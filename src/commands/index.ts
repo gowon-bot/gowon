@@ -1,8 +1,10 @@
-import { Command, NoCommand } from "./Command";
+import { Command, NoCommand } from "../BaseCommand";
 import { Ping } from "./Ping";
 import { NowPlaying } from "./NowPlaying";
 import { Login } from "./Login";
 import { Whoami } from "./Whoami";
+import { Github } from "./Github";
+import { Help } from "./Help";
 
 interface Commands {
   [key: string]: () => Command;
@@ -13,6 +15,8 @@ const commands: Commands = {
   nowplaying: () => new NowPlaying(),
   login: () => new Login(),
   whoami: () => new Whoami(),
+  github: () => new Github(),
+  help: () => new Help(),
 };
 
 export default {
@@ -29,5 +33,12 @@ export default {
       }
     }
     return new NoCommand();
+  },
+  list(showSecret: boolean): Command[] {
+    let commandsList = Object.values(commands).sort();
+
+    return showSecret
+      ? commandsList.map((c) => c())
+      : commandsList.map((c) => c()).filter((c) => !c.secretCommand);
   },
 };

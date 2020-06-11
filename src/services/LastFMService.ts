@@ -1,7 +1,11 @@
 import { stringify } from "querystring";
 import fetch from "node-fetch";
 
-import { GetRecentTracksResponse } from "./LastFMService.types";
+import {
+  GetRecentTracksResponse,
+  GetTrackInfoResponse,
+  GetArtistInfoResponse,
+} from "./LastFMService.types";
 
 import config from "../../config.json";
 
@@ -24,15 +28,38 @@ export class LastFMService {
     });
   }
 
-  async nowPlaying(username: string): Promise<GetRecentTracksResponse> {
-    let params = this.buildParams({
-      username,
-      limit: 1,
-      method: "user.getrecenttracks",
-    });
+  private async request<T>(method: string, params: Params): Promise<T> {
+    let qparams = this.buildParams({ method, ...params });
 
-    let response = await fetch(this.url + "?" + params);
+    let response = await fetch(this.url + "?" + qparams);
 
     return await response.json();
+  }
+
+  async nowPlaying(username: string): Promise<GetRecentTracksResponse> {
+    return await this.request<GetRecentTracksResponse>("user.getrecenttracks", {
+      username,
+      limit: 1,
+    });
+  }
+
+  async trackInfo(
+    artist: string,
+    track: string,
+    username?: string
+  ): Promise<GetTrackInfoResponse> {
+    let params: Params = { track, artist };
+    if (username) {
+      params.username = username;
+    }
+    return await this.request<GetTrackInfoResponse>("track.getInfo", params);
+  }
+
+  async artistInfo(artist: string, username?: string): Promise<GetArtistInfoResponse> {
+    let params: Params = { artist };
+    if (username) {
+      params.username = username;
+    }
+    return await this.request<GetArtistInfoResponse>("artist.getInfo", params);
   }
 }

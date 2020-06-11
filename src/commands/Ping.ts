@@ -1,10 +1,12 @@
-import { BaseCommand } from "./Command";
+import { BaseCommand } from "../BaseCommand";
 import { Message } from "discord.js";
 
 export class Ping extends BaseCommand {
-    aliases = ["🏓"]
+  aliases = ["🏓"];
+  description = "Ping! Pong!";
+  secretCommand = true;
 
-    async run(message: Message) {
-        await message.reply("Pong 🏓")
-    }
+  async run(message: Message) {
+    await message.reply("Pong 🏓");
+  }
 }
