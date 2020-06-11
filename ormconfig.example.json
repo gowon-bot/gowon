@@ -1,0 +1,15 @@
+{
+    "name": "default",
+    "type": "postgres",
+    "host": "localhost",
+    "port": 5432,
+    "username": "",
+    "password": "",
+    "database": "bot_moment",
+    "synchronize": true,
+    "logging": false,
+    "entities": ["dist/database/entity/**/*.js"],
+    "migrations": ["dist/database/migration/**/*.js"],
+    "subscribers": ["dist/database/subscriber/**/*.js"]
+  }
+  
