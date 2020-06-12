@@ -1,7 +1,9 @@
 import { BaseCommand } from "../BaseCommand";
-import { Message, MessageEmbed } from "discord.js";
+import { Message, MessageEmbed, User } from "discord.js";
 import { LinkGenerator, parseLastFMTrackResponse } from "../helpers/lastFM";
 import { ConnectionOptionsReader } from "typeorm";
+import { addS, numberDisplay } from "../helpers";
+import { Arguments } from "../arguments";
 
 export class NowPlaying extends BaseCommand {
   aliases = ["np", "fm"];
@@ -9,11 +11,22 @@ export class NowPlaying extends BaseCommand {
     fmv: "Displays more information",
   };
   description = "Displays the now playing or last played track in last.fm";
+  arguments: Arguments = {
+    inputs: {
+      lastFMUsername: { index: 0, optional: true },
+    },
+    mentions: {
+      0: { name: "user", description: "The user to lookup" },
+    },
+  };
 
   async run(message: Message, runAs?: string) {
-    console.log(runAs);
+    let user = this.parsedArguments.user as User,
+      lastFMUsername = this.parsedArguments.lastFMUsername as string;
 
-    let username = await this.usersService.getUsername(message.author.id);
+    let username = lastFMUsername
+      ? lastFMUsername
+      : await this.usersService.getUsername(user?.id ?? message.author.id);
 
     let response = await this.lastFMService.nowPlaying(username);
 
@@ -40,14 +53,18 @@ export class NowPlaying extends BaseCommand {
         this.lastFMService.trackInfo(track.artist, track.name, username),
       ]);
 
-      console.log(trackInfo.track.userloved === "1");
-
-      nowPlayingEmbed = nowPlayingEmbed.setColor(
-        trackInfo.track.userloved === "1" ? "#cc0000" : "black"
-      ).setFooter(`${artistInfo.artist.stats.userplaycount} ${
-        artistInfo.artist.name
-      } scrobbles | ${trackInfo.track.userplaycount} scrobbles of this song
-${artistInfo.artist.tags.tag.map((t) => t.name).join(" ‧ ")}`);
+      nowPlayingEmbed = nowPlayingEmbed
+        .setColor(trackInfo.track.userloved === "1" ? "#cc0000" : "black")
+        .setFooter(
+          numberDisplay(
+            artistInfo.artist.stats.userplaycount,
+            `${track.artist} scrobble`
+          ) +
+            " | " +
+            numberDisplay(trackInfo.track.userplaycount, "scrobble") +
+            " of this song\n" +
+            artistInfo.artist.tags.tag.map((t) => t.name).join(" ‧ ")
+        );
     }
 
     await message.channel.send(nowPlayingEmbed);

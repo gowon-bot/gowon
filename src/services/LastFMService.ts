@@ -32,8 +32,8 @@ export class LastFMService {
     let qparams = this.buildParams({ method, ...params });
 
     let response = await fetch(this.url + "?" + qparams);
-
-    return await response.json();
+    
+    return <T>await response.json();
   }
 
   async nowPlaying(username: string): Promise<GetRecentTracksResponse> {
@@ -48,15 +48,18 @@ export class LastFMService {
     track: string,
     username?: string
   ): Promise<GetTrackInfoResponse> {
-    let params: Params = { track, artist };
+    let params: Params = { track: track.trim(), artist: artist.trim() };
     if (username) {
       params.username = username;
     }
     return await this.request<GetTrackInfoResponse>("track.getInfo", params);
   }
 
-  async artistInfo(artist: string, username?: string): Promise<GetArtistInfoResponse> {
-    let params: Params = { artist };
+  async artistInfo(
+    artist: string,
+    username?: string
+  ): Promise<GetArtistInfoResponse> {
+    let params: Params = { artist: artist.trim() };
     if (username) {
       params.username = username;
     }

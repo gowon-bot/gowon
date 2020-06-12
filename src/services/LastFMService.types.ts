@@ -42,10 +42,10 @@ export interface GetTrackInfoResponse {
     name: string;
     mbid: string;
     url: string;
-    duration: string;
+    duration: number;
     streamable: { "#text": string; fulltrack: string };
-    listeners: string;
-    playcount: string;
+    listeners: number;
+    playcount: number;
     artist: {
       name: string;
       mbid: string;
@@ -56,9 +56,9 @@ export interface GetTrackInfoResponse {
       title: string;
       mbid: string;
       url: string;
-      "@attr": { position: string };
+      "@attr": { position: number };
     };
-    userplaycount: string;
+    userplaycount: number;
     userloved: string;
     toptags: { tag: Tag[] };
   };
@@ -70,7 +70,7 @@ export interface GetArtistInfoResponse {
     url: string;
     streamable: string;
     ontour: string;
-    stats: { listeners: string; playcount: string; userplaycount: string };
+    stats: { listeners: number; playcount: number; userplaycount: number };
     similar: {
       artist: {
         name: string;

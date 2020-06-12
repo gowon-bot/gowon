@@ -5,6 +5,8 @@ import { Login } from "./Login";
 import { Whoami } from "./Whoami";
 import { Github } from "./Github";
 import { Help } from "./Help";
+import { TrackPlays } from "./TrackPlays";
+import { ProfilePic } from "./ProfilePic";
 
 interface Commands {
   [key: string]: () => Command;
@@ -17,6 +19,8 @@ const commands: Commands = {
   whoami: () => new Whoami(),
   github: () => new Github(),
   help: () => new Help(),
+  trackplays: () => new TrackPlays(),
+  profilepic: () => new ProfilePic(),
 };
 
 export default {
