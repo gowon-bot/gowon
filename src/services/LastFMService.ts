@@ -8,6 +8,7 @@ import {
 } from "./LastFMService.types";
 
 import config from "../../config.json";
+import { ParsedTrack, parseLastFMTrackResponse } from "../helpers/lastFM";
 
 interface Params {
   [key: string]: any;
@@ -32,7 +33,7 @@ export class LastFMService {
     let qparams = this.buildParams({ method, ...params });
 
     let response = await fetch(this.url + "?" + qparams);
-    
+
     return <T>await response.json();
   }
 
@@ -41,6 +42,11 @@ export class LastFMService {
       username,
       limit: 1,
     });
+  }
+
+  async nowPlayingParsed(username: string): Promise<ParsedTrack> {
+    let nowPlaying = await this.nowPlaying(username);
+    return parseLastFMTrackResponse(nowPlaying.recenttracks.track[0]);
   }
 
   async trackInfo(

@@ -22,9 +22,19 @@ export class TrackPlays extends BaseCommand {
       trackName = this.parsedArguments.track as string,
       user = this.parsedArguments.user as User;
 
-    let username = await this.usersService.getUsername(
-      user?.id ?? message.author.id
-    );
+    let senderUsername = await this.usersService.getUsername(message.author.id);
+    let mentionedUsername = await this.usersService.getUsername(user?.id);
+
+    let username = mentionedUsername || senderUsername;
+
+    if (!artist || !trackName) {
+      let nowPlaying = await this.lastFMService.nowPlayingParsed(
+        senderUsername
+      );
+
+      if (!artist) artist = nowPlaying.artist;
+      if (!trackName) trackName = nowPlaying.name;
+    }
 
     let trackDetails = await this.lastFMService.trackInfo(
       artist,
@@ -33,7 +43,7 @@ export class TrackPlays extends BaseCommand {
     );
 
     message.channel.send(
-      `${username} has ${numberDisplay(
+      `\`${username}\` has ${numberDisplay(
         trackDetails.track.userplaycount,
         "scrobble"
       )} of **${trackDetails.track.name}** by ${trackDetails.track.artist.name}`

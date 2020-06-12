@@ -1,7 +1,7 @@
 import { Message, User } from "discord.js";
 
 const extractArgs = (string: string, runAs: string) =>
-  string.replace(`!${runAs}`, "").trim();
+  string.replace(`!${runAs}`, "");
 
 export interface ArgumentOptions {}
 
@@ -22,7 +22,11 @@ export interface Arguments {
     };
   };
   inputs?: {
-    [name: string]: { index: number | Slice; splitOn?: string, optional?: boolean};
+    [name: string]: {
+      index: number | Slice;
+      splitOn?: string;
+      optional?: boolean;
+    };
   };
 }
 
@@ -34,13 +38,13 @@ export class ArgumentParser {
   parsedArguments: ParsedArguments = {};
 
   private removeMentions(string: string): string {
-    return string.replace(/<@(!|&|#)?[0-9]+>/, "");
+    return string.replace(/<@(!|&|#)?[0-9]+>/g, "");
   }
 
   private getElementFromIndex(array: Array<string>, index: number | Slice) {
     return typeof index === "number"
-      ? array[index]
-      : array.slice(index.start, index.stop + 1);
+      ? array[index]?.trim()
+      : array.slice(index.start, index.stop + 1).map((e) => e?.trim());
   }
 
   private parseInputs(args: Arguments, string: string): ParsedArguments {
@@ -74,7 +78,7 @@ export class ArgumentParser {
       parsedSplitArgs = splitArgs.reduce((acc: ParsedArguments, arg, idx) => {
         let argOptions = args.inputs![arg];
 
-        let splitStringArray = string.split(` ${argOptions?.splitOn} `);
+        let splitStringArray = (string + " ").split(` ${argOptions?.splitOn} `);
 
         acc[arg] = this.getElementFromIndex(splitStringArray, argOptions.index);
 
@@ -113,7 +117,7 @@ export class ArgumentParser {
 }
 
 export interface GroupedArguments {
-  [split: string]: { name: string; index: number | Slice, optional: boolean }[];
+  [split: string]: { name: string; index: number | Slice; optional: boolean }[];
 }
 export function groupArgumentsBySplit(args: Arguments): GroupedArguments {
   return Object.keys(args.inputs ?? {}).reduce((acc, argName) => {
@@ -122,9 +126,17 @@ export function groupArgumentsBySplit(args: Arguments): GroupedArguments {
     if (!acc[arg.splitOn ?? " "]) acc[arg.splitOn ?? " "] = [];
 
     if (arg.splitOn) {
-      acc[arg.splitOn].push({ name: argName, index: arg.index, optional: arg.optional ?? false });
+      acc[arg.splitOn].push({
+        name: argName,
+        index: arg.index,
+        optional: arg.optional ?? false,
+      });
     } else {
-      acc[" "].push({ name: argName, index: arg.index, optional: arg.optional ?? false });
+      acc[" "].push({
+        name: argName,
+        index: arg.index,
+        optional: arg.optional ?? false,
+      });
     }
 
     return acc;

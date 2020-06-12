@@ -1,8 +1,7 @@
 import { BaseCommand } from "../BaseCommand";
 import { Message, MessageEmbed, User } from "discord.js";
 import { LinkGenerator, parseLastFMTrackResponse } from "../helpers/lastFM";
-import { ConnectionOptionsReader } from "typeorm";
-import { addS, numberDisplay } from "../helpers";
+import { numberDisplay } from "../helpers";
 import { Arguments } from "../arguments";
 
 export class NowPlaying extends BaseCommand {
