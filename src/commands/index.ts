@@ -7,6 +7,8 @@ import { Github } from "./Github";
 import { Help } from "./Help";
 import { TrackPlays } from "./TrackPlays";
 import { ProfilePic } from "./ProfilePic";
+import { ArtistPlays } from "./ArtistPlays";
+import { AlbumPlays } from "./AlbumPlays";
 
 interface Commands {
   [key: string]: () => Command;
@@ -21,6 +23,8 @@ const commands: Commands = {
   help: () => new Help(),
   trackplays: () => new TrackPlays(),
   profilepic: () => new ProfilePic(),
+  artistplays: () => new ArtistPlays(),
+  albumplays: () => new AlbumPlays(),
 };
 
 export default {

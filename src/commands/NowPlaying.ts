@@ -36,7 +36,11 @@ export class NowPlaying extends BaseCommand {
 
     let nowPlayingEmbed = new MessageEmbed()
       .setColor("black")
-      .setAuthor(`Now Playing for ${response.recenttracks["@attr"].user}`)
+      .setAuthor(
+        `${
+          nowPlaying["@attr"]?.nowplaying ? "Now playing" : "Last scrobbled"
+        } for ${response.recenttracks["@attr"].user}`
+      )
       .setTitle(track.name)
       .setURL(LinkGenerator.trackPage(track.artist, track.name))
       .setDescription(
@@ -62,7 +66,9 @@ export class NowPlaying extends BaseCommand {
             " | " +
             numberDisplay(trackInfo.track.userplaycount, "scrobble") +
             " of this song\n" +
-            artistInfo.artist.tags.tag.map((t) => t.name).join(" ‧ ")
+            artistInfo.artist.tags.tag
+              .map((t) => t.name.toLowerCase())
+              .join(" ‧ ")
         );
     }
 

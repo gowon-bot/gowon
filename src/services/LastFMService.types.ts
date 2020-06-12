@@ -42,10 +42,10 @@ export interface GetTrackInfoResponse {
     name: string;
     mbid: string;
     url: string;
-    duration: number;
+    duration: string;
     streamable: { "#text": string; fulltrack: string };
-    listeners: number;
-    playcount: number;
+    listeners: string;
+    playcount: string;
     artist: {
       name: string;
       mbid: string;
@@ -56,9 +56,9 @@ export interface GetTrackInfoResponse {
       title: string;
       mbid: string;
       url: string;
-      "@attr": { position: number };
+      "@attr": { position: string };
     };
-    userplaycount: number;
+    userplaycount: string;
     userloved: string;
     toptags: { tag: Tag[] };
   };
@@ -70,7 +70,7 @@ export interface GetArtistInfoResponse {
     url: string;
     streamable: string;
     ontour: string;
-    stats: { listeners: number; playcount: number; userplaycount: number };
+    stats: { listeners: string; playcount: string; userplaycount: string };
     similar: {
       artist: {
         name: string;
@@ -91,5 +91,34 @@ export interface GetArtistInfoResponse {
       summary: string;
       content: string;
     };
+  };
+}
+
+export interface GetAlbumInfoResponse {
+  album: {
+    name: string;
+    artist: string;
+    url: string;
+    image: Image[];
+    listeners: string;
+    playcount: string;
+    userplaycount: string;
+    tracks: {
+      track: [
+        {
+          name: string;
+          url: string;
+          duration: string;
+          "@attr": { rank: string };
+          streamable: { "#text": string; fulltrack: string };
+          artist: {
+            name: string;
+            mbid: string;
+            url: string;
+          };
+        }
+      ];
+    };
+    tags: { tag: Tag[] };
   };
 }

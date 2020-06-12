@@ -5,6 +5,7 @@ import {
   GetRecentTracksResponse,
   GetTrackInfoResponse,
   GetArtistInfoResponse,
+  GetAlbumInfoResponse,
 } from "./LastFMService.types";
 
 import config from "../../config.json";
@@ -70,5 +71,17 @@ export class LastFMService {
       params.username = username;
     }
     return await this.request<GetArtistInfoResponse>("artist.getInfo", params);
+  }
+
+  async albumInfo(
+    artist: string,
+    album: string,
+    username?: string
+  ): Promise<GetAlbumInfoResponse> {
+    let params: Params = { artist: artist.trim(), album: album.trim() };
+    if (username) {
+      params.username = username;
+    }
+    return await this.request<GetAlbumInfoResponse>("album.getInfo", params);
   }
 }
