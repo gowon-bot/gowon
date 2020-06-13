@@ -2,10 +2,11 @@ import { stringify } from "querystring";
 import fetch from "node-fetch";
 
 import {
-  GetRecentTracksResponse,
-  GetTrackInfoResponse,
-  GetArtistInfoResponse,
-  GetAlbumInfoResponse,
+  RecentTracksResponse,
+  TrackInfoResponse,
+  ArtistInfoResponse,
+  AlbumInfoResponse,
+  UserInfoResponse,
 } from "./LastFMService.types";
 
 import config from "../../config.json";
@@ -38,11 +39,24 @@ export class LastFMService {
     return <T>await response.json();
   }
 
-  async nowPlaying(username: string): Promise<GetRecentTracksResponse> {
-    return await this.request<GetRecentTracksResponse>("user.getrecenttracks", {
+  async recentTracks(
+    username: string,
+    limit?: number
+  ): Promise<RecentTracksResponse> {
+    let params: Params = {
+      username,
+    };
+
+    if (limit) params.limit = limit;
+
+    return await this.request<RecentTracksResponse>("user.getrecenttracks", {
       username,
       limit: 1,
     });
+  }
+
+  async nowPlaying(username: string): Promise<RecentTracksResponse> {
+    return await this.recentTracks(username, 1);
   }
 
   async nowPlayingParsed(username: string): Promise<ParsedTrack> {
@@ -54,34 +68,38 @@ export class LastFMService {
     artist: string,
     track: string,
     username?: string
-  ): Promise<GetTrackInfoResponse> {
+  ): Promise<TrackInfoResponse> {
     let params: Params = { track: track.trim(), artist: artist.trim() };
     if (username) {
       params.username = username;
     }
-    return await this.request<GetTrackInfoResponse>("track.getInfo", params);
+    return await this.request<TrackInfoResponse>("track.getInfo", params);
   }
 
   async artistInfo(
     artist: string,
     username?: string
-  ): Promise<GetArtistInfoResponse> {
+  ): Promise<ArtistInfoResponse> {
     let params: Params = { artist: artist.trim() };
     if (username) {
       params.username = username;
     }
-    return await this.request<GetArtistInfoResponse>("artist.getInfo", params);
+    return await this.request<ArtistInfoResponse>("artist.getInfo", params);
   }
 
   async albumInfo(
     artist: string,
     album: string,
     username?: string
-  ): Promise<GetAlbumInfoResponse> {
+  ): Promise<AlbumInfoResponse> {
     let params: Params = { artist: artist.trim(), album: album.trim() };
     if (username) {
       params.username = username;
     }
-    return await this.request<GetAlbumInfoResponse>("album.getInfo", params);
+    return await this.request<AlbumInfoResponse>("album.getInfo", params);
+  }
+
+  async userInfo(username: string): Promise<UserInfoResponse> {
+    return await this.request<UserInfoResponse>("user.getInfo", { username });
   }
 }

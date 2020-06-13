@@ -10,6 +10,7 @@ import { ProfilePic } from "./ProfilePic";
 import { ArtistPlays } from "./ArtistPlays";
 import { AlbumPlays } from "./AlbumPlays";
 import { Cover } from "./Cover";
+import { ArtistStats } from "./Stats/ArtistStats";
 
 interface Commands {
   [key: string]: () => Command;
@@ -27,6 +28,7 @@ const commands: Commands = {
   artistplays: () => new ArtistPlays(),
   albumplays: () => new AlbumPlays(),
   cover: () => new Cover(),
+  artiststats: () => new ArtistStats(),
 };
 
 export default {

@@ -7,7 +7,7 @@ export interface ArgumentOptions {}
 
 export interface Slice {
   start: number;
-  stop: number;
+  stop?: number;
 }
 
 export interface InputsOptions {
@@ -44,7 +44,12 @@ export class ArgumentParser {
   private getElementFromIndex(array: Array<string>, index: number | Slice) {
     return typeof index === "number"
       ? array[index]?.trim()
-      : array.slice(index.start, index.stop + 1).map((e) => e?.trim());
+      : (index.stop
+          ? array.slice(index.start, index.stop + 1)
+          : array.slice(index.start)
+        )
+          .map((e) => e?.trim())
+          .join(" ");
   }
 
   private parseInputs(args: Arguments, string: string): ParsedArguments {

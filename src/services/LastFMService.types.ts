@@ -33,11 +33,11 @@ export interface RecentTracks extends PagedCollection {
   track: Track[];
 }
 
-export interface GetRecentTracksResponse {
+export interface RecentTracksResponse {
   recenttracks: RecentTracks;
 }
 
-export interface GetTrackInfoResponse {
+export interface TrackInfoResponse {
   track: {
     name: string;
     mbid: string;
@@ -64,7 +64,7 @@ export interface GetTrackInfoResponse {
   };
 }
 
-export interface GetArtistInfoResponse {
+export interface ArtistInfoResponse {
   artist: {
     name: string;
     url: string;
@@ -94,7 +94,7 @@ export interface GetArtistInfoResponse {
   };
 }
 
-export interface GetAlbumInfoResponse {
+export interface AlbumInfoResponse {
   album: {
     name: string;
     artist: string;
@@ -120,5 +120,23 @@ export interface GetAlbumInfoResponse {
       ];
     };
     tags: { tag: Tag[] };
+  };
+}
+
+export interface UserInfoResponse {
+  user: {
+    playlists: string;
+    playcount: string;
+    gender: string;
+    name: string;
+    subscriber: string;
+    url: string;
+    country: string;
+    image: Image[];
+    registered: { unixtime: string; "#text": number };
+    type: string;
+    age: string;
+    bootstrap: string;
+    realname: string;
   };
 }

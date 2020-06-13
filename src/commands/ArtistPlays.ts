@@ -9,7 +9,11 @@ export class ArtistPlays extends BaseCommand {
 
   arguments: Arguments = {
     inputs: {
-      artist: { index: 0 },
+      artist: {
+        index: {
+          start: 0,
+        },
+      },
     },
     mentions: {
       0: { name: "user", description: "The user to lookup" },
