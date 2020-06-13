@@ -48,7 +48,7 @@ export class ArgumentParser {
   }
 
   private parseInputs(args: Arguments, string: string): ParsedArguments {
-    let stringArray = string.split(/\s+/);
+    let stringArray = string.trim().split(/\s+/);
 
     let parsedGenericArgs: ParsedArguments = {},
       parsedSplitArgs: ParsedArguments = {};

@@ -9,6 +9,7 @@ import { TrackPlays } from "./TrackPlays";
 import { ProfilePic } from "./ProfilePic";
 import { ArtistPlays } from "./ArtistPlays";
 import { AlbumPlays } from "./AlbumPlays";
+import { Cover } from "./Cover";
 
 interface Commands {
   [key: string]: () => Command;
@@ -25,6 +26,7 @@ const commands: Commands = {
   profilepic: () => new ProfilePic(),
   artistplays: () => new ArtistPlays(),
   albumplays: () => new AlbumPlays(),
+  cover: () => new Cover(),
 };
 
 export default {

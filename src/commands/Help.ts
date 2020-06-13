@@ -82,7 +82,7 @@ export class Help extends BaseCommand {
 
   async run(message: Message) {
     let commandName = this.parsedArguments.command as string;
-
+    
     let embed = new MessageEmbed().setAuthor(
       "Help for " + message.author.username
     );

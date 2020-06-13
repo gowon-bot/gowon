@@ -19,7 +19,7 @@ export class AlbumPlays extends BaseCommand {
 
   async run(message: Message) {
     let artist = this.parsedArguments.artist as string,
-      albumName = this.parsedArguments.track as string,
+      albumName = this.parsedArguments.album as string,
       user = this.parsedArguments.user as User;
 
     let senderUsername = await this.usersService.getUsername(message.author.id);
