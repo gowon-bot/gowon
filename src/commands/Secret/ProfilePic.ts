@@ -1,8 +1,8 @@
-import { BaseCommand } from "../BaseCommand";
+import { BaseCommand } from "../../BaseCommand";
 import { Message, MessageEmbed } from "discord.js";
-import { generateLink } from "../helpers/discord";
+import { generateLink } from "../../helpers/discord";
 
-export class ProfilePic extends BaseCommand {
+export default class ProfilePic extends BaseCommand {
   aliases = ["hah", "ha"];
   description = "Hah!";
   secretCommand = true;

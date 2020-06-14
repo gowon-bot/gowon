@@ -1,8 +1,8 @@
-import { BaseCommand } from "../BaseCommand";
+import { BaseCommand } from "../../BaseCommand";
 import { Message } from "discord.js";
-import { sanitizeForDiscord } from "../helpers/discord";
+import { sanitizeForDiscord } from "../../helpers/discord";
 
-export class Whoami extends BaseCommand {
+export default class Whoami extends BaseCommand {
   aliases = ["me"];
   description = "Displays your login";
 

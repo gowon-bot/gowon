@@ -1,9 +1,9 @@
-import { BaseCommand } from "../BaseCommand";
+import { BaseCommand } from "../../BaseCommand";
 import { Message } from "discord.js";
-import { sanitizeForDiscord } from "../helpers/discord";
-import { Arguments } from "../arguments";
+import { sanitizeForDiscord } from "../../helpers/discord";
+import { Arguments } from "../../arguments";
 
-export class Login extends BaseCommand {
+export default class Login extends BaseCommand {
   description = "Logs you into lastfm";
 
   arguments: Arguments = {

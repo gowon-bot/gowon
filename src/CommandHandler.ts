@@ -1,12 +1,17 @@
-import commands from "./commands";
+import { CommandManager } from "./CommandManager";
 import { Command, NoCommand } from "./BaseCommand";
 import { Message } from "discord.js";
 
 export class CommandHandler {
   prefix: string;
+  commandManager = CommandManager;
 
   constructor(prefix: string) {
     this.prefix = prefix;
+  }
+
+  async init() {
+    await this.commandManager.init();
   }
 
   private extractCommandName(message: Message): string {
@@ -23,7 +28,7 @@ export class CommandHandler {
     let command = this.extractCommandName(message);
 
     if (command) {
-      return commands.find(command);
+      return this.commandManager.find(command);
     } else return new NoCommand();
   }
 

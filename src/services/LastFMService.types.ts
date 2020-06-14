@@ -140,3 +140,8 @@ export interface UserInfoResponse {
     realname: string;
   };
 }
+
+export interface LastFMErrorResponse {
+  error: number;
+  message: string;
+}

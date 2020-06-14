@@ -1,9 +1,9 @@
-import { BaseCommand } from "../BaseCommand";
+import { BaseCommand } from "../../BaseCommand";
 import { Message, User } from "discord.js";
-import { Arguments } from "../arguments";
-import { numberDisplay } from "../helpers";
+import { Arguments } from "../../arguments";
+import { numberDisplay } from "../../helpers";
 
-export class ArtistPlays extends BaseCommand {
+export default class ArtistPlays extends BaseCommand {
   aliases = ["ap"];
   description = "Shows you how many plays you have of a given artist";
 
@@ -25,7 +25,7 @@ export class ArtistPlays extends BaseCommand {
       user = this.parsedArguments.user as User;
 
     let senderUsername = await this.usersService.getUsername(message.author.id);
-    let mentionedUsername = await this.usersService.getUsername(user?.id);
+    let mentionedUsername = user && await this.usersService.getUsername(user.id);
 
     let username = mentionedUsername || senderUsername;
 

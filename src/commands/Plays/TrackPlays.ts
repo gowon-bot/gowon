@@ -1,16 +1,16 @@
-import { BaseCommand } from "../BaseCommand";
+import { BaseCommand } from "../../BaseCommand";
 import { Message, User } from "discord.js";
-import { Arguments } from "../arguments";
-import { numberDisplay } from "../helpers";
+import { Arguments } from "../../arguments";
+import { numberDisplay } from "../../helpers";
 
-export class AlbumPlays extends BaseCommand {
-  aliases = ["alp", "lp"];
-  description = "Shows you how many plays you have of a given album";
+export default class TrackPlays extends BaseCommand {
+  aliases = ["tp"];
+  description = "Shows you how many plays you have of a given track";
 
   arguments: Arguments = {
     inputs: {
       artist: { index: 0, splitOn: "|" },
-      album: { index: 1, splitOn: "|" },
+      track: { index: 1, splitOn: "|" },
     },
     mentions: {
       0: { name: "user", description: "The user to lookup" },
@@ -19,34 +19,34 @@ export class AlbumPlays extends BaseCommand {
 
   async run(message: Message) {
     let artist = this.parsedArguments.artist as string,
-      albumName = this.parsedArguments.album as string,
+      trackName = this.parsedArguments.track as string,
       user = this.parsedArguments.user as User;
 
     let senderUsername = await this.usersService.getUsername(message.author.id);
-    let mentionedUsername = await this.usersService.getUsername(user?.id);
+    let mentionedUsername = user && await this.usersService.getUsername(user.id);
 
     let username = mentionedUsername || senderUsername;
 
-    if (!artist || !albumName) {
+    if (!artist || !trackName) {
       let nowPlaying = await this.lastFMService.nowPlayingParsed(
         senderUsername
       );
 
       if (!artist) artist = nowPlaying.artist;
-      if (!albumName) albumName = nowPlaying.album;
+      if (!trackName) trackName = nowPlaying.name;
     }
 
-    let albumDetails = await this.lastFMService.albumInfo(
+    let trackDetails = await this.lastFMService.trackInfo(
       artist,
-      albumName,
+      trackName,
       username
     );
 
     message.channel.send(
       `\`${username}\` has ${numberDisplay(
-        albumDetails.album.userplaycount,
+        trackDetails.track.userplaycount,
         "scrobble"
-      )} of **${albumDetails.album.name}** by ${albumDetails.album.artist}`
+      )} of **${trackDetails.track.name}** by ${trackDetails.track.artist.name}`
     );
   }
 }

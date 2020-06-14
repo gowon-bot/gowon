@@ -1,7 +1,7 @@
-import { BaseCommand } from "../BaseCommand";
+import { BaseCommand } from "../../BaseCommand";
 import { Message } from "discord.js";
 
-export class Github extends BaseCommand {
+export default class Github extends BaseCommand {
   secretCommand = true;
   description = "Displays the github link for the bot";
 

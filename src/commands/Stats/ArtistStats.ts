@@ -2,9 +2,8 @@ import { BaseCommand } from "../../BaseCommand";
 import { Message, MessageEmbed, User } from "discord.js";
 import { Arguments } from "../../arguments";
 import { calculatePercent } from "../../helpers/stats";
-import { send } from "process";
 
-export class ArtistStats extends BaseCommand {
+export default class ArtistStats extends BaseCommand {
   aliases = ["astats", "as"];
   description = "Display some stats about an artist";
   arguments: Arguments = {
@@ -21,7 +20,7 @@ export class ArtistStats extends BaseCommand {
       user = this.parsedArguments.user as User;
 
     let senderUsername = await this.usersService.getUsername(message.author.id);
-    let mentionedUsername = await this.usersService.getUsername(user?.id);
+    let mentionedUsername = user && await this.usersService.getUsername(user?.id);
 
     let username = mentionedUsername || senderUsername;
 

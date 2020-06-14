@@ -1,5 +1,3 @@
-import { Connection } from "typeorm";
-
 export class BotMomentService {
   // Static methods/properties
   private static instance: BotMomentService;

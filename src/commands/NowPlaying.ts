@@ -1,10 +1,11 @@
 import { BaseCommand } from "../BaseCommand";
-import { Message, MessageEmbed, User } from "discord.js";
+import { Message, MessageEmbed, User, Channel } from "discord.js";
 import { LinkGenerator, parseLastFMTrackResponse } from "../helpers/lastFM";
 import { numberDisplay } from "../helpers";
 import { Arguments } from "../arguments";
+import { isBotMoment, fakeNowPlaying } from "../botmoment/fakeNowPlaying";
 
-export class NowPlaying extends BaseCommand {
+export default class NowPlaying extends BaseCommand {
   aliases = ["np", "fm"];
   variations = {
     fmv: "Displays more information",
@@ -22,6 +23,11 @@ export class NowPlaying extends BaseCommand {
   async run(message: Message, runAs?: string) {
     let user = this.parsedArguments.user as User,
       lastFMUsername = this.parsedArguments.lastFMUsername as string;
+
+    if (isBotMoment(user?.id)) {
+      await message.channel.send(fakeNowPlaying());
+      return;
+    }
 
     let username = lastFMUsername
       ? lastFMUsername

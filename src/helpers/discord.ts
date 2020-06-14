@@ -5,4 +5,3 @@ export function sanitizeForDiscord(string: string): string {
 export function generateLink(text: string, link: string): string {
   return `[${text}](${link})`;
 }
-

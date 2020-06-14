@@ -7,10 +7,12 @@ import {
   ArtistInfoResponse,
   AlbumInfoResponse,
   UserInfoResponse,
+  LastFMErrorResponse,
 } from "./LastFMService.types";
 
 import config from "../../config.json";
 import { ParsedTrack, parseLastFMTrackResponse } from "../helpers/lastFM";
+import { LastFMConnectionError, LastFMError } from "../errors";
 
 interface Params {
   [key: string]: any;
@@ -36,7 +38,13 @@ export class LastFMService {
 
     let response = await fetch(this.url + "?" + qparams);
 
-    return <T>await response.json();
+    if (!response.ok) throw new LastFMConnectionError();
+
+    let jsonResponse = await response.json();
+
+    if (jsonResponse.error) throw new LastFMError(jsonResponse);
+
+    return jsonResponse as T;
   }
 
   async recentTracks(

@@ -2,7 +2,7 @@ import { BaseCommand } from "../BaseCommand";
 import { Message } from "discord.js";
 import { Arguments } from "../arguments";
 
-export class Cover extends BaseCommand {
+export default class Cover extends BaseCommand {
   aliases = ["co"];
   description = "Shows the cover for an album";
   secretCommand = true;

@@ -11,7 +11,7 @@ import config from "../config.json";
 const client = new Client();
 const handler = new CommandHandler("!");
 
-DB.connect().then(() => {
+Promise.all([DB.connect(), handler.init()]).then(() => {
   client.on("ready", () => {
     console.log(`Logged in as ${client?.user && client.user.tag}!`);
   });

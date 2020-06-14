@@ -1,9 +1,9 @@
 import { BaseCommand, Command } from "../BaseCommand";
 import { Message, MessageEmbed } from "discord.js";
-import commandManager from "../commands";
+import { CommandManager } from "../CommandManager";
 import { Arguments, groupArgumentsBySplit } from "../arguments";
 
-export class Help extends BaseCommand {
+export default class Help extends BaseCommand {
   aliases = ["h"];
   description = "Displays the help menu";
 
@@ -82,20 +82,20 @@ export class Help extends BaseCommand {
 
   async run(message: Message) {
     let commandName = this.parsedArguments.command as string;
-    
+
     let embed = new MessageEmbed().setAuthor(
       "Help for " + message.author.username
     );
 
     if (commandName) {
-      let command = commandManager.find(commandName);
+      let command = CommandManager.find(commandName);
 
       embed = this.parseAliases(embed, command);
       embed = this.parseName(embed, command);
       embed = this.parseVariations(embed, command);
       embed = this.parseCommandArguments(embed, command);
     } else {
-      let commands = commandManager.list(false);
+      let commands = CommandManager.list(false);
 
       embed = embed.setDescription(commands.map((c) => c.name).join(", "));
     }

@@ -1,4 +1,5 @@
 import { User } from "../database/entity/User";
+import { UsernameNotRegisteredError } from "../errors";
 
 
 export class UsersService {
@@ -7,7 +8,7 @@ export class UsersService {
 
     if (user) {
       return user.lastFMUsername;
-    } else return "";
+    } else throw new UsernameNotRegisteredError();
   }
 
   async setUsername(
