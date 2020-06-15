@@ -38,8 +38,6 @@ export class CommandManager {
   }
 
   static find(commandName: string): Command {
-    console.log(this.commands);
-
     if (Object.keys(this.commands).includes(commandName.toLowerCase())) {
       return this.commands[commandName.toLowerCase()]();
     } else {
@@ -53,7 +51,7 @@ export class CommandManager {
     }
     return new NoCommand();
   }
-  static list(showSecret: boolean): Command[] {
+  static list(showSecret: boolean = false): Command[] {
     let commandsList = Object.values(this.commands).sort();
 
     return showSecret

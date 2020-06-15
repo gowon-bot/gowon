@@ -7,8 +7,6 @@ function parseErrorSix(message: string): string {
 }
 
 export function parseError(error: LastFMErrorResponse): string {
-  console.log(error);
-
   switch (error.error) {
     case 6:
       return parseErrorSix(error.message);

@@ -9,7 +9,7 @@ import { DB } from "./database";
 import config from "../config.json";
 
 const client = new Client();
-const handler = new CommandHandler("!");
+const handler = new CommandHandler();
 
 Promise.all([DB.connect(), handler.init()]).then(() => {
   client.on("ready", () => {

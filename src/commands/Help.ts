@@ -95,7 +95,7 @@ export default class Help extends BaseCommand {
       embed = this.parseVariations(embed, command);
       embed = this.parseCommandArguments(embed, command);
     } else {
-      let commands = CommandManager.list(false);
+      let commands = CommandManager.list();
 
       embed = embed.setDescription(commands.map((c) => c.name).join(", "));
     }

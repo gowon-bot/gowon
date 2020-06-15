@@ -1,9 +1,6 @@
 import { Message, User } from "discord.js";
-
-const extractArgs = (string: string, runAs: string) =>
-  string.replace(`!${runAs}`, "");
-
-export interface ArgumentOptions {}
+import { BotMomentService } from "./services/BotMomentService";
+import { arch } from "os";
 
 export interface Slice {
   start: number;
@@ -14,6 +11,13 @@ export interface InputsOptions {
   stopChar?: string;
 }
 
+export interface InputArguments {
+  index: number | Slice;
+  splitOn?: string;
+  regex?: RegExp;
+  optional?: boolean;
+}
+
 export interface Arguments {
   mentions?: {
     [index: number]: {
@@ -22,11 +26,7 @@ export interface Arguments {
     };
   };
   inputs?: {
-    [name: string]: {
-      index: number | Slice;
-      splitOn?: string;
-      optional?: boolean;
-    };
+    [name: string]: InputArguments;
   };
 }
 
@@ -36,6 +36,26 @@ export interface ParsedArguments {
 
 export class ArgumentParser {
   parsedArguments: ParsedArguments = {};
+  botMomentService = BotMomentService.getInstance();
+  arguments: Arguments;
+
+  constructor(args: Arguments) {
+    this.arguments = args;
+  }
+
+  parse(message: Message, runAs: string): ParsedArguments {
+    let messageString = this.removeMentions(message.content).trim();
+
+    let mentions = this.parseMentions(message);
+
+    let inputs = this.parseInputs(
+      this.botMomentService.removeCommandName(messageString, runAs)
+    );
+
+    this.parsedArguments = { ...mentions, ...inputs };
+
+    return this.parsedArguments;
+  }
 
   private removeMentions(string: string): string {
     return string.replace(/<@(!|&|#)?[0-9]+>/g, "");
@@ -52,72 +72,61 @@ export class ArgumentParser {
           .join(" ");
   }
 
-  private parseInputs(args: Arguments, string: string): ParsedArguments {
-    let stringArray = string.trim().split(/\s+/);
-
-    let parsedGenericArgs: ParsedArguments = {},
-      parsedSplitArgs: ParsedArguments = {};
-
-    if (args.inputs) {
-      let genericArgs = Object.keys(args.inputs).filter(
-        (arg) => !args.inputs![arg]?.splitOn
+  private parseInputsWithSplit(
+    messageString: string,
+    splitFunction: (string: string, arg: InputArguments) => Array<string>,
+    filter: (arg: InputArguments) => boolean
+  ): ParsedArguments {
+    if (this.arguments.inputs) {
+      let argArray = Object.keys(this.arguments.inputs).filter((arg) =>
+        filter(this.arguments.inputs![arg])
       );
 
-      parsedGenericArgs = genericArgs.reduce(
-        (acc: ParsedArguments, arg, idx) => {
-          if (!args.inputs) return acc;
+      return argArray.reduce((acc: ParsedArguments, arg, idx) => {
+        let argOptions = this.arguments.inputs![arg];
+        let array = splitFunction(messageString, argOptions);
 
-          let argOptions = args.inputs[arg];
-
-          acc[arg] = this.getElementFromIndex(stringArray, argOptions.index);
-
-          return acc;
-        },
-        {} as ParsedArguments
-      );
-
-      let splitArgs = Object.keys(args.inputs).filter(
-        (arg) => !!args.inputs![arg]?.splitOn
-      );
-
-      parsedSplitArgs = splitArgs.reduce((acc: ParsedArguments, arg, idx) => {
-        let argOptions = args.inputs![arg];
-
-        let splitStringArray = (string + " ").split(` ${argOptions?.splitOn} `);
-
-        acc[arg] = this.getElementFromIndex(splitStringArray, argOptions.index);
+        acc[arg] = this.getElementFromIndex(array, argOptions.index);
 
         return acc;
       }, {} as ParsedArguments);
-    }
-
-    return { ...parsedGenericArgs, ...parsedSplitArgs };
+    } else return {};
   }
 
-  private parseMentions(args: Arguments, message: Message): ParsedArguments {
-    if (args.mentions) {
-      return Object.keys(args.mentions).reduce((acc, arg, idx) => {
-        if (args.mentions![idx]) {
-          acc[args.mentions![idx].name] = message.mentions.members?.array()[
-            idx
-          ]?.user;
+  private parseInputs(string: string): ParsedArguments {
+    let genericArgs = this.parseInputsWithSplit(
+      string,
+      (string) => string.trim().split(/\s+/),
+      (arg) => !arg.splitOn
+    );
+
+    let splitOnArgs = this.parseInputsWithSplit(
+      string,
+      (string, arg) => (string + " ").split(` ${arg?.splitOn} `),
+      (arg) => !!arg.splitOn
+    );
+
+    let regexArgs = this.parseInputsWithSplit(
+      string,
+      (string, arg) => string.match(arg.regex!) as Array<string>,
+      (arg) => !!arg.regex
+    );
+
+    return { ...genericArgs, ...splitOnArgs, ...regexArgs };
+  }
+
+  private parseMentions(message: Message): ParsedArguments {
+    if (this.arguments.mentions) {
+      return Object.keys(this.arguments.mentions).reduce((acc, arg, idx) => {
+        if (this.arguments.mentions![idx]) {
+          acc[
+            this.arguments.mentions![idx].name
+          ] = message.mentions.members?.array()[idx]?.user;
         }
         return acc;
       }, {} as ParsedArguments);
     }
     return {};
-  }
-
-  parse(message: Message, args: Arguments, runAs: string): ParsedArguments {
-    let messageString = this.removeMentions(message.content).trim();
-
-    let mentions = this.parseMentions(args, message);
-
-    let inputs = this.parseInputs(args, extractArgs(messageString, runAs));
-
-    this.parsedArguments = { ...mentions, ...inputs };
-
-    return this.parsedArguments;
   }
 }
 

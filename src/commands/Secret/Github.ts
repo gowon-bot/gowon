@@ -2,6 +2,7 @@ import { BaseCommand } from "../../BaseCommand";
 import { Message } from "discord.js";
 
 export default class Github extends BaseCommand {
+  aliases = ["gh"]
   secretCommand = true;
   description = "Displays the github link for the bot";
 

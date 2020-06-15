@@ -4,7 +4,7 @@ import { Arguments } from "../../arguments";
 import { numberDisplay } from "../../helpers";
 
 export default class ArtistPlays extends BaseCommand {
-  aliases = ["ap"];
+  aliases = ["ap", "p"];
   description = "Shows you how many plays you have of a given artist";
 
   arguments: Arguments = {

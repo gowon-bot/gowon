@@ -145,3 +145,76 @@ export interface LastFMErrorResponse {
   error: number;
   message: string;
 }
+
+export interface TopArtistsResponse {
+  topartists: {
+    artist: {
+      "@attr": { rank: string };
+      mbid: string;
+      url: string;
+      playcount: string;
+      image: Image[];
+      name: string;
+      streamable: string;
+    }[];
+    "@attr": {
+      page: string;
+      perPage: string;
+      user: string;
+      total: string;
+      totalPages: string;
+    };
+  };
+}
+
+export interface TopAlbumsResponse {
+  topalbums: {
+    album: {
+      artist: {
+        url: string;
+        name: string;
+        mbid: string;
+      };
+      "@attr": { rank: string };
+      image: Image[];
+      playcount: string;
+      url: string;
+      name: string;
+      mbid: string;
+    }[];
+    "@attr": {
+      page: string;
+      total: string;
+      user: string;
+      perPage: string;
+      totalPages: string;
+    };
+  };
+}
+
+export interface TopTracksResponse {
+  toptracks: {
+    "@attr": {
+      page: string;
+      total: string;
+      user: string;
+      perPage: string;
+      totalPages: string;
+    };
+    track: {
+      "@attr": { rank: string };
+      duration: string;
+      playcount: string;
+      artist: {
+        url: string;
+        name: string;
+        mbid: string;
+      };
+      image: Image[];
+      streamable: { fulltrack: string; "#text": string };
+      mbid: string;
+      name: string;
+      url: string;
+    }[];
+  };
+}

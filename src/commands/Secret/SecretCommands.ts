@@ -1,13 +1,18 @@
-// import { BaseCommand } from "../BaseCommand";
-// import { Message } from "discord.js";
-// import {  } from 
+import { BaseCommand } from "../../BaseCommand";
+import { Message, MessageEmbed } from "discord.js";
+import { CommandManager } from "../../CommandManager";
 
-// export class Ping extends BaseCommand {
-//   aliases = ["🏓"];
-//   description = "Ping! Pong!";
-//   secretCommand = true;
+export default class SecretCommands extends BaseCommand {
+  description = "Shows the secret commands";
+  secretCommand = true;
 
-//   async run(message: Message) {
-//     await message.reply("Pong 🏓");
-//   }
-// }
+  async run(message: Message) {
+    let commands = CommandManager.list(true).filter(c => c.secretCommand);
+
+    let embed = new MessageEmbed()
+      .setAuthor("Secret commands for " + message.author.username)
+      .setDescription(commands.map((c) => c.name).join(", "));
+
+    await message.channel.send(embed);
+  }
+}

@@ -3,7 +3,8 @@ import { LastFMService } from "./services/LastFMService";
 import { UsersService } from "./services/UsersService";
 import { Connection, getConnection } from "typeorm";
 import { Arguments, ParsedArguments, ArgumentParser } from "./arguments";
-import { ClientError, UnknownError } from "./errors";
+import { UnknownError } from "./errors";
+import { BotMomentService } from "./services/BotMomentService";
 
 export interface Command {
   execute(message: Message, runAs?: string): Promise<void>;
@@ -29,6 +30,7 @@ export abstract class BaseCommand implements Command {
 
   lastFMService = new LastFMService();
   usersService = new UsersService();
+  botMomentService = BotMomentService.getInstance();
   db: Connection = getConnection();
 
   abstract async run(message: Message, runAs?: string): Promise<void>;
@@ -42,7 +44,7 @@ export abstract class BaseCommand implements Command {
         await message.channel.send(e.message);
       } else {
         await message.channel.send(new UnknownError().message);
-        throw (e)
+        throw e;
       }
     }
   }
@@ -55,18 +57,10 @@ export abstract class BaseCommand implements Command {
     return Object.keys(this.variations).includes(variation);
   }
 
-  _extractArgs(message: Message, runAs?: string): string {
-    return message.content.replace(`!${runAs ? runAs : this.name}`, "").trim();
-  }
-
-  _extractArgsArray(message: Message): Array<string> {
-    return this._extractArgs(message).split(/\s+/);
-  }
-
   parseArguments(message: Message, runAs: string): ParsedArguments {
-    let parser = new ArgumentParser();
+    let parser = new ArgumentParser(this.arguments);
 
-    return parser.parse(message, this.arguments, runAs);
+    return parser.parse(message, runAs);
   }
 }
 

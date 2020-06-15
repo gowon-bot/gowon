@@ -5,7 +5,6 @@ import { Arguments } from "../arguments";
 export default class Cover extends BaseCommand {
   aliases = ["co"];
   description = "Shows the cover for an album";
-  secretCommand = true;
   arguments: Arguments = {
     inputs: {
       artist: { index: 0, splitOn: "|" },

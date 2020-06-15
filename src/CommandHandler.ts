@@ -1,21 +1,23 @@
 import { CommandManager } from "./CommandManager";
 import { Command, NoCommand } from "./BaseCommand";
 import { Message } from "discord.js";
+import { BotMomentService } from "./services/BotMomentService";
 
 export class CommandHandler {
-  prefix: string;
+  botMomentService = BotMomentService.getInstance();
   commandManager = CommandManager;
 
-  constructor(prefix: string) {
-    this.prefix = prefix;
-  }
+  constructor() {}
 
   async init() {
     await this.commandManager.init();
   }
 
   private extractCommandName(message: Message): string {
-    let extractionRegex = new RegExp(`(?<=${this.prefix})[^ ]*`, "i");
+    let extractionRegex = new RegExp(
+      `(?<=${this.botMomentService.regexSafePrefix})[^ ]*`,
+      "i"
+    );
 
     let matches = message.content.match(extractionRegex) ?? [];
 
@@ -33,7 +35,7 @@ export class CommandHandler {
   }
 
   async handle(message: Message): Promise<void> {
-    if (message.content.startsWith(this.prefix)) {
+    if (message.content.startsWith(this.botMomentService.prefix)) {
       let command = this.extractCommand(message);
       let runAs = this.extractCommandName(message);
 

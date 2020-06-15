@@ -7,7 +7,9 @@ import {
   ArtistInfoResponse,
   AlbumInfoResponse,
   UserInfoResponse,
-  LastFMErrorResponse,
+  TopArtistsResponse,
+  TopAlbumsResponse,
+  TopTracksResponse,
 } from "./LastFMService.types";
 
 import config from "../../config.json";
@@ -109,5 +111,25 @@ export class LastFMService {
 
   async userInfo(username: string): Promise<UserInfoResponse> {
     return await this.request<UserInfoResponse>("user.getInfo", { username });
+  }
+
+  async topArtists(
+    username: string,
+    limit = 50,
+    page = 1
+  ): Promise<TopArtistsResponse> {
+    return await this.request<TopArtistsResponse>("user.getTopArtists", {
+      username,
+      limit,
+      page,
+    });
+  }
+
+  async topAlbums(username: string, limit = 50, page = 1): Promise<TopAlbumsResponse> {
+    return await this.request<TopAlbumsResponse>("user.getTopAlbums", { username, limit, page });
+  }
+
+  async topTracks(username: string, limit = 50, page = 1): Promise<TopTracksResponse> {
+    return await this.request<TopTracksResponse>("user.getTopTracks", { username, limit, page });
   }
 }
