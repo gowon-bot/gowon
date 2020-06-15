@@ -7,9 +7,10 @@ import { isBotMoment, fakeNowPlaying } from "../botmoment/fakeNowPlaying";
 
 export default class NowPlaying extends BaseCommand {
   aliases = ["np", "fm"];
-  variations = {
-    fmv: "Displays more information",
-  };
+  variations = [{
+    variationString: "fmv",
+    description: "Displays more information",
+  }];
   description = "Displays the now playing or last played track in last.fm";
   arguments: Arguments = {
     inputs: {
@@ -33,9 +34,8 @@ export default class NowPlaying extends BaseCommand {
       ? lastFMUsername
       : await this.usersService.getUsername(user?.id ?? message.author.id);
 
-    let response = await this.lastFMService.nowPlaying(username);
+    let nowPlaying = await this.lastFMService.nowPlaying(username);
 
-    let nowPlaying = response.recenttracks.track[0];
     let track = parseLastFMTrackResponse(nowPlaying);
 
     let links = LinkGenerator.generateTrackLinksForEmbed(nowPlaying);
@@ -45,7 +45,7 @@ export default class NowPlaying extends BaseCommand {
       .setAuthor(
         `${
           nowPlaying["@attr"]?.nowplaying ? "Now playing" : "Last scrobbled"
-        } for ${response.recenttracks["@attr"].user}`
+        } for ${username}`
       )
       .setTitle(track.name)
       .setURL(LinkGenerator.trackPage(track.artist, track.name))
@@ -63,16 +63,16 @@ export default class NowPlaying extends BaseCommand {
       ]);
 
       nowPlayingEmbed = nowPlayingEmbed
-        .setColor(trackInfo.track.userloved === "1" ? "#cc0000" : "black")
+        .setColor(trackInfo.userloved === "1" ? "#cc0000" : "black")
         .setFooter(
           numberDisplay(
-            artistInfo.artist.stats.userplaycount,
+            artistInfo.stats.userplaycount,
             `${track.artist} scrobble`
           ) +
             " | " +
-            numberDisplay(trackInfo.track.userplaycount, "scrobble") +
+            numberDisplay(trackInfo.userplaycount, "scrobble") +
             " of this song\n" +
-            artistInfo.artist.tags.tag
+            artistInfo.tags.tag
               .map((t) => t.name.toLowerCase())
               .join(" ‧ ")
         );

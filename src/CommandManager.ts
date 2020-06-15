@@ -52,10 +52,14 @@ export class CommandManager {
     return new NoCommand();
   }
   static list(showSecret: boolean = false): Command[] {
-    let commandsList = Object.values(this.commands).sort();
+    let commandGetterList = Object.values(this.commands).sort();
+
+    let commandsList = commandGetterList
+      .map((c) => c())
+      .filter((c) => c.isRunnable);
 
     return showSecret
-      ? commandsList.map((c) => c())
-      : commandsList.map((c) => c()).filter((c) => !c.secretCommand);
+      ? commandsList
+      : commandsList.filter((c) => !c.secretCommand);
   }
 }

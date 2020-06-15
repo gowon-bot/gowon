@@ -1,3 +1,5 @@
+import { Integration } from "discord.js";
+
 export interface PagedCollection {
   "@attr": {
     page: string;
@@ -37,108 +39,113 @@ export interface RecentTracksResponse {
   recenttracks: RecentTracks;
 }
 
-export interface TrackInfoResponse {
-  track: {
+export interface TrackInfo {
+  name: string;
+  mbid: string;
+  url: string;
+  duration: string;
+  streamable: { "#text": string; fulltrack: string };
+  listeners: string;
+  playcount: string;
+  artist: {
     name: string;
     mbid: string;
     url: string;
-    duration: string;
-    streamable: { "#text": string; fulltrack: string };
-    listeners: string;
-    playcount: string;
+  };
+  album: {
+    artist: string;
+    title: string;
+    mbid: string;
+    url: string;
+    "@attr": { position: string };
+  };
+  userplaycount: string;
+  userloved: string;
+  toptags: { tag: Tag[] };
+}
+
+export interface TrackInfoResponse {
+  track: TrackInfo;
+}
+
+export interface ArtistInfo {
+  name: string;
+  url: string;
+  streamable: string;
+  ontour: string;
+  stats: { listeners: string; playcount: string; userplaycount: string };
+  similar: {
     artist: {
       name: string;
-      mbid: string;
       url: string;
+      image: Image[];
     };
-    album: {
-      artist: string;
-      title: string;
-      mbid: string;
-      url: string;
-      "@attr": { position: string };
+  };
+  tags: { tag: Tag[] };
+  bio: {
+    links: {
+      link: {
+        "#text": string;
+        rel: string;
+        href: string;
+      };
     };
-    userplaycount: string;
-    userloved: string;
-    toptags: { tag: Tag[] };
+    published: string;
+    summary: string;
+    content: string;
   };
 }
-
 export interface ArtistInfoResponse {
-  artist: {
-    name: string;
-    url: string;
-    streamable: string;
-    ontour: string;
-    stats: { listeners: string; playcount: string; userplaycount: string };
-    similar: {
-      artist: {
+  artist: ArtistInfo;
+}
+
+export interface AlbumInfo {
+  name: string;
+  artist: string;
+  url: string;
+  image: Image[];
+  listeners: string;
+  playcount: string;
+  userplaycount: string;
+  tracks: {
+    track: [
+      {
         name: string;
         url: string;
-        image: Image[];
-      };
-    };
-    tags: { tag: Tag[] };
-    bio: {
-      links: {
-        link: {
-          "#text": string;
-          rel: string;
-          href: string;
-        };
-      };
-      published: string;
-      summary: string;
-      content: string;
-    };
-  };
-}
-
-export interface AlbumInfoResponse {
-  album: {
-    name: string;
-    artist: string;
-    url: string;
-    image: Image[];
-    listeners: string;
-    playcount: string;
-    userplaycount: string;
-    tracks: {
-      track: [
-        {
+        duration: string;
+        "@attr": { rank: string };
+        streamable: { "#text": string; fulltrack: string };
+        artist: {
           name: string;
+          mbid: string;
           url: string;
-          duration: string;
-          "@attr": { rank: string };
-          streamable: { "#text": string; fulltrack: string };
-          artist: {
-            name: string;
-            mbid: string;
-            url: string;
-          };
-        }
-      ];
-    };
-    tags: { tag: Tag[] };
+        };
+      }
+    ];
   };
+  tags: { tag: Tag[] };
+}
+export interface AlbumInfoResponse {
+  album: AlbumInfo;
 }
 
+export interface UserInfo {
+  playlists: string;
+  playcount: string;
+  gender: string;
+  name: string;
+  subscriber: string;
+  url: string;
+  country: string;
+  image: Image[];
+  registered: { unixtime: string; "#text": number };
+  type: string;
+  age: string;
+  bootstrap: string;
+  realname: string;
+}
 export interface UserInfoResponse {
-  user: {
-    playlists: string;
-    playcount: string;
-    gender: string;
-    name: string;
-    subscriber: string;
-    url: string;
-    country: string;
-    image: Image[];
-    registered: { unixtime: string; "#text": number };
-    type: string;
-    age: string;
-    bootstrap: string;
-    realname: string;
-  };
+  user: UserInfo;
 }
 
 export interface LastFMErrorResponse {
@@ -146,75 +153,72 @@ export interface LastFMErrorResponse {
   message: string;
 }
 
+export interface TopArtists extends PagedCollection {
+  artist: {
+    "@attr": { rank: string };
+    mbid: string;
+    url: string;
+    playcount: string;
+    image: Image[];
+    name: string;
+    streamable: string;
+  }[];
+}
 export interface TopArtistsResponse {
-  topartists: {
+  topartists: TopArtists;
+}
+
+export interface TopAlbums extends PagedCollection {
+  album: {
     artist: {
-      "@attr": { rank: string };
-      mbid: string;
       url: string;
-      playcount: string;
-      image: Image[];
       name: string;
-      streamable: string;
-    }[];
-    "@attr": {
-      page: string;
-      perPage: string;
-      user: string;
-      total: string;
-      totalPages: string;
+      mbid: string;
     };
+    "@attr": { rank: string };
+    image: Image[];
+    playcount: string;
+    url: string;
+    name: string;
+    mbid: string;
+  }[];
+  "@attr": {
+    page: string;
+    total: string;
+    user: string;
+    perPage: string;
+    totalPages: string;
   };
 }
 
 export interface TopAlbumsResponse {
-  topalbums: {
-    album: {
-      artist: {
-        url: string;
-        name: string;
-        mbid: string;
-      };
-      "@attr": { rank: string };
-      image: Image[];
-      playcount: string;
-      url: string;
-      name: string;
-      mbid: string;
-    }[];
-    "@attr": {
-      page: string;
-      total: string;
-      user: string;
-      perPage: string;
-      totalPages: string;
-    };
-  };
+  topalbums: TopAlbums;
 }
 
-export interface TopTracksResponse {
-  toptracks: {
-    "@attr": {
-      page: string;
-      total: string;
-      user: string;
-      perPage: string;
-      totalPages: string;
-    };
-    track: {
-      "@attr": { rank: string };
-      duration: string;
-      playcount: string;
-      artist: {
-        url: string;
-        name: string;
-        mbid: string;
-      };
-      image: Image[];
-      streamable: { fulltrack: string; "#text": string };
-      mbid: string;
-      name: string;
-      url: string;
-    }[];
+export interface TopTracks extends PagedCollection {
+  "@attr": {
+    page: string;
+    total: string;
+    user: string;
+    perPage: string;
+    totalPages: string;
   };
+  track: {
+    "@attr": { rank: string };
+    duration: string;
+    playcount: string;
+    artist: {
+      url: string;
+      name: string;
+      mbid: string;
+    };
+    image: Image[];
+    streamable: { fulltrack: string; "#text": string };
+    mbid: string;
+    name: string;
+    url: string;
+  }[];
+}
+export interface TopTracksResponse {
+  toptracks: TopTracks;
 }

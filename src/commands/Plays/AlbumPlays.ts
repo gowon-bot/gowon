@@ -44,9 +44,9 @@ export default class AlbumPlays extends BaseCommand {
 
     message.channel.send(
       `\`${username}\` has ${numberDisplay(
-        albumDetails.album.userplaycount,
+        albumDetails.userplaycount,
         "scrobble"
-      )} of **${albumDetails.album.name}** by ${albumDetails.album.artist}`
+      )} of **${albumDetails.name}** by ${albumDetails.artist}`
     );
   }
 }

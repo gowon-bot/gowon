@@ -29,29 +29,29 @@ export default class ArtistStats extends BaseCommand {
         .artist;
     }
 
-    let [artistInfo, userInfo] = await Promise.all([
+    let [artist, userInfo] = await Promise.all([
       this.lastFMService.artistInfo(artistName, username),
       this.lastFMService.userInfo(username),
     ]);
 
     let embed = new MessageEmbed()
       .setAuthor(`Artist stats for ${username}`)
-      .setTitle(artistInfo.artist.name)
+      .setTitle(artist.name)
       .addField(
         "Global stats",
-        `\`${artistInfo.artist.stats.listeners}\` listeners
-\`${artistInfo.artist.stats.playcount}\` total plays
-\`${artistInfo.artist.stats.userplaycount}\` plays by you
+        `\`${artist.stats.listeners}\` listeners
+\`${artist.stats.playcount}\` total plays
+\`${artist.stats.userplaycount}\` plays by you
 That means you account for ${calculatePercent(
-          artistInfo.artist.stats.userplaycount,
-          artistInfo.artist.stats.playcount
-        )}% of all ${artistInfo.artist.name} scrobbles!`
+          artist.stats.userplaycount,
+          artist.stats.playcount
+        )}% of all ${artist.name} scrobbles!`
       )
       .addField(
         "Your stats",
         `${calculatePercent(
-          artistInfo.artist.stats.userplaycount,
-          userInfo.user.playcount
+          artist.stats.userplaycount,
+          userInfo.playcount
         )}% of your total scrobbles`
       );
 

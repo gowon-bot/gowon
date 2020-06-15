@@ -10,6 +10,15 @@ import {
   TopArtistsResponse,
   TopAlbumsResponse,
   TopTracksResponse,
+  RecentTracks,
+  Track,
+  ArtistInfo,
+  AlbumInfo,
+  UserInfo,
+  TopArtists,
+  TopAlbums,
+  TopTracks,
+  TrackInfo,
 } from "./LastFMService.types";
 
 import config from "../../config.json";
@@ -49,87 +58,101 @@ export class LastFMService {
     return jsonResponse as T;
   }
 
-  async recentTracks(
-    username: string,
-    limit?: number
-  ): Promise<RecentTracksResponse> {
+  async recentTracks(username: string, limit?: number): Promise<RecentTracks> {
     let params: Params = {
       username,
     };
 
     if (limit) params.limit = limit;
 
-    return await this.request<RecentTracksResponse>("user.getrecenttracks", {
-      username,
-      limit: 1,
-    });
+    return (
+      await this.request<RecentTracksResponse>("user.getrecenttracks", {
+        username,
+        limit: 1,
+      })
+    ).recenttracks;
   }
 
-  async nowPlaying(username: string): Promise<RecentTracksResponse> {
-    return await this.recentTracks(username, 1);
+  async nowPlaying(username: string): Promise<Track> {
+    return (await this.recentTracks(username, 1)).track[0];
   }
 
   async nowPlayingParsed(username: string): Promise<ParsedTrack> {
     let nowPlaying = await this.nowPlaying(username);
-    return parseLastFMTrackResponse(nowPlaying.recenttracks.track[0]);
+    return parseLastFMTrackResponse(nowPlaying);
   }
 
   async trackInfo(
     artist: string,
     track: string,
     username?: string
-  ): Promise<TrackInfoResponse> {
+  ): Promise<TrackInfo> {
     let params: Params = { track: track.trim(), artist: artist.trim() };
     if (username) {
       params.username = username;
     }
-    return await this.request<TrackInfoResponse>("track.getInfo", params);
+    return (await this.request<TrackInfoResponse>("track.getInfo", params))
+      .track;
   }
 
-  async artistInfo(
-    artist: string,
-    username?: string
-  ): Promise<ArtistInfoResponse> {
+  async artistInfo(artist: string, username?: string): Promise<ArtistInfo> {
     let params: Params = { artist: artist.trim() };
     if (username) {
       params.username = username;
     }
-    return await this.request<ArtistInfoResponse>("artist.getInfo", params);
+    return (await this.request<ArtistInfoResponse>("artist.getInfo", params))
+      .artist;
   }
 
   async albumInfo(
     artist: string,
     album: string,
     username?: string
-  ): Promise<AlbumInfoResponse> {
+  ): Promise<AlbumInfo> {
     let params: Params = { artist: artist.trim(), album: album.trim() };
     if (username) {
       params.username = username;
     }
-    return await this.request<AlbumInfoResponse>("album.getInfo", params);
+    return (await this.request<AlbumInfoResponse>("album.getInfo", params))
+      .album;
   }
 
-  async userInfo(username: string): Promise<UserInfoResponse> {
-    return await this.request<UserInfoResponse>("user.getInfo", { username });
+  async userInfo(username: string): Promise<UserInfo> {
+    return (await this.request<UserInfoResponse>("user.getInfo", { username }))
+      .user;
   }
 
   async topArtists(
     username: string,
     limit = 50,
     page = 1
-  ): Promise<TopArtistsResponse> {
-    return await this.request<TopArtistsResponse>("user.getTopArtists", {
-      username,
-      limit,
-      page,
-    });
+  ): Promise<TopArtists> {
+    return (
+      await this.request<TopArtistsResponse>("user.getTopArtists", {
+        username,
+        limit,
+        page,
+      })
+    ).topartists;
   }
 
-  async topAlbums(username: string, limit = 50, page = 1): Promise<TopAlbumsResponse> {
-    return await this.request<TopAlbumsResponse>("user.getTopAlbums", { username, limit, page });
+  async topAlbums(username: string, limit = 50, page = 1): Promise<TopAlbums> {
+    return (
+      await this.request<TopAlbumsResponse>("user.getTopAlbums", {
+        username,
+        limit,
+        page,
+      })
+    ).topalbums;
   }
 
-  async topTracks(username: string, limit = 50, page = 1): Promise<TopTracksResponse> {
-    return await this.request<TopTracksResponse>("user.getTopTracks", { username, limit, page });
+  async topTracks(username: string, limit = 50, page = 1): Promise<TopTracks> {
+    return (
+      await this.request<TopTracksResponse>("user.getTopTracks", {
+        username,
+        limit,
+        page,
+      })
+    ).toptracks;
   }
 }

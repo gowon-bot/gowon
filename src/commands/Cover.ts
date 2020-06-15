@@ -26,10 +26,10 @@ export default class Cover extends BaseCommand {
     }
 
     let albumDetails = await this.lastFMService.albumInfo(artist, albumName);
-    let image = albumDetails.album.image.find((i) => i.size === "extralarge");
+    let image = albumDetails.image.find((i) => i.size === "extralarge");
 
     message.channel.send(
-      `Cover for **${albumDetails.album.name}** by **${albumDetails.album.artist}**`,
+      `Cover for **${albumDetails.name}** by **${albumDetails.artist}**`,
       { files: [image?.["#text"] ?? ""] }
     );
   }

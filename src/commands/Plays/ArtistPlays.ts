@@ -38,9 +38,9 @@ export default class ArtistPlays extends BaseCommand {
 
     message.channel.send(
       `\`${username}\` has ${numberDisplay(
-        artistDetails.artist.stats.userplaycount,
+        artistDetails.stats.userplaycount,
         "scrobble"
-      )} of **${artistDetails.artist.name}**`
+      )} of **${artistDetails.name}**`
     );
   }
 }

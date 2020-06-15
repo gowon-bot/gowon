@@ -3,9 +3,9 @@ import { Message, User } from "discord.js";
 import { Arguments } from "../../arguments";
 import { numberDisplay } from "../../helpers";
 
-export default class ArtistAt extends BaseCommand {
-  aliases = ["aa", "ra"];
-  description = "Finds the artist at a certain rank";
+export default class TrackAt extends BaseCommand {
+  aliases = ["ta"];
+  description = "Finds the track at a certain rank";
   arguments: Arguments = {
     mentions: {
       0: { name: "user", description: "The user to lookup" },
@@ -19,18 +19,23 @@ export default class ArtistAt extends BaseCommand {
     let rank = parseInt(this.parsedArguments.rank as string, 10),
       user = this.parsedArguments.user as User;
 
+    if (isNaN(rank) || rank < 0 || rank > 1000) {
+      await message.reply("please enter a valid rank (1-1000)");
+      return;
+    }
+
     let username = await this.usersService.getUsername(
       user?.id || message.author.id
     );
 
-    let topArtists = await this.lastFMService.topArtists(username, 1, rank);
+    let topTracks = await this.lastFMService.topTracks(username, 1, rank);
 
-    let artist = topArtists.topartists.artist[0];
+    let track = topTracks.track[0];
 
     await message.reply(
-      `${artist.name} is ranked at **${
-        artist["@attr"].rank
-      }** in your top artists with ${numberDisplay(artist.playcount, "play")}`
+      `**${track.name}** by _${track.artist.name}_ is ranked at **${
+        track["@attr"].rank
+      }** in your top albums with ${numberDisplay(track.playcount, "play")}`
     );
   }
 }

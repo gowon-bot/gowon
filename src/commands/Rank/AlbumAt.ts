@@ -4,7 +4,7 @@ import { Arguments } from "../../arguments";
 import { numberDisplay } from "../../helpers";
 
 export default class AlbumAt extends BaseCommand {
-  aliases = ["ala", "alra"];
+  aliases = ["ala"];
   description = "Finds the album at a certain rank";
   arguments: Arguments = {
     mentions: {
@@ -19,13 +19,18 @@ export default class AlbumAt extends BaseCommand {
     let rank = parseInt(this.parsedArguments.rank as string, 10),
       user = this.parsedArguments.user as User;
 
+    if (isNaN(rank) || rank < 0 || rank > 1000) {
+      await message.reply("please enter a valid rank (1-1000)");
+      return;
+    }
+
     let username = await this.usersService.getUsername(
       user?.id || message.author.id
     );
 
     let topAlbums = await this.lastFMService.topAlbums(username, 1, rank);
 
-    let album = topAlbums.topalbums.album[0]
+    let album = topAlbums.album[0];
 
     await message.reply(
       `**${album.name}** by _${album.artist.name}_ is ranked at **${

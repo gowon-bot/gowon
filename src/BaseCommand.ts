@@ -6,24 +6,32 @@ import { Arguments, ParsedArguments, ArgumentParser } from "./arguments";
 import { UnknownError } from "./errors";
 import { BotMomentService } from "./services/BotMomentService";
 
+
+export interface Variation {
+  variationString?: string,
+  variationRegex?: RegExp,
+  description?: string,
+}
 export interface Command {
   execute(message: Message, runAs?: string): Promise<void>;
   hasAlias(alias: string): boolean;
 
-  variations: { [variation: string]: string };
+  variations: Variation[]
   aliases: Array<string>;
   arguments: Arguments;
   secretCommand: boolean;
   name: string;
   description: string;
+  isRunnable: boolean;
 }
 
 export abstract class BaseCommand implements Command {
   name: string = this.constructor.name.toLowerCase();
   aliases: Array<string> = [];
-  variations: { [variation: string]: string } = {};
+  variations: Variation[] = [];
   description: string = "No description for this command";
   secretCommand: boolean = false;
+  isRunnable: boolean = true;
   arguments: Arguments = {};
 
   parsedArguments: ParsedArguments = {};
@@ -54,7 +62,14 @@ export abstract class BaseCommand implements Command {
   }
 
   hasVariation(variation: string): boolean {
-    return Object.keys(this.variations).includes(variation);
+    for (let v of this.variations) {
+      if (v.variationString) {
+        return v.variationString === variation
+      } else if (v.variationRegex) {
+        return v.variationRegex.test(variation)
+      }
+    }
+    return false
   }
 
   parseArguments(message: Message, runAs: string): ParsedArguments {

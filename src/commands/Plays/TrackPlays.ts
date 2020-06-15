@@ -44,9 +44,9 @@ export default class TrackPlays extends BaseCommand {
 
     message.channel.send(
       `\`${username}\` has ${numberDisplay(
-        trackDetails.track.userplaycount,
+        trackDetails.userplaycount,
         "scrobble"
-      )} of **${trackDetails.track.name}** by ${trackDetails.track.artist.name}`
+      )} of **${trackDetails.name}** by ${trackDetails.artist.name}`
     );
   }
 }

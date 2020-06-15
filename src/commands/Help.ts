@@ -33,11 +33,8 @@ export default class Help extends BaseCommand {
     return Object.keys(command.variations).length
       ? embed.addField(
           "Variations",
-          Object.keys(command.variations)
-            .map(
-              (variation) =>
-                `\`${variation}\`: ${command.variations[variation]}`
-            )
+          command.variations
+            .map((variation) => `\`${variation.variationString || variation.variationRegex}\`: ${variation.description}`)
             .join("\n")
         )
       : embed;
