@@ -4,8 +4,11 @@ import { Arguments } from "../../arguments";
 
 export default class TrackRank extends BaseCommand {
   aliases = ["tra", "tr"];
-  description = "Shows what rank the track is at in your top 1000 album";
+  description = "Shows what rank the track is at in your top 1000 tracks";
   arguments: Arguments = {
+    mentions: {
+      0: { name: "user", description: "the user to lookup" },
+    },
     inputs: {
       artist: {
         index: 0,
@@ -22,10 +25,16 @@ export default class TrackRank extends BaseCommand {
     let track = this.parsedArguments.track as string,
       artist = this.parsedArguments.artist as string;
 
-    let username = await this.usersService.getUsername(message.author.id);
+    let {
+      username,
+      senderUsername,
+      perspective,
+    } = await this.parseMentionedUsername(message);
 
     if (!track || !artist) {
-      let nowPlaying = await this.lastFMService.nowPlayingParsed(username);
+      let nowPlaying = await this.lastFMService.nowPlayingParsed(
+        senderUsername
+      );
 
       if (!artist) artist = nowPlaying.artist;
       if (!track) track = nowPlaying.name;
@@ -40,14 +49,16 @@ export default class TrackRank extends BaseCommand {
     );
 
     if (rank === -1) {
-      await message.reply("that track wasn't found in your top 1000 tracks");
+      await message.reply(
+        `that track wasn't found in ${perspective.possessive} top 1000 tracks`
+      );
     } else {
       await message.reply(
         `**${topTracks.track[rank].name}** by ${
           topTracks.track[rank].artist.name
-        } is ranked **#${rank + 1}** with ${
-          topTracks.track[rank].playcount
-        } plays`
+        } is ranked **#${rank + 1}** in ${
+          perspective.possessive
+        } top 1,000 tracks with ${topTracks.track[rank].playcount} plays`
       );
     }
   }

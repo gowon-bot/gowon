@@ -1,7 +1,7 @@
 import { BaseCommand } from "../../BaseCommand";
-import { Message, User } from "discord.js";
+import { Message } from "discord.js";
 import { Arguments } from "../../arguments";
-import { numberDisplay } from "../../helpers";
+import { numberDisplay, ucFirst } from "../../helpers";
 
 export default class TrackPlays extends BaseCommand {
   aliases = ["tp"];
@@ -19,13 +19,13 @@ export default class TrackPlays extends BaseCommand {
 
   async run(message: Message) {
     let artist = this.parsedArguments.artist as string,
-      trackName = this.parsedArguments.track as string,
-      user = this.parsedArguments.user as User;
+      trackName = this.parsedArguments.track as string;
 
-    let senderUsername = await this.usersService.getUsername(message.author.id);
-    let mentionedUsername = user && await this.usersService.getUsername(user.id);
-
-    let username = mentionedUsername || senderUsername;
+    let {
+      username,
+      senderUsername,
+      perspective,
+    } = await this.parseMentionedUsername(message);
 
     if (!artist || !trackName) {
       let nowPlaying = await this.lastFMService.nowPlayingParsed(
@@ -43,7 +43,7 @@ export default class TrackPlays extends BaseCommand {
     );
 
     message.channel.send(
-      `\`${username}\` has ${numberDisplay(
+      `${ucFirst(perspective.plusToHave)} has ${numberDisplay(
         trackDetails.userplaycount,
         "scrobble"
       )} of **${trackDetails.name}** by ${trackDetails.artist.name}`

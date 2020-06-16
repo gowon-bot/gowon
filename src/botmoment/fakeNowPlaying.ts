@@ -3,7 +3,6 @@ import { MessageEmbed } from "discord.js";
 import tracks from "./nowPlayingSongs.json";
 import { LinkGenerator } from "../helpers/lastFM";
 import { generateLink } from "../helpers/discord";
-import { link } from "fs";
 
 export function isBotMoment(discordID?: string): boolean {
   return discordID === "720135602669879386";

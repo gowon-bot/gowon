@@ -1,5 +1,5 @@
 import { BaseCommand } from "../BaseCommand";
-import { Message, MessageEmbed, User, Channel } from "discord.js";
+import { Message, MessageEmbed, User } from "discord.js";
 import { LinkGenerator, parseLastFMTrackResponse } from "../helpers/lastFM";
 import { numberDisplay } from "../helpers";
 import { Arguments } from "../arguments";

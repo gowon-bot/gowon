@@ -6,6 +6,9 @@ export default class Cover extends BaseCommand {
   aliases = ["co"];
   description = "Shows the cover for an album";
   arguments: Arguments = {
+    mentions: {
+      0: { name: "user", description: "the user to lookup" },
+    },
     inputs: {
       artist: { index: 0, splitOn: "|" },
       album: { index: 1, splitOn: "|" },
@@ -16,7 +19,7 @@ export default class Cover extends BaseCommand {
     let artist = this.parsedArguments.artist as string,
       albumName = this.parsedArguments.album as string;
 
-    let username = await this.usersService.getUsername(message.author.id);
+    let { username } = await this.parseMentionedUsername(message);
 
     if (!artist || !albumName) {
       let nowPlaying = await this.lastFMService.nowPlayingParsed(username);

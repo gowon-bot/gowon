@@ -1,5 +1,5 @@
 import { BaseCommand } from "../../BaseCommand";
-import { Message, MessageEmbed, User } from "discord.js";
+import { Message, MessageEmbed } from "discord.js";
 import { Arguments } from "../../arguments";
 import { calculatePercent } from "../../helpers/stats";
 
@@ -16,13 +16,13 @@ export default class ArtistStats extends BaseCommand {
   };
 
   async run(message: Message) {
-    let artistName = this.parsedArguments.artist as string,
-      user = this.parsedArguments.user as User;
+    let artistName = this.parsedArguments.artist as string;
 
-    let senderUsername = await this.usersService.getUsername(message.author.id);
-    let mentionedUsername = user && await this.usersService.getUsername(user?.id);
-
-    let username = mentionedUsername || senderUsername;
+    let {
+      username,
+      senderUsername,
+      perspective,
+    } = await this.parseMentionedUsername(message, false);
 
     if (!artistName) {
       artistName = (await this.lastFMService.nowPlayingParsed(senderUsername))
@@ -41,18 +41,18 @@ export default class ArtistStats extends BaseCommand {
         "Global stats",
         `\`${artist.stats.listeners}\` listeners
 \`${artist.stats.playcount}\` total plays
-\`${artist.stats.userplaycount}\` plays by you
-That means you account for ${calculatePercent(
+\`${artist.stats.userplaycount}\` plays by ${perspective.pronoun}
+That means ${perspective.regularVerb("account")} for ${calculatePercent(
           artist.stats.userplaycount,
           artist.stats.playcount
         )}% of all ${artist.name} scrobbles!`
       )
       .addField(
-        "Your stats",
+        `${perspective.possessive} stats`,
         `${calculatePercent(
           artist.stats.userplaycount,
           userInfo.playcount
-        )}% of your total scrobbles`
+        )}% of ${perspective.possesivePronoun} total scrobbles`
       );
 
     message.channel.send(embed);

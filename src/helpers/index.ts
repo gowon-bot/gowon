@@ -14,3 +14,7 @@ export function numberDisplay(number: number | string, unit?: string): string {
     (unit ? " " + (parsedNumber === 1 ? unit : unit + "s") : "")
   );
 }
+
+export function ucFirst(string: string): string {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}

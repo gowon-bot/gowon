@@ -1,22 +1,21 @@
-import { Message, Client, Channel } from "discord.js";
+import { Message, User } from "discord.js";
 import { LastFMService } from "./services/LastFMService";
-import { UsersService } from "./services/UsersService";
+import { UsersService, Perspective } from "./services/UsersService";
 import { Connection, getConnection } from "typeorm";
 import { Arguments, ParsedArguments, ArgumentParser } from "./arguments";
 import { UnknownError } from "./errors";
 import { BotMomentService } from "./services/BotMomentService";
 
-
 export interface Variation {
-  variationString?: string,
-  variationRegex?: RegExp,
-  description?: string,
+  variationString?: string;
+  variationRegex?: RegExp;
+  description?: string;
 }
 export interface Command {
   execute(message: Message, runAs?: string): Promise<void>;
   hasAlias(alias: string): boolean;
 
-  variations: Variation[]
+  variations: Variation[];
   aliases: Array<string>;
   arguments: Arguments;
   secretCommand: boolean;
@@ -43,6 +42,33 @@ export abstract class BaseCommand implements Command {
 
   abstract async run(message: Message, runAs?: string): Promise<void>;
 
+  async parseMentionedUsername(
+    message: Message,
+    asCode = true
+  ): Promise<{
+    senderUsername: string;
+    mentionedUsername?: string;
+    username: string;
+    perspective: Perspective;
+  }> {
+    let user = this.parsedArguments.user as User;
+
+    let senderUsername = await this.usersService.getUsername(message.author.id);
+
+    let mentionedUsername =
+      user && (await this.usersService.getUsername(user.id));
+
+    let username = mentionedUsername || senderUsername;
+
+    let perspective = this.usersService.perspective(
+      senderUsername,
+      mentionedUsername,
+      asCode
+    );
+
+    return { senderUsername, mentionedUsername, username, perspective };
+  }
+
   async execute(message: Message, runAs?: string) {
     try {
       this.parsedArguments = this.parseArguments(message, runAs || this.name);
@@ -58,18 +84,21 @@ export abstract class BaseCommand implements Command {
   }
 
   hasAlias(alias: string): boolean {
-    return this.aliases.includes(alias) || this.hasVariation(alias);
+    return (
+      this.aliases.map((a) => a.toLowerCase()).includes(alias.toLowerCase()) ||
+      this.hasVariation(alias)
+    );
   }
 
   hasVariation(variation: string): boolean {
     for (let v of this.variations) {
       if (v.variationString) {
-        return v.variationString === variation
+        return v.variationString === variation;
       } else if (v.variationRegex) {
-        return v.variationRegex.test(variation)
+        return v.variationRegex.test(variation);
       }
     }
-    return false
+    return false;
   }
 
   parseArguments(message: Message, runAs: string): ParsedArguments {

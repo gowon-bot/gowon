@@ -1,6 +1,5 @@
 import { Message, User } from "discord.js";
 import { BotMomentService } from "./services/BotMomentService";
-import { arch } from "os";
 
 export interface Slice {
   start: number;

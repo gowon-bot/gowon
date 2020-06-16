@@ -23,7 +23,7 @@
     "typescript": "^3.9.5"
   },
   "scripts": {
-    "start": "yarn build && node dist/index.js",
+    "start": "yarn build && node dist/src/index.js",
     "build": "tsc --project ./",
     "clean": "rm -rf dist/",
     "build:watch": "tsc -w --project ./",

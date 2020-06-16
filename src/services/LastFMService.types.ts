@@ -1,5 +1,3 @@
-import { Integration } from "discord.js";
-
 export interface PagedCollection {
   "@attr": {
     page: string;

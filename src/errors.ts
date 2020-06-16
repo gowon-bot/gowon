@@ -1,6 +1,5 @@
 import { LastFMErrorResponse } from "./services/LastFMService.types";
 import { parseError } from "./helpers/error";
-import { Client } from "discord.js";
 
 export abstract class ClientError extends Error {
   message: string;
