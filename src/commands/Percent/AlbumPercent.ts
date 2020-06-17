@@ -10,7 +10,7 @@ export default class AlbumPercent extends BaseCommand {
     "Shows you the percentage of an artist's scrobbles are made up of a certain album";
   arguments: Arguments = {
     inputs: {
-      track: { index: 0, splitOn: "|" },
+      artist: { index: 0, splitOn: "|" },
       album: { index: 1, splitOn: "|" },
     },
     mentions: {
@@ -29,7 +29,9 @@ export default class AlbumPercent extends BaseCommand {
     } = await this.parseMentionedUsername(message);
 
     if (!artist || !album) {
-      let nowPlaying = await this.lastFMService.nowPlayingParsed(senderUsername);
+      let nowPlaying = await this.lastFMService.nowPlayingParsed(
+        senderUsername
+      );
 
       if (!artist) artist = nowPlaying.artist;
       if (!album) album = nowPlaying.album;

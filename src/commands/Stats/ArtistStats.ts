@@ -2,6 +2,7 @@ import { BaseCommand } from "../../BaseCommand";
 import { Message, MessageEmbed } from "discord.js";
 import { Arguments } from "../../arguments";
 import { calculatePercent } from "../../helpers/stats";
+import { ucFirst, numberDisplay } from "../../helpers";
 
 export default class ArtistStats extends BaseCommand {
   aliases = ["astats", "as"];
@@ -39,16 +40,16 @@ export default class ArtistStats extends BaseCommand {
       .setTitle(artist.name)
       .addField(
         "Global stats",
-        `\`${artist.stats.listeners}\` listeners
-\`${artist.stats.playcount}\` total plays
-\`${artist.stats.userplaycount}\` plays by ${perspective.pronoun}
+        `\`${numberDisplay(artist.stats.listeners)}\` listeners
+\`${numberDisplay(artist.stats.playcount)}\` total plays
+\`${numberDisplay(artist.stats.userplaycount)}\` plays by ${perspective.pronoun}
 That means ${perspective.regularVerb("account")} for ${calculatePercent(
           artist.stats.userplaycount,
           artist.stats.playcount
         )}% of all ${artist.name} scrobbles!`
       )
       .addField(
-        `${perspective.possessive} stats`,
+        `${ucFirst(perspective.possessive)} stats`,
         `${calculatePercent(
           artist.stats.userplaycount,
           userInfo.playcount

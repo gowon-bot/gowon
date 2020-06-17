@@ -1,4 +1,4 @@
-import { Message, User } from "discord.js";
+import { Message } from "discord.js";
 import { BotMomentService } from "./services/BotMomentService";
 
 export interface Slice {
@@ -15,6 +15,7 @@ export interface InputArguments {
   splitOn?: string;
   regex?: RegExp;
   optional?: boolean;
+  custom?: (messageString: string) => ParsedArgument;
 }
 
 export interface Arguments {
@@ -29,8 +30,10 @@ export interface Arguments {
   };
 }
 
+export type ParsedArgument = any;
+
 export interface ParsedArguments {
-  [name: string]: string | Array<string> | User | undefined;
+  [name: string]: ParsedArgument;
 }
 
 export class ArgumentParser {
@@ -60,7 +63,17 @@ export class ArgumentParser {
     return string.replace(/<@(!|&|#)?[0-9]+>/g, "");
   }
 
-  private getElementFromIndex(array: Array<string>, index: number | Slice) {
+  private getElementFromIndex(
+    array: Array<string>,
+    index: number | Slice
+  ): ParsedArgument {
+    if (
+      array.length <
+      (typeof index === "number" ? index : index.stop || index.start)
+    ) {
+      return;
+    }
+
     return typeof index === "number"
       ? array[index]?.trim()
       : (index.stop
@@ -69,6 +82,22 @@ export class ArgumentParser {
         )
           .map((e) => e?.trim())
           .join(" ");
+  }
+
+  private parseCustomInputs(messageString: string): ParsedArguments {
+    if (this.arguments.inputs) {
+      let parsedArguments = Object.keys(this.arguments.inputs!)
+        .filter((arg) => !!this.arguments.inputs![arg].custom)
+        .reduce((acc, arg) => {
+          let argOptions = this.arguments.inputs![arg];
+          if (argOptions.custom) {
+            acc[arg] = argOptions.custom(messageString);
+          }
+          return acc;
+        }, {} as ParsedArguments);
+
+      return parsedArguments;
+    } else return {};
   }
 
   private parseInputsWithSplit(
@@ -107,11 +136,13 @@ export class ArgumentParser {
 
     let regexArgs = this.parseInputsWithSplit(
       string,
-      (string, arg) => string.match(arg.regex!) as Array<string>,
+      (string, arg) => (string.match(arg.regex!) || []) as Array<string>,
       (arg) => !!arg.regex
     );
 
-    return { ...genericArgs, ...splitOnArgs, ...regexArgs };
+    let customArgs = this.parseCustomInputs(string);
+
+    return { ...genericArgs, ...splitOnArgs, ...regexArgs, ...customArgs };
   }
 
   private parseMentions(message: Message): ParsedArguments {

@@ -10,8 +10,8 @@ export default class TrackPercent extends BaseCommand {
     "Shows you the percentage of an artist's scrobbles are made up of a certain track";
   arguments: Arguments = {
     inputs: {
-      track: { index: 0, splitOn: "|" },
-      artist: { index: 1, splitOn: "|" },
+      artist: { index: 0, splitOn: "|" },
+      track: { index: 1, splitOn: "|" },
     },
     mentions: {
       0: { name: "user", description: "the user to lookup" },
@@ -36,6 +36,8 @@ export default class TrackPercent extends BaseCommand {
       if (!artist) artist = nowPlaying.artist;
       if (!track) track = nowPlaying.name;
     }
+
+    console.log(artist, track)
 
     let [artistInfo, trackInfo] = await Promise.all([
       this.lastFMService.artistInfo(artist, username),

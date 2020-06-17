@@ -1,6 +1,7 @@
 import { BaseCommand } from "../../BaseCommand";
 import { Message } from "discord.js";
 import { Arguments } from "../../arguments";
+import { numberDisplay } from "../../helpers";
 
 export default class ArtistRank extends BaseCommand {
   aliases = ["ar", "ra"];
@@ -41,7 +42,7 @@ export default class ArtistRank extends BaseCommand {
       await message.reply(
         `**${topArtists.artist[rank].name}** is ranked **#${rank + 1}** in ${
           perspective.possessive
-        } top 1,000 artists with ${topArtists.artist[rank].playcount} plays`
+        } top 1,000 artists with ${numberDisplay(topArtists.artist[rank].playcount)} plays`
       );
     }
   }

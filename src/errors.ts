@@ -1,5 +1,6 @@
 import { LastFMErrorResponse } from "./services/LastFMService.types";
 import { parseError } from "./helpers/error";
+import { Response } from "node-fetch";
 
 export abstract class ClientError extends Error {
   message: string;
@@ -34,9 +35,11 @@ export class UsernameNotRegisteredError extends ClientError {
 
 export class LastFMConnectionError extends ClientError {
   name = "LastFMConnectionError";
+  response: Response;
 
-  constructor() {
+  constructor(response: Response) {
     super("There was a problem connecting to Last.fm");
+    this.response = response;
   }
 }
 
@@ -48,4 +51,10 @@ export class LastFMError extends ClientError {
   }
 }
 
+export class AlreadyLoggedOutError extends ClientError {
+  name = "AlreadyLoggedOutError";
 
+  constructor() {
+    super("You are already logged out!");
+  }
+}

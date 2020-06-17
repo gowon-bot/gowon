@@ -1,6 +1,6 @@
 import { User } from "../database/entity/User";
 import { User as DiscordUser } from "discord.js";
-import { UsernameNotRegisteredError } from "../errors";
+import { UsernameNotRegisteredError, AlreadyLoggedOutError } from "../errors";
 
 export class Perspective {
   name: string;
@@ -41,7 +41,7 @@ export class UsersService {
   async getUsername(discordID: string): Promise<string> {
     let user = await User.findOne({ discordID: discordID });
 
-    if (user) {
+    if (user && user.lastFMUsername) {
       return user.lastFMUsername;
     } else throw new UsernameNotRegisteredError();
   }
@@ -62,8 +62,17 @@ export class UsersService {
         lastFMUsername: lastFMUsername,
       });
       await user.save();
-      return user.lastFMUsername;
+      return user.lastFMUsername!;
     }
+  }
+
+  async clearUsername(discordID: string): Promise<void> {
+    let user = await User.findOne({ discordID: discordID });
+
+    if (user?.lastFMUsername) {
+      user.lastFMUsername = "";
+      await user.save();
+    } else throw new AlreadyLoggedOutError();
   }
 
   private buildPerspective(name: string): Perspective {

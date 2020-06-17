@@ -7,10 +7,12 @@ import { isBotMoment, fakeNowPlaying } from "../botmoment/fakeNowPlaying";
 
 export default class NowPlaying extends BaseCommand {
   aliases = ["np", "fm"];
-  variations = [{
-    variationString: "fmv",
-    description: "Displays more information",
-  }];
+  variations = [
+    {
+      variationString: "fmv",
+      description: "Displays more information",
+    },
+  ];
   description = "Displays the now playing or last played track in last.fm";
   arguments: Arguments = {
     inputs: {
@@ -72,9 +74,7 @@ export default class NowPlaying extends BaseCommand {
             " | " +
             numberDisplay(trackInfo.userplaycount, "scrobble") +
             " of this song\n" +
-            artistInfo.tags.tag
-              .map((t) => t.name.toLowerCase())
-              .join(" ‧ ")
+            artistInfo.tags.tag.map((t) => t.name.toLowerCase()).join(" ‧ ")
         );
     }
 

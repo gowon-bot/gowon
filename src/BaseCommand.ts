@@ -70,6 +70,7 @@ export abstract class BaseCommand implements Command {
   }
 
   async execute(message: Message, runAs?: string) {
+    message.channel.startTyping();
     try {
       this.parsedArguments = this.parseArguments(message, runAs || this.name);
       await this.run(message, runAs);
@@ -77,10 +78,12 @@ export abstract class BaseCommand implements Command {
       if (e.isClientFacing) {
         await message.channel.send(e.message);
       } else {
+        message.channel.stopTyping();
         await message.channel.send(new UnknownError().message);
         throw e;
       }
     }
+    message.channel.stopTyping();
   }
 
   hasAlias(alias: string): boolean {
@@ -110,4 +113,5 @@ export abstract class BaseCommand implements Command {
 
 export class NoCommand extends BaseCommand {
   async run() {}
+  async execute() {}
 }

@@ -34,6 +34,11 @@ export abstract class LinkGenerator {
     );
   }
 
+  // https://www.last.fm/user/flushed_emoji
+  static userPage(username: string, checkIfReal = false): string {
+    return this.baseURL + "user/" + this.encode(username);
+  }
+
   static generateTrackLinks(track: Track): TrackLinks {
     return {
       artist: this.artistPage(track.artist["#text"]),
