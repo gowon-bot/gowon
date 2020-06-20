@@ -36,8 +36,6 @@ export interface TimeRange {
 export function generateTimeRange(string: string): TimeRange {
   let difference = parse(string, "second");
 
-  console.log(string);
-
   if (!difference) {
     let matches = string.match(fallbackRegex) || [];
 

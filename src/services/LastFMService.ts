@@ -98,8 +98,6 @@ export class LastFMService {
       params
     );
 
-    console.log(params);
-
     return parseInt(recentTracks.recenttracks["@attr"].total, 10) || 0;
   }
 

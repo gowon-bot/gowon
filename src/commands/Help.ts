@@ -1,7 +1,7 @@
-import { BaseCommand, Command } from "../BaseCommand";
+import { BaseCommand, Command } from "../lib/command/BaseCommand";
 import { Message, MessageEmbed } from "discord.js";
-import { CommandManager } from "../CommandManager";
-import { Arguments, groupArgumentsBySplit } from "../arguments";
+import { CommandManager } from "../lib/command/CommandManager";
+import { Arguments, groupArgumentsBySplit } from "../lib/arguments/arguments";
 
 export default class Help extends BaseCommand {
   aliases = ["h"];
@@ -44,13 +44,13 @@ export default class Help extends BaseCommand {
     embed: MessageEmbed,
     command: Command
   ): MessageEmbed {
-    if (command.arguments.mentions)
-      embed.addField(
-        "Mentions",
-        Object.values(command.arguments.mentions)
-          .map((m) => `\`@${m.name}\`: ${m.description ?? ""}`)
-          .join("\n")
-      );
+    // if (command.arguments.mentions)
+    //   embed.addField(
+    //     "Mentions",
+    //     Object.values(command.arguments.mentions)
+    //       .map((m) => `\`@${m.name}\`: ${m.description ?? ""}`)
+    //       .join("\n")
+    //   );
 
     if (command.arguments.inputs) {
       let groupedArguments = groupArgumentsBySplit(command.arguments);

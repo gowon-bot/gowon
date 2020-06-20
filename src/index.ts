@@ -1,7 +1,7 @@
 // Shim required for typeorm
 import "reflect-metadata";
 
-import { CommandHandler } from "./CommandHandler";
+import { CommandHandler } from "./lib/command/CommandHandler";
 
 import { Client } from "discord.js";
 import { DB } from "./database";

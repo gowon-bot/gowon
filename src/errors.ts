@@ -58,3 +58,27 @@ export class AlreadyLoggedOutError extends ClientError {
     super("You are already logged out!");
   }
 }
+
+export class AlreadyFriendsError extends ClientError {
+  name = "AlreadyFriendsError";
+
+  constructor() {
+    super("You are already friends with that user");
+  }
+}
+
+export class NotFriendsError extends ClientError {
+  name = "NotFriendsError";
+
+  constructor() {
+    super("You were already not friends with that user");
+  }
+}
+
+export class LastFMUserDoesntExistError extends ClientError {
+  name = "LastFMUserDoesntExistError";
+
+  constructor() {
+    super("That user doesn't exist in Last.fm");
+  }
+}

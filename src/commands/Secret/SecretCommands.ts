@@ -1,6 +1,6 @@
-import { BaseCommand } from "../../BaseCommand";
+import { BaseCommand } from "../../lib/command/BaseCommand";
 import { Message, MessageEmbed } from "discord.js";
-import { CommandManager } from "../../CommandManager";
+import { CommandManager } from "../../lib/command/CommandManager";
 
 export default class SecretCommands extends BaseCommand {
   description = "Shows the secret commands";
