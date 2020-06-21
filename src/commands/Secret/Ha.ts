@@ -1,8 +1,8 @@
 import { BaseCommand } from "../../lib/command/BaseCommand";
 import { Message } from "discord.js";
 
-export default class ProfilePic extends BaseCommand {
-  aliases = ["hah", "ha"];
+export default class Ha extends BaseCommand {
+  aliases = ["hah"];
   description = "Hah!";
   secretCommand = true;
 

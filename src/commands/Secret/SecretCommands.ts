@@ -6,8 +6,12 @@ export default class SecretCommands extends BaseCommand {
   description = "Shows the secret commands";
   secretCommand = true;
 
+  commandManager = new CommandManager()
+
   async run(message: Message) {
-    let commands = CommandManager.list(true).filter(c => c.secretCommand);
+    await this.commandManager.init()
+
+    let commands = this.commandManager.list(true).filter(c => c.secretCommand);
 
     let embed = new MessageEmbed()
       .setAuthor("Secret commands for " + message.author.username)

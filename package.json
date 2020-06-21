@@ -27,6 +27,7 @@
   "scripts": {
     "start": "yarn build && node dist/src/index.js",
     "build": "tsc --project ./",
+    "rebuild": "yarn clean && yarn build",
     "clean": "rm -rf dist/",
     "build:watch": "tsc -w --project ./",
     "run:watch": "nodemon dist/src/index.js",

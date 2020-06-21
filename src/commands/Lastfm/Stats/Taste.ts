@@ -1,8 +1,11 @@
-import { Message, MessageEmbed, User } from "discord.js";
+import { Message, MessageEmbed } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { TasteCalculator } from "../../../helpers/TasteCalculator";
 import { numberDisplay } from "../../../helpers";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
+import { sanitizeForDiscord } from "../../../helpers/discord";
+import { Mention } from "../../../lib/arguments/mentions";
+import { generatePeriod, generateHumanPeriod } from "../../../helpers/date";
 
 export default class Taste extends LastFMBaseCommand {
   aliases = ["t"];
@@ -10,7 +13,17 @@ export default class Taste extends LastFMBaseCommand {
 
   arguments: Arguments = {
     inputs: {
-      artistAmount: { index: 0, regex: /[0-9]{1,4}/g },
+      artistAmount: { index: 0, regex: /[0-9]{1,4}(?!\w)(?! [a-z])/g },
+      timePeriod: {
+        custom: (messageString: string) =>
+          generatePeriod(messageString, "overall"),
+        index: -1,
+      },
+      humanReadableTimePeriod: {
+        custom: (messageString: string) =>
+          generateHumanPeriod(messageString, "overall"),
+        index: -1,
+      },
     },
     mentions: {
       user: {
@@ -27,9 +40,12 @@ export default class Taste extends LastFMBaseCommand {
   };
 
   async run(message: Message) {
-    let userTwo = this.parsedArguments.userTwo as User,
+    let userTwo = this.parsedArguments.userTwo as Mention,
       artistAmount =
-        parseInt(this.parsedArguments.artistAmount as string, 10) || 500;
+        parseInt(this.parsedArguments.artistAmount as string, 10) || 500,
+      timePeriod = this.parsedArguments.timePeriod as string,
+      humanReadableTimePeriod = this.parsedArguments
+        .humanReadableTimePeriod as string;
 
     let {
       senderUsername: userOneUsername,
@@ -42,18 +58,21 @@ export default class Taste extends LastFMBaseCommand {
     }
 
     if (artistAmount < 1 || artistAmount > 1000) {
-      await message.reply("Please specify a valid amount input!");
+      await message.reply("Please specify a valid amount!");
       return;
     }
 
     if (userTwo) {
       userOneUsername = userTwoUsername!;
-      userTwoUsername = await this.usersService.getUsername(userTwo.id);
+      userTwoUsername =
+        typeof userTwo === "string"
+          ? userTwo
+          : await this.usersService.getUsername(userTwo.id);
     }
 
     let [senderArtists, mentionedArtists] = await Promise.all([
-      this.lastFMService.topArtists(userOneUsername, artistAmount),
-      this.lastFMService.topArtists(userTwoUsername, artistAmount),
+      this.lastFMService.topArtists(userOneUsername, artistAmount, 1, timePeriod),
+      this.lastFMService.topArtists(userTwoUsername, artistAmount, 1, timePeriod),
     ]);
 
     let tasteCalculator = new TasteCalculator(senderArtists, mentionedArtists);
@@ -62,11 +81,13 @@ export default class Taste extends LastFMBaseCommand {
 
     let embed = new MessageEmbed()
       .setTitle(
-        `Taste comparison for ${userOneUsername} and ${userTwoUsername}`
+        `Taste comparison for ${sanitizeForDiscord(
+          userOneUsername
+        )} and ${sanitizeForDiscord(userTwoUsername)} ${humanReadableTimePeriod}`
       )
       .setDescription(
         `Comparing top ${numberDisplay(
-          artistAmount,
+          senderArtists.artist.length,
           "artist"
         )}, ${numberDisplay(taste.artists.length, "overlapping artist")} (${
           taste.percent

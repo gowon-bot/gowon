@@ -32,8 +32,6 @@ export default class Cover extends LastFMBaseCommand {
       if (!albumName) albumName = nowPlaying.album;
     }
 
-    console.log(artist, albumName);
-
     let albumDetails = await this.lastFMService.albumInfo(artist, albumName);
     let image = albumDetails.image.find((i) => i.size === "extralarge");
 

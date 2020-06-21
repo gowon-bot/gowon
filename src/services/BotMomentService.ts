@@ -16,8 +16,8 @@ export class BotMomentService {
   // Instance methods/properties
   prefix: string = "!";
   customPrefixes = {
-    lastfm: "lastfm:"
-  }
+    lastfm: "lastfm:",
+  };
 
   get regexSafePrefix(): string {
     return regexEscape(this.prefix);

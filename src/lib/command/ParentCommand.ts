@@ -1,8 +1,9 @@
-import { BaseCommand, Command } from "./BaseCommand";
+import { BaseCommand, Command, NoCommand } from "./BaseCommand";
 import escapeStringRegexp from "escape-string-regexp";
+import { CommandManager } from "./CommandManager";
 
 export abstract class ParentCommand extends BaseCommand {
-  children: ChildCommand[] = [];
+  abstract children: CommandManager;
   default?: Command;
   prefix: string = "";
 
@@ -14,11 +15,9 @@ export abstract class ParentCommand extends BaseCommand {
         ""
       );
     }
-    return (
-      this.children.find(
-        (c) => c.name === adjustedName || c.hasAlias(adjustedName)
-      ) || this.default
-    );
+    let child = this.children.find(adjustedName);
+
+    return child instanceof NoCommand ? undefined : child
   }
 
   async run() {}
@@ -26,5 +25,4 @@ export abstract class ParentCommand extends BaseCommand {
 
 export abstract class ChildCommand extends BaseCommand {
   shouldBeIndexed = false;
-  abstract parent: typeof ParentCommand;
 }

@@ -77,7 +77,7 @@ export function generateHumanTimeRange(string: string): string {
   } else return "overall";
 }
 
-export function generatePeriod(string: string): string {
+export function generatePeriod(string: string, fallback = "overall"): string {
   let periodRegexes: { [period: string]: RegExp } = {
     "7day": /(\s+|\b)(w(eek(s)?)?)(\s|\b)/gi,
     "3month": /(\s+|\b)((3|three) *mo(nth(s)?)?|q(uarter)?)(\s|\b)/gi,
@@ -94,11 +94,11 @@ export function generatePeriod(string: string): string {
     if (matches.length > 0) return period;
   }
 
-  return "overall";
+  return fallback;
 }
 
-export function generateHumanPeriod(string: string): string {
-  let period = generatePeriod(string);
+export function generateHumanPeriod(string: string, fallback = "overall"): string {
+  let period = generatePeriod(string, fallback);
 
   switch (period) {
     case "7day":

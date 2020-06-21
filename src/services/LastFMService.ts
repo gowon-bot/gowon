@@ -67,10 +67,7 @@ export class LastFMService {
     if (limit) params.limit = limit;
 
     return (
-      await this.request<RecentTracksResponse>("user.getrecenttracks", {
-        username,
-        limit: 1,
-      })
+      await this.request<RecentTracksResponse>("user.getrecenttracks", params)
     ).recenttracks;
   }
 
@@ -159,13 +156,15 @@ export class LastFMService {
   async topArtists(
     username: string,
     limit = 50,
-    page = 1
+    page = 1,
+    period: string = "overall"
   ): Promise<TopArtists> {
     return (
       await this.request<TopArtistsResponse>("user.getTopArtists", {
         username,
         limit,
         page,
+        period,
       })
     ).topartists;
   }
@@ -183,12 +182,18 @@ export class LastFMService {
     return parseInt(topArtists.topartists["@attr"].total, 10) || 0;
   }
 
-  async topAlbums(username: string, limit = 50, page = 1): Promise<TopAlbums> {
+  async topAlbums(
+    username: string,
+    limit = 50,
+    page = 1,
+    period = "overall"
+  ): Promise<TopAlbums> {
     return (
       await this.request<TopAlbumsResponse>("user.getTopAlbums", {
         username,
         limit,
         page,
+        period,
       })
     ).topalbums;
   }
@@ -206,12 +211,18 @@ export class LastFMService {
     return parseInt(topArtists.topalbums["@attr"].total, 10) || 0;
   }
 
-  async topTracks(username: string, limit = 50, page = 1): Promise<TopTracks> {
+  async topTracks(
+    username: string,
+    limit = 50,
+    page = 1,
+    period = "overall"
+  ): Promise<TopTracks> {
     return (
       await this.request<TopTracksResponse>("user.getTopTracks", {
         username,
         limit,
         page,
+        period,
       })
     ).toptracks;
   }

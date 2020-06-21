@@ -82,3 +82,13 @@ export class LastFMUserDoesntExistError extends ClientError {
     super("That user doesn't exist in Last.fm");
   }
 }
+
+export class BadAmountError extends ClientError {
+  name = "BadAmountError";
+
+  constructor(min: number, max: number) {
+    super(
+      `That is not a valid amount, please enter an amount between ${min} and ${max}`
+    );
+  }
+}

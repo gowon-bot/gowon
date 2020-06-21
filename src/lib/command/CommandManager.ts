@@ -17,6 +17,7 @@ async function generateCommands(): Promise<Commands> {
 
     if (command?.constructor) {
       let commandNameSplit = file.split("/");
+
       let commandName = commandNameSplit[commandNameSplit.length - 1]
         .slice(0, -3)
         .toLowerCase();
@@ -29,15 +30,17 @@ async function generateCommands(): Promise<Commands> {
 }
 
 export class CommandManager {
-  static commands: Commands = {};
+  commands: Commands;
 
-  private constructor() {}
+  constructor(commands: Commands = {}) {
+    this.commands = commands;
+  }
 
-  static async init() {
+  async init() {
     this.commands = await generateCommands();
   }
 
-  static find(commandName: string): Command {
+  find(commandName: string): Command {
     if (Object.keys(this.commands).includes(commandName.toLowerCase())) {
       return this.commands[commandName.toLowerCase()]();
     } else {
@@ -54,7 +57,8 @@ export class CommandManager {
     }
     return new NoCommand();
   }
-  static list(showSecret: boolean = false): Command[] {
+
+  list(showSecret: boolean = false): Command[] {
     let commandGetterList = Object.values(this.commands).sort();
 
     let commandsList = commandGetterList

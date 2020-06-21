@@ -28,15 +28,15 @@ export default class NowPlaying extends LastFMBaseCommand {
   async run(message: Message, runAs?: string) {
     let user = this.parsedArguments.user as Mention;
 
-    let username =
-      typeof user === "string"
-        ? user
-        : await this.usersService.getUsername(user?.id ?? message.author.id);
-
     if (isBotMoment(typeof user !== "string" ? user?.id : "")) {
       await message.channel.send(fakeNowPlaying());
       return;
     }
+
+    let username =
+      typeof user === "string"
+        ? user
+        : await this.usersService.getUsername(user?.id ?? message.author.id);
 
     let nowPlaying = await this.lastFMService.nowPlaying(username);
 

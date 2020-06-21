@@ -13,6 +13,8 @@ export default class Help extends BaseCommand {
     },
   };
 
+  commandManager = new CommandManager()
+
   private parseAliases(embed: MessageEmbed, command: Command): MessageEmbed {
     return command.aliases.length
       ? embed.addField(
@@ -78,6 +80,8 @@ export default class Help extends BaseCommand {
   }
 
   async run(message: Message) {
+    await this.commandManager.init()
+
     let commandName = this.parsedArguments.command as string;
 
     let embed = new MessageEmbed().setAuthor(
@@ -85,14 +89,14 @@ export default class Help extends BaseCommand {
     );
 
     if (commandName) {
-      let command = CommandManager.find(commandName);
+      let command = this.commandManager.find(commandName);
 
       embed = this.parseAliases(embed, command);
       embed = this.parseName(embed, command);
       embed = this.parseVariations(embed, command);
       embed = this.parseCommandArguments(embed, command);
     } else {
-      let commands = CommandManager.list();
+      let commands = this.commandManager.list();
 
       embed = embed.setDescription(commands.map((c) => c.name).join(", "));
     }

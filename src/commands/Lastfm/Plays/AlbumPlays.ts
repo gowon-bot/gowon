@@ -25,7 +25,6 @@ export default class AlbumPlays extends LastFMBaseCommand {
     let artist = this.parsedArguments.artist as string,
       albumName = this.parsedArguments.album as string;
 
-
     let {
       senderUsername,
       username,

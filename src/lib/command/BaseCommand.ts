@@ -3,7 +3,6 @@ import {
   UsersService,
   Perspective,
 } from "../../services/dbservices/UsersService";
-import { Connection, getConnection } from "typeorm";
 import {
   Arguments,
   ParsedArguments,
@@ -12,6 +11,7 @@ import {
 import { UnknownError } from "../../errors";
 import { BotMomentService } from "../../services/BotMomentService";
 import { Mention } from "../arguments/mentions";
+import { CommandManager } from "./CommandManager";
 
 export interface Variation {
   variationString?: string;
@@ -31,7 +31,7 @@ export interface Command {
   shouldBeIndexed: boolean;
   category: string | undefined;
 
-  children?: Command[];
+  children?: CommandManager;
   getChild(name: string): Command | undefined;
 }
 
@@ -49,9 +49,8 @@ export abstract class BaseCommand implements Command {
 
   usersService = new UsersService();
   botMomentService = BotMomentService.getInstance();
-  db: Connection = getConnection();
 
-  children?: Command[];
+  children?: CommandManager;
   getChild(name: string): Command | undefined {
     return undefined;
   }
@@ -94,14 +93,18 @@ export abstract class BaseCommand implements Command {
     return { senderUsername, mentionedUsername, username, perspective };
   }
 
+  async prerun(message: Message): Promise<void> {}
+
   async execute(message: Message, runAs?: string) {
     message.channel.startTyping();
     try {
       this.parsedArguments = this.parseArguments(message, runAs || this.name);
+      await this.prerun(message);
       await this.run(message, runAs);
     } catch (e) {
       if (e.isClientFacing) {
         await message.channel.send(e.message);
+        message.channel.stopTyping()
       } else {
         message.channel.stopTyping();
         await message.channel.send(new UnknownError().message);

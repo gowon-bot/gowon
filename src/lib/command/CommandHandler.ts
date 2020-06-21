@@ -5,7 +5,7 @@ import { BotMomentService } from "../../services/BotMomentService";
 
 export class CommandHandler {
   botMomentService = BotMomentService.getInstance();
-  commandManager = CommandManager;
+  commandManager = new CommandManager();
 
   constructor() {}
 
