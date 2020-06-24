@@ -1,4 +1,11 @@
-import { Entity, Column, PrimaryGeneratedColumn, BaseEntity } from "typeorm";
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  BaseEntity,
+  OneToMany,
+} from "typeorm";
+import { Crown } from "./Crown";
 
 @Entity()
 export class User extends BaseEntity {
@@ -10,4 +17,7 @@ export class User extends BaseEntity {
 
   @Column()
   lastFMUsername!: string;
+
+  @OneToMany((type) => Crown, (crown) => crown.user)
+  crowns!: Crown[];
 }

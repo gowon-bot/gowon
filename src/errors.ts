@@ -92,3 +92,11 @@ export class BadAmountError extends ClientError {
     );
   }
 }
+
+export class UserNotFoundError extends ClientError {
+  name = "UserNotFoundError";
+
+  constructor() {
+    super("That user was not found!");
+  }
+}
