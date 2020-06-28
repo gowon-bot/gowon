@@ -19,6 +19,10 @@ export class Check extends CrownsChildCommand {
 
     let { username } = await this.parseMentionedUsername(message);
 
+    if (!artist) {
+      artist = (await this.lastFMService.nowPlayingParsed(username)).artist;
+    }
+
     let artistDetails = await this.lastFMService.artistInfo(artist, username);
 
     let crownCheck = await this.crownsService.checkCrown({
@@ -28,8 +32,6 @@ export class Check extends CrownsChildCommand {
       plays: parseInt(artistDetails.stats.userplaycount, 10),
     });
 
-    console.log(crownCheck);
-
     switch (crownCheck.state) {
       case CrownState.newCrown:
         await message.channel.send(
@@ -37,15 +39,42 @@ export class Check extends CrownsChildCommand {
         );
         break;
       case CrownState.updated:
-        await message.channel.send(
-          CrownEmbeds.updatedCrown(crownCheck, message.author)
-        );
+        await message.channel.send(CrownEmbeds.updatedCrown(crownCheck));
         break;
       case CrownState.snatched:
         await message.channel.send(
           await CrownEmbeds.snatchedCrown(crownCheck, message.author, message)
         );
         break;
+      case CrownState.fail:
+        await message.channel.send(
+          await CrownEmbeds.fail(
+            crownCheck,
+            artistDetails,
+            message,
+            message.author
+          )
+        );
+        break;
+      case CrownState.tie:
+        await message.channel.send(
+          await CrownEmbeds.tie(
+            crownCheck,
+            artistDetails,
+            message,
+            message.author
+          )
+        );
+        break;
+      case CrownState.tooLow:
+        await message.channel.send(
+          await CrownEmbeds.tooLow(
+            artistDetails.name,
+            this.crownsService.threshold,
+            message.author,
+            artistDetails.stats.userplaycount
+          )
+        );
     }
   }
 }

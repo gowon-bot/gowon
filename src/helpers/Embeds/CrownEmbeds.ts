@@ -1,55 +1,159 @@
 import { CrownCheck } from "../../services/dbservices/CrownsService";
-import { User as DiscordUser, MessageEmbed, Message } from "discord.js";
+import { User as DiscordUser, MessageEmbed, Message, User } from "discord.js";
 import { numberDisplay } from "..";
+import { ArtistInfo } from "../../services/LastFMService.types";
 
 export class CrownEmbeds {
   private constructor() {}
 
+  static async getUsernameOfGuildMember(
+    message: Message,
+    discordID: string
+  ): Promise<string> {
+    let crownHolder = await message.guild?.members.fetch(discordID)!;
+    return crownHolder.user.username;
+  }
+
   static newCrown(crownCheck: CrownCheck, user: DiscordUser): MessageEmbed {
     return new MessageEmbed()
-      .setTitle(`New crown for ${user.username}`)
-      .setColor("#008000")
+      .setTitle(`Crown for ${crownCheck.crown!.artistName}`)
       .setDescription(
-        `${user.username} has created a crown for **${
-          crownCheck.crown.artistName
-        }** with **${numberDisplay(crownCheck.crown.plays, "play")}**`
+        `:crown: → \`${user.username}\` - ${numberDisplay(
+          crownCheck.crown!.plays,
+          "play"
+        )}
+      
+      You've created a crown for **${
+        crownCheck.crown!.artistName
+      }** with **${numberDisplay(crownCheck.crown!.plays, "play")}**`
       );
   }
 
-  static updatedCrown(crownCheck: CrownCheck, user: DiscordUser): MessageEmbed {
+  static updatedCrown(crownCheck: CrownCheck): MessageEmbed {
     return new MessageEmbed()
-      .setTitle(`Updated crown for ${user.username}`)
-      .setColor("#008000")
+      .setTitle(`Crown for ${crownCheck.crown!.artistName}`)
       .setDescription(
         `You already have the crown **${
-          crownCheck.crown.artistName
+          crownCheck.crown!.artistName
         }**, but it's been updated from ${numberDisplay(
           crownCheck.oldCrown!.plays,
           "play"
-        )} to **${numberDisplay(crownCheck.crown.plays, "play")}**`
+        )} to **${numberDisplay(crownCheck.crown!.plays, "play")}**`
       );
   }
 
   static async snatchedCrown(
     crownCheck: CrownCheck,
-    user: DiscordUser,
+    user: User,
     message: Message
   ): Promise<MessageEmbed> {
-    let crownHolder = await message.guild?.members.fetch(
+    let holderUsername = await this.getUsernameOfGuildMember(
+      message,
       crownCheck.oldCrown!.user.discordID
-    )!;
-    let holderUsername = crownHolder.user.username;
+    );
 
     return new MessageEmbed()
-      .setTitle("Yoink")
-      .setColor("#008000")
+      .setTitle(`Crown for ${crownCheck.crown!.artistName}`)
       .setDescription(
-        `The crown for **${
-          crownCheck.crown.artistName
-        }** was stolen from ${holderUsername} and is now at **${numberDisplay(
-          crownCheck.crown.plays,
+        `
+:crown: → \`${user.username}\` - ${numberDisplay(
+          crownCheck.crown!.plays,
           "play"
-        )}**! (from ${numberDisplay(crownCheck.oldCrown!.plays, "play")})`
+        )}
+
+:pensive: → \`${holderUsername}\` - ${numberDisplay(
+          crownCheck.oldCrown?.plays!,
+          "play"
+        )}
+
+        Yoink! The crown for **${
+          crownCheck.crown!.artistName
+        }** was stolen from ${holderUsername} and is now at **${numberDisplay(
+          crownCheck.crown!.plays,
+          "play"
+        )}**!`
+      );
+  }
+
+  static async fail(
+    crownCheck: CrownCheck,
+    artistDetails: ArtistInfo,
+    message: Message,
+    user: User
+  ): Promise<MessageEmbed> {
+    let holderUsername = await this.getUsernameOfGuildMember(
+      message,
+      crownCheck.oldCrown!.user.discordID
+    );
+    let difference =
+      crownCheck.crown!.plays - parseInt(artistDetails.stats.userplaycount, 10);
+
+    return new MessageEmbed()
+      .setTitle(`Crown for ${crownCheck.crown!.artistName}`)
+      .setDescription(
+        `
+:crown: → \`${holderUsername}\` - ${numberDisplay(
+          crownCheck.oldCrown?.plays!,
+          "play"
+        )}
+
+:pensive: → \`${user.username}\` - ${numberDisplay(
+          artistDetails.stats.userplaycount,
+          "play"
+        )}
+
+${holderUsername} will keep the crown for ${
+          crownCheck.crown!.artistName
+        }, leading ${user.username} by ${numberDisplay(difference, "play")}.
+`
+      );
+  }
+
+  static async tooLow(
+    artistName: string,
+    threshold: number,
+    user: User,
+    plays: number | string
+  ) {
+    return new MessageEmbed()
+      .setTitle(`Crown for ${artistName}`)
+      .setDescription(
+        `:pensive: → \`${user.username}\` - ${numberDisplay(plays, "play")}
+
+You must have at least ${numberDisplay(threshold, "play")} to create a crown.
+      `
+      );
+  }
+
+  static async tie(
+    crownCheck: CrownCheck,
+    artistDetails: ArtistInfo,
+    message: Message,
+    user: User
+  ): Promise<MessageEmbed> {
+    let holderUsername = await this.getUsernameOfGuildMember(
+      message,
+      crownCheck.oldCrown!.user.discordID
+    );
+
+    return new MessageEmbed()
+      .setTitle(`Crown for ${crownCheck.crown!.artistName}`)
+      .setDescription(
+        `
+:crown: → \`${holderUsername}\` - ${numberDisplay(
+          crownCheck.oldCrown?.plays!,
+          "play"
+        )}
+
+:eyes: → \`${user.username}\` - ${numberDisplay(
+          artistDetails.stats.userplaycount,
+          "play"
+        )}
+
+It's a tie! ${holderUsername} will keep the crown for ${
+          crownCheck.crown!.artistName
+        }.
+`
       );
   }
 }

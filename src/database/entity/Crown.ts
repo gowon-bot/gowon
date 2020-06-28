@@ -5,6 +5,7 @@ import {
   BaseEntity,
   UpdateDateColumn,
   ManyToOne,
+  CreateDateColumn,
 } from "typeorm";
 import { User } from "./User";
 
@@ -27,6 +28,10 @@ export class Crown extends BaseEntity {
 
   @Column()
   version!: number;
+
+  @CreateDateColumn()
+
+  createdAt!: Date;
 
   @UpdateDateColumn()
   updatedAt!: Date;

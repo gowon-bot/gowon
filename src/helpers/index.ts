@@ -1,3 +1,5 @@
+import moment from "moment";
+
 export function addS(string: string, number: number) {
   return number === 1 ? string : string + "s";
 }
@@ -13,6 +15,14 @@ export function numberDisplay(number: number | string, unit?: string): string {
     parsedNumber.toLocaleString() +
     (unit ? " " + (parsedNumber === 1 ? unit : unit + "s") : "")
   );
+}
+
+export function dateDisplay(date: Date): string {
+  return moment(date).format("dddd, MMMM Do, YYYY");
+}
+
+export function ago(date: Date): string {
+  return moment(date).fromNow();
 }
 
 export function ucFirst(string: string): string {

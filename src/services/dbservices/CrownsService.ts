@@ -12,18 +12,56 @@ export enum CrownState {
 }
 
 export interface CrownCheck {
-  crown: Crown;
+  crown?: Crown;
   oldCrown?: Crown;
   state: CrownState;
 }
 
+export interface CrownOptions {
+  serverID: string;
+  discordID: string;
+  artistName: string;
+  plays: number;
+}
+
 export class CrownsService {
-  async checkCrown(crownOptions: {
-    serverID: string;
-    discordID: string;
-    artistName: string;
-    plays: number;
-  }): Promise<CrownCheck> {
+  threshold = 30;
+
+  private async handleSelfCrown(
+    crown: Crown,
+    plays: number
+  ): Promise<CrownState> {
+    if (crown.plays === plays) {
+      return CrownState.updated;
+    } else if (plays < this.threshold) {
+      // delete the crown
+      return CrownState.updated;
+    } else {
+      crown.plays = plays;
+      await crown.save();
+      return CrownState.updated;
+    }
+  }
+
+  private async handleCrown(
+    crown: Crown,
+    plays: number,
+    user: User
+  ): Promise<CrownState> {
+    if (crown.plays < plays) {
+      crown.user = user;
+      crown.plays = plays;
+
+      await crown.save();
+
+      return CrownState.snatched;
+    } else if (plays < crown.plays) return CrownState.fail;
+    else if (plays < this.threshold) return CrownState.tooLow;
+    else if (crown.plays === plays) return CrownState.tie;
+    else return CrownState.fail;
+  }
+
+  async checkCrown(crownOptions: CrownOptions): Promise<CrownCheck> {
     let { discordID, artistName, plays, serverID } = crownOptions;
 
     let [crown, user] = await Promise.all([
@@ -35,22 +73,19 @@ export class CrownsService {
 
     if (!user) throw new UserNotFoundError();
 
+    let crownState: CrownState;
+
     if (crown) {
-      if (crown.plays < plays) {
-        let state =
-          crown.user.id === user.id ? CrownState.updated : CrownState.snatched;
+      if (crown.user.id === user.id) {
+        crownState = await this.handleSelfCrown(crown, plays);
+      } else {
+        crownState = await this.handleCrown(crown, plays, user);
+      }
 
-        crown.user = user;
-        crown.plays = plays;
-        crown.version++;
-
-        await crown.save();
-
-        return { crown, state, oldCrown };
-      } else if (crown.plays === plays) {
-        return { crown, state: CrownState.tie, oldCrown };
-      } else return { crown, state: CrownState.fail, oldCrown };
+      return { crown: crown, state: crownState, oldCrown };
     } else {
+      if (plays < this.threshold) return { state: CrownState.tooLow };
+
       let crown = Crown.create({
         user,
         artistName,
@@ -61,7 +96,35 @@ export class CrownsService {
 
       await crown.save();
 
-      return { crown: crown, state: CrownState.newCrown, oldCrown };
+      return {
+        crown: crown,
+        state: CrownState.newCrown,
+        oldCrown,
+      };
     }
+  }
+
+  async getCrown(artistName: string): Promise<Crown | undefined> {
+    return await Crown.findOne({ where: { artistName } });
+  }
+
+  async listTopCrowns(discordID: string, limit = 10): Promise<Crown[]> {
+    let user = await User.findOne({ where: { discordID } });
+
+    if (!user) throw new UserNotFoundError();
+
+    return await Crown.find({
+      where: { user },
+      order: { plays: "DESC" },
+      take: limit,
+    });
+  }
+
+  async count(discordID: string): Promise<number> {
+    let user = await User.findOne({ where: { discordID } });
+
+    if (!user) throw new UserNotFoundError();
+
+    return await Crown.count({ where: { user } });
   }
 }

@@ -44,7 +44,7 @@ export default class ArtistPlays extends LastFMBaseCommand {
       `${ucFirst(perspective.plusToHave)} ${numberDisplay(
         artistDetails.stats.userplaycount,
         "scrobble"
-      )} of **${artistDetails.name}**`
+      )} of ${artistDetails.name}`
     );
   }
 }

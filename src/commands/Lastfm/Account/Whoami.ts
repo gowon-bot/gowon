@@ -1,5 +1,4 @@
 import { Message, User } from "discord.js";
-import { sanitizeForDiscord } from "../../../helpers/discord";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
@@ -8,7 +7,7 @@ export default class Whoami extends LastFMBaseCommand {
   description = "Displays your login";
   arguments: Arguments = {
     mentions: {
-      user: { index: 0, description: "The user to lookup" }
+      user: { index: 0, description: "The user to lookup" },
     },
   };
 
@@ -22,10 +21,6 @@ export default class Whoami extends LastFMBaseCommand {
       user
     );
 
-    message.reply(
-      `${perspective.plusToBe} logged in as \`${sanitizeForDiscord(
-        username
-      )}\`.`
-    );
+    message.reply(`${perspective.plusToBe} logged in as \`${username}\`.`);
   }
 }

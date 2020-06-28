@@ -1,5 +1,4 @@
 import { Message } from "discord.js";
-import { sanitizeForDiscord } from "../../../helpers/discord";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
@@ -18,7 +17,7 @@ export default class Login extends LastFMBaseCommand {
     if (await this.lastFMService.userExists(username)) {
       await this.usersService.setUsername(message.author.id, username);
 
-      message.channel.send(`Logged in as \`${sanitizeForDiscord(username)}\``);
+      message.channel.send(`Logged in as \`${username}\``);
     } else {
       message.reply(`The user \`${username}\` couldn't be found`);
     }
