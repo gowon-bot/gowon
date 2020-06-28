@@ -49,9 +49,6 @@ export class CommandManager {
 
         if (command.hasAlias(commandName)) {
           return command;
-        } else if (command.children) {
-          let child = command.getChild(commandName);
-          if (child) return child;
         }
       }
     }

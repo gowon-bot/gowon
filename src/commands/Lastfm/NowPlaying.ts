@@ -5,6 +5,7 @@ import { Arguments } from "../../lib/arguments/arguments";
 import { isBotMoment, fakeNowPlaying } from "../../botmoment/fakeNowPlaying";
 import { Mention } from "../../lib/arguments/mentions";
 import { LastFMBaseCommand } from "./LastFMBaseCommand";
+import { CrownsService } from "../../services/dbservices/CrownsService";
 
 export default class NowPlaying extends LastFMBaseCommand {
   aliases = ["np", "fm"];
@@ -24,6 +25,8 @@ export default class NowPlaying extends LastFMBaseCommand {
       },
     },
   };
+
+  crownsService = new CrownsService(this.logger);
 
   async run(message: Message, runAs?: string) {
     let user = this.parsedArguments.user as Mention;
@@ -61,22 +64,39 @@ export default class NowPlaying extends LastFMBaseCommand {
       );
 
     if (runAs === "fmv") {
-      let [artistInfo, trackInfo] = await Promise.all([
+      let [artistInfo, trackInfo, crown] = await Promise.all([
         this.lastFMService.artistInfo(track.artist, username),
         this.lastFMService.trackInfo(track.artist, track.name, username),
+        this.crownsService.getCrownDisplay(track.artist, message),
       ]);
+
+      let crownString = "";
+      let isCrownHolder = false;
+
+      if (crown && crown.user) {
+        if (crown.user.id === message.author.id) {
+          isCrownHolder = true;
+        } else {
+          crownString = `👑 ${numberDisplay(crown.crown.plays)} (${
+            crown.user.username
+          })`;
+        }
+      }
 
       nowPlayingEmbed = nowPlayingEmbed
         .setColor(trackInfo.userloved === "1" ? "#cc0000" : "black")
         .setFooter(
-          numberDisplay(
-            artistInfo.stats.userplaycount,
-            `${track.artist} scrobble`
-          ) +
+          (isCrownHolder ? "👑 " : "") +
+            numberDisplay(
+              artistInfo.stats.userplaycount,
+              `${track.artist} scrobble`
+            ) +
             " | " +
             numberDisplay(trackInfo.userplaycount, "scrobble") +
             " of this song\n" +
-            artistInfo.tags.tag.map((t) => t.name.toLowerCase()).join(" ‧ ")
+            artistInfo.tags.tag.map((t) => t.name.toLowerCase()).join(" ‧ ") +
+            (crownString ? " • " + crownString : "")
+          // (crownString ? "\n" + crownString : "")
         );
     }
 

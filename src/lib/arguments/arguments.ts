@@ -14,6 +14,7 @@ export interface InputsOptions {
 
 export interface InputArguments {
   index: number | Slice;
+  join?: boolean
   splitOn?: string;
   regex?: RegExp;
   optional?: boolean;
@@ -90,7 +91,7 @@ export class ArgumentParser extends Parser {
         let argOptions = this.arguments.inputs![arg];
         let array = splitFunction(messageString, argOptions);
 
-        acc[arg] = this.getElementFromIndex(array, argOptions.index);
+        acc[arg] = this.getElementFromIndex(array, argOptions.index, argOptions.join);
 
         return acc;
       }, {} as ParsedArguments);

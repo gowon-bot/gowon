@@ -1,14 +1,16 @@
 import { Crown } from "../../database/entity/Crown";
 import { User } from "../../database/entity/User";
 import { UserNotFoundError } from "../../errors";
+import { Message, User as DiscordUser } from "discord.js";
+import { BaseService } from "../BaseService";
 
 export enum CrownState {
-  tie = "tie",
-  snatched = "snatched",
-  fail = "fail",
-  newCrown = "new crown",
-  updated = "updated",
-  tooLow = "too low",
+  tie = "Tie",
+  snatched = "Snatched",
+  fail = "Fail",
+  newCrown = "New crown",
+  updated = "Updated",
+  tooLow = "Too low",
 }
 
 export interface CrownCheck {
@@ -24,7 +26,7 @@ export interface CrownOptions {
   plays: number;
 }
 
-export class CrownsService {
+export class CrownsService extends BaseService {
   threshold = 30;
 
   private async handleSelfCrown(
@@ -63,6 +65,7 @@ export class CrownsService {
 
   async checkCrown(crownOptions: CrownOptions): Promise<CrownCheck> {
     let { discordID, artistName, plays, serverID } = crownOptions;
+    this.log(`Checking crown for user ${discordID} and artist ${artistName}`);
 
     let [crown, user] = await Promise.all([
       Crown.getCrown(serverID, artistName),
@@ -84,6 +87,7 @@ export class CrownsService {
 
       return { crown: crown, state: crownState, oldCrown };
     } else {
+      this.log("Creating crown for " + artistName);
       if (plays < this.threshold) return { state: CrownState.tooLow };
 
       let crown = Crown.create({
@@ -105,10 +109,26 @@ export class CrownsService {
   }
 
   async getCrown(artistName: string): Promise<Crown | undefined> {
+    this.log("Fetching crown for " + artistName);
     return await Crown.findOne({ where: { artistName } });
   }
 
+  async getCrownDisplay(
+    artistName: string,
+    message: Message
+  ): Promise<{ crown: Crown; user?: DiscordUser } | undefined> {
+    let crown = await this.getCrown(artistName);
+
+    if (!crown) return;
+
+    let user = (await message.guild?.members.fetch(crown?.user.discordID))
+      ?.user;
+
+    return { crown, user };
+  }
+
   async listTopCrowns(discordID: string, limit = 10): Promise<Crown[]> {
+    this.log("Listing crowns for user " + discordID);
     let user = await User.findOne({ where: { discordID } });
 
     if (!user) throw new UserNotFoundError();
@@ -121,6 +141,7 @@ export class CrownsService {
   }
 
   async count(discordID: string): Promise<number> {
+    this.log("Counting crowns for user " + discordID);
     let user = await User.findOne({ where: { discordID } });
 
     if (!user) throw new UserNotFoundError();

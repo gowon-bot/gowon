@@ -1,6 +1,11 @@
 import { User } from "../../database/entity/User";
 import { User as DiscordUser } from "discord.js";
-import { UsernameNotRegisteredError, AlreadyLoggedOutError } from "../../errors";
+import {
+  UsernameNotRegisteredError,
+  AlreadyLoggedOutError,
+} from "../../errors";
+import { BaseService } from "../BaseService";
+
 
 export class Perspective {
   name: string;
@@ -40,8 +45,9 @@ export class Perspective {
   }
 }
 
-export class UsersService {
+export class UsersService extends BaseService {
   async getUsername(discordID: string): Promise<string> {
+    this.log("fetching username with discordID: " + discordID);
     let user = await User.findOne({ discordID: discordID });
 
     if (user && user.lastFMUsername) {
@@ -53,6 +59,7 @@ export class UsersService {
     discordID: string,
     lastFMUsername: string
   ): Promise<string> {
+    this.log(`setting user ${discordID} with username ${lastFMUsername}`);
     let user = await User.findOne({ discordID: discordID });
 
     if (user) {
@@ -70,6 +77,7 @@ export class UsersService {
   }
 
   async clearUsername(discordID: string): Promise<void> {
+    this.log(`clearing username for ${discordID}`)
     let user = await User.findOne({ discordID: discordID });
 
     if (user?.lastFMUsername) {

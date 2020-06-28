@@ -2,16 +2,18 @@ import { CommandManager } from "../../../lib/command/CommandManager";
 import { LastFMBaseParentCommand } from "../LastFMBaseCommand";
 import { Check } from "./Check";
 import { Info } from "./Info";
-import { Crowns } from "./Crowns";
-import { CheckAll } from "./CheckAll";
+import { List } from "./List";
+import { CheckMany } from "./CheckMultiple";
 
 export default class CrownsParentCommand extends LastFMBaseParentCommand {
-  // prefix = "crowns "
+  prefix = "crowns ";
+  default = () => new List();
+  canSkipPrefixFor = ["info", "check", "checkmany"];
 
   children = new CommandManager({
     check: () => new Check(),
     info: () => new Info(),
-    crowns: () => new Crowns(),
-    checkall: () => new CheckAll(),
+    list: () => new List(),
+    checkmany: () => new CheckMany(),
   });
 }

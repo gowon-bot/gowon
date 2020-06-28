@@ -2,10 +2,12 @@ import { CommandManager } from "./CommandManager";
 import { Command, NoCommand } from "./BaseCommand";
 import { Message } from "discord.js";
 import { BotMomentService } from "../../services/BotMomentService";
+import { Logger } from "../Logger";
 
 export class CommandHandler {
   botMomentService = BotMomentService.getInstance();
   commandManager = new CommandManager();
+  private logger = new Logger();
 
   constructor() {}
 
@@ -29,6 +31,8 @@ export class CommandHandler {
   private extractCommand(message: Message): Command {
     let command = this.extractCommandName(message);
 
+    this.logger.logCommandHandlerSearch(command);
+
     if (command) {
       return this.commandManager.find(command);
     } else return new NoCommand();
@@ -38,6 +42,8 @@ export class CommandHandler {
     if (message.content.startsWith(this.botMomentService.prefix)) {
       let command = this.extractCommand(message);
       let runAs = this.extractCommandName(message);
+
+      this.logger.logCommandHandle(command);
 
       await command.execute(message, runAs);
     }

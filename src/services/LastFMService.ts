@@ -24,12 +24,13 @@ import {
 import config from "../../config.json";
 import { ParsedTrack, parseLastFMTrackResponse } from "../helpers/lastFM";
 import { LastFMConnectionError, LastFMError } from "../errors";
+import { BaseService } from "./BaseService";
 
 interface Params {
   [key: string]: any;
 }
 
-export class LastFMService {
+export class LastFMService extends BaseService {
   url = "http://ws.audioscrobbler.com/2.0/";
 
   get apikey(): string {
@@ -45,6 +46,8 @@ export class LastFMService {
   }
 
   private async request<T>(method: string, params: Params): Promise<T> {
+    this.log(`made API request for ${method} with params ${JSON.stringify(params)}`);
+
     let qparams = this.buildParams({ method, ...params });
 
     let response = await fetch(this.url + "?" + qparams);

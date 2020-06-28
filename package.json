@@ -11,6 +11,7 @@
     "@types/node-fetch": "^2.5.7",
     "@types/validator": "^13.0.0",
     "@types/ws": "^7.2.5",
+    "chalk": "^4.1.0",
     "discord.js": "^12.2.0",
     "escape-string-regexp": "^4.0.0",
     "glob": "^7.1.6",

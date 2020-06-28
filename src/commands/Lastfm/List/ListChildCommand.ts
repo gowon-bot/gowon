@@ -5,6 +5,8 @@ import { BadAmountError } from "../../../errors";
 import { LastFMBaseChildCommand } from "../LastFMBaseCommand";
 
 export abstract class ListChildCommand extends LastFMBaseChildCommand {
+  parentName = "list"
+
   arguments: Arguments = {
     mentions: {
       user: {

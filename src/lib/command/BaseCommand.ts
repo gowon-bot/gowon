@@ -12,6 +12,7 @@ import { UnknownError } from "../../errors";
 import { BotMomentService } from "../../services/BotMomentService";
 import { Mention } from "../arguments/mentions";
 import { CommandManager } from "./CommandManager";
+import { Logger } from "../Logger";
 
 export interface Variation {
   variationString?: string;
@@ -32,10 +33,13 @@ export interface Command {
   category: string | undefined;
 
   children?: CommandManager;
+  parentName?: string;
   getChild(name: string): Command | undefined;
 }
 
 export abstract class BaseCommand implements Command {
+  protected logger = new Logger();
+
   name: string = this.constructor.name.toLowerCase();
   aliases: Array<string> = [];
   variations: Variation[] = [];
@@ -47,10 +51,11 @@ export abstract class BaseCommand implements Command {
 
   parsedArguments: ParsedArguments = {};
 
-  usersService = new UsersService();
+  usersService = new UsersService(this.logger);
   botMomentService = BotMomentService.getInstance();
 
   children?: CommandManager;
+  parentName?: string;
   getChild(name: string): Command | undefined {
     return undefined;
   }
@@ -97,21 +102,25 @@ export abstract class BaseCommand implements Command {
 
   async execute(message: Message, runAs?: string) {
     message.channel.startTyping();
+    this.logger.openCommandHeader(this)
+    
     try {
       this.parsedArguments = this.parseArguments(message, runAs || this.name);
+      this.logger.logCommand(this, message, runAs);
       await this.prerun(message);
       await this.run(message, runAs);
     } catch (e) {
+
+      this.logger.logError(e);
+
       if (e.isClientFacing) {
         await message.channel.send(e.message);
-        message.channel.stopTyping()
       } else {
-        message.channel.stopTyping();
         await message.channel.send(new UnknownError().message);
-        throw e;
       }
     }
     message.channel.stopTyping();
+    this.logger.closeCommandHeader(this)
   }
 
   hasAlias(alias: string): boolean {
