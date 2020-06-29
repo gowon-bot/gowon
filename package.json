@@ -31,7 +31,7 @@
     "rebuild": "yarn clean && yarn build",
     "clean": "rm -rf dist/",
     "build:watch": "tsc -w --project ./",
-    "run:watch": "nodemon dist/src/index.js",
+    "start:watch": "nodemon dist/src/index.js",
     "psql": "psql bot_moment"
   }
 }

@@ -6,8 +6,9 @@ import {
   OneToMany,
 } from "typeorm";
 import { Crown } from "./Crown";
+import { Message, User as DiscordUser } from "discord.js";
 
-@Entity()
+@Entity({ name: "users" })
 export class User extends BaseEntity {
   @PrimaryGeneratedColumn()
   id!: number;
@@ -20,4 +21,15 @@ export class User extends BaseEntity {
 
   @OneToMany((type) => Crown, (crown) => crown.user)
   crowns!: Crown[];
+
+  static async toDiscordUser(
+    message: Message,
+    discordID: string
+  ): Promise<DiscordUser | undefined> {
+    return (await message.guild?.members.fetch(discordID))?.user;
+  }
+
+  async toDiscordUser(message: Message): Promise<DiscordUser | undefined> {
+    return await User.toDiscordUser(message, this.discordID);
+  }
 }

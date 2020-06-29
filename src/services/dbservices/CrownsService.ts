@@ -3,6 +3,7 @@ import { User } from "../../database/entity/User";
 import { UserNotFoundError } from "../../errors";
 import { Message, User as DiscordUser } from "discord.js";
 import { BaseService } from "../BaseService";
+import { FindManyOptions } from "typeorm";
 
 export enum CrownState {
   tie = "Tie",
@@ -24,6 +25,17 @@ export interface CrownOptions {
   discordID: string;
   artistName: string;
   plays: number;
+}
+
+interface RawCrownHolder {
+  userId: number;
+  discordID: string;
+  count: string;
+}
+
+export interface CrownHolder {
+  user: DiscordUser;
+  numberOfCrowns: number;
 }
 
 export class CrownsService extends BaseService {
@@ -53,6 +65,7 @@ export class CrownsService extends BaseService {
     if (crown.plays < plays) {
       crown.user = user;
       crown.plays = plays;
+      crown.version++;
 
       await crown.save();
 
@@ -68,7 +81,7 @@ export class CrownsService extends BaseService {
     this.log(`Checking crown for user ${discordID} and artist ${artistName}`);
 
     let [crown, user] = await Promise.all([
-      Crown.getCrown(serverID, artistName),
+      this.getCrown(artistName, serverID),
       User.findOne({ where: { discordID } }),
     ]);
 
@@ -87,8 +100,8 @@ export class CrownsService extends BaseService {
 
       return { crown: crown, state: crownState, oldCrown };
     } else {
-      this.log("Creating crown for " + artistName);
       if (plays < this.threshold) return { state: CrownState.tooLow };
+      this.log("Creating crown for " + artistName + " in server " + serverID);
 
       let crown = Crown.create({
         user,
@@ -108,44 +121,113 @@ export class CrownsService extends BaseService {
     }
   }
 
-  async getCrown(artistName: string): Promise<Crown | undefined> {
+  async getCrown(
+    artistName: string,
+    serverID: string
+  ): Promise<Crown | undefined> {
     this.log("Fetching crown for " + artistName);
-    return await Crown.findOne({ where: { artistName } });
+    return await Crown.findOne({ where: { artistName, serverID } });
   }
 
   async getCrownDisplay(
     artistName: string,
     message: Message
   ): Promise<{ crown: Crown; user?: DiscordUser } | undefined> {
-    let crown = await this.getCrown(artistName);
+    let crown = await this.getCrown(artistName, message.guild?.id!);
 
     if (!crown) return;
 
-    let user = (await message.guild?.members.fetch(crown?.user.discordID))
-      ?.user;
+    let user = await crown.user.toDiscordUser(message);
 
     return { crown, user };
   }
 
-  async listTopCrowns(discordID: string, limit = 10): Promise<Crown[]> {
-    this.log("Listing crowns for user " + discordID);
+  async listTopCrowns(
+    discordID: string,
+    serverID: string,
+    limit = 10
+  ): Promise<Crown[]> {
+    this.log("Listing crowns for user " + discordID + " in server " + serverID);
     let user = await User.findOne({ where: { discordID } });
 
     if (!user) throw new UserNotFoundError();
 
+    let options: FindManyOptions = {
+      where: { user, serverID },
+      order: { plays: "DESC" },
+    };
+
+    if (limit > 0) options.take = limit;
+
+    return await Crown.find(options);
+  }
+
+  async listTopCrownsInServer(serverID: string, limit = 10): Promise<Crown[]> {
+    this.log("Listing crowns in server " + serverID);
+
     return await Crown.find({
-      where: { user },
+      where: { serverID },
       order: { plays: "DESC" },
       take: limit,
     });
   }
 
-  async count(discordID: string): Promise<number> {
-    this.log("Counting crowns for user " + discordID);
+  async count(discordID: string, serverID: string): Promise<number> {
+    this.log(
+      "Counting crowns for user " + discordID + " in server " + serverID
+    );
     let user = await User.findOne({ where: { discordID } });
 
     if (!user) throw new UserNotFoundError();
 
-    return await Crown.count({ where: { user } });
+    return await Crown.count({ where: { user, serverID } });
+  }
+
+  async countAllInServer(serverID: string): Promise<number> {
+    this.log("Counting crowns for server " + serverID);
+
+    return await Crown.count({ where: { serverID } });
+  }
+
+  async listContentiousCrownsInServer(
+    serverID: string,
+    limit = 10
+  ): Promise<Crown[]> {
+    this.log("Listing contentious crowns in server " + serverID);
+
+    return await Crown.find({
+      where: { serverID },
+      order: { version: "DESC" },
+      take: limit,
+    });
+  }
+
+  async topCrownHolders(
+    serverID: string,
+    message: Message,
+    limit = 10
+  ): Promise<CrownHolder[]> {
+    this.log("Listing top crown holders in server " + serverID);
+    let users = (await Crown.query(
+      `select
+        count(*) as count,
+        "userId",
+        "discordID"
+      from crown c
+      left join users u
+        on u.id = "userId"
+      where "serverID" like $1
+      group by "userId", "discordID"
+      order by count desc
+      limit $2`,
+      [serverID, limit]
+    )) as RawCrownHolder[];
+
+    return await Promise.all(
+      users.map(async (rch) => ({
+        user: (await User.toDiscordUser(message, rch.discordID))!,
+        numberOfCrowns: parseInt(rch.count, 10),
+      }))
+    );
   }
 }

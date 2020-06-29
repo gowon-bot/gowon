@@ -28,3 +28,13 @@ export function ago(date: Date): string {
 export function ucFirst(string: string): string {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
+
+export function chunkArray(
+  array: Array<any>,
+  chunkSize: number
+): Array<Array<any>> {
+  return Array(Math.ceil(array.length / chunkSize))
+    .fill(0)
+    .map((_, index) => index * chunkSize)
+    .map((begin) => array.slice(begin, begin + chunkSize));
+}

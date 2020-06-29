@@ -100,17 +100,25 @@ export abstract class BaseCommand implements Command {
 
   async prerun(message: Message): Promise<void> {}
 
-  async execute(message: Message, runAs?: string) {
+  private async setup(message: Message) {
     message.channel.startTyping();
-    this.logger.openCommandHeader(this)
-    
+    this.logger.openCommandHeader(this);
+  }
+
+  private async teardown(message: Message) {
+    message.channel.stopTyping();
+    this.logger.closeCommandHeader(this);
+  }
+
+  async execute(message: Message, runAs?: string) {
+    await this.setup(message);
+
     try {
       this.parsedArguments = this.parseArguments(message, runAs || this.name);
       this.logger.logCommand(this, message, runAs);
       await this.prerun(message);
       await this.run(message, runAs);
     } catch (e) {
-
       this.logger.logError(e);
 
       if (e.isClientFacing) {
@@ -119,8 +127,8 @@ export abstract class BaseCommand implements Command {
         await message.channel.send(new UnknownError().message);
       }
     }
-    message.channel.stopTyping();
-    this.logger.closeCommandHeader(this)
+
+    await this.teardown(message);
   }
 
   hasAlias(alias: string): boolean {

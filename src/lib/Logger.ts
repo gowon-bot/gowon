@@ -21,6 +21,10 @@ export class Logger {
 
   header = "";
 
+  log(context: string, msg?: any): void {
+    Logger.log(context, msg, this);
+  }
+
   logCommandHandlerSearch(commandName: string): void {
     Logger.log(
       "CommandHandler",

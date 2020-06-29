@@ -6,14 +6,6 @@ import { ArtistInfo } from "../../services/LastFMService.types";
 export class CrownEmbeds {
   private constructor() {}
 
-  static async getUsernameOfGuildMember(
-    message: Message,
-    discordID: string
-  ): Promise<string> {
-    let crownHolder = await message.guild?.members.fetch(discordID)!;
-    return crownHolder.user.username;
-  }
-
   static newCrown(crownCheck: CrownCheck, user: DiscordUser): MessageEmbed {
     return new MessageEmbed()
       .setTitle(`Crown for ${crownCheck.crown!.artistName}`)
@@ -47,10 +39,7 @@ export class CrownEmbeds {
     user: User,
     message: Message
   ): Promise<MessageEmbed> {
-    let holderUsername = await this.getUsernameOfGuildMember(
-      message,
-      crownCheck.oldCrown!.user.discordID
-    );
+    let holderUsername = await crownCheck.crown?.user!.toDiscordUser(message);
 
     return new MessageEmbed()
       .setTitle(`Crown for ${crownCheck.crown!.artistName}`)
@@ -81,10 +70,8 @@ export class CrownEmbeds {
     message: Message,
     user: User
   ): Promise<MessageEmbed> {
-    let holderUsername = await this.getUsernameOfGuildMember(
-      message,
-      crownCheck.oldCrown!.user.discordID
-    );
+    let holderUsername = await crownCheck.crown?.user!.toDiscordUser(message);
+
     let difference =
       crownCheck.crown!.plays - parseInt(artistDetails.stats.userplaycount, 10);
 
@@ -131,10 +118,7 @@ You must have at least ${numberDisplay(threshold, "play")} to create a crown.
     message: Message,
     user: User
   ): Promise<MessageEmbed> {
-    let holderUsername = await this.getUsernameOfGuildMember(
-      message,
-      crownCheck.oldCrown!.user.discordID
-    );
+    let holderUsername = await crownCheck.crown?.user!.toDiscordUser(message);
 
     return new MessageEmbed()
       .setTitle(`Crown for ${crownCheck.crown!.artistName}`)
