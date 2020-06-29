@@ -13,7 +13,7 @@ export class DM extends CrownsChildCommand {
   };
 
   async run(message: Message) {
-    const crownsPerMessage = 20;
+    const crownsPerMessage = 40;
 
     let user = this.parsedArguments.user as User;
 
@@ -28,6 +28,8 @@ export class DM extends CrownsChildCommand {
       this.crownsService.listTopCrowns(discordID, message.guild?.id!, -1),
       this.crownsService.count(discordID, message.guild?.id!),
     ]);
+
+    message.reply(`sending you a list of ${perspective.possessive} crowns...`);
 
     let chunks = chunkArray(crowns, crownsPerMessage);
 
