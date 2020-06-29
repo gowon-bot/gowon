@@ -6,16 +6,18 @@ import {
 } from "../../errors";
 import { LastFMService } from "../LastFMService";
 import { Track } from "../LastFMService.types";
+import { BaseService } from "../BaseService";
 
 export interface FriendNowPlaying {
   friendUsername: string;
   nowPlaying: Track;
 }
 
-export class FriendsService {
+export class FriendsService extends BaseService {
   lastFMService = new LastFMService();
 
   async addFriend(userID: string, friendUsername: string): Promise<Friend> {
+    this.log(`Adding friend ${friendUsername} for user ${userID}`);
     let friend = await Friend.findOne({ userID, friendUsername });
 
     if (friend) throw new AlreadyFriendsError();
@@ -29,6 +31,7 @@ export class FriendsService {
   }
 
   async removeFriend(userID: string, friendUsername: string): Promise<void> {
+    this.log(`Removing friend ${friendUsername} for user ${userID}`);
     let friend = await Friend.findOne({ userID, friendUsername });
 
     if (!friend) throw new NotFriendsError();
@@ -37,10 +40,12 @@ export class FriendsService {
   }
 
   async listFriends(userID: string): Promise<Friend[]> {
+    this.log(`Listing friends for user ${userID}`);
     return await Friend.find({ userID });
   }
 
   async friendsNowPlaying(friends: Friend[]): Promise<FriendNowPlaying[]> {
+    this.log(`Fetching nowPlaying for friends ${friends.join(", ")}`);
     let nowPlayingArray = await Promise.all(
       friends.map((f) => this.lastFMService.recentTracks(f.friendUsername, 1))
     );

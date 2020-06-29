@@ -22,8 +22,8 @@ export default class ArtistAt extends LastFMBaseCommand {
   async run(message: Message) {
     let rank = parseInt(this.parsedArguments.rank as string, 10);
 
-    if (isNaN(rank) || rank < 0 || rank > 1000) {
-      await message.reply("please enter a valid rank (1-1000)");
+    if (isNaN(rank) || rank < 0) {
+      await message.reply("please enter a valid rank");
       return;
     }
 

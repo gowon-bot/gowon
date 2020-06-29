@@ -11,6 +11,7 @@
     "@types/node-fetch": "^2.5.7",
     "@types/validator": "^13.0.0",
     "@types/ws": "^7.2.5",
+    "chalk": "^4.1.0",
     "discord.js": "^12.2.0",
     "escape-string-regexp": "^4.0.0",
     "glob": "^7.1.6",
@@ -30,7 +31,7 @@
     "rebuild": "yarn clean && yarn build",
     "clean": "rm -rf dist/",
     "build:watch": "tsc -w --project ./",
-    "run:watch": "nodemon dist/src/index.js",
+    "start:watch": "nodemon dist/src/index.js",
     "psql": "psql bot_moment"
   }
 }

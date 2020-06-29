@@ -3,7 +3,7 @@ import { LastFMService } from "../../services/LastFMService";
 import { ParentCommand, ChildCommand } from "../../lib/command/ParentCommand";
 
 export abstract class LastFMBaseCommand extends BaseCommand {
-  lastFMService = new LastFMService();
+  lastFMService = new LastFMService(this.logger);
   category = "lastfm";
 
   // Non Discord Mention Parsing
@@ -13,7 +13,6 @@ export abstract class LastFMBaseCommand extends BaseCommand {
 }
 
 export abstract class LastFMBaseParentCommand extends ParentCommand {
-  lastFMService = new LastFMService();
   category = "lastfm";
 
   // Non Discord Mention Parsing
@@ -23,7 +22,7 @@ export abstract class LastFMBaseParentCommand extends ParentCommand {
 }
 
 export abstract class LastFMBaseChildCommand extends ChildCommand {
-  lastFMService = new LastFMService();
+  lastFMService = new LastFMService(this.logger);
   category = "lastfm";
 
   // Non Discord Mention Parsing

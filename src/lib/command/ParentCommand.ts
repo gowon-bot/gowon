@@ -1,28 +1,54 @@
 import { BaseCommand, Command, NoCommand } from "./BaseCommand";
-import escapeStringRegexp from "escape-string-regexp";
 import { CommandManager } from "./CommandManager";
+import { Message } from "discord.js";
 
 export abstract class ParentCommand extends BaseCommand {
   abstract children: CommandManager;
-  default?: Command;
+  default?: () => Command;
   prefix: string = "";
+  canSkipPrefixFor: Array<string> = [];
 
-  getChild(name: string): Command | undefined {
-    let adjustedName = name;
-    if (name.startsWith(this.prefix)) {
-      adjustedName = name.replace(
-        new RegExp(escapeStringRegexp(this.prefix)),
-        ""
-      );
+  private skippedPrefix: boolean = false;
+
+  getChild(alias: string): Command {
+    return this.children.find(alias);
+  }
+
+  async execute(message: Message, runAs: string) {
+    let alias = this.skippedPrefix
+      ? runAs
+      : this.botMomentService
+          .removeCommandName(message.content, this.prefix)
+          .split(/\s+/)[0];
+
+    let child = this.getChild(alias);
+
+    let newRunAs = this.skippedPrefix ? alias : this.prefix + alias
+
+    if (!(child instanceof NoCommand)) {
+      await child.execute(message, newRunAs);
+    } else if (this.default) {
+      await this.default().execute(message, this.prefix.trim());
     }
-    let child = this.children.find(adjustedName);
-
-    return child instanceof NoCommand ? undefined : child
   }
 
   async run() {}
+
+  hasAlias(alias: string): boolean {
+    let child = this.children.find(alias);
+
+    if (!this.prefix) return !(child instanceof NoCommand);
+    else if (
+      this.canSkipPrefixFor.length &&
+      this.canSkipPrefixFor.includes(child.name.toLowerCase())
+    ) {
+      this.skippedPrefix = true;
+      return true;
+    } else return this.prefix.trim().toLowerCase() === alias;
+  }
 }
 
 export abstract class ChildCommand extends BaseCommand {
   shouldBeIndexed = false;
+  abstract parentName: string;
 }
