@@ -60,9 +60,9 @@ export default class AlbumRank extends LastFMBaseCommand {
       await message.reply(
         `**${topAlbums.album[rank].name}** by ${
           topAlbums.album[rank].artist.name
-        } is ranked **#${rank + 1}** in ${
-          perspective.possessive
-        } top 1,000 albums with ${topAlbums.album[rank].playcount} plays`
+        } is ranked **#${rank + 1}** with ${
+          topAlbums.album[rank].playcount
+        } plays`
       );
     }
   }

@@ -60,9 +60,7 @@ export default class TrackRank extends LastFMBaseCommand {
       await message.reply(
         `**${topTracks.track[rank].name}** by ${
           topTracks.track[rank].artist.name
-        } is ranked **#${rank + 1}** in ${
-          perspective.possessive
-        } top 1,000 tracks with ${topTracks.track[rank].playcount} plays`
+        } is ranked **#${rank + 1}** with ${topTracks.track[rank].playcount} plays`
       );
     }
   }
