@@ -87,7 +87,7 @@ export class ArgumentParser extends Parser {
         filter(this.arguments.inputs![arg])
       );
 
-      return argArray.reduce((acc: ParsedArguments, arg, idx) => {
+      return argArray.reduce((acc: ParsedArguments, arg) => {
         let argOptions = this.arguments.inputs![arg];
         let array = splitFunction(messageString, argOptions);
 

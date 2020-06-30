@@ -17,7 +17,7 @@ export class Crown extends BaseEntity {
   @Column()
   serverID!: string;
 
-  @ManyToOne((type) => User, (user) => user.crowns, { eager: true })
+  @ManyToOne((_) => User, (user) => user.crowns, { eager: true })
   user!: User;
 
   @Column()

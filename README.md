@@ -49,7 +49,7 @@ Ensure you have Postgres and Typescript installed, and a database called `bot_mo
 ```sh
 yarn build:watch
 # and in another tab
-yarn run:watch
+yarn start:watch
 ```
 
 ## Logging

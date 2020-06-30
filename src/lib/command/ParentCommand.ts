@@ -5,7 +5,7 @@ import { Message } from "discord.js";
 export abstract class ParentCommand extends BaseCommand {
   abstract children: CommandManager;
   default?: () => Command;
-  prefix: string = "";
+  prefixes: string | Array<string> = "";
   canSkipPrefixFor: Array<string> = [];
 
   private skippedPrefix: boolean = false;
@@ -14,21 +14,32 @@ export abstract class ParentCommand extends BaseCommand {
     return this.children.find(alias);
   }
 
+  getPrefix(prefix: string): string | undefined {
+    return typeof this.prefixes === "string"
+      ? this.prefixes
+      : this.prefixes.find(
+          (p) => p.trim().toLowerCase() === prefix.trim().toLowerCase()
+        );
+  }
+
   async execute(message: Message, runAs: string) {
     let alias = this.skippedPrefix
       ? runAs
       : this.botMomentService
-          .removeCommandName(message.content, this.prefix)
+          .removeCommandName(message.content, runAs)
+          .trim()
           .split(/\s+/)[0];
 
     let child = this.getChild(alias);
 
-    let newRunAs = this.skippedPrefix ? alias : this.prefix + alias
+    let newRunAs = this.skippedPrefix ? alias : this.getPrefix(runAs) + alias;
+
+    console.log("newRunAs", newRunAs);
 
     if (!(child instanceof NoCommand)) {
       await child.execute(message, newRunAs);
     } else if (this.default) {
-      await this.default().execute(message, this.prefix.trim());
+      await this.default().execute(message, runAs.trim());
     }
   }
 
@@ -37,14 +48,18 @@ export abstract class ParentCommand extends BaseCommand {
   hasAlias(alias: string): boolean {
     let child = this.children.find(alias);
 
-    if (!this.prefix) return !(child instanceof NoCommand);
+    if (!this.prefixes) return !(child instanceof NoCommand);
     else if (
       this.canSkipPrefixFor.length &&
       this.canSkipPrefixFor.includes(child.name.toLowerCase())
     ) {
       this.skippedPrefix = true;
       return true;
-    } else return this.prefix.trim().toLowerCase() === alias;
+    } else {
+      return typeof this.prefixes === "string"
+        ? this.prefixes.trim().toLowerCase() === alias
+        : this.prefixes.map((p) => p.trim().toLowerCase()).includes(alias);
+    }
   }
 }
 

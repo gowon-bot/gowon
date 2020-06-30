@@ -15,7 +15,7 @@ export class List extends CrownsChildCommand {
   async run(message: Message) {
     let user = this.parsedArguments.user as User;
 
-    let discordID = user.id || message.author.id;
+    let discordID = user?.id || message.author.id;
 
     let perspective = this.usersService.discordPerspective(
       message.author,

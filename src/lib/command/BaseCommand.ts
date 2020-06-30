@@ -56,7 +56,7 @@ export abstract class BaseCommand implements Command {
 
   children?: CommandManager;
   parentName?: string;
-  getChild(name: string): Command | undefined {
+  getChild(_: string): Command | undefined {
     return undefined;
   }
 
@@ -98,7 +98,7 @@ export abstract class BaseCommand implements Command {
     return { senderUsername, mentionedUsername, username, perspective };
   }
 
-  async prerun(message: Message): Promise<void> {}
+  async prerun(_: Message): Promise<void> {}
 
   private async setup(message: Message) {
     message.channel.startTyping();

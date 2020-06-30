@@ -34,7 +34,7 @@ export abstract class ListChildCommand extends LastFMBaseChildCommand {
   humanReadableTimePeriod!: string;
   listAmount!: number;
 
-  async prerun(message: Message): Promise<void> {
+  async prerun(_: Message): Promise<void> {
     this.timePeriod = this.parsedArguments.timePeriod as string;
     this.humanReadableTimePeriod = this.parsedArguments
       .humanReadableTimePeriod as string;

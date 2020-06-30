@@ -19,7 +19,7 @@ export class User extends BaseEntity {
   @Column()
   lastFMUsername!: string;
 
-  @OneToMany((type) => Crown, (crown) => crown.user)
+  @OneToMany((_) => Crown, (crown) => crown.user)
   crowns!: Crown[];
 
   static async toDiscordUser(
