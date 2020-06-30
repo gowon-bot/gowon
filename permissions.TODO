@@ -1,0 +1,6 @@
+- Fix whitelist bug
+- Add logging
+- Add dewhitelist and deblacklist commands (and maybe refactor to whitelist add/remove and blacklist add/remove)
+- Make it possible to set permissions without mentioning the role/user
+- Make it possible to set permissions for a group of commands
+- Make it possible to set permissions for multiple commands at once

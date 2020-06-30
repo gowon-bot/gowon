@@ -49,7 +49,6 @@ export default class RegexTrackSearch extends LastFMBaseCommand {
 
       let tracks = topTracks.track
         .filter((t) => parsedRegex!.test(t.name))
-        .slice(0, 10);
 
       if (tracks.length) {
         let embed = new MessageEmbed()

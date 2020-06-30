@@ -3,9 +3,14 @@ import { Command, NoCommand } from "./BaseCommand";
 import { Message } from "discord.js";
 import { BotMomentService } from "../../services/BotMomentService";
 import { Logger } from "../Logger";
+import {
+  AdminService,
+  CheckFailReason,
+} from "../../services/dbservices/AdminService";
 
 export class CommandHandler {
   botMomentService = BotMomentService.getInstance();
+  adminService = new AdminService();
   commandManager = new CommandManager();
   private logger = new Logger();
 
@@ -43,6 +48,18 @@ export class CommandHandler {
       let command = this.extractCommand(message);
       let runAs = this.extractCommandName(message);
 
+      let canCheck = await this.adminService.can.run(command.name, message);
+
+      if (!canCheck.passed) {
+        Logger.log(
+          "CommandHandler",
+          canCheck.reason === CheckFailReason.disabled
+            ? `Attempt to run disabled command ${command.name}`
+            : `User ${message.author.username} did not have permissions to run command ${command.name}`
+        );
+
+        return;
+      }
       this.logger.logCommandHandle(command);
 
       await command.execute(message, runAs);

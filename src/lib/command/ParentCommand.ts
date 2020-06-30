@@ -34,8 +34,6 @@ export abstract class ParentCommand extends BaseCommand {
 
     let newRunAs = this.skippedPrefix ? alias : this.getPrefix(runAs) + alias;
 
-    console.log("newRunAs", newRunAs);
-
     if (!(child instanceof NoCommand)) {
       await child.execute(message, newRunAs);
     } else if (this.default) {
