@@ -3,10 +3,8 @@ import { Command, NoCommand } from "./BaseCommand";
 import { Message } from "discord.js";
 import { BotMomentService } from "../../services/BotMomentService";
 import { Logger } from "../Logger";
-import {
-  AdminService,
-  CheckFailReason,
-} from "../../services/dbservices/AdminService";
+import { AdminService } from "../../services/dbservices/AdminService";
+import { CheckFailReason } from "../permissions/Can";
 
 export class CommandHandler {
   botMomentService = BotMomentService.getInstance();

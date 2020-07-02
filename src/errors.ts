@@ -93,14 +93,6 @@ export class BadAmountError extends ClientError {
   }
 }
 
-export class UserNotFoundError extends ClientError {
-  name = "UserNotFoundError";
-
-  constructor() {
-    super("That user was not found!");
-  }
-}
-
 export class CommandAlreadyDisabledError extends ClientError {
   name = "CommandAlreadyDisabled";
 
@@ -154,5 +146,13 @@ export class LogicError extends ClientError {
 
   constructor(msg: string) {
     super(msg);
+  }
+}
+
+export class RecordNotFoundError extends ClientError {
+  name = "RecordNotFoundError";
+
+  constructor(recordName: string) {
+    super(`That ${recordName} wasn't found!`);
   }
 }

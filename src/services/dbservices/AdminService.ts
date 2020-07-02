@@ -4,81 +4,10 @@ import {
   CommandNotDisabledError,
   CommandAlreadyDisabledError,
   MismatchedPermissionsError,
+  RecordNotFoundError,
 } from "../../errors";
-import { Message, GuildMember } from "discord.js";
 import { Permission } from "../../database/entity/Permission";
-
-export enum CheckFailReason {
-  disabled = "disabled",
-  forbidden = "forbidden",
-}
-
-export interface CanCheck {
-  passed: boolean;
-  reason?: CheckFailReason;
-}
-
-class Can {
-  adminService: AdminService;
-
-  constructor(adminService: AdminService) {
-    this.adminService = adminService;
-  }
-
-  private hasPermission(user: GuildMember, permission: Permission): boolean {
-    return permission.isRoleBased
-      ? permission.isBlacklist
-        ? !user.roles.cache.has(permission.entityID)
-        : user.roles.cache.has(permission.entityID)
-      : permission.isBlacklist
-      ? user.user.id === permission.id.toString()
-      : user.user.id !== permission.id.toString();
-  }
-
-  private userHasPermissions(
-    user: GuildMember,
-    permissions: Permission[]
-  ): boolean {
-    if (!permissions.length) return true;
-
-    if (permissions[0].isBlacklist) {
-      for (let permission of permissions)
-        if (!this.hasPermission(user, permission)) return false;
-
-      return true;
-    } else {
-      for (let permission of permissions)
-        if (this.hasPermission(user, permission)) return true;
-
-      return false;
-    }
-  }
-
-  async run(commandName: string, message: Message): Promise<CanCheck> {
-    if (message.member?.hasPermission("ADMINISTRATOR")) return { passed: true };
-
-    let permissions = await Permission.find({
-      where: { serverID: message.guild?.id, commandName },
-    });
-
-    let notDisabled = !(await this.adminService.isCommandDisabled(
-      commandName,
-      message.guild?.id!
-    ));
-
-    let hasPermission = this.userHasPermissions(message.member!, permissions);
-
-    return {
-      passed: notDisabled && hasPermission,
-      reason:
-        notDisabled && hasPermission
-          ? undefined
-          : notDisabled
-          ? CheckFailReason.forbidden
-          : CheckFailReason.disabled,
-    };
-  }
-}
+import { Can } from "../../lib/permissions/Can";
 
 export class AdminService extends BaseService {
   get can(): Can {
@@ -193,5 +122,21 @@ export class AdminService extends BaseService {
       false,
       isRoleBased
     );
+  }
+
+  async delist(
+    entityID: string,
+    serverID: string,
+    commandName: string
+  ): Promise<Permission> {
+    let permission = await Permission.findOne({
+      where: { entityID, serverID, commandName },
+    });
+
+    if (!permission) throw new RecordNotFoundError("permission");
+
+    await permission.remove();
+
+    return permission;
   }
 }

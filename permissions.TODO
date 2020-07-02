@@ -4,3 +4,5 @@
 - Make it possible to set permissions without mentioning the role/user
 - Make it possible to set permissions for a group of commands
 - Make it possible to set permissions for multiple commands at once
+
+- !s n s d

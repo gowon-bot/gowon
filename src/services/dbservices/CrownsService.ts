@@ -1,6 +1,6 @@
 import { Crown } from "../../database/entity/Crown";
 import { User } from "../../database/entity/User";
-import { UserNotFoundError } from "../../errors";
+import { RecordNotFoundError } from "../../errors";
 import { Message, User as DiscordUser } from "discord.js";
 import { BaseService } from "../BaseService";
 import { FindManyOptions } from "typeorm";
@@ -87,7 +87,7 @@ export class CrownsService extends BaseService {
 
     let oldCrown = Object.assign({}, crown);
 
-    if (!user) throw new UserNotFoundError();
+    if (!user) throw new RecordNotFoundError("user");
 
     let crownState: CrownState;
 
@@ -150,7 +150,7 @@ export class CrownsService extends BaseService {
     this.log("Listing crowns for user " + discordID + " in server " + serverID);
     let user = await User.findOne({ where: { discordID } });
 
-    if (!user) throw new UserNotFoundError();
+    if (!user) throw new RecordNotFoundError("user");
 
     let options: FindManyOptions = {
       where: { user, serverID },
@@ -178,7 +178,7 @@ export class CrownsService extends BaseService {
     );
     let user = await User.findOne({ where: { discordID } });
 
-    if (!user) throw new UserNotFoundError();
+    if (!user) throw new RecordNotFoundError("user");
 
     return await Crown.count({ where: { user, serverID } });
   }
