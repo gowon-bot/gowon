@@ -8,6 +8,7 @@ import {
 } from "../../errors";
 import { Permission } from "../../database/entity/Permission";
 import { Can } from "../../lib/permissions/Can";
+import { Logger } from "../../lib/Logger";
 
 export class AdminService extends BaseService {
   get can(): Can {
@@ -71,12 +72,14 @@ export class AdminService extends BaseService {
     isRoleBased: boolean
   ): Promise<Permission> {
     let permissions = await Permission.find({
-      where: { serverID, entityID, commandName },
+      where: { serverID, commandName },
+      take: 1,
     });
 
+    Logger.log("preexisting permission", Logger.formatObject(permissions));
+
     let permissionsMismatched =
-      isBlacklist !==
-      (permissions[0] ? permissions[0].isBlacklist : isBlacklist);
+      isBlacklist !== (permissions[0]?.isBlacklist ?? isBlacklist);
 
     if (permissionsMismatched)
       throw new MismatchedPermissionsError(permissions[0].isBlacklist);
@@ -124,6 +127,22 @@ export class AdminService extends BaseService {
     );
   }
 
+  async whiteOrBlacklist(
+    entityID: string,
+    serverID: string,
+    commandName: string,
+    isRoleBased: boolean,
+    isBlacklist: boolean
+  ): Promise<Permission> {
+    return await this.setPermissions(
+      entityID,
+      serverID,
+      commandName,
+      isBlacklist,
+      isRoleBased
+    );
+  }
+
   async delist(
     entityID: string,
     serverID: string,
@@ -138,5 +157,23 @@ export class AdminService extends BaseService {
     await permission.remove();
 
     return permission;
+  }
+
+  async listPermissions(serverID: string): Promise<Permission[]> {
+    return await Permission.find({ where: { serverID } });
+  }
+
+  async listPermissionsForCommand(
+    serverID: string,
+    commandName: string
+  ): Promise<Permission[]> {
+    return await Permission.find({ where: { serverID, commandName } });
+  }
+
+  async listPermissionsForEntity(
+    serverID: string,
+    entityID: string
+  ): Promise<Permission[]> {
+    return await Permission.find({ where: { serverID, entityID } });
   }
 }

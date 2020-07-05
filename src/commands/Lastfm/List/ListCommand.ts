@@ -2,10 +2,10 @@ import { Arguments } from "../../../lib/arguments/arguments";
 import { generatePeriod, generateHumanPeriod } from "../../../helpers/date";
 import { Message } from "discord.js";
 import { BadAmountError } from "../../../errors";
-import { LastFMBaseChildCommand } from "../LastFMBaseCommand";
+import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
-export abstract class ListChildCommand extends LastFMBaseChildCommand {
-  parentName = "list"
+export abstract class ListCommand extends LastFMBaseCommand {
+  shouldBeIndexed = false
 
   arguments: Arguments = {
     mentions: {

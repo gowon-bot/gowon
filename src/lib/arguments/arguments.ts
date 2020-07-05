@@ -2,6 +2,7 @@ import { Message } from "discord.js";
 import { BotMomentService } from "../../services/BotMomentService";
 import { MentionParser, MentionOptions } from "./mentions";
 import { Parser } from "./parser";
+import { RunAs } from "../AliasChecker";
 
 export interface Slice {
   start: number;
@@ -47,7 +48,7 @@ export class ArgumentParser extends Parser {
     this.arguments = args;
   }
 
-  parse(message: Message, runAs: string): ParsedArguments {
+  parse(message: Message, runAs: RunAs): ParsedArguments {
     let messageString = this.removeAllMentions(message.content).trim();
 
     let mentions = this.mentionParser.parse(message);

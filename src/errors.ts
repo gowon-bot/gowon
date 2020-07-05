@@ -122,9 +122,9 @@ export class MismatchedPermissionsError extends ClientError {
 
   constructor(isBlacklist: boolean) {
     super(
-      `Permissions for that command are ${
+      `Permissions for that command are **${
         isBlacklist ? "blacklist" : "whitelist"
-      }-based. You cannot mix white and blacklists`
+      }-based**. You cannot mix white and blacklists.`
     );
   }
 }

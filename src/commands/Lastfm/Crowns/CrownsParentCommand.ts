@@ -14,7 +14,7 @@ export default class CrownsParentCommand extends LastFMBaseParentCommand {
   default = () => new List();
   canSkipPrefixFor = ["info", "check", "checkmany"];
 
-  children = new CommandManager({
+  children: CommandManager = new CommandManager({
     check: () => new Check(),
     info: () => new Info(),
     list: () => new List(),

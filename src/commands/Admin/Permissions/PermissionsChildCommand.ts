@@ -11,6 +11,8 @@ export abstract class PermissionsChildCommand extends AdminBaseChildCommand {
   command!: Command;
   alias!: string;
 
+  throwOnNoCommand = true
+
   arguments: Arguments = {
     inputs: {
       command: { index: 0 },
@@ -22,8 +24,8 @@ export abstract class PermissionsChildCommand extends AdminBaseChildCommand {
 
     this.alias = this.parsedArguments.command as string;
 
-    this.command = this.commandManager.find(this.alias);
+    this.command = this.commandManager.find(this.alias).command;
 
-    if (this.command instanceof NoCommand) throw new CommandNotFoundError();
+    if (this.command instanceof NoCommand && this.throwOnNoCommand) throw new CommandNotFoundError();
   }
 }

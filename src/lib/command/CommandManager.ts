@@ -1,6 +1,7 @@
 import { Command, NoCommand } from "./BaseCommand";
 import { promisify } from "util";
 import _glob from "glob";
+import { AliasChecker, RunAs } from "../AliasChecker";
 const glob = promisify(_glob);
 
 interface Commands {
@@ -40,19 +41,19 @@ export class CommandManager {
     this.commands = await generateCommands();
   }
 
-  find(commandName: string): Command {
-    if (Object.keys(this.commands).includes(commandName.toLowerCase())) {
-      return this.commands[commandName.toLowerCase()]();
-    } else {
-      for (let commandKey of Object.keys(this.commands)) {
-        let command = this.commands[commandKey.toLowerCase()]();
+  find(messageString: string): { command: Command; runAs: RunAs } {
+    let checker = new AliasChecker(messageString);
 
-        if (command.hasAlias(commandName)) {
-          return command;
-        }
+    for (let command of this.list(true)) {
+      if (checker.check(command)) {
+        let runAs = checker.getRunAs(command);
+        return {
+          command: runAs.last()?.command!,
+          runAs,
+        };
       }
     }
-    return new NoCommand();
+    return { command: new NoCommand(), runAs: new RunAs() };
   }
 
   list(showSecret: boolean = false): Command[] {
@@ -60,7 +61,7 @@ export class CommandManager {
 
     let commandsList = commandGetterList
       .map((c) => c())
-      .filter((c) => c.shouldBeIndexed);
+      .filter((c) => (c.parentName ? true : c.shouldBeIndexed));
 
     return showSecret
       ? commandsList

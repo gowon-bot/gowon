@@ -4,6 +4,7 @@ import { Blacklist } from "./Blacklist";
 import { Help } from "./Help";
 import { Whitelist } from "./Whitelist";
 import { Delist } from "./Delist";
+import { View } from "./View";
 
 export default class PermissionsParentCommand extends AdminBaseParentCommand {
   prefixes = ["permissions ", "perms "];
@@ -13,5 +14,6 @@ export default class PermissionsParentCommand extends AdminBaseParentCommand {
     whitelist: () => new Whitelist(),
     help: () => new Help(),
     delist: () => new Delist(),
+    list: () => new View(),
   });
 }

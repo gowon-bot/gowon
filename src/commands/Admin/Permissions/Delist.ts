@@ -1,6 +1,7 @@
 import { PermissionsChildCommand } from "./PermissionsChildCommand";
 import { Message, MessageEmbed } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
+import { addNamesToPermissions } from "../../../helpers/discord";
 
 export class Delist extends PermissionsChildCommand {
   description = "Remove a user/role from a white/blacklist";
@@ -16,12 +17,15 @@ export class Delist extends PermissionsChildCommand {
   async run(message: Message) {
     let { users: userMentions, roles: roleMentions } = message.mentions;
 
-    let delisted = await Promise.all(
-      [...userMentions.array(), ...roleMentions.array()].map((mention) =>
-        this.adminService.delist(
-          mention.id,
-          message.guild?.id!,
-          this.command.name
+    let delisted = await addNamesToPermissions(
+      message,
+      await Promise.all(
+        [...userMentions.array(), ...roleMentions.array()].map((mention) =>
+          this.adminService.delist(
+            mention.id,
+            message.guild?.id!,
+            this.command.name
+          )
         )
       )
     );
@@ -29,7 +33,9 @@ export class Delist extends PermissionsChildCommand {
     let embed = new MessageEmbed()
       .setTitle(`Removed permissions`)
       .setDescription(
-        `Delisted \`${this.command.name}\` for + ${delisted.map(d => d.id).join(", ")}`
+        `Delisted \`${this.command.name}\` for ${delisted
+          .map((d) => d.name)
+          .join(", ")}`
       );
 
     await message.channel.send(embed);

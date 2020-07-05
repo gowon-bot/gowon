@@ -1,9 +1,19 @@
 import { PermissionsChildCommand } from "./PermissionsChildCommand";
 import { Message, MessageEmbed } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
+import { addNamesToPermissions } from "../../../helpers/discord";
+import { Variation } from "../../../lib/command/BaseCommand";
+import { RunAs } from "../../../lib/AliasChecker";
 
 export class Blacklist extends PermissionsChildCommand {
   description = "Add a user to the blacklist for a command";
+
+  variations: Variation[] = [
+    {
+      variationString: "whitelist",
+      description: "Add a user to the whitelist for a command",
+    },
+  ];
 
   arguments: Arguments = {
     inputs: this.arguments.inputs,
@@ -12,27 +22,35 @@ export class Blacklist extends PermissionsChildCommand {
     },
   };
 
-  async run(message: Message) {
+  async run(message: Message, runAs: RunAs) {
     let { users: userMentions, roles: roleMentions } = message.mentions;
 
-    let userPermissions = await Promise.all(
-      userMentions.map((um) =>
-        this.adminService.blacklist(
-          um.id,
-          message.guild?.id!,
-          this.command.name,
-          false
+    let userPermissions = await addNamesToPermissions(
+      message,
+      await Promise.all(
+        userMentions.map((um) =>
+          this.adminService.whiteOrBlacklist(
+            um.id,
+            message.guild?.id!,
+            this.command.name,
+            false,
+            runAs.lastString() !== "whitelist"
+          )
         )
       )
     );
 
-    let rolePermissions = await Promise.all(
-      roleMentions.map((rm) =>
-        this.adminService.blacklist(
-          rm.id,
-          message.guild?.id!,
-          this.command.name,
-          true
+    let rolePermissions = await addNamesToPermissions(
+      message,
+      await Promise.all(
+        roleMentions.map((rm) =>
+          this.adminService.whiteOrBlacklist(
+            rm.id,
+            message.guild?.id!,
+            this.command.name,
+            true,
+            runAs.lastString() !== "whitelist"
+          )
         )
       )
     );
@@ -40,14 +58,14 @@ export class Blacklist extends PermissionsChildCommand {
     let embed = new MessageEmbed()
       .setTitle(`New permissions`)
       .setDescription(
-        `Blacklisted \`${this.command.name}\` for:\n` +
+        `${
+          runAs.lastString() === "whitelist" ? "Whitelisted" : "Blacklisted"
+        } \`${this.command.name}\` for:\n` +
           (rolePermissions.length
-            ? `Roles: ${rolePermissions
-                .map((rp) => "`" + rp + "`")
-                .join(", ")}\n`
+            ? `Roles: ${rolePermissions.map((rp) => rp.name).join(", ")}\n`
             : "") +
           (userPermissions.length
-            ? `Roles: ${userPermissions.map((up) => "`" + up + "`").join(", ")}`
+            ? `Users: ${userPermissions.map((up) => up.name).join(", ")}`
             : "")
       );
 

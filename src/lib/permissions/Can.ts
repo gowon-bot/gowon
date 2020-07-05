@@ -1,6 +1,7 @@
 import { AdminService } from "../../services/dbservices/AdminService";
 import { GuildMember, Message } from "discord.js";
 import { Permission } from "../../database/entity/Permission";
+import { Logger } from "../Logger";
 
 export enum CheckFailReason {
   disabled = "disabled",
@@ -20,13 +21,16 @@ export class Can {
   }
 
   private hasPermission(user: GuildMember, permission: Permission): boolean {
+    Logger.log("User", user)
+    Logger.log("Permission", Logger.formatObject(permission))
+
     return permission.isRoleBased
       ? permission.isBlacklist
         ? !user.roles.cache.has(permission.entityID)
         : user.roles.cache.has(permission.entityID)
       : permission.isBlacklist
-      ? user.user.id === permission.id.toString()
-      : user.user.id !== permission.id.toString();
+      ? user.user.id !== permission.id.toString()
+      : user.user.id === permission.id.toString();
   }
 
   private userHasPermissions(
@@ -61,6 +65,8 @@ export class Can {
     ));
 
     let hasPermission = this.userHasPermissions(message.member!, permissions);
+
+    Logger.log("Permissions", Logger.formatObject(permissions));
 
     return {
       passed: notDisabled && hasPermission,

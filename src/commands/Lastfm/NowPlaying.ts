@@ -6,6 +6,7 @@ import { isBotMoment, fakeNowPlaying } from "../../botmoment/fakeNowPlaying";
 import { Mention } from "../../lib/arguments/mentions";
 import { LastFMBaseCommand } from "./LastFMBaseCommand";
 import { CrownsService } from "../../services/dbservices/CrownsService";
+import { RunAs } from "../../lib/AliasChecker";
 
 export default class NowPlaying extends LastFMBaseCommand {
   aliases = ["np", "fm"];
@@ -28,7 +29,7 @@ export default class NowPlaying extends LastFMBaseCommand {
 
   crownsService = new CrownsService(this.logger);
 
-  async run(message: Message, runAs?: string) {
+  async run(message: Message, runAs: RunAs) {
     let user = this.parsedArguments.user as Mention;
 
     if (isBotMoment(typeof user !== "string" ? user?.id : "")) {
@@ -63,7 +64,7 @@ export default class NowPlaying extends LastFMBaseCommand {
         nowPlaying.image.find((i) => i.size === "large")?.["#text"] || ""
       );
 
-    if (runAs === "fmv") {
+    if (runAs.lastString()! === "fmv") {
       let [artistInfo, trackInfo, crown] = await Promise.all([
         this.lastFMService.artistInfo(track.artist, username),
         this.lastFMService.trackInfo(track.artist, track.name, username),
