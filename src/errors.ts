@@ -156,3 +156,11 @@ export class RecordNotFoundError extends ClientError {
     super(`That ${recordName} wasn't found!`);
   }
 }
+
+export class DuplicateRecordError extends  ClientError {
+  name = "DuplicateRecordError";
+
+  constructor(recordName: string) {
+    super(`That ${recordName} already exists!`);
+  }
+}

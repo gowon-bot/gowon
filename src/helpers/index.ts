@@ -38,3 +38,13 @@ export function chunkArray(
     .map((_, index) => index * chunkSize)
     .map((begin) => array.slice(begin, begin + chunkSize));
 }
+
+export function flatDeep<T = any>(arr: Array<any>, d = Infinity): Array<T> {
+  return (d > 0
+    ? arr.reduce(
+        (acc, val) =>
+          acc.concat(Array.isArray(val) ? flatDeep(val, d - 1) : val),
+        []
+      )
+    : arr.slice() as Array<T>);
+}

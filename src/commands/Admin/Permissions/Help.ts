@@ -8,8 +8,6 @@ export class Help extends PermissionsChildCommand {
   async prerun() {}
 
   async run(message: Message) {
-    // if (!this.adminService.can.viewPermissions) return;
-
     await message.channel.send(
       new MessageEmbed()
         .setTitle(`Permissions help for ${message.author.username}`)

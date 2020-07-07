@@ -15,8 +15,6 @@ export class Check extends CrownsChildCommand {
   };
 
   async run(message: Message) {
-    this.logger.log("message", message.guild?.id)
-
     let artist = this.parsedArguments.artist as string;
 
     let { username } = await this.parseMentionedUsername(message);

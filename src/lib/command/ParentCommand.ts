@@ -1,6 +1,5 @@
 import { BaseCommand, Command, NoCommand } from "./BaseCommand";
 import { CommandManager } from "./CommandManager";
-import { Message } from "discord.js";
 
 export abstract class ParentCommand extends BaseCommand {
   abstract children: CommandManager;
@@ -8,8 +7,6 @@ export abstract class ParentCommand extends BaseCommand {
   default?: () => Command;
   prefixes: string | Array<string> = "";
   canSkipPrefixFor: Array<string> = [];
-
-  private skippedPrefix: boolean = false;
 
   getChild(child: string): Command | undefined {
     let childCommand = this.children.find(child);
@@ -20,7 +17,7 @@ export abstract class ParentCommand extends BaseCommand {
     return;
   }
 
-  async execute(message: Message, runAs: string) {}
+  async execute() {}
 
   async run() {}
 }

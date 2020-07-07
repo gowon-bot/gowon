@@ -28,14 +28,14 @@ export class CommandHandler {
     if (message.content.startsWith(this.botMomentService.prefix)) {
       let { command, runAs } = this.commandManager.find(message.content);
 
-      let canCheck = await this.adminService.can.run(command.name, message);
+      let canCheck = await this.adminService.can.run(command.id, message);
 
       if (!canCheck.passed) {
         Logger.log(
           "CommandHandler",
           canCheck.reason === CheckFailReason.disabled
             ? `Attempt to run disabled command ${command.name}`
-            : `User ${message.author.username} did not have permissions to run command ${command.name}`
+            : `User ${message.author.username} did not have permissions to run command ${command.name} (${command.id})`
         );
 
         return;

@@ -14,12 +14,12 @@ export default class Disable extends PermissionsChildCommand {
       );
 
     let disabledCommand = await this.adminService.disableCommand(
-      this.command.name,
+      this.command.id,
       message.guild?.id!
     );
 
     await message.channel.send(
-      `Successfully disabled \`${disabledCommand.commandName}\``
+      `Successfully disabled \`${this.commandManager.findByID(disabledCommand.commandID)?.name}\``
     );
   }
 }

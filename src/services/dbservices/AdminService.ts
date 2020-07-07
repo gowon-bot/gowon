@@ -5,10 +5,11 @@ import {
   CommandAlreadyDisabledError,
   MismatchedPermissionsError,
   RecordNotFoundError,
+  DuplicateRecordError,
 } from "../../errors";
 import { Permission } from "../../database/entity/Permission";
 import { Can } from "../../lib/permissions/Can";
-import { Logger } from "../../lib/Logger";
+import { QueryFailedError } from "typeorm";
 
 export class AdminService extends BaseService {
   get can(): Can {
@@ -16,18 +17,18 @@ export class AdminService extends BaseService {
   }
 
   async disableCommand(
-    commandName: string,
+    commandID: string,
     serverID: string
   ): Promise<DisabledCommand> {
     let disabledCommand = await DisabledCommand.findOne({
-      where: { commandName, serverID },
+      where: { commandID, serverID },
     });
 
     if (disabledCommand) throw new CommandAlreadyDisabledError();
 
-    this.log("disabling " + commandName + " for server " + serverID);
+    this.log("disabling " + commandID + " for server " + serverID);
 
-    let newDisabledCommand = DisabledCommand.create({ commandName, serverID });
+    let newDisabledCommand = DisabledCommand.create({ commandID, serverID });
 
     await newDisabledCommand.save();
 
@@ -35,16 +36,16 @@ export class AdminService extends BaseService {
   }
 
   async enableCommand(
-    commandName: string,
+    commandID: string,
     serverID: string
   ): Promise<DisabledCommand> {
     let disabledCommand = await DisabledCommand.findOne({
-      where: { commandName, serverID },
+      where: { commandID, serverID },
     });
 
     if (!disabledCommand) throw new CommandNotDisabledError();
 
-    this.log("enabling " + commandName + " for server " + serverID);
+    this.log("enabling " + commandID + " for server " + serverID);
 
     await disabledCommand.remove();
 
@@ -52,13 +53,13 @@ export class AdminService extends BaseService {
   }
 
   async isCommandDisabled(
-    commandName: string,
+    commandID: string,
     serverID: string
   ): Promise<boolean> {
-    this.log("checking if " + commandName + " is disabled in " + serverID);
+    this.log("checking if " + commandID + " is disabled in " + serverID);
 
     let dc = await DisabledCommand.findOne({
-      where: { serverID, commandName },
+      where: { serverID, commandID },
     });
 
     return !!dc;
@@ -67,16 +68,14 @@ export class AdminService extends BaseService {
   private async setPermissions(
     entityID: string,
     serverID: string,
-    commandName: string,
+    commandID: string,
     isBlacklist: boolean,
     isRoleBased: boolean
   ): Promise<Permission> {
     let permissions = await Permission.find({
-      where: { serverID, commandName },
+      where: { serverID, commandID },
       take: 1,
     });
-
-    Logger.log("preexisting permission", Logger.formatObject(permissions));
 
     let permissionsMismatched =
       isBlacklist !== (permissions[0]?.isBlacklist ?? isBlacklist);
@@ -84,15 +83,25 @@ export class AdminService extends BaseService {
     if (permissionsMismatched)
       throw new MismatchedPermissionsError(permissions[0].isBlacklist);
 
-    let newPermissions = Permission.create({
-      entityID,
-      serverID,
-      commandName,
-      isBlacklist,
-      isRoleBased,
-    });
+    let newPermissions: Permission;
 
-    await newPermissions.save();
+    try {
+      newPermissions = Permission.create({
+        entityID,
+        serverID,
+        commandID,
+        isBlacklist,
+        isRoleBased,
+      });
+      await newPermissions.save();
+    } catch (e) {
+      if (
+        e instanceof QueryFailedError &&
+        e.message.includes("duplicate key value violates unique constraint")
+      ) {
+        throw new DuplicateRecordError("permission");
+      } else throw e;
+    }
 
     return newPermissions;
   }
@@ -100,13 +109,13 @@ export class AdminService extends BaseService {
   async blacklist(
     entityID: string,
     serverID: string,
-    commandName: string,
+    commandID: string,
     isRoleBased: boolean
   ): Promise<Permission> {
     return await this.setPermissions(
       entityID,
       serverID,
-      commandName,
+      commandID,
       true,
       isRoleBased
     );
@@ -115,13 +124,13 @@ export class AdminService extends BaseService {
   async whitelist(
     entityID: string,
     serverID: string,
-    commandName: string,
+    commandID: string,
     isRoleBased: boolean
   ): Promise<Permission> {
     return await this.setPermissions(
       entityID,
       serverID,
-      commandName,
+      commandID,
       false,
       isRoleBased
     );
@@ -130,14 +139,14 @@ export class AdminService extends BaseService {
   async whiteOrBlacklist(
     entityID: string,
     serverID: string,
-    commandName: string,
+    commandID: string,
     isRoleBased: boolean,
     isBlacklist: boolean
   ): Promise<Permission> {
     return await this.setPermissions(
       entityID,
       serverID,
-      commandName,
+      commandID,
       isBlacklist,
       isRoleBased
     );
@@ -146,10 +155,10 @@ export class AdminService extends BaseService {
   async delist(
     entityID: string,
     serverID: string,
-    commandName: string
+    commandID: string
   ): Promise<Permission> {
     let permission = await Permission.findOne({
-      where: { entityID, serverID, commandName },
+      where: { entityID, serverID, commandID },
     });
 
     if (!permission) throw new RecordNotFoundError("permission");
@@ -165,9 +174,9 @@ export class AdminService extends BaseService {
 
   async listPermissionsForCommand(
     serverID: string,
-    commandName: string
+    commandID: string
   ): Promise<Permission[]> {
-    return await Permission.find({ where: { serverID, commandName } });
+    return await Permission.find({ where: { serverID, commandID } });
   }
 
   async listPermissionsForEntity(

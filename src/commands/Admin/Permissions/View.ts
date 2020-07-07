@@ -78,12 +78,26 @@ export class View extends PermissionsChildCommand {
           permissions.length
             ? (blacklisted.length
                 ? `Blacklisted for ` +
-                  blacklisted.map((p) => "`" + p.commandName + "`").join(", ") +
+                  blacklisted
+                    .map(
+                      (p) =>
+                        "`" +
+                        this.commandManager.findByID(p.commandID)?.name +
+                        "`"
+                    )
+                    .join(", ") +
                   "\n"
                 : "") +
                 (whitelisted.length
                   ? `Whitelisted for ` +
-                    whitelisted.map((p) => "`" + p.commandName + "`").join(", ")
+                    whitelisted
+                      .map(
+                        (p) =>
+                          "`" +
+                          this.commandManager.findByID(p.commandID)?.name +
+                          "`"
+                      )
+                      .join(", ")
                   : "")
             : `This server doesn't have any permissions set for \`${entityName}\`!`
         );
@@ -94,8 +108,8 @@ export class View extends PermissionsChildCommand {
       );
 
       let groupedPermissions = permissions.reduce((acc, p) => {
-        if (!acc[p.commandName]) acc[p.commandName] = 1;
-        else acc[p.commandName] += 1;
+        if (!acc[p.commandID]) acc[p.commandID] = 1;
+        else acc[p.commandID] += 1;
 
         return acc;
       }, {} as GroupedPermissions);

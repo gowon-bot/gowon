@@ -32,7 +32,7 @@ export class Blacklist extends PermissionsChildCommand {
           this.adminService.whiteOrBlacklist(
             um.id,
             message.guild?.id!,
-            this.command.name,
+            this.command.id,
             false,
             runAs.lastString() !== "whitelist"
           )
@@ -47,7 +47,7 @@ export class Blacklist extends PermissionsChildCommand {
           this.adminService.whiteOrBlacklist(
             rm.id,
             message.guild?.id!,
-            this.command.name,
+            this.command.id,
             true,
             runAs.lastString() !== "whitelist"
           )

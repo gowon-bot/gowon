@@ -24,7 +24,7 @@ export class Delist extends PermissionsChildCommand {
           this.adminService.delist(
             mention.id,
             message.guild?.id!,
-            this.command.name
+            this.command.id
           )
         )
       )

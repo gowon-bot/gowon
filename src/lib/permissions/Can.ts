@@ -21,16 +21,13 @@ export class Can {
   }
 
   private hasPermission(user: GuildMember, permission: Permission): boolean {
-    Logger.log("User", user)
-    Logger.log("Permission", Logger.formatObject(permission))
-
     return permission.isRoleBased
       ? permission.isBlacklist
         ? !user.roles.cache.has(permission.entityID)
         : user.roles.cache.has(permission.entityID)
       : permission.isBlacklist
-      ? user.user.id !== permission.id.toString()
-      : user.user.id === permission.id.toString();
+      ? user.user.id !== permission.entityID
+      : user.user.id === permission.entityID;
   }
 
   private userHasPermissions(
@@ -52,21 +49,19 @@ export class Can {
     }
   }
 
-  async run(commandName: string, message: Message): Promise<CanCheck> {
+  async run(commandID: string, message: Message): Promise<CanCheck> {
     if (message.member?.hasPermission("ADMINISTRATOR")) return { passed: true };
 
     let permissions = await Permission.find({
-      where: { serverID: message.guild?.id, commandName },
+      where: { serverID: message.guild?.id, commandID },
     });
 
     let notDisabled = !(await this.adminService.isCommandDisabled(
-      commandName,
+      commandID,
       message.guild?.id!
     ));
 
     let hasPermission = this.userHasPermissions(message.member!, permissions);
-
-    Logger.log("Permissions", Logger.formatObject(permissions));
 
     return {
       passed: notDisabled && hasPermission,

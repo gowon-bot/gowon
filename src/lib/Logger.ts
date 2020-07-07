@@ -67,6 +67,7 @@ export class Logger {
     this.header +=
       "\n" +
       chalk`
+{cyan ID}: ${command.id}
 {cyan Ran at}: ${message.createdAt} {cyan by} ${message.author.username}
 {cyan with arguments}: ${Logger.formatObject(command.parsedArguments)}
 {cyan as}: ${runAs.join(" ")}

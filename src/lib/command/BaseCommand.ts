@@ -1,4 +1,5 @@
 import { Message } from "discord.js";
+import md5 from "js-md5";
 import {
   UsersService,
   Perspective,
@@ -14,6 +15,7 @@ import { Mention } from "../arguments/mentions";
 import { CommandManager } from "./CommandManager";
 import { Logger } from "../Logger";
 import { RunAs } from "../AliasChecker";
+import { ParentCommand } from "./ParentCommand";
 
 export interface Variation {
   variationString?: string;
@@ -22,6 +24,7 @@ export interface Variation {
 }
 export interface Command {
   execute(message: Message, runAs: RunAs): Promise<void>;
+  id: string;
 
   variations: Variation[];
   aliases: Array<string>;
@@ -35,6 +38,7 @@ export interface Command {
   hasChildren: boolean;
   children?: CommandManager;
   parentName?: string;
+  parent?: ParentCommand;
   getChild(...names: string[]): Command | undefined;
 }
 
@@ -49,7 +53,6 @@ export abstract class BaseCommand implements Command {
   shouldBeIndexed: boolean = true;
   arguments: Arguments = {};
   category: string | undefined = undefined;
-  runAs: Array<string> = [];
 
   parsedArguments: ParsedArguments = {};
 
@@ -64,6 +67,16 @@ export abstract class BaseCommand implements Command {
   }
   getChild(..._: string[]): Command | undefined {
     return undefined;
+  }
+
+  get id(): string {
+    return md5(
+      this.name +
+        this.description +
+        this.parentName +
+        this.arguments +
+        this.aliases
+    );
   }
 
   abstract async run(message: Message, runAs: RunAs): Promise<void>;

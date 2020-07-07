@@ -146,6 +146,7 @@ export class AliasChecker {
 
   getRunAs(command: Command): RunAs {
     let checks = this.aliasesString
+      .toLowerCase()
       .replace(new RegExp(this.botMomentService.regexSafePrefix, "i"), "")
       .trim()
       .split(/\s+/);

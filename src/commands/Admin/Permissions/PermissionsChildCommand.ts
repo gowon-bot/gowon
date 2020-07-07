@@ -9,23 +9,24 @@ export abstract class PermissionsChildCommand extends AdminBaseChildCommand {
 
   commandManager = new CommandManager();
   command!: Command;
-  alias!: string;
+  aliases!: string[];
 
-  throwOnNoCommand = true
+  throwOnNoCommand = true;
 
   arguments: Arguments = {
     inputs: {
-      command: { index: 0 },
+      command: { index: { start: 0 } },
     },
   };
 
   async prerun() {
     await this.commandManager.init();
 
-    this.alias = this.parsedArguments.command as string;
+    this.aliases = (this.parsedArguments.command as string).split(/\s*\//);
 
-    this.command = this.commandManager.find(this.alias).command;
+    this.command = this.commandManager.find(this.aliases.join(" ")).command;
 
-    if (this.command instanceof NoCommand && this.throwOnNoCommand) throw new CommandNotFoundError();
+    if (this.command instanceof NoCommand && this.throwOnNoCommand)
+      throw new CommandNotFoundError();
   }
 }

@@ -6,7 +6,7 @@ export class DisabledCommand extends BaseEntity {
   id!: number;
 
   @Column()
-  commandName!: string;
+  commandID!: string;
 
   @Column()
   serverID!: string;
