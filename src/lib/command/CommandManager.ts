@@ -33,6 +33,7 @@ async function generateCommands(): Promise<Commands> {
 
 export class CommandManager {
   commands: Commands;
+  isInitialized = false;
 
   constructor(commands: Commands = {}) {
     this.commands = commands;
@@ -40,6 +41,7 @@ export class CommandManager {
 
   async init() {
     this.commands = await generateCommands();
+    this.isInitialized = true;
   }
 
   find(messageString: string): { command: Command; runAs: RunAs } {

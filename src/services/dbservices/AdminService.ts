@@ -18,7 +18,8 @@ export class AdminService extends BaseService {
 
   async disableCommand(
     commandID: string,
-    serverID: string
+    serverID: string,
+    commandFriendlyName: string
   ): Promise<DisabledCommand> {
     let disabledCommand = await DisabledCommand.findOne({
       where: { commandID, serverID },
@@ -26,9 +27,13 @@ export class AdminService extends BaseService {
 
     if (disabledCommand) throw new CommandAlreadyDisabledError();
 
-    this.log("disabling " + commandID + " for server " + serverID);
+    this.log("disabling `" + commandFriendlyName + "` for server " + serverID);
 
-    let newDisabledCommand = DisabledCommand.create({ commandID, serverID });
+    let newDisabledCommand = DisabledCommand.create({
+      commandID,
+      serverID,
+      commandFriendlyName,
+    });
 
     await newDisabledCommand.save();
 
@@ -65,12 +70,17 @@ export class AdminService extends BaseService {
     return !!dc;
   }
 
+  async listDisabled(serverID: string): Promise<DisabledCommand[]> {
+    return await DisabledCommand.find({ serverID });
+  }
+
   private async setPermissions(
     entityID: string,
     serverID: string,
     commandID: string,
     isBlacklist: boolean,
-    isRoleBased: boolean
+    isRoleBased: boolean,
+    commandFriendlyName: string
   ): Promise<Permission> {
     let permissions = await Permission.find({
       where: { serverID, commandID },
@@ -92,6 +102,7 @@ export class AdminService extends BaseService {
         commandID,
         isBlacklist,
         isRoleBased,
+        commandFriendlyName,
       });
       await newPermissions.save();
     } catch (e) {
@@ -110,14 +121,16 @@ export class AdminService extends BaseService {
     entityID: string,
     serverID: string,
     commandID: string,
-    isRoleBased: boolean
+    isRoleBased: boolean,
+    commandFriendlyName: string
   ): Promise<Permission> {
     return await this.setPermissions(
       entityID,
       serverID,
       commandID,
       true,
-      isRoleBased
+      isRoleBased,
+      commandFriendlyName
     );
   }
 
@@ -125,14 +138,16 @@ export class AdminService extends BaseService {
     entityID: string,
     serverID: string,
     commandID: string,
-    isRoleBased: boolean
+    isRoleBased: boolean,
+    commandFriendlyName: string
   ): Promise<Permission> {
     return await this.setPermissions(
       entityID,
       serverID,
       commandID,
       false,
-      isRoleBased
+      isRoleBased,
+      commandFriendlyName
     );
   }
 
@@ -141,14 +156,16 @@ export class AdminService extends BaseService {
     serverID: string,
     commandID: string,
     isRoleBased: boolean,
-    isBlacklist: boolean
+    isBlacklist: boolean,
+    commandFriendlyName: string
   ): Promise<Permission> {
     return await this.setPermissions(
       entityID,
       serverID,
       commandID,
       isBlacklist,
-      isRoleBased
+      isRoleBased,
+      commandFriendlyName
     );
   }
 

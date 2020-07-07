@@ -10,6 +10,8 @@ import { ContentiousCrowns } from "./ContentiousCrowns";
 import { TopCrownHolders } from "./TopCrownHolders";
 
 export default class CrownsParentCommand extends LastFMBaseParentCommand {
+  friendlyName = "crowns";
+
   prefixes = ["crowns ", "cw "];
   default = () => new List();
   canSkipPrefixFor = ["info", "check", "checkmany"];

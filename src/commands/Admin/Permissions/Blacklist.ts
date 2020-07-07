@@ -1,6 +1,5 @@
 import { PermissionsChildCommand } from "./PermissionsChildCommand";
 import { Message, MessageEmbed } from "discord.js";
-import { Arguments } from "../../../lib/arguments/arguments";
 import { addNamesToPermissions } from "../../../helpers/discord";
 import { Variation } from "../../../lib/command/BaseCommand";
 import { RunAs } from "../../../lib/AliasChecker";
@@ -15,26 +14,18 @@ export class Blacklist extends PermissionsChildCommand {
     },
   ];
 
-  arguments: Arguments = {
-    inputs: this.arguments.inputs,
-    mentions: {
-      entities: { index: { start: 0 } },
-    },
-  };
-
   async run(message: Message, runAs: RunAs) {
-    let { users: userMentions, roles: roleMentions } = message.mentions;
-
     let userPermissions = await addNamesToPermissions(
       message,
       await Promise.all(
-        userMentions.map((um) =>
+        this.users.map((user) =>
           this.adminService.whiteOrBlacklist(
-            um.id,
+            user.id,
             message.guild?.id!,
             this.command.id,
             false,
-            runAs.lastString() !== "whitelist"
+            runAs.lastString() !== "whitelist",
+            this.runAs.toCommandFriendlyName()
           )
         )
       )
@@ -43,13 +34,14 @@ export class Blacklist extends PermissionsChildCommand {
     let rolePermissions = await addNamesToPermissions(
       message,
       await Promise.all(
-        roleMentions.map((rm) =>
+        this.roles.map((role) =>
           this.adminService.whiteOrBlacklist(
-            rm.id,
+            role.id,
             message.guild?.id!,
             this.command.id,
             true,
-            runAs.lastString() !== "whitelist"
+            runAs.lastString() !== "whitelist",
+            this.runAs.toCommandFriendlyName()
           )
         )
       )
@@ -60,7 +52,7 @@ export class Blacklist extends PermissionsChildCommand {
       .setDescription(
         `${
           runAs.lastString() === "whitelist" ? "Whitelisted" : "Blacklisted"
-        } \`${this.command.name}\` for:\n` +
+        } \`${this.runAs.toCommandFriendlyName()}\` for:\n` +
           (rolePermissions.length
             ? `Roles: ${rolePermissions.map((rp) => rp.name).join(", ")}\n`
             : "") +

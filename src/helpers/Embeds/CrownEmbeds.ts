@@ -39,7 +39,9 @@ export class CrownEmbeds {
     user: User,
     message: Message
   ): Promise<MessageEmbed> {
-    let holderUsername = await crownCheck.crown?.user!.toDiscordUser(message);
+    let holderUsername = (
+      await crownCheck.oldCrown?.user!.toDiscordUser(message)
+    )?.username;
 
     return new MessageEmbed()
       .setTitle(`Crown for ${crownCheck.crown!.artistName}`)
@@ -70,7 +72,9 @@ export class CrownEmbeds {
     message: Message,
     user: User
   ): Promise<MessageEmbed> {
-    let holderUsername = await crownCheck.crown?.user!.toDiscordUser(message);
+    let holderUsername = (
+      await crownCheck.oldCrown?.user!.toDiscordUser(message)
+    )?.username;
 
     let difference =
       crownCheck.crown!.plays - parseInt(artistDetails.stats.userplaycount, 10);
@@ -118,7 +122,8 @@ You must have at least ${numberDisplay(threshold, "play")} to create a crown.
     message: Message,
     user: User
   ): Promise<MessageEmbed> {
-    let holderUsername = await crownCheck.crown?.user!.toDiscordUser(message);
+    let holderUsername = (await crownCheck.crown?.user!.toDiscordUser(message))
+      ?.username;
 
     return new MessageEmbed()
       .setTitle(`Crown for ${crownCheck.crown!.artistName}`)

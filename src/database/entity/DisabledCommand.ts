@@ -10,4 +10,7 @@ export class DisabledCommand extends BaseEntity {
 
   @Column()
   serverID!: string;
+
+  @Column()
+  commandFriendlyName!: string;
 }

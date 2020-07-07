@@ -31,6 +31,7 @@ export interface Command {
   arguments: Arguments;
   secretCommand: boolean;
   name: string;
+  friendlyName: string;
   description: string;
   shouldBeIndexed: boolean;
   category: string | undefined;
@@ -46,6 +47,7 @@ export abstract class BaseCommand implements Command {
   protected logger = new Logger();
 
   name: string = this.constructor.name.toLowerCase();
+  friendlyName: string = this.constructor.name.toLowerCase();
   aliases: Array<string> = [];
   variations: Variation[] = [];
   description: string = "No description for this command";

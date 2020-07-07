@@ -6,6 +6,7 @@ import escapeStringRegexp from "escape-string-regexp";
 export interface MentionOptions {
   index: number | Slice;
   description?: string;
+  join?: boolean;
   nonDiscordMentionParsing?: {
     prefix: string;
   };
@@ -60,14 +61,20 @@ export class MentionParser extends Parser {
       if (!matches.length)
         return this.getElementFromIndex(
           message.mentions.users.array(),
-          mentionOptions.index
+          mentionOptions.index,
+          mentionOptions.join
         );
 
-      return this.getElementFromIndex(matches, mentionOptions.index);
+      return this.getElementFromIndex(
+        matches,
+        mentionOptions.index,
+        mentionOptions.join
+      );
     } else
       return this.getElementFromIndex(
         message.mentions.users.array(),
-        mentionOptions.index
+        mentionOptions.index,
+        mentionOptions.join
       );
   }
 

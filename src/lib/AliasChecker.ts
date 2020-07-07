@@ -55,6 +55,12 @@ export class RunAs {
     return array;
   }
 
+  toCommandFriendlyName(): string {
+    return this.toCommandArray()
+      .map((c) => c.friendlyName)
+      .join(" ");
+  }
+
   toArray(): Array<string> {
     let array: Array<string> = [];
 
@@ -157,6 +163,13 @@ export class AliasChecker {
       const check = checks[check_i];
 
       if (command instanceof ParentCommand) {
+        if (
+          check_i === checks.length - 1 &&
+          this.parentCommandHasAlias(command, check)
+        ) {
+          return runAs.add({ string: check, command: command });
+        }
+
         let child = command.getChild(checks.slice(check_i + 1).join(" ") || "");
         let childNoPrefix = this.parentCommandGetChildSkipPrefix(
           command,

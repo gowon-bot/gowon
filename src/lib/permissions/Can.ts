@@ -1,7 +1,10 @@
 import { AdminService } from "../../services/dbservices/AdminService";
 import { GuildMember, Message } from "discord.js";
 import { Permission } from "../../database/entity/Permission";
-import { Logger } from "../Logger";
+import { Command } from "../command/BaseCommand";
+import { ChildCommand } from "../command/ParentCommand";
+import { CommandManager } from "../command/CommandManager";
+import { In } from "typeorm";
 
 export enum CheckFailReason {
   disabled = "disabled",
@@ -15,9 +18,18 @@ export interface CanCheck {
 
 export class Can {
   adminService: AdminService;
+  commandManager = new CommandManager();
 
   constructor(adminService: AdminService) {
     this.adminService = adminService;
+  }
+
+  private async getParentIDs(child: ChildCommand): Promise<string[]> {
+    if (!this.commandManager.isInitialized) await this.commandManager.init();
+
+    let runAs = this.commandManager.find(child.parentName);
+
+    return runAs.runAs.toCommandArray().map((c) => c.id);
   }
 
   private hasPermission(user: GuildMember, permission: Permission): boolean {
@@ -49,26 +61,42 @@ export class Can {
     }
   }
 
-  async run(commandID: string, message: Message): Promise<CanCheck> {
+  async run(command: Command, message: Message): Promise<CanCheck> {
     if (message.member?.hasPermission("ADMINISTRATOR")) return { passed: true };
 
-    let permissions = await Permission.find({
-      where: { serverID: message.guild?.id, commandID },
+    let permissions: Permission[];
+
+    permissions = await Permission.find({
+      where: {
+        serverID: message.guild?.id,
+        commandID:
+          command instanceof ChildCommand
+            ? In([command.id, ...(await this.getParentIDs(command))])
+            : command.id,
+      },
     });
 
-    let notDisabled = !(await this.adminService.isCommandDisabled(
-      commandID,
-      message.guild?.id!
-    ));
+    let disabledCheck = !(
+      await Promise.all(
+        (command instanceof ChildCommand
+          ? [command.id, ...(await this.getParentIDs(command))]
+          : [command.id]
+        ).map((id) =>
+          this.adminService.isCommandDisabled(id, message.guild?.id!)
+        )
+      )
+    ).filter((v) => !v)[0];
+
+    let disabled = disabledCheck ?? false;
 
     let hasPermission = this.userHasPermissions(message.member!, permissions);
 
     return {
-      passed: notDisabled && hasPermission,
+      passed: !disabled && hasPermission,
       reason:
-        notDisabled && hasPermission
+        !disabled && hasPermission
           ? undefined
-          : notDisabled
+          : !disabled
           ? CheckFailReason.forbidden
           : CheckFailReason.disabled,
     };

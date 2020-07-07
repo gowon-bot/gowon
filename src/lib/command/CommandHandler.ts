@@ -28,7 +28,7 @@ export class CommandHandler {
     if (message.content.startsWith(this.botMomentService.prefix)) {
       let { command, runAs } = this.commandManager.find(message.content);
 
-      let canCheck = await this.adminService.can.run(command.id, message);
+      let canCheck = await this.adminService.can.run(command, message);
 
       if (!canCheck.passed) {
         Logger.log(

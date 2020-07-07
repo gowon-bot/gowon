@@ -29,11 +29,18 @@ export class Permission extends BaseEntity {
   @Column()
   commandID!: string;
 
+  @Column()
+  commandFriendlyName!: string;
+
+  static async toDiscordRole(message: Message, roleID: string): Promise<Role> {
+    return (await message.guild?.roles.fetch(roleID))!;
+  }
+
   async toDiscordUser(message: Message): Promise<DiscordUser> {
     return (await User.toDiscordUser(message, this.entityID))!;
   }
 
   async toDiscordRole(message: Message): Promise<Role> {
-    return (await message.guild?.roles.fetch(this.entityID))!;
+    return (await Permission.toDiscordRole(message, this.entityID))!;
   }
 }
