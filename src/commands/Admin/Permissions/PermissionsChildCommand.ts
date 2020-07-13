@@ -35,11 +35,13 @@ export abstract class PermissionsChildCommand extends AdminBaseChildCommand {
         index: { start: 0 },
         nonDiscordMentionParsing: this.ndmp.users,
         join: false,
+        ndmpOnly: true
       },
       roleIDs: {
         index: { start: 0 },
         nonDiscordMentionParsing: this.ndmp.roles,
         join: false,
+        ndmpOnly: true
       },
     },
   };

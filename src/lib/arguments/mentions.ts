@@ -10,6 +10,7 @@ export interface MentionOptions {
   nonDiscordMentionParsing?: {
     prefix: string;
   };
+  ndmpOnly?: boolean;
 }
 
 export type Mention = User | string;
@@ -49,7 +50,7 @@ export class MentionParser extends Parser {
   private parseMention(
     mentionOptions: MentionOptions,
     message: Message
-  ): Mention | undefined {
+  ): Mention | Mention[] | undefined {
     if (mentionOptions.nonDiscordMentionParsing) {
       let matches =
         message.content.match(
@@ -58,12 +59,16 @@ export class MentionParser extends Parser {
           )
         ) || [];
 
-      if (!matches.length)
+      if (!matches.length) {
+        if (mentionOptions.ndmpOnly) {
+          return [];
+        }
         return this.getElementFromIndex(
           message.mentions.users.array(),
           mentionOptions.index,
           mentionOptions.join
         );
+      }
 
       return this.getElementFromIndex(
         matches,

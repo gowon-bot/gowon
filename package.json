@@ -8,7 +8,7 @@
     "@types/bluebird": "^3.5.32",
     "@types/glob": "^7.1.2",
     "@types/js-md5": "^0.4.2",
-    "@types/node": "^14.0.13",
+    "@types/node": "^14.0.19",
     "@types/node-fetch": "^2.5.7",
     "@types/validator": "^13.0.0",
     "@types/ws": "^7.2.5",
@@ -25,7 +25,7 @@
     "querystring": "^0.2.0",
     "reflect-metadata": "^0.1.13",
     "typeorm": "^0.2.25",
-    "typescript": "^3.9.5"
+    "typescript": "^3.9.6"
   },
   "scripts": {
     "start": "yarn build && node dist/src/index.js",
