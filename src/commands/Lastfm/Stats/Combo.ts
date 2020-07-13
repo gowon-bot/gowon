@@ -51,17 +51,17 @@ export default class Combo extends LastFMBaseCommand {
         combo.hasAnyConsecutivePlays
           ? (combo.artist.plays > 0
               ? `Artist: ${combo.artist.plays}${
-                  combo.artist.nowplaying ? "+" : ""
+                  combo.artist.nowplaying ? "➚" : ""
                 } in a row (**${combo.artist.name}**)\n`
               : "") +
               (combo.album.plays > 0
                 ? `Album: ${combo.album.plays}${
-                    combo.album.nowplaying ? "+" : ""
+                    combo.album.nowplaying ? "➚" : ""
                   } in a row (**${combo.album.name}**)\n`
                 : "") +
               (combo.track.plays > 0
                 ? `Track: ${combo.track.plays}${
-                    combo.track.nowplaying ? "+" : ""
+                    combo.track.nowplaying ? "➚" : ""
                   } in a row (**${combo.track.name}**)\n`
                 : "")
           : "No consecutive plays found!"

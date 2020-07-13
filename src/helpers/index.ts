@@ -38,3 +38,31 @@ export function chunkArray(
     .map((_, index) => index * chunkSize)
     .map((begin) => array.slice(begin, begin + chunkSize));
 }
+
+export function flatDeep<T = any>(arr: Array<any>, d = Infinity): Array<T> {
+  return d > 0
+    ? arr.reduce(
+        (acc, val) =>
+          acc.concat(Array.isArray(val) ? flatDeep(val, d - 1) : val),
+        []
+      )
+    : (arr.slice() as Array<T>);
+}
+
+export function getOrdinal(number: number): string {
+  let ordinals = [
+    "th",
+    "st",
+    "nd",
+    "rd",
+    "th",
+    "th",
+    "th",
+    "th",
+    "th",
+    "th",
+    "th",
+  ];
+
+  return number + ordinals[parseInt(`${number}`.charAt(`${number}`.length - 1))];
+}

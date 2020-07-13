@@ -1,7 +1,8 @@
-import { BaseCommand, Command } from "./command/BaseCommand";
+import { BaseCommand } from "./command/BaseCommand";
 import { Message } from "discord.js";
 import chalk from "chalk";
 import moment from "moment";
+import { RunAs } from "./AliasChecker";
 
 export class Logger {
   static log(context: string, msg?: any, logger?: Logger): void {
@@ -19,6 +20,10 @@ export class Logger {
     }
   }
 
+  static formatObject(object: any): string {
+    return JSON.stringify(object, undefined, 2);
+  }
+
   header = "";
 
   log(context: string, msg?: any): void {
@@ -32,8 +37,14 @@ export class Logger {
     );
   }
 
-  logCommandHandle(command: Command): void {
-    Logger.log(`CommandHandler`, chalk`{grey found ${command.name}}`);
+  logCommandHandle(runAs: RunAs): void {
+    Logger.log(
+      `CommandHandler`,
+      chalk`{grey found ${runAs
+        .toCommandArray()
+        .map((c) => c.name)
+        .join(":")}}`
+    );
   }
 
   openCommandHeader(command: BaseCommand): void {
@@ -52,13 +63,14 @@ export class Logger {
     );
   }
 
-  logCommand(command: BaseCommand, message: Message, runAs?: string): void {
+  logCommand(command: BaseCommand, message: Message, ...runAs: string[]): void {
     this.header +=
       "\n" +
       chalk`
+{cyan ID}: ${command.id}
 {cyan Ran at}: ${message.createdAt} {cyan by} ${message.author.username}
-{cyan with arguments}: ${JSON.stringify(command.parsedArguments, undefined, 2)}
-{cyan as}: ${runAs}
+{cyan with arguments}: ${Logger.formatObject(command.parsedArguments)}
+{cyan as}: ${runAs.join(" ")}
 
 {cyan Raw message content}:
 {bgGrey ${message.content}}

@@ -1,4 +1,5 @@
 import { Message } from "discord.js";
+import md5 from "js-md5";
 import {
   UsersService,
   Perspective,
@@ -13,6 +14,8 @@ import { BotMomentService } from "../../services/BotMomentService";
 import { Mention } from "../arguments/mentions";
 import { CommandManager } from "./CommandManager";
 import { Logger } from "../Logger";
+import { RunAs } from "../AliasChecker";
+import { ParentCommand } from "./ParentCommand";
 
 export interface Variation {
   variationString?: string;
@@ -20,27 +23,31 @@ export interface Variation {
   description?: string;
 }
 export interface Command {
-  execute(message: Message, runAs?: string): Promise<void>;
-  hasAlias(alias: string): boolean;
+  execute(message: Message, runAs: RunAs): Promise<void>;
+  id: string;
 
   variations: Variation[];
   aliases: Array<string>;
   arguments: Arguments;
   secretCommand: boolean;
   name: string;
+  friendlyName: string;
   description: string;
   shouldBeIndexed: boolean;
   category: string | undefined;
 
+  hasChildren: boolean;
   children?: CommandManager;
   parentName?: string;
-  getChild(name: string): Command | undefined;
+  parent?: ParentCommand;
+  getChild(...names: string[]): Command | undefined;
 }
 
 export abstract class BaseCommand implements Command {
   protected logger = new Logger();
 
   name: string = this.constructor.name.toLowerCase();
+  friendlyName: string = this.constructor.name.toLowerCase();
   aliases: Array<string> = [];
   variations: Variation[] = [];
   description: string = "No description for this command";
@@ -54,13 +61,27 @@ export abstract class BaseCommand implements Command {
   usersService = new UsersService(this.logger);
   botMomentService = BotMomentService.getInstance();
 
+  hasChildren = false;
   children?: CommandManager;
   parentName?: string;
-  getChild(_: string): Command | undefined {
+  hasChild(..._: string[]): boolean {
+    return false;
+  }
+  getChild(..._: string[]): Command | undefined {
     return undefined;
   }
 
-  abstract async run(message: Message, runAs?: string): Promise<void>;
+  get id(): string {
+    return md5(
+      this.name +
+        this.description +
+        this.parentName +
+        this.arguments +
+        this.aliases
+    );
+  }
+
+  abstract async run(message: Message, runAs: RunAs): Promise<void>;
 
   async parseMentionedUsername(
     message: Message,
@@ -110,12 +131,12 @@ export abstract class BaseCommand implements Command {
     this.logger.closeCommandHeader(this);
   }
 
-  async execute(message: Message, runAs?: string) {
+  async execute(message: Message, runAs: RunAs) {
     await this.setup(message);
 
     try {
-      this.parsedArguments = this.parseArguments(message, runAs || this.name);
-      this.logger.logCommand(this, message, runAs);
+      this.parsedArguments = this.parseArguments(message, runAs);
+      this.logger.logCommand(this, message, runAs.toArray().join(" "));
       await this.prerun(message);
       await this.run(message, runAs);
     } catch (e) {
@@ -131,25 +152,7 @@ export abstract class BaseCommand implements Command {
     await this.teardown(message);
   }
 
-  hasAlias(alias: string): boolean {
-    return (
-      this.aliases.map((a) => a.toLowerCase()).includes(alias.toLowerCase()) ||
-      this.hasVariation(alias)
-    );
-  }
-
-  hasVariation(variation: string): boolean {
-    for (let v of this.variations) {
-      if (v.variationString) {
-        return v.variationString === variation;
-      } else if (v.variationRegex) {
-        return v.variationRegex.test(variation);
-      }
-    }
-    return false;
-  }
-
-  parseArguments(message: Message, runAs: string): ParsedArguments {
+  parseArguments(message: Message, runAs: RunAs): ParsedArguments {
     let parser = new ArgumentParser(this.arguments);
 
     return parser.parse(message, runAs);

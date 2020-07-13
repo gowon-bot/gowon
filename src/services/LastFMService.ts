@@ -25,6 +25,7 @@ import config from "../../config.json";
 import { ParsedTrack, parseLastFMTrackResponse } from "../helpers/lastFM";
 import { LastFMConnectionError, LastFMError } from "../errors";
 import { BaseService } from "./BaseService";
+import { Logger } from "../lib/Logger";
 
 interface Params {
   [key: string]: any;
@@ -46,7 +47,9 @@ export class LastFMService extends BaseService {
   }
 
   private async request<T>(method: string, params: Params): Promise<T> {
-    this.log(`made API request for ${method} with params ${JSON.stringify(params)}`);
+    this.log(
+      `made API request for ${method} with params ${JSON.stringify(params)}`
+    );
 
     let qparams = this.buildParams({ method, ...params });
 
@@ -81,6 +84,26 @@ export class LastFMService extends BaseService {
   async nowPlayingParsed(username: string): Promise<ParsedTrack> {
     let nowPlaying = await this.nowPlaying(username);
     return parseLastFMTrackResponse(nowPlaying);
+  }
+
+  async getMilestone(username: string, milestone: number): Promise<Track> {
+    let total = (await this.recentTracks(username, 1))["@attr"].total;
+
+    let response = await this.request<RecentTracksResponse>(
+      "user.getrecenttracks",
+      {
+        username,
+        page: parseInt(total) - milestone + 1,
+        limit: 1,
+      }
+    );
+
+    this.logger?.log(
+      "@attr",
+      Logger.formatObject(response.recenttracks["@attr"])
+    );
+
+    return response.recenttracks.track[1];
   }
 
   async getNumberScrobbles(

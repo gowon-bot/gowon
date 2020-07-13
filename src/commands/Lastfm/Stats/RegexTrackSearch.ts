@@ -2,6 +2,7 @@ import { Message, MessageEmbed } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { Variation } from "../../../lib/command/BaseCommand";
+import { RunAs } from "../../../lib/AliasChecker";
 
 export default class RegexTrackSearch extends LastFMBaseCommand {
   aliases = ["regexts", "ts"];
@@ -26,13 +27,13 @@ export default class RegexTrackSearch extends LastFMBaseCommand {
     },
   ];
 
-  async run(message: Message, runAs?: string) {
+  async run(message: Message, runAs: RunAs) {
     let { username, perspective } = await this.parseMentionedUsername(message);
 
     let page = 1;
 
     if (runAs) {
-      page = parseInt(runAs.slice(2)) || 1;
+      page = parseInt(runAs.lastString().slice(2)) || 1;
     }
 
     let regex = this.parsedArguments.regex as string;
@@ -47,9 +48,7 @@ export default class RegexTrackSearch extends LastFMBaseCommand {
     if (parsedRegex) {
       let topTracks = await this.lastFMService.topTracks(username, 1000, page);
 
-      let tracks = topTracks.track
-        .filter((t) => parsedRegex!.test(t.name))
-        .slice(0, 10);
+      let tracks = topTracks.track.filter((t) => parsedRegex!.test(t.name));
 
       if (tracks.length) {
         let embed = new MessageEmbed()

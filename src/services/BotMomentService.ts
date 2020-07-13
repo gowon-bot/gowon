@@ -1,4 +1,5 @@
 import regexEscape from "escape-string-regexp";
+import { RunAs } from "../lib/AliasChecker";
 
 export class BotMomentService {
   // Static methods/properties
@@ -23,7 +24,10 @@ export class BotMomentService {
     return regexEscape(this.prefix);
   }
 
-  removeCommandName(string: string, runAs: string): string {
-    return string.replace(this.prefix + runAs, "");
+  removeCommandName(string: string, runAs: RunAs): string {
+    return string.replace(
+      new RegExp(`${this.regexSafePrefix}${runAs.toRegexString()}`, "i"),
+      ""
+    );
   }
 }

@@ -1,10 +1,11 @@
 import { Message, MessageEmbed } from "discord.js";
 import { numberDisplay } from "../../../helpers";
-import { ListChildCommand } from "./ListChildCommand";
+import { ListCommand } from "./ListCommand";
 
-export class AlbumList extends ListChildCommand {
+export default class AlbumList extends ListCommand {
   aliases = ["llist", "allist", "topalbums"];
   description = "Shows your top albums";
+  shouldBeIndexed = true
 
   async run(message: Message) {
     let { username } = await this.parseMentionedUsername(message);

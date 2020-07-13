@@ -89,7 +89,7 @@ export default class Help extends BaseCommand {
     );
 
     if (commandName) {
-      let command = this.commandManager.find(commandName);
+      let command = this.commandManager.find(commandName).command;
 
       embed = this.parseAliases(embed, command);
       embed = this.parseName(embed, command);

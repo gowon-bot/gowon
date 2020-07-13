@@ -93,10 +93,74 @@ export class BadAmountError extends ClientError {
   }
 }
 
-export class UserNotFoundError extends ClientError {
-  name = "UserNotFoundError";
+export class CommandAlreadyDisabledError extends ClientError {
+  name = "CommandAlreadyDisabled";
 
   constructor() {
-    super("That user was not found!");
+    super("That command is already disabled");
+  }
+}
+
+export class CommandNotFoundError extends ClientError {
+  name = "CommandNotFoundError";
+
+  constructor() {
+    super("That command was not found!");
+  }
+}
+
+export class CommandNotDisabledError extends ClientError {
+  name = "CommandNotDisabledError";
+
+  constructor() {
+    super("That command is already enabled!");
+  }
+}
+
+export class MismatchedPermissionsError extends ClientError {
+  name = "MismatchedPermissionsError";
+
+  constructor(isBlacklist: boolean) {
+    super(
+      `Permissions for that command are **${
+        isBlacklist ? "blacklist" : "whitelist"
+      }-based**. You cannot mix white and blacklists.`
+    );
+  }
+}
+
+export class PermissionsAlreadySetError extends ClientError {
+  name = "PermissionsAlreadySetError";
+
+  constructor(isBlacklist: boolean) {
+    super(
+      "That command has already been " + isBlacklist
+        ? "blacklisted"
+        : "whitelisted" + "for that user/role"
+    );
+  }
+}
+
+export class LogicError extends ClientError {
+  name = "LogicError";
+
+  constructor(msg: string) {
+    super(msg);
+  }
+}
+
+export class RecordNotFoundError extends ClientError {
+  name = "RecordNotFoundError";
+
+  constructor(recordName: string) {
+    super(`That ${recordName} wasn't found!`);
+  }
+}
+
+export class DuplicateRecordError extends  ClientError {
+  name = "DuplicateRecordError";
+
+  constructor(recordName: string) {
+    super(`That ${recordName} already exists!`);
   }
 }

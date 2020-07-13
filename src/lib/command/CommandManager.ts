@@ -1,6 +1,8 @@
 import { Command, NoCommand } from "./BaseCommand";
 import { promisify } from "util";
 import _glob from "glob";
+import { AliasChecker, RunAs } from "../AliasChecker";
+import { flatDeep } from "../../helpers";
 const glob = promisify(_glob);
 
 interface Commands {
@@ -31,6 +33,7 @@ async function generateCommands(): Promise<Commands> {
 
 export class CommandManager {
   commands: Commands;
+  isInitialized = false;
 
   constructor(commands: Commands = {}) {
     this.commands = commands;
@@ -38,21 +41,26 @@ export class CommandManager {
 
   async init() {
     this.commands = await generateCommands();
+    this.isInitialized = true;
   }
 
-  find(commandName: string): Command {
-    if (Object.keys(this.commands).includes(commandName.toLowerCase())) {
-      return this.commands[commandName.toLowerCase()]();
-    } else {
-      for (let commandKey of Object.keys(this.commands)) {
-        let command = this.commands[commandKey.toLowerCase()]();
+  find(messageString: string): { command: Command; runAs: RunAs } {
+    let checker = new AliasChecker(messageString);
 
-        if (command.hasAlias(commandName)) {
-          return command;
-        }
+    for (let command of this.list(true)) {
+      if (checker.check(command)) {
+        let runAs = checker.getRunAs(command);
+        return {
+          command: runAs.last()?.command!,
+          runAs,
+        };
       }
     }
-    return new NoCommand();
+    return { command: new NoCommand(), runAs: new RunAs() };
+  }
+
+  findByID(id: string): Command | undefined {
+    return this.deepList().find((c) => c.id === id);
   }
 
   list(showSecret: boolean = false): Command[] {
@@ -60,10 +68,20 @@ export class CommandManager {
 
     let commandsList = commandGetterList
       .map((c) => c())
-      .filter((c) => c.shouldBeIndexed);
+      .filter((c) => (c.parentName ? true : c.shouldBeIndexed));
 
     return showSecret
       ? commandsList
       : commandsList.filter((c) => !c.secretCommand);
+  }
+
+  deepList(showSecret: boolean = false): Command[] {
+    let shallowCommands = this.list();
+
+    return flatDeep<Command>(
+      shallowCommands.map((sc) =>
+        sc.hasChildren ? [sc, ...(sc.children?.deepList(showSecret) || [])] : sc
+      )
+    ).filter((c) => showSecret || !c.secretCommand);
   }
 }

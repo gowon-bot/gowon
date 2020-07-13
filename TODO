@@ -1,0 +1,32 @@
+
+Bugs:
+  [] `! c` - this should not work
+
+Todo:
+  [] Keep track of every command run
+  [x] Make AliasChecker case insensitive
+  [x] Disable commands in dms
+
+  Crowns:
+    [] Inactivity
+    [] Kill
+
+  Permissions:
+    [x] Display friendly names instead of IDs
+    [x] Fix blacklisting
+    [x] Fix whitelisting  
+    [x] Allow viewing permissions
+    [x] Enable permissions for subcommands
+    [x] Allow white & blacklisting for parentcommands
+    [x] Make permissions unique
+    [x] Allow listing of disabled commands
+    [x] Allow setting permissions for roles without mentioning the role
+    [x] Allow setting permissions without mentioning the user
+    [x] Fix manipulating multiple commands
+    [] Default commands
+
+  Large Projects:
+    [] Change User.username into GuildMember.nickname (or w/e it's called)
+    [] Make commands database-based
+    [] Feedback command to automatically make gh issue
+    [] Permission caching
