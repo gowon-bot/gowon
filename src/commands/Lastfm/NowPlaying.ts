@@ -58,7 +58,8 @@ export default class NowPlaying extends LastFMBaseCommand {
       .setTitle(track.name)
       .setURL(LinkGenerator.trackPage(track.artist, track.name))
       .setDescription(
-        `by **${links.artist}**` + (track.album ? ` from _${links.album}_` : "")
+        `by ${links.artist.bold()}` +
+          (track.album ? ` from ${links.album.italic()}` : "")
       )
       .setThumbnail(
         nowPlaying.image.find((i) => i.size === "large")?.["#text"] || ""
@@ -97,7 +98,6 @@ export default class NowPlaying extends LastFMBaseCommand {
             " of this song\n" +
             artistInfo.tags.tag.map((t) => t.name.toLowerCase()).join(" ‧ ") +
             (crownString ? " • " + crownString : "")
-          // (crownString ? "\n" + crownString : "")
         );
     }
 

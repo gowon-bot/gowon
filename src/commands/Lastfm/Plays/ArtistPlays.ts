@@ -41,10 +41,10 @@ export default class ArtistPlays extends LastFMBaseCommand {
     let artistDetails = await this.lastFMService.artistInfo(artist, username);
 
     message.channel.send(
-      `${ucFirst(perspective.plusToHave)} ${numberDisplay(
+      `${ucFirst(perspective.plusToHave)} **${numberDisplay(
         artistDetails.stats.userplaycount,
-        "scrobble"
-      )} of ${artistDetails.name}`
+        "**scrobble"
+      )} of **${artistDetails.name}**`
     );
   }
 }

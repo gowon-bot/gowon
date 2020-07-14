@@ -24,7 +24,7 @@ export class MentionParser extends Parser {
   }
 
   private buildCustomMentionRegex(prefix: string): RegExp {
-    return new RegExp(`(?<=\\b${escapeStringRegexp(prefix)})\\w+`, "gi");
+    return new RegExp(`(?<=\\b${escapeStringRegexp(prefix)})\\s*\\w+`, "gi");
   }
 
   hasNonDiscordMentions(): boolean {
@@ -44,7 +44,7 @@ export class MentionParser extends Parser {
       .map((mo) => escapeStringRegexp(mo.nonDiscordMentionParsing?.prefix!))
       .join("|");
 
-    return string.replace(new RegExp(`\\b(${prefixRegexPart})\\w+`, "gi"), "");
+    return string.replace(new RegExp(`\\b(${prefixRegexPart})\\s*\\w+`, "gi"), "");
   }
 
   private parseMention(

@@ -55,7 +55,7 @@ export class DM extends CrownsChildCommand {
               (c, i) =>
                 `${chunkIdx * crownsPerMessage + 1 + i}) ${
                   c.artistName
-                } ― **${numberDisplay(c.plays, "play")}**`
+                } ― ${numberDisplay(c.plays, "play").bold()}`
             )
           )
       )

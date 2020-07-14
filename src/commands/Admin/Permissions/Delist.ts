@@ -24,7 +24,7 @@ export class Delist extends PermissionsChildCommand {
     let embed = new MessageEmbed()
       .setTitle(`Removed permissions`)
       .setDescription(
-        `Delisted \`${this.runAs.toCommandFriendlyName()}\` for ${delisted
+        `Delisted ${this.runAs.toCommandFriendlyName().code()} for ${delisted
           .map((d) => (d instanceof Role ? d.name + " (role)" : d.username))
           .join(", ")}` +
           (failed.length

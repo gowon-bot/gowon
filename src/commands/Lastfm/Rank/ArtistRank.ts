@@ -46,11 +46,13 @@ export default class ArtistRank extends LastFMBaseCommand {
       );
     } else {
       await message.reply(
-        `**${topArtists.artist[rank].name}** is ranked **#${rank + 1}** in ${
+        `${topArtists.artist[rank].name.bold()} is ranked #${numberDisplay(
+          rank + 1
+        ).bold()} in ${
           perspective.possessive
         } top 1,000 artists with ${numberDisplay(
           topArtists.artist[rank].playcount
-        )} plays`
+        ).bold()} plays`
       );
     }
   }

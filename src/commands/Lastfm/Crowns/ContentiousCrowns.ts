@@ -21,10 +21,10 @@ export class ContentiousCrowns extends CrownsChildCommand {
           crowns
             .map(
               (c) =>
-                `${c.artistName} ― stolen **${numberDisplay(
+                `${c.artistName} ― stolen ${numberDisplay(
                   c.version - 1,
                   "time"
-                )}**`
+                ).bold()}`
             )
             .join("\n")
       );

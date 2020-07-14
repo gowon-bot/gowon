@@ -42,7 +42,7 @@ export default class Combo extends LastFMBaseCommand {
 
     let embed = new MessageEmbed()
       .setTitle(
-        `Streak for \`${username}\` (from recent ${numberDisplay(
+        `Streak for ${username.code()} (from recent ${numberDisplay(
           streakAmount,
           "track"
         )})`
@@ -52,17 +52,17 @@ export default class Combo extends LastFMBaseCommand {
           ? (combo.artist.plays > 0
               ? `Artist: ${combo.artist.plays}${
                   combo.artist.nowplaying ? "➚" : ""
-                } in a row (**${combo.artist.name}**)\n`
+                } in a row (${combo.artist.name.bold()})\n`
               : "") +
               (combo.album.plays > 0
                 ? `Album: ${combo.album.plays}${
                     combo.album.nowplaying ? "➚" : ""
-                  } in a row (**${combo.album.name}**)\n`
+                  } in a row (${combo.album.name.bold()})\n`
                 : "") +
               (combo.track.plays > 0
                 ? `Track: ${combo.track.plays}${
                     combo.track.nowplaying ? "➚" : ""
-                  } in a row (**${combo.track.name}**)\n`
+                  } in a row (${combo.track.name.bold()})\n`
                 : "")
           : "No consecutive plays found!"
       );

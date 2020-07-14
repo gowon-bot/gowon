@@ -4,7 +4,7 @@ import { numberDisplay, ucFirst } from "../../../helpers";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 export default class AlbumPlays extends LastFMBaseCommand {
-  aliases = ["alp", "lp"];
+  aliases = ["alp"];
   description = "Shows you how many plays you have of a given album";
 
   arguments: Arguments = {
@@ -50,7 +50,7 @@ export default class AlbumPlays extends LastFMBaseCommand {
       `${ucFirst(perspective.plusToHave)} **${numberDisplay(
         albumDetails.userplaycount,
         "** scrobble"
-      )} of ${albumDetails.name.italic()} by ${albumDetails.artist.bold()}`
+      )} of **${albumDetails.name}** by ${albumDetails.artist}`
     );
   }
 }

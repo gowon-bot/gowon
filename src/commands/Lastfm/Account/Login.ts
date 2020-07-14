@@ -17,9 +17,9 @@ export default class Login extends LastFMBaseCommand {
     if (await this.lastFMService.userExists(username)) {
       await this.usersService.setUsername(message.author.id, username);
 
-      message.channel.send(`Logged in as \`${username}\``);
+      message.channel.send(`Logged in as ${username.code()}`);
     } else {
-      message.reply(`The user \`${username}\` couldn't be found`);
+      message.reply(`The user ${username.code()} couldn't be found`);
     }
   }
 }

@@ -4,7 +4,11 @@ export function addS(string: string, number: number) {
   return number === 1 ? string : string + "s";
 }
 
-export function numberDisplay(number: number | string, unit?: string): string {
+export function numberDisplay(
+  number: number | string,
+  unit?: string,
+  noSpace = false
+): string {
   let parsedNumber = number;
 
   if (typeof number === "string") {
@@ -13,7 +17,9 @@ export function numberDisplay(number: number | string, unit?: string): string {
 
   return (
     parsedNumber.toLocaleString() +
-    (unit ? " " + (parsedNumber === 1 ? unit : unit + "s") : "")
+    (unit
+      ? (noSpace ? "" : " ") + (parsedNumber === 1 ? unit : unit + "s")
+      : "")
   );
 }
 
@@ -64,5 +70,7 @@ export function getOrdinal(number: number): string {
     "th",
   ];
 
-  return number + ordinals[parseInt(`${number}`.charAt(`${number}`.length - 1))];
+  return (
+    number + ordinals[parseInt(`${number}`.charAt(`${number}`.length - 1))]
+  );
 }

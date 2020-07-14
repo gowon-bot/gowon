@@ -34,9 +34,9 @@ export default class ArtistAt extends LastFMBaseCommand {
     let artist = topArtists.artist[0];
 
     await message.reply(
-      `${artist.name} is ranked at **#${artist["@attr"].rank}** in ${
+      `${artist.name.bold()} is ranked at #${artist["@attr"].rank.bold()} in ${
         perspective.possessive
-      } top artists with ${numberDisplay(artist.playcount, "play")}`
+      } top artists with ${numberDisplay(artist.playcount, "play").bold()}`
     );
   }
 }

@@ -45,10 +45,10 @@ export default class Scrobbles extends LastFMBaseCommand {
     );
 
     await message.reply(
-      `${perspective.plusToHave} **${numberDisplay(
+      `${perspective.plusToHave} ${numberDisplay(
         scrobbles,
         "scrobble"
-      )}** ${humanTimeRange}`
+      ).bold()} ${humanTimeRange}`
     );
   }
 }

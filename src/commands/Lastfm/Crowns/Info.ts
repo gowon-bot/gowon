@@ -31,7 +31,9 @@ export class Info extends CrownsChildCommand {
     );
 
     if (!crown) {
-      await message.reply(`No one has the crown for **${artistDetails.name}**`);
+      await message.reply(
+        `No one has the crown for ${artistDetails.name.bold()}`
+      );
     } else {
       let holderUsername = await User.toDiscordUser(
         message,
@@ -39,11 +41,12 @@ export class Info extends CrownsChildCommand {
       );
 
       let embed = new MessageEmbed()
-        .setTitle(`Who has **${artistDetails.name}**?`)
+        .setTitle(`Who has ${artistDetails.name.bold()}?`)
         .setDescription(
-          `${holderUsername} has the crown for **${
-            artistDetails.name
-          }** with ${numberDisplay(crown.plays, "play")}
+          `${holderUsername} has the crown for ${artistDetails.name.bold()} with ${numberDisplay(
+            crown.plays,
+            "play"
+          )}
 
           Created ${ago(crown.createdAt)}${
             crown.version > 1 ? ". Last stolen " + ago(crown.updatedAt) : ""

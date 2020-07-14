@@ -10,14 +10,15 @@ export class CrownEmbeds {
     return new MessageEmbed()
       .setTitle(`Crown for ${crownCheck.crown!.artistName}`)
       .setDescription(
-        `:crown: → \`${user.username}\` - ${numberDisplay(
+        `:crown: → ${user.username.code()} - ${numberDisplay(
           crownCheck.crown!.plays,
           "play"
         )}
       
-      You've created a crown for **${
-        crownCheck.crown!.artistName
-      }** with **${numberDisplay(crownCheck.crown!.plays, "play")}**`
+      You've created a crown for ${crownCheck.crown!.artistName.bold()} with ${numberDisplay(
+          crownCheck.crown!.plays,
+          "play"
+        ).bold()}`
       );
   }
 
@@ -25,12 +26,10 @@ export class CrownEmbeds {
     return new MessageEmbed()
       .setTitle(`Crown for ${crownCheck.crown!.artistName}`)
       .setDescription(
-        `You already have the crown **${
-          crownCheck.crown!.artistName
-        }**, but it's been updated from ${numberDisplay(
+        `You already have the crown ${crownCheck.crown!.artistName.bold()}, but it's been updated from ${numberDisplay(
           crownCheck.oldCrown!.plays,
           "play"
-        )} to **${numberDisplay(crownCheck.crown!.plays, "play")}**`
+        )} to ${numberDisplay(crownCheck.crown!.plays, "play").bold()}`
       );
   }
 
@@ -47,22 +46,20 @@ export class CrownEmbeds {
       .setTitle(`Crown for ${crownCheck.crown!.artistName}`)
       .setDescription(
         `
-:crown: → \`${user.username}\` - ${numberDisplay(
+:crown: → ${user.username.code()} - ${numberDisplay(
           crownCheck.crown!.plays,
           "play"
         )}
 
-:pensive: → \`${holderUsername}\` - ${numberDisplay(
+:pensive: → ${holderUsername?.code()} - ${numberDisplay(
           crownCheck.oldCrown?.plays!,
           "play"
         )}
 
-        Yoink! The crown for **${
-          crownCheck.crown!.artistName
-        }** was stolen from ${holderUsername} and is now at **${numberDisplay(
+        Yoink! The crown for ${crownCheck.crown!.artistName.bold()} was stolen from ${holderUsername} and is now at ${numberDisplay(
           crownCheck.crown!.plays,
           "play"
-        )}**!`
+        ).bold()}!`
       );
   }
 
@@ -83,12 +80,12 @@ export class CrownEmbeds {
       .setTitle(`Crown for ${crownCheck.crown!.artistName}`)
       .setDescription(
         `
-:crown: → \`${holderUsername}\` - ${numberDisplay(
+:crown: → ${holderUsername?.code()} - ${numberDisplay(
           crownCheck.oldCrown?.plays!,
           "play"
         )}
 
-:pensive: → \`${user.username}\` - ${numberDisplay(
+:pensive: → ${user.username.code()} - ${numberDisplay(
           artistDetails.stats.userplaycount,
           "play"
         )}
@@ -109,9 +106,12 @@ ${holderUsername} will keep the crown for ${
     return new MessageEmbed()
       .setTitle(`Crown for ${artistName}`)
       .setDescription(
-        `:pensive: → \`${user.username}\` - ${numberDisplay(plays, "play")}
+        `:pensive: → ${user.username.code()} - ${numberDisplay(plays, "play")}
 
-You must have at least ${numberDisplay(threshold, "play")} to create a crown.
+You must have at least ${numberDisplay(
+          threshold,
+          "play"
+        ).bold()} to create a crown.
       `
       );
   }
@@ -129,12 +129,12 @@ You must have at least ${numberDisplay(threshold, "play")} to create a crown.
       .setTitle(`Crown for ${crownCheck.crown!.artistName}`)
       .setDescription(
         `
-:crown: → \`${holderUsername}\` - ${numberDisplay(
+:crown: → ${holderUsername?.code()} - ${numberDisplay(
           crownCheck.oldCrown?.plays!,
           "play"
         )}
 
-:eyes: → \`${user.username}\` - ${numberDisplay(
+:eyes: → ${user.username.code()} - ${numberDisplay(
           artistDetails.stats.userplaycount,
           "play"
         )}

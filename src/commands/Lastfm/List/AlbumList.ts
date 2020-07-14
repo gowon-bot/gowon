@@ -5,7 +5,7 @@ import { ListCommand } from "./ListCommand";
 export default class AlbumList extends ListCommand {
   aliases = ["llist", "allist", "topalbums"];
   description = "Shows your top albums";
-  shouldBeIndexed = true
+  shouldBeIndexed = true;
 
   async run(message: Message) {
     let { username } = await this.parseMentionedUsername(message);
@@ -27,9 +27,10 @@ export default class AlbumList extends ListCommand {
         topAlbums.album
           .map(
             (a) =>
-              `${numberDisplay(a.playcount, "play")} - **${a.name}** by _${
-                a.artist.name
-              }_`
+              `${numberDisplay(
+                a.playcount,
+                "play"
+              )} - ${a.name.bold()} by ${a.artist.name.italic()}`
           )
           .join("\n")
       );

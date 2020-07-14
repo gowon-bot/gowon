@@ -47,18 +47,21 @@ export default class ArtistStats extends LastFMBaseCommand {
 
     let embed = new MessageEmbed()
       .setAuthor(`Album stats for ${username}`)
-      .setTitle(albumInfo.name + " _by " + albumInfo.artist + "_")
+      .setTitle(albumInfo.name + " by " + albumInfo.artist.italic())
+      .setImage(
+        albumInfo.image.find((i) => i.size === "large")?.["#text"] || ""
+      )
       .addField(
         "Global stats",
-        `\`${numberDisplay(albumInfo.listeners)}\` listeners
-\`${numberDisplay(albumInfo.playcount)}\` total plays
-\`${numberDisplay(albumInfo.userplaycount)}\` plays by ${
+        `\`${numberDisplay(albumInfo.listeners, "` listener", true)}
+\`${numberDisplay(albumInfo.playcount, "` total play", true)}
+\`${numberDisplay(albumInfo.userplaycount, "` play", true)} by ${
           perspective.objectPronoun
         }
 That means ${perspective.regularVerb("account")} for ${calculatePercent(
           albumInfo.userplaycount,
           albumInfo.playcount
-        )}% of all scrobbles of this album!`
+        ).bold()}% of all scrobbles of this album!`
       )
       .addField(
         `${ucFirst(perspective.possessive)} stats`,
@@ -66,9 +69,8 @@ That means ${perspective.regularVerb("account")} for ${calculatePercent(
           albumInfo.userplaycount,
           userInfo.playcount,
           4
-        )}% of ${perspective.possesivePronoun} total scrobbles`
+        ).bold()}% of ${perspective.possesivePronoun} total scrobbles`
       );
-
     message.channel.send(embed);
   }
 }

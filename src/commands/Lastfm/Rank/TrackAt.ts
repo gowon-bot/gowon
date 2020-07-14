@@ -21,7 +21,7 @@ export default class TrackAt extends LastFMBaseCommand {
 
   async run(message: Message) {
     let rank = parseInt(this.parsedArguments.rank as string, 10);
-    
+
     if (isNaN(rank) || rank < 0) {
       await message.reply("please enter a valid rank");
       return;
@@ -34,12 +34,11 @@ export default class TrackAt extends LastFMBaseCommand {
     let track = topTracks.track[0];
 
     await message.reply(
-      `**${track.name}** by _${track.artist.name}_ is ranked at **${
-        track["@attr"].rank
-      }** in ${perspective.possessive} top tracks with ${numberDisplay(
-        track.playcount,
-        "play"
-      )}`
+      `${track.name.bold()} by ${track.artist.name.italic()} is ranked at ${track[
+        "@attr"
+      ].rank.bold()} in ${
+        perspective.possessive
+      } top tracks with ${numberDisplay(track.playcount, "play").bold()}`
     );
   }
 }

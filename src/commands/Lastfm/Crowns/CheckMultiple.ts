@@ -55,7 +55,7 @@ export class CheckMany extends CrownsChildCommand {
       .setDescription(
         Object.keys(display).map(
           (state) =>
-            `${state}: ${display[state].map((a) => "`" + a + "`").join(", ")}`
+            `${state}: ${display[state].map((a) => a.code()).join(", ")}`
         )
       );
 

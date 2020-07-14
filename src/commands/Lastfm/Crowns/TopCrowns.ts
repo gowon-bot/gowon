@@ -20,7 +20,8 @@ export class TopCrowns extends CrownsChildCommand {
         }\n\n` +
           crowns
             .map(
-              (c) => `${c.artistName} ― **${numberDisplay(c.plays, "play")}**`
+              (c) =>
+                `${c.artistName} ― ${numberDisplay(c.plays, "play").bold()}`
             )
             .join("\n")
       );

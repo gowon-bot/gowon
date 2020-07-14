@@ -53,13 +53,17 @@ export default class RegexTrackSearch extends LastFMBaseCommand {
       if (tracks.length) {
         let embed = new MessageEmbed()
           .setTitle(
-            `Tracks in ${perspective.possessive} library that match \`${regex}\``
+            `Tracks in ${
+              perspective.possessive
+            } library that match ${regex.code()}`
           )
           .setDescription(
             tracks
               .map(
                 (t) =>
-                  `**${t.name}** by ${t.artist.name} _(${t.playcount} plays)_`
+                  `${t.name.bold()} by ${t.artist.name} _(${
+                    t.playcount
+                  } plays)_`
               )
               .join("\n")
           );
@@ -67,11 +71,13 @@ export default class RegexTrackSearch extends LastFMBaseCommand {
         await message.channel.send(embed);
       } else {
         await message.reply(
-          `no tracks were found with the regex \`${regex}\` for ${perspective.name}`
+          `no tracks were found with the regex ${regex.code()} for ${
+            perspective.name
+          }`
         );
       }
     } else {
-      await message.reply(`the regex \`${regex}\` is not valid`);
+      await message.reply(`the regex ${regex.code()} is not valid`);
     }
   }
 }

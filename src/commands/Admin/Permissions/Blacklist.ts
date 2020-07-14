@@ -63,7 +63,7 @@ export class Blacklist extends PermissionsChildCommand {
       .setDescription(
         `${
           runAs.lastString() === "whitelist" ? "Whitelisted" : "Blacklisted"
-        } \`${this.runAs.toCommandFriendlyName()}\` for:\n` +
+        } ${this.runAs.toCommandFriendlyName().code()} for:\n` +
           (createdRolePermissions.length
             ? `Roles: ${createdRolePermissions
                 .map((rp) => rp.name)

@@ -44,23 +44,23 @@ export default class ArtistStats extends LastFMBaseCommand {
       .setTitle(artist.name)
       .addField(
         "Global stats",
-        `\`${numberDisplay(artist.stats.listeners)}\` listeners
-\`${numberDisplay(artist.stats.playcount)}\` total plays
-\`${numberDisplay(artist.stats.userplaycount)}\` plays by ${
+        `\`${numberDisplay(artist.stats.listeners, "` listener", true)}
+\`${numberDisplay(artist.stats.playcount, "` total play", true)}
+\`${numberDisplay(artist.stats.userplaycount, "` play", true)} by ${
           perspective.objectPronoun
         }
 That means ${perspective.regularVerb("account")} for ${calculatePercent(
           artist.stats.userplaycount,
           artist.stats.playcount,
           4
-        )}% of all ${artist.name} scrobbles!`
+        ).bold()}% of all ${artist.name} scrobbles!`
       )
       .addField(
         `${ucFirst(perspective.possessive)} stats`,
         `${calculatePercent(
           artist.stats.userplaycount,
           userInfo.playcount
-        )}% of ${perspective.possesivePronoun} total scrobbles`
+        ).bold()}% of ${perspective.possesivePronoun} total scrobbles`
       );
 
     message.channel.send(embed);

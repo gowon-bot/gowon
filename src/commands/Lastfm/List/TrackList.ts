@@ -27,9 +27,10 @@ export default class TrackList extends ListCommand {
         topTracks.track
           .map(
             (a) =>
-              `${numberDisplay(a.playcount, "play")} - **${a.name}** by _${
-                a.artist.name
-              }_`
+              `${numberDisplay(
+                a.playcount,
+                "play"
+              )} - ${a.name.bold()} by ${a.artist.name.italic()}`
           )
           .join("\n")
       );

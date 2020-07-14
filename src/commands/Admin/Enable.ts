@@ -19,9 +19,9 @@ export default class Enable extends PermissionsChildCommand {
     );
 
     await message.channel.send(
-      `Successfully re-enabled \`${
-        this.commandManager.findByID(disabledCommand.commandID)?.name
-      }\``
+      `Successfully re-enabled ${
+        this.commandManager.findByID(disabledCommand.commandID)?.name.code()
+      }`
     );
   }
 }

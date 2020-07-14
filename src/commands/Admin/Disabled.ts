@@ -17,7 +17,7 @@ export default class Disabled extends PermissionsChildCommand {
       .setDescription(
         disabledCommands.length
           ? disabledCommands
-              .map((dc) => "`" + dc.commandFriendlyName + "`")
+              .map((dc) => dc.commandFriendlyName.code())
               .join(", ")
           : `This server does not have any disabled commands!`
       );

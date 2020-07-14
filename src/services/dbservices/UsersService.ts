@@ -108,7 +108,7 @@ export class UsersService extends BaseService {
     if (username === undefined || authorUsername === username) {
       return this.buildPerspective("you");
     } else {
-      return this.buildPerspective(asCode ? "`" + username! + "`" : username!);
+      return this.buildPerspective(asCode ? username!.code() : username!);
     }
   }
 

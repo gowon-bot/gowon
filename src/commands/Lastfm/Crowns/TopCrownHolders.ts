@@ -21,10 +21,10 @@ export class TopCrownHolders extends CrownsChildCommand {
           holders
             .map(
               (h, idx) =>
-                `${idx}) ${h.user.username} ― **${numberDisplay(
+                `${idx}) ${h.user.username} ― ${numberDisplay(
                   h.numberOfCrowns,
                   "crown"
-                )}**`
+                ).bold()}`
             )
             .join("\n")
       );

@@ -37,8 +37,8 @@ export default class Milestone extends LastFMBaseCommand {
       )
       .setTitle(track.name)
       .setDescription(
-        `by **${track.artist["#text"]}**` +
-          (track.album["#text"] ? ` from _${track.album["#text"]}_` : "")
+        `by ${track.artist["#text"].bold()}` +
+          (track.album["#text"] ? ` from ${track.album["#text"].italic()}` : "")
       )
       .setThumbnail(
         track.image.find((i) => i.size === "large")?.["#text"] || ""

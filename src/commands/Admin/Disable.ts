@@ -15,7 +15,7 @@ export default class Disable extends PermissionsChildCommand {
     if (this.command instanceof NoCommand) throw new CommandNotFoundError();
     if (["enable", "disable"].includes(this.command.name))
       throw new LogicError(
-        `You can't disable the \`${this.command.name}\` command!`
+        `You can't disable the ${this.command.name.code()} command!`
       );
 
     let disabledCommand = await this.adminService.disableCommand(
@@ -25,9 +25,9 @@ export default class Disable extends PermissionsChildCommand {
     );
 
     await message.channel.send(
-      `Successfully disabled \`${
-        this.commandManager.findByID(disabledCommand.commandID)?.name
-      }\``
+      `Successfully disabled ${this.commandManager
+        .findByID(disabledCommand.commandID)
+        ?.name.code()}`
     );
   }
 }

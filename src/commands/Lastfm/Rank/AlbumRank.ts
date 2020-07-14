@@ -1,6 +1,7 @@
 import { Message } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
+import { numberDisplay } from "../../../helpers";
 
 export default class AlbumRank extends LastFMBaseCommand {
   aliases = ["alra", "lra"];
@@ -58,11 +59,12 @@ export default class AlbumRank extends LastFMBaseCommand {
       );
     } else {
       await message.reply(
-        `**${topAlbums.album[rank].name}** by ${
+        `${topAlbums.album[rank].name.bold()} by ${
           topAlbums.album[rank].artist.name
-        } is ranked **#${rank + 1}** with ${
-          topAlbums.album[rank].playcount
-        } plays`
+        } is ranked #${numberDisplay(rank + 1).bold()} with ${numberDisplay(
+          topAlbums.album[rank].playcount,
+          "play"
+        ).bold()}`
       );
     }
   }

@@ -50,10 +50,12 @@ export default class AlbumPercent extends LastFMBaseCommand {
       `${perspective.possessive} ${numberDisplay(
         albumInfo.userplaycount,
         "play"
-      )} of **${albumInfo.name}** make **${calculatePercent(
+      )} of ${albumInfo.name.bold()} make ${calculatePercent(
         albumInfo.userplaycount,
         artistInfo.stats.userplaycount
-      )}%** of ${perspective.possesivePronoun} ${artistInfo.name} scrobbles`
+      ).bold()}% of ${perspective.possesivePronoun} ${
+        artistInfo.name.bold()
+      } scrobbles`
     );
   }
 }

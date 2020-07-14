@@ -34,9 +34,9 @@ export default class ArtistPlaysover extends LastFMBaseCommand {
     }
 
     await message.reply(
-      `**${playsover}** of ${
+      `${numberDisplay(playsover).bold()} of ${
         perspective.possessive
-      } top 1,000 artist have at least **${numberDisplay(plays, "play")}**`
+      } top 1,000 artist have at least ${numberDisplay(plays, "play").bold()}`
     );
   }
 }
