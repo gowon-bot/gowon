@@ -3,6 +3,8 @@ import { Arguments } from "../../../lib/arguments/arguments";
 import { Message } from "discord.js";
 import { CrownState } from "../../../services/dbservices/CrownsService";
 import { CrownEmbeds } from "../../../helpers/Embeds/CrownEmbeds";
+import { userHasRole } from "../../../helpers/discord";
+import { InactiveError, OptedOutError } from "../../../errors";
 
 export class Check extends CrownsChildCommand {
   aliases = ["c"];
@@ -15,6 +17,24 @@ export class Check extends CrownsChildCommand {
   };
 
   async run(message: Message) {
+    if (
+      userHasRole(
+        message.member!,
+        await this.botMomentService.getInactiveRole(message.guild!)
+      )
+    ) {
+      throw new InactiveError();
+    }
+
+    if (
+      await this.crownsService.isUserOptedOut(
+        message.guild?.id!,
+        message.author.id
+      )
+    ) {
+      throw new OptedOutError();
+    }
+
     let artist = this.parsedArguments.artist as string;
 
     let { username } = await this.parseMentionedUsername(message);

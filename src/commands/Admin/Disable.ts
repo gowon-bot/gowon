@@ -8,7 +8,7 @@ export default class Disable extends PermissionsChildCommand {
   description = "Disable a command globally";
 
   arguments: Arguments = {
-    ...this.arguments.inputs,
+    inputs: this.arguments.inputs,
   };
 
   async run(message: Message) {

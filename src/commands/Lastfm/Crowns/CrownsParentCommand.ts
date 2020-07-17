@@ -8,6 +8,9 @@ import { CheckMany } from "./CheckMultiple";
 import { TopCrowns } from "./TopCrowns";
 import { ContentiousCrowns } from "./ContentiousCrowns";
 import { TopCrownHolders } from "./TopCrownHolders";
+import { SetInactiveRole } from "./SetInactiveRole";
+import { OptOut } from "./OptOut";
+import { OptIn } from "./OptIn";
 
 export default class CrownsParentCommand extends LastFMBaseParentCommand {
   friendlyName = "crowns";
@@ -25,5 +28,8 @@ export default class CrownsParentCommand extends LastFMBaseParentCommand {
     contentiouscrowns: () => new ContentiousCrowns(),
     topcrownholders: () => new TopCrownHolders(),
     dm: () => new DM(),
+    setinactiverole: () => new SetInactiveRole(),
+    optout: () => new OptOut(),
+    optin: () => new OptIn(),
   });
 }

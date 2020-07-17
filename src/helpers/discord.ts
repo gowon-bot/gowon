@@ -1,4 +1,4 @@
-import { Message, Role } from "discord.js";
+import { Message, Role, GuildMember } from "discord.js";
 import { Permission } from "../database/entity/Permission";
 
 export function sanitizeForDiscord(string: string): string {
@@ -31,4 +31,15 @@ export async function addNamesToPermissions(
   }
 
   return namedPermissions;
+}
+
+export function userHasRole(
+  member: GuildMember,
+  roleID: string | undefined
+): boolean {
+  if (!roleID) {
+    return false;
+  }
+
+  return member.roles.cache.has(roleID);
 }

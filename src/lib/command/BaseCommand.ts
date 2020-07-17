@@ -143,9 +143,9 @@ export abstract class BaseCommand implements Command {
       this.logger.logError(e);
 
       if (e.isClientFacing) {
-        await message.channel.send(e.message);
+        await message.reply(e.message);
       } else {
-        await message.channel.send(new UnknownError().message);
+        await message.reply(new UnknownError().message);
       }
     }
 

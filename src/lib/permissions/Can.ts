@@ -76,18 +76,21 @@ export class Can {
       },
     });
 
-    let disabledCheck = !(
+    let disabledCheck = (
       await Promise.all(
         (command instanceof ChildCommand
           ? [command.id, ...(await this.getParentIDs(command))]
           : [command.id]
-        ).map((id) =>
-          this.adminService.isCommandDisabled(id, message.guild?.id!)
-        )
+        ).map((id) => {
+          return this.adminService.isCommandDisabled(id, message.guild?.id!);
+        })
       )
-    ).filter((v) => !v)[0];
+    ).reduce((acc, c) => {
+      if (!acc) acc = c;
+      return acc;
+    }, false);
 
-    let disabled = disabledCheck ?? false;
+    let disabled = disabledCheck;
 
     let hasPermission = this.userHasPermissions(message.member!, permissions);
 

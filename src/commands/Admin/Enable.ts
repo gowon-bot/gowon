@@ -9,7 +9,7 @@ export default class Enable extends PermissionsChildCommand {
   commandManager = new CommandManager();
 
   arguments: Arguments = {
-    ...this.arguments.inputs,
+    inputs: this.arguments.inputs,
   };
 
   async run(message: Message) {
@@ -19,9 +19,9 @@ export default class Enable extends PermissionsChildCommand {
     );
 
     await message.channel.send(
-      `Successfully re-enabled ${
-        this.commandManager.findByID(disabledCommand.commandID)?.name.code()
-      }`
+      `Successfully re-enabled ${this.commandManager
+        .findByID(disabledCommand.commandID)
+        ?.name.code()}`
     );
   }
 }

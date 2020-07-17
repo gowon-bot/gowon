@@ -4,6 +4,9 @@ import { RecordNotFoundError } from "../../errors";
 import { Message, User as DiscordUser } from "discord.js";
 import { BaseService } from "../BaseService";
 import { FindManyOptions } from "typeorm";
+import { Setting } from "../../database/entity/Setting";
+import { Settings } from "../../lib/Settings";
+import { BotMomentService } from "../BotMomentService";
 
 export enum CrownState {
   tie = "Tie",
@@ -229,5 +232,57 @@ export class CrownsService extends BaseService {
         numberOfCrowns: parseInt(rch.count, 10),
       }))
     );
+  }
+
+  async setInactiveRole(
+    serverID: string,
+    roleID?: string
+  ): Promise<Setting | undefined> {
+    let setting = await Setting.createUpdateOrDelete(
+      Settings.InactiveRole,
+      serverID,
+      roleID
+    );
+
+    BotMomentService.getInstance().inactiveRole[serverID] = roleID;
+
+    return setting;
+  }
+
+  private async wipeUsersCrowns(
+    serverID: string,
+    userID: string
+  ): Promise<number> {
+    let user = await User.findOne({ where: { discordID: userID } });
+
+    let result = await Crown.delete({ serverID, user });
+
+    return result.affected!;
+  }
+
+  async optOut(serverID: string, userID: string): Promise<number> {
+    await Setting.createUpdateOrDelete(
+      Settings.OptedOut,
+      serverID,
+      "true",
+      userID
+    );
+
+    return await this.wipeUsersCrowns(serverID, userID);
+  }
+
+  async optIn(serverID: string, userID: string): Promise<void> {
+    await Setting.createUpdateOrDelete(
+      Settings.OptedOut,
+      serverID,
+      undefined,
+      userID
+    );
+  }
+
+  async isUserOptedOut(serverID: string, userID: string): Promise<boolean> {
+    let setting = await Setting.getByName(Settings.OptedOut, serverID, userID);
+
+    return !!setting;
   }
 }

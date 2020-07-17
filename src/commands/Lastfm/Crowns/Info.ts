@@ -35,10 +35,9 @@ export class Info extends CrownsChildCommand {
         `No one has the crown for ${artistDetails.name.bold()}`
       );
     } else {
-      let holderUsername = await User.toDiscordUser(
-        message,
-        crown.user.discordID
-      );
+      let holderUsername = (
+        await User.toDiscordUser(message, crown.user.discordID)
+      )?.username;
 
       let embed = new MessageEmbed()
         .setTitle(`Who has ${artistDetails.name.bold()}?`)

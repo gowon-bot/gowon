@@ -3,7 +3,7 @@ import { PermissionsChildCommand } from "./Permissions/PermissionsChildCommand";
 
 export default class Disabled extends PermissionsChildCommand {
   description = "List all disabled commands";
-  aliases = ["listdisabled"];
+  aliases = ["listdisabled", "disabledcommands"];
 
   async prerun() {}
 
