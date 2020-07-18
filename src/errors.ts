@@ -48,6 +48,7 @@ export class LastFMError extends ClientError {
 
   constructor(error: LastFMErrorResponse) {
     super(parseError(error));
+    this.name = "LastFMError:" + error.error
   }
 }
 

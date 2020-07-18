@@ -16,6 +16,7 @@ import { CommandManager } from "./CommandManager";
 import { Logger } from "../Logger";
 import { RunAs } from "../AliasChecker";
 import { ParentCommand } from "./ParentCommand";
+import { TrackingService } from "../../services/TrackingService";
 
 export interface Variation {
   variationString?: string;
@@ -60,6 +61,7 @@ export abstract class BaseCommand implements Command {
 
   usersService = new UsersService(this.logger);
   botMomentService = BotMomentService.getInstance();
+  track = new TrackingService(this.logger);
 
   hasChildren = false;
   children?: CommandManager;
@@ -141,6 +143,7 @@ export abstract class BaseCommand implements Command {
       await this.run(message, runAs);
     } catch (e) {
       this.logger.logError(e);
+      this.track.error(e)
 
       if (e.isClientFacing) {
         await message.reply(e.message);

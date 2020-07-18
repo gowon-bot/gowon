@@ -25,7 +25,12 @@ export class CommandHandler {
       await message.react("😔");
     }
 
-    if (message.content.startsWith(this.botMomentService.prefix)) {
+    if (
+      message.content.match(
+        new RegExp(`^${this.botMomentService.regexSafePrefix}\\w+`, "i")
+      )
+    ) {
+      // if (message.content.startsWith(this.botMomentService.prefix)) {
       let { command, runAs } = this.commandManager.find(message.content);
 
       let canCheck = await this.adminService.can.run(command, message);

@@ -1,15 +1,27 @@
-
 Bugs:
-  [] `! c` - this should not work
+  [x] `! c` - this should not work
 
 Todo:
   [] Keep track of every command run
+  [] Error logging
   [x] Make AliasChecker case insensitive
   [x] Disable commands in dms
+  [] Update commands list
+  [] Use tags from both track.getInfo and artist.getInfo (and album.getInfo?)
+  [x] Make !co use nowplaying when displaying currently playing album cover
 
   Crowns:
-    [] Inactivity
+    [x] Inactivity
+    [x] Opting out
     [] Kill
+    [] History
+
+  Comands:
+    [] Goback
+    [] Partytime
+    [] Fill out regex searches
+    [] Artist/Album/Track (maybe) info
+    [] Overview + subcommands
 
   Permissions:
     [x] Display friendly names instead of IDs
@@ -26,7 +38,7 @@ Todo:
     [] Default commands
 
   Large Projects:
-    [] Change User.username into GuildMember.nickname (or w/e it's called)
+    [] Change User.username ixnto GuildMember.nickname (or w/e it's called)
     [] Make commands database-based
     [] Feedback command to automatically make gh issue
     [] Permission caching

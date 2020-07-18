@@ -57,7 +57,13 @@ export function generateTimeRange(string: string): TimeRange {
   };
 }
 
-export function generateHumanTimeRange(string: string): string {
+export function generateHumanTimeRange(
+  string: string,
+  options: { noOverall: boolean; raw: boolean } = {
+    noOverall: false,
+    raw: false,
+  }
+): string {
   let timeRange = generateTimeRange(string);
 
   if (timeRange.from) {
@@ -72,9 +78,9 @@ export function generateHumanTimeRange(string: string): string {
 
       let match = timeFrameConverter(matches[0]);
 
-      return "over the past " + match;
-    } else return "over the past " + matches[0];
-  } else return "overall";
+      return (options.raw ? "" : "over the past ") + match;
+    } else return (options.raw ? "" : "over the past ") + matches[0];
+  } else return options.noOverall ? "" : "overall";
 }
 
 export function generatePeriod(string: string, fallback = "overall"): string {
@@ -97,12 +103,15 @@ export function generatePeriod(string: string, fallback = "overall"): string {
   return fallback;
 }
 
-export function generateHumanPeriod(string: string, fallback = "overall"): string {
+export function generateHumanPeriod(
+  string: string,
+  fallback = "overall"
+): string {
   let period = generatePeriod(string, fallback);
 
   switch (period) {
     case "7day":
-      return "over the past week"
+      return "over the past week";
     case "1month":
       return "over the past month";
     case "3month":

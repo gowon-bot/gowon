@@ -25,19 +25,32 @@ export default class Cover extends LastFMBaseCommand {
 
     let { username } = await this.parseMentionedUsername(message);
 
-    if (!artist || !albumName) {
-      let nowPlaying = await this.lastFMService.nowPlayingParsed(username);
+    if (!artist && !albumName) {
+      let nowPlaying = await this.lastFMService.nowPlaying(username);
 
-      if (!artist) artist = nowPlaying.artist;
-      if (!albumName) albumName = nowPlaying.album;
+      let image = nowPlaying.image.find((i) => i.size === "extralarge");
+
+      message.channel.send(
+        `Cover for ${nowPlaying.name.bold()} by ${nowPlaying.artist[
+          "#text"
+        ].code()}`,
+        { files: [image?.["#text"] ?? ""] }
+      );
+    } else {
+      if (!artist || !albumName) {
+        let nowPlaying = await this.lastFMService.nowPlayingParsed(username);
+
+        if (!artist) artist = nowPlaying.artist;
+        if (!albumName) albumName = nowPlaying.album;
+      }
+
+      let albumDetails = await this.lastFMService.albumInfo(artist, albumName);
+      let image = albumDetails.image.find((i) => i.size === "extralarge");
+
+      message.channel.send(
+        `Cover for ${albumDetails.name.bold()} by ${albumDetails.artist.code()}`,
+        { files: [image?.["#text"] ?? ""] }
+      );
     }
-
-    let albumDetails = await this.lastFMService.albumInfo(artist, albumName);
-    let image = albumDetails.image.find((i) => i.size === "extralarge");
-
-    message.channel.send(
-      `Cover for ${albumDetails.name.bold()} by ${albumDetails.artist.code()}`,
-      { files: [image?.["#text"] ?? ""] }
-    );
   }
 }

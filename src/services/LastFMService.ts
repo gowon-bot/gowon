@@ -25,7 +25,7 @@ import config from "../../config.json";
 import { ParsedTrack, parseLastFMTrackResponse } from "../helpers/lastFM";
 import { LastFMConnectionError, LastFMError } from "../errors";
 import { BaseService } from "./BaseService";
-import { Logger } from "../lib/Logger";
+import moment from "moment";
 
 interface Params {
   [key: string]: any;
@@ -96,11 +96,6 @@ export class LastFMService extends BaseService {
         page: parseInt(total) - milestone + 1,
         limit: 1,
       }
-    );
-
-    this.logger?.log(
-      "@attr",
-      Logger.formatObject(response.recenttracks["@attr"])
     );
 
     return response.recenttracks.track[1];
@@ -264,5 +259,23 @@ export class LastFMService extends BaseService {
     );
 
     return parseInt(topArtists.toptracks["@attr"].total, 10) || 0;
+  }
+
+  async goBack(username: string, when: Date): Promise<Track> {
+    let to = moment(when).add(1, "day").toDate();
+
+    let params = {
+      username,
+      limit: 1,
+      from: ~~(when.getTime() / 1000),
+      to: ~~(to.getTime() / 1000),
+    };
+
+    let recentTracks = await this.request<RecentTracksResponse>(
+      "user.getRecentTracks",
+      params
+    );
+
+    return recentTracks.recenttracks.track[1];
   }
 }

@@ -1,6 +1,6 @@
 import { Message, MessageEmbed } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
-import { getOrdinal } from "../../../helpers";
+import { getOrdinal, ucFirst } from "../../../helpers";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 export default class Milestone extends LastFMBaseCommand {
@@ -33,7 +33,7 @@ export default class Milestone extends LastFMBaseCommand {
 
     let embed = new MessageEmbed()
       .setAuthor(
-        `${perspective.possessive} ${getOrdinal(milestone)} track was:`
+        `${ucFirst(perspective.possessive)} ${getOrdinal(milestone)} track was:`
       )
       .setTitle(track.name)
       .setDescription(
