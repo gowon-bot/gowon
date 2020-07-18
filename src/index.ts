@@ -13,7 +13,6 @@ import { Dashboard } from "./dashboard";
 
 const client = new Client();
 const handler = new CommandHandler();
-
 let dashboard = new Dashboard();
 
 dashboard.init();
