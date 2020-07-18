@@ -42,3 +42,6 @@ Todo:
     [] Make commands database-based
     [] Feedback command to automatically make gh issue
     [] Permission caching
+
+  Dashboard:
+    [] Make TrackedErrors individual instead of grouped
