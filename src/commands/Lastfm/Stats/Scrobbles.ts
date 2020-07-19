@@ -13,7 +13,7 @@ export default class Scrobbles extends LastFMBaseCommand {
   description = "Shows you how many scrobbles you have";
   arguments: Arguments = {
     mentions: {
-      user: { index: 0, description: "The user to lookup" },
+      user: { index: 0, description: "The user to lookup", nonDiscordMentionParsing: this.ndmp },
     },
     inputs: {
       timeRange: {

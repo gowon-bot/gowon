@@ -16,7 +16,7 @@ function timeFrameConverter(timeframe: string): string {
     case "d":
       return "day";
     case "w":
-      return "w";
+      return "week";
     case "mo":
       return "month";
     case "q":

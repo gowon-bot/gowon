@@ -10,26 +10,7 @@ export class All extends OverviewChildCommand {
 
     await this.calculator.cacheAll();
 
-    let image = (await this.calculator.userInfo()).image.find(
-      (i) => i.size === "large"
-    )?.["#text"]!;
-
-    let userType = (await this.calculator.userInfo()).type;
-    let badge =
-      userType !== "user"
-        ? userType === "subscriber"
-          ? " [Pro]"
-          : ` [${ucFirst(userType)}]`
-        : "";
-
-    let colour =
-      userType === "mod"
-        ? "#fb9904"
-        : userType === "staff"
-        ? "#b90100"
-        : userType === "subscriber"
-        ? "black"
-        : "#ffffff";
+    let { colour, badge, image } = await this.getAuthorDetails();
 
     let embed = new MessageEmbed()
       .setAuthor(username + badge, image)
@@ -71,7 +52,6 @@ Among ${perspective.possesivePronoun} top 1000 artists, ${
     ).bold()} artists with 100+ scrobbles
 
 **Total crowns**: ${await this.calculator.totalCrowns()}
-
 For every ${numberDisplay(
           await this.calculator.artistsPerCrown(),
           "eligible artist"
