@@ -20,7 +20,7 @@ export class BotMomentService {
   // Instance methods/properties
   prefix: string = "!";
   customPrefixes = {
-    lastfm: "lastfm:",
+    lastfm: "lfm:",
   };
   inactiveRole: { [serverID: string]: string | undefined } = {};
 

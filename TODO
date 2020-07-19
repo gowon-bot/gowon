@@ -1,27 +1,37 @@
 Bugs:
   [x] `! c` - this should not work
+  [] `by YURI (Girls’ Generation)) from The First Scene - The 1st Mini Album/The%20First%20Scene%20-%20The%201st%20Mini%20Album)`
+  [] You can ask for a milestone way over your scrobble count
+  [] Can't use overall/alltime/6month (instead of 6months) in top_____ commands
 
 Todo:
   [] Keep track of every command run
-  [] Error logging
+  [x] Error tracking
   [x] Make AliasChecker case insensitive
   [x] Disable commands in dms
   [] Update commands list
   [] Use tags from both track.getInfo and artist.getInfo (and album.getInfo?)
   [x] Make !co use nowplaying when displaying currently playing album cover
+  [] Default commands
+  [] Perspective is broken
 
   Crowns:
     [x] Inactivity
     [x] Opting out
     [] Kill
     [] History
+    [] Rank
 
   Comands:
-    [] Goback
-    [] Partytime
+    [x] Goback
+    [x] Partytime
     [] Fill out regex searches
     [] Artist/Album/Track (maybe) info
-    [] Overview + subcommands
+    Overview + subcommands:
+      [x] Overview command
+      [x] Crowns stats (crowns / per scrobbles | crowns per artists) 
+      [] Make overview work with ndmps
+      [] All existing commands
 
   Permissions:
     [x] Display friendly names instead of IDs
@@ -35,7 +45,6 @@ Todo:
     [x] Allow setting permissions for roles without mentioning the role
     [x] Allow setting permissions without mentioning the user
     [x] Fix manipulating multiple commands
-    [] Default commands
 
   Large Projects:
     [] Change User.username ixnto GuildMember.nickname (or w/e it's called)

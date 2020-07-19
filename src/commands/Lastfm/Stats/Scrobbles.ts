@@ -31,6 +31,7 @@ export default class Scrobbles extends LastFMBaseCommand {
   async run(message: Message) {
     if (message.content.trim() === "!s n s d") {
       await message.channel.send("Gee gee gee gee baby baby baby")
+      return;
     }
 
     let timeRange = this.parsedArguments.timeRange as TimeRange,

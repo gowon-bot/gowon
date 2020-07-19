@@ -16,5 +16,5 @@ String.prototype.bold = function (this: string) {
 };
 
 String.prototype.code = function (this: string) {
-  return "`" + sanitizeForDiscord(this) + "`";
+  return "`" + this + "`";
 };

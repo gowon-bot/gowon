@@ -26,7 +26,7 @@ export class CrownEmbeds {
     return new MessageEmbed()
       .setTitle(`Crown for ${crownCheck.crown!.artistName}`)
       .setDescription(
-        `You already have the crown ${crownCheck.crown!.artistName.bold()}, but it's been updated from ${numberDisplay(
+        `You already have the crown for ${crownCheck.crown!.artistName.bold()}, but it's been updated from ${numberDisplay(
           crownCheck.oldCrown!.plays,
           "play"
         )} to ${numberDisplay(crownCheck.crown!.plays, "play").bold()}`

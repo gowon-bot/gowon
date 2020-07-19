@@ -57,7 +57,7 @@ export default class Combo extends LastFMBaseCommand {
               (combo.album.plays > 0
                 ? `Album: ${combo.album.plays}${
                     combo.album.nowplaying ? "➚" : ""
-                  } in a row (${combo.album.name.bold()})\n`
+                  } in a row (${combo.album.name.italic()})\n`
                 : "") +
               (combo.track.plays > 0
                 ? `Track: ${combo.track.plays}${

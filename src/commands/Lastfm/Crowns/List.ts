@@ -36,7 +36,7 @@ export class List extends CrownsChildCommand {
         )} in ${message.guild?.name}\n\n` +
           crowns
             .map(
-              (c) => `${c.artistName} ― ${numberDisplay(c.plays, "play").bold()}`
+              (c) => `${numberDisplay(c.plays, "play").bold()} - ${c.artistName}`
             )
             .join("\n")
       );
