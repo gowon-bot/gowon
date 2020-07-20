@@ -36,7 +36,7 @@ export class CheckMany extends CrownsChildCommand {
         serverID: message.guild?.id!,
         discordID: message.author.id,
         artistName: ad.name,
-        plays: parseInt(ad.stats.userplaycount, 10),
+        plays: ad.stats.userplaycount.toInt(),
       })
     );
 

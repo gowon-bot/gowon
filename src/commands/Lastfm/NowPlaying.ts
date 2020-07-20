@@ -78,6 +78,13 @@ export default class NowPlaying extends LastFMBaseCommand {
       if (crown && crown.user) {
         if (crown.user.id === message.author.id) {
           isCrownHolder = true;
+
+          this.crownsService.checkCrown({
+            artistName: nowPlaying.artist["#text"],
+            serverID: message.guild?.id!,
+            discordID: message.author.id,
+            plays: artistInfo.stats.userplaycount.toInt(),
+          });
         } else {
           crownString = `👑 ${numberDisplay(crown.crown.plays)} (${
             crown.user.username

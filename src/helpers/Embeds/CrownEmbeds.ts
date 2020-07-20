@@ -74,7 +74,7 @@ export class CrownEmbeds {
     )?.username;
 
     let difference =
-      crownCheck.crown!.plays - parseInt(artistDetails.stats.userplaycount, 10);
+      crownCheck.crown!.plays - artistDetails.stats.userplaycount.toInt();
 
     return new MessageEmbed()
       .setTitle(`Crown for ${crownCheck.crown!.artistName}`)

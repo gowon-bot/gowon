@@ -90,6 +90,7 @@ export function generatePeriod(string: string, fallback = "overall"): string {
     "6month": /(\s+|\b)((6|six) *mo(nth(s)?)?|h(alf(\s*year)?)?)(\s|\b)/gi,
     "12month": /(\s+|\b)((12|twelve) *mo(nth(s)?)?|y(ear)?)(\s|\b)/gi,
     "1month": /(\s+|\b)((1|one)? *mo(nth(s)?)?)(\s|\b)/gi,
+    overall: /(\s+|\b)(a(lltime)?|o(verall)?)(\s|\b)/gi,
   };
 
   for (let period of Object.keys(periodRegexes)) {

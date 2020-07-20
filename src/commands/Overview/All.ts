@@ -67,27 +67,3 @@ For every ${numberDisplay(
   }
 }
 
-// Username: flushed_emoji (scrobbling since 7 Jul 2019)
-// Country: Canada
-// Scrobbles: 44474 | Avg/Day: 117.73
-// Artists: 2244 | Avg/Artist: 19.82
-// Albums: 3967 | Avg/Album: 11.21
-// Tracks: 6431 | Avg/Track: 6.92
-
-// Albums per artist: 1.77
-// Tracks per artist: 2.87
-// Tracks per album: 1.62
-
-// H-Index: 86
-// # of artists to equal 50% of scrobbles: Top 73
-// Total scrobbles for top 10 artists: 9441
-// flushed_emoji's top 10 artists account for 21.23% of their total scrobbles.
-
-// Among their top 1000 artists, flushed_emoji has...
-// - 3 artists with 1000+ scrobbles
-// - 7 artists with 500+ scrobbles
-// - 28 artists with 250+ scrobbles
-// - 74 artists with 100+ scrobbles
-
-// Total Crowns: 65 (Ranked #120)
-// flushed_emoji has 297 artists with 30+ plays in their top 1000 artists.

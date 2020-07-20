@@ -49,7 +49,7 @@ export class Check extends CrownsChildCommand {
       serverID: message.guild?.id!,
       discordID: message.author.id,
       artistName: artistDetails.name,
-      plays: parseInt(artistDetails.stats.userplaycount, 10),
+      plays: artistDetails.stats.userplaycount.toInt(),
     });
 
     switch (crownCheck.state) {

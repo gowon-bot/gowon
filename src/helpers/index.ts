@@ -71,6 +71,6 @@ export function getOrdinal(number: number): string {
   ];
 
   return (
-    number + ordinals[parseInt(`${number}`.charAt(`${number}`.length - 1))]
+    number + ordinals[`${number}`.charAt(`${number}`.length - 1).toInt()]
   );
 }

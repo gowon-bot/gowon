@@ -8,6 +8,12 @@ import {
   CreateDateColumn,
 } from "typeorm";
 import { User } from "./User";
+import { LastFMService } from "../../services/LastFMService";
+
+export interface CrownRankResponse {
+  count: string;
+  rank: string;
+}
 
 @Entity()
 export class Crown extends BaseEntity {
@@ -30,11 +36,19 @@ export class Crown extends BaseEntity {
   version!: number;
 
   @CreateDateColumn()
-
   createdAt!: Date;
 
   @UpdateDateColumn()
   updatedAt!: Date;
+
+  async refresh(): Promise<Crown> {
+    this.plays = await new LastFMService().getArtistPlays(
+      this.user.lastFMUsername,
+      this.artistName
+    );
+    await this.save();
+    return this;
+  }
 
   // static methods
   static async getCrown(
@@ -42,5 +56,33 @@ export class Crown extends BaseEntity {
     artistName: string
   ): Promise<Crown | undefined> {
     return await Crown.findOne({ where: { serverID, artistName } });
+  }
+
+  static async rank(
+    serverID: string,
+    discordID: string
+  ): Promise<CrownRankResponse> {
+    let user = await User.findOne({ where: { discordID } });
+
+    return ((await this.query(
+      `SELECT count, rank FROM (
+      SELECT *, ROW_NUMBER() OVER (
+      ORDER BY 1 DESC
+  ) AS rank FROM (
+      SELECT
+          count(crown) AS count,
+          "userId"
+      FROM crown
+      WHERE "serverID" LIKE $1
+      GROUP BY "userId"
+      ORDER BY 1 desc
+  ) t
+  JOIN users u    
+      ON u.id = t."userId"
+) ranks
+WHERE "lastFMUsername" LIKE $2
+`,
+      [serverID, user?.lastFMUsername!]
+    )) as CrownRankResponse[])[0];
   }
 }

@@ -4,6 +4,7 @@ import { BotMomentService } from "../../services/BotMomentService";
 import { AdminService } from "../../services/dbservices/AdminService";
 import { Logger } from "../Logger";
 import { CheckFailReason } from "../permissions/Can";
+import { ParentCommand } from "./ParentCommand";
 
 export class CommandHandler {
   botMomentService = BotMomentService.getInstance();
@@ -30,8 +31,10 @@ export class CommandHandler {
         new RegExp(`^${this.botMomentService.regexSafePrefix}\\w+`, "i")
       )
     ) {
-      // if (message.content.startsWith(this.botMomentService.prefix)) {
       let { command, runAs } = this.commandManager.find(message.content);
+
+      if (command instanceof ParentCommand)
+        command = (command.default && command.default()) || command;
 
       let canCheck = await this.adminService.can.run(command, message);
 

@@ -23,9 +23,11 @@ import {
 
 import config from "../../config.json";
 import { ParsedTrack, parseLastFMTrackResponse } from "../helpers/lastFM";
-import { LastFMConnectionError, LastFMError } from "../errors";
+import { LastFMConnectionError, LastFMError, LogicError } from "../errors";
 import { BaseService } from "./BaseService";
 import moment from "moment";
+import { numberDisplay } from "../helpers";
+import { Logger } from "../lib/Logger";
 
 interface Params {
   [key: string]: any;
@@ -93,10 +95,20 @@ export class LastFMService extends BaseService {
       "user.getrecenttracks",
       {
         username,
-        page: parseInt(total) - milestone + 1,
+        page: total.toInt() - milestone + 1,
         limit: 1,
       }
     );
+
+    Logger.log("total tracks", response.recenttracks["@attr"].total.toInt());
+    if (milestone > response.recenttracks["@attr"].total.toInt()) {
+      throw new LogicError(
+        `${username.code()} hasn't scrobbled ${numberDisplay(
+          milestone,
+          "track"
+        )} yet!`
+      );
+    }
 
     return response.recenttracks.track[1];
   }
@@ -116,7 +128,7 @@ export class LastFMService extends BaseService {
       params
     );
 
-    return parseInt(recentTracks.recenttracks["@attr"].total, 10) || 0;
+    return recentTracks.recenttracks["@attr"].total.toInt() || 0;
   }
 
   async trackInfo(
@@ -200,7 +212,7 @@ export class LastFMService extends BaseService {
       }
     );
 
-    return parseInt(topArtists.topartists["@attr"].total, 10) || 0;
+    return topArtists.topartists["@attr"].total.toInt() || 0;
   }
 
   async topAlbums(
@@ -229,7 +241,7 @@ export class LastFMService extends BaseService {
       }
     );
 
-    return parseInt(topArtists.topalbums["@attr"].total, 10) || 0;
+    return topArtists.topalbums["@attr"].total.toInt() || 0;
   }
 
   async topTracks(
@@ -258,7 +270,7 @@ export class LastFMService extends BaseService {
       }
     );
 
-    return parseInt(topArtists.toptracks["@attr"].total, 10) || 0;
+    return topArtists.toptracks["@attr"].total.toInt() || 0;
   }
 
   async goBack(username: string, when: Date): Promise<Track> {
@@ -277,5 +289,11 @@ export class LastFMService extends BaseService {
     );
 
     return recentTracks.recenttracks.track[1];
+  }
+
+  async getArtistPlays(username: string, artist: string): Promise<number> {
+    return (
+      await this.artistInfo(artist, username)
+    ).stats.userplaycount.toInt();
   }
 }

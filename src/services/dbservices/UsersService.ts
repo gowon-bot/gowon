@@ -6,7 +6,6 @@ import {
 } from "../../errors";
 import { BaseService } from "../BaseService";
 
-
 export class Perspective {
   name: string;
   possessive: string;
@@ -17,6 +16,8 @@ export class Perspective {
   pronounPlusToBe: string;
   plusToHave: string;
   pronounPlusToHave: string;
+
+  discordUser?: DiscordUser;
 
   constructor(options: {
     name: string;
@@ -40,9 +41,18 @@ export class Perspective {
     this.pronounPlusToHave = options.pronounPlusToHave;
   }
 
+  addDiscordUser(user: DiscordUser): Perspective {
+    this.discordUser = user;
+    return this;
+  }
+
   regularVerb(verb: string) {
     return this.name + " " + (this.name === "you" ? verb : verb + "s");
   }
+}
+
+export class DiscordPersective extends Perspective {
+  user!: DiscordUser;
 }
 
 export class UsersService extends BaseService {
@@ -77,7 +87,7 @@ export class UsersService extends BaseService {
   }
 
   async clearUsername(discordID: string): Promise<void> {
-    this.log(`clearing username for ${discordID}`)
+    this.log(`clearing username for ${discordID}`);
     let user = await User.findOne({ discordID: discordID });
 
     if (user?.lastFMUsername) {
@@ -117,9 +127,11 @@ export class UsersService extends BaseService {
     mentioned?: DiscordUser
   ): Perspective {
     if (mentioned === undefined || author.id === mentioned.id) {
-      return this.buildPerspective("you");
+      return this.buildPerspective("you").addDiscordUser(author);
     } else {
-      return this.buildPerspective(mentioned?.username);
+      return this.buildPerspective(mentioned?.username).addDiscordUser(
+        mentioned
+      );
     }
   }
 }

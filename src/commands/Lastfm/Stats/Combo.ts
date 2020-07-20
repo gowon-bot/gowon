@@ -24,7 +24,7 @@ export default class Combo extends LastFMBaseCommand {
     let { username } = await this.parseMentionedUsername(message);
 
     let streakAmount =
-      parseInt(this.parsedArguments.streakAmount as string, 10) || 1000;
+      (this.parsedArguments.streakAmount as string).toInt() || 1000;
 
     if (streakAmount < 1 || streakAmount > 1000) {
       await message.reply("Please specify a valid amount!");

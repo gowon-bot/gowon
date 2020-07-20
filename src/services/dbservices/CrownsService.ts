@@ -1,4 +1,4 @@
-import { Crown } from "../../database/entity/Crown";
+import { Crown, CrownRankResponse } from "../../database/entity/Crown";
 import { User } from "../../database/entity/User";
 import { RecordNotFoundError } from "../../errors";
 import { Message, User as DiscordUser } from "discord.js";
@@ -98,6 +98,7 @@ export class CrownsService extends BaseService {
       if (crown.user.id === user.id) {
         crownState = await this.handleSelfCrown(crown, plays);
       } else {
+        crown = oldCrown = await crown.refresh();
         crownState = await this.handleCrown(crown, plays, user);
       }
 
@@ -129,7 +130,9 @@ export class CrownsService extends BaseService {
     serverID: string
   ): Promise<Crown | undefined> {
     this.log("Fetching crown for " + artistName);
-    return await Crown.findOne({ where: { artistName, serverID } });
+    let crown = await Crown.findOne({ where: { artistName, serverID } });
+
+    return await crown?.refresh();
   }
 
   async getCrownDisplay(
@@ -186,6 +189,20 @@ export class CrownsService extends BaseService {
     return await Crown.count({ where: { user, serverID } });
   }
 
+  async getRank(
+    discordID: string,
+    serverID: string
+  ): Promise<CrownRankResponse> {
+    this.log(
+      "Counting crowns for user " + discordID + " in server " + serverID
+    );
+    let user = await User.findOne({ where: { discordID } });
+
+    if (!user) throw new RecordNotFoundError("user");
+
+    return await Crown.rank(serverID, discordID);
+  }
+
   async countAllInServer(serverID: string): Promise<number> {
     this.log("Counting crowns for server " + serverID);
 
@@ -229,7 +246,7 @@ export class CrownsService extends BaseService {
     return await Promise.all(
       users.map(async (rch) => ({
         user: (await User.toDiscordUser(message, rch.discordID))!,
-        numberOfCrowns: parseInt(rch.count, 10),
+        numberOfCrowns: rch.count.toInt(),
       }))
     );
   }

@@ -29,8 +29,8 @@ export class TasteCalculator {
       if (userTwoArtist) {
         acc.push({
           name: artist.name,
-          user1plays: parseInt(artist.playcount, 10),
-          user2plays: parseInt(userTwoArtist.playcount, 10),
+          user1plays: artist.playcount.toInt(),
+          user2plays: userTwoArtist.playcount.toInt(),
         });
       }
 

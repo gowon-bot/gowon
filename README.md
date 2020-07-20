@@ -69,6 +69,7 @@ _You can find the source code for all the commands at [/src/commands](/src/comma
 - `nowplaying`, shows the song you are currently listening to, along with other information
 - `help`, list all commands, or display help about a certain command
 - `cover`, shows the cover of an album
+- `partytime`, counts down
 - Account
     - `login`, logs you in
     - `logout`, logs you out
@@ -79,14 +80,20 @@ _You can find the source code for all the commands at [/src/commands](/src/comma
     - `checkmany`, checks multiple crowns at once
     - `info`, displays info about a crown
     - `list`, lists a user's crowns
+    - `rank`, ranks a user based on their crown count
     - `dm`, DMs you a list of all of a users crowns
     - `contentiouscrowns`, lists the crowns which have been stolen the most times
     - `topcrowns`, lists the crowns with the highest playcounts
     - `topcrownholders`, lists who has the most crowns
+    - `optout`, opts you out of the crowns game
+    - `optin`, opts you back into the crowns game
+    - `setinactiverole`, set what role should be treated as the inactive role 
 - List
     - `artistlist`, shows your top artists
     - `albumlist`, shows your top albums
     - `tracklist`, shows your top tracks
+- Pages
+    - `artistpage`, gives you the link to an artist's last.fm page 
 - Percent
     - `artistpercent`, shows what percentage an artist makes up of your total scrobbles
     - `albumpercent`, shows what percentage an album makes up of your total scrobbles of an artist
@@ -116,9 +123,34 @@ _You can find the source code for all the commands at [/src/commands](/src/comma
     - `regextracksearch`, search your library with a regex (or keyword)
     - `scrobbles`, shows how many scrobbles you have
     - `combo`, shows listening streaks 
+    - `milestone`, shows you what you scrobbled at a scrobble milestone
+    - `goback`, shows you what you scrobbled in the past
+- Overview
+    - `avgperday`, shows your average scrobbles per day
+    - `crowns`, shows stats about your crowns
+    - `hindx`, shows your hindex
+    - `joined`, shows when you joined
+    - `per`, shows some "per" stats for artist/albums/tracks
+    - `scrobblesperartist`, shows your average scrobbles per artist
+    - `scrobblesperalbum`, shows your average scrobbles per album
+    - `scrobblespertrack`, shows your average scrobbles per track
+    - `sumtop`, shows the sum of your top artists
+    - `top50percent`, shows how many artists make up 50% of your scrobbles
+    - `all`, all of the above
+
+### Admin
+
+- `disable`, disable a command entirely
+- `enable`, re-enable a disabled command
+- `disabled`, lists all disabled commands
+- `permissions`, control who can use what commands
+    - `blacklist`, lets you black/whitelist commands for users/roles
+    - `delist`, removes a user/role from the whitelist/blacklist for a command
+    - `help`, permissions help
+    - `view`, view permissions
 
 ## Special Thanks
 - RTFL and thot for moral support
 - mypetrobot for building Who Knows?, the inspiration for this bot
-- Frikandel and the .fmbot team, another inspiration
-- Last.fm, for obvious reasons
+- Frikandel and the .fmbot team
+- Last.fm, for making a great platform <3

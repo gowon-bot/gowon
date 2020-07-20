@@ -48,7 +48,7 @@ export default class Cover extends LastFMBaseCommand {
       let image = albumDetails.image.find((i) => i.size === "extralarge");
 
       message.channel.send(
-        `Cover for ${albumDetails.name.bold()} by ${albumDetails.artist.code()}`,
+        `Cover for ${albumDetails.name.italic()} by ${albumDetails.artist.bold()}`,
         { files: [image?.["#text"] ?? ""] }
       );
     }

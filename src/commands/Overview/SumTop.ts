@@ -15,7 +15,7 @@ export class SumTop extends OverviewChildCommand {
   };
 
   async run(message: Message) {
-    let top = parseInt(this.parsedArguments.top as string, 10) || 10;
+    let top = (this.parsedArguments.top as string).toInt() || 10;
     let { username, perspective } = await this.parseMentionedUsername(message);
 
     if (top > 1000 || top < 2)

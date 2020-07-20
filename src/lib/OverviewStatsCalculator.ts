@@ -99,7 +99,7 @@ export class OverviewStatsCalculator {
 
   async joined(): Promise<string> {
     return moment
-      .unix(parseInt((await this.userInfo()).registered.unixtime, 10))
+      .unix((await this.userInfo()).registered.unixtime.toInt())
       .format("MMMM Do, YYYY");
   }
 
@@ -116,10 +116,10 @@ export class OverviewStatsCalculator {
   async avgPerDay(): Promise<string> {
     let userInfo = await this.userInfo();
 
-    let scrobbles = parseInt(userInfo.playcount, 10);
+    let scrobbles = userInfo.playcount.toInt();
     let diff = Math.abs(
       moment
-        .unix(parseInt(userInfo.registered.unixtime, 10))
+        .unix(userInfo.registered.unixtime.toInt())
         .startOf("day")
         .diff(moment().startOf("day"), "days")
     );
@@ -140,7 +140,7 @@ export class OverviewStatsCalculator {
     ]);
 
     return (
-      parseInt(userInfo.playcount, 10) / parseInt(topArtists["@attr"].total, 10)
+      userInfo.playcount.toInt() / topArtists["@attr"].total.toInt()
     ).toFixed(2);
   }
 
@@ -157,7 +157,7 @@ export class OverviewStatsCalculator {
     ]);
 
     return (
-      parseInt(userInfo.playcount, 10) / parseInt(topAlbums["@attr"].total, 10)
+      userInfo.playcount.toInt() / topAlbums["@attr"].total.toInt()
     ).toFixed(2);
   }
 
@@ -174,7 +174,7 @@ export class OverviewStatsCalculator {
     ]);
 
     return (
-      parseInt(userInfo.playcount, 10) / parseInt(topTracks["@attr"].total, 10)
+      userInfo.playcount.toInt() / topTracks["@attr"].total.toInt()
     ).toFixed(2);
   }
 
@@ -185,8 +185,7 @@ export class OverviewStatsCalculator {
     ]);
 
     return (
-      parseInt(topAlbums["@attr"].total, 10) /
-      parseInt(topArtists["@attr"].total, 10)
+      topAlbums["@attr"].total.toInt() / topArtists["@attr"].total.toInt()
     ).toFixed(2);
   }
 
@@ -197,8 +196,7 @@ export class OverviewStatsCalculator {
     ]);
 
     return (
-      parseInt(topTracks["@attr"].total, 10) /
-      parseInt(topArtists["@attr"].total, 10)
+      topTracks["@attr"].total.toInt() / topArtists["@attr"].total.toInt()
     ).toFixed(2);
   }
 
@@ -209,8 +207,7 @@ export class OverviewStatsCalculator {
     ]);
 
     return (
-      parseInt(topTracks["@attr"].total, 10) /
-      parseInt(topAlbums["@attr"].total, 10)
+      topTracks["@attr"].total.toInt() / topAlbums["@attr"].total.toInt()
     ).toFixed(2);
   }
 
@@ -224,7 +221,7 @@ export class OverviewStatsCalculator {
     ) {
       const artist = topArtists.artist[artistIndex];
 
-      if (parseInt(artist.playcount, 10) <= artistIndex) {
+      if (artist.playcount.toInt() <= artistIndex) {
         return artistIndex.toLocaleString();
       }
     }
@@ -237,7 +234,7 @@ export class OverviewStatsCalculator {
       this.userInfo(),
     ]);
 
-    let halfOfScrobbles = parseInt(userInfo.playcount, 10) / 2;
+    let halfOfScrobbles = userInfo.playcount.toInt() / 2;
     let sum = 0;
 
     for (
@@ -247,7 +244,7 @@ export class OverviewStatsCalculator {
     ) {
       const artist = topArtists.artist[artistIndex];
 
-      sum += parseInt(artist.playcount, 10);
+      sum += artist.playcount.toInt();
 
       if (sum > halfOfScrobbles) {
         return artistIndex.toLocaleString();
@@ -259,23 +256,23 @@ export class OverviewStatsCalculator {
   async sumTop(number = 10) {
     return (await this.topArtists()).artist
       .slice(0, number)
-      .reduce((sum, artist) => sum + parseInt(artist.playcount, 10), 0);
+      .reduce((sum, artist) => sum + artist.playcount.toInt(), 0);
   }
 
   async sumTopPercent(number = 10) {
-    let totalScrobbles = parseInt((await this.userInfo()).playcount, 10);
+    let totalScrobbles = (await this.userInfo()).playcount.toInt();
 
     return calculatePercent(
       (await this.topArtists()).artist
         .slice(0, number)
-        .reduce((sum, artist) => sum + parseInt(artist.playcount, 10), 0),
+        .reduce((sum, artist) => sum + artist.playcount.toInt(), 0),
       totalScrobbles
     );
   }
 
   async playsOver(number: number): Promise<string> {
     return (await this.topArtists()).artist
-      .filter((a) => parseInt(a.playcount, 10) > number)
+      .filter((a) => a.playcount.toInt() > number)
       .length.toLocaleString();
   }
 
@@ -289,7 +286,7 @@ export class OverviewStatsCalculator {
       this.playsOver(30),
     ]);
 
-    return (parseInt(playsOver, 10) / crownsCount).toFixed(2);
+    return (playsOver.toInt() / crownsCount).toFixed(2);
   }
 
   async scrobblesPerCrown(): Promise<string> {
@@ -298,6 +295,6 @@ export class OverviewStatsCalculator {
       this.userInfo(),
     ]);
 
-    return (parseInt(userInfo.playcount, 10) / crownsCount).toFixed(2);
+    return (userInfo.playcount.toInt() / crownsCount).toFixed(2);
   }
 }

@@ -33,7 +33,7 @@ export default class RegexTrackSearch extends LastFMBaseCommand {
     let page = 1;
 
     if (runAs) {
-      page = parseInt(runAs.lastString().slice(2)) || 1;
+      page = runAs.lastString().slice(2).toInt() || 1;
     }
 
     let regex = this.parsedArguments.regex as string;

@@ -2,14 +2,14 @@ import { Message } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
-export default class AlbumPage extends LastFMBaseCommand {
-  aliases = ["alpa", "lpa", "alpage", "lpage"];
-  description = "Links you to the album page on lastfm";
+export default class TrackPage extends LastFMBaseCommand {
+  aliases = ["tpa", "tpage"];
+  description = "Links you to the track page on lastfm";
 
   arguments: Arguments = {
     inputs: {
       artist: { index: 0, splitOn: "|" },
-      album: { index: 1, splitOn: "|" },
+      track: { index: 1, splitOn: "|" },
     },
     mentions: {
       user: {
@@ -22,26 +22,26 @@ export default class AlbumPage extends LastFMBaseCommand {
 
   async run(message: Message) {
     let artist = this.parsedArguments.artist as string,
-      albumName = this.parsedArguments.album as string;
+      trackName = this.parsedArguments.track as string;
 
     let { username } = await this.parseMentionedUsername(message);
 
-    if (!artist || !albumName) {
+    if (!artist || !trackName) {
       let nowPlaying = await this.lastFMService.nowPlayingParsed(username);
 
       if (!artist) artist = nowPlaying.artist;
-      if (!albumName) albumName = nowPlaying.album;
+      if (!trackName) trackName = nowPlaying.name;
     }
 
-    let albumDetails = await this.lastFMService.albumInfo(
+    let trackDetails = await this.lastFMService.trackInfo(
       artist,
-      albumName,
+      trackName,
       username
     );
 
     message.channel.send(
-      `${albumDetails.name.italic()} by ${albumDetails.artist.bold()} on last.fm: ${
-        albumDetails.url
+      `${trackDetails.name.italic()} by ${trackDetails.artist.name.bold()} on last.fm: ${
+        trackDetails.url
       }`
     );
   }

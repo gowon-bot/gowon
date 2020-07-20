@@ -20,7 +20,7 @@ export default class AlbumPlaysover extends LastFMBaseCommand {
   };
 
   async run(message: Message) {
-    let plays = parseInt(this.parsedArguments.plays as string, 10);
+    let plays = (this.parsedArguments.plays as string).toInt();
 
     let { username, perspective } = await this.parseMentionedUsername(message);
 
@@ -29,7 +29,7 @@ export default class AlbumPlaysover extends LastFMBaseCommand {
     let playsover = 0;
 
     for (let album of topAlbums.album) {
-      if (parseInt(album.playcount, 10) > plays) playsover++;
+      if (album.playcount.toInt() > plays) playsover++;
       else break;
     }
 
