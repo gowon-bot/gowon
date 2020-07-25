@@ -19,11 +19,18 @@ import {
   TopAlbums,
   TopTracks,
   TrackInfo,
+  TagInfo,
+  TagInfoResponse,
 } from "./LastFMService.types";
 
 import config from "../../config.json";
 import { ParsedTrack, parseLastFMTrackResponse } from "../helpers/lastFM";
-import { LastFMConnectionError, LastFMError, LogicError } from "../errors";
+import {
+  LastFMConnectionError,
+  LastFMError,
+  LogicError,
+  BadLastFMResponseError,
+} from "../errors";
 import { BaseService } from "./BaseService";
 import moment from "moment";
 import { numberDisplay } from "../helpers";
@@ -140,8 +147,18 @@ export class LastFMService extends BaseService {
     if (username) {
       params.username = username;
     }
-    return (await this.request<TrackInfoResponse>("track.getInfo", params))
-      .track;
+
+    let response = (
+      await this.request<TrackInfoResponse>("track.getInfo", params)
+    ).track;
+
+    if (
+      response?.userplaycount !== undefined &&
+      isNaN(response.userplaycount.toInt())
+    )
+      throw new BadLastFMResponseError();
+
+    return response;
   }
 
   async artistInfo(artist: string, username?: string): Promise<ArtistInfo> {
@@ -149,8 +166,18 @@ export class LastFMService extends BaseService {
     if (username) {
       params.username = username;
     }
-    return (await this.request<ArtistInfoResponse>("artist.getInfo", params))
-      .artist;
+
+    let response = (
+      await this.request<ArtistInfoResponse>("artist.getInfo", params)
+    ).artist;
+
+    if (
+      response?.stats?.userplaycount !== undefined &&
+      isNaN(response.stats.userplaycount.toInt())
+    )
+      throw new BadLastFMResponseError();
+
+    return response;
   }
 
   async albumInfo(
@@ -162,8 +189,18 @@ export class LastFMService extends BaseService {
     if (username) {
       params.username = username;
     }
-    return (await this.request<AlbumInfoResponse>("album.getInfo", params))
-      .album;
+
+    let response = (
+      await this.request<AlbumInfoResponse>("album.getInfo", params)
+    ).album;
+
+    if (
+      response?.userplaycount !== undefined &&
+      isNaN(response.userplaycount.toInt())
+    )
+      throw new BadLastFMResponseError();
+
+    return response;
   }
 
   async userInfo(username: string): Promise<UserInfo> {
@@ -184,6 +221,10 @@ export class LastFMService extends BaseService {
       }
       throw e;
     }
+  }
+
+  async tagInfo(tag: string): Promise<TagInfo> {
+    return (await this.request<TagInfoResponse>("tag.getInfo", { tag })).tag;
   }
 
   async topArtists(
@@ -292,8 +333,12 @@ export class LastFMService extends BaseService {
   }
 
   async getArtistPlays(username: string, artist: string): Promise<number> {
-    return (
+    let playcount = (
       await this.artistInfo(artist, username)
     ).stats.userplaycount.toInt();
+
+    if (isNaN(playcount)) throw new BadLastFMResponseError();
+
+    return playcount;
   }
 }

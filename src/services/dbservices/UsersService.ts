@@ -3,6 +3,7 @@ import { User as DiscordUser } from "discord.js";
 import {
   UsernameNotRegisteredError,
   AlreadyLoggedOutError,
+  RecordNotFoundError,
 } from "../../errors";
 import { BaseService } from "../BaseService";
 
@@ -56,9 +57,11 @@ export class DiscordPersective extends Perspective {
 }
 
 export class UsersService extends BaseService {
-  async getUsername(discordID: string): Promise<string> {
-    this.log("fetching username with discordID: " + discordID);
-    let user = await User.findOne({ discordID: discordID });
+  async getUsername(discordID: string, serverID: string): Promise<string> {
+    this.log(
+      `fetching username with discordID ${discordID} in the server ${serverID}`
+    );
+    let user = await User.findOne({ discordID, serverID });
 
     if (user && user.lastFMUsername) {
       return user.lastFMUsername;
@@ -67,10 +70,13 @@ export class UsersService extends BaseService {
 
   async setUsername(
     discordID: string,
+    serverID: string,
     lastFMUsername: string
   ): Promise<string> {
-    this.log(`setting user ${discordID} with username ${lastFMUsername}`);
-    let user = await User.findOne({ discordID: discordID });
+    this.log(
+      `setting user ${discordID} in ${serverID} with username ${lastFMUsername}`
+    );
+    let user = await User.findOne({ discordID, serverID });
 
     if (user) {
       user.lastFMUsername = lastFMUsername;
@@ -78,17 +84,18 @@ export class UsersService extends BaseService {
       return user.lastFMUsername;
     } else {
       user = User.create({
-        discordID: discordID,
-        lastFMUsername: lastFMUsername,
+        discordID,
+        lastFMUsername,
+        serverID,
       });
       await user.save();
       return user.lastFMUsername!;
     }
   }
 
-  async clearUsername(discordID: string): Promise<void> {
-    this.log(`clearing username for ${discordID}`);
-    let user = await User.findOne({ discordID: discordID });
+  async clearUsername(discordID: string, serverID: string): Promise<void> {
+    this.log(`clearing username for ${discordID} in ${serverID}`);
+    let user = await User.findOne({ discordID, serverID });
 
     if (user?.lastFMUsername) {
       user.lastFMUsername = "";
@@ -133,5 +140,21 @@ export class UsersService extends BaseService {
         mentioned
       );
     }
+  }
+
+  async getUser(discordID: string, serverID: string): Promise<User> {
+    this.log(
+      `fetching user with discordID ${discordID} in the server ${serverID}`
+    );
+    let user = await User.findOne({ where: { discordID, serverID } });
+
+    if (!user) throw new RecordNotFoundError("user");
+
+    return user;
+  }
+
+  async countUsers(serverID: string): Promise<number> {
+    this.log(`counting users in the server ${serverID}`);
+    return await User.count({ where: { serverID } });
   }
 }

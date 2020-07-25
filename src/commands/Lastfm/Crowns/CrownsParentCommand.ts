@@ -12,6 +12,7 @@ import { SetInactiveRole } from "./SetInactiveRole";
 import { OptOut } from "./OptOut";
 import { OptIn } from "./OptIn";
 import { Rank } from "./Rank";
+import { Kill } from "./Kill";
 
 export default class CrownsParentCommand extends LastFMBaseParentCommand {
   friendlyName = "crowns";
@@ -33,5 +34,6 @@ export default class CrownsParentCommand extends LastFMBaseParentCommand {
     optout: () => new OptOut(),
     optin: () => new OptIn(),
     rank: () => new Rank(),
+    kill: () => new Kill(),
   });
 }

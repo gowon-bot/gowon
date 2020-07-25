@@ -1,6 +1,6 @@
 import { OverviewChildCommand } from "./OverviewChildCommand";
 import { Message, MessageEmbed } from "discord.js";
-import { ucFirst, numberDisplay } from "../../helpers";
+import { ucFirst, numberDisplay, getOrdinal } from "../../../helpers";
 
 export class All extends OverviewChildCommand {
   description = "Shows information about a crown";
@@ -11,6 +11,8 @@ export class All extends OverviewChildCommand {
     await this.calculator.cacheAll();
 
     let { colour, badge, image } = await this.getAuthorDetails();
+
+    let rank = await this.calculator.crownsRank()
 
     let embed = new MessageEmbed()
       .setAuthor(username + badge, image)
@@ -51,7 +53,7 @@ Among ${perspective.possesivePronoun} top 1000 artists, ${
       await this.calculator.playsOver(100)
     ).bold()} artists with 100+ scrobbles
 
-**Total crowns**: ${await this.calculator.totalCrowns()}
+**Total crowns**: ${rank.count} (${getOrdinal(rank.rank.toInt()).italic()})
 For every ${numberDisplay(
           await this.calculator.artistsPerCrown(),
           "eligible artist"

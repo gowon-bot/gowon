@@ -21,7 +21,7 @@ export class TopCrowns extends CrownsChildCommand {
           crowns
             .map(
               (c) =>
-                `${c.artistName} ― ${numberDisplay(c.plays, "play").bold()}`
+                `${numberDisplay(c.plays, "play").bold()} - ${c.artistName}`
             )
             .join("\n")
       );

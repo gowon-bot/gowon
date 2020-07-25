@@ -17,7 +17,6 @@ export abstract class LinkGenerator {
 
   // https://www.last.fm/music/Red+Velvet
   static artistPage(artist: string) {
-    console.log(this.encode(artist));
     return this.baseURL + "music/" + this.encode(artist);
   }
 

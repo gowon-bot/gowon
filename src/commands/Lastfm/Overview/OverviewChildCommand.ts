@@ -1,8 +1,8 @@
-import { LastFMBaseChildCommand } from "../Lastfm/LastFMBaseCommand";
-import { OverviewStatsCalculator } from "../../lib/OverviewStatsCalculator";
+import { LastFMBaseChildCommand } from "../LastFMBaseCommand";
+import { OverviewStatsCalculator } from "../../../lib/OverviewStatsCalculator";
 import { Message, User } from "discord.js";
-import { Arguments } from "../../lib/arguments/arguments";
-import { ucFirst } from "../../helpers";
+import { Arguments } from "../../../lib/arguments/arguments";
+import { ucFirst } from "../../../helpers";
 
 export abstract class OverviewChildCommand extends LastFMBaseChildCommand {
   parentName = "overview";
@@ -47,7 +47,7 @@ export abstract class OverviewChildCommand extends LastFMBaseChildCommand {
   async prerun(message: Message) {
     let user = (this.parsedArguments.user as User) || message.author;
 
-    let username = await this.usersService.getUsername(user.id);
+    let username = await this.usersService.getUsername(user.id, message.guild?.id!);
 
     this.calculator = new OverviewStatsCalculator(
       username,

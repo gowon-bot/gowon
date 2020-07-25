@@ -5,10 +5,12 @@ import { AdminService } from "../../services/dbservices/AdminService";
 import { Logger } from "../Logger";
 import { CheckFailReason } from "../permissions/Can";
 import { ParentCommand } from "./ParentCommand";
+import { MetaService } from "../../services/dbservices/MetaService";
 
 export class CommandHandler {
   botMomentService = BotMomentService.getInstance();
   adminService = new AdminService();
+  metaService = new MetaService();
   commandManager = new CommandManager();
   private logger = new Logger();
 
@@ -50,6 +52,8 @@ export class CommandHandler {
       }
       this.logger.logCommandHandle(runAs);
 
+      this.metaService.recordCommandRun(command.id, message)
+      
       await command.execute(message, runAs);
     }
   }

@@ -1,6 +1,6 @@
 import { OverviewChildCommand } from "./OverviewChildCommand";
 import { Message, MessageEmbed } from "discord.js";
-import { numberDisplay } from "../../helpers";
+import { numberDisplay, getOrdinal } from "../../../helpers";
 
 export class Crowns extends OverviewChildCommand {
   aliases = ["c", "cw"];
@@ -10,8 +10,8 @@ export class Crowns extends OverviewChildCommand {
     let { badge, colour, image } = await this.getAuthorDetails();
     let { username } = await this.parseMentionedUsername(message);
 
-    let [crownCount, apc, spc] = await Promise.all([
-      this.calculator.totalCrowns(),
+    let [crownRank, apc, spc] = await Promise.all([
+      this.calculator.crownsRank(),
       this.calculator.artistsPerCrown(),
       this.calculator.scrobblesPerCrown(),
     ]);
@@ -19,9 +19,9 @@ export class Crowns extends OverviewChildCommand {
     let embed = new MessageEmbed()
       .setAuthor(username + badge, image)
       .setColor(colour).setDescription(`You have ${numberDisplay(
-      crownCount,
+        crownRank.count,
       "crown"
-    ).bold()}
+    ).bold()} (ranked ${getOrdinal(crownRank.rank.toInt()).italic()})
       For every ${numberDisplay(
         apc,
         "eligible artist"

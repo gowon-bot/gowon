@@ -33,7 +33,7 @@ export default class Cover extends LastFMBaseCommand {
       message.channel.send(
         `Cover for ${nowPlaying.album["#text"].bold()} by ${nowPlaying.artist[
           "#text"
-        ].code()}`,
+        ].bold()}`,
         { files: [image?.["#text"] ?? ""] }
       );
     } else {

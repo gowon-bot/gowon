@@ -1,5 +1,5 @@
-import { CommandManager } from "../../lib/command/CommandManager";
-import { LastFMBaseParentCommand } from "../Lastfm/LastFMBaseCommand";
+import { CommandManager } from "../../../lib/command/CommandManager";
+import { LastFMBaseParentCommand } from "../LastFMBaseCommand";
 import { All } from "./All";
 import { Joined } from "./Joined";
 import { AvgPerDay } from "./AvgPerDay";

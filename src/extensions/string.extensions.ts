@@ -8,6 +8,7 @@ declare global {
     toInt: () => number;
   }
 }
+
 String.prototype.italic = function (this: string): string {
   return "_" + sanitizeForDiscord(this) + "_";
 };

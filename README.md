@@ -39,10 +39,9 @@ Bot syntax is kept as intuitive and as human readable as possible. Most commands
 !trackpercent JPEGMAFIA | BALD! lastfm:flushed_emoji
 ```
 
-
 ## Running yourself
 
-Ensure you have Postgres and Typescript installed, and a database called `bot_moment` exists (`createdb bot_moment`). 
+Ensure you have Postgres and Typescript installed, and a database called `bot_moment` exists (`createdb bot_moment`).
 
 `yarn start` will build and run the bot. To start in development mode, make sure you have `nodemon` installed, then run:
 
@@ -60,7 +59,7 @@ Every command run has a log associated with it. This way if multiple commands ar
 
 _Note the how timestamps in the activities overlap_
 
-## Commands list 
+## Commands list
 
 _You can find the source code for all the commands at [/src/commands](/src/commands)_
 
@@ -71,72 +70,72 @@ _You can find the source code for all the commands at [/src/commands](/src/comma
 - `cover`, shows the cover of an album
 - `partytime`, counts down
 - Account
-    - `login`, logs you in
-    - `logout`, logs you out
-    - `whoami`, shows who you're logged in as
-    - `lastfm`, links to the lastfm page of a user
+  - `login`, logs you in
+  - `logout`, logs you out
+  - `whoami`, shows who you're logged in as
+  - `lastfm`, links to the lastfm page of a user
 - Crowns
-    - `check`, checks a crown
-    - `checkmany`, checks multiple crowns at once
-    - `info`, displays info about a crown
-    - `list`, lists a user's crowns
-    - `rank`, ranks a user based on their crown count
-    - `dm`, DMs you a list of all of a users crowns
-    - `contentiouscrowns`, lists the crowns which have been stolen the most times
-    - `topcrowns`, lists the crowns with the highest playcounts
-    - `topcrownholders`, lists who has the most crowns
-    - `optout`, opts you out of the crowns game
-    - `optin`, opts you back into the crowns game
-    - `setinactiverole`, set what role should be treated as the inactive role 
+  - `check`, checks a crown
+  - `checkmany`, checks multiple crowns at once
+  - `info`, displays info about a crown
+  - `list`, lists a user's crowns
+  - `rank`, ranks a user based on their crown count
+  - `dm`, DMs you a list of all of a users crowns
+  - `contentiouscrowns`, lists the crowns which have been stolen the most times
+  - `topcrowns`, lists the crowns with the highest playcounts
+  - `topcrownholders`, lists who has the most crowns
+  - `optout`, opts you out of the crowns game
+  - `optin`, opts you back into the crowns game
+  - `setinactiverole`, set what role should be treated as the inactive role
 - List
-    - `artistlist`, shows your top artists
-    - `albumlist`, shows your top albums
-    - `tracklist`, shows your top tracks
+  - `artistlist`, shows your top artists
+  - `albumlist`, shows your top albums
+  - `tracklist`, shows your top tracks
 - Pages
-    - `artistpage`, gives you the link to an artist's last.fm page 
+  - `artistpage`, gives you the link to an artist's last.fm page
 - Percent
-    - `artistpercent`, shows what percentage an artist makes up of your total scrobbles
-    - `albumpercent`, shows what percentage an album makes up of your total scrobbles of an artist
-    - `trackpercent`, shows what percentage an track makes up of your total scrobbles of an artist
+  - `artistpercent`, shows what percentage an artist makes up of your total scrobbles
+  - `albumpercent`, shows what percentage an album makes up of your total scrobbles of an artist
+  - `trackpercent`, shows what percentage an track makes up of your total scrobbles of an artist
 - Plays
-    - `artistplays`, shows how many plays you have of an artist
-    - `albumplays`, shows how many plays you have of an album
-    - `trackplays`, shows how many plays you have of a track
+  - `artistplays`, shows how many plays you have of an artist
+  - `albumplays`, shows how many plays you have of an album
+  - `trackplays`, shows how many plays you have of a track
 - Playsover
-    - `artistplaysover`, shows how many plays over a given number you have of an artist
-    - `albumplaysover`, shows how many plays over a given number you have of an album
-    - `trackplaysover`, shows how many plays over a given number you have of a track
+  - `artistplaysover`, shows how many plays over a given number you have of an artist
+  - `albumplaysover`, shows how many plays over a given number you have of an album
+  - `trackplaysover`, shows how many plays over a given number you have of a track
 - Rank
-    - `artistrank`, shows what rank an artist is in your top artists
-    - `albumrank`, shows what rank an album is in your top albums
-    - `trackrank`, shows what rank a track is in your top tracks
-    - `artistat`, shows what artist is at a given rank
-    - `albumat`, shows what album is at a given rank
-    - `trackat`, shows what track is at a given rank
+  - `artistrank`, shows what rank an artist is in your top artists
+  - `albumrank`, shows what rank an album is in your top albums
+  - `trackrank`, shows what rank a track is in your top tracks
+  - `artistat`, shows what artist is at a given rank
+  - `albumat`, shows what album is at a given rank
+  - `trackat`, shows what track is at a given rank
 - Stats
-    - `artistcount`, counts your artists
-    - `albumcount`, counts your albums
-    - `trackcount`, counts your tracks
-    - `artiststats`, shows stats about an artist
-    - `albumstats`, shows stats about an album
-    - `taste`, compares your taste with another user
-    - `regextracksearch`, search your library with a regex (or keyword)
-    - `scrobbles`, shows how many scrobbles you have
-    - `combo`, shows listening streaks 
-    - `milestone`, shows you what you scrobbled at a scrobble milestone
-    - `goback`, shows you what you scrobbled in the past
+  - `artistcount`, counts your artists
+  - `albumcount`, counts your albums
+  - `trackcount`, counts your tracks
+  - `artiststats`, shows stats about an artist
+  - `albumstats`, shows stats about an album
+  - `taste`, compares your taste with another user
+  - `regextracksearch`, search your library with a regex (or keyword)
+  - `scrobbles`, shows how many scrobbles you have
+  - `combo`, shows listening streaks
+  - `milestone`, shows you what you scrobbled at a scrobble milestone
+  - `goback`, shows you what you scrobbled in the past
 - Overview
-    - `avgperday`, shows your average scrobbles per day
-    - `crowns`, shows stats about your crowns
-    - `hindx`, shows your hindex
-    - `joined`, shows when you joined
-    - `per`, shows some "per" stats for artist/albums/tracks
-    - `scrobblesperartist`, shows your average scrobbles per artist
-    - `scrobblesperalbum`, shows your average scrobbles per album
-    - `scrobblespertrack`, shows your average scrobbles per track
-    - `sumtop`, shows the sum of your top artists
-    - `top50percent`, shows how many artists make up 50% of your scrobbles
-    - `all`, all of the above
+  - `avgperday`, shows your average scrobbles per day
+  - `crowns`, shows stats about your crowns
+  - `hindx`, shows your hindex
+  - `joined`, shows when you joined
+  - `per`, shows some "per" stats for artist/albums/tracks
+  - `scrobblesperartist`, shows your average scrobbles per artist
+  - `scrobblesperalbum`, shows your average scrobbles per album
+  - `scrobblespertrack`, shows your average scrobbles per track
+  - `sumtop`, shows the sum of your top artists
+  - `top50percent`, shows how many artists make up 50% of your scrobbles
+  - `all`, all of the above
 
 ### Admin
 
@@ -144,13 +143,15 @@ _You can find the source code for all the commands at [/src/commands](/src/comma
 - `enable`, re-enable a disabled command
 - `disabled`, lists all disabled commands
 - `permissions`, control who can use what commands
-    - `blacklist`, lets you black/whitelist commands for users/roles
-    - `delist`, removes a user/role from the whitelist/blacklist for a command
-    - `help`, permissions help
-    - `view`, view permissions
+  - `blacklist`, lets you black/whitelist commands for users/roles
+  - `delist`, removes a user/role from the whitelist/blacklist for a command
+  - `help`, permissions help
+  - `view`, view permissions
 
 ## Special Thanks
+
 - RTFL and thot for moral support
-- mypetrobot for building Who Knows?, the inspiration for this bot
+- Dunster for the friends idea
+- mypetrobot for building the Who Knows? bot, the inspiration for this bot
 - Frikandel and the .fmbot team
 - Last.fm, for making a great platform <3

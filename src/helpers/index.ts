@@ -24,7 +24,7 @@ export function numberDisplay(
 }
 
 export function dateDisplay(date: Date): string {
-  return moment(date).format("dddd, MMMM Do, YYYY");
+  return moment(date).format("MMMM Do, YYYY");
 }
 
 export function ago(date: Date): string {

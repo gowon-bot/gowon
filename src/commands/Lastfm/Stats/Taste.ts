@@ -67,7 +67,7 @@ export default class Taste extends LastFMBaseCommand {
       userTwoUsername =
         typeof userTwo === "string"
           ? userTwo
-          : await this.usersService.getUsername(userTwo.id);
+          : await this.usersService.getUsername(userTwo.id, message.guild?.id!);
     }
 
     let [senderArtists, mentionedArtists] = await Promise.all([

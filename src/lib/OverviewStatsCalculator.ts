@@ -10,6 +10,7 @@ import { CrownsService } from "../services/dbservices/CrownsService";
 import { Logger } from "./Logger";
 import { numberDisplay } from "../helpers";
 import { calculatePercent } from "../helpers/stats";
+import { CrownRankResponse } from "../database/entity/Crown";
 
 export class OverviewStatsCalculator {
   private username: string;
@@ -21,6 +22,7 @@ export class OverviewStatsCalculator {
     topArtists?: TopArtists;
     topAlbums?: TopAlbums;
     topTracks?: TopTracks;
+    crownsRank?: CrownRankResponse;
     crownsCount?: number;
   } = {};
 
@@ -89,12 +91,19 @@ export class OverviewStatsCalculator {
 
   async crownsCount(): Promise<number> {
     if (!this.cache.crownsCount)
-      this.cache.crownsCount = await this.crownsService.count(
+      this.cache.crownsCount = (await this.crownsRank()).count.toInt();
+
+    return this.cache.crownsCount;
+  }
+
+  async crownsRank(): Promise<CrownRankResponse> {
+    if (!this.cache.crownsRank)
+      this.cache.crownsRank = await this.crownsService.getRank(
         this.userID,
         this.serverID
       );
 
-    return this.cache.crownsCount;
+    return this.cache.crownsRank;
   }
 
   async joined(): Promise<string> {
@@ -276,9 +285,9 @@ export class OverviewStatsCalculator {
       .length.toLocaleString();
   }
 
-  async totalCrowns(): Promise<string> {
-    return (await this.crownsCount()).toFixed();
-  }
+  // async totalCrowns(): Promise<string> {
+  //   return (await this.crownsCount()).toFixed();
+  // }
 
   async artistsPerCrown(): Promise<string> {
     let [crownsCount, playsOver] = await Promise.all([

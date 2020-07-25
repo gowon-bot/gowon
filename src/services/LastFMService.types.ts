@@ -60,6 +60,11 @@ export interface TrackInfo {
   userplaycount: string;
   userloved: string;
   toptags: { tag: Tag[] };
+  wiki?: {
+    published: string;
+    summary: string;
+    content: string;
+  };
 }
 
 export interface TrackInfoResponse {
@@ -77,7 +82,7 @@ export interface ArtistInfo {
       name: string;
       url: string;
       image: Image[];
-    };
+    }[];
   };
   tags: { tag: Tag[] };
   bio: {
@@ -122,6 +127,11 @@ export interface AlbumInfo {
     ];
   };
   tags: { tag: Tag[] };
+  wiki?: {
+    published: string;
+    summary: string;
+    content: string;
+  };
 }
 export interface AlbumInfoResponse {
   album: AlbumInfo;
@@ -217,6 +227,21 @@ export interface TopTracks extends PagedCollection {
     url: string;
   }[];
 }
+
 export interface TopTracksResponse {
   toptracks: TopTracks;
+}
+
+export interface TagInfo {
+  name: string;
+  total: number;
+  reach: number;
+  wiki: {
+    summary: string;
+    content: string;
+  };
+}
+
+export interface TagInfoResponse {
+  tag: TagInfo;
 }

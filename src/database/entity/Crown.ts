@@ -3,19 +3,19 @@ import {
   Column,
   PrimaryGeneratedColumn,
   BaseEntity,
-  UpdateDateColumn,
   ManyToOne,
   CreateDateColumn,
 } from "typeorm";
 import { User } from "./User";
 import { LastFMService } from "../../services/LastFMService";
+import { Logger } from "../../lib/Logger";
 
 export interface CrownRankResponse {
   count: string;
   rank: string;
 }
 
-@Entity()
+@Entity({ name: "crowns" })
 export class Crown extends BaseEntity {
   @PrimaryGeneratedColumn()
   id!: number;
@@ -35,18 +35,23 @@ export class Crown extends BaseEntity {
   @Column()
   version!: number;
 
+  @Column()
+  lastStolen!: Date;
+
   @CreateDateColumn()
   createdAt!: Date;
 
-  @UpdateDateColumn()
-  updatedAt!: Date;
-
-  async refresh(): Promise<Crown> {
-    this.plays = await new LastFMService().getArtistPlays(
-      this.user.lastFMUsername,
-      this.artistName
-    );
-    await this.save();
+  async refresh(options: { onlyIfOwnerIs?: string, logger?: Logger } = {}): Promise<Crown> {
+    if (
+      !options.onlyIfOwnerIs ||
+      options.onlyIfOwnerIs === this.user.discordID
+    ) {
+      this.plays = await new LastFMService(options.logger).getArtistPlays(
+        this.user.lastFMUsername,
+        this.artistName
+      );
+      await this.save();
+    }
     return this;
   }
 
@@ -67,22 +72,24 @@ export class Crown extends BaseEntity {
     return ((await this.query(
       `SELECT count, rank FROM (
       SELECT *, ROW_NUMBER() OVER (
-      ORDER BY 1 DESC
+      ORDER BY count DESC
   ) AS rank FROM (
       SELECT
-          count(crown) AS count,
+          count(id) AS count,
           "userId"
-      FROM crown
-      WHERE "serverID" LIKE $1
+      FROM crowns
+      WHERE crowns."serverID" LIKE $1
       GROUP BY "userId"
       ORDER BY 1 desc
   ) t
-  JOIN users u    
+  LEFT JOIN (
+      SELECT * FROM users WHERE users."serverID" LIKE $1
+    ) u    
       ON u.id = t."userId"
 ) ranks
-WHERE "lastFMUsername" LIKE $2
+WHERE "userId" = $2
 `,
-      [serverID, user?.lastFMUsername!]
+      [serverID, user?.id!]
     )) as CrownRankResponse[])[0];
   }
 }

@@ -2,6 +2,7 @@
 import "reflect-metadata";
 
 import "./extensions/string.extensions";
+import "./extensions/array.extensions";
 
 import { CommandHandler } from "./lib/command/CommandHandler";
 

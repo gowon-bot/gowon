@@ -1,6 +1,7 @@
 import { LastFMErrorResponse } from "./services/LastFMService.types";
 import { parseError } from "./helpers/error";
 import { Response } from "node-fetch";
+import { numberDisplay } from "./helpers";
 
 export abstract class ClientError extends Error {
   message: string;
@@ -48,7 +49,7 @@ export class LastFMError extends ClientError {
 
   constructor(error: LastFMErrorResponse) {
     super(parseError(error));
-    this.name = "LastFMError:" + error.error
+    this.name = "LastFMError:" + error.error;
   }
 }
 
@@ -181,5 +182,21 @@ export class OptedOutError extends ClientError {
 
   constructor() {
     super(`You have opted out of the crowns game!`);
+  }
+}
+
+export class TooManyFriendsError extends ClientError {
+  name = "TooManyFriendsError";
+
+  constructor(limit: number) {
+    super(`You cannot have more than ${numberDisplay(limit, "friend")}`);
+  }
+}
+
+export class BadLastFMResponseError extends ClientError {
+  name = "BadLastFMResponseError";
+
+  constructor() {
+    super("Last.fm is having issues at the moment, please try again later...");
   }
 }

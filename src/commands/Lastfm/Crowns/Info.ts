@@ -17,7 +17,11 @@ export class Info extends CrownsChildCommand {
   async run(message: Message) {
     let artist = this.parsedArguments.artist as string;
 
-    let { username } = await this.parseMentionedUsername(message);
+    let user = await this.usersService.getUser(
+      message.author.id!,
+      message.guild?.id!
+    );
+    let username = user.lastFMUsername;
 
     if (!artist) {
       artist = (await this.lastFMService.nowPlayingParsed(username)).artist;
@@ -27,38 +31,47 @@ export class Info extends CrownsChildCommand {
 
     let crown = await this.crownsService.getCrown(
       artistDetails.name,
-      message.guild?.id!
+      message.guild?.id!,
+      { refresh: false }
     );
 
-    if (!crown) {
-      await message.reply(
-        `No one has the crown for ${artistDetails.name.bold()}`
-      );
+    if (crown && crown.user.id === user.id) {
+      crown.plays = artistDetails.stats.userplaycount.toInt();
+      crown.save();
     } else {
-      let holderUsername = (
-        await User.toDiscordUser(message, crown.user.discordID)
-      )?.username;
+      await crown?.refresh();
+    }
 
-      let embed = new MessageEmbed()
-        .setTitle(`Who has ${artistDetails.name.bold()}?`)
-        .setDescription(
-          `${holderUsername} has the crown for ${artistDetails.name.bold()} with ${numberDisplay(
-            crown.plays,
-            "play"
-          )}
+    if (crown?.user.id)
+      if (!crown) {
+        await message.reply(
+          `No one has the crown for ${artistDetails.name.bold()}`
+        );
+      } else {
+        let holderUsername = (
+          await User.toDiscordUser(message, crown.user.discordID)
+        )?.username;
+
+        let embed = new MessageEmbed()
+          .setTitle(`Who has ${artistDetails.name.bold()}?`)
+          .setDescription(
+            `${holderUsername} has the crown for ${artistDetails.name.bold()} with ${numberDisplay(
+              crown.plays,
+              "play"
+            )}
 
           Created ${ago(crown.createdAt)}${
-            crown.version > 1 ? ". Last stolen " + ago(crown.updatedAt) : ""
-          }
+              crown.version > 1 ? ". Last stolen " + ago(crown.lastStolen) : ""
+            }
 
           _It ${
             crown.version === 1
               ? "has never been stolen"
               : "has been stolen " + numberDisplay(crown.version - 1, "time")
           }_`
-        );
+          );
 
-      await message.channel.send(embed);
-    }
+        await message.channel.send(embed);
+      }
   }
 }

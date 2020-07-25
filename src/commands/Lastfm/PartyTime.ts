@@ -27,7 +27,6 @@ export default class PartyTime extends LastFMBaseCommand {
         );
 
       }, (time - currentTime) * 1200);
-      this.logger.log("Partytimer", (time - currentTime) * 1200);
     }
   }
 }

@@ -5,7 +5,7 @@ import { Variation } from "../../../lib/command/BaseCommand";
 import { RunAs } from "../../../lib/AliasChecker";
 
 export default class RegexTrackSearch extends LastFMBaseCommand {
-  aliases = ["regexts", "ts"];
+  aliases = ["regexts", "rts"];
   description =
     "Searches your top tracks for tracks that match a given regex\nRegex help: https://regexr.com/";
   arguments: Arguments = {
@@ -55,10 +55,12 @@ export default class RegexTrackSearch extends LastFMBaseCommand {
           .setTitle(
             `Tracks in ${
               perspective.possessive
-            } library that match ${regex.code()}`
+            } library that match ${regex.code()} ${
+              tracks.length > 25 ? "(showing only top 20)" : ""
+            }`
           )
           .setDescription(
-            tracks
+            tracks.slice(0, 25)
               .map(
                 (t) =>
                   `${t.name.bold()} by ${t.artist.name} _(${

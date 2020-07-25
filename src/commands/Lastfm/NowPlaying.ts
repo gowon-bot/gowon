@@ -7,10 +7,16 @@ import { Mention } from "../../lib/arguments/mentions";
 import { LastFMBaseCommand } from "./LastFMBaseCommand";
 import { CrownsService } from "../../services/dbservices/CrownsService";
 import { RunAs } from "../../lib/AliasChecker";
+import { Tag } from "../../services/LastFMService.types";
+import { TagConsolidator } from "../../lib/TagConsolidator";
 
 export default class NowPlaying extends LastFMBaseCommand {
   aliases = ["np", "fm"];
   variations = [
+    {
+      variationString: "fmvv",
+      description: "Displays a few more tags than fmv",
+    },
     {
       variationString: "fmv",
       description: "Displays more information",
@@ -18,6 +24,9 @@ export default class NowPlaying extends LastFMBaseCommand {
   ];
   description = "Displays the now playing or last played track in last.fm";
   arguments: Arguments = {
+    inputs: {
+      otherWords: { index: { start: 0 } },
+    },
     mentions: {
       user: {
         index: 0,
@@ -28,9 +37,11 @@ export default class NowPlaying extends LastFMBaseCommand {
   };
 
   crownsService = new CrownsService(this.logger);
+  tagConsolidator = new TagConsolidator();
 
   async run(message: Message, runAs: RunAs) {
-    let user = this.parsedArguments.user as Mention;
+    let user = this.parsedArguments.user as Mention,
+      otherWords = this.parsedArguments.otherWords as string | undefined;
 
     if (isBotMoment(typeof user !== "string" ? user?.id : "")) {
       await message.channel.send(fakeNowPlaying());
@@ -40,7 +51,10 @@ export default class NowPlaying extends LastFMBaseCommand {
     let username =
       typeof user === "string"
         ? user
-        : await this.usersService.getUsername(user?.id ?? message.author.id);
+        : await this.usersService.getUsername(
+            (!otherWords && user?.id) || message.author.id,
+            message.guild?.id!
+          );
 
     let nowPlaying = await this.lastFMService.nowPlaying(username);
 
@@ -53,7 +67,8 @@ export default class NowPlaying extends LastFMBaseCommand {
       .setAuthor(
         `${
           nowPlaying["@attr"]?.nowplaying ? "Now playing" : "Last scrobbled"
-        } for ${username}`
+        } for ${username}`,
+        message.author.avatarURL() || undefined
       )
       .setTitle(track.name)
       .setURL(LinkGenerator.trackPage(track.artist, track.name))
@@ -65,45 +80,55 @@ export default class NowPlaying extends LastFMBaseCommand {
         nowPlaying.image.find((i) => i.size === "large")?.["#text"] || ""
       );
 
-    if (runAs.lastString()! === "fmv") {
-      let [artistInfo, trackInfo, crown] = await Promise.all([
+    if (["fmv", "fmvv"].includes(runAs.lastString()!)) {
+      // Types for Promise.allSettled are broken(?), so I have to manually assert the type that's returned
+      let [artistInfo, trackInfo, crown] = (await Promise.allSettled([
         this.lastFMService.artistInfo(track.artist, username),
         this.lastFMService.trackInfo(track.artist, track.name, username),
         this.crownsService.getCrownDisplay(track.artist, message),
-      ]);
+      ])) as { status: string; value?: any; reason: any }[];
 
       let crownString = "";
       let isCrownHolder = false;
 
-      if (crown && crown.user) {
-        if (crown.user.id === message.author.id) {
-          isCrownHolder = true;
-
-          this.crownsService.checkCrown({
-            artistName: nowPlaying.artist["#text"],
-            serverID: message.guild?.id!,
-            discordID: message.author.id,
-            plays: artistInfo.stats.userplaycount.toInt(),
-          });
-        } else {
-          crownString = `👑 ${numberDisplay(crown.crown.plays)} (${
-            crown.user.username
+      if (crown.value && crown.value.user) {
+        if (crown.value.user.id === message.author.id) isCrownHolder = true;
+        else {
+          crownString = `👑 ${numberDisplay(crown.value.crown.plays)} (${
+            crown.value.user.username
           })`;
         }
       }
 
+      if (trackInfo.value)
+        this.tagConsolidator.addTags(
+          trackInfo.value?.toptags?.tag?.map((t: Tag) =>
+            t.name.toLowerCase()
+          ) || []
+        );
+      if (artistInfo.value)
+        this.tagConsolidator.addTags(
+          artistInfo.value?.tags?.tag?.map((t: Tag) => t.name.toLowerCase()) ||
+            []
+        );
+
       nowPlayingEmbed = nowPlayingEmbed
-        .setColor(trackInfo.userloved === "1" ? "#cc0000" : "black")
+        .setColor(trackInfo.value?.userloved === "1" ? "#cc0000" : "black")
         .setFooter(
           (isCrownHolder ? "👑 " : "") +
-            numberDisplay(
-              artistInfo.stats.userplaycount,
-              `${track.artist} scrobble`
-            ) +
-            " | " +
-            numberDisplay(trackInfo.userplaycount, "scrobble") +
-            " of this song\n" +
-            artistInfo.tags.tag.map((t) => t.name.toLowerCase()).join(" ‧ ") +
+            (artistInfo.value
+              ? numberDisplay(
+                  artistInfo.value.stats.userplaycount,
+                  `${track.artist} scrobble`
+                ) + " | "
+              : "No data on last.fm for " + nowPlaying.artist["#text"]) +
+            (trackInfo.value
+              ? numberDisplay(trackInfo.value.userplaycount, "scrobble") +
+                " of this song\n"
+              : "") +
+            this.tagConsolidator
+              .consolidate(runAs.lastString()! === "fmvv" ? Infinity : 6)
+              .join(" ‧ ") +
             (crownString ? " • " + crownString : "")
         );
     }

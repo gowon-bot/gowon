@@ -1,8 +1,8 @@
 import { OverviewChildCommand } from "./OverviewChildCommand";
 import { Message, MessageEmbed } from "discord.js";
-import { Arguments } from "../../lib/arguments/arguments";
-import { LogicError } from "../../errors";
-import { numberDisplay, ucFirst } from "../../helpers";
+import { Arguments } from "../../../lib/arguments/arguments";
+import { LogicError } from "../../../errors";
+import { numberDisplay, ucFirst } from "../../../helpers";
 
 export class SumTop extends OverviewChildCommand {
   aliases = [];
