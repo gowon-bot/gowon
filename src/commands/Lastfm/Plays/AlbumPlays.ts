@@ -49,7 +49,7 @@ export default class AlbumPlays extends LastFMBaseCommand {
     message.channel.send(
       `${ucFirst(perspective.plusToHave)} **${numberDisplay(
         albumDetails.userplaycount,
-        "** scrobble"
+        "**scrobble"
       )} of ${albumDetails.name.italic()} by ${albumDetails.artist.bold()}`
     );
   }

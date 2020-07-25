@@ -5,7 +5,7 @@ export default class Logout extends LastFMBaseCommand {
   description = "Logs you out of lastfm";
 
   async run(message: Message) {
-    await this.usersService.clearUsername(message.author.id);
+    await this.usersService.clearUsername(message.author.id, message.guild?.id!);
 
     message.channel.send(`Logged out successfully.`);
   }

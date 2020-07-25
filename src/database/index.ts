@@ -4,6 +4,6 @@ export class DB {
   static async connect() {
     let connection = await createConnection();
 
-    await connection.synchronize()
+    await connection.synchronize();
   }
 }

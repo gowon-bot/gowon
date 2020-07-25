@@ -20,7 +20,7 @@ export default class ArtistPlaysover extends LastFMBaseCommand {
   };
 
   async run(message: Message) {
-    let plays = parseInt(this.parsedArguments.plays as string, 10);
+    let plays = (this.parsedArguments.plays as string).toInt();
 
     let { username, perspective } = await this.parseMentionedUsername(message);
 
@@ -29,14 +29,14 @@ export default class ArtistPlaysover extends LastFMBaseCommand {
     let playsover = 0;
 
     for (let artist of topArtists.artist) {
-      if (parseInt(artist.playcount, 10) > plays) playsover++;
+      if (artist.playcount.toInt() > plays) playsover++;
       else break;
     }
 
     await message.reply(
       `${numberDisplay(playsover).bold()} of ${
         perspective.possessive
-      } top 1,000 artist have at least ${numberDisplay(plays, "play").bold()}`
+      } top 1,000 artists have at least ${numberDisplay(plays, "play").bold()}`
     );
   }
 }

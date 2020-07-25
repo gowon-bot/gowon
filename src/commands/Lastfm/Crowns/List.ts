@@ -1,6 +1,6 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
 import { Message, MessageEmbed, User } from "discord.js";
-import { numberDisplay, ucFirst } from "../../../helpers";
+import { numberDisplay, ucFirst, getOrdinal } from "../../../helpers";
 import { Arguments } from "../../../lib/arguments/arguments";
 
 export class List extends CrownsChildCommand {
@@ -22,9 +22,10 @@ export class List extends CrownsChildCommand {
       user
     );
 
-    let [crowns, crownsCount] = await Promise.all([
+    let [crowns, crownsCount, rank] = await Promise.all([
       this.crownsService.listTopCrowns(discordID, message.guild?.id!),
       this.crownsService.count(discordID, message.guild?.id!),
+      this.crownsService.getRank(discordID, message.guild?.id!),
     ]);
 
     let embed = new MessageEmbed()
@@ -33,10 +34,13 @@ export class List extends CrownsChildCommand {
         `${ucFirst(perspective.plusToHave)} **${numberDisplay(
           crownsCount,
           "** crown"
-        )} in ${message.guild?.name}\n\n` +
+        )} in ${message.guild?.name} (ranked ${getOrdinal(
+          rank.rank.toInt()
+        ).bold()})\n\n` +
           crowns
             .map(
-              (c) => `${c.artistName} ― ${numberDisplay(c.plays, "play").bold()}`
+              (c) =>
+                `${numberDisplay(c.plays, "play").bold()} - ${c.artistName}`
             )
             .join("\n")
       );

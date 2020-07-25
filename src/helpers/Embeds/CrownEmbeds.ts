@@ -26,7 +26,7 @@ export class CrownEmbeds {
     return new MessageEmbed()
       .setTitle(`Crown for ${crownCheck.crown!.artistName}`)
       .setDescription(
-        `You already have the crown ${crownCheck.crown!.artistName.bold()}, but it's been updated from ${numberDisplay(
+        `You already have the crown for ${crownCheck.crown!.artistName.bold()}, but it's been updated from ${numberDisplay(
           crownCheck.oldCrown!.plays,
           "play"
         )} to ${numberDisplay(crownCheck.crown!.plays, "play").bold()}`
@@ -74,7 +74,7 @@ export class CrownEmbeds {
     )?.username;
 
     let difference =
-      crownCheck.crown!.plays - parseInt(artistDetails.stats.userplaycount, 10);
+      crownCheck.crown!.plays - artistDetails.stats.userplaycount.toInt();
 
     return new MessageEmbed()
       .setTitle(`Crown for ${crownCheck.crown!.artistName}`)

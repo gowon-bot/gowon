@@ -87,7 +87,11 @@ export abstract class BaseCommand implements Command {
 
   async parseMentionedUsername(
     message: Message,
-    options: { asCode?: boolean; argumentName?: string } = {
+    options: {
+      asCode?: boolean;
+      argumentName?: string;
+      inputArgumentName?: string;
+    } = {
       asCode: true,
       argumentName: "user",
     }
@@ -98,8 +102,11 @@ export abstract class BaseCommand implements Command {
     perspective: Perspective;
   }> {
     let user = this.parsedArguments.user as Mention;
+    let inputUsername =
+      options.inputArgumentName &&
+      (this.parsedArguments[options.inputArgumentName] as string);
 
-    let senderUsername = await this.usersService.getUsername(message.author.id);
+    let senderUsername = await this.usersService.getUsername(message.author.id, message.guild?.id!);
 
     let mentionedUsername: string;
 
@@ -107,10 +114,10 @@ export abstract class BaseCommand implements Command {
       mentionedUsername = user;
     } else {
       mentionedUsername =
-        user && (await this.usersService.getUsername(user.id));
+        user && (await this.usersService.getUsername(user.id, message.guild?.id!));
     }
 
-    let username = mentionedUsername || senderUsername;
+    let username = inputUsername || mentionedUsername || senderUsername;
 
     let perspective = this.usersService.perspective(
       senderUsername,
@@ -143,7 +150,7 @@ export abstract class BaseCommand implements Command {
       await this.run(message, runAs);
     } catch (e) {
       this.logger.logError(e);
-      this.track.error(e)
+      this.track.error(e);
 
       if (e.isClientFacing) {
         await message.reply(e.message);

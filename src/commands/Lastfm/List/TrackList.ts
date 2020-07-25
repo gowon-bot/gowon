@@ -3,7 +3,7 @@ import { numberDisplay } from "../../../helpers";
 import { ListCommand } from "./ListCommand";
 
 export default class TrackList extends ListCommand {
-  aliases = ["tlist", "toptracks"];
+  aliases = ["tlist", "toptracks", "toptrack", "tracks"];
   description = "Shows your top tracks";
   shouldBeIndexed = true;
 

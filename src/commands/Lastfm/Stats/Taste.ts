@@ -42,7 +42,7 @@ export default class Taste extends LastFMBaseCommand {
   async run(message: Message) {
     let userTwo = this.parsedArguments.userTwo as Mention,
       artistAmount =
-        parseInt(this.parsedArguments.artistAmount as string, 10) || 500,
+        (this.parsedArguments.artistAmount as string).toInt() || 500,
       timePeriod = this.parsedArguments.timePeriod as string,
       humanReadableTimePeriod = this.parsedArguments
         .humanReadableTimePeriod as string;
@@ -67,12 +67,22 @@ export default class Taste extends LastFMBaseCommand {
       userTwoUsername =
         typeof userTwo === "string"
           ? userTwo
-          : await this.usersService.getUsername(userTwo.id);
+          : await this.usersService.getUsername(userTwo.id, message.guild?.id!);
     }
 
     let [senderArtists, mentionedArtists] = await Promise.all([
-      this.lastFMService.topArtists(userOneUsername, artistAmount, 1, timePeriod),
-      this.lastFMService.topArtists(userTwoUsername, artistAmount, 1, timePeriod),
+      this.lastFMService.topArtists(
+        userOneUsername,
+        artistAmount,
+        1,
+        timePeriod
+      ),
+      this.lastFMService.topArtists(
+        userTwoUsername,
+        artistAmount,
+        1,
+        timePeriod
+      ),
     ]);
 
     let tasteCalculator = new TasteCalculator(senderArtists, mentionedArtists);
@@ -83,7 +93,9 @@ export default class Taste extends LastFMBaseCommand {
       .setTitle(
         `Taste comparison for ${sanitizeForDiscord(
           userOneUsername
-        )} and ${sanitizeForDiscord(userTwoUsername)} ${humanReadableTimePeriod}`
+        )} and ${sanitizeForDiscord(
+          userTwoUsername
+        )} ${humanReadableTimePeriod}`
       )
       .setDescription(
         `Comparing top ${numberDisplay(

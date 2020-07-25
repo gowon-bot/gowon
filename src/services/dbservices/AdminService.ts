@@ -96,6 +96,10 @@ export class AdminService extends BaseService {
     let newPermissions: Permission;
 
     try {
+      this.log(
+        `Creating new permission for entity ${entityID} and command ${commandID} in ${serverID}`
+      );
+
       newPermissions = Permission.create({
         entityID,
         serverID,
@@ -180,12 +184,17 @@ export class AdminService extends BaseService {
 
     if (!permission) throw new RecordNotFoundError("permission");
 
+    this.log(
+      `Removing permission for entity ${entityID} and command ${commandID} in ${serverID}`
+    );
+
     await permission.remove();
 
     return permission;
   }
 
   async listPermissions(serverID: string): Promise<Permission[]> {
+    this.log(`Listing permissions in ${serverID}`);
     return await Permission.find({ where: { serverID } });
   }
 
@@ -193,6 +202,7 @@ export class AdminService extends BaseService {
     serverID: string,
     commandID: string
   ): Promise<Permission[]> {
+    this.log(`Listing permissions in ${serverID} for command ${commandID}`);
     return await Permission.find({ where: { serverID, commandID } });
   }
 
@@ -200,6 +210,7 @@ export class AdminService extends BaseService {
     serverID: string,
     entityID: string
   ): Promise<Permission[]> {
+    this.log(`Listing permissions in ${serverID} for entity ${entityID}`);
     return await Permission.find({ where: { serverID, entityID } });
   }
 }

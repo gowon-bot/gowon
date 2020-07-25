@@ -5,7 +5,7 @@ import { BadAmountError } from "../../../errors";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 export abstract class ListCommand extends LastFMBaseCommand {
-  shouldBeIndexed = false
+  shouldBeIndexed = false;
 
   arguments: Arguments = {
     mentions: {
@@ -38,8 +38,7 @@ export abstract class ListCommand extends LastFMBaseCommand {
     this.timePeriod = this.parsedArguments.timePeriod as string;
     this.humanReadableTimePeriod = this.parsedArguments
       .humanReadableTimePeriod as string;
-    this.listAmount =
-      parseInt(this.parsedArguments.listAmount as string, 10) || 10;
+    this.listAmount = (this.parsedArguments.listAmount as string)?.toInt() || 10;
 
     if (this.listAmount < 1 || this.listAmount > 25)
       throw new BadAmountError(1, 25);

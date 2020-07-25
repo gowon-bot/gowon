@@ -31,9 +31,9 @@ export default class Cover extends LastFMBaseCommand {
       let image = nowPlaying.image.find((i) => i.size === "extralarge");
 
       message.channel.send(
-        `Cover for ${nowPlaying.name.bold()} by ${nowPlaying.artist[
+        `Cover for ${nowPlaying.album["#text"].bold()} by ${nowPlaying.artist[
           "#text"
-        ].code()}`,
+        ].bold()}`,
         { files: [image?.["#text"] ?? ""] }
       );
     } else {
@@ -48,7 +48,7 @@ export default class Cover extends LastFMBaseCommand {
       let image = albumDetails.image.find((i) => i.size === "extralarge");
 
       message.channel.send(
-        `Cover for ${albumDetails.name.bold()} by ${albumDetails.artist.code()}`,
+        `Cover for ${albumDetails.name.italic()} by ${albumDetails.artist.bold()}`,
         { files: [image?.["#text"] ?? ""] }
       );
     }

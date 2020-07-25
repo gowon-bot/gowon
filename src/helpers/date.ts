@@ -16,7 +16,7 @@ function timeFrameConverter(timeframe: string): string {
     case "d":
       return "day";
     case "w":
-      return "w";
+      return "week";
     case "mo":
       return "month";
     case "q":
@@ -39,7 +39,7 @@ export function generateTimeRange(string: string): TimeRange {
   if (!difference) {
     let matches = string.match(fallbackRegex) || [];
 
-    if (matches.length < 1) return {};
+    if (matches.length < 1) return { to: new Date() };
 
     let match = timeFrameConverter(matches[0]);
 
@@ -59,9 +59,10 @@ export function generateTimeRange(string: string): TimeRange {
 
 export function generateHumanTimeRange(
   string: string,
-  options: { noOverall: boolean; raw: boolean } = {
+  options: { noOverall?: boolean; raw?: boolean; overallMessage?: string } = {
     noOverall: false,
     raw: false,
+    overallMessage: "overall",
   }
 ): string {
   let timeRange = generateTimeRange(string);
@@ -69,18 +70,24 @@ export function generateHumanTimeRange(
   if (timeRange.from) {
     let durationRegex = /(-?(?:\d+\.?\d*|\d*\.?\d+)(?:e[-+]?\d+)?)\s*([a-zµμ]*)/gi;
 
-    let matches = string.match(durationRegex) || [];
+    let matches = Array.from(string.matchAll(durationRegex)) || [];
 
-    if (matches.length < 1) {
+    let match = matches.reduce((acc, val) => {
+      if (val[2].trim()) acc = val[1] + " " + val[2];
+
+      return acc;
+    }, undefined as undefined | string);
+
+    if (!match) {
       let matches = string.match(fallbackRegex) || [];
 
-      if (matches.length < 1) return "overall";
+      if (matches.length < 1) return options.overallMessage!;
 
       let match = timeFrameConverter(matches[0]);
 
       return (options.raw ? "" : "over the past ") + match;
-    } else return (options.raw ? "" : "over the past ") + matches[0];
-  } else return options.noOverall ? "" : "overall";
+    } else return (options.raw ? "" : "over the past ") + match;
+  } else return options.noOverall ? "" : options.overallMessage!;
 }
 
 export function generatePeriod(string: string, fallback = "overall"): string {
@@ -90,6 +97,7 @@ export function generatePeriod(string: string, fallback = "overall"): string {
     "6month": /(\s+|\b)((6|six) *mo(nth(s)?)?|h(alf(\s*year)?)?)(\s|\b)/gi,
     "12month": /(\s+|\b)((12|twelve) *mo(nth(s)?)?|y(ear)?)(\s|\b)/gi,
     "1month": /(\s+|\b)((1|one)? *mo(nth(s)?)?)(\s|\b)/gi,
+    overall: /(\s+|\b)(a(lltime)?|o(verall)?)(\s|\b)/gi,
   };
 
   for (let period of Object.keys(periodRegexes)) {

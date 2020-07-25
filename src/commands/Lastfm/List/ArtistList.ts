@@ -3,7 +3,7 @@ import { numberDisplay } from "../../../helpers";
 import { ListCommand } from "./ListCommand";
 
 export default class ArtistList extends ListCommand {
-  aliases = ["alist", "topartists"];
+  aliases = ["alist", "topartists", "topartist", "artists"];
   description = "Shows your top artists";
   shouldBeIndexed = true
 

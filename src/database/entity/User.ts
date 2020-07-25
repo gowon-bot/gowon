@@ -7,6 +7,7 @@ import {
 } from "typeorm";
 import { Crown } from "./Crown";
 import { Message, User as DiscordUser } from "discord.js";
+import { Friend } from "./Friend";
 
 @Entity({ name: "users" })
 export class User extends BaseEntity {
@@ -17,10 +18,16 @@ export class User extends BaseEntity {
   discordID!: string;
 
   @Column()
+  serverID!: string;
+
+  @Column()
   lastFMUsername!: string;
 
   @OneToMany((_) => Crown, (crown) => crown.user)
   crowns!: Crown[];
+
+  @OneToMany((_) => Friend, (friend) => friend.user)
+  friends!: Friend[];
 
   static async toDiscordUser(
     message: Message,

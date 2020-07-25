@@ -1,11 +1,10 @@
 import { Message } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
-import { numberDisplay, ucFirst } from "../../../helpers";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
-export default class AlbumPlays extends LastFMBaseCommand {
-  aliases = ["alp"];
-  description = "Shows you how many plays you have of a given album";
+export default class AlbumPage extends LastFMBaseCommand {
+  aliases = ["alpa", "lpa", "alpage", "lpage"];
+  description = "Links you to the album page on lastfm";
 
   arguments: Arguments = {
     inputs: {
@@ -25,16 +24,10 @@ export default class AlbumPlays extends LastFMBaseCommand {
     let artist = this.parsedArguments.artist as string,
       albumName = this.parsedArguments.album as string;
 
-    let {
-      senderUsername,
-      username,
-      perspective,
-    } = await this.parseMentionedUsername(message);
+    let { username } = await this.parseMentionedUsername(message);
 
     if (!artist || !albumName) {
-      let nowPlaying = await this.lastFMService.nowPlayingParsed(
-        senderUsername
-      );
+      let nowPlaying = await this.lastFMService.nowPlayingParsed(username);
 
       if (!artist) artist = nowPlaying.artist;
       if (!albumName) albumName = nowPlaying.album;
@@ -47,10 +40,9 @@ export default class AlbumPlays extends LastFMBaseCommand {
     );
 
     message.channel.send(
-      `${ucFirst(perspective.plusToHave)} **${numberDisplay(
-        albumDetails.userplaycount,
-        "** scrobble"
-      )} of **${albumDetails.name}** by ${albumDetails.artist}`
+      `${albumDetails.name.italic()} by ${albumDetails.artist.bold()} on last.fm: ${
+        albumDetails.url
+      }`
     );
   }
 }

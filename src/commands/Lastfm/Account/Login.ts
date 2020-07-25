@@ -15,7 +15,7 @@ export default class Login extends LastFMBaseCommand {
     let username = this.parsedArguments.username as string;
 
     if (await this.lastFMService.userExists(username)) {
-      await this.usersService.setUsername(message.author.id, username);
+      await this.usersService.setUsername(message.author.id, message.guild?.id!, username);
 
       message.channel.send(`Logged in as ${username.code()}`);
     } else {

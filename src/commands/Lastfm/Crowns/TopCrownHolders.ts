@@ -21,7 +21,7 @@ export class TopCrownHolders extends CrownsChildCommand {
           holders
             .map(
               (h, idx) =>
-                `${idx}) ${h.user.username} ― ${numberDisplay(
+                `${idx + 1}) ${h.user.username} ― ${numberDisplay(
                   h.numberOfCrowns,
                   "crown"
                 ).bold()}`

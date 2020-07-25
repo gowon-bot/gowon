@@ -47,7 +47,7 @@ export default class TrackPlays extends LastFMBaseCommand {
     );
 
     message.channel.send(
-      `${ucFirst(perspective.plusToHave)} has **${numberDisplay(
+      `${ucFirst(perspective.plusToHave)} **${numberDisplay(
         trackDetails.userplaycount,
         "**scrobble"
       )} of **${trackDetails.name}** by ${trackDetails.artist.name}`

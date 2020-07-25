@@ -24,7 +24,7 @@ export default class Combo extends LastFMBaseCommand {
     let { username } = await this.parseMentionedUsername(message);
 
     let streakAmount =
-      parseInt(this.parsedArguments.streakAmount as string, 10) || 1000;
+      (this.parsedArguments.streakAmount as string).toInt() || 1000;
 
     if (streakAmount < 1 || streakAmount > 1000) {
       await message.reply("Please specify a valid amount!");
@@ -57,7 +57,7 @@ export default class Combo extends LastFMBaseCommand {
               (combo.album.plays > 0
                 ? `Album: ${combo.album.plays}${
                     combo.album.nowplaying ? "➚" : ""
-                  } in a row (${combo.album.name.bold()})\n`
+                  } in a row (${combo.album.name.italic()})\n`
                 : "") +
               (combo.track.plays > 0
                 ? `Track: ${combo.track.plays}${

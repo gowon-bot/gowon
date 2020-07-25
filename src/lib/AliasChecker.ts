@@ -142,9 +142,10 @@ export class AliasChecker {
   commandHasVariation(command: Command, variation: string): boolean {
     for (let v of command.variations) {
       if (v.variationString) {
-        return v.variationString.toLowerCase() === variation.toLowerCase();
+        if (v.variationString.toLowerCase() === variation.toLowerCase())
+          return true;
       } else if (v.variationRegex) {
-        return v.variationRegex.test(variation);
+        if (v.variationRegex.test(variation)) return true;
       }
     }
     return false;

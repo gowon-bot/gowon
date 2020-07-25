@@ -4,13 +4,15 @@ import { Check } from "./Check";
 import { Info } from "./Info";
 import { List } from "./List";
 import { DM } from "./DM";
-import { CheckMany } from "./CheckMultiple";
+import { CheckMany } from "./CheckMany";
 import { TopCrowns } from "./TopCrowns";
 import { ContentiousCrowns } from "./ContentiousCrowns";
 import { TopCrownHolders } from "./TopCrownHolders";
 import { SetInactiveRole } from "./SetInactiveRole";
 import { OptOut } from "./OptOut";
 import { OptIn } from "./OptIn";
+import { Rank } from "./Rank";
+import { Kill } from "./Kill";
 
 export default class CrownsParentCommand extends LastFMBaseParentCommand {
   friendlyName = "crowns";
@@ -31,5 +33,7 @@ export default class CrownsParentCommand extends LastFMBaseParentCommand {
     setinactiverole: () => new SetInactiveRole(),
     optout: () => new OptOut(),
     optin: () => new OptIn(),
+    rank: () => new Rank(),
+    kill: () => new Kill(),
   });
 }

@@ -20,7 +20,7 @@ export class BotMomentService {
   // Instance methods/properties
   prefix: string = "!";
   customPrefixes = {
-    lastfm: "lastfm:",
+    lastfm: "lfm:",
   };
   inactiveRole: { [serverID: string]: string | undefined } = {};
 
@@ -35,7 +35,7 @@ export class BotMomentService {
     );
   }
 
-  async getInactiveRole(guild: Guild): Promise<string | undefined> {
+  async getInactiveRole(guild: Guild): Promise<string | undefined> {    
     if (!this.inactiveRole[guild.id])
       this.inactiveRole[guild.id] = (
         await Setting.getByName(Settings.InactiveRole, guild.id)

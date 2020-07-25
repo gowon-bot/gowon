@@ -1,4 +1,4 @@
-import { Crown } from "../../database/entity/Crown";
+import { Crown, CrownRankResponse } from "../../database/entity/Crown";
 import { User } from "../../database/entity/User";
 import { RecordNotFoundError } from "../../errors";
 import { Message, User as DiscordUser } from "discord.js";
@@ -69,6 +69,7 @@ export class CrownsService extends BaseService {
       crown.user = user;
       crown.plays = plays;
       crown.version++;
+      crown.lastStolen = new Date();
 
       await crown.save();
 
@@ -85,7 +86,7 @@ export class CrownsService extends BaseService {
 
     let [crown, user] = await Promise.all([
       this.getCrown(artistName, serverID),
-      User.findOne({ where: { discordID } }),
+      User.findOne({ where: { discordID, serverID } }),
     ]);
 
     let oldCrown = Object.assign({}, crown);
@@ -98,6 +99,7 @@ export class CrownsService extends BaseService {
       if (crown.user.id === user.id) {
         crownState = await this.handleSelfCrown(crown, plays);
       } else {
+        crown = oldCrown = await crown.refresh({ logger: this.logger });
         crownState = await this.handleCrown(crown, plays, user);
       }
 
@@ -112,6 +114,7 @@ export class CrownsService extends BaseService {
         plays,
         serverID,
         version: 1,
+        lastStolen: new Date(),
       });
 
       await crown.save();
@@ -126,10 +129,25 @@ export class CrownsService extends BaseService {
 
   async getCrown(
     artistName: string,
-    serverID: string
+    serverID: string,
+    options: { refresh: boolean; requester?: DiscordUser } = { refresh: false }
   ): Promise<Crown | undefined> {
     this.log("Fetching crown for " + artistName);
-    return await Crown.findOne({ where: { artistName, serverID } });
+    let crown = await Crown.findOne({ where: { artistName, serverID } });
+
+    return options.refresh
+      ? await crown?.refresh({
+          onlyIfOwnerIs: options.requester?.id,
+          logger: this.logger,
+        })
+      : crown;
+  }
+
+  async killCrown(artistName: string, serverID: string) {
+    this.log("Killing crown for " + artistName);
+    let crown = await Crown.findOne({ where: { artistName, serverID } });
+
+    await crown?.remove();
   }
 
   async getCrownDisplay(
@@ -151,7 +169,7 @@ export class CrownsService extends BaseService {
     limit = 10
   ): Promise<Crown[]> {
     this.log("Listing crowns for user " + discordID + " in server " + serverID);
-    let user = await User.findOne({ where: { discordID } });
+    let user = await User.findOne({ where: { discordID, serverID } });
 
     if (!user) throw new RecordNotFoundError("user");
 
@@ -179,11 +197,23 @@ export class CrownsService extends BaseService {
     this.log(
       "Counting crowns for user " + discordID + " in server " + serverID
     );
-    let user = await User.findOne({ where: { discordID } });
+    let user = await User.findOne({ where: { discordID, serverID } });
 
     if (!user) throw new RecordNotFoundError("user");
 
     return await Crown.count({ where: { user, serverID } });
+  }
+
+  async getRank(
+    discordID: string,
+    serverID: string
+  ): Promise<CrownRankResponse> {
+    this.log("Ranking user " + discordID + " in server " + serverID);
+    let user = await User.findOne({ where: { discordID, serverID } });
+
+    if (!user) throw new RecordNotFoundError("user");
+
+    return await Crown.rank(serverID, discordID);
   }
 
   async countAllInServer(serverID: string): Promise<number> {
@@ -216,10 +246,10 @@ export class CrownsService extends BaseService {
         count(*) as count,
         "userId",
         "discordID"
-      from crown c
+      from crowns c
       left join users u
         on u.id = "userId"
-      where "serverID" like $1
+      where c."serverID" like $1
       group by "userId", "discordID"
       order by count desc
       limit $2`,
@@ -229,7 +259,7 @@ export class CrownsService extends BaseService {
     return await Promise.all(
       users.map(async (rch) => ({
         user: (await User.toDiscordUser(message, rch.discordID))!,
-        numberOfCrowns: parseInt(rch.count, 10),
+        numberOfCrowns: rch.count.toInt(),
       }))
     );
   }
@@ -253,7 +283,7 @@ export class CrownsService extends BaseService {
     serverID: string,
     userID: string
   ): Promise<number> {
-    let user = await User.findOne({ where: { discordID: userID } });
+    let user = await User.findOne({ where: { discordID: userID, serverID } });
 
     let result = await Crown.delete({ serverID, user });
 
