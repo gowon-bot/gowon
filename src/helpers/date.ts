@@ -25,7 +25,7 @@ function timeFrameConverter(timeframe: string): string {
       return "year";
   }
 
-  return "d";
+  return timeframe.trim();
 }
 
 export interface TimeRange {
@@ -73,7 +73,7 @@ export function generateHumanTimeRange(
     let matches = Array.from(string.matchAll(durationRegex)) || [];
 
     let match = matches.reduce((acc, val) => {
-      if (val[2].trim()) acc = val[1] + " " + val[2];
+      if (val[2].trim()) acc = val[1] + " " + timeFrameConverter(val[2]);
 
       return acc;
     }, undefined as undefined | string);
@@ -92,11 +92,11 @@ export function generateHumanTimeRange(
 
 export function generatePeriod(string: string, fallback = "overall"): string {
   let periodRegexes: { [period: string]: RegExp } = {
-    "7day": /(\s+|\b)(w(eek(s)?)?)(\s|\b)/gi,
-    "3month": /(\s+|\b)((3|three) *mo(nth(s)?)?|q(uarter)?)(\s|\b)/gi,
-    "6month": /(\s+|\b)((6|six) *mo(nth(s)?)?|h(alf(\s*year)?)?)(\s|\b)/gi,
-    "12month": /(\s+|\b)((12|twelve) *mo(nth(s)?)?|y(ear)?)(\s|\b)/gi,
-    "1month": /(\s+|\b)((1|one)? *mo(nth(s)?)?)(\s|\b)/gi,
+    "7day": /(\s+|\b)(1|one)? *(w(eek(s)?)?)|(7|seven) *d(ay(s)?)?(\s|\b)/gi,
+    "3month": /(\s+|\b)((3|three) *m(o(nth(s)?)?)?|q(uarter)?)(\s|\b)/gi,
+    "6month": /(\s+|\b)((6|six) *m(o(nth(s)?)?)?|h(alf(\s*year)?)?)(\s|\b)/gi,
+    "12month": /(\s+|\b)((12|twelve) *m(o(nth(s)?)?)?|y(ear)?)(\s|\b)/gi,
+    "1month": /(\s+|\b)(1|one)? *m(o(nth(s)?)?)?(\s|\b)/gi,
     overall: /(\s+|\b)(a(lltime)?|o(verall)?)(\s|\b)/gi,
   };
 

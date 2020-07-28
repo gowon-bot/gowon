@@ -160,15 +160,28 @@ export class AliasChecker {
 
     let runAs = new RunAs();
 
+    let parent: { command?: ParentCommand; atIndex?: number } = {};
+
     for (let check_i = 0; check_i < checks.length; check_i++) {
       const check = checks[check_i];
 
       if (command instanceof ParentCommand) {
+        if (this.parentCommandHasAlias(command, check)) {
+          parent = {
+            command,
+            atIndex: check_i,
+          };
+        }
+
         if (
-          check_i === checks.length - 1 &&
-          this.parentCommandHasAlias(command, check)
+          parent.command &&
+          parent.atIndex &&
+          parent.atIndex + 1 === check_i
         ) {
-          return runAs.add({ string: check, command: command });
+          return runAs.add({
+            string: checks[parent.atIndex],
+            command: parent.command,
+          });
         }
 
         let child = command.getChild(checks.slice(check_i + 1).join(" ") || "");
@@ -198,6 +211,12 @@ export class AliasChecker {
         } else break;
       }
     }
+
+    if (parent.command && typeof parent.atIndex === "number")
+      return runAs.add({
+        string: checks[parent.atIndex],
+        command: parent.command,
+      });
 
     return runAs;
   }

@@ -42,7 +42,7 @@ export default class Taste extends LastFMBaseCommand {
   async run(message: Message) {
     let userTwo = this.parsedArguments.userTwo as Mention,
       artistAmount =
-        (this.parsedArguments.artistAmount as string).toInt() || 500,
+        (this.parsedArguments?.artistAmount as string)?.toInt() || 500,
       timePeriod = this.parsedArguments.timePeriod as string,
       humanReadableTimePeriod = this.parsedArguments
         .humanReadableTimePeriod as string;

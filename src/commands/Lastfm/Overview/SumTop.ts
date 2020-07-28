@@ -9,6 +9,7 @@ export class SumTop extends OverviewChildCommand {
   description = "Shows how much of your scrobbles your top artists make up";
 
   arguments: Arguments = {
+    mentions: this.arguments.mentions,
     inputs: {
       top: { index: 0, regex: /[0-9]{1,4}/ },
     },

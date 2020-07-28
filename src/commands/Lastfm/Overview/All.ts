@@ -6,16 +6,19 @@ export class All extends OverviewChildCommand {
   description = "Shows information about a crown";
 
   async run(message: Message) {
-    let { username, perspective } = await this.parseMentionedUsername(message);
+    let perspective = this.usersService.perspective(
+      this.senderUsername,
+      this.username
+    );
 
     await this.calculator.cacheAll();
 
     let { colour, badge, image } = await this.getAuthorDetails();
 
-    let rank = await this.calculator.crownsRank()
+    let rank = await this.calculator.crownsRank();
 
     let embed = new MessageEmbed()
-      .setAuthor(username + badge, image)
+      .setAuthor(this.username + badge, image)
       .setColor(colour)
       .setDescription(
         `
@@ -51,21 +54,23 @@ Among ${perspective.possesivePronoun} top 1000 artists, ${
     ).bold()} artists with 250+ scrobbles
     - ${(
       await this.calculator.playsOver(100)
-    ).bold()} artists with 100+ scrobbles
-
-**Total crowns**: ${rank.count} (${getOrdinal(rank.rank.toInt()).italic()})
+    ).bold()} artists with 100+ scrobbles` +
+          (this.calculator.hasCrownStats()
+            ? `\n\n**Total crowns**: ${rank!.count} (${getOrdinal(
+                rank!.rank.toInt()
+              ).italic()})
 For every ${numberDisplay(
-          await this.calculator.artistsPerCrown(),
-          "eligible artist"
-        ).bold()}, ${perspective.plusToHave} a crown
+                (await this.calculator.artistsPerCrown())!,
+                "eligible artist"
+              ).bold()}, ${perspective.plusToHave} a crown
 For every ${numberDisplay(
-          await this.calculator.scrobblesPerCrown(),
-          "scrobble"
-        ).bold()}, ${perspective.plusToHave} a crown
+                (await this.calculator.scrobblesPerCrown())!,
+                "scrobble"
+              ).bold()}, ${perspective.plusToHave} a crown
 `
+            : "")
       );
 
     await message.channel.send(embed);
   }
 }
-

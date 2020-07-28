@@ -1,5 +1,3 @@
-import { Logger } from "./Logger";
-
 export class TagConsolidator {
   blacklistedTags = [
     "seen live",
@@ -10,7 +8,8 @@ export class TagConsolidator {
     "soty",
     "aoty",
     "songs seen live",
-    "fave"
+    "fave",
+    "love at first listen",
   ];
 
   tags: string[] = [];
@@ -60,8 +59,6 @@ export class TagConsolidator {
 
       return acc;
     }, {} as { [tagName: string]: number });
-
-    Logger.log("tags", Logger.formatObject(tagCounts));
 
     return Object.keys(tagCounts)
       .sort((a, b) => tagCounts[b] - tagCounts[a])

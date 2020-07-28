@@ -22,7 +22,11 @@ export default class TagInfo extends InfoCommand {
     let embed = new MessageEmbed()
       .setTitle(tagInfo.name)
       .addFields(
-        { name: "Listeners", value: numberDisplay(tagInfo.total), inline: true },
+        {
+          name: "Listeners",
+          value: numberDisplay(tagInfo.total),
+          inline: true,
+        },
         { name: "Uses", value: numberDisplay(tagInfo.reach), inline: true }
       )
       .setURL(this.getLinkFromBio(tagInfo.wiki.summary) || "")

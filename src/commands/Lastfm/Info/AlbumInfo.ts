@@ -1,17 +1,25 @@
 import { Message, MessageEmbed } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { InfoCommand } from "./InfoCommand";
-import { numberDisplay } from "../../../helpers";
+import { numberDisplay, ucFirst } from "../../../helpers";
+import { calculatePercent } from "../../../helpers/stats";
 
 export default class AlbumInfo extends InfoCommand {
   shouldBeIndexed = true;
 
-  aliases = ["ali", "li"];
+  aliases = ["ali", "li", "alstats", "als", "ls"];
   description = "Display some information about an album";
   arguments: Arguments = {
     inputs: {
       artist: { index: 0, splitOn: "|" },
       album: { index: 1, splitOn: "|" },
+    },
+    mentions: {
+      user: {
+        index: 0,
+        description: "The user to lookup",
+        nonDiscordMentionParsing: this.ndmp,
+      },
     },
   };
 
@@ -19,9 +27,13 @@ export default class AlbumInfo extends InfoCommand {
     let artist = this.parsedArguments.artist as string,
       albumName = this.parsedArguments.album as string;
 
+    let {
+      senderUsername,
+      username,
+      perspective,
+    } = await this.parseMentionedUsername(message);
+
     if (!artist || !albumName) {
-      let { senderUsername } = await this.parseMentionedUsername(message);
-      
       let nowPlaying = await this.lastFMService.nowPlayingParsed(
         senderUsername
       );
@@ -30,7 +42,11 @@ export default class AlbumInfo extends InfoCommand {
       if (!albumName) albumName = nowPlaying.album;
     }
 
-    let albumInfo = await this.lastFMService.albumInfo(artist, albumName);
+    let [albumInfo, userInfo] = await Promise.all([
+      this.lastFMService.albumInfo(artist, albumName, username),
+      this.lastFMService.userInfo(username),
+    ]);
+
     let albumDuration = albumInfo.tracks.track.reduce(
       (sum, t) => sum + t.duration.toInt(),
       0
@@ -51,6 +67,9 @@ export default class AlbumInfo extends InfoCommand {
         }
       )
       .setURL(albumInfo.url)
+      .setImage(
+        albumInfo.image.find((i) => i.size === "large")?.["#text"] || ""
+      )
       .setDescription(
         (albumInfo.tracks.track.length
           ? `_${numberDisplay(albumInfo.tracks.track.length, "track")}` +
@@ -63,6 +82,21 @@ export default class AlbumInfo extends InfoCommand {
             ? "\n\n**Tags:** " +
               albumInfo.tags.tag.map((t) => t.name).join(" ‧ ")
             : "")
+      )
+      .addField(
+        `${ucFirst(perspective.possessive)} stats`,
+        `
+        \`${numberDisplay(albumInfo.userplaycount, "` play", true)} by ${
+          perspective.objectPronoun
+        } (${calculatePercent(
+          albumInfo.userplaycount,
+          userInfo.playcount,
+          4
+        ).bold()}% of ${perspective.possesivePronoun} total scrobbles)
+        ${ucFirst(perspective.regularVerb("account"))} for ${calculatePercent(
+          albumInfo.userplaycount,
+          albumInfo.playcount
+        ).bold()}% of all scrobbles of this album!`
       );
 
     message.channel.send(embed);

@@ -1,19 +1,21 @@
 import { LastFMBaseChildCommand } from "../LastFMBaseCommand";
 import { OverviewStatsCalculator } from "../../../lib/OverviewStatsCalculator";
-import { Message, User } from "discord.js";
+import { Message } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { ucFirst } from "../../../helpers";
 
 export abstract class OverviewChildCommand extends LastFMBaseChildCommand {
   parentName = "overview";
 
-  calculator!: OverviewStatsCalculator;
-
   arguments: Arguments = {
     mentions: {
-      user: { index: 0 },
+      user: { index: 0, nonDiscordMentionParsing: this.ndmp },
     },
   };
+
+  calculator!: OverviewStatsCalculator;
+  username!: string;
+  senderUsername!: string;
 
   async getAuthorDetails(): Promise<{
     badge: string;
@@ -45,14 +47,39 @@ export abstract class OverviewChildCommand extends LastFMBaseChildCommand {
   }
 
   async prerun(message: Message) {
-    let user = (this.parsedArguments.user as User) || message.author;
+    let user: { id?: string } = {},
+      username: string;
 
-    let username = await this.usersService.getUsername(user.id, message.guild?.id!);
+    if (typeof this.parsedArguments.user === "string") {
+      username = this.parsedArguments.user as string;
+      let [dbUser, senderUsername] = await Promise.all([
+        this.usersService.getUserFromLastFMUsername(
+          username,
+          message.guild?.id!
+        ),
+        this.usersService.getUsername(message.author.id, message.guild?.id!),
+      ]);
+
+      if (dbUser) user = await message.guild!.members.fetch(dbUser?.discordID!);
+      this.senderUsername = senderUsername;
+    } else {
+      let {
+        dbUser,
+        username: parsedUsername,
+        senderUsername,
+      } = await this.parseMentionedUsername(message);
+
+      user = dbUser ? { id: dbUser.discordID } : user;
+      username = parsedUsername;
+      this.senderUsername = senderUsername;
+    }
+
+    this.username = username;
 
     this.calculator = new OverviewStatsCalculator(
       username,
-      user.id,
       message.guild?.id!,
+      user.id,
       this.logger
     );
   }

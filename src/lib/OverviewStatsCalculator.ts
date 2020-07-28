@@ -14,7 +14,7 @@ import { CrownRankResponse } from "../database/entity/Crown";
 
 export class OverviewStatsCalculator {
   private username: string;
-  private userID: string;
+  private userID?: string;
   private serverID: string;
 
   private cache: {
@@ -31,8 +31,8 @@ export class OverviewStatsCalculator {
 
   constructor(
     username: string,
-    userID: string,
     serverID: string,
+    userID?: string,
     logger?: Logger
   ) {
     this.username = username;
@@ -40,6 +40,10 @@ export class OverviewStatsCalculator {
     this.serverID = serverID;
     this.lastFMService = new LastFMService(logger);
     this.crownsService = new CrownsService(logger);
+  }
+
+  hasCrownStats(): boolean {
+    return !!this.userID
   }
 
   async cacheAll(): Promise<void> {
@@ -89,14 +93,16 @@ export class OverviewStatsCalculator {
     return this.cache.topTracks;
   }
 
-  async crownsCount(): Promise<number> {
+  async crownsCount(): Promise<number | undefined> {
+    if (!this.userID) return undefined;
     if (!this.cache.crownsCount)
-      this.cache.crownsCount = (await this.crownsRank()).count.toInt();
+      this.cache.crownsCount = (await this.crownsRank())!.count.toInt();
 
     return this.cache.crownsCount;
   }
 
-  async crownsRank(): Promise<CrownRankResponse> {
+  async crownsRank(): Promise<CrownRankResponse | undefined> {
+    if (!this.userID) return undefined;
     if (!this.cache.crownsRank)
       this.cache.crownsRank = await this.crownsService.getRank(
         this.userID,
@@ -285,25 +291,23 @@ export class OverviewStatsCalculator {
       .length.toLocaleString();
   }
 
-  // async totalCrowns(): Promise<string> {
-  //   return (await this.crownsCount()).toFixed();
-  // }
-
-  async artistsPerCrown(): Promise<string> {
+  async artistsPerCrown(): Promise<string | undefined> {
+    if (!this.userID) return undefined;
     let [crownsCount, playsOver] = await Promise.all([
       this.crownsCount(),
       this.playsOver(30),
     ]);
 
-    return (playsOver.toInt() / crownsCount).toFixed(2);
+    return (playsOver.toInt() / crownsCount!).toFixed(2);
   }
 
-  async scrobblesPerCrown(): Promise<string> {
+  async scrobblesPerCrown(): Promise<string | undefined> {
+    if (!this.userID) return undefined;
     let [crownsCount, userInfo] = await Promise.all([
       this.crownsCount(),
       this.userInfo(),
     ]);
 
-    return (userInfo.playcount.toInt() / crownsCount).toFixed(2);
+    return (userInfo.playcount.toInt() / crownsCount!).toFixed(2);
   }
 }

@@ -42,36 +42,36 @@ export class Info extends CrownsChildCommand {
       await crown?.refresh();
     }
 
-    if (crown?.user.id)
-      if (!crown) {
-        await message.reply(
-          `No one has the crown for ${artistDetails.name.bold()}`
-        );
-      } else {
-        let holderUsername = (
-          await User.toDiscordUser(message, crown.user.discordID)
-        )?.username;
+    if (!crown)
+      await message.reply(
+        `No one has the crown for ${artistDetails.name.bold()}`
+      );
 
-        let embed = new MessageEmbed()
-          .setTitle(`Who has ${artistDetails.name.bold()}?`)
-          .setDescription(
-            `${holderUsername} has the crown for ${artistDetails.name.bold()} with ${numberDisplay(
-              crown.plays,
-              "play"
-            )}
+    if (crown?.user.id) {
+      let holderUsername = (
+        await User.toDiscordUser(message, crown.user.discordID)
+      )?.username;
+
+      let embed = new MessageEmbed()
+        .setTitle(`Who has ${artistDetails.name.bold()}?`)
+        .setDescription(
+          `${holderUsername} has the crown for ${artistDetails.name.bold()} with ${numberDisplay(
+            crown.plays,
+            "play"
+          )}
 
           Created ${ago(crown.createdAt)}${
-              crown.version > 1 ? ". Last stolen " + ago(crown.lastStolen) : ""
-            }
+            crown.version > 1 ? ". Last stolen " + ago(crown.lastStolen) : ""
+          }
 
           _It ${
             crown.version === 1
               ? "has never been stolen"
               : "has been stolen " + numberDisplay(crown.version - 1, "time")
           }_`
-          );
+        );
 
-        await message.channel.send(embed);
-      }
+      await message.channel.send(embed);
+    }
   }
 }

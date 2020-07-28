@@ -17,6 +17,7 @@ import { Logger } from "../Logger";
 import { RunAs } from "../AliasChecker";
 import { ParentCommand } from "./ParentCommand";
 import { TrackingService } from "../../services/TrackingService";
+import { User } from "../../database/entity/User";
 
 export interface Variation {
   variationString?: string;
@@ -100,32 +101,51 @@ export abstract class BaseCommand implements Command {
     mentionedUsername?: string;
     username: string;
     perspective: Perspective;
+    dbUser?: User;
   }> {
+    let dbUser: User | undefined;
     let user = this.parsedArguments.user as Mention;
     let inputUsername =
       options.inputArgumentName &&
       (this.parsedArguments[options.inputArgumentName] as string);
 
-    let senderUsername = await this.usersService.getUsername(message.author.id, message.guild?.id!);
+    let senderUser = await this.usersService.getUser(
+      message.author.id,
+      message.guild?.id!
+    );
 
-    let mentionedUsername: string;
+    let mentionedUsername: string | undefined;
 
     if (typeof user === "string") {
       mentionedUsername = user;
     } else {
-      mentionedUsername =
-        user && (await this.usersService.getUsername(user.id, message.guild?.id!));
+      let mentionedUser = user
+        ? await this.usersService.getUser(user.id, message.guild?.id!)
+        : undefined;
+
+      dbUser = mentionedUser;
+
+      mentionedUsername = mentionedUser?.lastFMUsername;
     }
 
-    let username = inputUsername || mentionedUsername || senderUsername;
+    let username =
+      inputUsername || mentionedUsername || senderUser.lastFMUsername;
+
+    dbUser = username === senderUser.lastFMUsername ? senderUser : dbUser;
 
     let perspective = this.usersService.perspective(
-      senderUsername,
+      senderUser.lastFMUsername,
       mentionedUsername,
       options.asCode
     );
 
-    return { senderUsername, mentionedUsername, username, perspective };
+    return {
+      senderUsername: senderUser.lastFMUsername,
+      mentionedUsername,
+      username,
+      perspective,
+      dbUser,
+    };
   }
 
   async prerun(_: Message): Promise<void> {}

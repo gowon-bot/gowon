@@ -5,9 +5,12 @@ import { Arguments } from "../../lib/arguments/arguments";
 import { isBotMoment, fakeNowPlaying } from "../../botmoment/fakeNowPlaying";
 import { Mention } from "../../lib/arguments/mentions";
 import { LastFMBaseCommand } from "./LastFMBaseCommand";
-import { CrownsService } from "../../services/dbservices/CrownsService";
+import {
+  CrownsService,
+  CrownCheck,
+} from "../../services/dbservices/CrownsService";
 import { RunAs } from "../../lib/AliasChecker";
-import { Tag } from "../../services/LastFMService.types";
+import { Tag, ArtistInfo } from "../../services/LastFMService.types";
 import { TagConsolidator } from "../../lib/TagConsolidator";
 
 export default class NowPlaying extends LastFMBaseCommand {
@@ -92,8 +95,14 @@ export default class NowPlaying extends LastFMBaseCommand {
       let isCrownHolder = false;
 
       if (crown.value && crown.value.user) {
-        if (crown.value.user.id === message.author.id) isCrownHolder = true;
-        else {
+        if (crown.value.user.id === message.author.id) {
+          isCrownHolder = true;
+
+          if (artistInfo.value) {
+            (crown.value! as CrownCheck).crown!.plays = (artistInfo.value as ArtistInfo).stats.userplaycount.toInt();
+            crown.value.crown.save();
+          }
+        } else {
           crownString = `👑 ${numberDisplay(crown.value.crown.plays)} (${
             crown.value.user.username
           })`;
@@ -122,6 +131,7 @@ export default class NowPlaying extends LastFMBaseCommand {
                   `${track.artist} scrobble`
                 ) + " | "
               : "No data on last.fm for " + nowPlaying.artist["#text"]) +
+            (artistInfo.value && trackInfo.value ? " | " : "") +
             (trackInfo.value
               ? numberDisplay(trackInfo.value.userplaycount, "scrobble") +
                 " of this song\n"

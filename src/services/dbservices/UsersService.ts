@@ -61,7 +61,7 @@ export class UsersService extends BaseService {
     this.log(
       `fetching username with discordID ${discordID} in the server ${serverID}`
     );
-    let user = await User.findOne({ discordID, serverID });
+    let user = await User.findOne({ where: { discordID, serverID } });
 
     if (user && user.lastFMUsername) {
       return user.lastFMUsername;
@@ -76,7 +76,7 @@ export class UsersService extends BaseService {
     this.log(
       `setting user ${discordID} in ${serverID} with username ${lastFMUsername}`
     );
-    let user = await User.findOne({ discordID, serverID });
+    let user = await User.findOne({ where: { discordID, serverID } });
 
     if (user) {
       user.lastFMUsername = lastFMUsername;
@@ -95,7 +95,7 @@ export class UsersService extends BaseService {
 
   async clearUsername(discordID: string, serverID: string): Promise<void> {
     this.log(`clearing username for ${discordID} in ${serverID}`);
-    let user = await User.findOne({ discordID, serverID });
+    let user = await User.findOne({ where: { discordID, serverID } });
 
     if (user?.lastFMUsername) {
       user.lastFMUsername = "";
@@ -156,5 +156,15 @@ export class UsersService extends BaseService {
   async countUsers(serverID: string): Promise<number> {
     this.log(`counting users in the server ${serverID}`);
     return await User.count({ where: { serverID } });
+  }
+
+  async getUserFromLastFMUsername(
+    username: string,
+    serverID: string
+  ): Promise<User | undefined> {
+    this.log(`looking for user with username ${username} in ${serverID}`);
+    return await User.findOne({
+      where: { lastFMUsername: username, serverID },
+    });
   }
 }
