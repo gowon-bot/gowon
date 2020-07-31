@@ -29,7 +29,7 @@ export default class AlbumPlaysover extends LastFMBaseCommand {
     let playsover = 0;
 
     for (let album of topAlbums.album) {
-      if (album.playcount.toInt() > plays) playsover++;
+      if (album.playcount.toInt() >= plays) playsover++;
       else break;
     }
 

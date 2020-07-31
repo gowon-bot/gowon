@@ -1,5 +1,5 @@
 import { LastFMBaseChildCommand } from "../LastFMBaseCommand";
-import { OverviewStatsCalculator } from "../../../lib/OverviewStatsCalculator";
+import { OverviewStatsCalculator } from "../../../lib/calculators/OverviewStatsCalculator";
 import { Message } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { ucFirst } from "../../../helpers";

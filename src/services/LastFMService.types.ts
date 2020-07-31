@@ -161,16 +161,17 @@ export interface LastFMErrorResponse {
   message: string;
 }
 
+export interface TopArtist {
+  "@attr": { rank: string };
+  mbid: string;
+  url: string;
+  playcount: string;
+  image: Image[];
+  name: string;
+  streamable: string;
+}
 export interface TopArtists extends PagedCollection {
-  artist: {
-    "@attr": { rank: string };
-    mbid: string;
-    url: string;
-    playcount: string;
-    image: Image[];
-    name: string;
-    streamable: string;
-  }[];
+  artist: TopArtist[];
 }
 export interface TopArtistsResponse {
   topartists: TopArtists;

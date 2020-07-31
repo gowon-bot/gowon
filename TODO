@@ -1,11 +1,14 @@
 Bugs:
-  [] Use TagConsolidator for all info tag displays
-
+  [x] double pipes in now playing
+  [x] Use TagConsolidator for all info tag displays
+  [] Crown: undefined
+  [] Fix tags
+  [] Partytime (and possible other commands) that use `(arg as string).toInt()` break when undefined
 
 Todo:
-  [] Add crown to artist info
+  [x] Add crown to artist info
+  [x] Combine ____info and ____stats
   [] Update command list
-  [] Combine ____info and ____stats
   [later] Keep track of every tag, artist ever fm'd
 
   Crowns:
@@ -17,7 +20,7 @@ Todo:
     [later] Whosampled (w/scraping)
     
     Overview + subcommands:
-      [] Breadth command (higher toppct, hindex, higher scrobbles, lower sumtop)
+      [x] Breadth command (higher toppct, hindex, higher scrobbles, lower sumtop)
 
     `!help`:
       [] Add `usage` to commands
@@ -25,8 +28,8 @@ Todo:
       [] Group similar commands
       [] Display parentCommands' friendly names
     
-  Dashboard:
-    [] Make TrackedErrors individual instead of grouped
+Dashboard:
+  [] Make TrackedErrors individual instead of grouped
       
 Large Projects:
   [-] Make commands database-based

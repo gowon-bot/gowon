@@ -1,0 +1,42 @@
+import { LastFMBaseChildCommand } from "../LastFMBaseCommand";
+import { Message } from "discord.js";
+import { RedisService } from "../../../services/RedisService";
+import { JumbleCalculator } from "../../../lib/calculators/JumbleCalculator";
+
+export abstract class JumbleChildCommand extends LastFMBaseChildCommand {
+  redisService = new RedisService({
+    logger: this.logger,
+    sessionPrefix: "jumble",
+  });
+  parentName = "jumble";
+
+  jumbleCalculator!: JumbleCalculator;
+
+  async sessionSetJSON(
+    message: Message,
+    key: string,
+    value: Object | Array<unknown>
+  ) {
+    return this.redisService.sessionSet(message, key, JSON.stringify(value));
+  }
+
+  async sessionGetJSON<T extends Object>(message: Message, key: string): Promise<T> {
+    return JSON.parse(
+      (await this.redisService.sessionGet(message, key)) || "{}"
+    ) as T;
+  }
+
+  async prerun(message: Message) {
+    await this.redisService.init();
+
+    let senderUsername = await this.usersService.getUsername(
+      message.author.id,
+      message.guild?.id!
+    );
+
+    this.jumbleCalculator = new JumbleCalculator(
+      senderUsername,
+      this.lastFMService
+    );
+  }
+}

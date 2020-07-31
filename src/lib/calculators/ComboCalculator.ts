@@ -1,4 +1,4 @@
-import { RecentTracks, Track } from "../services/LastFMService.types";
+import { RecentTracks, Track } from "../../services/LastFMService.types";
 
 export interface ComboDetails {
   plays: number;

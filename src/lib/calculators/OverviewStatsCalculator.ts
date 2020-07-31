@@ -3,14 +3,16 @@ import {
   TopArtists,
   TopAlbums,
   TopTracks,
-} from "../services/LastFMService.types";
-import { LastFMService } from "../services/LastFMService";
+} from "../../services/LastFMService.types";
+import { LastFMService } from "../../services/LastFMService";
 import moment from "moment";
-import { CrownsService } from "../services/dbservices/CrownsService";
-import { Logger } from "./Logger";
-import { numberDisplay } from "../helpers";
-import { calculatePercent } from "../helpers/stats";
-import { CrownRankResponse } from "../database/entity/Crown";
+import { CrownsService } from "../../services/dbservices/CrownsService";
+import { Logger } from "../Logger";
+import { numberDisplay } from "../../helpers";
+import { calculatePercent } from "../../helpers/stats";
+import { CrownRankResponse } from "../../database/entity/Crown";
+import { sqrt } from "mathjs";
+import { LogicError } from "../../errors";
 
 export class OverviewStatsCalculator {
   private username: string;
@@ -43,7 +45,7 @@ export class OverviewStatsCalculator {
   }
 
   hasCrownStats(): boolean {
-    return !!this.userID
+    return !!this.userID;
   }
 
   async cacheAll(): Promise<void> {
@@ -268,13 +270,13 @@ export class OverviewStatsCalculator {
     return "0";
   }
 
-  async sumTop(number = 10) {
+  async sumTop(number = 10): Promise<number> {
     return (await this.topArtists()).artist
       .slice(0, number)
       .reduce((sum, artist) => sum + artist.playcount.toInt(), 0);
   }
 
-  async sumTopPercent(number = 10) {
+  async sumTopPercent(number = 10): Promise<string> {
     let totalScrobbles = (await this.userInfo()).playcount.toInt();
 
     return calculatePercent(
@@ -309,5 +311,42 @@ export class OverviewStatsCalculator {
     ]);
 
     return (userInfo.playcount.toInt() / crownsCount!).toFixed(2);
+  }
+
+  async breadth(): Promise<{ rating: number; ratingString: string }> {
+    let top50 = (await this.top50Percent()).replace(",", "").toInt();
+    let hindex = (await this.hIndex()).replace(",", "").toInt();
+    let scrobbles = (await this.totalScrobbles()).replace(",", "").toInt();
+    let sumTop = await this.sumTop();
+    let artistCount = (await this.totalArtists()).replace(",", "").toInt();
+
+    console.log(scrobbles);
+
+    if (scrobbles < 1000)
+      throw new LogicError(
+        "at least 1000 scrobbles are needed to calculate breadth"
+      );
+
+    let rating = sqrt(
+      (((top50 * hindex * sqrt(scrobbles / 1000)) / 2) *
+        (artistCount / (scrobbles / 1000))) /
+        (sumTop / 2)
+    );
+    let ratingString =
+      rating > 50
+        ? "really high!"
+        : rating > 20
+        ? "very high"
+        : rating > 10
+        ? "high"
+        : rating > 5
+        ? "medium"
+        : rating > 2
+        ? "low"
+        : rating > 1
+        ? "very low"
+        : ".... really?";
+
+    return { rating, ratingString };
   }
 }

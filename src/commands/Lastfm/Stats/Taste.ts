@@ -1,6 +1,6 @@
 import { Message, MessageEmbed } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
-import { TasteCalculator } from "../../../helpers/TasteCalculator";
+import { TasteCalculator } from "../../../lib/calculators/TasteCalculator";
 import { numberDisplay } from "../../../helpers";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { sanitizeForDiscord } from "../../../helpers/discord";

@@ -26,7 +26,7 @@ export class CommandHandler {
       message.content.toLowerCase().includes("thank you bot") ||
       message.content.toLowerCase().includes("thanks bot")
     ) {
-      message.react("😌");
+      message.react("🥰");
     }
 
     if (

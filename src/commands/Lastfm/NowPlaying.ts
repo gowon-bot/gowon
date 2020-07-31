@@ -10,7 +10,7 @@ import {
   CrownCheck,
 } from "../../services/dbservices/CrownsService";
 import { RunAs } from "../../lib/AliasChecker";
-import { Tag, ArtistInfo } from "../../services/LastFMService.types";
+import { ArtistInfo } from "../../services/LastFMService.types";
 import { TagConsolidator } from "../../lib/TagConsolidator";
 
 export default class NowPlaying extends LastFMBaseCommand {
@@ -110,16 +110,9 @@ export default class NowPlaying extends LastFMBaseCommand {
       }
 
       if (trackInfo.value)
-        this.tagConsolidator.addTags(
-          trackInfo.value?.toptags?.tag?.map((t: Tag) =>
-            t.name.toLowerCase()
-          ) || []
-        );
+        this.tagConsolidator.addTags(trackInfo.value?.toptags?.tag || []);
       if (artistInfo.value)
-        this.tagConsolidator.addTags(
-          artistInfo.value?.tags?.tag?.map((t: Tag) => t.name.toLowerCase()) ||
-            []
-        );
+        this.tagConsolidator.addTags(artistInfo.value?.tags?.tag || []);
 
       nowPlayingEmbed = nowPlayingEmbed
         .setColor(trackInfo.value?.userloved === "1" ? "#cc0000" : "black")
@@ -129,7 +122,7 @@ export default class NowPlaying extends LastFMBaseCommand {
               ? numberDisplay(
                   artistInfo.value.stats.userplaycount,
                   `${track.artist} scrobble`
-                ) + " | "
+                )
               : "No data on last.fm for " + nowPlaying.artist["#text"]) +
             (artistInfo.value && trackInfo.value ? " | " : "") +
             (trackInfo.value

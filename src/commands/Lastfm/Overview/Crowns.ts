@@ -4,7 +4,7 @@ import { numberDisplay, getOrdinal } from "../../../helpers";
 import { LogicError } from "../../../errors";
 
 export class Crowns extends OverviewChildCommand {
-  aliases = ["c", "cw"];
+  aliases = ["cw", "cws"];
   description = "Shows some stats about crowns";
 
   async run(message: Message) {

@@ -3,6 +3,7 @@ import { Arguments } from "../../../lib/arguments/arguments";
 import { InfoCommand } from "./InfoCommand";
 import { numberDisplay, ucFirst } from "../../../helpers";
 import { calculatePercent } from "../../../helpers/stats";
+import { CrownsService } from "../../../services/dbservices/CrownsService";
 
 export default class ArtistInfo extends InfoCommand {
   shouldBeIndexed = true;
@@ -22,6 +23,8 @@ export default class ArtistInfo extends InfoCommand {
     },
   };
 
+  crownsService = new CrownsService();
+
   async run(message: Message) {
     let artistName = this.parsedArguments.artist as string;
 
@@ -36,38 +39,35 @@ export default class ArtistInfo extends InfoCommand {
         .artist;
     }
 
-    // let artistInfo = await this.lastFMService.artistInfo(artistName);
     let [artistInfo, userInfo] = await Promise.all([
       this.lastFMService.artistInfo(artistName, username),
       this.lastFMService.userInfo(username),
     ]);
 
+    let crown = await this.crownsService.getCrownDisplay(
+      artistInfo.name,
+      message
+    );
+
+    this.tagConsolidator.addTags(artistInfo.tags.tag);
+
     let embed = new MessageEmbed()
       .setTitle(artistInfo.name)
-      .addFields(
-        {
-          name: "Listeners",
-          value: numberDisplay(artistInfo.stats.listeners),
-          inline: true,
-        },
-        {
-          name: "Playcount",
-          value: numberDisplay(artistInfo.stats.playcount),
-          inline: true,
-        }
-      )
       .setURL(artistInfo.url)
       .setDescription(
         this.scrubReadMore(artistInfo.bio.summary.trimRight()) +
           (artistInfo.similar.artist.length
-            ? (!artistInfo.tags.tag.length ? "\n" : "\n\n") +
-              "**Similar artists:** " +
+            ? "\n\n**Similar artists:** " +
               artistInfo.similar.artist.map((t) => t.name).join(" ‧ ")
             : "") +
-          (artistInfo.tags.tag.length
+          (this.tagConsolidator.hasTags()
             ? "\n**Tags:** " +
-              artistInfo.tags.tag.map((t) => t.name).join(" ‧ ")
-            : "")
+              this.tagConsolidator.consolidate().join(" ‧ ") +
+              "\n"
+            : "") +
+          `\n**Listeners**: ${numberDisplay(artistInfo.stats.listeners)}
+**Playcount**: ${numberDisplay(artistInfo.stats.playcount)}
+**Crown**: ${crown?.user?.username}`
       )
       .addField(
         `${ucFirst(perspective.possessive)} stats`,

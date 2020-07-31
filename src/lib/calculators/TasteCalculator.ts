@@ -1,5 +1,5 @@
-import { TopArtists } from "../services/LastFMService.types";
-import { calculatePercent } from "./stats";
+import { TopArtists } from "../../services/LastFMService.types";
+import { calculatePercent } from "../../helpers/stats";
 
 export interface TasteArtist {
   name: string;

@@ -11,6 +11,7 @@ import { HIndex } from "./HIndex";
 import { Top50Percent } from "./Top50Percent";
 import { SumTop } from "./SumTop";
 import { Crowns } from "./Crowns";
+import { Breadth } from "./Breadth";
 
 export default class OverviewParentCommand extends LastFMBaseParentCommand {
   friendlyName = "overview";
@@ -30,5 +31,6 @@ export default class OverviewParentCommand extends LastFMBaseParentCommand {
     top50percent: () => new Top50Percent(),
     sumtop: () => new SumTop(),
     crowns: () => new Crowns(),
+    breadth: () => new Breadth(),
   });
 }

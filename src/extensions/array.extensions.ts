@@ -1,8 +1,8 @@
 interface Array<T> {
-  insert<T>(index: number, element: T): T[];
+  insertAtIndex<T>(index: number, element: T): T[];
 }
 
-Array.prototype.insert = function <T>(
+Array.prototype.insertAtIndex = function <T>(
   this: Array<T>,
   index: number,
   element: T
@@ -13,3 +13,4 @@ Array.prototype.insert = function <T>(
 
   return arrayCopy;
 };
+

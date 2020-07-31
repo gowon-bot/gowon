@@ -19,7 +19,7 @@ export class FriendsRequester {
   ): Promise<FetchedResponses<T>> {
     let fetched = await Promise.all(
       this.usernames.map((u) => {
-        return method(...params.insert(options.usernameInPosition || 0, u));
+        return method(...params.insertAtIndex(options.usernameInPosition || 0, u));
       })
     );
 

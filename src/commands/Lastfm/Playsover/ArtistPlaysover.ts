@@ -29,7 +29,7 @@ export default class ArtistPlaysover extends LastFMBaseCommand {
     let playsover = 0;
 
     for (let artist of topArtists.artist) {
-      if (artist.playcount.toInt() > plays) playsover++;
+      if (artist.playcount.toInt() >= plays) playsover++;
       else break;
     }
 

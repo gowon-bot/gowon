@@ -47,6 +47,8 @@ export default class AlbumInfo extends InfoCommand {
       this.lastFMService.userInfo(username),
     ]);
 
+    this.tagConsolidator.addTags(albumInfo.tags.tag);
+
     let albumDuration = albumInfo.tracks.track.reduce(
       (sum, t) => sum + t.duration.toInt(),
       0
@@ -78,9 +80,10 @@ export default class AlbumInfo extends InfoCommand {
           (albumInfo.wiki
             ? this.scrubReadMore(albumInfo.wiki?.summary.trimRight())
             : "") +
-          (albumInfo.tags.tag.length
-            ? "\n\n**Tags:** " +
-              albumInfo.tags.tag.map((t) => t.name).join(" ‧ ")
+          (this.tagConsolidator.hasTags()
+            ? (albumInfo.wiki?.summary.length ? "\n\n" : "") +
+              "**Tags:** " +
+              this.tagConsolidator.consolidate().join(" ‧ ")
             : "")
       )
       .addField(

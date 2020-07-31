@@ -1,3 +1,5 @@
+import { Tag } from "../services/LastFMService.types";
+
 export class TagConsolidator {
   blacklistedTags = [
     "seen live",
@@ -14,8 +16,16 @@ export class TagConsolidator {
 
   tags: string[] = [];
 
-  addTags(tags: string[]): TagConsolidator {
-    this.tags.push(...tags.filter((t) => !this.blacklistedTags.includes(t)));
+  hasTags(): boolean {
+    return !!this.tags.length;
+  }
+
+  addTags(tags: Tag[]): TagConsolidator {
+    this.tags.push(
+      ...tags
+        .map((t) => t.name.toLowerCase())
+        .filter((t) => !this.blacklistedTags.includes(t))
+    );
     return this;
   }
 
@@ -47,7 +57,7 @@ export class TagConsolidator {
     return { reverser, fixer };
   }
 
-  consolidate(max: number = 5): string[] {
+  consolidate(max: number = Infinity): string[] {
     let { fixer, reverser } = this.tagFixer();
 
     let tagCounts = this.tags.reduce((acc, tag) => {

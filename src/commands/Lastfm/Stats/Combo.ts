@@ -1,7 +1,7 @@
 import { Message, MessageEmbed } from "discord.js";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { Arguments } from "../../../lib/arguments/arguments";
-import { ComboCalculator } from "../../../helpers/ComboCalculator";
+import { ComboCalculator } from "../../../lib/calculators/ComboCalculator";
 import { numberDisplay } from "../../../helpers";
 
 export default class Combo extends LastFMBaseCommand {

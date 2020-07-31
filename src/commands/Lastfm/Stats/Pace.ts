@@ -6,7 +6,7 @@ import {
   TimeRange,
 } from "../../../helpers/date";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
-import { PaceCalculator } from "../../../lib/PaceCalculator";
+import { PaceCalculator } from "../../../lib/calculators/PaceCalculator";
 import { LogicError } from "../../../errors";
 import { numberDisplay, dateDisplay } from "../../../helpers";
 

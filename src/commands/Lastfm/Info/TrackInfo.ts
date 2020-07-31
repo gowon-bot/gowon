@@ -32,6 +32,8 @@ export default class TrackInfo extends InfoCommand {
 
     let trackInfo = await this.lastFMService.trackInfo(artist, trackName);
 
+    this.tagConsolidator.addTags(trackInfo.toptags.tag);
+
     let embed = new MessageEmbed()
       .setTitle(trackInfo.name.italic() + " by " + trackInfo.artist.name.bold())
       .addFields(
@@ -60,9 +62,8 @@ export default class TrackInfo extends InfoCommand {
           (trackInfo.wiki
             ? "\n\n" + this.scrubReadMore(trackInfo.wiki?.summary.trimRight())
             : "") +
-          (trackInfo.toptags.tag.length
-            ? "\n\n**Tags:** " +
-              trackInfo.toptags.tag.map((t) => t.name).join(" ‧ ")
+          (this.tagConsolidator.hasTags()
+            ? "\n\n**Tags:** " + this.tagConsolidator.consolidate().join(" ‧ ")
             : "")
       );
 
