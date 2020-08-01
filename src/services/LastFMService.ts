@@ -21,6 +21,8 @@ import {
   TrackInfo,
   TagInfo,
   TagInfoResponse,
+  ArtistTopTracks,
+  ArtistTopTracksResponse,
 } from "./LastFMService.types";
 
 import config from "../../config.json";
@@ -330,6 +332,19 @@ export class LastFMService extends BaseService {
     );
 
     return recentTracks.recenttracks.track[1];
+  }
+
+  async artistTopTracks(
+    artist: string,
+    limit = 50,
+    page = 1
+  ): Promise<ArtistTopTracks> {
+    let response = await this.request<ArtistTopTracksResponse>(
+      "artist.getTopTracks",
+      { artist, page, limit }
+    );
+
+    return response.toptracks;
   }
 
   async getArtistPlays(username: string, artist: string): Promise<number> {

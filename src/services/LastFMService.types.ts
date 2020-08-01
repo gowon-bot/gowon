@@ -246,3 +246,28 @@ export interface TagInfo {
 export interface TagInfoResponse {
   tag: TagInfo;
 }
+
+export interface ArtistTopTracks extends PagedCollection {
+  track: [
+    {
+      name: string;
+      playcount: string;
+      listeners: string;
+      url: string;
+      streamable: string;
+      artist: {
+        name: string;
+        mbid: string;
+        url: string;
+      };
+      image: Image[];
+      "@attr": {
+        rank: string;
+      };
+    }
+  ];
+}
+
+export interface ArtistTopTracksResponse {
+  toptracks: ArtistTopTracks;
+}

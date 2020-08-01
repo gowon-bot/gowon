@@ -3,6 +3,7 @@ import { BotMomentService } from "../../services/BotMomentService";
 import { MentionParser, MentionOptions } from "./mentions";
 import { Parser } from "./parser";
 import { RunAs } from "../AliasChecker";
+import escapeStringRegexp from "escape-string-regexp";
 
 export interface Slice {
   start: number;
@@ -15,6 +16,7 @@ export interface InputsOptions {
 
 export interface InputArguments {
   index: number | Slice;
+  default?: any;
   join?: boolean;
   splitOn?: string;
   regex?: RegExp;
@@ -95,7 +97,8 @@ export class ArgumentParser extends Parser {
         acc[arg] = this.getElementFromIndex(
           array,
           argOptions.index,
-          argOptions.join
+          argOptions.join,
+          argOptions.default
         );
 
         return acc;
@@ -122,7 +125,10 @@ export class ArgumentParser extends Parser {
 
     let splitOnArgs = this.parseInputsWithSplit(
       string,
-      (string, arg) => (string + " ").split(` ${arg?.splitOn} `),
+      (string, arg) =>
+        (string + " ").split(
+          new RegExp(`\s*${escapeStringRegexp(arg?.splitOn || "")}\s*`)
+        ),
       (arg) => !!arg.splitOn
     );
 

@@ -20,7 +20,7 @@ export default class TrackAt extends LastFMBaseCommand {
   };
 
   async run(message: Message) {
-    let rank = (this.parsedArguments.rank as string).toInt();
+    let rank = (this.parsedArguments.rank as string)?.toInt();
 
     if (isNaN(rank) || rank < 0) {
       await message.reply("please enter a valid rank");

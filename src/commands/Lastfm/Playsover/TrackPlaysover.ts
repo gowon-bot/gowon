@@ -20,7 +20,7 @@ export default class TrackPlaysover extends LastFMBaseCommand {
   };
 
   async run(message: Message) {
-    let plays = (this.parsedArguments.plays as string).toInt();
+    let plays = (this.parsedArguments.plays as string)?.toInt();
 
     let { username, perspective } = await this.parseMentionedUsername(message);
 

@@ -15,6 +15,7 @@ export class TagConsolidator {
   ];
 
   tags: string[] = [];
+  characterLimit = 30;
 
   hasTags(): boolean {
     return !!this.tags.length;
@@ -57,7 +58,7 @@ export class TagConsolidator {
     return { reverser, fixer };
   }
 
-  consolidate(max: number = Infinity): string[] {
+  consolidate(max: number = Infinity, filter = true): string[] {
     let { fixer, reverser } = this.tagFixer();
 
     let tagCounts = this.tags.reduce((acc, tag) => {
@@ -73,6 +74,7 @@ export class TagConsolidator {
     return Object.keys(tagCounts)
       .sort((a, b) => tagCounts[b] - tagCounts[a])
       .map((t) => reverser(t))
+      .filter((t) => !filter || t.length <= this.characterLimit)
       .slice(0, max);
   }
 }

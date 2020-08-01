@@ -13,7 +13,7 @@ export default class PartyTime extends LastFMBaseCommand {
   };
 
   async run(message: Message) {
-    let time = (this.parsedArguments.time as string).toInt() || 10;
+    let time = (this.parsedArguments.time as string)?.toInt() || 10;
 
     if (time < 5 || time > 15)
       throw new LogicError("Please enter a reasonable time. 😐");

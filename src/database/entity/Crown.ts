@@ -41,7 +41,9 @@ export class Crown extends BaseEntity {
   @CreateDateColumn()
   createdAt!: Date;
 
-  async refresh(options: { onlyIfOwnerIs?: string, logger?: Logger } = {}): Promise<Crown> {
+  async refresh(
+    options: { onlyIfOwnerIs?: string; logger?: Logger } = {}
+  ): Promise<Crown> {
     if (
       !options.onlyIfOwnerIs ||
       options.onlyIfOwnerIs === this.user.discordID
@@ -67,7 +69,7 @@ export class Crown extends BaseEntity {
     serverID: string,
     discordID: string
   ): Promise<CrownRankResponse> {
-    let user = await User.findOne({ where: { discordID } });
+    let user = await User.findOne({ where: { discordID, serverID } });
 
     return ((await this.query(
       `SELECT count, rank FROM (

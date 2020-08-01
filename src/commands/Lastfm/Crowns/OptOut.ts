@@ -24,7 +24,7 @@ export class OptOut extends CrownsChildCommand {
         message.author.id
       );
 
-      await message.reply(
+      await message.channel.send(
         new MessageEmbed().setDescription(
           `Opted you out, deleting ${numberDisplay(
             numberOfCrowns,

@@ -41,7 +41,7 @@ export default class Pace extends LastFMBaseCommand {
     let timeRange = this.parsedArguments.timeRange as TimeRange,
       humanReadableTimeRange = this.parsedArguments
         .humanReadableTimeRange as string,
-      milestone = (this.parsedArguments.milestone as string).toInt();
+      milestone = (this.parsedArguments.milestone as string)?.toInt();
 
     if (milestone > 10000000)
       throw new LogicError(

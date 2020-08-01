@@ -8,7 +8,8 @@ export abstract class Parser {
   protected getElementFromIndex(
     array: Array<any>,
     index: number | Slice,
-    join = true
+    join = true,
+    defaults?: any | any[]
   ): ParsedArgument {
     if (index === undefined) return undefined;
 
@@ -16,18 +17,32 @@ export abstract class Parser {
       array.length <
       (typeof index === "number" ? index : index.stop || index.start)
     ) {
-      return;
+      return defaults;
     }
 
     if (typeof index === "number") {
-      return typeof array[index] === "string"
-        ? array[index]?.trim()
-        : array[index];
+      return (
+        (typeof array[index] === "string"
+          ? array[index]?.trim()
+          : array[index]) || defaults
+      );
     } else {
       let slicedArray = (index.stop
         ? array.slice(index.start, index.stop + 1)
         : array.slice(index.start)
       ).map((e) => (typeof e === "string" ? e?.trim() : e));
+
+      if (index.start && index.stop) {
+        for (let i = 0; i < index.stop - index.start + 1; i++) {
+          if (!slicedArray[i]) slicedArray[i] = (defaults || [])[i];
+        }
+      } else {
+        for (let i = 0; i < defaults?.length; i++) {
+          const def = defaults[i];
+
+          if (!slicedArray[i]) slicedArray[i] = def;
+        }
+      }
 
       return join ? slicedArray.join(" ") : slicedArray;
     }

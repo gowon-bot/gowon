@@ -1,22 +1,30 @@
 Bugs:
   [x] double pipes in now playing
   [x] Use TagConsolidator for all info tag displays
-  [] Crown: undefined
-  [] Fix tags
-  [] Partytime (and possible other commands) that use `(arg as string).toInt()` break when undefined
+  [x] Tags are messed up with no track data but artist data
+  [x] Crown: undefined
+  [x] Fix tags
+  [x] Partytime (and possible other commands) that use `(arg as string).toInt()` break when undefined
+  [x] Split on needs spaces between splits
+  [] Error message for private recent tracks
+  [] `!toptracks`
 
 Todo:
   [x] Add crown to artist info
   [x] Combine ____info and ____stats
+  [x] Arguments defaults
   [] Update command list
+  [later] Dockerize 😳
   [later] Keep track of every tag, artist ever fm'd
 
   Crowns:
-    [] History
+    [later] History
 
   Comands:
-    [] Jumble
+    [x] Jumble
     [] Toptrack
+    [] RecentlyStolen
+    [] Most used commands
     [later] Whosampled (w/scraping)
     
     Overview + subcommands:
@@ -39,4 +47,5 @@ Large Projects:
   [] Permission caching
   [] !flashplaylist with spotify integration
   [] `!crowns mark 수호 duplicate of suho`
+  [] Cache redirects
 

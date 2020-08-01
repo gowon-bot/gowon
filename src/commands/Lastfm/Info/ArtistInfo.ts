@@ -67,7 +67,7 @@ export default class ArtistInfo extends InfoCommand {
             : "") +
           `\n**Listeners**: ${numberDisplay(artistInfo.stats.listeners)}
 **Playcount**: ${numberDisplay(artistInfo.stats.playcount)}
-**Crown**: ${crown?.user?.username}`
+${crown ? `**Crown**: ${crown?.user?.username}` : ""}`
       )
       .addField(
         `${ucFirst(perspective.possessive)} stats`,

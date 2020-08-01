@@ -1,6 +1,7 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { Message, MessageEmbed } from "discord.js";
+import { LogicError } from "../../../errors";
 
 export class Kill extends CrownsChildCommand {
   description = "Shows information about a crown";
@@ -15,6 +16,8 @@ export class Kill extends CrownsChildCommand {
     let artist = this.parsedArguments.artist as string;
 
     let crown = await this.crownsService.getCrown(artist, message.guild?.id!);
+
+    if (!crown) throw new LogicError(`A crown for ${artist.bold()} doesn't exist`)
 
     let sentMessage = await message.reply(
       `are you sure you want to kill the crown for ${crown?.artistName.bold()}?`

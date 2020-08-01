@@ -109,10 +109,17 @@ export default class NowPlaying extends LastFMBaseCommand {
         }
       }
 
-      if (trackInfo.value)
-        this.tagConsolidator.addTags(trackInfo.value?.toptags?.tag || []);
-      if (artistInfo.value)
-        this.tagConsolidator.addTags(artistInfo.value?.tags?.tag || []);
+      if (runAs.lastString() === "fmvv") {
+        if (trackInfo.value)
+          this.tagConsolidator.addTags(trackInfo.value?.toptags?.tag || []);
+        if (artistInfo.value)
+          this.tagConsolidator.addTags(artistInfo.value?.tags?.tag || []);
+      } else {
+        if (artistInfo.value)
+          this.tagConsolidator.addTags(artistInfo.value?.tags?.tag || []);
+        if (trackInfo.value)
+          this.tagConsolidator.addTags(trackInfo.value?.toptags?.tag || []);
+      }
 
       nowPlayingEmbed = nowPlayingEmbed
         .setColor(trackInfo.value?.userloved === "1" ? "#cc0000" : "black")
@@ -124,13 +131,16 @@ export default class NowPlaying extends LastFMBaseCommand {
                   `${track.artist} scrobble`
                 )
               : "No data on last.fm for " + nowPlaying.artist["#text"]) +
-            (artistInfo.value && trackInfo.value ? " | " : "") +
+            (artistInfo.value && trackInfo.value ? " | " : "\n") +
             (trackInfo.value
               ? numberDisplay(trackInfo.value.userplaycount, "scrobble") +
                 " of this song\n"
               : "") +
             this.tagConsolidator
-              .consolidate(runAs.lastString()! === "fmvv" ? Infinity : 6)
+              .consolidate(
+                runAs.lastString() === "fmvv" ? Infinity : 6,
+                runAs.lastString() !== "fmvv"
+              )
               .join(" ‧ ") +
             (crownString ? " • " + crownString : "")
         );
