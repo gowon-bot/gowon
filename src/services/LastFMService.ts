@@ -36,7 +36,6 @@ import {
 import { BaseService } from "./BaseService";
 import moment from "moment";
 import { numberDisplay } from "../helpers";
-import { Logger } from "../lib/Logger";
 
 interface Params {
   [key: string]: any;
@@ -109,7 +108,6 @@ export class LastFMService extends BaseService {
       }
     );
 
-    Logger.log("total tracks", response.recenttracks["@attr"].total.toInt());
     if (milestone > response.recenttracks["@attr"].total.toInt()) {
       throw new LogicError(
         `${username.code()} hasn't scrobbled ${numberDisplay(
@@ -350,7 +348,7 @@ export class LastFMService extends BaseService {
   async getArtistPlays(username: string, artist: string): Promise<number> {
     let playcount = (
       await this.artistInfo(artist, username)
-    ).stats.userplaycount.toInt();
+    ).stats?.userplaycount?.toInt();
 
     if (isNaN(playcount)) throw new BadLastFMResponseError();
 

@@ -2,6 +2,7 @@ import parse from "parse-duration";
 import moment, { DurationInputArg2 } from "moment";
 
 const fallbackRegex = /(\s+|\b)(s(econd)?|m(inute)?|h(our)?|d(ay)?|w(eek)?|mo(nth)?|q(uarter)?|y(ear)?)(\s|\b)/gi;
+const overallRegex = /(\s+|\b)(a(lltime)?|o(verall)?)(\s|\b)/gi;
 
 function timeFrameConverter(timeframe: string): string {
   if (timeframe.trim().length > 1) return timeframe.trim();
@@ -33,13 +34,22 @@ export interface TimeRange {
   to?: Date;
 }
 
-export function generateTimeRange(string: string): TimeRange {
+export function generateTimeRange(
+  string: string,
+  options: { fallback?: string; useOverall?: boolean } = {}
+): TimeRange {
   let difference = parse(string, "second");
 
   if (!difference) {
     let matches = string.match(fallbackRegex) || [];
+    let overallMatch = string.match(overallRegex) || [];
 
-    if (matches.length < 1) return { to: new Date() };
+    if (overallMatch.length && options.useOverall) return { to: new Date() };
+
+    if (matches.length < 1)
+      return options.fallback
+        ? generateTimeRange(options.fallback)
+        : { to: new Date() };
 
     let match = timeFrameConverter(matches[0]);
 
@@ -59,7 +69,12 @@ export function generateTimeRange(string: string): TimeRange {
 
 export function generateHumanTimeRange(
   string: string,
-  options: { noOverall?: boolean; raw?: boolean; overallMessage?: string } = {
+  options: {
+    noOverall?: boolean;
+    raw?: boolean;
+    overallMessage?: string;
+    fallback?: string;
+  } = {
     noOverall: false,
     raw: false,
     overallMessage: "overall",
@@ -87,7 +102,16 @@ export function generateHumanTimeRange(
 
       return (options.raw ? "" : "over the past ") + match;
     } else return (options.raw ? "" : "over the past ") + match;
-  } else return options.noOverall ? "" : options.overallMessage!;
+  } else {
+    if (!options.noOverall && overallRegex.test(string))
+      return options.overallMessage!;
+
+    return options.fallback
+      ? (options.raw ? "" : "over the past ") + options.fallback
+      : options.noOverall
+      ? ""
+      : options.overallMessage!;
+  }
 }
 
 export function generatePeriod(string: string, fallback = "overall"): string {
@@ -97,7 +121,7 @@ export function generatePeriod(string: string, fallback = "overall"): string {
     "6month": /(\s+|\b)((6|six) *m(o(nth(s)?)?)?|h(alf(\s*year)?)?)(\s|\b)/gi,
     "12month": /(\s+|\b)((12|twelve) *m(o(nth(s)?)?)?|y(ear)?)(\s|\b)/gi,
     "1month": /(\s+|\b)(1|one)? *m(o(nth(s)?)?)?(\s|\b)/gi,
-    overall: /(\s+|\b)(a(lltime)?|o(verall)?)(\s|\b)/gi,
+    overall: overallRegex,
   };
 
   for (let period of Object.keys(periodRegexes)) {

@@ -13,6 +13,7 @@ import { OptOut } from "./OptOut";
 import { OptIn } from "./OptIn";
 import { Rank } from "./Rank";
 import { Kill } from "./Kill";
+import { RecentlyStolen } from "./RecentlyStolen";
 
 export default class CrownsParentCommand extends LastFMBaseParentCommand {
   friendlyName = "crowns";
@@ -35,5 +36,6 @@ export default class CrownsParentCommand extends LastFMBaseParentCommand {
     optin: () => new OptIn(),
     rank: () => new Rank(),
     kill: () => new Kill(),
+    recentlystolen: () => new RecentlyStolen(),
   });
 }

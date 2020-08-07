@@ -7,6 +7,7 @@ import { FindManyOptions } from "typeorm";
 import { Setting } from "../../database/entity/Setting";
 import { Settings } from "../../lib/Settings";
 import { BotMomentService } from "../BotMomentService";
+import { MoreThan } from "typeorm"
 
 export enum CrownState {
   tie = "Tie",
@@ -231,6 +232,16 @@ export class CrownsService extends BaseService {
     return await Crown.find({
       where: { serverID },
       order: { version: "DESC" },
+      take: limit,
+    });
+  }
+
+  async listRecentlyStolen(serverID: string, limit = 10): Promise<Crown[]> {
+    this.log("Listing recently stolen crowns in server " + serverID);
+
+    return await Crown.find({
+      where: { serverID, version: MoreThan(1) },
+      order: { lastStolen: "DESC" },
       take: limit,
     });
   }

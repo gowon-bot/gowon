@@ -23,13 +23,18 @@ export default class Pace extends LastFMBaseCommand {
     },
     inputs: {
       timeRange: {
-        custom: (messageString: string) => generateTimeRange(messageString),
+        custom: (messageString: string) =>
+          generateTimeRange(messageString, {
+            useOverall: true,
+            fallback: "1 week",
+          }),
         index: -1,
       },
       humanReadableTimeRange: {
         custom: (messageString: string) =>
           generateHumanTimeRange(messageString, {
             overallMessage: "since <user> began scrobbling",
+            fallback: "week",
           }),
         index: -1,
       },
@@ -62,7 +67,7 @@ export default class Pace extends LastFMBaseCommand {
         "<user>",
         perspective.pronoun
       )}, ${perspective.name} will hit **${numberDisplay(
-        milestone,
+        pace.milestone,
         "** scrobble"
       )} on ${dateDisplay(pace.prediction).bold()}`
     );

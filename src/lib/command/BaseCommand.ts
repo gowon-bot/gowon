@@ -34,6 +34,7 @@ export interface Command {
   secretCommand: boolean;
   name: string;
   friendlyName: string;
+  friendlyNameWithParent?: string;
   description: string;
   shouldBeIndexed: boolean;
   category: string | undefined;
@@ -58,6 +59,12 @@ export abstract class BaseCommand implements Command {
   arguments: Arguments = {};
   category: string | undefined = undefined;
 
+  get friendlyNameWithParent(): string {
+    return (
+      (this.parentName ? this.parentName.trim() + " " : "") + this.friendlyName
+    );
+  }
+
   parsedArguments: ParsedArguments = {};
 
   usersService = new UsersService(this.logger);
@@ -75,13 +82,7 @@ export abstract class BaseCommand implements Command {
   }
 
   get id(): string {
-    return md5(
-      this.name +
-        this.description +
-        this.parentName +
-        this.arguments +
-        this.aliases
-    );
+    return md5(this.name + this.parentName + this.category);
   }
 
   abstract async run(message: Message, runAs: RunAs): Promise<void>;

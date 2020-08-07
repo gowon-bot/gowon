@@ -40,6 +40,10 @@ export default class TrackPlays extends LastFMBaseCommand {
       if (!trackName) trackName = nowPlaying.name;
     }
 
+    let hamham = artist.toLowerCase() === "iu" && trackName.toLowerCase() === "ham ham"
+    if (hamham)
+      trackName = "Jam Jam"
+
     let trackDetails = await this.lastFMService.trackInfo(
       artist,
       trackName,
@@ -47,7 +51,7 @@ export default class TrackPlays extends LastFMBaseCommand {
     );
 
     message.channel.send(
-      `${ucFirst(perspective.plusToHave)} **${numberDisplay(
+      `${hamham ? "FTFY\n" : ""}${ucFirst(perspective.plusToHave)} **${numberDisplay(
         trackDetails.userplaycount,
         "**scrobble"
       )} of **${trackDetails.name}** by ${trackDetails.artist.name}`

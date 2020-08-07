@@ -3,6 +3,7 @@ import { Arguments } from "../../../lib/arguments/arguments";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { Variation } from "../../../lib/command/BaseCommand";
 import { RunAs } from "../../../lib/AliasChecker";
+import { LogicError } from "../../../errors";
 
 export default class RegexAlbumSearch extends LastFMBaseCommand {
   aliases = ["regexls", "regexals", "rls", "rals"];
@@ -22,7 +23,7 @@ export default class RegexAlbumSearch extends LastFMBaseCommand {
   };
   variations: Variation[] = [
     {
-      variationRegex: /(regexls|regexals|rls|rals|)[0-9]{1,3}/i,
+      variationRegex: /(regexls|regexals|rls|rals)[0-9]{1,3}/i,
       description: "Offset in pages",
     },
   ];
@@ -37,6 +38,8 @@ export default class RegexAlbumSearch extends LastFMBaseCommand {
     }
 
     let regex = this.parsedArguments.regex as string;
+
+    if (!regex) throw new LogicError("please enter a valid regex!")
 
     let parsedRegex: RegExp | undefined;
     try {

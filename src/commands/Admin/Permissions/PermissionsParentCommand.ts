@@ -8,7 +8,7 @@ import { View } from "./View";
 export default class PermissionsParentCommand extends AdminBaseParentCommand {
   friendlyName = "permissions";
 
-  prefixes = ["permissions ", "perms "];
+  prefixes = ["permissions", "perms"];
 
   children: CommandManager = new CommandManager({
     blacklist: () => new Blacklist(),

@@ -6,8 +6,12 @@ Bugs:
   [x] Fix tags
   [x] Partytime (and possible other commands) that use `(arg as string).toInt()` break when undefined
   [x] Split on needs spaces between splits
-  [] Error message for private recent tracks
-  [] `!toptracks`
+  [x] Error message for private recent tracks
+  [x] `!toptracks`
+  [x] `!optout`, `!crowns kill` are broken
+  [x] !fmv -> !fm, !fm -> !fmc
+  [x] Pace should work with no arguments
+  [] Algorithm for !t
 
 Todo:
   [x] Add crown to artist info
@@ -17,14 +21,11 @@ Todo:
   [later] Dockerize 😳
   [later] Keep track of every tag, artist ever fm'd
 
-  Crowns:
-    [later] History
-
   Comands:
     [x] Jumble
-    [] Toptrack
-    [] RecentlyStolen
-    [] Most used commands
+    [x] Toptrack
+    [x] RecentlyStolen
+    [x] Most used commands + time framing
     [later] Whosampled (w/scraping)
     
     Overview + subcommands:
@@ -40,7 +41,6 @@ Dashboard:
   [] Make TrackedErrors individual instead of grouped
       
 Large Projects:
-  [-] Make commands database-based
   [] Change lastfm service methods to take specific object type params
   [] Change User.username into GuildMember.nickname (or w/e it's called)
   [] Feedback command to automatically make gh issue
@@ -48,4 +48,6 @@ Large Projects:
   [] !flashplaylist with spotify integration
   [] `!crowns mark 수호 duplicate of suho`
   [] Cache redirects
+  [] Spotify integration
+  [] Crowns history
 

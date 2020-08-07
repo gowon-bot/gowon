@@ -1,6 +1,10 @@
 import { BaseService } from "../BaseService";
 import { Message } from "discord.js";
-import { CommandRun } from "../../database/entity/meta/CommandRun";
+import {
+  CommandRun,
+  MostUsedCommandsResponse,
+} from "../../database/entity/meta/CommandRun";
+import { TimeRange } from "../../helpers/date";
 
 export class MetaService extends BaseService {
   async recordCommandRun(commandID: string, message: Message) {
@@ -12,5 +16,12 @@ export class MetaService extends BaseService {
     });
 
     await commandRun.save();
+  }
+
+  async mostUsedCommands(
+    serverID: string,
+    timeRange?: TimeRange
+  ): Promise<MostUsedCommandsResponse[]> {
+    return await CommandRun.mostUsedCommands(serverID, timeRange);
   }
 }

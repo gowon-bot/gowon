@@ -10,13 +10,14 @@ export class OptOut extends CrownsChildCommand {
       `are you sure you want to opt out? This will delete all your crowns!`
     );
 
+    message.channel.stopTyping()
     await sentMessage.react("✅");
 
     try {
       await sentMessage.awaitReactions(
         (reaction, user) =>
           user.id == message.author.id && reaction.emoji.name == "✅",
-        { max: 1, time: 30000 }
+        { max: 1, time: 30000, errors: ["time"] }
       );
 
       let numberOfCrowns = await this.crownsService.optOut(

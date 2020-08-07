@@ -5,7 +5,7 @@ import { Variation } from "../../../lib/command/BaseCommand";
 import { RunAs } from "../../../lib/AliasChecker";
 import { LogicError } from "../../../errors";
 
-export default class RegexTrackSearch extends LastFMBaseCommand {
+export default class RegexArtistSearch extends LastFMBaseCommand {
   aliases = ["regexas", "ras"];
   description =
     "Searches your top artists for an artist that match a given regex\nRegex help: https://regexr.com/";
@@ -23,7 +23,7 @@ export default class RegexTrackSearch extends LastFMBaseCommand {
   };
   variations: Variation[] = [
     {
-      variationRegex: /(regexas|regexartistsearch)[0-9]{1,3}/i,
+      variationRegex: /(regexas|ras|regexartistsearch)[0-9]{1,3}/i,
       description: "Offset in pages",
     },
   ];
@@ -38,6 +38,8 @@ export default class RegexTrackSearch extends LastFMBaseCommand {
     }
 
     let regex = this.parsedArguments.regex as string;
+
+    if (!regex) throw new LogicError("please enter a valid regex!");
 
     let parsedRegex: RegExp | undefined;
     try {

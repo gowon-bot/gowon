@@ -18,11 +18,11 @@ export default class NowPlaying extends LastFMBaseCommand {
   variations = [
     {
       variationString: "fmvv",
-      description: "Displays a few more tags than fmv",
+      description: "Displays a bit more information",
     },
     {
-      variationString: "fmv",
-      description: "Displays more information",
+      variationString: "fmc",
+      description: "Displays a bit less information",
     },
   ];
   description = "Displays the now playing or last played track in last.fm";
@@ -83,7 +83,7 @@ export default class NowPlaying extends LastFMBaseCommand {
         nowPlaying.image.find((i) => i.size === "large")?.["#text"] || ""
       );
 
-    if (["fmv", "fmvv"].includes(runAs.lastString()!)) {
+    if (!["fmc"].includes(runAs.lastString()!)) {
       // Types for Promise.allSettled are broken(?), so I have to manually assert the type that's returned
       let [artistInfo, trackInfo, crown] = (await Promise.allSettled([
         this.lastFMService.artistInfo(track.artist, username),

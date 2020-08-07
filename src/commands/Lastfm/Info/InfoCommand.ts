@@ -9,8 +9,7 @@ export abstract class InfoCommand extends LastFMBaseCommand {
 
   getLinkFromBio(bio: string): string | undefined {
     let matches = bio.match(/(?<=<a href=")(.*)(?=">)/) || [];
-
-    Logger.log("Mathches", Logger.formatObject(matches));
+    
     return matches[0];
   }
 

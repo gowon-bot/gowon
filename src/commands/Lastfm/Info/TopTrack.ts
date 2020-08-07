@@ -36,8 +36,6 @@ export default class TopTrack extends InfoCommand {
     if (position.end < position.start)
       [position.start, position.end] = [position.end, position.start];
 
-    this.logger.log("position", Logger.formatObject(position));
-
     if (position.end - position.start > 9)
       throw new LogicError("those two positions are too far apart!");
 
@@ -48,21 +46,23 @@ export default class TopTrack extends InfoCommand {
         .artist;
     }
 
+    // https://i0.wp.com/media.boingboing.net/wp-content/uploads/2016/11/bcf.png?fit=680%2C445&ssl=1
+    let limit =
+        10 +
+        (~~((position.start - 1) / 10) !== ~~((position.end - 1) / 10)
+          ? 10
+          : 0),
+      page = ~~((position.start + 1) / limit),
+      sliceStart = (position.start % 10) - (position.start % 10 === 0 ? -9 : 1),
+      sliceEnd = sliceStart + (position.end - position.start) + 1;
+
     let topTracks = await this.lastFMService.artistTopTracks(
       artistName,
-      10 + (~~(position.start / 10) === ~~(position.end / 10) ? 10 : 0),
-      ~~(position.start / 10)
+      limit,
+      page
     );
 
-    console.log(
-      10 + (~~(position.start / 10) === ~~(position.end / 10) ? 10 : 0),
-      ~~(position.start / 10)
-    );
-
-    let tracksToDisplay = topTracks.track.slice(
-      (position.start % 10) - 1,
-      (position.start % 10) + (position.end - position.start)
-    );
+    let tracksToDisplay = topTracks.track.slice(sliceStart, sliceEnd);
 
     let embed = new MessageEmbed()
       .setTitle(
@@ -71,10 +71,11 @@ export default class TopTrack extends InfoCommand {
       .setDescription(
         tracksToDisplay
           .map(
-            (t) =>
-              `${
-                t["@attr"].rank.toInt() + ~~(position.start / 10) * 10
-              }. ${t.name.bold()} (${numberDisplay(t.listeners, "listener")})`
+            (t, idx) =>
+              `${position.start + idx}. ${t.name.bold()} (${numberDisplay(
+                t.listeners,
+                "listener"
+              )})`
           )
           .join("\n")
       );

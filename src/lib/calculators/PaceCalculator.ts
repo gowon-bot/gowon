@@ -5,6 +5,7 @@ import moment from "moment";
 export interface PacePrediction {
   scrobbleRate: number;
   prediction: Date;
+  milestone: number;
 }
 
 export class PaceCalculator {
@@ -54,6 +55,7 @@ export class PaceCalculator {
         userInfo.playcount.toInt(),
         rate
       ),
+      milestone,
     };
   }
 
@@ -78,13 +80,30 @@ export class PaceCalculator {
     return {
       scrobbleRate: rate,
       prediction: this.makePrediction(milestone, totalScrobbles, rate),
+      milestone,
     };
+  }
+
+  private async getNearestMilestone(): Promise<number> {
+    let overallScrobbles = await this.lastFMService.getNumberScrobbles(
+      this.username
+    );
+
+    if (overallScrobbles < 5000) {
+      return 5000;
+    } else if (overallScrobbles < 10000) {
+      return 10000;
+    } else {
+      return ~~(overallScrobbles / 25000) * 25000 + 25000;
+    }
   }
 
   async calculate(
     timeRange: TimeRange,
-    milestone: number
+    milestone?: number
   ): Promise<PacePrediction> {
+    if (!milestone) milestone = await this.getNearestMilestone();
+
     if (timeRange.from) {
       return await this.calculateFromTimeRange(timeRange, milestone);
     } else return await this.calculateFromOverall(milestone);

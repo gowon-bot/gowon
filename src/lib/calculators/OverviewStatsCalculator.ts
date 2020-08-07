@@ -320,8 +320,6 @@ export class OverviewStatsCalculator {
     let sumTop = await this.sumTop();
     let artistCount = (await this.totalArtists()).replace(",", "").toInt();
 
-    console.log(scrobbles);
-
     if (scrobbles < 1000)
       throw new LogicError(
         "at least 1000 scrobbles are needed to calculate breadth"

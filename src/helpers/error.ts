@@ -10,6 +10,9 @@ export function parseError(error: LastFMErrorResponse): string {
   switch (error.error) {
     case 6:
       return parseErrorSix(error.message);
+    
+    case 17:
+      return "That user's recent tracks are probably set to private. To turn off hidden recent tracks, visit your privacy settings in last.fm"
 
     default:
       return error.message;

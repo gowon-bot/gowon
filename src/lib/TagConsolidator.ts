@@ -37,7 +37,7 @@ export class TagConsolidator {
     let tagMap: { [fixedTag: string]: { [tag: string]: number } } = {};
 
     function fixer(tag: string): string {
-      let fixedTag = tag.replace(/ |-|_/, "").toLowerCase();
+      let fixedTag = tag.replace(/ |-|_/g, "").toLowerCase();
 
       if (!tagMap[fixedTag]) tagMap[fixedTag] = {};
       if (!tagMap[fixedTag][tag]) tagMap[fixedTag][tag] = 0;
