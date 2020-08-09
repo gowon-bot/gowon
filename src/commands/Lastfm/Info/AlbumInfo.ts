@@ -9,6 +9,7 @@ export default class AlbumInfo extends InfoCommand {
 
   aliases = ["ali", "li", "alstats", "als", "ls"];
   description = "Display some information about an album";
+  
   arguments: Arguments = {
     inputs: {
       artist: { index: 0, splitOn: "|" },

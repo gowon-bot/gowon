@@ -7,6 +7,8 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 export default class TrackCount extends LastFMBaseCommand {
   aliases = ["tc"];
   description = "Shows you how many tracks you've scrobbled";
+  subcategory = "library stats";
+
   arguments: Arguments = {
     mentions: {
       user: {

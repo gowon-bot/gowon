@@ -7,6 +7,8 @@ import { numberDisplay } from "../../../helpers";
 export default class Combo extends LastFMBaseCommand {
   aliases = ["streak", "str", "comvo"];
   description = "shows your current streak";
+  subcategory = "library stats"
+
   arguments: Arguments = {
     inputs: {
       streakAmount: { index: 0, regex: /[0-9]{1,4}/g },

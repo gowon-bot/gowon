@@ -10,6 +10,7 @@ export default class ArtistInfo extends InfoCommand {
 
   aliases = ["ai", "as"];
   description = "Display some information about an artist";
+  subcategory = "info"
   arguments: Arguments = {
     inputs: {
       artist: { index: { start: 0 } },

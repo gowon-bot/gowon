@@ -6,6 +6,7 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 export default class TrackPlays extends LastFMBaseCommand {
   aliases = ["tp"];
   description = "Shows you how many plays you have of a given track";
+  subcategory = "plays";
 
   arguments: Arguments = {
     inputs: {
@@ -40,9 +41,9 @@ export default class TrackPlays extends LastFMBaseCommand {
       if (!trackName) trackName = nowPlaying.name;
     }
 
-    let hamham = artist.toLowerCase() === "iu" && trackName.toLowerCase() === "ham ham"
-    if (hamham)
-      trackName = "Jam Jam"
+    let hamham =
+      artist.toLowerCase() === "iu" && trackName.toLowerCase() === "ham ham";
+    if (hamham) trackName = "Jam Jam";
 
     let trackDetails = await this.lastFMService.trackInfo(
       artist,
@@ -51,10 +52,11 @@ export default class TrackPlays extends LastFMBaseCommand {
     );
 
     message.channel.send(
-      `${hamham ? "FTFY\n" : ""}${ucFirst(perspective.plusToHave)} **${numberDisplay(
-        trackDetails.userplaycount,
-        "**scrobble"
-      )} of **${trackDetails.name}** by ${trackDetails.artist.name}`
+      `${hamham ? "FTFY\n" : ""}${ucFirst(
+        perspective.plusToHave
+      )} **${numberDisplay(trackDetails.userplaycount, "**scrobble")} of **${
+        trackDetails.name
+      }** by ${trackDetails.artist.name}`
     );
   }
 }

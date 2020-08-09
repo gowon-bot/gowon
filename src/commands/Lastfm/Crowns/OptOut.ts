@@ -4,13 +4,14 @@ import { numberDisplay } from "../../../helpers";
 
 export class OptOut extends CrownsChildCommand {
   description = "Opts you out of the crowns game";
+  usage = "";
 
   async run(message: Message) {
     let sentMessage = await message.reply(
       `are you sure you want to opt out? This will delete all your crowns!`
     );
 
-    message.channel.stopTyping()
+    message.channel.stopTyping();
     await sentMessage.react("✅");
 
     try {

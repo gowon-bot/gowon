@@ -4,7 +4,8 @@ import { Message, MessageEmbed } from "discord.js";
 import { LogicError } from "../../../errors";
 
 export class Kill extends CrownsChildCommand {
-  description = "Shows information about a crown";
+  description = "Kills a crown";
+  usage = ["artist (be specific with case!)"];
 
   arguments: Arguments = {
     inputs: {

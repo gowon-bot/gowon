@@ -1,8 +1,9 @@
 import { Message, MessageEmbed } from "discord.js";
-import { PermissionsChildCommand } from "./Permissions/PermissionsChildCommand";
+import { PermissionsChildCommand } from "../Permissions/PermissionsChildCommand";
 
-export default class Disabled extends PermissionsChildCommand {
+export class Disabled extends PermissionsChildCommand {
   description = "List all disabled commands";
+  usage = ""
   aliases = ["listdisabled", "disabledcommands"];
 
   async prerun() {}

@@ -7,6 +7,8 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 export default class AlbumCount extends LastFMBaseCommand {
   aliases = ["alc", "lc"];
   description = "Shows you how many albums you've scrobbled";
+  subcategory = "library stats"
+
   arguments: Arguments = {
     mentions: {
       user: {

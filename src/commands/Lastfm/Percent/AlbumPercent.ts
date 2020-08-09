@@ -8,6 +8,8 @@ export default class AlbumPercent extends LastFMBaseCommand {
   aliases = ["lpct", "alpct"];
   description =
     "Shows you the percentage of an artist's scrobbles are made up of a certain album";
+  subcategory = "percents"
+
   arguments: Arguments = {
     inputs: {
       artist: { index: 0, splitOn: "|" },

@@ -6,6 +6,8 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 export default class ArtistAt extends LastFMBaseCommand {
   aliases = ["aa"];
   description = "Finds the artist at a certain rank";
+  subcategory = "ranks"
+
   arguments: Arguments = {
     mentions: {
       user: {

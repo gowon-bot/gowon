@@ -3,6 +3,7 @@ import { PermissionsChildCommand } from "./PermissionsChildCommand";
 
 export class Help extends PermissionsChildCommand {
   description = "Shows help about permissions";
+  usage = ""
 
   arguments = {};
   async prerun() {}

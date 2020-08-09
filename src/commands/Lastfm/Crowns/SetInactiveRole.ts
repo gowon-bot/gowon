@@ -3,6 +3,7 @@ import { Message, MessageEmbed } from "discord.js";
 
 export class SetInactiveRole extends CrownsChildCommand {
   description = "Sets the crowns inactive role for the server";
+  usage = "@inactive_role";
 
   async run(message: Message) {
     let [inactiveRole] = message.mentions.roles.array();

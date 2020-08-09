@@ -5,6 +5,7 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 export default class TrackPage extends LastFMBaseCommand {
   aliases = ["tpa", "tpage"];
   description = "Links you to the track page on lastfm";
+  subcategory = "pages"
 
   arguments: Arguments = {
     inputs: {

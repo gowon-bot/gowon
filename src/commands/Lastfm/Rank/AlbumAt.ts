@@ -6,6 +6,8 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 export default class AlbumAt extends LastFMBaseCommand {
   aliases = ["ala"];
   description = "Finds the album at a certain rank";
+  subcategory = "ranks"
+
   arguments: Arguments = {
     mentions: {
       user: {

@@ -4,6 +4,8 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 export default class Login extends LastFMBaseCommand {
   description = "Logs you into lastfm";
+  subcategory = "accounts"
+  usage = "username"
 
   arguments: Arguments = {
     inputs: {

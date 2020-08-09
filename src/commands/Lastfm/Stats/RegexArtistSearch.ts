@@ -9,6 +9,8 @@ export default class RegexArtistSearch extends LastFMBaseCommand {
   aliases = ["regexas", "ras"];
   description =
     "Searches your top artists for an artist that match a given regex\nRegex help: https://regexr.com/";
+  subcategory = "library stats";
+
   arguments: Arguments = {
     mentions: {
       user: {
@@ -25,6 +27,7 @@ export default class RegexArtistSearch extends LastFMBaseCommand {
     {
       variationRegex: /(regexas|ras|regexartistsearch)[0-9]{1,3}/i,
       description: "Offset in pages",
+      friendlyString: "ras<page_number>"
     },
   ];
 

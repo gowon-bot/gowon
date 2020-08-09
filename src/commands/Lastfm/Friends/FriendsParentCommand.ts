@@ -9,6 +9,7 @@ import { TrackPlays } from "./Commands/TrackPlays";
 
 export default class FriendsParentCommand extends LastFMBaseParentCommand {
   friendlyName = "friends";
+  subcategory = "friends"
 
   prefixes = ["friends", "fr", "f"];
   default = () => new List();

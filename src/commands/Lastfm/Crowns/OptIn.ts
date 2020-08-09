@@ -2,7 +2,8 @@ import { CrownsChildCommand } from "./CrownsChildCommand";
 import { Message } from "discord.js";
 
 export class OptIn extends CrownsChildCommand {
-  description = "Opts you into the crowns game";
+  description = "Opts you back into the crowns game";
+  usage = ""
 
   async run(message: Message) {
     let sentMessage = await message.reply(

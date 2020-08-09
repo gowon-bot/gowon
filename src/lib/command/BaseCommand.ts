@@ -23,6 +23,7 @@ export interface Variation {
   variationString?: string;
   variationRegex?: RegExp;
   description?: string;
+  friendlyString?: string;
 }
 export interface Command {
   execute(message: Message, runAs: RunAs): Promise<void>;
@@ -32,12 +33,15 @@ export interface Command {
   aliases: Array<string>;
   arguments: Arguments;
   secretCommand: boolean;
+  shouldBeIndexed: boolean;
+
   name: string;
   friendlyName: string;
   friendlyNameWithParent?: string;
   description: string;
-  shouldBeIndexed: boolean;
   category: string | undefined;
+  subcategory: string | undefined;
+  usage: string | string[];
 
   hasChildren: boolean;
   children?: CommandManager;
@@ -58,6 +62,8 @@ export abstract class BaseCommand implements Command {
   shouldBeIndexed: boolean = true;
   arguments: Arguments = {};
   category: string | undefined = undefined;
+  subcategory: string | undefined = undefined;
+  usage: string | string[] = "";
 
   get friendlyNameWithParent(): string {
     return (

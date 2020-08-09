@@ -6,6 +6,9 @@ import { LogicError } from "../../../errors";
 export default class LastFmToDiscord extends LastFMBaseCommand {
   aliases = ["lfm2d"];
   description = "Displays who is logged in as a given user";
+  subcategory = "accounts"
+  usage = "lastfm_username"
+
   arguments: Arguments = {
     inputs: {
       username: { index: 0 },

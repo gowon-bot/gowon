@@ -7,10 +7,12 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 export default class LastFM extends LastFMBaseCommand {
   aliases = ["lfm"];
   description = "Links the last.fm profile page for a user";
+  subcategory = "accounts";
+  usage = ["", "@user"];
 
   arguments: Arguments = {
     mentions: {
-      user: { index: 0, description: "The user to lookup" }
+      user: { index: 0, description: "The user to lookup" },
     },
   };
 

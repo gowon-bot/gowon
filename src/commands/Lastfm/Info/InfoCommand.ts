@@ -1,15 +1,15 @@
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
-import { Logger } from "../../../lib/Logger";
 import { TagConsolidator } from "../../../lib/TagConsolidator";
 
 export abstract class InfoCommand extends LastFMBaseCommand {
   shouldBeIndexed = false;
+  subcategory = "info";
 
   tagConsolidator = new TagConsolidator();
 
   getLinkFromBio(bio: string): string | undefined {
     let matches = bio.match(/(?<=<a href=")(.*)(?=">)/) || [];
-    
+
     return matches[0];
   }
 

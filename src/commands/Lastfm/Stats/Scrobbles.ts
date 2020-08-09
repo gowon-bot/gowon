@@ -11,6 +11,8 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 export default class Scrobbles extends LastFMBaseCommand {
   aliases = ["s"];
   description = "Shows you how many scrobbles you have";
+  subcategory = "library stats"
+
   arguments: Arguments = {
     mentions: {
       user: { index: 0, description: "The user to lookup", nonDiscordMentionParsing: this.ndmp },

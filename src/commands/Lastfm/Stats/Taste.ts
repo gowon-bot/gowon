@@ -10,6 +10,7 @@ import { generatePeriod, generateHumanPeriod } from "../../../helpers/date";
 export default class Taste extends LastFMBaseCommand {
   aliases = ["t"];
   description = "Shows your taste overlap with another user";
+  subcategory = "library stats";
 
   arguments: Arguments = {
     inputs: {

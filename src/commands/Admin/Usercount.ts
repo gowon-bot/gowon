@@ -5,6 +5,7 @@ import { numberDisplay } from "../../helpers";
 export default class Usercount extends AdminBaseCommand {
   description = "Count the number of users";
   aliases = ["uc"];
+  usage = "";
 
   async run(message: Message) {
     let usercount = await this.usersService.countUsers(message.guild?.id!);

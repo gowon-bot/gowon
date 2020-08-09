@@ -6,6 +6,8 @@ import { numberDisplay } from "../../../helpers";
 export default class AlbumRank extends LastFMBaseCommand {
   aliases = ["alra", "lra"];
   description = "Shows what rank the album is at in your top 1000 albums";
+  subcategory = "ranks"
+
   arguments: Arguments = {
     mentions: {
       user: {

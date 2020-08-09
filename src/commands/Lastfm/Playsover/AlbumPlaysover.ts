@@ -6,6 +6,8 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 export default class AlbumPlaysover extends LastFMBaseCommand {
   aliases = ["alpo", "lpo"];
   description = "Shows you how many albums you have over a certain playcount";
+  subcategory = "playsover"
+
   arguments: Arguments = {
     inputs: {
       plays: { index: 0 },

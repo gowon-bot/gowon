@@ -26,6 +26,11 @@ export default class NowPlaying extends LastFMBaseCommand {
     },
   ];
   description = "Displays the now playing or last played track in last.fm";
+  usage = [
+    "",
+    "@user (will show their now playing)",
+    "@user hey check out this song (will show your now playing)",
+  ];
   arguments: Arguments = {
     inputs: {
       otherWords: { index: { start: 0 } },

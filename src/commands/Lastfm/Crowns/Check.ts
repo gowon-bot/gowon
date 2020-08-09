@@ -9,6 +9,7 @@ import { InactiveError, OptedOutError } from "../../../errors";
 export class Check extends CrownsChildCommand {
   aliases = ["c"];
   description = "Checks a crown";
+  usage = ["", "artist"]
 
   arguments: Arguments = {
     inputs: {

@@ -5,7 +5,8 @@ import { Arguments } from "../../../lib/arguments/arguments";
 
 export class Rank extends CrownsChildCommand {
   aliases = ["r"];
-  description = "Ranks you based on your crown count";
+  description = "Ranks a user based on their crown count";
+  usage = ["", "@user"];
 
   arguments: Arguments = {
     mentions: {

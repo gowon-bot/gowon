@@ -3,6 +3,8 @@ import { Message, MessageEmbed, User, Role } from "discord.js";
 
 export class Delist extends PermissionsChildCommand {
   description = "Remove a user/role from a white/blacklist";
+  usage = ["command @role or role:roleid", "command @user or user:userid"];
+  
   aliases = ["dewhitelist", "deblacklist"];
 
   async run(message: Message) {
@@ -20,11 +22,13 @@ export class Delist extends PermissionsChildCommand {
         failed.push({ entity, reason: e.message });
       }
     }
-      
+
     let embed = new MessageEmbed()
       .setTitle(`Removed permissions`)
       .setDescription(
-        `Delisted ${this.runAs.toCommandFriendlyName().code()} for ${delisted
+        `Delisted ${this.runAs
+          .toCommandFriendlyName()
+          .code()} for ${delisted
           .map((d) => (d instanceof Role ? d.name + " (role)" : d.username))
           .join(", ")}` +
           (failed.length

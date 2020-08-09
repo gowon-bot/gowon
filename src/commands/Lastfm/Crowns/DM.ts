@@ -4,7 +4,8 @@ import { numberDisplay, chunkArray, ucFirst } from "../../../helpers";
 import { Arguments } from "../../../lib/arguments/arguments";
 
 export class DM extends CrownsChildCommand {
-  description = "Lists your top crowns";
+  description = "DMs you a users crowns";
+  usage = ["", "@user"];
 
   arguments: Arguments = {
     mentions: {

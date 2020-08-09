@@ -15,6 +15,13 @@ export class View extends PermissionsChildCommand {
   description =
     "View the permissions in the server, for a specific command, or for a specific user/role";
 
+  usage = [
+    "",
+    "command",
+    "role:roleid or @role",
+    "user:userid or @user",
+  ]
+
   throwOnNoCommand = false;
   aliases = ["list"];
 

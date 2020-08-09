@@ -7,6 +7,8 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 export abstract class ListCommand extends LastFMBaseCommand {
   shouldBeIndexed = false;
 
+  subcategory = 'lists'
+
   arguments: Arguments = {
     mentions: {
       user: {

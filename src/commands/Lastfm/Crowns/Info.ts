@@ -7,6 +7,7 @@ import { User } from "../../../database/entity/User";
 export class Info extends CrownsChildCommand {
   aliases = ["wh"];
   description = "Shows information about a crown";
+  usage = ["", "artist"]
 
   arguments: Arguments = {
     inputs: {

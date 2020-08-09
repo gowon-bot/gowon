@@ -9,6 +9,7 @@ export abstract class JumbleChildCommand extends LastFMBaseChildCommand {
     sessionPrefix: "jumble",
   });
   parentName = "jumble";
+  subcategory = "jumble"
 
   jumbleCalculator!: JumbleCalculator;
 

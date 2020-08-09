@@ -6,6 +6,8 @@ import { numberDisplay } from "../../../helpers";
 export default class TrackRank extends LastFMBaseCommand {
   aliases = ["tra", "tr"];
   description = "Shows what rank the track is at in your top 1000 tracks";
+  subcategory = "ranks"
+
   arguments: Arguments = {
     mentions: {
       user: {

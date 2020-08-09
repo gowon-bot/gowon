@@ -6,6 +6,8 @@ import { RunAs } from "../../../lib/AliasChecker";
 export class Blacklist extends PermissionsChildCommand {
   description = "Add a user to the blacklist for a command";
 
+  usage = ["command @role or role:roleid", "command @user or user:userid"];
+
   variations: Variation[] = [
     {
       variationString: "whitelist",

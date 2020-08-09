@@ -4,7 +4,8 @@ import { numberDisplay, ucFirst, getOrdinal } from "../../../helpers";
 import { Arguments } from "../../../lib/arguments/arguments";
 
 export class List extends CrownsChildCommand {
-  description = "Lists your top crowns";
+  description = "Lists a user's top crowns";
+  usage = ["", "@user"];
 
   arguments: Arguments = {
     mentions: {

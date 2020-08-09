@@ -1,11 +1,13 @@
 import { Message } from "discord.js";
-import { NoCommand } from "../../lib/command/BaseCommand";
-import { CommandNotFoundError, LogicError } from "../../errors";
-import { PermissionsChildCommand } from "./Permissions/PermissionsChildCommand";
-import { Arguments } from "../../lib/arguments/arguments";
+import { NoCommand } from "../../../lib/command/BaseCommand";
+import { CommandNotFoundError, LogicError } from "../../../errors";
+import { PermissionsChildCommand } from "./PermissionsChildCommand";
+import { Arguments } from "../../../lib/arguments/arguments";
 
-export default class Disable extends PermissionsChildCommand {
+export class Disable extends PermissionsChildCommand {
   description = "Disable a command globally";
+
+  usage = "command";
 
   arguments: Arguments = {
     inputs: this.arguments.inputs,

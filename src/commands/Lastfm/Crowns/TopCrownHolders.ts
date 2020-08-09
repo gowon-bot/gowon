@@ -5,6 +5,7 @@ import { numberDisplay } from "../../../helpers";
 export class TopCrownHolders extends CrownsChildCommand {
   description = "Lists the top crown holders in the server";
   aliases = ["leaderboard", "ldb", "guild"];
+  usage = ""
 
   async run(message: Message) {
     let [holders, crownsCount] = await Promise.all([

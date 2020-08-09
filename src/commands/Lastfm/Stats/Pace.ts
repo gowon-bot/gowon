@@ -13,6 +13,8 @@ import { numberDisplay, dateDisplay } from "../../../helpers";
 export default class Pace extends LastFMBaseCommand {
   aliases = ["pc"];
   description = "predicts when you're gonna git a milestone";
+  subcategory = "library stats"
+
   arguments: Arguments = {
     mentions: {
       user: {

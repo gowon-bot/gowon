@@ -8,6 +8,8 @@ export default class ArtistPercent extends LastFMBaseCommand {
   aliases = ["apct"];
   description =
     "Shows you the percentage of your total scrobbles an artist makes up";
+  subcategory = "percents";
+
   arguments: Arguments = {
     inputs: {
       artist: { index: { start: 0 } },

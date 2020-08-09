@@ -1,5 +1,5 @@
 import { Message } from "discord.js";
-import { BaseCommand } from "../lib/command/BaseCommand";
+import { BaseCommand } from "../../lib/command/BaseCommand";
 
 export default class Test extends BaseCommand {
   description = "Testing testing 123";

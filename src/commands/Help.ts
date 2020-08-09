@@ -1,7 +1,11 @@
-import { BaseCommand, Command } from "../lib/command/BaseCommand";
+import { BaseCommand, Command, NoCommand } from "../lib/command/BaseCommand";
 import { Message, MessageEmbed } from "discord.js";
 import { CommandManager } from "../lib/command/CommandManager";
-import { Arguments, groupArgumentsBySplit } from "../lib/arguments/arguments";
+import { Arguments } from "../lib/arguments/arguments";
+import { AdminService } from "../services/dbservices/AdminService";
+import { CommandNotFoundError } from "../errors";
+import { flatDeep } from "../helpers";
+import { ParentCommand } from "../lib/command/ParentCommand";
 
 export default class Help extends BaseCommand {
   aliases = ["h"];
@@ -9,98 +13,169 @@ export default class Help extends BaseCommand {
 
   arguments: Arguments = {
     inputs: {
-      command: { index: 0 },
+      command: { index: { start: 0 } },
     },
   };
 
-  commandManager = new CommandManager()
+  commandManager = new CommandManager();
+  adminService = new AdminService();
 
-  private parseAliases(embed: MessageEmbed, command: Command): MessageEmbed {
-    return command.aliases.length
-      ? embed.addField(
-          "Aliases",
-          command.aliases.map((a) => `\`${a}\``).join(", "),
-          true
+  async run(message: Message) {
+    await this.commandManager.init();
+
+    let command = this.parsedArguments.command as string;
+
+    let embed = await (command
+      ? this.helpForOneCommand(message, command)
+      : this.helpForAllCommands(message));
+
+    if (!embed) return;
+
+    await message.channel.send(embed);
+  }
+
+  private async helpForAllCommands(message: Message) {
+    let commands = await Promise.all(
+      this.commandManager
+        .list()
+        .filter(
+          async (c) => (await this.adminService.can.run(c, message)).passed
         )
-      : embed;
-  }
+    );
 
-  private parseName(embed: MessageEmbed, command: Command): MessageEmbed {
-    return embed
-      .setTitle(command.name)
-      .addField("Description", command.description);
-  }
-
-  private parseVariations(embed: MessageEmbed, command: Command): MessageEmbed {
-    return Object.keys(command.variations).length
-      ? embed.addField(
-          "Variations",
-          command.variations
-            .map((variation) => `\`${variation.variationString || variation.variationRegex}\`: ${variation.description}`)
-            .join("\n")
-        )
-      : embed;
-  }
-
-  private parseCommandArguments(
-    embed: MessageEmbed,
-    command: Command
-  ): MessageEmbed {
-    // if (command.arguments.mentions)
-    //   embed.addField(
-    //     "Mentions",
-    //     Object.values(command.arguments.mentions)
-    //       .map((m) => `\`@${m.name}\`: ${m.description ?? ""}`)
-    //       .join("\n")
-    //   );
-
-    if (command.arguments.inputs) {
-      let groupedArguments = groupArgumentsBySplit(command.arguments);
-
-      let argumentCombinations: Array<string> = [];
-
-      for (let split of Object.keys(groupedArguments)) {
-        let args = groupedArguments[split];
-
-        let argNames = args
-          .sort(
-            (a, b) =>
-              (typeof b.index === "number" ? b.index : b.index.start) -
-              (typeof a.index === "number" ? a.index : a.index.start)
-          )
-          .map((a) => (a.optional ? a.name + "?" : a.name))
-          .join(split !== " " ? " " + split + " " : split);
-
-        argumentCombinations.push(command.name + " " + argNames);
-      }
-      embed.addField("Usage", argumentCombinations.join("\n"));
+    interface GroupedCommands {
+      [category: string]: {
+        [subcategory: string]: Command[];
+      };
     }
+
+    let groupedCommands = commands.reduce((acc, c) => {
+      if (!acc[c.category || "misc"]) acc[c.category || "misc"] = {};
+      if (!acc[c.category || "misc"][c.subcategory || ""])
+        acc[c.category || "misc"][c.subcategory || ""] = [];
+
+      acc[c.category || "misc"][c.subcategory || ""].push(c);
+
+      return acc;
+    }, {} as GroupedCommands);
+
+    return new MessageEmbed()
+      .setAuthor(
+        `Help for ${message.author.username}`,
+        message.author.avatarURL() || ""
+      )
+      .addFields(
+        Object.keys(groupedCommands).map((gc) => ({
+          name: gc,
+          value:
+            (groupedCommands[gc][""]
+              ? Object.values(groupedCommands[gc][""])
+                  .map((c) => c.friendlyName)
+                  .join(", ")
+                  .italic() + "\n"
+              : "") +
+            Object.keys(groupedCommands[gc])
+              .filter((k) => k !== "")
+              .map(
+                (k) =>
+                  k.bold() +
+                  ": " +
+                  groupedCommands[gc][k].map((c) => c.friendlyName).join(", ")
+              )
+              .join("\n"),
+        }))
+      );
+  }
+
+  private async helpForOneCommand(message: Message, commandName: string) {
+    let command = this.commandManager.find(commandName).command;
+
+    if (command instanceof NoCommand) throw new CommandNotFoundError();
+    if (!(await this.adminService.can.run(command, message)).passed) {
+      message.channel.stopTyping();
+      return;
+    }
+
+    if (command instanceof ParentCommand)
+      return this.showHelpForParentCommand(message, command);
+
+    let embed = new MessageEmbed()
+      .setAuthor(
+        `Help with ${
+          command.friendlyNameWithParent || command.friendlyName
+        } for ${message.author.username}`,
+        message.author.avatarURL() || ""
+      )
+      .setDescription(
+        `
+        ${(command.friendlyNameWithParent || command.friendlyName).bold()}:
+        ${command.description.italic()}
+
+        ${
+          command.aliases.length
+            ? `**Aliases**: ${command.aliases.map((a) => a.code())}\n\n`
+            : ""
+        }${
+          command.variations.length
+            ? `**Variations**:
+            ${command.variations
+              .map(
+                (a) =>
+                  `${a.variationString || a.friendlyString} ${
+                    a.description ? "- " + a.description : ""
+                  }`
+              )
+              .join("\n")}\n\n`
+            : ""
+        }${
+          command.usage !== undefined
+            ? "**Usage**:\n" +
+              flatDeep([command.usage])
+                .map((u) =>
+                  (
+                    this.botMomentService.prefix +
+                    command.friendlyNameWithParent +
+                    " " +
+                    u
+                  )
+                    .trim()
+                    .code()
+                )
+                .join("\n")
+            : ""
+        }`
+      );
 
     return embed;
   }
 
-  async run(message: Message) {
-    await this.commandManager.init()
-
-    let commandName = this.parsedArguments.command as string;
-
-    let embed = new MessageEmbed().setAuthor(
-      "Help for " + message.author.username
-    );
-
-    if (commandName) {
-      let command = this.commandManager.find(commandName).command;
-
-      embed = this.parseAliases(embed, command);
-      embed = this.parseName(embed, command);
-      embed = this.parseVariations(embed, command);
-      embed = this.parseCommandArguments(embed, command);
-    } else {
-      let commands = this.commandManager.list();
-
-      embed = embed.setDescription(commands.map((c) => c.name).join(", "));
-    }
-
-    await message.channel.send(embed);
+  private async showHelpForParentCommand(
+    message: Message,
+    command: ParentCommand
+  ) {
+    return new MessageEmbed()
+      .setAuthor(
+        `Help with ${command.friendlyName} for ${message.author.username}`,
+        message.author.avatarURL() || ""
+      )
+      .setDescription(
+        `${command.friendlyName.bold()}:
+        ${command.description.italic()}
+        
+        ${
+          command.prefixes
+            ? `**Prefixes**:
+            ${flatDeep([command.prefixes])
+              .map((p) => p.trim().code())
+              .join(", ")}\n`
+            : ""
+        }
+        **Commands**:
+        ${command.children
+          .list()
+          .map((c) => c.friendlyName)
+          .join(", ")}
+        `
+      );
   }
 }

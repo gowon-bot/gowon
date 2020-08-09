@@ -20,6 +20,8 @@ export class Can {
   adminService: AdminService;
   commandManager = new CommandManager();
 
+  cachedPermissons?: Permission[];
+
   constructor(adminService: AdminService) {
     this.adminService = adminService;
   }
@@ -66,15 +68,19 @@ export class Can {
 
     let permissions: Permission[];
 
-    permissions = await Permission.find({
-      where: {
-        serverID: message.guild?.id,
-        commandID:
-          command instanceof ChildCommand
-            ? In([command.id, ...(await this.getParentIDs(command))])
-            : command.id,
-      },
-    });
+    permissions =
+      this.cachedPermissons ||
+      (await Permission.find({
+        where: {
+          serverID: message.guild?.id,
+          commandID:
+            command instanceof ChildCommand
+              ? In([command.id, ...(await this.getParentIDs(command))])
+              : command.id,
+        },
+      }));
+
+    if (!this.cachedPermissons) this.cachedPermissons = permissions;
 
     let disabledCheck = (
       await Promise.all(

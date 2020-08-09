@@ -9,6 +9,8 @@ export default class RegexTrackSearch extends LastFMBaseCommand {
   aliases = ["regexts", "rts"];
   description =
     "Searches your top tracks for tracks that match a given regex\nRegex help: https://regexr.com/";
+  subcategory = "library stats";
+
   arguments: Arguments = {
     mentions: {
       user: {
@@ -25,6 +27,7 @@ export default class RegexTrackSearch extends LastFMBaseCommand {
     {
       variationRegex: /(ts|regexts|regextracksearch)[0-9]{1,3}/i,
       description: "Offset in pages",
+      friendlyString: "rts<page_number>"
     },
   ];
 

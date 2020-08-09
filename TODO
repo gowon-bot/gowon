@@ -12,6 +12,9 @@ Bugs:
   [x] !fmv -> !fm, !fm -> !fmc
   [x] Pace should work with no arguments
   [] Algorithm for !t
+  [] Party for milestones
+  [] Add inactive marker for `!wh`
+  [] Add scrobble purgatory roll
 
 Todo:
   [x] Add crown to artist info
@@ -35,7 +38,7 @@ Todo:
       [] Add `usage` to commands
       [] Fix variations
       [] Group similar commands
-      [] Display parentCommands' friendly names
+      [x] Display parentCommands' friendly names
     
 Dashboard:
   [] Make TrackedErrors individual instead of grouped

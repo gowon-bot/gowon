@@ -17,6 +17,7 @@ import { RecentlyStolen } from "./RecentlyStolen";
 
 export default class CrownsParentCommand extends LastFMBaseParentCommand {
   friendlyName = "crowns";
+  description = "See `!crownsgame` for more info";
 
   prefixes = ["crowns", "cw"];
   default = () => new List();

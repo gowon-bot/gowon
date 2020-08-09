@@ -5,6 +5,9 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 export default class Whoami extends LastFMBaseCommand {
   aliases = ["me"];
   description = "Displays your login";
+  subcategory = "accounts";
+  usage = ["", "@user"];
+
   arguments: Arguments = {
     mentions: {
       user: { index: 0, description: "The user to lookup" },

@@ -8,6 +8,8 @@ export default class TrackPercent extends LastFMBaseCommand {
   aliases = ["tpct"];
   description =
     "Shows you the percentage of an artist's scrobbles are made up of a certain track";
+  subcategory = "percents";
+
   arguments: Arguments = {
     inputs: {
       artist: { index: 0, splitOn: "|" },
@@ -53,7 +55,9 @@ export default class TrackPercent extends LastFMBaseCommand {
       )} of ${trackInfo.name.bold()} make ${calculatePercent(
         trackInfo.userplaycount,
         artistInfo.stats.userplaycount
-      ).bold()}% of ${perspective.possesivePronoun} ${artistInfo.name.bold()} scrobbles`
+      ).bold()}% of ${
+        perspective.possesivePronoun
+      } ${artistInfo.name.bold()} scrobbles`
     );
   }
 }

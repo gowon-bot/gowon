@@ -6,6 +6,8 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 export default class ArtistPlaysover extends LastFMBaseCommand {
   aliases = ["po", "apo"];
   description = "Shows you how many artists you have over a certain playcount";
+  subcategory = "playsover"
+  
   arguments: Arguments = {
     inputs: {
       plays: { index: 0 },

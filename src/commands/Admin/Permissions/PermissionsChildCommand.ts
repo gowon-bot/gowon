@@ -10,6 +10,7 @@ import { User } from "../../../database/entity/User";
 
 export abstract class PermissionsChildCommand extends AdminBaseChildCommand {
   parentName = "permissions";
+  subcategory = "permissions"
 
   commandManager = new CommandManager();
   command!: Command;

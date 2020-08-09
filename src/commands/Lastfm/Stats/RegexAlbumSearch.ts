@@ -9,6 +9,8 @@ export default class RegexAlbumSearch extends LastFMBaseCommand {
   aliases = ["regexls", "regexals", "rls", "rals"];
   description =
     "Searches your top albums for albums that match a given regex\nRegex help: https://regexr.com/";
+  subcategory = "library stats";
+
   arguments: Arguments = {
     mentions: {
       user: {
@@ -25,6 +27,7 @@ export default class RegexAlbumSearch extends LastFMBaseCommand {
     {
       variationRegex: /(regexls|regexals|rls|rals)[0-9]{1,3}/i,
       description: "Offset in pages",
+      friendlyString: "rls<page_number>"
     },
   ];
 
@@ -39,7 +42,7 @@ export default class RegexAlbumSearch extends LastFMBaseCommand {
 
     let regex = this.parsedArguments.regex as string;
 
-    if (!regex) throw new LogicError("please enter a valid regex!")
+    if (!regex) throw new LogicError("please enter a valid regex!");
 
     let parsedRegex: RegExp | undefined;
     try {

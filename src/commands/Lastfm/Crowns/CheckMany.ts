@@ -9,6 +9,7 @@ interface CheckedCrownsDisplay {
 export class CheckMany extends CrownsChildCommand {
   aliases = ["cm"];
   description = "Checks multiple crowns at once (max 10)";
+  usage = ["", "artist1 | artist2 | artist3 ...artist10"];
 
   arguments: Arguments = {
     inputs: {

@@ -11,6 +11,8 @@ import { LogicError } from "../../../errors";
 export default class GoBack extends LastFMBaseCommand {
   aliases = ["gb"];
   description = "Shows what you scrobbled ";
+  subcategory = "library stats"
+
   arguments: Arguments = {
     mentions: {
       user: { index: 0, description: "The user to lookup" },

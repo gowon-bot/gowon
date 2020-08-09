@@ -5,6 +5,7 @@ import { numberDisplay } from "../../../helpers";
 export class ContentiousCrowns extends CrownsChildCommand {
   description = "Lists the most contentious crowns in the server";
   aliases = ["cont", "contentious", "con"];
+  usage = ""
 
   async run(message: Message) {
     let [crowns, crownsCount] = await Promise.all([
