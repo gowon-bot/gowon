@@ -7,6 +7,7 @@ export default class ArtistPlays extends LastFMBaseCommand {
   aliases = ["ap", "p"];
   description = "Shows you how many plays you have of a given artist";
   subcategory = "plays"
+  usage = ["", "artist @user"]
 
   arguments: Arguments = {
     inputs: {

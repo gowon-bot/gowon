@@ -6,7 +6,8 @@ import { ucFirst } from "../../../helpers";
 
 export abstract class OverviewChildCommand extends LastFMBaseChildCommand {
   parentName = "overview";
-  subcategory = "overview"
+  subcategory = "overview";
+  usage = ["", "@user or lfm:username"];
 
   arguments: Arguments = {
     mentions: {

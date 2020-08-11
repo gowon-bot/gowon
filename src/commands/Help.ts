@@ -10,6 +10,7 @@ import { ParentCommand } from "../lib/command/ParentCommand";
 export default class Help extends BaseCommand {
   aliases = ["h"];
   description = "Displays the help menu";
+  usage = ["", "command"];
 
   arguments: Arguments = {
     inputs: {
@@ -35,12 +36,9 @@ export default class Help extends BaseCommand {
   }
 
   private async helpForAllCommands(message: Message) {
-    let commands = await Promise.all(
-      this.commandManager
-        .list()
-        .filter(
-          async (c) => (await this.adminService.can.run(c, message)).passed
-        )
+    let commands = await this.adminService.can.viewList(
+      this.commandManager.list(),
+      message
     );
 
     interface GroupedCommands {
@@ -153,6 +151,11 @@ export default class Help extends BaseCommand {
     message: Message,
     command: ParentCommand
   ) {
+    let commands = await this.adminService.can.viewList(
+      command.children.list(),
+      message
+    );
+
     return new MessageEmbed()
       .setAuthor(
         `Help with ${command.friendlyName} for ${message.author.username}`,
@@ -171,10 +174,7 @@ export default class Help extends BaseCommand {
             : ""
         }
         **Commands**:
-        ${command.children
-          .list()
-          .map((c) => c.friendlyName)
-          .join(", ")}
+        ${commands.map((c) => c.friendlyName).join(", ")}
         `
       );
   }

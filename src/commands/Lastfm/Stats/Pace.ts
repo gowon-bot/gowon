@@ -14,6 +14,7 @@ export default class Pace extends LastFMBaseCommand {
   aliases = ["pc"];
   description = "predicts when you're gonna git a milestone";
   subcategory = "library stats"
+  usage = ["", "milestone", "time period milestone @user"]
 
   arguments: Arguments = {
     mentions: {

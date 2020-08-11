@@ -7,10 +7,11 @@ export default class TrackPlaysover extends LastFMBaseCommand {
   aliases = ["alpo", "lpo"];
   description = "Shows you how many artists you have over a certain playcount";
   subcategory = "playsover";
+  usage = ["", "number"]
 
   arguments: Arguments = {
     inputs: {
-      plays: { index: 0 },
+      plays: { index: 0, default: "100" },
     },
     mentions: {
       user: {

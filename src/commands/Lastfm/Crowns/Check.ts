@@ -4,12 +4,12 @@ import { Message } from "discord.js";
 import { CrownState } from "../../../services/dbservices/CrownsService";
 import { CrownEmbeds } from "../../../helpers/Embeds/CrownEmbeds";
 import { userHasRole } from "../../../helpers/discord";
-import { InactiveError, OptedOutError } from "../../../errors";
+import { InactiveError, OptedOutError, PurgatoryError } from "../../../errors";
 
 export class Check extends CrownsChildCommand {
   aliases = ["c"];
   description = "Checks a crown";
-  usage = ["", "artist"]
+  usage = ["", "artist"];
 
   arguments: Arguments = {
     inputs: {
@@ -18,6 +18,15 @@ export class Check extends CrownsChildCommand {
   };
 
   async run(message: Message) {
+    this.logger.log(
+      "Inactive Role",
+      await this.botMomentService.getInactiveRole(message.guild!)
+    );
+    this.logger.log(
+      "Purgatory Role",
+      await this.botMomentService.getPurgatoryRole(message.guild!)
+    );
+
     if (
       userHasRole(
         message.member!,
@@ -25,6 +34,15 @@ export class Check extends CrownsChildCommand {
       )
     ) {
       throw new InactiveError();
+    }
+
+    if (
+      userHasRole(
+        message.member!,
+        await this.botMomentService.getPurgatoryRole(message.guild!)
+      )
+    ) {
+      throw new PurgatoryError();
     }
 
     if (

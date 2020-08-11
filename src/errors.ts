@@ -177,6 +177,16 @@ export class InactiveError extends ClientError {
   }
 }
 
+export class PurgatoryError extends ClientError {
+  name = "PurgatoryError";
+
+  constructor() {
+    super(
+      `Scrobble Purgatory? Oh noes! This rare role is handed to users that have clearly fake scrobbled to inflate their play counts. It stops them from playing the "Who Knows?" game and is a badge of shame on the server. Booooooo!`
+    );
+  }
+}
+
 export class OptedOutError extends ClientError {
   name = "OptedOutError";
 

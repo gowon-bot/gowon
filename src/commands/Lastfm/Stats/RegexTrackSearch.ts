@@ -10,6 +10,7 @@ export default class RegexTrackSearch extends LastFMBaseCommand {
   description =
     "Searches your top tracks for tracks that match a given regex\nRegex help: https://regexr.com/";
   subcategory = "library stats";
+  usage = ["regex"]
 
   arguments: Arguments = {
     mentions: {

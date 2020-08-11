@@ -5,7 +5,6 @@ import { ListCommand } from "./ListCommand";
 export default class ArtistList extends ListCommand {
   aliases = ["alist", "topartists", "topartist", "artists"];
   description = "Shows your top artists";
-  shouldBeIndexed = true
 
   async run(message: Message) {
     let { username } = await this.parseMentionedUsername(message);

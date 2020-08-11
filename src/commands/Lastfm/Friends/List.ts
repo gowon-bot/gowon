@@ -4,8 +4,9 @@ import { FriendsRequester } from "../../../lib/FriendsRequester";
 import { numberDisplay } from "../../../helpers";
 
 export class List extends FriendsChildCommand {
-  aliases = ["fm", "np", "nowplaying"]
+  aliases = ["fm", "np", "nowplaying"];
   description = "View what your friends are listening to";
+  usage = "";
 
   async run(message: Message) {
     let nowPlayings = await new FriendsRequester(this.friendUsernames).fetch(

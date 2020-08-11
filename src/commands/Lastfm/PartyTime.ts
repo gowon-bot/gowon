@@ -6,6 +6,8 @@ import { LogicError } from "../../errors";
 export default class PartyTime extends LastFMBaseCommand {
   aliases = ["pt"];
   description = "Shows the cover for an album";
+  usage = ["", "partytime"];
+
   arguments: Arguments = {
     inputs: {
       time: { index: 0, regex: /[0-9]{1,2}/ },
@@ -25,7 +27,6 @@ export default class PartyTime extends LastFMBaseCommand {
         message.channel.send(
           currentTime === 0 ? "🎉 NOW 🎊".bold() : `${currentTime}`.bold()
         );
-
       }, (time - currentTime) * 1200);
     }
   }

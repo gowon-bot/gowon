@@ -14,6 +14,7 @@ import { OptIn } from "./OptIn";
 import { Rank } from "./Rank";
 import { Kill } from "./Kill";
 import { RecentlyStolen } from "./RecentlyStolen";
+import { SetPurgatoryRole } from "./SetPurgatoryRole";
 
 export default class CrownsParentCommand extends LastFMBaseParentCommand {
   friendlyName = "crowns";
@@ -33,6 +34,7 @@ export default class CrownsParentCommand extends LastFMBaseParentCommand {
     topcrownholders: () => new TopCrownHolders(),
     dm: () => new DM(),
     setinactiverole: () => new SetInactiveRole(),
+    setpurgatoryrole: () => new SetPurgatoryRole(),
     optout: () => new OptOut(),
     optin: () => new OptIn(),
     rank: () => new Rank(),

@@ -11,10 +11,11 @@ Bugs:
   [x] `!optout`, `!crowns kill` are broken
   [x] !fmv -> !fm, !fm -> !fmc
   [x] Pace should work with no arguments
-  [] Algorithm for !t
-  [] Party for milestones
-  [] Add inactive marker for `!wh`
-  [] Add scrobble purgatory roll
+  [x] Add scrobble purgatory roll
+  [x] Party for milestones
+  [x] Add inactive marker for `!wh`
+  [x] Jaljayo good night easter egg
+  [] Fix algorithm for !t
 
 Todo:
   [x] Add crown to artist info
@@ -29,15 +30,16 @@ Todo:
     [x] Toptrack
     [x] RecentlyStolen
     [x] Most used commands + time framing
+    [x] Randomsong
     [later] Whosampled (w/scraping)
     
     Overview + subcommands:
       [x] Breadth command (higher toppct, hindex, higher scrobbles, lower sumtop)
 
     `!help`:
-      [] Add `usage` to commands
-      [] Fix variations
-      [] Group similar commands
+      [x] Add `usage` to commands
+      [x] Fix variations
+      [x] Group similar commands
       [x] Display parentCommands' friendly names
     
 Dashboard:

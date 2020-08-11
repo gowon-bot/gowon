@@ -10,6 +10,7 @@ export default class RegexAlbumSearch extends LastFMBaseCommand {
   description =
     "Searches your top albums for albums that match a given regex\nRegex help: https://regexr.com/";
   subcategory = "library stats";
+  usage = ["regex"];
 
   arguments: Arguments = {
     mentions: {
@@ -27,7 +28,7 @@ export default class RegexAlbumSearch extends LastFMBaseCommand {
     {
       variationRegex: /(regexls|regexals|rls|rals)[0-9]{1,3}/i,
       description: "Offset in pages",
-      friendlyString: "rls<page_number>"
+      friendlyString: "rls<page_number>",
     },
   ];
 

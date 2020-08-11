@@ -6,7 +6,9 @@ import { JumbledArtist, jumbleRedisKey } from "./JumbleParentCommand";
 import { Arguments } from "../../../lib/arguments/arguments";
 
 export class Me extends JumbleChildCommand {
-  description = "Picks an artist from your library to jumble";
+  description =
+    "Picks an artist from your library to jumble, or reshuffles your current one";
+  usage = ["", "poolAmount"];
 
   arguments: Arguments = {
     inputs: {
@@ -66,18 +68,16 @@ export class Me extends JumbleChildCommand {
   private async handleAlreadyJumbled(message: Message, jumble: JumbledArtist) {
     jumble.jumbled = this.jumble(jumble.unjumbled);
 
-    this.sessionSetJSON(message, jumbleRedisKey, jumble)
+    this.sessionSetJSON(message, jumbleRedisKey, jumble);
 
-    let embed = new MessageEmbed()
-      .setAuthor(
-        `Rejumble for ${message.member?.nickname}`,
-        message.author.avatarURL() ?? ""
-      )
-      .setDescription(`I've reshuffled the letters, now who is this artist?
+    let embed = new MessageEmbed().setAuthor(
+      `Rejumble for ${message.member?.nickname}`,
+      message.author.avatarURL() ?? ""
+    ).setDescription(`I've reshuffled the letters, now who is this artist?
       
       ${jumble.jumbled.code()}`);
 
-    await message.channel.send(embed)
+    await message.channel.send(embed);
   }
 
   private jumble(artistName: string): string {

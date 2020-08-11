@@ -5,16 +5,15 @@ import { BadAmountError } from "../../../errors";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 export abstract class ListCommand extends LastFMBaseCommand {
-  shouldBeIndexed = false;
-
-  subcategory = 'lists'
+  subcategory = "lists";
+  usage = ["", "list_amount time period @user"]
 
   arguments: Arguments = {
     mentions: {
       user: {
         index: 0,
         description: "The user to lookup",
-        nonDiscordMentionParsing: this.ndmp
+        nonDiscordMentionParsing: this.ndmp,
       },
     },
     inputs: {
@@ -28,7 +27,11 @@ export abstract class ListCommand extends LastFMBaseCommand {
           generateHumanPeriod(messageString, "7day"),
         index: -1,
       },
-      listAmount: { index: 0, regex: /[0-9]{1,4}(?!\w)(?! [a-z])/g, default: "10" },
+      listAmount: {
+        index: 0,
+        regex: /[0-9]{1,4}(?!\w)(?! [a-z])/g,
+        default: "10",
+      },
     },
   };
 

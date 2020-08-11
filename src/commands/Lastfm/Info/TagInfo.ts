@@ -8,6 +8,8 @@ export default class TagInfo extends InfoCommand {
 
   aliases = ["ti", "gi"];
   description = "Display some information about a tag";
+  usage = ["tag"];
+  
   arguments: Arguments = {
     inputs: {
       tag: { index: { start: 0 } },

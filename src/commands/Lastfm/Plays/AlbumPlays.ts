@@ -6,7 +6,8 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 export default class AlbumPlays extends LastFMBaseCommand {
   aliases = ["alp", "lp"];
   description = "Shows you how many plays you have of a given album";
-  subcategory = "plays"
+  subcategory = "plays";
+  usage = ["", "artist | album @user"];
 
   arguments: Arguments = {
     inputs: {

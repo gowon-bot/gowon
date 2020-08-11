@@ -10,6 +10,7 @@ export default class RegexArtistSearch extends LastFMBaseCommand {
   description =
     "Searches your top artists for an artist that match a given regex\nRegex help: https://regexr.com/";
   subcategory = "library stats";
+  usage = ["regex"]
 
   arguments: Arguments = {
     mentions: {

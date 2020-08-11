@@ -7,6 +7,7 @@ export default class Milestone extends LastFMBaseCommand {
   aliases = ["mls"];
   description = "Shows you what you scrobbled at a certain milestone";
   subcategory = "library stats"
+  usage = ["", "milestone @user"]
 
   arguments: Arguments = {
     inputs: {

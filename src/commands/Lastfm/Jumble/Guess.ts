@@ -7,6 +7,7 @@ import { shuffle } from "../../../helpers";
 
 export class Guess extends JumbleChildCommand {
   description = "Picks an artist from your library to jumble";
+  usage = ["artist_guess"];
 
   arguments: Arguments = {
     inputs: { guess: { index: { start: 0 } } },

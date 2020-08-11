@@ -7,6 +7,7 @@ import { numberDisplay, ucFirst } from "../../../helpers";
 export class SumTop extends OverviewChildCommand {
   aliases = [];
   description = "Shows how much of your scrobbles your top artists make up";
+  usage = ["", "top", "top @user"]
 
   arguments: Arguments = {
     mentions: this.arguments.mentions,

@@ -6,7 +6,8 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 export default class AlbumAt extends LastFMBaseCommand {
   aliases = ["ala"];
   description = "Finds the album at a certain rank";
-  subcategory = "ranks"
+  subcategory = "ranks";
+  usage = ["", "rank @user"];
 
   arguments: Arguments = {
     mentions: {
@@ -17,7 +18,7 @@ export default class AlbumAt extends LastFMBaseCommand {
       },
     },
     inputs: {
-      rank: { index: 0 },
+      rank: { index: 0, default: "1" },
     },
   };
 
@@ -36,12 +37,11 @@ export default class AlbumAt extends LastFMBaseCommand {
     let album = topAlbums.album[0];
 
     await message.reply(
-      `${album.name.bold()} by ${album.artist.name.italic()} is ranked at #${
-        album["@attr"].rank.bold()
-      } in ${perspective.possessive} top albums with ${numberDisplay(
-        album.playcount,
-        "play"
-      ).bold()}`
+      `${album.name.bold()} by ${album.artist.name.italic()} is ranked at #${album[
+        "@attr"
+      ].rank.bold()} in ${
+        perspective.possessive
+      } top albums with ${numberDisplay(album.playcount, "play").bold()}`
     );
   }
 }

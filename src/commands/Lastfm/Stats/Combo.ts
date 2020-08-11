@@ -5,9 +5,10 @@ import { ComboCalculator } from "../../../lib/calculators/ComboCalculator";
 import { numberDisplay } from "../../../helpers";
 
 export default class Combo extends LastFMBaseCommand {
-  aliases = ["streak", "str", "comvo"];
+  aliases = ["streak", "str"];
   description = "shows your current streak";
-  subcategory = "library stats"
+  subcategory = "library stats";
+  usage = ["", "amount_to_check @user"];
 
   arguments: Arguments = {
     inputs: {

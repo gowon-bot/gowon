@@ -23,6 +23,7 @@ export class BotMomentService {
     lastfm: "lfm:",
   };
   inactiveRole: { [serverID: string]: string | undefined } = {};
+  purgatoryRole: { [serverID: string]: string | undefined } = {};
 
   get regexSafePrefix(): string {
     return regexEscape(this.prefix);
@@ -35,7 +36,7 @@ export class BotMomentService {
     );
   }
 
-  async getInactiveRole(guild: Guild): Promise<string | undefined> {    
+  async getInactiveRole(guild: Guild): Promise<string | undefined> {
     if (!this.inactiveRole[guild.id])
       this.inactiveRole[guild.id] = (
         await Setting.getByName(Settings.InactiveRole, guild.id)
@@ -47,5 +48,19 @@ export class BotMomentService {
     }
 
     return this.inactiveRole[guild.id]!;
+  }
+
+  async getPurgatoryRole(guild: Guild): Promise<string | undefined> {
+    if (!this.purgatoryRole[guild.id])
+      this.purgatoryRole[guild.id] = (
+        await Setting.getByName(Settings.PurgatoryRole, guild.id)
+      )?.value;
+
+    if (!this.purgatoryRole[guild.id]) {
+      delete this.purgatoryRole[guild.id];
+      return undefined;
+    }
+
+    return this.purgatoryRole[guild.id]!;
   }
 }

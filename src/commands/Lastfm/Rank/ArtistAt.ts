@@ -7,6 +7,7 @@ export default class ArtistAt extends LastFMBaseCommand {
   aliases = ["aa"];
   description = "Finds the artist at a certain rank";
   subcategory = "ranks"
+  usage = ["", "rank @user"]
 
   arguments: Arguments = {
     mentions: {
@@ -17,7 +18,7 @@ export default class ArtistAt extends LastFMBaseCommand {
       },
     },
     inputs: {
-      rank: { index: 0 },
+      rank: { index: 0, default: "1" },
     },
   };
 

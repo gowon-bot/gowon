@@ -11,6 +11,7 @@ import {
 
 export class TopCommands extends MetaChildCommand {
   description = "Shows the most used commands";
+  usage = ["", "time period"]
 
   arguments: Arguments = {
     inputs: {

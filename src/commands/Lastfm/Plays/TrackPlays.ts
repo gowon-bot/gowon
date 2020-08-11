@@ -7,6 +7,7 @@ export default class TrackPlays extends LastFMBaseCommand {
   aliases = ["tp"];
   description = "Shows you how many plays you have of a given track";
   subcategory = "plays";
+  usage = ["artist | track @user"];
 
   arguments: Arguments = {
     inputs: {

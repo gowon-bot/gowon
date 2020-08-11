@@ -36,6 +36,12 @@ export class User extends BaseEntity {
     return (await message.guild?.members.fetch(discordID))?.user;
   }
 
+  static async random(): Promise<User> {
+    return (
+      await this.query(`SELECT * FROM users ORDER BY RANDOM() LIMIT 1`)
+    )[0] as User;
+  }
+
   async toDiscordUser(message: Message): Promise<DiscordUser | undefined> {
     return await User.toDiscordUser(message, this.discordID);
   }

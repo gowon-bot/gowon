@@ -167,4 +167,9 @@ export class UsersService extends BaseService {
       where: { lastFMUsername: username, serverID },
     });
   }
+
+  async randomUser(): Promise<User> {
+    this.log("Fetching a random user...");
+    return await User.random();
+  }
 }

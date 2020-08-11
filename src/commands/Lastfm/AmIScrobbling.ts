@@ -2,9 +2,10 @@ import { Message } from "discord.js";
 import { LastFMBaseCommand } from "./LastFMBaseCommand";
 
 export default class AmIScrobbling extends LastFMBaseCommand {
-  aliases = ["amis"]
+  aliases = ["amis"];
   description = "Am I scrobbling?";
   secretCommand = true;
+  usage = [""];
 
   async run(message: Message) {
     let { senderUsername } = await this.parseMentionedUsername(message);

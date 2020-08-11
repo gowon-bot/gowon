@@ -143,7 +143,7 @@ export default class NowPlaying extends LastFMBaseCommand {
               : "") +
             this.tagConsolidator
               .consolidate(
-                runAs.lastString() === "fmvv" ? Infinity : 6,
+                runAs.lastString() === "fmvv" ? Infinity : 5,
                 runAs.lastString() !== "fmvv"
               )
               .join(" ‧ ") +
@@ -151,6 +151,13 @@ export default class NowPlaying extends LastFMBaseCommand {
         );
     }
 
-    await message.channel.send(nowPlayingEmbed);
+    let sentMessage = await message.channel.send(nowPlayingEmbed);
+
+    if (
+      track.artist.toLowerCase() === "twice" &&
+      track.name.toLowerCase() === "jaljayo good night"
+    ) {
+      sentMessage.react("😴");
+    }
   }
 }

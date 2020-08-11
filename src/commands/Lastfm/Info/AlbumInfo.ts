@@ -7,8 +7,9 @@ import { calculatePercent } from "../../../helpers/stats";
 export default class AlbumInfo extends InfoCommand {
   shouldBeIndexed = true;
 
-  aliases = ["ali", "li", "alstats", "als", "ls"];
+  aliases = ["ali", "li", "als", "ls"];
   description = "Display some information about an album";
+  usage = ["", "artist | album"]
   
   arguments: Arguments = {
     inputs: {

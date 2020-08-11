@@ -7,7 +7,7 @@ import { FindManyOptions } from "typeorm";
 import { Setting } from "../../database/entity/Setting";
 import { Settings } from "../../lib/Settings";
 import { BotMomentService } from "../BotMomentService";
-import { MoreThan } from "typeorm"
+import { MoreThan } from "typeorm";
 
 export enum CrownState {
   tie = "Tie",
@@ -286,6 +286,21 @@ export class CrownsService extends BaseService {
     );
 
     BotMomentService.getInstance().inactiveRole[serverID] = roleID;
+
+    return setting;
+  }
+
+  async setPurgatoryRole(
+    serverID: string,
+    roleID?: string
+  ): Promise<Setting | undefined> {
+    let setting = await Setting.createUpdateOrDelete(
+      Settings.PurgatoryRole,
+      serverID,
+      roleID
+    );
+
+    BotMomentService.getInstance().purgatoryRole[serverID] = roleID;
 
     return setting;
   }

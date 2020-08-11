@@ -9,6 +9,7 @@ export default class TrackPercent extends LastFMBaseCommand {
   description =
     "Shows you the percentage of an artist's scrobbles are made up of a certain track";
   subcategory = "percents";
+  usage = ["artist | track"]
 
   arguments: Arguments = {
     inputs: {

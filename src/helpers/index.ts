@@ -70,15 +70,57 @@ export function getOrdinal(number: number): string {
     "th",
   ];
 
-  return (
-    number + ordinals[`${number}`.charAt(`${number}`.length - 1).toInt()]
-  );
+  return number + ordinals[`${number}`.charAt(`${number}`.length - 1).toInt()];
 }
 
- export function shuffle<T>(a: Array<T>): Array<T> {
+export function shuffle<T>(a: Array<T>): Array<T> {
   for (let i = a.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [a[i], a[j]] = [a[j], a[i]];
   }
   return a;
+}
+
+export class StringPadder {
+  stringFunction: (item: any) => string;
+
+  longestString = 0;
+
+  constructor(stringFunction: (item: any) => string) {
+    this.stringFunction = stringFunction;
+  }
+
+  maxLength(items: any[]): number {
+    return items.reduce(
+      (acc, val) =>
+        this.stringFunction(val).length > acc
+          ? this.stringFunction(val).length
+          : acc,
+      0
+    );
+  }
+
+  generatedPaddedList(
+    items: any[],
+    left = false,
+    hardLimit?: number
+  ): string[] {
+    let limit =
+      hardLimit ||
+      items.reduce(
+        (acc, val) =>
+          this.stringFunction(val).length > acc
+            ? this.stringFunction(val).length
+            : acc,
+        0
+      );
+
+    return items.map((val) => {
+      return left
+        ? " ".repeat(limit - this.stringFunction(val).length) +
+            this.stringFunction(val)
+        : this.stringFunction(val) +
+            " ".repeat(limit - this.stringFunction(val).length);
+    });
+  }
 }

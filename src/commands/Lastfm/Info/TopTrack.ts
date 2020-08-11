@@ -3,10 +3,10 @@ import { Arguments } from "../../../lib/arguments/arguments";
 import { InfoCommand } from "./InfoCommand";
 import { LogicError } from "../../../errors";
 import { numberDisplay } from "../../../helpers";
-import { Logger } from "../../../lib/Logger";
 
 export default class TopTrack extends InfoCommand {
   shouldBeIndexed = true;
+  usage = ["", "artist", "artist | start | stop"];
 
   aliases = ["tt"];
   description = "Display the top track for an artist";

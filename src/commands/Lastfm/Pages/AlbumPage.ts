@@ -6,6 +6,7 @@ export default class AlbumPage extends LastFMBaseCommand {
   aliases = ["alpa", "lpa", "alpage", "lpage"];
   description = "Links you to the album page on lastfm";
   subcategory = "pages"
+  usage = ["", "artist | album"]
 
   arguments: Arguments = {
     inputs: {

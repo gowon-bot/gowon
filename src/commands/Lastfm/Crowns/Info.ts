@@ -3,11 +3,12 @@ import { Arguments } from "../../../lib/arguments/arguments";
 import { Message, MessageEmbed } from "discord.js";
 import { numberDisplay, ago } from "../../../helpers";
 import { User } from "../../../database/entity/User";
+import { userHasRole } from "../../../helpers/discord";
 
 export class Info extends CrownsChildCommand {
   aliases = ["wh"];
   description = "Shows information about a crown";
-  usage = ["", "artist"]
+  usage = ["", "artist"];
 
   arguments: Arguments = {
     inputs: {
@@ -49,14 +50,21 @@ export class Info extends CrownsChildCommand {
       );
 
     if (crown?.user.id) {
-      let holderUsername = (
-        await User.toDiscordUser(message, crown.user.discordID)
-      )?.username;
+      let holderUser = await User.toDiscordUser(message, crown.user.discordID);
+
+      let holderUsername = holderUser?.username;
+      let member = await message.guild?.members.fetch(holderUser?.id!);
+      let isInactive = userHasRole(
+        member!,
+        await this.botMomentService.getInactiveRole(message.guild!)
+      );
 
       let embed = new MessageEmbed()
         .setTitle(`Who has ${artistDetails.name.bold()}?`)
         .setDescription(
-          `${holderUsername} has the crown for ${artistDetails.name.bold()} with ${numberDisplay(
+          `${holderUsername}${
+            isInactive ? " _[INACTIVE]_" : ""
+          } has the crown for ${artistDetails.name.bold()} with ${numberDisplay(
             crown.plays,
             "play"
           )}

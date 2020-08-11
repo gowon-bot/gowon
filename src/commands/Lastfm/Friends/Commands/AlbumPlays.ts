@@ -7,6 +7,7 @@ import { Arguments } from "../../../../lib/arguments/arguments";
 export class AlbumPlays extends FriendsChildCommand {
   description = "View how many plays of an album your friends have";
   aliases = ["lp", "alp"];
+  usage = ["", "artist | album"];
 
   arguments: Arguments = {
     inputs: {

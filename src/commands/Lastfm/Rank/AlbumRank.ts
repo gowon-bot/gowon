@@ -7,6 +7,7 @@ export default class AlbumRank extends LastFMBaseCommand {
   aliases = ["alra", "lra"];
   description = "Shows what rank the album is at in your top 1000 albums";
   subcategory = "ranks"
+  usage = ["", "artist | album @user"]
 
   arguments: Arguments = {
     mentions: {

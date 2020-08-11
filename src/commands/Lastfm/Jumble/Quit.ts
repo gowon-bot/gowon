@@ -5,8 +5,8 @@ import { LogicError } from "../../../errors";
 
 export class Quit extends JumbleChildCommand {
   description = "Giveup on the current jumble";
-
   aliases = ["giveup"];
+  usage = ""
 
   async run(message: Message) {
     let jumbledArtist = await this.sessionGetJSON<JumbledArtist>(

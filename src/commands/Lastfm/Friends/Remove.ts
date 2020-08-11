@@ -5,6 +5,7 @@ import { LogicError } from "../../../errors";
 
 export class Remove extends FriendsChildCommand {
   description = "Remove a friend";
+  usage = ["lfm_username", "@user"];
 
   arguments: Arguments = {
     mentions: {
@@ -22,20 +23,22 @@ export class Remove extends FriendsChildCommand {
   async prerun() {}
 
   async run(message: Message) {
-    let { username, senderUsername } = await this.parseMentionedUsername(
-      message, { inputArgumentName: "friendUsername" }
-    );
+    let {
+      username,
+      senderUsername,
+    } = await this.parseMentionedUsername(message, {
+      inputArgumentName: "friendUsername",
+    });
 
     if (username === senderUsername)
       throw new LogicError("Please specify a user to remove as a friend!");
 
-    let user = await this.usersService.getUser(message.author.id, message.guild?.id!);
-
-    await this.friendsService.removeFriend(
-      message.guild?.id!,
-      user,
-      username
+    let user = await this.usersService.getUser(
+      message.author.id,
+      message.guild?.id!
     );
+
+    await this.friendsService.removeFriend(message.guild?.id!, user, username);
 
     await message.channel.send(
       new MessageEmbed().setDescription(

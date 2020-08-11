@@ -6,7 +6,8 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 export default class TrackAt extends LastFMBaseCommand {
   aliases = ["ta"];
   description = "Finds the track at a certain rank";
-  subcategory = "ranks"
+  subcategory = "ranks";
+  usage = ["", "rank @user"];
 
   arguments: Arguments = {
     mentions: {
@@ -17,7 +18,7 @@ export default class TrackAt extends LastFMBaseCommand {
       },
     },
     inputs: {
-      rank: { index: 0 },
+      rank: { index: 0, default: "1" },
     },
   };
 

@@ -8,7 +8,8 @@ export default class AlbumPercent extends LastFMBaseCommand {
   aliases = ["lpct", "alpct"];
   description =
     "Shows you the percentage of an artist's scrobbles are made up of a certain album";
-  subcategory = "percents"
+  subcategory = "percents";
+  usage = ["", "artist | album"];
 
   arguments: Arguments = {
     inputs: {
@@ -55,9 +56,9 @@ export default class AlbumPercent extends LastFMBaseCommand {
       )} of ${albumInfo.name.bold()} make ${calculatePercent(
         albumInfo.userplaycount,
         artistInfo.stats.userplaycount
-      ).bold()}% of ${perspective.possesivePronoun} ${
-        artistInfo.name.bold()
-      } scrobbles`
+      ).bold()}% of ${
+        perspective.possesivePronoun
+      } ${artistInfo.name.bold()} scrobbles`
     );
   }
 }

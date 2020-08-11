@@ -6,7 +6,8 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 export default class ArtistRank extends LastFMBaseCommand {
   aliases = ["ar", "ra"];
   description = "Shows what rank the artist is at in your top 1000 artists";
-  subcategory = "ranks"
+  subcategory = "ranks";
+  usage = ["artist @user"];
 
   arguments: Arguments = {
     mentions: {

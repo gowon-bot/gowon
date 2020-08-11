@@ -8,6 +8,8 @@ export default class TrackInfo extends InfoCommand {
 
   aliases = ["tri"];
   description = "Display some information about a track";
+  usage = ["", "artist | track"]
+
   arguments: Arguments = {
     inputs: {
       artist: { index: 0, splitOn: "|" },

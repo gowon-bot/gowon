@@ -20,7 +20,9 @@ export class Can {
   adminService: AdminService;
   commandManager = new CommandManager();
 
-  cachedPermissons?: Permission[];
+  cachedPermissons: {
+    [commandID: string]: Permission[];
+  } = {};
 
   constructor(adminService: AdminService) {
     this.adminService = adminService;
@@ -69,7 +71,7 @@ export class Can {
     let permissions: Permission[];
 
     permissions =
-      this.cachedPermissons ||
+      this.cachedPermissons[command.id] ||
       (await Permission.find({
         where: {
           serverID: message.guild?.id,
@@ -80,7 +82,8 @@ export class Can {
         },
       }));
 
-    if (!this.cachedPermissons) this.cachedPermissons = permissions;
+    if (!this.cachedPermissons[command.id])
+      this.cachedPermissons[command.id] = permissions;
 
     let disabledCheck = (
       await Promise.all(
@@ -109,5 +112,27 @@ export class Can {
           ? CheckFailReason.forbidden
           : CheckFailReason.disabled,
     };
+  }
+
+  async viewList(commands: Command[], message: Message): Promise<Command[]> {
+    let allPermissions = await Permission.find({
+      where: { serverID: message.guild?.id! },
+    });
+
+    allPermissions.forEach((c) => {
+      if (!this.cachedPermissons[c.id]) this.cachedPermissons[c.id] = [];
+
+      this.cachedPermissons[c.id].push(c);
+    });
+
+    let passed = [] as Command[];
+
+    for (let command of commands) {
+      let check = await this.run(command, message);
+
+      if (check.passed) passed.push(command);
+    }
+
+    return passed;
   }
 }

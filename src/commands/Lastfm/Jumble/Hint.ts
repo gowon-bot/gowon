@@ -6,6 +6,7 @@ import { shuffle } from "../../../helpers";
 
 export class Hint extends JumbleChildCommand {
   description = "Gives you a hint on the current jumble";
+  usage = "";
 
   async run(message: Message) {
     let jumbledArtist = await this.sessionGetJSON<JumbledArtist>(

@@ -11,11 +11,16 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 export default class Scrobbles extends LastFMBaseCommand {
   aliases = ["s"];
   description = "Shows you how many scrobbles you have";
-  subcategory = "library stats"
+  subcategory = "library stats";
+  usage = ["time period @user"];
 
   arguments: Arguments = {
     mentions: {
-      user: { index: 0, description: "The user to lookup", nonDiscordMentionParsing: this.ndmp },
+      user: {
+        index: 0,
+        description: "The user to lookup",
+        nonDiscordMentionParsing: this.ndmp,
+      },
     },
     inputs: {
       timeRange: {
@@ -32,7 +37,7 @@ export default class Scrobbles extends LastFMBaseCommand {
 
   async run(message: Message) {
     if (message.content.trim() === "!s n s d") {
-      await message.channel.send("Gee gee gee gee baby baby baby")
+      await message.channel.send("Gee gee gee gee baby baby baby");
       return;
     }
 
@@ -47,11 +52,19 @@ export default class Scrobbles extends LastFMBaseCommand {
       timeRange.to
     );
 
-    await message.reply(
+    let sentMessage = await message.reply(
       `${perspective.plusToHave} ${numberDisplay(
         scrobbles,
         "scrobble"
       ).bold()} ${humanTimeRange}`
     );
+
+    if (
+      humanTimeRange === "overall" &&
+      scrobbles % 25000 === 0 &&
+      scrobbles > 0
+    ) {
+      await sentMessage.react("🥳");
+    }
   }
 }
