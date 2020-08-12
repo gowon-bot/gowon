@@ -152,6 +152,7 @@ _You can find the source code for all the commands at [/src/commands](/src/comma
 
 - RTFL and thot for moral support
 - Dunster for the friends idea
+- Mex for breaking things
 - mypetrobot for building the Who Knows? bot, the inspiration for this bot
 - Frikandel and the .fmbot team
 - Last.fm, for making a great platform <3

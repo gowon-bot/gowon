@@ -32,7 +32,7 @@ export default class Cover extends LastFMBaseCommand {
 
       let image = nowPlaying.image.find((i) => i.size === "extralarge");
 
-      message.channel.send(
+      await message.channel.send(
         `Cover for ${nowPlaying.album["#text"].bold()} by ${nowPlaying.artist[
           "#text"
         ].bold()}`,
@@ -47,9 +47,9 @@ export default class Cover extends LastFMBaseCommand {
       }
 
       let albumDetails = await this.lastFMService.albumInfo(artist, albumName);
-      let image = albumDetails.image.find((i) => i.size === "huge");
+      let image = albumDetails.image.find((i) => i.size === "extralarge");
 
-      message.channel.send(
+      await message.channel.send(
         `Cover for ${albumDetails.name.italic()} by ${albumDetails.artist.bold()}`,
         { files: [image?.["#text"] ?? ""] }
       );

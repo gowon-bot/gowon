@@ -1,11 +1,12 @@
 import { Message } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
+import { LogicError } from "../../../errors";
 
 export default class Login extends LastFMBaseCommand {
   description = "Logs you into lastfm";
-  subcategory = "accounts"
-  usage = "username"
+  subcategory = "accounts";
+  usage = "username";
 
   arguments: Arguments = {
     inputs: {
@@ -16,12 +17,21 @@ export default class Login extends LastFMBaseCommand {
   async run(message: Message) {
     let username = this.parsedArguments.username as string;
 
+    if (!username)
+      throw new LogicError(
+      `please enter a username (\`${this.botMomentService.prefix}login <username>\`)`
+      );
+
     if (await this.lastFMService.userExists(username)) {
-      await this.usersService.setUsername(message.author.id, message.guild?.id!, username);
+      await this.usersService.setUsername(
+        message.author.id,
+        message.guild?.id!,
+        username
+      );
 
       message.channel.send(`Logged in as ${username.code()}`);
     } else {
-      message.reply(`The user ${username.code()} couldn't be found`);
+      message.reply(`The user ${username?.code()} couldn't be found`);
     }
   }
 }

@@ -1,16 +1,15 @@
 import parse from "parse-duration";
 import moment, { DurationInputArg2 } from "moment";
+import { LogicError } from "../errors";
 
-const fallbackRegex = /(\s+|\b)(s(econd)?|m(inute)?|h(our)?|d(ay)?|w(eek)?|mo(nth)?|q(uarter)?|y(ear)?)(\s|\b)/gi;
+const fallbackRegex = /(\s+|\b)1?(s(econd)?|mi(nute)?|h(our)?|d(ay)?|w(eek)?|m(o(nth)?)?|q(uarter)?|y(ear)?)(\s|\b)/gi;
 const overallRegex = /(\s+|\b)(a(lltime)?|o(verall)?)(\s|\b)/gi;
 
 function timeFrameConverter(timeframe: string): string {
-  if (timeframe.trim().length > 1) return timeframe.trim();
-
   switch (timeframe.trim()) {
     case "s":
       return "string";
-    case "m":
+    case "mi":
       return "minute";
     case "h":
       return "hour";
@@ -18,6 +17,7 @@ function timeFrameConverter(timeframe: string): string {
       return "day";
     case "w":
       return "week";
+    case "m":
     case "mo":
       return "month";
     case "q":
@@ -32,6 +32,7 @@ function timeFrameConverter(timeframe: string): string {
 export interface TimeRange {
   from?: Date;
   to?: Date;
+  difference?: number;
 }
 
 export function generateTimeRange(
@@ -39,6 +40,9 @@ export function generateTimeRange(
   options: { fallback?: string; useOverall?: boolean } = {}
 ): TimeRange {
   let difference = parse(string, "second");
+
+  if ((difference || 0) < -1)
+    throw new LogicError("that's in the future, dumbass");
 
   if (!difference) {
     let matches = string.match(fallbackRegex) || [];
@@ -58,12 +62,14 @@ export function generateTimeRange(
         .subtract(1, match as DurationInputArg2)
         .toDate(),
       to: new Date(),
+      difference: moment.duration(1, match as DurationInputArg2).asSeconds(),
     };
   }
 
   return {
     from: moment().subtract(difference, "second").toDate(),
     to: new Date(),
+    difference,
   };
 }
 
@@ -82,36 +88,21 @@ export function generateHumanTimeRange(
 ): string {
   let timeRange = generateTimeRange(string);
 
-  if (timeRange.from) {
-    let durationRegex = /(-?(?:\d+\.?\d*|\d*\.?\d+)(?:e[-+]?\d+)?)\s*([a-zµμ]*)/gi;
-
-    let matches = Array.from(string.matchAll(durationRegex)) || [];
-
-    let match = matches.reduce((acc, val) => {
-      if (val[2].trim()) acc = val[1] + " " + timeFrameConverter(val[2]);
-
-      return acc;
-    }, undefined as undefined | string);
-
-    if (!match) {
-      let matches = string.match(fallbackRegex) || [];
-
-      if (matches.length < 1) return options.overallMessage!;
-
-      let match = timeFrameConverter(matches[0]);
-
-      return (options.raw ? "" : "over the past ") + match;
-    } else return (options.raw ? "" : "over the past ") + match;
+  if (timeRange.difference) {
+    let timeString = moment
+      .duration(timeRange.difference, "second")
+      .humanize()
+      .replace(/a(n)? /, "");
+    if (timeString.length) return "over the past " + timeString;
   } else {
     if (!options.noOverall && overallRegex.test(string))
       return options.overallMessage!;
-
-    return options.fallback
-      ? (options.raw ? "" : "over the past ") + options.fallback
-      : options.noOverall
-      ? ""
-      : options.overallMessage!;
   }
+  return options.fallback
+    ? (options.raw ? "" : "over the past ") + options.fallback
+    : options.noOverall
+    ? ""
+    : options.overallMessage!;
 }
 
 export function generatePeriod(string: string, fallback = "overall"): string {

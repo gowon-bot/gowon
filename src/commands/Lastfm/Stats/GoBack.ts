@@ -12,7 +12,7 @@ export default class GoBack extends LastFMBaseCommand {
   aliases = ["gb"];
   description = "Shows what you scrobbled ";
   subcategory = "library stats";
-  usage = ["", "time period @user"];
+  usage = ["time period @user"];
 
   arguments: Arguments = {
     mentions: {
@@ -35,7 +35,7 @@ export default class GoBack extends LastFMBaseCommand {
     let timeRange = this.parsedArguments.timeRange as TimeRange,
       humanTimeRange = this.parsedArguments.humanReadableTimeRange as string;
 
-    if (!timeRange.from) throw new LogicError("Please enter a valid timeframe");
+    if (!timeRange.from) throw new LogicError("please enter a valid timeframe");
 
     let { username, perspective } = await this.parseMentionedUsername(message);
 

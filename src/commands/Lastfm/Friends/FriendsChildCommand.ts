@@ -18,6 +18,8 @@ export abstract class FriendsChildCommand extends LastFMBaseChildCommand {
       this.usersService.getUsername(message.author.id, message.guild?.id!),
     ]);
     this.senderUsername = senderUsername;
+    
+    
   }
 
   async setFriendUsernames(message: Message) {

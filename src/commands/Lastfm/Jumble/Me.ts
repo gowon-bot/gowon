@@ -4,15 +4,21 @@ import { LogicError } from "../../../errors";
 import { numberDisplay, shuffle } from "../../../helpers";
 import { JumbledArtist, jumbleRedisKey } from "./JumbleParentCommand";
 import { Arguments } from "../../../lib/arguments/arguments";
+import { Variation } from "../../../lib/command/BaseCommand";
 
 export class Me extends JumbleChildCommand {
   description =
     "Picks an artist from your library to jumble, or reshuffles your current one";
   usage = ["", "poolAmount"];
+  variations: Variation[] = [
+    {
+      variationString: "menonascii"
+    }
+  ]
 
   arguments: Arguments = {
     inputs: {
-      poolAmount: { index: 0, regex: /[0-9]{1,4}/g },
+      poolAmount: { index: 0, regex: /[0-9]{1,4}/g, default: "500" },
     },
   };
 
@@ -22,12 +28,13 @@ export class Me extends JumbleChildCommand {
       jumbleRedisKey
     );
 
-    if (alreadyJumbled.jumbled) {
+    if (alreadyJumbled?.jumbled) {
       this.handleAlreadyJumbled(message, alreadyJumbled);
+      message.channel.stopTyping();
       return;
     }
 
-    let poolAmount = this.parsedArguments.poolAmount?.toInt() || 500;
+    let poolAmount = this.parsedArguments.poolAmount?.toInt();
 
     if (poolAmount < 5 || poolAmount > 1000)
       throw new LogicError("Please enter a number between 5 and 1000!");
@@ -47,7 +54,7 @@ export class Me extends JumbleChildCommand {
 
     let embed = new MessageEmbed()
       .setAuthor(
-        `Jumble for ${message.member?.nickname}`,
+        `Jumble for ${message.member?.nickname || message.author.username}`,
         message.author.avatarURL() ?? ""
       )
       .setDescription(
@@ -71,7 +78,7 @@ export class Me extends JumbleChildCommand {
     this.sessionSetJSON(message, jumbleRedisKey, jumble);
 
     let embed = new MessageEmbed().setAuthor(
-      `Rejumble for ${message.member?.nickname}`,
+      `Rejumble for ${message.member?.nickname || message.author.username}`,
       message.author.avatarURL() ?? ""
     ).setDescription(`I've reshuffled the letters, now who is this artist?
       
@@ -94,13 +101,3 @@ export class Me extends JumbleChildCommand {
     return jumbled;
   }
 }
-
-// Can You Solve This Artist Name Jumble?
-// Who is this artist?
-
-// IAXLEGA 500
-
-// Hints:
-// This artist has 403.5k listeners on last.fm and douzed has scrobbled them 5 times overall (#312 on their top artists list for that period).This artist is tagged as "shoegaze" as well as "dream pop". Last.fm considers Mojave 3 and Slowdive to be similar.
-
-// Command executed by douzed#4353•Today at 10:16 PM

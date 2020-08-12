@@ -23,15 +23,15 @@ export class Add extends FriendsChildCommand {
   async prerun() {}
 
   async run(message: Message) {
-    let {
-      username,
-      senderUsername,
-    } = await this.parseMentionedUsername(message, {
-      inputArgumentName: "friendUsername",
-    });
+    let { username, senderUsername } = await this.parseMentionedUsername(
+      message,
+      {
+        inputArgumentName: "friendUsername",
+      }
+    );
 
     if (username === senderUsername)
-      throw new LogicError("Please specify a user to add as a friend!");
+      throw new LogicError("please specify a user to add as a friend!");
 
     let user = await this.usersService.getUser(
       message.author.id,

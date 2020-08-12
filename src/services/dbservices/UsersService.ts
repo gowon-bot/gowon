@@ -64,7 +64,7 @@ export class UsersService extends BaseService {
     let user = await User.findOne({ where: { discordID, serverID } });
 
     if (user && user.lastFMUsername) {
-      return user.lastFMUsername;
+      return user.lastFMUsername.toLowerCase();
     } else throw new UsernameNotRegisteredError();
   }
 
@@ -79,13 +79,13 @@ export class UsersService extends BaseService {
     let user = await User.findOne({ where: { discordID, serverID } });
 
     if (user) {
-      user.lastFMUsername = lastFMUsername;
+      user.lastFMUsername = lastFMUsername.toLowerCase();
       await user.save();
       return user.lastFMUsername;
     } else {
       user = User.create({
         discordID,
-        lastFMUsername,
+        lastFMUsername: lastFMUsername.toLowerCase(),
         serverID,
       });
       await user.save();
@@ -164,7 +164,7 @@ export class UsersService extends BaseService {
   ): Promise<User | undefined> {
     this.log(`looking for user with username ${username} in ${serverID}`);
     return await User.findOne({
-      where: { lastFMUsername: username, serverID },
+      where: { lastFMUsername: username.toLowerCase(), serverID },
     });
   }
 

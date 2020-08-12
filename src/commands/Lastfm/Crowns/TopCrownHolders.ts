@@ -5,7 +5,7 @@ import { numberDisplay } from "../../../helpers";
 export class TopCrownHolders extends CrownsChildCommand {
   description = "Lists the top crown holders in the server";
   aliases = ["leaderboard", "ldb", "guild"];
-  usage = ""
+  usage = "";
 
   async run(message: Message) {
     let [holders, crownsCount] = await Promise.all([
@@ -16,9 +16,10 @@ export class TopCrownHolders extends CrownsChildCommand {
     let embed = new MessageEmbed()
       .setTitle(`Crowns in ${message.guild?.name}`)
       .setDescription(
-        `There are **${numberDisplay(crownsCount, "** crown")} in ${
-          message.guild?.name
-        }\n\n` +
+        `There ${crownsCount === 1 ? "is" : "are"} **${numberDisplay(
+          crownsCount,
+          "** crown"
+        )} in ${message.guild?.name}\n\n` +
           holders
             .map(
               (h, idx) =>

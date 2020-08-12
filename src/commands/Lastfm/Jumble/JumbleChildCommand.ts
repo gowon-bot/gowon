@@ -9,7 +9,7 @@ export abstract class JumbleChildCommand extends LastFMBaseChildCommand {
     sessionPrefix: "jumble",
   });
   parentName = "jumble";
-  subcategory = "jumble"
+  subcategory = "jumble";
 
   jumbleCalculator!: JumbleCalculator;
 
@@ -21,15 +21,16 @@ export abstract class JumbleChildCommand extends LastFMBaseChildCommand {
     return this.redisService.sessionSet(message, key, JSON.stringify(value));
   }
 
-  async sessionGetJSON<T extends Object>(message: Message, key: string): Promise<T> {
+  async sessionGetJSON<T extends Object>(
+    message: Message,
+    key: string
+  ): Promise<T> {
     return JSON.parse(
       (await this.redisService.sessionGet(message, key)) || "{}"
     ) as T;
   }
 
   async prerun(message: Message) {
-    await this.redisService.init();
-
     let senderUsername = await this.usersService.getUsername(
       message.author.id,
       message.guild?.id!

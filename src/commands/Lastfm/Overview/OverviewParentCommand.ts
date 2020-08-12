@@ -16,7 +16,7 @@ import { Breadth } from "./Breadth";
 export default class OverviewParentCommand extends LastFMBaseParentCommand {
   friendlyName = "overview";
 
-  prefixes = ["o"];
+  prefixes = ["o", "overview"];
   default = () => new All();
 
   children: CommandManager = new CommandManager({

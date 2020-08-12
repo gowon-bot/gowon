@@ -29,7 +29,8 @@ export class RedisService extends BaseService {
   }
 
   private genSessionKey(message: Message, key: string): string {
-    return `${this.sessionPrefix}-${message.author.id}-${key}`;
+    return `${this.sessionPrefix}-${message.author.id}:${message.guild
+      ?.id!}-${key}`;
   }
 
   async init() {

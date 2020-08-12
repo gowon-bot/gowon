@@ -5,12 +5,8 @@ import { Arguments } from "../../lib/arguments/arguments";
 import { isBotMoment, fakeNowPlaying } from "../../botmoment/fakeNowPlaying";
 import { Mention } from "../../lib/arguments/mentions";
 import { LastFMBaseCommand } from "./LastFMBaseCommand";
-import {
-  CrownsService,
-  CrownCheck,
-} from "../../services/dbservices/CrownsService";
+import { CrownsService } from "../../services/dbservices/CrownsService";
 import { RunAs } from "../../lib/AliasChecker";
-import { ArtistInfo } from "../../services/LastFMService.types";
 import { TagConsolidator } from "../../lib/TagConsolidator";
 
 export default class NowPlaying extends LastFMBaseCommand {
@@ -102,11 +98,6 @@ export default class NowPlaying extends LastFMBaseCommand {
       if (crown.value && crown.value.user) {
         if (crown.value.user.id === message.author.id) {
           isCrownHolder = true;
-
-          if (artistInfo.value) {
-            (crown.value! as CrownCheck).crown!.plays = (artistInfo.value as ArtistInfo).stats.userplaycount.toInt();
-            crown.value.crown.save();
-          }
         } else {
           crownString = `👑 ${numberDisplay(crown.value.crown.plays)} (${
             crown.value.user.username
@@ -130,12 +121,15 @@ export default class NowPlaying extends LastFMBaseCommand {
         .setColor(trackInfo.value?.userloved === "1" ? "#cc0000" : "black")
         .setFooter(
           (isCrownHolder ? "👑 " : "") +
-            (artistInfo.value
+            (artistInfo.value && track.artist.length < 150
               ? numberDisplay(
                   artistInfo.value.stats.userplaycount,
                   `${track.artist} scrobble`
                 )
-              : "No data on last.fm for " + nowPlaying.artist["#text"]) +
+              : "No data on last.fm for " +
+                (track.artist.length > 150
+                  ? "that artist"
+                  : nowPlaying.artist["#text"])) +
             (artistInfo.value && trackInfo.value ? " | " : "\n") +
             (trackInfo.value
               ? numberDisplay(trackInfo.value.userplaycount, "scrobble") +

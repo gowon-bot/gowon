@@ -2,18 +2,20 @@ import { Message, MessageEmbed } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { getOrdinal, ucFirst } from "../../../helpers";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
+import { LogicError, BadLastFMResponseError } from "../../../errors";
 
 export default class Milestone extends LastFMBaseCommand {
   aliases = ["mls"];
   description = "Shows you what you scrobbled at a certain milestone";
-  subcategory = "library stats"
-  usage = ["", "milestone @user"]
+  subcategory = "library stats";
+  usage = ["", "milestone @user"];
 
   arguments: Arguments = {
     inputs: {
       milestone: {
         regex: /[0-9]{1,8}/,
-        index: 0,
+        index: { start: 0 },
+        default: "1",
       },
     },
     mentions: {
@@ -26,13 +28,17 @@ export default class Milestone extends LastFMBaseCommand {
   };
 
   async run(message: Message) {
-    let milestone = this.parsedArguments.milestone as number;
+    let milestone = (this.parsedArguments.milestone as string)?.toInt();
+
+    if (milestone <= 0) throw new LogicError("please enter a valid milestone!");
 
     let { username, perspective } = await this.parseMentionedUsername(message, {
       asCode: false,
     });
 
     let track = await this.lastFMService.getMilestone(username, milestone);
+
+    if (!track) throw new BadLastFMResponseError();
 
     let embed = new MessageEmbed()
       .setAuthor(

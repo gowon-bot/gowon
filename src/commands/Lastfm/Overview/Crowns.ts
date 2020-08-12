@@ -17,7 +17,7 @@ export class Crowns extends OverviewChildCommand {
       this.calculator.scrobblesPerCrown(),
     ]);
 
-    if (this.calculator.hasCrownStats()) {
+    if (await this.calculator.hasCrownStats()) {
       let embed = new MessageEmbed()
         .setAuthor(username + badge, image)
         .setColor(colour).setDescription(`You have ${numberDisplay(
@@ -33,7 +33,7 @@ export class Crowns extends OverviewChildCommand {
 
       await message.channel.send(embed);
     } else {
-      throw new LogicError("that user isn't logged into the bot!");
+      throw new LogicError("that user isn't logged into the bot or doesn't have any crowns!");
     }
   }
 }

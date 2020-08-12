@@ -137,6 +137,7 @@ export abstract class BaseCommand implements Command {
 
     let username =
       inputUsername || mentionedUsername || senderUser.lastFMUsername;
+    mentionedUsername = inputUsername || mentionedUsername;
 
     dbUser = username === senderUser.lastFMUsername ? senderUser : dbUser;
 

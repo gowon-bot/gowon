@@ -4,6 +4,7 @@ import { jumbleRedisKey, JumbledArtist } from "./JumbleParentCommand";
 import { LogicError } from "../../../errors";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { shuffle } from "../../../helpers";
+import { Logger } from "../../../lib/Logger";
 
 export class Guess extends JumbleChildCommand {
   description = "Picks an artist from your library to jumble";

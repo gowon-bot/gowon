@@ -2,6 +2,7 @@ import { FriendsChildCommand } from "./FriendsChildCommand";
 import { Message, MessageEmbed } from "discord.js";
 import { FriendsRequester } from "../../../lib/FriendsRequester";
 import { numberDisplay } from "../../../helpers";
+import { LogicError } from "../../../errors";
 
 export class List extends FriendsChildCommand {
   aliases = ["fm", "np", "nowplaying"];
@@ -17,6 +18,8 @@ export class List extends FriendsChildCommand {
       message.guild?.id!,
       this.user
     );
+
+    if (numberOfFriends === 0) throw new LogicError("you don't have any friends!")
 
     let embed = new MessageEmbed()
       .setTitle(

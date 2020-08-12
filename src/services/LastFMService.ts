@@ -117,7 +117,7 @@ export class LastFMService extends BaseService {
       );
     }
 
-    return response.recenttracks.track[1];
+    return response.recenttracks.track[1] ?? response.recenttracks.track[0];
   }
 
   async getNumberScrobbles(
@@ -214,10 +214,8 @@ export class LastFMService extends BaseService {
 
       return !!user.name;
     } catch (e) {
-      if (e.name === "LastFMConnectionError") {
-        if (e.response?.status === 404) {
-          return false;
-        }
+      if (e.name === "LastFMConnectionError" || e.name === "LastFMError:8") {
+        return false;
       }
       throw e;
     }

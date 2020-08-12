@@ -12,12 +12,21 @@ export default class LastFM extends LastFMBaseCommand {
 
   arguments: Arguments = {
     mentions: {
-      user: { index: 0, description: "The user to lookup" },
+      user: {
+        index: 0,
+        description: "The user to lookup",
+        nonDiscordMentionParsing: this.ndmp,
+      },
+    },
+    inputs: {
+      friendUsername: { index: 0 },
     },
   };
 
   async run(message: Message) {
-    let { username, perspective } = await this.parseMentionedUsername(message);
+    let { username, perspective } = await this.parseMentionedUsername(message, {
+      inputArgumentName: "friendUsername",
+    });
 
     let link = LinkGenerator.userPage(username);
 

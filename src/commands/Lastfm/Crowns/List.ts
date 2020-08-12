@@ -2,6 +2,7 @@ import { CrownsChildCommand } from "./CrownsChildCommand";
 import { Message, MessageEmbed, User } from "discord.js";
 import { numberDisplay, ucFirst, getOrdinal } from "../../../helpers";
 import { Arguments } from "../../../lib/arguments/arguments";
+import { LogicError } from "../../../errors";
 
 export class List extends CrownsChildCommand {
   description = "Lists a user's top crowns";
@@ -28,6 +29,9 @@ export class List extends CrownsChildCommand {
       this.crownsService.count(discordID, message.guild?.id!),
       this.crownsService.getRank(discordID, message.guild?.id!),
     ]);
+
+    if (!rank?.count)
+      throw new LogicError("you don't have any crowns in this server!");
 
     let embed = new MessageEmbed()
       .setTitle(`${ucFirst(perspective.possessive)} crowns`)

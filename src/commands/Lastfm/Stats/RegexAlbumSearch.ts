@@ -35,11 +35,7 @@ export default class RegexAlbumSearch extends LastFMBaseCommand {
   async run(message: Message, runAs: RunAs) {
     let { username, perspective } = await this.parseMentionedUsername(message);
 
-    let page = 1;
-
-    if (runAs) {
-      page = runAs.lastString().slice(2).toInt() || 1;
-    }
+    let page = (runAs.lastString().match("[0-9]{1,3}") || [])[0]?.toInt() || 1;
 
     let regex = this.parsedArguments.regex as string;
 

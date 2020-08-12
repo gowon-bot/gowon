@@ -15,7 +15,8 @@ Bugs:
   [x] Party for milestones
   [x] Add inactive marker for `!wh`
   [x] Jaljayo good night easter egg
-  [] Fix algorithm for !t
+  [x] Fix algorithm for !t
+  [] pct commands return nan
 
 Todo:
   [x] Add crown to artist info

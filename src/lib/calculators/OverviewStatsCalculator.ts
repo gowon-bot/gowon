@@ -44,8 +44,8 @@ export class OverviewStatsCalculator {
     this.crownsService = new CrownsService(logger);
   }
 
-  hasCrownStats(): boolean {
-    return !!this.userID;
+  async hasCrownStats(): Promise<boolean> {
+    return !!this.userID && !!(await this.crownsCount());
   }
 
   async cacheAll(): Promise<void> {
@@ -98,7 +98,7 @@ export class OverviewStatsCalculator {
   async crownsCount(): Promise<number | undefined> {
     if (!this.userID) return undefined;
     if (!this.cache.crownsCount)
-      this.cache.crownsCount = (await this.crownsRank())!.count.toInt();
+      this.cache.crownsCount = (await this.crownsRank())?.count?.toInt();
 
     return this.cache.crownsCount;
   }
@@ -319,6 +319,8 @@ export class OverviewStatsCalculator {
     let scrobbles = (await this.totalScrobbles()).replace(",", "").toInt();
     let sumTop = await this.sumTop();
     let artistCount = (await this.totalArtists()).replace(",", "").toInt();
+
+    console.log(scrobbles)
 
     if (scrobbles < 1000)
       throw new LogicError(

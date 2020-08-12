@@ -10,7 +10,7 @@ export default class RegexTrackSearch extends LastFMBaseCommand {
   description =
     "Searches your top tracks for tracks that match a given regex\nRegex help: https://regexr.com/";
   subcategory = "library stats";
-  usage = ["regex"]
+  usage = ["regex"];
 
   arguments: Arguments = {
     mentions: {
@@ -28,18 +28,14 @@ export default class RegexTrackSearch extends LastFMBaseCommand {
     {
       variationRegex: /(ts|regexts|regextracksearch)[0-9]{1,3}/i,
       description: "Offset in pages",
-      friendlyString: "rts<page_number>"
+      friendlyString: "rts<page_number>",
     },
   ];
-
+  
   async run(message: Message, runAs: RunAs) {
     let { username, perspective } = await this.parseMentionedUsername(message);
 
-    let page = 1;
-
-    if (runAs) {
-      page = runAs.lastString().slice(2).toInt() || 1;
-    }
+    let page = (runAs.lastString().match("[0-9]{1,3}") || [])[0]?.toInt() || 1;
 
     let regex = this.parsedArguments.regex as string;
 

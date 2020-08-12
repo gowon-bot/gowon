@@ -6,8 +6,8 @@ import { LogicError } from "../../../errors";
 export default class LastFmToDiscord extends LastFMBaseCommand {
   aliases = ["lfm2d"];
   description = "Displays who is logged in as a given user";
-  subcategory = "accounts"
-  usage = "lastfm_username"
+  subcategory = "accounts";
+  usage = "lastfm_username";
 
   arguments: Arguments = {
     inputs: {
@@ -32,6 +32,10 @@ export default class LastFmToDiscord extends LastFMBaseCommand {
         `couldn't find anyone logged in as ${username.code()} in this server.`
       );
 
-    message.reply(`${member.displayName.bold()} is logged in as ${username.code()}.`);
+    message.reply(
+      `${member.displayName.bold()} is logged in as ${username
+        .toLowerCase()
+        .code()}.`
+    );
   }
 }

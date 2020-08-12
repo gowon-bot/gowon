@@ -1,6 +1,6 @@
 import { TopArtists } from "../../services/LastFMService.types";
 import { calculatePercent } from "../../helpers/stats";
-import { mean, sqrt } from "mathjs";
+import { mean } from "mathjs";
 
 export interface TasteArtist {
   name: string;
@@ -40,10 +40,10 @@ export class TasteCalculator {
 
     return matchedArtists.sort(
       (a, b) =>
-        (b.user1plays / topArtistsAverage.userOne) * 10 +
-        sqrt(b.user1plays) -
-        (a.user2plays / topArtistsAverage.userTwo) * 10 +
-        sqrt(a.user2plays)
+        (b.user1plays + b.user2plays) *
+          (b.user1plays / topArtistsAverage.userOne) -
+        (a.user1plays + a.user2plays) *
+          (a.user1plays / topArtistsAverage.userOne)
     );
   }
 

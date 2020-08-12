@@ -11,14 +11,16 @@ import { DB } from "./database";
 
 import config from "../config.json";
 import { Dashboard } from "./dashboard";
+import { RedisService } from "./services/RedisService";
 
 const client = new Client();
 const handler = new CommandHandler();
-let dashboard = new Dashboard();
+const dashboard = new Dashboard();
+const redisService = new RedisService();
 
 dashboard.init();
 
-Promise.all([DB.connect(), handler.init()]).then(() => {
+Promise.all([DB.connect(), handler.init(), redisService.init()]).then(() => {
   client.on("ready", () => {
     console.log(`Logged in as ${client?.user && client.user.tag}!`);
   });

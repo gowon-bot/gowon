@@ -1,6 +1,7 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { Message, MessageEmbed } from "discord.js";
+import { Logger } from "../../../lib/Logger";
 
 interface CheckedCrownsDisplay {
   [state: string]: Array<string>;
@@ -27,6 +28,8 @@ export class CheckMany extends CrownsChildCommand {
     if (!artists) {
       artists = [(await this.lastFMService.nowPlayingParsed(username)).artist];
     }
+
+    this.logger.log("artists", Logger.formatObject(artists));
 
     let artistDetailsList = await Promise.all(
       artists.map((a) => this.lastFMService.artistInfo(a, username))

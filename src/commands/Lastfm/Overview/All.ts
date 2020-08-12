@@ -57,7 +57,7 @@ Among ${perspective.possesivePronoun} top 1000 artists, ${
     - ${(
       await this.calculator.playsOver(100)
     ).bold()} artists with 100+ scrobbles` +
-          (this.calculator.hasCrownStats()
+          ((await this.calculator.hasCrownStats())
             ? `\n\n**Total crowns**: ${rank!.count} (${getOrdinal(
                 rank!.rank.toInt()
               ).italic()})
