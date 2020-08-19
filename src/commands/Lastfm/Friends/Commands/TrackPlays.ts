@@ -7,7 +7,7 @@ import { Arguments } from "../../../../lib/arguments/arguments";
 export class TrackPlays extends FriendsChildCommand {
   description = "View how many plays of a track your friends have";
   aliases = ["tp"];
-  usage = ["", "artist | track"]
+  usage = ["", "artist | track"];
 
   arguments: Arguments = {
     inputs: {
@@ -18,24 +18,24 @@ export class TrackPlays extends FriendsChildCommand {
 
   async run(message: Message) {
     let artist = this.parsedArguments.artist as string,
-      trackName = this.parsedArguments.track as string;
+      track = this.parsedArguments.track as string;
 
-    if (!artist || !trackName) {
+    if (!artist || !track) {
       let nowPlaying = await this.lastFMService.nowPlayingParsed(
         this.senderUsername
       );
 
       if (!artist) artist = nowPlaying.artist;
-      if (!trackName) trackName = nowPlaying.name;
+      if (!track) track = nowPlaying.name;
     }
 
-    let trackDetails = await new FriendsRequester(this.friendUsernames).fetch(
-      this.lastFMService.trackInfo.bind(this.lastFMService),
-      [artist, trackName],
-      {
-        usernameInPosition: 2,
-      }
-    );
+    let trackDetails = await new FriendsRequester([
+      ...this.friendUsernames,
+      this.senderUsername,
+    ]).fetch(this.lastFMService.trackInfo.bind(this.lastFMService), {
+      artist,
+      track,
+    });
 
     let trackInfo = Object.values(trackDetails).filter((v) => v.name)[0];
 

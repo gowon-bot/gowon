@@ -26,9 +26,11 @@ export class Guess extends JumbleChildCommand {
       throw new LogicError("you haven't jumbled an artist yet!");
     if (!guess) throw new LogicError("please make a guess");
 
+    this.logger.log("jumble", Logger.formatObject(jumbledArtist));
+
     if (
-      guess.toLowerCase().replace(/\s+/, " ") ===
-      jumbledArtist.unjumbled.toLowerCase().replace(/\s+/, " ")
+      guess.toLowerCase().replace(/\s+/g, " ") ===
+      jumbledArtist.unjumbled.toLowerCase().replace(/\s+/g, " ")
     ) {
       this.redisService.sessionDelete(message, jumbleRedisKey);
 
@@ -43,13 +45,3 @@ export class Guess extends JumbleChildCommand {
     }
   }
 }
-
-// Can You Solve This Artist Name Jumble?
-// Who is this artist?
-
-// IAXLEGA 500
-
-// Hints:
-// This artist has 403.5k listeners on last.fm and douzed has scrobbled them 5 times overall (#312 on their top artists list for that period).This artist is tagged as "shoegaze" as well as "dream pop". Last.fm considers Mojave 3 and Slowdive to be similar.
-
-// Command executed by douzed#4353•Today at 10:16 PM

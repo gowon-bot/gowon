@@ -37,7 +37,9 @@ export abstract class OverviewChildCommand extends LastFMBaseChildCommand {
         : "";
 
     let colour =
-      userType === "mod"
+      userType === "alum"
+        ? "#9804fe"
+        : userType === "mod"
         ? "#fb9904"
         : userType === "staff"
         ? "#b90100"

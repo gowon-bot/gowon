@@ -23,11 +23,11 @@ export default class Cover extends LastFMBaseCommand {
 
   async run(message: Message) {
     let artist = this.parsedArguments.artist as string,
-      albumName = this.parsedArguments.album as string;
+      album = this.parsedArguments.album as string;
 
     let { username } = await this.parseMentionedUsername(message);
 
-    if (!artist && !albumName) {
+    if (!artist && !album) {
       let nowPlaying = await this.lastFMService.nowPlaying(username);
 
       let image = nowPlaying.image.find((i) => i.size === "extralarge");
@@ -39,14 +39,14 @@ export default class Cover extends LastFMBaseCommand {
         { files: [image?.["#text"] ?? ""] }
       );
     } else {
-      if (!artist || !albumName) {
+      if (!artist || !album) {
         let nowPlaying = await this.lastFMService.nowPlayingParsed(username);
 
         if (!artist) artist = nowPlaying.artist;
-        if (!albumName) albumName = nowPlaying.album;
+        if (!album) album = nowPlaying.album;
       }
 
-      let albumDetails = await this.lastFMService.albumInfo(artist, albumName);
+      let albumDetails = await this.lastFMService.albumInfo({ artist, album });
       let image = albumDetails.image.find((i) => i.size === "extralarge");
 
       await message.channel.send(

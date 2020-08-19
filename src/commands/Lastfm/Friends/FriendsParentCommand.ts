@@ -11,7 +11,7 @@ export default class FriendsParentCommand extends LastFMBaseParentCommand {
   friendlyName = "friends";
   subcategory = "friends"
 
-  prefixes = ["friends", "fr", "f"];
+  prefixes = ["friends", "fr"];
   default = () => new List();
 
   children: CommandManager = new CommandManager({

@@ -21,3 +21,6 @@ export class Friend extends BaseEntity {
   @Column()
   friendUsername!: string;
 }
+
+
+

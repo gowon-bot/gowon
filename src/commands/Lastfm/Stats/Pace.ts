@@ -9,12 +9,13 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { PaceCalculator } from "../../../lib/calculators/PaceCalculator";
 import { LogicError } from "../../../errors";
 import { numberDisplay, dateDisplay } from "../../../helpers";
+import moment from "moment";
 
 export default class Pace extends LastFMBaseCommand {
   aliases = ["pc"];
   description = "predicts when you're gonna git a milestone";
-  subcategory = "library stats"
-  usage = ["", "milestone", "time period milestone @user"]
+  subcategory = "library stats";
+  usage = ["", "milestone", "time period milestone @user"];
 
   arguments: Arguments = {
     mentions: {
@@ -41,7 +42,11 @@ export default class Pace extends LastFMBaseCommand {
           }),
         index: -1,
       },
-      milestone: { index: 0, regex: /[0-9]{1,}(?!\w)(?! [a-z])/g },
+      milestone: {
+        index: 0,
+        regex: /[0-9]{1,}(?!\w)(?! [a-z])/g,
+        number: true,
+      },
     },
   };
 
@@ -49,9 +54,9 @@ export default class Pace extends LastFMBaseCommand {
     let timeRange = this.parsedArguments.timeRange as TimeRange,
       humanReadableTimeRange = this.parsedArguments
         .humanReadableTimeRange as string,
-      milestone = (this.parsedArguments.milestone as string)?.toInt();
+      milestone = this.parsedArguments.milestone as number | undefined;
 
-    if (milestone > 10000000)
+    if (milestone && milestone > 10000000)
       throw new LogicError(
         "you probably won't be alive to witness that milestone..."
       );
@@ -61,6 +66,11 @@ export default class Pace extends LastFMBaseCommand {
     let paceCalculator = new PaceCalculator(this.lastFMService, username);
 
     let pace = await paceCalculator.calculate(timeRange, milestone);
+
+    if (moment(pace.prediction).isBefore(new Date()))
+      throw new LogicError(
+        `${perspective.plusToHave} already passed that milestone!`
+      );
 
     let embed = new MessageEmbed().setDescription(
       `At a rate of **${numberDisplay(

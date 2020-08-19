@@ -12,20 +12,41 @@ export class FriendsRequester {
     this.usernames = usernames;
   }
 
+  async fetch<T, ParamsT>(
+    method: (params: ParamsT) => Promise<T>,
+    params: ParamsT,
+    options?: {}
+  ): Promise<FetchedResponses<T>>;
   async fetch<T>(
     method: (...params: any[]) => Promise<T>,
-    params: any[] = [],
-    options: { usernameInPosition?: number } = { usernameInPosition: 0 }
+    params: any[],
+    options?: { usernameInPosition?: number }
+  ): Promise<FetchedResponses<T>>;
+  async fetch<T, ParamsT>(
+    method: (...params: any[]) => Promise<T>,
+    params: any,
+    options?: any
   ): Promise<FetchedResponses<T>> {
-    let fetched = await Promise.all(
-      this.usernames.map((u) => {
-        return method(...params.insertAtIndex(options.usernameInPosition || 0, u));
-      })
-    );
+    if (params instanceof Array) {
+      let fetched = await Promise.all(
+        this.usernames.map((u) =>
+          method(...params.insertAtIndex(options?.usernameInPosition || 0, u))
+        )
+      );
 
-    return fetched.reduce((acc, f, idx) => {
-      acc[this.usernames[idx]] = f;
-      return acc;
-    }, {} as FetchedResponses<T>);
+      return fetched.reduce((acc, f, idx) => {
+        acc[this.usernames[idx]] = f;
+        return acc;
+      }, {} as FetchedResponses<T>);
+    } else {
+      let fetched = await Promise.all(
+        this.usernames.map((u) => method({ ...params, username: u } as ParamsT))
+      );
+
+      return fetched.reduce((acc, f, idx) => {
+        acc[this.usernames[idx]] = f;
+        return acc;
+      }, {} as FetchedResponses<T>);
+    }
   }
 }

@@ -8,6 +8,7 @@ import { LastFMBaseCommand } from "./LastFMBaseCommand";
 import { CrownsService } from "../../services/dbservices/CrownsService";
 import { RunAs } from "../../lib/AliasChecker";
 import { TagConsolidator } from "../../lib/TagConsolidator";
+import { sanitizeForDiscord } from "../../helpers/discord";
 
 export default class NowPlaying extends LastFMBaseCommand {
   aliases = ["np", "fm"];
@@ -74,7 +75,7 @@ export default class NowPlaying extends LastFMBaseCommand {
         } for ${username}`,
         message.author.avatarURL() || undefined
       )
-      .setTitle(track.name)
+      .setTitle(sanitizeForDiscord(track.name))
       .setURL(LinkGenerator.trackPage(track.artist, track.name))
       .setDescription(
         `by ${links.artist.bold()}` +
@@ -87,8 +88,12 @@ export default class NowPlaying extends LastFMBaseCommand {
     if (!["fmc"].includes(runAs.lastString()!)) {
       // Types for Promise.allSettled are broken(?), so I have to manually assert the type that's returned
       let [artistInfo, trackInfo, crown] = (await Promise.allSettled([
-        this.lastFMService.artistInfo(track.artist, username),
-        this.lastFMService.trackInfo(track.artist, track.name, username),
+        this.lastFMService.artistInfo({ artist: track.artist, username }),
+        this.lastFMService.trackInfo({
+          artist: track.artist,
+          track: track.name,
+          username,
+        }),
         this.crownsService.getCrownDisplay(track.artist, message),
       ])) as { status: string; value?: any; reason: any }[];
 
@@ -137,7 +142,7 @@ export default class NowPlaying extends LastFMBaseCommand {
               : "") +
             this.tagConsolidator
               .consolidate(
-                runAs.lastString() === "fmvv" ? Infinity : 5,
+                runAs.lastString() === "fmvv" ? Infinity : 6,
                 runAs.lastString() !== "fmvv"
               )
               .join(" ‧ ") +

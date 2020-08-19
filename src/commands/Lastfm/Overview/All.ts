@@ -16,7 +16,10 @@ export class All extends OverviewChildCommand {
     let { colour, badge, image } = await this.getAuthorDetails();
 
     let rank = await this.calculator.crownsRank();
-    let breadth = await this.calculator.breadth();
+    let breadth: { rating: number; ratingString: string } | undefined;
+    try {
+      breadth = await this.calculator.breadth();
+    } catch {}
 
     let embed = new MessageEmbed()
       .setAuthor(this.username + badge, image)
@@ -35,7 +38,13 @@ _Scrobbling since ${await this.calculator.joined()}_
 **Tracks per album**: ${await this.calculator.tracksPerAlbum()}
 
 **H-Index**: ${await this.calculator.hIndex()}
-**Breadth rating**: ${breadth.rating.toFixed(0)} _(${breadth.ratingString})_
+${
+  breadth
+    ? `**Breadth rating**: ${breadth.rating.toFixed(0)} _(${
+        breadth.ratingString
+      })_`
+    : ""
+}
 **# of artists to equal 50% of scrobbles**: ${await this.calculator.top50Percent()}
 **Total scrobbles for top 10 artists**: ${await this.calculator.sumTop(10)}
 ${ucFirst(perspective.possessive)} top 10 artists account for: ${(
@@ -56,7 +65,10 @@ Among ${perspective.possesivePronoun} top 1000 artists, ${
     ).bold()} artists with 250+ scrobbles
     - ${(
       await this.calculator.playsOver(100)
-    ).bold()} artists with 100+ scrobbles` +
+    ).bold()} artists with 100+ scrobbles
+    - ${(
+      await this.calculator.playsOver(50)
+    ).bold()} artists with 50+ scrobbles` +
           ((await this.calculator.hasCrownStats())
             ? `\n\n**Total crowns**: ${rank!.count} (${getOrdinal(
                 rank!.rank.toInt()

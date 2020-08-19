@@ -42,7 +42,7 @@ export class Remove extends FriendsChildCommand {
 
     await message.channel.send(
       new MessageEmbed().setDescription(
-        `Successfully added ${username.code()} as a friend!`
+        `Successfully removed ${username.code()} as a friend!`
       )
     );
   }

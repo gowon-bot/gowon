@@ -5,8 +5,8 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 export default class ArtistPage extends LastFMBaseCommand {
   aliases = ["page", "apage", "arp", "arpa"];
   description = "Links you to the artist page on lastfm";
-  subcategory = "pages"
-  usage = ["", "artist"]
+  subcategory = "pages";
+  usage = ["", "artist"];
 
   arguments: Arguments = {
     inputs: {
@@ -34,7 +34,10 @@ export default class ArtistPage extends LastFMBaseCommand {
       artist = (await this.lastFMService.nowPlayingParsed(username)).artist;
     }
 
-    let artistDetails = await this.lastFMService.artistInfo(artist, username);
+    let artistDetails = await this.lastFMService.artistInfo({
+      artist,
+      username,
+    });
 
     message.reply(
       `${artistDetails.name.bold()} on last.fm: ${artistDetails.url}`

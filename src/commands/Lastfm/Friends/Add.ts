@@ -1,7 +1,7 @@
 import { FriendsChildCommand } from "./FriendsChildCommand";
 import { Message, MessageEmbed } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
-import { LogicError } from "../../../errors";
+import { LogicError, AlreadyFriendsError } from "../../../errors";
 
 export class Add extends FriendsChildCommand {
   description = "Add a friend";
@@ -23,12 +23,13 @@ export class Add extends FriendsChildCommand {
   async prerun() {}
 
   async run(message: Message) {
-    let { username, senderUsername } = await this.parseMentionedUsername(
-      message,
-      {
-        inputArgumentName: "friendUsername",
-      }
-    );
+    let {
+      username,
+      senderUsername,
+      dbUser,
+    } = await this.parseMentionedUsername(message, {
+      inputArgumentName: "friendUsername",
+    });
 
     if (username === senderUsername)
       throw new LogicError("please specify a user to add as a friend!");
@@ -37,6 +38,16 @@ export class Add extends FriendsChildCommand {
       message.author.id,
       message.guild?.id!
     );
+
+    let friends = await this.friendsService.getUsernames(
+      message.guild?.id!,
+      dbUser!
+    );
+
+    this.logger.log("friends", friends);
+
+    if (friends.includes(username.toLowerCase()))
+      throw new AlreadyFriendsError();
 
     let friend = await this.friendsService.addFriend(
       message.guild?.id!,

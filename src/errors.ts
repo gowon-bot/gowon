@@ -65,7 +65,7 @@ export class AlreadyFriendsError extends ClientError {
   name = "AlreadyFriendsError";
 
   constructor() {
-    super("You are already friends with that user");
+    super("you are already friends with that user");
   }
 }
 

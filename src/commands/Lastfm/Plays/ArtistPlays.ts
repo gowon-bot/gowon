@@ -6,8 +6,8 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 export default class ArtistPlays extends LastFMBaseCommand {
   aliases = ["ap", "p"];
   description = "Shows you how many plays you have of a given artist";
-  subcategory = "plays"
-  usage = ["", "artist @user"]
+  subcategory = "plays";
+  usage = ["", "artist @user"];
 
   arguments: Arguments = {
     inputs: {
@@ -40,7 +40,10 @@ export default class ArtistPlays extends LastFMBaseCommand {
         .artist;
     }
 
-    let artistDetails = await this.lastFMService.artistInfo(artist, username);
+    let artistDetails = await this.lastFMService.artistInfo({
+      artist,
+      username,
+    });
 
     message.channel.send(
       `${ucFirst(perspective.plusToHave)} **${numberDisplay(

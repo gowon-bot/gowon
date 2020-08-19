@@ -11,7 +11,7 @@ import { Logger } from "../Logger";
 import { numberDisplay } from "../../helpers";
 import { calculatePercent } from "../../helpers/stats";
 import { CrownRankResponse } from "../../database/entity/Crown";
-import { sqrt } from "mathjs";
+import { log } from "mathjs";
 import { LogicError } from "../../errors";
 
 export class OverviewStatsCalculator {
@@ -60,37 +60,39 @@ export class OverviewStatsCalculator {
 
   async userInfo(): Promise<UserInfo> {
     if (!this.cache.userInfo)
-      this.cache.userInfo = await this.lastFMService.userInfo(this.username);
+      this.cache.userInfo = await this.lastFMService.userInfo({
+        username: this.username,
+      });
 
     return this.cache.userInfo;
   }
 
   async topArtists(): Promise<TopArtists> {
     if (!this.cache.topArtists)
-      this.cache.topArtists = await this.lastFMService.topArtists(
-        this.username,
-        1000
-      );
+      this.cache.topArtists = await this.lastFMService.topArtists({
+        username: this.username,
+        limit: 1000,
+      });
 
     return this.cache.topArtists;
   }
 
   async topAlbums(): Promise<TopAlbums> {
     if (!this.cache.topAlbums)
-      this.cache.topAlbums = await this.lastFMService.topAlbums(
-        this.username,
-        1
-      );
+      this.cache.topAlbums = await this.lastFMService.topAlbums({
+        username: this.username,
+        limit: 1,
+      });
 
     return this.cache.topAlbums;
   }
 
   async topTracks(): Promise<TopTracks> {
     if (!this.cache.topTracks)
-      this.cache.topTracks = await this.lastFMService.topTracks(
-        this.username,
-        1
-      );
+      this.cache.topTracks = await this.lastFMService.topTracks({
+        username: this.username,
+        limit: 1,
+      });
 
     return this.cache.topTracks;
   }
@@ -156,9 +158,9 @@ export class OverviewStatsCalculator {
       this.topArtists(),
     ]);
 
-    return (
+    return (~~(
       userInfo.playcount.toInt() / topArtists["@attr"].total.toInt()
-    ).toFixed(2);
+    )).toFixed(2);
   }
 
   async totalAlbums(): Promise<string> {
@@ -173,9 +175,9 @@ export class OverviewStatsCalculator {
       this.topAlbums(),
     ]);
 
-    return (
+    return (~~(
       userInfo.playcount.toInt() / topAlbums["@attr"].total.toInt()
-    ).toFixed(2);
+    )).toFixed(2);
   }
 
   async totalTracks(): Promise<string> {
@@ -190,9 +192,9 @@ export class OverviewStatsCalculator {
       this.topTracks(),
     ]);
 
-    return (
+    return (~~(
       userInfo.playcount.toInt() / topTracks["@attr"].total.toInt()
-    ).toFixed(2);
+    )).toFixed(2);
   }
 
   async albumsPerArtist(): Promise<string> {
@@ -239,10 +241,10 @@ export class OverviewStatsCalculator {
       const artist = topArtists.artist[artistIndex];
 
       if (artist.playcount.toInt() <= artistIndex) {
-        return artistIndex.toLocaleString();
+        return (artistIndex || 1).toLocaleString();
       }
     }
-    return "";
+    return "1";
   }
 
   async top50Percent(): Promise<string> {
@@ -264,10 +266,10 @@ export class OverviewStatsCalculator {
       sum += artist.playcount.toInt();
 
       if (sum > halfOfScrobbles) {
-        return artistIndex.toLocaleString();
+        return (artistIndex || 1).toLocaleString();
       }
     }
-    return "0";
+    return "1";
   }
 
   async sumTop(number = 10): Promise<number> {
@@ -313,40 +315,72 @@ export class OverviewStatsCalculator {
     return (userInfo.playcount.toInt() / crownsCount!).toFixed(2);
   }
 
+  // async breadth(): Promise<{ rating: number; ratingString: string }> {
+  //   let top50 = (await this.top50Percent()).replace(",", "").toInt();
+  //   let hindex = (await this.hIndex()).replace(",", "").toInt();
+  //   let scrobbles = (await this.totalScrobbles()).replace(",", "").toInt();
+  //   let sumTop = await this.sumTop();
+  //   let artistCount = (await this.totalArtists()).replace(",", "").toInt();
+
+  //   console.log(scrobbles);
+
+  //   if (scrobbles < 1000)
+  //     throw new LogicError(
+  //       "at least 1000 scrobbles are needed to calculate breadth"
+  //     );
+
+  //   let rating =
+  //     sqrt(
+  //       (((top50 * (hindex * 2) * sqrt(scrobbles / 1000)) / 2) *
+  //         (artistCount / (scrobbles / 1000))) /
+  //         (sumTop / 2)
+  //     ) *
+  //     (2 / 3);
+  //   let ratingString =
+  //     rating > 200
+  //       ? "what the fuck"
+  //       : rating > 50
+  //       ? "really high!"
+  //       : rating > 20
+  //       ? "very high"
+  //       : rating > 10
+  //       ? "high"
+  //       : rating > 5
+  //       ? "medium"
+  //       : rating > 2
+  //       ? "low"
+  //       : rating > 1
+  //       ? "very low"
+  //       : ".... really?";
+
+  //   return { rating, ratingString };
+  // }
+
   async breadth(): Promise<{ rating: number; ratingString: string }> {
     let top50 = (await this.top50Percent()).replace(",", "").toInt();
     let hindex = (await this.hIndex()).replace(",", "").toInt();
     let scrobbles = (await this.totalScrobbles()).replace(",", "").toInt();
     let sumTop = await this.sumTop();
-    let artistCount = (await this.totalArtists()).replace(",", "").toInt();
+    // let artistCount = (await this.totalArtists()).replace(",", "").toInt();
 
-    console.log(scrobbles)
+    console.log(scrobbles);
 
     if (scrobbles < 1000)
       throw new LogicError(
         "at least 1000 scrobbles are needed to calculate breadth"
       );
 
-    let rating = sqrt(
-      (((top50 * hindex * sqrt(scrobbles / 1000)) / 2) *
-        (artistCount / (scrobbles / 1000))) /
-        (sumTop / 2)
-    );
-    let ratingString =
-      rating > 50
-        ? "really high!"
-        : rating > 20
-        ? "very high"
-        : rating > 10
-        ? "high"
-        : rating > 5
-        ? "medium"
-        : rating > 2
-        ? "low"
-        : rating > 1
-        ? "very low"
-        : ".... really?";
+    // let rsating =
+    //   sqrt(
+    //     (((top50 * (hindex * 2) * sqrt(scrobbles / 1000)) / 2) *
+    //       (artistCount / (scrobbles / 1000))) /
+    //       (sumTop / 2)
+    //   ) *
+    //   (2 / 3);
 
-    return { rating, ratingString };
+    // let rating = log(top50 * Math.pow(hindex, 2) * (10 / sumTop) + 1) * 5;
+    let rating = log((top50 * Math.pow(hindex, 1.5)) / sumTop + 1, 2) * 5;
+
+    return { rating, ratingString: "h" };
   }
 }

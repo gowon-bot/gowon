@@ -3,6 +3,7 @@ import { Arguments } from "../../../lib/arguments/arguments";
 import { LinkGenerator } from "../../../helpers/lastFM";
 import { ucFirst } from "../../../helpers";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
+import { RecordNotFoundError } from "../../../errors";
 
 export default class LastFM extends LastFMBaseCommand {
   aliases = ["lfm"];
@@ -27,6 +28,9 @@ export default class LastFM extends LastFMBaseCommand {
     let { username, perspective } = await this.parseMentionedUsername(message, {
       inputArgumentName: "friendUsername",
     });
+
+    if (!(await this.lastFMService.userExists(username)))
+      throw new RecordNotFoundError("user");
 
     let link = LinkGenerator.userPage(username);
 

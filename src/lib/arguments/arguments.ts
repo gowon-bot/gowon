@@ -22,6 +22,7 @@ export interface InputArguments {
   regex?: RegExp;
   optional?: boolean;
   custom?: (messageString: string) => ParsedArgument;
+  number?: boolean;
 }
 
 export interface Arguments {
@@ -97,8 +98,7 @@ export class ArgumentParser extends Parser {
         acc[arg] = this.getElementFromIndex(
           array,
           argOptions.index,
-          argOptions.join,
-          argOptions.default
+          argOptions
         );
 
         return acc;

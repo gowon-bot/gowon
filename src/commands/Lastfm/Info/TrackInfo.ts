@@ -8,7 +8,7 @@ export default class TrackInfo extends InfoCommand {
 
   aliases = ["tri"];
   description = "Display some information about a track";
-  usage = ["", "artist | track"]
+  usage = ["", "artist | track"];
 
   arguments: Arguments = {
     inputs: {
@@ -19,9 +19,9 @@ export default class TrackInfo extends InfoCommand {
 
   async run(message: Message) {
     let artist = this.parsedArguments.artist as string,
-      trackName = this.parsedArguments.track as string;
+      track = this.parsedArguments.track as string;
 
-    if (!artist || !trackName) {
+    if (!artist || !track) {
       let { senderUsername } = await this.parseMentionedUsername(message);
 
       let nowPlaying = await this.lastFMService.nowPlayingParsed(
@@ -29,10 +29,10 @@ export default class TrackInfo extends InfoCommand {
       );
 
       if (!artist) artist = nowPlaying.artist;
-      if (!trackName) trackName = nowPlaying.name;
+      if (!track) track = nowPlaying.name;
     }
 
-    let trackInfo = await this.lastFMService.trackInfo(artist, trackName);
+    let trackInfo = await this.lastFMService.trackInfo({ artist, track });
 
     this.tagConsolidator.addTags(trackInfo.toptags.tag);
 

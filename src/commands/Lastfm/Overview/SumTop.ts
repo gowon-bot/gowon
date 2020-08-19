@@ -7,17 +7,17 @@ import { numberDisplay, ucFirst } from "../../../helpers";
 export class SumTop extends OverviewChildCommand {
   aliases = [];
   description = "Shows how much of your scrobbles your top artists make up";
-  usage = ["", "top", "top @user"]
+  usage = ["", "top", "top @user"];
 
   arguments: Arguments = {
     mentions: this.arguments.mentions,
     inputs: {
-      top: { index: 0, regex: /[0-9]{1,4}/ },
+      top: { index: 0, regex: /[0-9]{1,4}/, default: 10, number: true },
     },
   };
 
   async run(message: Message) {
-    let top = (this.parsedArguments.top as string)?.toInt() || 10;
+    let top = this.parsedArguments.top as number;
     let { username, perspective } = await this.parseMentionedUsername(message);
 
     if (top > 1000 || top < 2)
@@ -25,8 +25,8 @@ export class SumTop extends OverviewChildCommand {
 
     let { badge, colour, image } = await this.getAuthorDetails();
     let [sumtop, sumtoppct] = await Promise.all([
-      this.calculator.sumTop(top),
-      this.calculator.sumTopPercent(top),
+      this.calculator.sumTop(10),
+      this.calculator.sumTopPercent(10),
     ]);
 
     let embed = new MessageEmbed()

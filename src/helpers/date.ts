@@ -1,6 +1,7 @@
 import parse from "parse-duration";
 import moment, { DurationInputArg2 } from "moment";
 import { LogicError } from "../errors";
+import { LastFMPeriod } from "../services/LastFMService.types";
 
 const fallbackRegex = /(\s+|\b)1?(s(econd)?|mi(nute)?|h(our)?|d(ay)?|w(eek)?|m(o(nth)?)?|q(uarter)?|y(ear)?)(\s|\b)/gi;
 const overallRegex = /(\s+|\b)(a(lltime)?|o(verall)?)(\s|\b)/gi;
@@ -8,7 +9,7 @@ const overallRegex = /(\s+|\b)(a(lltime)?|o(verall)?)(\s|\b)/gi;
 function timeFrameConverter(timeframe: string): string {
   switch (timeframe.trim()) {
     case "s":
-      return "string";
+      return "second";
     case "mi":
       return "minute";
     case "h":
@@ -93,7 +94,8 @@ export function generateHumanTimeRange(
       .duration(timeRange.difference, "second")
       .humanize()
       .replace(/a(n)? /, "");
-    if (timeString.length) return "over the past " + timeString;
+    if (timeString.length)
+      return (options.raw ? "" : "over the past ") + timeString;
   } else {
     if (!options.noOverall && overallRegex.test(string))
       return options.overallMessage!;
@@ -105,7 +107,10 @@ export function generateHumanTimeRange(
     : options.overallMessage!;
 }
 
-export function generatePeriod(string: string, fallback = "overall"): string {
+export function generatePeriod(
+  string: string,
+  fallback: LastFMPeriod = "overall"
+): LastFMPeriod {
   let periodRegexes: { [period: string]: RegExp } = {
     "7day": /(\s+|\b)(1|one)? *(w(eek(s)?)?)|(7|seven) *d(ay(s)?)?(\s|\b)/gi,
     "3month": /(\s+|\b)((3|three) *m(o(nth(s)?)?)?|q(uarter)?)(\s|\b)/gi,
@@ -120,7 +125,7 @@ export function generatePeriod(string: string, fallback = "overall"): string {
 
     let matches = string.match(regex) || [];
 
-    if (matches.length > 0) return period;
+    if (matches.length > 0) return period as LastFMPeriod;
   }
 
   return fallback;
@@ -128,7 +133,7 @@ export function generatePeriod(string: string, fallback = "overall"): string {
 
 export function generateHumanPeriod(
   string: string,
-  fallback = "overall"
+  fallback: LastFMPeriod = "overall"
 ): string {
   let period = generatePeriod(string, fallback);
 

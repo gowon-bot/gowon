@@ -5,8 +5,8 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 export default class AlbumPage extends LastFMBaseCommand {
   aliases = ["alpa", "lpa", "alpage", "lpage"];
   description = "Links you to the album page on lastfm";
-  subcategory = "pages"
-  usage = ["", "artist | album"]
+  subcategory = "pages";
+  usage = ["", "artist | album"];
 
   arguments: Arguments = {
     inputs: {
@@ -24,22 +24,22 @@ export default class AlbumPage extends LastFMBaseCommand {
 
   async run(message: Message) {
     let artist = this.parsedArguments.artist as string,
-      albumName = this.parsedArguments.album as string;
+      album = this.parsedArguments.album as string;
 
     let { username } = await this.parseMentionedUsername(message);
 
-    if (!artist || !albumName) {
+    if (!artist || !album) {
       let nowPlaying = await this.lastFMService.nowPlayingParsed(username);
 
       if (!artist) artist = nowPlaying.artist;
-      if (!albumName) albumName = nowPlaying.album;
+      if (!album) album = nowPlaying.album;
     }
 
-    let albumDetails = await this.lastFMService.albumInfo(
+    let albumDetails = await this.lastFMService.albumInfo({
       artist,
-      albumName,
-      username
-    );
+      album,
+      username,
+    });
 
     message.channel.send(
       `${albumDetails.name.italic()} by ${albumDetails.artist.bold()} on last.fm: ${

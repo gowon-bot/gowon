@@ -12,7 +12,12 @@ export default class Combo extends LastFMBaseCommand {
 
   arguments: Arguments = {
     inputs: {
-      streakAmount: { index: 0, regex: /[0-9]{1,4}/g },
+      streakAmount: {
+        index: 0,
+        regex: /[0-9]{1,4}/g,
+        default: 1000,
+        number: true,
+      },
     },
     mentions: {
       user: {
@@ -26,18 +31,17 @@ export default class Combo extends LastFMBaseCommand {
   async run(message: Message) {
     let { username } = await this.parseMentionedUsername(message);
 
-    let streakAmount =
-      (this.parsedArguments.streakAmount as string)?.toInt() || 1000;
+    let streakAmount = this.parsedArguments.streakAmount as number;
 
     if (streakAmount < 1 || streakAmount > 1000) {
       await message.reply("Please specify a valid amount!");
       return;
     }
 
-    let recentTracks = await this.lastFMService.recentTracks(
+    let recentTracks = await this.lastFMService.recentTracks({
       username,
-      streakAmount
-    );
+      limit: streakAmount,
+    });
 
     let comboCalculator = new ComboCalculator();
 

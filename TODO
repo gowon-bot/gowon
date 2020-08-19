@@ -1,47 +1,18 @@
 Bugs:
-  [x] double pipes in now playing
-  [x] Use TagConsolidator for all info tag displays
-  [x] Tags are messed up with no track data but artist data
-  [x] Crown: undefined
-  [x] Fix tags
-  [x] Partytime (and possible other commands) that use `(arg as string).toInt()` break when undefined
-  [x] Split on needs spaces between splits
-  [x] Error message for private recent tracks
-  [x] `!toptracks`
-  [x] `!optout`, `!crowns kill` are broken
-  [x] !fmv -> !fm, !fm -> !fmc
-  [x] Pace should work with no arguments
-  [x] Add scrobble purgatory roll
-  [x] Party for milestones
-  [x] Add inactive marker for `!wh`
-  [x] Jaljayo good night easter egg
-  [x] Fix algorithm for !t
-  [] pct commands return nan
+  [] Yoinking still bugged
+  [] !albumat out of bounds (probably aa and tra too)
 
 Todo:
-  [x] Add crown to artist info
-  [x] Combine ____info and ____stats
-  [x] Arguments defaults
-  [] Update command list
+  [] artist correct method
+  [] Change rank command to be like !tt
+  [] Add top artists to tags
   [later] Dockerize 😳
   [later] Keep track of every tag, artist ever fm'd
 
   Comands:
-    [x] Jumble
-    [x] Toptrack
-    [x] RecentlyStolen
-    [x] Most used commands + time framing
-    [x] Randomsong
+    [] Crowns ban
     [later] Whosampled (w/scraping)
-    
-    Overview + subcommands:
-      [x] Breadth command (higher toppct, hindex, higher scrobbles, lower sumtop)
 
-    `!help`:
-      [x] Add `usage` to commands
-      [x] Fix variations
-      [x] Group similar commands
-      [x] Display parentCommands' friendly names
     
 Dashboard:
   [] Make TrackedErrors individual instead of grouped

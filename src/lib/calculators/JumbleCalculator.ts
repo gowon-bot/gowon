@@ -14,10 +14,10 @@ export class JumbleCalculator {
     poolAmount: number,
     options: { nonAscii?: boolean } = {}
   ): Promise<TopArtist | undefined> {
-    let topArtists = await this.lastFMService.topArtists(
-      this.username,
-      poolAmount
-    );
+    let topArtists = await this.lastFMService.topArtists({
+      username: this.username,
+      limit: poolAmount,
+    });
     let filter = topArtists.artist.filter((a) =>
       this.artistFilter(a.name, options.nonAscii || false)
     );
@@ -28,8 +28,7 @@ export class JumbleCalculator {
   private artistFilter(artistName: string, allowNonAscii: boolean): boolean {
     return (
       artistName.length > 4 &&
-      !allowNonAscii &&
-      !!artistName.match(/^[\s0-9A-Z\.,()&!?\-"':]+$/i)
+      (allowNonAscii || !!artistName.match(/^[\s0-9A-Z\.,()&!?\-"':]+$/i))
     );
   }
 }

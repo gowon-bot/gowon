@@ -12,6 +12,7 @@ import { Top50Percent } from "./Top50Percent";
 import { SumTop } from "./SumTop";
 import { Crowns } from "./Crowns";
 import { Breadth } from "./Breadth";
+import { Playsover } from "./Playsover";
 
 export default class OverviewParentCommand extends LastFMBaseParentCommand {
   friendlyName = "overview";
@@ -32,5 +33,6 @@ export default class OverviewParentCommand extends LastFMBaseParentCommand {
     sumtop: () => new SumTop(),
     crowns: () => new Crowns(),
     breadth: () => new Breadth(),
+    playsover: () => new Playsover(),
   });
 }

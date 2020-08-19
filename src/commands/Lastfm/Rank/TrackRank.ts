@@ -6,8 +6,8 @@ import { numberDisplay } from "../../../helpers";
 export default class TrackRank extends LastFMBaseCommand {
   aliases = ["tra", "tr"];
   description = "Shows what rank the track is at in your top 1000 tracks";
-  subcategory = "ranks"
-  usage = ["", "artist | track @user"]
+  subcategory = "ranks";
+  usage = ["", "artist | track @user"];
 
   arguments: Arguments = {
     mentions: {
@@ -48,7 +48,10 @@ export default class TrackRank extends LastFMBaseCommand {
       if (!track) track = nowPlaying.name;
     }
 
-    let topTracks = await this.lastFMService.topTracks(username, 1000);
+    let topTracks = await this.lastFMService.topTracks({
+      username,
+      limit: 1000,
+    });
 
     let rank = topTracks.track.findIndex(
       (a) =>

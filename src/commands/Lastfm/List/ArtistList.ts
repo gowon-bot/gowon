@@ -9,12 +9,11 @@ export default class ArtistList extends ListCommand {
   async run(message: Message) {
     let { username } = await this.parseMentionedUsername(message);
 
-    let topArtists = await this.lastFMService.topArtists(
+    let topArtists = await this.lastFMService.topArtists({
       username,
-      this.listAmount,
-      1,
-      this.timePeriod
-    );
+      limit: this.listAmount,
+      period: this.timePeriod,
+    });
 
     let messageEmbed = new MessageEmbed()
       .setTitle(
@@ -24,7 +23,9 @@ export default class ArtistList extends ListCommand {
       )
       .setDescription(
         topArtists.artist
-          .map((a) => `${numberDisplay(a.playcount, "play")} - ${a.name.bold()}`)
+          .map(
+            (a) => `${numberDisplay(a.playcount, "play")} - ${a.name.bold()}`
+          )
           .join("\n")
       );
 

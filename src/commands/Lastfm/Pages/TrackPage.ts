@@ -5,8 +5,8 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 export default class TrackPage extends LastFMBaseCommand {
   aliases = ["tpa", "tpage"];
   description = "Links you to the track page on lastfm";
-  subcategory = "pages"
-  usage = ["artist | track"]
+  subcategory = "pages";
+  usage = ["artist | track"];
 
   arguments: Arguments = {
     inputs: {
@@ -24,22 +24,22 @@ export default class TrackPage extends LastFMBaseCommand {
 
   async run(message: Message) {
     let artist = this.parsedArguments.artist as string,
-      trackName = this.parsedArguments.track as string;
+      track = this.parsedArguments.track as string;
 
     let { username } = await this.parseMentionedUsername(message);
 
-    if (!artist || !trackName) {
+    if (!artist || !track) {
       let nowPlaying = await this.lastFMService.nowPlayingParsed(username);
 
       if (!artist) artist = nowPlaying.artist;
-      if (!trackName) trackName = nowPlaying.name;
+      if (!track) track = nowPlaying.name;
     }
 
-    let trackDetails = await this.lastFMService.trackInfo(
+    let trackDetails = await this.lastFMService.trackInfo({
       artist,
-      trackName,
-      username
-    );
+      track,
+      username,
+    });
 
     message.channel.send(
       `${trackDetails.name.italic()} by ${trackDetails.artist.name.bold()} on last.fm: ${

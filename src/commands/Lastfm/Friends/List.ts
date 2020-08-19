@@ -11,7 +11,8 @@ export class List extends FriendsChildCommand {
 
   async run(message: Message) {
     let nowPlayings = await new FriendsRequester(this.friendUsernames).fetch(
-      this.lastFMService.nowPlayingParsed.bind(this.lastFMService)
+      this.lastFMService.nowPlayingParsed.bind(this.lastFMService),
+      []
     );
 
     let numberOfFriends = await this.friendsService.friendsCount(
@@ -19,7 +20,8 @@ export class List extends FriendsChildCommand {
       this.user
     );
 
-    if (numberOfFriends === 0) throw new LogicError("you don't have any friends!")
+    if (numberOfFriends === 0)
+      throw new LogicError("you don't have any friends :(");
 
     let embed = new MessageEmbed()
       .setTitle(

@@ -6,8 +6,8 @@ import { Arguments } from "../../../../lib/arguments/arguments";
 
 export class ArtistPlays extends FriendsChildCommand {
   description = "View how many plays of an artist your friends have";
-  aliases = ["p"];
-  usage = ["", "artist"]
+  aliases = ["ap", "p"];
+  usage = ["", "artist"];
 
   arguments: Arguments = {
     inputs: {
@@ -27,15 +27,14 @@ export class ArtistPlays extends FriendsChildCommand {
         .artist;
     }
 
-    let artistDetails = await new FriendsRequester(this.friendUsernames).fetch(
-      this.lastFMService.artistInfo.bind(this.lastFMService),
-      [artist],
-      {
-        usernameInPosition: 1,
-      }
-    );
+    let artistDetails = await new FriendsRequester([
+      ...this.friendUsernames,
+      this.senderUsername,
+    ]).fetch(this.lastFMService.artistInfo.bind(this.lastFMService), {
+      artist,
+    });
 
-    let artistName = Object.values(artistDetails).filter(v => v.name)[0].name
+    let artistName = Object.values(artistDetails).filter((v) => v.name)[0].name;
 
     let embed = new MessageEmbed()
       .setTitle(`Your friends plays of ${artistName}`)

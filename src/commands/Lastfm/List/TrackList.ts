@@ -9,12 +9,11 @@ export default class TrackList extends ListCommand {
   async run(message: Message) {
     let { username } = await this.parseMentionedUsername(message);
 
-    let topTracks = await this.lastFMService.topTracks(
+    let topTracks = await this.lastFMService.topTracks({
       username,
-      this.listAmount,
-      1,
-      this.timePeriod
-    );
+      limit: this.listAmount,
+      period: this.timePeriod,
+    });
 
     let messageEmbed = new MessageEmbed()
       .setTitle(

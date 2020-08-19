@@ -10,7 +10,7 @@ import { LogicError } from "../../../errors";
 
 export default class GoBack extends LastFMBaseCommand {
   aliases = ["gb"];
-  description = "Shows what you scrobbled ";
+  description = "Shows what you scrobbled in the past";
   subcategory = "library stats";
   usage = ["time period @user"];
 
@@ -37,9 +37,16 @@ export default class GoBack extends LastFMBaseCommand {
 
     if (!timeRange.from) throw new LogicError("please enter a valid timeframe");
 
-    let { username, perspective } = await this.parseMentionedUsername(message);
+    let { username, perspective } = await this.parseMentionedUsername(message, {
+      asCode: false,
+    });
 
     let track = await this.lastFMService.goBack(username, timeRange.from!);
+
+    if (!track)
+      throw new LogicError(
+        `${perspective.plusToHave} not scrobbled any tracks in that time period!`
+      );
 
     let embed = new MessageEmbed()
       .setAuthor(`${humanTimeRange} ago ${perspective.name} scrobbled:`)

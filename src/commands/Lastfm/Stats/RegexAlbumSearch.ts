@@ -12,6 +12,8 @@ export default class RegexAlbumSearch extends LastFMBaseCommand {
   subcategory = "library stats";
   usage = ["regex"];
 
+  shouldBeIndexed = false;
+
   arguments: Arguments = {
     mentions: {
       user: {
@@ -49,7 +51,11 @@ export default class RegexAlbumSearch extends LastFMBaseCommand {
     }
 
     if (parsedRegex) {
-      let topAlbums = await this.lastFMService.topAlbums(username, 1000, page);
+      let topAlbums = await this.lastFMService.topAlbums({
+        username,
+        limit: 1000,
+        page,
+      });
 
       let albums = topAlbums.album.filter((t) => parsedRegex!.test(t.name));
 

@@ -1,5 +1,5 @@
 import { BaseService } from "./BaseService";
-import redis from "redis";
+import redis, { RedisError } from "redis";
 import { promisify } from "util";
 import { Message } from "discord.js";
 import { Logger } from "../lib/Logger";
@@ -33,8 +33,17 @@ export class RedisService extends BaseService {
       ?.id!}-${key}`;
   }
 
+  private handleRedisError(error: RedisError): void {
+    this.client.quit();
+    this.client = redis.createClient();
+    this.init();
+    throw error;
+  }
+
   async init() {
     await promisify(this.client.on).bind(this.client)("ready");
+
+    this.client.on("error", this.handleRedisError);
   }
 
   async set(key: string, value: any, expiresAfter?: number) {

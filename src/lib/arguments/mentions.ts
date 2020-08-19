@@ -72,20 +72,18 @@ export class MentionParser extends Parser {
         return this.getElementFromIndex(
           message.mentions.users.array(),
           mentionOptions.index,
-          mentionOptions.join
+          { join: mentionOptions.join }
         );
       }
 
-      return this.getElementFromIndex(
-        matches,
-        mentionOptions.index,
-        mentionOptions.join
-      );
+      return this.getElementFromIndex(matches, mentionOptions.index, {
+        join: mentionOptions.join,
+      });
     } else
       return this.getElementFromIndex(
         message.mentions.users.array(),
         mentionOptions.index,
-        mentionOptions.join
+        { join: mentionOptions.join }
       );
   }
 

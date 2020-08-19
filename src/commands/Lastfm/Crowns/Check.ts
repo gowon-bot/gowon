@@ -62,7 +62,10 @@ export class Check extends CrownsChildCommand {
       artist = (await this.lastFMService.nowPlayingParsed(username)).artist;
     }
 
-    let artistDetails = await this.lastFMService.artistInfo(artist, username);
+    let artistDetails = await this.lastFMService.artistInfo({
+      artist,
+      username,
+    });
 
     let crownCheck = await this.crownsService.checkCrown({
       serverID: message.guild?.id!,

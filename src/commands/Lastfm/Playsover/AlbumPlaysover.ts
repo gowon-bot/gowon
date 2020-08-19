@@ -6,12 +6,12 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 export default class AlbumPlaysover extends LastFMBaseCommand {
   aliases = ["alpo", "lpo"];
   description = "Shows you how many albums you have over a certain playcount";
-  subcategory = "playsover"
-  usage = ["", "number"]
+  subcategory = "playsover";
+  usage = ["", "number"];
 
   arguments: Arguments = {
     inputs: {
-      plays: { index: 0, default: "100" },
+      plays: { index: 0, default: 100, number: true },
     },
     mentions: {
       user: {
@@ -23,11 +23,14 @@ export default class AlbumPlaysover extends LastFMBaseCommand {
   };
 
   async run(message: Message) {
-    let plays = (this.parsedArguments.plays as string)?.toInt();
+    let plays = this.parsedArguments.plays as number;
 
     let { username, perspective } = await this.parseMentionedUsername(message);
 
-    let topAlbums = await this.lastFMService.topAlbums(username, 1000);
+    let topAlbums = await this.lastFMService.topAlbums({
+      username,
+      limit: 1000,
+    });
 
     let playsover = 0;
 

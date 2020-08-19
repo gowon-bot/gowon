@@ -23,7 +23,7 @@ export default class TopTrack extends InfoCommand {
   };
 
   async run(message: Message) {
-    let artistName = this.parsedArguments.artist as string,
+    let artist = this.parsedArguments.artist as string,
       position = {
         start: (this.parsedArguments.position as string[])[0].toInt(),
         end: -1,
@@ -41,8 +41,8 @@ export default class TopTrack extends InfoCommand {
 
     let { senderUsername } = await this.parseMentionedUsername(message);
 
-    if (!artistName) {
-      artistName = (await this.lastFMService.nowPlayingParsed(senderUsername))
+    if (!artist) {
+      artist = (await this.lastFMService.nowPlayingParsed(senderUsername))
         .artist;
     }
 
@@ -56,18 +56,16 @@ export default class TopTrack extends InfoCommand {
       sliceStart = (position.start % 10) - (position.start % 10 === 0 ? -9 : 1),
       sliceEnd = sliceStart + (position.end - position.start) + 1;
 
-    let topTracks = await this.lastFMService.artistTopTracks(
-      artistName,
+    let topTracks = await this.lastFMService.artistTopTracks({
+      artist,
       limit,
-      page
-    );
+      page,
+    });
 
     let tracksToDisplay = topTracks.track.slice(sliceStart, sliceEnd);
 
     let embed = new MessageEmbed()
-      .setTitle(
-        `Top tracks for ${tracksToDisplay[0]?.artist?.name || artistName}`
-      )
+      .setTitle(`Top tracks for ${tracksToDisplay[0]?.artist?.name || artist}`)
       .setDescription(
         tracksToDisplay
           .map(

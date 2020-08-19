@@ -3,10 +3,11 @@ import { generatePeriod, generateHumanPeriod } from "../../../helpers/date";
 import { Message } from "discord.js";
 import { BadAmountError } from "../../../errors";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
+import { LastFMPeriod } from "../../../services/LastFMService.types";
 
 export abstract class ListCommand extends LastFMBaseCommand {
   subcategory = "lists";
-  usage = ["", "list_amount time period @user"]
+  usage = ["", "list_amount time period @user"];
 
   arguments: Arguments = {
     mentions: {
@@ -30,20 +31,21 @@ export abstract class ListCommand extends LastFMBaseCommand {
       listAmount: {
         index: 0,
         regex: /[0-9]{1,4}(?!\w)(?! [a-z])/g,
-        default: "10",
+        default: 10,
+        number: true,
       },
     },
   };
 
-  timePeriod!: string;
+  timePeriod!: LastFMPeriod;
   humanReadableTimePeriod!: string;
   listAmount!: number;
 
   async prerun(_: Message): Promise<void> {
-    this.timePeriod = this.parsedArguments.timePeriod as string;
+    this.timePeriod = this.parsedArguments.timePeriod as LastFMPeriod;
     this.humanReadableTimePeriod = this.parsedArguments
       .humanReadableTimePeriod as string;
-    this.listAmount = (this.parsedArguments.listAmount as string)?.toInt();
+    this.listAmount = this.parsedArguments.listAmount as number;
 
     if (this.listAmount < 1 || this.listAmount > 25)
       throw new BadAmountError(1, 25);

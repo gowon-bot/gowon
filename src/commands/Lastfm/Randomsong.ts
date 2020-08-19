@@ -8,10 +8,10 @@ export default class Randomsong extends LastFMBaseCommand {
   async run(message: Message) {
     let randomUser = await this.usersService.randomUser();
 
-    let randomSongs = await this.lastFMService.recentTracks(
-      randomUser.lastFMUsername,
-      100
-    );
+    let randomSongs = await this.lastFMService.recentTracks({
+      username: randomUser.lastFMUsername,
+      limit: 100,
+    });
 
     let randomSong =
       randomSongs.track[~~(randomSongs.track.length * Math.random())];

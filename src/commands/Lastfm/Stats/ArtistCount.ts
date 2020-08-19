@@ -3,12 +3,13 @@ import { Arguments } from "../../../lib/arguments/arguments";
 import { generatePeriod, generateHumanPeriod } from "../../../helpers/date";
 import { numberDisplay } from "../../../helpers";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
+import { LastFMPeriod } from "../../../services/LastFMService.types";
 
 export default class ArtistCount extends LastFMBaseCommand {
   aliases = ["ac"];
   description = "Shows you how many artists you've scrobbled";
-  subcategory = "library stats"
-  usage = ["", "time period @user"]
+  subcategory = "library stats";
+  usage = ["", "time period @user"];
 
   arguments: Arguments = {
     mentions: {
@@ -31,7 +32,7 @@ export default class ArtistCount extends LastFMBaseCommand {
   };
 
   async run(message: Message) {
-    let timePeriod = this.parsedArguments.timePeriod as string,
+    let timePeriod = this.parsedArguments.timePeriod as LastFMPeriod,
       humanReadableTimePeriod = this.parsedArguments
         .humanReadableTimePeriod as string;
 

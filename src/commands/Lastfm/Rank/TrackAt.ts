@@ -18,12 +18,12 @@ export default class TrackAt extends LastFMBaseCommand {
       },
     },
     inputs: {
-      rank: { index: 0, default: "1" },
+      rank: { index: 0, default: 1, number: true },
     },
   };
 
   async run(message: Message) {
-    let rank = (this.parsedArguments.rank as string)?.toInt();
+    let rank = this.parsedArguments.rank as number;
 
     if (isNaN(rank) || rank < 0) {
       await message.reply("please enter a valid rank");
@@ -32,7 +32,11 @@ export default class TrackAt extends LastFMBaseCommand {
 
     let { username, perspective } = await this.parseMentionedUsername(message);
 
-    let topTracks = await this.lastFMService.topTracks(username, 1, rank);
+    let topTracks = await this.lastFMService.topTracks({
+      username,
+      limit: 1,
+      page: rank,
+    });
 
     let track = topTracks.track[0];
 

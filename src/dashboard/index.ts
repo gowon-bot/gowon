@@ -4,7 +4,7 @@ import errors from "./errors";
 export class Dashboard {
   init() {
     const app = express();
-    const port = 3000;
+    const port = 3001;
 
     app.get("/errors", errors);
     app.get("/", (_: Request, res: Response) =>

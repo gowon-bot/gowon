@@ -6,8 +6,8 @@ import { numberDisplay } from "../../../helpers";
 export default class AlbumRank extends LastFMBaseCommand {
   aliases = ["alra", "lra"];
   description = "Shows what rank the album is at in your top 1000 albums";
-  subcategory = "ranks"
-  usage = ["", "artist | album @user"]
+  subcategory = "ranks";
+  usage = ["", "artist | album @user"];
 
   arguments: Arguments = {
     mentions: {
@@ -48,7 +48,10 @@ export default class AlbumRank extends LastFMBaseCommand {
       if (!artist) artist = nowPlaying.artist;
     }
 
-    let topAlbums = await this.lastFMService.topAlbums(username, 1000);
+    let topAlbums = await this.lastFMService.topAlbums({
+      username,
+      limit: 1000,
+    });
 
     let rank = topAlbums.album.findIndex(
       (a) =>

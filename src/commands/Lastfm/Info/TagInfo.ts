@@ -9,7 +9,7 @@ export default class TagInfo extends InfoCommand {
   aliases = ["ti", "gi"];
   description = "Display some information about a tag";
   usage = ["tag"];
-  
+
   arguments: Arguments = {
     inputs: {
       tag: { index: { start: 0 } },
@@ -17,9 +17,9 @@ export default class TagInfo extends InfoCommand {
   };
 
   async run(message: Message) {
-    let tagName = this.parsedArguments.tag as string;
+    let tag = this.parsedArguments.tag as string;
 
-    let tagInfo = await this.lastFMService.tagInfo(tagName);
+    let tagInfo = await this.lastFMService.tagInfo({ tag });
 
     let embed = new MessageEmbed()
       .setTitle(tagInfo.name)

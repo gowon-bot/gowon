@@ -32,7 +32,9 @@ export class CheckMany extends CrownsChildCommand {
     this.logger.log("artists", Logger.formatObject(artists));
 
     let artistDetailsList = await Promise.all(
-      artists.map((a) => this.lastFMService.artistInfo(a, username))
+      artists.map((artist) =>
+        this.lastFMService.artistInfo({ artist, username })
+      )
     );
 
     let crownChecks = artistDetailsList.map((ad) =>

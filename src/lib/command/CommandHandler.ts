@@ -40,7 +40,7 @@ export class CommandHandler {
       !message.author.bot &&
       message.guild &&
       message.content.match(
-        new RegExp(`^${this.botMomentService.regexSafePrefix}\\w+`, "i")
+        new RegExp(`^${this.botMomentService.regexSafePrefix}[^\\s]+`, "i")
       )
     ) {
       let { command, runAs } = this.commandManager.find(message.content);

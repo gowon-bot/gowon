@@ -28,7 +28,7 @@ export class Hint extends JumbleChildCommand {
 
     let embed = new MessageEmbed()
       .setAuthor(
-        `Hint for ${message.member?.nickname}`,
+        `Hint for ${message.member?.nickname || message.author.username}`,
         message.author.avatarURL() ?? ""
       )
       .setDescription(

@@ -5,6 +5,7 @@ import { numberDisplay, shuffle } from "../../../helpers";
 import { JumbledArtist, jumbleRedisKey } from "./JumbleParentCommand";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { Variation } from "../../../lib/command/BaseCommand";
+import { RunAs } from "../../../lib/AliasChecker";
 
 export class Me extends JumbleChildCommand {
   description =
@@ -12,17 +13,22 @@ export class Me extends JumbleChildCommand {
   usage = ["", "poolAmount"];
   variations: Variation[] = [
     {
-      variationString: "menonascii"
-    }
-  ]
+      variationString: "nonascii",
+    },
+  ];
 
   arguments: Arguments = {
     inputs: {
-      poolAmount: { index: 0, regex: /[0-9]{1,4}/g, default: "500" },
+      poolAmount: {
+        index: 0,
+        regex: /[0-9]{1,4}/g,
+        default: 500,
+        number: true,
+      },
     },
   };
 
-  async run(message: Message) {
+  async run(message: Message, runAs: RunAs) {
     let alreadyJumbled = await this.sessionGetJSON<JumbledArtist>(
       message,
       jumbleRedisKey
@@ -34,12 +40,14 @@ export class Me extends JumbleChildCommand {
       return;
     }
 
-    let poolAmount = this.parsedArguments.poolAmount?.toInt();
+    let poolAmount = this.parsedArguments.poolAmount as number
 
     if (poolAmount < 5 || poolAmount > 1000)
       throw new LogicError("Please enter a number between 5 and 1000!");
 
-    let artist = await this.jumbleCalculator.getArtist(poolAmount);
+    let artist = await this.jumbleCalculator.getArtist(poolAmount, {
+      nonAscii: runAs.lastString().toLowerCase() === "nonascii",
+    });
 
     if (!artist)
       throw new LogicError("No suitable artists were found in your library!");

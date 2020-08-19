@@ -25,7 +25,7 @@ export default class AlbumPlays extends LastFMBaseCommand {
 
   async run(message: Message) {
     let artist = this.parsedArguments.artist as string,
-      albumName = this.parsedArguments.album as string;
+      album = this.parsedArguments.album as string;
 
     let {
       senderUsername,
@@ -33,20 +33,20 @@ export default class AlbumPlays extends LastFMBaseCommand {
       perspective,
     } = await this.parseMentionedUsername(message);
 
-    if (!artist || !albumName) {
+    if (!artist || !album) {
       let nowPlaying = await this.lastFMService.nowPlayingParsed(
         senderUsername
       );
 
       if (!artist) artist = nowPlaying.artist;
-      if (!albumName) albumName = nowPlaying.album;
+      if (!album) album = nowPlaying.album;
     }
 
-    let albumDetails = await this.lastFMService.albumInfo(
+    let albumDetails = await this.lastFMService.albumInfo({
       artist,
-      albumName,
-      username
-    );
+      album,
+      username,
+    });
 
     message.channel.send(
       `${ucFirst(perspective.plusToHave)} **${numberDisplay(

@@ -10,7 +10,7 @@ export default class ArtistInfo extends InfoCommand {
 
   aliases = ["ai", "as"];
   description = "Display some information about an artist";
-  usage = ["", "artist"]
+  usage = ["", "artist"];
 
   arguments: Arguments = {
     inputs: {
@@ -28,7 +28,7 @@ export default class ArtistInfo extends InfoCommand {
   crownsService = new CrownsService();
 
   async run(message: Message) {
-    let artistName = this.parsedArguments.artist as string;
+    let artist = this.parsedArguments.artist as string;
 
     let {
       senderUsername,
@@ -36,14 +36,14 @@ export default class ArtistInfo extends InfoCommand {
       perspective,
     } = await this.parseMentionedUsername(message);
 
-    if (!artistName) {
-      artistName = (await this.lastFMService.nowPlayingParsed(senderUsername))
+    if (!artist) {
+      artist = (await this.lastFMService.nowPlayingParsed(senderUsername))
         .artist;
     }
 
     let [artistInfo, userInfo] = await Promise.all([
-      this.lastFMService.artistInfo(artistName, username),
-      this.lastFMService.userInfo(username),
+      this.lastFMService.artistInfo({ artist, username }),
+      this.lastFMService.userInfo({ username }),
     ]);
 
     let crown = await this.crownsService.getCrownDisplay(

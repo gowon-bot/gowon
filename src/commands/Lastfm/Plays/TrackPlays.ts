@@ -25,7 +25,7 @@ export default class TrackPlays extends LastFMBaseCommand {
 
   async run(message: Message) {
     let artist = this.parsedArguments.artist as string,
-      trackName = this.parsedArguments.track as string;
+      track = this.parsedArguments.track as string;
 
     let {
       username,
@@ -33,24 +33,24 @@ export default class TrackPlays extends LastFMBaseCommand {
       perspective,
     } = await this.parseMentionedUsername(message);
 
-    if (!artist || !trackName) {
+    if (!artist || !track) {
       let nowPlaying = await this.lastFMService.nowPlayingParsed(
         senderUsername
       );
 
       if (!artist) artist = nowPlaying.artist;
-      if (!trackName) trackName = nowPlaying.name;
+      if (!track) track = nowPlaying.name;
     }
 
     let hamham =
-      artist.toLowerCase() === "iu" && trackName.toLowerCase() === "ham ham";
-    if (hamham) trackName = "Jam Jam";
+      artist.toLowerCase() === "iu" && track.toLowerCase() === "ham ham";
+    if (hamham) track = "Jam Jam";
 
-    let trackDetails = await this.lastFMService.trackInfo(
+    let trackDetails = await this.lastFMService.trackInfo({
       artist,
-      trackName,
-      username
-    );
+      track,
+      username,
+    });
 
     message.channel.send(
       `${hamham ? "FTFY\n" : ""}${ucFirst(

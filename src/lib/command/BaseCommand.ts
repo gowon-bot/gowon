@@ -126,9 +126,10 @@ export abstract class BaseCommand implements Command {
     if (typeof user === "string") {
       mentionedUsername = user;
     } else {
-      let mentionedUser = user
-        ? await this.usersService.getUser(user.id, message.guild?.id!)
-        : undefined;
+      let mentionedUser = await this.usersService.getUser(
+        user?.id || message.author.id,
+        message.guild?.id!
+      );
 
       dbUser = mentionedUser;
 

@@ -1,3 +1,5 @@
+// Responses
+
 export interface PagedCollection {
   "@attr": {
     page: string;
@@ -270,4 +272,86 @@ export interface ArtistTopTracks extends PagedCollection {
 
 export interface ArtistTopTracksResponse {
   toptracks: ArtistTopTracks;
+}
+
+// Inputs
+
+export interface Params {}
+
+export interface UsernameParams {
+  username?: string;
+}
+
+export interface TimeframeParams {
+  from?: number;
+  to?: number;
+}
+
+export interface PagedParams {
+  limit?: number;
+  page?: number;
+}
+
+export type LastFMPeriod =
+  | "overall"
+  | "7day"
+  | "1month"
+  | "3month"
+  | "6month"
+  | "12month";
+export interface TimePeriodParams {
+  period?: LastFMPeriod;
+}
+
+export interface RecentTracksParams
+  extends UsernameParams,
+    TimeframeParams,
+    PagedParams {
+  extended?: 0 | 1;
+}
+
+export interface TrackInfoParams extends UsernameParams {
+  track: string;
+  artist: string;
+  autocorrect?: 0 | 1;
+}
+
+export interface ArtistInfoParams extends UsernameParams {
+  artist: string;
+  autocorrect?: 0 | 1;
+  lang?: string;
+}
+
+export interface AlbumInfoParams extends UsernameParams {
+  artist: string;
+  album: string;
+  autocorrect?: 0 | 1;
+  lang?: string;
+}
+
+export interface UserInfoParams extends UsernameParams {}
+
+export interface TagInfoParams {
+  tag: string;
+  lang?: string;
+}
+
+export interface TopArtistsParams
+  extends UsernameParams,
+    TimePeriodParams,
+    PagedParams {}
+
+export interface TopTracksParams
+  extends UsernameParams,
+    TimePeriodParams,
+    PagedParams {}
+
+export interface TopAlbumsParams
+  extends UsernameParams,
+    TimePeriodParams,
+    PagedParams {}
+
+export interface ArtistTopTracksParams extends PagedParams {
+  artist: string;
+  autocorrect?: 0 | 1;
 }

@@ -8,24 +8,26 @@ export abstract class Parser {
   protected getElementFromIndex(
     array: Array<any>,
     index: number | Slice,
-    join = true,
-    defaults?: any | any[]
+    options: { join?: boolean; default?: any | any[]; number?: boolean } = {}
   ): ParsedArgument {
     if (index === undefined) return undefined;
+
+    options.join = options.join ?? true;
 
     if (
       array.length <
       (typeof index === "number" ? index : index.stop || index.start)
     ) {
-      return defaults;
+      return options.default;
     }
 
+    let argument: any;
+
     if (typeof index === "number") {
-      return (
+      argument =
         (typeof array[index] === "string"
           ? array[index]?.trim()
-          : array[index]) || defaults
-      );
+          : array[index]) || options.default;
     } else {
       let slicedArray = (index.stop
         ? array.slice(index.start, index.stop + 1)
@@ -34,17 +36,23 @@ export abstract class Parser {
 
       if (index.start && index.stop) {
         for (let i = 0; i < index.stop - index.start + 1; i++) {
-          if (!slicedArray[i]) slicedArray[i] = (defaults || [])[i];
+          if (!slicedArray[i]) slicedArray[i] = (options.default || [])[i];
         }
       } else {
-        for (let i = 0; i < defaults?.length; i++) {
-          const def = defaults[i];
+        for (let i = 0; i < options.default?.length; i++) {
+          const def = options.default[i];
 
           if (!slicedArray[i]) slicedArray[i] = def;
         }
       }
 
-      return join ? slicedArray.join(" ") : slicedArray;
+      argument = options.join ? slicedArray.join(" ") : slicedArray;
     }
+
+    if (options.number) {
+      if (typeof argument === "string")
+        return isNaN(argument.toInt()) ? options.default : argument.toInt();
+      else return parseInt(argument) ?? options.default;
+    } else return argument ?? options.default;
   }
 }

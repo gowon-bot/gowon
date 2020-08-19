@@ -38,7 +38,11 @@ export class FriendsService extends BaseService {
     if (!(await this.lastFMService.userExists(friendUsername)))
       throw new LastFMUserDoesntExistError();
 
-    friend = Friend.create({ user, friendUsername, serverID });
+    friend = Friend.create({
+      user,
+      friendUsername: friendUsername.toLowerCase(),
+      serverID,
+    });
     await friend.save();
     return friend;
   }
@@ -51,7 +55,11 @@ export class FriendsService extends BaseService {
     this.log(
       `Removing friend ${friendUsername} for user ${user.lastFMUsername} in ${serverID}`
     );
-    let friend = await Friend.findOne({ serverID, user, friendUsername });
+    let friend = await Friend.findOne({
+      serverID,
+      user,
+      friendUsername: friendUsername.toLowerCase(),
+    });
 
     if (!friend) throw new NotFriendsError();
 
@@ -59,13 +67,13 @@ export class FriendsService extends BaseService {
   }
 
   async listFriends(serverID: string, user: User): Promise<Friend[]> {
-    this.log(`Listing friends for user ${user.lastFMUsername}`);
+    this.log(`Listing friends for user ${user?.lastFMUsername}`);
     return await Friend.find({ user, serverID });
   }
 
   async getUsernames(serverID: string, user: User): Promise<string[]> {
-    return (await this.listFriends(serverID, user)).map(
-      (f) => f.friendUsername
+    return (await this.listFriends(serverID, user)).map((f) =>
+      f.friendUsername.toLowerCase()
     );
   }
 

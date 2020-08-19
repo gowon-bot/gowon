@@ -45,8 +45,8 @@ export default class AlbumPercent extends LastFMBaseCommand {
     }
 
     let [artistInfo, albumInfo] = await Promise.all([
-      this.lastFMService.artistInfo(artist, username),
-      this.lastFMService.albumInfo(artist, album, username),
+      this.lastFMService.artistInfo({ artist, username }),
+      this.lastFMService.albumInfo({ artist, album, username }),
     ]);
 
     await message.reply(

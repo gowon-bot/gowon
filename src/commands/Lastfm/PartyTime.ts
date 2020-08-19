@@ -10,12 +10,12 @@ export default class PartyTime extends LastFMBaseCommand {
 
   arguments: Arguments = {
     inputs: {
-      time: { index: 0, regex: /[0-9]{1,2}/ },
+      time: { index: 0, regex: /[0-9]{1,2}/, number: true, default: 10 },
     },
   };
 
   async run(message: Message) {
-    let time = (this.parsedArguments.time as string)?.toInt() || 10;
+    let time = this.parsedArguments.time as number;
 
     if (time < 5 || time > 15)
       throw new LogicError("Please enter a reasonable time. 😐");

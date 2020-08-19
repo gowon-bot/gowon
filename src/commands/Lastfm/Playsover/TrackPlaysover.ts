@@ -4,14 +4,14 @@ import { numberDisplay } from "../../../helpers";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 export default class TrackPlaysover extends LastFMBaseCommand {
-  aliases = ["alpo", "lpo"];
+  aliases = ["trpo", "tpo"];
   description = "Shows you how many artists you have over a certain playcount";
   subcategory = "playsover";
-  usage = ["", "number"]
+  usage = ["", "number"];
 
   arguments: Arguments = {
     inputs: {
-      plays: { index: 0, default: "100" },
+      plays: { index: 0, default: 100, number: true },
     },
     mentions: {
       user: {
@@ -23,11 +23,14 @@ export default class TrackPlaysover extends LastFMBaseCommand {
   };
 
   async run(message: Message) {
-    let plays = (this.parsedArguments.plays as string)?.toInt();
+    let plays = this.parsedArguments.plays as number;
 
     let { username, perspective } = await this.parseMentionedUsername(message);
 
-    let topArtists = await this.lastFMService.topArtists(username, 1000);
+    let topArtists = await this.lastFMService.topArtists({
+      username,
+      limit: 1000,
+    });
 
     let playsover = 0;
 

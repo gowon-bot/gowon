@@ -20,7 +20,9 @@ const redisService = new RedisService();
 
 dashboard.init();
 
-Promise.all([DB.connect(), handler.init(), redisService.init()]).then(() => {
+async function start() {
+  await Promise.all([DB.connect(), handler.init(), redisService.init()]);
+
   client.on("ready", () => {
     console.log(`Logged in as ${client?.user && client.user.tag}!`);
   });
@@ -30,4 +32,6 @@ Promise.all([DB.connect(), handler.init(), redisService.init()]).then(() => {
   });
 
   client.login(config.discordToken);
-});
+}
+
+start();

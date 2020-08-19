@@ -23,19 +23,18 @@ export class TasteCalculator {
   }
 
   sortMatchedArtists(matchedArtists: TasteArtist[]): TasteArtist[] {
+    let userOneMatchedArtists = matchedArtists
+      .sort((a, b) => a.user1plays - b.user1plays)
+      .slice(0, 5)
+      .map((a) => a.user1plays);
+    let userTwoMatchedArtists = matchedArtists
+      .sort((a, b) => a.user2plays - b.user2plays)
+      .slice(0, 5)
+      .map((a) => a.user2plays);
+
     let topArtistsAverage = {
-      userOne: mean(
-        matchedArtists
-          .sort((a, b) => a.user1plays - b.user1plays)
-          .slice(0, 5)
-          .map((a) => a.user1plays)
-      ),
-      userTwo: mean(
-        matchedArtists
-          .sort((a, b) => a.user2plays - b.user2plays)
-          .slice(0, 5)
-          .map((a) => a.user2plays)
-      ),
+      userOne: userOneMatchedArtists.length ? mean(userOneMatchedArtists) : 0,
+      userTwo: userTwoMatchedArtists.length ? mean(userTwoMatchedArtists) : 0,
     };
 
     return matchedArtists.sort(

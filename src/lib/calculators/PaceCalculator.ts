@@ -39,7 +39,9 @@ export class PaceCalculator {
   private async calculateFromOverall(
     milestone: number
   ): Promise<PacePrediction> {
-    let userInfo = await this.lastFMService.userInfo(this.username);
+    let userInfo = await this.lastFMService.userInfo({
+      username: this.username,
+    });
     let scrobblingSince = moment
       .unix(userInfo.registered.unixtime.toInt())
       .toDate();

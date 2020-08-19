@@ -37,7 +37,10 @@ export default class ArtistRank extends LastFMBaseCommand {
       artist = (await this.lastFMService.nowPlayingParsed(senderUsername))
         .artist;
 
-    let topArtists = await this.lastFMService.topArtists(username, 1000);
+    let topArtists = await this.lastFMService.topArtists({
+      username,
+      limit: 1000,
+    });
 
     let rank = topArtists.artist.findIndex(
       (a) => a.name.toLowerCase() === artist.toLowerCase()

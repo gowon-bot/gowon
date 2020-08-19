@@ -7,3 +7,5 @@ export class DB {
     await connection.synchronize();
   }
 }
+
+

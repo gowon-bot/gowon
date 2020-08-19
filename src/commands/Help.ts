@@ -62,6 +62,9 @@ export default class Help extends BaseCommand {
         `Help for ${message.author.username}`,
         message.author.avatarURL() || ""
       )
+      .setDescription(
+        `Run \`${this.botMomentService.prefix}help <command>\` to learn more about specific commands`
+      )
       .addFields(
         Object.keys(groupedCommands).map((gc) => ({
           name: gc,

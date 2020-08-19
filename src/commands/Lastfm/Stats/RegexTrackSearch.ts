@@ -12,6 +12,8 @@ export default class RegexTrackSearch extends LastFMBaseCommand {
   subcategory = "library stats";
   usage = ["regex"];
 
+  shouldBeIndexed = false;
+
   arguments: Arguments = {
     mentions: {
       user: {
@@ -31,7 +33,7 @@ export default class RegexTrackSearch extends LastFMBaseCommand {
       friendlyString: "rts<page_number>",
     },
   ];
-  
+
   async run(message: Message, runAs: RunAs) {
     let { username, perspective } = await this.parseMentionedUsername(message);
 
@@ -49,7 +51,11 @@ export default class RegexTrackSearch extends LastFMBaseCommand {
     }
 
     if (parsedRegex) {
-      let topTracks = await this.lastFMService.topTracks(username, 1000, page);
+      let topTracks = await this.lastFMService.topTracks({
+        username,
+        limit: 1000,
+        page,
+      });
 
       let tracks = topTracks.track.filter((t) => parsedRegex!.test(t.name));
 

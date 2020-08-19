@@ -69,11 +69,14 @@ _You can find the source code for all the commands at [/src/commands](/src/comma
 - `help`, list all commands, or display help about a certain command
 - `cover`, shows the cover of an album
 - `partytime`, counts down
+- `amiscrobbling`, shows you if you are scrobbling or not
+- `randomsong`, picks a random song from the signed in users
 - Account
   - `login`, logs you in
   - `logout`, logs you out
   - `whoami`, shows who you're logged in as
   - `lastfm`, links to the lastfm page of a user
+  - `lastfm2discord`, looksup a discord user based on their last.fm username
 - Crowns
   - `check`, checks a crown
   - `checkmany`, checks multiple crowns at once
@@ -87,12 +90,47 @@ _You can find the source code for all the commands at [/src/commands](/src/comma
   - `optout`, opts you out of the crowns game
   - `optin`, opts you back into the crowns game
   - `setinactiverole`, set what role should be treated as the inactive role
+  - `setpurgatoryrole`, set what role should be treated as the purgatory role
+  - `recentlystolen`, see the crowns which were recently yoinked
+- Friends
+  - `albumplays`, show how many scrobbles of an album your friends have
+  - `artistplays`, show how many scrobbles of an artist your friends have
+  - `trackplays`, show how many scrobbles of an track your friends have
+  - `add`, add a friend
+  - `remove`, remove a friend :(
+  - `list`, list your friends, and see what they're playing
+- Info
+  - `artistinfo`, shows info about an artist
+  - `albuminfo`, shows info about an album
+  - `trackinfo`, shows info about an track
+  - `taginfo`, shows info about an track
+  - `toptrack`, shows the top tracks for an artist
+- Jumble
+  - `me`, find an artist from your library to jumble
+  - `guess`, make a guess for the jumble
+  - `hint`, get a hint for the jumble
+  - `quit`, give up on the jumble
 - List
   - `artistlist`, shows your top artists
   - `albumlist`, shows your top albums
   - `tracklist`, shows your top tracks
+- Overview
+  - `avgperday`, shows your average scrobbles per day
+  - `crowns`, shows stats about your crowns
+  - `hindx`, shows your hindex
+  - `joined`, shows when you joined
+  - `per`, shows some "per" stats for artist/albums/tracks
+  - `scrobblesperartist`, shows your average scrobbles per artist
+  - `scrobblesperalbum`, shows your average scrobbles per album
+  - `scrobblespertrack`, shows your average scrobbles per track
+  - `sumtop`, shows the sum of your top artists
+  - `top50percent`, shows how many artists make up 50% of your scrobbles
+  - `all`, all of the above
+  - `breadth`, shows your breadth rating
 - Pages
   - `artistpage`, gives you the link to an artist's last.fm page
+  - `albumpage`, gives you the link to an album's last.fm page
+  - `trackpage`, gives you the link to an track's last.fm page
 - Percent
   - `artistpercent`, shows what percentage an artist makes up of your total scrobbles
   - `albumpercent`, shows what percentage an album makes up of your total scrobbles of an artist
@@ -116,26 +154,15 @@ _You can find the source code for all the commands at [/src/commands](/src/comma
   - `artistcount`, counts your artists
   - `albumcount`, counts your albums
   - `trackcount`, counts your tracks
-  - `artiststats`, shows stats about an artist
-  - `albumstats`, shows stats about an album
   - `taste`, compares your taste with another user
-  - `regextracksearch`, search your library with a regex (or keyword)
+  - [disabled] `regextracksearch`, search your track library with a regex (or keyword)
+  - [disabled] `regexalbumsearch`, search your album library with a regex (or keyword)
+  - [disabled] `regexartistsearch`, search your artist library with a regex (or keyword)
   - `scrobbles`, shows how many scrobbles you have
   - `combo`, shows listening streaks
   - `milestone`, shows you what you scrobbled at a scrobble milestone
   - `goback`, shows you what you scrobbled in the past
-- Overview
-  - `avgperday`, shows your average scrobbles per day
-  - `crowns`, shows stats about your crowns
-  - `hindx`, shows your hindex
-  - `joined`, shows when you joined
-  - `per`, shows some "per" stats for artist/albums/tracks
-  - `scrobblesperartist`, shows your average scrobbles per artist
-  - `scrobblesperalbum`, shows your average scrobbles per album
-  - `scrobblespertrack`, shows your average scrobbles per track
-  - `sumtop`, shows the sum of your top artists
-  - `top50percent`, shows how many artists make up 50% of your scrobbles
-  - `all`, all of the above
+  - `pace`, predicts when you will hit a scrobble milestone
 
 ### Admin
 
@@ -147,12 +174,18 @@ _You can find the source code for all the commands at [/src/commands](/src/comma
   - `delist`, removes a user/role from the whitelist/blacklist for a command
   - `help`, permissions help
   - `view`, view permissions
+- `usercount`, shows how many users are signed into the bot
+
+### Meta
+
+- `topcommands`, shows most run commands in the server
 
 ## Special Thanks
 
-- RTFL and thot for moral support
-- Dunster for the friends idea
-- Mex for breaking things
-- mypetrobot for building the Who Knows? bot, the inspiration for this bot
-- Frikandel and the .fmbot team
+- RTFL and thot, for moral support
+- Dunster, for the friends idea
+- Mex, for breaking things
+- NiceManu, for, well being nice
+- mypetrobot for building the `Who Knows?` bot, the inspiration for this bot
+- Frikandel, for making a great influence
 - Last.fm, for making a great platform <3

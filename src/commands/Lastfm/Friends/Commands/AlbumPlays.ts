@@ -18,24 +18,24 @@ export class AlbumPlays extends FriendsChildCommand {
 
   async run(message: Message) {
     let artist = this.parsedArguments.artist as string,
-      albumName = this.parsedArguments.album as string;
+      album = this.parsedArguments.album as string;
 
-    if (!artist || !albumName) {
+    if (!artist || !album) {
       let nowPlaying = await this.lastFMService.nowPlayingParsed(
         this.senderUsername
       );
 
       if (!artist) artist = nowPlaying.artist;
-      if (!albumName) albumName = nowPlaying.album;
+      if (!album) album = nowPlaying.album;
     }
 
-    let albumDetails = await new FriendsRequester(this.friendUsernames).fetch(
-      this.lastFMService.albumInfo.bind(this.lastFMService),
-      [artist, albumName],
-      {
-        usernameInPosition: 2,
-      }
-    );
+    let albumDetails = await new FriendsRequester([
+      ...this.friendUsernames,
+      this.senderUsername,
+    ]).fetch(this.lastFMService.albumInfo.bind(this.lastFMService), {
+      artist,
+      album,
+    });
 
     let albumInfo = Object.values(albumDetails).filter((v) => v.name)[0];
 

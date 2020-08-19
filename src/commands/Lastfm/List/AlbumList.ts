@@ -9,12 +9,11 @@ export default class AlbumList extends ListCommand {
   async run(message: Message) {
     let { username } = await this.parseMentionedUsername(message);
 
-    let topAlbums = await this.lastFMService.topAlbums(
+    let topAlbums = await this.lastFMService.topAlbums({
       username,
-      this.listAmount,
-      1,
-      this.timePeriod
-    );
+      limit: this.listAmount,
+      period: this.timePeriod,
+    });
 
     let messageEmbed = new MessageEmbed()
       .setTitle(

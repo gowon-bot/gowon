@@ -29,7 +29,10 @@ export class Info extends CrownsChildCommand {
       artist = (await this.lastFMService.nowPlayingParsed(username)).artist;
     }
 
-    let artistDetails = await this.lastFMService.artistInfo(artist, username);
+    let artistDetails = await this.lastFMService.artistInfo({
+      artist,
+      username,
+    });
 
     let crown = await this.crownsService.getCrown(
       artistDetails.name,

@@ -9,8 +9,8 @@ export default class AlbumInfo extends InfoCommand {
 
   aliases = ["ali", "li", "als", "ls"];
   description = "Display some information about an album";
-  usage = ["", "artist | album"]
-  
+  usage = ["", "artist | album"];
+
   arguments: Arguments = {
     inputs: {
       artist: { index: 0, splitOn: "|" },
@@ -27,7 +27,7 @@ export default class AlbumInfo extends InfoCommand {
 
   async run(message: Message) {
     let artist = this.parsedArguments.artist as string,
-      albumName = this.parsedArguments.album as string;
+      album = this.parsedArguments.album as string;
 
     let {
       senderUsername,
@@ -35,18 +35,18 @@ export default class AlbumInfo extends InfoCommand {
       perspective,
     } = await this.parseMentionedUsername(message);
 
-    if (!artist || !albumName) {
+    if (!artist || !album) {
       let nowPlaying = await this.lastFMService.nowPlayingParsed(
         senderUsername
       );
 
       if (!artist) artist = nowPlaying.artist;
-      if (!albumName) albumName = nowPlaying.album;
+      if (!album) album = nowPlaying.album;
     }
 
     let [albumInfo, userInfo] = await Promise.all([
-      this.lastFMService.albumInfo(artist, albumName, username),
-      this.lastFMService.userInfo(username),
+      this.lastFMService.albumInfo({ artist, album, username }),
+      this.lastFMService.userInfo({ username }),
     ]);
 
     this.tagConsolidator.addTags(albumInfo.tags.tag);

@@ -9,7 +9,7 @@ export default class ArtistPercent extends LastFMBaseCommand {
   description =
     "Shows you the percentage of your total scrobbles an artist makes up";
   subcategory = "percents";
-  usage = ["", "artist"]
+  usage = ["", "artist"];
 
   arguments: Arguments = {
     inputs: {
@@ -38,8 +38,8 @@ export default class ArtistPercent extends LastFMBaseCommand {
         .artist;
 
     let [artistInfo, userInfo] = await Promise.all([
-      this.lastFMService.artistInfo(artist, username),
-      this.lastFMService.userInfo(username),
+      this.lastFMService.artistInfo({ artist, username }),
+      this.lastFMService.userInfo({ username }),
     ]);
 
     await message.reply(

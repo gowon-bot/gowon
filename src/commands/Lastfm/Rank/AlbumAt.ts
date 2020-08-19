@@ -18,12 +18,12 @@ export default class AlbumAt extends LastFMBaseCommand {
       },
     },
     inputs: {
-      rank: { index: 0, default: "1" },
+      rank: { index: 0, default: 1, number: true },
     },
   };
 
   async run(message: Message) {
-    let rank = (this.parsedArguments.rank as string)?.toInt();
+    let rank = this.parsedArguments.rank as number;
 
     if (isNaN(rank) || rank < 0) {
       await message.reply("please enter a valid rank");
@@ -32,7 +32,11 @@ export default class AlbumAt extends LastFMBaseCommand {
 
     let { username, perspective } = await this.parseMentionedUsername(message);
 
-    let topAlbums = await this.lastFMService.topAlbums(username, 1, rank);
+    let topAlbums = await this.lastFMService.topAlbums({
+      username,
+      limit: 1,
+      page: rank,
+    });
 
     let album = topAlbums.album[0];
 

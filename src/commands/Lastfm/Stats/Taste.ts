@@ -8,6 +8,7 @@ import { Mention } from "../../../lib/arguments/mentions";
 import { generatePeriod, generateHumanPeriod } from "../../../helpers/date";
 import { Variation } from "../../../lib/command/BaseCommand";
 import { RunAs } from "../../../lib/AliasChecker";
+import { LastFMPeriod } from "../../../services/LastFMService.types";
 
 export default class Taste extends LastFMBaseCommand {
   aliases = ["t"];
@@ -23,7 +24,12 @@ export default class Taste extends LastFMBaseCommand {
 
   arguments: Arguments = {
     inputs: {
-      artistAmount: { index: 0, regex: /[0-9]{1,4}(?!\w)(?! [a-z])/g },
+      artistAmount: {
+        index: 0,
+        regex: /[0-9]{1,4}(?!\w)(?! [a-z])/g,
+        default: 500,
+        number: true,
+      },
       timePeriod: {
         custom: (messageString: string) =>
           generatePeriod(messageString, "overall"),
@@ -51,9 +57,8 @@ export default class Taste extends LastFMBaseCommand {
 
   async run(message: Message, runAs: RunAs) {
     let userTwo = this.parsedArguments.userTwo as Mention,
-      artistAmount =
-        (this.parsedArguments?.artistAmount as string)?.toInt() || 500,
-      timePeriod = this.parsedArguments.timePeriod as string,
+      artistAmount = this.parsedArguments.artistAmount as number,
+      timePeriod = this.parsedArguments.timePeriod as LastFMPeriod,
       humanReadableTimePeriod = this.parsedArguments
         .humanReadableTimePeriod as string;
 
@@ -81,18 +86,16 @@ export default class Taste extends LastFMBaseCommand {
     }
 
     let [senderArtists, mentionedArtists] = await Promise.all([
-      this.lastFMService.topArtists(
-        userOneUsername,
-        artistAmount,
-        1,
-        timePeriod
-      ),
-      this.lastFMService.topArtists(
-        userTwoUsername,
-        artistAmount,
-        1,
-        timePeriod
-      ),
+      this.lastFMService.topArtists({
+        username: userOneUsername,
+        limit: artistAmount,
+        period: timePeriod,
+      }),
+      this.lastFMService.topArtists({
+        username: userTwoUsername,
+        limit: artistAmount,
+        period: timePeriod,
+      }),
     ]);
 
     let tasteCalculator = new TasteCalculator(senderArtists, mentionedArtists);
@@ -147,7 +150,13 @@ export default class Taste extends LastFMBaseCommand {
         .map(
           (a, idx) =>
             `${paddedPlays1[idx + 1]} ${
-              paddedPlays1[idx + 1] > paddedPlays2[idx + 1] ? ">" : "<"
+              paddedPlays1[idx + 1].trim().toInt() ===
+              paddedPlays2[idx + 1].trim().toInt()
+                ? "•"
+                : paddedPlays1[idx + 1].trim().toInt() >
+                  paddedPlays2[idx + 1].trim().toInt()
+                ? ">"
+                : "<"
             } ${paddedPlays2[idx + 1]}   ${a.name}`
         );
 
