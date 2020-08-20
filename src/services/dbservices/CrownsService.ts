@@ -8,6 +8,7 @@ import { Setting } from "../../database/entity/Setting";
 import { Settings } from "../../lib/Settings";
 import { BotMomentService } from "../BotMomentService";
 import { MoreThan } from "typeorm";
+import { Logger } from "../../lib/Logger";
 
 export enum CrownState {
   tie = "Tie",
@@ -91,6 +92,9 @@ export class CrownsService extends BaseService {
     ]);
 
     let oldCrown = Object.assign({}, crown);
+    oldCrown.user = Object.assign({}, crown?.user);
+
+    this.logger?.log("oldCrown", Logger.formatObject(oldCrown));
 
     if (!user) throw new RecordNotFoundError("user");
 
@@ -100,7 +104,8 @@ export class CrownsService extends BaseService {
       if (crown.user.id === user.id) {
         crownState = await this.handleSelfCrown(crown, plays);
       } else {
-        crown = oldCrown = await crown.refresh({ logger: this.logger });
+        crown = await crown.refresh({ logger: this.logger });
+        oldCrown.plays = crown.plays;
         crownState = await this.handleCrown(crown, plays, user);
       }
 

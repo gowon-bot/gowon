@@ -4,7 +4,6 @@ import { jumbleRedisKey, JumbledArtist } from "./JumbleParentCommand";
 import { LogicError } from "../../../errors";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { shuffle } from "../../../helpers";
-import { Logger } from "../../../lib/Logger";
 
 export class Guess extends JumbleChildCommand {
   description = "Picks an artist from your library to jumble";
@@ -25,8 +24,6 @@ export class Guess extends JumbleChildCommand {
     if (!jumbledArtist.jumbled)
       throw new LogicError("you haven't jumbled an artist yet!");
     if (!guess) throw new LogicError("please make a guess");
-
-    this.logger.log("jumble", Logger.formatObject(jumbledArtist));
 
     if (
       guess.toLowerCase().replace(/\s+/g, " ") ===

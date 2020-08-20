@@ -44,8 +44,6 @@ export class Add extends FriendsChildCommand {
       dbUser!
     );
 
-    this.logger.log("friends", friends);
-
     if (friends.includes(username.toLowerCase()))
       throw new AlreadyFriendsError();
 

@@ -141,8 +141,6 @@ export class LastFMScraper extends BaseScraper {
       ".chartlist-timestamp > span"
     );
 
-    console.log(lastScrobbled.text());
-
     return moment(lastScrobbled.text().trim(), "D MMM h:mma").toDate();
   }
 }

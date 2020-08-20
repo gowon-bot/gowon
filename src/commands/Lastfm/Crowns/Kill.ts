@@ -40,7 +40,7 @@ export class Kill extends CrownsChildCommand {
       await message.channel.send(
         new MessageEmbed()
           .setAuthor(
-            message.member?.nickname,
+            message.member?.nickname || message.author.username,
             message.author.avatarURL() || undefined
           )
           .setDescription(`Successfully killed the crown for ${artist.bold()}`)

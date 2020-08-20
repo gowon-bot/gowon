@@ -17,7 +17,7 @@ export class Breadth extends OverviewChildCommand {
       .setColor(colour)
       .setDescription(
         `${ucFirst(perspective.possessive)} breadth rating is ${numberDisplay(
-          breadth.rating.toFixed(0)
+          breadth.rating.toFixed(1)
         ).bold()} _(${breadth.ratingString})_`
       );
 

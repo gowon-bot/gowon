@@ -2,6 +2,7 @@ import { CrownCheck } from "../../services/dbservices/CrownsService";
 import { User as DiscordUser, MessageEmbed, Message, User } from "discord.js";
 import { numberDisplay } from "..";
 import { ArtistInfo } from "../../services/LastFMService.types";
+import { User as DBUser } from "../../database/entity/User";
 
 export class CrownEmbeds {
   private constructor() {}
@@ -39,7 +40,7 @@ export class CrownEmbeds {
     message: Message
   ): Promise<MessageEmbed> {
     let holderUsername = (
-      await crownCheck.oldCrown?.user!.toDiscordUser(message)
+      await DBUser.toDiscordUser(message, crownCheck.oldCrown!.user.discordID)
     )?.username;
 
     return new MessageEmbed()

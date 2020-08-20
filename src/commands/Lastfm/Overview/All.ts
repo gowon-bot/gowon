@@ -40,7 +40,7 @@ _Scrobbling since ${await this.calculator.joined()}_
 **H-Index**: ${await this.calculator.hIndex()}
 ${
   breadth
-    ? `**Breadth rating**: ${breadth.rating.toFixed(0)} _(${
+    ? `**Breadth rating**: ${breadth.rating.toFixed(1)} _(${
         breadth.ratingString
       })_`
     : ""

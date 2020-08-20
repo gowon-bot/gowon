@@ -1,14 +1,18 @@
 Bugs:
-  [] Yoinking still bugged
+  [x] Yoinking still bugged
   [] `!albumat` out of bounds (probably aa and tra too)
   [] `!o all` help
   [] infinity in `!o per`
   [] need to be logged in to run commands
 
+Test:
+  [] Steal crown from signed out/gone user
+
 Todo:
   [] artist correct method
   [] Change rank command to be like !tt
   [] Add top artists to tags
+  [] Add total tracks/albums/scrobbles to att, ltt, att, last
   [later] Dockerize 😳
   [later] Keep track of every tag, artist ever fm'd
 

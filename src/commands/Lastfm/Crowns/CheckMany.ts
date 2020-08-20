@@ -29,8 +29,6 @@ export class CheckMany extends CrownsChildCommand {
       artists = [(await this.lastFMService.nowPlayingParsed(username)).artist];
     }
 
-    this.logger.log("artists", Logger.formatObject(artists));
-
     let artistDetailsList = await Promise.all(
       artists.map((artist) =>
         this.lastFMService.artistInfo({ artist, username })

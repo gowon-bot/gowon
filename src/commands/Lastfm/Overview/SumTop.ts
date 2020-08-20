@@ -25,7 +25,7 @@ export class SumTop extends OverviewChildCommand {
 
     let { badge, colour, image } = await this.getAuthorDetails();
     let [sumtop, sumtoppct] = await Promise.all([
-      this.calculator.sumTop(10),
+      this.calculator.sumTop(top),
       this.calculator.sumTopPercent(10),
     ]);
 

@@ -5,6 +5,7 @@ import { CrownState } from "../../../services/dbservices/CrownsService";
 import { CrownEmbeds } from "../../../helpers/Embeds/CrownEmbeds";
 import { userHasRole } from "../../../helpers/discord";
 import { InactiveError, OptedOutError, PurgatoryError } from "../../../errors";
+import { Logger } from "../../../lib/Logger";
 
 export class Check extends CrownsChildCommand {
   aliases = ["c"];
@@ -18,15 +19,6 @@ export class Check extends CrownsChildCommand {
   };
 
   async run(message: Message) {
-    this.logger.log(
-      "Inactive Role",
-      await this.botMomentService.getInactiveRole(message.guild!)
-    );
-    this.logger.log(
-      "Purgatory Role",
-      await this.botMomentService.getPurgatoryRole(message.guild!)
-    );
-
     if (
       userHasRole(
         message.member!,
@@ -73,6 +65,8 @@ export class Check extends CrownsChildCommand {
       artistName: artistDetails.name,
       plays: artistDetails.stats.userplaycount.toInt(),
     });
+
+    this.logger.log("Crown Check", Logger.formatObject(crownCheck));
 
     switch (crownCheck.state) {
       case CrownState.newCrown:

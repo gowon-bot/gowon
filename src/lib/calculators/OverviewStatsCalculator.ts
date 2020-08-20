@@ -315,71 +315,35 @@ export class OverviewStatsCalculator {
     return (userInfo.playcount.toInt() / crownsCount!).toFixed(2);
   }
 
-  // async breadth(): Promise<{ rating: number; ratingString: string }> {
-  //   let top50 = (await this.top50Percent()).replace(",", "").toInt();
-  //   let hindex = (await this.hIndex()).replace(",", "").toInt();
-  //   let scrobbles = (await this.totalScrobbles()).replace(",", "").toInt();
-  //   let sumTop = await this.sumTop();
-  //   let artistCount = (await this.totalArtists()).replace(",", "").toInt();
-
-  //   console.log(scrobbles);
-
-  //   if (scrobbles < 1000)
-  //     throw new LogicError(
-  //       "at least 1000 scrobbles are needed to calculate breadth"
-  //     );
-
-  //   let rating =
-  //     sqrt(
-  //       (((top50 * (hindex * 2) * sqrt(scrobbles / 1000)) / 2) *
-  //         (artistCount / (scrobbles / 1000))) /
-  //         (sumTop / 2)
-  //     ) *
-  //     (2 / 3);
-  //   let ratingString =
-  //     rating > 200
-  //       ? "what the fuck"
-  //       : rating > 50
-  //       ? "really high!"
-  //       : rating > 20
-  //       ? "very high"
-  //       : rating > 10
-  //       ? "high"
-  //       : rating > 5
-  //       ? "medium"
-  //       : rating > 2
-  //       ? "low"
-  //       : rating > 1
-  //       ? "very low"
-  //       : ".... really?";
-
-  //   return { rating, ratingString };
-  // }
-
   async breadth(): Promise<{ rating: number; ratingString: string }> {
     let top50 = (await this.top50Percent()).replace(",", "").toInt();
     let hindex = (await this.hIndex()).replace(",", "").toInt();
     let scrobbles = (await this.totalScrobbles()).replace(",", "").toInt();
     let sumTop = await this.sumTop();
-    // let artistCount = (await this.totalArtists()).replace(",", "").toInt();
-
-    console.log(scrobbles);
 
     if (scrobbles < 1000)
       throw new LogicError(
         "at least 1000 scrobbles are needed to calculate breadth"
       );
 
-    // let rsating =
-    //   sqrt(
-    //     (((top50 * (hindex * 2) * sqrt(scrobbles / 1000)) / 2) *
-    //       (artistCount / (scrobbles / 1000))) /
-    //       (sumTop / 2)
-    //   ) *
-    //   (2 / 3);
-
-    // let rating = log(top50 * Math.pow(hindex, 2) * (10 / sumTop) + 1) * 5;
     let rating = log((top50 * Math.pow(hindex, 1.5)) / sumTop + 1, 2) * 5;
+
+    //   let ratingString =
+    //     rating > 200
+    //       ? "what the fuck"
+    //       : rating > 50
+    //       ? "really high!"
+    //       : rating > 20
+    //       ? "very high"
+    //       : rating > 10
+    //       ? "high"
+    //       : rating > 5
+    //       ? "medium"
+    //       : rating > 2
+    //       ? "low"
+    //       : rating > 1
+    //       ? "very low"
+    //       : ".... really?";
 
     return { rating, ratingString: "h" };
   }
