@@ -18,7 +18,7 @@ export class BotMomentService {
   }
 
   // Instance methods/properties
-  prefix: string = "!";
+  prefix: string = ".";
   customPrefixes = {
     lastfm: "lfm:",
   };

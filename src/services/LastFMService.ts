@@ -48,9 +48,11 @@ import {
 import { BaseService } from "./BaseService";
 import moment from "moment";
 import { numberDisplay } from "../helpers";
+import { LastFMScraper } from "./scrapingServices/LastFMScraper";
 
 export class LastFMService extends BaseService {
   url = "http://ws.audioscrobbler.com/2.0/";
+  scraper = new LastFMScraper(this);
 
   get apikey(): string {
     return config.lastFMAPIKey;

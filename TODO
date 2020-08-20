@@ -1,6 +1,9 @@
 Bugs:
   [] Yoinking still bugged
-  [] !albumat out of bounds (probably aa and tra too)
+  [] `!albumat` out of bounds (probably aa and tra too)
+  [] `!o all` help
+  [] infinity in `!o per`
+  [] need to be logged in to run commands
 
 Todo:
   [] artist correct method

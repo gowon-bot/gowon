@@ -27,6 +27,10 @@ export function dateDisplay(date: Date): string {
   return moment(date).format("MMMM Do, YYYY");
 }
 
+export function dateTimeDisplay(date: Date): string {
+  return moment(date).format("h:mma MMMM Do, YYYY");
+}
+
 export function ago(date: Date): string {
   return moment(date).fromNow();
 }
