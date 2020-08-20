@@ -22,5 +22,5 @@ String.prototype.code = function (this: string): string {
 };
 
 String.prototype.toInt = function (this: string): number {
-  return parseInt(this, 10);
+  return parseInt(this.replace(/,/g, ""), 10);
 };

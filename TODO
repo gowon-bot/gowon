@@ -4,6 +4,7 @@ Bugs:
   [] `!o all` help
   [] infinity in `!o per`
   [] need to be logged in to run commands
+  [] Number display in `!o all`
 
 Test:
   [] Steal crown from signed out/gone user
