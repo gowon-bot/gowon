@@ -13,11 +13,8 @@ export interface TopAlbum {
 }
 
 export class LastFMScraper extends BaseScraper {
-  lastFMService: LastFMService;
-
   constructor(lastFMService: LastFMService) {
     super(lastFMService.logger, "https://last.fm/");
-    this.lastFMService = lastFMService;
   }
 
   // https://www.last.fm/user/flushed_emoji/library/music/Red+Velvet

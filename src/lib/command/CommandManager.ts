@@ -32,12 +32,9 @@ async function generateCommands(): Promise<Commands> {
 }
 
 export class CommandManager {
-  commands: Commands;
   isInitialized = false;
 
-  constructor(commands: Commands = {}) {
-    this.commands = commands;
-  }
+  constructor(public commands: Commands = {}) {}
 
   async init() {
     this.commands = await generateCommands();

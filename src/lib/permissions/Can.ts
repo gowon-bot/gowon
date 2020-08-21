@@ -17,16 +17,13 @@ export interface CanCheck {
 }
 
 export class Can {
-  adminService: AdminService;
   commandManager = new CommandManager();
 
   cachedPermissons: {
     [commandID: string]: Permission[];
   } = {};
 
-  constructor(adminService: AdminService) {
-    this.adminService = adminService;
-  }
+  constructor(private adminService: AdminService) {}
 
   private async getParentIDs(child: ChildCommand): Promise<string[]> {
     if (!this.commandManager.isInitialized) await this.commandManager.init();

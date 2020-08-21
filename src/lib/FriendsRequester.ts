@@ -5,12 +5,9 @@ export interface FetchedResponses<T> {
 }
 
 export class FriendsRequester {
-  usernames: string[];
   lastFMService = new LastFMService();
 
-  constructor(usernames: string[]) {
-    this.usernames = usernames;
-  }
+  constructor(public usernames: string[]) {}
 
   async fetch<T, ParamsT>(
     method: (params: ParamsT) => Promise<T>,

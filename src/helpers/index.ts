@@ -86,11 +86,9 @@ export function shuffle<T>(a: Array<T>): Array<T> {
 }
 
 export class StringPadder {
-  stringFunction: (item: any) => string;
-
   longestString = 0;
 
-  constructor(stringFunction: (item: any) => string) {
+  constructor(public stringFunction: (item: any) => string) {
     this.stringFunction = stringFunction;
   }
 

@@ -14,13 +14,10 @@ export interface Taste {
 }
 
 export class TasteCalculator {
-  userOneArtists: TopArtists;
-  userTwoArtists: TopArtists;
-
-  constructor(userOneArtists: TopArtists, userTwoArtists: TopArtists) {
-    this.userOneArtists = userOneArtists;
-    this.userTwoArtists = userTwoArtists;
-  }
+  constructor(
+    private userOneArtists: TopArtists,
+    private userTwoArtists: TopArtists
+  ) {}
 
   sortMatchedArtists(matchedArtists: TasteArtist[]): TasteArtist[] {
     let userOneMatchedArtists = matchedArtists

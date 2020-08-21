@@ -4,12 +4,10 @@ import { Logger } from "../../lib/Logger";
 import cheerio from "cheerio";
 
 export class BaseScraper extends BaseService {
-  url: string;
   axios: AxiosInstance;
 
-  constructor(logger: Logger | undefined, url: string) {
+  constructor(logger: Logger | undefined, private url: string) {
     super(logger);
-    this.url = url;
 
     this.axios = axios.create();
   }

@@ -4,14 +4,9 @@ import { BotMomentService } from "../services/BotMomentService";
 import { ParentCommand } from "./command/ParentCommand";
 
 class Stack {
-  string: string;
-  command: Command;
   next?: Stack;
 
-  constructor(runAs: string, command: Command) {
-    this.command = command;
-    this.string = runAs;
-  }
+  constructor(public string: string, public command: Command) {}
 }
 
 export class RunAs {

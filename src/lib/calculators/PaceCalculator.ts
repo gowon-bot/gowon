@@ -9,13 +9,7 @@ export interface PacePrediction {
 }
 
 export class PaceCalculator {
-  username: string;
-  lastFMService: LastFMService;
-
-  constructor(lastFMService: LastFMService, username: string) {
-    this.lastFMService = lastFMService;
-    this.username = username;
-  }
+  constructor(private lastFMService: LastFMService, private username: string) {}
 
   private calculateScrobblesPerHour(
     scrobbles: number,

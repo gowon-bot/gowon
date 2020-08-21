@@ -43,12 +43,10 @@ export interface ParsedArguments {
 export class ArgumentParser extends Parser {
   parsedArguments: ParsedArguments = {};
   botMomentService = BotMomentService.getInstance();
-  arguments: Arguments;
   mentionParser = new MentionParser(this);
 
-  constructor(args: Arguments) {
+  constructor(public args: Arguments) {
     super();
-    this.arguments = args;
   }
 
   parse(message: Message, runAs: RunAs): ParsedArguments {
@@ -66,11 +64,11 @@ export class ArgumentParser extends Parser {
   }
 
   private parseCustomInputs(messageString: string): ParsedArguments {
-    if (this.arguments.inputs) {
-      let parsedArguments = Object.keys(this.arguments.inputs!)
-        .filter((arg) => !!this.arguments.inputs![arg].custom)
+    if (this.args.inputs) {
+      let parsedArguments = Object.keys(this.args.inputs!)
+        .filter((arg) => !!this.args.inputs![arg].custom)
         .reduce((acc, arg) => {
-          let argOptions = this.arguments.inputs![arg];
+          let argOptions = this.args.inputs![arg];
           if (argOptions.custom) {
             acc[arg] = argOptions.custom(messageString);
           }
@@ -86,13 +84,13 @@ export class ArgumentParser extends Parser {
     splitFunction: (string: string, arg: InputArguments) => Array<string>,
     filter: (arg: InputArguments) => boolean
   ): ParsedArguments {
-    if (this.arguments.inputs) {
-      let argArray = Object.keys(this.arguments.inputs).filter((arg) =>
-        filter(this.arguments.inputs![arg])
+    if (this.args.inputs) {
+      let argArray = Object.keys(this.args.inputs).filter((arg) =>
+        filter(this.args.inputs![arg])
       );
 
       return argArray.reduce((acc: ParsedArguments, arg) => {
-        let argOptions = this.arguments.inputs![arg];
+        let argOptions = this.args.inputs![arg];
         let array = splitFunction(messageString, argOptions);
 
         acc[arg] = this.getElementFromIndex(

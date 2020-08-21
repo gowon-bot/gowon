@@ -4,13 +4,11 @@ import { Response } from "node-fetch";
 import { numberDisplay } from "./helpers";
 
 export abstract class ClientError extends Error {
-  message: string;
   name = "ClientError";
   isClientFacing = true;
 
-  constructor(message: string) {
+  constructor(public message: string) {
     super(message);
-    this.message = message;
   }
 }
 

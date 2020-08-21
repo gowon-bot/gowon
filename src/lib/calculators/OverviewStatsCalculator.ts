@@ -15,10 +15,6 @@ import { log } from "mathjs";
 import { LogicError } from "../../errors";
 
 export class OverviewStatsCalculator {
-  private username: string;
-  private userID?: string;
-  private serverID: string;
-
   private cache: {
     userInfo?: UserInfo;
     topArtists?: TopArtists;
@@ -32,14 +28,11 @@ export class OverviewStatsCalculator {
   private crownsService: CrownsService;
 
   constructor(
-    username: string,
-    serverID: string,
-    userID?: string,
+    private username: string,
+    private serverID: string,
+    private userID?: string,
     logger?: Logger
   ) {
-    this.username = username;
-    this.userID = userID;
-    this.serverID = serverID;
     this.lastFMService = new LastFMService(logger);
     this.crownsService = new CrownsService(logger);
   }

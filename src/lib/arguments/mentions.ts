@@ -16,11 +16,8 @@ export interface MentionOptions {
 export type Mention = User | string;
 
 export class MentionParser extends Parser {
-  argumentsParser: ArgumentParser;
-
-  constructor(argumentsParser: ArgumentParser) {
+  constructor(private argumentsParser: ArgumentParser) {
     super();
-    this.argumentsParser = argumentsParser;
   }
 
   private buildCustomMentionRegex(prefix: string): RegExp {
@@ -32,7 +29,7 @@ export class MentionParser extends Parser {
 
   hasNonDiscordMentions(): boolean {
     for (let mentionOptions of Object.values(
-      this.argumentsParser.arguments?.mentions ?? {}
+      this.argumentsParser.args?.mentions ?? {}
     )) {
       if (!!mentionOptions.nonDiscordMentionParsing) return true;
     }
@@ -41,7 +38,7 @@ export class MentionParser extends Parser {
 
   removeCustomMentions(string: string): string {
     let prefixRegexPart = Object.values(
-      this.argumentsParser.arguments.mentions || {}
+      this.argumentsParser.args.mentions || {}
     )
       .filter((mo) => !!mo.nonDiscordMentionParsing?.prefix)
       .map((mo) => escapeStringRegexp(mo.nonDiscordMentionParsing?.prefix!))
@@ -88,7 +85,7 @@ export class MentionParser extends Parser {
   }
 
   parse(message: Message): ParsedArguments {
-    let mentions = this.argumentsParser.arguments.mentions;
+    let mentions = this.argumentsParser.args.mentions;
 
     if (mentions) {
       return Object.keys(mentions).reduce((acc, arg) => {

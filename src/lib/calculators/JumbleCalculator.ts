@@ -2,13 +2,7 @@ import { LastFMService } from "../../services/LastFMService";
 import { TopArtist } from "../../services/LastFMService.types";
 
 export class JumbleCalculator {
-  username: string;
-  lastFMService: LastFMService;
-
-  constructor(username: string, lastFMService: LastFMService) {
-    this.username = username;
-    this.lastFMService = lastFMService;
-  }
+  constructor(private username: string, private lastFMService: LastFMService) {}
 
   async getArtist(
     poolAmount: number,
