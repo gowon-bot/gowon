@@ -22,7 +22,7 @@ export class CheckMany extends CrownsChildCommand {
 
     artists = artists.slice(0, 10);
 
-    let { username } = await this.parseMentionedUsername(message);
+    let { username } = await this.parseMentionedUsername();
 
     if (!artists) {
       artists = [(await this.lastFMService.nowPlayingParsed(username)).artist];
@@ -36,7 +36,7 @@ export class CheckMany extends CrownsChildCommand {
 
     let crownChecks = artistDetailsList.map((ad) =>
       this.crownsService.checkCrown({
-        serverID: message.guild?.id!,
+        message,
         discordID: message.author.id,
         artistName: ad.name,
         plays: ad.stats.userplaycount.toInt(),
@@ -62,6 +62,6 @@ export class CheckMany extends CrownsChildCommand {
         )
       );
 
-    await message.channel.send(embed);
+    await this.send(embed);
   }
 }

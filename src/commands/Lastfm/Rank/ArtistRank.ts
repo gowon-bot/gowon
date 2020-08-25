@@ -1,4 +1,3 @@
-import { Message } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { numberDisplay } from "../../../helpers";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
@@ -24,14 +23,14 @@ export default class ArtistRank extends LastFMBaseCommand {
     },
   };
 
-  async run(message: Message) {
+  async run() {
     let artist = this.parsedArguments.artist as string;
 
     let {
       username,
       senderUsername,
       perspective,
-    } = await this.parseMentionedUsername(message);
+    } = await this.parseMentionedUsername();
 
     if (!artist)
       artist = (await this.lastFMService.nowPlayingParsed(senderUsername))
@@ -47,11 +46,11 @@ export default class ArtistRank extends LastFMBaseCommand {
     );
 
     if (rank === -1) {
-      await message.reply(
+      await this.reply(
         `that artist wasn't found in ${perspective.possessive} top 1000 artists`
       );
     } else {
-      await message.reply(
+      await this.reply(
         `${topArtists.artist[rank].name.bold()} is ranked #${numberDisplay(
           rank + 1
         ).bold()} in ${

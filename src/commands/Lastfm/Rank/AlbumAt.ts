@@ -1,7 +1,7 @@
-import { Message } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
-import { numberDisplay } from "../../../helpers";
+import { numberDisplay, ucFirst } from "../../../helpers";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
+import { LogicError } from "../../../errors";
 
 export default class AlbumAt extends LastFMBaseCommand {
   aliases = ["ala"];
@@ -22,15 +22,15 @@ export default class AlbumAt extends LastFMBaseCommand {
     },
   };
 
-  async run(message: Message) {
+  async run() {
     let rank = this.parsedArguments.rank as number;
 
     if (isNaN(rank) || rank < 0) {
-      await message.reply("please enter a valid rank");
+      await this.reply("please enter a valid rank");
       return;
     }
 
-    let { username, perspective } = await this.parseMentionedUsername(message);
+    let { username, perspective } = await this.parseMentionedUsername();
 
     let topAlbums = await this.lastFMService.topAlbums({
       username,
@@ -40,7 +40,14 @@ export default class AlbumAt extends LastFMBaseCommand {
 
     let album = topAlbums.album[0];
 
-    await message.reply(
+    if (!album)
+      throw new LogicError(
+        `${ucFirst(
+          perspective.name
+        )} haven't scrobbled an album at that position!`
+      );
+
+    await this.reply(
       `${album.name.bold()} by ${album.artist.name.italic()} is ranked at #${album[
         "@attr"
       ].rank.bold()} in ${

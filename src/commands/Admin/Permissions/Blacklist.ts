@@ -91,6 +91,6 @@ export class Blacklist extends PermissionsChildCommand {
             : "")
       );
 
-    await message.channel.send(embed);
+    await this.send(embed);
   }
 }

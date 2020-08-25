@@ -39,6 +39,6 @@ export class List extends FriendsChildCommand {
         })
       );
 
-    await message.channel.send(embed);
+    await this.send(embed);
   }
 }

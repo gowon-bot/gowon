@@ -2,7 +2,7 @@ import { Message, MessageEmbed } from "discord.js";
 import { LinkGenerator, parseLastFMTrackResponse } from "../../helpers/lastFM";
 import { numberDisplay } from "../../helpers";
 import { Arguments } from "../../lib/arguments/arguments";
-import { isBotMoment, fakeNowPlaying } from "../../botmoment/fakeNowPlaying";
+import { isGowon, fakeNowPlaying } from "../../gowon/fakeNowPlaying";
 import { Mention } from "../../lib/arguments/mentions";
 import { LastFMBaseCommand } from "./LastFMBaseCommand";
 import { CrownsService } from "../../services/dbservices/CrownsService";
@@ -14,7 +14,7 @@ export default class NowPlaying extends LastFMBaseCommand {
   aliases = ["np", "fm"];
   variations = [
     {
-      variationString: "fmvv",
+      variationString: "fmv",
       description: "Displays a bit more information",
     },
     {
@@ -48,8 +48,8 @@ export default class NowPlaying extends LastFMBaseCommand {
     let user = this.parsedArguments.user as Mention,
       otherWords = this.parsedArguments.otherWords as string | undefined;
 
-    if (isBotMoment(typeof user !== "string" ? user?.id : "")) {
-      await message.channel.send(fakeNowPlaying());
+    if (isGowon(typeof user !== "string" ? user?.id : "")) {
+      await this.send(fakeNowPlaying());
       return;
     }
 
@@ -110,7 +110,7 @@ export default class NowPlaying extends LastFMBaseCommand {
         }
       }
 
-      if (runAs.lastString() === "fmvv") {
+      if (runAs.lastString() === "fmv") {
         if (trackInfo.value)
           this.tagConsolidator.addTags(trackInfo.value?.toptags?.tag || []);
         if (artistInfo.value)
@@ -142,15 +142,15 @@ export default class NowPlaying extends LastFMBaseCommand {
               : "") +
             this.tagConsolidator
               .consolidate(
-                runAs.lastString() === "fmvv" ? Infinity : 6,
-                runAs.lastString() !== "fmvv"
+                runAs.lastString() === "fmv" ? Infinity : 6,
+                runAs.lastString() !== "fmv"
               )
               .join(" ‧ ") +
             (crownString ? " • " + crownString : "")
         );
     }
 
-    let sentMessage = await message.channel.send(nowPlayingEmbed);
+    let sentMessage = await this.send(nowPlayingEmbed);
 
     if (
       track.artist.toLowerCase() === "twice" &&

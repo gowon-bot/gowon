@@ -1,4 +1,4 @@
-import { Message } from "discord.js";
+import { Message, MessageEmbed } from "discord.js";
 import md5 from "js-md5";
 import {
   UsersService,
@@ -10,7 +10,7 @@ import {
   ArgumentParser,
 } from "../arguments/arguments";
 import { UnknownError } from "../../errors";
-import { BotMomentService } from "../../services/BotMomentService";
+import { GowonService } from "../../services/GowonService";
 import { Mention } from "../arguments/mentions";
 import { CommandManager } from "./CommandManager";
 import { Logger } from "../Logger";
@@ -51,7 +51,7 @@ export interface Command {
 }
 
 export abstract class BaseCommand implements Command {
-  protected logger = new Logger();
+  logger = new Logger();
 
   name: string = this.constructor.name.toLowerCase();
   friendlyName: string = this.constructor.name.toLowerCase();
@@ -65,6 +65,9 @@ export abstract class BaseCommand implements Command {
   subcategory: string | undefined = undefined;
   usage: string | string[] = "";
 
+  message!: Message;
+  responses: Array<MessageEmbed | string> = [];
+
   get friendlyNameWithParent(): string {
     return (
       (this.parentName ? this.parentName.trim() + " " : "") + this.friendlyName
@@ -74,7 +77,7 @@ export abstract class BaseCommand implements Command {
   parsedArguments: ParsedArguments = {};
 
   usersService = new UsersService(this.logger);
-  botMomentService = BotMomentService.getInstance();
+  gowonService = GowonService.getInstance();
   track = new TrackingService(this.logger);
 
   hasChildren = false;
@@ -94,7 +97,6 @@ export abstract class BaseCommand implements Command {
   abstract async run(message: Message, runAs: RunAs): Promise<void>;
 
   async parseMentionedUsername(
-    message: Message,
     options: {
       asCode?: boolean;
       argumentName?: string;
@@ -117,8 +119,8 @@ export abstract class BaseCommand implements Command {
       (this.parsedArguments[options.inputArgumentName] as string);
 
     let senderUser = await this.usersService.getUser(
-      message.author.id,
-      message.guild?.id!
+      this.message.author.id,
+      this.message.guild?.id!
     );
 
     let mentionedUsername: string | undefined;
@@ -127,8 +129,8 @@ export abstract class BaseCommand implements Command {
       mentionedUsername = user;
     } else {
       let mentionedUser = await this.usersService.getUser(
-        user?.id || message.author.id,
-        message.guild?.id!
+        user?.id || this.message.author.id,
+        this.message.guild?.id!
       );
 
       dbUser = mentionedUser;
@@ -159,21 +161,22 @@ export abstract class BaseCommand implements Command {
 
   async prerun(_: Message): Promise<void> {}
 
-  private async setup(message: Message) {
-    message.channel.startTyping();
+  async setup() {
+    this.message.channel.startTyping();
     this.logger.openCommandHeader(this);
   }
 
-  private async teardown(message: Message) {
-    message.channel.stopTyping();
+  async teardown() {
+    this.message.channel.stopTyping();
     this.logger.closeCommandHeader(this);
   }
 
   async execute(message: Message, runAs: RunAs) {
-    await this.setup(message);
+    this.message = message;
+    await this.setup();
 
     try {
-      this.parsedArguments = this.parseArguments(message, runAs);
+      this.parsedArguments = this.parseArguments(runAs);
       this.logger.logCommand(this, message, runAs.toArray().join(" "));
       await this.prerun(message);
       await this.run(message, runAs);
@@ -182,19 +185,39 @@ export abstract class BaseCommand implements Command {
       this.track.error(e);
 
       if (e.isClientFacing) {
-        await message.reply(e.message);
+        await this.reply(e.message);
       } else {
-        await message.reply(new UnknownError().message);
+        await this.reply(new UnknownError().message);
       }
     }
 
-    await this.teardown(message);
+    await this.teardown();
   }
 
-  parseArguments(message: Message, runAs: RunAs): ParsedArguments {
+  parseArguments(runAs: RunAs): ParsedArguments {
     let parser = new ArgumentParser(this.arguments);
 
-    return parser.parse(message, runAs);
+    return parser.parse(this.message, runAs);
+  }
+
+  addResponse(res: MessageEmbed | string) {
+    this.responses.push(res);
+  }
+
+  async sendWithFiles(message: MessageEmbed | string, files: [string]) {
+    this.addResponse(message);
+    await this.message.channel.send(message, {
+      files,
+    });
+  }
+
+  async send(message: MessageEmbed | string): Promise<Message> {
+    this.addResponse(message);
+    return await this.message.channel.send(message);
+  }
+  async reply(message: MessageEmbed | string): Promise<Message> {
+    this.addResponse(message);
+    return await this.message.reply(message);
   }
 }
 

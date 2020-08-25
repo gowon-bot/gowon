@@ -26,7 +26,7 @@ export class Disable extends PermissionsChildCommand {
       this.runAs.toCommandFriendlyName()
     );
 
-    await message.channel.send(
+    await this.send(
       `Successfully disabled ${this.commandManager
         .findByID(disabledCommand.commandID)
         ?.name.code()}`

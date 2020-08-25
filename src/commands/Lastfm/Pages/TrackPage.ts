@@ -1,4 +1,3 @@
-import { Message } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
@@ -22,11 +21,11 @@ export default class TrackPage extends LastFMBaseCommand {
     },
   };
 
-  async run(message: Message) {
+  async run() {
     let artist = this.parsedArguments.artist as string,
       track = this.parsedArguments.track as string;
 
-    let { username } = await this.parseMentionedUsername(message);
+    let { username } = await this.parseMentionedUsername();
 
     if (!artist || !track) {
       let nowPlaying = await this.lastFMService.nowPlayingParsed(username);
@@ -41,7 +40,7 @@ export default class TrackPage extends LastFMBaseCommand {
       username,
     });
 
-    message.channel.send(
+    this.send(
       `${trackDetails.name.italic()} by ${trackDetails.artist.name.bold()} on last.fm: ${
         trackDetails.url
       }`

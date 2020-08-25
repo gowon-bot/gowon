@@ -12,6 +12,6 @@ export default class Logout extends LastFMBaseCommand {
       message.guild?.id!
     );
 
-    message.channel.send(`Logged out successfully.`);
+    this.send(`Logged out successfully.`);
   }
 }

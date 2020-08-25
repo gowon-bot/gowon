@@ -21,7 +21,7 @@ export class Kill extends CrownsChildCommand {
     if (!crown)
       throw new LogicError(`A crown for ${artist.bold()} doesn't exist`);
 
-    let sentMessage = await message.reply(
+    let sentMessage = await this.reply(
       `are you sure you want to kill the crown for ${crown?.artistName.bold()}?`
     );
 
@@ -37,7 +37,7 @@ export class Kill extends CrownsChildCommand {
 
       await this.crownsService.killCrown(artist, message.guild?.id!);
 
-      await message.channel.send(
+      await this.send(
         new MessageEmbed()
           .setAuthor(
             message.member?.nickname || message.author.username,
@@ -46,7 +46,7 @@ export class Kill extends CrownsChildCommand {
           .setDescription(`Successfully killed the crown for ${artist.bold()}`)
       );
     } catch {
-      await message.reply(
+      await this.reply(
         `No reaction, cancelling crown kill for ${artist.bold()}`
       );
     }

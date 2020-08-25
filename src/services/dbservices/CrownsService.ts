@@ -6,9 +6,7 @@ import { BaseService } from "../BaseService";
 import { FindManyOptions } from "typeorm";
 import { Setting } from "../../database/entity/Setting";
 import { Settings } from "../../lib/Settings";
-import { BotMomentService } from "../BotMomentService";
 import { MoreThan } from "typeorm";
-import { Logger } from "../../lib/Logger";
 
 export enum CrownState {
   tie = "Tie",
@@ -17,6 +15,9 @@ export enum CrownState {
   newCrown = "New crown",
   updated = "Updated",
   tooLow = "Too low",
+  inactivity = "Inactivity",
+  purgatory = "Purgatory",
+  left = "Left",
 }
 
 export interface CrownCheck {
@@ -26,7 +27,7 @@ export interface CrownCheck {
 }
 
 export interface CrownOptions {
-  serverID: string;
+  message: Message;
   discordID: string;
   artistName: string;
   plays: number;
@@ -44,7 +45,7 @@ export interface CrownHolder {
 }
 
 export class CrownsService extends BaseService {
-  threshold = 30;
+  threshold = this.gowonService.contants.crownThreshold;
 
   private async handleSelfCrown(
     crown: Crown,
@@ -82,25 +83,54 @@ export class CrownsService extends BaseService {
     else return CrownState.fail;
   }
 
+  private async handleInvalidHolder(
+    crown: Crown,
+    reason: CrownState.inactivity | CrownState.left | CrownState.purgatory,
+    plays: number,
+    user: User
+  ): Promise<CrownCheck> {
+    crown.user = user;
+    crown.plays = plays;
+
+    await crown.save();
+
+    return {
+      crown,
+      state: reason,
+    };
+  }
+
   async checkCrown(crownOptions: CrownOptions): Promise<CrownCheck> {
-    let { discordID, artistName, plays, serverID } = crownOptions;
+    let { discordID, artistName, plays, message } = crownOptions;
     this.log(`Checking crown for user ${discordID} and artist ${artistName}`);
 
     let [crown, user] = await Promise.all([
-      this.getCrown(artistName, serverID),
-      User.findOne({ where: { discordID, serverID } }),
+      this.getCrown(artistName, message.guild?.id!),
+      User.findOne({ where: { discordID, serverID: message.guild?.id! } }),
     ]);
 
     let oldCrown = Object.assign({}, crown);
     oldCrown.user = Object.assign({}, crown?.user);
-
-    this.logger?.log("oldCrown", Logger.formatObject(oldCrown));
 
     if (!user) throw new RecordNotFoundError("user");
 
     let crownState: CrownState;
 
     if (crown) {
+      let invalidCheck = await crown.invalid(message);
+
+      if (invalidCheck.failed) {
+        return {
+          ...(await this.handleInvalidHolder(
+            crown,
+            invalidCheck.reason!,
+            plays,
+            user
+          )),
+          oldCrown,
+        };
+      }
+
       if (crown.user.id === user.id) {
         crownState = await this.handleSelfCrown(crown, plays);
       } else {
@@ -112,13 +142,15 @@ export class CrownsService extends BaseService {
       return { crown: crown, state: crownState, oldCrown };
     } else {
       if (plays < this.threshold) return { state: CrownState.tooLow };
-      this.log("Creating crown for " + artistName + " in server " + serverID);
+      this.log(
+        "Creating crown for " + artistName + " in server " + message.guild?.id!
+      );
 
       let crown = Crown.create({
         user,
         artistName,
         plays,
-        serverID,
+        serverID: message.guild?.id!,
         version: 1,
         lastStolen: new Date(),
       });
@@ -290,7 +322,7 @@ export class CrownsService extends BaseService {
       roleID
     );
 
-    BotMomentService.getInstance().inactiveRole[serverID] = roleID;
+    this.gowonService.inactiveRole[serverID] = roleID;
 
     return setting;
   }
@@ -305,7 +337,7 @@ export class CrownsService extends BaseService {
       roleID
     );
 
-    BotMomentService.getInstance().purgatoryRole[serverID] = roleID;
+    this.gowonService.purgatoryRole[serverID] = roleID;
 
     return setting;
   }

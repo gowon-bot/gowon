@@ -40,6 +40,6 @@ export class Rank extends CrownsChildCommand {
         ).bold()} in ${message.guild?.name}`
       );
 
-    await message.channel.send(embed);
+    await this.send(embed);
   }
 }

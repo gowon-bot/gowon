@@ -1,4 +1,4 @@
-import { Message, MessageEmbed } from "discord.js";
+import { MessageEmbed } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { getOrdinal, ucFirst } from "../../../helpers";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
@@ -28,12 +28,12 @@ export default class Milestone extends LastFMBaseCommand {
     },
   };
 
-  async run(message: Message) {
+  async run() {
     let milestone = this.parsedArguments.milestone as number;
 
     if (milestone <= 0) throw new LogicError("please enter a valid milestone!");
 
-    let { username, perspective } = await this.parseMentionedUsername(message, {
+    let { username, perspective } = await this.parseMentionedUsername({
       asCode: false,
     });
 
@@ -54,6 +54,6 @@ export default class Milestone extends LastFMBaseCommand {
         track.image.find((i) => i.size === "large")?.["#text"] || ""
       );
 
-    await message.channel.send(embed);
+    await this.send(embed);
   }
 }

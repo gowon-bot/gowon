@@ -1,5 +1,5 @@
 import { Message } from "discord.js";
-import { BotMomentService } from "../../services/BotMomentService";
+import { GowonService } from "../../services/GowonService";
 import { MentionParser, MentionOptions } from "./mentions";
 import { Parser } from "./parser";
 import { RunAs } from "../AliasChecker";
@@ -42,7 +42,7 @@ export interface ParsedArguments {
 
 export class ArgumentParser extends Parser {
   parsedArguments: ParsedArguments = {};
-  botMomentService = BotMomentService.getInstance();
+  gowonService = GowonService.getInstance();
   mentionParser = new MentionParser(this);
 
   constructor(public args: Arguments) {
@@ -55,7 +55,7 @@ export class ArgumentParser extends Parser {
     let mentions = this.mentionParser.parse(message);
 
     let inputs = this.parseInputs(
-      this.botMomentService.removeCommandName(messageString, runAs)
+      this.gowonService.removeCommandName(messageString, runAs)
     );
 
     this.parsedArguments = { ...mentions, ...inputs };

@@ -19,6 +19,6 @@ export default class SecretCommands extends BaseCommand {
       .setAuthor("Secret commands for " + message.author.username)
       .setDescription(commands.map((c) => c.name).join(", "));
 
-    await message.channel.send(embed);
+    await this.send(embed);
   }
 }

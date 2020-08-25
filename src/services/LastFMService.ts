@@ -58,7 +58,7 @@ export class LastFMService extends BaseService {
     return config.lastFMAPIKey;
   }
 
-  private buildParams(params: Params): string {
+  buildParams(params: Params): string {
     return stringify({
       format: "json",
       api_key: this.apikey,
@@ -66,7 +66,7 @@ export class LastFMService extends BaseService {
     });
   }
 
-  private async request<T>(method: string, params: Params): Promise<T> {
+  async request<T>(method: string, params: Params): Promise<T> {
     this.log(
       `made API request for ${method} with params ${JSON.stringify(params)}`
     );
@@ -306,5 +306,31 @@ export class LastFMService extends BaseService {
     if (isNaN(playcount)) throw new BadLastFMResponseError();
 
     return playcount;
+  }
+
+  async correctArtist(params: ArtistInfoParams): Promise<string> {
+    return (await this.artistInfo(params)).name;
+  }
+
+  async correctAlbum(
+    params: AlbumInfoParams
+  ): Promise<{ artist: string; album: string }> {
+    let response = await this.albumInfo(params);
+
+    return {
+      artist: response.artist,
+      album: response.name,
+    };
+  }
+
+  async correctTrack(
+    params: TrackInfoParams
+  ): Promise<{ artist: string; track: string }> {
+    let response = await this.trackInfo(params);
+
+    return {
+      artist: response.artist.name,
+      track: response.name,
+    };
   }
 }

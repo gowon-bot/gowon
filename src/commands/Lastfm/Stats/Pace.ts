@@ -1,4 +1,4 @@
-import { Message, MessageEmbed } from "discord.js";
+import { MessageEmbed } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
 import {
   generateTimeRange,
@@ -50,7 +50,7 @@ export default class Pace extends LastFMBaseCommand {
     },
   };
 
-  async run(message: Message) {
+  async run() {
     let timeRange = this.parsedArguments.timeRange as TimeRange,
       humanReadableTimeRange = this.parsedArguments
         .humanReadableTimeRange as string,
@@ -61,7 +61,7 @@ export default class Pace extends LastFMBaseCommand {
         "you probably won't be alive to witness that milestone..."
       );
 
-    let { username, perspective } = await this.parseMentionedUsername(message);
+    let { username, perspective } = await this.parseMentionedUsername();
 
     let paceCalculator = new PaceCalculator(this.lastFMService, username);
 
@@ -85,6 +85,6 @@ export default class Pace extends LastFMBaseCommand {
       )} on ${dateDisplay(pace.prediction).bold()}`
     );
 
-    await message.channel.send(embed);
+    await this.send(embed);
   }
 }

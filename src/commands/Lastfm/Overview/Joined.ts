@@ -1,12 +1,12 @@
 import { OverviewChildCommand } from "./OverviewChildCommand";
-import { Message, MessageEmbed } from "discord.js";
+import { MessageEmbed } from "discord.js";
 
 export class Joined extends OverviewChildCommand {
   aliases = ["j", "join"];
   description = "Shows when a user joined";
 
-  async run(message: Message) {
-    let { username } = await this.parseMentionedUsername(message);
+  async run() {
+    let { username } = await this.parseMentionedUsername();
 
     let { badge, colour, image } = await this.getAuthorDetails();
     let joined = await this.calculator.joined();
@@ -16,6 +16,6 @@ export class Joined extends OverviewChildCommand {
       .setColor(colour)
       .setDescription(`Scrobbling since ${joined}`);
 
-    await message.channel.send(embed);
+    await this.send(embed);
   }
 }

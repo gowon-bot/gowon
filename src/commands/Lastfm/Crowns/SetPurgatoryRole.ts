@@ -19,6 +19,6 @@ export class SetPurgatoryRole extends CrownsChildCommand {
       `Set the purgatory role for crowns to ${purgatoryRole.name}`
     );
 
-    await message.channel.send(embed);
+    await this.send(embed);
   }
 }

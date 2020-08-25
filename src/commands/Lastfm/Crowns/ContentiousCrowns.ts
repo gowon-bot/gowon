@@ -30,6 +30,6 @@ export class ContentiousCrowns extends CrownsChildCommand {
             .join("\n")
       );
 
-    await message.channel.send(embed);
+    await this.send(embed);
   }
 }

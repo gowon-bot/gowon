@@ -1,17 +1,18 @@
 Bugs:
   [x] Yoinking still bugged
-  [] `!albumat` out of bounds (probably aa and tra too)
-  [] `!o all` help
-  [] infinity in `!o per`
-  [] need to be logged in to run commands
-  [] Number display in `!o all`
+  [x] `!albumat` out of bounds (probably aa and tra too)
+  [x] `!o all` help
+  [x] infinity in `!o per`
+  [x] Number display in `!o all`
+  [] `!wh` inactive, purgatory, left display
+  [] UsernameNotRegistered error no longer thrown (maybe fix need to be logged in too)
 
 Test:
-  [] Steal crown from signed out/gone user
+  [x] Steal crown from gone/inactive/cheating user
 
 Todo:
-  [] artist correct method
-  [] Change rank command to be like !tt
+  [x] artist/album/track correct method
+  [x] Pagination helper, plus multiple pages on `!combo`
   [] Add top artists to tags
   [] Add total tracks/albums/scrobbles to att, ltt, att, last
   [later] Dockerize 😳
@@ -19,6 +20,8 @@ Todo:
 
   Comands:
     [] Crowns ban
+    [] Server nowplaying
+    [] Friends scrobbles
     [later] Whosampled (w/scraping)
 
     
@@ -26,13 +29,14 @@ Dashboard:
   [] Make TrackedErrors individual instead of grouped
       
 Large Projects:
-  [] Change lastfm service methods to take specific object type params
+  [x] Change lastfm service methods to take specific object type params
+  [] Tests
+  [] Cache redirects
   [] Change User.username into GuildMember.nickname (or w/e it's called)
   [] Feedback command to automatically make gh issue
   [] Permission caching
   [] !flashplaylist with spotify integration
   [] `!crowns mark 수호 duplicate of suho`
-  [] Cache redirects
   [] Spotify integration
   [] Crowns history
 

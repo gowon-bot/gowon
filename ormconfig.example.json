@@ -1,14 +1,30 @@
-{
-  "name": "default",
-  "type": "postgres",
-  "host": "localhost",
-  "port": 5432,
-  "username": "",
-  "password": "",
-  "database": "gowon",
-  "synchronize": true,
-  "logging": false,
-  "entities": ["dist/src/database/entity/**/*.js"],
-  "migrations": ["dist/src/database/migration/**/*.js"],
-  "subscribers": ["dist/src/database/subscriber/**/*.js"]
-}
+[
+  {
+    "name": "default",
+    "type": "postgres",
+    "host": "localhost",
+    "port": 5432,
+    "username": "",
+    "password": "",
+    "database": "gowon",
+    "synchronize": true,
+    "logging": false,
+    "entities": ["dist/src/database/entity/**/*.js"],
+    "migrations": ["dist/src/database/migration/**/*.js"],
+    "subscribers": ["dist/src/database/subscriber/**/*.js"]
+  },
+  {
+    "name": "test",
+    "type": "postgres",
+    "host": "localhost",
+    "port": 5432,
+    "username": "",
+    "password": "",
+    "database": "gowon_test",
+    "synchronize": true,
+    "logging": false,
+    "entities": ["dist/src/database/entity/**/*.js"],
+    "migrations": ["dist/src/database/migration/**/*.js"],
+    "subscribers": ["dist/src/database/subscriber/**/*.js"]
+  }
+]

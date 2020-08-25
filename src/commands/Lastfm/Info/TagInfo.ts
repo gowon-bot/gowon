@@ -1,4 +1,4 @@
-import { Message, MessageEmbed } from "discord.js";
+import { MessageEmbed } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { InfoCommand } from "./InfoCommand";
 import { numberDisplay } from "../../../helpers";
@@ -16,7 +16,7 @@ export default class TagInfo extends InfoCommand {
     },
   };
 
-  async run(message: Message) {
+  async run() {
     let tag = this.parsedArguments.tag as string;
 
     let tagInfo = await this.lastFMService.tagInfo({ tag });
@@ -34,6 +34,6 @@ export default class TagInfo extends InfoCommand {
       .setURL(this.getLinkFromBio(tagInfo.wiki.summary) || "")
       .setDescription(this.scrubReadMore(tagInfo.wiki.summary));
 
-    message.channel.send(embed);
+    this.send(embed);
   }
 }

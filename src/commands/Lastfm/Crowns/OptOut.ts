@@ -7,7 +7,7 @@ export class OptOut extends CrownsChildCommand {
   usage = "";
 
   async run(message: Message) {
-    let sentMessage = await message.reply(
+    let sentMessage = await this.reply(
       `are you sure you want to opt out? This will delete all your crowns!`
     );
 
@@ -26,7 +26,7 @@ export class OptOut extends CrownsChildCommand {
         message.author.id
       );
 
-      await message.channel.send(
+      await this.send(
         new MessageEmbed().setDescription(
           `Opted you out, deleting ${numberDisplay(
             numberOfCrowns,
@@ -35,7 +35,7 @@ export class OptOut extends CrownsChildCommand {
         )
       );
     } catch {
-      await message.reply(`No reaction, cancelling opt out`);
+      await this.reply(`No reaction, cancelling opt out`);
     }
   }
 }

@@ -1,11 +1,11 @@
 import { OverviewChildCommand } from "./OverviewChildCommand";
-import { Message, MessageEmbed } from "discord.js";
+import { MessageEmbed } from "discord.js";
 import { ucFirst, numberDisplay, getOrdinal } from "../../../helpers";
 
 export class All extends OverviewChildCommand {
-  description = "Shows information about a crown";
+  description = "Shows information about you and your library";
 
-  async run(message: Message) {
+  async run() {
     let perspective = this.usersService.perspective(
       this.senderUsername,
       this.username
@@ -85,6 +85,6 @@ For every ${numberDisplay(
             : "")
       );
 
-    await message.channel.send(embed);
+    await this.send(embed);
   }
 }

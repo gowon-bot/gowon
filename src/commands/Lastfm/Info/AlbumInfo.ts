@@ -1,4 +1,4 @@
-import { Message, MessageEmbed } from "discord.js";
+import { MessageEmbed } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { InfoCommand } from "./InfoCommand";
 import { numberDisplay, ucFirst } from "../../../helpers";
@@ -25,7 +25,7 @@ export default class AlbumInfo extends InfoCommand {
     },
   };
 
-  async run(message: Message) {
+  async run() {
     let artist = this.parsedArguments.artist as string,
       album = this.parsedArguments.album as string;
 
@@ -33,7 +33,7 @@ export default class AlbumInfo extends InfoCommand {
       senderUsername,
       username,
       perspective,
-    } = await this.parseMentionedUsername(message);
+    } = await this.parseMentionedUsername();
 
     if (!artist || !album) {
       let nowPlaying = await this.lastFMService.nowPlayingParsed(
@@ -104,6 +104,6 @@ export default class AlbumInfo extends InfoCommand {
         ).bold()}% of all scrobbles of this album!`
       );
 
-    message.channel.send(embed);
+    this.send(embed);
   }
 }

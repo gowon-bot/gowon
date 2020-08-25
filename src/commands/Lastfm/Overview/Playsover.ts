@@ -1,12 +1,12 @@
 import { OverviewChildCommand } from "./OverviewChildCommand";
-import { Message, MessageEmbed } from "discord.js";
+import { MessageEmbed } from "discord.js";
 
 export class Playsover extends OverviewChildCommand {
   aliases = ["po"];
   description = "Shows some playsover stats";
 
-  async run(message: Message) {
-    let { username, perspective } = await this.parseMentionedUsername(message);
+  async run() {
+    let { username, perspective } = await this.parseMentionedUsername();
 
     let { badge, colour, image } = await this.getAuthorDetails();
     let [thousand, fivehundred, twofifty, hundred, fifty] = await Promise.all([
@@ -28,6 +28,6 @@ export class Playsover extends OverviewChildCommand {
   - ${hundred.bold()} artists with 100+ scrobbles
   - ${fifty.bold()} artists with 50+ scrobbles`);
 
-    await message.channel.send(embed);
+    await this.send(embed);
   }
 }

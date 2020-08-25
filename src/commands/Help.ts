@@ -32,7 +32,7 @@ export default class Help extends BaseCommand {
 
     if (!embed) return;
 
-    await message.channel.send(embed);
+    await this.send(embed);
   }
 
   private async helpForAllCommands(message: Message) {
@@ -63,7 +63,7 @@ export default class Help extends BaseCommand {
         message.author.avatarURL() || ""
       )
       .setDescription(
-        `Run \`${this.botMomentService.prefix}help <command>\` to learn more about specific commands`
+        `Run \`${this.gowonService.prefix}help <command>\` to learn more about specific commands`
       )
       .addFields(
         Object.keys(groupedCommands).map((gc) => ({
@@ -134,7 +134,7 @@ export default class Help extends BaseCommand {
               flatDeep([command.usage])
                 .map((u) =>
                   (
-                    this.botMomentService.prefix +
+                    this.gowonService.prefix +
                     command.friendlyNameWithParent +
                     " " +
                     u

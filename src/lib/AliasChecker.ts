@@ -1,6 +1,6 @@
 import { Command, NoCommand } from "./command/BaseCommand";
 import escapeStringRegexp from "escape-string-regexp";
-import { BotMomentService } from "../services/BotMomentService";
+import { GowonService } from "../services/GowonService";
 import { ParentCommand } from "./command/ParentCommand";
 
 class Stack {
@@ -94,12 +94,9 @@ export class RunAs {
 }
 
 export class AliasChecker {
-  private aliasesString: string;
-  private botMomentService = BotMomentService.getInstance();
+  private gowonService = GowonService.getInstance();
 
-  constructor(aliasesString: string) {
-    this.aliasesString = aliasesString;
-  }
+  constructor(private aliasesString: string) {}
 
   parentCommandGetChildSkipPrefix(
     command: ParentCommand,
@@ -149,7 +146,7 @@ export class AliasChecker {
   getRunAs(command: Command): RunAs {
     let checks = this.aliasesString
       .toLowerCase()
-      .replace(new RegExp(this.botMomentService.regexSafePrefix, "i"), "")
+      .replace(new RegExp(this.gowonService.regexSafePrefix, "i"), "")
       .trim()
       .split(/\s+/);
 

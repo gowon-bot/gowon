@@ -77,7 +77,7 @@ export class Me extends JumbleChildCommand {
       )} (ranked #${artist["@attr"].rank})`
       );
 
-    await message.channel.send(embed);
+    await this.send(embed);
   }
 
   private async handleAlreadyJumbled(message: Message, jumble: JumbledArtist) {
@@ -92,7 +92,7 @@ export class Me extends JumbleChildCommand {
       
       ${jumble.jumbled.code()}`);
 
-    await message.channel.send(embed);
+    await this.send(embed);
   }
 
   private jumble(artistName: string): string {

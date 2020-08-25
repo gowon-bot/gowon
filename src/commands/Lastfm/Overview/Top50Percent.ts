@@ -1,13 +1,13 @@
 import { OverviewChildCommand } from "./OverviewChildCommand";
-import { Message, MessageEmbed } from "discord.js";
+import { MessageEmbed } from "discord.js";
 
 export class Top50Percent extends OverviewChildCommand {
   aliases = ["toppct", "top50"];
   description =
     "Shows how many artists are needed to make 50% of your scrobbles";
 
-  async run(message: Message) {
-    let { username, perspective } = await this.parseMentionedUsername(message);
+  async run() {
+    let { username, perspective } = await this.parseMentionedUsername();
 
     let { badge, colour, image } = await this.getAuthorDetails();
 
@@ -22,6 +22,6 @@ export class Top50Percent extends OverviewChildCommand {
         } scrobbles!`
       );
 
-    await message.channel.send(embed);
+    await this.send(embed);
   }
 }

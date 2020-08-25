@@ -71,7 +71,7 @@ export abstract class OverviewChildCommand extends LastFMBaseChildCommand {
         dbUser,
         username: parsedUsername,
         senderUsername,
-      } = await this.parseMentionedUsername(message);
+      } = await this.parseMentionedUsername();
 
       user = dbUser ? { id: dbUser.discordID } : user;
       username = parsedUsername;

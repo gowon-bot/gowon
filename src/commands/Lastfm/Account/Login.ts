@@ -19,7 +19,7 @@ export default class Login extends LastFMBaseCommand {
 
     if (!username)
       throw new LogicError(
-      `please enter a username (\`${this.botMomentService.prefix}login <username>\`)`
+      `please enter a username (\`${this.gowonService.prefix}login <username>\`)`
       );
 
     if (await this.lastFMService.userExists(username)) {
@@ -29,9 +29,9 @@ export default class Login extends LastFMBaseCommand {
         username
       );
 
-      message.channel.send(`Logged in as ${username.code()}`);
+      this.send(`Logged in as ${username.code()}`);
     } else {
-      message.reply(`The user ${username?.code()} couldn't be found`);
+      this.reply(`The user ${username?.code()} couldn't be found`);
     }
   }
 }

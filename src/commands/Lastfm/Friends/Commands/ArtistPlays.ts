@@ -1,5 +1,5 @@
 import { FriendsChildCommand } from "../FriendsChildCommand";
-import { Message, MessageEmbed } from "discord.js";
+import { MessageEmbed } from "discord.js";
 import { FriendsRequester } from "../../../../lib/FriendsRequester";
 import { numberDisplay } from "../../../../helpers";
 import { Arguments } from "../../../../lib/arguments/arguments";
@@ -19,7 +19,7 @@ export class ArtistPlays extends FriendsChildCommand {
     },
   };
 
-  async run(message: Message) {
+  async run() {
     let artist = this.parsedArguments.artist as string;
 
     if (!artist) {
@@ -55,6 +55,6 @@ export class ArtistPlays extends FriendsChildCommand {
           })
       );
 
-    await message.channel.send(embed);
+    await this.send(embed);
   }
 }

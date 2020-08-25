@@ -17,11 +17,12 @@ const client = new Client();
 const handler = new CommandHandler();
 const dashboard = new Dashboard();
 const redisService = new RedisService();
+const db = new DB();
 
 dashboard.init();
 
 async function start() {
-  await Promise.all([DB.connect(), handler.init(), redisService.init()]);
+  await Promise.all([db.connect(), handler.init(), redisService.init()]);
 
   client.on("ready", () => {
     console.log(`Logged in as ${client?.user && client.user.tag}!`);

@@ -9,13 +9,13 @@ export class Help extends PermissionsChildCommand {
   async prerun() {}
 
   async run(message: Message) {
-    await message.channel.send(
+    await this.send(
       new MessageEmbed()
         .setTitle(`Permissions help for ${message.author.username}`)
         .addField(
           "Disabling commands",
-          `You can disable a command by running \`${this.botMomentService.prefix}disable <commandName>\`.\
-          This will disable for all users. To enable it again, run \`${this.botMomentService.prefix}enable <commandName>\``
+          `You can disable a command by running \`${this.gowonService.prefix}disable <commandName>\`.\
+          This will disable for all users. To enable it again, run \`${this.gowonService.prefix}enable <commandName>\``
         )
         .addField(
           "White- and blacklisting",

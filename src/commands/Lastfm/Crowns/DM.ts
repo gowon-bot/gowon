@@ -30,7 +30,7 @@ export class DM extends CrownsChildCommand {
       this.crownsService.count(discordID, message.guild?.id!),
     ]);
 
-    message.reply(`sending you a list of ${perspective.possessive} crowns...`);
+    this.reply(`sending you a list of ${perspective.possessive} crowns...`);
 
     let chunks = chunkArray(crowns, crownsPerMessage);
 

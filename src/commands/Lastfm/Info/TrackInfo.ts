@@ -1,4 +1,4 @@
-import { Message, MessageEmbed } from "discord.js";
+import { MessageEmbed } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { InfoCommand } from "./InfoCommand";
 import { numberDisplay } from "../../../helpers";
@@ -17,12 +17,12 @@ export default class TrackInfo extends InfoCommand {
     },
   };
 
-  async run(message: Message) {
+  async run() {
     let artist = this.parsedArguments.artist as string,
       track = this.parsedArguments.track as string;
 
     if (!artist || !track) {
-      let { senderUsername } = await this.parseMentionedUsername(message);
+      let { senderUsername } = await this.parseMentionedUsername();
 
       let nowPlaying = await this.lastFMService.nowPlayingParsed(
         senderUsername
@@ -69,6 +69,6 @@ export default class TrackInfo extends InfoCommand {
             : "")
       );
 
-    message.channel.send(embed);
+    this.send(embed);
   }
 }

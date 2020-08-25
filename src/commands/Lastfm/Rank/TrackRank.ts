@@ -1,4 +1,3 @@
-import { Message } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { numberDisplay } from "../../../helpers";
@@ -29,7 +28,7 @@ export default class TrackRank extends LastFMBaseCommand {
     },
   };
 
-  async run(message: Message) {
+  async run() {
     let track = this.parsedArguments.track as string,
       artist = this.parsedArguments.artist as string;
 
@@ -37,7 +36,7 @@ export default class TrackRank extends LastFMBaseCommand {
       username,
       senderUsername,
       perspective,
-    } = await this.parseMentionedUsername(message);
+    } = await this.parseMentionedUsername();
 
     if (!track || !artist) {
       let nowPlaying = await this.lastFMService.nowPlayingParsed(
@@ -60,11 +59,11 @@ export default class TrackRank extends LastFMBaseCommand {
     );
 
     if (rank === -1) {
-      await message.reply(
+      await this.reply(
         `that track wasn't found in ${perspective.possessive} top 1000 tracks`
       );
     } else {
-      await message.reply(
+      await this.reply(
         `${topTracks.track[rank].name.bold()} by ${
           topTracks.track[rank].artist.name
         } is ranked #${numberDisplay(rank + 1).bold()} with ${numberDisplay(

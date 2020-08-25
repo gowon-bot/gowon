@@ -27,7 +27,7 @@ export class Add extends FriendsChildCommand {
       username,
       senderUsername,
       dbUser,
-    } = await this.parseMentionedUsername(message, {
+    } = await this.parseMentionedUsername({
       inputArgumentName: "friendUsername",
     });
 
@@ -53,7 +53,7 @@ export class Add extends FriendsChildCommand {
       username
     );
 
-    await message.channel.send(
+    await this.send(
       new MessageEmbed().setDescription(
         `Successfully added ${friend.friendUsername.code()} as a friend!`
       )

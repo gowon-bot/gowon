@@ -1,4 +1,3 @@
-import { Message } from "discord.js";
 import { LastFMBaseCommand } from "./LastFMBaseCommand";
 
 export default class AmIScrobbling extends LastFMBaseCommand {
@@ -7,12 +6,12 @@ export default class AmIScrobbling extends LastFMBaseCommand {
   secretCommand = true;
   usage = [""];
 
-  async run(message: Message) {
-    let { senderUsername } = await this.parseMentionedUsername(message);
+  async run() {
+    let { senderUsername } = await this.parseMentionedUsername();
 
     let nowPlaying = await this.lastFMService.nowPlaying(senderUsername);
 
-    await message.reply(
+    await this.reply(
       nowPlaying["@attr"]?.nowplaying === "true" ? "probably." : "probably not."
     );
   }

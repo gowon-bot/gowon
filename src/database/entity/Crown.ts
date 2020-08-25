@@ -9,6 +9,8 @@ import {
 import { User } from "./User";
 import { LastFMService } from "../../services/LastFMService";
 import { Logger } from "../../lib/Logger";
+import { Message } from "discord.js";
+import { CrownState } from "../../services/dbservices/CrownsService";
 
 export interface CrownRankResponse {
   count: string;
@@ -93,5 +95,27 @@ WHERE "userId" = $2
 `,
       [serverID, user?.id!]
     )) as CrownRankResponse[])[0];
+  }
+
+  async invalid(
+    message: Message
+  ): Promise<{
+    failed: boolean;
+    reason?: CrownState.inactivity | CrownState.left | CrownState.purgatory;
+  }> {
+    if (!(await this.userStillInServer(message)))
+      return { failed: true, reason: CrownState.left };
+
+    if (await this.user.inactive(message))
+      return { failed: true, reason: CrownState.inactivity };
+
+    if (await this.user.inPurgatory(message))
+      return { failed: true, reason: CrownState.purgatory };
+
+    return { failed: false };
+  }
+
+  async userStillInServer(message: Message): Promise<boolean> {
+    return await User.stillInServer(message, this.user.discordID);
   }
 }

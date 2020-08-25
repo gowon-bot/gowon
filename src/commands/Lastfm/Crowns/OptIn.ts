@@ -6,7 +6,7 @@ export class OptIn extends CrownsChildCommand {
   usage = ""
 
   async run(message: Message) {
-    let sentMessage = await message.reply(
+    let sentMessage = await this.reply(
       "are you sure you want to opt back into the crowns game?"
     );
 
@@ -21,9 +21,9 @@ export class OptIn extends CrownsChildCommand {
 
       await this.crownsService.optIn(message.guild?.id!, message.author.id);
 
-      await message.reply(`Opted you back in`);
+      await this.reply(`Opted you back in`);
     } catch {
-      await message.reply(`No reaction, cancelling opt in`);
+      await this.reply(`No reaction, cancelling opt in`);
     }
   }
 }

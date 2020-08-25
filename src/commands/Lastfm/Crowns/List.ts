@@ -31,7 +31,9 @@ export class List extends CrownsChildCommand {
     ]);
 
     if (!rank?.count)
-      throw new LogicError("you don't have any crowns in this server!");
+      throw new LogicError(
+        `${ucFirst(perspective.name)} don't have any crowns in this server!`
+      );
 
     let embed = new MessageEmbed()
       .setTitle(`${ucFirst(perspective.possessive)} crowns`)
@@ -50,6 +52,6 @@ export class List extends CrownsChildCommand {
             .join("\n")
       );
 
-    await message.channel.send(embed);
+    await this.send(embed);
   }
 }

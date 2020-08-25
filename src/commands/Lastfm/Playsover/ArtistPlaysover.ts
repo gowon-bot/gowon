@@ -1,4 +1,3 @@
-import { Message } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { numberDisplay } from "../../../helpers";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
@@ -22,10 +21,10 @@ export default class ArtistPlaysover extends LastFMBaseCommand {
     },
   };
 
-  async run(message: Message) {
+  async run() {
     let plays = this.parsedArguments.plays as number;
 
-    let { username, perspective } = await this.parseMentionedUsername(message);
+    let { username, perspective } = await this.parseMentionedUsername();
 
     let topArtists = await this.lastFMService.topArtists({
       username,
@@ -39,7 +38,7 @@ export default class ArtistPlaysover extends LastFMBaseCommand {
       else break;
     }
 
-    await message.reply(
+    await this.reply(
       `${numberDisplay(playsover).bold()} of ${
         perspective.possessive
       } top 1,000 artists have at least ${numberDisplay(plays, "play").bold()}`

@@ -5,7 +5,6 @@ import { CrownState } from "../../../services/dbservices/CrownsService";
 import { CrownEmbeds } from "../../../helpers/Embeds/CrownEmbeds";
 import { userHasRole } from "../../../helpers/discord";
 import { InactiveError, OptedOutError, PurgatoryError } from "../../../errors";
-import { Logger } from "../../../lib/Logger";
 
 export class Check extends CrownsChildCommand {
   aliases = ["c"];
@@ -22,7 +21,7 @@ export class Check extends CrownsChildCommand {
     if (
       userHasRole(
         message.member!,
-        await this.botMomentService.getInactiveRole(message.guild!)
+        await this.gowonService.getInactiveRole(message.guild!)
       )
     ) {
       throw new InactiveError();
@@ -31,7 +30,7 @@ export class Check extends CrownsChildCommand {
     if (
       userHasRole(
         message.member!,
-        await this.botMomentService.getPurgatoryRole(message.guild!)
+        await this.gowonService.getPurgatoryRole(message.guild!)
       )
     ) {
       throw new PurgatoryError();
@@ -48,7 +47,7 @@ export class Check extends CrownsChildCommand {
 
     let artist = this.parsedArguments.artist as string;
 
-    let { username } = await this.parseMentionedUsername(message);
+    let { username } = await this.parseMentionedUsername();
 
     if (!artist) {
       artist = (await this.lastFMService.nowPlayingParsed(username)).artist;
@@ -60,30 +59,28 @@ export class Check extends CrownsChildCommand {
     });
 
     let crownCheck = await this.crownsService.checkCrown({
-      serverID: message.guild?.id!,
+      message,
       discordID: message.author.id,
       artistName: artistDetails.name,
       plays: artistDetails.stats.userplaycount.toInt(),
     });
 
-    this.logger.log("Crown Check", Logger.formatObject(crownCheck));
-
     switch (crownCheck.state) {
       case CrownState.newCrown:
-        await message.channel.send(
+        await this.send(
           CrownEmbeds.newCrown(crownCheck, message.author)
         );
         break;
       case CrownState.updated:
-        await message.channel.send(CrownEmbeds.updatedCrown(crownCheck));
+        await this.send(CrownEmbeds.updatedCrown(crownCheck));
         break;
       case CrownState.snatched:
-        await message.channel.send(
+        await this.send(
           await CrownEmbeds.snatchedCrown(crownCheck, message.author, message)
         );
         break;
       case CrownState.fail:
-        await message.channel.send(
+        await this.send(
           await CrownEmbeds.fail(
             crownCheck,
             artistDetails,
@@ -93,7 +90,7 @@ export class Check extends CrownsChildCommand {
         );
         break;
       case CrownState.tie:
-        await message.channel.send(
+        await this.send(
           await CrownEmbeds.tie(
             crownCheck,
             artistDetails,
@@ -103,7 +100,7 @@ export class Check extends CrownsChildCommand {
         );
         break;
       case CrownState.tooLow:
-        await message.channel.send(
+        await this.send(
           await CrownEmbeds.tooLow(
             artistDetails.name,
             this.crownsService.threshold,
@@ -111,6 +108,22 @@ export class Check extends CrownsChildCommand {
             artistDetails.stats.userplaycount
           )
         );
+        break;
+      case CrownState.inactivity:
+        await this.send(
+          await CrownEmbeds.inactivity(crownCheck, message.author, message)
+        );
+        break;
+      case CrownState.purgatory:
+        await this.send(
+          await CrownEmbeds.purgatory(crownCheck, message.author, message)
+        );
+        break;
+      case CrownState.left:
+        await this.send(
+          await CrownEmbeds.left(crownCheck, message.author)
+        );
+        break;
     }
   }
 }

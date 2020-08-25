@@ -34,7 +34,7 @@ export default class ArtistInfo extends InfoCommand {
       senderUsername,
       username,
       perspective,
-    } = await this.parseMentionedUsername(message);
+    } = await this.parseMentionedUsername();
 
     if (!artist) {
       artist = (await this.lastFMService.nowPlayingParsed(senderUsername))
@@ -89,6 +89,6 @@ ${ucFirst(perspective.regularVerb("account"))} for ${calculatePercent(
         `
       );
 
-    message.channel.send(embed);
+    this.send(embed);
   }
 }

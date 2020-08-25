@@ -1,9 +1,11 @@
-import { RecentTracks, Track } from "../../services/LastFMService.types";
+import { Track } from "../../services/LastFMService.types";
+import { Paginator } from "../Paginator";
 
 export interface ComboDetails {
   plays: number;
   name: string;
   nowplaying: boolean;
+  hitMax: boolean;
 }
 export interface Combo {
   artist: ComboDetails;
@@ -43,7 +45,7 @@ export class ComboCalculator {
     );
   }
 
-  private setCombo(entity: Entity, name: string, track: Track) {
+  private setCombo(entity: Entity, name: string, track: Track, last: boolean) {
     let nowplaying = track["@attr"]?.nowplaying === "true" ?? false;
 
     if (this.combo[entity]) {
@@ -51,30 +53,44 @@ export class ComboCalculator {
         name: this.combo[entity]!.name,
         plays: this.combo[entity]!.plays + 1,
         nowplaying: this.combo[entity]!.nowplaying,
+        hitMax: last,
       };
     } else {
       this.combo[entity] = {
         name,
         nowplaying,
         plays: nowplaying ? 0 : 1,
+        hitMax: false,
       };
     }
   }
 
-  calculate(recentTracks: RecentTracks): Combo {
-    for (let track of recentTracks.track) {
-      if (this.shouldContinueStreak(track, "artist")) {
-        this.setCombo("artist", track.artist["#text"], track);
-      } else if (!this.streakEnded.artist) this.streakEnded.artist = true;
+  async calculate(recentTracks: Paginator): Promise<Combo> {
+    for await (let page of recentTracks.iterator()) {
+      let tracks =
+        recentTracks.currentPage === 1 ? page.track : page.track.slice(1);
 
-      if (this.shouldContinueStreak(track, "album")) {
-        this.setCombo("album", track.album["#text"], track);
-      } else if (!this.streakEnded.album) this.streakEnded.album = true;
+      for (let trackIndex = 0; trackIndex < tracks.length; trackIndex++) {
+        const track = tracks[trackIndex];
 
-      if (this.shouldContinueStreak(track, "track")) {
-        this.setCombo("track", track.name, track);
-      } else if (!this.streakEnded.track) this.streakEnded.track = true;
+        let last =
+          trackIndex === tracks.length - 1 &&
+          recentTracks.currentPage === recentTracks.maxPages;
 
+        if (this.shouldContinueStreak(track, "artist")) {
+          this.setCombo("artist", track.artist["#text"], track, last);
+        } else if (!this.streakEnded.artist) this.streakEnded.artist = true;
+
+        if (this.shouldContinueStreak(track, "album")) {
+          this.setCombo("album", track.album["#text"], track, last);
+        } else if (!this.streakEnded.album) this.streakEnded.album = true;
+
+        if (this.shouldContinueStreak(track, "track")) {
+          this.setCombo("track", track.name, track, last);
+        } else if (!this.streakEnded.track) this.streakEnded.track = true;
+
+        if (this.shouldBreak()) break;
+      }
       if (this.shouldBreak()) break;
     }
 

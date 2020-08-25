@@ -17,13 +17,13 @@ export default class Whoami extends LastFMBaseCommand {
   async run(message: Message) {
     let user = this.parsedArguments.user as User;
 
-    let { username } = await this.parseMentionedUsername(message);
+    let { username } = await this.parseMentionedUsername();
 
     let perspective = this.usersService.discordPerspective(
       message.author,
       user
     );
 
-    message.reply(`${perspective.plusToBe} logged in as ${username.code()}.`);
+    this.reply(`${perspective.plusToBe} logged in as ${username.code()}.`);
   }
 }

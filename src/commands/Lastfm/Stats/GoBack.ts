@@ -1,4 +1,4 @@
-import { Message, MessageEmbed } from "discord.js";
+import { MessageEmbed } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
 import {
   generateTimeRange,
@@ -31,13 +31,13 @@ export default class GoBack extends LastFMBaseCommand {
     },
   };
 
-  async run(message: Message) {
+  async run() {
     let timeRange = this.parsedArguments.timeRange as TimeRange,
       humanTimeRange = this.parsedArguments.humanReadableTimeRange as string;
 
     if (!timeRange.from) throw new LogicError("please enter a valid timeframe");
 
-    let { username, perspective } = await this.parseMentionedUsername(message, {
+    let { username, perspective } = await this.parseMentionedUsername({
       asCode: false,
     });
 
@@ -59,6 +59,6 @@ export default class GoBack extends LastFMBaseCommand {
         track.image.find((i) => i.size === "large")?.["#text"] || ""
       );
 
-    await message.channel.send(embed);
+    await this.send(embed);
   }
 }

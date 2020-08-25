@@ -1,4 +1,4 @@
-import { Message, MessageEmbed } from "discord.js";
+import { MessageEmbed } from "discord.js";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { numberDisplay } from "../../../helpers";
 import { Arguments } from "../../../lib/arguments/arguments";
@@ -22,13 +22,11 @@ export default class AlbumTopTracks extends LastFMBaseCommand {
     },
   };
 
-  async run(message: Message) {
+  async run() {
     let artist = this.parsedArguments.artist as string,
       album = this.parsedArguments.album as string;
 
-    let { senderUsername, username } = await this.parseMentionedUsername(
-      message
-    );
+    let { senderUsername, username } = await this.parseMentionedUsername();
 
     if (artist && album) {
       let albumInfo = await this.lastFMService.albumInfo({ artist, album });
@@ -44,12 +42,18 @@ export default class AlbumTopTracks extends LastFMBaseCommand {
       if (!artist) {
         artist = nowPlaying.artist;
       } else {
-        artist = (await this.lastFMService.artistInfo({ artist })).name;
+        artist = await this.lastFMService.correctArtist({ artist });
       }
       if (!album) {
         album = nowPlaying.album;
       } else {
-        album = (await this.lastFMService.albumInfo({ artist, album })).name;
+        let corrected = await this.lastFMService.correctAlbum({
+          artist,
+          album,
+        });
+
+        artist = corrected.artist;
+        album = corrected.album;
       }
     }
 
@@ -72,6 +76,6 @@ export default class AlbumTopTracks extends LastFMBaseCommand {
           .join("\n")
       );
 
-    await message.channel.send(embed);
+    await this.send(embed);
   }
 }

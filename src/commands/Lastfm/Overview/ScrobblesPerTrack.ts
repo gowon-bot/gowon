@@ -1,12 +1,12 @@
 import { OverviewChildCommand } from "./OverviewChildCommand";
-import { Message, MessageEmbed } from "discord.js";
+import { MessageEmbed } from "discord.js";
 
 export class ScrobblesPerTrack extends OverviewChildCommand {
   aliases = ["spt"];
   description = "Shows your average scrobbles per track";
 
-  async run(message: Message) {
-    let { username } = await this.parseMentionedUsername(message);
+  async run() {
+    let { username } = await this.parseMentionedUsername();
 
     let { badge, colour, image } = await this.getAuthorDetails();
     let spt = await this.calculator.avgScrobblesPerTrack();
@@ -16,6 +16,6 @@ export class ScrobblesPerTrack extends OverviewChildCommand {
       .setColor(colour)
       .setDescription(`${spt.bold()} scrobbles per track!`);
 
-    await message.channel.send(embed);
+    await this.send(embed);
   }
 }

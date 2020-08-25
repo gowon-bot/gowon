@@ -34,8 +34,8 @@ export default class RegexTrackSearch extends LastFMBaseCommand {
     },
   ];
 
-  async run(message: Message, runAs: RunAs) {
-    let { username, perspective } = await this.parseMentionedUsername(message);
+  async run(_: Message, runAs: RunAs) {
+    let { username, perspective } = await this.parseMentionedUsername();
 
     let page = (runAs.lastString().match("[0-9]{1,3}") || [])[0]?.toInt() || 1;
 
@@ -80,9 +80,9 @@ export default class RegexTrackSearch extends LastFMBaseCommand {
               .join("\n")
           );
 
-        await message.channel.send(embed);
+        await this.send(embed);
       } else {
-        await message.reply(
+        await this.reply(
           `no tracks were found with the regex ${regex.code()} for ${
             perspective.name
           }`

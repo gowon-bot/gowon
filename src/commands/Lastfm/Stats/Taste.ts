@@ -27,7 +27,7 @@ export default class Taste extends LastFMBaseCommand {
       artistAmount: {
         index: 0,
         regex: /[0-9]{1,4}(?!\w)(?! [a-z])/g,
-        default: 500,
+        default: 1000,
         number: true,
       },
       timePeriod: {
@@ -65,15 +65,15 @@ export default class Taste extends LastFMBaseCommand {
     let {
       senderUsername: userOneUsername,
       mentionedUsername: userTwoUsername,
-    } = await this.parseMentionedUsername(message);
+    } = await this.parseMentionedUsername();
 
     if (!userTwoUsername) {
-      await message.reply("Please specify a user to compare taste with!");
+      await this.reply("Please specify a user to compare taste with!");
       return;
     }
 
     if (artistAmount < 1 || artistAmount > 1000) {
-      await message.reply("Please specify a valid amount!");
+      await this.reply("Please specify a valid amount!");
       return;
     }
 
@@ -179,6 +179,6 @@ ${[...headers, ...table].join("\n")}\`\`\`
       );
     }
 
-    await message.channel.send(embed);
+    await this.send(embed);
   }
 }

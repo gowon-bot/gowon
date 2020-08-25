@@ -10,7 +10,7 @@ export default class Usercount extends AdminBaseCommand {
   async run(message: Message) {
     let usercount = await this.usersService.countUsers(message.guild?.id!);
 
-    await message.channel.send(
+    await this.send(
       new MessageEmbed()
         .setAuthor(message.guild?.name!, message.guild?.iconURL() as string)
         .setDescription(

@@ -1,4 +1,4 @@
-import { Message, MessageEmbed } from "discord.js";
+import { MessageEmbed } from "discord.js";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { numberDisplay } from "../../../helpers";
 import { Arguments } from "../../../lib/arguments/arguments";
@@ -25,18 +25,16 @@ export default class ArtistTopTracks extends LastFMBaseCommand {
     },
   };
 
-  async run(message: Message) {
+  async run() {
     let artist = this.parsedArguments.artist as string;
 
-    let { username, senderUsername } = await this.parseMentionedUsername(
-      message
-    );
+    let { username, senderUsername } = await this.parseMentionedUsername();
 
     if (!artist) {
       artist = (await this.lastFMService.nowPlayingParsed(senderUsername))
         .artist;
     } else {
-      artist = (await this.lastFMService.artistInfo({ username, artist })).name;
+      artist = await this.lastFMService.correctArtist({ artist });
     }
 
     let topTracks = await this.lastFMService.scraper.artistTopTracks(
@@ -55,6 +53,6 @@ export default class ArtistTopTracks extends LastFMBaseCommand {
           .join("\n")
       );
 
-    await message.channel.send(embed);
+    await this.send(embed);
   }
 }

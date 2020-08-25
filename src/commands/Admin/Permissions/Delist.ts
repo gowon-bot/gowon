@@ -46,6 +46,6 @@ export class Delist extends PermissionsChildCommand {
             : "")
       );
 
-    await message.channel.send(embed);
+    await this.send(embed);
   }
 }

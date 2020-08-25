@@ -37,7 +37,7 @@ export class Hint extends JumbleChildCommand {
       ${jumbledArtist.currenthint.code()}`
       );
 
-    await message.channel.send(embed);
+    await this.send(embed);
   }
 
   private generateHint(jumble: JumbledArtist, number = 2): string {

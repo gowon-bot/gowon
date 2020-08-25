@@ -21,22 +21,22 @@ export default class Cover extends LastFMBaseCommand {
     },
   };
 
-  async run(message: Message) {
+  async run(_: Message) {
     let artist = this.parsedArguments.artist as string,
       album = this.parsedArguments.album as string;
 
-    let { username } = await this.parseMentionedUsername(message);
+    let { username } = await this.parseMentionedUsername();
 
     if (!artist && !album) {
       let nowPlaying = await this.lastFMService.nowPlaying(username);
 
       let image = nowPlaying.image.find((i) => i.size === "extralarge");
 
-      await message.channel.send(
+      await this.sendWithFiles(
         `Cover for ${nowPlaying.album["#text"].bold()} by ${nowPlaying.artist[
           "#text"
         ].bold()}`,
-        { files: [image?.["#text"] ?? ""] }
+        [image?.["#text"] ?? ""]
       );
     } else {
       if (!artist || !album) {
@@ -49,9 +49,9 @@ export default class Cover extends LastFMBaseCommand {
       let albumDetails = await this.lastFMService.albumInfo({ artist, album });
       let image = albumDetails.image.find((i) => i.size === "extralarge");
 
-      await message.channel.send(
+      await this.sendWithFiles(
         `Cover for ${albumDetails.name.italic()} by ${albumDetails.artist.bold()}`,
-        { files: [image?.["#text"] ?? ""] }
+        [image?.["#text"] ?? ""]
       );
     }
   }

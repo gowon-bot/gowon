@@ -1,5 +1,5 @@
 import { OverviewChildCommand } from "./OverviewChildCommand";
-import { Message, MessageEmbed } from "discord.js";
+import { MessageEmbed } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { LogicError } from "../../../errors";
 import { numberDisplay, ucFirst } from "../../../helpers";
@@ -16,9 +16,9 @@ export class SumTop extends OverviewChildCommand {
     },
   };
 
-  async run(message: Message) {
+  async run() {
     let top = this.parsedArguments.top as number;
-    let { username, perspective } = await this.parseMentionedUsername(message);
+    let { username, perspective } = await this.parseMentionedUsername();
 
     if (top > 1000 || top < 2)
       throw new LogicError("Please enter a valid number (between 2 and 1000)");
@@ -44,6 +44,6 @@ export class SumTop extends OverviewChildCommand {
         } total scrobbles!)`
       );
 
-    await message.channel.send(embed);
+    await this.send(embed);
   }
 }

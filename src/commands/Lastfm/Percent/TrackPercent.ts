@@ -1,4 +1,3 @@
-import { Message } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { numberDisplay } from "../../../helpers";
 import { calculatePercent } from "../../../helpers/stats";
@@ -25,7 +24,7 @@ export default class TrackPercent extends LastFMBaseCommand {
     },
   };
 
-  async run(message: Message) {
+  async run() {
     let artist = this.parsedArguments.artist as string,
       track = this.parsedArguments.track as string;
 
@@ -33,7 +32,7 @@ export default class TrackPercent extends LastFMBaseCommand {
       username,
       senderUsername,
       perspective,
-    } = await this.parseMentionedUsername(message);
+    } = await this.parseMentionedUsername();
 
     if (!artist || !track) {
       let nowPlaying = await this.lastFMService.nowPlayingParsed(
@@ -45,11 +44,11 @@ export default class TrackPercent extends LastFMBaseCommand {
     }
 
     let [artistInfo, trackInfo] = await Promise.all([
-      this.lastFMService.artistInfo({artist, username}),
+      this.lastFMService.artistInfo({ artist, username }),
       this.lastFMService.trackInfo({ artist, track, username }),
     ]);
 
-    await message.reply(
+    await this.reply(
       `${perspective.possessive} ${numberDisplay(
         trackInfo.userplaycount,
         "play"

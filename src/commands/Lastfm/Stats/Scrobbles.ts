@@ -37,14 +37,14 @@ export default class Scrobbles extends LastFMBaseCommand {
 
   async run(message: Message) {
     if (message.content.trim() === "!s n s d") {
-      await message.channel.send("Gee gee gee gee baby baby baby");
+      await this.send("Gee gee gee gee baby baby baby");
       return;
     }
 
     let timeRange = this.parsedArguments.timeRange as TimeRange,
       humanTimeRange = this.parsedArguments.humanReadableTimeRange as string;
 
-    let { username, perspective } = await this.parseMentionedUsername(message);
+    let { username, perspective } = await this.parseMentionedUsername();
 
     let scrobbles = await this.lastFMService.getNumberScrobbles(
       username,
@@ -52,7 +52,7 @@ export default class Scrobbles extends LastFMBaseCommand {
       timeRange.to
     );
 
-    let sentMessage = await message.reply(
+    let sentMessage = await this.reply(
       `${perspective.plusToHave} ${numberDisplay(
         scrobbles,
         "scrobble"

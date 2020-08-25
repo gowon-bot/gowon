@@ -48,7 +48,7 @@ export class Info extends CrownsChildCommand {
     }
 
     if (!crown)
-      await message.reply(
+      await this.reply(
         `No one has the crown for ${artistDetails.name.bold()}`
       );
 
@@ -59,7 +59,7 @@ export class Info extends CrownsChildCommand {
       let member = await message.guild?.members.fetch(holderUser?.id!);
       let isInactive = userHasRole(
         member!,
-        await this.botMomentService.getInactiveRole(message.guild!)
+        await this.gowonService.getInactiveRole(message.guild!)
       );
 
       let embed = new MessageEmbed()
@@ -83,7 +83,7 @@ export class Info extends CrownsChildCommand {
           }_`
         );
 
-      await message.channel.send(embed);
+      await this.send(embed);
     }
   }
 }

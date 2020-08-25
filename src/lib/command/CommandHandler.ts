@@ -1,6 +1,6 @@
 import { CommandManager } from "./CommandManager";
 import { Message } from "discord.js";
-import { BotMomentService } from "../../services/BotMomentService";
+import { GowonService } from "../../services/GowonService";
 import { AdminService } from "../../services/dbservices/AdminService";
 import { Logger } from "../Logger";
 import { CheckFailReason } from "../permissions/Can";
@@ -8,7 +8,7 @@ import { ParentCommand } from "./ParentCommand";
 import { MetaService } from "../../services/dbservices/MetaService";
 
 export class CommandHandler {
-  botMomentService = BotMomentService.getInstance();
+  gowonService = GowonService.getInstance();
   adminService = new AdminService();
   metaService = new MetaService();
   commandManager = new CommandManager();
@@ -40,7 +40,7 @@ export class CommandHandler {
       !message.author.bot &&
       message.guild &&
       message.content.match(
-        new RegExp(`^${this.botMomentService.regexSafePrefix}[^\\s]+`, "i")
+        new RegExp(`^${this.gowonService.regexSafePrefix}[^\\s]+`, "i")
       )
     ) {
       let { command, runAs } = this.commandManager.find(message.content);

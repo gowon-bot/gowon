@@ -23,6 +23,6 @@ export class Disabled extends PermissionsChildCommand {
           : `This server does not have any disabled commands!`
       );
 
-    await message.channel.send(embed);
+    await this.send(embed);
   }
 }

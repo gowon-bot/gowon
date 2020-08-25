@@ -5,7 +5,11 @@ import moment from "moment";
 import { RunAs } from "./AliasChecker";
 
 export class Logger {
+  static output = true;
+
   static log(context: string, msg?: any, logger?: Logger): void {
+    if (!this.output) return;
+
     let logString =
       chalk`{black (${moment().format(
         "HH:mm:ss a SSS[ms]"
@@ -55,12 +59,13 @@ export class Logger {
 
   closeCommandHeader(command: BaseCommand): void {
     Logger.log("Command", chalk.grey("finished"), this);
-    console.log(
-      this.header +
-        chalk`\n=============={yellow /${
-          (command.parentName ? command.parentName + ":" : "") + command.name
-        }}====================`
-    );
+    Logger.output &&
+      console.log(
+        this.header +
+          chalk`\n=============={yellow /${
+            (command.parentName ? command.parentName + ":" : "") + command.name
+          }}====================`
+      );
   }
 
   logCommand(command: BaseCommand, message: Message, ...runAs: string[]): void {

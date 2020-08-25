@@ -136,7 +136,7 @@ export class OverviewStatsCalculator {
         .diff(moment().startOf("day"), "days")
     );
 
-    return (scrobbles / diff).toFixed(2);
+    return (scrobbles / diff).toFixed(0);
   }
 
   async totalArtists(): Promise<string> {
@@ -153,7 +153,7 @@ export class OverviewStatsCalculator {
 
     return (~~(
       userInfo.playcount.toInt() / topArtists["@attr"].total.toInt()
-    )).toFixed(2);
+    )).toFixed(0);
   }
 
   async totalAlbums(): Promise<string> {
@@ -170,7 +170,7 @@ export class OverviewStatsCalculator {
 
     return (~~(
       userInfo.playcount.toInt() / topAlbums["@attr"].total.toInt()
-    )).toFixed(2);
+    )).toFixed(0);
   }
 
   async totalTracks(): Promise<string> {
@@ -187,7 +187,7 @@ export class OverviewStatsCalculator {
 
     return (~~(
       userInfo.playcount.toInt() / topTracks["@attr"].total.toInt()
-    )).toFixed(2);
+    )).toFixed(0);
   }
 
   async albumsPerArtist(): Promise<string> {
@@ -196,9 +196,11 @@ export class OverviewStatsCalculator {
       this.topAlbums(),
     ]);
 
-    return (
+    let apa = (
       topAlbums["@attr"].total.toInt() / topArtists["@attr"].total.toInt()
     ).toFixed(2);
+
+    return apa === "Infinity" ? "0" : apa;
   }
 
   async tracksPerArtist(): Promise<string> {
@@ -207,9 +209,11 @@ export class OverviewStatsCalculator {
       this.topTracks(),
     ]);
 
-    return (
+    let tpa = (
       topTracks["@attr"].total.toInt() / topArtists["@attr"].total.toInt()
     ).toFixed(2);
+
+    return tpa === "Infinity" ? "0" : tpa;
   }
 
   async tracksPerAlbum(): Promise<string> {
@@ -218,9 +222,11 @@ export class OverviewStatsCalculator {
       this.topTracks(),
     ]);
 
-    return (
+    let tpl = (
       topTracks["@attr"].total.toInt() / topAlbums["@attr"].total.toInt()
     ).toFixed(2);
+
+    return tpl === "Infinity" ? "0" : tpl;
   }
 
   async hIndex(): Promise<string> {

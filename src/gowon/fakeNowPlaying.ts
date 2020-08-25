@@ -4,7 +4,7 @@ import tracks from "./nowPlayingSongs.json";
 import { LinkGenerator } from "../helpers/lastFM";
 import { generateLink } from "../helpers/discord";
 
-export function isBotMoment(discordID?: string): boolean {
+export function isGowon(discordID?: string): boolean {
   return discordID === "720135602669879386";
 }
 

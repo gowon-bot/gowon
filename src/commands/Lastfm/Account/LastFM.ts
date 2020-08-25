@@ -1,4 +1,3 @@
-import { Message } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { LinkGenerator } from "../../../helpers/lastFM";
 import { ucFirst } from "../../../helpers";
@@ -24,8 +23,8 @@ export default class LastFM extends LastFMBaseCommand {
     },
   };
 
-  async run(message: Message) {
-    let { username, perspective } = await this.parseMentionedUsername(message, {
+  async run() {
+    let { username, perspective } = await this.parseMentionedUsername({
       inputArgumentName: "friendUsername",
     });
 
@@ -34,8 +33,6 @@ export default class LastFM extends LastFMBaseCommand {
 
     let link = LinkGenerator.userPage(username);
 
-    await message.channel.send(
-      `${ucFirst(perspective.possessive)} profile: ${link}`
-    );
+    await this.send(`${ucFirst(perspective.possessive)} profile: ${link}`);
   }
 }

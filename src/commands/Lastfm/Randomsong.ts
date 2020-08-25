@@ -1,11 +1,11 @@
-import { Message, MessageEmbed } from "discord.js";
+import { MessageEmbed } from "discord.js";
 import { LastFMBaseCommand } from "./LastFMBaseCommand";
 
 export default class Randomsong extends LastFMBaseCommand {
   description = "Picks a random song";
   usage = "";
 
-  async run(message: Message) {
+  async run() {
     let randomUser = await this.usersService.randomUser();
 
     let randomSongs = await this.lastFMService.recentTracks({
@@ -29,6 +29,6 @@ export default class Randomsong extends LastFMBaseCommand {
         randomSong.image.find((i) => i.size === "large")?.["#text"] || ""
       );
 
-    await message.channel.send(embed);
+    await this.send(embed);
   }
 }

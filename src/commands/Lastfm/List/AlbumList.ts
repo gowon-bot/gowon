@@ -1,4 +1,4 @@
-import { Message, MessageEmbed } from "discord.js";
+import { MessageEmbed } from "discord.js";
 import { numberDisplay } from "../../../helpers";
 import { ListCommand } from "./ListCommand";
 
@@ -6,8 +6,8 @@ export default class AlbumList extends ListCommand {
   aliases = ["llist", "allist", "topalbums", "topalbum", "albums"];
   description = "Shows your top albums";
 
-  async run(message: Message) {
-    let { username } = await this.parseMentionedUsername(message);
+  async run() {
+    let { username } = await this.parseMentionedUsername();
 
     let topAlbums = await this.lastFMService.topAlbums({
       username,
@@ -33,6 +33,6 @@ export default class AlbumList extends ListCommand {
           .join("\n")
       );
 
-    await message.channel.send(messageEmbed);
+    await this.send(messageEmbed);
   }
 }

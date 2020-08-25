@@ -8,7 +8,7 @@ export abstract class LastFMBaseCommand extends BaseCommand {
 
   // Non Discord Mention Parsing
   ndmp = {
-    prefix: this.botMomentService.customPrefixes.lastfm,
+    prefix: this.gowonService.customPrefixes.lastfm,
   };
 }
 
@@ -17,7 +17,7 @@ export abstract class LastFMBaseParentCommand extends ParentCommand {
 
   // Non Discord Mention Parsing
   ndmp = {
-    prefix: this.botMomentService.customPrefixes.lastfm,
+    prefix: this.gowonService.customPrefixes.lastfm,
   };
 }
 
@@ -27,6 +27,6 @@ export abstract class LastFMBaseChildCommand extends ChildCommand {
 
   // Non Discord Mention Parsing
   ndmp = {
-    prefix: this.botMomentService.customPrefixes.lastfm,
+    prefix: this.gowonService.customPrefixes.lastfm,
   };
 }

@@ -23,10 +23,7 @@ export class Remove extends FriendsChildCommand {
   async prerun() {}
 
   async run(message: Message) {
-    let {
-      username,
-      senderUsername,
-    } = await this.parseMentionedUsername(message, {
+    let { username, senderUsername } = await this.parseMentionedUsername({
       inputArgumentName: "friendUsername",
     });
 
@@ -40,7 +37,7 @@ export class Remove extends FriendsChildCommand {
 
     await this.friendsService.removeFriend(message.guild?.id!, user, username);
 
-    await message.channel.send(
+    await this.send(
       new MessageEmbed().setDescription(
         `Successfully removed ${username.code()} as a friend!`
       )

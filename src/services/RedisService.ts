@@ -25,7 +25,7 @@ export class RedisService extends BaseService {
   }
 
   private genKey(key: string): string {
-    return "botmoment:" + key;
+    return "gowon:" + key;
   }
 
   private genSessionKey(message: Message, key: string): string {

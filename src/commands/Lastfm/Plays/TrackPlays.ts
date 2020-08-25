@@ -1,4 +1,3 @@
-import { Message } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { numberDisplay, ucFirst } from "../../../helpers";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
@@ -23,7 +22,7 @@ export default class TrackPlays extends LastFMBaseCommand {
     },
   };
 
-  async run(message: Message) {
+  async run() {
     let artist = this.parsedArguments.artist as string,
       track = this.parsedArguments.track as string;
 
@@ -31,7 +30,7 @@ export default class TrackPlays extends LastFMBaseCommand {
       username,
       senderUsername,
       perspective,
-    } = await this.parseMentionedUsername(message);
+    } = await this.parseMentionedUsername();
 
     if (!artist || !track) {
       let nowPlaying = await this.lastFMService.nowPlayingParsed(
@@ -52,7 +51,7 @@ export default class TrackPlays extends LastFMBaseCommand {
       username,
     });
 
-    message.channel.send(
+    this.send(
       `${hamham ? "FTFY\n" : ""}${ucFirst(
         perspective.plusToHave
       )} **${numberDisplay(trackDetails.userplaycount, "**scrobble")} of **${

@@ -1,8 +1,9 @@
-import { Message, MessageEmbed } from "discord.js";
+import { MessageEmbed } from "discord.js";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { ComboCalculator } from "../../../lib/calculators/ComboCalculator";
 import { numberDisplay } from "../../../helpers";
+import { Paginator } from "../../../lib/Paginator";
 
 export default class Combo extends LastFMBaseCommand {
   aliases = ["streak", "str"];
@@ -28,24 +29,25 @@ export default class Combo extends LastFMBaseCommand {
     },
   };
 
-  async run(message: Message) {
-    let { username } = await this.parseMentionedUsername(message);
+  async run() {
+    let { username } = await this.parseMentionedUsername();
 
     let streakAmount = this.parsedArguments.streakAmount as number;
 
     if (streakAmount < 1 || streakAmount > 1000) {
-      await message.reply("Please specify a valid amount!");
+      await this.reply("Please specify a valid amount!");
       return;
     }
 
-    let recentTracks = await this.lastFMService.recentTracks({
-      username,
-      limit: streakAmount,
-    });
+    let paginator = new Paginator(
+      this.lastFMService.recentTracks.bind(this.lastFMService),
+      this.gowonService.contants.hardPageLimit,
+      { username, limit: streakAmount }
+    );
 
     let comboCalculator = new ComboCalculator();
 
-    let combo = comboCalculator.calculate(recentTracks);
+    let combo = await comboCalculator.calculate(paginator);
 
     let embed = new MessageEmbed()
       .setTitle(
@@ -58,22 +60,22 @@ export default class Combo extends LastFMBaseCommand {
         combo.hasAnyConsecutivePlays
           ? (combo.artist.plays > 0
               ? `Artist: ${combo.artist.plays}${
-                  combo.artist.nowplaying ? "➚" : ""
+                  combo.artist.hitMax ? "+" : combo.artist.nowplaying ? "➚" : ""
                 } in a row (${combo.artist.name.bold()})\n`
               : "") +
               (combo.album.plays > 0
                 ? `Album: ${combo.album.plays}${
-                    combo.album.nowplaying ? "➚" : ""
+                    combo.album.hitMax ? "+" : combo.album.nowplaying ? "➚" : ""
                   } in a row (${combo.album.name.italic()})\n`
                 : "") +
               (combo.track.plays > 0
                 ? `Track: ${combo.track.plays}${
-                    combo.track.nowplaying ? "➚" : ""
+                    combo.track.hitMax ? "+" : combo.track.nowplaying ? "➚" : ""
                   } in a row (${combo.track.name.bold()})\n`
                 : "")
           : "No consecutive plays found!"
       );
 
-    await message.channel.send(embed);
+    await this.send(embed);
   }
 }

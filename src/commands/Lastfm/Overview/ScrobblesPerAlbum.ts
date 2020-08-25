@@ -1,12 +1,12 @@
 import { OverviewChildCommand } from "./OverviewChildCommand";
-import { Message, MessageEmbed } from "discord.js";
+import { MessageEmbed } from "discord.js";
 
 export class ScrobblesPerAlbum extends OverviewChildCommand {
   aliases = ["spl", "spal"];
   description = "Shows your average scrobbles per album";
 
-  async run(message: Message) {
-    let { username } = await this.parseMentionedUsername(message);
+  async run() {
+    let { username } = await this.parseMentionedUsername();
 
     let { badge, colour, image } = await this.getAuthorDetails();
     let spl = await this.calculator.avgScrobblesPerAlbum();
@@ -16,6 +16,6 @@ export class ScrobblesPerAlbum extends OverviewChildCommand {
       .setColor(colour)
       .setDescription(`${spl.bold()} scrobbles per album!`);
 
-    await message.channel.send(embed);
+    await this.send(embed);
   }
 }

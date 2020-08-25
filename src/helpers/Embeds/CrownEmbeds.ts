@@ -71,7 +71,7 @@ export class CrownEmbeds {
     user: User
   ): Promise<MessageEmbed> {
     let holderUsername = (
-      await crownCheck.oldCrown?.user!.toDiscordUser(message)
+      await DBUser.toDiscordUser(message, crownCheck.oldCrown!.user.discordID)
     )?.username;
 
     let difference =
@@ -123,8 +123,9 @@ You must have at least ${numberDisplay(
     message: Message,
     user: User
   ): Promise<MessageEmbed> {
-    let holderUsername = (await crownCheck.crown?.user!.toDiscordUser(message))
-      ?.username;
+    let holderUsername = (
+      await DBUser.toDiscordUser(message, crownCheck.oldCrown!.user.discordID)
+    )?.username;
 
     return new MessageEmbed()
       .setTitle(`Crown for ${crownCheck.crown!.artistName}`)
@@ -144,6 +145,76 @@ It's a tie! ${holderUsername} will keep the crown for ${
           crownCheck.crown!.artistName
         }.
 `
+      );
+  }
+
+  static async inactivity(
+    crownCheck: CrownCheck,
+    user: User,
+    message: Message
+  ): Promise<MessageEmbed> {
+    let holderUsername = (
+      await DBUser.toDiscordUser(message, crownCheck.oldCrown!.user.discordID)
+    )?.username;
+
+    return new MessageEmbed()
+      .setTitle(`Crown for ${crownCheck.crown!.artistName}`)
+      .setDescription(
+        `
+:crown: → ${user.username.code()} - ${numberDisplay(
+          crownCheck.crown!.plays,
+          "play"
+        )}
+
+:pensive: → ${holderUsername?.code()} - ${numberDisplay(
+          crownCheck.oldCrown?.plays!,
+          "play"
+        )}
+
+        Yoink! The crown for ${crownCheck.crown!.artistName.bold()} was stolen from ${holderUsername} due to inactivity!`
+      );
+  }
+
+  static async purgatory(
+    crownCheck: CrownCheck,
+    user: User,
+    message: Message
+  ): Promise<MessageEmbed> {
+    let holderUsername = (
+      await DBUser.toDiscordUser(message, crownCheck.oldCrown!.user.discordID)
+    )?.username;
+
+    return new MessageEmbed()
+      .setTitle(`Crown for ${crownCheck.crown!.artistName}`)
+      .setDescription(
+        `
+:crown: → ${user.username.code()} - ${numberDisplay(
+          crownCheck.crown!.plays,
+          "play"
+        )}
+
+:pensive: → ${holderUsername?.code()} - ${numberDisplay(
+          crownCheck.oldCrown?.plays!,
+          "play"
+        )}
+
+        Yoink! The crown for ${crownCheck.crown!.artistName.bold()} was stolen from ${holderUsername} due to cheating!`
+      );
+  }
+
+  static async left(crownCheck: CrownCheck, user: User): Promise<MessageEmbed> {
+    return new MessageEmbed()
+      .setTitle(`Crown for ${crownCheck.crown!.artistName}`)
+      .setDescription(
+        `
+:crown: → ${user.username.code()} - ${numberDisplay(
+          crownCheck.crown!.plays,
+          "play"
+        )}
+
+:wave: → ??? - ${numberDisplay(crownCheck.oldCrown?.plays!, "play")}
+
+        Yoink! The crown for ${crownCheck.crown!.artistName.bold()} was stolen from someone who left!`
       );
   }
 }

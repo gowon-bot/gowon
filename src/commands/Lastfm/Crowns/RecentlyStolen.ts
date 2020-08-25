@@ -20,6 +20,6 @@ export class RecentlyStolen extends CrownsChildCommand {
           .join("\n")
       );
 
-    await message.channel.send(embed);
+    await this.send(embed);
   }
 }

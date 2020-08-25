@@ -1,4 +1,3 @@
-import { Message } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
@@ -25,10 +24,10 @@ export default class ArtistPage extends LastFMBaseCommand {
     },
   };
 
-  async run(message: Message) {
+  async run() {
     let artist = this.parsedArguments.artist as string;
 
-    let { username } = await this.parseMentionedUsername(message);
+    let { username } = await this.parseMentionedUsername();
 
     if (!artist) {
       artist = (await this.lastFMService.nowPlayingParsed(username)).artist;
@@ -39,8 +38,6 @@ export default class ArtistPage extends LastFMBaseCommand {
       username,
     });
 
-    message.reply(
-      `${artistDetails.name.bold()} on last.fm: ${artistDetails.url}`
-    );
+    this.reply(`${artistDetails.name.bold()} on last.fm: ${artistDetails.url}`);
   }
 }

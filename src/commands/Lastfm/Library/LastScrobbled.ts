@@ -1,4 +1,4 @@
-import { Message, MessageEmbed } from "discord.js";
+import { MessageEmbed } from "discord.js";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { dateTimeDisplay, ucFirst } from "../../../helpers";
 import { Arguments } from "../../../lib/arguments/arguments";
@@ -22,7 +22,7 @@ export default class LastScrobbled extends LastFMBaseCommand {
     },
   };
 
-  async run(message: Message) {
+  async run() {
     let artist = this.parsedArguments.artist as string,
       track = this.parsedArguments.track as string;
 
@@ -30,7 +30,7 @@ export default class LastScrobbled extends LastFMBaseCommand {
       senderUsername,
       username,
       perspective,
-    } = await this.parseMentionedUsername(message);
+    } = await this.parseMentionedUsername();
 
     if (artist && track) {
       let albumInfo = await this.lastFMService.trackInfo({ artist, track });
@@ -46,12 +46,17 @@ export default class LastScrobbled extends LastFMBaseCommand {
       if (!artist) {
         artist = nowPlaying.artist;
       } else {
-        artist = (await this.lastFMService.artistInfo({ artist })).name;
+        artist = await this.lastFMService.correctArtist({ artist });
       }
       if (!track) {
         track = nowPlaying.name;
       } else {
-        track = (await this.lastFMService.trackInfo({ artist, track })).name;
+        let corrected = await this.lastFMService.correctTrack({
+          artist,
+          track,
+        });
+        track = corrected.track;
+        artist = corrected.artist;
       }
     }
 
@@ -61,8 +66,6 @@ export default class LastScrobbled extends LastFMBaseCommand {
       track
     );
 
-    // if ()
-
     let embed = new MessageEmbed().setDescription(
       `${ucFirst(
         perspective.name
@@ -71,6 +74,6 @@ export default class LastScrobbled extends LastFMBaseCommand {
       ).bold()}`
     );
 
-    await message.channel.send(embed);
+    await this.send(embed);
   }
 }

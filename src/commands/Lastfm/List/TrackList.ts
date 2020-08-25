@@ -1,4 +1,4 @@
-import { Message, MessageEmbed } from "discord.js";
+import { MessageEmbed } from "discord.js";
 import { numberDisplay } from "../../../helpers";
 import { ListCommand } from "./ListCommand";
 
@@ -6,8 +6,8 @@ export default class TrackList extends ListCommand {
   aliases = ["tlist", "toptracks", "toptrack", "tracks"];
   description = "Shows your top tracks";
 
-  async run(message: Message) {
-    let { username } = await this.parseMentionedUsername(message);
+  async run() {
+    let { username } = await this.parseMentionedUsername();
 
     let topTracks = await this.lastFMService.topTracks({
       username,
@@ -33,6 +33,6 @@ export default class TrackList extends ListCommand {
           .join("\n")
       );
 
-    await message.channel.send(messageEmbed);
+    await this.send(messageEmbed);
   }
 }

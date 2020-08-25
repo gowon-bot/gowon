@@ -180,7 +180,7 @@ export class PurgatoryError extends ClientError {
 
   constructor() {
     super(
-      `Scrobble Purgatory? Oh noes! This rare role is handed to users that have clearly fake scrobbled to inflate their play counts. It stops them from playing the "Who Knows?" game and is a badge of shame on the server. Booooooo!`
+      `You have been placed in scrobble purgatory, this means you cannot participate in the crowns game. This is usually updated when you become an active user again, if you think this is an error please speak to a staff member.`
     );
   }
 }

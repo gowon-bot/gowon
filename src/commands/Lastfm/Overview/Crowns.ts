@@ -1,5 +1,5 @@
 import { OverviewChildCommand } from "./OverviewChildCommand";
-import { Message, MessageEmbed } from "discord.js";
+import { MessageEmbed } from "discord.js";
 import { numberDisplay, getOrdinal } from "../../../helpers";
 import { LogicError } from "../../../errors";
 
@@ -7,9 +7,9 @@ export class Crowns extends OverviewChildCommand {
   aliases = ["cw", "cws"];
   description = "Shows some stats about crowns";
 
-  async run(message: Message) {
+  async run() {
     let { badge, colour, image } = await this.getAuthorDetails();
-    let { username } = await this.parseMentionedUsername(message);
+    let { username } = await this.parseMentionedUsername();
 
     let [crownRank, apc, spc] = await Promise.all([
       this.calculator.crownsRank(),
@@ -31,9 +31,11 @@ export class Crowns extends OverviewChildCommand {
   For every ${numberDisplay(spc!, "scrobble").bold()}, you a crown
         `);
 
-      await message.channel.send(embed);
+      await this.send(embed);
     } else {
-      throw new LogicError("that user isn't logged into the bot or doesn't have any crowns!");
+      throw new LogicError(
+        "that user isn't logged into the bot or doesn't have any crowns!"
+      );
     }
   }
 }

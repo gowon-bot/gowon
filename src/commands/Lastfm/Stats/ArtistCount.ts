@@ -1,4 +1,3 @@
-import { Message } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { generatePeriod, generateHumanPeriod } from "../../../helpers/date";
 import { numberDisplay } from "../../../helpers";
@@ -31,16 +30,16 @@ export default class ArtistCount extends LastFMBaseCommand {
     },
   };
 
-  async run(message: Message) {
+  async run() {
     let timePeriod = this.parsedArguments.timePeriod as LastFMPeriod,
       humanReadableTimePeriod = this.parsedArguments
         .humanReadableTimePeriod as string;
 
-    let { username, perspective } = await this.parseMentionedUsername(message);
+    let { username, perspective } = await this.parseMentionedUsername();
 
     let scrobbles = await this.lastFMService.artistCount(username, timePeriod);
 
-    await message.reply(
+    await this.reply(
       `${perspective.plusToHave} scrobbled ${numberDisplay(
         scrobbles,
         "artist"

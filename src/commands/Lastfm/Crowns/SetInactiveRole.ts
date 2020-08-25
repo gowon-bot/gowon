@@ -19,6 +19,6 @@ export class SetInactiveRole extends CrownsChildCommand {
       `Set the inactive role for crowns to ${inactiveRole.name}`
     );
 
-    await message.channel.send(embed);
+    await this.send(embed);
   }
 }

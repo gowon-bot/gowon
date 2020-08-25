@@ -3,27 +3,33 @@ import { RunAs } from "../lib/AliasChecker";
 import { Setting } from "../database/entity/Setting";
 import { Guild } from "discord.js";
 import { Settings } from "../lib/Settings";
+import config from "../../config.json";
 
-export class BotMomentService {
+export class GowonService {
   // Static methods/properties
-  private static instance: BotMomentService;
+  private static instance: GowonService;
 
   private constructor() {}
 
-  static getInstance(): BotMomentService {
+  static getInstance(): GowonService {
     if (!this.instance) {
-      this.instance = new BotMomentService();
+      this.instance = new GowonService();
     }
     return this.instance;
   }
 
   // Instance methods/properties
-  prefix: string = ".";
+  prefix: string = config.prefix;
   customPrefixes = {
     lastfm: "lfm:",
   };
   inactiveRole: { [serverID: string]: string | undefined } = {};
   purgatoryRole: { [serverID: string]: string | undefined } = {};
+
+  contants = {
+    hardPageLimit: 5,
+    crownThreshold: 30,
+  };
 
   get regexSafePrefix(): string {
     return regexEscape(this.prefix);

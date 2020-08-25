@@ -1,7 +1,7 @@
-import { Message } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
-import { numberDisplay } from "../../../helpers";
+import { numberDisplay, ucFirst } from "../../../helpers";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
+import { LogicError } from "../../../errors";
 
 export default class ArtistAt extends LastFMBaseCommand {
   aliases = ["aa"];
@@ -22,15 +22,15 @@ export default class ArtistAt extends LastFMBaseCommand {
     },
   };
 
-  async run(message: Message) {
+  async run() {
     let rank = this.parsedArguments.rank as number;
 
     if (isNaN(rank) || rank < 0) {
-      await message.reply("please enter a valid rank");
+      await this.reply("please enter a valid rank");
       return;
     }
 
-    let { username, perspective } = await this.parseMentionedUsername(message);
+    let { username, perspective } = await this.parseMentionedUsername();
 
     let topArtists = await this.lastFMService.topArtists({
       username,
@@ -40,7 +40,14 @@ export default class ArtistAt extends LastFMBaseCommand {
 
     let artist = topArtists.artist[0];
 
-    await message.reply(
+    if (!artist)
+      throw new LogicError(
+        `${ucFirst(
+          perspective.name
+        )} haven't scrobbled an artist at that position!`
+      );
+
+    await this.reply(
       `${artist.name.bold()} is ranked at #${artist["@attr"].rank.bold()} in ${
         perspective.possessive
       } top artists with ${numberDisplay(artist.playcount, "play").bold()}`

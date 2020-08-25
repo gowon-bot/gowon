@@ -32,7 +32,7 @@ export default class LastFmToDiscord extends LastFMBaseCommand {
         `couldn't find anyone logged in as ${username.code()} in this server.`
       );
 
-    message.reply(
+    this.reply(
       `${member.displayName.bold()} is logged in as ${username
         .toLowerCase()
         .code()}.`

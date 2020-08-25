@@ -1,13 +1,13 @@
 import { OverviewChildCommand } from "./OverviewChildCommand";
-import { Message, MessageEmbed } from "discord.js";
+import { MessageEmbed } from "discord.js";
 import { numberDisplay, ucFirst } from "../../../helpers";
 
 export class Breadth extends OverviewChildCommand {
   aliases = ["diversity", "div"];
   description = "Shows your breadth rating";
 
-  async run(message: Message) {
-    let { username, perspective } = await this.parseMentionedUsername(message);
+  async run() {
+    let { username, perspective } = await this.parseMentionedUsername();
 
     let { badge, colour, image } = await this.getAuthorDetails();
     let breadth = await this.calculator.breadth();
@@ -21,6 +21,6 @@ export class Breadth extends OverviewChildCommand {
         ).bold()} _(${breadth.ratingString})_`
       );
 
-    await message.channel.send(embed);
+    await this.send(embed);
   }
 }

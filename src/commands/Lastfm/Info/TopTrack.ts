@@ -1,4 +1,4 @@
-import { Message, MessageEmbed } from "discord.js";
+import { MessageEmbed } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { InfoCommand } from "./InfoCommand";
 import { LogicError } from "../../../errors";
@@ -22,7 +22,7 @@ export default class TopTrack extends InfoCommand {
     },
   };
 
-  async run(message: Message) {
+  async run() {
     let artist = this.parsedArguments.artist as string,
       position = {
         start: (this.parsedArguments.position as string[])[0].toInt(),
@@ -39,7 +39,7 @@ export default class TopTrack extends InfoCommand {
     if (position.end - position.start > 9)
       throw new LogicError("those two positions are too far apart!");
 
-    let { senderUsername } = await this.parseMentionedUsername(message);
+    let { senderUsername } = await this.parseMentionedUsername();
 
     if (!artist) {
       artist = (await this.lastFMService.nowPlayingParsed(senderUsername))
@@ -78,6 +78,6 @@ export default class TopTrack extends InfoCommand {
           .join("\n")
       );
 
-    await message.channel.send(embed);
+    await this.send(embed);
   }
 }

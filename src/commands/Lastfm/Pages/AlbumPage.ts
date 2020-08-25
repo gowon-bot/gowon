@@ -1,4 +1,3 @@
-import { Message } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
@@ -22,11 +21,11 @@ export default class AlbumPage extends LastFMBaseCommand {
     },
   };
 
-  async run(message: Message) {
+  async run() {
     let artist = this.parsedArguments.artist as string,
       album = this.parsedArguments.album as string;
 
-    let { username } = await this.parseMentionedUsername(message);
+    let { username } = await this.parseMentionedUsername();
 
     if (!artist || !album) {
       let nowPlaying = await this.lastFMService.nowPlayingParsed(username);
@@ -41,7 +40,7 @@ export default class AlbumPage extends LastFMBaseCommand {
       username,
     });
 
-    message.channel.send(
+    this.send(
       `${albumDetails.name.italic()} by ${albumDetails.artist.bold()} on last.fm: ${
         albumDetails.url
       }`

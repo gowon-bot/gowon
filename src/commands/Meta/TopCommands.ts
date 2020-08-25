@@ -51,6 +51,6 @@ export class TopCommands extends MetaChildCommand {
         )
       );
 
-    await message.channel.send(embed);
+    await this.send(embed);
   }
 }
