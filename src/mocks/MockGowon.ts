@@ -36,20 +36,16 @@ export class MockGowon {
     return this.instance;
   }
 
-  getSetup() {
-    return async () => {
-      Logger.output = false;
+  async setup() {
+    Logger.output = false;
 
-      await this.db.connectTest();
-      await this.signInUser();
-    };
+    await this.db.connectTest();
+    await this.signInUser();
   }
 
-  getSetdown() {
-    return async () => {
-      // await this.db.close(); // broken, see implementation
-      await this.signOutUser();
-    };
+  async teardown() {
+    // await this.db.close(); // broken, see implementation
+    await this.signOutUser();
   }
 
   async signInUser() {
@@ -63,7 +59,9 @@ export class MockGowon {
     let user = this.discord.getUser();
     let guild = this.discord.getGuild();
 
-    await this.usersService.clearUsername(user.id, guild.id);
+    try {
+      await this.usersService.clearUsername(user.id, guild.id);
+    } catch {}
   }
 
   command<T extends BaseCommand>(command: T): T {

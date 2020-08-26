@@ -28,7 +28,7 @@ export function dateDisplay(date: Date): string {
 }
 
 export function dateTimeDisplay(date: Date): string {
-  return moment(date).format("h:mma MMMM on Do, YYYY");
+  return moment(date).format("h:mma on MMMM Do, YYYY");
 }
 
 export function ago(date: Date): string {
