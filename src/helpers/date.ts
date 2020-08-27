@@ -38,7 +38,11 @@ export interface TimeRange {
 
 export function generateTimeRange(
   string: string,
-  options: { fallback?: string; useOverall?: boolean } = {}
+  options: {
+    fallback?: string;
+    useOverall?: boolean;
+    noFallback?: boolean;
+  } = {}
 ): TimeRange {
   let difference = parse(string, "second");
 
@@ -46,6 +50,8 @@ export function generateTimeRange(
     throw new LogicError("that's in the future, dumbass");
 
   if (!difference) {
+    if (options.noFallback) return {};
+
     let matches = string.match(fallbackRegex) || [];
     let overallMatch = string.match(overallRegex) || [];
 
@@ -151,4 +157,23 @@ export function generateHumanPeriod(
     default:
       return "overall";
   }
+}
+
+export function parseDate(
+  string: string,
+  ...parsers: Array<string | ((string: string) => Date | undefined)>
+): Date | undefined {
+  if (!string) return;
+
+  for (let parser of parsers) {
+    if (typeof parser === "string") {
+      let attempt = moment(string, parser);
+      if (attempt.isValid()) return attempt.toDate();
+    } else {
+      let attempt = parser(string);
+      if (attempt) return attempt;
+    }
+  }
+
+  return;
 }

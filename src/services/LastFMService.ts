@@ -35,6 +35,9 @@ import {
   TopAlbumsParams,
   TopTracksParams,
   ArtistTopTracksParams,
+  TagTopArtistsParams,
+  TagTopArtists,
+  TagTopArtistsResponse,
 } from "./LastFMService.types";
 
 import config from "../../config.json";
@@ -332,5 +335,13 @@ export class LastFMService extends BaseService {
       artist: response.artist.name,
       track: response.name,
     };
+  }
+
+  async tagTopArtists(params: TagTopArtistsParams): Promise<TagTopArtists> {
+    let response = await this.request<TagTopArtistsResponse>(
+      "tag.gettopartists",
+      params
+    );
+    return response.topartists;
   }
 }

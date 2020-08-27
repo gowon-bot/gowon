@@ -4,7 +4,8 @@ Bugs:
   [x] `!o all` help
   [x] infinity in `!o per`
   [x] Number display in `!o all`
-  [] `!wh` inactive, purgatory, left display
+  [x] Fix `!last` parsing
+  [x] `!wh` inactive, purgatory, left display
   [] UsernameNotRegistered error no longer thrown (maybe fix need to be logged in too)
 
 Test:
@@ -13,7 +14,6 @@ Test:
 Todo:
   [x] artist/album/track correct method
   [x] Pagination helper, plus multiple pages on `!combo`
-  [] Add top artists to tags
   [] Add total tracks/albums/scrobbles to att, ltt, att, last
   [later] Dockerize 😳
   [later] Keep track of every tag, artist ever fm'd

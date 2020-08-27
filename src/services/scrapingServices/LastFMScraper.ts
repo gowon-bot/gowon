@@ -1,6 +1,6 @@
 import { BaseScraper } from "./BaseScraper";
 import { LastFMService } from "../LastFMService";
-import moment from "moment";
+import { generateTimeRange, parseDate } from "../../helpers/date";
 
 export interface TopTrack {
   track: string;
@@ -122,7 +122,7 @@ export class LastFMScraper extends BaseScraper {
     username: string,
     artist: string,
     track: string
-  ): Promise<Date> {
+  ): Promise<Date | undefined> {
     let $ = await this.fetch(
       "user/" +
         encodeURIComponent(username) +
@@ -138,6 +138,14 @@ export class LastFMScraper extends BaseScraper {
       ".chartlist-timestamp > span"
     );
 
-    return moment(lastScrobbled.text().trim(), "D MMM h:mma").toDate();
+    // 6 Jul 2019, 9:35pm
+    return parseDate(
+      lastScrobbled.text().trim(),
+      "D MMM h:mma",
+      "D MMM YYYY, h:mma",
+      (string: string) => {
+        return generateTimeRange(string, { noFallback: true }).from;
+      }
+    );
   }
 }

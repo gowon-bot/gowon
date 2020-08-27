@@ -3,7 +3,7 @@ import { Arguments } from "../../../lib/arguments/arguments";
 import { Message, MessageEmbed } from "discord.js";
 import { numberDisplay, ago } from "../../../helpers";
 import { User } from "../../../database/entity/User";
-import { userHasRole } from "../../../helpers/discord";
+import { CrownState } from "../../../services/dbservices/CrownsService";
 
 export class Info extends CrownsChildCommand {
   aliases = ["wh"];
@@ -40,34 +40,40 @@ export class Info extends CrownsChildCommand {
       { refresh: false }
     );
 
-    if (crown && crown.user.id === user.id) {
+    if (!crown) {
+      await this.reply(`No one has the crown for ${artistDetails.name.bold()}`);
+      return;
+    }
+
+    let invalidCheck = await crown?.invalid(message);
+
+    let invalidBadge =
+      invalidCheck.reason === CrownState.inactivity
+        ? " [Inactive]"
+        : invalidCheck.reason === CrownState.left
+        ? " [Left the server]"
+        : invalidCheck.reason === CrownState.purgatory
+        ? " [Purgatory]"
+        : "";
+
+    if (crown.user.id === user.id) {
       crown.plays = artistDetails.stats.userplaycount.toInt();
       crown.save();
     } else {
-      await crown?.refresh();
+      await crown.refresh();
     }
 
-    if (!crown)
-      await this.reply(
-        `No one has the crown for ${artistDetails.name.bold()}`
-      );
-
-    if (crown?.user.id) {
+    if (crown.user.id) {
       let holderUser = await User.toDiscordUser(message, crown.user.discordID);
 
       let holderUsername = holderUser?.username;
-      let member = await message.guild?.members.fetch(holderUser?.id!);
-      let isInactive = userHasRole(
-        member!,
-        await this.gowonService.getInactiveRole(message.guild!)
-      );
 
       let embed = new MessageEmbed()
         .setTitle(`Who has ${artistDetails.name.bold()}?`)
         .setDescription(
-          `${holderUsername}${
-            isInactive ? " _[INACTIVE]_" : ""
-          } has the crown for ${artistDetails.name.bold()} with ${numberDisplay(
+          `${
+            holderUsername || "???"
+          }${invalidBadge} has the crown for ${artistDetails.name.bold()} with ${numberDisplay(
             crown.plays,
             "play"
           )}

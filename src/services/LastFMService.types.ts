@@ -274,7 +274,32 @@ export interface ArtistTopTracksResponse {
   toptracks: ArtistTopTracks;
 }
 
+export interface TagTopArtistsResponse {
+  topartists: TagTopArtists;
+}
+
+export interface TagTopArtists {
+  artist: {
+    name: string;
+    url: string;
+    streamable: "0" | "1";
+    image: Image[];
+    "@attr": {
+      rank: string;
+    };
+  }[];
+  "@attr": {
+    tag: string;
+    page: string;
+    perPage: string;
+    totalPages: string;
+    total: string;
+  };
+}
+
+/// ==================
 // Inputs
+/// ==================
 
 export interface Params {}
 
@@ -354,4 +379,8 @@ export interface TopAlbumsParams
 export interface ArtistTopTracksParams extends PagedParams {
   artist: string;
   autocorrect?: 0 | 1;
+}
+
+export interface TagTopArtistsParams extends PagedParams {
+  tag: string;
 }

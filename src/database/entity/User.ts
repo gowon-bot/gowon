@@ -17,11 +17,11 @@ import { userHasRole } from "../../helpers/discord";
 import { GowonService } from "../../services/GowonService";
 
 // Shims (required for tests)
-import "./DisabledCommand"
-import "./meta/CommandRun"
-import "./meta/Error"
-import "./Permission"
-import "./Setting"
+import "./DisabledCommand";
+import "./meta/CommandRun";
+import "./meta/Error";
+import "./Permission";
+import "./Setting";
 
 @Entity({ name: "users" })
 export class User extends BaseEntity {
@@ -47,7 +47,11 @@ export class User extends BaseEntity {
     message: Message,
     discordID: string
   ): Promise<DiscordUser | undefined> {
-    return (await message.guild?.members.fetch(discordID))?.user;
+    try {
+      return (await message.guild?.members.fetch(discordID))?.user;
+    } catch {
+      return;
+    }
   }
 
   static async stillInServer(

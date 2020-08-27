@@ -2,6 +2,7 @@ import { MessageEmbed } from "discord.js";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { dateTimeDisplay, ucFirst } from "../../../helpers";
 import { Arguments } from "../../../lib/arguments/arguments";
+import { LogicError } from "../../../errors";
 
 export default class LastScrobbled extends LastFMBaseCommand {
   description = "Shows the last time you scrobbled a song";
@@ -66,6 +67,8 @@ export default class LastScrobbled extends LastFMBaseCommand {
       track
     );
 
+    if (!lastScrobbled) throw new LogicError(`${perspective.plusToHave} not scrobbled that track!`)
+    
     let embed = new MessageEmbed().setDescription(
       `${ucFirst(
         perspective.name

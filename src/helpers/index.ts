@@ -27,7 +27,7 @@ export function dateDisplay(date: Date): string {
   return moment(date).format("MMMM Do, YYYY");
 }
 
-export function dateTimeDisplay(date: Date): string {
+export function dateTimeDisplay(date: Date | undefined): string {
   return moment(date).format("h:mma on MMMM Do, YYYY");
 }
 
