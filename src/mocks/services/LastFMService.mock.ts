@@ -23,6 +23,8 @@ import {
   TopTracksParams,
   ArtistTopTracksParams,
   Image,
+  TagTopArtistsParams,
+  TagTopArtists,
 } from "../../services/LastFMService.types";
 import { BaseService } from "../../services/BaseService";
 import { LastFMScraper } from "../../services/scrapingServices/LastFMScraper";
@@ -377,6 +379,29 @@ export class LastFMMock extends BaseService {
     return {
       artist: "artist",
       track: "track",
+    };
+  }
+
+  async tagTopArtists(_: TagTopArtistsParams): Promise<TagTopArtists> {
+    return {
+      artist: [
+        {
+          name: "tag",
+          url: "https://google.ca",
+          streamable: "0",
+          image: fakeImages(),
+          "@attr": {
+            rank: "1",
+          },
+        },
+      ],
+      "@attr": {
+        tag: "tag",
+        page: "1",
+        perPage: "1",
+        totalPages: "1",
+        total: "1",
+      },
     };
   }
 }
