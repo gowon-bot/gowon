@@ -17,7 +17,7 @@ export class Paginator {
     console.log({
       ...this.params,
       page: this.currentPage,
-    })
+    });
 
     return await this.method({
       ...this.params,
@@ -35,22 +35,66 @@ export class Paginator {
     }
   }
 
-  async getAll(options: { groupOn?: string } = {}): Promise<any> {
-    let results = [];
+  private generatePages<T>(method: (params: any) => Promise<T>): Promise<T>[] {
+    let pages = [];
 
-    for (let page = this.currentPage; page <= this.maxPages; page++) {
-      let response = await this.method({
-        ...this.params,
-        page,
-      });
+    for (let page = this.currentPage + 1; page <= this.maxPages; page++) {
+      pages.push(
+        method({
+          ...this.params,
+          page,
+        })
+      );
+    }
 
+    return pages;
+  }
+
+  async getAll<T = any>(options: {
+    concatTo?: string;
+    concurrent?: boolean;
+  }): Promise<T>;
+  async getAll<T = any>(options: {
+    groupOn?: string;
+    concurrent?: boolean;
+  }): Promise<T[]>;
+  async getAll<T = any>(options: { concurrent: boolean }): Promise<T[]>;
+  async getAll<T = any>(
+    options: { groupOn?: string; concatTo?: string; concurrent?: boolean } = {
+      concurrent: true,
+    }
+  ): Promise<T[] | T> {
+    let results = [] as T[];
+    let result: T | undefined;
+
+    const eachFunction = (response: any) => {
       if (options.groupOn) {
         results.push(response[options.groupOn]);
+      } else if (options.concatTo) {
+        if (!result) result = response;
+        else
+          ((result as any)[options.concatTo] as Array<unknown>).push(
+            ...response[options.concatTo]
+          );
       } else {
         results.push(response);
       }
+    };
+
+    if (options.concurrent) {
+      for await (let page of this.generatePages(this.method)) {
+        eachFunction(page);
+      }
+    } else {
+      (await Promise.all(this.generatePages(this.method))).forEach(
+        eachFunction
+      );
     }
 
-    return results;
+    if (result) {
+      return result;
+    } else {
+      return results as T[];
+    }
   }
 }

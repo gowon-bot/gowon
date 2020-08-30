@@ -19,6 +19,8 @@ export class ArtistPlays extends FriendsChildCommand {
     },
   };
 
+  throwIfNoFriends = true
+
   async run() {
     let artist = this.parsedArguments.artist as string;
 

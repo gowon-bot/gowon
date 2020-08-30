@@ -45,12 +45,16 @@ export default class ArtistTopTracks extends LastFMBaseCommand {
     let embed = new MessageEmbed()
       .setTitle(`Top ${artist.bold()} tracks for ${username.code()}`)
       .setDescription(
-        topTracks
-          .map(
-            (tt) =>
-              `${numberDisplay(tt.playcount, "play")} - ${tt.track.bold()}`
-          )
-          .join("\n")
+        `_${numberDisplay(topTracks.total, `total scrobble`)}, ${numberDisplay(
+          topTracks.count!,
+          `total track`
+        )}_\n\n` +
+          topTracks.items
+            .map(
+              (tt) =>
+                `${numberDisplay(tt.playcount, "play")} - ${tt.track.bold()}`
+            )
+            .join("\n")
       );
 
     await this.send(embed);

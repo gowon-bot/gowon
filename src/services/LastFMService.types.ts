@@ -58,6 +58,7 @@ export interface TrackInfo {
     mbid: string;
     url: string;
     "@attr": { position: string };
+    image: Image[];
   };
   userplaycount: string;
   userloved: string;

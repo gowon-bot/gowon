@@ -1,11 +1,10 @@
-import { MessageEmbed } from "discord.js";
+import { Message, MessageEmbed } from "discord.js";
 import { ucFirst } from "../../../helpers";
+import { RunAs } from "../../../lib/AliasChecker";
 import { Arguments } from "../../../lib/arguments/arguments";
-// import { Paginator } from "../../../lib/Paginator";
-import {
-  // TagTopArtists,
-  TopArtists,
-} from "../../../services/LastFMService.types";
+import { Variation } from "../../../lib/command/BaseCommand";
+import { Paginator } from "../../../lib/Paginator";
+import { TopArtists } from "../../../services/LastFMService.types";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 interface Overlap {
@@ -14,7 +13,12 @@ interface Overlap {
 }
 
 export default class Tag extends LastFMBaseCommand {
-  aliases = ["tag"];
+  variations: Variation[] = [
+    {
+      variationString: "tagm",
+      description: "Checks your top 2000 artists (instead of 1000)",
+    },
+  ];
   description = "shows your scrobbles of a tag";
   subcategory = "stats";
   usage = ["", "milestone", "time period milestone @user"];
@@ -34,15 +38,21 @@ export default class Tag extends LastFMBaseCommand {
     },
   };
 
-  async run() {
+  async run(_: Message, runAs: RunAs) {
     let tag = this.parsedArguments.tag as string;
     let { username, perspective } = await this.parseMentionedUsername({
       asCode: false,
     });
 
+    let paginator = new Paginator(
+      this.lastFMService.topArtists.bind(this.lastFMService),
+      runAs.lastString() === "tagm" ? 2 : 1,
+      { username, limit: 1000 }
+    );
+
     let [tagTopArtists, userTopArtists] = await Promise.all([
       this.lastFMService.tagTopArtists({ tag, limit: 1000 }),
-      this.lastFMService.topArtists({ username, limit: 1000 }),
+      paginator.getAll<TopArtists>({ concatTo: "artist", concurrent: false }),
     ]);
 
     let tagArtistNames = tagTopArtists!.artist.map((a) =>

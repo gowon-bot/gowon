@@ -84,7 +84,7 @@ export class LastFMService extends BaseService {
     let jsonResponse = await response.json();
 
     if (jsonResponse.error) throw new LastFMError(jsonResponse);
-
+    
     return jsonResponse as T;
   }
 

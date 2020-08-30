@@ -1,8 +1,8 @@
-import { MessageEmbed } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { getOrdinal, ucFirst } from "../../../helpers";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { LogicError, BadLastFMResponseError } from "../../../errors";
+import { TrackEmbed } from "../../../helpers/Embeds";
 
 export default class Milestone extends LastFMBaseCommand {
   aliases = ["mls"];
@@ -41,18 +41,9 @@ export default class Milestone extends LastFMBaseCommand {
 
     if (!track) throw new BadLastFMResponseError();
 
-    let embed = new MessageEmbed()
-      .setAuthor(
-        `${ucFirst(perspective.possessive)} ${getOrdinal(milestone)} track was:`
-      )
-      .setTitle(track.name)
-      .setDescription(
-        `by ${track.artist["#text"].bold()}` +
-          (track.album["#text"] ? ` from ${track.album["#text"].italic()}` : "")
-      )
-      .setThumbnail(
-        track.image.find((i) => i.size === "large")?.["#text"] || ""
-      );
+    let embed = TrackEmbed(track).setAuthor(
+      `${ucFirst(perspective.possessive)} ${getOrdinal(milestone)} track was:`
+    );
 
     await this.send(embed);
   }

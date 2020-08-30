@@ -68,12 +68,13 @@ export default class AlbumTopTracks extends LastFMBaseCommand {
         `Top tracks on ${artist.bold()} - ${album.italic()} for ${username.code()}`
       )
       .setDescription(
-        topAlbums
-          .map(
-            (tt) =>
-              `${numberDisplay(tt.playcount, "play")} - ${tt.track.bold()}`
-          )
-          .join("\n")
+        `_${numberDisplay(topAlbums.total, `total scrobble`)}_\n\n` +
+          topAlbums.items
+            .map(
+              (tt) =>
+                `${numberDisplay(tt.playcount, "play")} - ${tt.track.bold()}`
+            )
+            .join("\n")
       );
 
     await this.send(embed);

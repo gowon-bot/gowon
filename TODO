@@ -14,14 +14,17 @@ Test:
 Todo:
   [x] artist/album/track correct method
   [x] Pagination helper, plus multiple pages on `!combo`
-  [] Add total tracks/albums/scrobbles to att, ltt, att, last
+  [x] no friends on plays
+  [x] Add total tracks/albums/scrobbles to att, ltt, att
+  [] author on library commands
   [later] Dockerize 😳
   [later] Keep track of every tag, artist ever fm'd
 
   Comands:
-    [] Crowns ban
+    [] Command that searches (or direct queries) a track to display
     [] Server nowplaying
     [] Friends scrobbles
+    [?] Crowns ban
     [later] Whosampled (w/scraping)
 
     

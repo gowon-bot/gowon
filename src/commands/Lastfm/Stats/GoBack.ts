@@ -1,4 +1,3 @@
-import { MessageEmbed } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
 import {
   generateTimeRange,
@@ -7,6 +6,7 @@ import {
 } from "../../../helpers/date";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { LogicError } from "../../../errors";
+import { TrackEmbed } from "../../../helpers/Embeds";
 
 export default class GoBack extends LastFMBaseCommand {
   aliases = ["gb"];
@@ -48,16 +48,9 @@ export default class GoBack extends LastFMBaseCommand {
         `${perspective.plusToHave} not scrobbled any tracks in that time period!`
       );
 
-    let embed = new MessageEmbed()
-      .setAuthor(`${humanTimeRange} ago ${perspective.name} scrobbled:`)
-      .setTitle(track.name)
-      .setDescription(
-        `by ${track.artist["#text"].bold()}` +
-          (track.album["#text"] ? ` from ${track.album["#text"].italic()}` : "")
-      )
-      .setThumbnail(
-        track.image.find((i) => i.size === "large")?.["#text"] || ""
-      );
+    let embed = TrackEmbed(track).setAuthor(
+      `${humanTimeRange} ago ${perspective.name} scrobbled:`
+    );
 
     await this.send(embed);
   }

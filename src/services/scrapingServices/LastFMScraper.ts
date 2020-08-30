@@ -12,19 +12,34 @@ export interface TopAlbum {
   playcount: number;
 }
 
+interface Metadata {
+  [key: string]: string;
+}
+
+export interface Top<T> {
+  items: T[];
+  total: number;
+  count?: number;
+}
+
 export class LastFMScraper extends BaseScraper {
   constructor(lastFMService: LastFMService) {
     super(lastFMService.logger, "https://last.fm/");
   }
 
   // https://www.last.fm/user/flushed_emoji/library/music/Red+Velvet
-  async artistTopTracks(username: string, artist: string): Promise<TopTrack[]> {
+  async artistTopTracks(
+    username: string,
+    artist: string
+  ): Promise<Top<TopTrack>> {
     let $ = await this.fetch(
       "user/" +
         encodeURIComponent(username) +
         "/library/music/" +
         encodeURIComponent(artist)
     );
+
+    let metadata = this.getMetadataItems($);
 
     let topTracks = [] as TopTrack[];
 
@@ -45,16 +60,25 @@ export class LastFMScraper extends BaseScraper {
         topTracks.push({ track, playcount });
       });
 
-    return topTracks;
+    return {
+      items: topTracks,
+      total: metadata.Scrobbles.toInt(),
+      count: metadata.Tracks.toInt(),
+    };
   }
 
-  async artistTopAlbums(username: string, artist: string): Promise<TopAlbum[]> {
+  async artistTopAlbums(
+    username: string,
+    artist: string
+  ): Promise<Top<TopAlbum>> {
     let $ = await this.fetch(
       "user/" +
         encodeURIComponent(username) +
         "/library/music/" +
         encodeURIComponent(artist)
     );
+
+    let metadata = this.getMetadataItems($);
 
     let topAlbums = [] as TopAlbum[];
 
@@ -76,15 +100,18 @@ export class LastFMScraper extends BaseScraper {
         topAlbums.push({ album, playcount });
       });
 
-    return topAlbums;
+    return {
+      items: topAlbums,
+      total: metadata.Scrobbles.toInt(),
+      count: metadata.Albums.toInt(),
+    };
   }
 
-  // https://www.last.fm/user/flushed_emoji/library/music/Red+Velvet/%E2%80%98The+ReVe+Festival%E2%80%99+Day+1
   async albumTopTracks(
     username: string,
     artist: string,
     album: string
-  ): Promise<TopTrack[]> {
+  ): Promise<Top<TopTrack>> {
     let $ = await this.fetch(
       "user/" +
         encodeURIComponent(username) +
@@ -93,6 +120,8 @@ export class LastFMScraper extends BaseScraper {
         "/" +
         encodeURIComponent(album)
     );
+
+    let metadata = this.getMetadataItems($);
 
     let topTracks = [] as TopTrack[];
 
@@ -114,7 +143,7 @@ export class LastFMScraper extends BaseScraper {
         topTracks.push({ track, playcount });
       });
 
-    return topTracks;
+    return { items: topTracks, total: metadata.Scrobbles.toInt() };
   }
 
   // https://www.last.fm/user/flushed_emoji/library/music/Red+Velvet/_/Sunny+Side+Up!
@@ -138,7 +167,6 @@ export class LastFMScraper extends BaseScraper {
       ".chartlist-timestamp > span"
     );
 
-    // 6 Jul 2019, 9:35pm
     return parseDate(
       lastScrobbled.text().trim(),
       "D MMM h:mma",
@@ -147,5 +175,18 @@ export class LastFMScraper extends BaseScraper {
         return generateTimeRange(string, { noFallback: true }).from;
       }
     );
+  }
+
+  private getMetadataItems(page: CheerioStatic): Metadata {
+    let items = page(".metadata-list > .metadata-item").toArray();
+
+    return items.reduce((acc, val) => {
+      let key = page(val).find(".metadata-title").text();
+      let value = page(val).find(".metadata-display").text();
+
+      acc[key] = value;
+
+      return acc;
+    }, {} as Metadata);
   }
 }
