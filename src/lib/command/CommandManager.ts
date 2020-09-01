@@ -10,6 +10,10 @@ interface Commands {
 }
 
 async function generateCommands(): Promise<Commands> {
+  console.log(
+    require("path").dirname(require.main?.filename) + "/commands/**/*.js"
+  );
+
   let files = await glob(
     require("path").dirname(require.main?.filename) + "/commands/**/*.js"
   );

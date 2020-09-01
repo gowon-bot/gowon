@@ -29,6 +29,7 @@ import {
 import { BaseService } from "../../services/BaseService";
 import { LastFMScraper } from "../../services/scrapingServices/LastFMScraper";
 import { ParsedTrack } from "../../helpers/lastFM";
+import { LastFMService } from "../../services/LastFMService";
 
 function pagedResponse<T>(object: any): T {
   return {
@@ -78,7 +79,7 @@ function fakeTrack(): Track {
 
 export class LastFMMock extends BaseService {
   url = "";
-  scraper: LastFMScraper = new LastFMScraper(this);
+  scraper: LastFMScraper = new LastFMScraper(new LastFMService());
 
   get apikey(): string {
     return "";

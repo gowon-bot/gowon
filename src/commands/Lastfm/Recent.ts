@@ -33,7 +33,7 @@ export default class Recent extends LastFMBaseCommand {
     });
 
     let embed = new MessageEmbed()
-      .setTitle(`${perspective.uc.possessive} recent tracks`)
+      .setTitle(`${perspective.upper.possessive} recent tracks`)
       .setDescription(
         recentTracks.track
           .map(
