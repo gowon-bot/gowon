@@ -1,7 +1,5 @@
-import { Message, MessageEmbed } from "discord.js";
-import { RunAs } from "../../../lib/AliasChecker";
+import { MessageEmbed } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
-import { Variation } from "../../../lib/command/BaseCommand";
 import { Paginator } from "../../../lib/Paginator";
 import { TopArtists } from "../../../services/LastFMService.types";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
@@ -12,12 +10,6 @@ interface Overlap {
 }
 
 export default class Tag extends LastFMBaseCommand {
-  variations: Variation[] = [
-    {
-      variationString: "tagm",
-      description: "Checks your top 2000 artists (instead of 1000)",
-    },
-  ];
   description = "shows your scrobbles of a tag";
   subcategory = "stats";
   usage = ["", "milestone", "time period milestone @user"];
@@ -37,7 +29,7 @@ export default class Tag extends LastFMBaseCommand {
     },
   };
 
-  async run(_: Message, runAs: RunAs) {
+  async run() {
     let tag = this.parsedArguments.tag as string;
     let { username, perspective } = await this.parseMentionedUsername({
       asCode: false,
@@ -45,7 +37,7 @@ export default class Tag extends LastFMBaseCommand {
 
     let paginator = new Paginator(
       this.lastFMService.topArtists.bind(this.lastFMService),
-      runAs.lastString() === "tagm" ? 2 : 1,
+      2,
       { username, limit: 1000 }
     );
 
@@ -62,15 +54,13 @@ export default class Tag extends LastFMBaseCommand {
 
     let embed = new MessageEmbed()
       .setTitle(
-        `${(perspective.upper.possessive)} top ${
+        `${perspective.upper.possessive} top ${
           tagTopArtists!["@attr"].tag
         } artists`
       )
       .setDescription(
         `
-_Compares your top ${
-          runAs.lastString() === "tagm" ? 2 : 1
-        }000 artists and the top 1000 artists of the tag_\n` +
+_Compares your top 2000 artists and the top 1000 artists of the tag_\n` +
           (overlap.length
             ? `\`\`\`
 ${overlap.map((o) => o.plays + " - " + o.artist).join("\n")}

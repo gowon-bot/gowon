@@ -30,7 +30,7 @@ export abstract class ListCommand extends LastFMBaseCommand {
       },
       listAmount: {
         index: 0,
-        regex: /[0-9]{1,4}(?!\w)(?! [a-z])/g,
+        regex: /[0-9]{1,4}(?!\w)(?! [mw])/g,
         default: 10,
         number: true,
       },
