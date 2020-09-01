@@ -268,7 +268,8 @@ export class OverviewStatsCalculator {
         return (artistIndex || 1).toLocaleString();
       }
     }
-    return "1";
+
+    return "1000+";
   }
 
   async sumTop(number = 10): Promise<number> {
@@ -315,7 +316,10 @@ export class OverviewStatsCalculator {
   }
 
   async breadth(): Promise<{ rating: number; ratingString: string }> {
-    let top50 = (await this.top50Percent()).replace(",", "").toInt();
+    let top50 = (await this.top50Percent())
+      .replace(",", "")
+      .replace("+", "")
+      .toInt();
     let hindex = (await this.hIndex()).replace(",", "").toInt();
     let scrobbles = (await this.totalScrobbles()).replace(",", "").toInt();
     let sumTop = await this.sumTop();

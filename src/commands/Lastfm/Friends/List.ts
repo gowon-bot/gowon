@@ -1,6 +1,6 @@
 import { FriendsChildCommand } from "./FriendsChildCommand";
 import { Message, MessageEmbed } from "discord.js";
-import { FriendsRequester } from "../../../lib/FriendsRequester";
+import { MultiRequster } from "../../../lib/MultiRequester";
 import { numberDisplay } from "../../../helpers";
 
 export class List extends FriendsChildCommand {
@@ -11,7 +11,7 @@ export class List extends FriendsChildCommand {
   throwIfNoFriends = true;
 
   async run(message: Message) {
-    let nowPlayings = await new FriendsRequester(this.friendUsernames).fetch(
+    let nowPlayings = await new MultiRequster(this.friendUsernames).fetch(
       this.lastFMService.nowPlayingParsed.bind(this.lastFMService),
       []
     );
@@ -31,9 +31,9 @@ export class List extends FriendsChildCommand {
         Object.keys(nowPlayings).map((username) => {
           let np = nowPlayings[username];
 
-          return `${username.code()} - ${
-            np.name
-          } by ${np.artist.bold()} from ${np.album.italic()}`;
+          return `${username.code()} - ${np.name} by ${np.artist.bold()} ${
+            np.album ? `from ${np.album.italic()}` : ""
+          }`;
         })
       );
 

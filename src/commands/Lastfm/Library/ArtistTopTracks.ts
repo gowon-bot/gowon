@@ -43,6 +43,10 @@ export default class ArtistTopTracks extends LastFMBaseCommand {
     );
 
     let embed = new MessageEmbed()
+      .setAuthor(
+        this.message.author.username,
+        this.message.author.avatarURL() || ""
+      )
       .setTitle(`Top ${artist.bold()} tracks for ${username.code()}`)
       .setDescription(
         `_${numberDisplay(topTracks.total, `total scrobble`)}, ${numberDisplay(

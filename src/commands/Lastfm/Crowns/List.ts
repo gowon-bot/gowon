@@ -1,6 +1,6 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
 import { Message, MessageEmbed, User } from "discord.js";
-import { numberDisplay, ucFirst, getOrdinal } from "../../../helpers";
+import { numberDisplay, getOrdinal } from "../../../helpers";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { LogicError } from "../../../errors";
 
@@ -32,13 +32,13 @@ export class List extends CrownsChildCommand {
 
     if (!rank?.count)
       throw new LogicError(
-        `${ucFirst(perspective.name)} don't have any crowns in this server!`
+        `${perspective.upper.name} don't have any crowns in this server!`
       );
 
     let embed = new MessageEmbed()
-      .setTitle(`${ucFirst(perspective.possessive)} crowns`)
+      .setTitle(`${perspective.upper.possessive} crowns`)
       .setDescription(
-        `${ucFirst(perspective.plusToHave)} **${numberDisplay(
+        `${perspective.upper.plusToHave} **${numberDisplay(
           crownsCount,
           "** crown"
         )} in ${message.guild?.name} (ranked ${getOrdinal(

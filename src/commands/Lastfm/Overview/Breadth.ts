@@ -1,6 +1,6 @@
 import { OverviewChildCommand } from "./OverviewChildCommand";
 import { MessageEmbed } from "discord.js";
-import { numberDisplay, ucFirst } from "../../../helpers";
+import { numberDisplay } from "../../../helpers";
 
 export class Breadth extends OverviewChildCommand {
   aliases = ["diversity", "div"];
@@ -16,7 +16,7 @@ export class Breadth extends OverviewChildCommand {
       .setAuthor(username + badge, image)
       .setColor(colour)
       .setDescription(
-        `${ucFirst(perspective.possessive)} breadth rating is ${numberDisplay(
+        `${(perspective.upper.possessive)} breadth rating is ${numberDisplay(
           breadth.rating.toFixed(1)
         ).bold()} _(${breadth.ratingString})_`
       );

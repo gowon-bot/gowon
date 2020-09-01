@@ -6,55 +6,7 @@ import {
   RecordNotFoundError,
 } from "../../errors";
 import { BaseService } from "../BaseService";
-
-export class Perspective {
-  name: string;
-  possessive: string;
-  pronoun: string;
-  possesivePronoun: string;
-  objectPronoun: string;
-  plusToBe: string;
-  pronounPlusToBe: string;
-  plusToHave: string;
-  pronounPlusToHave: string;
-
-  discordUser?: DiscordUser;
-
-  constructor(options: {
-    name: string;
-    possessive: string;
-    pronoun: string;
-    possesivePronoun: string;
-    objectPronoun: string;
-    plusToBe: string;
-    pronounPlusToBe: string;
-    plusToHave: string;
-    pronounPlusToHave: string;
-  }) {
-    this.name = options.name;
-    this.possessive = options.possessive;
-    this.pronoun = options.pronoun;
-    this.possesivePronoun = options.possesivePronoun;
-    this.objectPronoun = options.objectPronoun;
-    this.plusToBe = options.plusToBe;
-    this.pronounPlusToBe = options.pronounPlusToBe;
-    this.plusToHave = options.plusToHave;
-    this.pronounPlusToHave = options.pronounPlusToHave;
-  }
-
-  addDiscordUser(user: DiscordUser): Perspective {
-    this.discordUser = user;
-    return this;
-  }
-
-  regularVerb(verb: string) {
-    return this.name + " " + (this.name === "you" ? verb : verb + "s");
-  }
-}
-
-export class DiscordPersective extends Perspective {
-  user!: DiscordUser;
-}
+import { Perspective } from "../../lib/Perspective";
 
 export class UsersService extends BaseService {
   async getUsername(discordID: string, serverID: string): Promise<string> {
@@ -103,18 +55,19 @@ export class UsersService extends BaseService {
     } else throw new AlreadyLoggedOutError();
   }
 
-  private buildPerspective(name: string): Perspective {
-    return new Perspective({
-      name: name,
-      possessive: name === "you" ? "your" : name + "'s",
-      pronoun: name === "you" ? "you" : "they",
-      possesivePronoun: name === "you" ? "your" : "their",
-      objectPronoun: name === "you" ? "you" : "them",
-      plusToBe: name === "you" ? "you are" : name + " is",
-      pronounPlusToBe: name === "you" ? "you are" : "they are",
-      plusToHave: name === "you" ? "you have" : name + " has",
-      pronounPlusToHave: name === "you" ? "you have" : "they have",
-    });
+  private buildPerspective(name: string, different: boolean): Perspective {
+    return new Perspective(
+      different,
+      name,
+      !different ? "your" : name + "'s",
+      !different ? "you" : "they",
+      !different ? "your" : "their",
+      !different ? "you" : "them",
+      !different ? "you are" : name + " is",
+      !different ? "you are" : "they are",
+      !different ? "you have" : name + " has",
+      !different ? "you have" : "they have"
+    );
   }
 
   perspective(
@@ -123,9 +76,9 @@ export class UsersService extends BaseService {
     asCode = true
   ): Perspective {
     if (username === undefined || authorUsername === username) {
-      return this.buildPerspective("you");
+      return this.buildPerspective("you", false);
     } else {
-      return this.buildPerspective(asCode ? username!.code() : username!);
+      return this.buildPerspective(asCode ? username!.code() : username!, true);
     }
   }
 
@@ -134,9 +87,9 @@ export class UsersService extends BaseService {
     mentioned?: DiscordUser
   ): Perspective {
     if (mentioned === undefined || author.id === mentioned.id) {
-      return this.buildPerspective("you").addDiscordUser(author);
+      return this.buildPerspective("you", false).addDiscordUser(author);
     } else {
-      return this.buildPerspective(mentioned?.username).addDiscordUser(
+      return this.buildPerspective(mentioned?.username, true).addDiscordUser(
         mentioned
       );
     }
@@ -168,8 +121,25 @@ export class UsersService extends BaseService {
     });
   }
 
-  async randomUser(): Promise<User> {
+  async randomUser(options?: { serverID?: string }): Promise<User>;
+  async randomUser(options?: { serverID?: string; limit?: 1 }): Promise<User>;
+  async randomUser(options?: {
+    serverID?: string;
+    limit?: number;
+  }): Promise<User[]>;
+  async randomUser(
+    options: {
+      serverID?: string;
+      limit?: number;
+    } = {}
+  ): Promise<User | User[]> {
     this.log("Fetching a random user...");
-    return await User.random();
+    let users = await User.random({ limit: 1, ...options });
+
+    if ((options.limit || 1) === 1) {
+      return users[0] as User;
+    } else {
+      return users as User[];
+    }
   }
 }

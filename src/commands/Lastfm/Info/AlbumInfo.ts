@@ -1,7 +1,7 @@
 import { MessageEmbed } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { InfoCommand } from "./InfoCommand";
-import { numberDisplay, ucFirst } from "../../../helpers";
+import { numberDisplay } from "../../../helpers";
 import { calculatePercent } from "../../../helpers/stats";
 
 export default class AlbumInfo extends InfoCommand {
@@ -89,7 +89,7 @@ export default class AlbumInfo extends InfoCommand {
             : "")
       )
       .addField(
-        `${ucFirst(perspective.possessive)} stats`,
+        `${perspective.upper.possessive} stats`,
         `
         \`${numberDisplay(albumInfo.userplaycount, "` play", true)} by ${
           perspective.objectPronoun
@@ -97,8 +97,8 @@ export default class AlbumInfo extends InfoCommand {
           albumInfo.userplaycount,
           userInfo.playcount,
           4
-        ).bold()}% of ${perspective.possesivePronoun} total scrobbles)
-        ${ucFirst(perspective.regularVerb("account"))} for ${calculatePercent(
+        ).bold()}% of ${perspective.possessivePronoun} total scrobbles)
+        ${perspective.upper.regularVerb("account")} for ${calculatePercent(
           albumInfo.userplaycount,
           albumInfo.playcount
         ).bold()}% of all scrobbles of this album!`

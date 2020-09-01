@@ -64,6 +64,10 @@ export default class AlbumTopTracks extends LastFMBaseCommand {
     );
 
     let embed = new MessageEmbed()
+      .setAuthor(
+        this.message.author.username,
+        this.message.author.avatarURL() || ""
+      )
       .setTitle(
         `Top tracks on ${artist.bold()} - ${album.italic()} for ${username.code()}`
       )

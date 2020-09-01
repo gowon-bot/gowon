@@ -1,3 +1,10 @@
+// Shims (required for tests)
+import "./DisabledCommand";
+import "./meta/CommandRun";
+import "./meta/Error";
+import "./Permission";
+import "./Setting";
+
 import {
   Entity,
   Column,
@@ -15,13 +22,8 @@ import {
 import { Friend } from "./Friend";
 import { userHasRole } from "../../helpers/discord";
 import { GowonService } from "../../services/GowonService";
-
-// Shims (required for tests)
-import "./DisabledCommand";
-import "./meta/CommandRun";
-import "./meta/Error";
-import "./Permission";
-import "./Setting";
+import { Setting } from "./Setting";
+import { Settings } from "../../lib/Settings";
 
 @Entity({ name: "users" })
 export class User extends BaseEntity {
@@ -65,10 +67,18 @@ export class User extends BaseEntity {
     }
   }
 
-  static async random(): Promise<User> {
-    return (
-      await this.query(`SELECT * FROM users ORDER BY RANDOM() LIMIT 1`)
-    )[0] as User;
+  static async random(options: {
+    serverID?: string;
+    limit: number;
+  }): Promise<User[]> {
+    let users = await this.query(
+      `SELECT * FROM users ${
+        options.serverID ? 'WHERE "serverID" like $2' : ""
+      } ORDER BY RANDOM() LIMIT $1`,
+      options.serverID ? [options.limit, options.serverID] : [options.limit]
+    );
+
+    return users as User[];
   }
 
   async toDiscordUser(message: Message): Promise<DiscordUser | undefined> {
@@ -101,5 +111,22 @@ export class User extends BaseEntity {
       await this.asGuildMember(message),
       await GowonService.getInstance().getInactiveRole(message.guild!)
     );
+  }
+
+  async isCrownBanned(message: Message): Promise<boolean> {
+    return GowonService.getInstance().isUserCrownBanned(
+      message.guild!,
+      this.discordID
+    );
+  }
+
+  async isOptedOut(message: Message): Promise<boolean> {
+    let setting = await Setting.getByName(
+      Settings.OptedOut,
+      message.guild!.id,
+      this.discordID
+    );
+
+    return !!setting;
   }
 }

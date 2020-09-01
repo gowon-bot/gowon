@@ -20,7 +20,7 @@ export class Playsover extends OverviewChildCommand {
     let embed = new MessageEmbed()
       .setAuthor(username + badge, image)
       .setColor(colour).setDescription(`Among ${
-      perspective.possesivePronoun
+      perspective.possessivePronoun
     } top 1000 artists, ${perspective.plusToHave}...
   - ${thousand.bold()} artists with 1000+ scrobbles
   - ${fivehundred.bold()} artists with 500+ scrobbles

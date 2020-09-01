@@ -32,7 +32,7 @@ export default class Track extends LastFMBaseCommand {
 
       let trackInfo = await this.lastFMService.trackInfo({ artist, track });
 
-      let embed = TrackEmbed({ 
+      let embed = TrackEmbed({
         ...trackInfo,
         image: trackInfo.album.image,
       }).setAuthor(
@@ -42,6 +42,24 @@ export default class Track extends LastFMBaseCommand {
 
       await this.send(embed);
     } else {
+      let results = await this.lastFMService.trackSearch({
+        track: querystring,
+        limit: 1,
+      });
+
+      let track = results.results.trackmatches.track[0];
+
+      let trackInfo = await this.lastFMService.trackInfo({
+        track: track.name,
+        artist: track.artist,
+      });
+
+      let embed = TrackEmbed({
+        ...trackInfo,
+        image: trackInfo.album.image,
+      });
+
+      await this.send(embed);
     }
   }
 }

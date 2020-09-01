@@ -1,5 +1,4 @@
 import { Message, MessageEmbed } from "discord.js";
-import { ucFirst } from "../../../helpers";
 import { RunAs } from "../../../lib/AliasChecker";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { Variation } from "../../../lib/command/BaseCommand";
@@ -63,13 +62,15 @@ export default class Tag extends LastFMBaseCommand {
 
     let embed = new MessageEmbed()
       .setTitle(
-        `${ucFirst(perspective.possessive)} top ${
+        `${(perspective.upper.possessive)} top ${
           tagTopArtists!["@attr"].tag
         } artists`
       )
       .setDescription(
         `
-_Compares your top 1000 artists and the top 1000 artists of the tag_\n` +
+_Compares your top ${
+          runAs.lastString() === "tagm" ? 2 : 1
+        }000 artists and the top 1000 artists of the tag_\n` +
           (overlap.length
             ? `\`\`\`
 ${overlap.map((o) => o.plays + " - " + o.artist).join("\n")}

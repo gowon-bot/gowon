@@ -4,7 +4,7 @@ export interface FetchedResponses<T> {
   [username: string]: T;
 }
 
-export class FriendsRequester {
+export class MultiRequster {
   lastFMService = new LastFMService();
 
   constructor(public usernames: string[]) {}

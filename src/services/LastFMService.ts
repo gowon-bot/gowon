@@ -38,6 +38,8 @@ import {
   TagTopArtistsParams,
   TagTopArtists,
   TagTopArtistsResponse,
+  TrackSearchParams,
+  TrackSearchResponse,
 } from "./LastFMService.types";
 
 import config from "../../config.json";
@@ -84,7 +86,7 @@ export class LastFMService extends BaseService {
     let jsonResponse = await response.json();
 
     if (jsonResponse.error) throw new LastFMError(jsonResponse);
-    
+
     return jsonResponse as T;
   }
 
@@ -343,5 +345,14 @@ export class LastFMService extends BaseService {
       params
     );
     return response.topartists;
+  }
+
+  async trackSearch(params: TrackSearchParams): Promise<TrackSearchResponse> {
+    let response = await this.request<TrackSearchResponse>(
+      "track.search",
+      params
+    );
+
+    return response;
   }
 }

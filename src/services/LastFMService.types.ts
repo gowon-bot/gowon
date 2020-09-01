@@ -298,6 +298,31 @@ export interface TagTopArtists {
   };
 }
 
+export interface TrackSearchResponse {
+  results: {
+    "opensearch:Query": {
+      "#text": string;
+      role: "request";
+      startPage: string;
+    };
+    "opensearch:totalResults": string;
+    "opensearch:startIndex": string;
+    "opensearch:itemsPerPage": string;
+    trackmatches: {
+      track: {
+        name: string;
+        artist: string;
+        url: string;
+        streamable: "FIXME";
+        listeners: "46498";
+        image: Image[];
+        mbid: string;
+      }[];
+    };
+    "@attr": {};
+  };
+}
+
 /// ==================
 // Inputs
 /// ==================
@@ -325,6 +350,7 @@ export type LastFMPeriod =
   | "3month"
   | "6month"
   | "12month";
+
 export interface TimePeriodParams {
   period?: LastFMPeriod;
 }
@@ -384,4 +410,9 @@ export interface ArtistTopTracksParams extends PagedParams {
 
 export interface TagTopArtistsParams extends PagedParams {
   tag: string;
+}
+
+export interface TrackSearchParams extends PagedParams {
+  track: string;
+  artist?: string;
 }

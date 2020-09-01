@@ -15,6 +15,8 @@ import { Rank } from "./Rank";
 import { Kill } from "./Kill";
 import { RecentlyStolen } from "./RecentlyStolen";
 import { SetPurgatoryRole } from "./SetPurgatoryRole";
+import { Ban } from "./Ban";
+import { Unban } from "./Unban";
 
 export default class CrownsParentCommand extends LastFMBaseParentCommand {
   friendlyName = "crowns";
@@ -40,5 +42,7 @@ export default class CrownsParentCommand extends LastFMBaseParentCommand {
     rank: () => new Rank(),
     kill: () => new Kill(),
     recentlystolen: () => new RecentlyStolen(),
+    ban: () => new Ban(),
+    unban: () => new Unban(),
   });
 }

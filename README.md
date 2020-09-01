@@ -6,7 +6,7 @@ Bot Moment is a Last.FM discord bot in active development.
 
 Bot syntax is kept as intuitive and as human readable as possible. Most commands accept parameters in any order. Mentions can be anywhere in the message.
 
-```js
+```
 !plays Red Velvet
 
 // The `|` character is used to seperate multi-word arguments
@@ -41,7 +41,10 @@ Bot syntax is kept as intuitive and as human readable as possible. Most commands
 
 ## Running yourself
 
-Ensure you have Postgres and Typescript installed, and a database called `bot_moment` exists (`createdb bot_moment`).
+Ensure you have Postgres and Typescript installed, and a database called `gowon` exists (`createdb gowon`).
+Ensure you have Redis installed (https://redis.io/download) and started
+
+Rename `config.example.json` to `config.json`, and fill in all the fields. Then, do the same with `ormconfig.example.json`
 
 `yarn start` will build and run the bot. To start in development mode, make sure you have `nodemon` installed, then run:
 

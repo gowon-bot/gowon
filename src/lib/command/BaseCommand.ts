@@ -1,15 +1,12 @@
-import { Message, MessageEmbed } from "discord.js";
+import { Guild, Message, MessageEmbed, User as DiscordUser } from "discord.js";
 import md5 from "js-md5";
-import {
-  UsersService,
-  Perspective,
-} from "../../services/dbservices/UsersService";
+import { UsersService } from "../../services/dbservices/UsersService";
 import {
   Arguments,
   ParsedArguments,
   ArgumentParser,
 } from "../arguments/arguments";
-import { UnknownError } from "../../errors";
+import { UnknownError, UsernameNotRegisteredError } from "../../errors";
 import { GowonService } from "../../services/GowonService";
 import { Mention } from "../arguments/mentions";
 import { CommandManager } from "./CommandManager";
@@ -18,6 +15,7 @@ import { RunAs } from "../AliasChecker";
 import { ParentCommand } from "./ParentCommand";
 import { TrackingService } from "../../services/TrackingService";
 import { User } from "../../database/entity/User";
+import { Perspective } from "../Perspective";
 
 export interface Variation {
   variationString?: string;
@@ -66,6 +64,9 @@ export abstract class BaseCommand implements Command {
   usage: string | string[] = "";
 
   message!: Message;
+  guild!: Guild;
+  author!: DiscordUser;
+
   responses: Array<MessageEmbed | string> = [];
 
   get friendlyNameWithParent(): string {
@@ -101,9 +102,12 @@ export abstract class BaseCommand implements Command {
       asCode?: boolean;
       argumentName?: string;
       inputArgumentName?: string;
+      suppressError?: boolean;
+      throwOnNoMention?: boolean;
     } = {
       asCode: true,
       argumentName: "user",
+      suppressError: false,
     }
   ): Promise<{
     senderUsername: string;
@@ -111,6 +115,7 @@ export abstract class BaseCommand implements Command {
     username: string;
     perspective: Perspective;
     dbUser?: User;
+    senderUser?: User;
   }> {
     let dbUser: User | undefined;
     let user = this.parsedArguments.user as Mention;
@@ -128,14 +133,18 @@ export abstract class BaseCommand implements Command {
     if (typeof user === "string") {
       mentionedUsername = user;
     } else if (user) {
-      let mentionedUser = await this.usersService.getUser(
-        user.id,
-        this.message.guild?.id!
-      );
+      try {
+        let mentionedUser = await this.usersService.getUser(
+          user.id,
+          this.message.guild?.id!
+        );
 
-      dbUser = mentionedUser;
+        dbUser = mentionedUser;
 
-      mentionedUsername = mentionedUser?.lastFMUsername;
+        mentionedUsername = mentionedUser?.lastFMUsername;
+      } catch {
+        throw new UsernameNotRegisteredError(user.username);
+      }
     }
 
     let username =
@@ -150,12 +159,22 @@ export abstract class BaseCommand implements Command {
       options.asCode
     );
 
+    if (!username && !options.suppressError) {
+      if (!senderUser.lastFMUsername)
+        throw new UsernameNotRegisteredError(true);
+      else
+        throw new UsernameNotRegisteredError(
+          user instanceof DiscordUser ? user.username : undefined
+        );
+    }
+
     return {
       senderUsername: senderUser.lastFMUsername,
       mentionedUsername,
       username,
       perspective,
       dbUser,
+      senderUser,
     };
   }
 
@@ -173,6 +192,8 @@ export abstract class BaseCommand implements Command {
 
   async execute(message: Message, runAs: RunAs) {
     this.message = message;
+    this.guild = message.guild!;
+    this.author = message.author;
     await this.setup();
 
     try {

@@ -1,12 +1,22 @@
-import { Crown, CrownRankResponse } from "../../database/entity/Crown";
+import {
+  Crown,
+  CrownRankResponse,
+  InvalidCrownState,
+} from "../../database/entity/Crown";
 import { User } from "../../database/entity/User";
-import { RecordNotFoundError } from "../../errors";
+import {
+  AlreadyBannedError,
+  NotBannedError,
+  RecordNotFoundError,
+} from "../../errors";
 import { Message, User as DiscordUser } from "discord.js";
 import { BaseService } from "../BaseService";
 import { FindManyOptions } from "typeorm";
 import { Setting } from "../../database/entity/Setting";
 import { Settings } from "../../lib/Settings";
 import { MoreThan } from "typeorm";
+import { CrownBan } from "../../database/entity/CrownBan";
+import { ShallowCacheScopedKey } from "../../database/cache/ShallowCache";
 
 export enum CrownState {
   tie = "Tie",
@@ -18,6 +28,7 @@ export enum CrownState {
   inactivity = "Inactivity",
   purgatory = "Purgatory",
   left = "Left",
+  banned = "Banned",
 }
 
 export interface CrownCheck {
@@ -85,7 +96,7 @@ export class CrownsService extends BaseService {
 
   private async handleInvalidHolder(
     crown: Crown,
-    reason: CrownState.inactivity | CrownState.left | CrownState.purgatory,
+    reason: InvalidCrownState,
     plays: number,
     user: User
   ): Promise<CrownCheck> {
@@ -322,7 +333,11 @@ export class CrownsService extends BaseService {
       roleID
     );
 
-    this.gowonService.inactiveRole[serverID] = roleID;
+    this.gowonService.shallowCache.remember(
+      ShallowCacheScopedKey.InactiveRole,
+      roleID,
+      serverID
+    );
 
     return setting;
   }
@@ -337,7 +352,11 @@ export class CrownsService extends BaseService {
       roleID
     );
 
-    this.gowonService.purgatoryRole[serverID] = roleID;
+    this.gowonService.shallowCache.remember(
+      ShallowCacheScopedKey.PurgatoryRole,
+      roleID,
+      serverID
+    );
 
     return setting;
   }
@@ -377,5 +396,57 @@ export class CrownsService extends BaseService {
     let setting = await Setting.getByName(Settings.OptedOut, serverID, userID);
 
     return !!setting;
+  }
+
+  async banUser(user: User): Promise<CrownBan> {
+    let existingCrownBan = await CrownBan.findOne({ user });
+
+    if (existingCrownBan) throw new AlreadyBannedError();
+
+    let crownBan = CrownBan.create({ user, serverID: user.serverID });
+    await crownBan.save();
+
+    let bans = [
+      ...(this.gowonService.shallowCache.find(
+        ShallowCacheScopedKey.CrownBannedUsers,
+        user.serverID
+      ) || []),
+      user.discordID,
+    ];
+
+    this.gowonService.shallowCache.remember(
+      ShallowCacheScopedKey.CrownBannedUsers,
+      bans,
+      user.serverID
+    );
+
+    return crownBan;
+  }
+
+  async unbanUser(user: User): Promise<void> {
+    let crownBan = await CrownBan.findOne({ user });
+
+    if (!crownBan) throw new NotBannedError();
+
+    await crownBan.remove();
+
+    let bans = (
+      this.gowonService.shallowCache.find<string[]>(
+        ShallowCacheScopedKey.CrownBannedUsers,
+        user.serverID
+      ) || []
+    ).filter((u) => u !== user.discordID);
+
+    this.gowonService.shallowCache.remember(
+      ShallowCacheScopedKey.CrownBannedUsers,
+      bans,
+      user.serverID
+    );
+  }
+
+  async getCrownBannedUsers(serverID: string): Promise<CrownBan[]> {
+    return await CrownBan.find({
+      where: { user: { serverID } },
+    });
   }
 }

@@ -6,10 +6,11 @@ import { ArtistPlays } from "./Commands/ArtistPlays";
 import { Remove } from "./Remove";
 import { AlbumPlays } from "./Commands/AlbumPlays";
 import { TrackPlays } from "./Commands/TrackPlays";
+import { Scrobbles } from "./Commands/Scrobbles";
 
 export default class FriendsParentCommand extends LastFMBaseParentCommand {
   friendlyName = "friends";
-  subcategory = "friends"
+  subcategory = "friends";
 
   prefixes = ["friends", "fr"];
   default = () => new List();
@@ -23,5 +24,6 @@ export default class FriendsParentCommand extends LastFMBaseParentCommand {
     artistplays: () => new ArtistPlays(),
     albumplays: () => new AlbumPlays(),
     trackplays: () => new TrackPlays(),
+    scrobbles: () => new Scrobbles(),
   });
 }

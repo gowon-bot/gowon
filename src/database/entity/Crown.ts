@@ -11,11 +11,18 @@ import { LastFMService } from "../../services/LastFMService";
 import { Logger } from "../../lib/Logger";
 import { Message } from "discord.js";
 import { CrownState } from "../../services/dbservices/CrownsService";
+import { GowonService } from "../../services/GowonService";
 
 export interface CrownRankResponse {
   count: string;
   rank: string;
 }
+
+export type InvalidCrownState =
+  | CrownState.inactivity
+  | CrownState.left
+  | CrownState.purgatory
+  | CrownState.banned;
 
 @Entity({ name: "crowns" })
 export class Crown extends BaseEntity {
@@ -101,7 +108,7 @@ WHERE "userId" = $2
     message: Message
   ): Promise<{
     failed: boolean;
-    reason?: CrownState.inactivity | CrownState.left | CrownState.purgatory;
+    reason?: InvalidCrownState;
   }> {
     if (!(await this.userStillInServer(message)))
       return { failed: true, reason: CrownState.left };
@@ -111,6 +118,14 @@ WHERE "userId" = $2
 
     if (await this.user.inPurgatory(message))
       return { failed: true, reason: CrownState.purgatory };
+
+    if (
+      await GowonService.getInstance().isUserCrownBanned(
+        message.guild!,
+        this.user.discordID
+      )
+    )
+      return { failed: true, reason: CrownState.banned };
 
     return { failed: false };
   }

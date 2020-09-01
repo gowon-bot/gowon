@@ -1,5 +1,5 @@
 import { Arguments } from "../../../lib/arguments/arguments";
-import { numberDisplay, ucFirst } from "../../../helpers";
+import { numberDisplay } from "../../../helpers";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 export default class TrackPlays extends LastFMBaseCommand {
@@ -52,9 +52,9 @@ export default class TrackPlays extends LastFMBaseCommand {
     });
 
     this.send(
-      `${hamham ? "FTFY\n" : ""}${ucFirst(
-        perspective.plusToHave
-      )} **${numberDisplay(trackDetails.userplaycount, "**scrobble")} of **${
+      `${hamham ? "FTFY\n" : ""}${
+        perspective.upper.plusToHave
+      } **${numberDisplay(trackDetails.userplaycount, "**scrobble")} of **${
         trackDetails.name
       }** by ${trackDetails.artist.name}`
     );

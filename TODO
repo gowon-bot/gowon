@@ -6,7 +6,7 @@ Bugs:
   [x] Number display in `!o all`
   [x] Fix `!last` parsing
   [x] `!wh` inactive, purgatory, left display
-  [] UsernameNotRegistered error no longer thrown (maybe fix need to be logged in too)
+  [x] UsernameNotRegistered error no longer thrown (maybe fix need to be logged in too)
 
 Test:
   [x] Steal crown from gone/inactive/cheating user
@@ -16,15 +16,19 @@ Todo:
   [x] Pagination helper, plus multiple pages on `!combo`
   [x] no friends on plays
   [x] Add total tracks/albums/scrobbles to att, ltt, att
-  [] author on library commands
+  [x] fix ucFirst on perspective
+  [x] author on library commands
+  [] Tagm => tag
+  [] Opting out shouldn't delete crowns
   [later] Dockerize 😳
   [later] Keep track of every tag, artist ever fm'd
 
   Comands:
-    [] Command that searches (or direct queries) a track to display
-    [] Server nowplaying
-    [] Friends scrobbles
-    [?] Crowns ban
+    [x] Command that searches (or direct queries) a track to display
+    [x] Server nowplaying
+    [x] Friends scrobbles
+    [x] recent
+    [] Crowns ban
     [later] Whosampled (w/scraping)
 
     

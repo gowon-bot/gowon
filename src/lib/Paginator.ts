@@ -14,10 +14,6 @@ export class Paginator {
 
     if (this.currentPage > this.maxPages) return;
 
-    console.log({
-      ...this.params,
-      page: this.currentPage,
-    });
 
     return await this.method({
       ...this.params,

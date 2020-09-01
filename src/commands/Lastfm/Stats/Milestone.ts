@@ -1,5 +1,5 @@
 import { Arguments } from "../../../lib/arguments/arguments";
-import { getOrdinal, ucFirst } from "../../../helpers";
+import { getOrdinal } from "../../../helpers";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { LogicError, BadLastFMResponseError } from "../../../errors";
 import { TrackEmbed } from "../../../helpers/Embeds";
@@ -42,7 +42,7 @@ export default class Milestone extends LastFMBaseCommand {
     if (!track) throw new BadLastFMResponseError();
 
     let embed = TrackEmbed(track).setAuthor(
-      `${ucFirst(perspective.possessive)} ${getOrdinal(milestone)} track was:`
+      `${perspective.upper.possessive} ${getOrdinal(milestone)} track was:`
     );
 
     await this.send(embed);

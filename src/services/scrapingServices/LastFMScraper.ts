@@ -1,6 +1,6 @@
 import { BaseScraper } from "./BaseScraper";
 import { LastFMService } from "../LastFMService";
-import { generateTimeRange, parseDate } from "../../helpers/date";
+import { parseDate } from "../../helpers/date";
 
 export interface TopTrack {
   track: string;
@@ -151,7 +151,7 @@ export class LastFMScraper extends BaseScraper {
     username: string,
     artist: string,
     track: string
-  ): Promise<Date | undefined> {
+  ): Promise<Date | string | undefined> {
     let $ = await this.fetch(
       "user/" +
         encodeURIComponent(username) +
@@ -163,17 +163,16 @@ export class LastFMScraper extends BaseScraper {
 
     let trackChart = $($(".chartlist").get(0));
 
-    let lastScrobbled = $(trackChart.find("tr").get(2)).find(
+    let lastScrobbled = $(trackChart.find("tr").get(1)).find(
       ".chartlist-timestamp > span"
     );
 
-    return parseDate(
-      lastScrobbled.text().trim(),
-      "D MMM h:mma",
-      "D MMM YYYY, h:mma",
-      (string: string) => {
-        return generateTimeRange(string, { noFallback: true }).from;
-      }
+    return (
+      parseDate(
+        lastScrobbled.text().trim(),
+        "D MMM h:mma",
+        "D MMM YYYY, h:mma"
+      ) || lastScrobbled.text().trim()
     );
   }
 

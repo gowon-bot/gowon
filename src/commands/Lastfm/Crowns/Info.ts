@@ -54,6 +54,8 @@ export class Info extends CrownsChildCommand {
         ? " [Left the server]"
         : invalidCheck.reason === CrownState.purgatory
         ? " [Purgatory]"
+        : invalidCheck.reason === CrownState.banned
+        ? " [Crown banned]"
         : "";
 
     if (crown.user.id === user.id) {
@@ -63,6 +65,7 @@ export class Info extends CrownsChildCommand {
       await crown.refresh();
     }
 
+    
     if (crown.user.id) {
       let holderUser = await User.toDiscordUser(message, crown.user.discordID);
 
@@ -86,7 +89,8 @@ export class Info extends CrownsChildCommand {
             crown.version === 1
               ? "has never been stolen"
               : "has been stolen " + numberDisplay(crown.version - 1, "time")
-          }_`
+          }_
+           ${artistDetails.name === "IZ*ONE" ? "Jae_ had this crown with 53,737 plays 💔" : ""}`
         );
 
       await this.send(embed);

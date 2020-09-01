@@ -56,7 +56,7 @@ export default class TrackPercent extends LastFMBaseCommand {
         trackInfo.userplaycount,
         artistInfo.stats.userplaycount
       ).bold()}% of ${
-        perspective.possesivePronoun
+        perspective.possessivePronoun
       } ${artistInfo.name.bold()} scrobbles`
     );
   }

@@ -1,6 +1,6 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
 import { Message, MessageEmbed, User } from "discord.js";
-import { numberDisplay, chunkArray, ucFirst } from "../../../helpers";
+import { numberDisplay, chunkArray } from "../../../helpers";
 import { Arguments } from "../../../lib/arguments/arguments";
 
 export class DM extends CrownsChildCommand {
@@ -35,7 +35,7 @@ export class DM extends CrownsChildCommand {
     let chunks = chunkArray(crowns, crownsPerMessage);
 
     message.author.send(
-      `${ucFirst(perspective.plusToHave)} ${numberDisplay(
+      `${perspective.upper.plusToHave} ${numberDisplay(
         crownsCount,
         "crown"
       )} in ${message.guild?.name}`

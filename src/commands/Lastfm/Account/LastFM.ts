@@ -1,6 +1,5 @@
 import { Arguments } from "../../../lib/arguments/arguments";
 import { LinkGenerator } from "../../../helpers/lastFM";
-import { ucFirst } from "../../../helpers";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { RecordNotFoundError } from "../../../errors";
 
@@ -33,6 +32,6 @@ export default class LastFM extends LastFMBaseCommand {
 
     let link = LinkGenerator.userPage(username);
 
-    await this.send(`${ucFirst(perspective.possessive)} profile: ${link}`);
+    await this.send(`${perspective.upper.possessive} profile: ${link}`);
   }
 }

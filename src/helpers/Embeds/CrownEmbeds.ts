@@ -1,113 +1,111 @@
 import { CrownCheck } from "../../services/dbservices/CrownsService";
-import { User as DiscordUser, MessageEmbed, Message, User } from "discord.js";
+import { User as DiscordUser, MessageEmbed, Message } from "discord.js";
 import { numberDisplay } from "..";
-import { ArtistInfo } from "../../services/LastFMService.types";
 import { User as DBUser } from "../../database/entity/User";
 
 export class CrownEmbeds {
-  private constructor() {}
+  constructor(
+    private crownCheck: CrownCheck,
+    private user: DiscordUser,
+    private message: Message,
+    private plays: number
+  ) {}
 
-  static newCrown(crownCheck: CrownCheck, user: DiscordUser): MessageEmbed {
+  newCrown(): MessageEmbed {
     return new MessageEmbed()
-      .setTitle(`Crown for ${crownCheck.crown!.artistName}`)
+      .setTitle(`Crown for ${this.crownCheck.crown!.artistName}`)
       .setDescription(
-        `:crown: → ${user.username.code()} - ${numberDisplay(
-          crownCheck.crown!.plays,
+        `:crown: → ${this.user.username.code()} - ${numberDisplay(
+          this.crownCheck.crown!.plays,
           "play"
         )}
       
-      You've created a crown for ${crownCheck.crown!.artistName.bold()} with ${numberDisplay(
-          crownCheck.crown!.plays,
+      You've created a crown for ${this.crownCheck.crown!.artistName.bold()} with ${numberDisplay(
+          this.crownCheck.crown!.plays,
           "play"
         ).bold()}`
       );
   }
 
-  static updatedCrown(crownCheck: CrownCheck): MessageEmbed {
+  updatedCrown(): MessageEmbed {
     return new MessageEmbed()
-      .setTitle(`Crown for ${crownCheck.crown!.artistName}`)
+      .setTitle(`Crown for ${this.crownCheck.crown!.artistName}`)
       .setDescription(
-        `You already have the crown for ${crownCheck.crown!.artistName.bold()}, but it's been updated from ${numberDisplay(
-          crownCheck.oldCrown!.plays,
+        `You already have the crown for ${this.crownCheck.crown!.artistName.bold()}, but it's been updated from ${numberDisplay(
+          this.crownCheck.oldCrown!.plays,
           "play"
-        )} to ${numberDisplay(crownCheck.crown!.plays, "play").bold()}`
+        )} to ${numberDisplay(this.crownCheck.crown!.plays, "play").bold()}`
       );
   }
 
-  static async snatchedCrown(
-    crownCheck: CrownCheck,
-    user: User,
-    message: Message
-  ): Promise<MessageEmbed> {
+  async snatchedCrown(): Promise<MessageEmbed> {
     let holderUsername = (
-      await DBUser.toDiscordUser(message, crownCheck.oldCrown!.user.discordID)
+      await DBUser.toDiscordUser(
+        this.message,
+        this.crownCheck.oldCrown!.user.discordID
+      )
     )?.username;
 
     return new MessageEmbed()
-      .setTitle(`Crown for ${crownCheck.crown!.artistName}`)
+      .setTitle(`Crown for ${this.crownCheck.crown!.artistName}`)
       .setDescription(
         `
-:crown: → ${user.username.code()} - ${numberDisplay(
-          crownCheck.crown!.plays,
+:crown: → ${this.user.username.code()} - ${numberDisplay(
+          this.crownCheck.crown!.plays,
           "play"
         )}
 
 :pensive: → ${holderUsername?.code()} - ${numberDisplay(
-          crownCheck.oldCrown?.plays!,
+          this.crownCheck.oldCrown?.plays!,
           "play"
         )}
 
-        Yoink! The crown for ${crownCheck.crown!.artistName.bold()} was stolen from ${holderUsername} and is now at ${numberDisplay(
-          crownCheck.crown!.plays,
+        Yoink! The crown for ${this.crownCheck.crown!.artistName.bold()} was stolen from ${holderUsername} and is now at ${numberDisplay(
+          this.crownCheck.crown!.plays,
           "play"
         ).bold()}!`
       );
   }
 
-  static async fail(
-    crownCheck: CrownCheck,
-    artistDetails: ArtistInfo,
-    message: Message,
-    user: User
-  ): Promise<MessageEmbed> {
+  async fail(): Promise<MessageEmbed> {
     let holderUsername = (
-      await DBUser.toDiscordUser(message, crownCheck.oldCrown!.user.discordID)
+      await DBUser.toDiscordUser(
+        this.message,
+        this.crownCheck.oldCrown!.user.discordID
+      )
     )?.username;
 
-    let difference =
-      crownCheck.crown!.plays - artistDetails.stats.userplaycount.toInt();
+    let difference = this.crownCheck.crown!.plays - this.plays;
 
     return new MessageEmbed()
-      .setTitle(`Crown for ${crownCheck.crown!.artistName}`)
+      .setTitle(`Crown for ${this.crownCheck.crown!.artistName}`)
       .setDescription(
         `
 :crown: → ${holderUsername?.code()} - ${numberDisplay(
-          crownCheck.oldCrown?.plays!,
+          this.crownCheck.oldCrown?.plays!,
           "play"
         )}
 
-:pensive: → ${user.username.code()} - ${numberDisplay(
-          artistDetails.stats.userplaycount,
-          "play"
-        )}
+:pensive: → ${this.user.username.code()} - ${numberDisplay(this.plays, "play")}
 
 ${holderUsername} will keep the crown for ${
-          crownCheck.crown!.artistName
-        }, leading ${user.username} by ${numberDisplay(difference, "play")}.
+          this.crownCheck.crown!.artistName
+        }, leading ${this.user.username} by ${numberDisplay(
+          difference,
+          "play"
+        )}.
 `
       );
   }
 
-  static async tooLow(
-    artistName: string,
-    threshold: number,
-    user: User,
-    plays: number | string
-  ) {
+  async tooLow(artistName: string, threshold: number) {
     return new MessageEmbed()
       .setTitle(`Crown for ${artistName}`)
       .setDescription(
-        `:pensive: → ${user.username.code()} - ${numberDisplay(plays, "play")}
+        `:pensive: → ${this.user.username.code()} - ${numberDisplay(
+          this.plays,
+          "play"
+        )}
 
 You must have at least ${numberDisplay(
           threshold,
@@ -117,104 +115,123 @@ You must have at least ${numberDisplay(
       );
   }
 
-  static async tie(
-    crownCheck: CrownCheck,
-    artistDetails: ArtistInfo,
-    message: Message,
-    user: User
-  ): Promise<MessageEmbed> {
+  async tie(): Promise<MessageEmbed> {
     let holderUsername = (
-      await DBUser.toDiscordUser(message, crownCheck.oldCrown!.user.discordID)
+      await DBUser.toDiscordUser(
+        this.message,
+        this.crownCheck.oldCrown!.user.discordID
+      )
     )?.username;
 
     return new MessageEmbed()
-      .setTitle(`Crown for ${crownCheck.crown!.artistName}`)
+      .setTitle(`Crown for ${this.crownCheck.crown!.artistName}`)
       .setDescription(
         `
 :crown: → ${holderUsername?.code()} - ${numberDisplay(
-          crownCheck.oldCrown?.plays!,
+          this.crownCheck.oldCrown?.plays!,
           "play"
         )}
 
-:eyes: → ${user.username.code()} - ${numberDisplay(
-          artistDetails.stats.userplaycount,
-          "play"
-        )}
+:eyes: → ${this.user.username.code()} - ${numberDisplay(this.plays, "play")}
 
 It's a tie! ${holderUsername} will keep the crown for ${
-          crownCheck.crown!.artistName
+          this.crownCheck.crown!.artistName
         }.
 `
       );
   }
 
-  static async inactivity(
-    crownCheck: CrownCheck,
-    user: User,
-    message: Message
-  ): Promise<MessageEmbed> {
+  async inactivity(): Promise<MessageEmbed> {
     let holderUsername = (
-      await DBUser.toDiscordUser(message, crownCheck.oldCrown!.user.discordID)
+      await DBUser.toDiscordUser(
+        this.message,
+        this.crownCheck.oldCrown!.user.discordID
+      )
     )?.username;
 
     return new MessageEmbed()
-      .setTitle(`Crown for ${crownCheck.crown!.artistName}`)
+      .setTitle(`Crown for ${this.crownCheck.crown!.artistName}`)
       .setDescription(
         `
-:crown: → ${user.username.code()} - ${numberDisplay(
-          crownCheck.crown!.plays,
+:crown: → ${this.user.username.code()} - ${numberDisplay(
+          this.crownCheck.crown!.plays,
           "play"
         )}
 
 :pensive: → ${holderUsername?.code()} - ${numberDisplay(
-          crownCheck.oldCrown?.plays!,
+          this.crownCheck.oldCrown?.plays!,
           "play"
         )}
 
-        Yoink! The crown for ${crownCheck.crown!.artistName.bold()} was stolen from ${holderUsername} due to inactivity!`
+        Yoink! The crown for ${this.crownCheck.crown!.artistName.bold()} was stolen from ${holderUsername} due to inactivity!`
       );
   }
 
-  static async purgatory(
-    crownCheck: CrownCheck,
-    user: User,
-    message: Message
-  ): Promise<MessageEmbed> {
+  async purgatory(): Promise<MessageEmbed> {
     let holderUsername = (
-      await DBUser.toDiscordUser(message, crownCheck.oldCrown!.user.discordID)
+      await DBUser.toDiscordUser(
+        this.message,
+        this.crownCheck.oldCrown!.user.discordID
+      )
     )?.username;
 
     return new MessageEmbed()
-      .setTitle(`Crown for ${crownCheck.crown!.artistName}`)
+      .setTitle(`Crown for ${this.crownCheck.crown!.artistName}`)
       .setDescription(
         `
-:crown: → ${user.username.code()} - ${numberDisplay(
-          crownCheck.crown!.plays,
+:crown: → ${this.user.username.code()} - ${numberDisplay(
+          this.crownCheck.crown!.plays,
           "play"
         )}
 
 :pensive: → ${holderUsername?.code()} - ${numberDisplay(
-          crownCheck.oldCrown?.plays!,
+          this.crownCheck.oldCrown?.plays!,
           "play"
         )}
 
-        Yoink! The crown for ${crownCheck.crown!.artistName.bold()} was stolen from ${holderUsername} due to cheating!`
+        Yoink! The crown for ${this.crownCheck.crown!.artistName.bold()} was stolen from ${holderUsername} due to cheating!`
       );
   }
 
-  static async left(crownCheck: CrownCheck, user: User): Promise<MessageEmbed> {
+  left(): MessageEmbed {
     return new MessageEmbed()
-      .setTitle(`Crown for ${crownCheck.crown!.artistName}`)
+      .setTitle(`Crown for ${this.crownCheck.crown!.artistName}`)
       .setDescription(
         `
-:crown: → ${user.username.code()} - ${numberDisplay(
-          crownCheck.crown!.plays,
+:crown: → ${this.user.username.code()} - ${numberDisplay(
+          this.crownCheck.crown!.plays,
           "play"
         )}
 
-:wave: → ??? - ${numberDisplay(crownCheck.oldCrown?.plays!, "play")}
+:wave: → ??? - ${numberDisplay(this.crownCheck.oldCrown?.plays!, "play")}
 
-        Yoink! The crown for ${crownCheck.crown!.artistName.bold()} was stolen from someone who left!`
+        Yoink! The crown for ${this.crownCheck.crown!.artistName.bold()} was stolen from someone who left!`
+      );
+  }
+
+  async banned(): Promise<MessageEmbed> {
+    let holderUsername = (
+      await DBUser.toDiscordUser(
+        this.message,
+        this.crownCheck.oldCrown!.user.discordID
+      )
+    )?.username;
+
+    return new MessageEmbed()
+      .setTitle(`Crown for ${this.crownCheck.crown!.artistName}`)
+      .setDescription(
+        `
+:crown: → ${this.user.username.code()} - ${numberDisplay(
+          this.crownCheck.crown!.plays,
+          "play"
+        )}
+
+:pensive: → ${holderUsername?.code()} - ${numberDisplay(
+          this.crownCheck.oldCrown?.plays!,
+          "play"
+        )}
+
+        Yoink! The crown for ${this.crownCheck.crown!.artistName.bold()} was stolen from ${holderUsername} because they were crown banned!`
       );
   }
 }

@@ -1,6 +1,6 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
 import { Message, MessageEmbed, User } from "discord.js";
-import { numberDisplay, getOrdinal, ucFirst } from "../../../helpers";
+import { numberDisplay, getOrdinal } from "../../../helpers";
 import { Arguments } from "../../../lib/arguments/arguments";
 
 export class Rank extends CrownsChildCommand {
@@ -28,11 +28,11 @@ export class Rank extends CrownsChildCommand {
 
     let embed = new MessageEmbed()
       .setAuthor(
-        ucFirst(perspective.possessive) + " crowns rank",
+        perspective.upper.possessive + " crowns rank",
         perspective.discordUser?.displayAvatarURL()
       )
       .setDescription(
-        `${ucFirst(perspective.possessive)} ${numberDisplay(
+        `${perspective.upper.possessive} ${numberDisplay(
           rank.count,
           "crown"
         ).bold()} rank ${perspective.objectPronoun} ${getOrdinal(

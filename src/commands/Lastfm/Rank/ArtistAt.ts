@@ -1,5 +1,5 @@
 import { Arguments } from "../../../lib/arguments/arguments";
-import { numberDisplay, ucFirst } from "../../../helpers";
+import { numberDisplay } from "../../../helpers";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { LogicError } from "../../../errors";
 
@@ -42,9 +42,7 @@ export default class ArtistAt extends LastFMBaseCommand {
 
     if (!artist)
       throw new LogicError(
-        `${ucFirst(
-          perspective.name
-        )} haven't scrobbled an artist at that position!`
+        `${perspective.upper.name} haven't scrobbled an artist at that position!`
       );
 
     await this.reply(

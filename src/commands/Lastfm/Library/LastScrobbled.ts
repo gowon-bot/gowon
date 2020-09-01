@@ -1,6 +1,6 @@
 import { MessageEmbed } from "discord.js";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
-import { dateTimeDisplay, ucFirst } from "../../../helpers";
+import { dateTimeDisplay } from "../../../helpers";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { LogicError } from "../../../errors";
 
@@ -67,15 +67,25 @@ export default class LastScrobbled extends LastFMBaseCommand {
       track
     );
 
-    if (!lastScrobbled) throw new LogicError(`${perspective.plusToHave} not scrobbled that track!`)
-    
-    let embed = new MessageEmbed().setDescription(
-      `${ucFirst(
-        perspective.name
-      )} last scrobbled ${track.bold()} by ${artist.bold()} at ${dateTimeDisplay(
-        lastScrobbled
-      ).bold()}`
-    );
+    if (!lastScrobbled)
+      throw new LogicError(
+        `${perspective.plusToHave} not scrobbled that track!`
+      );
+
+    let embed = new MessageEmbed()
+      .setAuthor(
+        this.message.author.username,
+        this.message.author.avatarURL() || ""
+      )
+      .setDescription(
+        `${
+          perspective.upper.name
+        } last scrobbled ${track.bold()} by ${artist.bold()} ${
+          lastScrobbled instanceof Date
+            ? `at ${dateTimeDisplay(lastScrobbled).bold()}`
+            : lastScrobbled
+        }`
+      );
 
     await this.send(embed);
   }

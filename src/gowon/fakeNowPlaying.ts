@@ -19,7 +19,7 @@ export function fakeNowPlaying(): MessageEmbed {
 
   let nowPlayingEmbed = new MessageEmbed()
     .setColor("yellow")
-    .setAuthor(`Now playing for bot_moment`)
+    .setAuthor(`Now playing for gowon`)
     .setTitle(track.track)
     .setURL(links.track)
     .setDescription(
@@ -29,7 +29,6 @@ export function fakeNowPlaying(): MessageEmbed {
       )}_`
     )
     .setThumbnail(track.albumURL)
-    .setFooter("Ha!");
 
   return nowPlayingEmbed;
 }

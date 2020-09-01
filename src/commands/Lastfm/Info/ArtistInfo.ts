@@ -1,7 +1,7 @@
 import { Message, MessageEmbed } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { InfoCommand } from "./InfoCommand";
-import { numberDisplay, ucFirst } from "../../../helpers";
+import { numberDisplay } from "../../../helpers";
 import { calculatePercent } from "../../../helpers/stats";
 import { CrownsService } from "../../../services/dbservices/CrownsService";
 
@@ -72,7 +72,7 @@ export default class ArtistInfo extends InfoCommand {
 ${crown ? `**Crown**: ${crown?.user?.username}` : ""}`
       )
       .addField(
-        `${ucFirst(perspective.possessive)} stats`,
+        `${perspective.upper.possessive} stats`,
         `\`${numberDisplay(
           artistInfo.stats.userplaycount,
           "` play",
@@ -80,8 +80,8 @@ ${crown ? `**Crown**: ${crown?.user?.username}` : ""}`
         )} by ${perspective.objectPronoun} (${calculatePercent(
           artistInfo.stats.userplaycount,
           userInfo.playcount
-        ).bold()}% of ${perspective.possesivePronoun} total scrobbles)
-${ucFirst(perspective.regularVerb("account"))} for ${calculatePercent(
+        ).bold()}% of ${perspective.possessivePronoun} total scrobbles)
+${perspective.upper.regularVerb("account")} for ${calculatePercent(
           artistInfo.stats.userplaycount,
           artistInfo.stats.playcount,
           4

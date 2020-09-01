@@ -2,7 +2,7 @@ import { OverviewChildCommand } from "./OverviewChildCommand";
 import { MessageEmbed } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { LogicError } from "../../../errors";
-import { numberDisplay, ucFirst } from "../../../helpers";
+import { numberDisplay } from "../../../helpers";
 
 export class SumTop extends OverviewChildCommand {
   aliases = [];
@@ -33,14 +33,14 @@ export class SumTop extends OverviewChildCommand {
       .setAuthor(username + badge, image)
       .setColor(colour)
       .setDescription(
-        `${ucFirst(perspective.possessive)} top ${numberDisplay(
+        `${perspective.upper.possessive} top ${numberDisplay(
           top,
           "artist"
         ).bold()} make up ${numberDisplay(
           sumtop,
           "scrobble"
         ).bold()} (${sumtoppct.bold()}% of ${
-          perspective.possesivePronoun
+          perspective.possessivePronoun
         } total scrobbles!)`
       );
 

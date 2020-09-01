@@ -1,6 +1,6 @@
 import { OverviewChildCommand } from "./OverviewChildCommand";
 import { MessageEmbed } from "discord.js";
-import { ucFirst, numberDisplay, getOrdinal } from "../../../helpers";
+import { numberDisplay, getOrdinal } from "../../../helpers";
 
 export class All extends OverviewChildCommand {
   description = "Shows information about you and your library";
@@ -47,11 +47,11 @@ ${
 }
 **# of artists to equal 50% of scrobbles**: ${await this.calculator.top50Percent()}
 **Total scrobbles for top 10 artists**: ${await this.calculator.sumTop(10)}
-${ucFirst(perspective.possessive)} top 10 artists account for: ${(
+${perspective.upper.possessive} top 10 artists account for: ${(
           await this.calculator.sumTopPercent(10)
-        ).bold()}% of ${perspective.possesivePronoun} total scrobbles
+        ).bold()}% of ${perspective.possessivePronoun} total scrobbles
 
-Among ${perspective.possesivePronoun} top 1000 artists, ${
+Among ${perspective.possessivePronoun} top 1000 artists, ${
           perspective.plusToHave
         }...
     - ${(
