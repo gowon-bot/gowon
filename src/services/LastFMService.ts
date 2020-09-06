@@ -57,7 +57,7 @@ import { LastFMScraper } from "./scrapingServices/LastFMScraper";
 
 export class LastFMService extends BaseService {
   url = "http://ws.audioscrobbler.com/2.0/";
-  scraper = new LastFMScraper(this);
+  scraper = new LastFMScraper(this.logger);
 
   get apikey(): string {
     return config.lastFMAPIKey;

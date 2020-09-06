@@ -11,31 +11,39 @@ export class CrownEmbeds {
     private plays: number
   ) {}
 
+  private get redirect(): string {
+    return this.crownCheck.crown!.redirectedFrom
+      ? `  (_redirected from ${this.crownCheck.crown!.redirectedFrom}_)`
+      : "";
+  }
+
+  private get embed(): MessageEmbed {
+    return new MessageEmbed().setTitle(
+      `Crown for ${this.crownCheck.crown!.artistName}${this.redirect}`
+    );
+  }
+
   newCrown(): MessageEmbed {
-    return new MessageEmbed()
-      .setTitle(`Crown for ${this.crownCheck.crown!.artistName}`)
-      .setDescription(
-        `:crown: → ${this.user.username.code()} - ${numberDisplay(
-          this.crownCheck.crown!.plays,
-          "play"
-        )}
+    return this.embed.setDescription(
+      `:crown: → ${this.user.username.code()} - ${numberDisplay(
+        this.crownCheck.crown!.plays,
+        "play"
+      )}
       
       You've created a crown for ${this.crownCheck.crown!.artistName.bold()} with ${numberDisplay(
-          this.crownCheck.crown!.plays,
-          "play"
-        ).bold()}`
-      );
+        this.crownCheck.crown!.plays,
+        "play"
+      ).bold()}`
+    );
   }
 
   updatedCrown(): MessageEmbed {
-    return new MessageEmbed()
-      .setTitle(`Crown for ${this.crownCheck.crown!.artistName}`)
-      .setDescription(
-        `You already have the crown for ${this.crownCheck.crown!.artistName.bold()}, but it's been updated from ${numberDisplay(
-          this.crownCheck.oldCrown!.plays,
-          "play"
-        )} to ${numberDisplay(this.crownCheck.crown!.plays, "play").bold()}`
-      );
+    return this.embed.setDescription(
+      `You already have the crown for ${this.crownCheck.crown!.artistName.bold()}, but it's been updated from ${numberDisplay(
+        this.crownCheck.oldCrown!.plays,
+        "play"
+      )} to ${numberDisplay(this.crownCheck.crown!.plays, "play").bold()}`
+    );
   }
 
   async snatchedCrown(): Promise<MessageEmbed> {
@@ -46,25 +54,23 @@ export class CrownEmbeds {
       )
     )?.username;
 
-    return new MessageEmbed()
-      .setTitle(`Crown for ${this.crownCheck.crown!.artistName}`)
-      .setDescription(
-        `
+    return this.embed.setDescription(
+      `
 :crown: → ${this.user.username.code()} - ${numberDisplay(
-          this.crownCheck.crown!.plays,
-          "play"
-        )}
+        this.crownCheck.crown!.plays,
+        "play"
+      )}
 
 :pensive: → ${holderUsername?.code()} - ${numberDisplay(
-          this.crownCheck.oldCrown?.plays!,
-          "play"
-        )}
+        this.crownCheck.oldCrown?.plays!,
+        "play"
+      )}
 
         Yoink! The crown for ${this.crownCheck.crown!.artistName.bold()} was stolen from ${holderUsername} and is now at ${numberDisplay(
-          this.crownCheck.crown!.plays,
-          "play"
-        ).bold()}!`
-      );
+        this.crownCheck.crown!.plays,
+        "play"
+      ).bold()}!`
+    );
   }
 
   async fail(): Promise<MessageEmbed> {
@@ -77,25 +83,20 @@ export class CrownEmbeds {
 
     let difference = this.crownCheck.crown!.plays - this.plays;
 
-    return new MessageEmbed()
-      .setTitle(`Crown for ${this.crownCheck.crown!.artistName}`)
-      .setDescription(
-        `
+    return this.embed.setDescription(
+      `
 :crown: → ${holderUsername?.code()} - ${numberDisplay(
-          this.crownCheck.oldCrown?.plays!,
-          "play"
-        )}
+        this.crownCheck.oldCrown?.plays!,
+        "play"
+      )}
 
 :pensive: → ${this.user.username.code()} - ${numberDisplay(this.plays, "play")}
 
 ${holderUsername} will keep the crown for ${
-          this.crownCheck.crown!.artistName
-        }, leading ${this.user.username} by ${numberDisplay(
-          difference,
-          "play"
-        )}.
+        this.crownCheck.crown!.artistName
+      }, leading ${this.user.username} by ${numberDisplay(difference, "play")}.
 `
-      );
+    );
   }
 
   async tooLow(artistName: string, threshold: number) {
@@ -123,22 +124,20 @@ You must have at least ${numberDisplay(
       )
     )?.username;
 
-    return new MessageEmbed()
-      .setTitle(`Crown for ${this.crownCheck.crown!.artistName}`)
-      .setDescription(
-        `
+    return this.embed.setDescription(
+      `
 :crown: → ${holderUsername?.code()} - ${numberDisplay(
-          this.crownCheck.oldCrown?.plays!,
-          "play"
-        )}
+        this.crownCheck.oldCrown?.plays!,
+        "play"
+      )}
 
 :eyes: → ${this.user.username.code()} - ${numberDisplay(this.plays, "play")}
 
 It's a tie! ${holderUsername} will keep the crown for ${
-          this.crownCheck.crown!.artistName
-        }.
+        this.crownCheck.crown!.artistName
+      }.
 `
-      );
+    );
   }
 
   async inactivity(): Promise<MessageEmbed> {
@@ -149,22 +148,20 @@ It's a tie! ${holderUsername} will keep the crown for ${
       )
     )?.username;
 
-    return new MessageEmbed()
-      .setTitle(`Crown for ${this.crownCheck.crown!.artistName}`)
-      .setDescription(
-        `
+    return this.embed.setDescription(
+      `
 :crown: → ${this.user.username.code()} - ${numberDisplay(
-          this.crownCheck.crown!.plays,
-          "play"
-        )}
+        this.crownCheck.crown!.plays,
+        "play"
+      )}
 
 :pensive: → ${holderUsername?.code()} - ${numberDisplay(
-          this.crownCheck.oldCrown?.plays!,
-          "play"
-        )}
+        this.crownCheck.oldCrown?.plays!,
+        "play"
+      )}
 
         Yoink! The crown for ${this.crownCheck.crown!.artistName.bold()} was stolen from ${holderUsername} due to inactivity!`
-      );
+    );
   }
 
   async purgatory(): Promise<MessageEmbed> {
@@ -175,38 +172,34 @@ It's a tie! ${holderUsername} will keep the crown for ${
       )
     )?.username;
 
-    return new MessageEmbed()
-      .setTitle(`Crown for ${this.crownCheck.crown!.artistName}`)
-      .setDescription(
-        `
+    return this.embed.setDescription(
+      `
 :crown: → ${this.user.username.code()} - ${numberDisplay(
-          this.crownCheck.crown!.plays,
-          "play"
-        )}
+        this.crownCheck.crown!.plays,
+        "play"
+      )}
 
 :pensive: → ${holderUsername?.code()} - ${numberDisplay(
-          this.crownCheck.oldCrown?.plays!,
-          "play"
-        )}
+        this.crownCheck.oldCrown?.plays!,
+        "play"
+      )}
 
         Yoink! The crown for ${this.crownCheck.crown!.artistName.bold()} was stolen from ${holderUsername} due to cheating!`
-      );
+    );
   }
 
   left(): MessageEmbed {
-    return new MessageEmbed()
-      .setTitle(`Crown for ${this.crownCheck.crown!.artistName}`)
-      .setDescription(
-        `
+    return this.embed.setDescription(
+      `
 :crown: → ${this.user.username.code()} - ${numberDisplay(
-          this.crownCheck.crown!.plays,
-          "play"
-        )}
+        this.crownCheck.crown!.plays,
+        "play"
+      )}
 
 :wave: → ??? - ${numberDisplay(this.crownCheck.oldCrown?.plays!, "play")}
 
         Yoink! The crown for ${this.crownCheck.crown!.artistName.bold()} was stolen from someone who left!`
-      );
+    );
   }
 
   async banned(): Promise<MessageEmbed> {
@@ -217,21 +210,19 @@ It's a tie! ${holderUsername} will keep the crown for ${
       )
     )?.username;
 
-    return new MessageEmbed()
-      .setTitle(`Crown for ${this.crownCheck.crown!.artistName}`)
-      .setDescription(
-        `
+    return this.embed.setDescription(
+      `
 :crown: → ${this.user.username.code()} - ${numberDisplay(
-          this.crownCheck.crown!.plays,
-          "play"
-        )}
+        this.crownCheck.crown!.plays,
+        "play"
+      )}
 
 :pensive: → ${holderUsername?.code()} - ${numberDisplay(
-          this.crownCheck.oldCrown?.plays!,
-          "play"
-        )}
+        this.crownCheck.oldCrown?.plays!,
+        "play"
+      )}
 
         Yoink! The crown for ${this.crownCheck.crown!.artistName.bold()} was stolen from ${holderUsername} because they were crown banned!`
-      );
+    );
   }
 }

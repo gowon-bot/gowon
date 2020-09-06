@@ -69,7 +69,7 @@ export class GowonService {
     return await this.shallowCache.findOrRemember<string[]>(
       ShallowCacheScopedKey.CrownBannedUsers,
       async () => {
-        let bans = (
+      let bans = (
           await CrownBan.find({
             where: { serverID: guild.id },
           })
@@ -82,7 +82,6 @@ export class GowonService {
   }
 
   async isUserCrownBanned(guild: Guild, discordID: string): Promise<boolean> {
-    console.log(await this.getCrownBannedUsers(guild), discordID)
     return (await this.getCrownBannedUsers(guild)).includes(discordID);
   }
 }

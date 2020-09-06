@@ -3,11 +3,13 @@ Bugs:
 Test:  
 
 Todo:
-  [] Opting out shouldn't delete crowns
+  [x] Opting out shouldn't delete crowns
+  [x] Marking a bootleg crown should kill the bootleg
   [later] Dockerize 😳
   [later] Keep track of every tag, artist ever fm'd
 
   Comands:
+    [] `!cw unmarkbootleg artist name`
     [later] Whosampled (w/scraping)
 
     
@@ -15,13 +17,14 @@ Dashboard:
   [] Make TrackedErrors individual instead of grouped
       
 Large Projects:
+  [] `!crowns mark 수호 duplicate of suho`
+  [] Crowns history
+
   [] Tests
   [] Cache redirects
   [] Change User.username into GuildMember.nickname (or w/e it's called)
   [] Feedback command to automatically make gh issue
   [] Permission caching
+  [] Spotify integrations
   [] !flashplaylist with spotify integration
-  [] `!crowns mark 수호 duplicate of suho`
-  [] Spotify integration
-  [] Crowns history
 

@@ -12,7 +12,7 @@ export interface MostUsedCommandsResponse {
   count: number;
 }
 
-@Entity({ name: "meta__commandruns" })
+@Entity({ name: "command_runs" })
 export class CommandRun extends BaseEntity {
   @PrimaryGeneratedColumn()
   id!: number;
