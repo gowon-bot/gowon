@@ -41,31 +41,32 @@ export class History extends CrownsChildCommand {
 
     if (!crown) {
       await this.send(
-        `There is no history for the ${artistDetails.name.bold()}!`
+        `There is no history for the ${artistDetails.name.bold()} crown!`
       );
       return;
     }
 
-    let history = await this.crownsService.scribe.getHistory(
-      crown,
-      CrownEventString.snatched
-    );
+    let history = await this.crownsService.scribe.getHistory(crown, [
+      CrownEventString.snatched,
+    ]);
 
     this.send(
-      new MessageEmbed().setDescription(
-        "```" +
-          history
-          .map(
-              (h) =>
-                `${dateDisplay(
-                  h.happenedAt
-                )} - snatched by ${h.perpetuatorUsername.bold()} (${
-                  h.oldCrown!.plays
-                } → ${h.newCrown.plays})`
-            )
-            .join("\n") +
-          "```"
-      )
+      new MessageEmbed()
+        .setTitle(
+          `Crown history for ${crown.artistName}${crown.redirectDisplay()}`
+        )
+        .setDescription(
+          "```" +
+            history
+              .map(
+                (h) =>
+                  `${dateDisplay(h.happenedAt)} - snatched by ${
+                    h.perpetuatorUsername
+                  } (${h.oldCrown!.plays} → ${h.newCrown.plays})`
+              )
+              .join("\n") +
+            "```"
+        )
     );
   }
 }

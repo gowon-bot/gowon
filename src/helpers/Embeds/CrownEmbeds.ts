@@ -12,9 +12,7 @@ export class CrownEmbeds {
   ) {}
 
   private get redirect(): string {
-    return this.crownCheck.crown!.redirectedFrom
-      ? `  (_redirected from ${this.crownCheck.crown!.redirectedFrom}_)`
-      : "";
+    return this.crownCheck.crown!.redirectDisplay();
   }
 
   private get embed(): MessageEmbed {

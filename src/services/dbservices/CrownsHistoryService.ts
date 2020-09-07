@@ -5,7 +5,8 @@ import { Logger } from "../../lib/Logger";
 import { BaseService } from "../BaseService";
 import { CrownCheck, CrownsService, CrownState } from "./CrownsService";
 import { GuildMember, Message, User as DiscordUser } from "discord.js";
-import { FindConditions } from "typeorm";
+import { FindConditions, In } from "typeorm";
+import { BootlegCrown } from "../../database/entity/BootlegCrown";
 
 export enum CrownEventString {
   created = "created",
@@ -13,6 +14,7 @@ export enum CrownEventString {
   killed = "killed",
   updated = "updated",
   bootlegged = "bootlegged",
+  unbootlegged = "unbootlegged",
   userBanned = "user.banned",
   userUnbanned = "user.unbanned",
   userOptedOut = "user.optedOut",
@@ -160,6 +162,21 @@ export class CrownsHistoryService extends BaseService {
     }
   }
 
+  async unbootleg(bootleg: BootlegCrown, perpetuator: DiscordUser) {
+    let crown = await this.crownsService.getCrown(
+      bootleg.artistName,
+      bootleg.serverID,
+      {
+        noRedirect: true,
+        showDeleted: true,
+      }
+    );
+
+    if (crown) {
+      this.logEvent(crown, CrownEventString.unbootlegged, perpetuator);
+    }
+  }
+
   async handleCheck(crownCheck: CrownCheck, message: Message) {
     let { state, crown, oldCrown } = crownCheck;
     let owner = await User.toDiscordUser(
@@ -232,11 +249,11 @@ export class CrownsHistoryService extends BaseService {
 
   async getHistory(
     crown: Crown,
-    eventType?: CrownEventString
+    eventTypes?: CrownEventString[]
   ): Promise<CrownEvent[]> {
     let findOptions: FindConditions<CrownEvent> = { crown };
 
-    if (eventType) findOptions.event = eventType;
+    if (eventTypes) findOptions.event = In(eventTypes);
 
     return await CrownEvent.find(findOptions);
   }

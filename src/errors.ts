@@ -250,8 +250,8 @@ export class AlreadyBootleggedError extends ClientError {
   }
 }
 
-export class NotBootleffedError extends ClientError {
-  name = "NotBootleffedError";
+export class NotBootleggedError extends ClientError {
+  name = "NotBootleggedError";
 
   constructor() {
     super(`that artist name is already not marked as a bootleg!`);

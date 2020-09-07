@@ -2,7 +2,7 @@ import { LogicError } from "../../../errors";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { CrownsChildCommand } from "./CrownsChildCommand";
 
-export default class MarkBootleg extends CrownsChildCommand {
+export class MarkBootleg extends CrownsChildCommand {
   aliases = ["bootleg", "mb"];
   description = "Marks a crown as a bootleg of another crown";
   usage = ["artistName | real artistName"];

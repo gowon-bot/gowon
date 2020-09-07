@@ -72,10 +72,7 @@ export class Info extends CrownsChildCommand {
 
       let embed = new MessageEmbed()
         .setTitle(
-          `Who has ${crown.artistName.bold()}?` +
-            (crown.redirectedFrom
-              ? `  (_redirected from ${crown.redirectedFrom}_)`
-              : "")
+          `Who has ${crown.artistName.bold()}?` + crown.redirectDisplay()
         )
         .setDescription(
           `${

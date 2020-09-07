@@ -8,7 +8,7 @@ import {
   AlreadyBannedError,
   AlreadyBootleggedError,
   NotBannedError,
-  NotBootleffedError as NotBootleggedError,
+  NotBootleggedError,
   RecordNotFoundError,
 } from "../../errors";
 import { Message, User as DiscordUser } from "discord.js";
@@ -21,7 +21,6 @@ import { CrownBan } from "../../database/entity/CrownBan";
 import { ShallowCacheScopedKey } from "../../database/cache/ShallowCache";
 import { CrownsHistoryService } from "./CrownsHistoryService";
 import { BootlegCrown } from "../../database/entity/BootlegCrown";
-import { Logger } from "../../lib/Logger";
 
 export enum CrownState {
   tie = "Tie",
@@ -231,8 +230,6 @@ export class CrownsService extends BaseService {
     });
 
     if (crown) crown.redirectedFrom = redirectedFrom;
-
-    console.log(Logger.formatObject(crown));
 
     return options.refresh
       ? await crown?.refresh({
@@ -514,16 +511,19 @@ export class CrownsService extends BaseService {
     return bootleg;
   }
 
-  async unmarkBootleg(artistName: string, serverID: string) {
-    let bootleg = await BootlegCrown.findOne({
-      artistName,
-      serverID,
-    });
-
+  async unmarkBootleg(bootleg?: BootlegCrown): Promise<BootlegCrown> {
     if (bootleg) {
       await bootleg.remove();
+      return bootleg;
     } else {
       throw new NotBootleggedError();
     }
+  }
+
+  async findBootleg(
+    artistName: string,
+    serverID: string
+  ): Promise<BootlegCrown | undefined> {
+    return await BootlegCrown.findOne({ artistName, serverID });
   }
 }

@@ -173,4 +173,10 @@ export class Crown extends BaseEntity {
   async userStillInServer(message: Message): Promise<boolean> {
     return await User.stillInServer(message, this.user.discordID);
   }
+
+  redirectDisplay(): string {
+    return this.redirectedFrom
+      ? `  (_redirected from ${this.redirectedFrom}_)`
+      : "";
+  }
 }

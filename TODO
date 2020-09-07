@@ -1,15 +1,18 @@
 Bugs:
-
+  `.cw mb 수호 |suho` => `@undefined, a crown for uho doesn't exist!` .
+  
 Test:  
 
 Todo:
   [x] Opting out shouldn't delete crowns
   [x] Marking a bootleg crown should kill the bootleg
+  [] Update readme, update commands list
   [later] Dockerize 😳
   [later] Keep track of every tag, artist ever fm'd
 
   Comands:
-    [] `!cw unmarkbootleg artist name`
+    [x] `!cw unmarkbootleg artist name`
+    [] `!cw bootlegs crownName`
     [later] Whosampled (w/scraping)
 
     

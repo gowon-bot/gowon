@@ -162,6 +162,7 @@ export class LastFMService extends BaseService {
     ).artist;
 
     if (
+      params.username &&
       response?.stats?.userplaycount !== undefined &&
       isNaN(response.stats.userplaycount.toInt())
     )
@@ -314,6 +315,7 @@ export class LastFMService extends BaseService {
   }
 
   async correctArtist(params: ArtistInfoParams): Promise<string> {
+    console.log(params)
     return (await this.artistInfo(params)).name;
   }
 

@@ -69,7 +69,7 @@ export class GowonService {
     return await this.shallowCache.findOrRemember<string[]>(
       ShallowCacheScopedKey.CrownBannedUsers,
       async () => {
-      let bans = (
+        let bans = (
           await CrownBan.find({
             where: { serverID: guild.id },
           })

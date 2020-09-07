@@ -1,6 +1,5 @@
 import { LogicError } from "../../../errors";
 import { Arguments } from "../../../lib/arguments/arguments";
-import { Logger } from "../../../lib/Logger";
 import { CrownsChildCommand } from "./CrownsChildCommand";
 
 export class Unban extends CrownsChildCommand {
@@ -16,8 +15,6 @@ export class Unban extends CrownsChildCommand {
     let { dbUser, senderUser } = await this.parseMentionedUsername();
 
     if (!dbUser || dbUser.discordID === senderUser?.discordID) {
-      this.logger.log("dbuser", Logger.formatObject(dbUser))
-      this.logger.log("senderUser", Logger.formatObject(senderUser))
       throw new LogicError(`please mention a valid user`);
     }
 

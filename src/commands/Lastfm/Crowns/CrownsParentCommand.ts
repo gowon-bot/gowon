@@ -18,7 +18,8 @@ import { SetPurgatoryRole } from "./SetPurgatoryRole";
 import { Ban } from "./Ban";
 import { Unban } from "./Unban";
 import { History } from "./History";
-import MarkBootleg from "./MarkBootleg";
+import { MarkBootleg } from "./MarkBootleg";
+import { UnmarkBootleg } from "./UnmarkBootleg";
 
 export default class CrownsParentCommand extends LastFMBaseParentCommand {
   friendlyName = "crowns";
@@ -48,5 +49,6 @@ export default class CrownsParentCommand extends LastFMBaseParentCommand {
     unban: () => new Unban(),
     history: () => new History(),
     markbootleg: () => new MarkBootleg(),
+    unmarkbootleg: () => new UnmarkBootleg(),
   });
 }
