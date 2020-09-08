@@ -3,7 +3,7 @@ import { generatePeriod, generateHumanPeriod } from "../../../helpers/date";
 import { Message } from "discord.js";
 import { BadAmountError } from "../../../errors";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
-import { LastFMPeriod } from "../../../services/LastFMService.types";
+import { LastFMPeriod } from "../../../services/LastFM/LastFMService.types";
 
 export abstract class ListCommand extends LastFMBaseCommand {
   subcategory = "lists";

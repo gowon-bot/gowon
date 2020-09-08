@@ -6,13 +6,12 @@ Test:
 Todo:
   [x] Opting out shouldn't delete crowns
   [x] Marking a bootleg crown should kill the bootleg
-  [] Update readme, update commands list
+  [] Add a total match thing to tag
   [later] Dockerize 😳
   [later] Keep track of every tag, artist ever fm'd
 
   Comands:
-    [x] `!cw unmarkbootleg artist name`
-    [] `!cw bootlegs crownName`
+    [] `!redirects `
     [later] Whosampled (w/scraping)
 
     
@@ -20,11 +19,11 @@ Dashboard:
   [] Make TrackedErrors individual instead of grouped
       
 Large Projects:
-  [] `!crowns mark 수호 duplicate of suho`
-  [] Crowns history
+  [x] `!crowns mark 수호 duplicate of suho`
+  [x] Crowns history
 
+  [] Automatic argument validation
   [] Tests
-  [] Cache redirects
   [] Change User.username into GuildMember.nickname (or w/e it's called)
   [] Feedback command to automatically make gh issue
   [] Permission caching

@@ -10,7 +10,7 @@ import {
 } from "typeorm";
 import { User } from "./User";
 import { CrownEvent } from "./meta/CrownEvent";
-import { LastFMService } from "../../services/LastFMService";
+import { LastFMService } from "../../services/LastFM/LastFMService";
 import { Logger } from "../../lib/Logger";
 import { Message } from "discord.js";
 import { CrownState } from "../../services/dbservices/CrownsService";
@@ -65,7 +65,7 @@ export class Crown extends BaseEntity {
   @DeleteDateColumn()
   deletedAt?: Date | null;
 
-  // Set when redirected from a BootlegCrown
+  // Set when redirected
   redirectedFrom?: string;
 
   async refresh(

@@ -25,7 +25,7 @@ import {
   Image,
   TagTopArtistsParams,
   TagTopArtists,
-} from "../../services/LastFMService.types";
+} from "../../services/LastFM/LastFMService.types";
 import { BaseService } from "../../services/BaseService";
 import { LastFMScraper } from "../../services/scrapingServices/LastFMScraper";
 import { ParsedTrack } from "../../helpers/lastFM";

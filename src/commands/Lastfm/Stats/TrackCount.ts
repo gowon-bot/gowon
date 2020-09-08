@@ -2,7 +2,7 @@ import { Arguments } from "../../../lib/arguments/arguments";
 import { generatePeriod, generateHumanPeriod } from "../../../helpers/date";
 import { numberDisplay } from "../../../helpers";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
-import { LastFMPeriod } from "../../../services/LastFMService.types";
+import { LastFMPeriod } from "../../../services/LastFM/LastFMService.types";
 
 export default class TrackCount extends LastFMBaseCommand {
   aliases = ["tc"];

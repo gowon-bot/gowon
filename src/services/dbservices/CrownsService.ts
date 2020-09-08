@@ -6,9 +6,7 @@ import {
 import { User } from "../../database/entity/User";
 import {
   AlreadyBannedError,
-  AlreadyBootleggedError,
   NotBannedError,
-  NotBootleggedError,
   RecordNotFoundError,
 } from "../../errors";
 import { Message, User as DiscordUser } from "discord.js";
@@ -20,7 +18,8 @@ import { MoreThan } from "typeorm";
 import { CrownBan } from "../../database/entity/CrownBan";
 import { ShallowCacheScopedKey } from "../../database/cache/ShallowCache";
 import { CrownsHistoryService } from "./CrownsHistoryService";
-import { BootlegCrown } from "../../database/entity/BootlegCrown";
+import { RedirectsService } from "./RedirectsServices";
+import { ILike } from "../../extensions/typeorm";
 
 export enum CrownState {
   tie = "Tie",
@@ -57,6 +56,8 @@ export class CrownsService extends BaseService {
   public scribe = new CrownsHistoryService(this.logger, this);
 
   threshold = this.gowonService.contants.crownThreshold;
+
+  private redirectsService = new RedirectsService();
 
   private async handleSelfCrown(
     crown: Crown,
@@ -216,17 +217,19 @@ export class CrownsService extends BaseService {
 
     if (!options.noRedirect) {
       this.log(`Checking crown redirects for ${artistName.code()}`);
-      let redirect = await BootlegCrown.findRedirect(artistName, serverID);
+      let redirect = await this.redirectsService.checkRedirect(artistName);
 
       if (redirect) {
-        crownArtistName = redirect.redirectedTo;
-        redirectedFrom = redirect.redirectedFrom;
+        redirectedFrom = redirect.from;
+        crownArtistName = redirect.to;
       }
     }
 
+    Crown.findOne({});
+
     let crown = await Crown.findOne({
-      where: { artistName: crownArtistName, serverID },
-      withDeleted: options.showDeleted,
+      where: { artistName: ILike(crownArtistName), serverID },
+      // withDeleted: options.showDeleted,
     });
 
     if (crown) crown.redirectedFrom = redirectedFrom;
@@ -483,47 +486,5 @@ export class CrownsService extends BaseService {
     return await CrownBan.find({
       where: { user: { serverID } },
     });
-  }
-
-  async markAsBootleg(crown: Crown, artistName: string): Promise<BootlegCrown> {
-    let existingBootleg = await BootlegCrown.findOne({
-      artistName,
-      serverID: crown.serverID,
-    });
-
-    if (existingBootleg)
-      throw new AlreadyBootleggedError(existingBootleg.crown);
-
-    let bootleg = BootlegCrown.create({
-      crown,
-      artistName,
-      serverID: crown.serverID,
-    });
-
-    await bootleg.save();
-
-    let bootlegCrown = await this.getCrown(artistName, crown.serverID, {
-      noRedirect: true,
-    });
-
-    if (bootlegCrown) await bootlegCrown.softRemove();
-
-    return bootleg;
-  }
-
-  async unmarkBootleg(bootleg?: BootlegCrown): Promise<BootlegCrown> {
-    if (bootleg) {
-      await bootleg.remove();
-      return bootleg;
-    } else {
-      throw new NotBootleggedError();
-    }
-  }
-
-  async findBootleg(
-    artistName: string,
-    serverID: string
-  ): Promise<BootlegCrown | undefined> {
-    return await BootlegCrown.findOne({ artistName, serverID });
   }
 }

@@ -1,5 +1,5 @@
 import { TimeRange } from "../../helpers/date";
-import { LastFMService } from "../../services/LastFMService";
+import { LastFMService } from "../../services/LastFM/LastFMService";
 import moment from "moment";
 
 export interface PacePrediction {

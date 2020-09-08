@@ -1,8 +1,7 @@
-import { LastFMErrorResponse } from "./services/LastFMService.types";
+import { LastFMErrorResponse } from "./services/LastFM/LastFMService.types";
 import { parseError } from "./helpers/error";
 import { Response } from "node-fetch";
 import { numberDisplay } from "./helpers";
-import { Crown } from "./database/entity/Crown";
 
 export abstract class ClientError extends Error {
   name = "ClientError";
@@ -237,23 +236,5 @@ export class CrownBannedError extends ClientError {
     super(
       "you have been banned from the crowns game. If you think this is an error please speak to a staff member."
     );
-  }
-}
-
-export class AlreadyBootleggedError extends ClientError {
-  name = "AlreadyBootleggedError";
-
-  constructor(crown: Crown) {
-    super(
-      `that artist name has already been marked a bootleg of ${crown.artistName}!`
-    );
-  }
-}
-
-export class NotBootleggedError extends ClientError {
-  name = "NotBootleggedError";
-
-  constructor() {
-    super(`that artist name is already not marked as a bootleg!`);
   }
 }

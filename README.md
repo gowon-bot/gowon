@@ -99,7 +99,6 @@ _You can find the source code for all the commands at [/src/commands](/src/comma
   - `setpurgatoryrole`, set what role should be treated as the purgatory role
   - `recentlystolen`, see the crowns which were recently yoinked
   - `ban`/`unban`, bans/unbans a user from the crowns game
-  - `markbootleg`/`unmarkbootleg`, marks/unmarks a crown as a bootleg of another
 - Friends
   - `add`, add a friend
   - `remove`, remove a friend :(

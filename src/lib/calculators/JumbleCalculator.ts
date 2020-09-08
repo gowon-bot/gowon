@@ -1,5 +1,5 @@
-import { LastFMService } from "../../services/LastFMService";
-import { TopArtist } from "../../services/LastFMService.types";
+import { LastFMService } from "../../services/LastFM/LastFMService";
+import { TopArtist } from "../../services/LastFM/LastFMService.types";
 
 export class JumbleCalculator {
   constructor(private username: string, private lastFMService: LastFMService) {}

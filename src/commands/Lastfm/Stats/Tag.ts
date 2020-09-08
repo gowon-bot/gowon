@@ -1,7 +1,7 @@
 import { MessageEmbed } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { Paginator } from "../../../lib/Paginator";
-import { TopArtists } from "../../../services/LastFMService.types";
+import { TopArtists } from "../../../services/LastFM/LastFMService.types";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 interface Overlap {
@@ -53,6 +53,7 @@ export default class Tag extends LastFMBaseCommand {
     let overlap = this.calculateOverlap(userTopArtists, tagArtistNames);
 
     let embed = new MessageEmbed()
+      .setAuthor(this.author.username, this.author.avatarURL() || "")
       .setTitle(
         `${perspective.upper.possessive} top ${
           tagTopArtists!["@attr"].tag

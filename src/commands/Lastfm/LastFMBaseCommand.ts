@@ -1,5 +1,5 @@
 import { BaseCommand } from "../../lib/command/BaseCommand";
-import { LastFMService } from "../../services/LastFMService";
+import { LastFMService } from "../../services/LastFM/LastFMService";
 import { ParentCommand, ChildCommand } from "../../lib/command/ParentCommand";
 
 export abstract class LastFMBaseCommand extends BaseCommand {

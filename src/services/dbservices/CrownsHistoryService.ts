@@ -6,15 +6,12 @@ import { BaseService } from "../BaseService";
 import { CrownCheck, CrownsService, CrownState } from "./CrownsService";
 import { GuildMember, Message, User as DiscordUser } from "discord.js";
 import { FindConditions, In } from "typeorm";
-import { BootlegCrown } from "../../database/entity/BootlegCrown";
 
 export enum CrownEventString {
   created = "created",
   snatched = "snatched",
   killed = "killed",
   updated = "updated",
-  bootlegged = "bootlegged",
-  unbootlegged = "unbootlegged",
   userBanned = "user.banned",
   userUnbanned = "user.unbanned",
   userOptedOut = "user.optedOut",
@@ -140,41 +137,6 @@ export class CrownsHistoryService extends BaseService {
     );
 
     this.logEvent(crowns, CrownEventString.userOptedOut, discordUser.user);
-  }
-
-  async bootleg(
-    artistName: string,
-    serverID: string,
-    perpetuator: DiscordUser,
-    redirectedTo: string
-  ) {
-    let crown = await this.crownsService.getCrown(artistName, serverID, {
-      noRedirect: true,
-    });
-
-    if (crown) {
-      let newCrown = { artistName: redirectedTo, plays: crown.plays || 0 };
-
-      this.logEvent(crown, CrownEventString.bootlegged, perpetuator, {
-        oldCrown: crown,
-        newCrown,
-      });
-    }
-  }
-
-  async unbootleg(bootleg: BootlegCrown, perpetuator: DiscordUser) {
-    let crown = await this.crownsService.getCrown(
-      bootleg.artistName,
-      bootleg.serverID,
-      {
-        noRedirect: true,
-        showDeleted: true,
-      }
-    );
-
-    if (crown) {
-      this.logEvent(crown, CrownEventString.unbootlegged, perpetuator);
-    }
   }
 
   async handleCheck(crownCheck: CrownCheck, message: Message) {

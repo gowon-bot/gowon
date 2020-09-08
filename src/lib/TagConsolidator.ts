@@ -1,4 +1,4 @@
-import { Tag } from "../services/LastFMService.types";
+import { Tag } from "../services/LastFM/LastFMService.types";
 
 export class TagConsolidator {
   blacklistedTags = [
