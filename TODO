@@ -6,12 +6,11 @@ Test:
 Todo:
   [x] Opting out shouldn't delete crowns
   [x] Marking a bootleg crown should kill the bootleg
-  [] Add a total match thing to tag
+  [x] Add a total match thing to tag
   [later] Dockerize 😳
   [later] Keep track of every tag, artist ever fm'd
 
   Comands:
-    [] `!redirects `
     [later] Whosampled (w/scraping)
 
     

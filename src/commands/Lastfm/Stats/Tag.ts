@@ -1,4 +1,6 @@
 import { MessageEmbed } from "discord.js";
+import { numberDisplay } from "../../../helpers";
+import { calculatePercent } from "../../../helpers/stats";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { Paginator } from "../../../lib/Paginator";
 import { TopArtists } from "../../../services/LastFM/LastFMService.types";
@@ -63,8 +65,18 @@ export default class Tag extends LastFMBaseCommand {
         `
 _Compares your top 2000 artists and the top 1000 artists of the tag_\n` +
           (overlap.length
-            ? `\`\`\`
-${overlap.map((o) => o.plays + " - " + o.artist).join("\n")}
+            ? `\`\`\`` +
+              `${numberDisplay(
+                overlap.length,
+                "artist"
+              )} found (${calculatePercent(
+                overlap.length,
+                tagArtistNames.length
+              )}% match)\n` +
+              `${overlap
+                .slice(0, 20)
+                .map((o) => o.plays + " - " + o.artist)
+                .join("\n")}
 \`\`\``
             : "Couldn't find any matching artists!")
       );
@@ -76,16 +88,14 @@ ${overlap.map((o) => o.plays + " - " + o.artist).join("\n")}
     userTopArtists: TopArtists,
     tagArtistNames: string[]
   ): Overlap[] {
-    return userTopArtists.artist
-      .reduce((acc, a) => {
-        if (tagArtistNames.includes(a.name.toLowerCase().replace(/\s+/g, "-")))
-          acc.push({
-            artist: a.name,
-            plays: a.playcount.toInt(),
-          });
+    return userTopArtists.artist.reduce((acc, a) => {
+      if (tagArtistNames.includes(a.name.toLowerCase().replace(/\s+/g, "-")))
+        acc.push({
+          artist: a.name,
+          plays: a.playcount.toInt(),
+        });
 
-        return acc;
-      }, [] as Overlap[])
-      .slice(0, 20);
+      return acc;
+    }, [] as Overlap[]);
   }
 }
