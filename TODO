@@ -1,9 +1,12 @@
 Bugs:
-
+  `.cw mb 수호 |suho` => `@undefined, a crown for uho doesn't exist!` .
+  
 Test:  
 
 Todo:
-  [] Opting out shouldn't delete crowns
+  [x] Opting out shouldn't delete crowns
+  [x] Marking a bootleg crown should kill the bootleg
+  [x] Add a total match thing to tag
   [later] Dockerize 😳
   [later] Keep track of every tag, artist ever fm'd
 
@@ -15,13 +18,14 @@ Dashboard:
   [] Make TrackedErrors individual instead of grouped
       
 Large Projects:
+  [x] `!crowns mark 수호 duplicate of suho`
+  [x] Crowns history
+
+  [] Automatic argument validation
   [] Tests
-  [] Cache redirects
   [] Change User.username into GuildMember.nickname (or w/e it's called)
   [] Feedback command to automatically make gh issue
   [] Permission caching
+  [] Spotify integrations
   [] !flashplaylist with spotify integration
-  [] `!crowns mark 수호 duplicate of suho`
-  [] Spotify integration
-  [] Crowns history
 

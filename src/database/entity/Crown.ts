@@ -2,12 +2,15 @@ import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
-  BaseEntity,
   ManyToOne,
   CreateDateColumn,
+  OneToMany,
+  BaseEntity,
+  DeleteDateColumn,
 } from "typeorm";
 import { User } from "./User";
-import { LastFMService } from "../../services/LastFMService";
+import { CrownEvent } from "./meta/CrownEvent";
+import { LastFMService } from "../../services/LastFM/LastFMService";
 import { Logger } from "../../lib/Logger";
 import { Message } from "discord.js";
 import { CrownState } from "../../services/dbservices/CrownsService";
@@ -16,6 +19,12 @@ import { GowonService } from "../../services/GowonService";
 export interface CrownRankResponse {
   count: string;
   rank: string;
+}
+
+interface RawCrownHolder {
+  userId: number;
+  discordID: string;
+  count: string;
 }
 
 export type InvalidCrownState =
@@ -35,6 +44,9 @@ export class Crown extends BaseEntity {
   @ManyToOne((_) => User, (user) => user.crowns, { eager: true })
   user!: User;
 
+  @OneToMany((_) => CrownEvent, (crownEvent) => crownEvent.crown)
+  history!: CrownEvent[];
+
   @Column()
   artistName!: string;
 
@@ -49,6 +61,12 @@ export class Crown extends BaseEntity {
 
   @CreateDateColumn()
   createdAt!: Date;
+
+  @DeleteDateColumn()
+  deletedAt?: Date | null;
+
+  // Set when redirected
+  redirectedFrom?: string;
 
   async refresh(
     options: { onlyIfOwnerIs?: string; logger?: Logger } = {}
@@ -83,25 +101,47 @@ export class Crown extends BaseEntity {
     return ((await this.query(
       `SELECT count, rank FROM (
       SELECT *, ROW_NUMBER() OVER (
-      ORDER BY count DESC
-  ) AS rank FROM (
-      SELECT
-          count(id) AS count,
-          "userId"
-      FROM crowns
-      WHERE crowns."serverID" LIKE $1
-      GROUP BY "userId"
-      ORDER BY 1 desc
-  ) t
-  LEFT JOIN (
-      SELECT * FROM users WHERE users."serverID" LIKE $1
-    ) u    
-      ON u.id = t."userId"
-) ranks
-WHERE "userId" = $2
+        ORDER BY count DESC
+      ) AS rank FROM (
+          SELECT
+              count(id) AS count,
+              "userId"
+          FROM crowns
+          WHERE crowns."serverID" LIKE $1
+            AND "deletedAt" IS NULL
+          GROUP BY "userId"
+          ORDER BY 1 desc
+      ) t
+      LEFT JOIN (
+          SELECT * FROM users WHERE users."serverID" LIKE $1
+        ) u    
+          ON u.id = t."userId"
+      ) ranks
+      WHERE "userId" = $2
 `,
       [serverID, user?.id!]
     )) as CrownRankResponse[])[0];
+  }
+
+  static async guild(
+    serverID: string,
+    limit: number
+  ): Promise<RawCrownHolder[]> {
+    return (await this.query(
+      `SELECT
+        count(*) AS count,
+        "userId",
+        "discordID"
+      FROM crowns c
+      LEFT JOIN users u
+        ON u.id = "userId"
+      WHERE c."serverID" LIKE $1
+        AND c."deletedAt" IS NULL
+      GROUP BY "userId", "discordID"
+      ORDER BY count DESC
+      LIMIT $2`,
+      [serverID, limit]
+    )) as RawCrownHolder[];
   }
 
   async invalid(
@@ -132,5 +172,11 @@ WHERE "userId" = $2
 
   async userStillInServer(message: Message): Promise<boolean> {
     return await User.stillInServer(message, this.user.discordID);
+  }
+
+  redirectDisplay(): string {
+    return this.redirectedFrom
+      ? `  (_redirected from ${this.redirectedFrom}_)`
+      : "";
   }
 }

@@ -17,6 +17,9 @@ import { Settings } from "../../lib/Settings";
 import { MoreThan } from "typeorm";
 import { CrownBan } from "../../database/entity/CrownBan";
 import { ShallowCacheScopedKey } from "../../database/cache/ShallowCache";
+import { CrownsHistoryService } from "./CrownsHistoryService";
+import { RedirectsService } from "./RedirectsServices";
+import { ILike } from "../../extensions/typeorm";
 
 export enum CrownState {
   tie = "Tie",
@@ -44,19 +47,17 @@ export interface CrownOptions {
   plays: number;
 }
 
-interface RawCrownHolder {
-  userId: number;
-  discordID: string;
-  count: string;
-}
-
 export interface CrownHolder {
   user: DiscordUser;
   numberOfCrowns: number;
 }
 
 export class CrownsService extends BaseService {
+  public scribe = new CrownsHistoryService(this.logger, this);
+
   threshold = this.gowonService.contants.crownThreshold;
+
+  private redirectsService = new RedirectsService();
 
   private async handleSelfCrown(
     crown: Crown,
@@ -111,12 +112,41 @@ export class CrownsService extends BaseService {
     };
   }
 
+  async handleNewCrown(
+    crownOptions: {
+      user: User;
+      artistName: string;
+      plays: number;
+      serverID: string;
+    },
+    crown?: Crown
+  ): Promise<Crown> {
+    if (crown && crown.deletedAt) {
+      crown.user = crownOptions.user;
+      crown.plays = crownOptions.plays;
+      crown.lastStolen = new Date();
+      crown.deletedAt = null;
+
+      return await crown.save();
+    } else {
+      let newCrown = Crown.create({
+        ...crownOptions,
+        version: 0,
+        lastStolen: new Date(),
+      });
+
+      await newCrown.save();
+
+      return newCrown;
+    }
+  }
+
   async checkCrown(crownOptions: CrownOptions): Promise<CrownCheck> {
     let { discordID, artistName, plays, message } = crownOptions;
     this.log(`Checking crown for user ${discordID} and artist ${artistName}`);
 
     let [crown, user] = await Promise.all([
-      this.getCrown(artistName, message.guild?.id!),
+      this.getCrown(artistName, message.guild?.id!, { showDeleted: true }),
       User.findOne({ where: { discordID, serverID: message.guild?.id! } }),
     ]);
 
@@ -127,7 +157,7 @@ export class CrownsService extends BaseService {
 
     let crownState: CrownState;
 
-    if (crown) {
+    if (crown && !crown.deletedAt) {
       let invalidCheck = await crown.invalid(message);
 
       if (invalidCheck.failed) {
@@ -157,19 +187,13 @@ export class CrownsService extends BaseService {
         "Creating crown for " + artistName + " in server " + message.guild?.id!
       );
 
-      let crown = Crown.create({
-        user,
-        artistName,
-        plays,
-        serverID: message.guild?.id!,
-        version: 1,
-        lastStolen: new Date(),
-      });
-
-      await crown.save();
+      let newCrown = await this.handleNewCrown(
+        { user, plays, artistName, serverID: message.guild!.id },
+        crown
+      );
 
       return {
-        crown: crown,
+        crown: newCrown,
         state: CrownState.newCrown,
         oldCrown,
       };
@@ -179,10 +203,36 @@ export class CrownsService extends BaseService {
   async getCrown(
     artistName: string,
     serverID: string,
-    options: { refresh: boolean; requester?: DiscordUser } = { refresh: false }
+    options: {
+      refresh?: boolean;
+      requester?: DiscordUser;
+      showDeleted?: boolean;
+      noRedirect?: boolean;
+    } = { refresh: false, showDeleted: true, noRedirect: false }
   ): Promise<Crown | undefined> {
     this.log("Fetching crown for " + artistName);
-    let crown = await Crown.findOne({ where: { artistName, serverID } });
+
+    let crownArtistName = artistName;
+    let redirectedFrom: string | undefined = undefined;
+
+    if (!options.noRedirect) {
+      this.log(`Checking crown redirects for ${artistName.code()}`);
+      let redirect = await this.redirectsService.checkRedirect(artistName);
+
+      if (redirect) {
+        redirectedFrom = redirect.from;
+        crownArtistName = redirect.to;
+      }
+    }
+
+    Crown.findOne({});
+
+    let crown = await Crown.findOne({
+      where: { artistName: ILike(crownArtistName), serverID },
+      // withDeleted: options.showDeleted,
+    });
+
+    if (crown) crown.redirectedFrom = redirectedFrom;
 
     return options.refresh
       ? await crown?.refresh({
@@ -196,7 +246,7 @@ export class CrownsService extends BaseService {
     this.log("Killing crown for " + artistName);
     let crown = await Crown.findOne({ where: { artistName, serverID } });
 
-    await crown?.remove();
+    if (crown) await Crown.softRemove(crown);
   }
 
   async getCrownDisplay(
@@ -300,20 +350,7 @@ export class CrownsService extends BaseService {
     limit = 10
   ): Promise<CrownHolder[]> {
     this.log("Listing top crown holders in server " + serverID);
-    let users = (await Crown.query(
-      `select
-        count(*) as count,
-        "userId",
-        "discordID"
-      from crowns c
-      left join users u
-        on u.id = "userId"
-      where c."serverID" like $1
-      group by "userId", "discordID"
-      order by count desc
-      limit $2`,
-      [serverID, limit]
-    )) as RawCrownHolder[];
+    let users = await Crown.guild(serverID, limit);
 
     return await Promise.all(
       users.map(async (rch) => ({
@@ -367,9 +404,10 @@ export class CrownsService extends BaseService {
   ): Promise<number> {
     let user = await User.findOne({ where: { discordID: userID, serverID } });
 
-    let result = await Crown.delete({ serverID, user });
+    let crown = await Crown.find({ serverID, user });
+    let result = await Crown.softRemove(crown);
 
-    return result.affected!;
+    return result.length;
   }
 
   async optOut(serverID: string, userID: string): Promise<number> {

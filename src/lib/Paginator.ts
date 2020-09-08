@@ -1,4 +1,4 @@
-import { Params } from "../services/LastFMService.types";
+import { Params } from "../services/LastFM/LastFMService.types";
 
 export class Paginator {
   currentPage: number = 0;

@@ -5,8 +5,6 @@ export class DB {
 
   async connect() {
     this.connection = await createConnection("default");
-
-    await this.connection.synchronize();
   }
 
   async connectTest() {
@@ -25,8 +23,6 @@ export class DB {
         entities: [__dirname + "/entity/**/*.ts"],
       });
     }
-
-    await this.connection.synchronize();
   }
 
   async close() {

@@ -15,10 +15,15 @@ export class Ban extends CrownsChildCommand {
     let { dbUser, senderUser } = await this.parseMentionedUsername();
 
     if (!dbUser || dbUser.discordID === senderUser?.discordID) {
-      throw new LogicError(`please mention a valid user`);
+      throw new LogicError("please mention a valid user");
     }
 
     await this.crownsService.banUser(dbUser);
+    this.crownsService.scribe.ban(
+      dbUser,
+      this.message.author,
+      this.message.mentions.members!.array()[0].user
+    );
 
     await this.reply(
       `successfully banned ${
@@ -27,5 +32,3 @@ export class Ban extends CrownsChildCommand {
     );
   }
 }
-
-

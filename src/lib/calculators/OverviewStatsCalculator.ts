@@ -3,8 +3,8 @@ import {
   TopArtists,
   TopAlbums,
   TopTracks,
-} from "../../services/LastFMService.types";
-import { LastFMService } from "../../services/LastFMService";
+} from "../../services/LastFM/LastFMService.types";
+import { LastFMService } from "../../services/LastFM/LastFMService";
 import moment from "moment";
 import { CrownsService } from "../../services/dbservices/CrownsService";
 import { Logger } from "../Logger";

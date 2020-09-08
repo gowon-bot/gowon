@@ -16,7 +16,9 @@ export class Kill extends CrownsChildCommand {
   async run(message: Message) {
     let artist = this.parsedArguments.artist as string;
 
-    let crown = await this.crownsService.getCrown(artist, message.guild?.id!);
+    let crown = await this.crownsService.getCrown(artist, message.guild?.id!, {
+      noRedirect: true,
+    });
 
     if (!crown)
       throw new LogicError(`A crown for ${artist.bold()} doesn't exist`);
@@ -36,6 +38,7 @@ export class Kill extends CrownsChildCommand {
       );
 
       await this.crownsService.killCrown(artist, message.guild?.id!);
+      this.crownsService.scribe.kill(crown, message.author);
 
       await this.send(
         new MessageEmbed()

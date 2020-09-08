@@ -1,7 +1,7 @@
 import parse from "parse-duration";
 import moment, { DurationInputArg2 } from "moment";
 import { LogicError } from "../errors";
-import { LastFMPeriod } from "../services/LastFMService.types";
+import { LastFMPeriod } from "../services/LastFM/LastFMService.types";
 
 const fallbackRegex = /(\s+|\b)1?(s(econd)?|mi(nute)?|h(our)?|d(ay)?|w(eek)?|m(o(nth)?)?|q(uarter)?|y(ear)?)(\s|\b)/gi;
 const overallRegex = /(\s+|\b)(a(lltime)?|o(verall)?)(\s|\b)/gi;

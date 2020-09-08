@@ -1,6 +1,6 @@
 import { BaseScraper } from "./BaseScraper";
-import { LastFMService } from "../LastFMService";
 import { parseDate } from "../../helpers/date";
+import { Logger } from "../../lib/Logger";
 
 export interface TopTrack {
   track: string;
@@ -23,8 +23,8 @@ export interface Top<T> {
 }
 
 export class LastFMScraper extends BaseScraper {
-  constructor(lastFMService: LastFMService) {
-    super(lastFMService.logger, "https://last.fm/");
+  constructor(logger?: Logger) {
+    super(logger, "https://last.fm/");
   }
 
   // https://www.last.fm/user/flushed_emoji/library/music/Red+Velvet
@@ -146,7 +146,6 @@ export class LastFMScraper extends BaseScraper {
     return { items: topTracks, total: metadata.Scrobbles.toInt() };
   }
 
-  // https://www.last.fm/user/flushed_emoji/library/music/Red+Velvet/_/Sunny+Side+Up!
   async lastScrobbled(
     username: string,
     artist: string,

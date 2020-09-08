@@ -3,9 +3,9 @@ import chalk from "chalk";
 import { GowonService } from "./GowonService";
 
 export class BaseService {
-  gowonService = GowonService.getInstance();
+  protected gowonService = GowonService.getInstance();
 
-  constructor(public logger?: Logger) {}
+  constructor(protected logger?: Logger) {}
 
   protected log(msg: string): void {
     Logger.log(this.constructor.name, chalk`{grey ${msg}}`, this.logger);

@@ -1,4 +1,4 @@
-import { TopArtists } from "../../services/LastFMService.types";
+import { TopArtists } from "../../services/LastFM/LastFMService.types";
 import { calculatePercent } from "../../helpers/stats";
 import { mean } from "mathjs";
 

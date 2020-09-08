@@ -74,6 +74,9 @@ _You can find the source code for all the commands at [/src/commands](/src/comma
 - `partytime`, counts down
 - `amiscrobbling`, shows you if you are scrobbling or not
 - `randomsong`, picks a random song from the signed in users
+- `server`, picks random users from the server and shows what they're listening to
+- `recent`, shows a few of your recent tracks
+- `track`, search or directly query a song (like a fake nowplaying)
 - Account
   - `login`, logs you in
   - `logout`, logs you out
@@ -95,13 +98,15 @@ _You can find the source code for all the commands at [/src/commands](/src/comma
   - `setinactiverole`, set what role should be treated as the inactive role
   - `setpurgatoryrole`, set what role should be treated as the purgatory role
   - `recentlystolen`, see the crowns which were recently yoinked
+  - `ban`/`unban`, bans/unbans a user from the crowns game
 - Friends
-  - `albumplays`, show how many scrobbles of an album your friends have
-  - `artistplays`, show how many scrobbles of an artist your friends have
-  - `trackplays`, show how many scrobbles of an track your friends have
   - `add`, add a friend
   - `remove`, remove a friend :(
   - `list`, list your friends, and see what they're playing
+  - `albumplays`, shows how many scrobbles of an album your friends have
+  - `artistplays`, shows how many scrobbles of an artist your friends have
+  - `trackplays`, shows how many scrobbles of an track your friends have
+  - `scrobbles`, shows how many scrobbles your friends have
 - Info
   - `artistinfo`, shows info about an artist
   - `albuminfo`, shows info about an album
@@ -113,6 +118,11 @@ _You can find the source code for all the commands at [/src/commands](/src/comma
   - `guess`, make a guess for the jumble
   - `hint`, get a hint for the jumble
   - `quit`, give up on the jumble
+- Library
+  - `albumtoptracks`, shows your top tracks on an album
+  - `artisttoptracks`, shows your top tracks for an artist
+  - `artisttopalbums`, shows your top albums for an artist
+  - `lastscrobbled`, shows when you last scrobbled a song
 - List
   - `artistlist`, shows your top artists
   - `albumlist`, shows your top albums
@@ -166,6 +176,7 @@ _You can find the source code for all the commands at [/src/commands](/src/comma
   - `milestone`, shows you what you scrobbled at a scrobble milestone
   - `goback`, shows you what you scrobbled in the past
   - `pace`, predicts when you will hit a scrobble milestone
+  - `tag`, shows your overlap with a tag's top artist
 
 ### Admin
 

@@ -5,8 +5,8 @@ import {
   LastFMUserDoesntExistError,
   TooManyFriendsError,
 } from "../../errors";
-import { LastFMService } from "../LastFMService";
-import { Track } from "../LastFMService.types";
+import { LastFMService } from "../LastFM/LastFMService";
+import { Track } from "../LastFM/LastFMService.types";
 import { BaseService } from "../BaseService";
 import { User } from "../../database/entity/User";
 

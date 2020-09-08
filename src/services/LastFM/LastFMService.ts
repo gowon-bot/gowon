@@ -42,22 +42,22 @@ import {
   TrackSearchResponse,
 } from "./LastFMService.types";
 
-import config from "../../config.json";
-import { ParsedTrack, parseLastFMTrackResponse } from "../helpers/lastFM";
+import config from "../../../config.json";
+import { ParsedTrack, parseLastFMTrackResponse } from "../../helpers/lastFM";
 import {
   LastFMConnectionError,
   LastFMError,
   LogicError,
   BadLastFMResponseError,
-} from "../errors";
-import { BaseService } from "./BaseService";
+} from "../../errors";
+import { BaseService } from "../BaseService";
 import moment from "moment";
-import { numberDisplay } from "../helpers";
-import { LastFMScraper } from "./scrapingServices/LastFMScraper";
+import { numberDisplay } from "../../helpers";
+import { LastFMScraper } from "../scrapingServices/LastFMScraper";
 
 export class LastFMService extends BaseService {
-  url = "http://ws.audioscrobbler.com/2.0/";
-  scraper = new LastFMScraper(this);
+  url = "https://ws.audioscrobbler.com/2.0/";
+  scraper = new LastFMScraper(this.logger);
 
   get apikey(): string {
     return config.lastFMAPIKey;
@@ -162,6 +162,7 @@ export class LastFMService extends BaseService {
     ).artist;
 
     if (
+      params.username &&
       response?.stats?.userplaycount !== undefined &&
       isNaN(response.stats.userplaycount.toInt())
     )
