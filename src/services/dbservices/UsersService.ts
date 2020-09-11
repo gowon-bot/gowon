@@ -9,11 +9,9 @@ import { BaseService } from "../BaseService";
 import { Perspective } from "../../lib/Perspective";
 
 export class UsersService extends BaseService {
-  async getUsername(discordID: string, serverID: string): Promise<string> {
-    this.log(
-      `fetching username with discordID ${discordID} in the server ${serverID}`
-    );
-    let user = await User.findOne({ where: { discordID, serverID } });
+  async getUsername(discordID: string): Promise<string> {
+    this.log(`fetching username with discordID ${discordID}`);
+    let user = await User.findOne({ where: { discordID } });
 
     if (user && user.lastFMUsername) {
       return user.lastFMUsername.toLowerCase();
@@ -22,13 +20,10 @@ export class UsersService extends BaseService {
 
   async setUsername(
     discordID: string,
-    serverID: string,
     lastFMUsername: string
   ): Promise<string> {
-    this.log(
-      `setting user ${discordID} in ${serverID} with username ${lastFMUsername}`
-    );
-    let user = await User.findOne({ where: { discordID, serverID } });
+    this.log(`setting user ${discordID} with username ${lastFMUsername}`);
+    let user = await User.findOne({ where: { discordID } });
 
     if (user) {
       user.lastFMUsername = lastFMUsername.toLowerCase();
@@ -38,16 +33,15 @@ export class UsersService extends BaseService {
       user = User.create({
         discordID,
         lastFMUsername: lastFMUsername.toLowerCase(),
-        serverID,
       });
       await user.save();
       return user.lastFMUsername!;
     }
   }
 
-  async clearUsername(discordID: string, serverID: string): Promise<void> {
-    this.log(`clearing username for ${discordID} in ${serverID}`);
-    let user = await User.findOne({ where: { discordID, serverID } });
+  async clearUsername(discordID: string): Promise<void> {
+    this.log(`clearing username for ${discordID}`);
+    let user = await User.findOne({ where: { discordID } });
 
     if (user?.lastFMUsername) {
       user.lastFMUsername = "";
@@ -95,41 +89,32 @@ export class UsersService extends BaseService {
     }
   }
 
-  async getUser(discordID: string, serverID: string): Promise<User> {
-    this.log(
-      `fetching user with discordID ${discordID} in the server ${serverID}`
-    );
-    let user = await User.findOne({ where: { discordID, serverID } });
+  async getUser(discordID: string): Promise<User> {
+    this.log(`fetching user with discordID ${discordID}`);
+    let user = await User.findOne({ where: { discordID } });
 
     if (!user) throw new RecordNotFoundError("user");
 
     return user;
   }
 
-  async countUsers(serverID: string): Promise<number> {
-    this.log(`counting users in the server ${serverID}`);
-    return await User.count({ where: { serverID } });
+  async countUsers(): Promise<number> {
+    this.log(`counting users}`);
+    return await User.count();
   }
 
-  async getUserFromLastFMUsername(
-    username: string,
-    serverID: string
-  ): Promise<User | undefined> {
-    this.log(`looking for user with username ${username} in ${serverID}`);
+  async getUserFromLastFMUsername(username: string): Promise<User | undefined> {
+    this.log(`looking for user with username ${username}`);
     return await User.findOne({
-      where: { lastFMUsername: username.toLowerCase(), serverID },
+      where: { lastFMUsername: username.toLowerCase() },
     });
   }
 
-  async randomUser(options?: { serverID?: string }): Promise<User>;
-  async randomUser(options?: { serverID?: string; limit?: 1 }): Promise<User>;
-  async randomUser(options?: {
-    serverID?: string;
-    limit?: number;
-  }): Promise<User[]>;
+  async randomUser(options?: {}): Promise<User>;
+  async randomUser(options?: { limit?: 1 }): Promise<User>;
+  async randomUser(options?: { limit?: number }): Promise<User[]>;
   async randomUser(
     options: {
-      serverID?: string;
       limit?: number;
     } = {}
   ): Promise<User | User[]> {

@@ -57,11 +57,8 @@ export abstract class OverviewChildCommand extends LastFMBaseChildCommand {
     if (typeof this.parsedArguments.user === "string") {
       username = this.parsedArguments.user as string;
       let [dbUser, senderUsername] = await Promise.all([
-        this.usersService.getUserFromLastFMUsername(
-          username,
-          message.guild?.id!
-        ),
-        this.usersService.getUsername(message.author.id, message.guild?.id!),
+        this.usersService.getUserFromLastFMUsername(username),
+        this.usersService.getUsername(message.author.id),
       ]);
 
       if (dbUser) user = await message.guild!.members.fetch(dbUser?.discordID!);

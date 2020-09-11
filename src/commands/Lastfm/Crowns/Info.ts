@@ -19,10 +19,7 @@ export class Info extends CrownsChildCommand {
   async run(message: Message) {
     let artist = this.parsedArguments.artist as string;
 
-    let user = await this.usersService.getUser(
-      message.author.id!,
-      message.guild?.id!
-    );
+    let user = await this.usersService.getUser(message.author.id!);
     let username = user.lastFMUsername;
 
     if (!artist) {
@@ -65,7 +62,6 @@ export class Info extends CrownsChildCommand {
       await crown.refresh();
     }
 
-    
     if (crown.user.id) {
       let holderUser = await User.toDiscordUser(message, crown.user.discordID);
 
@@ -90,7 +86,11 @@ export class Info extends CrownsChildCommand {
               ? "has never been stolen"
               : "has been stolen " + numberDisplay(crown.version - 1, "time")
           }_
-           ${artistDetails.name === "IZ*ONE" ? "Jae_ had this crown with 53,737 plays 💔" : ""}`
+           ${
+             artistDetails.name === "IZ*ONE"
+               ? "Jae_ had this crown with 53,737 plays 💔"
+               : ""
+           }`
         );
 
       await this.send(embed);

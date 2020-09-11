@@ -18,7 +18,7 @@ export abstract class FriendsChildCommand extends LastFMBaseChildCommand {
   async prerun(message: Message) {
     let [, senderUsername] = await Promise.all([
       this.setFriendUsernames(message),
-      this.usersService.getUsername(message.author.id, message.guild?.id!),
+      this.usersService.getUsername(message.author.id),
     ]);
     this.senderUsername = senderUsername;
 
@@ -27,10 +27,7 @@ export abstract class FriendsChildCommand extends LastFMBaseChildCommand {
   }
 
   async setFriendUsernames(message: Message) {
-    let user = await this.usersService.getUser(
-      message.author.id,
-      message.guild?.id!
-    );
+    let user = await this.usersService.getUser(message.author.id);
 
     this.user = user;
 

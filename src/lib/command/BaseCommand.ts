@@ -45,7 +45,7 @@ export interface Command {
   children?: CommandManager;
   parentName?: string;
   parent?: ParentCommand;
-  getChild(...names: string[]): Command | undefined;
+  getChild(name: string, serverID: string): Command | undefined;
 }
 
 export abstract class BaseCommand implements Command {
@@ -84,10 +84,8 @@ export abstract class BaseCommand implements Command {
   hasChildren = false;
   children?: CommandManager;
   parentName?: string;
-  hasChild(..._: string[]): boolean {
-    return false;
-  }
-  getChild(..._: string[]): Command | undefined {
+  
+  getChild(_: string, __: string): Command | undefined {
     return undefined;
   }
 
@@ -123,10 +121,7 @@ export abstract class BaseCommand implements Command {
       options.inputArgumentName &&
       (this.parsedArguments[options.inputArgumentName] as string);
 
-    let senderUser = await this.usersService.getUser(
-      this.message.author.id,
-      this.message.guild?.id!
-    );
+    let senderUser = await this.usersService.getUser(this.message.author.id);
 
     let mentionedUsername: string | undefined;
 
@@ -134,10 +129,7 @@ export abstract class BaseCommand implements Command {
       mentionedUsername = user;
     } else if (user) {
       try {
-        let mentionedUser = await this.usersService.getUser(
-          user.id,
-          this.message.guild?.id!
-        );
+        let mentionedUser = await this.usersService.getUser(user.id);
 
         dbUser = mentionedUser;
 

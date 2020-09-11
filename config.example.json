@@ -1,4 +1,9 @@
 {
   "lastFMAPIKey": "",
-  "discordToken": ""
+  "discordToken": "",
+
+  "defaultPrefix": ".",
+
+  "githubUsername": "",
+  "githubPassword": ""
 }

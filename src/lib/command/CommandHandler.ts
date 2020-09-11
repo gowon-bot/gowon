@@ -1,11 +1,13 @@
 import { CommandManager } from "./CommandManager";
-import { Message } from "discord.js";
+import { Client, Message } from "discord.js";
 import { GowonService } from "../../services/GowonService";
 import { AdminService } from "../../services/dbservices/AdminService";
 import { Logger } from "../Logger";
 import { CheckFailReason } from "../permissions/Can";
 import { ParentCommand } from "./ParentCommand";
 import { MetaService } from "../../services/dbservices/MetaService";
+import Prefix from "../../commands/Meta/Prefix";
+import { RunAs } from "../AliasChecker";
 
 export class CommandHandler {
   gowonService = GowonService.getInstance();
@@ -13,8 +15,11 @@ export class CommandHandler {
   metaService = new MetaService();
   commandManager = new CommandManager();
   private logger = new Logger();
+  private client!: Client;
 
-  constructor() {}
+  setClient(client: Client) {
+    this.client = client;
+  }
 
   async init() {
     await this.commandManager.init();
@@ -36,14 +41,22 @@ export class CommandHandler {
       message.react("😔");
     }
 
+    await this.runPrefixCommandIfMentioned(message);
+
     if (
       !message.author.bot &&
       message.guild &&
       message.content.match(
-        new RegExp(`^${this.gowonService.regexSafePrefix}[^\\s]+`, "i")
+        new RegExp(
+          `^${this.gowonService.regexSafePrefix(message.guild!.id)}[^\\s]+`,
+          "i"
+        )
       )
     ) {
-      let { command, runAs } = this.commandManager.find(message.content);
+      let { command, runAs } = this.commandManager.find(
+        message.content,
+        message.guild.id
+      );
 
       if (command instanceof ParentCommand)
         command = (command.default && command.default()) || command;
@@ -65,6 +78,22 @@ export class CommandHandler {
       this.metaService.recordCommandRun(command.id, message);
 
       await command.execute(message, runAs);
+    }
+  }
+
+  async runPrefixCommandIfMentioned(message: Message) {
+    if (
+      message.mentions.users
+        .array()
+        .map((u) => u.id)
+        .includes(this.client.user!.id) &&
+      message.content.split(/\s+/)[1].toLowerCase() === "prefix" &&
+      !message.author.bot
+    ) {
+      let prefix: string | undefined =
+        message.content.split(/\s+/)[2] || undefined;
+
+      await new Prefix().setPrefix(prefix).execute(message, new RunAs());
     }
   }
 }

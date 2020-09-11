@@ -30,10 +30,7 @@ export class Remove extends FriendsChildCommand {
     if (username === senderUsername)
       throw new LogicError("Please specify a user to remove as a friend!");
 
-    let user = await this.usersService.getUser(
-      message.author.id,
-      message.guild?.id!
-    );
+    let user = await this.usersService.getUser(message.author.id);
 
     await this.friendsService.removeFriend(message.guild?.id!, user, username);
 

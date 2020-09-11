@@ -18,7 +18,7 @@ export class Unban extends CrownsChildCommand {
       throw new LogicError(`please mention a valid user`);
     }
 
-    await this.crownsService.unbanUser(dbUser);
+    await this.crownsService.unbanUser(dbUser, this.guild.id);
 
     await this.reply(
       `successfully unbanned ${

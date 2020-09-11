@@ -25,10 +25,13 @@ export class Can {
 
   constructor(private adminService: AdminService) {}
 
-  private async getParentIDs(child: ChildCommand): Promise<string[]> {
+  private async getParentIDs(
+    child: ChildCommand,
+    serverID: string
+  ): Promise<string[]> {
     if (!this.commandManager.isInitialized) await this.commandManager.init();
 
-    let runAs = this.commandManager.find(child.parentName);
+    let runAs = this.commandManager.find(child.parentName, serverID);
 
     return runAs.runAs.toCommandArray().map((c) => c.id);
   }
@@ -74,7 +77,10 @@ export class Can {
           serverID: message.guild?.id,
           commandID:
             command instanceof ChildCommand
-              ? In([command.id, ...(await this.getParentIDs(command))])
+              ? In([
+                  command.id,
+                  ...(await this.getParentIDs(command, message.guild!.id)),
+                ])
               : command.id,
         },
       }));
@@ -85,7 +91,10 @@ export class Can {
     let disabledCheck = (
       await Promise.all(
         (command instanceof ChildCommand
-          ? [command.id, ...(await this.getParentIDs(command))]
+          ? [
+              command.id,
+              ...(await this.getParentIDs(command, message.guild!.id)),
+            ]
           : [command.id]
         ).map((id) => {
           return this.adminService.isCommandDisabled(id, message.guild?.id!);

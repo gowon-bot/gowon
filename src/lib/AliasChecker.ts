@@ -100,9 +100,10 @@ export class AliasChecker {
 
   parentCommandGetChildSkipPrefix(
     command: ParentCommand,
-    childAlias: string
+    childAlias: string,
+    serverID: string
   ): Command | undefined {
-    let child = command.children.find(childAlias);
+    let child = command.children.find(childAlias, serverID);
 
     if (
       command.canSkipPrefixFor.includes(child.command.name) &&
@@ -143,10 +144,10 @@ export class AliasChecker {
     return false;
   }
 
-  getRunAs(command: Command): RunAs {
+  getRunAs(command: Command, serverID: string): RunAs {
     let checks = this.aliasesString
       .toLowerCase()
-      .replace(new RegExp(this.gowonService.regexSafePrefix, "i"), "")
+      .replace(new RegExp(this.gowonService.regexSafePrefix(serverID), "i"), "")
       .trim()
       .split(/\s+/);
 
@@ -176,10 +177,14 @@ export class AliasChecker {
           });
         }
 
-        let child = command.getChild(checks.slice(check_i + 1).join(" ") || "");
+        let child = command.getChild(
+          checks.slice(check_i + 1).join(" ") || "",
+          serverID
+        );
         let childNoPrefix = this.parentCommandGetChildSkipPrefix(
           command,
-          check
+          check,
+          serverID
         );
 
         if (childNoPrefix)
@@ -213,7 +218,7 @@ export class AliasChecker {
     return runAs;
   }
 
-  check(command: Command): boolean {
-    return !this.getRunAs(command).empty();
+  check(command: Command, serverID: string): boolean {
+    return !this.getRunAs(command, serverID).empty();
   }
 }

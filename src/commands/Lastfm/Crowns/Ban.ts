@@ -18,7 +18,7 @@ export class Ban extends CrownsChildCommand {
       throw new LogicError(`please mention a valid user`);
     }
 
-    await this.crownsService.banUser(dbUser);
+    await this.crownsService.banUser(dbUser, this.guild.id);
 
     await this.reply(
       `successfully banned ${

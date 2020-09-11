@@ -20,10 +20,7 @@ export default class LastFmToDiscord extends LastFMBaseCommand {
 
     if (!username) throw new LogicError("please enter a username to lookup");
 
-    let user = await this.usersService.getUserFromLastFMUsername(
-      username,
-      message.guild?.id!
-    );
+    let user = await this.usersService.getUserFromLastFMUsername(username);
 
     let member = await message.guild!.members.fetch(user?.discordID || "");
 

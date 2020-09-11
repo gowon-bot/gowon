@@ -117,7 +117,7 @@ export class CrownsService extends BaseService {
 
     let [crown, user] = await Promise.all([
       this.getCrown(artistName, message.guild?.id!),
-      User.findOne({ where: { discordID, serverID: message.guild?.id! } }),
+      User.findOne({ where: { discordID } }),
     ]);
 
     let oldCrown = Object.assign({}, crown);
@@ -218,7 +218,7 @@ export class CrownsService extends BaseService {
     limit = 10
   ): Promise<Crown[]> {
     this.log("Listing crowns for user " + discordID + " in server " + serverID);
-    let user = await User.findOne({ where: { discordID, serverID } });
+    let user = await User.findOne({ where: { discordID } });
 
     if (!user) throw new RecordNotFoundError("user");
 
@@ -246,7 +246,7 @@ export class CrownsService extends BaseService {
     this.log(
       "Counting crowns for user " + discordID + " in server " + serverID
     );
-    let user = await User.findOne({ where: { discordID, serverID } });
+    let user = await User.findOne({ where: { discordID } });
 
     if (!user) throw new RecordNotFoundError("user");
 
@@ -258,7 +258,7 @@ export class CrownsService extends BaseService {
     serverID: string
   ): Promise<CrownRankResponse> {
     this.log("Ranking user " + discordID + " in server " + serverID);
-    let user = await User.findOne({ where: { discordID, serverID } });
+    let user = await User.findOne({ where: { discordID } });
 
     if (!user) throw new RecordNotFoundError("user");
 
@@ -365,7 +365,7 @@ export class CrownsService extends BaseService {
     serverID: string,
     userID: string
   ): Promise<number> {
-    let user = await User.findOne({ where: { discordID: userID, serverID } });
+    let user = await User.findOne({ where: { discordID: userID } });
 
     let result = await Crown.delete({ serverID, user });
 
@@ -398,18 +398,18 @@ export class CrownsService extends BaseService {
     return !!setting;
   }
 
-  async banUser(user: User): Promise<CrownBan> {
+  async banUser(user: User, serverID: string): Promise<CrownBan> {
     let existingCrownBan = await CrownBan.findOne({ user });
 
     if (existingCrownBan) throw new AlreadyBannedError();
 
-    let crownBan = CrownBan.create({ user, serverID: user.serverID });
+    let crownBan = CrownBan.create({ user });
     await crownBan.save();
 
     let bans = [
       ...(this.gowonService.shallowCache.find(
         ShallowCacheScopedKey.CrownBannedUsers,
-        user.serverID
+        serverID
       ) || []),
       user.discordID,
     ];
@@ -417,13 +417,13 @@ export class CrownsService extends BaseService {
     this.gowonService.shallowCache.remember(
       ShallowCacheScopedKey.CrownBannedUsers,
       bans,
-      user.serverID
+      serverID
     );
 
     return crownBan;
   }
 
-  async unbanUser(user: User): Promise<void> {
+  async unbanUser(user: User, serverID: string): Promise<void> {
     let crownBan = await CrownBan.findOne({ user });
 
     if (!crownBan) throw new NotBannedError();
@@ -433,14 +433,14 @@ export class CrownsService extends BaseService {
     let bans = (
       this.gowonService.shallowCache.find<string[]>(
         ShallowCacheScopedKey.CrownBannedUsers,
-        user.serverID
+        serverID
       ) || []
     ).filter((u) => u !== user.discordID);
 
     this.gowonService.shallowCache.remember(
       ShallowCacheScopedKey.CrownBannedUsers,
       bans,
-      user.serverID
+      serverID
     );
   }
 

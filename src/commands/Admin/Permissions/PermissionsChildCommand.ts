@@ -10,7 +10,7 @@ import { User } from "../../../database/entity/User";
 
 export abstract class PermissionsChildCommand extends AdminBaseChildCommand {
   parentName = "permissions";
-  subcategory = "permissions"
+  subcategory = "permissions";
 
   commandManager = new CommandManager();
   command!: Command;
@@ -36,13 +36,13 @@ export abstract class PermissionsChildCommand extends AdminBaseChildCommand {
         index: { start: 0 },
         nonDiscordMentionParsing: this.ndmp.users,
         join: false,
-        ndmpOnly: true
+        ndmpOnly: true,
       },
       roleIDs: {
         index: { start: 0 },
         nonDiscordMentionParsing: this.ndmp.roles,
         join: false,
-        ndmpOnly: true
+        ndmpOnly: true,
       },
     },
   };
@@ -52,7 +52,10 @@ export abstract class PermissionsChildCommand extends AdminBaseChildCommand {
 
     this.aliases = (this.parsedArguments.command as string).split(/\s*\//);
 
-    let command = this.commandManager.find(this.aliases.join(" "));
+    let command = this.commandManager.find(
+      this.aliases.join(" "),
+      this.guild.id
+    );
 
     this.command = command.command;
     this.runAs = command.runAs;

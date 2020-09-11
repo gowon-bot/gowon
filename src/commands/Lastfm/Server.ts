@@ -11,8 +11,7 @@ export default class Server extends LastFMBaseCommand {
 
   async run() {
     let users = await this.usersService.randomUser({
-      limit: 10,
-      serverID: this.message.guild?.id!,
+      limit: 10
     });
 
     let nowPlayings = await new MultiRequster(

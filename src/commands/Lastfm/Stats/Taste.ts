@@ -42,8 +42,8 @@ export default class Taste extends LastFMBaseCommand {
       },
       username: {
         regex: /[\w\-]/gi,
-        index: 0
-      }
+        index: 0,
+      },
     },
     mentions: {
       user: {
@@ -59,7 +59,7 @@ export default class Taste extends LastFMBaseCommand {
     },
   };
 
-  async run(message: Message, runAs: RunAs) {
+  async run(_: Message, runAs: RunAs) {
     let userTwo = this.parsedArguments.userTwo as Mention,
       artistAmount = this.parsedArguments.artistAmount as number,
       timePeriod = this.parsedArguments.timePeriod as LastFMPeriod,
@@ -69,7 +69,7 @@ export default class Taste extends LastFMBaseCommand {
     let {
       senderUsername: userOneUsername,
       mentionedUsername: userTwoUsername,
-    } = await this.parseMentionedUsername({inputArgumentName: "x  "});
+    } = await this.parseMentionedUsername({ inputArgumentName: "user" });
 
     if (!userTwoUsername) {
       await this.reply("Please specify a user to compare taste with!");
@@ -86,7 +86,7 @@ export default class Taste extends LastFMBaseCommand {
       userTwoUsername =
         typeof userTwo === "string"
           ? userTwo
-          : await this.usersService.getUsername(userTwo.id, message.guild?.id!);
+          : await this.usersService.getUsername(userTwo.id);
     }
 
     let [senderArtists, mentionedArtists] = await Promise.all([
