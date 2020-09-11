@@ -1,4 +1,4 @@
-import { LastFMErrorResponse } from "../services/LastFMService.types";
+import { LastFMErrorResponse } from "../services/LastFM/LastFMService.types";
 
 function parseErrorSix(message: string): string {
   if (message.includes("artist")) return "That artist could not be found";

@@ -8,7 +8,7 @@ import { Mention } from "../../../lib/arguments/mentions";
 import { generatePeriod, generateHumanPeriod } from "../../../helpers/date";
 import { Variation } from "../../../lib/command/BaseCommand";
 import { RunAs } from "../../../lib/AliasChecker";
-import { LastFMPeriod } from "../../../services/LastFMService.types";
+import { LastFMPeriod } from "../../../services/LastFM/LastFMService.types";
 
 export default class Taste extends LastFMBaseCommand {
   aliases = ["t"];

@@ -11,7 +11,7 @@ import {
 } from "../../../errors";
 
 export class Check extends CrownsChildCommand {
-  aliases = ["c"];
+  aliases = ["c", "w"];
   description = "Checks a crown";
   usage = ["", "artist"];
 
@@ -53,6 +53,15 @@ export class Check extends CrownsChildCommand {
       message,
       artistDetails.stats.userplaycount.toInt()
     );
+
+    if (
+      !(
+        crownCheck.state === CrownState.updated &&
+        crownCheck.crown?.plays === crownCheck.oldCrown?.plays
+      )
+    ) {
+      this.crownsService.scribe.handleCheck(crownCheck, message);
+    }
 
     let embed =
       crownCheck.state === CrownState.newCrown

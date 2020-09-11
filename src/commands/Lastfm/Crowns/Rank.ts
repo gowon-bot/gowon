@@ -35,9 +35,9 @@ export class Rank extends CrownsChildCommand {
         `${perspective.upper.possessive} ${numberDisplay(
           rank.count,
           "crown"
-        ).bold()} rank ${perspective.objectPronoun} ${getOrdinal(
-          rank.rank.toInt()
-        ).bold()} in ${message.guild?.name}`
+        ).bold()} ${rank.count.toInt() === 1 ? "ranks" : "rank"} ${
+          perspective.objectPronoun
+        } ${getOrdinal(rank.rank.toInt()).bold()} in ${message.guild?.name}`
       );
 
     await this.send(embed);

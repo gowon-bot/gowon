@@ -4,6 +4,7 @@ import { Arguments } from "../../../lib/arguments/arguments";
 import { ComboCalculator } from "../../../lib/calculators/ComboCalculator";
 import { numberDisplay } from "../../../helpers";
 import { Paginator } from "../../../lib/Paginator";
+import { RedirectsService } from "../../../services/dbservices/RedirectsServices";
 
 export default class Combo extends LastFMBaseCommand {
   aliases = ["streak", "str"];
@@ -29,6 +30,8 @@ export default class Combo extends LastFMBaseCommand {
     },
   };
 
+  redirectsService = new RedirectsService(this.logger)
+
   async run() {
     let { username } = await this.parseMentionedUsername();
 
@@ -45,7 +48,7 @@ export default class Combo extends LastFMBaseCommand {
       { username, limit: streakAmount }
     );
 
-    let comboCalculator = new ComboCalculator();
+    let comboCalculator = new ComboCalculator(this.redirectsService);
 
     let combo = await comboCalculator.calculate(paginator);
 

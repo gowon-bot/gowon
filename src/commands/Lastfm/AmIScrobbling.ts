@@ -3,7 +3,6 @@ import { LastFMBaseCommand } from "./LastFMBaseCommand";
 export default class AmIScrobbling extends LastFMBaseCommand {
   aliases = ["amis"];
   description = "Am I scrobbling?";
-  secretCommand = true;
   usage = [""];
 
   async run() {

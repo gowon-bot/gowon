@@ -1,4 +1,5 @@
-import { Track } from "../../services/LastFMService.types";
+import { RedirectsService } from "../../services/dbservices/RedirectsServices";
+import { Track } from "../../services/LastFM/LastFMService.types";
 import { Paginator } from "../Paginator";
 
 export interface ComboDetails {
@@ -14,9 +15,15 @@ export interface Combo {
   hasAnyConsecutivePlays: boolean;
 }
 
+interface RedirectsCache {
+  [from: string]: string;
+}
+
 type Entity = "artist" | "track" | "album";
 
 export class ComboCalculator {
+  constructor(private redirectsService: RedirectsService) {}
+
   private combo: Partial<Combo> = {};
   private streakEnded = {
     artist: false,
@@ -24,11 +31,29 @@ export class ComboCalculator {
     track: false,
   };
 
-  private shouldContinueStreak(track: Track, entity: Entity): boolean {
+  private redirectsCache: RedirectsCache = {};
+
+  private async getRedirect(artist: string): Promise<string> {
+    if (this.redirectsCache[artist]) return this.redirectsCache[artist];
+
+    let redirect =
+      (await this.redirectsService.checkRedirect(artist))?.to || artist;
+
+    this.redirectsCache[artist] = redirect;
+
+    return redirect;
+  }
+
+  private async shouldContinueStreak(
+    track: Track,
+    entity: Entity
+  ): Promise<boolean> {
     let entityName =
       entity === "album" || entity === "artist"
         ? track[entity]["#text"]
         : track.name;
+
+    if (entity === "artist") entityName = await this.getRedirect(entityName);
 
     return (
       this.streakEnded[entity] !== true &&
@@ -45,19 +70,32 @@ export class ComboCalculator {
     );
   }
 
-  private setCombo(entity: Entity, name: string, track: Track, last: boolean) {
+  private async setCombo(
+    entity: Entity,
+    name: string,
+    track: Track,
+    last: boolean
+  ) {
     let nowplaying = track["@attr"]?.nowplaying === "true" ?? false;
 
     if (this.combo[entity]) {
+      let entityName =
+        entity === "artist"
+          ? await this.getRedirect(this.combo[entity]!.name)
+          : this.combo[entity]!.name;
+
       this.combo[entity] = {
-        name: this.combo[entity]!.name,
+        name: entityName,
         plays: this.combo[entity]!.plays + 1,
         nowplaying: this.combo[entity]!.nowplaying,
         hitMax: last,
       };
     } else {
+      let entityName =
+        entity === "artist" ? await this.getRedirect(name) : name;
+
       this.combo[entity] = {
-        name,
+        name: entityName,
         nowplaying,
         plays: nowplaying ? 0 : 1,
         hitMax: false,
@@ -77,15 +115,15 @@ export class ComboCalculator {
           trackIndex === tracks.length - 1 &&
           recentTracks.currentPage === recentTracks.maxPages;
 
-        if (this.shouldContinueStreak(track, "artist")) {
+        if (await this.shouldContinueStreak(track, "artist")) {
           this.setCombo("artist", track.artist["#text"], track, last);
         } else if (!this.streakEnded.artist) this.streakEnded.artist = true;
 
-        if (this.shouldContinueStreak(track, "album")) {
+        if (await this.shouldContinueStreak(track, "album")) {
           this.setCombo("album", track.album["#text"], track, last);
         } else if (!this.streakEnded.album) this.streakEnded.album = true;
 
-        if (this.shouldContinueStreak(track, "track")) {
+        if (await this.shouldContinueStreak(track, "track")) {
           this.setCombo("track", track.name, track, last);
         } else if (!this.streakEnded.track) this.streakEnded.track = true;
 

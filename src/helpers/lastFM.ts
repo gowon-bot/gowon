@@ -1,4 +1,4 @@
-import { Track } from "../services/LastFMService.types";
+import { Track } from "../services/LastFM/LastFMService.types";
 
 import { generateLink as generateLinkEmbed } from "./discord";
 

@@ -1,4 +1,4 @@
-import { LastFMErrorResponse } from "./services/LastFMService.types";
+import { LastFMErrorResponse } from "./services/LastFM/LastFMService.types";
 import { parseError } from "./helpers/error";
 import { Response } from "node-fetch";
 import { numberDisplay } from "./helpers";

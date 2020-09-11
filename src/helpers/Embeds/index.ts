@@ -1,5 +1,5 @@
 import { MessageEmbed } from "discord.js";
-import { Image } from "../../services/LastFMService.types";
+import { Image } from "../../services/LastFM/LastFMService.types";
 
 interface SimpleTrack {
   name: string;

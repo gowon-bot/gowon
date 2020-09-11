@@ -25,11 +25,10 @@ import {
   Image,
   TagTopArtistsParams,
   TagTopArtists,
-} from "../../services/LastFMService.types";
+} from "../../services/LastFM/LastFMService.types";
 import { BaseService } from "../../services/BaseService";
 import { LastFMScraper } from "../../services/scrapingServices/LastFMScraper";
 import { ParsedTrack } from "../../helpers/lastFM";
-import { LastFMService } from "../../services/LastFMService";
 
 function pagedResponse<T>(object: any): T {
   return {
@@ -79,7 +78,7 @@ function fakeTrack(): Track {
 
 export class LastFMMock extends BaseService {
   url = "";
-  scraper: LastFMScraper = new LastFMScraper(new LastFMService());
+  scraper: LastFMScraper = new LastFMScraper();
 
   get apikey(): string {
     return "";

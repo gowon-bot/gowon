@@ -1,4 +1,4 @@
-import { LastFMService } from "../services/LastFMService";
+import { LastFMService } from "../services/LastFM/LastFMService";
 
 export interface FetchedResponses<T> {
   [username: string]: T;

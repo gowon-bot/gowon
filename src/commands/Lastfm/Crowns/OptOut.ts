@@ -21,6 +21,8 @@ export class OptOut extends CrownsChildCommand {
         { max: 1, time: 30000, errors: ["time"] }
       );
 
+      await this.crownsService.scribe.optOut(message.member!);
+
       let numberOfCrowns = await this.crownsService.optOut(
         message.guild?.id!,
         message.author.id
@@ -30,7 +32,7 @@ export class OptOut extends CrownsChildCommand {
         new MessageEmbed().setDescription(
           `Opted you out, deleting ${numberDisplay(
             numberOfCrowns,
-            "crowns"
+            "crown"
           ).bold()}`
         )
       );

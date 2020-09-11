@@ -68,11 +68,13 @@ export class Info extends CrownsChildCommand {
       let holderUsername = holderUser?.username;
 
       let embed = new MessageEmbed()
-        .setTitle(`Who has ${artistDetails.name.bold()}?`)
+        .setTitle(
+          `Who has ${crown.artistName.bold()}?` + crown.redirectDisplay()
+        )
         .setDescription(
           `${
             holderUsername || "???"
-          }${invalidBadge} has the crown for ${artistDetails.name.bold()} with ${numberDisplay(
+          }${invalidBadge} has the crown for ${crown.artistName.bold()} with ${numberDisplay(
             crown.plays,
             "play"
           )}
@@ -82,9 +84,9 @@ export class Info extends CrownsChildCommand {
           }
 
           _It ${
-            crown.version === 1
+            crown.version === 0
               ? "has never been stolen"
-              : "has been stolen " + numberDisplay(crown.version - 1, "time")
+              : "has been stolen " + numberDisplay(crown.version, "time")
           }_
            ${
              artistDetails.name === "IZ*ONE"
