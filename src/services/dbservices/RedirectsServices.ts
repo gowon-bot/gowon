@@ -1,5 +1,5 @@
 import { ArtistRedirect } from "../../database/entity/ArtistRedirect";
-import { DuplicateRecordError } from "../../errors";
+import { DuplicateRecordError, RecordNotFoundError } from "../../errors";
 import { BaseService } from "../BaseService";
 
 export class RedirectsService extends BaseService {
@@ -11,6 +11,17 @@ export class RedirectsService extends BaseService {
     let redirect = ArtistRedirect.create({ from, to });
 
     return await redirect.save();
+  }
+
+  async removeRedirect(from: string): Promise<ArtistRedirect> {
+    this.log(`Removing redirect from ${from}`);
+    let redirect = await ArtistRedirect.findOne({ from });
+
+    if (!redirect) throw new RecordNotFoundError("redirect");
+
+    await redirect.remove();
+
+    return redirect;
   }
 
   async checkRedirect(artistName: string): Promise<ArtistRedirect | undefined> {

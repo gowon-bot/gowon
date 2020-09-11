@@ -18,10 +18,12 @@ export class GraphQLAPI {
           ...userResolvers.queries,
           ...crownResolvers.queries,
         },
+        Mutation: {
+          ...userResolvers.mutations,
+        },
       },
       introspection: true,
       playground: true,
-      
     };
 
     const server = new ApolloServer(config);
@@ -30,8 +32,8 @@ export class GraphQLAPI {
       app,
       path: "/graphql",
       cors: {
-        origin: "http://localhost:3001"
-      }
+        origin: "http://localhost:3001",
+      },
     });
 
     app.listen(3000, () => {

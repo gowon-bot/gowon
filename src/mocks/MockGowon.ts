@@ -50,17 +50,15 @@ export class MockGowon {
 
   async signInUser() {
     let user = this.discord.getUser();
-    let guild = this.discord.getGuild();
 
-    await this.usersService.setUsername(user.id, guild.id, "flushed_emoji");
+    await this.usersService.setUsername(user.id, "flushed_emoji");
   }
 
   async signOutUser() {
     let user = this.discord.getUser();
-    let guild = this.discord.getGuild();
 
     try {
-      await this.usersService.clearUsername(user.id, guild.id);
+      await this.usersService.clearUsername(user.id);
     } catch {}
   }
 
@@ -83,7 +81,7 @@ export class MockGowon {
     command.teardown = async () => {};
 
     // if (command instanceof LastFMBaseCommand)
-      // command.lastFMService = new LastFMMock();
+    // command.lastFMService = new LastFMMock();
 
     return command;
   }

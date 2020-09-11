@@ -31,10 +31,7 @@ export abstract class JumbleChildCommand extends LastFMBaseChildCommand {
   }
 
   async prerun(message: Message) {
-    let senderUsername = await this.usersService.getUsername(
-      message.author.id,
-      message.guild?.id!
-    );
+    let senderUsername = await this.usersService.getUsername(message.author.id);
 
     this.jumbleCalculator = new JumbleCalculator(
       senderUsername,

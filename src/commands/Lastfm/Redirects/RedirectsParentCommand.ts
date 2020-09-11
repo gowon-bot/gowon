@@ -2,6 +2,7 @@ import { CommandManager } from "../../../lib/command/CommandManager";
 import { LastFMBaseParentCommand } from "../LastFMBaseCommand";
 import { Add } from "./Add";
 import { List } from "./List";
+import { Remove } from "./Remove";
 
 export default class RedirectsParentCommand extends LastFMBaseParentCommand {
   friendlyName = "redirects";
@@ -12,6 +13,7 @@ export default class RedirectsParentCommand extends LastFMBaseParentCommand {
 
   children: CommandManager = new CommandManager({
     add: () => new Add(),
+    remove: () => new Remove(),
     list: () => new List(),
   });
 }

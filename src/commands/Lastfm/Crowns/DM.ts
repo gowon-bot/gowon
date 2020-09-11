@@ -5,6 +5,7 @@ import { Arguments } from "../../../lib/arguments/arguments";
 
 export class DM extends CrownsChildCommand {
   description = "DMs you a users crowns";
+  aliases = ["me"]
   usage = ["", "@user"];
 
   arguments: Arguments = {

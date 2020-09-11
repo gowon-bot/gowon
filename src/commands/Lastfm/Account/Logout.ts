@@ -7,10 +7,7 @@ export default class Logout extends LastFMBaseCommand {
   usage = "";
 
   async run(message: Message) {
-    await this.usersService.clearUsername(
-      message.author.id,
-      message.guild?.id!
-    );
+    await this.usersService.clearUsername(message.author.id);
 
     this.send(`Logged out successfully.`);
   }

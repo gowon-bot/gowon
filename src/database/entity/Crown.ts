@@ -96,7 +96,7 @@ export class Crown extends BaseEntity {
     serverID: string,
     discordID: string
   ): Promise<CrownRankResponse> {
-    let user = await User.findOne({ where: { discordID, serverID } });
+    let user = await User.findOne({ where: { discordID } });
 
     return ((await this.query(
       `SELECT count, rank FROM (
@@ -113,7 +113,7 @@ export class Crown extends BaseEntity {
           ORDER BY 1 desc
       ) t
       LEFT JOIN (
-          SELECT * FROM users WHERE users."serverID" LIKE $1
+          SELECT * FROM users
         ) u    
           ON u.id = t."userId"
       ) ranks

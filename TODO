@@ -1,6 +1,5 @@
 Bugs:
-  [] `.cw mb 수호 |suho` => `@undefined, a crown for uho doesn't exist!`
-  [] Redirects for crowns broken
+  [x] Redirects for crowns broken
   
 Test:  
 

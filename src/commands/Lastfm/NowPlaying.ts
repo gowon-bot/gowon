@@ -57,8 +57,7 @@ export default class NowPlaying extends LastFMBaseCommand {
       typeof user === "string"
         ? user
         : await this.usersService.getUsername(
-            (!otherWords && user?.id) || message.author.id,
-            message.guild?.id!
+            (!otherWords && user?.id) || message.author.id
           );
 
     let nowPlaying = await this.lastFMService.nowPlaying(username);

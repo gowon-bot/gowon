@@ -34,10 +34,7 @@ export class Add extends FriendsChildCommand {
     if (username === senderUsername)
       throw new LogicError("please specify a user to add as a friend!");
 
-    let user = await this.usersService.getUser(
-      message.author.id,
-      message.guild?.id!
-    );
+    let user = await this.usersService.getUser(message.author.id);
 
     let friends = await this.friendsService.getUsernames(
       message.guild?.id!,

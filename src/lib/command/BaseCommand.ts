@@ -123,10 +123,7 @@ export abstract class BaseCommand implements Command {
       options.inputArgumentName &&
       (this.parsedArguments[options.inputArgumentName] as string);
 
-    let senderUser = await this.usersService.getUser(
-      this.message.author.id,
-      this.message.guild?.id!
-    );
+    let senderUser = await this.usersService.getUser(this.message.author.id);
 
     let mentionedUsername: string | undefined;
 
@@ -134,10 +131,7 @@ export abstract class BaseCommand implements Command {
       mentionedUsername = user;
     } else if (user) {
       try {
-        let mentionedUser = await this.usersService.getUser(
-          user.id,
-          this.message.guild?.id!
-        );
+        let mentionedUser = await this.usersService.getUser(user.id);
 
         dbUser = mentionedUser;
 

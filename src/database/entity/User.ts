@@ -34,10 +34,10 @@ export class User extends BaseEntity {
   discordID!: string;
 
   @Column()
-  serverID!: string;
-
-  @Column()
   lastFMUsername!: string;
+
+  @Column({ nullable: true })
+  discordAuthCode?: string;
 
   @OneToMany((_) => Crown, (crown) => crown.user)
   crowns!: Crown[];
@@ -67,15 +67,10 @@ export class User extends BaseEntity {
     }
   }
 
-  static async random(options: {
-    serverID?: string;
-    limit: number;
-  }): Promise<User[]> {
+  static async random(options: { limit: number }): Promise<User[]> {
     let users = await this.query(
-      `SELECT * FROM users ${
-        options.serverID ? 'WHERE "serverID" like $2' : ""
-      } ORDER BY RANDOM() LIMIT $1`,
-      options.serverID ? [options.limit, options.serverID] : [options.limit]
+      `SELECT * FROM users ORDER BY RANDOM() LIMIT $1`,
+      [options.limit]
     );
 
     return users as User[];
