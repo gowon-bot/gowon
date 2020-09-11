@@ -22,7 +22,8 @@ export class Unban extends CrownsChildCommand {
     this.crownsService.scribe.unban(
       dbUser,
       this.message.author,
-      this.message.mentions.members!.array()[0].user
+      this.message.mentions.members!.array()[0].user,
+      this.guild.id
     );
 
     await this.reply(
