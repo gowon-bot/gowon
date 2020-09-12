@@ -9,6 +9,7 @@ import { generatePeriod, generateHumanPeriod } from "../../../helpers/date";
 import { Variation } from "../../../lib/command/BaseCommand";
 import { RunAs } from "../../../lib/AliasChecker";
 import { LastFMPeriod } from "../../../services/LastFM/LastFMService.types";
+import { LogicError } from "../../../errors";
 
 export default class Taste extends LastFMBaseCommand {
   aliases = ["t"];
@@ -41,9 +42,9 @@ export default class Taste extends LastFMBaseCommand {
         index: -1,
       },
       username: {
-        regex: /[\w\-]/gi,
+        regex: /[\w\-]+/i,
         index: 0,
-      },
+      }
     },
     mentions: {
       user: {
@@ -69,7 +70,7 @@ export default class Taste extends LastFMBaseCommand {
     let {
       senderUsername: userOneUsername,
       mentionedUsername: userTwoUsername,
-    } = await this.parseMentionedUsername({ inputArgumentName: "user" });
+    } = await this.parseMentionedUsername({ inputArgumentName: "username" });
 
     if (!userTwoUsername) {
       await this.reply("Please specify a user to compare taste with!");
@@ -77,8 +78,7 @@ export default class Taste extends LastFMBaseCommand {
     }
 
     if (artistAmount < 1 || artistAmount > 1000) {
-      await this.reply("Please specify a valid amount!");
-      return;
+      throw new LogicError("Please specify a valid amount!");
     }
 
     if (userTwo) {

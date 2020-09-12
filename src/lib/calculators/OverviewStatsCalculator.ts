@@ -291,7 +291,7 @@ export class OverviewStatsCalculator {
 
   async playsOver(number: number): Promise<string> {
     return (await this.topArtists()).artist
-      .filter((a) => a.playcount.toInt() > number)
+      .filter((a) => a.playcount.toInt() >= number)
       .length.toLocaleString();
   }
 

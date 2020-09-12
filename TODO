@@ -5,6 +5,7 @@ Test:
 
 Todo:
   [] Add scrobbles to `!o top50`
+  [] Errors on `.cm` breaks all of the artists
   [later] Dockerize 😳
   [later] Keep track of every tag, artist ever fm'd
 

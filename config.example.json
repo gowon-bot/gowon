@@ -1,6 +1,8 @@
 {
-  "lastFMAPIKey": "",
-  "discordToken": "",
+  "lastFMAPIKey": "Get this from https://last.fm/api",
+  "lastFMSecret": "Get this from https://last.fm/api",
+
+  "discordToken": "Get this from the discord developer portal",
 
   "defaultPrefix": ".",
 

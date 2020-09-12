@@ -5,7 +5,7 @@ import { RedirectsChildCommand } from "./RedirectsChildCommand";
 
 export class Add extends RedirectsChildCommand {
   description = "Add a redirect";
-  aliases = ["set"]
+  aliases = ["set"];
   usage = ["redirectFrom | redirectTo"];
 
   arguments: Arguments = {
@@ -26,6 +26,18 @@ export class Add extends RedirectsChildCommand {
 
     if (fromCorrected === toCorrected)
       throw new LogicError("You can't redirect an artist to itself!");
+
+    this.message.react("✅");
+
+    let isValid = await this.lastFMService.validateRedirect(
+      fromCorrected,
+      toCorrected
+    );
+
+    if (!isValid)
+      throw new LogicError(
+        `hmmm, it looks like ${fromCorrected.bold()} doesn't redirect to ${toCorrected.bold()}`
+      );
 
     let redirect = await this.redirectsService.setRedirect(
       fromCorrected,

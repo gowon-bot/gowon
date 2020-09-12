@@ -98,8 +98,9 @@ export class Crown extends BaseEntity {
   ): Promise<CrownRankResponse> {
     let user = await User.findOne({ where: { discordID } });
 
-    return ((await this.query(
-      `SELECT count, rank FROM (
+    return (
+      ((await this.query(
+        `SELECT count, rank FROM (
         SELECT *, ROW_NUMBER() OVER (
           ORDER BY count DESC
         ) AS rank FROM (
@@ -108,6 +109,7 @@ export class Crown extends BaseEntity {
                 "userId"
             FROM crowns
             WHERE crowns."serverID" LIKE $1
+              AND crowns."deletedAt" IS NULL
             GROUP BY "userId"
             ORDER BY 1 desc
         ) t
@@ -116,8 +118,9 @@ export class Crown extends BaseEntity {
       ) ranks
       WHERE "userId" = $2
 `,
-      [serverID, user?.id!]
-    )) as CrownRankResponse[])[0];
+        [serverID, user?.id!]
+      )) as CrownRankResponse[])[0] || { count: "0", rank: "0" }
+    );
   }
 
   static async guild(

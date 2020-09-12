@@ -2,6 +2,7 @@ import { CrownsChildCommand } from "./CrownsChildCommand";
 import { Message, MessageEmbed, User } from "discord.js";
 import { numberDisplay, getOrdinal } from "../../../helpers";
 import { Arguments } from "../../../lib/arguments/arguments";
+import { LogicError } from "../../../errors";
 
 export class Rank extends CrownsChildCommand {
   aliases = ["r"];
@@ -25,6 +26,11 @@ export class Rank extends CrownsChildCommand {
     );
 
     let rank = await this.crownsService.getRank(discordID, message.guild?.id!);
+
+    if (!rank?.count?.toInt())
+      throw new LogicError(
+        `${perspective.plusToHave} no crowns in this server!`
+      );
 
     let embed = new MessageEmbed()
       .setAuthor(

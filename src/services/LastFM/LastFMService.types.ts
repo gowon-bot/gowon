@@ -416,3 +416,17 @@ export interface TrackSearchParams extends PagedParams {
   track: string;
   artist?: string;
 }
+
+export interface ScrobbleParams {
+  artist: string;
+  track: string;
+  timestamp: number;
+
+  album?: string;
+  albumArtist?: string;
+  duration?: number;
+}
+
+export interface GetSessionParams {
+  token: string;
+}

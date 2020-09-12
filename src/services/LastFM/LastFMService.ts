@@ -1,63 +1,31 @@
 import { stringify } from "querystring";
-import fetch from "node-fetch";
 
 import {
-  RecentTracksResponse,
-  TrackInfoResponse,
-  ArtistInfoResponse,
-  AlbumInfoResponse,
-  UserInfoResponse,
-  TopArtistsResponse,
-  TopAlbumsResponse,
-  TopTracksResponse,
-  RecentTracks,
   Track,
-  ArtistInfo,
-  AlbumInfo,
-  UserInfo,
-  TopArtists,
-  TopAlbums,
-  TopTracks,
-  TrackInfo,
-  TagInfo,
-  TagInfoResponse,
-  ArtistTopTracks,
-  ArtistTopTracksResponse,
   Params,
   RecentTracksParams,
   TrackInfoParams,
   ArtistInfoParams,
   AlbumInfoParams,
-  UserInfoParams,
-  TagInfoParams,
-  TopArtistsParams,
   LastFMPeriod,
-  TopAlbumsParams,
-  TopTracksParams,
-  ArtistTopTracksParams,
-  TagTopArtistsParams,
-  TagTopArtists,
-  TagTopArtistsResponse,
-  TrackSearchParams,
-  TrackSearchResponse,
 } from "./LastFMService.types";
-
 import config from "../../../config.json";
 import { ParsedTrack, parseLastFMTrackResponse } from "../../helpers/lastFM";
-import {
-  LastFMConnectionError,
-  LastFMError,
-  LogicError,
-  BadLastFMResponseError,
-} from "../../errors";
-import { BaseService } from "../BaseService";
+import { LogicError, BadLastFMResponseError } from "../../errors";
 import moment from "moment";
 import { numberDisplay } from "../../helpers";
 import { LastFMScraper } from "../scrapingServices/LastFMScraper";
+import { LastFMAPIService } from "./LastFMAPIService";
+import { Logger } from "../../lib/Logger";
+import { delay } from "bluebird";
 
-export class LastFMService extends BaseService {
+export class LastFMService extends LastFMAPIService {
   url = "https://ws.audioscrobbler.com/2.0/";
   scraper = new LastFMScraper(this.logger);
+
+  constructor(logger?: Logger) {
+    super(logger);
+  }
 
   get apikey(): string {
     return config.lastFMAPIKey;
@@ -69,31 +37,6 @@ export class LastFMService extends BaseService {
       api_key: this.apikey,
       ...params,
     });
-  }
-
-  async request<T>(method: string, params: Params): Promise<T> {
-    this.log(
-      `made API request for ${method} with params ${JSON.stringify(params)}`
-    );
-
-    let qparams = this.buildParams({ method, ...params });
-
-    let response = await fetch(this.url + "?" + qparams);
-
-    if (`${response.status}`.startsWith("3"))
-      throw new LastFMConnectionError(response);
-
-    let jsonResponse = await response.json();
-
-    if (jsonResponse.error) throw new LastFMError(jsonResponse);
-
-    return jsonResponse as T;
-  }
-
-  async recentTracks(params: RecentTracksParams): Promise<RecentTracks> {
-    return (
-      await this.request<RecentTracksResponse>("user.getrecenttracks", params)
-    ).recenttracks;
   }
 
   async nowPlaying(username: string): Promise<Track> {
@@ -142,53 +85,6 @@ export class LastFMService extends BaseService {
     return recentTracks["@attr"].total.toInt() || 0;
   }
 
-  async trackInfo(params: TrackInfoParams): Promise<TrackInfo> {
-    let response = (
-      await this.request<TrackInfoResponse>("track.getInfo", params)
-    ).track;
-
-    if (
-      response?.userplaycount !== undefined &&
-      isNaN(response.userplaycount.toInt())
-    )
-      throw new BadLastFMResponseError();
-
-    return response;
-  }
-
-  async artistInfo(params: ArtistInfoParams): Promise<ArtistInfo> {
-    let response = (
-      await this.request<ArtistInfoResponse>("artist.getInfo", params)
-    ).artist;
-
-    if (
-      params.username &&
-      response?.stats?.userplaycount !== undefined &&
-      isNaN(response.stats.userplaycount.toInt())
-    )
-      throw new BadLastFMResponseError();
-
-    return response;
-  }
-
-  async albumInfo(params: AlbumInfoParams): Promise<AlbumInfo> {
-    let response = (
-      await this.request<AlbumInfoResponse>("album.getInfo", params)
-    ).album;
-
-    if (
-      response?.userplaycount !== undefined &&
-      isNaN(response.userplaycount.toInt())
-    )
-      throw new BadLastFMResponseError();
-
-    return response;
-  }
-
-  async userInfo(params: UserInfoParams): Promise<UserInfo> {
-    return (await this.request<UserInfoResponse>("user.getInfo", params)).user;
-  }
-
   async userExists(username: string): Promise<boolean> {
     try {
       let user = await this.userInfo({ username });
@@ -200,21 +96,6 @@ export class LastFMService extends BaseService {
       }
       throw e;
     }
-  }
-
-  async tagInfo(params: TagInfoParams): Promise<TagInfo> {
-    return (await this.request<TagInfoResponse>("tag.getInfo", params)).tag;
-  }
-
-  async topArtists(params: TopArtistsParams): Promise<TopArtists> {
-    return (
-      await this.request<TopArtistsResponse>("user.getTopArtists", {
-        limit: 50,
-        page: 1,
-        period: "overall",
-        ...params,
-      })
-    ).topartists;
   }
 
   async artistCount(
@@ -230,17 +111,6 @@ export class LastFMService extends BaseService {
     return topArtists["@attr"].total.toInt() || 0;
   }
 
-  async topAlbums(params: TopAlbumsParams): Promise<TopAlbums> {
-    return (
-      await this.request<TopAlbumsResponse>("user.getTopAlbums", {
-        limit: 50,
-        page: 1,
-        period: "overall",
-        ...params,
-      })
-    ).topalbums;
-  }
-
   async albumCount(
     username: string,
     timePeriod: LastFMPeriod = "overall"
@@ -252,17 +122,6 @@ export class LastFMService extends BaseService {
     });
 
     return topArtists["@attr"].total.toInt() || 0;
-  }
-
-  async topTracks(params: TopTracksParams): Promise<TopTracks> {
-    return (
-      await this.request<TopTracksResponse>("user.getTopTracks", {
-        page: 1,
-        limit: 50,
-        period: "overall",
-        ...params,
-      })
-    ).toptracks;
   }
 
   async trackCount(
@@ -291,17 +150,6 @@ export class LastFMService extends BaseService {
     let recentTracks = await this.recentTracks(params);
 
     return recentTracks.track[1] ?? recentTracks.track[0];
-  }
-
-  async artistTopTracks(
-    params: ArtistTopTracksParams
-  ): Promise<ArtistTopTracks> {
-    let response = await this.request<ArtistTopTracksResponse>(
-      "artist.getTopTracks",
-      params
-    );
-
-    return response.toptracks;
   }
 
   async getArtistPlays(username: string, artist: string): Promise<number> {
@@ -340,20 +188,25 @@ export class LastFMService extends BaseService {
     };
   }
 
-  async tagTopArtists(params: TagTopArtistsParams): Promise<TagTopArtists> {
-    let response = await this.request<TagTopArtistsResponse>(
-      "tag.gettopartists",
-      params
-    );
-    return response.topartists;
-  }
-
-  async trackSearch(params: TrackSearchParams): Promise<TrackSearchResponse> {
-    let response = await this.request<TrackSearchResponse>(
-      "track.search",
-      params
+  async validateRedirect(from: string, to: string): Promise<boolean> {
+    let fromCount = await this.getArtistPlays(
+      config.lastFMVerificationUsername,
+      from
     );
 
-    return response;
+    await this.scrobbleTrack({
+      artist: from,
+      track: `${new Date()}`,
+      timestamp: Math.ceil(new Date().getTime() / 1000),
+    });
+
+    await delay(5000)
+
+    let toCount = await this.getArtistPlays(
+      config.lastFMVerificationUsername,
+      to
+    );
+
+    return toCount === fromCount + 1;
   }
 }
