@@ -3,6 +3,7 @@ export enum ShallowCacheScopedKey {
   InactiveRole = "inactiveRole",
   PurgatoryRole = "purgatoryRole",
   CrownBannedUsers = "crownBannedUsers",
+  Prefixes = "prefixes"
 }
 export type ShallowCacheKey = ShallowCacheGlobalKey | ShallowCacheScopedKey;
 

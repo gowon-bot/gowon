@@ -21,7 +21,11 @@ export default class Help extends BaseCommand {
   commandManager = new CommandManager();
   adminService = new AdminService();
 
+  prefix!: string;
+
   async run(message: Message) {
+    this.prefix = this.gowonService.prefix(this.guild.id);
+
     await this.commandManager.init();
 
     let command = this.parsedArguments.command as string;
@@ -63,7 +67,7 @@ export default class Help extends BaseCommand {
         message.author.avatarURL() || ""
       )
       .setDescription(
-        `Run \`${this.gowonService.prefix}help <command>\` to learn more about specific commands`
+        `Run \`${this.prefix}help <command>\` to learn more about specific commands`
       )
       .addFields(
         Object.keys(groupedCommands).map((gc) => ({
@@ -89,7 +93,7 @@ export default class Help extends BaseCommand {
   }
 
   private async helpForOneCommand(message: Message, commandName: string) {
-    let command = this.commandManager.find(commandName).command;
+    let command = this.commandManager.find(commandName, this.guild.id).command;
 
     if (command instanceof NoCommand) throw new CommandNotFoundError();
     if (!(await this.adminService.can.run(command, message)).passed) {
@@ -133,12 +137,7 @@ export default class Help extends BaseCommand {
             ? "**Usage**:\n" +
               flatDeep([command.usage])
                 .map((u) =>
-                  (
-                    this.gowonService.prefix +
-                    command.friendlyNameWithParent +
-                    " " +
-                    u
-                  )
+                  (this.prefix + command.friendlyNameWithParent + " " + u)
                     .trim()
                     .code()
                 )

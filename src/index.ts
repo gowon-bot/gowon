@@ -27,6 +27,7 @@ async function start() {
 
   client.on("ready", () => {
     console.log(`Logged in as ${client?.user && client.user.tag}!`);
+    handler.setClient(client);
   });
 
   client.on("message", (msg) => {

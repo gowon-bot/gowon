@@ -24,7 +24,7 @@ export class GowonService {
   }
 
   // Instance methods/properties
-  prefix: string = config.prefix;
+  // prefix: string = config.prefix;
   customPrefixes = {
     lastfm: "lfm:",
   };
@@ -36,13 +36,42 @@ export class GowonService {
     crownThreshold: 30,
   };
 
-  get regexSafePrefix(): string {
-    return regexEscape(this.prefix);
+  async init() {
+    let prefixes = await Setting.find({ where: { name: Settings.Prefix } });
+    for (let prefix of prefixes) {
+      this.shallowCache.remember(
+        ShallowCacheScopedKey.Prefixes,
+        prefix.value,
+        prefix.scope!
+      );
+    }
   }
 
-  removeCommandName(string: string, runAs: RunAs): string {
+  prefix(serverID: string): string {
+    return (
+      this.shallowCache.find(ShallowCacheScopedKey.Prefixes, serverID) ||
+      config.defaultPrefix
+    );
+  }
+
+  setPrefix(serverID: string, prefix: string): string {
+    return this.shallowCache.remember(
+      ShallowCacheScopedKey.Prefixes,
+      prefix,
+      serverID
+    );
+  }
+
+  regexSafePrefix(serverID: string): string {
+    return regexEscape(this.prefix(serverID));
+  }
+
+  removeCommandName(string: string, runAs: RunAs, serverID: string): string {
     return string.replace(
-      new RegExp(`${this.regexSafePrefix}${runAs.toRegexString()}`, "i"),
+      new RegExp(
+        `${this.regexSafePrefix(serverID)}${runAs.toRegexString()}`,
+        "i"
+      ),
       ""
     );
   }

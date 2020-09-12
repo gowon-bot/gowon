@@ -55,7 +55,11 @@ export class ArgumentParser extends Parser {
     let mentions = this.mentionParser.parse(message);
 
     let inputs = this.parseInputs(
-      this.gowonService.removeCommandName(messageString, runAs)
+      this.gowonService.removeCommandName(
+        messageString,
+        runAs,
+        message.guild!.id
+      )
     );
 
     this.parsedArguments = { ...mentions, ...inputs };

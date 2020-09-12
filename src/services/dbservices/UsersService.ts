@@ -10,10 +10,8 @@ import { Perspective } from "../../lib/Perspective";
 
 export class UsersService extends BaseService {
   async getUsername(discordID: string): Promise<string> {
-    this.log(
-      `fetching username with discordID ${discordID}`
-    );
-    let user = await User.findOne({ where: { discordID} });
+    this.log(`fetching username with discordID ${discordID}`);
+    let user = await User.findOne({ where: { discordID } });
 
     if (user && user.lastFMUsername) {
       return user.lastFMUsername.toLowerCase();
@@ -100,9 +98,9 @@ export class UsersService extends BaseService {
     return user;
   }
 
-  async countUsers(serverID: string): Promise<number> {
-    this.log(`counting users in the server ${serverID}`);
-    return await User.count({ where: { serverID } });
+  async countUsers(): Promise<number> {
+    this.log(`counting users}`);
+    return await User.count();
   }
 
   async getUserFromLastFMUsername(username: string): Promise<User | undefined> {

@@ -42,8 +42,8 @@ export default class Taste extends LastFMBaseCommand {
       },
       username: {
         regex: /[\w\-]/gi,
-        index: 0
-      }
+        index: 0,
+      },
     },
     mentions: {
       user: {
@@ -69,7 +69,7 @@ export default class Taste extends LastFMBaseCommand {
     let {
       senderUsername: userOneUsername,
       mentionedUsername: userTwoUsername,
-    } = await this.parseMentionedUsername({inputArgumentName: "x  "});
+    } = await this.parseMentionedUsername({ inputArgumentName: "user" });
 
     if (!userTwoUsername) {
       await this.reply("Please specify a user to compare taste with!");

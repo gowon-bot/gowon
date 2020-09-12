@@ -3,7 +3,7 @@ import { PermissionsChildCommand } from "./PermissionsChildCommand";
 
 export class Help extends PermissionsChildCommand {
   description = "Shows help about permissions";
-  usage = ""
+  usage = "";
 
   arguments = {};
   async prerun() {}
@@ -14,8 +14,12 @@ export class Help extends PermissionsChildCommand {
         .setTitle(`Permissions help for ${message.author.username}`)
         .addField(
           "Disabling commands",
-          `You can disable a command by running \`${this.gowonService.prefix}disable <commandName>\`.\
-          This will disable for all users. To enable it again, run \`${this.gowonService.prefix}enable <commandName>\``
+          `You can disable a command by running \`${this.gowonService.prefix(
+            this.guild.id
+          )}disable <commandName>\`.\
+          This will disable for all users. To enable it again, run \`${this.gowonService.prefix(
+            this.guild.id
+          )}enable <commandName>\``
         )
         .addField(
           "White- and blacklisting",

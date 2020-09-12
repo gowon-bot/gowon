@@ -105,7 +105,12 @@ export class CrownsHistoryService extends BaseService {
     });
   }
 
-  async ban(user: User, banner: DiscordUser, banTarget: DiscordUser, serverID: string) {
+  async ban(
+    user: User,
+    banner: DiscordUser,
+    banTarget: DiscordUser,
+    serverID: string
+  ) {
     let crowns = await this.crownsService.listTopCrowns(
       user.discordID,
       serverID,
@@ -117,7 +122,12 @@ export class CrownsHistoryService extends BaseService {
     });
   }
 
-  async unban(user: User, unbanner: DiscordUser, unbanTarget: DiscordUser, serverID: string) {
+  async unban(
+    user: User,
+    unbanner: DiscordUser,
+    unbanTarget: DiscordUser,
+    serverID: string
+  ) {
     let crowns = await this.crownsService.listTopCrowns(
       user.discordID,
       serverID,

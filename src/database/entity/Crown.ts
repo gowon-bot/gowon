@@ -100,21 +100,18 @@ export class Crown extends BaseEntity {
 
     return ((await this.query(
       `SELECT count, rank FROM (
-      SELECT *, ROW_NUMBER() OVER (
-        ORDER BY count DESC
-      ) AS rank FROM (
-          SELECT
-              count(id) AS count,
-              "userId"
-          FROM crowns
-          WHERE crowns."serverID" LIKE $1
-            AND "deletedAt" IS NULL
-          GROUP BY "userId"
-          ORDER BY 1 desc
-      ) t
-      LEFT JOIN (
-          SELECT * FROM users
-        ) u    
+        SELECT *, ROW_NUMBER() OVER (
+          ORDER BY count DESC
+        ) AS rank FROM (
+            SELECT
+                count(id) AS count,
+                "userId"
+            FROM crowns
+            WHERE crowns."serverID" LIKE $1
+            GROUP BY "userId"
+            ORDER BY 1 desc
+        ) t
+        LEFT JOIN users u
           ON u.id = t."userId"
       ) ranks
       WHERE "userId" = $2

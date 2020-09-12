@@ -45,7 +45,7 @@ export interface Command {
   children?: CommandManager;
   parentName?: string;
   parent?: ParentCommand;
-  getChild(...names: string[]): Command | undefined;
+  getChild(name: string, serverID: string): Command | undefined;
 }
 
 export abstract class BaseCommand implements Command {
@@ -84,10 +84,8 @@ export abstract class BaseCommand implements Command {
   hasChildren = false;
   children?: CommandManager;
   parentName?: string;
-  hasChild(..._: string[]): boolean {
-    return false;
-  }
-  getChild(..._: string[]): Command | undefined {
+  
+  getChild(_: string, __: string): Command | undefined {
     return undefined;
   }
 

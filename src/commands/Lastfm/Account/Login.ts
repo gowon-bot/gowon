@@ -19,7 +19,13 @@ export default class Login extends LastFMBaseCommand {
 
     if (!username)
       throw new LogicError(
+<<<<<<< HEAD
         `please enter a username (\`${this.gowonService.prefix}login <username>\`)`
+=======
+        `please enter a username (\`${this.gowonService.prefix(
+          this.guild.id
+        )}login <username>\`)`
+>>>>>>> 166ae3f6699cd26f430a29f90d873644adff9f30
       );
 
     if (await this.lastFMService.userExists(username)) {
