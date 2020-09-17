@@ -46,6 +46,11 @@ export const typeDefs = gql`
     happenedAt: Date!
   }
 
+  type Redirect {
+    from: String!
+    to: String!
+  }
+
   type Query {
     # User queries
     user(id: ID!): User
@@ -57,6 +62,9 @@ export const typeDefs = gql`
     crownsByUser(discordID: String): [Crown!]!
     crownsByServer(serverID: String!): [Crown!]!
     crownHistory(crownID: ID!): [CrownEvent!]!
+
+    # Redirects
+    artistRedirects(artistName: String!): [Redirect!]!
   }
 
   type Mutation {

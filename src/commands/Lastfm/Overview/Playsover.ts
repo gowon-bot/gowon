@@ -22,11 +22,11 @@ export class Playsover extends OverviewChildCommand {
       .setColor(colour).setDescription(`Among ${
       perspective.possessivePronoun
     } top 1000 artists, ${perspective.plusToHave}...
-  - ${thousand.bold()} artists with 1000+ scrobbles
-  - ${fivehundred.bold()} artists with 500+ scrobbles
-  - ${twofifty.bold()} artists with 250+ scrobbles
-  - ${hundred.bold()} artists with 100+ scrobbles
-  - ${fifty.bold()} artists with 50+ scrobbles`);
+  - ${thousand.asString.bold()} artists with 1000+ scrobbles
+  - ${fivehundred.asString.bold()} artists with 500+ scrobbles
+  - ${twofifty.asString.bold()} artists with 250+ scrobbles
+  - ${hundred.asString.bold()} artists with 100+ scrobbles
+  - ${fifty.asString.bold()} artists with 50+ scrobbles`);
 
     await this.send(embed);
   }

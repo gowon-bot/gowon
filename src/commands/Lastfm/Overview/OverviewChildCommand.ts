@@ -18,6 +18,7 @@ export abstract class OverviewChildCommand extends LastFMBaseChildCommand {
   calculator!: OverviewStatsCalculator;
   username!: string;
   senderUsername!: string;
+  discordID?: string;
 
   async getAuthorDetails(): Promise<{
     badge: string;
@@ -76,6 +77,7 @@ export abstract class OverviewChildCommand extends LastFMBaseChildCommand {
     }
 
     this.username = username;
+    this.discordID = user.id;
 
     this.calculator = new OverviewStatsCalculator(
       username,

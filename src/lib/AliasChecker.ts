@@ -1,4 +1,5 @@
-import { Command, NoCommand } from "./command/BaseCommand";
+import { NoCommand } from "./command/BaseCommand";
+import { Command } from "./command/Command";
 import escapeStringRegexp from "escape-string-regexp";
 import { GowonService } from "../services/GowonService";
 import { ParentCommand } from "./command/ParentCommand";

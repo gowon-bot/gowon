@@ -4,6 +4,7 @@ import { UsersService } from "../services/dbservices/UsersService";
 import { typeDefs } from "./graphql/schema.gql";
 import userResolvers from "./resolvers/userResolvers";
 import crownResolvers from "./resolvers/crownResolvers";
+import redirectResolvers from "./resolvers/redirectResolvers";
 
 export class GraphQLAPI {
   usersService = new UsersService();
@@ -17,6 +18,7 @@ export class GraphQLAPI {
         Query: {
           ...userResolvers.queries,
           ...crownResolvers.queries,
+          ...redirectResolvers.queries,
         },
         Mutation: {
           ...userResolvers.mutations,

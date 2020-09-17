@@ -146,6 +146,8 @@ export class CrownsHistoryService extends BaseService {
       -1
     );
 
+    console.log(crowns)
+
     this.logEvent(crowns, CrownEventString.userOptedOut, discordUser.user);
   }
 

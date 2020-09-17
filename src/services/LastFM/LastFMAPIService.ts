@@ -251,12 +251,12 @@ export class LastFMAPIService extends BaseService {
     return await this.authRequest("auth.getSession", params);
   }
 
-  async scrobbleTrack(params: ScrobbleParams) {
+  async scrobbleTrack(params: ScrobbleParams, sk?: string) {
     return await this.authRequest(
       "track.scrobble",
       {
         ...params,
-        sk: config.lastFMVerificationSessionKey,
+        sk: sk || config.lastFMVerificationSessionKey,
       },
       { post: true }
     );

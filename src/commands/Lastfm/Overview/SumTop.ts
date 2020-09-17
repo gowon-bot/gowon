@@ -37,9 +37,9 @@ export class SumTop extends OverviewChildCommand {
           top,
           "artist"
         ).bold()} make up ${numberDisplay(
-          sumtop,
+          sumtop.asNumber,
           "scrobble"
-        ).bold()} (${sumtoppct.bold()}% of ${
+        ).bold()} (${sumtoppct.asString.bold()}% of ${
           perspective.possessivePronoun
         } total scrobbles!)`
       );

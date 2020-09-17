@@ -29,10 +29,10 @@ export class Crowns extends OverviewChildCommand {
         crownRank!.count,
         "crown"
       ).bold()} (ranked ${getOrdinal(crownRank!.rank.toInt()).italic()})
-        For every ${numberDisplay(apc!, "eligible artist").bold()}, ${
+        For every ${numberDisplay(apc!.asNumber, "eligible artist").bold()}, ${
         perspective.plusToHave
       } a crown
-  For every ${numberDisplay(spc!, "scrobble").bold()}, ${
+  For every ${numberDisplay(spc!.asNumber, "scrobble").bold()}, ${
         perspective.plusToHave
       } a crown
         `);

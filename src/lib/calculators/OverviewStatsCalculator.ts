@@ -14,6 +14,14 @@ import { CrownRankResponse } from "../../database/entity/Crown";
 import { log } from "mathjs";
 import { LogicError } from "../../errors";
 
+export class Stat {
+  constructor(public asNumber: number, public asString: string) {}
+
+  toString(): string {
+    return this.asString;
+  }
+}
+
 export class OverviewStatsCalculator {
   private cache: {
     userInfo?: UserInfo;
@@ -119,13 +127,16 @@ export class OverviewStatsCalculator {
     return (await this.userInfo()).country;
   }
 
-  async totalScrobbles(): Promise<string> {
+  async totalScrobbles(): Promise<Stat> {
     let userInfo = await this.userInfo();
 
-    return numberDisplay(userInfo.playcount);
+    return new Stat(
+      userInfo.playcount.toInt(),
+      numberDisplay(userInfo.playcount)
+    );
   }
 
-  async avgPerDay(): Promise<string> {
+  async avgPerDay(): Promise<Stat> {
     let userInfo = await this.userInfo();
 
     let scrobbles = userInfo.playcount.toInt();
@@ -136,100 +147,118 @@ export class OverviewStatsCalculator {
         .diff(moment().startOf("day"), "days")
     );
 
-    return (scrobbles / diff).toFixed(0);
+    return new Stat(scrobbles / diff, (scrobbles / diff).toFixed(0));
   }
 
-  async totalArtists(): Promise<string> {
+  async totalArtists(): Promise<Stat> {
     let topArtists = await this.topArtists();
 
-    return topArtists["@attr"].total;
+    return new Stat(
+      topArtists["@attr"].total.toInt(),
+      numberDisplay(topArtists["@attr"].total)
+    );
   }
 
-  async avgScrobblesPerArtist(): Promise<string> {
+  async avgScrobblesPerArtist(): Promise<Stat> {
     let [userInfo, topArtists] = await Promise.all([
       this.userInfo(),
       this.topArtists(),
     ]);
 
-    return (~~(
+    let average = ~~(
       userInfo.playcount.toInt() / topArtists["@attr"].total.toInt()
-    )).toFixed(0);
+    );
+
+    return new Stat(average, average.toFixed(0));
   }
 
-  async totalAlbums(): Promise<string> {
+  async totalAlbums(): Promise<Stat> {
     let topAlbums = await this.topAlbums();
 
-    return topAlbums["@attr"].total;
+    return new Stat(
+      topAlbums["@attr"].total.toInt(),
+      numberDisplay(topAlbums["@attr"].total)
+    );
   }
 
-  async avgScrobblesPerAlbum(): Promise<string> {
+  async avgScrobblesPerAlbum(): Promise<Stat> {
     let [userInfo, topAlbums] = await Promise.all([
       this.userInfo(),
       this.topAlbums(),
     ]);
 
-    return (~~(
+    let average = ~~(
       userInfo.playcount.toInt() / topAlbums["@attr"].total.toInt()
-    )).toFixed(0);
+    );
+
+    return new Stat(average, average.toFixed(0));
   }
 
-  async totalTracks(): Promise<string> {
+  async totalTracks(): Promise<Stat> {
     let topTracks = await this.topTracks();
 
-    return topTracks["@attr"].total;
+    return new Stat(
+      topTracks["@attr"].total.toInt(),
+      numberDisplay(topTracks["@attr"].total)
+    );
   }
 
-  async avgScrobblesPerTrack(): Promise<string> {
+  async avgScrobblesPerTrack(): Promise<Stat> {
     let [userInfo, topTracks] = await Promise.all([
       this.userInfo(),
       this.topTracks(),
     ]);
 
-    return (~~(
+    let average = ~~(
       userInfo.playcount.toInt() / topTracks["@attr"].total.toInt()
-    )).toFixed(0);
+    );
+
+    return new Stat(average, average.toFixed(0));
   }
 
-  async albumsPerArtist(): Promise<string> {
+  async albumsPerArtist(): Promise<Stat> {
     let [topArtists, topAlbums] = await Promise.all([
       this.topArtists(),
       this.topAlbums(),
     ]);
 
-    let apa = (
-      topAlbums["@attr"].total.toInt() / topArtists["@attr"].total.toInt()
-    ).toFixed(2);
+    let apa =
+      topAlbums["@attr"].total.toInt() / topArtists["@attr"].total.toInt();
 
-    return apa === "Infinity" ? "0" : apa;
+    apa = apa === Infinity ? 0 : apa;
+
+    return new Stat(apa, apa.toFixed(2));
   }
 
-  async tracksPerArtist(): Promise<string> {
+  async tracksPerArtist(): Promise<Stat> {
     let [topArtists, topTracks] = await Promise.all([
       this.topArtists(),
       this.topTracks(),
     ]);
 
-    let tpa = (
-      topTracks["@attr"].total.toInt() / topArtists["@attr"].total.toInt()
-    ).toFixed(2);
+    let tpa =
+      topTracks["@attr"].total.toInt() / topArtists["@attr"].total.toInt();
 
-    return tpa === "Infinity" ? "0" : tpa;
+    tpa = tpa === Infinity ? 0 : tpa;
+
+    return new Stat(tpa, tpa.toFixed(2));
   }
 
-  async tracksPerAlbum(): Promise<string> {
+  async tracksPerAlbum(): Promise<Stat> {
     let [topAlbums, topTracks] = await Promise.all([
       this.topAlbums(),
       this.topTracks(),
     ]);
 
-    let tpl = (
-      topTracks["@attr"].total.toInt() / topAlbums["@attr"].total.toInt()
-    ).toFixed(2);
+    let tpl =
+      topTracks["@attr"].total.toInt() / topAlbums["@attr"].total.toInt();
 
-    return tpl === "Infinity" ? "0" : tpl;
+    tpl = tpl === Infinity ? 0 : tpl;
+
+    return new Stat(tpl, tpl.toFixed(2));
   }
 
-  async hIndex(): Promise<string> {
+  async hIndex(): Promise<Stat> {
     let topArtists = await this.topArtists();
 
     for (
@@ -240,13 +269,16 @@ export class OverviewStatsCalculator {
       const artist = topArtists.artist[artistIndex];
 
       if (artist.playcount.toInt() <= artistIndex) {
-        return (artistIndex || 1).toLocaleString();
+        return new Stat(artistIndex || 1, (artistIndex || 1).toLocaleString());
       }
     }
-    return "1";
+    return new Stat(1, "1");
   }
 
-  async top50Percent(): Promise<string> {
+  async top50Percent(): Promise<{
+    count: Stat;
+    total: Stat;
+  }> {
     let [topArtists, userInfo] = await Promise.all([
       this.topArtists(),
       this.userInfo(),
@@ -265,64 +297,79 @@ export class OverviewStatsCalculator {
       sum += artist.playcount.toInt();
 
       if (sum > halfOfScrobbles) {
-        return (artistIndex || 1).toLocaleString();
+        let count = artistIndex || 1;
+        return {
+          count: new Stat(count, count.toLocaleString()),
+          total: new Stat(sum, sum.toLocaleString()),
+        };
       }
     }
 
-    return "1000+";
+    return {
+      count: new Stat(1000, "1000+"),
+      total: new Stat(sum, sum.toLocaleString()),
+    };
   }
 
-  async sumTop(number = 10): Promise<number> {
-    return (await this.topArtists()).artist
+  async sumTop(number = 10): Promise<Stat> {
+    let sumTop = (await this.topArtists()).artist
       .slice(0, number)
       .reduce((sum, artist) => sum + artist.playcount.toInt(), 0);
+
+    return new Stat(sumTop, sumTop.toLocaleString());
   }
 
-  async sumTopPercent(number = 10): Promise<string> {
+  async sumTopPercent(number = 10): Promise<Stat> {
     let totalScrobbles = (await this.userInfo()).playcount.toInt();
+    let topArtists = (await this.topArtists()).artist
+      .slice(0, number)
+      .reduce((sum, artist) => sum + artist.playcount.toInt(), 0);
 
-    return calculatePercent(
-      (await this.topArtists()).artist
-        .slice(0, number)
-        .reduce((sum, artist) => sum + artist.playcount.toInt(), 0),
-      totalScrobbles
+    return new Stat(
+      topArtists / totalScrobbles,
+      calculatePercent(topArtists, totalScrobbles)
     );
   }
 
-  async playsOver(number: number): Promise<string> {
-    return (await this.topArtists()).artist
-      .filter((a) => a.playcount.toInt() >= number)
-      .length.toLocaleString();
+  async playsOver(number: number): Promise<Stat> {
+    let po = (await this.topArtists()).artist.filter(
+      (a) => a.playcount.toInt() >= number
+    ).length;
+
+    return new Stat(po, po.toLocaleString());
   }
 
-  async artistsPerCrown(): Promise<string | undefined> {
+  async artistsPerCrown(): Promise<Stat | undefined> {
     if (!this.userID) return undefined;
     let [crownsCount, playsOver] = await Promise.all([
       this.crownsCount(),
       this.playsOver(30),
     ]);
 
-    return (playsOver.toInt() / crownsCount!).toFixed(2);
+    return new Stat(
+      playsOver.asNumber / crownsCount!,
+      (playsOver.asNumber / crownsCount!).toLocaleString()
+    );
   }
 
-  async scrobblesPerCrown(): Promise<string | undefined> {
+  async scrobblesPerCrown(): Promise<Stat | undefined> {
     if (!this.userID) return undefined;
     let [crownsCount, userInfo] = await Promise.all([
       this.crownsCount(),
       this.userInfo(),
     ]);
 
-    return (userInfo.playcount.toInt() / crownsCount!).toFixed(2);
+    return new Stat(
+      userInfo.playcount.toInt() / crownsCount!,
+      (userInfo.playcount.toInt() / crownsCount!).toFixed(2)
+    );
   }
 
   async breadth(): Promise<{ rating: number; ratingString: string }> {
-    let top50 = (await this.top50Percent())
-      .replace(",", "")
-      .replace("+", "")
-      .toInt();
-    let hindex = (await this.hIndex()).replace(",", "").toInt();
-    let scrobbles = (await this.totalScrobbles()).replace(",", "").toInt();
-    let sumTop = await this.sumTop();
+    let top50 = (await this.top50Percent()).count.asNumber;
+    let hindex = (await this.hIndex()).asNumber;
+    let scrobbles = (await this.totalScrobbles()).asNumber;
+    let sumTop = (await this.sumTop()).asNumber;
 
     if (scrobbles < 1000)
       throw new LogicError(
@@ -331,23 +378,23 @@ export class OverviewStatsCalculator {
 
     let rating = log((top50 * Math.pow(hindex, 1.5)) / sumTop + 1, 2) * 5;
 
-    //   let ratingString =
-    //     rating > 200
-    //       ? "what the fuck"
-    //       : rating > 50
-    //       ? "really high!"
-    //       : rating > 20
-    //       ? "very high"
-    //       : rating > 10
-    //       ? "high"
-    //       : rating > 5
-    //       ? "medium"
-    //       : rating > 2
-    //       ? "low"
-    //       : rating > 1
-    //       ? "very low"
-    //       : ".... really?";
+    let ratingString =
+      rating > 200
+        ? "what the fuck"
+        : rating > 50
+        ? "really high!"
+        : rating > 20
+        ? "very high"
+        : rating > 10
+        ? "high"
+        : rating > 5
+        ? "medium"
+        : rating > 2
+        ? "low"
+        : rating > 1
+        ? "very low"
+        : ".... really?";
 
-    return { rating, ratingString: "h" };
+    return { rating, ratingString };
   }
 }

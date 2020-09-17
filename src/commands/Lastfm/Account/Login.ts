@@ -6,6 +6,7 @@ import { LogicError } from "../../../errors";
 export default class Login extends LastFMBaseCommand {
   description = "Logs you into lastfm";
   subcategory = "accounts";
+  aliases = ["fmset"];
   usage = "username";
 
   arguments: Arguments = {

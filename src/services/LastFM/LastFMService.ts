@@ -196,11 +196,11 @@ export class LastFMService extends LastFMAPIService {
 
     await this.scrobbleTrack({
       artist: from,
-      track: `${new Date()}`,
+      track: `${from} → ${to}`,
       timestamp: Math.ceil(new Date().getTime() / 1000),
     });
 
-    await delay(5000)
+    await delay(5000);
 
     let toCount = await this.getArtistPlays(
       config.lastFMVerificationUsername,

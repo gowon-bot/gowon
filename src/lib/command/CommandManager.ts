@@ -1,4 +1,5 @@
-import { Command, NoCommand } from "./BaseCommand";
+import { NoCommand } from "./BaseCommand";
+import { Command } from "./Command";
 import { promisify } from "util";
 import _glob from "glob";
 import { AliasChecker, RunAs } from "../AliasChecker";
