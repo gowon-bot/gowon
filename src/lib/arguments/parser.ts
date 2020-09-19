@@ -46,6 +46,8 @@ export abstract class Parser {
         }
       }
 
+      slicedArray = slicedArray.filter((e) => !!e);
+
       argument = options.join ? slicedArray.join(" ") : slicedArray;
     }
 

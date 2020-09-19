@@ -182,8 +182,6 @@ export abstract class BaseCommand implements Command {
     try {
       this.parsedArguments = this.parseArguments(runAs);
 
-      new ValidationChecker(this.parsedArguments, this.validation).validate();
-
       for (let delegate of this.delegates) {
         if (delegate.when(this.parsedArguments)) {
           let command = new delegate.delegateTo();
@@ -195,6 +193,9 @@ export abstract class BaseCommand implements Command {
       }
 
       this.logger.logCommand(this, message, runAs.toArray().join(" "));
+
+      new ValidationChecker(this.parsedArguments, this.validation).validate();
+
       await this.prerun(message);
       await this.run(message, runAs);
     } catch (e) {

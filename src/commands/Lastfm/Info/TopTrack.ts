@@ -13,7 +13,7 @@ export default class TopTrack extends InfoCommand {
   arguments: Arguments = {
     inputs: {
       artist: { index: 0, splitOn: "|" },
-      position: {
+      positions: {
         index: { start: 1, stop: 2 },
         splitOn: "|",
         join: false,
@@ -25,12 +25,12 @@ export default class TopTrack extends InfoCommand {
   async run() {
     let artist = this.parsedArguments.artist as string,
       position = {
-        start: (this.parsedArguments.position as string[])[0].toInt(),
+        start: (this.parsedArguments.positions as string[])[0].toInt(),
         end: -1,
       };
 
     position.end =
-      (this.parsedArguments.position as string[])[1]?.toInt() ||
+      (this.parsedArguments.positions as string[])[1]?.toInt() ||
       position.start + 2;
 
     if (position.end < position.start)

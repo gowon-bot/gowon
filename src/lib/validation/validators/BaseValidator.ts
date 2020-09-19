@@ -1,7 +1,9 @@
 import { ClientError } from "../../../errors";
 import { Validator } from "../ValidationChecker";
 
-export interface ValidatorOptions {}
+export interface ValidatorOptions {
+  message?: string;
+}
 
 export class ValidationError extends ClientError {
   name = "ValidationError";
@@ -13,7 +15,7 @@ export abstract class BaseValidator<
   constructor(protected options: T) {}
 
   protected throw(message: string) {
-    throw new ValidationError(message);
+    throw new ValidationError(this.options.message || message);
   }
 
   abstract validate(arg: any | undefined, argName: string): void;

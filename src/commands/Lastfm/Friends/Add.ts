@@ -2,6 +2,8 @@ import { FriendsChildCommand } from "./FriendsChildCommand";
 import { Message, MessageEmbed } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { LogicError, AlreadyFriendsError } from "../../../errors";
+import { Validation } from "../../../lib/validation/ValidationChecker";
+import { validators } from "../../../lib/validation/validators";
 
 export class Add extends FriendsChildCommand {
   description = "Add a friend";
@@ -20,6 +22,15 @@ export class Add extends FriendsChildCommand {
     },
   };
 
+  validation: Validation = {
+    user: {
+      validator: new validators.Required({
+        message: "please specify a friend to add!",
+      }),
+      dependsOn: ["friendUsername"],
+    },
+  };
+
   async prerun() {}
 
   async run(message: Message) {
@@ -32,7 +43,7 @@ export class Add extends FriendsChildCommand {
     });
 
     if (username === senderUsername)
-      throw new LogicError("please specify a user to add as a friend!");
+      throw new LogicError("you can't add yourself as a friend!");
 
     let user = await this.usersService.getUser(message.author.id);
 

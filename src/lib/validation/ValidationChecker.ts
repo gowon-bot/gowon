@@ -8,36 +8,58 @@ export interface Validator {
   ): void;
 }
 
+type ValidatorOptions =
+  | Validator
+  | { validator: Validator; dependsOn?: string[]; friendlyName?: string };
+
 export interface Validation {
-  [key: string]: Validator[] | { validators: Validator[]; dependsOn: string[] };
+  [key: string]: Array<ValidatorOptions> | ValidatorOptions;
+}
+
+function isValidator(validator: ValidatorOptions): validator is Validator {
+  return (validator as Validator).validate !== undefined;
 }
 
 export class ValidationChecker {
   constructor(private args: ParsedArguments, private validation: Validation) {}
 
+  runValidator(
+    validator: ValidatorOptions,
+    argumentName: string,
+    argumentValue: any
+  ): void {
+    if (isValidator(validator)) {
+      validator.validate(argumentValue, argumentName);
+    } else {
+      let dependsOn = (validator?.dependsOn || []).reduce((acc, arg) => {
+        acc[arg] = this.args[arg];
+
+        return acc;
+      }, {} as ParsedArguments);
+
+      validator.validator.validate(
+        argumentValue,
+        validator.friendlyName || argumentName,
+        dependsOn
+      );
+    }
+  }
+
   validate() {
     let argumentEntries = Object.entries(this.args);
 
     for (let [argumentName, argumentValue] of argumentEntries) {
-      let validators = this.validation[argumentName];
+      let argumentValidators = this.validation[argumentName];
 
-      if (!validators) continue;
+      if (!argumentValidators) continue;
 
-      if (validators instanceof Array) {
-        validators.forEach((v) => v.validate(argumentValue, argumentName));
-      } else {
-        let dependsOn = validators.dependsOn;
-        validators.validators.forEach((v) =>
-          v.validate(
-            argumentValue,
-            argumentName,
-            dependsOn.reduce((acc, arg) => {
-              acc[arg] = this.args[arg];
+      let validators =
+        argumentValidators instanceof Array
+          ? argumentValidators
+          : [argumentValidators];
 
-              return acc;
-            }, {} as ParsedArguments)
-          )
-        );
+      for (let validator of validators) {
+        this.runValidator(validator, argumentName, argumentValue);
       }
     }
   }

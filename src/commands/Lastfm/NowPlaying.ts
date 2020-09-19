@@ -62,7 +62,7 @@ export default class NowPlaying extends LastFMBaseCommand {
     let links = LinkGenerator.generateTrackLinksForEmbed(nowPlaying);
 
     if (
-      nowPlaying["@attr"].nowplaying &&
+      nowPlaying["@attr"]?.nowplaying &&
       this.client.isAlphaTester(this.author.id)
     ) {
       this.lastFMService.scrobbleTrack(

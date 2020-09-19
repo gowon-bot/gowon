@@ -1,6 +1,7 @@
 import { Arguments } from "../../lib/arguments/arguments";
 import { LastFMBaseCommand } from "./LastFMBaseCommand";
-import { LogicError } from "../../errors";
+import { Validation } from "../../lib/validation/ValidationChecker";
+import { validators } from "../../lib/validation/validators";
 
 export default class PartyTime extends LastFMBaseCommand {
   aliases = ["pt"];
@@ -9,15 +10,20 @@ export default class PartyTime extends LastFMBaseCommand {
 
   arguments: Arguments = {
     inputs: {
-      time: { index: 0, regex: /[0-9]{1,2}/, number: true, default: 10 },
+      time: { index: 0, regex: /[0-9]+/, number: true, default: 10 },
     },
+  };
+
+  validation: Validation = {
+    time: new validators.Range({
+      min: 5,
+      max: 15,
+      message: "Please enter a reasonable time. 😐",
+    }),
   };
 
   async run() {
     let time = this.parsedArguments.time as number;
-
-    if (time < 5 || time > 15)
-      throw new LogicError("Please enter a reasonable time. 😐");
 
     await this.send("The party begins in...".bold());
 

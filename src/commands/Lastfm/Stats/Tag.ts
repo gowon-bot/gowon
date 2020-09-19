@@ -3,6 +3,8 @@ import { numberDisplay } from "../../../helpers";
 import { calculatePercent } from "../../../helpers/stats";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { Paginator } from "../../../lib/Paginator";
+import { Validation } from "../../../lib/validation/ValidationChecker";
+import { validators } from "../../../lib/validation/validators";
 import { TopArtists } from "../../../services/LastFM/LastFMService.types";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
@@ -29,6 +31,10 @@ export default class Tag extends LastFMBaseCommand {
         index: { start: 0 },
       },
     },
+  };
+
+  validation: Validation = {
+    tag: new validators.Required({}),
   };
 
   async run() {

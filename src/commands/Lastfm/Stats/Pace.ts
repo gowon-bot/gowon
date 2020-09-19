@@ -10,6 +10,8 @@ import { PaceCalculator } from "../../../lib/calculators/PaceCalculator";
 import { LogicError } from "../../../errors";
 import { numberDisplay, dateDisplay } from "../../../helpers";
 import moment from "moment";
+import { Validation } from "../../../lib/validation/ValidationChecker";
+import { validators } from "../../../lib/validation/validators";
 
 export default class Pace extends LastFMBaseCommand {
   aliases = ["pc"];
@@ -44,10 +46,20 @@ export default class Pace extends LastFMBaseCommand {
       },
       milestone: {
         index: 0,
-        regex: /[0-9]{1,}(?!\w)(?! [a-z])/g,
+        regex: /[0-9]+(?!\w)(?! [a-z])/g,
         number: true,
       },
     },
+  };
+
+  validation: Validation = {
+    milestone: [
+      new validators.Range({ min: 1 }),
+      new validators.Range({
+        max: 1000,
+        message: "you probably won't be alive to witness that milestone...",
+      }),
+    ],
   };
 
   async run() {
@@ -55,11 +67,6 @@ export default class Pace extends LastFMBaseCommand {
       humanReadableTimeRange = this.parsedArguments
         .humanReadableTimeRange as string,
       milestone = this.parsedArguments.milestone as number | undefined;
-
-    if (milestone && milestone > 10000000)
-      throw new LogicError(
-        "you probably won't be alive to witness that milestone..."
-      );
 
     let { username, perspective } = await this.parseMentionedUsername();
 

@@ -1,5 +1,7 @@
 import { MessageEmbed } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
+import { Validation } from "../../../lib/validation/ValidationChecker";
+import { validators } from "../../../lib/validation/validators";
 import { RedirectsChildCommand } from "./RedirectsChildCommand";
 
 export class Remove extends RedirectsChildCommand {
@@ -10,6 +12,10 @@ export class Remove extends RedirectsChildCommand {
     inputs: {
       from: { index: { start: 0 } },
     },
+  };
+
+  validation: Validation = {
+    from: { validator: new validators.Required({}), friendlyName: "redirect" },
   };
 
   async run() {

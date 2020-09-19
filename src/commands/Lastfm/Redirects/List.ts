@@ -1,6 +1,8 @@
 import { MessageEmbed } from "discord.js";
 import { LogicError } from "../../../errors";
 import { Arguments } from "../../../lib/arguments/arguments";
+import { Validation } from "../../../lib/validation/ValidationChecker";
+import { validators } from "../../../lib/validation/validators";
 import { RedirectsChildCommand } from "./RedirectsChildCommand";
 
 export class List extends RedirectsChildCommand {
@@ -11,6 +13,10 @@ export class List extends RedirectsChildCommand {
     inputs: {
       to: { index: 0, splitOn: "|" },
     },
+  };
+
+  validation: Validation = {
+    to: { validator: new validators.Required({}), friendlyName: "artist" },
   };
 
   async run() {

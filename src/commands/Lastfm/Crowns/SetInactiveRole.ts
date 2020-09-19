@@ -16,7 +16,9 @@ export class SetInactiveRole extends CrownsChildCommand {
     );
 
     let embed = new MessageEmbed().setDescription(
-      `Set the inactive role for crowns to ${inactiveRole.name}`
+      inactiveRole.name
+        ? `Set the inactive role for crowns to ${inactiveRole.name}`
+        : `Cleared the inactive role`
     );
 
     await this.send(embed);

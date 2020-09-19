@@ -2,6 +2,8 @@ import { FriendsChildCommand } from "./FriendsChildCommand";
 import { Message, MessageEmbed } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { LogicError } from "../../../errors";
+import { Validation } from "../../../lib/validation/ValidationChecker";
+import { validators } from "../../../lib/validation/validators";
 
 export class Remove extends FriendsChildCommand {
   description = "Remove a friend";
@@ -20,6 +22,15 @@ export class Remove extends FriendsChildCommand {
     },
   };
 
+  validation: Validation = {
+    user: {
+      validator: new validators.Required({
+        message: "please specify a friend to remove!",
+      }),
+      dependsOn: ["friendUsername"],
+    },
+  };
+
   async prerun() {}
 
   async run(message: Message) {
@@ -28,7 +39,7 @@ export class Remove extends FriendsChildCommand {
     });
 
     if (username === senderUsername)
-      throw new LogicError("Please specify a user to remove as a friend!");
+      throw new LogicError("you can't be friends with yourself!");
 
     let user = await this.usersService.getUser(message.author.id);
 

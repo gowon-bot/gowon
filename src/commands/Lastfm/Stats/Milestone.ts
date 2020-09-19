@@ -1,8 +1,10 @@
 import { Arguments } from "../../../lib/arguments/arguments";
 import { getOrdinal } from "../../../helpers";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
-import { LogicError, BadLastFMResponseError } from "../../../errors";
+import { BadLastFMResponseError } from "../../../errors";
 import { TrackEmbed } from "../../../helpers/Embeds";
+import { Validation } from "../../../lib/validation/ValidationChecker";
+import { validators } from "../../../lib/validation/validators";
 
 export default class Milestone extends LastFMBaseCommand {
   aliases = ["mls"];
@@ -13,8 +15,8 @@ export default class Milestone extends LastFMBaseCommand {
   arguments: Arguments = {
     inputs: {
       milestone: {
-        regex: /[0-9]{1,8}/,
-        index: { start: 0 },
+        regex: /-?[0-9]+/,
+        index: 0,
         default: 1,
         number: true,
       },
@@ -28,10 +30,19 @@ export default class Milestone extends LastFMBaseCommand {
     },
   };
 
+  validation: Validation = {
+    milestone: [
+      new validators.Number({}),
+      new validators.Range({
+        min: 1,
+        max: 2000000,
+        message: "please enter a valid milestone!",
+      }),
+    ],
+  };
+
   async run() {
     let milestone = this.parsedArguments.milestone as number;
-
-    if (milestone <= 0) throw new LogicError("please enter a valid milestone!");
 
     let { username, perspective } = await this.parseMentionedUsername({
       asCode: false,
