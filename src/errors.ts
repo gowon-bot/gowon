@@ -238,3 +238,5 @@ export class CrownBannedError extends ClientError {
     );
   }
 }
+
+

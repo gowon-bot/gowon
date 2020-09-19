@@ -2,6 +2,8 @@ import { MessageEmbed } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { InfoCommand } from "./InfoCommand";
 import { numberDisplay } from "../../../helpers";
+import { Validation } from "../../../lib/validation/ValidationChecker";
+import { validators } from "../../../lib/validation/validators";
 
 export default class TagInfo extends InfoCommand {
   shouldBeIndexed = true;
@@ -14,6 +16,10 @@ export default class TagInfo extends InfoCommand {
     inputs: {
       tag: { index: { start: 0 } },
     },
+  };
+
+  validation: Validation = {
+    tag: new validators.Required({}),
   };
 
   async run() {

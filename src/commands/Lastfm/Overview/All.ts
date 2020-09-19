@@ -26,6 +26,15 @@ export class All extends OverviewChildCommand {
       .setColor(colour)
       .setDescription(
         `
+${
+  this.client.isAuthor(this.discordID)
+    ? "<:typescript:746450416635609199> _Author_\n"
+    : this.client.isGowon(this.discordID)
+    ? "<:gowonswag2:754923498786521088> _Gowon_\n"
+    : this.client.isAlphaTester(this.discordID)
+    ? ":sunglasses: _Alpha tester_\n"
+    : ""
+}
 _Scrobbling since ${await this.calculator.joined()}_
 
 **Scrobbles**: ${await this.calculator.totalScrobbles()} (_${await this.calculator.avgPerDay()}/day_)
@@ -45,40 +54,42 @@ ${
       })_`
     : ""
 }
-**# of artists to equal 50% of scrobbles**: ${await this.calculator.top50Percent()}
+**# of artists to equal 50% of scrobbles**: ${await (
+          await this.calculator.top50Percent()
+        ).count}
 **Total scrobbles for top 10 artists**: ${await this.calculator.sumTop(10)}
 ${perspective.upper.possessive} top 10 artists account for: ${(
           await this.calculator.sumTopPercent(10)
-        ).bold()}% of ${perspective.possessivePronoun} total scrobbles
+        ).asString.bold()}% of ${perspective.possessivePronoun} total scrobbles
 
 Among ${perspective.possessivePronoun} top 1000 artists, ${
           perspective.plusToHave
         }...
     - ${(
       await this.calculator.playsOver(1000)
-    ).bold()} artists with 1000+ scrobbles
+    ).asString.bold()} artists with 1000+ scrobbles
     - ${(
       await this.calculator.playsOver(500)
-    ).bold()} artists with 500+ scrobbles
+    ).asString.bold()} artists with 500+ scrobbles
     - ${(
       await this.calculator.playsOver(250)
-    ).bold()} artists with 250+ scrobbles
+    ).asString.bold()} artists with 250+ scrobbles
     - ${(
       await this.calculator.playsOver(100)
-    ).bold()} artists with 100+ scrobbles
+    ).asString.bold()} artists with 100+ scrobbles
     - ${(
       await this.calculator.playsOver(50)
-    ).bold()} artists with 50+ scrobbles` +
+    ).asString.bold()} artists with 50+ scrobbles` +
           ((await this.calculator.hasCrownStats())
             ? `\n\n**Total crowns**: ${rank!.count} (${getOrdinal(
                 rank!.rank.toInt()
               ).italic()})
 For every ${numberDisplay(
-                (await this.calculator.artistsPerCrown())!,
+                (await this.calculator.artistsPerCrown())!.asString,
                 "eligible artist"
               ).bold()}, ${perspective.plusToHave} a crown
 For every ${numberDisplay(
-                (await this.calculator.scrobblesPerCrown())!,
+                (await this.calculator.scrobblesPerCrown())!.asString,
                 "scrobble"
               ).bold()}, ${perspective.plusToHave} a crown
 `

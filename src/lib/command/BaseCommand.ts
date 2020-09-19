@@ -12,10 +12,12 @@ import { Mention } from "../arguments/mentions";
 import { CommandManager } from "./CommandManager";
 import { Logger } from "../Logger";
 import { RunAs } from "../AliasChecker";
-import { ParentCommand } from "./ParentCommand";
+import { Command } from "./Command";
 import { TrackingService } from "../../services/TrackingService";
 import { User } from "../../database/entity/User";
 import { Perspective } from "../Perspective";
+import { GowonClient } from "../GowonClient";
+import { Validation, ValidationChecker } from "../validation/ValidationChecker";
 
 export interface Variation {
   variationString?: string;
@@ -23,29 +25,10 @@ export interface Variation {
   description?: string;
   friendlyString?: string;
 }
-export interface Command {
-  execute(message: Message, runAs: RunAs): Promise<void>;
-  id: string;
 
-  variations: Variation[];
-  aliases: Array<string>;
-  arguments: Arguments;
-  secretCommand: boolean;
-  shouldBeIndexed: boolean;
-
-  name: string;
-  friendlyName: string;
-  friendlyNameWithParent?: string;
-  description: string;
-  category: string | undefined;
-  subcategory: string | undefined;
-  usage: string | string[];
-
-  hasChildren: boolean;
-  children?: CommandManager;
-  parentName?: string;
-  parent?: ParentCommand;
-  getChild(name: string, serverID: string): Command | undefined;
+export interface Delegate {
+  delegateTo: { new (): Command };
+  when(args: { [key: string]: any }): boolean;
 }
 
 export abstract class BaseCommand implements Command {
@@ -58,14 +41,21 @@ export abstract class BaseCommand implements Command {
   description: string = "No description for this command";
   secretCommand: boolean = false;
   shouldBeIndexed: boolean = true;
+
   arguments: Arguments = {};
+  validation: Validation = {};
+
   category: string | undefined = undefined;
   subcategory: string | undefined = undefined;
   usage: string | string[] = "";
 
+  delegates: Delegate[] = [];
+  delegatedFrom?: Command;
+
   message!: Message;
   guild!: Guild;
   author!: DiscordUser;
+  client!: GowonClient;
 
   responses: Array<MessageEmbed | string> = [];
 
@@ -84,7 +74,7 @@ export abstract class BaseCommand implements Command {
   hasChildren = false;
   children?: CommandManager;
   parentName?: string;
-  
+
   getChild(_: string, __: string): Command | undefined {
     return undefined;
   }
@@ -186,11 +176,26 @@ export abstract class BaseCommand implements Command {
     this.message = message;
     this.guild = message.guild!;
     this.author = message.author;
+
     await this.setup();
 
     try {
       this.parsedArguments = this.parseArguments(runAs);
+
+      for (let delegate of this.delegates) {
+        if (delegate.when(this.parsedArguments)) {
+          let command = new delegate.delegateTo();
+          command.client = this.client;
+          command.delegatedFrom = this;
+          await command.execute(message, runAs);
+          return;
+        }
+      }
+
       this.logger.logCommand(this, message, runAs.toArray().join(" "));
+
+      new ValidationChecker(this.parsedArguments, this.validation).validate();
+
       await this.prerun(message);
       await this.run(message, runAs);
     } catch (e) {

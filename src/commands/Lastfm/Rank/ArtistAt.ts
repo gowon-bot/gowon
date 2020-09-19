@@ -2,6 +2,8 @@ import { Arguments } from "../../../lib/arguments/arguments";
 import { numberDisplay } from "../../../helpers";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { LogicError } from "../../../errors";
+import { validators } from "../../../lib/validation/validators";
+import { Validation } from "../../../lib/validation/ValidationChecker";
 
 export default class ArtistAt extends LastFMBaseCommand {
   aliases = ["aa"];
@@ -22,13 +24,12 @@ export default class ArtistAt extends LastFMBaseCommand {
     },
   };
 
+  validation: Validation = {
+    rank: new validators.Number({ whole: true }),
+  };
+
   async run() {
     let rank = this.parsedArguments.rank as number;
-
-    if (isNaN(rank) || rank < 0) {
-      await this.reply("please enter a valid rank");
-      return;
-    }
 
     let { username, perspective } = await this.parseMentionedUsername();
 

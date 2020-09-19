@@ -14,7 +14,7 @@ export class ScrobblesPerTrack extends OverviewChildCommand {
     let embed = new MessageEmbed()
       .setAuthor(username + badge, image)
       .setColor(colour)
-      .setDescription(`${spt.bold()} scrobbles per track!`);
+      .setDescription(`${spt.asString.bold()} scrobbles per track!`);
 
     await this.send(embed);
   }

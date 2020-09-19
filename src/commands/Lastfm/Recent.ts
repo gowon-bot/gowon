@@ -1,5 +1,7 @@
 import { MessageEmbed } from "discord.js";
 import { Arguments } from "../../lib/arguments/arguments";
+import { Validation } from "../../lib/validation/ValidationChecker";
+import { validators } from "../../lib/validation/validators";
 import { LastFMBaseCommand } from "./LastFMBaseCommand";
 
 export default class Recent extends LastFMBaseCommand {
@@ -9,7 +11,7 @@ export default class Recent extends LastFMBaseCommand {
 
   arguments: Arguments = {
     inputs: {
-      amount: { index: 0, regex: /[0-9]{1,2}/g, default: 5, number: true },
+      amount: { index: 0, regex: /-?[0-9]+/g, default: 5, number: true },
     },
     mentions: {
       user: {
@@ -20,12 +22,14 @@ export default class Recent extends LastFMBaseCommand {
     },
   };
 
+  validation: Validation = {
+    amount: new validators.Range({ min: 1, max: 15 }),
+  };
+
   async run() {
     let amount = this.parsedArguments.amount as number;
 
     let { username, perspective } = await this.parseMentionedUsername();
-
-    if (amount > 15) amount = 15;
 
     let recentTracks = await this.lastFMService.recentTracks({
       username,

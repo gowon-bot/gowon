@@ -5,6 +5,8 @@ import { ComboCalculator } from "../../../lib/calculators/ComboCalculator";
 import { numberDisplay } from "../../../helpers";
 import { Paginator } from "../../../lib/Paginator";
 import { RedirectsService } from "../../../services/dbservices/RedirectsServices";
+import { Validation } from "../../../lib/validation/ValidationChecker";
+import { validators } from "../../../lib/validation/validators";
 
 export default class Combo extends LastFMBaseCommand {
   aliases = ["streak", "str"];
@@ -16,7 +18,7 @@ export default class Combo extends LastFMBaseCommand {
     inputs: {
       streakAmount: {
         index: 0,
-        regex: /[0-9]{1,4}/g,
+        regex: /-?[0-9]+/g,
         default: 1000,
         number: true,
       },
@@ -30,17 +32,19 @@ export default class Combo extends LastFMBaseCommand {
     },
   };
 
-  redirectsService = new RedirectsService(this.logger)
+  validation: Validation = {
+    streakAmount: {
+      validator: new validators.Range({ min: 1, max: 1000 }),
+      friendlyName: "the number of recent tracks",
+    },
+  };
+
+  redirectsService = new RedirectsService(this.logger);
 
   async run() {
     let { username } = await this.parseMentionedUsername();
 
     let streakAmount = this.parsedArguments.streakAmount as number;
-
-    if (streakAmount < 1 || streakAmount > 1000) {
-      await this.reply("Please specify a valid amount!");
-      return;
-    }
 
     let paginator = new Paginator(
       this.lastFMService.recentTracks.bind(this.lastFMService),

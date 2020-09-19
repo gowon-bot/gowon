@@ -1,7 +1,8 @@
-import { LogicError } from "../../errors";
 import { dateTimeDisplay } from "../../helpers";
 import { Arguments } from "../../lib/arguments/arguments";
 import { BaseCommand } from "../../lib/command/BaseCommand";
+import { Validation } from "../../lib/validation/ValidationChecker";
+import { RequiredAnd } from "../../lib/validation/validators/Required";
 import { GithubService } from "../../services/Github/GithubService";
 
 export default class Feedback extends BaseCommand {
@@ -16,14 +17,22 @@ export default class Feedback extends BaseCommand {
     },
   };
 
+  validation: Validation = {
+    title: {
+      validator: new RequiredAnd({
+        message: "please specify a title and a body!",
+      }),
+      dependsOn: ["body"],
+    },
+  };
+
   githubService = new GithubService(this.logger);
 
   async run() {
+    if (!this.client.isAuthor(this.author.id)) return;
+
     let title = this.parsedArguments.title as string,
       body = this.parsedArguments.body as string;
-
-    if (!title || !body)
-      throw new LogicError("please specify a title and a body!");
 
     let metadata = `
 
@@ -34,7 +43,7 @@ export default class Feedback extends BaseCommand {
       this.message.member?.nickname || "*No Nickname*"
     })
 **Ran at**: ${dateTimeDisplay(new Date())}
-**Channel:pok c** \\#${
+**Channel:** \\#${
       this.message.guild?.channels.cache.find(
         (c) => c.id === this.message.channel.id
       )?.name

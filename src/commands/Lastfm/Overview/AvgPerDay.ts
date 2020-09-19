@@ -14,7 +14,7 @@ export class AvgPerDay extends OverviewChildCommand {
     let embed = new MessageEmbed()
       .setAuthor(username + badge, image)
       .setColor(colour)
-      .setDescription(`${avg.bold()} scrobbles per day!`);
+      .setDescription(`${avg.asString.bold()} scrobbles per day!`);
 
     await this.send(embed);
   }

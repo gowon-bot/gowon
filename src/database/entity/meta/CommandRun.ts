@@ -12,7 +12,9 @@ export interface MostUsedCommandsResponse {
   count: number;
 }
 
-@Entity({ name: "command_runs" })
+const tableName = "command_runs"
+
+@Entity({ name: tableName })
 export class CommandRun extends BaseEntity {
   @PrimaryGeneratedColumn()
   id!: number;
@@ -39,7 +41,7 @@ export class CommandRun extends BaseEntity {
     let query = timeRange?.from
       ? this.query(
           `SELECT "commandID", count("commandID")
-    FROM meta__commandruns
+    FROM ${tableName}
     WHERE "serverID" like $1
       AND "runAt" between $2 and $3
     GROUP BY "commandID"
@@ -48,7 +50,7 @@ export class CommandRun extends BaseEntity {
         )
       : this.query(
           `SELECT "commandID", count("commandID")
-    FROM meta__commandruns
+    FROM ${tableName}
     WHERE "serverID" like $1
     GROUP BY "commandID"
     ORDER BY 2 DESC`,

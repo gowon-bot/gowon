@@ -1,4 +1,5 @@
-import { BaseCommand, Command, NoCommand } from "../lib/command/BaseCommand";
+import { BaseCommand, NoCommand } from "../lib/command/BaseCommand";
+import { Command } from "../lib/command/Command";
 import { Message, MessageEmbed } from "discord.js";
 import { CommandManager } from "../lib/command/CommandManager";
 import { Arguments } from "../lib/arguments/arguments";

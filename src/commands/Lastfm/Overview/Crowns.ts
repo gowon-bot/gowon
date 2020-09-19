@@ -9,13 +9,18 @@ export class Crowns extends OverviewChildCommand {
 
   async run() {
     let { badge, colour, image } = await this.getAuthorDetails();
-    let { username } = await this.parseMentionedUsername();
+    let { username, perspective } = await this.parseMentionedUsername();
 
     let [crownRank, apc, spc] = await Promise.all([
       this.calculator.crownsRank(),
       this.calculator.artistsPerCrown(),
       this.calculator.scrobblesPerCrown(),
     ]);
+
+    if (!crownRank?.count?.toInt())
+      throw new LogicError(
+        `${perspective.upper.plusToHave} no crowns in this server!`
+      );
 
     if (await this.calculator.hasCrownStats()) {
       let embed = new MessageEmbed()
@@ -24,11 +29,12 @@ export class Crowns extends OverviewChildCommand {
         crownRank!.count,
         "crown"
       ).bold()} (ranked ${getOrdinal(crownRank!.rank.toInt()).italic()})
-        For every ${numberDisplay(
-          apc!,
-          "eligible artist"
-        ).bold()}, you have a crown
-  For every ${numberDisplay(spc!, "scrobble").bold()}, you a crown
+        For every ${numberDisplay(apc!.asNumber, "eligible artist").bold()}, ${
+        perspective.plusToHave
+      } a crown
+  For every ${numberDisplay(spc!.asNumber, "scrobble").bold()}, ${
+        perspective.plusToHave
+      } a crown
         `);
 
       await this.send(embed);

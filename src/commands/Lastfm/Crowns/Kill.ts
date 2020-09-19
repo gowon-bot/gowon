@@ -2,6 +2,8 @@ import { CrownsChildCommand } from "./CrownsChildCommand";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { Message, MessageEmbed } from "discord.js";
 import { LogicError } from "../../../errors";
+import { Validation } from "../../../lib/validation/ValidationChecker";
+import { validators } from "../../../lib/validation/validators";
 
 export class Kill extends CrownsChildCommand {
   description = "Kills a crown";
@@ -11,6 +13,10 @@ export class Kill extends CrownsChildCommand {
     inputs: {
       artist: { index: { start: 0 } },
     },
+  };
+
+  validation: Validation = {
+    artist: new validators.Required({}),
   };
 
   async run(message: Message) {

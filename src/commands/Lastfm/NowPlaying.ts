@@ -2,13 +2,13 @@ import { Message, MessageEmbed } from "discord.js";
 import { LinkGenerator, parseLastFMTrackResponse } from "../../helpers/lastFM";
 import { numberDisplay } from "../../helpers";
 import { Arguments } from "../../lib/arguments/arguments";
-import { isGowon, fakeNowPlaying } from "../../gowon/fakeNowPlaying";
 import { Mention } from "../../lib/arguments/mentions";
 import { LastFMBaseCommand } from "./LastFMBaseCommand";
 import { CrownsService } from "../../services/dbservices/CrownsService";
 import { RunAs } from "../../lib/AliasChecker";
 import { TagConsolidator } from "../../lib/TagConsolidator";
 import { sanitizeForDiscord } from "../../helpers/discord";
+import config from "../../../config.json";
 
 export default class NowPlaying extends LastFMBaseCommand {
   aliases = ["np", "fm"];
@@ -48,11 +48,6 @@ export default class NowPlaying extends LastFMBaseCommand {
     let user = this.parsedArguments.user as Mention,
       otherWords = this.parsedArguments.otherWords as string | undefined;
 
-    if (isGowon(typeof user !== "string" ? user?.id : "")) {
-      await this.send(fakeNowPlaying());
-      return;
-    }
-
     let username =
       typeof user === "string"
         ? user
@@ -65,6 +60,21 @@ export default class NowPlaying extends LastFMBaseCommand {
     let track = parseLastFMTrackResponse(nowPlaying);
 
     let links = LinkGenerator.generateTrackLinksForEmbed(nowPlaying);
+
+    if (
+      nowPlaying["@attr"]?.nowplaying &&
+      this.client.isAlphaTester(this.author.id)
+    ) {
+      this.lastFMService.scrobbleTrack(
+        {
+          artist: track.artist,
+          track: track.name,
+          album: track.album,
+          timestamp: new Date().getTime() / 1000,
+        },
+        config.lastFMBotSessionKey
+      );
+    }
 
     let nowPlayingEmbed = new MessageEmbed()
       .setColor("black")

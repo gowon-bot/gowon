@@ -8,6 +8,7 @@ import { ParentCommand } from "./ParentCommand";
 import { MetaService } from "../../services/dbservices/MetaService";
 import Prefix from "../../commands/Meta/Prefix";
 import { RunAs } from "../AliasChecker";
+import { GowonClient } from "../GowonClient";
 
 export class CommandHandler {
   gowonService = GowonService.getInstance();
@@ -77,6 +78,8 @@ export class CommandHandler {
       this.logger.logCommandHandle(runAs);
 
       this.metaService.recordCommandRun(command.id, message);
+
+      command.client = new GowonClient(this.client);
 
       await command.execute(message, runAs);
     }

@@ -36,6 +36,9 @@ export class User extends BaseEntity {
   @Column()
   lastFMUsername!: string;
 
+  @Column({ nullable: true })
+  discordAuthCode?: string;
+
   @OneToMany((_) => Crown, (crown) => crown.user)
   crowns!: Crown[];
 

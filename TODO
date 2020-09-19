@@ -1,12 +1,10 @@
 Bugs:
-  `.cw mb 수호 |suho` => `@undefined, a crown for uho doesn't exist!` .
+  [x] Redirects for crowns broken
   
 Test:  
 
 Todo:
-  [x] Opting out shouldn't delete crowns
-  [x] Marking a bootleg crown should kill the bootleg
-  [x] Add a total match thing to tag
+  [x] Add scrobbles to `!o top50`
   [later] Dockerize 😳
   [later] Keep track of every tag, artist ever fm'd
 
@@ -21,6 +19,7 @@ Large Projects:
   [x] `!crowns mark 수호 duplicate of suho`
   [x] Crowns history
 
+  [] Redirect verification (by scrobbling both artists, then adding one scrobble to the first artist, and checking if the second has updated with it)
   [] Automatic argument validation
   [] Tests
   [] Change User.username into GuildMember.nickname (or w/e it's called)

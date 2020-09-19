@@ -11,7 +11,7 @@ export default class Server extends LastFMBaseCommand {
 
   async run() {
     let users = await this.usersService.randomUser({
-      limit: 10
+      limit: 10,
     });
 
     let nowPlayings = await new MultiRequster(
@@ -24,9 +24,9 @@ export default class Server extends LastFMBaseCommand {
         Object.keys(nowPlayings).map((username) => {
           let np = nowPlayings[username];
 
-          return `${username.code()} - ${
-            np.name
-          } by ${np.artist.bold()} ${np.album ? `from ${np.album.italic()}` : ""}`;
+          return `${username.code()} - ${np.name} by ${np.artist.bold()} ${
+            np.album ? `from ${np.album.italic()}` : ""
+          }`;
         })
       );
 

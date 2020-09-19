@@ -3,6 +3,8 @@ import { numberDisplay } from "../../../helpers";
 import { calculatePercent } from "../../../helpers/stats";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { Paginator } from "../../../lib/Paginator";
+import { Validation } from "../../../lib/validation/ValidationChecker";
+import { validators } from "../../../lib/validation/validators";
 import { TopArtists } from "../../../services/LastFM/LastFMService.types";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
@@ -29,6 +31,10 @@ export default class Tag extends LastFMBaseCommand {
         index: { start: 0 },
       },
     },
+  };
+
+  validation: Validation = {
+    tag: new validators.Required({}),
   };
 
   async run() {
@@ -63,16 +69,22 @@ export default class Tag extends LastFMBaseCommand {
       )
       .setDescription(
         `
-_Compares your top 2000 artists and the top 1000 artists of the tag_\n` +
+_Comparing ${perspective.possessive} top ${numberDisplay(
+          userTopArtists.artist.length,
+          "artist"
+        )} and the top ${numberDisplay(
+          tagArtistNames.length,
+          "artist"
+        )} of the tag_\n` +
           (overlap.length
             ? `\`\`\`` +
-              `${numberDisplay(
-                overlap.length,
-                "artist"
-              )} found (${calculatePercent(
+              `${numberDisplay(overlap.length, "artist")} (${calculatePercent(
                 overlap.length,
                 tagArtistNames.length
-              )}% match)\n` +
+              )}% match) (${numberDisplay(
+                overlap.reduce((sum, o) => sum + o.plays, 0),
+                "scrobble"
+              )})\n` +
               `${overlap
                 .slice(0, 20)
                 .map((o) => o.plays + " - " + o.artist)

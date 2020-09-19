@@ -110,7 +110,7 @@ export class UsersService extends BaseService {
     });
   }
 
-  async randomUser(options?: {}): Promise<User>;
+  async randomUser(): Promise<User>;
   async randomUser(options?: { limit?: 1 }): Promise<User>;
   async randomUser(options?: { limit?: number }): Promise<User[]>;
   async randomUser(

@@ -17,9 +17,9 @@ export class Per extends OverviewChildCommand {
 
     let embed = new MessageEmbed()
       .setAuthor(username + badge, image)
-      .setColor(colour).setDescription(`${lpa.bold()} albums per artist!
-      ${tpa.bold()} tracks per artist!
-      ${tpl.bold()} tracks per album!`);
+      .setColor(colour).setDescription(`${lpa.asString.bold()} albums per artist!
+      ${tpa.asString.bold()} tracks per artist!
+      ${tpl.asString.bold()} tracks per album!`);
 
     await this.send(embed);
   }

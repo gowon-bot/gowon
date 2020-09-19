@@ -1,6 +1,8 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { Message, MessageEmbed } from "discord.js";
+import { Validation } from "../../../lib/validation/ValidationChecker";
+import { validators } from "../../../lib/validation/validators";
 
 interface CheckedCrownsDisplay {
   [state: string]: Array<string>;
@@ -13,14 +15,16 @@ export class CheckMany extends CrownsChildCommand {
 
   arguments: Arguments = {
     inputs: {
-      artist: { index: { start: 0 }, splitOn: "|", join: false },
+      artists: { index: { start: 0 }, splitOn: "|", join: false },
     },
   };
 
-  async run(message: Message) {
-    let artists = this.parsedArguments.artist as Array<string>;
+  validation: Validation = {
+    artists: new validators.LengthRange({ min: 1, max: 10 }),
+  };
 
-    artists = artists.slice(0, 10);
+  async run(message: Message) {
+    let artists = this.parsedArguments.artists as Array<string>;
 
     let { username } = await this.parseMentionedUsername();
 

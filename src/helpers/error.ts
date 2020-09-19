@@ -1,8 +1,8 @@
 import { LastFMErrorResponse } from "../services/LastFM/LastFMService.types";
 
 function parseErrorSix(message: string): string {
-  if (message.includes("artist")) return "That artist could not be found";
-  else if (message.includes("album")) return "That album could not be found";
+  if (message.includes("artist")) return "that artist could not be found!";
+  else if (message.includes("album")) return "that album could not be found!";
   else return message;
 }
 
@@ -12,7 +12,7 @@ export function parseError(error: LastFMErrorResponse): string {
       return parseErrorSix(error.message);
     
     case 17:
-      return "That user's recent tracks are probably set to private. To turn off hidden recent tracks, visit your privacy settings in last.fm"
+      return "that user's recent tracks are probably set to private. To turn off hidden recent tracks, visit your privacy settings in last.fm"
 
     default:
       return error.message;

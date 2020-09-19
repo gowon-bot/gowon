@@ -1,9 +1,25 @@
 import { MessageEmbed } from "discord.js";
+import { Arguments } from "../../lib/arguments/arguments";
+import { Delegate } from "../../lib/command/BaseCommand";
 import { LastFMBaseCommand } from "./LastFMBaseCommand";
+import RandomsongInUsersLibrary from "./RandomSongInUsersLibrary";
 
 export default class Randomsong extends LastFMBaseCommand {
   description = "Picks a random song";
   usage = "";
+
+  arguments: Arguments = {
+    mentions: {
+      user: { index: 0, nonDiscordMentionParsing: this.ndmp },
+    },
+  };
+
+  delegates: Delegate[] = [
+    {
+      when: (args) => !!args.user,
+      delegateTo: RandomsongInUsersLibrary,
+    },
+  ];
 
   async run() {
     let randomUser = await this.usersService.randomUser();

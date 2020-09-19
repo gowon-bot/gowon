@@ -57,7 +57,7 @@ export class CrownsService extends BaseService {
 
   threshold = this.gowonService.contants.crownThreshold;
 
-  private redirectsService = new RedirectsService();
+  private redirectsService = new RedirectsService(this.logger);
 
   private async handleSelfCrown(
     crown: Crown,
@@ -129,10 +129,18 @@ export class CrownsService extends BaseService {
 
       return await crown.save();
     } else {
+      let redirect = await this.redirectsService.checkRedirect(
+        crownOptions.artistName
+      );
+
+      let artistName = redirect?.to || crownOptions.artistName;
+
       let newCrown = Crown.create({
         ...crownOptions,
+        artistName,
         version: 0,
         lastStolen: new Date(),
+        redirectedFrom: redirect?.from,
       });
 
       await newCrown.save();
@@ -146,7 +154,7 @@ export class CrownsService extends BaseService {
     this.log(`Checking crown for user ${discordID} and artist ${artistName}`);
 
     let [crown, user] = await Promise.all([
-      this.getCrown(artistName, message.guild?.id!),
+      this.getCrown(artistName, message.guild?.id!, { showDeleted: true }),
       User.findOne({ where: { discordID } }),
     ]);
 
@@ -216,7 +224,6 @@ export class CrownsService extends BaseService {
     let redirectedFrom: string | undefined = undefined;
 
     if (!options.noRedirect) {
-      this.log(`Checking crown redirects for ${artistName.code()}`);
       let redirect = await this.redirectsService.checkRedirect(artistName);
 
       if (redirect) {
@@ -225,11 +232,9 @@ export class CrownsService extends BaseService {
       }
     }
 
-    Crown.findOne({});
-
     let crown = await Crown.findOne({
       where: { artistName: ILike(crownArtistName), serverID },
-      // withDeleted: options.showDeleted,
+      withDeleted: options.showDeleted,
     });
 
     if (crown) crown.redirectedFrom = redirectedFrom;
@@ -441,7 +446,7 @@ export class CrownsService extends BaseService {
 
     if (existingCrownBan) throw new AlreadyBannedError();
 
-    let crownBan = CrownBan.create({ user });
+    let crownBan = CrownBan.create({ user, serverID });
     await crownBan.save();
 
     let bans = [

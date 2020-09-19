@@ -10,10 +10,6 @@ export interface Slice {
   stop?: number;
 }
 
-export interface InputsOptions {
-  stopChar?: string;
-}
-
 export interface InputArguments {
   index: number | Slice;
   default?: any;

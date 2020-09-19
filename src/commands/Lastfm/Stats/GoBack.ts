@@ -7,6 +7,8 @@ import {
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { LogicError } from "../../../errors";
 import { TrackEmbed } from "../../../helpers/Embeds";
+import { Validation } from "../../../lib/validation/ValidationChecker";
+import { validators } from "../../../lib/validation/validators";
 
 export default class GoBack extends LastFMBaseCommand {
   aliases = ["gb"];
@@ -31,11 +33,13 @@ export default class GoBack extends LastFMBaseCommand {
     },
   };
 
+  validation: Validation = {
+    timeRange: { validator: new validators.TimeRange({ requireFrom: true }) },
+  };
+
   async run() {
     let timeRange = this.parsedArguments.timeRange as TimeRange,
       humanTimeRange = this.parsedArguments.humanReadableTimeRange as string;
-
-    if (!timeRange.from) throw new LogicError("please enter a valid timeframe");
 
     let { username, perspective } = await this.parseMentionedUsername({
       asCode: false,

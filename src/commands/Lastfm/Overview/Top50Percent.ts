@@ -1,5 +1,6 @@
 import { OverviewChildCommand } from "./OverviewChildCommand";
 import { MessageEmbed } from "discord.js";
+import { numberDisplay } from "../../../helpers";
 
 export class Top50Percent extends OverviewChildCommand {
   aliases = ["toppct", "top50"];
@@ -17,9 +18,10 @@ export class Top50Percent extends OverviewChildCommand {
       .setAuthor(username + badge, image)
       .setColor(colour)
       .setDescription(
-        `${toppct.bold()} artists make up 50% of ${
-          perspective.possessive
-        } scrobbles!`
+        `${toppct.count.asString.bold()} artists (a total of ${numberDisplay(
+          toppct.total.asNumber,
+          "scrobbles"
+        )}) make up 50% of ${perspective.possessive} scrobbles!`
       );
 
     await this.send(embed);

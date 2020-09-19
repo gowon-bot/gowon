@@ -1,7 +1,8 @@
 import { AdminBaseChildCommand } from "../AdminBaseCommand";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { CommandManager } from "../../../lib/command/CommandManager";
-import { NoCommand, Command } from "../../../lib/command/BaseCommand";
+import { NoCommand } from "../../../lib/command/BaseCommand";
+import { Command } from "../../../lib/command/Command";
 import { CommandNotFoundError } from "../../../errors";
 import { RunAs } from "../../../lib/AliasChecker";
 import { Permission } from "../../../database/entity/Permission";

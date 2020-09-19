@@ -14,7 +14,7 @@ export class ScrobblesPerArtist extends OverviewChildCommand {
     let embed = new MessageEmbed()
       .setAuthor(username + badge, image)
       .setColor(colour)
-      .setDescription(`${spa.bold()} scrobbles per artist!`);
+      .setDescription(`${spa.asString.bold()} scrobbles per artist!`);
 
     await this.send(embed);
   }

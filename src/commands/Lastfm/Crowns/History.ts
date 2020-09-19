@@ -18,9 +18,7 @@ export class History extends CrownsChildCommand {
   async run(message: Message) {
     let artist = this.parsedArguments.artist as string;
 
-    let user = await this.usersService.getUser(
-      message.author.id!,
-    );
+    let user = await this.usersService.getUser(message.author.id!);
     let username = user.lastFMUsername;
 
     if (!artist) {

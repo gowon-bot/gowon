@@ -16,7 +16,9 @@ export class SetPurgatoryRole extends CrownsChildCommand {
     );
 
     let embed = new MessageEmbed().setDescription(
-      `Set the purgatory role for crowns to ${purgatoryRole.name}`
+      purgatoryRole.name
+        ? `Set the purgatory role for crowns to ${purgatoryRole.name}`
+        : `Cleared the purgatory role`
     );
 
     await this.send(embed);

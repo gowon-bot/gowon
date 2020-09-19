@@ -1,7 +1,7 @@
 import { AdminService } from "../../services/dbservices/AdminService";
 import { GuildMember, Message } from "discord.js";
 import { Permission } from "../../database/entity/Permission";
-import { Command } from "../command/BaseCommand";
+import { Command } from "../command/Command";
 import { ChildCommand } from "../command/ParentCommand";
 import { CommandManager } from "../command/CommandManager";
 import { In } from "typeorm";

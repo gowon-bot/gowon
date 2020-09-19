@@ -98,7 +98,7 @@ export default class Track extends LastFMBaseCommand {
           (track.album ? ` from ${track.album.italic()}` : "")
       )
       .setThumbnail(
-        trackInfo.value.image.find((i: Image) => i.size === "large")?.[
+        trackInfo.value.image?.find((i: Image) => i.size === "large")?.[
           "#text"
         ] || ""
       )

@@ -1,4 +1,5 @@
-import { BaseCommand, Command, NoCommand } from "./BaseCommand";
+import { BaseCommand, NoCommand } from "./BaseCommand";
+import { Command } from "./Command";
 import { CommandManager } from "./CommandManager";
 
 export abstract class ParentCommand extends BaseCommand {

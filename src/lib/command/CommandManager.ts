@@ -1,4 +1,5 @@
-import { Command, NoCommand } from "./BaseCommand";
+import { NoCommand } from "./BaseCommand";
+import { Command } from "./Command";
 import { promisify } from "util";
 import _glob from "glob";
 import { AliasChecker, RunAs } from "../AliasChecker";
@@ -10,10 +11,6 @@ interface Commands {
 }
 
 async function generateCommands(): Promise<Commands> {
-  console.log(
-    require("path").dirname(require.main?.filename) + "/commands/**/*.js"
-  );
-
   let files = await glob(
     require("path").dirname(require.main?.filename) + "/commands/**/*.js"
   );
