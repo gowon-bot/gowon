@@ -1,6 +1,6 @@
 import { Track } from "../services/LastFM/LastFMService.types";
 
-import { generateLink as generateLinkEmbed } from "./discord";
+import { generateLink, generateLink as generateLinkEmbed } from "./discord";
 
 export interface TrackLinks {
   artist: string;
@@ -75,4 +75,33 @@ export function parseLastFMTrackResponse(track: Track): ParsedTrack {
     album: track.album["#text"],
     name: track.name,
   };
+}
+
+export class LinkConsolidator {
+  constructor(private links: { link?: string; text: string }[]) {}
+
+  hasLinks(): boolean {
+    return !!this.links.filter((l) => !!l).length;
+  }
+
+  consolidate(): string {
+    return this.links
+      .filter((l) => !!l.link)
+      .map((l) => generateLink(l.text, l.link!))
+      .join(" ‧ ");
+  }
+
+  static spotify(url?: string) {
+    return {
+      link: url,
+      text: "Spotify",
+    };
+  }
+
+  static lastfm(url?: string) {
+    return {
+      link: url,
+      text: "Last.fm",
+    };
+  }
 }

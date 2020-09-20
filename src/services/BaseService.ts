@@ -16,4 +16,8 @@ export class BaseService {
       "base64"
     )}`;
   }
+
+  protected bearerAuthorization(token: string) {
+    return `Bearer ${token}`;
+  }
 }

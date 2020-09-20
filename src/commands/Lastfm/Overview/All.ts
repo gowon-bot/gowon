@@ -1,6 +1,7 @@
 import { OverviewChildCommand } from "./OverviewChildCommand";
 import { MessageEmbed } from "discord.js";
 import { numberDisplay, getOrdinal } from "../../../helpers";
+import { Emoji } from "../../../lib/Emoji";
 
 export class All extends OverviewChildCommand {
   description = "Shows information about you and your library";
@@ -28,9 +29,9 @@ export class All extends OverviewChildCommand {
         `
 ${
   this.client.isAuthor(this.discordID)
-    ? "<:typescript:746450416635609199> _Author_\n"
+    ? `${Emoji.typescript} _Author_\n`
     : this.client.isGowon(this.discordID)
-    ? "<:gowonswag2:754923498786521088> _Gowon_\n"
+    ? `${Emoji.gowonswag2} _Gowon_\n`
     : this.client.isAlphaTester(this.discordID)
     ? ":sunglasses: _Alpha tester_\n"
     : ""

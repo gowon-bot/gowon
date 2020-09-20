@@ -4,6 +4,7 @@ import { InfoCommand } from "./InfoCommand";
 import { numberDisplay } from "../../../helpers";
 import { calculatePercent } from "../../../helpers/stats";
 import { CrownsService } from "../../../services/dbservices/CrownsService";
+import { LinkConsolidator } from "../../../helpers/lastFM";
 
 export default class ArtistInfo extends InfoCommand {
   shouldBeIndexed = true;
@@ -41,9 +42,10 @@ export default class ArtistInfo extends InfoCommand {
         .artist;
     }
 
-    let [artistInfo, userInfo] = await Promise.all([
+    let [artistInfo, userInfo, spotifyArtist] = await Promise.all([
       this.lastFMService.artistInfo({ artist, username }),
       this.lastFMService.userInfo({ username }),
+      this.spotifyService.searchArtist(artist),
     ]);
 
     let crown = await this.crownsService.getCrownDisplay(
@@ -52,6 +54,11 @@ export default class ArtistInfo extends InfoCommand {
     );
 
     this.tagConsolidator.addTags(artistInfo.tags.tag);
+
+    let linkConsolidator = new LinkConsolidator([
+      LinkConsolidator.spotify(spotifyArtist?.external_urls?.spotify),
+      LinkConsolidator.lastfm(artistInfo.url),
+    ]);
 
     let embed = new MessageEmbed()
       .setTitle(artistInfo.name)
@@ -66,6 +73,9 @@ export default class ArtistInfo extends InfoCommand {
             ? "\n**Tags:** " +
               this.tagConsolidator.consolidate().join(" ‧ ") +
               "\n"
+            : "") +
+          (linkConsolidator.hasLinks()
+            ? "**Links**: " + linkConsolidator.consolidate()
             : "") +
           `\n**Listeners**: ${numberDisplay(artistInfo.stats.listeners)}
 **Playcount**: ${numberDisplay(artistInfo.stats.playcount)}
@@ -88,6 +98,13 @@ ${perspective.upper.regularVerb("account")} for ${calculatePercent(
         ).bold()}% of all ${artistInfo.name} scrobbles!
         `
       );
+
+    if (spotifyArtist) {
+      embed.setThumbnail(
+        this.spotifyService.getImageFromSearchItem(spotifyArtist)
+      );
+      embed.setFooter("Image source: Spotify");
+    }
 
     this.send(embed);
   }

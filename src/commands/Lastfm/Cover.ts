@@ -1,4 +1,5 @@
 import { Message } from "discord.js";
+import { LogicError } from "../../errors";
 import { Arguments } from "../../lib/arguments/arguments";
 import { LastFMBaseCommand } from "./LastFMBaseCommand";
 
@@ -32,6 +33,8 @@ export default class Cover extends LastFMBaseCommand {
 
       let image = nowPlaying.image.find((i) => i.size === "extralarge");
 
+      if (!image) throw new LogicError("that album doesn't have a cover!");
+
       await this.sendWithFiles(
         `Cover for ${nowPlaying.album["#text"].bold()} by ${nowPlaying.artist[
           "#text"
@@ -48,6 +51,9 @@ export default class Cover extends LastFMBaseCommand {
 
       let albumDetails = await this.lastFMService.albumInfo({ artist, album });
       let image = albumDetails.image.find((i) => i.size === "extralarge");
+
+      console.log(albumDetails.image)
+      if (!image?.["#text"]) throw new LogicError("that album doesn't have a cover!");
 
       await this.sendWithFiles(
         `Cover for ${albumDetails.name.italic()} by ${albumDetails.artist.bold()}`,

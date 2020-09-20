@@ -2,6 +2,7 @@ import { MessageEmbed } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { InfoCommand } from "./InfoCommand";
 import { numberDisplay } from "../../../helpers";
+import { LinkConsolidator } from "../../../helpers/lastFM";
 
 export default class TrackInfo extends InfoCommand {
   shouldBeIndexed = true;
@@ -32,9 +33,17 @@ export default class TrackInfo extends InfoCommand {
       if (!track) track = nowPlaying.name;
     }
 
-    let trackInfo = await this.lastFMService.trackInfo({ artist, track });
+    let [trackInfo, spotifyTrack] = await Promise.all([
+      this.lastFMService.trackInfo({ artist, track }),
+      this.spotifyService.searchTrack(artist, track),
+    ]);
 
     this.tagConsolidator.addTags(trackInfo.toptags.tag);
+
+    let linkConsolidator = new LinkConsolidator([
+      LinkConsolidator.spotify(spotifyTrack?.external_urls?.spotify),
+      LinkConsolidator.lastfm(trackInfo.url),
+    ]);
 
     let embed = new MessageEmbed()
       .setTitle(trackInfo.name.italic() + " by " + trackInfo.artist.name.bold())
@@ -65,7 +74,12 @@ export default class TrackInfo extends InfoCommand {
             ? "\n\n" + this.scrubReadMore(trackInfo.wiki?.summary.trimRight())
             : "") +
           (this.tagConsolidator.hasTags()
-            ? "\n\n**Tags:** " + this.tagConsolidator.consolidate().join(" ‧ ")
+            ? "\n\n**Tags:** " +
+              this.tagConsolidator.consolidate().join(" ‧ ") +
+              "\n"
+            : "") +
+          (linkConsolidator.hasLinks()
+            ? `**Links**: ${linkConsolidator.consolidate()}`
             : "")
       );
 

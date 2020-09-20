@@ -3,6 +3,7 @@ import { Arguments } from "../../../lib/arguments/arguments";
 import { InfoCommand } from "./InfoCommand";
 import { numberDisplay } from "../../../helpers";
 import { calculatePercent } from "../../../helpers/stats";
+import { LinkConsolidator } from "../../../helpers/lastFM";
 
 export default class AlbumInfo extends InfoCommand {
   shouldBeIndexed = true;
@@ -44,12 +45,18 @@ export default class AlbumInfo extends InfoCommand {
       if (!album) album = nowPlaying.album;
     }
 
-    let [albumInfo, userInfo] = await Promise.all([
+    let [albumInfo, userInfo, spotifyAlbum] = await Promise.all([
       this.lastFMService.albumInfo({ artist, album, username }),
       this.lastFMService.userInfo({ username }),
+      this.spotifyService.searchAlbum(artist, album),
     ]);
 
     this.tagConsolidator.addTags(albumInfo.tags.tag);
+
+    let linkConsolidator = new LinkConsolidator([
+      LinkConsolidator.spotify(spotifyAlbum?.external_urls?.spotify),
+      LinkConsolidator.lastfm(albumInfo.url),
+    ]);
 
     let albumDuration = albumInfo.tracks.track.reduce(
       (sum, t) => sum + t.duration.toInt(),
@@ -72,7 +79,10 @@ export default class AlbumInfo extends InfoCommand {
       )
       .setURL(albumInfo.url)
       .setImage(
-        albumInfo.image.find((i) => i.size === "large")?.["#text"] || ""
+        albumInfo.image.find((i) => i.size === "large")?.["#text"] ||
+          (spotifyAlbum &&
+            this.spotifyService.getImageFromSearchItem(spotifyAlbum)) ||
+          ""
       )
       .setDescription(
         (albumInfo.tracks.track.length
@@ -85,7 +95,11 @@ export default class AlbumInfo extends InfoCommand {
           (this.tagConsolidator.hasTags()
             ? (albumInfo.wiki?.summary.length ? "\n\n" : "") +
               "**Tags:** " +
-              this.tagConsolidator.consolidate().join(" ‧ ")
+              this.tagConsolidator.consolidate().join(" ‧ ") +
+              "\n"
+            : "") +
+          (linkConsolidator.hasLinks()
+            ? `**Links**: ${linkConsolidator.consolidate()}`
             : "")
       )
       .addField(
@@ -103,6 +117,12 @@ export default class AlbumInfo extends InfoCommand {
           albumInfo.playcount
         ).bold()}% of all scrobbles of this album!`
       );
+
+    console.log(
+      albumInfo.image.find((i) => i.size === "large")?.["#text"] ||
+        (spotifyAlbum &&
+          this.spotifyService.getImageFromSearchItem(spotifyAlbum))
+    );
 
     this.send(embed);
   }
