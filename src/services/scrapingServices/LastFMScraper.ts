@@ -170,7 +170,7 @@ export class LastFMScraper extends BaseScraper {
       parseDate(
         lastScrobbled.text().trim(),
         "D MMM h:mma",
-        "D MMM YYYY, h:mma"
+        "D MMM yyyy, h:mma"
       ) || lastScrobbled.text().trim()
     );
   }

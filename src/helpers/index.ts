@@ -1,4 +1,4 @@
-import moment from "moment";
+import { format, formatDistanceToNow } from "date-fns";
 
 export function addS(string: string, number: number) {
   return number === 1 ? string : string + "s";
@@ -24,15 +24,16 @@ export function numberDisplay(
 }
 
 export function dateDisplay(date: Date): string {
-  return moment(date).format("MMMM Do, YYYY");
+  return format(date, "MMMM do, yyyy");
 }
 
 export function dateTimeDisplay(date: Date | undefined): string {
-  return moment(date).format("h:mma on MMMM Do, YYYY");
+  if (!date) return "";
+  return format(date, "h:mma 'on' MMMM do, yyyy");
 }
 
 export function ago(date: Date): string {
-  return moment(date).fromNow();
+  return formatDistanceToNow(date);
 }
 
 export function ucFirst(string: string): string {

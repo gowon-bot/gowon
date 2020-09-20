@@ -10,4 +10,10 @@ export class BaseService {
   protected log(msg: string): void {
     Logger.log(this.constructor.name, chalk`{grey ${msg}}`, this.logger);
   }
+
+  protected basicAuthorization(left: string, right: string) {
+    return `Basic ${Buffer.from(`${left}:${right}`, "binary").toString(
+      "base64"
+    )}`;
+  }
 }

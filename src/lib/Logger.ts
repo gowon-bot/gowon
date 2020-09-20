@@ -1,8 +1,8 @@
 import { BaseCommand } from "./command/BaseCommand";
 import { Message } from "discord.js";
 import chalk from "chalk";
-import moment from "moment";
 import { RunAs } from "./AliasChecker";
+import { format } from "date-fns";
 
 export class Logger {
   static output = true;
@@ -11,8 +11,9 @@ export class Logger {
     if (!this.output) return;
 
     let logString =
-      chalk`{black (${moment().format(
-        "HH:mm:ss a SSS[ms]"
+      chalk`{black (${format(
+        new Date(),
+        "HH:mm:ss a SSS'ms'"
       )})} {grey ${context}:}` +
       " " +
       msg;

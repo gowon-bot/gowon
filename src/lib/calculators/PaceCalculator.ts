@@ -1,6 +1,6 @@
+import { add, differenceInSeconds, fromUnixTime } from "date-fns";
 import { TimeRange } from "../../helpers/date";
 import { LastFMService } from "../../services/LastFM/LastFMService";
-import moment from "moment";
 
 export interface PacePrediction {
   scrobbleRate: number;
@@ -15,7 +15,7 @@ export class PaceCalculator {
     scrobbles: number,
     timeRange: TimeRange
   ): number {
-    let diff = moment(timeRange.to).diff(timeRange.from, "hour");
+    let diff = differenceInSeconds(timeRange.to!, timeRange.from!) / 3600;
 
     return scrobbles / diff;
   }
@@ -27,7 +27,7 @@ export class PaceCalculator {
   ): Date {
     let hoursToGoal = (milestone - currentScrobbles) / rate;
 
-    return moment().add(hoursToGoal, "hours").toDate();
+    return add(new Date(), { hours: hoursToGoal });
   }
 
   private async calculateFromOverall(
@@ -36,12 +36,11 @@ export class PaceCalculator {
     let userInfo = await this.lastFMService.userInfo({
       username: this.username,
     });
-    let scrobblingSince = moment
-      .unix(userInfo.registered.unixtime.toInt())
-      .toDate();
+    let scrobblingSince = fromUnixTime(userInfo.registered.unixtime.toInt());
 
     let rate = this.calculateScrobblesPerHour(userInfo.playcount.toInt(), {
       from: scrobblingSince,
+      to: new Date(),
     });
 
     return {

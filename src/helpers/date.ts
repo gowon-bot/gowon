@@ -1,9 +1,17 @@
 import parse from "parse-duration";
-import moment, { DurationInputArg2 } from "moment";
 import { LogicError } from "../errors";
 import { LastFMPeriod } from "../services/LastFM/LastFMService.types";
+import {
+  differenceInSeconds,
+  Duration,
+  formatDuration,
+  intervalToDuration,
+  sub,
+  subSeconds,
+  parse as fnsParse,
+} from "date-fns";
 
-const fallbackRegex = /(\s+|\b)1?(s(econd)?|mi(nute)?|h(our)?|d(ay)?|w(eek)?|m(o(nth)?)?|q(uarter)?|y(ear)?)(\s|\b)/gi;
+const fallbackRegex = /(\s+|\b)1?(s(econd)?|mi(nute)?|h(our)?|d(ay)?|w(eek)?|m(o(nth)?)?|q(uarter)?|ha(lf)?|y(ear)?)(\s|\b)/gi;
 const overallRegex = /(\s+|\b)(a(lltime)?|o(verall)?)(\s|\b)/gi;
 
 function timeFrameConverter(timeframe: string): string {
@@ -23,6 +31,8 @@ function timeFrameConverter(timeframe: string): string {
       return "month";
     case "q":
       return "quarter";
+    case "ha":
+      return "half";
     case "y":
       return "year";
   }
@@ -30,10 +40,25 @@ function timeFrameConverter(timeframe: string): string {
   return timeframe.trim();
 }
 
+function timeFrameToDuration(timeFrame: string): Duration {
+  let timeFrameConverted = timeFrameConverter(timeFrame) + "s";
+
+  if (timeFrameConverted === "quarters") {
+    return { months: 3 };
+  } else if (timeFrameConverted === "halfs") {
+    return { months: 6 };
+  } else {
+    let duration: Duration = {};
+    duration[timeFrameConverted as keyof Duration] = 1;
+    return duration;
+  }
+}
+
 export interface TimeRange {
   from?: Date;
   to?: Date;
   difference?: number;
+  duration?: Duration;
 }
 
 export function generateTimeRange(
@@ -45,6 +70,7 @@ export function generateTimeRange(
   } = {}
 ): TimeRange {
   let difference = parse(string, "second");
+
 
   if ((difference || 0) < -1)
     throw new LogicError("that's in the future, dumbass");
@@ -62,19 +88,20 @@ export function generateTimeRange(
         ? generateTimeRange(options.fallback)
         : { to: new Date() };
 
-    let match = timeFrameConverter(matches[0]);
+    let duration = timeFrameToDuration(matches[0]);
+
+    let fromDate = sub(new Date(), duration);
 
     return {
-      from: moment()
-        .subtract(1, match as DurationInputArg2)
-        .toDate(),
+      from: fromDate,
       to: new Date(),
-      difference: moment.duration(1, match as DurationInputArg2).asSeconds(),
+      difference: differenceInSeconds(new Date(), fromDate),
+      duration,
     };
   }
 
   return {
-    from: moment().subtract(difference, "second").toDate(),
+    from: subSeconds(new Date(), difference),
     to: new Date(),
     difference,
   };
@@ -95,11 +122,11 @@ export function generateHumanTimeRange(
 ): string {
   let timeRange = generateTimeRange(string);
 
-  if (timeRange.difference) {
-    let timeString = moment
-      .duration(timeRange.difference, "second")
-      .humanize()
-      .replace(/a(n)? /, "");
+  if (timeRange.difference && timeRange.duration) {
+    let timeString = humanizeDurationInSeconds(
+      timeRange.duration || timeRange.difference
+    );
+
     if (timeString.length)
       return (options.raw ? "" : "over the past ") + timeString;
   } else {
@@ -167,8 +194,9 @@ export function parseDate(
 
   for (let parser of parsers) {
     if (typeof parser === "string") {
-      let attempt = moment(string, parser);
-      if (attempt.isValid()) return attempt.toDate();
+      let now = new Date();
+      let attempt = fnsParse(string, parser, now);
+      if (attempt !== now) return attempt;
     } else {
       let attempt = parser(string);
       if (attempt) return attempt;
@@ -177,3 +205,26 @@ export function parseDate(
 
   return;
 }
+
+export const humanizeDurationInSeconds = (
+  seconds: number | Duration
+): string => {
+  const duration =
+    typeof seconds === "number"
+      ? intervalToDuration({ start: 0, end: seconds * 1000 })
+      : seconds;
+
+  return formatDuration(duration)
+    .split(/\s+/)
+    .reduce((acc, part, idx, arr) => {
+      if (arr.length > 2 && arr.length - idx == 2) {
+        acc += " and";
+      } else if (idx % 2 === 0 && idx !== 0) {
+        acc += ",";
+      }
+
+      acc += " " + part;
+
+      return acc.trim();
+    }, "");
+};

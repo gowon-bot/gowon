@@ -9,13 +9,13 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { PaceCalculator } from "../../../lib/calculators/PaceCalculator";
 import { LogicError } from "../../../errors";
 import { numberDisplay, dateDisplay } from "../../../helpers";
-import moment from "moment";
+import { isBefore, isValid } from "date-fns";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 
 export default class Pace extends LastFMBaseCommand {
   aliases = ["pc"];
-  description = "predicts when you're gonna git a milestone";
+  description = "Predicts when you're gonna hit a milestone";
   subcategory = "library stats";
   usage = ["", "milestone", "time period milestone @user"];
 
@@ -56,7 +56,7 @@ export default class Pace extends LastFMBaseCommand {
     milestone: [
       new validators.Range({ min: 1 }),
       new validators.Range({
-        max: 1000,
+        max: 10000000,
         message: "you probably won't be alive to witness that milestone...",
       }),
     ],
@@ -74,7 +74,12 @@ export default class Pace extends LastFMBaseCommand {
 
     let pace = await paceCalculator.calculate(timeRange, milestone);
 
-    if (moment(pace.prediction).isBefore(new Date()))
+    if (!isValid(pace.prediction))
+      throw new LogicError(
+        "An error occurred while calculating the pace. Try again with a more reasonable time frame..."
+      );
+
+    if (isBefore(pace.prediction, new Date()))
       throw new LogicError(
         `${perspective.plusToHave} already passed that milestone!`
       );

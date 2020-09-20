@@ -12,12 +12,12 @@ import {
 import config from "../../../config.json";
 import { ParsedTrack, parseLastFMTrackResponse } from "../../helpers/lastFM";
 import { LogicError, BadLastFMResponseError } from "../../errors";
-import moment from "moment";
 import { numberDisplay } from "../../helpers";
 import { LastFMScraper } from "../scrapingServices/LastFMScraper";
 import { LastFMAPIService } from "./LastFMAPIService";
 import { Logger } from "../../lib/Logger";
 import { delay } from "bluebird";
+import { add } from "date-fns";
 
 export class LastFMService extends LastFMAPIService {
   url = "https://ws.audioscrobbler.com/2.0/";
@@ -138,7 +138,7 @@ export class LastFMService extends LastFMAPIService {
   }
 
   async goBack(username: string, when: Date): Promise<Track> {
-    let to = moment(when).add(1, "day").toDate();
+    let to = add(when, { days: 1 });
 
     let params = {
       username,

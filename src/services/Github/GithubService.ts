@@ -24,10 +24,10 @@ export class GithubService extends BaseService {
   }
 
   private get Authorization(): string {
-    return `Basic ${Buffer.from(
-      `${config.githubUsername}:${config.githubPassword}`,
-      "binary"
-    ).toString("base64")}`;
+    return this.basicAuthorization(
+      config.githubUsername,
+      config.githubPassword
+    );
   }
 
   async request<T>(

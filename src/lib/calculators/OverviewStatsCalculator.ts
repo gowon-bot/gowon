@@ -5,14 +5,14 @@ import {
   TopTracks,
 } from "../../services/LastFM/LastFMService.types";
 import { LastFMService } from "../../services/LastFM/LastFMService";
-import moment from "moment";
 import { CrownsService } from "../../services/dbservices/CrownsService";
 import { Logger } from "../Logger";
-import { numberDisplay } from "../../helpers";
+import { dateDisplay, numberDisplay } from "../../helpers";
 import { calculatePercent } from "../../helpers/stats";
 import { CrownRankResponse } from "../../database/entity/Crown";
 import { log } from "mathjs";
 import { LogicError } from "../../errors";
+import { differenceInDays, fromUnixTime } from "date-fns";
 
 export class Stat {
   constructor(public asNumber: number, public asString: string) {}
@@ -118,9 +118,9 @@ export class OverviewStatsCalculator {
   }
 
   async joined(): Promise<string> {
-    return moment
-      .unix((await this.userInfo()).registered.unixtime.toInt())
-      .format("MMMM Do, YYYY");
+    return dateDisplay(
+      fromUnixTime((await this.userInfo()).registered.unixtime.toInt())
+    );
   }
 
   async country(): Promise<string> {
@@ -140,11 +140,12 @@ export class OverviewStatsCalculator {
     let userInfo = await this.userInfo();
 
     let scrobbles = userInfo.playcount.toInt();
+
     let diff = Math.abs(
-      moment
-        .unix(userInfo.registered.unixtime.toInt())
-        .startOf("day")
-        .diff(moment().startOf("day"), "days")
+      differenceInDays(
+        fromUnixTime(userInfo.registered.unixtime.toInt()),
+        new Date()
+      )
     );
 
     return new Stat(scrobbles / diff, (scrobbles / diff).toFixed(0));
