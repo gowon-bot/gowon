@@ -93,7 +93,7 @@ export default class Pace extends LastFMBaseCommand {
         perspective.pronoun
       )}, ${perspective.name} will hit **${numberDisplay(
         pace.milestone,
-        "** scrobble"
+        "**scrobble"
       )} on ${dateDisplay(pace.prediction).bold()}`
     );
 

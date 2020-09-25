@@ -53,7 +53,7 @@ export abstract class PermissionsChildCommand extends AdminBaseChildCommand {
 
     this.aliases = (this.parsedArguments.command as string).split(/\s*\//);
 
-    let command = this.commandManager.find(
+    let command = await this.commandManager.find(
       this.aliases.join(" "),
       this.guild.id
     );

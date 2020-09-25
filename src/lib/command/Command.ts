@@ -31,5 +31,5 @@ export interface Command {
   parentName?: string;
   parent?: ParentCommand;
   client?: GowonClient;
-  getChild(name: string, serverID: string): Command | undefined;
+  getChild(name: string, serverID: string): Promise<Command | undefined>;
 }

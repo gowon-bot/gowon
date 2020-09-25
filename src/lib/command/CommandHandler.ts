@@ -50,12 +50,12 @@ export class CommandHandler {
       message.guild &&
       message.content.match(
         new RegExp(
-          `^${this.gowonService.regexSafePrefix(message.guild!.id)}[^\\s]+`,
+          `^${await this.gowonService.regexSafePrefix(message.guild!.id)}[^\\s]+`,
           "i"
         )
       )
     ) {
-      let { command, runAs } = this.commandManager.find(
+      let { command, runAs } = await this.commandManager.find(
         message.content,
         message.guild.id
       );

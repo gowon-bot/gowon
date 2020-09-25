@@ -9,8 +9,8 @@ export abstract class ParentCommand extends BaseCommand {
   prefixes: string | Array<string> = "";
   canSkipPrefixFor: Array<string> = [];
 
-  getChild(child: string, serverID: string): Command | undefined {
-    let childCommand = this.children.find(child, serverID);
+  async getChild(child: string, serverID: string): Promise<Command | undefined> {
+    let childCommand = await this.children.find(child, serverID);
 
     if (!(childCommand.command instanceof NoCommand)) {
       return childCommand.command;

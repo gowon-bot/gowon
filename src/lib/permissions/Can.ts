@@ -31,7 +31,7 @@ export class Can {
   ): Promise<string[]> {
     if (!this.commandManager.isInitialized) await this.commandManager.init();
 
-    let runAs = this.commandManager.find(child.parentName, serverID);
+    let runAs = await this.commandManager.find(child.parentName, serverID);
 
     return runAs.runAs.toCommandArray().map((c) => c.id);
   }

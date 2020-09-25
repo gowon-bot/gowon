@@ -9,17 +9,15 @@ export class Help extends PermissionsChildCommand {
   async prerun() {}
 
   async run(message: Message) {
+    let prefix = await this.gowonService.prefix(this.guild.id);
+
     await this.send(
       new MessageEmbed()
         .setTitle(`Permissions help for ${message.author.username}`)
         .addField(
           "Disabling commands",
-          `You can disable a command by running \`${this.gowonService.prefix(
-            this.guild.id
-          )}disable <commandName>\`.\
-          This will disable for all users. To enable it again, run \`${this.gowonService.prefix(
-            this.guild.id
-          )}enable <commandName>\``
+          `You can disable a command by running \`${prefix}disable <commandName>\`.\
+          This will disable for all users. To enable it again, run \`${prefix}enable <commandName>\``
         )
         .addField(
           "White- and blacklisting",

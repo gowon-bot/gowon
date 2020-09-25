@@ -47,14 +47,18 @@ export class GowonService {
     }
   }
 
-  prefix(serverID: string): string {
+  async prefix(serverID: string): Promise<string> {
     return (
-      this.shallowCache.find(ShallowCacheScopedKey.Prefixes, serverID) ||
-      config.defaultPrefix
+      (await this.shallowCache.findOrRemember(
+        ShallowCacheScopedKey.Prefixes,
+        async () => (await Setting.getByName(Settings.Prefix, serverID))?.value,
+        serverID
+      )) || config.defaultPrefix
     );
   }
 
-  setPrefix(serverID: string, prefix: string): string {
+  async setPrefix(serverID: string, prefix: string): Promise<string> {
+    await Setting.createUpdateOrDelete(Settings.Prefix, serverID, prefix);
     return this.shallowCache.remember(
       ShallowCacheScopedKey.Prefixes,
       prefix,
@@ -62,8 +66,8 @@ export class GowonService {
     );
   }
 
-  regexSafePrefix(serverID: string): string {
-    return regexEscape(this.prefix(serverID));
+  async regexSafePrefix(serverID: string): Promise<string> {
+    return regexEscape(await this.prefix(serverID));
   }
 
   removeCommandName(string: string, runAs: RunAs, serverID: string): string {

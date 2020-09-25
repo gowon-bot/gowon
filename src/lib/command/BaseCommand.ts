@@ -75,7 +75,7 @@ export abstract class BaseCommand implements Command {
   children?: CommandManager;
   parentName?: string;
 
-  getChild(_: string, __: string): Command | undefined {
+  async getChild(_: string, __: string): Promise<Command | undefined> {
     return undefined;
   }
 

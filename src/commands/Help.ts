@@ -25,7 +25,7 @@ export default class Help extends BaseCommand {
   prefix!: string;
 
   async run(message: Message) {
-    this.prefix = this.gowonService.prefix(this.guild.id);
+    this.prefix = await this.gowonService.prefix(this.guild.id);
 
     await this.commandManager.init();
 
@@ -94,7 +94,10 @@ export default class Help extends BaseCommand {
   }
 
   private async helpForOneCommand(message: Message, commandName: string) {
-    let command = this.commandManager.find(commandName, this.guild.id).command;
+    let { command } = await this.commandManager.find(
+      commandName,
+      this.guild.id
+    );
 
     if (command instanceof NoCommand) throw new CommandNotFoundError();
     if (!(await this.adminService.can.run(command, message)).passed) {
