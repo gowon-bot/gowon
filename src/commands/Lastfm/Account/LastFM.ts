@@ -2,8 +2,6 @@ import { Arguments } from "../../../lib/arguments/arguments";
 import { LinkGenerator } from "../../../helpers/lastFM";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { RecordNotFoundError } from "../../../errors";
-import { Validation } from "../../../lib/validation/ValidationChecker";
-import { userValidator } from "../../../lib/validation/templates";
 
 export default class LastFM extends LastFMBaseCommand {
   aliases = ["lfm"];
@@ -23,8 +21,6 @@ export default class LastFM extends LastFMBaseCommand {
       username: { index: 0 },
     },
   };
-
-  validation: Validation = userValidator();
 
   async run() {
     let { username, perspective } = await this.parseMentionedUsername({

@@ -50,7 +50,9 @@ export class CommandHandler {
       message.guild &&
       message.content.match(
         new RegExp(
-          `^${await this.gowonService.regexSafePrefix(message.guild!.id)}[^\\s]+`,
+          `^${await this.gowonService.regexSafePrefix(
+            message.guild!.id
+          )}[^\\s]+`,
           "i"
         )
       )
@@ -63,7 +65,11 @@ export class CommandHandler {
       if (command instanceof ParentCommand)
         command = (command.default && command.default()) || command;
 
-      let canCheck = await this.adminService.can.run(command, message);
+      let client = new GowonClient(this.client);
+
+      let canCheck = await this.adminService.can.run(command, message, client, {
+        useChannel: true,
+      });
 
       if (!canCheck.passed) {
         Logger.log(
@@ -79,7 +85,7 @@ export class CommandHandler {
 
       this.metaService.recordCommandRun(command.id, message);
 
-      command.client = new GowonClient(this.client);
+      command.client = client;
 
       await command.execute(message, runAs);
     }

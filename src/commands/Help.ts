@@ -43,7 +43,8 @@ export default class Help extends BaseCommand {
   private async helpForAllCommands(message: Message) {
     let commands = await this.adminService.can.viewList(
       this.commandManager.list(),
-      message
+      message,
+      this.client
     );
 
     interface GroupedCommands {
@@ -100,7 +101,9 @@ export default class Help extends BaseCommand {
     );
 
     if (command instanceof NoCommand) throw new CommandNotFoundError();
-    if (!(await this.adminService.can.run(command, message)).passed) {
+    if (
+      !(await this.adminService.can.run(command, message, this.client)).passed
+    ) {
       message.channel.stopTyping();
       return;
     }
@@ -159,7 +162,8 @@ export default class Help extends BaseCommand {
   ) {
     let commands = await this.adminService.can.viewList(
       command.children.list(),
-      message
+      message,
+      this.client
     );
 
     return new MessageEmbed()

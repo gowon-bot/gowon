@@ -25,10 +25,7 @@ export default class Login extends LastFMBaseCommand {
   async run(message: Message) {
     let username = this.parsedArguments.username as string;
 
-    if (
-      message.content.trim() ===
-      `${await this.gowonService.prefix(this.guild.id)}login <username>`
-    ) {
+    if (username === "<username>") {
       await this.reply("lol");
       return;
     }

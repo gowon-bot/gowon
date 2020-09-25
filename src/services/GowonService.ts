@@ -4,11 +4,9 @@ import { Setting } from "../database/entity/Setting";
 import { Guild } from "discord.js";
 import { Settings } from "../lib/Settings";
 import config from "../../config.json";
-import {
-  ShallowCache,
-  ShallowCacheScopedKey,
-} from "../database/cache/ShallowCache";
+import { ShallowCache, CacheScopedKey } from "../database/cache/ShallowCache";
 import { CrownBan } from "../database/entity/CrownBan";
+import { ChannelBlacklist } from "../database/entity/ChannelBlacklist";
 
 export class GowonService {
   // Static methods/properties
@@ -40,7 +38,7 @@ export class GowonService {
     let prefixes = await Setting.find({ where: { name: Settings.Prefix } });
     for (let prefix of prefixes) {
       this.shallowCache.remember(
-        ShallowCacheScopedKey.Prefixes,
+        CacheScopedKey.Prefixes,
         prefix.value,
         prefix.scope!
       );
@@ -50,7 +48,7 @@ export class GowonService {
   async prefix(serverID: string): Promise<string> {
     return (
       (await this.shallowCache.findOrRemember(
-        ShallowCacheScopedKey.Prefixes,
+        CacheScopedKey.Prefixes,
         async () => (await Setting.getByName(Settings.Prefix, serverID))?.value,
         serverID
       )) || config.defaultPrefix
@@ -60,7 +58,7 @@ export class GowonService {
   async setPrefix(serverID: string, prefix: string): Promise<string> {
     await Setting.createUpdateOrDelete(Settings.Prefix, serverID, prefix);
     return this.shallowCache.remember(
-      ShallowCacheScopedKey.Prefixes,
+      CacheScopedKey.Prefixes,
       prefix,
       serverID
     );
@@ -70,10 +68,14 @@ export class GowonService {
     return regexEscape(await this.prefix(serverID));
   }
 
-  removeCommandName(string: string, runAs: RunAs, serverID: string): string {
+  async removeCommandName(
+    string: string,
+    runAs: RunAs,
+    serverID: string
+  ): Promise<string> {
     return string.replace(
       new RegExp(
-        `${this.regexSafePrefix(serverID)}${runAs.toRegexString()}`,
+        `${await this.regexSafePrefix(serverID)}${runAs.toRegexString()}`,
         "i"
       ),
       ""
@@ -82,7 +84,7 @@ export class GowonService {
 
   async getInactiveRole(guild: Guild): Promise<string | undefined> {
     return await this.shallowCache.findOrRemember(
-      ShallowCacheScopedKey.InactiveRole,
+      CacheScopedKey.InactiveRole,
       async () =>
         (await Setting.getByName(Settings.InactiveRole, guild.id))?.value,
       guild.id
@@ -91,7 +93,7 @@ export class GowonService {
 
   async getPurgatoryRole(guild: Guild): Promise<string | undefined> {
     return await this.shallowCache.findOrRemember(
-      ShallowCacheScopedKey.PurgatoryRole,
+      CacheScopedKey.PurgatoryRole,
       async () =>
         (await Setting.getByName(Settings.PurgatoryRole, guild.id))?.value,
       guild.id
@@ -100,7 +102,7 @@ export class GowonService {
 
   async getCrownBannedUsers(guild: Guild): Promise<string[]> {
     return await this.shallowCache.findOrRemember<string[]>(
-      ShallowCacheScopedKey.CrownBannedUsers,
+      CacheScopedKey.CrownBannedUsers,
       async () => {
         let bans = (
           await CrownBan.find({
@@ -116,5 +118,13 @@ export class GowonService {
 
   async isUserCrownBanned(guild: Guild, discordID: string): Promise<boolean> {
     return (await this.getCrownBannedUsers(guild)).includes(discordID);
+  }
+
+  async getChannelBlacklists(serverID: string): Promise<ChannelBlacklist[]> {
+    return await this.shallowCache.findOrRemember(
+      CacheScopedKey.ChannelBlacklists,
+      async () => await ChannelBlacklist.find({ serverID }),
+      serverID
+    );
   }
 }

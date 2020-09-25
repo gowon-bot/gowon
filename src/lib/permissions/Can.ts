@@ -5,10 +5,13 @@ import { Command } from "../command/Command";
 import { ChildCommand } from "../command/ParentCommand";
 import { CommandManager } from "../command/CommandManager";
 import { In } from "typeorm";
+import { GowonService } from "../../services/GowonService";
+import { GowonClient } from "../GowonClient";
 
 export enum CheckFailReason {
   disabled = "disabled",
   forbidden = "forbidden",
+  blacklistedFromChannel = "blacklisted from channel",
 }
 
 export interface CanCheck {
@@ -18,6 +21,7 @@ export interface CanCheck {
 
 export class Can {
   commandManager = new CommandManager();
+  private gowonService = GowonService.getInstance();
 
   cachedPermissons: {
     [commandID: string]: Permission[];
@@ -65,8 +69,38 @@ export class Can {
     }
   }
 
-  async run(command: Command, message: Message): Promise<CanCheck> {
+  private async canRunInChannel(
+    serverID: string,
+    commandID: string,
+    channelID: string
+  ): Promise<boolean> {
+    let channelBlacklists = await this.gowonService.getChannelBlacklists(
+      serverID
+    );
+
+    return !channelBlacklists.find(
+      (cb) => cb.commandID === commandID && cb.channelID === channelID
+    );
+  }
+
+  async run(
+    command: Command,
+    message: Message,
+    client: GowonClient,
+    { useChannel }: { useChannel?: boolean } = { useChannel: false }
+  ): Promise<CanCheck> {
     if (message.member?.hasPermission("ADMINISTRATOR")) return { passed: true };
+    if (client.isAuthor(message.author.id)) return { passed: true };
+
+    if (
+      useChannel &&
+      !(await this.canRunInChannel(
+        message.guild!.id,
+        command.id,
+        message.channel.id
+      ))
+    )
+      return { passed: false, reason: CheckFailReason.blacklistedFromChannel };
 
     let permissions: Permission[];
 
@@ -120,7 +154,11 @@ export class Can {
     };
   }
 
-  async viewList(commands: Command[], message: Message): Promise<Command[]> {
+  async viewList(
+    commands: Command[],
+    message: Message,
+    guild: GowonClient
+  ): Promise<Command[]> {
     let allPermissions = await Permission.find({
       where: { serverID: message.guild?.id! },
     });
@@ -134,7 +172,7 @@ export class Can {
     let passed = [] as Command[];
 
     for (let command of commands) {
-      let check = await this.run(command, message);
+      let check = await this.run(command, message, guild);
 
       if (check.passed) passed.push(command);
     }
