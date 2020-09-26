@@ -42,15 +42,15 @@ export class CommandManager {
     this.isInitialized = true;
   }
 
-  find(
+  async find(
     messageString: string,
     serverID: string
-  ): { command: Command; runAs: RunAs } {
+  ): Promise<{ command: Command; runAs: RunAs }> {
     let checker = new AliasChecker(messageString);
 
     for (let command of this.list(true)) {
-      if (checker.check(command, serverID)) {
-        let runAs = checker.getRunAs(command, serverID);
+      if (await checker.check(command, serverID)) {
+        let runAs = await checker.getRunAs(command, serverID);
         return {
           command: runAs.last()?.command!,
           runAs,

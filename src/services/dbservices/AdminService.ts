@@ -10,6 +10,8 @@ import {
 import { Permission } from "../../database/entity/Permission";
 import { Can } from "../../lib/permissions/Can";
 import { QueryFailedError } from "typeorm";
+import { ChannelBlacklist } from "../../database/entity/ChannelBlacklist";
+import { CacheScopedKey } from "../../database/cache/ShallowCache";
 
 export class AdminService extends BaseService {
   get can(): Can {
@@ -212,5 +214,72 @@ export class AdminService extends BaseService {
   ): Promise<Permission[]> {
     this.log(`Listing permissions in ${serverID} for entity ${entityID}`);
     return await Permission.find({ where: { serverID, entityID } });
+  }
+
+  async blacklistCommandFromChannel(
+    serverID: string,
+    commandID: string,
+    channelID: string
+  ): Promise<ChannelBlacklist> {
+    this.log(
+      `blacklisting ${commandID} in #${channelID} in the server ${serverID}`
+    );
+    let existingChannelBlacklist = await ChannelBlacklist.findOne({
+      serverID,
+      commandID,
+      channelID,
+    });
+
+    if (existingChannelBlacklist)
+      throw new DuplicateRecordError("channel blacklist");
+
+    let channelBlacklist = ChannelBlacklist.create({
+      serverID,
+      commandID,
+      channelID,
+    });
+
+    await channelBlacklist.save();
+
+    let channelBlacklists = [
+      ...(await this.gowonService.getChannelBlacklists(serverID)),
+      channelBlacklist,
+    ];
+
+    await this.gowonService.shallowCache.remember(
+      CacheScopedKey.ChannelBlacklists,
+      channelBlacklists,
+      serverID
+    );
+
+    return channelBlacklist;
+  }
+
+  async unblacklistCommandFromChannel(
+    serverID: string,
+    commandID: string,
+    channelID: string
+  ): Promise<ChannelBlacklist> {
+    let channelBlacklist = await ChannelBlacklist.findOne({
+      serverID,
+      commandID,
+      channelID,
+    });
+
+    if (!channelBlacklist) throw new RecordNotFoundError("channel blacklist");
+
+    let channelBlacklists = (
+      await this.gowonService.getChannelBlacklists(serverID)
+    ).filter((cr) => cr.id !== channelBlacklist!.id);
+
+    await channelBlacklist.remove();
+
+    this.gowonService.shallowCache.remember(
+      CacheScopedKey.ChannelBlacklists,
+      channelBlacklists,
+      serverID
+    );
+
+    return channelBlacklist;
   }
 }

@@ -45,13 +45,13 @@ export class ArgumentParser extends Parser {
     super();
   }
 
-  parse(message: Message, runAs: RunAs): ParsedArguments {
+  async parse(message: Message, runAs: RunAs): Promise<ParsedArguments> {
     let messageString = this.removeAllMentions(message.content).trim();
 
     let mentions = this.mentionParser.parse(message);
 
     let inputs = this.parseInputs(
-      this.gowonService.removeCommandName(
+      await this.gowonService.removeCommandName(
         messageString,
         runAs,
         message.guild!.id

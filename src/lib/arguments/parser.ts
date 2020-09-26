@@ -2,7 +2,7 @@ import { Slice, ParsedArgument } from "./arguments";
 
 export abstract class Parser {
   protected removeMentions(string: string): string {
-    return string.replace(/<@(!|&|#)?[0-9]+>/g, "");
+    return string.replace(/<(@|#)(!|&)?[0-9]+>/g, "");
   }
 
   protected getElementFromIndex(

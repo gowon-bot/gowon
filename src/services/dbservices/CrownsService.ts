@@ -16,7 +16,7 @@ import { Setting } from "../../database/entity/Setting";
 import { Settings } from "../../lib/Settings";
 import { MoreThan } from "typeorm";
 import { CrownBan } from "../../database/entity/CrownBan";
-import { ShallowCacheScopedKey } from "../../database/cache/ShallowCache";
+import { CacheScopedKey } from "../../database/cache/ShallowCache";
 import { CrownsHistoryService } from "./CrownsHistoryService";
 import { RedirectsService } from "./RedirectsServices";
 import { ILike } from "../../extensions/typeorm";
@@ -376,7 +376,7 @@ export class CrownsService extends BaseService {
     );
 
     this.gowonService.shallowCache.remember(
-      ShallowCacheScopedKey.InactiveRole,
+      CacheScopedKey.InactiveRole,
       roleID,
       serverID
     );
@@ -395,7 +395,7 @@ export class CrownsService extends BaseService {
     );
 
     this.gowonService.shallowCache.remember(
-      ShallowCacheScopedKey.PurgatoryRole,
+      CacheScopedKey.PurgatoryRole,
       roleID,
       serverID
     );
@@ -451,14 +451,14 @@ export class CrownsService extends BaseService {
 
     let bans = [
       ...(this.gowonService.shallowCache.find(
-        ShallowCacheScopedKey.CrownBannedUsers,
+        CacheScopedKey.CrownBannedUsers,
         serverID
       ) || []),
       user.discordID,
     ];
 
     this.gowonService.shallowCache.remember(
-      ShallowCacheScopedKey.CrownBannedUsers,
+      CacheScopedKey.CrownBannedUsers,
       bans,
       serverID
     );
@@ -475,13 +475,13 @@ export class CrownsService extends BaseService {
 
     let bans = (
       this.gowonService.shallowCache.find<string[]>(
-        ShallowCacheScopedKey.CrownBannedUsers,
+        CacheScopedKey.CrownBannedUsers,
         serverID
       ) || []
     ).filter((u) => u !== user.discordID);
 
     this.gowonService.shallowCache.remember(
-      ShallowCacheScopedKey.CrownBannedUsers,
+      CacheScopedKey.CrownBannedUsers,
       bans,
       serverID
     );
