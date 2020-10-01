@@ -1,8 +1,8 @@
 import { Arguments } from "../../../lib/arguments/arguments";
 import {
-  generateTimeRange,
   TimeRange,
-  generateHumanTimeRange,
+  timeRangeParser,
+  humanizedTimeRangeParser
 } from "../../../helpers/date";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { LogicError } from "../../../errors";
@@ -21,25 +21,28 @@ export default class GoBack extends LastFMBaseCommand {
       user: { index: 0, description: "The user to lookup" },
     },
     inputs: {
-      timeRange: {
-        custom: (messageString: string) => generateTimeRange(messageString),
-        index: -1,
-      },
-      humanReadableTimeRange: {
-        custom: (messageString: string) =>
-          generateHumanTimeRange(messageString, { raw: true, noOverall: true }),
+      timeRange: { custom: timeRangeParser(), index: -1 },
+      humanizedTimeRange: {
+        custom: humanizedTimeRangeParser({
+          raw: true,
+          noOverall: true,
+          cleanSingleDurations: false,
+        }),
         index: -1,
       },
     },
   };
 
   validation: Validation = {
-    timeRange: { validator: new validators.TimeRange({ requireFrom: true }) },
+    timeRange: {
+      validator: new validators.TimeRange({ requireFrom: true }),
+      friendlyName: "time range",
+    },
   };
 
   async run() {
     let timeRange = this.parsedArguments.timeRange as TimeRange,
-      humanTimeRange = this.parsedArguments.humanReadableTimeRange as string;
+      humanTimeRange = this.parsedArguments.humanizedTimeRange as string;
 
     let { username, perspective } = await this.parseMentionedUsername({
       asCode: false,

@@ -52,7 +52,6 @@ export default class Cover extends LastFMBaseCommand {
       let albumDetails = await this.lastFMService.albumInfo({ artist, album });
       let image = albumDetails.image.find((i) => i.size === "extralarge");
 
-      console.log(albumDetails.image)
       if (!image?.["#text"]) throw new LogicError("that album doesn't have a cover!");
 
       await this.sendWithFiles(

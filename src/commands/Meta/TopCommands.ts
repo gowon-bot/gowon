@@ -4,24 +4,20 @@ import { numberDisplay } from "../../helpers";
 import { CommandManager } from "../../lib/command/CommandManager";
 import { Arguments } from "../../lib/arguments/arguments";
 import {
-  generateTimeRange,
-  generateHumanTimeRange,
   TimeRange,
+  timeRangeParser,
+  humanizedTimeRangeParser,
 } from "../../helpers/date";
 
 export class TopCommands extends MetaChildCommand {
   description = "Shows the most used commands";
-  usage = ["", "time period"]
+  usage = ["", "time period"];
 
   arguments: Arguments = {
     inputs: {
-      timeRange: {
-        custom: (messageString: string) => generateTimeRange(messageString),
-        index: -1,
-      },
-      humanReadableTimeRange: {
-        custom: (messageString: string) =>
-          generateHumanTimeRange(messageString, { noOverall: true }),
+      timeRange: { custom: timeRangeParser(), index: -1 },
+      humanizedTimeRange: {
+        custom: humanizedTimeRangeParser({ noOverall: true }),
         index: -1,
       },
     },
@@ -29,8 +25,7 @@ export class TopCommands extends MetaChildCommand {
 
   async run(message: Message) {
     let timeRange = this.parsedArguments.timeRange as TimeRange,
-      humanReadableTimeRange = this.parsedArguments
-        .humanReadableTimeRange as string;
+      humanizedTimeRange = this.parsedArguments.humanizedTimeRange as string;
 
     let topCommands = (
       await this.metaService.mostUsedCommands(message.guild?.id!, timeRange)
@@ -40,7 +35,7 @@ export class TopCommands extends MetaChildCommand {
     await commandManager.init();
 
     let embed = new MessageEmbed()
-      .setTitle(`Top commands in ${message.guild?.name!} ${humanReadableTimeRange}`)
+      .setTitle(`Top commands in ${message.guild?.name!} ${humanizedTimeRange}`)
       .setDescription(
         topCommands.map(
           (tc) =>

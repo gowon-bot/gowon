@@ -118,12 +118,6 @@ export default class AlbumInfo extends InfoCommand {
         ).bold()}% of all scrobbles of this album!`
       );
 
-    console.log(
-      albumInfo.image.find((i) => i.size === "large")?.["#text"] ||
-        (spotifyAlbum &&
-          this.spotifyService.getImageFromSearchItem(spotifyAlbum))
-    );
-
     this.send(embed);
   }
 }

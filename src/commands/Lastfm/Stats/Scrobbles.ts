@@ -1,9 +1,9 @@
 import { Message } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
 import {
-  generateTimeRange,
   TimeRange,
-  generateHumanTimeRange,
+  timeRangeParser,
+  humanizedTimeRangeParser,
 } from "../../../helpers/date";
 import { numberDisplay } from "../../../helpers";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
@@ -23,15 +23,8 @@ export default class Scrobbles extends LastFMBaseCommand {
       },
     },
     inputs: {
-      timeRange: {
-        custom: (messageString: string) => generateTimeRange(messageString),
-        index: -1,
-      },
-      humanReadableTimeRange: {
-        custom: (messageString: string) =>
-          generateHumanTimeRange(messageString),
-        index: -1,
-      },
+      timeRange: { custom: timeRangeParser(), index: -1 },
+      humanizedTimeRange: { custom: humanizedTimeRangeParser(), index: -1 },
     },
   };
 
@@ -45,7 +38,7 @@ export default class Scrobbles extends LastFMBaseCommand {
     }
 
     let timeRange = this.parsedArguments.timeRange as TimeRange,
-      humanTimeRange = this.parsedArguments.humanReadableTimeRange as string;
+      humanTimeRange = this.parsedArguments.humanizedTimeRange as string;
 
     let { username, perspective } = await this.parseMentionedUsername();
 

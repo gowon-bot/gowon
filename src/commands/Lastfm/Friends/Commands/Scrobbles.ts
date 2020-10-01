@@ -4,9 +4,9 @@ import { MultiRequster } from "../../../../lib/MultiRequester";
 import { numberDisplay } from "../../../../helpers";
 import { Arguments } from "../../../../lib/arguments/arguments";
 import {
-  generateHumanTimeRange,
-  generateTimeRange,
+  humanizedTimeRangeParser,
   TimeRange,
+  timeRangeParser,
 } from "../../../../helpers/date";
 
 export class Scrobbles extends FriendsChildCommand {
@@ -16,15 +16,8 @@ export class Scrobbles extends FriendsChildCommand {
 
   arguments: Arguments = {
     inputs: {
-      timeRange: {
-        custom: (messageString: string) => generateTimeRange(messageString),
-        index: -1,
-      },
-      humanReadableTimeRange: {
-        custom: (messageString: string) =>
-          generateHumanTimeRange(messageString),
-        index: -1,
-      },
+      timeRange: { custom: timeRangeParser(), index: -1 },
+      humanizedTimeRange: { custom: humanizedTimeRangeParser(), index: -1 },
     },
   };
 
@@ -32,7 +25,7 @@ export class Scrobbles extends FriendsChildCommand {
 
   async run() {
     let timeRange = this.parsedArguments.timeRange as TimeRange,
-      humanTimeRange = this.parsedArguments.humanReadableTimeRange as string;
+      humanTimeRange = this.parsedArguments.humanizedTimeRange as string;
 
     let scrobbles = await new MultiRequster([
       ...this.friendUsernames,

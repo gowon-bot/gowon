@@ -1,9 +1,9 @@
 import { MessageEmbed } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
 import {
-  generateTimeRange,
-  generateHumanTimeRange,
   TimeRange,
+  timeRangeParser,
+  humanizedTimeRangeParser,
 } from "../../../helpers/date";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { PaceCalculator } from "../../../lib/calculators/PaceCalculator";
@@ -29,19 +29,14 @@ export default class Pace extends LastFMBaseCommand {
     },
     inputs: {
       timeRange: {
-        custom: (messageString: string) =>
-          generateTimeRange(messageString, {
-            useOverall: true,
-            fallback: "1 week",
-          }),
+        custom: timeRangeParser({ default: { weeks: 1 }, useOverall: true }),
         index: -1,
       },
-      humanReadableTimeRange: {
-        custom: (messageString: string) =>
-          generateHumanTimeRange(messageString, {
-            overallMessage: "since <user> began scrobbling",
-            fallback: "week",
-          }),
+      humanizedTimeRange: {
+        custom: humanizedTimeRangeParser({
+          default: "week",
+          overallMessage: "since <user> began scrobbling",
+        }),
         index: -1,
       },
       milestone: {
@@ -64,8 +59,7 @@ export default class Pace extends LastFMBaseCommand {
 
   async run() {
     let timeRange = this.parsedArguments.timeRange as TimeRange,
-      humanReadableTimeRange = this.parsedArguments
-        .humanReadableTimeRange as string,
+      humanizedTimeRange = this.parsedArguments.humanizedTimeRange as string,
       milestone = this.parsedArguments.milestone as number | undefined;
 
     let { username, perspective } = await this.parseMentionedUsername();
@@ -88,10 +82,9 @@ export default class Pace extends LastFMBaseCommand {
       `At a rate of **${numberDisplay(
         pace.scrobbleRate.toFixed(2),
         "scrobble"
-      )}/hour** ${humanReadableTimeRange.replace(
-        "<user>",
-        perspective.pronoun
-      )}, ${perspective.name} will hit **${numberDisplay(
+      )}/hour** ${humanizedTimeRange.replace("<user>", perspective.pronoun)}, ${
+        perspective.name
+      } will hit **${numberDisplay(
         pace.milestone,
         "** scrobble"
       )} on ${dateDisplay(pace.prediction).bold()}`

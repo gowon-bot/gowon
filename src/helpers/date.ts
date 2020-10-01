@@ -1,143 +1,20 @@
-import parse from "parse-duration";
-import { LogicError } from "../errors";
 import { LastFMPeriod } from "../services/LastFM/LastFMService.types";
 import {
-  differenceInSeconds,
   Duration,
   formatDuration,
   intervalToDuration,
   sub,
-  subSeconds,
   parse as fnsParse,
 } from "date-fns";
+import { DurationParser } from "../lib/DurationParser";
 
-const fallbackRegex = /(\s+|\b)1?(s(econd)?|mi(nute)?|h(our)?|d(ay)?|w(eek)?|m(o(nth)?)?|q(uarter)?|ha(lf)?|y(ear)?)(\s|\b)/gi;
 const overallRegex = /(\s+|\b)(a(lltime)?|o(verall)?)(\s|\b)/gi;
-
-function timeFrameConverter(timeframe: string): string {
-  switch (timeframe.trim()) {
-    case "s":
-      return "second";
-    case "mi":
-      return "minute";
-    case "h":
-      return "hour";
-    case "d":
-      return "day";
-    case "w":
-      return "week";
-    case "m":
-    case "mo":
-      return "month";
-    case "q":
-      return "quarter";
-    case "ha":
-      return "half";
-    case "y":
-      return "year";
-  }
-
-  return timeframe.trim();
-}
-
-function timeFrameToDuration(timeFrame: string): Duration {
-  let timeFrameConverted = timeFrameConverter(timeFrame) + "s";
-
-  if (timeFrameConverted === "quarters") {
-    return { months: 3 };
-  } else if (timeFrameConverted === "halfs") {
-    return { months: 6 };
-  } else {
-    let duration: Duration = {};
-    duration[timeFrameConverted as keyof Duration] = 1;
-    return duration;
-  }
-}
 
 export interface TimeRange {
   from?: Date;
   to?: Date;
   difference?: number;
   duration?: Duration;
-}
-
-export function generateTimeRange(
-  string: string,
-  options: {
-    fallback?: string;
-    useOverall?: boolean;
-    noFallback?: boolean;
-  } = {}
-): TimeRange {
-  let difference = parse(string, "second");
-
-
-  if ((difference || 0) < -1)
-    throw new LogicError("that's in the future, dumbass");
-
-  if (!difference) {
-    if (options.noFallback) return {};
-
-    let matches = string.match(fallbackRegex) || [];
-    let overallMatch = string.match(overallRegex) || [];
-
-    if (overallMatch.length && options.useOverall) return { to: new Date() };
-
-    if (matches.length < 1)
-      return options.fallback
-        ? generateTimeRange(options.fallback)
-        : { to: new Date() };
-
-    let duration = timeFrameToDuration(matches[0]);
-
-    let fromDate = sub(new Date(), duration);
-
-    return {
-      from: fromDate,
-      to: new Date(),
-      difference: differenceInSeconds(new Date(), fromDate),
-      duration,
-    };
-  }
-
-  return {
-    from: subSeconds(new Date(), difference),
-    to: new Date(),
-    difference,
-  };
-}
-
-export function generateHumanTimeRange(
-  string: string,
-  options: {
-    noOverall?: boolean;
-    raw?: boolean;
-    overallMessage?: string;
-    fallback?: string;
-  } = {
-    noOverall: false,
-    raw: false,
-    overallMessage: "overall",
-  }
-): string {
-  let timeRange = generateTimeRange(string);
-
-  if (timeRange.difference && timeRange.duration) {
-    let timeString = humanizeDurationInSeconds(
-      timeRange.duration || timeRange.difference
-    );
-
-    if (timeString.length)
-      return (options.raw ? "" : "over the past ") + timeString;
-  } else {
-    if (!options.noOverall && overallRegex.test(string))
-      return options.overallMessage!;
-  }
-  return options.fallback
-    ? (options.raw ? "" : "over the past ") + options.fallback
-    : options.noOverall
-    ? ""
-    : options.overallMessage!;
 }
 
 export function generatePeriod(
@@ -206,25 +83,95 @@ export function parseDate(
   return;
 }
 
-export const humanizeDurationInSeconds = (
-  seconds: number | Duration
+export const humanizeDuration = (
+  seconds: number | Duration,
+  options: { cleanSingleDurations?: boolean } = {}
 ): string => {
   const duration =
     typeof seconds === "number"
       ? intervalToDuration({ start: 0, end: seconds * 1000 })
       : seconds;
 
-  return formatDuration(duration)
-    .split(/\s+/)
-    .reduce((acc, part, idx, arr) => {
-      if (arr.length > 2 && arr.length - idx == 2) {
-        acc += " and";
-      } else if (idx % 2 === 0 && idx !== 0) {
-        acc += ",";
-      }
+  let split = formatDuration(duration).split(/\s+/);
 
-      acc += " " + part;
+  if (options.cleanSingleDurations && split.length === 2 && split[0] === "1")
+    return split[1];
 
-      return acc.trim();
-    }, "");
+  return split.reduce((acc, part, idx, arr) => {
+    if (arr.length > 2 && arr.length - idx == 2) {
+      acc += " and";
+    } else if (idx % 2 === 0 && idx !== 0) {
+      acc += ",";
+    }
+
+    acc += " " + part;
+
+    return acc.trim();
+  }, "");
 };
+
+export function timeRangeParser(
+  options: { default?: Duration; useOverall?: boolean } = {}
+): (string: string) => TimeRange {
+  return (string) => {
+    let durationParser = new DurationParser();
+
+    let parsedDuration = durationParser.parse(string);
+
+    if (parsedDuration && Object.keys(parsedDuration).length) {
+      let fromDate = sub(new Date(), parsedDuration);
+
+      return {
+        from: fromDate,
+        to: new Date(),
+        duration: parsedDuration,
+      };
+    } else {
+      if (options.useOverall && overallRegex.test(string))
+        return { to: new Date() };
+
+      if (!options.default) return { to: new Date() };
+
+      return {
+        from: sub(new Date(), options.default),
+        to: new Date(),
+        duration: options.default,
+      };
+    }
+  };
+}
+
+export function humanizedTimeRangeParser(
+  options: {
+    raw?: boolean;
+    default?: string;
+    noOverall?: boolean;
+    overallMessage?: string;
+    cleanSingleDurations?: boolean;
+  } = { overallMessage: "overall" }
+): (string: string) => string {
+  return (string: string) => {
+    let timeRange = timeRangeParser()(string);
+
+    console.log(timeRange);
+
+    if (timeRange.duration) {
+      let timeString = humanizeDuration(
+        timeRange.duration || timeRange.difference,
+        {}
+      );
+
+      if (timeString.length)
+        return (options.raw ? "" : "over the past ") + timeString;
+    } else {
+      if (!options.noOverall && overallRegex.test(string))
+        return options.overallMessage!;
+    }
+
+    return options.default
+      ? (options.raw ? "" : "over the past ") + options.default
+      : options.noOverall
+      ? ""
+      : options.overallMessage!;
+  };
+}
