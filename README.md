@@ -203,3 +203,4 @@ _You can find the source code for all the commands at [/src/commands](/src/comma
 - mypetrobot for building the `Who Knows?` bot, the inspiration for this bot
 - Frikandel, for making a great influence
 - Last.fm, for making a great platform <3
+

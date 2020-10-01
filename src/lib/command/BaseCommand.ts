@@ -75,7 +75,7 @@ export abstract class BaseCommand implements Command {
   children?: CommandManager;
   parentName?: string;
 
-  getChild(_: string, __: string): Command | undefined {
+  async getChild(_: string, __: string): Promise<Command | undefined> {
     return undefined;
   }
 
@@ -180,7 +180,7 @@ export abstract class BaseCommand implements Command {
     await this.setup();
 
     try {
-      this.parsedArguments = this.parseArguments(runAs);
+      this.parsedArguments = await this.parseArguments(runAs);
 
       for (let delegate of this.delegates) {
         if (delegate.when(this.parsedArguments)) {
@@ -212,10 +212,10 @@ export abstract class BaseCommand implements Command {
     await this.teardown();
   }
 
-  parseArguments(runAs: RunAs): ParsedArguments {
+  async parseArguments(runAs: RunAs): Promise<ParsedArguments> {
     let parser = new ArgumentParser(this.arguments);
 
-    return parser.parse(this.message, runAs);
+    return await parser.parse(this.message, runAs);
   }
 
   addResponse(res: MessageEmbed | string) {

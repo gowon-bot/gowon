@@ -7,6 +7,7 @@ import { View } from "./View";
 import { Enable } from "./Enable";
 import { Disable } from "./Disable";
 import { Disabled } from "./Disabled";
+import { ChannelBlacklist } from "./ChannelBlacklist";
 
 export default class PermissionsParentCommand extends AdminBaseParentCommand {
   friendlyName = "permissions";
@@ -21,5 +22,6 @@ export default class PermissionsParentCommand extends AdminBaseParentCommand {
     enable: () => new Enable(),
     disable: () => new Disable(),
     disabled: () => new Disabled(),
+    channelblacklist: () => new ChannelBlacklist(),
   });
 }

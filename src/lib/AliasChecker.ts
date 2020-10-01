@@ -99,12 +99,12 @@ export class AliasChecker {
 
   constructor(private aliasesString: string) {}
 
-  parentCommandGetChildSkipPrefix(
+  async parentCommandGetChildSkipPrefix(
     command: ParentCommand,
     childAlias: string,
     serverID: string
-  ): Command | undefined {
-    let child = command.children.find(childAlias, serverID);
+  ): Promise<Command | undefined> {
+    let child = await command.children.find(childAlias, serverID);
 
     if (
       command.canSkipPrefixFor.includes(child.command.name) &&
@@ -145,10 +145,13 @@ export class AliasChecker {
     return false;
   }
 
-  getRunAs(command: Command, serverID: string): RunAs {
+  async getRunAs(command: Command, serverID: string): Promise<RunAs> {
     let checks = this.aliasesString
       .toLowerCase()
-      .replace(new RegExp(this.gowonService.regexSafePrefix(serverID), "i"), "")
+      .replace(
+        new RegExp(await this.gowonService.regexSafePrefix(serverID), "i"),
+        ""
+      )
       .trim()
       .split(/\s+/);
 
@@ -178,11 +181,11 @@ export class AliasChecker {
           });
         }
 
-        let child = command.getChild(
+        let child = await command.getChild(
           checks.slice(check_i + 1).join(" ") || "",
           serverID
         );
-        let childNoPrefix = this.parentCommandGetChildSkipPrefix(
+        let childNoPrefix = await this.parentCommandGetChildSkipPrefix(
           command,
           check,
           serverID
@@ -219,7 +222,7 @@ export class AliasChecker {
     return runAs;
   }
 
-  check(command: Command, serverID: string): boolean {
-    return !this.getRunAs(command, serverID).empty();
+  async check(command: Command, serverID: string): Promise<boolean> {
+    return !(await this.getRunAs(command, serverID)).empty();
   }
 }
