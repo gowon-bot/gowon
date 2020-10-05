@@ -1,6 +1,6 @@
 import { FriendsChildCommand } from "../FriendsChildCommand";
 import { MessageEmbed } from "discord.js";
-import { MultiRequster } from "../../../../lib/MultiRequester";
+import { MultiRequester } from "../../../../lib/MultiRequester";
 import { numberDisplay } from "../../../../helpers";
 import { Arguments } from "../../../../lib/arguments/arguments";
 import {
@@ -27,7 +27,7 @@ export class Scrobbles extends FriendsChildCommand {
     let timeRange = this.parsedArguments.timeRange as TimeRange,
       humanTimeRange = this.parsedArguments.humanizedTimeRange as string;
 
-    let scrobbles = await new MultiRequster([
+    let scrobbles = await new MultiRequester([
       ...this.friendUsernames,
       this.senderUsername,
     ]).fetch(this.lastFMService.getNumberScrobbles.bind(this.lastFMService), [

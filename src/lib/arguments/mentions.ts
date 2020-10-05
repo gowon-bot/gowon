@@ -22,7 +22,7 @@ export class MentionParser extends Parser {
 
   private buildCustomMentionRegex(prefix: string): RegExp {
     return new RegExp(
-      `(?<=\\b${escapeStringRegexp(prefix)})\\s*[\\w\\-]+`,
+      `(?<=\\b${escapeStringRegexp(prefix)})\\s*[\\w\\-.!]+`,
       "gi"
     );
   }
@@ -45,7 +45,7 @@ export class MentionParser extends Parser {
       .join("|");
 
     return string.replace(
-      new RegExp(`\\b(${prefixRegexPart})\\s*[\\w\\-]+`, "gi"),
+      new RegExp(`\\b(${prefixRegexPart})\\s*[\\w\\-].!+`, "gi"),
       ""
     );
   }

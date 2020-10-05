@@ -46,12 +46,12 @@ export class GowonService {
   }
 
   async prefix(serverID: string): Promise<string> {
-    return (
-      (await this.shallowCache.findOrRemember(
-        CacheScopedKey.Prefixes,
-        async () => (await Setting.getByName(Settings.Prefix, serverID))?.value,
-        serverID
-      )) || config.defaultPrefix
+    return await this.shallowCache.findOrRemember(
+      CacheScopedKey.Prefixes,
+      async () =>
+        (await Setting.getByName(Settings.Prefix, serverID))?.value ||
+        config.defaultPrefix,
+      serverID
     );
   }
 

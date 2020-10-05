@@ -5,6 +5,7 @@ import {
   intervalToDuration,
   sub,
   parse as fnsParse,
+  isValid,
 } from "date-fns";
 import { DurationParser } from "../lib/DurationParser";
 
@@ -73,7 +74,8 @@ export function parseDate(
     if (typeof parser === "string") {
       let now = new Date();
       let attempt = fnsParse(string, parser, now);
-      if (attempt !== now) return attempt;
+
+      if (attempt !== now && isValid(attempt)) return attempt;
     } else {
       let attempt = parser(string);
       if (attempt) return attempt;
@@ -152,8 +154,6 @@ export function humanizedTimeRangeParser(
 ): (string: string) => string {
   return (string: string) => {
     let timeRange = timeRangeParser()(string);
-
-    console.log(timeRange);
 
     if (timeRange.duration) {
       let timeString = humanizeDuration(

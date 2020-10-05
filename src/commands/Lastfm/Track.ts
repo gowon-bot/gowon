@@ -65,7 +65,7 @@ export default class Track extends LastFMBaseCommand {
     let track = {
       name: (trackInfo.value?.name || trackName) as string,
       artist: (trackInfo.value?.artist?.name || artistName) as string,
-      album: (trackInfo.value?.album?.name || "") as string,
+      album: (trackInfo.value?.album?.title || "") as string,
     };
 
     let crownString = "";
@@ -98,7 +98,7 @@ export default class Track extends LastFMBaseCommand {
           (track.album ? ` from ${track.album.italic()}` : "")
       )
       .setThumbnail(
-        trackInfo.value.image?.find((i: Image) => i.size === "large")?.[
+        trackInfo.value?.album?.image?.find((i: Image) => i.size === "large")?.[
           "#text"
         ] || ""
       )

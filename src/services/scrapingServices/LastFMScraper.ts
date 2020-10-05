@@ -166,11 +166,13 @@ export class LastFMScraper extends BaseScraper {
       ".chartlist-timestamp > span"
     );
 
+    console.log("Last Scrobbled", lastScrobbled.text());
+
     return (
       parseDate(
         lastScrobbled.text().trim(),
-        "D MMM h:mma",
-        "D MMM yyyy, h:mma"
+        "d MMM h:mma",
+        "d MMM yyyy, h:mma"
       ) || lastScrobbled.text().trim()
     );
   }

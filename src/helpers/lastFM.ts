@@ -1,6 +1,10 @@
 import { Track } from "../services/LastFM/LastFMService.types";
 
-import { generateLink, generateLink as generateLinkEmbed } from "./discord";
+import {
+  cleanURL,
+  generateLink,
+  generateLink as generateLinkEmbed,
+} from "./discord";
 
 export interface TrackLinks {
   artist: string;
@@ -12,7 +16,7 @@ export abstract class LinkGenerator {
   static baseURL = "https://www.last.fm/";
 
   static encode(string: string): string {
-    return encodeURIComponent(string).replace(")", "%29");
+    return cleanURL(encodeURIComponent(string));
   }
 
   // https://www.last.fm/music/Red+Velvet
@@ -67,6 +71,7 @@ export interface ParsedTrack {
   artist: string;
   album: string;
   name: string;
+  nowPlaying: boolean;
 }
 
 export function parseLastFMTrackResponse(track: Track): ParsedTrack {
@@ -74,6 +79,7 @@ export function parseLastFMTrackResponse(track: Track): ParsedTrack {
     artist: track.artist["#text"],
     album: track.album["#text"],
     name: track.name,
+    nowPlaying: track["@attr"]?.nowplaying === "true",
   };
 }
 

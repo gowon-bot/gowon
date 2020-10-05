@@ -1,5 +1,5 @@
 import { CommandManager } from "../../lib/command/CommandManager";
-import Feedback from "./Feedback";
+import Issue from "./Feedback";
 import { MetaBaseParentCommand } from "./MetaBaseCommand";
 import { TopCommands } from "./TopCommands";
 
@@ -10,6 +10,6 @@ export default class MetaParentCommamnd extends MetaBaseParentCommand {
 
   children: CommandManager = new CommandManager({
     topcommands: () => new TopCommands(),
-    feedback: () => new Feedback(),
+    feedback: () => new Issue(),
   });
 }

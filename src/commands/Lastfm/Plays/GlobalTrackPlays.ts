@@ -1,11 +1,11 @@
-import { cleanURL } from "../../../helpers/discord";
 import { Arguments } from "../../../lib/arguments/arguments";
+import { numberDisplay } from "../../../helpers";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
-export default class TrackPage extends LastFMBaseCommand {
-  aliases = ["tpa", "tpage"];
-  description = "Links you to the track page on lastfm";
-  subcategory = "pages";
+export default class GlobalTrackPlays extends LastFMBaseCommand {
+  aliases = ["gtp", "globaltp"];
+  description = "Shows you how many plays Last.fm has of a given track";
+  subcategory = "plays";
   usage = ["artist | track"];
 
   arguments: Arguments = {
@@ -26,10 +26,16 @@ export default class TrackPage extends LastFMBaseCommand {
     let artist = this.parsedArguments.artist as string,
       track = this.parsedArguments.track as string;
 
-    let { username } = await this.parseMentionedUsername();
+    let {
+      username,
+      perspective,
+      senderUsername,
+    } = await this.parseMentionedUsername();
 
     if (!artist || !track) {
-      let nowPlaying = await this.lastFMService.nowPlayingParsed(username);
+      let nowPlaying = await this.lastFMService.nowPlayingParsed(
+        senderUsername
+      );
 
       if (!artist) artist = nowPlaying.artist;
       if (!track) track = nowPlaying.name;
@@ -42,8 +48,15 @@ export default class TrackPage extends LastFMBaseCommand {
     });
 
     this.send(
-      `${trackDetails.name.italic()} by ${trackDetails.artist.name.bold()} on last.fm: ${
-        cleanURL(trackDetails.url)
+      `Last.fm has scrobbled **${trackDetails.name}** by ${
+        trackDetails.artist.name
+      } ${numberDisplay(trackDetails.playcount, "time").bold()} ${
+        trackDetails.userplaycount.toInt() > 0
+          ? `(${perspective.plusToHave} ${numberDisplay(
+              trackDetails.userplaycount,
+              "scrobble"
+            ).bold()})`
+          : ""
       }`
     );
   }

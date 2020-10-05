@@ -1,9 +1,10 @@
 import { Arguments } from "../../../lib/arguments/arguments";
 import { generatePeriod, generateHumanPeriod } from "../../../helpers/date";
 import { Message } from "discord.js";
-import { BadAmountError } from "../../../errors";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { LastFMPeriod } from "../../../services/LastFM/LastFMService.types";
+import { Validation } from "../../../lib/validation/ValidationChecker";
+import { validators } from "../../../lib/validation/validators";
 
 export abstract class ListCommand extends LastFMBaseCommand {
   subcategory = "lists";
@@ -37,6 +38,13 @@ export abstract class ListCommand extends LastFMBaseCommand {
     },
   };
 
+  validation: Validation = {
+    listAmount: {
+      validator: new validators.Range({ min: 1, max: 25 }),
+      friendlyName: "amount",
+    },
+  };
+
   timePeriod!: LastFMPeriod;
   humanReadableTimePeriod!: string;
   listAmount!: number;
@@ -46,8 +54,5 @@ export abstract class ListCommand extends LastFMBaseCommand {
     this.humanReadableTimePeriod = this.parsedArguments
       .humanReadableTimePeriod as string;
     this.listAmount = this.parsedArguments.listAmount as number;
-
-    if (this.listAmount < 1 || this.listAmount > 25)
-      throw new BadAmountError(1, 25);
   }
 }

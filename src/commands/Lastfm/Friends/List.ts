@@ -1,6 +1,6 @@
 import { FriendsChildCommand } from "./FriendsChildCommand";
 import { Message, MessageEmbed } from "discord.js";
-import { MultiRequster } from "../../../lib/MultiRequester";
+import { MultiRequester } from "../../../lib/MultiRequester";
 import { numberDisplay } from "../../../helpers";
 
 export class List extends FriendsChildCommand {
@@ -11,7 +11,7 @@ export class List extends FriendsChildCommand {
   throwIfNoFriends = true;
 
   async run(message: Message) {
-    let nowPlayings = await new MultiRequster(this.friendUsernames).fetch(
+    let nowPlayings = await new MultiRequester(this.friendUsernames).fetch(
       this.lastFMService.nowPlayingParsed.bind(this.lastFMService),
       []
     );

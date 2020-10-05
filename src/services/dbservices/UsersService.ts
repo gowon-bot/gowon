@@ -111,15 +111,23 @@ export class UsersService extends BaseService {
   }
 
   async randomUser(): Promise<User>;
-  async randomUser(options?: { limit?: 1 }): Promise<User>;
-  async randomUser(options?: { limit?: number }): Promise<User[]>;
+  async randomUser(options?: { limit?: 1; userIDs?: string[] }): Promise<User>;
+  async randomUser(options?: {
+    limit?: number;
+    userIDs?: string[];
+  }): Promise<User[]>;
   async randomUser(
     options: {
       limit?: number;
+      userIDs?: string[];
     } = {}
   ): Promise<User | User[]> {
     this.log("Fetching a random user...");
-    let users = await User.random({ limit: 1, ...options });
+
+    let users = await User.random({
+      limit: options.limit || 1,
+      userIDs: options.userIDs,
+    });
 
     if ((options.limit || 1) === 1) {
       return users[0] as User;

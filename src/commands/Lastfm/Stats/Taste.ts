@@ -8,8 +8,13 @@ import { Mention } from "../../../lib/arguments/mentions";
 import { generatePeriod, generateHumanPeriod } from "../../../helpers/date";
 import { Variation } from "../../../lib/command/BaseCommand";
 import { RunAs } from "../../../lib/AliasChecker";
-import { LastFMPeriod } from "../../../services/LastFM/LastFMService.types";
-import { LogicError } from "../../../errors";
+import {
+  LastFMPeriod,
+  TopArtists,
+} from "../../../services/LastFM/LastFMService.types";
+import { Validation } from "../../../lib/validation/ValidationChecker";
+import { validators } from "../../../lib/validation/validators";
+import { Paginator } from "../../../lib/Paginator";
 
 export default class Taste extends LastFMBaseCommand {
   aliases = ["t"];
@@ -27,7 +32,7 @@ export default class Taste extends LastFMBaseCommand {
     inputs: {
       artistAmount: {
         index: 0,
-        regex: /[0-9]{1,4}(?!\w)(?! [a-z])/g,
+        regex: /[0-9]+(?!\w)(?! [a-z])/g,
         default: 1000,
         number: true,
       },
@@ -42,9 +47,9 @@ export default class Taste extends LastFMBaseCommand {
         index: -1,
       },
       username: {
-        regex: /[\w\-]+/i,
+        regex: /[\w\-.!]+/i,
         index: 0,
-      }
+      },
     },
     mentions: {
       user: {
@@ -58,6 +63,10 @@ export default class Taste extends LastFMBaseCommand {
         nonDiscordMentionParsing: this.ndmp,
       },
     },
+  };
+
+  validation: Validation = {
+    artistAmount: { validator: new validators.Range({ min: 100, max: 2000 }) },
   };
 
   async run(_: Message, runAs: RunAs) {
@@ -77,10 +86,6 @@ export default class Taste extends LastFMBaseCommand {
       return;
     }
 
-    if (artistAmount < 1 || artistAmount > 1000) {
-      throw new LogicError("Please specify a valid amount!");
-    }
-
     if (userTwo) {
       userOneUsername = userTwoUsername!;
       userTwoUsername =
@@ -89,20 +94,34 @@ export default class Taste extends LastFMBaseCommand {
           : await this.usersService.getUsername(userTwo.id);
     }
 
-    let [senderArtists, mentionedArtists] = await Promise.all([
-      this.lastFMService.topArtists({
-        username: userOneUsername,
-        limit: artistAmount,
-        period: timePeriod,
-      }),
-      this.lastFMService.topArtists({
-        username: userTwoUsername,
-        limit: artistAmount,
-        period: timePeriod,
-      }),
-    ]);
+    let maxPages = artistAmount > 1000 ? 2 : 1;
+    let params = {
+      limit: artistAmount > 1000 ? Math.ceil(artistAmount / 2) : artistAmount,
+      period: timePeriod,
+    };
 
-    let tasteCalculator = new TasteCalculator(senderArtists, mentionedArtists);
+    let senderPaginator = new Paginator(
+      this.lastFMService.topArtists.bind(this.lastFMService),
+      maxPages,
+      { ...params, username: userOneUsername }
+    );
+
+    let mentionedPaginator = new Paginator(
+      this.lastFMService.topArtists.bind(this.lastFMService),
+      maxPages,
+      { ...params, username: userTwoUsername }
+    );
+
+    let [senderArtists, mentionedArtists] = (await Promise.all([
+      senderPaginator.getAll({ concatTo: "artist" }),
+      mentionedPaginator.getAll({ concatTo: "artist" }),
+    ])) as [TopArtists, TopArtists];
+
+    let tasteCalculator = new TasteCalculator(
+      senderArtists,
+      mentionedArtists,
+      artistAmount
+    );
 
     let taste = tasteCalculator.calculate();
 
@@ -116,7 +135,7 @@ export default class Taste extends LastFMBaseCommand {
       )
       .setDescription(
         `Comparing top ${numberDisplay(
-          senderArtists.artist.length,
+          senderArtists.artist.slice(0, artistAmount).length,
           "artist"
         )}, ${numberDisplay(taste.artists.length, "overlapping artist")} (${
           taste.percent

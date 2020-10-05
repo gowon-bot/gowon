@@ -2,10 +2,10 @@ import { dateTimeDisplay } from "../../helpers";
 import { Arguments } from "../../lib/arguments/arguments";
 import { BaseCommand } from "../../lib/command/BaseCommand";
 import { Validation } from "../../lib/validation/ValidationChecker";
-import { RequiredAnd } from "../../lib/validation/validators/Required";
+import { validators } from "../../lib/validation/validators";
 import { GithubService } from "../../services/Github/GithubService";
 
-export default class Feedback extends BaseCommand {
+export default class Issue extends BaseCommand {
   description = "Send feedback to the john (the gowon author)";
   secretCommand = true;
   usage = ["title | body"];
@@ -18,12 +18,7 @@ export default class Feedback extends BaseCommand {
   };
 
   validation: Validation = {
-    title: {
-      validator: new RequiredAnd({
-        message: "please specify a title and a body!",
-      }),
-      dependsOn: ["body"],
-    },
+    title: new validators.Required({}),
   };
 
   githubService = new GithubService(this.logger);

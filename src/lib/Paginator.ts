@@ -1,19 +1,18 @@
 import { Params } from "../services/LastFM/LastFMService.types";
 
-export class Paginator {
+export class Paginator<T extends Params = Params, U = any> {
   currentPage: number = 0;
 
   constructor(
-    private readonly method: (params: any) => Promise<any>,
-    public readonly maxPages: number,
-    private params: Params
+    private readonly method: (params: T) => Promise<U>,
+    public maxPages: number,
+    private params: T
   ) {}
 
-  async getNext<T>(): Promise<T | undefined> {
+  async getNext(): Promise<U | undefined> {
     this.currentPage++;
 
     if (this.currentPage > this.maxPages) return;
-
 
     return await this.method({
       ...this.params,
@@ -31,7 +30,7 @@ export class Paginator {
     }
   }
 
-  private generatePages<T>(method: (params: any) => Promise<T>): Promise<T>[] {
+  private generatePages(method: (params: T) => Promise<U>): Promise<U>[] {
     let pages = [];
 
     for (let page = this.currentPage + 1; page <= this.maxPages; page++) {
@@ -46,24 +45,26 @@ export class Paginator {
     return pages;
   }
 
-  async getAll<T = any>(options: {
+  async getAll<V>(options: {
     concatTo?: string;
     concurrent?: boolean;
-  }): Promise<T>;
-  async getAll<T = any>(options: {
+  }): Promise<U>;
+  async getAll<V = any>(options: {
     groupOn?: string;
     concurrent?: boolean;
-  }): Promise<T[]>;
-  async getAll<T = any>(options: { concurrent: boolean }): Promise<T[]>;
-  async getAll<T = any>(
+  }): Promise<V[]>;
+  async getAll<V = any>(options: { concurrent: boolean }): Promise<V[]>;
+  async getAll<V = any>(
     options: { groupOn?: string; concatTo?: string; concurrent?: boolean } = {
       concurrent: true,
     }
-  ): Promise<T[] | T> {
-    let results = [] as T[];
-    let result: T | undefined;
+  ): Promise<V[] | U> {
+    let results = [] as V[];
+    let result: U | undefined;
 
     const eachFunction = (response: any) => {
+      console.log(response);
+
       if (options.groupOn) {
         results.push(response[options.groupOn]);
       } else if (options.concatTo) {
@@ -88,9 +89,9 @@ export class Paginator {
     }
 
     if (result) {
-      return result;
+      return result as U;
     } else {
-      return results as T[];
+      return results as V[];
     }
   }
 }

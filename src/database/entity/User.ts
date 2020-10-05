@@ -67,10 +67,17 @@ export class User extends BaseEntity {
     }
   }
 
-  static async random(options: { limit: number }): Promise<User[]> {
+  static async random(options: {
+    limit: number;
+    userIDs?: string[];
+  }): Promise<User[]> {
     let users = await this.query(
-      `SELECT * FROM users ORDER BY RANDOM() LIMIT $1`,
-      [options.limit]
+      `SELECT * FROM users${
+        options.userIDs?.length ? ` WHERE "discordID" = ANY ($2)` : ""
+      } ORDER BY RANDOM() LIMIT $1`,
+      options.userIDs?.length
+        ? [options.limit, options.userIDs]
+        : [options.limit]
     );
 
     return users as User[];

@@ -4,6 +4,7 @@ import { InfoCommand } from "./InfoCommand";
 import { numberDisplay } from "../../../helpers";
 import { calculatePercent } from "../../../helpers/stats";
 import { LinkConsolidator } from "../../../helpers/lastFM";
+import { LineConsolidator } from "../../../lib/LineConsolidator";
 
 export default class AlbumInfo extends InfoCommand {
   shouldBeIndexed = true;
@@ -25,6 +26,8 @@ export default class AlbumInfo extends InfoCommand {
       },
     },
   };
+
+  lineConsolidator = new LineConsolidator();
 
   async run() {
     let artist = this.parsedArguments.artist as string,
@@ -63,8 +66,46 @@ export default class AlbumInfo extends InfoCommand {
       0
     );
 
+    this.lineConsolidator.addLines(
+      {
+        shouldDisplay: albumInfo.tracks.track.length > 0,
+        string: `_${numberDisplay(
+          albumInfo.tracks.track.length,
+          "track"
+        )} (${numberDisplay(Math.ceil(albumDuration / 60), "minute")})_`,
+      },
+      {
+        shouldDisplay: albumInfo.tracks.track.length > 0,
+        string: "",
+      },
+      {
+        shouldDisplay: !!albumInfo.wiki?.summary?.trim(),
+        string: this.scrubReadMore(albumInfo.wiki?.summary.trimRight())!,
+      },
+      {
+        shouldDisplay: !!albumInfo.wiki?.summary?.trim(),
+        string: "",
+      },
+      {
+        shouldDisplay: this.tagConsolidator.hasTags(),
+        string: `**Tags:** ${this.tagConsolidator.consolidate().join(" ‧ ")}`,
+      },
+      {
+        shouldDisplay: linkConsolidator.hasLinks(),
+        string: `**Links**: ${linkConsolidator.consolidate()}`,
+      }
+    );
+
     let embed = new MessageEmbed()
       .setTitle(albumInfo.name.italic() + " by " + albumInfo.artist.bold())
+      .setDescription(this.lineConsolidator.consolidate())
+      .setURL(albumInfo.url)
+      .setImage(
+        albumInfo.image.find((i) => i.size === "large")?.["#text"] ||
+          (spotifyAlbum &&
+            this.spotifyService.getImageFromSearchItem(spotifyAlbum)) ||
+          ""
+      )
       .addFields(
         {
           name: "Listeners",
@@ -75,47 +116,22 @@ export default class AlbumInfo extends InfoCommand {
           name: "Playcount",
           value: numberDisplay(albumInfo.playcount),
           inline: true,
-        }
-      )
-      .setURL(albumInfo.url)
-      .setImage(
-        albumInfo.image.find((i) => i.size === "large")?.["#text"] ||
-          (spotifyAlbum &&
-            this.spotifyService.getImageFromSearchItem(spotifyAlbum)) ||
-          ""
-      )
-      .setDescription(
-        (albumInfo.tracks.track.length
-          ? `_${numberDisplay(albumInfo.tracks.track.length, "track")}` +
-            ` (${numberDisplay(Math.ceil(albumDuration / 60), "minute")})_\n\n`
-          : "") +
-          (albumInfo.wiki
-            ? this.scrubReadMore(albumInfo.wiki?.summary.trimRight())
-            : "") +
-          (this.tagConsolidator.hasTags()
-            ? (albumInfo.wiki?.summary.length ? "\n\n" : "") +
-              "**Tags:** " +
-              this.tagConsolidator.consolidate().join(" ‧ ") +
-              "\n"
-            : "") +
-          (linkConsolidator.hasLinks()
-            ? `**Links**: ${linkConsolidator.consolidate()}`
-            : "")
-      )
-      .addField(
-        `${perspective.upper.possessive} stats`,
-        `
+        },
+        {
+          name: `${perspective.upper.possessive} stats`,
+          value: `
         \`${numberDisplay(albumInfo.userplaycount, "` play", true)} by ${
-          perspective.objectPronoun
-        } (${calculatePercent(
-          albumInfo.userplaycount,
-          userInfo.playcount,
-          4
-        ).bold()}% of ${perspective.possessivePronoun} total scrobbles)
+            perspective.objectPronoun
+          } (${calculatePercent(
+            albumInfo.userplaycount,
+            userInfo.playcount,
+            4
+          ).bold()}% of ${perspective.possessivePronoun} total scrobbles)
         ${perspective.upper.regularVerb("account")} for ${calculatePercent(
-          albumInfo.userplaycount,
-          albumInfo.playcount
-        ).bold()}% of all scrobbles of this album!`
+            albumInfo.userplaycount,
+            albumInfo.playcount
+          ).bold()}% of all scrobbles of this album!`,
+        }
       );
 
     this.send(embed);

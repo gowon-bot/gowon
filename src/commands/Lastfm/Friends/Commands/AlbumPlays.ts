@@ -1,6 +1,6 @@
 import { FriendsChildCommand } from "../FriendsChildCommand";
 import { MessageEmbed } from "discord.js";
-import { MultiRequster } from "../../../../lib/MultiRequester";
+import { MultiRequester } from "../../../../lib/MultiRequester";
 import { numberDisplay } from "../../../../helpers";
 import { Arguments } from "../../../../lib/arguments/arguments";
 
@@ -31,7 +31,7 @@ export class AlbumPlays extends FriendsChildCommand {
       if (!album) album = nowPlaying.album;
     }
 
-    let albumDetails = await new MultiRequster([
+    let albumDetails = await new MultiRequester([
       ...this.friendUsernames,
       this.senderUsername,
     ]).fetch(this.lastFMService.albumInfo.bind(this.lastFMService), {

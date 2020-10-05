@@ -380,17 +380,17 @@ export class OverviewStatsCalculator {
     let rating = log((top50 * Math.pow(hindex, 1.5)) / sumTop + 1, 2) * 5;
 
     let ratingString =
-      rating > 50
+      rating > 40
         ? "what the fuck"
-        : rating > 40
+        : rating > 35
         ? "really high!"
         : rating > 30
         ? "very high"
-        : rating > 25
+        : rating > 20
         ? "high"
         : rating > 10
         ? "medium"
-        : rating > 2
+        : rating > 5
         ? "low"
         : rating > 1
         ? "very low"

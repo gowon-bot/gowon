@@ -8,11 +8,11 @@ export interface RangeValidatorOptions extends ValidatorOptions {
 
 export class Range extends BaseValidator<RangeValidatorOptions> {
   validate(arg: number | undefined, argName: string) {
-    if (!arg) return;
+    if (arg === undefined) return;
 
     if (
-      (this.options.max && arg > this.options.max) ||
-      (this.options.min && arg < this.options.min)
+      (this.options.max !== undefined && arg > this.options.max) ||
+      (this.options.min !== undefined && arg < this.options.min)
     ) {
       this.throw(
         this.options.min && this.options.max

@@ -16,7 +16,8 @@ export interface Taste {
 export class TasteCalculator {
   constructor(
     private userOneArtists: TopArtists,
-    private userTwoArtists: TopArtists
+    private userTwoArtists: TopArtists,
+    private artistAmount: number
   ) {}
 
   sortMatchedArtists(matchedArtists: TasteArtist[]): TasteArtist[] {
@@ -44,27 +45,29 @@ export class TasteCalculator {
   }
 
   calculate(): Taste {
-    let matchedArtists = this.userOneArtists.artist.reduce((acc, artist) => {
-      let userTwoArtist = this.userTwoArtists.artist.find(
-        (a) => a.name === artist.name
-      );
-      if (userTwoArtist) {
-        acc.push({
-          name: artist.name,
-          user1plays: artist.playcount.toInt(),
-          user2plays: userTwoArtist.playcount.toInt(),
-        });
-      }
+    let matchedArtists = this.userOneArtists.artist
+      .slice(0, this.artistAmount)
+      .reduce((acc, artist) => {
+        let userTwoArtist = this.userTwoArtists.artist
+          .slice(0, this.artistAmount)
+          .find((a) => a.name === artist.name);
+        if (userTwoArtist) {
+          acc.push({
+            name: artist.name,
+            user1plays: artist.playcount.toInt(),
+            user2plays: userTwoArtist.playcount.toInt(),
+          });
+        }
 
-      return acc;
-    }, [] as TasteArtist[]);
+        return acc;
+      }, [] as TasteArtist[]);
 
     matchedArtists = this.sortMatchedArtists(matchedArtists);
 
     return {
       percent: calculatePercent(
         matchedArtists.length,
-        this.userOneArtists.artist.length
+        this.userOneArtists.artist.slice(0, this.artistAmount).length
       ),
       artists: matchedArtists,
     } as Taste;

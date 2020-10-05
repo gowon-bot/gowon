@@ -13,7 +13,7 @@ export abstract class InfoCommand extends LastFMBaseCommand {
     return matches[0];
   }
 
-  scrubReadMore(bio: string): string {
-    return bio.replace(/<a href=".*/, "");
+  scrubReadMore(bio?: string): string | undefined {
+    return bio?.replace(/<a href=".*/, "");
   }
 }

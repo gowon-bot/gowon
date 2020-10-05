@@ -2,11 +2,11 @@ import { Arguments } from "../../../lib/arguments/arguments";
 import { numberDisplay } from "../../../helpers";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
-export default class ArtistPlays extends LastFMBaseCommand {
-  aliases = ["ap", "p"];
-  description = "Shows you how many plays you have of a given artist";
+export default class GlobalArtistPlays extends LastFMBaseCommand {
+  aliases = ["gap", "gp", "globalp"];
+  description = "Shows you how many plays Last.fm has of a given artist";
   subcategory = "plays";
-  usage = ["", "artist @user"];
+  usage = ["", "artist"];
 
   arguments: Arguments = {
     inputs: {
@@ -45,10 +45,17 @@ export default class ArtistPlays extends LastFMBaseCommand {
     });
 
     this.send(
-      `${perspective.upper.plusToHave} **${numberDisplay(
-        artistDetails.stats.userplaycount,
-        "**scrobble"
-      )} of ${artistDetails.name.bold()}`
+      `Last.fm has scrobbled ${artistDetails.name} ${numberDisplay(
+        artistDetails.stats.playcount,
+        "time"
+      ).bold()}${
+        artistDetails.stats.userplaycount.toInt() > 0
+          ? ` (${perspective.plusToHave} ${numberDisplay(
+              artistDetails.stats.userplaycount,
+              "scrobble"
+            ).bold()})`
+          : ""
+      }`
     );
   }
 }

@@ -112,6 +112,7 @@ export class LastFMMock extends BaseService {
       name: "nowplayingtrack",
       album: "nowplayingalbum",
       artist: "nowplayingartist",
+      nowPlaying: false,
     };
   }
 

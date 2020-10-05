@@ -7,7 +7,7 @@ import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 
 export default class Milestone extends LastFMBaseCommand {
-  aliases = ["mls"];
+  aliases = ["mls", "ms"];
   description = "Shows you what you scrobbled at a certain milestone";
   subcategory = "library stats";
   usage = ["", "milestone @user"];

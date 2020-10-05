@@ -3,6 +3,7 @@ import { Arguments } from "../../../lib/arguments/arguments";
 import { InfoCommand } from "./InfoCommand";
 import { numberDisplay } from "../../../helpers";
 import { LinkConsolidator } from "../../../helpers/lastFM";
+import { LineConsolidator } from "../../../lib/LineConsolidator";
 
 export default class TrackInfo extends InfoCommand {
   shouldBeIndexed = true;
@@ -17,6 +18,8 @@ export default class TrackInfo extends InfoCommand {
       track: { index: 1, splitOn: "|" },
     },
   };
+
+  lineConsolidator = new LineConsolidator();
 
   async run() {
     let artist = this.parsedArguments.artist as string,
@@ -45,8 +48,37 @@ export default class TrackInfo extends InfoCommand {
       LinkConsolidator.lastfm(trackInfo.url),
     ]);
 
+    let duration = trackInfo.duration.toInt();
+
+    this.lineConsolidator.addLines(
+      (duration
+        ? `_${numberDisplay(Math.ceil(duration / 60000), "minute")}_`
+        : "") +
+        (duration && trackInfo.album ? " - " : "") +
+        trackInfo.album
+        ? `from the album ${trackInfo.album.title.italic()}`
+        : "",
+      {
+        shouldDisplay: !!(duration || trackInfo.album),
+        string: "",
+      },
+      {
+        shouldDisplay: !!trackInfo.wiki,
+        string: this.scrubReadMore(trackInfo.wiki?.summary?.trimRight())!,
+      },
+      {
+        shouldDisplay: this.tagConsolidator.hasTags(),
+        string: `**Tags:** ${this.tagConsolidator.consolidate().join(" ‧ ")}`,
+      },
+      {
+        shouldDisplay: linkConsolidator.hasLinks(),
+        string: `**Links:** ${linkConsolidator.consolidate()}`,
+      }
+    );
+
     let embed = new MessageEmbed()
       .setTitle(trackInfo.name.italic() + " by " + trackInfo.artist.name.bold())
+      .setDescription(this.lineConsolidator.consolidate())
       .addFields(
         {
           name: "Listeners",
@@ -59,29 +91,7 @@ export default class TrackInfo extends InfoCommand {
           inline: true,
         }
       )
-      .setURL(trackInfo.url)
-      .setDescription(
-        (trackInfo.duration.toInt()
-          ? `_${numberDisplay(
-              Math.ceil(trackInfo.duration.toInt() / 60000),
-              "minute"
-            )}_ - `
-          : "") +
-          (trackInfo.album
-            ? ` from the album ${trackInfo.album.title.italic()}`
-            : "") +
-          (trackInfo.wiki
-            ? "\n\n" + this.scrubReadMore(trackInfo.wiki?.summary.trimRight())
-            : "") +
-          (this.tagConsolidator.hasTags()
-            ? "\n\n**Tags:** " +
-              this.tagConsolidator.consolidate().join(" ‧ ") +
-              "\n"
-            : "") +
-          (linkConsolidator.hasLinks()
-            ? `**Links**: ${linkConsolidator.consolidate()}`
-            : "")
-      );
+      .setURL(trackInfo.url);
 
     this.send(embed);
   }

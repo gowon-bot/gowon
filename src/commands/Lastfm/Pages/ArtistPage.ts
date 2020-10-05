@@ -1,3 +1,4 @@
+import { cleanURL } from "../../../helpers/discord";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
@@ -38,6 +39,8 @@ export default class ArtistPage extends LastFMBaseCommand {
       username,
     });
 
-    this.reply(`${artistDetails.name.bold()} on last.fm: ${artistDetails.url}`);
+    this.reply(
+      `${artistDetails.name.bold()} on last.fm: ${cleanURL(artistDetails.url)}`
+    );
   }
 }

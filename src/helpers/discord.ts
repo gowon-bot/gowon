@@ -6,7 +6,7 @@ export function sanitizeForDiscord(string: string): string {
 }
 
 export function generateLink(text: string, link: string): string {
-  return `[${text}](${link})`;
+  return `[${text}](${cleanURL(link)})`;
 }
 
 export interface NamedPermission extends Permission {
@@ -42,4 +42,8 @@ export function userHasRole(
   }
 
   return member.roles.cache.has(roleID);
+}
+
+export function cleanURL(url: string): string {
+  return url.replace(")", "%29");
 }

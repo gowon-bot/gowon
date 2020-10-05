@@ -4,12 +4,16 @@ export enum CacheScopedKey {
   PurgatoryRole = "purgatoryRole",
   CrownBannedUsers = "crownBannedUsers",
   Prefixes = "prefixes",
-  ChannelBlacklists = "channelBlacklists"
+  ChannelBlacklists = "channelBlacklists",
 }
 export type ShallowCacheKey = CacheKey | CacheScopedKey;
 
 interface Cache {
   [key: string]: any;
+}
+
+function isScoped(key: CacheKey | CacheScopedKey): key is CacheScopedKey {
+  return Object.values(CacheScopedKey).includes(key as any);
 }
 
 export class ShallowCache {
@@ -18,11 +22,11 @@ export class ShallowCache {
   remember<T = any>(key: CacheKey, value: any): T;
   remember<T = any>(key: CacheScopedKey, value: any, scope: string): T;
   remember<T = any>(key: ShallowCacheKey, value: any, scope?: string): T {
-    if (Object.values(CacheKey).includes(key as any)) {
-      this.cache[key] = value;
-    } else {
+    if (isScoped(key)) {
       if (!this.cache[key]) this.cache[key] = {};
       this.cache[key][scope!] = value;
+    } else {
+      this.cache[key] = value;
     }
 
     return value as T;
@@ -31,22 +35,22 @@ export class ShallowCache {
   find<T = any>(key: CacheKey): T;
   find<T = any>(key: CacheScopedKey, scope: string): T;
   find<T = any>(key: ShallowCacheKey, scope?: string): T {
-    if (Object.values(CacheKey).includes(key as any)) {
-      return this.cache[key] as T;
-    } else {
+    if (isScoped(key)) {
       if (!this.cache[key]) this.cache[key] = {};
       return this.cache[key][scope!] as T;
+    } else {
+      return this.cache[key] as T;
     }
   }
 
   forget(key: CacheKey): void;
   forget(key: CacheScopedKey, scope: string): void;
   forget(key: ShallowCacheKey, scope?: string): void {
-    if (Object.values(CacheKey).includes(key as any)) {
-      delete this.cache[key];
-    } else {
+    if (isScoped(key)) {
       if (!this.cache[key]) this.cache[key] = {};
       delete this.cache[key][scope!];
+    } else {
+      delete this.cache[key];
     }
   }
 
@@ -69,12 +73,22 @@ export class ShallowCache {
     if (!value) {
       let newValue = await refreshser();
 
-      this.remember(CacheScopedKey.InactiveRole, newValue, scope!);
+      if (isScoped(key)) {
+        this.remember(key, newValue, scope!);
+      } else {
+        this.remember(key, newValue);
+      }
 
       value = newValue;
     }
 
-    if (!value) this.forget(CacheScopedKey.InactiveRole, scope!);
+    if (!value) {
+      if (isScoped(key)) {
+        this.forget(key, scope!);
+      } else {
+        this.forget(key);
+      }
+    }
 
     return value || undefined;
   }

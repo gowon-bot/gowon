@@ -1,6 +1,7 @@
-import { RedirectsService } from "../../services/dbservices/RedirectsServices";
+import { RedirectsService } from "../../services/dbservices/RedirectsService";
 import { Track } from "../../services/LastFM/LastFMService.types";
 import { Paginator } from "../Paginator";
+import { RedirectsCache } from "../RedirectsCache";
 
 export interface ComboDetails {
   plays: number;
@@ -15,10 +16,6 @@ export interface Combo {
   hasAnyConsecutivePlays: boolean;
 }
 
-interface RedirectsCache {
-  [from: string]: string;
-}
-
 type Entity = "artist" | "track" | "album";
 
 export class ComboCalculator {
@@ -31,18 +28,7 @@ export class ComboCalculator {
     track: false,
   };
 
-  private redirectsCache: RedirectsCache = {};
-
-  private async getRedirect(artist: string): Promise<string> {
-    if (this.redirectsCache[artist]) return this.redirectsCache[artist];
-
-    let redirect =
-      (await this.redirectsService.checkRedirect(artist))?.to || artist;
-
-    this.redirectsCache[artist] = redirect;
-
-    return redirect;
-  }
+  private redirectsCache = new RedirectsCache(this.redirectsService);
 
   private async shouldContinueStreak(
     track: Track,
@@ -53,7 +39,8 @@ export class ComboCalculator {
         ? track[entity]["#text"]
         : track.name;
 
-    if (entity === "artist") entityName = await this.getRedirect(entityName);
+    if (entity === "artist")
+      entityName = await this.redirectsCache.getRedirect(entityName);
 
     return (
       this.streakEnded[entity] !== true &&
@@ -81,7 +68,7 @@ export class ComboCalculator {
     if (this.combo[entity]) {
       let entityName =
         entity === "artist"
-          ? await this.getRedirect(this.combo[entity]!.name)
+          ? await this.redirectsCache.getRedirect(this.combo[entity]!.name)
           : this.combo[entity]!.name;
 
       this.combo[entity] = {
@@ -92,7 +79,9 @@ export class ComboCalculator {
       };
     } else {
       let entityName =
-        entity === "artist" ? await this.getRedirect(name) : name;
+        entity === "artist"
+          ? await this.redirectsCache.getRedirect(name)
+          : name;
 
       this.combo[entity] = {
         name: entityName,

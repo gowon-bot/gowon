@@ -18,7 +18,7 @@ import { MoreThan } from "typeorm";
 import { CrownBan } from "../../database/entity/CrownBan";
 import { CacheScopedKey } from "../../database/cache/ShallowCache";
 import { CrownsHistoryService } from "./CrownsHistoryService";
-import { RedirectsService } from "./RedirectsServices";
+import { RedirectsService } from "./RedirectsService";
 import { ILike } from "../../extensions/typeorm";
 
 export enum CrownState {

@@ -79,10 +79,11 @@ export default class NowPlaying extends LastFMBaseCommand {
     let nowPlayingEmbed = new MessageEmbed()
       .setColor("black")
       .setAuthor(
-        `${
+      `${
           nowPlaying["@attr"]?.nowplaying ? "Now playing" : "Last scrobbled"
         } for ${username}`,
-        message.author.avatarURL() || undefined
+        message.author.avatarURL() || undefined,
+        LinkGenerator.userPage(username)
       )
       .setTitle(sanitizeForDiscord(track.name))
       .setURL(LinkGenerator.trackPage(track.artist, track.name))

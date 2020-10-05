@@ -5,6 +5,7 @@ import { numberDisplay } from "../../../helpers";
 import { calculatePercent } from "../../../helpers/stats";
 import { CrownsService } from "../../../services/dbservices/CrownsService";
 import { LinkConsolidator } from "../../../helpers/lastFM";
+import { LineConsolidator } from "../../../lib/LineConsolidator";
 
 export default class ArtistInfo extends InfoCommand {
   shouldBeIndexed = true;
@@ -27,6 +28,7 @@ export default class ArtistInfo extends InfoCommand {
   };
 
   crownsService = new CrownsService();
+  lineConsolidator = new LineConsolidator();
 
   async run(message: Message) {
     let artist = this.parsedArguments.artist as string;
@@ -60,27 +62,41 @@ export default class ArtistInfo extends InfoCommand {
       LinkConsolidator.lastfm(artistInfo.url),
     ]);
 
+    this.lineConsolidator.addLines(
+      {
+        shouldDisplay: !!artistInfo.bio.summary,
+        string: this.scrubReadMore(artistInfo.bio.summary.trimRight())!,
+      },
+      {
+        shouldDisplay: !!artistInfo.bio.summary.trim(),
+        string: "",
+      },
+      {
+        shouldDisplay: !!artistInfo.similar.artist.length,
+        string: `**Similar artists:** ${artistInfo.similar.artist
+          .map((t) => t.name)
+          .join(" ‧ ")}`,
+      },
+      {
+        shouldDisplay: this.tagConsolidator.hasTags(),
+        string: `**Tags:** ${this.tagConsolidator.consolidate().join(" ‧ ")}`,
+      },
+      {
+        shouldDisplay: linkConsolidator.hasLinks(),
+        string: `**Links**: ${linkConsolidator.consolidate()}`,
+      },
+      `**Listeners**: ${numberDisplay(artistInfo.stats.listeners)}`,
+      `**Playcount**: ${numberDisplay(artistInfo.stats.playcount)}`,
+      {
+        shouldDisplay: crown?.user?.username !== undefined,
+        string: `**Crown**: ${crown?.user?.username}`,
+      }
+    );
+
     let embed = new MessageEmbed()
       .setTitle(artistInfo.name)
       .setURL(artistInfo.url)
-      .setDescription(
-        this.scrubReadMore(artistInfo.bio.summary.trimRight()) +
-          (artistInfo.similar.artist.length
-            ? "\n\n**Similar artists:** " +
-              artistInfo.similar.artist.map((t) => t.name).join(" ‧ ")
-            : "") +
-          (this.tagConsolidator.hasTags()
-            ? "\n**Tags:** " +
-              this.tagConsolidator.consolidate().join(" ‧ ") +
-              "\n"
-            : "") +
-          (linkConsolidator.hasLinks()
-            ? "**Links**: " + linkConsolidator.consolidate()
-            : "") +
-          `\n**Listeners**: ${numberDisplay(artistInfo.stats.listeners)}
-**Playcount**: ${numberDisplay(artistInfo.stats.playcount)}
-${crown ? `**Crown**: ${crown?.user?.username}` : ""}`
-      )
+      .setDescription(this.lineConsolidator.consolidate())
       .addField(
         `${perspective.upper.possessive} stats`,
         `\`${numberDisplay(

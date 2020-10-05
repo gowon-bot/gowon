@@ -25,7 +25,6 @@ export class RedirectsService extends BaseService {
   }
 
   async checkRedirect(artistName: string): Promise<ArtistRedirect | undefined> {
-    this.log(`Checking redirects for ${artistName}`);
     return await ArtistRedirect.check(artistName);
   }
 

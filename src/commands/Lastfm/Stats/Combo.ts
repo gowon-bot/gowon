@@ -4,7 +4,7 @@ import { Arguments } from "../../../lib/arguments/arguments";
 import { ComboCalculator } from "../../../lib/calculators/ComboCalculator";
 import { numberDisplay } from "../../../helpers";
 import { Paginator } from "../../../lib/Paginator";
-import { RedirectsService } from "../../../services/dbservices/RedirectsServices";
+import { RedirectsService } from "../../../services/dbservices/RedirectsService";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 
