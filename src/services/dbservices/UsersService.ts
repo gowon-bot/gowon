@@ -49,44 +49,19 @@ export class UsersService extends BaseService {
     } else throw new AlreadyLoggedOutError();
   }
 
-  private buildPerspective(name: string, different: boolean): Perspective {
-    return new Perspective(
-      different,
-      name,
-      !different ? "your" : name + "'s",
-      !different ? "you" : "they",
-      !different ? "your" : "their",
-      !different ? "you" : "them",
-      !different ? "you are" : name + " is",
-      !different ? "you are" : "they are",
-      !different ? "you have" : name + " has",
-      !different ? "you have" : "they have"
-    );
-  }
-
   perspective(
     authorUsername: string,
     username?: string,
     asCode = true
   ): Perspective {
-    if (username === undefined || authorUsername === username) {
-      return this.buildPerspective("you", false);
-    } else {
-      return this.buildPerspective(asCode ? username!.code() : username!, true);
-    }
+    return Perspective.perspective(authorUsername, username, asCode);
   }
 
   discordPerspective(
     author: DiscordUser,
     mentioned?: DiscordUser
   ): Perspective {
-    if (mentioned === undefined || author.id === mentioned.id) {
-      return this.buildPerspective("you", false).addDiscordUser(author);
-    } else {
-      return this.buildPerspective(mentioned?.username, true).addDiscordUser(
-        mentioned
-      );
-    }
+    return Perspective.discordPerspective(author, mentioned);
   }
 
   async getUser(discordID: string): Promise<User> {

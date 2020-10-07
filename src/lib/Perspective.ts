@@ -5,6 +5,52 @@ export class Perspective {
   discordUser?: DiscordUser;
   private titlecase = false;
 
+  // Static methods
+  static buildPerspective(name: string, different: boolean): Perspective {
+    return new Perspective(
+      different,
+      name,
+      !different ? "your" : name + "'s",
+      !different ? "you" : "they",
+      !different ? "your" : "their",
+      !different ? "you" : "them",
+      !different ? "you are" : name + " is",
+      !different ? "you are" : "they are",
+      !different ? "you have" : name + " has",
+      !different ? "you have" : "they have"
+    );
+  }
+
+  static perspective(
+    authorUsername: string,
+    username?: string,
+    asCode = true
+  ): Perspective {
+    if (username === undefined || authorUsername === username) {
+      return Perspective.buildPerspective("you", false);
+    } else {
+      return Perspective.buildPerspective(
+        asCode ? username!.code() : username!,
+        true
+      );
+    }
+  }
+
+  static discordPerspective(
+    author: DiscordUser,
+    mentioned?: DiscordUser
+  ): Perspective {
+    if (mentioned === undefined || author.id === mentioned.id) {
+      return Perspective.buildPerspective("you", false).addDiscordUser(author);
+    } else {
+      return Perspective.buildPerspective(
+        mentioned?.username,
+        true
+      ).addDiscordUser(mentioned);
+    }
+  }
+
+  // Instance methods
   constructor(
     private different: boolean,
     private _name: string,

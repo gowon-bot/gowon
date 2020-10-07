@@ -54,7 +54,7 @@
     "build:watch": "tsc -w --project ./",
     "start:watch": "nodemon dist/src/index.js",
     "psql": "psql gowon",
-    "test": "ava-ts tests/ --verbose",
+    "test": "ava-ts src/tests/ --verbose",
     "migrate": "typeorm migration:run"
   },
   "devDependencies": {

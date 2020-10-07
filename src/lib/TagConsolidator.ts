@@ -58,7 +58,7 @@ export class TagConsolidator {
     return { reverser, fixer };
   }
 
-  consolidate(max: number = Infinity, filter = true): string[] {
+  consolidate(max: number = Infinity, useCharacterLimit = true): string[] {
     let { fixer, reverser } = this.tagFixer();
 
     let tagCounts = this.tags.reduce((acc, tag) => {
@@ -74,7 +74,7 @@ export class TagConsolidator {
     return Object.keys(tagCounts)
       .sort((a, b) => tagCounts[b] - tagCounts[a])
       .map((t) => reverser(t))
-      .filter((t) => !filter || t.length <= this.characterLimit)
+      .filter((t) => !useCharacterLimit || t.length <= this.characterLimit)
       .slice(0, max);
   }
 }
