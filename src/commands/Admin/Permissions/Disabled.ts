@@ -3,7 +3,7 @@ import { PermissionsChildCommand } from "../Permissions/PermissionsChildCommand"
 
 export class Disabled extends PermissionsChildCommand {
   description = "List all disabled commands";
-  usage = ""
+  usage = "";
   aliases = ["listdisabled", "disabledcommands"];
 
   async prerun() {}
@@ -20,7 +20,7 @@ export class Disabled extends PermissionsChildCommand {
           ? disabledCommands
               .map((dc) => dc.commandFriendlyName.code())
               .join(", ")
-          : `This server does not have any disabled commands!`
+          : "This server does not have any disabled commands!"
       );
 
     await this.send(embed);

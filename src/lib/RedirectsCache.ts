@@ -6,7 +6,7 @@ interface RedirectsCacheObject {
 
 export class RedirectsCache {
   private cache: RedirectsCacheObject = {};
-  constructor(private redirectsService: RedirectsService) {};
+  constructor(private redirectsService: RedirectsService) {}
 
   async getRedirect(artist: string): Promise<string> {
     if (this.cache[artist]) return this.cache[artist];

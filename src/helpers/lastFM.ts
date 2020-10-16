@@ -48,6 +48,13 @@ export abstract class LinkGenerator {
     return this.baseURL + "tag/" + this.encode(tag);
   }
 
+  // https://www.last.fm/music/TWICE/+listeners/you-know
+  static listenersYouKnow(artist: string): string {
+    return (
+      this.baseURL + "/music/" + this.encode(artist) + "/+listeners/you-know"
+    );
+  }
+
   static generateTrackLinks(track: Track): TrackLinks {
     return {
       artist: this.artistPage(track.artist["#text"]),

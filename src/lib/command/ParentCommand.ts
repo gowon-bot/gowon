@@ -1,4 +1,4 @@
-import { BaseCommand, NoCommand } from "./BaseCommand";
+import { BaseCommand } from "./BaseCommand";
 import { Command } from "./Command";
 import { CommandManager } from "./CommandManager";
 
@@ -9,10 +9,13 @@ export abstract class ParentCommand extends BaseCommand {
   prefixes: string | Array<string> = "";
   canSkipPrefixFor: Array<string> = [];
 
-  async getChild(child: string, serverID: string): Promise<Command | undefined> {
+  async getChild(
+    child: string,
+    serverID: string
+  ): Promise<Command | undefined> {
     let childCommand = await this.children.find(child, serverID);
 
-    if (!(childCommand.command instanceof NoCommand)) {
+    if (childCommand.command) {
       return childCommand.command;
     }
     return;

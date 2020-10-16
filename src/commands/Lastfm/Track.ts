@@ -27,12 +27,10 @@ export default class Track extends LastFMBaseCommand {
       artistName = this.parsedArguments.artist as string,
       querystring = this.parsedArguments.querystring as string;
 
-    let { senderUsername: username } = await this.parseMentionedUsername();
+    let { senderUsername } = await this.parseMentions();
 
     if (querystring.includes("|") || !querystring.trim()) {
       if (!artistName || !trackName) {
-        let { senderUsername } = await this.parseMentionedUsername();
-
         let nowPlaying = await this.lastFMService.nowPlayingParsed(
           senderUsername
         );
@@ -53,11 +51,14 @@ export default class Track extends LastFMBaseCommand {
     }
 
     let [artistInfo, trackInfo, crown] = (await Promise.allSettled([
-      this.lastFMService.artistInfo({ artist: artistName, username }),
+      this.lastFMService.artistInfo({
+        artist: artistName,
+        username: senderUsername,
+      }),
       this.lastFMService.trackInfo({
         artist: artistName,
         track: trackName,
-        username,
+        username: senderUsername,
       }),
       this.crownsService.getCrownDisplay(artistName, this.message),
     ])) as { status: string; value?: any; reason: any }[];

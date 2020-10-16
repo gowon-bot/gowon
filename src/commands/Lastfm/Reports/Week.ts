@@ -3,6 +3,7 @@ import { MessageEmbed } from "discord.js";
 import { LogicError } from "../../../errors";
 import { dateDisplay, numberDisplay } from "../../../helpers";
 import { Arguments } from "../../../lib/arguments/arguments";
+import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { WeekCalculator } from "../../../lib/calculators/WeekCalculator";
 import { Paginator } from "../../../lib/Paginator";
 import { Validation } from "../../../lib/validation/ValidationChecker";
@@ -16,13 +17,7 @@ export default class Week extends LastFMBaseCommand {
   usage = ["", "weekly @user"];
 
   arguments: Arguments = {
-    mentions: {
-      user: {
-        index: 0,
-        description: "The user to lookup",
-        nonDiscordMentionParsing: this.ndmp,
-      },
-    },
+    mentions: standardMentions,
   };
 
   validation: Validation = {
@@ -32,7 +27,7 @@ export default class Week extends LastFMBaseCommand {
   redirectsService = new RedirectsService(this.logger);
 
   async run() {
-    let { username, perspective } = await this.parseMentionedUsername();
+    let { username, perspective } = await this.parseMentions();
 
     let paginator = new Paginator(
       this.lastFMService.recentTracks.bind(this.lastFMService),

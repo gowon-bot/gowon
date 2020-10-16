@@ -7,12 +7,12 @@ export class Ban extends CrownsChildCommand {
   usage = "@user";
   arguments: Arguments = {
     mentions: {
-      user: { index: 0, description: "The user to ban from the crowns game" },
+      user: { index: 0 },
     },
   };
 
   async run() {
-    let { dbUser, senderUser } = await this.parseMentionedUsername();
+    let { dbUser, senderUser } = await this.parseMentions();
 
     if (!dbUser || dbUser.discordID === senderUser?.discordID) {
       throw new LogicError("please mention a valid user");

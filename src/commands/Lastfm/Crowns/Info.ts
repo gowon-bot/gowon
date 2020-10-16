@@ -19,22 +19,27 @@ export class Info extends CrownsChildCommand {
   async run(message: Message) {
     let artist = this.parsedArguments.artist as string;
 
-    let user = await this.usersService.getUser(message.author.id!);
-    let username = user.lastFMUsername;
+    let { senderUsername, senderUser } = await this.parseMentions({
+      usernameRequired: !artist,
+    });
 
     if (!artist) {
-      artist = (await this.lastFMService.nowPlayingParsed(username)).artist;
+      artist = (await this.lastFMService.nowPlayingParsed(senderUsername))
+        .artist;
     }
 
-    let artistDetails = await this.lastFMService.artistInfo({
-      artist,
-      username,
-    });
+    let artistDetails = await this.lastFMService.artistInfo(
+      senderUsername
+        ? {
+            artist,
+            username: senderUsername,
+          }
+        : { artist }
+    );
 
     let crown = await this.crownsService.getCrown(
       artistDetails.name,
-      message.guild?.id!,
-      { refresh: false }
+      message.guild?.id!
     );
 
     if (!crown) {
@@ -55,11 +60,11 @@ export class Info extends CrownsChildCommand {
         ? " [Crown banned]"
         : "";
 
-    if (crown.user.id === user.id) {
+    if (crown.user.id === senderUser?.id && artistDetails.stats.userplaycount) {
       crown.plays = artistDetails.stats.userplaycount.toInt();
       crown.save();
-    } else {
-      await crown.refresh();
+    } else if (crown.user.lastFMUsername) {
+      await crown.refresh({ logger: this.logger });
     }
 
     if (crown.user.id) {
@@ -87,12 +92,7 @@ export class Info extends CrownsChildCommand {
             crown.version === 0
               ? "has never been stolen"
               : "has been stolen " + numberDisplay(crown.version, "time")
-          }_
-           ${
-             artistDetails.name === "IZ*ONE"
-               ? "Jae_ had this crown with 53,737 plays 💔"
-               : ""
-           }`
+          }_`
         );
 
       await this.send(embed);

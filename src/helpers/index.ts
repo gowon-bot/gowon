@@ -33,7 +33,7 @@ export function dateTimeDisplay(date: Date | undefined): string {
 }
 
 export function ago(date: Date): string {
-  return formatDistanceToNow(date);
+  return formatDistanceToNow(date) + " ago";
 }
 
 export function ucFirst(string: string): string {

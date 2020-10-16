@@ -1,5 +1,4 @@
 import { MessageEmbed } from "discord.js";
-import { Arguments } from "../../lib/arguments/arguments";
 import { MultiRequester } from "../../lib/MultiRequester";
 import { LastFMBaseCommand } from "./LastFMBaseCommand";
 
@@ -7,7 +6,6 @@ export default class Server extends LastFMBaseCommand {
   description = "Shows what the server is listening to";
   aliases = ["sfm"];
   usage = [""];
-  arguments: Arguments = {};
 
   async run() {
     let serverUsers = this.guild.members.cache.map((u) => `${u.id}`);

@@ -3,6 +3,7 @@ import { generatePeriod, generateHumanPeriod } from "../../../helpers/date";
 import { numberDisplay } from "../../../helpers";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { LastFMPeriod } from "../../../services/LastFM/LastFMService.types";
+import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
 export default class AlbumCount extends LastFMBaseCommand {
   aliases = ["alc", "lc"];
@@ -11,13 +12,6 @@ export default class AlbumCount extends LastFMBaseCommand {
   usage = ["", "time period @user"];
 
   arguments: Arguments = {
-    mentions: {
-      user: {
-        index: 0,
-        description: "The user to lookup",
-        nonDiscordMentionParsing: this.ndmp,
-      },
-    },
     inputs: {
       timePeriod: {
         custom: (messageString: string) => generatePeriod(messageString),
@@ -28,6 +22,7 @@ export default class AlbumCount extends LastFMBaseCommand {
         index: -1,
       },
     },
+    mentions: standardMentions,
   };
 
   async run() {
@@ -35,7 +30,7 @@ export default class AlbumCount extends LastFMBaseCommand {
       humanReadableTimePeriod = this.parsedArguments
         .humanReadableTimePeriod as string;
 
-    let { username, perspective } = await this.parseMentionedUsername();
+    let { username, perspective } = await this.parseMentions();
 
     let scrobbles = await this.lastFMService.albumCount(username, timePeriod);
 

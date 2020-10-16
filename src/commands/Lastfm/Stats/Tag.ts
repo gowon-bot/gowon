@@ -2,6 +2,7 @@ import { MessageEmbed } from "discord.js";
 import { numberDisplay } from "../../../helpers";
 import { calculatePercent } from "../../../helpers/stats";
 import { Arguments } from "../../../lib/arguments/arguments";
+import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { Paginator } from "../../../lib/Paginator";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
@@ -19,18 +20,12 @@ export default class Tag extends LastFMBaseCommand {
   usage = ["", "milestone", "time period milestone @user"];
 
   arguments: Arguments = {
-    mentions: {
-      user: {
-        index: 0,
-        description: "The user to lookup",
-        nonDiscordMentionParsing: this.ndmp,
-      },
-    },
     inputs: {
       tag: {
         index: { start: 0 },
       },
     },
+    mentions: standardMentions,
   };
 
   validation: Validation = {
@@ -39,7 +34,7 @@ export default class Tag extends LastFMBaseCommand {
 
   async run() {
     let tag = this.parsedArguments.tag as string;
-    let { username, perspective } = await this.parseMentionedUsername({
+    let { username, perspective } = await this.parseMentions({
       asCode: false,
     });
 

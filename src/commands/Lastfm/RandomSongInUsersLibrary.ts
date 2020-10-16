@@ -1,19 +1,18 @@
 import { MessageEmbed } from "discord.js";
 import { getOrdinal } from "../../helpers";
 import { Arguments } from "../../lib/arguments/arguments";
+import { standardMentions } from "../../lib/arguments/mentions/mentions";
 import { LastFMBaseCommand } from "./LastFMBaseCommand";
 
 export default class RandomsongInUsersLibrary extends LastFMBaseCommand {
   shouldBeIndexed = false;
 
   arguments: Arguments = {
-    mentions: {
-      user: { index: 0, nonDiscordMentionParsing: this.ndmp },
-    },
+    mentions: standardMentions,
   };
 
   async run() {
-    let { username } = await this.parseMentionedUsername();
+    let { username } = await this.parseMentions();
 
     let trackCount = await this.lastFMService.trackCount(username);
 

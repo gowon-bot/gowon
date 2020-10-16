@@ -1,5 +1,6 @@
 import { cleanURL } from "../../../helpers/discord";
 import { Arguments } from "../../../lib/arguments/arguments";
+import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 export default class TrackPage extends LastFMBaseCommand {
@@ -13,20 +14,14 @@ export default class TrackPage extends LastFMBaseCommand {
       artist: { index: 0, splitOn: "|" },
       track: { index: 1, splitOn: "|" },
     },
-    mentions: {
-      user: {
-        index: 0,
-        description: "The user to lookup",
-        nonDiscordMentionParsing: this.ndmp,
-      },
-    },
+    mentions: standardMentions,
   };
 
   async run() {
     let artist = this.parsedArguments.artist as string,
       track = this.parsedArguments.track as string;
 
-    let { username } = await this.parseMentionedUsername();
+    let { username } = await this.parseMentions();
 
     if (!artist || !track) {
       let nowPlaying = await this.lastFMService.nowPlayingParsed(username);
@@ -42,9 +37,9 @@ export default class TrackPage extends LastFMBaseCommand {
     });
 
     this.send(
-      `${trackDetails.name.italic()} by ${trackDetails.artist.name.bold()} on last.fm: ${
-        cleanURL(trackDetails.url)
-      }`
+      `${trackDetails.name.italic()} by ${trackDetails.artist.name.bold()} on last.fm: ${cleanURL(
+        trackDetails.url
+      )}`
     );
   }
 }

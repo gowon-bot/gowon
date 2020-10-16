@@ -6,7 +6,7 @@ export class ScrobblesPerTrack extends OverviewChildCommand {
   description = "Shows your average scrobbles per track";
 
   async run() {
-    let { username } = await this.parseMentionedUsername();
+    let { username } = await this.parseMentions();
 
     let { badge, colour, image } = await this.getAuthorDetails();
     let spt = await this.calculator.avgScrobblesPerTrack();

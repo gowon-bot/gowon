@@ -12,13 +12,6 @@ export default class TrackAt extends LastFMBaseCommand {
   usage = ["", "rank @user"];
 
   arguments: Arguments = {
-    mentions: {
-      user: {
-        index: 0,
-        description: "The user to lookup",
-        nonDiscordMentionParsing: this.ndmp,
-      },
-    },
     inputs: {
       rank: { index: 0, default: 1, number: true },
     },
@@ -31,7 +24,7 @@ export default class TrackAt extends LastFMBaseCommand {
   async run() {
     let rank = this.parsedArguments.rank as number;
 
-    let { username, perspective } = await this.parseMentionedUsername();
+    let { username, perspective } = await this.parseMentions();
 
     let topTracks = await this.lastFMService.topTracks({
       username,

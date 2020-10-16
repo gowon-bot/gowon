@@ -6,7 +6,7 @@ export class Joined extends OverviewChildCommand {
   description = "Shows when a user joined";
 
   async run() {
-    let { username } = await this.parseMentionedUsername();
+    let { username } = await this.parseMentions();
 
     let { badge, colour, image } = await this.getAuthorDetails();
     let joined = await this.calculator.joined();

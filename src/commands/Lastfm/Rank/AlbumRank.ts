@@ -1,6 +1,7 @@
 import { Arguments } from "../../../lib/arguments/arguments";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { numberDisplay } from "../../../helpers";
+import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
 export default class AlbumRank extends LastFMBaseCommand {
   aliases = ["alra", "lra"];
@@ -9,13 +10,6 @@ export default class AlbumRank extends LastFMBaseCommand {
   usage = ["", "artist | album @user"];
 
   arguments: Arguments = {
-    mentions: {
-      user: {
-        index: 0,
-        description: "The user to lookup",
-        nonDiscordMentionParsing: this.ndmp,
-      },
-    },
     inputs: {
       artist: {
         index: 0,
@@ -26,17 +20,16 @@ export default class AlbumRank extends LastFMBaseCommand {
         splitOn: "|",
       },
     },
+    mentions: standardMentions,
   };
 
   async run() {
     let album = this.parsedArguments.album as string,
       artist = this.parsedArguments.artist as string;
 
-    let {
-      username,
-      senderUsername,
-      perspective,
-    } = await this.parseMentionedUsername();
+    let { username, senderUsername, perspective } = await this.parseMentions({
+      senderRequired: !artist || !album,
+    });
 
     if (!album || !artist) {
       let nowPlaying = await this.lastFMService.nowPlayingParsed(

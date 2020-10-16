@@ -7,7 +7,7 @@ export class Breadth extends OverviewChildCommand {
   description = "Shows your breadth rating";
 
   async run() {
-    let { username, perspective } = await this.parseMentionedUsername();
+    let { username, perspective } = await this.parseMentions();
 
     let { badge, colour, image } = await this.getAuthorDetails();
     let breadth = await this.calculator.breadth();

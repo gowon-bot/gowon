@@ -7,6 +7,7 @@ import {
 } from "../../../helpers/date";
 import { numberDisplay } from "../../../helpers";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
+import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
 export default class Scrobbles extends LastFMBaseCommand {
   aliases = ["s"];
@@ -15,17 +16,11 @@ export default class Scrobbles extends LastFMBaseCommand {
   usage = ["time period @user"];
 
   arguments: Arguments = {
-    mentions: {
-      user: {
-        index: 0,
-        description: "The user to lookup",
-        nonDiscordMentionParsing: this.ndmp,
-      },
-    },
     inputs: {
       timeRange: { custom: timeRangeParser(), index: -1 },
       humanizedTimeRange: { custom: humanizedTimeRangeParser(), index: -1 },
     },
+    mentions: standardMentions,
   };
 
   async run(message: Message) {
@@ -40,7 +35,7 @@ export default class Scrobbles extends LastFMBaseCommand {
     let timeRange = this.parsedArguments.timeRange as TimeRange,
       humanTimeRange = this.parsedArguments.humanizedTimeRange as string;
 
-    let { username, perspective } = await this.parseMentionedUsername();
+    let { username, perspective } = await this.parseMentions();
 
     let scrobbles = await this.lastFMService.getNumberScrobbles(
       username,

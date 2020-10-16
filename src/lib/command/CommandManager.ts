@@ -1,4 +1,3 @@
-import { NoCommand } from "./BaseCommand";
 import { Command } from "./Command";
 import { promisify } from "util";
 import _glob from "glob";
@@ -45,7 +44,7 @@ export class CommandManager {
   async find(
     messageString: string,
     serverID: string
-  ): Promise<{ command: Command; runAs: RunAs }> {
+  ): Promise<{ command?: Command; runAs: RunAs }> {
     let checker = new AliasChecker(messageString);
 
     for (let command of this.list(true)) {
@@ -57,7 +56,7 @@ export class CommandManager {
         };
       }
     }
-    return { command: new NoCommand(), runAs: new RunAs() };
+    return { runAs: new RunAs() };
   }
 
   findByID(id: string): Command | undefined {

@@ -39,7 +39,7 @@ export default class TopTrack extends InfoCommand {
     if (position.end - position.start > 9)
       throw new LogicError("those two positions are too far apart!");
 
-    let { senderUsername } = await this.parseMentionedUsername();
+    let { senderUsername } = await this.parseMentions();
 
     if (!artist) {
       artist = (await this.lastFMService.nowPlayingParsed(senderUsername))

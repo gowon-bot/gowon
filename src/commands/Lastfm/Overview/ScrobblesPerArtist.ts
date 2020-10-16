@@ -6,7 +6,7 @@ export class ScrobblesPerArtist extends OverviewChildCommand {
   description = "Shows your average scrobbles per artist";
 
   async run() {
-    let { username } = await this.parseMentionedUsername();
+    let { username } = await this.parseMentions();
 
     let { badge, colour, image } = await this.getAuthorDetails();
     let spa = await this.calculator.avgScrobblesPerArtist();

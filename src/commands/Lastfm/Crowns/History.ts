@@ -18,16 +18,17 @@ export class History extends CrownsChildCommand {
   async run(message: Message) {
     let artist = this.parsedArguments.artist as string;
 
-    let user = await this.usersService.getUser(message.author.id!);
-    let username = user.lastFMUsername;
+    let { senderUsername } = await this.parseMentions({
+      senderRequired: !artist,
+    });
 
     if (!artist) {
-      artist = (await this.lastFMService.nowPlayingParsed(username)).artist;
+      artist = (await this.lastFMService.nowPlayingParsed(senderUsername))
+        .artist;
     }
 
     let artistDetails = await this.lastFMService.artistInfo({
       artist,
-      username,
     });
 
     let crown = await this.crownsService.getCrown(

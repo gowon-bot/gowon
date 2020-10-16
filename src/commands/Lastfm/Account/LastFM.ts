@@ -2,6 +2,7 @@ import { Arguments } from "../../../lib/arguments/arguments";
 import { LinkGenerator } from "../../../helpers/lastFM";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { RecordNotFoundError } from "../../../errors";
+import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
 export default class LastFM extends LastFMBaseCommand {
   aliases = ["lfm"];
@@ -10,20 +11,14 @@ export default class LastFM extends LastFMBaseCommand {
   usage = ["", "@user"];
 
   arguments: Arguments = {
-    mentions: {
-      user: {
-        index: 0,
-        description: "The user to lookup",
-        nonDiscordMentionParsing: this.ndmp,
-      },
-    },
     inputs: {
       username: { index: 0 },
     },
+    mentions: standardMentions,
   };
 
   async run() {
-    let { username, perspective } = await this.parseMentionedUsername({
+    let { username, perspective } = await this.parseMentions({
       inputArgumentName: "username",
     });
 

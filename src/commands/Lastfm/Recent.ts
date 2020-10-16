@@ -1,5 +1,6 @@
 import { MessageEmbed } from "discord.js";
 import { Arguments } from "../../lib/arguments/arguments";
+import { standardMentions } from "../../lib/arguments/mentions/mentions";
 import { Validation } from "../../lib/validation/ValidationChecker";
 import { validators } from "../../lib/validation/validators";
 import { LastFMBaseCommand } from "./LastFMBaseCommand";
@@ -13,13 +14,7 @@ export default class Recent extends LastFMBaseCommand {
     inputs: {
       amount: { index: 0, regex: /-?[0-9]+/g, default: 5, number: true },
     },
-    mentions: {
-      user: {
-        index: 0,
-        description: "The user to lookup",
-        nonDiscordMentionParsing: this.ndmp,
-      },
-    },
+    mentions: standardMentions
   };
 
   validation: Validation = {
@@ -29,7 +24,7 @@ export default class Recent extends LastFMBaseCommand {
   async run() {
     let amount = this.parsedArguments.amount as number;
 
-    let { username, perspective } = await this.parseMentionedUsername();
+    let { username, perspective } = await this.parseMentions();
 
     let recentTracks = await this.lastFMService.recentTracks({
       username,

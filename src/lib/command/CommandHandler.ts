@@ -62,6 +62,8 @@ export class CommandHandler {
         message.guild.id
       );
 
+      if (!command) return;
+
       if (command instanceof ParentCommand)
         command = (command.default && command.default()) || command;
 

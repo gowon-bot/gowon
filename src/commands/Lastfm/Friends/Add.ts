@@ -4,22 +4,17 @@ import { Arguments } from "../../../lib/arguments/arguments";
 import { LogicError, AlreadyFriendsError } from "../../../errors";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
+import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
 export class Add extends FriendsChildCommand {
   description = "Add a friend";
   usage = ["lfm_username", "@user"];
 
   arguments: Arguments = {
-    mentions: {
-      user: {
-        index: 0,
-        description: "The user to add",
-        nonDiscordMentionParsing: this.ndmp,
-      },
-    },
     inputs: {
       friendUsername: { index: 0 },
     },
+    mentions: standardMentions,
   };
 
   validation: Validation = {
@@ -27,18 +22,14 @@ export class Add extends FriendsChildCommand {
       validator: new validators.Required({
         message: "please specify a friend to add!",
       }),
-      dependsOn: ["friendUsername"],
+      dependsOn: ["friendUsername", "userID", "lfmUser"],
     },
   };
 
   async prerun() {}
 
   async run(message: Message) {
-    let {
-      username,
-      senderUsername,
-      dbUser,
-    } = await this.parseMentionedUsername({
+    let { username, senderUsername, dbUser } = await this.parseMentions({
       inputArgumentName: "friendUsername",
     });
 

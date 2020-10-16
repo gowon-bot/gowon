@@ -1,4 +1,4 @@
-import { BaseCommand, NoCommand } from "../lib/command/BaseCommand";
+import { BaseCommand } from "../lib/command/BaseCommand";
 import { Command } from "../lib/command/Command";
 import { Message, MessageEmbed } from "discord.js";
 import { CommandManager } from "../lib/command/CommandManager";
@@ -100,7 +100,7 @@ export default class Help extends BaseCommand {
       this.guild.id
     );
 
-    if (command instanceof NoCommand) throw new CommandNotFoundError();
+    if (!command) throw new CommandNotFoundError();
     if (
       !(await this.adminService.can.run(command, message, this.client)).passed
     ) {
@@ -144,7 +144,7 @@ export default class Help extends BaseCommand {
             ? "**Usage**:\n" +
               flatDeep([command.usage])
                 .map((u) =>
-                  (this.prefix + command.friendlyNameWithParent + " " + u)
+                  (this.prefix + command!.friendlyNameWithParent + " " + u)
                     .trim()
                     .code()
                 )

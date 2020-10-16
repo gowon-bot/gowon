@@ -7,7 +7,7 @@ export default class TrackList extends ListCommand {
   description = "Shows your top tracks";
 
   async run() {
-    let { username } = await this.parseMentionedUsername();
+    let { username } = await this.parseMentions();
 
     let topTracks = await this.lastFMService.topTracks({
       username,

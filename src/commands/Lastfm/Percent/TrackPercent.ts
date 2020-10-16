@@ -2,6 +2,7 @@ import { Arguments } from "../../../lib/arguments/arguments";
 import { numberDisplay } from "../../../helpers";
 import { calculatePercent } from "../../../helpers/stats";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
+import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
 export default class TrackPercent extends LastFMBaseCommand {
   aliases = ["tpct"];
@@ -15,24 +16,16 @@ export default class TrackPercent extends LastFMBaseCommand {
       artist: { index: 0, splitOn: "|" },
       track: { index: 1, splitOn: "|" },
     },
-    mentions: {
-      user: {
-        index: 0,
-        description: "The user to lookup",
-        nonDiscordMentionParsing: this.ndmp,
-      },
-    },
+    mentions: standardMentions,
   };
 
   async run() {
     let artist = this.parsedArguments.artist as string,
       track = this.parsedArguments.track as string;
 
-    let {
-      username,
-      senderUsername,
-      perspective,
-    } = await this.parseMentionedUsername();
+    let { username, senderUsername, perspective } = await this.parseMentions({
+      senderRequired: !artist || !track,
+    });
 
     if (!artist || !track) {
       let nowPlaying = await this.lastFMService.nowPlayingParsed(

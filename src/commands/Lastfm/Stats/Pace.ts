@@ -12,6 +12,7 @@ import { numberDisplay, dateDisplay } from "../../../helpers";
 import { isBefore, isValid } from "date-fns";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
+import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
 export default class Pace extends LastFMBaseCommand {
   aliases = ["pc"];
@@ -20,13 +21,6 @@ export default class Pace extends LastFMBaseCommand {
   usage = ["", "milestone", "time period milestone @user"];
 
   arguments: Arguments = {
-    mentions: {
-      user: {
-        index: 0,
-        description: "The user to lookup",
-        nonDiscordMentionParsing: this.ndmp,
-      },
-    },
     inputs: {
       timeRange: {
         custom: timeRangeParser({ default: { weeks: 1 }, useOverall: true }),
@@ -45,6 +39,7 @@ export default class Pace extends LastFMBaseCommand {
         number: true,
       },
     },
+    mentions: standardMentions,
   };
 
   validation: Validation = {
@@ -62,7 +57,7 @@ export default class Pace extends LastFMBaseCommand {
       humanizedTimeRange = this.parsedArguments.humanizedTimeRange as string,
       milestone = this.parsedArguments.milestone as number | undefined;
 
-    let { username, perspective } = await this.parseMentionedUsername();
+    let { username, perspective } = await this.parseMentions();
 
     let paceCalculator = new PaceCalculator(this.lastFMService, username);
 

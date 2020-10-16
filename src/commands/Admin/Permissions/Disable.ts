@@ -1,5 +1,4 @@
 import { Message } from "discord.js";
-import { NoCommand } from "../../../lib/command/BaseCommand";
 import { CommandNotFoundError, LogicError } from "../../../errors";
 import { PermissionsChildCommand } from "./PermissionsChildCommand";
 import { Arguments } from "../../../lib/arguments/arguments";
@@ -14,7 +13,7 @@ export class Disable extends PermissionsChildCommand {
   };
 
   async run(message: Message) {
-    if (this.command instanceof NoCommand) throw new CommandNotFoundError();
+    if (!this.command) throw new CommandNotFoundError();
     if (["enable", "disable"].includes(this.command.name))
       throw new LogicError(
         `You can't disable the ${this.command.name.code()} command!`

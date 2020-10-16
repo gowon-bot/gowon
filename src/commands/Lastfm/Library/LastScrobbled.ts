@@ -3,6 +3,7 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { dateTimeDisplay } from "../../../helpers";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { LogicError } from "../../../errors";
+import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
 export default class LastScrobbled extends LastFMBaseCommand {
   description = "Shows the last time you scrobbled a song";
@@ -14,24 +15,16 @@ export default class LastScrobbled extends LastFMBaseCommand {
       artist: { index: 0, splitOn: "|" },
       track: { index: 1, splitOn: "|" },
     },
-    mentions: {
-      user: {
-        index: 0,
-        description: "The user to lookup",
-        nonDiscordMentionParsing: this.ndmp,
-      },
-    },
+    mentions: standardMentions,
   };
 
   async run() {
     let artist = this.parsedArguments.artist as string,
       track = this.parsedArguments.track as string;
 
-    let {
-      senderUsername,
-      username,
-      perspective,
-    } = await this.parseMentionedUsername();
+    let { senderUsername, username, perspective } = await this.parseMentions({
+      senderRequired: !artist || !track,
+    });
 
     if (artist && track) {
       let albumInfo = await this.lastFMService.trackInfo({ artist, track });

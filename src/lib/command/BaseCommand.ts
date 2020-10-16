@@ -6,9 +6,13 @@ import {
   ParsedArguments,
   ArgumentParser,
 } from "../arguments/arguments";
-import { UnknownError, UsernameNotRegisteredError } from "../../errors";
+import {
+  LogicError,
+  UnknownError,
+  UsernameNotRegisteredError,
+} from "../../errors";
 import { GowonService } from "../../services/GowonService";
-import { Mention } from "../arguments/mentions";
+import { ParsedMention } from "../arguments/mentions/mentions";
 import { CommandManager } from "./CommandManager";
 import { Logger } from "../Logger";
 import { RunAs } from "../AliasChecker";
@@ -85,78 +89,102 @@ export abstract class BaseCommand implements Command {
 
   abstract async run(message: Message, runAs: RunAs): Promise<void>;
 
-  async parseMentionedUsername(
-    options: {
-      asCode?: boolean;
-      argumentName?: string;
-      inputArgumentName?: string;
-      suppressError?: boolean;
-      throwOnNoMention?: boolean;
-    } = {
-      asCode: true,
-      argumentName: "user",
-      suppressError: false,
-    }
-  ): Promise<{
+  async parseMentions({
+    senderRequired = false,
+    usernameRequired = true,
+    inputArgumentName = "username",
+    asCode = true,
+    fetchDiscordUser = false,
+    reverseLookup = { lastFM: false },
+  }: {
+    senderRequired?: boolean;
+    usernameRequired?: boolean;
+    inputArgumentName?: string;
+    asCode?: boolean;
+    fetchDiscordUser?: boolean;
+    reverseLookup?: { lastFM?: boolean };
+  } = {}): Promise<{
     senderUsername: string;
     mentionedUsername?: string;
     username: string;
     perspective: Perspective;
     dbUser?: User;
     senderUser?: User;
+    discordUser?: DiscordUser;
   }> {
-    let dbUser: User | undefined;
-    let user = this.parsedArguments.user as Mention;
-    let inputUsername =
-      options.inputArgumentName &&
-      (this.parsedArguments[options.inputArgumentName] as string);
+    let { user, userID, lfmUser } = this.parsedArguments as {
+      user?: User;
+      userID?: string;
+      lfmUser?: string;
+    };
 
     let senderUser = await this.usersService.getUser(this.message.author.id);
 
     let mentionedUsername: string | undefined;
+    let dbUser: User | undefined;
+    let discordUser: DiscordUser | undefined;
 
-    if (typeof user === "string") {
-      mentionedUsername = user;
-    } else if (user) {
+    if (lfmUser) {
+      mentionedUsername = lfmUser;
+    } else if (user?.id || userID) {
       try {
-        let mentionedUser = await this.usersService.getUser(user.id);
+        let mentionedUser = await this.usersService.getUser(
+          userID || `${user?.id}`
+        );
 
         dbUser = mentionedUser;
 
-        mentionedUsername = mentionedUser?.lastFMUsername;
+        if (!mentionedUser?.lastFMUsername)
+          throw new UsernameNotRegisteredError();
+
+        mentionedUsername = mentionedUser.lastFMUsername;
       } catch {
-        throw new UsernameNotRegisteredError(user.username);
+        throw new UsernameNotRegisteredError();
       }
+    } else if (inputArgumentName && this.parsedArguments[inputArgumentName]) {
+      mentionedUsername = this.parsedArguments[inputArgumentName];
     }
-
-    let username =
-      inputUsername || mentionedUsername || senderUser.lastFMUsername;
-    mentionedUsername = inputUsername || mentionedUsername;
-
-    dbUser = username === senderUser.lastFMUsername ? senderUser : dbUser;
 
     let perspective = this.usersService.perspective(
       senderUser.lastFMUsername,
       mentionedUsername,
-      options.asCode
+      asCode
     );
 
-    if (!username && !options.suppressError) {
-      if (!senderUser.lastFMUsername)
-        throw new UsernameNotRegisteredError(true);
-      else
-        throw new UsernameNotRegisteredError(
-          user instanceof DiscordUser ? user.username : undefined
-        );
+    if (reverseLookup.lastFM && !dbUser && mentionedUsername) {
+      dbUser = await this.usersService.getUserFromLastFMUsername(
+        mentionedUsername
+      );
     }
 
+    let username = mentionedUsername || senderUser.lastFMUsername;
+
+    if (fetchDiscordUser) {
+      discordUser = (
+        await this.guild.members.fetch(
+          dbUser?.discordID || userID || this.author.id
+        )
+      ).user;
+    }
+
+    if (
+      usernameRequired &&
+      (!username || (senderRequired && !senderUser?.lastFMUsername))
+    )
+      throw new LogicError(
+        `Please sign in! (\`${await this.gowonService.prefix(
+          this.guild.id
+        )}login <username>)\``
+      );
+
     return {
+      username,
       senderUsername: senderUser.lastFMUsername,
       mentionedUsername,
-      username,
       perspective,
       dbUser,
       senderUser,
+      discordUser,
     };
   }
 
@@ -237,9 +265,4 @@ export abstract class BaseCommand implements Command {
     this.addResponse(message);
     return await this.message.reply(message);
   }
-}
-
-export class NoCommand extends BaseCommand {
-  async run() {}
-  async execute() {}
 }

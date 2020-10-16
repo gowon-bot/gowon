@@ -5,19 +5,13 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { LastFMPeriod } from "../../../services/LastFM/LastFMService.types";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
+import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
 export abstract class ListCommand extends LastFMBaseCommand {
   subcategory = "lists";
   usage = ["", "list_amount time period @user"];
 
   arguments: Arguments = {
-    mentions: {
-      user: {
-        index: 0,
-        description: "The user to lookup",
-        nonDiscordMentionParsing: this.ndmp,
-      },
-    },
     inputs: {
       timePeriod: {
         custom: (messageString: string) =>
@@ -36,6 +30,7 @@ export abstract class ListCommand extends LastFMBaseCommand {
         number: true,
       },
     },
+    mentions: standardMentions,
   };
 
   validation: Validation = {

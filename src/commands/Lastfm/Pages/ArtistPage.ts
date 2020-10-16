@@ -1,5 +1,6 @@
 import { cleanURL } from "../../../helpers/discord";
 import { Arguments } from "../../../lib/arguments/arguments";
+import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 export default class ArtistPage extends LastFMBaseCommand {
@@ -16,19 +17,13 @@ export default class ArtistPage extends LastFMBaseCommand {
         },
       },
     },
-    mentions: {
-      user: {
-        index: 0,
-        description: "The user to lookup",
-        nonDiscordMentionParsing: this.ndmp,
-      },
-    },
+    mentions: standardMentions,
   };
 
   async run() {
     let artist = this.parsedArguments.artist as string;
 
-    let { username } = await this.parseMentionedUsername();
+    let { username } = await this.parseMentions();
 
     if (!artist) {
       artist = (await this.lastFMService.nowPlayingParsed(username)).artist;

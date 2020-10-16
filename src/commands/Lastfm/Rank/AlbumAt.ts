@@ -4,6 +4,7 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { LogicError } from "../../../errors";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
+import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
 export default class AlbumAt extends LastFMBaseCommand {
   aliases = ["ala"];
@@ -12,16 +13,10 @@ export default class AlbumAt extends LastFMBaseCommand {
   usage = ["", "rank @user"];
 
   arguments: Arguments = {
-    mentions: {
-      user: {
-        index: 0,
-        description: "The user to lookup",
-        nonDiscordMentionParsing: this.ndmp,
-      },
-    },
     inputs: {
       rank: { index: 0, default: 1, number: true },
     },
+    mentions: standardMentions,
   };
 
   validation: Validation = {
@@ -31,7 +26,7 @@ export default class AlbumAt extends LastFMBaseCommand {
   async run() {
     let rank = this.parsedArguments.rank as number;
 
-    let { username, perspective } = await this.parseMentionedUsername();
+    let { username, perspective } = await this.parseMentions();
 
     let topAlbums = await this.lastFMService.topAlbums({
       username,

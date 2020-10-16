@@ -4,6 +4,7 @@ import { InfoCommand } from "./InfoCommand";
 import { numberDisplay } from "../../../helpers";
 import { LinkConsolidator } from "../../../helpers/lastFM";
 import { LineConsolidator } from "../../../lib/LineConsolidator";
+import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
 export default class TrackInfo extends InfoCommand {
   shouldBeIndexed = true;
@@ -17,6 +18,7 @@ export default class TrackInfo extends InfoCommand {
       artist: { index: 0, splitOn: "|" },
       track: { index: 1, splitOn: "|" },
     },
+    mentions: standardMentions,
   };
 
   lineConsolidator = new LineConsolidator();
@@ -26,7 +28,9 @@ export default class TrackInfo extends InfoCommand {
       track = this.parsedArguments.track as string;
 
     if (!artist || !track) {
-      let { senderUsername } = await this.parseMentionedUsername();
+      let { senderUsername } = await this.parseMentions({
+        senderRequired: true,
+      });
 
       let nowPlaying = await this.lastFMService.nowPlayingParsed(
         senderUsername
@@ -55,9 +59,9 @@ export default class TrackInfo extends InfoCommand {
         ? `_${numberDisplay(Math.ceil(duration / 60000), "minute")}_`
         : "") +
         (duration && trackInfo.album ? " - " : "") +
-        trackInfo.album
-        ? `from the album ${trackInfo.album.title.italic()}`
-        : "",
+        (trackInfo.album
+          ? `from the album ${trackInfo.album?.title.italic()}`
+          : ""),
       {
         shouldDisplay: !!(duration || trackInfo.album),
         string: "",

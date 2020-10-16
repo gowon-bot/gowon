@@ -6,7 +6,7 @@ export class AvgPerDay extends OverviewChildCommand {
   description = "Shows your average scrobble count per day";
 
   async run() {
-    let { username, perspective } = await this.parseMentionedUsername();
+    let { username, perspective } = await this.parseMentions();
 
     let { badge, colour, image } = await this.getAuthorDetails();
     let avg = await this.calculator.avgPerDay();

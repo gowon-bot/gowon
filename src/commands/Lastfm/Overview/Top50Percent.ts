@@ -8,7 +8,7 @@ export class Top50Percent extends OverviewChildCommand {
     "Shows how many artists are needed to make 50% of your scrobbles";
 
   async run() {
-    let { username, perspective } = await this.parseMentionedUsername();
+    let { username, perspective } = await this.parseMentions();
 
     let { badge, colour, image } = await this.getAuthorDetails();
 

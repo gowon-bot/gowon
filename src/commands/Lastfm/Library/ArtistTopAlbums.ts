@@ -2,6 +2,7 @@ import { MessageEmbed } from "discord.js";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { numberDisplay } from "../../../helpers";
 import { Arguments } from "../../../lib/arguments/arguments";
+import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
 export default class ArtistTopAlbums extends LastFMBaseCommand {
   description = "Shows your top albums from an artist";
@@ -16,19 +17,15 @@ export default class ArtistTopAlbums extends LastFMBaseCommand {
         },
       },
     },
-    mentions: {
-      user: {
-        index: 0,
-        description: "The user to lookup",
-        nonDiscordMentionParsing: this.ndmp,
-      },
-    },
+    mentions: standardMentions,
   };
 
   async run() {
     let artist = this.parsedArguments.artist as string;
 
-    let { username, senderUsername } = await this.parseMentionedUsername();
+    let { username, senderUsername } = await this.parseMentions({
+      senderRequired: !artist,
+    });
 
     if (!artist) {
       artist = (await this.lastFMService.nowPlayingParsed(senderUsername))

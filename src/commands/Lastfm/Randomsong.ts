@@ -1,5 +1,6 @@
 import { MessageEmbed } from "discord.js";
 import { Arguments } from "../../lib/arguments/arguments";
+import { standardMentions } from "../../lib/arguments/mentions/mentions";
 import { Delegate } from "../../lib/command/BaseCommand";
 import { LastFMBaseCommand } from "./LastFMBaseCommand";
 import RandomsongInUsersLibrary from "./RandomSongInUsersLibrary";
@@ -9,14 +10,12 @@ export default class Randomsong extends LastFMBaseCommand {
   usage = "";
 
   arguments: Arguments = {
-    mentions: {
-      user: { index: 0, nonDiscordMentionParsing: this.ndmp },
-    },
+    mentions: standardMentions
   };
 
   delegates: Delegate[] = [
     {
-      when: (args) => !!args.user,
+      when: (args) => !!args.user || !!args.userID || !!args.lfmUser,
       delegateTo: RandomsongInUsersLibrary,
     },
   ];

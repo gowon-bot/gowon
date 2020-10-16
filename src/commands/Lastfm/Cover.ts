@@ -1,6 +1,7 @@
 import { Message } from "discord.js";
 import { LogicError } from "../../errors";
 import { Arguments } from "../../lib/arguments/arguments";
+import { standardMentions } from "../../lib/arguments/mentions/mentions";
 import { LastFMBaseCommand } from "./LastFMBaseCommand";
 
 export default class Cover extends LastFMBaseCommand {
@@ -9,24 +10,20 @@ export default class Cover extends LastFMBaseCommand {
   usage = ["", "artist | artist @user"];
 
   arguments: Arguments = {
-    mentions: {
-      user: {
-        index: 0,
-        description: "The user to lookup",
-        nonDiscordMentionParsing: this.ndmp,
-      },
-    },
     inputs: {
       artist: { index: 0, splitOn: "|" },
       album: { index: 1, splitOn: "|" },
     },
+    mentions: standardMentions,
   };
 
   async run(_: Message) {
     let artist = this.parsedArguments.artist as string,
       album = this.parsedArguments.album as string;
 
-    let { username } = await this.parseMentionedUsername();
+    let { username } = await this.parseMentions({
+      usernameRequired: !artist || !album,
+    });
 
     if (!artist && !album) {
       let nowPlaying = await this.lastFMService.nowPlaying(username);
@@ -52,7 +49,8 @@ export default class Cover extends LastFMBaseCommand {
       let albumDetails = await this.lastFMService.albumInfo({ artist, album });
       let image = albumDetails.image.find((i) => i.size === "extralarge");
 
-      if (!image?.["#text"]) throw new LogicError("that album doesn't have a cover!");
+      if (!image?.["#text"])
+        throw new LogicError("that album doesn't have a cover!");
 
       await this.sendWithFiles(
         `Cover for ${albumDetails.name.italic()} by ${albumDetails.artist.bold()}`,

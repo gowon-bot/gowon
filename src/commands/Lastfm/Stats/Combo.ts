@@ -7,6 +7,7 @@ import { Paginator } from "../../../lib/Paginator";
 import { RedirectsService } from "../../../services/dbservices/RedirectsService";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
+import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
 export default class Combo extends LastFMBaseCommand {
   aliases = ["streak", "str"];
@@ -23,13 +24,7 @@ export default class Combo extends LastFMBaseCommand {
         number: true,
       },
     },
-    mentions: {
-      user: {
-        index: 0,
-        description: "The user to lookup",
-        nonDiscordMentionParsing: this.ndmp,
-      },
-    },
+    mentions: standardMentions,
   };
 
   validation: Validation = {
@@ -42,7 +37,7 @@ export default class Combo extends LastFMBaseCommand {
   redirectsService = new RedirectsService(this.logger);
 
   async run() {
-    let { username } = await this.parseMentionedUsername();
+    let { username } = await this.parseMentions();
 
     let streakAmount = this.parsedArguments.streakAmount as number;
 

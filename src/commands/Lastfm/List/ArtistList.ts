@@ -7,7 +7,7 @@ export default class ArtistList extends ListCommand {
   description = "Shows your top artists";
 
   async run() {
-    let { username } = await this.parseMentionedUsername();
+    let { username } = await this.parseMentions();
 
     let topArtists = await this.lastFMService.topArtists({
       username,

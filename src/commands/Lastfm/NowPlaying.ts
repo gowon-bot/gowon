@@ -2,7 +2,7 @@ import { Message, MessageEmbed } from "discord.js";
 import { LinkGenerator, parseLastFMTrackResponse } from "../../helpers/lastFM";
 import { numberDisplay } from "../../helpers";
 import { Arguments } from "../../lib/arguments/arguments";
-import { Mention } from "../../lib/arguments/mentions";
+import { standardMentions } from "../../lib/arguments/mentions/mentions";
 import { LastFMBaseCommand } from "./LastFMBaseCommand";
 import { CrownsService } from "../../services/dbservices/CrownsService";
 import { RunAs } from "../../lib/AliasChecker";
@@ -32,28 +32,24 @@ export default class NowPlaying extends LastFMBaseCommand {
     inputs: {
       otherWords: { index: { start: 0 } },
     },
-    mentions: {
-      user: {
-        index: 0,
-        description: "The user to lookup",
-        nonDiscordMentionParsing: this.ndmp,
-      },
-    },
+    mentions: standardMentions,
   };
 
   crownsService = new CrownsService(this.logger);
   tagConsolidator = new TagConsolidator();
 
   async run(message: Message, runAs: RunAs) {
-    let user = this.parsedArguments.user as Mention,
-      otherWords = this.parsedArguments.otherWords as string | undefined;
+    let otherWords = this.parsedArguments.otherWords as string | undefined;
 
-    let username =
-      typeof user === "string"
-        ? user
-        : await this.usersService.getUsername(
-            (!otherWords && user?.id) || message.author.id
-          );
+    let { username, senderUsername } = await this.parseMentions();
+
+    if (
+      otherWords &&
+      !this.parsedArguments.userID &&
+      !this.parsedArguments.lfmUser
+    ) {
+      username = senderUsername;
+    }
 
     let nowPlaying = await this.lastFMService.nowPlaying(username);
 
@@ -79,7 +75,7 @@ export default class NowPlaying extends LastFMBaseCommand {
     let nowPlayingEmbed = new MessageEmbed()
       .setColor("black")
       .setAuthor(
-      `${
+        `${
           nowPlaying["@attr"]?.nowplaying ? "Now playing" : "Last scrobbled"
         } for ${username}`,
         message.author.avatarURL() || undefined,

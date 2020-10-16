@@ -2,6 +2,7 @@ import { BaseService } from "../BaseService";
 import axios, { AxiosInstance } from "axios";
 import { Logger } from "../../lib/Logger";
 import cheerio from "cheerio";
+import chalk from "chalk";
 
 export class BaseScraper extends BaseService {
   axios: AxiosInstance;
@@ -13,6 +14,7 @@ export class BaseScraper extends BaseService {
   }
 
   protected async fetch(path: string): Promise<CheerioStatic> {
+    this.log(chalk`Made scraping request for {cyan '${this.url + path}'}`)
     let response = await this.axios.get(this.url + path);
     return cheerio.load(response.data);
   }

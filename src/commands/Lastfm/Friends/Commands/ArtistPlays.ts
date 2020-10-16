@@ -3,6 +3,7 @@ import { MessageEmbed } from "discord.js";
 import { MultiRequester } from "../../../../lib/MultiRequester";
 import { numberDisplay } from "../../../../helpers";
 import { Arguments } from "../../../../lib/arguments/arguments";
+import { LinkGenerator } from "../../../../helpers/lastFM";
 
 export class ArtistPlays extends FriendsChildCommand {
   description = "View how many plays of an artist your friends have";
@@ -19,7 +20,7 @@ export class ArtistPlays extends FriendsChildCommand {
     },
   };
 
-  throwIfNoFriends = true
+  throwIfNoFriends = true;
 
   async run() {
     let artist = this.parsedArguments.artist as string;
@@ -40,6 +41,7 @@ export class ArtistPlays extends FriendsChildCommand {
 
     let embed = new MessageEmbed()
       .setTitle(`Your friends plays of ${artistName}`)
+      .setURL(LinkGenerator.listenersYouKnow(artistName))
       .setDescription(
         Object.keys(artistDetails)
           .sort(

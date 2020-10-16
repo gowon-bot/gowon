@@ -6,6 +6,7 @@ import { calculatePercent } from "../../../helpers/stats";
 import { CrownsService } from "../../../services/dbservices/CrownsService";
 import { LinkConsolidator } from "../../../helpers/lastFM";
 import { LineConsolidator } from "../../../lib/LineConsolidator";
+import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
 export default class ArtistInfo extends InfoCommand {
   shouldBeIndexed = true;
@@ -18,13 +19,7 @@ export default class ArtistInfo extends InfoCommand {
     inputs: {
       artist: { index: { start: 0 } },
     },
-    mentions: {
-      user: {
-        index: 0,
-        description: "The user to lookup",
-        nonDiscordMentionParsing: this.ndmp,
-      },
-    },
+    mentions: standardMentions,
   };
 
   crownsService = new CrownsService();
@@ -33,11 +28,9 @@ export default class ArtistInfo extends InfoCommand {
   async run(message: Message) {
     let artist = this.parsedArguments.artist as string;
 
-    let {
-      senderUsername,
-      username,
-      perspective,
-    } = await this.parseMentionedUsername();
+    let { senderUsername, username, perspective } = await this.parseMentions({
+      senderRequired: !artist,
+    });
 
     if (!artist) {
       artist = (await this.lastFMService.nowPlayingParsed(senderUsername))

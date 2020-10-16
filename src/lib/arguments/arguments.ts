@@ -1,9 +1,11 @@
 import { Message } from "discord.js";
 import { GowonService } from "../../services/GowonService";
-import { MentionParser, MentionOptions } from "./mentions";
+import { MentionParser, MentionOptions } from "./mentions/mentions";
 import { Parser } from "./parser";
 import { RunAs } from "../AliasChecker";
 import escapeStringRegexp from "escape-string-regexp";
+
+export type ParsedArgument = any;
 
 export interface Slice {
   start: number;
@@ -29,8 +31,6 @@ export interface Arguments {
     [name: string]: InputArguments;
   };
 }
-
-export type ParsedArgument = any;
 
 export interface ParsedArguments {
   [name: string]: ParsedArgument;

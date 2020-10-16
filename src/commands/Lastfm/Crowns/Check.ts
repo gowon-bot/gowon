@@ -24,7 +24,7 @@ export class Check extends CrownsChildCommand {
   async run(message: Message) {
     let artist = this.parsedArguments.artist as string;
 
-    let { username, senderUser } = await this.parseMentionedUsername();
+    let { username, senderUser } = await this.parseMentions();
 
     if (await senderUser?.inPurgatory(message)) throw new PurgatoryError();
     if (await senderUser?.inactive(message)) throw new InactiveError();

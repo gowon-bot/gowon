@@ -63,8 +63,6 @@ export class Paginator<T extends Params = Params, U = any> {
     let result: U | undefined;
 
     const eachFunction = (response: any) => {
-      console.log(response);
-
       if (options.groupOn) {
         results.push(response[options.groupOn]);
       } else if (options.concatTo) {

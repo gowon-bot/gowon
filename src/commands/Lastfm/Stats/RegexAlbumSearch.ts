@@ -4,6 +4,7 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { Variation } from "../../../lib/command/BaseCommand";
 import { RunAs } from "../../../lib/AliasChecker";
 import { LogicError } from "../../../errors";
+import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
 export default class RegexAlbumSearch extends LastFMBaseCommand {
   aliases = ["regexls", "regexals", "rls", "rals"];
@@ -15,16 +16,10 @@ export default class RegexAlbumSearch extends LastFMBaseCommand {
   shouldBeIndexed = false;
 
   arguments: Arguments = {
-    mentions: {
-      user: {
-        index: 0,
-        description: "The user to lookup",
-        nonDiscordMentionParsing: this.ndmp,
-      },
-    },
     inputs: {
       regex: { index: { start: 0 } },
     },
+    mentions: standardMentions,
   };
   variations: Variation[] = [
     {
@@ -34,8 +29,8 @@ export default class RegexAlbumSearch extends LastFMBaseCommand {
     },
   ];
 
-async run(_: Message, runAs: RunAs) {
-    let { username, perspective } = await this.parseMentionedUsername();
+  async run(_: Message, runAs: RunAs) {
+    let { username, perspective } = await this.parseMentions();
 
     let page = (runAs.lastString().match("[0-9]{1,3}") || [])[0]?.toInt() || 1;
 

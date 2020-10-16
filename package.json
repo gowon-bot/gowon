@@ -31,6 +31,7 @@
     "express": "^4.17.1",
     "glob": "^7.1.6",
     "graphql": "^15.3.0",
+    "hangul-romanization": "^1.0.0",
     "http-errors": "^1.8.0",
     "js-md5": "^0.7.3",
     "mathjs": "^7.1.0",

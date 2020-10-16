@@ -1,7 +1,6 @@
 import { AdminBaseChildCommand } from "../AdminBaseCommand";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { CommandManager } from "../../../lib/command/CommandManager";
-import { NoCommand } from "../../../lib/command/BaseCommand";
 import { Command } from "../../../lib/command/Command";
 import { CommandNotFoundError } from "../../../errors";
 import { RunAs } from "../../../lib/AliasChecker";
@@ -58,7 +57,10 @@ export abstract class PermissionsChildCommand extends AdminBaseChildCommand {
       this.guild.id
     );
 
-    this.command = command.command;
+    if (!command.command && this.throwOnNoCommand)
+      throw new CommandNotFoundError();
+
+    if (command.command) this.command = command.command;
     this.runAs = command.runAs;
     let userIDs = (this.parsedArguments.userIDs as string[]) || [];
     let roleIDs = (this.parsedArguments.roleIDs as string[]) || [];
@@ -82,8 +84,5 @@ export abstract class PermissionsChildCommand extends AdminBaseChildCommand {
 
     this.users = users;
     this.roles = roles;
-
-    if (this.command instanceof NoCommand && this.throwOnNoCommand)
-      throw new CommandNotFoundError();
   }
 }

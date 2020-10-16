@@ -1,4 +1,3 @@
-import { NoCommand } from "./command/BaseCommand";
 import { Command } from "./command/Command";
 import escapeStringRegexp from "escape-string-regexp";
 import { GowonService } from "../services/GowonService";
@@ -107,6 +106,7 @@ export class AliasChecker {
     let child = await command.children.find(childAlias, serverID);
 
     if (
+      child.command &&
       command.canSkipPrefixFor.includes(child.command.name) &&
       childAlias !== child.command.name
     )
@@ -194,11 +194,7 @@ export class AliasChecker {
         if (childNoPrefix)
           return runAs.add({ string: check, command: childNoPrefix });
 
-        if (
-          child &&
-          !(child instanceof NoCommand) &&
-          this.parentCommandHasAlias(command, check)
-        ) {
+        if (child && this.parentCommandHasAlias(command, check)) {
           runAs.add({ command, string: check });
           command = child;
         } else break;
@@ -206,7 +202,7 @@ export class AliasChecker {
         if (
           (this.commandHasAlias(command, check) ||
             this.commandHasVariation(command, check)) &&
-          !(command instanceof NoCommand)
+          command
         ) {
           return runAs.add({ command, string: check });
         } else break;

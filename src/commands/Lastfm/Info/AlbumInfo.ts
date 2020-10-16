@@ -5,6 +5,7 @@ import { numberDisplay } from "../../../helpers";
 import { calculatePercent } from "../../../helpers/stats";
 import { LinkConsolidator } from "../../../helpers/lastFM";
 import { LineConsolidator } from "../../../lib/LineConsolidator";
+import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
 export default class AlbumInfo extends InfoCommand {
   shouldBeIndexed = true;
@@ -18,13 +19,7 @@ export default class AlbumInfo extends InfoCommand {
       artist: { index: 0, splitOn: "|" },
       album: { index: 1, splitOn: "|" },
     },
-    mentions: {
-      user: {
-        index: 0,
-        description: "The user to lookup",
-        nonDiscordMentionParsing: this.ndmp,
-      },
-    },
+    mentions: standardMentions,
   };
 
   lineConsolidator = new LineConsolidator();
@@ -33,11 +28,9 @@ export default class AlbumInfo extends InfoCommand {
     let artist = this.parsedArguments.artist as string,
       album = this.parsedArguments.album as string;
 
-    let {
-      senderUsername,
-      username,
-      perspective,
-    } = await this.parseMentionedUsername();
+    let { senderUsername, username, perspective } = await this.parseMentions({
+      senderRequired: !artist || !album,
+    });
 
     if (!artist || !album) {
       let nowPlaying = await this.lastFMService.nowPlayingParsed(
@@ -132,6 +125,14 @@ export default class AlbumInfo extends InfoCommand {
             albumInfo.playcount
           ).bold()}% of all scrobbles of this album!`,
         }
+      )
+      .setFooter(
+        albumInfo.image.find((i) => i.size === "large")?.["#text"]
+          ? "Image source: Last.fm"
+          : spotifyAlbum &&
+            this.spotifyService.getImageFromSearchItem(spotifyAlbum)
+          ? "Image source: Spotify"
+          : ""
       );
 
     this.send(embed);

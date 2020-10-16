@@ -6,7 +6,7 @@ export class Playsover extends OverviewChildCommand {
   description = "Shows some playsover stats";
 
   async run() {
-    let { username, perspective } = await this.parseMentionedUsername();
+    let { username, perspective } = await this.parseMentions();
 
     let { badge, colour, image } = await this.getAuthorDetails();
     let [thousand, fivehundred, twofifty, hundred, fifty] = await Promise.all([

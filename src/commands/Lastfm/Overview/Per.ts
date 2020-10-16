@@ -6,7 +6,7 @@ export class Per extends OverviewChildCommand {
   description = "Shows some averages about your library";
 
   async run() {
-    let { username } = await this.parseMentionedUsername();
+    let { username } = await this.parseMentions();
 
     let { badge, colour, image } = await this.getAuthorDetails();
     let [lpa, tpa, tpl] = await Promise.all([

@@ -11,7 +11,7 @@ export class Logger {
     if (!this.output) return;
 
     let logString =
-      chalk`{black (${format(
+      chalk`{grey.bold (${format(
         new Date(),
         "HH:mm:ss a SSS'ms'"
       )})} {grey ${context}:}` +
@@ -27,7 +27,7 @@ export class Logger {
 
   static formatObject(object: any): string {
     return JSON.stringify(object, undefined, 2);
-  }
+}
 
   header = "";
 

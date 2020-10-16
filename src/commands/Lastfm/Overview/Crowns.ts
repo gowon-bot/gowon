@@ -9,7 +9,7 @@ export class Crowns extends OverviewChildCommand {
 
   async run() {
     let { badge, colour, image } = await this.getAuthorDetails();
-    let { username, perspective } = await this.parseMentionedUsername();
+    let { username, perspective } = await this.parseMentions();
 
     let [crownRank, apc, spc] = await Promise.all([
       this.calculator.crownsRank(),

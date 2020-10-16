@@ -1,5 +1,4 @@
 import { ParsedArguments } from "../../arguments/arguments";
-import { Logger } from "../../Logger";
 import { BaseValidator, ValidatorOptions } from "./BaseValidator";
 
 const vowels = "aeoi";
@@ -22,8 +21,6 @@ export class Required extends BaseValidator<RequiredValidatorOptions> {
         } else if (this.type === RequiredValidatorType.and && !argValue) {
           acc = false;
         }
-
-        Logger.log("value", argValue);
 
         return acc;
       }, this.type === RequiredValidatorType.and);

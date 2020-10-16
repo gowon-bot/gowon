@@ -24,9 +24,9 @@ export class CheckMany extends CrownsChildCommand {
   };
 
   async run(message: Message) {
-    let artists = this.parsedArguments.artists as Array<string>;
+    let artists = this.parsedArguments.artists as string[];
 
-    let { username } = await this.parseMentionedUsername();
+    let { username } = await this.parseMentions();
 
     if (!artists) {
       artists = [(await this.lastFMService.nowPlayingParsed(username)).artist];

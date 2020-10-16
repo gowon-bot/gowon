@@ -3,6 +3,7 @@ import { OverviewStatsCalculator } from "../../../lib/calculators/OverviewStatsC
 import { Message } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { ucFirst } from "../../../helpers";
+import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
 export abstract class OverviewChildCommand extends LastFMBaseChildCommand {
   parentName = "overview";
@@ -10,9 +11,7 @@ export abstract class OverviewChildCommand extends LastFMBaseChildCommand {
   usage = ["", "@user or lfm:username"];
 
   arguments: Arguments = {
-    mentions: {
-      user: { index: 0, nonDiscordMentionParsing: this.ndmp },
-    },
+    mentions: standardMentions,
   };
 
   calculator!: OverviewStatsCalculator;
@@ -52,37 +51,19 @@ export abstract class OverviewChildCommand extends LastFMBaseChildCommand {
   }
 
   async prerun(message: Message) {
-    let user: { id?: string } = {},
-      username: string;
+    let { senderUsername, username, discordUser } = await this.parseMentions({
+      fetchDiscordUser: true,
+      reverseLookup: { lastFM: true },
+    });
 
-    if (typeof this.parsedArguments.user === "string") {
-      username = this.parsedArguments.user as string;
-      let [dbUser, senderUsername] = await Promise.all([
-        this.usersService.getUserFromLastFMUsername(username),
-        this.usersService.getUsername(message.author.id),
-      ]);
-
-      if (dbUser) user = await message.guild!.members.fetch(dbUser?.discordID!);
-      this.senderUsername = senderUsername;
-    } else {
-      let {
-        dbUser,
-        username: parsedUsername,
-        senderUsername,
-      } = await this.parseMentionedUsername();
-
-      user = dbUser ? { id: dbUser.discordID } : user;
-      username = parsedUsername;
-      this.senderUsername = senderUsername;
-    }
-
+    this.senderUsername = senderUsername;
     this.username = username;
-    this.discordID = user.id;
+    this.discordID = discordUser?.id;
 
     this.calculator = new OverviewStatsCalculator(
       username,
       message.guild?.id!,
-      user.id,
+      this.discordID,
       this.logger
     );
   }

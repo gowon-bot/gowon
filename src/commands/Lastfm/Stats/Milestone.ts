@@ -5,6 +5,7 @@ import { BadLastFMResponseError } from "../../../errors";
 import { TrackEmbed } from "../../../helpers/Embeds";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
+import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
 export default class Milestone extends LastFMBaseCommand {
   aliases = ["mls", "ms"];
@@ -21,13 +22,7 @@ export default class Milestone extends LastFMBaseCommand {
         number: true,
       },
     },
-    mentions: {
-      user: {
-        index: 0,
-        description: "The user to lookup",
-        nonDiscordMentionParsing: this.ndmp,
-      },
-    },
+    mentions: standardMentions,
   };
 
   validation: Validation = {
@@ -44,7 +39,7 @@ export default class Milestone extends LastFMBaseCommand {
   async run() {
     let milestone = this.parsedArguments.milestone as number;
 
-    let { username, perspective } = await this.parseMentionedUsername({
+    let { username, perspective } = await this.parseMentions({
       asCode: false,
     });
 

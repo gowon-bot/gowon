@@ -3749,6 +3749,13 @@ graphql@^15.3.0:
   resolved "https://registry.yarnpkg.com/graphql/-/graphql-15.3.0.tgz#3ad2b0caab0d110e3be4a5a9b2aa281e362b5278"
   integrity sha512-GTCJtzJmkFLWRfFJuoo9RWWa/FfamUHgiFosxi/X1Ani4AVWbeyBenZTNX6dM+7WSbbFfTo/25eh0LLkwHMw2w==
 
+hangul-romanization@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/hangul-romanization/-/hangul-romanization-1.0.0.tgz#b22133ca69eff4c4acf2729aad3f10ff70d94557"
+  integrity sha512-nunYwV1aND675xevCtkRn1fzLGRbC5doGGeMsJmzH5NxGDgZ1QueiYdiCRWQhTwAH59nbDskAO/wcAnURMgTow==
+  dependencies:
+    typescript "^2.0.3"
+
 har-schema@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/har-schema/-/har-schema-2.0.0.tgz#a94c2224ebcac04782a0d9035521f24735b7ec92"
@@ -8067,6 +8074,11 @@ typeorm@^0.2.25:
     xml2js "^0.4.17"
     yargonaut "^1.1.2"
     yargs "^13.2.1"
+
+typescript@^2.0.3:
+  version "2.9.2"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.9.2.tgz#1cbf61d05d6b96269244eb6a3bce4bd914e0f00c"
+  integrity sha512-Gr4p6nFNaoufRIY4NMdpQRNmgxVIGMs4Fcu/ujdYk3nAZqk7supzBE9idmvfZIlH/Cuj//dvi+019qEue9lV0w==
 
 typescript@^4.0.2:
   version "4.0.2"

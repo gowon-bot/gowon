@@ -1,19 +1,33 @@
+import { numberDisplay } from "../../../helpers";
 import { BaseValidator, ValidatorOptions } from "./BaseValidator";
 
-interface LengthRangeValidatorOptions extends ValidatorOptions {
-  min: number;
-  max: number;
+export interface LengthRangeValidatorOptions extends ValidatorOptions {
+  min?: number;
+  max?: number;
 }
 
-export class LengthRange extends BaseValidator<
-  LengthRangeValidatorOptions
-> {
+export class LengthRange extends BaseValidator<LengthRangeValidatorOptions> {
   validate(arg: { length: number } | undefined, argName: string) {
-    if (!arg) return;
+    if (arg === undefined) return;
 
-    if (arg.length > this.options.max || arg.length < this.options.min) {
+    if (
+      (this.options.max !== undefined && arg.length > this.options.max) ||
+      (this.options.min !== undefined && arg.length < this.options.min)
+    ) {
       this.throw(
-        `please specify between ${this.options.min} and ${this.options.max} ${argName}!`
+        this.options.min && this.options.max
+          ? `please specify between ${numberDisplay(
+              this.options.min
+            )} and ${numberDisplay(this.options.max)} ${argName}!`
+          : this.options.min
+          ? `please specify at least ${numberDisplay(
+              this.options.min
+            )} ${argName}!`
+          : this.options.max
+          ? `please specify at most ${numberDisplay(
+              this.options.max
+            )} ${argName}!`
+          : `please enter a valid ${argName}!`
       );
     }
   }

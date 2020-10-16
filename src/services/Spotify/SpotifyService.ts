@@ -10,7 +10,6 @@ import {
   SpotifyEntity,
   SpotifyToken,
 } from "./SpotifyService.types";
-import { Logger } from "../../lib/Logger";
 
 export class SpotifyService extends BaseService {
   url = "https://api.spotify.com/v1/";
@@ -59,9 +58,7 @@ export class SpotifyService extends BaseService {
   }
 
   async request<T>(path: string, params: { [key: string]: any }): Promise<T> {
-    this.log(
-      `made API request to ${path} with params ${Logger.formatObject(params)}`
-    );
+    this.log(`made API request to ${path} with params ${params}`);
     let response = await fetch(this.url + path + "?" + stringify(params), {
       headers: await this.headers(),
     });
@@ -104,7 +101,9 @@ export class SpotifyService extends BaseService {
   }
 
   getImageFromSearchItem(si: SearchItem): string {
-    return si.images.sort((a, b) => b.height * b.width - a.height * a.width)[0]
-      .url;
+    return (
+      si.images.sort((a, b) => b.height * b.width - a.height * a.width)[0]
+        ?.url || ""
+    );
   }
 }

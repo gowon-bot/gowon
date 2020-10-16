@@ -2,6 +2,7 @@ import { MessageEmbed } from "discord.js";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { numberDisplay } from "../../../helpers";
 import { Arguments } from "../../../lib/arguments/arguments";
+import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
 export default class AlbumTopTracks extends LastFMBaseCommand {
   description = "Shows your top tracks from an album";
@@ -13,20 +14,16 @@ export default class AlbumTopTracks extends LastFMBaseCommand {
       artist: { index: 0, splitOn: "|" },
       album: { index: 1, splitOn: "|" },
     },
-    mentions: {
-      user: {
-        index: 0,
-        description: "The user to lookup",
-        nonDiscordMentionParsing: this.ndmp,
-      },
-    },
+    mentions: standardMentions,
   };
 
   async run() {
     let artist = this.parsedArguments.artist as string,
       album = this.parsedArguments.album as string;
 
-    let { senderUsername, username } = await this.parseMentionedUsername();
+    let { senderUsername, username } = await this.parseMentions({
+      senderRequired: !artist || !album,
+    });
 
     if (artist && album) {
       let albumInfo = await this.lastFMService.albumInfo({ artist, album });

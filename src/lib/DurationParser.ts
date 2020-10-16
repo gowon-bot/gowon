@@ -1,3 +1,5 @@
+import { Duration } from "date-fns";
+
 export class DurationParser {
   durations = {
     years: ["year", "years", "y"],
@@ -8,10 +10,6 @@ export class DurationParser {
     minutes: ["minute", "minutes", "mi"],
     seconds: ["second", "seconds", "s"],
   };
-
-  constructor(customDurations: { [key: string]: string[] } = {}) {
-    this.durations = Object.assign(this.durations, customDurations);
-  }
 
   parse(string: string): Duration | undefined {
     let durations = Object.values(this.durations).flat().join("|");

@@ -5,7 +5,6 @@ import {
   addNamesToPermissions,
   NamedPermission,
 } from "../../../helpers/discord";
-import { NoCommand } from "../../../lib/command/BaseCommand";
 
 interface GroupedPermissions {
   [permission: string]: number;
@@ -29,7 +28,7 @@ export class View extends PermissionsChildCommand {
     let permissions: NamedPermission[] = [];
     let embed: MessageEmbed;
 
-    if (this.command && !(this.command instanceof NoCommand)) {
+    if (this.command) {
       permissions = await addNamesToPermissions(
         message,
         await this.adminService.listPermissionsForCommand(

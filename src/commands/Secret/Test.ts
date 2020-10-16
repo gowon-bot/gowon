@@ -1,6 +1,6 @@
 import { Arguments } from "../../lib/arguments/arguments";
+import { standardMentions } from "../../lib/arguments/mentions/mentions";
 import { BaseCommand } from "../../lib/command/BaseCommand";
-import { DurationParser } from "../../lib/DurationParser";
 import { Logger } from "../../lib/Logger";
 
 export default class Test extends BaseCommand {
@@ -8,16 +8,12 @@ export default class Test extends BaseCommand {
   secretCommand = true;
 
   arguments: Arguments = {
-    inputs: {
-      timePeriod: { index: { start: 0 } },
-    },
+    mentions: standardMentions,
   };
 
   async run() {
-    let durationParser = new DurationParser();
-
-    let duration = durationParser.parse(this.parsedArguments.timePeriod);
-
-    await this.send("```\n" + Logger.formatObject(duration) + "\n```");
+    await this.send(
+      "```\n" + Logger.formatObject(this.parsedArguments) + "\n```"
+    );
   }
 }

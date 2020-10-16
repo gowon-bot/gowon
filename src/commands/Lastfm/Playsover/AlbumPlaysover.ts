@@ -1,6 +1,7 @@
 import { Arguments } from "../../../lib/arguments/arguments";
 import { numberDisplay } from "../../../helpers";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
+import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
 export default class AlbumPlaysover extends LastFMBaseCommand {
   aliases = ["alpo", "lpo"];
@@ -12,19 +13,13 @@ export default class AlbumPlaysover extends LastFMBaseCommand {
     inputs: {
       plays: { index: 0, default: 100, number: true },
     },
-    mentions: {
-      user: {
-        index: 0,
-        description: "The user to lookup",
-        nonDiscordMentionParsing: this.ndmp,
-      },
-    },
+    mentions: standardMentions,
   };
 
   async run() {
     let plays = this.parsedArguments.plays as number;
 
-    let { username, perspective } = await this.parseMentionedUsername();
+    let { username, perspective } = await this.parseMentions();
 
     let topAlbums = await this.lastFMService.topAlbums({
       username,

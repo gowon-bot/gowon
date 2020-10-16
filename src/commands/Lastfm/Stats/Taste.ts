@@ -4,7 +4,7 @@ import { TasteCalculator } from "../../../lib/calculators/TasteCalculator";
 import { numberDisplay, StringPadder } from "../../../helpers";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { sanitizeForDiscord } from "../../../helpers/discord";
-import { Mention } from "../../../lib/arguments/mentions";
+import { ParsedMention } from "../../../lib/arguments/mentions/mentions";
 import { generatePeriod, generateHumanPeriod } from "../../../helpers/date";
 import { Variation } from "../../../lib/command/BaseCommand";
 import { RunAs } from "../../../lib/AliasChecker";
@@ -70,7 +70,7 @@ export default class Taste extends LastFMBaseCommand {
   };
 
   async run(_: Message, runAs: RunAs) {
-    let userTwo = this.parsedArguments.userTwo as Mention,
+    let userTwo = this.parsedArguments.userTwo as ParsedMention,
       artistAmount = this.parsedArguments.artistAmount as number,
       timePeriod = this.parsedArguments.timePeriod as LastFMPeriod,
       humanReadableTimePeriod = this.parsedArguments
@@ -79,7 +79,7 @@ export default class Taste extends LastFMBaseCommand {
     let {
       senderUsername: userOneUsername,
       mentionedUsername: userTwoUsername,
-    } = await this.parseMentionedUsername({ inputArgumentName: "username" });
+    } = await this.parseMentions({ inputArgumentName: "username" });
 
     if (!userTwoUsername) {
       await this.reply("Please specify a user to compare taste with!");

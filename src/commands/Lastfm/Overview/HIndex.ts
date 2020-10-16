@@ -6,7 +6,7 @@ export class HIndex extends OverviewChildCommand {
   description = "Shows your H-index (!hindex for more information)";
 
   async run() {
-    let { username, perspective } = await this.parseMentionedUsername();
+    let { username, perspective } = await this.parseMentions();
 
     let { badge, colour, image } = await this.getAuthorDetails();
     let hindex = await this.calculator.hIndex();

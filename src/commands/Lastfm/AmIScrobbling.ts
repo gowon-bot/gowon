@@ -6,7 +6,7 @@ export default class AmIScrobbling extends LastFMBaseCommand {
   usage = [""];
 
   async run() {
-    let { senderUsername } = await this.parseMentionedUsername();
+    let { senderUsername } = await this.parseMentions();
 
     let nowPlaying = await this.lastFMService.nowPlaying(senderUsername);
 
