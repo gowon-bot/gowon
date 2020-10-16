@@ -12,7 +12,6 @@ import {
   UsernameNotRegisteredError,
 } from "../../errors";
 import { GowonService } from "../../services/GowonService";
-import { ParsedMention } from "../arguments/mentions/mentions";
 import { CommandManager } from "./CommandManager";
 import { Logger } from "../Logger";
 import { RunAs } from "../AliasChecker";
