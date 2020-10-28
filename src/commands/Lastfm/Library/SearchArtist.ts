@@ -25,7 +25,6 @@ export default class SearchArtist extends SearchCommand {
     let filtered = topArtists.artist
       .filter((a) => this.clean(a.name).includes(this.clean(keywords)))
       .slice(0, 25)
-      .sort((a, b) => a.name.localeCompare(b.name));
 
     let embed = new MessageEmbed()
       .setTitle(
@@ -38,7 +37,7 @@ export default class SearchArtist extends SearchCommand {
         filtered.length
           ? `Artists matching ${keywords.code()}
 \`\`\`
-${filtered.map((f) => f.name).join("\n")}
+${filtered.map((f) => `${f["@attr"].rank}.` + f.name).join("\n")}
 \`\`\``
           : `No results found for ${keywords.code()}!`
       );

@@ -2,6 +2,7 @@ import { OverviewChildCommand } from "./OverviewChildCommand";
 import { MessageEmbed } from "discord.js";
 import { numberDisplay, getOrdinal } from "../../../helpers";
 import { Emoji } from "../../../lib/Emoji";
+import { LinkGenerator } from "../../../helpers/lastFM";
 
 export class All extends OverviewChildCommand {
   description = "Shows information about you and your library";
@@ -23,7 +24,12 @@ export class All extends OverviewChildCommand {
     } catch {}
 
     let embed = new MessageEmbed()
-      .setAuthor(this.username + badge, image)
+      .setAuthor(
+        this.username + badge,
+        image,
+        LinkGenerator.userPage(this.username)
+      )
+      .setThumbnail(image)
       .setColor(colour)
       .setDescription(
         `
@@ -56,7 +62,7 @@ ${
     : ""
 }
 **# of artists to equal 50% of scrobbles**: ${await (
-          await this.calculator.top50Percent()
+          await this.calculator.topPercent(50)
         ).count}
 **Total scrobbles for top 10 artists**: ${await this.calculator.sumTop(10)}
 ${perspective.upper.possessive} top 10 artists account for: ${(

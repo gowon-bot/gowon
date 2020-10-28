@@ -86,6 +86,12 @@ export default class ArtistInfo extends InfoCommand {
       }
     );
 
+    let percentage = calculatePercent(
+      artistInfo.stats.userplaycount,
+      artistInfo.stats.playcount,
+      4
+    );
+
     let embed = new MessageEmbed()
       .setTitle(artistInfo.name)
       .setURL(artistInfo.url)
@@ -100,11 +106,13 @@ export default class ArtistInfo extends InfoCommand {
           artistInfo.stats.userplaycount,
           userInfo.playcount
         ).bold()}% of ${perspective.possessivePronoun} total scrobbles)
-${perspective.upper.regularVerb("account")} for ${calculatePercent(
-          artistInfo.stats.userplaycount,
-          artistInfo.stats.playcount,
-          4
-        ).bold()}% of all ${artistInfo.name} scrobbles!
+${
+  parseFloat(percentage) > 0
+    ? `${perspective.upper.regularVerb(
+        "account"
+      )} for ${percentage.bold()}% of all ${artistInfo.name} scrobbles!`
+    : ""
+}
         `
       );
 

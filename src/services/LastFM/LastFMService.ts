@@ -138,7 +138,7 @@ export class LastFMService extends LastFMAPIService {
   }
 
   async goBack(username: string, when: Date): Promise<Track> {
-    let to = add(when, { days: 1 });
+    let to = add(when, { hours: 6 });
 
     let params = {
       username,

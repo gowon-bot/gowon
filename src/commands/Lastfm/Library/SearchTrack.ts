@@ -46,9 +46,7 @@ export default class SearchTrack extends SearchCommand {
 \`\`\`
 ${filtered
   .slice(0, 25)
-  .map((l) => `${l.artist.name} - ${l.name}`)
-  .sort((a, b) => a.localeCompare(b))
-  .map((f) => f)
+  .map((l) => `${l["@attr"].rank}. ${l.artist.name} - ${l.name}`)
   .join("\n")}
 \`\`\``
           : `No results found for ${keywords.code()}!`

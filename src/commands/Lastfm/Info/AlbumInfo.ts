@@ -89,6 +89,11 @@ export default class AlbumInfo extends InfoCommand {
       }
     );
 
+    let percentage = calculatePercent(
+      albumInfo.userplaycount,
+      albumInfo.playcount
+    );
+
     let embed = new MessageEmbed()
       .setTitle(albumInfo.name.italic() + " by " + albumInfo.artist.bold())
       .setDescription(this.lineConsolidator.consolidate())
@@ -120,10 +125,13 @@ export default class AlbumInfo extends InfoCommand {
             userInfo.playcount,
             4
           ).bold()}% of ${perspective.possessivePronoun} total scrobbles)
-        ${perspective.upper.regularVerb("account")} for ${calculatePercent(
-            albumInfo.userplaycount,
-            albumInfo.playcount
-          ).bold()}% of all scrobbles of this album!`,
+        ${
+          parseFloat(percentage) > 0
+            ? `${perspective.upper.regularVerb(
+                "account"
+              )} for ${percentage.bold()}% of all scrobbles of this album!`
+            : ""
+        }`,
         }
       )
       .setFooter(
