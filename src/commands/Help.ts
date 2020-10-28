@@ -119,10 +119,22 @@ export default class Help extends BaseCommand {
         message.author.avatarURL() || ""
       )
       .setDescription(
-        `
-        ${(command.friendlyNameWithParent || command.friendlyName).bold()}:
+        `${(command.friendlyNameWithParent || command.friendlyName).bold()}:
         ${command.description.italic()}
 
+        ${
+          command.usage !== undefined
+            ? "**Usage**:\n" +
+              flatDeep([command.usage])
+                .map((u) =>
+                  (this.prefix + command!.friendlyNameWithParent + " " + u)
+                    .trim()
+                    .code()
+                )
+                .join("\n") +
+              "\n"
+            : ""
+        }
         ${
           command.aliases.length
             ? `**Aliases**: ${command.aliases.map((a) => a.code())}\n\n`
@@ -138,17 +150,6 @@ export default class Help extends BaseCommand {
                   }`
               )
               .join("\n")}\n\n`
-            : ""
-        }${
-          command.usage !== undefined
-            ? "**Usage**:\n" +
-              flatDeep([command.usage])
-                .map((u) =>
-                  (this.prefix + command!.friendlyNameWithParent + " " + u)
-                    .trim()
-                    .code()
-                )
-                .join("\n")
             : ""
         }`
       );

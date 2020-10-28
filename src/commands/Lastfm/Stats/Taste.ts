@@ -97,7 +97,7 @@ export default class Taste extends LastFMBaseCommand {
     // The following code is for parsing users
     // it essentially checks through the following arguments, checking if each one exists
     // if it does, it adds it to the usernames list (after two it stops checking)
-    // if there's only one username, it makes the first user the sender, the the second user the mentioned user
+    // if there's only one username, it makes the first user the sender, then the second user the mentioned user
     // this is because the order of the users matters for display
     for (let argName of [
       "user",
