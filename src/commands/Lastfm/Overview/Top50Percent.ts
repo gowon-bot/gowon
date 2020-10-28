@@ -20,7 +20,7 @@ export class Top50Percent extends OverviewChildCommand {
       .setDescription(
         `${toppct.count.asString.bold()} artists (a total of ${numberDisplay(
           toppct.total.asNumber,
-          "scrobbles"
+          "scrobble"
         )}) make up 50% of ${perspective.possessive} scrobbles!`
       );
 

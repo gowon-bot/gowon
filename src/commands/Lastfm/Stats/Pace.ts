@@ -70,7 +70,10 @@ export default class Pace extends LastFMBaseCommand {
 
     if (isBefore(pace.prediction, new Date()))
       throw new LogicError(
-        `${perspective.plusToHave} already passed that milestone!`
+        `${perspective.plusToHave} already passed ${numberDisplay(
+          milestone!,
+          "scrobble"
+        )}!`
       );
 
     let embed = new MessageEmbed().setDescription(
