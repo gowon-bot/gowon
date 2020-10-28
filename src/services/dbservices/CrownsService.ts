@@ -20,6 +20,7 @@ import { CacheScopedKey } from "../../database/cache/ShallowCache";
 import { CrownsHistoryService } from "./CrownsHistoryService";
 import { RedirectsService } from "./RedirectsService";
 import { ILike } from "../../extensions/typeorm";
+import { ArtistRedirect } from "../../database/entity/ArtistRedirect";
 
 export enum CrownState {
   tie = "Tie",
@@ -38,6 +39,8 @@ export interface CrownCheck {
   crown?: Crown;
   oldCrown?: Crown;
   state: CrownState;
+  artistName: string;
+  redirect: ArtistRedirect;
 }
 
 export interface CrownOptions {
@@ -99,7 +102,9 @@ export class CrownsService extends BaseService {
     crown: Crown,
     reason: InvalidCrownState,
     plays: number,
-    user: User
+    user: User,
+    artistName: string,
+    artistRedirect: ArtistRedirect
   ): Promise<CrownCheck> {
     crown.user = user;
     crown.plays = plays;
@@ -109,6 +114,8 @@ export class CrownsService extends BaseService {
     return {
       crown,
       state: reason,
+      artistName,
+      redirect: artistRedirect,
     };
   }
 
@@ -133,14 +140,14 @@ export class CrownsService extends BaseService {
         crownOptions.artistName
       );
 
-      let artistName = redirect?.to || crownOptions.artistName;
+      let artistName = redirect || crownOptions.artistName;
 
       let newCrown = Crown.create({
         ...crownOptions,
         artistName,
         version: 0,
         lastStolen: new Date(),
-        redirectedFrom: redirect?.from,
+        redirectedFrom: redirect,
       });
 
       await newCrown.save();
@@ -153,10 +160,21 @@ export class CrownsService extends BaseService {
     let { discordID, artistName, plays, message } = crownOptions;
     this.log(`Checking crown for user ${discordID} and artist ${artistName}`);
 
+    let redirect = (await this.redirectsService.getRedirect(artistName))!;
+
+    let redirectedArtistName = redirect.to || redirect.from;
+
     let [crown, user] = await Promise.all([
-      this.getCrown(artistName, message.guild?.id!, { showDeleted: true }),
+      this.getCrown(redirectedArtistName, message.guild?.id!, {
+        showDeleted: true,
+        noRedirect: true,
+      }),
       User.findOne({ where: { discordID } }),
     ]);
+
+    if (redirect.to && crown) {
+      crown.redirectedFrom = redirect.from;
+    }
 
     let oldCrown = Object.assign({}, crown);
     oldCrown.user = Object.assign({}, crown?.user);
@@ -174,7 +192,9 @@ export class CrownsService extends BaseService {
             crown,
             invalidCheck.reason!,
             plays,
-            user
+            user,
+            redirectedArtistName,
+            redirect
           )),
           oldCrown,
         };
@@ -188,15 +208,34 @@ export class CrownsService extends BaseService {
         crownState = await this.handleCrown(crown, plays, user);
       }
 
-      return { crown: crown, state: crownState, oldCrown };
+      return {
+        crown: crown,
+        state: crownState,
+        oldCrown,
+        artistName: redirectedArtistName,
+        redirect,
+      };
     } else {
-      if (plays < this.threshold) return { state: CrownState.tooLow };
+      if (plays < this.threshold)
+        return {
+          state: CrownState.tooLow,
+          artistName: redirectedArtistName,
+          redirect,
+        };
       this.log(
-        "Creating crown for " + artistName + " in server " + message.guild?.id!
+        "Creating crown for " +
+          redirectedArtistName +
+          " in server " +
+          message.guild?.id!
       );
 
       let newCrown = await this.handleNewCrown(
-        { user, plays, artistName, serverID: message.guild!.id },
+        {
+          user,
+          plays,
+          artistName: redirectedArtistName,
+          serverID: message.guild!.id,
+        },
         crown
       );
 
@@ -204,6 +243,8 @@ export class CrownsService extends BaseService {
         crown: newCrown,
         state: CrownState.newCrown,
         oldCrown,
+        artistName: redirectedArtistName,
+        redirect,
       };
     }
   }
@@ -224,11 +265,11 @@ export class CrownsService extends BaseService {
     let redirectedFrom: string | undefined = undefined;
 
     if (!options.noRedirect) {
-      let redirect = await this.redirectsService.checkRedirect(artistName);
+      let redirect = await this.redirectsService.getRedirect(artistName);
 
-      if (redirect) {
+      if (redirect?.to) {
         redirectedFrom = redirect.from;
-        crownArtistName = redirect.to;
+        crownArtistName = redirect.to || redirect.from;
       }
     }
 

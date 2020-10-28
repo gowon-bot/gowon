@@ -3,11 +3,12 @@ import { Arguments } from "../../../lib/arguments/arguments";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
+import { UserInfo } from "../../../services/LastFM/LastFMService.types";
+import { differenceInDays, fromUnixTime } from "date-fns";
 
 export default class Login extends LastFMBaseCommand {
   description = "Logs you into lastfm";
   subcategory = "accounts";
-  aliases = ["fmset"];
   usage = "username";
 
   arguments: Arguments = {
@@ -30,11 +31,25 @@ export default class Login extends LastFMBaseCommand {
       return;
     }
 
-    if (await this.lastFMService.userExists(username)) {
+    let userInfo: UserInfo | undefined;
+
+    try {
+      userInfo = await this.lastFMService.userInfo({ username });
+
       await this.usersService.setUsername(message.author.id, username);
 
-      this.send(`Logged in as ${username.code()}`);
-    } else {
+      let joined = fromUnixTime(userInfo.registered.unixtime.toInt());
+
+      console.log(differenceInDays(joined, new Date()));
+
+      this.send(
+        `Logged in as ${username.code()}${
+          differenceInDays(new Date(), joined) < 10
+            ? ". Welcome to Last.fm!"
+            : ""
+        }`
+      );
+    } catch {
       this.reply(`The user ${username?.code()} couldn't be found`);
     }
   }

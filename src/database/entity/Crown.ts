@@ -176,7 +176,7 @@ export class Crown extends BaseEntity {
 
   redirectDisplay(): string {
     return this.redirectedFrom
-      ? `  (_redirected from ${this.redirectedFrom}_)`
+      ? ` (_redirected from ${this.redirectedFrom}_)`
       : "";
   }
 }

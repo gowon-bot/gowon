@@ -1,10 +1,17 @@
 import { ArtistRedirect } from "../../database/entity/ArtistRedirect";
 import { DuplicateRecordError, RecordNotFoundError } from "../../errors";
 import { BaseService } from "../BaseService";
+import { LastFMService } from "../LastFM/LastFMService";
 
 export class RedirectsService extends BaseService {
-  async setRedirect(from: string, to: string): Promise<ArtistRedirect> {
-    this.log(`Setting redirect from ${from} to ${to}`);
+  lastFMService = new LastFMService(this.logger);
+
+  async setRedirect(from: string, to?: string): Promise<ArtistRedirect> {
+    this.log(
+      to
+        ? `Setting redirect from ${from} to ${to}`
+        : `Marking ${from} as no redirect`
+    );
     if (await ArtistRedirect.findOne({ from }))
       throw new DuplicateRecordError("redirect");
 
@@ -24,8 +31,36 @@ export class RedirectsService extends BaseService {
     return redirect;
   }
 
-  async checkRedirect(artistName: string): Promise<ArtistRedirect | undefined> {
-    return await ArtistRedirect.check(artistName);
+  async getRedirect(artistName: string): Promise<ArtistRedirect | undefined> {
+    let redirect = await ArtistRedirect.check(artistName);
+
+    if (!redirect) {
+      try {
+        let lastFMRedirect = await this.lastFMService.getArtistCorrection({
+          artist: artistName,
+        });
+
+        if (lastFMRedirect.name.toLowerCase() === artistName.toLowerCase()) {
+          let newRedirect = await this.setRedirect(lastFMRedirect.name);
+          return newRedirect;
+        } else {
+          let newRedirect = await this.setRedirect(
+            artistName,
+            lastFMRedirect.name
+          );
+          return newRedirect;
+        }
+      } catch (e) {
+        if (e.name === "LastFMError") return undefined;
+        else throw e;
+      }
+    } else return redirect;
+  }
+
+  async checkRedirect(artistName: string): Promise<string> {
+    let redirect = await this.getRedirect(artistName);
+
+    return redirect?.to || redirect?.from!;
   }
 
   async listRedirects(artistName: string): Promise<ArtistRedirect[]> {

@@ -1,5 +1,6 @@
 import { convert as romanizeHangeul } from "hangul-romanization";
 import { Arguments } from "../../../lib/arguments/arguments";
+import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
@@ -12,9 +13,7 @@ export abstract class SearchCommand extends LastFMBaseCommand {
     inputs: {
       keywords: { index: { start: 0 } },
     },
-    mentions: {
-      user: { index: 0, nonDiscordMentionParsing: this.ndmp },
-    },
+    mentions: standardMentions,
   };
 
   validation: Validation = {

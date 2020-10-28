@@ -41,12 +41,16 @@ import {
   TrackSearchResponse,
   GetSessionParams,
   ScrobbleParams,
+  GetArtistCorrectionParams,
+  ArtistCorrection,
+  GetArtistCorrectionResponse,
 } from "./LastFMService.types";
 import config from "../../../config.json";
 import {
   LastFMConnectionError,
   LastFMError,
   BadLastFMResponseError,
+  RecordNotFoundError,
 } from "../../errors";
 import { BaseService } from "../BaseService";
 import { LastFMScraper } from "../scrapingServices/LastFMScraper";
@@ -214,6 +218,19 @@ export class LastFMAPIService extends BaseService {
     );
 
     return response;
+  }
+
+  async getArtistCorrection(
+    params: GetArtistCorrectionParams
+  ): Promise<ArtistCorrection> {
+    let response = await this.request<GetArtistCorrectionResponse>(
+      "artist.getCorrection",
+      params
+    );
+
+    if (!response.corrections) throw new RecordNotFoundError("artist");
+
+    return response.corrections.correction.artist;
   }
 
   private async authRequest<T>(

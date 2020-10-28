@@ -15,6 +15,7 @@ import {
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { Paginator } from "../../../lib/Paginator";
+import { LastFMMention } from "../../../lib/arguments/mentions/LastFMMention";
 
 export default class Taste extends LastFMBaseCommand {
   aliases = ["t"];
@@ -55,12 +56,12 @@ export default class Taste extends LastFMBaseCommand {
       user: {
         index: 0,
         description: "The user to compare your taste with",
-        nonDiscordMentionParsing: this.ndmp,
+        mention: new LastFMMention(),
       },
       userTwo: {
         index: 1,
         description: "A user to compare with another user",
-        nonDiscordMentionParsing: this.ndmp,
+        mention: new LastFMMention(),
       },
     },
   };

@@ -12,7 +12,7 @@ export class RedirectsCache {
     if (this.cache[artist]) return this.cache[artist];
 
     let redirect =
-      (await this.redirectsService.checkRedirect(artist))?.to || artist;
+      (await this.redirectsService.checkRedirect(artist)) || artist;
 
     this.cache[artist] = redirect;
 

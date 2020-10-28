@@ -7,6 +7,7 @@ import { RunAs } from "../../../lib/AliasChecker";
 import { Permission } from "../../../database/entity/Permission";
 import { Message, User as DiscordUser, Role } from "discord.js";
 import { User } from "../../../database/entity/User";
+import { CustomMention } from "../../../lib/arguments/mentions/CustomMention";
 
 export abstract class PermissionsChildCommand extends AdminBaseChildCommand {
   parentName = "permissions";
@@ -22,11 +23,6 @@ export abstract class PermissionsChildCommand extends AdminBaseChildCommand {
 
   throwOnNoCommand = true;
 
-  ndmp = {
-    roles: { prefix: "role:" },
-    users: { prefix: "user:" },
-  };
-
   arguments: Arguments = {
     inputs: {
       command: { index: { start: 0 } },
@@ -34,15 +30,13 @@ export abstract class PermissionsChildCommand extends AdminBaseChildCommand {
     mentions: {
       userIDs: {
         index: { start: 0 },
-        nonDiscordMentionParsing: this.ndmp.users,
+        mention: new CustomMention("user:", "[0-9]{17,18}", true),
         join: false,
-        ndmpOnly: true,
       },
       roleIDs: {
         index: { start: 0 },
-        nonDiscordMentionParsing: this.ndmp.roles,
+        mention: new CustomMention("role:", "[0-9]{17,18}", true),
         join: false,
-        ndmpOnly: true,
       },
     },
   };

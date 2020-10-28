@@ -323,6 +323,23 @@ export interface TrackSearchResponse {
   };
 }
 
+export interface GetArtistCorrectionResponse {
+  corrections?: {
+    correction: {
+      artist: ArtistCorrection;
+      "@attr": {
+        index: string;
+      };
+    };
+  };
+}
+
+export interface ArtistCorrection {
+  name: string;
+  mbid: string;
+  url: string;
+}
+
 /// ==================
 // Inputs
 /// ==================
@@ -429,4 +446,8 @@ export interface ScrobbleParams {
 
 export interface GetSessionParams {
   token: string;
+}
+
+export interface GetArtistCorrectionParams {
+  artist: string;
 }

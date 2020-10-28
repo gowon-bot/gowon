@@ -10,13 +10,13 @@ export default class PartyTime extends LastFMBaseCommand {
 
   arguments: Arguments = {
     inputs: {
-      time: { index: 0, regex: /[0-9]+/, number: true, default: 10 },
+      time: { index: 0, regex: /[0-9]+/, number: true, default: 5 },
     },
   };
 
   validation: Validation = {
     time: new validators.Range({
-      min: 5,
+      min: 3,
       max: 15,
       message: "Please enter a reasonable time. 😐",
     }),

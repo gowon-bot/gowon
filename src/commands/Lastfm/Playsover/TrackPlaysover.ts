@@ -5,7 +5,7 @@ import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
 export default class TrackPlaysover extends LastFMBaseCommand {
   aliases = ["trpo", "tpo"];
-  description = "Shows you how many artists you have over a certain playcount";
+  description = "Shows you how many tracks you have over a certain playcount";
   subcategory = "playsover";
   usage = ["", "number"];
 
@@ -21,22 +21,22 @@ export default class TrackPlaysover extends LastFMBaseCommand {
 
     let { username, perspective } = await this.parseMentions();
 
-    let topArtists = await this.lastFMService.topArtists({
+    let topTracks = await this.lastFMService.topTracks({
       username,
       limit: 1000,
     });
 
     let playsover = 0;
 
-    for (let album of topArtists.artist) {
-      if (album.playcount.toInt() >= plays) playsover++;
+    for (let track of topTracks.track) {
+      if (track.playcount.toInt() >= plays) playsover++;
       else break;
     }
 
     await this.reply(
       `${numberDisplay(playsover).bold()} of ${
         perspective.possessive
-      } top 1,000 artists have at least ${numberDisplay(plays, "play").bold()}`
+      } top 1,000 tracks have at least ${numberDisplay(plays, "play").bold()}`
     );
   }
 }

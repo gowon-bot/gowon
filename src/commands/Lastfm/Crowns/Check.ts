@@ -55,9 +55,10 @@ export class Check extends CrownsChildCommand {
     );
 
     if (
+      crownCheck.crown &&
       !(
         crownCheck.state === CrownState.updated &&
-        crownCheck.crown?.plays === crownCheck.oldCrown?.plays
+        crownCheck.crown.plays === crownCheck.oldCrown?.plays
       )
     ) {
       this.crownsService.scribe.handleCheck(crownCheck, message);
@@ -75,7 +76,7 @@ export class Check extends CrownsChildCommand {
         : crownCheck.state === CrownState.tie
         ? embeds.tie()
         : crownCheck.state === CrownState.tooLow
-        ? embeds.tooLow(artistDetails.name, this.crownsService.threshold)
+        ? embeds.tooLow(this.crownsService.threshold)
         : crownCheck.state === CrownState.inactivity
         ? embeds.inactivity()
         : crownCheck.state === CrownState.purgatory
