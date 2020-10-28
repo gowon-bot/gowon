@@ -91,14 +91,20 @@ export abstract class BaseCommand implements Command {
   async parseMentions({
     senderRequired = false,
     usernameRequired = true,
+    userArgumentName = "user",
     inputArgumentName = "username",
+    lfmMentionArgumentName = "lfmUser",
+    idMentionArgumentName = "userID",
     asCode = true,
     fetchDiscordUser = false,
     reverseLookup = { lastFM: false },
   }: {
     senderRequired?: boolean;
     usernameRequired?: boolean;
+    userArgumentName?: string;
     inputArgumentName?: string;
+    lfmMentionArgumentName?: string;
+    idMentionArgumentName?: string;
     asCode?: boolean;
     fetchDiscordUser?: boolean;
     reverseLookup?: { lastFM?: boolean };
@@ -111,17 +117,18 @@ export abstract class BaseCommand implements Command {
     senderUser?: User;
     discordUser?: DiscordUser;
   }> {
-    let { user, userID, lfmUser } = this.parsedArguments as {
-      user?: User;
-      userID?: string;
-      lfmUser?: string;
-    };
-
-    let senderUser = await this.usersService.getUser(this.message.author.id);
+    let user = this.parsedArguments[userArgumentName],
+      userID = this.parsedArguments[idMentionArgumentName],
+      lfmUser = this.parsedArguments[lfmMentionArgumentName];
 
     let mentionedUsername: string | undefined;
     let dbUser: User | undefined;
     let discordUser: DiscordUser | undefined;
+    let senderUser: User | undefined;
+
+    try {
+      senderUser = await this.usersService.getUser(this.message.author.id);
+    } catch {}
 
     if (lfmUser) {
       mentionedUsername = lfmUser;
@@ -145,7 +152,7 @@ export abstract class BaseCommand implements Command {
     }
 
     let perspective = this.usersService.perspective(
-      senderUser.lastFMUsername,
+      senderUser?.lastFMUsername || "<no user>",
       mentionedUsername,
       asCode
     );
@@ -156,7 +163,7 @@ export abstract class BaseCommand implements Command {
       );
     }
 
-    let username = mentionedUsername || senderUser.lastFMUsername;
+    let username = mentionedUsername || senderUser?.lastFMUsername;
 
     if (fetchDiscordUser) {
       discordUser = (
@@ -177,8 +184,8 @@ export abstract class BaseCommand implements Command {
       );
 
     return {
-      username,
-      senderUsername: senderUser.lastFMUsername,
+      username: username || "",
+      senderUsername: senderUser?.lastFMUsername || "",
       mentionedUsername,
       perspective,
       dbUser,

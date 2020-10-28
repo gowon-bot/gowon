@@ -11,7 +11,7 @@ export class DurationParser {
     seconds: ["second", "seconds", "s"],
   };
 
-  parse(string: string): Duration | undefined {
+  parse(string: string): Duration {
     let durations = Object.values(this.durations).flat().join("|");
 
     let regex = new RegExp(
@@ -33,6 +33,12 @@ export class DurationParser {
     }
 
     return duration as Duration;
+  }
+
+  isDuration(string: string): boolean {
+    let duration = this.parse(string);
+
+    return Object.keys(duration).length > 0;
   }
 
   private getAmountAndPeriod(match: string): [number, string] {
