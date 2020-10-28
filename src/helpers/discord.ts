@@ -45,5 +45,5 @@ export function userHasRole(
 }
 
 export function cleanURL(url: string): string {
-  return url.replace(")", "%29");
+  return url.replace(")", "%29").replace(",", "%2C");
 }

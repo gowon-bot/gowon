@@ -2,6 +2,7 @@ import { Arguments } from "../../../lib/arguments/arguments";
 import { numberDisplay } from "../../../helpers";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
+import { calculatePercent } from "../../../helpers/stats";
 
 export default class GlobalAlbumPlays extends LastFMBaseCommand {
   aliases = ["glp", "globallp"];
@@ -40,15 +41,20 @@ export default class GlobalAlbumPlays extends LastFMBaseCommand {
       username,
     });
 
+    let percentage = calculatePercent(
+      albumDetails.userplaycount,
+      albumDetails.playcount
+    );
+
     this.send(
       `Last.fm has scrobbled ${albumDetails.name.italic()} by ${
         albumDetails.artist
-      } ${numberDisplay(albumDetails.playcount, "time").bold()}${
+      } ${numberDisplay(albumDetails.playcount, "time")}${
         albumDetails.userplaycount.toInt() > 0
-          ? ` (${perspective.plusToHave} ${numberDisplay(
+          ? `. ${perspective.upper.plusToHave} ${numberDisplay(
               albumDetails.userplaycount,
               "scrobble"
-            ).bold()})`
+            )} ${parseFloat(percentage) > 0 ? `(${percentage}%)` : ""}`
           : ""
       }`
     );

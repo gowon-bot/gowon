@@ -164,5 +164,12 @@ export default class NowPlaying extends LastFMBaseCommand {
     ) {
       sentMessage.react("😴");
     }
+
+    if (
+      this.tagConsolidator.consolidate().includes("rare sad girl") ||
+      this.tagConsolidator.consolidate().includes("rare sad boy")
+    ) {
+      sentMessage.react("😭");
+    }
   }
 }
