@@ -32,7 +32,14 @@ export class GowonService {
   contants = {
     hardPageLimit: 5,
     crownThreshold: 30,
-    dateParsers: ["yyyy-MM-dd", "yyyy/MM/dd"],
+    dateParsers: [
+      "yy-MM-dd",
+      "yyyy-MM-dd",
+      "yy/MM/dd",
+      "yyyy/MM/dd",
+      "yy.MM.dd",
+      "yyyy.MM.dd",
+    ],
   } as const;
 
   async init() {

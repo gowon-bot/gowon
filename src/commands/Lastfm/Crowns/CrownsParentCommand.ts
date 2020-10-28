@@ -18,6 +18,7 @@ import { SetPurgatoryRole } from "./SetPurgatoryRole";
 import { Ban } from "./Ban";
 import { Unban } from "./Unban";
 import { History } from "./History";
+import { GuildAround } from "./GuildAround";
 
 export default class CrownsParentCommand extends LastFMBaseParentCommand {
   friendlyName = "crowns";
@@ -45,6 +46,7 @@ export default class CrownsParentCommand extends LastFMBaseParentCommand {
     recentlystolen: () => new RecentlyStolen(),
     ban: () => new Ban(),
     unban: () => new Unban(),
-    history: () => new History()
+    history: () => new History(),
+    guildaround: () => new GuildAround(),
   });
 }

@@ -21,6 +21,18 @@ export interface CrownRankResponse {
   rank: string;
 }
 
+export interface GuildAroundUser {
+  count: string;
+  rank: string;
+  discordID: string;
+}
+
+export interface GuildAtResponse {
+  users: GuildAroundUser[];
+  start: number;
+  end: number;
+}
+
 interface RawCrownHolder {
   userId: number;
   discordID: string;
@@ -121,6 +133,48 @@ export class Crown extends BaseEntity {
         [serverID, user?.id!]
       )) as CrownRankResponse[])[0] || { count: "0", rank: "0" }
     );
+  }
+
+  static async guildAt(serverID: string, rank: number) {
+    let start = rank < 10 ? 0 : rank - 5;
+
+    let users =
+      ((await this.query(
+        `SELECT count, rank, "discordID" FROM (
+        SELECT *, ROW_NUMBER() OVER (
+          ORDER BY count DESC
+        ) AS rank FROM (
+            SELECT
+                count(id) AS count,
+                "userId"
+            FROM crowns
+            WHERE crowns."serverID" LIKE $1
+              AND crowns."deletedAt" IS NULL
+            GROUP BY "userId"
+            ORDER BY 1 desc
+        ) t
+        LEFT JOIN users u
+          ON u.id = t."userId"
+      ) ranks
+      OFFSET $2
+      LIMIT 10`,
+        [serverID, start]
+      )) as GuildAroundUser[]) || [];
+
+    return {
+      users,
+      start,
+      end: start + 10,
+    };
+  }
+
+  static async guildAround(
+    serverID: string,
+    discordID: string
+  ): Promise<GuildAtResponse> {
+    let rank = (await this.rank(serverID, discordID)).rank.toInt();
+
+    return await this.guildAt(serverID, rank);
   }
 
   static async guild(

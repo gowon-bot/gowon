@@ -1,6 +1,7 @@
 import {
   Crown,
   CrownRankResponse,
+  GuildAtResponse,
   InvalidCrownState,
 } from "../../database/entity/Crown";
 import { User } from "../../database/entity/User";
@@ -532,5 +533,16 @@ export class CrownsService extends BaseService {
     return await CrownBan.find({
       where: { user: { serverID } },
     });
+  }
+
+  async guildAround(
+    serverID: string,
+    discordID: string
+  ): Promise<GuildAtResponse> {
+    return await Crown.guildAround(serverID, discordID);
+  }
+
+  async guildAt(serverID: string, rank: number): Promise<GuildAtResponse> {
+    return await Crown.guildAt(serverID, rank);
   }
 }
