@@ -8,7 +8,7 @@ import { validators } from "../../../lib/validation/validators";
 export default class TagInfo extends InfoCommand {
   shouldBeIndexed = true;
 
-  aliases = ["ti", "gi"];
+  aliases = ["tai", "gi"];
   description = "Display some information about a tag";
   usage = ["tag"];
 

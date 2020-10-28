@@ -9,7 +9,7 @@ import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 export default class TrackInfo extends InfoCommand {
   shouldBeIndexed = true;
 
-  aliases = ["tri"];
+  aliases = ["tri", "ti"];
   description = "Display some information about a track";
   usage = ["", "artist | track"];
 
