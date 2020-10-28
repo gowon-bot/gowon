@@ -267,8 +267,18 @@ export abstract class BaseCommand implements Command {
     this.addResponse(message);
     return await this.message.channel.send(message);
   }
+
   async reply(message: MessageEmbed | string): Promise<Message> {
     this.addResponse(message);
     return await this.message.reply(message);
+  }
+
+  protected async fetchUsername(id: string): Promise<string> {
+    try {
+      let member = await this.guild.members.fetch(id);
+      return member.user.username;
+    } catch {
+      return "<unknown user>";
+    }
   }
 }

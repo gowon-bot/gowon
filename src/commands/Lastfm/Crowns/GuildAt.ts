@@ -35,9 +35,7 @@ export class GuildAt extends CrownsChildCommand {
               async (u) =>
                 `${u.rank}. ${
                   u.discordID === highlighted?.discordID ? "**" : ""
-                }${
-                  (await this.guild.members.fetch(u.discordID)).user.username
-                }${
+                }${await this.fetchUsername(u.discordID)}${
                   u.discordID === highlighted?.discordID ? "**" : ""
                 } with ${numberDisplay(u.count, "crown")}`
             )

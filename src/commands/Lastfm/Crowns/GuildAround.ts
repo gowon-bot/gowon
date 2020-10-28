@@ -44,7 +44,7 @@ export class GuildAround extends CrownsChildCommand {
             guildAround.users.map(
               async (u) =>
                 `${u.rank}. ${u.discordID === author?.discordID ? "**" : ""}${
-                  (await this.guild.members.fetch(u.discordID)).user.username
+                  (await this.fetchUsername(u.discordID))
                 }${
                   u.discordID === author?.discordID ? "**" : ""
                 } with ${numberDisplay(u.count, "crown")}`
