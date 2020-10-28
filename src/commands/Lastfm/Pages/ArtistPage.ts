@@ -4,7 +4,7 @@ import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 export default class ArtistPage extends LastFMBaseCommand {
-  aliases = ["page", "apage", "arp", "arpa"];
+  aliases = ["arp", "arpa"];
   description = "Links you to the artist page on lastfm";
   subcategory = "pages";
   usage = ["", "artist"];

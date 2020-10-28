@@ -5,8 +5,6 @@ import { Arguments } from "../../../lib/arguments/arguments";
 import { LogicError } from "../../../errors";
 
 export class GuildAt extends CrownsChildCommand {
-  shouldBeIndexed = false;
-
   arguments: Arguments = {
     inputs: {
       rank: { index: 0, number: true },

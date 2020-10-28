@@ -1,4 +1,4 @@
-# Bot Moment
+# Gowon
 
 Bot Moment is a Last.FM discord bot in active development.
 
@@ -36,7 +36,8 @@ Bot syntax is kept as intuitive and as human readable as possible. Most commands
 !artistcount q                  // For 'quarter'
 
 // Most last.fm commands also take "Non discord mentions", allowing you to user last.fm usernames as 'mentions'. They function identically to discord mentions
-!trackpercent JPEGMAFIA | BALD! lastfm:flushed_emoji
+!trackpercent JPEGMAFIA | BALD! lfm:flushed_emoji
+!cw id:196249128286552064
 ```
 
 ## Running yourself
@@ -60,22 +61,21 @@ Every command run has a log associated with it. This way if multiple commands ar
 
 ![alt text](./assets/Logs.png "Logs")
 
-_Note the how timestamps in the activities overlap_
-
 ## Commands list
 
 _You can find the source code for all the commands at [/src/commands](/src/commands)_
 
+- `help`, list all commands, or display help about a certain command
+
 ### Lastfm
 
-- `nowplaying`, shows the song you are currently listening to, along with other information
-- `help`, list all commands, or display help about a certain command
-- `cover`, shows the cover of an album
-- `partytime`, counts down
 - `amiscrobbling`, shows you if you are scrobbling or not
+- `cover`, shows the cover of an album
+- `nowplaying`, shows the song you are currently listening to, along with other information
+- `partytime`, counts down
 - `randomsong`, picks a random song from the signed in users
-- `server`, picks random users from the server and shows what they're listening to
 - `recent`, shows a few of your recent tracks
+- `server`, picks random users from the server and shows what they're listening to
 - `track`, search or directly query a song (like a fake nowplaying)
 - Account
   - `login`, logs you in
@@ -99,6 +99,12 @@ _You can find the source code for all the commands at [/src/commands](/src/comma
   - `setpurgatoryrole`, set what role should be treated as the purgatory role
   - `recentlystolen`, see the crowns which were recently yoinked
   - `ban`/`unban`, bans/unbans a user from the crowns game
+  - `guildat`, shows the crowns guild at a certain rank
+  - `guildaround`, shows the crowns guild around you
+- External
+  - `rateyourmusic`, searches RateYourMusic for an album
+  - `whosampled`, searches WhoSampled for a track
+  - `wikipedia`, searches Wikipedia for a track
 - Friends
   - `add`, add a friend
   - `remove`, remove a friend :(
@@ -123,6 +129,9 @@ _You can find the source code for all the commands at [/src/commands](/src/comma
   - `artisttoptracks`, shows your top tracks for an artist
   - `artisttopalbums`, shows your top albums for an artist
   - `lastscrobbled`, shows when you last scrobbled a song
+  - `searchartist`, search your top artists for a keyword
+  - `searchalbum`, search your top albums for a keyword
+  - `searchtrack`, search your top tracks for a keyword
 - List
   - `artistlist`, shows your top artists
   - `albumlist`, shows your top albums
@@ -137,7 +146,7 @@ _You can find the source code for all the commands at [/src/commands](/src/comma
   - `scrobblesperalbum`, shows your average scrobbles per album
   - `scrobblespertrack`, shows your average scrobbles per track
   - `sumtop`, shows the sum of your top artists
-  - `top50percent`, shows how many artists make up 50% of your scrobbles
+  - `toppercent`, shows how many artists make up 50% of your scrobbles
   - `all`, all of the above
   - `breadth`, shows your breadth rating
 - Pages
@@ -152,10 +161,16 @@ _You can find the source code for all the commands at [/src/commands](/src/comma
   - `artistplays`, shows how many plays you have of an artist
   - `albumplays`, shows how many plays you have of an album
   - `trackplays`, shows how many plays you have of a track
+  - `globalartistplays`, shows how many plays Last.fm has of an artist
+  - `globalalbumplays`, shows how many plays Last.fm has of an album
+  - `globaltrackplays`, shows how many plays Last.fm has of a track
 - Playsover
   - `artistplaysover`, shows how many plays over a given number you have of an artist
   - `albumplaysover`, shows how many plays over a given number you have of an album
   - `trackplaysover`, shows how many plays over a given number you have of a track
+  - `artistplaysequal`, shows how many plays equal to a given number you have of an artist
+  - `albumplaysequal`, shows how many plays equal to a given number you have of an album
+  - `trackplaysequal`, shows how many plays equal to a given number you have of a track
 - Rank
   - `artistrank`, shows what rank an artist is in your top artists
   - `albumrank`, shows what rank an album is in your top albums
@@ -163,20 +178,21 @@ _You can find the source code for all the commands at [/src/commands](/src/comma
   - `artistat`, shows what artist is at a given rank
   - `albumat`, shows what album is at a given rank
   - `trackat`, shows what track is at a given rank
+- Redirects
+  - [disabled] `add`, adds a redirect
+  - [disabled] `remove`, removes a redirect
+  - [disabled] `list`, list all artists that redirect to another artist
 - Stats
   - `artistcount`, counts your artists
   - `albumcount`, counts your albums
   - `trackcount`, counts your tracks
   - `taste`, compares your taste with another user
-  - [disabled] `regextracksearch`, search your track library with a regex (or keyword)
-  - [disabled] `regexalbumsearch`, search your album library with a regex (or keyword)
-  - [disabled] `regexartistsearch`, search your artist library with a regex (or keyword)
   - `scrobbles`, shows how many scrobbles you have
   - `combo`, shows listening streaks
   - `milestone`, shows you what you scrobbled at a scrobble milestone
   - `goback`, shows you what you scrobbled in the past
   - `pace`, predicts when you will hit a scrobble milestone
-  - `tag`, shows your overlap with a tag's top artist
+  - `tag`, shows your overlap with a tag's top artists
 
 ### Admin
 
@@ -193,14 +209,23 @@ _You can find the source code for all the commands at [/src/commands](/src/comma
 ### Meta
 
 - `topcommands`, shows most run commands in the server
+- `github`, links the github repository for the bot
 
 ## Special Thanks
 
-- RTFL and thot, for moral support
-- Dunster, for the friends idea
-- Mex, for breaking things
-- NiceManu, for, well being nice
-- mypetrobot for building the `Who Knows?` bot, the inspiration for this bot
-- Frikandel, for making a great influence
-- Last.fm, for making a great platform <3
+- All my alpha testers, for breaking everything:
 
+  - RTFL
+  - Thot
+  - Mex
+  - DunsterJR
+  - Manu
+  - Himiko
+  - Dana
+  - Turbie
+  - Mez
+  - Itsuko
+
+- mypetrobot for building the `Who Knows?` bot, the backbone and inspiration for this bot
+- Frikandel, for being a great influence and always ready to help
+- Last.fm, for making a great platform <3
