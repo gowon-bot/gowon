@@ -32,7 +32,8 @@ export class GowonService {
   contants = {
     hardPageLimit: 5,
     crownThreshold: 30,
-  };
+    dateParsers: ["yyyy-MM-dd", "yyyy/MM/dd"],
+  } as const;
 
   async init() {
     let prefixes = await Setting.find({ where: { name: Settings.Prefix } });

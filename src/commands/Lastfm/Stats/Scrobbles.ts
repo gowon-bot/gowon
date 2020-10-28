@@ -4,8 +4,9 @@ import {
   TimeRange,
   timeRangeParser,
   humanizedTimeRangeParser,
+  parseDate,
 } from "../../../helpers/date";
-import { numberDisplay } from "../../../helpers";
+import { dateDisplay, numberDisplay } from "../../../helpers";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
@@ -19,6 +20,11 @@ export default class Scrobbles extends LastFMBaseCommand {
     inputs: {
       timeRange: { custom: timeRangeParser(), index: -1 },
       humanizedTimeRange: { custom: humanizedTimeRangeParser(), index: -1 },
+      date: {
+        custom: (string: string) =>
+          parseDate(string.trim(), ...this.gowonService.contants.dateParsers),
+        index: -1,
+      },
     },
     mentions: standardMentions,
   };
@@ -33,21 +39,22 @@ export default class Scrobbles extends LastFMBaseCommand {
     }
 
     let timeRange = this.parsedArguments.timeRange as TimeRange,
-      humanTimeRange = this.parsedArguments.humanizedTimeRange as string;
+      humanTimeRange = this.parsedArguments.humanizedTimeRange as string,
+      date = this.parsedArguments.date as Date | undefined;
 
     let { username, perspective } = await this.parseMentions();
 
     let scrobbles = await this.lastFMService.getNumberScrobbles(
       username,
-      timeRange.from,
-      timeRange.to
+      date || timeRange.from,
+      date ? new Date() : timeRange.to
     );
 
     let sentMessage = await this.reply(
       `${perspective.plusToHave} ${numberDisplay(
         scrobbles,
         "scrobble"
-      ).bold()} ${humanTimeRange}`
+      ).bold()} ${date ? `since ${dateDisplay(date)}` : humanTimeRange}`
     );
 
     if (
