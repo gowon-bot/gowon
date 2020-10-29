@@ -1,5 +1,7 @@
 import { LogicError } from "../../../errors";
 import { numberDisplay } from "../../../helpers";
+import { RunAs } from "../../../lib/AliasChecker";
+import { Variation } from "../../../lib/command/BaseCommand";
 import { Paginator } from "../../../lib/Paginator";
 import { SearchCommand } from "./SearchCommand";
 
@@ -7,20 +9,30 @@ export default class SearchAlbum extends SearchCommand {
   shouldBeIndexed = true;
   description = "Searches your top albums for keywords";
   aliases = ["sl", "sal", "salbum"];
+  variations: Variation[] = [
+    {
+      variationRegex: /sldeep|sld/,
+      friendlyString: "sldeep`,`sld",
+      description: "Searches your top 4000 albums (instead of 2000)",
+    },
+  ];
   usage = ["keywords", "keywords @user"];
 
-  async run() {
+  async run(_: any, runAs: RunAs) {
     let keywords = this.parsedArguments.keywords as string;
 
     let { username } = await this.parseMentions();
 
     let paginator = new Paginator(
       this.lastFMService.topAlbums.bind(this.lastFMService),
-      2,
+      ["sldeep", "sld"].includes(runAs.lastString()) ? 4 : 2,
       { username, limit: 1000 }
     );
 
-    let topAlbums = await paginator.getAll({ concatTo: "album" });
+    let topAlbums = await paginator.getAll({
+      concatTo: "album",
+      concurrent: ["sldeep", "sld"].includes(runAs.lastString()),
+    });
 
     let filtered = topAlbums.album.filter((a) =>
       this.clean(a.name).includes(this.clean(keywords))

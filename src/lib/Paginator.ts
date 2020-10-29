@@ -1,3 +1,4 @@
+import { sleep } from "../helpers";
 import { Params } from "../services/LastFM/LastFMService.types";
 
 export class Paginator<T extends Params = Params, U = any> {
@@ -20,12 +21,21 @@ export class Paginator<T extends Params = Params, U = any> {
     });
   }
 
-  *iterator() {
+  async *iterator() {
     for (let page = this.currentPage + 1; page <= this.maxPages; page++) {
       this.currentPage += 1;
-      yield this.method({
+      yield await this.method({
         ...this.params,
         page: this.currentPage,
+      });
+    }
+  }
+
+ async *pagesIterator(method: (params: T) => Promise<U>) {
+    for (let page = this.currentPage + 1; page <= this.maxPages; page++) {
+      yield await method({
+        ...this.params,
+        page,
       });
     }
   }
@@ -48,14 +58,24 @@ export class Paginator<T extends Params = Params, U = any> {
   async getAll<V>(options: {
     concatTo?: string;
     concurrent?: boolean;
+    waitInterval?: number;
   }): Promise<U>;
   async getAll<V = any>(options: {
     groupOn?: string;
     concurrent?: boolean;
+    waitInterval?: number;
   }): Promise<V[]>;
-  async getAll<V = any>(options: { concurrent: boolean }): Promise<V[]>;
+  async getAll<V = any>(options: {
+    concurrent: boolean;
+    waitInterval?: number;
+  }): Promise<V[]>;
   async getAll<V = any>(
-    options: { groupOn?: string; concatTo?: string; concurrent?: boolean } = {
+    options: {
+      groupOn?: string;
+      concatTo?: string;
+      concurrent?: boolean;
+      waitInterval?: number;
+    } = {
       concurrent: true,
     }
   ): Promise<V[] | U> {
@@ -77,8 +97,9 @@ export class Paginator<T extends Params = Params, U = any> {
     };
 
     if (options.concurrent) {
-      for await (let page of this.generatePages(this.method)) {
+      for await (let page of this.pagesIterator(this.method)) {
         eachFunction(page);
+        if (options.waitInterval) await sleep(options.waitInterval);
       }
     } else {
       (await Promise.all(this.generatePages(this.method))).forEach(

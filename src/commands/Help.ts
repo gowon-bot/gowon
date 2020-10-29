@@ -145,7 +145,7 @@ export default class Help extends BaseCommand {
             ${command.variations
               .map(
                 (a) =>
-                  `${a.variationString || a.friendlyString} ${
+                  `${(a.variationString || a.friendlyString)?.code()} ${
                     a.description ? "- " + a.description : ""
                   }`
               )

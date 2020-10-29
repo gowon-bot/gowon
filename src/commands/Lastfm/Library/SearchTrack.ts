@@ -1,26 +1,38 @@
 import { LogicError } from "../../../errors";
 import { numberDisplay } from "../../../helpers";
+import { RunAs } from "../../../lib/AliasChecker";
+import { Variation } from "../../../lib/command/BaseCommand";
 import { Paginator } from "../../../lib/Paginator";
 import { SearchCommand } from "./SearchCommand";
 
 export default class SearchTrack extends SearchCommand {
   shouldBeIndexed = true;
-  description = "Searches your top albums for keywords";
+  description = "Searches your top tracks for keywords";
   aliases = ["st", "str", "strack"];
+  variations: Variation[] = [
+    {
+      variationRegex: /stdeep|std/,
+      friendlyString: "stdeep`,`std",
+      description: "Searches your top 6000 tracks (instead of 3000)",
+    },
+  ];
   usage = ["keywords", "keywords @user"];
 
-  async run() {
+  async run(_: any, runAs: RunAs) {
     let keywords = this.parsedArguments.keywords as string;
 
     let { username } = await this.parseMentions();
 
     let paginator = new Paginator(
       this.lastFMService.topTracks.bind(this.lastFMService),
-      3,
+      ["stdeep", "std"].includes(runAs.lastString()) ? 6 : 3,
       { username, limit: 1000 }
     );
 
-    let topTracks = await paginator.getAll({ concatTo: "track" });
+    let topTracks = await paginator.getAll({
+      concatTo: "track",
+      concurrent: ["stdeep", "std"].includes(runAs.lastString()),
+    });
 
     let filtered = topTracks.track.filter((t) =>
       this.clean(t.name).includes(this.clean(keywords))

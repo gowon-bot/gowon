@@ -3,4 +3,5 @@ export const Emoji = {
   lastfm: "<:lastfm:757101691026800650>",
   gowonswag2: "<:gowonswag2:754923498786521088>",
   typescript: "<:typescript:746450416635609199>",
+  gowonheart: "<:gowonheart:771235114277535764>",
 } as const;

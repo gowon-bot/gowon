@@ -22,7 +22,7 @@ export abstract class SearchCommand extends LastFMBaseCommand {
         message: "please enter some keywords!",
       }),
       new validators.LengthRange({
-        min: 2,
+        min: 1,
         message: "please enter a longer search string!",
       }),
     ],
