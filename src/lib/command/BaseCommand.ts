@@ -172,6 +172,8 @@ export abstract class BaseCommand implements Command {
           dbUser?.discordID || userID || this.author.id
         )
       ).user;
+
+      perspective.addDiscordUser(discordUser);
     }
 
     if (

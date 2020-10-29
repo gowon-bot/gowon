@@ -33,10 +33,16 @@ export interface GuildAtResponse {
   end: number;
 }
 
-interface RawCrownHolder {
+export interface RawCrownHolder {
   userId: number;
   discordID: string;
   count: string;
+}
+
+export interface CrownRank {
+  artistName: string;
+  rank: string;
+  plays: string
 }
 
 export type InvalidCrownState =
@@ -196,6 +202,32 @@ export class Crown extends BaseEntity {
       LIMIT $2`,
       [serverID, limit]
     )) as RawCrownHolder[];
+  }
+
+  static async crownRanks(
+    serverID: string,
+    discordID: string
+  ): Promise<CrownRank[]> {
+    return (await this.query(
+      `
+    SELECT * FROM (
+      SELECT
+          "artistName",
+          "userId",
+          plays,
+          ROW_NUMBER() OVER (
+            ORDER BY plays DESC
+          ) AS rank
+      FROM crowns
+      WHERE crowns."serverID" = $1
+        AND crowns."deletedAt" IS NULL
+    ) crowns
+    WHERE "userId" in (SELECT id FROM users WHERE "discordID" = $2) 
+      ORDER BY rank ASC
+    LIMIT 15
+      `,
+      [serverID, discordID]
+    )) as CrownRank[];
   }
 
   async invalid(

@@ -2,8 +2,6 @@ import { GuildMember, MessageEmbed } from "discord.js";
 import { Image } from "../../services/LastFM/LastFMService.types";
 
 export function GowonEmbed(member?: GuildMember) {
-  console.log(member?.roles.highest?.hexColor);
-
   let embed = new MessageEmbed().setColor(
     member?.roles?.highest?.hexColor || "black"
   );

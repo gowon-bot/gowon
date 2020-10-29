@@ -1,6 +1,6 @@
 # Gowon
 
-Bot Moment is a Last.FM discord bot in active development.
+Gowon is a Last.FM discord bot in active development.
 
 ## Syntax
 
@@ -101,6 +101,7 @@ _You can find the source code for all the commands at [/src/commands](/src/comma
   - `ban`/`unban`, bans/unbans a user from the crowns game
   - `guildat`, shows the crowns guild at a certain rank
   - `guildaround`, shows the crowns guild around you
+  - `crownranks`, see the ranks of your crowns
 - External
   - `rateyourmusic`, searches RateYourMusic for an album
   - `whosampled`, searches WhoSampled for a track

@@ -31,17 +31,17 @@ export class TopCrownHolders extends CrownsChildCommand {
 
   async run(message: Message) {
     let [holders, crownsCount] = await Promise.all([
-      this.crownsService.topCrownHolders(message.guild?.id!, message, 20),
-      this.crownsService.countAllInServer(message.guild?.id!),
+      this.crownsService.topCrownHolders(this.guild.id, message, 20),
+      this.crownsService.countAllInServer(this.guild.id),
     ]);
 
     let embed = this.newEmbed()
-      .setTitle(`Crowns in ${message.guild?.name}`)
+      .setTitle(`Crowns in ${this.guild.name}`)
       .setDescription(
         `There ${crownsCount === 1 ? "is" : "are"} **${numberDisplay(
           crownsCount,
           "** crown"
-        )} in ${message.guild?.name}\n\n` +
+        )} in ${this.guild.name}\n\n` +
           holders
             .map(
               (h, idx) =>

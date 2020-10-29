@@ -10,10 +10,7 @@ export class SetInactiveRole extends CrownsChildCommand {
 
     inactiveRole = inactiveRole ?? {};
 
-    await this.crownsService.setInactiveRole(
-      message.guild?.id!,
-      inactiveRole.id
-    );
+    await this.crownsService.setInactiveRole(this.guild.id, inactiveRole.id);
 
     let embed = this.newEmbed().setDescription(
       inactiveRole.name

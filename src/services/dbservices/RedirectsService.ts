@@ -1,5 +1,5 @@
 import { ArtistRedirect } from "../../database/entity/ArtistRedirect";
-import { DuplicateRecordError, RecordNotFoundError } from "../../errors";
+import { RecordNotFoundError } from "../../errors";
 import { BaseService } from "../BaseService";
 import { LastFMService } from "../LastFM/LastFMService";
 
@@ -12,8 +12,6 @@ export class RedirectsService extends BaseService {
         ? `Setting redirect from ${from} to ${to}`
         : `Marking ${from} as no redirect`
     );
-    if (await ArtistRedirect.findOne({ from }))
-      throw new DuplicateRecordError("redirect");
 
     let redirect = ArtistRedirect.create({ from, to });
 

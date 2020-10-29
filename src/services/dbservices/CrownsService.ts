@@ -1,5 +1,6 @@
 import {
   Crown,
+  CrownRank,
   CrownRankResponse,
   GuildAtResponse,
   InvalidCrownState,
@@ -279,6 +280,8 @@ export class CrownsService extends BaseService {
       withDeleted: options.showDeleted,
     });
 
+    console.log("CROWN:", crown);
+
     if (crown) crown.redirectedFrom = redirectedFrom;
 
     return options.refresh
@@ -544,5 +547,9 @@ export class CrownsService extends BaseService {
 
   async guildAt(serverID: string, rank: number): Promise<GuildAtResponse> {
     return await Crown.guildAt(serverID, rank);
+  }
+
+  async crownRanks(serverID: string, discordID: string): Promise<CrownRank[]> {
+    return await Crown.crownRanks(serverID, discordID);
   }
 }

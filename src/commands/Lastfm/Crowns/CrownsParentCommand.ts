@@ -19,6 +19,7 @@ import { Ban } from "./Ban";
 import { Unban } from "./Unban";
 import { History } from "./History";
 import { GuildAround } from "./GuildAround";
+import { CrownRanks } from "./CrownRanks";
 
 export default class CrownsParentCommand extends LastFMBaseParentCommand {
   friendlyName = "crowns";
@@ -48,5 +49,6 @@ export default class CrownsParentCommand extends LastFMBaseParentCommand {
     unban: () => new Unban(),
     history: () => new History(),
     guildaround: () => new GuildAround(),
+    crownranks: () => new CrownRanks(),
   });
 }
