@@ -225,7 +225,9 @@ _You can find the source code for all the commands at [/src/commands](/src/comma
   - Turbie
   - Mez
   - Itsuko
+  - Catchy
 
+- DunsterJR for making the profile picture, and for the friends plays idea
 - mypetrobot for building the `Who Knows?` bot, the backbone and inspiration for this bot
 - Frikandel, for being a great influence and always ready to help
 - Last.fm, for making a great platform <3

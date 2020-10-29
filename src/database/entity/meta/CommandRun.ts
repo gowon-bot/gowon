@@ -42,7 +42,7 @@ export class CommandRun extends BaseEntity {
       ? this.query(
           `SELECT "commandID", count("commandID")
     FROM ${tableName}
-    WHERE "serverID" like $1
+    WHERE "serverID" = $1
       AND "runAt" between $2 and $3
     GROUP BY "commandID"
     ORDER BY 2 DESC`,
@@ -51,7 +51,7 @@ export class CommandRun extends BaseEntity {
       : this.query(
           `SELECT "commandID", count("commandID")
     FROM ${tableName}
-    WHERE "serverID" like $1
+    WHERE "serverID" = $1
     GROUP BY "commandID"
     ORDER BY 2 DESC`,
           [serverID]

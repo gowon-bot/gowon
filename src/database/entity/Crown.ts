@@ -120,7 +120,7 @@ export class Crown extends BaseEntity {
                 count(id) AS count,
                 "userId"
             FROM crowns
-            WHERE crowns."serverID" LIKE $1
+            WHERE crowns."serverID" = $1
               AND crowns."deletedAt" IS NULL
             GROUP BY "userId"
             ORDER BY 1 desc
@@ -148,7 +148,7 @@ export class Crown extends BaseEntity {
                 count(id) AS count,
                 "userId"
             FROM crowns
-            WHERE crowns."serverID" LIKE $1
+            WHERE crowns."serverID" = $1
               AND crowns."deletedAt" IS NULL
             GROUP BY "userId"
             ORDER BY 1 desc
@@ -164,7 +164,7 @@ export class Crown extends BaseEntity {
     return {
       users,
       start,
-      end: start + 10,
+      end: start + users.length,
     };
   }
 
@@ -189,7 +189,7 @@ export class Crown extends BaseEntity {
       FROM crowns c
       LEFT JOIN users u
         ON u.id = "userId"
-      WHERE c."serverID" LIKE $1
+      WHERE c."serverID" = $1
         AND c."deletedAt" IS NULL
       GROUP BY "userId", "discordID"
       ORDER BY count DESC
