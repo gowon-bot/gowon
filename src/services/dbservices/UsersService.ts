@@ -7,6 +7,7 @@ import {
 } from "../../errors";
 import { BaseService } from "../BaseService";
 import { Perspective } from "../../lib/Perspective";
+import { ILike } from "../../extensions/typeorm";
 
 export class UsersService extends BaseService {
   async getUsername(discordID: string): Promise<string> {
@@ -14,7 +15,7 @@ export class UsersService extends BaseService {
     let user = await User.findOne({ where: { discordID } });
 
     if (user && user.lastFMUsername) {
-      return user.lastFMUsername.toLowerCase();
+      return user.lastFMUsername;
     } else throw new UsernameNotRegisteredError();
   }
 
@@ -26,13 +27,13 @@ export class UsersService extends BaseService {
     let user = await User.findOne({ where: { discordID } });
 
     if (user) {
-      user.lastFMUsername = lastFMUsername.toLowerCase();
+      user.lastFMUsername = lastFMUsername;
       await user.save();
       return user.lastFMUsername;
     } else {
       user = User.create({
         discordID,
-        lastFMUsername: lastFMUsername.toLowerCase(),
+        lastFMUsername: lastFMUsername,
       });
       await user.save();
       return user.lastFMUsername!;
@@ -81,7 +82,7 @@ export class UsersService extends BaseService {
   async getUserFromLastFMUsername(username: string): Promise<User | undefined> {
     this.log(`looking for user with username ${username}`);
     return await User.findOne({
-      where: { lastFMUsername: username.toLowerCase() },
+      where: { lastFMUsername: ILike(username) },
     });
   }
 

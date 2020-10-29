@@ -280,8 +280,6 @@ export class CrownsService extends BaseService {
       withDeleted: options.showDeleted,
     });
 
-    console.log("CROWN:", crown);
-
     if (crown) crown.redirectedFrom = redirectedFrom;
 
     return options.refresh

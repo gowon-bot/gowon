@@ -5,8 +5,6 @@ import { Arguments } from "../../../lib/arguments/arguments";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { WeekCalculator } from "../../../lib/calculators/WeekCalculator";
 import { Paginator } from "../../../lib/Paginator";
-import { Validation } from "../../../lib/validation/ValidationChecker";
-import { validators } from "../../../lib/validation/validators";
 import { RedirectsService } from "../../../services/dbservices/RedirectsService";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
@@ -17,10 +15,6 @@ export default class Week extends LastFMBaseCommand {
 
   arguments: Arguments = {
     mentions: standardMentions,
-  };
-
-  validation: Validation = {
-    amount: new validators.Range({ min: 1, max: 15 }),
   };
 
   redirectsService = new RedirectsService(this.logger);
@@ -50,7 +44,7 @@ export default class Week extends LastFMBaseCommand {
 
     let restPages = await paginator.getAll({ concatTo: "track" });
 
-    restPages.track = [...firstPage!.track, ...restPages.track];
+    restPages.track = [...firstPage!.track, ...(restPages.track ?? [])];
 
     let weekCalculator = new WeekCalculator(this.redirectsService, restPages);
 

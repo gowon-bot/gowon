@@ -27,7 +27,9 @@ export default class Login extends LastFMBaseCommand {
     let username = this.parsedArguments.username as string;
 
     if (username === "<username>") {
-      await this.reply("lol");
+      await this.reply(
+        "hint: you're supposed to replace <username> with your username".italic()
+      );
       return;
     }
 
@@ -36,14 +38,12 @@ export default class Login extends LastFMBaseCommand {
     try {
       userInfo = await this.lastFMService.userInfo({ username });
 
-      await this.usersService.setUsername(message.author.id, username);
+      await this.usersService.setUsername(message.author.id, userInfo.name);
 
       let joined = fromUnixTime(userInfo.registered.unixtime.toInt());
 
-      console.log(differenceInDays(joined, new Date()));
-
       this.send(
-        `Logged in as ${username.code()}${
+        `Logged in as ${userInfo.name.code()}${
           differenceInDays(new Date(), joined) < 10
             ? ". Welcome to Last.fm!"
             : ""

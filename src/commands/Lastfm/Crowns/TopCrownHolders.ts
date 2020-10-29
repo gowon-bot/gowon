@@ -33,7 +33,7 @@ export class TopCrownHolders extends CrownsChildCommand {
     let [holders, crownsCount] = await Promise.all([
       this.crownsService.topCrownHolders(this.guild.id, message, 20),
       this.crownsService.countAllInServer(this.guild.id),
-    ]);
+    ]); 
 
     let embed = this.newEmbed()
       .setTitle(`Crowns in ${this.guild.name}`)

@@ -31,7 +31,7 @@ export class Paginator<T extends Params = Params, U = any> {
     }
   }
 
- async *pagesIterator(method: (params: T) => Promise<U>) {
+  async *pagesIterator(method: (params: T) => Promise<U>) {
     for (let page = this.currentPage + 1; page <= this.maxPages; page++) {
       yield await method({
         ...this.params,
