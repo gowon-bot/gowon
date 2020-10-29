@@ -81,7 +81,7 @@ export default class NowPlaying extends LastFMBaseCommand {
       .setTitle(sanitizeForDiscord(track.name))
       .setURL(LinkGenerator.trackPage(track.artist, track.name))
       .setDescription(
-        `by ${links.artist.bold()}` +
+        `By ${links.artist.bold()}` +
           (track.album ? ` from ${links.album.italic()}` : "")
       )
       .setThumbnail(

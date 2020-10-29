@@ -1,3 +1,4 @@
+import { LogicError } from "../../../errors";
 import { numberDisplay } from "../../../helpers";
 import { RunAs } from "../../../lib/AliasChecker";
 import { Variation } from "../../../lib/command/BaseCommand";
@@ -33,9 +34,17 @@ export default class SearchArtist extends SearchCommand {
       concurrent: ["sadeep", "sad"].includes(runAs.lastString()),
     });
 
-    let filtered = topArtists.artist
-      .filter((a) => this.clean(a.name).includes(this.clean(keywords)))
-      .slice(0, 25);
+    let filtered = topArtists.artist.filter((a) =>
+      this.clean(a.name).includes(this.clean(keywords))
+    );
+
+    if (filtered.length !== 0 && filtered.length === topArtists.artist.length) {
+      throw new LogicError(
+        "too many search results, try narrowing down your query..."
+      );
+    }
+
+    filtered = filtered.slice(0, 25);
 
     let embed = this.newEmbed()
       .setTitle(

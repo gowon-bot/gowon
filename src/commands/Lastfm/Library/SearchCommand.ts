@@ -30,8 +30,8 @@ export abstract class SearchCommand extends LastFMBaseCommand {
 
   clean(string: string): string {
     return romanizeHangeul(string)
-      .replace(/[\s\-_'"‘’”“`「」『』«»―~‐⁓,.]+/g, "")
-      .replace("&", "and")
+      .replace(/[\-_'"‘’”“`「」『』«»―~‐⁓,.]+/g, "")
+      .replace("&", " and ")
       .toLowerCase()
       .normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "");
