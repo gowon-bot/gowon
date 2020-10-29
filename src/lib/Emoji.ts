@@ -4,4 +4,5 @@ export const Emoji = {
   gowonswag2: "<:gowonswag2:754923498786521088>",
   typescript: "<:typescript:746450416635609199>",
   gowonheart: "<:gowonheart:771235114277535764>",
+  wail: "<:wail:751562824366555146>",
 } as const;

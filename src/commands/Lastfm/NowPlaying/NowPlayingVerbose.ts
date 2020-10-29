@@ -152,7 +152,7 @@ export default class NowPlayingVerbose extends LastFMBaseCommand {
       },
       // Second line
       {
-        shouldDisplay: this.tagConsolidator.hasTags(),
+        shouldDisplay: this.tagConsolidator.hasAnyTags(),
         string: tags,
       }
     );
@@ -186,8 +186,7 @@ export default class NowPlayingVerbose extends LastFMBaseCommand {
     }
 
     if (
-      this.tagConsolidator.consolidate().includes("rare sad girl") ||
-      this.tagConsolidator.consolidate().includes("rare sad boy")
+      this.tagConsolidator.hasTag("rare sad boy", "rsb", "rsg", "rare sad girl")
     ) {
       sentMessage.react("😭");
     }

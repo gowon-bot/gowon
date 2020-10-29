@@ -14,9 +14,10 @@ export class Ban extends CrownsChildCommand {
   async run() {
     let { dbUser, senderUser } = await this.parseMentions();
 
-    if (!dbUser || dbUser.discordID === senderUser?.discordID) {
-      throw new LogicError("please mention a valid user");
-    }
+    if (!dbUser) throw new LogicError("please mention a valid user");
+
+    if (dbUser.discordID === senderUser?.discordID)
+      throw new LogicError("you can't crown ban yourself?");
 
     await this.crownsService.banUser(dbUser, this.guild.id);
     this.crownsService.scribe.ban(

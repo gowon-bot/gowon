@@ -71,7 +71,7 @@ export default class ArtistInfo extends InfoCommand {
           .join(" ‧ ")}`,
       },
       {
-        shouldDisplay: this.tagConsolidator.hasTags(),
+        shouldDisplay: this.tagConsolidator.hasAnyTags(),
         string: `**Tags:** ${this.tagConsolidator.consolidate().join(" ‧ ")}`,
       },
       {

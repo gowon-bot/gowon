@@ -8,6 +8,7 @@ import {
 import { numberDisplay } from "..";
 import { User as DBUser } from "../../database/entity/User";
 import { GowonEmbed } from ".";
+import { Emoji } from "../../lib/Emoji";
 
 export class CrownEmbeds {
   constructor(
@@ -95,7 +96,9 @@ export class CrownEmbeds {
         "play"
       )}
 
-:pensive: → ${this.user.username.code()} - ${numberDisplay(this.plays, "play")}
+${
+  difference >= 5000 ? Emoji.wail : ":pensive:"
+} → ${this.user.username.code()} - ${numberDisplay(this.plays, "play")}
 
 ${holderUsername} will keep the crown for ${
         this.crownCheck.artistName

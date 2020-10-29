@@ -79,7 +79,7 @@ export default class AlbumInfo extends InfoCommand {
         string: "",
       },
       {
-        shouldDisplay: this.tagConsolidator.hasTags(),
+        shouldDisplay: this.tagConsolidator.hasAnyTags(),
         string: `**Tags:** ${this.tagConsolidator.consolidate().join(" ‧ ")}`,
       },
       {

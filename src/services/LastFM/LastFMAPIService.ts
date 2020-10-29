@@ -214,7 +214,7 @@ export class LastFMAPIService extends BaseService {
   async trackSearch(params: TrackSearchParams): Promise<TrackSearchResponse> {
     let response = await this.request<TrackSearchResponse>(
       "track.search",
-      params
+      this.cleanSearchParams<TrackSearchParams>(params)
     );
 
     return response;
@@ -277,5 +277,14 @@ export class LastFMAPIService extends BaseService {
       },
       { post: true }
     );
+  }
+
+  // private methods
+  private cleanSearchParams<T = any>(params: any): T {
+    if (params.track) params.track = params.track.replace(":", " ");
+    if (params.artist) params.artist = params.artist.replace(":", " ");
+    if (params.album) params.album = params.album.replace(":", " ");
+
+    return params as T;
   }
 }

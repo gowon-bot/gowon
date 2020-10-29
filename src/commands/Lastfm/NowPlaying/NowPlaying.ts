@@ -131,7 +131,7 @@ export default class NowPlaying extends LastFMBaseCommand {
 
     lineConsolidator.addLines(
       {
-        shouldDisplay: this.tagConsolidator.hasTags(),
+        shouldDisplay: this.tagConsolidator.hasAnyTags(),
         string: this.tagConsolidator.tags.join(" ‧ "),
       },
       {
@@ -164,8 +164,7 @@ export default class NowPlaying extends LastFMBaseCommand {
     }
 
     if (
-      this.tagConsolidator.consolidate().includes("rare sad girl") ||
-      this.tagConsolidator.consolidate().includes("rare sad boy")
+      this.tagConsolidator.hasTag("rare sad boy", "rsb", "rsg", "rare sad girl")
     ) {
       sentMessage.react("😭");
     }

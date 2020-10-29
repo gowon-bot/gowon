@@ -70,7 +70,7 @@ export default class TrackInfo extends InfoCommand {
         string: this.scrubReadMore(trackInfo.wiki?.summary?.trimRight())!,
       },
       {
-        shouldDisplay: this.tagConsolidator.hasTags(),
+        shouldDisplay: this.tagConsolidator.hasAnyTags(),
         string: `**Tags:** ${this.tagConsolidator.consolidate().join(" ‧ ")}`,
       },
       {

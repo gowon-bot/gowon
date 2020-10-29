@@ -167,13 +167,22 @@ export abstract class BaseCommand implements Command {
     let username = mentionedUsername || senderUser?.lastFMUsername;
 
     if (fetchDiscordUser) {
-      discordUser = (
+      let fetchedUser = (
         await this.guild.members.fetch(
           dbUser?.discordID || userID || this.author.id
         )
       ).user;
 
-      perspective.addDiscordUser(discordUser);
+      if (
+        username === senderUser?.lastFMUsername ||
+        (username === dbUser?.lastFMUsername &&
+          dbUser?.discordID === fetchedUser.id) ||
+        userID === fetchedUser.id
+      ) {
+        discordUser = fetchedUser;
+
+        perspective.addDiscordUser(discordUser);
+      } else discordUser = undefined;
     }
 
     if (

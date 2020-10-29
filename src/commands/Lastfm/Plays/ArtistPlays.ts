@@ -4,7 +4,7 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
 export default class ArtistPlays extends LastFMBaseCommand {
-  aliases = ["ap", "p"];
+  aliases = ["ap", "p", "plays"];
   description = "Shows you how many plays you have of a given artist";
   subcategory = "plays";
   usage = ["", "artist @user"];

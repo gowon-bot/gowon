@@ -17,7 +17,7 @@ export class TagConsolidator {
   tags: string[] = [];
   characterLimit = 30;
 
-  hasTags(): boolean {
+  hasAnyTags(): boolean {
     return !!this.tags.length;
   }
 
@@ -76,5 +76,13 @@ export class TagConsolidator {
       .map((t) => reverser(t))
       .filter((t) => !useCharacterLimit || t.length <= this.characterLimit)
       .slice(0, max);
+  }
+
+  hasTag(...tags: string[]): boolean {
+    for (let tag of tags) {
+      if (this.consolidate().includes(tag)) return true;
+    }
+
+    return false;
   }
 }

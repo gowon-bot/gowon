@@ -1,3 +1,4 @@
+import { LogicError } from "../../errors";
 import { numberDisplay } from "../../helpers";
 import { sanitizeForDiscord } from "../../helpers/discord";
 import { LinkGenerator } from "../../helpers/lastFM";
@@ -45,6 +46,8 @@ export default class Track extends LastFMBaseCommand {
 
       let track = results.results.trackmatches.track[0];
 
+      if (!track) throw new LogicError("that track could not be found!");
+
       trackName = track.name;
       artistName = track.artist;
     }
@@ -61,6 +64,9 @@ export default class Track extends LastFMBaseCommand {
       }),
       this.crownsService.getCrownDisplay(artistName, this.message),
     ])) as { status: string; value?: any; reason: any }[];
+
+    if (!trackInfo.value)
+      throw new LogicError("that track could not be found!");
 
     let track = {
       name: (trackInfo.value?.name || trackName) as string,
@@ -128,6 +134,12 @@ export default class Track extends LastFMBaseCommand {
       track.name.toLowerCase() === "jaljayo good night"
     ) {
       sentMessage.react("😴");
+    }
+
+    if (
+      this.tagConsolidator.hasTag("rare sad boy", "rsb", "rsg", "rare sad girl")
+    ) {
+      sentMessage.react("😭");
     }
   }
 }
