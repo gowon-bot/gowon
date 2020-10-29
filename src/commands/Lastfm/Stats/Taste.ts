@@ -1,4 +1,4 @@
-import { Message, MessageEmbed } from "discord.js";
+import { Message } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { TasteCalculator } from "../../../lib/calculators/TasteCalculator";
 import { numberDisplay, StringPadder } from "../../../helpers";
@@ -176,7 +176,7 @@ export default class Taste extends LastFMBaseCommand {
 
     let taste = tasteCalculator.calculate();
 
-    let embed = new MessageEmbed()
+    let embed = this.newEmbed()
       .setTitle(
         `Taste comparison for ${sanitizeForDiscord(
           userOneUsername

@@ -1,4 +1,3 @@
-import { MessageEmbed } from "discord.js";
 import { numberDisplay } from "../../helpers";
 import { sanitizeForDiscord } from "../../helpers/discord";
 import { LinkGenerator } from "../../helpers/lastFM";
@@ -87,7 +86,7 @@ export default class Track extends LastFMBaseCommand {
     if (artistInfo.value)
       this.tagConsolidator.addTags(artistInfo.value?.tags?.tag || []);
 
-    let nowPlayingEmbed = new MessageEmbed()
+    let nowPlayingEmbed = this.newEmbed()
       .setAuthor(
         `Track for ${this.author.username}`,
         this.author.avatarURL() || undefined

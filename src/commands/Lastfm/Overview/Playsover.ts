@@ -1,5 +1,4 @@
 import { OverviewChildCommand } from "./OverviewChildCommand";
-import { MessageEmbed } from "discord.js";
 
 export class Playsover extends OverviewChildCommand {
   aliases = ["po"];
@@ -17,7 +16,7 @@ export class Playsover extends OverviewChildCommand {
       this.calculator.playsOver(50),
     ]);
 
-    let embed = new MessageEmbed()
+    let embed = this.newEmbed()
       .setAuthor(username + badge, image)
       .setColor(colour).setDescription(`Among ${
       perspective.possessivePronoun

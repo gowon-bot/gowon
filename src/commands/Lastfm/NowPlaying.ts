@@ -1,4 +1,4 @@
-import { Message, MessageEmbed } from "discord.js";
+import { Message } from "discord.js";
 import { LinkGenerator, parseLastFMTrackResponse } from "../../helpers/lastFM";
 import { numberDisplay } from "../../helpers";
 import { Arguments } from "../../lib/arguments/arguments";
@@ -72,7 +72,7 @@ export default class NowPlaying extends LastFMBaseCommand {
       );
     }
 
-    let nowPlayingEmbed = new MessageEmbed()
+    let nowPlayingEmbed = this.newEmbed()
       .setColor("black")
       .setAuthor(
         `${

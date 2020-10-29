@@ -1,4 +1,3 @@
-import { MessageEmbed } from "discord.js";
 import { MultiRequester } from "../../lib/MultiRequester";
 import { LastFMBaseCommand } from "./LastFMBaseCommand";
 
@@ -19,7 +18,7 @@ export default class Server extends LastFMBaseCommand {
       users.map((u) => u.lastFMUsername)
     ).fetch(this.lastFMService.nowPlayingParsed.bind(this.lastFMService), []);
 
-    let embed = new MessageEmbed()
+    let embed = this.newEmbed()
       .setTitle("Random songs across the server")
       .setDescription(
         Object.keys(nowPlayings)

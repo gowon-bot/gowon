@@ -1,6 +1,6 @@
 import { BaseCommand } from "../lib/command/BaseCommand";
 import { Command } from "../lib/command/Command";
-import { Message, MessageEmbed } from "discord.js";
+import { Message } from "discord.js";
 import { CommandManager } from "../lib/command/CommandManager";
 import { Arguments } from "../lib/arguments/arguments";
 import { AdminService } from "../services/dbservices/AdminService";
@@ -63,7 +63,7 @@ export default class Help extends BaseCommand {
       return acc;
     }, {} as GroupedCommands);
 
-    return new MessageEmbed()
+    return this.newEmbed()
       .setAuthor(
         `Help for ${message.author.username}`,
         message.author.avatarURL() || ""
@@ -111,7 +111,7 @@ export default class Help extends BaseCommand {
     if (command instanceof ParentCommand)
       return this.showHelpForParentCommand(message, command);
 
-    let embed = new MessageEmbed()
+    let embed = this.newEmbed()
       .setAuthor(
         `Help with ${
           command.friendlyNameWithParent || command.friendlyName
@@ -167,7 +167,7 @@ export default class Help extends BaseCommand {
       this.client
     );
 
-    return new MessageEmbed()
+    return this.newEmbed()
       .setAuthor(
         `Help with ${command.friendlyName} for ${message.author.username}`,
         message.author.avatarURL() || ""

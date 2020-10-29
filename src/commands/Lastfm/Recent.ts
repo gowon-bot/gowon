@@ -1,4 +1,3 @@
-import { MessageEmbed } from "discord.js";
 import { Arguments } from "../../lib/arguments/arguments";
 import { standardMentions } from "../../lib/arguments/mentions/mentions";
 import { Validation } from "../../lib/validation/ValidationChecker";
@@ -31,7 +30,7 @@ export default class Recent extends LastFMBaseCommand {
       limit: amount,
     });
 
-    let embed = new MessageEmbed()
+    let embed = this.newEmbed()
       .setTitle(`${perspective.upper.possessive} recent tracks`)
       .setDescription(
         recentTracks.track

@@ -1,14 +1,21 @@
 import { CrownCheck } from "../../services/dbservices/CrownsService";
-import { User as DiscordUser, MessageEmbed, Message } from "discord.js";
+import {
+  User as DiscordUser,
+  MessageEmbed,
+  Message,
+  GuildMember,
+} from "discord.js";
 import { numberDisplay } from "..";
 import { User as DBUser } from "../../database/entity/User";
+import { GowonEmbed } from ".";
 
 export class CrownEmbeds {
   constructor(
     private crownCheck: CrownCheck,
     private user: DiscordUser,
     private message: Message,
-    private plays: number
+    private plays: number,
+    private member?: GuildMember
   ) {}
 
   private get redirect(): string {
@@ -16,7 +23,7 @@ export class CrownEmbeds {
   }
 
   private get embed(): MessageEmbed {
-    return new MessageEmbed().setTitle(
+    return GowonEmbed(this.member).setTitle(
       `Crown for ${this.crownCheck.artistName}${this.redirect}`
     );
   }

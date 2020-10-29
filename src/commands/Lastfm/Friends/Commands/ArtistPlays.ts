@@ -1,5 +1,4 @@
 import { FriendsChildCommand } from "../FriendsChildCommand";
-import { MessageEmbed } from "discord.js";
 import { MultiRequester } from "../../../../lib/MultiRequester";
 import { numberDisplay } from "../../../../helpers";
 import { Arguments } from "../../../../lib/arguments/arguments";
@@ -39,7 +38,7 @@ export class ArtistPlays extends FriendsChildCommand {
 
     let artistName = Object.values(artistDetails).filter((v) => v.name)[0].name;
 
-    let embed = new MessageEmbed()
+    let embed = this.newEmbed()
       .setTitle(`Your friends plays of ${artistName}`)
       .setURL(LinkGenerator.listenersYouKnow(artistName))
       .setDescription(

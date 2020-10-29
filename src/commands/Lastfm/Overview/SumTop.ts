@@ -1,5 +1,4 @@
 import { OverviewChildCommand } from "./OverviewChildCommand";
-import { MessageEmbed } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { LogicError } from "../../../errors";
 import { numberDisplay } from "../../../helpers";
@@ -29,7 +28,7 @@ export class SumTop extends OverviewChildCommand {
       this.calculator.sumTopPercent(10),
     ]);
 
-    let embed = new MessageEmbed()
+    let embed = this.newEmbed()
       .setAuthor(username + badge, image)
       .setColor(colour)
       .setDescription(

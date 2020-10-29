@@ -1,6 +1,6 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
 import { Arguments } from "../../../lib/arguments/arguments";
-import { Message, MessageEmbed } from "discord.js";
+import { Message } from "discord.js";
 import { LogicError } from "../../../errors";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
@@ -47,7 +47,7 @@ export class Kill extends CrownsChildCommand {
       this.crownsService.scribe.kill(crown, message.author);
 
       await this.send(
-        new MessageEmbed()
+        this.newEmbed()
           .setAuthor(
             message.member?.nickname || message.author.username,
             message.author.avatarURL() || undefined

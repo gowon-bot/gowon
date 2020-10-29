@@ -1,4 +1,3 @@
-import { MessageEmbed } from "discord.js";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { dateTimeDisplay } from "../../../helpers";
 import { Arguments } from "../../../lib/arguments/arguments";
@@ -65,7 +64,7 @@ export default class LastScrobbled extends LastFMBaseCommand {
         `${perspective.plusToHave} not scrobbled that track!`
       );
 
-    let embed = new MessageEmbed()
+    let embed = this.newEmbed()
       .setAuthor(
         this.message.author.username,
         this.message.author.avatarURL() || ""

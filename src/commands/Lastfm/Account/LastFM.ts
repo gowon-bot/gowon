@@ -4,7 +4,7 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { RecordNotFoundError } from "../../../errors";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
-export default class LastFM extends LastFMBaseCommand {
+export default class LastFMAccount extends LastFMBaseCommand {
   aliases = ["lfm"];
   description = "Links the last.fm profile page for a user";
   subcategory = "accounts";

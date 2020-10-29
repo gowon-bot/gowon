@@ -1,5 +1,4 @@
 import { OverviewChildCommand } from "./OverviewChildCommand";
-import { MessageEmbed } from "discord.js";
 import { numberDisplay, getOrdinal } from "../../../helpers";
 import { Emoji } from "../../../lib/Emoji";
 import { LinkGenerator } from "../../../helpers/lastFM";
@@ -23,7 +22,7 @@ export class All extends OverviewChildCommand {
       breadth = await this.calculator.breadth();
     } catch {}
 
-    let embed = new MessageEmbed()
+    let embed = this.newEmbed()
       .setAuthor(
         this.username + badge,
         image,

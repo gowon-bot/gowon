@@ -1,4 +1,3 @@
-import { MessageEmbed } from "discord.js";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { numberDisplay } from "../../../helpers";
 import { Arguments } from "../../../lib/arguments/arguments";
@@ -60,7 +59,7 @@ export default class AlbumTopTracks extends LastFMBaseCommand {
       album
     );
 
-    let embed = new MessageEmbed()
+    let embed = this.newEmbed()
       .setAuthor(
         this.message.author.username,
         this.message.author.avatarURL() || ""

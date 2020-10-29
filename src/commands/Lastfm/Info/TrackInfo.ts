@@ -1,4 +1,3 @@
-import { MessageEmbed } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { InfoCommand } from "./InfoCommand";
 import { numberDisplay } from "../../../helpers";
@@ -80,7 +79,7 @@ export default class TrackInfo extends InfoCommand {
       }
     );
 
-    let embed = new MessageEmbed()
+    let embed = this.newEmbed()
       .setTitle(trackInfo.name.italic() + " by " + trackInfo.artist.name.bold())
       .setDescription(this.lineConsolidator.consolidate())
       .addFields(

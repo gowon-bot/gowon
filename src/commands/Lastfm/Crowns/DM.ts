@@ -1,5 +1,5 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
-import { Message, MessageEmbed, User } from "discord.js";
+import { Message, User } from "discord.js";
 import { numberDisplay, chunkArray } from "../../../helpers";
 import { Arguments } from "../../../lib/arguments/arguments";
 
@@ -44,7 +44,7 @@ export class DM extends CrownsChildCommand {
 
     chunks
       .map((chunk, chunkIdx) =>
-        new MessageEmbed()
+        this.newEmbed()
           .setTitle(
             `Crowns ${chunkIdx * crownsPerMessage + 1} - ${
               (chunkIdx + 1) * crownsPerMessage < crowns.length

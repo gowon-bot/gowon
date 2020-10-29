@@ -1,5 +1,4 @@
 import { OverviewChildCommand } from "./OverviewChildCommand";
-import { MessageEmbed } from "discord.js";
 
 export class Joined extends OverviewChildCommand {
   aliases = ["j", "join"];
@@ -11,7 +10,7 @@ export class Joined extends OverviewChildCommand {
     let { badge, colour, image } = await this.getAuthorDetails();
     let joined = await this.calculator.joined();
 
-    let embed = new MessageEmbed()
+    let embed = this.newEmbed()
       .setAuthor(username + badge, image)
       .setColor(colour)
       .setDescription(`Scrobbling since ${joined}`);

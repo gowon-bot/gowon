@@ -1,4 +1,4 @@
-import { Message, MessageEmbed } from "discord.js";
+import { Message } from "discord.js";
 import { PermissionsChildCommand } from "./PermissionsChildCommand";
 
 export class Help extends PermissionsChildCommand {
@@ -12,7 +12,7 @@ export class Help extends PermissionsChildCommand {
     let prefix = await this.gowonService.prefix(this.guild.id);
 
     await this.send(
-      new MessageEmbed()
+      this.newEmbed()
         .setTitle(`Permissions help for ${message.author.username}`)
         .addField(
           "Disabling commands",

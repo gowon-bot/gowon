@@ -1,4 +1,3 @@
-import { MessageEmbed } from "discord.js";
 import { Arguments } from "../../lib/arguments/arguments";
 import { standardMentions } from "../../lib/arguments/mentions/mentions";
 import { Delegate } from "../../lib/command/BaseCommand";
@@ -10,7 +9,7 @@ export default class Randomsong extends LastFMBaseCommand {
   usage = "";
 
   arguments: Arguments = {
-    mentions: standardMentions
+    mentions: standardMentions,
   };
 
   delegates: Delegate[] = [
@@ -31,7 +30,7 @@ export default class Randomsong extends LastFMBaseCommand {
     let randomSong =
       randomSongs.track[~~(randomSongs.track.length * Math.random())];
 
-    let embed = new MessageEmbed()
+    let embed = this.newEmbed()
       .setAuthor(`Scrobbled by ${randomUser.lastFMUsername}`)
       .setTitle(randomSong.name)
       .setDescription(

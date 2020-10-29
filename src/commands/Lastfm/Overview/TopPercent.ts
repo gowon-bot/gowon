@@ -1,5 +1,4 @@
 import { OverviewChildCommand } from "./OverviewChildCommand";
-import { MessageEmbed } from "discord.js";
 import { numberDisplay } from "../../../helpers";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { Validation } from "../../../lib/validation/ValidationChecker";
@@ -29,7 +28,7 @@ export class TopPercent extends OverviewChildCommand {
 
     let toppct = await this.calculator.topPercent(percent);
 
-    let embed = new MessageEmbed()
+    let embed = this.newEmbed()
       .setAuthor(username + badge, image)
       .setColor(colour)
       .setDescription(

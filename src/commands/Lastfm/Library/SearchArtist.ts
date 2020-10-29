@@ -1,4 +1,3 @@
-import { MessageEmbed } from "discord.js";
 import { numberDisplay } from "../../../helpers";
 import { Paginator } from "../../../lib/Paginator";
 import { SearchCommand } from "./SearchCommand";
@@ -24,9 +23,9 @@ export default class SearchArtist extends SearchCommand {
 
     let filtered = topArtists.artist
       .filter((a) => this.clean(a.name).includes(this.clean(keywords)))
-      .slice(0, 25)
+      .slice(0, 25);
 
-    let embed = new MessageEmbed()
+    let embed = this.newEmbed()
       .setTitle(
         `Search results in ${username.code()}'s top ${numberDisplay(
           topArtists.artist.length,

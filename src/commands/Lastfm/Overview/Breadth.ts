@@ -1,5 +1,4 @@
 import { OverviewChildCommand } from "./OverviewChildCommand";
-import { MessageEmbed } from "discord.js";
 import { numberDisplay } from "../../../helpers";
 
 export class Breadth extends OverviewChildCommand {
@@ -13,7 +12,7 @@ export class Breadth extends OverviewChildCommand {
     let { badge, colour, image } = await this.getAuthorDetails();
     let breadth = await this.calculator.breadth();
 
-    let embed = new MessageEmbed()
+    let embed = this.newEmbed()
       .setAuthor(username + badge, image)
       .setColor(colour)
       .setDescription(

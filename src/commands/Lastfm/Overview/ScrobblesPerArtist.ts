@@ -1,5 +1,4 @@
 import { OverviewChildCommand } from "./OverviewChildCommand";
-import { MessageEmbed } from "discord.js";
 
 export class ScrobblesPerArtist extends OverviewChildCommand {
   aliases = ["spa"];
@@ -11,7 +10,7 @@ export class ScrobblesPerArtist extends OverviewChildCommand {
     let { badge, colour, image } = await this.getAuthorDetails();
     let spa = await this.calculator.avgScrobblesPerArtist();
 
-    let embed = new MessageEmbed()
+    let embed = this.newEmbed()
       .setAuthor(username + badge, image)
       .setColor(colour)
       .setDescription(`${spa.asString.bold()} scrobbles per artist!`);

@@ -1,4 +1,3 @@
-import { MessageEmbed } from "discord.js";
 import { LogicError } from "../../../errors";
 import { numberDisplay } from "../../../helpers";
 import { Paginator } from "../../../lib/Paginator";
@@ -33,7 +32,7 @@ export default class SearchAlbum extends SearchCommand {
       );
     }
 
-    let embed = new MessageEmbed()
+    let embed = this.newEmbed()
       .setTitle(
         `Search results in ${username.code()}'s top ${numberDisplay(
           topAlbums.album.length,

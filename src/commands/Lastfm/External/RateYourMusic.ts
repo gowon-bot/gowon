@@ -1,4 +1,3 @@
-import { MessageEmbed } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
@@ -30,7 +29,7 @@ export default class RateYourMusic extends LastFMBaseCommand {
 
     let encodedKeywords = encodeURIComponent(keywords);
 
-    let embed = new MessageEmbed()
+    let embed = this.newEmbed()
       .setAuthor(`Rateyourmusic search for "${keywords}"`)
       .setTitle("Click here to view the results")
       .setURL(

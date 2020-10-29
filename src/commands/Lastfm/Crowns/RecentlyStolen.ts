@@ -1,5 +1,5 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
-import { Message, MessageEmbed } from "discord.js";
+import { Message } from "discord.js";
 import { ago } from "../../../helpers";
 
 export class RecentlyStolen extends CrownsChildCommand {
@@ -12,7 +12,7 @@ export class RecentlyStolen extends CrownsChildCommand {
       message.guild?.id!
     );
 
-    let embed = new MessageEmbed()
+    let embed = this.newEmbed()
       .setTitle(`Recently stolen crowns in ${message.guild?.name}`)
       .setDescription(
         crowns

@@ -1,5 +1,5 @@
 import { PermissionsChildCommand } from "./PermissionsChildCommand";
-import { Message, MessageEmbed, User, Role } from "discord.js";
+import { Message, User, Role } from "discord.js";
 
 export class Delist extends PermissionsChildCommand {
   description = "Remove a user/role from a white/blacklist";
@@ -23,7 +23,7 @@ export class Delist extends PermissionsChildCommand {
       }
     }
 
-    let embed = new MessageEmbed()
+    let embed = this.newEmbed()
       .setTitle(`Removed permissions`)
       .setDescription(
         `Delisted ${this.runAs

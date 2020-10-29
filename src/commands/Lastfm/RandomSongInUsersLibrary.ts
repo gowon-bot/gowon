@@ -1,4 +1,3 @@
-import { MessageEmbed } from "discord.js";
 import { getOrdinal } from "../../helpers";
 import { Arguments } from "../../lib/arguments/arguments";
 import { standardMentions } from "../../lib/arguments/mentions/mentions";
@@ -33,7 +32,7 @@ export default class RandomsongInUsersLibrary extends LastFMBaseCommand {
       artist: randomSong.artist.name,
     });
 
-    let embed = new MessageEmbed()
+    let embed = this.newEmbed()
       .setAuthor(`${username}'s ${getOrdinal(randomIndex - 1)} top track`)
       .setTitle(randomSong.name)
       .setDescription(

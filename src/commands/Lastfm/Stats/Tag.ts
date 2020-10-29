@@ -1,4 +1,3 @@
-import { MessageEmbed } from "discord.js";
 import { numberDisplay } from "../../../helpers";
 import { calculatePercent } from "../../../helpers/stats";
 import { Arguments } from "../../../lib/arguments/arguments";
@@ -55,7 +54,7 @@ export default class Tag extends LastFMBaseCommand {
 
     let overlap = this.calculateOverlap(userTopArtists, tagArtistNames);
 
-    let embed = new MessageEmbed()
+    let embed = this.newEmbed()
       .setAuthor(this.author.username, this.author.avatarURL() || "")
       .setTitle(
         `${perspective.upper.possessive} top ${

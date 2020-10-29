@@ -1,5 +1,5 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
-import { Message, MessageEmbed, User } from "discord.js";
+import { Message, User } from "discord.js";
 import { numberDisplay, getOrdinal } from "../../../helpers";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { LogicError } from "../../../errors";
@@ -35,7 +35,7 @@ export class List extends CrownsChildCommand {
         `${perspective.upper.name} don't have any crowns in this server!`
       );
 
-    let embed = new MessageEmbed()
+    let embed = this.newEmbed()
       .setTitle(`${perspective.upper.possessive} crowns`)
       .setDescription(
         `${perspective.upper.plusToHave} **${numberDisplay(

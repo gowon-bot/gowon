@@ -1,5 +1,4 @@
 import { sub } from "date-fns";
-import { MessageEmbed } from "discord.js";
 import { LogicError } from "../../../errors";
 import { dateDisplay, numberDisplay } from "../../../helpers";
 import { Arguments } from "../../../lib/arguments/arguments";
@@ -69,7 +68,7 @@ export default class Week extends LastFMBaseCommand {
       (a, b) => week.top.artists[b] - week.top.artists[a]
     );
 
-    let embed = new MessageEmbed().setTitle(`${username.code()}'s week`)
+    let embed = this.newEmbed().setTitle(`${username.code()}'s week`)
       .setDescription(`
       _${dateDisplay(sub(new Date(), { weeks: 1 }))} - ${dateDisplay(
       new Date()

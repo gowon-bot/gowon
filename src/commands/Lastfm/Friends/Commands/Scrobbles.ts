@@ -1,5 +1,4 @@
 import { FriendsChildCommand } from "../FriendsChildCommand";
-import { MessageEmbed } from "discord.js";
 import { MultiRequester } from "../../../../lib/MultiRequester";
 import { numberDisplay } from "../../../../helpers";
 import { Arguments } from "../../../../lib/arguments/arguments";
@@ -35,7 +34,7 @@ export class Scrobbles extends FriendsChildCommand {
       timeRange.to,
     ]);
 
-    let embed = new MessageEmbed()
+    let embed = this.newEmbed()
       .setTitle(`Your friends scrobbles ${humanTimeRange}`)
       .setDescription(
         Object.keys(scrobbles)

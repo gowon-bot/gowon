@@ -1,4 +1,4 @@
-import { Message, MessageEmbed } from "discord.js";
+import { Message } from "discord.js";
 import { MetaChildCommand } from "./MetaChildCommand";
 import { numberDisplay } from "../../helpers";
 import { CommandManager } from "../../lib/command/CommandManager";
@@ -34,7 +34,7 @@ export class TopCommands extends MetaChildCommand {
     let commandManager = new CommandManager();
     await commandManager.init();
 
-    let embed = new MessageEmbed()
+    let embed = this.newEmbed()
       .setTitle(`Top commands in ${message.guild?.name!} ${humanizedTimeRange}`)
       .setDescription(
         topCommands.map(

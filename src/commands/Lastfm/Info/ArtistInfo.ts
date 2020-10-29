@@ -1,4 +1,4 @@
-import { Message, MessageEmbed } from "discord.js";
+import { Message } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { InfoCommand } from "./InfoCommand";
 import { numberDisplay } from "../../../helpers";
@@ -92,7 +92,7 @@ export default class ArtistInfo extends InfoCommand {
       4
     );
 
-    let embed = new MessageEmbed()
+    let embed = this.newEmbed()
       .setTitle(artistInfo.name)
       .setURL(artistInfo.url)
       .setDescription(this.lineConsolidator.consolidate())

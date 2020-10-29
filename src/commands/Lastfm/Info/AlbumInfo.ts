@@ -1,4 +1,3 @@
-import { MessageEmbed } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { InfoCommand } from "./InfoCommand";
 import { numberDisplay } from "../../../helpers";
@@ -94,7 +93,7 @@ export default class AlbumInfo extends InfoCommand {
       albumInfo.playcount
     );
 
-    let embed = new MessageEmbed()
+    let embed = this.newEmbed()
       .setTitle(albumInfo.name.italic() + " by " + albumInfo.artist.bold())
       .setDescription(this.lineConsolidator.consolidate())
       .setURL(albumInfo.url)

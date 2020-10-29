@@ -21,6 +21,7 @@ import { User } from "../../database/entity/User";
 import { Perspective } from "../Perspective";
 import { GowonClient } from "../GowonClient";
 import { Validation, ValidationChecker } from "../validation/ValidationChecker";
+import { GowonEmbed } from "../../helpers/Embeds";
 
 export interface Variation {
   variationString?: string;
@@ -280,5 +281,9 @@ export abstract class BaseCommand implements Command {
     } catch {
       return "<unknown user>";
     }
+  }
+
+  protected newEmbed(): MessageEmbed {
+    return GowonEmbed(this.message.member ?? undefined);
   }
 }

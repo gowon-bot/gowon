@@ -1,6 +1,6 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
 import { Arguments } from "../../../lib/arguments/arguments";
-import { Message, MessageEmbed } from "discord.js";
+import { Message } from "discord.js";
 import { dateDisplay } from "../../../helpers";
 import { CrownEventString } from "../../../services/dbservices/CrownsHistoryService";
 
@@ -49,7 +49,7 @@ export class History extends CrownsChildCommand {
     ]);
 
     this.send(
-      new MessageEmbed()
+      this.newEmbed()
         .setTitle(
           `Crown history for ${crown.artistName}${crown.redirectDisplay()}`
         )

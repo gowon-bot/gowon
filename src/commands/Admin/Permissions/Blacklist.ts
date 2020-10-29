@@ -1,5 +1,5 @@
 import { PermissionsChildCommand } from "./PermissionsChildCommand";
-import { Message, MessageEmbed, Role, User } from "discord.js";
+import { Message, Role, User } from "discord.js";
 import { Variation } from "../../../lib/command/BaseCommand";
 import { RunAs } from "../../../lib/AliasChecker";
 
@@ -60,7 +60,7 @@ export class Blacklist extends PermissionsChildCommand {
       }
     }
 
-    let embed = new MessageEmbed()
+    let embed = this.newEmbed()
       .setTitle(`New permissions`)
       .setDescription(
         `${

@@ -1,5 +1,5 @@
 import { JumbleChildCommand } from "./JumbleChildCommand";
-import { Message, MessageEmbed } from "discord.js";
+import { Message } from "discord.js";
 import { LogicError } from "../../../errors";
 import { numberDisplay, shuffle } from "../../../helpers";
 import { JumbledArtist, jumbleRedisKey } from "./JumbleParentCommand";
@@ -60,7 +60,7 @@ export class Me extends JumbleChildCommand {
 
     this.sessionSetJSON(message, jumbleRedisKey, jumbledArtist);
 
-    let embed = new MessageEmbed()
+    let embed = this.newEmbed()
       .setAuthor(
         `Jumble for ${message.member?.nickname || message.author.username}`,
         message.author.avatarURL() ?? ""
@@ -85,7 +85,7 @@ export class Me extends JumbleChildCommand {
 
     this.sessionSetJSON(message, jumbleRedisKey, jumble);
 
-    let embed = new MessageEmbed().setAuthor(
+    let embed = this.newEmbed().setAuthor(
       `Rejumble for ${message.member?.nickname || message.author.username}`,
       message.author.avatarURL() ?? ""
     ).setDescription(`I've reshuffled the letters, now who is this artist?

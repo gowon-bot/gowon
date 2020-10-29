@@ -1,4 +1,3 @@
-import { MessageEmbed } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
 import {
   TimeRange,
@@ -76,7 +75,7 @@ export default class Pace extends LastFMBaseCommand {
         )}!`
       );
 
-    let embed = new MessageEmbed().setDescription(
+    let embed = this.newEmbed().setDescription(
       `At a rate of **${numberDisplay(
         pace.scrobbleRate.toFixed(2),
         "scrobble"

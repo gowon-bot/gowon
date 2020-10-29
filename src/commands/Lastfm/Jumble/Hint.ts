@@ -1,5 +1,5 @@
 import { JumbleChildCommand } from "./JumbleChildCommand";
-import { Message, MessageEmbed } from "discord.js";
+import { Message } from "discord.js";
 import { jumbleRedisKey, JumbledArtist } from "./JumbleParentCommand";
 import { LogicError } from "../../../errors";
 import { shuffle } from "../../../helpers";
@@ -26,7 +26,7 @@ export class Hint extends JumbleChildCommand {
 
     this.sessionSetJSON(message, jumbleRedisKey, jumbledArtist);
 
-    let embed = new MessageEmbed()
+    let embed = this.newEmbed()
       .setAuthor(
         `Hint for ${message.member?.nickname || message.author.username}`,
         message.author.avatarURL() ?? ""

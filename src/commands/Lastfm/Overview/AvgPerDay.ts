@@ -1,5 +1,4 @@
 import { OverviewChildCommand } from "./OverviewChildCommand";
-import { MessageEmbed } from "discord.js";
 
 export class AvgPerDay extends OverviewChildCommand {
   aliases = ["avg", "average", "daily"];
@@ -11,7 +10,7 @@ export class AvgPerDay extends OverviewChildCommand {
     let { badge, colour, image } = await this.getAuthorDetails();
     let avg = await this.calculator.avgPerDay();
 
-    let embed = new MessageEmbed()
+    let embed = this.newEmbed()
       .setAuthor(username + badge, image)
       .setColor(colour)
       .setDescription(

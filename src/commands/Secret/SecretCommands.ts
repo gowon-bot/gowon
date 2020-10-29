@@ -1,5 +1,5 @@
 import { BaseCommand } from "../../lib/command/BaseCommand";
-import { Message, MessageEmbed } from "discord.js";
+import { Message } from "discord.js";
 import { CommandManager } from "../../lib/command/CommandManager";
 
 export default class SecretCommands extends BaseCommand {
@@ -15,7 +15,7 @@ export default class SecretCommands extends BaseCommand {
       .list(true)
       .filter((c) => c.secretCommand);
 
-    let embed = new MessageEmbed()
+    let embed = this.newEmbed()
       .setAuthor("Secret commands for " + message.author.username)
       .setDescription(commands.map((c) => c.name).join(", "));
 

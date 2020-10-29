@@ -1,6 +1,6 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
 import { Arguments } from "../../../lib/arguments/arguments";
-import { Message, MessageEmbed } from "discord.js";
+import { Message } from "discord.js";
 import { CrownState } from "../../../services/dbservices/CrownsService";
 import { CrownEmbeds } from "../../../helpers/Embeds/CrownEmbeds";
 import {
@@ -51,7 +51,8 @@ export class Check extends CrownsChildCommand {
       crownCheck,
       message.author,
       message,
-      artistDetails.stats.userplaycount.toInt()
+      artistDetails.stats.userplaycount.toInt(),
+      this.message.member ?? undefined
     );
 
     if (
@@ -85,7 +86,7 @@ export class Check extends CrownsChildCommand {
         ? embeds.left()
         : crownCheck.state === CrownState.banned
         ? embeds.banned()
-        : new MessageEmbed();
+        : this.newEmbed();
 
     await this.send(await embed);
   }

@@ -1,4 +1,4 @@
-import { Message, MessageEmbed } from "discord.js";
+import { Message } from "discord.js";
 import { CrownsChildCommand } from "./CrownsChildCommand";
 import { numberDisplay } from "../../../helpers";
 import { Arguments } from "../../../lib/arguments/arguments";
@@ -22,7 +22,7 @@ export class GuildAt extends CrownsChildCommand {
         `hmmm... I couldn't find that rank on the crowns leaderboard!`
       );
 
-    let embed = new MessageEmbed()
+    let embed = this.newEmbed()
       .setAuthor(
         `${this.guild.name}'s crown leaderboard (${guildAt.start + 1} - ${
           guildAt.end

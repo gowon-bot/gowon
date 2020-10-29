@@ -1,4 +1,3 @@
-import { MessageEmbed } from "discord.js";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { ComboCalculator } from "../../../lib/calculators/ComboCalculator";
@@ -51,7 +50,7 @@ export default class Combo extends LastFMBaseCommand {
 
     let combo = await comboCalculator.calculate(paginator);
 
-    let embed = new MessageEmbed()
+    let embed = this.newEmbed()
       .setTitle(
         `Streak for ${username.code()} (from recent ${numberDisplay(
           streakAmount,

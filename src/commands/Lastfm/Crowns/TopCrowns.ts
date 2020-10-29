@@ -1,5 +1,5 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
-import { Message, MessageEmbed } from "discord.js";
+import { Message } from "discord.js";
 import { numberDisplay } from "../../../helpers";
 
 export class TopCrowns extends CrownsChildCommand {
@@ -13,7 +13,7 @@ export class TopCrowns extends CrownsChildCommand {
       this.crownsService.countAllInServer(message.guild?.id!),
     ]);
 
-    let embed = new MessageEmbed()
+    let embed = this.newEmbed()
       .setTitle(`Top crowns in ${message.guild?.name}`)
       .setDescription(
         `There are **${numberDisplay(crownsCount, "** crown")} in ${

@@ -1,4 +1,3 @@
-import { MessageEmbed } from "discord.js";
 import { numberDisplay } from "../../../helpers";
 import { ListCommand } from "./ListCommand";
 
@@ -15,7 +14,7 @@ export default class TrackList extends ListCommand {
       period: this.timePeriod,
     });
 
-    let messageEmbed = new MessageEmbed()
+    let messageEmbed = this.newEmbed()
       .setTitle(
         `Top ${numberDisplay(this.listAmount, "track")} for \`${username}\` ${
           this.humanReadableTimePeriod

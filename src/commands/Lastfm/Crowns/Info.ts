@@ -1,6 +1,6 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
 import { Arguments } from "../../../lib/arguments/arguments";
-import { Message, MessageEmbed } from "discord.js";
+import { Message } from "discord.js";
 import { numberDisplay, ago } from "../../../helpers";
 import { User } from "../../../database/entity/User";
 import { CrownState } from "../../../services/dbservices/CrownsService";
@@ -72,7 +72,7 @@ export class Info extends CrownsChildCommand {
 
       let holderUsername = holderUser?.username;
 
-      let embed = new MessageEmbed()
+      let embed = this.newEmbed()
         .setTitle(
           `Who has ${crown.artistName.bold()}?` + crown.redirectDisplay()
         )

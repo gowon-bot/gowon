@@ -1,5 +1,5 @@
 import { FriendsChildCommand } from "./FriendsChildCommand";
-import { Message, MessageEmbed } from "discord.js";
+import { Message } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { LogicError, AlreadyFriendsError } from "../../../errors";
 import { Validation } from "../../../lib/validation/ValidationChecker";
@@ -53,7 +53,7 @@ export class Add extends FriendsChildCommand {
     );
 
     await this.send(
-      new MessageEmbed().setDescription(
+      this.newEmbed().setDescription(
         `Successfully added ${friend.friendUsername.code()} as a friend!`
       )
     );

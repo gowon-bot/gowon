@@ -1,5 +1,4 @@
 import { FriendsChildCommand } from "../FriendsChildCommand";
-import { MessageEmbed } from "discord.js";
 import { MultiRequester } from "../../../../lib/MultiRequester";
 import { numberDisplay } from "../../../../helpers";
 import { Arguments } from "../../../../lib/arguments/arguments";
@@ -41,7 +40,7 @@ export class AlbumPlays extends FriendsChildCommand {
 
     let albumInfo = Object.values(albumDetails).filter((v) => v.name)[0];
 
-    let embed = new MessageEmbed()
+    let embed = this.newEmbed()
       .setTitle(
         `Your friends plays of ${albumInfo.name} by ${albumInfo.artist}`
       )

@@ -1,5 +1,4 @@
 import { OverviewChildCommand } from "./OverviewChildCommand";
-import { MessageEmbed } from "discord.js";
 import { numberDisplay, getOrdinal } from "../../../helpers";
 import { LogicError } from "../../../errors";
 
@@ -23,7 +22,7 @@ export class Crowns extends OverviewChildCommand {
       );
 
     if (await this.calculator.hasCrownStats()) {
-      let embed = new MessageEmbed()
+      let embed = this.newEmbed()
         .setAuthor(username + badge, image)
         .setColor(colour).setDescription(`You have ${numberDisplay(
         crownRank!.count,

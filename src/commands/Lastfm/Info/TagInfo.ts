@@ -1,4 +1,3 @@
-import { MessageEmbed } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { InfoCommand } from "./InfoCommand";
 import { numberDisplay } from "../../../helpers";
@@ -27,7 +26,7 @@ export default class TagInfo extends InfoCommand {
 
     let tagInfo = await this.lastFMService.tagInfo({ tag });
 
-    let embed = new MessageEmbed()
+    let embed = this.newEmbed()
       .setTitle(tagInfo.name)
       .addFields(
         {

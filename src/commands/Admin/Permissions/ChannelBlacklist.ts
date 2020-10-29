@@ -1,4 +1,3 @@
-import { MessageEmbed } from "discord.js";
 import { RunAs } from "../../../lib/AliasChecker";
 import { Variation } from "../../../lib/command/BaseCommand";
 import { PermissionsChildCommand } from "./PermissionsChildCommand";
@@ -41,7 +40,7 @@ export class ChannelBlacklist extends PermissionsChildCommand {
       }
     }
 
-    let embed = new MessageEmbed().setDescription(
+    let embed = this.newEmbed().setDescription(
       `${
         blacklistedChannels.success.length
           ? "**Success**: " +

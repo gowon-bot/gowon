@@ -37,7 +37,7 @@ export class View extends PermissionsChildCommand {
         )
       );
 
-      embed = new MessageEmbed()
+      embed = this.newEmbed()
         .setTitle(
           `Permissions for ${this.runAs.toCommandFriendlyName().code()} in ${
             message.guild?.name
@@ -70,7 +70,7 @@ export class View extends PermissionsChildCommand {
       let blacklisted = permissions.filter((p) => p.isBlacklist);
       let whitelisted = permissions.filter((p) => !p.isBlacklist);
 
-      embed = new MessageEmbed()
+      embed = this.newEmbed()
         .setTitle(`Permissions for ${entityName.code()} in ${message.guild?.name}`)
         .setDescription(
           permissions.length
@@ -102,7 +102,7 @@ export class View extends PermissionsChildCommand {
         return acc;
       }, {} as GroupedPermissions);
 
-      embed = new MessageEmbed()
+      embed = this.newEmbed()
         .setTitle(`Permissions for ${message.guild?.name}`)
         .setDescription(
           permissions.length

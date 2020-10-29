@@ -1,5 +1,5 @@
 import { FriendsChildCommand } from "./FriendsChildCommand";
-import { Message, MessageEmbed } from "discord.js";
+import { Message } from "discord.js";
 import { MultiRequester } from "../../../lib/MultiRequester";
 import { numberDisplay } from "../../../helpers";
 
@@ -21,7 +21,7 @@ export class List extends FriendsChildCommand {
       this.user
     );
 
-    let embed = new MessageEmbed()
+    let embed = this.newEmbed()
       .setTitle(
         `${numberDisplay(numberOfFriends, "friend")} for ${
           message.author.username

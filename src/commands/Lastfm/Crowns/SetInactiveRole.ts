@@ -1,5 +1,5 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
-import { Message, MessageEmbed } from "discord.js";
+import { Message } from "discord.js";
 
 export class SetInactiveRole extends CrownsChildCommand {
   description = "Sets the crowns inactive role for the server";
@@ -15,7 +15,7 @@ export class SetInactiveRole extends CrownsChildCommand {
       inactiveRole.id
     );
 
-    let embed = new MessageEmbed().setDescription(
+    let embed = this.newEmbed().setDescription(
       inactiveRole.name
         ? `Set the inactive role for crowns to ${inactiveRole.name}`
         : `Cleared the inactive role`
