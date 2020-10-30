@@ -15,6 +15,7 @@ export interface Command {
   arguments: Arguments;
   secretCommand: boolean;
   shouldBeIndexed: boolean;
+  devCommand?: boolean;
 
   name: string;
   friendlyName: string;

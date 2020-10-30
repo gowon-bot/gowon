@@ -8,13 +8,13 @@ export class GowonClient {
     return users.map((a) => Object.keys(a)[0]);
   }
 
-  isAuthor(userID?: string) {
-    return this.getUserIDs(specialUsers.authors).includes(userID || "");
+  isDeveloper(userID?: string) {
+    return this.getUserIDs(specialUsers.developers).includes(userID || "");
   }
 
   isAlphaTester(userID?: string) {
     return (
-      this.isAuthor(userID) ||
+      this.isDeveloper(userID) ||
       this.getUserIDs(specialUsers.alphaTesters).includes(userID || "")
     );
   }

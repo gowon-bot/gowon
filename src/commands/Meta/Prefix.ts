@@ -17,10 +17,10 @@ export default class Prefix extends BaseCommand {
   async run(_: Message, __: RunAs) {
     if (this.prefix) {
       await this.gowonService.setPrefix(this.guild.id, this.prefix);
-      await this.reply(`The new prefix is ${this.prefix.code()}`);
+      await this.reply(`the new prefix is ${this.prefix.code()}`);
     } else {
       this.prefix = await this.gowonService.prefix(this.guild.id);
-      await this.reply(`The prefix is ${this.prefix.code()}`);
+      await this.reply(`the prefix is ${this.prefix.code()}`);
     }
   }
 }

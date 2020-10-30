@@ -1,5 +1,5 @@
 import { CommandManager } from "../../lib/command/CommandManager";
-import Issue from "./Feedback";
+import Issue from "./Issue";
 import { MetaBaseParentCommand } from "./MetaBaseCommand";
 import { TopCommands } from "./TopCommands";
 

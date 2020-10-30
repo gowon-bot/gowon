@@ -2,7 +2,7 @@ import { numberDisplay } from "../../../helpers";
 import { ListCommand } from "./ListCommand";
 
 export default class AlbumList extends ListCommand {
-  aliases = ["llist", "allist", "topalbums", "topalbum", "albums"];
+  aliases = ["llist", "allist", "topalbums", "topalbum", "albums", "ll"];
   description = "Shows your top albums";
 
   async run() {

@@ -45,6 +45,7 @@ export abstract class BaseCommand implements Command {
   description: string = "No description for this command";
   secretCommand: boolean = false;
   shouldBeIndexed: boolean = true;
+  devCommand: boolean = false;
 
   arguments: Arguments = {};
   validation: Validation = {};
@@ -234,6 +235,7 @@ export abstract class BaseCommand implements Command {
           command.client = this.client;
           command.delegatedFrom = this;
           await command.execute(message, runAs);
+          this.message.channel.stopTyping();
           return;
         }
       }

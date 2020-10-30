@@ -32,7 +32,7 @@ export default class PartyTime extends LastFMBaseCommand {
         this.send(
           currentTime === 0 ? "🎉 NOW 🎊".bold() : `${currentTime}`.bold()
         );
-      }, (time - currentTime) * 1200);
+      }, (time - currentTime) * 1800);
     }
   }
 }

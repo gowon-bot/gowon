@@ -4,6 +4,7 @@ import { Message } from "discord.js";
 import { numberDisplay, ago } from "../../../helpers";
 import { User } from "../../../database/entity/User";
 import { CrownState } from "../../../services/dbservices/CrownsService";
+import { RedirectsService } from "../../../services/dbservices/RedirectsService";
 
 export class Info extends CrownsChildCommand {
   aliases = ["wh"];
@@ -15,6 +16,8 @@ export class Info extends CrownsChildCommand {
       artist: { index: { start: 0 } },
     },
   };
+
+  redirectsService = new RedirectsService(this.logger);
 
   async run(message: Message) {
     let artist = this.parsedArguments.artist as string;
@@ -37,13 +40,27 @@ export class Info extends CrownsChildCommand {
         : { artist }
     );
 
+    let redirectArtistName =
+      (await this.redirectsService.getRedirect(artistDetails.name))?.to ||
+      artistDetails.name;
+
     let crown = await this.crownsService.getCrown(
-      artistDetails.name,
-      message.guild?.id!
+      redirectArtistName,
+      message.guild?.id!,
+      {
+        showDeleted: false,
+        noRedirect: true,
+      }
     );
 
     if (!crown) {
-      await this.reply(`No one has the crown for ${artistDetails.name.bold()}`);
+      await this.reply(
+        `No one has the crown for ${redirectArtistName.bold()}${
+          redirectArtistName !== artistDetails.name
+            ? ` _(redirected from ${artistDetails.name})_`
+            : ""
+        }`
+      );
       return;
     }
 

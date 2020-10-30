@@ -43,7 +43,8 @@ export class CommandHandler {
       message.react("😔");
     }
 
-    await this.runPrefixCommandIfMentioned(message);
+    let client = new GowonClient(this.client);
+    await this.runPrefixCommandIfMentioned(message, client);
 
     if (
       !message.author.bot &&
@@ -67,7 +68,7 @@ export class CommandHandler {
       if (command instanceof ParentCommand)
         command = (command.default && command.default()) || command;
 
-      let client = new GowonClient(this.client);
+      if (command.devCommand && !client.isDeveloper(message.author.id)) return;
 
       let canCheck = await this.adminService.can.run(command, message, client, {
         useChannel: true,
@@ -93,14 +94,16 @@ export class CommandHandler {
     }
   }
 
-  async runPrefixCommandIfMentioned(message: Message) {
+  async runPrefixCommandIfMentioned(message: Message, client: GowonClient) {
     if (
       message.mentions.users
         .array()
         .map((u) => u.id)
         .includes(this.client.user!.id) &&
       message.content.split(/\s+/)[1].toLowerCase() === "prefix" &&
-      !message.author.bot
+      !message.author.bot &&
+      (message.member?.hasPermission("ADMINISTRATOR") ||
+        client.isDeveloper(message.author.id))
     ) {
       let prefix: string | undefined =
         message.content.split(/\s+/)[2] || undefined;

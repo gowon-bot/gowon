@@ -2,7 +2,7 @@ import { numberDisplay } from "../../../helpers";
 import { ListCommand } from "./ListCommand";
 
 export default class TrackList extends ListCommand {
-  aliases = ["tlist", "toptracks", "toptrack", "tracks"];
+  aliases = ["tlist", "toptracks", "toptrack", "tracks", "tl"];
   description = "Shows your top tracks";
 
   async run() {

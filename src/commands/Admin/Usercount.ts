@@ -6,6 +6,7 @@ export default class Usercount extends AdminBaseCommand {
   description = "Count the number of users";
   aliases = ["uc"];
   usage = "";
+  devCommand = true;
 
   async run(message: Message) {
     let usercount = await this.usersService.countUsers();
@@ -14,7 +15,10 @@ export default class Usercount extends AdminBaseCommand {
       this.newEmbed()
         .setAuthor(message.guild?.name!, message.guild?.iconURL() as string)
         .setDescription(
-          `There are ${numberDisplay(usercount, "registered user").bold()} logged into Gowon`
+          `There are ${numberDisplay(
+            usercount,
+            "registered user"
+          ).bold()} logged into Gowon`
         )
     );
   }

@@ -2,7 +2,7 @@ import { numberDisplay } from "../../../helpers";
 import { ListCommand } from "./ListCommand";
 
 export default class ArtistList extends ListCommand {
-  aliases = ["alist", "topartists", "topartist", "artists"];
+  aliases = ["alist", "topartists", "topartist", "artists", "al"];
   description = "Shows your top artists";
 
   async run() {
