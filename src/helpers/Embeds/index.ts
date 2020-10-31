@@ -3,7 +3,7 @@ import { Image } from "../../services/LastFM/LastFMService.types";
 
 export function GowonEmbed(member?: GuildMember) {
   let embed = new MessageEmbed().setColor(
-    member?.roles?.highest?.hexColor || "black"
+    member?.roles?.color?.hexColor || "black"
   );
 
   return embed;

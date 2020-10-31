@@ -1,4 +1,4 @@
-import { RedirectsService } from "../services/dbservices/RedirectsService";
+import { RedirectsService } from "../../services/dbservices/RedirectsService";
 
 interface RedirectsCacheObject {
   [from: string]: string;

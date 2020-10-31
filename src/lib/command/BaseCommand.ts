@@ -292,7 +292,7 @@ export abstract class BaseCommand implements Command {
       let member = await this.guild.members.fetch(id);
       return member.user.username;
     } catch {
-      return "<unknown user>";
+      return this.gowonService.constants.unknownUserDisplay;
     }
   }
 

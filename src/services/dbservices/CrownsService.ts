@@ -60,7 +60,7 @@ export interface CrownHolder {
 export class CrownsService extends BaseService {
   public scribe = new CrownsHistoryService(this.logger, this);
 
-  threshold = this.gowonService.contants.crownThreshold;
+  threshold = this.gowonService.constants.crownThreshold;
 
   private redirectsService = new RedirectsService(this.logger);
 

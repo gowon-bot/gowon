@@ -1,3 +1,4 @@
+import { LogicError } from "../../../errors";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { ListCommand } from "./ListCommand";
 
@@ -17,6 +18,9 @@ export default class List extends ListCommand {
     let type = this.parsedArguments.type as string,
       period = this.parsedArguments.period as string,
       amount = this.parsedArguments.amount as string;
+
+    if (!type || !period || !amount)
+      throw new LogicError("please specify all three arguments!");
 
     let commandstring = await this.gowonService.prefix(this.guild.id);
 

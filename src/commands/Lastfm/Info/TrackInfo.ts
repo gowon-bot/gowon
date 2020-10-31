@@ -71,7 +71,9 @@ export default class TrackInfo extends InfoCommand {
       },
       {
         shouldDisplay: this.tagConsolidator.hasAnyTags(),
-        string: `**Tags:** ${this.tagConsolidator.consolidate().join(" ‧ ")}`,
+        string: `**Tags:** ${this.tagConsolidator
+          .consolidate(Infinity, false)
+          .join(" ‧ ")}`,
       },
       {
         shouldDisplay: linkConsolidator.hasLinks(),

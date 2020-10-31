@@ -6,9 +6,9 @@ import { Delegate } from "../../../lib/command/BaseCommand";
 import { GuildAround } from "./GuildAround";
 import { GuildAt } from "./GuildAt";
 
-export class TopCrownHolders extends CrownsChildCommand {
+export class Guild extends CrownsChildCommand {
   description = "Lists the top crown holders in the server";
-  aliases = ["leaderboard", "ldb", "guild"];
+  aliases = ["leaderboard", "ldb"];
   usage = "";
 
   arguments: Arguments = {
@@ -33,7 +33,7 @@ export class TopCrownHolders extends CrownsChildCommand {
     let [holders, crownsCount] = await Promise.all([
       this.crownsService.topCrownHolders(this.guild.id, message, 20),
       this.crownsService.countAllInServer(this.guild.id),
-    ]); 
+    ]);
 
     let embed = this.newEmbed()
       .setTitle(`Crowns in ${this.guild.name}`)
@@ -45,10 +45,9 @@ export class TopCrownHolders extends CrownsChildCommand {
           holders
             .map(
               (h, idx) =>
-                `${idx + 1}) ${h.user.username} ― ${numberDisplay(
-                  h.numberOfCrowns,
-                  "crown"
-                ).bold()}`
+                `${idx + 1}) ${
+                  h?.user?.username || this.gowonService.constants.unknownUserDisplay
+                } ― ${numberDisplay(h.numberOfCrowns, "crown").bold()}`
             )
             .join("\n")
       );

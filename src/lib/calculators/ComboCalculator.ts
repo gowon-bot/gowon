@@ -1,7 +1,7 @@
 import { RedirectsService } from "../../services/dbservices/RedirectsService";
 import { Track } from "../../services/LastFM/LastFMService.types";
 import { Paginator } from "../Paginator";
-import { RedirectsCache } from "../RedirectsCache";
+import { RedirectsCache } from "../caches/RedirectsCache";
 
 export interface ComboDetails {
   plays: number;

@@ -32,7 +32,7 @@ export default class GoBack extends LastFMBaseCommand {
       },
       date: {
         custom: (string: string) =>
-          parseDate(string.trim(), ...this.gowonService.contants.dateParsers),
+          parseDate(string.trim(), ...this.gowonService.constants.dateParsers),
         index: -1,
       },
     },

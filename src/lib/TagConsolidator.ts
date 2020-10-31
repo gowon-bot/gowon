@@ -12,6 +12,7 @@ export class TagConsolidator {
     "songs seen live",
     "fave",
     "love at first listen",
+    "played",
   ];
 
   tags: string[] = [];

@@ -22,7 +22,7 @@ export default class Scrobbles extends LastFMBaseCommand {
       humanizedTimeRange: { custom: humanizedTimeRangeParser(), index: -1 },
       date: {
         custom: (string: string) =>
-          parseDate(string.trim(), ...this.gowonService.contants.dateParsers),
+          parseDate(string.trim(), ...this.gowonService.constants.dateParsers),
         index: -1,
       },
     },

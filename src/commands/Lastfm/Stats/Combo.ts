@@ -42,7 +42,7 @@ export default class Combo extends LastFMBaseCommand {
 
     let paginator = new Paginator(
       this.lastFMService.recentTracks.bind(this.lastFMService),
-      this.gowonService.contants.hardPageLimit,
+      this.gowonService.constants.hardPageLimit,
       { username, limit: streakAmount }
     );
 

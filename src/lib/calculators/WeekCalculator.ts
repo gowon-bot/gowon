@@ -1,6 +1,6 @@
 import { RedirectsService } from "../../services/dbservices/RedirectsService";
 import { RecentTracks } from "../../services/LastFM/LastFMService.types";
-import { RedirectsCache } from "../RedirectsCache";
+import { RedirectsCache } from "../caches/RedirectsCache";
 
 interface Count {
   [name: string]: number;

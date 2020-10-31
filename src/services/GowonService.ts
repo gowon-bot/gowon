@@ -29,7 +29,7 @@ export class GowonService {
 
   shallowCache = new ShallowCache();
 
-  contants = {
+  constants = {
     hardPageLimit: 5,
     crownThreshold: 30,
     dateParsers: [
@@ -40,6 +40,7 @@ export class GowonService {
       "yy.MM.dd",
       "yyyy.MM.dd",
     ],
+    unknownUserDisplay: "<unknown user>"
   } as const;
 
   async init() {

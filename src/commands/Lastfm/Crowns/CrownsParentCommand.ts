@@ -7,7 +7,7 @@ import { DM } from "./DM";
 import { CheckMany } from "./CheckMany";
 import { TopCrowns } from "./TopCrowns";
 import { ContentiousCrowns } from "./ContentiousCrowns";
-import { TopCrownHolders } from "./TopCrownHolders";
+import { Guild } from "./Guild";
 import { SetInactiveRole } from "./SetInactiveRole";
 import { OptOut } from "./OptOut";
 import { OptIn } from "./OptIn";
@@ -36,7 +36,7 @@ export default class CrownsParentCommand extends LastFMBaseParentCommand {
     checkmany: () => new CheckMany(),
     topcrowns: () => new TopCrowns(),
     contentiouscrowns: () => new ContentiousCrowns(),
-    topcrownholders: () => new TopCrownHolders(),
+    guild: () => new Guild(),
     dm: () => new DM(),
     setinactiverole: () => new SetInactiveRole(),
     setpurgatoryrole: () => new SetPurgatoryRole(),
