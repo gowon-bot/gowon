@@ -38,7 +38,7 @@ ${
     : this.gowonClient.isGowon(this.discordID)
     ? `${Emoji.gowonswag2} _Gowon_\n`
     : this.gowonClient.isAlphaTester(this.discordID)
-    ? ":sunglasses: _Alpha tester_\n"
+    ? `${Emoji.gowonheart} _Alpha tester_\n`
     : ""
 }
 _Scrobbling since ${await this.calculator.joined()}_
