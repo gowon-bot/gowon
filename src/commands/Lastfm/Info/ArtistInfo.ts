@@ -1,4 +1,3 @@
-import { Message } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { InfoCommand } from "./InfoCommand";
 import { numberDisplay } from "../../../helpers";
@@ -25,7 +24,7 @@ export default class ArtistInfo extends InfoCommand {
   crownsService = new CrownsService();
   lineConsolidator = new LineConsolidator();
 
-  async run(message: Message) {
+  async run() {
     let artist = this.parsedArguments.artist as string;
 
     let { senderUsername, username, perspective } = await this.parseMentions({
@@ -45,7 +44,8 @@ export default class ArtistInfo extends InfoCommand {
 
     let crown = await this.crownsService.getCrownDisplay(
       artistInfo.name,
-      message
+      this.guild,
+      this.gowonClient.client
     );
 
     this.tagConsolidator.addTags(artistInfo.tags.tag);

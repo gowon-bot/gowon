@@ -1,14 +1,13 @@
 import { LogicError } from "../../../errors";
 import { Arguments } from "../../../lib/arguments/arguments";
+import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { CrownsChildCommand } from "./CrownsChildCommand";
 
 export class Ban extends CrownsChildCommand {
   description = "Bans a user from the crowns game";
   usage = "@user";
   arguments: Arguments = {
-    mentions: {
-      user: { index: 0 },
-    },
+    mentions: standardMentions,
   };
 
   async run() {
@@ -29,7 +28,7 @@ export class Ban extends CrownsChildCommand {
 
     await this.reply(
       `successfully banned ${
-        (await dbUser.toDiscordUser(this.message))!.username
+        (await dbUser.toDiscordUser(this.gowonClient.client))!.username
       }`
     );
   }

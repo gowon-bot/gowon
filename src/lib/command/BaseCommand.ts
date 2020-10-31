@@ -8,6 +8,7 @@ import {
 } from "../arguments/arguments";
 import {
   LogicError,
+  ReverseLookupError,
   UnknownError,
   UsernameNotRegisteredError,
 } from "../../errors";
@@ -60,7 +61,7 @@ export abstract class BaseCommand implements Command {
   message!: Message;
   guild!: Guild;
   author!: DiscordUser;
-  client!: GowonClient;
+  gowonClient!: GowonClient;
 
   responses: Array<MessageEmbed | string> = [];
 
@@ -163,6 +164,8 @@ export abstract class BaseCommand implements Command {
       dbUser = await this.usersService.getUserFromLastFMUsername(
         mentionedUsername
       );
+
+      if (!dbUser) throw new ReverseLookupError("Last.fm username");
     }
 
     let username = mentionedUsername || senderUser?.lastFMUsername;
@@ -232,7 +235,7 @@ export abstract class BaseCommand implements Command {
       for (let delegate of this.delegates) {
         if (delegate.when(this.parsedArguments)) {
           let command = new delegate.delegateTo();
-          command.client = this.client;
+          command.gowonClient = this.gowonClient;
           command.delegatedFrom = this;
           await command.execute(message, runAs);
           this.message.channel.stopTyping();

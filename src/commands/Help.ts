@@ -44,7 +44,7 @@ export default class Help extends BaseCommand {
     let commands = await this.adminService.can.viewList(
       this.commandManager.list(),
       message,
-      this.client
+      this.gowonClient
     );
 
     interface GroupedCommands {
@@ -102,7 +102,7 @@ export default class Help extends BaseCommand {
 
     if (!command) throw new CommandNotFoundError();
     if (
-      !(await this.adminService.can.run(command, message, this.client)).passed
+      !(await this.adminService.can.run(command, message, this.gowonClient)).passed
     ) {
       message.channel.stopTyping();
       return;
@@ -164,7 +164,7 @@ export default class Help extends BaseCommand {
     let commands = await this.adminService.can.viewList(
       command.children.list(),
       message,
-      this.client
+      this.gowonClient
     );
 
     return this.newEmbed()

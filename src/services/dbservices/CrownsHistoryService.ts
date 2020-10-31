@@ -4,7 +4,7 @@ import { User } from "../../database/entity/User";
 import { Logger } from "../../lib/Logger";
 import { BaseService } from "../BaseService";
 import { CrownCheck, CrownsService, CrownState } from "./CrownsService";
-import { GuildMember, Message, User as DiscordUser } from "discord.js";
+import { Client, GuildMember, Message, User as DiscordUser } from "discord.js";
 import { FindConditions, In } from "typeorm";
 
 export enum CrownEventString {
@@ -149,10 +149,10 @@ export class CrownsHistoryService extends BaseService {
     this.logEvent(crowns, CrownEventString.userOptedOut, discordUser.user);
   }
 
-  async handleCheck(crownCheck: CrownCheck, message: Message) {
+  async handleCheck(crownCheck: CrownCheck, message: Message, client: Client) {
     let { state, crown, oldCrown } = crownCheck;
-    let owner = await User.toDiscordUser(
-      message,
+    let owner = await User.toDiscordUser2(
+      client,
       crownCheck.oldCrown!.user.discordID
     );
 
@@ -227,6 +227,9 @@ export class CrownsHistoryService extends BaseService {
 
     if (eventTypes) findOptions.event = In(eventTypes);
 
-    return await CrownEvent.find(findOptions);
+    return await CrownEvent.find({
+      where: findOptions,
+      order: { happenedAt: "DESC" },
+    });
   }
 }

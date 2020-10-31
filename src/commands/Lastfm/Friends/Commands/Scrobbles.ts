@@ -7,6 +7,7 @@ import {
   TimeRange,
   timeRangeParser,
 } from "../../../../helpers/date";
+import { FriendNotFoundError } from "../../../../errors";
 
 export class Scrobbles extends FriendsChildCommand {
   description = "View how many scrobbles your friends have";
@@ -29,10 +30,14 @@ export class Scrobbles extends FriendsChildCommand {
     let scrobbles = await new MultiRequester([
       ...this.friendUsernames,
       this.senderUsername,
-    ]).fetch(this.lastFMService.getNumberScrobbles.bind(this.lastFMService), [
-      timeRange.from,
-      timeRange.to,
-    ]);
+    ])
+      .fetch(this.lastFMService.getNumberScrobbles.bind(this.lastFMService), [
+        timeRange.from,
+        timeRange.to,
+      ])
+      .catch(() => {
+        throw new FriendNotFoundError();
+      });
 
     let embed = this.newEmbed()
       .setTitle(`Your friends scrobbles ${humanTimeRange}`)

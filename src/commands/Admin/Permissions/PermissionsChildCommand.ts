@@ -71,7 +71,7 @@ export abstract class PermissionsChildCommand extends AdminBaseChildCommand {
     }
 
     for (let user of await Promise.all(
-      userIDs.map((id) => User.toDiscordUser(message, id)!)
+      userIDs.map((id) => User.toDiscordUser2(this.gowonClient.client, id)!)
     )) {
       users.push(user!);
     }

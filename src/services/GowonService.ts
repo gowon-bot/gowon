@@ -40,7 +40,7 @@ export class GowonService {
       "yy.MM.dd",
       "yyyy.MM.dd",
     ],
-    unknownUserDisplay: "<unknown user>"
+    unknownUserDisplay: "???"
   } as const;
 
   async init() {

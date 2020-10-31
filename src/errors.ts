@@ -238,3 +238,19 @@ export class CrownBannedError extends ClientError {
     );
   }
 }
+
+export class ReverseLookupError extends ClientError {
+  name = "ReverseLookupError";
+
+  constructor(entityName: string) {
+    super(`a user with that ${entityName} couldn't be found!`);
+  }
+}
+
+export class FriendNotFoundError extends ClientError {
+  name = "FriendNotFoundError";
+
+  constructor() {
+    super(`one of your friends doesn't exist!`);
+  }
+}

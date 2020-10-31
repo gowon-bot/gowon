@@ -1,33 +1,31 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
-import { Message, User } from "discord.js";
 import { numberDisplay, getOrdinal } from "../../../helpers";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { LogicError } from "../../../errors";
+import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
 export class List extends CrownsChildCommand {
   description = "Lists a user's top crowns";
   usage = ["", "@user"];
 
   arguments: Arguments = {
-    mentions: {
-      user: { index: 0 },
-    },
+    mentions: standardMentions,
   };
 
-  async run(message: Message) {
-    let user = this.parsedArguments.user as User;
+  async run() {
+    let { discordUser: user } = await this.parseMentions({
+      fetchDiscordUser: true,
+      reverseLookup: { lastFM: true },
+    });
 
-    let discordID = user?.id || message.author.id;
+    let discordID = user?.id || this.author.id;
 
-    let perspective = this.usersService.discordPerspective(
-      message.author,
-      user
-    );
+    let perspective = this.usersService.discordPerspective(this.author, user);
 
     let [crowns, crownsCount, rank] = await Promise.all([
-      this.crownsService.listTopCrowns(discordID, message.guild?.id!),
-      this.crownsService.count(discordID, message.guild?.id!),
-      this.crownsService.getRank(discordID, message.guild?.id!),
+      this.crownsService.listTopCrowns(discordID, this.guild.id),
+      this.crownsService.count(discordID, this.guild.id),
+      this.crownsService.getRank(discordID, this.guild.id),
     ]);
 
     if (!rank?.count)
@@ -41,7 +39,7 @@ export class List extends CrownsChildCommand {
         `${perspective.upper.plusToHave} **${numberDisplay(
           crownsCount,
           "** crown"
-        )} in ${message.guild?.name} (ranked ${getOrdinal(
+        )} in ${this.guild.name} (ranked ${getOrdinal(
           rank.rank.toInt()
         ).bold()})\n\n` +
           crowns

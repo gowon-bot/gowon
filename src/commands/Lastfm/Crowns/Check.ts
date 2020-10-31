@@ -50,7 +50,7 @@ export class Check extends CrownsChildCommand {
     let embeds = new CrownEmbeds(
       crownCheck,
       message.author,
-      message,
+      this.gowonClient.client,
       artistDetails.stats.userplaycount.toInt(),
       this.message.member ?? undefined
     );
@@ -62,7 +62,11 @@ export class Check extends CrownsChildCommand {
         crownCheck.crown.plays === crownCheck.oldCrown?.plays
       )
     ) {
-      this.crownsService.scribe.handleCheck(crownCheck, message);
+      this.crownsService.scribe.handleCheck(
+        crownCheck,
+        message,
+        this.gowonClient.client
+      );
     }
 
     let embed =

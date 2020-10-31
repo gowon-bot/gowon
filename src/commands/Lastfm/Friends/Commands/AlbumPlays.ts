@@ -2,6 +2,7 @@ import { FriendsChildCommand } from "../FriendsChildCommand";
 import { MultiRequester } from "../../../../lib/MultiRequester";
 import { numberDisplay } from "../../../../helpers";
 import { Arguments } from "../../../../lib/arguments/arguments";
+import { FriendNotFoundError } from "../../../../errors";
 
 export class AlbumPlays extends FriendsChildCommand {
   description = "View how many plays of an album your friends have";
@@ -15,8 +16,8 @@ export class AlbumPlays extends FriendsChildCommand {
     },
   };
 
-  throwIfNoFriends = true
-  
+  throwIfNoFriends = true;
+
   async run() {
     let artist = this.parsedArguments.artist as string,
       album = this.parsedArguments.album as string;
@@ -33,10 +34,14 @@ export class AlbumPlays extends FriendsChildCommand {
     let albumDetails = await new MultiRequester([
       ...this.friendUsernames,
       this.senderUsername,
-    ]).fetch(this.lastFMService.albumInfo.bind(this.lastFMService), {
-      artist,
-      album,
-    });
+    ])
+      .fetch(this.lastFMService.albumInfo.bind(this.lastFMService), {
+        artist,
+        album,
+      })
+      .catch(() => {
+        throw new FriendNotFoundError();
+      });
 
     let albumInfo = Object.values(albumDetails).filter((v) => v.name)[0];
 

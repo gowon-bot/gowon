@@ -57,7 +57,7 @@ export default class NowPlaying extends LastFMBaseCommand {
 
     if (
       nowPlaying["@attr"]?.nowplaying &&
-      this.client.isAlphaTester(this.author.id)
+      this.gowonClient.isAlphaTester(this.author.id)
     ) {
       this.lastFMService.scrobbleTrack(
         {
@@ -91,7 +91,11 @@ export default class NowPlaying extends LastFMBaseCommand {
     // Types for Promise.allSettled are broken(?), so I have to manually assert the type that's returned
     let [artistInfo, crown] = (await Promise.allSettled([
       this.lastFMService.artistInfo({ artist: track.artist, username }),
-      this.crownsService.getCrownDisplay(track.artist, message),
+      this.crownsService.getCrownDisplay(
+        track.artist,
+        this.guild,
+        this.gowonClient.client
+      ),
     ])) as { status: string; value?: any; reason: any }[];
 
     let crownString = "";

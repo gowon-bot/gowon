@@ -7,7 +7,7 @@ export class Unban extends CrownsChildCommand {
   description = "Unbans a user from the crowns game";
   usage = "@user";
   arguments: Arguments = {
-    mentions: standardMentions
+    mentions: standardMentions,
   };
 
   async run() {
@@ -27,7 +27,7 @@ export class Unban extends CrownsChildCommand {
 
     await this.reply(
       `successfully unbanned ${
-        (await dbUser.toDiscordUser(this.message))!.username
+        (await dbUser.toDiscordUser(this.gowonClient.client))!.username
       }`
     );
   }

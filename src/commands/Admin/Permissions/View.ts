@@ -14,12 +14,7 @@ export class View extends PermissionsChildCommand {
   description =
     "View the permissions in the server, for a specific command, or for a specific user/role";
 
-  usage = [
-    "",
-    "command",
-    "role:roleid or @role",
-    "user:userid or @user",
-  ]
+  usage = ["", "command", "role:roleid or @role", "user:userid or @user"];
 
   throwOnNoCommand = false;
   aliases = ["list"];
@@ -31,6 +26,7 @@ export class View extends PermissionsChildCommand {
     if (this.command) {
       permissions = await addNamesToPermissions(
         message,
+        this.gowonClient.client,
         await this.adminService.listPermissionsForCommand(
           message.guild?.id!,
           this.command.id
@@ -53,7 +49,9 @@ export class View extends PermissionsChildCommand {
                 permissions
                   .map((p) => p.name + (p.isRoleBased ? " (role)" : ""))
                   .join(", ")
-            : `This server doesn't have any permissions set for ${this.runAs.toCommandFriendlyName().code()}!`
+            : `This server doesn't have any permissions set for ${this.runAs
+                .toCommandFriendlyName()
+                .code()}!`
         );
     } else if (this.users.length || this.roles.length) {
       let entity = this.users[0] ?? this.roles[0];
@@ -61,6 +59,8 @@ export class View extends PermissionsChildCommand {
 
       permissions = await addNamesToPermissions(
         message,
+
+        this.gowonClient.client,
         await this.adminService.listPermissionsForEntity(
           message.guild?.id!,
           entity.id
@@ -71,7 +71,9 @@ export class View extends PermissionsChildCommand {
       let whitelisted = permissions.filter((p) => !p.isBlacklist);
 
       embed = this.newEmbed()
-        .setTitle(`Permissions for ${entityName.code()} in ${message.guild?.name}`)
+        .setTitle(
+          `Permissions for ${entityName.code()} in ${message.guild?.name}`
+        )
         .setDescription(
           permissions.length
             ? (blacklisted.length
@@ -92,6 +94,7 @@ export class View extends PermissionsChildCommand {
     } else {
       permissions = await addNamesToPermissions(
         message,
+        this.gowonClient.client,
         await this.adminService.listPermissions(message.guild?.id!)
       );
 

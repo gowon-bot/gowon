@@ -85,7 +85,10 @@ export class Info extends CrownsChildCommand {
     }
 
     if (crown.user.id) {
-      let holderUser = await User.toDiscordUser(message, crown.user.discordID);
+      let holderUser = await User.toDiscordUser2(
+        this.gowonClient.client,
+        crown.user.discordID
+      );
 
       let holderUsername = holderUser?.username;
 
@@ -108,7 +111,7 @@ export class Info extends CrownsChildCommand {
           _It ${
             crown.version === 0
               ? "has never been stolen"
-              : "has been stolen " + numberDisplay(crown.version, "time")
+              : "has been stolen " + numberDisplay(crown.version - 1, "time")
           }_`
         );
 

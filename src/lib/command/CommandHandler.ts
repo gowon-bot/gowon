@@ -88,7 +88,7 @@ export class CommandHandler {
 
       this.metaService.recordCommandRun(command.id, message);
 
-      command.client = client;
+      command.gowonClient = client;
 
       await command.execute(message, runAs);
     }

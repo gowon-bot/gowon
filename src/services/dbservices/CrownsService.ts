@@ -11,7 +11,7 @@ import {
   NotBannedError,
   RecordNotFoundError,
 } from "../../errors";
-import { Message, User as DiscordUser } from "discord.js";
+import { Client, Guild, Message, User as DiscordUser } from "discord.js";
 import { BaseService } from "../BaseService";
 import { FindManyOptions } from "typeorm";
 import { Setting } from "../../database/entity/Setting";
@@ -299,13 +299,14 @@ export class CrownsService extends BaseService {
 
   async getCrownDisplay(
     artistName: string,
-    message: Message
+    guild: Guild,
+    client: Client
   ): Promise<{ crown: Crown; user?: DiscordUser } | undefined> {
-    let crown = await this.getCrown(artistName, message.guild?.id!);
+    let crown = await this.getCrown(artistName, guild.id);
 
     if (!crown) return;
 
-    let user = await crown.user.toDiscordUser(message);
+    let user = await crown.user.toDiscordUser(client);
 
     return { crown, user };
   }
@@ -392,17 +393,35 @@ export class CrownsService extends BaseService {
     });
   }
 
-  async topCrownHolders(
+  async guild(
     serverID: string,
-    message: Message,
+    client: Client,
     limit = 10
   ): Promise<CrownHolder[]> {
     this.log("Listing top crown holders in server " + serverID);
+
     let users = await Crown.guild(serverID, limit);
 
     return await Promise.all(
       users.map(async (rch) => ({
-        user: (await User.toDiscordUser(message, rch.discordID))!,
+        user: (await User.toDiscordUser2(client, rch.discordID))!,
+        numberOfCrowns: rch.count.toInt(),
+      }))
+    );
+  }
+
+  async topCrownHolders2(
+    serverID: string,
+    client: Client,
+    limit = 10
+  ): Promise<CrownHolder[]> {
+    this.log("Listing top crown holders in server " + serverID);
+
+    let users = await Crown.guild(serverID, limit);
+
+    return await Promise.all(
+      users.map(async (rch) => ({
+        user: (await User.toDiscordUser2(client, rch.discordID))!,
         numberOfCrowns: rch.count.toInt(),
       }))
     );

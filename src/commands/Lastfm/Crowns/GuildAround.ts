@@ -1,8 +1,8 @@
-import { Message } from "discord.js";
 import { CrownsChildCommand } from "./CrownsChildCommand";
 import { numberDisplay } from "../../../helpers";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { LogicError } from "../../../errors";
+import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
 export class GuildAround extends CrownsChildCommand {
   aliases = ["guildme"];
@@ -11,18 +11,19 @@ export class GuildAround extends CrownsChildCommand {
   usage = ["", "@user"];
 
   arguments: Arguments = {
-    mentions: {
-      user: { index: 0 },
-    },
+    mentions: standardMentions,
   };
 
-  async run(message: Message) {
-    let { discordUser } = await this.parseMentions();
+  async run() {
+    let { discordUser } = await this.parseMentions({
+      fetchDiscordUser: true,
+      reverseLookup: { lastFM: true },
+    });
 
     let discordID = discordUser?.id || this.author.id;
 
     let guildAround = await this.crownsService.guildAround(
-      message.guild!.id!,
+      this.guild.id,
       discordID
     );
     let author = guildAround.users.find((u) => u.discordID === discordID);
@@ -43,9 +44,9 @@ export class GuildAround extends CrownsChildCommand {
           await Promise.all(
             guildAround.users.map(
               async (u) =>
-                `${u.rank}. ${u.discordID === author?.discordID ? "**" : ""}${
-                  (await this.fetchUsername(u.discordID))
-                }${
+                `${u.rank}. ${
+                  u.discordID === author?.discordID ? "**" : ""
+                }${await this.fetchUsername(u.discordID)}${
                   u.discordID === author?.discordID ? "**" : ""
                 } with ${numberDisplay(u.count, "crown")}`
             )

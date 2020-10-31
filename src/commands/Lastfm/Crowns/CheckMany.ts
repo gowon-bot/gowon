@@ -50,7 +50,11 @@ export class CheckMany extends CrownsChildCommand {
     let checkedCrowns = await Promise.all(crownChecks);
 
     checkedCrowns.forEach((cc) =>
-      this.crownsService.scribe.handleCheck(cc, message)
+      this.crownsService.scribe.handleCheck(
+        cc,
+        message,
+        this.gowonClient.client
+      )
     );
 
     let display = checkedCrowns.reduce((acc, cc, idx) => {

@@ -2,8 +2,8 @@ import { CrownCheck } from "../../services/dbservices/CrownsService";
 import {
   User as DiscordUser,
   MessageEmbed,
-  Message,
   GuildMember,
+  Client,
 } from "discord.js";
 import { numberDisplay } from "..";
 import { User as DBUser } from "../../database/entity/User";
@@ -14,7 +14,7 @@ export class CrownEmbeds {
   constructor(
     private crownCheck: CrownCheck,
     private user: DiscordUser,
-    private message: Message,
+    private client: Client,
     private plays: number,
     private member?: GuildMember
   ) {}
@@ -54,8 +54,8 @@ export class CrownEmbeds {
 
   async snatchedCrown(): Promise<MessageEmbed> {
     let holderUsername = (
-      await DBUser.toDiscordUser(
-        this.message,
+      await DBUser.toDiscordUser2(
+        this.client,
         this.crownCheck.oldCrown!.user.discordID
       )
     )?.username;
@@ -81,8 +81,8 @@ export class CrownEmbeds {
 
   async fail(): Promise<MessageEmbed> {
     let holderUsername = (
-      await DBUser.toDiscordUser(
-        this.message,
+      await DBUser.toDiscordUser2(
+        this.client,
         this.crownCheck.oldCrown!.user.discordID
       )
     )?.username;
@@ -124,8 +124,8 @@ You must have at least ${numberDisplay(
 
   async tie(): Promise<MessageEmbed> {
     let holderUsername = (
-      await DBUser.toDiscordUser(
-        this.message,
+      await DBUser.toDiscordUser2(
+        this.client,
         this.crownCheck.oldCrown!.user.discordID
       )
     )?.username;
@@ -148,8 +148,8 @@ It's a tie! ${holderUsername} will keep the crown for ${
 
   async inactivity(): Promise<MessageEmbed> {
     let holderUsername = (
-      await DBUser.toDiscordUser(
-        this.message,
+      await DBUser.toDiscordUser2(
+        this.client,
         this.crownCheck.oldCrown!.user.discordID
       )
     )?.username;
@@ -172,8 +172,8 @@ It's a tie! ${holderUsername} will keep the crown for ${
 
   async purgatory(): Promise<MessageEmbed> {
     let holderUsername = (
-      await DBUser.toDiscordUser(
-        this.message,
+      await DBUser.toDiscordUser2(
+        this.client,
         this.crownCheck.oldCrown!.user.discordID
       )
     )?.username;
@@ -210,8 +210,8 @@ It's a tie! ${holderUsername} will keep the crown for ${
 
   async banned(): Promise<MessageEmbed> {
     let holderUsername = (
-      await DBUser.toDiscordUser(
-        this.message,
+      await DBUser.toDiscordUser2(
+        this.client,
         this.crownCheck.oldCrown!.user.discordID
       )
     )?.username;

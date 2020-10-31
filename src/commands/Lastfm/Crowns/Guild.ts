@@ -1,5 +1,4 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
-import { Message } from "discord.js";
 import { numberDisplay } from "../../../helpers";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { Delegate } from "../../../lib/command/BaseCommand";
@@ -29,9 +28,9 @@ export class Guild extends CrownsChildCommand {
     },
   ];
 
-  async run(message: Message) {
+  async run() {
     let [holders, crownsCount] = await Promise.all([
-      this.crownsService.topCrownHolders(this.guild.id, message, 20),
+      this.crownsService.guild(this.guild.id, this.gowonClient.client, 20),
       this.crownsService.countAllInServer(this.guild.id),
     ]);
 
@@ -46,7 +45,8 @@ export class Guild extends CrownsChildCommand {
             .map(
               (h, idx) =>
                 `${idx + 1}) ${
-                  h?.user?.username || this.gowonService.constants.unknownUserDisplay
+                  h?.user?.username ||
+                  this.gowonService.constants.unknownUserDisplay
                 } ― ${numberDisplay(h.numberOfCrowns, "crown").bold()}`
             )
             .join("\n")

@@ -2,6 +2,7 @@ import { FriendsChildCommand } from "./FriendsChildCommand";
 import { Message } from "discord.js";
 import { MultiRequester } from "../../../lib/MultiRequester";
 import { numberDisplay } from "../../../helpers";
+import { FriendNotFoundError } from "../../../errors";
 
 export class List extends FriendsChildCommand {
   aliases = ["fm", "np", "nowplaying"];
@@ -11,10 +12,11 @@ export class List extends FriendsChildCommand {
   throwIfNoFriends = true;
 
   async run(message: Message) {
-    let nowPlayings = await new MultiRequester(this.friendUsernames).fetch(
-      this.lastFMService.nowPlayingParsed.bind(this.lastFMService),
-      []
-    );
+    let nowPlayings = await new MultiRequester(this.friendUsernames)
+      .fetch(this.lastFMService.nowPlayingParsed.bind(this.lastFMService), [])
+      .catch(() => {
+        throw new FriendNotFoundError();
+      });
 
     let numberOfFriends = await this.friendsService.friendsCount(
       message.guild?.id!,

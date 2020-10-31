@@ -1,45 +1,43 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
-import { Message, User } from "discord.js";
 import { numberDisplay, chunkArray } from "../../../helpers";
 import { Arguments } from "../../../lib/arguments/arguments";
+import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
 export class DM extends CrownsChildCommand {
   description = "DMs you a users crowns";
-  aliases = ["me"]
+  aliases = ["me"];
   usage = ["", "@user"];
 
   arguments: Arguments = {
-    mentions: {
-      user: { index: 0 },
-    },
+    mentions: standardMentions,
   };
 
-  async run(message: Message) {
+  async run() {
     const crownsPerMessage = 40;
 
-    let user = this.parsedArguments.user as User;
+    let { discordUser: user } = await this.parseMentions({
+      fetchDiscordUser: true,
+      reverseLookup: { lastFM: true },
+    });
 
-    let discordID = user?.id || message.author.id;
+    let discordID = user?.id || this.author.id;
 
-    let perspective = this.usersService.discordPerspective(
-      message.author,
-      user
-    );
+    let perspective = this.usersService.discordPerspective(this.author, user);
 
     let [crowns, crownsCount] = await Promise.all([
-      this.crownsService.listTopCrowns(discordID, message.guild?.id!, -1),
-      this.crownsService.count(discordID, message.guild?.id!),
+      this.crownsService.listTopCrowns(discordID, this.guild.id, -1),
+      this.crownsService.count(discordID, this.guild.id),
     ]);
 
     this.reply(`sending you a list of ${perspective.possessive} crowns...`);
 
     let chunks = chunkArray(crowns, crownsPerMessage);
 
-    message.author.send(
+    this.author.send(
       `${perspective.upper.plusToHave} ${numberDisplay(
         crownsCount,
         "crown"
-      )} in ${message.guild?.name}`
+      )} in ${this.guild.name}`
     );
 
     chunks
@@ -61,6 +59,6 @@ export class DM extends CrownsChildCommand {
             )
           )
       )
-      .forEach((e) => message.author.send(e));
+      .forEach((e) => this.author.send(e));
   }
 }

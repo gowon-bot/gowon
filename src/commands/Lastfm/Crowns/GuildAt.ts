@@ -1,4 +1,3 @@
-import { Message } from "discord.js";
 import { CrownsChildCommand } from "./CrownsChildCommand";
 import { numberDisplay } from "../../../helpers";
 import { Arguments } from "../../../lib/arguments/arguments";
@@ -11,10 +10,10 @@ export class GuildAt extends CrownsChildCommand {
     },
   };
 
-  async run(message: Message) {
+  async run() {
     let rank = this.parsedArguments.rank as number;
 
-    let guildAt = await this.crownsService.guildAt(message.guild!.id!, rank);
+    let guildAt = await this.crownsService.guildAt(this.guild.id, rank);
     let highlighted = guildAt.users.find((u) => u.rank.toInt() === rank);
 
     if (!guildAt.users.length)

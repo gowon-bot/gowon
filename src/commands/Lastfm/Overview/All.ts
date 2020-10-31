@@ -33,11 +33,11 @@ export class All extends OverviewChildCommand {
       .setDescription(
         `
 ${
-  this.client.isDeveloper(this.discordID)
+  this.gowonClient.isDeveloper(this.discordID)
     ? `${Emoji.typescript} _Author_\n`
-    : this.client.isGowon(this.discordID)
+    : this.gowonClient.isGowon(this.discordID)
     ? `${Emoji.gowonswag2} _Gowon_\n`
-    : this.client.isAlphaTester(this.discordID)
+    : this.gowonClient.isAlphaTester(this.discordID)
     ? ":sunglasses: _Alpha tester_\n"
     : ""
 }

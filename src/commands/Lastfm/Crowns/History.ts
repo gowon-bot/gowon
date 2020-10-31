@@ -3,6 +3,8 @@ import { Arguments } from "../../../lib/arguments/arguments";
 import { Message } from "discord.js";
 import { dateDisplay } from "../../../helpers";
 import { CrownEventString } from "../../../services/dbservices/CrownsHistoryService";
+import { LogicError } from "../../../errors";
+import { CrownEvent } from "../../../database/entity/meta/CrownEvent";
 
 export class History extends CrownsChildCommand {
   aliases = ["hist"];
@@ -46,7 +48,10 @@ export class History extends CrownsChildCommand {
 
     let history = await this.crownsService.scribe.getHistory(crown, [
       CrownEventString.snatched,
+      CrownEventString.created,
     ]);
+
+    if (!history.length) throw new LogicError("that crown has no history yet!");
 
     this.send(
       this.newEmbed()
@@ -54,17 +59,25 @@ export class History extends CrownsChildCommand {
           `Crown history for ${crown.artistName}${crown.redirectDisplay()}`
         )
         .setDescription(
-          "```" +
-            history
-              .map(
-                (h) =>
-                  `${dateDisplay(h.happenedAt)} - snatched by ${
-                    h.perpetuatorUsername
-                  } (${h.oldCrown!.plays} → ${h.newCrown.plays})`
-              )
-              .join("\n") +
-            "```"
+          "```" + history.map(this.displayEvent).join("\n") + "```"
         )
     );
+  }
+
+  private displayEvent(event: CrownEvent): string {
+    switch (event.event) {
+      case CrownEventString.created:
+        return `${dateDisplay(event.happenedAt)} - created by ${
+          event.perpetuatorUsername
+        } (${event.newCrown.plays})`;
+
+      case CrownEventString.snatched:
+        return `${dateDisplay(event.happenedAt)} - snatched by ${
+          event.perpetuatorUsername
+        } (${event.oldCrown!.plays} → ${event.newCrown.plays})`;
+
+      default:
+        return "";
+    }
   }
 }
