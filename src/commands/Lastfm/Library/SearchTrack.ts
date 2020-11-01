@@ -25,13 +25,13 @@ export default class SearchTrack extends SearchCommand {
 
     let paginator = new Paginator(
       this.lastFMService.topTracks.bind(this.lastFMService),
-      ["stdeep", "std"].includes(runAs.lastString()) ? 6 : 3,
+      runAs.variationWasUsed("stdeep", "std") ? 6 : 3,
       { username, limit: 1000 }
     );
 
     let topTracks = await paginator.getAll({
       concatTo: "track",
-      concurrent: ["stdeep", "std"].includes(runAs.lastString()),
+      concurrent: runAs.variationWasUsed("stdeep", "std"),
     });
 
     let filtered = topTracks.track.filter((t) =>

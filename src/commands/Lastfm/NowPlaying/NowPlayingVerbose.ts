@@ -124,27 +124,27 @@ export default class NowPlayingVerbose extends LastFMBaseCommand {
       // Top line
       {
         shouldDisplay: !!artistPlays && !!trackPlays && !!crownString,
-        string: `${artistPlays} | ${trackPlays} | ${crownString}`,
+        string: `${artistPlays} • ${trackPlays} • ${crownString}`,
       },
       {
         shouldDisplay: !!artistPlays && !!trackPlays && !crownString,
-        string: `${artistPlays} | ${trackPlays}`,
+        string: `${artistPlays} • ${trackPlays}`,
       },
       {
         shouldDisplay: !!artistPlays && !trackPlays && !!crownString,
-        string: `${artistPlays} | ${crownString}`,
+        string: `${artistPlays} • ${crownString}`,
       },
       {
         shouldDisplay: !artistPlays && !!trackPlays && !!crownString,
-        string: `${noArtistData} | ${trackPlays} | ${crownString}`,
+        string: `${noArtistData} • ${trackPlays} • ${crownString}`,
       },
       {
         shouldDisplay: !artistPlays && !trackPlays && !!crownString,
-        string: `${noArtistData} | ${crownString}`,
+        string: `${noArtistData} • ${crownString}`,
       },
       {
         shouldDisplay: !artistPlays && !!trackPlays && !crownString,
-        string: `${noArtistData} | ${trackPlays}`,
+        string: `${noArtistData} • ${trackPlays}`,
       },
       {
         shouldDisplay: !!artistPlays && !trackPlays && !crownString,

@@ -24,6 +24,7 @@ export class Kill extends CrownsChildCommand {
 
     let crown = await this.crownsService.getCrown(artist, message.guild?.id!, {
       noRedirect: true,
+      caseSensitive: true,
     });
 
     if (!crown)

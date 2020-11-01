@@ -40,13 +40,13 @@ export class Me extends JumbleChildCommand {
       return;
     }
 
-    let poolAmount = this.parsedArguments.poolAmount as number
+    let poolAmount = this.parsedArguments.poolAmount as number;
 
     if (poolAmount < 5 || poolAmount > 1000)
       throw new LogicError("Please enter a number between 5 and 1000!");
 
     let artist = await this.jumbleCalculator.getArtist(poolAmount, {
-      nonAscii: runAs.lastString().toLowerCase() === "nonascii",
+      nonAscii: runAs.variationWasUsed("nonascii"),
     });
 
     if (!artist)

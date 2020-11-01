@@ -25,13 +25,13 @@ export default class SearchAlbum extends SearchCommand {
 
     let paginator = new Paginator(
       this.lastFMService.topAlbums.bind(this.lastFMService),
-      ["sldeep", "sld"].includes(runAs.lastString()) ? 4 : 2,
+      runAs.variationWasUsed("sldeep", "sld") ? 4 : 2,
       { username, limit: 1000 }
     );
 
     let topAlbums = await paginator.getAll({
       concatTo: "album",
-      concurrent: ["sldeep", "sld"].includes(runAs.lastString()),
+      concurrent: runAs.variationWasUsed("sldeep", "sld"),
     });
 
     let filtered = topAlbums.album.filter((a) =>

@@ -27,7 +27,7 @@ export class Blacklist extends PermissionsChildCommand {
           message.guild?.id!,
           this.command.id,
           true,
-          runAs.lastString() !== "whitelist",
+          !runAs.variationWasUsed("whitelist"),
           this.runAs.toCommandFriendlyName()
         );
 
@@ -47,7 +47,7 @@ export class Blacklist extends PermissionsChildCommand {
           message.guild?.id!,
           this.command.id,
           false,
-          runAs.lastString() !== "whitelist",
+          !runAs.variationWasUsed("whitelist"),
           this.runAs.toCommandFriendlyName()
         );
 
@@ -64,7 +64,7 @@ export class Blacklist extends PermissionsChildCommand {
       .setTitle(`New permissions`)
       .setDescription(
         `${
-          runAs.lastString() === "whitelist" ? "Whitelisted" : "Blacklisted"
+          runAs.variationWasUsed("whitelist") ? "Whitelisted" : "Blacklisted"
         } ${this.runAs.toCommandFriendlyName().code()} for:\n` +
           (createdRolePermissions.length
             ? `Roles: ${createdRolePermissions

@@ -19,7 +19,7 @@ export class ChannelBlacklist extends PermissionsChildCommand {
 
     for (let channel of mentionedChannels) {
       try {
-        runAs.lastString().toLowerCase() !== "channelunblacklist"
+        !runAs.variationWasUsed("channelunblacklist")
           ? await this.adminService.blacklistCommandFromChannel(
               this.guild.id,
               this.command.id,

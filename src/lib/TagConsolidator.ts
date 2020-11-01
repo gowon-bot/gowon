@@ -13,6 +13,8 @@ export class TagConsolidator {
     "fave",
     "love at first listen",
     "played",
+    "personal favourites",
+    "personal favorites",
   ];
 
   tags: string[] = [];

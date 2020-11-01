@@ -45,7 +45,7 @@ export class ComboCalculator {
     return (
       this.streakEnded[entity] !== true &&
       (this.combo[entity]?.name === undefined ||
-        this.combo[entity]?.name === entityName)
+        this.combo[entity]?.name.toLowerCase() === entityName.toLowerCase())
     );
   }
 

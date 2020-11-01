@@ -108,6 +108,15 @@ export class CrownsService extends BaseService {
     artistName: string,
     artistRedirect: ArtistRedirect
   ): Promise<CrownCheck> {
+    if (plays < this.threshold) {
+      return {
+        state: CrownState.fail,
+        crown,
+        artistName,
+        redirect: artistRedirect,
+      };
+    }
+
     crown.user = user;
     crown.plays = plays;
 
@@ -259,6 +268,7 @@ export class CrownsService extends BaseService {
       requester?: DiscordUser;
       showDeleted?: boolean;
       noRedirect?: boolean;
+      caseSensitive?: boolean;
     } = { refresh: false, showDeleted: true, noRedirect: false }
   ): Promise<Crown | undefined> {
     this.log("Fetching crown for " + artistName);
@@ -276,7 +286,12 @@ export class CrownsService extends BaseService {
     }
 
     let crown = await Crown.findOne({
-      where: { artistName: ILike(crownArtistName), serverID },
+      where: {
+        artistName: options.caseSensitive
+          ? crownArtistName
+          : ILike(crownArtistName),
+        serverID,
+      },
       withDeleted: options.showDeleted,
     });
 

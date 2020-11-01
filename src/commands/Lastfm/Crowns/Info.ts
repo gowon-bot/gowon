@@ -3,13 +3,22 @@ import { Arguments } from "../../../lib/arguments/arguments";
 import { Message } from "discord.js";
 import { numberDisplay, ago } from "../../../helpers";
 import { User } from "../../../database/entity/User";
-import { CrownState } from "../../../services/dbservices/CrownsService";
 import { RedirectsService } from "../../../services/dbservices/RedirectsService";
+import { Variation } from "../../../lib/command/BaseCommand";
+import { RunAs } from "../../../lib/AliasChecker";
+import { createInvalidBadge } from "../../../helpers/crowns";
 
 export class Info extends CrownsChildCommand {
   aliases = ["wh"];
-  description = "Shows information about a crown";
+  description = "Shows who has a crown";
   usage = ["", "artist"];
+
+  variations: Variation[] = [
+    {
+      variationString: "whv",
+      description: "Shows some more information about the crown",
+    },
+  ];
 
   arguments: Arguments = {
     inputs: {
@@ -19,7 +28,7 @@ export class Info extends CrownsChildCommand {
 
   redirectsService = new RedirectsService(this.logger);
 
-  async run(message: Message) {
+  async run(message: Message, runAs: RunAs) {
     let artist = this.parsedArguments.artist as string;
 
     let { senderUsername, senderUser } = await this.parseMentions({
@@ -46,7 +55,7 @@ export class Info extends CrownsChildCommand {
 
     let crown = await this.crownsService.getCrown(
       redirectArtistName,
-      message.guild?.id!,
+      this.guild.id,
       {
         showDeleted: false,
         noRedirect: true,
@@ -66,16 +75,7 @@ export class Info extends CrownsChildCommand {
 
     let invalidCheck = await crown?.invalid(message);
 
-    let invalidBadge =
-      invalidCheck.reason === CrownState.inactivity
-        ? " [Inactive]"
-        : invalidCheck.reason === CrownState.left
-        ? " [Left the server]"
-        : invalidCheck.reason === CrownState.purgatory
-        ? " [Purgatory]"
-        : invalidCheck.reason === CrownState.banned
-        ? " [Crown banned]"
-        : "";
+    let invalidBadge = createInvalidBadge(invalidCheck.reason);
 
     if (crown.user.id === senderUser?.id && artistDetails.stats.userplaycount) {
       crown.plays = artistDetails.stats.userplaycount.toInt();
@@ -92,30 +92,42 @@ export class Info extends CrownsChildCommand {
 
       let holderUsername = holderUser?.username;
 
-      let embed = this.newEmbed()
-        .setTitle(
-          `Who has ${crown.artistName.bold()}?` + crown.redirectDisplay()
-        )
-        .setDescription(
-          `${
-            holderUsername || "???"
-          }${invalidBadge} has the crown for ${crown.artistName.bold()} with ${numberDisplay(
-            crown.plays,
-            "play"
-          )}
+      if (runAs.variationWasUsed("whv")) {
+        let embed = this.newEmbed()
+          .setTitle(
+            `Who has ${crown.artistName.bold()}?` + crown.redirectDisplay()
+          )
+          .setDescription(
+            `${
+              holderUsername || "???"
+            }${invalidBadge} has the crown for ${crown.artistName.bold()} with ${numberDisplay(
+              crown.plays,
+              "play"
+            )}
 
           Created ${ago(crown.createdAt)}${
-            crown.version > 1 ? ". Last stolen " + ago(crown.lastStolen) : ""
-          }
+              crown.version > 1 ? ". Last stolen " + ago(crown.lastStolen) : ""
+            }
 
           _It ${
             crown.version === 0
               ? "has never been stolen"
-              : "has been stolen " + numberDisplay(crown.version - 1, "time")
+              : "has been stolen " + numberDisplay(crown.version, "time")
           }_`
-        );
+          );
 
-      await this.send(embed);
+        await this.send(embed);
+      } else {
+        await this.reply(
+          `${
+            holderUsername?.bold() ||
+            this.gowonService.constants.unknownUserDisplay
+          }${invalidBadge} has the crown for ${crown.artistName.bold()} with **${numberDisplay(
+            crown.plays,
+            "**play"
+          )}.`
+        );
+      }
     }
   }
 }

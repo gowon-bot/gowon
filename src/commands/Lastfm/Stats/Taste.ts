@@ -193,7 +193,7 @@ export default class Taste extends LastFMBaseCommand {
         }% match) found.`
       );
 
-    if (runAs.lastString() === "tb") {
+    if (runAs.variationWasUsed("tb")) {
       let padder = new StringPadder((val) => `${val}`);
       let maxArtists = 20;
 

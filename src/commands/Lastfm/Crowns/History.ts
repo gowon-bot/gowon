@@ -65,6 +65,7 @@ export class History extends CrownsChildCommand {
   }
 
   private displayEvent(event: CrownEvent): string {
+    console.log(event);
     switch (event.event) {
       case CrownEventString.created:
         return `${dateDisplay(event.happenedAt)} - created by ${

@@ -25,13 +25,13 @@ export default class SearchArtist extends SearchCommand {
 
     let paginator = new Paginator(
       this.lastFMService.topArtists.bind(this.lastFMService),
-      ["sadeep", "sad"].includes(runAs.lastString()) ? 4 : 2,
+      runAs.variationWasUsed("sadeep", "sad") ? 4 : 2,
       { username, limit: 1000 }
     );
 
     let topArtists = await paginator.getAll({
       concatTo: "artist",
-      concurrent: ["sadeep", "sad"].includes(runAs.lastString()),
+      concurrent: runAs.variationWasUsed("sadeep", "sad"),
     });
 
     let filtered = topArtists.artist.filter((a) =>
