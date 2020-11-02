@@ -102,6 +102,7 @@ _You can find the source code for all the commands at [/src/commands](/src/comma
   - `guildat`, shows the crowns guild at a certain rank
   - `guildaround`, shows the crowns guild around you
   - `crownranks`, see the ranks of your crowns
+  - `artist`/`unbanartist`, bans/unbans users from getting the crown for a certain artist
 - External
   - `rateyourmusic`, searches RateYourMusic for an album
   - `whosampled`, searches WhoSampled for a track
