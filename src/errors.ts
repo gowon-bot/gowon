@@ -251,6 +251,30 @@ export class FriendNotFoundError extends ClientError {
   name = "FriendNotFoundError";
 
   constructor() {
-    super(`one of your friends doesn't exist!`);
+    super("one of your friends doesn't exist!");
+  }
+}
+
+export class ArtistAlreadyCrownBannedError extends ClientError {
+  name = "ArtistAlreadyCrownBannedError";
+
+  constructor() {
+    super("that artist has already been crown banned!");
+  }
+}
+
+export class ArtistNotCrownBannedError extends ClientError {
+  name = "ArtistNotCrownBannedError";
+
+  constructor() {
+    super("that artist is already not crown banned!");
+  }
+}
+
+export class ArtistCrownBannedError extends ClientError {
+  name = "ArtistCrownBannedError";
+
+  constructor(artist: string) {
+    super(`it is not possible to get the crown for ${artist.bold()}!`);
   }
 }

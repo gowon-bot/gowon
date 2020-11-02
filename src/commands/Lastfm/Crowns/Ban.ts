@@ -11,7 +11,10 @@ export class Ban extends CrownsChildCommand {
   };
 
   async run() {
-    let { dbUser, senderUser } = await this.parseMentions();
+    let { dbUser, senderUser, discordUser } = await this.parseMentions({
+      fetchDiscordUser: true,
+      reverseLookup: { lastFM: true },
+    });
 
     if (!dbUser) throw new LogicError("please mention a valid user");
 
@@ -22,7 +25,7 @@ export class Ban extends CrownsChildCommand {
     this.crownsService.scribe.ban(
       dbUser,
       this.message.author,
-      this.message.mentions.members!.array()[0].user,
+      discordUser!,
       this.guild.id
     );
 

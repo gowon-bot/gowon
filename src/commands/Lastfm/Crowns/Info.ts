@@ -7,6 +7,7 @@ import { RedirectsService } from "../../../services/dbservices/RedirectsService"
 import { Variation } from "../../../lib/command/BaseCommand";
 import { RunAs } from "../../../lib/AliasChecker";
 import { createInvalidBadge } from "../../../helpers/crowns";
+import { ArtistCrownBannedError } from "../../../errors";
 
 export class Info extends CrownsChildCommand {
   aliases = ["wh"];
@@ -63,8 +64,17 @@ export class Info extends CrownsChildCommand {
     );
 
     if (!crown) {
+      if (
+        await this.gowonService.isArtistCrownBanned(
+          this.guild,
+          redirectArtistName
+        )
+      ) {
+        throw new ArtistCrownBannedError(redirectArtistName);
+      }
+
       await this.reply(
-        `No one has the crown for ${redirectArtistName.bold()}${
+        `no one has the crown for ${redirectArtistName.bold()}${
           redirectArtistName !== artistDetails.name
             ? ` _(redirected from ${artistDetails.name})_`
             : ""
@@ -85,7 +95,7 @@ export class Info extends CrownsChildCommand {
     }
 
     if (crown.user.id) {
-      let holderUser = await User.toDiscordUser2(
+      let holderUser = await User.toDiscordUser(
         this.gowonClient.client,
         crown.user.discordID
       );

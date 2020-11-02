@@ -37,7 +37,7 @@ export class Permission extends BaseEntity {
   }
 
   async toDiscordUser(client: Client): Promise<DiscordUser> {
-    return (await User.toDiscordUser2(client, this.entityID))!;
+    return (await User.toDiscordUser(client, this.entityID))!;
   }
 
   async toDiscordRole(message: Message): Promise<Role> {

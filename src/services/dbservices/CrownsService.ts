@@ -8,6 +8,9 @@ import {
 import { User } from "../../database/entity/User";
 import {
   AlreadyBannedError,
+  ArtistAlreadyCrownBannedError,
+  ArtistCrownBannedError,
+  ArtistNotCrownBannedError,
   NotBannedError,
   RecordNotFoundError,
 } from "../../errors";
@@ -23,6 +26,7 @@ import { CrownsHistoryService } from "./CrownsHistoryService";
 import { RedirectsService } from "./RedirectsService";
 import { ILike } from "../../extensions/typeorm";
 import { ArtistRedirect } from "../../database/entity/ArtistRedirect";
+import { ArtistCrownBan } from "../../database/entity/ArtistCrownBan";
 
 export enum CrownState {
   tie = "Tie",
@@ -174,6 +178,15 @@ export class CrownsService extends BaseService {
     let redirect = (await this.redirectsService.getRedirect(artistName))!;
 
     let redirectedArtistName = redirect.to || redirect.from;
+
+    if (
+      await this.gowonService.isArtistCrownBanned(
+        message.guild!,
+        redirectedArtistName
+      )
+    ) {
+      throw new ArtistCrownBannedError(redirectedArtistName);
+    }
 
     let [crown, user] = await Promise.all([
       this.getCrown(redirectedArtistName, message.guild?.id!, {
@@ -419,7 +432,7 @@ export class CrownsService extends BaseService {
 
     return await Promise.all(
       users.map(async (rch) => ({
-        user: (await User.toDiscordUser2(client, rch.discordID))!,
+        user: (await User.toDiscordUser(client, rch.discordID))!,
         numberOfCrowns: rch.count.toInt(),
       }))
     );
@@ -436,7 +449,7 @@ export class CrownsService extends BaseService {
 
     return await Promise.all(
       users.map(async (rch) => ({
-        user: (await User.toDiscordUser2(client, rch.discordID))!,
+        user: (await User.toDiscordUser(client, rch.discordID))!,
         numberOfCrowns: rch.count.toInt(),
       }))
     );
@@ -583,5 +596,66 @@ export class CrownsService extends BaseService {
 
   async crownRanks(serverID: string, discordID: string): Promise<CrownRank[]> {
     return await Crown.crownRanks(serverID, discordID);
+  }
+
+  async artistCrownBan(
+    serverID: string,
+    artistName: string
+  ): Promise<ArtistCrownBan> {
+    let existingCrownBan = await ArtistCrownBan.findOne({
+      artistName,
+      serverID,
+    });
+
+    if (existingCrownBan) throw new ArtistAlreadyCrownBannedError();
+
+    let crownBan = ArtistCrownBan.create({ artistName, serverID });
+
+    await crownBan.save();
+
+    let bans = [
+      ...(this.gowonService.shallowCache.find(
+        CacheScopedKey.CrownBannedArtists,
+        serverID
+      ) || []),
+      crownBan.artistName,
+    ];
+
+    this.gowonService.shallowCache.remember(
+      CacheScopedKey.CrownBannedArtists,
+      bans,
+      serverID
+    );
+
+    return crownBan;
+  }
+
+  async artistCrownUnban(
+    serverID: string,
+    artistName: string
+  ): Promise<ArtistCrownBan> {
+    let crownBan = await ArtistCrownBan.findOne({
+      artistName,
+      serverID,
+    });
+
+    if (!crownBan) throw new ArtistNotCrownBannedError();
+
+    await crownBan.remove();
+
+    let bans = (
+      this.gowonService.shallowCache.find<string[]>(
+        CacheScopedKey.CrownBannedArtists,
+        serverID
+      ) || []
+    ).filter((a) => a !== artistName);
+
+    this.gowonService.shallowCache.remember(
+      CacheScopedKey.CrownBannedArtists,
+      bans,
+      serverID
+    );
+
+    return crownBan;
   }
 }

@@ -151,7 +151,7 @@ export class CrownsHistoryService extends BaseService {
 
   async handleCheck(crownCheck: CrownCheck, message: Message, client: Client) {
     let { state, crown, oldCrown } = crownCheck;
-    let owner = await User.toDiscordUser2(
+    let owner = await User.toDiscordUser(
       client,
       crownCheck.oldCrown!.user.discordID
     );

@@ -12,6 +12,7 @@ import { TagConsolidator } from "../../../lib/TagConsolidator";
 import { sanitizeForDiscord } from "../../../helpers/discord";
 import config from "../../../../config.json";
 import { LineConsolidator } from "../../../lib/LineConsolidator";
+import { User } from "../../../database/entity/User";
 
 export default class NowPlayingVerbose extends LastFMBaseCommand {
   aliases = ["npv", "fmv", "fmt"];
@@ -87,9 +88,11 @@ export default class NowPlayingVerbose extends LastFMBaseCommand {
       if (crown.value.user.id === message.author.id) {
         isCrownHolder = true;
       } else {
-        crownString = `👑 ${numberDisplay(crown.value.crown.plays)} (${
-          crown.value.user.username
-        })`;
+        if (await User.stillInServer(this.message, crown.value.user.id)) {
+          crownString = `👑 ${numberDisplay(crown.value.crown.plays)} (${
+            crown.value.user.username
+          })`;
+        }
       }
     }
 

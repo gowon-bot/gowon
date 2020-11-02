@@ -20,6 +20,8 @@ import { Unban } from "./Unban";
 import { History } from "./History";
 import { GuildAround } from "./GuildAround";
 import { CrownRanks } from "./CrownRanks";
+import { BanArtist } from "./BanArtist";
+import { UnbanArtist } from "./UnbanArtist";
 
 export default class CrownsParentCommand extends LastFMBaseParentCommand {
   friendlyName = "crowns";
@@ -50,5 +52,7 @@ export default class CrownsParentCommand extends LastFMBaseParentCommand {
     history: () => new History(),
     guildaround: () => new GuildAround(),
     crownranks: () => new CrownRanks(),
+    banartist: () => new BanArtist(),
+    unbanartist: () => new UnbanArtist(),
   });
 }

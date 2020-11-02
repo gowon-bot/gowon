@@ -47,17 +47,6 @@ export class User extends BaseEntity {
   friends!: Friend[];
 
   static async toDiscordUser(
-    message: Message,
-    discordID: string
-  ): Promise<DiscordUser | undefined> {
-    try {
-      return (await message.guild?.members.fetch(discordID))?.user;
-    } catch {
-      return;
-    }
-  }
-
-  static async toDiscordUser2(
     client: Client,
     discordID: string
   ): Promise<DiscordUser | undefined> {
@@ -97,7 +86,7 @@ export class User extends BaseEntity {
 
   async toDiscordUser(client: Client): Promise<DiscordUser | undefined> {
     try {
-      return await User.toDiscordUser2(client, this.discordID);
+      return await User.toDiscordUser(client, this.discordID);
     } catch (e) {
       if (!(e instanceof DiscordAPIError)) throw e;
       return;

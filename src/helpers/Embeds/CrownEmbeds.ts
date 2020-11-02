@@ -54,7 +54,7 @@ export class CrownEmbeds {
 
   async snatchedCrown(): Promise<MessageEmbed> {
     let holderUsername = (
-      await DBUser.toDiscordUser2(
+      await DBUser.toDiscordUser(
         this.client,
         this.crownCheck.oldCrown!.user.discordID
       )
@@ -81,7 +81,7 @@ export class CrownEmbeds {
 
   async fail(): Promise<MessageEmbed> {
     let holderUsername = (
-      await DBUser.toDiscordUser2(
+      await DBUser.toDiscordUser(
         this.client,
         this.crownCheck.oldCrown!.user.discordID
       )
@@ -124,7 +124,7 @@ You must have at least ${numberDisplay(
 
   async tie(): Promise<MessageEmbed> {
     let holderUsername = (
-      await DBUser.toDiscordUser2(
+      await DBUser.toDiscordUser(
         this.client,
         this.crownCheck.oldCrown!.user.discordID
       )
@@ -148,7 +148,7 @@ It's a tie! ${holderUsername} will keep the crown for ${
 
   async inactivity(): Promise<MessageEmbed> {
     let holderUsername = (
-      await DBUser.toDiscordUser2(
+      await DBUser.toDiscordUser(
         this.client,
         this.crownCheck.oldCrown!.user.discordID
       )
@@ -172,7 +172,7 @@ It's a tie! ${holderUsername} will keep the crown for ${
 
   async purgatory(): Promise<MessageEmbed> {
     let holderUsername = (
-      await DBUser.toDiscordUser2(
+      await DBUser.toDiscordUser(
         this.client,
         this.crownCheck.oldCrown!.user.discordID
       )
@@ -210,7 +210,7 @@ It's a tie! ${holderUsername} will keep the crown for ${
 
   async banned(): Promise<MessageEmbed> {
     let holderUsername = (
-      await DBUser.toDiscordUser2(
+      await DBUser.toDiscordUser(
         this.client,
         this.crownCheck.oldCrown!.user.discordID
       )
