@@ -26,6 +26,7 @@ import { UnbanArtist } from "./UnbanArtist";
 export default class CrownsParentCommand extends LastFMBaseParentCommand {
   friendlyName = "crowns";
   description = "See `!crownsgame` for more info";
+  subcategory = "games";
 
   prefixes = ["crowns", "cw"];
   default = () => new List();

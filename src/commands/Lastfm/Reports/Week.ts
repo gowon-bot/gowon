@@ -10,7 +10,7 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 export default class Week extends LastFMBaseCommand {
   description = "Shows an overview of your week";
-  category = "reports";
+  subcategory = "reports";
   usage = ["", "weekly @user"];
 
   arguments: Arguments = {

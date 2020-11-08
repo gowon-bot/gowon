@@ -25,7 +25,11 @@ export class Rank extends CrownsChildCommand {
       user
     );
 
-    let rank = await this.crownsService.getRank(discordID, message.guild?.id!);
+    let rank = await this.crownsService.getRank(
+      discordID,
+      message.guild?.id!,
+      await this.serverUserIDs()
+    );
 
     if (!rank?.count?.toInt())
       throw new LogicError(

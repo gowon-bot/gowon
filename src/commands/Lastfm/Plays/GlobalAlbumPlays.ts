@@ -6,7 +6,7 @@ import { calculatePercent } from "../../../helpers/stats";
 
 export default class GlobalAlbumPlays extends LastFMBaseCommand {
   aliases = ["glp", "globallp"];
-  description = "Shows you how many plays Last.fm have of a given album";
+  description = "Shows you how many plays Last.fm has of a given album for all users";
   subcategory = "plays";
   usage = ["", "artist | album"];
 

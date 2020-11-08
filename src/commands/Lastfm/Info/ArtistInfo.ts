@@ -44,8 +44,7 @@ export default class ArtistInfo extends InfoCommand {
 
     let crown = await this.crownsService.getCrownDisplay(
       artistInfo.name,
-      this.guild,
-      this.gowonClient.client
+      this.guild
     );
 
     this.tagConsolidator.addTags(artistInfo.tags.tag);

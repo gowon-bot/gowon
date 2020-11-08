@@ -16,6 +16,7 @@ export const jumbleRedisKey = "jumbledArtist";
 export default class JumbleParentCommand extends LastFMBaseParentCommand {
   friendlyName = "jumble";
   description = "See `!jumblegame` for more info";
+  subcategory = "games";
 
   prefixes = ["jumble", "j"];
   default = () => new Guess();

@@ -13,7 +13,11 @@ export class GuildAt extends CrownsChildCommand {
   async run() {
     let rank = this.parsedArguments.rank as number;
 
-    let guildAt = await this.crownsService.guildAt(this.guild.id, rank);
+    let guildAt = await this.crownsService.guildAt(
+      this.guild.id,
+      rank,
+      await this.serverUserIDs()
+    );
     let highlighted = guildAt.users.find((u) => u.rank.toInt() === rank);
 
     if (!guildAt.users.length)

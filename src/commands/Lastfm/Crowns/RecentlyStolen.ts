@@ -7,7 +7,11 @@ export class RecentlyStolen extends CrownsChildCommand {
   usage = "";
 
   async run() {
-    let crowns = await this.crownsService.listRecentlyStolen(this.guild.id);
+    let crowns = await this.crownsService.listRecentlyStolen(
+      this.guild.id,
+      10,
+      await this.serverUserIDs()
+    );
 
     let embed = this.newEmbed()
       .setTitle(`Recently stolen crowns in ${this.guild.name}`)

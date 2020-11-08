@@ -7,7 +7,7 @@ import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 export default class TrackPercent extends LastFMBaseCommand {
   aliases = ["tpct"];
   description =
-    "Shows you the percentage of an artist's scrobbles are made up of a certain track";
+    "Shows you what percentage of an artist's scrobbles are made up by a certain track";
   subcategory = "percents";
   usage = ["artist | track"];
 

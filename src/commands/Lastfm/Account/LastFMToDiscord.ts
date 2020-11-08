@@ -1,4 +1,3 @@
-import { Message } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { LogicError } from "../../../errors";
@@ -6,7 +5,7 @@ import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 
 export default class LastFmToDiscord extends LastFMBaseCommand {
-  aliases = ["lfm2d", "last2todiscord"];
+  aliases = ["lfm2d", "last2todiscord", "l2d"];
   description = "Displays who is logged in as a given user";
   subcategory = "accounts";
   usage = "lastfm_username";
@@ -21,12 +20,14 @@ export default class LastFmToDiscord extends LastFMBaseCommand {
     username: new validators.Required({}),
   };
 
-  async run(message: Message) {
+  async run() {
     let username = this.parsedArguments.username as string;
 
     let user = await this.usersService.getUserFromLastFMUsername(username);
 
-    let member = await message.guild!.members.fetch(user?.discordID || "");
+    let member = user
+      ? await this.guild.members.fetch(user.discordID)
+      : undefined;
 
     if (!user || !member)
       throw new LogicError(
@@ -34,7 +35,9 @@ export default class LastFmToDiscord extends LastFMBaseCommand {
       );
 
     this.reply(
-      `${member.displayName.bold()} (${member.user.username}#${
+      `${(member.nickname || member.user.username).bold()} (${
+        member.user.username
+      }#${
         member.user.discriminator
       }) is logged in as ${username.toLowerCase().code()}.`
     );

@@ -45,6 +45,7 @@ export class CommandHandler {
 
     let client = new GowonClient(this.client);
     await this.runPrefixCommandIfMentioned(message, client);
+    await this.gers(message);
 
     if (
       !message.author.bot &&
@@ -109,6 +110,19 @@ export class CommandHandler {
         message.content.split(/\s+/)[2] || undefined;
 
       await new Prefix().setPrefix(prefix).execute(message, new RunAs());
+    }
+  }
+
+  async gers(message: Message) {
+    if (
+      message.mentions.users
+        .array()
+        .map((u) => u.id)
+        .includes(this.client.user!.id) &&
+      message.content.split(/\s+/)[1].toLowerCase() === "pog" &&
+      !message.author.bot
+    ) {
+      await message.channel.send("gers");
     }
   }
 }

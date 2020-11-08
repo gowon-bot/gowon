@@ -7,7 +7,7 @@ import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 export default class AlbumPercent extends LastFMBaseCommand {
   aliases = ["lpct", "alpct"];
   description =
-    "Shows you the percentage of an artist's scrobbles are made up of a certain album";
+    "Shows you what percentage of an artist's scrobbles are made up by a certain album";
   subcategory = "percents";
   usage = ["", "artist | album"];
 

@@ -42,7 +42,7 @@ export interface RawCrownHolder {
 export interface CrownRank {
   artistName: string;
   rank: string;
-  plays: string
+  plays: string;
 }
 
 export type InvalidCrownState =
@@ -112,7 +112,8 @@ export class Crown extends BaseEntity {
 
   static async rank(
     serverID: string,
-    discordID: string
+    discordID: string,
+    userIDs?: string[]
   ): Promise<CrownRankResponse> {
     let user = await User.findOne({ where: { discordID } });
 
@@ -123,25 +124,26 @@ export class Crown extends BaseEntity {
           ORDER BY count DESC
         ) AS rank FROM (
             SELECT
-                count(id) AS count,
+                count(*) AS count,
                 "userId"
             FROM crowns
+            LEFT JOIN users u
+              ON u.id = crowns."userId"
             WHERE crowns."serverID" = $1
               AND crowns."deletedAt" IS NULL
+              ${userIDs ? 'AND "discordID" = ANY ($3)' : ""}
             GROUP BY "userId"
             ORDER BY 1 desc
         ) t
-        LEFT JOIN users u
-          ON u.id = t."userId"
       ) ranks
       WHERE "userId" = $2
 `,
-        [serverID, user?.id!]
+        userIDs ? [serverID, user?.id!, userIDs] : [serverID, user?.id!]
       )) as CrownRankResponse[])[0] || { count: "0", rank: "0" }
     );
   }
 
-  static async guildAt(serverID: string, rank: number) {
+  static async guildAt(serverID: string, rank: number, userIDs?: string[]) {
     let start = rank < 10 ? 0 : rank - 5;
 
     let users =
@@ -151,20 +153,22 @@ export class Crown extends BaseEntity {
           ORDER BY count DESC
         ) AS rank FROM (
             SELECT
-                count(id) AS count,
-                "userId"
+                count(*) AS count,
+                "userId",
+                "discordID"
             FROM crowns
+            LEFT JOIN users u
+              ON u.id = crowns."userId"
             WHERE crowns."serverID" = $1
               AND crowns."deletedAt" IS NULL
-            GROUP BY "userId"
+              ${userIDs ? 'AND "discordID" = ANY ($3)' : ""}
+            GROUP BY "userId", "discordID"
             ORDER BY 1 desc
         ) t
-        LEFT JOIN users u
-          ON u.id = t."userId"
       ) ranks
       OFFSET $2
       LIMIT 10`,
-        [serverID, start]
+        userIDs ? [serverID, start, userIDs] : [serverID, start]
       )) as GuildAroundUser[]) || [];
 
     return {
@@ -176,16 +180,18 @@ export class Crown extends BaseEntity {
 
   static async guildAround(
     serverID: string,
-    discordID: string
+    discordID: string,
+    userIDs?: string[]
   ): Promise<GuildAtResponse> {
-    let rank = (await this.rank(serverID, discordID)).rank.toInt();
+    let rank = (await this.rank(serverID, discordID, userIDs)).rank.toInt();
 
-    return await this.guildAt(serverID, rank);
+    return await this.guildAt(serverID, rank, userIDs);
   }
 
   static async guild(
     serverID: string,
-    limit: number
+    limit: number,
+    userIDs?: string[]
   ): Promise<RawCrownHolder[]> {
     return (await this.query(
       `SELECT
@@ -197,10 +203,11 @@ export class Crown extends BaseEntity {
         ON u.id = "userId"
       WHERE c."serverID" = $1
         AND c."deletedAt" IS NULL
+        ${userIDs ? 'AND "discordID" = ANY ($3)' : ""}
       GROUP BY "userId", "discordID"
       ORDER BY count DESC
       LIMIT $2`,
-      [serverID, limit]
+      userIDs ? [serverID, limit, userIDs] : [serverID, limit]
     )) as RawCrownHolder[];
   }
 

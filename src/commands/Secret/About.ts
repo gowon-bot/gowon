@@ -67,7 +67,12 @@ export default class About extends BaseCommand {
           )}\nArtists scrobbled: ${numberDisplay(artistCount)}`,
         }
       )
-      .setFooter("Made with <3 by John🥳#2527");
+      .setFooter(
+        "Made with <3 by John🥳#2527",
+        (
+          await this.gowonClient.client.users.fetch("267794154459889664")
+        ).avatarURL({ dynamic: true }) ?? undefined
+      );
 
     await this.send(embed);
   }

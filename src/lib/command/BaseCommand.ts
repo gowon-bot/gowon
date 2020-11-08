@@ -302,4 +302,8 @@ export abstract class BaseCommand implements Command {
   protected newEmbed(): MessageEmbed {
     return GowonEmbed(this.message.member ?? undefined);
   }
+
+  protected async serverUserIDs(): Promise<string[]> {
+    return (await this.guild.members.fetch()).map((u) => u.user.id);
+  }
 }

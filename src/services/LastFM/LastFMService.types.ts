@@ -39,6 +39,36 @@ export interface RecentTracksResponse {
   recenttracks: RecentTracks;
 }
 
+export interface RecentTracksExtended extends PagedCollection {
+  track: [
+    {
+      "@attr": {
+        nowplaying: string;
+      };
+      artist: {
+        url: string;
+        mbid: string;
+        image: Image[];
+        name: string;
+      };
+      mbid: string;
+      image: Image[];
+      url: string;
+      streamable: string;
+      album: {
+        mbid: string;
+        "#text": string;
+      };
+      name: string;
+      loved: string;
+    }
+  ];
+}
+
+export interface RecentTracksExtendedResponse {
+  recenttracks: RecentTracksExtended;
+}
+
 export interface TrackInfo {
   name: string;
   mbid: string;

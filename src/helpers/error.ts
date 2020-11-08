@@ -1,7 +1,6 @@
 import { LastFMErrorResponse } from "../services/LastFM/LastFMService.types";
 
 function parseErrorSix(message: string): string {
-  console.log(message);
   if (message.toLowerCase().includes("artist"))
     return "that artist could not be found!";
   else if (message.toLowerCase().includes("album"))

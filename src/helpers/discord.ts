@@ -1,4 +1,4 @@
-import { Message, Role, GuildMember, Client } from "discord.js";
+import { Message, Role, GuildMember } from "discord.js";
 import { Permission } from "../database/entity/Permission";
 
 export function sanitizeForDiscord(string: string): string {
@@ -14,7 +14,6 @@ export interface NamedPermission extends Permission {
 }
 export async function addNamesToPermissions(
   message: Message,
-  client: Client,
   _permissions: Permission[]
 ): Promise<NamedPermission[]> {
   let namedPermissions = [] as NamedPermission[];
@@ -24,7 +23,7 @@ export async function addNamesToPermissions(
   for (let permission of permissions) {
     let entity = await (permission.isRoleBased
       ? permission.toDiscordRole(message)
-      : permission.toDiscordUser(client));
+      : permission.toDiscordUser(message.guild!));
 
     permission.name = entity instanceof Role ? entity.name : entity.username;
 

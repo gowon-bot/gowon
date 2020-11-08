@@ -4,23 +4,36 @@ import {
   MessageEmbed,
   GuildMember,
   Client,
+  Message,
 } from "discord.js";
 import { numberDisplay } from "..";
-import { User as DBUser } from "../../database/entity/User";
 import { GowonEmbed } from ".";
 import { Emoji } from "../../lib/Emoji";
+import { GowonClient } from "../../lib/GowonClient";
 
 export class CrownEmbeds {
+  client: Client;
+
   constructor(
     private crownCheck: CrownCheck,
     private user: DiscordUser,
-    private client: Client,
+    private gowonClient: GowonClient,
     private plays: number,
+    private message: Message,
     private member?: GuildMember
-  ) {}
+  ) {
+    this.client = gowonClient.client;
+  }
 
   private get redirect(): string {
     return this.crownCheck.redirect.redirectDisplay();
+  }
+
+  private async holderUsername(): Promise<string> {
+    return await this.gowonClient.userDisplay(
+      this.message,
+      this.crownCheck.oldCrown!.user.discordID
+    );
   }
 
   private get embed(): MessageEmbed {
@@ -53,12 +66,7 @@ export class CrownEmbeds {
   }
 
   async snatchedCrown(): Promise<MessageEmbed> {
-    let holderUsername = (
-      await DBUser.toDiscordUser(
-        this.client,
-        this.crownCheck.oldCrown!.user.discordID
-      )
-    )?.username;
+    let holderUsername = await this.holderUsername();
 
     return this.embed.setDescription(
       `
@@ -80,12 +88,7 @@ export class CrownEmbeds {
   }
 
   async fail(): Promise<MessageEmbed> {
-    let holderUsername = (
-      await DBUser.toDiscordUser(
-        this.client,
-        this.crownCheck.oldCrown!.user.discordID
-      )
-    )?.username;
+    let holderUsername = await this.holderUsername();
 
     let difference = this.crownCheck.crown!.plays - this.plays;
 
@@ -123,12 +126,7 @@ You must have at least ${numberDisplay(
   }
 
   async tie(): Promise<MessageEmbed> {
-    let holderUsername = (
-      await DBUser.toDiscordUser(
-        this.client,
-        this.crownCheck.oldCrown!.user.discordID
-      )
-    )?.username;
+    let holderUsername = await this.holderUsername();
 
     return this.embed.setDescription(
       `
@@ -147,12 +145,7 @@ It's a tie! ${holderUsername} will keep the crown for ${
   }
 
   async inactivity(): Promise<MessageEmbed> {
-    let holderUsername = (
-      await DBUser.toDiscordUser(
-        this.client,
-        this.crownCheck.oldCrown!.user.discordID
-      )
-    )?.username;
+    let holderUsername = await this.holderUsername();
 
     return this.embed.setDescription(
       `
@@ -171,12 +164,7 @@ It's a tie! ${holderUsername} will keep the crown for ${
   }
 
   async purgatory(): Promise<MessageEmbed> {
-    let holderUsername = (
-      await DBUser.toDiscordUser(
-        this.client,
-        this.crownCheck.oldCrown!.user.discordID
-      )
-    )?.username;
+    let holderUsername = await this.holderUsername();
 
     return this.embed.setDescription(
       `
@@ -209,12 +197,7 @@ It's a tie! ${holderUsername} will keep the crown for ${
   }
 
   async banned(): Promise<MessageEmbed> {
-    let holderUsername = (
-      await DBUser.toDiscordUser(
-        this.client,
-        this.crownCheck.oldCrown!.user.discordID
-      )
-    )?.username;
+    let holderUsername = await this.holderUsername();
 
     return this.embed.setDescription(
       `

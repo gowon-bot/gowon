@@ -2,7 +2,6 @@ import { CrownsChildCommand } from "./CrownsChildCommand";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { Message } from "discord.js";
 import { numberDisplay, ago } from "../../../helpers";
-import { User } from "../../../database/entity/User";
 import { RedirectsService } from "../../../services/dbservices/RedirectsService";
 import { Variation } from "../../../lib/command/BaseCommand";
 import { RunAs } from "../../../lib/AliasChecker";
@@ -95,12 +94,7 @@ export class Info extends CrownsChildCommand {
     }
 
     if (crown.user.id) {
-      let holderUser = await User.toDiscordUser(
-        this.gowonClient.client,
-        crown.user.discordID
-      );
-
-      let holderUsername = holderUser?.username;
+      let holderUsername = await this.fetchUsername(crown.user.discordID);
 
       if (runAs.variationWasUsed("whv")) {
         let embed = this.newEmbed()
@@ -108,9 +102,7 @@ export class Info extends CrownsChildCommand {
             `Who has ${crown.artistName.bold()}?` + crown.redirectDisplay()
           )
           .setDescription(
-            `${
-              holderUsername || "???"
-            }${invalidBadge} has the crown for ${crown.artistName.bold()} with ${numberDisplay(
+            `${holderUsername}${invalidBadge} has the crown for ${crown.artistName.bold()} with ${numberDisplay(
               crown.plays,
               "play"
             )}

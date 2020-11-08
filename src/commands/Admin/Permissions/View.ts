@@ -26,7 +26,6 @@ export class View extends PermissionsChildCommand {
     if (this.command) {
       permissions = await addNamesToPermissions(
         message,
-        this.gowonClient.client,
         await this.adminService.listPermissionsForCommand(
           message.guild?.id!,
           this.command.id
@@ -59,8 +58,6 @@ export class View extends PermissionsChildCommand {
 
       permissions = await addNamesToPermissions(
         message,
-
-        this.gowonClient.client,
         await this.adminService.listPermissionsForEntity(
           message.guild?.id!,
           entity.id
@@ -94,7 +91,6 @@ export class View extends PermissionsChildCommand {
     } else {
       permissions = await addNamesToPermissions(
         message,
-        this.gowonClient.client,
         await this.adminService.listPermissions(message.guild?.id!)
       );
 

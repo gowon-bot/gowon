@@ -6,6 +6,7 @@ import { CrownEmbeds } from "../../../helpers/Embeds/CrownEmbeds";
 import {
   CrownBannedError,
   InactiveError,
+  LogicError,
   OptedOutError,
   PurgatoryError,
 } from "../../../errors";
@@ -32,7 +33,12 @@ export class Check extends CrownsChildCommand {
     if (await senderUser?.isOptedOut(message)) throw new OptedOutError();
 
     if (!artist) {
-      artist = (await this.lastFMService.nowPlayingParsed(username)).artist;
+      let response = await this.lastFMService.nowPlayingParsed(username);
+      if (!response.nowPlaying)
+        throw new LogicError(
+          "you don't appear to be currently scrobbling anything."
+        );
+      artist = response.artist;
     }
 
     let artistDetails = await this.lastFMService.artistInfo({
@@ -49,9 +55,10 @@ export class Check extends CrownsChildCommand {
 
     let embeds = new CrownEmbeds(
       crownCheck,
-      message.author,
-      this.gowonClient.client,
+      this.message.author,
+      this.gowonClient,
       artistDetails.stats.userplaycount.toInt(),
+      this.message,
       this.message.member ?? undefined
     );
 
@@ -62,11 +69,7 @@ export class Check extends CrownsChildCommand {
         crownCheck.crown.plays === crownCheck.oldCrown?.plays
       )
     ) {
-      this.crownsService.scribe.handleCheck(
-        crownCheck,
-        message,
-        this.gowonClient.client
-      );
+      this.crownsService.scribe.handleCheck(crownCheck, message);
     }
 
     let embed =

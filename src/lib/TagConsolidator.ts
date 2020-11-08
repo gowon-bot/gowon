@@ -15,7 +15,13 @@ export class TagConsolidator {
     "played",
     "personal favourites",
     "personal favorites",
+    "hino",
   ];
+
+  addArtistName(artistName: string): TagConsolidator {
+    this.blacklistedTags.push(artistName.toLowerCase());
+    return this;
+  }
 
   tags: string[] = [];
   characterLimit = 30;

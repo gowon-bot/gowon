@@ -17,6 +17,7 @@ import { User } from "../../../database/entity/User";
 export default class NowPlayingVerbose extends LastFMBaseCommand {
   aliases = ["npv", "fmv", "fmt"];
   description = "Displays the now playing or last played track in last.fm";
+  subcategory = "nowplaying";
   usage = [
     "",
     "@user (will show their now playing)",
@@ -74,11 +75,7 @@ export default class NowPlayingVerbose extends LastFMBaseCommand {
         track: track.name,
         username,
       }),
-      this.crownsService.getCrownDisplay(
-        track.artist,
-        this.guild,
-        this.gowonClient.client
-      ),
+      this.crownsService.getCrownDisplay(track.artist, this.guild),
     ])) as { status: string; value?: any; reason: any }[];
 
     let crownString = "";
@@ -95,6 +92,8 @@ export default class NowPlayingVerbose extends LastFMBaseCommand {
         }
       }
     }
+
+    this.tagConsolidator.addArtistName(track.artist);
 
     if (trackInfo.value)
       this.tagConsolidator.addTags(trackInfo.value?.toptags?.tag || []);

@@ -28,9 +28,9 @@ export class List extends CrownsChildCommand {
       this.crownsService.getRank(discordID, this.guild.id),
     ]);
 
-    if (!rank?.count)
+    if (!crownsCount)
       throw new LogicError(
-        `${perspective.upper.name} don't have any crowns in this server!`
+        `${perspective.name} don't have any crowns in this server!`
       );
 
     let embed = this.newEmbed()

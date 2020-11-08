@@ -59,23 +59,28 @@ export class History extends CrownsChildCommand {
           `Crown history for ${crown.artistName}${crown.redirectDisplay()}`
         )
         .setDescription(
-          "```" + history.map(this.displayEvent).join("\n") + "```"
+          (await Promise.all(history.map(this.displayEvent.bind(this)))).join(
+            "\n"
+          )
         )
     );
   }
 
-  private displayEvent(event: CrownEvent): string {
-    console.log(event);
+  private async displayEvent(event: CrownEvent): Promise<string> {
     switch (event.event) {
       case CrownEventString.created:
-        return `${dateDisplay(event.happenedAt)} - created by ${
-          event.perpetuatorUsername
-        } (${event.newCrown.plays})`;
+        return `${dateDisplay(
+          event.happenedAt
+        )} - created by ${await this.fetchUsername(
+          event.perpetuatorDiscordID
+        )} (${event.newCrown.plays})`;
 
       case CrownEventString.snatched:
-        return `${dateDisplay(event.happenedAt)} - snatched by ${
-          event.perpetuatorUsername
-        } (${event.oldCrown!.plays} → ${event.newCrown.plays})`;
+        return `${dateDisplay(
+          event.happenedAt
+        )} - snatched by ${await this.fetchUsername(
+          event.perpetuatorDiscordID
+        )} (${event.oldCrown!.plays} → ${event.newCrown.plays})`;
 
       default:
         return "";

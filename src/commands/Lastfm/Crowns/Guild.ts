@@ -29,27 +29,31 @@ export class Guild extends CrownsChildCommand {
   ];
 
   async run() {
+    let serverUsers = await this.serverUserIDs();
+
     let [holders, crownsCount] = await Promise.all([
-      this.crownsService.guild(this.guild.id, this.gowonClient.client, 20),
-      this.crownsService.countAllInServer(this.guild.id),
+      this.crownsService.guild(this.guild, 20, serverUsers),
+      this.crownsService.countAllInServer(this.guild.id, serverUsers),
     ]);
 
     let embed = this.newEmbed()
-      .setTitle(`Crowns in ${this.guild.name}`)
+      .setTitle(`${this.guild.name}'s crown leaderboard`)
       .setDescription(
         `There ${crownsCount === 1 ? "is" : "are"} **${numberDisplay(
           crownsCount,
           "** crown"
         )} in ${this.guild.name}\n\n` +
-          holders
-            .map(
-              (h, idx) =>
-                `${idx + 1}) ${
-                  h?.user?.username ||
-                  this.gowonService.constants.unknownUserDisplay
-                } ― ${numberDisplay(h.numberOfCrowns, "crown").bold()}`
+          (
+            await Promise.all(
+              holders.map(
+                async (h, idx) =>
+                  `${idx + 1}) ${await this.gowonClient.userDisplay(
+                    this.message,
+                    h.user
+                  )} ― ${numberDisplay(h.numberOfCrowns, "crown").bold()}`
+              )
             )
-            .join("\n")
+          ).join("\n")
       );
 
     await this.send(embed);

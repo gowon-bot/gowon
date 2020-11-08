@@ -9,6 +9,7 @@ export default class SearchAlbum extends SearchCommand {
   shouldBeIndexed = true;
   description = "Searches your top albums for keywords";
   aliases = ["sl", "sal", "salbum"];
+  
   variations: Variation[] = [
     {
       variationRegex: /sldeep|sld/,

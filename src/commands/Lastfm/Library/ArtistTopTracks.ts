@@ -2,11 +2,13 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { numberDisplay } from "../../../helpers";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
+import { LinkGenerator } from "../../../helpers/lastFM";
 
 export default class ArtistTopTracks extends LastFMBaseCommand {
   description = "Shows your top tracks from an artist";
   aliases = ["att"];
   usage = ["", "artist @user"];
+  subcategory = "library";
 
   arguments: Arguments = {
     inputs: {
@@ -44,6 +46,7 @@ export default class ArtistTopTracks extends LastFMBaseCommand {
         this.message.author.avatarURL() || ""
       )
       .setTitle(`Top ${artist.bold()} tracks for ${username.code()}`)
+      .setURL(LinkGenerator.libraryArtistPage(username, artist))
       .setDescription(
         `_${numberDisplay(topTracks.total, "total scrobble")}, ${numberDisplay(
           topTracks.count!,

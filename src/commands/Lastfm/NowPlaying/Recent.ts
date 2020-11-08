@@ -1,19 +1,19 @@
-import { Arguments } from "../../lib/arguments/arguments";
-import { standardMentions } from "../../lib/arguments/mentions/mentions";
-import { Validation } from "../../lib/validation/ValidationChecker";
-import { validators } from "../../lib/validation/validators";
-import { LastFMBaseCommand } from "./LastFMBaseCommand";
+import { Arguments } from "../../../lib/arguments/arguments";
+import { standardMentions } from "../../../lib/arguments/mentions/mentions";
+import { Validation } from "../../../lib/validation/ValidationChecker";
+import { validators } from "../../../lib/validation/validators";
+import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 export default class Recent extends LastFMBaseCommand {
   description = "Shows your recent tracks";
-
+  subcategory = "nowplaying";
   usage = ["", "amount"];
 
   arguments: Arguments = {
     inputs: {
       amount: { index: 0, regex: /-?[0-9]+/g, default: 5, number: true },
     },
-    mentions: standardMentions
+    mentions: standardMentions,
   };
 
   validation: Validation = {

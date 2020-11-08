@@ -27,6 +27,13 @@ async function start() {
 
   client.on("ready", () => {
     console.log(`Logged in as ${client?.user && client.user.tag}!`);
+    client.user!.setPresence({
+      activity: {
+        name: "One & Only",
+        type: "LISTENING",
+        url: "https://github.com/jivison/gowon",
+      },
+    });
     handler.setClient(client);
   });
 

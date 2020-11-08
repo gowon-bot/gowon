@@ -20,7 +20,9 @@ export default class List extends ListCommand {
       amount = this.parsedArguments.amount as string;
 
     if (!type || !period || !amount)
-      throw new LogicError("please specify all three arguments!");
+      throw new LogicError(
+        "`list` has been split into three separate commands, `artistlist`, `albumlist`, and `tracklist`. The new syntax is similar to the old one. For example `!artistlist w 3` would show your top 3 artists over the last week."
+      );
 
     let commandstring = await this.gowonService.prefix(this.guild.id);
 

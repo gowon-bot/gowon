@@ -5,7 +5,7 @@ import {
   BaseEntity,
   Unique,
 } from "typeorm";
-import { User as DiscordUser, Message, Role, Client } from "discord.js";
+import { User as DiscordUser, Message, Role, Guild } from "discord.js";
 import { User } from "./User";
 
 @Entity({ name: "permissions" })
@@ -36,8 +36,8 @@ export class Permission extends BaseEntity {
     return (await message.guild?.roles.fetch(roleID))!;
   }
 
-  async toDiscordUser(client: Client): Promise<DiscordUser> {
-    return (await User.toDiscordUser(client, this.entityID))!;
+  async toDiscordUser(guild: Guild): Promise<DiscordUser> {
+    return (await User.toDiscordUser(guild, this.entityID))!;
   }
 
   async toDiscordRole(message: Message): Promise<Role> {

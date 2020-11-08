@@ -9,6 +9,7 @@ export default class SearchTrack extends SearchCommand {
   shouldBeIndexed = true;
   description = "Searches your top tracks for keywords";
   aliases = ["st", "str", "strack"];
+
   variations: Variation[] = [
     {
       variationRegex: /stdeep|std/,

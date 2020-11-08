@@ -6,7 +6,8 @@ import { calculatePercent } from "../../../helpers/stats";
 
 export default class GlobalTrackPlays extends LastFMBaseCommand {
   aliases = ["gtp", "globaltp"];
-  description = "Shows you how many plays Last.fm has of a given track";
+  description =
+    "Shows you how many plays Last.fm has of a given tracks for all users";
   subcategory = "plays";
   usage = ["artist | track"];
 
@@ -14,7 +15,7 @@ export default class GlobalTrackPlays extends LastFMBaseCommand {
     inputs: {
       artist: { index: 0, splitOn: "|" },
       track: { index: 1, splitOn: "|" },
-    },
+    },  
     mentions: standardMentions,
   };
 

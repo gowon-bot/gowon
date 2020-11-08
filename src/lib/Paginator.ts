@@ -1,16 +1,16 @@
 import { sleep } from "../helpers";
 import { Params } from "../services/LastFM/LastFMService.types";
 
-export class Paginator<T extends Params = Params, U = any> {
+export class Paginator<ParamsT extends Params = Params, ResponseT = any> {
   currentPage: number = 0;
 
   constructor(
-    private readonly method: (params: T) => Promise<U>,
+    private readonly method: (params: ParamsT) => Promise<ResponseT>,
     public maxPages: number,
-    private params: T
+    private params: ParamsT
   ) {}
 
-  async getNext(): Promise<U | undefined> {
+  async getNext(): Promise<ResponseT | undefined> {
     this.currentPage++;
 
     if (this.currentPage > this.maxPages) return;
@@ -31,7 +31,7 @@ export class Paginator<T extends Params = Params, U = any> {
     }
   }
 
-  async *pagesIterator(method: (params: T) => Promise<U>) {
+  async *pagesIterator(method: (params: ParamsT) => Promise<ResponseT>) {
     for (let page = this.currentPage + 1; page <= this.maxPages; page++) {
       yield await method({
         ...this.params,
@@ -40,7 +40,7 @@ export class Paginator<T extends Params = Params, U = any> {
     }
   }
 
-  private generatePages(method: (params: T) => Promise<U>): Promise<U>[] {
+  private generatePages(method: (params: ParamsT) => Promise<ResponseT>): Promise<ResponseT>[] {
     let pages = [];
 
     for (let page = this.currentPage + 1; page <= this.maxPages; page++) {
@@ -59,7 +59,7 @@ export class Paginator<T extends Params = Params, U = any> {
     concatTo?: string;
     concurrent?: boolean;
     waitInterval?: number;
-  }): Promise<U>;
+  }): Promise<ResponseT>;
   async getAll<V = any>(options: {
     groupOn?: string;
     concurrent?: boolean;
@@ -78,9 +78,9 @@ export class Paginator<T extends Params = Params, U = any> {
     } = {
       concurrent: true,
     }
-  ): Promise<V[] | U> {
+  ): Promise<V[] | ResponseT> {
     let results = [] as V[];
-    let result: U | undefined;
+    let result: ResponseT | undefined;
 
     const eachFunction = (response: any) => {
       if (options.groupOn) {
@@ -108,7 +108,7 @@ export class Paginator<T extends Params = Params, U = any> {
     }
 
     if (result) {
-      return result as U;
+      return result as ResponseT;
     } else {
       return results as V[];
     }

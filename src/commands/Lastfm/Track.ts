@@ -62,11 +62,7 @@ export default class Track extends LastFMBaseCommand {
         track: trackName,
         username: senderUsername,
       }),
-      this.crownsService.getCrownDisplay(
-        artistName,
-        this.guild,
-        this.gowonClient.client
-      ),
+      this.crownsService.getCrownDisplay(artistName, this.guild),
     ])) as { status: string; value?: any; reason: any }[];
 
     if (!trackInfo.value)

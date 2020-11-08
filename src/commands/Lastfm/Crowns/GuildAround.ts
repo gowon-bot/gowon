@@ -24,7 +24,8 @@ export class GuildAround extends CrownsChildCommand {
 
     let guildAround = await this.crownsService.guildAround(
       this.guild.id,
-      discordID
+      discordID,
+      await this.serverUserIDs()
     );
     let author = guildAround.users.find((u) => u.discordID === discordID);
 

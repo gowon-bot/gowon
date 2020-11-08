@@ -17,6 +17,7 @@ import { User } from "../../../database/entity/User";
 export default class NowPlaying extends LastFMBaseCommand {
   aliases = ["np", "fm"];
   description = "Displays the now playing or last played track in last.fm";
+  subcategory = "nowplaying";
   usage = [
     "",
     "@user (will show their now playing)",
@@ -92,11 +93,7 @@ export default class NowPlaying extends LastFMBaseCommand {
     // Types for Promise.allSettled are broken(?), so I have to manually assert the type that's returned
     let [artistInfo, crown] = (await Promise.allSettled([
       this.lastFMService.artistInfo({ artist: track.artist, username }),
-      this.crownsService.getCrownDisplay(
-        track.artist,
-        this.guild,
-        this.gowonClient.client
-      ),
+      this.crownsService.getCrownDisplay(track.artist, this.guild),
     ])) as { status: string; value?: any; reason: any }[];
 
     let crownString = "";
@@ -113,6 +110,9 @@ export default class NowPlaying extends LastFMBaseCommand {
         }
       }
     }
+
+    this.tagConsolidator.addArtistName(track.artist);
+
     this.tagConsolidator.addTags(artistInfo.value?.tags?.tag || []);
 
     let lineConsolidator = new LineConsolidator();

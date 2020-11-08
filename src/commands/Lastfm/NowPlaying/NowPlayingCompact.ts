@@ -11,6 +11,7 @@ import { sanitizeForDiscord } from "../../../helpers/discord";
 export default class NowPlayingCompact extends LastFMBaseCommand {
   aliases = ["npc", "fmc"];
   description = "Displays the now playing or last played track in last.fm";
+  subcategory = "nowplaying";
   usage = [
     "",
     "@user (will show their now playing)",

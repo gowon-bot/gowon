@@ -92,6 +92,9 @@ export class Can {
     if (message.member?.hasPermission("ADMINISTRATOR")) return { passed: true };
     if (client.isDeveloper(message.author.id)) return { passed: true };
 
+    if (command.devCommand)
+      return { passed: false, reason: CheckFailReason.forbidden };
+
     if (
       useChannel &&
       !(await this.canRunInChannel(

@@ -7,6 +7,6 @@ export default class Ping extends BaseCommand {
   secretCommand = true;
 
   async run(_: any, runAs: RunAs) {
-    await this.reply(`Pon${runAs.variationWasUsed("pin") ? "g" : ""} 🏓`);
+    await this.reply(`Pon${runAs.variationWasUsed("pin") ? "" : "g"} 🏓`);
   }
 }

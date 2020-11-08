@@ -69,28 +69,33 @@ export default class Help extends BaseCommand {
         message.author.avatarURL() || ""
       )
       .setDescription(
-        `Run \`${this.prefix}help <command>\` to learn more about specific commands`
-      )
-      .addFields(
-        Object.keys(groupedCommands).map((gc) => ({
-          name: gc,
-          value:
-            (groupedCommands[gc][""]
-              ? Object.values(groupedCommands[gc][""])
-                  .map((c) => c.friendlyName)
-                  .join(", ")
-                  .italic() + "\n"
-              : "") +
-            Object.keys(groupedCommands[gc])
-              .filter((k) => k !== "")
-              .map(
-                (k) =>
-                  k.bold() +
-                  ": " +
-                  groupedCommands[gc][k].map((c) => c.friendlyName).join(", ")
-              )
-              .join("\n"),
-        }))
+        `Run \`${this.prefix}help <command>\` to learn more about specific commands\n\n` +
+          Object.keys(groupedCommands)
+            .map(
+              (gc, idx, arr) =>
+                (idx === arr.length - 1 ? "\n" : "") +
+                gc.bold() +
+                "\n" +
+                (groupedCommands[gc][""]
+                  ? Object.values(groupedCommands[gc][""])
+                      .map((c) => c.friendlyName)
+                      .join(", ")
+                      .italic() + "\n"
+                  : "") +
+                Object.keys(groupedCommands[gc])
+                  .filter((k) => k !== "")
+                  .map(
+                    (k) =>
+                      "" +
+                      k.bold() +
+                      ": " +
+                      groupedCommands[gc][k]
+                        .map((c) => c.friendlyName)
+                        .join(", ")
+                  )
+                  .join("\n")
+            )
+            .join("\n")
       );
   }
 
@@ -102,7 +107,8 @@ export default class Help extends BaseCommand {
 
     if (!command) throw new CommandNotFoundError();
     if (
-      !(await this.adminService.can.run(command, message, this.gowonClient)).passed
+      !(await this.adminService.can.run(command, message, this.gowonClient))
+        .passed
     ) {
       message.channel.stopTyping();
       return;

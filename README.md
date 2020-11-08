@@ -110,6 +110,7 @@ _You can find the source code for all the commands at [/src/commands](/src/comma
 - Friends
   - `add`, add a friend
   - `remove`, remove a friend :(
+  - `removeall`, remove all friends :((((
   - `list`, list your friends, and see what they're playing
   - `albumplays`, shows how many scrobbles of an album your friends have
   - `artistplays`, shows how many scrobbles of an artist your friends have

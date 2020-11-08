@@ -9,9 +9,15 @@ export class ContentiousCrowns extends CrownsChildCommand {
   usage = "";
 
   async run(message: Message) {
+    let serverUsers = await this.serverUserIDs();
+
     let [crowns, crownsCount] = await Promise.all([
-      this.crownsService.listContentiousCrownsInServer(message.guild?.id!),
-      this.crownsService.countAllInServer(message.guild?.id!),
+      this.crownsService.listContentiousCrownsInServer(
+        message.guild?.id!,
+        undefined,
+        serverUsers
+      ),
+      this.crownsService.countAllInServer(message.guild?.id!, serverUsers),
     ]);
 
     let filteredCrowns = crowns.filter((c) => c.version > 0);

@@ -176,6 +176,11 @@ export default class Taste extends LastFMBaseCommand {
 
     let taste = tasteCalculator.calculate();
 
+    if (taste.artists.length === 0)
+      throw new LogicError(
+        `${userOneUsername.code()} and ${userTwoUsername.code()} share no common artists!`
+      );
+
     let embed = this.newEmbed()
       .setTitle(
         `Taste comparison for ${sanitizeForDiscord(

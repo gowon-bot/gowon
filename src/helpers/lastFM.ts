@@ -55,6 +55,51 @@ export abstract class LinkGenerator {
     );
   }
 
+  // https://www.last.fm/user/flushed_emoji/library/music/Red+Velvet
+  static libraryArtistPage(username: string, artist: string): string {
+    return (
+      this.baseURL +
+      "/user/" +
+      this.encode(username) +
+      "/library/music/" +
+      this.encode(artist)
+    );
+  }
+
+  // https://www.last.fm/user/flushed_emoji/library/music/Red+Velvet/%E2%80%98The+ReVe+Festival%E2%80%99+Day+1
+  static libraryAlbumPage(
+    username: string,
+    artist: string,
+    track: string
+  ): string {
+    return (
+      this.baseURL +
+      "/user/" +
+      this.encode(username) +
+      "/library/music/" +
+      this.encode(artist) +
+      "/" +
+      this.encode(track)
+    );
+  }
+
+  // https://www.last.fm/user/flushed_emoji/library/music/Red+Velvet/_/Sunny+Side+Up!
+  static libraryTrackPage(
+    username: string,
+    artist: string,
+    album: string
+  ): string {
+    return (
+      this.baseURL +
+      "/user/" +
+      this.encode(username) +
+      "/library/music/" +
+      this.encode(artist) +
+      "/_/" +
+      this.encode(album)
+    );
+  }
+
   static generateTrackLinks(track: Track): TrackLinks {
     return {
       artist: this.artistPage(track.artist["#text"]),

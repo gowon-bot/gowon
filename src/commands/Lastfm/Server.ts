@@ -7,7 +7,7 @@ export default class Server extends LastFMBaseCommand {
   usage = [""];
 
   async run() {
-    let serverUsers = this.guild.members.cache.map((u) => `${u.id}`);
+    let serverUsers = await this.serverUserIDs();
 
     let users = await this.usersService.randomUser({
       limit: 10,

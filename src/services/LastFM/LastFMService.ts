@@ -40,7 +40,12 @@ export class LastFMService extends LastFMAPIService {
   }
 
   async nowPlaying(username: string): Promise<Track> {
-    return (await this.recentTracks({ username, limit: 1 })).track[0];
+    return (
+      await this.recentTracks({
+        username,
+        limit: 1,
+      })
+    ).track[0];
   }
 
   async nowPlayingParsed(username: string): Promise<ParsedTrack> {

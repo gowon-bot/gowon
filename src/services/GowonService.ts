@@ -23,7 +23,6 @@ export class GowonService {
   }
 
   // Instance methods/properties
-  // prefix: string = config.prefix;
   customPrefixes = {
     lastfm: "lfm:",
   };
@@ -158,8 +157,6 @@ export class GowonService {
     guild: Guild,
     artistName: string
   ): Promise<boolean> {
-    console.log(await this.getCrownBannedArtists(guild));
-
     return (await this.getCrownBannedArtists(guild))
       .map((a) => a.toLowerCase())
       .includes(artistName.toLowerCase());

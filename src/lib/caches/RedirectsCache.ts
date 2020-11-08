@@ -9,12 +9,14 @@ export class RedirectsCache {
   constructor(private redirectsService: RedirectsService) {}
 
   async getRedirect(artist: string): Promise<string> {
-    if (this.cache[artist]) return this.cache[artist];
+    let artistName = artist.toLowerCase();
+
+    if (this.cache[artistName]) return this.cache[artistName];
 
     let redirect =
-      (await this.redirectsService.checkRedirect(artist)) || artist;
+      (await this.redirectsService.checkRedirect(artistName)) || artistName;
 
-    this.cache[artist] = redirect;
+    this.cache[artistName] = redirect;
 
     return redirect;
   }

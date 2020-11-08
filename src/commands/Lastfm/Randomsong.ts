@@ -20,7 +20,7 @@ export default class Randomsong extends LastFMBaseCommand {
   ];
 
   async run() {
-    let serverUsers = this.guild.members.cache.map((u) => `${u.id}`);
+    let serverUsers = (await this.guild.members.fetch()).map((u) => `${u.id}`);
 
     let randomUser = await this.usersService.randomUser({
       userIDs: serverUsers,
