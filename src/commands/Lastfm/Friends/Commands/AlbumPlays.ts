@@ -62,7 +62,7 @@ export class AlbumPlays extends FriendsChildCommand {
             return `${username.code()} - **${numberDisplay(
               ad.userplaycount,
               "**scrobble"
-            )} of **${ad.name}**`;
+            )}`;
           })
       );
 

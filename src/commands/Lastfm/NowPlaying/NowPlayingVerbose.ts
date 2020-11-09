@@ -53,6 +53,7 @@ export default class NowPlayingVerbose extends LastFMBaseCommand {
     let links = LinkGenerator.generateTrackLinksForEmbed(nowPlaying);
 
     if (
+      this.gowonClient.environment === "production" &&
       nowPlaying["@attr"]?.nowplaying &&
       this.gowonClient.isAlphaTester(this.author.id)
     ) {

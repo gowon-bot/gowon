@@ -9,6 +9,7 @@ import { MetaService } from "../../services/dbservices/MetaService";
 import Prefix from "../../commands/Meta/Prefix";
 import { RunAs } from "../AliasChecker";
 import { GowonClient } from "../GowonClient";
+import config from "../../../config.json";
 
 export class CommandHandler {
   gowonService = GowonService.getInstance();
@@ -43,7 +44,7 @@ export class CommandHandler {
       message.react("😔");
     }
 
-    let client = new GowonClient(this.client);
+    let client = new GowonClient(this.client, config.environment);
     await this.runPrefixCommandIfMentioned(message, client);
     await this.gers(message);
 

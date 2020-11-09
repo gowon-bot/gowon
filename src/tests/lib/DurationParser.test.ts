@@ -144,7 +144,7 @@ test("should parse a duration in hours", async (t) => {
 
   let plural = t.context.parser.parse("hours");
   let singular = t.context.parser.parse("hour");
-  let acronym = t.context.parser.parse("h");
+  // `h` is used by half-year, so don't expect `h` to return 1 hour
 
   let expected: Duration = { hours: 3 };
 
@@ -160,7 +160,6 @@ test("should parse a duration in hours", async (t) => {
 
   t.deepEqual(plural, expected);
   t.deepEqual(singular, expected);
-  t.deepEqual(acronym, expected);
 });
 
 test("should parse a duration in minutes", async (t) => {
@@ -233,4 +232,16 @@ test("should not parse a duration if there isn't one present", async (t) => {
   t.deepEqual(noDuration, {});
   t.deepEqual(noDuration2, {});
   t.deepEqual(noDuration3, {});
+});
+
+test("should parse a shorthand duration", async (t) => {
+  let quarter = t.context.parser.parse("q");
+  let quarter2 = t.context.parser.parse("quarter");
+  let halfYear = t.context.parser.parse("h");
+  let halfYear2 = t.context.parser.parse("half");
+
+  t.deepEqual(quarter, { months: 3 });
+  t.deepEqual(quarter2, { months: 3 });
+  t.deepEqual(halfYear, { months: 6 });
+  t.deepEqual(halfYear2, { months: 6 });
 });

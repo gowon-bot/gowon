@@ -1,4 +1,6 @@
 {
+  "environment": "development",
+
   "lastFMAPIKey": "Get this from https://last.fm/api",
   "lastFMSecret": "Get this from https://last.fm/api",
 

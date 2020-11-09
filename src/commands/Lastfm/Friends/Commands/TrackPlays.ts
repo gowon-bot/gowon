@@ -40,7 +40,7 @@ export class TrackPlays extends FriendsChildCommand {
         track,
       })
       .catch(() => {
-        throw new FriendNotFoundError ();
+        throw new FriendNotFoundError();
       });
 
     let trackInfo = Object.values(trackDetails).filter((v) => v.name)[0];
@@ -62,7 +62,7 @@ export class TrackPlays extends FriendsChildCommand {
             return `${username.code()} - **${numberDisplay(
               td.userplaycount,
               "**scrobble"
-            )} of **${td.name}**`;
+            )}`;
           })
       );
 

@@ -58,6 +58,7 @@ export default class NowPlaying extends LastFMBaseCommand {
     let links = LinkGenerator.generateTrackLinksForEmbed(nowPlaying);
 
     if (
+      this.gowonClient.environment === "production" &&
       nowPlaying["@attr"]?.nowplaying &&
       this.gowonClient.isAlphaTester(this.author.id)
     ) {
@@ -95,7 +96,6 @@ export default class NowPlaying extends LastFMBaseCommand {
       this.lastFMService.artistInfo({ artist: track.artist, username }),
       this.crownsService.getCrownDisplay(track.artist, this.guild),
     ])) as { status: string; value?: any; reason: any }[];
-    
 
     let crownString = "";
     let isCrownHolder = false;

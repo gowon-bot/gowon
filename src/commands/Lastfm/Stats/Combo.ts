@@ -9,12 +9,19 @@ import {
   Combo as ComboType,
 } from "../../../lib/calculators/ComboCalculator";
 import { LineConsolidator } from "../../../lib/LineConsolidator";
+import { Validation } from "../../../lib/validation/ValidationChecker";
+import { validators } from "../../../lib/validation/validators";
 
 export default class Combo extends LastFMBaseCommand {
   aliases = ["streak", "str"];
-  description = "shows your current streak";
+  description = `Shows your current streak\n Max combo: ${numberDisplay(
+    this.gowonService.constants.hardPageLimit * 1000
+  )}`;
   subcategory = "library stats";
-  usage = ["", "artist1 | artist2 | artistn... (artists to count when checking for consecutive plays)"];
+  usage = [
+    "",
+    "artist1 | artist2 | artistn... (artists to count when checking for consecutive plays)",
+  ];
 
   arguments: Arguments = {
     inputs: {
@@ -25,6 +32,10 @@ export default class Combo extends LastFMBaseCommand {
       },
     },
     mentions: standardMentions,
+  };
+
+  validation: Validation = {
+    artists: new validators.LengthRange({ max: 10 }),
   };
 
   redirectsService = new RedirectsService(this.logger);

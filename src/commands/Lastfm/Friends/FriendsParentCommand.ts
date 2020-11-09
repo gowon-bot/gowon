@@ -8,6 +8,7 @@ import { AlbumPlays } from "./Commands/AlbumPlays";
 import { TrackPlays } from "./Commands/TrackPlays";
 import { Scrobbles } from "./Commands/Scrobbles";
 import { RemoveAll } from "./RemoveAll";
+import { Joined } from "./Commands/Joined";
 
 export default class FriendsParentCommand extends LastFMBaseParentCommand {
   friendlyName = "friends";
@@ -27,5 +28,6 @@ export default class FriendsParentCommand extends LastFMBaseParentCommand {
     albumplays: () => new AlbumPlays(),
     trackplays: () => new TrackPlays(),
     scrobbles: () => new Scrobbles(),
+    joined: () => new Joined(),
   });
 }

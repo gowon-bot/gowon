@@ -4,7 +4,7 @@ import { GowonService } from "../services/GowonService";
 import specialUsers from "./specialUsers.json";
 
 export class GowonClient {
-  constructor(public client: Client) {}
+  constructor(public client: Client, public environment: string) {}
 
   private getUserIDs(users: { [key: string]: string | undefined }[]): string[] {
     return users.map((a) => Object.keys(a)[0]);
@@ -33,10 +33,10 @@ export class GowonClient {
   ): Promise<string> {
     if (
       user &&
-      await User.stillInServer(
+      (await User.stillInServer(
         message,
         typeof user === "string" ? user : user.id
-      )
+      ))
     ) {
       if (typeof user === "string") {
         try {
