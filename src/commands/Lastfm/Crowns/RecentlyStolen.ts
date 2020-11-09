@@ -10,7 +10,7 @@ export class RecentlyStolen extends CrownsChildCommand {
     let crowns = await this.crownsService.listRecentlyStolen(
       this.guild.id,
       10,
-      await this.serverUserIDs()
+      await this.serverUserIDs({ filterCrownBannedUsers: true })
     );
 
     let embed = this.newEmbed()

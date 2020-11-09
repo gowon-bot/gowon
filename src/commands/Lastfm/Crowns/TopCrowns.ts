@@ -7,7 +7,9 @@ export class TopCrowns extends CrownsChildCommand {
   usage = "";
 
   async run() {
-    let serverUsers = await this.serverUserIDs();
+    let serverUsers = await this.serverUserIDs({
+      filterCrownBannedUsers: true,
+    });
 
     let [crowns, crownsCount] = await Promise.all([
       this.crownsService.listTopCrownsInServer(this.guild.id, 10, serverUsers),

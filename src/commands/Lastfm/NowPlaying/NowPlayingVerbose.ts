@@ -100,15 +100,16 @@ export default class NowPlayingVerbose extends LastFMBaseCommand {
     if (artistInfo.value)
       this.tagConsolidator.addTags(artistInfo.value?.tags?.tag || []);
 
-    let artistPlays =
-      (isCrownHolder ? "👑 " : "") +
-      (track.artist.length < 150
-        ? numberDisplay(
-            artistInfo.value.stats.userplaycount,
-            `${track.artist} scrobble`
-          )
-        : numberDisplay(artistInfo.value.stats.userplaycount, `scrobble`) +
-          " of that artist");
+    let artistPlays = artistInfo.value
+      ? (isCrownHolder ? "👑 " : "") +
+        (track.artist.length < 150
+          ? numberDisplay(
+              artistInfo.value.stats.userplaycount,
+              `${track.artist} scrobble`
+            )
+          : numberDisplay(artistInfo.value.stats.userplaycount, `scrobble`) +
+            " of that artist")
+      : "";
 
     let noArtistData =
       "No data on last.fm for " +

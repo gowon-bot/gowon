@@ -239,7 +239,7 @@ export class LastFMAPIService extends BaseService {
       params
     );
 
-    if (!response.corrections) throw new RecordNotFoundError("artist");
+    if (!response.corrections?.correction) throw new RecordNotFoundError("artist");
 
     return response.corrections.correction.artist;
   }

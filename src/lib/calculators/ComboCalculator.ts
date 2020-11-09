@@ -128,10 +128,10 @@ export class Combo {
 
   get artistNames(): string[] {
     return [
+      this.artistName,
       ...this.artists.filter(
         (an) => !this.caseInsensitiveCompare(an, this.artistName)
       ),
-      this.artistName,
     ];
   }
 

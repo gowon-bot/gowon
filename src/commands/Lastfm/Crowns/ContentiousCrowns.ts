@@ -9,7 +9,9 @@ export class ContentiousCrowns extends CrownsChildCommand {
   usage = "";
 
   async run(message: Message) {
-    let serverUsers = await this.serverUserIDs();
+    let serverUsers = await this.serverUserIDs({
+      filterCrownBannedUsers: true,
+    });
 
     let [crowns, crownsCount] = await Promise.all([
       this.crownsService.listContentiousCrownsInServer(

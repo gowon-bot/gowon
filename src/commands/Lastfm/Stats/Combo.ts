@@ -14,7 +14,7 @@ export default class Combo extends LastFMBaseCommand {
   aliases = ["streak", "str"];
   description = "shows your current streak";
   subcategory = "library stats";
-  usage = ["", "amount_to_check @user"];
+  usage = ["", "artist1 | artist2 | artistn... (artists to count when checking for consecutive plays)"];
 
   arguments: Arguments = {
     inputs: {
@@ -37,7 +37,7 @@ export default class Combo extends LastFMBaseCommand {
     let paginator = new Paginator(
       this.lastFMService.recentTracks.bind(this.lastFMService),
       this.gowonService.constants.hardPageLimit,
-      { username, limit: 100 }
+      { username, limit: 1000 }
     );
 
     let comboCalculator = new ComboCalculator(this.redirectsService, artists);
@@ -48,7 +48,9 @@ export default class Combo extends LastFMBaseCommand {
 
     lineConsolidator.addLines(
       {
-        string: this.displayCombo(combo, "artist") + ` (${combo.artist.name})`,
+        string:
+          this.displayCombo(combo, "artist") +
+          ` (${combo.artistNames.join(", ")})`,
         shouldDisplay: combo.artist.plays > 0,
       },
       {

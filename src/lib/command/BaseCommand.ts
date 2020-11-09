@@ -89,7 +89,7 @@ export abstract class BaseCommand implements Command {
     return md5(this.name + this.parentName + this.category);
   }
 
-  abstract async run(message: Message, runAs: RunAs): Promise<void>;
+  abstract run(message: Message, runAs: RunAs): Promise<void>;
 
   async parseMentions({
     senderRequired = false,
@@ -303,7 +303,31 @@ export abstract class BaseCommand implements Command {
     return GowonEmbed(this.message.member ?? undefined);
   }
 
-  protected async serverUserIDs(): Promise<string[]> {
-    return (await this.guild.members.fetch()).map((u) => u.user.id);
+  protected async serverUserIDs({
+    filterCrownBannedUsers,
+  }: { filterCrownBannedUsers?: boolean } = {}): Promise<string[]> {
+    let filter = (_: string) => true;
+
+    if (filterCrownBannedUsers) {
+      let crownBannedUsers = await this.gowonService.getCrownBannedUsers(
+        this.guild
+      );
+
+      let purgatoryRole = await this.gowonService.getPurgatoryRole(this.guild);
+
+      let usersInPurgatory = purgatoryRole
+        ? (await this.guild.members.fetch())
+            .filter((m) => m.roles.cache.has(purgatoryRole!))
+            .map((m) => m.user.id)
+        : [];
+
+      filter = (id: string) => {
+        return !crownBannedUsers.includes(id) && !usersInPurgatory.includes(id);
+      };
+    }
+
+    return (await this.guild.members.fetch())
+      .map((u) => u.user.id)
+      .filter(filter);
   }
 }

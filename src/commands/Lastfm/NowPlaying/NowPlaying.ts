@@ -95,6 +95,7 @@ export default class NowPlaying extends LastFMBaseCommand {
       this.lastFMService.artistInfo({ artist: track.artist, username }),
       this.crownsService.getCrownDisplay(track.artist, this.guild),
     ])) as { status: string; value?: any; reason: any }[];
+    
 
     let crownString = "";
     let isCrownHolder = false;
@@ -117,15 +118,16 @@ export default class NowPlaying extends LastFMBaseCommand {
 
     let lineConsolidator = new LineConsolidator();
 
-    let artistPlays =
-      (isCrownHolder ? "👑 " : "") +
-      (track.artist.length < 150
-        ? numberDisplay(
-            artistInfo.value.stats.userplaycount,
-            `${track.artist} scrobble`
-          )
-        : numberDisplay(artistInfo.value.stats.userplaycount, `scrobble`) +
-          " of that artist");
+    let artistPlays = artistInfo.value
+      ? (isCrownHolder ? "👑 " : "") +
+        (track.artist.length < 150
+          ? numberDisplay(
+              artistInfo.value.stats.userplaycount,
+              `${track.artist} scrobble`
+            )
+          : numberDisplay(artistInfo.value.stats.userplaycount, `scrobble`) +
+            " of that artist")
+      : "";
 
     let noArtistData =
       "No data on last.fm for " +

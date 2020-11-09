@@ -13,8 +13,14 @@ export class RedirectsCache {
 
     if (this.cache[artistName]) return this.cache[artistName];
 
-    let redirect =
-      (await this.redirectsService.checkRedirect(artistName)) || artistName;
+    let redirect: string;
+
+    try {
+      redirect =
+        (await this.redirectsService.checkRedirect(artistName)) || artistName;
+    } catch {
+      redirect = artistName;
+    }
 
     this.cache[artistName] = redirect;
 

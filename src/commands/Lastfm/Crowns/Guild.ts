@@ -29,7 +29,9 @@ export class Guild extends CrownsChildCommand {
   ];
 
   async run() {
-    let serverUsers = await this.serverUserIDs();
+    let serverUsers = await this.serverUserIDs({
+      filterCrownBannedUsers: true,
+    });
 
     let [holders, crownsCount] = await Promise.all([
       this.crownsService.guild(this.guild, 20, serverUsers),

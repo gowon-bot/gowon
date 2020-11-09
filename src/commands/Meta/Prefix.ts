@@ -1,5 +1,3 @@
-import { Message } from "discord.js";
-import { RunAs } from "../../lib/AliasChecker";
 import { BaseCommand } from "../../lib/command/BaseCommand";
 
 export default class Prefix extends BaseCommand {
@@ -14,7 +12,7 @@ export default class Prefix extends BaseCommand {
     return this;
   }
 
-  async run(_: Message, __: RunAs) {
+  async run() {
     if (this.prefix) {
       await this.gowonService.setPrefix(this.guild.id, this.prefix);
       await this.reply(`the new prefix is ${this.prefix.code()}`);

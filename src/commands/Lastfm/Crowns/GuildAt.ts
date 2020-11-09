@@ -16,7 +16,7 @@ export class GuildAt extends CrownsChildCommand {
     let guildAt = await this.crownsService.guildAt(
       this.guild.id,
       rank,
-      await this.serverUserIDs()
+      await this.serverUserIDs({ filterCrownBannedUsers: true })
     );
     let highlighted = guildAt.users.find((u) => u.rank.toInt() === rank);
 
