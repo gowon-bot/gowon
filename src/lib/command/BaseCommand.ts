@@ -100,7 +100,7 @@ export abstract class BaseCommand implements Command {
     idMentionArgumentName = "userID",
     asCode = true,
     fetchDiscordUser = false,
-    reverseLookup = { lastFM: false },
+    reverseLookup = { lastFM: false, optional: false },
   }: {
     senderRequired?: boolean;
     usernameRequired?: boolean;
@@ -110,7 +110,7 @@ export abstract class BaseCommand implements Command {
     idMentionArgumentName?: string;
     asCode?: boolean;
     fetchDiscordUser?: boolean;
-    reverseLookup?: { lastFM?: boolean };
+    reverseLookup?: { lastFM?: boolean; optional?: boolean };
   } = {}): Promise<{
     senderUsername: string;
     mentionedUsername?: string;
@@ -165,7 +165,8 @@ export abstract class BaseCommand implements Command {
         mentionedUsername
       );
 
-      if (!dbUser) throw new ReverseLookupError("Last.fm username");
+      if (!reverseLookup.optional && !dbUser)
+        throw new ReverseLookupError("Last.fm username");
     }
 
     let username = mentionedUsername || senderUser?.lastFMUsername;

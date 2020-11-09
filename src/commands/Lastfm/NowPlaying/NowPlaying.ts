@@ -8,7 +8,7 @@ import { Arguments } from "../../../lib/arguments/arguments";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { CrownsService } from "../../../services/dbservices/CrownsService";
-import { TagConsolidator } from "../../../lib/TagConsolidator";
+import { TagConsolidator } from "../../../lib/tags/TagConsolidator";
 import { sanitizeForDiscord } from "../../../helpers/discord";
 import config from "../../../../config.json";
 import { LineConsolidator } from "../../../lib/LineConsolidator";
@@ -36,7 +36,10 @@ export default class NowPlaying extends LastFMBaseCommand {
   async run(message: Message) {
     let otherWords = this.parsedArguments.otherWords as string | undefined;
 
-    let { username, senderUsername } = await this.parseMentions();
+    let { username, senderUsername, discordUser } = await this.parseMentions({
+      fetchDiscordUser: true,
+      reverseLookup: { lastFM: true, optional: true },
+    });
 
     if (
       otherWords &&
@@ -101,7 +104,7 @@ export default class NowPlaying extends LastFMBaseCommand {
     let isCrownHolder = false;
 
     if (crown.value && crown.value.user) {
-      if (crown.value.user.id === message.author.id) {
+      if (crown.value.user.id === discordUser?.id) {
         isCrownHolder = true;
       } else {
         if (await User.stillInServer(this.message, crown.value.user.id)) {

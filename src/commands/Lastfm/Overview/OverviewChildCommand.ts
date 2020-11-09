@@ -53,7 +53,7 @@ export abstract class OverviewChildCommand extends LastFMBaseChildCommand {
   async prerun(message: Message) {
     let { senderUsername, username, discordUser } = await this.parseMentions({
       fetchDiscordUser: true,
-      reverseLookup: { lastFM: true },
+      reverseLookup: { lastFM: true, optional: true },
     });
 
     this.senderUsername = senderUsername;

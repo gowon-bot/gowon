@@ -1,5 +1,5 @@
 import anyTest, { TestInterface } from "ava";
-import { TagConsolidator } from "../../lib/TagConsolidator";
+import { TagConsolidator } from "../../lib/tags/TagConsolidator";
 import { Tag } from "../../services/LastFM/LastFMService.types";
 
 const test = anyTest as TestInterface<{ consolidator: TagConsolidator }>;
@@ -91,4 +91,19 @@ test("should not filter long tags if disabled", async (t) => {
   let consolidated = t.context.consolidator.consolidate(Infinity, false);
 
   t.deepEqual(consolidated, ["tag1", longtag, "tag2"]);
+});
+
+test("should filter out explicit tags", async (t) => {
+  t.context.consolidator.explicitTags = t.context.consolidator.parseExplicitTags(
+    // 20 = t, 1 = a, 7 = g, so filter out all tags that contain `tag`
+    [[20, 1, 7]]
+  );
+
+  let tags = ["tag1", "k-pop", "tag"];
+
+  t.context.consolidator.addTags(createTags(tags));
+
+  let consolidated = t.context.consolidator.consolidate();
+
+  t.deepEqual(consolidated, ["k-pop"]);
 });

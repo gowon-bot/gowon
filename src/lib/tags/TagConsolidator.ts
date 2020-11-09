@@ -1,22 +1,14 @@
-import { Tag } from "../services/LastFM/LastFMService.types";
+import { Tag } from "../../services/LastFM/LastFMService.types";
+import blacklistedTags from "./blacklistedTags.json";
 
 export class TagConsolidator {
-  blacklistedTags = [
-    "seen live",
-    "albums I own",
-    "check out",
-    "all",
-    "amazing",
-    "soty",
-    "aoty",
-    "songs seen live",
-    "fave",
-    "love at first listen",
-    "played",
-    "personal favourites",
-    "personal favorites",
-    "hino",
-  ];
+  blacklistedTags: string[];
+  explicitTags: string[];
+
+  constructor() {
+    this.blacklistedTags = blacklistedTags.strings;
+    this.explicitTags = this.parseExplicitTags(blacklistedTags.explicit);
+  }
 
   addArtistName(artistName: string): TagConsolidator {
     this.blacklistedTags.push(artistName.toLowerCase());
@@ -35,6 +27,7 @@ export class TagConsolidator {
       ...tags
         .map((t) => t.name.toLowerCase())
         .filter((t) => !this.blacklistedTags.includes(t))
+        .filter(this.explicitTagFilter.bind(this))
     );
     return this;
   }
@@ -93,5 +86,19 @@ export class TagConsolidator {
     }
 
     return false;
+  }
+
+  parseExplicitTags(tags: number[][]): string[] {
+    const letters = "abcdefghijklmnopqrstuvwxyz";
+
+    return tags.map((tag) =>
+      tag.map((letter) => letters.charAt(letter - 1)).join("")
+    );
+  }
+
+  private explicitTagFilter(tag: string): boolean {
+    let matches = this.explicitTags.filter((eTag) => tag.includes(eTag));
+
+    return !matches.length;
   }
 }
