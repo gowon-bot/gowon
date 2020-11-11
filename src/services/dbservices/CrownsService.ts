@@ -16,7 +16,7 @@ import {
 } from "../../errors";
 import { Guild, Message, User as DiscordUser } from "discord.js";
 import { BaseService } from "../BaseService";
-import { FindManyOptions, In } from "typeorm";
+import { FindManyOptions, ILike, In } from "typeorm";
 import { Setting } from "../../database/entity/Setting";
 import { Settings } from "../../lib/Settings";
 import { MoreThan } from "typeorm";
@@ -24,7 +24,6 @@ import { CrownBan } from "../../database/entity/CrownBan";
 import { CacheScopedKey } from "../../database/cache/ShallowCache";
 import { CrownsHistoryService } from "./CrownsHistoryService";
 import { RedirectsService } from "./RedirectsService";
-import { ILike } from "../../extensions/typeorm";
 import { ArtistRedirect } from "../../database/entity/ArtistRedirect";
 import { ArtistCrownBan } from "../../database/entity/ArtistCrownBan";
 

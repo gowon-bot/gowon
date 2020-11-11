@@ -191,7 +191,7 @@ export class LastFMScraper extends BaseScraper {
     );
   }
 
-  private getMetadataItems(page: CheerioStatic): Metadata {
+  private getMetadataItems(page: cheerio.Root): Metadata {
     let items = page(".metadata-list > .metadata-item").toArray();
 
     return items.reduce((acc, val) => {

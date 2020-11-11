@@ -1,5 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, BaseEntity, Column } from "typeorm";
-import { ILike } from "../../extensions/typeorm";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  BaseEntity,
+  Column,
+  ILike,
+} from "typeorm";
 
 @Entity({ name: "artist_redirects" })
 export class ArtistRedirect extends BaseEntity {

@@ -7,7 +7,7 @@ import {
 } from "../../errors";
 import { BaseService } from "../BaseService";
 import { Perspective } from "../../lib/Perspective";
-import { ILike } from "../../extensions/typeorm";
+import { ILike } from "typeorm";
 
 export class UsersService extends BaseService {
   async getUsername(discordID: string): Promise<string> {

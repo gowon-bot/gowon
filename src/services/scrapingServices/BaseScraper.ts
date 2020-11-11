@@ -22,7 +22,7 @@ export class BaseScraper extends BaseService {
     this.axios = axios.create();
   }
 
-  protected async fetch(path: string): Promise<CheerioStatic> {
+  protected async fetch(path: string): Promise<cheerio.Root> {
     this.log(chalk`Made scraping request for {cyan '${this.url + path}'}`);
     let response = await this.axios.get(this.url + path);
     return cheerio.load(response.data);
