@@ -1,5 +1,5 @@
 import { CommandManager } from "./CommandManager";
-import { Client, Message } from "discord.js";
+import { Message } from "discord.js";
 import { GowonService } from "../../services/GowonService";
 import { AdminService } from "../../services/dbservices/AdminService";
 import { Logger } from "../Logger";
@@ -9,17 +9,16 @@ import { MetaService } from "../../services/dbservices/MetaService";
 import Prefix from "../../commands/Meta/Prefix";
 import { RunAs } from "../AliasChecker";
 import { GowonClient } from "../GowonClient";
-import config from "../../../config.json";
 
 export class CommandHandler {
   gowonService = GowonService.getInstance();
   adminService = new AdminService();
   metaService = new MetaService();
   commandManager = new CommandManager();
+  client!: GowonClient;
   private logger = new Logger();
-  private client!: Client;
 
-  setClient(client: Client) {
+  setClient(client: GowonClient) {
     this.client = client;
   }
 
@@ -44,8 +43,7 @@ export class CommandHandler {
       message.react("😔");
     }
 
-    let client = new GowonClient(this.client, config.environment);
-    await this.runPrefixCommandIfMentioned(message, client);
+    await this.runPrefixCommandIfMentioned(message, this.client);
     await this.gers(message);
 
     if (
@@ -70,11 +68,17 @@ export class CommandHandler {
       if (command instanceof ParentCommand)
         command = (command.default && command.default()) || command;
 
-      if (command.devCommand && !client.isDeveloper(message.author.id)) return;
+      if (command.devCommand && !this.client.isDeveloper(message.author.id))
+        return;
 
-      let canCheck = await this.adminService.can.run(command, message, client, {
-        useChannel: true,
-      });
+      let canCheck = await this.adminService.can.run(
+        command,
+        message,
+        this.client,
+        {
+          useChannel: true,
+        }
+      );
 
       if (!canCheck.passed) {
         Logger.log(
@@ -90,7 +94,7 @@ export class CommandHandler {
 
       this.metaService.recordCommandRun(command.id, message);
 
-      command.gowonClient = client;
+      command.gowonClient = this.client;
 
       await command.execute(message, runAs);
     }
@@ -101,7 +105,7 @@ export class CommandHandler {
       message.mentions.users
         .array()
         .map((u) => u.id)
-        .includes(this.client.user!.id) &&
+        .includes(this.client.client.user!.id) &&
       message.content.split(/\s+/)[1].toLowerCase() === "prefix" &&
       !message.author.bot &&
       (message.member?.hasPermission("ADMINISTRATOR") ||
@@ -119,7 +123,7 @@ export class CommandHandler {
       message.mentions.users
         .array()
         .map((u) => u.id)
-        .includes(this.client.user!.id) &&
+        .includes(this.client.client.user!.id) &&
       message.content.split(/\s+/)[1].toLowerCase() === "pog" &&
       !message.author.bot
     ) {
