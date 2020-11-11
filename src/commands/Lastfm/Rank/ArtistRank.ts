@@ -40,7 +40,9 @@ export default class ArtistRank extends LastFMBaseCommand {
 
     if (rank === -1) {
       await this.reply(
-        `that artist wasn't found in ${perspective.possessive} top 1000 artists`
+        `that artist wasn't found in ${
+          perspective.possessive
+        } top ${numberDisplay(topArtists.artist.length, "artist")}`
       );
     } else {
       await this.reply(

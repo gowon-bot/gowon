@@ -62,16 +62,16 @@ export default class Combo extends LastFMBaseCommand {
         string:
           this.displayCombo(combo, "artist") +
           ` (${combo.artistNames.join(", ")})`,
-        shouldDisplay: combo.artist.plays > 0,
+        shouldDisplay: combo.artist.plays > 1,
       },
       {
         string:
           this.displayCombo(combo, "album") + ` (${combo.album.name.italic()})`,
-        shouldDisplay: combo.album.plays > 0,
+        shouldDisplay: combo.album.plays > 1,
       },
       {
         string: this.displayCombo(combo, "track") + ` (${combo.track.name})`,
-        shouldDisplay: combo.track.plays > 0,
+        shouldDisplay: combo.track.plays > 1,
       }
     );
 

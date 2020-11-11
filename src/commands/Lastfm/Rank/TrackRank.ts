@@ -53,7 +53,9 @@ export default class TrackRank extends LastFMBaseCommand {
 
     if (rank === -1) {
       await this.reply(
-        `that track wasn't found in ${perspective.possessive} top 1000 tracks`
+        `that track wasn't found in ${
+          perspective.possessive
+        } top ${numberDisplay(topTracks.track.length, "track")}`
       );
     } else {
       await this.reply(

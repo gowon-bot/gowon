@@ -24,8 +24,7 @@ export class ComboCalculator {
     for await (let page of paginator.iterator()) {
       let tracks = this.extractTracks(page, paginator.currentPage);
 
-      this.totalTracks +=
-        paginator.currentPage === 1 ? tracks.length - 1 : tracks.length;
+      this.totalTracks += tracks.filter((t) => !t["@attr"]?.nowplaying).length;
 
       for (let trackIndex = 0; trackIndex < tracks.length; trackIndex++) {
         let track = tracks[trackIndex];
@@ -50,10 +49,10 @@ export class ComboCalculator {
 
     if (pageNumber === 1) this.combo.imprint(tracks[0]);
 
-    if (pageNumber === 1 && tracks[0]["@attr"]?.nowplaying) {
+    if (pageNumber === 1) {
       return tracks;
     } else {
-      return tracks.slice(1);
+      return tracks.filter((t) => !t["@attr"]?.nowplaying);
     }
   }
 

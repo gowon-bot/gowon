@@ -3,6 +3,7 @@ import {
   Params,
   CreateIssueParams,
   CreateIssueResponse,
+  GetBranchResponse,
 } from "./GithubService.types";
 import config from "../../../config.json";
 import Axios, { AxiosInstance } from "axios";
@@ -10,8 +11,8 @@ import Axios, { AxiosInstance } from "axios";
 export class GithubService extends BaseService {
   private baseURL = "https://api.github.com";
 
-  private owner = "jivison";
-  private repo = "gowon";
+  public readonly owner = "jivison";
+  public readonly repo = "gowon";
 
   get axios(): AxiosInstance {
     return Axios.create({
@@ -44,6 +45,8 @@ export class GithubService extends BaseService {
 
     if (options.verb === "POST") {
       response = await this.axios.post(path, options.params!);
+    } else if (options.verb === "GET") {
+      response = await this.axios.get(path);
     }
 
     return response.data as T;
@@ -55,6 +58,15 @@ export class GithubService extends BaseService {
       {
         params,
         verb: "POST",
+      }
+    );
+  }
+
+  async getBranch(branch = "master"): Promise<GetBranchResponse> {
+    return await this.request<GetBranchResponse>(
+      `/repos/${this.owner}/${this.repo}/branches/${branch}`,
+      {
+        verb: "GET",
       }
     );
   }

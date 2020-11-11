@@ -22,6 +22,9 @@ export class SumTop extends OverviewChildCommand {
     if (top > 1000 || top < 2)
       throw new LogicError("Please enter a valid number (between 2 and 1000)");
 
+    // Cache the top artists and user info responses
+    await Promise.all([this.calculator.topArtists(), this.calculator.userInfo()])
+
     let { badge, colour, image } = await this.getAuthorDetails();
     let [sumtop, sumtoppct] = await Promise.all([
       this.calculator.sumTop(top),

@@ -53,7 +53,9 @@ export default class AlbumRank extends LastFMBaseCommand {
 
     if (rank === -1) {
       await this.reply(
-        `that album wasn't found in ${perspective.possessive} top 1000 albums`
+        `that album wasn't found in ${
+          perspective.possessive
+        } top ${numberDisplay(topAlbums.album.length, "album")}`
       );
     } else {
       await this.reply(

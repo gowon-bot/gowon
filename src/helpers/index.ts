@@ -61,6 +61,8 @@ export function flatDeep<T = any>(arr: Array<any>, d = Infinity): Array<T> {
 }
 
 export function getOrdinal(number: number): string {
+  if (`${number}`.endsWith("11")) return numberDisplay(number) + "th";
+  
   let ordinals = [
     "th",
     "st",
@@ -75,7 +77,7 @@ export function getOrdinal(number: number): string {
     "th",
   ];
 
-  return number + ordinals[`${number}`.charAt(`${number}`.length - 1).toInt()];
+  return numberDisplay(number) + ordinals[`${number}`.charAt(`${number}`.length - 1).toInt()];
 }
 
 export function shuffle<T>(a: Array<T>): Array<T> {

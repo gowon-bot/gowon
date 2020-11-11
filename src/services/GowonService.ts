@@ -30,7 +30,7 @@ export class GowonService {
   shallowCache = new ShallowCache();
 
   constants = {
-    hardPageLimit: 5,
+    hardPageLimit: 10,
     crownThreshold: 30,
     dateParsers: [
       "yy-MM-dd",

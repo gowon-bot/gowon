@@ -57,10 +57,9 @@ ${
   breadth
     ? `**Breadth rating**: ${breadth.rating.toFixed(1)} _(${
         breadth.ratingString
-      })_`
+      })_\n`
     : ""
-}
-**# of artists to equal 50% of scrobbles**: ${await (
+}**# of artists to equal 50% of scrobbles**: ${await (
           await this.calculator.topPercent(50)
         ).count}
 **Total scrobbles for top 10 artists**: ${await this.calculator.sumTop(10)}
@@ -68,9 +67,12 @@ ${perspective.upper.possessive} top 10 artists account for: ${(
           await this.calculator.sumTopPercent(10)
         ).asString.bold()}% of ${perspective.possessivePronoun} total scrobbles
 
-Among ${perspective.possessivePronoun} top 1000 artists, ${
-          perspective.plusToHave
-        }...
+Among ${perspective.possessivePronoun} top ${numberDisplay(
+          (await this.calculator.totalArtists()).asNumber > 1000
+            ? 1000
+            : (await this.calculator.totalArtists()).asNumber,
+          "artist"
+        )}, ${perspective.plusToHave}...
     - ${(
       await this.calculator.playsOver(1000)
     ).asString.bold()} artists with 1000+ scrobbles

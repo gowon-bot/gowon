@@ -21,7 +21,6 @@ export class Joined extends FriendsChildCommand {
     ])
       .fetch(this.lastFMService.userInfo.bind(this.lastFMService), {})
       .catch((e) => {
-        console.log(e);
         throw new FriendNotFoundError();
       });
 
