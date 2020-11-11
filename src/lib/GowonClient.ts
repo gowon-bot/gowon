@@ -4,6 +4,8 @@ import { GowonService } from "../services/GowonService";
 import specialUsers from "./specialUsers.json";
 
 export class GowonClient {
+  public hasPM2 = false;
+
   constructor(public client: Client, public environment: string) {}
 
   private getUserIDs(users: { [key: string]: string | undefined }[]): string[] {

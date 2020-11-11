@@ -278,3 +278,13 @@ export class ArtistCrownBannedError extends ClientError {
     super(`it is not possible to get the crown for ${artist.bold()}!`);
   }
 }
+
+export class PM2ConnectionError extends ClientError {
+  name = "PM2ConnectionError";
+
+  constructor() {
+    super(
+      "Couldn't connect to PM2! Check that you have pm2 installed and running!"
+    );
+  }
+}

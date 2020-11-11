@@ -6,3 +6,4 @@ config.json
 ormconfig.json
 Gowon.code-workspace
 specialUsers.json
+yarn.lock

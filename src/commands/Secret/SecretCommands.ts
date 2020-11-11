@@ -5,6 +5,7 @@ import { CommandManager } from "../../lib/command/CommandManager";
 export default class SecretCommands extends BaseCommand {
   description = "Shows the secret commands";
   secretCommand = true;
+  devCommand = true;
 
   commandManager = new CommandManager();
 
