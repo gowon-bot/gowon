@@ -10,7 +10,7 @@ import { ArtistCrownBannedError } from "../../../errors";
 
 export class Info extends CrownsChildCommand {
   aliases = ["wh"];
-  description = "Shows who has a crown";
+  description = "Shows who has the crown for a given user";
   usage = ["", "artist"];
 
   variations: Variation[] = [

@@ -21,15 +21,21 @@ import { DurationParser } from "../../../lib/DurationParser";
 
 export default class Taste extends LastFMBaseCommand {
   aliases = ["t"];
+  description = "Shows your taste overlap with another user";
+  subcategory = "library stats";
+  usage = [
+    "",
+    "@user or lfm:username",
+    "time period @user",
+    "username amount time period",
+  ];
+
   variations: Variation[] = [
     {
       variationString: "tb",
       description: "Uses a table view instead of an embed to display",
     },
   ];
-  description = "Shows your taste overlap with another user";
-  subcategory = "library stats";
-  usage = ["", "@user or lfm:username", "time period @user"];
 
   arguments: Arguments = {
     inputs: {

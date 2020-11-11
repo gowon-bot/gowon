@@ -1,7 +1,7 @@
 import { BaseCommand } from "../../lib/command/BaseCommand";
 
 export default class Prefix extends BaseCommand {
-  description = "Set the prefix";
+  description = "Set or view the prefix";
   secretCommand = true;
   shouldBeIndexed = false;
 

@@ -3,7 +3,7 @@ import { Variation } from "../../../lib/command/BaseCommand";
 import { PermissionsChildCommand } from "./PermissionsChildCommand";
 
 export class ChannelBlacklist extends PermissionsChildCommand {
-  description = "Blacklist command from channel";
+  description = "Prevent a command from being used in a channel";
   usage = ["command #channel", "command #channel #channel2"];
   variations: Variation[] = [{ variationString: "channelunblacklist" }];
 

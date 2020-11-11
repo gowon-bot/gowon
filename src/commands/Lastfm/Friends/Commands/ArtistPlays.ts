@@ -6,7 +6,7 @@ import { LinkGenerator } from "../../../../helpers/lastFM";
 import { FriendNotFoundError } from "../../../../errors";
 
 export class ArtistPlays extends FriendsChildCommand {
-  description = "View how many plays of an artist your friends have";
+  description = "Shows how many plays of an artist your friends have";
   aliases = ["ap", "p"];
   usage = ["", "artist"];
 

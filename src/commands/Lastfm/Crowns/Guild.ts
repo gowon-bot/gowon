@@ -6,7 +6,7 @@ import { GuildAround } from "./GuildAround";
 import { GuildAt } from "./GuildAt";
 
 export class Guild extends CrownsChildCommand {
-  description = "Lists the top crown holders in the server";
+  description = "Shows the server's crowns leaderboard";
   aliases = ["leaderboard", "ldb"];
   usage = "";
 

@@ -15,6 +15,8 @@ import { Breadth } from "./Breadth";
 import { Playsover } from "./Playsover";
 
 export default class OverviewParentCommand extends LastFMBaseParentCommand {
+  description =
+    "Shows information about you and your library. Run overview all to see an example";
   friendlyName = "overview";
 
   prefixes = ["o", "overview"];

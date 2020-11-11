@@ -6,7 +6,7 @@ import { LastFMBaseCommand } from "./LastFMBaseCommand";
 
 export default class Cover extends LastFMBaseCommand {
   aliases = ["co"];
-  description = "Shows the cover for an album";
+  description = "Shows the cover for a given album";
   usage = ["", "artist | album @user"];
 
   arguments: Arguments = {

@@ -211,8 +211,9 @@ _You can find the source code for all the commands at [/src/commands](/src/comma
 
 ### Meta
 
-- `topcommands`, shows most run commands in the server
 - `github`, links the github repository for the bot
+- `issues`, lists the github issues page for the bot
+- `latestcommit`, shows the latest commit to the github repository
 
 ## Special Thanks
 

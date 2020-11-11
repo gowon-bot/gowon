@@ -5,7 +5,7 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 export default class Whoami extends LastFMBaseCommand {
   aliases = ["me"];
-  description = "Displays your login";
+  description = "Displays your Last.fm username, or if you mention another user, theirs";
   subcategory = "accounts";
   usage = ["", "@user"];
 

@@ -15,7 +15,7 @@ import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
 export default class Pace extends LastFMBaseCommand {
   aliases = ["pc"];
-  description = "Predicts when you're gonna hit a milestone";
+  description = "Predicts when a user is gonna hit a scrobble milestone";
   subcategory = "library stats";
   usage = ["", "milestone", "time period milestone @user"];
 

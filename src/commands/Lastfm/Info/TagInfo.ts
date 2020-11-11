@@ -8,7 +8,7 @@ export default class TagInfo extends InfoCommand {
   shouldBeIndexed = true;
 
   aliases = ["tai", "gi"];
-  description = "Display some information about a tag";
+  description = "Displays some information about a tag";
   usage = ["tag"];
 
   arguments: Arguments = {

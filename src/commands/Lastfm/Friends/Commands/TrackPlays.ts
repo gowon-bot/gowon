@@ -5,7 +5,7 @@ import { Arguments } from "../../../../lib/arguments/arguments";
 import { FriendNotFoundError } from "../../../../errors";
 
 export class TrackPlays extends FriendsChildCommand {
-  description = "View how many plays of a track your friends have";
+  description = "Shows how many plays of a track your friends have";
   aliases = ["tp"];
   usage = ["", "artist | track"];
 

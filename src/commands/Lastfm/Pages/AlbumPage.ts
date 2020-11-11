@@ -5,7 +5,7 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 export default class AlbumPage extends LastFMBaseCommand {
   aliases = ["alpa", "lpa"];
-  description = "Links you to the album page on lastfm";
+  description = "Links you to an album's page on Last.fm";
   subcategory = "pages";
   usage = ["", "artist | album"];
 

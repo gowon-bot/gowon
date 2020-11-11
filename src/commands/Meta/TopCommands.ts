@@ -10,7 +10,7 @@ import {
 } from "../../helpers/date";
 
 export class TopCommands extends MetaChildCommand {
-  description = "Shows the most used commands";
+  description = "Shows the most used commands over a given time period";
   usage = ["", "time period"];
 
   arguments: Arguments = {
@@ -41,7 +41,7 @@ export class TopCommands extends MetaChildCommand {
           (tc) =>
             `${numberDisplay(tc.count, "run")} - ${(
               commandManager.findByID(tc.commandID)?.friendlyNameWithParent ??
-              "[deleted command]"
+              "[unknown command]"
             ).bold()}`
         )
       );

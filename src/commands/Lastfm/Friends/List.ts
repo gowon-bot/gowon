@@ -6,7 +6,7 @@ import { FriendNotFoundError } from "../../../errors";
 
 export class List extends FriendsChildCommand {
   aliases = ["fm", "np", "nowplaying"];
-  description = "View what your friends are listening to";
+  description = "Shows what your friends are listening to";
   usage = "";
 
   throwIfNoFriends = true;

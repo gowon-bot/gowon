@@ -8,7 +8,7 @@ export default class TopTrack extends InfoCommand {
   usage = ["", "artist", "artist | start | stop"];
 
   aliases = ["tt"];
-  description = "Display the top track for an artist";
+  description = "Displays the top tracks for an artist";
   arguments: Arguments = {
     inputs: {
       artist: { index: 0, splitOn: "|" },

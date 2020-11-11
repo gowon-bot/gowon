@@ -7,7 +7,7 @@ import { validators } from "../../../lib/validation/validators";
 
 export class Kill extends CrownsChildCommand {
   description = "Kills a crown";
-  usage = ["artist (be specific with case!)"];
+  usage = ["artist (case sensitive!)"];
 
   arguments: Arguments = {
     inputs: {

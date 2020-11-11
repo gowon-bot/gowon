@@ -2,12 +2,22 @@ import { CrownsChildCommand } from "./CrownsChildCommand";
 import { numberDisplay } from "../../../helpers";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { LogicError } from "../../../errors";
+import { Validation } from "../../../lib/validation/ValidationChecker";
+import { validators } from "../../../lib/validation/validators";
 
 export class GuildAt extends CrownsChildCommand {
+  description =
+    "Shows the user at a given rank on the crowns leaderboard, and the surrounding users";
+  usage = "rank";
+
   arguments: Arguments = {
     inputs: {
       rank: { index: 0, number: true },
     },
+  };
+
+  validation: Validation = {
+    rank: new validators.Required({}),
   };
 
   async run() {

@@ -4,7 +4,7 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 export default class RateYourMusic extends LastFMBaseCommand {
   aliases = ["ryms"];
-  description = "Search rateyourmusic for an album (or anything!)";
+  description = "Search Rateyourmusic for an album (or anything!)";
   subcategory = "external";
 
   arguments: Arguments = {

@@ -8,7 +8,7 @@ import { FriendNotFoundError } from "../../../../errors";
 import { fromUnixTime } from "date-fns";
 
 export class Joined extends FriendsChildCommand {
-  description = "View when your friends joined Last.fm";
+  description = "Shows when your friends joined Last.fm";
   aliases = ["j"];
   usage = ["", "time period"];
 
@@ -20,7 +20,7 @@ export class Joined extends FriendsChildCommand {
       this.senderUsername,
     ])
       .fetch(this.lastFMService.userInfo.bind(this.lastFMService), {})
-      .catch((e) => {
+      .catch(() => {
         throw new FriendNotFoundError();
       });
 

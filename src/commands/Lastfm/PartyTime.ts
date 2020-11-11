@@ -5,7 +5,7 @@ import { validators } from "../../lib/validation/validators";
 
 export default class PartyTime extends LastFMBaseCommand {
   aliases = ["pt"];
-  description = "Shows the cover for an album";
+  description = "Counts down from a given number";
   usage = ["", "partytime"];
 
   arguments: Arguments = {

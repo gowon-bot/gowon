@@ -3,7 +3,7 @@ import { Emoji } from "../../lib/Emoji";
 
 export default class GoodMorning extends BaseCommand {
   aliases = ["gm"];
-  description = "You mistyped the command " + Emoji.gronning;
+  description = "You probably mistyped `fm` " + Emoji.gronning;
   secretCommand = true;
 
   async run() {

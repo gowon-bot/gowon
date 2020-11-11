@@ -5,7 +5,7 @@ import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
 export default class TrackRank extends LastFMBaseCommand {
   aliases = ["tra", "tr"];
-  description = "Shows what rank the track is at in your top 1000 tracks";
+  description = "Shows what rank a track is at in your top 1000 tracks";
   subcategory = "ranks";
   usage = ["", "artist | track @user"];
 

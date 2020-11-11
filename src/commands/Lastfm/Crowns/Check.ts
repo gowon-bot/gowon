@@ -13,7 +13,7 @@ import {
 
 export class Check extends CrownsChildCommand {
   aliases = ["c", "w"];
-  description = "Checks a crown";
+  description = "Checks a crown. If you have more plays, you will take it.";
   usage = ["", "artist"];
 
   arguments: Arguments = {

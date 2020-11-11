@@ -15,7 +15,7 @@ import { dateDisplay } from "../../../helpers";
 
 export default class GoBack extends LastFMBaseCommand {
   aliases = ["gb"];
-  description = "Shows what you scrobbled in the past";
+  description = "Shows what you scrobbled in the past...";
   subcategory = "library stats";
   usage = ["time period @user"];
 

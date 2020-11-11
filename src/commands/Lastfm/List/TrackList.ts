@@ -2,8 +2,8 @@ import { numberDisplay } from "../../../helpers";
 import { ListCommand } from "./ListCommand";
 
 export default class TrackList extends ListCommand {
+  description = "Shows your top tracks over a given time period";
   aliases = ["tlist", "toptracks", "toptrack", "tracks", "tl"];
-  description = "Shows your top tracks";
 
   async run() {
     let { username } = await this.parseMentions();

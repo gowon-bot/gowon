@@ -16,7 +16,7 @@ import { User } from "../../../database/entity/User";
 
 export default class NowPlaying extends LastFMBaseCommand {
   aliases = ["np", "fm"];
-  description = "Displays the now playing or last played track in last.fm";
+  description = "Displays the now playing or last played track from Last.fm";
   subcategory = "nowplaying";
   usage = [
     "",

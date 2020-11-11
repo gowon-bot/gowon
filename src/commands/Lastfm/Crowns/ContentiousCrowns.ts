@@ -4,7 +4,8 @@ import { numberDisplay } from "../../../helpers";
 import { LogicError } from "../../../errors";
 
 export class ContentiousCrowns extends CrownsChildCommand {
-  description = "Lists the most contentious crowns in the server";
+  description =
+    "Lists the most contentious crowns in the server (ones that have been stolen the most number of times)";
   aliases = ["cont", "contentious", "con"];
   usage = "";
 

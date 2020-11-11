@@ -5,7 +5,7 @@ import { validators } from "../../../lib/validation/validators";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 export default class Recent extends LastFMBaseCommand {
-  description = "Shows your recent tracks";
+  description = "Shows a few of your recent tracks";
   subcategory = "nowplaying";
   usage = ["", "amount"];
 

@@ -12,7 +12,7 @@ import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
 export default class Scrobbles extends LastFMBaseCommand {
   aliases = ["s"];
-  description = "Shows you how many scrobbles you have";
+  description = "Shows you how many scrobbles you have over a given time period";
   subcategory = "library stats";
   usage = ["time period @user"];
 

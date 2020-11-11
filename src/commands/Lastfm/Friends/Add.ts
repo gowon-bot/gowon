@@ -7,7 +7,7 @@ import { validators } from "../../../lib/validation/validators";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
 export class Add extends FriendsChildCommand {
-  description = "Add a friend";
+  description = "Adds a friend";
   usage = ["lfm_username", "@user"];
 
   arguments: Arguments = {

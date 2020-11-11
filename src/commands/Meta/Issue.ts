@@ -6,7 +6,7 @@ import { validators } from "../../lib/validation/validators";
 import { GithubService } from "../../services/Github/GithubService";
 
 export default class Issue extends BaseCommand {
-  description = "Send feedback to the john (the gowon author)";
+  description = "Send feedback to the John (the author)";
   secretCommand = true;
   usage = ["title | body"];
   devCommand = true;

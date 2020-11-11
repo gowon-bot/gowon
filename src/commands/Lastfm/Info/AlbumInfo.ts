@@ -10,7 +10,7 @@ export default class AlbumInfo extends InfoCommand {
   shouldBeIndexed = true;
 
   aliases = ["ali", "li", "als", "ls"];
-  description = "Display some information about an album";
+  description = "Displays some information about an album";
   usage = ["", "artist | album"];
 
   arguments: Arguments = {

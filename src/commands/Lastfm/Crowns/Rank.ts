@@ -6,7 +6,7 @@ import { LogicError } from "../../../errors";
 
 export class Rank extends CrownsChildCommand {
   aliases = ["r"];
-  description = "Ranks a user based on their crown count";
+  description = "Ranks a user on the crowns leaderboard based on their crown count";
   usage = ["", "@user"];
 
   arguments: Arguments = {

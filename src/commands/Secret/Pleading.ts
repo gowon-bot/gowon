@@ -1,8 +1,8 @@
 import { BaseCommand } from "../../lib/command/BaseCommand";
 
 export default class Pleading extends BaseCommand {
-  aliases = ["🥺"];
   description = ":pleading:";
+  aliases = ["🥺"];
   secretCommand = true;
 
   async run() {

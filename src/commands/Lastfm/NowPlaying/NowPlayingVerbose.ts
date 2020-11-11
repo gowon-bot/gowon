@@ -16,13 +16,14 @@ import { User } from "../../../database/entity/User";
 
 export default class NowPlayingVerbose extends LastFMBaseCommand {
   aliases = ["npv", "fmv", "fmt"];
-  description = "Displays the now playing or last played track in last.fm";
+  description = "Displays the now playing or last played track from Last.fm, including some strack information";
   subcategory = "nowplaying";
   usage = [
     "",
     "@user (will show their now playing)",
     "@user hey check out this song (will show your now playing)",
   ];
+  
   arguments: Arguments = {
     inputs: {
       otherWords: { index: { start: 0 } },

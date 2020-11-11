@@ -9,6 +9,7 @@ export abstract class MetaBaseCommand extends BaseCommand {
 }
 
 export abstract class MetaBaseParentCommand extends ParentCommand {
+  description = "Information about the bot"
   category = "meta";
 }
 

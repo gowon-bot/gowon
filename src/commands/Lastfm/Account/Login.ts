@@ -7,7 +7,7 @@ import { UserInfo } from "../../../services/LastFM/LastFMService.types";
 import { differenceInDays, fromUnixTime } from "date-fns";
 
 export default class Login extends LastFMBaseCommand {
-  description = "Logs you into lastfm";
+  description = "Sets your Last.fm username in Gowon";
   subcategory = "accounts";
   usage = "username";
 

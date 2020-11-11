@@ -10,7 +10,7 @@ import {
 import { FriendNotFoundError } from "../../../../errors";
 
 export class Scrobbles extends FriendsChildCommand {
-  description = "View how many scrobbles your friends have";
+  description = "Shows how many scrobbles your friends have";
   aliases = ["s"];
   usage = ["", "time period"];
 

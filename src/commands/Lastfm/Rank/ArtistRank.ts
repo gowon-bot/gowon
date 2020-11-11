@@ -5,7 +5,7 @@ import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
 export default class ArtistRank extends LastFMBaseCommand {
   aliases = ["ar", "ra"];
-  description = "Shows what rank the artist is at in your top 1000 artists";
+  description = "Shows what rank an artist is in your top 1000 artists";
   subcategory = "ranks";
   usage = ["artist @user"];
 

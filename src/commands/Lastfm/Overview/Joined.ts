@@ -2,7 +2,7 @@ import { OverviewChildCommand } from "./OverviewChildCommand";
 
 export class Joined extends OverviewChildCommand {
   aliases = ["j", "join"];
-  description = "Shows when a user joined";
+  description = "Shows when a user joined Last.fm";
 
   async run() {
     let { username } = await this.parseMentions();

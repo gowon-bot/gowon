@@ -8,7 +8,7 @@ import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
 export default class AlbumAt extends LastFMBaseCommand {
   aliases = ["ala"];
-  description = "Finds the album at a certain rank";
+  description = "Finds the album in your library at a given rank";
   subcategory = "ranks";
   usage = ["", "rank @user"];
 

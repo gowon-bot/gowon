@@ -2,7 +2,7 @@ import { OverviewChildCommand } from "./OverviewChildCommand";
 
 export class Per extends OverviewChildCommand {
   aliases = ["lpa", "tpa", "tpl", "alpa", "tpal"];
-  description = "Shows some averages about your library";
+  description = "Shows averages about your library. Average...\n- albums per artist\n- tracks per artist\n- tracks per album";
 
   async run() {
     let { username } = await this.parseMentions();

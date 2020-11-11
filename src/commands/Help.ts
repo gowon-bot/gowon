@@ -10,7 +10,7 @@ import { ParentCommand } from "../lib/command/ParentCommand";
 
 export default class Help extends BaseCommand {
   aliases = ["h"];
-  description = "Displays the help menu";
+  description = "Displays the help menu, or help about a given command";
   usage = ["", "command"];
 
   arguments: Arguments = {
@@ -191,7 +191,11 @@ export default class Help extends BaseCommand {
             : ""
         }
         **Commands**:
-        ${commands.map((c) => c.friendlyName).join(", ")}
+        ${commands
+          .map(
+            (c) => c.friendlyName.code() + ` - ${c.description.split("\n")[0]}`
+          )
+          .join("\n")}
         `
       );
   }

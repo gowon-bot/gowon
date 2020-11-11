@@ -4,7 +4,7 @@ import { Arguments } from "../../../lib/arguments/arguments";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
 export class DM extends CrownsChildCommand {
-  description = "DMs you a users crowns";
+  description = "Sends you a full list of a users crowns";
   aliases = ["me"];
   usage = ["", "@user"];
 

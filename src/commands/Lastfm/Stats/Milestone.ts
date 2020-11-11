@@ -9,7 +9,7 @@ import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
 export default class Milestone extends LastFMBaseCommand {
   aliases = ["mls", "ms"];
-  description = "Shows you what you scrobbled at a certain milestone";
+  description = "Shows you what you scrobbled at a given milestone";
   subcategory = "library stats";
   usage = ["", "milestone @user"];
 

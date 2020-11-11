@@ -7,7 +7,7 @@ import { validators } from "../../../lib/validation/validators";
 
 export default class TrackAt extends LastFMBaseCommand {
   aliases = ["ta"];
-  description = "Finds the track at a certain rank";
+  description = "Finds the track in your library at a given rank";
   subcategory = "ranks";
   usage = ["", "rank @user"];
 

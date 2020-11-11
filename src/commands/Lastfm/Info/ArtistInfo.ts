@@ -11,7 +11,7 @@ export default class ArtistInfo extends InfoCommand {
   shouldBeIndexed = true;
 
   aliases = ["ai", "as"];
-  description = "Display some information about an artist";
+  description = "Displays some information about an artist";
   usage = ["", "artist"];
 
   arguments: Arguments = {

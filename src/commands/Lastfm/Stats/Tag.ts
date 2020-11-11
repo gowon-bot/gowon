@@ -14,9 +14,10 @@ interface Overlap {
 }
 
 export default class Tag extends LastFMBaseCommand {
-  description = "shows your scrobbles of a tag";
+  description =
+    "Shows the overlap between your top artists, and a given tag's top artists";
   subcategory = "stats";
-  usage = ["", "milestone", "time period milestone @user"];
+  usage = ["tag"];
 
   arguments: Arguments = {
     inputs: {

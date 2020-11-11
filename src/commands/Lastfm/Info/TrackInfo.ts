@@ -9,7 +9,7 @@ export default class TrackInfo extends InfoCommand {
   shouldBeIndexed = true;
 
   aliases = ["tri", "ti"];
-  description = "Display some information about a track";
+  description = "Displays some information about a track";
   usage = ["", "artist | track"];
 
   arguments: Arguments = {

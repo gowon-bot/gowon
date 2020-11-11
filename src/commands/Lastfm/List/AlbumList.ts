@@ -2,8 +2,8 @@ import { numberDisplay } from "../../../helpers";
 import { ListCommand } from "./ListCommand";
 
 export default class AlbumList extends ListCommand {
+  description = "Shows your top albums over a given time period";
   aliases = ["llist", "allist", "topalbums", "topalbum", "albums", "ll"];
-  description = "Shows your top albums";
 
   async run() {
     let { username } = await this.parseMentions();

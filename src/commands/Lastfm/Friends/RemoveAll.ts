@@ -2,7 +2,7 @@ import { FriendsChildCommand } from "./FriendsChildCommand";
 import { numberDisplay } from "../../../helpers";
 
 export class RemoveAll extends FriendsChildCommand {
-  description = "Remove all your friends";
+  description = "Removes all your friends";
   usage = [""];
 
   async prerun() {}

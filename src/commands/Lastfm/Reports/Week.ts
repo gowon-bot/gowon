@@ -9,7 +9,7 @@ import { RedirectsService } from "../../../services/dbservices/RedirectsService"
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 export default class Week extends LastFMBaseCommand {
-  description = "Shows an overview of your week";
+  description = "Shows an overview of your week, including your top artists, albums, and tracks";
   subcategory = "reports";
   usage = ["", "weekly @user"];
 
