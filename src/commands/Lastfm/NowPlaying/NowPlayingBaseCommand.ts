@@ -4,6 +4,7 @@ import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import config from "../../../../config.json";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import {
+  AlbumInfo,
   ArtistInfo,
   RecentTracks,
   Track,
@@ -133,6 +134,13 @@ export abstract class NowPlayingBaseCommand extends LastFMBaseCommand {
     return trackInfo.value
       ? numberDisplay(trackInfo.value.userplaycount, "scrobble") +
           " of this song"
+      : "";
+  }
+
+  protected albumPlays(albumInfo: { value?: AlbumInfo }): string {
+    return albumInfo.value
+      ? numberDisplay(albumInfo.value?.userplaycount, "scrobble") +
+          " of this album"
       : "";
   }
 
