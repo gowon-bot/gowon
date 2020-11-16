@@ -35,7 +35,7 @@ export abstract class NowPlayingBaseCommand extends LastFMBaseCommand {
   tagConsolidator = new TagConsolidator();
 
   protected async nowPlayingMentions(
-    { noDiscordUser }: { noDiscordUser?: boolean } = { noDiscordUser: true }
+    { noDiscordUser }: { noDiscordUser?: boolean } = { noDiscordUser: false }
   ): Promise<{
     username: string;
     senderUsername: string;
