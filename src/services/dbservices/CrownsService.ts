@@ -60,6 +60,11 @@ export interface CrownHolder {
   numberOfCrowns: number;
 }
 
+export interface CrownDisplay {
+  crown: Crown;
+  user?: DiscordUser;
+}
+
 export class CrownsService extends BaseService {
   public scribe = new CrownsHistoryService(this.logger, this);
 
@@ -327,8 +332,10 @@ export class CrownsService extends BaseService {
   async getCrownDisplay(
     artistName: string,
     guild: Guild
-  ): Promise<{ crown: Crown; user?: DiscordUser } | undefined> {
-    let crown = await this.getCrown(artistName, guild.id);
+  ): Promise<CrownDisplay | undefined> {
+    let crown = await this.getCrown(artistName, guild.id, {
+      showDeleted: false,
+    });
 
     if (!crown) return;
 

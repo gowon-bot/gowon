@@ -27,7 +27,7 @@ export class GithubService extends BaseService {
   private get Authorization(): string {
     return this.basicAuthorization(
       config.githubUsername,
-      config.githubPassword
+      config.githubAuthToken
     );
   }
 

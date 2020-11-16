@@ -7,7 +7,7 @@ import { LogicError } from "../../../errors";
 export class CrownRanks extends CrownsChildCommand {
   description =
     "Lists your top crowns and their ranks relative to the server's top crowns";
-  aliases = ["stan"];
+  aliases = ["stan", "ranks"];
   usage = "";
 
   arguments: Arguments = {
@@ -42,8 +42,9 @@ export class CrownRanks extends CrownsChildCommand {
           .map(
             (cr) =>
               `${numberDisplay(cr.rank)}. ${cr.artistName} - ${numberDisplay(
-                cr.plays
-              )}`
+                cr.plays,
+                "play"
+              ).bold()}`
           )
           .join("\n") +
           `\n\n${perspective.upper.plusToHave} ${numberDisplay(

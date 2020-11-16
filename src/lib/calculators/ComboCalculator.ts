@@ -78,12 +78,8 @@ export class Combo {
   ) {}
 
   hasAnyConsecutivePlays(): boolean {
-    let limit = this.track.nowplaying ? 0 : 1;
-
     return (
-      this.artist.plays > limit ||
-      this.album.plays > limit ||
-      this.track.plays > limit
+      this.artist.plays > 1 || this.album.plays > 1 || this.track.plays > 1
     );
   }
 

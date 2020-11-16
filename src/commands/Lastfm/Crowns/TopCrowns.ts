@@ -23,10 +23,9 @@ export class TopCrowns extends CrownsChildCommand {
           await Promise.all(
             crowns.map(
               async (c, idx) =>
-                `${idx + 1}. ${c.artistName} - ${numberDisplay(
-                  c.plays,
-                  "play"
-                ).bold()} (${await this.fetchUsername(c.user.discordID)})`
+                `${idx + 1}. ${c.artistName} (${numberDisplay(
+                  c.plays
+                ).bold()}, ${await this.fetchUsername(c.user.discordID)})`
             )
           )
         ).join("\n") +

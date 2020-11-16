@@ -49,10 +49,10 @@ export class Guild extends CrownsChildCommand {
             await Promise.all(
               holders.map(
                 async (h, idx) =>
-                  `${idx + 1}) ${await this.gowonClient.userDisplay(
+                  `${idx + 1}. ${await this.gowonClient.userDisplay(
                     this.message,
                     h.user
-                  )} ― ${numberDisplay(h.numberOfCrowns, "crown").bold()}`
+                  )} with ${numberDisplay(h.numberOfCrowns, "crown").bold()}`
               )
             )
           ).join("\n")

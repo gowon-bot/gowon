@@ -36,18 +36,21 @@ export class List extends CrownsChildCommand {
     let embed = this.newEmbed()
       .setTitle(`${perspective.upper.possessive} crowns`)
       .setDescription(
-        `${perspective.upper.plusToHave} **${numberDisplay(
-          crownsCount,
-          "** crown"
-        )} in ${this.guild.name} (ranked ${getOrdinal(
-          rank.rank.toInt()
-        ).bold()})\n\n` +
-          crowns
-            .map(
-              (c) =>
-                `${numberDisplay(c.plays, "play").bold()} - ${c.artistName}`
-            )
-            .join("\n")
+        crowns
+          .map(
+            (c, idx) =>
+              `${idx + 1}. ${c.artistName} - ${numberDisplay(
+                c.plays,
+                "play"
+              ).bold()}`
+          )
+          .join("\n") +
+          `\n\n${perspective.upper.plusToHave} **${numberDisplay(
+            crownsCount,
+            "** crown"
+          )} in ${this.guild.name} (ranked ${getOrdinal(
+            rank.rank.toInt()
+          ).bold()})`
       );
 
     await this.send(embed);
