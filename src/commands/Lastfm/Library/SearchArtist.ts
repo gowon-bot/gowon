@@ -49,7 +49,7 @@ export default class SearchArtist extends SearchCommand {
 
     let embed = this.newEmbed()
       .setTitle(
-        `Search results in ${username.code()}'s top ${numberDisplay(
+        `Search results in ${username}'s top ${numberDisplay(
           topArtists.artist.length,
           "artist"
         )}`

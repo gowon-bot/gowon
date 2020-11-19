@@ -62,7 +62,7 @@ export default class Week extends LastFMBaseCommand {
       (a, b) => week.top.artists[b] - week.top.artists[a]
     );
 
-    let embed = this.newEmbed().setTitle(`${username.code()}'s week`)
+    let embed = this.newEmbed().setTitle(`${username}'s week`)
       .setDescription(`
       _${dateDisplay(sub(new Date(), { weeks: 1 }))} - ${dateDisplay(
       new Date()

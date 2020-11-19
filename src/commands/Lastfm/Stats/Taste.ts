@@ -184,7 +184,7 @@ export default class Taste extends LastFMBaseCommand {
 
     if (taste.artists.length === 0)
       throw new LogicError(
-        `${userOneUsername.code()} and ${userTwoUsername.code()} share no common artists!`
+        `${userOneUsername} and ${userTwoUsername} share no common artists!`
       );
 
     let embed = this.newEmbed()

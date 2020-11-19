@@ -47,7 +47,7 @@ export default class SearchTrack extends SearchCommand {
 
     let embed = this.newEmbed()
       .setTitle(
-        `Search results in ${username.code()}'s top ${numberDisplay(
+        `Search results in ${username}'s top ${numberDisplay(
           topTracks.track.length,
           "track"
         )}`

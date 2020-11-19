@@ -66,7 +66,7 @@ export default class AlbumTopTracks extends LastFMBaseCommand {
         this.message.author.username,
         this.message.author.avatarURL() || ""
       )
-      .setTitle(`Top tracks on ${artist} - ${album} for ${username.code()}`)
+      .setTitle(`Top tracks on ${artist} - ${album} for ${username}`)
       .setURL(LinkGenerator.libraryAlbumPage(username, artist, album))
       .setDescription(
         `_${numberDisplay(topAlbums.total, `total scrobble`)}_\n\n` +

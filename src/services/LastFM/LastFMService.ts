@@ -65,10 +65,7 @@ export class LastFMService extends LastFMAPIService {
 
     if (milestone > response["@attr"].total.toInt()) {
       throw new LogicError(
-        `${username.code()} hasn't scrobbled ${numberDisplay(
-          milestone,
-          "track"
-        )} yet!`
+        `${username} hasn't scrobbled ${numberDisplay(milestone, "track")} yet!`
       );
     }
 

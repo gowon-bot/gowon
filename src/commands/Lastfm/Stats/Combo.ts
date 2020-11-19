@@ -77,7 +77,7 @@ export default class Combo extends LastFMBaseCommand {
 
     let embed = this.newEmbed()
       .setTitle(
-        `Streak for ${username.code()} (from recent ${numberDisplay(
+        `Streak for ${username} (from recent ${numberDisplay(
           comboCalculator.totalTracks,
           "track"
         )})`
