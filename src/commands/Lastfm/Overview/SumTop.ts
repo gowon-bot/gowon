@@ -4,7 +4,7 @@ import { LogicError } from "../../../errors";
 import { numberDisplay } from "../../../helpers";
 
 export class SumTop extends OverviewChildCommand {
-  aliases = [];
+  aliases = ["toppct"];
   description = "Shows what percent of your scrobbles are made up by your top artists";
   usage = ["", "top", "top @user"];
 

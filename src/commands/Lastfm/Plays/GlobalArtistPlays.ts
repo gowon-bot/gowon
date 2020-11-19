@@ -39,7 +39,7 @@ export default class GlobalArtistPlays extends LastFMBaseCommand {
       artistDetails.stats.playcount
     );
 
-    this.send(
+    await this.send(
       `Last.fm has scrobbled ${artistDetails.name} ${numberDisplay(
         artistDetails.stats.playcount,
         "time"

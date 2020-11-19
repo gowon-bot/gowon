@@ -164,7 +164,7 @@ export function humanizedTimeRangeParser(
       if (timeString.length)
         return (options.raw ? "" : "over the past ") + timeString;
     } else {
-      if (!options.noOverall && overallRegex.test(string))
+      if (!options.noOverall && overallRegex.test(` ${string} `))
         return options.overallMessage!;
     }
 

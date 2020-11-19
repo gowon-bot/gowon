@@ -6,7 +6,8 @@ import { LogicError } from "../../../errors";
 
 export class Rank extends CrownsChildCommand {
   aliases = ["r"];
-  description = "Ranks a user on the crowns leaderboard based on their crown count";
+  description =
+    "Ranks a user on the crowns leaderboard based on their crown count";
   usage = ["", "@user"];
 
   arguments: Arguments = {
@@ -47,7 +48,9 @@ export class Rank extends CrownsChildCommand {
           "crown"
         ).bold()} ${rank.count.toInt() === 1 ? "ranks" : "rank"} ${
           perspective.objectPronoun
-        } ${getOrdinal(rank.rank.toInt()).bold()} in ${message.guild?.name}`
+        } ${getOrdinal(rank.rank.toInt()).bold()} in ${
+          message.guild?.name
+        } out of ${numberDisplay(rank.totalUsers, "total user")}`
       );
 
     await this.send(embed);

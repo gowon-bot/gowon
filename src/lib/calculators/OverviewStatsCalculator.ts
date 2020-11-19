@@ -300,7 +300,7 @@ export class OverviewStatsCalculator {
       sum += artist.playcount.toInt();
 
       if (sum > halfOfScrobbles) {
-        let count = artistIndex || 1;
+        let count = artistIndex + 1 || 1;
         return {
           count: new Stat(count, count.toLocaleString()),
           total: new Stat(sum, sum.toLocaleString()),

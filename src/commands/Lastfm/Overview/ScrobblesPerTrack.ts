@@ -5,7 +5,7 @@ export class ScrobblesPerTrack extends OverviewChildCommand {
   description = "Shows your average scrobbles per track";
 
   async run() {
-    let { username } = await this.parseMentions();
+    let { username, perspective } = await this.parseMentions();
 
     let { badge, colour, image } = await this.getAuthorDetails();
     let spt = await this.calculator.avgScrobblesPerTrack();
@@ -13,7 +13,11 @@ export class ScrobblesPerTrack extends OverviewChildCommand {
     let embed = this.newEmbed()
       .setAuthor(username + badge, image)
       .setColor(colour)
-      .setDescription(`${spt.asString.bold()} scrobbles per track!`);
+      .setDescription(
+        `${perspective.upper.regularVerb(
+          "average"
+        )} ${spt.asString.bold()} scrobbles per track!`
+      );
 
     await this.send(embed);
   }

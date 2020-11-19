@@ -5,7 +5,7 @@ import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 
 export class TopPercent extends OverviewChildCommand {
-  aliases = ["toppct"];
+  aliases = ["toppct", "apct"];
   description = "Shows how many artists make up at least 50% of your scrobbles";
 
   arguments: Arguments = {

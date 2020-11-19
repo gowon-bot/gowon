@@ -195,7 +195,7 @@ export abstract class BaseCommand implements Command {
       (!username || (senderRequired && !senderUser?.lastFMUsername))
     )
       throw new LogicError(
-        `Please sign in! (\`${await this.gowonService.prefix(
+        `please sign in! (\`${await this.gowonService.prefix(
           this.guild.id
         )}login <username>)\``
       );

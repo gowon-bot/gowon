@@ -89,7 +89,7 @@ Among ${perspective.possessivePronoun} top ${numberDisplay(
       await this.calculator.playsOver(50)
     ).asString.bold()} artists with 50+ scrobbles` +
           ((await this.calculator.hasCrownStats())
-            ? `\n\n**Total crowns**: ${rank!.count} (${getOrdinal(
+            ? `\n\n**Total crowns**: ${rank!.count} (ranked ${getOrdinal(
                 rank!.rank.toInt()
               ).italic()})
 For every ${numberDisplay(

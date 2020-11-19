@@ -15,7 +15,7 @@ export default class GlobalTrackPlays extends LastFMBaseCommand {
     inputs: {
       artist: { index: 0, splitOn: "|" },
       track: { index: 1, splitOn: "|" },
-    },  
+    },
     mentions: standardMentions,
   };
 
@@ -47,7 +47,7 @@ export default class GlobalTrackPlays extends LastFMBaseCommand {
       trackDetails.playcount
     );
 
-    this.send(
+    await this.send(
       `Last.fm has scrobbled **${trackDetails.name}** by ${
         trackDetails.artist.name
       } ${numberDisplay(trackDetails.playcount, "time")}${

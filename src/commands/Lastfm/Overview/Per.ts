@@ -5,7 +5,7 @@ export class Per extends OverviewChildCommand {
   description = "Shows averages about your library. Average...\n- albums per artist\n- tracks per artist\n- tracks per album";
 
   async run() {
-    let { username } = await this.parseMentions();
+    let { username, perspective } = await this.parseMentions();
 
     // Cache the top entities responses
     await Promise.all([
@@ -24,7 +24,8 @@ export class Per extends OverviewChildCommand {
     let embed = this.newEmbed()
       .setAuthor(username + badge, image)
       .setColor(colour)
-      .setDescription(`${lpa.asString.bold()} albums per artist!
+      .setDescription(`${perspective.upper.regularVerb("listen")} to an average of...
+      ${lpa.asString.bold()} albums per artist!
       ${tpa.asString.bold()} tracks per artist!
       ${tpl.asString.bold()} tracks per album!`);
 

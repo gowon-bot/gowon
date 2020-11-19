@@ -40,11 +40,15 @@ export default class AlbumPlays extends LastFMBaseCommand {
       username,
     });
 
-    this.send(
-      `${perspective.upper.plusToHave} **${numberDisplay(
-        albumDetails.userplaycount,
-        "**scrobble"
-      )} of ${albumDetails.name.italic()} by ${albumDetails.artist.bold()}`
+    await this.reply(
+      `${perspective.plusToHave}` +
+        (albumDetails.userplaycount.toInt() === 0
+          ? "n't scrobbled"
+          : ` **${numberDisplay(
+              albumDetails.userplaycount,
+              "**scrobble"
+            )} of`) +
+        ` ${albumDetails.name.italic()} by ${albumDetails.artist.bold()}`
     );
   }
 }

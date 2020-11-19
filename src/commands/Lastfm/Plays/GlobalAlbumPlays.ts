@@ -6,7 +6,8 @@ import { calculatePercent } from "../../../helpers/stats";
 
 export default class GlobalAlbumPlays extends LastFMBaseCommand {
   aliases = ["glp", "globallp"];
-  description = "Shows you how many plays Last.fm has of a given album for all users";
+  description =
+    "Shows you how many plays Last.fm has of a given album for all users";
   subcategory = "plays";
   usage = ["", "artist | album"];
 
@@ -46,7 +47,7 @@ export default class GlobalAlbumPlays extends LastFMBaseCommand {
       albumDetails.playcount
     );
 
-    this.send(
+    await this.send(
       `Last.fm has scrobbled ${albumDetails.name.italic()} by ${
         albumDetails.artist
       } ${numberDisplay(albumDetails.playcount, "time")}${

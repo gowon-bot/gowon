@@ -5,7 +5,7 @@ export class ScrobblesPerArtist extends OverviewChildCommand {
   description = "Shows your average scrobbles per artist";
 
   async run() {
-    let { username } = await this.parseMentions();
+    let { username, perspective } = await this.parseMentions();
 
     let { badge, colour, image } = await this.getAuthorDetails();
     let spa = await this.calculator.avgScrobblesPerArtist();
@@ -13,7 +13,7 @@ export class ScrobblesPerArtist extends OverviewChildCommand {
     let embed = this.newEmbed()
       .setAuthor(username + badge, image)
       .setColor(colour)
-      .setDescription(`${spa.asString.bold()} scrobbles per artist!`);
+      .setDescription(`${perspective.upper.regularVerb("average")} ${spa.asString.bold()} scrobbles per artist!`);
 
     await this.send(embed);
   }

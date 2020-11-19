@@ -55,7 +55,7 @@ export default class GoBack extends LastFMBaseCommand {
       date = this.parsedArguments.date as Date | undefined;
 
     if (!date && !timeRange.from)
-      throw new LogicError("please enter a valid date or timezone!");
+      throw new LogicError("please enter a valid date or time range!");
 
     let { username, perspective } = await this.parseMentions({
       asCode: false,

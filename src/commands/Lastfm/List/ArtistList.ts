@@ -23,7 +23,11 @@ export default class ArtistList extends ListCommand {
       .setDescription(
         topArtists.artist
           .map(
-            (a) => `${numberDisplay(a.playcount, "play")} - ${a.name.bold()}`
+            (a, idx) =>
+              `${idx + 1}. ${a.name.bold()} - ${numberDisplay(
+                a.playcount,
+                "play"
+              )}`
           )
           .join("\n")
       );

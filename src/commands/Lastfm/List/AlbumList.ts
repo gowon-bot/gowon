@@ -23,11 +23,13 @@ export default class AlbumList extends ListCommand {
       .setDescription(
         topAlbums.album
           .map(
-            (a) =>
-              `${numberDisplay(
+            (a, idx) =>
+              `${
+                idx + 1
+              }. ${a.name.bold()} by ${a.artist.name.italic()} - ${numberDisplay(
                 a.playcount,
                 "play"
-              )} - ${a.name.bold()} by ${a.artist.name.italic()}`
+              )}`
           )
           .join("\n")
       );

@@ -72,19 +72,24 @@ _Comparing ${perspective.possessive} top ${numberDisplay(
           "artist"
         )} of the tag_\n` +
           (overlap.length
-            ? `\`\`\`` +
-              `${numberDisplay(overlap.length, "artist")} (${calculatePercent(
+            ? `${numberDisplay(overlap.length, "artist")} (${calculatePercent(
                 overlap.length,
                 tagArtistNames.length
               )}% match) (${numberDisplay(
                 overlap.reduce((sum, o) => sum + o.plays, 0),
                 "scrobble"
-              )})\n` +
+              )})\n\n` +
               `${overlap
                 .slice(0, 20)
-                .map((o) => o.plays + " - " + o.artist)
+                .map(
+                  (o, idx) =>
+                    `${idx + 1}. ${o.artist.bold()} - ${numberDisplay(
+                      o.plays,
+                      "play"
+                    )}`
+                )
                 .join("\n")}
-\`\`\``
+`
             : "Couldn't find any matching artists!")
       );
 
