@@ -1,6 +1,10 @@
 import { Tag } from "../../services/LastFM/LastFMService.types";
 import blacklistedTags from "./blacklistedTags.json";
 
+function isTagArray(tags: string[] | Tag[]): tags is Tag[] {
+  return (tags as Tag[])[0]?.name !== undefined;
+}
+
 export class TagConsolidator {
   blacklistedTags: string[];
   explicitTags: string[];
@@ -22,46 +26,21 @@ export class TagConsolidator {
     return !!this.tags.length;
   }
 
-  addTags(tags: Tag[]): TagConsolidator {
+  addTags(tags: Tag[] | string[]): TagConsolidator {
+    let tagStrings = isTagArray(tags)
+      ? tags.map((t) => t.name.toLowerCase())
+      : tags;
+
     this.tags.push(
-      ...tags
-        .map((t) => t.name.toLowerCase())
+      ...tagStrings
         .filter((t) => !this.blacklistedTags.includes(t))
         .filter(this.explicitTagFilter.bind(this))
     );
     return this;
   }
 
-  tagFixer(): {
-    fixer: (tag: string) => string;
-    reverser: (tag: string) => string;
-  } {
-    let tagMap: { [fixedTag: string]: { [tag: string]: number } } = {};
-
-    function fixer(tag: string): string {
-      let fixedTag = tag.replace(/ |-|_|'/g, "").toLowerCase();
-
-      if (!tagMap[fixedTag]) tagMap[fixedTag] = {};
-      if (!tagMap[fixedTag][tag]) tagMap[fixedTag][tag] = 0;
-
-      !tagMap[fixedTag][tag]++;
-
-      return fixedTag;
-    }
-
-    function reverser(fixedTag: string): string {
-      return (
-        Object.keys(tagMap[fixedTag]).sort(
-          (a, b) => tagMap[fixedTag][b] - tagMap[fixedTag][a]
-        )[0] || fixedTag
-      );
-    }
-
-    return { reverser, fixer };
-  }
-
   consolidate(max: number = Infinity, useCharacterLimit = true): string[] {
-    let { fixer, reverser } = this.tagFixer();
+    let { fixer, reverser } = TagConsolidator.tagFixer();
 
     let tagCounts = this.tags.reduce((acc, tag) => {
       let fixedTagName = fixer(tag);
@@ -100,5 +79,33 @@ export class TagConsolidator {
     let matches = this.explicitTags.filter((eTag) => tag.includes(eTag));
 
     return !matches.length;
+  }
+
+  static tagFixer(): {
+    fixer: (tag: string) => string;
+    reverser: (tag: string) => string;
+  } {
+    let tagMap: { [fixedTag: string]: { [tag: string]: number } } = {};
+
+    function fixer(tag: string): string {
+      let fixedTag = tag.replace(/ |-|_|'/g, "").toLowerCase();
+
+      if (!tagMap[fixedTag]) tagMap[fixedTag] = {};
+      if (!tagMap[fixedTag][tag]) tagMap[fixedTag][tag] = 0;
+
+      !tagMap[fixedTag][tag]++;
+
+      return fixedTag;
+    }
+
+    function reverser(fixedTag: string): string {
+      return (
+        Object.keys(tagMap[fixedTag]).sort(
+          (a, b) => tagMap[fixedTag][b] - tagMap[fixedTag][a]
+        )[0] || fixedTag
+      );
+    }
+
+    return { reverser, fixer };
   }
 }

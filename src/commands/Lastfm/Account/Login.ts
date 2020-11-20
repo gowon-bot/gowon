@@ -5,6 +5,8 @@ import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { UserInfo } from "../../../services/LastFM/LastFMService.types";
 import { differenceInDays, fromUnixTime } from "date-fns";
+import { DiscordIDMention } from "../../../lib/arguments/mentions/DiscordIDMention";
+import { LogicError } from "../../../errors";
 
 export default class Login extends LastFMBaseCommand {
   description = "Sets your Last.fm username in Gowon";
@@ -14,6 +16,10 @@ export default class Login extends LastFMBaseCommand {
   arguments: Arguments = {
     inputs: {
       username: { index: 0 },
+    },
+    mentions: {
+      user: { index: 0 },
+      userID: { mention: new DiscordIDMention(true), index: 0 },
     },
   };
 
@@ -25,6 +31,18 @@ export default class Login extends LastFMBaseCommand {
 
   async run(message: Message) {
     let username = this.parsedArguments.username as string;
+
+    let { discordUser } = await this.parseMentions({ fetchDiscordUser: true });
+
+    if (
+      discordUser &&
+      discordUser.id !== this.author.id &&
+      !this.message.member?.hasPermission("ADMINISTRATOR")
+    ) {
+      throw new LogicError(
+        "you are not able to set usernames for other users!"
+      );
+    }
 
     if (username === "<username>") {
       await this.reply(
@@ -38,7 +56,10 @@ export default class Login extends LastFMBaseCommand {
     try {
       userInfo = await this.lastFMService.userInfo({ username });
 
-      await this.usersService.setUsername(message.author.id, userInfo.name);
+      await this.usersService.setUsername(
+        (discordUser || message.author).id,
+        userInfo.name
+      );
 
       let joined = fromUnixTime(userInfo.registered.unixtime.toInt());
 
