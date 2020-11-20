@@ -1,3 +1,4 @@
+import { ILike } from "typeorm";
 import { ArtistTagCache } from "../../database/entity/ArtistTagCache";
 import { BaseService } from "../BaseService";
 import { ArtistInfo } from "../LastFM/LastFMService.types";
@@ -29,7 +30,7 @@ export class TagsService extends BaseService {
   }
 
   async getTags(artistName: string): Promise<string[] | undefined> {
-    let cache = await ArtistTagCache.findOne({ artistName });
+    let cache = await ArtistTagCache.findOne({ artistName: ILike(artistName) });
 
     return cache?.tags;
   }
