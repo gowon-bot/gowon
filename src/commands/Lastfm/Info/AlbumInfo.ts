@@ -60,11 +60,15 @@ export default class AlbumInfo extends InfoCommand {
 
     this.lineConsolidator.addLines(
       {
-        shouldDisplay: albumInfo.tracks.track.length > 0,
+        shouldDisplay: albumInfo.tracks.track.length > 0 && !!albumDuration,
         string: `_${numberDisplay(
           albumInfo.tracks.track.length,
           "track"
         )} (${numberDisplay(Math.ceil(albumDuration / 60), "minute")})_`,
+      },
+      {
+        shouldDisplay: albumInfo.tracks.track.length > 0 && !albumDuration,
+        string: `_${numberDisplay(albumInfo.tracks.track.length, "track")}_`,
       },
       {
         shouldDisplay: albumInfo.tracks.track.length > 0,

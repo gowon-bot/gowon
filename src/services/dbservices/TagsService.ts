@@ -34,4 +34,8 @@ export class TagsService extends BaseService {
 
     return cache?.tags;
   }
+
+  async countAllCachedArtists(): Promise<number> {
+    return await ArtistTagCache.count();
+  }
 }

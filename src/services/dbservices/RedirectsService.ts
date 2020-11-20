@@ -65,4 +65,8 @@ export class RedirectsService extends BaseService {
     this.log(`Listing redirects for ${artistName}`);
     return await ArtistRedirect.find({ to: artistName });
   }
+
+  async countAllRedirects(): Promise<number> {
+    return await ArtistRedirect.count()
+  }
 }
