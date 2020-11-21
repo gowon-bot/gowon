@@ -6,9 +6,11 @@ export function sanitizeForDiscord(string: string): string {
   const characters = ["||", "*", "_", "`"];
 
   for (let character of characters) {
+    console.log(string.split(character));
+
     if (string.split(character).length - 1 >= 2) {
       string = string.replace(
-        new RegExp(escapeStringRegexp(character)),
+        new RegExp(escapeStringRegexp(character), "g"),
         (match) => `\\${match}`
       );
     }

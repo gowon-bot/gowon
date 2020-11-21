@@ -83,6 +83,8 @@ export abstract class NowPlayingBaseCommand extends LastFMBaseCommand {
   protected nowPlayingEmbed(nowPlaying: Track, username: string): MessageEmbed {
     let links = LinkGenerator.generateTrackLinksForEmbed(nowPlaying);
 
+    console.log(links.album);
+
     return this.newEmbed()
       .setAuthor(
         `${
