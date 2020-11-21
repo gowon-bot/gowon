@@ -68,7 +68,7 @@ ${
 **Total scrobbles for top 10 artists**: ${await this.calculator.sumTop(10)}
 ${perspective.upper.possessive} top 10 artists account for: ${(
           await this.calculator.sumTopPercent(10)
-        ).asString.bold()}% of ${perspective.possessivePronoun} total scrobbles
+        ).asString.strong()}% of ${perspective.possessivePronoun} total scrobbles
 
 Among ${perspective.possessivePronoun} top ${numberDisplay(
           (await this.calculator.totalArtists()).asNumber > 1000
@@ -78,19 +78,19 @@ Among ${perspective.possessivePronoun} top ${numberDisplay(
         )}, ${perspective.plusToHave}...
     - ${(
       await this.calculator.playsOver(1000)
-    ).asString.bold()} artists with 1000+ scrobbles
+    ).asString.strong()} artists with 1000+ scrobbles
     - ${(
       await this.calculator.playsOver(500)
-    ).asString.bold()} artists with 500+ scrobbles
+    ).asString.strong()} artists with 500+ scrobbles
     - ${(
       await this.calculator.playsOver(250)
-    ).asString.bold()} artists with 250+ scrobbles
+    ).asString.strong()} artists with 250+ scrobbles
     - ${(
       await this.calculator.playsOver(100)
-    ).asString.bold()} artists with 100+ scrobbles
+    ).asString.strong()} artists with 100+ scrobbles
     - ${(
       await this.calculator.playsOver(50)
-    ).asString.bold()} artists with 50+ scrobbles` +
+    ).asString.strong()} artists with 50+ scrobbles` +
           ((await this.calculator.hasCrownStats())
             ? `\n\n**Total crowns**: ${rank!.count} (ranked ${getOrdinal(
                 rank!.rank.toInt()
@@ -98,11 +98,11 @@ Among ${perspective.possessivePronoun} top ${numberDisplay(
 For every ${numberDisplay(
                 (await this.calculator.artistsPerCrown())!.asString,
                 "eligible artist"
-              ).bold()}, ${perspective.plusToHave} a crown
+              ).strong()}, ${perspective.plusToHave} a crown
 For every ${numberDisplay(
                 (await this.calculator.scrobblesPerCrown())!.asString,
                 "scrobble"
-              ).bold()}, ${perspective.plusToHave} a crown
+              ).strong()}, ${perspective.plusToHave} a crown
 `
             : "")
       );

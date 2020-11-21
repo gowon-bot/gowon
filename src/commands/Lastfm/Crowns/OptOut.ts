@@ -33,7 +33,7 @@ export class OptOut extends CrownsChildCommand {
           `Opted you out, deleting ${numberDisplay(
             numberOfCrowns,
             "crown"
-          ).bold()}`
+          ).strong()}`
         )
       );
     } catch {

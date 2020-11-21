@@ -13,7 +13,7 @@ export class ScrobblesPerArtist extends OverviewChildCommand {
     let embed = this.newEmbed()
       .setAuthor(username + badge, image)
       .setColor(colour)
-      .setDescription(`${perspective.upper.regularVerb("average")} ${spa.asString.bold()} scrobbles per artist!`);
+      .setDescription(`${perspective.upper.regularVerb("average")} ${spa.asString.strong()} scrobbles per artist!`);
 
     await this.send(embed);
   }

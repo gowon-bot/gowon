@@ -73,7 +73,7 @@ export class Info extends CrownsChildCommand {
       }
 
       await this.reply(
-        `no one has the crown for ${redirectArtistName.bold()}${
+        `no one has the crown for ${redirectArtistName.strong()}${
           redirectArtistName !== artistDetails.name
             ? ` _(redirected from ${artistDetails.name})_`
             : ""
@@ -99,10 +99,10 @@ export class Info extends CrownsChildCommand {
       if (runAs.variationWasUsed("whv")) {
         let embed = this.newEmbed()
           .setTitle(
-            `Who has ${crown.artistName.bold()}?` + crown.redirectDisplay()
+            `Who has ${crown.artistName.strong()}?` + crown.redirectDisplay()
           )
           .setDescription(
-            `${holderUsername}${invalidBadge} has the crown for ${crown.artistName.bold()} with ${numberDisplay(
+            `${holderUsername}${invalidBadge} has the crown for ${crown.artistName.strong()} with ${numberDisplay(
               crown.plays,
               "play"
             )}
@@ -122,9 +122,9 @@ export class Info extends CrownsChildCommand {
       } else {
         await this.reply(
           `${
-            holderUsername?.bold() ||
+            holderUsername?.strong() ||
             this.gowonService.constants.unknownUserDisplay
-          }${invalidBadge} has the crown for ${crown.artistName.bold()} with **${numberDisplay(
+          }${invalidBadge} has the crown for ${crown.artistName.strong()} with **${numberDisplay(
             crown.plays,
             "**play"
           )}.`

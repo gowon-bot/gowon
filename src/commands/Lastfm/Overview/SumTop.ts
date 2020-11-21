@@ -38,10 +38,10 @@ export class SumTop extends OverviewChildCommand {
         `${perspective.upper.possessive} top ${numberDisplay(
           top,
           "artist"
-        ).bold()} make up ${numberDisplay(
+        ).strong()} make up ${numberDisplay(
           sumtop.asNumber,
           "scrobble"
-        ).bold()} (${sumtoppct.asString.bold()}% of ${
+        ).strong()} (${sumtoppct.asString.strong()}% of ${
           perspective.possessivePronoun
         } total scrobbles!)`
       );

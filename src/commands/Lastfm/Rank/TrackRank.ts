@@ -59,12 +59,12 @@ export default class TrackRank extends LastFMBaseCommand {
       );
     } else {
       await this.reply(
-        `${topTracks.track[rank].name.bold()} by ${
+        `${topTracks.track[rank].name.strong()} by ${
           topTracks.track[rank].artist.name
-        } is ranked #${numberDisplay(rank + 1).bold()} with ${numberDisplay(
+        } is ranked #${numberDisplay(rank + 1).strong()} with ${numberDisplay(
           topTracks.track[rank].playcount,
           "play"
-        ).bold()}`
+        ).strong()}`
       );
     }
   }

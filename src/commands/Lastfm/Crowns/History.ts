@@ -41,7 +41,7 @@ export class History extends CrownsChildCommand {
 
     if (!crown) {
       await this.send(
-        `There is no history for the ${artistDetails.name.bold()} crown!`
+        `There is no history for the ${artistDetails.name.strong()} crown!`
       );
       return;
     }

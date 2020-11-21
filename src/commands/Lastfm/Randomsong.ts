@@ -38,7 +38,7 @@ export default class Randomsong extends LastFMBaseCommand {
       .setAuthor(`Scrobbled by ${randomUser.lastFMUsername}`)
       .setTitle(randomSong.name)
       .setDescription(
-        `by ${randomSong.artist["#text"].bold()}` +
+        `by ${randomSong.artist["#text"].strong()}` +
           (randomSong.album["#text"]
             ? ` from ${randomSong.album["#text"].italic()}`
             : "")

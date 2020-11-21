@@ -82,7 +82,7 @@ export default class TrackInfo extends InfoCommand {
     );
 
     let embed = this.newEmbed()
-      .setTitle(trackInfo.name.italic() + " by " + trackInfo.artist.name.bold())
+      .setTitle(trackInfo.name.italic() + " by " + trackInfo.artist.name.strong())
       .setDescription(this.lineConsolidator.consolidate())
       .addFields(
         {

@@ -37,7 +37,7 @@ export default class TrackPage extends LastFMBaseCommand {
     });
 
     this.send(
-      `${trackDetails.name.italic()} by ${trackDetails.artist.name.bold()} on last.fm: ${cleanURL(
+      `${trackDetails.name.italic()} by ${trackDetails.artist.name.strong()} on last.fm: ${cleanURL(
         trackDetails.url
       )}`
     );

@@ -54,7 +54,8 @@ export class DurationParser {
 
       for (let [durationKey, matchers] of Object.entries(this.durations)) {
         if (matchers.includes(period)) {
-          duration[durationKey] = amount;
+          duration[durationKey] =
+            amount < 1 ? Math.ceil(amount) : Math.round(amount);
         }
       }
     }

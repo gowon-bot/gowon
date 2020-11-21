@@ -25,7 +25,7 @@ export class TopCrowns extends CrownsChildCommand {
               async (c, idx) =>
                 `${idx + 1}. ${c.artistName} (${numberDisplay(
                   c.plays
-                ).bold()}, ${await this.fetchUsername(c.user.discordID)})`
+                ).strong()}, ${await this.fetchUsername(c.user.discordID)})`
             )
           )
         ).join("\n") +

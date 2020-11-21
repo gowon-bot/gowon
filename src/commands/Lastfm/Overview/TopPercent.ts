@@ -31,7 +31,7 @@ export class TopPercent extends OverviewChildCommand {
       .setAuthor(username + badge, image)
       .setColor(colour)
       .setDescription(
-        `${toppct.count.asString.bold()} artists (a total of ${numberDisplay(
+        `${toppct.count.asString.strong()} artists (a total of ${numberDisplay(
           toppct.total.asNumber,
           "scrobble"
         )}) make up ${percent}% of ${perspective.possessive} scrobbles!`

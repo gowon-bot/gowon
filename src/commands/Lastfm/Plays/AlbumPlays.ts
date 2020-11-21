@@ -48,7 +48,7 @@ export default class AlbumPlays extends LastFMBaseCommand {
               albumDetails.userplaycount,
               "**scrobble"
             )} of`) +
-        ` ${albumDetails.name.italic()} by ${albumDetails.artist.bold()}`
+        ` ${albumDetails.name.italic()} by ${albumDetails.artist.strong()}`
     );
   }
 }

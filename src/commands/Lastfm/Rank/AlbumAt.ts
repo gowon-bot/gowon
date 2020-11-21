@@ -42,11 +42,11 @@ export default class AlbumAt extends LastFMBaseCommand {
       );
 
     await this.reply(
-      `${album.name.bold()} by ${album.artist.name.italic()} is ranked at #${album[
+      `${album.name.strong()} by ${album.artist.name.italic()} is ranked at #${album[
         "@attr"
-      ].rank.bold()} in ${
+      ].rank.strong()} in ${
         perspective.possessive
-      } top albums with ${numberDisplay(album.playcount, "play").bold()}`
+      } top albums with ${numberDisplay(album.playcount, "play").strong()}`
     );
   }
 }

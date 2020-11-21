@@ -75,9 +75,9 @@ export default class LastScrobbled extends LastFMBaseCommand {
       .setDescription(
         `${
           perspective.upper.name
-        } last scrobbled ${track.bold()} by ${artist.bold()} ${
+        } last scrobbled ${track.strong()} by ${artist.strong()} ${
           lastScrobbled instanceof Date
-            ? `at ${dateTimeDisplay(lastScrobbled).bold()}`
+            ? `at ${dateTimeDisplay(lastScrobbled).strong()}`
             : lastScrobbled
         }`
       );

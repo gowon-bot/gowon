@@ -36,7 +36,7 @@ export class Guess extends JumbleChildCommand {
       this.redisService.sessionDelete(message, jumbleRedisKey);
 
       await this.reply(
-        `you are correct! The artist was ${jumbledArtist.unjumbled.bold()}`
+        `you are correct! The artist was ${jumbledArtist.unjumbled.strong()}`
       );
     } else {
       await message.react(

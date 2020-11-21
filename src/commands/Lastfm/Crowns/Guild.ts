@@ -52,7 +52,7 @@ export class Guild extends CrownsChildCommand {
                   `${idx + 1}. ${await this.gowonClient.userDisplay(
                     this.message,
                     h.user
-                  )} with ${numberDisplay(h.numberOfCrowns, "crown").bold()}`
+                  )} with ${numberDisplay(h.numberOfCrowns, "crown").strong()}`
               )
             )
           ).join("\n")

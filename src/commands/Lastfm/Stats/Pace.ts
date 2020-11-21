@@ -34,7 +34,7 @@ export default class Pace extends LastFMBaseCommand {
       },
       milestone: {
         index: 0,
-        regex: /[0-9]+(?!\w)(?! [a-z])/g,
+        regex: /[0-9]+(?![\w.])(?! [a-z])/g,
         number: true,
       },
     },
@@ -87,7 +87,7 @@ export default class Pace extends LastFMBaseCommand {
         )}, ${perspective.name} will hit **${numberDisplay(
           pace.milestone,
           "**scrobble"
-        )} on ${dateDisplay(pace.prediction).bold()}`
+        )} on ${dateDisplay(pace.prediction).strong()}`
       );
 
     await this.send(embed);

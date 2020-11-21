@@ -83,7 +83,7 @@ _Comparing ${perspective.possessive} top ${numberDisplay(
                 .slice(0, 20)
                 .map(
                   (o, idx) =>
-                    `${idx + 1}. ${o.artist.bold()} - ${numberDisplay(
+                    `${idx + 1}. ${o.artist.strong()} - ${numberDisplay(
                       o.plays,
                       "play"
                     )}`

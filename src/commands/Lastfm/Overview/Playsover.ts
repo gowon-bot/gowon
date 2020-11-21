@@ -36,11 +36,11 @@ export class Playsover extends OverviewChildCommand {
       artistCount.asNumber > 1000 ? 1000 : artistCount.asNumber,
       "artist"
     )}, ${perspective.plusToHave}...
-  - ${thousand.asString.bold()} artists with 1000+ scrobbles
-  - ${fivehundred.asString.bold()} artists with 500+ scrobbles
-  - ${twofifty.asString.bold()} artists with 250+ scrobbles
-  - ${hundred.asString.bold()} artists with 100+ scrobbles
-  - ${fifty.asString.bold()} artists with 50+ scrobbles`);
+  - ${thousand.asString.strong()} artists with 1000+ scrobbles
+  - ${fivehundred.asString.strong()} artists with 500+ scrobbles
+  - ${twofifty.asString.strong()} artists with 250+ scrobbles
+  - ${hundred.asString.strong()} artists with 100+ scrobbles
+  - ${fifty.asString.strong()} artists with 50+ scrobbles`);
 
     await this.send(embed);
   }

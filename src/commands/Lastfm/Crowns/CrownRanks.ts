@@ -44,7 +44,7 @@ export class CrownRanks extends CrownsChildCommand {
               `${numberDisplay(cr.rank)}. ${cr.artistName} - ${numberDisplay(
                 cr.plays,
                 "play"
-              ).bold()}`
+              ).strong()}`
           )
           .join("\n") +
           `\n\n${perspective.upper.plusToHave} ${numberDisplay(

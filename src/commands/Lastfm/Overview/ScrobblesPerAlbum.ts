@@ -16,7 +16,7 @@ export class ScrobblesPerAlbum extends OverviewChildCommand {
       .setDescription(
         `${perspective.upper.regularVerb(
           "average"
-        )} ${spl.asString.bold()} scrobbles per album!`
+        )} ${spl.asString.strong()} scrobbles per album!`
       );
 
     await this.send(embed);

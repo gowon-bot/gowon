@@ -40,7 +40,7 @@ export class ContentiousCrowns extends CrownsChildCommand {
                 `${c.artistName} ― stolen ${numberDisplay(
                   c.version,
                   "time"
-                ).bold()}`
+                ).strong()}`
             )
             .join("\n")
       );

@@ -89,7 +89,7 @@ export class Me extends JumbleChildCommand {
       {
         shouldDisplay: !!artistInfo.similar.artist.length,
         string: `Last.fm considers ${artistInfo.similar.artist
-          .map((a) => a.name.bold())
+          .map((a) => a.name.strong())
           .slice(0, 2)
           .join(" and ")} to be similar`,
       }

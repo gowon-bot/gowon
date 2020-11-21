@@ -26,7 +26,7 @@ export default class TrackList extends ListCommand {
             (t, idx) =>
               `${
                 idx + 1
-              }. ${t.name.bold()} by ${t.artist.name.italic()} - ${numberDisplay(
+              }. ${t.name.strong()} by ${t.artist.name.italic()} - ${numberDisplay(
                 t.playcount,
                 "play"
               )}`

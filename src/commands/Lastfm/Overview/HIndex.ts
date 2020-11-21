@@ -14,7 +14,7 @@ export class HIndex extends OverviewChildCommand {
       .setAuthor(username + badge, image)
       .setColor(colour)
       .setDescription(
-        `${perspective.upper.possessive} H-index is ${hindex.asString.bold()}!`
+        `${perspective.upper.possessive} H-index is ${hindex.asString.strong()}!`
       );
 
     await this.send(embed);

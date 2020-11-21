@@ -18,7 +18,7 @@ export default class Usercount extends AdminBaseCommand {
           `There are ${numberDisplay(
             usercount,
             "registered user"
-          ).bold()} logged into Gowon`
+          ).strong()} logged into Gowon`
         )
     );
   }

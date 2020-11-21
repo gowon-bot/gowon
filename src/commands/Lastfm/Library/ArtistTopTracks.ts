@@ -45,7 +45,7 @@ export default class ArtistTopTracks extends LastFMBaseCommand {
         this.message.author.username,
         this.message.author.avatarURL() || ""
       )
-      .setTitle(`Top ${artist.bold()} tracks for ${username}`)
+      .setTitle(`Top ${artist.strong()} tracks for ${username}`)
       .setURL(LinkGenerator.libraryArtistPage(username, artist))
       .setDescription(
         `_${numberDisplay(topTracks.total, "total scrobble")}, ${numberDisplay(
@@ -55,7 +55,7 @@ export default class ArtistTopTracks extends LastFMBaseCommand {
           topTracks.items
             .map(
               (tt) =>
-                `${numberDisplay(tt.playcount, "play")} - ${tt.track.bold()}`
+                `${numberDisplay(tt.playcount, "play")} - ${tt.track.strong()}`
             )
             .join("\n")
       );

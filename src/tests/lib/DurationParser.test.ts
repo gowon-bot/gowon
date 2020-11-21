@@ -245,3 +245,13 @@ test("should parse a shorthand duration", async (t) => {
   t.deepEqual(halfYear, { months: 6 });
   t.deepEqual(halfYear2, { months: 6 });
 });
+
+test("should round a durations with decimals", async (t) => {
+  let hours = t.context.parser.parse("2.4 h");
+  let days = t.context.parser.parse("7.5 days");
+  let noMatch = t.context.parser.parse("12.2");
+
+  t.deepEqual(hours, { hours: 2 });
+  t.deepEqual(days, { days: 8 });
+  t.deepEqual(noMatch, {});
+});

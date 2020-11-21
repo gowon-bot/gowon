@@ -25,12 +25,12 @@ export default class PartyTime extends LastFMBaseCommand {
   async run() {
     let time = this.parsedArguments.time as number;
 
-    await this.send("The party begins in...".bold());
+    await this.send("The party begins in...".strong());
 
     for (let currentTime = time; currentTime >= 0; currentTime--) {
       setTimeout(() => {
         this.send(
-          currentTime === 0 ? "🎉 NOW 🎊".bold() : `${currentTime}`.bold()
+          currentTime === 0 ? "🎉 NOW 🎊".strong() : `${currentTime}`.strong()
         );
       }, (time - currentTime) * 1800);
     }

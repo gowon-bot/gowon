@@ -38,7 +38,7 @@ export default class ArtistCount extends LastFMBaseCommand {
       `${perspective.plusToHave} scrobbled ${numberDisplay(
         scrobbles,
         "artist"
-      ).bold()} ${humanReadableTimePeriod}`
+      ).strong()} ${humanReadableTimePeriod}`
     );
   }
 }

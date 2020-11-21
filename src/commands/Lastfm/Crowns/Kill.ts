@@ -28,10 +28,10 @@ export class Kill extends CrownsChildCommand {
     });
 
     if (!crown)
-      throw new LogicError(`A crown for ${artist.bold()} doesn't exist`);
+      throw new LogicError(`A crown for ${artist.strong()} doesn't exist`);
 
     let sentMessage = await this.reply(
-      `are you sure you want to kill the crown for ${crown?.artistName.bold()}?`
+      `are you sure you want to kill the crown for ${crown?.artistName.strong()}?`
     );
 
     message.channel.stopTyping();
@@ -53,11 +53,11 @@ export class Kill extends CrownsChildCommand {
             message.member?.nickname || message.author.username,
             message.author.avatarURL() || undefined
           )
-          .setDescription(`Successfully killed the crown for ${artist.bold()}`)
+          .setDescription(`Successfully killed the crown for ${artist.strong()}`)
       );
     } catch {
       await this.reply(
-        `No reaction, cancelling crown kill for ${artist.bold()}`
+        `No reaction, cancelling crown kill for ${artist.strong()}`
       );
     }
   }

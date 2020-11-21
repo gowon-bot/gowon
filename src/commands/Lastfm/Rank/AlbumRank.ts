@@ -59,12 +59,12 @@ export default class AlbumRank extends LastFMBaseCommand {
       );
     } else {
       await this.reply(
-        `${topAlbums.album[rank].name.bold()} by ${
+        `${topAlbums.album[rank].name.strong()} by ${
           topAlbums.album[rank].artist.name
-        } is ranked #${numberDisplay(rank + 1).bold()} with ${numberDisplay(
+        } is ranked #${numberDisplay(rank + 1).strong()} with ${numberDisplay(
           topAlbums.album[rank].playcount,
           "play"
-        ).bold()}`
+        ).strong()}`
       );
     }
   }

@@ -38,10 +38,10 @@ export default class ArtistPercent extends LastFMBaseCommand {
       `${perspective.possessive} ${numberDisplay(
         artistInfo.stats.userplaycount,
         "play"
-      )} of ${artistInfo.name.bold()} represent ${calculatePercent(
+      )} of ${artistInfo.name.strong()} represent ${calculatePercent(
         artistInfo.stats.userplaycount,
         userInfo.playcount
-      ).bold()}% of ${perspective.possessivePronoun} total scrobbles`
+      ).strong()}% of ${perspective.possessivePronoun} total scrobbles`
     );
   }
 }

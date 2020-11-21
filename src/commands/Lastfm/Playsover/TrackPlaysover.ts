@@ -34,9 +34,9 @@ export default class TrackPlaysover extends LastFMBaseCommand {
     }
 
     await this.reply(
-      `${numberDisplay(playsover).bold()} of ${
+      `${numberDisplay(playsover).strong()} of ${
         perspective.possessive
-      } top 1,000 tracks have at least ${numberDisplay(plays, "play").bold()}`
+      } top 1,000 tracks have at least ${numberDisplay(plays, "play").strong()}`
     );
   }
 }

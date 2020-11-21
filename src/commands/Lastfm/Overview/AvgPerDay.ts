@@ -16,7 +16,7 @@ export class AvgPerDay extends OverviewChildCommand {
       .setDescription(
         `${
           perspective.upper.plusToHave
-        } an average ${avg.asString.bold()} scrobbles per day!`
+        } an average ${avg.asString.strong()} scrobbles per day!`
       );
 
     await this.send(embed);

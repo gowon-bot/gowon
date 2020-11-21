@@ -37,7 +37,7 @@ export default class AlbumPage extends LastFMBaseCommand {
     });
 
     this.send(
-      `${albumDetails.name.italic()} by ${albumDetails.artist.bold()} on last.fm: ${cleanURL(
+      `${albumDetails.name.italic()} by ${albumDetails.artist.strong()} on last.fm: ${cleanURL(
         albumDetails.url
       )}`
     );

@@ -55,7 +55,7 @@ export default class ArtistTopAlbums extends LastFMBaseCommand {
           topAlbums.items
             .map(
               (ta) =>
-                `${numberDisplay(ta.playcount, "play")} - ${ta.album.bold()}`
+                `${numberDisplay(ta.playcount, "play")} - ${ta.album.strong()}`
             )
             .join("\n")
       );

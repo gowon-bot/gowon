@@ -42,7 +42,7 @@ export class TopCommands extends MetaChildCommand {
             `${numberDisplay(tc.count, "run")} - ${(
               commandManager.findByID(tc.commandID)?.friendlyNameWithParent ??
               "[unknown command]"
-            ).bold()}`
+            ).strong()}`
         )
       );
 

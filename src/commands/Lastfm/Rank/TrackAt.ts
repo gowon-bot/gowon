@@ -40,11 +40,11 @@ export default class TrackAt extends LastFMBaseCommand {
       );
 
     await this.reply(
-      `${track.name.bold()} by ${track.artist.name.italic()} is ranked at ${track[
+      `${track.name.strong()} by ${track.artist.name.italic()} is ranked at ${track[
         "@attr"
-      ].rank.bold()} in ${
+      ].rank.strong()} in ${
         perspective.possessive
-      } top tracks with ${numberDisplay(track.playcount, "play").bold()}`
+      } top tracks with ${numberDisplay(track.playcount, "play").strong()}`
     );
   }
 }

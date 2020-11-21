@@ -18,7 +18,7 @@ export class Breadth extends OverviewChildCommand {
       .setDescription(
         `${perspective.upper.possessive} breadth rating is ${numberDisplay(
           breadth.rating.toFixed(1)
-        ).bold()} _(${breadth.ratingString})_`
+        ).strong()} _(${breadth.ratingString})_`
       );
 
     await this.send(embed);

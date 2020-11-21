@@ -30,7 +30,7 @@
 //     let embed = new MessageEmbed()
 //       .setTitle(`Removed redirect`)
 //       .setDescription(
-//         `${redirect.from.bold()} no longer redirects to ${redirect.to.bold()}`
+//         `${redirect.from.strong()} no longer redirects to ${redirect.to.strong()}`
 //       );
 
 //     await this.send(embed);

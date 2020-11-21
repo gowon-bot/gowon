@@ -38,7 +38,7 @@ export default class AlbumCount extends LastFMBaseCommand {
       `${perspective.plusToHave} scrobbled ${numberDisplay(
         scrobbles,
         "album"
-      ).bold()} ${humanReadableTimePeriod}`
+      ).strong()} ${humanReadableTimePeriod}`
     );
   }
 }

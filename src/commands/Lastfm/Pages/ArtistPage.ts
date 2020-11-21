@@ -35,7 +35,7 @@ export default class ArtistPage extends LastFMBaseCommand {
     });
 
     this.reply(
-      `${artistDetails.name.bold()} on last.fm: ${cleanURL(artistDetails.url)}`
+      `${artistDetails.name.strong()} on last.fm: ${cleanURL(artistDetails.url)}`
     );
   }
 }

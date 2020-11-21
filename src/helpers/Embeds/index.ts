@@ -28,7 +28,7 @@ export function TrackEmbed(
   return new MessageEmbed()
     .setTitle(track.name)
     .setDescription(
-      `by ${artist.bold()}` + (album ? ` from ${album.italic()}` : "")
+      `by ${artist.strong()}` + (album ? ` from ${album.italic()}` : "")
     )
     .setThumbnail(
       track.image.find((i) => i.size === imageSize)?.["#text"] || ""

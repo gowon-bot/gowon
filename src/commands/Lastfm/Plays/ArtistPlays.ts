@@ -48,7 +48,7 @@ export default class ArtistPlays extends LastFMBaseCommand {
               artistDetails.stats.userplaycount,
               "**scrobble"
             )} of`) +
-        ` ${artistDetails.name.bold()}` +
+        ` ${artistDetails.name.strong()}` +
         (runAs.variationWasUsed("ap")
           ? `\n_looking for album plays? That command has moved to \`${prefix}lp\` or \`${prefix}albumplays\`_`
           : "")

@@ -275,7 +275,7 @@ export class ArtistCrownBannedError extends ClientError {
   name = "ArtistCrownBannedError";
 
   constructor(artist: string) {
-    super(`it is not possible to get the crown for ${artist.bold()}!`);
+    super(`it is not possible to get the crown for ${artist.strong()}!`);
   }
 }
 

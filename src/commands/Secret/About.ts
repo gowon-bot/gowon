@@ -45,7 +45,7 @@ export default class About extends BaseCommand {
         } is ${numberDisplay(
           differenceInDays(new Date(), this.startDate),
           "day"
-        ).bold()} old!\n${generateLink(
+        ).strong()} old!\n${generateLink(
           "Github",
           "https://github.com/jivison/gowon"
         )}`

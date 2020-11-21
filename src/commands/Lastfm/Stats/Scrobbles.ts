@@ -54,7 +54,7 @@ export default class Scrobbles extends LastFMBaseCommand {
       `${perspective.plusToHave} ${numberDisplay(
         scrobbles,
         "scrobble"
-      ).bold()} ${date ? `since ${dateDisplay(date)}` : humanTimeRange}`
+      ).strong()} ${date ? `since ${dateDisplay(date)}` : humanTimeRange}`
     );
 
     if (

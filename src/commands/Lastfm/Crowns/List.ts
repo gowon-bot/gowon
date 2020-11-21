@@ -42,7 +42,7 @@ export class List extends CrownsChildCommand {
               `${idx + 1}. ${c.artistName} - ${numberDisplay(
                 c.plays,
                 "play"
-              ).bold()}`
+              ).strong()}`
           )
           .join("\n") +
           `\n\n${perspective.upper.plusToHave} **${numberDisplay(
@@ -50,7 +50,7 @@ export class List extends CrownsChildCommand {
             "** crown"
           )} in ${this.guild.name} (ranked ${getOrdinal(
             rank.rank.toInt()
-          ).bold()})`
+          ).strong()})`
       );
 
     await this.send(embed);

@@ -36,7 +36,7 @@ export default class Recent extends LastFMBaseCommand {
         recentTracks.track
           .map(
             (t) =>
-              `${t.name} by ${t.artist["#text"].bold()} ${
+              `${t.name} by ${t.artist["#text"].strong()} ${
                 t.album ? `from ${t.album["#text"].italic()}` : ""
               }`
           )

@@ -35,7 +35,7 @@ export default class LastFmToDiscord extends LastFMBaseCommand {
       );
 
     this.reply(
-      `${(member.nickname || member.user.username).bold()} (${
+      `${(member.nickname || member.user.username).strong()} (${
         member.user.username
       }#${
         member.user.discriminator

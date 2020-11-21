@@ -25,9 +25,9 @@ export class Per extends OverviewChildCommand {
       .setAuthor(username + badge, image)
       .setColor(colour)
       .setDescription(`${perspective.upper.regularVerb("listen")} to an average of...
-      ${lpa.asString.bold()} albums per artist!
-      ${tpa.asString.bold()} tracks per artist!
-      ${tpl.asString.bold()} tracks per album!`);
+      ${lpa.asString.strong()} albums per artist!
+      ${tpa.asString.strong()} tracks per artist!
+      ${tpl.asString.strong()} tracks per album!`);
 
     await this.send(embed);
   }

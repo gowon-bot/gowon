@@ -26,7 +26,7 @@ export default class AlbumList extends ListCommand {
             (a, idx) =>
               `${
                 idx + 1
-              }. ${a.name.bold()} by ${a.artist.name.italic()} - ${numberDisplay(
+              }. ${a.name.strong()} by ${a.artist.name.italic()} - ${numberDisplay(
                 a.playcount,
                 "play"
               )}`

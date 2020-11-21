@@ -57,7 +57,7 @@ export default class RandomsongInUsersLibrary extends LastFMBaseCommand {
       .setAuthor(`${username}'s ${getOrdinal(randomIndex - 1)} top track`)
       .setTitle(randomSong.name)
       .setDescription(
-        `by ${randomSong.artist.name.bold()}` +
+        `by ${randomSong.artist.name.strong()}` +
           (trackInfo.album ? ` from ${trackInfo.album.title.italic()}` : "")
       )
       .setThumbnail(

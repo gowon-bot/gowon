@@ -69,7 +69,7 @@ export default class TopTrack extends InfoCommand {
         tracksToDisplay
           .map(
             (t, idx) =>
-              `${position.start + idx}. ${t.name.bold()} (${numberDisplay(
+              `${position.start + idx}. ${t.name.strong()} (${numberDisplay(
                 t.listeners,
                 "listener"
               )})`

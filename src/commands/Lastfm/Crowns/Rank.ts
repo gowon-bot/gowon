@@ -46,9 +46,9 @@ export class Rank extends CrownsChildCommand {
         `${perspective.upper.possessive} ${numberDisplay(
           rank.count,
           "crown"
-        ).bold()} ${rank.count.toInt() === 1 ? "ranks" : "rank"} ${
+        ).strong()} ${rank.count.toInt() === 1 ? "ranks" : "rank"} ${
           perspective.objectPronoun
-        } ${getOrdinal(rank.rank.toInt()).bold()} in ${
+        } ${getOrdinal(rank.rank.toInt()).strong()} in ${
           message.guild?.name
         } out of ${numberDisplay(rank.totalUsers, "total user")}`
       );

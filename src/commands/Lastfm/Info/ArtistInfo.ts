@@ -104,12 +104,12 @@ export default class ArtistInfo extends InfoCommand {
         )} by ${perspective.objectPronoun} (${calculatePercent(
           artistInfo.stats.userplaycount,
           userInfo.playcount
-        ).bold()}% of ${perspective.possessivePronoun} total scrobbles)
+        ).strong()}% of ${perspective.possessivePronoun} total scrobbles)
 ${
   parseFloat(percentage) > 0
     ? `${perspective.upper.regularVerb(
         "account"
-      )} for ${percentage.bold()}% of all ${artistInfo.name} scrobbles!`
+      )} for ${percentage.strong()}% of all ${artistInfo.name} scrobbles!`
     : ""
 }
         `

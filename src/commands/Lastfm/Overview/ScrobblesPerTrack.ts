@@ -16,7 +16,7 @@ export class ScrobblesPerTrack extends OverviewChildCommand {
       .setDescription(
         `${perspective.upper.regularVerb(
           "average"
-        )} ${spt.asString.bold()} scrobbles per track!`
+        )} ${spt.asString.strong()} scrobbles per track!`
       );
 
     await this.send(embed);

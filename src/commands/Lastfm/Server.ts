@@ -26,7 +26,7 @@ export default class Server extends LastFMBaseCommand {
           .map((username) => {
             let np = nowPlayings[username];
 
-            return `${username.code()} - ${np.name} by ${np.artist.bold()} ${
+            return `${username.code()} - ${np.name} by ${np.artist.strong()} ${
               np.album ? `from ${np.album.italic()}` : ""
             } ${np.nowPlaying ? "_(listening now)_" : ""}`;
           })

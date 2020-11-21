@@ -13,9 +13,9 @@ test("should be second person when usernames are the same", async (t) => {
 test("should be third person when usernames are different", async (t) => {
   let perspective = Perspective.perspective("flushed_emoji", "olivia_hye");
 
-  t.deepEqual(perspective.name, "`olivia_hye`");
-  t.deepEqual(perspective.plusToHave, "`olivia_hye` has");
-  t.deepEqual(perspective.possessive, "`olivia_hye`'s");
+  t.deepEqual(perspective.name, "olivia_hye");
+  t.deepEqual(perspective.plusToHave, "olivia_hye has");
+  t.deepEqual(perspective.possessive, "olivia_hye's");
 });
 
 test("should not have a username be code when disabled", async (t) => {
@@ -30,7 +30,7 @@ test("should conjugate a regular verb", async (t) => {
   let perspective1 = Perspective.perspective("flushed_emoji", "olivia_hye");
   let perspective2 = Perspective.perspective("flushed_emoji", "flushed_emoji");
 
-  t.deepEqual(perspective1.regularVerb("test"), "`olivia_hye` tests")
+  t.deepEqual(perspective1.regularVerb("test"), "olivia_hye tests")
   t.deepEqual(perspective2.regularVerb("test"), "you test")
 });
 

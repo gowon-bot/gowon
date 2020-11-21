@@ -98,7 +98,7 @@ export default class AlbumInfo extends InfoCommand {
     );
 
     let embed = this.newEmbed()
-      .setTitle(albumInfo.name.italic() + " by " + albumInfo.artist.bold())
+      .setTitle(albumInfo.name.italic() + " by " + albumInfo.artist.strong())
       .setDescription(this.lineConsolidator.consolidate())
       .setURL(albumInfo.url)
       .setImage(
@@ -127,12 +127,12 @@ export default class AlbumInfo extends InfoCommand {
             albumInfo.userplaycount,
             userInfo.playcount,
             4
-          ).bold()}% of ${perspective.possessivePronoun} total scrobbles)
+          ).strong()}% of ${perspective.possessivePronoun} total scrobbles)
         ${
           parseFloat(percentage) > 0
             ? `${perspective.upper.regularVerb(
                 "account"
-              )} for ${percentage.bold()}% of all scrobbles of this album!`
+              )} for ${percentage.strong()}% of all scrobbles of this album!`
             : ""
         }`,
         }

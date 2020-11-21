@@ -38,7 +38,7 @@ export default class TrackCount extends LastFMBaseCommand {
       `${perspective.plusToHave} scrobbled ${numberDisplay(
         scrobbles,
         "track"
-      ).bold()} ${humanReadableTimePeriod}`
+      ).strong()} ${humanReadableTimePeriod}`
     );
   }
 }

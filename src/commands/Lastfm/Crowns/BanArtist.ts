@@ -30,7 +30,7 @@ export class BanArtist extends CrownsChildCommand {
     );
 
     await this.reply(
-      `succesfully banned ${artistCrownBan.artistName.bold()} from the crowns game.`
+      `succesfully banned ${artistCrownBan.artistName.strong()} from the crowns game.`
     );
   }
 }

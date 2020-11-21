@@ -74,7 +74,7 @@ export default class Help extends BaseCommand {
             .map(
               (gc, idx, arr) =>
                 (idx === arr.length - 1 ? "\n" : "") +
-                gc.bold() +
+                gc.strong() +
                 "\n" +
                 (groupedCommands[gc][""]
                   ? Object.values(groupedCommands[gc][""])
@@ -87,7 +87,7 @@ export default class Help extends BaseCommand {
                   .map(
                     (k) =>
                       "" +
-                      k.bold() +
+                      k.strong() +
                       ": " +
                       groupedCommands[gc][k]
                         .map((c) => c.friendlyName)
@@ -125,7 +125,7 @@ export default class Help extends BaseCommand {
         message.author.avatarURL() || ""
       )
       .setDescription(
-        `${(command.friendlyNameWithParent || command.friendlyName).bold()}:
+        `${(command.friendlyNameWithParent || command.friendlyName).strong()}:
         ${command.description.italic()}
 
         ${
@@ -179,7 +179,7 @@ export default class Help extends BaseCommand {
         message.author.avatarURL() || ""
       )
       .setDescription(
-        `${command.friendlyName.bold()}:
+        `${command.friendlyName.strong()}:
         ${command.description.italic()}
         
         ${

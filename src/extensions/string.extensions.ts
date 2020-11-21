@@ -1,20 +1,28 @@
 import { sanitizeForDiscord } from "../helpers/discord";
 
+type FormattingFunction = (sanitize?: boolean) => string;
+
 declare global {
   interface String {
-    italic: () => string;
-    bold: () => string;
+    italic: FormattingFunction;
+    strong: FormattingFunction;
     code: () => string;
     toInt: () => number;
   }
 }
 
-String.prototype.italic = function (this: string): string {
-  return "_" + sanitizeForDiscord(this) + "_";
+String.prototype.italic = function (
+  this: string,
+  sanitize: boolean = true
+): string {
+  return "_" + (sanitize ? sanitizeForDiscord(this) : this) + "_";
 };
 
-String.prototype.bold = function (this: string): string {
-  return "**" + sanitizeForDiscord(this) + "**";
+String.prototype.strong = function (
+  this: string,
+  sanitize: boolean = true
+): string {
+  return "**" + (sanitize ? sanitizeForDiscord(this) : this) + "**";
 };
 
 String.prototype.code = function (this: string): string {

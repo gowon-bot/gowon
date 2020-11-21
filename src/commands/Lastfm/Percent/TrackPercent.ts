@@ -45,12 +45,12 @@ export default class TrackPercent extends LastFMBaseCommand {
       `${perspective.possessive} ${numberDisplay(
         trackInfo.userplaycount,
         "play"
-      )} of ${trackInfo.name.bold()} represent ${calculatePercent(
+      )} of ${trackInfo.name.strong()} represent ${calculatePercent(
         trackInfo.userplaycount,
         artistInfo.stats.userplaycount
-      ).bold()}% of ${
+      ).strong()}% of ${
         perspective.possessivePronoun
-      } ${artistInfo.name.bold()} scrobbles`
+      } ${artistInfo.name.strong()} scrobbles`
     );
   }
 }

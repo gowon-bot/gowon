@@ -35,9 +35,9 @@ export default class AlbumPlaysequal extends LastFMBaseCommand {
     }
 
     await this.reply(
-      `${numberDisplay(playsequal).bold()} of ${
+      `${numberDisplay(playsequal).strong()} of ${
         perspective.possessive
-      } top 1,000 albums have exactly ${numberDisplay(plays, "play").bold()}`
+      } top 1,000 albums have exactly ${numberDisplay(plays, "play").strong()}`
     );
   }
 }

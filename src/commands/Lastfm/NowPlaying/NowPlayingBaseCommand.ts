@@ -92,8 +92,10 @@ export abstract class NowPlayingBaseCommand extends LastFMBaseCommand {
         LinkGenerator.userPage(username)
       )
       .setDescription(
-        `by ${links.artist.bold()}` +
-          (nowPlaying.album["#text"] ? ` from ${links.album.italic()}` : "")
+        `by ${links.artist.strong(false)}` +
+          (nowPlaying.album["#text"]
+            ? ` from ${links.album.italic(false)}`
+            : "")
       )
       .setTitle(sanitizeForDiscord(nowPlaying.name))
       .setURL(
