@@ -1,11 +1,13 @@
 import { JumbleChildCommand } from "./JumbleChildCommand";
 import { Message } from "discord.js";
 import { LogicError } from "../../../errors";
-import { numberDisplay, shuffle } from "../../../helpers";
+import { numberDisplay, abbreviateNumber, shuffle } from "../../../helpers";
 import { JumbledArtist, jumbleRedisKey } from "./JumbleParentCommand";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { Variation } from "../../../lib/command/BaseCommand";
 import { RunAs } from "../../../lib/AliasChecker";
+import { LineConsolidator } from "../../../lib/LineConsolidator";
+import { TagConsolidator } from "../../../lib/tags/TagConsolidator";
 
 export class Me extends JumbleChildCommand {
   description =
@@ -52,13 +54,46 @@ export class Me extends JumbleChildCommand {
     if (!artist)
       throw new LogicError("No suitable artists were found in your library!");
 
+    let artistInfo = await this.lastFMService.artistInfo({
+      artist: artist.name,
+    });
+
     let jumbledArtist: JumbledArtist = {
       jumbled: this.jumble(artist.name),
       unjumbled: artist.name,
-      currenthint: artist.name.replace(/[^\s]/g, "_"),
+      currenthint: artist.name.replace(/[^\s]/g, this.hintChar),
     };
 
     this.sessionSetJSON(message, jumbleRedisKey, jumbledArtist);
+
+    let tags = new TagConsolidator()
+      .addArtistName(artist.name)
+      .addTags(artistInfo.tags.tag)
+      .consolidate();
+
+    let lineConsolidator = new LineConsolidator();
+
+    lineConsolidator.addLines(
+      `This artist has **${abbreviateNumber(
+        artistInfo.stats.listeners
+      )}** listeners on Last.fm and you have scrobbled them **${numberDisplay(
+        artist.playcount,
+        "**time"
+      )} (ranked #${numberDisplay(artist["@attr"].rank)}).`,
+      {
+        shouldDisplay: !!tags,
+        string: `This artist is tagged as ${tags
+          .slice(0, 2)
+          .join(" as well as ")}`,
+      },
+      {
+        shouldDisplay: !!artistInfo.similar.artist.length,
+        string: `Last.fm considers ${artistInfo.similar.artist
+          .map((a) => a.name.bold())
+          .slice(0, 2)
+          .join(" and ")} to be similar`,
+      }
+    );
 
     let embed = this.newEmbed()
       .setAuthor(
@@ -70,11 +105,8 @@ export class Me extends JumbleChildCommand {
       
       ${jumbledArtist.jumbled.code()}
       
-      Hints:
-      You've scrobbled them ${numberDisplay(
-        artist.playcount,
-        "time"
-      )} (ranked #${artist["@attr"].rank})`
+      **Hints**:
+      _${lineConsolidator.consolidate()}_`
       );
 
     await this.send(embed);
@@ -96,9 +128,9 @@ export class Me extends JumbleChildCommand {
   }
 
   private jumble(artistName: string): string {
-    let jumbled = shuffle(
-      artistName.split(/ /).map((t) => shuffle(t.split("")).join(""))
-    )
+    let jumbled = artistName
+      .split(/ /)
+      .map((t) => shuffle(t.split("")).join(""))
       .join(" ")
       .toLowerCase();
 
