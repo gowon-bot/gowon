@@ -2,7 +2,6 @@ import { OverviewChildCommand } from "./OverviewChildCommand";
 import { numberDisplay, getOrdinal } from "../../../helpers";
 import { Emoji } from "../../../lib/Emoji";
 import { LinkGenerator } from "../../../helpers/lastFM";
-import { Logger } from "../../../lib/Logger";
 
 export class All extends OverviewChildCommand {
   description = "Shows information about you and your library";
@@ -14,8 +13,6 @@ export class All extends OverviewChildCommand {
     );
 
     await this.calculator.cacheAll();
-
-    console.log(Logger.formatObject(await this.calculator.userInfo()));
 
     let { colour, badge, image } = await this.getAuthorDetails();
 
@@ -68,7 +65,9 @@ ${
 **Total scrobbles for top 10 artists**: ${await this.calculator.sumTop(10)}
 ${perspective.upper.possessive} top 10 artists account for: ${(
           await this.calculator.sumTopPercent(10)
-        ).asString.strong()}% of ${perspective.possessivePronoun} total scrobbles
+        ).asString.strong()}% of ${
+          perspective.possessivePronoun
+        } total scrobbles
 
 Among ${perspective.possessivePronoun} top ${numberDisplay(
           (await this.calculator.totalArtists()).asNumber > 1000

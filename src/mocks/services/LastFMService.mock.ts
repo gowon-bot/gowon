@@ -73,6 +73,10 @@ function fakeTrack(): Track {
     streamable: "0",
     url: "http://google.ca",
     name: "track",
+    date: {
+      uts: "1562537768",
+      "#text": "07 Jul 2019, 22:16",
+    },
   };
 }
 

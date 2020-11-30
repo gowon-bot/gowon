@@ -29,6 +29,10 @@ export interface Track {
   streamable: string;
   url: string;
   name: string;
+  date: {
+    uts: string;
+    "#text": string;
+  };
 }
 
 export interface RecentTracks extends PagedCollection {

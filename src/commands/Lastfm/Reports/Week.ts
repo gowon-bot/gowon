@@ -9,7 +9,9 @@ import { RedirectsService } from "../../../services/dbservices/RedirectsService"
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 export default class Week extends LastFMBaseCommand {
-  description = "Shows an overview of your week, including your top artists, albums, and tracks";
+  description =
+    "Shows an overview of your week, including your top artists, albums, and tracks";
+  aliases = ["weekly"];
   subcategory = "reports";
   usage = ["", "weekly @user"];
 
@@ -62,8 +64,7 @@ export default class Week extends LastFMBaseCommand {
       (a, b) => week.top.artists[b] - week.top.artists[a]
     );
 
-    let embed = this.newEmbed().setTitle(`${username}'s week`)
-      .setDescription(`
+    let embed = this.newEmbed().setTitle(`${username}'s week`).setDescription(`
       _${dateDisplay(sub(new Date(), { weeks: 1 }))} - ${dateDisplay(
       new Date()
     )}_
