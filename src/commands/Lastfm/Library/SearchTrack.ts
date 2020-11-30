@@ -32,7 +32,7 @@ export default class SearchTrack extends SearchCommand {
 
     let topTracks = await paginator.getAll({
       concatTo: "track",
-      concurrent: runAs.variationWasUsed("stdeep", "std"),
+      consecutive: runAs.variationWasUsed("stdeep", "std"),
     });
 
     let filtered = topTracks.track.filter((t) =>

@@ -46,6 +46,9 @@ export class User extends BaseEntity {
   @OneToMany((_) => Friend, (friend) => friend.user)
   friends!: Friend[];
 
+  @Column({ nullable: true })
+  lastIndexed!: Date;
+
   static async toDiscordUser(
     guild: Guild,
     discordID: string

@@ -46,6 +46,7 @@ import {
   ArtistCorrection,
   GetArtistCorrectionResponse,
   RecentTracksExtended,
+  RecentTracksExtendedResponse,
 } from "./LastFMService.types";
 import config from "../../../config.json";
 import {
@@ -114,11 +115,12 @@ export class LastFMAPIService extends BaseService {
   async recentTracksExtended(
     params: RecentTracksParams
   ): Promise<RecentTracksExtended> {
-    return await this.request<RecentTracksExtended>("user.getrecenttracks", {
-      ...params,
-      extended: 1,
-    });
-    // .recenttracks;
+    return (
+      await this.request<RecentTracksExtendedResponse>("user.getrecenttracks", {
+        ...params,
+        extended: 1,
+      })
+    ).recenttracks;
   }
 
   async trackInfo(params: TrackInfoParams): Promise<TrackInfo> {

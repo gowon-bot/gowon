@@ -46,7 +46,7 @@ export default class Tag extends LastFMBaseCommand {
 
     let [tagTopArtists, userTopArtists] = await Promise.all([
       this.lastFMService.tagTopArtists({ tag, limit: 1000 }),
-      paginator.getAll<TopArtists>({ concatTo: "artist", concurrent: false }),
+      paginator.getAll<TopArtists>({ concatTo: "artist", consecutive: false }),
     ]);
 
     let tagArtistNames = tagTopArtists!.artist.map((a) =>

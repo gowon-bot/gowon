@@ -32,7 +32,7 @@ export default class SearchArtist extends SearchCommand {
 
     let topArtists = await paginator.getAll({
       concatTo: "artist",
-      concurrent: runAs.variationWasUsed("sadeep", "sad"),
+      consecutive: runAs.variationWasUsed("sadeep", "sad"),
     });
 
     let filtered = topArtists.artist.filter((a) =>

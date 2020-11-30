@@ -32,7 +32,7 @@ export default class SearchAlbum extends SearchCommand {
 
     let topAlbums = await paginator.getAll({
       concatTo: "album",
-      concurrent: runAs.variationWasUsed("sldeep", "sld"),
+      consecutive: runAs.variationWasUsed("sldeep", "sld"),
     });
 
     let filtered = topAlbums.album.filter((a) =>

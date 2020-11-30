@@ -31,6 +31,19 @@ export class Paginator<ParamsT extends Params = Params, ResponseT = any> {
     }
   }
 
+  async *backwardsIterator() {
+    let startingPage = this.currentPage;
+
+    for (let page = this.maxPages; page > startingPage; page--) {
+      this.currentPage++;
+
+      yield await this.method({
+        ...this.params,
+        page,
+      });
+    }
+  }
+
   async *pagesIterator(method: (params: ParamsT) => Promise<ResponseT>) {
     for (let page = this.currentPage + 1; page <= this.maxPages; page++) {
       yield await method({
@@ -40,7 +53,9 @@ export class Paginator<ParamsT extends Params = Params, ResponseT = any> {
     }
   }
 
-  private generatePages(method: (params: ParamsT) => Promise<ResponseT>): Promise<ResponseT>[] {
+  private generatePages(
+    method: (params: ParamsT) => Promise<ResponseT>
+  ): Promise<ResponseT>[] {
     let pages = [];
 
     for (let page = this.currentPage + 1; page <= this.maxPages; page++) {
@@ -57,26 +72,26 @@ export class Paginator<ParamsT extends Params = Params, ResponseT = any> {
 
   async getAll<V>(options: {
     concatTo?: string;
-    concurrent?: boolean;
+    consecutive?: boolean;
     waitInterval?: number;
   }): Promise<ResponseT>;
   async getAll<V = any>(options: {
     groupOn?: string;
-    concurrent?: boolean;
+    consecutive?: boolean;
     waitInterval?: number;
   }): Promise<V[]>;
   async getAll<V = any>(options: {
-    concurrent: boolean;
+    consecutive: boolean;
     waitInterval?: number;
   }): Promise<V[]>;
   async getAll<V = any>(
     options: {
       groupOn?: string;
       concatTo?: string;
-      concurrent?: boolean;
+      consecutive?: boolean;
       waitInterval?: number;
     } = {
-      concurrent: true,
+      consecutive: true,
     }
   ): Promise<V[] | ResponseT> {
     let results = [] as V[];
@@ -96,7 +111,7 @@ export class Paginator<ParamsT extends Params = Params, ResponseT = any> {
       }
     };
 
-    if (options.concurrent) {
+    if (options.consecutive) {
       for await (let page of this.pagesIterator(this.method)) {
         eachFunction(page);
         if (options.waitInterval) await sleep(options.waitInterval);

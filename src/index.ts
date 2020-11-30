@@ -13,12 +13,15 @@ import { RedisService } from "./services/RedisService";
 import config from "../config.json";
 import { GraphQLAPI } from "./graphql_api";
 import { GowonClient } from "./lib/GowonClient";
+import { JobService } from "./services/JobService";
+import { JobManager } from "./jobs/JobManager";
 
 const client = new GowonClient(new Client(), config.environment);
 const handler = new CommandHandler();
 const redisService = new RedisService();
 const db = new DB();
 const api = new GraphQLAPI();
+const jobService = new JobService();
 
 async function start() {
   pm2.connect((err) => {
@@ -36,6 +39,7 @@ async function start() {
     handler.init(),
     redisService.init(),
     api.init(),
+    jobService.init(),
   ]);
 
   client.client.on("ready", () => {
@@ -59,4 +63,21 @@ async function start() {
   client.client.login(config.discordToken);
 }
 
+function exitHandler() {
+  console.log("Shutting down gracefully...");
+  JobManager.getInstance()
+    .stopAll()
+    .then(() => process.exit());
+}
+
 start();
+
+// Catches ctrl+c event
+process.on("SIGINT", exitHandler);
+
+// Catches "kill pid" (for example: nodemon restart)
+process.on("SIGUSR1", exitHandler);
+process.on("SIGUSR2", exitHandler);
+
+// Catches uncaught exceptions
+process.on("uncaughtException", exitHandler);
