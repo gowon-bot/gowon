@@ -2,7 +2,7 @@ import { Message } from "discord.js";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 export default class Logout extends LastFMBaseCommand {
-  description = "Logs you out of lastfm";
+  description = "Unsets your Last.fm username in Gowon";
   subcategory = "accounts";
   usage = "";
 

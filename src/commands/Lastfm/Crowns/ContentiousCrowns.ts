@@ -1,31 +1,46 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
-import { Message, MessageEmbed } from "discord.js";
+import { Message } from "discord.js";
 import { numberDisplay } from "../../../helpers";
+import { LogicError } from "../../../errors";
 
 export class ContentiousCrowns extends CrownsChildCommand {
-  description = "Lists the most contentious crowns in the server";
+  description =
+    "Lists the most contentious crowns in the server (ones that have been stolen the most number of times)";
   aliases = ["cont", "contentious", "con"];
-  usage = ""
+  usage = "";
 
   async run(message: Message) {
+    let serverUsers = await this.serverUserIDs({
+      filterCrownBannedUsers: true,
+    });
+
     let [crowns, crownsCount] = await Promise.all([
-      this.crownsService.listContentiousCrownsInServer(message.guild?.id!),
-      this.crownsService.countAllInServer(message.guild?.id!),
+      this.crownsService.listContentiousCrownsInServer(
+        message.guild?.id!,
+        undefined,
+        serverUsers
+      ),
+      this.crownsService.countAllInServer(message.guild?.id!, serverUsers),
     ]);
 
-    let embed = new MessageEmbed()
+    let filteredCrowns = crowns.filter((c) => c.version > 0);
+
+    if (!filteredCrowns.length)
+      throw new LogicError("no crowns have been stolen yet!");
+
+    let embed = this.newEmbed()
       .setTitle(`Most contentious crowns in ${message.guild?.name}`)
       .setDescription(
         `There are **${numberDisplay(crownsCount, "** crown")} in ${
           message.guild?.name
         }\n\n` +
-          crowns
+          filteredCrowns
             .map(
               (c) =>
                 `${c.artistName} ― stolen ${numberDisplay(
-                  c.version - 1,
+                  c.version,
                   "time"
-                ).bold()}`
+                ).strong()}`
             )
             .join("\n")
       );

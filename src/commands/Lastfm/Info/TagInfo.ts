@@ -1,4 +1,3 @@
-import { MessageEmbed } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { InfoCommand } from "./InfoCommand";
 import { numberDisplay } from "../../../helpers";
@@ -8,8 +7,8 @@ import { validators } from "../../../lib/validation/validators";
 export default class TagInfo extends InfoCommand {
   shouldBeIndexed = true;
 
-  aliases = ["ti", "gi"];
-  description = "Display some information about a tag";
+  aliases = ["tai", "gi"];
+  description = "Displays some information about a tag";
   usage = ["tag"];
 
   arguments: Arguments = {
@@ -27,7 +26,7 @@ export default class TagInfo extends InfoCommand {
 
     let tagInfo = await this.lastFMService.tagInfo({ tag });
 
-    let embed = new MessageEmbed()
+    let embed = this.newEmbed()
       .setTitle(tagInfo.name)
       .addFields(
         {

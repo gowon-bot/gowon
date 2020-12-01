@@ -8,6 +8,7 @@ import {
 } from "../arguments/arguments";
 import {
   LogicError,
+  ReverseLookupError,
   UnknownError,
   UsernameNotRegisteredError,
 } from "../../errors";
@@ -21,6 +22,7 @@ import { User } from "../../database/entity/User";
 import { Perspective } from "../Perspective";
 import { GowonClient } from "../GowonClient";
 import { Validation, ValidationChecker } from "../validation/ValidationChecker";
+import { GowonEmbed } from "../../helpers/Embeds";
 
 export interface Variation {
   variationString?: string;
@@ -44,6 +46,7 @@ export abstract class BaseCommand implements Command {
   description: string = "No description for this command";
   secretCommand: boolean = false;
   shouldBeIndexed: boolean = true;
+  devCommand: boolean = false;
 
   arguments: Arguments = {};
   validation: Validation = {};
@@ -58,7 +61,7 @@ export abstract class BaseCommand implements Command {
   message!: Message;
   guild!: Guild;
   author!: DiscordUser;
-  client!: GowonClient;
+  gowonClient!: GowonClient;
 
   responses: Array<MessageEmbed | string> = [];
 
@@ -86,22 +89,28 @@ export abstract class BaseCommand implements Command {
     return md5(this.name + this.parentName + this.category);
   }
 
-  abstract async run(message: Message, runAs: RunAs): Promise<void>;
+  abstract run(message: Message, runAs: RunAs): Promise<void>;
 
   async parseMentions({
     senderRequired = false,
     usernameRequired = true,
+    userArgumentName = "user",
     inputArgumentName = "username",
+    lfmMentionArgumentName = "lfmUser",
+    idMentionArgumentName = "userID",
     asCode = true,
     fetchDiscordUser = false,
-    reverseLookup = { lastFM: false },
+    reverseLookup = { lastFM: false, optional: false },
   }: {
     senderRequired?: boolean;
     usernameRequired?: boolean;
+    userArgumentName?: string;
     inputArgumentName?: string;
+    lfmMentionArgumentName?: string;
+    idMentionArgumentName?: string;
     asCode?: boolean;
     fetchDiscordUser?: boolean;
-    reverseLookup?: { lastFM?: boolean };
+    reverseLookup?: { lastFM?: boolean; optional?: boolean };
   } = {}): Promise<{
     senderUsername: string;
     mentionedUsername?: string;
@@ -111,17 +120,18 @@ export abstract class BaseCommand implements Command {
     senderUser?: User;
     discordUser?: DiscordUser;
   }> {
-    let { user, userID, lfmUser } = this.parsedArguments as {
-      user?: User;
-      userID?: string;
-      lfmUser?: string;
-    };
-
-    let senderUser = await this.usersService.getUser(this.message.author.id);
+    let user = this.parsedArguments[userArgumentName],
+      userID = this.parsedArguments[idMentionArgumentName],
+      lfmUser = this.parsedArguments[lfmMentionArgumentName];
 
     let mentionedUsername: string | undefined;
     let dbUser: User | undefined;
     let discordUser: DiscordUser | undefined;
+    let senderUser: User | undefined;
+
+    try {
+      senderUser = await this.usersService.getUser(this.message.author.id);
+    } catch {}
 
     if (lfmUser) {
       mentionedUsername = lfmUser;
@@ -145,7 +155,7 @@ export abstract class BaseCommand implements Command {
     }
 
     let perspective = this.usersService.perspective(
-      senderUser.lastFMUsername,
+      senderUser?.lastFMUsername || "<no user>",
       mentionedUsername,
       asCode
     );
@@ -154,16 +164,30 @@ export abstract class BaseCommand implements Command {
       dbUser = await this.usersService.getUserFromLastFMUsername(
         mentionedUsername
       );
+
+      if (!reverseLookup.optional && !dbUser)
+        throw new ReverseLookupError("Last.fm username");
     }
 
-    let username = mentionedUsername || senderUser.lastFMUsername;
+    let username = mentionedUsername || senderUser?.lastFMUsername;
 
     if (fetchDiscordUser) {
-      discordUser = (
+      let fetchedUser = (
         await this.guild.members.fetch(
           dbUser?.discordID || userID || this.author.id
         )
       ).user;
+
+      if (
+        username === senderUser?.lastFMUsername ||
+        (username === dbUser?.lastFMUsername &&
+          dbUser?.discordID === fetchedUser.id) ||
+        userID === fetchedUser.id
+      ) {
+        discordUser = fetchedUser;
+
+        perspective.addDiscordUser(discordUser);
+      } else discordUser = undefined;
     }
 
     if (
@@ -171,14 +195,14 @@ export abstract class BaseCommand implements Command {
       (!username || (senderRequired && !senderUser?.lastFMUsername))
     )
       throw new LogicError(
-        `Please sign in! (\`${await this.gowonService.prefix(
+        `please sign in! (\`${await this.gowonService.prefix(
           this.guild.id
         )}login <username>)\``
       );
 
     return {
-      username,
-      senderUsername: senderUser.lastFMUsername,
+      username: username || "",
+      senderUsername: senderUser?.lastFMUsername || "",
       mentionedUsername,
       perspective,
       dbUser,
@@ -212,9 +236,10 @@ export abstract class BaseCommand implements Command {
       for (let delegate of this.delegates) {
         if (delegate.when(this.parsedArguments)) {
           let command = new delegate.delegateTo();
-          command.client = this.client;
+          command.gowonClient = this.gowonClient;
           command.delegatedFrom = this;
           await command.execute(message, runAs);
+          this.message.channel.stopTyping();
           return;
         }
       }
@@ -260,8 +285,50 @@ export abstract class BaseCommand implements Command {
     this.addResponse(message);
     return await this.message.channel.send(message);
   }
+
   async reply(message: MessageEmbed | string): Promise<Message> {
     this.addResponse(message);
     return await this.message.reply(message);
+  }
+
+  protected async fetchUsername(id: string): Promise<string> {
+    try {
+      let member = await this.guild.members.fetch(id);
+      return member.user.username;
+    } catch {
+      return this.gowonService.constants.unknownUserDisplay;
+    }
+  }
+
+  protected newEmbed(): MessageEmbed {
+    return GowonEmbed(this.message.member ?? undefined);
+  }
+
+  protected async serverUserIDs({
+    filterCrownBannedUsers,
+  }: { filterCrownBannedUsers?: boolean } = {}): Promise<string[]> {
+    let filter = (_: string) => true;
+
+    if (filterCrownBannedUsers) {
+      let crownBannedUsers = await this.gowonService.getCrownBannedUsers(
+        this.guild
+      );
+
+      let purgatoryRole = await this.gowonService.getPurgatoryRole(this.guild);
+
+      let usersInPurgatory = purgatoryRole
+        ? (await this.guild.members.fetch())
+            .filter((m) => m.roles.cache.has(purgatoryRole!))
+            .map((m) => m.user.id)
+        : [];
+
+      filter = (id: string) => {
+        return !crownBannedUsers.includes(id) && !usersInPurgatory.includes(id);
+      };
+    }
+
+    return (await this.guild.members.fetch())
+      .map((u) => u.user.id)
+      .filter(filter);
   }
 }

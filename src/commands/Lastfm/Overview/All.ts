@@ -1,7 +1,7 @@
 import { OverviewChildCommand } from "./OverviewChildCommand";
-import { MessageEmbed } from "discord.js";
 import { numberDisplay, getOrdinal } from "../../../helpers";
 import { Emoji } from "../../../lib/Emoji";
+import { LinkGenerator } from "../../../helpers/lastFM";
 
 export class All extends OverviewChildCommand {
   description = "Shows information about you and your library";
@@ -22,18 +22,23 @@ export class All extends OverviewChildCommand {
       breadth = await this.calculator.breadth();
     } catch {}
 
-    let embed = new MessageEmbed()
-      .setAuthor(this.username + badge, image)
+    let embed = this.newEmbed()
+      .setAuthor(
+        this.username + badge,
+        image,
+        LinkGenerator.userPage(this.username)
+      )
+      .setThumbnail(image)
       .setColor(colour)
       .setDescription(
         `
 ${
-  this.client.isAuthor(this.discordID)
+  this.gowonClient.isDeveloper(this.discordID)
     ? `${Emoji.typescript} _Author_\n`
-    : this.client.isGowon(this.discordID)
+    : this.gowonClient.isGowon(this.discordID)
     ? `${Emoji.gowonswag2} _Gowon_\n`
-    : this.client.isAlphaTester(this.discordID)
-    ? ":sunglasses: _Alpha tester_\n"
+    : this.gowonClient.isAlphaTester(this.discordID)
+    ? `${Emoji.gowonheart} _Alpha tester_\n`
     : ""
 }
 _Scrobbling since ${await this.calculator.joined()}_
@@ -52,47 +57,51 @@ ${
   breadth
     ? `**Breadth rating**: ${breadth.rating.toFixed(1)} _(${
         breadth.ratingString
-      })_`
+      })_\n`
     : ""
-}
-**# of artists to equal 50% of scrobbles**: ${await (
-          await this.calculator.top50Percent()
+}**# of artists to equal 50% of scrobbles**: ${await (
+          await this.calculator.topPercent(50)
         ).count}
 **Total scrobbles for top 10 artists**: ${await this.calculator.sumTop(10)}
 ${perspective.upper.possessive} top 10 artists account for: ${(
           await this.calculator.sumTopPercent(10)
-        ).asString.bold()}% of ${perspective.possessivePronoun} total scrobbles
+        ).asString.strong()}% of ${
+          perspective.possessivePronoun
+        } total scrobbles
 
-Among ${perspective.possessivePronoun} top 1000 artists, ${
-          perspective.plusToHave
-        }...
+Among ${perspective.possessivePronoun} top ${numberDisplay(
+          (await this.calculator.totalArtists()).asNumber > 1000
+            ? 1000
+            : (await this.calculator.totalArtists()).asNumber,
+          "artist"
+        )}, ${perspective.plusToHave}...
     - ${(
       await this.calculator.playsOver(1000)
-    ).asString.bold()} artists with 1000+ scrobbles
+    ).asString.strong()} artists with 1000+ scrobbles
     - ${(
       await this.calculator.playsOver(500)
-    ).asString.bold()} artists with 500+ scrobbles
+    ).asString.strong()} artists with 500+ scrobbles
     - ${(
       await this.calculator.playsOver(250)
-    ).asString.bold()} artists with 250+ scrobbles
+    ).asString.strong()} artists with 250+ scrobbles
     - ${(
       await this.calculator.playsOver(100)
-    ).asString.bold()} artists with 100+ scrobbles
+    ).asString.strong()} artists with 100+ scrobbles
     - ${(
       await this.calculator.playsOver(50)
-    ).asString.bold()} artists with 50+ scrobbles` +
+    ).asString.strong()} artists with 50+ scrobbles` +
           ((await this.calculator.hasCrownStats())
-            ? `\n\n**Total crowns**: ${rank!.count} (${getOrdinal(
+            ? `\n\n**Total crowns**: ${rank!.count} (ranked ${getOrdinal(
                 rank!.rank.toInt()
               ).italic()})
 For every ${numberDisplay(
                 (await this.calculator.artistsPerCrown())!.asString,
                 "eligible artist"
-              ).bold()}, ${perspective.plusToHave} a crown
+              ).strong()}, ${perspective.plusToHave} a crown
 For every ${numberDisplay(
                 (await this.calculator.scrobblesPerCrown())!.asString,
                 "scrobble"
-              ).bold()}, ${perspective.plusToHave} a crown
+              ).strong()}, ${perspective.plusToHave} a crown
 `
             : "")
       );

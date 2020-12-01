@@ -1,12 +1,12 @@
 import { FriendsChildCommand } from "../FriendsChildCommand";
-import { MessageEmbed } from "discord.js";
 import { MultiRequester } from "../../../../lib/MultiRequester";
 import { numberDisplay } from "../../../../helpers";
 import { Arguments } from "../../../../lib/arguments/arguments";
 import { LinkGenerator } from "../../../../helpers/lastFM";
+import { FriendNotFoundError } from "../../../../errors";
 
 export class ArtistPlays extends FriendsChildCommand {
-  description = "View how many plays of an artist your friends have";
+  description = "Shows how many plays of an artist your friends have";
   aliases = ["ap", "p"];
   usage = ["", "artist"];
 
@@ -33,13 +33,17 @@ export class ArtistPlays extends FriendsChildCommand {
     let artistDetails = await new MultiRequester([
       ...this.friendUsernames,
       this.senderUsername,
-    ]).fetch(this.lastFMService.artistInfo.bind(this.lastFMService), {
-      artist,
-    });
+    ])
+      .fetch(this.lastFMService.artistInfo.bind(this.lastFMService), {
+        artist,
+      })
+      .catch(() => {
+        throw new FriendNotFoundError();
+      });
 
     let artistName = Object.values(artistDetails).filter((v) => v.name)[0].name;
 
-    let embed = new MessageEmbed()
+    let embed = this.newEmbed()
       .setTitle(`Your friends plays of ${artistName}`)
       .setURL(LinkGenerator.listenersYouKnow(artistName))
       .setDescription(
@@ -55,7 +59,7 @@ export class ArtistPlays extends FriendsChildCommand {
             return `${username.code()} - **${numberDisplay(
               ad.stats.userplaycount,
               "**scrobble"
-            )} of **${ad.name}**`;
+            )}`;
           })
       );
 

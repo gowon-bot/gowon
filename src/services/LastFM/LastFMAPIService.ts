@@ -1,6 +1,7 @@
 import { stringify } from "querystring";
 import fetch, { RequestInit } from "node-fetch";
 import crypto from "crypto";
+import { TagsService } from "../../services/dbservices/TagsService";
 
 import {
   RecentTracksResponse,
@@ -44,6 +45,7 @@ import {
   GetArtistCorrectionParams,
   ArtistCorrection,
   GetArtistCorrectionResponse,
+  RecentTracksExtended,
 } from "./LastFMService.types";
 import config from "../../../config.json";
 import {
@@ -58,6 +60,7 @@ import { LastFMScraper } from "../scrapingServices/LastFMScraper";
 export class LastFMAPIService extends BaseService {
   url = "https://ws.audioscrobbler.com/2.0/";
   scraper = new LastFMScraper(this.logger);
+  tagsService = new TagsService(this.logger);
 
   get apikey(): string {
     return config.lastFMAPIKey;
@@ -108,6 +111,16 @@ export class LastFMAPIService extends BaseService {
     ).recenttracks;
   }
 
+  async recentTracksExtended(
+    params: RecentTracksParams
+  ): Promise<RecentTracksExtended> {
+    return await this.request<RecentTracksExtended>("user.getrecenttracks", {
+      ...params,
+      extended: 1,
+    });
+    // .recenttracks;
+  }
+
   async trackInfo(params: TrackInfoParams): Promise<TrackInfo> {
     let response = (
       await this.request<TrackInfoResponse>("track.getInfo", params)
@@ -126,6 +139,8 @@ export class LastFMAPIService extends BaseService {
     let response = (
       await this.request<ArtistInfoResponse>("artist.getInfo", params)
     ).artist;
+
+    this.tagsService.cacheTagsFromArtistInfo(response);
 
     if (
       params.username &&
@@ -214,7 +229,7 @@ export class LastFMAPIService extends BaseService {
   async trackSearch(params: TrackSearchParams): Promise<TrackSearchResponse> {
     let response = await this.request<TrackSearchResponse>(
       "track.search",
-      params
+      this.cleanSearchParams<TrackSearchParams>(params)
     );
 
     return response;
@@ -228,7 +243,8 @@ export class LastFMAPIService extends BaseService {
       params
     );
 
-    if (!response.corrections) throw new RecordNotFoundError("artist");
+    if (!response.corrections?.correction)
+      throw new RecordNotFoundError("artist");
 
     return response.corrections.correction.artist;
   }
@@ -277,5 +293,14 @@ export class LastFMAPIService extends BaseService {
       },
       { post: true }
     );
+  }
+
+  // private methods
+  private cleanSearchParams<T = any>(params: any): T {
+    if (params.track) params.track = params.track.replace(":", " ");
+    if (params.artist) params.artist = params.artist.replace(":", " ");
+    if (params.album) params.album = params.album.replace(":", " ");
+
+    return params as T;
   }
 }

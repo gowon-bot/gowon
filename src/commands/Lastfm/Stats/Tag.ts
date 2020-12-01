@@ -1,4 +1,3 @@
-import { MessageEmbed } from "discord.js";
 import { numberDisplay } from "../../../helpers";
 import { calculatePercent } from "../../../helpers/stats";
 import { Arguments } from "../../../lib/arguments/arguments";
@@ -15,9 +14,10 @@ interface Overlap {
 }
 
 export default class Tag extends LastFMBaseCommand {
-  description = "shows your scrobbles of a tag";
+  description =
+    "Shows the overlap between your top artists, and a given tag's top artists";
   subcategory = "stats";
-  usage = ["", "milestone", "time period milestone @user"];
+  usage = ["tag"];
 
   arguments: Arguments = {
     inputs: {
@@ -55,7 +55,7 @@ export default class Tag extends LastFMBaseCommand {
 
     let overlap = this.calculateOverlap(userTopArtists, tagArtistNames);
 
-    let embed = new MessageEmbed()
+    let embed = this.newEmbed()
       .setAuthor(this.author.username, this.author.avatarURL() || "")
       .setTitle(
         `${perspective.upper.possessive} top ${
@@ -72,19 +72,24 @@ _Comparing ${perspective.possessive} top ${numberDisplay(
           "artist"
         )} of the tag_\n` +
           (overlap.length
-            ? `\`\`\`` +
-              `${numberDisplay(overlap.length, "artist")} (${calculatePercent(
+            ? `${numberDisplay(overlap.length, "artist")} (${calculatePercent(
                 overlap.length,
                 tagArtistNames.length
               )}% match) (${numberDisplay(
                 overlap.reduce((sum, o) => sum + o.plays, 0),
                 "scrobble"
-              )})\n` +
+              )})\n\n` +
               `${overlap
                 .slice(0, 20)
-                .map((o) => o.plays + " - " + o.artist)
+                .map(
+                  (o, idx) =>
+                    `${idx + 1}. ${o.artist.strong()} - ${numberDisplay(
+                      o.plays,
+                      "play"
+                    )}`
+                )
                 .join("\n")}
-\`\`\``
+`
             : "Couldn't find any matching artists!")
       );
 

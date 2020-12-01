@@ -276,7 +276,9 @@ export class OverviewStatsCalculator {
     return new Stat(1, "1");
   }
 
-  async top50Percent(): Promise<{
+  async topPercent(
+    percent: number
+  ): Promise<{
     count: Stat;
     total: Stat;
   }> {
@@ -285,7 +287,7 @@ export class OverviewStatsCalculator {
       this.userInfo(),
     ]);
 
-    let halfOfScrobbles = userInfo.playcount.toInt() / 2;
+    let halfOfScrobbles = userInfo.playcount.toInt() * (percent / 100);
     let sum = 0;
 
     for (
@@ -298,7 +300,7 @@ export class OverviewStatsCalculator {
       sum += artist.playcount.toInt();
 
       if (sum > halfOfScrobbles) {
-        let count = artistIndex || 1;
+        let count = artistIndex + 1 || 1;
         return {
           count: new Stat(count, count.toLocaleString()),
           total: new Stat(sum, sum.toLocaleString()),
@@ -367,7 +369,7 @@ export class OverviewStatsCalculator {
   }
 
   async breadth(): Promise<{ rating: number; ratingString: string }> {
-    let top50 = (await this.top50Percent()).count.asNumber;
+    let top50 = (await this.topPercent(50)).count.asNumber;
     let hindex = (await this.hIndex()).asNumber;
     let scrobbles = (await this.totalScrobbles()).asNumber;
     let sumTop = (await this.sumTop()).asNumber;

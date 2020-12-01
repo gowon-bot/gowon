@@ -5,7 +5,7 @@ import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
 export default class AlbumRank extends LastFMBaseCommand {
   aliases = ["alra", "lra"];
-  description = "Shows what rank the album is at in your top 1000 albums";
+  description = "Shows what rank a given album is in your top 1000 albums";
   subcategory = "ranks";
   usage = ["", "artist | album @user"];
 
@@ -53,16 +53,18 @@ export default class AlbumRank extends LastFMBaseCommand {
 
     if (rank === -1) {
       await this.reply(
-        `that album wasn't found in ${perspective.possessive} top 1000 albums`
+        `that album wasn't found in ${
+          perspective.possessive
+        } top ${numberDisplay(topAlbums.album.length, "album")}`
       );
     } else {
       await this.reply(
-        `${topAlbums.album[rank].name.bold()} by ${
+        `${topAlbums.album[rank].name.strong()} by ${
           topAlbums.album[rank].artist.name
-        } is ranked #${numberDisplay(rank + 1).bold()} with ${numberDisplay(
+        } is ranked #${numberDisplay(rank + 1).strong()} with ${numberDisplay(
           topAlbums.album[rank].playcount,
           "play"
-        ).bold()}`
+        ).strong()}`
       );
     }
   }

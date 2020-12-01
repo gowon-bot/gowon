@@ -66,6 +66,18 @@ export class FriendsService extends BaseService {
     await friend.remove();
   }
 
+  async clearFriends(serverID: string, user: User): Promise<number> {
+    this.log(
+      `Removing friend all friends for user ${user.lastFMUsername} in ${serverID}`
+    );
+    let friendsDeleted = await Friend.delete({
+      serverID,
+      user,
+    });
+
+    return friendsDeleted.affected ?? 0;
+  }
+
   async listFriends(serverID: string, user: User): Promise<Friend[]> {
     this.log(`Listing friends for user ${user?.lastFMUsername}`);
     return await Friend.find({ user, serverID });

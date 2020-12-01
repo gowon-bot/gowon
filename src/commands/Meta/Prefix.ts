@@ -1,9 +1,7 @@
-import { Message } from "discord.js";
-import { RunAs } from "../../lib/AliasChecker";
 import { BaseCommand } from "../../lib/command/BaseCommand";
 
 export default class Prefix extends BaseCommand {
-  description = "Set the prefix";
+  description = "Set or view the prefix";
   secretCommand = true;
   shouldBeIndexed = false;
 
@@ -14,13 +12,13 @@ export default class Prefix extends BaseCommand {
     return this;
   }
 
-  async run(_: Message, __: RunAs) {
+  async run() {
     if (this.prefix) {
       await this.gowonService.setPrefix(this.guild.id, this.prefix);
-      await this.reply(`The new prefix is ${this.prefix.code()}`);
+      await this.reply(`the new prefix is ${this.prefix.code()}`);
     } else {
       this.prefix = await this.gowonService.prefix(this.guild.id);
-      await this.reply(`The prefix is ${this.prefix.code()}`);
+      await this.reply(`the prefix is ${this.prefix.code()}`);
     }
   }
 }

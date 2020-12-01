@@ -1,12 +1,18 @@
 import { OverviewChildCommand } from "./OverviewChildCommand";
-import { MessageEmbed } from "discord.js";
 
 export class Per extends OverviewChildCommand {
   aliases = ["lpa", "tpa", "tpl", "alpa", "tpal"];
-  description = "Shows some averages about your library";
+  description = "Shows averages about your library. Average...\n- albums per artist\n- tracks per artist\n- tracks per album";
 
   async run() {
-    let { username } = await this.parseMentions();
+    let { username, perspective } = await this.parseMentions();
+
+    // Cache the top entities responses
+    await Promise.all([
+      this.calculator.topArtists(),
+      this.calculator.topAlbums(),
+      this.calculator.topTracks(),
+    ]);
 
     let { badge, colour, image } = await this.getAuthorDetails();
     let [lpa, tpa, tpl] = await Promise.all([
@@ -15,11 +21,13 @@ export class Per extends OverviewChildCommand {
       this.calculator.tracksPerAlbum(),
     ]);
 
-    let embed = new MessageEmbed()
+    let embed = this.newEmbed()
       .setAuthor(username + badge, image)
-      .setColor(colour).setDescription(`${lpa.asString.bold()} albums per artist!
-      ${tpa.asString.bold()} tracks per artist!
-      ${tpl.asString.bold()} tracks per album!`);
+      .setColor(colour)
+      .setDescription(`${perspective.upper.regularVerb("listen")} to an average of...
+      ${lpa.asString.strong()} albums per artist!
+      ${tpa.asString.strong()} tracks per artist!
+      ${tpl.asString.strong()} tracks per album!`);
 
     await this.send(embed);
   }

@@ -90,7 +90,10 @@ export class Can {
     { useChannel }: { useChannel?: boolean } = { useChannel: false }
   ): Promise<CanCheck> {
     if (message.member?.hasPermission("ADMINISTRATOR")) return { passed: true };
-    if (client.isAuthor(message.author.id)) return { passed: true };
+    if (client.isDeveloper(message.author.id)) return { passed: true };
+
+    if (command.devCommand)
+      return { passed: false, reason: CheckFailReason.forbidden };
 
     if (
       useChannel &&

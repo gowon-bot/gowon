@@ -1,5 +1,5 @@
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
-import { TagConsolidator } from "../../../lib/TagConsolidator";
+import { TagConsolidator } from "../../../lib/tags/TagConsolidator";
 
 export abstract class InfoCommand extends LastFMBaseCommand {
   shouldBeIndexed = false;

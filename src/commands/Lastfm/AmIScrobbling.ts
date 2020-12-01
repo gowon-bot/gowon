@@ -2,6 +2,7 @@ import { LastFMBaseCommand } from "./LastFMBaseCommand";
 
 export default class AmIScrobbling extends LastFMBaseCommand {
   aliases = ["amis"];
+  subcategory = "nowplaying";
   description = "Am I scrobbling?";
   usage = [""];
 

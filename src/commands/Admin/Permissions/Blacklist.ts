@@ -1,10 +1,11 @@
 import { PermissionsChildCommand } from "./PermissionsChildCommand";
-import { Message, MessageEmbed, Role, User } from "discord.js";
+import { Message, Role, User } from "discord.js";
 import { Variation } from "../../../lib/command/BaseCommand";
 import { RunAs } from "../../../lib/AliasChecker";
 
 export class Blacklist extends PermissionsChildCommand {
-  description = "Add a user to the blacklist for a command";
+  description =
+    "Blacklist/whitelist a user/role from using a command\nSee permissions help for more info";
 
   usage = ["command @role or role:roleid", "command @user or user:userid"];
 
@@ -27,7 +28,7 @@ export class Blacklist extends PermissionsChildCommand {
           message.guild?.id!,
           this.command.id,
           true,
-          runAs.lastString() !== "whitelist",
+          !runAs.variationWasUsed("whitelist"),
           this.runAs.toCommandFriendlyName()
         );
 
@@ -47,7 +48,7 @@ export class Blacklist extends PermissionsChildCommand {
           message.guild?.id!,
           this.command.id,
           false,
-          runAs.lastString() !== "whitelist",
+          !runAs.variationWasUsed("whitelist"),
           this.runAs.toCommandFriendlyName()
         );
 
@@ -60,11 +61,11 @@ export class Blacklist extends PermissionsChildCommand {
       }
     }
 
-    let embed = new MessageEmbed()
+    let embed = this.newEmbed()
       .setTitle(`New permissions`)
       .setDescription(
         `${
-          runAs.lastString() === "whitelist" ? "Whitelisted" : "Blacklisted"
+          runAs.variationWasUsed("whitelist") ? "Whitelisted" : "Blacklisted"
         } ${this.runAs.toCommandFriendlyName().code()} for:\n` +
           (createdRolePermissions.length
             ? `Roles: ${createdRolePermissions

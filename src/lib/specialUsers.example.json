@@ -1,0 +1,7 @@
+{
+  "help": "You should add the discord of your bot here, as well as the discord id of any developers (devs can bypass permissions and run special commands)",
+  "format": [{ "<discordID>": "<name>" }],
+  "developers": [],
+  "bots": [],
+  "alphaTesters": []
+}

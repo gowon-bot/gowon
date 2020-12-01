@@ -8,7 +8,7 @@ import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
 export default class ArtistAt extends LastFMBaseCommand {
   aliases = ["aa"];
-  description = "Finds the artist at a certain rank";
+  description = "Finds the artist in your library at a given rank";
   subcategory = "ranks";
   usage = ["", "rank @user"];
 
@@ -42,9 +42,9 @@ export default class ArtistAt extends LastFMBaseCommand {
       );
 
     await this.reply(
-      `${artist.name.bold()} is ranked at #${artist["@attr"].rank.bold()} in ${
+      `${artist.name.strong()} is ranked at #${artist["@attr"].rank.strong()} in ${
         perspective.possessive
-      } top artists with ${numberDisplay(artist.playcount, "play").bold()}`
+      } top artists with ${numberDisplay(artist.playcount, "play").strong()}`
     );
   }
 }

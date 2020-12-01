@@ -7,7 +7,7 @@ import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 export default class AlbumPercent extends LastFMBaseCommand {
   aliases = ["lpct", "alpct"];
   description =
-    "Shows you the percentage of an artist's scrobbles are made up of a certain album";
+    "Shows you what percentage of an artist's scrobbles are made up by a certain album";
   subcategory = "percents";
   usage = ["", "artist | album"];
 
@@ -45,12 +45,12 @@ export default class AlbumPercent extends LastFMBaseCommand {
       `${perspective.possessive} ${numberDisplay(
         albumInfo.userplaycount,
         "play"
-      )} of ${albumInfo.name.bold()} make ${calculatePercent(
+      )} of ${albumInfo.name.strong()} represent ${calculatePercent(
         albumInfo.userplaycount,
         artistInfo.stats.userplaycount
-      ).bold()}% of ${
+      ).strong()}% of ${
         perspective.possessivePronoun
-      } ${artistInfo.name.bold()} scrobbles`
+      } ${artistInfo.name.strong()} scrobbles`
     );
   }
 }

@@ -1,4 +1,3 @@
-import { MessageEmbed } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { InfoCommand } from "./InfoCommand";
 import { numberDisplay } from "../../../helpers";
@@ -11,7 +10,7 @@ export default class AlbumInfo extends InfoCommand {
   shouldBeIndexed = true;
 
   aliases = ["ali", "li", "als", "ls"];
-  description = "Display some information about an album";
+  description = "Displays some information about an album";
   usage = ["", "artist | album"];
 
   arguments: Arguments = {
@@ -61,11 +60,15 @@ export default class AlbumInfo extends InfoCommand {
 
     this.lineConsolidator.addLines(
       {
-        shouldDisplay: albumInfo.tracks.track.length > 0,
+        shouldDisplay: albumInfo.tracks.track.length > 0 && !!albumDuration,
         string: `_${numberDisplay(
           albumInfo.tracks.track.length,
           "track"
         )} (${numberDisplay(Math.ceil(albumDuration / 60), "minute")})_`,
+      },
+      {
+        shouldDisplay: albumInfo.tracks.track.length > 0 && !albumDuration,
+        string: `_${numberDisplay(albumInfo.tracks.track.length, "track")}_`,
       },
       {
         shouldDisplay: albumInfo.tracks.track.length > 0,
@@ -80,7 +83,7 @@ export default class AlbumInfo extends InfoCommand {
         string: "",
       },
       {
-        shouldDisplay: this.tagConsolidator.hasTags(),
+        shouldDisplay: this.tagConsolidator.hasAnyTags(),
         string: `**Tags:** ${this.tagConsolidator.consolidate().join(" ‧ ")}`,
       },
       {
@@ -89,8 +92,13 @@ export default class AlbumInfo extends InfoCommand {
       }
     );
 
-    let embed = new MessageEmbed()
-      .setTitle(albumInfo.name.italic() + " by " + albumInfo.artist.bold())
+    let percentage = calculatePercent(
+      albumInfo.userplaycount,
+      albumInfo.playcount
+    );
+
+    let embed = this.newEmbed()
+      .setTitle(albumInfo.name.italic() + " by " + albumInfo.artist.strong())
       .setDescription(this.lineConsolidator.consolidate())
       .setURL(albumInfo.url)
       .setImage(
@@ -119,11 +127,14 @@ export default class AlbumInfo extends InfoCommand {
             albumInfo.userplaycount,
             userInfo.playcount,
             4
-          ).bold()}% of ${perspective.possessivePronoun} total scrobbles)
-        ${perspective.upper.regularVerb("account")} for ${calculatePercent(
-            albumInfo.userplaycount,
-            albumInfo.playcount
-          ).bold()}% of all scrobbles of this album!`,
+          ).strong()}% of ${perspective.possessivePronoun} total scrobbles)
+        ${
+          parseFloat(percentage) > 0
+            ? `${perspective.upper.regularVerb(
+                "account"
+              )} for ${percentage.strong()}% of all scrobbles of this album!`
+            : ""
+        }`,
         }
       )
       .setFooter(

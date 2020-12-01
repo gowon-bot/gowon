@@ -1,10 +1,9 @@
-import { MessageEmbed } from "discord.js";
 import { numberDisplay } from "../../../helpers";
 import { ListCommand } from "./ListCommand";
 
 export default class AlbumList extends ListCommand {
-  aliases = ["llist", "allist", "topalbums", "topalbum", "albums"];
-  description = "Shows your top albums";
+  description = "Shows your top albums over a given time period";
+  aliases = ["llist", "allist", "topalbums", "topalbum", "albums", "ll"];
 
   async run() {
     let { username } = await this.parseMentions();
@@ -15,7 +14,7 @@ export default class AlbumList extends ListCommand {
       period: this.timePeriod,
     });
 
-    let messageEmbed = new MessageEmbed()
+    let messageEmbed = this.newEmbed()
       .setTitle(
         `Top ${numberDisplay(this.listAmount, "album")} for \`${username}\` ${
           this.humanReadableTimePeriod
@@ -24,11 +23,13 @@ export default class AlbumList extends ListCommand {
       .setDescription(
         topAlbums.album
           .map(
-            (a) =>
-              `${numberDisplay(
+            (a, idx) =>
+              `${
+                idx + 1
+              }. ${a.name.strong()} by ${a.artist.name.italic()} - ${numberDisplay(
                 a.playcount,
                 "play"
-              )} - ${a.name.bold()} by ${a.artist.name.italic()}`
+              )}`
           )
           .join("\n")
       );

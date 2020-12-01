@@ -9,11 +9,13 @@ export abstract class MetaBaseCommand extends BaseCommand {
 }
 
 export abstract class MetaBaseParentCommand extends ParentCommand {
+  description = "Information about the bot";
   category = "meta";
 }
 
 export abstract class MetaBaseChildCommand extends ChildCommand {
   category = "meta";
+  secretCommand = true;
 
   metaService = new MetaService();
 }

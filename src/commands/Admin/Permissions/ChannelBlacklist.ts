@@ -1,10 +1,9 @@
-import { MessageEmbed } from "discord.js";
 import { RunAs } from "../../../lib/AliasChecker";
 import { Variation } from "../../../lib/command/BaseCommand";
 import { PermissionsChildCommand } from "./PermissionsChildCommand";
 
 export class ChannelBlacklist extends PermissionsChildCommand {
-  description = "Blacklist command from channel";
+  description = "Prevent a command from being used in a channel";
   usage = ["command #channel", "command #channel #channel2"];
   variations: Variation[] = [{ variationString: "channelunblacklist" }];
 
@@ -20,7 +19,7 @@ export class ChannelBlacklist extends PermissionsChildCommand {
 
     for (let channel of mentionedChannels) {
       try {
-        runAs.lastString().toLowerCase() !== "channelunblacklist"
+        !runAs.variationWasUsed("channelunblacklist")
           ? await this.adminService.blacklistCommandFromChannel(
               this.guild.id,
               this.command.id,
@@ -41,7 +40,7 @@ export class ChannelBlacklist extends PermissionsChildCommand {
       }
     }
 
-    let embed = new MessageEmbed().setDescription(
+    let embed = this.newEmbed().setDescription(
       `${
         blacklistedChannels.success.length
           ? "**Success**: " +

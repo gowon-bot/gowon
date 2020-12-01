@@ -1,13 +1,14 @@
-import { MessageEmbed } from "discord.js";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { numberDisplay } from "../../../helpers";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
+import { LinkGenerator } from "../../../helpers/lastFM";
 
 export default class AlbumTopTracks extends LastFMBaseCommand {
   description = "Shows your top tracks from an album";
   aliases = ["ltt"];
   usage = ["", "artist | album @user"];
+  subcategory = "library";
 
   arguments: Arguments = {
     inputs: {
@@ -60,20 +61,19 @@ export default class AlbumTopTracks extends LastFMBaseCommand {
       album
     );
 
-    let embed = new MessageEmbed()
+    let embed = this.newEmbed()
       .setAuthor(
         this.message.author.username,
         this.message.author.avatarURL() || ""
       )
-      .setTitle(
-        `Top tracks on ${artist.bold()} - ${album.italic()} for ${username.code()}`
-      )
+      .setTitle(`Top tracks on ${artist} - ${album} for ${username}`)
+      .setURL(LinkGenerator.libraryAlbumPage(username, artist, album))
       .setDescription(
         `_${numberDisplay(topAlbums.total, `total scrobble`)}_\n\n` +
           topAlbums.items
             .map(
               (tt) =>
-                `${numberDisplay(tt.playcount, "play")} - ${tt.track.bold()}`
+                `${numberDisplay(tt.playcount, "play")} - ${tt.track.strong()}`
             )
             .join("\n")
       );

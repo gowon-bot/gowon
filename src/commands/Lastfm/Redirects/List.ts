@@ -27,7 +27,7 @@
 //     let redirects = await this.redirectsService.listRedirects(to);
 
 //     if (!redirects.length)
-//       throw new LogicError(`Nothing redirects to ${toCorrected.bold()}!`);
+//       throw new LogicError(`Nothing redirects to ${toCorrected.strong()}!`);
 
 //     let embed = new MessageEmbed()
 //       .setTitle(`Artists that redirect to ${toCorrected}`)

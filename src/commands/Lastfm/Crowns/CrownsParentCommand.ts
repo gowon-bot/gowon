@@ -7,7 +7,7 @@ import { DM } from "./DM";
 import { CheckMany } from "./CheckMany";
 import { TopCrowns } from "./TopCrowns";
 import { ContentiousCrowns } from "./ContentiousCrowns";
-import { TopCrownHolders } from "./TopCrownHolders";
+import { Guild } from "./Guild";
 import { SetInactiveRole } from "./SetInactiveRole";
 import { OptOut } from "./OptOut";
 import { OptIn } from "./OptIn";
@@ -18,10 +18,16 @@ import { SetPurgatoryRole } from "./SetPurgatoryRole";
 import { Ban } from "./Ban";
 import { Unban } from "./Unban";
 import { History } from "./History";
+import { GuildAround } from "./GuildAround";
+import { CrownRanks } from "./CrownRanks";
+import { BanArtist } from "./BanArtist";
+import { UnbanArtist } from "./UnbanArtist";
+import { GuildAt } from "./GuildAt";
 
 export default class CrownsParentCommand extends LastFMBaseParentCommand {
   friendlyName = "crowns";
   description = "See `!crownsgame` for more info";
+  subcategory = "games";
 
   prefixes = ["crowns", "cw"];
   default = () => new List();
@@ -34,7 +40,7 @@ export default class CrownsParentCommand extends LastFMBaseParentCommand {
     checkmany: () => new CheckMany(),
     topcrowns: () => new TopCrowns(),
     contentiouscrowns: () => new ContentiousCrowns(),
-    topcrownholders: () => new TopCrownHolders(),
+    guild: () => new Guild(),
     dm: () => new DM(),
     setinactiverole: () => new SetInactiveRole(),
     setpurgatoryrole: () => new SetPurgatoryRole(),
@@ -45,6 +51,11 @@ export default class CrownsParentCommand extends LastFMBaseParentCommand {
     recentlystolen: () => new RecentlyStolen(),
     ban: () => new Ban(),
     unban: () => new Unban(),
-    history: () => new History()
+    crownranks: () => new CrownRanks(),
+    banartist: () => new BanArtist(),
+    unbanartist: () => new UnbanArtist(),
+    history: () => new History(),
+    guildat: () => new GuildAt(),
+    guildaround: () => new GuildAround(),
   });
 }

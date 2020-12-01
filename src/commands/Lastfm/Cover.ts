@@ -6,8 +6,8 @@ import { LastFMBaseCommand } from "./LastFMBaseCommand";
 
 export default class Cover extends LastFMBaseCommand {
   aliases = ["co"];
-  description = "Shows the cover for an album";
-  usage = ["", "artist | artist @user"];
+  description = "Shows the cover for a given album";
+  usage = ["", "artist | album @user"];
 
   arguments: Arguments = {
     inputs: {
@@ -33,9 +33,9 @@ export default class Cover extends LastFMBaseCommand {
       if (!image) throw new LogicError("that album doesn't have a cover!");
 
       await this.sendWithFiles(
-        `Cover for ${nowPlaying.album["#text"].bold()} by ${nowPlaying.artist[
+        `Cover for ${nowPlaying.album["#text"].strong()} by ${nowPlaying.artist[
           "#text"
-        ].bold()}`,
+        ].strong()}`,
         [image?.["#text"] ?? ""]
       );
     } else {
@@ -53,7 +53,7 @@ export default class Cover extends LastFMBaseCommand {
         throw new LogicError("that album doesn't have a cover!");
 
       await this.sendWithFiles(
-        `Cover for ${albumDetails.name.italic()} by ${albumDetails.artist.bold()}`,
+        `Cover for ${albumDetails.name.italic()} by ${albumDetails.artist.strong()}`,
         [image?.["#text"] ?? ""]
       );
     }

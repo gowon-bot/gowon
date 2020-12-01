@@ -1,15 +1,16 @@
+import { sleep } from "../helpers";
 import { Params } from "../services/LastFM/LastFMService.types";
 
-export class Paginator<T extends Params = Params, U = any> {
+export class Paginator<ParamsT extends Params = Params, ResponseT = any> {
   currentPage: number = 0;
 
   constructor(
-    private readonly method: (params: T) => Promise<U>,
+    private readonly method: (params: ParamsT) => Promise<ResponseT>,
     public maxPages: number,
-    private params: T
+    private params: ParamsT
   ) {}
 
-  async getNext(): Promise<U | undefined> {
+  async getNext(): Promise<ResponseT | undefined> {
     this.currentPage++;
 
     if (this.currentPage > this.maxPages) return;
@@ -20,17 +21,26 @@ export class Paginator<T extends Params = Params, U = any> {
     });
   }
 
-  *iterator() {
+  async *iterator() {
     for (let page = this.currentPage + 1; page <= this.maxPages; page++) {
       this.currentPage += 1;
-      yield this.method({
+      yield await this.method({
         ...this.params,
         page: this.currentPage,
       });
     }
   }
 
-  private generatePages(method: (params: T) => Promise<U>): Promise<U>[] {
+  async *pagesIterator(method: (params: ParamsT) => Promise<ResponseT>) {
+    for (let page = this.currentPage + 1; page <= this.maxPages; page++) {
+      yield await method({
+        ...this.params,
+        page,
+      });
+    }
+  }
+
+  private generatePages(method: (params: ParamsT) => Promise<ResponseT>): Promise<ResponseT>[] {
     let pages = [];
 
     for (let page = this.currentPage + 1; page <= this.maxPages; page++) {
@@ -48,19 +58,29 @@ export class Paginator<T extends Params = Params, U = any> {
   async getAll<V>(options: {
     concatTo?: string;
     concurrent?: boolean;
-  }): Promise<U>;
+    waitInterval?: number;
+  }): Promise<ResponseT>;
   async getAll<V = any>(options: {
     groupOn?: string;
     concurrent?: boolean;
+    waitInterval?: number;
   }): Promise<V[]>;
-  async getAll<V = any>(options: { concurrent: boolean }): Promise<V[]>;
+  async getAll<V = any>(options: {
+    concurrent: boolean;
+    waitInterval?: number;
+  }): Promise<V[]>;
   async getAll<V = any>(
-    options: { groupOn?: string; concatTo?: string; concurrent?: boolean } = {
+    options: {
+      groupOn?: string;
+      concatTo?: string;
+      concurrent?: boolean;
+      waitInterval?: number;
+    } = {
       concurrent: true,
     }
-  ): Promise<V[] | U> {
+  ): Promise<V[] | ResponseT> {
     let results = [] as V[];
-    let result: U | undefined;
+    let result: ResponseT | undefined;
 
     const eachFunction = (response: any) => {
       if (options.groupOn) {
@@ -77,8 +97,9 @@ export class Paginator<T extends Params = Params, U = any> {
     };
 
     if (options.concurrent) {
-      for await (let page of this.generatePages(this.method)) {
+      for await (let page of this.pagesIterator(this.method)) {
         eachFunction(page);
+        if (options.waitInterval) await sleep(options.waitInterval);
       }
     } else {
       (await Promise.all(this.generatePages(this.method))).forEach(
@@ -87,7 +108,7 @@ export class Paginator<T extends Params = Params, U = any> {
     }
 
     if (result) {
-      return result as U;
+      return result as ResponseT;
     } else {
       return results as V[];
     }

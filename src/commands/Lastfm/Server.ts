@@ -1,4 +1,3 @@
-import { MessageEmbed } from "discord.js";
 import { MultiRequester } from "../../lib/MultiRequester";
 import { LastFMBaseCommand } from "./LastFMBaseCommand";
 
@@ -8,7 +7,7 @@ export default class Server extends LastFMBaseCommand {
   usage = [""];
 
   async run() {
-    let serverUsers = this.guild.members.cache.map((u) => `${u.id}`);
+    let serverUsers = await this.serverUserIDs();
 
     let users = await this.usersService.randomUser({
       limit: 10,
@@ -19,7 +18,7 @@ export default class Server extends LastFMBaseCommand {
       users.map((u) => u.lastFMUsername)
     ).fetch(this.lastFMService.nowPlayingParsed.bind(this.lastFMService), []);
 
-    let embed = new MessageEmbed()
+    let embed = this.newEmbed()
       .setTitle("Random songs across the server")
       .setDescription(
         Object.keys(nowPlayings)
@@ -27,7 +26,7 @@ export default class Server extends LastFMBaseCommand {
           .map((username) => {
             let np = nowPlayings[username];
 
-            return `${username.code()} - ${np.name} by ${np.artist.bold()} ${
+            return `${username.code()} - ${np.name} by ${np.artist.strong()} ${
               np.album ? `from ${np.album.italic()}` : ""
             } ${np.nowPlaying ? "_(listening now)_" : ""}`;
           })

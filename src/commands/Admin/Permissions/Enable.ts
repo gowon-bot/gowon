@@ -3,7 +3,7 @@ import { CommandManager } from "../../../lib/command/CommandManager";
 import { PermissionsChildCommand } from "../Permissions/PermissionsChildCommand";
 
 export class Enable extends PermissionsChildCommand {
-  description = "Re-enable a command globally";
+  description = "Re-enable a command";
   usage = "command";
   shouldBeIndexed = false;
 

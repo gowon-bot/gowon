@@ -1,4 +1,3 @@
-import { Message, MessageEmbed } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { InfoCommand } from "./InfoCommand";
 import { numberDisplay } from "../../../helpers";
@@ -12,7 +11,7 @@ export default class ArtistInfo extends InfoCommand {
   shouldBeIndexed = true;
 
   aliases = ["ai", "as"];
-  description = "Display some information about an artist";
+  description = "Displays some information about an artist";
   usage = ["", "artist"];
 
   arguments: Arguments = {
@@ -25,7 +24,7 @@ export default class ArtistInfo extends InfoCommand {
   crownsService = new CrownsService();
   lineConsolidator = new LineConsolidator();
 
-  async run(message: Message) {
+  async run() {
     let artist = this.parsedArguments.artist as string;
 
     let { senderUsername, username, perspective } = await this.parseMentions({
@@ -45,7 +44,7 @@ export default class ArtistInfo extends InfoCommand {
 
     let crown = await this.crownsService.getCrownDisplay(
       artistInfo.name,
-      message
+      this.guild
     );
 
     this.tagConsolidator.addTags(artistInfo.tags.tag);
@@ -71,7 +70,7 @@ export default class ArtistInfo extends InfoCommand {
           .join(" ‧ ")}`,
       },
       {
-        shouldDisplay: this.tagConsolidator.hasTags(),
+        shouldDisplay: this.tagConsolidator.hasAnyTags(),
         string: `**Tags:** ${this.tagConsolidator.consolidate().join(" ‧ ")}`,
       },
       {
@@ -86,7 +85,13 @@ export default class ArtistInfo extends InfoCommand {
       }
     );
 
-    let embed = new MessageEmbed()
+    let percentage = calculatePercent(
+      artistInfo.stats.userplaycount,
+      artistInfo.stats.playcount,
+      4
+    );
+
+    let embed = this.newEmbed()
       .setTitle(artistInfo.name)
       .setURL(artistInfo.url)
       .setDescription(this.lineConsolidator.consolidate())
@@ -99,12 +104,14 @@ export default class ArtistInfo extends InfoCommand {
         )} by ${perspective.objectPronoun} (${calculatePercent(
           artistInfo.stats.userplaycount,
           userInfo.playcount
-        ).bold()}% of ${perspective.possessivePronoun} total scrobbles)
-${perspective.upper.regularVerb("account")} for ${calculatePercent(
-          artistInfo.stats.userplaycount,
-          artistInfo.stats.playcount,
-          4
-        ).bold()}% of all ${artistInfo.name} scrobbles!
+        ).strong()}% of ${perspective.possessivePronoun} total scrobbles)
+${
+  parseFloat(percentage) > 0
+    ? `${perspective.upper.regularVerb(
+        "account"
+      )} for ${percentage.strong()}% of all ${artistInfo.name} scrobbles!`
+    : ""
+}
         `
       );
 

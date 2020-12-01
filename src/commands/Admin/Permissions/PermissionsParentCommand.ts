@@ -10,6 +10,8 @@ import { Disabled } from "./Disabled";
 import { ChannelBlacklist } from "./ChannelBlacklist";
 
 export default class PermissionsParentCommand extends AdminBaseParentCommand {
+  description = "Manage permissions for Gowon in your guild\nSee permissions help for more info"
+
   friendlyName = "permissions";
 
   prefixes = ["permissions", "perms"];

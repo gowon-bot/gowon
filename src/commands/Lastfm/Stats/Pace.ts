@@ -1,4 +1,3 @@
-import { MessageEmbed } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
 import {
   TimeRange,
@@ -16,7 +15,7 @@ import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
 export default class Pace extends LastFMBaseCommand {
   aliases = ["pc"];
-  description = "Predicts when you're gonna hit a milestone";
+  description = "Predicts when a user is gonna hit a scrobble milestone";
   subcategory = "library stats";
   usage = ["", "milestone", "time period milestone @user"];
 
@@ -35,7 +34,7 @@ export default class Pace extends LastFMBaseCommand {
       },
       milestone: {
         index: 0,
-        regex: /[0-9]+(?!\w)(?! [a-z])/g,
+        regex: /[0-9]+(?![\w.])(?! [a-z])/g,
         number: true,
       },
     },
@@ -70,20 +69,26 @@ export default class Pace extends LastFMBaseCommand {
 
     if (isBefore(pace.prediction, new Date()))
       throw new LogicError(
-        `${perspective.plusToHave} already passed that milestone!`
+        `${perspective.plusToHave} already passed ${numberDisplay(
+          milestone!,
+          "scrobble"
+        )}!`
       );
 
-    let embed = new MessageEmbed().setDescription(
-      `At a rate of **${numberDisplay(
-        pace.scrobbleRate.toFixed(2),
-        "scrobble"
-      )}/hour** ${humanizedTimeRange.replace("<user>", perspective.pronoun)}, ${
-        perspective.name
-      } will hit **${numberDisplay(
-        pace.milestone,
-        "**scrobble"
-      )} on ${dateDisplay(pace.prediction).bold()}`
-    );
+    let embed = this.newEmbed()
+      .setAuthor("Pace for " + username)
+      .setDescription(
+        `At a rate of **${numberDisplay(
+          pace.scrobbleRate.toFixed(2),
+          "scrobble"
+        )}/hour** ${humanizedTimeRange.replace(
+          "<user>",
+          perspective.pronoun
+        )}, ${perspective.name} will hit **${numberDisplay(
+          pace.milestone,
+          "**scrobble"
+        )} on ${dateDisplay(pace.prediction).strong()}`
+      );
 
     await this.send(embed);
   }

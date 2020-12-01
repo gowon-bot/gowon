@@ -1,14 +1,15 @@
-import { MessageEmbed } from "discord.js";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { dateTimeDisplay } from "../../../helpers";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { LogicError } from "../../../errors";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
+import { LinkGenerator } from "../../../helpers/lastFM";
 
 export default class LastScrobbled extends LastFMBaseCommand {
   description = "Shows the last time you scrobbled a song";
   aliases = ["last"];
   usage = ["", "artist | track @user"];
+  subcategory = "library";
 
   arguments: Arguments = {
     inputs: {
@@ -65,17 +66,18 @@ export default class LastScrobbled extends LastFMBaseCommand {
         `${perspective.plusToHave} not scrobbled that track!`
       );
 
-    let embed = new MessageEmbed()
+    let embed = this.newEmbed()
       .setAuthor(
         this.message.author.username,
-        this.message.author.avatarURL() || ""
+        this.message.author.avatarURL() || "",
+        LinkGenerator.libraryTrackPage(username, artist, track)
       )
       .setDescription(
         `${
           perspective.upper.name
-        } last scrobbled ${track.bold()} by ${artist.bold()} ${
+        } last scrobbled ${track.strong()} by ${artist.strong()} ${
           lastScrobbled instanceof Date
-            ? `at ${dateTimeDisplay(lastScrobbled).bold()}`
+            ? `at ${dateTimeDisplay(lastScrobbled).strong()}`
             : lastScrobbled
         }`
       );

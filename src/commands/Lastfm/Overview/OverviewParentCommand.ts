@@ -8,13 +8,15 @@ import { ScrobblesPerAlbum } from "./ScrobblesPerAlbum";
 import { ScrobblesPerTrack } from "./ScrobblesPerTrack";
 import { Per } from "./Per";
 import { HIndex } from "./HIndex";
-import { Top50Percent } from "./Top50Percent";
+import { TopPercent } from "./TopPercent";
 import { SumTop } from "./SumTop";
 import { Crowns } from "./Crowns";
 import { Breadth } from "./Breadth";
 import { Playsover } from "./Playsover";
 
 export default class OverviewParentCommand extends LastFMBaseParentCommand {
+  description =
+    "Shows information about you and your library. Run overview all to see an example";
   friendlyName = "overview";
 
   prefixes = ["o", "overview"];
@@ -29,7 +31,7 @@ export default class OverviewParentCommand extends LastFMBaseParentCommand {
     scrobblesPerTrack: () => new ScrobblesPerTrack(),
     per: () => new Per(),
     hindex: () => new HIndex(),
-    top50percent: () => new Top50Percent(),
+    toppercent: () => new TopPercent(),
     sumtop: () => new SumTop(),
     crowns: () => new Crowns(),
     breadth: () => new Breadth(),

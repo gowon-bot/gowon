@@ -4,7 +4,7 @@ import { PermissionsChildCommand } from "./PermissionsChildCommand";
 import { Arguments } from "../../../lib/arguments/arguments";
 
 export class Disable extends PermissionsChildCommand {
-  description = "Disable a command globally";
+  description = "Disable a command";
 
   usage = "command";
 

@@ -47,7 +47,7 @@
 
 //     if (!isValid)
 //       throw new LogicError(
-//         `hmmm, it looks like ${fromCorrected.bold()} doesn't redirect to ${toCorrected.bold()}`
+//         `hmmm, it looks like ${fromCorrected.strong()} doesn't redirect to ${toCorrected.strong()}`
 //       );
 
 //     let redirect = await this.redirectsService.setRedirect(
@@ -58,7 +58,7 @@
 //     let embed = new MessageEmbed()
 //       .setTitle(`New redirect`)
 //       .setDescription(
-//         `Set ${redirect.from.bold()} to redirect to ${redirect.to.bold()}`
+//         `Set ${redirect.from.strong()} to redirect to ${redirect.to.strong()}`
 //       );
 
 //     await this.send(embed);

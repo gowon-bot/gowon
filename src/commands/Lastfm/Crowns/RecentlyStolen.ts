@@ -1,5 +1,4 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
-import { Message, MessageEmbed } from "discord.js";
 import { ago } from "../../../helpers";
 
 export class RecentlyStolen extends CrownsChildCommand {
@@ -7,16 +6,18 @@ export class RecentlyStolen extends CrownsChildCommand {
   aliases = ["recent", "stolen", "rs"];
   usage = "";
 
-  async run(message: Message) {
+  async run() {
     let crowns = await this.crownsService.listRecentlyStolen(
-      message.guild?.id!
+      this.guild.id,
+      10,
+      await this.serverUserIDs({ filterCrownBannedUsers: true })
     );
 
-    let embed = new MessageEmbed()
-      .setTitle(`Recently stolen crowns in ${message.guild?.name}`)
+    let embed = this.newEmbed()
+      .setTitle(`Recently stolen crowns in ${this.guild.name}`)
       .setDescription(
         crowns
-          .map((c) => `${c.artistName.bold()} ― yoinked ${ago(c.lastStolen)}`)
+          .map((c) => `${c.artistName.strong()} ― yoinked ${ago(c.lastStolen)}`)
           .join("\n")
       );
 

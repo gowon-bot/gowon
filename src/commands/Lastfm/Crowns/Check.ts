@@ -1,18 +1,19 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
 import { Arguments } from "../../../lib/arguments/arguments";
-import { Message, MessageEmbed } from "discord.js";
+import { Message } from "discord.js";
 import { CrownState } from "../../../services/dbservices/CrownsService";
 import { CrownEmbeds } from "../../../helpers/Embeds/CrownEmbeds";
 import {
   CrownBannedError,
   InactiveError,
+  LogicError,
   OptedOutError,
   PurgatoryError,
 } from "../../../errors";
 
 export class Check extends CrownsChildCommand {
   aliases = ["c", "w"];
-  description = "Checks a crown";
+  description = "Checks a crown. If you have more plays, you will take it.";
   usage = ["", "artist"];
 
   arguments: Arguments = {
@@ -32,7 +33,12 @@ export class Check extends CrownsChildCommand {
     if (await senderUser?.isOptedOut(message)) throw new OptedOutError();
 
     if (!artist) {
-      artist = (await this.lastFMService.nowPlayingParsed(username)).artist;
+      let response = await this.lastFMService.nowPlayingParsed(username);
+      if (!response.nowPlaying)
+        throw new LogicError(
+          "you don't appear to be currently scrobbling anything."
+        );
+      artist = response.artist;
     }
 
     let artistDetails = await this.lastFMService.artistInfo({
@@ -49,9 +55,11 @@ export class Check extends CrownsChildCommand {
 
     let embeds = new CrownEmbeds(
       crownCheck,
-      message.author,
-      message,
-      artistDetails.stats.userplaycount.toInt()
+      this.message.author,
+      this.gowonClient,
+      artistDetails.stats.userplaycount.toInt(),
+      this.message,
+      this.message.member ?? undefined
     );
 
     if (
@@ -85,7 +93,7 @@ export class Check extends CrownsChildCommand {
         ? embeds.left()
         : crownCheck.state === CrownState.banned
         ? embeds.banned()
-        : new MessageEmbed();
+        : this.newEmbed();
 
     await this.send(await embed);
   }

@@ -1,27 +1,39 @@
-import { MessageEmbed } from "discord.js";
 import { LogicError } from "../../../errors";
 import { numberDisplay } from "../../../helpers";
+import { RunAs } from "../../../lib/AliasChecker";
+import { Variation } from "../../../lib/command/BaseCommand";
 import { Paginator } from "../../../lib/Paginator";
 import { SearchCommand } from "./SearchCommand";
 
 export default class SearchTrack extends SearchCommand {
   shouldBeIndexed = true;
-  description = "Searches your top albums for keywords";
+  description = "Searches your top tracks for keywords";
   aliases = ["st", "str", "strack"];
+
+  variations: Variation[] = [
+    {
+      variationRegex: /stdeep|std/,
+      friendlyString: "stdeep`,`std",
+      description: "Searches your top 6000 tracks (instead of 3000)",
+    },
+  ];
   usage = ["keywords", "keywords @user"];
 
-  async run() {
+  async run(_: any, runAs: RunAs) {
     let keywords = this.parsedArguments.keywords as string;
 
     let { username } = await this.parseMentions();
 
     let paginator = new Paginator(
       this.lastFMService.topTracks.bind(this.lastFMService),
-      3,
+      runAs.variationWasUsed("stdeep", "std") ? 6 : 3,
       { username, limit: 1000 }
     );
 
-    let topTracks = await paginator.getAll({ concatTo: "track" });
+    let topTracks = await paginator.getAll({
+      concatTo: "track",
+      concurrent: runAs.variationWasUsed("stdeep", "std"),
+    });
 
     let filtered = topTracks.track.filter((t) =>
       this.clean(t.name).includes(this.clean(keywords))
@@ -33,9 +45,9 @@ export default class SearchTrack extends SearchCommand {
       );
     }
 
-    let embed = new MessageEmbed()
+    let embed = this.newEmbed()
       .setTitle(
-        `Search results in ${username.code()}'s top ${numberDisplay(
+        `Search results in ${username}'s top ${numberDisplay(
           topTracks.track.length,
           "track"
         )}`
@@ -46,9 +58,7 @@ export default class SearchTrack extends SearchCommand {
 \`\`\`
 ${filtered
   .slice(0, 25)
-  .map((l) => `${l.artist.name} - ${l.name}`)
-  .sort((a, b) => a.localeCompare(b))
-  .map((f) => f)
+  .map((l) => `${l["@attr"].rank}. ${l.artist.name} - ${l.name}`)
   .join("\n")}
 \`\`\``
           : `No results found for ${keywords.code()}!`

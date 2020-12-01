@@ -1,4 +1,4 @@
-import { Message, MessageEmbed } from "discord.js";
+import { Message } from "discord.js";
 import { PermissionsChildCommand } from "../Permissions/PermissionsChildCommand";
 
 export class Disabled extends PermissionsChildCommand {
@@ -13,7 +13,7 @@ export class Disabled extends PermissionsChildCommand {
       message.guild?.id!
     );
 
-    let embed = new MessageEmbed()
+    let embed = this.newEmbed()
       .setTitle(`Disabled commands in ${message.guild?.name}`)
       .setDescription(
         disabledCommands.length

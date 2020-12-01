@@ -1,4 +1,4 @@
-import { BaseScraper } from "./BaseScraper";
+import { BaseScraper, ScrapingError } from "./BaseScraper";
 import { parseDate } from "../../helpers/date";
 import { Logger } from "../../lib/Logger";
 
@@ -51,14 +51,20 @@ export class LastFMScraper extends BaseScraper {
         let element = $(el);
 
         let track = element.find(".chartlist-name > a").text();
-        let playcount = element
+        let playcountElement = element
           .find(".chartlist-count-bar-value")
           .text()
-          .trim()
-          .toInt();
+          .trim();
+
+        let playcount = playcountElement.toInt();
 
         topTracks.push({ track, playcount });
       });
+
+    if (!topTracks.length)
+      throw new ScrapingError(
+        `it looks like you don't have any scrobbles of ${artist}!`
+      );
 
     return {
       items: topTracks,
@@ -99,6 +105,11 @@ export class LastFMScraper extends BaseScraper {
 
         topAlbums.push({ album, playcount });
       });
+
+    if (!topAlbums.length)
+      throw new ScrapingError(
+        `it looks like you don't have any scrobbles of any albums by ${artist}!`
+      );
 
     return {
       items: topAlbums,
@@ -143,6 +154,11 @@ export class LastFMScraper extends BaseScraper {
         topTracks.push({ track, playcount });
       });
 
+    if (!topTracks.length)
+      throw new ScrapingError(
+        `it looks like you don't have any scrobbles of ${album} by ${artist}!`
+      );
+
     return { items: topTracks, total: metadata.Scrobbles.toInt() };
   }
 
@@ -175,7 +191,7 @@ export class LastFMScraper extends BaseScraper {
     );
   }
 
-  private getMetadataItems(page: CheerioStatic): Metadata {
+  private getMetadataItems(page: cheerio.Root): Metadata {
     let items = page(".metadata-list > .metadata-item").toArray();
 
     return items.reduce((acc, val) => {

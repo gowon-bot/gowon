@@ -1,11 +1,11 @@
 import { FriendsChildCommand } from "../FriendsChildCommand";
-import { MessageEmbed } from "discord.js";
 import { MultiRequester } from "../../../../lib/MultiRequester";
 import { numberDisplay } from "../../../../helpers";
 import { Arguments } from "../../../../lib/arguments/arguments";
+import { FriendNotFoundError } from "../../../../errors";
 
 export class TrackPlays extends FriendsChildCommand {
-  description = "View how many plays of a track your friends have";
+  description = "Shows how many plays of a track your friends have";
   aliases = ["tp"];
   usage = ["", "artist | track"];
 
@@ -34,14 +34,18 @@ export class TrackPlays extends FriendsChildCommand {
     let trackDetails = await new MultiRequester([
       ...this.friendUsernames,
       this.senderUsername,
-    ]).fetch(this.lastFMService.trackInfo.bind(this.lastFMService), {
-      artist,
-      track,
-    });
+    ])
+      .fetch(this.lastFMService.trackInfo.bind(this.lastFMService), {
+        artist,
+        track,
+      })
+      .catch(() => {
+        throw new FriendNotFoundError();
+      });
 
     let trackInfo = Object.values(trackDetails).filter((v) => v.name)[0];
 
-    let embed = new MessageEmbed()
+    let embed = this.newEmbed()
       .setTitle(
         `Your friends plays of ${trackInfo.name} by ${trackInfo.artist.name}`
       )
@@ -58,7 +62,7 @@ export class TrackPlays extends FriendsChildCommand {
             return `${username.code()} - **${numberDisplay(
               td.userplaycount,
               "**scrobble"
-            )} of **${td.name}**`;
+            )}`;
           })
       );
 

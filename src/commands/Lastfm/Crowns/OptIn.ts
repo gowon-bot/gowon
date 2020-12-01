@@ -3,7 +3,7 @@ import { Message } from "discord.js";
 
 export class OptIn extends CrownsChildCommand {
   description = "Opts you back into the crowns game";
-  usage = ""
+  usage = "";
 
   async run(message: Message) {
     let sentMessage = await this.reply(

@@ -1,12 +1,13 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
-import { Message, MessageEmbed, User } from "discord.js";
+import { Message, User } from "discord.js";
 import { numberDisplay, getOrdinal } from "../../../helpers";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { LogicError } from "../../../errors";
 
 export class Rank extends CrownsChildCommand {
   aliases = ["r"];
-  description = "Ranks a user based on their crown count";
+  description =
+    "Ranks a user on the crowns leaderboard based on their crown count";
   usage = ["", "@user"];
 
   arguments: Arguments = {
@@ -25,14 +26,18 @@ export class Rank extends CrownsChildCommand {
       user
     );
 
-    let rank = await this.crownsService.getRank(discordID, message.guild?.id!);
+    let rank = await this.crownsService.getRank(
+      discordID,
+      message.guild?.id!,
+      await this.serverUserIDs({ filterCrownBannedUsers: true })
+    );
 
     if (!rank?.count?.toInt())
       throw new LogicError(
         `${perspective.plusToHave} no crowns in this server!`
       );
 
-    let embed = new MessageEmbed()
+    let embed = this.newEmbed()
       .setAuthor(
         perspective.upper.possessive + " crowns rank",
         perspective.discordUser?.displayAvatarURL()
@@ -41,9 +46,11 @@ export class Rank extends CrownsChildCommand {
         `${perspective.upper.possessive} ${numberDisplay(
           rank.count,
           "crown"
-        ).bold()} ${rank.count.toInt() === 1 ? "ranks" : "rank"} ${
+        ).strong()} ${rank.count.toInt() === 1 ? "ranks" : "rank"} ${
           perspective.objectPronoun
-        } ${getOrdinal(rank.rank.toInt()).bold()} in ${message.guild?.name}`
+        } ${getOrdinal(rank.rank.toInt()).strong()} in ${
+          message.guild?.name
+        } out of ${numberDisplay(rank.totalUsers, "total user")}`
       );
 
     await this.send(embed);

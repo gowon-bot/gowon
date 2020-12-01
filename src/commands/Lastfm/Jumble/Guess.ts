@@ -22,7 +22,11 @@ export class Guess extends JumbleChildCommand {
     );
 
     if (!jumbledArtist.jumbled)
-      throw new LogicError("you haven't jumbled an artist yet!");
+      throw new LogicError(
+        `you haven't jumbled an artist yet, to jumble an artist, run \`${await this.gowonService.prefix(
+          this.guild.id
+        )}jumble me\`!`
+      );
     if (!guess) throw new LogicError("please make a guess");
 
     if (
@@ -32,7 +36,7 @@ export class Guess extends JumbleChildCommand {
       this.redisService.sessionDelete(message, jumbleRedisKey);
 
       await this.reply(
-        `you are correct! The artist was ${jumbledArtist.unjumbled.bold()}`
+        `you are correct! The artist was ${jumbledArtist.unjumbled.strong()}`
       );
     } else {
       await message.react(

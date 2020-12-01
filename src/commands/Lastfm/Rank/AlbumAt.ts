@@ -8,7 +8,7 @@ import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
 export default class AlbumAt extends LastFMBaseCommand {
   aliases = ["ala"];
-  description = "Finds the album at a certain rank";
+  description = "Finds the album in your library at a given rank";
   subcategory = "ranks";
   usage = ["", "rank @user"];
 
@@ -42,11 +42,11 @@ export default class AlbumAt extends LastFMBaseCommand {
       );
 
     await this.reply(
-      `${album.name.bold()} by ${album.artist.name.italic()} is ranked at #${album[
+      `${album.name.strong()} by ${album.artist.name.italic()} is ranked at #${album[
         "@attr"
-      ].rank.bold()} in ${
+      ].rank.strong()} in ${
         perspective.possessive
-      } top albums with ${numberDisplay(album.playcount, "play").bold()}`
+      } top albums with ${numberDisplay(album.playcount, "play").strong()}`
     );
   }
 }

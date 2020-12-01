@@ -24,7 +24,7 @@ export class Perspective {
   static perspective(
     authorUsername: string,
     username?: string,
-    asCode = true
+    asCode = false
   ): Perspective {
     if (username === undefined || authorUsername === username) {
       return Perspective.buildPerspective("you", false);

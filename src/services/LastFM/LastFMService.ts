@@ -40,7 +40,12 @@ export class LastFMService extends LastFMAPIService {
   }
 
   async nowPlaying(username: string): Promise<Track> {
-    return (await this.recentTracks({ username, limit: 1 })).track[0];
+    return (
+      await this.recentTracks({
+        username,
+        limit: 1,
+      })
+    ).track[0];
   }
 
   async nowPlayingParsed(username: string): Promise<ParsedTrack> {
@@ -60,10 +65,7 @@ export class LastFMService extends LastFMAPIService {
 
     if (milestone > response["@attr"].total.toInt()) {
       throw new LogicError(
-        `${username.code()} hasn't scrobbled ${numberDisplay(
-          milestone,
-          "track"
-        )} yet!`
+        `${username} hasn't scrobbled ${numberDisplay(milestone, "track")} yet!`
       );
     }
 
@@ -138,7 +140,7 @@ export class LastFMService extends LastFMAPIService {
   }
 
   async goBack(username: string, when: Date): Promise<Track> {
-    let to = add(when, { days: 1 });
+    let to = add(when, { hours: 6 });
 
     let params = {
       username,

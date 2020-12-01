@@ -1,22 +1,22 @@
 export interface GithubUser {
-  login: string;
-  id: number;
-  node_id: string;
   avatar_url: string;
-  gravatar_id: string;
-  url: string;
-  html_url: string;
+  events_url: string;
   followers_url: string;
   following_url: string;
   gists_url: string;
+  gravatar_id: string;
+  html_url: string;
+  id: number;
+  login: string;
+  node_id: string;
+  organizations_url: string;
+  received_events_url: string;
+  repos_url: string;
+  site_admin: boolean;
   starred_url: string;
   subscriptions_url: string;
-  organizations_url: string;
-  repos_url: string;
-  events_url: string;
-  received_events_url: string;
   type: string;
-  site_admin: boolean;
+  url: string;
 }
 
 export interface CreateIssueResponse {
@@ -78,6 +78,70 @@ export interface CreateIssueResponse {
   closed_by: GithubUser;
 }
 
+export interface GetBranchResponse {
+  name: string;
+  commit: TopLevelCommit;
+  _links: Links;
+  protected: boolean;
+  protection: Protection;
+  protection_url: string;
+}
+
+export interface Links {
+  html: string;
+  self: string;
+}
+
+export interface TopLevelCommit {
+  sha: string;
+  node_id: string;
+  commit: Commit;
+  author: GithubUser;
+  parents: Tree[];
+  url: string;
+  committer: GithubUser;
+  html_url: string;
+  comments_url: string;
+}
+
+export interface Commit {
+  author: CommitAuthor;
+  url: string;
+  message: string;
+  tree: Tree;
+  committer: CommitAuthor;
+  verification: Verification;
+  comment_count: number;
+}
+
+export interface CommitAuthor {
+  name: string;
+  date: string;
+  email: string;
+}
+
+export interface Tree {
+  sha: string;
+  url: string;
+}
+
+export interface Verification {
+  verified: boolean;
+  reason: string;
+  signature: null;
+  payload: null;
+}
+
+export interface Protection {
+  enabled: boolean;
+  required_status_checks: RequiredStatusChecks;
+}
+
+export interface RequiredStatusChecks {
+  enforcement_level: string;
+  contexts: string[];
+}
+
 /// ==================
 // Inputs
 /// ==================
@@ -88,6 +152,6 @@ export interface CreateIssueParams extends Params {
   title: string;
   body?: string;
   milestone?: string;
-  labels?: [string];
-  assignees?: [string];
+  labels?: string[];
+  assignees?: string[];
 }

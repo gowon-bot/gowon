@@ -1,4 +1,3 @@
-import { MessageEmbed } from "discord.js";
 import { Arguments } from "../../lib/arguments/arguments";
 import { standardMentions } from "../../lib/arguments/mentions/mentions";
 import { Delegate } from "../../lib/command/BaseCommand";
@@ -6,11 +5,11 @@ import { LastFMBaseCommand } from "./LastFMBaseCommand";
 import RandomsongInUsersLibrary from "./RandomSongInUsersLibrary";
 
 export default class Randomsong extends LastFMBaseCommand {
-  description = "Picks a random song";
-  usage = "";
+  description = "Picks a random song from all the users in a guild";
+  usage = ["", "@user (will pick a random song in their top tracks) poolAmount"];
 
   arguments: Arguments = {
-    mentions: standardMentions
+    mentions: standardMentions,
   };
 
   delegates: Delegate[] = [
@@ -21,7 +20,11 @@ export default class Randomsong extends LastFMBaseCommand {
   ];
 
   async run() {
-    let randomUser = await this.usersService.randomUser();
+    let serverUsers = (await this.guild.members.fetch()).map((u) => `${u.id}`);
+
+    let randomUser = await this.usersService.randomUser({
+      userIDs: serverUsers,
+    });
 
     let randomSongs = await this.lastFMService.recentTracks({
       username: randomUser.lastFMUsername,
@@ -31,11 +34,11 @@ export default class Randomsong extends LastFMBaseCommand {
     let randomSong =
       randomSongs.track[~~(randomSongs.track.length * Math.random())];
 
-    let embed = new MessageEmbed()
+    let embed = this.newEmbed()
       .setAuthor(`Scrobbled by ${randomUser.lastFMUsername}`)
       .setTitle(randomSong.name)
       .setDescription(
-        `by ${randomSong.artist["#text"].bold()}` +
+        `by ${randomSong.artist["#text"].strong()}` +
           (randomSong.album["#text"]
             ? ` from ${randomSong.album["#text"].italic()}`
             : "")

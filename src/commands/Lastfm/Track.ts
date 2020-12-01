@@ -1,15 +1,15 @@
-import { MessageEmbed } from "discord.js";
+import { LogicError } from "../../errors";
 import { numberDisplay } from "../../helpers";
 import { sanitizeForDiscord } from "../../helpers/discord";
 import { LinkGenerator } from "../../helpers/lastFM";
 import { Arguments } from "../../lib/arguments/arguments";
-import { TagConsolidator } from "../../lib/TagConsolidator";
+import { TagConsolidator } from "../../lib/tags/TagConsolidator";
 import { CrownsService } from "../../services/dbservices/CrownsService";
 import { Image } from "../../services/LastFM/LastFMService.types";
 import { LastFMBaseCommand } from "./LastFMBaseCommand";
 
 export default class Track extends LastFMBaseCommand {
-  description = "Searches and shows a track";
+  description = "Searches and displays a track";
   usage = ["", "artist | track", "query string"];
   arguments: Arguments = {
     inputs: {
@@ -46,6 +46,8 @@ export default class Track extends LastFMBaseCommand {
 
       let track = results.results.trackmatches.track[0];
 
+      if (!track) throw new LogicError("that track could not be found!");
+
       trackName = track.name;
       artistName = track.artist;
     }
@@ -60,8 +62,11 @@ export default class Track extends LastFMBaseCommand {
         track: trackName,
         username: senderUsername,
       }),
-      this.crownsService.getCrownDisplay(artistName, this.message),
+      this.crownsService.getCrownDisplay(artistName, this.guild),
     ])) as { status: string; value?: any; reason: any }[];
+
+    if (!trackInfo.value)
+      throw new LogicError("that track could not be found!");
 
     let track = {
       name: (trackInfo.value?.name || trackName) as string,
@@ -87,7 +92,7 @@ export default class Track extends LastFMBaseCommand {
     if (artistInfo.value)
       this.tagConsolidator.addTags(artistInfo.value?.tags?.tag || []);
 
-    let nowPlayingEmbed = new MessageEmbed()
+    let nowPlayingEmbed = this.newEmbed()
       .setAuthor(
         `Track for ${this.author.username}`,
         this.author.avatarURL() || undefined
@@ -129,6 +134,12 @@ export default class Track extends LastFMBaseCommand {
       track.name.toLowerCase() === "jaljayo good night"
     ) {
       sentMessage.react("😴");
+    }
+
+    if (
+      this.tagConsolidator.hasTag("rare sad boy", "rsb", "rsg", "rare sad girl")
+    ) {
+      sentMessage.react("😭");
     }
   }
 }

@@ -238,3 +238,53 @@ export class CrownBannedError extends ClientError {
     );
   }
 }
+
+export class ReverseLookupError extends ClientError {
+  name = "ReverseLookupError";
+
+  constructor(entityName: string) {
+    super(`a user with that ${entityName} couldn't be found!`);
+  }
+}
+
+export class FriendNotFoundError extends ClientError {
+  name = "FriendNotFoundError";
+
+  constructor() {
+    super("one of your friends doesn't exist!");
+  }
+}
+
+export class ArtistAlreadyCrownBannedError extends ClientError {
+  name = "ArtistAlreadyCrownBannedError";
+
+  constructor() {
+    super("that artist has already been crown banned!");
+  }
+}
+
+export class ArtistNotCrownBannedError extends ClientError {
+  name = "ArtistNotCrownBannedError";
+
+  constructor() {
+    super("that artist is already not crown banned!");
+  }
+}
+
+export class ArtistCrownBannedError extends ClientError {
+  name = "ArtistCrownBannedError";
+
+  constructor(artist: string) {
+    super(`it is not possible to get the crown for ${artist.strong()}!`);
+  }
+}
+
+export class PM2ConnectionError extends ClientError {
+  name = "PM2ConnectionError";
+
+  constructor() {
+    super(
+      "Couldn't connect to PM2! Check that you have pm2 installed and running!"
+    );
+  }
+}

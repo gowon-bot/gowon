@@ -1,4 +1,4 @@
-import { Message, MessageEmbed } from "discord.js";
+import { Message } from "discord.js";
 import { MetaChildCommand } from "./MetaChildCommand";
 import { numberDisplay } from "../../helpers";
 import { CommandManager } from "../../lib/command/CommandManager";
@@ -10,7 +10,7 @@ import {
 } from "../../helpers/date";
 
 export class TopCommands extends MetaChildCommand {
-  description = "Shows the most used commands";
+  description = "Shows the most used commands over a given time period";
   usage = ["", "time period"];
 
   arguments: Arguments = {
@@ -34,15 +34,15 @@ export class TopCommands extends MetaChildCommand {
     let commandManager = new CommandManager();
     await commandManager.init();
 
-    let embed = new MessageEmbed()
+    let embed = this.newEmbed()
       .setTitle(`Top commands in ${message.guild?.name!} ${humanizedTimeRange}`)
       .setDescription(
         topCommands.map(
           (tc) =>
             `${numberDisplay(tc.count, "run")} - ${(
               commandManager.findByID(tc.commandID)?.friendlyNameWithParent ??
-              "[deleted command]"
-            ).bold()}`
+              "[unknown command]"
+            ).strong()}`
         )
       );
 

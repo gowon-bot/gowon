@@ -1,5 +1,5 @@
 import { CommandManager } from "./CommandManager";
-import { Client, Message } from "discord.js";
+import { Message } from "discord.js";
 import { GowonService } from "../../services/GowonService";
 import { AdminService } from "../../services/dbservices/AdminService";
 import { Logger } from "../Logger";
@@ -15,10 +15,10 @@ export class CommandHandler {
   adminService = new AdminService();
   metaService = new MetaService();
   commandManager = new CommandManager();
+  client!: GowonClient;
   private logger = new Logger();
-  private client!: Client;
 
-  setClient(client: Client) {
+  setClient(client: GowonClient) {
     this.client = client;
   }
 
@@ -43,7 +43,8 @@ export class CommandHandler {
       message.react("😔");
     }
 
-    await this.runPrefixCommandIfMentioned(message);
+    await this.runPrefixCommandIfMentioned(message, this.client);
+    await this.gers(message);
 
     if (
       !message.author.bot &&
@@ -67,11 +68,17 @@ export class CommandHandler {
       if (command instanceof ParentCommand)
         command = (command.default && command.default()) || command;
 
-      let client = new GowonClient(this.client);
+      if (command.devCommand && !this.client.isDeveloper(message.author.id))
+        return;
 
-      let canCheck = await this.adminService.can.run(command, message, client, {
-        useChannel: true,
-      });
+      let canCheck = await this.adminService.can.run(
+        command,
+        message,
+        this.client,
+        {
+          useChannel: true,
+        }
+      );
 
       if (!canCheck.passed) {
         Logger.log(
@@ -87,25 +94,40 @@ export class CommandHandler {
 
       this.metaService.recordCommandRun(command.id, message);
 
-      command.client = client;
+      command.gowonClient = this.client;
 
       await command.execute(message, runAs);
     }
   }
 
-  async runPrefixCommandIfMentioned(message: Message) {
+  async runPrefixCommandIfMentioned(message: Message, client: GowonClient) {
     if (
       message.mentions.users
         .array()
         .map((u) => u.id)
-        .includes(this.client.user!.id) &&
+        .includes(this.client.client.user!.id) &&
       message.content.split(/\s+/)[1].toLowerCase() === "prefix" &&
-      !message.author.bot
+      !message.author.bot &&
+      (message.member?.hasPermission("ADMINISTRATOR") ||
+        client.isDeveloper(message.author.id))
     ) {
       let prefix: string | undefined =
         message.content.split(/\s+/)[2] || undefined;
 
       await new Prefix().setPrefix(prefix).execute(message, new RunAs());
+    }
+  }
+
+  async gers(message: Message) {
+    if (
+      message.mentions.users
+        .array()
+        .map((u) => u.id)
+        .includes(this.client.client.user!.id) &&
+      message.content.split(/\s+/)[1].toLowerCase() === "pog" &&
+      !message.author.bot
+    ) {
+      await message.channel.send("gers");
     }
   }
 }

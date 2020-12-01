@@ -1,12 +1,11 @@
 import { OverviewChildCommand } from "./OverviewChildCommand";
-import { MessageEmbed } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { LogicError } from "../../../errors";
 import { numberDisplay } from "../../../helpers";
 
 export class SumTop extends OverviewChildCommand {
-  aliases = [];
-  description = "Shows how much of your scrobbles your top artists make up";
+  aliases = ["toppct"];
+  description = "Shows what percent of your scrobbles are made up by your top artists";
   usage = ["", "top", "top @user"];
 
   arguments: Arguments = {
@@ -23,23 +22,26 @@ export class SumTop extends OverviewChildCommand {
     if (top > 1000 || top < 2)
       throw new LogicError("Please enter a valid number (between 2 and 1000)");
 
+    // Cache the top artists and user info responses
+    await Promise.all([this.calculator.topArtists(), this.calculator.userInfo()])
+
     let { badge, colour, image } = await this.getAuthorDetails();
     let [sumtop, sumtoppct] = await Promise.all([
       this.calculator.sumTop(top),
       this.calculator.sumTopPercent(10),
     ]);
 
-    let embed = new MessageEmbed()
+    let embed = this.newEmbed()
       .setAuthor(username + badge, image)
       .setColor(colour)
       .setDescription(
         `${perspective.upper.possessive} top ${numberDisplay(
           top,
           "artist"
-        ).bold()} make up ${numberDisplay(
+        ).strong()} make up ${numberDisplay(
           sumtop.asNumber,
           "scrobble"
-        ).bold()} (${sumtoppct.asString.bold()}% of ${
+        ).strong()} (${sumtoppct.asString.strong()}% of ${
           perspective.possessivePronoun
         } total scrobbles!)`
       );

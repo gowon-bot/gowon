@@ -15,6 +15,7 @@ export interface Command {
   arguments: Arguments;
   secretCommand: boolean;
   shouldBeIndexed: boolean;
+  devCommand?: boolean;
 
   name: string;
   friendlyName: string;
@@ -30,6 +31,6 @@ export interface Command {
   children?: CommandManager;
   parentName?: string;
   parent?: ParentCommand;
-  client?: GowonClient;
+  gowonClient?: GowonClient;
   getChild(name: string, serverID: string): Promise<Command | undefined>;
 }

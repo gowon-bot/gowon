@@ -5,7 +5,7 @@ import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
 export default class ArtistRank extends LastFMBaseCommand {
   aliases = ["ar", "ra"];
-  description = "Shows what rank the artist is at in your top 1000 artists";
+  description = "Shows what rank an artist is in your top 1000 artists";
   subcategory = "ranks";
   usage = ["artist @user"];
 
@@ -40,17 +40,19 @@ export default class ArtistRank extends LastFMBaseCommand {
 
     if (rank === -1) {
       await this.reply(
-        `that artist wasn't found in ${perspective.possessive} top 1000 artists`
+        `that artist wasn't found in ${
+          perspective.possessive
+        } top ${numberDisplay(topArtists.artist.length, "artist")}`
       );
     } else {
       await this.reply(
-        `${topArtists.artist[rank].name.bold()} is ranked #${numberDisplay(
+        `${topArtists.artist[rank].name.strong()} is ranked #${numberDisplay(
           rank + 1
-        ).bold()} in ${
+        ).strong()} in ${
           perspective.possessive
         } top 1,000 artists with ${numberDisplay(
           topArtists.artist[rank].playcount
-        ).bold()} plays`
+        ).strong()} plays`
       );
     }
   }

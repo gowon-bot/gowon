@@ -1,6 +1,7 @@
-import { MessageEmbed } from "discord.js";
 import { LogicError } from "../../../errors";
 import { numberDisplay } from "../../../helpers";
+import { RunAs } from "../../../lib/AliasChecker";
+import { Variation } from "../../../lib/command/BaseCommand";
 import { Paginator } from "../../../lib/Paginator";
 import { SearchCommand } from "./SearchCommand";
 
@@ -8,20 +9,31 @@ export default class SearchAlbum extends SearchCommand {
   shouldBeIndexed = true;
   description = "Searches your top albums for keywords";
   aliases = ["sl", "sal", "salbum"];
+  
+  variations: Variation[] = [
+    {
+      variationRegex: /sldeep|sld/,
+      friendlyString: "sldeep`,`sld",
+      description: "Searches your top 4000 albums (instead of 2000)",
+    },
+  ];
   usage = ["keywords", "keywords @user"];
 
-  async run() {
+  async run(_: any, runAs: RunAs) {
     let keywords = this.parsedArguments.keywords as string;
 
     let { username } = await this.parseMentions();
 
     let paginator = new Paginator(
       this.lastFMService.topAlbums.bind(this.lastFMService),
-      2,
+      runAs.variationWasUsed("sldeep", "sld") ? 4 : 2,
       { username, limit: 1000 }
     );
 
-    let topAlbums = await paginator.getAll({ concatTo: "album" });
+    let topAlbums = await paginator.getAll({
+      concatTo: "album",
+      concurrent: runAs.variationWasUsed("sldeep", "sld"),
+    });
 
     let filtered = topAlbums.album.filter((a) =>
       this.clean(a.name).includes(this.clean(keywords))
@@ -33,9 +45,9 @@ export default class SearchAlbum extends SearchCommand {
       );
     }
 
-    let embed = new MessageEmbed()
+    let embed = this.newEmbed()
       .setTitle(
-        `Search results in ${username.code()}'s top ${numberDisplay(
+        `Search results in ${username}'s top ${numberDisplay(
           topAlbums.album.length,
           "album"
         )}`
@@ -46,9 +58,7 @@ export default class SearchAlbum extends SearchCommand {
 \`\`\`
 ${filtered
   .slice(0, 25)
-  .map((l) => `${l.artist.name} - ${l.name}`)
-  .sort((a, b) => a.localeCompare(b))
-  .map((f) => f)
+  .map((l) => `${l["@attr"].rank}. ${l.artist.name} - ${l.name}`)
   .join("\n")}
 \`\`\``
           : `No results found for ${keywords.code()}!`

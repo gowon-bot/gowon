@@ -1,15 +1,16 @@
 import { Arguments } from "../../../lib/arguments/arguments";
-import { getOrdinal } from "../../../helpers";
+import { dateTimeDisplay, getOrdinal } from "../../../helpers";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { BadLastFMResponseError } from "../../../errors";
 import { TrackEmbed } from "../../../helpers/Embeds";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
+import { fromUnixTime } from "date-fns";
 
 export default class Milestone extends LastFMBaseCommand {
   aliases = ["mls", "ms"];
-  description = "Shows you what you scrobbled at a certain milestone";
+  description = "Shows you what you scrobbled at a given milestone";
   subcategory = "library stats";
   usage = ["", "milestone @user"];
 
@@ -47,9 +48,13 @@ export default class Milestone extends LastFMBaseCommand {
 
     if (!track) throw new BadLastFMResponseError();
 
-    let embed = TrackEmbed(track).setAuthor(
-      `${perspective.upper.possessive} ${getOrdinal(milestone)} track was:`
-    );
+    let scrobbledAt = fromUnixTime(track.date.uts.toInt());
+
+    let embed = TrackEmbed(track)
+      .setAuthor(
+        `${perspective.upper.possessive} ${getOrdinal(milestone)} track was:`
+      )
+      .setFooter(`Scrobbled at ${dateTimeDisplay(scrobbledAt)}`);
 
     await this.send(embed);
   }

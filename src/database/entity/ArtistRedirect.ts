@@ -1,4 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, BaseEntity, Column } from "typeorm";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  BaseEntity,
+  Column,
+  ILike,
+} from "typeorm";
 
 @Entity({ name: "artist_redirects" })
 export class ArtistRedirect extends BaseEntity {
@@ -12,12 +18,10 @@ export class ArtistRedirect extends BaseEntity {
   to?: string;
 
   static async check(artistName: string): Promise<ArtistRedirect | undefined> {
-    return await this.findOne({ from: artistName });
+    return await this.findOne({ from: ILike(artistName) });
   }
 
   redirectDisplay(): string {
-    return this.to
-      ? ` (_redirected from ${this.from}_)`
-      : "";
+    return this.to ? ` (_redirected from ${this.from}_)` : "";
   }
 }

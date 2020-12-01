@@ -1,20 +1,19 @@
-import { MessageEmbed } from "discord.js";
-import { Arguments } from "../../lib/arguments/arguments";
-import { standardMentions } from "../../lib/arguments/mentions/mentions";
-import { Validation } from "../../lib/validation/ValidationChecker";
-import { validators } from "../../lib/validation/validators";
-import { LastFMBaseCommand } from "./LastFMBaseCommand";
+import { Arguments } from "../../../lib/arguments/arguments";
+import { standardMentions } from "../../../lib/arguments/mentions/mentions";
+import { Validation } from "../../../lib/validation/ValidationChecker";
+import { validators } from "../../../lib/validation/validators";
+import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 export default class Recent extends LastFMBaseCommand {
-  description = "Shows your recent tracks";
-
+  description = "Shows a few of your recent tracks";
+  subcategory = "nowplaying";
   usage = ["", "amount"];
 
   arguments: Arguments = {
     inputs: {
       amount: { index: 0, regex: /-?[0-9]+/g, default: 5, number: true },
     },
-    mentions: standardMentions
+    mentions: standardMentions,
   };
 
   validation: Validation = {
@@ -31,13 +30,13 @@ export default class Recent extends LastFMBaseCommand {
       limit: amount,
     });
 
-    let embed = new MessageEmbed()
+    let embed = this.newEmbed()
       .setTitle(`${perspective.upper.possessive} recent tracks`)
       .setDescription(
         recentTracks.track
           .map(
             (t) =>
-              `${t.name} by ${t.artist["#text"].bold()} ${
+              `${t.name} by ${t.artist["#text"].strong()} ${
                 t.album ? `from ${t.album["#text"].italic()}` : ""
               }`
           )

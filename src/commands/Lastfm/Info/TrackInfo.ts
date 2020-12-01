@@ -1,4 +1,3 @@
-import { MessageEmbed } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { InfoCommand } from "./InfoCommand";
 import { numberDisplay } from "../../../helpers";
@@ -9,8 +8,8 @@ import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 export default class TrackInfo extends InfoCommand {
   shouldBeIndexed = true;
 
-  aliases = ["tri"];
-  description = "Display some information about a track";
+  aliases = ["tri", "ti"];
+  description = "Displays some information about a track";
   usage = ["", "artist | track"];
 
   arguments: Arguments = {
@@ -71,8 +70,10 @@ export default class TrackInfo extends InfoCommand {
         string: this.scrubReadMore(trackInfo.wiki?.summary?.trimRight())!,
       },
       {
-        shouldDisplay: this.tagConsolidator.hasTags(),
-        string: `**Tags:** ${this.tagConsolidator.consolidate().join(" ‧ ")}`,
+        shouldDisplay: this.tagConsolidator.hasAnyTags(),
+        string: `**Tags:** ${this.tagConsolidator
+          .consolidate(Infinity, false)
+          .join(" ‧ ")}`,
       },
       {
         shouldDisplay: linkConsolidator.hasLinks(),
@@ -80,8 +81,8 @@ export default class TrackInfo extends InfoCommand {
       }
     );
 
-    let embed = new MessageEmbed()
-      .setTitle(trackInfo.name.italic() + " by " + trackInfo.artist.name.bold())
+    let embed = this.newEmbed()
+      .setTitle(trackInfo.name.italic() + " by " + trackInfo.artist.name.strong())
       .setDescription(this.lineConsolidator.consolidate())
       .addFields(
         {

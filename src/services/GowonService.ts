@@ -7,6 +7,7 @@ import config from "../../config.json";
 import { ShallowCache, CacheScopedKey } from "../database/cache/ShallowCache";
 import { CrownBan } from "../database/entity/CrownBan";
 import { ChannelBlacklist } from "../database/entity/ChannelBlacklist";
+import { ArtistCrownBan } from "../database/entity/ArtistCrownBan";
 
 export class GowonService {
   // Static methods/properties
@@ -22,17 +23,25 @@ export class GowonService {
   }
 
   // Instance methods/properties
-  // prefix: string = config.prefix;
   customPrefixes = {
     lastfm: "lfm:",
   };
 
   shallowCache = new ShallowCache();
 
-  contants = {
-    hardPageLimit: 5,
+  constants = {
+    hardPageLimit: 10,
     crownThreshold: 30,
-  };
+    dateParsers: [
+      "yy-MM-dd",
+      "yyyy-MM-dd",
+      "yy/MM/dd",
+      "yyyy/MM/dd",
+      "yy.MM.dd",
+      "yyyy.MM.dd",
+    ],
+    unknownUserDisplay: "???",
+  } as const;
 
   async init() {
     let prefixes = await Setting.find({ where: { name: Settings.Prefix } });
@@ -126,5 +135,30 @@ export class GowonService {
       async () => await ChannelBlacklist.find({ serverID }),
       serverID
     );
+  }
+
+  async getCrownBannedArtists(guild: Guild): Promise<string[]> {
+    return await this.shallowCache.findOrRemember<string[]>(
+      CacheScopedKey.CrownBannedArtists,
+      async () => {
+        let bans = (
+          await ArtistCrownBan.find({
+            where: { serverID: guild.id },
+          })
+        ).map((u) => u.artistName);
+
+        return bans;
+      },
+      guild.id
+    );
+  }
+
+  async isArtistCrownBanned(
+    guild: Guild,
+    artistName: string
+  ): Promise<boolean> {
+    return (await this.getCrownBannedArtists(guild))
+      .map((a) => a.toLowerCase())
+      .includes(artistName.toLowerCase());
   }
 }

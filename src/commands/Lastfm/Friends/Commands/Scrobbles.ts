@@ -1,5 +1,4 @@
 import { FriendsChildCommand } from "../FriendsChildCommand";
-import { MessageEmbed } from "discord.js";
 import { MultiRequester } from "../../../../lib/MultiRequester";
 import { numberDisplay } from "../../../../helpers";
 import { Arguments } from "../../../../lib/arguments/arguments";
@@ -8,9 +7,10 @@ import {
   TimeRange,
   timeRangeParser,
 } from "../../../../helpers/date";
+import { FriendNotFoundError } from "../../../../errors";
 
 export class Scrobbles extends FriendsChildCommand {
-  description = "View how many scrobbles your friends have";
+  description = "Shows how many scrobbles your friends have";
   aliases = ["s"];
   usage = ["", "time period"];
 
@@ -30,12 +30,16 @@ export class Scrobbles extends FriendsChildCommand {
     let scrobbles = await new MultiRequester([
       ...this.friendUsernames,
       this.senderUsername,
-    ]).fetch(this.lastFMService.getNumberScrobbles.bind(this.lastFMService), [
-      timeRange.from,
-      timeRange.to,
-    ]);
+    ])
+      .fetch(this.lastFMService.getNumberScrobbles.bind(this.lastFMService), [
+        timeRange.from,
+        timeRange.to,
+      ])
+      .catch(() => {
+        throw new FriendNotFoundError();
+      });
 
-    let embed = new MessageEmbed()
+    let embed = this.newEmbed()
       .setTitle(`Your friends scrobbles ${humanTimeRange}`)
       .setDescription(
         Object.keys(scrobbles)

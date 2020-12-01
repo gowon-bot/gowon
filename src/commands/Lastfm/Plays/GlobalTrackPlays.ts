@@ -2,10 +2,12 @@ import { Arguments } from "../../../lib/arguments/arguments";
 import { numberDisplay } from "../../../helpers";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
+import { calculatePercent } from "../../../helpers/stats";
 
 export default class GlobalTrackPlays extends LastFMBaseCommand {
   aliases = ["gtp", "globaltp"];
-  description = "Shows you how many plays Last.fm has of a given track";
+  description =
+    "Shows you how many plays Last.fm has of a given tracks for all users";
   subcategory = "plays";
   usage = ["artist | track"];
 
@@ -40,15 +42,20 @@ export default class GlobalTrackPlays extends LastFMBaseCommand {
       username,
     });
 
-    this.send(
+    let percentage = calculatePercent(
+      trackDetails.userplaycount,
+      trackDetails.playcount
+    );
+
+    await this.send(
       `Last.fm has scrobbled **${trackDetails.name}** by ${
         trackDetails.artist.name
-      } ${numberDisplay(trackDetails.playcount, "time").bold()} ${
+      } ${numberDisplay(trackDetails.playcount, "time")}${
         trackDetails.userplaycount.toInt() > 0
-          ? `(${perspective.plusToHave} ${numberDisplay(
+          ? `. ${perspective.upper.plusToHave} ${numberDisplay(
               trackDetails.userplaycount,
               "scrobble"
-            ).bold()})`
+            )}${parseFloat(percentage) > 0 ? ` (${percentage}%)` : ""}`
           : ""
       }`
     );

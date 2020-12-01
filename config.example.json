@@ -1,4 +1,7 @@
 {
+  "environment": "development",
+  "pm2AppName": "gowon",
+
   "lastFMAPIKey": "Get this from https://last.fm/api",
   "lastFMSecret": "Get this from https://last.fm/api",
 
@@ -6,6 +9,17 @@
 
   "defaultPrefix": ".",
 
-  "githubUsername": "",
-  "githubPassword": ""
+  "githubUsername": "Use this if you want Gowon to create issues for you (you will need to change the repo in GithubService.ts)",
+  "githubAuthToken": "^ See https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/creating-a-personal-access-token for creating personal access tokens.",
+
+  "lastFMVerificationUsername": "leave me blank",
+  "lastFMVerificationPassword": "leave me blank",
+  "lastFMVerificationSessionKey": "leave me blank",
+
+  "lastFMBotUsername": "use this if you want the bot to scrobble tracks (you will need to configure who it will scrobble yourself. By default, it's alpha testers in specialUsers.json)",
+  "lastFMBotPassword": "use this if you want the bot to scrobble tracks",
+  "lastFMBotSessionKey": "use this if you want the bot to scrobble tracks",
+
+  "spotifyClientID": "Get this from the spotify application dashboard",
+  "spotifyClientSecret": "Get this from the spotify application dashboard"
 }

@@ -4,8 +4,8 @@ import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 export default class AlbumPage extends LastFMBaseCommand {
-  aliases = ["alpa", "lpa", "alpage", "lpage"];
-  description = "Links you to the album page on lastfm";
+  aliases = ["alpa", "lpa"];
+  description = "Links you to an album's page on Last.fm";
   subcategory = "pages";
   usage = ["", "artist | album"];
 
@@ -37,7 +37,7 @@ export default class AlbumPage extends LastFMBaseCommand {
     });
 
     this.send(
-      `${albumDetails.name.italic()} by ${albumDetails.artist.bold()} on last.fm: ${cleanURL(
+      `${albumDetails.name.italic()} by ${albumDetails.artist.strong()} on last.fm: ${cleanURL(
         albumDetails.url
       )}`
     );

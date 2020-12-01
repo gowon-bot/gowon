@@ -44,12 +44,15 @@ export default class TrackPlays extends LastFMBaseCommand {
       username,
     });
 
-    this.send(
-      `${hamham ? "FTFY\n" : ""}${
-        perspective.upper.plusToHave
-      } **${numberDisplay(trackDetails.userplaycount, "**scrobble")} of **${
-        trackDetails.name
-      }** by ${trackDetails.artist.name}`
+    await this.reply(
+      `${hamham ? "FTFY\n" : ""}${perspective.plusToHave}` +
+        (trackDetails.userplaycount.toInt() === 0
+          ? "n't scrobbled"
+          : ` **${numberDisplay(
+              trackDetails.userplaycount,
+              "**scrobble"
+            )} of`) +
+        ` **${trackDetails.name}** by ${trackDetails.artist.name}`
     );
   }
 }

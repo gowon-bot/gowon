@@ -1,5 +1,5 @@
 import { JumbleChildCommand } from "./JumbleChildCommand";
-import { Message, MessageEmbed } from "discord.js";
+import { Message } from "discord.js";
 import { jumbleRedisKey, JumbledArtist } from "./JumbleParentCommand";
 import { LogicError } from "../../../errors";
 import { shuffle } from "../../../helpers";
@@ -19,14 +19,15 @@ export class Hint extends JumbleChildCommand {
 
     let hint = this.generateHint(jumbledArtist);
     let noNewHint =
-      hint.split("").filter((c) => c === "_").length ===
-      jumbledArtist.currenthint.split("").filter((c) => c === "_").length;
+      hint.split("").filter((c) => c === this.hintChar).length ===
+      jumbledArtist.currenthint.split("").filter((c) => c === this.hintChar)
+        .length;
 
     jumbledArtist.currenthint = hint;
 
     this.sessionSetJSON(message, jumbleRedisKey, jumbledArtist);
 
-    let embed = new MessageEmbed()
+    let embed = this.newEmbed()
       .setAuthor(
         `Hint for ${message.member?.nickname || message.author.username}`,
         message.author.avatarURL() ?? ""
@@ -40,11 +41,11 @@ export class Hint extends JumbleChildCommand {
     await this.send(embed);
   }
 
-  private generateHint(jumble: JumbledArtist, number = 2): string {
+  private generateHint(jumble: JumbledArtist, number = 3): string {
     let acceptablePositions = jumble.currenthint
       .split("")
-      .reduce((acc: Array<number>, char: string, idx: number) => {
-        if (char === "_") {
+      .reduce((acc, char, idx) => {
+        if (char === this.hintChar) {
           acc.push(idx);
         }
         return acc;
@@ -65,7 +66,8 @@ export class Hint extends JumbleChildCommand {
       i++
     ) {
       if (
-        generatedHint.split("").filter((c) => ![" ", "_"].includes(c)).length +
+        generatedHint.split("").filter((c) => ![" ", this.hintChar].includes(c))
+          .length +
           (unjumbledLength < 8 ? 3 : unjumbledLength > 12 ? 6 : 4) >=
         unjumbledLength
       )

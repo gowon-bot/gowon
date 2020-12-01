@@ -1,22 +1,43 @@
 import { CrownCheck } from "../../services/dbservices/CrownsService";
-import { User as DiscordUser, MessageEmbed, Message } from "discord.js";
+import {
+  User as DiscordUser,
+  MessageEmbed,
+  GuildMember,
+  Client,
+  Message,
+} from "discord.js";
 import { numberDisplay } from "..";
-import { User as DBUser } from "../../database/entity/User";
+import { GowonEmbed } from ".";
+import { Emoji } from "../../lib/Emoji";
+import { GowonClient } from "../../lib/GowonClient";
 
 export class CrownEmbeds {
+  client: Client;
+
   constructor(
     private crownCheck: CrownCheck,
     private user: DiscordUser,
+    private gowonClient: GowonClient,
+    private plays: number,
     private message: Message,
-    private plays: number
-  ) {}
+    private member?: GuildMember
+  ) {
+    this.client = gowonClient.client;
+  }
 
   private get redirect(): string {
     return this.crownCheck.redirect.redirectDisplay();
   }
 
+  private async holderUsername(): Promise<string> {
+    return await this.gowonClient.userDisplay(
+      this.message,
+      this.crownCheck.oldCrown!.user.discordID
+    );
+  }
+
   private get embed(): MessageEmbed {
-    return new MessageEmbed().setTitle(
+    return GowonEmbed(this.member).setTitle(
       `Crown for ${this.crownCheck.artistName}${this.redirect}`
     );
   }
@@ -28,29 +49,24 @@ export class CrownEmbeds {
         "play"
       )}
       
-      You've created a crown for ${this.crownCheck.artistName.bold()} with ${numberDisplay(
+      You've created a crown for ${this.crownCheck.artistName.strong()} with ${numberDisplay(
         this.crownCheck.crown!.plays,
         "play"
-      ).bold()}`
+      ).strong()}`
     );
   }
 
   updatedCrown(): MessageEmbed {
     return this.embed.setDescription(
-      `You already have the crown for ${this.crownCheck.artistName.bold()}, but it's been updated from ${numberDisplay(
+      `You already have the crown for ${this.crownCheck.artistName.strong()}, but it's been updated from ${numberDisplay(
         this.crownCheck.oldCrown!.plays,
         "play"
-      )} to ${numberDisplay(this.crownCheck.crown!.plays, "play").bold()}`
+      )} to ${numberDisplay(this.crownCheck.crown!.plays, "play").strong()}`
     );
   }
 
   async snatchedCrown(): Promise<MessageEmbed> {
-    let holderUsername = (
-      await DBUser.toDiscordUser(
-        this.message,
-        this.crownCheck.oldCrown!.user.discordID
-      )
-    )?.username;
+    let holderUsername = await this.holderUsername();
 
     return this.embed.setDescription(
       `
@@ -64,20 +80,15 @@ export class CrownEmbeds {
         "play"
       )}
 
-        Yoink! The crown for ${this.crownCheck.artistName.bold()} was stolen from ${holderUsername} and is now at ${numberDisplay(
+        Yoink! The crown for ${this.crownCheck.artistName.strong()} was stolen from ${holderUsername} and is now at ${numberDisplay(
         this.crownCheck.crown!.plays,
         "play"
-      ).bold()}!`
+      ).strong()}!`
     );
   }
 
   async fail(): Promise<MessageEmbed> {
-    let holderUsername = (
-      await DBUser.toDiscordUser(
-        this.message,
-        this.crownCheck.oldCrown!.user.discordID
-      )
-    )?.username;
+    let holderUsername = await this.holderUsername();
 
     let difference = this.crownCheck.crown!.plays - this.plays;
 
@@ -88,7 +99,9 @@ export class CrownEmbeds {
         "play"
       )}
 
-:pensive: → ${this.user.username.code()} - ${numberDisplay(this.plays, "play")}
+${
+  difference >= 5000 ? Emoji.wail : ":pensive:"
+} → ${this.user.username.code()} - ${numberDisplay(this.plays, "play")}
 
 ${holderUsername} will keep the crown for ${
         this.crownCheck.artistName
@@ -107,18 +120,13 @@ ${holderUsername} will keep the crown for ${
 You must have at least ${numberDisplay(
         threshold,
         "play"
-      ).bold()} to create a crown.
+      ).strong()} to create a crown.
       `
     );
   }
 
   async tie(): Promise<MessageEmbed> {
-    let holderUsername = (
-      await DBUser.toDiscordUser(
-        this.message,
-        this.crownCheck.oldCrown!.user.discordID
-      )
-    )?.username;
+    let holderUsername = await this.holderUsername();
 
     return this.embed.setDescription(
       `
@@ -137,12 +145,7 @@ It's a tie! ${holderUsername} will keep the crown for ${
   }
 
   async inactivity(): Promise<MessageEmbed> {
-    let holderUsername = (
-      await DBUser.toDiscordUser(
-        this.message,
-        this.crownCheck.oldCrown!.user.discordID
-      )
-    )?.username;
+    let holderUsername = await this.holderUsername();
 
     return this.embed.setDescription(
       `
@@ -156,17 +159,12 @@ It's a tie! ${holderUsername} will keep the crown for ${
         "play"
       )}
 
-        Yoink! The crown for ${this.crownCheck.artistName.bold()} was stolen from ${holderUsername} due to inactivity!`
+        Yoink! The crown for ${this.crownCheck.artistName.strong()} was stolen from ${holderUsername} due to inactivity!`
     );
   }
 
   async purgatory(): Promise<MessageEmbed> {
-    let holderUsername = (
-      await DBUser.toDiscordUser(
-        this.message,
-        this.crownCheck.oldCrown!.user.discordID
-      )
-    )?.username;
+    let holderUsername = await this.holderUsername();
 
     return this.embed.setDescription(
       `
@@ -180,7 +178,7 @@ It's a tie! ${holderUsername} will keep the crown for ${
         "play"
       )}
 
-        Yoink! The crown for ${this.crownCheck.artistName.bold()} was stolen from ${holderUsername} due to cheating!`
+        Yoink! The crown for ${this.crownCheck.artistName.strong()} was stolen from ${holderUsername} due to cheating!`
     );
   }
 
@@ -194,17 +192,12 @@ It's a tie! ${holderUsername} will keep the crown for ${
 
 :wave: → ??? - ${numberDisplay(this.crownCheck.oldCrown?.plays!, "play")}
 
-        Yoink! The crown for ${this.crownCheck.artistName.bold()} was stolen from someone who left!`
+        Yoink! The crown for ${this.crownCheck.artistName.strong()} was stolen from someone who left!`
     );
   }
 
   async banned(): Promise<MessageEmbed> {
-    let holderUsername = (
-      await DBUser.toDiscordUser(
-        this.message,
-        this.crownCheck.oldCrown!.user.discordID
-      )
-    )?.username;
+    let holderUsername = await this.holderUsername();
 
     return this.embed.setDescription(
       `
@@ -218,7 +211,7 @@ It's a tie! ${holderUsername} will keep the crown for ${
         "play"
       )}
 
-        Yoink! The crown for ${this.crownCheck.artistName.bold()} was stolen from ${holderUsername} because they were crown banned!`
+        Yoink! The crown for ${this.crownCheck.artistName.strong()} was stolen from ${holderUsername} because they were crown banned!`
     );
   }
 }

@@ -1,10 +1,9 @@
-import { Message, MessageEmbed } from "discord.js";
+import { Message } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { TasteCalculator } from "../../../lib/calculators/TasteCalculator";
 import { numberDisplay, StringPadder } from "../../../helpers";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { sanitizeForDiscord } from "../../../helpers/discord";
-import { ParsedMention } from "../../../lib/arguments/mentions/mentions";
 import { generatePeriod, generateHumanPeriod } from "../../../helpers/date";
 import { Variation } from "../../../lib/command/BaseCommand";
 import { RunAs } from "../../../lib/AliasChecker";
@@ -16,18 +15,27 @@ import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { Paginator } from "../../../lib/Paginator";
 import { LastFMMention } from "../../../lib/arguments/mentions/LastFMMention";
+import { DiscordIDMention } from "../../../lib/arguments/mentions/DiscordIDMention";
+import { LogicError } from "../../../errors";
+import { DurationParser } from "../../../lib/DurationParser";
 
 export default class Taste extends LastFMBaseCommand {
   aliases = ["t"];
+  description = "Shows your taste overlap with another user";
+  subcategory = "library stats";
+  usage = [
+    "",
+    "@user or lfm:username",
+    "time period @user",
+    "username amount time period",
+  ];
+
   variations: Variation[] = [
     {
       variationString: "tb",
       description: "Uses a table view instead of an embed to display",
     },
   ];
-  description = "Shows your taste overlap with another user";
-  subcategory = "library stats";
-  usage = ["", "@user or lfm:username", "time period @user"];
 
   arguments: Arguments = {
     inputs: {
@@ -48,20 +56,32 @@ export default class Taste extends LastFMBaseCommand {
         index: -1,
       },
       username: {
-        regex: /[\w\-.!]+/i,
+        regex: /[0-9]?[a-zA-Z_\-\!]+[0-9]?/gi,
         index: 0,
+      },
+      username2: {
+        regex: /[0-9]?[a-zA-Z_\-\!]+[0-9]?/gi,
+        index: 1,
       },
     },
     mentions: {
-      user: {
+      user: { index: 0 },
+      userTwo: { index: 1 },
+      lfmUser: {
         index: 0,
-        description: "The user to compare your taste with",
-        mention: new LastFMMention(),
+        mention: new LastFMMention(true),
       },
-      userTwo: {
+      lfmUser2: {
         index: 1,
-        description: "A user to compare with another user",
-        mention: new LastFMMention(),
+        mention: new LastFMMention(true),
+      },
+      userID: {
+        index: 0,
+        mention: new DiscordIDMention(true),
+      },
+      userID2: {
+        index: 1,
+        mention: new DiscordIDMention(true),
       },
     },
   };
@@ -70,30 +90,66 @@ export default class Taste extends LastFMBaseCommand {
     artistAmount: { validator: new validators.Range({ min: 100, max: 2000 }) },
   };
 
+  durationParser = new DurationParser();
+
   async run(_: Message, runAs: RunAs) {
-    let userTwo = this.parsedArguments.userTwo as ParsedMention,
-      artistAmount = this.parsedArguments.artistAmount as number,
+    let artistAmount = this.parsedArguments.artistAmount as number,
       timePeriod = this.parsedArguments.timePeriod as LastFMPeriod,
       humanReadableTimePeriod = this.parsedArguments
         .humanReadableTimePeriod as string;
 
-    let {
-      senderUsername: userOneUsername,
-      mentionedUsername: userTwoUsername,
-    } = await this.parseMentions({ inputArgumentName: "username" });
+    let usernames: string[] = [];
+
+    // The following code is for parsing users
+    // it essentially checks through the following arguments, checking if each one exists
+    // if it does, it adds it to the usernames list (after two it stops checking)
+    // if there's only one username, it makes the first user the sender, then the second user the mentioned user
+    // this is because the order of the users matters for display
+    for (let argName of [
+      "user",
+      "user2",
+      "userID",
+      "userID2",
+      "lfmUser",
+      "lfmUser2",
+      "username",
+      "username2",
+    ]) {
+      if (usernames.length < 2 && this.parsedArguments[argName]) {
+        let username: string | undefined;
+
+        if (argName === "user" || argName === "user2") {
+          username = await this.usersService.getUsername(
+            this.parsedArguments[argName].id
+          );
+        } else if (argName === "userID" || argName === "userID2") {
+          username = await this.usersService.getUsername(
+            this.parsedArguments[argName]
+          );
+        } else if (argName === "username" || argName === "username2") {
+          if (!this.durationParser.isDuration(this.parsedArguments[argName]))
+            username = this.parsedArguments[argName] as string;
+        } else if (argName === "lfmUser" || argName === "lfmUser2") {
+          username = this.parsedArguments[argName] as string;
+        } else {
+          throw new LogicError("please enter a user to compare your taste to!");
+        }
+
+        if (username) usernames.push(username);
+      }
+    }
+
+    let [userOneUsername, userTwoUsername] = usernames;
 
     if (!userTwoUsername) {
-      await this.reply("Please specify a user to compare taste with!");
-      return;
+      let senderUsername = await this.usersService.getUsername(this.author.id);
+
+      userTwoUsername = userOneUsername;
+      userOneUsername = senderUsername;
     }
 
-    if (userTwo) {
-      userOneUsername = userTwoUsername!;
-      userTwoUsername =
-        typeof userTwo === "string"
-          ? userTwo
-          : await this.usersService.getUsername(userTwo.id);
-    }
+    if (!userOneUsername || !userTwoUsername)
+      throw new LogicError("please enter a user to compare your taste to!");
 
     let maxPages = artistAmount > 1000 ? 2 : 1;
     let params = {
@@ -126,7 +182,12 @@ export default class Taste extends LastFMBaseCommand {
 
     let taste = tasteCalculator.calculate();
 
-    let embed = new MessageEmbed()
+    if (taste.artists.length === 0)
+      throw new LogicError(
+        `${userOneUsername} and ${userTwoUsername} share no common artists!`
+      );
+
+    let embed = this.newEmbed()
       .setTitle(
         `Taste comparison for ${sanitizeForDiscord(
           userOneUsername
@@ -143,7 +204,7 @@ export default class Taste extends LastFMBaseCommand {
         }% match) found.`
       );
 
-    if (runAs.lastString() === "tb") {
+    if (runAs.variationWasUsed("tb")) {
       let padder = new StringPadder((val) => `${val}`);
       let maxArtists = 20;
 

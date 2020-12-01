@@ -1,4 +1,3 @@
-import { MessageEmbed } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { InfoCommand } from "./InfoCommand";
 import { LogicError } from "../../../errors";
@@ -9,7 +8,7 @@ export default class TopTrack extends InfoCommand {
   usage = ["", "artist", "artist | start | stop"];
 
   aliases = ["tt"];
-  description = "Display the top track for an artist";
+  description = "Displays the top tracks for an artist";
   arguments: Arguments = {
     inputs: {
       artist: { index: 0, splitOn: "|" },
@@ -64,13 +63,13 @@ export default class TopTrack extends InfoCommand {
 
     let tracksToDisplay = topTracks.track.slice(sliceStart, sliceEnd);
 
-    let embed = new MessageEmbed()
+    let embed = this.newEmbed()
       .setTitle(`Top tracks for ${tracksToDisplay[0]?.artist?.name || artist}`)
       .setDescription(
         tracksToDisplay
           .map(
             (t, idx) =>
-              `${position.start + idx}. ${t.name.bold()} (${numberDisplay(
+              `${position.start + idx}. ${t.name.strong()} (${numberDisplay(
                 t.listeners,
                 "listener"
               )})`

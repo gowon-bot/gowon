@@ -91,6 +91,13 @@ export class RunAs {
     this.stack = new Stack(stack.string, stack.command);
     return this;
   }
+
+  variationWasUsed(...variations: string[]): boolean {
+    for (let variation of variations) {
+      if (this.lastString().toLowerCase() === variation) return true;
+    }
+    return false;
+  }
 }
 
 export class AliasChecker {

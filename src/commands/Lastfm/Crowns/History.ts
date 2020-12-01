@@ -1,8 +1,10 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
 import { Arguments } from "../../../lib/arguments/arguments";
-import { Message, MessageEmbed } from "discord.js";
+import { Message } from "discord.js";
 import { dateDisplay } from "../../../helpers";
 import { CrownEventString } from "../../../services/dbservices/CrownsHistoryService";
+import { LogicError } from "../../../errors";
+import { CrownEvent } from "../../../database/entity/meta/CrownEvent";
 
 export class History extends CrownsChildCommand {
   aliases = ["hist"];
@@ -39,32 +41,49 @@ export class History extends CrownsChildCommand {
 
     if (!crown) {
       await this.send(
-        `There is no history for the ${artistDetails.name.bold()} crown!`
+        `There is no history for the ${artistDetails.name.strong()} crown!`
       );
       return;
     }
 
     let history = await this.crownsService.scribe.getHistory(crown, [
       CrownEventString.snatched,
+      CrownEventString.created,
     ]);
 
+    if (!history.length) throw new LogicError("that crown has no history yet!");
+
     this.send(
-      new MessageEmbed()
+      this.newEmbed()
         .setTitle(
           `Crown history for ${crown.artistName}${crown.redirectDisplay()}`
         )
         .setDescription(
-          "```" +
-            history
-              .map(
-                (h) =>
-                  `${dateDisplay(h.happenedAt)} - snatched by ${
-                    h.perpetuatorUsername
-                  } (${h.oldCrown!.plays} → ${h.newCrown.plays})`
-              )
-              .join("\n") +
-            "```"
+          (await Promise.all(history.map(this.displayEvent.bind(this)))).join(
+            "\n"
+          )
         )
     );
+  }
+
+  private async displayEvent(event: CrownEvent): Promise<string> {
+    switch (event.event) {
+      case CrownEventString.created:
+        return `${dateDisplay(
+          event.happenedAt
+        )} - created by ${await this.fetchUsername(
+          event.perpetuatorDiscordID
+        )} (${event.newCrown.plays})`;
+
+      case CrownEventString.snatched:
+        return `${dateDisplay(
+          event.happenedAt
+        )} - snatched by ${await this.fetchUsername(
+          event.perpetuatorDiscordID
+        )} (${event.oldCrown!.plays} → ${event.newCrown.plays})`;
+
+      default:
+        return "";
+    }
   }
 }

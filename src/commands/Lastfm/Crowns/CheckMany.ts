@@ -1,6 +1,6 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
 import { Arguments } from "../../../lib/arguments/arguments";
-import { Message, MessageEmbed } from "discord.js";
+import { Message } from "discord.js";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 
@@ -61,7 +61,7 @@ export class CheckMany extends CrownsChildCommand {
       return acc;
     }, {} as CheckedCrownsDisplay);
 
-    let embed = new MessageEmbed()
+    let embed = this.newEmbed()
       .setTitle(`Crown checks for ${checkedCrowns.length} artists`)
       .setDescription(
         Object.keys(display).map(

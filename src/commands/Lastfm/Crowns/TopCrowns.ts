@@ -1,30 +1,37 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
-import { Message, MessageEmbed } from "discord.js";
 import { numberDisplay } from "../../../helpers";
 
 export class TopCrowns extends CrownsChildCommand {
   description = "Lists the top crowns in the server";
-  aliases = ["top"];
+  aliases = ["top", "stans"];
   usage = "";
 
-  async run(message: Message) {
+  async run() {
+    let serverUsers = await this.serverUserIDs({
+      filterCrownBannedUsers: true,
+    });
+
     let [crowns, crownsCount] = await Promise.all([
-      this.crownsService.listTopCrownsInServer(message.guild?.id!),
-      this.crownsService.countAllInServer(message.guild?.id!),
+      this.crownsService.listTopCrownsInServer(this.guild.id, 10, serverUsers),
+      this.crownsService.countAllInServer(this.guild.id, serverUsers),
     ]);
 
-    let embed = new MessageEmbed()
-      .setTitle(`Top crowns in ${message.guild?.name}`)
+    let embed = this.newEmbed()
+      .setTitle(`Top crowns in ${this.guild.name}`)
       .setDescription(
-        `There are **${numberDisplay(crownsCount, "** crown")} in ${
-          message.guild?.name
-        }\n\n` +
-          crowns
-            .map(
-              (c) =>
-                `${numberDisplay(c.plays, "play").bold()} - ${c.artistName}`
+        (
+          await Promise.all(
+            crowns.map(
+              async (c, idx) =>
+                `${idx + 1}. ${c.artistName} (${numberDisplay(
+                  c.plays
+                ).strong()}, ${await this.fetchUsername(c.user.discordID)})`
             )
-            .join("\n")
+          )
+        ).join("\n") +
+          `\n\nThere are **${numberDisplay(crownsCount, "** crown")} in ${
+            this.guild.name
+          }`
       );
 
     await this.send(embed);

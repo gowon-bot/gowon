@@ -7,7 +7,7 @@ import { validators } from "../../../lib/validation/validators";
 
 export default class TrackAt extends LastFMBaseCommand {
   aliases = ["ta"];
-  description = "Finds the track at a certain rank";
+  description = "Finds the track in your library at a given rank";
   subcategory = "ranks";
   usage = ["", "rank @user"];
 
@@ -40,11 +40,11 @@ export default class TrackAt extends LastFMBaseCommand {
       );
 
     await this.reply(
-      `${track.name.bold()} by ${track.artist.name.italic()} is ranked at ${track[
+      `${track.name.strong()} by ${track.artist.name.italic()} is ranked at ${track[
         "@attr"
-      ].rank.bold()} in ${
+      ].rank.strong()} in ${
         perspective.possessive
-      } top tracks with ${numberDisplay(track.playcount, "play").bold()}`
+      } top tracks with ${numberDisplay(track.playcount, "play").strong()}`
     );
   }
 }

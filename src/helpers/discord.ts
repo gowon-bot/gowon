@@ -1,12 +1,24 @@
 import { Message, Role, GuildMember } from "discord.js";
+import escapeStringRegexp from "escape-string-regexp";
 import { Permission } from "../database/entity/Permission";
 
 export function sanitizeForDiscord(string: string): string {
-  return string.replace(/(\_|\*|\\|`)/g, (match) => `\\${match}`);
+  const characters = ["||", "*", "_", "`"];
+
+  for (let character of characters) {
+    if (string.split(character).length - 1 >= 2) {
+      string = string.replace(
+        new RegExp(escapeStringRegexp(character), "g"),
+        (match) => `\\${match}`
+      );
+    }
+  }
+
+  return string;
 }
 
 export function generateLink(text: string, link: string): string {
-  return `[${text}](${cleanURL(link)})`;
+  return `[${sanitizeForDiscord(text)}](${cleanURL(link)})`;
 }
 
 export interface NamedPermission extends Permission {
@@ -23,7 +35,7 @@ export async function addNamesToPermissions(
   for (let permission of permissions) {
     let entity = await (permission.isRoleBased
       ? permission.toDiscordRole(message)
-      : permission.toDiscordUser(message));
+      : permission.toDiscordUser(message.guild!));
 
     permission.name = entity instanceof Role ? entity.name : entity.username;
 
@@ -45,5 +57,5 @@ export function userHasRole(
 }
 
 export function cleanURL(url: string): string {
-  return url.replace(")", "%29");
+  return url.replace(")", "%29").replace(",", "%2C");
 }

@@ -1,6 +1,6 @@
 import { RedirectsService } from "../../services/dbservices/RedirectsService";
 import { RecentTracks } from "../../services/LastFM/LastFMService.types";
-import { RedirectsCache } from "../RedirectsCache";
+import { RedirectsCache } from "../caches/RedirectsCache";
 
 interface Count {
   [name: string]: number;
@@ -73,10 +73,11 @@ export class WeekCalculator {
     name: string,
     artist?: string
   ): void {
-    if (!this.top[category][artist ? `${artist} - ${name}` : name])
-      this.top[category][artist ? `${artist} - ${name}` : name] = 0;
+    let entity = artist ? `${artist} - ${name}` : name;
 
-    this.top[category][artist ? `${artist} - ${name}` : name] += 1;
+    if (!this.top[category][entity]) this.top[category][entity] = 0;
+
+    this.top[category][entity] += 1;
   }
 
   private getTotalCounts(): TotalCounts {

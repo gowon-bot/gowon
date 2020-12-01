@@ -1,0 +1,27 @@
+{
+  "strings": [
+    "seen live",
+    "albums I own",
+    "albumsiown",
+    "check out",
+    "all",
+    "amazing",
+    "soty",
+    "aoty",
+    "songs seen live",
+    "fave",
+    "love at first listen",
+    "played",
+    "personal favourites",
+    "personal favorites",
+    "hino",
+    "disgusting"
+  ],
+  "explicit": [
+    [19, 12, 21, 20],
+    [14, 9, 7, 7, 5, 18],
+    [14, 9, 7, 7, 1],
+    [6, 1, 7, 7, 15, 20],
+    [23, 8, 15, 18, 5]
+  ]
+}

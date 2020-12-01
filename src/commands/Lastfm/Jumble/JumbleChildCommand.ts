@@ -11,6 +11,8 @@ export abstract class JumbleChildCommand extends LastFMBaseChildCommand {
   parentName = "jumble";
   subcategory = "jumble";
 
+  hintChar = " ";
+
   jumbleCalculator!: JumbleCalculator;
 
   async sessionSetJSON(

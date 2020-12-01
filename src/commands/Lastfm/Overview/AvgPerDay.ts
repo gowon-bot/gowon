@@ -1,8 +1,7 @@
 import { OverviewChildCommand } from "./OverviewChildCommand";
-import { MessageEmbed } from "discord.js";
 
 export class AvgPerDay extends OverviewChildCommand {
-  aliases = ["avg", "average", "daily"];
+  aliases = ["avg", "average", "daily", "spd"];
   description = "Shows your average scrobble count per day";
 
   async run() {
@@ -11,13 +10,13 @@ export class AvgPerDay extends OverviewChildCommand {
     let { badge, colour, image } = await this.getAuthorDetails();
     let avg = await this.calculator.avgPerDay();
 
-    let embed = new MessageEmbed()
+    let embed = this.newEmbed()
       .setAuthor(username + badge, image)
       .setColor(colour)
       .setDescription(
         `${
           perspective.upper.plusToHave
-        } an average ${avg.asString.bold()} scrobbles per day!`
+        } an average ${avg.asString.strong()} scrobbles per day!`
       );
 
     await this.send(embed);

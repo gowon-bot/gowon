@@ -1,6 +1,6 @@
 import { BaseCommand } from "../lib/command/BaseCommand";
 import { Command } from "../lib/command/Command";
-import { Message, MessageEmbed } from "discord.js";
+import { Message } from "discord.js";
 import { CommandManager } from "../lib/command/CommandManager";
 import { Arguments } from "../lib/arguments/arguments";
 import { AdminService } from "../services/dbservices/AdminService";
@@ -10,7 +10,7 @@ import { ParentCommand } from "../lib/command/ParentCommand";
 
 export default class Help extends BaseCommand {
   aliases = ["h"];
-  description = "Displays the help menu";
+  description = "Displays the help menu, or help about a given command";
   usage = ["", "command"];
 
   arguments: Arguments = {
@@ -44,7 +44,7 @@ export default class Help extends BaseCommand {
     let commands = await this.adminService.can.viewList(
       this.commandManager.list(),
       message,
-      this.client
+      this.gowonClient
     );
 
     interface GroupedCommands {
@@ -63,34 +63,39 @@ export default class Help extends BaseCommand {
       return acc;
     }, {} as GroupedCommands);
 
-    return new MessageEmbed()
+    return this.newEmbed()
       .setAuthor(
         `Help for ${message.author.username}`,
         message.author.avatarURL() || ""
       )
       .setDescription(
-        `Run \`${this.prefix}help <command>\` to learn more about specific commands`
-      )
-      .addFields(
-        Object.keys(groupedCommands).map((gc) => ({
-          name: gc,
-          value:
-            (groupedCommands[gc][""]
-              ? Object.values(groupedCommands[gc][""])
-                  .map((c) => c.friendlyName)
-                  .join(", ")
-                  .italic() + "\n"
-              : "") +
-            Object.keys(groupedCommands[gc])
-              .filter((k) => k !== "")
-              .map(
-                (k) =>
-                  k.bold() +
-                  ": " +
-                  groupedCommands[gc][k].map((c) => c.friendlyName).join(", ")
-              )
-              .join("\n"),
-        }))
+        `Run \`${this.prefix}help <command>\` to learn more about specific commands\n\n` +
+          Object.keys(groupedCommands)
+            .map(
+              (gc, idx, arr) =>
+                (idx === arr.length - 1 ? "\n" : "") +
+                gc.strong() +
+                "\n" +
+                (groupedCommands[gc][""]
+                  ? Object.values(groupedCommands[gc][""])
+                      .map((c) => c.friendlyName)
+                      .join(", ")
+                      .italic() + "\n"
+                  : "") +
+                Object.keys(groupedCommands[gc])
+                  .filter((k) => k !== "")
+                  .map(
+                    (k) =>
+                      "" +
+                      k.strong() +
+                      ": " +
+                      groupedCommands[gc][k]
+                        .map((c) => c.friendlyName)
+                        .join(", ")
+                  )
+                  .join("\n")
+            )
+            .join("\n")
       );
   }
 
@@ -102,7 +107,8 @@ export default class Help extends BaseCommand {
 
     if (!command) throw new CommandNotFoundError();
     if (
-      !(await this.adminService.can.run(command, message, this.client)).passed
+      !(await this.adminService.can.run(command, message, this.gowonClient))
+        .passed
     ) {
       message.channel.stopTyping();
       return;
@@ -111,7 +117,7 @@ export default class Help extends BaseCommand {
     if (command instanceof ParentCommand)
       return this.showHelpForParentCommand(message, command);
 
-    let embed = new MessageEmbed()
+    let embed = this.newEmbed()
       .setAuthor(
         `Help with ${
           command.friendlyNameWithParent || command.friendlyName
@@ -119,10 +125,22 @@ export default class Help extends BaseCommand {
         message.author.avatarURL() || ""
       )
       .setDescription(
-        `
-        ${(command.friendlyNameWithParent || command.friendlyName).bold()}:
+        `${(command.friendlyNameWithParent || command.friendlyName).strong()}:
         ${command.description.italic()}
 
+        ${
+          command.usage !== undefined
+            ? "**Usage**:\n" +
+              flatDeep([command.usage])
+                .map((u) =>
+                  (this.prefix + command!.friendlyNameWithParent + " " + u)
+                    .trim()
+                    .code()
+                )
+                .join("\n") +
+              "\n"
+            : ""
+        }
         ${
           command.aliases.length
             ? `**Aliases**: ${command.aliases.map((a) => a.code())}\n\n`
@@ -133,22 +151,11 @@ export default class Help extends BaseCommand {
             ${command.variations
               .map(
                 (a) =>
-                  `${a.variationString || a.friendlyString} ${
+                  `${(a.variationString || a.friendlyString)?.code()} ${
                     a.description ? "- " + a.description : ""
                   }`
               )
               .join("\n")}\n\n`
-            : ""
-        }${
-          command.usage !== undefined
-            ? "**Usage**:\n" +
-              flatDeep([command.usage])
-                .map((u) =>
-                  (this.prefix + command!.friendlyNameWithParent + " " + u)
-                    .trim()
-                    .code()
-                )
-                .join("\n")
             : ""
         }`
       );
@@ -163,16 +170,16 @@ export default class Help extends BaseCommand {
     let commands = await this.adminService.can.viewList(
       command.children.list(),
       message,
-      this.client
+      this.gowonClient
     );
 
-    return new MessageEmbed()
+    return this.newEmbed()
       .setAuthor(
         `Help with ${command.friendlyName} for ${message.author.username}`,
         message.author.avatarURL() || ""
       )
       .setDescription(
-        `${command.friendlyName.bold()}:
+        `${command.friendlyName.strong()}:
         ${command.description.italic()}
         
         ${
@@ -184,7 +191,11 @@ export default class Help extends BaseCommand {
             : ""
         }
         **Commands**:
-        ${commands.map((c) => c.friendlyName).join(", ")}
+        ${commands
+          .map(
+            (c) => c.friendlyName.code() + ` - ${c.description.split("\n")[0]}`
+          )
+          .join("\n")}
         `
       );
   }

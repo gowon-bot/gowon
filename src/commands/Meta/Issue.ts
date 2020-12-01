@@ -6,9 +6,10 @@ import { validators } from "../../lib/validation/validators";
 import { GithubService } from "../../services/Github/GithubService";
 
 export default class Issue extends BaseCommand {
-  description = "Send feedback to the john (the gowon author)";
+  description = "Send feedback to the John (the author)";
   secretCommand = true;
   usage = ["title | body"];
+  devCommand = true;
 
   arguments: Arguments = {
     inputs: {
@@ -24,8 +25,6 @@ export default class Issue extends BaseCommand {
   githubService = new GithubService(this.logger);
 
   async run() {
-    if (!this.client.isAuthor(this.author.id)) return;
-
     let title = this.parsedArguments.title as string,
       body = this.parsedArguments.body as string;
 

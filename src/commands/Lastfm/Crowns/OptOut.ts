@@ -1,9 +1,9 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
-import { Message, MessageEmbed } from "discord.js";
+import { Message } from "discord.js";
 import { numberDisplay } from "../../../helpers";
 
 export class OptOut extends CrownsChildCommand {
-  description = "Opts you out of the crowns game";
+  description = "Opts you out of the crowns game, deleting all your crowns, and preventing you from getting new ones";
   usage = "";
 
   async run(message: Message) {
@@ -29,11 +29,11 @@ export class OptOut extends CrownsChildCommand {
       );
 
       await this.send(
-        new MessageEmbed().setDescription(
+        this.newEmbed().setDescription(
           `Opted you out, deleting ${numberDisplay(
             numberOfCrowns,
             "crown"
-          ).bold()}`
+          ).strong()}`
         )
       );
     } catch {

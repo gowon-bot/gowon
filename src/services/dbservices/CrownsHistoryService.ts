@@ -152,7 +152,7 @@ export class CrownsHistoryService extends BaseService {
   async handleCheck(crownCheck: CrownCheck, message: Message) {
     let { state, crown, oldCrown } = crownCheck;
     let owner = await User.toDiscordUser(
-      message,
+      message.guild!,
       crownCheck.oldCrown!.user.discordID
     );
 
@@ -227,6 +227,9 @@ export class CrownsHistoryService extends BaseService {
 
     if (eventTypes) findOptions.event = In(eventTypes);
 
-    return await CrownEvent.find(findOptions);
+    return await CrownEvent.find({
+      where: findOptions,
+      order: { happenedAt: "DESC" },
+    });
   }
 }

@@ -5,7 +5,7 @@ import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
 export default class TrackRank extends LastFMBaseCommand {
   aliases = ["tra", "tr"];
-  description = "Shows what rank the track is at in your top 1000 tracks";
+  description = "Shows what rank a track is at in your top 1000 tracks";
   subcategory = "ranks";
   usage = ["", "artist | track @user"];
 
@@ -53,16 +53,18 @@ export default class TrackRank extends LastFMBaseCommand {
 
     if (rank === -1) {
       await this.reply(
-        `that track wasn't found in ${perspective.possessive} top 1000 tracks`
+        `that track wasn't found in ${
+          perspective.possessive
+        } top ${numberDisplay(topTracks.track.length, "track")}`
       );
     } else {
       await this.reply(
-        `${topTracks.track[rank].name.bold()} by ${
+        `${topTracks.track[rank].name.strong()} by ${
           topTracks.track[rank].artist.name
-        } is ranked #${numberDisplay(rank + 1).bold()} with ${numberDisplay(
+        } is ranked #${numberDisplay(rank + 1).strong()} with ${numberDisplay(
           topTracks.track[rank].playcount,
           "play"
-        ).bold()}`
+        ).strong()}`
       );
     }
   }

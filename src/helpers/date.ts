@@ -23,11 +23,11 @@ export function generatePeriod(
   fallback: LastFMPeriod = "overall"
 ): LastFMPeriod {
   let periodRegexes: { [period: string]: RegExp } = {
-    "7day": /(\s+|\b)(1|one)? *(w(eek(s)?)?)|(7|seven) *d(ay(s)?)?(\s|\b)/gi,
-    "3month": /(\s+|\b)((3|three) *m(o(nth(s)?)?)?|q(uarter)?)(\s|\b)/gi,
-    "6month": /(\s+|\b)((6|six) *m(o(nth(s)?)?)?|h(alf(\s*year)?)?)(\s|\b)/gi,
-    "12month": /(\s+|\b)((12|twelve) *m(o(nth(s)?)?)?|y(ear)?)(\s|\b)/gi,
-    "1month": /(\s+|\b)(1|one)? *m(o(nth(s)?)?)?(\s|\b)/gi,
+    "7day": /(\s+|\b)(w(eek)?)(\s|\b)/gi,
+    "3month": /(\s+|\b)(q(uarter)?)(\s|\b)/gi,
+    "6month": /(\s+|\b)h(alf(\s*year)?)?(\s|\b)/gi,
+    "12month": /(\s+|\b)(y(ear)?)(\s|\b)/gi,
+    "1month": /(\s+|\b)m(o(nth?)?)?(\s|\b)/gi,
     overall: overallRegex,
   };
 
@@ -164,7 +164,7 @@ export function humanizedTimeRangeParser(
       if (timeString.length)
         return (options.raw ? "" : "over the past ") + timeString;
     } else {
-      if (!options.noOverall && overallRegex.test(string))
+      if (!options.noOverall && overallRegex.test(` ${string} `))
         return options.overallMessage!;
     }
 

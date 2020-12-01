@@ -15,6 +15,7 @@ import {
 import { Crown } from "./Crown";
 import {
   DiscordAPIError,
+  Guild,
   GuildMember,
   Message,
   User as DiscordUser,
@@ -46,11 +47,11 @@ export class User extends BaseEntity {
   friends!: Friend[];
 
   static async toDiscordUser(
-    message: Message,
+    guild: Guild,
     discordID: string
   ): Promise<DiscordUser | undefined> {
     try {
-      return (await message.guild?.members.fetch(discordID))?.user;
+      return (await guild.members.fetch(discordID))?.user;
     } catch {
       return;
     }
@@ -83,9 +84,9 @@ export class User extends BaseEntity {
     return users as User[];
   }
 
-  async toDiscordUser(message: Message): Promise<DiscordUser | undefined> {
+  async toDiscordUser(guild: Guild): Promise<DiscordUser | undefined> {
     try {
-      return await User.toDiscordUser(message, this.discordID);
+      return await User.toDiscordUser(guild, this.discordID);
     } catch (e) {
       if (!(e instanceof DiscordAPIError)) throw e;
       return;

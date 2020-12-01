@@ -1,133 +1,194 @@
 import { RedirectsService } from "../../services/dbservices/RedirectsService";
-import { Track } from "../../services/LastFM/LastFMService.types";
+import { RecentTracks, Track } from "../../services/LastFM/LastFMService.types";
+import { RedirectsCache } from "../caches/RedirectsCache";
 import { Paginator } from "../Paginator";
-import { RedirectsCache } from "../RedirectsCache";
 
 export interface ComboDetails {
   plays: number;
   name: string;
   nowplaying: boolean;
   hitMax: boolean;
+  shouldIncrement: boolean;
 }
-export interface Combo {
-  artist: ComboDetails;
-  album: ComboDetails;
-  track: ComboDetails;
-  hasAnyConsecutivePlays: boolean;
-}
-
-type Entity = "artist" | "track" | "album";
 
 export class ComboCalculator {
-  constructor(private redirectsService: RedirectsService) {}
+  private combo = new Combo(this.redirectsService, this.additionalArtists);
+  public totalTracks = 0;
 
-  private combo: Partial<Combo> = {};
-  private streakEnded = {
-    artist: false,
-    album: false,
-    track: false,
-  };
+  constructor(
+    private redirectsService: RedirectsService,
+    private additionalArtists: string[]
+  ) {}
+
+  async calculate(paginator: Paginator<any, RecentTracks>): Promise<Combo> {
+    for await (let page of paginator.iterator()) {
+      let tracks = this.extractTracks(page, paginator.currentPage);
+
+      this.totalTracks += tracks.filter((t) => !t["@attr"]?.nowplaying).length;
+
+      for (let trackIndex = 0; trackIndex < tracks.length; trackIndex++) {
+        let track = tracks[trackIndex];
+
+        if (!(await this.shouldContinue(track))) return this.combo;
+
+        await this.incrementCombo(
+          track,
+          paginator.currentPage === paginator.maxPages &&
+            trackIndex === tracks.length - 1
+        );
+      }
+    }
+
+    return this.combo;
+  }
+
+  private extractTracks(page: RecentTracks, pageNumber: number): Track[] {
+    let tracks = page.track;
+
+    if (!tracks.length) return [];
+
+    if (pageNumber === 1) this.combo.imprint(tracks[0]);
+
+    if (pageNumber === 1) {
+      return tracks;
+    } else {
+      return tracks.filter((t) => !t["@attr"]?.nowplaying);
+    }
+  }
+
+  private async shouldContinue(track: Track): Promise<boolean> {
+    return await this.combo.compareTrackToCombo(track);
+  }
+
+  private async incrementCombo(track: Track, last: boolean): Promise<void> {
+    await this.combo.increment(track, last);
+  }
+}
+
+export class Combo {
+  artist!: ComboDetails;
+  album!: ComboDetails;
+  track!: ComboDetails;
 
   private redirectsCache = new RedirectsCache(this.redirectsService);
 
-  private async shouldContinueStreak(
-    track: Track,
-    entity: Entity
+  constructor(
+    private redirectsService: RedirectsService,
+    private artists: string[]
+  ) {}
+
+  hasAnyConsecutivePlays(): boolean {
+    return (
+      this.artist.plays > 1 || this.album.plays > 1 || this.track.plays > 1
+    );
+  }
+
+  imprint(track: Track) {
+    let nowplaying = !!track["@attr"]?.nowplaying;
+
+    let defaultDetails = {
+      nowplaying,
+      plays: 0,
+      hitMax: false,
+      shouldIncrement: true,
+    } as Partial<ComboDetails>;
+
+    this.artist = {
+      ...defaultDetails,
+      name: track.artist["#text"],
+    } as ComboDetails;
+
+    this.album = {
+      ...defaultDetails,
+      name: track.album["#text"],
+    } as ComboDetails;
+
+    this.track = {
+      ...defaultDetails,
+      name: track.name,
+    } as ComboDetails;
+  }
+
+  get artistName(): string {
+    return this.artist.name;
+  }
+
+  get albumName(): string {
+    return this.album.name;
+  }
+
+  get trackName(): string {
+    return this.track.name;
+  }
+
+  get artistNames(): string[] {
+    return [
+      this.artistName,
+      ...this.artists.filter(
+        (an) => !this.caseInsensitiveCompare(an, this.artistName)
+      ),
+    ];
+  }
+
+  async compareTrackToCombo(track: Track) {
+    return (
+      (await this.compareArtistNames(
+        track.artist["#text"],
+        this.artistNames
+      )) ||
+      this.caseInsensitiveCompare(track.album["#text"], this.albumName) ||
+      this.caseInsensitiveCompare(track.name, this.trackName)
+    );
+  }
+
+  async increment(track: Track, hitMax: boolean) {
+    if (track["@attr"]?.nowplaying) return;
+
+    if (
+      this.artist.shouldIncrement &&
+      (await this.compareArtistNames(track.artist["#text"], this.artistNames))
+    ) {
+      this.artist.plays += 1;
+      this.artist.hitMax = hitMax;
+    } else this.artist.shouldIncrement = false;
+
+    if (
+      this.album.shouldIncrement &&
+      this.caseInsensitiveCompare(track.album["#text"], this.albumName)
+    ) {
+      this.album.plays += 1;
+      this.album.hitMax = hitMax;
+    } else this.album.shouldIncrement = false;
+
+    if (
+      this.track.shouldIncrement &&
+      this.caseInsensitiveCompare(track.name, this.trackName)
+    ) {
+      this.track.plays += 1;
+      this.track.hitMax = hitMax;
+    } else this.track.shouldIncrement = false;
+  }
+
+  private async compareArtistNames(
+    artist: string,
+    artists: string[]
   ): Promise<boolean> {
-    let entityName =
-      entity === "album" || entity === "artist"
-        ? track[entity]["#text"]
-        : track.name;
-
-    if (entity === "artist")
-      entityName = await this.redirectsCache.getRedirect(entityName);
-
-    return (
-      this.streakEnded[entity] !== true &&
-      (this.combo[entity]?.name === undefined ||
-        this.combo[entity]?.name === entityName)
-    );
-  }
-
-  private shouldBreak(): boolean {
-    return (
-      this.streakEnded.album &&
-      this.streakEnded.artist &&
-      this.streakEnded.track
-    );
-  }
-
-  private async setCombo(
-    entity: Entity,
-    name: string,
-    track: Track,
-    last: boolean
-  ) {
-    let nowplaying = track["@attr"]?.nowplaying === "true" ?? false;
-
-    if (this.combo[entity]) {
-      let entityName =
-        entity === "artist"
-          ? await this.redirectsCache.getRedirect(this.combo[entity]!.name)
-          : this.combo[entity]!.name;
-
-      this.combo[entity] = {
-        name: entityName,
-        plays: this.combo[entity]!.plays + 1,
-        nowplaying: this.combo[entity]!.nowplaying,
-        hitMax: last,
-      };
-    } else {
-      let entityName =
-        entity === "artist"
-          ? await this.redirectsCache.getRedirect(name)
-          : name;
-
-      this.combo[entity] = {
-        name: entityName,
-        nowplaying,
-        plays: nowplaying ? 0 : 1,
-        hitMax: false,
-      };
-    }
-  }
-
-  async calculate(recentTracks: Paginator): Promise<Combo> {
-    for await (let page of recentTracks.iterator()) {
-      let tracks =
-        recentTracks.currentPage === 1 ? page.track : page.track.slice(1);
-
-      for (let trackIndex = 0; trackIndex < tracks.length; trackIndex++) {
-        const track = tracks[trackIndex];
-
-        let last =
-          trackIndex === tracks.length - 1 &&
-          recentTracks.currentPage === recentTracks.maxPages;
-
-        if (await this.shouldContinueStreak(track, "artist")) {
-          this.setCombo("artist", track.artist["#text"], track, last);
-        } else if (!this.streakEnded.artist) this.streakEnded.artist = true;
-
-        if (await this.shouldContinueStreak(track, "album")) {
-          this.setCombo("album", track.album["#text"], track, last);
-        } else if (!this.streakEnded.album) this.streakEnded.album = true;
-
-        if (await this.shouldContinueStreak(track, "track")) {
-          this.setCombo("track", track.name, track, last);
-        } else if (!this.streakEnded.track) this.streakEnded.track = true;
-
-        if (this.shouldBreak()) break;
-      }
-      if (this.shouldBreak()) break;
+    for (let compareArtist of artists) {
+      if (
+        this.caseInsensitiveCompare(
+          await this.redirectsCache.getRedirect(artist),
+          await this.redirectsCache.getRedirect(compareArtist)
+        )
+      )
+        return true;
     }
 
-    return {
-      ...this.combo,
-      hasAnyConsecutivePlays:
-        (this.combo.artist?.plays || 0) +
-          (this.combo.album?.plays || 0) +
-          (this.combo.track?.plays || 0) >
-        0,
-    } as Combo;
+    return false;
+  }
+
+  private caseInsensitiveCompare(string1?: string, string2?: string) {
+    if (!string1 || !string2) return false;
+
+    return string1?.toLowerCase() === string2?.toLowerCase();
   }
 }
