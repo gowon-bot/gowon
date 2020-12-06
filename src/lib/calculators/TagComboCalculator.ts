@@ -1,6 +1,7 @@
 import { TagsService } from "../../services/dbservices/TagsService";
 import { LastFMService } from "../../services/LastFM/LastFMService";
 import { RecentTracks, Track } from "../../services/LastFM/LastFMService.types";
+import { TagsCache } from "../caches/TagsCache";
 import { Paginator } from "../Paginator";
 import { TagConsolidator } from "../tags/TagConsolidator";
 
@@ -12,7 +13,9 @@ export interface TagComboDetails {
 }
 
 export class TagComboCalculator {
-  private combo = new TagCombo(this.tagsService, this.lastFMService);
+  private combo = new TagCombo(
+    new TagsCache(this.tagsService, this.lastFMService)
+  );
   public totalTracks = 0;
 
   constructor(
@@ -71,10 +74,7 @@ export class TagComboCalculator {
 export class TagCombo {
   comboCollection: { [tag: string]: TagComboDetails } = {};
 
-  constructor(
-    private tagsService: TagsService,
-    private lastFMService: LastFMService
-  ) {}
+  constructor(private tagsCache: TagsCache) {}
 
   hasAnyConsecutivePlays(): boolean {
     return !!Object.values(this.comboCollection).filter((i) => i.plays > 1)
@@ -120,9 +120,7 @@ export class TagCombo {
   }
 
   private async getTags(track: Track) {
-    const tags =
-      (await this.tagsService.getTags(track.artist["#text"])) ||
-      (await this.lastFMService.getArtistTags(track.artist["#text"]));
+    const tags = await this.tagsCache.getTags(track.artist["#text"]);
 
     return new TagConsolidator()
       .addTags(tags)

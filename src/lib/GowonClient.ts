@@ -12,8 +12,9 @@ export class GowonClient {
     return users.map((a) => Object.keys(a)[0]);
   }
 
-  isDeveloper(userID?: string) {
-    return this.getUserIDs(specialUsers.developers).includes(userID || "");
+  isDeveloper(userID?: string): boolean {
+    if (!userID) return false;
+    return this.getUserIDs(specialUsers.developers).includes(userID);
   }
 
   isAlphaTester(userID?: string) {
