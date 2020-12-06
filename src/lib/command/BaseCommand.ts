@@ -23,6 +23,7 @@ import { Perspective } from "../Perspective";
 import { GowonClient } from "../GowonClient";
 import { Validation, ValidationChecker } from "../validation/ValidationChecker";
 import { GowonEmbed } from "../../helpers/Embeds";
+import { Emoji, EmojiRaw } from "../Emoji";
 
 export interface Variation {
   variationString?: string;
@@ -64,6 +65,9 @@ export abstract class BaseCommand implements Command {
   gowonClient!: GowonClient;
 
   responses: Array<MessageEmbed | string> = [];
+
+  showLoadingAfter?: number;
+  isCompleted = false;
 
   get friendlyNameWithParent(): string {
     return (
@@ -216,11 +220,25 @@ export abstract class BaseCommand implements Command {
   async setup() {
     this.message.channel.startTyping();
     this.logger.openCommandHeader(this);
+
+    if (this.showLoadingAfter) {
+      setTimeout(() => {
+        if (!this.isCompleted) {
+          this.message.react(Emoji.loading);
+        }
+      }, this.showLoadingAfter * 1000);
+    }
   }
 
   async teardown() {
     this.message.channel.stopTyping();
     this.logger.closeCommandHeader(this);
+    this.isCompleted = true;
+    if (this.showLoadingAfter) {
+      this.message.reactions
+        .resolve(EmojiRaw.loading)
+        ?.users.remove(this.gowonClient.client.user!);
+    }
   }
 
   async execute(message: Message, runAs: RunAs) {

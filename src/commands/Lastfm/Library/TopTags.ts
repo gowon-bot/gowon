@@ -6,7 +6,7 @@ import { TagsService } from "../../../services/dbservices/TagsService";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 export default class TopTags extends LastFMBaseCommand {
-  description = "Displays your top tags (WIP)";
+  description = "Displays your top tags";
   secretCommand = true;
   aliases = [];
 
@@ -15,6 +15,8 @@ export default class TopTags extends LastFMBaseCommand {
   };
 
   tagsService = new TagsService(this.logger);
+
+  showLoadingAfter = this.gowonService.constants.defaultLoadingTime;
 
   async run() {
     let { username } = await this.parseMentions();
@@ -25,15 +27,16 @@ export default class TopTags extends LastFMBaseCommand {
     });
 
     let tagsCount: { [artist: string]: number } = {};
-    let artistsCached = 0;
 
     for (let artist of topArtists.artist) {
       let artistTags = await this.tagsService.getTags(artist.name);
 
-      if (artistTags) artistsCached++;
+      if (!artistTags) {
+        artistTags = await this.lastFMService.getArtistTags(artist.name);
+      }
 
       let tagConsolidator = new TagConsolidator().addTags(
-        (artistTags || []).map((t) => t.toLowerCase())
+        artistTags.map((t) => t.toLowerCase())
       );
 
       for (let tag of tagConsolidator.consolidate(Infinity, false)) {
@@ -51,9 +54,7 @@ export default class TopTags extends LastFMBaseCommand {
     let embed = this.newEmbed()
       .setTitle(`Top tags for ${username}`)
       .setDescription(
-        `_${numberDisplay(topTags.length, "unique tag")}, ${numberDisplay(
-          artistsCached
-        )}/${numberDisplay(topArtists.artist.length, "artist")} cached_\n\n` +
+        `_${numberDisplay(topTags.length, "unique tag")}_\n` +
           topTopTags
             .map(
               (tt, idx) =>

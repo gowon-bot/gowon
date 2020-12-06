@@ -41,6 +41,7 @@ export class GowonService {
       "yyyy.MM.dd",
     ],
     unknownUserDisplay: "???",
+    defaultLoadingTime: 5
   } as const;
 
   async init() {

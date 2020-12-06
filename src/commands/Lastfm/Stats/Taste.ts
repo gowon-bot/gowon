@@ -66,7 +66,7 @@ export default class Taste extends LastFMBaseCommand {
     },
     mentions: {
       user: { index: 0 },
-      userTwo: { index: 1 },
+      user2: { index: 1 },
       lfmUser: {
         index: 0,
         mention: new LastFMMention(true),

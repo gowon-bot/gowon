@@ -211,4 +211,14 @@ export class LastFMService extends LastFMAPIService {
 
     return toCount === fromCount + 1;
   }
+
+  async getArtistTags(artist: string): Promise<string[]> {
+    try {
+      return (
+        (await this.artistInfo({ artist }))?.tags?.tag?.map((t) => t.name) || []
+      );
+    } catch {
+      return [];
+    }
+  }
 }

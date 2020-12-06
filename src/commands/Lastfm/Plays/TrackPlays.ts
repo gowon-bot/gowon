@@ -43,7 +43,7 @@ export default class TrackPlays extends LastFMBaseCommand {
       track,
       username,
     });
-
+    
     await this.reply(
       `${hamham ? "FTFY\n" : ""}${perspective.plusToHave}` +
         (trackDetails.userplaycount.toInt() === 0
