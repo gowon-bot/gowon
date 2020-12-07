@@ -72,8 +72,7 @@ export default class Help extends BaseCommand {
         `Run \`${this.prefix}help <command>\` to learn more about specific commands\n\n` +
           Object.keys(groupedCommands)
             .map(
-              (gc, idx, arr) =>
-                (idx === arr.length - 1 ? "\n" : "") +
+              (gc) =>
                 gc.strong() +
                 "\n" +
                 (groupedCommands[gc][""]
