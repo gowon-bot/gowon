@@ -18,6 +18,8 @@ export const Emoji = {
   gronning: "<:gronning:774797344632995900>",
   kapp: "<:Kapp:775580682876747778>",
   loading: "<a:loading:784905179451359252>",
+  ish: "<:ish:785397271725604875>",
+  fmbot: "<:fmbot:474719957226094602>",
 } as const;
 
 export const EmojiRaw = Object.entries(Emoji).reduce(

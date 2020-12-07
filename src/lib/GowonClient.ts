@@ -32,6 +32,12 @@ export class GowonClient {
     return this.getUserIDs(specialUsers.bots).includes(userID || "");
   }
 
+  isDeveloperOf(bot: "chuu" | "fmbot", userID?: string) {
+    return this.getUserIDs(specialUsers.otherBotDevelopers[bot]).includes(
+      userID || ""
+    );
+  }
+
   async userDisplay(message: Message, user?: string): Promise<string>;
   async userDisplay(message: Message, user?: DiscordUser): Promise<string>;
   async userDisplay(

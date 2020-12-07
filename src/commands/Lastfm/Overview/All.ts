@@ -39,6 +39,10 @@ ${
     ? `${Emoji.typescript} _Author_\n`
     : this.gowonClient.isGowon(this.discordID)
     ? `${Emoji.gowonswag2} _Gowon_\n`
+    : this.gowonClient.isDeveloperOf("chuu", this.discordID)
+    ? `${Emoji.ish} _Ish_`
+    : this.gowonClient.isDeveloperOf("fmbot", this.discordID)
+    ? `${Emoji.fmbot} _Frikandel_`
     : this.gowonClient.isAlphaTester(this.discordID)
     ? `${Emoji.gowonheart} _Alpha tester_\n`
     : ""
