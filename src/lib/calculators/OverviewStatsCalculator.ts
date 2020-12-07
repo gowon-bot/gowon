@@ -343,6 +343,25 @@ export class OverviewStatsCalculator {
     );
   }
 
+  async tierPlaysOver(
+    tiers: number[],
+    take: number
+  ): Promise<{ count: number; tier: number }[]> {
+    const tierCounts = tiers
+      .sort((a, b) => b - a)
+      .map((t) => ({ tier: t, count: 0 }));
+
+    for (let topArtist of (await this.topArtists()).artist) {
+      tierCounts.forEach((tierCount) => {
+        if (topArtist.playcount.toInt() >= tierCount.tier) {
+          tierCount.count++;
+        }
+      });
+    }
+
+    return tierCounts.filter((t) => t.count > 0).slice(0, take);
+  }
+
   async playsOver(number: number): Promise<Stat> {
     let po = (await this.topArtists()).artist.filter(
       (a) => a.playcount.toInt() >= number

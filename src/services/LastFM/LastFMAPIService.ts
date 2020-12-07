@@ -136,11 +136,20 @@ export class LastFMAPIService extends BaseService {
   }
 
   async artistInfo(params: ArtistInfoParams): Promise<ArtistInfo> {
-    let response = (
-      await this.request<ArtistInfoResponse>("artist.getInfo", params)
-    ).artist;
+    let response: ArtistInfo;
 
-    this.tagsService.cacheTagsFromArtistInfo(response);
+    try {
+      response = (
+        await this.request<ArtistInfoResponse>("artist.getInfo", params)
+      ).artist;
+
+      this.tagsService.cacheTagsFromArtistInfo(response);
+    } catch (e) {
+      if (e.name === "LastFMError:6")
+        await this.tagsService.cacheTagsForArtistNotFound(params.artist);
+
+      throw e;
+    }
 
     if (
       params.username &&

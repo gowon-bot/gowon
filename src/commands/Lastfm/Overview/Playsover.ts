@@ -6,7 +6,7 @@ export class Playsover extends OverviewChildCommand {
 
   aliases = ["po"];
   description =
-    "Shows how many artists you have over 1000, 500, 250, 100, and 50 scrobbles respectively";
+    "Shows how many artists you have over some common scrobble tiers";
 
   async run() {
     let { username, perspective } = await this.parseMentions();
@@ -15,21 +15,7 @@ export class Playsover extends OverviewChildCommand {
     await this.calculator.topArtists();
 
     let { badge, colour, image } = await this.getAuthorDetails();
-    let [
-      thousand,
-      fivehundred,
-      twofifty,
-      hundred,
-      fifty,
-      artistCount,
-    ] = await Promise.all([
-      this.calculator.playsOver(1000),
-      this.calculator.playsOver(500),
-      this.calculator.playsOver(250),
-      this.calculator.playsOver(100),
-      this.calculator.playsOver(50),
-      this.calculator.totalArtists(),
-    ]);
+    let artistCount = await this.calculator.totalArtists();
 
     let embed = this.newEmbed()
       .setAuthor(username + badge, image)
@@ -39,11 +25,16 @@ export class Playsover extends OverviewChildCommand {
       artistCount.asNumber > 1000 ? 1000 : artistCount.asNumber,
       "artist"
     )}, ${perspective.plusToHave}...
-  - ${thousand.asString.strong()} artists with 1000+ scrobbles
-  - ${fivehundred.asString.strong()} artists with 500+ scrobbles
-  - ${twofifty.asString.strong()} artists with 250+ scrobbles
-  - ${hundred.asString.strong()} artists with 100+ scrobbles
-  - ${fifty.asString.strong()} artists with 50+ scrobbles`);
+    ${(await this.calculator.tierPlaysOver(this.playsoverTiers, 6))
+      .map(
+        (po) =>
+          `**${numberDisplay(po.count, "**artist")} with ${numberDisplay(
+            po.tier,
+            "+ scrobble",
+            true
+          )}`
+      )
+      .join("\n")}`);
 
     await this.send(embed);
   }

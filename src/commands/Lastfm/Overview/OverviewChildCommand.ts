@@ -19,6 +19,19 @@ export abstract class OverviewChildCommand extends LastFMBaseChildCommand {
   senderUsername!: string;
   discordID?: string;
 
+  protected readonly playsoverTiers = [
+    20_000,
+    15_000,
+    10_000,
+    5000,
+    2000,
+    1000,
+    500,
+    250,
+    100,
+    50,
+  ];
+
   async getAuthorDetails(): Promise<{
     badge: string;
     colour: string;

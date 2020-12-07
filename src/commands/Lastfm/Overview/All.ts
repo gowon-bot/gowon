@@ -8,6 +8,8 @@ export class All extends OverviewChildCommand {
 
   description = "Shows information about you and your library";
 
+  showLoadingAfter = 5;
+
   async run() {
     let perspective = this.usersService.perspective(
       this.senderUsername,
@@ -47,6 +49,7 @@ ${
     ? `${Emoji.gowonheart} _Alpha tester_\n`
     : ""
 }
+
 _Scrobbling since ${await this.calculator.joined()}_
 
 **Scrobbles**: ${await this.calculator.totalScrobbles()} (_${await this.calculator.avgPerDay()}/day_)
@@ -75,21 +78,16 @@ Among ${perspective.possessivePronoun} top ${numberDisplay(
             : (await this.calculator.totalArtists()).asNumber,
           "artist"
         )}, ${perspective.plusToHave}...
-    - ${(
-      await this.calculator.playsOver(1000)
-    ).asString.strong()} artists with 1000+ scrobbles
-    - ${(
-      await this.calculator.playsOver(500)
-    ).asString.strong()} artists with 500+ scrobbles
-    - ${(
-      await this.calculator.playsOver(250)
-    ).asString.strong()} artists with 250+ scrobbles
-    - ${(
-      await this.calculator.playsOver(100)
-    ).asString.strong()} artists with 100+ scrobbles
-    - ${(
-      await this.calculator.playsOver(50)
-    ).asString.strong()} artists with 50+ scrobbles` +
+        ${(await this.calculator.tierPlaysOver(this.playsoverTiers, 6))
+          .map(
+            (po) =>
+              `**${numberDisplay(po.count, "**artist")} with ${numberDisplay(
+                po.tier,
+                "+ scrobble",
+                true
+              )}`
+          )
+          .join("\n")}` +
           ((await this.calculator.hasCrownStats())
             ? `\n\n**Total crowns**: ${rank!.count} (ranked ${getOrdinal(
                 rank!.rank.toInt()
@@ -101,7 +99,9 @@ For every ${numberDisplay(
 For every ${numberDisplay(
                 (await this.calculator.scrobblesPerCrown())!.asString,
                 "scrobble"
-              ).strong()}, ${perspective.plusToHave} a crown
+              ).strong()}, ${perspective.plusToHave} a crown`
+            : "") +
+          `
 
 ${
   breadth
@@ -109,9 +109,7 @@ ${
         breadth.ratingString
       })_\n`
     : ""
-}**Number of unique tags**: ${(await this.calculator.uniqueTags()).toString()}
-              `
-            : "")
+}**Number of unique tags**: ${(await this.calculator.uniqueTags()).toString()}`
       );
 
     await this.send(embed);
