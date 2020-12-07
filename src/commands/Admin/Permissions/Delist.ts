@@ -2,9 +2,11 @@ import { PermissionsChildCommand } from "./PermissionsChildCommand";
 import { Message, User, Role } from "discord.js";
 
 export class Delist extends PermissionsChildCommand {
+  idSeed = "red velvet joy";
+
   description = "Remove a user/role from a white/blacklist";
   usage = ["command @role or role:roleid", "command @user or user:userid"];
-  
+
   aliases = ["dewhitelist", "deblacklist"];
 
   async run(message: Message) {

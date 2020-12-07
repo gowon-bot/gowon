@@ -3,22 +3,15 @@ import { Arguments } from "../../../lib/arguments/arguments";
 import { Message } from "discord.js";
 import { numberDisplay, ago } from "../../../helpers";
 import { RedirectsService } from "../../../services/dbservices/RedirectsService";
-import { Variation } from "../../../lib/command/BaseCommand";
-import { RunAs } from "../../../lib/AliasChecker";
 import { createInvalidBadge } from "../../../helpers/crowns";
 import { ArtistCrownBannedError } from "../../../errors";
 
 export class Info extends CrownsChildCommand {
+  idSeed = "wjsn dayoung";
+
   aliases = ["wh"];
   description = "Shows who has the crown for a given user";
   usage = ["", "artist"];
-
-  variations: Variation[] = [
-    {
-      variationString: "whv",
-      description: "Shows some more information about the crown",
-    },
-  ];
 
   arguments: Arguments = {
     inputs: {
@@ -28,7 +21,7 @@ export class Info extends CrownsChildCommand {
 
   redirectsService = new RedirectsService(this.logger);
 
-  async run(message: Message, runAs: RunAs) {
+  async run(message: Message) {
     let artist = this.parsedArguments.artist as string;
 
     let { senderUsername, senderUser } = await this.parseMentions({
@@ -96,40 +89,28 @@ export class Info extends CrownsChildCommand {
     if (crown.user.id) {
       let holderUsername = await this.fetchUsername(crown.user.discordID);
 
-      if (runAs.variationWasUsed("whv")) {
-        let embed = this.newEmbed()
-          .setTitle(
-            `Who has ${crown.artistName.strong()}?` + crown.redirectDisplay()
-          )
-          .setDescription(
-            `${holderUsername}${invalidBadge} has the crown for ${crown.artistName.strong()} with ${numberDisplay(
-              crown.plays,
-              "play"
-            )}
+      let embed = this.newEmbed()
+        .setTitle(
+          `Who has ${crown.artistName.strong()}?` + crown.redirectDisplay()
+        )
+        .setDescription(
+          `${holderUsername}${invalidBadge} has the crown for ${crown.artistName.strong()} with ${numberDisplay(
+            crown.plays,
+            "play"
+          )}
 
           Created ${ago(crown.createdAt)}${
-              crown.version > 1 ? ". Last stolen " + ago(crown.lastStolen) : ""
-            }
+            crown.version > 1 ? ". Last stolen " + ago(crown.lastStolen) : ""
+          }
 
           _It ${
             crown.version === 0
               ? "has never been stolen"
               : "has been stolen " + numberDisplay(crown.version, "time")
           }_`
-          );
-
-        await this.send(embed);
-      } else {
-        await this.reply(
-          `${
-            holderUsername?.strong() ||
-            this.gowonService.constants.unknownUserDisplay
-          }${invalidBadge} has the crown for ${crown.artistName.strong()} with **${numberDisplay(
-            crown.plays,
-            "**play"
-          )}.`
         );
-      }
+
+      await this.send(embed);
     }
   }
 }

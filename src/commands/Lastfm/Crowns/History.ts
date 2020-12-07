@@ -7,6 +7,8 @@ import { LogicError } from "../../../errors";
 import { CrownEvent } from "../../../database/entity/meta/CrownEvent";
 
 export class History extends CrownsChildCommand {
+  idSeed = "wjsn cheng xiao";
+
   aliases = ["hist"];
   description = "Shows a crown's history";
   usage = ["", "artist"];

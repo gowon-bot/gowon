@@ -13,10 +13,12 @@ import { RedisService } from "./services/RedisService";
 import config from "../config.json";
 import { GraphQLAPI } from "./graphql_api";
 import { GowonClient } from "./lib/GowonClient";
+import { GuildSetupService } from "./services/GuildSetupService";
 
 const client = new GowonClient(new Client(), config.environment);
 const handler = new CommandHandler();
 const redisService = new RedisService();
+const guildSetupService = new GuildSetupService(client);
 const db = new DB();
 const api = new GraphQLAPI();
 
@@ -36,6 +38,7 @@ async function start() {
     handler.init(),
     redisService.init(),
     api.init(),
+    guildSetupService.init(),
   ]);
 
   client.client.on("ready", () => {
@@ -54,6 +57,10 @@ async function start() {
 
   client.client.on("message", (msg) => {
     handler.handle(msg);
+  });
+
+  client.client.on("guildCreate", (guild) => {
+    guildSetupService.handleNewGuild(guild);
   });
 
   client.client.login(config.discordToken);

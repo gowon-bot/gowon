@@ -5,6 +5,8 @@ import { LogicError } from "../../../errors";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
 export class GuildAround extends CrownsChildCommand {
+  idSeed = "weki meki doyeon";
+
   aliases = ["guildme"];
   description =
     "Ranks a user based on their crown count, and shows the surrounding users";

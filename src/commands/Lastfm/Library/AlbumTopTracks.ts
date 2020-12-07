@@ -5,6 +5,8 @@ import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { LinkGenerator } from "../../../helpers/lastFM";
 
 export default class AlbumTopTracks extends LastFMBaseCommand {
+  idSeed = "nature sunshine";
+
   description = "Shows your top tracks from an album";
   aliases = ["ltt"];
   usage = ["", "artist | album @user"];

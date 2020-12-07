@@ -2,6 +2,8 @@ import { Message } from "discord.js";
 import { PermissionsChildCommand } from "./PermissionsChildCommand";
 
 export class Help extends PermissionsChildCommand {
+  idSeed = "loona hyunjin";
+
   description = "Shows help about permissions";
   usage = "";
 
@@ -28,8 +30,10 @@ export class Help extends PermissionsChildCommand {
           "Channel restrictions",
           `You can restrict users from running certain commands in certain channels by running channel blacklist. Eg. \`${prefix}perms channelblacklist <commandName> #channel1 #channel2\``
         )
-        .setFooter(
-          "All users with `ADMINISTRATOR` priveliges in Discord automatically bypass any permissions checks"
+        .addField(
+          "Admin priveleges",
+          "All users with `ADMINISTRATOR` priveliges in Discord automatically bypass any permissions checks. This means that if you want to only allow administrators to run a command, you can use the disable command.\n\n" +
+            "By default, the `permissions` and `crowns kill` commands are disabled (essentially restricting them to admins)"
         )
     );
   }

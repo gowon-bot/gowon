@@ -7,6 +7,8 @@ import { Validation } from "../../../lib/validation/ValidationChecker";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
 export default class ArtistAt extends LastFMBaseCommand {
+  idSeed = "cignature jeewon";
+  
   aliases = ["aa"];
   description = "Finds the artist in your library at a given rank";
   subcategory = "ranks";
@@ -42,7 +44,9 @@ export default class ArtistAt extends LastFMBaseCommand {
       );
 
     await this.reply(
-      `${artist.name.strong()} is ranked at #${artist["@attr"].rank.strong()} in ${
+      `${artist.name.strong()} is ranked at #${artist[
+        "@attr"
+      ].rank.strong()} in ${
         perspective.possessive
       } top artists with ${numberDisplay(artist.playcount, "play").strong()}`
     );

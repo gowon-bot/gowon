@@ -3,6 +3,8 @@ import { AdminBaseCommand } from "./AdminBaseCommand";
 import { numberDisplay } from "../../helpers";
 
 export default class Usercount extends AdminBaseCommand {
+  idSeed = "loona yeojin";
+
   description = "Displays the number of users logged into the bot";
   aliases = ["uc"];
   usage = "";

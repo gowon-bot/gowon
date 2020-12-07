@@ -1,6 +1,8 @@
 import { OverviewChildCommand } from "./OverviewChildCommand";
 
 export class ScrobblesPerAlbum extends OverviewChildCommand {
+  idSeed = "snsd jessica";
+
   aliases = ["spl", "spal"];
   description = "Shows your average scrobbles per album";
 

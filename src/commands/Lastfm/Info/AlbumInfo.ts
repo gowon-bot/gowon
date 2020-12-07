@@ -7,6 +7,8 @@ import { LineConsolidator } from "../../../lib/LineConsolidator";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
 export default class AlbumInfo extends InfoCommand {
+  idSeed = "nature uchae";
+
   shouldBeIndexed = true;
 
   aliases = ["ali", "li", "als", "ls"];

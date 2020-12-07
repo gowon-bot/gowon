@@ -3,6 +3,8 @@ import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 export default class WhoSampled extends LastFMBaseCommand {
+  idSeed = "elris hyeseong";
+  
   aliases = ["ws"];
   description = "Search WhoSampled for a song (or anything!)";
   subcategory = "external";

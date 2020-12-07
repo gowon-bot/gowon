@@ -8,6 +8,10 @@ export class GowonClient {
 
   constructor(public client: Client, public environment: string) {}
 
+  get specialUsers() {
+    return specialUsers;
+  }
+
   private getUserIDs(users: { [key: string]: string | undefined }[]): string[] {
     return users.map((a) => Object.keys(a)[0]);
   }

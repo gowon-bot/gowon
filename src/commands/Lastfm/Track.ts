@@ -9,6 +9,8 @@ import { Image } from "../../services/LastFM/LastFMService.types";
 import { LastFMBaseCommand } from "./LastFMBaseCommand";
 
 export default class Track extends LastFMBaseCommand {
+  idSeed = "april jinsol";
+
   description = "Searches and displays a track";
   usage = ["", "artist | track", "query string"];
   arguments: Arguments = {

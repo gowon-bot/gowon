@@ -5,6 +5,8 @@ import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { RunAs } from "../../../lib/AliasChecker";
 
 export default class ArtistPlays extends LastFMBaseCommand {
+  idSeed = "itzy ryujin";
+  
   aliases = ["ap", "p", "plays"];
   description = "Shows you how many plays you have of a given artist";
   subcategory = "plays";

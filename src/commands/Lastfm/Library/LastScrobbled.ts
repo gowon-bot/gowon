@@ -6,6 +6,8 @@ import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { LinkGenerator } from "../../../helpers/lastFM";
 
 export default class LastScrobbled extends LastFMBaseCommand {
+  idSeed = "gwsn lena";
+  
   description = "Shows the last time you scrobbled a song";
   aliases = ["last"];
   usage = ["", "artist | track @user"];

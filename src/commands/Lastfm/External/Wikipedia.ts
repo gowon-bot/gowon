@@ -3,6 +3,8 @@ import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 export default class Wikipedia extends LastFMBaseCommand {
+  idSeed = "elris yukyung";
+  
   aliases = ["wiki"];
   description = "Search wikipedia for a song (or anything!)";
   subcategory = "external";

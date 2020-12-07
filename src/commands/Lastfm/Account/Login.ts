@@ -9,6 +9,8 @@ import { DiscordIDMention } from "../../../lib/arguments/mentions/DiscordIDMenti
 import { LogicError } from "../../../errors";
 
 export default class Login extends LastFMBaseCommand {
+  idSeed = "loona jinsoul";
+
   description = "Sets your Last.fm username in Gowon";
   subcategory = "accounts";
   usage = "username";

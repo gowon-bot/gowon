@@ -5,7 +5,7 @@ import { AdminService } from "../../services/dbservices/AdminService";
 export abstract class AdminBaseCommand extends BaseCommand {
   category = "admin";
 
-  adminService = new AdminService()
+  adminService = new AdminService(this.gowonClient);
 }
 
 export abstract class AdminBaseParentCommand extends ParentCommand {
@@ -15,5 +15,5 @@ export abstract class AdminBaseParentCommand extends ParentCommand {
 export abstract class AdminBaseChildCommand extends ChildCommand {
   category = "admin";
 
-  adminService = new AdminService()
+  adminService = new AdminService(this.gowonClient);
 }

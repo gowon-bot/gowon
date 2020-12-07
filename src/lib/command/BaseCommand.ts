@@ -38,6 +38,12 @@ export interface Delegate {
 }
 
 export abstract class BaseCommand implements Command {
+  /**
+   * idSeed is the seed for the generated command id
+   * **Must be unique among all commands!**
+   */
+  abstract idSeed: string;
+
   logger = new Logger();
 
   name: string = this.constructor.name.toLowerCase();
@@ -90,7 +96,7 @@ export abstract class BaseCommand implements Command {
   }
 
   get id(): string {
-    return md5(this.name + this.parentName + this.category);
+    return md5(this.idSeed);
   }
 
   abstract run(message: Message, runAs: RunAs): Promise<void>;

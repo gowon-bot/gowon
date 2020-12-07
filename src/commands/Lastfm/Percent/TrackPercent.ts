@@ -5,6 +5,8 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
 export default class TrackPercent extends LastFMBaseCommand {
+  idSeed = "itzy yeji";
+  
   aliases = ["tpct"];
   description =
     "Shows you what percentage of an artist's scrobbles are made up by a certain track";

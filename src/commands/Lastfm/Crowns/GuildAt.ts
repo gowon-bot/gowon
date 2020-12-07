@@ -6,6 +6,8 @@ import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 
 export class GuildAt extends CrownsChildCommand {
+  idSeed = "wjsn bona";
+
   description =
     "Shows the user at a given rank on the crowns leaderboard, and the surrounding users";
   usage = "rank";

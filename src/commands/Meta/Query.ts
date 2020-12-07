@@ -6,6 +6,8 @@ import { Validation } from "../../lib/validation/ValidationChecker";
 import { validators } from "../../lib/validation/validators";
 
 export default class Query extends BaseCommand {
+  idSeed = "gfriend sowon";
+
   description = "Query the database";
   secretCommand = true;
   devCommand = true;

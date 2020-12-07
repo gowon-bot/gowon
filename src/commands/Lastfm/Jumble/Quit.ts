@@ -4,9 +4,11 @@ import { jumbleRedisKey, JumbledArtist } from "./JumbleParentCommand";
 import { LogicError } from "../../../errors";
 
 export class Quit extends JumbleChildCommand {
+  idSeed = "clc sorn";
+
   description = "Giveup on the current jumble";
   aliases = ["giveup"];
-  usage = ""
+  usage = "";
 
   async run(message: Message) {
     let jumbledArtist = await this.sessionGetJSON<JumbledArtist>(

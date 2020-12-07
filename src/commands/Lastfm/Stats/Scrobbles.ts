@@ -11,8 +11,11 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
 export default class Scrobbles extends LastFMBaseCommand {
+  idSeed = "wooah songyee";
+  
   aliases = ["s"];
-  description = "Shows you how many scrobbles you have over a given time period";
+  description =
+    "Shows you how many scrobbles you have over a given time period";
   subcategory = "library stats";
   usage = ["time period @user"];
 

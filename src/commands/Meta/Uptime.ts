@@ -4,6 +4,8 @@ import { BaseCommand } from "../../lib/command/BaseCommand";
 import { PM2Service } from "../../services/PM2Service";
 
 export default class Uptime extends BaseCommand {
+  idSeed = "gfriend yuju";
+
   description = "Show's the bots uptime";
   secretCommand = true;
   devCommand = true;

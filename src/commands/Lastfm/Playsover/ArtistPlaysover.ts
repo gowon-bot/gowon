@@ -4,6 +4,8 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
 export default class ArtistPlaysover extends LastFMBaseCommand {
+  idSeed = "gugudan sally";
+  
   aliases = ["po", "apo"];
   description = "Shows you how many artists you have over a certain playcount";
   subcategory = "playsover";
@@ -36,7 +38,10 @@ export default class ArtistPlaysover extends LastFMBaseCommand {
     await this.reply(
       `${numberDisplay(playsover).strong()} of ${
         perspective.possessive
-      } top 1,000 artists have at least ${numberDisplay(plays, "play").strong()}`
+      } top 1,000 artists have at least ${numberDisplay(
+        plays,
+        "play"
+      ).strong()}`
     );
   }
 }

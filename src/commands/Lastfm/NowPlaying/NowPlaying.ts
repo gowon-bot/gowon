@@ -5,6 +5,8 @@ import { NowPlayingBaseCommand } from "./NowPlayingBaseCommand";
 import { promiseAllSettled } from "../../../helpers";
 
 export default class NowPlaying extends NowPlayingBaseCommand {
+  idSeed = "stayc isa";
+
   aliases = ["np", "fm"];
   description = "Displays the now playing or last played track from Last.fm";
 

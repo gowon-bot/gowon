@@ -4,6 +4,8 @@ import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 export default class TrackPage extends LastFMBaseCommand {
+  idSeed = "twice dahyun";
+
   aliases = ["tpa", "trpa"];
   description = "Links you to a track's page on Last.fm";
   subcategory = "pages";

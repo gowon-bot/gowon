@@ -13,4 +13,8 @@ export class DisabledCommand extends BaseEntity {
 
   @Column()
   commandFriendlyName!: string;
+
+  // devPermissions can only be modified by developers
+  @Column({ default: false })
+  devPermission!: boolean;
 }

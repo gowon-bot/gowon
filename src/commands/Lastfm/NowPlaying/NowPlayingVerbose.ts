@@ -5,6 +5,8 @@ import { NowPlayingBaseCommand } from "./NowPlayingBaseCommand";
 import { promiseAllSettled } from "../../../helpers";
 
 export default class NowPlayingVerbose extends NowPlayingBaseCommand {
+  idSeed = "fx luna";
+  
   aliases = ["npv", "fmv", "fmt"];
   description =
     "Displays the now playing or last played track from Last.fm, including some track information";

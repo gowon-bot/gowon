@@ -2,6 +2,8 @@ import { Message } from "discord.js";
 import { PermissionsChildCommand } from "../Permissions/PermissionsChildCommand";
 
 export class Disabled extends PermissionsChildCommand {
+  idSeed = "red velvet seulgi";
+
   description = "List all disabled commands";
   usage = "";
   aliases = ["listdisabled", "disabledcommands"];

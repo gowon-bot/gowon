@@ -12,10 +12,10 @@ import { GowonClient } from "../GowonClient";
 
 export class CommandHandler {
   gowonService = GowonService.getInstance();
-  adminService = new AdminService();
   metaService = new MetaService();
   commandManager = new CommandManager();
   client!: GowonClient;
+  adminService = new AdminService(this.client);
   private logger = new Logger();
 
   setClient(client: GowonClient) {

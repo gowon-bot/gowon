@@ -14,6 +14,8 @@ import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { dateDisplay } from "../../../helpers";
 
 export default class GoBack extends LastFMBaseCommand {
+  idSeed = "wooah sora";
+
   aliases = ["gb"];
   description = "Shows what you scrobbled in the past...";
   subcategory = "library stats";

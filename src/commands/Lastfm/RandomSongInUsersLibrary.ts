@@ -6,6 +6,8 @@ import { validators } from "../../lib/validation/validators";
 import { LastFMBaseCommand } from "./LastFMBaseCommand";
 
 export default class RandomsongInUsersLibrary extends LastFMBaseCommand {
+  idSeed = "april yena";
+  
   shouldBeIndexed = false;
 
   arguments: Arguments = {

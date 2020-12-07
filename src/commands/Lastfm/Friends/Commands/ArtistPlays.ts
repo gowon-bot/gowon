@@ -6,6 +6,8 @@ import { LinkGenerator } from "../../../../helpers/lastFM";
 import { LastFMEntityNotFoundError } from "../../../../errors";
 
 export class ArtistPlays extends FriendsChildCommand {
+  idSeed = "elris EJ";
+
   description = "Shows how many plays of an artist your friends have";
   aliases = ["ap", "p"];
   usage = ["", "artist"];

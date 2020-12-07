@@ -5,6 +5,7 @@ import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 
 export default class TagInfo extends InfoCommand {
+  idSeed = "csvc park moonchi";
   shouldBeIndexed = true;
 
   aliases = ["tai", "gi"];

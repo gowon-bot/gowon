@@ -6,6 +6,8 @@ import { Paginator } from "../../../lib/Paginator";
 import { SearchCommand } from "./SearchCommand";
 
 export default class SearchTrack extends SearchCommand {
+  idSeed = "gwsn seoryoung";
+
   shouldBeIndexed = true;
   description = "Searches your top tracks for keywords";
   aliases = ["st", "str", "strack"];

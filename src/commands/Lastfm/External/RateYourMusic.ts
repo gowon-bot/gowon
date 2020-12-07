@@ -3,6 +3,8 @@ import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 export default class RateYourMusic extends LastFMBaseCommand {
+  idSeed = "elris bella";
+
   aliases = ["ryms"];
   description = "Search Rateyourmusic for an album (or anything!)";
   subcategory = "external";

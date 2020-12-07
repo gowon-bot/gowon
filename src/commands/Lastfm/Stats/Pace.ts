@@ -14,6 +14,8 @@ import { validators } from "../../../lib/validation/validators";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
 export default class Pace extends LastFMBaseCommand {
+  idSeed = "wooah minseo";
+
   aliases = ["pc"];
   description = "Predicts when a user is gonna hit a scrobble milestone";
   subcategory = "library stats";

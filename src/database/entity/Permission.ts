@@ -32,6 +32,10 @@ export class Permission extends BaseEntity {
   @Column()
   commandFriendlyName!: string;
 
+  // devPermissions can only be modified by developers
+  @Column({ default: false })
+  devPermission!: boolean;
+
   static async toDiscordRole(message: Message, roleID: string): Promise<Role> {
     return (await message.guild?.roles.fetch(roleID))!;
   }

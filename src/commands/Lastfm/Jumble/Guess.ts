@@ -6,6 +6,8 @@ import { Arguments } from "../../../lib/arguments/arguments";
 import { shuffle } from "../../../helpers";
 
 export class Guess extends JumbleChildCommand {
+  idSeed = "clc yeeun";
+  
   description = "Picks an artist from your library to jumble";
   usage = ["artist_guess"];
 

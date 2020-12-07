@@ -1,8 +1,11 @@
 import { OverviewChildCommand } from "./OverviewChildCommand";
 
 export class Per extends OverviewChildCommand {
+  idSeed = "snsd yoona";
+  
   aliases = ["lpa", "tpa", "tpl", "alpa", "tpal"];
-  description = "Shows averages about your library. Average...\n- albums per artist\n- tracks per artist\n- tracks per album";
+  description =
+    "Shows averages about your library. Average...\n- albums per artist\n- tracks per artist\n- tracks per album";
 
   async run() {
     let { username, perspective } = await this.parseMentions();
@@ -23,8 +26,9 @@ export class Per extends OverviewChildCommand {
 
     let embed = this.newEmbed()
       .setAuthor(username + badge, image)
-      .setColor(colour)
-      .setDescription(`${perspective.upper.regularVerb("listen")} to an average of...
+      .setColor(colour).setDescription(`${perspective.upper.regularVerb(
+      "listen"
+    )} to an average of...
       ${lpa.asString.strong()} albums per artist!
       ${tpa.asString.strong()} tracks per artist!
       ${tpl.asString.strong()} tracks per album!`);

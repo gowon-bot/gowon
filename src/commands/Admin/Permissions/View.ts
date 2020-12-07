@@ -11,6 +11,8 @@ interface GroupedPermissions {
 }
 
 export class View extends PermissionsChildCommand {
+  idSeed = "loona haseul";
+
   description =
     "View the permissions in the server, for a specific command, or for a specific user/role";
 

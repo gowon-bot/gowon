@@ -5,6 +5,8 @@ import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { LinkGenerator } from "../../../helpers/lastFM";
 
 export default class ArtistTopTracks extends LastFMBaseCommand {
+  idSeed = "gwsn anne";
+  
   description = "Shows your top tracks from an artist";
   aliases = ["att"];
   usage = ["", "artist @user"];

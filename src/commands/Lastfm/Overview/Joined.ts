@@ -1,6 +1,8 @@
 import { OverviewChildCommand } from "./OverviewChildCommand";
 
 export class Joined extends OverviewChildCommand {
+  idSeed = "snsd yuri";
+  
   aliases = ["j", "join"];
   description = "Shows when a user joined Last.fm";
 

@@ -6,6 +6,8 @@ import { GuildAround } from "./GuildAround";
 import { GuildAt } from "./GuildAt";
 
 export class Guild extends CrownsChildCommand {
+  idSeed = "weki meki rina";
+
   description = "Shows the server's crowns leaderboard";
   aliases = ["leaderboard", "ldb"];
   usage = "";

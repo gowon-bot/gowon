@@ -2,6 +2,8 @@ import { CrownsChildCommand } from "./CrownsChildCommand";
 import { Message } from "discord.js";
 
 export class OptIn extends CrownsChildCommand {
+  idSeed = "wjsn yeoreum";
+
   description = "Opts you back into the crowns game";
   usage = "";
 

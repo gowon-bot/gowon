@@ -9,6 +9,8 @@ import { flatDeep } from "../helpers";
 import { ParentCommand } from "../lib/command/ParentCommand";
 
 export default class Help extends BaseCommand {
+  idSeed = "clc seungyeon";
+
   aliases = ["h"];
   description = "Displays the help menu, or help about a given command";
   usage = ["", "command"];
@@ -20,7 +22,7 @@ export default class Help extends BaseCommand {
   };
 
   commandManager = new CommandManager();
-  adminService = new AdminService();
+  adminService = new AdminService(this.gowonClient);
 
   prefix!: string;
 
@@ -69,7 +71,7 @@ export default class Help extends BaseCommand {
         message.author.avatarURL() || ""
       )
       .setDescription(
-        `Run \`${this.prefix}help <command>\` to learn more about specific commands\n\n` +
+        `Run \`${this.prefix}help <command>\` to learn more about specific commands\nTo change prefix, mention Gowon (\`@Gowon prefix ?\`)\n\n` +
           Object.keys(groupedCommands)
             .map(
               (gc) =>

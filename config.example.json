@@ -6,6 +6,7 @@
   "lastFMSecret": "Get this from https://last.fm/api",
 
   "discordToken": "Get this from the discord developer portal",
+  "discordClientID": "",
 
   "defaultPrefix": ".",
 

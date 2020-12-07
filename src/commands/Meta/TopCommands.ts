@@ -10,6 +10,8 @@ import {
 } from "../../helpers/date";
 
 export class TopCommands extends MetaChildCommand {
+  idSeed = "eunha";
+
   description = "Shows the most used commands over a given time period";
   usage = ["", "time period"];
 

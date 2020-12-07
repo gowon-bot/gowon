@@ -6,22 +6,30 @@ import {
   MismatchedPermissionsError,
   RecordNotFoundError,
   DuplicateRecordError,
+  LogicError,
 } from "../../errors";
 import { Permission } from "../../database/entity/Permission";
 import { Can } from "../../lib/permissions/Can";
 import { QueryFailedError } from "typeorm";
 import { ChannelBlacklist } from "../../database/entity/ChannelBlacklist";
 import { CacheScopedKey } from "../../database/cache/ShallowCache";
+import { GowonClient } from "../../lib/GowonClient";
+import { Logger } from "../../lib/Logger";
 
 export class AdminService extends BaseService {
   get can(): Can {
     return new Can(this);
   }
 
+  constructor(private gowonClient: GowonClient, logger?: Logger) {
+    super(logger);
+  }
+
   async disableCommand(
     commandID: string,
     serverID: string,
-    commandFriendlyName: string
+    commandFriendlyName: string,
+    dev = false
   ): Promise<DisabledCommand> {
     let disabledCommand = await DisabledCommand.findOne({
       where: { commandID, serverID },
@@ -35,6 +43,7 @@ export class AdminService extends BaseService {
       commandID,
       serverID,
       commandFriendlyName,
+      devPermission: dev,
     });
 
     await newDisabledCommand.save();
@@ -44,13 +53,23 @@ export class AdminService extends BaseService {
 
   async enableCommand(
     commandID: string,
-    serverID: string
+    serverID: string,
+    enablerID: string
   ): Promise<DisabledCommand> {
     let disabledCommand = await DisabledCommand.findOne({
       where: { commandID, serverID },
     });
 
     if (!disabledCommand) throw new CommandNotDisabledError();
+
+    if (
+      disabledCommand.devPermission &&
+      !this.gowonClient.isDeveloper(enablerID)
+    ) {
+      throw new LogicError(
+        "You need to be a developer to reenable this command!"
+      );
+    }
 
     this.log("enabling " + commandID + " for server " + serverID);
 

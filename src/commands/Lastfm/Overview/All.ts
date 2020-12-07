@@ -4,6 +4,8 @@ import { Emoji } from "../../../lib/Emoji";
 import { LinkGenerator } from "../../../helpers/lastFM";
 
 export class All extends OverviewChildCommand {
+  idSeed = "fx victoria";
+
   description = "Shows information about you and your library";
 
   async run() {

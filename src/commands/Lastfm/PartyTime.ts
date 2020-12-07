@@ -4,6 +4,8 @@ import { Validation } from "../../lib/validation/ValidationChecker";
 import { validators } from "../../lib/validation/validators";
 
 export default class PartyTime extends LastFMBaseCommand {
+  idSeed = "april chaewon";
+  
   aliases = ["pt"];
   description = "Counts down from a given number";
   usage = ["", "partytime"];

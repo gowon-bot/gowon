@@ -5,6 +5,8 @@ import { Arguments } from "../../../lib/arguments/arguments";
 import { LogicError } from "../../../errors";
 
 export class Rank extends CrownsChildCommand {
+  idSeed = "wjsn exy";
+
   aliases = ["r"];
   description =
     "Ranks a user on the crowns leaderboard based on their crown count";

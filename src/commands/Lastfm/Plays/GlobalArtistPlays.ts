@@ -5,8 +5,11 @@ import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { calculatePercent } from "../../../helpers/stats";
 
 export default class GlobalArtistPlays extends LastFMBaseCommand {
+  idSeed = "itzy yuna";
+
   aliases = ["gap", "gp", "globalp"];
-  description = "Shows you how many plays Last.fm has of a given artist for all users";
+  description =
+    "Shows you how many plays Last.fm has of a given artist for all users";
   subcategory = "plays";
   usage = ["", "artist"];
 

@@ -4,6 +4,8 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
 export default class AlbumPlaysequal extends LastFMBaseCommand {
+  idSeed = "gugudan haebin";
+  
   aliases = ["alpe", "lpe"];
   description =
     "Shows you how many albums you have equal to a certain playcount";

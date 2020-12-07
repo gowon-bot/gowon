@@ -5,6 +5,8 @@ import { standardMentions } from "../../lib/arguments/mentions/mentions";
 import { LastFMBaseCommand } from "./LastFMBaseCommand";
 
 export default class Cover extends LastFMBaseCommand {
+  idSeed = "april chaekyung";
+
   aliases = ["co"];
   description = "Shows the cover for a given album";
   usage = ["", "artist | album @user"];

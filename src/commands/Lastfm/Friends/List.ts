@@ -4,6 +4,8 @@ import { MultiRequester } from "../../../lib/MultiRequester";
 import { numberDisplay } from "../../../helpers";
 
 export class List extends FriendsChildCommand {
+  idSeed = "nature chaebin";
+
   aliases = ["fm", "np", "nowplaying"];
   description = "Shows what your friends are listening to";
   usage = "";

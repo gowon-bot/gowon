@@ -7,6 +7,8 @@ import { validators } from "../../../lib/validation/validators";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
 export default class AlbumAt extends LastFMBaseCommand {
+  idSeed = "gugudan hyeyeon";
+
   aliases = ["ala"];
   description = "Finds the album in your library at a given rank";
   subcategory = "ranks";

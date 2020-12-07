@@ -6,6 +6,8 @@ import { validators } from "../../../lib/validation/validators";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 export abstract class SearchCommand extends LastFMBaseCommand {
+  idSeed = "gwsn seokyung";
+
   shouldBeIndexed = false;
   subcategory = "library";
 

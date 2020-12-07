@@ -4,6 +4,8 @@ import { validators } from "../../../lib/validation/validators";
 import { CrownsChildCommand } from "./CrownsChildCommand";
 
 export class BanArtist extends CrownsChildCommand {
+  idSeed = "loona olivia hye";
+
   description = "Bans an artist from the crowns game";
   usage = "artist";
   arguments: Arguments = {

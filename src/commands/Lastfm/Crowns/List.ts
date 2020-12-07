@@ -5,6 +5,8 @@ import { LogicError } from "../../../errors";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
 export class List extends CrownsChildCommand {
+  idSeed = "wjsn eunseo";
+
   description = "Lists a user's top crowns";
   usage = ["", "@user"];
 

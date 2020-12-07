@@ -1,6 +1,8 @@
 import { OverviewChildCommand } from "./OverviewChildCommand";
 
 export class ScrobblesPerTrack extends OverviewChildCommand {
+  idSeed = "twice jeongyeon";
+  
   aliases = ["spt"];
   description = "Shows your average scrobbles per track";
 

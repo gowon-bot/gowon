@@ -5,6 +5,8 @@ import { LogicError } from "../../../errors";
 import { shuffle } from "../../../helpers";
 
 export class Hint extends JumbleChildCommand {
+  idSeed = "clc elkie";
+  
   description = "Gives you a hint on the current jumble";
   usage = "";
 

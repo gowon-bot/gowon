@@ -4,8 +4,11 @@ import { LogicError } from "../../../errors";
 import { numberDisplay } from "../../../helpers";
 
 export class SumTop extends OverviewChildCommand {
+  idSeed = "twice momo";
+  
   aliases = ["toppct"];
-  description = "Shows what percent of your scrobbles are made up by your top artists";
+  description =
+    "Shows what percent of your scrobbles are made up by your top artists";
   usage = ["", "top", "top @user"];
 
   arguments: Arguments = {
@@ -23,7 +26,10 @@ export class SumTop extends OverviewChildCommand {
       throw new LogicError("Please enter a valid number (between 2 and 1000)");
 
     // Cache the top artists and user info responses
-    await Promise.all([this.calculator.topArtists(), this.calculator.userInfo()])
+    await Promise.all([
+      this.calculator.topArtists(),
+      this.calculator.userInfo(),
+    ]);
 
     let { badge, colour, image } = await this.getAuthorDetails();
     let [sumtop, sumtoppct] = await Promise.all([

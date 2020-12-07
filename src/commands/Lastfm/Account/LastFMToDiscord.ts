@@ -5,6 +5,8 @@ import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 
 export default class LastFmToDiscord extends LastFMBaseCommand {
+  idSeed = "loona choerry";
+
   aliases = ["lfm2d", "last2todiscord", "l2d"];
   description = "Displays who is logged in as a given Last.fm user";
   subcategory = "accounts";

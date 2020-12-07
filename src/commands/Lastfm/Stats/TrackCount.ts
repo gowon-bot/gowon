@@ -6,6 +6,8 @@ import { LastFMPeriod } from "../../../services/LastFM/LastFMService.types";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
 export default class TrackCount extends LastFMBaseCommand {
+  idSeed = "secret number soodam";
+
   aliases = ["tc"];
   description = "Shows you how many tracks you've scrobbled";
   subcategory = "library stats";

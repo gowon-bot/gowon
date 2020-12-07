@@ -25,8 +25,11 @@ import { UnbanArtist } from "./UnbanArtist";
 import { GuildAt } from "./GuildAt";
 
 export default class CrownsParentCommand extends LastFMBaseParentCommand {
+  idSeed = "weki meki lua";
+
   friendlyName = "crowns";
-  description = "See `!crownsgame` for more info";
+  description =
+    "See who has the most plays for an artist!\nCrowns are not automatic, to claim a crown see crown check";
   subcategory = "games";
 
   prefixes = ["crowns", "cw"];

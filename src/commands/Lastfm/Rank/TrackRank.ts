@@ -4,6 +4,8 @@ import { numberDisplay } from "../../../helpers";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
 export default class TrackRank extends LastFMBaseCommand {
+  idSeed = "cignature seline";
+  
   aliases = ["tra", "tr"];
   description = "Shows what rank a track is at in your top 1000 tracks";
   subcategory = "ranks";

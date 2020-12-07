@@ -1,6 +1,8 @@
 import { BaseCommand } from "../../lib/command/BaseCommand";
 
 export default class Prefix extends BaseCommand {
+  idSeed = "apink hayoung";
+  
   description = "Set or view the prefix";
   secretCommand = true;
   shouldBeIndexed = false;

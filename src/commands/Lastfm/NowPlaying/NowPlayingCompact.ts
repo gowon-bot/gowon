@@ -2,6 +2,8 @@ import { parseLastFMTrackResponse } from "../../../helpers/lastFM";
 import { NowPlayingBaseCommand } from "./NowPlayingBaseCommand";
 
 export default class NowPlayingCompact extends NowPlayingBaseCommand {
+  idSeed = "fx sulli";
+  
   aliases = ["npc", "fmc"];
   description = "Displays the now playing or last played track from Last.fm";
 

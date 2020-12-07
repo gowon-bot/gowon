@@ -4,6 +4,8 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
 export default class AlbumPlays extends LastFMBaseCommand {
+  idSeed = "itzy lia";
+
   aliases = ["alp", "lp"];
   description = "Shows you how many plays you have of a given album";
   subcategory = "plays";

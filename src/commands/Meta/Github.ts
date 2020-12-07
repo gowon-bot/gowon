@@ -1,6 +1,8 @@
 import { BaseCommand } from "../../lib/command/BaseCommand";
 
 export default class Github extends BaseCommand {
+  idSeed = "apink chorom";
+
   aliases = ["gh"];
   secretCommand = true;
   description = "Displays the github link for the bot";

@@ -3,6 +3,8 @@ import { Message } from "discord.js";
 import { CommandManager } from "../../lib/command/CommandManager";
 
 export default class SecretCommands extends BaseCommand {
+  idSeed = "2ne1 minzy";
+
   description = "Shows the secret commands";
   secretCommand = true;
   devCommand = true;

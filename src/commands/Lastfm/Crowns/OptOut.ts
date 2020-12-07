@@ -3,6 +3,8 @@ import { Message } from "discord.js";
 import { numberDisplay } from "../../../helpers";
 
 export class OptOut extends CrownsChildCommand {
+  idSeed = "wjsn seola"
+  
   description = "Opts you out of the crowns game, deleting all your crowns, and preventing you from getting new ones";
   usage = "";
 

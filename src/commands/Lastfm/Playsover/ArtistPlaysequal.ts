@@ -4,6 +4,8 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
 export default class ArtistPlaysequal extends LastFMBaseCommand {
+  idSeed = "gugudan sejeong";
+  
   aliases = ["pe", "ape"];
   description =
     "Shows you how many artists you have equal to a certain playcount";

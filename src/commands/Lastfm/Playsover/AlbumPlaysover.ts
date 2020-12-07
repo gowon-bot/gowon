@@ -4,6 +4,8 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
 export default class AlbumPlaysover extends LastFMBaseCommand {
+  idSeed = "gugudan nayoung";
+
   aliases = ["alpo", "lpo"];
   description = "Shows you how many albums you have over a certain playcount";
   subcategory = "playsover";

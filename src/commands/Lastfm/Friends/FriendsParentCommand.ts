@@ -11,6 +11,8 @@ import { RemoveAll } from "./RemoveAll";
 import { Joined } from "./Commands/Joined";
 
 export default class FriendsParentCommand extends LastFMBaseParentCommand {
+  idSeed = "nature lu";
+
   description = "Manage friends, allowing you to see various stats about them";
 
   friendlyName = "friends";

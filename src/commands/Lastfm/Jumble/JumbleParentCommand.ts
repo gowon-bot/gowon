@@ -14,8 +14,12 @@ export interface JumbledArtist {
 export const jumbleRedisKey = "jumbledArtist";
 
 export default class JumbleParentCommand extends LastFMBaseParentCommand {
+  idSeed = "clc eunbin";
+
   friendlyName = "jumble";
-  description = "Jumbles an artist from your library for you to guess. Run jumble me to generate an artist\nSee `!jumblegame` for more info";
+  description =
+    "Jumbles an artist from your library for you to guess. See jumble me to generate an artist.\n" +
+    "To make a guess run `jumble <your guess here>` (or if your guess conflicts with a jumble command, `jumble guess <your guess here>`)";
   subcategory = "games";
 
   prefixes = ["jumble", "j"];

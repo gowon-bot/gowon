@@ -6,6 +6,8 @@ import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 
 export default class TrackAt extends LastFMBaseCommand {
+  idSeed = "cignature sunn";
+
   aliases = ["ta"];
   description = "Finds the track in your library at a given rank";
   subcategory = "ranks";

@@ -15,6 +15,8 @@ import { Breadth } from "./Breadth";
 import { Playsover } from "./Playsover";
 
 export default class OverviewParentCommand extends LastFMBaseParentCommand {
+  idSeed = "snsd sooyoung";
+  
   description =
     "Shows information about you and your library. Run overview all to see an example";
   friendlyName = "overview";

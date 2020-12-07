@@ -7,6 +7,8 @@ import { dateDisplay } from "../../../../helpers";
 import { fromUnixTime } from "date-fns";
 
 export class Joined extends FriendsChildCommand {
+  idSeed = "elris chaejeong";
+
   description = "Shows when your friends joined Last.fm";
   aliases = ["j"];
   usage = ["", "time period"];

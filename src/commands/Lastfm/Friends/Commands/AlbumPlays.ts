@@ -5,6 +5,8 @@ import { Arguments } from "../../../../lib/arguments/arguments";
 import { LastFMEntityNotFoundError } from "../../../../errors";
 
 export class AlbumPlays extends FriendsChildCommand {
+  idSeed = "elris karin";
+
   description = "Shows how many plays of an album your friends have";
   aliases = ["lp", "alp"];
   usage = ["", "artist | album"];

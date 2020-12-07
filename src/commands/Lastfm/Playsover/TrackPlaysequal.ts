@@ -4,6 +4,8 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
 export default class TrackPlaysequal extends LastFMBaseCommand {
+  idSeed = "gugudan soyee";
+  
   aliases = ["trpe", "tpe"];
   description =
     "Shows you how many tracks you have equal to a certain playcount";

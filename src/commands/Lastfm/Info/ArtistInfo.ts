@@ -8,6 +8,7 @@ import { LineConsolidator } from "../../../lib/LineConsolidator";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
 export default class ArtistInfo extends InfoCommand {
+  idSeed = "csvc lovey  ";
   shouldBeIndexed = true;
 
   aliases = ["ai", "as"];

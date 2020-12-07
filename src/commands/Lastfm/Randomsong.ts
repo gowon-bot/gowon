@@ -5,8 +5,12 @@ import { LastFMBaseCommand } from "./LastFMBaseCommand";
 import RandomsongInUsersLibrary from "./RandomSongInUsersLibrary";
 
 export default class Randomsong extends LastFMBaseCommand {
+  idSeed = "april naeun";
   description = "Picks a random song from all the users in a guild";
-  usage = ["", "@user (will pick a random song in their top tracks) poolAmount"];
+  usage = [
+    "",
+    "@user (will pick a random song in their top tracks) poolAmount",
+  ];
 
   arguments: Arguments = {
     mentions: standardMentions,

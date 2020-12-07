@@ -1,6 +1,8 @@
 import { BaseCommand } from "../../lib/command/BaseCommand";
 
 export default class WJSN extends BaseCommand {
+  idSeed = "clc yujin";
+  
   description = "The only good wjsn song";
   secretCommand = true;
 

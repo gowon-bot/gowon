@@ -4,6 +4,8 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
 export default class TrackPlaysover extends LastFMBaseCommand {
+  idSeed = "gugudan mina";
+
   aliases = ["trpo", "tpo"];
   description = "Shows you how many tracks you have over a certain playcount";
   subcategory = "playsover";

@@ -2,6 +2,8 @@ import { CrownsChildCommand } from "./CrownsChildCommand";
 import { numberDisplay } from "../../../helpers";
 
 export class TopCrowns extends CrownsChildCommand {
+  idSeed = "wjsn meiqi";
+  
   description = "Lists the top crowns in the server";
   aliases = ["top", "stans"];
   usage = "";

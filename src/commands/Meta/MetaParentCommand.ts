@@ -4,6 +4,8 @@ import { MetaBaseParentCommand } from "./MetaBaseCommand";
 import { TopCommands } from "./TopCommands";
 
 export default class MetaParentCommamnd extends MetaBaseParentCommand {
+  idSeed = "apink namjoo";
+  
   friendlyName = "meta";
   prefixes = ["meta"];
   devCommand = true;

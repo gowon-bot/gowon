@@ -5,6 +5,8 @@ import { RecordNotFoundError } from "../../../errors";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
 export default class LastFMAccount extends LastFMBaseCommand {
+  idSeed = "loona kim lip";
+
   aliases = ["lfm"];
   description = "Links the last.fm profile page for a user";
   subcategory = "accounts";

@@ -3,6 +3,8 @@ import { numberDisplay, getOrdinal } from "../../../helpers";
 import { LogicError } from "../../../errors";
 
 export class Crowns extends OverviewChildCommand {
+  idSeed = "snsd tiffany";
+
   aliases = ["cw", "cws"];
   description = "Shows some stats about crowns";
 
@@ -28,9 +30,10 @@ export class Crowns extends OverviewChildCommand {
         crownRank!.count,
         "crown"
       ).strong()} (ranked ${getOrdinal(crownRank!.rank.toInt()).italic()})
-        For every ${numberDisplay(apc!.asNumber, "eligible artist").strong()}, ${
-        perspective.plusToHave
-      } a crown
+        For every ${numberDisplay(
+          apc!.asNumber,
+          "eligible artist"
+        ).strong()}, ${perspective.plusToHave} a crown
   For every ${numberDisplay(spc!.asNumber, "scrobble").strong()}, ${
         perspective.plusToHave
       } a crown

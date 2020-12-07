@@ -6,10 +6,12 @@ import { Paginator } from "../../../lib/Paginator";
 import { SearchCommand } from "./SearchCommand";
 
 export default class SearchAlbum extends SearchCommand {
+  idSeed = "gwsn miya";
+
   shouldBeIndexed = true;
   description = "Searches your top albums for keywords";
   aliases = ["sl", "sal", "salbum"];
-  
+
   variations: Variation[] = [
     {
       variationRegex: /sldeep|sld/,

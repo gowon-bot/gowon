@@ -9,6 +9,7 @@ import { RedirectsService } from "../../../services/dbservices/RedirectsService"
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 export default class Week extends LastFMBaseCommand {
+  idSeed = "cignature belle";
   description =
     "Shows an overview of your week, including your top artists, albums, and tracks";
   aliases = ["weekly"];

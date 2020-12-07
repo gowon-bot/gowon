@@ -2,6 +2,8 @@ import { Message } from "discord.js";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 export default class Logout extends LastFMBaseCommand {
+  idSeed = "loona gowon"
+
   description = "Unsets your Last.fm username in Gowon";
   subcategory = "accounts";
   usage = "";

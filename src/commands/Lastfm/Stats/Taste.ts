@@ -20,6 +20,7 @@ import { LogicError } from "../../../errors";
 import { DurationParser } from "../../../lib/DurationParser";
 
 export default class Taste extends LastFMBaseCommand {
+  idSeed = "secret number jinny";
   aliases = ["t"];
   description = "Shows your taste overlap with another user";
   subcategory = "library stats";

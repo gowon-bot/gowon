@@ -13,6 +13,7 @@ import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 
 export default class Combo extends LastFMBaseCommand {
+  idSeed = "wooah wooyeon";
   aliases = ["streak", "str"];
   description = `Shows your current streak\n Max combo: ${numberDisplay(
     this.gowonService.constants.hardPageLimit * 1000

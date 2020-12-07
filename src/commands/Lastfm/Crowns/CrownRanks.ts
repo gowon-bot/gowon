@@ -5,6 +5,8 @@ import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { LogicError } from "../../../errors";
 
 export class CrownRanks extends CrownsChildCommand {
+  idSeed = "weki meki elly";
+
   description =
     "Lists your top crowns and their ranks relative to the server's top crowns";
   aliases = ["stan", "ranks"];

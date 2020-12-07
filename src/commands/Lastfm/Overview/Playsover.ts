@@ -2,14 +2,17 @@ import { numberDisplay } from "../../../helpers";
 import { OverviewChildCommand } from "./OverviewChildCommand";
 
 export class Playsover extends OverviewChildCommand {
+  idSeed = "snsd seohyun";
+
   aliases = ["po"];
-  description = "Shows how many artists you have over 1000, 500, 250, 100, and 50 scrobbles respectively";
+  description =
+    "Shows how many artists you have over 1000, 500, 250, 100, and 50 scrobbles respectively";
 
   async run() {
     let { username, perspective } = await this.parseMentions();
 
     // Cache the top artists response
-    await this.calculator.topArtists()
+    await this.calculator.topArtists();
 
     let { badge, colour, image } = await this.getAuthorDetails();
     let [

@@ -5,6 +5,8 @@ import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { calculatePercent } from "../../../helpers/stats";
 
 export default class GlobalAlbumPlays extends LastFMBaseCommand {
+  idSeed = "itzy chaeryeong";
+  
   aliases = ["glp", "globallp"];
   description =
     "Shows you how many plays Last.fm has of a given album for all users";

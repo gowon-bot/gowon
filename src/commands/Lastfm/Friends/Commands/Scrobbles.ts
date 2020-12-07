@@ -9,6 +9,8 @@ import {
 } from "../../../../helpers/date";
 
 export class Scrobbles extends FriendsChildCommand {
+  idSeed = "nature sohee";
+
   description = "Shows how many scrobbles your friends have";
   aliases = ["s"];
   usage = ["", "time period"];

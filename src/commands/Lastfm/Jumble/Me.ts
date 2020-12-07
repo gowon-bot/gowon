@@ -10,6 +10,8 @@ import { LineConsolidator } from "../../../lib/LineConsolidator";
 import { TagConsolidator } from "../../../lib/tags/TagConsolidator";
 
 export class Me extends JumbleChildCommand {
+  idSeed = "csvc stella jang";
+  
   description =
     "Picks an artist from your library to jumble, or reshuffles your current one";
   usage = ["", "poolAmount"];

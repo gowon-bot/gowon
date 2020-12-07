@@ -4,6 +4,8 @@ import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { CrownsChildCommand } from "./CrownsChildCommand";
 
 export class Ban extends CrownsChildCommand {
+  idSeed = "loona chuu";
+
   description = "Bans a user from the crowns game";
   usage = "@user";
   arguments: Arguments = {

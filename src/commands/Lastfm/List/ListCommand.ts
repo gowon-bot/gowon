@@ -8,6 +8,8 @@ import { validators } from "../../../lib/validation/validators";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
 export abstract class ListCommand extends LastFMBaseCommand {
+  idSeed = "stayc j";
+  
   subcategory = "lists";
   usage = ["", "list_amount time period @user"];
 

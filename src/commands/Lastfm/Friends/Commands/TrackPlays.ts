@@ -5,6 +5,8 @@ import { Arguments } from "../../../../lib/arguments/arguments";
 import { LastFMEntityNotFoundError } from "../../../../errors";
 
 export class TrackPlays extends FriendsChildCommand {
+  idSeed = "nature saebom";
+
   description = "Shows how many plays of a track your friends have";
   aliases = ["tp"];
   usage = ["", "artist | track"];

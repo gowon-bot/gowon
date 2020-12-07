@@ -9,6 +9,8 @@ import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { fromUnixTime } from "date-fns";
 
 export default class Milestone extends LastFMBaseCommand {
+  idSeed = "wooah lucy";
+  
   aliases = ["mls", "ms"];
   description = "Shows you what you scrobbled at a given milestone";
   subcategory = "library stats";

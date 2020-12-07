@@ -6,6 +6,8 @@ import { LineConsolidator } from "../../../lib/LineConsolidator";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
 export default class TrackInfo extends InfoCommand {
+  idSeed = "iz*one eunbi";
+
   shouldBeIndexed = true;
 
   aliases = ["tri", "ti"];
@@ -82,7 +84,9 @@ export default class TrackInfo extends InfoCommand {
     );
 
     let embed = this.newEmbed()
-      .setTitle(trackInfo.name.italic() + " by " + trackInfo.artist.name.strong())
+      .setTitle(
+        trackInfo.name.italic() + " by " + trackInfo.artist.name.strong()
+      )
       .setDescription(this.lineConsolidator.consolidate())
       .addFields(
         {

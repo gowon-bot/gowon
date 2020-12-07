@@ -12,6 +12,8 @@ import { TagsService } from "../../services/dbservices/TagsService";
 import { LastFMService } from "../../services/LastFM/LastFMService";
 
 export default class About extends BaseCommand {
+  idSeed = "gfriend sinb";
+  
   aliases = ["stats"];
   description = "Shows information about the bot";
   secretCommand = true;

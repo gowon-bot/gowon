@@ -2,6 +2,8 @@ import { FriendsChildCommand } from "./FriendsChildCommand";
 import { numberDisplay } from "../../../helpers";
 
 export class RemoveAll extends FriendsChildCommand {
+  idSeed = "nature loha";
+
   description = "Removes all your friends";
   usage = [""];
 

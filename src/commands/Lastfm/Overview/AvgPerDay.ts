@@ -1,6 +1,8 @@
 import { OverviewChildCommand } from "./OverviewChildCommand";
 
 export class AvgPerDay extends OverviewChildCommand {
+  idSeed = "snsd taeyeon";
+  
   aliases = ["avg", "average", "daily", "spd"];
   description = "Shows your average scrobble count per day";
 

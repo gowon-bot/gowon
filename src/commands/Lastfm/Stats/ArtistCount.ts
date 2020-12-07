@@ -6,6 +6,8 @@ import { LastFMPeriod } from "../../../services/LastFM/LastFMService.types";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
 export default class ArtistCount extends LastFMBaseCommand {
+  idSeed = "wooah nana";
+
   aliases = ["ac"];
   description = "Shows you how many artists you've scrobbled";
   subcategory = "library stats";

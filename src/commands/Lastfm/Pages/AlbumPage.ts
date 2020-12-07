@@ -4,6 +4,8 @@ import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 export default class AlbumPage extends LastFMBaseCommand {
+  idSeed = "twice jihyo";
+
   aliases = ["alpa", "lpa"];
   description = "Links you to an album's page on Last.fm";
   subcategory = "pages";
@@ -14,7 +16,7 @@ export default class AlbumPage extends LastFMBaseCommand {
       artist: { index: 0, splitOn: "|" },
       album: { index: 1, splitOn: "|" },
     },
-    mentions: standardMentions
+    mentions: standardMentions,
   };
 
   async run() {

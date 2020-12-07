@@ -2,6 +2,8 @@ import { CrownsChildCommand } from "./CrownsChildCommand";
 import { Message } from "discord.js";
 
 export class SetInactiveRole extends CrownsChildCommand {
+  idSeed = "wjsn luda";
+
   description = "Sets the crowns inactive role for the server";
   usage = "@inactive_role";
 

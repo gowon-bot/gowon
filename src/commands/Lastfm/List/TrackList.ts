@@ -2,6 +2,8 @@ import { numberDisplay } from "../../../helpers";
 import { ListCommand } from "./ListCommand";
 
 export default class TrackList extends ListCommand {
+  idSeed = "stayc yoon";
+
   description = "Shows your top tracks over a given time period";
   aliases = ["tlist", "toptracks", "toptrack", "tracks", "tl"];
 

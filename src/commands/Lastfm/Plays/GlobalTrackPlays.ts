@@ -5,6 +5,8 @@ import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { calculatePercent } from "../../../helpers/stats";
 
 export default class GlobalTrackPlays extends LastFMBaseCommand {
+  idSeed = "gugudan mimi";
+
   aliases = ["gtp", "globaltp"];
   description =
     "Shows you how many plays Last.fm has of a given tracks for all users";

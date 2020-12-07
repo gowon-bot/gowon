@@ -6,6 +6,7 @@ import { LastFMPeriod } from "../../../services/LastFM/LastFMService.types";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
 export default class AlbumCount extends LastFMBaseCommand {
+  idSeed = "cignature semi";
   aliases = ["alc", "lc"];
   description = "Shows you how many albums you've scrobbled";
   subcategory = "library stats";

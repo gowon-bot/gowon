@@ -4,6 +4,8 @@ import { numberDisplay } from "../../../helpers";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
 export default class AlbumRank extends LastFMBaseCommand {
+  idSeed = "cignature chaesol";
+
   aliases = ["alra", "lra"];
   description = "Shows what rank a given album is in your top 1000 albums";
   subcategory = "ranks";

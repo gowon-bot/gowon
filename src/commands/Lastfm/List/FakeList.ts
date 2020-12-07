@@ -3,8 +3,11 @@ import { Arguments } from "../../../lib/arguments/arguments";
 import { ListCommand } from "./ListCommand";
 
 export default class List extends ListCommand {
+  idSeed = "stayc sieun";
+
   aliases = ["l"];
   description = "This is a temporary command <3";
+  secretCommand = true;
 
   arguments: Arguments = {
     inputs: {

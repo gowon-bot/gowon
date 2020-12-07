@@ -4,6 +4,8 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
 export default class ArtistRank extends LastFMBaseCommand {
+  idSeed = "cignature ye ah";
+
   aliases = ["ar", "ra"];
   description = "Shows what rank an artist is in your top 1000 artists";
   subcategory = "ranks";

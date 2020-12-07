@@ -2,6 +2,8 @@ import { BaseCommand } from "../../lib/command/BaseCommand";
 import { Emoji } from "../../lib/Emoji";
 
 export default class Jopping extends BaseCommand {
+  idSeed = "blackpink jisoo";
+
   aliases = ["markleeoppa"];
   description = Emoji.joppinh;
   secretCommand = true;

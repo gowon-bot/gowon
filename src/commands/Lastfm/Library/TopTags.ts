@@ -6,6 +6,8 @@ import { TagsService } from "../../../services/dbservices/TagsService";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 export default class TopTags extends LastFMBaseCommand {
+  idSeed = "gwsn soso";
+  
   description = "Displays your top tags";
   secretCommand = true;
   aliases = [];

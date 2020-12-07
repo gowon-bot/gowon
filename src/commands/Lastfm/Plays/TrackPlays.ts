@@ -4,6 +4,8 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
 export default class TrackPlays extends LastFMBaseCommand {
+  idSeed = "gugudan hana";
+  
   aliases = ["tp"];
   description = "Shows you how many plays you have of a given track";
   subcategory = "plays";
@@ -43,7 +45,7 @@ export default class TrackPlays extends LastFMBaseCommand {
       track,
       username,
     });
-    
+
     await this.reply(
       `${hamham ? "FTFY\n" : ""}${perspective.plusToHave}` +
         (trackDetails.userplaycount.toInt() === 0

@@ -6,6 +6,8 @@ import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 
 export class Kill extends CrownsChildCommand {
+  idSeed = "wjsn xuanyi";
+  
   description = "Kills a crown";
   usage = ["artist (case sensitive!)"];
 
@@ -53,7 +55,9 @@ export class Kill extends CrownsChildCommand {
             message.member?.nickname || message.author.username,
             message.author.avatarURL() || undefined
           )
-          .setDescription(`Successfully killed the crown for ${artist.strong()}`)
+          .setDescription(
+            `Successfully killed the crown for ${artist.strong()}`
+          )
       );
     } catch {
       await this.reply(

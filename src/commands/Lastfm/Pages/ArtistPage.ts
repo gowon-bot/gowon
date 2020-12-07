@@ -4,6 +4,8 @@ import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 export default class ArtistPage extends LastFMBaseCommand {
+  idSeed = "twice mina";
+  
   aliases = ["arp", "arpa"];
   description = "Links you to an artist's page on Last.fm";
   subcategory = "pages";
@@ -35,7 +37,9 @@ export default class ArtistPage extends LastFMBaseCommand {
     });
 
     this.reply(
-      `${artistDetails.name.strong()} on last.fm: ${cleanURL(artistDetails.url)}`
+      `${artistDetails.name.strong()} on last.fm: ${cleanURL(
+        artistDetails.url
+      )}`
     );
   }
 }

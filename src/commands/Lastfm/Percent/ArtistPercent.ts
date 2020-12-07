@@ -5,6 +5,8 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
 export default class ArtistPercent extends LastFMBaseCommand {
+  idSeed = "twice tzuyu";
+
   aliases = ["apct"];
   description =
     "Shows you what percentage of your total scrobbles are made up by a certain artist";

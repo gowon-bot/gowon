@@ -4,6 +4,8 @@ import { Variation } from "../../../lib/command/BaseCommand";
 import { RunAs } from "../../../lib/AliasChecker";
 
 export class Blacklist extends PermissionsChildCommand {
+  idSeed = "red velvet irene";
+
   description =
     "Blacklist/whitelist a user/role from using a command\nSee permissions help for more info";
 

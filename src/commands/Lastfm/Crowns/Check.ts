@@ -12,6 +12,8 @@ import {
 } from "../../../errors";
 
 export class Check extends CrownsChildCommand {
+  idSeed = "weki meki sei";
+
   aliases = ["c", "w"];
   description = "Checks a crown. If you have more plays, you will take it.";
   usage = ["", "artist"];

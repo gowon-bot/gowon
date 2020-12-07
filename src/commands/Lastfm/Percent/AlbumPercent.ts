@@ -5,6 +5,8 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
 export default class AlbumPercent extends LastFMBaseCommand {
+  idSeed = "twice chaeyoung";
+
   aliases = ["lpct", "alpct"];
   description =
     "Shows you what percentage of an artist's scrobbles are made up by a certain album";

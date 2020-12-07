@@ -14,6 +14,8 @@ interface Overlap {
 }
 
 export default class Tag extends LastFMBaseCommand {
+  idSeed = "secret number lea";
+  
   description =
     "Shows the overlap between your top artists, and a given tag's top artists";
   subcategory = "stats";

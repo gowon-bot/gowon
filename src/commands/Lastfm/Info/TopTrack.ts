@@ -4,6 +4,8 @@ import { LogicError } from "../../../errors";
 import { numberDisplay } from "../../../helpers";
 
 export default class TopTrack extends InfoCommand {
+  idSeed = "csv dalchong";
+  
   shouldBeIndexed = true;
   usage = ["", "artist", "artist | start | stop"];
 

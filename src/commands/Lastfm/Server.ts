@@ -2,6 +2,8 @@ import { MultiRequester } from "../../lib/MultiRequester";
 import { LastFMBaseCommand } from "./LastFMBaseCommand";
 
 export default class Server extends LastFMBaseCommand {
+  idSeed = "april rachel";
+  
   description = "Shows what the server is listening to";
   aliases = ["sfm"];
   usage = [""];
@@ -22,9 +24,10 @@ export default class Server extends LastFMBaseCommand {
       .setTitle("Random songs across the server")
       .setDescription(
         Object.keys(nowPlayings)
-          .sort((k) => (nowPlayings[k].nowPlaying ? 1 : 0))
+          .filter((k) => nowPlayings[k] && nowPlayings[k]?.name)
+          .sort((k) => (nowPlayings[k]!.nowPlaying ? 1 : 0))
           .map((username) => {
-            let np = nowPlayings[username];
+            let np = nowPlayings[username]!;
 
             return `${username.code()} - ${np.name} by ${np.artist.strong()} ${
               np.album ? `from ${np.album.italic()}` : ""

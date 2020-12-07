@@ -2,6 +2,8 @@ import { CrownsChildCommand } from "./CrownsChildCommand";
 import { ago } from "../../../helpers";
 
 export class RecentlyStolen extends CrownsChildCommand {
+  idSeed = "wjsn soobin";
+
   description = "Lists the crowns that were most recently stolen";
   aliases = ["recent", "stolen", "rs"];
   usage = "";

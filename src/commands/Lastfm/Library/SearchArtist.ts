@@ -6,9 +6,11 @@ import { Paginator } from "../../../lib/Paginator";
 import { SearchCommand } from "./SearchCommand";
 
 export default class SearchArtist extends SearchCommand {
+  idSeed = "gwsn minju";
+  
   shouldBeIndexed = true;
   description = "Searches your top artists for keywords";
-  
+
   variations: Variation[] = [
     {
       variationRegex: /sadeep|sad/,
