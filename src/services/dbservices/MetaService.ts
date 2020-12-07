@@ -24,4 +24,8 @@ export class MetaService extends BaseService {
   ): Promise<MostUsedCommandsResponse[]> {
     return await CommandRun.mostUsedCommands(serverID, timeRange);
   }
+
+  async countCommandRuns(commandID: string) {
+    return await CommandRun.count({ commandID });
+  }
 }

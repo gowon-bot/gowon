@@ -9,6 +9,7 @@ import { ParentCommand } from "./ParentCommand";
 export interface Command {
   execute(message: Message, runAs: RunAs): Promise<void>;
   id: string;
+  idSeed: string;
 
   variations: Variation[];
   aliases: Array<string>;
