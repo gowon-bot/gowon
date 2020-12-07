@@ -2,6 +2,7 @@ import { parseLastFMTrackResponse } from "../../../helpers/lastFM";
 import { CrownsService } from "../../../services/dbservices/CrownsService";
 import { LineConsolidator } from "../../../lib/LineConsolidator";
 import { NowPlayingBaseCommand } from "./NowPlayingBaseCommand";
+import { promiseAllSettled } from "../../../helpers";
 
 export default class NowPlaying extends NowPlayingBaseCommand {
   aliases = ["np", "fm"];
@@ -27,11 +28,10 @@ export default class NowPlaying extends NowPlayingBaseCommand {
 
     let nowPlayingEmbed = this.nowPlayingEmbed(nowPlaying, username);
 
-    // Types for Promise.allSettled are broken(?), so I have to manually assert the type that's returned
-    let [artistInfo, crown] = (await Promise.allSettled([
+    let [artistInfo, crown] = await promiseAllSettled([
       this.lastFMService.artistInfo({ artist: track.artist, username }),
       this.crownsService.getCrownDisplay(track.artist, this.guild),
-    ])) as { status: string; value?: any; reason: any }[];
+    ]);
 
     let { crownString, isCrownHolder } = await this.crownDetails(
       crown,

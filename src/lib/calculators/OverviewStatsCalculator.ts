@@ -13,9 +13,16 @@ import { CrownRankResponse } from "../../database/entity/Crown";
 import { log } from "mathjs";
 import { LogicError } from "../../errors";
 import { differenceInDays, fromUnixTime } from "date-fns";
+import { TagsCache } from "../caches/TagsCache";
+import { TagsService } from "../../services/dbservices/TagsService";
 
 export class Stat {
-  constructor(public asNumber: number, public asString: string) {}
+  public asString: string;
+
+  constructor(public asNumber: number, asString?: string) {
+    if (!asString) this.asString = numberDisplay(asNumber);
+    else this.asString = asString;
+  }
 
   toString(): string {
     return this.asString;
@@ -34,6 +41,7 @@ export class OverviewStatsCalculator {
 
   private lastFMService: LastFMService;
   private crownsService: CrownsService;
+  private tagsCache: TagsCache;
 
   constructor(
     private username: string,
@@ -43,6 +51,7 @@ export class OverviewStatsCalculator {
   ) {
     this.lastFMService = new LastFMService(logger);
     this.crownsService = new CrownsService(logger);
+    this.tagsCache = new TagsCache(new TagsService(logger), this.lastFMService);
   }
 
   async hasCrownStats(): Promise<boolean> {
@@ -399,5 +408,16 @@ export class OverviewStatsCalculator {
         : ".... really?";
 
     return { rating, ratingString };
+  }
+
+  async uniqueTags(): Promise<Stat> {
+    const topArtists = await this.topArtists();
+    const tags = [];
+
+    for (let artist of topArtists.artist) {
+      tags.push(...(await this.tagsCache.getTags(artist.name)));
+    }
+
+    return new Stat([...new Set(tags)].length);
   }
 }

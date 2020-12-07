@@ -166,3 +166,21 @@ export class StringPadder {
 }
 
 export const sleep = (ms: number) => new Promise((res) => setTimeout(res, ms));
+
+type UnwrapPromise<T extends Promise<any>> = T extends Promise<infer U>
+  ? U
+  : never;
+
+type PromiseAllSettledResult<T extends Promise<any>[]> = {
+  [V in keyof T]: {
+    status: "rejected" | "fulfilled";
+    // @ts-ignore (for some reason this errors, despite typescript inferring the types correctly)
+    value?: UnwrapPromise<T[V]>;
+  };
+};
+
+export async function promiseAllSettled<T extends Promise<any>[]>(
+  promises: [...T]
+): Promise<PromiseAllSettledResult<T>> {
+  return (await Promise.allSettled(promises)) as any;
+}

@@ -2,7 +2,7 @@ import { FriendsChildCommand } from "../FriendsChildCommand";
 import { MultiRequester } from "../../../../lib/MultiRequester";
 import { numberDisplay } from "../../../../helpers";
 import { Arguments } from "../../../../lib/arguments/arguments";
-import { FriendNotFoundError } from "../../../../errors";
+import { LastFMEntityNotFoundError } from "../../../../errors";
 
 export class AlbumPlays extends FriendsChildCommand {
   description = "Shows how many plays of an album your friends have";
@@ -34,16 +34,14 @@ export class AlbumPlays extends FriendsChildCommand {
     let albumDetails = await new MultiRequester([
       ...this.friendUsernames,
       this.senderUsername,
-    ])
-      .fetch(this.lastFMService.albumInfo.bind(this.lastFMService), {
-        artist,
-        album,
-      })
-      .catch(() => {
-        throw new FriendNotFoundError();
-      });
+    ]).fetch(this.lastFMService.albumInfo.bind(this.lastFMService), {
+      artist,
+      album,
+    });
 
-    let albumInfo = Object.values(albumDetails).filter((v) => v.name)[0];
+    let albumInfo = Object.values(albumDetails).filter((v) => v?.name)[0]!;
+
+    if (!albumInfo) throw new LastFMEntityNotFoundError("album");
 
     let embed = this.newEmbed()
       .setTitle(
@@ -53,11 +51,13 @@ export class AlbumPlays extends FriendsChildCommand {
         Object.keys(albumDetails)
           .sort(
             (a, b) =>
-              albumDetails[b].userplaycount.toInt() -
-              albumDetails[a].userplaycount.toInt()
+              (albumDetails[b]?.userplaycount?.toInt() ?? -Infinity) -
+              (albumDetails[a]?.userplaycount?.toInt() ?? -Infinity)
           )
           .map((username) => {
             let ad = albumDetails[username];
+
+            if (!ad?.userplaycount) return this.displayMissingFriend(username);
 
             return `${username.code()} - **${numberDisplay(
               ad.userplaycount,

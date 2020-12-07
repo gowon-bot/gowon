@@ -4,7 +4,6 @@ import {
   MultiRequester,
 } from "../../../../lib/MultiRequester";
 import { dateDisplay } from "../../../../helpers";
-import { FriendNotFoundError } from "../../../../errors";
 import { fromUnixTime } from "date-fns";
 
 export class Joined extends FriendsChildCommand {
@@ -18,15 +17,11 @@ export class Joined extends FriendsChildCommand {
     let joineds = await new MultiRequester([
       ...this.friendUsernames,
       this.senderUsername,
-    ])
-      .fetch(this.lastFMService.userInfo.bind(this.lastFMService), {})
-      .catch(() => {
-        throw new FriendNotFoundError();
-      });
+    ]).fetch(this.lastFMService.userInfo.bind(this.lastFMService), {});
 
     let joinDates = Object.keys(joineds).reduce((acc, username) => {
       acc[username] = fromUnixTime(
-        joineds[username].registered.unixtime.toInt()
+        joineds[username]?.registered.unixtime.toInt() || 0
       );
 
       return acc;
@@ -36,9 +31,20 @@ export class Joined extends FriendsChildCommand {
       .setTitle(`Your friends' join dates`)
       .setDescription(
         Object.keys(joinDates)
-          .sort((a, b) => joinDates[a].getTime() - joinDates[b].getTime())
+          .sort(
+            (a, b) =>
+              (joinDates[a]?.getTime() === 0
+                ? Infinity
+                : joinDates[a]!.getTime()) -
+              (joinDates[b]?.getTime() === 0
+                ? Infinity
+                : joinDates[b]!.getTime())
+          )
           .map((username) => {
             let s = joinDates[username];
+
+            if (!s || s?.getTime() === 0)
+              return this.displayMissingFriend(username, "join date");
 
             return `${username.code()} - ${dateDisplay(s)}`;
           })

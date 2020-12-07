@@ -1,5 +1,5 @@
 import { LogicError } from "../../errors";
-import { numberDisplay } from "../../helpers";
+import { numberDisplay, promiseAllSettled } from "../../helpers";
 import { sanitizeForDiscord } from "../../helpers/discord";
 import { LinkGenerator } from "../../helpers/lastFM";
 import { Arguments } from "../../lib/arguments/arguments";
@@ -52,7 +52,7 @@ export default class Track extends LastFMBaseCommand {
       artistName = track.artist;
     }
 
-    let [artistInfo, trackInfo, crown] = (await Promise.allSettled([
+    let [artistInfo, trackInfo, crown] = await promiseAllSettled([
       this.lastFMService.artistInfo({
         artist: artistName,
         username: senderUsername,
@@ -63,7 +63,7 @@ export default class Track extends LastFMBaseCommand {
         username: senderUsername,
       }),
       this.crownsService.getCrownDisplay(artistName, this.guild),
-    ])) as { status: string; value?: any; reason: any }[];
+    ]);
 
     if (!trackInfo.value)
       throw new LogicError("that track could not be found!");
@@ -98,7 +98,12 @@ export default class Track extends LastFMBaseCommand {
         this.author.avatarURL() || undefined
       )
       .setTitle(sanitizeForDiscord(track.name))
-      .setURL(LinkGenerator.trackPage(artistInfo.value.name, track.name))
+      .setURL(
+        LinkGenerator.trackPage(
+          artistInfo.value?.name || track.artist,
+          track.name
+        )
+      )
       .setDescription(
         `by ${track.artist}` +
           (track.album ? ` from ${track.album.italic()}` : "")

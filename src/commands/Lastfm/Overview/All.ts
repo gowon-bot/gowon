@@ -53,15 +53,9 @@ _Scrobbling since ${await this.calculator.joined()}_
 **Tracks per album**: ${await this.calculator.tracksPerAlbum()}
 
 **H-Index**: ${await this.calculator.hIndex()}
-${
-  breadth
-    ? `**Breadth rating**: ${breadth.rating.toFixed(1)} _(${
-        breadth.ratingString
-      })_\n`
-    : ""
-}**# of artists to equal 50% of scrobbles**: ${await (
-          await this.calculator.topPercent(50)
-        ).count}
+**# of artists to equal 50% of scrobbles**: ${
+          (await this.calculator.topPercent(50)).count
+        }
 **Total scrobbles for top 10 artists**: ${await this.calculator.sumTop(10)}
 ${perspective.upper.possessive} top 10 artists account for: ${(
           await this.calculator.sumTopPercent(10)
@@ -102,7 +96,15 @@ For every ${numberDisplay(
                 (await this.calculator.scrobblesPerCrown())!.asString,
                 "scrobble"
               ).strong()}, ${perspective.plusToHave} a crown
-`
+
+${
+  breadth
+    ? `**Breadth rating**: ${breadth.rating.toFixed(1)} _(${
+        breadth.ratingString
+      })_\n`
+    : ""
+}**Number of unique tags**: ${(await this.calculator.uniqueTags()).toString()}
+              `
             : "")
       );
 

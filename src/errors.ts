@@ -1,5 +1,5 @@
 import { LastFMErrorResponse } from "./services/LastFM/LastFMService.types";
-import { parseError } from "./helpers/error";
+import { parseError, parseErrorSix } from "./helpers/error";
 import { Response } from "node-fetch";
 import { numberDisplay } from "./helpers";
 
@@ -286,5 +286,13 @@ export class PM2ConnectionError extends ClientError {
     super(
       "Couldn't connect to PM2! Check that you have pm2 installed and running!"
     );
+  }
+}
+
+export class LastFMEntityNotFoundError extends ClientError {
+  name = "LastFMEntityNotFoundError";
+
+  constructor(entity: "artist" | "album" | "track" | "user") {
+    super(parseErrorSix(entity));
   }
 }

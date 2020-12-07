@@ -2,6 +2,7 @@ import { parseLastFMTrackResponse } from "../../../helpers/lastFM";
 import { CrownsService } from "../../../services/dbservices/CrownsService";
 import { LineConsolidator } from "../../../lib/LineConsolidator";
 import { NowPlayingBaseCommand } from "./NowPlayingBaseCommand";
+import { promiseAllSettled } from "../../../helpers";
 
 export default class NowPlayingAlbum extends NowPlayingBaseCommand {
   aliases = ["fml", "npl", "fma"];
@@ -21,8 +22,7 @@ export default class NowPlayingAlbum extends NowPlayingBaseCommand {
 
     this.tagConsolidator.addArtistName(track.artist);
 
-    // Types for Promise.allSettled are broken(?), so I have to manually assert the type that's returned
-    let [artistInfo, albumInfo, crown] = (await Promise.allSettled([
+    let [artistInfo, albumInfo, crown] = await promiseAllSettled([
       this.lastFMService.artistInfo({ artist: track.artist, username }),
       this.lastFMService.albumInfo({
         artist: track.artist,
@@ -30,7 +30,7 @@ export default class NowPlayingAlbum extends NowPlayingBaseCommand {
         username,
       }),
       this.crownsService.getCrownDisplay(track.artist, this.guild),
-    ])) as { status: string; value?: any; reason: any }[];
+    ]);
 
     let { crownString, isCrownHolder } = await this.crownDetails(
       crown,

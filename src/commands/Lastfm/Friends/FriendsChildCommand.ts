@@ -36,4 +36,8 @@ export abstract class FriendsChildCommand extends LastFMBaseChildCommand {
       user
     );
   }
+
+  protected displayMissingFriend(username: string, entity = "playcount") {
+    return `${username.code()} - _Error fetching ${entity}_`;
+  }
 }

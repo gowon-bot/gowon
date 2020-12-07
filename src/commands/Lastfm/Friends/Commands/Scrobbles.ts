@@ -7,7 +7,6 @@ import {
   TimeRange,
   timeRangeParser,
 } from "../../../../helpers/date";
-import { FriendNotFoundError } from "../../../../errors";
 
 export class Scrobbles extends FriendsChildCommand {
   description = "Shows how many scrobbles your friends have";
@@ -30,22 +29,23 @@ export class Scrobbles extends FriendsChildCommand {
     let scrobbles = await new MultiRequester([
       ...this.friendUsernames,
       this.senderUsername,
-    ])
-      .fetch(this.lastFMService.getNumberScrobbles.bind(this.lastFMService), [
-        timeRange.from,
-        timeRange.to,
-      ])
-      .catch(() => {
-        throw new FriendNotFoundError();
-      });
+    ]).fetch(this.lastFMService.getNumberScrobbles.bind(this.lastFMService), [
+      timeRange.from,
+      timeRange.to,
+    ]);
 
     let embed = this.newEmbed()
       .setTitle(`Your friends scrobbles ${humanTimeRange}`)
       .setDescription(
         Object.keys(scrobbles)
-          .sort((a, b) => scrobbles[b] - scrobbles[a])
+          .sort(
+            (a, b) => (scrobbles[b] ?? -Infinity) - (scrobbles[a] ?? -Infinity)
+          )
           .map((username) => {
             let s = scrobbles[username];
+
+            if (!s)
+              return this.displayMissingFriend(username, "scrobble count");
 
             return `${username.code()} - **${numberDisplay(s, "**scrobble")}`;
           })
