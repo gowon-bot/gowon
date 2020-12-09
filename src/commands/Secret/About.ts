@@ -40,7 +40,7 @@ export default class About extends BaseCommand {
 
     let embed = this.newEmbed()
       .setAuthor(`About ${this.gowonClient.client.user?.username || "Gowon"}`)
-      .setThumbnail("")
+      .setThumbnail("https://raw.githubusercontent.com/jivison/gowon/master/assets/gowonswag2.png")
       .setDescription(
         `${
           this.gowonClient.client.user?.username || "Gowon"
