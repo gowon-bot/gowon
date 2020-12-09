@@ -7,7 +7,7 @@ export class Quit extends JumbleChildCommand {
   idSeed = "clc sorn";
 
   description = "Giveup on the current jumble";
-  aliases = ["giveup"];
+  aliases = ["giveup", "cancel"];
   usage = "";
 
   async run(message: Message) {

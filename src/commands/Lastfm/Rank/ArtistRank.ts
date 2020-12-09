@@ -2,6 +2,8 @@ import { Arguments } from "../../../lib/arguments/arguments";
 import { numberDisplay } from "../../../helpers";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
+import { RedirectsCache } from "../../../lib/caches/RedirectsCache";
+import { RedirectsService } from "../../../services/dbservices/RedirectsService";
 
 export default class ArtistRank extends LastFMBaseCommand {
   idSeed = "cignature ye ah";
@@ -20,6 +22,9 @@ export default class ArtistRank extends LastFMBaseCommand {
     mentions: standardMentions,
   };
 
+  redirectsService = new RedirectsService(this.logger);
+  redirectsCache = new RedirectsCache(this.redirectsService);
+
   async run() {
     let artist = this.parsedArguments.artist as string;
 
@@ -36,9 +41,15 @@ export default class ArtistRank extends LastFMBaseCommand {
       limit: 1000,
     });
 
-    let rank = topArtists.artist.findIndex(
-      (a) => a.name.toLowerCase() === artist.toLowerCase()
-    );
+    const artistName = await this.redirectsCache.getRedirect(artist);
+
+    let rank = (
+      await Promise.all(
+        topArtists.artist.map(
+          async (a) => await this.redirectsCache.getRedirect(a.name)
+        )
+      )
+    ).findIndex((a) => a.toLowerCase() === artistName.toLowerCase());
 
     if (rank === -1) {
       await this.reply(

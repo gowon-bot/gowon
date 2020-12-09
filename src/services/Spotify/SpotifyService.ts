@@ -95,9 +95,19 @@ export class SpotifyService extends BaseService {
     artist: string,
     track: string
   ): Promise<SearchItem | undefined> {
-    let search = await this.search(artist + " " + track, ["track"]);
+    return await this.searchTrackRaw(artist + " " + track);
+  }
+
+  async searchTrackRaw(keywords: string): Promise<SearchItem | undefined> {
+    let search = await this.search(keywords, ["track"]);
 
     return search.tracks.items[0];
+  }
+
+  async searchAlbumRaw(keywords: string): Promise<SearchItem | undefined> {
+    let search = await this.search(keywords, ["album"]);
+
+    return search.albums.items[0];
   }
 
   getImageFromSearchItem(si: SearchItem): string {

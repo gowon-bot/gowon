@@ -8,7 +8,7 @@ import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
 export class Add extends FriendsChildCommand {
   idSeed = "nature aurora";
-  
+
   description = "Adds a friend";
   usage = ["lfm_username", "@user"];
 
@@ -31,18 +31,18 @@ export class Add extends FriendsChildCommand {
   async prerun() {}
 
   async run(message: Message) {
-    let { username, senderUsername, dbUser } = await this.parseMentions({
+    let { username, senderUsername, senderUser } = await this.parseMentions({
       inputArgumentName: "friendUsername",
     });
 
-    if (username === senderUsername)
+    if (username.toLowerCase() === senderUsername.toLowerCase())
       throw new LogicError("you can't add yourself as a friend!");
 
     let user = await this.usersService.getUser(message.author.id);
 
     let friends = await this.friendsService.getUsernames(
       message.guild?.id!,
-      dbUser!
+      senderUser!
     );
 
     if (friends.includes(username.toLowerCase()))
