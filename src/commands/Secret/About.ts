@@ -13,7 +13,7 @@ import { LastFMService } from "../../services/LastFM/LastFMService";
 
 export default class About extends BaseCommand {
   idSeed = "gfriend sinb";
-  
+
   aliases = ["stats"];
   description = "Shows information about the bot";
   secretCommand = true;
@@ -40,17 +40,22 @@ export default class About extends BaseCommand {
 
     let embed = this.newEmbed()
       .setAuthor(`About ${this.gowonClient.client.user?.username || "Gowon"}`)
-      .setThumbnail("https://pbs.twimg.com/media/Dx0gzYBWkAAH6Dv.jpg:large")
+      .setThumbnail("")
       .setDescription(
         `${
           this.gowonClient.client.user?.username || "Gowon"
         } is ${numberDisplay(
           differenceInDays(new Date(), this.startDate),
           "day"
-        ).strong()} old!\n${generateLink(
+        ).strong()} old!
+          Profile pictures by ${generateLink(
+            "reis",
+            "https://twitter.com/reisnassance"
+          )}
+        ${generateLink(
           "Github",
           "https://github.com/jivison/gowon"
-        )}`
+        )}, ${generateLink("Last.fm", "https://last.fm/user/gowon_")}`
       )
       .addFields(
         {

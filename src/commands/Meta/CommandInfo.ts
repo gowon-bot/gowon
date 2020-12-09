@@ -53,7 +53,7 @@ export default class CommandInfo extends MetaBaseCommand {
         ? `\n**Number of children**: ${command.children?.list().length || 0}`
         : ""
     }
-    **Category**: ${command.category}${
+    **Category**: ${command.category || "(no category)"}${
       command.subcategory ? ` > ${command.subcategory}` : ""
     }
     

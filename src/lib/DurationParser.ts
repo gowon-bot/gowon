@@ -83,7 +83,10 @@ export class DurationParser {
 
       if (!secondaryMatch) return [1, amount.replace(".", "")];
 
-      return [parseFloat(secondaryMatch[1].trim()), secondaryMatch[2].trim()];
+      return [
+        parseFloat(secondaryMatch[1].trim().toLowerCase()),
+        secondaryMatch[2].trim().toLowerCase(),
+      ];
     }
 
     return [parseFloat(amount), period];
