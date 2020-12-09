@@ -28,17 +28,17 @@ export class CommandHandler {
 
   async handle(message: Message): Promise<void> {
     if (
-      !message.content.toLowerCase().includes("not good bot") &&
-      (message.content.toLowerCase().includes("good bot") ||
-        message.content.toLowerCase().includes("thank you bot") ||
-        message.content.toLowerCase().includes("thanks bot") ||
-        message.content.toLowerCase().includes("not bad bot"))
+      !(message.content.toLowerCase() === "not good bot") &&
+      (message.content.toLowerCase() === "good bot" ||
+        message.content.toLowerCase() === "thank you bot" ||
+        message.content.toLowerCase() === "thanks bot" ||
+        message.content.toLowerCase() === "not bad bot")
     ) {
       message.react("🥰");
     } else if (
-      message.content.toLowerCase().includes("stupid bot") ||
-      message.content.toLowerCase().includes("fuck you bot") ||
-      message.content.toLowerCase().includes("not good bot")
+      message.content.toLowerCase() === "stupid bot" ||
+      message.content.toLowerCase() === "fuck you bot" ||
+      message.content.toLowerCase() === "not good bot"
     ) {
       message.react("😔");
     }

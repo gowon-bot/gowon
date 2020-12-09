@@ -14,7 +14,7 @@ export function sanitizeForDiscord(string: string): string {
     }
   }
 
-  return string;
+  return string.replace(/\n/g, " ");
 }
 
 export function generateLink(text: string, link: string): string {

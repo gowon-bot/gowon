@@ -11,6 +11,7 @@ import {
 import { LineConsolidator } from "../../../lib/LineConsolidator";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
+import { sanitizeForDiscord } from "../../../helpers/discord";
 
 export default class Combo extends LastFMBaseCommand {
   idSeed = "wooah wooyeon";
@@ -62,7 +63,7 @@ export default class Combo extends LastFMBaseCommand {
       {
         string:
           this.displayCombo(combo, "artist") +
-          ` (${combo.artistNames.join(", ")})`,
+          ` (${sanitizeForDiscord(combo.artistNames.join(", "))})`,
         shouldDisplay: combo.artist.plays > 1,
       },
       {
