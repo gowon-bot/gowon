@@ -4,44 +4,6 @@ Gowon is a Last.FM discord bot in active development.
 
 Check out the indexing server over at [jivison/gowon-indexer](https://github.com/jivison/gowon-indexer)
 
-## Syntax
-
-Bot syntax is kept as intuitive and as human readable as possible. Most commands accept parameters in any order. Mentions can be anywhere in the message.
-
-```
-!plays Red Velvet
-
-// The `|` character is used to seperate multi-word arguments
-!albumplays Death Grips | The Money Store
-
-// Any omitted arguments are filled from your currently playing song in last.fm
-// eg. if I were listening to Egoist by LOOΠΔ
-
-!plays                          // Equivalent to !plays LOOΠΔ
-!albumplays                     // Equivalent to !plays LOOΠΔ | Olivia Hye
-!trackplays | Heart Attack      // Equivalent to !trackplays LOOΠΔ | Heart Attack
-!trackplays Kent |              // Equivalent to !trackplays Kent | Egoist
-!trackplays Kent                // Equivalent to !trackplays Kent | Egoist
-
-// Mentions can be anywhere in the message (including in other words)
-!taste @SomeUser                // Compare top artists with SomeUser
-!taste @SomeUser 500            // Compare top 500 artists with SomeUser
-!taste 500 @SomeUser 6 months   // Compare top 500 artists over the last 6 months with SomeUser
-!taste  50@SomeUser0 6 @SomeUser mon@SomeUserths  // This works. Just... don't.
-
-// Time period is very flexible
-!artistcount 3 months
-!artistcount 3months
-!artistcount 3mo
-!artistcount three months
-!artistcount 3 mo
-!artistcount q                  // For 'quarter'
-
-// Most last.fm commands also take "Non discord mentions", allowing you to user last.fm usernames as 'mentions'. They function identically to discord mentions
-!trackpercent JPEGMAFIA | BALD! lfm:flushed_emoji
-!cw id:196249128286552064
-```
-
 ## Running yourself
 
 Ensure you have Postgres and Typescript installed, and a database called `gowon` exists (`createdb gowon`).
