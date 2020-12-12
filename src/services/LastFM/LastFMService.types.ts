@@ -374,6 +374,62 @@ export interface ArtistCorrection {
   url: string;
 }
 
+export interface Friends extends PagedCollection {
+  user: {
+    playlists: string;
+    playcount: string;
+    subscriber: string;
+    name: string;
+    country: string;
+    image: Image[];
+    registered: {
+      unixtime: string;
+      "#text": string;
+    };
+    url: string;
+    realname: string;
+    bootstrap: string;
+    type: string;
+  }[];
+}
+
+export interface UserGetFriendsResponse {
+  friends: Friends;
+}
+
+export interface TagTopTracks {
+  track: {
+    name: string;
+    duration: string;
+    mbid: string;
+    url: string;
+    streamable: {
+      "#text": string;
+      fulltrack: string;
+    };
+    artist: {
+      name: string;
+      mbid: string;
+      url: string;
+    };
+    image: Image[];
+    "@attr": {
+      rank: string;
+    };
+  }[];
+  "@attr": {
+    tag: string;
+    page: string;
+    perPage: string;
+    totalPages: string;
+    total: string;
+  };
+}
+
+export interface TagTopTracksResponse {
+  tracks: TagTopTracks;
+}
+
 /// ==================
 // Inputs
 /// ==================
@@ -484,4 +540,12 @@ export interface GetSessionParams {
 
 export interface GetArtistCorrectionParams {
   artist: string;
+}
+
+export interface UserGetFriendsParams extends PagedParams {
+  username: string;
+}
+
+export interface TagTopTracksParams extends PagedParams {
+  tag: string;
 }

@@ -16,7 +16,10 @@ export class All extends OverviewChildCommand {
       this.username
     );
 
-    await this.calculator.cacheAll();
+    let [friends] = await Promise.all([
+      this.lastFMService.userGetFriends({ username: this.username, limit: 1 }),
+      await this.calculator.cacheAll(),
+    ]);
 
     let { colour, badge, image } = await this.getAuthorDetails();
 
@@ -42,15 +45,15 @@ ${
     : this.gowonClient.isGowon(this.discordID)
     ? `${Emoji.gowonswag2} _Gowon_\n`
     : this.gowonClient.isDeveloperOf("chuu", this.discordID)
-    ? `${Emoji.ish} _Ish_`
+    ? `${Emoji.ish} _Ish_\n`
     : this.gowonClient.isDeveloperOf("fmbot", this.discordID)
-    ? `${Emoji.fmbot} _Frikandel_`
+    ? `${Emoji.fmbot} _Frikandel_\n`
     : this.gowonClient.isAlphaTester(this.discordID)
     ? `${Emoji.gowonheart} _Alpha tester_\n`
     : ""
 }
-
 _Scrobbling since ${await this.calculator.joined()}_
+_Following ${numberDisplay(friends["@attr"].total, "user")}_
 
 **Scrobbles**: ${await this.calculator.totalScrobbles()} (_${await this.calculator.avgPerDay()}/day_)
 **Artists**: ${await this.calculator.totalArtists()} (_${await this.calculator.avgScrobblesPerArtist()} scrobbles/artist_)

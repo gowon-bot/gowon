@@ -79,7 +79,10 @@ export class SpotifyService extends BaseService {
   async searchArtist(artist: string): Promise<SearchItem | undefined> {
     let search = await this.search(artist, ["artist"]);
 
-    return search.artists.items[0];
+    return (
+      search.artists.items.find((a) => this.compare(a.name, artist)) ||
+      search.artists.items[0]
+    );
   }
 
   async searchAlbum(
@@ -114,6 +117,13 @@ export class SpotifyService extends BaseService {
     return (
       si.images.sort((a, b) => b.height * b.width - a.height * a.width)[0]
         ?.url || ""
+    );
+  }
+
+  private compare(string1: string, string2: string) {
+    return (
+      string1.toLowerCase().replace(/'"`‘’:/, "") ===
+      string2.toLowerCase().replace(/'"`‘’:/, "")
     );
   }
 }

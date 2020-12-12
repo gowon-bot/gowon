@@ -6,6 +6,7 @@ import { CrownEvent } from "../../database/entity/meta/CrownEvent";
 import { dateDisplay, numberDisplay } from "../../helpers";
 import { generateLink } from "../../helpers/discord";
 import { BaseCommand } from "../../lib/command/BaseCommand";
+import { CommandManager } from "../../lib/command/CommandManager";
 import { CrownEventString } from "../../services/dbservices/CrownsHistoryService";
 import { RedirectsService } from "../../services/dbservices/RedirectsService";
 import { TagsService } from "../../services/dbservices/TagsService";
@@ -23,14 +24,18 @@ export default class About extends BaseCommand {
   lastFMService = new LastFMService(this.logger);
   redirectsService = new RedirectsService(this.logger);
   tagsService = new TagsService(this.logger);
+  commandManager = new CommandManager();
 
   async run(_: any) {
+    await this.commandManager.init();
+
     let crowns = await Crown.count();
     let yoinks = await CrownEvent.count({
       where: { event: CrownEventString.snatched },
     });
     let commandsRun = await CommandRun.count();
     let friends = await Friend.count();
+    let commandCount = this.commandManager.deepList().length;
 
     let userInfo = await this.lastFMService.userInfo({ username: "gowon_" });
     let artistCount = await this.lastFMService.artistCount("gowon_");
@@ -40,7 +45,9 @@ export default class About extends BaseCommand {
 
     let embed = this.newEmbed()
       .setAuthor(`About ${this.gowonClient.client.user?.username || "Gowon"}`)
-      .setThumbnail("https://raw.githubusercontent.com/jivison/gowon/master/assets/gowonswag2.png")
+      .setThumbnail(
+        "https://raw.githubusercontent.com/jivison/gowon/master/assets/gowonswag2.png"
+      )
       .setDescription(
         `${
           this.gowonClient.client.user?.username || "Gowon"
@@ -48,21 +55,18 @@ export default class About extends BaseCommand {
           differenceInDays(new Date(), this.startDate),
           "day"
         ).strong()} old!
-          Profile pictures by ${generateLink(
-            "reis",
-            "https://twitter.com/reisnassance"
-          )}
-        ${generateLink(
-          "Github",
-          "https://github.com/jivison/gowon"
-        )}, ${generateLink("Last.fm", "https://last.fm/user/gowon_")}`
+Profile pictures by ${generateLink("reis", "https://twitter.com/reisnassance")}
+${generateLink("Github", "https://github.com/jivison/gowon")}, ${generateLink(
+          "Last.fm",
+          "https://last.fm/user/gowon_"
+        )}`
       )
       .addFields(
         {
           name: "Bot stats",
-          value: `Commands run: ${numberDisplay(
-            commandsRun
-          )}\nTotal friends: ${numberDisplay(friends)}`,
+          value: `Commands run: ${numberDisplay(commandsRun)}
+Total friends: ${numberDisplay(friends)}
+Total commands: ${numberDisplay(commandCount)}`,
           inline: true,
         },
         {

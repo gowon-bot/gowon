@@ -46,6 +46,12 @@ import {
   ArtistCorrection,
   GetArtistCorrectionResponse,
   RecentTracksExtended,
+  UserGetFriendsParams,
+  Friends,
+  UserGetFriendsResponse,
+  TagTopTracksParams,
+  TagTopTracks,
+  TagTopTracksResponse,
 } from "./LastFMService.types";
 import config from "../../../config.json";
 import {
@@ -256,6 +262,18 @@ export class LastFMAPIService extends BaseService {
       throw new RecordNotFoundError("artist");
 
     return response.corrections.correction.artist;
+  }
+
+  async userGetFriends(params: UserGetFriendsParams): Promise<Friends> {
+    return (
+      await this.request<UserGetFriendsResponse>("user.getFriends", params)
+    ).friends;
+  }
+
+  async tagTopTracks(params: TagTopTracksParams): Promise<TagTopTracks> {
+    return (
+      await this.request<TagTopTracksResponse>("tag.getTopTracks", params)
+    ).tracks;
   }
 
   private async authRequest<T>(

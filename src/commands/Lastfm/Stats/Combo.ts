@@ -12,6 +12,7 @@ import { LineConsolidator } from "../../../lib/LineConsolidator";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { sanitizeForDiscord } from "../../../helpers/discord";
+import { LinkGenerator } from "../../../helpers/lastFM";
 
 export default class Combo extends LastFMBaseCommand {
   idSeed = "wooah wooyeon";
@@ -84,6 +85,7 @@ export default class Combo extends LastFMBaseCommand {
           "track"
         )})`
       )
+      .setURL(LinkGenerator.userPage(username))
       .setDescription(
         combo.hasAnyConsecutivePlays()
           ? lineConsolidator.consolidate()
