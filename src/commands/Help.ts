@@ -150,6 +150,12 @@ export default class Help extends BaseCommand {
           command.variations.length
             ? `**Variations**:
             ${command.variations
+              .sort((a, b) => {
+                return (
+                  (b.variationString || b.friendlyString || "").length -
+                  (a.variationString || a.friendlyString || "").length
+                );
+              })
               .map(
                 (a) =>
                   `${(a.variationString || a.friendlyString)?.code()} ${

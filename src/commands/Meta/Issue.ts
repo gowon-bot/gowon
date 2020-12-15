@@ -1,6 +1,9 @@
+import { Message } from "discord.js";
 import { dateTimeDisplay } from "../../helpers";
+import { generateLink } from "../../helpers/discord";
+import { RunAs } from "../../lib/AliasChecker";
 import { Arguments } from "../../lib/arguments/arguments";
-import { BaseCommand } from "../../lib/command/BaseCommand";
+import { BaseCommand, Variation } from "../../lib/command/BaseCommand";
 import { Validation } from "../../lib/validation/ValidationChecker";
 import { validators } from "../../lib/validation/validators";
 import { GithubService } from "../../services/Github/GithubService";
@@ -12,6 +15,27 @@ export default class Issue extends BaseCommand {
   secretCommand = true;
   usage = ["title | body"];
   devCommand = true;
+
+  variations: Variation[] = [
+    {
+      variationString: "bug",
+      description: "Add the bug label",
+    },
+    {
+      variationRegex: /enhancement|feat|feature/,
+      friendlyString: "enhancement`, `feat`,`feature",
+      description: "Add the enhancement label",
+    },
+    {
+      variationRegex: /documentation|doc/,
+      friendlyString: "documentation`, `doc",
+      description: "Add the documentation label",
+    },
+    {
+      variationString: "spike",
+      description: "Add the question label",
+    },
+  ];
 
   arguments: Arguments = {
     inputs: {
@@ -26,7 +50,7 @@ export default class Issue extends BaseCommand {
 
   githubService = new GithubService(this.logger);
 
-  async run() {
+  async run(_: Message, runAs: RunAs) {
     let title = this.parsedArguments.title as string,
       body = this.parsedArguments.body as string;
 
@@ -34,6 +58,8 @@ export default class Issue extends BaseCommand {
 
 
 ## Notes from Gowon:
+
+${generateLink("Jump to message", this.message.url)}
 
 **Author**: ${this.author.username} (${
       this.message.member?.nickname || "*No Nickname*"
@@ -46,10 +72,19 @@ export default class Issue extends BaseCommand {
     }
 **Guild**: ${this.guild.name}`;
 
+    const labels = ["user feedback"];
+
+    if (runAs.variationWasUsed("bug")) labels.push("bug");
+    else if (runAs.variationWasUsed("spike")) labels.push("question");
+    else if (runAs.variationWasUsed("enhancement", "feat", "feature"))
+      labels.push("enhancement");
+    else if (runAs.variationWasUsed("documentation", "doc"))
+      labels.push("documentation");
+
     let issue = await this.githubService.createIssue({
       title,
       body: body + metadata,
-      labels: ["user feedback"],
+      labels: labels,
     });
 
     if (issue.id) {
