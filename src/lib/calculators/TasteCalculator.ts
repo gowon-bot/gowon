@@ -1,4 +1,4 @@
-import { TopArtists } from "../../services/LastFM/LastFMService.types";
+import { TopArtist } from "../../services/LastFM/LastFMService.types";
 import { calculatePercent } from "../../helpers/stats";
 import { mean } from "mathjs";
 
@@ -15,8 +15,8 @@ export interface Taste {
 
 export class TasteCalculator {
   constructor(
-    private userOneArtists: TopArtists,
-    private userTwoArtists: TopArtists,
+    private userOneArtists: TopArtist[],
+    private userTwoArtists: TopArtist[],
     private artistAmount: number
   ) {}
 
@@ -45,10 +45,10 @@ export class TasteCalculator {
   }
 
   calculate(): Taste {
-    let matchedArtists = this.userOneArtists.artist
+    let matchedArtists = this.userOneArtists
       .slice(0, this.artistAmount)
       .reduce((acc, artist) => {
-        let userTwoArtist = this.userTwoArtists.artist
+        let userTwoArtist = this.userTwoArtists
           .slice(0, this.artistAmount)
           .find((a) => a.name === artist.name);
         if (userTwoArtist) {
@@ -67,7 +67,7 @@ export class TasteCalculator {
     return {
       percent: calculatePercent(
         matchedArtists.length,
-        this.userOneArtists.artist.slice(0, this.artistAmount).length
+        this.userOneArtists.slice(0, this.artistAmount).length
       ),
       artists: matchedArtists,
     } as Taste;

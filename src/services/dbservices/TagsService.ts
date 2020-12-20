@@ -42,4 +42,23 @@ export class TagsService extends BaseService {
   async cacheTagsForArtistNotFound(artist: string) {
     await this.cacheTags(artist, []);
   }
+
+  async filter<T extends { name: string }>(
+    artists: T[],
+    allowedTags: string[]
+  ): Promise<T[]> {
+    allowedTags = allowedTags.map((t) => t.toLowerCase());
+
+    let resultArtists: T[] = [];
+
+    for (let artist of artists) {
+      let tags = (await this.getTags(artist.name))?.map((t) => t.toLowerCase());
+
+      if (tags?.filter((t) => allowedTags.includes(t))?.length) {
+        resultArtists.push(artist);
+      }
+    }
+
+    return resultArtists;
+  }
 }
