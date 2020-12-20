@@ -265,9 +265,24 @@ export class LastFMAPIService extends BaseService {
   }
 
   async userGetFriends(params: UserGetFriendsParams): Promise<Friends> {
-    return (
-      await this.request<UserGetFriendsResponse>("user.getFriends", params)
-    ).friends;
+    try {
+      return (
+        await this.request<UserGetFriendsResponse>("user.getFriends", params)
+      ).friends;
+    } catch (e) {
+      if (e.response?.message === "no such page") {
+        return {
+          user: [],
+          "@attr": {
+            page: "0",
+            perPage: "0",
+            totalPages: "0",
+            total: "0",
+            user: params.username,
+          },
+        };
+      } else throw e;
+    }
   }
 
   async tagTopTracks(params: TagTopTracksParams): Promise<TagTopTracks> {

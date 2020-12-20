@@ -1,7 +1,8 @@
 import { LastFMErrorResponse } from "../services/LastFM/LastFMService.types";
 
 export function parseErrorSix(message: string): string {
-  if (message.toLowerCase().includes("artist"))
+  if (message.toLowerCase() === "no such page") return "unknown error";
+  else if (message.toLowerCase().includes("artist"))
     return "that artist could not be found!";
   else if (message.toLowerCase().includes("album"))
     return "that album could not be found!";
