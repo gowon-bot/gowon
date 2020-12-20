@@ -195,7 +195,7 @@ _You can find the source code for all the commands at [/src/commands](/src/comma
   - Itsuko
   - Catchy
 
-- DunsterJR for making the profile picture, and for the friends plays idea
+- DunsterJR for making the (old) profile picture, and for the friends plays idea
 - mypetrobot for building the `Who Knows?` bot, the backbone and inspiration for this bot
 - Frikandel, for being a great influence and always ready to help ([Go checkout .fmbot!](https://github.com/fmbot-discord/fmbot))
 - Ish, for being cool overall 😎 ([Go checkout Chuu!](https://github.com/ishwi/discordBot))

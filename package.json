@@ -1,5 +1,5 @@
 {
-  "name": "discord_bot",
+  "name": "gowon",
   "version": "1.0.0",
   "main": "dist/src/index.js",
   "author": "John Ivison <john@ivison.org>",
