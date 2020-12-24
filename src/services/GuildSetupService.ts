@@ -19,6 +19,8 @@ export class GuildSetupService extends BaseService {
   }
 
   async handleNewGuild(guild: Guild) {
+    this.log(`setting up Gowon for ${guild.name}`);
+
     await this.setupPermissions(guild);
     await this.pingDeveloper(guild);
   }
@@ -47,7 +49,11 @@ export class GuildSetupService extends BaseService {
             runAs.toCommandFriendlyName(),
             commandName.dev
           );
-        } catch {}
+        } catch (e) {
+          this.log(
+            `Error while setting up permissions for ${guild.name}:${e.message}`
+          );
+        }
       }
     }
   }

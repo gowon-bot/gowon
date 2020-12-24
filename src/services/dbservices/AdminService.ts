@@ -81,14 +81,16 @@ export class AdminService extends BaseService {
   async isCommandDisabled(
     commandID: string,
     serverID: string
-  ): Promise<boolean> {
+  ): Promise<{ isDisabled: boolean; dev: boolean }> {
     this.log("checking if " + commandID + " is disabled in " + serverID);
 
     let dc = await DisabledCommand.findOne({
       where: { serverID, commandID },
     });
 
-    return !!dc;
+    return dc
+      ? { isDisabled: true, dev: dc.devPermission }
+      : { isDisabled: false, dev: false };
   }
 
   async listDisabled(serverID: string): Promise<DisabledCommand[]> {

@@ -94,7 +94,7 @@ export class Can {
     if (command.devCommand)
       return { passed: false, reason: CheckFailReason.forbidden };
 
-    if (message.member?.hasPermission("ADMINISTRATOR")) return { passed: true };
+    const isAdmin = message.member?.hasPermission("ADMINISTRATOR");
 
     if (
       useChannel &&
@@ -126,7 +126,7 @@ export class Can {
     if (!this.cachedPermissons[command.id])
       this.cachedPermissons[command.id] = permissions;
 
-    let disabledCheck = (
+    let disabled = (
       await Promise.all(
         (command instanceof ChildCommand
           ? [
@@ -139,11 +139,12 @@ export class Can {
         })
       )
     ).reduce((acc, c) => {
-      if (!acc) acc = c;
-      return acc;
-    }, false);
+      if (!acc) return true;
+      if (c.isDisabled && c.dev) return true;
+      if (c.isDisabled && !isAdmin) return true;
 
-    let disabled = disabledCheck;
+      return false;
+    }, false);
 
     let hasPermission = this.userHasPermissions(message.member!, permissions);
 
