@@ -139,7 +139,7 @@ export class Can {
         })
       )
     ).reduce((acc, c) => {
-      if (!acc) return true;
+      if (acc) return true;
       if (c.isDisabled && c.dev) return true;
       if (c.isDisabled && !isAdmin) return true;
 
