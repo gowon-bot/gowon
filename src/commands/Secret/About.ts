@@ -64,7 +64,9 @@ ${generateLink("Github", "https://github.com/jivison/gowon")}, ${generateLink(
       .addFields(
         {
           name: "Bot stats",
-          value: `Commands run: ${numberDisplay(commandsRun)}
+          value: `Guilds cached: ${this.gowonClient.client.guilds.cache.size}
+          Users cached: ${this.gowonClient.client.users.cache.size}
+          Commands run: ${numberDisplay(commandsRun)}
 Total friends: ${numberDisplay(friends)}
 Total commands: ${numberDisplay(commandCount)}`,
           inline: true,

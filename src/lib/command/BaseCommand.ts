@@ -205,9 +205,9 @@ export abstract class BaseCommand implements Command {
       (!username || (senderRequired && !senderUser?.lastFMUsername))
     )
       throw new LogicError(
-        `please sign in! (\`${await this.gowonService.prefix(
+        `please sign in with a last.fm account! (\`${await this.gowonService.prefix(
           this.guild.id
-        )}login <username>)\``
+        )}login <lastfm username>)\``
       );
 
     return {
