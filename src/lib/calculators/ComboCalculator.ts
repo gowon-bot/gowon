@@ -1,7 +1,7 @@
 import { RedirectsService } from "../../services/dbservices/RedirectsService";
 import { RecentTracks, Track } from "../../services/LastFM/LastFMService.types";
 import { RedirectsCache } from "../caches/RedirectsCache";
-import { Paginator } from "../Paginator";
+import { isPaginator, Paginator } from "../Paginator";
 
 export interface ComboDetails {
   plays: number;
@@ -20,26 +20,47 @@ export class ComboCalculator {
     private additionalArtists: string[]
   ) {}
 
-  async calculate(paginator: Paginator<any, RecentTracks>): Promise<Combo> {
-    for await (let page of paginator.iterator()) {
-      let tracks = this.extractTracks(page, paginator.currentPage);
-
-      this.totalTracks += tracks.filter((t) => !t["@attr"]?.nowplaying).length;
-
-      for (let trackIndex = 0; trackIndex < tracks.length; trackIndex++) {
-        let track = tracks[trackIndex];
-
-        if (!(await this.shouldContinue(track))) return this.combo;
-
-        await this.incrementCombo(
-          track,
-          paginator.currentPage === paginator.maxPages &&
-            trackIndex === tracks.length - 1
+  async calculate(
+    recentTracks: Paginator<any, RecentTracks> | RecentTracks
+  ): Promise<Combo> {
+    if (isPaginator(recentTracks)) {
+      for await (let page of recentTracks.iterator()) {
+        const shouldContinue = this.handlePage(
+          page,
+          recentTracks.currentPage,
+          recentTracks.maxPages
         );
+
+        if (!shouldContinue) break;
       }
+    } else {
+      this.handlePage(recentTracks, 1, 1);
     }
 
     return this.combo;
+  }
+
+  private async handlePage(
+    page: RecentTracks,
+    pageNumber: number,
+    maxPages: number
+  ): Promise<boolean> {
+    let tracks = this.extractTracks(page, pageNumber);
+
+    this.totalTracks += tracks.filter((t) => !t["@attr"]?.nowplaying).length;
+
+    for (let trackIndex = 0; trackIndex < tracks.length; trackIndex++) {
+      let track = tracks[trackIndex];
+
+      if (!(await this.shouldContinue(track))) return false;
+
+      await this.incrementCombo(
+        track,
+        pageNumber === maxPages && trackIndex === tracks.length - 1
+      );
+    }
+
+    return true;
   }
 
   private extractTracks(page: RecentTracks, pageNumber: number): Track[] {

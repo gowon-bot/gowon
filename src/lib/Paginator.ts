@@ -1,6 +1,12 @@
 import { sleep } from "../helpers";
 import { Params } from "../services/LastFM/LastFMService.types";
 
+export function isPaginator<T = any>(
+  value: Paginator<T> | any
+): value is Paginator<T> {
+  return value instanceof Paginator;
+}
+
 export class Paginator<ParamsT extends Params = Params, ResponseT = any> {
   currentPage: number = 0;
 
@@ -40,7 +46,9 @@ export class Paginator<ParamsT extends Params = Params, ResponseT = any> {
     }
   }
 
-  private generatePages(method: (params: ParamsT) => Promise<ResponseT>): Promise<ResponseT>[] {
+  private generatePages(
+    method: (params: ParamsT) => Promise<ResponseT>
+  ): Promise<ResponseT>[] {
     let pages = [];
 
     for (let page = this.currentPage + 1; page <= this.maxPages; page++) {
