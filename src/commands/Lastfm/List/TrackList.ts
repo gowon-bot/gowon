@@ -5,7 +5,7 @@ export default class TrackList extends ListCommand {
   idSeed = "stayc yoon";
 
   description = "Shows your top tracks over a given time period";
-  aliases = ["tlist", "toptracks", "toptrack", "tracks", "tl"];
+  aliases = ["tlist", "toptracks", "toptrack", "tracks", "tl", "topsongs"];
 
   async run() {
     let { username } = await this.parseMentions();

@@ -12,7 +12,7 @@ import { TagsService } from "../../../services/dbservices/TagsService";
 export default class TagCombo extends LastFMBaseCommand {
   idSeed = "secret number dita";
 
-  aliases = ["tagstreak", "tc"];
+  aliases = ["tagstreak", "tac"];
   description = `Shows your current streak\n Max combo: ${numberDisplay(
     this.gowonService.constants.hardPageLimit * 1000
   )}`;
