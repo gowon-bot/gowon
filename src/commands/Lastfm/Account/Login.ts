@@ -27,7 +27,7 @@ export default class Login extends LastFMBaseCommand {
 
   validation: Validation = {
     username: new validators.Required({
-      message: `please enter a username (\`login <username>\`)`,
+      message: `please enter a last.fm username (\`login <username>\`)`,
     }),
   };
 
