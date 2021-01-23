@@ -15,7 +15,7 @@ export default class SearchTrack extends SearchCommand {
 
   variations: Variation[] = [
     {
-      variationRegex: /deepst|sdt/,
+      variationRegex: /deepst|dst/,
       friendlyString: "deepst`,`dst",
       description: "Searches your top 6000 tracks (instead of 3000)",
     },
