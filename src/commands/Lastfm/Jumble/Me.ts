@@ -11,7 +11,7 @@ import { TagConsolidator } from "../../../lib/tags/TagConsolidator";
 
 export class Me extends JumbleChildCommand {
   idSeed = "csvc stella jang";
-  
+
   description =
     "Picks an artist from your library to jumble, or reshuffles your current one";
   usage = ["", "poolAmount"];
@@ -31,6 +31,8 @@ export class Me extends JumbleChildCommand {
       },
     },
   };
+
+  tagConsolidator = new TagConsolidator();
 
   async run(message: Message, runAs: RunAs) {
     let alreadyJumbled = await this.sessionGetJSON<JumbledArtist>(
@@ -68,7 +70,7 @@ export class Me extends JumbleChildCommand {
 
     this.sessionSetJSON(message, jumbleRedisKey, jumbledArtist);
 
-    let tags = new TagConsolidator()
+    let tags = this.tagConsolidator
       .addArtistName(artist.name)
       .addTags(artistInfo.tags.tag)
       .consolidate();
@@ -83,7 +85,7 @@ export class Me extends JumbleChildCommand {
         "**time"
       )} (ranked #${numberDisplay(artist["@attr"].rank)}).`,
       {
-        shouldDisplay: !!tags,
+        shouldDisplay: this.tagConsolidator.hasAnyTags(),
         string: `This artist is tagged as ${tags
           .slice(0, 2)
           .join(" as well as ")}`,

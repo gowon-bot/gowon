@@ -51,7 +51,7 @@ export function abbreviateNumber(number: number | string) {
     }
   }
 
-  return result;
+  return result || numberDisplay(number);
 }
 
 export function dateDisplay(date: Date): string {
