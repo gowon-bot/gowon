@@ -10,16 +10,16 @@ export default class SearchArtist extends SearchCommand {
   
   shouldBeIndexed = true;
   description = "Searches your top artists for keywords";
+  aliases = ["sa", "sartist"];
+  usage = ["keywords", "keywords @user"];
 
   variations: Variation[] = [
     {
-      variationRegex: /sadeep|sad/,
-      friendlyString: "sadeep`,`sad",
+      variationRegex: /deepsa|dsa/,
+      friendlyString: "deepsa`,`dsa",
       description: "Searches your top 4000 artists (instead of 2000)",
     },
   ];
-  aliases = ["sa", "sartist"];
-  usage = ["keywords", "keywords @user"];
 
   async run(_: any, runAs: RunAs) {
     let keywords = this.parsedArguments.keywords as string;
@@ -28,13 +28,13 @@ export default class SearchArtist extends SearchCommand {
 
     let paginator = new Paginator(
       this.lastFMService.topArtists.bind(this.lastFMService),
-      runAs.variationWasUsed("sadeep", "sad") ? 4 : 2,
+      runAs.variationWasUsed("deepsa", "dsa") ? 4 : 2,
       { username, limit: 1000 }
     );
 
     let topArtists = await paginator.getAll({
       concatTo: "artist",
-      concurrent: runAs.variationWasUsed("sadeep", "sad"),
+      concurrent: runAs.variationWasUsed("deepsa", "dsa"),
     });
 
     let filtered = topArtists.artist.filter((a) =>

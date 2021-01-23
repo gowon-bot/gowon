@@ -11,15 +11,15 @@ export default class SearchAlbum extends SearchCommand {
   shouldBeIndexed = true;
   description = "Searches your top albums for keywords";
   aliases = ["sl", "sal", "salbum"];
+  usage = ["keywords", "keywords @user"];
 
   variations: Variation[] = [
     {
-      variationRegex: /sldeep|sld/,
-      friendlyString: "sldeep`,`sld",
+      variationRegex: /deepsl|dsl/,
+      friendlyString: "deepsl`,`dsl",
       description: "Searches your top 4000 albums (instead of 2000)",
     },
   ];
-  usage = ["keywords", "keywords @user"];
 
   async run(_: any, runAs: RunAs) {
     let keywords = this.parsedArguments.keywords as string;
@@ -28,13 +28,13 @@ export default class SearchAlbum extends SearchCommand {
 
     let paginator = new Paginator(
       this.lastFMService.topAlbums.bind(this.lastFMService),
-      runAs.variationWasUsed("sldeep", "sld") ? 4 : 2,
+      runAs.variationWasUsed("deepsl", "dsl") ? 4 : 2,
       { username, limit: 1000 }
     );
 
     let topAlbums = await paginator.getAll({
       concatTo: "album",
-      concurrent: runAs.variationWasUsed("sldeep", "sld"),
+      concurrent: runAs.variationWasUsed("deepsl", "dsl"),
     });
 
     let filtered = topAlbums.album.filter((a) =>

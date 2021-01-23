@@ -11,15 +11,15 @@ export default class SearchTrack extends SearchCommand {
   shouldBeIndexed = true;
   description = "Searches your top tracks for keywords";
   aliases = ["st", "str", "strack"];
+  usage = ["keywords", "keywords @user"];
 
   variations: Variation[] = [
     {
-      variationRegex: /stdeep|std/,
-      friendlyString: "stdeep`,`std",
+      variationRegex: /deepst|sdt/,
+      friendlyString: "deepst`,`dst",
       description: "Searches your top 6000 tracks (instead of 3000)",
     },
   ];
-  usage = ["keywords", "keywords @user"];
 
   async run(_: any, runAs: RunAs) {
     let keywords = this.parsedArguments.keywords as string;
@@ -28,13 +28,13 @@ export default class SearchTrack extends SearchCommand {
 
     let paginator = new Paginator(
       this.lastFMService.topTracks.bind(this.lastFMService),
-      runAs.variationWasUsed("stdeep", "std") ? 6 : 3,
+      runAs.variationWasUsed("deepst", "dst") ? 6 : 3,
       { username, limit: 1000 }
     );
 
     let topTracks = await paginator.getAll({
       concatTo: "track",
-      concurrent: runAs.variationWasUsed("stdeep", "std"),
+      concurrent: runAs.variationWasUsed("deepst", "dst"),
     });
 
     let filtered = topTracks.track.filter((t) =>

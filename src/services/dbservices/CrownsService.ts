@@ -335,6 +335,7 @@ export class CrownsService extends BaseService {
   ): Promise<CrownDisplay | undefined> {
     let crown = await this.getCrown(artistName, guild.id, {
       showDeleted: false,
+      refresh: false,
     });
 
     if (!crown) return;
