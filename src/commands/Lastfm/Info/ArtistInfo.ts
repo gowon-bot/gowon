@@ -82,7 +82,9 @@ export default class ArtistInfo extends InfoCommand {
       `**Playcount**: ${numberDisplay(artistInfo.stats.playcount)}`,
       {
         shouldDisplay: crown?.user?.username !== undefined,
-        string: `**Crown**: ${crown?.user?.username}`,
+        string: `**Crown**: ${crown?.user?.username} (${numberDisplay(
+          crown?.crown.plays!
+        )})`,
       }
     );
 

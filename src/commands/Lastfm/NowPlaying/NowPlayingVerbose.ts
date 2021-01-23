@@ -6,7 +6,7 @@ import { promiseAllSettled } from "../../../helpers";
 
 export default class NowPlayingVerbose extends NowPlayingBaseCommand {
   idSeed = "fx luna";
-  
+
   aliases = ["npv", "fmv", "fmt"];
   description =
     "Displays the now playing or last played track from Last.fm, including some track information";
@@ -47,7 +47,7 @@ export default class NowPlayingVerbose extends NowPlayingBaseCommand {
     let artistPlays = this.artistPlays(artistInfo, track, isCrownHolder);
     let noArtistData = this.noArtistData(nowPlaying);
     let trackPlays = this.trackPlays(trackInfo);
-    let tags = this.tagConsolidator.consolidate(Infinity).join(" ‧ ");
+    let tags = this.tagConsolidator.consolidate(Infinity, false).join(" ‧ ");
 
     let lineConsolidator = new LineConsolidator();
     lineConsolidator.addLines(
