@@ -5,7 +5,7 @@ export function addS(string: string, number: number) {
 }
 
 export function numberDisplay(
-  number: number | string,
+  number: number | string | undefined,
   unit?: string,
   noSpace = false
 ): string {
@@ -14,6 +14,8 @@ export function numberDisplay(
   if (typeof number === "string") {
     parsedNumber = Number(number) || 0;
   }
+
+  parsedNumber ||= 0;
 
   return (
     parsedNumber.toLocaleString() +
