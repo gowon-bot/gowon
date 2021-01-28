@@ -55,7 +55,7 @@ export default class About extends BaseCommand {
           differenceInDays(new Date(), this.startDate),
           "day"
         ).strong()} old!
-Profile pictures by ${generateLink("reis", "https://twitter.com/reisnassance")}
+Profile pictures by ${generateLink("reis", "https://twitter.com/restlessrice")}
 ${generateLink("Github", "https://github.com/jivison/gowon")}, ${generateLink(
           "Last.fm",
           "https://last.fm/user/gowon_"
