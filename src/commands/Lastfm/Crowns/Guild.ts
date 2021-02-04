@@ -5,27 +5,29 @@ import { Delegate } from "../../../lib/command/BaseCommand";
 import { GuildAround } from "./GuildAround";
 import { GuildAt } from "./GuildAt";
 
-export class Guild extends CrownsChildCommand {
+const args = {
+  inputs: {
+    me: { regex: /me/gi, index: 0 },
+    rank: { regex: /[0-9]+/, index: 0 },
+  },
+} as const;
+
+export class Guild extends CrownsChildCommand<typeof args> {
   idSeed = "weki meki rina";
 
   description = "Shows the server's crowns leaderboard";
   aliases = ["leaderboard", "ldb"];
   usage = "";
 
-  arguments: Arguments = {
-    inputs: {
-      me: { regex: /me/gi, index: 0 },
-      rank: { regex: /[0-9]+/, index: 0 },
-    },
-  };
+  arguments: Arguments = args;
 
-  delegates: Delegate[] = [
+  delegates: Delegate<typeof args>[] = [
     {
-      when: (args) => args.me,
+      when: (args) => !!args.me,
       delegateTo: GuildAround,
     },
     {
-      when: (args) => args.rank,
+      when: (args) => !!args.rank,
       delegateTo: GuildAt,
     },
   ];

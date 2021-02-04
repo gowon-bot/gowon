@@ -1,6 +1,5 @@
 import { Arguments } from "../../../lib/arguments/arguments";
 import {
-  TimeRange,
   timeRangeParser,
   humanizedTimeRangeParser,
   parseDate,
@@ -12,8 +11,32 @@ import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { dateDisplay } from "../../../helpers";
+import { GowonService } from "../../../services/GowonService";
 
-export default class GoBack extends LastFMBaseCommand {
+const args = {
+  inputs: {
+    timeRange: { custom: timeRangeParser(), index: -1 },
+    humanizedTimeRange: {
+      custom: humanizedTimeRangeParser({
+        raw: true,
+        noOverall: true,
+        cleanSingleDurations: false,
+      }),
+      index: -1,
+    },
+    date: {
+      custom: (string: string) =>
+        parseDate(
+          string.trim(),
+          ...GowonService.getInstance().constants.dateParsers
+        ),
+      index: -1,
+    },
+  },
+  mentions: standardMentions,
+} as const;
+
+export default class GoBack extends LastFMBaseCommand<typeof args> {
   idSeed = "wooah sora";
 
   aliases = ["gb"];
@@ -21,25 +44,7 @@ export default class GoBack extends LastFMBaseCommand {
   subcategory = "library stats";
   usage = ["time period @user"];
 
-  arguments: Arguments = {
-    inputs: {
-      timeRange: { custom: timeRangeParser(), index: -1 },
-      humanizedTimeRange: {
-        custom: humanizedTimeRangeParser({
-          raw: true,
-          noOverall: true,
-          cleanSingleDurations: false,
-        }),
-        index: -1,
-      },
-      date: {
-        custom: (string: string) =>
-          parseDate(string.trim(), ...this.gowonService.constants.dateParsers),
-        index: -1,
-      },
-    },
-    mentions: standardMentions,
-  };
+  arguments: Arguments = args;
 
   validation: Validation = {
     timeRange: {
@@ -52,9 +57,9 @@ export default class GoBack extends LastFMBaseCommand {
   };
 
   async run() {
-    let timeRange = this.parsedArguments.timeRange as TimeRange,
-      humanTimeRange = this.parsedArguments.humanizedTimeRange as string,
-      date = this.parsedArguments.date as Date | undefined;
+    let timeRange = this.parsedArguments.timeRange!,
+      humanTimeRange = this.parsedArguments.humanizedTimeRange!,
+      date = this.parsedArguments.date!;
 
     if (!date && !timeRange.from)
       throw new LogicError("please enter a valid date or time range!");

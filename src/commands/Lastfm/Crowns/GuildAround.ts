@@ -4,6 +4,10 @@ import { Arguments } from "../../../lib/arguments/arguments";
 import { LogicError } from "../../../errors";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
+const args = {
+  mentions: standardMentions,
+} as const;
+
 export class GuildAround extends CrownsChildCommand {
   idSeed = "weki meki doyeon";
 
@@ -12,15 +16,18 @@ export class GuildAround extends CrownsChildCommand {
     "Ranks a user based on their crown count, and shows the surrounding users";
   usage = ["", "@user"];
 
-  arguments: Arguments = {
-    mentions: standardMentions,
-  };
+  arguments: Arguments = args;
 
   async run() {
     let { discordUser } = await this.parseMentions({
       fetchDiscordUser: true,
       reverseLookup: { lastFM: true },
     });
+
+    const perspective = this.usersService.discordPerspective(
+      this.author,
+      discordUser
+    );
 
     let discordID = discordUser?.id || this.author.id;
 
@@ -56,10 +63,9 @@ export class GuildAround extends CrownsChildCommand {
           )
         ).join("\n")}
         
-        Your position is #${author!.rank} with ${numberDisplay(
-          author!.count,
-          "crown"
-        )}`
+        ${perspective.upper.possessive} position is #${
+          author!.rank
+        } with ${numberDisplay(author!.count, "crown")}`
       );
 
     await this.send(embed);

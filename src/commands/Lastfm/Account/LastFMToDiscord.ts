@@ -4,7 +4,13 @@ import { LogicError } from "../../../errors";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 
-export default class LastFmToDiscord extends LastFMBaseCommand {
+const args = {
+  inputs: {
+    username: { index: 0 },
+  },
+} as const;
+
+export default class LastFmToDiscord extends LastFMBaseCommand<typeof args> {
   idSeed = "loona choerry";
 
   aliases = ["lfm2d", "last2todiscord", "l2d"];
@@ -12,18 +18,14 @@ export default class LastFmToDiscord extends LastFMBaseCommand {
   subcategory = "accounts";
   usage = "lastfm_username";
 
-  arguments: Arguments = {
-    inputs: {
-      username: { index: 0 },
-    },
-  };
+  arguments: Arguments = args;
 
   validation: Validation = {
     username: new validators.Required({}),
   };
 
   async run() {
-    let username = this.parsedArguments.username as string;
+    let username = this.parsedArguments.username!;
 
     let user = await this.usersService.getUserFromLastFMUsername(username);
 

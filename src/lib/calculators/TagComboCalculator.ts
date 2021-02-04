@@ -1,4 +1,4 @@
-import { TagsService } from "../../services/dbservices/TagsService";
+import { TagsService } from "../../services/dbservices/tags/TagsService";
 import { LastFMService } from "../../services/LastFM/LastFMService";
 import { RecentTracks, Track } from "../../services/LastFM/LastFMService.types";
 import { TagsCache } from "../caches/TagsCache";

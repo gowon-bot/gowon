@@ -17,7 +17,16 @@ import { User as DBUser } from "../../../database/entity/User";
 import { TagConsolidator } from "../../../lib/tags/TagConsolidator";
 import { sanitizeForDiscord } from "../../../helpers/discord";
 
-export abstract class NowPlayingBaseCommand extends LastFMBaseCommand {
+const args = {
+  inputs: {
+    otherWords: { index: { start: 0 } },
+  },
+  mentions: standardMentions,
+} as const;
+
+export abstract class NowPlayingBaseCommand extends LastFMBaseCommand<
+  typeof args
+> {
   subcategory = "nowplaying";
   usage = [
     "",
@@ -25,12 +34,7 @@ export abstract class NowPlayingBaseCommand extends LastFMBaseCommand {
     "@user hey check out this song (will show your now playing)",
   ];
 
-  arguments: Arguments = {
-    inputs: {
-      otherWords: { index: { start: 0 } },
-    },
-    mentions: standardMentions,
-  };
+  arguments: Arguments = args;
 
   tagConsolidator = new TagConsolidator();
 
@@ -41,7 +45,7 @@ export abstract class NowPlayingBaseCommand extends LastFMBaseCommand {
     senderUsername: string;
     discordUser?: User;
   }> {
-    let otherWords = this.parsedArguments.otherWords as string | undefined;
+    let otherWords = this.parsedArguments.otherWords;
 
     let { username, senderUsername, discordUser } = await this.parseMentions(
       noDiscordUser

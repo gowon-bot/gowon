@@ -2,22 +2,24 @@ import { Arguments } from "../../../lib/arguments/arguments";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
-export default class Wikipedia extends LastFMBaseCommand {
+const args = {
+  inputs: {
+    keywords: { index: { start: 0 } },
+  },
+  mentions: standardMentions,
+} as const;
+
+export default class Wikipedia extends LastFMBaseCommand<typeof args> {
   idSeed = "elris yukyung";
-  
+
   aliases = ["wiki"];
   description = "Search wikipedia for a song (or anything!)";
   subcategory = "external";
 
-  arguments: Arguments = {
-    inputs: {
-      keywords: { index: { start: 0 } },
-    },
-    mentions: standardMentions,
-  };
+  arguments: Arguments = args;
 
   async run() {
-    let keywords = this.parsedArguments.keywords as string;
+    let keywords = this.parsedArguments.keywords;
 
     let { username } = await this.parseMentions({
       usernameRequired: !keywords,

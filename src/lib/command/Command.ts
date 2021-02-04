@@ -1,10 +1,10 @@
 import { Message } from "discord.js";
-import { RunAs } from "../AliasChecker";
 import { Arguments } from "../arguments/arguments";
 import { GowonClient } from "../GowonClient";
 import { Variation } from "./BaseCommand";
 import { CommandManager } from "./CommandManager";
 import { ParentCommand } from "./ParentCommand";
+import { RunAs } from "./RunAs";
 
 export interface Command {
   execute(message: Message, runAs: RunAs): Promise<void>;

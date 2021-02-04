@@ -3,21 +3,23 @@ import { Arguments } from "../../../lib/arguments/arguments";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { SpotifyBaseCommand } from "./SpotifyBaseCommand";
 
-export default class SpotifyArtist extends SpotifyBaseCommand {
+const args = {
+  inputs: {
+    keywords: { index: { start: 0 } },
+  },
+  mentions: standardMentions,
+} as const;
+
+export default class SpotifyArtist extends SpotifyBaseCommand<typeof args> {
   idSeed = "iz*one chaeyeon";
 
   description = "Links the spotify page for an artist";
   aliases = ["fmsa", "spa"];
 
-  arguments: Arguments = {
-    inputs: {
-      keywords: { index: { start: 0 } },
-    },
-    mentions: standardMentions,
-  };
+  arguments: Arguments = args;
 
   async run() {
-    let keywords = this.parsedArguments.keywords as string;
+    let keywords = this.parsedArguments.keywords;
 
     let { username } = await this.parseMentions({
       usernameRequired: !keywords,

@@ -1,6 +1,5 @@
 import { Arguments } from "../../../lib/arguments/arguments";
 import {
-  TimeRange,
   timeRangeParser,
   humanizedTimeRangeParser,
 } from "../../../helpers/date";
@@ -13,7 +12,29 @@ import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
-export default class Pace extends LastFMBaseCommand {
+const args = {
+  inputs: {
+    timeRange: {
+      custom: timeRangeParser({ default: { weeks: 1 }, useOverall: true }),
+      index: -1,
+    },
+    humanizedTimeRange: {
+      custom: humanizedTimeRangeParser({
+        default: "week",
+        overallMessage: "since <user> began scrobbling",
+      }),
+      index: -1,
+    },
+    milestone: {
+      index: 0,
+      regex: /[0-9]+(?![\w.])(?! [a-z])/g,
+      number: true,
+    },
+  },
+  mentions: standardMentions,
+} as const;
+
+export default class Pace extends LastFMBaseCommand<typeof args> {
   idSeed = "wooah minseo";
 
   aliases = ["pc"];
@@ -21,27 +42,7 @@ export default class Pace extends LastFMBaseCommand {
   subcategory = "library stats";
   usage = ["", "milestone", "time period milestone @user"];
 
-  arguments: Arguments = {
-    inputs: {
-      timeRange: {
-        custom: timeRangeParser({ default: { weeks: 1 }, useOverall: true }),
-        index: -1,
-      },
-      humanizedTimeRange: {
-        custom: humanizedTimeRangeParser({
-          default: "week",
-          overallMessage: "since <user> began scrobbling",
-        }),
-        index: -1,
-      },
-      milestone: {
-        index: 0,
-        regex: /[0-9]+(?![\w.])(?! [a-z])/g,
-        number: true,
-      },
-    },
-    mentions: standardMentions,
-  };
+  arguments: Arguments = args;
 
   validation: Validation = {
     milestone: [
@@ -54,9 +55,9 @@ export default class Pace extends LastFMBaseCommand {
   };
 
   async run() {
-    let timeRange = this.parsedArguments.timeRange as TimeRange,
-      humanizedTimeRange = this.parsedArguments.humanizedTimeRange as string,
-      milestone = this.parsedArguments.milestone as number | undefined;
+    let timeRange = this.parsedArguments.timeRange!,
+      humanizedTimeRange = this.parsedArguments.humanizedTimeRange!,
+      milestone = this.parsedArguments.milestone;
 
     let { username, perspective } = await this.parseMentions();
 

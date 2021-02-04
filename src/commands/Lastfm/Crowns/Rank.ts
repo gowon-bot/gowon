@@ -1,10 +1,16 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
-import { Message, User } from "discord.js";
+import { Message } from "discord.js";
 import { numberDisplay, getOrdinal } from "../../../helpers";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { LogicError } from "../../../errors";
 
-export class Rank extends CrownsChildCommand {
+const args = {
+  mentions: {
+    user: { index: 0 },
+  },
+} as const;
+
+export class Rank extends CrownsChildCommand<typeof args> {
   idSeed = "wjsn exy";
 
   aliases = ["r"];
@@ -12,14 +18,10 @@ export class Rank extends CrownsChildCommand {
     "Ranks a user on the crowns leaderboard based on their crown count";
   usage = ["", "@user"];
 
-  arguments: Arguments = {
-    mentions: {
-      user: { index: 0 },
-    },
-  };
+  arguments: Arguments = args;
 
   async run(message: Message) {
-    let user = this.parsedArguments.user as User;
+    let user = this.parsedArguments.user;
 
     let discordID = user?.id || message.author.id;
 

@@ -5,7 +5,16 @@ import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { RedirectsCache } from "../../../lib/caches/RedirectsCache";
 import { RedirectsService } from "../../../services/dbservices/RedirectsService";
 
-export default class ArtistRank extends LastFMBaseCommand {
+const args = {
+  inputs: {
+    artist: {
+      index: { start: 0 },
+    },
+  },
+  mentions: standardMentions,
+} as const;
+
+export default class ArtistRank extends LastFMBaseCommand<typeof args> {
   idSeed = "cignature ye ah";
 
   aliases = ["ar", "ra"];
@@ -13,20 +22,13 @@ export default class ArtistRank extends LastFMBaseCommand {
   subcategory = "ranks";
   usage = ["artist @user"];
 
-  arguments: Arguments = {
-    inputs: {
-      artist: {
-        index: { start: 0 },
-      },
-    },
-    mentions: standardMentions,
-  };
+  arguments: Arguments = args;
 
   redirectsService = new RedirectsService(this.logger);
   redirectsCache = new RedirectsCache(this.redirectsService);
 
   async run() {
-    let artist = this.parsedArguments.artist as string;
+    let artist = this.parsedArguments.artist;
 
     let { username, senderUsername, perspective } = await this.parseMentions({
       senderRequired: !artist,

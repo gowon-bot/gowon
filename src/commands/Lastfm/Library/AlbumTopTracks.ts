@@ -4,7 +4,15 @@ import { Arguments } from "../../../lib/arguments/arguments";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { LinkGenerator } from "../../../helpers/lastFM";
 
-export default class AlbumTopTracks extends LastFMBaseCommand {
+const args = {
+  inputs: {
+    artist: { index: 0, splitOn: "|" },
+    album: { index: 1, splitOn: "|" },
+  },
+  mentions: standardMentions,
+} as const;
+
+export default class AlbumTopTracks extends LastFMBaseCommand<typeof args> {
   idSeed = "nature sunshine";
 
   description = "Shows your top tracks from an album";
@@ -12,17 +20,11 @@ export default class AlbumTopTracks extends LastFMBaseCommand {
   usage = ["", "artist | album @user"];
   subcategory = "library";
 
-  arguments: Arguments = {
-    inputs: {
-      artist: { index: 0, splitOn: "|" },
-      album: { index: 1, splitOn: "|" },
-    },
-    mentions: standardMentions,
-  };
+  arguments: Arguments = args;
 
   async run() {
-    let artist = this.parsedArguments.artist as string,
-      album = this.parsedArguments.album as string;
+    let artist = this.parsedArguments.artist,
+      album = this.parsedArguments.album;
 
     let { senderUsername, username } = await this.parseMentions({
       senderRequired: !artist || !album,

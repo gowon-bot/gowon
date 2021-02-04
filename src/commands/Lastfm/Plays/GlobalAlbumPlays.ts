@@ -4,26 +4,28 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { calculatePercent } from "../../../helpers/stats";
 
-export default class GlobalAlbumPlays extends LastFMBaseCommand {
+const args = {
+  inputs: {
+    artist: { index: 0, splitOn: "|" },
+    album: { index: 1, splitOn: "|" },
+  },
+  mentions: standardMentions,
+} as const;
+
+export default class GlobalAlbumPlays extends LastFMBaseCommand<typeof args> {
   idSeed = "itzy chaeryeong";
-  
+
   aliases = ["glp", "globallp"];
   description =
     "Shows you how many plays Last.fm has of a given album for all users";
   subcategory = "plays";
   usage = ["", "artist | album"];
 
-  arguments: Arguments = {
-    inputs: {
-      artist: { index: 0, splitOn: "|" },
-      album: { index: 1, splitOn: "|" },
-    },
-    mentions: standardMentions,
-  };
+  arguments: Arguments = args;
 
   async run() {
-    let artist = this.parsedArguments.artist as string,
-      album = this.parsedArguments.album as string;
+    let artist = this.parsedArguments.artist,
+      album = this.parsedArguments.album;
 
     let { senderUsername, username, perspective } = await this.parseMentions({
       senderRequired: !artist || !album,

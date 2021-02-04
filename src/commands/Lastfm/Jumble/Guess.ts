@@ -5,18 +5,20 @@ import { LogicError } from "../../../errors";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { shuffle } from "../../../helpers";
 
-export class Guess extends JumbleChildCommand {
+const args = {
+  inputs: { guess: { index: { start: 0 } } },
+} as const;
+
+export class Guess extends JumbleChildCommand<typeof args> {
   idSeed = "clc yeeun";
-  
+
   description = "Picks an artist from your library to jumble";
   usage = ["artist_guess"];
 
-  arguments: Arguments = {
-    inputs: { guess: { index: { start: 0 } } },
-  };
+  arguments: Arguments = args;
 
   async run(message: Message) {
-    let guess = this.parsedArguments.guess as string;
+    let guess = this.parsedArguments.guess;
 
     let jumbledArtist = await this.sessionGetJSON<JumbledArtist>(
       message,

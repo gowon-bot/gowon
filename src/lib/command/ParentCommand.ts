@@ -1,3 +1,4 @@
+import { Arguments } from "../arguments/arguments";
 import { BaseCommand } from "./BaseCommand";
 import { Command } from "./Command";
 import { CommandManager } from "./CommandManager";
@@ -26,7 +27,9 @@ export abstract class ParentCommand extends BaseCommand {
   async run() {}
 }
 
-export abstract class ChildCommand extends BaseCommand {
+export abstract class ChildCommand<
+  T extends Arguments = Arguments
+> extends BaseCommand<T> {
   shouldBeIndexed = false;
   abstract parentName: string;
 }

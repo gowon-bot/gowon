@@ -24,8 +24,8 @@ export abstract class BaseMention implements Mention {
 
   private buildPrefix(): string {
     return this.prefix instanceof Array
-      ? this.prefix.map((p) => escapeStringRegexp(p) + ":").join("|")
-      : escapeStringRegexp(this.prefix) + ":";
+      ? this.prefix.map((p) => escapeStringRegexp(p)).join("|")
+      : escapeStringRegexp(this.prefix);
   }
 
   private buildParseRegex(): RegExp {

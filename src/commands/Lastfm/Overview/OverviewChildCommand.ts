@@ -5,7 +5,9 @@ import { Arguments } from "../../../lib/arguments/arguments";
 import { ucFirst } from "../../../helpers";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
-export abstract class OverviewChildCommand extends LastFMBaseChildCommand {
+export abstract class OverviewChildCommand<
+  T extends Arguments = Arguments
+> extends LastFMBaseChildCommand<T> {
   parentName = "overview";
   subcategory = "overview";
   usage = ["", "@user or lfm:username"];

@@ -1,5 +1,5 @@
-import { RunAs } from "../../lib/AliasChecker";
 import { BaseCommand } from "../../lib/command/BaseCommand";
+import { RunAs } from "../../lib/command/RunAs";
 
 export default class Ping extends BaseCommand {
   idSeed = "blackpink lisa";

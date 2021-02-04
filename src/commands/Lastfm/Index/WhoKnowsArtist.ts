@@ -9,7 +9,13 @@ import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { IndexingService } from "../../../services/indexing/IndexingService";
 
-export default class WhoKnowsArtist extends BaseCommand {
+const args = {
+  inputs: {
+    artist: { index: { start: 0 } },
+  },
+} as const;
+
+export default class WhoKnowsArtist extends BaseCommand<typeof args> {
   idSeed = "bvndit songhee";
 
   aliases = ["wk"];
@@ -20,18 +26,14 @@ export default class WhoKnowsArtist extends BaseCommand {
 
   indexingService = new IndexingService(this.logger);
 
-  arguments: Arguments = {
-    inputs: {
-      artist: { index: { start: 0 } },
-    },
-  };
+  arguments: Arguments = args;
 
   validation: Validation = {
     artist: new validators.Required({}),
   };
 
   async run() {
-    const artistName = this.parsedArguments.artist as string;
+    const artistName = this.parsedArguments.artist!;
 
     let response: any;
 

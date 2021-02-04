@@ -5,18 +5,20 @@ import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
-export abstract class SearchCommand extends LastFMBaseCommand {
+const args = {
+  inputs: {
+    keywords: { index: { start: 0 } },
+  },
+  mentions: standardMentions,
+} as const;
+
+export abstract class SearchCommand extends LastFMBaseCommand<typeof args> {
   idSeed = "gwsn seokyung";
 
   shouldBeIndexed = false;
   subcategory = "library";
 
-  arguments: Arguments = {
-    inputs: {
-      keywords: { index: { start: 0 } },
-    },
-    mentions: standardMentions,
-  };
+  arguments: Arguments = args;
 
   validation: Validation = {
     keywords: [

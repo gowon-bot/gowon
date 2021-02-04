@@ -2,21 +2,23 @@ import { numberDisplay } from "../../../helpers";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { TagConsolidator } from "../../../lib/tags/TagConsolidator";
-import { TagsService } from "../../../services/dbservices/TagsService";
+import { TagsService } from "../../../services/dbservices/tags/TagsService";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
-export default class TopTags extends LastFMBaseCommand {
+const args = {
+  mentions: standardMentions,
+} as const;
+
+export default class TopTags extends LastFMBaseCommand<typeof args> {
   idSeed = "gwsn soso";
-  
+
   description = "Displays your top tags";
   secretCommand = true;
   aliases = [];
 
-  arguments: Arguments = {
-    mentions: standardMentions,
-  };
+  arguments: Arguments = args;
 
-  tagsService = new TagsService(this.logger);
+  tagsService = new TagsService(this.lastFMService, this.logger);
 
   showLoadingAfter = this.gowonService.constants.defaultLoadingTime;
 

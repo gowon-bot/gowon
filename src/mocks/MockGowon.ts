@@ -4,9 +4,9 @@ import { UsersService } from "../services/dbservices/UsersService";
 import { BaseCommand } from "../lib/command/BaseCommand";
 import { Message } from "discord.js";
 import { Logger } from "../lib/Logger";
+import { RunAs } from "../lib/command/RunAs";
 // import { LastFMBaseCommand } from "../commands/Lastfm/LastFMBaseCommand";
 // import { LastFMMock } from "./services/LastFMService.mock";
-import { RunAs } from "../lib/AliasChecker";
 
 export class FakeLogger {
   header: string = "";

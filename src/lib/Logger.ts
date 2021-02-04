@@ -1,8 +1,8 @@
 import { BaseCommand } from "./command/BaseCommand";
 import { Message } from "discord.js";
 import chalk from "chalk";
-import { RunAs } from "./AliasChecker";
 import { format } from "date-fns";
+import { RunAs } from "./command/RunAs";
 
 export class Logger {
   static output = true;
@@ -27,7 +27,7 @@ export class Logger {
 
   static formatObject(object: any): string {
     return JSON.stringify(object, undefined, 2);
-}
+  }
 
   header = "";
 

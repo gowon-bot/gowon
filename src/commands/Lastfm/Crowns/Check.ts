@@ -11,21 +11,23 @@ import {
   PurgatoryError,
 } from "../../../errors";
 
-export class Check extends CrownsChildCommand {
+const args = {
+  inputs: {
+    artist: { index: { start: 0 } },
+  },
+} as const;
+
+export class Check extends CrownsChildCommand<typeof args> {
   idSeed = "weki meki sei";
 
   aliases = ["c", "w"];
   description = "Checks a crown. If you have more plays, you will take it.";
   usage = ["", "artist"];
 
-  arguments: Arguments = {
-    inputs: {
-      artist: { index: { start: 0 } },
-    },
-  };
+  arguments: Arguments = args;
 
   async run(message: Message) {
-    let artist = this.parsedArguments.artist as string;
+    let artist = this.parsedArguments.artist;
 
     let { username, senderUser } = await this.parseMentions();
 

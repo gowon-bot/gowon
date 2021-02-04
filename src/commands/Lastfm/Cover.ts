@@ -4,24 +4,26 @@ import { Arguments } from "../../lib/arguments/arguments";
 import { standardMentions } from "../../lib/arguments/mentions/mentions";
 import { LastFMBaseCommand } from "./LastFMBaseCommand";
 
-export default class Cover extends LastFMBaseCommand {
+const args = {
+  inputs: {
+    artist: { index: 0, splitOn: "|" },
+    album: { index: 1, splitOn: "|" },
+  },
+  mentions: standardMentions,
+} as const;
+
+export default class Cover extends LastFMBaseCommand<typeof args> {
   idSeed = "april chaekyung";
 
   aliases = ["co"];
   description = "Shows the cover for a given album";
   usage = ["", "artist | album @user"];
 
-  arguments: Arguments = {
-    inputs: {
-      artist: { index: 0, splitOn: "|" },
-      album: { index: 1, splitOn: "|" },
-    },
-    mentions: standardMentions,
-  };
+  arguments: Arguments = args;
 
   async run(_: Message) {
-    let artist = this.parsedArguments.artist as string,
-      album = this.parsedArguments.album as string;
+    let artist = this.parsedArguments.artist,
+      album = this.parsedArguments.album;
 
     let { username } = await this.parseMentions({
       usernameRequired: !artist || !album,

@@ -1,5 +1,4 @@
 import regexEscape from "escape-string-regexp";
-import { RunAs } from "../lib/AliasChecker";
 import { Setting } from "../database/entity/Setting";
 import { Guild } from "discord.js";
 import { Settings } from "../lib/Settings";
@@ -8,6 +7,7 @@ import { ShallowCache, CacheScopedKey } from "../database/cache/ShallowCache";
 import { CrownBan } from "../database/entity/CrownBan";
 import { ChannelBlacklist } from "../database/entity/ChannelBlacklist";
 import { ArtistCrownBan } from "../database/entity/ArtistCrownBan";
+import { RunAs } from "../lib/command/RunAs";
 
 export class GowonService {
   // Static methods/properties
@@ -41,7 +41,7 @@ export class GowonService {
       "yyyy.MM.dd",
     ],
     unknownUserDisplay: "???",
-    defaultLoadingTime: 5
+    defaultLoadingTime: 5,
   } as const;
 
   async init() {

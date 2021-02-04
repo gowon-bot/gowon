@@ -5,21 +5,25 @@ import { Validation } from "../../lib/validation/ValidationChecker";
 import { validators } from "../../lib/validation/validators";
 import { LastFMBaseCommand } from "./LastFMBaseCommand";
 
-export default class RandomsongInUsersLibrary extends LastFMBaseCommand {
+const args = {
+  inputs: {
+    poolAmount: {
+      regex: /[0-9]+/,
+      index: 0,
+      number: true,
+    },
+  },
+  mentions: standardMentions,
+} as const;
+
+export default class RandomsongInUsersLibrary extends LastFMBaseCommand<
+  typeof args
+> {
   idSeed = "april yena";
-  
+
   shouldBeIndexed = false;
 
-  arguments: Arguments = {
-    inputs: {
-      poolAmount: {
-        regex: /[0-9]+/,
-        index: 0,
-        number: true,
-      },
-    },
-    mentions: standardMentions,
-  };
+  arguments: Arguments = args;
 
   validation: Validation = {
     poolAmount: {
@@ -29,7 +33,7 @@ export default class RandomsongInUsersLibrary extends LastFMBaseCommand {
   };
 
   async run() {
-    let poolAmount = this.parsedArguments.poolAmount as number;
+    let poolAmount = this.parsedArguments.poolAmount!;
 
     let { username } = await this.parseMentions();
 

@@ -1,15 +1,18 @@
-import { RunAs } from "../../../lib/AliasChecker";
 import { Variation } from "../../../lib/command/BaseCommand";
+import { RunAs } from "../../../lib/command/RunAs";
+import { validators } from "../../../lib/validation/validators";
 import { PermissionsChildCommand } from "./PermissionsChildCommand";
 
 export class ChannelBlacklist extends PermissionsChildCommand {
   idSeed = "red velvet wendy";
-  
+
   description = "Prevent a command from being used in a channel";
   usage = ["command #channel", "command #channel #channel2"];
   variations: Variation[] = [{ variationString: "channelunblacklist" }];
 
-  throwOnNoCommand = true;
+  validation = {
+    command: new validators.Required({}),
+  };
 
   async run(_: any, runAs: RunAs) {
     let mentionedChannels = this.message.mentions.channels.array();

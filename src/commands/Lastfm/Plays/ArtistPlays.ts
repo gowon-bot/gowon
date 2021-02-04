@@ -2,29 +2,31 @@ import { Arguments } from "../../../lib/arguments/arguments";
 import { numberDisplay } from "../../../helpers";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
-import { RunAs } from "../../../lib/AliasChecker";
+import { RunAs } from "../../../lib/command/RunAs";
 
-export default class ArtistPlays extends LastFMBaseCommand {
+const args = {
+  inputs: {
+    artist: {
+      index: {
+        start: 0,
+      },
+    },
+  },
+  mentions: standardMentions,
+} as const;
+
+export default class ArtistPlays extends LastFMBaseCommand<typeof args> {
   idSeed = "itzy ryujin";
-  
+
   aliases = ["ap", "p", "plays"];
   description = "Shows you how many plays you have of a given artist";
   subcategory = "plays";
   usage = ["", "artist @user"];
 
-  arguments: Arguments = {
-    inputs: {
-      artist: {
-        index: {
-          start: 0,
-        },
-      },
-    },
-    mentions: standardMentions,
-  };
+  arguments: Arguments = args;
 
   async run(_: any, runAs: RunAs) {
-    let artist = this.parsedArguments.artist as string;
+    let artist = this.parsedArguments.artist;
 
     let { username, senderUsername, perspective } = await this.parseMentions({
       senderRequired: !artist,

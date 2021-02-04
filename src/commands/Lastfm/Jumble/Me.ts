@@ -5,11 +5,22 @@ import { numberDisplay, abbreviateNumber, shuffle } from "../../../helpers";
 import { JumbledArtist, jumbleRedisKey } from "./JumbleParentCommand";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { Variation } from "../../../lib/command/BaseCommand";
-import { RunAs } from "../../../lib/AliasChecker";
 import { LineConsolidator } from "../../../lib/LineConsolidator";
 import { TagConsolidator } from "../../../lib/tags/TagConsolidator";
+import { RunAs } from "../../../lib/command/RunAs";
 
-export class Me extends JumbleChildCommand {
+const args = {
+  inputs: {
+    poolAmount: {
+      index: 0,
+      regex: /[0-9]{1,4}/g,
+      default: 500,
+      number: true,
+    },
+  },
+} as const;
+
+export class Me extends JumbleChildCommand<typeof args> {
   idSeed = "csvc stella jang";
 
   description =
@@ -21,16 +32,7 @@ export class Me extends JumbleChildCommand {
     },
   ];
 
-  arguments: Arguments = {
-    inputs: {
-      poolAmount: {
-        index: 0,
-        regex: /[0-9]{1,4}/g,
-        default: 500,
-        number: true,
-      },
-    },
-  };
+  arguments: Arguments = args;
 
   tagConsolidator = new TagConsolidator();
 
@@ -46,7 +48,7 @@ export class Me extends JumbleChildCommand {
       return;
     }
 
-    let poolAmount = this.parsedArguments.poolAmount as number;
+    let poolAmount = this.parsedArguments.poolAmount!;
 
     if (poolAmount < 5 || poolAmount > 1000)
       throw new LogicError("Please enter a number between 5 and 1000!");

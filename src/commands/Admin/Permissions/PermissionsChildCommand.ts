@@ -3,13 +3,33 @@ import { Arguments } from "../../../lib/arguments/arguments";
 import { CommandManager } from "../../../lib/command/CommandManager";
 import { Command } from "../../../lib/command/Command";
 import { CommandNotFoundError } from "../../../errors";
-import { RunAs } from "../../../lib/AliasChecker";
 import { Permission } from "../../../database/entity/Permission";
 import { Message, User as DiscordUser, Role } from "discord.js";
 import { User } from "../../../database/entity/User";
 import { CustomMention } from "../../../lib/arguments/mentions/CustomMention";
+import { RunAs } from "../../../lib/command/RunAs";
 
-export abstract class PermissionsChildCommand extends AdminBaseChildCommand {
+const args = {
+  inputs: {
+    command: { index: { start: 0 } },
+  },
+  mentions: {
+    userIDs: {
+      index: { start: 0 },
+      mention: new CustomMention("user:", "[0-9]{17,18}", true),
+      join: false,
+    },
+    roleIDs: {
+      index: { start: 0 },
+      mention: new CustomMention("role:", "[0-9]{17,18}", true),
+      join: false,
+    },
+  },
+} as const;
+
+export abstract class PermissionsChildCommand extends AdminBaseChildCommand<
+  typeof args
+> {
   parentName = "permissions";
   subcategory = "permissions";
 
@@ -23,28 +43,12 @@ export abstract class PermissionsChildCommand extends AdminBaseChildCommand {
 
   throwOnNoCommand = true;
 
-  arguments: Arguments = {
-    inputs: {
-      command: { index: { start: 0 } },
-    },
-    mentions: {
-      userIDs: {
-        index: { start: 0 },
-        mention: new CustomMention("user:", "[0-9]{17,18}", true),
-        join: false,
-      },
-      roleIDs: {
-        index: { start: 0 },
-        mention: new CustomMention("role:", "[0-9]{17,18}", true),
-        join: false,
-      },
-    },
-  };
+  arguments: Arguments = args;
 
   async prerun(message: Message) {
     await this.commandManager.init();
 
-    this.aliases = (this.parsedArguments.command as string).split(/\s*\//);
+    this.aliases = this.parsedArguments.command!.split(/\s*\//);
 
     let command = await this.commandManager.find(
       this.aliases.join(" "),

@@ -4,27 +4,25 @@ import { Arguments } from "../../../lib/arguments/arguments";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { LinkGenerator } from "../../../helpers/lastFM";
 
-export default class ArtistTopTracks extends LastFMBaseCommand {
+const args = {
+  inputs: {
+    artist: { index: { start: 0 } },
+  },
+  mentions: standardMentions,
+} as const;
+
+export default class ArtistTopTracks extends LastFMBaseCommand<typeof args> {
   idSeed = "gwsn anne";
-  
+
   description = "Shows your top tracks from an artist";
   aliases = ["att"];
   usage = ["", "artist @user"];
   subcategory = "library";
 
-  arguments: Arguments = {
-    inputs: {
-      artist: {
-        index: {
-          start: 0,
-        },
-      },
-    },
-    mentions: standardMentions,
-  };
+  arguments: Arguments = args;
 
   async run() {
-    let artist = this.parsedArguments.artist as string;
+    let artist = this.parsedArguments.artist;
 
     let { username, senderUsername } = await this.parseMentions({
       senderRequired: !artist,

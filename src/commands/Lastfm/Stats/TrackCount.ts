@@ -2,10 +2,23 @@ import { Arguments } from "../../../lib/arguments/arguments";
 import { generatePeriod, generateHumanPeriod } from "../../../helpers/date";
 import { numberDisplay } from "../../../helpers";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
-import { LastFMPeriod } from "../../../services/LastFM/LastFMService.types";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
-export default class TrackCount extends LastFMBaseCommand {
+const args = {
+  inputs: {
+    timePeriod: {
+      custom: (messageString: string) => generatePeriod(messageString),
+      index: -1,
+    },
+    humanReadableTimePeriod: {
+      custom: (messageString: string) => generateHumanPeriod(messageString),
+      index: -1,
+    },
+  },
+  mentions: standardMentions,
+} as const;
+
+export default class TrackCount extends LastFMBaseCommand<typeof args> {
   idSeed = "secret number soodam";
 
   aliases = ["tc"];
@@ -13,24 +26,11 @@ export default class TrackCount extends LastFMBaseCommand {
   subcategory = "library stats";
   usage = ["", "time period @user"];
 
-  arguments: Arguments = {
-    inputs: {
-      timePeriod: {
-        custom: (messageString: string) => generatePeriod(messageString),
-        index: -1,
-      },
-      humanReadableTimePeriod: {
-        custom: (messageString: string) => generateHumanPeriod(messageString),
-        index: -1,
-      },
-    },
-    mentions: standardMentions,
-  };
+  arguments: Arguments = args;
 
   async run() {
-    let timePeriod = this.parsedArguments.timePeriod as LastFMPeriod,
-      humanReadableTimePeriod = this.parsedArguments
-        .humanReadableTimePeriod as string;
+    let timePeriod = this.parsedArguments.timePeriod!,
+      humanReadableTimePeriod = this.parsedArguments.humanReadableTimePeriod!;
 
     let { username, perspective } = await this.parseMentions();
 

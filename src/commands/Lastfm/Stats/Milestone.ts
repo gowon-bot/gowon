@@ -8,25 +8,27 @@ import { validators } from "../../../lib/validation/validators";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { fromUnixTime } from "date-fns";
 
-export default class Milestone extends LastFMBaseCommand {
+const args = {
+  inputs: {
+    milestone: {
+      regex: /-?[0-9]+/,
+      index: 0,
+      default: 1,
+      number: true,
+    },
+  },
+  mentions: standardMentions,
+} as const;
+
+export default class Milestone extends LastFMBaseCommand<typeof args> {
   idSeed = "wooah lucy";
-  
+
   aliases = ["mls", "ms"];
   description = "Shows you what you scrobbled at a given milestone";
   subcategory = "library stats";
   usage = ["", "milestone @user"];
 
-  arguments: Arguments = {
-    inputs: {
-      milestone: {
-        regex: /-?[0-9]+/,
-        index: 0,
-        default: 1,
-        number: true,
-      },
-    },
-    mentions: standardMentions,
-  };
+  arguments: Arguments = args;
 
   validation: Validation = {
     milestone: [
@@ -40,7 +42,7 @@ export default class Milestone extends LastFMBaseCommand {
   };
 
   async run() {
-    let milestone = this.parsedArguments.milestone as number;
+    let milestone = this.parsedArguments.milestone!;
 
     let { username, perspective } = await this.parseMentions({
       asCode: false,

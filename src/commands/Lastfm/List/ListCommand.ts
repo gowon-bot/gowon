@@ -7,33 +7,34 @@ import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
-export abstract class ListCommand extends LastFMBaseCommand {
+const args = {
+  inputs: {
+    timePeriod: {
+      custom: (messageString: string) => generatePeriod(messageString, "7day"),
+      index: -1,
+    },
+    humanReadableTimePeriod: {
+      custom: (messageString: string) =>
+        generateHumanPeriod(messageString, "7day"),
+      index: -1,
+    },
+    listAmount: {
+      index: 0,
+      regex: /[0-9]{1,4}(?!\w)(?! [mw])/g,
+      default: 10,
+      number: true,
+    },
+  },
+  mentions: standardMentions,
+} as const;
+
+export abstract class ListCommand extends LastFMBaseCommand<typeof args> {
   idSeed = "stayc j";
-  
+
   subcategory = "lists";
   usage = ["", "list_amount time period @user"];
 
-  arguments: Arguments = {
-    inputs: {
-      timePeriod: {
-        custom: (messageString: string) =>
-          generatePeriod(messageString, "7day"),
-        index: -1,
-      },
-      humanReadableTimePeriod: {
-        custom: (messageString: string) =>
-          generateHumanPeriod(messageString, "7day"),
-        index: -1,
-      },
-      listAmount: {
-        index: 0,
-        regex: /[0-9]{1,4}(?!\w)(?! [mw])/g,
-        default: 10,
-        number: true,
-      },
-    },
-    mentions: standardMentions,
-  };
+  arguments: Arguments = args;
 
   validation: Validation = {
     listAmount: {
@@ -47,9 +48,8 @@ export abstract class ListCommand extends LastFMBaseCommand {
   listAmount!: number;
 
   async prerun(_: Message): Promise<void> {
-    this.timePeriod = this.parsedArguments.timePeriod as LastFMPeriod;
-    this.humanReadableTimePeriod = this.parsedArguments
-      .humanReadableTimePeriod as string;
-    this.listAmount = this.parsedArguments.listAmount as number;
+    this.timePeriod = this.parsedArguments.timePeriod!;
+    this.humanReadableTimePeriod = this.parsedArguments.humanReadableTimePeriod!;
+    this.listAmount = this.parsedArguments.listAmount!;
   }
 }

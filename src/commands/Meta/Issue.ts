@@ -1,17 +1,24 @@
 import { Message } from "discord.js";
 import { dateTimeDisplay } from "../../helpers";
 import { generateLink } from "../../helpers/discord";
-import { RunAs } from "../../lib/AliasChecker";
 import { Arguments } from "../../lib/arguments/arguments";
 import { BaseCommand, Variation } from "../../lib/command/BaseCommand";
+import { RunAs } from "../../lib/command/RunAs";
 import { Validation } from "../../lib/validation/ValidationChecker";
 import { validators } from "../../lib/validation/validators";
 import { GithubService } from "../../services/Github/GithubService";
 
-export default class Issue extends BaseCommand {
+const args = {
+  inputs: {
+    title: { index: 0, splitOn: "|" },
+    body: { index: { start: 1 }, splitOn: "|" },
+  },
+} as const;
+
+export default class Issue extends BaseCommand<typeof args> {
   idSeed = "apink bomi";
 
-  description = "Send feedback to the John (the author)";
+  description = "Create a github issue on the gowon repository";
   secretCommand = true;
   usage = ["title | body"];
   devCommand = true;
@@ -37,12 +44,7 @@ export default class Issue extends BaseCommand {
     },
   ];
 
-  arguments: Arguments = {
-    inputs: {
-      title: { index: 0, splitOn: "|" },
-      body: { index: { start: 1 }, splitOn: "|" },
-    },
-  };
+  arguments: Arguments = args;
 
   validation: Validation = {
     title: new validators.Required({}),
@@ -51,8 +53,8 @@ export default class Issue extends BaseCommand {
   githubService = new GithubService(this.logger);
 
   async run(_: Message, runAs: RunAs) {
-    let title = this.parsedArguments.title as string,
-      body = this.parsedArguments.body as string;
+    let title = this.parsedArguments.title!,
+      body = this.parsedArguments.body;
 
     let metadata = `
 

@@ -14,7 +14,18 @@ import { validators } from "../../../lib/validation/validators";
 import { sanitizeForDiscord } from "../../../helpers/discord";
 import { LinkGenerator } from "../../../helpers/lastFM";
 
-export default class Combo extends LastFMBaseCommand {
+const args = {
+  inputs: {
+    artists: {
+      index: { start: 0 },
+      splitOn: "|",
+      join: false,
+    },
+  },
+  mentions: standardMentions,
+} as const;
+
+export default class Combo extends LastFMBaseCommand<typeof args> {
   idSeed = "wooah wooyeon";
   aliases = ["streak", "str"];
   description = `Shows your current streak\n Max combo: ${numberDisplay(
@@ -26,16 +37,7 @@ export default class Combo extends LastFMBaseCommand {
     "artist1 | artist2 | artistn... (artists to count when checking for consecutive plays)",
   ];
 
-  arguments: Arguments = {
-    inputs: {
-      artists: {
-        index: { start: 0 },
-        splitOn: "|",
-        join: false,
-      },
-    },
-    mentions: standardMentions,
-  };
+  arguments: Arguments = args;
 
   validation: Validation = {
     artists: new validators.LengthRange({ max: 10 }),
@@ -44,7 +46,7 @@ export default class Combo extends LastFMBaseCommand {
   redirectsService = new RedirectsService(this.logger);
 
   async run() {
-    let artists = this.parsedArguments.artists as string[];
+    let artists = this.parsedArguments.artists!;
 
     let { username } = await this.parseMentions();
 

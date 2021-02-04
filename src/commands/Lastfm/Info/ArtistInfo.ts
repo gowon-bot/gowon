@@ -7,26 +7,28 @@ import { LinkConsolidator } from "../../../helpers/lastFM";
 import { LineConsolidator } from "../../../lib/LineConsolidator";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
-export default class ArtistInfo extends InfoCommand {
-  idSeed = "csvc lovey  ";
+const args = {
+  inputs: {
+    artist: { index: { start: 0 } },
+  },
+  mentions: standardMentions,
+} as const;
+
+export default class ArtistInfo extends InfoCommand<typeof args> {
+  idSeed = "csvc lovey";
   shouldBeIndexed = true;
 
   aliases = ["ai", "as"];
   description = "Displays some information about an artist";
   usage = ["", "artist"];
 
-  arguments: Arguments = {
-    inputs: {
-      artist: { index: { start: 0 } },
-    },
-    mentions: standardMentions,
-  };
+  arguments: Arguments = args;
 
   crownsService = new CrownsService();
   lineConsolidator = new LineConsolidator();
 
   async run() {
-    let artist = this.parsedArguments.artist as string;
+    let artist = this.parsedArguments.artist;
 
     let { senderUsername, username, perspective } = await this.parseMentions({
       senderRequired: !artist,

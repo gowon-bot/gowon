@@ -6,7 +6,14 @@ import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
-export default class AlbumAt extends LastFMBaseCommand {
+const args = {
+  inputs: {
+    rank: { index: 0, default: 1, number: true },
+  },
+  mentions: standardMentions,
+} as const;
+
+export default class AlbumAt extends LastFMBaseCommand<typeof args> {
   idSeed = "gugudan hyeyeon";
 
   aliases = ["ala"];
@@ -14,19 +21,14 @@ export default class AlbumAt extends LastFMBaseCommand {
   subcategory = "ranks";
   usage = ["", "rank @user"];
 
-  arguments: Arguments = {
-    inputs: {
-      rank: { index: 0, default: 1, number: true },
-    },
-    mentions: standardMentions,
-  };
+  arguments: Arguments = args;
 
   validation: Validation = {
     rank: new validators.Number({ whole: true }),
   };
 
   async run() {
-    let rank = this.parsedArguments.rank as number;
+    let rank = this.parsedArguments.rank;
 
     let { username, perspective } = await this.parseMentions();
 

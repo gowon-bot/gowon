@@ -8,25 +8,27 @@ interface CheckedCrownsDisplay {
   [state: string]: Array<string>;
 }
 
-export class CheckMany extends CrownsChildCommand {
+const args = {
+  inputs: {
+    artists: { index: { start: 0 }, splitOn: "|", join: false },
+  },
+} as const;
+
+export class CheckMany extends CrownsChildCommand<typeof args> {
   idSeed = "weki meki suyeon";
 
   aliases = ["cm"];
   description = "Checks multiple crowns at once (max 10)";
   usage = ["", "artist1 | artist2 | artist3 ...artist10"];
 
-  arguments: Arguments = {
-    inputs: {
-      artists: { index: { start: 0 }, splitOn: "|", join: false },
-    },
-  };
+  arguments: Arguments = args;
 
   validation: Validation = {
     artists: new validators.LengthRange({ min: 1, max: 10 }),
   };
 
   async run(message: Message) {
-    let artists = this.parsedArguments.artists as string[];
+    let artists = this.parsedArguments.artists;
 
     let { username } = await this.parseMentions();
 

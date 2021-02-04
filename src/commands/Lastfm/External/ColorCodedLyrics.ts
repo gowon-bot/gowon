@@ -4,22 +4,24 @@ import { Arguments } from "../../../lib/arguments/arguments";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
-export default class ColorCodedLyrics extends LastFMBaseCommand {
+const args = {
+  inputs: {
+    keywords: { index: { start: 0 } },
+  },
+  mentions: standardMentions,
+} as const;
+
+export default class ColorCodedLyrics extends LastFMBaseCommand<typeof args> {
   idSeed = "iz*one minju";
 
   aliases = ["ccl"];
   description = "Search colorcodedlyrics for an song";
   subcategory = "external";
 
-  arguments: Arguments = {
-    inputs: {
-      keywords: { index: { start: 0 } },
-    },
-    mentions: standardMentions,
-  };
+  arguments: Arguments = args;
 
   async run() {
-    let keywords = this.parsedArguments.keywords as string;
+    let keywords = this.parsedArguments.keywords;
 
     let { username } = await this.parseMentions({
       usernameRequired: !keywords,

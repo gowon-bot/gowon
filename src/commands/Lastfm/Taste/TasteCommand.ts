@@ -10,33 +10,35 @@ import { DiscordIDMention } from "../../../lib/arguments/mentions/DiscordIDMenti
 import { LogicError } from "../../../errors";
 import { DurationParser } from "../../../lib/DurationParser";
 
-export abstract class TasteCommand extends LastFMBaseCommand {
+export const tasteMentions = {
+  user: { index: 0 },
+  user2: { index: 1 },
+  lfmUser: {
+    index: 0,
+    mention: new LastFMMention(true),
+  },
+  lfmUser2: {
+    index: 1,
+    mention: new LastFMMention(true),
+  },
+  userID: {
+    index: 0,
+    mention: new DiscordIDMention(true),
+  },
+  userID2: {
+    index: 1,
+    mention: new DiscordIDMention(true),
+  },
+} as const;
+
+export abstract class TasteCommand<
+  T extends Arguments = { mentions: typeof tasteMentions }
+> extends LastFMBaseCommand<T> {
   subcategory = "taste";
 
-  arguments: Arguments = {
-    mentions: {
-      user: { index: 0 },
-      user2: { index: 1 },
-      lfmUser: {
-        index: 0,
-        mention: new LastFMMention(true),
-      },
-      lfmUser2: {
-        index: 1,
-        mention: new LastFMMention(true),
-      },
-      userID: {
-        index: 0,
-        mention: new DiscordIDMention(true),
-      },
-      userID2: {
-        index: 1,
-        mention: new DiscordIDMention(true),
-      },
-    },
-  };
-
   durationParser = new DurationParser();
+
+  arguments: Arguments = { mentions: tasteMentions };
 
   protected async getUsernames(): Promise<[string, string]> {
     let usernames: string[] = [];
@@ -56,22 +58,24 @@ export abstract class TasteCommand extends LastFMBaseCommand {
       "username",
       "username2",
     ]) {
-      if (usernames.length < 2 && this.parsedArguments[argName]) {
+      const parsedArguments = this.parsedArguments as any;
+
+      if (usernames.length < 2 && parsedArguments[argName]) {
         let username: string | undefined;
 
         if (argName === "user" || argName === "user2") {
           username = await this.usersService.getUsername(
-            this.parsedArguments[argName].id
+            parsedArguments[argName].id
           );
         } else if (argName === "userID" || argName === "userID2") {
           username = await this.usersService.getUsername(
-            this.parsedArguments[argName]
+            parsedArguments[argName]
           );
         } else if (argName === "username" || argName === "username2") {
-          if (!this.durationParser.isDuration(this.parsedArguments[argName]))
-            username = this.parsedArguments[argName] as string;
+          if (!this.durationParser.isDuration(parsedArguments[argName]))
+            username = parsedArguments[argName] as string;
         } else if (argName === "lfmUser" || argName === "lfmUser2") {
-          username = this.parsedArguments[argName] as string;
+          username = parsedArguments[argName] as string;
         } else {
           throw new LogicError("please enter a user to compare your taste to!");
         }
@@ -96,8 +100,8 @@ export abstract class TasteCommand extends LastFMBaseCommand {
   }
 
   protected getPaginators(usernameOne: string, usernameTwo: string) {
-    let artistAmount = this.parsedArguments.artistAmount as number,
-      timePeriod = (this.parsedArguments.timePeriod ||
+    let artistAmount = (this.parsedArguments as any).artistAmount as number,
+      timePeriod = ((this.parsedArguments as any).timePeriod ||
         "overall") as LastFMPeriod;
 
     let maxPages = artistAmount > 1000 ? 2 : 1;

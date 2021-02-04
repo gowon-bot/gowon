@@ -3,22 +3,24 @@ import { LogicError } from "../../../errors";
 import { dateDisplay, numberDisplay } from "../../../helpers";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
-import { WeekCalculator } from "../../../lib/calculators/WeekCalculator";
+import { ReportCalculator } from "../../../lib/calculators/ReportCalculator";
 import { Paginator } from "../../../lib/Paginator";
 import { RedirectsService } from "../../../services/dbservices/RedirectsService";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
-export default class Week extends LastFMBaseCommand {
+const args = {
+  mentions: standardMentions,
+} as const;
+
+export default class Week extends LastFMBaseCommand<typeof args> {
   idSeed = "cignature belle";
   description =
     "Shows an overview of your week, including your top artists, albums, and tracks";
   aliases = ["weekly"];
   subcategory = "reports";
-  usage = ["", "weekly @user"];
+  usage = ["", "@user"];
 
-  arguments: Arguments = {
-    mentions: standardMentions,
-  };
+  arguments: Arguments = args;
 
   redirectsService = new RedirectsService(this.logger);
 
@@ -49,9 +51,12 @@ export default class Week extends LastFMBaseCommand {
 
     restPages.track = [...firstPage!.track, ...(restPages.track ?? [])];
 
-    let weekCalculator = new WeekCalculator(this.redirectsService, restPages);
+    let reportCalculator = new ReportCalculator(
+      this.redirectsService,
+      restPages
+    );
 
-    let week = await weekCalculator.calculate();
+    let week = await reportCalculator.calculate();
 
     let topTracks = Object.keys(week.top.tracks).sort(
       (a, b) => week.top.tracks[b] - week.top.tracks[a]

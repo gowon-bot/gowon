@@ -4,29 +4,30 @@ import { numberDisplay } from "../../../../helpers";
 import { Arguments } from "../../../../lib/arguments/arguments";
 import {
   humanizedTimeRangeParser,
-  TimeRange,
   timeRangeParser,
 } from "../../../../helpers/date";
 
-export class Scrobbles extends FriendsChildCommand {
+const args = {
+  inputs: {
+    timeRange: { custom: timeRangeParser(), index: -1 },
+    humanizedTimeRange: { custom: humanizedTimeRangeParser(), index: -1 },
+  },
+} as const;
+
+export class Scrobbles extends FriendsChildCommand<typeof args> {
   idSeed = "nature sohee";
 
   description = "Shows how many scrobbles your friends have";
   aliases = ["s"];
   usage = ["", "time period"];
 
-  arguments: Arguments = {
-    inputs: {
-      timeRange: { custom: timeRangeParser(), index: -1 },
-      humanizedTimeRange: { custom: humanizedTimeRangeParser(), index: -1 },
-    },
-  };
+  arguments: Arguments = args;
 
   throwIfNoFriends = true;
 
   async run() {
-    let timeRange = this.parsedArguments.timeRange as TimeRange,
-      humanTimeRange = this.parsedArguments.humanizedTimeRange as string;
+    let timeRange = this.parsedArguments.timeRange!,
+      humanTimeRange = this.parsedArguments.humanizedTimeRange!;
 
     let scrobbles = await new MultiRequester([
       ...this.friendUsernames,

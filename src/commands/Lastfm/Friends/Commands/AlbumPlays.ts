@@ -4,25 +4,27 @@ import { numberDisplay } from "../../../../helpers";
 import { Arguments } from "../../../../lib/arguments/arguments";
 import { LastFMEntityNotFoundError } from "../../../../errors";
 
-export class AlbumPlays extends FriendsChildCommand {
+const args = {
+  inputs: {
+    artist: { index: 0, splitOn: "|" },
+    album: { index: 1, splitOn: "|" },
+  },
+} as const;
+
+export class AlbumPlays extends FriendsChildCommand<typeof args> {
   idSeed = "elris karin";
 
   description = "Shows how many plays of an album your friends have";
   aliases = ["lp", "alp"];
   usage = ["", "artist | album"];
 
-  arguments: Arguments = {
-    inputs: {
-      artist: { index: 0, splitOn: "|" },
-      album: { index: 1, splitOn: "|" },
-    },
-  };
+  arguments: Arguments = args;
 
   throwIfNoFriends = true;
 
   async run() {
-    let artist = this.parsedArguments.artist as string,
-      album = this.parsedArguments.album as string;
+    let artist = this.parsedArguments.artist,
+      album = this.parsedArguments.album;
 
     if (!artist || !album) {
       let nowPlaying = await this.lastFMService.nowPlayingParsed(

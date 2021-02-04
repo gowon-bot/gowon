@@ -5,7 +5,13 @@ import { LogicError } from "../../../errors";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 
-export default class TrackAt extends LastFMBaseCommand {
+const args = {
+  inputs: {
+    rank: { index: 0, default: 1, number: true },
+  },
+} as const;
+
+export default class TrackAt extends LastFMBaseCommand<typeof args> {
   idSeed = "cignature sunn";
 
   aliases = ["ta"];
@@ -13,18 +19,14 @@ export default class TrackAt extends LastFMBaseCommand {
   subcategory = "ranks";
   usage = ["", "rank @user"];
 
-  arguments: Arguments = {
-    inputs: {
-      rank: { index: 0, default: 1, number: true },
-    },
-  };
+  arguments: Arguments = args;
 
   validation: Validation = {
     rank: new validators.Number({ whole: true }),
   };
 
   async run() {
-    let rank = this.parsedArguments.rank as number;
+    let rank = this.parsedArguments.rank;
 
     let { username, perspective } = await this.parseMentions();
 

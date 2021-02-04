@@ -3,30 +3,32 @@ import { InfoCommand } from "./InfoCommand";
 import { LogicError } from "../../../errors";
 import { numberDisplay } from "../../../helpers";
 
-export default class TopTrack extends InfoCommand {
+const args = {
+  inputs: {
+    artist: { index: 0, splitOn: "|" },
+    positions: {
+      index: { start: 1, stop: 2 },
+      splitOn: "|",
+      join: false,
+      default: ["1"],
+    },
+  },
+} as const;
+
+export default class TopTrack extends InfoCommand<typeof args> {
   idSeed = "csv dalchong";
-  
+
   shouldBeIndexed = true;
   usage = ["", "artist", "artist | start | stop"];
 
   aliases = ["tt"];
   description = "Displays the top tracks for an artist";
-  arguments: Arguments = {
-    inputs: {
-      artist: { index: 0, splitOn: "|" },
-      positions: {
-        index: { start: 1, stop: 2 },
-        splitOn: "|",
-        join: false,
-        default: ["1"],
-      },
-    },
-  };
+  arguments: Arguments = args;
 
   async run() {
-    let artist = this.parsedArguments.artist as string,
+    let artist = this.parsedArguments.artist,
       position = {
-        start: (this.parsedArguments.positions as string[])[0].toInt(),
+        start: this.parsedArguments.positions![0].toInt(),
         end: -1,
       };
 

@@ -3,7 +3,21 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { numberDisplay } from "../../../helpers";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
-export default class AlbumRank extends LastFMBaseCommand {
+const args = {
+  inputs: {
+    artist: {
+      index: 0,
+      splitOn: "|",
+    },
+    album: {
+      index: 1,
+      splitOn: "|",
+    },
+  },
+  mentions: standardMentions,
+} as const;
+
+export default class AlbumRank extends LastFMBaseCommand<typeof args> {
   idSeed = "cignature chaesol";
 
   aliases = ["alra", "lra"];
@@ -11,23 +25,11 @@ export default class AlbumRank extends LastFMBaseCommand {
   subcategory = "ranks";
   usage = ["", "artist | album @user"];
 
-  arguments: Arguments = {
-    inputs: {
-      artist: {
-        index: 0,
-        splitOn: "|",
-      },
-      album: {
-        index: 1,
-        splitOn: "|",
-      },
-    },
-    mentions: standardMentions,
-  };
+  arguments: Arguments = args;
 
   async run() {
-    let album = this.parsedArguments.album as string,
-      artist = this.parsedArguments.artist as string;
+    let album = this.parsedArguments.album,
+      artist = this.parsedArguments.artist;
 
     let { username, senderUsername, perspective } = await this.parseMentions({
       senderRequired: !artist || !album,
@@ -49,8 +51,8 @@ export default class AlbumRank extends LastFMBaseCommand {
 
     let rank = topAlbums.album.findIndex(
       (a) =>
-        a.name.toLowerCase() === album.toLowerCase() &&
-        a.artist.name.toLowerCase() === artist.toLowerCase()
+        a.name.toLowerCase() === album!.toLowerCase() &&
+        a.artist.name.toLowerCase() === artist!.toLowerCase()
     );
 
     if (rank === -1) {

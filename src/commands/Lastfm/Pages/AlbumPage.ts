@@ -3,7 +3,15 @@ import { Arguments } from "../../../lib/arguments/arguments";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
-export default class AlbumPage extends LastFMBaseCommand {
+const args = {
+  inputs: {
+    artist: { index: 0, splitOn: "|" },
+    album: { index: 1, splitOn: "|" },
+  },
+  mentions: standardMentions,
+} as const;
+
+export default class AlbumPage extends LastFMBaseCommand<typeof args> {
   idSeed = "twice jihyo";
 
   aliases = ["alpa", "lpa"];
@@ -11,17 +19,11 @@ export default class AlbumPage extends LastFMBaseCommand {
   subcategory = "pages";
   usage = ["", "artist | album"];
 
-  arguments: Arguments = {
-    inputs: {
-      artist: { index: 0, splitOn: "|" },
-      album: { index: 1, splitOn: "|" },
-    },
-    mentions: standardMentions,
-  };
+  arguments: Arguments = args;
 
   async run() {
-    let artist = this.parsedArguments.artist as string,
-      album = this.parsedArguments.album as string;
+    let artist = this.parsedArguments.artist,
+      album = this.parsedArguments.album;
 
     let { username } = await this.parseMentions();
 

@@ -8,22 +8,24 @@ import { differenceInDays, fromUnixTime } from "date-fns";
 import { DiscordIDMention } from "../../../lib/arguments/mentions/DiscordIDMention";
 import { LogicError } from "../../../errors";
 
-export default class Login extends LastFMBaseCommand {
+const args = {
+  inputs: {
+    username: { index: 0 },
+  },
+  mentions: {
+    user: { index: 0 },
+    userID: { mention: new DiscordIDMention(true), index: 0 },
+  },
+} as const;
+
+export default class Login extends LastFMBaseCommand<typeof args> {
   idSeed = "loona jinsoul";
 
   description = "Sets your Last.fm username in Gowon";
   subcategory = "accounts";
   usage = "username";
 
-  arguments: Arguments = {
-    inputs: {
-      username: { index: 0 },
-    },
-    mentions: {
-      user: { index: 0 },
-      userID: { mention: new DiscordIDMention(true), index: 0 },
-    },
-  };
+  arguments: Arguments = args;
 
   validation: Validation = {
     username: new validators.Required({
@@ -32,9 +34,12 @@ export default class Login extends LastFMBaseCommand {
   };
 
   async run(message: Message) {
-    let username = this.parsedArguments.username as string;
+    let username = this.parsedArguments.username!;
 
-    let { discordUser } = await this.parseMentions({ fetchDiscordUser: true });
+    let { discordUser } = await this.parseMentions({
+      fetchDiscordUser: true,
+      usernameRequired: false,
+    });
 
     if (
       discordUser &&

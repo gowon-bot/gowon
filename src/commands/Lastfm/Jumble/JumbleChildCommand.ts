@@ -2,8 +2,11 @@ import { LastFMBaseChildCommand } from "../LastFMBaseCommand";
 import { Message } from "discord.js";
 import { RedisService } from "../../../services/RedisService";
 import { JumbleCalculator } from "../../../lib/calculators/JumbleCalculator";
+import { Arguments } from "../../../lib/arguments/arguments";
 
-export abstract class JumbleChildCommand extends LastFMBaseChildCommand {
+export abstract class JumbleChildCommand<
+  T extends Arguments = Arguments
+> extends LastFMBaseChildCommand<T> {
   redisService = new RedisService({
     logger: this.logger,
     sessionPrefix: "jumble",

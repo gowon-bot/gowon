@@ -14,7 +14,7 @@ import { log } from "mathjs";
 import { LogicError } from "../../errors";
 import { differenceInDays, fromUnixTime } from "date-fns";
 import { TagsCache } from "../caches/TagsCache";
-import { TagsService } from "../../services/dbservices/TagsService";
+import { TagsService } from "../../services/dbservices/tags/TagsService";
 
 export class Stat {
   public asString: string;
@@ -51,7 +51,10 @@ export class OverviewStatsCalculator {
   ) {
     this.lastFMService = new LastFMService(logger);
     this.crownsService = new CrownsService(logger);
-    this.tagsCache = new TagsCache(new TagsService(logger), this.lastFMService);
+    this.tagsCache = new TagsCache(
+      new TagsService(this.lastFMService, logger),
+      this.lastFMService
+    );
   }
 
   async hasCrownStats(): Promise<boolean> {

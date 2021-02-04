@@ -4,7 +4,14 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { RecordNotFoundError } from "../../../errors";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
-export default class LastFMAccount extends LastFMBaseCommand {
+const args = {
+  inputs: {
+    username: { index: 0 },
+  },
+  mentions: standardMentions,
+} as const;
+
+export default class LastFMAccount extends LastFMBaseCommand<typeof args> {
   idSeed = "loona kim lip";
 
   aliases = ["lfm"];
@@ -12,12 +19,7 @@ export default class LastFMAccount extends LastFMBaseCommand {
   subcategory = "accounts";
   usage = ["", "@user"];
 
-  arguments: Arguments = {
-    inputs: {
-      username: { index: 0 },
-    },
-    mentions: standardMentions,
-  };
+  arguments: Arguments = args;
 
   async run() {
     let { username, perspective } = await this.parseMentions({

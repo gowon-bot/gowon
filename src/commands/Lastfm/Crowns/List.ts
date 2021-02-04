@@ -4,15 +4,17 @@ import { Arguments } from "../../../lib/arguments/arguments";
 import { LogicError } from "../../../errors";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
-export class List extends CrownsChildCommand {
+const args = {
+  mentions: standardMentions,
+} as const;
+
+export class List extends CrownsChildCommand<typeof args> {
   idSeed = "wjsn eunseo";
 
   description = "Lists a user's top crowns";
   usage = ["", "@user"];
 
-  arguments: Arguments = {
-    mentions: standardMentions,
-  };
+  arguments: Arguments = args;
 
   async run() {
     let { discordUser: user } = await this.parseMentions({

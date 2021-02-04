@@ -8,26 +8,28 @@ import { CrownsService } from "../../services/dbservices/CrownsService";
 import { Image } from "../../services/LastFM/LastFMService.types";
 import { LastFMBaseCommand } from "./LastFMBaseCommand";
 
-export default class Track extends LastFMBaseCommand {
+const args = {
+  inputs: {
+    querystring: { index: { start: 0 } },
+    artist: { index: 0, splitOn: "|" },
+    track: { index: 1, splitOn: "|" },
+  },
+} as const;
+
+export default class Track extends LastFMBaseCommand<typeof args> {
   idSeed = "april jinsol";
 
   description = "Searches and displays a track";
   usage = ["", "artist | track", "query string"];
-  arguments: Arguments = {
-    inputs: {
-      querystring: { index: { start: 0 } },
-      artist: { index: 0, splitOn: "|" },
-      track: { index: 1, splitOn: "|" },
-    },
-  };
+  arguments: Arguments = args;
 
   tagConsolidator = new TagConsolidator();
   crownsService = new CrownsService(this.logger);
 
   async run() {
-    let trackName = this.parsedArguments.track as string,
-      artistName = this.parsedArguments.artist as string,
-      querystring = this.parsedArguments.querystring as string;
+    let trackName = this.parsedArguments.track,
+      artistName = this.parsedArguments.artist,
+      querystring = this.parsedArguments.querystring || "";
 
     let { senderUsername } = await this.parseMentions();
 

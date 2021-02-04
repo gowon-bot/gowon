@@ -5,27 +5,29 @@ import { Arguments } from "../../../../lib/arguments/arguments";
 import { LinkGenerator } from "../../../../helpers/lastFM";
 import { LastFMEntityNotFoundError } from "../../../../errors";
 
-export class ArtistPlays extends FriendsChildCommand {
+const args = {
+  inputs: {
+    artist: {
+      index: {
+        start: 0,
+      },
+    },
+  },
+} as const;
+
+export class ArtistPlays extends FriendsChildCommand<typeof args> {
   idSeed = "elris EJ";
 
   description = "Shows how many plays of an artist your friends have";
   aliases = ["ap", "p"];
   usage = ["", "artist"];
 
-  arguments: Arguments = {
-    inputs: {
-      artist: {
-        index: {
-          start: 0,
-        },
-      },
-    },
-  };
+  arguments: Arguments = args;
 
   throwIfNoFriends = true;
 
   async run() {
-    let artist = this.parsedArguments.artist as string;
+    let artist = this.parsedArguments.artist;
 
     if (!artist) {
       artist = (await this.lastFMService.nowPlayingParsed(this.senderUsername))

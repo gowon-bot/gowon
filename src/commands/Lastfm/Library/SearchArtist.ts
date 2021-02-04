@@ -1,13 +1,13 @@
 import { LogicError } from "../../../errors";
 import { numberDisplay } from "../../../helpers";
-import { RunAs } from "../../../lib/AliasChecker";
 import { Variation } from "../../../lib/command/BaseCommand";
+import { RunAs } from "../../../lib/command/RunAs";
 import { Paginator } from "../../../lib/Paginator";
 import { SearchCommand } from "./SearchCommand";
 
 export default class SearchArtist extends SearchCommand {
   idSeed = "gwsn minju";
-  
+
   shouldBeIndexed = true;
   description = "Searches your top artists for keywords";
   aliases = ["sa", "sartist"];
@@ -22,7 +22,7 @@ export default class SearchArtist extends SearchCommand {
   ];
 
   async run(_: any, runAs: RunAs) {
-    let keywords = this.parsedArguments.keywords as string;
+    let keywords = this.parsedArguments.keywords!;
 
     let { username } = await this.parseMentions();
 

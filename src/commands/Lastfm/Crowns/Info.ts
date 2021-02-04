@@ -6,23 +6,25 @@ import { RedirectsService } from "../../../services/dbservices/RedirectsService"
 import { createInvalidBadge } from "../../../helpers/crowns";
 import { ArtistCrownBannedError } from "../../../errors";
 
-export class Info extends CrownsChildCommand {
+const args = {
+  inputs: {
+    artist: { index: { start: 0 } },
+  },
+} as const;
+
+export class Info extends CrownsChildCommand<typeof args> {
   idSeed = "wjsn dayoung";
 
   aliases = ["wh"];
   description = "Shows who has the crown for a given user";
   usage = ["", "artist"];
 
-  arguments: Arguments = {
-    inputs: {
-      artist: { index: { start: 0 } },
-    },
-  };
+  arguments: Arguments = args;
 
   redirectsService = new RedirectsService(this.logger);
 
   async run(message: Message) {
-    let artist = this.parsedArguments.artist as string;
+    let artist = this.parsedArguments.artist;
 
     let { senderUsername, senderUser } = await this.parseMentions({
       usernameRequired: !artist,

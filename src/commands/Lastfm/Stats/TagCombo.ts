@@ -7,9 +7,13 @@ import {
   TagComboCalculator,
   TagCombo as TagComboType,
 } from "../../../lib/calculators/TagComboCalculator";
-import { TagsService } from "../../../services/dbservices/TagsService";
+import { TagsService } from "../../../services/dbservices/tags/TagsService";
 
-export default class TagCombo extends LastFMBaseCommand {
+const args = {
+  mentions: standardMentions,
+} as const;
+
+export default class TagCombo extends LastFMBaseCommand<typeof args> {
   idSeed = "secret number dita";
 
   aliases = ["tagstreak", "tac"];
@@ -19,11 +23,9 @@ export default class TagCombo extends LastFMBaseCommand {
   subcategory = "library stats";
   usage = [""];
 
-  arguments: Arguments = {
-    mentions: standardMentions,
-  };
+  arguments: Arguments = args;
 
-  tagsService = new TagsService(this.logger);
+  tagsService = new TagsService(this.lastFMService, this.logger);
 
   showLoadingAfter = this.gowonService.constants.defaultLoadingTime;
 

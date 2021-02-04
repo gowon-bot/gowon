@@ -3,23 +3,25 @@ import { numberDisplay } from "../../../helpers";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
-export default class ArtistPlaysover extends LastFMBaseCommand {
+const args = {
+  inputs: {
+    plays: { index: 0, default: 100, number: true },
+  },
+  mentions: standardMentions,
+} as const;
+
+export default class ArtistPlaysover extends LastFMBaseCommand<typeof args> {
   idSeed = "gugudan sally";
-  
+
   aliases = ["po", "apo"];
   description = "Shows you how many artists you have over a certain playcount";
   subcategory = "playsover";
   usage = ["", "number"];
 
-  arguments: Arguments = {
-    inputs: {
-      plays: { index: 0, default: 100, number: true },
-    },
-    mentions: standardMentions,
-  };
+  arguments: Arguments = args;
 
   async run() {
-    let plays = this.parsedArguments.plays as number;
+    let plays = this.parsedArguments.plays!;
 
     let { username, perspective } = await this.parseMentions();
 

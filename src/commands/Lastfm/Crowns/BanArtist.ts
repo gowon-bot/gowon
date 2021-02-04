@@ -3,23 +3,25 @@ import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { CrownsChildCommand } from "./CrownsChildCommand";
 
-export class BanArtist extends CrownsChildCommand {
+const args = {
+  inputs: {
+    artist: { index: { start: 0 } },
+  },
+} as const;
+
+export class BanArtist extends CrownsChildCommand<typeof args> {
   idSeed = "loona olivia hye";
 
   description = "Bans an artist from the crowns game";
   usage = "artist";
-  arguments: Arguments = {
-    inputs: {
-      artist: { index: { start: 0 } },
-    },
-  };
+  arguments: Arguments = args;
 
   validation: Validation = {
     artist: new validators.Required({}),
   };
 
   async run() {
-    let artist = (await this.parsedArguments.artist) as string;
+    let artist = this.parsedArguments.artist!;
 
     let artistCrownBan = await this.crownsService.artistCrownBan(
       this.guild.id,

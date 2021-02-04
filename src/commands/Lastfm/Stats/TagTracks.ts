@@ -14,7 +14,16 @@ interface Overlap {
   plays: number;
 }
 
-export default class TagTracks extends LastFMBaseCommand {
+const args = {
+  inputs: {
+    tag: {
+      index: { start: 0 },
+    },
+  },
+  mentions: standardMentions,
+} as const;
+
+export default class TagTracks extends LastFMBaseCommand<typeof args> {
   idSeed = "iz*one nako";
 
   description =
@@ -23,21 +32,15 @@ export default class TagTracks extends LastFMBaseCommand {
   aliases = ["tagt", "tagtr", "tagtrack"];
   usage = ["tag"];
 
-  arguments: Arguments = {
-    inputs: {
-      tag: {
-        index: { start: 0 },
-      },
-    },
-    mentions: standardMentions,
-  };
+  arguments: Arguments = args;
 
   validation: Validation = {
     tag: new validators.Required({}),
   };
 
   async run() {
-    let tag = this.parsedArguments.tag as string;
+    let tag = this.parsedArguments.tag!;
+
     let { username, perspective } = await this.parseMentions({
       asCode: false,
     });

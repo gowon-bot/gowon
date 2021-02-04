@@ -4,7 +4,13 @@ import { Validation } from "../../lib/validation/ValidationChecker";
 import { validators } from "../../lib/validation/validators";
 import { IndexingService } from "../../services/indexing/IndexingService";
 
-export default class Index extends BaseCommand {
+const args = {
+  inputs: {
+    username: { index: 0 },
+  },
+} as const;
+
+export default class Index extends BaseCommand<typeof args> {
   idSeed = "iz*one yujin";
 
   description = "Testing testing 123";
@@ -13,18 +19,14 @@ export default class Index extends BaseCommand {
 
   indexingService = new IndexingService();
 
-  arguments: Arguments = {
-    inputs: {
-    username: { index: 0 },
-    },
-  };
+  arguments: Arguments = args;
 
   validation: Validation = {
     username: new validators.Required({}),
   };
 
   async run() {
-    const username = this.parsedArguments.username as string;
+    const username = this.parsedArguments.username!;
 
     // const response = await this.indexingService.userTopArtists(username);
     const response = await this.indexingService.fullIndex(username);

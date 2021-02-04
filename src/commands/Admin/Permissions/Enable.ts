@@ -20,7 +20,7 @@ export class Enable extends PermissionsChildCommand {
 
     await this.send(
       `Successfully re-enabled ${this.commandManager
-        .findByID(disabledCommand.commandID)
+        .findByID(disabledCommand.commandID, { includeSecret: true })
         ?.name.code()}`
     );
   }

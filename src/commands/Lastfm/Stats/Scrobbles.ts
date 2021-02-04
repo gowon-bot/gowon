@@ -1,7 +1,6 @@
 import { Message } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
 import {
-  TimeRange,
   timeRangeParser,
   humanizedTimeRangeParser,
   parseDate,
@@ -9,28 +8,34 @@ import {
 import { dateDisplay, numberDisplay } from "../../../helpers";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
+import { GowonService } from "../../../services/GowonService";
 
-export default class Scrobbles extends LastFMBaseCommand {
+const args = {
+  inputs: {
+    timeRange: { custom: timeRangeParser(), index: -1 },
+    humanizedTimeRange: { custom: humanizedTimeRangeParser(), index: -1 },
+    date: {
+      custom: (string: string) =>
+        parseDate(
+          string.trim(),
+          ...GowonService.getInstance().constants.dateParsers
+        ),
+      index: -1,
+    },
+  },
+  mentions: standardMentions,
+} as const;
+
+export default class Scrobbles extends LastFMBaseCommand<typeof args> {
   idSeed = "wooah songyee";
-  
+
   aliases = ["s"];
   description =
     "Shows you how many scrobbles you have over a given time period";
   subcategory = "library stats";
   usage = ["time period @user"];
 
-  arguments: Arguments = {
-    inputs: {
-      timeRange: { custom: timeRangeParser(), index: -1 },
-      humanizedTimeRange: { custom: humanizedTimeRangeParser(), index: -1 },
-      date: {
-        custom: (string: string) =>
-          parseDate(string.trim(), ...this.gowonService.constants.dateParsers),
-        index: -1,
-      },
-    },
-    mentions: standardMentions,
-  };
+  arguments: Arguments = args;
 
   async run(message: Message) {
     if (
@@ -41,9 +46,9 @@ export default class Scrobbles extends LastFMBaseCommand {
       return;
     }
 
-    let timeRange = this.parsedArguments.timeRange as TimeRange,
-      humanTimeRange = this.parsedArguments.humanizedTimeRange as string,
-      date = this.parsedArguments.date as Date | undefined;
+    let timeRange = this.parsedArguments.timeRange!,
+      humanTimeRange = this.parsedArguments.humanizedTimeRange!,
+      date = this.parsedArguments.date;
 
     let { username, perspective } = await this.parseMentions();
 

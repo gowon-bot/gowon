@@ -6,21 +6,23 @@ import { CrownEventString } from "../../../services/dbservices/CrownsHistoryServ
 import { LogicError } from "../../../errors";
 import { CrownEvent } from "../../../database/entity/meta/CrownEvent";
 
-export class History extends CrownsChildCommand {
+const args = {
+  inputs: {
+    artist: { index: { start: 0 } },
+  },
+} as const;
+
+export class History extends CrownsChildCommand<typeof args> {
   idSeed = "wjsn cheng xiao";
 
   aliases = ["hist"];
   description = "Shows a crown's history";
   usage = ["", "artist"];
 
-  arguments: Arguments = {
-    inputs: {
-      artist: { index: { start: 0 } },
-    },
-  };
+  arguments: Arguments = args;
 
   async run(message: Message) {
-    let artist = this.parsedArguments.artist as string;
+    let artist = this.parsedArguments.artist;
 
     let { senderUsername } = await this.parseMentions({
       senderRequired: !artist,

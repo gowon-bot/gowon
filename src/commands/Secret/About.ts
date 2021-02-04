@@ -9,7 +9,7 @@ import { BaseCommand } from "../../lib/command/BaseCommand";
 import { CommandManager } from "../../lib/command/CommandManager";
 import { CrownEventString } from "../../services/dbservices/CrownsHistoryService";
 import { RedirectsService } from "../../services/dbservices/RedirectsService";
-import { TagsService } from "../../services/dbservices/TagsService";
+import { TagsService } from "../../services/dbservices/tags/TagsService";
 import { LastFMService } from "../../services/LastFM/LastFMService";
 
 export default class About extends BaseCommand {
@@ -23,7 +23,7 @@ export default class About extends BaseCommand {
 
   lastFMService = new LastFMService(this.logger);
   redirectsService = new RedirectsService(this.logger);
-  tagsService = new TagsService(this.logger);
+  tagsService = new TagsService(this.lastFMService, this.logger);
   commandManager = new CommandManager();
 
   async run(_: any) {
@@ -65,8 +65,8 @@ ${generateLink("Github", "https://github.com/jivison/gowon")}, ${generateLink(
         {
           name: "Bot stats",
           value: `Guilds cached: ${this.gowonClient.client.guilds.cache.size}
-          Users cached: ${this.gowonClient.client.users.cache.size}
-          Commands run: ${numberDisplay(commandsRun)}
+Users cached: ${this.gowonClient.client.users.cache.size}
+Commands run: ${numberDisplay(commandsRun)}
 Total friends: ${numberDisplay(friends)}
 Total commands: ${numberDisplay(commandCount)}`,
           inline: true,

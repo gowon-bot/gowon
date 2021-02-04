@@ -3,16 +3,18 @@ import { numberDisplay, chunkArray } from "../../../helpers";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
-export class DM extends CrownsChildCommand {
-  idSeed = "weki meki lucy"
+const args = {
+  mentions: standardMentions,
+} as const;
+
+export class DM extends CrownsChildCommand<typeof args> {
+  idSeed = "weki meki lucy";
 
   description = "Sends you a full list of a users crowns";
   aliases = ["me"];
   usage = ["", "@user"];
 
-  arguments: Arguments = {
-    mentions: standardMentions,
-  };
+  arguments: Arguments = args;
 
   async run() {
     const crownsPerMessage = 40;

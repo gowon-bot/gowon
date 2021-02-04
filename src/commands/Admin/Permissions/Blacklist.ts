@@ -1,13 +1,15 @@
 import { PermissionsChildCommand } from "./PermissionsChildCommand";
 import { Message, Role, User } from "discord.js";
 import { Variation } from "../../../lib/command/BaseCommand";
-import { RunAs } from "../../../lib/AliasChecker";
+import { Validation } from "../../../lib/validation/ValidationChecker";
+import { validators } from "../../../lib/validation/validators";
+import { RunAs } from "../../../lib/command/RunAs";
 
 export class Blacklist extends PermissionsChildCommand {
   idSeed = "red velvet irene";
 
   description =
-    "Blacklist/whitelist a user/role from using a command\nSee permissions help for more info";
+    "Blacklist/whitelist a user/role from using a command.\nSee permissions help for more info";
 
   usage = ["command @role or role:roleid", "command @user or user:userid"];
 
@@ -17,6 +19,10 @@ export class Blacklist extends PermissionsChildCommand {
       description: "Add a user to the whitelist for a command",
     },
   ];
+
+  validation: Validation = {
+    command: new validators.Required({}),
+  };
 
   async run(message: Message, runAs: RunAs) {
     let createdRolePermissions: Array<Role> = [];

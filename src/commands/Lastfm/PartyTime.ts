@@ -3,18 +3,20 @@ import { LastFMBaseCommand } from "./LastFMBaseCommand";
 import { Validation } from "../../lib/validation/ValidationChecker";
 import { validators } from "../../lib/validation/validators";
 
-export default class PartyTime extends LastFMBaseCommand {
+const args = {
+  inputs: {
+    time: { index: 0, regex: /[0-9]+/, number: true, default: 5 },
+  },
+} as const;
+
+export default class PartyTime extends LastFMBaseCommand<typeof args> {
   idSeed = "april chaewon";
-  
+
   aliases = ["pt"];
   description = "Counts down from a given number";
   usage = ["", "partytime"];
 
-  arguments: Arguments = {
-    inputs: {
-      time: { index: 0, regex: /[0-9]+/, number: true, default: 5 },
-    },
-  };
+  arguments: Arguments = args;
 
   validation: Validation = {
     time: new validators.Range({
@@ -25,7 +27,7 @@ export default class PartyTime extends LastFMBaseCommand {
   };
 
   async run() {
-    let time = this.parsedArguments.time as number;
+    let time = this.parsedArguments.time!;
 
     await this.send("The party begins in...".strong());
 

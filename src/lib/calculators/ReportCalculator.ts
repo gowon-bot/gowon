@@ -18,12 +18,12 @@ interface TotalCounts {
   tracks: number;
 }
 
-interface Week {
+interface Report {
   top: Top;
   total: TotalCounts;
 }
 
-export class WeekCalculator {
+export class ReportCalculator {
   private top: Top = {
     artists: {},
     albums: {},
@@ -32,13 +32,13 @@ export class WeekCalculator {
 
   constructor(
     private redirectsService: RedirectsService,
-    private weeklyTracks: RecentTracks
+    private tracks: RecentTracks
   ) {}
 
   redirectsCache = new RedirectsCache(this.redirectsService);
 
-  async calculate(): Promise<Week> {
-    for (let track of this.weeklyTracks.track) {
+  async calculate(): Promise<Report> {
+    for (let track of this.tracks.track) {
       this.logCount(
         "tracks",
         track.name,

@@ -4,7 +4,14 @@ import { calculatePercent } from "../../../helpers/stats";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
-export default class ArtistPercent extends LastFMBaseCommand {
+const args = {
+  inputs: {
+    artist: { index: { start: 0 } },
+  },
+  mentions: standardMentions,
+} as const;
+
+export default class ArtistPercent extends LastFMBaseCommand<typeof args> {
   idSeed = "twice tzuyu";
 
   aliases = ["apct"];
@@ -13,15 +20,10 @@ export default class ArtistPercent extends LastFMBaseCommand {
   subcategory = "percents";
   usage = ["", "artist"];
 
-  arguments: Arguments = {
-    inputs: {
-      artist: { index: { start: 0 } },
-    },
-    mentions: standardMentions,
-  };
+  arguments: Arguments = args;
 
   async run() {
-    let artist = this.parsedArguments.artist as string;
+    let artist = this.parsedArguments.artist;
 
     let { username, senderUsername, perspective } = await this.parseMentions({
       senderRequired: !artist,

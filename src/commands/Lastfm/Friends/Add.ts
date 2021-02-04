@@ -6,18 +6,20 @@ import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
-export class Add extends FriendsChildCommand {
+const args = {
+  inputs: {
+    friendUsername: { index: 0 },
+  },
+  mentions: standardMentions,
+} as const;
+
+export class Add extends FriendsChildCommand<typeof args> {
   idSeed = "nature aurora";
 
   description = "Adds a friend";
   usage = ["lfm_username", "@user"];
 
-  arguments: Arguments = {
-    inputs: {
-      friendUsername: { index: 0 },
-    },
-    mentions: standardMentions,
-  };
+  arguments: Arguments = args;
 
   validation: Validation = {
     user: {

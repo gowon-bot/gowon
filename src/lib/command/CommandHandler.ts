@@ -7,8 +7,8 @@ import { CheckFailReason } from "../permissions/Can";
 import { ParentCommand } from "./ParentCommand";
 import { MetaService } from "../../services/dbservices/MetaService";
 import Prefix from "../../commands/Meta/Prefix";
-import { RunAs } from "../AliasChecker";
 import { GowonClient } from "../GowonClient";
+import { RunAs } from "./RunAs";
 
 export class CommandHandler {
   gowonService = GowonService.getInstance();

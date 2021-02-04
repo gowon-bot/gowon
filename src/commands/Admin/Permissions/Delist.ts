@@ -1,5 +1,7 @@
 import { PermissionsChildCommand } from "./PermissionsChildCommand";
 import { Message, User, Role } from "discord.js";
+import { Validation } from "../../../lib/validation/ValidationChecker";
+import { validators } from "../../../lib/validation/validators";
 
 export class Delist extends PermissionsChildCommand {
   idSeed = "red velvet joy";
@@ -7,7 +9,11 @@ export class Delist extends PermissionsChildCommand {
   description = "Remove a user/role from a white/blacklist";
   usage = ["command @role or role:roleid", "command @user or user:userid"];
 
-  aliases = ["dewhitelist", "deblacklist"];
+  aliases = ["dewhitelist", "deblacklist", "unwhitelist", "unblacklist"];
+
+  validation: Validation = {
+    command: new validators.Required({}),
+  };
 
   async run(message: Message) {
     let delisted: Array<Role | User> = [];
@@ -20,33 +26,36 @@ export class Delist extends PermissionsChildCommand {
           message.guild?.id!,
           this.command.id
         );
+
+        delisted.push(entity);
       } catch (e) {
         failed.push({ entity, reason: e.message });
       }
     }
 
+    const commandName = this.runAs.toCommandFriendlyName();
+
+    const description =
+      `Delisted ${commandName.code()} for ${delisted
+        .map((d) => (d instanceof Role ? d.name + " (role)" : d.username))
+        .join(", ")}` +
+      (failed.length
+        ? "\n\n**Failed**\n" +
+          failed
+            .map(
+              (f) =>
+                (f.entity instanceof Role
+                  ? f.entity.name + " (role)"
+                  : f.entity.username) +
+                " - " +
+                f.reason
+            )
+            .join("\n")
+        : "");
+
     let embed = this.newEmbed()
       .setTitle(`Removed permissions`)
-      .setDescription(
-        `Delisted ${this.runAs
-          .toCommandFriendlyName()
-          .code()} for ${delisted
-          .map((d) => (d instanceof Role ? d.name + " (role)" : d.username))
-          .join(", ")}` +
-          (failed.length
-            ? "\n\n**Failed**\n" +
-              failed
-                .map(
-                  (f) =>
-                    (f.entity instanceof Role
-                      ? f.entity.name + " (role)"
-                      : f.entity.username) +
-                    " - " +
-                    f.reason
-                )
-                .join("\n")
-            : "")
-      );
+      .setDescription(description);
 
     await this.send(embed);
   }

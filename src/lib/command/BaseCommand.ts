@@ -1,11 +1,7 @@
 import { Guild, Message, MessageEmbed, User as DiscordUser } from "discord.js";
 import md5 from "js-md5";
 import { UsersService } from "../../services/dbservices/UsersService";
-import {
-  Arguments,
-  ParsedArguments,
-  ArgumentParser,
-} from "../arguments/arguments";
+import { Arguments, ArgumentParser } from "../arguments/arguments";
 import {
   LogicError,
   ReverseLookupError,
@@ -15,7 +11,6 @@ import {
 import { GowonService } from "../../services/GowonService";
 import { CommandManager } from "./CommandManager";
 import { Logger } from "../Logger";
-import { RunAs } from "../AliasChecker";
 import { Command } from "./Command";
 import { TrackingService } from "../../services/TrackingService";
 import { User } from "../../database/entity/User";
@@ -24,6 +19,8 @@ import { GowonClient } from "../GowonClient";
 import { Validation, ValidationChecker } from "../validation/ValidationChecker";
 import { GowonEmbed } from "../../helpers/Embeds";
 import { Emoji, EmojiRaw } from "../Emoji";
+import { Argument, Mention } from "./ArgumentType";
+import { RunAs } from "./RunAs";
 
 export interface Variation {
   variationString?: string;
@@ -32,12 +29,24 @@ export interface Variation {
   friendlyString?: string;
 }
 
-export interface Delegate {
+export interface Delegate<T> {
   delegateTo: { new (): Command };
-  when(args: { [key: string]: any }): boolean;
+  when(args: ParsedArguments<T>): boolean;
 }
 
-export abstract class BaseCommand implements Command {
+type ArgumentName<T extends Arguments> =
+  | keyof T["inputs"]
+  | keyof T["mentions"];
+
+export type ParsedArguments<T extends Arguments> = {
+  [K in keyof T["inputs"]]?: Argument<T["inputs"][K]>;
+} &
+  {
+    [K in keyof T["mentions"]]?: Mention<T["mentions"][K]>;
+  };
+
+export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
+  implements Command {
   /**
    * idSeed is the seed for the generated command id
    * **Must be unique among all commands!**
@@ -58,11 +67,13 @@ export abstract class BaseCommand implements Command {
   arguments: Arguments = {};
   validation: Validation = {};
 
+  parsedArguments: ParsedArguments<ArgumentsType> = {};
+
   category: string | undefined = undefined;
   subcategory: string | undefined = undefined;
   usage: string | string[] = "";
 
-  delegates: Delegate[] = [];
+  delegates: Delegate<ArgumentsType>[] = [];
   delegatedFrom?: Command;
 
   message!: Message;
@@ -80,8 +91,6 @@ export abstract class BaseCommand implements Command {
       (this.parentName ? this.parentName.trim() + " " : "") + this.friendlyName
     );
   }
-
-  parsedArguments: ParsedArguments = {};
 
   usersService = new UsersService(this.logger);
   gowonService = GowonService.getInstance();
@@ -104,20 +113,20 @@ export abstract class BaseCommand implements Command {
   async parseMentions({
     senderRequired = false,
     usernameRequired = true,
-    userArgumentName = "user",
-    inputArgumentName = "username",
-    lfmMentionArgumentName = "lfmUser",
-    idMentionArgumentName = "userID",
+    userArgumentName = "user" as ArgumentName<ArgumentsType>,
+    inputArgumentName = "username" as ArgumentName<ArgumentsType>,
+    lfmMentionArgumentName = "lfmUser" as ArgumentName<ArgumentsType>,
+    idMentionArgumentName = "userID" as ArgumentName<ArgumentsType>,
     asCode = true,
     fetchDiscordUser = false,
     reverseLookup = { lastFM: false, optional: false },
   }: {
     senderRequired?: boolean;
     usernameRequired?: boolean;
-    userArgumentName?: string;
-    inputArgumentName?: string;
-    lfmMentionArgumentName?: string;
-    idMentionArgumentName?: string;
+    userArgumentName?: ArgumentName<ArgumentsType>;
+    inputArgumentName?: ArgumentName<ArgumentsType>;
+    lfmMentionArgumentName?: ArgumentName<ArgumentsType>;
+    idMentionArgumentName?: ArgumentName<ArgumentsType>;
     asCode?: boolean;
     fetchDiscordUser?: boolean;
     reverseLookup?: { lastFM?: boolean; optional?: boolean };
@@ -130,9 +139,9 @@ export abstract class BaseCommand implements Command {
     senderUser?: User;
     discordUser?: DiscordUser;
   }> {
-    let user = this.parsedArguments[userArgumentName],
-      userID = this.parsedArguments[idMentionArgumentName],
-      lfmUser = this.parsedArguments[lfmMentionArgumentName];
+    let user = (this.parsedArguments[userArgumentName] as any) as User,
+      userID = this.parsedArguments[idMentionArgumentName] as string,
+      lfmUser = this.parsedArguments[lfmMentionArgumentName] as string;
 
     let mentionedUsername: string | undefined;
     let dbUser: User | undefined;
@@ -153,7 +162,7 @@ export abstract class BaseCommand implements Command {
 
         dbUser = mentionedUser;
 
-        if (!mentionedUser?.lastFMUsername)
+        if (!mentionedUser?.lastFMUsername && usernameRequired)
           throw new UsernameNotRegisteredError();
 
         mentionedUsername = mentionedUser.lastFMUsername;
@@ -161,7 +170,7 @@ export abstract class BaseCommand implements Command {
         throw new UsernameNotRegisteredError();
       }
     } else if (inputArgumentName && this.parsedArguments[inputArgumentName]) {
-      mentionedUsername = this.parsedArguments[inputArgumentName];
+      mentionedUsername = this.parsedArguments[inputArgumentName] as string;
     }
 
     let perspective = this.usersService.perspective(
@@ -255,7 +264,7 @@ export abstract class BaseCommand implements Command {
     await this.setup();
 
     try {
-      this.parsedArguments = await this.parseArguments(runAs);
+      this.parsedArguments = (await this.parseArguments(runAs)) as any;
 
       for (let delegate of this.delegates) {
         if (delegate.when(this.parsedArguments)) {
@@ -288,10 +297,13 @@ export abstract class BaseCommand implements Command {
     await this.teardown();
   }
 
-  async parseArguments(runAs: RunAs): Promise<ParsedArguments> {
+  async parseArguments(runAs: RunAs): Promise<ParsedArguments<ArgumentsType>> {
     let parser = new ArgumentParser(this.arguments);
 
-    return await parser.parse(this.message, runAs);
+    return (await parser.parse(
+      this.message,
+      runAs
+    )) as ParsedArguments<ArgumentsType>;
   }
 
   addResponse(res: MessageEmbed | string) {

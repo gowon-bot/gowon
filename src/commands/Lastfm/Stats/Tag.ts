@@ -13,29 +13,32 @@ interface Overlap {
   plays: number;
 }
 
-export default class Tag extends LastFMBaseCommand {
+const args = {
+  inputs: {
+    tag: {
+      index: { start: 0 },
+    },
+  },
+  mentions: standardMentions,
+} as const;
+
+export default class Tag extends LastFMBaseCommand<typeof args> {
   idSeed = "secret number lea";
-  
+
   description =
     "Shows the overlap between your top artists, and a given tag's top artists";
   subcategory = "stats";
   usage = ["tag"];
 
-  arguments: Arguments = {
-    inputs: {
-      tag: {
-        index: { start: 0 },
-      },
-    },
-    mentions: standardMentions,
-  };
+  arguments: Arguments = args;
 
   validation: Validation = {
     tag: new validators.Required({}),
   };
 
   async run() {
-    let tag = this.parsedArguments.tag as string;
+    let tag = this.parsedArguments.tag!;
+
     let { username, perspective } = await this.parseMentions({
       asCode: false,
     });

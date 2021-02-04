@@ -6,16 +6,18 @@ import { Validation } from "../../lib/validation/ValidationChecker";
 import { validators } from "../../lib/validation/validators";
 import { MetaBaseCommand } from "./MetaBaseCommand";
 
-export default class CommandInfo extends MetaBaseCommand {
+const args = {
+  inputs: {
+    searchString: {
+      index: { start: 0 },
+    },
+  },
+} as const;
+
+export default class CommandInfo extends MetaBaseCommand<typeof args> {
   idSeed = "iz*one hyewon";
 
-  arguments: Arguments = {
-    inputs: {
-      searchString: {
-        index: { start: 0 },
-      },
-    },
-  };
+  arguments: Arguments = args;
 
   validation: Validation = {
     searchString: {
@@ -31,7 +33,7 @@ export default class CommandInfo extends MetaBaseCommand {
   commandManager = new CommandManager();
 
   async run() {
-    let searchString = this.parsedArguments.searchString as string;
+    let searchString = this.parsedArguments.searchString!;
 
     await this.commandManager.init();
 

@@ -3,31 +3,29 @@ import { MetaChildCommand } from "./MetaChildCommand";
 import { numberDisplay } from "../../helpers";
 import { CommandManager } from "../../lib/command/CommandManager";
 import { Arguments } from "../../lib/arguments/arguments";
-import {
-  TimeRange,
-  timeRangeParser,
-  humanizedTimeRangeParser,
-} from "../../helpers/date";
+import { timeRangeParser, humanizedTimeRangeParser } from "../../helpers/date";
 
-export class TopCommands extends MetaChildCommand {
+const args = {
+  inputs: {
+    timeRange: { custom: timeRangeParser(), index: -1 },
+    humanizedTimeRange: {
+      custom: humanizedTimeRangeParser({ noOverall: true }),
+      index: -1,
+    },
+  },
+} as const;
+
+export class TopCommands extends MetaChildCommand<typeof args> {
   idSeed = "eunha";
 
   description = "Shows the most used commands over a given time period";
   usage = ["", "time period"];
 
-  arguments: Arguments = {
-    inputs: {
-      timeRange: { custom: timeRangeParser(), index: -1 },
-      humanizedTimeRange: {
-        custom: humanizedTimeRangeParser({ noOverall: true }),
-        index: -1,
-      },
-    },
-  };
+  arguments: Arguments = args;
 
   async run(message: Message) {
-    let timeRange = this.parsedArguments.timeRange as TimeRange,
-      humanizedTimeRange = this.parsedArguments.humanizedTimeRange as string;
+    let timeRange = this.parsedArguments.timeRange,
+      humanizedTimeRange = this.parsedArguments.humanizedTimeRange;
 
     let topCommands = (
       await this.metaService.mostUsedCommands(message.guild?.id!, timeRange)

@@ -8,18 +8,20 @@ import { CommandNotFoundError } from "../errors";
 import { flatDeep } from "../helpers";
 import { ParentCommand } from "../lib/command/ParentCommand";
 
-export default class Help extends BaseCommand {
+const args = {
+  inputs: {
+    command: { index: { start: 0 } },
+  },
+} as const;
+
+export default class Help extends BaseCommand<typeof args> {
   idSeed = "clc seungyeon";
 
   aliases = ["h"];
   description = "Displays the help menu, or help about a given command";
   usage = ["", "command"];
 
-  arguments: Arguments = {
-    inputs: {
-      command: { index: { start: 0 } },
-    },
-  };
+  arguments: Arguments = args;
 
   commandManager = new CommandManager();
   adminService = new AdminService(this.gowonClient);
@@ -27,11 +29,10 @@ export default class Help extends BaseCommand {
   prefix!: string;
 
   async run(message: Message) {
+    let command = this.parsedArguments.command;
+
     this.prefix = await this.gowonService.prefix(this.guild.id);
-
     await this.commandManager.init();
-
-    let command = this.parsedArguments.command as string;
 
     let embed = await (command
       ? this.helpForOneCommand(message, command)

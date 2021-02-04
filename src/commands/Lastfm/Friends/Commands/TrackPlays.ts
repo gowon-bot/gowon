@@ -4,19 +4,21 @@ import { numberDisplay } from "../../../../helpers";
 import { Arguments } from "../../../../lib/arguments/arguments";
 import { LastFMEntityNotFoundError } from "../../../../errors";
 
-export class TrackPlays extends FriendsChildCommand {
+const args = {
+  inputs: {
+    artist: { index: 0, splitOn: "|" },
+    track: { index: 1, splitOn: "|" },
+  },
+} as const;
+
+export class TrackPlays extends FriendsChildCommand<typeof args> {
   idSeed = "nature saebom";
 
   description = "Shows how many plays of a track your friends have";
   aliases = ["tp"];
   usage = ["", "artist | track"];
 
-  arguments: Arguments = {
-    inputs: {
-      artist: { index: 0, splitOn: "|" },
-      track: { index: 1, splitOn: "|" },
-    },
-  };
+  arguments: Arguments = args;
 
   throwIfNoFriends = true;
 

@@ -4,7 +4,15 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { calculatePercent } from "../../../helpers/stats";
 
-export default class GlobalTrackPlays extends LastFMBaseCommand {
+const args = {
+  inputs: {
+    artist: { index: 0, splitOn: "|" },
+    track: { index: 1, splitOn: "|" },
+  },
+  mentions: standardMentions,
+} as const;
+
+export default class GlobalTrackPlays extends LastFMBaseCommand<typeof args> {
   idSeed = "gugudan mimi";
 
   aliases = ["gtp", "globaltp"];
@@ -13,17 +21,11 @@ export default class GlobalTrackPlays extends LastFMBaseCommand {
   subcategory = "plays";
   usage = ["artist | track"];
 
-  arguments: Arguments = {
-    inputs: {
-      artist: { index: 0, splitOn: "|" },
-      track: { index: 1, splitOn: "|" },
-    },
-    mentions: standardMentions,
-  };
+  arguments: Arguments = args;
 
   async run() {
-    let artist = this.parsedArguments.artist as string,
-      track = this.parsedArguments.track as string;
+    let artist = this.parsedArguments.artist,
+      track = this.parsedArguments.track;
 
     let { username, perspective, senderUsername } = await this.parseMentions({
       senderRequired: !artist || !track,

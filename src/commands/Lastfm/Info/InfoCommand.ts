@@ -1,7 +1,10 @@
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { TagConsolidator } from "../../../lib/tags/TagConsolidator";
+import { Arguments } from "../../../lib/arguments/arguments";
 
-export abstract class InfoCommand extends LastFMBaseCommand {
+export abstract class InfoCommand<
+  T extends Arguments = Arguments
+> extends LastFMBaseCommand<T> {
   shouldBeIndexed = false;
   subcategory = "info";
 

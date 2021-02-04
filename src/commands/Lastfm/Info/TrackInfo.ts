@@ -5,7 +5,15 @@ import { LinkConsolidator } from "../../../helpers/lastFM";
 import { LineConsolidator } from "../../../lib/LineConsolidator";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
-export default class TrackInfo extends InfoCommand {
+const args = {
+  inputs: {
+    artist: { index: 0, splitOn: "|" },
+    track: { index: 1, splitOn: "|" },
+  },
+  mentions: standardMentions,
+} as const;
+
+export default class TrackInfo extends InfoCommand<typeof args> {
   idSeed = "iz*one eunbi";
 
   shouldBeIndexed = true;
@@ -14,19 +22,13 @@ export default class TrackInfo extends InfoCommand {
   description = "Displays some information about a track";
   usage = ["", "artist | track"];
 
-  arguments: Arguments = {
-    inputs: {
-      artist: { index: 0, splitOn: "|" },
-      track: { index: 1, splitOn: "|" },
-    },
-    mentions: standardMentions,
-  };
+  arguments: Arguments = args;
 
   lineConsolidator = new LineConsolidator();
 
   async run() {
-    let artist = this.parsedArguments.artist as string,
-      track = this.parsedArguments.track as string;
+    let artist = this.parsedArguments.artist,
+      track = this.parsedArguments.track;
 
     if (!artist || !track) {
       let { senderUsername } = await this.parseMentions({

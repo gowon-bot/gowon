@@ -4,26 +4,28 @@ import { calculatePercent } from "../../../helpers/stats";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
-export default class TrackPercent extends LastFMBaseCommand {
+const args = {
+  inputs: {
+    artist: { index: 0, splitOn: "|" },
+    track: { index: 1, splitOn: "|" },
+  },
+  mentions: standardMentions,
+} as const;
+
+export default class TrackPercent extends LastFMBaseCommand<typeof args> {
   idSeed = "itzy yeji";
-  
+
   aliases = ["tpct"];
   description =
     "Shows you what percentage of an artist's scrobbles are made up by a certain track";
   subcategory = "percents";
   usage = ["artist | track"];
 
-  arguments: Arguments = {
-    inputs: {
-      artist: { index: 0, splitOn: "|" },
-      track: { index: 1, splitOn: "|" },
-    },
-    mentions: standardMentions,
-  };
+  arguments: Arguments = args;
 
   async run() {
-    let artist = this.parsedArguments.artist as string,
-      track = this.parsedArguments.track as string;
+    let artist = this.parsedArguments.artist,
+      track = this.parsedArguments.track;
 
     let { username, senderUsername, perspective } = await this.parseMentions({
       senderRequired: !artist || !track,

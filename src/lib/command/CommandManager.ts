@@ -1,8 +1,9 @@
 import { Command } from "./Command";
 import { promisify } from "util";
 import _glob from "glob";
-import { AliasChecker, RunAs } from "../AliasChecker";
+import { AliasChecker } from "../AliasChecker";
 import { flatDeep } from "../../helpers";
+import { RunAs } from "./RunAs";
 const glob = promisify(_glob);
 
 interface Commands {
@@ -59,15 +60,20 @@ export class CommandManager {
     return { runAs: new RunAs() };
   }
 
-  findByID(id: string): Command | undefined {
-    return this.deepList().find((c) => c.id === id);
+  findByID(
+    id: string,
+    { includeSecret }: { includeSecret?: boolean } = {}
+  ): Command | undefined {
+    return this.deepList(includeSecret).find((c) => c.id === id);
   }
 
   list(showSecret: boolean = false): Command[] {
-    let commandGetterList = Object.values(this.commands).sort();
+    let commandGetterList = Object.values(this.commands);
 
     let commandsList = commandGetterList
-      .map((c) => c())
+      .map((c) => {
+        return c();
+      })
       .filter((c) => (c.parentName ? true : c.shouldBeIndexed));
 
     return showSecret

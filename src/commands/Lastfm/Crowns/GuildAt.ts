@@ -5,25 +5,27 @@ import { LogicError } from "../../../errors";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 
-export class GuildAt extends CrownsChildCommand {
+const args = {
+  inputs: {
+    rank: { index: 0, number: true },
+  },
+} as const;
+
+export class GuildAt extends CrownsChildCommand<typeof args> {
   idSeed = "wjsn bona";
 
   description =
     "Shows the user at a given rank on the crowns leaderboard, and the surrounding users";
   usage = "rank";
 
-  arguments: Arguments = {
-    inputs: {
-      rank: { index: 0, number: true },
-    },
-  };
+  arguments: Arguments = args;
 
   validation: Validation = {
     rank: new validators.Required({}),
   };
 
   async run() {
-    let rank = this.parsedArguments.rank as number;
+    let rank = this.parsedArguments.rank!;
 
     let guildAt = await this.crownsService.guildAt(
       this.guild.id,

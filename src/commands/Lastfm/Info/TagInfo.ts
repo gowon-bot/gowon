@@ -4,7 +4,13 @@ import { numberDisplay } from "../../../helpers";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 
-export default class TagInfo extends InfoCommand {
+const args = {
+  inputs: {
+    tag: { index: { start: 0 } },
+  },
+} as const;
+
+export default class TagInfo extends InfoCommand<typeof args> {
   idSeed = "csvc park moonchi";
   shouldBeIndexed = true;
 
@@ -12,18 +18,14 @@ export default class TagInfo extends InfoCommand {
   description = "Displays some information about a tag";
   usage = ["tag"];
 
-  arguments: Arguments = {
-    inputs: {
-      tag: { index: { start: 0 } },
-    },
-  };
+  arguments: Arguments = args;
 
   validation: Validation = {
     tag: new validators.Required({}),
   };
 
   async run() {
-    let tag = this.parsedArguments.tag as string;
+    let tag = this.parsedArguments.tag!;
 
     let tagInfo = await this.lastFMService.tagInfo({ tag });
 

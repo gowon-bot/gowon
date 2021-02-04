@@ -4,7 +4,11 @@ import { Delegate } from "../../lib/command/BaseCommand";
 import { LastFMBaseCommand } from "./LastFMBaseCommand";
 import RandomsongInUsersLibrary from "./RandomSongInUsersLibrary";
 
-export default class Randomsong extends LastFMBaseCommand {
+const args = {
+  mentions: standardMentions,
+} as const;
+
+export default class Randomsong extends LastFMBaseCommand<typeof args> {
   idSeed = "april naeun";
   description = "Picks a random song from all the users in a guild";
   usage = [
@@ -12,11 +16,9 @@ export default class Randomsong extends LastFMBaseCommand {
     "@user (will pick a random song in their top tracks) poolAmount",
   ];
 
-  arguments: Arguments = {
-    mentions: standardMentions,
-  };
+  arguments: Arguments = args;
 
-  delegates: Delegate[] = [
+  delegates: Delegate<typeof args>[] = [
     {
       when: (args) => !!args.user || !!args.userID || !!args.lfmUser,
       delegateTo: RandomsongInUsersLibrary,

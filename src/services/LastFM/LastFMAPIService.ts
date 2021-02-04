@@ -1,7 +1,7 @@
 import { stringify } from "querystring";
 import fetch, { RequestInit } from "node-fetch";
 import crypto from "crypto";
-import { TagsService } from "../../services/dbservices/TagsService";
+import { TagsService } from "../dbservices/tags/TagsService";
 
 import {
   RecentTracksResponse,
@@ -61,12 +61,10 @@ import {
   RecordNotFoundError,
 } from "../../errors";
 import { BaseService } from "../BaseService";
-import { LastFMScraper } from "../scrapingServices/LastFMScraper";
 
 export class LastFMAPIService extends BaseService {
   url = "https://ws.audioscrobbler.com/2.0/";
-  scraper = new LastFMScraper(this.logger);
-  tagsService = new TagsService(this.logger);
+  tagsService = new TagsService(this, this.logger);
 
   get apikey(): string {
     return config.lastFMAPIKey;

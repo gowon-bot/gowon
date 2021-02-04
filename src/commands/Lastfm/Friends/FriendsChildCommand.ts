@@ -3,8 +3,11 @@ import { FriendsService } from "../../../services/dbservices/FriendsService";
 import { Message } from "discord.js";
 import { User } from "../../../database/entity/User";
 import { LogicError } from "../../../errors";
+import { Arguments } from "../../../lib/arguments/arguments";
 
-export abstract class FriendsChildCommand extends LastFMBaseChildCommand {
+export abstract class FriendsChildCommand<
+  T extends Arguments = Arguments
+> extends LastFMBaseChildCommand<T> {
   parentName = "friends";
 
   friendsService = new FriendsService(this.logger);

@@ -3,7 +3,14 @@ import { numberDisplay } from "../../../helpers";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
-export default class AlbumPlaysover extends LastFMBaseCommand {
+const args = {
+  inputs: {
+    plays: { index: 0, default: 100, number: true },
+  },
+  mentions: standardMentions,
+} as const;
+
+export default class AlbumPlaysover extends LastFMBaseCommand<typeof args> {
   idSeed = "gugudan nayoung";
 
   aliases = ["alpo", "lpo"];
@@ -11,15 +18,10 @@ export default class AlbumPlaysover extends LastFMBaseCommand {
   subcategory = "playsover";
   usage = ["", "number"];
 
-  arguments: Arguments = {
-    inputs: {
-      plays: { index: 0, default: 100, number: true },
-    },
-    mentions: standardMentions,
-  };
+  arguments: Arguments = args;
 
   async run() {
-    let plays = this.parsedArguments.plays as number;
+    let plays = this.parsedArguments.plays!;
 
     let { username, perspective } = await this.parseMentions();
 

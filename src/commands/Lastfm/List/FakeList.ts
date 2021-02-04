@@ -2,6 +2,14 @@ import { LogicError } from "../../../errors";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { ListCommand } from "./ListCommand";
 
+const args = {
+  inputs: {
+    type: { index: 0 },
+    period: { index: 1 },
+    amount: { index: 2 },
+  },
+} as const;
+
 export default class List extends ListCommand {
   idSeed = "stayc sieun";
 
@@ -9,18 +17,12 @@ export default class List extends ListCommand {
   description = "This is a temporary command <3";
   secretCommand = true;
 
-  arguments: Arguments = {
-    inputs: {
-      type: { index: 0 },
-      period: { index: 1 },
-      amount: { index: 2 },
-    },
-  };
+  arguments: Arguments = args;
 
   async run() {
-    let type = this.parsedArguments.type as string,
-      period = this.parsedArguments.period as string,
-      amount = this.parsedArguments.amount as string;
+    let type = (this.parsedArguments as any).type as string,
+      period = (this.parsedArguments as any).period as string,
+      amount = (this.parsedArguments as any).amount as string;
 
     if (!type || !period || !amount)
       throw new LogicError(

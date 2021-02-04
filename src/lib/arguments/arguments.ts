@@ -2,8 +2,8 @@ import { Message } from "discord.js";
 import { GowonService } from "../../services/GowonService";
 import { MentionParser, MentionOptions } from "./mentions/mentions";
 import { Parser } from "./parser";
-import { RunAs } from "../AliasChecker";
 import escapeStringRegexp from "escape-string-regexp";
+import { RunAs } from "../command/RunAs";
 
 export type ParsedArgument = any;
 

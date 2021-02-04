@@ -3,14 +3,16 @@ import { Arguments } from "../../../lib/arguments/arguments";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { CrownsChildCommand } from "./CrownsChildCommand";
 
-export class Ban extends CrownsChildCommand {
+const args = {
+  mentions: standardMentions,
+} as const;
+
+export class Ban extends CrownsChildCommand<typeof args> {
   idSeed = "loona chuu";
 
   description = "Bans a user from the crowns game";
   usage = "@user";
-  arguments: Arguments = {
-    mentions: standardMentions,
-  };
+  arguments: Arguments = args;
 
   async run() {
     let { dbUser, senderUser, discordUser } = await this.parseMentions({

@@ -5,18 +5,20 @@ import { Logger } from "../../lib/Logger";
 import { Validation } from "../../lib/validation/ValidationChecker";
 import { validators } from "../../lib/validation/validators";
 
-export default class Query extends BaseCommand {
+const args = {
+  inputs: {
+    query: { index: { start: 0 } },
+  },
+} as const;
+
+export default class Query extends BaseCommand<typeof args> {
   idSeed = "gfriend sowon";
 
   description = "Query the database";
   secretCommand = true;
   devCommand = true;
 
-  arguments: Arguments = {
-    inputs: {
-      query: { index: { start: 0 } },
-    },
-  };
+  arguments: Arguments = args;
 
   validation: Validation = {
     query: new validators.Required({}),
@@ -25,7 +27,7 @@ export default class Query extends BaseCommand {
   async run() {
     let connection = getConnection();
 
-    let result = await connection.query(this.parsedArguments.query);
+    let result = await connection.query(this.parsedArguments.query!);
 
     await this.send("```" + Logger.formatObject(result) + "```");
   }

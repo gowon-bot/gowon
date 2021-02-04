@@ -4,15 +4,36 @@ import { TasteCalculator } from "../../../lib/calculators/TasteCalculator";
 import { numberDisplay } from "../../../helpers";
 import { sanitizeForDiscord } from "../../../helpers/discord";
 import { Variation } from "../../../lib/command/BaseCommand";
-import { RunAs } from "../../../lib/AliasChecker";
 import { TopArtists } from "../../../services/LastFM/LastFMService.types";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { LogicError } from "../../../errors";
-import { TagsService } from "../../../services/dbservices/TagsService";
-import { TasteCommand } from "./TasteCommand";
+import { TagsService } from "../../../services/dbservices/tags/TagsService";
+import { TasteCommand, tasteMentions } from "./TasteCommand";
+import { RunAs } from "../../../lib/command/RunAs";
 
-export default class TagTaste extends TasteCommand {
+const args = {
+  inputs: {
+    tag: { index: 0, splitOn: "|" },
+    artistAmount: {
+      index: 0,
+      regex: /(?<=.\|.*)\b[0-9]+\b/g,
+      default: 1000,
+      number: true,
+    },
+    username: {
+      regex: /(?<=.\|.*)[\w\-\!]+/gi,
+      index: 0,
+    },
+    username2: {
+      regex: /(?<=.\|.*)[\w\-\!]+/gi,
+      index: 1,
+    },
+  },
+  mentions: tasteMentions,
+} as const;
+
+export default class TagTaste extends TasteCommand<typeof args> {
   idSeed = "iz*one yuri";
   aliases = ["tat", "ttaste", "ttb"];
   description = "Shows your taste overlap within a genre with another user";
@@ -31,26 +52,7 @@ export default class TagTaste extends TasteCommand {
     },
   ];
 
-  arguments: Arguments = {
-    inputs: {
-      tag: { index: 0, splitOn: "|" },
-      artistAmount: {
-        index: 0,
-        regex: /(?<=.\|.*)\b[0-9]+\b/g,
-        default: 1000,
-        number: true,
-      },
-      username: {
-        regex: /(?<=.\|.*)[\w\-\!]+/gi,
-        index: 0,
-      },
-      username2: {
-        regex: /(?<=.\|.*)[\w\-\!]+/gi,
-        index: 1,
-      },
-    },
-    mentions: this.arguments.mentions,
-  };
+  arguments: Arguments = args;
 
   validation: Validation = {
     tag: new validators.Required({}),
@@ -60,11 +62,11 @@ export default class TagTaste extends TasteCommand {
     },
   };
 
-  tagService = new TagsService(this.logger);
+  tagService = new TagsService(this.lastFMService, this.logger);
 
   async run(_: Message, runAs: RunAs) {
-    let artistAmount = this.parsedArguments.artistAmount as number,
-      tag = this.parsedArguments.tag as string;
+    let artistAmount = this.parsedArguments.artistAmount!,
+      tag = this.parsedArguments.tag!;
 
     let [userOneUsername, userTwoUsername] = await this.getUsernames();
 

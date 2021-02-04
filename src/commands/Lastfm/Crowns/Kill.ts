@@ -5,24 +5,26 @@ import { LogicError } from "../../../errors";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 
-export class Kill extends CrownsChildCommand {
+const args = {
+  inputs: {
+    artist: { index: { start: 0 } },
+  },
+} as const;
+
+export class Kill extends CrownsChildCommand<typeof args> {
   idSeed = "wjsn xuanyi";
-  
+
   description = "Kills a crown";
   usage = ["artist (case sensitive!)"];
 
-  arguments: Arguments = {
-    inputs: {
-      artist: { index: { start: 0 } },
-    },
-  };
+  arguments: Arguments = args;
 
   validation: Validation = {
     artist: new validators.Required({}),
   };
 
   async run(message: Message) {
-    let artist = this.parsedArguments.artist as string;
+    let artist = this.parsedArguments.artist!;
 
     let crown = await this.crownsService.getCrown(artist, message.guild?.id!, {
       noRedirect: true,
@@ -30,7 +32,7 @@ export class Kill extends CrownsChildCommand {
     });
 
     if (!crown)
-      throw new LogicError(`A crown for ${artist.strong()} doesn't exist`);
+      throw new LogicError(`A crown for ${artist.strong()} doesn't exist! *Make sure the artist exactly matches the artist name on the crown!*`);
 
     let sentMessage = await this.reply(
       `are you sure you want to kill the crown for ${crown?.artistName.strong()}?`

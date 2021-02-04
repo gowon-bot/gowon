@@ -2,24 +2,28 @@ import { OverviewChildCommand } from "./OverviewChildCommand";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { LogicError } from "../../../errors";
 import { numberDisplay } from "../../../helpers";
+import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
-export class SumTop extends OverviewChildCommand {
+const args = {
+  mentions: standardMentions,
+  inputs: {
+    top: { index: 0, regex: /[0-9]{1,4}/, default: 10, number: true },
+  },
+} as const;
+
+export class SumTop extends OverviewChildCommand<typeof args> {
   idSeed = "twice momo";
-  
+
   aliases = ["toppct"];
   description =
     "Shows what percent of your scrobbles are made up by your top artists";
   usage = ["", "top", "top @user"];
 
-  arguments: Arguments = {
-    mentions: this.arguments.mentions,
-    inputs: {
-      top: { index: 0, regex: /[0-9]{1,4}/, default: 10, number: true },
-    },
-  };
+  arguments: Arguments = args;
 
   async run() {
-    let top = this.parsedArguments.top as number;
+    let top = this.parsedArguments.top!;
+
     let { username, perspective } = await this.parseMentions();
 
     if (top > 1000 || top < 2)

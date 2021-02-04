@@ -3,31 +3,33 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { numberDisplay } from "../../../helpers";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
-export default class TrackRank extends LastFMBaseCommand {
+const args = {
+  inputs: {
+    artist: {
+      index: 0,
+      splitOn: "|",
+    },
+    track: {
+      index: 1,
+      splitOn: "|",
+    },
+  },
+  mentions: standardMentions,
+} as const;
+
+export default class TrackRank extends LastFMBaseCommand<typeof args> {
   idSeed = "cignature seline";
-  
+
   aliases = ["tra", "tr"];
   description = "Shows what rank a track is at in your top 1000 tracks";
   subcategory = "ranks";
   usage = ["", "artist | track @user"];
 
-  arguments: Arguments = {
-    inputs: {
-      artist: {
-        index: 0,
-        splitOn: "|",
-      },
-      track: {
-        index: 1,
-        splitOn: "|",
-      },
-    },
-    mentions: standardMentions,
-  };
+  arguments: Arguments = args;
 
   async run() {
-    let track = this.parsedArguments.track as string,
-      artist = this.parsedArguments.artist as string;
+    let track = this.parsedArguments.track,
+      artist = this.parsedArguments.artist;
 
     let { username, senderUsername, perspective } = await this.parseMentions({
       senderRequired: !track || !artist,
@@ -49,8 +51,8 @@ export default class TrackRank extends LastFMBaseCommand {
 
     let rank = topTracks.track.findIndex(
       (a) =>
-        a.name.toLowerCase() === track.toLowerCase() &&
-        a.artist.name.toLowerCase() === artist.toLowerCase()
+        a.name.toLowerCase() === track!.toLowerCase() &&
+        a.artist.name.toLowerCase() === artist!.toLowerCase()
     );
 
     if (rank === -1) {

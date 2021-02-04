@@ -5,14 +5,44 @@ import { numberDisplay } from "../../../helpers";
 import { sanitizeForDiscord } from "../../../helpers/discord";
 import { generatePeriod, generateHumanPeriod } from "../../../helpers/date";
 import { Variation } from "../../../lib/command/BaseCommand";
-import { RunAs } from "../../../lib/AliasChecker";
 import { TopArtists } from "../../../services/LastFM/LastFMService.types";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { LogicError } from "../../../errors";
-import { TasteCommand } from "./TasteCommand";
+import { TasteCommand, tasteMentions } from "./TasteCommand";
+import { RunAs } from "../../../lib/command/RunAs";
 
-export default class Taste extends TasteCommand {
+const args = {
+  inputs: {
+    artistAmount: {
+      index: 0,
+      regex: /\b[0-9]+\b/g,
+      default: 1000,
+      number: true,
+    },
+    timePeriod: {
+      custom: (messageString: string) =>
+        generatePeriod(messageString, "overall"),
+      index: -1,
+    },
+    humanReadableTimePeriod: {
+      custom: (messageString: string) =>
+        generateHumanPeriod(messageString, "overall"),
+      index: -1,
+    },
+    username: {
+      regex: /[\w\-\!]+/gi,
+      index: 0,
+    },
+    username2: {
+      regex: /[\w\-\!]+/gi,
+      index: 1,
+    },
+  },
+  mentions: tasteMentions,
+} as const;
+
+export default class Taste extends TasteCommand<typeof args> {
   idSeed = "secret number jinny";
   aliases = ["t", "tb"];
   description = "Shows your taste overlap with another user";
@@ -31,44 +61,15 @@ export default class Taste extends TasteCommand {
     },
   ];
 
-  arguments: Arguments = {
-    inputs: {
-      artistAmount: {
-        index: 0,
-        regex: /\b[0-9]+\b/g,
-        default: 1000,
-        number: true,
-      },
-      timePeriod: {
-        custom: (messageString: string) =>
-          generatePeriod(messageString, "overall"),
-        index: -1,
-      },
-      humanReadableTimePeriod: {
-        custom: (messageString: string) =>
-          generateHumanPeriod(messageString, "overall"),
-        index: -1,
-      },
-      username: {
-        regex: /[\w\-\!]+/gi,
-        index: 0,
-      },
-      username2: {
-        regex: /[\w\-\!]+/gi,
-        index: 1,
-      },
-    },
-    mentions: this.arguments.mentions,
-  };
+  arguments: Arguments = args;
 
   validation: Validation = {
     artistAmount: { validator: new validators.Range({ min: 100, max: 2000 }) },
   };
 
   async run(_: Message, runAs: RunAs) {
-    let artistAmount = this.parsedArguments.artistAmount as number,
-      humanReadableTimePeriod = this.parsedArguments
-        .humanReadableTimePeriod as string;
+    let artistAmount = this.parsedArguments.artistAmount!,
+      humanReadableTimePeriod = this.parsedArguments.humanReadableTimePeriod!;
 
     const [userOneUsername, userTwoUsername] = await this.getUsernames();
 

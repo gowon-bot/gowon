@@ -5,25 +5,27 @@ import { LogicError } from "../../../errors";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { LinkGenerator } from "../../../helpers/lastFM";
 
-export default class LastScrobbled extends LastFMBaseCommand {
+const args = {
+  inputs: {
+    artist: { index: 0, splitOn: "|" },
+    track: { index: 1, splitOn: "|" },
+  },
+  mentions: standardMentions,
+} as const;
+
+export default class LastScrobbled extends LastFMBaseCommand<typeof args> {
   idSeed = "gwsn lena";
-  
+
   description = "Shows the last time you scrobbled a song";
   aliases = ["last"];
   usage = ["", "artist | track @user"];
   subcategory = "library";
 
-  arguments: Arguments = {
-    inputs: {
-      artist: { index: 0, splitOn: "|" },
-      track: { index: 1, splitOn: "|" },
-    },
-    mentions: standardMentions,
-  };
+  arguments: Arguments = args;
 
   async run() {
-    let artist = this.parsedArguments.artist as string,
-      track = this.parsedArguments.track as string;
+    let artist = this.parsedArguments.artist,
+      track = this.parsedArguments.track;
 
     let { senderUsername, username, perspective } = await this.parseMentions({
       senderRequired: !artist || !track,
