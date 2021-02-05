@@ -1,9 +1,7 @@
-import { Message } from "discord.js";
 import { dateTimeDisplay } from "../../helpers";
 import { generateLink } from "../../helpers/discord";
 import { Arguments } from "../../lib/arguments/arguments";
 import { BaseCommand, Variation } from "../../lib/command/BaseCommand";
-import { RunAs } from "../../lib/command/RunAs";
 import { Validation } from "../../lib/validation/ValidationChecker";
 import { validators } from "../../lib/validation/validators";
 import { GithubService } from "../../services/Github/GithubService";
@@ -25,21 +23,23 @@ export default class Issue extends BaseCommand<typeof args> {
 
   variations: Variation[] = [
     {
-      variationString: "bug",
+      name: "bug",
+      variation: "bug",
       description: "Add the bug label",
     },
     {
-      variationRegex: /enhancement|feat|feature/,
-      friendlyString: "enhancement`, `feat`,`feature",
+      name: "feature",
+      variation: ["enhancement", "feat", "feature"],
       description: "Add the enhancement label",
     },
     {
-      variationRegex: /documentation|doc/,
-      friendlyString: "documentation`, `doc",
+      name: "enhancement",
+      variation: ["documentation", "doc"],
       description: "Add the documentation label",
     },
     {
-      variationString: "spike",
+      name: "spike",
+      variation: ["spike", "question"],
       description: "Add the question label",
     },
   ];
@@ -52,7 +52,7 @@ export default class Issue extends BaseCommand<typeof args> {
 
   githubService = new GithubService(this.logger);
 
-  async run(_: Message, runAs: RunAs) {
+  async run() {
     let title = this.parsedArguments.title!,
       body = this.parsedArguments.body;
 
@@ -76,11 +76,10 @@ ${generateLink("Jump to message", this.message.url)}
 
     const labels = ["user feedback"];
 
-    if (runAs.variationWasUsed("bug")) labels.push("bug");
-    else if (runAs.variationWasUsed("spike")) labels.push("question");
-    else if (runAs.variationWasUsed("enhancement", "feat", "feature"))
-      labels.push("enhancement");
-    else if (runAs.variationWasUsed("documentation", "doc"))
+    if (this.variationWasUsed("bug")) labels.push("bug");
+    else if (this.variationWasUsed("spike")) labels.push("question");
+    else if (this.variationWasUsed("enhancement")) labels.push("enhancement");
+    else if (this.variationWasUsed("documentation"))
       labels.push("documentation");
 
     let issue = await this.githubService.createIssue({

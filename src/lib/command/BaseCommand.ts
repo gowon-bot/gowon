@@ -23,10 +23,9 @@ import { Argument, Mention } from "./ArgumentType";
 import { RunAs } from "./RunAs";
 
 export interface Variation {
-  variationString?: string;
-  variationRegex?: RegExp;
+  name: string;
+  variation: string[] | string;
   description?: string;
-  friendlyString?: string;
 }
 
 export interface Delegate<T> {
@@ -77,6 +76,7 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
   delegatedFrom?: Command;
 
   message!: Message;
+  runAs!: RunAs;
   guild!: Guild;
   author!: DiscordUser;
   gowonClient!: GowonClient;
@@ -258,6 +258,7 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
 
   async execute(message: Message, runAs: RunAs) {
     this.message = message;
+    this.runAs = runAs;
     this.guild = message.guild!;
     this.author = message.author;
 
@@ -366,5 +367,20 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     return (await this.guild.members.fetch())
       .map((u) => u.user.id)
       .filter(filter);
+  }
+
+  protected variationWasUsed(...names: string[]): boolean {
+    for (let variation of this.variations.filter((v) =>
+      names.includes(v.name)
+    )) {
+      const variations =
+        variation.variation instanceof Array
+          ? variation.variation
+          : [variation.variation];
+
+      if (variations.find((v) => this.runAs.variationWasUsed(v))) return true;
+    }
+
+    return false;
   }
 }

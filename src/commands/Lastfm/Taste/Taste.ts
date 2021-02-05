@@ -1,4 +1,3 @@
-import { Message } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { TasteCalculator } from "../../../lib/calculators/TasteCalculator";
 import { numberDisplay } from "../../../helpers";
@@ -10,7 +9,6 @@ import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { LogicError } from "../../../errors";
 import { TasteCommand, tasteMentions } from "./TasteCommand";
-import { RunAs } from "../../../lib/command/RunAs";
 
 const args = {
   inputs: {
@@ -55,7 +53,8 @@ export default class Taste extends TasteCommand<typeof args> {
 
   variations: Variation[] = [
     {
-      variationString: "te",
+      name: "embed",
+      variation: "te",
       description:
         "Uses an embed view instead of a table to display (more mobile friendly)",
     },
@@ -67,7 +66,7 @@ export default class Taste extends TasteCommand<typeof args> {
     artistAmount: { validator: new validators.Range({ min: 100, max: 2000 }) },
   };
 
-  async run(_: Message, runAs: RunAs) {
+  async run() {
     let artistAmount = this.parsedArguments.artistAmount!,
       humanReadableTimePeriod = this.parsedArguments.humanReadableTimePeriod!;
 
@@ -113,7 +112,7 @@ export default class Taste extends TasteCommand<typeof args> {
         }% match) found.`
       );
 
-    if (runAs.variationWasUsed("te")) {
+    if (this.variationWasUsed("embed")) {
       this.generateEmbed(taste, embed);
     } else {
       this.generateTable(userOneUsername, userTwoUsername, taste, embed);

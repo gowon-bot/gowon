@@ -45,12 +45,12 @@ export class AliasChecker {
 
   commandHasVariation(command: Command, variation: string): boolean {
     for (let v of command.variations) {
-      if (v.variationString) {
-        if (v.variationString.toLowerCase() === variation.toLowerCase())
-          return true;
-      } else if (v.variationRegex) {
-        if (v.variationRegex.test(variation)) return true;
-      }
+      const variations =
+        v.variation instanceof Array ? v.variation : [v.variation];
+
+      return !!variations.find(
+        (v) => v.toLowerCase() === variation.toLowerCase()
+      );
     }
     return false;
   }

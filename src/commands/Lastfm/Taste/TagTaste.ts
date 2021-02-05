@@ -1,4 +1,3 @@
-import { Message } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { TasteCalculator } from "../../../lib/calculators/TasteCalculator";
 import { numberDisplay } from "../../../helpers";
@@ -10,7 +9,6 @@ import { validators } from "../../../lib/validation/validators";
 import { LogicError } from "../../../errors";
 import { TagsService } from "../../../services/dbservices/tags/TagsService";
 import { TasteCommand, tasteMentions } from "./TasteCommand";
-import { RunAs } from "../../../lib/command/RunAs";
 
 const args = {
   inputs: {
@@ -46,7 +44,8 @@ export default class TagTaste extends TasteCommand<typeof args> {
 
   variations: Variation[] = [
     {
-      variationString: "tte",
+      name: "embed",
+      variation: "tte",
       description:
         "Uses an embed view instead of a table to display (more mobile friendly)",
     },
@@ -64,7 +63,7 @@ export default class TagTaste extends TasteCommand<typeof args> {
 
   tagService = new TagsService(this.lastFMService, this.logger);
 
-  async run(_: Message, runAs: RunAs) {
+  async run() {
     let artistAmount = this.parsedArguments.artistAmount!,
       tag = this.parsedArguments.tag!;
 
@@ -118,7 +117,7 @@ export default class TagTaste extends TasteCommand<typeof args> {
         )} (${taste.percent}% match) found.`
       );
 
-    if (runAs.variationWasUsed("tte")) {
+    if (this.variationWasUsed("embed")) {
       this.generateEmbed(taste, embed);
     } else {
       this.generateTable(userOneUsername, userTwoUsername, taste, embed);

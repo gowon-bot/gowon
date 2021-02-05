@@ -1,7 +1,6 @@
 import { LogicError } from "../../../errors";
 import { numberDisplay } from "../../../helpers";
 import { Variation } from "../../../lib/command/BaseCommand";
-import { RunAs } from "../../../lib/command/RunAs";
 import { Paginator } from "../../../lib/Paginator";
 import { SearchCommand } from "./SearchCommand";
 
@@ -15,26 +14,26 @@ export default class SearchAlbum extends SearchCommand {
 
   variations: Variation[] = [
     {
-      variationRegex: /deepsl|dsl/,
-      friendlyString: "deepsl`,`dsl",
+      name: "deep",
+      variation: ["deepsl", "dsl"],
       description: "Searches your top 4000 albums (instead of 2000)",
     },
   ];
 
-  async run(_: any, runAs: RunAs) {
+  async run() {
     let keywords = this.parsedArguments.keywords!;
 
     let { username } = await this.parseMentions();
 
     let paginator = new Paginator(
       this.lastFMService.topAlbums.bind(this.lastFMService),
-      runAs.variationWasUsed("deepsl", "dsl") ? 4 : 2,
+      this.variationWasUsed("deep") ? 4 : 2,
       { username, limit: 1000 }
     );
 
     let topAlbums = await paginator.getAll({
       concatTo: "album",
-      concurrent: runAs.variationWasUsed("deepsl", "dsl"),
+      concurrent: this.variationWasUsed("deep"),
     });
 
     let filtered = topAlbums.album.filter((a) =>

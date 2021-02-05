@@ -1,7 +1,6 @@
 import { LogicError } from "../../../errors";
 import { numberDisplay } from "../../../helpers";
 import { Variation } from "../../../lib/command/BaseCommand";
-import { RunAs } from "../../../lib/command/RunAs";
 import { Paginator } from "../../../lib/Paginator";
 import { SearchCommand } from "./SearchCommand";
 
@@ -15,26 +14,26 @@ export default class SearchTrack extends SearchCommand {
 
   variations: Variation[] = [
     {
-      variationRegex: /deepst|dst/,
-      friendlyString: "deepst`,`dst",
+      name: "deep",
+      variation: ["deepst", "dst"],
       description: "Searches your top 6000 tracks (instead of 3000)",
     },
   ];
 
-  async run(_: any, runAs: RunAs) {
+  async run() {
     let keywords = this.parsedArguments.keywords!;
 
     let { username } = await this.parseMentions();
 
     let paginator = new Paginator(
       this.lastFMService.topTracks.bind(this.lastFMService),
-      runAs.variationWasUsed("deepst", "dst") ? 6 : 3,
+      this.variationWasUsed("deep") ? 6 : 3,
       { username, limit: 1000 }
     );
 
     let topTracks = await paginator.getAll({
       concatTo: "track",
-      concurrent: runAs.variationWasUsed("deepst", "dst"),
+      concurrent: this.variationWasUsed("deep"),
     });
 
     let filtered = topTracks.track.filter((t) =>

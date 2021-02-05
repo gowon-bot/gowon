@@ -1,5 +1,4 @@
 import { Variation } from "../../../lib/command/BaseCommand";
-import { RunAs } from "../../../lib/command/RunAs";
 import { validators } from "../../../lib/validation/validators";
 import { PermissionsChildCommand } from "./PermissionsChildCommand";
 
@@ -8,13 +7,19 @@ export class ChannelBlacklist extends PermissionsChildCommand {
 
   description = "Prevent a command from being used in a channel";
   usage = ["command #channel", "command #channel #channel2"];
-  variations: Variation[] = [{ variationString: "channelunblacklist" }];
+  variations: Variation[] = [
+    {
+      name: "unblacklist",
+      variation: "channelunblacklist",
+      description: "Re-allow a command to be used in a channel",
+    },
+  ];
 
   validation = {
     command: new validators.Required({}),
   };
 
-  async run(_: any, runAs: RunAs) {
+  async run() {
     let mentionedChannels = this.message.mentions.channels.array();
 
     let blacklistedChannels = {
@@ -24,7 +29,7 @@ export class ChannelBlacklist extends PermissionsChildCommand {
 
     for (let channel of mentionedChannels) {
       try {
-        !runAs.variationWasUsed("channelunblacklist")
+        !this.variationWasUsed("i")
           ? await this.adminService.blacklistCommandFromChannel(
               this.guild.id,
               this.command.id,

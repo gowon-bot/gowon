@@ -28,7 +28,9 @@ export class Me extends JumbleChildCommand<typeof args> {
   usage = ["", "poolAmount"];
   variations: Variation[] = [
     {
-      variationString: "nonascii",
+      name: "nonascii",
+      variation: "nonascii",
+      description: "Allow artists with non-ascii characters to appear",
     },
   ];
 

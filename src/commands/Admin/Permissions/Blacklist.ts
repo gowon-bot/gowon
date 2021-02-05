@@ -1,9 +1,8 @@
 import { PermissionsChildCommand } from "./PermissionsChildCommand";
-import { Message, Role, User } from "discord.js";
+import { Role, User } from "discord.js";
 import { Variation } from "../../../lib/command/BaseCommand";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
-import { RunAs } from "../../../lib/command/RunAs";
 
 export class Blacklist extends PermissionsChildCommand {
   idSeed = "red velvet irene";
@@ -15,7 +14,8 @@ export class Blacklist extends PermissionsChildCommand {
 
   variations: Variation[] = [
     {
-      variationString: "whitelist",
+      name: "whitelist",
+      variation: "whitelist",
       description: "Add a user to the whitelist for a command",
     },
   ];
@@ -24,7 +24,7 @@ export class Blacklist extends PermissionsChildCommand {
     command: new validators.Required({}),
   };
 
-  async run(message: Message, runAs: RunAs) {
+  async run() {
     let createdRolePermissions: Array<Role> = [];
     let createdUserPermissions: Array<User> = [];
     let failed: Array<{ entity: Role | User; reason: string }> = [];
@@ -33,10 +33,10 @@ export class Blacklist extends PermissionsChildCommand {
       try {
         await this.adminService.whiteOrBlacklist(
           role.id,
-          message.guild?.id!,
+          this.message.guild?.id!,
           this.command.id,
           true,
-          !runAs.variationWasUsed("whitelist"),
+          !this.variationWasUsed("whitelist"),
           this.runAs.toCommandFriendlyName()
         );
 
@@ -53,10 +53,10 @@ export class Blacklist extends PermissionsChildCommand {
       try {
         await this.adminService.whiteOrBlacklist(
           user.id,
-          message.guild?.id!,
+          this.message.guild?.id!,
           this.command.id,
           false,
-          !runAs.variationWasUsed("whitelist"),
+          !this.variationWasUsed("whitelist"),
           this.runAs.toCommandFriendlyName()
         );
 
@@ -73,7 +73,7 @@ export class Blacklist extends PermissionsChildCommand {
       .setTitle(`New permissions`)
       .setDescription(
         `${
-          runAs.variationWasUsed("whitelist") ? "Whitelisted" : "Blacklisted"
+          this.variationWasUsed("whitelist") ? "Whitelisted" : "Blacklisted"
         } ${this.runAs.toCommandFriendlyName().code()} for:\n` +
           (createdRolePermissions.length
             ? `Roles: ${createdRolePermissions

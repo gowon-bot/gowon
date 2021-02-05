@@ -1,12 +1,11 @@
-import { BaseCommand } from "../lib/command/BaseCommand";
-import { Command } from "../lib/command/Command";
+import { BaseCommand } from "../../lib/command/BaseCommand";
 import { Message } from "discord.js";
-import { CommandManager } from "../lib/command/CommandManager";
-import { Arguments } from "../lib/arguments/arguments";
-import { AdminService } from "../services/dbservices/AdminService";
-import { CommandNotFoundError } from "../errors";
-import { flatDeep } from "../helpers";
-import { ParentCommand } from "../lib/command/ParentCommand";
+import { CommandManager } from "../../lib/command/CommandManager";
+import { Arguments } from "../../lib/arguments/arguments";
+import { AdminService } from "../../services/dbservices/AdminService";
+import { CommandNotFoundError } from "../../errors";
+import { flatDeep } from "../../helpers";
+import { ParentCommand } from "../../lib/command/ParentCommand";
 
 const args = {
   inputs: {
@@ -14,12 +13,10 @@ const args = {
   },
 } as const;
 
-export default class Help extends BaseCommand<typeof args> {
+export default class HelpForOneCommand extends BaseCommand<typeof args> {
   idSeed = "clc seungyeon";
 
-  aliases = ["h"];
-  description = "Displays the help menu, or help about a given command";
-  usage = ["", "command"];
+  shouldBeIndexed = false;
 
   arguments: Arguments = args;
 
@@ -29,76 +26,16 @@ export default class Help extends BaseCommand<typeof args> {
   prefix!: string;
 
   async run(message: Message) {
-    let command = this.parsedArguments.command;
+    let command = this.parsedArguments.command!;
 
     this.prefix = await this.gowonService.prefix(this.guild.id);
     await this.commandManager.init();
 
-    let embed = await (command
-      ? this.helpForOneCommand(message, command)
-      : this.helpForAllCommands(message));
+    let embed = await this.helpForOneCommand(message, command);
 
     if (!embed) return;
 
     await this.send(embed);
-  }
-
-  private async helpForAllCommands(message: Message) {
-    let commands = await this.adminService.can.viewList(
-      this.commandManager.list(),
-      message,
-      this.gowonClient
-    );
-
-    interface GroupedCommands {
-      [category: string]: {
-        [subcategory: string]: Command[];
-      };
-    }
-
-    let groupedCommands = commands.reduce((acc, c) => {
-      if (!acc[c.category || "misc"]) acc[c.category || "misc"] = {};
-      if (!acc[c.category || "misc"][c.subcategory || ""])
-        acc[c.category || "misc"][c.subcategory || ""] = [];
-
-      acc[c.category || "misc"][c.subcategory || ""].push(c);
-
-      return acc;
-    }, {} as GroupedCommands);
-
-    return this.newEmbed()
-      .setAuthor(
-        `Help for ${message.author.username}`,
-        message.author.avatarURL() || ""
-      )
-      .setDescription(
-        `Run \`${this.prefix}help <command>\` to learn more about specific commands\nTo change prefix, mention Gowon (\`@Gowon prefix ?\`)\n\n` +
-          Object.keys(groupedCommands)
-            .map(
-              (gc) =>
-                gc.strong() +
-                "\n" +
-                (groupedCommands[gc][""]
-                  ? Object.values(groupedCommands[gc][""])
-                      .map((c) => c.friendlyName)
-                      .join(", ")
-                      .italic() + "\n"
-                  : "") +
-                Object.keys(groupedCommands[gc])
-                  .filter((k) => k !== "")
-                  .map(
-                    (k) =>
-                      "" +
-                      k.strong() +
-                      ": " +
-                      groupedCommands[gc][k]
-                        .map((c) => c.friendlyName)
-                        .join(", ")
-                  )
-                  .join("\n")
-            )
-            .join("\n")
-      );
   }
 
   private async helpForOneCommand(message: Message, commandName: string) {
@@ -153,16 +90,20 @@ export default class Help extends BaseCommand<typeof args> {
             ${command.variations
               .sort((a, b) => {
                 return (
-                  (b.variationString || b.friendlyString || "").length -
-                  (a.variationString || a.friendlyString || "").length
+                  (b.name || b.name || "").length -
+                  (a.name || a.name || "").length
                 );
               })
-              .map(
-                (a) =>
-                  `${(a.variationString || a.friendlyString)?.code()} ${
-                    a.description ? "- " + a.description : ""
-                  }`
-              )
+              .map((v) => {
+                const variationDisplay =
+                  v.variation instanceof Array
+                    ? v.variation.map((v) => v.code()).join(", ")
+                    : v.variation.code();
+
+                return `${variationDisplay} ${
+                  v.description ? "- " + v.description : ""
+                }`;
+              })
               .join("\n")}\n\n`
             : ""
         }`
