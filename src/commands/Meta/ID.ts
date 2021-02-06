@@ -1,11 +1,12 @@
 import { BaseCommand } from "../../lib/command/BaseCommand";
 import { Arguments } from "../../lib/arguments/arguments";
+import { standardMentions } from "../../lib/arguments/mentions/mentions";
 
 const args = {
   inputs: {
-    username: { index: { start: 0 } },
+    discordUsername: { index: { start: 0 } },
   },
-  mentions: {},
+  mentions: standardMentions,
 } as const;
 
 export default class ID extends BaseCommand<typeof args> {
@@ -17,11 +18,15 @@ export default class ID extends BaseCommand<typeof args> {
   arguments: Arguments = args;
 
   async run() {
-    const username = this.parsedArguments.username;
+    const username = this.parsedArguments.discordUsername;
 
-    if (!username) {
-      await this.send(this.author.id);
-    } else {
+    let { discordUser } = await this.parseMentions({
+      fetchDiscordUser: true,
+      reverseLookup: { lastFM: true },
+      usernameRequired: false,
+    });
+
+    if (username) {
       const user = this.message.guild?.members.cache.find(
         (member) => member.user.username === username
       );
@@ -32,6 +37,8 @@ export default class ID extends BaseCommand<typeof args> {
             "Note that username is case sensitive".italic()
         );
       else await this.send(user?.id);
+    } else {
+      await this.send(discordUser!.id);
     }
   }
 }
