@@ -59,7 +59,7 @@ export default class TrackInfo extends InfoCommand<typeof args> {
 
     this.lineConsolidator.addLines(
       (duration
-        ? `_${numberDisplay(Math.ceil(duration / 60000), "minute")}_`
+        ? `_${numberDisplay(Math.round(duration / 60000), "minute")}_`
         : "") +
         (duration && trackInfo.album ? " - " : "") +
         (trackInfo.album

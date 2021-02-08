@@ -78,7 +78,7 @@ export default class Login extends LastFMBaseCommand<typeof args> {
         }`
       );
     } catch {
-      this.reply(`The user ${username?.code()} couldn't be found`);
+      this.sendError(`The user ${username?.code()} couldn't be found`);
     }
   }
 }

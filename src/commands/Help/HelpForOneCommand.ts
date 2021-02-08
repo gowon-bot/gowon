@@ -6,6 +6,7 @@ import { AdminService } from "../../services/dbservices/AdminService";
 import { CommandNotFoundError } from "../../errors";
 import { flatDeep } from "../../helpers";
 import { ParentCommand } from "../../lib/command/ParentCommand";
+import { LineConsolidator } from "../../lib/LineConsolidator";
 
 const args = {
   inputs: {
@@ -38,76 +39,62 @@ export default class HelpForOneCommand extends BaseCommand<typeof args> {
     await this.send(embed);
   }
 
-  private async helpForOneCommand(message: Message, commandName: string) {
-    let { command } = await this.commandManager.find(
-      commandName,
-      this.guild.id
-    );
+  private async helpForOneCommand(message: Message, input: string) {
+    let { command } = await this.commandManager.find(input, this.guild.id);
 
     if (!command) throw new CommandNotFoundError();
+
     if (
       !(await this.adminService.can.run(command, message, this.gowonClient))
         .passed
     ) {
-      message.channel.stopTyping();
       return;
     }
 
     if (command instanceof ParentCommand)
       return this.showHelpForParentCommand(message, command);
 
+    const commandName = command.friendlyNameWithParent || command.friendlyName;
+
+    const variations = command.variations
+      .map((v) => {
+        const display =
+          v.variation instanceof Array
+            ? v.variation.map((v) => v.code()).join(", ")
+            : v.variation.code();
+
+        return `${display} ${v.description ? "- " + v.description : ""}`;
+      })
+      .join("\n");
+
+    const lineConsolidator = new LineConsolidator();
+
+    lineConsolidator.addLines(
+      commandName.strong() + ":",
+      command.description.italic(),
+      "",
+      {
+        shouldDisplay: !!command.usage,
+        string: flatDeep([command.usage])
+          .map((u) => `${this.prefix}${commandName} ${u}`.trim().code())
+          .join("\n"),
+      },
+      {
+        shouldDisplay: !!command.aliases.length,
+        string: `\n**Aliases**: ${command.aliases.map((a) => a.code())}\n`,
+      },
+      {
+        shouldDisplay: !!command.variations.length,
+        string: "**Variations**:\n" + variations,
+      }
+    );
+
     let embed = this.newEmbed()
       .setAuthor(
-        `Help with ${
-          command.friendlyNameWithParent || command.friendlyName
-        } for ${message.author.username}`,
+        `Help with ${commandName} for ${message.author.username}`,
         message.author.avatarURL() || ""
       )
-      .setDescription(
-        `${(command.friendlyNameWithParent || command.friendlyName).strong()}:
-        ${command.description.italic()}
-
-        ${
-          command.usage !== undefined
-            ? "**Usage**:\n" +
-              flatDeep([command.usage])
-                .map((u) =>
-                  (this.prefix + command!.friendlyNameWithParent + " " + u)
-                    .trim()
-                    .code()
-                )
-                .join("\n") +
-              "\n"
-            : ""
-        }
-        ${
-          command.aliases.length
-            ? `**Aliases**: ${command.aliases.map((a) => a.code())}\n\n`
-            : ""
-        }${
-          command.variations.length
-            ? `**Variations**:
-            ${command.variations
-              .sort((a, b) => {
-                return (
-                  (b.name || b.name || "").length -
-                  (a.name || a.name || "").length
-                );
-              })
-              .map((v) => {
-                const variationDisplay =
-                  v.variation instanceof Array
-                    ? v.variation.map((v) => v.code()).join(", ")
-                    : v.variation.code();
-
-                return `${variationDisplay} ${
-                  v.description ? "- " + v.description : ""
-                }`;
-              })
-              .join("\n")}\n\n`
-            : ""
-        }`
-      );
+      .setDescription(lineConsolidator.consolidate());
 
     return embed;
   }
@@ -122,30 +109,34 @@ export default class HelpForOneCommand extends BaseCommand<typeof args> {
       this.gowonClient
     );
 
+    const lineConsolidator = new LineConsolidator();
+
+    lineConsolidator.addLines(
+      command.friendlyName.strong() + ":",
+      command.description.italic(),
+      "",
+      {
+        shouldDisplay: !!command.prefixes,
+        string:
+          "**Prefixes**:\n" +
+          flatDeep([command.prefixes])
+            .map((p) => p.trim().code())
+            .join(", ") +
+          "\n",
+      },
+      "**Commands**:",
+      commands
+        .map(
+          (c) => c.friendlyName.code() + ` - ${c.description.split("\n")[0]}`
+        )
+        .join("\n")
+    );
+
     return this.newEmbed()
       .setAuthor(
         `Help with ${command.friendlyName} for ${message.author.username}`,
         message.author.avatarURL() || ""
       )
-      .setDescription(
-        `${command.friendlyName.strong()}:
-        ${command.description.italic()}
-        
-        ${
-          command.prefixes
-            ? `**Prefixes**:
-            ${flatDeep([command.prefixes])
-              .map((p) => p.trim().code())
-              .join(", ")}\n`
-            : ""
-        }
-        **Commands**:
-        ${commands
-          .map(
-            (c) => c.friendlyName.code() + ` - ${c.description.split("\n")[0]}`
-          )
-          .join("\n")}
-        `
-      );
+      .setDescription(lineConsolidator.consolidate());
   }
 }

@@ -1,7 +1,9 @@
+import { DocumentNode } from "graphql";
 import request from "graphql-request";
 import { RequestDocument } from "graphql-request/dist/types";
+import { IndexingWebhookService } from "../../api/indexing/IndexingWebhookService";
 import { BaseService } from "../BaseService";
-import { IndexingQueries, IndexingQuery } from "./IndexingQueries";
+import { IndexingQueries } from "./IndexingQueries";
 
 export class IndexingService extends BaseService {
   private readonly baseURL = "http://localhost:8080/graphql";
@@ -11,9 +13,11 @@ export class IndexingService extends BaseService {
     variables?: object
   ): Promise<any> {
     this.log(
-      `Sending request to ${this.baseURL} for ${
-        (query.toString().match(/(query|mutation)\s+\w+/) || [])[0]
-      } with variables ${JSON.stringify(variables, undefined, 2)}`
+      `Sending request to ${this.baseURL} with variables ${JSON.stringify(
+        variables,
+        undefined,
+        2
+      )}`
     );
 
     return await (variables
@@ -21,8 +25,13 @@ export class IndexingService extends BaseService {
       : request(this.baseURL, query));
   }
 
-  async genericRequest(query: IndexingQuery): Promise<any> {
-    return await this.sendRequest(IndexingQueries[query]);
+  public webhook = IndexingWebhookService.getInstance();
+
+  async genericRequest<T = any>(
+    query: DocumentNode,
+    variables: { [key: string]: any }
+  ): Promise<T> {
+    return await this.sendRequest(query, variables);
   }
 
   public async fullIndex(username: string): Promise<any> {

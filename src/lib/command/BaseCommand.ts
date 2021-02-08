@@ -21,6 +21,7 @@ import { GowonEmbed } from "../../helpers/Embeds";
 import { Emoji, EmojiRaw } from "../Emoji";
 import { Argument, Mention } from "./ArgumentType";
 import { RunAs } from "./RunAs";
+import { ucFirst } from "../../helpers";
 
 export interface Variation {
   name: string;
@@ -167,7 +168,7 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
 
         mentionedUsername = mentionedUser.lastFMUsername;
       } catch {
-        throw new UsernameNotRegisteredError();
+        if (usernameRequired) throw new UsernameNotRegisteredError();
       }
     } else if (inputArgumentName && this.parsedArguments[inputArgumentName]) {
       mentionedUsername = this.parsedArguments[inputArgumentName] as string;
@@ -289,7 +290,7 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
       this.track.error(e);
 
       if (e.isClientFacing) {
-        await this.reply(e.message);
+        await this.sendError(e.message);
       } else {
         await this.reply(new UnknownError().message);
       }
@@ -382,5 +383,17 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     }
 
     return false;
+  }
+
+  protected async sendError(message: string) {
+    const errorEmbed = this.newEmbed()
+      .setColor("#ED008E")
+      .setAuthor(
+        `Error | ${this.author.username}#${this.author.discriminator}`,
+        this.author.avatarURL() ?? undefined
+      )
+      .setDescription(ucFirst(message));
+
+    await this.send(errorEmbed);
   }
 }

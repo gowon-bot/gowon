@@ -298,3 +298,7 @@ export class LastFMEntityNotFoundError extends ClientError {
     super(parseErrorSix(entity));
   }
 }
+
+export class IndexerError extends ClientError {
+  name = "IndexerError";
+}

@@ -186,3 +186,20 @@ export async function promiseAllSettled<T extends Promise<any>[]>(
 ): Promise<PromiseAllSettledResult<T>> {
   return (await Promise.allSettled(promises)) as any;
 }
+
+export class Stopwatch {
+  private startTime?: Date;
+  private endTime?: Date;
+
+  /**
+   * @return The amount of time passed in seconds and 0 if it hasn't started
+   */
+  get elapsed() {
+    if (!this.startTime) return 0;
+    else if (!this.endTime)
+      return (this.startTime.getTime() - new Date().getTime()) * 1000;
+    else return (this.startTime.getTime() - this.endTime.getTime()) * 1000;
+  }
+
+  start() {}
+}

@@ -5,6 +5,8 @@ import { typeDefs } from "./graphql/schema.gql";
 import userResolvers from "./resolvers/userResolvers";
 import crownResolvers from "./resolvers/crownResolvers";
 import redirectResolvers from "./resolvers/redirectResolvers";
+import { IndexingWebhookService } from "./indexing/IndexingWebhookService";
+import bodyParser from "body-parser";
 
 export class GraphQLAPI {
   usersService = new UsersService();
@@ -38,8 +40,21 @@ export class GraphQLAPI {
       },
     });
 
+    app.use("/api", bodyParser.json());
+
+    app.post("/api/indexingWebhook", (req, res) => {
+      const body = req.body as { data?: { token?: string } };
+
+      if (body?.data?.token) {
+        IndexingWebhookService.getInstance().handleRequest(body.data.token);
+        res.status(200).send();
+      } else {
+        res.status(400).send("Please send a token in valid json format");
+      }
+    });
+
     app.listen(3000, () => {
-      console.log("Gowon GraphQL API running at http://localhost:3000/graphql");
+      console.log("Gowon API running at http://localhost:3000");
     });
   }
 }

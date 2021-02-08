@@ -29,6 +29,10 @@ export default class About extends BaseCommand {
   async run(_: any) {
     await this.commandManager.init();
 
+    const author = await this.gowonClient.client.users.fetch(
+      Object.keys(this.gowonClient.specialUsers.developers[0])[0]
+    );
+
     let crowns = await Crown.count();
     let yoinks = await CrownEvent.count({
       where: { event: CrownEventString.snatched },
@@ -95,10 +99,8 @@ Total commands: ${numberDisplay(commandCount)}`,
         }
       )
       .setFooter(
-        "Made with <3 by John🥳#2527",
-        (
-          await this.gowonClient.client.users.fetch("267794154459889664")
-        ).avatarURL({ dynamic: true }) ?? undefined
+        `Made with <3 by ${author.username}#${author.discriminator}`,
+        author.avatarURL({ dynamic: true }) ?? undefined
       );
 
     await this.send(embed);

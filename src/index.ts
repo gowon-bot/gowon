@@ -11,7 +11,7 @@ import { Client } from "discord.js";
 import { DB } from "./database";
 import { RedisService } from "./services/RedisService";
 import config from "../config.json";
-import { GraphQLAPI } from "./graphql_api";
+import { GraphQLAPI } from "./api";
 import { GowonClient } from "./lib/GowonClient";
 import { GuildSetupService } from "./services/GuildSetupService";
 

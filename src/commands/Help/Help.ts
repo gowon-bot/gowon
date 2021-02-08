@@ -5,6 +5,13 @@ import { CommandManager } from "../../lib/command/CommandManager";
 import { Arguments } from "../../lib/arguments/arguments";
 import { AdminService } from "../../services/dbservices/AdminService";
 import HelpForOneCommand from "./HelpForOneCommand";
+import { LineConsolidator } from "../../lib/LineConsolidator";
+
+interface GroupedCommands {
+  [category: string]: {
+    [subcategory: string]: Command[];
+  };
+}
 
 const args = {
   inputs: {
@@ -51,54 +58,52 @@ export default class Help extends BaseCommand<typeof args> {
       this.gowonClient
     );
 
-    interface GroupedCommands {
-      [category: string]: {
-        [subcategory: string]: Command[];
-      };
-    }
-
     let groupedCommands = commands.reduce((acc, c) => {
-      if (!acc[c.category || "misc"]) acc[c.category || "misc"] = {};
-      if (!acc[c.category || "misc"][c.subcategory || ""])
-        acc[c.category || "misc"][c.subcategory || ""] = [];
+      const category = c.category || "misc";
+      const subcategory = c.subcategory || "";
 
-      acc[c.category || "misc"][c.subcategory || ""].push(c);
+      if (!acc[category]) acc[category] = {};
+      if (!acc[category][subcategory]) acc[category][subcategory] = [];
+
+      acc[category][subcategory].push(c);
 
       return acc;
     }, {} as GroupedCommands);
+
+    const lineConsolidator = new LineConsolidator();
+    lineConsolidator.addLines(
+      `Run \`${this.prefix}help <command>\` to learn more about specific commands\nTo change prefix, mention Gowon (\`@Gowon prefix ?\`)\n`
+    );
+
+    for (let [categoryName, category] of Object.entries(groupedCommands)) {
+      lineConsolidator.addLines(categoryName.strong());
+
+      lineConsolidator.addLines({
+        shouldDisplay: !!category[""],
+        string: Object.values(category[""])
+          .map((c) => c.friendlyName)
+          .join(", ")
+          .italic(),
+      });
+
+      delete category[""];
+
+      for (let [subcategory, commands] of Object.entries(category)) {
+        lineConsolidator.addLines(
+          `${subcategory.strong()}: ${commands
+            .map((c) => c.friendlyName)
+            .join(", ")}`
+        );
+      }
+
+      lineConsolidator.addLines(" ");
+    }
 
     return this.newEmbed()
       .setAuthor(
         `Help for ${message.author.username}`,
         message.author.avatarURL() || ""
       )
-      .setDescription(
-        `Run \`${this.prefix}help <command>\` to learn more about specific commands\nTo change prefix, mention Gowon (\`@Gowon prefix ?\`)\n\n` +
-          Object.keys(groupedCommands)
-            .map(
-              (gc) =>
-                gc.strong() +
-                "\n" +
-                (groupedCommands[gc][""]
-                  ? Object.values(groupedCommands[gc][""])
-                      .map((c) => c.friendlyName)
-                      .join(", ")
-                      .italic() + "\n"
-                  : "") +
-                Object.keys(groupedCommands[gc])
-                  .filter((k) => k !== "")
-                  .map(
-                    (k) =>
-                      "" +
-                      k.strong() +
-                      ": " +
-                      groupedCommands[gc][k]
-                        .map((c) => c.friendlyName)
-                        .join(", ")
-                  )
-                  .join("\n")
-            )
-            .join("\n")
-      );
+      .setDescription(lineConsolidator.consolidate());
   }
 }
