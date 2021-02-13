@@ -47,7 +47,7 @@ export default class Update extends IndexingCommand<
     if (errors) throw new IndexerError("An unknown error ocurred");
 
     this.indexingService.webhook.onResponse(response.updateUser.token, () => {
-      if (this.stopwatch.elapsed > 5) {
+      if (this.stopwatch.elapsedInSeconds > 5) {
         this.reply(`Updated user ${senderUsername.code()}!`);
       } else {
         sentMessage.edit(

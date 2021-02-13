@@ -1,12 +1,12 @@
 import { GuildMember, MessageEmbed } from "discord.js";
 import { Image } from "../../services/LastFM/LastFMService.types";
 
-export function GowonEmbed(member?: GuildMember) {
-  let embed = new MessageEmbed().setColor(
+export function GowonEmbed(member?: GuildMember, embed?: MessageEmbed) {
+  let gowonEmbed = (embed || new MessageEmbed()).setColor(
     member?.roles?.color?.hexColor || "black"
   );
 
-  return embed;
+  return gowonEmbed;
 }
 
 interface SimpleTrack {

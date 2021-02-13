@@ -188,18 +188,51 @@ export async function promiseAllSettled<T extends Promise<any>[]>(
 }
 
 export class Stopwatch {
-  private startTime?: Date;
-  private endTime?: Date;
+  private startTime?: bigint;
+  private endTime?: bigint;
+
+  /**
+   * @return The amount of time passed in nanoseconds and 0 if it hasn't started
+   */
+  get elapsedInNanoseconds(): number {
+    if (!this.startTime) return 0;
+
+    const endTime = this.endTime || this.now();
+
+    return Number(endTime - this.startTime);
+  }
+
+  /**
+   * @return The amount of time passed in milliseconds and 0 if it hasn't started
+   */
+  get elapsedInMilliseconds(): number {
+    return this.elapsedInNanoseconds / 1e6;
+  }
 
   /**
    * @return The amount of time passed in seconds and 0 if it hasn't started
    */
-  get elapsed() {
-    if (!this.startTime) return 0;
-    else if (!this.endTime)
-      return (this.startTime.getTime() - new Date().getTime()) * 1000;
-    else return (this.startTime.getTime() - this.endTime.getTime()) * 1000;
+  get elapsedInSeconds(): number {
+    return this.elapsedInNanoseconds / 1e9;
   }
 
-  start() {}
+  start() {
+    this.startTime = this.now();
+    return this;
+  }
+
+  stop() {
+    this.endTime = this.now();
+    return this;
+  }
+
+  zero() {
+    this.startTime = undefined;
+    this.endTime = undefined;
+    return this;
+  }
+
+  now() {
+    return process.hrtime.bigint();
+  }
 }

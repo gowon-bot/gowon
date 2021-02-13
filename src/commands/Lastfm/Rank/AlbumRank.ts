@@ -20,7 +20,7 @@ const args = {
 export default class AlbumRank extends LastFMBaseCommand<typeof args> {
   idSeed = "cignature chaesol";
 
-  aliases = ["alra", "lra"];
+  aliases = ["alra", "lra", "lr"];
   description = "Shows what rank a given album is in your top 1000 albums";
   subcategory = "ranks";
   usage = ["", "artist | album @user"];

@@ -54,7 +54,8 @@ export default class Milestone extends LastFMBaseCommand<typeof args> {
 
     let scrobbledAt = fromUnixTime(track.date.uts.toInt());
 
-    let embed = TrackEmbed(track)
+
+    let embed = this.newEmbed(TrackEmbed(track))
       .setAuthor(
         `${perspective.upper.possessive} ${getOrdinal(milestone)} track was:`
       )

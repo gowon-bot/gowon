@@ -338,8 +338,8 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     }
   }
 
-  protected newEmbed(): MessageEmbed {
-    return GowonEmbed(this.message.member ?? undefined);
+  protected newEmbed(embed?: MessageEmbed): MessageEmbed {
+    return GowonEmbed(this.message.member ?? undefined, embed);
   }
 
   protected async serverUserIDs({

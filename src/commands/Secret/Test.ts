@@ -1,4 +1,3 @@
-import { IndexingWebhookService } from "../../api/indexing/IndexingWebhookService";
 import { BaseCommand } from "../../lib/command/BaseCommand";
 
 const args = {
@@ -16,16 +15,7 @@ export default class Test extends BaseCommand<typeof args> {
 
   arguments = args;
 
-  indexingWebhookService = IndexingWebhookService.getInstance();
-
   async run() {
-    await this.send("Waiting for webhook before executing");
-
-    await this.indexingWebhookService.waitForResponse(
-      this.parsedArguments.token!,
-      30000 // timeout
-    );
-
     await this.send("Hello, world!");
   }
 }
