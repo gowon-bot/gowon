@@ -18,7 +18,6 @@ import { Guild, Message, User as DiscordUser } from "discord.js";
 import { BaseService } from "../BaseService";
 import { FindManyOptions, ILike, In } from "typeorm";
 import { Setting } from "../../database/entity/Setting";
-import { Settings } from "../../lib/Settings";
 import { MoreThan } from "typeorm";
 import { CrownBan } from "../../database/entity/CrownBan";
 import { CacheScopedKey } from "../../database/cache/ShallowCache";
@@ -482,38 +481,26 @@ export class CrownsService extends BaseService {
   }
 
   async setInactiveRole(
-    serverID: string,
+    guildID: string,
     roleID?: string
   ): Promise<Setting | undefined> {
-    let setting = await Setting.createUpdateOrDelete(
-      Settings.InactiveRole,
-      serverID,
+    const setting = await this.gowonService.settingsManager.set(
+      "inactiveRole",
+      { guildID },
       roleID
-    );
-
-    this.gowonService.shallowCache.remember(
-      CacheScopedKey.InactiveRole,
-      roleID,
-      serverID
     );
 
     return setting;
   }
 
   async setPurgatoryRole(
-    serverID: string,
+    guildID: string,
     roleID?: string
   ): Promise<Setting | undefined> {
-    let setting = await Setting.createUpdateOrDelete(
-      Settings.PurgatoryRole,
-      serverID,
+    const setting = await this.gowonService.settingsManager.set(
+      "purgatoryRole",
+      { guildID },
       roleID
-    );
-
-    this.gowonService.shallowCache.remember(
-      CacheScopedKey.PurgatoryRole,
-      roleID,
-      serverID
     );
 
     return setting;
@@ -531,28 +518,31 @@ export class CrownsService extends BaseService {
     return result.length;
   }
 
-  async optOut(serverID: string, userID: string): Promise<number> {
-    await Setting.createUpdateOrDelete(
-      Settings.OptedOut,
-      serverID,
-      "true",
-      userID
+  async optOut(guildID: string, userID: string): Promise<number> {
+    await this.gowonService.settingsManager.set(
+      "optedOut",
+      {
+        guildID,
+        userID,
+      },
+      "true"
     );
 
-    return await this.wipeUsersCrowns(serverID, userID);
+    return await this.wipeUsersCrowns(guildID, userID);
   }
 
-  async optIn(serverID: string, userID: string): Promise<void> {
-    await Setting.createUpdateOrDelete(
-      Settings.OptedOut,
-      serverID,
-      undefined,
-      userID
-    );
+  async optIn(guildID: string, userID: string): Promise<void> {
+    this.gowonService.settingsManager.set("optedOut", {
+      guildID,
+      userID,
+    });
   }
 
-  async isUserOptedOut(serverID: string, userID: string): Promise<boolean> {
-    let setting = await Setting.getByName(Settings.OptedOut, serverID, userID);
+  async isUserOptedOut(guildID: string, userID: string): Promise<boolean> {
+    const setting = this.gowonService.settingsManager.get("optedOut", {
+      guildID,
+      userID,
+    });
 
     return !!setting;
   }

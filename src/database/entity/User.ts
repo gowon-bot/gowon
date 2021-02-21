@@ -23,8 +23,6 @@ import {
 import { Friend } from "./Friend";
 import { userHasRole } from "../../helpers/discord";
 import { GowonService } from "../../services/GowonService";
-import { Setting } from "./Setting";
-import { Settings } from "../../lib/Settings";
 
 @Entity({ name: "users" })
 export class User extends BaseEntity {
@@ -124,11 +122,12 @@ export class User extends BaseEntity {
   }
 
   async isOptedOut(message: Message): Promise<boolean> {
-    let setting = await Setting.getByName(
-      Settings.OptedOut,
-      message.guild!.id,
-      this.discordID
-    );
+    const settingsManager = GowonService.getInstance().settingsManager;
+
+    const setting = settingsManager.get("optedOut", {
+      guildID: message.guild!.id,
+      userID: this.discordID,
+    });
 
     return !!setting;
   }

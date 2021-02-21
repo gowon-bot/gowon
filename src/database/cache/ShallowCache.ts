@@ -1,10 +1,7 @@
 export enum CacheKey {}
 export enum CacheScopedKey {
-  InactiveRole = "inactiveRole",
-  PurgatoryRole = "purgatoryRole",
   CrownBannedUsers = "crownBannedUsers",
   CrownBannedArtists = "crownBannedArtists",
-  Prefixes = "prefixes",
   ChannelBlacklists = "channelBlacklists",
 }
 export type ShallowCacheKey = CacheKey | CacheScopedKey;

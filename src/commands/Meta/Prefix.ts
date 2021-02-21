@@ -7,19 +7,22 @@ export default class Prefix extends BaseCommand {
   secretCommand = true;
   shouldBeIndexed = false;
 
-  prefix?: string;
+  newPrefix?: string;
 
   setPrefix(prefix?: string): Prefix {
-    this.prefix = prefix;
+    this.newPrefix = prefix;
     return this;
   }
 
   async run() {
-    if (this.prefix) {
-      await this.gowonService.setPrefix(this.guild.id, this.prefix);
+    if (this.newPrefix) {
+      await this.gowonService.settingsManager.set(
+        "prefix",
+        this.scopes.guild,
+        this.newPrefix
+      );
       await this.reply(`the new prefix is ${this.prefix.code()}`);
     } else {
-      this.prefix = await this.gowonService.prefix(this.guild.id);
       await this.reply(`the prefix is ${this.prefix.code()}`);
     }
   }

@@ -42,7 +42,7 @@ export default class ArtistPlays extends LastFMBaseCommand<typeof args> {
       username,
     });
 
-    let prefix = await this.gowonService.prefix(this.guild.id);
+    let prefix = this.prefix;
 
     await this.reply(
       `${perspective.plusToHave}` +

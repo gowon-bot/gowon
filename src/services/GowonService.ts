@@ -1,13 +1,12 @@
 import regexEscape from "escape-string-regexp";
-import { Setting } from "../database/entity/Setting";
 import { Guild } from "discord.js";
-import { Settings } from "../lib/Settings";
 import config from "../../config.json";
-import { ShallowCache, CacheScopedKey } from "../database/cache/ShallowCache";
+import { CacheScopedKey, ShallowCache } from "../database/cache/ShallowCache";
 import { CrownBan } from "../database/entity/CrownBan";
 import { ChannelBlacklist } from "../database/entity/ChannelBlacklist";
 import { ArtistCrownBan } from "../database/entity/ArtistCrownBan";
 import { RunAs } from "../lib/command/RunAs";
+import { SettingsManager } from "../lib/settings/SettingsManager";
 
 export class GowonService {
   // Static methods/properties
@@ -27,6 +26,7 @@ export class GowonService {
     lastfm: "lfm:",
   };
 
+  settingsManager = new SettingsManager();
   shallowCache = new ShallowCache();
 
   constants = {
@@ -44,48 +44,20 @@ export class GowonService {
     defaultLoadingTime: 5,
   } as const;
 
-  async init() {
-    let prefixes = await Setting.find({ where: { name: Settings.Prefix } });
-    for (let prefix of prefixes) {
-      this.shallowCache.remember(
-        CacheScopedKey.Prefixes,
-        prefix.value,
-        prefix.scope!
-      );
-    }
-  }
-
-  async prefix(serverID: string): Promise<string> {
-    return await this.shallowCache.findOrRemember(
-      CacheScopedKey.Prefixes,
-      async () =>
-        (await Setting.getByName(Settings.Prefix, serverID))?.value ||
-        config.defaultPrefix,
-      serverID
+  prefix(guildID: string): string {
+    return (
+      this.settingsManager.get("prefix", { guildID }) || config.defaultPrefix
     );
   }
 
-  async setPrefix(serverID: string, prefix: string): Promise<string> {
-    await Setting.createUpdateOrDelete(Settings.Prefix, serverID, prefix);
-    return this.shallowCache.remember(
-      CacheScopedKey.Prefixes,
-      prefix,
-      serverID
-    );
+  regexSafePrefix(serverID: string): string {
+    return regexEscape(this.prefix(serverID));
   }
 
-  async regexSafePrefix(serverID: string): Promise<string> {
-    return regexEscape(await this.prefix(serverID));
-  }
-
-  async removeCommandName(
-    string: string,
-    runAs: RunAs,
-    serverID: string
-  ): Promise<string> {
+  removeCommandName(string: string, runAs: RunAs, serverID: string): string {
     return string.replace(
       new RegExp(
-        `${await this.regexSafePrefix(serverID)}${runAs.toRegexString()}`,
+        `${this.regexSafePrefix(serverID)}${runAs.toRegexString()}`,
         "i"
       ),
       ""
@@ -93,21 +65,11 @@ export class GowonService {
   }
 
   async getInactiveRole(guild: Guild): Promise<string | undefined> {
-    return await this.shallowCache.findOrRemember(
-      CacheScopedKey.InactiveRole,
-      async () =>
-        (await Setting.getByName(Settings.InactiveRole, guild.id))?.value,
-      guild.id
-    );
+    return this.settingsManager.get("inactiveRole", { guildID: guild.id });
   }
 
   async getPurgatoryRole(guild: Guild): Promise<string | undefined> {
-    return await this.shallowCache.findOrRemember(
-      CacheScopedKey.PurgatoryRole,
-      async () =>
-        (await Setting.getByName(Settings.PurgatoryRole, guild.id))?.value,
-      guild.id
-    );
+    return this.settingsManager.get("purgatoryRole", { guildID: guild.id });
   }
 
   async getCrownBannedUsers(guild: Guild): Promise<string[]> {

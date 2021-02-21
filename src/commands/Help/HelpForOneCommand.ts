@@ -24,12 +24,9 @@ export default class HelpForOneCommand extends BaseCommand<typeof args> {
   commandManager = new CommandManager();
   adminService = new AdminService(this.gowonClient);
 
-  prefix!: string;
-
   async run(message: Message) {
     let command = this.parsedArguments.command!;
 
-    this.prefix = await this.gowonService.prefix(this.guild.id);
     await this.commandManager.init();
 
     let embed = await this.helpForOneCommand(message, command);

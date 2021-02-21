@@ -14,6 +14,7 @@ import config from "../config.json";
 import { GraphQLAPI } from "./api";
 import { GowonClient } from "./lib/GowonClient";
 import { GuildSetupService } from "./services/GuildSetupService";
+import { GowonService } from "./services/GowonService";
 
 const client = new GowonClient(new Client(), config.environment);
 const handler = new CommandHandler();
@@ -21,6 +22,7 @@ const redisService = new RedisService();
 const guildSetupService = new GuildSetupService(client);
 const db = new DB();
 const api = new GraphQLAPI();
+const gowonService = GowonService.getInstance();
 
 async function start() {
   pm2.connect((err) => {
@@ -40,6 +42,9 @@ async function start() {
     api.init(),
     guildSetupService.init(),
   ]);
+
+  // SettingsManager needs the database to be connected to cache settings
+  await gowonService.settingsManager.init();
 
   client.client.on("ready", () => {
     console.log(

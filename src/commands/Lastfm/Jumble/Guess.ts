@@ -27,9 +27,7 @@ export class Guess extends JumbleChildCommand<typeof args> {
 
     if (!jumbledArtist.jumbled)
       throw new LogicError(
-        `you haven't jumbled an artist yet, to jumble an artist, run \`${await this.gowonService.prefix(
-          this.guild.id
-        )}jumble me\`!`
+        `you haven't jumbled an artist yet, to jumble an artist, run \`${this.prefix}jumble me\`!`
       );
     if (!guess) throw new LogicError("please make a guess");
 

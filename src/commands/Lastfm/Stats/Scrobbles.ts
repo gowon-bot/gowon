@@ -38,10 +38,7 @@ export default class Scrobbles extends LastFMBaseCommand<typeof args> {
   arguments: Arguments = args;
 
   async run(message: Message) {
-    if (
-      message.content.trim() ===
-      `${await this.gowonService.prefix(this.guild.id)}s n s d`
-    ) {
+    if (message.content.trim() === `${this.prefix}s n s d`) {
       await this.send("Gee gee gee gee baby baby baby");
       return;
     }

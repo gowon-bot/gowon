@@ -109,6 +109,10 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     return md5(this.idSeed);
   }
 
+  get prefix(): string {
+    return this.gowonService.prefix(this.guild.id);
+  }
+
   abstract run(message: Message, runAs: RunAs): Promise<void>;
 
   async parseMentions({
@@ -215,9 +219,7 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
       (!username || (senderRequired && !senderUser?.lastFMUsername))
     )
       throw new LogicError(
-        `please sign in with a last.fm account! (\`${await this.gowonService.prefix(
-          this.guild.id
-        )}login <lastfm username>)\``
+        `please sign in with a last.fm account! (\`${this.prefix}login <lastfm username>)\``
       );
 
     return {
@@ -266,7 +268,7 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     await this.setup();
 
     try {
-      this.parsedArguments = (await this.parseArguments(runAs)) as any;
+      this.parsedArguments = this.parseArguments(runAs) as any;
 
       for (let delegate of this.delegates) {
         if (delegate.when(this.parsedArguments)) {
@@ -299,13 +301,10 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     await this.teardown();
   }
 
-  async parseArguments(runAs: RunAs): Promise<ParsedArguments<ArgumentsType>> {
+  parseArguments(runAs: RunAs): ParsedArguments<ArgumentsType> {
     let parser = new ArgumentParser(this.arguments);
 
-    return (await parser.parse(
-      this.message,
-      runAs
-    )) as ParsedArguments<ArgumentsType>;
+    return parser.parse(this.message, runAs) as ParsedArguments<ArgumentsType>;
   }
 
   addResponse(res: MessageEmbed | string) {
@@ -395,5 +394,13 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
       .setDescription(ucFirst(message));
 
     await this.send(errorEmbed);
+  }
+
+  protected get scopes() {
+    const guild = { guildID: this.guild.id };
+    const user = { userID: this.author.id };
+    const guildMember = Object.assign(guild, user);
+
+    return { guild, user, guildMember };
   }
 }

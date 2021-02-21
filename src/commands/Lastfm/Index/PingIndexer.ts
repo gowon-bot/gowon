@@ -36,8 +36,6 @@ export default class PingIndexer extends IndexingCommand<
   async run() {
     const response = await this.query({});
 
-    console.log(response);
-
     if (!response.ping) {
       await this.send("No repsonse :(");
     } else {

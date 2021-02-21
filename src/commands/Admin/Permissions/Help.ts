@@ -11,7 +11,7 @@ export class Help extends PermissionsChildCommand {
   async prerun() {}
 
   async run(message: Message) {
-    let prefix = await this.gowonService.prefix(this.guild.id);
+    let prefix = this.prefix;
 
     await this.send(
       this.newEmbed()
