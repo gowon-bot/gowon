@@ -236,8 +236,7 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
   async prerun(_: Message): Promise<void> {}
 
   async setup() {
-    this.message.channel.startTyping();
-    this.logger.openCommandHeader(this);
+    this.startTyping();
 
     if (this.showLoadingAfter) {
       setTimeout(() => {
@@ -249,7 +248,7 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
   }
 
   async teardown() {
-    this.message.channel.stopTyping();
+    this.stopTyping();
     this.logger.closeCommandHeader(this);
     this.isCompleted = true;
     if (this.showLoadingAfter) {
@@ -402,5 +401,20 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     const guildMember = Object.assign(guild, user);
 
     return { guild, user, guildMember };
+  }
+
+  protected startTyping() {
+    // Sometimes Discord throws 500 errors on this call
+    // To reduce the amount of errors when discord is crashing
+    // this is try / caught
+    try {
+      this.message.channel.startTyping();
+    } catch {}
+  }
+
+  protected stopTyping() {
+    try {
+      this.message.channel.stopTyping();
+    } catch {}
   }
 }
