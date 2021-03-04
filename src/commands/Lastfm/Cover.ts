@@ -2,6 +2,7 @@ import { Message } from "discord.js";
 import { LogicError } from "../../errors";
 import { Arguments } from "../../lib/arguments/arguments";
 import { standardMentions } from "../../lib/arguments/mentions/mentions";
+import { AlbumInfo, Track } from "../../services/LastFM/LastFMService.types";
 import { LastFMBaseCommand } from "./LastFMBaseCommand";
 
 const args = {
@@ -29,37 +30,59 @@ export default class Cover extends LastFMBaseCommand<typeof args> {
       usernameRequired: !artist || !album,
     });
 
-    if (!artist && !album) {
-      let nowPlaying = await this.lastFMService.nowPlaying(username);
+    let nowPlaying: Track | undefined = undefined;
 
-      let image = nowPlaying.image.find((i) => i.size === "extralarge");
+    if (!artist || !album) {
+      nowPlaying = await this.lastFMService.nowPlaying(username);
 
-      if (!image) throw new LogicError("that album doesn't have a cover!");
-
-      await this.sendWithFiles(
-        `Cover for ${nowPlaying.album["#text"].strong()} by ${nowPlaying.artist[
-          "#text"
-        ].strong()}`,
-        [image?.["#text"] ?? ""]
-      );
-    } else {
-      if (!artist || !album) {
-        let nowPlaying = await this.lastFMService.nowPlayingParsed(username);
-
-        if (!artist) artist = nowPlaying.artist;
-        if (!album) album = nowPlaying.album;
-      }
-
-      let albumDetails = await this.lastFMService.albumInfo({ artist, album });
-      let image = albumDetails.image.find((i) => i.size === "extralarge");
-
-      if (!image?.["#text"])
-        throw new LogicError("that album doesn't have a cover!");
-
-      await this.sendWithFiles(
-        `Cover for ${albumDetails.name.italic()} by ${albumDetails.artist.strong()}`,
-        [image?.["#text"] ?? ""]
-      );
+      if (!artist) artist = nowPlaying.artist["#text"];
+      if (!album) album = nowPlaying.album["#text"];
     }
+
+    let albumDetails: AlbumInfo | undefined = undefined;
+
+    try {
+      albumDetails = await this.lastFMService.albumInfo({ artist, album });
+    } catch {}
+
+    if (albumDetails) {
+      this.sendFromAlbumDetails(albumDetails);
+    } else if (nowPlaying) {
+      this.sendFromNowPlaying(nowPlaying);
+    } else {
+      throw new LogicError("that album could not be found!");
+    }
+  }
+
+  private async sendFromAlbumDetails(albumInfo: AlbumInfo) {
+    console.log(albumInfo.image);
+
+    let image = albumInfo.image.find((i) => i.size === "extralarge");
+
+    if (!image?.["#text"])
+      throw new LogicError("that album doesn't have a cover!");
+
+    await this.sendWithFiles(
+      `Cover for ${albumInfo.name.italic()} by ${albumInfo.artist.strong()}`,
+      [this.enlargeImage(image?.["#text"] ?? "")]
+    );
+  }
+
+  private async sendFromNowPlaying(nowPlaying: Track) {
+    let image = nowPlaying.image.find((i) => i.size === "extralarge");
+
+    if (!image?.["#text"])
+      throw new LogicError("that album doesn't have a cover!");
+
+    await this.sendWithFiles(
+      `Cover for ${nowPlaying.album["#text"].strong()} by ${nowPlaying.artist[
+        "#text"
+      ].strong()}`,
+      [this.enlargeImage(image?.["#text"] ?? "")]
+    );
+  }
+
+  private enlargeImage(url: string): string {
+    return url.replace(/\d+x\d+/, "2048x2048");
   }
 }
