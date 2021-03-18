@@ -1,6 +1,5 @@
 import { TopArtist } from "../../services/LastFM/LastFMService.types";
 import { calculatePercent } from "../../helpers/stats";
-import { mean } from "mathjs";
 
 export interface TasteArtist {
   name: string;
@@ -21,26 +20,8 @@ export class TasteCalculator {
   ) {}
 
   sortMatchedArtists(matchedArtists: TasteArtist[]): TasteArtist[] {
-    let userOneMatchedArtists = matchedArtists
-      .sort((a, b) => a.user1plays - b.user1plays)
-      .slice(0, 5)
-      .map((a) => a.user1plays);
-    let userTwoMatchedArtists = matchedArtists
-      .sort((a, b) => a.user2plays - b.user2plays)
-      .slice(0, 5)
-      .map((a) => a.user2plays);
-
-    let topArtistsAverage = {
-      userOne: userOneMatchedArtists.length ? mean(userOneMatchedArtists) : 0,
-      userTwo: userTwoMatchedArtists.length ? mean(userTwoMatchedArtists) : 0,
-    };
-
     return matchedArtists.sort(
-      (a, b) =>
-        (b.user1plays + b.user2plays) *
-          (b.user1plays / topArtistsAverage.userOne) -
-        (a.user1plays + a.user2plays) *
-          (a.user1plays / topArtistsAverage.userOne)
+      (a, b) => b.user1plays * b.user2plays - a.user1plays * a.user2plays
     );
   }
 
