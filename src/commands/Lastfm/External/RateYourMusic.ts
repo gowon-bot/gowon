@@ -28,7 +28,7 @@ export default class RateYourMusic extends LastFMBaseCommand<typeof args> {
     if (!keywords) {
       let nowplaying = await this.lastFMService.nowPlayingParsed(username);
 
-      keywords = `${nowplaying.artist}" "${nowplaying.album}`;
+      keywords = `${nowplaying.artist} - ${nowplaying.album}`;
     }
 
     let encodedKeywords = encodeURIComponent(keywords);
@@ -37,8 +37,7 @@ export default class RateYourMusic extends LastFMBaseCommand<typeof args> {
       .setAuthor(`Rateyourmusic search for "${keywords}"`)
       .setTitle("Click here to view the results")
       .setURL(
-        // https://duckduckgo.com/?q=%5Csite%3Arateyourmusic.com+%22How+The+Dogs+Chill%2c+Vol.+1%22+%22MALL+GRAB%22
-        `https://duckduckgo.com/?q=%5Csite%3Arateyourmusic.com+%22${encodedKeywords}%22`
+        `https://www.google.com/search?q=${encodedKeywords}+site%3Arateyourmusic.com`
       )
       .setThumbnail("https://e.snmc.io/3.0/img/logo/sonemic-512.png");
 
