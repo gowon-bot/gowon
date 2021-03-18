@@ -28,7 +28,9 @@ export default class RateYourMusic extends LastFMBaseCommand<typeof args> {
     if (!keywords) {
       let nowplaying = await this.lastFMService.nowPlayingParsed(username);
 
-      keywords = `${nowplaying.artist} - ${nowplaying.album}`;
+      keywords = `${nowplaying.artist} - ${this.cleanAlbumName(
+        nowplaying.album
+      )}`;
     }
 
     let encodedKeywords = encodeURIComponent(keywords);
@@ -42,5 +44,12 @@ export default class RateYourMusic extends LastFMBaseCommand<typeof args> {
       .setThumbnail("https://e.snmc.io/3.0/img/logo/sonemic-512.png");
 
     await this.send(embed);
+  }
+
+  private cleanAlbumName(albumName: string): string {
+    return albumName.replace(
+      /(\s?(-|–)\s?)?(The )?(\d+\w{2}) (Mini )?Album( Repackage)?/gi,
+      ""
+    );
   }
 }
