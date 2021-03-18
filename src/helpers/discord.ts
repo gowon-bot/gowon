@@ -1,4 +1,4 @@
-import { Message, Role, GuildMember } from "discord.js";
+import { Message, Role, GuildMember, MessageReaction, User } from "discord.js";
 import escapeStringRegexp from "escape-string-regexp";
 import { Permission } from "../database/entity/Permission";
 
@@ -57,5 +57,10 @@ export function userHasRole(
 }
 
 export function cleanURL(url: string): string {
-  return url.replace(")", "%29").replace(",", "%2C");
+  return url.replace(/\)/g, "%29").replace(/,/g, "%2C");
 }
+
+export type ReactionCollectorFilter = (
+  reaction: MessageReaction,
+  user: User
+) => boolean;

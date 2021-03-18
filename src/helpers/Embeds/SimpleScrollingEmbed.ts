@@ -1,0 +1,50 @@
+import { Message, MessageEmbed } from "discord.js";
+import { ScrollingEmbed } from "./ScrollingEmbed";
+
+export interface SimpleOptions<T> {
+  items: Array<T>;
+  pageSize: number;
+  /**
+   * Allows the passing in of a template to render the items in
+   */
+  pageRenderer?: (items: T[]) => string;
+}
+
+export class SimpleScrollingEmbed<T> {
+  scrollingEmbed: ScrollingEmbed;
+
+  constructor(
+    message: Message,
+    embed: MessageEmbed,
+    private options: SimpleOptions<T>
+  ) {
+    this.scrollingEmbed = new ScrollingEmbed(message, embed, {
+      totalItems: options.items.length,
+      totalPages: this.getTotalPages(),
+      initialItems: this.renderItemsFromPage(1),
+    });
+
+    this.scrollingEmbed.onPageChange((page) => {
+      return this.renderItemsFromPage(page);
+    });
+  }
+
+  public async send() {
+    return this.scrollingEmbed.send();
+  }
+
+  private getTotalPages(): number {
+    return Math.ceil(this.options.items.length / this.options.pageSize);
+  }
+
+  private renderItemsFromPage(page: number): string {
+    const items = this.options.items.slice(
+      (page - 1) * this.options.pageSize,
+      page * this.options.pageSize
+    );
+
+    return this.options.pageRenderer
+      ? this.options.pageRenderer(items)
+      : items.join("\n");
+  }
+}

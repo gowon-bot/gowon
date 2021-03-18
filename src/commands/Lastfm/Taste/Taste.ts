@@ -9,6 +9,7 @@ import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { LogicError } from "../../../errors";
 import { TasteCommand, tasteMentions } from "./TasteCommand";
+import { SimpleScrollingEmbed } from "../../../helpers/Embeds/SimpleScrollingEmbed";
 
 const args = {
   inputs: {
@@ -95,6 +96,16 @@ export default class Taste extends TasteCommand<typeof args> {
         `${userOneUsername} and ${userTwoUsername} share no common artists!`
       );
 
+    const embedDescription =
+      userOneUsername === userTwoUsername
+        ? "It's 100%, what are you expecting :neutral_face:"
+        : `Comparing top ${numberDisplay(
+            senderArtists.artist.slice(0, artistAmount).length,
+            "artist"
+          )}, ${numberDisplay(taste.artists.length, "overlapping artist")} (${
+            taste.percent
+          }% match) found.`;
+
     let embed = this.newEmbed()
       .setTitle(
         `Taste comparison for ${sanitizeForDiscord(
@@ -103,21 +114,25 @@ export default class Taste extends TasteCommand<typeof args> {
           userTwoUsername
         )} ${humanReadableTimePeriod}`
       )
-      .setDescription(
-        `Comparing top ${numberDisplay(
-          senderArtists.artist.slice(0, artistAmount).length,
-          "artist"
-        )}, ${numberDisplay(taste.artists.length, "overlapping artist")} (${
-          taste.percent
-        }% match) found.`
-      );
+      .setDescription(embedDescription);
 
     if (this.variationWasUsed("embed")) {
       this.generateEmbed(taste, embed);
+      await this.send(embed);
     } else {
-      this.generateTable(userOneUsername, userTwoUsername, taste, embed);
-    }
+      const scrollingEmbed = new SimpleScrollingEmbed(this.message, embed, {
+        items: taste.artists,
+        pageSize: 20,
+        pageRenderer: (items) => {
+          return (
+            embedDescription +
+            "\n" +
+            this.generateTable(userOneUsername, userTwoUsername, items)
+          );
+        },
+      });
 
-    await this.send(embed);
+      scrollingEmbed.send();
+    }
   }
 }

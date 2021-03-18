@@ -1,6 +1,9 @@
 import { MessageEmbed } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
-import { Taste as TasteType } from "../../../lib/calculators/TasteCalculator";
+import {
+  Taste as TasteType,
+  TasteArtist,
+} from "../../../lib/calculators/TasteCalculator";
 import { numberDisplay, StringPadder } from "../../../helpers";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { LastFMPeriod } from "../../../services/LastFM/LastFMService.types";
@@ -128,25 +131,24 @@ export abstract class TasteCommand<
   protected generateTable(
     userOneUsername: string,
     userTwoUsername: string,
-    taste: TasteType,
-    embed: MessageEmbed
-  ) {
+    artists: TasteArtist[]
+  ): string {
     let padder = new StringPadder((val) => `${val}`);
     let maxArtists = 20;
 
     let paddedPlays1 = padder.generatedPaddedList(
       [
         userOneUsername,
-        ...taste.artists.slice(0, maxArtists).map((a) => a.user1plays),
+        ...artists.slice(0, maxArtists).map((a) => a.user1plays),
       ],
       true
     );
     let paddedPlays2 = padder.generatedPaddedList([
       userTwoUsername,
-      ...taste.artists.slice(0, maxArtists).map((a) => a.user2plays),
+      ...artists.slice(0, maxArtists).map((a) => a.user2plays),
     ]);
     let longestArtist = padder.maxLength(
-      taste.artists.slice(0, maxArtists).map((a) => a.name)
+      artists.slice(0, maxArtists).map((a) => a.name)
     );
 
     let headers = [
@@ -156,7 +158,7 @@ export abstract class TasteCommand<
       ),
     ];
 
-    let table = taste.artists
+    let table = artists
       .slice(0, maxArtists)
       .map(
         (a, idx) =>
@@ -171,12 +173,7 @@ export abstract class TasteCommand<
           } ${paddedPlays2[idx + 1]}   ${a.name}`
       );
 
-    embed.setDescription(`
-      ${embed.description}
-      
-      \`\`\`
-${[...headers, ...table].join("\n")}\`\`\`
-      `);
+    return `\`\`\`\n${[...headers, ...table].join("\n")}\n\`\`\``;
   }
 
   protected generateEmbed(taste: TasteType, embed: MessageEmbed) {
