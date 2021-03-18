@@ -47,9 +47,11 @@ export default class RateYourMusic extends LastFMBaseCommand<typeof args> {
   }
 
   private cleanAlbumName(albumName: string): string {
-    return albumName.replace(
-      /(\s?(-|–)\s?)?(The )?(\d+\w{2}) (Mini )?Album( Repackage)?/gi,
+    const cleaned = albumName.replace(
+      /(\s?(-|–)\s?)?(The )?((\d+\w{2})|(first|second|third|fourth|fifth|sixth|seventh|eighth|ninth|tenth|eleventh|twelfth|thirteenth|fourteenth|fifteenth)) (Mini )?Album( Repackage)?/gi,
       ""
     );
+
+    if (cleaned === "") return albumName;
   }
 }
