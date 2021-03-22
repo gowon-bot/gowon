@@ -41,7 +41,7 @@ export default class Recent extends LastFMBaseCommand<typeof args> {
           .map(
             (t) =>
               `${t.name} by ${t.artist["#text"].strong()} ${
-                t.album ? `from ${t.album["#text"].italic()}` : ""
+                t.album?.["#text"] ? `from ${t.album["#text"].italic()}` : ""
               }`
           )
           .join("\n")
