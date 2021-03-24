@@ -67,6 +67,18 @@ export class ScrollingEmbed {
     await this.react();
   }
 
+  public async customSend(
+    sendCallback:
+      | ((embed: MessageEmbed) => Message)
+      | ((embed: MessageEmbed) => Promise<Message>)
+  ) {
+    this.generateEmbed();
+
+    this.sentMessage = await Promise.resolve(sendCallback(this.embed));
+
+    await this.react();
+  }
+
   public onPageChange(callback: OnPageChangeCallback) {
     this.onPageChangeCallback = callback;
   }
