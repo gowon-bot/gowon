@@ -100,6 +100,18 @@ export abstract class LinkGenerator {
     );
   }
 
+  // https://www.last.fm/music/The+Electriceels/Fluke/+images/upload
+  static imageUploadLink(artist: string, album: string): string {
+    return (
+      this.baseURL +
+      "/music/" +
+      this.encode(artist) +
+      "/" +
+      this.encode(album) +
+      "/+images/upload"
+    );
+  }
+
   static generateTrackLinks(track: Track): TrackLinks {
     return {
       artist: this.artistPage(track.artist["#text"]),

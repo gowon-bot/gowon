@@ -1,8 +1,14 @@
 import { Message } from "discord.js";
 import { LogicError } from "../../errors";
+import { generateLink } from "../../helpers/discord";
+import { LinkGenerator } from "../../helpers/lastFM";
 import { Arguments } from "../../lib/arguments/arguments";
 import { standardMentions } from "../../lib/arguments/mentions/mentions";
-import { AlbumInfo, Track } from "../../services/LastFM/LastFMService.types";
+import {
+  AlbumInfo,
+  Image,
+  Track,
+} from "../../services/LastFM/LastFMService.types";
 import { LastFMBaseCommand } from "./LastFMBaseCommand";
 
 const args = {
@@ -22,6 +28,9 @@ export default class Cover extends LastFMBaseCommand<typeof args> {
 
   arguments: Arguments = args;
 
+  private readonly defaultImageURL =
+    "https://lastfm.freetls.fastly.net/i/u/174s/2a96cbd8b46e442fc41c2b86b821562f.png";
+
   async run(_: Message) {
     let artist = this.parsedArguments.artist,
       album = this.parsedArguments.album;
@@ -39,50 +48,58 @@ export default class Cover extends LastFMBaseCommand<typeof args> {
       if (!album) album = nowPlaying.album["#text"];
     }
 
-    let albumDetails: AlbumInfo | undefined = undefined;
-
-    try {
-      albumDetails = await this.lastFMService.albumInfo({ artist, album });
-    } catch {}
-
-    if (albumDetails) {
-      this.sendFromAlbumDetails(albumDetails);
-    } else if (nowPlaying) {
-      this.sendFromNowPlaying(nowPlaying);
+    if (
+      nowPlaying?.artist["#text"] === artist &&
+      nowPlaying?.album["#text"] === album
+    ) {
+      await this.sendFromNowPlaying(nowPlaying);
     } else {
-      throw new LogicError("that album could not be found!");
+      const albumDetails = await this.lastFMService.albumInfo({
+        artist,
+        album,
+      });
+
+      await this.sendFromAlbumDetails(albumDetails);
     }
   }
 
   private async sendFromAlbumDetails(albumInfo: AlbumInfo) {
-    console.log(albumInfo.image);
-
     let image = albumInfo.image.find((i) => i.size === "extralarge");
 
-    if (!image?.["#text"])
-      throw new LogicError("that album doesn't have a cover!");
-
-    await this.sendWithFiles(
-      `Cover for ${albumInfo.name.italic()} by ${albumInfo.artist.strong()}`,
-      [this.enlargeImage(image?.["#text"] ?? "")]
-    );
+    await this.sendCoverImage(albumInfo.artist, albumInfo.name, image);
   }
 
   private async sendFromNowPlaying(nowPlaying: Track) {
     let image = nowPlaying.image.find((i) => i.size === "extralarge");
 
-    if (!image?.["#text"])
-      throw new LogicError("that album doesn't have a cover!");
+    await this.sendCoverImage(
+      nowPlaying.artist["#text"],
+      nowPlaying.album["#text"],
+      image
+    );
+  }
+
+  private async sendCoverImage(artist: string, album: string, image?: Image) {
+    this.checkIfAlbumHasCover(artist, album, image);
 
     await this.sendWithFiles(
-      `Cover for ${nowPlaying.album["#text"].strong()} by ${nowPlaying.artist[
-        "#text"
-      ].strong()}`,
-      [this.enlargeImage(image?.["#text"] ?? "")]
+      `Cover for ${album.strong()} by ${artist.strong()}`,
+      [this.enlargeImage(image!["#text"]!)]
     );
   }
 
   private enlargeImage(url: string): string {
     return url.replace(/\d+x\d+/, "2048x2048");
+  }
+
+  private checkIfAlbumHasCover(artist: string, album: string, image?: Image) {
+    if (!image?.["#text"] || image["#text"] === this.defaultImageURL) {
+      throw new LogicError(
+        `that album doesn't have a cover yet! You can add one ${generateLink(
+          "here",
+          LinkGenerator.imageUploadLink(artist, album)
+        )}.`
+      );
+    }
   }
 }
