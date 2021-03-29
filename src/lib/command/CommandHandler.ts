@@ -45,6 +45,7 @@ export class CommandHandler {
 
     await this.runPrefixCommandIfMentioned(message, this.client);
     await this.gers(message);
+    await this.yesMaam(message);
 
     if (
       !message.author.bot &&
@@ -128,6 +129,19 @@ export class CommandHandler {
       !message.author.bot
     ) {
       await message.channel.send("gers");
+    }
+  }
+
+  async yesMaam(message: Message) {
+    if (
+      message.mentions.users
+        .array()
+        .map((u) => u.id)
+        .includes(this.client.client.user!.id) &&
+      message.content.split(/\s+/)[1].toLowerCase() === "You" &&
+      message.author.id === "541298511430287395"
+    ) {
+      await message.reply("Yes ma'am!");
     }
   }
 }
