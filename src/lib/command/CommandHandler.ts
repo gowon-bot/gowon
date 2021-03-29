@@ -138,7 +138,7 @@ export class CommandHandler {
         .array()
         .map((u) => u.id)
         .includes(this.client.client.user!.id) &&
-      message.content.split(/\s+/)[1].toLowerCase() === "You" &&
+      message.content.split(/\s+/)[1].toLowerCase() === "you" &&
       message.author.id === "541298511430287395"
     ) {
       await message.reply("Yes ma'am!");
