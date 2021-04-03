@@ -45,6 +45,7 @@ export class CommandHandler {
 
     await this.runPrefixCommandIfMentioned(message, this.client);
     await this.gers(message);
+    await this.yesMaam(message);
 
     if (
       !message.author.bot &&
@@ -102,10 +103,7 @@ export class CommandHandler {
 
   async runPrefixCommandIfMentioned(message: Message, client: GowonClient) {
     if (
-      message.mentions.users
-        .array()
-        .map((u) => u.id)
-        .includes(this.client.client.user!.id) &&
+      message.mentions.users.has(this.client.client.user!.id) &&
       message.content.split(/\s+/)[1].toLowerCase() === "prefix" &&
       !message.author.bot &&
       (message.member?.hasPermission("ADMINISTRATOR") ||
@@ -120,14 +118,21 @@ export class CommandHandler {
 
   async gers(message: Message) {
     if (
-      message.mentions.users
-        .array()
-        .map((u) => u.id)
-        .includes(this.client.client.user!.id) &&
+      message.mentions.users.has(this.client.client.user!.id) &&
       message.content.split(/\s+/)[1].toLowerCase() === "pog" &&
       !message.author.bot
     ) {
       await message.channel.send("gers");
+    }
+  }
+
+  async yesMaam(message: Message) {
+    if (
+      message.mentions.users.has(this.client.client.user!.id) &&
+      message.content.split(/\s+/)[1].toLowerCase() === "you" &&
+      message.author.id === "541298511430287395"
+    ) {
+      await message.reply("Yes ma'am!");
     }
   }
 }
