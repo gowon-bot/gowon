@@ -52,9 +52,7 @@ export class CommandHandler {
       message.guild &&
       message.content.match(
         new RegExp(
-          `^${await this.gowonService.regexSafePrefix(
-            message.guild!.id
-          )}[^\\s]+`,
+          `^${this.gowonService.regexSafePrefix(message.guild!.id)}[^\\s]+`,
           "i"
         )
       )
@@ -127,10 +125,13 @@ export class CommandHandler {
   }
 
   async yesMaam(message: Message) {
+    const id = this.client.client.user!.id;
+
     if (
-      message.mentions.users.has(this.client.client.user!.id) &&
+      (message.content.includes(`<@${id}>`) ||
+        message.content.includes(`<@!${id}>`)) &&
       message.content.split(/\s+/)[1].toLowerCase() === "you" &&
-      message.author.id === "541298511430287395"
+      this.client.isBot(message.author.id, "rem")
     ) {
       await message.reply("Yes ma'am!");
     }
