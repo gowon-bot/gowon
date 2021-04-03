@@ -11,7 +11,7 @@ import {
 import { GowonService } from "../../services/GowonService";
 import { CommandManager } from "./CommandManager";
 import { Logger } from "../Logger";
-import { Command } from "./Command";
+import { Command, Rollout } from "./Command";
 import { TrackingService } from "../../services/TrackingService";
 import { User } from "../../database/entity/User";
 import { Perspective } from "../Perspective";
@@ -22,6 +22,7 @@ import { Emoji, EmojiRaw } from "../Emoji";
 import { Argument, Mention } from "./ArgumentType";
 import { RunAs } from "./RunAs";
 import { ucFirst } from "../../helpers";
+import { generateLink } from "../../helpers/discord";
 
 export interface Variation {
   name: string;
@@ -43,6 +44,9 @@ export type ParsedArguments<T extends Arguments> = {
 } &
   {
     [K in keyof T["mentions"]]?: Mention<T["mentions"][K]>;
+  } &
+  {
+    [K in keyof T["flags"]]: boolean;
   };
 
 export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
@@ -67,7 +71,10 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
   arguments: Arguments = {};
   validation: Validation = {};
 
-  parsedArguments: ParsedArguments<ArgumentsType> = {};
+  // Has to be any typed because the parsed flags aren't optionally typed
+  // because they always will be either true or false
+  // this is set by the FlagParser when this.parseArguments() is called
+  parsedArguments: ParsedArguments<ArgumentsType> = {} as any;
 
   category: string | undefined = undefined;
   subcategory: string | undefined = undefined;
@@ -86,6 +93,8 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
 
   showLoadingAfter?: number;
   isCompleted = false;
+
+  rollout: Rollout = {};
 
   get friendlyNameWithParent(): string {
     return (
@@ -219,7 +228,11 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
       (!username || (senderRequired && !senderUser?.lastFMUsername))
     )
       throw new LogicError(
-        `please sign in with a last.fm account! (\`${this.prefix}login <lastfm username>)\``
+        `please sign in with a last.fm account! (\`${this.prefix}login <lastfm username>)\``,
+        `Don't have a one? You can create one ${generateLink(
+          "here",
+          "https://last.fm/join"
+        )}.`
       );
 
     return {
@@ -264,6 +277,10 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     this.guild = message.guild!;
     this.author = message.author;
 
+    if (!this.checkRollout()) {
+      return;
+    }
+
     await this.setup();
 
     try {
@@ -291,7 +308,7 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
       this.track.error(e);
 
       if (e.isClientFacing) {
-        await this.sendError(e.message);
+        await this.sendError(e.message, e.footer);
       } else {
         await this.reply(new UnknownError().message);
       }
@@ -340,6 +357,13 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     return GowonEmbed(this.message.member ?? undefined, embed);
   }
 
+  protected generateEmbedAuthor(title: string): [string, string | undefined] {
+    return [
+      `${this.message.author.tag} | ${title}`,
+      this.message.author.avatarURL() || undefined,
+    ];
+  }
+
   protected async serverUserIDs({
     filterCrownBannedUsers,
   }: { filterCrownBannedUsers?: boolean } = {}): Promise<string[]> {
@@ -383,14 +407,15 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     return false;
   }
 
-  protected async sendError(message: string) {
+  protected async sendError(message: string, footer = "") {
     const errorEmbed = this.newEmbed()
       .setColor("#ED008E")
       .setAuthor(
         `Error | ${this.author.username}#${this.author.discriminator}`,
         this.author.avatarURL() ?? undefined
       )
-      .setDescription(ucFirst(message));
+      .setDescription(ucFirst(message))
+      .setFooter(footer);
 
     await this.send(errorEmbed);
   }
@@ -416,5 +441,23 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     try {
       this.message.channel.stopTyping();
     } catch {}
+  }
+
+  private checkRollout(): boolean {
+    if (
+      (!this.rollout.users && !this.rollout.guilds) ||
+      this.gowonClient.isDeveloper(this.author.id)
+    )
+      return true;
+
+    if (this.rollout.users) {
+      if (this.rollout.users.includes(this.author.id)) {
+        return true;
+      }
+    } else if (this.rollout.guilds) {
+      return this.rollout.guilds.includes(this.guild.id);
+    }
+
+    return false;
   }
 }

@@ -1,7 +1,26 @@
 {
-  "help": "You should add the discord of your bot here, as well as the discord id of any developers (devs can bypass permissions and run special commands)",
-  "format": [{ "<discordID>": "<name>" }],
-  "developers": [],
-  "bots": [],
-  "alphaTesters": []
+  "help": [
+    "You should add the discord id of your bot here, as well as the discord id of any developers",
+    "(devs can bypass permissions and run special commands)",
+    "the format for adding user ids to this file is: ",
+    "{",
+    "name: human readable name",
+    "id: discord id",
+    "}",
+    "(the help property should be removed from this file when you edit it)"
+  ],
+  "developers": [{ "id": "YOUR DISCORD ID HERE", "name": "YOUR NAME HERE" }],
+  "bots": [
+    { "id": "YOUR BOT'S DISCORD ID HERE", "name": "YOUR BOT'S NAME HERE" },
+    {
+      "id": "541298511430287395",
+      "name": "rem"
+    }
+  ],
+  "alphaTesters": [],
+  "otherBotDevelopers": {
+    "chuu": [{ "id": "240561665396047872", "name": "ish" }],
+    "fmbot": [{ "id": "125740103539621888", "name": "frik" }],
+    "rem": [{ "id": "125740103539621888", "name": "mex" }]
+  }
 }

@@ -1,11 +1,10 @@
 import { BaseCommand } from "../../lib/command/BaseCommand";
 
 const args = {
-  inputs: {
-    token: { index: 0 },
-  },
+  inputs: {},
   mentions: {},
-};
+  flags: {},
+} as const;
 
 export default class Test extends BaseCommand<typeof args> {
   idSeed = "clc seunghee";

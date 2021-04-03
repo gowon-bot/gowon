@@ -7,19 +7,19 @@ import "./extensions/array.extensions";
 import pm2 from "pm2";
 
 import { CommandHandler } from "./lib/command/CommandHandler";
-import { Client } from "discord.js";
+import { Client, GuildMember } from "discord.js";
 import { DB } from "./database";
 import { RedisService } from "./services/RedisService";
 import config from "../config.json";
 import { GraphQLAPI } from "./api";
 import { GowonClient } from "./lib/GowonClient";
-import { GuildSetupService } from "./services/GuildSetupService";
+import { GuildEventService as GuildEventService } from "./services/GuildEventService";
 import { GowonService } from "./services/GowonService";
 
 const client = new GowonClient(new Client(), config.environment);
 const handler = new CommandHandler();
 const redisService = new RedisService();
-const guildSetupService = new GuildSetupService(client);
+const guildEventService = new GuildEventService(client);
 const db = new DB();
 const api = new GraphQLAPI();
 const gowonService = GowonService.getInstance();
@@ -40,7 +40,7 @@ async function start() {
     handler.init(),
     redisService.init(),
     api.init(),
-    guildSetupService.init(),
+    guildEventService.init(),
   ]);
 
   // SettingsManager needs the database to be connected to cache settings
@@ -65,7 +65,15 @@ async function start() {
   });
 
   client.client.on("guildCreate", (guild) => {
-    guildSetupService.handleNewGuild(guild);
+    guildEventService.handleNewGuild(guild);
+  });
+
+  client.client.on("guildMemberAdd", (guildMember) => {
+    guildEventService.handleNewUser(guildMember as GuildMember);
+  });
+
+  client.client.on("guildMemberRemove", (guildMember) => {
+    guildEventService.handleUserLeave(guildMember as GuildMember);
   });
 
   client.client.login(config.discordToken);

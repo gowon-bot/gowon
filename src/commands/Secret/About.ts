@@ -15,7 +15,7 @@ import { LastFMService } from "../../services/LastFM/LastFMService";
 export default class About extends BaseCommand {
   idSeed = "gfriend sinb";
 
-  aliases = ["stats"];
+  aliases = ["stats", "info"];
   description = "Shows information about the bot";
   secretCommand = true;
 

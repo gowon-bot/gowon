@@ -1,22 +1,28 @@
 import { gql } from "apollo-server-express";
 import { BaseConnector } from "../../../../lib/indexing/BaseConnector";
+import {
+  ArtistInput,
+  WhoKnowsSettings,
+} from "../../../../services/indexing/IndexingTypes";
 
 export interface WhoKnowsArtistResponse {
-  whoKnows: {
+  whoKnowsArtist: {
     artist: {
       name: string;
     };
-    users: {
+    rows: {
       playcount: number;
       user: {
-        lastFMUsername: string;
+        username: string;
+        discordID: string;
       };
     }[];
   };
 }
 
 export interface WhoKnowsArtistParams {
-  artist: string;
+  artist: ArtistInput;
+  settings?: WhoKnowsSettings;
 }
 
 export class WhoKnowsArtistConnector extends BaseConnector<
@@ -24,15 +30,17 @@ export class WhoKnowsArtistConnector extends BaseConnector<
   WhoKnowsArtistParams
 > {
   query = gql`
-    query whoKnowsArtist($artist: String!) {
-      whoKnows(artist: $artist) {
+    query whoKnowsArtist($artist: ArtistInput!, $settings: WhoKnowsSettings) {
+      whoKnowsArtist(artist: $artist, settings: $settings) {
         artist {
           name
         }
-        users {
+
+        rows {
           playcount
           user {
-            lastFMUsername
+            username
+            discordID
           }
         }
       }

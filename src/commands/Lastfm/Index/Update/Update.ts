@@ -1,7 +1,18 @@
-import { IndexerError } from "../../../../errors";
+import { IndexerError, LogicError } from "../../../../errors";
 import { Stopwatch } from "../../../../helpers";
+import {
+  ConcurrencyManager,
+  ConcurrentActions,
+} from "../../../../lib/caches/ConcurrencyManager";
+import { Delegate } from "../../../../lib/command/BaseCommand";
 import { IndexingCommand } from "../../../../lib/indexing/IndexingCommand";
+import {
+  IndexerErrorResponses,
+  responseHasError,
+} from "../../../../services/indexing/IndexerErrorResposes";
+import { IndexerTaskNames } from "../../../../services/indexing/IndexerTaskNames";
 import { IndexingService } from "../../../../services/indexing/IndexingService";
+import Index from "../Index/Index";
 import {
   UpdateUserConnector,
   UpdateUserParams,
@@ -11,6 +22,13 @@ import {
 const args = {
   inputs: {},
   mentions: {},
+  flags: {
+    full: {
+      shortnames: [],
+      longnames: ["full", "force"],
+      description: "Deletes all of your indexed data and replaces it",
+    },
+  },
 } as const;
 
 export default class Update extends IndexingCommand<
@@ -22,9 +40,16 @@ export default class Update extends IndexingCommand<
 
   idSeed = "bvndit yiyeon";
 
-  description = "Testing testing 123";
+  description = "Updates a user's cached data based on their lastest scrobbles";
   secretCommand = true;
-  devCommand = true;
+
+  rollout = {
+    guilds: ["768596255697272862"],
+  };
+
+  delegates: Delegate<typeof args>[] = [
+    { when: (args) => args.full, delegateTo: Index },
+  ];
 
   arguments = args;
 
@@ -32,21 +57,60 @@ export default class Update extends IndexingCommand<
 
   stopwatch = new Stopwatch();
 
+  concurrencyManager = new ConcurrencyManager();
+
+  async prerun() {
+    throw new LogicError("E");
+    if (
+      await this.concurrencyManager.isUserDoingAction(
+        this.author.id,
+        ConcurrentActions.Indexing,
+        ConcurrentActions.Updating
+      )
+    ) {
+      throw new LogicError(
+        "You are already being updated or indexed, please wait until you are done!"
+      );
+    }
+  }
+
   async run() {
     const { senderUsername } = await this.parseMentions();
 
-    const sentMessage = await this.reply(
-      `Updating user ${senderUsername.code()}`
-    );
-
     this.stopwatch.start();
-    const response = await this.query({ username: senderUsername });
+    const response = await this.query({
+      user: { lastFMUsername: senderUsername, discordID: this.author.id },
+    });
 
     const errors = this.parseErrors(response);
 
-    if (errors) throw new IndexerError("An unknown error ocurred");
+    if (errors) {
+      if (responseHasError(errors, IndexerErrorResponses.UserDoesntExist)) {
+        throw new IndexerError(
+          `Couldn't find you logged into the indexer, try running \`${this.prefix}login ${senderUsername}\` again`
+        );
+      } else {
+        throw new IndexerError(errors.errors[0].message);
+      }
+    }
 
-    this.indexingService.webhook.onResponse(response.updateUser.token, () => {
+    await this.concurrencyManager.registerUser(
+      ConcurrentActions.Updating,
+      this.author.id
+    );
+
+    const sentMessage = await this.reply(
+      `Updating user ${senderUsername.code()}` +
+        (response.update.taskName === IndexerTaskNames.indexUser
+          ? ". Since you haven't been fully indexed yet, this may take a while"
+          : "")
+    );
+
+    this.indexingService.webhook.onResponse(response.update.token, () => {
+      this.concurrencyManager.unregisterUser(
+        ConcurrentActions.Indexing,
+        this.author.id
+      );
       if (this.stopwatch.elapsedInSeconds > 5) {
         this.reply(`Updated user ${senderUsername.code()}!`);
       } else {

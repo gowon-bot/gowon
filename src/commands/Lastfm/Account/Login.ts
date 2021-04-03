@@ -7,6 +7,13 @@ import { UserInfo } from "../../../services/LastFM/LastFMService.types";
 import { differenceInDays, fromUnixTime } from "date-fns";
 import { DiscordIDMention } from "../../../lib/arguments/mentions/DiscordIDMention";
 import { LogicError } from "../../../errors";
+import { IndexingService } from "../../../services/indexing/IndexingService";
+import { UserType } from "../../../services/indexing/IndexingTypes";
+import { ConfirmationEmbed } from "../../../helpers/Embeds/ConfirmationEmbed";
+import {
+  ConcurrencyManager,
+  ConcurrentActions,
+} from "../../../lib/caches/ConcurrencyManager";
 
 const args = {
   inputs: {
@@ -33,13 +40,20 @@ export default class Login extends LastFMBaseCommand<typeof args> {
     }),
   };
 
+  indexingService = new IndexingService(this.logger);
+  concurrencyManager = new ConcurrencyManager();
+
   async run(message: Message) {
     let username = this.parsedArguments.username!;
 
-    let { discordUser } = await this.parseMentions({
+    let { discordUser, senderUsername } = await this.parseMentions({
       fetchDiscordUser: true,
       usernameRequired: false,
     });
+
+    if (username === senderUsername) {
+      return this.sendError(`You're already logged in as ${username.code()}`);
+    }
 
     if (
       discordUser &&
@@ -62,23 +76,81 @@ export default class Login extends LastFMBaseCommand<typeof args> {
 
     try {
       userInfo = await this.lastFMService.userInfo({ username });
-
-      await this.usersService.setUsername(
-        (discordUser || message.author).id,
-        userInfo.name
+    } catch {
+      this.sendError(
+        `The user ${username?.code()} couldn't be found!` +
+          (username === this.author.username
+            ? " You need to login with a **Last.fm** account, if you don't have you can create one at https://www.last.fm/join"
+            : "")
       );
+      return;
+    }
 
-      let joined = fromUnixTime(userInfo.registered.unixtime.toInt());
+    await this.usersService.setUsername(
+      (discordUser || message.author).id,
+      userInfo.name
+    );
+    await this.handleIndexerLogin(
+      (discordUser || message.author).id,
+      userInfo.name
+    );
 
-      this.send(
+    let joined = fromUnixTime(userInfo.registered.unixtime.toInt());
+
+    const embed = this.newEmbed()
+      .setAuthor(...this.generateEmbedAuthor("Login"))
+      .setDescription(
         `Logged in as ${userInfo.name.code()}${
           differenceInDays(new Date(), joined) < 10
             ? ". Welcome to Last.fm!"
             : ""
-        }`
+        }
+        
+        Would you like to index your data?`
+      )
+      .setFooter(
+        '"Indexing" means downloading all your last.fm data. This is required for many commands to function, and is recommended.'
       );
-    } catch {
-      this.sendError(`The user ${username?.code()} couldn't be found`);
+
+    const confirmationEmbed = new ConfirmationEmbed(
+      this.message,
+      embed,
+      this.gowonClient
+    );
+
+    this.stopTyping();
+    if (await confirmationEmbed.awaitConfirmation()) {
+      await confirmationEmbed.sentMessage!.edit(
+        embed.setDescription(
+          embed.description + "\n\nIndexing... (this may take a while)"
+        )
+      );
+      await this.concurrencyManager.registerUser(
+        ConcurrentActions.Indexing,
+        this.author.id
+      );
+      await this.indexingService.fullIndex(this.author.id, username);
+      this.concurrencyManager.registerUser(
+        ConcurrentActions.Indexing,
+        this.author.id
+      );
+      await confirmationEmbed.sentMessage!.edit(
+        embed.setDescription(
+          embed.description!.replace(
+            "Indexing... (this may take a while)",
+            "Indexed!"
+          )
+        )
+      );
+    }
+  }
+
+  private async handleIndexerLogin(discordID: string, username: string) {
+    await this.indexingService.login(username, discordID, UserType.Lastfm);
+    try {
+      await this.indexingService.addUserToGuild(discordID, this.guild.id);
+    } catch (e) {
+      console.log(e);
     }
   }
 }

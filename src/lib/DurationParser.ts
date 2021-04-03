@@ -12,7 +12,7 @@ export class DurationParser {
     months: ["month", "months", "mo", "m"],
     weeks: ["week", "weeks", "w"],
     days: ["day", "days", "d"],
-    hours: ["hour", "hours", "h", "ho"],
+    hours: ["hour", "hours", "h", "ho", "hr"],
     minutes: ["minute", "minutes", "mi"],
     seconds: ["second", "seconds", "s"],
   };

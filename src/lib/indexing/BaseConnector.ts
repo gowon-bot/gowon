@@ -1,3 +1,4 @@
+import { gql } from "apollo-server-core";
 import { DocumentNode } from "graphql";
 import { IndexingService } from "../../services/indexing/IndexingService";
 
@@ -12,4 +13,14 @@ export abstract class BaseConnector<ResponseT, ParamsT>
   async request(indexingService: IndexingService, variables?: ParamsT) {
     return await indexingService.genericRequest(this.query, variables || {});
   }
+
+  fragments = {
+    taskStartResponse: gql`
+      fragment TaskStartResponseFields on TaskStartResponse {
+        taskName
+        token
+        success
+      }
+    `,
+  } as const;
 }

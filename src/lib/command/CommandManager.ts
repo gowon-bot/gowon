@@ -1,9 +1,10 @@
 import { Command } from "./Command";
-import { promisify } from "util";
-import _glob from "glob";
 import { AliasChecker } from "../AliasChecker";
 import { flatDeep } from "../../helpers";
 import { RunAs } from "./RunAs";
+
+import { promisify } from "util";
+import _glob from "glob";
 const glob = promisify(_glob);
 
 interface Commands {

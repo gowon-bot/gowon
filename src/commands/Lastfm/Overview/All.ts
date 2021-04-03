@@ -48,6 +48,8 @@ ${
     ? `${Emoji.ish} _Ish_\n`
     : this.gowonClient.isDeveloperOf("fmbot", this.discordID)
     ? `${Emoji.fmbot} _Frikandel_\n`
+    : this.gowonClient.isDeveloperOf("rem", this.discordID)
+    ? `${Emoji.rem} _Mex_\n`
     : this.gowonClient.isAlphaTester(this.discordID)
     ? `${Emoji.gowonheart} _Alpha tester_\n`
     : ""

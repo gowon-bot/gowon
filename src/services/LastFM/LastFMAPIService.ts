@@ -122,7 +122,6 @@ export class LastFMAPIService extends BaseService {
       ...params,
       extended: 1,
     });
-    // .recenttracks;
   }
 
   async trackInfo(params: TrackInfoParams): Promise<TrackInfo> {

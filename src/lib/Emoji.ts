@@ -19,7 +19,14 @@ export const Emoji = {
   kapp: "<:Kapp:775580682876747778>",
   loading: "<a:loading:784905179451359252>",
   ish: "<:ish:785397271725604875>",
-  fmbot: "<:fmbot:474719957226094602>",
+  fmbot: "<:fmbot:822230495713689650>",
+  rem: "<:rem:826270521788072026>",
+
+  arrowLeft: "<:arrowleft:825600908594905107>",
+  arrowRight: "<:arrowRight:825626338534490162>",
+  arrowFirst: "<:arrowFirst:825626330648412180>",
+  arrowLast: "<:arrowLast:825626334436917248>",
+  checkmark: "<:checkmark:825628201354657823>",
 } as const;
 
 export const EmojiRaw = Object.entries(Emoji).reduce(

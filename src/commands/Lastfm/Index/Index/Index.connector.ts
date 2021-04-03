@@ -1,14 +1,18 @@
 import { gql } from "apollo-server-express";
 import { BaseConnector } from "../../../../lib/indexing/BaseConnector";
+import {
+  TaskStartResponse,
+  UserInput,
+} from "../../../../services/indexing/IndexingTypes";
 
 export interface IndexUserResponse {
-  indexUser: {
-    token: string;
-  };
+  fullIndex: TaskStartResponse;
 }
 
 export interface IndexUserParams {
-  username: string;
+  user: UserInput;
+  guildID: string;
+  discordID: string;
 }
 
 export class IndexUserConnector extends BaseConnector<
@@ -16,10 +20,23 @@ export class IndexUserConnector extends BaseConnector<
   IndexUserParams
 > {
   query = gql`
-    mutation indexUser($username: String!) {
-      indexUser(username: $username) {
-        token
+    mutation fullIndex(
+      $user: UserInput!
+      $guildID: String!
+      $discordID: String!
+    ) {
+      fullIndex(user: $user, forceUserCreate: true) {
+        ...TaskStartResponseFields
+      }
+
+      addUserToGuild(discordID: $discordID, guildID: $guildID) {
+        user {
+          id
+        }
+        guildID
       }
     }
+
+    ${this.fragments.taskStartResponse}
   `;
 }

@@ -4,6 +4,7 @@ import { IndexingService } from "../../services/indexing/IndexingService";
 import { Arguments } from "../arguments/arguments";
 import { IndexerError } from "../../errors";
 import gql from "graphql-tag";
+import { LastFMService } from "../../services/LastFM/LastFMService";
 
 export interface ErrorResponse {
   errors: { message: string }[];
@@ -25,6 +26,7 @@ export abstract class IndexingCommand<
   abstract connector: Connector<ResponseT, ParamsT>;
 
   indexingService = new IndexingService(this.logger);
+  lastFMService = new LastFMService(this.logger);
 
   protected get query(): (variables: ParamsT) => Promise<ResponseT> {
     return async (variables) => {
@@ -60,21 +62,21 @@ export abstract class IndexingCommand<
     timeout = 2000
   ): Promise<void> {
     const query = gql`
-      mutation updateUser($username: String!) {
-        updateUser(username: $username) {
+      mutation update($user: UserInput!) {
+        update(user: $user) {
           token
         }
       }
     `;
 
     const response = (await this.indexingService.genericRequest(query, {
-      username,
+      user: { lastFMUsername: username },
     })) as {
-      updateUser: { token: string };
+      update: { token: string };
     };
 
     return await this.indexingService.webhook
-      .waitForResponse(response.updateUser.token, timeout)
+      .waitForResponse(response.update.token, timeout)
       .catch(() => {});
   }
 }
