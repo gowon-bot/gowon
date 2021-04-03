@@ -30,7 +30,7 @@ export default class About extends BaseCommand {
     await this.commandManager.init();
 
     const author = await this.gowonClient.client.users.fetch(
-      Object.keys(this.gowonClient.specialUsers.developers[0])[0]
+      this.gowonClient.specialUsers.developers[0].id
     );
 
     let crowns = await Crown.count();

@@ -65,6 +65,8 @@ export default class Index extends IndexingCommand<
   async run() {
     const { senderUsername } = await this.parseMentions();
 
+    this.indexingService.addUserToGuild(this.author.id, this.guild.id);
+
     const indexingUsername = senderUsername;
 
     const perspective = this.usersService.perspective(

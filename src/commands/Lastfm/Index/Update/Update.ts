@@ -74,6 +74,8 @@ export default class Update extends IndexingCommand<
   }
 
   async run() {
+    this.indexingService.addUserToGuild(this.author.id, this.guild.id);
+
     const { senderUsername } = await this.parseMentions();
 
     this.stopwatch.start();
