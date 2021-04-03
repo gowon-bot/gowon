@@ -22,7 +22,7 @@ import { Emoji, EmojiRaw } from "../Emoji";
 import { Argument, Mention } from "./ArgumentType";
 import { RunAs } from "./RunAs";
 import { ucFirst } from "../../helpers";
-import { display } from "../../helpers/discord";
+import { displayLink } from "../../helpers/discord";
 
 export interface Variation {
   name: string;
@@ -229,7 +229,7 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     )
       throw new LogicError(
         `please sign in with a last.fm account! (\`${this.prefix}login <lastfm username>)\``,
-        `Don't have a one? You can create one ${display(
+        `Don't have a one? You can create one ${displayLink(
           "here",
           "https://last.fm/join"
         )}.`

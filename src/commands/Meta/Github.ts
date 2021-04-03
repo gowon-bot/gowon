@@ -1,4 +1,4 @@
-import { display } from "../../helpers/discord";
+import { displayLink } from "../../helpers/discord";
 import { BaseCommand } from "../../lib/command/BaseCommand";
 
 export default class Github extends BaseCommand {
@@ -12,10 +12,10 @@ export default class Github extends BaseCommand {
     const embed = this.newEmbed()
       .setTitle("Gowon's source code </>")
       .setDescription(
-        `You can find the bot repo at ${display(
+        `You can find the bot repo at ${displayLink(
           "jivison/gowon",
           "https://github.com/jivison/gowon"
-        )} and the indexing repo at ${display(
+        )} and the indexing repo at ${displayLink(
           "jivison/gowon-indexer",
           "https://github.com/jivison/gowon-indexer"
         )}

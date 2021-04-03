@@ -1,6 +1,10 @@
 import { Track } from "../services/LastFM/LastFMService.types";
 
-import { cleanURL, display, display as generateLinkEmbed } from "./discord";
+import {
+  cleanURL,
+  displayLink,
+  displayLink as generateLinkEmbed,
+} from "./discord";
 
 export interface TrackLinks {
   artist: string;
@@ -153,7 +157,7 @@ export class LinkConsolidator {
   consolidate(): string {
     return this.links
       .filter((l) => !!l.link)
-      .map((l) => display(l.text, l.link!))
+      .map((l) => displayLink(l.text, l.link!))
       .join(" ‧ ");
   }
 
