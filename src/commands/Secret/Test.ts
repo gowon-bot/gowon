@@ -1,11 +1,13 @@
+import { DiscordIDMention } from "../../lib/arguments/mentions/DiscordIDMention";
 import { BaseCommand } from "../../lib/command/BaseCommand";
 
 const args = {
-  inputs: {
-    token: { index: 0 },
+  inputs: {},
+  mentions: {
+    id: { index: 0, mention: new DiscordIDMention() },
   },
-  mentions: {},
-};
+  flags: {},
+} as const;
 
 export default class Test extends BaseCommand<typeof args> {
   idSeed = "clc seunghee";
@@ -16,6 +18,9 @@ export default class Test extends BaseCommand<typeof args> {
   arguments = args;
 
   async run() {
-    await this.send("Hello, world!");
+    // await this.send("Hello, world!");
+    await this.send(
+      "" + this.gowonClient.isDeveloperOf("rem", this.parsedArguments.id!)
+    );
   }
 }

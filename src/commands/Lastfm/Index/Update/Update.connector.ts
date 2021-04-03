@@ -1,14 +1,16 @@
 import { gql } from "apollo-server-express";
 import { BaseConnector } from "../../../../lib/indexing/BaseConnector";
+import {
+  TaskStartResponse,
+  UserInput,
+} from "../../../../services/indexing/IndexingTypes";
 
 export interface UpdateUserResponse {
-  updateUser: {
-    token: string;
-  };
+  update: TaskStartResponse;
 }
 
 export interface UpdateUserParams {
-  username: string;
+  user: UserInput;
 }
 
 export class UpdateUserConnector extends BaseConnector<
@@ -16,10 +18,12 @@ export class UpdateUserConnector extends BaseConnector<
   UpdateUserParams
 > {
   query = gql`
-    mutation updateUser($username: String!) {
-      updateUser(username: $username) {
-        token
+    mutation updateUser($user: UserInput!) {
+      update(user: $user, forceUserCreate: true) {
+        ...TaskStartResponseFields
       }
     }
+
+    ${this.fragments.taskStartResponse}
   `;
 }

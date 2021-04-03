@@ -17,7 +17,7 @@ const args = {
 export default class CommandSearch extends BaseCommand<typeof args> {
   idSeed = "exid solji";
 
-  aliases = ["command"];
+  aliases = ["command", "searchcommands"];
 
   description = "Search the list of commands for a keyword";
 

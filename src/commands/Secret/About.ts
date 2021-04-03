@@ -4,7 +4,7 @@ import { Friend } from "../../database/entity/Friend";
 import { CommandRun } from "../../database/entity/meta/CommandRun";
 import { CrownEvent } from "../../database/entity/meta/CrownEvent";
 import { dateDisplay, numberDisplay } from "../../helpers";
-import { generateLink } from "../../helpers/discord";
+import { displayLink } from "../../helpers/discord";
 import { BaseCommand } from "../../lib/command/BaseCommand";
 import { CommandManager } from "../../lib/command/CommandManager";
 import { CrownEventString } from "../../services/dbservices/CrownsHistoryService";
@@ -15,7 +15,7 @@ import { LastFMService } from "../../services/LastFM/LastFMService";
 export default class About extends BaseCommand {
   idSeed = "gfriend sinb";
 
-  aliases = ["stats"];
+  aliases = ["stats", "info"];
   description = "Shows information about the bot";
   secretCommand = true;
 
@@ -59,8 +59,8 @@ export default class About extends BaseCommand {
           differenceInDays(new Date(), this.startDate),
           "day"
         ).strong()} old!
-Profile pictures by ${generateLink("reis", "https://twitter.com/restlessrice")}
-${generateLink("Github", "https://github.com/jivison/gowon")}, ${generateLink(
+Profile pictures by ${displayLink("reis", "https://twitter.com/restlessrice")}
+${displayLink("Github", "https://github.com/jivison/gowon")}, ${displayLink(
           "Last.fm",
           "https://last.fm/user/gowon_"
         )}`

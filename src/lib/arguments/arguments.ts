@@ -4,6 +4,7 @@ import { MentionParser, MentionOptions } from "./mentions/mentions";
 import { Parser } from "./parser";
 import escapeStringRegexp from "escape-string-regexp";
 import { RunAs } from "../command/RunAs";
+import { Flag, FlagParser } from "./flags";
 
 export type ParsedArgument = any;
 
@@ -30,6 +31,9 @@ export interface Arguments {
   inputs?: {
     [name: string]: InputArguments;
   };
+  flags?: {
+    [name: string]: Flag;
+  };
 }
 
 export interface ParsedArguments {
@@ -40,6 +44,7 @@ export class ArgumentParser extends Parser {
   parsedArguments: ParsedArguments = {};
   gowonService = GowonService.getInstance();
   mentionParser = new MentionParser(this);
+  flagParser = new FlagParser();
 
   constructor(public args: Arguments) {
     super();
@@ -48,17 +53,21 @@ export class ArgumentParser extends Parser {
   parse(message: Message, runAs: RunAs): ParsedArguments {
     let messageString = this.removeAllMentions(message.content).trim();
 
-    let mentions = this.mentionParser.parse(message);
+    const mentions = this.mentionParser.parse(message);
+    const {
+      flags,
+      string: stringWithNoFlags,
+    } = this.flagParser.parseAndRemoveFlags(messageString, this.args.flags);
 
     let inputs = this.parseInputs(
       this.gowonService.removeCommandName(
-        messageString,
+        stringWithNoFlags,
         runAs,
         message.guild!.id
       )
     );
 
-    this.parsedArguments = { ...mentions, ...inputs };
+    this.parsedArguments = { ...mentions, ...inputs, ...flags };
 
     return this.parsedArguments;
   }

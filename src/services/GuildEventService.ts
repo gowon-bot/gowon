@@ -1,28 +1,60 @@
-import { Guild } from "discord.js";
+import { Guild, GuildMember } from "discord.js";
+import { numberDisplay } from "../helpers";
 import { CommandManager } from "../lib/command/CommandManager";
 import { GowonClient } from "../lib/GowonClient";
+import { Logger } from "../lib/Logger";
 import { BaseService } from "./BaseService";
 import { AdminService } from "./dbservices/AdminService";
 import { GowonService } from "./GowonService";
+import { IndexingService } from "./indexing/IndexingService";
 
-export class GuildSetupService extends BaseService {
+export class GuildEventService extends BaseService {
   gowonService = GowonService.getInstance();
   adminService = new AdminService(this.gowonClient);
   commandManager = new CommandManager();
+  indexingService = new IndexingService();
 
-  constructor(private gowonClient: GowonClient) {
-    super();
+  constructor(private gowonClient: GowonClient, logger?: Logger) {
+    super(logger);
   }
 
   async init() {
     await this.commandManager.init();
   }
 
-  async handleNewGuild(guild: Guild) {
+  public async handleNewGuild(guild: Guild) {
     this.log(`setting up Gowon for ${guild.name}`);
 
     await this.setupPermissions(guild);
     await this.pingDeveloper(guild);
+  }
+
+  public async handleNewUser(guildMember: GuildMember) {
+    this.log("Handling new user");
+    try {
+      await this.indexingService.addUserToGuild(
+        guildMember.user.id,
+        guildMember.guild.id
+      );
+    } catch (e) {
+      this.log(
+        `Failed to log in guildMember ${guildMember.user.id} in ${guildMember.guild.id} (${e})`
+      );
+    }
+  }
+
+  public async handleUserLeave(guildMember: GuildMember) {
+    this.log("Handling user leave");
+    try {
+      await this.indexingService.removeUserFromGuild(
+        guildMember.user.id,
+        guildMember.guild.id
+      );
+    } catch (e) {
+      this.log(
+        `Failed to log out guildMember ${guildMember.user.id} in ${guildMember.guild.id} (${e})`
+      );
+    }
   }
 
   private async setupPermissions(guild: Guild) {
@@ -65,6 +97,11 @@ export class GuildSetupService extends BaseService {
 
     await this.gowonClient.client.users
       .resolve(developerID)
-      ?.send(`Gowon just joined ${guild.name}`);
+      ?.send(
+        `Gowon just joined ${guild.name} (${numberDisplay(
+          guild.memberCount,
+          "members"
+        )})`
+      );
   }
 }

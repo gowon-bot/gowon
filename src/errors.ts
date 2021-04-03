@@ -150,7 +150,7 @@ export class PermissionsAlreadySetError extends ClientError {
 export class LogicError extends ClientError {
   name = "LogicError";
 
-  constructor(msg: string) {
+  constructor(msg: string, public footer = "") {
     super(msg);
   }
 }

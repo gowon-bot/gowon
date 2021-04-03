@@ -60,8 +60,8 @@ export abstract class PermissionsChildCommand extends AdminBaseChildCommand<
 
     if (command.command) this.command = command.command;
     this.runAs = command.runAs;
-    let userIDs = (this.parsedArguments.userIDs as string[]) || [];
-    let roleIDs = (this.parsedArguments.roleIDs as string[]) || [];
+    let userIDs = this.parsedArguments.userIDs || [];
+    let roleIDs = this.parsedArguments.roleIDs || [];
 
     let { users: userMentions, roles: roleMentions } = message.mentions;
 

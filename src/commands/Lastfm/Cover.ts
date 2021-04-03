@@ -1,6 +1,6 @@
 import { Message } from "discord.js";
 import { LogicError } from "../../errors";
-import { generateLink } from "../../helpers/discord";
+import { displayLink } from "../../helpers/discord";
 import { LinkGenerator } from "../../helpers/lastFM";
 import { Arguments } from "../../lib/arguments/arguments";
 import { standardMentions } from "../../lib/arguments/mentions/mentions";
@@ -81,11 +81,17 @@ export default class Cover extends LastFMBaseCommand<typeof args> {
 
   private async sendCoverImage(artist: string, album: string, image?: Image) {
     this.checkIfAlbumHasCover(artist, album, image);
-
-    await this.sendWithFiles(
-      `Cover for ${album.strong()} by ${artist.strong()}`,
-      [this.enlargeImage(image!["#text"]!)]
-    );
+    try {
+      await this.sendWithFiles(
+        `Cover for ${album.strong()} by ${artist.strong()}`,
+        [this.enlargeImage(image!["#text"]!)]
+      );
+    } catch (e) {
+      await this.sendWithFiles(
+        `Cover for ${album.strong()} by ${artist.strong()}`,
+        [image!["#text"]]
+      );
+    }
   }
 
   private enlargeImage(url: string): string {
@@ -95,7 +101,7 @@ export default class Cover extends LastFMBaseCommand<typeof args> {
   private checkIfAlbumHasCover(artist: string, album: string, image?: Image) {
     if (!image?.["#text"] || image["#text"] === this.defaultImageURL) {
       throw new LogicError(
-        `that album doesn't have a cover yet! You can add one ${generateLink(
+        `that album doesn't have a cover yet! You can add one ${displayLink(
           "here",
           LinkGenerator.imageUploadLink(artist, album)
         )}.`

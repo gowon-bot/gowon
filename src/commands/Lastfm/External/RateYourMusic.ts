@@ -53,5 +53,6 @@ export default class RateYourMusic extends LastFMBaseCommand<typeof args> {
     );
 
     if (cleaned === "") return albumName;
+    return cleaned;
   }
 }

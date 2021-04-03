@@ -3,6 +3,7 @@ import redis, { RedisError } from "redis";
 import { promisify } from "util";
 import { Message } from "discord.js";
 import { Logger } from "../lib/Logger";
+import { fromUnixTime } from "date-fns";
 
 export class RedisService extends BaseService {
   client = redis.createClient();
@@ -72,5 +73,13 @@ export class RedisService extends BaseService {
 
   async sessionDelete(message: Message, key: string) {
     return this.delete(this.genSessionKey(message, key));
+  }
+
+  public encodeDate(date: Date): string {
+    return `${date.getTime()}`;
+  }
+
+  public parseDate(date: string): Date {
+    return fromUnixTime(parseInt(date) / 1000);
   }
 }

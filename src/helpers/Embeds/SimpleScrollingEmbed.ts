@@ -1,5 +1,5 @@
 import { Message, MessageEmbed } from "discord.js";
-import { ScrollingEmbed } from "./ScrollingEmbed";
+import { ScrollingEmbed, ScrollingEmbedOptions } from "./ScrollingEmbed";
 
 export interface SimpleOptions<T> {
   items: Array<T>;
@@ -16,13 +16,21 @@ export class SimpleScrollingEmbed<T> {
   constructor(
     message: Message,
     embed: MessageEmbed,
-    private options: SimpleOptions<T>
+    private options: SimpleOptions<T>,
+    overrideOptions: Partial<ScrollingEmbedOptions> = {}
   ) {
-    this.scrollingEmbed = new ScrollingEmbed(message, embed, {
-      totalItems: options.items.length,
-      totalPages: this.getTotalPages(),
-      initialItems: this.renderItemsFromPage(1),
-    });
+    this.scrollingEmbed = new ScrollingEmbed(
+      message,
+      embed,
+      Object.assign(
+        {
+          totalItems: options.items.length,
+          totalPages: this.getTotalPages(),
+          initialItems: this.renderItemsFromPage(1),
+        },
+        overrideOptions
+      )
+    );
 
     this.scrollingEmbed.onPageChange((page) => {
       return this.renderItemsFromPage(page);

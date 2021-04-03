@@ -2,8 +2,8 @@ import { Track } from "../services/LastFM/LastFMService.types";
 
 import {
   cleanURL,
-  generateLink,
-  generateLink as generateLinkEmbed,
+  displayLink,
+  displayLink as generateLinkEmbed,
 } from "./discord";
 
 export interface TrackLinks {
@@ -157,7 +157,7 @@ export class LinkConsolidator {
   consolidate(): string {
     return this.links
       .filter((l) => !!l.link)
-      .map((l) => generateLink(l.text, l.link!))
+      .map((l) => displayLink(l.text, l.link!))
       .join(" ‧ ");
   }
 

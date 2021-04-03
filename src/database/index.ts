@@ -7,6 +7,10 @@ export class DB {
     this.connection = await createConnection("default");
   }
 
+  async close() {
+    await this.connection.close(); // bug in typeorm, closing a connection doesn't fully close it, causing it to error when trying to reconnect
+  }
+
   async connectTest() {
     if (this.connection) this.connection.connect();
     else {
@@ -23,9 +27,5 @@ export class DB {
         entities: [__dirname + "/entity/**/*.ts"],
       });
     }
-  }
-
-  async close() {
-    await this.connection.close(); // bug in typeorm, closing a connection doesn't fully close it, causing it to error when trying to reconnect
   }
 }

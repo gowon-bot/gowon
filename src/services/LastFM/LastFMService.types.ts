@@ -1,13 +1,13 @@
 // Responses
 
-export interface PagedCollection {
+export interface PagedCollection<T = {}> {
   "@attr": {
     page: string;
     total: string;
     user: string;
     perPage: string;
     totalPages: string;
-  };
+  } & T;
 }
 
 export interface Image {

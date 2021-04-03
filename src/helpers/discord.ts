@@ -17,7 +17,7 @@ export function sanitizeForDiscord(string: string): string {
   return string.replace(/\n/g, " ");
 }
 
-export function generateLink(text: string, link: string): string {
+export function displayLink(text: string, link: string): string {
   return `[${sanitizeForDiscord(text)}](${cleanURL(link)})`;
 }
 

@@ -1,12 +1,11 @@
 import { MessageEmbed } from "discord.js";
 import { IndexerError } from "../../../../errors";
 import { numberDisplay } from "../../../../helpers";
-import { generateLink } from "../../../../helpers/discord";
+import { displayLink } from "../../../../helpers/discord";
 import { LinkGenerator } from "../../../../helpers/lastFM";
 import { Arguments } from "../../../../lib/arguments/arguments";
+import { Variation } from "../../../../lib/command/BaseCommand";
 import { IndexingCommand } from "../../../../lib/indexing/IndexingCommand";
-import { Validation } from "../../../../lib/validation/ValidationChecker";
-import { validators } from "../../../../lib/validation/validators";
 import {
   WhoKnowsArtistConnector,
   WhoKnowsArtistParams,
@@ -30,23 +29,43 @@ export default class WhoKnowsArtist extends IndexingCommand<
 
   aliases = ["wk"];
 
+  variations: Variation[] = [{ name: "update", variation: "uwk" }];
+
   description = "See who knows an artist";
   secretCommand = true;
-  devCommand = true;
+
+  rollout = {
+    guilds: ["768596255697272862"],
+  };
 
   arguments: Arguments = args;
 
-  validation: Validation = {
-    artist: new validators.Required({}),
-  };
-
   async run() {
-    const { senderUsername } = await this.parseMentions();
-    await this.updateAndWait(senderUsername);
+    let artistName = this.parsedArguments.artist;
 
-    const artistName = this.parsedArguments.artist!;
+    let { senderUsername } = await this.parseMentions({
+      senderRequired: !artistName,
+    });
 
-    const response = await this.query({ artist: artistName });
+    if (!artistName) {
+      artistName = (await this.lastFMService.nowPlayingParsed(senderUsername))
+        .artist;
+    } else {
+      const lfmArtist = await this.lastFMService.artistInfo({
+        artist: artistName,
+      });
+
+      artistName = lfmArtist.name;
+    }
+
+    if (this.variationWasUsed("update")) {
+      await this.updateAndWait(senderUsername);
+    }
+
+    const response = await this.query({
+      artist: { name: artistName },
+      settings: { guildID: this.guild.id, limit: 20 },
+    });
 
     const errors = this.parseErrors(response);
 
@@ -54,18 +73,18 @@ export default class WhoKnowsArtist extends IndexingCommand<
       throw new IndexerError(errors.errors[0].message);
     }
 
-    const { users, artist } = response.whoKnows;
+    const { rows, artist } = response.whoKnowsArtist;
 
     const embed = new MessageEmbed()
       .setTitle(`Who knows ${artist.name.strong()}?`)
       .setDescription(
-        !artist || users.length === 0
+        !artist || rows.length === 0
           ? `No one knows this artist`
-          : users.map(
-              (wk: any, index: number) =>
-                `${index + 1}. ${generateLink(
-                  wk.user.lastFMUsername,
-                  LinkGenerator.userPage(wk.user.lastFMUsername)
+          : rows.map(
+              (wk, index) =>
+                `${index + 1}. ${displayLink(
+                  wk.user.username,
+                  LinkGenerator.userPage(wk.user.username)
                 )} - **${numberDisplay(wk.playcount, "**play")}`
             )
       );

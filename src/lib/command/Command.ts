@@ -35,3 +35,8 @@ export interface Command {
   gowonClient?: GowonClient;
   getChild(name: string, serverID: string): Promise<Command | undefined>;
 }
+
+export interface Rollout {
+  users?: string[];
+  guilds?: string[];
+}

@@ -5,8 +5,6 @@ import { BaseCommand } from "../lib/command/BaseCommand";
 import { Message } from "discord.js";
 import { Logger } from "../lib/Logger";
 import { RunAs } from "../lib/command/RunAs";
-// import { LastFMBaseCommand } from "../commands/Lastfm/LastFMBaseCommand";
-// import { LastFMMock } from "./services/LastFMService.mock";
 
 export class FakeLogger {
   header: string = "";
@@ -79,9 +77,6 @@ export class MockGowon {
 
     command.setup = async () => {};
     command.teardown = async () => {};
-
-    // if (command instanceof LastFMBaseCommand)
-    // command.lastFMService = new LastFMMock();
 
     return command;
   }

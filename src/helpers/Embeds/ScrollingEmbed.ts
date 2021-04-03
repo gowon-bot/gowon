@@ -7,6 +7,7 @@ import {
   ReactionCollector,
   User,
 } from "discord.js";
+import { EmojiRaw } from "../../lib/Emoji";
 import { ReactionCollectorFilter } from "../discord";
 
 export interface ScrollingEmbedOptions {
@@ -36,6 +37,11 @@ export class ScrollingEmbed {
   private currentItems: string | EmbedField[];
   private options: ScrollingEmbedOptions;
   private onPageChangeCallback: OnPageChangeCallback = () => "";
+
+  private readonly leftArrow = EmojiRaw.arrowLeft;
+  private readonly rightArrow = EmojiRaw.arrowRight;
+  private readonly lastArrow = EmojiRaw.arrowLast;
+  private readonly firstArrow = EmojiRaw.arrowFirst;
 
   constructor(
     private message: Message,
@@ -137,12 +143,26 @@ export class ScrollingEmbed {
         this.removeReaction(emoji, user.id);
 
         let page = this.currentPage;
+        const emojiResolvable = emoji.id ?? emoji.name;
 
-        if (emoji.name === "⏮️" && page !== 1) page = 1;
-        if (emoji.name === "◀️" && page !== 1) page--;
-        if (emoji.name === "▶️" && page !== this.options.totalPages) page++;
-        if (emoji.name === "⏭️" && this.currentPage !== this.options.totalPages)
+        if (emojiResolvable === this.firstArrow && page !== 1) {
+          page = 1;
+        }
+        if (emojiResolvable === this.leftArrow && page !== 1) {
+          page--;
+        }
+        if (
+          emojiResolvable === this.rightArrow &&
+          page !== this.options.totalPages
+        ) {
+          page++;
+        }
+        if (
+          emojiResolvable === this.lastArrow &&
+          this.currentPage !== this.options.totalPages
+        ) {
           page = this.options.totalPages;
+        }
 
         if (page === this.currentPage) return;
 
@@ -173,19 +193,21 @@ export class ScrollingEmbed {
       });
 
       if (this.options.totalPages > -1 && this.options.totalPages > 2)
-        await this.sentMessage.react(`⏮️`);
-      if (this.options.totalPages > 1) await this.sentMessage.react(`◀️`);
+        await this.sentMessage.react(this.firstArrow);
+      if (this.options.totalPages > 1)
+        await this.sentMessage.react(this.leftArrow);
 
-      if (this.options.totalPages > 1) await this.sentMessage.react(`▶️`);
+      if (this.options.totalPages > 1)
+        await this.sentMessage.react(this.rightArrow);
       if (this.options.totalPages > -1 && this.options.totalPages > 2)
-        await this.sentMessage.react(`⏭️`);
+        await this.sentMessage.react(this.lastArrow);
     });
   }
 
   private async removeReaction(emoji: Emoji, userId: string) {
     if (this.message.guild?.me?.hasPermission("MANAGE_MESSAGES"))
-      await this.sentMessage!.reactions.resolve(emoji.name)!.users.remove(
-        userId
-      );
+      await this.sentMessage!.reactions.resolve(
+        emoji.id ?? emoji.name
+      )!.users.remove(userId);
   }
 }
