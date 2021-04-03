@@ -4,7 +4,7 @@ import { Friend } from "../../database/entity/Friend";
 import { CommandRun } from "../../database/entity/meta/CommandRun";
 import { CrownEvent } from "../../database/entity/meta/CrownEvent";
 import { dateDisplay, numberDisplay } from "../../helpers";
-import { generateLink } from "../../helpers/discord";
+import { display } from "../../helpers/discord";
 import { BaseCommand } from "../../lib/command/BaseCommand";
 import { CommandManager } from "../../lib/command/CommandManager";
 import { CrownEventString } from "../../services/dbservices/CrownsHistoryService";
@@ -59,8 +59,8 @@ export default class About extends BaseCommand {
           differenceInDays(new Date(), this.startDate),
           "day"
         ).strong()} old!
-Profile pictures by ${generateLink("reis", "https://twitter.com/restlessrice")}
-${generateLink("Github", "https://github.com/jivison/gowon")}, ${generateLink(
+Profile pictures by ${display("reis", "https://twitter.com/restlessrice")}
+${display("Github", "https://github.com/jivison/gowon")}, ${display(
           "Last.fm",
           "https://last.fm/user/gowon_"
         )}`

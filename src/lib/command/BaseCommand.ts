@@ -22,7 +22,7 @@ import { Emoji, EmojiRaw } from "../Emoji";
 import { Argument, Mention } from "./ArgumentType";
 import { RunAs } from "./RunAs";
 import { ucFirst } from "../../helpers";
-import { generateLink } from "../../helpers/discord";
+import { display } from "../../helpers/discord";
 
 export interface Variation {
   name: string;
@@ -229,7 +229,7 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     )
       throw new LogicError(
         `please sign in with a last.fm account! (\`${this.prefix}login <lastfm username>)\``,
-        `Don't have a one? You can create one ${generateLink(
+        `Don't have a one? You can create one ${display(
           "here",
           "https://last.fm/join"
         )}.`
@@ -250,6 +250,7 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
 
   async setup() {
     this.startTyping();
+    this.logger.openCommandHeader(this);
 
     if (this.showLoadingAfter) {
       setTimeout(() => {
@@ -264,6 +265,7 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     this.stopTyping();
     this.logger.closeCommandHeader(this);
     this.isCompleted = true;
+
     if (this.showLoadingAfter) {
       this.message.reactions
         .resolve(EmojiRaw.loading)

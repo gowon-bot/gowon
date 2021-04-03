@@ -60,7 +60,6 @@ export default class Update extends IndexingCommand<
   concurrencyManager = new ConcurrencyManager();
 
   async prerun() {
-    throw new LogicError("E");
     if (
       await this.concurrencyManager.isUserDoingAction(
         this.author.id,

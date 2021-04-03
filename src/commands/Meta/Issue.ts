@@ -1,5 +1,5 @@
 import { dateTimeDisplay } from "../../helpers";
-import { generateLink } from "../../helpers/discord";
+import { display } from "../../helpers/discord";
 import { Arguments } from "../../lib/arguments/arguments";
 import { BaseCommand, Variation } from "../../lib/command/BaseCommand";
 import { Validation } from "../../lib/validation/ValidationChecker";
@@ -61,7 +61,7 @@ export default class Issue extends BaseCommand<typeof args> {
 
 ## Notes from Gowon:
 
-${generateLink("Jump to message", this.message.url)}
+${display("Jump to message", this.message.url)}
 
 **Author**: ${this.author.username} (${
       this.message.member?.nickname || "*No Nickname*"

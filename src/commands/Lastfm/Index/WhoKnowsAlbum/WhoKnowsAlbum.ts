@@ -1,7 +1,7 @@
 import { MessageEmbed } from "discord.js";
 import { IndexerError } from "../../../../errors";
 import { numberDisplay } from "../../../../helpers";
-import { generateLink } from "../../../../helpers/discord";
+import { display } from "../../../../helpers/discord";
 import { LinkGenerator } from "../../../../helpers/lastFM";
 import { Arguments } from "../../../../lib/arguments/arguments";
 import { Variation } from "../../../../lib/command/BaseCommand";
@@ -92,7 +92,7 @@ export default class WhoKnowsAlbum extends IndexingCommand<
           ? `No one knows this album`
           : rows.map(
               (wk, index) =>
-                `${index + 1}. ${generateLink(
+                `${index + 1}. ${display(
                   wk.user.username,
                   LinkGenerator.userPage(wk.user.username)
                 )} - **${numberDisplay(wk.playcount, "**play")}`

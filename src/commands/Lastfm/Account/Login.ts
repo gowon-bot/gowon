@@ -14,6 +14,8 @@ import {
   ConcurrencyManager,
   ConcurrentActions,
 } from "../../../lib/caches/ConcurrencyManager";
+import { Delegate } from "../../../lib/command/BaseCommand";
+import SimpleLogin from "./SimpleLogin";
 
 const args = {
   inputs: {
@@ -42,6 +44,15 @@ export default class Login extends LastFMBaseCommand<typeof args> {
 
   indexingService = new IndexingService(this.logger);
   concurrencyManager = new ConcurrencyManager();
+
+  private readonly indexerGuilds = ["768596255697272862"];
+
+  delegates: Delegate<typeof args>[] = [
+    {
+      delegateTo: SimpleLogin,
+      when: () => !this.indexerGuilds.includes(this.guild.id),
+    },
+  ];
 
   async run(message: Message) {
     let username = this.parsedArguments.username!;
