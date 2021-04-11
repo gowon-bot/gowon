@@ -36,7 +36,7 @@ export default class TrackCount extends LastFMBaseCommand<typeof args> {
 
     let scrobbles = await this.lastFMService.trackCount(username, timePeriod);
 
-    await this.reply(
+    await this.traditionalReply(
       `${perspective.plusToHave} scrobbled ${numberDisplay(
         scrobbles,
         "track"

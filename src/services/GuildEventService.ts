@@ -32,7 +32,7 @@ export class GuildEventService extends BaseService {
   public async handleNewUser(guildMember: GuildMember) {
     this.log("Handling new user");
     try {
-      await this.indexingService.addUserToGuild(
+      await this.indexingService.quietAddUserToGuild(
         guildMember.user.id,
         guildMember.guild.id
       );
@@ -46,7 +46,7 @@ export class GuildEventService extends BaseService {
   public async handleUserLeave(guildMember: GuildMember) {
     this.log("Handling user leave");
     try {
-      await this.indexingService.removeUserFromGuild(
+      await this.indexingService.quietRemoveUserFromGuild(
         guildMember.user.id,
         guildMember.guild.id
       );

@@ -94,7 +94,7 @@ export class Can {
     if (command.devCommand)
       return { passed: false, reason: CheckFailReason.forbidden };
 
-    const isAdmin = message.member?.hasPermission("ADMINISTRATOR");
+    const isAdmin = message.member?.permissions?.has("ADMINISTRATOR");
 
     if (
       useChannel &&

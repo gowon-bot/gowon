@@ -1,32 +1,35 @@
-import { RedisService } from "../../services/RedisService";
-
 export enum ConcurrentActions {
   Indexing = "Indexing",
   Updating = "Updating",
 }
 
+interface ConcurrencyCache {
+  [action: string]: Set<string>;
+}
+
 export class ConcurrencyManager {
-  redisService = new RedisService();
+  cache: ConcurrencyCache = {};
+
+  constructor() {
+    for (const action of Object.values(ConcurrentActions)) {
+      this.cache[action] = new Set();
+    }
+  }
 
   async registerUser(action: ConcurrentActions, discordID: string) {
-    await this.redisService.set(
-      discordID + action,
-      this.redisService.encodeDate(new Date())
-    );
+    this.cache[action].add(discordID);
   }
 
   unregisterUser(action: ConcurrentActions, discordID: string) {
-    this.redisService.delete(discordID + action);
+    this.cache[action].delete(discordID);
   }
 
   async isUserDoingAction(
     discordID: string,
     ...actions: ConcurrentActions[]
   ): Promise<boolean> {
-    const result = await Promise.all(
-      actions.map((a) => this.redisService.get(discordID + a))
-    );
-
-    return !!result.filter((a) => a).length;
+    return actions.some((action) => {
+      return this.cache[action].has(discordID);
+    });
   }
 }

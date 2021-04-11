@@ -21,9 +21,9 @@ export default class Prefix extends BaseCommand {
         this.scopes.guild,
         this.newPrefix
       );
-      await this.reply(`the new prefix is ${this.prefix.code()}`);
+      await this.traditionalReply(`the new prefix is ${this.prefix.code()}`);
     } else {
-      await this.reply(`the prefix is ${this.prefix.code()}`);
+      await this.traditionalReply(`the prefix is ${this.prefix.code()}`);
     }
   }
 }

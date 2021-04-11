@@ -26,6 +26,8 @@ export default class Whoami extends LastFMBaseCommand<typeof args> {
       user
     );
 
-    this.reply(`${perspective.plusToBe} logged in as ${username.code()}.`);
+    this.traditionalReply(
+      `${perspective.plusToBe} logged in as ${username.code()}.`
+    );
   }
 }

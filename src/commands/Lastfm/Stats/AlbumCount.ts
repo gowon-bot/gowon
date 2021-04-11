@@ -35,7 +35,7 @@ export default class AlbumCount extends LastFMBaseCommand<typeof args> {
 
     let scrobbles = await this.lastFMService.albumCount(username, timePeriod);
 
-    await this.reply(
+    await this.traditionalReply(
       `${perspective.plusToHave} scrobbled ${numberDisplay(
         scrobbles,
         "album"

@@ -3,7 +3,7 @@ import { BaseCommand } from "../../lib/command/BaseCommand";
 import { PM2Service } from "../../services/PM2Service";
 
 export default class Restart extends BaseCommand {
-  idSeed = "gfriend yerin"
+  idSeed = "gfriend yerin";
   description = "Restart the bot";
   secretCommand = true;
   devCommand = true;
@@ -13,7 +13,7 @@ export default class Restart extends BaseCommand {
   async run() {
     if (!this.gowonClient.hasPM2) throw new PM2ConnectionError();
 
-    await this.reply("restarting...");
+    await this.traditionalReply("restarting...");
     this.pm2Service.restart();
   }
 }

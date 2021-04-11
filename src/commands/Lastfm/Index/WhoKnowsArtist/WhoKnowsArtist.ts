@@ -5,7 +5,7 @@ import { displayLink } from "../../../../helpers/discord";
 import { LinkGenerator } from "../../../../helpers/lastFM";
 import { Arguments } from "../../../../lib/arguments/arguments";
 import { Variation } from "../../../../lib/command/BaseCommand";
-import { IndexingCommand } from "../../../../lib/indexing/IndexingCommand";
+import { IndexingBaseCommand } from "../../../../lib/indexing/IndexingCommand";
 import {
   WhoKnowsArtistConnector,
   WhoKnowsArtistParams,
@@ -18,7 +18,7 @@ const args = {
   },
 } as const;
 
-export default class WhoKnowsArtist extends IndexingCommand<
+export default class WhoKnowsArtist extends IndexingBaseCommand<
   WhoKnowsArtistResponse,
   WhoKnowsArtistParams,
   typeof args

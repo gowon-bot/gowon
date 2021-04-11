@@ -54,13 +54,13 @@ export default class ArtistRank extends LastFMBaseCommand<typeof args> {
     ).findIndex((a) => a.toLowerCase() === artistName.toLowerCase());
 
     if (rank === -1) {
-      await this.reply(
+      await this.traditionalReply(
         `that artist wasn't found in ${
           perspective.possessive
         } top ${numberDisplay(topArtists.artist.length, "artist")}`
       );
     } else {
-      await this.reply(
+      await this.traditionalReply(
         `${topArtists.artist[rank].name.strong()} is ranked #${numberDisplay(
           rank + 1
         ).strong()} in ${

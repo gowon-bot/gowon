@@ -78,31 +78,49 @@ export class IndexingService extends BaseService {
     );
   }
 
-  public async addUserToGuild(discordID: string, guildID: string) {
-    await this.genericRequest(
-      gql`
-        mutation addUserToGuild($discordID: String!, $guildID: String!) {
-          addUserToGuild(discordID: $discordID, guildID: $guildID) {
-            user {
-              id
+  public async quietAddUserToGuild(
+    discordID: string,
+    guildID: string
+  ): Promise<Error | undefined> {
+    try {
+      await this.genericRequest(
+        gql`
+          mutation addUserToGuild($discordID: String!, $guildID: String!) {
+            addUserToGuild(discordID: $discordID, guildID: $guildID) {
+              user {
+                id
+              }
+              guildID
             }
-            guildID
           }
-        }
-      `,
-      { discordID, guildID }
-    );
+        `,
+        { discordID, guildID }
+      );
+    } catch (e) {
+      return e;
+    }
+
+    return;
   }
 
-  public async removeUserFromGuild(discordID: string, guildID: string) {
-    await this.genericRequest(
-      gql`
-        mutation removeUserFromGuild($discordID: String!, $guildID: String!) {
-          removeUserFromGuild(discordID: $discordID, guildID: $guildID)
-        }
-      `,
-      { discordID, guildID }
-    );
+  public async quietRemoveUserFromGuild(
+    discordID: string,
+    guildID: string
+  ): Promise<Error | undefined> {
+    try {
+      await this.genericRequest(
+        gql`
+          mutation removeUserFromGuild($discordID: String!, $guildID: String!) {
+            removeUserFromGuild(discordID: $discordID, guildID: $guildID)
+          }
+        `,
+        { discordID, guildID }
+      );
+    } catch (e) {
+      return e;
+    }
+
+    return;
   }
 
   public async fullIndex(discordID: string, username: string) {

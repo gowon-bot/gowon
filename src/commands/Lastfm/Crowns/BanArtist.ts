@@ -33,7 +33,7 @@ export class BanArtist extends CrownsChildCommand<typeof args> {
       this.guild.id
     );
 
-    await this.reply(
+    await this.traditionalReply(
       `succesfully banned ${artistCrownBan.artistName.strong()} from the crowns game.`
     );
   }

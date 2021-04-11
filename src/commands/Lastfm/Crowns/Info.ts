@@ -67,7 +67,7 @@ export class Info extends CrownsChildCommand<typeof args> {
         throw new ArtistCrownBannedError(redirectArtistName);
       }
 
-      await this.reply(
+      await this.traditionalReply(
         `no one has the crown for ${redirectArtistName.strong()}${
           redirectArtistName !== artistDetails.name
             ? ` _(redirected from ${artistDetails.name})_`

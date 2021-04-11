@@ -1,6 +1,5 @@
 import { Message } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
-import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { UserInfo } from "../../../services/LastFM/LastFMService.types";
@@ -16,6 +15,9 @@ import {
 } from "../../../lib/caches/ConcurrencyManager";
 import { Delegate } from "../../../lib/command/BaseCommand";
 import SimpleLogin from "./SimpleLogin";
+import { IndexingBaseCommand } from "../../../lib/indexing/IndexingCommand";
+import { EmptyConnector } from "../../../lib/indexing/BaseConnector";
+import { Perspective } from "../../../lib/Perspective";
 
 const args = {
   inputs: {
@@ -27,8 +29,10 @@ const args = {
   },
 } as const;
 
-export default class Login extends LastFMBaseCommand<typeof args> {
+export default class Login extends IndexingBaseCommand<any, any, typeof args> {
   idSeed = "loona jinsoul";
+
+  connector = new EmptyConnector();
 
   description = "Sets your Last.fm username in Gowon";
   subcategory = "accounts";
@@ -69,7 +73,7 @@ export default class Login extends LastFMBaseCommand<typeof args> {
     if (
       discordUser &&
       discordUser.id !== this.author.id &&
-      !this.message.member?.hasPermission("ADMINISTRATOR")
+      !this.message.member?.permissions.has("ADMINISTRATOR")
     ) {
       throw new LogicError(
         "you are not able to set usernames for other users!"
@@ -77,10 +81,11 @@ export default class Login extends LastFMBaseCommand<typeof args> {
     }
 
     if (username === "<username>") {
-      await this.reply(
-        "hint: you're supposed to replace <username> with your username".italic()
+      throw new LogicError(
+        "you're supposed to replace <username> with your username!"
       );
-      return;
+    } else if (username.startsWith("<") && username.endsWith(">")) {
+      throw new LogicError("please do not include the triangle brackets! (<>)");
     }
 
     let userInfo: UserInfo | undefined;
@@ -133,7 +138,8 @@ export default class Login extends LastFMBaseCommand<typeof args> {
     if (await confirmationEmbed.awaitConfirmation()) {
       await confirmationEmbed.sentMessage!.edit(
         embed.setDescription(
-          embed.description + "\n\nIndexing... (this may take a while)"
+          embed.description +
+            "\n\nIndexing... (this may take a while - I'll ping you when I'm done!)"
         )
       );
       await this.concurrencyManager.registerUser(
@@ -145,21 +151,14 @@ export default class Login extends LastFMBaseCommand<typeof args> {
         ConcurrentActions.Indexing,
         this.author.id
       );
-      await confirmationEmbed.sentMessage!.edit(
-        embed.setDescription(
-          embed.description!.replace(
-            "Indexing... (this may take a while)",
-            "Indexed!"
-          )
-        )
-      );
+      this.notifyUser(Perspective.buildPerspective(username, false), "index");
     }
   }
 
   private async handleIndexerLogin(discordID: string, username: string) {
     await this.indexingService.login(username, discordID, UserType.Lastfm);
     try {
-      await this.indexingService.addUserToGuild(discordID, this.guild.id);
+      await this.indexingService.quietAddUserToGuild(discordID, this.guild.id);
     } catch (e) {
       console.log(e);
     }

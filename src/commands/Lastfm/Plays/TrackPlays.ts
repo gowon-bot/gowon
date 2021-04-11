@@ -48,7 +48,7 @@ export default class TrackPlays extends LastFMBaseCommand<typeof args> {
       username,
     });
 
-    await this.reply(
+    await this.traditionalReply(
       `${hamham ? "FTFY\n" : ""}${perspective.plusToHave}` +
         (trackDetails.userplaycount.toInt() === 0
           ? "n't scrobbled"

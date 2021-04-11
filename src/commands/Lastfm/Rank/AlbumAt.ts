@@ -45,7 +45,7 @@ export default class AlbumAt extends LastFMBaseCommand<typeof args> {
         `${perspective.upper.name} haven't scrobbled an album at that position!`
       );
 
-    await this.reply(
+    await this.traditionalReply(
       `${album.name.strong()} by ${album.artist.name.italic()} is ranked at #${album[
         "@attr"
       ].rank.strong()} in ${

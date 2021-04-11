@@ -37,7 +37,7 @@ export default class AlbumPlaysover extends LastFMBaseCommand<typeof args> {
       else break;
     }
 
-    await this.reply(
+    await this.traditionalReply(
       `${numberDisplay(playsover).strong()} of ${
         perspective.possessive
       } top 1,000 albums have at least ${numberDisplay(plays, "play").strong()}`

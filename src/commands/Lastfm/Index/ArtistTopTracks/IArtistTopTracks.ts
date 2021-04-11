@@ -4,7 +4,7 @@ import { numberDisplay } from "../../../../helpers";
 import { SimpleScrollingEmbed } from "../../../../helpers/Embeds/SimpleScrollingEmbed";
 import { LinkGenerator } from "../../../../helpers/lastFM";
 import { Arguments } from "../../../../lib/arguments/arguments";
-import { IndexingCommand } from "../../../../lib/indexing/IndexingCommand";
+import { IndexingBaseCommand } from "../../../../lib/indexing/IndexingCommand";
 import {
   ArtistTopTracksConnector,
   ArtistTopTracksParams,
@@ -17,7 +17,7 @@ const args = {
   },
 } as const;
 
-export default class IndexArtistTopAlbums extends IndexingCommand<
+export default class IndexArtistTopAlbums extends IndexingBaseCommand<
   ArtistTopTracksResponse,
   ArtistTopTracksParams,
   typeof args

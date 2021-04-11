@@ -56,13 +56,13 @@ export default class TrackRank extends LastFMBaseCommand<typeof args> {
     );
 
     if (rank === -1) {
-      await this.reply(
+      await this.traditionalReply(
         `that track wasn't found in ${
           perspective.possessive
         } top ${numberDisplay(topTracks.track.length, "track")}`
       );
     } else {
-      await this.reply(
+      await this.traditionalReply(
         `${topTracks.track[rank].name.strong()} by ${
           topTracks.track[rank].artist.name
         } is ranked #${numberDisplay(rank + 1).strong()} with ${numberDisplay(

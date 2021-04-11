@@ -38,7 +38,7 @@ export default class LastFmToDiscord extends LastFMBaseCommand<typeof args> {
         `couldn't find anyone logged in as ${username.code()} in this server.`
       );
 
-    this.reply(
+    this.traditionalReply(
       `${(member.nickname || member.user.username).strong()} (${
         member.user.username
       }#${

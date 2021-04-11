@@ -8,6 +8,6 @@ export default class Pong extends BaseCommand {
   secretCommand = true;
 
   async run() {
-    await this.reply(`${Emoji.gnop} gniP`);
+    await this.reply(`${Emoji.gnop} gniP`, { ping: true });
   }
 }

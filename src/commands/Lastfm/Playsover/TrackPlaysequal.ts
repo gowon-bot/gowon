@@ -38,7 +38,7 @@ export default class TrackPlaysequal extends LastFMBaseCommand<typeof args> {
       if (track.playcount.toInt() < plays) break;
     }
 
-    await this.reply(
+    await this.traditionalReply(
       `${numberDisplay(playsequal).strong()} of ${
         perspective.possessive
       } top 1,000 tracks have exactly ${numberDisplay(plays, "play").strong()}`

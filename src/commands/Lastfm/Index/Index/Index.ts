@@ -4,8 +4,7 @@ import {
   ConcurrencyManager,
   ConcurrentActions,
 } from "../../../../lib/caches/ConcurrencyManager";
-import { IndexingCommand } from "../../../../lib/indexing/IndexingCommand";
-import { Perspective } from "../../../../lib/Perspective";
+import { IndexingBaseCommand } from "../../../../lib/indexing/IndexingCommand";
 import { Validation } from "../../../../lib/validation/ValidationChecker";
 import { validators } from "../../../../lib/validation/validators";
 import { IndexingService } from "../../../../services/indexing/IndexingService";
@@ -19,7 +18,7 @@ const args = {
   inputs: {},
 } as const;
 
-export default class Index extends IndexingCommand<
+export default class Index extends IndexingBaseCommand<
   IndexUserResponse,
   IndexUserParams,
   typeof args
@@ -65,7 +64,9 @@ export default class Index extends IndexingCommand<
   async run() {
     const { senderUsername } = await this.parseMentions();
 
-    this.indexingService.addUserToGuild(this.author.id, this.guild.id);
+    try {
+      this.indexingService.quietAddUserToGuild(this.author.id, this.guild.id);
+    } catch {}
 
     const indexingUsername = senderUsername;
 
@@ -98,13 +99,7 @@ export default class Index extends IndexingCommand<
         ConcurrentActions.Indexing,
         this.author.id
       );
-      this.notify(perspective);
+      this.notifyUser(perspective, "index");
     });
-  }
-
-  private notify(perspective: Perspective) {
-    this.message.reply(
-      `Successfully updated ${perspective.possessive} information!`
-    );
   }
 }

@@ -5,7 +5,7 @@ import {
   ConcurrentActions,
 } from "../../../../lib/caches/ConcurrencyManager";
 import { Delegate } from "../../../../lib/command/BaseCommand";
-import { IndexingCommand } from "../../../../lib/indexing/IndexingCommand";
+import { IndexingBaseCommand } from "../../../../lib/indexing/IndexingCommand";
 import {
   IndexerErrorResponses,
   responseHasError,
@@ -31,7 +31,7 @@ const args = {
   },
 } as const;
 
-export default class Update extends IndexingCommand<
+export default class Update extends IndexingBaseCommand<
   UpdateUserResponse,
   UpdateUserParams,
   typeof args
@@ -74,9 +74,9 @@ export default class Update extends IndexingCommand<
   }
 
   async run() {
-    this.indexingService.addUserToGuild(this.author.id, this.guild.id);
+    this.indexingService.quietAddUserToGuild(this.author.id, this.guild.id);
 
-    const { senderUsername } = await this.parseMentions();
+    const { senderUsername, perspective } = await this.parseMentions();
 
     this.stopwatch.start();
     const response = await this.query({
@@ -100,7 +100,7 @@ export default class Update extends IndexingCommand<
       this.author.id
     );
 
-    const sentMessage = await this.reply(
+    const sentMessage = await this.traditionalReply(
       `Updating user ${senderUsername.code()}` +
         (response.update.taskName === IndexerTaskNames.indexUser
           ? ". Since you haven't been fully indexed yet, this may take a while"
@@ -113,7 +113,12 @@ export default class Update extends IndexingCommand<
         this.author.id
       );
       if (this.stopwatch.elapsedInSeconds > 5) {
-        this.reply(`Updated user ${senderUsername.code()}!`);
+        this.notifyUser(
+          perspective,
+          response.update.taskName === IndexerTaskNames.indexUser
+            ? "index"
+            : "update"
+        );
       } else {
         sentMessage.edit(
           `<@${this.author.id}>, Updated user ${senderUsername.code()}!`

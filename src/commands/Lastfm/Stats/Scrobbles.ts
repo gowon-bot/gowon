@@ -55,7 +55,7 @@ export default class Scrobbles extends LastFMBaseCommand<typeof args> {
       date ? new Date() : timeRange.to
     );
 
-    let sentMessage = await this.reply(
+    let sentMessage = await this.traditionalReply(
       `${perspective.plusToHave} ${numberDisplay(
         scrobbles,
         "scrobble"

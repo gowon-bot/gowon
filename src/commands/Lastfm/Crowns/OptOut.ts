@@ -3,13 +3,14 @@ import { Message } from "discord.js";
 import { numberDisplay } from "../../../helpers";
 
 export class OptOut extends CrownsChildCommand {
-  idSeed = "wjsn seola"
-  
-  description = "Opts you out of the crowns game, deleting all your crowns, and preventing you from getting new ones";
+  idSeed = "wjsn seola";
+
+  description =
+    "Opts you out of the crowns game, deleting all your crowns, and preventing you from getting new ones";
   usage = "";
 
   async run(message: Message) {
-    let sentMessage = await this.reply(
+    let sentMessage = await this.traditionalReply(
       `are you sure you want to opt out? This will delete all your crowns!`
     );
 
@@ -39,7 +40,7 @@ export class OptOut extends CrownsChildCommand {
         )
       );
     } catch {
-      await this.reply(`No reaction, cancelling opt out`);
+      await this.traditionalReply(`No reaction, cancelling opt out`);
     }
   }
 }

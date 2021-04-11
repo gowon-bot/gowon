@@ -16,7 +16,22 @@ import { GowonClient } from "./lib/GowonClient";
 import { GuildEventService as GuildEventService } from "./services/GuildEventService";
 import { GowonService } from "./services/GowonService";
 
-const client = new GowonClient(new Client(), config.environment);
+const client = new GowonClient(
+  new Client({
+    // List of intents: https://discord.com/developers/docs/topics/gateway#list-of-intents
+    intents: [
+      "GUILDS",
+      "GUILD_MEMBERS",
+      "GUILD_MESSAGES",
+      "GUILD_MESSAGE_REACTIONS",
+      "GUILD_MESSAGE_TYPING",
+      "DIRECT_MESSAGES",
+      "DIRECT_MESSAGE_REACTIONS",
+      "DIRECT_MESSAGE_TYPING",
+    ],
+  }),
+  config.environment
+);
 const handler = new CommandHandler();
 const redisService = new RedisService();
 const guildEventService = new GuildEventService(client);
@@ -69,7 +84,7 @@ async function start() {
   });
 
   client.client.on("guildMemberAdd", (guildMember) => {
-    guildEventService.handleNewUser(guildMember as GuildMember);
+    guildEventService.handleNewUser(guildMember);
   });
 
   client.client.on("guildMemberRemove", (guildMember) => {

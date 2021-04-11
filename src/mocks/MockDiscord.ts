@@ -67,7 +67,7 @@ export default class MockDiscord {
   }
 
   private mockClient(): void {
-    this.client = new Client();
+    this.client = new Client({ intents: [] });
   }
 
   private mockGuild(): void {

@@ -1,4 +1,10 @@
-import { Guild, Message, MessageEmbed, User as DiscordUser } from "discord.js";
+import {
+  Guild,
+  Message,
+  MessageEmbed,
+  MessageResolvable,
+  User as DiscordUser,
+} from "discord.js";
 import md5 from "js-md5";
 import { UsersService } from "../../services/dbservices/UsersService";
 import { Arguments, ArgumentParser } from "../arguments/arguments";
@@ -312,7 +318,7 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
       if (e.isClientFacing) {
         await this.sendError(e.message, e.footer);
       } else {
-        await this.reply(new UnknownError().message);
+        await this.sendError(new UnknownError().message);
       }
     }
 
@@ -341,9 +347,30 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     return await this.message.channel.send(message);
   }
 
-  async reply(message: MessageEmbed | string): Promise<Message> {
+  async reply(
+    message: string,
+    settings: {
+      to?: MessageResolvable;
+      ping?: boolean;
+    } = {}
+  ): Promise<Message> {
+    const settingsWithDefaults = Object.assign({ ping: false }, settings);
+
+    message = typeof message === "string" ? ucFirst(message) : message;
+
     this.addResponse(message);
-    return await this.message.reply(message);
+
+    return await this.message.reply(message, {
+      replyTo: settingsWithDefaults.to,
+      allowedMentions: { repliedUser: settingsWithDefaults.ping },
+    });
+  }
+
+  async traditionalReply(message: string): Promise<Message> {
+    this.addResponse(message);
+    return await this.message.channel.send(
+      `<@!${this.author.id}>, ` + message.trimStart()
+    );
   }
 
   protected async fetchUsername(id: string): Promise<string> {

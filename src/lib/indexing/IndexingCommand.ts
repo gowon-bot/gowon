@@ -5,6 +5,7 @@ import { Arguments } from "../arguments/arguments";
 import { IndexerError } from "../../errors";
 import gql from "graphql-tag";
 import { LastFMService } from "../../services/LastFM/LastFMService";
+import { Perspective } from "../Perspective";
 
 export interface ErrorResponse {
   errors: { message: string }[];
@@ -18,13 +19,12 @@ function hasErrors(response: any): response is ErrorResponse {
   );
 }
 
-export abstract class IndexingCommand<
+export abstract class IndexingBaseCommand<
   ResponseT,
   ParamsT,
   ArgumentsT extends Arguments = Arguments
 > extends BaseCommand<ArgumentsT> {
   abstract connector: Connector<ResponseT, ParamsT>;
-
   indexingService = new IndexingService(this.logger);
   lastFMService = new LastFMService(this.logger);
 
@@ -78,5 +78,17 @@ export abstract class IndexingCommand<
     return await this.indexingService.webhook
       .waitForResponse(response.update.token, timeout)
       .catch(() => {});
+  }
+
+  protected async notifyUser(
+    perspective: Perspective,
+    type: "update" | "index"
+  ) {
+    this.reply(
+      `${perspective.upper.plusToHave} ${
+        type === "index" ? "fully indexed" : "updated"
+      } successfully!`,
+      { ping: true }
+    );
   }
 }

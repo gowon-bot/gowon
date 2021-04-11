@@ -38,7 +38,7 @@ export default class ArtistPlaysequal extends LastFMBaseCommand<typeof args> {
       if (artist.playcount.toInt() < plays) break;
     }
 
-    await this.reply(
+    await this.traditionalReply(
       `${numberDisplay(playsequal).strong()} of ${
         perspective.possessive
       } top 1,000 artists have exactly ${numberDisplay(plays, "play").strong()}`

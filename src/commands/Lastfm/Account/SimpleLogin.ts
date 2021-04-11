@@ -46,7 +46,7 @@ export default class SimpleLogin extends LastFMBaseCommand<typeof args> {
     if (
       discordUser &&
       discordUser.id !== this.author.id &&
-      !this.message.member?.hasPermission("ADMINISTRATOR")
+      !this.message.member?.permissions?.has("ADMINISTRATOR")
     ) {
       throw new LogicError(
         "you are not able to set usernames for other users!"
@@ -54,7 +54,7 @@ export default class SimpleLogin extends LastFMBaseCommand<typeof args> {
     }
 
     if (username === "<username>") {
-      await this.reply(
+      await this.traditionalReply(
         "hint: you're supposed to replace <username> with your username".italic()
       );
       return;

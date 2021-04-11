@@ -43,7 +43,7 @@ export default class TrackAt extends LastFMBaseCommand<typeof args> {
         `${perspective.upper.name} haven't scrobbled an album at that position!`
       );
 
-    await this.reply(
+    await this.traditionalReply(
       `${track.name.strong()} by ${track.artist.name.italic()} is ranked at ${track[
         "@attr"
       ].rank.strong()} in ${

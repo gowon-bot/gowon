@@ -5,7 +5,7 @@ import { displayLink } from "../../../../helpers/discord";
 import { LinkGenerator } from "../../../../helpers/lastFM";
 import { Arguments } from "../../../../lib/arguments/arguments";
 import { Variation } from "../../../../lib/command/BaseCommand";
-import { IndexingCommand } from "../../../../lib/indexing/IndexingCommand";
+import { IndexingBaseCommand } from "../../../../lib/indexing/IndexingCommand";
 import {
   WhoKnowsTrackConnector,
   WhoKnowsTrackParams,
@@ -19,7 +19,7 @@ const args = {
   },
 } as const;
 
-export default class WhoKnowsTrack extends IndexingCommand<
+export default class WhoKnowsTrack extends IndexingBaseCommand<
   WhoKnowsTrackResponse,
   WhoKnowsTrackParams,
   typeof args

@@ -1,6 +1,6 @@
 import { Arguments } from "../../../lib/arguments/arguments";
 import { BaseConnector } from "../../../lib/indexing/BaseConnector";
-import { IndexingCommand } from "../../../lib/indexing/IndexingCommand";
+import { IndexingBaseCommand } from "../../../lib/indexing/IndexingCommand";
 import gql from "graphql-tag";
 
 type Response = { ping: string };
@@ -19,7 +19,7 @@ const args = {
   mentions: {},
 } as const;
 
-export default class PingIndexer extends IndexingCommand<
+export default class PingIndexer extends IndexingBaseCommand<
   Response,
   Params,
   typeof args

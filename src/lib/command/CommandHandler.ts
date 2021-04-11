@@ -104,7 +104,7 @@ export class CommandHandler {
       message.mentions.users.has(this.client.client.user!.id) &&
       message.content.split(/\s+/)[1].toLowerCase() === "prefix" &&
       !message.author.bot &&
-      (message.member?.hasPermission("ADMINISTRATOR") ||
+      (message.member?.permissions?.has("ADMINISTRATOR") ||
         client.isDeveloper(message.author.id))
     ) {
       let prefix: string | undefined =

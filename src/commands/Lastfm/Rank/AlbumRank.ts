@@ -56,13 +56,13 @@ export default class AlbumRank extends LastFMBaseCommand<typeof args> {
     );
 
     if (rank === -1) {
-      await this.reply(
+      await this.traditionalReply(
         `that album wasn't found in ${
           perspective.possessive
         } top ${numberDisplay(topAlbums.album.length, "album")}`
       );
     } else {
-      await this.reply(
+      await this.traditionalReply(
         `${topAlbums.album[rank].name.strong()} by ${
           topAlbums.album[rank].artist.name
         } is ranked #${numberDisplay(rank + 1).strong()} with ${numberDisplay(

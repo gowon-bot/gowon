@@ -24,3 +24,11 @@ export abstract class BaseConnector<ResponseT, ParamsT>
     `,
   } as const;
 }
+
+export class EmptyConnector extends BaseConnector<never, any> {
+  query = gql`
+    query {
+      ping
+    }
+  `;
+}

@@ -32,9 +32,11 @@ export class Kill extends CrownsChildCommand<typeof args> {
     });
 
     if (!crown)
-      throw new LogicError(`A crown for ${artist.strong()} doesn't exist! *Make sure the artist exactly matches the artist name on the crown!*`);
+      throw new LogicError(
+        `A crown for ${artist.strong()} doesn't exist! *Make sure the artist exactly matches the artist name on the crown!*`
+      );
 
-    let sentMessage = await this.reply(
+    let sentMessage = await this.traditionalReply(
       `are you sure you want to kill the crown for ${crown?.artistName.strong()}?`
     );
 
@@ -62,7 +64,7 @@ export class Kill extends CrownsChildCommand<typeof args> {
           )
       );
     } catch {
-      await this.reply(
+      await this.traditionalReply(
         `No reaction, cancelling crown kill for ${artist.strong()}`
       );
     }

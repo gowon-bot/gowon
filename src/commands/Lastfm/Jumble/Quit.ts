@@ -21,6 +21,8 @@ export class Quit extends JumbleChildCommand {
 
     this.redisService.sessionDelete(message, jumbleRedisKey);
 
-    await this.reply(`The artist was ${jumbledArtist.unjumbled.strong()}!`);
+    await this.traditionalReply(
+      `The artist was ${jumbledArtist.unjumbled.strong()}!`
+    );
   }
 }
