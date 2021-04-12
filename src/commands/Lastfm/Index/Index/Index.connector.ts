@@ -20,20 +20,9 @@ export class IndexUserConnector extends BaseConnector<
   IndexUserParams
 > {
   query = gql`
-    mutation fullIndex(
-      $user: UserInput!
-      $guildID: String!
-      $discordID: String!
-    ) {
+    mutation fullIndex($user: UserInput!) {
       fullIndex(user: $user, forceUserCreate: true) {
         ...TaskStartResponseFields
-      }
-
-      addUserToGuild(discordID: $discordID, guildID: $guildID) {
-        user {
-          id
-        }
-        guildID
       }
     }
 

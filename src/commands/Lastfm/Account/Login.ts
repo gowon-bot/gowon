@@ -124,9 +124,7 @@ export default class Login extends IndexingBaseCommand<any, any, typeof args> {
         
         Would you like to index your data?`
       )
-      .setFooter(
-        '"Indexing" means downloading all your last.fm data. This is required for many commands to function, and is recommended.'
-      );
+      .setFooter(this.indexingHelp);
 
     const confirmationEmbed = new ConfirmationEmbed(
       this.message,
@@ -138,8 +136,7 @@ export default class Login extends IndexingBaseCommand<any, any, typeof args> {
     if (await confirmationEmbed.awaitConfirmation()) {
       await confirmationEmbed.sentMessage!.edit(
         embed.setDescription(
-          embed.description +
-            "\n\nIndexing... (this may take a while - I'll ping you when I'm done!)"
+          embed.description + "\n\n" + this.indexingInProgressHelp
         )
       );
       await this.concurrencyManager.registerUser(

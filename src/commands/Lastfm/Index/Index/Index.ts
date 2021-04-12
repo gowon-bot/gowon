@@ -1,4 +1,5 @@
 import { IndexerError, LogicError } from "../../../../errors";
+import { ConfirmationEmbed } from "../../../../helpers/Embeds/ConfirmationEmbed";
 import { Arguments } from "../../../../lib/arguments/arguments";
 import {
   ConcurrencyManager,
@@ -64,9 +65,7 @@ export default class Index extends IndexingBaseCommand<
   async run() {
     const { senderUsername } = await this.parseMentions();
 
-    try {
-      this.indexingService.quietAddUserToGuild(this.author.id, this.guild.id);
-    } catch {}
+    this.indexingService.quietAddUserToGuild(this.author.id, this.guild.id);
 
     const indexingUsername = senderUsername;
 
@@ -75,7 +74,26 @@ export default class Index extends IndexingBaseCommand<
       indexingUsername
     );
 
-    this.send(`Indexing user ${indexingUsername.code()}`);
+    const embed = this.newEmbed()
+      .setAuthor(...this.generateEmbedAuthor("Indexing"))
+      .setDescription(
+        "Indexing will delete all your data, and re-download it. Are you sure you want to full index?"
+      )
+      .setFooter(this.indexingHelp);
+
+    const confirmationEmbed = new ConfirmationEmbed(
+      this.message,
+      embed,
+      this.gowonClient
+    );
+
+    if (!(await confirmationEmbed.awaitConfirmation())) {
+      return;
+    } else {
+      confirmationEmbed.sentMessage?.edit(
+        embed.setDescription(this.indexingInProgressHelp)
+      );
+    }
 
     let response = await this.query({
       user: { lastFMUsername: indexingUsername, discordID: this.author.id },

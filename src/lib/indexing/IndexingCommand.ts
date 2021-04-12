@@ -28,6 +28,11 @@ export abstract class IndexingBaseCommand<
   indexingService = new IndexingService(this.logger);
   lastFMService = new LastFMService(this.logger);
 
+  readonly indexingHelp =
+    '"Indexing" means downloading all your last.fm data. This is required for many commands to function, and is recommended.';
+  readonly indexingInProgressHelp =
+    "\n\nIndexing... (this may take a while - I'll ping you when I'm done!)";
+
   protected get query(): (variables: ParamsT) => Promise<ResponseT> {
     return async (variables) => {
       let response: ResponseT = {} as any;
@@ -85,7 +90,7 @@ export abstract class IndexingBaseCommand<
     type: "update" | "index"
   ) {
     this.reply(
-      `${perspective.upper.plusToHave} ${
+      `${perspective.upper.plusToHave} been ${
         type === "index" ? "fully indexed" : "updated"
       } successfully!`,
       { ping: true }
