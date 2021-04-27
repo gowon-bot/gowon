@@ -127,12 +127,10 @@ export abstract class NowPlayingBaseCommand extends LastFMBaseCommand<
       : "";
   }
 
-  protected noArtistData(track: Track): string {
+  protected noArtistData(track: ParsedTrack): string {
     return (
       "No data on last.fm for " +
-      (track.artist["#text"].length > 150
-        ? "that artist"
-        : track.artist["#text"])
+      (track.artist.length > 150 ? "that artist" : track.artist)
     );
   }
 

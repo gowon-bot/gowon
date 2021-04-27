@@ -51,7 +51,7 @@ export default class NowPlayingCombo extends NowPlayingBaseCommand {
     );
 
     const artistPlays = this.artistPlays(artistInfo, track, isCrownHolder);
-    const noArtistData = this.noArtistData(nowPlaying);
+    const noArtistData = this.noArtistData(track);
 
     const comboString = `${numberDisplay(combo.artist.plays)} in a row ${
       combo.artist.plays > 100 ? "🔥" : ""

@@ -45,7 +45,7 @@ export default class NowPlayingAlbum extends NowPlayingBaseCommand {
       this.tagConsolidator.addTags(artistInfo.value?.tags?.tag || []);
 
     let artistPlays = this.artistPlays(artistInfo, track, isCrownHolder);
-    let noArtistData = this.noArtistData(nowPlaying);
+    let noArtistData = this.noArtistData(track);
     let albumPlays = this.albumPlays(albumInfo);
     let tags = this.tagConsolidator.consolidate(Infinity).join(" ‧ ");
 
