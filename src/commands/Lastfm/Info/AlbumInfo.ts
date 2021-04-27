@@ -50,6 +50,7 @@ export default class AlbumInfo extends InfoCommand<typeof args> {
       this.spotifyService.searchAlbum(artist, album),
     ]);
 
+    this.tagConsolidator.blacklistTags(albumInfo.artist, albumInfo.name);
     this.tagConsolidator.addTags(albumInfo.tags.tag);
 
     let linkConsolidator = new LinkConsolidator([

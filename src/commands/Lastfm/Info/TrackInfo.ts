@@ -48,6 +48,7 @@ export default class TrackInfo extends InfoCommand<typeof args> {
       this.spotifyService.searchTrack(artist, track),
     ]);
 
+    this.tagConsolidator.blacklistTags(trackInfo.artist.name, trackInfo.name);
     this.tagConsolidator.addTags(trackInfo.toptags.tag);
 
     let linkConsolidator = new LinkConsolidator([

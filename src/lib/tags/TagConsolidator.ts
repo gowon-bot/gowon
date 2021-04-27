@@ -7,15 +7,21 @@ function isTagArray(tags: string[] | Tag[]): tags is Tag[] {
 
 export class TagConsolidator {
   blacklistedTags: string[];
+  regexBlacklist: RegExp[];
   explicitTags: string[];
 
   constructor() {
-    this.blacklistedTags = blacklistedTags.strings;
+    this.blacklistedTags = blacklistedTags.strings.map((tag) =>
+      this.normalizeTagName(tag)
+    );
     this.explicitTags = this.parseExplicitTags(blacklistedTags.explicit);
+    this.regexBlacklist = blacklistedTags.regex.map(
+      (regex) => new RegExp(`^${regex}$`, "i")
+    );
   }
 
-  addArtistName(artistName: string): TagConsolidator {
-    this.blacklistedTags.push(artistName.toLowerCase());
+  blacklistTags(...nonTags: string[]): TagConsolidator {
+    this.blacklistedTags.push(...nonTags.map(this.normalizeTagName));
     return this;
   }
 
@@ -31,11 +37,7 @@ export class TagConsolidator {
       ? tags.map((t) => t.name.toLowerCase())
       : tags;
 
-    this.tags.push(
-      ...tagStrings
-        .filter((t) => !this.blacklistedTags.includes(t))
-        .filter(this.explicitTagFilter.bind(this))
-    );
+    this.tags.push(...this.filterTags(tagStrings));
     return this;
   }
 
@@ -75,12 +77,6 @@ export class TagConsolidator {
     );
   }
 
-  private explicitTagFilter(tag: string): boolean {
-    let matches = this.explicitTags.filter((eTag) => tag.includes(eTag));
-
-    return !matches.length;
-  }
-
   static tagFixer(): {
     fixer: (tag: string) => string;
     reverser: (tag: string) => string;
@@ -107,5 +103,26 @@ export class TagConsolidator {
     }
 
     return { reverser, fixer };
+  }
+
+  private filterTags(tags: string[]): string[] {
+    return tags
+      .filter(
+        (tag) => !this.blacklistedTags.includes(this.normalizeTagName(tag))
+      )
+      .filter(this.regexTagFilter.bind(this))
+      .filter(this.explicitTagFilter.bind(this));
+  }
+
+  private explicitTagFilter(tag: string): boolean {
+    return !this.explicitTags.some((eTag) => tag.includes(eTag));
+  }
+
+  private regexTagFilter(tag: string): boolean {
+    return !this.regexBlacklist.some((regex) => regex.test(tag));
+  }
+
+  private normalizeTagName(tag: string): string {
+    return tag.replace(/\s+/g, "").toLowerCase();
   }
 }

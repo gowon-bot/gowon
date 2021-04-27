@@ -22,7 +22,7 @@ export default class NowPlayingVerbose extends NowPlayingBaseCommand {
 
     if (nowPlaying["@attr"]?.nowplaying) this.scrobble(track);
 
-    this.tagConsolidator.addArtistName(track.artist);
+    this.tagConsolidator.blacklistTags(track.artist, track.name);
 
     let [artistInfo, trackInfo, crown] = await promiseAllSettled([
       this.lastFMService.artistInfo({ artist: track.artist, username }),

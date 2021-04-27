@@ -75,7 +75,7 @@ export class Me extends JumbleChildCommand<typeof args> {
     this.sessionSetJSON(message, jumbleRedisKey, jumbledArtist);
 
     let tags = this.tagConsolidator
-      .addArtistName(artist.name)
+      .blacklistTags(artist.name)
       .addTags(artistInfo.tags.tag)
       .consolidate();
 

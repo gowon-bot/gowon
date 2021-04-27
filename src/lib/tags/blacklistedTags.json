@@ -1,7 +1,6 @@
 {
   "strings": [
     "seen live",
-    "albums I own",
     "albumsiown",
     "check out",
     "all",
@@ -15,8 +14,13 @@
     "personal favourites",
     "personal favorites",
     "hino",
-    "disgusting"
+    "disgusting",
+    "flop",
+    "bots",
+    "1m",
+    "2w"
   ],
+  "regex": ["better than .*", "best of \\d{4}", ".* step on me .*", "hi \\w+"],
   "explicit": [
     [19, 12, 21, 20],
     [14, 9, 7, 7, 5, 18],

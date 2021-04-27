@@ -26,7 +26,7 @@ export default class NowPlaying extends NowPlayingBaseCommand {
 
     if (nowPlaying["@attr"]?.nowplaying) this.scrobble(track);
 
-    this.tagConsolidator.addArtistName(track.artist);
+    this.tagConsolidator.blacklistTags(track.artist, track.name);
 
     let nowPlayingEmbed = this.nowPlayingEmbed(nowPlaying, username);
 

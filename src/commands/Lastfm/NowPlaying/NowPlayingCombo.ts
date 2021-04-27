@@ -32,7 +32,7 @@ export default class NowPlayingCombo extends NowPlayingBaseCommand {
 
     let track = parseLastFMTrackResponse(nowPlaying);
 
-    this.tagConsolidator.addArtistName(track.artist);
+    this.tagConsolidator.blacklistTags(track.artist, track.name);
 
     if (nowPlaying["@attr"]?.nowplaying) this.scrobble(track);
 

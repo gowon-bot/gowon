@@ -15,14 +15,14 @@ const args = {
   },
 } as const;
 
-export default class TopTrack extends InfoCommand<typeof args> {
-  idSeed = "csv dalchong";
+export default class PopularTracks extends InfoCommand<typeof args> {
+  idSeed = "csvc dalchong";
 
   shouldBeIndexed = true;
   usage = ["", "artist", "artist | start | stop"];
 
-  aliases = ["tt"];
-  description = "Displays the top tracks for an artist";
+  aliases = ["pop"];
+  description = "Displays the most popular tracks for an artist on Last.fm";
   arguments: Arguments = args;
 
   async run() {
