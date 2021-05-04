@@ -18,7 +18,9 @@
     "flop",
     "bots",
     "1m",
-    "2w"
+    "2w",
+    "shit",
+    "white power"
   ],
   "regex": ["better than .*", "best of \\d{4}", ".* step on me .*", "hi \\w+"],
   "explicit": [
