@@ -36,7 +36,7 @@ export default class WhoKnowsAlbum extends IndexingBaseCommand<
   secretCommand = true;
 
   rollout = {
-    guilds: ["768596255697272862"],
+    guilds: this.indexerGuilds,
   };
 
   arguments: Arguments = args;

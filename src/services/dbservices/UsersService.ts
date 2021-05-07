@@ -111,4 +111,14 @@ export class UsersService extends BaseService {
       return users as User[];
     }
   }
+
+  async setAsIndexed(discordID: string) {
+    this.log(`Setting user with id ${discordID} as indexed`);
+
+    const user = await this.getUser(discordID);
+
+    user.isIndexed = true;
+
+    await user.save();
+  }
 }

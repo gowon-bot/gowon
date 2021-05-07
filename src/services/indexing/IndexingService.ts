@@ -4,9 +4,12 @@ import request from "graphql-request";
 import { RequestDocument } from "graphql-request/dist/types";
 import { IndexingWebhookService } from "../../api/indexing/IndexingWebhookService";
 import { BaseService } from "../BaseService";
+import { UsersService } from "../dbservices/UsersService";
 import { UserType } from "./IndexingTypes";
 
 export class IndexingService extends BaseService {
+  private usersService = new UsersService(this.logger);
+
   private readonly baseURL = "http://localhost:8080/graphql";
 
   private async sendRequest(
@@ -123,21 +126,20 @@ export class IndexingService extends BaseService {
     return;
   }
 
-  public async fullIndex(discordID: string, username: string) {
+  public async fullIndex(discordID: string) {
+    await this.usersService.setAsIndexed(discordID);
+
     const response = await this.genericRequest<{
       fullIndex: { token: string };
     }>(
       gql`
-        mutation fullIndex($discordID: String!, $username: String!) {
-          fullIndex(
-            user: { discordID: $discordID, lastFMUsername: $username }
-            forceUserCreate: true
-          ) {
+        mutation fullIndex($discordID: String!) {
+          fullIndex(user: { discordID: $discordID }, forceUserCreate: true) {
             token
           }
         }
       `,
-      { discordID, username }
+      { discordID }
     );
 
     await this.webhook.waitForResponse(response.fullIndex.token);

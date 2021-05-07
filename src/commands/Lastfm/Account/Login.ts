@@ -9,15 +9,11 @@ import { LogicError } from "../../../errors";
 import { IndexingService } from "../../../services/indexing/IndexingService";
 import { UserType } from "../../../services/indexing/IndexingTypes";
 import { ConfirmationEmbed } from "../../../helpers/Embeds/ConfirmationEmbed";
-import {
-  ConcurrencyManager,
-  ConcurrentActions,
-} from "../../../lib/caches/ConcurrencyManager";
+import { ConcurrencyManager } from "../../../lib/caches/ConcurrencyManager";
 import { Delegate } from "../../../lib/command/BaseCommand";
 import SimpleLogin from "./SimpleLogin";
 import { IndexingBaseCommand } from "../../../lib/indexing/IndexingCommand";
 import { EmptyConnector } from "../../../lib/indexing/BaseConnector";
-import { Perspective } from "../../../lib/Perspective";
 
 const args = {
   inputs: {
@@ -48,8 +44,6 @@ export default class Login extends IndexingBaseCommand<any, any, typeof args> {
 
   indexingService = new IndexingService(this.logger);
   concurrencyManager = new ConcurrencyManager();
-
-  private readonly indexerGuilds = ["768596255697272862"];
 
   delegates: Delegate<typeof args>[] = [
     {
@@ -134,21 +128,7 @@ export default class Login extends IndexingBaseCommand<any, any, typeof args> {
 
     this.stopTyping();
     if (await confirmationEmbed.awaitConfirmation()) {
-      await confirmationEmbed.sentMessage!.edit(
-        embed.setDescription(
-          embed.description + "\n\n" + this.indexingInProgressHelp
-        )
-      );
-      await this.concurrencyManager.registerUser(
-        ConcurrentActions.Indexing,
-        this.author.id
-      );
-      await this.indexingService.fullIndex(this.author.id, username);
-      this.concurrencyManager.registerUser(
-        ConcurrentActions.Indexing,
-        this.author.id
-      );
-      this.notifyUser(Perspective.buildPerspective(username, false), "index");
+      this.impromptuIndex(embed, confirmationEmbed, username, this.author.id);
     }
   }
 

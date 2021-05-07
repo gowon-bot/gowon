@@ -31,7 +31,7 @@ export default class WhoKnowsTrack extends IndexingBaseCommand<
   aliases = ["wkt"];
 
   rollout = {
-    guilds: ["768596255697272862"],
+    guilds: this.indexerGuilds,
   };
 
   variations: Variation[] = [{ name: "update", variation: "uwkt" }];

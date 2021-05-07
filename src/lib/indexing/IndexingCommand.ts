@@ -2,10 +2,17 @@ import { BaseCommand } from "../command/BaseCommand";
 import { Connector } from "./BaseConnector";
 import { IndexingService } from "../../services/indexing/IndexingService";
 import { Arguments } from "../arguments/arguments";
-import { IndexerError } from "../../errors";
+import { IndexerError, LogicError, UserNotIndexedError } from "../../errors";
 import gql from "graphql-tag";
 import { LastFMService } from "../../services/LastFM/LastFMService";
 import { Perspective } from "../Perspective";
+import { MessageEmbed } from "discord.js";
+import { User as DBUser } from "../../database/entity/User";
+import { ConfirmationEmbed } from "../../helpers/Embeds/ConfirmationEmbed";
+import {
+  ConcurrencyManager,
+  ConcurrentActions,
+} from "../caches/ConcurrencyManager";
 
 export interface ErrorResponse {
   errors: { message: string }[];
@@ -27,6 +34,12 @@ export abstract class IndexingBaseCommand<
   abstract connector: Connector<ResponseT, ParamsT>;
   indexingService = new IndexingService(this.logger);
   lastFMService = new LastFMService(this.logger);
+  concurrencyManager = new ConcurrencyManager();
+
+  protected readonly indexerGuilds = [
+    "768596255697272862",
+    "769112727103995904",
+  ];
 
   readonly indexingHelp =
     '"Indexing" means downloading all your last.fm data. This is required for many commands to function, and is recommended.';
@@ -95,5 +108,71 @@ export abstract class IndexingBaseCommand<
       } successfully!`,
       { ping: true }
     );
+  }
+
+  protected async throwIfNotIndexed(
+    user: DBUser | undefined,
+    perspective: Perspective
+  ) {
+    if (!user) {
+      throw new LogicError(
+        "The user you have specified is not signed into the bot!"
+      );
+    }
+
+    if (!user.isIndexed) {
+      const isAuthor = perspective.name === "you";
+
+      const embed = this.newEmbed()
+        .setAuthor(...this.generateEmbedAuthor("Error"))
+        .setColor(this.errorColour)
+        .setDescription(
+          `This command requires ${perspective.name} to be indexed to execute!` +
+            (isAuthor ? " Would you like to index now?" : "")
+        );
+
+      if (isAuthor) {
+        const confirmationEmbed = new ConfirmationEmbed(
+          this.message,
+          embed,
+          this.gowonClient
+        );
+
+        if (await confirmationEmbed.awaitConfirmation()) {
+          this.impromptuIndex(
+            embed,
+            confirmationEmbed,
+            user.lastFMUsername,
+            user.discordID
+          );
+        }
+
+        const error = new UserNotIndexedError();
+        error.silent = true;
+
+        throw error;
+      }
+    }
+  }
+
+  protected async impromptuIndex(
+    embed: MessageEmbed,
+    confirmationEmbed: ConfirmationEmbed,
+    username: string,
+    discordID: string
+  ) {
+    this.stopTyping();
+    await confirmationEmbed.sentMessage!.edit(
+      embed.setDescription(
+        embed.description + "\n" + this.indexingInProgressHelp
+      )
+    );
+    await this.concurrencyManager.registerUser(
+      ConcurrentActions.Indexing,
+      discordID
+    );
+    await this.indexingService.fullIndex(discordID);
+    this.concurrencyManager.registerUser(ConcurrentActions.Indexing, discordID);
+    this.notifyUser(Perspective.buildPerspective(username, false), "index");
   }
 }

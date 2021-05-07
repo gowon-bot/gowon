@@ -6,6 +6,7 @@ import { numberDisplay } from "./helpers";
 export abstract class ClientError extends Error {
   name = "ClientError";
   isClientFacing = true;
+  silent = false;
 
   constructor(public message: string) {
     super(message);
@@ -301,4 +302,12 @@ export class LastFMEntityNotFoundError extends ClientError {
 
 export class IndexerError extends ClientError {
   name = "IndexerError";
+}
+
+export class UserNotIndexedError extends ClientError {
+  name = "UserNotIndexedError";
+
+  constructor() {
+    super("That user hasn't been indexed yet!");
+  }
 }

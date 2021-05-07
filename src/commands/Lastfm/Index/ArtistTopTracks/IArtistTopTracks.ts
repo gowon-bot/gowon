@@ -4,6 +4,7 @@ import { numberDisplay } from "../../../../helpers";
 import { SimpleScrollingEmbed } from "../../../../helpers/Embeds/SimpleScrollingEmbed";
 import { LinkGenerator } from "../../../../helpers/lastFM";
 import { Arguments } from "../../../../lib/arguments/arguments";
+import { standardMentions } from "../../../../lib/arguments/mentions/mentions";
 import { IndexingBaseCommand } from "../../../../lib/indexing/IndexingCommand";
 import {
   ArtistTopTracksConnector,
@@ -15,6 +16,7 @@ const args = {
   inputs: {
     artist: { index: { start: 0 } },
   },
+  mentions: standardMentions,
 } as const;
 
 export default class IndexArtistTopAlbums extends IndexingBaseCommand<
@@ -26,13 +28,13 @@ export default class IndexArtistTopAlbums extends IndexingBaseCommand<
 
   idSeed = "weeekly soojin";
 
-  aliases = ["iatt"];
+  aliases = ["att", "at", "iatt"];
 
   description = "Displays your top scrobbled tracks from an artist";
   secretCommand = true;
 
   rollout = {
-    guilds: ["768596255697272862"],
+    guilds: this.indexerGuilds,
   };
 
   arguments: Arguments = args;
@@ -40,12 +42,24 @@ export default class IndexArtistTopAlbums extends IndexingBaseCommand<
   async run() {
     let artistName = this.parsedArguments.artist;
 
-    let { username } = await this.parseMentions({
+    let {
+      username,
+      senderUser,
+      senderUsername,
+      dbUser,
+      perspective,
+    } = await this.parseMentions({
       senderRequired: !artistName,
+      reverseLookup: { lastFM: true },
     });
 
+    const user = (dbUser || senderUser)!;
+
+    await this.throwIfNotIndexed(user, perspective);
+
     if (!artistName) {
-      artistName = (await this.lastFMService.nowPlayingParsed(username)).artist;
+      artistName = (await this.lastFMService.nowPlayingParsed(senderUsername))
+        .artist;
     } else {
       const lfmArtist = await this.lastFMService.artistInfo({
         artist: artistName,
@@ -56,7 +70,7 @@ export default class IndexArtistTopAlbums extends IndexingBaseCommand<
 
     const response = await this.query({
       artist: { name: artistName },
-      user: { discordID: this.author.id },
+      user: { discordID: user.discordID },
     });
 
     const errors = this.parseErrors(response);
@@ -69,7 +83,9 @@ export default class IndexArtistTopAlbums extends IndexingBaseCommand<
 
     if (topTracks.length < 1) {
       throw new LogicError(
-        "you don't have any scrobbles of any songs from this artist!"
+        `${
+          perspective.plusToHave
+        } no scrobbles of any songs from ${artist.name.strong()}!`
       );
     }
     const embed = new MessageEmbed()

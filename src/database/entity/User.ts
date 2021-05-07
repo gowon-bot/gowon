@@ -38,6 +38,9 @@ export class User extends BaseEntity {
   @Column({ nullable: true })
   discordAuthCode?: string;
 
+  @Column({ default: false })
+  isIndexed!: boolean;
+
   @OneToMany((_) => Crown, (crown) => crown.user)
   crowns!: Crown[];
 

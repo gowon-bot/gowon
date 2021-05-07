@@ -4,6 +4,7 @@ import { numberDisplay } from "../../../../helpers";
 import { SimpleScrollingEmbed } from "../../../../helpers/Embeds/SimpleScrollingEmbed";
 import { LinkGenerator } from "../../../../helpers/lastFM";
 import { Arguments } from "../../../../lib/arguments/arguments";
+import { standardMentions } from "../../../../lib/arguments/mentions/mentions";
 import { IndexingBaseCommand } from "../../../../lib/indexing/IndexingCommand";
 import {
   ArtistTopAlbumsConnector,
@@ -15,6 +16,7 @@ const args = {
   inputs: {
     artist: { index: { start: 0 } },
   },
+  mentions: standardMentions,
 } as const;
 
 export default class IndexArtistTopAlbums extends IndexingBaseCommand<
@@ -26,13 +28,13 @@ export default class IndexArtistTopAlbums extends IndexingBaseCommand<
 
   idSeed = "redsquare bomin";
 
-  aliases = ["iatl"];
+  aliases = ["atl", "iatl"];
 
   description = "Displays your top scrobbled albums from an artist";
   secretCommand = true;
 
   rollout = {
-    guilds: ["768596255697272862"],
+    guilds: this.indexerGuilds,
   };
 
   arguments: Arguments = args;
@@ -40,12 +42,24 @@ export default class IndexArtistTopAlbums extends IndexingBaseCommand<
   async run() {
     let artistName = this.parsedArguments.artist;
 
-    let { username } = await this.parseMentions({
+    let {
+      username,
+      senderUser,
+      senderUsername,
+      dbUser,
+      perspective,
+    } = await this.parseMentions({
       senderRequired: !artistName,
+      reverseLookup: { lastFM: true },
     });
 
+    const user = dbUser || senderUser;
+
+    await this.throwIfNotIndexed(user, perspective);
+
     if (!artistName) {
-      artistName = (await this.lastFMService.nowPlayingParsed(username)).artist;
+      artistName = (await this.lastFMService.nowPlayingParsed(senderUsername))
+        .artist;
     } else {
       const lfmArtist = await this.lastFMService.artistInfo({
         artist: artistName,
@@ -69,7 +83,9 @@ export default class IndexArtistTopAlbums extends IndexingBaseCommand<
 
     if (topAlbums.length < 1) {
       throw new LogicError(
-        "you don't have any scrobbles of any albums from this artist!"
+        `${
+          perspective.plusToHave
+        } no scrobbles of any albums from ${artist.name.strong()}!`
       );
     }
 

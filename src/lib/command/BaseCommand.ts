@@ -116,6 +116,8 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
   children?: CommandManager;
   parentName?: string;
 
+  protected readonly errorColour = "#ED008E";
+
   async getChild(_: string, __: string): Promise<Command | undefined> {
     return undefined;
   }
@@ -150,6 +152,7 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     asCode?: boolean;
     fetchDiscordUser?: boolean;
     reverseLookup?: { lastFM?: boolean; optional?: boolean };
+    prioritizeIndexed?: boolean;
   } = {}): Promise<{
     senderUsername: string;
     mentionedUsername?: string;
@@ -160,8 +163,8 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     discordUser?: DiscordUser;
   }> {
     let user = (this.parsedArguments[userArgumentName] as any) as User,
-      userID = this.parsedArguments[idMentionArgumentName] as string,
-      lfmUser = this.parsedArguments[lfmMentionArgumentName] as string;
+      userID = (this.parsedArguments[idMentionArgumentName] as any) as string,
+      lfmUser = (this.parsedArguments[lfmMentionArgumentName] as any) as string;
 
     let mentionedUsername: string | undefined;
     let dbUser: User | undefined;
@@ -190,7 +193,9 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
         if (usernameRequired) throw new UsernameNotRegisteredError();
       }
     } else if (inputArgumentName && this.parsedArguments[inputArgumentName]) {
-      mentionedUsername = this.parsedArguments[inputArgumentName] as string;
+      mentionedUsername = (this.parsedArguments[
+        inputArgumentName
+      ] as any) as string;
     }
 
     let perspective = this.usersService.perspective(
@@ -315,9 +320,9 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
       this.logger.logError(e);
       this.track.error(e);
 
-      if (e.isClientFacing) {
+      if (e.isClientFacing && !e.silent) {
         await this.sendError(e.message, e.footer);
-      } else {
+      } else if (!e.isClientFacing) {
         await this.sendError(new UnknownError().message);
       }
     }
@@ -438,7 +443,7 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
 
   protected async sendError(message: string, footer = "") {
     const errorEmbed = this.newEmbed()
-      .setColor("#ED008E")
+      .setColor(this.errorColour)
       .setAuthor(
         `Error | ${this.author.username}#${this.author.discriminator}`,
         this.author.avatarURL() ?? undefined

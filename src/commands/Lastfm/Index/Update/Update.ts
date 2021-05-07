@@ -44,7 +44,7 @@ export default class Update extends IndexingBaseCommand<
   secretCommand = true;
 
   rollout = {
-    guilds: ["768596255697272862"],
+    guilds: this.indexerGuilds,
   };
 
   delegates: Delegate<typeof args>[] = [

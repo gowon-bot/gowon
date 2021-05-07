@@ -15,7 +15,7 @@ export default class ArtistTopTracks extends LastFMBaseCommand<typeof args> {
   idSeed = "gwsn anne";
 
   description = "Shows your top tracks from an artist";
-  aliases = ["att"];
+  aliases = ["satt"];
   usage = ["", "artist @user"];
   subcategory = "library";
 

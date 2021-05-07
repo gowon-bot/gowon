@@ -35,7 +35,7 @@ export default class Index extends IndexingBaseCommand<
   secretCommand = true;
 
   rollout = {
-    guilds: ["768596255697272862"],
+    guilds: this.indexerGuilds,
   };
 
   indexingService = new IndexingService();
@@ -117,6 +117,7 @@ export default class Index extends IndexingBaseCommand<
         ConcurrentActions.Indexing,
         this.author.id
       );
+      this.usersService.setAsIndexed(this.author.id);
       this.notifyUser(perspective, "index");
     });
   }
