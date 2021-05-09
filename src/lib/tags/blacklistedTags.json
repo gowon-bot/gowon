@@ -20,9 +20,10 @@
     "1m",
     "2w",
     "shit",
-    "white power"
+    "white power",
+    "suicide"
   ],
-  "regex": ["better than .*", "best of \\d{4}", ".* step on me .*", "hi \\w+"],
+  "regex": ["better than .*", "best of \\d{4}", ".* step on me ?.*", "hi \\w+"],
   "explicit": [
     [19, 12, 21, 20],
     [14, 9, 7, 7, 5, 18],
