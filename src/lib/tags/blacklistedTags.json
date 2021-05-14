@@ -20,6 +20,7 @@
     "1m",
     "2w",
     "shit",
+    "tanked",
 
     "==== Offensive Tags ====",
     "white power",
@@ -35,7 +36,8 @@
     "best of \\d{4}",
     ".* step on me ?.*",
     "hi \\w+",
-    ".*comeback.*"
+    ".*comeback.*",
+    "anal"
   ],
   "explicit": [
     [19, 12, 21, 20],
