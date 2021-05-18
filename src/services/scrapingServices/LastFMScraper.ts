@@ -1,6 +1,7 @@
 import { BaseScraper, ScrapingError } from "./BaseScraper";
 import { parseDate } from "../../helpers/date";
 import { Logger } from "../../lib/Logger";
+import { toInt } from "../../helpers/lastFM";
 
 export interface TopTrack {
   track: string;
@@ -56,7 +57,7 @@ export class LastFMScraper extends BaseScraper {
           .text()
           .trim();
 
-        let playcount = playcountElement.toInt();
+        let playcount = toInt(playcountElement);
 
         topTracks.push({ track, playcount });
       });
@@ -68,8 +69,8 @@ export class LastFMScraper extends BaseScraper {
 
     return {
       items: topTracks,
-      total: metadata.Scrobbles.toInt(),
-      count: metadata.Tracks.toInt(),
+      total: toInt(metadata.Scrobbles),
+      count: toInt(metadata.Tracks),
     };
   }
 
@@ -97,11 +98,9 @@ export class LastFMScraper extends BaseScraper {
         let element = $(el);
 
         let album = element.find(".chartlist-name > a").text();
-        let playcount = element
-          .find(".chartlist-count-bar-value")
-          .text()
-          .trim()
-          .toInt();
+        let playcount = toInt(
+          element.find(".chartlist-count-bar-value").text().trim()
+        );
 
         topAlbums.push({ album, playcount });
       });
@@ -113,8 +112,8 @@ export class LastFMScraper extends BaseScraper {
 
     return {
       items: topAlbums,
-      total: metadata.Scrobbles.toInt(),
-      count: metadata.Albums.toInt(),
+      total: toInt(metadata.Scrobbles),
+      count: toInt(metadata.Albums),
     };
   }
 
@@ -145,11 +144,9 @@ export class LastFMScraper extends BaseScraper {
         let element = $(el);
 
         let track = element.find(".chartlist-name > a").text();
-        let playcount = element
-          .find(".chartlist-count-bar-value")
-          .text()
-          .trim()
-          .toInt();
+        let playcount = toInt(
+          element.find(".chartlist-count-bar-value").text().trim()
+        );
 
         topTracks.push({ track, playcount });
       });
@@ -159,7 +156,7 @@ export class LastFMScraper extends BaseScraper {
         `it looks like you don't have any scrobbles of ${album} by ${artist}!`
       );
 
-    return { items: topTracks, total: metadata.Scrobbles.toInt() };
+    return { items: topTracks, total: toInt(metadata.Scrobbles) };
   }
 
   async lastScrobbled(

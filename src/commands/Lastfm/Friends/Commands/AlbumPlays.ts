@@ -3,6 +3,7 @@ import { MultiRequester } from "../../../../lib/MultiRequester";
 import { numberDisplay } from "../../../../helpers";
 import { Arguments } from "../../../../lib/arguments/arguments";
 import { LastFMEntityNotFoundError } from "../../../../errors";
+import { toInt } from "../../../../helpers/lastFM";
 
 const args = {
   inputs: {
@@ -55,8 +56,8 @@ export class AlbumPlays extends FriendsChildCommand<typeof args> {
         Object.keys(albumDetails)
           .sort(
             (a, b) =>
-              (albumDetails[b]?.userplaycount?.toInt() ?? -Infinity) -
-              (albumDetails[a]?.userplaycount?.toInt() ?? -Infinity)
+              (toInt(albumDetails[b]?.userplaycount) ?? -Infinity) -
+              (toInt(albumDetails[a]?.userplaycount) ?? -Infinity)
           )
           .map((username) => {
             let ad = albumDetails[username];

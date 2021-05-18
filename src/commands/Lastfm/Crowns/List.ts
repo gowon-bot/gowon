@@ -3,6 +3,7 @@ import { numberDisplay, getOrdinal } from "../../../helpers";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { LogicError } from "../../../errors";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
+import { toInt } from "../../../helpers/lastFM";
 
 const args = {
   mentions: standardMentions,
@@ -53,7 +54,7 @@ export class List extends CrownsChildCommand<typeof args> {
             crownsCount,
             "** crown"
           )} in ${this.guild.name} (ranked ${getOrdinal(
-            rank.rank.toInt()
+            toInt(rank.rank)
           ).strong()})`
       );
 

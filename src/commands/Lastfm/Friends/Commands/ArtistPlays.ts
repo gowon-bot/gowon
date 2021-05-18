@@ -2,7 +2,7 @@ import { FriendsChildCommand } from "../FriendsChildCommand";
 import { MultiRequester } from "../../../../lib/MultiRequester";
 import { numberDisplay } from "../../../../helpers";
 import { Arguments } from "../../../../lib/arguments/arguments";
-import { LinkGenerator } from "../../../../helpers/lastFM";
+import { LinkGenerator, toInt } from "../../../../helpers/lastFM";
 import { LastFMEntityNotFoundError } from "../../../../errors";
 
 const args = {
@@ -53,8 +53,8 @@ export class ArtistPlays extends FriendsChildCommand<typeof args> {
         Object.keys(artistDetails)
           .sort(
             (a, b) =>
-              (artistDetails[b]?.stats?.userplaycount?.toInt() ?? -Infinity) -
-              (artistDetails[a]?.stats?.userplaycount?.toInt() ?? -Infinity)
+              (toInt(artistDetails[b]?.stats?.userplaycount) ?? -Infinity) -
+              (toInt(artistDetails[a]?.stats?.userplaycount) ?? -Infinity)
           )
           .map((username) => {
             let ad = artistDetails[username];

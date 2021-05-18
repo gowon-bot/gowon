@@ -1,3 +1,4 @@
+import { toInt } from "../../helpers/lastFM";
 import { Slice, ParsedArgument } from "./arguments";
 
 export abstract class Parser {
@@ -29,9 +30,10 @@ export abstract class Parser {
           ? array[index]?.trim()
           : array[index]) || options.default;
     } else {
-      let slicedArray = (index.stop
-        ? array.slice(index.start, index.stop + 1)
-        : array.slice(index.start)
+      let slicedArray = (
+        index.stop
+          ? array.slice(index.start, index.stop + 1)
+          : array.slice(index.start)
       ).map((e) => (typeof e === "string" ? e?.trim() : e));
 
       if (index.start && index.stop) {
@@ -53,7 +55,7 @@ export abstract class Parser {
 
     if (options.number) {
       if (typeof argument === "string")
-        return isNaN(argument.toInt()) ? options.default : argument.toInt();
+        return isNaN(toInt(argument)) ? options.default : toInt(argument);
       else return parseInt(argument) ?? options.default;
     } else return argument ?? options.default;
   }

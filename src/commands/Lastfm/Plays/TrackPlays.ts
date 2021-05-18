@@ -2,6 +2,7 @@ import { Arguments } from "../../../lib/arguments/arguments";
 import { numberDisplay } from "../../../helpers";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
+import { toInt } from "../../../helpers/lastFM";
 
 const args = {
   inputs: {
@@ -50,7 +51,7 @@ export default class TrackPlays extends LastFMBaseCommand<typeof args> {
 
     await this.traditionalReply(
       `${hamham ? "FTFY\n" : ""}${perspective.plusToHave}` +
-        (trackDetails.userplaycount.toInt() === 0
+        (toInt(trackDetails.userplaycount) === 0
           ? "n't scrobbled"
           : ` **${numberDisplay(
               trackDetails.userplaycount,

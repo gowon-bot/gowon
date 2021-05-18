@@ -1,5 +1,6 @@
 import { TopArtist } from "../../services/LastFM/LastFMService.types";
 import { calculatePercent } from "../../helpers/stats";
+import { toInt } from "../../helpers/lastFM";
 
 export interface TasteArtist {
   name: string;
@@ -35,8 +36,8 @@ export class TasteCalculator {
         if (userTwoArtist) {
           acc.push({
             name: artist.name,
-            user1plays: artist.playcount.toInt(),
-            user2plays: userTwoArtist.playcount.toInt(),
+            user1plays: toInt(artist.playcount),
+            user2plays: toInt(userTwoArtist.playcount),
           });
         }
 

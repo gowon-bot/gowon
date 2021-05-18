@@ -1,6 +1,7 @@
 import { sub } from "date-fns";
 import { LogicError } from "../../../errors";
 import { dateDisplay, numberDisplay } from "../../../helpers";
+import { toInt } from "../../../helpers/lastFM";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { ReportCalculator } from "../../../lib/calculators/ReportCalculator";
@@ -40,12 +41,12 @@ export default class Week extends LastFMBaseCommand<typeof args> {
 
     let firstPage = await paginator.getNext();
 
-    if (firstPage!["@attr"].totalPages.toInt() > 4)
+    if (toInt(firstPage!["@attr"].totalPages) > 4)
       throw new LogicError(
         `${perspective.plusToHave} too many scrobbles this week to see an overview!`
       );
 
-    paginator.maxPages = firstPage!["@attr"].totalPages.toInt();
+    paginator.maxPages = toInt(firstPage!["@attr"].totalPages);
 
     let restPages = await paginator.getAll({ concatTo: "track" });
 

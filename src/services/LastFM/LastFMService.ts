@@ -10,7 +10,11 @@ import {
   LastFMPeriod,
 } from "./LastFMService.types";
 import config from "../../../config.json";
-import { ParsedTrack, parseLastFMTrackResponse } from "../../helpers/lastFM";
+import {
+  ParsedTrack,
+  parseLastFMTrackResponse,
+  toInt,
+} from "../../helpers/lastFM";
 import { LogicError, BadLastFMResponseError } from "../../errors";
 import { numberDisplay } from "../../helpers";
 import { LastFMScraper } from "../scrapingServices/LastFMScraper";
@@ -59,11 +63,11 @@ export class LastFMService extends LastFMAPIService {
 
     let response = await this.recentTracks({
       username,
-      page: total.toInt() - milestone + 1,
+      page: toInt(total) - milestone + 1,
       limit: 1,
     });
 
-    if (milestone > response["@attr"].total.toInt()) {
+    if (milestone > toInt(response["@attr"].total)) {
       throw new LogicError(
         `${username} hasn't scrobbled ${numberDisplay(milestone, "track")} yet!`
       );
@@ -84,7 +88,7 @@ export class LastFMService extends LastFMAPIService {
 
     let recentTracks = await this.recentTracks(params);
 
-    return recentTracks["@attr"].total.toInt() || 0;
+    return toInt(recentTracks["@attr"].total) || 0;
   }
 
   async userExists(username: string): Promise<boolean> {
@@ -110,7 +114,7 @@ export class LastFMService extends LastFMAPIService {
       period: timePeriod,
     });
 
-    return topArtists["@attr"].total.toInt() || 0;
+    return toInt(topArtists["@attr"].total) || 0;
   }
 
   async albumCount(
@@ -123,7 +127,7 @@ export class LastFMService extends LastFMAPIService {
       period: timePeriod,
     });
 
-    return topArtists["@attr"].total.toInt() || 0;
+    return toInt(topArtists["@attr"].total) || 0;
   }
 
   async trackCount(
@@ -136,7 +140,7 @@ export class LastFMService extends LastFMAPIService {
       period: timePeriod,
     });
 
-    return topTracks["@attr"].total.toInt() || 0;
+    return toInt(topTracks["@attr"].total) || 0;
   }
 
   async goBack(username: string, when: Date): Promise<Track> {
@@ -155,9 +159,9 @@ export class LastFMService extends LastFMAPIService {
   }
 
   async getArtistPlays(username: string, artist: string): Promise<number> {
-    let playcount = (
-      await this.artistInfo({ artist, username })
-    ).stats?.userplaycount?.toInt();
+    let playcount = toInt(
+      (await this.artistInfo({ artist, username })).stats?.userplaycount
+    );
 
     if (isNaN(playcount)) throw new BadLastFMResponseError();
 

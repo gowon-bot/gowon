@@ -1,7 +1,7 @@
 import { OverviewChildCommand } from "./OverviewChildCommand";
 import { numberDisplay, getOrdinal } from "../../../helpers";
 import { Emoji } from "../../../lib/Emoji";
-import { LinkGenerator } from "../../../helpers/lastFM";
+import { LinkGenerator, toInt } from "../../../helpers/lastFM";
 
 export class All extends OverviewChildCommand {
   idSeed = "fx victoria";
@@ -95,7 +95,7 @@ Among ${perspective.possessivePronoun} top ${numberDisplay(
           .join("\n")}` +
           ((await this.calculator.hasCrownStats())
             ? `\n\n**Total crowns**: ${rank!.count} (ranked ${getOrdinal(
-                rank!.rank.toInt()
+                toInt(rank!.rank)
               ).italic()})
 For every ${numberDisplay(
                 (await this.calculator.artistsPerCrown())!.asString,

@@ -2,7 +2,7 @@ import { Arguments } from "../../../lib/arguments/arguments";
 import { InfoCommand } from "./InfoCommand";
 import { numberDisplay } from "../../../helpers";
 import { calculatePercent } from "../../../helpers/stats";
-import { LinkConsolidator } from "../../../helpers/lastFM";
+import { LinkConsolidator, toInt } from "../../../helpers/lastFM";
 import { LineConsolidator } from "../../../lib/LineConsolidator";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
@@ -59,7 +59,7 @@ export default class AlbumInfo extends InfoCommand<typeof args> {
     ]);
 
     let albumDuration = albumInfo.tracks.track.reduce(
-      (sum, t) => sum + t.duration.toInt(),
+      (sum, t) => sum + toInt(t.duration),
       0
     );
 

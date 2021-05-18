@@ -1,4 +1,5 @@
 import { format, formatDistanceToNow } from "date-fns";
+import { toInt } from "./lastFM";
 
 export function addS(string: string, number: number) {
   return number === 1 ? string : string + "s";
@@ -28,7 +29,7 @@ export function numberDisplay(
 export function abbreviateNumber(number: number | string) {
   const abbreviations = ["k", "m", "b", "t"];
 
-  let convertedNumber = typeof number === "string" ? number.toInt() : number;
+  let convertedNumber = typeof number === "string" ? toInt(number) : number;
 
   let result = "";
 
@@ -113,7 +114,7 @@ export function getOrdinal(number: number): string {
 
   return (
     numberDisplay(number) +
-    ordinals[`${number}`.charAt(`${number}`.length - 1).toInt()]
+    ordinals[toInt(`${number}`.charAt(`${number}`.length - 1))]
   );
 }
 

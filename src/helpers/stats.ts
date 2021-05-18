@@ -1,3 +1,5 @@
+import { toInt } from "./lastFM";
+
 export function calculatePercent(
   number1: number | string,
   number2: number | string,
@@ -5,7 +7,7 @@ export function calculatePercent(
 ): string {
   if (
     !number2 ||
-    isNaN(typeof number2 === "string" ? number2.toInt() : number2) ||
+    isNaN(typeof number2 === "string" ? toInt(number2) : number2) ||
     number2 <= 0
   )
     return "0";

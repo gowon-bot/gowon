@@ -28,7 +28,3 @@ String.prototype.strong = function (
 String.prototype.code = function (this: string): string {
   return "`" + this + "`";
 };
-
-String.prototype.toInt = function (this: string): number {
-  return parseInt(this.replace(/,/g, ""), 10);
-};

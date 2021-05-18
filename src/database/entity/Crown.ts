@@ -16,6 +16,7 @@ import { Message } from "discord.js";
 import { CrownState } from "../../services/dbservices/CrownsService";
 import { GowonService } from "../../services/GowonService";
 import { CrownsQueries } from "../queries";
+import { toInt } from "../../helpers/lastFM";
 
 export interface CrownRankResponse {
   count: string;
@@ -121,10 +122,12 @@ export class Crown extends BaseEntity {
     let user = await User.findOne({ where: { discordID } });
 
     return (
-      ((await this.query(
-        CrownsQueries.rank(userIDs),
-        userIDs ? [serverID, user?.id!, userIDs] : [serverID, user?.id!]
-      )) as CrownRankResponse[])[0] || {
+      (
+        (await this.query(
+          CrownsQueries.rank(userIDs),
+          userIDs ? [serverID, user?.id!, userIDs] : [serverID, user?.id!]
+        )) as CrownRankResponse[]
+      )[0] || {
         count: "0",
         rank: "0",
         totalCount: "0",
@@ -154,7 +157,7 @@ export class Crown extends BaseEntity {
     discordID: string,
     userIDs?: string[]
   ): Promise<GuildAtResponse> {
-    let rank = (await this.rank(serverID, discordID, userIDs)).rank.toInt();
+    let rank = toInt((await this.rank(serverID, discordID, userIDs)).rank);
 
     return await this.guildAt(serverID, rank, userIDs);
   }
@@ -180,9 +183,7 @@ export class Crown extends BaseEntity {
     ])) as CrownRank[];
   }
 
-  async invalid(
-    message: Message
-  ): Promise<{
+  async invalid(message: Message): Promise<{
     failed: boolean;
     reason?: InvalidCrownState;
   }> {

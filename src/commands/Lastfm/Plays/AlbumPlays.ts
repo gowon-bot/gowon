@@ -2,6 +2,7 @@ import { Arguments } from "../../../lib/arguments/arguments";
 import { numberDisplay } from "../../../helpers";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
+import { toInt } from "../../../helpers/lastFM";
 
 const args = {
   inputs: {
@@ -46,7 +47,7 @@ export default class AlbumPlays extends LastFMBaseCommand<typeof args> {
 
     await this.traditionalReply(
       `${perspective.plusToHave}` +
-        (albumDetails.userplaycount.toInt() === 0
+        (toInt(albumDetails.userplaycount) === 0
           ? "n't scrobbled"
           : ` **${numberDisplay(
               albumDetails.userplaycount,

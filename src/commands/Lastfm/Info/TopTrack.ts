@@ -2,6 +2,7 @@ import { Arguments } from "../../../lib/arguments/arguments";
 import { InfoCommand } from "./InfoCommand";
 import { LogicError } from "../../../errors";
 import { numberDisplay } from "../../../helpers";
+import { toInt } from "../../../helpers/lastFM";
 
 const args = {
   inputs: {
@@ -28,12 +29,12 @@ export default class PopularTracks extends InfoCommand<typeof args> {
   async run() {
     let artist = this.parsedArguments.artist,
       position = {
-        start: this.parsedArguments.positions![0].toInt(),
+        start: toInt(this.parsedArguments.positions![0]),
         end: -1,
       };
 
     position.end =
-      (this.parsedArguments.positions as string[])[1]?.toInt() ||
+      toInt((this.parsedArguments.positions as string[])[1]) ||
       position.start + 2;
 
     if (position.end < position.start)

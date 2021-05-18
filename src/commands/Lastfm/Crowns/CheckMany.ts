@@ -3,6 +3,7 @@ import { Arguments } from "../../../lib/arguments/arguments";
 import { Message } from "discord.js";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
+import { toInt } from "../../../helpers/lastFM";
 
 interface CheckedCrownsDisplay {
   [state: string]: Array<string>;
@@ -47,7 +48,7 @@ export class CheckMany extends CrownsChildCommand<typeof args> {
         message,
         discordID: message.author.id,
         artistName: ad.name,
-        plays: ad.stats.userplaycount.toInt(),
+        plays: toInt(ad.stats.userplaycount),
       })
     );
 

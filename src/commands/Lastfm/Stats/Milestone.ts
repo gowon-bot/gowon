@@ -7,6 +7,7 @@ import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { fromUnixTime } from "date-fns";
+import { toInt } from "../../../helpers/lastFM";
 
 const args = {
   inputs: {
@@ -52,8 +53,7 @@ export default class Milestone extends LastFMBaseCommand<typeof args> {
 
     if (!track) throw new BadLastFMResponseError();
 
-    let scrobbledAt = fromUnixTime(track.date.uts.toInt());
-
+    let scrobbledAt = fromUnixTime(toInt(track.date.uts));
 
     let embed = this.newEmbed(TrackEmbed(track))
       .setAuthor(

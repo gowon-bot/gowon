@@ -5,6 +5,7 @@ import { numberDisplay, ago } from "../../../helpers";
 import { RedirectsService } from "../../../services/dbservices/RedirectsService";
 import { createInvalidBadge } from "../../../helpers/crowns";
 import { ArtistCrownBannedError } from "../../../errors";
+import { toInt } from "../../../helpers/lastFM";
 
 const args = {
   inputs: {
@@ -82,7 +83,7 @@ export class Info extends CrownsChildCommand<typeof args> {
     let invalidBadge = createInvalidBadge(invalidCheck.reason);
 
     if (crown.user.id === senderUser?.id && artistDetails.stats.userplaycount) {
-      crown.plays = artistDetails.stats.userplaycount.toInt();
+      crown.plays = toInt(artistDetails.stats.userplaycount);
       crown.save();
     } else if (crown.user.lastFMUsername) {
       await crown.refresh({ logger: this.logger });

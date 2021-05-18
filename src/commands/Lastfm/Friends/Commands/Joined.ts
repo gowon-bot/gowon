@@ -5,6 +5,7 @@ import {
 } from "../../../../lib/MultiRequester";
 import { dateDisplay } from "../../../../helpers";
 import { fromUnixTime } from "date-fns";
+import { toInt } from "../../../../helpers/lastFM";
 
 export class Joined extends FriendsChildCommand {
   idSeed = "elris chaejeong";
@@ -23,7 +24,7 @@ export class Joined extends FriendsChildCommand {
 
     let joinDates = Object.keys(joineds).reduce((acc, username) => {
       acc[username] = fromUnixTime(
-        joineds[username]?.registered.unixtime.toInt() || 0
+        toInt(joineds[username]?.registered.unixtime) || 0
       );
 
       return acc;

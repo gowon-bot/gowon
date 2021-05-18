@@ -7,6 +7,7 @@ import { UserInfo } from "../../../services/LastFM/LastFMService.types";
 import { differenceInDays, fromUnixTime } from "date-fns";
 import { DiscordIDMention } from "../../../lib/arguments/mentions/DiscordIDMention";
 import { LogicError } from "../../../errors";
+import { toInt } from "../../../helpers/lastFM";
 
 const args = {
   inputs: {
@@ -70,7 +71,7 @@ export default class SimpleLogin extends LastFMBaseCommand<typeof args> {
         userInfo.name
       );
 
-      let joined = fromUnixTime(userInfo.registered.unixtime.toInt());
+      let joined = fromUnixTime(toInt(userInfo.registered.unixtime));
 
       this.send(
         `Logged in as ${userInfo.name.code()}${

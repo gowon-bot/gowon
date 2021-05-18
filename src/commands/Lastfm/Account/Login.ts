@@ -14,6 +14,7 @@ import { Delegate } from "../../../lib/command/BaseCommand";
 import SimpleLogin from "./SimpleLogin";
 import { IndexingBaseCommand } from "../../../lib/indexing/IndexingCommand";
 import { EmptyConnector } from "../../../lib/indexing/BaseConnector";
+import { toInt } from "../../../helpers/lastFM";
 
 const args = {
   inputs: {
@@ -105,7 +106,7 @@ export default class Login extends IndexingBaseCommand<any, any, typeof args> {
       userInfo.name
     );
 
-    let joined = fromUnixTime(userInfo.registered.unixtime.toInt());
+    let joined = fromUnixTime(toInt(userInfo.registered.unixtime));
 
     const embed = this.newEmbed()
       .setAuthor(...this.generateEmbedAuthor("Login"))

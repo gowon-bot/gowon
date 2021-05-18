@@ -3,6 +3,7 @@ import { numberDisplay } from "../../../helpers";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { calculatePercent } from "../../../helpers/stats";
+import { toInt } from "../../../helpers/lastFM";
 
 const args = {
   inputs: {
@@ -49,7 +50,7 @@ export default class GlobalArtistPlays extends LastFMBaseCommand<typeof args> {
         artistDetails.stats.playcount,
         "time"
       )}${
-        artistDetails.stats.userplaycount.toInt() > 0
+        toInt(artistDetails.stats.userplaycount) > 0
           ? `. ${perspective.upper.plusToHave} ${numberDisplay(
               artistDetails.stats.userplaycount,
               "scrobble"

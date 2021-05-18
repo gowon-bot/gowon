@@ -1,6 +1,7 @@
 import { sub } from "date-fns";
 import { LogicError } from "../../../errors";
 import { dateDisplay, numberDisplay } from "../../../helpers";
+import { toInt } from "../../../helpers/lastFM";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { ReportCalculator } from "../../../lib/calculators/ReportCalculator";
@@ -40,12 +41,12 @@ export default class Month extends LastFMBaseCommand<typeof args> {
 
     let firstPage = await paginator.getNext();
 
-    if (firstPage!["@attr"].totalPages.toInt() > 6)
+    if (toInt(firstPage!["@attr"].totalPages) > 6)
       throw new LogicError(
         `${perspective.plusToHave} too many scrobbles this month to see an overview!`
       );
 
-    paginator.maxPages = firstPage!["@attr"].totalPages.toInt();
+    paginator.maxPages = toInt(firstPage!["@attr"].totalPages);
 
     let restPages = await paginator.getAll({ concatTo: "track" });
 

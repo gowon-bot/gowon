@@ -4,6 +4,7 @@ import { Arguments } from "../../../lib/arguments/arguments";
 import { LogicError } from "../../../errors";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
+import { toInt } from "../../../helpers/lastFM";
 
 const args = {
   inputs: {
@@ -32,7 +33,7 @@ export class GuildAt extends CrownsChildCommand<typeof args> {
       rank,
       await this.serverUserIDs({ filterCrownBannedUsers: true })
     );
-    let highlighted = guildAt.users.find((u) => u.rank.toInt() === rank);
+    let highlighted = guildAt.users.find((u) => toInt(u.rank) === rank);
 
     if (!guildAt.users.length)
       throw new LogicError(

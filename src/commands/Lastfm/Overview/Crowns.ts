@@ -1,6 +1,7 @@
 import { OverviewChildCommand } from "./OverviewChildCommand";
 import { numberDisplay, getOrdinal } from "../../../helpers";
 import { LogicError } from "../../../errors";
+import { toInt } from "../../../helpers/lastFM";
 
 export class Crowns extends OverviewChildCommand {
   idSeed = "snsd tiffany";
@@ -18,7 +19,7 @@ export class Crowns extends OverviewChildCommand {
       this.calculator.scrobblesPerCrown(),
     ]);
 
-    if (!crownRank?.count?.toInt())
+    if (!toInt(crownRank?.count))
       throw new LogicError(
         `${perspective.upper.plusToHave} no crowns in this server!`
       );
@@ -29,7 +30,7 @@ export class Crowns extends OverviewChildCommand {
         .setColor(colour).setDescription(`You have ${numberDisplay(
         crownRank!.count,
         "crown"
-      ).strong()} (ranked ${getOrdinal(crownRank!.rank.toInt()).italic()})
+      ).strong()} (ranked ${getOrdinal(toInt(crownRank!.rank)).italic()})
         For every ${numberDisplay(
           apc!.asNumber,
           "eligible artist"

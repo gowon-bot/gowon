@@ -5,6 +5,7 @@ import { CommandRun } from "../../database/entity/meta/CommandRun";
 import { CrownEvent } from "../../database/entity/meta/CrownEvent";
 import { dateDisplay, numberDisplay } from "../../helpers";
 import { displayLink } from "../../helpers/discord";
+import { toInt } from "../../helpers/lastFM";
 import { BaseCommand } from "../../lib/command/BaseCommand";
 import { CommandManager } from "../../lib/command/CommandManager";
 import { CrownEventString } from "../../services/dbservices/CrownsHistoryService";
@@ -92,7 +93,7 @@ Total commands: ${numberDisplay(commandCount)}`,
         {
           name: "Last.fm stats",
           value: `_Scrobbling since ${dateDisplay(
-            fromUnixTime(userInfo.registered.unixtime.toInt())
+            fromUnixTime(toInt(userInfo.registered.unixtime))
           )}_\n\nScrobbles: ${numberDisplay(
             userInfo.playcount
           )}\nArtists scrobbled: ${numberDisplay(artistCount)}`,

@@ -1,4 +1,5 @@
 import { numberDisplay } from "../../../helpers";
+import { toInt } from "../../../helpers/lastFM";
 import { calculatePercent } from "../../../helpers/stats";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
@@ -109,7 +110,7 @@ _Comparing ${perspective.possessive} top ${numberDisplay(
       if (tagArtistNames.includes(a.name.toLowerCase().replace(/\s+/g, "-")))
         acc.push({
           artist: a.name,
-          plays: a.playcount.toInt(),
+          plays: toInt(a.playcount),
         });
 
       return acc;

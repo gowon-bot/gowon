@@ -3,6 +3,7 @@ import { numberDisplay } from "../../../helpers";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { calculatePercent } from "../../../helpers/stats";
+import { toInt } from "../../../helpers/lastFM";
 
 const args = {
   inputs: {
@@ -55,7 +56,7 @@ export default class GlobalAlbumPlays extends LastFMBaseCommand<typeof args> {
       `Last.fm has scrobbled ${albumDetails.name.italic()} by ${
         albumDetails.artist
       } ${numberDisplay(albumDetails.playcount, "time")}${
-        albumDetails.userplaycount.toInt() > 0
+        toInt(albumDetails.userplaycount) > 0
           ? `. ${perspective.upper.plusToHave} ${numberDisplay(
               albumDetails.userplaycount,
               "scrobble"

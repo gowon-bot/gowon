@@ -3,6 +3,7 @@ import { Message } from "discord.js";
 import { numberDisplay, getOrdinal } from "../../../helpers";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { LogicError } from "../../../errors";
+import { toInt } from "../../../helpers/lastFM";
 
 const args = {
   mentions: {
@@ -36,7 +37,7 @@ export class Rank extends CrownsChildCommand<typeof args> {
       await this.serverUserIDs({ filterCrownBannedUsers: true })
     );
 
-    if (!rank?.count?.toInt())
+    if (!toInt(rank?.count))
       throw new LogicError(
         `${perspective.plusToHave} no crowns in this server!`
       );
@@ -50,9 +51,9 @@ export class Rank extends CrownsChildCommand<typeof args> {
         `${perspective.upper.possessive} ${numberDisplay(
           rank.count,
           "crown"
-        ).strong()} ${rank.count.toInt() === 1 ? "ranks" : "rank"} ${
+        ).strong()} ${toInt(rank.count) === 1 ? "ranks" : "rank"} ${
           perspective.objectPronoun
-        } ${getOrdinal(rank.rank.toInt()).strong()} in ${
+        } ${getOrdinal(toInt(rank.rank)).strong()} in ${
           message.guild?.name
         } out of ${numberDisplay(rank.totalUsers, "total user")}`
       );

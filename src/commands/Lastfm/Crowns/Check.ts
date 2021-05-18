@@ -10,6 +10,7 @@ import {
   OptedOutError,
   PurgatoryError,
 } from "../../../errors";
+import { toInt } from "../../../helpers/lastFM";
 
 const args = {
   inputs: {
@@ -54,14 +55,14 @@ export class Check extends CrownsChildCommand<typeof args> {
       message,
       discordID: message.author.id,
       artistName: artistDetails.name,
-      plays: artistDetails.stats.userplaycount.toInt(),
+      plays: toInt(artistDetails.stats.userplaycount),
     });
 
     let embeds = new CrownEmbeds(
       crownCheck,
       this.message.author,
       this.gowonClient,
-      artistDetails.stats.userplaycount.toInt(),
+      toInt(artistDetails.stats.userplaycount),
       this.message,
       this.message.member ?? undefined
     );

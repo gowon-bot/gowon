@@ -25,6 +25,7 @@ import { CrownsHistoryService } from "./CrownsHistoryService";
 import { RedirectsService } from "./RedirectsService";
 import { ArtistRedirect } from "../../database/entity/ArtistRedirect";
 import { ArtistCrownBan } from "../../database/entity/ArtistCrownBan";
+import { toInt } from "../../helpers/lastFM";
 
 export enum CrownState {
   tie = "Tie",
@@ -475,7 +476,7 @@ export class CrownsService extends BaseService {
     return await Promise.all(
       users.map(async (rch) => ({
         user: (await User.toDiscordUser(guild, rch.discordID))!,
-        numberOfCrowns: rch.count.toInt(),
+        numberOfCrowns: toInt(rch.count),
       }))
     );
   }

@@ -1,7 +1,7 @@
 import { Arguments } from "../../../lib/arguments/arguments";
 import { InfoCommand } from "./InfoCommand";
 import { numberDisplay } from "../../../helpers";
-import { LinkConsolidator } from "../../../helpers/lastFM";
+import { LinkConsolidator, toInt } from "../../../helpers/lastFM";
 import { LineConsolidator } from "../../../lib/LineConsolidator";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
@@ -56,7 +56,7 @@ export default class TrackInfo extends InfoCommand<typeof args> {
       LinkConsolidator.lastfm(trackInfo.url),
     ]);
 
-    let duration = trackInfo.duration.toInt();
+    let duration = toInt(trackInfo.duration);
 
     this.lineConsolidator.addLines(
       (duration

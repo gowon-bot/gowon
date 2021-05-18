@@ -12,6 +12,7 @@ import { LastFMMention } from "../../../lib/arguments/mentions/LastFMMention";
 import { DiscordIDMention } from "../../../lib/arguments/mentions/DiscordIDMention";
 import { LogicError } from "../../../errors";
 import { DurationParser } from "../../../lib/DurationParser";
+import { toInt } from "../../../helpers/lastFM";
 
 export const tasteMentions = {
   user: { index: 0 },
@@ -163,11 +164,11 @@ export abstract class TasteCommand<
       .map(
         (a, idx) =>
           `${paddedPlays1[idx + 1]} ${
-            paddedPlays1[idx + 1].trim().toInt() ===
-            paddedPlays2[idx + 1].trim().toInt()
+            toInt(paddedPlays1[idx + 1].trim()) ===
+            toInt(paddedPlays2[idx + 1].trim())
               ? "•"
-              : paddedPlays1[idx + 1].trim().toInt() >
-                paddedPlays2[idx + 1].trim().toInt()
+              : toInt(paddedPlays1[idx + 1].trim()) >
+                toInt(paddedPlays2[idx + 1].trim())
               ? ">"
               : "<"
           } ${paddedPlays2[idx + 1]}   ${a.name}`

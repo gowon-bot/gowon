@@ -61,6 +61,7 @@ import {
   RecordNotFoundError,
 } from "../../errors";
 import { BaseService } from "../BaseService";
+import { toInt } from "../../helpers/lastFM";
 
 export class LastFMAPIService extends BaseService {
   url = "https://ws.audioscrobbler.com/2.0/";
@@ -131,7 +132,7 @@ export class LastFMAPIService extends BaseService {
 
     if (
       response?.userplaycount !== undefined &&
-      isNaN(response.userplaycount.toInt())
+      isNaN(toInt(response.userplaycount))
     )
       throw new BadLastFMResponseError();
 
@@ -156,8 +157,8 @@ export class LastFMAPIService extends BaseService {
 
     if (
       params.username &&
-      response?.stats?.userplaycount !== undefined &&
-      isNaN(response.stats.userplaycount.toInt())
+      !!response?.stats?.userplaycount &&
+      isNaN(toInt(response.stats.userplaycount))
     )
       throw new BadLastFMResponseError();
 
@@ -171,7 +172,7 @@ export class LastFMAPIService extends BaseService {
 
     if (
       response?.userplaycount !== undefined &&
-      isNaN(response.userplaycount.toInt())
+      isNaN(toInt(response.userplaycount))
     )
       throw new BadLastFMResponseError();
 

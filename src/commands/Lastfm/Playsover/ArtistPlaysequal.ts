@@ -2,6 +2,7 @@ import { Arguments } from "../../../lib/arguments/arguments";
 import { numberDisplay } from "../../../helpers";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
+import { toInt } from "../../../helpers/lastFM";
 
 const args = {
   inputs: {
@@ -34,8 +35,8 @@ export default class ArtistPlaysequal extends LastFMBaseCommand<typeof args> {
     let playsequal = 0;
 
     for (let artist of topArtists.artist) {
-      if (artist.playcount.toInt() === plays) playsequal++;
-      if (artist.playcount.toInt() < plays) break;
+      if (toInt(artist.playcount) === plays) playsequal++;
+      if (toInt(artist.playcount) < plays) break;
     }
 
     await this.traditionalReply(
