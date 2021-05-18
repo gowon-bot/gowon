@@ -1,9 +1,12 @@
-import { gql } from "apollo-server-core";
+import { gql } from "@apollo/client/core";
 import { DocumentNode } from "graphql";
 import { IndexingService } from "../../services/indexing/IndexingService";
 
 export interface Connector<ResponseT, ParamsT> {
-  request(indexingService: IndexingService, vars?: ParamsT): Promise<ResponseT>;
+  request(
+    indexingService: IndexingService,
+    vars?: ParamsT
+  ): Promise<{ data: ResponseT } | ResponseT>;
 }
 
 export abstract class BaseConnector<ResponseT, ParamsT>

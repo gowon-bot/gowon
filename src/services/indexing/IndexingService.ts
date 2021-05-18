@@ -1,8 +1,7 @@
-import { gql } from "apollo-server-core";
+import { gql } from "@apollo/client/core";
 import { DocumentNode } from "graphql";
-import request from "graphql-request";
-import { RequestDocument } from "graphql-request/dist/types";
 import { IndexingWebhookService } from "../../api/indexing/IndexingWebhookService";
+import { indexerClient } from "../../lib/indexing/client";
 import { BaseService } from "../BaseService";
 import { UsersService } from "../dbservices/UsersService";
 import { UserType } from "./IndexingTypes";
@@ -13,7 +12,7 @@ export class IndexingService extends BaseService {
   private readonly baseURL = "http://localhost:8080/graphql";
 
   private async sendRequest(
-    query: RequestDocument,
+    query: DocumentNode,
     variables?: object
   ): Promise<any> {
     this.log(
@@ -24,9 +23,11 @@ export class IndexingService extends BaseService {
       )}`
     );
 
-    return await (variables
-      ? request(this.baseURL, query, variables)
-      : request(this.baseURL, query));
+    return await indexerClient.query({
+      query,
+      variables,
+      fetchPolicy: "no-cache",
+    });
   }
 
   public webhook = IndexingWebhookService.getInstance();
@@ -35,7 +36,7 @@ export class IndexingService extends BaseService {
     query: DocumentNode,
     variables: { [key: string]: any }
   ): Promise<T> {
-    return await this.sendRequest(query, variables);
+    return (await this.sendRequest(query, variables)).data;
   }
 
   public async ping(): Promise<{ ping: string }> {

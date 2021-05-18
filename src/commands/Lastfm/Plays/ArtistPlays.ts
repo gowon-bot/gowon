@@ -7,9 +7,8 @@ import { displayNumber } from "../../../lib/views/displays";
 const args = {
   inputs: {
     artist: {
-      index: {
-        start: 0,
-      },
+      index: 0,
+      splitOn: "|",
     },
   },
   mentions: standardMentions,

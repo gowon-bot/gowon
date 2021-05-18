@@ -28,7 +28,7 @@ export default class IndexArtistTopAlbums extends IndexingBaseCommand<
 
   idSeed = "weeekly soojin";
 
-  aliases = ["att", "at", "iatt"];
+  aliases = ["att", "at", "iatt", "favs"];
 
   description = "Displays your top scrobbled tracks from an artist";
   secretCommand = true;

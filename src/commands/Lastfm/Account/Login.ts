@@ -14,6 +14,7 @@ import SimpleLogin from "./SimpleLogin";
 import { IndexingBaseCommand } from "../../../lib/indexing/IndexingCommand";
 import { EmptyConnector } from "../../../lib/indexing/BaseConnector";
 import { UserInfo } from "../../../services/LastFM/converters/InfoTypes";
+import { displayLink } from "../../../lib/views/displays";
 
 const args = {
   inputs: {
@@ -90,7 +91,8 @@ export default class Login extends IndexingBaseCommand<any, any, typeof args> {
       this.sendError(
         `The user ${username?.code()} couldn't be found!` +
           (username === this.author.username
-            ? " You need to login with a **Last.fm** account, if you don't have you can create one at https://www.last.fm/join"
+            ? " You need to login with a **Last.fm** account, if you don't have you can create one " +
+              displayLink("here", "https://www.last.fm/join")
             : "")
       );
       return;
@@ -134,8 +136,6 @@ export default class Login extends IndexingBaseCommand<any, any, typeof args> {
     await this.indexingService.login(username, discordID, UserType.Lastfm);
     try {
       await this.indexingService.quietAddUserToGuild(discordID, this.guild.id);
-    } catch (e) {
-      console.log(e);
-    }
+    } catch (e) {}
   }
 }

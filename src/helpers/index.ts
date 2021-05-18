@@ -1,6 +1,8 @@
-import { formatDistanceToNow } from "date-fns";
 import { displayNumber } from "../lib/views/displays";
 import { toInt } from "./lastFM";
+import { formatDistanceToNow } from "date-fns";
+import { DocumentNode } from "graphql";
+import { Emoji } from "../lib/Emoji";
 
 export function addS(string: string, number: number) {
   return number === 1 ? string : string + "s";
@@ -207,4 +209,26 @@ export class Stopwatch {
   now() {
     return process.hrtime.bigint();
   }
+}
+
+export function queryDisplay(query: DocumentNode): string | undefined {
+  return query.loc?.source?.body;
+}
+
+export function ratingDisplay(rating: number): string {
+  const numberOfStars = rating / 2;
+  const hasHalfStar = rating % 2 == 1;
+
+  return "★".repeat(numberOfStars) + (hasHalfStar ? "½" : "");
+}
+
+export function ratingDisplayEmojis(rating: number): string {
+  const numberOfStars = rating / 2;
+  const hasHalfStar = rating % 2 == 1;
+
+  return (
+    Emoji.fullStar.repeat(numberOfStars) +
+    (hasHalfStar ? Emoji.halfStar : "") +
+    Emoji.emptyStar.repeat(Math.floor((10 - rating) / 2))
+  );
 }

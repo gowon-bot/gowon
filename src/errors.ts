@@ -304,6 +304,14 @@ export class IndexerError extends ClientError {
   name = "IndexerError";
 }
 
+export class UnknownIndexerError extends ClientError {
+  name = "UnknownIndexerError";
+
+  constructor() {
+    super("Something went wrong while communicating with the indexing server.");
+  }
+}
+
 export class UserNotIndexedError extends ClientError {
   name = "UserNotIndexedError";
 

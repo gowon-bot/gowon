@@ -1,7 +1,7 @@
+import { gql } from "@apollo/client/core";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { BaseConnector } from "../../../lib/indexing/BaseConnector";
 import { IndexingBaseCommand } from "../../../lib/indexing/IndexingCommand";
-import gql from "graphql-tag";
 
 type Response = { ping: string };
 type Params = {};
@@ -37,7 +37,7 @@ export default class PingIndexer extends IndexingBaseCommand<
     const response = await this.query({});
 
     if (!response.ping) {
-      await this.send("No repsonse :(");
+      await this.send("No response :(");
     } else {
       await this.send(response.ping);
     }

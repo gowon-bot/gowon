@@ -1,6 +1,6 @@
-import { Arguments } from "../../../lib/arguments/arguments";
-import { standardMentions } from "../../../lib/arguments/mentions/mentions";
-import { LastFMBaseCommand } from "../LastFMBaseCommand";
+import { Arguments } from "../../../../lib/arguments/arguments";
+import { standardMentions } from "../../../../lib/arguments/mentions/mentions";
+import { RateYourMusicChildCommand } from "./RateYourMusicChildCommand";
 
 const args = {
   inputs: {
@@ -9,12 +9,10 @@ const args = {
   mentions: standardMentions,
 } as const;
 
-export default class RateYourMusic extends LastFMBaseCommand<typeof args> {
+export class Link extends RateYourMusicChildCommand<typeof args> {
   idSeed = "elris bella";
 
-  aliases = ["ryms"];
   description = "Search Rateyourmusic for an album (or anything!)";
-  subcategory = "external";
 
   arguments: Arguments = args;
 

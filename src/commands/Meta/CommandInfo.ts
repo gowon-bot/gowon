@@ -49,7 +49,9 @@ export default class CommandInfo extends MetaBaseCommand<typeof args> {
     let embed = this.newEmbed().setTitle(
       `Info about ${runAs.toCommandFriendlyName()}`
     ).setDescription(`
-      **Name**: ${command.name}
+      **Name**: ${command.name}${
+      command.parentName ? `\n**Parent**: ${command.parentName}` : ""
+    }
       **Id**: ${command.idSeed} — ${command.id.italic()}${
       command.hasChildren
         ? `\n**Number of children**: ${command.children?.list().length || 0}`

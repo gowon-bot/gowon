@@ -60,8 +60,12 @@ export class User extends BaseEntity {
 
   static async stillInServer(
     message: Message,
-    discordID: string
+    discordID?: string
   ): Promise<boolean> {
+    if (!discordID) {
+      return false;
+    }
+
     try {
       return !!(await message.guild?.members.fetch(discordID));
     } catch {

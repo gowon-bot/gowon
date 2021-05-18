@@ -61,6 +61,8 @@ export class GuildEventService extends BaseService {
     let commands = [
       { command: "permissions", dev: false },
       { command: "crowns kill", dev: false },
+      { command: "crowns ban", dev: false },
+      { command: "crowns banartist", dev: false },
       { command: "lastscrobbled", dev: true },
       { command: "artisttoptracks", dev: true },
       { command: "artisttopalbums", dev: true },

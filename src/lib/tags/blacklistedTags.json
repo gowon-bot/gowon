@@ -21,6 +21,7 @@
     "2w",
     "shit",
     "tanked",
+    "cunty",
 
     "==== Offensive Tags ====",
     "white power",
@@ -34,11 +35,12 @@
   "regex": [
     "better than .*",
     "best of \\d{4}",
-    ".* step on me ?.*",
+    ".* ?step on me ?.*",
     "hi \\w+",
     ".*comeback.*",
     ".*\\banal\\b.*",
-    ".*\\fisting\\b.*"
+    ".*\\fisting\\b.*",
+    ".*taeminification.*"
   ],
   "explicit": [
     [19, 12, 21, 20],

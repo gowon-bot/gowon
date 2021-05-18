@@ -3,7 +3,8 @@ import { Connector } from "./BaseConnector";
 import { IndexingService } from "../../services/indexing/IndexingService";
 import { Arguments } from "../arguments/arguments";
 import { IndexerError, LogicError, UserNotIndexedError } from "../../errors";
-import gql from "graphql-tag";
+import { gql } from "@apollo/client/core";
+import { LastFMService } from "../../services/LastFM/LastFMService";
 import { Perspective } from "../Perspective";
 import { MessageEmbed } from "discord.js";
 import { User as DBUser } from "../../database/entity/User";
@@ -12,7 +13,6 @@ import {
   ConcurrencyManager,
   ConcurrentActions,
 } from "../caches/ConcurrencyManager";
-import { LastFMService } from "../../services/LastFM/LastFMService";
 
 export interface ErrorResponse {
   errors: { message: string }[];
@@ -20,7 +20,7 @@ export interface ErrorResponse {
 
 function hasErrors(response: any): response is ErrorResponse {
   return (
-    response.errors &&
+    response?.errors &&
     response.errors instanceof Array &&
     response.errors.length > 0
   );
@@ -51,17 +51,23 @@ export abstract class IndexingBaseCommand<
       let response: ResponseT = {} as any;
 
       try {
-        response = await this.connector.request(
+        const rawResponse = await this.connector.request(
           this.indexingService,
           variables
         );
+
+        if ((rawResponse as any).data) {
+          response = (rawResponse as any).data;
+        } else {
+          response = rawResponse as ResponseT;
+        }
       } catch (e) {
-        if (e.errno === "ECONNREFUSED") {
+        if (e.graphQLErrors?.length) {
+          (response as any).errors = e.graphQLErrors;
+        } else if (e.networkError) {
           throw new IndexerError(
             "The indexing service is not responding, please try again later."
           );
-        } else {
-          (response as any).errors = e.response.errors;
         }
       }
 
@@ -175,4 +181,13 @@ export abstract class IndexingBaseCommand<
     this.concurrencyManager.registerUser(ConcurrentActions.Indexing, discordID);
     this.notifyUser(Perspective.buildPerspective(username, false), "index");
   }
+}
+
+export abstract class IndexingChildCommand<
+  ResponseT,
+  ParamsT,
+  T extends Arguments
+> extends IndexingBaseCommand<ResponseT, ParamsT, T> {
+  shouldBeIndexed = false;
+  abstract parentName: string;
 }

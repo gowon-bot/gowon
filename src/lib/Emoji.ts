@@ -21,6 +21,11 @@ export const Emoji = {
   ish: "<:ish:785397271725604875>",
   fmbot: "<:fmbot:822230495713689650>",
   rem: "<:rem:826270521788072026>",
+  gowonRated: "<:gowonRated:843400034770223114>",
+
+  fullStar: "<:fullStar:843763033858899968>",
+  halfStar: "<:halfStar:843763307994284032>",
+  emptyStar: "<:emptyStar:843763307428315148>",
 
   arrowLeft: "<:arrowleft:825600908594905107>",
   arrowRight: "<:arrowRight:825626338534490162>",

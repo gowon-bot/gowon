@@ -1,4 +1,4 @@
-import { gql } from "graphql-request";
+import { gql } from "@apollo/client/core";
 
 export type IndexingQuery = keyof typeof IndexingQueries;
 
@@ -53,5 +53,5 @@ export const IndexingQueries = {
         success
       }
     }
-  `
+  `,
 };

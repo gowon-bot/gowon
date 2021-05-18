@@ -199,3 +199,9 @@ _You can find the source code for all the commands at [/src/commands](/src/comma
 - Frikandel, for being a great influence and always ready to help ([Go checkout .fmbot!](https://github.com/fmbot-discord/fmbot))
 - Ish, for being cool overall 😎 ([Go checkout Chuu!](https://github.com/ishwi/discordBot))
 - Last.fm, for making a great platform <3
+
+## Any questions?
+
+Somethings broken? Just curious how something works?
+
+Feel free to shoot me a Discord dm at `john!#2527`

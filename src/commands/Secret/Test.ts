@@ -1,11 +1,8 @@
-import { DiscordIDMention } from "../../lib/arguments/mentions/DiscordIDMention";
 import { BaseCommand } from "../../lib/command/BaseCommand";
 
 const args = {
   inputs: {},
-  mentions: {
-    id: { index: 0, mention: new DiscordIDMention() },
-  },
+  mentions: {},
   flags: {},
 } as const;
 

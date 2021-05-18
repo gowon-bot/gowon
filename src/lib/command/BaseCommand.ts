@@ -23,12 +23,11 @@ import { User } from "../../database/entity/User";
 import { Perspective } from "../Perspective";
 import { GowonClient } from "../GowonClient";
 import { Validation, ValidationChecker } from "../validation/ValidationChecker";
-import { GowonEmbed } from "../views/embeds";
 import { Emoji, EmojiRaw } from "../Emoji";
 import { Argument, Mention } from "./ArgumentType";
 import { RunAs } from "./RunAs";
 import { ucFirst } from "../../helpers";
-import { displayLink } from "../views/displays";
+import { gowonEmbed } from "../views/embeds";
 
 export interface Variation {
   name: string;
@@ -241,10 +240,7 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     )
       throw new LogicError(
         `please sign in with a last.fm account! (\`${this.prefix}login <lastfm username>)\``,
-        `Don't have a one? You can create one ${displayLink(
-          "here",
-          "https://last.fm/join"
-        )}.`
+        `Don't have a one? You can create one at https://last.fm/join`
       );
 
     return {
@@ -348,8 +344,16 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     });
   }
 
-  async send(message: MessageEmbed | string): Promise<Message> {
+  async send(
+    message: MessageEmbed | string,
+    withEmbed?: MessageEmbed
+  ): Promise<Message> {
     this.addResponse(message);
+
+    if (withEmbed) {
+      return await this.message.channel.send(message, { embed: withEmbed });
+    }
+
     return await this.message.channel.send(message);
   }
 
@@ -389,12 +393,14 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
   }
 
   protected newEmbed(embed?: MessageEmbed): MessageEmbed {
-    return GowonEmbed(this.message.member ?? undefined, embed);
+    return gowonEmbed(this.message.member ?? undefined, embed);
   }
 
-  protected generateEmbedAuthor(title: string): [string, string | undefined] {
+  protected generateEmbedAuthor(title?: string): [string, string | undefined] {
     return [
-      `${this.message.author.tag} | ${title}`,
+      title
+        ? `${this.message.author.tag} | ${title}`
+        : `${this.message.author.tag}`,
       this.message.author.avatarURL() || undefined,
     ];
   }

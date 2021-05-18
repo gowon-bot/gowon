@@ -6,10 +6,10 @@ import {
   Client,
   Message,
 } from "discord.js";
+import { gowonEmbed } from ".";
 import { Emoji } from "../../Emoji";
 import { GowonClient } from "../../GowonClient";
 import { displayNumber } from "../displays";
-import { GowonEmbed } from ".";
 
 export class CrownEmbeds {
   client: Client;
@@ -37,7 +37,7 @@ export class CrownEmbeds {
   }
 
   private get embed(): MessageEmbed {
-    return GowonEmbed(this.member).setTitle(
+    return gowonEmbed(this.member).setTitle(
       `Crown for ${this.crownCheck.artistName}${this.redirect}`
     );
   }
