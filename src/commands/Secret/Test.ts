@@ -1,5 +1,6 @@
 import { DiscordIDMention } from "../../lib/arguments/mentions/DiscordIDMention";
 import { BaseCommand } from "../../lib/command/BaseCommand";
+import { LastFMConverter } from "../../services/LastFM/Converter/LastFMConverter";
 
 const args = {
   inputs: {},
@@ -17,10 +18,17 @@ export default class Test extends BaseCommand<typeof args> {
 
   arguments = args;
 
+  converter = new LastFMConverter(this.logger);
+
   async run() {
     // await this.send("Hello, world!");
-    await this.send(
-      "" + this.gowonClient.isDeveloperOf("rem", this.parsedArguments.id!)
-    );
+
+    const artistInfo = await this.converter.artistInfo({
+      artist: "sokodomo",
+    });
+
+    console.log(artistInfo);
+
+    this.stopTyping();
   }
 }

@@ -41,17 +41,17 @@ export default class TrackPercent extends LastFMBaseCommand<typeof args> {
     }
 
     let [artistInfo, trackInfo] = await Promise.all([
-      this.lastFMService.artistInfo({ artist, username }),
-      this.lastFMService.trackInfo({ artist, track, username }),
+      this.lastFMConverter.artistInfo({ artist, username }),
+      this.lastFMConverter.trackInfo({ artist, track, username }),
     ]);
 
     await this.traditionalReply(
       `${perspective.possessive} ${numberDisplay(
-        trackInfo.userplaycount,
+        trackInfo.userPlaycount,
         "play"
       )} of ${trackInfo.name.strong()} represent ${calculatePercent(
-        trackInfo.userplaycount,
-        artistInfo.stats.userplaycount
+        trackInfo.userPlaycount,
+        artistInfo.userPlaycount
       ).strong()}% of ${
         perspective.possessivePronoun
       } ${artistInfo.name.strong()} scrobbles`

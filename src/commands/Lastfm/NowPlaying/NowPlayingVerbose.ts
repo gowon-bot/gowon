@@ -25,8 +25,8 @@ export default class NowPlayingVerbose extends NowPlayingBaseCommand {
     this.tagConsolidator.blacklistTags(track.artist, track.name);
 
     let [artistInfo, trackInfo, crown] = await promiseAllSettled([
-      this.lastFMService.artistInfo({ artist: track.artist, username }),
-      this.lastFMService.trackInfo({
+      this.lastFMConverter.artistInfo({ artist: track.artist, username }),
+      this.lastFMConverter.trackInfo({
         artist: track.artist,
         track: track.name,
         username,
@@ -40,9 +40,9 @@ export default class NowPlayingVerbose extends NowPlayingBaseCommand {
     );
 
     if (trackInfo.value)
-      this.tagConsolidator.addTags(trackInfo.value?.toptags?.tag || []);
+      this.tagConsolidator.addTags(trackInfo.value?.tags || []);
     if (artistInfo.value)
-      this.tagConsolidator.addTags(artistInfo.value?.tags?.tag || []);
+      this.tagConsolidator.addTags(artistInfo.value?.tags || []);
 
     let artistPlays = this.artistPlays(artistInfo, track, isCrownHolder);
     let noArtistData = this.noArtistData(track);

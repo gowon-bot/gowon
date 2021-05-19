@@ -46,7 +46,7 @@ export class Check extends CrownsChildCommand<typeof args> {
       artist = response.artist;
     }
 
-    let artistDetails = await this.lastFMService.artistInfo({
+    let artistDetails = await this.lastFMConverter.artistInfo({
       artist,
       username,
     });
@@ -55,14 +55,14 @@ export class Check extends CrownsChildCommand<typeof args> {
       message,
       discordID: message.author.id,
       artistName: artistDetails.name,
-      plays: toInt(artistDetails.stats.userplaycount),
+      plays: artistDetails.userPlaycount,
     });
 
     let embeds = new CrownEmbeds(
       crownCheck,
       this.message.author,
       this.gowonClient,
-      toInt(artistDetails.stats.userplaycount),
+      artistDetails.userPlaycount,
       this.message,
       this.message.member ?? undefined
     );

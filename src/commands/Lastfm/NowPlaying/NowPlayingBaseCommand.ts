@@ -5,10 +5,8 @@ import config from "../../../../config.json";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import {
   AlbumInfo,
-  ArtistInfo,
   RecentTracks,
   Track,
-  TrackInfo,
 } from "../../../services/LastFM/LastFMService.types";
 import { numberDisplay } from "../../../helpers";
 import { Message, MessageEmbed, User } from "discord.js";
@@ -16,6 +14,10 @@ import { CrownDisplay } from "../../../services/dbservices/CrownsService";
 import { User as DBUser } from "../../../database/entity/User";
 import { TagConsolidator } from "../../../lib/tags/TagConsolidator";
 import { sanitizeForDiscord } from "../../../helpers/discord";
+import {
+  ConvertedArtistInfo,
+  ConvertedTrackInfo,
+} from "../../../services/LastFM/Converter/InfoTypes";
 
 const args = {
   inputs: {
@@ -111,7 +113,7 @@ export abstract class NowPlayingBaseCommand extends LastFMBaseCommand<
   }
 
   protected artistPlays(
-    artistInfo: { value?: ArtistInfo },
+    artistInfo: { value?: ConvertedArtistInfo },
     track: ParsedTrack,
     isCrownHolder: boolean
   ): string {
@@ -119,10 +121,10 @@ export abstract class NowPlayingBaseCommand extends LastFMBaseCommand<
       ? (isCrownHolder ? "👑 " : "") +
           (track.artist.length < 150
             ? numberDisplay(
-                artistInfo.value.stats.userplaycount,
+                artistInfo.value.userPlaycount,
                 `${track.artist} scrobble`
               )
-            : numberDisplay(artistInfo.value.stats.userplaycount, `scrobble`) +
+            : numberDisplay(artistInfo.value.userPlaycount, `scrobble`) +
               " of that artist")
       : "";
   }
@@ -134,9 +136,9 @@ export abstract class NowPlayingBaseCommand extends LastFMBaseCommand<
     );
   }
 
-  protected trackPlays(trackInfo: { value?: TrackInfo }): string {
+  protected trackPlays(trackInfo: { value?: ConvertedTrackInfo }): string {
     return trackInfo.value
-      ? numberDisplay(trackInfo.value.userplaycount, "scrobble") +
+      ? numberDisplay(trackInfo.value.userPlaycount, "scrobble") +
           " of this song"
       : "";
   }

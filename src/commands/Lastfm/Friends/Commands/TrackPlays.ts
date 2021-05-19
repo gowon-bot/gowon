@@ -39,7 +39,7 @@ export class TrackPlays extends FriendsChildCommand<typeof args> {
     let trackDetails = await new MultiRequester([
       ...this.friendUsernames,
       this.senderUsername,
-    ]).fetch(this.lastFMService.trackInfo.bind(this.lastFMService), {
+    ]).fetch(this.lastFMConverter.trackInfo.bind(this.lastFMService), {
       artist,
       track,
     });
@@ -56,16 +56,18 @@ export class TrackPlays extends FriendsChildCommand<typeof args> {
         Object.keys(trackDetails)
           .sort(
             (a, b) =>
-              (toInt(trackDetails[b]?.userplaycount) ?? -Infinity) -
-              (toInt(trackDetails[a]?.userplaycount) ?? -Infinity)
+              (trackDetails[b]?.userPlaycount ?? -Infinity) -
+              (trackDetails[a]?.userPlaycount ?? -Infinity)
           )
           .map((username) => {
             let td = trackDetails[username];
 
-            if (!td?.userplaycount) return this.displayMissingFriend(username);
+            if (!td || isNaN(td.userPlaycount)) {
+              return this.displayMissingFriend(username);
+            }
 
             return `${username.code()} - **${numberDisplay(
-              td.userplaycount,
+              td.userPlaycount,
               "**scrobble"
             )}`;
           })

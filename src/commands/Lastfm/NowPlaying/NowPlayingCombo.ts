@@ -37,12 +37,12 @@ export default class NowPlayingCombo extends NowPlayingBaseCommand {
     if (nowPlaying["@attr"]?.nowplaying) this.scrobble(track);
 
     let [artistInfo, crown] = await promiseAllSettled([
-      this.lastFMService.artistInfo({ artist: track.artist, username }),
+      this.lastFMConverter.artistInfo({ artist: track.artist, username }),
       this.crownsService.getCrownDisplay(track.artist, this.guild),
     ]);
 
     if (artistInfo.value) {
-      this.tagConsolidator.addTags(artistInfo.value.tags.tag);
+      this.tagConsolidator.addTags(artistInfo.value.tags);
     }
 
     let { crownString, isCrownHolder } = await this.crownDetails(

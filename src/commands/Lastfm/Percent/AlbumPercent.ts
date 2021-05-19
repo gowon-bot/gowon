@@ -41,7 +41,7 @@ export default class AlbumPercent extends LastFMBaseCommand<typeof args> {
     }
 
     let [artistInfo, albumInfo] = await Promise.all([
-      this.lastFMService.artistInfo({ artist, username }),
+      this.lastFMConverter.artistInfo({ artist, username }),
       this.lastFMService.albumInfo({ artist, album, username }),
     ]);
 
@@ -51,7 +51,7 @@ export default class AlbumPercent extends LastFMBaseCommand<typeof args> {
         "play"
       )} of ${albumInfo.name.strong()} represent ${calculatePercent(
         albumInfo.userplaycount,
-        artistInfo.stats.userplaycount
+        artistInfo.userPlaycount
       ).strong()}% of ${
         perspective.possessivePronoun
       } ${artistInfo.name.strong()} scrobbles`

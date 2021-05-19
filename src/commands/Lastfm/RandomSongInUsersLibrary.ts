@@ -54,7 +54,7 @@ export default class RandomsongInUsersLibrary extends LastFMBaseCommand<
       })
     ).track[0];
 
-    let trackInfo = await this.lastFMService.trackInfo({
+    let trackInfo = await this.lastFMConverter.trackInfo({
       track: randomSong.name,
       artist: randomSong.artist.name,
     });
@@ -64,11 +64,9 @@ export default class RandomsongInUsersLibrary extends LastFMBaseCommand<
       .setTitle(randomSong.name)
       .setDescription(
         `by ${randomSong.artist.name.strong()}` +
-          (trackInfo.album ? ` from ${trackInfo.album.title.italic()}` : "")
+          (trackInfo.album ? ` from ${trackInfo.album.name.italic()}` : "")
       )
-      .setThumbnail(
-        trackInfo.album?.image.find((i) => i.size === "large")?.["#text"] || ""
-      );
+      .setThumbnail(trackInfo.album?.images.get("large") || "");
 
     await this.send(embed);
   }

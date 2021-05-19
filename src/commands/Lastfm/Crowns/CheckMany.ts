@@ -39,7 +39,7 @@ export class CheckMany extends CrownsChildCommand<typeof args> {
 
     let artistDetailsList = await Promise.all(
       artists.map((artist) =>
-        this.lastFMService.artistInfo({ artist, username })
+        this.lastFMConverter.artistInfo({ artist, username })
       )
     );
 
@@ -48,7 +48,7 @@ export class CheckMany extends CrownsChildCommand<typeof args> {
         message,
         discordID: message.author.id,
         artistName: ad.name,
-        plays: toInt(ad.stats.userplaycount),
+        plays: toInt(ad.userPlaycount),
       })
     );
 

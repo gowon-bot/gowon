@@ -33,7 +33,7 @@ export class History extends CrownsChildCommand<typeof args> {
         .artist;
     }
 
-    let artistDetails = await this.lastFMService.artistInfo({
+    let artistDetails = await this.lastFMConverter.artistInfo({
       artist,
     });
 

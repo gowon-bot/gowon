@@ -57,11 +57,11 @@ export default class Track extends LastFMBaseCommand<typeof args> {
     }
 
     let [artistInfo, trackInfo, crown] = await promiseAllSettled([
-      this.lastFMService.artistInfo({
+      this.lastFMConverter.artistInfo({
         artist: artistName,
         username: senderUsername,
       }),
-      this.lastFMService.trackInfo({
+      this.lastFMConverter.trackInfo({
         artist: artistName,
         track: trackName,
         username: senderUsername,
@@ -75,7 +75,7 @@ export default class Track extends LastFMBaseCommand<typeof args> {
     let track = {
       name: (trackInfo.value?.name || trackName) as string,
       artist: (trackInfo.value?.artist?.name || artistName) as string,
-      album: (trackInfo.value?.album?.title || "") as string,
+      album: (trackInfo.value?.album?.name || "") as string,
     };
 
     let crownString = "";
@@ -92,9 +92,9 @@ export default class Track extends LastFMBaseCommand<typeof args> {
     }
 
     if (trackInfo.value)
-      this.tagConsolidator.addTags(trackInfo.value?.toptags?.tag || []);
+      this.tagConsolidator.addTags(trackInfo.value?.tags || []);
     if (artistInfo.value)
-      this.tagConsolidator.addTags(artistInfo.value?.tags?.tag || []);
+      this.tagConsolidator.addTags(artistInfo.value?.tags || []);
 
     let nowPlayingEmbed = this.newEmbed()
       .setAuthor(
@@ -112,24 +112,20 @@ export default class Track extends LastFMBaseCommand<typeof args> {
         `by ${track.artist}` +
           (track.album ? ` from ${track.album.italic()}` : "")
       )
-      .setThumbnail(
-        trackInfo.value?.album?.image?.find((i: Image) => i.size === "large")?.[
-          "#text"
-        ] || ""
-      )
-      .setColor(trackInfo.value?.userloved === "1" ? "#cc0000" : "black")
+      .setThumbnail(trackInfo.value?.album?.images.get("large") || "")
+      .setColor(trackInfo.value?.loved ? "#cc0000" : "black")
       .setFooter(
         (isCrownHolder ? "👑 " : "") +
           (artistInfo.value && track.artist.length < 150
             ? numberDisplay(
-                artistInfo.value.stats.userplaycount,
+                artistInfo.value.userPlaycount,
                 `${track.artist} scrobble`
               )
             : "No data on last.fm for " +
               (track.artist.length > 150 ? "that artist" : track.artist)) +
           (artistInfo.value && trackInfo.value ? " | " : "\n") +
           (trackInfo.value
-            ? numberDisplay(trackInfo.value.userplaycount, "scrobble") +
+            ? numberDisplay(trackInfo.value.userPlaycount, "scrobble") +
               " of this song\n"
             : "") +
           this.tagConsolidator.consolidate(Infinity, true).join(" ‧ ") +

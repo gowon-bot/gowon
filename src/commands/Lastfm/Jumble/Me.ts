@@ -62,7 +62,7 @@ export class Me extends JumbleChildCommand<typeof args> {
     if (!artist)
       throw new LogicError("No suitable artists were found in your library!");
 
-    let artistInfo = await this.lastFMService.artistInfo({
+    let artistInfo = await this.lastFMConverter.artistInfo({
       artist: artist.name,
     });
 
@@ -76,14 +76,14 @@ export class Me extends JumbleChildCommand<typeof args> {
 
     let tags = this.tagConsolidator
       .blacklistTags(artist.name)
-      .addTags(artistInfo.tags.tag)
+      .addTags(artistInfo.tags)
       .consolidate();
 
     let lineConsolidator = new LineConsolidator();
 
     lineConsolidator.addLines(
       `This artist has **${abbreviateNumber(
-        artistInfo.stats.listeners
+        artistInfo.listeners
       )}** listeners on Last.fm and you have scrobbled them **${numberDisplay(
         artist.playcount,
         "**time"
@@ -95,8 +95,8 @@ export class Me extends JumbleChildCommand<typeof args> {
           .join(" as well as ")}`,
       },
       {
-        shouldDisplay: !!artistInfo.similar.artist.length,
-        string: `Last.fm considers ${artistInfo.similar.artist
+        shouldDisplay: !!artistInfo.similarArtists.length,
+        string: `Last.fm considers ${artistInfo.similarArtists
           .map((a) => a.name.strong())
           .slice(0, 2)
           .join(" and ")} to be similar`,

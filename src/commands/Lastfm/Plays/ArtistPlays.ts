@@ -3,7 +3,6 @@ import { numberDisplay } from "../../../helpers";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { RunAs } from "../../../lib/command/RunAs";
-import { toInt } from "../../../helpers/lastFM";
 
 const args = {
   inputs: {
@@ -38,7 +37,7 @@ export default class ArtistPlays extends LastFMBaseCommand<typeof args> {
         .artist;
     }
 
-    let artistDetails = await this.lastFMService.artistInfo({
+    let artistDetails = await this.lastFMConverter.artistInfo({
       artist,
       username,
     });
@@ -47,10 +46,10 @@ export default class ArtistPlays extends LastFMBaseCommand<typeof args> {
 
     await this.traditionalReply(
       `${perspective.plusToHave}` +
-        (toInt(artistDetails.stats.userplaycount) === 0
+        (artistDetails.userPlaycount === 0
           ? "n't scrobbled"
           : ` **${numberDisplay(
-              artistDetails.stats.userplaycount,
+              artistDetails.userPlaycount,
               "**scrobble"
             )} of`) +
         ` ${artistDetails.name.strong()}` +

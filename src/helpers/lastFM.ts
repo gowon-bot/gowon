@@ -179,7 +179,7 @@ export class LinkConsolidator {
 export function toInt(number: any): number {
   if (typeof number === "number") {
     return number;
-  } else if (typeof number === "string") {
-    return parseInt(number, 10);
-  } else return Number(number);
+  }
+
+  return parseInt(number, 10);
 }

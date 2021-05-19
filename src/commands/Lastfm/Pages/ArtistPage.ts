@@ -33,7 +33,7 @@ export default class ArtistPage extends LastFMBaseCommand<typeof args> {
       artist = (await this.lastFMService.nowPlayingParsed(username)).artist;
     }
 
-    let artistDetails = await this.lastFMService.artistInfo({
+    let artistDetails = await this.lastFMConverter.artistInfo({
       artist,
       username,
     });

@@ -42,16 +42,11 @@ export default class IndexArtistTopAlbums extends IndexingBaseCommand<
   async run() {
     let artistName = this.parsedArguments.artist;
 
-    let {
-      username,
-      senderUser,
-      senderUsername,
-      dbUser,
-      perspective,
-    } = await this.parseMentions({
-      senderRequired: !artistName,
-      reverseLookup: { lastFM: true },
-    });
+    let { username, senderUser, senderUsername, dbUser, perspective } =
+      await this.parseMentions({
+        senderRequired: !artistName,
+        reverseLookup: { lastFM: true },
+      });
 
     const user = (dbUser || senderUser)!;
 
@@ -61,7 +56,7 @@ export default class IndexArtistTopAlbums extends IndexingBaseCommand<
       artistName = (await this.lastFMService.nowPlayingParsed(senderUsername))
         .artist;
     } else {
-      const lfmArtist = await this.lastFMService.artistInfo({
+      const lfmArtist = await this.lastFMConverter.artistInfo({
         artist: artistName,
       });
 

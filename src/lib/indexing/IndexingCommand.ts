@@ -13,6 +13,7 @@ import {
   ConcurrencyManager,
   ConcurrentActions,
 } from "../caches/ConcurrencyManager";
+import { LastFMConverter } from "../../services/LastFM/Converter/LastFMConverter";
 
 export interface ErrorResponse {
   errors: { message: string }[];
@@ -34,6 +35,7 @@ export abstract class IndexingBaseCommand<
   abstract connector: Connector<ResponseT, ParamsT>;
   indexingService = new IndexingService(this.logger);
   lastFMService = new LastFMService(this.logger);
+  lastFMConverter = new LastFMConverter(this.logger);
   concurrencyManager = new ConcurrencyManager();
 
   protected readonly indexerGuilds = [

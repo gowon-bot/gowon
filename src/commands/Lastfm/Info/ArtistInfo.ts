@@ -40,7 +40,7 @@ export default class ArtistInfo extends InfoCommand<typeof args> {
     }
 
     let [artistInfo, userInfo, spotifyArtist] = await Promise.all([
-      this.lastFMService.artistInfo({ artist, username }),
+      this.lastFMConverter.artistInfo({ artist, username }),
       this.lastFMService.userInfo({ username }),
       this.spotifyService.searchArtist(artist),
     ]);
@@ -50,7 +50,7 @@ export default class ArtistInfo extends InfoCommand<typeof args> {
       this.guild
     );
 
-    this.tagConsolidator.addTags(artistInfo.tags.tag);
+    this.tagConsolidator.addTags(artistInfo.tags);
 
     let linkConsolidator = new LinkConsolidator([
       LinkConsolidator.spotify(spotifyArtist?.external_urls?.spotify),
@@ -59,16 +59,16 @@ export default class ArtistInfo extends InfoCommand<typeof args> {
 
     this.lineConsolidator.addLines(
       {
-        shouldDisplay: !!artistInfo.bio.summary,
-        string: this.scrubReadMore(artistInfo.bio.summary.trimRight())!,
+        shouldDisplay: !!artistInfo.wiki.summary,
+        string: this.scrubReadMore(artistInfo.wiki.summary.trimRight())!,
       },
       {
-        shouldDisplay: !!artistInfo.bio.summary.trim(),
+        shouldDisplay: !!artistInfo.wiki.summary.trim(),
         string: "",
       },
       {
-        shouldDisplay: !!artistInfo.similar.artist.length,
-        string: `**Similar artists:** ${artistInfo.similar.artist
+        shouldDisplay: !!artistInfo.similarArtists.length,
+        string: `**Similar artists:** ${artistInfo.similarArtists
           .map((t) => t.name)
           .join(" ‧ ")}`,
       },
@@ -80,8 +80,8 @@ export default class ArtistInfo extends InfoCommand<typeof args> {
         shouldDisplay: linkConsolidator.hasLinks(),
         string: `**Links**: ${linkConsolidator.consolidate()}`,
       },
-      `**Listeners**: ${numberDisplay(artistInfo.stats.listeners)}`,
-      `**Playcount**: ${numberDisplay(artistInfo.stats.playcount)}`,
+      `**Listeners**: ${numberDisplay(artistInfo.listeners)}`,
+      `**Playcount**: ${numberDisplay(artistInfo.globalPlaycount)}`,
       {
         shouldDisplay: crown?.user?.username !== undefined,
         string: `**Crown**: ${crown?.user?.username} (${numberDisplay(
@@ -91,8 +91,8 @@ export default class ArtistInfo extends InfoCommand<typeof args> {
     );
 
     let percentage = calculatePercent(
-      artistInfo.stats.userplaycount,
-      artistInfo.stats.playcount,
+      artistInfo.userPlaycount,
+      artistInfo.globalPlaycount,
       4
     );
 
@@ -102,12 +102,10 @@ export default class ArtistInfo extends InfoCommand<typeof args> {
       .setDescription(this.lineConsolidator.consolidate())
       .addField(
         `${perspective.upper.possessive} stats`,
-        `\`${numberDisplay(
-          artistInfo.stats.userplaycount,
-          "` play",
-          true
-        )} by ${perspective.objectPronoun} (${calculatePercent(
-          artistInfo.stats.userplaycount,
+        `\`${numberDisplay(artistInfo.userPlaycount, "` play", true)} by ${
+          perspective.objectPronoun
+        } (${calculatePercent(
+          artistInfo.userPlaycount,
           userInfo.playcount
         ).strong()}% of ${perspective.possessivePronoun} total scrobbles)
 ${

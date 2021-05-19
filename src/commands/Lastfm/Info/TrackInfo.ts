@@ -44,12 +44,12 @@ export default class TrackInfo extends InfoCommand<typeof args> {
     }
 
     let [trackInfo, spotifyTrack] = await Promise.all([
-      this.lastFMService.trackInfo({ artist, track }),
+      this.lastFMConverter.trackInfo({ artist, track }),
       this.spotifyService.searchTrack(artist, track),
     ]);
 
     this.tagConsolidator.blacklistTags(trackInfo.artist.name, trackInfo.name);
-    this.tagConsolidator.addTags(trackInfo.toptags.tag);
+    this.tagConsolidator.addTags(trackInfo.tags);
 
     let linkConsolidator = new LinkConsolidator([
       LinkConsolidator.spotify(spotifyTrack?.external_urls?.spotify),
@@ -64,7 +64,7 @@ export default class TrackInfo extends InfoCommand<typeof args> {
         : "") +
         (duration && trackInfo.album ? " - " : "") +
         (trackInfo.album
-          ? `from the album ${trackInfo.album?.title.italic()}`
+          ? `from the album ${trackInfo.album?.name.italic()}`
           : ""),
       {
         shouldDisplay: !!(duration || trackInfo.album),

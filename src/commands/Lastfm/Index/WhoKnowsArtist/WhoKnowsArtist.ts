@@ -51,7 +51,7 @@ export default class WhoKnowsArtist extends IndexingBaseCommand<
       artistName = (await this.lastFMService.nowPlayingParsed(senderUsername))
         .artist;
     } else {
-      const lfmArtist = await this.lastFMService.artistInfo({
+      const lfmArtist = await this.lastFMConverter.artistInfo({
         artist: artistName,
       });
 

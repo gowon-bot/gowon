@@ -2,7 +2,7 @@ import { FriendsChildCommand } from "../FriendsChildCommand";
 import { MultiRequester } from "../../../../lib/MultiRequester";
 import { numberDisplay } from "../../../../helpers";
 import { Arguments } from "../../../../lib/arguments/arguments";
-import { LinkGenerator, toInt } from "../../../../helpers/lastFM";
+import { LinkGenerator } from "../../../../helpers/lastFM";
 import { LastFMEntityNotFoundError } from "../../../../errors";
 
 const args = {
@@ -37,7 +37,7 @@ export class ArtistPlays extends FriendsChildCommand<typeof args> {
     let artistDetails = await new MultiRequester([
       ...this.friendUsernames,
       this.senderUsername,
-    ]).fetch(this.lastFMService.artistInfo.bind(this.lastFMService), {
+    ]).fetch(this.lastFMConverter.artistInfo.bind(this.lastFMConverter), {
       artist,
     });
 
@@ -53,17 +53,18 @@ export class ArtistPlays extends FriendsChildCommand<typeof args> {
         Object.keys(artistDetails)
           .sort(
             (a, b) =>
-              (toInt(artistDetails[b]?.stats?.userplaycount) ?? -Infinity) -
-              (toInt(artistDetails[a]?.stats?.userplaycount) ?? -Infinity)
+              (artistDetails[b]?.userPlaycount ?? -Infinity) -
+              (artistDetails[a]?.userPlaycount ?? -Infinity)
           )
           .map((username) => {
             let ad = artistDetails[username];
 
-            if (!ad?.stats.userplaycount)
+            if (!ad || isNaN(ad.userPlaycount)) {
               return this.displayMissingFriend(username);
+            }
 
             return `${username.code()} - **${numberDisplay(
-              ad.stats.userplaycount,
+              ad.userPlaycount,
               "**scrobble"
             )}`;
           })

@@ -37,7 +37,7 @@ export default class NowPlaying extends NowPlayingBaseCommand {
     let nowPlayingEmbed = this.nowPlayingEmbed(nowPlaying, username);
 
     let [artistInfo, crown] = await promiseAllSettled([
-      this.lastFMService.artistInfo({ artist: track.artist, username }),
+      this.lastFMConverter.artistInfo({ artist: track.artist, username }),
       this.crownsService.getCrownDisplay(track.artist, this.guild),
     ]);
 
@@ -46,7 +46,7 @@ export default class NowPlaying extends NowPlayingBaseCommand {
       discordUser
     );
 
-    this.tagConsolidator.addTags(artistInfo.value?.tags?.tag || []);
+    this.tagConsolidator.addTags(artistInfo.value?.tags || []);
 
     let lineConsolidator = new LineConsolidator();
 

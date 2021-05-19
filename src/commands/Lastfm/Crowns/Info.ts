@@ -36,7 +36,7 @@ export class Info extends CrownsChildCommand<typeof args> {
         .artist;
     }
 
-    let artistDetails = await this.lastFMService.artistInfo(
+    let artistDetails = await this.lastFMConverter.artistInfo(
       senderUsername
         ? {
             artist,
@@ -82,8 +82,8 @@ export class Info extends CrownsChildCommand<typeof args> {
 
     let invalidBadge = createInvalidBadge(invalidCheck.reason);
 
-    if (crown.user.id === senderUser?.id && artistDetails.stats.userplaycount) {
-      crown.plays = toInt(artistDetails.stats.userplaycount);
+    if (crown.user.id === senderUser?.id && artistDetails.userPlaycount) {
+      crown.plays = artistDetails.userPlaycount;
       crown.save();
     } else if (crown.user.lastFMUsername) {
       await crown.refresh({ logger: this.logger });

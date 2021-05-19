@@ -35,24 +35,24 @@ export default class GlobalArtistPlays extends LastFMBaseCommand<typeof args> {
         .artist;
     }
 
-    let artistDetails = await this.lastFMService.artistInfo({
+    let artistDetails = await this.lastFMConverter.artistInfo({
       artist,
       username,
     });
 
     let percentage = calculatePercent(
-      artistDetails.stats.userplaycount,
-      artistDetails.stats.playcount
+      artistDetails.userPlaycount,
+      artistDetails.globalPlaycount
     );
 
     await this.send(
       `Last.fm has scrobbled ${artistDetails.name} ${numberDisplay(
-        artistDetails.stats.playcount,
+        artistDetails.globalPlaycount,
         "time"
       )}${
-        toInt(artistDetails.stats.userplaycount) > 0
+        toInt(artistDetails.userPlaycount) > 0
           ? `. ${perspective.upper.plusToHave} ${numberDisplay(
-              artistDetails.stats.userplaycount,
+              artistDetails.userPlaycount,
               "scrobble"
             )} ${parseFloat(percentage) > 0 ? `(${percentage}%)` : ""}`
           : ""

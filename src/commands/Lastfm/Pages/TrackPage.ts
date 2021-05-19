@@ -34,7 +34,7 @@ export default class TrackPage extends LastFMBaseCommand<typeof args> {
       if (!track) track = nowPlaying.name;
     }
 
-    let trackDetails = await this.lastFMService.trackInfo({
+    let trackDetails = await this.lastFMConverter.trackInfo({
       artist,
       track,
       username,

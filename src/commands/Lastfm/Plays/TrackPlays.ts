@@ -43,7 +43,7 @@ export default class TrackPlays extends LastFMBaseCommand<typeof args> {
       artist.toLowerCase() === "iu" && track.toLowerCase() === "ham ham";
     if (hamham) track = "Jam Jam";
 
-    let trackDetails = await this.lastFMService.trackInfo({
+    let trackDetails = await this.lastFMConverter.trackInfo({
       artist,
       track,
       username,
@@ -51,10 +51,10 @@ export default class TrackPlays extends LastFMBaseCommand<typeof args> {
 
     await this.traditionalReply(
       `${hamham ? "FTFY\n" : ""}${perspective.plusToHave}` +
-        (toInt(trackDetails.userplaycount) === 0
+        (trackDetails.userPlaycount === 0
           ? "n't scrobbled"
           : ` **${numberDisplay(
-              trackDetails.userplaycount,
+              trackDetails.userPlaycount,
               "**scrobble"
             )} of`) +
         ` **${trackDetails.name}** by ${trackDetails.artist.name}`
