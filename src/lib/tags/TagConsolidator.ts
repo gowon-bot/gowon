@@ -35,7 +35,7 @@ export class TagConsolidator {
   addTags(tags: Tag[] | string[]): TagConsolidator {
     let tagStrings = isTagArray(tags)
       ? tags.map((t) => t.name.toLowerCase())
-      : tags;
+      : tags.map((t) => t.toLowerCase());
 
     this.tags.push(...this.filterTags(tagStrings));
     return this;

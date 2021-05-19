@@ -89,13 +89,14 @@ export class ConvertedTrackInfo extends BaseConverter {
       url: trackInfo.artist.url,
     };
 
-    this.album = {
-      artist: trackInfo.album.artist,
-      name: trackInfo.album.title,
-      mbid: trackInfo.album.mbid,
-      url: trackInfo.album.url,
-      images: new ImageCollection(trackInfo.album.image),
-    };
+    if (trackInfo.album)
+      this.album = {
+        artist: trackInfo.album.artist,
+        name: trackInfo.album.title,
+        mbid: trackInfo.album.mbid,
+        url: trackInfo.album.url,
+        images: new ImageCollection(trackInfo.album.image),
+      };
 
     this.tags = this.convertTags(this.array(trackInfo?.toptags?.tag));
     this.wiki = {
