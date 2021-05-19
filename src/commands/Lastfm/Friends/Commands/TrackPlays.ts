@@ -3,7 +3,6 @@ import { MultiRequester } from "../../../../lib/MultiRequester";
 import { numberDisplay } from "../../../../helpers";
 import { Arguments } from "../../../../lib/arguments/arguments";
 import { LastFMEntityNotFoundError } from "../../../../errors";
-import { toInt } from "../../../../helpers/lastFM";
 
 const args = {
   inputs: {

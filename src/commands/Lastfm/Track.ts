@@ -5,7 +5,6 @@ import { LinkGenerator } from "../../helpers/lastFM";
 import { Arguments } from "../../lib/arguments/arguments";
 import { TagConsolidator } from "../../lib/tags/TagConsolidator";
 import { CrownsService } from "../../services/dbservices/CrownsService";
-import { Image } from "../../services/LastFM/LastFMService.types";
 import { LastFMBaseCommand } from "./LastFMBaseCommand";
 
 const args = {

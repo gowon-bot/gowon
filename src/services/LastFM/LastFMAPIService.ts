@@ -62,7 +62,6 @@ import {
 } from "../../errors";
 import { BaseService } from "../BaseService";
 import { toInt } from "../../helpers/lastFM";
-import { Logger } from "../../lib/Logger";
 
 export class LastFMAPIService extends BaseService {
   url = "https://ws.audioscrobbler.com/2.0/";

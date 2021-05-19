@@ -99,7 +99,7 @@ export default class TrackInfo extends InfoCommand<typeof args> {
         },
         {
           name: "Playcount",
-          value: numberDisplay(trackInfo.playcount),
+          value: numberDisplay(trackInfo.globalPlaycount),
           inline: true,
         }
       )

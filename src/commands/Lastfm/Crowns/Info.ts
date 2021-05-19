@@ -5,7 +5,6 @@ import { numberDisplay, ago } from "../../../helpers";
 import { RedirectsService } from "../../../services/dbservices/RedirectsService";
 import { createInvalidBadge } from "../../../helpers/crowns";
 import { ArtistCrownBannedError } from "../../../errors";
-import { toInt } from "../../../helpers/lastFM";
 
 const args = {
   inputs: {
