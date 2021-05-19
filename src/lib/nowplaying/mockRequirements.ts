@@ -32,6 +32,12 @@ export const mockRequirements = (
   });
 
   return {
+    // Resources
+    message,
+    username: "gowon_",
+    dbUser,
+
+    // Lastfm Types
     artistInfo: {
       name: nowPlaying.artist,
       url: "",
@@ -59,6 +65,7 @@ export const mockRequirements = (
         tag: createTags(["k-pop", "korean", "pop", "female vocalists"]),
       },
     },
+
     trackInfo: {
       mbid: "",
       name: nowPlaying.name,
@@ -94,22 +101,7 @@ export const mockRequirements = (
         content: "",
       },
     },
-    albumPlays: [
-      {
-        album: { name: nowPlaying.album, artist: { name: nowPlaying.artist } },
-        playcount: 605,
-      },
-    ],
-    artistCrown: {
-      user: { id: "720135602669879386", username: "Gowon" } as User,
-      crown: Crown.create({
-        id: 1,
-        serverID: message.guild!.id,
-        user: dbUser,
-        plays: 6360,
-      }),
-    },
-    message,
+
     recentTracks: {
       recenttracks: {
         track: [
@@ -137,8 +129,31 @@ export const mockRequirements = (
         },
       },
     },
-    username: "gowon_",
-    dbUser,
+
+    // Gowon types
+    artistCrown: {
+      user: { id: "720135602669879386", username: "Gowon" } as User,
+      crown: Crown.create({
+        id: 1,
+        serverID: message.guild!.id,
+        user: dbUser,
+        plays: 6360,
+      }),
+    },
+
+    // Indexer types
+    albumPlays: [
+      {
+        album: { name: nowPlaying.album, artist: { name: nowPlaying.artist } },
+        playcount: 605,
+      },
+    ],
+    artistPlays: [
+      {
+        artist: { name: nowPlaying.artist },
+        playcount: 6360,
+      },
+    ],
     albumRating: [
       {
         rating: 7,
