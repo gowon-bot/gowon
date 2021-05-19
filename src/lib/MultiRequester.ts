@@ -1,4 +1,4 @@
-import { promiseAllSettled, sleep } from "../helpers";
+import { promiseAllSettled } from "../helpers";
 import { LastFMService } from "../services/LastFM/LastFMService";
 
 export interface FetchedResponses<T> {
@@ -39,12 +39,9 @@ export class MultiRequester {
       }, {} as FetchedResponses<T>);
     } else {
       let fetched = await promiseAllSettled(
-        this.usernames.map(async (u, idx) => {
-          console.log({ ...params, username: u });
-
-          await sleep(idx * 1000);
-          return method({ ...params, username: u } as ParamsT);
-        })
+        this.usernames.map(async (u) =>
+          method({ ...params, username: u } as ParamsT)
+        )
       );
 
       return fetched.reduce((acc, f, idx) => {
