@@ -32,25 +32,23 @@ export default class AlbumPercent extends LastFMBaseCommand<typeof args> {
     });
 
     if (!artist || !album) {
-      let nowPlaying = await this.lastFMService.nowPlayingParsed(
-        senderUsername
-      );
+      let nowPlaying = await this.lastFMService.nowPlaying(senderUsername);
 
       if (!artist) artist = nowPlaying.artist;
       if (!album) album = nowPlaying.album;
     }
 
     let [artistInfo, albumInfo] = await Promise.all([
-      this.lastFMConverter.artistInfo({ artist, username }),
+      this.lastFMService.artistInfo({ artist, username }),
       this.lastFMService.albumInfo({ artist, album, username }),
     ]);
 
     await this.traditionalReply(
       `${perspective.possessive} ${numberDisplay(
-        albumInfo.userplaycount,
+        albumInfo.userPlaycount,
         "play"
       )} of ${albumInfo.name.strong()} represent ${calculatePercent(
-        albumInfo.userplaycount,
+        albumInfo.userPlaycount,
         artistInfo.userPlaycount
       ).strong()}% of ${
         perspective.possessivePronoun

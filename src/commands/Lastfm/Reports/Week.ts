@@ -41,20 +41,27 @@ export default class Week extends LastFMBaseCommand<typeof args> {
 
     let firstPage = await paginator.getNext();
 
-    if (toInt(firstPage!["@attr"].totalPages) > 4)
+    if (!firstPage || firstPage.meta.total < 1) {
+      throw new LogicError(
+        `${perspective.plusToHave} don't have any scrobbles in that time period`
+      );
+    }
+
+    if (firstPage.meta.totalPages > 4) {
       throw new LogicError(
         `${perspective.plusToHave} too many scrobbles this week to see an overview!`
       );
+    }
 
-    paginator.maxPages = toInt(firstPage!["@attr"].totalPages);
+    paginator.maxPages = toInt(firstPage.meta.totalPages);
 
-    let restPages = await paginator.getAll({ concatTo: "track" });
+    let restPages = await paginator.getAllToConcatonable();
 
-    restPages.track = [...firstPage!.track, ...(restPages.track ?? [])];
+    firstPage.concat(restPages);
 
     let reportCalculator = new ReportCalculator(
       this.redirectsService,
-      restPages
+      firstPage
     );
 
     let week = await reportCalculator.calculate();
@@ -75,7 +82,7 @@ export default class Week extends LastFMBaseCommand<typeof args> {
       _${dateDisplay(sub(new Date(), { weeks: 1 }))} - ${dateDisplay(
       new Date()
     )}_
-    _${numberDisplay(restPages.track.length, "scrobble")}, ${numberDisplay(
+    _${numberDisplay(firstPage.tracks.length, "scrobble")}, ${numberDisplay(
       week.total.artists,
       "artist"
     )}, ${numberDisplay(week.total.albums, "album")}, ${numberDisplay(

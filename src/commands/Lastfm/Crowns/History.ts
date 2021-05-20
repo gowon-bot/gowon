@@ -29,11 +29,10 @@ export class History extends CrownsChildCommand<typeof args> {
     });
 
     if (!artist) {
-      artist = (await this.lastFMService.nowPlayingParsed(senderUsername))
-        .artist;
+      artist = (await this.lastFMService.nowPlaying(senderUsername)).artist;
     }
 
-    let artistDetails = await this.lastFMConverter.artistInfo({
+    let artistDetails = await this.lastFMService.artistInfo({
       artist,
     });
 

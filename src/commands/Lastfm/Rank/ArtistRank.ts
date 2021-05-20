@@ -35,8 +35,7 @@ export default class ArtistRank extends LastFMBaseCommand<typeof args> {
     });
 
     if (!artist)
-      artist = (await this.lastFMService.nowPlayingParsed(senderUsername))
-        .artist;
+      artist = (await this.lastFMService.nowPlaying(senderUsername)).artist;
 
     let topArtists = await this.lastFMService.topArtists({
       username,
@@ -47,7 +46,7 @@ export default class ArtistRank extends LastFMBaseCommand<typeof args> {
 
     let rank = (
       await Promise.all(
-        topArtists.artist.map(
+        topArtists.artists.map(
           async (a) => await this.redirectsCache.getRedirect(a.name)
         )
       )
@@ -57,16 +56,16 @@ export default class ArtistRank extends LastFMBaseCommand<typeof args> {
       await this.traditionalReply(
         `that artist wasn't found in ${
           perspective.possessive
-        } top ${numberDisplay(topArtists.artist.length, "artist")}`
+        } top ${numberDisplay(topArtists.artists.length, "artist")}`
       );
     } else {
       await this.traditionalReply(
-        `${topArtists.artist[rank].name.strong()} is ranked #${numberDisplay(
+        `${topArtists.artists[rank].name.strong()} is ranked #${numberDisplay(
           rank + 1
         ).strong()} in ${
           perspective.possessive
         } top 1,000 artists with ${numberDisplay(
-          topArtists.artist[rank].playcount
+          topArtists.artists[rank].userPlaycount
         ).strong()} plays`
       );
     }

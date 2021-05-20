@@ -9,7 +9,7 @@ import {
   TopTracks,
   TrackInfo,
   TagInfo,
-  ArtistTopTracks,
+  ArtistPopularTracks,
   Params,
   RecentTracksParams,
   TrackInfoParams,
@@ -21,7 +21,7 @@ import {
   LastFMPeriod,
   TopAlbumsParams,
   TopTracksParams,
-  ArtistTopTracksParams,
+  ArtistPopularTracksParams,
   Image,
   TagTopArtistsParams,
   TagTopArtists,
@@ -338,7 +338,9 @@ export class LastFMMock extends BaseService {
     return fakeTrack();
   }
 
-  async artistTopTracks(_: ArtistTopTracksParams): Promise<ArtistTopTracks> {
+  async artistTopTracks(
+    _: ArtistPopularTracksParams
+  ): Promise<ArtistPopularTracks> {
     return pagedResponse({
       track: [
         {

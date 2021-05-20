@@ -30,11 +30,10 @@ export default class ArtistPercent extends LastFMBaseCommand<typeof args> {
     });
 
     if (!artist)
-      artist = (await this.lastFMService.nowPlayingParsed(senderUsername))
-        .artist;
+      artist = (await this.lastFMService.nowPlaying(senderUsername)).artist;
 
     let [artistInfo, userInfo] = await Promise.all([
-      this.lastFMConverter.artistInfo({ artist, username }),
+      this.lastFMService.artistInfo({ artist, username }),
       this.lastFMService.userInfo({ username }),
     ]);
 
@@ -44,7 +43,7 @@ export default class ArtistPercent extends LastFMBaseCommand<typeof args> {
         "play"
       )} of ${artistInfo.name.strong()} represent ${calculatePercent(
         artistInfo.userPlaycount,
-        userInfo.playcount
+        userInfo.scrobbleCount
       ).strong()}% of ${perspective.possessivePronoun} total scrobbles`
     );
   }

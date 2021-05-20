@@ -67,6 +67,6 @@ export class RedirectsService extends BaseService {
   }
 
   async countAllRedirects(): Promise<number> {
-    return await ArtistRedirect.count()
+    return await ArtistRedirect.count();
   }
 }

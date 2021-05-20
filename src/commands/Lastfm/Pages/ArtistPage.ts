@@ -17,7 +17,7 @@ const args = {
 export default class ArtistPage extends LastFMBaseCommand<typeof args> {
   idSeed = "twice mina";
 
-  aliases = ["arp", "arpa"];
+  aliases = ["arp", "arpa", "apage"];
   description = "Links you to an artist's page on Last.fm";
   subcategory = "pages";
   usage = ["", "artist"];
@@ -30,15 +30,15 @@ export default class ArtistPage extends LastFMBaseCommand<typeof args> {
     let { username } = await this.parseMentions();
 
     if (!artist) {
-      artist = (await this.lastFMService.nowPlayingParsed(username)).artist;
+      artist = (await this.lastFMService.nowPlaying(username)).artist;
     }
 
-    let artistDetails = await this.lastFMConverter.artistInfo({
+    let artistDetails = await this.lastFMService.artistInfo({
       artist,
       username,
     });
 
-    this.traditionalReply(
+    this.send(
       `${artistDetails.name.strong()} on last.fm: ${cleanURL(
         artistDetails.url
       )}`

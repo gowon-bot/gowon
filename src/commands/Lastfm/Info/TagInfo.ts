@@ -34,10 +34,10 @@ export default class TagInfo extends InfoCommand<typeof args> {
       .addFields(
         {
           name: "Listeners",
-          value: numberDisplay(tagInfo.total),
+          value: numberDisplay(tagInfo.listeners),
           inline: true,
         },
-        { name: "Uses", value: numberDisplay(tagInfo.reach), inline: true }
+        { name: "Uses", value: numberDisplay(tagInfo.uses), inline: true }
       )
       .setURL(this.getLinkFromBio(tagInfo.wiki.summary) || "")
       .setDescription(this.scrubReadMore(tagInfo.wiki.summary));

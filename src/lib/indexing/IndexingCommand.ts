@@ -4,7 +4,6 @@ import { IndexingService } from "../../services/indexing/IndexingService";
 import { Arguments } from "../arguments/arguments";
 import { IndexerError, LogicError, UserNotIndexedError } from "../../errors";
 import gql from "graphql-tag";
-import { LastFMService } from "../../services/LastFM/LastFMService";
 import { Perspective } from "../Perspective";
 import { MessageEmbed } from "discord.js";
 import { User as DBUser } from "../../database/entity/User";
@@ -13,7 +12,7 @@ import {
   ConcurrencyManager,
   ConcurrentActions,
 } from "../caches/ConcurrencyManager";
-import { LastFMConverter } from "../../services/LastFM/Converter/LastFMConverter";
+import { LastFMService } from "../../services/LastFM/LastFMService";
 
 export interface ErrorResponse {
   errors: { message: string }[];
@@ -35,7 +34,6 @@ export abstract class IndexingBaseCommand<
   abstract connector: Connector<ResponseT, ParamsT>;
   indexingService = new IndexingService(this.logger);
   lastFMService = new LastFMService(this.logger);
-  lastFMConverter = new LastFMConverter(this.logger);
   concurrencyManager = new ConcurrencyManager();
 
   protected readonly indexerGuilds = [

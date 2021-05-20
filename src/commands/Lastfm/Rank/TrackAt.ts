@@ -36,7 +36,7 @@ export default class TrackAt extends LastFMBaseCommand<typeof args> {
       page: rank,
     });
 
-    let track = topTracks.track[0];
+    let track = topTracks.tracks[0];
 
     if (!track)
       throw new LogicError(
@@ -44,11 +44,12 @@ export default class TrackAt extends LastFMBaseCommand<typeof args> {
       );
 
     await this.traditionalReply(
-      `${track.name.strong()} by ${track.artist.name.italic()} is ranked at ${track[
-        "@attr"
-      ].rank.strong()} in ${
-        perspective.possessive
-      } top tracks with ${numberDisplay(track.playcount, "play").strong()}`
+      `${track.name.strong()} by ${track.artist.name.italic()} is ranked at **${
+        track.rank
+      }** in ${perspective.possessive} top tracks with ${numberDisplay(
+        track.userPlaycount,
+        "play"
+      ).strong()}`
     );
   }
 }

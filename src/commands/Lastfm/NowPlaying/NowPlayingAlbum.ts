@@ -1,4 +1,3 @@
-import { parseLastFMTrackResponse } from "../../../helpers/lastFM";
 import { CrownsService } from "../../../services/dbservices/CrownsService";
 import { LineConsolidator } from "../../../lib/LineConsolidator";
 import { NowPlayingBaseCommand } from "./NowPlayingBaseCommand";
@@ -18,20 +17,18 @@ export default class NowPlayingAlbum extends NowPlayingBaseCommand {
 
     let nowPlaying = await this.lastFMService.nowPlaying(username);
 
-    let track = parseLastFMTrackResponse(nowPlaying);
+    if (nowPlaying.isNowPlaying) this.scrobble(nowPlaying);
 
-    if (nowPlaying["@attr"]?.nowplaying) this.scrobble(track);
-
-    this.tagConsolidator.blacklistTags(track.artist, track.name);
+    this.tagConsolidator.blacklistTags(nowPlaying.artist, nowPlaying.name);
 
     let [artistInfo, albumInfo, crown] = await promiseAllSettled([
-      this.lastFMConverter.artistInfo({ artist: track.artist, username }),
+      this.lastFMService.artistInfo({ artist: nowPlaying.artist, username }),
       this.lastFMService.albumInfo({
-        artist: track.artist,
-        album: track.album,
+        artist: nowPlaying.artist,
+        album: nowPlaying.album,
         username,
       }),
-      this.crownsService.getCrownDisplay(track.artist, this.guild),
+      this.crownsService.getCrownDisplay(nowPlaying.artist, this.guild),
     ]);
 
     let { crownString, isCrownHolder } = await this.crownDetails(
@@ -40,12 +37,12 @@ export default class NowPlayingAlbum extends NowPlayingBaseCommand {
     );
 
     if (albumInfo.value)
-      this.tagConsolidator.addTags(albumInfo.value?.tags?.tag || []);
+      this.tagConsolidator.addTags(albumInfo.value?.tags || []);
     if (artistInfo.value)
       this.tagConsolidator.addTags(artistInfo.value?.tags || []);
 
-    let artistPlays = this.artistPlays(artistInfo, track, isCrownHolder);
-    let noArtistData = this.noArtistData(track);
+    let artistPlays = this.artistPlays(artistInfo, nowPlaying, isCrownHolder);
+    let noArtistData = this.noArtistData(nowPlaying);
     let albumPlays = this.albumPlays(albumInfo);
     let tags = this.tagConsolidator.consolidate(Infinity).join(" ‧ ");
 
@@ -97,6 +94,6 @@ export default class NowPlayingAlbum extends NowPlayingBaseCommand {
 
     let sentMessage = await this.send(nowPlayingEmbed);
 
-    await this.easterEggs(sentMessage, track);
+    await this.easterEggs(sentMessage, nowPlaying);
   }
 }

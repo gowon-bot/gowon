@@ -1,6 +1,5 @@
-import { add, differenceInSeconds, fromUnixTime } from "date-fns";
+import { add, differenceInSeconds } from "date-fns";
 import { TimeRange } from "../../helpers/date";
-import { toInt } from "../../helpers/lastFM";
 import { LastFMService } from "../../services/LastFM/LastFMService";
 
 export interface PacePrediction {
@@ -37,20 +36,15 @@ export class PaceCalculator {
     let userInfo = await this.lastFMService.userInfo({
       username: this.username,
     });
-    let scrobblingSince = fromUnixTime(toInt(userInfo.registered.unixtime));
 
-    let rate = this.calculateScrobblesPerHour(toInt(userInfo.playcount), {
-      from: scrobblingSince,
+    let rate = this.calculateScrobblesPerHour(userInfo.scrobbleCount, {
+      from: userInfo.registeredAt,
       to: new Date(),
     });
 
     return {
       scrobbleRate: rate,
-      prediction: this.makePrediction(
-        milestone,
-        toInt(userInfo.playcount),
-        rate
-      ),
+      prediction: this.makePrediction(milestone, userInfo.scrobbleCount, rate),
       milestone,
     };
   }

@@ -1,13 +1,8 @@
-import { LinkGenerator, ParsedTrack } from "../../../helpers/lastFM";
+import { LinkGenerator } from "../../../helpers/lastFM";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import config from "../../../../config.json";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
-import {
-  AlbumInfo,
-  RecentTracks,
-  Track,
-} from "../../../services/LastFM/LastFMService.types";
 import { numberDisplay } from "../../../helpers";
 import { Message, MessageEmbed, User } from "discord.js";
 import { CrownDisplay } from "../../../services/dbservices/CrownsService";
@@ -15,9 +10,14 @@ import { User as DBUser } from "../../../database/entity/User";
 import { TagConsolidator } from "../../../lib/tags/TagConsolidator";
 import { sanitizeForDiscord } from "../../../helpers/discord";
 import {
+  ConvertedAlbumInfo,
   ConvertedArtistInfo,
   ConvertedTrackInfo,
-} from "../../../services/LastFM/Converter/InfoTypes";
+} from "../../../services/LastFM/converters/InfoTypes";
+import {
+  ConvertedRecentTrack,
+  ConvertedRecentTracks,
+} from "../../../services/LastFM/converters/RecentTracks";
 
 const args = {
   inputs: {
@@ -26,9 +26,9 @@ const args = {
   mentions: standardMentions,
 } as const;
 
-export abstract class NowPlayingBaseCommand extends LastFMBaseCommand<
-  typeof args
-> {
+export abstract class NowPlayingBaseCommand<
+  T extends typeof args = typeof args
+> extends LastFMBaseCommand<T> {
   subcategory = "nowplaying";
   usage = [
     "",
@@ -69,7 +69,7 @@ export abstract class NowPlayingBaseCommand extends LastFMBaseCommand<
     return { username, senderUsername, discordUser };
   }
 
-  protected scrobble(track: ParsedTrack) {
+  protected scrobble(track: ConvertedRecentTrack) {
     if (
       this.gowonClient.environment === "production" &&
       this.gowonClient.isAlphaTester(this.author.id)
@@ -86,35 +86,32 @@ export abstract class NowPlayingBaseCommand extends LastFMBaseCommand<
     }
   }
 
-  protected nowPlayingEmbed(nowPlaying: Track, username: string): MessageEmbed {
+  protected nowPlayingEmbed(
+    nowPlaying: ConvertedRecentTrack,
+    username: string
+  ): MessageEmbed {
     let links = LinkGenerator.generateTrackLinksForEmbed(nowPlaying);
 
     return this.newEmbed()
       .setAuthor(
         `${
-          nowPlaying["@attr"]?.nowplaying ? "Now playing" : "Last scrobbled"
+          nowPlaying.isNowPlaying ? "Now playing" : "Last scrobbled"
         } for ${username}`,
         this.author.avatarURL() || undefined,
         LinkGenerator.userPage(username)
       )
       .setDescription(
         `by ${links.artist.strong(false)}` +
-          (nowPlaying.album["#text"]
-            ? ` from ${links.album.italic(false)}`
-            : "")
+          (nowPlaying.album ? ` from ${links.album.italic(false)}` : "")
       )
       .setTitle(sanitizeForDiscord(nowPlaying.name))
-      .setURL(
-        LinkGenerator.trackPage(nowPlaying.artist["#text"], nowPlaying.name)
-      )
-      .setThumbnail(
-        nowPlaying.image.find((i) => i.size === "large")?.["#text"] || ""
-      );
+      .setURL(LinkGenerator.trackPage(nowPlaying.artist, nowPlaying.name))
+      .setThumbnail(nowPlaying.images.get("large") || "");
   }
 
   protected artistPlays(
     artistInfo: { value?: ConvertedArtistInfo },
-    track: ParsedTrack,
+    track: ConvertedRecentTrack,
     isCrownHolder: boolean
   ): string {
     return artistInfo.value
@@ -129,7 +126,7 @@ export abstract class NowPlayingBaseCommand extends LastFMBaseCommand<
       : "";
   }
 
-  protected noArtistData(track: ParsedTrack): string {
+  protected noArtistData(track: ConvertedRecentTrack): string {
     return (
       "No data on last.fm for " +
       (track.artist.length > 150 ? "that artist" : track.artist)
@@ -143,18 +140,15 @@ export abstract class NowPlayingBaseCommand extends LastFMBaseCommand<
       : "";
   }
 
-  protected albumPlays(albumInfo: { value?: AlbumInfo }): string {
+  protected albumPlays(albumInfo: { value?: ConvertedAlbumInfo }): string {
     return albumInfo.value
-      ? numberDisplay(albumInfo.value?.userplaycount, "scrobble") +
+      ? numberDisplay(albumInfo.value?.userPlaycount, "scrobble") +
           " of this album"
       : "";
   }
 
-  protected scrobbleCount(nowPlayingResponse: RecentTracks): string {
-    return `${numberDisplay(
-      nowPlayingResponse["@attr"].total,
-      "total scrobble"
-    )}`;
+  protected scrobbleCount(nowPlayingResponse: ConvertedRecentTracks): string {
+    return `${numberDisplay(nowPlayingResponse.meta.total, "total scrobble")}`;
   }
 
   protected async crownDetails(
@@ -179,7 +173,10 @@ export abstract class NowPlayingBaseCommand extends LastFMBaseCommand<
     return { isCrownHolder, crownString };
   }
 
-  protected async easterEggs(sentMessage: Message, track: ParsedTrack) {
+  protected async easterEggs(
+    sentMessage: Message,
+    track: ConvertedRecentTrack
+  ) {
     if (
       track.artist.toLowerCase() === "twice" &&
       track.name.toLowerCase() === "jaljayo good night"

@@ -10,13 +10,13 @@ import {
 } from "typeorm";
 import { User } from "./User";
 import { CrownEvent } from "./meta/CrownEvent";
-import { LastFMService } from "../../services/LastFM/LastFMService";
 import { Logger } from "../../lib/Logger";
 import { Message } from "discord.js";
 import { CrownState } from "../../services/dbservices/CrownsService";
 import { GowonService } from "../../services/GowonService";
 import { CrownsQueries } from "../queries";
 import { toInt } from "../../helpers/lastFM";
+import { LastFMService } from "../../services/LastFM/LastFMService";
 
 export interface CrownRankResponse {
   count: string;

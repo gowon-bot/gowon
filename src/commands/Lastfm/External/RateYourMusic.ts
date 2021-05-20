@@ -26,7 +26,7 @@ export default class RateYourMusic extends LastFMBaseCommand<typeof args> {
     });
 
     if (!keywords) {
-      let nowplaying = await this.lastFMService.nowPlayingParsed(username);
+      let nowplaying = await this.lastFMService.nowPlaying(username);
 
       keywords = `${nowplaying.artist} - ${this.cleanAlbumName(
         nowplaying.album

@@ -1,94 +1,158 @@
-import { stringify } from "querystring";
-
-import {
-  Track,
-  Params,
-  RecentTracksParams,
-  TrackInfoParams,
-  ArtistInfoParams,
-  AlbumInfoParams,
-  LastFMPeriod,
-} from "./LastFMService.types";
-import config from "../../../config.json";
-import {
-  ParsedTrack,
-  parseLastFMTrackResponse,
-  toInt,
-} from "../../helpers/lastFM";
-import { LogicError, BadLastFMResponseError } from "../../errors";
+import { add } from "date-fns";
+import { BadLastFMResponseError, LogicError } from "../../errors";
 import { numberDisplay } from "../../helpers";
+import { TagsService } from "../dbservices/tags/TagsService";
 import { LastFMScraper } from "../scrapingServices/LastFMScraper";
 import { LastFMAPIService } from "./LastFMAPIService";
-import { Logger } from "../../lib/Logger";
-import { delay } from "bluebird";
-import { add } from "date-fns";
+import {
+  AlbumInfoParams,
+  ArtistInfoParams,
+  ArtistPopularTracksParams,
+  GetArtistCorrectionParams,
+  LastFMPeriod,
+  RecentTracksParams,
+  TagInfoParams,
+  TagTopArtistsParams,
+  TagTopTracksParams,
+  TopAlbumsParams,
+  TopArtistsParams,
+  TopTracksParams,
+  TrackInfoParams,
+  TrackSearchParams,
+  UserGetFriendsParams,
+  UserInfoParams,
+} from "./LastFMService.types";
+import {
+  ConvertedAlbumInfo,
+  ConvertedArtistInfo,
+  ConvertedTagInfo,
+  ConvertedTrackInfo,
+  ConvertedUserInfo,
+} from "./converters/InfoTypes";
+import {
+  ConvertedArtistCorrection,
+  ConvertedArtistPopularTracks,
+  ConvertedFriends,
+  ConvertedTagTopArtists,
+  ConvertedTagTopTracks,
+  ConvertedTrackSearch,
+} from "./converters/Misc";
+import {
+  ConvertedRecentTrack,
+  ConvertedRecentTracks,
+} from "./converters/RecentTracks";
+import {
+  ConvertedTopAlbums,
+  ConvertedTopArtists,
+  ConvertedTopTracks,
+} from "./converters/TopTypes";
 
 export class LastFMService extends LastFMAPIService {
-  url = "https://ws.audioscrobbler.com/2.0/";
   scraper = new LastFMScraper(this.logger);
 
-  constructor(logger?: Logger) {
-    super(logger);
-  }
+  private tagsService = new TagsService(this, this.logger);
 
-  get apikey(): string {
-    return config.lastFMAPIKey;
-  }
+  async artistInfo(params: ArtistInfoParams): Promise<ConvertedArtistInfo> {
+    let response: ConvertedArtistInfo;
 
-  buildParams(params: Params): string {
-    return stringify({
-      format: "json",
-      api_key: this.apikey,
-      ...params,
-    });
-  }
+    try {
+      response = new ConvertedArtistInfo(await this._artistInfo(params));
 
-  async nowPlaying(username: string): Promise<Track> {
-    return (
-      await this.recentTracks({
-        username,
-        limit: 1,
-      })
-    ).track[0];
-  }
+      this.tagsService.cacheTagsFromArtistInfo(response);
+    } catch (e) {
+      if (e.name === "LastFMError:6")
+        await this.tagsService.cacheTagsForArtistNotFound(params.artist);
 
-  async nowPlayingParsed(username: string): Promise<ParsedTrack> {
-    let nowPlaying = await this.nowPlaying(username);
-    return parseLastFMTrackResponse(nowPlaying);
-  }
-
-  async getMilestone(username: string, milestone: number): Promise<Track> {
-    let total = (await this.recentTracks({ username, limit: 1 }))["@attr"]
-      .total;
-
-    let response = await this.recentTracks({
-      username,
-      page: toInt(total) - milestone + 1,
-      limit: 1,
-    });
-
-    if (milestone > toInt(response["@attr"].total)) {
-      throw new LogicError(
-        `${username} hasn't scrobbled ${numberDisplay(milestone, "track")} yet!`
-      );
+      throw e;
     }
 
-    return response.track[1] ?? response.track[0];
+    return response;
   }
 
-  async getNumberScrobbles(
-    username: string,
-    from?: Date,
-    to?: Date
-  ): Promise<number> {
-    let params: RecentTracksParams = { username, limit: 1 };
+  async albumInfo(params: AlbumInfoParams): Promise<ConvertedAlbumInfo> {
+    return new ConvertedAlbumInfo(await this._albumInfo(params));
+  }
 
-    if (from) params.from = ~~(from.getTime() / 1000);
-    if (to) params.to = ~~(to.getTime() / 1000);
+  async trackInfo(params: TrackInfoParams): Promise<ConvertedTrackInfo> {
+    return new ConvertedTrackInfo(await this._trackInfo(params));
+  }
 
-    let recentTracks = await this.recentTracks(params);
+  async userInfo(params: UserInfoParams): Promise<ConvertedUserInfo> {
+    return new ConvertedUserInfo(await this._userInfo(params));
+  }
 
-    return toInt(recentTracks["@attr"].total) || 0;
+  async tagInfo(params: TagInfoParams): Promise<ConvertedTagInfo> {
+    return new ConvertedTagInfo(await this._tagInfo(params));
+  }
+
+  async topArtists(params: TopArtistsParams): Promise<ConvertedTopArtists> {
+    return new ConvertedTopArtists(await this._topArtists(params));
+  }
+
+  async topAlbums(params: TopAlbumsParams): Promise<ConvertedTopAlbums> {
+    return new ConvertedTopAlbums(await this._topAlbums(params));
+  }
+
+  async topTracks(params: TopTracksParams): Promise<ConvertedTopTracks> {
+    return new ConvertedTopTracks(await this._topTracks(params));
+  }
+
+  async recentTracks(
+    params: RecentTracksParams
+  ): Promise<ConvertedRecentTracks> {
+    return new ConvertedRecentTracks(await this._recentTracks(params));
+  }
+
+  async artistPopularTracks(
+    params: ArtistPopularTracksParams
+  ): Promise<ConvertedArtistPopularTracks> {
+    return new ConvertedArtistPopularTracks(
+      await this._artistPopularTracks(params)
+    );
+  }
+
+  async tagTopArtists(
+    params: TagTopArtistsParams
+  ): Promise<ConvertedTagTopArtists> {
+    return new ConvertedTagTopArtists(await this._tagTopArtists(params));
+  }
+
+  async trackSearch(params: TrackSearchParams): Promise<ConvertedTrackSearch> {
+    return new ConvertedTrackSearch(await this._trackSearch(params));
+  }
+
+  async getArtistCorrection(
+    params: GetArtistCorrectionParams
+  ): Promise<ConvertedArtistCorrection> {
+    return new ConvertedArtistCorrection(
+      await this._getArtistCorrection(params)
+    );
+  }
+
+  async userGetFriends(
+    params: UserGetFriendsParams
+  ): Promise<ConvertedFriends> {
+    return new ConvertedFriends(await this._userGetFriends(params));
+  }
+
+  async tagTopTracks(
+    params: TagTopTracksParams
+  ): Promise<ConvertedTagTopTracks> {
+    return new ConvertedTagTopTracks(await this._tagTopTracks(params));
+  }
+
+  // Derived methods
+  async nowPlaying(username: string): Promise<ConvertedRecentTrack> {
+    return (await this.recentTracks({ limit: 1, username })).first();
+  }
+
+  async getArtistPlays(username: string, artist: string): Promise<number> {
+    let playcount = (await this.artistInfo({ artist, username }))
+      ?.userPlaycount;
+
+    if (isNaN(playcount)) throw new BadLastFMResponseError();
+
+    return playcount;
   }
 
   async userExists(username: string): Promise<boolean> {
@@ -102,70 +166,6 @@ export class LastFMService extends LastFMAPIService {
       }
       throw e;
     }
-  }
-
-  async artistCount(
-    username: string,
-    timePeriod: LastFMPeriod = "overall"
-  ): Promise<number> {
-    let topArtists = await this.topArtists({
-      username,
-      limit: 1,
-      period: timePeriod,
-    });
-
-    return toInt(topArtists["@attr"].total) || 0;
-  }
-
-  async albumCount(
-    username: string,
-    timePeriod: LastFMPeriod = "overall"
-  ): Promise<number> {
-    let topArtists = await this.topAlbums({
-      username,
-      limit: 1,
-      period: timePeriod,
-    });
-
-    return toInt(topArtists["@attr"].total) || 0;
-  }
-
-  async trackCount(
-    username: string,
-    timePeriod: LastFMPeriod = "overall"
-  ): Promise<number> {
-    let topTracks = await this.topTracks({
-      username,
-      limit: 1,
-      period: timePeriod,
-    });
-
-    return toInt(topTracks["@attr"].total) || 0;
-  }
-
-  async goBack(username: string, when: Date): Promise<Track> {
-    let to = add(when, { hours: 6 });
-
-    let params = {
-      username,
-      limit: 1,
-      from: ~~(when.getTime() / 1000),
-      to: ~~(to.getTime() / 1000),
-    };
-
-    let recentTracks = await this.recentTracks(params);
-
-    return recentTracks.track[1] ?? recentTracks.track[0];
-  }
-
-  async getArtistPlays(username: string, artist: string): Promise<number> {
-    let playcount = toInt(
-      (await this.artistInfo({ artist, username })).stats?.userplaycount
-    );
-
-    if (isNaN(playcount)) throw new BadLastFMResponseError();
-
-    return playcount;
   }
 
   async correctArtist(params: ArtistInfoParams): Promise<string> {
@@ -194,35 +194,101 @@ export class LastFMService extends LastFMAPIService {
     };
   }
 
-  async validateRedirect(from: string, to: string): Promise<boolean> {
-    let fromCount = await this.getArtistPlays(
-      config.lastFMVerificationUsername,
-      from
-    );
-
-    await this.scrobbleTrack({
-      artist: from,
-      track: `${from} → ${to}`,
-      timestamp: Math.ceil(new Date().getTime() / 1000),
-    });
-
-    await delay(5000);
-
-    let toCount = await this.getArtistPlays(
-      config.lastFMVerificationUsername,
-      to
-    );
-
-    return toCount === fromCount + 1;
-  }
-
   async getArtistTags(artist: string): Promise<string[]> {
     try {
-      return (
-        (await this.artistInfo({ artist }))?.tags?.tag?.map((t) => t.name) || []
-      );
+      return (await this.artistInfo({ artist }))?.tags || [];
     } catch {
       return [];
     }
+  }
+
+  async artistCount(
+    username: string,
+    timePeriod: LastFMPeriod = "overall"
+  ): Promise<number> {
+    let topArtists = await this.topArtists({
+      username,
+      limit: 1,
+      period: timePeriod,
+    });
+
+    return topArtists.meta.total || 0;
+  }
+
+  async albumCount(
+    username: string,
+    timePeriod: LastFMPeriod = "overall"
+  ): Promise<number> {
+    let topArtists = await this.topAlbums({
+      username,
+      limit: 1,
+      period: timePeriod,
+    });
+
+    return topArtists.meta.total || 0;
+  }
+
+  async trackCount(
+    username: string,
+    timePeriod: LastFMPeriod = "overall"
+  ): Promise<number> {
+    let topTracks = await this.topTracks({
+      username,
+      limit: 1,
+      period: timePeriod,
+    });
+
+    return topTracks.meta.total || 0;
+  }
+
+  async getMilestone(
+    username: string,
+    milestone: number
+  ): Promise<ConvertedRecentTrack> {
+    let total = (await this.recentTracks({ username, limit: 1 })).meta.total;
+
+    let response = await this.recentTracks({
+      username,
+      page: total - milestone + 1,
+      limit: 1,
+    });
+
+    if (milestone > response.meta.total) {
+      throw new LogicError(
+        `${username} hasn't scrobbled ${numberDisplay(milestone, "track")} yet!`
+      );
+    }
+
+    return response.tracks[1] ?? response.first();
+  }
+
+  async getNumberScrobbles(
+    username: string,
+    from?: Date,
+    to?: Date
+  ): Promise<number> {
+    let params: RecentTracksParams = { username, limit: 1 };
+
+    if (from) params.from = ~~(from.getTime() / 1000);
+    if (to) params.to = ~~(to.getTime() / 1000);
+
+    let recentTracks = await this.recentTracks(params);
+
+    return recentTracks.meta.total || 0;
+  }
+
+  async goBack(username: string, when: Date): Promise<ConvertedRecentTrack> {
+    let to = add(when, { hours: 6 });
+
+    let params = {
+      username,
+      limit: 1,
+      from: ~~(when.getTime() / 1000),
+      to: ~~(to.getTime() / 1000),
+    };
+
+    let recentTracks = await this.recentTracks(params);
+
+    return recentTracks.tracks[1] ?? recentTracks.first();
   }
 }

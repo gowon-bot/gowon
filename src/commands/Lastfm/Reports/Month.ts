@@ -1,7 +1,6 @@
 import { sub } from "date-fns";
 import { LogicError } from "../../../errors";
 import { dateDisplay, numberDisplay } from "../../../helpers";
-import { toInt } from "../../../helpers/lastFM";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { ReportCalculator } from "../../../lib/calculators/ReportCalculator";
@@ -41,20 +40,26 @@ export default class Month extends LastFMBaseCommand<typeof args> {
 
     let firstPage = await paginator.getNext();
 
-    if (toInt(firstPage!["@attr"].totalPages) > 6)
+    if (!firstPage || firstPage.meta.total < 1) {
+      throw new LogicError(
+        `${perspective.plusToHave} don't have any scrobbles in that time period`
+      );
+    }
+
+    if (firstPage.meta.totalPages > 6)
       throw new LogicError(
         `${perspective.plusToHave} too many scrobbles this month to see an overview!`
       );
 
-    paginator.maxPages = toInt(firstPage!["@attr"].totalPages);
+    paginator.maxPages = firstPage.meta.totalPages;
 
-    let restPages = await paginator.getAll({ concatTo: "track" });
+    let restPages = await paginator.getAllToConcatonable();
 
-    restPages.track = [...firstPage!.track, ...(restPages.track ?? [])];
+    firstPage.concat(restPages);
 
     let reportCalculator = new ReportCalculator(
       this.redirectsService,
-      restPages
+      firstPage
     );
 
     let month = await reportCalculator.calculate();
@@ -75,7 +80,7 @@ export default class Month extends LastFMBaseCommand<typeof args> {
       _${dateDisplay(sub(new Date(), { months: 1 }))} - ${dateDisplay(
       new Date()
     )}_
-    _${numberDisplay(restPages.track.length, "scrobble")}, ${numberDisplay(
+    _${numberDisplay(firstPage.tracks.length, "scrobble")}, ${numberDisplay(
       month.total.artists,
       "artist"
     )}, ${numberDisplay(month.total.albums, "album")}, ${numberDisplay(

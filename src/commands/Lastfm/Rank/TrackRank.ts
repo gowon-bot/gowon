@@ -36,9 +36,7 @@ export default class TrackRank extends LastFMBaseCommand<typeof args> {
     });
 
     if (!track || !artist) {
-      let nowPlaying = await this.lastFMService.nowPlayingParsed(
-        senderUsername
-      );
+      let nowPlaying = await this.lastFMService.nowPlaying(senderUsername);
 
       if (!artist) artist = nowPlaying.artist;
       if (!track) track = nowPlaying.name;
@@ -49,7 +47,7 @@ export default class TrackRank extends LastFMBaseCommand<typeof args> {
       limit: 1000,
     });
 
-    let rank = topTracks.track.findIndex(
+    let rank = topTracks.tracks.findIndex(
       (a) =>
         a.name.toLowerCase() === track!.toLowerCase() &&
         a.artist.name.toLowerCase() === artist!.toLowerCase()
@@ -59,14 +57,14 @@ export default class TrackRank extends LastFMBaseCommand<typeof args> {
       await this.traditionalReply(
         `that track wasn't found in ${
           perspective.possessive
-        } top ${numberDisplay(topTracks.track.length, "track")}`
+        } top ${numberDisplay(topTracks.tracks.length, "track")}`
       );
     } else {
       await this.traditionalReply(
-        `${topTracks.track[rank].name.strong()} by ${
-          topTracks.track[rank].artist.name
+        `${topTracks.tracks[rank].name.strong()} by ${
+          topTracks.tracks[rank].artist.name
         } is ranked #${numberDisplay(rank + 1).strong()} with ${numberDisplay(
-          topTracks.track[rank].playcount,
+          topTracks.tracks[rank].userPlaycount,
           "play"
         ).strong()}`
       );

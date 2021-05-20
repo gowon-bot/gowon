@@ -1,5 +1,5 @@
 import { RedirectsService } from "../../services/dbservices/RedirectsService";
-import { RecentTracks } from "../../services/LastFM/LastFMService.types";
+import { ConvertedRecentTracks } from "../../services/LastFM/converters/RecentTracks";
 import { RedirectsCache } from "../caches/RedirectsCache";
 
 interface Count {
@@ -32,27 +32,27 @@ export class ReportCalculator {
 
   constructor(
     private redirectsService: RedirectsService,
-    private tracks: RecentTracks
+    private tracks: ConvertedRecentTracks
   ) {}
 
   redirectsCache = new RedirectsCache(this.redirectsService);
 
   async calculate(): Promise<Report> {
-    for (let track of this.tracks.track) {
+    for (let track of this.tracks.tracks) {
       this.logCount(
         "tracks",
         track.name,
-        await this.redirectsCache.getRedirect(track.artist["#text"])
+        await this.redirectsCache.getRedirect(track.artist)
       );
       this.logCount(
         "artists",
-        await this.redirectsCache.getRedirect(track.artist["#text"])
+        await this.redirectsCache.getRedirect(track.artist)
       );
-      if (track.album["#text"])
+      if (track.album)
         this.logCount(
           "albums",
-          track.album["#text"],
-          await this.redirectsCache.getRedirect(track.artist["#text"])
+          track.album,
+          await this.redirectsCache.getRedirect(track.artist)
         );
     }
 

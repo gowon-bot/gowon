@@ -53,10 +53,9 @@ export default class IndexArtistTopAlbums extends IndexingBaseCommand<
     await this.throwIfNotIndexed(user, perspective);
 
     if (!artistName) {
-      artistName = (await this.lastFMService.nowPlayingParsed(senderUsername))
-        .artist;
+      artistName = (await this.lastFMService.nowPlaying(senderUsername)).artist;
     } else {
-      const lfmArtist = await this.lastFMConverter.artistInfo({
+      const lfmArtist = await this.lastFMService.artistInfo({
         artist: artistName,
       });
 

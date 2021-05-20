@@ -1,6 +1,5 @@
-import { TopArtist } from "../../services/LastFM/LastFMService.types";
 import { calculatePercent } from "../../helpers/stats";
-import { toInt } from "../../helpers/lastFM";
+import { ConvertedTopArtist } from "../../services/LastFM/converters/TopTypes";
 
 export interface TasteArtist {
   name: string;
@@ -15,8 +14,8 @@ export interface Taste {
 
 export class TasteCalculator {
   constructor(
-    private userOneArtists: TopArtist[],
-    private userTwoArtists: TopArtist[],
+    private userOneArtists: ConvertedTopArtist[],
+    private userTwoArtists: ConvertedTopArtist[],
     private artistAmount: number
   ) {}
 
@@ -36,8 +35,8 @@ export class TasteCalculator {
         if (userTwoArtist) {
           acc.push({
             name: artist.name,
-            user1plays: toInt(artist.playcount),
-            user2plays: toInt(userTwoArtist.playcount),
+            user1plays: artist.userPlaycount,
+            user2plays: userTwoArtist.userPlaycount,
           });
         }
 

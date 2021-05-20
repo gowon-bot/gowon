@@ -31,9 +31,7 @@ export default class AlbumPlays extends LastFMBaseCommand<typeof args> {
     });
 
     if (!artist || !album) {
-      let nowPlaying = await this.lastFMService.nowPlayingParsed(
-        senderUsername
-      );
+      let nowPlaying = await this.lastFMService.nowPlaying(senderUsername);
 
       if (!artist) artist = nowPlaying.artist;
       if (!album) album = nowPlaying.album;
@@ -47,10 +45,10 @@ export default class AlbumPlays extends LastFMBaseCommand<typeof args> {
 
     await this.traditionalReply(
       `${perspective.plusToHave}` +
-        (toInt(albumDetails.userplaycount) === 0
+        (toInt(albumDetails.userPlaycount) === 0
           ? "n't scrobbled"
           : ` **${numberDisplay(
-              albumDetails.userplaycount,
+              albumDetails.userPlaycount,
               "**scrobble"
             )} of`) +
         ` ${albumDetails.name.italic()} by ${albumDetails.artist.strong()}`

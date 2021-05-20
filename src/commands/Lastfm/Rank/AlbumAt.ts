@@ -38,7 +38,7 @@ export default class AlbumAt extends LastFMBaseCommand<typeof args> {
       page: rank,
     });
 
-    let album = topAlbums.album[0];
+    let album = topAlbums.albums[0];
 
     if (!album)
       throw new LogicError(
@@ -46,11 +46,12 @@ export default class AlbumAt extends LastFMBaseCommand<typeof args> {
       );
 
     await this.traditionalReply(
-      `${album.name.strong()} by ${album.artist.name.italic()} is ranked at #${album[
-        "@attr"
-      ].rank.strong()} in ${
-        perspective.possessive
-      } top albums with ${numberDisplay(album.playcount, "play").strong()}`
+      `${album.name.strong()} by ${album.artist.name.italic()} is ranked at #**${
+        album.rank
+      }** in ${perspective.possessive} top albums with ${numberDisplay(
+        album.userPlaycount,
+        "play"
+      ).strong()}`
     );
   }
 }

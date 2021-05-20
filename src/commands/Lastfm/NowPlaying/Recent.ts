@@ -37,11 +37,11 @@ export default class Recent extends LastFMBaseCommand<typeof args> {
     let embed = this.newEmbed()
       .setTitle(`${perspective.upper.possessive} recent tracks`)
       .setDescription(
-        recentTracks.track
+        recentTracks.tracks
           .map(
             (t) =>
-              `${t.name} by ${t.artist["#text"].strong()} ${
-                t.album?.["#text"] ? `from ${t.album["#text"].italic()}` : ""
+              `${t.name} by ${t.artist.strong()} ${
+                t.album ? `from ${t.album.italic()}` : ""
               }`
           )
           .join("\n")

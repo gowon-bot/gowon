@@ -35,12 +35,11 @@ export default class ArtistInfo extends InfoCommand<typeof args> {
     });
 
     if (!artist) {
-      artist = (await this.lastFMService.nowPlayingParsed(senderUsername))
-        .artist;
+      artist = (await this.lastFMService.nowPlaying(senderUsername)).artist;
     }
 
     let [artistInfo, userInfo, spotifyArtist] = await Promise.all([
-      this.lastFMConverter.artistInfo({ artist, username }),
+      this.lastFMService.artistInfo({ artist, username }),
       this.lastFMService.userInfo({ username }),
       this.spotifyService.searchArtist(artist),
     ]);
@@ -106,7 +105,7 @@ export default class ArtistInfo extends InfoCommand<typeof args> {
           perspective.objectPronoun
         } (${calculatePercent(
           artistInfo.userPlaycount,
-          userInfo.playcount
+          userInfo.scrobbleCount
         ).strong()}% of ${perspective.possessivePronoun} total scrobbles)
 ${
   parseFloat(percentage) > 0

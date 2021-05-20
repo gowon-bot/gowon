@@ -2,8 +2,7 @@ import { Message } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
-import { UserInfo } from "../../../services/LastFM/LastFMService.types";
-import { differenceInDays, fromUnixTime } from "date-fns";
+import { differenceInDays } from "date-fns";
 import { DiscordIDMention } from "../../../lib/arguments/mentions/DiscordIDMention";
 import { LogicError } from "../../../errors";
 import { IndexingService } from "../../../services/indexing/IndexingService";
@@ -14,7 +13,7 @@ import { Delegate } from "../../../lib/command/BaseCommand";
 import SimpleLogin from "./SimpleLogin";
 import { IndexingBaseCommand } from "../../../lib/indexing/IndexingCommand";
 import { EmptyConnector } from "../../../lib/indexing/BaseConnector";
-import { toInt } from "../../../helpers/lastFM";
+import { ConvertedUserInfo } from "../../../services/LastFM/converters/InfoTypes";
 
 const args = {
   inputs: {
@@ -83,7 +82,7 @@ export default class Login extends IndexingBaseCommand<any, any, typeof args> {
       throw new LogicError("please do not include the triangle brackets! (<>)");
     }
 
-    let userInfo: UserInfo | undefined;
+    let userInfo: ConvertedUserInfo | undefined;
 
     try {
       userInfo = await this.lastFMService.userInfo({ username });
@@ -106,13 +105,11 @@ export default class Login extends IndexingBaseCommand<any, any, typeof args> {
       userInfo.name
     );
 
-    let joined = fromUnixTime(toInt(userInfo.registered.unixtime));
-
     const embed = this.newEmbed()
       .setAuthor(...this.generateEmbedAuthor("Login"))
       .setDescription(
         `Logged in as ${userInfo.name.code()}${
-          differenceInDays(new Date(), joined) < 10
+          differenceInDays(new Date(), userInfo.registeredAt) < 10
             ? ". Welcome to Last.fm!"
             : ""
         }

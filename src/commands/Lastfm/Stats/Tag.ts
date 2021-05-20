@@ -1,12 +1,11 @@
 import { numberDisplay } from "../../../helpers";
-import { toInt } from "../../../helpers/lastFM";
 import { calculatePercent } from "../../../helpers/stats";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { Paginator } from "../../../lib/Paginator";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
-import { TopArtists } from "../../../services/LastFM/LastFMService.types";
+import { ConvertedTopArtists } from "../../../services/LastFM/converters/TopTypes";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 interface Overlap {
@@ -52,10 +51,12 @@ export default class Tag extends LastFMBaseCommand<typeof args> {
 
     let [tagTopArtists, userTopArtists] = await Promise.all([
       this.lastFMService.tagTopArtists({ tag, limit: 1000 }),
-      paginator.getAll<TopArtists>({ concatTo: "artist", concurrent: false }),
+      paginator.getAllToConcatonable({
+        concurrent: false,
+      }),
     ]);
 
-    let tagArtistNames = tagTopArtists!.artist.map((a) =>
+    let tagArtistNames = tagTopArtists!.artists.map((a) =>
       a.name.toLowerCase().replace(/\s+/g, "-")
     );
 
@@ -64,14 +65,12 @@ export default class Tag extends LastFMBaseCommand<typeof args> {
     let embed = this.newEmbed()
       .setAuthor(this.author.username, this.author.avatarURL() || "")
       .setTitle(
-        `${perspective.upper.possessive} top ${
-          tagTopArtists!["@attr"].tag
-        } artists`
+        `${perspective.upper.possessive} top ${tagTopArtists.meta.tag} artists`
       )
       .setDescription(
         `
 _Comparing ${perspective.possessive} top ${numberDisplay(
-          userTopArtists.artist.length,
+          userTopArtists.artists.length,
           "artist"
         )} and the top ${numberDisplay(
           tagArtistNames.length,
@@ -103,14 +102,14 @@ _Comparing ${perspective.possessive} top ${numberDisplay(
   }
 
   calculateOverlap(
-    userTopArtists: TopArtists,
+    userTopArtists: ConvertedTopArtists,
     tagArtistNames: string[]
   ): Overlap[] {
-    return userTopArtists.artist.reduce((acc, a) => {
+    return userTopArtists.artists.reduce((acc, a) => {
       if (tagArtistNames.includes(a.name.toLowerCase().replace(/\s+/g, "-")))
         acc.push({
           artist: a.name,
-          plays: toInt(a.playcount),
+          plays: a.userPlaycount,
         });
 
       return acc;

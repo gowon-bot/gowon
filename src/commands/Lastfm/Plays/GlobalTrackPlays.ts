@@ -33,15 +33,13 @@ export default class GlobalTrackPlays extends LastFMBaseCommand<typeof args> {
     });
 
     if (!artist || !track) {
-      let nowPlaying = await this.lastFMService.nowPlayingParsed(
-        senderUsername
-      );
+      let nowPlaying = await this.lastFMService.nowPlaying(senderUsername);
 
       if (!artist) artist = nowPlaying.artist;
       if (!track) track = nowPlaying.name;
     }
 
-    let trackDetails = await this.lastFMConverter.trackInfo({
+    let trackDetails = await this.lastFMService.trackInfo({
       artist,
       track,
       username,

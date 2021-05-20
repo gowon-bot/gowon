@@ -17,7 +17,10 @@ export class All extends OverviewChildCommand {
     );
 
     let [friends] = await Promise.all([
-      this.lastFMService.userGetFriends({ username: this.username, limit: 1 }),
+      this.lastFMService.userGetFriends({
+        username: this.username,
+        limit: 1,
+      }),
       await this.calculator.cacheAll(),
     ]);
 
@@ -55,7 +58,7 @@ ${
     : ""
 }
 _Scrobbling since ${await this.calculator.joined()}_
-_Following ${numberDisplay(friends["@attr"].total, "user")}_
+_Following ${numberDisplay(friends.meta.total, "user")}_
 
 **Scrobbles**: ${await this.calculator.totalScrobbles()} (_${await this.calculator.avgPerDay()}/day_)
 **Artists**: ${await this.calculator.totalArtists()} (_${await this.calculator.avgScrobblesPerArtist()} scrobbles/artist_)

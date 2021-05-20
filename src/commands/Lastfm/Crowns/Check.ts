@@ -37,15 +37,15 @@ export class Check extends CrownsChildCommand<typeof args> {
     if (await senderUser?.isOptedOut(message)) throw new OptedOutError();
 
     if (!artist) {
-      let response = await this.lastFMService.nowPlayingParsed(username);
-      if (!response.nowPlaying)
+      let response = await this.lastFMService.nowPlaying(username);
+      if (!response.isNowPlaying)
         throw new LogicError(
           "you don't appear to be currently scrobbling anything."
         );
       artist = response.artist;
     }
 
-    let artistDetails = await this.lastFMConverter.artistInfo({
+    let artistDetails = await this.lastFMService.artistInfo({
       artist,
       username,
     });

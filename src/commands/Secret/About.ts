@@ -1,11 +1,10 @@
-import { differenceInDays, fromUnixTime } from "date-fns";
+import { differenceInDays } from "date-fns";
 import { Crown } from "../../database/entity/Crown";
 import { Friend } from "../../database/entity/Friend";
 import { CommandRun } from "../../database/entity/meta/CommandRun";
 import { CrownEvent } from "../../database/entity/meta/CrownEvent";
 import { dateDisplay, numberDisplay } from "../../helpers";
 import { displayLink } from "../../helpers/discord";
-import { toInt } from "../../helpers/lastFM";
 import { BaseCommand } from "../../lib/command/BaseCommand";
 import { CommandManager } from "../../lib/command/CommandManager";
 import { CrownEventString } from "../../services/dbservices/CrownsHistoryService";
@@ -93,9 +92,9 @@ Total commands: ${numberDisplay(commandCount)}`,
         {
           name: "Last.fm stats",
           value: `_Scrobbling since ${dateDisplay(
-            fromUnixTime(toInt(userInfo.registered.unixtime))
+            userInfo.registeredAt
           )}_\n\nScrobbles: ${numberDisplay(
-            userInfo.playcount
+            userInfo.scrobbleCount
           )}\nArtists scrobbled: ${numberDisplay(artistCount)}`,
         }
       )

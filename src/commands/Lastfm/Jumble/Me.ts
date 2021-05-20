@@ -62,7 +62,7 @@ export class Me extends JumbleChildCommand<typeof args> {
     if (!artist)
       throw new LogicError("No suitable artists were found in your library!");
 
-    let artistInfo = await this.lastFMConverter.artistInfo({
+    let artistInfo = await this.lastFMService.artistInfo({
       artist: artist.name,
     });
 
@@ -85,9 +85,9 @@ export class Me extends JumbleChildCommand<typeof args> {
       `This artist has **${abbreviateNumber(
         artistInfo.listeners
       )}** listeners on Last.fm and you have scrobbled them **${numberDisplay(
-        artist.playcount,
+        artist.userPlaycount,
         "**time"
-      )} (ranked #${numberDisplay(artist["@attr"].rank)}).`,
+      )} (ranked #${numberDisplay(artist.rank)}).`,
       {
         shouldDisplay: this.tagConsolidator.hasAnyTags(),
         string: `This artist is tagged as ${tags

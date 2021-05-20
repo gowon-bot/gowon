@@ -1,12 +1,11 @@
 import { numberDisplay } from "../../../helpers";
-import { toInt } from "../../../helpers/lastFM";
 import { calculatePercent } from "../../../helpers/stats";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { Paginator } from "../../../lib/Paginator";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
-import { TopTracks } from "../../../services/LastFM/LastFMService.types";
+import { ConvertedTopTracks } from "../../../services/LastFM/converters/TopTypes";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 interface Overlap {
@@ -54,10 +53,10 @@ export default class TagTracks extends LastFMBaseCommand<typeof args> {
 
     let [tagTopTracks, userTopTracks] = await Promise.all([
       this.lastFMService.tagTopTracks({ tag, limit: 1000 }),
-      paginator.getAll<TopTracks>({ concatTo: "track", concurrent: false }),
+      paginator.getAllToConcatonable({ concurrent: false }),
     ]);
 
-    let tagTrackNames = tagTopTracks!.track.map((t) =>
+    let tagTrackNames = tagTopTracks!.tracks.map((t) =>
       this.generateTrackName(t.artist.name, t.name)
     );
 
@@ -66,14 +65,12 @@ export default class TagTracks extends LastFMBaseCommand<typeof args> {
     let embed = this.newEmbed()
       .setAuthor(this.author.username, this.author.avatarURL() || "")
       .setTitle(
-        `${perspective.upper.possessive} top ${
-          tagTopTracks!["@attr"].tag
-        } tracks`
+        `${perspective.upper.possessive} top ${tagTopTracks.meta.tag} tracks`
       )
       .setDescription(
         `
 _Comparing ${perspective.possessive} top ${numberDisplay(
-          userTopTracks.track.length,
+          userTopTracks.tracks.length,
           "track"
         )} and the top ${numberDisplay(
           tagTrackNames.length,
@@ -107,15 +104,15 @@ _Comparing ${perspective.possessive} top ${numberDisplay(
   }
 
   private calculateOverlap(
-    userTopTracks: TopTracks,
+    userTopTracks: ConvertedTopTracks,
     tagTrackNames: string[]
   ): Overlap[] {
-    return userTopTracks.track.reduce((acc, t) => {
+    return userTopTracks.tracks.reduce((acc, t) => {
       if (tagTrackNames.includes(this.generateTrackName(t.artist.name, t.name)))
         acc.push({
           track: t.name,
           artist: t.artist.name,
-          plays: toInt(t.playcount),
+          plays: t.userPlaycount,
         });
 
       return acc;

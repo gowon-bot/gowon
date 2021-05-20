@@ -1,5 +1,8 @@
 import { RedirectsService } from "../../services/dbservices/RedirectsService";
-import { RecentTracks, Track } from "../../services/LastFM/LastFMService.types";
+import {
+  ConvertedRecentTrack,
+  ConvertedRecentTracks,
+} from "../../services/LastFM/converters/RecentTracks";
 import { RedirectsCache } from "../caches/RedirectsCache";
 import { isPaginator, Paginator } from "../Paginator";
 
@@ -21,7 +24,7 @@ export class ComboCalculator {
   ) {}
 
   async calculate(
-    recentTracks: Paginator<any, RecentTracks> | RecentTracks
+    recentTracks: Paginator<any, ConvertedRecentTracks> | ConvertedRecentTracks
   ): Promise<Combo> {
     if (isPaginator(recentTracks)) {
       for await (let page of recentTracks.iterator()) {
@@ -41,13 +44,13 @@ export class ComboCalculator {
   }
 
   private async handlePage(
-    page: RecentTracks,
+    page: ConvertedRecentTracks,
     pageNumber: number,
     maxPages: number
   ): Promise<boolean> {
     let tracks = this.extractTracks(page, pageNumber);
 
-    this.totalTracks += tracks.filter((t) => !t["@attr"]?.nowplaying).length;
+    this.totalTracks += tracks.filter((t) => !t.isNowPlaying).length;
 
     for (let trackIndex = 0; trackIndex < tracks.length; trackIndex++) {
       let track = tracks[trackIndex];
@@ -63,25 +66,31 @@ export class ComboCalculator {
     return true;
   }
 
-  private extractTracks(page: RecentTracks, pageNumber: number): Track[] {
-    let tracks = page.track;
+  private extractTracks(
+    page: ConvertedRecentTracks,
+    pageNumber: number
+  ): ConvertedRecentTrack[] {
+    let { tracks } = page;
 
     if (!tracks.length) return [];
 
-    if (pageNumber === 1) this.combo.imprint(tracks[0]);
+    if (pageNumber === 1) this.combo.imprint(page.first());
 
     if (pageNumber === 1) {
       return tracks;
     } else {
-      return tracks.filter((t) => !t["@attr"]?.nowplaying);
+      return tracks.filter((t) => !t.isNowPlaying);
     }
   }
 
-  private async shouldContinue(track: Track): Promise<boolean> {
+  private async shouldContinue(track: ConvertedRecentTrack): Promise<boolean> {
     return await this.combo.compareTrackToCombo(track);
   }
 
-  private async incrementCombo(track: Track, last: boolean): Promise<void> {
+  private async incrementCombo(
+    track: ConvertedRecentTrack,
+    last: boolean
+  ): Promise<void> {
     await this.combo.increment(track, last);
   }
 }
@@ -104,8 +113,8 @@ export class Combo {
     );
   }
 
-  imprint(track: Track) {
-    let nowplaying = !!track["@attr"]?.nowplaying;
+  imprint(track: ConvertedRecentTrack) {
+    let nowplaying = !!track.isNowPlaying;
 
     let defaultDetails = {
       nowplaying,
@@ -116,12 +125,12 @@ export class Combo {
 
     this.artist = {
       ...defaultDetails,
-      name: track.artist["#text"],
+      name: track.artist,
     } as ComboDetails;
 
     this.album = {
       ...defaultDetails,
-      name: track.album["#text"],
+      name: track.album,
     } as ComboDetails;
 
     this.track = {
@@ -151,23 +160,20 @@ export class Combo {
     ];
   }
 
-  async compareTrackToCombo(track: Track) {
+  async compareTrackToCombo(track: ConvertedRecentTrack) {
     return (
-      (await this.compareArtistNames(
-        track.artist["#text"],
-        this.artistNames
-      )) ||
-      this.caseInsensitiveCompare(track.album["#text"], this.albumName) ||
+      (await this.compareArtistNames(track.artist, this.artistNames)) ||
+      this.caseInsensitiveCompare(track.album, this.albumName) ||
       this.caseInsensitiveCompare(track.name, this.trackName)
     );
   }
 
-  async increment(track: Track, hitMax: boolean) {
-    if (track["@attr"]?.nowplaying) return;
+  async increment(track: ConvertedRecentTrack, hitMax: boolean) {
+    if (track.isNowPlaying) return;
 
     if (
       this.artist.shouldIncrement &&
-      (await this.compareArtistNames(track.artist["#text"], this.artistNames))
+      (await this.compareArtistNames(track.artist, this.artistNames))
     ) {
       this.artist.plays += 1;
       this.artist.hitMax = hitMax;
@@ -175,7 +181,7 @@ export class Combo {
 
     if (
       this.album.shouldIncrement &&
-      this.caseInsensitiveCompare(track.album["#text"], this.albumName)
+      this.caseInsensitiveCompare(track.album, this.albumName)
     ) {
       this.album.plays += 1;
       this.album.hitMax = hitMax;

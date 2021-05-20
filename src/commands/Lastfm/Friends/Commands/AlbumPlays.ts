@@ -3,7 +3,6 @@ import { MultiRequester } from "../../../../lib/MultiRequester";
 import { numberDisplay } from "../../../../helpers";
 import { Arguments } from "../../../../lib/arguments/arguments";
 import { LastFMEntityNotFoundError } from "../../../../errors";
-import { toInt } from "../../../../helpers/lastFM";
 
 const args = {
   inputs: {
@@ -28,9 +27,7 @@ export class AlbumPlays extends FriendsChildCommand<typeof args> {
       album = this.parsedArguments.album;
 
     if (!artist || !album) {
-      let nowPlaying = await this.lastFMService.nowPlayingParsed(
-        this.senderUsername
-      );
+      let nowPlaying = await this.lastFMService.nowPlaying(this.senderUsername);
 
       if (!artist) artist = nowPlaying.artist;
       if (!album) album = nowPlaying.album;
@@ -56,16 +53,18 @@ export class AlbumPlays extends FriendsChildCommand<typeof args> {
         Object.keys(albumDetails)
           .sort(
             (a, b) =>
-              (toInt(albumDetails[b]?.userplaycount) ?? -Infinity) -
-              (toInt(albumDetails[a]?.userplaycount) ?? -Infinity)
+              (albumDetails[b]?.userPlaycount ?? -Infinity) -
+              (albumDetails[a]?.userPlaycount ?? -Infinity)
           )
           .map((username) => {
             let ad = albumDetails[username];
 
-            if (!ad?.userplaycount) return this.displayMissingFriend(username);
+            if (!ad || isNaN(ad.userPlaycount)) {
+              return this.displayMissingFriend(username);
+            }
 
             return `${username.code()} - **${numberDisplay(
-              ad.userplaycount,
+              ad.userPlaycount,
               "**scrobble"
             )}`;
           })

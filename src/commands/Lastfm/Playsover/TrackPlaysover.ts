@@ -2,7 +2,6 @@ import { Arguments } from "../../../lib/arguments/arguments";
 import { numberDisplay } from "../../../helpers";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
-import { toInt } from "../../../helpers/lastFM";
 
 const args = {
   inputs: {
@@ -33,8 +32,8 @@ export default class TrackPlaysover extends LastFMBaseCommand<typeof args> {
 
     let playsover = 0;
 
-    for (let track of topTracks.track) {
-      if (toInt(track.playcount) >= plays) playsover++;
+    for (let track of topTracks.tracks) {
+      if (track.userPlaycount >= plays) playsover++;
       else break;
     }
 

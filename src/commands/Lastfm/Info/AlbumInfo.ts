@@ -2,7 +2,7 @@ import { Arguments } from "../../../lib/arguments/arguments";
 import { InfoCommand } from "./InfoCommand";
 import { numberDisplay } from "../../../helpers";
 import { calculatePercent } from "../../../helpers/stats";
-import { LinkConsolidator, toInt } from "../../../helpers/lastFM";
+import { LinkConsolidator } from "../../../helpers/lastFM";
 import { LineConsolidator } from "../../../lib/LineConsolidator";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 
@@ -36,9 +36,7 @@ export default class AlbumInfo extends InfoCommand<typeof args> {
     });
 
     if (!artist || !album) {
-      let nowPlaying = await this.lastFMService.nowPlayingParsed(
-        senderUsername
-      );
+      let nowPlaying = await this.lastFMService.nowPlaying(senderUsername);
 
       if (!artist) artist = nowPlaying.artist;
       if (!album) album = nowPlaying.album;
@@ -51,32 +49,32 @@ export default class AlbumInfo extends InfoCommand<typeof args> {
     ]);
 
     this.tagConsolidator.blacklistTags(albumInfo.artist, albumInfo.name);
-    this.tagConsolidator.addTags(albumInfo.tags.tag);
+    this.tagConsolidator.addTags(albumInfo.tags);
 
     let linkConsolidator = new LinkConsolidator([
       LinkConsolidator.spotify(spotifyAlbum?.external_urls?.spotify),
       LinkConsolidator.lastfm(albumInfo.url),
     ]);
 
-    let albumDuration = albumInfo.tracks.track.reduce(
-      (sum, t) => sum + toInt(t.duration),
+    let albumDuration = albumInfo.tracks.reduce(
+      (sum, t) => sum + t.duration,
       0
     );
 
     this.lineConsolidator.addLines(
       {
-        shouldDisplay: albumInfo.tracks.track.length > 0 && !!albumDuration,
+        shouldDisplay: albumInfo.tracks.length > 0 && !!albumDuration,
         string: `_${numberDisplay(
-          albumInfo.tracks.track.length,
+          albumInfo.tracks.length,
           "track"
         )} (${numberDisplay(Math.ceil(albumDuration / 60), "minute")})_`,
       },
       {
-        shouldDisplay: albumInfo.tracks.track.length > 0 && !albumDuration,
-        string: `_${numberDisplay(albumInfo.tracks.track.length, "track")}_`,
+        shouldDisplay: albumInfo.tracks.length > 0 && !albumDuration,
+        string: `_${numberDisplay(albumInfo.tracks.length, "track")}_`,
       },
       {
-        shouldDisplay: albumInfo.tracks.track.length > 0,
+        shouldDisplay: albumInfo.tracks.length > 0,
         string: "",
       },
       {
@@ -98,8 +96,8 @@ export default class AlbumInfo extends InfoCommand<typeof args> {
     );
 
     let percentage = calculatePercent(
-      albumInfo.userplaycount,
-      albumInfo.playcount
+      albumInfo.userPlaycount,
+      albumInfo.globalPlaycount
     );
 
     let embed = this.newEmbed()
@@ -107,7 +105,7 @@ export default class AlbumInfo extends InfoCommand<typeof args> {
       .setDescription(this.lineConsolidator.consolidate())
       .setURL(albumInfo.url)
       .setImage(
-        albumInfo.image.find((i) => i.size === "large")?.["#text"] ||
+        albumInfo.images.get("large") ||
           (spotifyAlbum &&
             this.spotifyService.getImageFromSearchItem(spotifyAlbum)) ||
           ""
@@ -120,17 +118,17 @@ export default class AlbumInfo extends InfoCommand<typeof args> {
         },
         {
           name: "Playcount",
-          value: numberDisplay(albumInfo.playcount),
+          value: numberDisplay(albumInfo.globalPlaycount),
           inline: true,
         },
         {
           name: `${perspective.upper.possessive} stats`,
           value: `
-        \`${numberDisplay(albumInfo.userplaycount, "` play", true)} by ${
+        \`${numberDisplay(albumInfo.userPlaycount, "` play", true)} by ${
             perspective.objectPronoun
           } (${calculatePercent(
-            albumInfo.userplaycount,
-            userInfo.playcount,
+            albumInfo.userPlaycount,
+            userInfo.scrobbleCount,
             4
           ).strong()}% of ${perspective.possessivePronoun} total scrobbles)
         ${
@@ -143,7 +141,7 @@ export default class AlbumInfo extends InfoCommand<typeof args> {
         }
       )
       .setFooter(
-        albumInfo.image.find((i) => i.size === "large")?.["#text"]
+        albumInfo.images.get("large")
           ? "Image source: Last.fm"
           : spotifyAlbum &&
             this.spotifyService.getImageFromSearchItem(spotifyAlbum)

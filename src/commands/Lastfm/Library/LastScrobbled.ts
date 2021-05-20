@@ -32,15 +32,13 @@ export default class LastScrobbled extends LastFMBaseCommand<typeof args> {
     });
 
     if (artist && track) {
-      let trackInfo = await this.lastFMConverter.trackInfo({ artist, track });
+      let trackInfo = await this.lastFMService.trackInfo({ artist, track });
       artist = trackInfo.artist.name;
       track = trackInfo.name;
     }
 
     if (!artist || !track) {
-      let nowPlaying = await this.lastFMService.nowPlayingParsed(
-        senderUsername
-      );
+      let nowPlaying = await this.lastFMService.nowPlaying(senderUsername);
 
       if (!artist) {
         artist = nowPlaying.artist;

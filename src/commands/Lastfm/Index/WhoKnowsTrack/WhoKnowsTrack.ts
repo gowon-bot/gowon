@@ -50,14 +50,12 @@ export default class WhoKnowsTrack extends IndexingBaseCommand<
     });
 
     if (!artistName || !trackName) {
-      let nowPlaying = await this.lastFMService.nowPlayingParsed(
-        senderUsername
-      );
+      let nowPlaying = await this.lastFMService.nowPlaying(senderUsername);
 
       if (!artistName) artistName = nowPlaying.artist;
       if (!trackName) trackName = nowPlaying.name;
     } else {
-      const lfmTrack = await this.lastFMConverter.trackInfo({
+      const lfmTrack = await this.lastFMService.trackInfo({
         artist: artistName,
         track: trackName,
       });

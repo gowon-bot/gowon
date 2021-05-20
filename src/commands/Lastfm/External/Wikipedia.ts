@@ -26,7 +26,7 @@ export default class Wikipedia extends LastFMBaseCommand<typeof args> {
     });
 
     if (!keywords) {
-      let nowplaying = await this.lastFMService.nowPlayingParsed(username);
+      let nowplaying = await this.lastFMService.nowPlaying(username);
 
       keywords = `${nowplaying.artist} - ${nowplaying.name}`;
     }

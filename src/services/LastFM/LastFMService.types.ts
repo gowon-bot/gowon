@@ -214,20 +214,22 @@ export interface TopArtistsResponse {
   topartists: TopArtists;
 }
 
-export interface TopAlbums extends PagedCollection {
-  album: {
-    artist: {
-      url: string;
-      name: string;
-      mbid: string;
-    };
-    "@attr": { rank: string };
-    image: Image[];
-    playcount: string;
+export interface TopAlbum {
+  artist: {
     url: string;
     name: string;
     mbid: string;
-  }[];
+  };
+  "@attr": { rank: string };
+  image: Image[];
+  playcount: string;
+  url: string;
+  name: string;
+  mbid: string;
+}
+
+export interface TopAlbums extends PagedCollection {
+  album: TopAlbum[];
   "@attr": {
     page: string;
     total: string;
@@ -241,6 +243,22 @@ export interface TopAlbumsResponse {
   topalbums: TopAlbums;
 }
 
+export interface TopTrack {
+  "@attr": { rank: string };
+  duration: string;
+  playcount: string;
+  artist: {
+    url: string;
+    name: string;
+    mbid: string;
+  };
+  image: Image[];
+  streamable: { fulltrack: string; "#text": string };
+  mbid: string;
+  name: string;
+  url: string;
+}
+
 export interface TopTracks extends PagedCollection {
   "@attr": {
     page: string;
@@ -249,21 +267,7 @@ export interface TopTracks extends PagedCollection {
     perPage: string;
     totalPages: string;
   };
-  track: {
-    "@attr": { rank: string };
-    duration: string;
-    playcount: string;
-    artist: {
-      url: string;
-      name: string;
-      mbid: string;
-    };
-    image: Image[];
-    streamable: { fulltrack: string; "#text": string };
-    mbid: string;
-    name: string;
-    url: string;
-  }[];
+  track: TopTrack[];
 }
 
 export interface TopTracksResponse {
@@ -284,45 +288,47 @@ export interface TagInfoResponse {
   tag: TagInfo;
 }
 
-export interface ArtistTopTracks extends PagedCollection {
-  track: [
-    {
-      name: string;
-      playcount: string;
-      listeners: string;
-      url: string;
-      streamable: string;
-      artist: {
-        name: string;
-        mbid: string;
-        url: string;
-      };
-      image: Image[];
-      "@attr": {
-        rank: string;
-      };
-    }
-  ];
+export interface ArtistPopularTrack {
+  name: string;
+  playcount: string;
+  listeners: string;
+  url: string;
+  streamable: string;
+  artist: {
+    name: string;
+    mbid: string;
+    url: string;
+  };
+  image: Image[];
+  "@attr": {
+    rank: string;
+  };
 }
 
-export interface ArtistTopTracksResponse {
-  toptracks: ArtistTopTracks;
+export interface ArtistPopularTracks extends PagedCollection {
+  track: ArtistPopularTrack[];
+}
+
+export interface ArtistPopularTracksResponse {
+  toptracks: ArtistPopularTracks;
 }
 
 export interface TagTopArtistsResponse {
   topartists: TagTopArtists;
 }
 
+export interface TagTopArtist {
+  name: string;
+  url: string;
+  streamable: "0" | "1";
+  image: Image[];
+  "@attr": {
+    rank: string;
+  };
+}
+
 export interface TagTopArtists {
-  artist: {
-    name: string;
-    url: string;
-    streamable: "0" | "1";
-    image: Image[];
-    "@attr": {
-      rank: string;
-    };
-  }[];
+  artist: TagTopArtist[];
   "@attr": {
     tag: string;
     page: string;
@@ -330,6 +336,16 @@ export interface TagTopArtists {
     totalPages: string;
     total: string;
   };
+}
+
+export interface SearchedTrack {
+  name: string;
+  artist: string;
+  url: string;
+  streamable: "FIXME";
+  listeners: "46498";
+  image: Image[];
+  mbid: string;
 }
 
 export interface TrackSearchResponse {
@@ -343,15 +359,7 @@ export interface TrackSearchResponse {
     "opensearch:startIndex": string;
     "opensearch:itemsPerPage": string;
     trackmatches: {
-      track: {
-        name: string;
-        artist: string;
-        url: string;
-        streamable: "FIXME";
-        listeners: "46498";
-        image: Image[];
-        mbid: string;
-      }[];
+      track: SearchedTrack[];
     };
     "@attr": {};
   };
@@ -374,49 +382,53 @@ export interface ArtistCorrection {
   url: string;
 }
 
+export interface Friend {
+  playlists: string;
+  playcount: string;
+  subscriber: string;
+  name: string;
+  country: string;
+  image: Image[];
+  registered: {
+    unixtime: string;
+    "#text": string;
+  };
+  url: string;
+  realname: string;
+  bootstrap: string;
+  type: string;
+}
+
 export interface Friends extends PagedCollection {
-  user: {
-    playlists: string;
-    playcount: string;
-    subscriber: string;
-    name: string;
-    country: string;
-    image: Image[];
-    registered: {
-      unixtime: string;
-      "#text": string;
-    };
-    url: string;
-    realname: string;
-    bootstrap: string;
-    type: string;
-  }[];
+  user: Friend[];
 }
 
 export interface UserGetFriendsResponse {
   friends: Friends;
 }
 
-export interface TagTopTracks {
-  track: {
+export interface TagTopTrack {
+  name: string;
+  duration: string;
+  mbid: string;
+  url: string;
+  streamable: {
+    "#text": string;
+    fulltrack: string;
+  };
+  artist: {
     name: string;
-    duration: string;
     mbid: string;
     url: string;
-    streamable: {
-      "#text": string;
-      fulltrack: string;
-    };
-    artist: {
-      name: string;
-      mbid: string;
-      url: string;
-    };
-    image: Image[];
-    "@attr": {
-      rank: string;
-    };
-  }[];
+  };
+  image: Image[];
+  "@attr": {
+    rank: string;
+  };
+}
+
+export interface TagTopTracks {
+  track: TagTopTrack[];
   "@attr": {
     tag: string;
     page: string;
@@ -510,7 +522,7 @@ export interface TopAlbumsParams
     TimePeriodParams,
     PagedParams {}
 
-export interface ArtistTopTracksParams extends PagedParams {
+export interface ArtistPopularTracksParams extends PagedParams {
   artist: string;
   autocorrect?: 0 | 1;
 }

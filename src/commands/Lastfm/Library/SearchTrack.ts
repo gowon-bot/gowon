@@ -31,16 +31,15 @@ export default class SearchTrack extends SearchCommand {
       { username, limit: 1000 }
     );
 
-    let topTracks = await paginator.getAll({
-      concatTo: "track",
+    let topTracks = await paginator.getAllToConcatonable({
       concurrent: this.variationWasUsed("deep"),
     });
 
-    let filtered = topTracks.track.filter((t) =>
+    let filtered = topTracks.tracks.filter((t) =>
       this.clean(t.name).includes(this.clean(keywords))
     );
 
-    if (filtered.length !== 0 && filtered.length === topTracks.track.length) {
+    if (filtered.length !== 0 && filtered.length === topTracks.tracks.length) {
       throw new LogicError(
         "too many search results, try narrowing down your query..."
       );
@@ -49,7 +48,7 @@ export default class SearchTrack extends SearchCommand {
     let embed = this.newEmbed()
       .setTitle(
         `Search results in ${username}'s top ${numberDisplay(
-          topTracks.track.length,
+          topTracks.tracks.length,
           "track"
         )}`
       )
@@ -59,7 +58,7 @@ export default class SearchTrack extends SearchCommand {
 \`\`\`
 ${filtered
   .slice(0, 25)
-  .map((l) => `${l["@attr"].rank}. ${l.artist.name} - ${l.name}`)
+  .map((t) => `${t.rank}. ${t.artist.name} - ${t.name}`)
   .join("\n")}
 \`\`\``
           : `No results found for ${keywords.code()}!`

@@ -34,12 +34,12 @@ export class CheckMany extends CrownsChildCommand<typeof args> {
     let { username } = await this.parseMentions();
 
     if (!artists) {
-      artists = [(await this.lastFMService.nowPlayingParsed(username)).artist];
+      artists = [(await this.lastFMService.nowPlaying(username)).artist];
     }
 
     let artistDetailsList = await Promise.all(
       artists.map((artist) =>
-        this.lastFMConverter.artistInfo({ artist, username })
+        this.lastFMService.artistInfo({ artist, username })
       )
     );
 

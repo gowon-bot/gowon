@@ -46,8 +46,7 @@ export default class PopularTracks extends InfoCommand<typeof args> {
     let { senderUsername } = await this.parseMentions();
 
     if (!artist) {
-      artist = (await this.lastFMService.nowPlayingParsed(senderUsername))
-        .artist;
+      artist = (await this.lastFMService.nowPlaying(senderUsername)).artist;
     }
 
     // https://i0.wp.com/media.boingboing.net/wp-content/uploads/2016/11/bcf.png?fit=680%2C445&ssl=1
@@ -60,13 +59,13 @@ export default class PopularTracks extends InfoCommand<typeof args> {
       sliceStart = (position.start % 10) - (position.start % 10 === 0 ? -9 : 1),
       sliceEnd = sliceStart + (position.end - position.start) + 1;
 
-    let topTracks = await this.lastFMService.artistTopTracks({
+    let topTracks = await this.lastFMService.artistPopularTracks({
       artist,
       limit,
       page,
     });
 
-    let tracksToDisplay = topTracks.track.slice(sliceStart, sliceEnd);
+    let tracksToDisplay = topTracks.tracks.slice(sliceStart, sliceEnd);
 
     let embed = this.newEmbed()
       .setTitle(`Top tracks for ${tracksToDisplay[0]?.artist?.name || artist}`)

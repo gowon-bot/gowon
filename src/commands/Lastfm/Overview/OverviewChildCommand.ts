@@ -22,16 +22,7 @@ export abstract class OverviewChildCommand<
   discordID?: string;
 
   protected readonly playsoverTiers = [
-    20_000,
-    15_000,
-    10_000,
-    5000,
-    2000,
-    1000,
-    500,
-    250,
-    100,
-    50,
+    20_000, 15_000, 10_000, 5000, 2000, 1000, 500, 250, 100, 50, 1,
   ];
 
   async getAuthorDetails(): Promise<{
@@ -39,9 +30,7 @@ export abstract class OverviewChildCommand<
     colour: string;
     image: string;
   }> {
-    let image = (await this.calculator.userInfo()).image.find(
-      (i) => i.size === "large"
-    )?.["#text"]!;
+    let image = (await this.calculator.userInfo()).images.get("large")!;
 
     let userType = (await this.calculator.userInfo()).type;
     let badge =

@@ -33,9 +33,7 @@ export default class GlobalAlbumPlays extends LastFMBaseCommand<typeof args> {
     });
 
     if (!artist || !album) {
-      let nowPlaying = await this.lastFMService.nowPlayingParsed(
-        senderUsername
-      );
+      let nowPlaying = await this.lastFMService.nowPlaying(senderUsername);
 
       if (!artist) artist = nowPlaying.artist;
       if (!album) album = nowPlaying.album;
@@ -48,17 +46,17 @@ export default class GlobalAlbumPlays extends LastFMBaseCommand<typeof args> {
     });
 
     let percentage = calculatePercent(
-      albumDetails.userplaycount,
-      albumDetails.playcount
+      albumDetails.userPlaycount,
+      albumDetails.globalPlaycount
     );
 
     await this.send(
       `Last.fm has scrobbled ${albumDetails.name.italic()} by ${
         albumDetails.artist
-      } ${numberDisplay(albumDetails.playcount, "time")}${
-        toInt(albumDetails.userplaycount) > 0
+      } ${numberDisplay(albumDetails.globalPlaycount, "time")}${
+        toInt(albumDetails.userPlaycount) > 0
           ? `. ${perspective.upper.plusToHave} ${numberDisplay(
-              albumDetails.userplaycount,
+              albumDetails.userPlaycount,
               "scrobble"
             )} ${parseFloat(percentage) > 0 ? `(${percentage}%)` : ""}`
           : ""

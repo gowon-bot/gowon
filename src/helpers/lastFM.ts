@@ -1,3 +1,4 @@
+import { ConvertedRecentTrack } from "../services/LastFM/converters/RecentTracks";
 import { Track } from "../services/LastFM/LastFMService.types";
 
 import {
@@ -112,20 +113,20 @@ export abstract class LinkGenerator {
     );
   }
 
-  static generateTrackLinks(track: Track): TrackLinks {
+  static generateTrackLinks(track: ConvertedRecentTrack): TrackLinks {
     return {
-      artist: this.artistPage(track.artist["#text"]),
-      album: this.albumPage(track.artist["#text"], track.album["#text"]),
-      track: this.trackPage(track.artist["#text"], track.name),
+      artist: this.artistPage(track.artist),
+      album: this.albumPage(track.artist, track.album),
+      track: this.trackPage(track.artist, track.name),
     };
   }
 
-  static generateTrackLinksForEmbed(track: Track): TrackLinks {
+  static generateTrackLinksForEmbed(track: ConvertedRecentTrack): TrackLinks {
     let links = this.generateTrackLinks(track);
 
     return {
-      artist: generateLinkEmbed(track.artist["#text"], links.artist),
-      album: generateLinkEmbed(track.album["#text"], links.album),
+      artist: generateLinkEmbed(track.artist, links.artist),
+      album: generateLinkEmbed(track.album, links.album),
       track: generateLinkEmbed(track.name, links.track),
     };
   }

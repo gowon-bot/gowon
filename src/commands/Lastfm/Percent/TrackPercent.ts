@@ -32,17 +32,15 @@ export default class TrackPercent extends LastFMBaseCommand<typeof args> {
     });
 
     if (!artist || !track) {
-      let nowPlaying = await this.lastFMService.nowPlayingParsed(
-        senderUsername
-      );
+      let nowPlaying = await this.lastFMService.nowPlaying(senderUsername);
 
       if (!artist) artist = nowPlaying.artist;
       if (!track) track = nowPlaying.name;
     }
 
     let [artistInfo, trackInfo] = await Promise.all([
-      this.lastFMConverter.artistInfo({ artist, username }),
-      this.lastFMConverter.trackInfo({ artist, track, username }),
+      this.lastFMService.artistInfo({ artist, username }),
+      this.lastFMService.trackInfo({ artist, track, username }),
     ]);
 
     await this.traditionalReply(

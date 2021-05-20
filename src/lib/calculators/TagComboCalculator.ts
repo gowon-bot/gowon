@@ -1,6 +1,9 @@
 import { TagsService } from "../../services/dbservices/tags/TagsService";
 import { LastFMService } from "../../services/LastFM/LastFMService";
-import { RecentTracks, Track } from "../../services/LastFM/LastFMService.types";
+import {
+  ConvertedRecentTrack,
+  ConvertedRecentTracks,
+} from "../../services/LastFM/converters/RecentTracks";
 import { TagsCache } from "../caches/TagsCache";
 import { Paginator } from "../Paginator";
 import { TagConsolidator } from "../tags/TagConsolidator";
@@ -23,11 +26,13 @@ export class TagComboCalculator {
     private lastFMService: LastFMService
   ) {}
 
-  async calculate(paginator: Paginator<any, RecentTracks>): Promise<TagCombo> {
+  async calculate(
+    paginator: Paginator<any, ConvertedRecentTracks>
+  ): Promise<TagCombo> {
     for await (let page of paginator.iterator()) {
       let tracks = await this.extractTracks(page, paginator.currentPage);
 
-      this.totalTracks += tracks.filter((t) => !t["@attr"]?.nowplaying).length;
+      this.totalTracks += tracks.filter((t) => !t.isNowPlaying).length;
 
       for (let trackIndex = 0; trackIndex < tracks.length; trackIndex++) {
         let track = tracks[trackIndex];
@@ -46,19 +51,19 @@ export class TagComboCalculator {
   }
 
   private async extractTracks(
-    page: RecentTracks,
+    page: ConvertedRecentTracks,
     pageNumber: number
-  ): Promise<Track[]> {
-    let tracks = page.track;
+  ): Promise<ConvertedRecentTrack[]> {
+    let tracks = page.tracks;
 
     if (!tracks.length) return [];
 
-    if (pageNumber === 1) await this.combo.imprint(tracks[0]);
+    if (pageNumber === 1) await this.combo.imprint(page.first());
 
     if (pageNumber === 1) {
       return tracks;
     } else {
-      return tracks.filter((t) => !t["@attr"]?.nowplaying);
+      return tracks.filter((t) => !t.isNowPlaying);
     }
   }
 
@@ -66,7 +71,10 @@ export class TagComboCalculator {
     return await this.combo.shouldContinue();
   }
 
-  private async incrementCombo(track: Track, last: boolean): Promise<void> {
+  private async incrementCombo(
+    track: ConvertedRecentTrack,
+    last: boolean
+  ): Promise<void> {
     await this.combo.increment(track, last);
   }
 }
@@ -81,8 +89,8 @@ export class TagCombo {
       .length;
   }
 
-  async imprint(track: Track) {
-    const nowplaying = !!track["@attr"]?.nowplaying;
+  async imprint(track: ConvertedRecentTrack) {
+    const nowplaying = !!track.isNowPlaying;
 
     const tags = await this.getTags(track);
 
@@ -98,8 +106,8 @@ export class TagCombo {
     }
   }
 
-  async increment(track: Track, hitMax: boolean) {
-    if (track["@attr"]?.nowplaying) return;
+  async increment(track: ConvertedRecentTrack, hitMax: boolean) {
+    if (track.isNowPlaying) return;
 
     const tags = await this.getTags(track);
 
@@ -119,8 +127,8 @@ export class TagCombo {
       .filter((t) => t).length;
   }
 
-  private async getTags(track: Track) {
-    const tags = await this.tagsCache.getTags(track.artist["#text"]);
+  private async getTags(track: ConvertedRecentTrack) {
+    const tags = await this.tagsCache.getTags(track.artist);
 
     return new TagConsolidator()
       .addTags(tags)

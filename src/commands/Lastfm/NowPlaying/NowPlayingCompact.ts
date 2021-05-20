@@ -1,4 +1,3 @@
-import { parseLastFMTrackResponse } from "../../../helpers/lastFM";
 import { NowPlayingBaseCommand } from "./NowPlayingBaseCommand";
 
 export default class NowPlayingCompact extends NowPlayingBaseCommand {
@@ -12,12 +11,10 @@ export default class NowPlayingCompact extends NowPlayingBaseCommand {
 
     let nowPlaying = await this.lastFMService.nowPlaying(username);
 
-    let track = parseLastFMTrackResponse(nowPlaying);
-
     let nowPlayingEmbed = this.nowPlayingEmbed(nowPlaying, username);
 
     let sentMessage = await this.send(nowPlayingEmbed);
 
-    await this.easterEggs(sentMessage, track);
+    await this.easterEggs(sentMessage, nowPlaying);
   }
 }

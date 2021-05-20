@@ -3,7 +3,7 @@ import { ListCommand } from "./ListCommand";
 
 export default class ArtistList extends ListCommand {
   idSeed = "stayc seeun";
-  
+
   description = "Shows your top artists over a given time period";
   aliases = ["alist", "topartists", "topartist", "artists", "al"];
 
@@ -23,11 +23,11 @@ export default class ArtistList extends ListCommand {
         }`
       )
       .setDescription(
-        topArtists.artist
+        topArtists.artists
           .map(
             (a, idx) =>
               `${idx + 1}. ${a.name.strong()} - ${numberDisplay(
-                a.playcount,
+                a.userPlaycount,
                 "play"
               )}`
           )

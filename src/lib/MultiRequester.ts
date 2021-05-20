@@ -1,13 +1,10 @@
 import { promiseAllSettled } from "../helpers";
-import { LastFMService } from "../services/LastFM/LastFMService";
 
 export interface FetchedResponses<T> {
   [username: string]: T | undefined;
 }
 
 export class MultiRequester {
-  lastFMService = new LastFMService();
-
   constructor(public usernames: string[]) {}
 
   async fetch<T, ParamsT>(

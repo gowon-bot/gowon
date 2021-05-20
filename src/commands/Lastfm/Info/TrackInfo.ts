@@ -35,16 +35,14 @@ export default class TrackInfo extends InfoCommand<typeof args> {
         senderRequired: true,
       });
 
-      let nowPlaying = await this.lastFMService.nowPlayingParsed(
-        senderUsername
-      );
+      let nowPlaying = await this.lastFMService.nowPlaying(senderUsername);
 
       if (!artist) artist = nowPlaying.artist;
       if (!track) track = nowPlaying.name;
     }
 
     let [trackInfo, spotifyTrack] = await Promise.all([
-      this.lastFMConverter.trackInfo({ artist, track }),
+      this.lastFMService.trackInfo({ artist, track }),
       this.spotifyService.searchTrack(artist, track),
     ]);
 
@@ -91,6 +89,7 @@ export default class TrackInfo extends InfoCommand<typeof args> {
         trackInfo.name.italic() + " by " + trackInfo.artist.name.strong()
       )
       .setDescription(this.lineConsolidator.consolidate())
+      .setThumbnail(trackInfo.album?.images?.get("large") || "")
       .addFields(
         {
           name: "Listeners",

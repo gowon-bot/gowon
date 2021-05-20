@@ -1,5 +1,5 @@
 import { LastFMService } from "../../services/LastFM/LastFMService";
-import { TopArtist } from "../../services/LastFM/LastFMService.types";
+import { ConvertedTopArtist } from "../../services/LastFM/converters/TopTypes";
 
 export class JumbleCalculator {
   constructor(private username: string, private lastFMService: LastFMService) {}
@@ -7,12 +7,12 @@ export class JumbleCalculator {
   async getArtist(
     poolAmount: number,
     options: { nonAscii?: boolean } = {}
-  ): Promise<TopArtist | undefined> {
+  ): Promise<ConvertedTopArtist | undefined> {
     let topArtists = await this.lastFMService.topArtists({
       username: this.username,
       limit: poolAmount,
     });
-    let filter = topArtists.artist.filter((a) =>
+    let filter = topArtists.artists.filter((a) =>
       this.artistFilter(a.name, options.nonAscii || false)
     );
 

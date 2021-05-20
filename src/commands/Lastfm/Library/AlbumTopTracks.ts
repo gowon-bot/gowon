@@ -37,9 +37,7 @@ export default class AlbumTopTracks extends LastFMBaseCommand<typeof args> {
     }
 
     if (!artist || !album) {
-      let nowPlaying = await this.lastFMService.nowPlayingParsed(
-        senderUsername
-      );
+      let nowPlaying = await this.lastFMService.nowPlaying(senderUsername);
 
       if (!artist) {
         artist = nowPlaying.artist;

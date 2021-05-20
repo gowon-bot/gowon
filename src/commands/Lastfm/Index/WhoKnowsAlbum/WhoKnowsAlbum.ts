@@ -50,9 +50,7 @@ export default class WhoKnowsAlbum extends IndexingBaseCommand<
     });
 
     if (!artistName || !albumName) {
-      let nowPlaying = await this.lastFMService.nowPlayingParsed(
-        senderUsername
-      );
+      let nowPlaying = await this.lastFMService.nowPlaying(senderUsername);
 
       if (!artistName) artistName = nowPlaying.artist;
       if (!albumName) albumName = nowPlaying.album;

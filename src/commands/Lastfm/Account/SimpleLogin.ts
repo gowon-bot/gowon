@@ -3,11 +3,10 @@ import { Arguments } from "../../../lib/arguments/arguments";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
-import { UserInfo } from "../../../services/LastFM/LastFMService.types";
-import { differenceInDays, fromUnixTime } from "date-fns";
+import { differenceInDays } from "date-fns";
 import { DiscordIDMention } from "../../../lib/arguments/mentions/DiscordIDMention";
 import { LogicError } from "../../../errors";
-import { toInt } from "../../../helpers/lastFM";
+import { ConvertedUserInfo } from "../../../services/LastFM/converters/InfoTypes";
 
 const args = {
   inputs: {
@@ -61,7 +60,7 @@ export default class SimpleLogin extends LastFMBaseCommand<typeof args> {
       return;
     }
 
-    let userInfo: UserInfo | undefined;
+    let userInfo: ConvertedUserInfo | undefined;
 
     try {
       userInfo = await this.lastFMService.userInfo({ username });
@@ -71,11 +70,9 @@ export default class SimpleLogin extends LastFMBaseCommand<typeof args> {
         userInfo.name
       );
 
-      let joined = fromUnixTime(toInt(userInfo.registered.unixtime));
-
       this.send(
         `Logged in as ${userInfo.name.code()}${
-          differenceInDays(new Date(), joined) < 10
+          differenceInDays(new Date(), userInfo.registeredAt) < 10
             ? ". Welcome to Last.fm!"
             : ""
         }`

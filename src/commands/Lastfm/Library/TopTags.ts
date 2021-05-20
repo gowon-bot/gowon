@@ -32,7 +32,7 @@ export default class TopTags extends LastFMBaseCommand<typeof args> {
 
     let tagsCount: { [artist: string]: number } = {};
 
-    for (let artist of topArtists.artist) {
+    for (let artist of topArtists.artists) {
       let artistTags = await this.tagsService.getTags(artist.name);
 
       if (!artistTags) {

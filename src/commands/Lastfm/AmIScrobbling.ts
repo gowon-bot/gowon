@@ -14,7 +14,7 @@ export default class AmIScrobbling extends LastFMBaseCommand {
     let nowPlaying = await this.lastFMService.nowPlaying(senderUsername);
 
     await this.traditionalReply(
-      nowPlaying["@attr"]?.nowplaying === "true" ? "probably." : "probably not."
+      nowPlaying.isNowPlaying ? "probably." : "probably not."
     );
   }
 }

@@ -38,7 +38,7 @@ export default class ArtistAt extends LastFMBaseCommand<typeof args> {
       page: rank,
     });
 
-    let artist = topArtists.artist[0];
+    let artist = topArtists.artists[0];
 
     if (!artist)
       throw new LogicError(
@@ -46,11 +46,12 @@ export default class ArtistAt extends LastFMBaseCommand<typeof args> {
       );
 
     await this.traditionalReply(
-      `${artist.name.strong()} is ranked at #${artist[
-        "@attr"
-      ].rank.strong()} in ${
+      `${artist.name.strong()} is ranked at #**${artist.rank}** in ${
         perspective.possessive
-      } top artists with ${numberDisplay(artist.playcount, "play").strong()}`
+      } top artists with ${numberDisplay(
+        artist.userPlaycount,
+        "play"
+      ).strong()}`
     );
   }
 }

@@ -121,4 +121,34 @@ export class Paginator<ParamsT extends Params = Params, ResponseT = any> {
       return results as V[];
     }
   }
+
+  async getAllToConcatonable(
+    options: {
+      concurrent?: boolean;
+      waitInterval?: number;
+    } = {}
+  ): Promise<ResponseT> {
+    let result: ResponseT;
+
+    const eachFunction = (response: ResponseT) => {
+      if (result) {
+        (result as any).concat(response);
+      } else {
+        result = response;
+      }
+    };
+
+    if (options.concurrent) {
+      for await (let page of this.pagesIterator(this.method)) {
+        eachFunction(page);
+        if (options.waitInterval) await sleep(options.waitInterval);
+      }
+    } else {
+      (await Promise.all(this.generatePages(this.method))).forEach(
+        eachFunction
+      );
+    }
+
+    return result!;
+  }
 }

@@ -3,7 +3,6 @@ import { TasteCalculator } from "../../../lib/calculators/TasteCalculator";
 import { numberDisplay } from "../../../helpers";
 import { sanitizeForDiscord } from "../../../helpers/discord";
 import { Variation } from "../../../lib/command/BaseCommand";
-import { TopArtists } from "../../../services/LastFM/LastFMService.types";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { LogicError } from "../../../errors";
@@ -75,17 +74,17 @@ export default class TagTaste extends TasteCommand<typeof args> {
       userTwoUsername
     );
 
-    let [senderArtists, mentionedArtists] = (await Promise.all([
-      senderPaginator.getAll({ concatTo: "artist" }),
-      mentionedPaginator.getAll({ concatTo: "artist" }),
-    ])) as [TopArtists, TopArtists];
+    let [senderArtists, mentionedArtists] = await Promise.all([
+      senderPaginator.getAllToConcatonable(),
+      mentionedPaginator.getAllToConcatonable(),
+    ]);
 
     let senderArtistsFiltered = await this.tagService.filter(
-      senderArtists.artist,
+      senderArtists.artists,
       [tag]
     );
     let mentionedArtistsFiltered = await this.tagService.filter(
-      mentionedArtists.artist,
+      mentionedArtists.artists,
       [tag]
     );
 
@@ -103,7 +102,7 @@ export default class TagTaste extends TasteCommand<typeof args> {
       );
 
     const embedDescription = `Comparing top ${numberDisplay(
-      senderArtists.artist.slice(0, artistAmount).length,
+      senderArtists.artists.slice(0, artistAmount).length,
       "artist"
     )}, ${numberDisplay(taste.artists.length, `overlapping ${tag} artist`)} (${
       taste.percent

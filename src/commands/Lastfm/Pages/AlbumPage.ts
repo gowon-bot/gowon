@@ -14,7 +14,7 @@ const args = {
 export default class AlbumPage extends LastFMBaseCommand<typeof args> {
   idSeed = "twice jihyo";
 
-  aliases = ["alpa", "lpa"];
+  aliases = ["alpa", "lpa", "lpage"];
   description = "Links you to an album's page on Last.fm";
   subcategory = "pages";
   usage = ["", "artist | album"];
@@ -28,7 +28,7 @@ export default class AlbumPage extends LastFMBaseCommand<typeof args> {
     let { username } = await this.parseMentions();
 
     if (!artist || !album) {
-      let nowPlaying = await this.lastFMService.nowPlayingParsed(username);
+      let nowPlaying = await this.lastFMService.nowPlaying(username);
 
       if (!artist) artist = nowPlaying.artist;
       if (!album) album = nowPlaying.album;

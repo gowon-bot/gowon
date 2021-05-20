@@ -1,5 +1,5 @@
 import { GuildMember, MessageEmbed } from "discord.js";
-import { Image } from "../../services/LastFM/LastFMService.types";
+import { ImageCollection } from "../../services/LastFM/converters/BaseConverter";
 
 export function GowonEmbed(member?: GuildMember, embed?: MessageEmbed) {
   let gowonEmbed = (embed || new MessageEmbed()).setColor(
@@ -11,9 +11,9 @@ export function GowonEmbed(member?: GuildMember, embed?: MessageEmbed) {
 
 interface SimpleTrack {
   name: string;
-  artist: { "#text"?: string; name?: string; title?: string };
-  album: { "#text"?: string; name?: string; title?: string };
-  image: Image[];
+  artist: string | { name: string };
+  album: string | { name: string };
+  images: ImageCollection;
 }
 
 export function TrackEmbed(
@@ -21,16 +21,13 @@ export function TrackEmbed(
   imageSize = "large"
 ): MessageEmbed {
   let artist =
-    track.artist.name || track.artist["#text"] || track.artist.title || "";
-  let album =
-    track.album.name || track.album["#text"] || track.album.title || "";
+    typeof track.artist === "string" ? track.artist : track.artist.name;
+  let album = typeof track.album === "string" ? track.album : track.album.name;
 
   return new MessageEmbed()
     .setTitle(track.name)
     .setDescription(
       `by ${artist.strong()}` + (album ? ` from ${album.italic()}` : "")
     )
-    .setThumbnail(
-      track.image.find((i) => i.size === imageSize)?.["#text"] || ""
-    );
+    .setThumbnail(track.images.get(imageSize) || "");
 }

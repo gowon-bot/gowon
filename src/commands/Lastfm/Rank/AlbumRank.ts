@@ -36,9 +36,7 @@ export default class AlbumRank extends LastFMBaseCommand<typeof args> {
     });
 
     if (!album || !artist) {
-      let nowPlaying = await this.lastFMService.nowPlayingParsed(
-        senderUsername
-      );
+      let nowPlaying = await this.lastFMService.nowPlaying(senderUsername);
 
       if (!album) album = nowPlaying.album;
       if (!artist) artist = nowPlaying.artist;
@@ -49,7 +47,7 @@ export default class AlbumRank extends LastFMBaseCommand<typeof args> {
       limit: 1000,
     });
 
-    let rank = topAlbums.album.findIndex(
+    let rank = topAlbums.albums.findIndex(
       (a) =>
         a.name.toLowerCase() === album!.toLowerCase() &&
         a.artist.name.toLowerCase() === artist!.toLowerCase()
@@ -59,14 +57,14 @@ export default class AlbumRank extends LastFMBaseCommand<typeof args> {
       await this.traditionalReply(
         `that album wasn't found in ${
           perspective.possessive
-        } top ${numberDisplay(topAlbums.album.length, "album")}`
+        } top ${numberDisplay(topAlbums.albums.length, "album")}`
       );
     } else {
       await this.traditionalReply(
-        `${topAlbums.album[rank].name.strong()} by ${
-          topAlbums.album[rank].artist.name
+        `${topAlbums.albums[rank].name.strong()} by ${
+          topAlbums.albums[rank].artist.name
         } is ranked #${numberDisplay(rank + 1).strong()} with ${numberDisplay(
-          topAlbums.album[rank].playcount,
+          topAlbums.albums[rank].userPlaycount,
           "play"
         ).strong()}`
       );

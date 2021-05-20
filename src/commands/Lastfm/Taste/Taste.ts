@@ -4,7 +4,6 @@ import { numberDisplay } from "../../../helpers";
 import { sanitizeForDiscord } from "../../../helpers/discord";
 import { generatePeriod, generateHumanPeriod } from "../../../helpers/date";
 import { Variation } from "../../../lib/command/BaseCommand";
-import { TopArtists } from "../../../services/LastFM/LastFMService.types";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { LogicError } from "../../../errors";
@@ -78,14 +77,14 @@ export default class Taste extends TasteCommand<typeof args> {
       userTwoUsername
     );
 
-    let [senderArtists, mentionedArtists] = (await Promise.all([
-      senderPaginator.getAll({ concatTo: "artist" }),
-      mentionedPaginator.getAll({ concatTo: "artist" }),
-    ])) as [TopArtists, TopArtists];
+    let [senderArtists, mentionedArtists] = await Promise.all([
+      senderPaginator.getAllToConcatonable(),
+      mentionedPaginator.getAllToConcatonable(),
+    ]);
 
     let tasteCalculator = new TasteCalculator(
-      senderArtists.artist,
-      mentionedArtists.artist,
+      senderArtists.artists,
+      mentionedArtists.artists,
       artistAmount
     );
 
@@ -100,7 +99,7 @@ export default class Taste extends TasteCommand<typeof args> {
       userOneUsername === userTwoUsername
         ? "It's 100%, what are you expecting :neutral_face:"
         : `Comparing top ${numberDisplay(
-            senderArtists.artist.slice(0, artistAmount).length,
+            senderArtists.artists.slice(0, artistAmount).length,
             "artist"
           )}, ${numberDisplay(taste.artists.length, "overlapping artist")} (${
             taste.percent

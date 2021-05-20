@@ -1,4 +1,3 @@
-import { parseLastFMTrackResponse } from "../../../helpers/lastFM";
 import { CrownsService } from "../../../services/dbservices/CrownsService";
 import { LineConsolidator } from "../../../lib/LineConsolidator";
 import { NowPlayingBaseCommand } from "./NowPlayingBaseCommand";
@@ -28,17 +27,15 @@ export default class NowPlayingCombo extends NowPlayingBaseCommand {
 
     const combo = await comboCalculator.calculate(recentTracks);
 
-    let nowPlaying = recentTracks.track[0];
+    let nowPlaying = recentTracks.first();
 
-    let track = parseLastFMTrackResponse(nowPlaying);
+    this.tagConsolidator.blacklistTags(nowPlaying.artist, nowPlaying.name);
 
-    this.tagConsolidator.blacklistTags(track.artist, track.name);
-
-    if (nowPlaying["@attr"]?.nowplaying) this.scrobble(track);
+    if (nowPlaying.isNowPlaying) this.scrobble(nowPlaying);
 
     let [artistInfo, crown] = await promiseAllSettled([
-      this.lastFMConverter.artistInfo({ artist: track.artist, username }),
-      this.crownsService.getCrownDisplay(track.artist, this.guild),
+      this.lastFMService.artistInfo({ artist: nowPlaying.artist, username }),
+      this.crownsService.getCrownDisplay(nowPlaying.artist, this.guild),
     ]);
 
     if (artistInfo.value) {
@@ -50,8 +47,8 @@ export default class NowPlayingCombo extends NowPlayingBaseCommand {
       discordUser
     );
 
-    const artistPlays = this.artistPlays(artistInfo, track, isCrownHolder);
-    const noArtistData = this.noArtistData(track);
+    const artistPlays = this.artistPlays(artistInfo, nowPlaying, isCrownHolder);
+    const noArtistData = this.noArtistData(nowPlaying);
 
     const comboString = `${numberDisplay(combo.artist.plays)} in a row ${
       combo.artist.plays > 100 ? "🔥" : ""
@@ -106,6 +103,6 @@ export default class NowPlayingCombo extends NowPlayingBaseCommand {
 
     let sentMessage = await this.send(nowPlayingEmbed);
 
-    await this.easterEggs(sentMessage, track);
+    await this.easterEggs(sentMessage, nowPlaying);
   }
 }

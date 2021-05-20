@@ -38,20 +38,16 @@ export default class Randomsong extends LastFMBaseCommand<typeof args> {
     });
 
     let randomSong =
-      randomSongs.track[~~(randomSongs.track.length * Math.random())];
+      randomSongs.tracks[~~(randomSongs.tracks.length * Math.random())];
 
     let embed = this.newEmbed()
       .setAuthor(`Scrobbled by ${randomUser.lastFMUsername}`)
       .setTitle(randomSong.name)
       .setDescription(
-        `by ${randomSong.artist["#text"].strong()}` +
-          (randomSong.album["#text"]
-            ? ` from ${randomSong.album["#text"].italic()}`
-            : "")
+        `by ${randomSong.artist.strong()}` +
+          (randomSong.album ? ` from ${randomSong.album.italic()}` : "")
       )
-      .setThumbnail(
-        randomSong.image.find((i) => i.size === "large")?.["#text"] || ""
-      );
+      .setThumbnail(randomSong.images.get("large") || "");
 
     await this.send(embed);
   }

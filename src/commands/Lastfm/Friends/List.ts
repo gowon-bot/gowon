@@ -14,7 +14,7 @@ export class List extends FriendsChildCommand {
 
   async run(message: Message) {
     let nowPlayings = await new MultiRequester(this.friendUsernames).fetch(
-      this.lastFMService.nowPlayingParsed.bind(this.lastFMService),
+      this.lastFMService.nowPlaying.bind(this.lastFMService),
       []
     );
 

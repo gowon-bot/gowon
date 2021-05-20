@@ -14,7 +14,7 @@ const args = {
 export default class TrackPage extends LastFMBaseCommand<typeof args> {
   idSeed = "twice dahyun";
 
-  aliases = ["tpa", "trpa"];
+  aliases = ["tpa", "trpa", "tpage"];
   description = "Links you to a track's page on Last.fm";
   subcategory = "pages";
   usage = ["artist | track"];
@@ -28,13 +28,13 @@ export default class TrackPage extends LastFMBaseCommand<typeof args> {
     let { username } = await this.parseMentions();
 
     if (!artist || !track) {
-      let nowPlaying = await this.lastFMService.nowPlayingParsed(username);
+      let nowPlaying = await this.lastFMService.nowPlaying(username);
 
       if (!artist) artist = nowPlaying.artist;
       if (!track) track = nowPlaying.name;
     }
 
-    let trackDetails = await this.lastFMConverter.trackInfo({
+    let trackDetails = await this.lastFMService.trackInfo({
       artist,
       track,
       username,

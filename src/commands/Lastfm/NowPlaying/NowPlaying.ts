@@ -1,4 +1,3 @@
-import { parseLastFMTrackResponse } from "../../../helpers/lastFM";
 import { CrownsService } from "../../../services/dbservices/CrownsService";
 import { LineConsolidator } from "../../../lib/LineConsolidator";
 import { NowPlayingBaseCommand } from "./NowPlayingBaseCommand";
@@ -26,19 +25,17 @@ export default class NowPlaying extends NowPlayingBaseCommand {
       limit: 1,
     });
 
-    let nowPlaying = nowPlayingResponse.track[0];
+    let nowPlaying = nowPlayingResponse.first();
 
-    let track = parseLastFMTrackResponse(nowPlaying);
+    if (nowPlaying.isNowPlaying) this.scrobble(nowPlaying);
 
-    if (nowPlaying["@attr"]?.nowplaying) this.scrobble(track);
-
-    this.tagConsolidator.blacklistTags(track.artist, track.name);
+    this.tagConsolidator.blacklistTags(nowPlaying.artist, nowPlaying.name);
 
     let nowPlayingEmbed = this.nowPlayingEmbed(nowPlaying, username);
 
     let [artistInfo, crown] = await promiseAllSettled([
-      this.lastFMConverter.artistInfo({ artist: track.artist, username }),
-      this.crownsService.getCrownDisplay(track.artist, this.guild),
+      this.lastFMService.artistInfo({ artist: nowPlaying.artist, username }),
+      this.crownsService.getCrownDisplay(nowPlaying.artist, this.guild),
     ]);
 
     let { crownString, isCrownHolder } = await this.crownDetails(
@@ -50,8 +47,8 @@ export default class NowPlaying extends NowPlayingBaseCommand {
 
     let lineConsolidator = new LineConsolidator();
 
-    let artistPlays = this.artistPlays(artistInfo, track, isCrownHolder);
-    let noArtistData = this.noArtistData(track);
+    let artistPlays = this.artistPlays(artistInfo, nowPlaying, isCrownHolder);
+    let noArtistData = this.noArtistData(nowPlaying);
     let scrobbleCount = this.scrobbleCount(nowPlayingResponse);
 
     lineConsolidator.addLines(
@@ -85,7 +82,7 @@ export default class NowPlaying extends NowPlayingBaseCommand {
 
     let sentMessage = await this.send(nowPlayingEmbed);
 
-    await this.easterEggs(sentMessage, track);
+    await this.easterEggs(sentMessage, nowPlaying);
   }
 
   private reverseEmbed(embed: MessageEmbed): MessageEmbed {

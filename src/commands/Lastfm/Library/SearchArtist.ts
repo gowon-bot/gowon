@@ -31,16 +31,18 @@ export default class SearchArtist extends SearchCommand {
       { username, limit: 1000 }
     );
 
-    let topArtists = await paginator.getAll({
-      concatTo: "artist",
+    let topArtists = await paginator.getAllToConcatonable({
       concurrent: this.variationWasUsed("deep"),
     });
 
-    let filtered = topArtists.artist.filter((a) =>
+    let filtered = topArtists.artists.filter((a) =>
       this.clean(a.name).includes(this.clean(keywords))
     );
 
-    if (filtered.length !== 0 && filtered.length === topArtists.artist.length) {
+    if (
+      filtered.length !== 0 &&
+      filtered.length === topArtists.artists.length
+    ) {
       throw new LogicError(
         "too many search results, try narrowing down your query..."
       );
@@ -51,7 +53,7 @@ export default class SearchArtist extends SearchCommand {
     let embed = this.newEmbed()
       .setTitle(
         `Search results in ${username}'s top ${numberDisplay(
-          topArtists.artist.length,
+          topArtists.artists.length,
           "artist"
         )}`
       )
@@ -59,7 +61,7 @@ export default class SearchArtist extends SearchCommand {
         filtered.length
           ? `Artists matching ${keywords.code()}
 \`\`\`
-${filtered.map((f) => `${f["@attr"].rank}.` + f.name).join("\n")}
+${filtered.map((f) => `${f.rank}.` + f.name).join("\n")}
 \`\`\``
           : `No results found for ${keywords.code()}!`
       );

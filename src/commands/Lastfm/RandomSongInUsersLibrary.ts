@@ -52,9 +52,9 @@ export default class RandomsongInUsersLibrary extends LastFMBaseCommand<
         limit: 1,
         page: randomIndex,
       })
-    ).track[0];
+    ).tracks[0];
 
-    let trackInfo = await this.lastFMConverter.trackInfo({
+    let trackInfo = await this.lastFMService.trackInfo({
       track: randomSong.name,
       artist: randomSong.artist.name,
     });
