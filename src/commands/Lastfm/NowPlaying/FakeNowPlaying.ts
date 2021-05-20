@@ -3,7 +3,7 @@ import { LineConsolidator } from "../../../lib/LineConsolidator";
 import { NowPlayingBaseCommand } from "./NowPlayingBaseCommand";
 import { promiseAllSettled } from "../../../helpers";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
-import { ConvertedRecentTrack } from "../../../services/LastFM/converters/RecentTracks";
+import { RecentTrack } from "../../../services/LastFM/converters/RecentTracks";
 import { LogicError } from "../../../errors";
 import { LinkGenerator } from "../../../helpers/lastFM";
 
@@ -156,8 +156,8 @@ export default class FakeNowPlaying extends NowPlayingBaseCommand<typeof args> {
     trackName: string,
     albumName: string,
     image: string
-  ): ConvertedRecentTrack {
-    return new ConvertedRecentTrack({
+  ): RecentTrack {
+    return new RecentTrack({
       artist: { "#text": artistName, mbid: "" },
       "@attr": { nowplaying: "0" },
       mbid: "",

@@ -1,12 +1,12 @@
 import { fromUnixTime } from "date-fns";
-import { RecentTracks, Track } from "../LastFMService.types";
+import { RawRecentTracks, RawTrack } from "../LastFMService.types";
 import {
   BaseConverter,
   Concatonatable,
   ImageCollection,
 } from "./BaseConverter";
 
-export class ConvertedRecentTrack extends BaseConverter {
+export class RecentTrack extends BaseConverter {
   artist: string;
   artistMBID: string;
   isNowPlaying: boolean;
@@ -19,7 +19,7 @@ export class ConvertedRecentTrack extends BaseConverter {
   name: string;
   scrobbledAt: Date;
 
-  constructor(track: Track) {
+  constructor(track: RawTrack) {
     super();
 
     this.artist = track.artist["#text"];
@@ -38,11 +38,11 @@ export class ConvertedRecentTrack extends BaseConverter {
   }
 }
 
-export class ConvertedRecentTracks
+export class RecentTracks
   extends BaseConverter
-  implements Concatonatable<ConvertedRecentTracks>
+  implements Concatonatable<RecentTracks>
 {
-  tracks: ConvertedRecentTrack[];
+  tracks: RecentTrack[];
   meta: {
     page: number;
     total: number;
@@ -51,12 +51,12 @@ export class ConvertedRecentTracks
     user: string;
   };
 
-  constructor(recentTracks: RecentTracks) {
+  constructor(recentTracks: RawRecentTracks) {
     super();
 
     const attr = recentTracks["@attr"];
 
-    this.tracks = recentTracks.track.map((t) => new ConvertedRecentTrack(t));
+    this.tracks = recentTracks.track.map((t) => new RecentTrack(t));
 
     this.meta = {
       user: attr.page,
@@ -67,11 +67,11 @@ export class ConvertedRecentTracks
     };
   }
 
-  first(): ConvertedRecentTrack {
+  first(): RecentTrack {
     return this.tracks[0];
   }
 
-  concat(tracks: ConvertedRecentTracks) {
+  concat(tracks: RecentTracks) {
     if (tracks) {
       this.tracks = this.tracks.concat(tracks.tracks);
     }

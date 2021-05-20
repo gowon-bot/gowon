@@ -1,5 +1,5 @@
 import { RedirectsService } from "../../services/dbservices/RedirectsService";
-import { ConvertedRecentTracks } from "../../services/LastFM/converters/RecentTracks";
+import { RecentTracks } from "../../services/LastFM/converters/RecentTracks";
 import { RedirectsCache } from "../caches/RedirectsCache";
 
 interface Count {
@@ -32,7 +32,7 @@ export class ReportCalculator {
 
   constructor(
     private redirectsService: RedirectsService,
-    private tracks: ConvertedRecentTracks
+    private tracks: RecentTracks
   ) {}
 
   redirectsCache = new RedirectsCache(this.redirectsService);

@@ -1,8 +1,8 @@
 import { TagsService } from "../../services/dbservices/tags/TagsService";
 import { LastFMService } from "../../services/LastFM/LastFMService";
 import {
-  ConvertedRecentTrack,
-  ConvertedRecentTracks,
+  RecentTrack,
+  RecentTracks,
 } from "../../services/LastFM/converters/RecentTracks";
 import { TagsCache } from "../caches/TagsCache";
 import { Paginator } from "../Paginator";
@@ -26,9 +26,7 @@ export class TagComboCalculator {
     private lastFMService: LastFMService
   ) {}
 
-  async calculate(
-    paginator: Paginator<any, ConvertedRecentTracks>
-  ): Promise<TagCombo> {
+  async calculate(paginator: Paginator<any, RecentTracks>): Promise<TagCombo> {
     for await (let page of paginator.iterator()) {
       let tracks = await this.extractTracks(page, paginator.currentPage);
 
@@ -51,9 +49,9 @@ export class TagComboCalculator {
   }
 
   private async extractTracks(
-    page: ConvertedRecentTracks,
+    page: RecentTracks,
     pageNumber: number
-  ): Promise<ConvertedRecentTrack[]> {
+  ): Promise<RecentTrack[]> {
     let tracks = page.tracks;
 
     if (!tracks.length) return [];
@@ -72,7 +70,7 @@ export class TagComboCalculator {
   }
 
   private async incrementCombo(
-    track: ConvertedRecentTrack,
+    track: RecentTrack,
     last: boolean
   ): Promise<void> {
     await this.combo.increment(track, last);
@@ -89,7 +87,7 @@ export class TagCombo {
       .length;
   }
 
-  async imprint(track: ConvertedRecentTrack) {
+  async imprint(track: RecentTrack) {
     const nowplaying = !!track.isNowPlaying;
 
     const tags = await this.getTags(track);
@@ -106,7 +104,7 @@ export class TagCombo {
     }
   }
 
-  async increment(track: ConvertedRecentTrack, hitMax: boolean) {
+  async increment(track: RecentTrack, hitMax: boolean) {
     if (track.isNowPlaying) return;
 
     const tags = await this.getTags(track);
@@ -127,7 +125,7 @@ export class TagCombo {
       .filter((t) => t).length;
   }
 
-  private async getTags(track: ConvertedRecentTrack) {
+  private async getTags(track: RecentTrack) {
     const tags = await this.tagsCache.getTags(track.artist);
 
     return new TagConsolidator()

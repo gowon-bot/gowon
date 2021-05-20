@@ -5,7 +5,7 @@ import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { Paginator } from "../../../lib/Paginator";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
-import { ConvertedTopArtists } from "../../../services/LastFM/converters/TopTypes";
+import { TopArtists } from "../../../services/LastFM/converters/TopTypes";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 interface Overlap {
@@ -102,7 +102,7 @@ _Comparing ${perspective.possessive} top ${numberDisplay(
   }
 
   calculateOverlap(
-    userTopArtists: ConvertedTopArtists,
+    userTopArtists: TopArtists,
     tagArtistNames: string[]
   ): Overlap[] {
     return userTopArtists.artists.reduce((acc, a) => {

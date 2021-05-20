@@ -10,11 +10,11 @@ import { TagsCache } from "../caches/TagsCache";
 import { TagsService } from "../../services/dbservices/tags/TagsService";
 import { toInt } from "../../helpers/lastFM";
 import { LastFMService } from "../../services/LastFM/LastFMService";
-import { ConvertedUserInfo } from "../../services/LastFM/converters/InfoTypes";
+import { UserInfo } from "../../services/LastFM/converters/InfoTypes";
 import {
-  ConvertedTopAlbums,
-  ConvertedTopArtists,
-  ConvertedTopTracks,
+  TopAlbums,
+  TopArtists,
+  TopTracks,
 } from "../../services/LastFM/converters/TopTypes";
 
 export class Stat {
@@ -32,10 +32,10 @@ export class Stat {
 
 export class OverviewStatsCalculator {
   private cache: {
-    userInfo?: ConvertedUserInfo;
-    topArtists?: ConvertedTopArtists;
-    topAlbums?: ConvertedTopAlbums;
-    topTracks?: ConvertedTopTracks;
+    userInfo?: UserInfo;
+    topArtists?: TopArtists;
+    topAlbums?: TopAlbums;
+    topTracks?: TopTracks;
     crownsRank?: CrownRankResponse;
     crownsCount?: number;
   } = {};
@@ -72,7 +72,7 @@ export class OverviewStatsCalculator {
     ]);
   }
 
-  async userInfo(): Promise<ConvertedUserInfo> {
+  async userInfo(): Promise<UserInfo> {
     if (!this.cache.userInfo)
       this.cache.userInfo = await this.lastFMService.userInfo({
         username: this.username,
@@ -81,7 +81,7 @@ export class OverviewStatsCalculator {
     return this.cache.userInfo;
   }
 
-  async topArtists(): Promise<ConvertedTopArtists> {
+  async topArtists(): Promise<TopArtists> {
     if (!this.cache.topArtists)
       this.cache.topArtists = await this.lastFMService.topArtists({
         username: this.username,
@@ -91,7 +91,7 @@ export class OverviewStatsCalculator {
     return this.cache.topArtists;
   }
 
-  async topAlbums(): Promise<ConvertedTopAlbums> {
+  async topAlbums(): Promise<TopAlbums> {
     if (!this.cache.topAlbums)
       this.cache.topAlbums = await this.lastFMService.topAlbums({
         username: this.username,
@@ -101,7 +101,7 @@ export class OverviewStatsCalculator {
     return this.cache.topAlbums;
   }
 
-  async topTracks(): Promise<ConvertedTopTracks> {
+  async topTracks(): Promise<TopTracks> {
     if (!this.cache.topTracks)
       this.cache.topTracks = await this.lastFMService.topTracks({
         username: this.username,

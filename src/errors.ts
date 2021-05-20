@@ -1,4 +1,4 @@
-import { LastFMErrorResponse } from "./services/LastFM/LastFMService.types";
+import { RawLastFMErrorResponse } from "./services/LastFM/LastFMService.types";
 import { parseError, parseErrorSix } from "./helpers/error";
 import { Response } from "node-fetch";
 import { numberDisplay } from "./helpers";
@@ -49,9 +49,9 @@ export class LastFMConnectionError extends ClientError {
 
 export class LastFMError extends ClientError {
   name = "LastFMError";
-  response: LastFMErrorResponse;
+  response: RawLastFMErrorResponse;
 
-  constructor(error: LastFMErrorResponse) {
+  constructor(error: RawLastFMErrorResponse) {
     super(parseError(error));
     this.response = error;
     this.name = "LastFMError:" + error.error;

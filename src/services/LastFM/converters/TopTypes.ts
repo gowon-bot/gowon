@@ -1,10 +1,10 @@
 import {
-  TopAlbum,
-  TopAlbums,
-  TopArtist,
-  TopArtists,
-  TopTrack,
-  TopTracks,
+  RawTopAlbum,
+  RawTopAlbums,
+  RawTopArtist,
+  RawTopArtists,
+  RawTopTrack,
+  RawTopTracks,
 } from "../LastFMService.types";
 import {
   BaseConverter,
@@ -12,7 +12,7 @@ import {
   ImageCollection,
 } from "./BaseConverter";
 
-export class ConvertedTopArtist extends BaseConverter {
+export class TopArtist extends BaseConverter {
   rank: number;
   mbid: string;
   url: string;
@@ -21,7 +21,7 @@ export class ConvertedTopArtist extends BaseConverter {
   name: string;
   streamable: boolean;
 
-  constructor(topArtist: TopArtist) {
+  constructor(topArtist: RawTopArtist) {
     super();
 
     this.rank = this.number(topArtist["@attr"].rank);
@@ -34,11 +34,11 @@ export class ConvertedTopArtist extends BaseConverter {
   }
 }
 
-export class ConvertedTopArtists
+export class TopArtists
   extends BaseConverter
-  implements Concatonatable<ConvertedTopArtists>
+  implements Concatonatable<TopArtists>
 {
-  artists: ConvertedTopArtist[];
+  artists: TopArtist[];
   meta: {
     user: string;
     page: number;
@@ -47,12 +47,12 @@ export class ConvertedTopArtists
     totalPages: number;
   };
 
-  constructor(topArtists: TopArtists) {
+  constructor(topArtists: RawTopArtists) {
     super();
 
     const attr = topArtists["@attr"];
 
-    this.artists = topArtists.artist.map((a) => new ConvertedTopArtist(a));
+    this.artists = topArtists.artist.map((a) => new TopArtist(a));
 
     this.meta = {
       user: attr.page,
@@ -63,14 +63,14 @@ export class ConvertedTopArtists
     };
   }
 
-  concat(topArtists: ConvertedTopArtists) {
+  concat(topArtists: TopArtists) {
     if (topArtists) {
       this.artists = this.artists.concat(topArtists.artists);
     }
   }
 }
 
-export class ConvertedTopAlbum extends BaseConverter {
+export class TopAlbum extends BaseConverter {
   artist: {
     url: string;
     name: string;
@@ -83,7 +83,7 @@ export class ConvertedTopAlbum extends BaseConverter {
   name: string;
   mbid: string;
 
-  constructor(topAlbum: TopAlbum) {
+  constructor(topAlbum: RawTopAlbum) {
     super();
 
     this.rank = this.number(topAlbum["@attr"].rank);
@@ -97,11 +97,11 @@ export class ConvertedTopAlbum extends BaseConverter {
   }
 }
 
-export class ConvertedTopAlbums
+export class TopAlbums
   extends BaseConverter
-  implements Concatonatable<ConvertedTopAlbums>
+  implements Concatonatable<TopAlbums>
 {
-  albums: ConvertedTopAlbum[];
+  albums: TopAlbum[];
   meta: {
     user: string;
     page: number;
@@ -110,12 +110,12 @@ export class ConvertedTopAlbums
     totalPages: number;
   };
 
-  constructor(topAlbums: TopAlbums) {
+  constructor(topAlbums: RawTopAlbums) {
     super();
 
     const attr = topAlbums["@attr"];
 
-    this.albums = topAlbums.album.map((a) => new ConvertedTopAlbum(a));
+    this.albums = topAlbums.album.map((a) => new TopAlbum(a));
 
     this.meta = {
       user: attr.page,
@@ -126,14 +126,14 @@ export class ConvertedTopAlbums
     };
   }
 
-  concat(topAlbums: ConvertedTopAlbums) {
+  concat(topAlbums: TopAlbums) {
     if (topAlbums) {
       this.albums = this.albums.concat(topAlbums.albums);
     }
   }
 }
 
-export class ConvertedTopTrack extends BaseConverter {
+export class TopTrack extends BaseConverter {
   rank: number;
   artist: {
     url: string;
@@ -147,7 +147,7 @@ export class ConvertedTopTrack extends BaseConverter {
   name: string;
   mbid: string;
 
-  constructor(topTrack: TopTrack) {
+  constructor(topTrack: RawTopTrack) {
     super();
 
     this.rank = this.number(topTrack["@attr"].rank);
@@ -162,11 +162,11 @@ export class ConvertedTopTrack extends BaseConverter {
   }
 }
 
-export class ConvertedTopTracks
+export class TopTracks
   extends BaseConverter
-  implements Concatonatable<ConvertedTopTracks>
+  implements Concatonatable<TopTracks>
 {
-  tracks: ConvertedTopTrack[];
+  tracks: TopTrack[];
   meta: {
     user: string;
     page: number;
@@ -175,12 +175,12 @@ export class ConvertedTopTracks
     totalPages: number;
   };
 
-  constructor(topTracks: TopTracks) {
+  constructor(topTracks: RawTopTracks) {
     super();
 
     const attr = topTracks["@attr"];
 
-    this.tracks = topTracks.track.map((t) => new ConvertedTopTrack(t));
+    this.tracks = topTracks.track.map((t) => new TopTrack(t));
 
     this.meta = {
       user: attr.page,
@@ -191,7 +191,7 @@ export class ConvertedTopTracks
     };
   }
 
-  concat(topTracks: ConvertedTopTracks) {
+  concat(topTracks: TopTracks) {
     if (topTracks) {
       this.tracks = this.tracks.concat(topTracks.tracks);
     }

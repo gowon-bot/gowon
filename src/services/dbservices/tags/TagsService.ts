@@ -2,7 +2,7 @@ import { ILike, In } from "typeorm";
 import { ArtistTagCache } from "../../../database/entity/ArtistTagCache";
 import { Logger } from "../../../lib/Logger";
 import { BaseService } from "../../BaseService";
-import { ConvertedArtistInfo } from "../../LastFM/converters/InfoTypes";
+import { ArtistInfo } from "../../LastFM/converters/InfoTypes";
 import { LastFMService } from "../../LastFM/LastFMService";
 import { ArtistTagMap, ManyTagsResponse } from "./TagsService.types";
 
@@ -12,7 +12,7 @@ export class TagsService extends BaseService {
   }
 
   async cacheTagsFromArtistInfo(
-    artistInfo: ConvertedArtistInfo
+    artistInfo: ArtistInfo
   ): Promise<ArtistTagCache> {
     return await this.cacheTags(artistInfo.name, artistInfo.tags);
   }

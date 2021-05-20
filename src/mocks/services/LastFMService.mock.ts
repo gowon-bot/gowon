@@ -1,15 +1,15 @@
 import {
-  RecentTracks,
-  Track,
-  ArtistInfo,
-  AlbumInfo,
-  UserInfo,
-  TopArtists,
-  TopAlbums,
-  TopTracks,
-  TrackInfo,
-  TagInfo,
-  ArtistPopularTracks,
+  RawRecentTracks,
+  RawTrack,
+  RawArtistInfo,
+  RawAlbumInfo,
+  RawUserInfo,
+  RawTopArtists,
+  RawTopAlbums,
+  RawTopTracks,
+  RawTrackInfo,
+  RawTagInfo,
+  RawArtistPopularTracks,
   Params,
   RecentTracksParams,
   TrackInfoParams,
@@ -22,9 +22,9 @@ import {
   TopAlbumsParams,
   TopTracksParams,
   ArtistPopularTracksParams,
-  Image,
+  RawImage,
   TagTopArtistsParams,
-  TagTopArtists,
+  RawTagTopArtists,
 } from "../../services/LastFM/LastFMService.types";
 import { BaseService } from "../../services/BaseService";
 import { LastFMScraper } from "../../services/scrapingServices/LastFMScraper";
@@ -43,7 +43,7 @@ function pagedResponse<T>(object: any): T {
   };
 }
 
-function fakeImages(): Image[] {
+function fakeImages(): RawImage[] {
   return [
     {
       "#text":
@@ -63,7 +63,7 @@ function fakeImages(): Image[] {
   ];
 }
 
-function fakeTrack(): Track {
+function fakeTrack(): RawTrack {
   return {
     artist: { mbid: "string", "#text": "artist" },
     "@attr": { nowplaying: "0" },
@@ -96,13 +96,13 @@ export class LastFMMock extends BaseService {
     return {} as T;
   }
 
-  async recentTracks(_: RecentTracksParams): Promise<RecentTracks> {
-    return pagedResponse<RecentTracks>({
+  async recentTracks(_: RecentTracksParams): Promise<RawRecentTracks> {
+    return pagedResponse<RawRecentTracks>({
       track: [fakeTrack()],
     });
   }
 
-  async nowPlaying(_: string): Promise<Track> {
+  async nowPlaying(_: string): Promise<RawTrack> {
     return {
       ...fakeTrack(),
       name: "nowplayingtrack",
@@ -120,7 +120,7 @@ export class LastFMMock extends BaseService {
     };
   }
 
-  async getMilestone(_: string, __: number): Promise<Track> {
+  async getMilestone(_: string, __: number): Promise<RawTrack> {
     return fakeTrack();
   }
 
@@ -128,7 +128,7 @@ export class LastFMMock extends BaseService {
     return 10;
   }
 
-  async trackInfo(params: TrackInfoParams): Promise<TrackInfo> {
+  async trackInfo(params: TrackInfoParams): Promise<RawTrackInfo> {
     return {
       name: params.track,
       mbid: "string",
@@ -157,10 +157,10 @@ export class LastFMMock extends BaseService {
         summary: "string",
         content: "string",
       },
-    } as TrackInfo;
+    } as RawTrackInfo;
   }
 
-  async artistInfo(params: ArtistInfoParams): Promise<ArtistInfo> {
+  async artistInfo(params: ArtistInfoParams): Promise<RawArtistInfo> {
     return {
       name: params.artist,
       url: "string",
@@ -196,7 +196,7 @@ export class LastFMMock extends BaseService {
     };
   }
 
-  async albumInfo(params: AlbumInfoParams): Promise<AlbumInfo> {
+  async albumInfo(params: AlbumInfoParams): Promise<RawAlbumInfo> {
     return {
       name: params.album,
       artist: params.artist,
@@ -230,7 +230,7 @@ export class LastFMMock extends BaseService {
     };
   }
 
-  async userInfo(_: UserInfoParams): Promise<UserInfo> {
+  async userInfo(_: UserInfoParams): Promise<RawUserInfo> {
     return {
       playlists: "string",
       playcount: "string",
@@ -252,7 +252,7 @@ export class LastFMMock extends BaseService {
     return true;
   }
 
-  async tagInfo(_: TagInfoParams): Promise<TagInfo> {
+  async tagInfo(_: TagInfoParams): Promise<RawTagInfo> {
     return {
       name: "tag",
       total: 1,
@@ -264,7 +264,7 @@ export class LastFMMock extends BaseService {
     };
   }
 
-  async topArtists(_: TopArtistsParams): Promise<TopArtists> {
+  async topArtists(_: TopArtistsParams): Promise<RawTopArtists> {
     return pagedResponse({
       artist: [
         {
@@ -284,7 +284,7 @@ export class LastFMMock extends BaseService {
     return 1;
   }
 
-  async topAlbums(_: TopAlbumsParams): Promise<TopAlbums> {
+  async topAlbums(_: TopAlbumsParams): Promise<RawTopAlbums> {
     return pagedResponse({
       album: [
         {
@@ -308,7 +308,7 @@ export class LastFMMock extends BaseService {
     return 1;
   }
 
-  async topTracks(_: TopTracksParams): Promise<TopTracks> {
+  async topTracks(_: TopTracksParams): Promise<RawTopTracks> {
     return pagedResponse({
       track: [
         {
@@ -334,13 +334,13 @@ export class LastFMMock extends BaseService {
     return 1;
   }
 
-  async goBack(_: string, __: Date): Promise<Track> {
+  async goBack(_: string, __: Date): Promise<RawTrack> {
     return fakeTrack();
   }
 
   async artistTopTracks(
     _: ArtistPopularTracksParams
-  ): Promise<ArtistPopularTracks> {
+  ): Promise<RawArtistPopularTracks> {
     return pagedResponse({
       track: [
         {
@@ -389,7 +389,7 @@ export class LastFMMock extends BaseService {
     };
   }
 
-  async tagTopArtists(_: TagTopArtistsParams): Promise<TagTopArtists> {
+  async tagTopArtists(_: TagTopArtistsParams): Promise<RawTagTopArtists> {
     return {
       artist: [
         {

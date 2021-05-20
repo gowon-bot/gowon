@@ -10,13 +10,13 @@ import { User as DBUser } from "../../../database/entity/User";
 import { TagConsolidator } from "../../../lib/tags/TagConsolidator";
 import { sanitizeForDiscord } from "../../../helpers/discord";
 import {
-  ConvertedAlbumInfo,
-  ConvertedArtistInfo,
-  ConvertedTrackInfo,
+  AlbumInfo,
+  ArtistInfo,
+  TrackInfo,
 } from "../../../services/LastFM/converters/InfoTypes";
 import {
-  ConvertedRecentTrack,
-  ConvertedRecentTracks,
+  RecentTrack,
+  RecentTracks,
 } from "../../../services/LastFM/converters/RecentTracks";
 
 const args = {
@@ -69,7 +69,7 @@ export abstract class NowPlayingBaseCommand<
     return { username, senderUsername, discordUser };
   }
 
-  protected scrobble(track: ConvertedRecentTrack) {
+  protected scrobble(track: RecentTrack) {
     if (
       this.gowonClient.environment === "production" &&
       this.gowonClient.isAlphaTester(this.author.id)
@@ -87,7 +87,7 @@ export abstract class NowPlayingBaseCommand<
   }
 
   protected nowPlayingEmbed(
-    nowPlaying: ConvertedRecentTrack,
+    nowPlaying: RecentTrack,
     username: string
   ): MessageEmbed {
     let links = LinkGenerator.generateTrackLinksForEmbed(nowPlaying);
@@ -110,8 +110,8 @@ export abstract class NowPlayingBaseCommand<
   }
 
   protected artistPlays(
-    artistInfo: { value?: ConvertedArtistInfo },
-    track: ConvertedRecentTrack,
+    artistInfo: { value?: ArtistInfo },
+    track: RecentTrack,
     isCrownHolder: boolean
   ): string {
     return artistInfo.value
@@ -126,28 +126,28 @@ export abstract class NowPlayingBaseCommand<
       : "";
   }
 
-  protected noArtistData(track: ConvertedRecentTrack): string {
+  protected noArtistData(track: RecentTrack): string {
     return (
       "No data on last.fm for " +
       (track.artist.length > 150 ? "that artist" : track.artist)
     );
   }
 
-  protected trackPlays(trackInfo: { value?: ConvertedTrackInfo }): string {
+  protected trackPlays(trackInfo: { value?: TrackInfo }): string {
     return trackInfo.value
       ? numberDisplay(trackInfo.value.userPlaycount, "scrobble") +
           " of this song"
       : "";
   }
 
-  protected albumPlays(albumInfo: { value?: ConvertedAlbumInfo }): string {
+  protected albumPlays(albumInfo: { value?: AlbumInfo }): string {
     return albumInfo.value
       ? numberDisplay(albumInfo.value?.userPlaycount, "scrobble") +
           " of this album"
       : "";
   }
 
-  protected scrobbleCount(nowPlayingResponse: ConvertedRecentTracks): string {
+  protected scrobbleCount(nowPlayingResponse: RecentTracks): string {
     return `${numberDisplay(nowPlayingResponse.meta.total, "total scrobble")}`;
   }
 
@@ -173,10 +173,7 @@ export abstract class NowPlayingBaseCommand<
     return { isCrownHolder, crownString };
   }
 
-  protected async easterEggs(
-    sentMessage: Message,
-    track: ConvertedRecentTrack
-  ) {
+  protected async easterEggs(sentMessage: Message, track: RecentTrack) {
     if (
       track.artist.toLowerCase() === "twice" &&
       track.name.toLowerCase() === "jaljayo good night"

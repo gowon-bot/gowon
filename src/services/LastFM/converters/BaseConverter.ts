@@ -1,9 +1,9 @@
 import { toInt } from "../../../helpers/lastFM";
-import { Tag } from "../LastFMService.types";
-import { Image } from "../LastFMService.types";
+import { RawTag } from "../LastFMService.types";
+import { RawImage } from "../LastFMService.types";
 
 export class ImageCollection {
-  constructor(private images: Image[]) {}
+  constructor(private images: RawImage[]) {}
 
   get(size: string): string | undefined {
     return this.images.find((i) => i.size === size)?.["#text"];
@@ -33,7 +33,7 @@ export abstract class BaseConverter {
     return false;
   }
 
-  protected convertTags(tags: Tag[]): string[] {
+  protected convertTags(tags: RawTag[]): string[] {
     return tags.map((t) => t.name);
   }
 

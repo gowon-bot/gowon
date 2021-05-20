@@ -1,5 +1,5 @@
 import { calculatePercent } from "../../helpers/stats";
-import { ConvertedTopArtist } from "../../services/LastFM/converters/TopTypes";
+import { TopArtist } from "../../services/LastFM/converters/TopTypes";
 
 export interface TasteArtist {
   name: string;
@@ -14,8 +14,8 @@ export interface Taste {
 
 export class TasteCalculator {
   constructor(
-    private userOneArtists: ConvertedTopArtist[],
-    private userTwoArtists: ConvertedTopArtist[],
+    private userOneArtists: TopArtist[],
+    private userTwoArtists: TopArtist[],
     private artistAmount: number
   ) {}
 

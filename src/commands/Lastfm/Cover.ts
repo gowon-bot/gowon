@@ -4,8 +4,8 @@ import { displayLink } from "../../helpers/discord";
 import { LinkGenerator } from "../../helpers/lastFM";
 import { Arguments } from "../../lib/arguments/arguments";
 import { standardMentions } from "../../lib/arguments/mentions/mentions";
-import { ConvertedAlbumInfo } from "../../services/LastFM/converters/InfoTypes";
-import { ConvertedRecentTrack } from "../../services/LastFM/converters/RecentTracks";
+import { AlbumInfo } from "../../services/LastFM/converters/InfoTypes";
+import { RecentTrack } from "../../services/LastFM/converters/RecentTracks";
 import { LastFMBaseCommand } from "./LastFMBaseCommand";
 
 const args = {
@@ -36,7 +36,7 @@ export default class Cover extends LastFMBaseCommand<typeof args> {
       usernameRequired: !artist || !album,
     });
 
-    let nowPlaying: ConvertedRecentTrack | undefined = undefined;
+    let nowPlaying: RecentTrack | undefined = undefined;
 
     if (!artist || !album) {
       nowPlaying = await this.lastFMService.nowPlaying(username);
@@ -57,13 +57,13 @@ export default class Cover extends LastFMBaseCommand<typeof args> {
     }
   }
 
-  private async sendFromAlbumDetails(albumInfo: ConvertedAlbumInfo) {
+  private async sendFromAlbumDetails(albumInfo: AlbumInfo) {
     let image = albumInfo.images.get("extralarge");
 
     await this.sendCoverImage(albumInfo.artist, albumInfo.name, image);
   }
 
-  private async sendFromNowPlaying(nowPlaying: ConvertedRecentTrack) {
+  private async sendFromNowPlaying(nowPlaying: RecentTrack) {
     let image = nowPlaying.images.get("extralarge");
 
     await this.sendCoverImage(nowPlaying.artist, nowPlaying.album, image);

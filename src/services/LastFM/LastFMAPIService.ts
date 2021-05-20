@@ -2,26 +2,26 @@ import { stringify } from "querystring";
 import fetch, { RequestInit } from "node-fetch";
 import crypto from "crypto";
 import {
-  RecentTracksResponse,
-  TrackInfoResponse,
-  ArtistInfoResponse,
-  AlbumInfoResponse,
-  UserInfoResponse,
-  TopArtistsResponse,
-  TopAlbumsResponse,
-  TopTracksResponse,
-  RecentTracks,
-  ArtistInfo,
-  AlbumInfo,
-  UserInfo,
-  TopArtists,
-  TopAlbums,
-  TopTracks,
-  TrackInfo,
-  TagInfo,
-  TagInfoResponse,
-  ArtistPopularTracks,
-  ArtistPopularTracksResponse,
+  RawRecentTracksResponse,
+  RawTrackInfoResponse,
+  RawArtistInfoResponse,
+  RawAlbumInfoResponse,
+  RawUserInfoResponse,
+  RawTopArtistsResponse,
+  RawTopAlbumsResponse,
+  RawTopTracksResponse,
+  RawRecentTracks,
+  RawArtistInfo,
+  RawAlbumInfo,
+  RawUserInfo,
+  RawTopArtists,
+  RawTopAlbums,
+  RawTopTracks,
+  RawTrackInfo,
+  RawTagInfo,
+  RawTagInfoResponse,
+  RawArtistPopularTracks,
+  RawArtistPopularTracksResponse,
   Params,
   RecentTracksParams,
   TrackInfoParams,
@@ -34,22 +34,22 @@ import {
   TopTracksParams,
   ArtistPopularTracksParams,
   TagTopArtistsParams,
-  TagTopArtists,
-  TagTopArtistsResponse,
+  RawTagTopArtists,
+  RawTagTopArtistsResponse,
   TrackSearchParams,
-  TrackSearchResponse,
+  RawTrackSearchResponse,
   GetSessionParams,
   ScrobbleParams,
   GetArtistCorrectionParams,
-  ArtistCorrection,
-  GetArtistCorrectionResponse,
-  RecentTracksExtended,
+  RawArtistCorrection,
+  RawGetArtistCorrectionResponse,
+  RawRecentTracksExtended,
   UserGetFriendsParams,
-  Friends,
-  UserGetFriendsResponse,
+  RawFriends,
+  RawUserGetFriendsResponse,
   TagTopTracksParams,
-  TagTopTracks,
-  TagTopTracksResponse,
+  RawTagTopTracks,
+  RawTagTopTracksResponse,
 } from "./LastFMService.types";
 import config from "../../../config.json";
 import {
@@ -107,24 +107,27 @@ export class LastFMAPIService extends BaseService {
     return jsonResponse as T;
   }
 
-  async _recentTracks(params: RecentTracksParams): Promise<RecentTracks> {
+  async _recentTracks(params: RecentTracksParams): Promise<RawRecentTracks> {
     return (
-      await this.request<RecentTracksResponse>("user.getrecenttracks", params)
+      await this.request<RawRecentTracksResponse>(
+        "user.getrecenttracks",
+        params
+      )
     ).recenttracks;
   }
 
   async _recentTracksExtended(
     params: RecentTracksParams
-  ): Promise<RecentTracksExtended> {
-    return await this.request<RecentTracksExtended>("user.getrecenttracks", {
+  ): Promise<RawRecentTracksExtended> {
+    return await this.request<RawRecentTracksExtended>("user.getrecenttracks", {
       ...params,
       extended: 1,
     });
   }
 
-  async _trackInfo(params: TrackInfoParams): Promise<TrackInfo> {
+  async _trackInfo(params: TrackInfoParams): Promise<RawTrackInfo> {
     let response = (
-      await this.request<TrackInfoResponse>("track.getInfo", params)
+      await this.request<RawTrackInfoResponse>("track.getInfo", params)
     ).track;
 
     if (
@@ -136,9 +139,9 @@ export class LastFMAPIService extends BaseService {
     return response;
   }
 
-  async _artistInfo(params: ArtistInfoParams): Promise<ArtistInfo> {
+  async _artistInfo(params: ArtistInfoParams): Promise<RawArtistInfo> {
     let response = (
-      await this.request<ArtistInfoResponse>("artist.getInfo", params)
+      await this.request<RawArtistInfoResponse>("artist.getInfo", params)
     ).artist;
 
     if (
@@ -151,9 +154,9 @@ export class LastFMAPIService extends BaseService {
     return response;
   }
 
-  async _albumInfo(params: AlbumInfoParams): Promise<AlbumInfo> {
+  async _albumInfo(params: AlbumInfoParams): Promise<RawAlbumInfo> {
     let response = (
-      await this.request<AlbumInfoResponse>("album.getInfo", params)
+      await this.request<RawAlbumInfoResponse>("album.getInfo", params)
     ).album;
 
     if (
@@ -165,17 +168,18 @@ export class LastFMAPIService extends BaseService {
     return response;
   }
 
-  async _userInfo(params: UserInfoParams): Promise<UserInfo> {
-    return (await this.request<UserInfoResponse>("user.getInfo", params)).user;
+  async _userInfo(params: UserInfoParams): Promise<RawUserInfo> {
+    return (await this.request<RawUserInfoResponse>("user.getInfo", params))
+      .user;
   }
 
-  async _tagInfo(params: TagInfoParams): Promise<TagInfo> {
-    return (await this.request<TagInfoResponse>("tag.getInfo", params)).tag;
+  async _tagInfo(params: TagInfoParams): Promise<RawTagInfo> {
+    return (await this.request<RawTagInfoResponse>("tag.getInfo", params)).tag;
   }
 
-  async _topArtists(params: TopArtistsParams): Promise<TopArtists> {
+  async _topArtists(params: TopArtistsParams): Promise<RawTopArtists> {
     return (
-      await this.request<TopArtistsResponse>("user.getTopArtists", {
+      await this.request<RawTopArtistsResponse>("user.getTopArtists", {
         limit: 50,
         page: 1,
         period: "overall",
@@ -184,9 +188,9 @@ export class LastFMAPIService extends BaseService {
     ).topartists;
   }
 
-  async _topAlbums(params: TopAlbumsParams): Promise<TopAlbums> {
+  async _topAlbums(params: TopAlbumsParams): Promise<RawTopAlbums> {
     return (
-      await this.request<TopAlbumsResponse>("user.getTopAlbums", {
+      await this.request<RawTopAlbumsResponse>("user.getTopAlbums", {
         limit: 50,
         page: 1,
         period: "overall",
@@ -195,9 +199,9 @@ export class LastFMAPIService extends BaseService {
     ).topalbums;
   }
 
-  async _topTracks(params: TopTracksParams): Promise<TopTracks> {
+  async _topTracks(params: TopTracksParams): Promise<RawTopTracks> {
     return (
-      await this.request<TopTracksResponse>("user.getTopTracks", {
+      await this.request<RawTopTracksResponse>("user.getTopTracks", {
         page: 1,
         limit: 50,
         period: "overall",
@@ -208,8 +212,8 @@ export class LastFMAPIService extends BaseService {
 
   async _artistPopularTracks(
     params: ArtistPopularTracksParams
-  ): Promise<ArtistPopularTracks> {
-    let response = await this.request<ArtistPopularTracksResponse>(
+  ): Promise<RawArtistPopularTracks> {
+    let response = await this.request<RawArtistPopularTracksResponse>(
       "artist.getTopTracks",
       params
     );
@@ -217,16 +221,18 @@ export class LastFMAPIService extends BaseService {
     return response.toptracks;
   }
 
-  async _tagTopArtists(params: TagTopArtistsParams): Promise<TagTopArtists> {
-    let response = await this.request<TagTopArtistsResponse>(
+  async _tagTopArtists(params: TagTopArtistsParams): Promise<RawTagTopArtists> {
+    let response = await this.request<RawTagTopArtistsResponse>(
       "tag.gettopartists",
       params
     );
     return response.topartists;
   }
 
-  async _trackSearch(params: TrackSearchParams): Promise<TrackSearchResponse> {
-    let response = await this.request<TrackSearchResponse>(
+  async _trackSearch(
+    params: TrackSearchParams
+  ): Promise<RawTrackSearchResponse> {
+    let response = await this.request<RawTrackSearchResponse>(
       "track.search",
       this.cleanSearchParams<TrackSearchParams>(params)
     );
@@ -236,8 +242,8 @@ export class LastFMAPIService extends BaseService {
 
   async _getArtistCorrection(
     params: GetArtistCorrectionParams
-  ): Promise<ArtistCorrection> {
-    let response = await this.request<GetArtistCorrectionResponse>(
+  ): Promise<RawArtistCorrection> {
+    let response = await this.request<RawGetArtistCorrectionResponse>(
       "artist.getCorrection",
       params
     );
@@ -248,10 +254,10 @@ export class LastFMAPIService extends BaseService {
     return response.corrections.correction.artist;
   }
 
-  async _userGetFriends(params: UserGetFriendsParams): Promise<Friends> {
+  async _userGetFriends(params: UserGetFriendsParams): Promise<RawFriends> {
     try {
       return (
-        await this.request<UserGetFriendsResponse>("user.getFriends", params)
+        await this.request<RawUserGetFriendsResponse>("user.getFriends", params)
       ).friends;
     } catch (e) {
       if (e.response?.message === "no such page") {
@@ -269,9 +275,9 @@ export class LastFMAPIService extends BaseService {
     }
   }
 
-  async _tagTopTracks(params: TagTopTracksParams): Promise<TagTopTracks> {
+  async _tagTopTracks(params: TagTopTracksParams): Promise<RawTagTopTracks> {
     return (
-      await this.request<TagTopTracksResponse>("tag.getTopTracks", params)
+      await this.request<RawTagTopTracksResponse>("tag.getTopTracks", params)
     ).tracks;
   }
 

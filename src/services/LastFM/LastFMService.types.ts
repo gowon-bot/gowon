@@ -1,6 +1,6 @@
 // Responses
 
-export interface PagedCollection<T = {}> {
+export interface RawPagedCollection<T = {}> {
   "@attr": {
     page: string;
     total: string;
@@ -10,22 +10,22 @@ export interface PagedCollection<T = {}> {
   } & T;
 }
 
-export interface Image {
+export interface RawImage {
   size: string;
   "#text": string;
 }
 
-export interface Tag {
+export interface RawTag {
   name: string;
   url: string;
 }
 
-export interface Track {
+export interface RawTrack {
   artist: { mbid: string; "#text": string };
   "@attr": { nowplaying: string };
   mbid: string;
   album: { mbid: string; "#text": string };
-  image: Image[];
+  image: RawImage[];
   streamable: string;
   url: string;
   name: string;
@@ -35,15 +35,15 @@ export interface Track {
   };
 }
 
-export interface RecentTracks extends PagedCollection {
-  track: Track[];
+export interface RawRecentTracks extends RawPagedCollection {
+  track: RawTrack[];
 }
 
-export interface RecentTracksResponse {
-  recenttracks: RecentTracks;
+export interface RawRecentTracksResponse {
+  recenttracks: RawRecentTracks;
 }
 
-export interface RecentTracksExtended extends PagedCollection {
+export interface RawRecentTracksExtended extends RawPagedCollection {
   track: [
     {
       "@attr": {
@@ -52,11 +52,11 @@ export interface RecentTracksExtended extends PagedCollection {
       artist: {
         url: string;
         mbid: string;
-        image: Image[];
+        image: RawImage[];
         name: string;
       };
       mbid: string;
-      image: Image[];
+      image: RawImage[];
       url: string;
       streamable: string;
       album: {
@@ -69,11 +69,11 @@ export interface RecentTracksExtended extends PagedCollection {
   ];
 }
 
-export interface RecentTracksExtendedResponse {
-  recenttracks: RecentTracksExtended;
+export interface RawRecentTracksExtendedResponse {
+  recenttracks: RawRecentTracksExtended;
 }
 
-export interface TrackInfo {
+export interface RawTrackInfo {
   name: string;
   mbid: string;
   url: string;
@@ -92,11 +92,11 @@ export interface TrackInfo {
     mbid: string;
     url: string;
     "@attr": { position: string };
-    image: Image[];
+    image: RawImage[];
   };
   userplaycount: string;
   userloved: string;
-  toptags: { tag: Tag[] };
+  toptags: { tag: RawTag[] };
   wiki?: {
     published: string;
     summary: string;
@@ -104,11 +104,11 @@ export interface TrackInfo {
   };
 }
 
-export interface TrackInfoResponse {
-  track: TrackInfo;
+export interface RawTrackInfoResponse {
+  track: RawTrackInfo;
 }
 
-export interface ArtistInfo {
+export interface RawArtistInfo {
   name: string;
   url: string;
   streamable: string;
@@ -118,10 +118,10 @@ export interface ArtistInfo {
     artist: {
       name: string;
       url: string;
-      image: Image[];
+      image: RawImage[];
     }[];
   };
-  tags: { tag: Tag[] };
+  tags: { tag: RawTag[] };
   bio: {
     links: {
       link: {
@@ -135,15 +135,15 @@ export interface ArtistInfo {
     content: string;
   };
 }
-export interface ArtistInfoResponse {
-  artist: ArtistInfo;
+export interface RawArtistInfoResponse {
+  artist: RawArtistInfo;
 }
 
-export interface AlbumInfo {
+export interface RawAlbumInfo {
   name: string;
   artist: string;
   url: string;
-  image: Image[];
+  image: RawImage[];
   listeners: string;
   playcount: string;
   userplaycount: string;
@@ -163,18 +163,18 @@ export interface AlbumInfo {
       }
     ];
   };
-  tags: { tag: Tag[] };
+  tags: { tag: RawTag[] };
   wiki?: {
     published: string;
     summary: string;
     content: string;
   };
 }
-export interface AlbumInfoResponse {
-  album: AlbumInfo;
+export interface RawAlbumInfoResponse {
+  album: RawAlbumInfo;
 }
 
-export interface UserInfo {
+export interface RawUserInfo {
   playlists: string;
   playcount: string;
   gender: string;
@@ -182,54 +182,54 @@ export interface UserInfo {
   subscriber: string;
   url: string;
   country: string;
-  image: Image[];
+  image: RawImage[];
   registered: { unixtime: string; "#text": number };
   type: string;
   age: string;
   bootstrap: string;
   realname: string;
 }
-export interface UserInfoResponse {
-  user: UserInfo;
+export interface RawUserInfoResponse {
+  user: RawUserInfo;
 }
 
-export interface LastFMErrorResponse {
+export interface RawLastFMErrorResponse {
   error: number;
   message: string;
 }
 
-export interface TopArtist {
+export interface RawTopArtist {
   "@attr": { rank: string };
   mbid: string;
   url: string;
   playcount: string;
-  image: Image[];
+  image: RawImage[];
   name: string;
   streamable: string;
 }
-export interface TopArtists extends PagedCollection {
-  artist: TopArtist[];
+export interface RawTopArtists extends RawPagedCollection {
+  artist: RawTopArtist[];
 }
-export interface TopArtistsResponse {
-  topartists: TopArtists;
+export interface RawTopArtistsResponse {
+  topartists: RawTopArtists;
 }
 
-export interface TopAlbum {
+export interface RawTopAlbum {
   artist: {
     url: string;
     name: string;
     mbid: string;
   };
   "@attr": { rank: string };
-  image: Image[];
+  image: RawImage[];
   playcount: string;
   url: string;
   name: string;
   mbid: string;
 }
 
-export interface TopAlbums extends PagedCollection {
-  album: TopAlbum[];
+export interface RawTopAlbums extends RawPagedCollection {
+  album: RawTopAlbum[];
   "@attr": {
     page: string;
     total: string;
@@ -239,11 +239,11 @@ export interface TopAlbums extends PagedCollection {
   };
 }
 
-export interface TopAlbumsResponse {
-  topalbums: TopAlbums;
+export interface RawTopAlbumsResponse {
+  topalbums: RawTopAlbums;
 }
 
-export interface TopTrack {
+export interface RawTopTrack {
   "@attr": { rank: string };
   duration: string;
   playcount: string;
@@ -252,14 +252,14 @@ export interface TopTrack {
     name: string;
     mbid: string;
   };
-  image: Image[];
+  image: RawImage[];
   streamable: { fulltrack: string; "#text": string };
   mbid: string;
   name: string;
   url: string;
 }
 
-export interface TopTracks extends PagedCollection {
+export interface RawTopTracks extends RawPagedCollection {
   "@attr": {
     page: string;
     total: string;
@@ -267,14 +267,14 @@ export interface TopTracks extends PagedCollection {
     perPage: string;
     totalPages: string;
   };
-  track: TopTrack[];
+  track: RawTopTrack[];
 }
 
-export interface TopTracksResponse {
-  toptracks: TopTracks;
+export interface RawTopTracksResponse {
+  toptracks: RawTopTracks;
 }
 
-export interface TagInfo {
+export interface RawTagInfo {
   name: string;
   total: number;
   reach: number;
@@ -284,11 +284,11 @@ export interface TagInfo {
   };
 }
 
-export interface TagInfoResponse {
-  tag: TagInfo;
+export interface RawTagInfoResponse {
+  tag: RawTagInfo;
 }
 
-export interface ArtistPopularTrack {
+export interface RawArtistPopularTrack {
   name: string;
   playcount: string;
   listeners: string;
@@ -299,36 +299,36 @@ export interface ArtistPopularTrack {
     mbid: string;
     url: string;
   };
-  image: Image[];
+  image: RawImage[];
   "@attr": {
     rank: string;
   };
 }
 
-export interface ArtistPopularTracks extends PagedCollection {
-  track: ArtistPopularTrack[];
+export interface RawArtistPopularTracks extends RawPagedCollection {
+  track: RawArtistPopularTrack[];
 }
 
-export interface ArtistPopularTracksResponse {
-  toptracks: ArtistPopularTracks;
+export interface RawArtistPopularTracksResponse {
+  toptracks: RawArtistPopularTracks;
 }
 
-export interface TagTopArtistsResponse {
-  topartists: TagTopArtists;
+export interface RawTagTopArtistsResponse {
+  topartists: RawTagTopArtists;
 }
 
-export interface TagTopArtist {
+export interface RawTagTopArtist {
   name: string;
   url: string;
   streamable: "0" | "1";
-  image: Image[];
+  image: RawImage[];
   "@attr": {
     rank: string;
   };
 }
 
-export interface TagTopArtists {
-  artist: TagTopArtist[];
+export interface RawTagTopArtists {
+  artist: RawTagTopArtist[];
   "@attr": {
     tag: string;
     page: string;
@@ -338,17 +338,17 @@ export interface TagTopArtists {
   };
 }
 
-export interface SearchedTrack {
+export interface RawSearchedTrack {
   name: string;
   artist: string;
   url: string;
   streamable: "FIXME";
   listeners: "46498";
-  image: Image[];
+  image: RawImage[];
   mbid: string;
 }
 
-export interface TrackSearchResponse {
+export interface RawTrackSearchResponse {
   results: {
     "opensearch:Query": {
       "#text": string;
@@ -359,16 +359,16 @@ export interface TrackSearchResponse {
     "opensearch:startIndex": string;
     "opensearch:itemsPerPage": string;
     trackmatches: {
-      track: SearchedTrack[];
+      track: RawSearchedTrack[];
     };
     "@attr": {};
   };
 }
 
-export interface GetArtistCorrectionResponse {
+export interface RawGetArtistCorrectionResponse {
   corrections?: {
     correction: {
-      artist: ArtistCorrection;
+      artist: RawArtistCorrection;
       "@attr": {
         index: string;
       };
@@ -376,19 +376,19 @@ export interface GetArtistCorrectionResponse {
   };
 }
 
-export interface ArtistCorrection {
+export interface RawArtistCorrection {
   name: string;
   mbid: string;
   url: string;
 }
 
-export interface Friend {
+export interface RawFriend {
   playlists: string;
   playcount: string;
   subscriber: string;
   name: string;
   country: string;
-  image: Image[];
+  image: RawImage[];
   registered: {
     unixtime: string;
     "#text": string;
@@ -399,15 +399,15 @@ export interface Friend {
   type: string;
 }
 
-export interface Friends extends PagedCollection {
-  user: Friend[];
+export interface RawFriends extends RawPagedCollection {
+  user: RawFriend[];
 }
 
-export interface UserGetFriendsResponse {
-  friends: Friends;
+export interface RawUserGetFriendsResponse {
+  friends: RawFriends;
 }
 
-export interface TagTopTrack {
+export interface RawTagTopTrack {
   name: string;
   duration: string;
   mbid: string;
@@ -421,14 +421,14 @@ export interface TagTopTrack {
     mbid: string;
     url: string;
   };
-  image: Image[];
+  image: RawImage[];
   "@attr": {
     rank: string;
   };
 }
 
-export interface TagTopTracks {
-  track: TagTopTrack[];
+export interface RawTagTopTracks {
+  track: RawTagTopTrack[];
   "@attr": {
     tag: string;
     page: string;
@@ -438,8 +438,8 @@ export interface TagTopTracks {
   };
 }
 
-export interface TagTopTracksResponse {
-  tracks: TagTopTracks;
+export interface RawTagTopTracksResponse {
+  tracks: RawTagTopTracks;
 }
 
 /// ==================

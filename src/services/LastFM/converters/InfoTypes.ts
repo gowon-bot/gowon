@@ -1,15 +1,15 @@
 import { fromUnixTime } from "date-fns";
 import {
-  ArtistInfo,
-  TrackInfo,
-  AlbumInfo,
-  UserInfo,
-  TagInfo,
+  RawArtistInfo,
+  RawTrackInfo,
+  RawAlbumInfo,
+  RawUserInfo,
+  RawTagInfo,
 } from "../LastFMService.types";
 import { BaseConverter, ImageCollection } from "./BaseConverter";
 export type LastFMUserType = "user" | "subscriber" | "alum" | "mod" | "staff";
 
-export class ConvertedArtistInfo extends BaseConverter {
+export class ArtistInfo extends BaseConverter {
   name: string;
   url: string;
   streamable: boolean;
@@ -22,7 +22,7 @@ export class ConvertedArtistInfo extends BaseConverter {
 
   wiki: { summary: string; content: string; link: string };
 
-  constructor(artistInfo: ArtistInfo) {
+  constructor(artistInfo: RawArtistInfo) {
     super();
 
     this.name = artistInfo.name;
@@ -49,7 +49,7 @@ export class ConvertedArtistInfo extends BaseConverter {
   }
 }
 
-export class ConvertedTrackInfo extends BaseConverter {
+export class TrackInfo extends BaseConverter {
   name: string;
   mbid: string;
   url: string;
@@ -77,7 +77,7 @@ export class ConvertedTrackInfo extends BaseConverter {
 
   wiki: { summary: string; content: string };
 
-  constructor(trackInfo: TrackInfo) {
+  constructor(trackInfo: RawTrackInfo) {
     super();
 
     this.name = trackInfo.name;
@@ -114,7 +114,7 @@ export class ConvertedTrackInfo extends BaseConverter {
   }
 }
 
-export class ConvertedAlbumInfo extends BaseConverter {
+export class AlbumInfo extends BaseConverter {
   name: string;
   artist: string;
   url: string;
@@ -139,7 +139,7 @@ export class ConvertedAlbumInfo extends BaseConverter {
 
   wiki: { summary: string; content: string };
 
-  constructor(albumInfo: AlbumInfo) {
+  constructor(albumInfo: RawAlbumInfo) {
     super();
 
     this.name = albumInfo.name;
@@ -167,7 +167,7 @@ export class ConvertedAlbumInfo extends BaseConverter {
   }
 }
 
-export class ConvertedUserInfo extends BaseConverter {
+export class UserInfo extends BaseConverter {
   playlists: number;
   scrobbleCount: number;
   name: string;
@@ -180,7 +180,7 @@ export class ConvertedUserInfo extends BaseConverter {
   age: number;
   realName: string;
 
-  constructor(userInfo: UserInfo) {
+  constructor(userInfo: RawUserInfo) {
     super();
 
     this.playlists = this.number(userInfo.playlists);
@@ -197,7 +197,7 @@ export class ConvertedUserInfo extends BaseConverter {
   }
 }
 
-export class ConvertedTagInfo extends BaseConverter {
+export class TagInfo extends BaseConverter {
   name: string;
   listeners: number;
   uses: number;
@@ -206,7 +206,7 @@ export class ConvertedTagInfo extends BaseConverter {
     content: string;
   };
 
-  constructor(tagInfo: TagInfo) {
+  constructor(tagInfo: RawTagInfo) {
     super();
 
     this.name = tagInfo.name;

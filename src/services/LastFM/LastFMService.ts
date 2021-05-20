@@ -23,40 +23,33 @@ import {
   UserInfoParams,
 } from "./LastFMService.types";
 import {
-  ConvertedAlbumInfo,
-  ConvertedArtistInfo,
-  ConvertedTagInfo,
-  ConvertedTrackInfo,
-  ConvertedUserInfo,
+  AlbumInfo,
+  ArtistInfo,
+  TagInfo,
+  TrackInfo,
+  UserInfo,
 } from "./converters/InfoTypes";
 import {
-  ConvertedArtistCorrection,
-  ConvertedArtistPopularTracks,
-  ConvertedFriends,
-  ConvertedTagTopArtists,
-  ConvertedTagTopTracks,
-  ConvertedTrackSearch,
+  ArtistCorrection,
+  ArtistPopularTracks,
+  Friends,
+  TagTopArtists,
+  TagTopTracks,
+  TrackSearch,
 } from "./converters/Misc";
-import {
-  ConvertedRecentTrack,
-  ConvertedRecentTracks,
-} from "./converters/RecentTracks";
-import {
-  ConvertedTopAlbums,
-  ConvertedTopArtists,
-  ConvertedTopTracks,
-} from "./converters/TopTypes";
+import { RecentTrack, RecentTracks } from "./converters/RecentTracks";
+import { TopAlbums, TopArtists, TopTracks } from "./converters/TopTypes";
 
 export class LastFMService extends LastFMAPIService {
   scraper = new LastFMScraper(this.logger);
 
   private tagsService = new TagsService(this, this.logger);
 
-  async artistInfo(params: ArtistInfoParams): Promise<ConvertedArtistInfo> {
-    let response: ConvertedArtistInfo;
+  async artistInfo(params: ArtistInfoParams): Promise<ArtistInfo> {
+    let response: ArtistInfo;
 
     try {
-      response = new ConvertedArtistInfo(await this._artistInfo(params));
+      response = new ArtistInfo(await this._artistInfo(params));
 
       this.tagsService.cacheTagsFromArtistInfo(response);
     } catch (e) {
@@ -69,80 +62,68 @@ export class LastFMService extends LastFMAPIService {
     return response;
   }
 
-  async albumInfo(params: AlbumInfoParams): Promise<ConvertedAlbumInfo> {
-    return new ConvertedAlbumInfo(await this._albumInfo(params));
+  async albumInfo(params: AlbumInfoParams): Promise<AlbumInfo> {
+    return new AlbumInfo(await this._albumInfo(params));
   }
 
-  async trackInfo(params: TrackInfoParams): Promise<ConvertedTrackInfo> {
-    return new ConvertedTrackInfo(await this._trackInfo(params));
+  async trackInfo(params: TrackInfoParams): Promise<TrackInfo> {
+    return new TrackInfo(await this._trackInfo(params));
   }
 
-  async userInfo(params: UserInfoParams): Promise<ConvertedUserInfo> {
-    return new ConvertedUserInfo(await this._userInfo(params));
+  async userInfo(params: UserInfoParams): Promise<UserInfo> {
+    return new UserInfo(await this._userInfo(params));
   }
 
-  async tagInfo(params: TagInfoParams): Promise<ConvertedTagInfo> {
-    return new ConvertedTagInfo(await this._tagInfo(params));
+  async tagInfo(params: TagInfoParams): Promise<TagInfo> {
+    return new TagInfo(await this._tagInfo(params));
   }
 
-  async topArtists(params: TopArtistsParams): Promise<ConvertedTopArtists> {
-    return new ConvertedTopArtists(await this._topArtists(params));
+  async topArtists(params: TopArtistsParams): Promise<TopArtists> {
+    return new TopArtists(await this._topArtists(params));
   }
 
-  async topAlbums(params: TopAlbumsParams): Promise<ConvertedTopAlbums> {
-    return new ConvertedTopAlbums(await this._topAlbums(params));
+  async topAlbums(params: TopAlbumsParams): Promise<TopAlbums> {
+    return new TopAlbums(await this._topAlbums(params));
   }
 
-  async topTracks(params: TopTracksParams): Promise<ConvertedTopTracks> {
-    return new ConvertedTopTracks(await this._topTracks(params));
+  async topTracks(params: TopTracksParams): Promise<TopTracks> {
+    return new TopTracks(await this._topTracks(params));
   }
 
-  async recentTracks(
-    params: RecentTracksParams
-  ): Promise<ConvertedRecentTracks> {
-    return new ConvertedRecentTracks(await this._recentTracks(params));
+  async recentTracks(params: RecentTracksParams): Promise<RecentTracks> {
+    return new RecentTracks(await this._recentTracks(params));
   }
 
   async artistPopularTracks(
     params: ArtistPopularTracksParams
-  ): Promise<ConvertedArtistPopularTracks> {
-    return new ConvertedArtistPopularTracks(
-      await this._artistPopularTracks(params)
-    );
+  ): Promise<ArtistPopularTracks> {
+    return new ArtistPopularTracks(await this._artistPopularTracks(params));
   }
 
-  async tagTopArtists(
-    params: TagTopArtistsParams
-  ): Promise<ConvertedTagTopArtists> {
-    return new ConvertedTagTopArtists(await this._tagTopArtists(params));
+  async tagTopArtists(params: TagTopArtistsParams): Promise<TagTopArtists> {
+    return new TagTopArtists(await this._tagTopArtists(params));
   }
 
-  async trackSearch(params: TrackSearchParams): Promise<ConvertedTrackSearch> {
-    return new ConvertedTrackSearch(await this._trackSearch(params));
+  async trackSearch(params: TrackSearchParams): Promise<TrackSearch> {
+    return new TrackSearch(await this._trackSearch(params));
   }
 
   async getArtistCorrection(
     params: GetArtistCorrectionParams
-  ): Promise<ConvertedArtistCorrection> {
-    return new ConvertedArtistCorrection(
-      await this._getArtistCorrection(params)
-    );
+  ): Promise<ArtistCorrection> {
+    return new ArtistCorrection(await this._getArtistCorrection(params));
   }
 
-  async userGetFriends(
-    params: UserGetFriendsParams
-  ): Promise<ConvertedFriends> {
-    return new ConvertedFriends(await this._userGetFriends(params));
+  async userGetFriends(params: UserGetFriendsParams): Promise<Friends> {
+    return new Friends(await this._userGetFriends(params));
   }
 
-  async tagTopTracks(
-    params: TagTopTracksParams
-  ): Promise<ConvertedTagTopTracks> {
-    return new ConvertedTagTopTracks(await this._tagTopTracks(params));
+  async tagTopTracks(params: TagTopTracksParams): Promise<TagTopTracks> {
+    return new TagTopTracks(await this._tagTopTracks(params));
   }
 
   // Derived methods
-  async nowPlaying(username: string): Promise<ConvertedRecentTrack> {
+  async nowPlaying(username: string): Promise<RecentTrack> {
     return (await this.recentTracks({ limit: 1, username })).first();
   }
 
@@ -244,7 +225,7 @@ export class LastFMService extends LastFMAPIService {
   async getMilestone(
     username: string,
     milestone: number
-  ): Promise<ConvertedRecentTrack> {
+  ): Promise<RecentTrack> {
     let total = (await this.recentTracks({ username, limit: 1 })).meta.total;
 
     let response = await this.recentTracks({
@@ -277,7 +258,7 @@ export class LastFMService extends LastFMAPIService {
     return recentTracks.meta.total || 0;
   }
 
-  async goBack(username: string, when: Date): Promise<ConvertedRecentTrack> {
+  async goBack(username: string, when: Date): Promise<RecentTrack> {
     let to = add(when, { hours: 6 });
 
     let params = {

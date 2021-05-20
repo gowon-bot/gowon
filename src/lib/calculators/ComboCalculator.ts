@@ -1,7 +1,7 @@
 import { RedirectsService } from "../../services/dbservices/RedirectsService";
 import {
-  ConvertedRecentTrack,
-  ConvertedRecentTracks,
+  RecentTrack,
+  RecentTracks,
 } from "../../services/LastFM/converters/RecentTracks";
 import { RedirectsCache } from "../caches/RedirectsCache";
 import { isPaginator, Paginator } from "../Paginator";
@@ -24,7 +24,7 @@ export class ComboCalculator {
   ) {}
 
   async calculate(
-    recentTracks: Paginator<any, ConvertedRecentTracks> | ConvertedRecentTracks
+    recentTracks: Paginator<any, RecentTracks> | RecentTracks
   ): Promise<Combo> {
     if (isPaginator(recentTracks)) {
       for await (let page of recentTracks.iterator()) {
@@ -44,7 +44,7 @@ export class ComboCalculator {
   }
 
   private async handlePage(
-    page: ConvertedRecentTracks,
+    page: RecentTracks,
     pageNumber: number,
     maxPages: number
   ): Promise<boolean> {
@@ -66,10 +66,7 @@ export class ComboCalculator {
     return true;
   }
 
-  private extractTracks(
-    page: ConvertedRecentTracks,
-    pageNumber: number
-  ): ConvertedRecentTrack[] {
+  private extractTracks(page: RecentTracks, pageNumber: number): RecentTrack[] {
     let { tracks } = page;
 
     if (!tracks.length) return [];
@@ -83,12 +80,12 @@ export class ComboCalculator {
     }
   }
 
-  private async shouldContinue(track: ConvertedRecentTrack): Promise<boolean> {
+  private async shouldContinue(track: RecentTrack): Promise<boolean> {
     return await this.combo.compareTrackToCombo(track);
   }
 
   private async incrementCombo(
-    track: ConvertedRecentTrack,
+    track: RecentTrack,
     last: boolean
   ): Promise<void> {
     await this.combo.increment(track, last);
@@ -113,7 +110,7 @@ export class Combo {
     );
   }
 
-  imprint(track: ConvertedRecentTrack) {
+  imprint(track: RecentTrack) {
     let nowplaying = !!track.isNowPlaying;
 
     let defaultDetails = {
@@ -160,7 +157,7 @@ export class Combo {
     ];
   }
 
-  async compareTrackToCombo(track: ConvertedRecentTrack) {
+  async compareTrackToCombo(track: RecentTrack) {
     return (
       (await this.compareArtistNames(track.artist, this.artistNames)) ||
       this.caseInsensitiveCompare(track.album, this.albumName) ||
@@ -168,7 +165,7 @@ export class Combo {
     );
   }
 
-  async increment(track: ConvertedRecentTrack, hitMax: boolean) {
+  async increment(track: RecentTrack, hitMax: boolean) {
     if (track.isNowPlaying) return;
 
     if (

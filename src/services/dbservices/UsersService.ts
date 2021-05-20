@@ -75,7 +75,7 @@ export class UsersService extends BaseService {
   }
 
   async countUsers(): Promise<number> {
-    this.log(`counting users}`);
+    this.log("counting users");
     return await User.count();
   }
 

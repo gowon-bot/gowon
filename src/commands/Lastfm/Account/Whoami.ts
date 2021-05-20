@@ -19,7 +19,9 @@ export default class Whoami extends LastFMBaseCommand<typeof args> {
   arguments: Arguments = args;
 
   async run(message: Message) {
-    let { username, discordUser: user } = await this.parseMentions();
+    let { username, discordUser: user } = await this.parseMentions({
+      fetchDiscordUser: true,
+    });
 
     let perspective = this.usersService.discordPerspective(
       message.author,

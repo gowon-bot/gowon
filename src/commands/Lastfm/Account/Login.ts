@@ -13,7 +13,7 @@ import { Delegate } from "../../../lib/command/BaseCommand";
 import SimpleLogin from "./SimpleLogin";
 import { IndexingBaseCommand } from "../../../lib/indexing/IndexingCommand";
 import { EmptyConnector } from "../../../lib/indexing/BaseConnector";
-import { ConvertedUserInfo } from "../../../services/LastFM/converters/InfoTypes";
+import { UserInfo } from "../../../services/LastFM/converters/InfoTypes";
 
 const args = {
   inputs: {
@@ -82,7 +82,7 @@ export default class Login extends IndexingBaseCommand<any, any, typeof args> {
       throw new LogicError("please do not include the triangle brackets! (<>)");
     }
 
-    let userInfo: ConvertedUserInfo | undefined;
+    let userInfo: UserInfo | undefined;
 
     try {
       userInfo = await this.lastFMService.userInfo({ username });

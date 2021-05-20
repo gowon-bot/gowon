@@ -1,5 +1,4 @@
-import { ConvertedRecentTrack } from "../services/LastFM/converters/RecentTracks";
-import { Track } from "../services/LastFM/LastFMService.types";
+import { RecentTrack } from "../services/LastFM/converters/RecentTracks";
 
 import {
   cleanURL,
@@ -113,7 +112,7 @@ export abstract class LinkGenerator {
     );
   }
 
-  static generateTrackLinks(track: ConvertedRecentTrack): TrackLinks {
+  static generateTrackLinks(track: RecentTrack): TrackLinks {
     return {
       artist: this.artistPage(track.artist),
       album: this.albumPage(track.artist, track.album),
@@ -121,7 +120,7 @@ export abstract class LinkGenerator {
     };
   }
 
-  static generateTrackLinksForEmbed(track: ConvertedRecentTrack): TrackLinks {
+  static generateTrackLinksForEmbed(track: RecentTrack): TrackLinks {
     let links = this.generateTrackLinks(track);
 
     return {
@@ -137,15 +136,6 @@ export interface ParsedTrack {
   album: string;
   name: string;
   nowPlaying: boolean;
-}
-
-export function parseLastFMTrackResponse(track: Track): ParsedTrack {
-  return {
-    artist: track.artist["#text"],
-    album: track.album["#text"],
-    name: track.name,
-    nowPlaying: track["@attr"]?.nowplaying === "true",
-  };
 }
 
 export class LinkConsolidator {

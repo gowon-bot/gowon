@@ -6,7 +6,7 @@ import { validators } from "../../../lib/validation/validators";
 import { differenceInDays } from "date-fns";
 import { DiscordIDMention } from "../../../lib/arguments/mentions/DiscordIDMention";
 import { LogicError } from "../../../errors";
-import { ConvertedUserInfo } from "../../../services/LastFM/converters/InfoTypes";
+import { UserInfo } from "../../../services/LastFM/converters/InfoTypes";
 
 const args = {
   inputs: {
@@ -60,7 +60,7 @@ export default class SimpleLogin extends LastFMBaseCommand<typeof args> {
       return;
     }
 
-    let userInfo: ConvertedUserInfo | undefined;
+    let userInfo: UserInfo | undefined;
 
     try {
       userInfo = await this.lastFMService.userInfo({ username });

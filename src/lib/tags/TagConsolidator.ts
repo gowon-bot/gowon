@@ -1,8 +1,8 @@
-import { Tag } from "../../services/LastFM/LastFMService.types";
+import { RawTag } from "../../services/LastFM/LastFMService.types";
 import blacklistedTags from "./blacklistedTags.json";
 
-function isTagArray(tags: string[] | Tag[]): tags is Tag[] {
-  return (tags as Tag[])[0]?.name !== undefined;
+function isTagArray(tags: string[] | RawTag[]): tags is RawTag[] {
+  return (tags as RawTag[])[0]?.name !== undefined;
 }
 
 export class TagConsolidator {
@@ -32,7 +32,7 @@ export class TagConsolidator {
     return !!this.tags.length;
   }
 
-  addTags(tags: Tag[] | string[]): TagConsolidator {
+  addTags(tags: RawTag[] | string[]): TagConsolidator {
     let tagStrings = isTagArray(tags)
       ? tags.map((t) => t.name.toLowerCase())
       : tags.map((t) => t.toLowerCase());

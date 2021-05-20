@@ -1,4 +1,4 @@
-import { LastFMErrorResponse } from "../services/LastFM/LastFMService.types";
+import { RawLastFMErrorResponse } from "../services/LastFM/LastFMService.types";
 
 export function parseErrorSix(message: string): string {
   if (message.toLowerCase() === "no such page") return "unknown error";
@@ -11,7 +11,7 @@ export function parseErrorSix(message: string): string {
   else return "that track could not be found!";
 }
 
-export function parseError(error: LastFMErrorResponse): string {
+export function parseError(error: RawLastFMErrorResponse): string {
   switch (error.error) {
     case 6:
       return parseErrorSix(error.message);

@@ -1,20 +1,20 @@
 import {
-  ArtistCorrection,
-  ArtistPopularTrack,
-  ArtistPopularTracks,
-  Friends,
-  SearchedTrack,
-  TagTopArtist,
-  TagTopArtists,
-  TagTopTrack,
-  TagTopTracks,
-  TrackSearchResponse,
-  UserInfo,
+  RawArtistCorrection,
+  RawArtistPopularTrack,
+  RawArtistPopularTracks,
+  RawFriends,
+  RawSearchedTrack,
+  RawTagTopArtist,
+  RawTagTopArtists,
+  RawTagTopTrack,
+  RawTagTopTracks,
+  RawTrackSearchResponse,
+  RawUserInfo,
 } from "../LastFMService.types";
 import { BaseConverter, ImageCollection } from "./BaseConverter";
-import { ConvertedUserInfo } from "./InfoTypes";
+import { UserInfo } from "./InfoTypes";
 
-export class ConvertedArtistPopularTrack extends BaseConverter {
+export class ArtistPopularTrack extends BaseConverter {
   name: string;
   globalPlaycount: number;
   listeners: number;
@@ -28,7 +28,7 @@ export class ConvertedArtistPopularTrack extends BaseConverter {
   images: ImageCollection;
   rank: number;
 
-  constructor(track: ArtistPopularTrack) {
+  constructor(track: RawArtistPopularTrack) {
     super();
 
     this.name = track.name;
@@ -42,8 +42,8 @@ export class ConvertedArtistPopularTrack extends BaseConverter {
   }
 }
 
-export class ConvertedArtistPopularTracks extends BaseConverter {
-  tracks: ConvertedArtistPopularTrack[];
+export class ArtistPopularTracks extends BaseConverter {
+  tracks: ArtistPopularTrack[];
   meta: {
     artist: string;
     page: number;
@@ -52,13 +52,13 @@ export class ConvertedArtistPopularTracks extends BaseConverter {
     totalPages: number;
   };
 
-  constructor(popularTracks: ArtistPopularTracks) {
+  constructor(popularTracks: RawArtistPopularTracks) {
     super();
 
     const attr = popularTracks["@attr"];
 
     this.tracks = popularTracks.track.map(
-      (t) => new ConvertedArtistPopularTrack(t)
+      (t) => new ArtistPopularTrack(t)
     );
 
     this.meta = {
@@ -71,14 +71,14 @@ export class ConvertedArtistPopularTracks extends BaseConverter {
   }
 }
 
-export class ConvertedTagTopArtist extends BaseConverter {
+export class TagTopArtist extends BaseConverter {
   name: string;
   url: string;
   streamable: boolean;
   images: ImageCollection;
   rank: number;
 
-  constructor(tagTopArtist: TagTopArtist) {
+  constructor(tagTopArtist: RawTagTopArtist) {
     super();
 
     this.name = tagTopArtist.name;
@@ -89,8 +89,8 @@ export class ConvertedTagTopArtist extends BaseConverter {
   }
 }
 
-export class ConvertedTagTopArtists extends BaseConverter {
-  artists: ConvertedTagTopArtist[];
+export class TagTopArtists extends BaseConverter {
+  artists: TagTopArtist[];
   meta: {
     tag: string;
     page: number;
@@ -99,13 +99,13 @@ export class ConvertedTagTopArtists extends BaseConverter {
     total: number;
   };
 
-  constructor(tagTopArtists: TagTopArtists) {
+  constructor(tagTopArtists: RawTagTopArtists) {
     super();
 
     const attr = tagTopArtists["@attr"];
 
     this.artists = tagTopArtists.artist.map(
-      (a) => new ConvertedTagTopArtist(a)
+      (a) => new TagTopArtist(a)
     );
 
     this.meta = {
@@ -118,7 +118,7 @@ export class ConvertedTagTopArtists extends BaseConverter {
   }
 }
 
-export class ConvertedSearchedTrack extends BaseConverter {
+export class SearchedTrack extends BaseConverter {
   name: string;
   artist: string;
   url: string;
@@ -127,7 +127,7 @@ export class ConvertedSearchedTrack extends BaseConverter {
   image: ImageCollection;
   mbid: string;
 
-  constructor(searchedTrack: SearchedTrack) {
+  constructor(searchedTrack: RawSearchedTrack) {
     super();
 
     this.name = searchedTrack.name;
@@ -140,8 +140,8 @@ export class ConvertedSearchedTrack extends BaseConverter {
   }
 }
 
-export class ConvertedTrackSearch extends BaseConverter {
-  tracks: ConvertedSearchedTrack[];
+export class TrackSearch extends BaseConverter {
+  tracks: SearchedTrack[];
   meta: {
     query: string;
     startPage: number;
@@ -149,11 +149,11 @@ export class ConvertedTrackSearch extends BaseConverter {
     perPage: number;
   };
 
-  constructor(trackSearch: TrackSearchResponse) {
+  constructor(trackSearch: RawTrackSearchResponse) {
     super();
 
     this.tracks = trackSearch.results.trackmatches.track.map(
-      (t) => new ConvertedSearchedTrack(t)
+      (t) => new SearchedTrack(t)
     );
 
     this.meta = {
@@ -165,12 +165,12 @@ export class ConvertedTrackSearch extends BaseConverter {
   }
 }
 
-export class ConvertedArtistCorrection extends BaseConverter {
+export class ArtistCorrection extends BaseConverter {
   name: string;
   mbid: string;
   url: string;
 
-  constructor(artistCorrection: ArtistCorrection) {
+  constructor(artistCorrection: RawArtistCorrection) {
     super();
 
     this.name = artistCorrection.name;
@@ -179,8 +179,8 @@ export class ConvertedArtistCorrection extends BaseConverter {
   }
 }
 
-export class ConvertedFriends extends BaseConverter {
-  friends: ConvertedUserInfo[];
+export class Friends extends BaseConverter {
+  friends: UserInfo[];
   meta: {
     user: string;
     page: number;
@@ -189,14 +189,14 @@ export class ConvertedFriends extends BaseConverter {
     total: number;
   };
 
-  constructor(friends: Friends) {
+  constructor(friends: RawFriends) {
     super();
 
     const attr = friends["@attr"];
 
     this.friends = friends.user.map(
       // a friend and user info are identical except friends are missing `gender`
-      (f) => new ConvertedUserInfo(f as any as UserInfo)
+      (f) => new UserInfo(f as any as RawUserInfo)
     );
 
     this.meta = {
@@ -209,7 +209,7 @@ export class ConvertedFriends extends BaseConverter {
   }
 }
 
-export class ConvertedTagTopTrack extends BaseConverter {
+export class TagTopTrack extends BaseConverter {
   name: string;
   duration: number;
   mbid: string;
@@ -222,7 +222,7 @@ export class ConvertedTagTopTrack extends BaseConverter {
   images: ImageCollection;
   rank: number;
 
-  constructor(tagTopTrack: TagTopTrack) {
+  constructor(tagTopTrack: RawTagTopTrack) {
     super();
 
     this.name = tagTopTrack.name;
@@ -235,8 +235,8 @@ export class ConvertedTagTopTrack extends BaseConverter {
   }
 }
 
-export class ConvertedTagTopTracks extends BaseConverter {
-  tracks: ConvertedTagTopTrack[];
+export class TagTopTracks extends BaseConverter {
+  tracks: TagTopTrack[];
   meta: {
     tag: string;
     page: number;
@@ -245,12 +245,12 @@ export class ConvertedTagTopTracks extends BaseConverter {
     total: number;
   };
 
-  constructor(tagTopTracks: TagTopTracks) {
+  constructor(tagTopTracks: RawTagTopTracks) {
     super();
 
     const attr = tagTopTracks["@attr"];
 
-    this.tracks = tagTopTracks.track.map((t) => new ConvertedTagTopTrack(t));
+    this.tracks = tagTopTracks.track.map((t) => new TagTopTrack(t));
 
     this.meta = {
       tag: attr.tag,
