@@ -1,9 +1,10 @@
 import { CrownsService } from "../../../services/dbservices/CrownsService";
 import { LineConsolidator } from "../../../lib/LineConsolidator";
 import { NowPlayingBaseCommand } from "./NowPlayingBaseCommand";
-import { numberDisplay, promiseAllSettled } from "../../../helpers";
+import { promiseAllSettled } from "../../../helpers";
 import { ComboCalculator } from "../../../lib/calculators/ComboCalculator";
 import { RedirectsService } from "../../../services/dbservices/RedirectsService";
+import { displayNumber } from "../../../lib/views/displays";
 
 export default class NowPlayingCombo extends NowPlayingBaseCommand {
   idSeed = "iz*one wonyoung";
@@ -50,7 +51,7 @@ export default class NowPlayingCombo extends NowPlayingBaseCommand {
     const artistPlays = this.artistPlays(artistInfo, nowPlaying, isCrownHolder);
     const noArtistData = this.noArtistData(nowPlaying);
 
-    const comboString = `${numberDisplay(combo.artist.plays)} in a row ${
+    const comboString = `${displayNumber(combo.artist.plays)} in a row ${
       combo.artist.plays > 100 ? "🔥" : ""
     }`;
     const hasCombo = combo.artist.plays > 1;

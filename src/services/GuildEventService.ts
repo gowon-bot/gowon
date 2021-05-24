@@ -1,8 +1,8 @@
 import { Guild, GuildMember } from "discord.js";
-import { numberDisplay } from "../helpers";
 import { CommandManager } from "../lib/command/CommandManager";
 import { GowonClient } from "../lib/GowonClient";
 import { Logger } from "../lib/Logger";
+import { displayNumber } from "../lib/views/displays";
 import { BaseService } from "./BaseService";
 import { AdminService } from "./dbservices/AdminService";
 import { GowonService } from "./GowonService";
@@ -98,7 +98,7 @@ export class GuildEventService extends BaseService {
     await this.gowonClient.client.users
       .resolve(developerID)
       ?.send(
-        `Gowon just joined ${guild.name} (${numberDisplay(
+        `Gowon just joined ${guild.name} (${displayNumber(
           guild.memberCount,
           "members"
         )})`

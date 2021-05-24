@@ -3,10 +3,13 @@ import { Crown } from "../../database/entity/Crown";
 import { Friend } from "../../database/entity/Friend";
 import { CommandRun } from "../../database/entity/meta/CommandRun";
 import { CrownEvent } from "../../database/entity/meta/CrownEvent";
-import { dateDisplay, numberDisplay } from "../../helpers";
-import { displayLink } from "../../helpers/discord";
 import { BaseCommand } from "../../lib/command/BaseCommand";
 import { CommandManager } from "../../lib/command/CommandManager";
+import {
+  displayDate,
+  displayLink,
+  displayNumber,
+} from "../../lib/views/displays";
 import { CrownEventString } from "../../services/dbservices/CrownsHistoryService";
 import { RedirectsService } from "../../services/dbservices/RedirectsService";
 import { TagsService } from "../../services/dbservices/tags/TagsService";
@@ -55,7 +58,7 @@ export default class About extends BaseCommand {
       .setDescription(
         `${
           this.gowonClient.client.user?.username || "Gowon"
-        } is ${numberDisplay(
+        } is ${displayNumber(
           differenceInDays(new Date(), this.startDate),
           "day"
         ).strong()} old!
@@ -70,32 +73,32 @@ ${displayLink("Github", "https://github.com/jivison/gowon")}, ${displayLink(
           name: "Bot stats",
           value: `Guilds cached: ${this.gowonClient.client.guilds.cache.size}
 Users cached: ${this.gowonClient.client.users.cache.size}
-Commands run: ${numberDisplay(commandsRun)}
-Total friends: ${numberDisplay(friends)}
-Total commands: ${numberDisplay(commandCount)}`,
+Commands run: ${displayNumber(commandsRun)}
+Total friends: ${displayNumber(friends)}
+Total commands: ${displayNumber(commandCount)}`,
           inline: true,
         },
         {
           name: "Crown stats",
-          value: `Total crowns: ${numberDisplay(
+          value: `Total crowns: ${displayNumber(
             crowns
-          )}\nYoinks: ${numberDisplay(yoinks)}`,
+          )}\nYoinks: ${displayNumber(yoinks)}`,
           inline: true,
         },
         {
           name: "Cache stats",
-          value: `Cached redirects: ${numberDisplay(
+          value: `Cached redirects: ${displayNumber(
             cachedRedirects
-          )}\nArtists with cached tags: ${numberDisplay(cachedTags)}`,
+          )}\nArtists with cached tags: ${displayNumber(cachedTags)}`,
           inline: true,
         },
         {
           name: "Last.fm stats",
-          value: `_Scrobbling since ${dateDisplay(
+          value: `_Scrobbling since ${displayDate(
             userInfo.registeredAt
-          )}_\n\nScrobbles: ${numberDisplay(
+          )}_\n\nScrobbles: ${displayNumber(
             userInfo.scrobbleCount
-          )}\nArtists scrobbled: ${numberDisplay(artistCount)}`,
+          )}\nArtists scrobbled: ${displayNumber(artistCount)}`,
         }
       )
       .setFooter(

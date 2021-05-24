@@ -17,10 +17,6 @@ export function sanitizeForDiscord(string: string): string {
   return string.replace(/\n/g, " ");
 }
 
-export function displayLink(text: string, link: string): string {
-  return `[${sanitizeForDiscord(text)}](${cleanURL(link)})`;
-}
-
 export interface NamedPermission extends Permission {
   name: string;
 }

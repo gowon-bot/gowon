@@ -1,6 +1,5 @@
 import { Arguments } from "../../../lib/arguments/arguments";
 import { TasteCalculator } from "../../../lib/calculators/TasteCalculator";
-import { numberDisplay } from "../../../helpers";
 import { sanitizeForDiscord } from "../../../helpers/discord";
 import { generatePeriod, generateHumanPeriod } from "../../../helpers/date";
 import { Variation } from "../../../lib/command/BaseCommand";
@@ -8,7 +7,8 @@ import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { LogicError } from "../../../errors";
 import { TasteCommand, tasteMentions } from "./TasteCommand";
-import { SimpleScrollingEmbed } from "../../../helpers/Embeds/SimpleScrollingEmbed";
+import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingEmbed";
+import { displayNumber } from "../../../lib/views/displays";
 
 const args = {
   inputs: {
@@ -98,10 +98,10 @@ export default class Taste extends TasteCommand<typeof args> {
     const embedDescription =
       userOneUsername === userTwoUsername
         ? "It's 100%, what are you expecting :neutral_face:"
-        : `Comparing top ${numberDisplay(
+        : `Comparing top ${displayNumber(
             senderArtists.artists.slice(0, artistAmount).length,
             "artist"
-          )}, ${numberDisplay(taste.artists.length, "overlapping artist")} (${
+          )}, ${displayNumber(taste.artists.length, "overlapping artist")} (${
             taste.percent
           }% match) found.`;
 

@@ -1,5 +1,5 @@
+import { displayNumber } from "../../../lib/views/displays";
 import { FriendsChildCommand } from "./FriendsChildCommand";
-import { numberDisplay } from "../../../helpers";
 
 export class RemoveAll extends FriendsChildCommand {
   idSeed = "nature loha";
@@ -19,7 +19,7 @@ export class RemoveAll extends FriendsChildCommand {
 
     await this.send(
       this.newEmbed().setDescription(
-        `Successfully removed ${numberDisplay(deletedCount, "friend")}!`
+        `Successfully removed ${displayNumber(deletedCount, "friend")}!`
       )
     );
   }

@@ -1,9 +1,9 @@
 import { Arguments } from "../../../lib/arguments/arguments";
 import { InfoCommand } from "./InfoCommand";
-import { numberDisplay } from "../../../helpers";
 import { LinkConsolidator, toInt } from "../../../helpers/lastFM";
 import { LineConsolidator } from "../../../lib/LineConsolidator";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
+import { displayNumber } from "../../../lib/views/displays";
 
 const args = {
   inputs: {
@@ -58,7 +58,7 @@ export default class TrackInfo extends InfoCommand<typeof args> {
 
     this.lineConsolidator.addLines(
       (duration
-        ? `_${numberDisplay(Math.round(duration / 60000), "minute")}_`
+        ? `_${displayNumber(Math.round(duration / 60000), "minute")}_`
         : "") +
         (duration && trackInfo.album ? " - " : "") +
         (trackInfo.album
@@ -93,12 +93,12 @@ export default class TrackInfo extends InfoCommand<typeof args> {
       .addFields(
         {
           name: "Listeners",
-          value: numberDisplay(trackInfo.listeners),
+          value: displayNumber(trackInfo.listeners),
           inline: true,
         },
         {
           name: "Playcount",
-          value: numberDisplay(trackInfo.globalPlaycount),
+          value: displayNumber(trackInfo.globalPlaycount),
           inline: true,
         }
       )

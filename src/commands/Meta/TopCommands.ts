@@ -1,9 +1,9 @@
 import { Message } from "discord.js";
 import { MetaChildCommand } from "./MetaChildCommand";
-import { numberDisplay } from "../../helpers";
 import { CommandManager } from "../../lib/command/CommandManager";
 import { Arguments } from "../../lib/arguments/arguments";
 import { timeRangeParser, humanizedTimeRangeParser } from "../../helpers/date";
+import { displayNumber } from "../../lib/views/displays";
 
 const args = {
   inputs: {
@@ -39,7 +39,7 @@ export class TopCommands extends MetaChildCommand<typeof args> {
       .setDescription(
         topCommands.map(
           (tc) =>
-            `${numberDisplay(tc.count, "run")} - ${(
+            `${displayNumber(tc.count, "run")} - ${(
               commandManager.findByID(tc.commandID)?.friendlyNameWithParent ??
               "[unknown command]"
             ).strong()}`

@@ -1,7 +1,7 @@
 import { Arguments } from "../../../lib/arguments/arguments";
-import { numberDisplay } from "../../../helpers";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
+import { displayNumber } from "../../../lib/views/displays";
 
 const args = {
   inputs: {
@@ -39,9 +39,9 @@ export default class TrackPlaysequal extends LastFMBaseCommand<typeof args> {
     }
 
     await this.traditionalReply(
-      `${numberDisplay(playsequal).strong()} of ${
+      `${displayNumber(playsequal).strong()} of ${
         perspective.possessive
-      } top 1,000 tracks have exactly ${numberDisplay(plays, "play").strong()}`
+      } top 1,000 tracks have exactly ${displayNumber(plays, "play").strong()}`
     );
   }
 }

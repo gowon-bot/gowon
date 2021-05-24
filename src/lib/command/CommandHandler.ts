@@ -36,6 +36,7 @@ export class CommandHandler {
     ) {
       message.react("🥰");
     } else if (
+      message.content.toLowerCase() === "bad bot" ||
       message.content.toLowerCase() === "stupid bot" ||
       message.content.toLowerCase() === "fuck you bot" ||
       message.content.toLowerCase() === "not good bot"

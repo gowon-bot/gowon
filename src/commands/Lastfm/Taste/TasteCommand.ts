@@ -4,7 +4,7 @@ import {
   Taste as TasteType,
   TasteArtist,
 } from "../../../lib/calculators/TasteCalculator";
-import { numberDisplay, StringPadder } from "../../../helpers";
+import { StringPadder } from "../../../helpers";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { LastFMPeriod } from "../../../services/LastFM/LastFMService.types";
 import { Paginator } from "../../../lib/Paginator";
@@ -13,6 +13,7 @@ import { DiscordIDMention } from "../../../lib/arguments/mentions/DiscordIDMenti
 import { LogicError } from "../../../errors";
 import { DurationParser } from "../../../lib/DurationParser";
 import { toInt } from "../../../helpers/lastFM";
+import { displayNumber } from "../../../lib/views/displays";
 
 export const tasteMentions = {
   user: { index: 0 },
@@ -181,7 +182,7 @@ export abstract class TasteCommand<
     embed = embed.addFields(
       taste.artists.slice(0, 12).map((ta) => ({
         name: ta.name,
-        value: `${numberDisplay(ta.user1plays, "play")} - ${numberDisplay(
+        value: `${displayNumber(ta.user1plays, "play")} - ${displayNumber(
           ta.user2plays,
           "play"
         )}`,

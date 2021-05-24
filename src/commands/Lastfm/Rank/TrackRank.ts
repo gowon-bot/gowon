@@ -1,7 +1,7 @@
 import { Arguments } from "../../../lib/arguments/arguments";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
-import { numberDisplay } from "../../../helpers";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
+import { displayNumber } from "../../../lib/views/displays";
 
 const args = {
   inputs: {
@@ -57,13 +57,13 @@ export default class TrackRank extends LastFMBaseCommand<typeof args> {
       await this.traditionalReply(
         `that track wasn't found in ${
           perspective.possessive
-        } top ${numberDisplay(topTracks.tracks.length, "track")}`
+        } top ${displayNumber(topTracks.tracks.length, "track")}`
       );
     } else {
       await this.traditionalReply(
         `${topTracks.tracks[rank].name.strong()} by ${
           topTracks.tracks[rank].artist.name
-        } is ranked #${numberDisplay(rank + 1).strong()} with ${numberDisplay(
+        } is ranked #${displayNumber(rank + 1).strong()} with ${displayNumber(
           topTracks.tracks[rank].userPlaycount,
           "play"
         ).strong()}`

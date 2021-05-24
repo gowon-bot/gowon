@@ -1,8 +1,8 @@
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
-import { numberDisplay } from "../../../helpers";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { LinkGenerator } from "../../../helpers/lastFM";
+import { displayNumber } from "../../../lib/views/displays";
 
 const args = {
   inputs: {
@@ -71,11 +71,11 @@ export default class AlbumTopTracks extends LastFMBaseCommand<typeof args> {
       .setTitle(`Top tracks on ${artist} - ${album} for ${username}`)
       .setURL(LinkGenerator.libraryAlbumPage(username, artist, album))
       .setDescription(
-        `_${numberDisplay(topAlbums.total, `total scrobble`)}_\n\n` +
+        `_${displayNumber(topAlbums.total, `total scrobble`)}_\n\n` +
           topAlbums.items
             .map(
               (tt) =>
-                `${numberDisplay(tt.playcount, "play")} - ${tt.track.strong()}`
+                `${displayNumber(tt.playcount, "play")} - ${tt.track.strong()}`
             )
             .join("\n")
       );

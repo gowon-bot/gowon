@@ -1,7 +1,8 @@
 import { OverviewChildCommand } from "./OverviewChildCommand";
-import { numberDisplay, getOrdinal } from "../../../helpers";
+import { getOrdinal } from "../../../helpers";
 import { Emoji } from "../../../lib/Emoji";
 import { LinkGenerator, toInt } from "../../../helpers/lastFM";
+import { displayNumber } from "../../../lib/views/displays";
 
 export class All extends OverviewChildCommand {
   idSeed = "fx victoria";
@@ -58,7 +59,7 @@ ${
     : ""
 }
 _Scrobbling since ${await this.calculator.joined()}_
-_Following ${numberDisplay(friends.meta.total, "user")}_
+_Following ${displayNumber(friends.meta.total, "user")}_
 
 **Scrobbles**: ${await this.calculator.totalScrobbles()} (_${await this.calculator.avgPerDay()}/day_)
 **Artists**: ${await this.calculator.totalArtists()} (_${await this.calculator.avgScrobblesPerArtist()} scrobbles/artist_)
@@ -80,7 +81,7 @@ ${perspective.upper.possessive} top 10 artists account for: ${(
           perspective.possessivePronoun
         } total scrobbles
 
-Among ${perspective.possessivePronoun} top ${numberDisplay(
+Among ${perspective.possessivePronoun} top ${displayNumber(
           (await this.calculator.totalArtists()).asNumber > 1000
             ? 1000
             : (await this.calculator.totalArtists()).asNumber,
@@ -89,7 +90,7 @@ Among ${perspective.possessivePronoun} top ${numberDisplay(
         ${(await this.calculator.tierPlaysOver(this.playsoverTiers, 6))
           .map(
             (po) =>
-              `**${numberDisplay(po.count, "**artist")} with ${numberDisplay(
+              `**${displayNumber(po.count, "**artist")} with ${displayNumber(
                 po.tier,
                 "+ scrobble",
                 true
@@ -100,11 +101,11 @@ Among ${perspective.possessivePronoun} top ${numberDisplay(
             ? `\n\n**Total crowns**: ${rank!.count} (ranked ${getOrdinal(
                 toInt(rank!.rank)
               ).italic()})
-For every ${numberDisplay(
+For every ${displayNumber(
                 (await this.calculator.artistsPerCrown())!.asString,
                 "eligible artist"
               ).strong()}, ${perspective.plusToHave} a crown
-For every ${numberDisplay(
+For every ${displayNumber(
                 (await this.calculator.scrobblesPerCrown())!.asString,
                 "scrobble"
               ).strong()}, ${perspective.plusToHave} a crown`

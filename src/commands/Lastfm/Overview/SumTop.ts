@@ -1,8 +1,8 @@
 import { OverviewChildCommand } from "./OverviewChildCommand";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { LogicError } from "../../../errors";
-import { numberDisplay } from "../../../helpers";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
+import { displayNumber } from "../../../lib/views/displays";
 
 const args = {
   mentions: standardMentions,
@@ -45,10 +45,10 @@ export class SumTop extends OverviewChildCommand<typeof args> {
       .setAuthor(username + badge, image)
       .setColor(colour)
       .setDescription(
-        `${perspective.upper.possessive} top ${numberDisplay(
+        `${perspective.upper.possessive} top ${displayNumber(
           top,
           "artist"
-        ).strong()} make up ${numberDisplay(
+        ).strong()} make up ${displayNumber(
           sumtop.asNumber,
           "scrobble"
         ).strong()} (${sumtoppct.asString.strong()}% of ${

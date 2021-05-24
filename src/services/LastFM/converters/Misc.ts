@@ -57,9 +57,7 @@ export class ArtistPopularTracks extends BaseConverter {
 
     const attr = popularTracks["@attr"];
 
-    this.tracks = popularTracks.track.map(
-      (t) => new ArtistPopularTrack(t)
-    );
+    this.tracks = popularTracks.track.map((t) => new ArtistPopularTrack(t));
 
     this.meta = {
       artist: (attr as any).artist,
@@ -104,9 +102,7 @@ export class TagTopArtists extends BaseConverter {
 
     const attr = tagTopArtists["@attr"];
 
-    this.artists = tagTopArtists.artist.map(
-      (a) => new TagTopArtist(a)
-    );
+    this.artists = tagTopArtists.artist.map((a) => new TagTopArtist(a));
 
     this.meta = {
       tag: attr.tag,

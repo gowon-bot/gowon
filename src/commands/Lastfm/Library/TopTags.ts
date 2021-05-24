@@ -1,7 +1,7 @@
-import { numberDisplay } from "../../../helpers";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { TagConsolidator } from "../../../lib/tags/TagConsolidator";
+import { displayNumber } from "../../../lib/views/displays";
 import { TagsService } from "../../../services/dbservices/tags/TagsService";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
@@ -58,11 +58,11 @@ export default class TopTags extends LastFMBaseCommand<typeof args> {
     let embed = this.newEmbed()
       .setTitle(`Top tags for ${username}`)
       .setDescription(
-        `_${numberDisplay(topTags.length, "unique tag")}_\n` +
+        `_${displayNumber(topTags.length, "unique tag")}_\n` +
           topTopTags
             .map(
               (tt, idx) =>
-                `${idx + 1}. ${tt} (${numberDisplay(tagsCount[tt], "artist")})`
+                `${idx + 1}. ${tt} (${displayNumber(tagsCount[tt], "artist")})`
             )
             .join("\n")
       );

@@ -1,9 +1,9 @@
 import { Arguments } from "../../../lib/arguments/arguments";
-import { numberDisplay } from "../../../helpers";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { calculatePercent } from "../../../helpers/stats";
 import { toInt } from "../../../helpers/lastFM";
+import { displayNumber } from "../../../lib/views/displays";
 
 const args = {
   inputs: {
@@ -53,9 +53,9 @@ export default class GlobalAlbumPlays extends LastFMBaseCommand<typeof args> {
     await this.send(
       `Last.fm has scrobbled ${albumDetails.name.italic()} by ${
         albumDetails.artist
-      } ${numberDisplay(albumDetails.globalPlaycount, "time")}${
+      } ${displayNumber(albumDetails.globalPlaycount, "time")}${
         toInt(albumDetails.userPlaycount) > 0
-          ? `. ${perspective.upper.plusToHave} ${numberDisplay(
+          ? `. ${perspective.upper.plusToHave} ${displayNumber(
               albumDetails.userPlaycount,
               "scrobble"
             )} ${parseFloat(percentage) > 0 ? `(${percentage}%)` : ""}`

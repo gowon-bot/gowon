@@ -1,6 +1,5 @@
 import { CrownsService } from "../../services/dbservices/CrownsService";
 import { Logger } from "../Logger";
-import { dateDisplay, numberDisplay } from "../../helpers";
 import { calculatePercent } from "../../helpers/stats";
 import { CrownRankResponse } from "../../database/entity/Crown";
 import { log } from "mathjs";
@@ -16,12 +15,13 @@ import {
   TopArtists,
   TopTracks,
 } from "../../services/LastFM/converters/TopTypes";
+import { displayDate, displayNumber } from "../views/displays";
 
 export class Stat {
   public asString: string;
 
   constructor(public asNumber: number, asString?: string) {
-    if (!asString) this.asString = numberDisplay(asNumber);
+    if (!asString) this.asString = displayNumber(asNumber);
     else this.asString = asString;
   }
 
@@ -131,7 +131,7 @@ export class OverviewStatsCalculator {
   }
 
   async joined(): Promise<string> {
-    return dateDisplay((await this.userInfo()).registeredAt);
+    return displayDate((await this.userInfo()).registeredAt);
   }
 
   async country(): Promise<string> {
@@ -143,7 +143,7 @@ export class OverviewStatsCalculator {
 
     return new Stat(
       userInfo.scrobbleCount,
-      numberDisplay(userInfo.scrobbleCount)
+      displayNumber(userInfo.scrobbleCount)
     );
   }
 
@@ -162,7 +162,7 @@ export class OverviewStatsCalculator {
 
     return new Stat(
       topArtists.meta.total,
-      numberDisplay(topArtists.meta.total)
+      displayNumber(topArtists.meta.total)
     );
   }
 
@@ -180,7 +180,7 @@ export class OverviewStatsCalculator {
   async totalAlbums(): Promise<Stat> {
     let topAlbums = await this.topAlbums();
 
-    return new Stat(topAlbums.meta.total, numberDisplay(topAlbums.meta.total));
+    return new Stat(topAlbums.meta.total, displayNumber(topAlbums.meta.total));
   }
 
   async avgScrobblesPerAlbum(): Promise<Stat> {
@@ -197,7 +197,7 @@ export class OverviewStatsCalculator {
   async totalTracks(): Promise<Stat> {
     let topTracks = await this.topTracks();
 
-    return new Stat(topTracks.meta.total, numberDisplay(topTracks.meta.total));
+    return new Stat(topTracks.meta.total, displayNumber(topTracks.meta.total));
   }
 
   async avgScrobblesPerTrack(): Promise<Stat> {

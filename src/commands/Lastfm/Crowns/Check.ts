@@ -2,7 +2,7 @@ import { CrownsChildCommand } from "./CrownsChildCommand";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { Message } from "discord.js";
 import { CrownState } from "../../../services/dbservices/CrownsService";
-import { CrownEmbeds } from "../../../helpers/Embeds/CrownEmbeds";
+import { CrownEmbeds } from "../../../lib/views/embeds/CrownEmbeds";
 import {
   CrownBannedError,
   InactiveError,

@@ -1,9 +1,10 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
-import { numberDisplay, getOrdinal } from "../../../helpers";
+import { getOrdinal } from "../../../helpers";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { LogicError } from "../../../errors";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { toInt } from "../../../helpers/lastFM";
+import { displayNumber } from "../../../lib/views/displays";
 
 const args = {
   mentions: standardMentions,
@@ -44,13 +45,13 @@ export class List extends CrownsChildCommand<typeof args> {
         crowns
           .map(
             (c, idx) =>
-              `${idx + 1}. ${c.artistName} - ${numberDisplay(
+              `${idx + 1}. ${c.artistName} - ${displayNumber(
                 c.plays,
                 "play"
               ).strong()}`
           )
           .join("\n") +
-          `\n\n${perspective.upper.plusToHave} **${numberDisplay(
+          `\n\n${perspective.upper.plusToHave} **${displayNumber(
             crownsCount,
             "** crown"
           )} in ${this.guild.name} (ranked ${getOrdinal(

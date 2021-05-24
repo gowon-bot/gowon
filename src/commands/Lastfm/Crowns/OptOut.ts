@@ -1,6 +1,6 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
 import { Message } from "discord.js";
-import { numberDisplay } from "../../../helpers";
+import { displayNumber } from "../../../lib/views/displays";
 
 export class OptOut extends CrownsChildCommand {
   idSeed = "wjsn seola";
@@ -33,7 +33,7 @@ export class OptOut extends CrownsChildCommand {
 
       await this.send(
         this.newEmbed().setDescription(
-          `Opted you out, deleting ${numberDisplay(
+          `Opted you out, deleting ${displayNumber(
             numberOfCrowns,
             "crown"
           ).strong()}`

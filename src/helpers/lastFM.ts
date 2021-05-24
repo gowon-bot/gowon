@@ -1,10 +1,6 @@
+import { displayLink } from "../lib/views/displays";
 import { RecentTrack } from "../services/LastFM/converters/RecentTracks";
-
-import {
-  cleanURL,
-  displayLink,
-  displayLink as generateLinkEmbed,
-} from "./discord";
+import { cleanURL } from "./discord";
 
 export interface TrackLinks {
   artist: string;
@@ -124,9 +120,9 @@ export abstract class LinkGenerator {
     let links = this.generateTrackLinks(track);
 
     return {
-      artist: generateLinkEmbed(track.artist, links.artist),
-      album: generateLinkEmbed(track.album, links.album),
-      track: generateLinkEmbed(track.name, links.track),
+      artist: displayLink(track.artist, links.artist),
+      album: displayLink(track.album, links.album),
+      track: displayLink(track.name, links.track),
     };
   }
 }

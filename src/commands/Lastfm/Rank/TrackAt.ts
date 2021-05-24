@@ -1,9 +1,9 @@
 import { Arguments } from "../../../lib/arguments/arguments";
-import { numberDisplay } from "../../../helpers";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { LogicError } from "../../../errors";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
+import { displayNumber } from "../../../lib/views/displays";
 
 const args = {
   inputs: {
@@ -46,7 +46,7 @@ export default class TrackAt extends LastFMBaseCommand<typeof args> {
     await this.traditionalReply(
       `${track.name.strong()} by ${track.artist.name.italic()} is ranked at **${
         track.rank
-      }** in ${perspective.possessive} top tracks with ${numberDisplay(
+      }** in ${perspective.possessive} top tracks with ${displayNumber(
         track.userPlaycount,
         "play"
       ).strong()}`

@@ -1,10 +1,10 @@
 import { sub } from "date-fns";
 import { LogicError } from "../../../errors";
-import { dateDisplay, numberDisplay } from "../../../helpers";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { ReportCalculator } from "../../../lib/calculators/ReportCalculator";
 import { Paginator } from "../../../lib/Paginator";
+import { displayDate, displayNumber } from "../../../lib/views/displays";
 import { RedirectsService } from "../../../services/dbservices/RedirectsService";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
@@ -78,13 +78,13 @@ export default class Day extends LastFMBaseCommand<typeof args> {
     );
 
     let embed = this.newEmbed().setTitle(`${username}'s day`).setDescription(`
-      _${dateDisplay(sub(new Date(), { days: 1 }))} - ${dateDisplay(
+      _${displayDate(sub(new Date(), { days: 1 }))} - ${displayDate(
       new Date()
     )}_
-    _${numberDisplay(firstPage.tracks.length, "scrobble")}, ${numberDisplay(
+    _${displayNumber(firstPage.tracks.length, "scrobble")}, ${displayNumber(
       day.total.artists,
       "artist"
-    )}, ${numberDisplay(day.total.albums, "album")}, ${numberDisplay(
+    )}, ${displayNumber(day.total.albums, "album")}, ${displayNumber(
       day.total.tracks,
       "track"
     )}_
@@ -92,21 +92,21 @@ export default class Day extends LastFMBaseCommand<typeof args> {
 **Top Tracks**:
  • ${topTracks
       .slice(0, 3)
-      .map((t) => `${t} (${numberDisplay(day.top.tracks[t], "play")})`)
+      .map((t) => `${t} (${displayNumber(day.top.tracks[t], "play")})`)
       // These are special spaces
       .join("\n​ • ")}
 
 **Top Albums**:
  • ${topAlbums
       .slice(0, 3)
-      .map((t) => `${t} (${numberDisplay(day.top.albums[t], "play")})`)
+      .map((t) => `${t} (${displayNumber(day.top.albums[t], "play")})`)
       // These are special spaces
       .join("\n​ • ")}
 
 **Top Artists**:
  • ${topArtists
       .slice(0, 3)
-      .map((t) => `${t} (${numberDisplay(day.top.artists[t], "play")})`)
+      .map((t) => `${t} (${displayNumber(day.top.artists[t], "play")})`)
       // These are special spaces
       .join("\n​ • ")}
     `);

@@ -1,9 +1,9 @@
 import { CommandNotFoundError } from "../../errors";
-import { numberDisplay } from "../../helpers";
 import { Arguments } from "../../lib/arguments/arguments";
 import { CommandManager } from "../../lib/command/CommandManager";
 import { Validation } from "../../lib/validation/ValidationChecker";
 import { validators } from "../../lib/validation/validators";
+import { displayNumber } from "../../lib/views/displays";
 import { MetaBaseCommand } from "./MetaBaseCommand";
 
 const args = {
@@ -59,7 +59,7 @@ export default class CommandInfo extends MetaBaseCommand<typeof args> {
       command.subcategory ? ` > ${command.subcategory}` : ""
     }
     
-    Run ${numberDisplay(count, "time")}
+    Run ${displayNumber(count, "time")}
       
     `);
 

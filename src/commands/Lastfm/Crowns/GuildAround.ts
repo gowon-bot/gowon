@@ -1,8 +1,8 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
-import { numberDisplay } from "../../../helpers";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { LogicError } from "../../../errors";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
+import { displayNumber } from "../../../lib/views/displays";
 
 const args = {
   mentions: standardMentions,
@@ -58,14 +58,14 @@ export class GuildAround extends CrownsChildCommand {
                   u.discordID === author?.discordID ? "**" : ""
                 }${await this.fetchUsername(u.discordID)}${
                   u.discordID === author?.discordID ? "**" : ""
-                } with ${numberDisplay(u.count, "crown")}`
+                } with ${displayNumber(u.count, "crown")}`
             )
           )
         ).join("\n")}
         
         ${perspective.upper.possessive} position is #${
           author!.rank
-        } with ${numberDisplay(author!.count, "crown")}`
+        } with ${displayNumber(author!.count, "crown")}`
       );
 
     await this.send(embed);

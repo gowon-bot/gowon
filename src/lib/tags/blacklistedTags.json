@@ -37,7 +37,8 @@
     ".* step on me ?.*",
     "hi \\w+",
     ".*comeback.*",
-    "anal"
+    ".*\\banal\\b.*",
+    ".*\\fisting\\b.*"
   ],
   "explicit": [
     [19, 12, 21, 20],

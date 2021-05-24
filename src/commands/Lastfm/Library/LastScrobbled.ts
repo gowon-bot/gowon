@@ -1,9 +1,9 @@
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
-import { dateTimeDisplay } from "../../../helpers";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { LogicError } from "../../../errors";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { LinkGenerator } from "../../../helpers/lastFM";
+import { displayDateTime } from "../../../lib/views/displays";
 
 const args = {
   inputs: {
@@ -79,7 +79,7 @@ export default class LastScrobbled extends LastFMBaseCommand<typeof args> {
           perspective.upper.name
         } last scrobbled ${track.strong()} by ${artist.strong()} ${
           lastScrobbled instanceof Date
-            ? `at ${dateTimeDisplay(lastScrobbled).strong()}`
+            ? `at ${displayDateTime(lastScrobbled).strong()}`
             : lastScrobbled
         }`
       );

@@ -1,9 +1,10 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
 import { Message } from "discord.js";
-import { numberDisplay, getOrdinal } from "../../../helpers";
+import { getOrdinal } from "../../../helpers";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { LogicError } from "../../../errors";
 import { toInt } from "../../../helpers/lastFM";
+import { displayNumber } from "../../../lib/views/displays";
 
 const args = {
   mentions: {
@@ -48,14 +49,14 @@ export class Rank extends CrownsChildCommand<typeof args> {
         perspective.discordUser?.displayAvatarURL()
       )
       .setDescription(
-        `${perspective.upper.possessive} ${numberDisplay(
+        `${perspective.upper.possessive} ${displayNumber(
           rank.count,
           "crown"
         ).strong()} ${toInt(rank.count) === 1 ? "ranks" : "rank"} ${
           perspective.objectPronoun
         } ${getOrdinal(toInt(rank.rank)).strong()} in ${
           message.guild?.name
-        } out of ${numberDisplay(rank.totalUsers, "total user")}`
+        } out of ${displayNumber(rank.totalUsers, "total user")}`
       );
 
     await this.send(embed);

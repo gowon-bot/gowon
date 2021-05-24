@@ -191,7 +191,6 @@ _You can find the source code for all the commands at [/src/commands](/src/comma
   - Himiko
   - Dana
   - Turbie
-  - Mez
   - Itsuko
   - Catchy
 

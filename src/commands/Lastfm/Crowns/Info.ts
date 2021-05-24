@@ -1,10 +1,11 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { Message } from "discord.js";
-import { numberDisplay, ago } from "../../../helpers";
+import { ago } from "../../../helpers";
 import { RedirectsService } from "../../../services/dbservices/RedirectsService";
 import { createInvalidBadge } from "../../../helpers/crowns";
 import { ArtistCrownBannedError } from "../../../errors";
+import { displayNumber } from "../../../lib/views/displays";
 
 const args = {
   inputs: {
@@ -95,7 +96,7 @@ export class Info extends CrownsChildCommand<typeof args> {
           `Who has ${crown.artistName.strong()}?` + crown.redirectDisplay()
         )
         .setDescription(
-          `${holderUsername}${invalidBadge} has the crown for ${crown.artistName.strong()} with ${numberDisplay(
+          `${holderUsername}${invalidBadge} has the crown for ${crown.artistName.strong()} with ${displayNumber(
             crown.plays,
             "play"
           )}
@@ -107,7 +108,7 @@ export class Info extends CrownsChildCommand<typeof args> {
           _It ${
             crown.version === 0
               ? "has never been stolen"
-              : "has been stolen " + numberDisplay(crown.version, "time")
+              : "has been stolen " + displayNumber(crown.version, "time")
           }_`
         );
 

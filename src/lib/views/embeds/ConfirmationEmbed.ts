@@ -5,9 +5,9 @@ import {
   MessageReaction,
   ReactionCollector,
 } from "discord.js";
-import { EmojiRaw } from "../../lib/Emoji";
-import { GowonClient } from "../../lib/GowonClient";
-import { ReactionCollectorFilter } from "../discord";
+import { EmojiRaw } from "../../Emoji";
+import { GowonClient } from "../../GowonClient";
+import { ReactionCollectorFilter } from "../../../helpers/discord";
 
 export class ConfirmationEmbed {
   private readonly reactionEmoji = EmojiRaw.checkmark;

@@ -1,8 +1,8 @@
 import { Arguments } from "../../../lib/arguments/arguments";
 import { generatePeriod, generateHumanPeriod } from "../../../helpers/date";
-import { numberDisplay } from "../../../helpers";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
+import { displayNumber } from "../../../lib/views/displays";
 
 const args = {
   inputs: {
@@ -36,7 +36,7 @@ export default class AlbumCount extends LastFMBaseCommand<typeof args> {
     let scrobbles = await this.lastFMService.albumCount(username, timePeriod);
 
     await this.traditionalReply(
-      `${perspective.plusToHave} scrobbled ${numberDisplay(
+      `${perspective.plusToHave} scrobbled ${displayNumber(
         scrobbles,
         "album"
       ).strong()} ${humanReadableTimePeriod}`

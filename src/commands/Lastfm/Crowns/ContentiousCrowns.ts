@@ -1,7 +1,7 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
 import { Message } from "discord.js";
-import { numberDisplay } from "../../../helpers";
 import { LogicError } from "../../../errors";
+import { displayNumber } from "../../../lib/views/displays";
 
 export class ContentiousCrowns extends CrownsChildCommand {
   idSeed = "weki meki yoojung";
@@ -33,13 +33,13 @@ export class ContentiousCrowns extends CrownsChildCommand {
     let embed = this.newEmbed()
       .setTitle(`Most contentious crowns in ${message.guild?.name}`)
       .setDescription(
-        `There are **${numberDisplay(crownsCount, "** crown")} in ${
+        `There are **${displayNumber(crownsCount, "** crown")} in ${
           message.guild?.name
         }\n\n` +
           filteredCrowns
             .map(
               (c) =>
-                `${c.artistName} ― stolen ${numberDisplay(
+                `${c.artistName} ― stolen ${displayNumber(
                   c.version,
                   "time"
                 ).strong()}`

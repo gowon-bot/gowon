@@ -5,10 +5,10 @@ import {
   humanizedTimeRangeParser,
   parseDate,
 } from "../../../helpers/date";
-import { dateDisplay, numberDisplay } from "../../../helpers";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { GowonService } from "../../../services/GowonService";
+import { displayDate, displayNumber } from "../../../lib/views/displays";
 
 const args = {
   inputs: {
@@ -56,10 +56,10 @@ export default class Scrobbles extends LastFMBaseCommand<typeof args> {
     );
 
     let sentMessage = await this.traditionalReply(
-      `${perspective.plusToHave} ${numberDisplay(
+      `${perspective.plusToHave} ${displayNumber(
         scrobbles,
         "scrobble"
-      ).strong()} ${date ? `since ${dateDisplay(date)}` : humanTimeRange}`
+      ).strong()} ${date ? `since ${displayDate(date)}` : humanTimeRange}`
     );
 
     if (

@@ -1,10 +1,10 @@
 import { PermissionsChildCommand } from "./PermissionsChildCommand";
 import { Message, MessageEmbed, Role } from "discord.js";
-import { numberDisplay } from "../../../helpers";
 import {
   addNamesToPermissions,
   NamedPermission,
 } from "../../../helpers/discord";
+import { displayNumber } from "../../../lib/views/displays";
 
 interface GroupedPermissions {
   [permission: string]: number;
@@ -109,7 +109,7 @@ export class View extends PermissionsChildCommand {
           permissions.length
             ? Object.keys(groupedPermissions).map(
                 (p) =>
-                  `${p.code()} - ${numberDisplay(
+                  `${p.code()} - ${displayNumber(
                     groupedPermissions[p],
                     "permission"
                   )}`

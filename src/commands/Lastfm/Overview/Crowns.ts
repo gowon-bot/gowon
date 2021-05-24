@@ -1,7 +1,8 @@
 import { OverviewChildCommand } from "./OverviewChildCommand";
-import { numberDisplay, getOrdinal } from "../../../helpers";
+import { getOrdinal } from "../../../helpers";
 import { LogicError } from "../../../errors";
 import { toInt } from "../../../helpers/lastFM";
+import { displayNumber } from "../../../lib/views/displays";
 
 export class Crowns extends OverviewChildCommand {
   idSeed = "snsd tiffany";
@@ -27,15 +28,15 @@ export class Crowns extends OverviewChildCommand {
     if (await this.calculator.hasCrownStats()) {
       let embed = this.newEmbed()
         .setAuthor(username + badge, image)
-        .setColor(colour).setDescription(`You have ${numberDisplay(
+        .setColor(colour).setDescription(`You have ${displayNumber(
         crownRank!.count,
         "crown"
       ).strong()} (ranked ${getOrdinal(toInt(crownRank!.rank)).italic()})
-        For every ${numberDisplay(
+        For every ${displayNumber(
           apc!.asNumber,
           "eligible artist"
         ).strong()}, ${perspective.plusToHave} a crown
-  For every ${numberDisplay(spc!.asNumber, "scrobble").strong()}, ${
+  For every ${displayNumber(spc!.asNumber, "scrobble").strong()}, ${
         perspective.plusToHave
       } a crown
         `);

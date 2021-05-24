@@ -1,7 +1,7 @@
 import { Arguments } from "../../../lib/arguments/arguments";
-import { numberDisplay } from "../../../helpers";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
+import { displayNumber } from "../../../lib/views/displays";
 
 const args = {
   inputs: {
@@ -50,7 +50,7 @@ export default class TrackPlays extends LastFMBaseCommand<typeof args> {
       `${hamham ? "FTFY\n" : ""}${perspective.plusToHave}` +
         (trackDetails.userPlaycount === 0
           ? "n't scrobbled"
-          : ` **${numberDisplay(
+          : ` **${displayNumber(
               trackDetails.userPlaycount,
               "**scrobble"
             )} of`) +

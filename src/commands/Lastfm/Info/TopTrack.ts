@@ -1,8 +1,8 @@
 import { Arguments } from "../../../lib/arguments/arguments";
 import { InfoCommand } from "./InfoCommand";
 import { LogicError } from "../../../errors";
-import { numberDisplay } from "../../../helpers";
 import { toInt } from "../../../helpers/lastFM";
+import { displayNumber } from "../../../lib/views/displays";
 
 const args = {
   inputs: {
@@ -73,7 +73,7 @@ export default class PopularTracks extends InfoCommand<typeof args> {
         tracksToDisplay
           .map(
             (t, idx) =>
-              `${position.start + idx}. ${t.name.strong()} (${numberDisplay(
+              `${position.start + idx}. ${t.name.strong()} (${displayNumber(
                 t.listeners,
                 "listener"
               )})`

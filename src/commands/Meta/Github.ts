@@ -1,5 +1,5 @@
-import { displayLink } from "../../helpers/discord";
 import { BaseCommand } from "../../lib/command/BaseCommand";
+import { displayLink } from "../../lib/views/displays";
 
 export default class Github extends BaseCommand {
   idSeed = "apink chorom";

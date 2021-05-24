@@ -1,6 +1,6 @@
 import { Message } from "discord.js";
+import { displayNumber } from "../../lib/views/displays";
 import { AdminBaseCommand } from "./AdminBaseCommand";
-import { numberDisplay } from "../../helpers";
 
 export default class Usercount extends AdminBaseCommand {
   idSeed = "loona yeojin";
@@ -17,7 +17,7 @@ export default class Usercount extends AdminBaseCommand {
       this.newEmbed()
         .setAuthor(message.guild?.name!, message.guild?.iconURL() as string)
         .setDescription(
-          `There are ${numberDisplay(
+          `There are ${displayNumber(
             usercount,
             "registered user"
           ).strong()} logged into Gowon`

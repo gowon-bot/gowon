@@ -7,7 +7,7 @@ import { DiscordIDMention } from "../../../lib/arguments/mentions/DiscordIDMenti
 import { LogicError } from "../../../errors";
 import { IndexingService } from "../../../services/indexing/IndexingService";
 import { UserType } from "../../../services/indexing/IndexingTypes";
-import { ConfirmationEmbed } from "../../../helpers/Embeds/ConfirmationEmbed";
+import { ConfirmationEmbed } from "../../../lib/views/embeds/ConfirmationEmbed";
 import { ConcurrencyManager } from "../../../lib/caches/ConcurrencyManager";
 import { Delegate } from "../../../lib/command/BaseCommand";
 import SimpleLogin from "./SimpleLogin";

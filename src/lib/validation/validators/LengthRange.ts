@@ -1,4 +1,4 @@
-import { numberDisplay } from "../../../helpers";
+import { displayNumber } from "../../views/displays";
 import { BaseValidator, ValidatorOptions } from "./BaseValidator";
 
 export interface LengthRangeValidatorOptions extends ValidatorOptions {
@@ -16,15 +16,15 @@ export class LengthRange extends BaseValidator<LengthRangeValidatorOptions> {
     ) {
       this.throw(
         this.options.min && this.options.max
-          ? `please specify between ${numberDisplay(
+          ? `please specify between ${displayNumber(
               this.options.min
-            )} and ${numberDisplay(this.options.max)} ${argName}!`
+            )} and ${displayNumber(this.options.max)} ${argName}!`
           : this.options.min
-          ? `please specify at least ${numberDisplay(
+          ? `please specify at least ${displayNumber(
               this.options.min
             )} ${argName}!`
           : this.options.max
-          ? `please specify at most ${numberDisplay(
+          ? `please specify at most ${displayNumber(
               this.options.max
             )} ${argName}!`
           : `please enter a valid ${argName}!`

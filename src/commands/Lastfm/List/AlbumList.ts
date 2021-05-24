@@ -1,4 +1,7 @@
-import { numberDisplay } from "../../../helpers";
+import {
+  displayNumber,
+  displayNumberedList,
+} from "../../../lib/views/displays";
 import { ListCommand } from "./ListCommand";
 
 export default class AlbumList extends ListCommand {
@@ -18,22 +21,20 @@ export default class AlbumList extends ListCommand {
 
     let messageEmbed = this.newEmbed()
       .setTitle(
-        `Top ${numberDisplay(this.listAmount, "album")} for \`${username}\` ${
+        `Top ${displayNumber(this.listAmount, "album")} for \`${username}\` ${
           this.humanReadableTimePeriod
         }`
       )
       .setDescription(
-        topAlbums.albums
-          .map(
-            (a, idx) =>
-              `${
-                idx + 1
-              }. ${a.name.strong()} by ${a.artist.name.italic()} - ${numberDisplay(
+        displayNumberedList(
+          topAlbums.albums.map(
+            (a) =>
+              `${a.name.strong()} by ${a.artist.name.italic()} - ${displayNumber(
                 a.userPlaycount,
                 "play"
               )}`
           )
-          .join("\n")
+        )
       );
 
     await this.send(messageEmbed);

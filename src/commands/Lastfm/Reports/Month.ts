@@ -1,10 +1,10 @@
 import { sub } from "date-fns";
 import { LogicError } from "../../../errors";
-import { dateDisplay, numberDisplay } from "../../../helpers";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { ReportCalculator } from "../../../lib/calculators/ReportCalculator";
 import { Paginator } from "../../../lib/Paginator";
+import { displayDate, displayNumber } from "../../../lib/views/displays";
 import { RedirectsService } from "../../../services/dbservices/RedirectsService";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
@@ -77,13 +77,13 @@ export default class Month extends LastFMBaseCommand<typeof args> {
     );
 
     let embed = this.newEmbed().setTitle(`${username}'s month`).setDescription(`
-      _${dateDisplay(sub(new Date(), { months: 1 }))} - ${dateDisplay(
+      _${displayDate(sub(new Date(), { months: 1 }))} - ${displayDate(
       new Date()
     )}_
-    _${numberDisplay(firstPage.tracks.length, "scrobble")}, ${numberDisplay(
+    _${displayNumber(firstPage.tracks.length, "scrobble")}, ${displayNumber(
       month.total.artists,
       "artist"
-    )}, ${numberDisplay(month.total.albums, "album")}, ${numberDisplay(
+    )}, ${displayNumber(month.total.albums, "album")}, ${displayNumber(
       month.total.tracks,
       "track"
     )}_
@@ -91,21 +91,21 @@ export default class Month extends LastFMBaseCommand<typeof args> {
 **Top Tracks**:
  • ${topTracks
       .slice(0, 3)
-      .map((t) => `${t} (${numberDisplay(month.top.tracks[t], "play")})`)
+      .map((t) => `${t} (${displayNumber(month.top.tracks[t], "play")})`)
       // These are special spaces
       .join("\n​ • ")}
 
 **Top Albums**:
  • ${topAlbums
       .slice(0, 3)
-      .map((t) => `${t} (${numberDisplay(month.top.albums[t], "play")})`)
+      .map((t) => `${t} (${displayNumber(month.top.albums[t], "play")})`)
       // These are special spaces
       .join("\n​ • ")}
 
 **Top Artists**:
  • ${topArtists
       .slice(0, 3)
-      .map((t) => `${t} (${numberDisplay(month.top.artists[t], "play")})`)
+      .map((t) => `${t} (${displayNumber(month.top.artists[t], "play")})`)
       // These are special spaces
       .join("\n​ • ")}
     `);

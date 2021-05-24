@@ -1,10 +1,10 @@
 import { Arguments } from "../../../lib/arguments/arguments";
-import { numberDisplay } from "../../../helpers";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { LogicError } from "../../../errors";
 import { validators } from "../../../lib/validation/validators";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
+import { displayNumber } from "../../../lib/views/displays";
 
 const args = {
   inputs: {
@@ -48,7 +48,7 @@ export default class ArtistAt extends LastFMBaseCommand<typeof args> {
     await this.traditionalReply(
       `${artist.name.strong()} is ranked at #**${artist.rank}** in ${
         perspective.possessive
-      } top artists with ${numberDisplay(
+      } top artists with ${displayNumber(
         artist.userPlaycount,
         "play"
       ).strong()}`

@@ -1,10 +1,10 @@
-import { numberDisplay } from "../../../helpers";
 import { calculatePercent } from "../../../helpers/stats";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { Paginator } from "../../../lib/Paginator";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
+import { displayNumber } from "../../../lib/views/displays";
 import { TopTracks } from "../../../services/LastFM/converters/TopTypes";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
@@ -69,18 +69,18 @@ export default class TagTracks extends LastFMBaseCommand<typeof args> {
       )
       .setDescription(
         `
-_Comparing ${perspective.possessive} top ${numberDisplay(
+_Comparing ${perspective.possessive} top ${displayNumber(
           userTopTracks.tracks.length,
           "track"
-        )} and the top ${numberDisplay(
+        )} and the top ${displayNumber(
           tagTrackNames.length,
           "track"
         )} of the tag_\n` +
           (overlap.length
-            ? `${numberDisplay(overlap.length, "track")} (${calculatePercent(
+            ? `${displayNumber(overlap.length, "track")} (${calculatePercent(
                 overlap.length,
                 tagTrackNames.length
-              )}% match) (${numberDisplay(
+              )}% match) (${displayNumber(
                 overlap.reduce((sum, o) => sum + o.plays, 0),
                 "scrobble"
               )})\n\n` +
@@ -90,7 +90,7 @@ _Comparing ${perspective.possessive} top ${numberDisplay(
                   (o, idx) =>
                     `${
                       idx + 1
-                    }. ${o.track.strong()} by ${o.artist.italic()} - ${numberDisplay(
+                    }. ${o.track.strong()} by ${o.artist.italic()} - ${displayNumber(
                       o.plays,
                       "play"
                     )}`

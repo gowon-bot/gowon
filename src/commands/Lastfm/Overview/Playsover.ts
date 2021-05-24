@@ -1,4 +1,4 @@
-import { numberDisplay } from "../../../helpers";
+import { displayNumber } from "../../../lib/views/displays";
 import { OverviewChildCommand } from "./OverviewChildCommand";
 
 export class Playsover extends OverviewChildCommand {
@@ -21,14 +21,14 @@ export class Playsover extends OverviewChildCommand {
       .setAuthor(username + badge, image)
       .setColor(colour).setDescription(`Among ${
       perspective.possessivePronoun
-    } top ${numberDisplay(
+    } top ${displayNumber(
       artistCount.asNumber > 1000 ? 1000 : artistCount.asNumber,
       "artist"
     )}, ${perspective.plusToHave}...
     ${(await this.calculator.tierPlaysOver(this.playsoverTiers, 6))
       .map(
         (po) =>
-          `**${numberDisplay(po.count, "**artist")} with ${numberDisplay(
+          `**${displayNumber(po.count, "**artist")} with ${displayNumber(
             po.tier,
             "+ scrobble",
             true

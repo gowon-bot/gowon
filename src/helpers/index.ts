@@ -1,29 +1,9 @@
-import { format, formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow } from "date-fns";
+import { displayNumber } from "../lib/views/displays";
 import { toInt } from "./lastFM";
 
 export function addS(string: string, number: number) {
   return number === 1 ? string : string + "s";
-}
-
-export function numberDisplay(
-  number: number | string | undefined,
-  unit?: string,
-  noSpace = false
-): string {
-  let parsedNumber = number;
-
-  if (typeof number === "string") {
-    parsedNumber = Number(number) || 0;
-  }
-
-  parsedNumber ||= 0;
-
-  return (
-    parsedNumber.toLocaleString() +
-    (unit
-      ? (noSpace ? "" : " ") + (parsedNumber === 1 ? unit : unit + "s")
-      : "")
-  );
 }
 
 export function abbreviateNumber(number: number | string) {
@@ -54,16 +34,7 @@ export function abbreviateNumber(number: number | string) {
     }
   }
 
-  return result || numberDisplay(number);
-}
-
-export function dateDisplay(date: Date): string {
-  return format(date, "MMMM do, yyyy");
-}
-
-export function dateTimeDisplay(date: Date | undefined): string {
-  if (!date) return "";
-  return format(date, "h:mma 'on' MMMM do, yyyy");
+  return result || displayNumber(number);
 }
 
 export function ago(date: Date): string {
@@ -95,8 +66,8 @@ export function flatDeep<T = any>(arr: Array<any>, d = Infinity): Array<T> {
 }
 
 export function getOrdinal(number: number): string {
-  if (`${number}`.endsWith("11")) return numberDisplay(number) + "th";
-  if (`${number}`.endsWith("12")) return numberDisplay(number) + "th";
+  if (`${number}`.endsWith("11")) return displayNumber(number) + "th";
+  if (`${number}`.endsWith("12")) return displayNumber(number) + "th";
 
   let ordinals = [
     "th",
@@ -113,7 +84,7 @@ export function getOrdinal(number: number): string {
   ];
 
   return (
-    numberDisplay(number) +
+    displayNumber(number) +
     ordinals[toInt(`${number}`.charAt(`${number}`.length - 1))]
   );
 }

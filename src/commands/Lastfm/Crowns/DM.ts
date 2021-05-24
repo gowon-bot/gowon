@@ -1,7 +1,8 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
-import { numberDisplay, chunkArray } from "../../../helpers";
+import { chunkArray } from "../../../helpers";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
+import { displayNumber } from "../../../lib/views/displays";
 
 const args = {
   mentions: standardMentions,
@@ -40,7 +41,7 @@ export class DM extends CrownsChildCommand<typeof args> {
     let chunks = chunkArray(crowns, crownsPerMessage);
 
     this.author.send(
-      `${perspective.upper.plusToHave} ${numberDisplay(
+      `${perspective.upper.plusToHave} ${displayNumber(
         crownsCount,
         "crown"
       )} in ${this.guild.name}`
@@ -61,7 +62,7 @@ export class DM extends CrownsChildCommand<typeof args> {
               (c, i) =>
                 `${chunkIdx * crownsPerMessage + 1 + i}) ${
                   c.artistName
-                } ― ${numberDisplay(c.plays, "play").strong()}`
+                } ― ${displayNumber(c.plays, "play").strong()}`
             )
           )
       )

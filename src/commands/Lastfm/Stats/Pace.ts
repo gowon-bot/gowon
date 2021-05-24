@@ -6,11 +6,11 @@ import {
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { PaceCalculator } from "../../../lib/calculators/PaceCalculator";
 import { LogicError } from "../../../errors";
-import { numberDisplay, dateDisplay } from "../../../helpers";
 import { isBefore, isValid } from "date-fns";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
+import { displayDate, displayNumber } from "../../../lib/views/displays";
 
 const args = {
   inputs: {
@@ -72,7 +72,7 @@ export default class Pace extends LastFMBaseCommand<typeof args> {
 
     if (isBefore(pace.prediction, new Date()))
       throw new LogicError(
-        `${perspective.plusToHave} already passed ${numberDisplay(
+        `${perspective.plusToHave} already passed ${displayNumber(
           milestone!,
           "scrobble"
         )}!`
@@ -81,16 +81,16 @@ export default class Pace extends LastFMBaseCommand<typeof args> {
     let embed = this.newEmbed()
       .setAuthor("Pace for " + username)
       .setDescription(
-        `At a rate of **${numberDisplay(
+        `At a rate of **${displayNumber(
           pace.scrobbleRate.toFixed(2),
           "scrobble"
         )}/hour** ${humanizedTimeRange.replace(
           "<user>",
           perspective.pronoun
-        )}, ${perspective.name} will hit **${numberDisplay(
+        )}, ${perspective.name} will hit **${displayNumber(
           pace.milestone,
           "**scrobble"
-        )} on ${dateDisplay(pace.prediction).strong()}`
+        )} on ${displayDate(pace.prediction).strong()}`
       );
 
     await this.send(embed);

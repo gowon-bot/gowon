@@ -1,7 +1,7 @@
 import { MetaChildCommand } from "./MetaChildCommand";
 import { Arguments } from "../../lib/arguments/arguments";
-import { SimpleScrollingEmbed } from "../../helpers/Embeds/SimpleScrollingEmbed";
-import { numberDisplay } from "../../helpers";
+import { SimpleScrollingEmbed } from "../../lib/views/embeds/SimpleScrollingEmbed";
+import { displayNumber } from "../../lib/views/displays";
 
 const args = {} as const;
 
@@ -27,7 +27,7 @@ export class ServerReport extends MetaChildCommand<typeof args> {
         return guilds
           .map(
             (guild) =>
-              `${guild.name} - ${numberDisplay(guild.memberCount, "member")}`
+              `${guild.name} - ${displayNumber(guild.memberCount, "member")}`
           )
           .join("\n");
       },

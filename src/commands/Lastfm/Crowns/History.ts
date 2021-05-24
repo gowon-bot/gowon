@@ -1,10 +1,10 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { Message } from "discord.js";
-import { dateDisplay } from "../../../helpers";
 import { CrownEventString } from "../../../services/dbservices/CrownsHistoryService";
 import { LogicError } from "../../../errors";
 import { CrownEvent } from "../../../database/entity/meta/CrownEvent";
+import { displayDate } from "../../../lib/views/displays";
 
 const args = {
   inputs: {
@@ -72,14 +72,14 @@ export class History extends CrownsChildCommand<typeof args> {
   private async displayEvent(event: CrownEvent): Promise<string> {
     switch (event.event) {
       case CrownEventString.created:
-        return `${dateDisplay(
+        return `${displayDate(
           event.happenedAt
         )} - created by ${await this.fetchUsername(
           event.perpetuatorDiscordID
         )} (${event.newCrown.plays})`;
 
       case CrownEventString.snatched:
-        return `${dateDisplay(
+        return `${displayDate(
           event.happenedAt
         )} - snatched by ${await this.fetchUsername(
           event.perpetuatorDiscordID

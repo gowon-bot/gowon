@@ -1,11 +1,11 @@
 import { Arguments } from "../../../lib/arguments/arguments";
 import { InfoCommand } from "./InfoCommand";
-import { numberDisplay } from "../../../helpers";
 import { calculatePercent } from "../../../helpers/stats";
 import { CrownsService } from "../../../services/dbservices/CrownsService";
 import { LinkConsolidator } from "../../../helpers/lastFM";
 import { LineConsolidator } from "../../../lib/LineConsolidator";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
+import { displayNumber } from "../../../lib/views/displays";
 
 const args = {
   inputs: {
@@ -79,11 +79,11 @@ export default class ArtistInfo extends InfoCommand<typeof args> {
         shouldDisplay: linkConsolidator.hasLinks(),
         string: `**Links**: ${linkConsolidator.consolidate()}`,
       },
-      `**Listeners**: ${numberDisplay(artistInfo.listeners)}`,
-      `**Playcount**: ${numberDisplay(artistInfo.globalPlaycount)}`,
+      `**Listeners**: ${displayNumber(artistInfo.listeners)}`,
+      `**Playcount**: ${displayNumber(artistInfo.globalPlaycount)}`,
       {
         shouldDisplay: crown?.user?.username !== undefined,
-        string: `**Crown**: ${crown?.user?.username} (${numberDisplay(
+        string: `**Crown**: ${crown?.user?.username} (${displayNumber(
           crown?.crown.plays!
         )})`,
       }
@@ -101,7 +101,7 @@ export default class ArtistInfo extends InfoCommand<typeof args> {
       .setDescription(this.lineConsolidator.consolidate())
       .addField(
         `${perspective.upper.possessive} stats`,
-        `\`${numberDisplay(artistInfo.userPlaycount, "` play", true)} by ${
+        `\`${displayNumber(artistInfo.userPlaycount, "` play", true)} by ${
           perspective.objectPronoun
         } (${calculatePercent(
           artistInfo.userPlaycount,

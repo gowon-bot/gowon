@@ -23,12 +23,12 @@ import { User } from "../../database/entity/User";
 import { Perspective } from "../Perspective";
 import { GowonClient } from "../GowonClient";
 import { Validation, ValidationChecker } from "../validation/ValidationChecker";
-import { GowonEmbed } from "../../helpers/Embeds";
+import { GowonEmbed } from "../views/embeds";
 import { Emoji, EmojiRaw } from "../Emoji";
 import { Argument, Mention } from "./ArgumentType";
 import { RunAs } from "./RunAs";
 import { ucFirst } from "../../helpers";
-import { displayLink } from "../../helpers/discord";
+import { displayLink } from "../views/displays";
 
 export interface Variation {
   name: string;
@@ -56,7 +56,8 @@ export type ParsedArguments<T extends Arguments> = {
   };
 
 export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
-  implements Command {
+  implements Command
+{
   /**
    * idSeed is the seed for the generated command id
    * **Must be unique among all commands!**
@@ -162,9 +163,9 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     senderUser?: User;
     discordUser?: DiscordUser;
   }> {
-    let user = (this.parsedArguments[userArgumentName] as any) as User,
-      userID = (this.parsedArguments[idMentionArgumentName] as any) as string,
-      lfmUser = (this.parsedArguments[lfmMentionArgumentName] as any) as string;
+    let user = this.parsedArguments[userArgumentName] as any as User,
+      userID = this.parsedArguments[idMentionArgumentName] as any as string,
+      lfmUser = this.parsedArguments[lfmMentionArgumentName] as any as string;
 
     let mentionedUsername: string | undefined;
     let dbUser: User | undefined;
@@ -193,9 +194,9 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
         if (usernameRequired) throw new UsernameNotRegisteredError();
       }
     } else if (inputArgumentName && this.parsedArguments[inputArgumentName]) {
-      mentionedUsername = (this.parsedArguments[
+      mentionedUsername = this.parsedArguments[
         inputArgumentName
-      ] as any) as string;
+      ] as any as string;
     }
 
     let perspective = this.usersService.perspective(

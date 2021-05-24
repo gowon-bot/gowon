@@ -1,8 +1,8 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
-import { numberDisplay } from "../../../helpers";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { LogicError } from "../../../errors";
+import { displayNumber } from "../../../lib/views/displays";
 
 const args = {
   mentions: standardMentions,
@@ -45,13 +45,13 @@ export class CrownRanks extends CrownsChildCommand<typeof args> {
         crownRanks
           .map(
             (cr) =>
-              `${numberDisplay(cr.rank)}. ${cr.artistName} - ${numberDisplay(
+              `${displayNumber(cr.rank)}. ${cr.artistName} - ${displayNumber(
                 cr.plays,
                 "play"
               ).strong()}`
           )
           .join("\n") +
-          `\n\n${perspective.upper.plusToHave} ${numberDisplay(
+          `\n\n${perspective.upper.plusToHave} ${displayNumber(
             crownsCount,
             "crown"
           )} in ${this.guild.name}`

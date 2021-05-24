@@ -1,5 +1,5 @@
 import { GuildMember, MessageEmbed } from "discord.js";
-import { ImageCollection } from "../../services/LastFM/converters/BaseConverter";
+import { ImageCollection } from "../../../services/LastFM/converters/BaseConverter";
 
 export function GowonEmbed(member?: GuildMember, embed?: MessageEmbed) {
   let gowonEmbed = (embed || new MessageEmbed()).setColor(

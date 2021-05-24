@@ -7,8 +7,8 @@ import {
   ReactionCollector,
   User,
 } from "discord.js";
-import { EmojiRaw } from "../../lib/Emoji";
-import { ReactionCollectorFilter } from "../discord";
+import { EmojiRaw } from "../../Emoji";
+import { ReactionCollectorFilter } from "../../../helpers/discord";
 
 export interface ScrollingEmbedOptions {
   initialItems: string | EmbedField[];

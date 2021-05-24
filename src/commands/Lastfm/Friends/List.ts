@@ -1,7 +1,7 @@
 import { FriendsChildCommand } from "./FriendsChildCommand";
 import { Message } from "discord.js";
 import { MultiRequester } from "../../../lib/MultiRequester";
-import { numberDisplay } from "../../../helpers";
+import { displayNumber } from "../../../lib/views/displays";
 
 export class List extends FriendsChildCommand {
   idSeed = "nature chaebin";
@@ -25,7 +25,7 @@ export class List extends FriendsChildCommand {
 
     let embed = this.newEmbed()
       .setTitle(
-        `${numberDisplay(numberOfFriends, "friend")} for ${
+        `${displayNumber(numberOfFriends, "friend")} for ${
           message.author.username
         }`
       )

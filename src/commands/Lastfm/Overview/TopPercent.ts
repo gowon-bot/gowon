@@ -1,9 +1,9 @@
 import { OverviewChildCommand } from "./OverviewChildCommand";
-import { numberDisplay } from "../../../helpers";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
+import { displayNumber } from "../../../lib/views/displays";
 
 const args = {
   mentions: standardMentions,
@@ -37,7 +37,7 @@ export class TopPercent extends OverviewChildCommand<typeof args> {
       .setAuthor(username + badge, image)
       .setColor(colour)
       .setDescription(
-        `${toppct.count.asString.strong()} artists (a total of ${numberDisplay(
+        `${toppct.count.asString.strong()} artists (a total of ${displayNumber(
           toppct.total.asNumber,
           "scrobble"
         )}) make up ${percent}% of ${perspective.possessive} scrobbles!`

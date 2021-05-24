@@ -1,7 +1,7 @@
 import { LogicError } from "../../../errors";
-import { numberDisplay } from "../../../helpers";
 import { Variation } from "../../../lib/command/BaseCommand";
 import { Paginator } from "../../../lib/Paginator";
+import { displayNumber } from "../../../lib/views/displays";
 import { SearchCommand } from "./SearchCommand";
 
 export default class SearchAlbum extends SearchCommand {
@@ -47,7 +47,7 @@ export default class SearchAlbum extends SearchCommand {
 
     let embed = this.newEmbed()
       .setTitle(
-        `Search results in ${username}'s top ${numberDisplay(
+        `Search results in ${username}'s top ${displayNumber(
           topAlbums.albums.length,
           "album"
         )}`

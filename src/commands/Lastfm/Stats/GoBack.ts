@@ -6,12 +6,12 @@ import {
 } from "../../../helpers/date";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { LogicError } from "../../../errors";
-import { TrackEmbed } from "../../../helpers/Embeds";
+import { TrackEmbed } from "../../../lib/views/embeds";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
-import { dateDisplay } from "../../../helpers";
 import { GowonService } from "../../../services/GowonService";
+import { displayDate } from "../../../lib/views/displays";
 
 const args = {
   inputs: {
@@ -80,7 +80,7 @@ export default class GoBack extends LastFMBaseCommand<typeof args> {
 
     let embed = TrackEmbed(track).setAuthor(
       date
-        ? `On ${dateDisplay(date)} ${perspective.name} scrobbled:`
+        ? `On ${displayDate(date)} ${perspective.name} scrobbled:`
         : `${humanTimeRange} ago ${perspective.name} scrobbled:`
     );
 

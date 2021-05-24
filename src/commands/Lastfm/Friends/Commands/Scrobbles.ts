@@ -1,11 +1,11 @@
 import { FriendsChildCommand } from "../FriendsChildCommand";
 import { MultiRequester } from "../../../../lib/MultiRequester";
-import { numberDisplay } from "../../../../helpers";
 import { Arguments } from "../../../../lib/arguments/arguments";
 import {
   humanizedTimeRangeParser,
   timeRangeParser,
 } from "../../../../helpers/date";
+import { displayNumber } from "../../../../lib/views/displays";
 
 const args = {
   inputs: {
@@ -50,7 +50,7 @@ export class Scrobbles extends FriendsChildCommand<typeof args> {
             if (!s)
               return this.displayMissingFriend(username, "scrobble count");
 
-            return `${username.code()} - **${numberDisplay(s, "**scrobble")}`;
+            return `${username.code()} - **${displayNumber(s, "**scrobble")}`;
           })
       );
 

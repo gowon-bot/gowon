@@ -3,9 +3,9 @@ import { Arguments } from "../../lib/arguments/arguments";
 import { BotStatsService } from "../../services/dbservices/BotStatsService";
 import { standardMentions } from "../../lib/arguments/mentions/mentions";
 import { LogicError } from "../../errors";
-import { numberDisplay } from "../../helpers";
 import { LineConsolidator } from "../../lib/LineConsolidator";
 import { CommandManager } from "../../lib/command/CommandManager";
+import { displayNumber } from "../../lib/views/displays";
 
 const args = {
   inputs: {},
@@ -48,7 +48,7 @@ export default class UserInfo extends BaseCommand<typeof args> {
     const lineConsolidator = new LineConsolidator();
 
     lineConsolidator.addLines(
-      `**Commands run**: ${numberDisplay(commandRunCount)}`,
+      `**Commands run**: ${displayNumber(commandRunCount)}`,
       {
         shouldDisplay: topCommands.length > 0,
         string: `**Top commands**: \n${topCommands
@@ -61,7 +61,7 @@ export default class UserInfo extends BaseCommand<typeof args> {
               command?.friendlyNameWithParent ||
               command?.friendlyName ||
               "<unknown command>"
-            } - ${numberDisplay(c.uses)}`;
+            } - ${displayNumber(c.uses)}`;
           })
           .join("\n")}`,
       }

@@ -1,5 +1,5 @@
 import { IndexerError, LogicError } from "../../../../errors";
-import { ConfirmationEmbed } from "../../../../helpers/Embeds/ConfirmationEmbed";
+import { ConfirmationEmbed } from "../../../../lib/views/embeds/ConfirmationEmbed";
 import { Arguments } from "../../../../lib/arguments/arguments";
 import {
   ConcurrencyManager,

@@ -3,7 +3,7 @@ import {
   FetchedResponses,
   MultiRequester,
 } from "../../../../lib/MultiRequester";
-import { dateDisplay } from "../../../../helpers";
+import { displayDate } from "../../../../lib/views/displays";
 
 export class Joined extends FriendsChildCommand {
   idSeed = "elris chaejeong";
@@ -45,7 +45,7 @@ export class Joined extends FriendsChildCommand {
             if (!s || s?.getTime() === 0)
               return this.displayMissingFriend(username, "join date");
 
-            return `${username.code()} - ${dateDisplay(s)}`;
+            return `${username.code()} - ${displayDate(s)}`;
           })
       );
 

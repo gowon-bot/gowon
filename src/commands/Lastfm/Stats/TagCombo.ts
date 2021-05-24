@@ -1,6 +1,5 @@
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { Arguments } from "../../../lib/arguments/arguments";
-import { numberDisplay } from "../../../helpers";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { Paginator } from "../../../lib/Paginator";
 import {
@@ -8,6 +7,7 @@ import {
   TagCombo as TagComboType,
 } from "../../../lib/calculators/TagComboCalculator";
 import { TagsService } from "../../../services/dbservices/tags/TagsService";
+import { displayNumber } from "../../../lib/views/displays";
 
 const args = {
   mentions: standardMentions,
@@ -17,7 +17,7 @@ export default class TagCombo extends LastFMBaseCommand<typeof args> {
   idSeed = "secret number dita";
 
   aliases = ["tagstreak", "tac"];
-  description = `Shows your current streak\n Max combo: ${numberDisplay(
+  description = `Shows your current streak\n Max combo: ${displayNumber(
     this.gowonService.constants.hardPageLimit * 1000
   )}`;
   subcategory = "library stats";
@@ -55,7 +55,7 @@ export default class TagCombo extends LastFMBaseCommand<typeof args> {
 
     let embed = this.newEmbed()
       .setTitle(
-        `Streak for ${username} (from recent ${numberDisplay(
+        `Streak for ${username} (from recent ${displayNumber(
           comboCalculator.totalTracks,
           "track"
         )})`
@@ -70,7 +70,7 @@ export default class TagCombo extends LastFMBaseCommand<typeof args> {
   }
 
   private displayCombo(combo: TagComboType, tag: string): string {
-    return `${tag.strong()}: ${numberDisplay(
+    return `${tag.strong()}: ${displayNumber(
       combo.comboCollection[tag].plays
     )}${
       combo.comboCollection[tag].hitMax

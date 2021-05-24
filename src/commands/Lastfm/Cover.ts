@@ -1,9 +1,9 @@
 import { Message } from "discord.js";
 import { LogicError } from "../../errors";
-import { displayLink } from "../../helpers/discord";
 import { LinkGenerator } from "../../helpers/lastFM";
 import { Arguments } from "../../lib/arguments/arguments";
 import { standardMentions } from "../../lib/arguments/mentions/mentions";
+import { displayLink } from "../../lib/views/displays";
 import { AlbumInfo } from "../../services/LastFM/converters/InfoTypes";
 import { RecentTrack } from "../../services/LastFM/converters/RecentTracks";
 import { LastFMBaseCommand } from "./LastFMBaseCommand";

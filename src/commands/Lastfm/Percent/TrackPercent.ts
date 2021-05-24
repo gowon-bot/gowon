@@ -1,8 +1,8 @@
 import { Arguments } from "../../../lib/arguments/arguments";
-import { numberDisplay } from "../../../helpers";
 import { calculatePercent } from "../../../helpers/stats";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
+import { displayNumber } from "../../../lib/views/displays";
 
 const args = {
   inputs: {
@@ -44,7 +44,7 @@ export default class TrackPercent extends LastFMBaseCommand<typeof args> {
     ]);
 
     await this.traditionalReply(
-      `${perspective.possessive} ${numberDisplay(
+      `${perspective.possessive} ${displayNumber(
         trackInfo.userPlaycount,
         "play"
       )} of ${trackInfo.name.strong()} represent ${calculatePercent(

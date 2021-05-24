@@ -1,6 +1,6 @@
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { Arguments } from "../../../lib/arguments/arguments";
-import { numberDisplay, ucFirst } from "../../../helpers";
+import { ucFirst } from "../../../helpers";
 import { Paginator } from "../../../lib/Paginator";
 import { RedirectsService } from "../../../services/dbservices/RedirectsService";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
@@ -13,6 +13,7 @@ import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { sanitizeForDiscord } from "../../../helpers/discord";
 import { LinkGenerator } from "../../../helpers/lastFM";
+import { displayNumber } from "../../../lib/views/displays";
 
 const args = {
   inputs: {
@@ -28,7 +29,7 @@ const args = {
 export default class Combo extends LastFMBaseCommand<typeof args> {
   idSeed = "wooah wooyeon";
   aliases = ["streak", "str"];
-  description = `Shows your current streak\n Max combo: ${numberDisplay(
+  description = `Shows your current streak\n Max combo: ${displayNumber(
     this.gowonService.constants.hardPageLimit * 1000
   )}`;
   subcategory = "library stats";
@@ -82,7 +83,7 @@ export default class Combo extends LastFMBaseCommand<typeof args> {
 
     let embed = this.newEmbed()
       .setTitle(
-        `Streak for ${username} (from recent ${numberDisplay(
+        `Streak for ${username} (from recent ${displayNumber(
           comboCalculator.totalTracks,
           "track"
         )})`

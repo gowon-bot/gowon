@@ -7,7 +7,7 @@ import gql from "graphql-tag";
 import { Perspective } from "../Perspective";
 import { MessageEmbed } from "discord.js";
 import { User as DBUser } from "../../database/entity/User";
-import { ConfirmationEmbed } from "../../helpers/Embeds/ConfirmationEmbed";
+import { ConfirmationEmbed } from "../views/embeds/ConfirmationEmbed";
 import {
   ConcurrencyManager,
   ConcurrentActions,

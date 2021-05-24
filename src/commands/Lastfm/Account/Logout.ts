@@ -1,4 +1,4 @@
-import { ConfirmationEmbed } from "../../../helpers/Embeds/ConfirmationEmbed";
+import { ConfirmationEmbed } from "../../../lib/views/embeds/ConfirmationEmbed";
 import { IndexingService } from "../../../services/indexing/IndexingService";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 

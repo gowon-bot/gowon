@@ -1,8 +1,8 @@
 import { FriendsChildCommand } from "../FriendsChildCommand";
 import { MultiRequester } from "../../../../lib/MultiRequester";
-import { numberDisplay } from "../../../../helpers";
 import { Arguments } from "../../../../lib/arguments/arguments";
 import { LastFMEntityNotFoundError } from "../../../../errors";
+import { displayNumber } from "../../../../lib/views/displays";
 
 const args = {
   inputs: {
@@ -63,7 +63,7 @@ export class TrackPlays extends FriendsChildCommand<typeof args> {
               return this.displayMissingFriend(username);
             }
 
-            return `${username.code()} - **${numberDisplay(
+            return `${username.code()} - **${displayNumber(
               td.userPlaycount,
               "**scrobble"
             )}`;

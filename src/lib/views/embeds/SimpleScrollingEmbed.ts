@@ -7,7 +7,10 @@ export interface SimpleOptions<T> {
   /**
    * Allows the passing in of a template to render the items in
    */
-  pageRenderer?: (items: T[]) => string;
+  pageRenderer?: (
+    items: T[],
+    pageInfo: { page: number; offset: number }
+  ) => string;
 }
 
 export class SimpleScrollingEmbed<T> {
@@ -46,13 +49,15 @@ export class SimpleScrollingEmbed<T> {
   }
 
   private renderItemsFromPage(page: number): string {
+    const offset = (page - 1) * this.options.pageSize;
+
     const items = this.options.items.slice(
-      (page - 1) * this.options.pageSize,
+      offset,
       page * this.options.pageSize
     );
 
     return this.options.pageRenderer
-      ? this.options.pageRenderer(items)
+      ? this.options.pageRenderer(items, { page, offset })
       : items.join("\n");
   }
 }

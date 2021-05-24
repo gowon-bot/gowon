@@ -1,13 +1,14 @@
 import { JumbleChildCommand } from "./JumbleChildCommand";
 import { Message } from "discord.js";
 import { LogicError } from "../../../errors";
-import { numberDisplay, abbreviateNumber, shuffle } from "../../../helpers";
+import { abbreviateNumber, shuffle } from "../../../helpers";
 import { JumbledArtist, jumbleRedisKey } from "./JumbleParentCommand";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { Variation } from "../../../lib/command/BaseCommand";
 import { LineConsolidator } from "../../../lib/LineConsolidator";
 import { TagConsolidator } from "../../../lib/tags/TagConsolidator";
 import { RunAs } from "../../../lib/command/RunAs";
+import { displayNumber } from "../../../lib/views/displays";
 
 const args = {
   inputs: {
@@ -84,10 +85,10 @@ export class Me extends JumbleChildCommand<typeof args> {
     lineConsolidator.addLines(
       `This artist has **${abbreviateNumber(
         artistInfo.listeners
-      )}** listeners on Last.fm and you have scrobbled them **${numberDisplay(
+      )}** listeners on Last.fm and you have scrobbled them **${displayNumber(
         artist.userPlaycount,
         "**time"
-      )} (ranked #${numberDisplay(artist.rank)}).`,
+      )} (ranked #${displayNumber(artist.rank)}).`,
       {
         shouldDisplay: this.tagConsolidator.hasAnyTags(),
         string: `This artist is tagged as ${tags

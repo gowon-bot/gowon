@@ -1,9 +1,9 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
-import { numberDisplay } from "../../../helpers";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { Delegate } from "../../../lib/command/BaseCommand";
 import { GuildAround } from "./GuildAround";
 import { GuildAt } from "./GuildAt";
+import { displayNumber } from "../../../lib/views/displays";
 
 const args = {
   inputs: {
@@ -45,7 +45,7 @@ export class Guild extends CrownsChildCommand<typeof args> {
     let embed = this.newEmbed()
       .setTitle(`${this.guild.name}'s crown leaderboard`)
       .setDescription(
-        `There ${crownsCount === 1 ? "is" : "are"} **${numberDisplay(
+        `There ${crownsCount === 1 ? "is" : "are"} **${displayNumber(
           crownsCount,
           "** crown"
         )} in ${this.guild.name}\n\n` +
@@ -56,7 +56,7 @@ export class Guild extends CrownsChildCommand<typeof args> {
                   `${idx + 1}. ${await this.gowonClient.userDisplay(
                     this.message,
                     h.user
-                  )} with ${numberDisplay(h.numberOfCrowns, "crown").strong()}`
+                  )} with ${displayNumber(h.numberOfCrowns, "crown").strong()}`
               )
             )
           ).join("\n")

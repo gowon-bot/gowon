@@ -3,7 +3,6 @@ import { Arguments } from "../../../lib/arguments/arguments";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import config from "../../../../config.json";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
-import { numberDisplay } from "../../../helpers";
 import { Message, MessageEmbed, User } from "discord.js";
 import { CrownDisplay } from "../../../services/dbservices/CrownsService";
 import { User as DBUser } from "../../../database/entity/User";
@@ -18,6 +17,7 @@ import {
   RecentTrack,
   RecentTracks,
 } from "../../../services/LastFM/converters/RecentTracks";
+import { displayNumber } from "../../../lib/views/displays";
 
 const args = {
   inputs: {
@@ -117,11 +117,11 @@ export abstract class NowPlayingBaseCommand<
     return artistInfo.value
       ? (isCrownHolder ? "👑 " : "") +
           (track.artist.length < 150
-            ? numberDisplay(
+            ? displayNumber(
                 artistInfo.value.userPlaycount,
                 `${track.artist} scrobble`
               )
-            : numberDisplay(artistInfo.value.userPlaycount, `scrobble`) +
+            : displayNumber(artistInfo.value.userPlaycount, `scrobble`) +
               " of that artist")
       : "";
   }
@@ -135,20 +135,20 @@ export abstract class NowPlayingBaseCommand<
 
   protected trackPlays(trackInfo: { value?: TrackInfo }): string {
     return trackInfo.value
-      ? numberDisplay(trackInfo.value.userPlaycount, "scrobble") +
+      ? displayNumber(trackInfo.value.userPlaycount, "scrobble") +
           " of this song"
       : "";
   }
 
   protected albumPlays(albumInfo: { value?: AlbumInfo }): string {
     return albumInfo.value
-      ? numberDisplay(albumInfo.value?.userPlaycount, "scrobble") +
+      ? displayNumber(albumInfo.value?.userPlaycount, "scrobble") +
           " of this album"
       : "";
   }
 
   protected scrobbleCount(nowPlayingResponse: RecentTracks): string {
-    return `${numberDisplay(nowPlayingResponse.meta.total, "total scrobble")}`;
+    return `${displayNumber(nowPlayingResponse.meta.total, "total scrobble")}`;
   }
 
   protected async crownDetails(
@@ -163,7 +163,7 @@ export abstract class NowPlayingBaseCommand<
         isCrownHolder = true;
       } else {
         if (await DBUser.stillInServer(this.message, crown.value.user.id)) {
-          crownString = `👑 ${numberDisplay(crown.value.crown.plays)} (${
+          crownString = `👑 ${displayNumber(crown.value.crown.plays)} (${
             crown.value.user.username
           })`;
         }

@@ -1,8 +1,8 @@
 import { Arguments } from "../../../lib/arguments/arguments";
 import { InfoCommand } from "./InfoCommand";
-import { numberDisplay } from "../../../helpers";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
+import { displayNumber } from "../../../lib/views/displays";
 
 const args = {
   inputs: {
@@ -34,10 +34,10 @@ export default class TagInfo extends InfoCommand<typeof args> {
       .addFields(
         {
           name: "Listeners",
-          value: numberDisplay(tagInfo.listeners),
+          value: displayNumber(tagInfo.listeners),
           inline: true,
         },
-        { name: "Uses", value: numberDisplay(tagInfo.uses), inline: true }
+        { name: "Uses", value: displayNumber(tagInfo.uses), inline: true }
       )
       .setURL(this.getLinkFromBio(tagInfo.wiki.summary) || "")
       .setDescription(this.scrubReadMore(tagInfo.wiki.summary));

@@ -1,7 +1,7 @@
 import { RawLastFMErrorResponse } from "./services/LastFM/LastFMService.types";
 import { parseError, parseErrorSix } from "./helpers/error";
 import { Response } from "node-fetch";
-import { numberDisplay } from "./helpers";
+import { displayNumber } from "./lib/views/displays";
 
 export abstract class ClientError extends Error {
   name = "ClientError";
@@ -204,7 +204,7 @@ export class TooManyFriendsError extends ClientError {
   name = "TooManyFriendsError";
 
   constructor(limit: number) {
-    super(`you cannot have more than ${numberDisplay(limit, "friend")}`);
+    super(`you cannot have more than ${displayNumber(limit, "friend")}`);
   }
 }
 

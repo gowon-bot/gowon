@@ -1,9 +1,9 @@
+import { displayNumber } from "../../../lib/views/displays";
 import { CrownsChildCommand } from "./CrownsChildCommand";
-import { numberDisplay } from "../../../helpers";
 
 export class TopCrowns extends CrownsChildCommand {
   idSeed = "wjsn meiqi";
-  
+
   description = "Lists the top crowns in the server";
   aliases = ["top", "stans"];
   usage = "";
@@ -25,13 +25,13 @@ export class TopCrowns extends CrownsChildCommand {
           await Promise.all(
             crowns.map(
               async (c, idx) =>
-                `${idx + 1}. ${c.artistName} (${numberDisplay(
+                `${idx + 1}. ${c.artistName} (${displayNumber(
                   c.plays
                 ).strong()}, ${await this.fetchUsername(c.user.discordID)})`
             )
           )
         ).join("\n") +
-          `\n\nThere are **${numberDisplay(crownsCount, "** crown")} in ${
+          `\n\nThere are **${displayNumber(crownsCount, "** crown")} in ${
             this.guild.name
           }`
       );

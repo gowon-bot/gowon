@@ -1,7 +1,6 @@
 import { MessageEmbed } from "discord.js";
 import { IndexerError, LogicError } from "../../../../errors";
-import { numberDisplay } from "../../../../helpers";
-import { SimpleScrollingEmbed } from "../../../../helpers/Embeds/SimpleScrollingEmbed";
+import { SimpleScrollingEmbed } from "../../../../lib/views/embeds/SimpleScrollingEmbed";
 import { LinkGenerator } from "../../../../helpers/lastFM";
 import { Arguments } from "../../../../lib/arguments/arguments";
 import { standardMentions } from "../../../../lib/arguments/mentions/mentions";
@@ -11,6 +10,7 @@ import {
   ArtistTopTracksParams,
   ArtistTopTracksResponse,
 } from "./ArtistTopTracks.connector";
+import { displayNumber } from "../../../../lib/views/displays";
 
 const args = {
   inputs: {
@@ -97,7 +97,7 @@ export default class IndexArtistTopAlbums extends IndexingBaseCommand<
           return tracks
             .map(
               (track) =>
-                `${numberDisplay(
+                `${displayNumber(
                   track.playcount,
                   "play"
                 )} - ${track.name.strong()}`

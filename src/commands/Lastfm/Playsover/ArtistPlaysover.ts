@@ -1,7 +1,7 @@
 import { Arguments } from "../../../lib/arguments/arguments";
-import { numberDisplay } from "../../../helpers";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
+import { displayNumber } from "../../../lib/views/displays";
 
 const args = {
   inputs: {
@@ -38,9 +38,9 @@ export default class ArtistPlaysover extends LastFMBaseCommand<typeof args> {
     }
 
     await this.traditionalReply(
-      `${numberDisplay(playsover).strong()} of ${
+      `${displayNumber(playsover).strong()} of ${
         perspective.possessive
-      } top 1,000 artists have at least ${numberDisplay(
+      } top 1,000 artists have at least ${displayNumber(
         plays,
         "play"
       ).strong()}`

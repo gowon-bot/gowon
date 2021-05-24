@@ -1,10 +1,10 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
-import { numberDisplay } from "../../../helpers";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { LogicError } from "../../../errors";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { toInt } from "../../../helpers/lastFM";
+import { displayNumber } from "../../../lib/views/displays";
 
 const args = {
   inputs: {
@@ -55,7 +55,7 @@ export class GuildAt extends CrownsChildCommand<typeof args> {
                   u.discordID === highlighted?.discordID ? "**" : ""
                 }${await this.fetchUsername(u.discordID)}${
                   u.discordID === highlighted?.discordID ? "**" : ""
-                } with ${numberDisplay(u.count, "crown")}`
+                } with ${displayNumber(u.count, "crown")}`
             )
           )
         ).join("\n")}`

@@ -4,8 +4,8 @@ import { Validation } from "../../lib/validation/ValidationChecker";
 import { validators } from "../../lib/validation/validators";
 import { CommandManager } from "../../lib/command/CommandManager";
 import { Command } from "../../lib/command/Command";
-import { numberDisplay } from "../../helpers";
 import { AdminService } from "../../services/dbservices/AdminService";
+import { displayNumber } from "../../lib/views/displays";
 
 const args = {
   inputs: {
@@ -59,10 +59,10 @@ export default class CommandSearch extends BaseCommand<typeof args> {
           .join("\n")
       )
       .setFooter(
-        `Searched ${numberDisplay(
+        `Searched ${displayNumber(
           commandList.length,
           "command"
-        )}, found ${numberDisplay(foundCommands.length, "result")}` +
+        )}, found ${displayNumber(foundCommands.length, "result")}` +
           (foundCommands.length > 12
             ? "\nTry narrowing down your search to see more results"
             : "")

@@ -1,9 +1,9 @@
 import { Arguments } from "../../../lib/arguments/arguments";
-import { numberDisplay } from "../../../helpers";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { RedirectsCache } from "../../../lib/caches/RedirectsCache";
 import { RedirectsService } from "../../../services/dbservices/RedirectsService";
+import { displayNumber } from "../../../lib/views/displays";
 
 const args = {
   inputs: {
@@ -56,15 +56,15 @@ export default class ArtistRank extends LastFMBaseCommand<typeof args> {
       await this.traditionalReply(
         `that artist wasn't found in ${
           perspective.possessive
-        } top ${numberDisplay(topArtists.artists.length, "artist")}`
+        } top ${displayNumber(topArtists.artists.length, "artist")}`
       );
     } else {
       await this.traditionalReply(
-        `${topArtists.artists[rank].name.strong()} is ranked #${numberDisplay(
+        `${topArtists.artists[rank].name.strong()} is ranked #${displayNumber(
           rank + 1
         ).strong()} in ${
           perspective.possessive
-        } top 1,000 artists with ${numberDisplay(
+        } top 1,000 artists with ${displayNumber(
           topArtists.artists[rank].userPlaycount
         ).strong()} plays`
       );

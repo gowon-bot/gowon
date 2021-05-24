@@ -1,10 +1,10 @@
 import { Arguments } from "../../../lib/arguments/arguments";
 import { InfoCommand } from "./InfoCommand";
-import { numberDisplay } from "../../../helpers";
 import { calculatePercent } from "../../../helpers/stats";
 import { LinkConsolidator } from "../../../helpers/lastFM";
 import { LineConsolidator } from "../../../lib/LineConsolidator";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
+import { displayNumber } from "../../../lib/views/displays";
 
 const args = {
   inputs: {
@@ -64,14 +64,14 @@ export default class AlbumInfo extends InfoCommand<typeof args> {
     this.lineConsolidator.addLines(
       {
         shouldDisplay: albumInfo.tracks.length > 0 && !!albumDuration,
-        string: `_${numberDisplay(
+        string: `_${displayNumber(
           albumInfo.tracks.length,
           "track"
-        )} (${numberDisplay(Math.ceil(albumDuration / 60), "minute")})_`,
+        )} (${displayNumber(Math.ceil(albumDuration / 60), "minute")})_`,
       },
       {
         shouldDisplay: albumInfo.tracks.length > 0 && !albumDuration,
-        string: `_${numberDisplay(albumInfo.tracks.length, "track")}_`,
+        string: `_${displayNumber(albumInfo.tracks.length, "track")}_`,
       },
       {
         shouldDisplay: albumInfo.tracks.length > 0,
@@ -113,18 +113,18 @@ export default class AlbumInfo extends InfoCommand<typeof args> {
       .addFields(
         {
           name: "Listeners",
-          value: numberDisplay(albumInfo.listeners),
+          value: displayNumber(albumInfo.listeners),
           inline: true,
         },
         {
           name: "Playcount",
-          value: numberDisplay(albumInfo.globalPlaycount),
+          value: displayNumber(albumInfo.globalPlaycount),
           inline: true,
         },
         {
           name: `${perspective.upper.possessive} stats`,
           value: `
-        \`${numberDisplay(albumInfo.userPlaycount, "` play", true)} by ${
+        \`${displayNumber(albumInfo.userPlaycount, "` play", true)} by ${
             perspective.objectPronoun
           } (${calculatePercent(
             albumInfo.userPlaycount,
