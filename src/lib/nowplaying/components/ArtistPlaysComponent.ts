@@ -1,4 +1,4 @@
-import { numberDisplay } from "../../../helpers";
+import { displayNumber } from "../../views/displays";
 import { BaseNowPlayingComponent } from "./BaseNowPlayingComponent";
 
 const artistPlaysRequirements = ["artistInfo", "artistPlays"] as const;
@@ -14,23 +14,23 @@ export class ArtistPlaysComponent extends BaseNowPlayingComponent<
 
     if (plays && name) {
       return {
-        string: `${numberDisplay(plays, `${name} scrobble`)}`,
+        string: `${displayNumber(plays, `${name} scrobble`)}`,
         size: 1,
       };
     } else {
       return {
-        string: `No data on last.fm for ${this.nowPlaying.artist["#text"]}`,
+        string: `No data on last.fm for ${this.nowPlaying.artist}`,
         size: 2,
       };
     }
   }
 
   private getPlays(): { plays: number | undefined; name: string | undefined } {
-    if (this.values.artistInfo?.stats?.userplaycount) {
-      console.log(this.values.artistInfo.stats.userplaycount);
+    if (this.values.artistInfo?.userPlaycount) {
+      console.log(this.values.artistInfo.userPlaycount);
 
       return {
-        plays: this.values.artistInfo.stats.userplaycount.toInt(),
+        plays: this.values.artistInfo.userPlaycount,
         name: this.values.artistInfo.name,
       };
     } else if (this.values.artistPlays.length) {

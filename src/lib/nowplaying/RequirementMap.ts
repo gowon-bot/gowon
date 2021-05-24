@@ -7,7 +7,7 @@ import {
 import {
   ArtistInfo,
   TrackInfo,
-} from "../../services/LastFM/LastFMService.types";
+} from "../../services/LastFM/converters/InfoTypes";
 
 export type RequirementMap = {
   // Lastfm data

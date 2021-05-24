@@ -71,11 +71,11 @@ export class TagsComponent extends BaseCompoundComponent<typeof requirements> {
 
   private addTags(consolidator: TagConsolidator) {
     if (this.values.artistInfo) {
-      consolidator.addTags(this.values.artistInfo.tags.tag);
+      consolidator.addTags(this.values.artistInfo.tags);
     }
 
     if (this.values.trackInfo) {
-      consolidator.addTags(this.values.trackInfo.toptags.tag);
+      consolidator.addTags(this.values.trackInfo.tags);
     }
   }
 }

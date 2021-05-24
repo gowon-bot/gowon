@@ -1,4 +1,4 @@
-import { numberDisplay } from "../../../helpers";
+import { displayNumber } from "../../views/displays";
 import { BaseNowPlayingComponent } from "./BaseNowPlayingComponent";
 
 const albumPlaysRequirements = ["albumPlays"] as const;
@@ -14,7 +14,7 @@ export class AlbumPlaysComponent extends BaseNowPlayingComponent<
 
     if (albumPlays) {
       return {
-        string: `${numberDisplay(
+        string: `${displayNumber(
           albumPlays.playcount,
           "scrobble"
         )} of this album`,

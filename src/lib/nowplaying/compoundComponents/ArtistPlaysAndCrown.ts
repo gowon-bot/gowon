@@ -1,5 +1,5 @@
 import { User } from "../../../database/entity/User";
-import { numberDisplay } from "../../../helpers";
+import { displayNumber } from "../../views/displays";
 import { BaseCompoundComponent } from "../components/BaseNowPlayingComponent";
 
 const requirements = ["artistInfo", "artistCrown"] as const;
@@ -23,7 +23,7 @@ export class ArtistPlaysAndCrownComponent extends BaseCompoundComponent<
         isCrownHolder = true;
       } else {
         if (await User.stillInServer(this.values.message, crown.user.id)) {
-          crownString = `👑 ${numberDisplay(crown.crown.plays)} (${
+          crownString = `👑 ${displayNumber(crown.crown.plays)} (${
             crown.user.username
           })`;
         }
@@ -34,13 +34,13 @@ export class ArtistPlaysAndCrownComponent extends BaseCompoundComponent<
     let artistExists = false;
 
     if (this.values.artistInfo) {
-      artistPlaysString = `${numberDisplay(
-        this.values.artistInfo.stats.userplaycount,
+      artistPlaysString = `${displayNumber(
+        this.values.artistInfo.userPlaycount,
         `${this.values.artistInfo.name} scrobble`
       )}`;
       artistExists = true;
     } else {
-      artistPlaysString = `No data on last.fm for ${this.nowPlaying.artist["#text"]}`;
+      artistPlaysString = `No data on last.fm for ${this.nowPlaying.artist}`;
     }
 
     return !artistExists

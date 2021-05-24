@@ -1,4 +1,4 @@
-import { numberDisplay } from "../../../helpers";
+import { displayNumber } from "../../views/displays";
 import { BaseNowPlayingComponent } from "./BaseNowPlayingComponent";
 
 const trackPlaysRequirements = ["trackInfo"] as const;
@@ -12,8 +12,8 @@ export class TrackPlaysComponent extends BaseNowPlayingComponent<
   present() {
     if (this.values.trackInfo) {
       return {
-        string: `${numberDisplay(
-          this.values.trackInfo.userplaycount,
+        string: `${displayNumber(
+          this.values.trackInfo.userPlaycount,
           "scrobble"
         )} of this song`,
         size: 1,

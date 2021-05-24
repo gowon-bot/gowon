@@ -7,13 +7,15 @@ import {
 } from "../../services/dbservices/CrownsService";
 import { IndexingService } from "../../services/indexing/IndexingService";
 import { UserInput } from "../../services/indexing/IndexingTypes";
-import { LastFMService } from "../../services/LastFM/LastFMService";
 import {
   ArtistInfo,
-  RecentTracksResponse,
-  Track,
   TrackInfo,
-} from "../../services/LastFM/LastFMService.types";
+} from "../../services/LastFM/converters/InfoTypes";
+import {
+  RecentTrack,
+  RecentTracks,
+} from "../../services/LastFM/converters/RecentTracks";
+import { LastFMService } from "../../services/LastFM/LastFMService";
 import { buildQuery, isQueryPart, QueryPart } from "./buildQuery";
 import { NowPlayingRequirement } from "./components/BaseNowPlayingComponent";
 
@@ -22,7 +24,7 @@ export interface ResolvedRequirements {
 }
 
 export interface Resources {
-  recentTracks: RecentTracksResponse;
+  recentTracks: RecentTracks;
   message: Message;
   username: string;
   dbUser: User;
@@ -35,8 +37,8 @@ export class DatasourceService extends BaseService {
 
   resources!: Resources;
 
-  private get nowPlaying(): Track {
-    return this.resources.recentTracks.recenttracks.track[0];
+  private get nowPlaying(): RecentTrack {
+    return this.resources.recentTracks.first();
   }
 
   async resolveRequirements(
@@ -92,14 +94,14 @@ export class DatasourceService extends BaseService {
     const nowPlaying = this.nowPlaying;
 
     return await this.lastFMService.artistInfo({
-      artist: nowPlaying.artist["#text"],
+      artist: nowPlaying.artist,
       username: this.resources.username,
     });
   }
 
   async trackInfo(): Promise<TrackInfo> {
     return await this.lastFMService.trackInfo({
-      artist: this.nowPlaying.artist["#text"],
+      artist: this.nowPlaying.artist,
       track: this.nowPlaying.name,
       username: this.resources.username,
     });
@@ -107,7 +109,7 @@ export class DatasourceService extends BaseService {
 
   async artistCrown(): Promise<CrownDisplay | undefined> {
     return await this.crownsService.getCrownDisplay(
-      this.nowPlaying.artist["#text"],
+      this.nowPlaying.artist,
       this.resources.message.guild!
     );
   }
@@ -116,8 +118,8 @@ export class DatasourceService extends BaseService {
     const user: UserInput = { lastFMUsername: this.resources.username };
     const lpSettings = {
       album: {
-        name: this.nowPlaying.album["#text"],
-        artist: { name: this.nowPlaying.artist["#text"] },
+        name: this.nowPlaying.album,
+        artist: { name: this.nowPlaying.artist },
       },
     };
 
@@ -127,7 +129,7 @@ export class DatasourceService extends BaseService {
   artistPlays(): QueryPart {
     const user: UserInput = { lastFMUsername: this.resources.username };
     const apSettings = {
-      artist: { name: this.nowPlaying.artist["#text"] },
+      artist: { name: this.nowPlaying.artist },
     };
 
     return { query: "artistPlays", variables: { user, apSettings } };
@@ -136,8 +138,8 @@ export class DatasourceService extends BaseService {
   albumRating(): QueryPart {
     const user: UserInput = { discordID: this.resources.dbUser.discordID };
     const lrAlbum = {
-      name: this.nowPlaying.album["#text"],
-      artist: { name: this.nowPlaying.artist["#text"] },
+      name: this.nowPlaying.album,
+      artist: { name: this.nowPlaying.artist },
     };
 
     return { query: "albumRating", variables: { user, lrAlbum } };

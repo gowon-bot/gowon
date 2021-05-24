@@ -1,12 +1,17 @@
 import { User as DBUser } from "../../database/entity/User";
 import { Message, User } from "discord.js";
-import { Tag } from "../../services/LastFM/LastFMService.types";
 import { Resources } from "./DatasourceService";
 import { RequirementMap } from "./RequirementMap";
 import { Crown } from "../../database/entity/Crown";
 import { ParsedTrack } from "../../helpers/lastFM";
+import {
+  ArtistInfo,
+  TrackInfo,
+} from "../../services/LastFM/converters/InfoTypes";
+import { RecentTracks } from "../../services/LastFM/converters/RecentTracks";
+import { RawTag } from "../../services/LastFM/LastFMService.types";
 
-function createTags(tags: string[]): Tag[] {
+function createTags(tags: string[]): RawTag[] {
   return tags.map((t) => ({
     name: t,
     url: `https://last.fm/tag/${t}`,
@@ -38,7 +43,7 @@ export const mockRequirements = (
     dbUser,
 
     // Lastfm Types
-    artistInfo: {
+    artistInfo: new ArtistInfo({
       name: nowPlaying.artist,
       url: "",
       streamable: "",
@@ -64,9 +69,9 @@ export const mockRequirements = (
       tags: {
         tag: createTags(["k-pop", "korean", "pop", "female vocalists"]),
       },
-    },
+    }),
 
-    trackInfo: {
+    trackInfo: new TrackInfo({
       mbid: "",
       name: nowPlaying.name,
       url: "",
@@ -100,35 +105,33 @@ export const mockRequirements = (
         summary: "",
         content: "",
       },
-    },
+    }),
 
-    recentTracks: {
-      recenttracks: {
-        track: [
-          {
-            name: nowPlaying.name,
-            artist: { "#text": nowPlaying.artist, mbid: "" },
-            "@attr": { nowplaying: "" },
+    recentTracks: new RecentTracks({
+      track: [
+        {
+          name: nowPlaying.name,
+          artist: { "#text": nowPlaying.artist, mbid: "" },
+          "@attr": { nowplaying: "" },
+          mbid: "",
+          album: {
             mbid: "",
-            album: {
-              mbid: "",
-              "#text": nowPlaying.album,
-            },
-            image: [],
-            streamable: "",
-            url: "",
-            date: { uts: "", "#text": "1620625939536" },
+            "#text": nowPlaying.album,
           },
-        ],
-        "@attr": {
-          total: "81841",
-          perPage: "0",
-          totalPages: "0",
-          page: "",
-          user: "",
+          image: [],
+          streamable: "",
+          url: "",
+          date: { uts: "", "#text": "1620625939536" },
         },
+      ],
+      "@attr": {
+        total: "81841",
+        perPage: "0",
+        totalPages: "0",
+        page: "",
+        user: "",
       },
-    },
+    }),
 
     // Gowon types
     artistCrown: {

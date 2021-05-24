@@ -1,8 +1,8 @@
 import { LogicError, UnknownIndexerError } from "../../../../errors";
 import { Arguments } from "../../../../lib/arguments/arguments";
+import { displayRating } from "../../../../lib/views/displays";
 import { RatingConnector, RatingParams, RatingResponse } from "./connectors";
 import { RateYourMusicIndexingChildCommand } from "./RateYourMusicChildCommand";
-import { ratingDisplayEmojis } from "../../../../helpers";
 
 const args = {
   inputs: {
@@ -39,9 +39,7 @@ export class Rating extends RateYourMusicIndexingChildCommand<
     const user = (dbUser || senderUser)!;
 
     if (!artist || !album) {
-      let nowPlaying = await this.lastFMService.nowPlayingParsed(
-        senderUsername
-      );
+      let nowPlaying = await this.lastFMService.nowPlaying(senderUsername);
 
       if (!artist) artist = nowPlaying.artist;
       if (!album) album = nowPlaying.album;
@@ -71,10 +69,8 @@ export class Rating extends RateYourMusicIndexingChildCommand<
       .setTitle(
         `${rateYourMusicAlbum.artistName} - ${rateYourMusicAlbum.title}`
       )
-      .setDescription(`${ratingDisplayEmojis(rating)}`)
-      .setThumbnail(
-        albumInfo.image.find((i) => i.size === "large")?.["#text"]!
-      );
+      .setDescription(`${displayRating(rating)}`)
+      .setThumbnail(albumInfo.images.get("large")!);
 
     await this.send(embed);
   }

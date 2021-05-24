@@ -6,11 +6,11 @@ import {
   ArtistRatingsResponse,
 } from "./connectors";
 import { RateYourMusicIndexingChildCommand } from "./RateYourMusicChildCommand";
-import { numberDisplay, ratingDisplayEmojis } from "../../../../helpers";
 import { IndexerRateYourMusicAlbum } from "../../../../services/indexing/IndexingTypes";
-import { SimpleScrollingEmbed } from "../../../../helpers/Embeds/SimpleScrollingEmbed";
 import { mean } from "mathjs";
 import { mostCommonOccurrence } from "../../../../helpers/stats";
+import { SimpleScrollingEmbed } from "../../../../lib/views/embeds/SimpleScrollingEmbed";
+import { displayNumber, displayRating } from "../../../../lib/views/displays";
 
 const args = {
   inputs: {
@@ -50,8 +50,7 @@ export class ArtistRatings extends RateYourMusicIndexingChildCommand<
       });
 
     if (!artist) {
-      artist = (await this.lastFMService.nowPlayingParsed(senderUsername))
-        .artist;
+      artist = (await this.lastFMService.nowPlaying(senderUsername)).artist;
     }
 
     const user = (dbUser || senderUser)!;
@@ -88,7 +87,7 @@ export class ArtistRatings extends RateYourMusicIndexingChildCommand<
 
     const header = `**Average**: ${(
       (mean(response.ratings.map((r) => r.rating)) as number) / 2
-    ).toPrecision(2)}/5 from ${numberDisplay(
+    ).toPrecision(2)}/5 from ${displayNumber(
       response.ratings.length,
       "rating"
     )}`;
@@ -114,7 +113,7 @@ export class ArtistRatings extends RateYourMusicIndexingChildCommand<
         console.log(r.rateYourMusicAlbum.artistName, artistName);
 
         return (
-          ratingDisplayEmojis(ratings[idx].rating) +
+          displayRating(ratings[idx].rating) +
           // this is a special space
           " " +
           r.rateYourMusicAlbum.title +

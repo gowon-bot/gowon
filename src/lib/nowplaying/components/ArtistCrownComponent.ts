@@ -1,5 +1,5 @@
 import { User } from "../../../database/entity/User";
-import { numberDisplay } from "../../../helpers";
+import { displayNumber } from "../../views/displays";
 import { BaseNowPlayingComponent } from "./BaseNowPlayingComponent";
 
 const artistCrownRequirements = ["artistCrown"] as const;
@@ -16,7 +16,7 @@ export class ArtistCrownComponent extends BaseNowPlayingComponent<
 
       if (await User.stillInServer(this.values.message, crown.user?.id)) {
         return {
-          string: `👑 ${numberDisplay(crown.crown.plays)} (${
+          string: `👑 ${displayNumber(crown.crown.plays)} (${
             crown.user!.username
           })`,
           size: 1,

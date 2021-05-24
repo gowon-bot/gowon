@@ -1,4 +1,4 @@
-import { Track } from "../../../services/LastFM/LastFMService.types";
+import { RecentTrack } from "../../../services/LastFM/converters/RecentTracks";
 import { Resources } from "../DatasourceService";
 import { RequirementMap } from "../RequirementMap";
 
@@ -20,8 +20,8 @@ export abstract class BaseNowPlayingComponent<
     protected values: Pick<RequirementMap, Requirements[number]> & Resources
   ) {}
 
-  protected get nowPlaying(): Track {
-    return this.values.recentTracks.recenttracks.track[0];
+  protected get nowPlaying(): RecentTrack {
+    return this.values.recentTracks.first();
   }
 
   abstract present():

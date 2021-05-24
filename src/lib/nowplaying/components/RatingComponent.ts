@@ -1,4 +1,4 @@
-import { ratingDisplay } from "../../../helpers";
+import { displayPlainRating } from "../../views/displays";
 import { BaseNowPlayingComponent } from "./BaseNowPlayingComponent";
 
 const ratingRequirements = ["albumRating"] as const;
@@ -14,7 +14,7 @@ export class RatingComponent extends BaseNowPlayingComponent<
 
     if (albumRating) {
       return {
-        string: ratingDisplay(albumRating.rating),
+        string: displayPlainRating(albumRating.rating),
         size: 1,
       };
     }

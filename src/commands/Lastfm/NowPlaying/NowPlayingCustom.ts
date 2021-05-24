@@ -20,20 +20,23 @@ export default class NowPlayingCustom extends NowPlayingBaseCommand {
 
     const config = await this.configService.getConfigForUser(senderUser);
 
-    const recentTracks = await this.lastFMService.recentTracksRaw({
+    const recentTracks = await this.lastFMService.recentTracks({
       username,
       limit: 1,
     });
-    const nowPlaying = recentTracks.recenttracks.track[0];
+    const nowPlaying = recentTracks.first();
 
     const builder = new NowPlayingBuilder(config);
 
     const requirements = builder.generateRequirements();
 
-    const resolvedRequirements = await this.datasourceService.resolveRequirements(
-      requirements,
-      { recentTracks, username, dbUser, message: this.message }
-    );
+    const resolvedRequirements =
+      await this.datasourceService.resolveRequirements(requirements, {
+        recentTracks,
+        username,
+        dbUser,
+        message: this.message,
+      });
 
     const baseEmbed = this.nowPlayingEmbed(nowPlaying, username);
 
@@ -48,15 +51,11 @@ export default class NowPlayingCustom extends NowPlayingBaseCommand {
     dbUser: User;
   }> {
     const otherwords = this.parsedArguments.otherWords;
-    const {
-      senderUser,
-      username,
-      senderUsername,
-      dbUser,
-    } = await this.parseMentions({
-      reverseLookup: { lastFM: true, optional: true },
-      senderRequired: true,
-    });
+    const { senderUser, username, senderUsername, dbUser } =
+      await this.parseMentions({
+        reverseLookup: { lastFM: true, optional: true },
+        senderRequired: true,
+      });
 
     const usernameToUse = otherwords ? senderUsername : username;
 

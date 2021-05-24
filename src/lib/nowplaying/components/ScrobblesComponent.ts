@@ -1,4 +1,4 @@
-import { numberDisplay } from "../../../helpers";
+import { displayNumber } from "../../views/displays";
 import { BaseNowPlayingComponent } from "./BaseNowPlayingComponent";
 
 const scrobblesRequirements = [] as const;
@@ -12,8 +12,8 @@ export class ScrobblesComponent extends BaseNowPlayingComponent<
   present() {
     if (this.values.recentTracks) {
       return {
-        string: `${numberDisplay(
-          this.values.recentTracks.recenttracks["@attr"].total,
+        string: `${displayNumber(
+          this.values.recentTracks.meta.total,
           "total scrobble"
         )}`,
         size: 1,
