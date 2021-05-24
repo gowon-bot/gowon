@@ -10,6 +10,7 @@ import { numberDisplay, ratingDisplayEmojis } from "../../../../helpers";
 import { IndexerRateYourMusicAlbum } from "../../../../services/indexing/IndexingTypes";
 import { SimpleScrollingEmbed } from "../../../../helpers/Embeds/SimpleScrollingEmbed";
 import { mean } from "mathjs";
+import { mostCommonOccurrence } from "../../../../helpers/stats";
 
 const args = {
   inputs: {
@@ -72,7 +73,7 @@ export class ArtistRatings extends RateYourMusicIndexingChildCommand<
       );
     }
 
-    const artistName = response.ratings[0].rateYourMusicAlbum.artistName;
+    const artistName = this.getArtistName(response.ratings);
 
     const embed = this.newEmbed()
       .setAuthor(...this.generateEmbedAuthor("Artist ratings"))
@@ -98,7 +99,8 @@ export class ArtistRatings extends RateYourMusicIndexingChildCommand<
       {
         items: response.ratings,
         pageSize: 10,
-        pageRenderer: (items) => header + "\n\n" + this.generateTable(items),
+        pageRenderer: (items) =>
+          header + "\n\n" + this.generateTable(items, artistName),
       },
       { itemName: "rating" }
     );
@@ -106,15 +108,32 @@ export class ArtistRatings extends RateYourMusicIndexingChildCommand<
     simpleScrollingEmbed.send();
   }
 
-  private generateTable(ratings: Rating[]): string {
+  private generateTable(ratings: Rating[], artistName: string): string {
     return ratings
-      .map(
-        (r, idx) =>
+      .map((r, idx) => {
+        console.log(r.rateYourMusicAlbum.artistName, artistName);
+
+        return (
           ratingDisplayEmojis(ratings[idx].rating) +
           // this is a special space
           " " +
-          r.rateYourMusicAlbum.title
-      )
+          r.rateYourMusicAlbum.title +
+          (r.rateYourMusicAlbum.artistName !== artistName
+            ? ` — ${r.rateYourMusicAlbum.artistName}`.italic()
+            : "")
+        );
+      })
       .join("\n");
+  }
+
+  private getArtistName(
+    ratings: {
+      rating: number;
+      rateYourMusicAlbum: IndexerRateYourMusicAlbum;
+    }[]
+  ): string {
+    return mostCommonOccurrence(
+      ratings.map((r) => r.rateYourMusicAlbum.artistName)
+    )!;
   }
 }

@@ -2,7 +2,7 @@ import { LogicError, UnknownIndexerError } from "../../../../errors";
 import { Arguments } from "../../../../lib/arguments/arguments";
 import { RatingConnector, RatingParams, RatingResponse } from "./connectors";
 import { RateYourMusicIndexingChildCommand } from "./RateYourMusicChildCommand";
-import { ratingDisplay } from "../../../../helpers";
+import { ratingDisplayEmojis } from "../../../../helpers";
 
 const args = {
   inputs: {
@@ -71,7 +71,7 @@ export class Rating extends RateYourMusicIndexingChildCommand<
       .setTitle(
         `${rateYourMusicAlbum.artistName} - ${rateYourMusicAlbum.title}`
       )
-      .setDescription(`${ratingDisplay(rating)}`)
+      .setDescription(`${ratingDisplayEmojis(rating)}`)
       .setThumbnail(
         albumInfo.image.find((i) => i.size === "large")?.["#text"]!
       );

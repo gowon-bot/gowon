@@ -20,3 +20,14 @@ export function calculatePercent(
     ).toFixed(precision)
   ).toLocaleString();
 }
+
+// Credit: https://stackoverflow.com/questions/1053843/get-the-element-with-the-highest-occurrence-in-an-array
+export function mostCommonOccurrence<T = any>(array: Array<T>): T | undefined {
+  return array
+    .sort(
+      (a, b) =>
+        array.filter((v) => v === a).length -
+        array.filter((v) => v === b).length
+    )
+    .pop();
+}
