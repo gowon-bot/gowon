@@ -27,8 +27,6 @@ export class ArtistPlaysComponent extends BaseNowPlayingComponent<
 
   private getPlays(): { plays: number | undefined; name: string | undefined } {
     if (this.values.artistInfo?.userPlaycount) {
-      console.log(this.values.artistInfo.userPlaycount);
-
       return {
         plays: this.values.artistInfo.userPlaycount,
         name: this.values.artistInfo.name,

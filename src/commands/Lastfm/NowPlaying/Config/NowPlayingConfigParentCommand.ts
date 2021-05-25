@@ -1,4 +1,5 @@
 import { CommandManager } from "../../../../lib/command/CommandManager";
+import { indexerGuilds } from "../../../../lib/indexing/IndexingCommand";
 import { LastFMBaseParentCommand } from "../../LastFMBaseCommand";
 import { Add } from "./Add";
 import { Help } from "./Help";
@@ -14,6 +15,10 @@ export default class NowPlayingConfigParentCommand extends LastFMBaseParentComma
   description = "Allows you to change how your nowplaying embeds look";
   friendlyName = "nowplayingconfig";
   customHelp = Help;
+
+  rollout = {
+    guilds: indexerGuilds,
+  };
 
   prefixes = ["npc", "nowplayingconfig"];
   default = () => new View();

@@ -106,8 +106,6 @@ export default class HelpForOneCommand extends BaseCommand<typeof args> {
     message: Message,
     command: ParentCommand
   ) {
-    console.log(command.children.list());
-
     let commands = await this.adminService.can.viewList(
       command.children.list(),
       message,

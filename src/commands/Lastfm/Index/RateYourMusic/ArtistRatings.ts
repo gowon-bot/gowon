@@ -110,8 +110,6 @@ export class ArtistRatings extends RateYourMusicIndexingChildCommand<
   private generateTable(ratings: Rating[], artistName: string): string {
     return ratings
       .map((r, idx) => {
-        console.log(r.rateYourMusicAlbum.artistName, artistName);
-
         return (
           displayRating(ratings[idx].rating) +
           // this is a special space
