@@ -27,7 +27,7 @@ export default class Tag extends LastFMBaseCommand<typeof args> {
 
   description =
     "Shows the overlap between your top artists, and a given tag's top artists";
-  subcategory = "stats";
+  subcategory = "tags";
   usage = ["tag"];
 
   arguments: Arguments = args;

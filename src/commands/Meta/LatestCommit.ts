@@ -5,8 +5,9 @@ import { GithubService } from "../../services/Github/GithubService";
 
 export default class LatestCommit extends BaseCommand {
   idSeed = "apink naeun";
-  
+
   aliases = ["whatsnew"];
+  subcategory = "developer";
   secretCommand = true;
   description = "Displays the most recent commit to the Gowon repository";
 

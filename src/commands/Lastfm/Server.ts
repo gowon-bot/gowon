@@ -4,6 +4,7 @@ import { LastFMBaseCommand } from "./LastFMBaseCommand";
 export default class Server extends LastFMBaseCommand {
   idSeed = "april rachel";
 
+  subcategory = "nowplaying";
   description = "Shows what the server is listening to";
   aliases = ["sfm"];
   usage = [""];

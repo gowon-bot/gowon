@@ -16,6 +16,7 @@ export default class Issue extends BaseCommand<typeof args> {
   idSeed = "apink bomi";
 
   description = "Create a github issue on the gowon repository";
+  subcategory = "developer";
   secretCommand = true;
   usage = ["title | body"];
   devCommand = true;

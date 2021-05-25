@@ -28,7 +28,7 @@ export default class TagTracks extends LastFMBaseCommand<typeof args> {
 
   description =
     "Shows the overlap between your top tracks, and a given tag's top tracks. This command works best for smaller/memey tags, as a lot of larger tags are mistagged";
-  subcategory = "stats";
+  subcategory = "tags";
   aliases = ["tagt", "tagtr", "tagtrack"];
   usage = ["tag"];
 

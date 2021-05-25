@@ -1,16 +1,15 @@
 import { BaseCommand, Delegate } from "../../lib/command/BaseCommand";
 import { Command } from "../../lib/command/Command";
-import { Message } from "discord.js";
+import { EmbedField, Message } from "discord.js";
 import { CommandManager } from "../../lib/command/CommandManager";
 import { Arguments } from "../../lib/arguments/arguments";
 import { AdminService } from "../../services/dbservices/AdminService";
 import HelpForOneCommand from "./HelpForOneCommand";
-import { LineConsolidator } from "../../lib/LineConsolidator";
+import { ucFirst } from "../../helpers";
+import { SimpleScrollingEmbed } from "../../lib/views/embeds/SimpleScrollingEmbed";
 
 interface GroupedCommands {
-  [category: string]: {
-    [subcategory: string]: Command[];
-  };
+  [category: string]: Command[];
 }
 
 const args = {
@@ -23,6 +22,7 @@ export default class Help extends BaseCommand<typeof args> {
   idSeed = "clc seungyeon";
 
   aliases = ["h"];
+  subcategory = "about";
   description = "Displays the help menu, or help about a given command";
   usage = ["", "command"];
 
@@ -41,11 +41,7 @@ export default class Help extends BaseCommand<typeof args> {
   async run(message: Message) {
     await this.commandManager.init();
 
-    let embed = await this.helpForAllCommands(message);
-
-    if (!embed) return;
-
-    await this.send(embed);
+    await this.helpForAllCommands(message);
   }
 
   private async helpForAllCommands(message: Message) {
@@ -55,52 +51,43 @@ export default class Help extends BaseCommand<typeof args> {
       this.gowonClient
     );
 
-    let groupedCommands = commands.reduce((acc, c) => {
-      const category = c.category || "misc";
-      const subcategory = c.subcategory || "";
+    const footer = (page: number, totalPages: number) =>
+      `Page ${page} of ${totalPages} • Can't find a command? Try ${this.prefix}searchcommand <keywords> to search commands`;
+    const description = `Run \`${this.prefix}help <command>\` to learn more about specific commands\nTo change prefix, mention Gowon (\`@Gowon prefix ?)\``;
+    const embed = this.newEmbed().setAuthor(
+      ...this.generateEmbedAuthor("Help")
+    );
 
-      if (!acc[category]) acc[category] = {};
-      if (!acc[category][subcategory]) acc[category][subcategory] = [];
+    const groupedCommands = commands.reduce((acc, command) => {
+      const subcategory = command.subcategory || command.category || "misc";
 
-      acc[category][subcategory].push(c);
+      if (!acc[subcategory]) acc[subcategory] = [];
+
+      acc[subcategory].push(command);
 
       return acc;
     }, {} as GroupedCommands);
 
-    const lineConsolidator = new LineConsolidator();
-    lineConsolidator.addLines(
-      `Run \`${this.prefix}help <command>\` to learn more about specific commands\nTo change prefix, mention Gowon (\`@Gowon prefix ?\`)\n`
-    );
+    const fields = [] as EmbedField[];
 
-    for (let [categoryName, category] of Object.entries(groupedCommands)) {
-      lineConsolidator.addLines(categoryName.strong());
-
-      lineConsolidator.addLines({
-        shouldDisplay: !!category[""],
-        string: Object.values(category[""])
-          .map((c) => c.friendlyName)
-          .join(", ")
-          .italic(),
+    for (const [subcategory, commands] of Object.entries(groupedCommands)) {
+      fields.push({
+        name: ucFirst(subcategory),
+        value: commands.map((c) => c.friendlyName.code()).join(", "),
+        inline: true,
       });
-
-      delete category[""];
-
-      for (let [subcategory, commands] of Object.entries(category)) {
-        lineConsolidator.addLines(
-          `${subcategory.strong()}: ${commands
-            .map((c) => c.friendlyName)
-            .join(", ")}`
-        );
-      }
-
-      lineConsolidator.addLines(" ");
     }
 
-    return this.newEmbed()
-      .setAuthor(
-        `Help for ${message.author.username}`,
-        message.author.avatarURL() || ""
-      )
-      .setDescription(lineConsolidator.consolidate());
+    const simpleScrollingEmbed = new SimpleScrollingEmbed(
+      this.message,
+      embed,
+      {
+        items: fields,
+        pageSize: 9,
+      },
+      { customFooter: footer, embedDescription: description }
+    );
+
+    simpleScrollingEmbed.send();
   }
 }

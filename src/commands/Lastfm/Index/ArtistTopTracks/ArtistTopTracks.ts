@@ -19,7 +19,7 @@ const args = {
   mentions: standardMentions,
 } as const;
 
-export default class IndexArtistTopAlbums extends IndexingBaseCommand<
+export default class ArtistTopTracks extends IndexingBaseCommand<
   ArtistTopTracksResponse,
   ArtistTopTracksParams,
   typeof args
@@ -29,9 +29,8 @@ export default class IndexArtistTopAlbums extends IndexingBaseCommand<
   idSeed = "weeekly soojin";
 
   aliases = ["att", "at", "iatt", "favs"];
-
+  subcategory = "library";
   description = "Displays your top scrobbled tracks from an artist";
-  secretCommand = true;
 
   rollout = {
     guilds: this.indexerGuilds,

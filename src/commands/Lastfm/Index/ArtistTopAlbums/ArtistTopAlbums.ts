@@ -19,19 +19,19 @@ const args = {
   mentions: standardMentions,
 } as const;
 
-export default class IndexArtistTopAlbums extends IndexingBaseCommand<
+export default class ArtistTopAlbums extends IndexingBaseCommand<
   ArtistTopAlbumsResponse,
   ArtistTopAlbumsParams,
   typeof args
 > {
   connector = new ArtistTopAlbumsConnector();
 
+  subcategory = "library";
   idSeed = "redsquare bomin";
 
   aliases = ["atl", "iatl"];
 
   description = "Displays your top scrobbled albums from an artist";
-  secretCommand = true;
 
   rollout = {
     guilds: this.indexerGuilds,

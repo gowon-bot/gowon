@@ -8,13 +8,14 @@ import { Rating } from "./Rating";
 export default class RateYourMusicParentCommand extends ParentCommand {
   idSeed = "sonamoo euijin";
 
+  subcategory = "rateyourmusic";
   description =
     "Allows you to import and view stats about your rateyourmusic data";
   friendlyName = "rateyourmusic";
 
   canSkipPrefixFor = ["importratings", "rating", "artistratings"];
 
-  prefixes = ["rym", "ryms"];
+  prefixes = ["rateyourmusic", "rym", "ryms"];
   default = () => new Link();
 
   children = new CommandManager({

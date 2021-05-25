@@ -27,6 +27,7 @@ export default class PingIndexer extends IndexingBaseCommand<
   idSeed = "exid jeonghwa";
 
   description = "Ping the indexer";
+  subcategory = "developer";
   secretCommand = true;
 
   connector = pingConnector;

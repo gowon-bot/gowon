@@ -9,6 +9,7 @@ const args = {
 export default class ID extends BaseCommand<typeof args> {
   idSeed = "exid hyerin";
 
+  subcategory = "developer";
   description = "Show your, or another person's discord ID";
   usage = ["", "discord username"];
 

@@ -12,6 +12,7 @@ const args = {
 export default class PartyTime extends LastFMBaseCommand<typeof args> {
   idSeed = "april chaewon";
 
+  subcategory = "fun";
   aliases = ["pt"];
   description = "Counts down from a given number";
   usage = ["", "partytime"];

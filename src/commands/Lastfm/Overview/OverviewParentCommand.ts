@@ -18,6 +18,7 @@ import { Help } from "./Help";
 export default class OverviewParentCommand extends LastFMBaseParentCommand {
   idSeed = "snsd sooyoung";
 
+  subcategory = "library";
   description =
     "Shows information about you and your library. Run overview all to see an example";
   friendlyName = "overview";

@@ -35,6 +35,8 @@ export interface Command {
   parent?: ParentCommand;
   gowonClient?: GowonClient;
   getChild(name: string, serverID: string): Promise<Command | undefined>;
+
+  rollout: Rollout;
 }
 
 export interface Rollout {

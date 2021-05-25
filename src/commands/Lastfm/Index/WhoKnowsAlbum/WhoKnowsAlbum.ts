@@ -31,8 +31,8 @@ export default class WhoKnowsAlbum extends IndexingBaseCommand<
 
   variations: Variation[] = [{ name: "update", variation: "uwkl" }];
 
+  subcategory = "whoknows";
   description = "See who knows an album";
-  secretCommand = true;
 
   rollout = {
     guilds: this.indexerGuilds,

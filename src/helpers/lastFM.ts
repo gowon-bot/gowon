@@ -100,7 +100,7 @@ export abstract class LinkGenerator {
   static imageUploadLink(artist: string, album: string): string {
     return (
       this.baseURL +
-      "/music/" +
+      "music/" +
       this.encode(artist) +
       "/" +
       this.encode(album) +

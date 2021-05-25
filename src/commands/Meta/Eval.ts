@@ -13,8 +13,8 @@ const args = {
 export default class Eval extends BaseCommand<typeof args> {
   idSeed = "redsquare ari";
 
+  subcategory = "developer";
   description = "Not for you to run >:(";
-  secretCommand = true;
   devCommand = true;
 
   arguments: Arguments = args;
@@ -26,6 +26,11 @@ export default class Eval extends BaseCommand<typeof args> {
   lastFMService = new LastFMService(this.logger);
 
   async run() {
+    // Permissions failsafe
+    if (this.author.id !== "267794154459889664") {
+      return;
+    }
+
     const result = eval(this.parsedArguments.script!);
 
     const embed = this.newEmbed()

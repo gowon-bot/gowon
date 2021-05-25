@@ -28,7 +28,7 @@ export default class WhoKnowsTrack extends IndexingBaseCommand<
   idSeed = "redsquare lina";
 
   aliases = ["wkt"];
-
+  subcategory = "whoknows";
   rollout = {
     guilds: this.indexerGuilds,
   };
@@ -36,7 +36,6 @@ export default class WhoKnowsTrack extends IndexingBaseCommand<
   variations: Variation[] = [{ name: "update", variation: "uwkt" }];
 
   description = "See who knows a track";
-  secretCommand = true;
 
   arguments: Arguments = args;
 

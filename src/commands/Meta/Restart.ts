@@ -5,6 +5,7 @@ import { PM2Service } from "../../services/PM2Service";
 export default class Restart extends BaseCommand {
   idSeed = "gfriend yerin";
   description = "Restart the bot";
+  subcategory = "developer";
   secretCommand = true;
   devCommand = true;
 

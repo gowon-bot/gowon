@@ -15,7 +15,7 @@ export default class Query extends BaseCommand<typeof args> {
   idSeed = "gfriend sowon";
 
   description = "Query the database";
-  secretCommand = true;
+  subcategory = "developer";
   devCommand = true;
 
   arguments: Arguments = args;
@@ -25,6 +25,11 @@ export default class Query extends BaseCommand<typeof args> {
   };
 
   async run() {
+    // Permissions failsafe
+    if (this.author.id !== "267794154459889664") {
+      return;
+    }
+
     let connection = getConnection();
 
     let result = await connection.query(this.parsedArguments.query!);

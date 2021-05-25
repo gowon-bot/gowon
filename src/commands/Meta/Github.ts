@@ -4,8 +4,8 @@ import { displayLink } from "../../lib/views/displays";
 export default class Github extends BaseCommand {
   idSeed = "apink chorom";
 
+  subcategory = "about";
   aliases = ["gh", "source"];
-  secretCommand = true;
   description = "Displays the github link for the bot";
 
   async run() {

@@ -14,6 +14,8 @@ import {
   ConcurrentActions,
 } from "../caches/ConcurrencyManager";
 
+export const indexerGuilds = ["768596255697272862", "769112727103995904"];
+
 export interface ErrorResponse {
   errors: { message: string }[];
 }
@@ -36,10 +38,7 @@ export abstract class IndexingBaseCommand<
   lastFMService = new LastFMService(this.logger);
   concurrencyManager = new ConcurrencyManager();
 
-  protected readonly indexerGuilds = [
-    "768596255697272862",
-    "769112727103995904",
-  ];
+  protected readonly indexerGuilds = indexerGuilds;
 
   readonly indexingHelp =
     '"Indexing" means downloading all your last.fm data. This is required for many commands to function, and is recommended.';

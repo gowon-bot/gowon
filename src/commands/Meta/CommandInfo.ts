@@ -26,7 +26,6 @@ export default class CommandInfo extends MetaBaseCommand<typeof args> {
     },
   };
 
-  secretCommand = true;
   devCommand = true;
   description = "Displays some info about a command";
 

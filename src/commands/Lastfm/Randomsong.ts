@@ -10,6 +10,7 @@ const args = {
 
 export default class Randomsong extends LastFMBaseCommand<typeof args> {
   idSeed = "april naeun";
+  subcategory = "fun";
   description = "Picks a random song from all the users in a guild";
   usage = [
     "",

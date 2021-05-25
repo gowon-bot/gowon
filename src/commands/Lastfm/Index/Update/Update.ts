@@ -39,9 +39,8 @@ export default class Update extends IndexingBaseCommand<
   connector = new UpdateUserConnector();
 
   idSeed = "bvndit yiyeon";
-
+  subcategory = "library";
   description = "Updates a user's cached data based on their lastest scrobbles";
-  secretCommand = true;
 
   rollout = {
     guilds: this.indexerGuilds,

@@ -11,6 +11,7 @@ export default class Test extends BaseCommand<typeof args> {
 
   description = "Testing testing 123";
   secretCommand = true;
+  subcategory = "developer";
 
   arguments = args;
 

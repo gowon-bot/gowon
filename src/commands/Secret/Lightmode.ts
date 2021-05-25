@@ -3,6 +3,7 @@ import { BaseCommand } from "../../lib/command/BaseCommand";
 export default class Lightmode extends BaseCommand {
   idSeed = "blackpink jennie";
 
+  subcategory = "fun";
   aliases = [
     "mexhastoexplainhowlightmodeisanaccessibilityissueforthehundredthtimeinarowbecauseredditlikestohateonrandomthingsthatpeopleenjoyfornoreason",
   ];

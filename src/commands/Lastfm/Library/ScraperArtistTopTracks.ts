@@ -11,7 +11,9 @@ const args = {
   mentions: standardMentions,
 } as const;
 
-export default class ArtistTopTracks extends LastFMBaseCommand<typeof args> {
+export default class ScraperArtistTopTracks extends LastFMBaseCommand<
+  typeof args
+> {
   idSeed = "gwsn anne";
 
   description = "Shows your top tracks from an artist";

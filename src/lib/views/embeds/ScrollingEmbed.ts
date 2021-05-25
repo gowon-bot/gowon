@@ -18,17 +18,19 @@ export interface ScrollingEmbedOptions {
   embedDescription: string;
   itemName: string;
   itemNamePlural: string;
+
+  customFooter: OnPageChangeCallback;
 }
 
-function isEmbedFields(value: string | EmbedField[]): value is EmbedField[] {
+export function isEmbedFields(
+  value: string | EmbedField[] | any
+): value is EmbedField[] {
   return !!((value[0] as EmbedField)?.name && (value[0] as EmbedField)?.value);
 }
 
 type OnPageChangeCallback = (
   page: number,
-  message: Message,
-  emoji: Emoji,
-  userId: string
+  totalPages: number
 ) => string | Promise<string> | EmbedField[] | Promise<EmbedField[]>;
 
 export class ScrollingEmbed {
@@ -57,6 +59,7 @@ export class ScrollingEmbed {
         totalPages: -1,
         totalItems: -1,
         startingPage: 1,
+        customFooter: this.generateFooter.bind(this),
       },
       options
     );
@@ -96,7 +99,9 @@ export class ScrollingEmbed {
   }
 
   private generateEmbed() {
-    this.embed.setFooter(this.generateFooter());
+    this.embed.setFooter(
+      this.options.customFooter(this.currentPage, this.options.totalPages)
+    );
 
     if (isEmbedFields(this.currentItems)) {
       this.embed.setDescription(this.options.embedDescription);
@@ -169,12 +174,7 @@ export class ScrollingEmbed {
         this.currentPage = page;
 
         Promise.resolve(
-          this.onPageChangeCallback(
-            this.currentPage,
-            this.message,
-            emoji,
-            user.id
-          )
+          this.onPageChangeCallback(this.currentPage, this.options.totalPages)
         ).then((items) => {
           this.currentItems = items;
 
@@ -205,9 +205,10 @@ export class ScrollingEmbed {
   }
 
   private async removeReaction(emoji: Emoji, userId: string) {
-    if (this.message.guild?.me?.permissions?.has("MANAGE_MESSAGES"))
+    if (this.message.guild?.me?.permissions?.has("MANAGE_MESSAGES")) {
       await this.sentMessage!.reactions.resolve(
         emoji.id ?? emoji.name
       )!.users.remove(userId);
+    }
   }
 }

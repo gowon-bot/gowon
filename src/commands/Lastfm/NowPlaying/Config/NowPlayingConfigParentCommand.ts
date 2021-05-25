@@ -10,6 +10,7 @@ import { View } from "./View";
 export default class NowPlayingConfigParentCommand extends LastFMBaseParentCommand {
   idSeed = "weeekly soeun";
 
+  subcategory = "config";
   description = "Allows you to change how your nowplaying embeds look";
   friendlyName = "nowplayingconfig";
   customHelp = Help;

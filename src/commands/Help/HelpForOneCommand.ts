@@ -106,11 +106,17 @@ export default class HelpForOneCommand extends BaseCommand<typeof args> {
     message: Message,
     command: ParentCommand
   ) {
+    console.log(command.children.list());
+
     let commands = await this.adminService.can.viewList(
       command.children.list(),
       message,
       this.gowonClient
     );
+
+    const shortestPrefix =
+      [command.prefixes].flat().sort((a, b) => a.length - b.length)[0] ||
+      command.friendlyName;
 
     const lineConsolidator = new LineConsolidator();
 
@@ -130,7 +136,9 @@ export default class HelpForOneCommand extends BaseCommand<typeof args> {
       "**Commands**:",
       commands
         .map(
-          (c) => c.friendlyName.code() + ` - ${c.description.split("\n")[0]}`
+          (c) =>
+            `${shortestPrefix} ${c.friendlyName}`.code() +
+            ` - ${c.description.split("\n")[0]}`
         )
         .join("\n")
     );

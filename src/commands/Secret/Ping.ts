@@ -4,6 +4,7 @@ import { RunAs } from "../../lib/command/RunAs";
 export default class Ping extends BaseCommand {
   idSeed = "blackpink lisa";
 
+  subcategory = "developer";
   description = "Ping! Pong!";
   aliases = ["🏓", "pin"];
   secretCommand = true;

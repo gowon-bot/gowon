@@ -27,6 +27,7 @@ import { Emoji, EmojiRaw } from "../Emoji";
 import { Argument, Mention } from "./ArgumentType";
 import { RunAs } from "./RunAs";
 import { ucFirst } from "../../helpers";
+import { checkRollout } from "../../helpers/permissions";
 import { gowonEmbed } from "../views/embeds";
 
 export interface Variation {
@@ -384,6 +385,12 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     );
   }
 
+  checkRollout(): boolean {
+    if (this.gowonClient.isDeveloper(this.author.id)) return true;
+
+    return checkRollout(this.rollout, this.message);
+  }
+
   protected async fetchUsername(id: string): Promise<string> {
     try {
       let member = await this.guild.members.fetch(id);
@@ -483,23 +490,5 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     try {
       this.message.channel.stopTyping();
     } catch {}
-  }
-
-  private checkRollout(): boolean {
-    if (
-      (!this.rollout.users && !this.rollout.guilds) ||
-      this.gowonClient.isDeveloper(this.author.id)
-    )
-      return true;
-
-    if (this.rollout.users) {
-      if (this.rollout.users.includes(this.author.id)) {
-        return true;
-      }
-    } else if (this.rollout.guilds) {
-      return this.rollout.guilds.includes(this.guild.id);
-    }
-
-    return false;
   }
 }

@@ -15,6 +15,7 @@ const args = {
 export default class UserInfo extends BaseCommand<typeof args> {
   idSeed = "exid le";
 
+  subcategory = "developer";
   description = "Show stats about a single user";
   aliases = ["ui"];
   usage = ["", "<discord id>"];

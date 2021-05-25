@@ -7,6 +7,7 @@ import { CommandManager } from "../command/CommandManager";
 import { In } from "typeorm";
 import { GowonService } from "../../services/GowonService";
 import { GowonClient } from "../GowonClient";
+import { checkRollout } from "../../helpers/permissions";
 
 export enum CheckFailReason {
   disabled = "disabled",
@@ -93,6 +94,9 @@ export class Can {
 
     if (command.devCommand)
       return { passed: false, reason: CheckFailReason.forbidden };
+
+    if (!this.checkRollout(command, message))
+      return { passed: false, reason: CheckFailReason.disabled };
 
     const isAdmin = message.member?.permissions?.has("ADMINISTRATOR");
 
@@ -183,5 +187,9 @@ export class Can {
     }
 
     return passed;
+  }
+
+  private checkRollout(command: Command, message: Message) {
+    return checkRollout(command.rollout, message);
   }
 }

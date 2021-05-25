@@ -12,8 +12,8 @@ const args = {
 export default class TopTags extends LastFMBaseCommand<typeof args> {
   idSeed = "gwsn soso";
 
+  subcategory = "tags";
   description = "Displays your top tags";
-  secretCommand = true;
   aliases = [];
 
   arguments: Arguments = args;

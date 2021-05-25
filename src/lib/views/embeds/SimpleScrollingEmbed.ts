@@ -1,5 +1,9 @@
-import { Message, MessageEmbed } from "discord.js";
-import { ScrollingEmbed, ScrollingEmbedOptions } from "./ScrollingEmbed";
+import { EmbedField, Message, MessageEmbed } from "discord.js";
+import {
+  ScrollingEmbed,
+  ScrollingEmbedOptions,
+  isEmbedFields,
+} from "./ScrollingEmbed";
 
 export interface SimpleOptions<T> {
   items: Array<T>;
@@ -48,7 +52,7 @@ export class SimpleScrollingEmbed<T> {
     return Math.ceil(this.options.items.length / this.options.pageSize);
   }
 
-  private renderItemsFromPage(page: number): string {
+  private renderItemsFromPage(page: number): string | EmbedField[] {
     const offset = (page - 1) * this.options.pageSize;
 
     const items = this.options.items.slice(
@@ -58,6 +62,8 @@ export class SimpleScrollingEmbed<T> {
 
     return this.options.pageRenderer
       ? this.options.pageRenderer(items, { page, offset })
-      : items.join("\n");
+      : !isEmbedFields(items)
+      ? items.join("\n")
+      : items;
   }
 }
