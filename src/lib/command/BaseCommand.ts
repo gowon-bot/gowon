@@ -73,6 +73,7 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
   secretCommand: boolean = false;
   shouldBeIndexed: boolean = true;
   devCommand: boolean = false;
+  customHelp?: { new (): Command } | undefined;
 
   arguments: Arguments = {};
   validation: Validation = {};

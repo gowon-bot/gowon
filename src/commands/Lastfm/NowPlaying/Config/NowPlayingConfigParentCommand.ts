@@ -12,6 +12,7 @@ export default class NowPlayingConfigParentCommand extends LastFMBaseParentComma
 
   description = "Allows you to change how your nowplaying embeds look";
   friendlyName = "nowplayingconfig";
+  customHelp = Help;
 
   prefixes = ["npc", "nowplayingconfig"];
   default = () => new View();

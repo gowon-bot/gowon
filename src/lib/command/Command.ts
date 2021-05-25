@@ -17,6 +17,7 @@ export interface Command {
   secretCommand: boolean;
   shouldBeIndexed: boolean;
   devCommand?: boolean;
+  customHelp?: { new (): Command };
 
   name: string;
   friendlyName: string;

@@ -12,7 +12,7 @@ export default class RateYourMusicParentCommand extends ParentCommand {
     "Allows you to import and view stats about your rateyourmusic data";
   friendlyName = "rateyourmusic";
 
-  canSkipPrefixFor = ["importratings", "rating"];
+  canSkipPrefixFor = ["importratings", "rating", "artistratings"];
 
   prefixes = ["rym", "ryms"];
   default = () => new Link();

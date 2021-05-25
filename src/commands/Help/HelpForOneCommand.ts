@@ -7,6 +7,7 @@ import { CommandNotFoundError } from "../../errors";
 import { flatDeep } from "../../helpers";
 import { ParentCommand } from "../../lib/command/ParentCommand";
 import { LineConsolidator } from "../../lib/LineConsolidator";
+import { Command } from "../../lib/command/Command";
 
 const args = {
   inputs: {
@@ -40,6 +41,11 @@ export default class HelpForOneCommand extends BaseCommand<typeof args> {
     let { command } = await this.commandManager.find(input, this.guild.id);
 
     if (!command) throw new CommandNotFoundError();
+
+    if (command.customHelp) {
+      this.runCustomHelp(command);
+      return;
+    }
 
     if (
       !(await this.adminService.can.run(command, message, this.gowonClient))
@@ -135,5 +141,14 @@ export default class HelpForOneCommand extends BaseCommand<typeof args> {
         message.author.avatarURL() || ""
       )
       .setDescription(lineConsolidator.consolidate());
+  }
+
+  private async runCustomHelp(commandClass: Command) {
+    let command = new commandClass.customHelp!();
+    command.gowonClient = this.gowonClient;
+    command.delegatedFrom = this;
+    await command.execute(this.message, this.runAs);
+    this.message.channel.stopTyping();
+    return;
   }
 }
