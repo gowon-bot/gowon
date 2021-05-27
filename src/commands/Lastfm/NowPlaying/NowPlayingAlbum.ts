@@ -94,6 +94,7 @@ export default class NowPlayingAlbum extends NowPlayingBaseCommand {
 
     let sentMessage = await this.send(nowPlayingEmbed);
 
+    await this.customReactions(sentMessage);
     await this.easterEggs(sentMessage, nowPlaying);
   }
 }

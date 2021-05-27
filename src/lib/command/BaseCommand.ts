@@ -218,17 +218,22 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     let username = mentionedUsername || senderUser?.lastFMUsername;
 
     if (fetchDiscordUser) {
-      let fetchedUser = (
-        await this.guild.members.fetch(
-          dbUser?.discordID || userID || this.author.id
-        )
-      ).user;
+      let fetchedUser: DiscordUser | undefined;
+
+      try {
+        fetchedUser = (
+          await this.guild.members.fetch(
+            dbUser?.discordID || userID || this.author.id
+          )
+        ).user;
+      } catch {}
 
       if (
-        username === senderUser?.lastFMUsername ||
-        (username === dbUser?.lastFMUsername &&
-          dbUser?.discordID === fetchedUser.id) ||
-        userID === fetchedUser.id
+        fetchedUser &&
+        (username === senderUser?.lastFMUsername ||
+          (username === dbUser?.lastFMUsername &&
+            dbUser?.discordID === fetchedUser.id) ||
+          userID === fetchedUser.id)
       ) {
         discordUser = fetchedUser;
 

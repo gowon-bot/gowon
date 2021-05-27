@@ -46,7 +46,10 @@ export default class NowPlayingCustom extends NowPlayingBaseCommand {
 
     const embed = await builder.asEmbed(resolvedRequirements, baseEmbed);
 
-    await this.send(embed);
+    const sentMessage = await this.send(embed);
+
+    await this.customReactions(sentMessage);
+    await this.easterEggs(sentMessage, nowPlaying);
   }
 
   private async customMentions(): Promise<{

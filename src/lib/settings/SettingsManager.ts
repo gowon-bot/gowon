@@ -1,4 +1,6 @@
+import chalk from "chalk";
 import { Setting } from "../../database/entity/Setting";
+import { Logger } from "../Logger";
 import { Settings, SettingsMap } from "./Settings";
 import {
   UserScope,
@@ -19,7 +21,7 @@ interface Cache {
 export class SettingsManager {
   public cache: Cache;
 
-  constructor() {
+  constructor(private logger?: Logger) {
     this.cache = Object.keys(Settings).reduce((acc, val) => {
       const setting: BaseSetting = (Settings as any)[val];
       acc[setting.name] = {};
@@ -50,6 +52,8 @@ export class SettingsManager {
     scope: Scope,
     value?: string
   ): Promise<Setting | undefined> {
+    this.log(`Setting ${settingName} for ${JSON.stringify(scope)}`);
+
     const setting = Settings[settingName];
     const stringScope = JSON.stringify(setting.transformScope(scope as any));
 
@@ -79,5 +83,9 @@ export class SettingsManager {
     } else {
       this.cache[settingName][scope] = setting.value;
     }
+  }
+
+  protected log(msg: string): void {
+    Logger.log(this.constructor.name, chalk`{grey ${msg}}`, this.logger);
   }
 }

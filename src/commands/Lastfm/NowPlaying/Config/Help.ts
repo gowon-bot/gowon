@@ -33,6 +33,8 @@ nowplaying config allows you to customize which elements appear in the footer of
 \`${this.prefix}npc add <options>\` - Quickly add some options
 \`${this.prefix}npc remove <options>\` - Quickly remove some options
 
+You can also use \`${this.prefix}reacts\` to control nowplaying reactions
+
 **Options**
 ${sortConfigOptions(Object.keys(componentMap))
   .map((o) => o.code())

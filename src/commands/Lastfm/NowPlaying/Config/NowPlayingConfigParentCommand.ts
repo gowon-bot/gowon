@@ -4,6 +4,7 @@ import { LastFMBaseParentCommand } from "../../LastFMBaseCommand";
 import { Add } from "./Add";
 import { Help } from "./Help";
 import { Preview } from "./Preview";
+import { React } from "./React";
 import { Remove } from "./Remove";
 import { Set } from "./Set";
 import { View } from "./View";
@@ -22,6 +23,7 @@ export default class NowPlayingConfigParentCommand extends LastFMBaseParentComma
 
   prefixes = ["npc", "nowplayingconfig"];
   default = () => new View();
+  canSkipPrefixFor = ["react"];
 
   children: CommandManager = new CommandManager({
     view: () => new View(),
@@ -30,5 +32,6 @@ export default class NowPlayingConfigParentCommand extends LastFMBaseParentComma
     preview: () => new Preview(),
     add: () => new Add(),
     remove: () => new Remove(),
+    react: () => new React(),
   });
 }

@@ -187,4 +187,30 @@ export abstract class NowPlayingBaseCommand<
       await sentMessage.react("😭");
     }
   }
+
+  protected async customReactions(sentMessage: Message) {
+    const reactions = JSON.parse(
+      this.gowonService.settingsManager.get("reacts", {
+        userID: this.author.id,
+      }) || "[]"
+    ) as string[];
+
+    const badReactions = [] as string[];
+
+    for (const reaction of reactions) {
+      try {
+        await sentMessage.react(reaction);
+      } catch {
+        badReactions.push(reaction);
+      }
+    }
+
+    if (badReactions.length) {
+      await this.gowonService.settingsManager.set(
+        "reacts",
+        { userID: this.author.id },
+        JSON.stringify(reactions.filter((r) => !badReactions.includes(r)))
+      );
+    }
+  }
 }
