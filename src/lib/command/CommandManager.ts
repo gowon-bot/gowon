@@ -12,12 +12,12 @@ interface Commands {
 }
 
 async function generateCommands(): Promise<Commands> {
-  let files = await glob(
+  const files = await glob(
     require("path").dirname(require.main?.filename) + "/commands/**/*.js"
   );
 
   return files.reduce((acc, file) => {
-    let command = require(file).default;
+    const command = require(file).default;
 
     if (command?.constructor) {
       let commandNameSplit = file.split("/");
