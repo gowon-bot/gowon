@@ -118,7 +118,13 @@ export const mockRequirements = (
             mbid: "",
             "#text": nowPlaying.album,
           },
-          image: [],
+          image: [
+            {
+              size: "large",
+              "#text":
+                "https://lastfm.freetls.fastly.net/i/u/174s/0cc3f20f6d4b0132d77a8a2ed305fa54.jpg",
+            },
+          ],
           streamable: "",
           url: "",
           date: { uts: "", "#text": "1620625939536" },

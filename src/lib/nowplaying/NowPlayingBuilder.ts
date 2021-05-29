@@ -46,7 +46,7 @@ export class NowPlayingBuilder {
     );
 
     const presented = this.organizeRows(
-      presentedComponents.filter((s) => !!s.string && !!s.size)
+      presentedComponents.filter((s) => !!s.string && s.size !== undefined)
     );
 
     return (embed || new MessageEmbed()).setFooter(
@@ -126,7 +126,7 @@ export class NowPlayingBuilder {
       }
 
       if (findIndex !== undefined) {
-        arrayNoveInPlace(newComponentList, {
+        arrayMoveInPlace(newComponentList, {
           from: componentIndex,
           to: findIndex,
         });
@@ -156,7 +156,7 @@ export class NowPlayingBuilder {
 
 // Credit: Reid on stackoverflow
 // https://stackoverflow.com/questions/5306680/move-an-array-element-from-one-array-position-to-another
-function arrayNoveInPlace(
+function arrayMoveInPlace(
   array: Array<any>,
   { from, to }: { from: number; to: number }
 ) {

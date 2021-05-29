@@ -111,7 +111,10 @@ export class CommandHandler {
       let prefix: string | undefined =
         message.content.split(/\s+/)[2] || undefined;
 
-      await new Prefix().setPrefix(prefix).execute(message, new RunAs());
+      const prefixCommand = new Prefix().setPrefix(prefix);
+      prefixCommand.gowonClient = this.client;
+
+      await prefixCommand.execute(message, new RunAs());
     }
   }
 

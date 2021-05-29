@@ -22,7 +22,7 @@ export class Help extends OverviewChildCommand<typeof args> {
       `
 The overview command allows you to see many stats about your last.fm account! The following statistics are available:
 
-Use \`${this.prefix}o statistic\` to use one. Run \`${this.prefix}help o statistic\` to see more about a specific one
+Use \`${this.prefix}o <statistic>\` to use one. Run \`${this.prefix}help o <statistic>\` to see more about a specific one
 
 **Statistics**:
 

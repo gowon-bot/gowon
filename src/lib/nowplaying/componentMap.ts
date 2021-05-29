@@ -11,6 +11,7 @@ import { TrackPlaysComponent } from "./components/TrackPlaysComponent";
 import { ArtistCrownComponent } from "./components/ArtistCrownComponent";
 import { ArtistPlaysAndCrownComponent } from "./compoundComponents/ArtistPlaysAndCrown";
 import { RatingComponent } from "./components/RatingComponent";
+import { LovedComponent } from "./components/LovedComponent";
 
 // Types
 export type NowPlayingComponent = {
@@ -25,6 +26,7 @@ type ComponentMap = {
 // Note: This list is used to determine order. The components will appear in this order in lists
 // and when the embed is generated, it sorts using order before checking size
 const componentList = [
+  LovedComponent,
   ArtistPlaysComponent,
   AlbumPlaysComponent,
   TrackPlaysComponent,

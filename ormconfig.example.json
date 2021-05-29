@@ -10,7 +10,6 @@
     "logging": false,
     "entities": ["dist/src/database/entity/**/*.js"],
     "migrations": ["dist/src/database/migration/**/*.js"]
-    
   },
   {
     "name": "test",
