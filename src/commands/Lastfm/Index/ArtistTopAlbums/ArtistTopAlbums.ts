@@ -85,7 +85,7 @@ export default class ArtistTopAlbums extends IndexingBaseCommand<
 
     const embed = new MessageEmbed()
       .setTitle(`Top ${artist.name} albums for ${username}`)
-      .setURL(LinkGenerator.artistPage(artist.name));
+      .setURL(LinkGenerator.libraryArtistTopAlbums(username, artist.name));
 
     const simpleScrollingEmbed = new SimpleScrollingEmbed(
       this.message,

@@ -62,6 +62,30 @@ export abstract class LinkGenerator {
     );
   }
 
+  // https://www.last.fm/user/flushed_emoji/library/music/WJSN/+albums
+  static libraryArtistTopAlbums(username: string, artist: string): string {
+    return (
+      this.baseURL +
+      "/user/" +
+      this.encode(username) +
+      "/library/music/" +
+      this.encode(artist) +
+      "/+albums"
+    );
+  }
+
+  // https://www.last.fm/user/flushed_emoji/library/music/WJSN/+tracks
+  static libraryArtistTopTracks(username: string, artist: string): string {
+    return (
+      this.baseURL +
+      "/user/" +
+      this.encode(username) +
+      "/library/music/" +
+      this.encode(artist) +
+      "/+tracks"
+    );
+  }
+
   // https://www.last.fm/user/flushed_emoji/library/music/Red+Velvet/%E2%80%98The+ReVe+Festival%E2%80%99+Day+1
   static libraryAlbumPage(
     username: string,
