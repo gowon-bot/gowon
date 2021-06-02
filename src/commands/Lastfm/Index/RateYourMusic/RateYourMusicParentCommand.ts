@@ -4,6 +4,7 @@ import { ArtistRatings } from "./ArtistRatings";
 import { ImportRatings } from "./Import";
 import { Link } from "./Link";
 import { Rating } from "./Rating";
+import { Stats } from "./Stats";
 
 export default class RateYourMusicParentCommand extends ParentCommand {
   idSeed = "sonamoo euijin";
@@ -23,5 +24,6 @@ export default class RateYourMusicParentCommand extends ParentCommand {
     link: () => new Link(),
     rating: () => new Rating(),
     artistratings: () => new ArtistRatings(),
+    stats: () => new Stats(),
   });
 }

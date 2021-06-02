@@ -32,7 +32,7 @@ export abstract class IndexingBaseCommand<
   ResponseT,
   ParamsT,
   ArgumentsT extends Arguments = Arguments
-> extends BaseCommand<ArgumentsT> {
+  > extends BaseCommand<ArgumentsT> {
   abstract connector: Connector<ResponseT, ParamsT>;
   indexingService = new IndexingService(this.logger);
   lastFMService = new LastFMService(this.logger);
@@ -100,7 +100,7 @@ export abstract class IndexingBaseCommand<
 
     return await this.indexingService.webhook
       .waitForResponse(response.update.token, timeout)
-      .catch(() => {});
+      .catch(() => { });
   }
 
   protected async notifyUser(
@@ -108,8 +108,7 @@ export abstract class IndexingBaseCommand<
     type: "update" | "index"
   ) {
     this.reply(
-      `${perspective.upper.plusToHave} been ${
-        type === "index" ? "fully indexed" : "updated"
+      `${perspective.upper.plusToHave} been ${type === "index" ? "fully indexed" : "updated"
       } successfully!`,
       { ping: true }
     );
@@ -133,7 +132,7 @@ export abstract class IndexingBaseCommand<
         .setColor(this.errorColour)
         .setDescription(
           `This command requires ${perspective.name} to be indexed to execute!` +
-            (isAuthor ? " Would you like to index now?" : "")
+          (isAuthor ? " Would you like to index now?" : "")
         );
 
       if (isAuthor) {
@@ -186,7 +185,7 @@ export abstract class IndexingChildCommand<
   ResponseT,
   ParamsT,
   T extends Arguments
-> extends IndexingBaseCommand<ResponseT, ParamsT, T> {
+  > extends IndexingBaseCommand<ResponseT, ParamsT, T> {
   shouldBeIndexed = false;
   abstract parentName: string;
 }

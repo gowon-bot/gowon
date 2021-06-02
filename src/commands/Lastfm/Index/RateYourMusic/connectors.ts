@@ -60,11 +60,16 @@ export class RatingConnector extends BaseConnector<
 // ArtistRatings
 export interface ArtistRatingsResponse {
   ratings: { rating: number; rateYourMusicAlbum: IndexerRateYourMusicAlbum }[];
+  artist?: {
+    artistName: string;
+    artistNativeName: string;
+  };
 }
 
 export interface ArtistRatingsParams {
   user: UserInput;
   artist: ArtistInput;
+  artistKeywords: string;
 }
 
 export class ArtistRatingsConnector extends BaseConnector<
@@ -72,8 +77,40 @@ export class ArtistRatingsConnector extends BaseConnector<
   ArtistRatingsParams
 > {
   query = gql`
-    query rating($user: UserInput, $artist: ArtistInput) {
+    query artistRatings(
+      $user: UserInput
+      $artist: ArtistInput
+      $artistKeywords: String!
+    ) {
       ratings(settings: { user: $user, album: { artist: $artist } }) {
+        rating
+        rateYourMusicAlbum {
+          title
+          artistName
+        }
+      }
+
+      artist: rateYourMusicArtist(keywords: $artistKeywords) {
+        artistName
+        artistNativeName
+      }
+    }
+  `;
+}
+
+// Stats
+export interface StatsResponse {
+  ratings: { rating: number; rateYourMusicAlbum: IndexerRateYourMusicAlbum }[];
+}
+
+export interface StatsParams {
+  user: UserInput;
+}
+
+export class StatsConnector extends BaseConnector<StatsResponse, StatsParams> {
+  query = gql`
+    query stats($user: UserInput) {
+      ratings(settings: { user: $user }) {
         rating
         rateYourMusicAlbum {
           title

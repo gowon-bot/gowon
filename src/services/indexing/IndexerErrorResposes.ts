@@ -2,6 +2,7 @@ import { ErrorResponse } from "../../lib/indexing/IndexingCommand";
 
 export enum IndexerErrorResponses {
   UserDoesntExist = "That user doesn't exist",
+  ArtistDoesntExist = "That artist doesn't exist"
 }
 
 export function responseHasError(

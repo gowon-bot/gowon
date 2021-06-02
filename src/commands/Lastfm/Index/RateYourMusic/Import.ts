@@ -26,7 +26,7 @@ export class ImportRatings extends RateYourMusicIndexingChildCommand<
   idSeed = "sonamoo high d";
   aliases = ["rymimport", "rymsimport"];
   description = "Import your rateyourmusic ratings";
-  secretCommand = true;
+
 
   rollout = {
     guilds: this.indexerGuilds,

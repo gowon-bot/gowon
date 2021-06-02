@@ -20,7 +20,6 @@ export class Rating extends RateYourMusicIndexingChildCommand<
 
   idSeed = "sonamoo newsun";
   description = "Shows what you've rated an album";
-  secretCommand = true;
 
   rollout = {
     guilds: this.indexerGuilds,

@@ -11,11 +11,13 @@ import { mean } from "mathjs";
 import { mostCommonOccurrence } from "../../../../helpers/stats";
 import { SimpleScrollingEmbed } from "../../../../lib/views/embeds/SimpleScrollingEmbed";
 import { displayNumber, displayRating } from "../../../../lib/views/displays";
+import { standardMentions } from "../../../../lib/arguments/mentions/mentions";
 
 const args = {
   inputs: {
     artist: { index: { start: 0 } },
   },
+  mentions: standardMentions,
 } as const;
 
 type Rating = {
@@ -32,8 +34,7 @@ export class ArtistRatings extends RateYourMusicIndexingChildCommand<
 
   aliases = ["ara"];
   idSeed = "sonamoo sumin";
-  description = "Shows what you've rated an artists albums";
-  secretCommand = true;
+  description = "Shows your top rated albums from an artist";
 
   rollout = {
     guilds: this.indexerGuilds,
@@ -44,9 +45,10 @@ export class ArtistRatings extends RateYourMusicIndexingChildCommand<
   async run() {
     let artist = this.parsedArguments.artist;
 
-    let { senderUsername, dbUser, senderUser, perspective } =
+    let { senderUsername, dbUser, senderUser, discordUser } =
       await this.parseMentions({
         senderRequired: !artist,
+        fetchDiscordUser: true,
       });
 
     if (!artist) {
@@ -55,12 +57,23 @@ export class ArtistRatings extends RateYourMusicIndexingChildCommand<
 
     const user = (dbUser || senderUser)!;
 
+    const perspective = this.usersService.discordPerspective(
+      this.author,
+      discordUser
+    );
+
     const response = await this.query({
       user: { lastFMUsername: user.lastFMUsername, discordID: user.discordID },
       artist: { name: artist },
+      artistKeywords: artist,
     });
 
     const errors = this.parseErrors(response);
+
+    let artistName =
+      response.artist?.artistName ||
+      this.getArtistName(response.ratings) ||
+      artist;
 
     if (errors) {
       throw new UnknownIndexerError();
@@ -68,11 +81,9 @@ export class ArtistRatings extends RateYourMusicIndexingChildCommand<
 
     if (!response.ratings.length) {
       throw new LogicError(
-        "Couldn't find any albums by that artist in your ratings!"
+        `Couldn't find any albums by that artist in ${perspective.possessive} ratings!`
       );
     }
-
-    const artistName = this.getArtistName(response.ratings);
 
     const embed = this.newEmbed()
       .setAuthor(...this.generateEmbedAuthor("Artist ratings"))
@@ -99,7 +110,7 @@ export class ArtistRatings extends RateYourMusicIndexingChildCommand<
         items: response.ratings,
         pageSize: 10,
         pageRenderer: (items) =>
-          header + "\n\n" + this.generateTable(items, artistName),
+          header + "\n\n" + this.generateTable(items, artistName!),
       },
       { itemName: "rating" }
     );

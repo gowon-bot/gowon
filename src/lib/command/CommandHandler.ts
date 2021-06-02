@@ -103,7 +103,7 @@ export class CommandHandler {
   async runPrefixCommandIfMentioned(message: Message, client: GowonClient) {
     if (
       message.mentions.users.has(this.client.client.user!.id) &&
-      message.content.split(/\s+/)[1].toLowerCase() === "prefix" &&
+      message.content.split(/\s+/)[1]?.toLowerCase() === "prefix" &&
       !message.author.bot &&
       (message.member?.permissions?.has("ADMINISTRATOR") ||
         client.isDeveloper(message.author.id))
