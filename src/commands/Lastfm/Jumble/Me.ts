@@ -60,11 +60,15 @@ export class Me extends JumbleChildCommand<typeof args> {
       nonAscii: runAs.variationWasUsed("nonascii"),
     });
 
-    if (!artist)
+    if (!artist) {
       throw new LogicError("No suitable artists were found in your library!");
+    }
 
-    let artistInfo = await this.lastFMService.artistInfo({
+    const { senderRequestable } = await this.parseMentions();
+
+    const artistInfo = await this.lastFMService.artistInfo({
       artist: artist.name,
+      username: senderRequestable,
     });
 
     let jumbledArtist: JumbledArtist = {
@@ -126,12 +130,15 @@ export class Me extends JumbleChildCommand<typeof args> {
 
     this.sessionSetJSON(message, jumbleRedisKey, jumble);
 
-    let embed = this.newEmbed().setAuthor(
-      `Rejumble for ${message.member?.nickname || message.author.username}`,
-      message.author.avatarURL() ?? ""
-    ).setDescription(`I've reshuffled the letters, now who is this artist?
-      
-      ${jumble.jumbled.code()}`);
+    let embed = this.newEmbed()
+      .setAuthor(
+        `Rejumble for ${message.member?.nickname || message.author.username}`,
+        message.author.avatarURL() ?? ""
+      )
+      .setDescription(
+        `I've reshuffled the letters, now who is this artist?\n\n${jumble.jumbled.code()}`
+      )
+      .setFooter(`Trying to skip? Run "${this.prefix}j quit" to give up`);
 
     await this.send(embed);
   }

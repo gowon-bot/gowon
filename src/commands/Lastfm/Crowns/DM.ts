@@ -22,7 +22,7 @@ export class DM extends CrownsChildCommand<typeof args> {
 
     let { discordUser: user } = await this.parseMentions({
       fetchDiscordUser: true,
-      reverseLookup: { lastFM: true },
+      reverseLookup: { required: true },
     });
 
     let discordID = user?.id || this.author.id;

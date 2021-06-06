@@ -47,10 +47,10 @@ export default class Scrobbles extends LastFMBaseCommand<typeof args> {
       humanTimeRange = this.parsedArguments.humanizedTimeRange!,
       date = this.parsedArguments.date;
 
-    let { username, perspective } = await this.parseMentions();
+    let { requestable, perspective } = await this.parseMentions();
 
     let scrobbles = await this.lastFMService.getNumberScrobbles(
-      username,
+      requestable,
       date || timeRange.from,
       date ? new Date() : timeRange.to
     );

@@ -17,9 +17,9 @@ export default class ImageUpload extends LastFMBaseCommand<typeof args> {
   arguments: Arguments = args;
 
   async run(_: Message) {
-    const { senderUsername } = await this.parseMentions();
+    const { senderRequestable } = await this.parseMentions();
 
-    const nowPlaying = await this.lastFMService.nowPlaying(senderUsername);
+    const nowPlaying = await this.lastFMService.nowPlaying(senderRequestable);
 
     if (!nowPlaying.album) {
       throw new LogicError(

@@ -29,6 +29,14 @@ import { RunAs } from "./RunAs";
 import { ucFirst } from "../../helpers";
 import { checkRollout } from "../../helpers/permissions";
 import { gowonEmbed } from "../views/embeds";
+import {
+  isSessionKey,
+  Requestable,
+} from "../../services/LastFM/LastFMAPIService";
+import {
+  buildRequestables,
+  compareUsernames,
+} from "../../helpers/parseMentions";
 
 export interface Variation {
   name: string;
@@ -143,7 +151,8 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     idMentionArgumentName = "userID" as ArgumentName<ArgumentsType>,
     asCode = true,
     fetchDiscordUser = false,
-    reverseLookup = { lastFM: false, optional: false },
+    reverseLookup = { required: false },
+    authentificationRequired,
   }: {
     senderRequired?: boolean;
     usernameRequired?: boolean;
@@ -153,13 +162,18 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     idMentionArgumentName?: ArgumentName<ArgumentsType>;
     asCode?: boolean;
     fetchDiscordUser?: boolean;
-    reverseLookup?: { lastFM?: boolean; optional?: boolean };
-    prioritizeIndexed?: boolean;
+    reverseLookup?: { required?: boolean };
+    authentificationRequired?: boolean;
   } = {}): Promise<{
     senderUsername: string;
-    mentionedUsername?: string;
+    senderRequestable: Requestable;
+
     username: string;
+    requestable: Requestable;
+
+    mentionedUsername?: string;
     perspective: Perspective;
+
     dbUser?: User;
     senderUser?: User;
     discordUser?: DiscordUser;
@@ -206,12 +220,12 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
       asCode
     );
 
-    if (reverseLookup.lastFM && !dbUser && mentionedUsername) {
+    if (!dbUser && mentionedUsername) {
       dbUser = await this.usersService.getUserFromLastFMUsername(
         mentionedUsername
       );
 
-      if (!reverseLookup.optional && !dbUser)
+      if (reverseLookup.required && !dbUser)
         throw new ReverseLookupError("Last.fm username");
     }
 
@@ -230,8 +244,8 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
 
       if (
         fetchedUser &&
-        (username === senderUser?.lastFMUsername ||
-          (username === dbUser?.lastFMUsername &&
+        (compareUsernames(username, senderUser?.lastFMUsername) ||
+          (compareUsernames(username, dbUser?.lastFMUsername) &&
             dbUser?.discordID === fetchedUser.id) ||
           userID === fetchedUser.id)
       ) {
@@ -244,20 +258,30 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     if (
       usernameRequired &&
       (!username || (senderRequired && !senderUser?.lastFMUsername))
-    )
+    ) {
       throw new LogicError(
         `please sign in with a last.fm account! (\`${this.prefix}login <lastfm username>)\``,
         `Don't have a one? You can create one at https://last.fm/join`
       );
+    }
+
+    const requestables = buildRequestables({
+      senderUser,
+      mentionedUsername,
+      mentionedUser: dbUser,
+    });
+
+    if (authentificationRequired && !isSessionKey(requestables?.requestable)) {
+      throw new LogicError("pls auth");
+    }
 
     return {
-      username: username || "",
-      senderUsername: senderUser?.lastFMUsername || "",
       mentionedUsername,
       perspective,
       dbUser,
       senderUser,
       discordUser,
+      ...requestables!,
     };
   }
 

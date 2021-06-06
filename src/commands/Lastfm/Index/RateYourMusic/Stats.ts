@@ -33,8 +33,9 @@ export class Stats extends RateYourMusicIndexingChildCommand<
   arguments: Arguments = args;
 
   async run() {
-    const { dbUser, senderUser, username, discordUser } =
-      await this.parseMentions({ fetchDiscordUser: true });
+    const { dbUser, senderUser, discordUser } = await this.parseMentions({
+      fetchDiscordUser: true,
+    });
 
     const user = (dbUser || senderUser)!;
 
@@ -44,7 +45,7 @@ export class Stats extends RateYourMusicIndexingChildCommand<
     );
 
     const response = await this.query({
-      user: { discordID: user.discordID, lastFMUsername: username },
+      user: { discordID: user.discordID },
     });
 
     const errors = this.parseErrors(response);

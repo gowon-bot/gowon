@@ -31,14 +31,14 @@ export class Rating extends RateYourMusicIndexingChildCommand<
     let artist = this.parsedArguments.artist!,
       album = this.parsedArguments.album!;
 
-    let { senderUsername, dbUser, senderUser } = await this.parseMentions({
+    const { senderRequestable, dbUser, senderUser } = await this.parseMentions({
       senderRequired: !artist || !album,
     });
 
     const user = (dbUser || senderUser)!;
 
     if (!artist || !album) {
-      let nowPlaying = await this.lastFMService.nowPlaying(senderUsername);
+      let nowPlaying = await this.lastFMService.nowPlaying(senderRequestable);
 
       if (!artist) artist = nowPlaying.artist;
       if (!album) album = nowPlaying.album;

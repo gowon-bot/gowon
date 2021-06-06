@@ -32,14 +32,14 @@ export default class Cover extends LastFMBaseCommand<typeof args> {
     let artist = this.parsedArguments.artist,
       album = this.parsedArguments.album;
 
-    let { username } = await this.parseMentions({
+    let { requestable } = await this.parseMentions({
       usernameRequired: !artist || !album,
     });
 
     let nowPlaying: RecentTrack | undefined = undefined;
 
     if (!artist || !album) {
-      nowPlaying = await this.lastFMService.nowPlaying(username);
+      nowPlaying = await this.lastFMService.nowPlaying(requestable);
 
       if (!artist) artist = nowPlaying.artist;
       if (!album) album = nowPlaying.album;

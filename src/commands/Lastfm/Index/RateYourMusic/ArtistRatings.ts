@@ -45,14 +45,14 @@ export class ArtistRatings extends RateYourMusicIndexingChildCommand<
   async run() {
     let artist = this.parsedArguments.artist;
 
-    let { senderUsername, dbUser, senderUser, discordUser } =
+    let { senderRequestable, dbUser, senderUser, discordUser } =
       await this.parseMentions({
         senderRequired: !artist,
         fetchDiscordUser: true,
       });
 
     if (!artist) {
-      artist = (await this.lastFMService.nowPlaying(senderUsername)).artist;
+      artist = (await this.lastFMService.nowPlaying(senderRequestable)).artist;
     }
 
     const user = (dbUser || senderUser)!;

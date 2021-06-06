@@ -41,14 +41,14 @@ export default class TagTracks extends LastFMBaseCommand<typeof args> {
   async run() {
     let tag = this.parsedArguments.tag!;
 
-    let { username, perspective } = await this.parseMentions({
+    let { requestable, perspective } = await this.parseMentions({
       asCode: false,
     });
 
     let paginator = new Paginator(
       this.lastFMService.topTracks.bind(this.lastFMService),
       3,
-      { username, limit: 1000 }
+      { username: requestable, limit: 1000 }
     );
 
     let [tagTopTracks, userTopTracks] = await Promise.all([

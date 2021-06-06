@@ -26,12 +26,13 @@ export default class AlbumPlays extends LastFMBaseCommand<typeof args> {
     let artist = this.parsedArguments.artist!,
       album = this.parsedArguments.album!;
 
-    let { senderUsername, username, perspective } = await this.parseMentions({
-      senderRequired: !artist || !album,
-    });
+    let { senderRequestable, requestable, perspective } =
+      await this.parseMentions({
+        senderRequired: !artist || !album,
+      });
 
     if (!artist || !album) {
-      let nowPlaying = await this.lastFMService.nowPlaying(senderUsername);
+      let nowPlaying = await this.lastFMService.nowPlaying(senderRequestable);
 
       if (!artist) artist = nowPlaying.artist;
       if (!album) album = nowPlaying.album;
@@ -40,7 +41,7 @@ export default class AlbumPlays extends LastFMBaseCommand<typeof args> {
     let albumDetails = await this.lastFMService.albumInfo({
       artist,
       album,
-      username,
+      username: requestable,
     });
 
     await this.traditionalReply(

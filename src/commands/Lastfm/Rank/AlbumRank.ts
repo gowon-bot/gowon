@@ -31,19 +31,20 @@ export default class AlbumRank extends LastFMBaseCommand<typeof args> {
     let album = this.parsedArguments.album,
       artist = this.parsedArguments.artist;
 
-    let { username, senderUsername, perspective } = await this.parseMentions({
-      senderRequired: !artist || !album,
-    });
+    let { requestable, senderRequestable, perspective } =
+      await this.parseMentions({
+        senderRequired: !artist || !album,
+      });
 
     if (!album || !artist) {
-      let nowPlaying = await this.lastFMService.nowPlaying(senderUsername);
+      let nowPlaying = await this.lastFMService.nowPlaying(senderRequestable);
 
       if (!album) album = nowPlaying.album;
       if (!artist) artist = nowPlaying.artist;
     }
 
     let topAlbums = await this.lastFMService.topAlbums({
-      username,
+      username: requestable,
       limit: 1000,
     });
 

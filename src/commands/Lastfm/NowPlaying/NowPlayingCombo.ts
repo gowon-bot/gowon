@@ -17,10 +17,11 @@ export default class NowPlayingCombo extends NowPlayingBaseCommand {
   redirectsService = new RedirectsService(this.logger);
 
   async run() {
-    let { username, discordUser } = await this.nowPlayingMentions();
+    let { username, requestable, discordUser } =
+      await this.nowPlayingMentions();
 
     let recentTracks = await this.lastFMService.recentTracks({
-      username,
+      username: requestable,
       limit: 1000,
     });
 
@@ -35,7 +36,10 @@ export default class NowPlayingCombo extends NowPlayingBaseCommand {
     if (nowPlaying.isNowPlaying) this.scrobble(nowPlaying);
 
     let [artistInfo, crown] = await promiseAllSettled([
-      this.lastFMService.artistInfo({ artist: nowPlaying.artist, username }),
+      this.lastFMService.artistInfo({
+        artist: nowPlaying.artist,
+        username: requestable,
+      }),
       this.crownsService.getCrownDisplay(nowPlaying.artist, this.guild),
     ]);
 

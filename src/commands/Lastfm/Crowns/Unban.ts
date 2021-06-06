@@ -16,7 +16,7 @@ export class Unban extends CrownsChildCommand<typeof args> {
 
   async run() {
     let { dbUser, senderUser, discordUser } = await this.parseMentions({
-      reverseLookup: { lastFM: true },
+      reverseLookup: { required: true },
       fetchDiscordUser: true,
     });
 

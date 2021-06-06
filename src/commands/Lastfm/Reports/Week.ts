@@ -26,7 +26,7 @@ export default class Week extends LastFMBaseCommand<typeof args> {
   redirectsService = new RedirectsService(this.logger);
 
   async run() {
-    let { username, perspective } = await this.parseMentions();
+    let { requestable, perspective } = await this.parseMentions();
 
     let paginator = new Paginator(
       this.lastFMService.recentTracks.bind(this.lastFMService),
@@ -34,7 +34,7 @@ export default class Week extends LastFMBaseCommand<typeof args> {
       {
         from: ~~(sub(new Date(), { weeks: 1 }).getTime() / 1000),
         to: ~~(new Date().getTime() / 1000),
-        username,
+        username: requestable,
         limit: 1000,
       }
     );
@@ -78,7 +78,8 @@ export default class Week extends LastFMBaseCommand<typeof args> {
       (a, b) => week.top.artists[b] - week.top.artists[a]
     );
 
-    let embed = this.newEmbed().setTitle(`${username}'s week`).setDescription(`
+    let embed = this.newEmbed().setTitle(`${perspective.possessive} week`)
+      .setDescription(`
       _${displayDate(sub(new Date(), { weeks: 1 }))} - ${displayDate(
       new Date()
     )}_

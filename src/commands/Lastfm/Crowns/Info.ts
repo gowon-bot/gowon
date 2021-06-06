@@ -27,19 +27,19 @@ export class Info extends CrownsChildCommand<typeof args> {
   async run(message: Message) {
     let artist = this.parsedArguments.artist;
 
-    let { senderUsername, senderUser } = await this.parseMentions({
+    let { senderUser, senderRequestable } = await this.parseMentions({
       usernameRequired: !artist,
     });
 
     if (!artist) {
-      artist = (await this.lastFMService.nowPlaying(senderUsername)).artist;
+      artist = (await this.lastFMService.nowPlaying(senderRequestable)).artist;
     }
 
     let artistDetails = await this.lastFMService.artistInfo(
-      senderUsername
+      senderRequestable
         ? {
             artist,
-            username: senderUsername,
+            username: senderRequestable,
           }
         : { artist }
     );

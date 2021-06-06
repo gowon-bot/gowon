@@ -23,10 +23,10 @@ export default class TopTags extends LastFMBaseCommand<typeof args> {
   showLoadingAfter = this.gowonService.constants.defaultLoadingTime;
 
   async run() {
-    let { username } = await this.parseMentions();
+    const { requestable, perspective } = await this.parseMentions();
 
     let topArtists = await this.lastFMService.topArtists({
-      username,
+      username: requestable,
       limit: 1000,
     });
 
@@ -56,7 +56,7 @@ export default class TopTags extends LastFMBaseCommand<typeof args> {
     let topTopTags = topTags.slice(0, 10);
 
     let embed = this.newEmbed()
-      .setTitle(`Top tags for ${username}`)
+      .setTitle(`${perspective.possessive} top tracks`)
       .setDescription(
         `_${displayNumber(topTags.length, "unique tag")}_\n` +
           topTopTags

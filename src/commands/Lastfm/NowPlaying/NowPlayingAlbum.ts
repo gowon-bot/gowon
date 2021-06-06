@@ -13,20 +13,24 @@ export default class NowPlayingAlbum extends NowPlayingBaseCommand {
   crownsService = new CrownsService(this.logger);
 
   async run() {
-    let { username, discordUser } = await this.nowPlayingMentions();
+    let { username, requestable, discordUser } =
+      await this.nowPlayingMentions();
 
-    let nowPlaying = await this.lastFMService.nowPlaying(username);
+    let nowPlaying = await this.lastFMService.nowPlaying(requestable);
 
     if (nowPlaying.isNowPlaying) this.scrobble(nowPlaying);
 
     this.tagConsolidator.blacklistTags(nowPlaying.artist, nowPlaying.name);
 
     let [artistInfo, albumInfo, crown] = await promiseAllSettled([
-      this.lastFMService.artistInfo({ artist: nowPlaying.artist, username }),
+      this.lastFMService.artistInfo({
+        artist: nowPlaying.artist,
+        username: requestable,
+      }),
       this.lastFMService.albumInfo({
         artist: nowPlaying.artist,
         album: nowPlaying.album,
-        username,
+        username: requestable,
       }),
       this.crownsService.getCrownDisplay(nowPlaying.artist, this.guild),
     ]);

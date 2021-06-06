@@ -18,6 +18,7 @@ import {
   RecentTracks,
 } from "../../../services/LastFM/converters/RecentTracks";
 import { displayNumber } from "../../../lib/views/displays";
+import { Requestable } from "../../../services/LastFM/LastFMAPIService";
 
 const args = {
   inputs: {
@@ -43,18 +44,25 @@ export abstract class NowPlayingBaseCommand<
   protected async nowPlayingMentions(
     { noDiscordUser }: { noDiscordUser?: boolean } = { noDiscordUser: false }
   ): Promise<{
+    requestable: Requestable;
+    senderRequestable: Requestable;
     username: string;
     senderUsername: string;
     discordUser?: User;
   }> {
     let otherWords = this.parsedArguments.otherWords;
 
-    let { username, senderUsername, discordUser } = await this.parseMentions(
+    let {
+      username,
+      senderUsername,
+      discordUser,
+      requestable,
+      senderRequestable,
+    } = await this.parseMentions(
       noDiscordUser
         ? {}
         : {
             fetchDiscordUser: true,
-            reverseLookup: { lastFM: true, optional: true },
           }
     );
 
@@ -63,10 +71,17 @@ export abstract class NowPlayingBaseCommand<
       !this.parsedArguments.userID &&
       !this.parsedArguments.lfmUser
     ) {
+      requestable = senderRequestable;
       username = senderUsername;
     }
 
-    return { username, senderUsername, discordUser };
+    return {
+      username,
+      senderUsername,
+      discordUser,
+      requestable,
+      senderRequestable,
+    };
   }
 
   protected scrobble(track: RecentTrack) {

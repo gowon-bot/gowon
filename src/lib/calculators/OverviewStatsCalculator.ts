@@ -16,6 +16,7 @@ import {
   TopTracks,
 } from "../../services/LastFM/converters/TopTypes";
 import { displayDate, displayNumber } from "../views/displays";
+import { Requestable } from "../../services/LastFM/LastFMAPIService";
 
 export class Stat {
   public asString: string;
@@ -45,7 +46,7 @@ export class OverviewStatsCalculator {
   private tagsCache: TagsCache;
 
   constructor(
-    private username: string,
+    private requestable: Requestable,
     private serverID: string,
     private userID?: string,
     logger?: Logger
@@ -75,7 +76,7 @@ export class OverviewStatsCalculator {
   async userInfo(): Promise<UserInfo> {
     if (!this.cache.userInfo)
       this.cache.userInfo = await this.lastFMService.userInfo({
-        username: this.username,
+        username: this.requestable,
       });
 
     return this.cache.userInfo;
@@ -84,7 +85,7 @@ export class OverviewStatsCalculator {
   async topArtists(): Promise<TopArtists> {
     if (!this.cache.topArtists)
       this.cache.topArtists = await this.lastFMService.topArtists({
-        username: this.username,
+        username: this.requestable,
         limit: 1000,
       });
 
@@ -94,7 +95,7 @@ export class OverviewStatsCalculator {
   async topAlbums(): Promise<TopAlbums> {
     if (!this.cache.topAlbums)
       this.cache.topAlbums = await this.lastFMService.topAlbums({
-        username: this.username,
+        username: this.requestable,
         limit: 1,
       });
 
@@ -104,7 +105,7 @@ export class OverviewStatsCalculator {
   async topTracks(): Promise<TopTracks> {
     if (!this.cache.topTracks)
       this.cache.topTracks = await this.lastFMService.topTracks({
-        username: this.username,
+        username: this.requestable,
         limit: 1,
       });
 

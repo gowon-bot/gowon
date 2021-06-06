@@ -16,12 +16,13 @@ export class ConfirmationEmbed {
   constructor(
     private originalMessage: Message,
     private embed: MessageEmbed,
-    private gowonClient: GowonClient
+    private gowonClient: GowonClient,
+    private inDM: boolean = false
   ) {}
 
   private get filter(): ReactionCollectorFilter {
     return (reaction: MessageReaction, user: User) =>
-      user.id === this.originalMessage.author.id &&
+      (!this.inDM || user.id === this.originalMessage.author.id) &&
       (reaction.emoji.id ?? reaction.emoji.name) === this.reactionEmoji;
   }
 

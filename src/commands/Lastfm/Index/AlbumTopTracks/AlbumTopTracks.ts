@@ -43,10 +43,10 @@ export default class AlbumTopTracks extends IndexingBaseCommand<
     let artistName = this.parsedArguments.artist,
       albumName = this.parsedArguments.album;
 
-    const { username, senderUser, senderUsername, dbUser, perspective } =
+    const { username, senderUser, senderRequestable, dbUser, perspective } =
       await this.parseMentions({
         senderRequired: !artistName || !albumName,
-        reverseLookup: { lastFM: true },
+        reverseLookup: { required: true },
       });
 
     const user = (dbUser || senderUser)!;
@@ -54,14 +54,15 @@ export default class AlbumTopTracks extends IndexingBaseCommand<
     await this.throwIfNotIndexed(user, perspective);
 
     if (!artistName || !albumName) {
-      let nowPlaying = await this.lastFMService.nowPlaying(senderUsername);
+      let nowPlaying = await this.lastFMService.nowPlaying(senderRequestable);
 
       if (!artistName) artistName = nowPlaying.artist;
       if (!albumName) albumName = nowPlaying.album;
     }
 
     if (!artistName) {
-      artistName = (await this.lastFMService.nowPlaying(senderUsername)).artist;
+      artistName = (await this.lastFMService.nowPlaying(senderRequestable))
+        .artist;
     } else {
       const lfmArtist = await this.lastFMService.artistInfo({
         artist: artistName,

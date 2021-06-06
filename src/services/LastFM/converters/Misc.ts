@@ -3,6 +3,7 @@ import {
   RawArtistPopularTrack,
   RawArtistPopularTracks,
   RawFriends,
+  RawLastFMSession,
   RawSearchedTrack,
   RawTagTopArtist,
   RawTagTopArtists,
@@ -255,5 +256,19 @@ export class TagTopTracks extends BaseConverter {
       total: this.number(attr.total),
       totalPages: this.number(attr.totalPages),
     };
+  }
+}
+
+export class LastFMSession extends BaseConverter {
+  isSubscriber: boolean;
+  username: string;
+  key: string;
+
+  constructor(lastFMSession: RawLastFMSession) {
+    super();
+
+    this.isSubscriber = this.boolean(lastFMSession.session.subscriber);
+    this.username = lastFMSession.session.name;
+    this.key = lastFMSession.session.key;
   }
 }

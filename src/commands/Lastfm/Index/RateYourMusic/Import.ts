@@ -27,7 +27,6 @@ export class ImportRatings extends RateYourMusicIndexingChildCommand<
   aliases = ["rymimport", "rymsimport"];
   description = "Import your rateyourmusic ratings";
 
-
   rollout = {
     guilds: this.indexerGuilds,
   };
@@ -35,13 +34,11 @@ export class ImportRatings extends RateYourMusicIndexingChildCommand<
   arguments: Arguments = args;
 
   async run() {
-    const { senderUsername } = await this.parseMentions();
-
     const ratings = await this.getRatings();
 
     const response = await this.query({
       csv: ratings,
-      user: { lastFMUsername: senderUsername, discordID: this.author.id },
+      user: { discordID: this.author.id },
     });
 
     const errors = this.parseErrors(response);

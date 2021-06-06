@@ -59,9 +59,9 @@ export default class Pace extends LastFMBaseCommand<typeof args> {
       humanizedTimeRange = this.parsedArguments.humanizedTimeRange!,
       milestone = this.parsedArguments.milestone;
 
-    let { username, perspective } = await this.parseMentions();
+    let { requestable, username, perspective } = await this.parseMentions();
 
-    let paceCalculator = new PaceCalculator(this.lastFMService, username);
+    let paceCalculator = new PaceCalculator(this.lastFMService, requestable);
 
     let pace = await paceCalculator.calculate(timeRange, milestone);
 

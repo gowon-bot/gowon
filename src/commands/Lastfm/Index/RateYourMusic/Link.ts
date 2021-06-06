@@ -19,12 +19,12 @@ export class Link extends RateYourMusicChildCommand<typeof args> {
   async run() {
     let keywords = this.parsedArguments.keywords;
 
-    let { username } = await this.parseMentions({
+    let { requestable } = await this.parseMentions({
       usernameRequired: !keywords,
     });
 
     if (!keywords) {
-      let nowplaying = await this.lastFMService.nowPlaying(username);
+      let nowplaying = await this.lastFMService.nowPlaying(requestable);
 
       keywords = `${nowplaying.artist} - ${this.cleanAlbumName(
         nowplaying.album

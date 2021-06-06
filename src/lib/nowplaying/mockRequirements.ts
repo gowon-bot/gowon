@@ -40,6 +40,7 @@ export const mockRequirements = (
     // Resources
     message,
     username: "gowon_",
+    requestable: "gowon_",
     dbUser,
 
     // Lastfm Types

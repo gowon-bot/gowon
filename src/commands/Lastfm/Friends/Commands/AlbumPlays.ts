@@ -27,7 +27,9 @@ export class AlbumPlays extends FriendsChildCommand<typeof args> {
       album = this.parsedArguments.album;
 
     if (!artist || !album) {
-      let nowPlaying = await this.lastFMService.nowPlaying(this.senderUsername);
+      let nowPlaying = await this.lastFMService.nowPlaying(
+        this.senderRequestable
+      );
 
       if (!artist) artist = nowPlaying.artist;
       if (!album) album = nowPlaying.album;
@@ -35,7 +37,7 @@ export class AlbumPlays extends FriendsChildCommand<typeof args> {
 
     let albumDetails = await new MultiRequester([
       ...this.friendUsernames,
-      this.senderUsername,
+      this.senderRequestable,
     ]).fetch(this.lastFMService.albumInfo.bind(this.lastFMService), {
       artist,
       album,

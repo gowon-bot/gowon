@@ -18,7 +18,7 @@ export default class ID extends BaseCommand<typeof args> {
   async run() {
     let { discordUser } = await this.parseMentions({
       fetchDiscordUser: true,
-      reverseLookup: { lastFM: true },
+      reverseLookup: { required: true },
       usernameRequired: false,
     });
 

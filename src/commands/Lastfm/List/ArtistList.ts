@@ -11,10 +11,10 @@ export default class ArtistList extends ListCommand {
   aliases = ["alist", "topartists", "topartist", "artists", "al"];
 
   async run() {
-    let { username } = await this.parseMentions();
+    let { requestable, username } = await this.parseMentions();
 
     let topArtists = await this.lastFMService.topArtists({
-      username,
+      username: requestable,
       limit: this.listAmount,
       period: this.timePeriod,
     });

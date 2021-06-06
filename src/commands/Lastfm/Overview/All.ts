@@ -19,7 +19,7 @@ export class All extends OverviewChildCommand {
 
     let [friends] = await Promise.all([
       this.lastFMService.userGetFriends({
-        username: this.username,
+        username: this.requestable,
         limit: 1,
       }),
       await this.calculator.cacheAll(),
@@ -35,7 +35,7 @@ export class All extends OverviewChildCommand {
 
     let embed = this.newEmbed()
       .setAuthor(
-        this.username + badge,
+        this.requestable + badge,
         image,
         LinkGenerator.userPage(this.username)
       )

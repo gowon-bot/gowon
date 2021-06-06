@@ -34,9 +34,7 @@ export default class FakeNowPlaying extends NowPlayingBaseCommand<typeof args> {
       artistName = this.parsedArguments.artist,
       querystring = this.parsedArguments.querystring || "";
 
-    let { senderUsername } = await this.parseMentions({
-      reverseLookup: { lastFM: true, optional: true },
-    });
+    let { senderUsername } = await this.parseMentions();
 
     if (querystring.includes("|") || !querystring.trim()) {
       if (!artistName || !trackName) {

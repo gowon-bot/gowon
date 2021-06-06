@@ -6,7 +6,7 @@ import { shuffle } from "../../../helpers";
 
 export class Hint extends JumbleChildCommand {
   idSeed = "clc elkie";
-  
+
   description = "Gives you a hint on the current jumble";
   usage = "";
 
@@ -56,8 +56,9 @@ export class Hint extends JumbleChildCommand {
     acceptablePositions = shuffle(acceptablePositions);
 
     let generatedHint = jumble.currenthint;
-    let unjumbledLength = jumble.unjumbled.split("").filter((c) => c !== " ")
-      .length;
+    let unjumbledLength = jumble.unjumbled
+      .split("")
+      .filter((c) => c !== " ").length;
 
     for (
       let i = 0;

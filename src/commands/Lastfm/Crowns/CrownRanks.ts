@@ -21,7 +21,7 @@ export class CrownRanks extends CrownsChildCommand<typeof args> {
   async run() {
     let { discordUser } = await this.parseMentions({
       fetchDiscordUser: true,
-      reverseLookup: { lastFM: true },
+      reverseLookup: { required: true },
     });
 
     let perspective = this.usersService.discordPerspective(

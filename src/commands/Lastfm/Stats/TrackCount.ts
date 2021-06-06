@@ -32,9 +32,12 @@ export default class TrackCount extends LastFMBaseCommand<typeof args> {
     let timePeriod = this.parsedArguments.timePeriod!,
       humanReadableTimePeriod = this.parsedArguments.humanReadableTimePeriod!;
 
-    let { username, perspective } = await this.parseMentions();
+    let { requestable, perspective } = await this.parseMentions();
 
-    let scrobbles = await this.lastFMService.trackCount(username, timePeriod);
+    let scrobbles = await this.lastFMService.trackCount(
+      requestable,
+      timePeriod
+    );
 
     await this.traditionalReply(
       `${perspective.plusToHave} scrobbled ${displayNumber(

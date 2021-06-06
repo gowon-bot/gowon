@@ -49,12 +49,12 @@ export default class Combo extends LastFMBaseCommand<typeof args> {
   async run() {
     let artists = this.parsedArguments.artists!;
 
-    let { username } = await this.parseMentions();
+    let { requestable, username } = await this.parseMentions();
 
     let paginator = new Paginator(
       this.lastFMService.recentTracks.bind(this.lastFMService),
       this.gowonService.constants.hardPageLimit,
-      { username, limit: 1000 }
+      { username: requestable, limit: 1000 }
     );
 
     let comboCalculator = new ComboCalculator(this.redirectsService, artists);

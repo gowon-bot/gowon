@@ -2,12 +2,13 @@ import { add } from "date-fns";
 import { BadLastFMResponseError, LogicError } from "../../errors";
 import { TagsService } from "../dbservices/tags/TagsService";
 import { LastFMScraper } from "../scrapingServices/LastFMScraper";
-import { LastFMAPIService } from "./LastFMAPIService";
+import { LastFMAPIService, Requestable } from "./LastFMAPIService";
 import {
   AlbumInfoParams,
   ArtistInfoParams,
   ArtistPopularTracksParams,
   GetArtistCorrectionParams,
+  GetSessionParams,
   LastFMPeriod,
   RecentTracksParams,
   TagInfoParams,
@@ -32,6 +33,7 @@ import {
   ArtistCorrection,
   ArtistPopularTracks,
   Friends,
+  LastFMSession,
   TagTopArtists,
   TagTopTracks,
   TrackSearch,
@@ -122,12 +124,16 @@ export class LastFMService extends LastFMAPIService {
     return new TagTopTracks(await this._tagTopTracks(params));
   }
 
+  async getSession(params: GetSessionParams): Promise<LastFMSession> {
+    return new LastFMSession(await this._getSession(params));
+  }
+
   // Derived methods
-  async nowPlaying(username: string): Promise<RecentTrack> {
+  async nowPlaying(username: Requestable): Promise<RecentTrack> {
     return (await this.recentTracks({ limit: 1, username })).first();
   }
 
-  async getArtistPlays(username: string, artist: string): Promise<number> {
+  async getArtistPlays(username: Requestable, artist: string): Promise<number> {
     let playcount = (await this.artistInfo({ artist, username }))
       ?.userPlaycount;
 
@@ -136,7 +142,7 @@ export class LastFMService extends LastFMAPIService {
     return playcount;
   }
 
-  async userExists(username: string): Promise<boolean> {
+  async userExists(username: Requestable): Promise<boolean> {
     try {
       let user = await this.userInfo({ username });
 
@@ -184,7 +190,7 @@ export class LastFMService extends LastFMAPIService {
   }
 
   async artistCount(
-    username: string,
+    username: Requestable,
     timePeriod: LastFMPeriod = "overall"
   ): Promise<number> {
     let topArtists = await this.topArtists({
@@ -197,7 +203,7 @@ export class LastFMService extends LastFMAPIService {
   }
 
   async albumCount(
-    username: string,
+    username: Requestable,
     timePeriod: LastFMPeriod = "overall"
   ): Promise<number> {
     let topArtists = await this.topAlbums({
@@ -210,7 +216,7 @@ export class LastFMService extends LastFMAPIService {
   }
 
   async trackCount(
-    username: string,
+    username: Requestable,
     timePeriod: LastFMPeriod = "overall"
   ): Promise<number> {
     let topTracks = await this.topTracks({
@@ -223,7 +229,7 @@ export class LastFMService extends LastFMAPIService {
   }
 
   async getMilestone(
-    username: string,
+    username: Requestable,
     milestone: number
   ): Promise<RecentTrack> {
     let total = (await this.recentTracks({ username, limit: 1 })).meta.total;
@@ -244,7 +250,7 @@ export class LastFMService extends LastFMAPIService {
   }
 
   async getNumberScrobbles(
-    username: string,
+    username: Requestable,
     from?: Date,
     to?: Date
   ): Promise<number> {
@@ -258,7 +264,7 @@ export class LastFMService extends LastFMAPIService {
     return recentTracks.meta.total || 0;
   }
 
-  async goBack(username: string, when: Date): Promise<RecentTrack> {
+  async goBack(username: Requestable, when: Date): Promise<RecentTrack> {
     let to = add(when, { hours: 6 });
 
     let params = {

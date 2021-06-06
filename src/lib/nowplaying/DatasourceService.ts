@@ -15,6 +15,7 @@ import {
   RecentTrack,
   RecentTracks,
 } from "../../services/LastFM/converters/RecentTracks";
+import { Requestable } from "../../services/LastFM/LastFMAPIService";
 import { LastFMService } from "../../services/LastFM/LastFMService";
 import { buildQuery, isQueryPart, QueryPart } from "./buildQuery";
 import { NowPlayingRequirement } from "./components/BaseNowPlayingComponent";
@@ -26,6 +27,7 @@ export interface ResolvedRequirements {
 export interface Resources {
   recentTracks: RecentTracks;
   message: Message;
+  requestable: Requestable;
   username: string;
   dbUser: User;
 }
@@ -95,7 +97,7 @@ export class DatasourceService extends BaseService {
 
     return await this.lastFMService.artistInfo({
       artist: nowPlaying.artist,
-      username: this.resources.username,
+      username: this.resources.requestable,
     });
   }
 
@@ -103,7 +105,7 @@ export class DatasourceService extends BaseService {
     return await this.lastFMService.trackInfo({
       artist: this.nowPlaying.artist,
       track: this.nowPlaying.name,
-      username: this.resources.username,
+      username: this.resources.requestable,
     });
   }
 
@@ -115,7 +117,7 @@ export class DatasourceService extends BaseService {
   }
 
   albumPlays(): QueryPart {
-    const user: UserInput = { lastFMUsername: this.resources.username };
+    const user: UserInput = { discordID: this.resources.dbUser.discordID };
     const lpSettings = {
       album: {
         name: this.nowPlaying.album,
@@ -127,7 +129,7 @@ export class DatasourceService extends BaseService {
   }
 
   artistPlays(): QueryPart {
-    const user: UserInput = { lastFMUsername: this.resources.username };
+    const user: UserInput = { discordID: this.resources.dbUser.discordID };
     const apSettings = {
       artist: { name: this.nowPlaying.artist },
     };

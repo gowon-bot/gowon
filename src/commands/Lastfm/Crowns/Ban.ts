@@ -17,7 +17,7 @@ export class Ban extends CrownsChildCommand<typeof args> {
   async run() {
     let { dbUser, senderUser, discordUser } = await this.parseMentions({
       fetchDiscordUser: true,
-      reverseLookup: { lastFM: true },
+      reverseLookup: { required: true },
     });
 
     if (!dbUser) throw new LogicError("please mention a valid user");

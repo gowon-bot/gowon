@@ -77,9 +77,11 @@ export default class Update extends IndexingBaseCommand<
 
     const { senderUsername, perspective } = await this.parseMentions();
 
+    console.log(senderUsername);
+
     this.stopwatch.start();
     const response = await this.query({
-      user: { lastFMUsername: senderUsername, discordID: this.author.id },
+      user: { discordID: this.author.id },
     });
 
     const errors = this.parseErrors(response);

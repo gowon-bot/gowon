@@ -44,12 +44,12 @@ export default class WhoKnowsAlbum extends IndexingBaseCommand<
     let artistName = this.parsedArguments.artist,
       albumName = this.parsedArguments.album;
 
-    let { senderUsername } = await this.parseMentions({
+    let { senderRequestable } = await this.parseMentions({
       senderRequired: !artistName || !albumName,
     });
 
     if (!artistName || !albumName) {
-      let nowPlaying = await this.lastFMService.nowPlaying(senderUsername);
+      let nowPlaying = await this.lastFMService.nowPlaying(senderRequestable);
 
       if (!artistName) artistName = nowPlaying.artist;
       if (!albumName) albumName = nowPlaying.album;
@@ -64,7 +64,7 @@ export default class WhoKnowsAlbum extends IndexingBaseCommand<
     }
 
     if (this.variationWasUsed("update")) {
-      await this.updateAndWait(senderUsername);
+      await this.updateAndWait(this.author.id);
     }
 
     const response = await this.query({

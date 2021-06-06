@@ -23,12 +23,12 @@ export default class SearchTrack extends SearchCommand {
   async run() {
     let keywords = this.parsedArguments.keywords!;
 
-    let { username } = await this.parseMentions();
+    const { requestable, perspective } = await this.parseMentions();
 
     let paginator = new Paginator(
       this.lastFMService.topTracks.bind(this.lastFMService),
       this.variationWasUsed("deep") ? 6 : 3,
-      { username, limit: 1000 }
+      { username: requestable, limit: 1000 }
     );
 
     let topTracks = await paginator.getAllToConcatonable({
@@ -47,7 +47,7 @@ export default class SearchTrack extends SearchCommand {
 
     let embed = this.newEmbed()
       .setTitle(
-        `Search results in ${username}'s top ${displayNumber(
+        `Search results in ${perspective.possessive} top ${displayNumber(
           topTracks.tracks.length,
           "track"
         )}`

@@ -50,24 +50,34 @@ export class IndexingService extends BaseService {
     );
   }
 
-  public async login(username: string, discordID: string, userType: UserType) {
+  public async login(
+    username: string,
+    discordID: string,
+    userType: UserType,
+    session: string | undefined
+  ) {
+    console.log("session:");
+    console.log({ username, discordID, userType, session });
+
     return await this.genericRequest(
       gql`
         mutation login(
           $username: String!
           $discordID: String!
           $userType: UserType!
+          $session: String
         ) {
           login(
             username: $username
             discordID: $discordID
             userType: $userType
+            session: $session
           ) {
             id
           }
         }
       `,
-      { username, discordID, userType }
+      { username, discordID, userType, session }
     );
   }
 

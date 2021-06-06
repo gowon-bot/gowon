@@ -1,32 +1,22 @@
 import { Message } from "discord.js";
+import { ReactionCollectorFilter } from "../../../helpers/discord";
+import { LinkGenerator } from "../../../helpers/lastFM";
 import { Arguments } from "../../../lib/arguments/arguments";
-import { Validation } from "../../../lib/validation/ValidationChecker";
-import { validators } from "../../../lib/validation/validators";
-import { differenceInDays } from "date-fns";
-import { DiscordIDMention } from "../../../lib/arguments/mentions/DiscordIDMention";
-import { LogicError } from "../../../errors";
-import { IndexingService } from "../../../services/indexing/IndexingService";
-import { UserType } from "../../../services/indexing/IndexingTypes";
-import { ConfirmationEmbed } from "../../../lib/views/embeds/ConfirmationEmbed";
-import { ConcurrencyManager } from "../../../lib/caches/ConcurrencyManager";
-import { Delegate } from "../../../lib/command/BaseCommand";
-import SimpleLogin from "./SimpleLogin";
-import { IndexingBaseCommand } from "../../../lib/indexing/IndexingCommand";
+import { EmojiRaw } from "../../../lib/Emoji";
 import { EmptyConnector } from "../../../lib/indexing/BaseConnector";
-import { UserInfo } from "../../../services/LastFM/converters/InfoTypes";
+import { IndexingBaseCommand } from "../../../lib/indexing/IndexingCommand";
+import { Validation } from "../../../lib/validation/ValidationChecker";
 import { displayLink } from "../../../lib/views/displays";
+import { ConfirmationEmbed } from "../../../lib/views/embeds/ConfirmationEmbed";
+import { UserType } from "../../../services/indexing/IndexingTypes";
 
-const args = {
-  inputs: {
-    username: { index: 0 },
-  },
-  mentions: {
-    user: { index: 0 },
-    userID: { mention: new DiscordIDMention(true), index: 0 },
-  },
-} as const;
+const args = {} as const;
 
-export default class Login extends IndexingBaseCommand<any, any, typeof args> {
+export default class Login extends IndexingBaseCommand<
+  never,
+  never,
+  typeof args
+> {
   idSeed = "loona jinsoul";
 
   connector = new EmptyConnector();
@@ -37,103 +27,118 @@ export default class Login extends IndexingBaseCommand<any, any, typeof args> {
 
   arguments: Arguments = args;
 
-  validation: Validation = {
-    username: new validators.Required({
-      message: `please enter a last.fm username (\`login <username>\`)`,
-    }),
-  };
+  validation: Validation = {};
 
-  indexingService = new IndexingService(this.logger);
-  concurrencyManager = new ConcurrencyManager();
+  async run() {
+    const { token } = await this.lastFMService.getToken();
 
-  delegates: Delegate<typeof args>[] = [
-    {
-      delegateTo: SimpleLogin,
-      when: () => !this.indexerGuilds.includes(this.guild.id),
-    },
-  ];
+    const url = LinkGenerator.authURL(this.lastFMService.apikey, token);
 
-  async run(message: Message) {
-    let username = this.parsedArguments.username!;
-
-    let { discordUser, senderUsername } = await this.parseMentions({
-      fetchDiscordUser: true,
-      usernameRequired: false,
-    });
-
-    if (username === senderUsername) {
-      return this.sendError(`You're already logged in as ${username.code()}`);
-    }
-
-    if (
-      discordUser &&
-      discordUser.id !== this.author.id &&
-      !this.message.member?.permissions.has("ADMINISTRATOR")
-    ) {
-      throw new LogicError(
-        "you are not able to set usernames for other users!"
-      );
-    }
-
-    if (username === "<username>") {
-      throw new LogicError(
-        "you're supposed to replace <username> with your username!"
-      );
-    } else if (username.startsWith("<") && username.endsWith(">")) {
-      throw new LogicError("please do not include the triangle brackets! (<>)");
-    }
-
-    let userInfo: UserInfo | undefined;
-
-    try {
-      userInfo = await this.lastFMService.userInfo({ username });
-    } catch {
-      this.sendError(
-        `The user ${username?.code()} couldn't be found!` +
-          (username === this.author.username
-            ? " You need to login with a **Last.fm** account, if you don't have you can create one " +
-              displayLink("here", "https://www.last.fm/join")
-            : "")
-      );
-      return;
-    }
-
-    await this.usersService.setUsername(
-      (discordUser || message.author).id,
-      userInfo.name
-    );
-    await this.handleIndexerLogin(
-      (discordUser || message.author).id,
-      userInfo.name
+    await this.send(
+      this.newEmbed()
+        .setAuthor(...this.generateEmbedAuthor("Login"))
+        .setDescription("Please check your DMs for a login link")
     );
 
     const embed = this.newEmbed()
-      .setAuthor(...this.generateEmbedAuthor("Login"))
+      .setTitle("Login with Last.fm")
       .setDescription(
-        `Logged in as ${userInfo.name.code()}${
-          differenceInDays(new Date(), userInfo.registeredAt) < 10
-            ? ". Welcome to Last.fm!"
-            : ""
-        }
-        
-        Would you like to index your data?`
-      )
-      .setFooter(this.indexingHelp);
+        `To login, ${displayLink(
+          "click the link",
+          url
+        )} and authenticate with Last.fm, then click the react to let Gowon know you're done.\n\nDon't have an account? You can create one at https://last.fm/join`
+      );
 
-    const confirmationEmbed = new ConfirmationEmbed(
-      this.message,
-      embed,
-      this.gowonClient
-    );
+    const sentMessage = await this.author.send(embed);
+    await sentMessage.react(EmojiRaw.checkmark);
 
-    this.stopTyping();
-    if (await confirmationEmbed.awaitConfirmation()) {
-      this.impromptuIndex(embed, confirmationEmbed, username, this.author.id);
-    }
+    const filter: ReactionCollectorFilter = (reaction, user) =>
+      reaction.emoji.id === EmojiRaw.checkmark && user.id === this.author.id;
+
+    const reactionCollector = sentMessage.createReactionCollector(filter, {
+      time: 5 * 60 * 1000,
+    });
+
+    reactionCollector.on("collect", async () => {
+      if (await this.handleCreateSession(token, sentMessage)) {
+        reactionCollector.stop();
+      } else if (!embed.footer?.text?.includes("didn't work")) {
+        await sentMessage.edit(
+          embed.setFooter(
+            "Hmm that didn't work, please ensure you've authenticated with the link and try again"
+          )
+        );
+      }
+    });
+
+    reactionCollector.on("error", () => reactionCollector.stop());
+
+    reactionCollector.on("end", async (_: any, reason) => {
+      if (reason === "time") {
+        await sentMessage.edit(
+          embed.setFooter("This login link has expired, please try again")
+        );
+      }
+    });
   }
 
-  private async handleIndexerLogin(discordID: string, username: string) {
-    await this.indexingService.login(username, discordID, UserType.Lastfm);
+  private async handleCreateSession(
+    token: string,
+    sentMessage: Message
+  ): Promise<boolean> {
+    try {
+      const session = await this.lastFMService.getSession({ token });
+
+      const user = await this.usersService.setLastFMSession(
+        this.author.id,
+        session
+      );
+
+      await this.handleIndexerLogin(
+        this.author.id,
+        session.username,
+        session.key
+      );
+
+      const successEmbed = this.newEmbed()
+        .setDescription(
+          `Success! You've been logged in as ${user.lastFMUsername}\n\nWould you like to index your data?`
+        )
+        .setFooter(this.indexingHelp);
+
+      const confirmationEmbed = new ConfirmationEmbed(
+        sentMessage,
+        successEmbed,
+        this.gowonClient
+      );
+
+      this.stopTyping();
+      if (await confirmationEmbed.awaitConfirmation()) {
+        this.impromptuIndex(
+          successEmbed,
+          confirmationEmbed,
+          session.username,
+          this.author.id
+        );
+      }
+    } catch (e) {
+      return false;
+    }
+
+    return true;
+  }
+
+  private async handleIndexerLogin(
+    discordID: string,
+    username: string,
+    session: string | undefined
+  ) {
+    await this.indexingService.login(
+      username,
+      discordID,
+      UserType.Lastfm,
+      session
+    );
     try {
       await this.indexingService.quietAddUserToGuild(discordID, this.guild.id);
     } catch (e) {}

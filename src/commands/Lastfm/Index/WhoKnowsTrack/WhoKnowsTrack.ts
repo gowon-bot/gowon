@@ -43,12 +43,12 @@ export default class WhoKnowsTrack extends IndexingBaseCommand<
     let artistName = this.parsedArguments.artist,
       trackName = this.parsedArguments.track;
 
-    let { senderUsername } = await this.parseMentions({
+    let { senderRequestable } = await this.parseMentions({
       senderRequired: !artistName || !trackName,
     });
 
     if (!artistName || !trackName) {
-      let nowPlaying = await this.lastFMService.nowPlaying(senderUsername);
+      let nowPlaying = await this.lastFMService.nowPlaying(senderRequestable);
 
       if (!artistName) artistName = nowPlaying.artist;
       if (!trackName) trackName = nowPlaying.name;
@@ -63,7 +63,7 @@ export default class WhoKnowsTrack extends IndexingBaseCommand<
     }
 
     if (this.variationWasUsed("update")) {
-      await this.updateAndWait(senderUsername);
+      await this.updateAndWait(this.author.id);
     }
 
     const response = await this.query({

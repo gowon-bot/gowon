@@ -132,6 +132,11 @@ export abstract class LinkGenerator {
     );
   }
 
+  // https://www.last.fm/api/auth?api_key=xxxxxxxxxxxxx&token=xxxxxxx
+  static authURL(apiKey: string, token: string) {
+    return this.baseURL + "/api/auth?api_key=" + apiKey + "&token=" + token;
+  }
+
   static generateTrackLinks(track: RecentTrack): TrackLinks {
     return {
       artist: this.artistPage(track.artist),

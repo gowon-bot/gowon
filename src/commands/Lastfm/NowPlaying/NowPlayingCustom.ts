@@ -3,6 +3,7 @@ import { indexerGuilds } from "../../../lib/indexing/IndexingCommand";
 import { DatasourceService } from "../../../lib/nowplaying/DatasourceService";
 import { NowPlayingBuilder } from "../../../lib/nowplaying/NowPlayingBuilder";
 import { ConfigService } from "../../../services/dbservices/NowPlayingService";
+import { Requestable } from "../../../services/LastFM/LastFMAPIService";
 import { NowPlayingBaseCommand } from "./NowPlayingBaseCommand";
 
 export default class NowPlayingCustom extends NowPlayingBaseCommand {
@@ -20,12 +21,13 @@ export default class NowPlayingCustom extends NowPlayingBaseCommand {
   configService = new ConfigService(this.logger);
 
   async run() {
-    let { username, senderUser, dbUser } = await this.customMentions();
+    let { username, senderUser, dbUser, requestable } =
+      await this.customMentions();
 
     const config = await this.configService.getConfigForUser(senderUser);
 
     const recentTracks = await this.lastFMService.recentTracks({
-      username,
+      username: requestable,
       limit: 1,
     });
     const nowPlaying = recentTracks.first();
@@ -37,6 +39,7 @@ export default class NowPlayingCustom extends NowPlayingBaseCommand {
     const resolvedRequirements =
       await this.datasourceService.resolveRequirements(requirements, {
         recentTracks,
+        requestable,
         username,
         dbUser,
         message: this.message,
@@ -56,17 +59,25 @@ export default class NowPlayingCustom extends NowPlayingBaseCommand {
     username: string;
     senderUser: User;
     dbUser: User;
+    requestable: Requestable;
   }> {
     const otherwords = this.parsedArguments.otherWords;
-    const { senderUser, username, senderUsername, dbUser } =
-      await this.parseMentions({
-        reverseLookup: { lastFM: true, optional: true },
-        senderRequired: true,
-      });
+    const {
+      senderUser,
+      username,
+      senderUsername,
+      dbUser,
+      requestable,
+      senderRequestable,
+    } = await this.parseMentions({
+      senderRequired: true,
+    });
 
     const usernameToUse = otherwords ? senderUsername : username;
+    const requestableToUse = otherwords ? senderRequestable : requestable;
 
     return {
+      requestable: requestableToUse,
       senderUser: senderUser!,
       username: usernameToUse,
       dbUser: (dbUser?.lastFMUsername === username ? dbUser : senderUser)!,

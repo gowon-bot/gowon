@@ -25,10 +25,10 @@ export default class TrackPage extends LastFMBaseCommand<typeof args> {
     let artist = this.parsedArguments.artist,
       track = this.parsedArguments.track;
 
-    let { username } = await this.parseMentions();
+    let { requestable } = await this.parseMentions();
 
     if (!artist || !track) {
-      let nowPlaying = await this.lastFMService.nowPlaying(username);
+      let nowPlaying = await this.lastFMService.nowPlaying(requestable);
 
       if (!artist) artist = nowPlaying.artist;
       if (!track) track = nowPlaying.name;
@@ -37,7 +37,7 @@ export default class TrackPage extends LastFMBaseCommand<typeof args> {
     let trackDetails = await this.lastFMService.trackInfo({
       artist,
       track,
-      username,
+      username: requestable,
     });
 
     this.send(

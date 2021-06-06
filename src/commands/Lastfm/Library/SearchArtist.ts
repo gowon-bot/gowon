@@ -23,12 +23,12 @@ export default class SearchArtist extends SearchCommand {
   async run() {
     let keywords = this.parsedArguments.keywords!;
 
-    let { username } = await this.parseMentions();
+    const { requestable, perspective } = await this.parseMentions();
 
     let paginator = new Paginator(
       this.lastFMService.topArtists.bind(this.lastFMService),
       this.variationWasUsed("deep") ? 4 : 2,
-      { username, limit: 1000 }
+      { username: requestable, limit: 1000 }
     );
 
     let topArtists = await paginator.getAllToConcatonable({
@@ -52,7 +52,7 @@ export default class SearchArtist extends SearchCommand {
 
     let embed = this.newEmbed()
       .setTitle(
-        `Search results in ${username}'s top ${displayNumber(
+        `Search results in ${perspective.possessive} top ${displayNumber(
           topArtists.artists.length,
           "artist"
         )}`

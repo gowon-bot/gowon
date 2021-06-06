@@ -50,6 +50,7 @@ import {
   TagTopTracksParams,
   RawTagTopTracks,
   RawTagTopTracksResponse,
+  RawLastFMSession,
 } from "./LastFMService.types";
 import config from "../../../config.json";
 import {
@@ -60,6 +61,19 @@ import {
 } from "../../errors";
 import { BaseService } from "../BaseService";
 import { toInt } from "../../helpers/lastFM";
+
+export interface SessionKey {
+  username: string;
+  session: string;
+}
+
+export type Requestable = SessionKey | string;
+
+export function isSessionKey(
+  value: unknown | Requestable
+): value is SessionKey {
+  return typeof value !== "string";
+}
 
 export class LastFMAPIService extends BaseService {
   url = "https://ws.audioscrobbler.com/2.0/";
@@ -80,31 +94,6 @@ export class LastFMAPIService extends BaseService {
       ...this.defaultParams,
       ...params,
     });
-  }
-
-  async request<T>(
-    method: string,
-    params: Params,
-    fetchOptions?: RequestInit
-  ): Promise<T> {
-    this.log(
-      `made API request for ${method} with params ${JSON.stringify(params)}`
-    );
-
-    let qparams = (params as any).api_key
-      ? stringify({ ...params })
-      : this.buildParams({ method, ...params });
-
-    let response = await fetch(this.url + "?" + qparams, fetchOptions);
-
-    if (`${response.status}`.startsWith("3"))
-      throw new LastFMConnectionError(response);
-
-    let jsonResponse = await response.json();
-
-    if (jsonResponse.error) throw new LastFMError(jsonResponse);
-
-    return jsonResponse as T;
   }
 
   async _recentTracks(params: RecentTracksParams): Promise<RawRecentTracks> {
@@ -141,7 +130,9 @@ export class LastFMAPIService extends BaseService {
 
   async _artistInfo(params: ArtistInfoParams): Promise<RawArtistInfo> {
     let response = (
-      await this.request<RawArtistInfoResponse>("artist.getInfo", params)
+      await this.request<RawArtistInfoResponse>("artist.getInfo", params, {
+        post: true,
+      })
     ).artist;
 
     if (
@@ -268,7 +259,7 @@ export class LastFMAPIService extends BaseService {
             perPage: "0",
             totalPages: "0",
             total: "0",
-            user: params.username,
+            user: typeof params.username === "string" ? params.username : "",
           },
         };
       } else throw e;
@@ -281,12 +272,24 @@ export class LastFMAPIService extends BaseService {
     ).tracks;
   }
 
-  private async authRequest<T>(
+  private async request<T>(
     method: string,
     params: Params,
-    options: { post?: boolean } = { post: false }
+    options: { post?: boolean; forceSignature?: boolean } = {
+      post: false,
+      forceSignature: false,
+    }
   ): Promise<T> {
-    let builtParams = { ...this.defaultParams, ...params, method };
+    let builtParams = this.parseUsername({
+      ...this.defaultParams,
+      ...params,
+      method,
+    });
+
+    if (!options.forceSignature && !builtParams.sk) {
+      return await this.unauthedRequest<T>(method, params);
+    }
+
     let signature = Object.keys(builtParams)
       .filter((k) => k !== "format")
       .sort()
@@ -298,7 +301,7 @@ export class LastFMAPIService extends BaseService {
       .update(`${signature}${config.lastFMSecret}`, "utf8")
       .digest("hex");
 
-    return await this.request<T>(
+    return await this.unauthedRequest<T>(
       method,
       { ...builtParams, api_sig },
       {
@@ -308,16 +311,47 @@ export class LastFMAPIService extends BaseService {
     );
   }
 
-  async getToken(): Promise<{ token: string }> {
-    return await this.authRequest("auth.getToken", {});
+  private async unauthedRequest<T>(
+    method: string,
+    params: Params,
+    fetchOptions?: RequestInit
+  ): Promise<T> {
+    this.log(
+      `made ${
+        (params as any).sk ? "authenticated " : ""
+      }API request for ${method} with params ${JSON.stringify(
+        this.cleanParametersForDisplay(params)
+      )}`
+    );
+
+    let qparams = (params as any).api_key
+      ? stringify({ ...params })
+      : this.buildParams({ method, ...params });
+
+    let response = await fetch(this.url + "?" + qparams, fetchOptions);
+
+    if (`${response.status}`.startsWith("3"))
+      throw new LastFMConnectionError(response);
+
+    let jsonResponse = await response.json();
+
+    if (jsonResponse.error) throw new LastFMError(jsonResponse);
+
+    return jsonResponse as T;
   }
 
-  async getSession(params: GetSessionParams) {
-    return await this.authRequest("auth.getSession", params);
+  async getToken(): Promise<{ token: string }> {
+    return await this.request("auth.getToken", {}, { forceSignature: true });
+  }
+
+  async _getSession(params: GetSessionParams): Promise<RawLastFMSession> {
+    return await this.request("auth.getSession", params, {
+      forceSignature: true,
+    });
   }
 
   async scrobbleTrack(params: ScrobbleParams, sk?: string) {
-    return await this.authRequest(
+    return await this.request(
       "track.scrobble",
       {
         ...params,
@@ -334,5 +368,29 @@ export class LastFMAPIService extends BaseService {
     if (params.album) params.album = params.album.replace(":", " ");
 
     return params as T;
+  }
+
+  private parseUsername(params: { [key: string]: any }): {
+    [key: string]: any;
+  } {
+    const username = params.username as Requestable | undefined;
+
+    if (!username || !isSessionKey(username)) {
+      return params;
+    }
+
+    return { ...params, username: username.username, sk: username.session };
+  }
+
+  private cleanParametersForDisplay(params: { [key: string]: any }): {
+    [key: string]: any;
+  } {
+    return Object.entries(params)
+      .filter(([key]) => !["api_sig", "api_key", "format", "sk"].includes(key))
+      .reduce((acc, [key, val]) => {
+        acc[key] = val;
+
+        return acc;
+      }, {} as any);
   }
 }
