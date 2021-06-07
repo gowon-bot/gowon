@@ -172,7 +172,10 @@ export class OverviewStatsCalculator {
       this.scrobbleCount(),
     ]);
 
-    let diff = Math.abs(differenceInDays(userInfo.registeredAt, new Date()));
+    const beginDate =
+      periodToRange(this.timePeriod).from || userInfo.registeredAt;
+
+    let diff = Math.abs(differenceInDays(beginDate, new Date()));
 
     return new Stat(scrobbleCount / diff, (scrobbleCount / diff).toFixed(0));
   }
