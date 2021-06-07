@@ -74,7 +74,7 @@ export default class HelpForOneCommand extends BaseCommand<typeof args> {
 
     lineConsolidator.addLines(
       commandName.strong() + ":",
-      command.description.italic(),
+      command.description.italic(false),
       "",
       {
         shouldDisplay: !!command.usage,

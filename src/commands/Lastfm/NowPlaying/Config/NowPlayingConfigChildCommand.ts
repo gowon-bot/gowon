@@ -24,6 +24,7 @@ export abstract class NowPlayingConfigChildCommand<
       "artist-tags",
       "track-tags",
       "artist-crown",
+      "loved",
     ],
   };
 

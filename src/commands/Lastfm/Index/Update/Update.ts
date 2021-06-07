@@ -77,8 +77,6 @@ export default class Update extends IndexingBaseCommand<
 
     const { senderUsername, perspective } = await this.parseMentions();
 
-    console.log(senderUsername);
-
     this.stopwatch.start();
     const response = await this.query({
       user: { discordID: this.author.id },
@@ -89,7 +87,7 @@ export default class Update extends IndexingBaseCommand<
     if (errors) {
       if (responseHasError(errors, IndexerErrorResponses.UserDoesntExist)) {
         throw new IndexerError(
-          `Couldn't find you logged into the indexer, try running \`${this.prefix}login ${senderUsername}\` again`
+          `Couldn't find you logged into the indexer, try running \`${this.prefix}login\` again`
         );
       } else {
         throw new IndexerError(errors.errors[0].message);

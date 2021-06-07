@@ -260,7 +260,7 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
       (!username || (senderRequired && !senderUser?.lastFMUsername))
     ) {
       throw new LogicError(
-        `please sign in with a last.fm account! (\`${this.prefix}login <lastfm username>)\``,
+        `please sign in with a last.fm account! (\`${this.prefix}login\`)`,
         `Don't have a one? You can create one at https://last.fm/join`
       );
     }
@@ -272,7 +272,9 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     });
 
     if (authentificationRequired && !isSessionKey(requestables?.requestable)) {
-      throw new LogicError("pls auth");
+      throw new LogicError(
+        "This command requires you to be authenticated, please logout and then login in again!"
+      );
     }
 
     return {

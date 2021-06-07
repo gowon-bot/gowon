@@ -34,11 +34,11 @@ export default class FakeNowPlaying extends NowPlayingBaseCommand<typeof args> {
       artistName = this.parsedArguments.artist,
       querystring = this.parsedArguments.querystring || "";
 
-    let { senderUsername } = await this.parseMentions();
+    let { senderUsername, senderRequestable } = await this.parseMentions();
 
     if (querystring.includes("|") || !querystring.trim()) {
       if (!artistName || !trackName) {
-        let nowPlaying = await this.lastFMService.nowPlaying(senderUsername);
+        let nowPlaying = await this.lastFMService.nowPlaying(senderRequestable);
 
         if (!artistName) artistName = nowPlaying.artist;
         if (!trackName) trackName = nowPlaying.name;
@@ -62,12 +62,12 @@ export default class FakeNowPlaying extends NowPlayingBaseCommand<typeof args> {
     let [artistInfo, trackInfo, crown] = await promiseAllSettled([
       this.lastFMService.artistInfo({
         artist: artistName,
-        username: senderUsername,
+        username: senderRequestable,
       }),
       this.lastFMService.trackInfo({
         artist: artistName,
         track: trackName,
-        username: senderUsername,
+        username: senderRequestable,
       }),
       this.crownsService.getCrownDisplay(artistName, this.guild),
     ]);

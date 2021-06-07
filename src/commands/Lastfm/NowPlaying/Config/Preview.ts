@@ -71,6 +71,7 @@ export class Preview extends NowPlayingConfigChildCommand<typeof args> {
       "username",
       "message",
       "dbUser",
+      "requestable",
     ]) {
       object[requirement] = (mr as ResolvedRequirements)[requirement];
     }

@@ -2,6 +2,7 @@ import { Message } from "discord.js";
 import { ReactionCollectorFilter } from "../../../helpers/discord";
 import { LinkGenerator } from "../../../helpers/lastFM";
 import { Arguments } from "../../../lib/arguments/arguments";
+import { Delegate } from "../../../lib/command/BaseCommand";
 import { EmojiRaw } from "../../../lib/Emoji";
 import { EmptyConnector } from "../../../lib/indexing/BaseConnector";
 import { IndexingBaseCommand } from "../../../lib/indexing/IndexingCommand";
@@ -9,6 +10,7 @@ import { Validation } from "../../../lib/validation/ValidationChecker";
 import { displayLink } from "../../../lib/views/displays";
 import { ConfirmationEmbed } from "../../../lib/views/embeds/ConfirmationEmbed";
 import { UserType } from "../../../services/indexing/IndexingTypes";
+import SimpleLogin from "./SimpleLogin";
 
 const args = {} as const;
 
@@ -28,6 +30,13 @@ export default class Login extends IndexingBaseCommand<
   arguments: Arguments = args;
 
   validation: Validation = {};
+
+  delegates: Delegate<typeof args>[] = [
+    {
+      delegateTo: SimpleLogin,
+      when: () => !this.indexerGuilds.includes(this.guild.id),
+    },
+  ];
 
   async run() {
     const { token } = await this.lastFMService.getToken();

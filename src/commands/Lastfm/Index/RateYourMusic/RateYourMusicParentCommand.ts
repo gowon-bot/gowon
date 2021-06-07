@@ -2,6 +2,7 @@ import { CommandManager } from "../../../../lib/command/CommandManager";
 import { ParentCommand } from "../../../../lib/command/ParentCommand";
 import { indexerGuilds } from "../../../../lib/indexing/IndexingCommand";
 import { ArtistRatings } from "./ArtistRatings";
+import { Help } from "./Help";
 import { ImportRatings } from "./Import";
 import { Link } from "./Link";
 import { Rating } from "./Rating";
@@ -30,5 +31,6 @@ export default class RateYourMusicParentCommand extends ParentCommand {
     rating: () => new Rating(),
     artistratings: () => new ArtistRatings(),
     stats: () => new Stats(),
+    help: () => new Help(),
   });
 }

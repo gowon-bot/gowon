@@ -1,5 +1,5 @@
 import { mean } from "mathjs";
-import { UnknownIndexerError } from "../../../../errors";
+import { LogicError, UnknownIndexerError } from "../../../../errors";
 import { toInt } from "../../../../helpers/lastFM";
 import { Arguments } from "../../../../lib/arguments/arguments";
 import { standardMentions } from "../../../../lib/arguments/mentions/mentions";
@@ -54,6 +54,12 @@ export class Stats extends RateYourMusicIndexingChildCommand<
       throw new UnknownIndexerError();
     }
 
+    if (!response.ratings.length) {
+      throw new LogicError(
+        `You don't have any ratings imported yet! To import your ratings see \`${this.prefix}ryms help\``
+      );
+    }
+
     const ratingsCounts = this.getRatingsCounts(response.ratings);
 
     const embed = this.newEmbed()
@@ -94,5 +100,3 @@ ${Object.entries(ratingsCounts)
     return curve;
   }
 }
-
-// ${calculatePercent(count, response.ratings.length, 0)}%
