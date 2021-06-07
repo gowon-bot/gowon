@@ -1,7 +1,7 @@
 import { OverviewChildCommand } from "./OverviewChildCommand";
 import { getOrdinal } from "../../../helpers";
 import { Emoji } from "../../../lib/Emoji";
-import { LinkGenerator, toInt } from "../../../helpers/lastFM";
+import { toInt } from "../../../helpers/lastFM";
 import { displayNumber } from "../../../lib/views/displays";
 
 export class All extends OverviewChildCommand {
