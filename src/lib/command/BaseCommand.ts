@@ -209,7 +209,9 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
         if (usernameRequired) throw new UsernameNotRegisteredError();
       }
     } else if (inputArgumentName && this.parsedArguments[inputArgumentName]) {
-      mentionedUsername = this.parsedArguments[inputArgumentName] as string;
+      mentionedUsername = this.parsedArguments[
+        inputArgumentName
+      ] as any as string;
     }
 
     let perspective = this.usersService.perspective(
