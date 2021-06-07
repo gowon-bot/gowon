@@ -209,9 +209,7 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
         if (usernameRequired) throw new UsernameNotRegisteredError();
       }
     } else if (inputArgumentName && this.parsedArguments[inputArgumentName]) {
-      mentionedUsername = this.parsedArguments[
-        inputArgumentName
-      ] as any as string;
+      mentionedUsername = this.parsedArguments[inputArgumentName] as string;
     }
 
     let perspective = this.usersService.perspective(
@@ -235,11 +233,9 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
       let fetchedUser: DiscordUser | undefined;
 
       try {
-        fetchedUser = (
-          await this.guild.members.fetch(
-            dbUser?.discordID || userID || this.author.id
-          )
-        ).user;
+        fetchedUser = await this.gowonClient.client.users.fetch(
+          dbUser?.discordID || userID || this.author.id
+        );
       } catch {}
 
       if (

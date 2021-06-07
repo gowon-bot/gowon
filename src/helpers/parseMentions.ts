@@ -35,7 +35,7 @@ export function buildRequestables({
     const requestable = buildRequestable(mentionedUsername!, mentionedUser);
 
     requestables.requestable = requestable.requestable;
-    requestables.username = requestables.username;
+    requestables.username = requestable.username;
   } else {
     requestables.requestable = senderRequestable.requestable;
     requestables.username = senderRequestable.username;
