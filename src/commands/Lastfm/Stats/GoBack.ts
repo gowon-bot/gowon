@@ -64,12 +64,12 @@ export default class GoBack extends LastFMBaseCommand<typeof args> {
     if (!date && !timeRange.from)
       throw new LogicError("please enter a valid date or time range!");
 
-    let { username, perspective } = await this.parseMentions({
+    let { requestable, perspective } = await this.parseMentions({
       asCode: false,
     });
 
     let track = await this.lastFMService.goBack(
-      username,
+      requestable,
       date || timeRange.from!
     );
 

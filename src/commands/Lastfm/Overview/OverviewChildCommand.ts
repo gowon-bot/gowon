@@ -4,6 +4,7 @@ import { Message } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { ucFirst } from "../../../helpers";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
+import { Requestable } from "../../../services/LastFM/LastFMAPIService";
 
 export abstract class OverviewChildCommand<
   T extends Arguments = Arguments
@@ -17,7 +18,9 @@ export abstract class OverviewChildCommand<
   };
 
   calculator!: OverviewStatsCalculator;
+  requestable!: Requestable;
   username!: string;
+  senderRequestable!: Requestable;
   senderUsername!: string;
   discordID?: string;
 
@@ -55,17 +58,24 @@ export abstract class OverviewChildCommand<
   }
 
   async prerun(message: Message) {
-    let { senderUsername, username, discordUser } = await this.parseMentions({
+    let {
+      senderRequestable,
+      senderUsername,
+      requestable,
+      username,
+      discordUser,
+    } = await this.parseMentions({
       fetchDiscordUser: true,
-      reverseLookup: { lastFM: true, optional: true },
     });
 
     this.senderUsername = senderUsername;
+    this.senderRequestable = senderRequestable;
+    this.requestable = requestable;
     this.username = username;
     this.discordID = discordUser?.id;
 
     this.calculator = new OverviewStatsCalculator(
-      username,
+      requestable,
       message.guild?.id!,
       this.discordID,
       this.logger

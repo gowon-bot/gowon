@@ -103,7 +103,7 @@ export class CommandHandler {
   async runPrefixCommandIfMentioned(message: Message, client: GowonClient) {
     if (
       message.mentions.users.has(this.client.client.user!.id) &&
-      message.content.split(/\s+/)[1].toLowerCase() === "prefix" &&
+      message.content.split(/\s+/)[1]?.toLowerCase() === "prefix" &&
       !message.author.bot &&
       (message.member?.permissions?.has("ADMINISTRATOR") ||
         client.isDeveloper(message.author.id))
@@ -111,7 +111,10 @@ export class CommandHandler {
       let prefix: string | undefined =
         message.content.split(/\s+/)[2] || undefined;
 
-      await new Prefix().setPrefix(prefix).execute(message, new RunAs());
+      const prefixCommand = new Prefix().setPrefix(prefix);
+      prefixCommand.gowonClient = this.client;
+
+      await prefixCommand.execute(message, new RunAs());
     }
   }
 

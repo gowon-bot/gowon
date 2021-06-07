@@ -7,6 +7,7 @@ import { CommandNotFoundError } from "../../errors";
 import { flatDeep } from "../../helpers";
 import { ParentCommand } from "../../lib/command/ParentCommand";
 import { LineConsolidator } from "../../lib/LineConsolidator";
+import { Command } from "../../lib/command/Command";
 
 const args = {
   inputs: {
@@ -41,6 +42,11 @@ export default class HelpForOneCommand extends BaseCommand<typeof args> {
 
     if (!command) throw new CommandNotFoundError();
 
+    if (command.customHelp) {
+      this.runCustomHelp(command);
+      return;
+    }
+
     if (
       !(await this.adminService.can.run(command, message, this.gowonClient))
         .passed
@@ -68,7 +74,7 @@ export default class HelpForOneCommand extends BaseCommand<typeof args> {
 
     lineConsolidator.addLines(
       commandName.strong() + ":",
-      command.description.italic(),
+      command.description.italic(false),
       "",
       {
         shouldDisplay: !!command.usage,
@@ -106,6 +112,10 @@ export default class HelpForOneCommand extends BaseCommand<typeof args> {
       this.gowonClient
     );
 
+    const shortestPrefix =
+      [command.prefixes].flat().sort((a, b) => a.length - b.length)[0] ||
+      command.friendlyName;
+
     const lineConsolidator = new LineConsolidator();
 
     lineConsolidator.addLines(
@@ -124,7 +134,9 @@ export default class HelpForOneCommand extends BaseCommand<typeof args> {
       "**Commands**:",
       commands
         .map(
-          (c) => c.friendlyName.code() + ` - ${c.description.split("\n")[0]}`
+          (c) =>
+            `${shortestPrefix} ${c.friendlyName}`.code() +
+            ` - ${c.description.split("\n")[0]}`
         )
         .join("\n")
     );
@@ -135,5 +147,14 @@ export default class HelpForOneCommand extends BaseCommand<typeof args> {
         message.author.avatarURL() || ""
       )
       .setDescription(lineConsolidator.consolidate());
+  }
+
+  private async runCustomHelp(commandClass: Command) {
+    let command = new commandClass.customHelp!();
+    command.gowonClient = this.gowonClient;
+    command.delegatedFrom = this;
+    await command.execute(this.message, this.runAs);
+    this.message.channel.stopTyping();
+    return;
   }
 }

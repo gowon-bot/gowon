@@ -61,6 +61,10 @@ export class GuildEventService extends BaseService {
     let commands = [
       { command: "permissions", dev: false },
       { command: "crowns kill", dev: false },
+      { command: "crowns ban", dev: false },
+      { command: "crowns banartist", dev: false },
+      { command: "crowns unban", dev: false },
+      { command: "crowns unbanartist", dev: false },
       { command: "lastscrobbled", dev: true },
       { command: "artisttoptracks", dev: true },
       { command: "artisttopalbums", dev: true },
@@ -91,9 +95,7 @@ export class GuildEventService extends BaseService {
   }
 
   private async pingDeveloper(guild: Guild) {
-    const developerID = Object.keys(
-      this.gowonClient.specialUsers.developers[0]
-    )[0];
+    const developerID = this.gowonClient.specialUsers.developers[0].id;
 
     await this.gowonClient.client.users
       .resolve(developerID)

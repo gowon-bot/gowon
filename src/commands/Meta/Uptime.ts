@@ -7,6 +7,7 @@ export default class Uptime extends BaseCommand {
   idSeed = "gfriend yuju";
 
   description = "Show's the bots uptime";
+  subcategory = "developer";
   secretCommand = true;
   devCommand = true;
 

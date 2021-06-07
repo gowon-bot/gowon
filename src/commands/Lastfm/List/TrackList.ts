@@ -11,10 +11,10 @@ export default class TrackList extends ListCommand {
   aliases = ["tlist", "toptracks", "toptrack", "tracks", "tl", "topsongs"];
 
   async run() {
-    let { username } = await this.parseMentions();
+    let { requestable, username } = await this.parseMentions();
 
     let topTracks = await this.lastFMService.topTracks({
-      username,
+      username: requestable,
       limit: this.listAmount,
       period: this.timePeriod,
     });

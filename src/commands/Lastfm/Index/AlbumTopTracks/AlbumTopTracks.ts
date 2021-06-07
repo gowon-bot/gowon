@@ -6,32 +6,32 @@ import { Arguments } from "../../../../lib/arguments/arguments";
 import { standardMentions } from "../../../../lib/arguments/mentions/mentions";
 import { IndexingBaseCommand } from "../../../../lib/indexing/IndexingCommand";
 import {
-  ArtistTopTracksConnector,
-  ArtistTopTracksParams,
-  ArtistTopTracksResponse,
-} from "./ArtistTopTracks.connector";
+  AlbumTopTracksConnector,
+  AlbumTopTracksParams,
+  AlbumTopTracksResponse,
+} from "./AlbumTopTracks.connector";
 import { displayNumber } from "../../../../lib/views/displays";
 
 const args = {
   inputs: {
-    artist: { index: { start: 0 } },
+    artist: { index: 0, splitOn: "|" },
+    album: { index: 1, splitOn: "|" },
   },
   mentions: standardMentions,
 } as const;
 
-export default class IndexArtistTopAlbums extends IndexingBaseCommand<
-  ArtistTopTracksResponse,
-  ArtistTopTracksParams,
+export default class AlbumTopTracks extends IndexingBaseCommand<
+  AlbumTopTracksResponse,
+  AlbumTopTracksParams,
   typeof args
 > {
-  connector = new ArtistTopTracksConnector();
+  connector = new AlbumTopTracksConnector();
 
-  idSeed = "weeekly soojin";
+  idSeed = "shasha sunhye";
 
-  aliases = ["att", "at", "iatt"];
-
-  description = "Displays your top scrobbled tracks from an artist";
-  secretCommand = true;
+  aliases = ["ltt"];
+  subcategory = "library";
+  description = "Displays your top scrobbled tracks from an album";
 
   rollout = {
     guilds: this.indexerGuilds,
@@ -40,20 +40,29 @@ export default class IndexArtistTopAlbums extends IndexingBaseCommand<
   arguments: Arguments = args;
 
   async run() {
-    let artistName = this.parsedArguments.artist;
+    let artistName = this.parsedArguments.artist,
+      albumName = this.parsedArguments.album;
 
-    let { username, senderUser, senderUsername, dbUser, perspective } =
+    const { username, senderUser, senderRequestable, dbUser, perspective } =
       await this.parseMentions({
-        senderRequired: !artistName,
-        reverseLookup: { lastFM: true },
+        senderRequired: !artistName || !albumName,
+        reverseLookup: { required: true },
       });
 
     const user = (dbUser || senderUser)!;
 
     await this.throwIfNotIndexed(user, perspective);
 
+    if (!artistName || !albumName) {
+      let nowPlaying = await this.lastFMService.nowPlaying(senderRequestable);
+
+      if (!artistName) artistName = nowPlaying.artist;
+      if (!albumName) albumName = nowPlaying.album;
+    }
+
     if (!artistName) {
-      artistName = (await this.lastFMService.nowPlaying(senderUsername)).artist;
+      artistName = (await this.lastFMService.nowPlaying(senderRequestable))
+        .artist;
     } else {
       const lfmArtist = await this.lastFMService.artistInfo({
         artist: artistName,
@@ -63,7 +72,7 @@ export default class IndexArtistTopAlbums extends IndexingBaseCommand<
     }
 
     const response = await this.query({
-      artist: { name: artistName },
+      album: { name: albumName, artist: { name: artistName } },
       user: { discordID: user.discordID },
     });
 
@@ -73,18 +82,22 @@ export default class IndexArtistTopAlbums extends IndexingBaseCommand<
       throw new IndexerError(errors.errors[0].message);
     }
 
-    const { topTracks, artist } = response.artistTopTracks;
+    const { topTracks, album } = response.albumTopTracks;
 
     if (topTracks.length < 1) {
       throw new LogicError(
         `${
           perspective.plusToHave
-        } no scrobbles of any songs from ${artist.name.strong()}!`
+        } no scrobbles of any songs from ${album.name.italic()} by ${album.artist.name.strong()}!`
       );
     }
     const embed = new MessageEmbed()
-      .setTitle(`Top ${artist.name} tracks for ${username}`)
-      .setURL(LinkGenerator.artistPage(artist.name));
+      .setTitle(
+        `Top tracks on ${album.name.italic()} by ${album.artist.name.strong()} for ${username}`
+      )
+      .setURL(
+        LinkGenerator.libraryAlbumPage(username, album.artist.name, album.name)
+      );
 
     const simpleScrollingEmbed = new SimpleScrollingEmbed(
       this.message,

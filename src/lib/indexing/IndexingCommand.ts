@@ -3,16 +3,18 @@ import { Connector } from "./BaseConnector";
 import { IndexingService } from "../../services/indexing/IndexingService";
 import { Arguments } from "../arguments/arguments";
 import { IndexerError, LogicError, UserNotIndexedError } from "../../errors";
-import gql from "graphql-tag";
+import { gql } from "@apollo/client/core";
+import { LastFMService } from "../../services/LastFM/LastFMService";
 import { Perspective } from "../Perspective";
-import { MessageEmbed } from "discord.js";
+import { Message, MessageEmbed } from "discord.js";
 import { User as DBUser } from "../../database/entity/User";
 import { ConfirmationEmbed } from "../views/embeds/ConfirmationEmbed";
 import {
   ConcurrencyManager,
   ConcurrentActions,
 } from "../caches/ConcurrencyManager";
-import { LastFMService } from "../../services/LastFM/LastFMService";
+
+export const indexerGuilds = ["768596255697272862", "769112727103995904"];
 
 export interface ErrorResponse {
   errors: { message: string }[];
@@ -20,7 +22,7 @@ export interface ErrorResponse {
 
 function hasErrors(response: any): response is ErrorResponse {
   return (
-    response.errors &&
+    response?.errors &&
     response.errors instanceof Array &&
     response.errors.length > 0
   );
@@ -36,10 +38,7 @@ export abstract class IndexingBaseCommand<
   lastFMService = new LastFMService(this.logger);
   concurrencyManager = new ConcurrencyManager();
 
-  protected readonly indexerGuilds = [
-    "768596255697272862",
-    "769112727103995904",
-  ];
+  protected readonly indexerGuilds = indexerGuilds;
 
   readonly indexingHelp =
     '"Indexing" means downloading all your last.fm data. This is required for many commands to function, and is recommended.';
@@ -51,17 +50,23 @@ export abstract class IndexingBaseCommand<
       let response: ResponseT = {} as any;
 
       try {
-        response = await this.connector.request(
+        const rawResponse = await this.connector.request(
           this.indexingService,
           variables
         );
+
+        if ((rawResponse as any).data) {
+          response = (rawResponse as any).data;
+        } else {
+          response = rawResponse as ResponseT;
+        }
       } catch (e) {
-        if (e.errno === "ECONNREFUSED") {
+        if (e.graphQLErrors?.length) {
+          (response as any).errors = e.graphQLErrors;
+        } else if (e.networkError) {
           throw new IndexerError(
             "The indexing service is not responding, please try again later."
           );
-        } else {
-          (response as any).errors = e.response.errors;
         }
       }
 
@@ -76,7 +81,7 @@ export abstract class IndexingBaseCommand<
   }
 
   protected async updateAndWait(
-    username: string,
+    discordID: string,
     timeout = 2000
   ): Promise<void> {
     const query = gql`
@@ -88,7 +93,7 @@ export abstract class IndexingBaseCommand<
     `;
 
     const response = (await this.indexingService.genericRequest(query, {
-      user: { lastFMUsername: username },
+      user: { discordID },
     })) as {
       update: { token: string };
     };
@@ -100,13 +105,14 @@ export abstract class IndexingBaseCommand<
 
   protected async notifyUser(
     perspective: Perspective,
-    type: "update" | "index"
+    type: "update" | "index",
+    replyTo?: Message
   ) {
     this.reply(
       `${perspective.upper.plusToHave} been ${
         type === "index" ? "fully indexed" : "updated"
       } successfully!`,
-      { ping: true }
+      { ping: true, to: replyTo }
     );
   }
 
@@ -173,6 +179,19 @@ export abstract class IndexingBaseCommand<
     );
     await this.indexingService.fullIndex(discordID);
     this.concurrencyManager.registerUser(ConcurrentActions.Indexing, discordID);
-    this.notifyUser(Perspective.buildPerspective(username, false), "index");
+    this.notifyUser(
+      Perspective.buildPerspective(username, false),
+      "index",
+      confirmationEmbed.sentMessage
+    );
   }
+}
+
+export abstract class IndexingChildCommand<
+  ResponseT,
+  ParamsT,
+  T extends Arguments
+> extends IndexingBaseCommand<ResponseT, ParamsT, T> {
+  shouldBeIndexed = false;
+  abstract parentName: string;
 }

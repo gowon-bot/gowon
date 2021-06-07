@@ -4,6 +4,7 @@ import { Message } from "discord.js";
 import { User } from "../../../database/entity/User";
 import { LogicError } from "../../../errors";
 import { Arguments } from "../../../lib/arguments/arguments";
+import { Requestable } from "../../../services/LastFM/LastFMAPIService";
 
 export abstract class FriendsChildCommand<
   T extends Arguments = Arguments
@@ -13,17 +14,17 @@ export abstract class FriendsChildCommand<
   friendsService = new FriendsService(this.logger);
 
   friendUsernames: string[] = [];
-  senderUsername!: string;
+  senderRequestable!: Requestable;
   user!: User;
 
   throwIfNoFriends = false;
 
   async prerun(message: Message) {
-    let [, senderUsername] = await Promise.all([
+    let [, senderRequestable] = await Promise.all([
       this.setFriendUsernames(message),
-      this.usersService.getUsername(message.author.id),
+      this.usersService.getRequestable(message.author.id),
     ]);
-    this.senderUsername = senderUsername;
+    this.senderRequestable = senderRequestable;
 
     if (this.throwIfNoFriends && this.friendUsernames.length < 1)
       throw new LogicError("you don't have any friends :(");

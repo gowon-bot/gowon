@@ -28,7 +28,7 @@ export default class TagTracks extends LastFMBaseCommand<typeof args> {
 
   description =
     "Shows the overlap between your top tracks, and a given tag's top tracks. This command works best for smaller/memey tags, as a lot of larger tags are mistagged";
-  subcategory = "stats";
+  subcategory = "tags";
   aliases = ["tagt", "tagtr", "tagtrack"];
   usage = ["tag"];
 
@@ -41,14 +41,14 @@ export default class TagTracks extends LastFMBaseCommand<typeof args> {
   async run() {
     let tag = this.parsedArguments.tag!;
 
-    let { username, perspective } = await this.parseMentions({
+    let { requestable, perspective } = await this.parseMentions({
       asCode: false,
     });
 
     let paginator = new Paginator(
       this.lastFMService.topTracks.bind(this.lastFMService),
       3,
-      { username, limit: 1000 }
+      { username: requestable, limit: 1000 }
     );
 
     let [tagTopTracks, userTopTracks] = await Promise.all([

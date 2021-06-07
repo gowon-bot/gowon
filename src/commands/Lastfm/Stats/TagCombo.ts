@@ -30,12 +30,12 @@ export default class TagCombo extends LastFMBaseCommand<typeof args> {
   showLoadingAfter = this.gowonService.constants.defaultLoadingTime;
 
   async run() {
-    let { username } = await this.parseMentions();
+    let { requestable, username } = await this.parseMentions();
 
     let paginator = new Paginator(
       this.lastFMService.recentTracks.bind(this.lastFMService),
       this.gowonService.constants.hardPageLimit,
-      { username, limit: 1000 }
+      { username: requestable, limit: 1000 }
     );
 
     let comboCalculator = new TagComboCalculator(

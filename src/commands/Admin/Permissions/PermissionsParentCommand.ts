@@ -14,6 +14,7 @@ export default class PermissionsParentCommand extends AdminBaseParentCommand {
 
   description =
     "Manage permissions for Gowon in your guild\nSee permissions help for more info";
+  customHelp = Help;
 
   friendlyName = "permissions";
 

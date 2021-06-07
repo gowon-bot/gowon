@@ -11,10 +11,10 @@ export default class AlbumList extends ListCommand {
   aliases = ["llist", "allist", "topalbums", "topalbum", "albums", "ll"];
 
   async run() {
-    let { username } = await this.parseMentions();
+    const { requestable, username } = await this.parseMentions();
 
     let topAlbums = await this.lastFMService.topAlbums({
-      username,
+      username: requestable,
       limit: this.listAmount,
       period: this.timePeriod,
     });

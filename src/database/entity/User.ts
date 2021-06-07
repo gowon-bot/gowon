@@ -41,6 +41,9 @@ export class User extends BaseEntity {
   @Column({ default: false })
   isIndexed!: boolean;
 
+  @Column({ nullable: true })
+  lastFMSession?: string;
+
   @OneToMany((_) => Crown, (crown) => crown.user)
   crowns!: Crown[];
 
@@ -60,8 +63,12 @@ export class User extends BaseEntity {
 
   static async stillInServer(
     message: Message,
-    discordID: string
+    discordID?: string
   ): Promise<boolean> {
+    if (!discordID) {
+      return false;
+    }
+
     try {
       return !!(await message.guild?.members.fetch(discordID));
     } catch {

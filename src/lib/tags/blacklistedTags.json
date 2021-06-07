@@ -21,6 +21,13 @@
     "2w",
     "shit",
     "tanked",
+    "cunty",
+    "mommy milkers",
+    "sit back and take that light like a good girl",
+    "check later",
+    "I want her ass",
+    "garbage",
+    "racism",
 
     "==== Offensive Tags ====",
     "white power",
@@ -34,11 +41,13 @@
   "regex": [
     "better than .*",
     "best of \\d{4}",
-    ".* step on me ?.*",
+    ".* ?step on me ?.*",
     "hi \\w+",
     ".*comeback.*",
     ".*\\banal\\b.*",
-    ".*\\fisting\\b.*"
+    ".*\\fisting\\b.*",
+    ".*taeminification.*",
+    ".*dilf.*"
   ],
   "explicit": [
     [19, 12, 21, 20],

@@ -17,8 +17,8 @@ const args = {
 export default class CommandSearch extends BaseCommand<typeof args> {
   idSeed = "exid solji";
 
-  aliases = ["command", "searchcommands"];
-
+  aliases = ["command", "searchcommands", "searchcommand"];
+  subcategory = "about";
   description = "Search the list of commands for a keyword";
 
   usage = "keywords";
@@ -82,7 +82,9 @@ export default class CommandSearch extends BaseCommand<typeof args> {
   }
 
   private displayCommand(command: Command, keywords: string) {
-    const name = command.name.replace(keywords, (match) => match.strong());
+    const name = command.friendlyName.replace(keywords, (match) =>
+      match.strong()
+    );
 
     return (command.parentName ? command.parentName + " " : "") + name;
   }

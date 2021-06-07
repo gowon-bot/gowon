@@ -49,9 +49,10 @@ export abstract class BaseSetting<ScopeT = {}> {
     } else return undefined;
   }
 
-  abstract transformScope(
-    scope: ScopeT
-  ): { scope?: string; secondaryScope?: string };
+  abstract transformScope(scope: ScopeT): {
+    scope?: string;
+    secondaryScope?: string;
+  };
 
   private setScopeOnWhere(scope: ScopeT, whereClause: any) {
     const transformedScope = this.transformScope(scope);

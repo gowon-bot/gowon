@@ -13,14 +13,14 @@ export class AliasChecker {
     childAlias: string,
     serverID: string
   ): Promise<Command | undefined> {
-    let child = await command.children.find(childAlias, serverID);
+    const child = await command.children.find(childAlias, serverID);
 
     if (
       child.command &&
-      command.canSkipPrefixFor.includes(child.command.name) &&
-      childAlias !== child.command.name
-    )
+      command.canSkipPrefixFor.includes(child.command.name)
+    ) {
       return child.command;
+    }
 
     return undefined;
   }

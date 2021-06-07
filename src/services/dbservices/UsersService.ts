@@ -8,6 +8,9 @@ import {
 import { BaseService } from "../BaseService";
 import { Perspective } from "../../lib/Perspective";
 import { ILike } from "typeorm";
+import { LastFMSession } from "../LastFM/converters/Misc";
+import { Requestable } from "../LastFM/LastFMAPIService";
+import { buildRequestable } from "../../helpers/parseMentions";
 
 export class UsersService extends BaseService {
   async getUsername(discordID: string): Promise<string> {
@@ -16,6 +19,15 @@ export class UsersService extends BaseService {
 
     if (user && user.lastFMUsername) {
       return user.lastFMUsername;
+    } else throw new UsernameNotRegisteredError();
+  }
+
+  async getRequestable(discordID: string): Promise<Requestable> {
+    this.log(`fetching requestable with discordID ${discordID}`);
+    let user = await User.findOne({ where: { discordID } });
+
+    if (user && user.lastFMUsername) {
+      return buildRequestable(user.lastFMUsername, user).requestable;
     } else throw new UsernameNotRegisteredError();
   }
 
@@ -40,12 +52,37 @@ export class UsersService extends BaseService {
     }
   }
 
-  async clearUsername(discordID: string): Promise<void> {
-    this.log(`clearing username for ${discordID}`);
+  async setLastFMSession(
+    discordID: string,
+    lastFMSession: LastFMSession
+  ): Promise<User> {
+    this.log(
+      `setting user ${discordID} with session ${lastFMSession.username}`
+    );
     let user = await User.findOne({ where: { discordID } });
 
-    if (user?.lastFMUsername) {
+    if (user) {
+      user.lastFMUsername = lastFMSession.username;
+      user.lastFMSession = lastFMSession.key;
+    } else {
+      user = User.create({
+        discordID,
+        lastFMUsername: lastFMSession.username,
+        lastFMSession: lastFMSession.key,
+      });
+    }
+
+    await user.save();
+    return user;
+  }
+
+  async clearUsername(discordID: string): Promise<void> {
+    this.log(`clearing username and session for ${discordID}`);
+    let user = await User.findOne({ where: { discordID } });
+
+    if (user?.lastFMUsername || user?.lastFMSession) {
       user.lastFMUsername = "";
+      user.lastFMSession = "";
       await user.save();
     } else throw new AlreadyLoggedOutError();
   }

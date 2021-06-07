@@ -49,7 +49,8 @@ export abstract class ListCommand extends LastFMBaseCommand<typeof args> {
 
   async prerun(_: Message): Promise<void> {
     this.timePeriod = this.parsedArguments.timePeriod!;
-    this.humanReadableTimePeriod = this.parsedArguments.humanReadableTimePeriod!;
+    this.humanReadableTimePeriod =
+      this.parsedArguments.humanReadableTimePeriod!;
     this.listAmount = this.parsedArguments.listAmount!;
   }
 }

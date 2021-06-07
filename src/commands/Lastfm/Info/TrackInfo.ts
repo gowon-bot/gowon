@@ -31,11 +31,11 @@ export default class TrackInfo extends InfoCommand<typeof args> {
       track = this.parsedArguments.track;
 
     if (!artist || !track) {
-      let { senderUsername } = await this.parseMentions({
+      let { senderRequestable } = await this.parseMentions({
         senderRequired: true,
       });
 
-      let nowPlaying = await this.lastFMService.nowPlaying(senderUsername);
+      let nowPlaying = await this.lastFMService.nowPlaying(senderRequestable);
 
       if (!artist) artist = nowPlaying.artist;
       if (!track) track = nowPlaying.name;

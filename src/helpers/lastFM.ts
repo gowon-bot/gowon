@@ -62,6 +62,30 @@ export abstract class LinkGenerator {
     );
   }
 
+  // https://www.last.fm/user/flushed_emoji/library/music/WJSN/+albums
+  static libraryArtistTopAlbums(username: string, artist: string): string {
+    return (
+      this.baseURL +
+      "/user/" +
+      this.encode(username) +
+      "/library/music/" +
+      this.encode(artist) +
+      "/+albums"
+    );
+  }
+
+  // https://www.last.fm/user/flushed_emoji/library/music/WJSN/+tracks
+  static libraryArtistTopTracks(username: string, artist: string): string {
+    return (
+      this.baseURL +
+      "/user/" +
+      this.encode(username) +
+      "/library/music/" +
+      this.encode(artist) +
+      "/+tracks"
+    );
+  }
+
   // https://www.last.fm/user/flushed_emoji/library/music/Red+Velvet/%E2%80%98The+ReVe+Festival%E2%80%99+Day+1
   static libraryAlbumPage(
     username: string,
@@ -100,12 +124,17 @@ export abstract class LinkGenerator {
   static imageUploadLink(artist: string, album: string): string {
     return (
       this.baseURL +
-      "/music/" +
+      "music/" +
       this.encode(artist) +
       "/" +
       this.encode(album) +
       "/+images/upload"
     );
+  }
+
+  // https://www.last.fm/api/auth?api_key=xxxxxxxxxxxxx&token=xxxxxxx
+  static authURL(apiKey: string, token: string) {
+    return this.baseURL + "/api/auth?api_key=" + apiKey + "&token=" + token;
   }
 
   static generateTrackLinks(track: RecentTrack): TrackLinks {

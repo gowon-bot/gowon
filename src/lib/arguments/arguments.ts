@@ -54,10 +54,8 @@ export class ArgumentParser extends Parser {
     let messageString = this.removeAllMentions(message.content).trim();
 
     const mentions = this.mentionParser.parse(message);
-    const {
-      flags,
-      string: stringWithNoFlags,
-    } = this.flagParser.parseAndRemoveFlags(messageString, this.args.flags);
+    const { flags, string: stringWithNoFlags } =
+      this.flagParser.parseAndRemoveFlags(messageString, this.args.flags);
 
     let inputs = this.parseInputs(
       this.gowonService.removeCommandName(

@@ -26,13 +26,13 @@ export default class Index extends IndexingBaseCommand<
 > {
   connector = new IndexUserConnector();
 
+  subcategory = "library";
   aliases = ["fullindex"];
 
   idSeed = "iz*one yujin";
 
   description =
     "Fully index a user, deleting any previous data and replacing it";
-  secretCommand = true;
 
   rollout = {
     guilds: this.indexerGuilds,

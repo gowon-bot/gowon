@@ -23,12 +23,20 @@ import { User } from "../../database/entity/User";
 import { Perspective } from "../Perspective";
 import { GowonClient } from "../GowonClient";
 import { Validation, ValidationChecker } from "../validation/ValidationChecker";
-import { GowonEmbed } from "../views/embeds";
 import { Emoji, EmojiRaw } from "../Emoji";
 import { Argument, Mention } from "./ArgumentType";
 import { RunAs } from "./RunAs";
 import { ucFirst } from "../../helpers";
-import { displayLink } from "../views/displays";
+import { checkRollout } from "../../helpers/permissions";
+import { gowonEmbed } from "../views/embeds";
+import {
+  isSessionKey,
+  Requestable,
+} from "../../services/LastFM/LastFMAPIService";
+import {
+  buildRequestables,
+  compareUsernames,
+} from "../../helpers/parseMentions";
 
 export interface Variation {
   name: string;
@@ -74,6 +82,7 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
   secretCommand: boolean = false;
   shouldBeIndexed: boolean = true;
   devCommand: boolean = false;
+  customHelp?: { new (): Command } | undefined;
 
   arguments: Arguments = {};
   validation: Validation = {};
@@ -142,7 +151,8 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     idMentionArgumentName = "userID" as ArgumentName<ArgumentsType>,
     asCode = true,
     fetchDiscordUser = false,
-    reverseLookup = { lastFM: false, optional: false },
+    reverseLookup = { required: false },
+    authentificationRequired,
   }: {
     senderRequired?: boolean;
     usernameRequired?: boolean;
@@ -152,13 +162,18 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     idMentionArgumentName?: ArgumentName<ArgumentsType>;
     asCode?: boolean;
     fetchDiscordUser?: boolean;
-    reverseLookup?: { lastFM?: boolean; optional?: boolean };
-    prioritizeIndexed?: boolean;
+    reverseLookup?: { required?: boolean };
+    authentificationRequired?: boolean;
   } = {}): Promise<{
     senderUsername: string;
-    mentionedUsername?: string;
+    senderRequestable: Requestable;
+
     username: string;
+    requestable: Requestable;
+
+    mentionedUsername?: string;
     perspective: Perspective;
+
     dbUser?: User;
     senderUser?: User;
     discordUser?: DiscordUser;
@@ -205,29 +220,34 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
       asCode
     );
 
-    if (reverseLookup.lastFM && !dbUser && mentionedUsername) {
+    if (!dbUser && mentionedUsername) {
       dbUser = await this.usersService.getUserFromLastFMUsername(
         mentionedUsername
       );
 
-      if (!reverseLookup.optional && !dbUser)
+      if (reverseLookup.required && !dbUser)
         throw new ReverseLookupError("Last.fm username");
     }
 
     let username = mentionedUsername || senderUser?.lastFMUsername;
 
     if (fetchDiscordUser) {
-      let fetchedUser = (
-        await this.guild.members.fetch(
-          dbUser?.discordID || userID || this.author.id
-        )
-      ).user;
+      let fetchedUser: DiscordUser | undefined;
+
+      try {
+        fetchedUser = (
+          await this.guild.members.fetch(
+            dbUser?.discordID || userID || this.author.id
+          )
+        ).user;
+      } catch {}
 
       if (
-        username === senderUser?.lastFMUsername ||
-        (username === dbUser?.lastFMUsername &&
-          dbUser?.discordID === fetchedUser.id) ||
-        userID === fetchedUser.id
+        fetchedUser &&
+        (compareUsernames(username, senderUser?.lastFMUsername) ||
+          (compareUsernames(username, dbUser?.lastFMUsername) &&
+            dbUser?.discordID === fetchedUser.id) ||
+          userID === fetchedUser.id)
       ) {
         discordUser = fetchedUser;
 
@@ -238,23 +258,32 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     if (
       usernameRequired &&
       (!username || (senderRequired && !senderUser?.lastFMUsername))
-    )
+    ) {
       throw new LogicError(
-        `please sign in with a last.fm account! (\`${this.prefix}login <lastfm username>)\``,
-        `Don't have a one? You can create one ${displayLink(
-          "here",
-          "https://last.fm/join"
-        )}.`
+        `please sign in with a last.fm account! (\`${this.prefix}login\`)`,
+        `Don't have a one? You can create one at https://last.fm/join`
       );
+    }
+
+    const requestables = buildRequestables({
+      senderUser,
+      mentionedUsername,
+      mentionedUser: dbUser,
+    });
+
+    if (authentificationRequired && !isSessionKey(requestables?.requestable)) {
+      throw new LogicError(
+        "This command requires you to be authenticated, please logout and then login in again!"
+      );
+    }
 
     return {
-      username: username || "",
-      senderUsername: senderUser?.lastFMUsername || "",
       mentionedUsername,
       perspective,
       dbUser,
       senderUser,
       discordUser,
+      ...requestables!,
     };
   }
 
@@ -348,8 +377,16 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     });
   }
 
-  async send(message: MessageEmbed | string): Promise<Message> {
+  async send(
+    message: MessageEmbed | string,
+    withEmbed?: MessageEmbed
+  ): Promise<Message> {
     this.addResponse(message);
+
+    if (withEmbed) {
+      return await this.message.channel.send(message, { embed: withEmbed });
+    }
+
     return await this.message.channel.send(message);
   }
 
@@ -379,6 +416,12 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     );
   }
 
+  checkRollout(): boolean {
+    if (this.gowonClient.isDeveloper(this.author.id)) return true;
+
+    return checkRollout(this.rollout, this.message);
+  }
+
   protected async fetchUsername(id: string): Promise<string> {
     try {
       let member = await this.guild.members.fetch(id);
@@ -389,12 +432,14 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
   }
 
   protected newEmbed(embed?: MessageEmbed): MessageEmbed {
-    return GowonEmbed(this.message.member ?? undefined, embed);
+    return gowonEmbed(this.message.member ?? undefined, embed);
   }
 
-  protected generateEmbedAuthor(title: string): [string, string | undefined] {
+  protected generateEmbedAuthor(title?: string): [string, string | undefined] {
     return [
-      `${this.message.author.tag} | ${title}`,
+      title
+        ? `${this.message.author.tag} | ${title}`
+        : `${this.message.author.tag}`,
       this.message.author.avatarURL() || undefined,
     ];
   }
@@ -476,23 +521,5 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     try {
       this.message.channel.stopTyping();
     } catch {}
-  }
-
-  private checkRollout(): boolean {
-    if (
-      (!this.rollout.users && !this.rollout.guilds) ||
-      this.gowonClient.isDeveloper(this.author.id)
-    )
-      return true;
-
-    if (this.rollout.users) {
-      if (this.rollout.users.includes(this.author.id)) {
-        return true;
-      }
-    } else if (this.rollout.guilds) {
-      return this.rollout.guilds.includes(this.guild.id);
-    }
-
-    return false;
   }
 }

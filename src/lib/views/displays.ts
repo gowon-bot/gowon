@@ -1,5 +1,7 @@
+import { DocumentNode } from "apollo-link";
 import { format } from "date-fns";
 import { cleanURL, sanitizeForDiscord } from "../../helpers/discord";
+import { Emoji } from "../Emoji";
 
 export function displayNumber(
   number: number | string | undefined,
@@ -46,4 +48,26 @@ export function displayNumberedList(list: any[], startAt = 0): string {
       )}\`. ${val}`;
     })
     .join("\n");
+}
+
+export function displayQuery(query: DocumentNode): string | undefined {
+  return query.loc?.source?.body;
+}
+
+export function displayPlainRating(rating: number): string {
+  const numberOfStars = rating / 2;
+  const hasHalfStar = rating % 2 == 1;
+
+  return "★".repeat(numberOfStars) + (hasHalfStar ? "½" : "");
+}
+
+export function displayRating(rating: number): string {
+  const numberOfStars = rating / 2;
+  const hasHalfStar = rating % 2 == 1;
+
+  return (
+    Emoji.fullStar.repeat(numberOfStars) +
+    (hasHalfStar ? Emoji.halfStar : "") +
+    Emoji.emptyStar.repeat(Math.floor((10 - rating) / 2))
+  );
 }

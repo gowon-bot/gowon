@@ -7,9 +7,8 @@ import { displayNumber } from "../../../lib/views/displays";
 const args = {
   inputs: {
     artist: {
-      index: {
-        start: 0,
-      },
+      index: 0,
+      splitOn: "|",
     },
   },
   mentions: standardMentions,
@@ -28,17 +27,18 @@ export default class ArtistPlays extends LastFMBaseCommand<typeof args> {
   async run(_: any, runAs: RunAs) {
     let artist = this.parsedArguments.artist;
 
-    let { username, senderUsername, perspective } = await this.parseMentions({
-      senderRequired: !artist,
-    });
+    let { perspective, senderRequestable, requestable } =
+      await this.parseMentions({
+        senderRequired: !artist,
+      });
 
     if (!artist) {
-      artist = (await this.lastFMService.nowPlaying(senderUsername)).artist;
+      artist = (await this.lastFMService.nowPlaying(senderRequestable)).artist;
     }
 
     let artistDetails = await this.lastFMService.artistInfo({
       artist,
-      username,
+      username: requestable,
     });
 
     let prefix = this.prefix;

@@ -1,3 +1,4 @@
+import { buildRequestable } from "../../helpers/parseMentions";
 import { Arguments } from "../../lib/arguments/arguments";
 import { standardMentions } from "../../lib/arguments/mentions/mentions";
 import { Delegate } from "../../lib/command/BaseCommand";
@@ -10,6 +11,7 @@ const args = {
 
 export default class Randomsong extends LastFMBaseCommand<typeof args> {
   idSeed = "april naeun";
+  subcategory = "fun";
   description = "Picks a random song from all the users in a guild";
   usage = [
     "",
@@ -33,7 +35,8 @@ export default class Randomsong extends LastFMBaseCommand<typeof args> {
     });
 
     let randomSongs = await this.lastFMService.recentTracks({
-      username: randomUser.lastFMUsername,
+      username: buildRequestable(randomUser.lastFMUsername, randomUser)
+        .requestable,
       limit: 100,
     });
 

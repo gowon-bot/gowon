@@ -18,10 +18,11 @@ export default class NowPlaying extends NowPlayingBaseCommand {
   crownsService = new CrownsService(this.logger);
 
   async run() {
-    let { username, discordUser } = await this.nowPlayingMentions();
+    let { username, requestable, discordUser } =
+      await this.nowPlayingMentions();
 
     let nowPlayingResponse = await this.lastFMService.recentTracks({
-      username,
+      username: requestable,
       limit: 1,
     });
 
@@ -34,7 +35,10 @@ export default class NowPlaying extends NowPlayingBaseCommand {
     let nowPlayingEmbed = this.nowPlayingEmbed(nowPlaying, username);
 
     let [artistInfo, crown] = await promiseAllSettled([
-      this.lastFMService.artistInfo({ artist: nowPlaying.artist, username }),
+      this.lastFMService.artistInfo({
+        artist: nowPlaying.artist,
+        username: requestable,
+      }),
       this.crownsService.getCrownDisplay(nowPlaying.artist, this.guild),
     ]);
 
@@ -82,6 +86,7 @@ export default class NowPlaying extends NowPlayingBaseCommand {
 
     let sentMessage = await this.send(nowPlayingEmbed);
 
+    await this.customReactions(sentMessage);
     await this.easterEggs(sentMessage, nowPlaying);
   }
 

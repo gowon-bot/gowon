@@ -34,3 +34,17 @@ export interface TaskStartResponse {
   token: string;
   success: boolean;
 }
+
+export interface IndexerArtist {
+  name: string;
+}
+
+export interface IndexerAlbum {
+  name: string;
+  artist: IndexerArtist;
+}
+
+export interface IndexerRateYourMusicAlbum {
+  title: string;
+  artistName: string;
+}

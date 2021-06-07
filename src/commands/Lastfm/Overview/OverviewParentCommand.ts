@@ -13,13 +13,16 @@ import { SumTop } from "./SumTop";
 import { Crowns } from "./Crowns";
 import { Breadth } from "./Breadth";
 import { Playsover } from "./Playsover";
+import { Help } from "./Help";
 
 export default class OverviewParentCommand extends LastFMBaseParentCommand {
   idSeed = "snsd sooyoung";
 
+  subcategory = "library";
   description =
     "Shows information about you and your library. Run overview all to see an example";
   friendlyName = "overview";
+  customHelp = Help;
 
   prefixes = ["o", "overview"];
   default = () => new All();
@@ -33,6 +36,7 @@ export default class OverviewParentCommand extends LastFMBaseParentCommand {
     scrobblesPerTrack: () => new ScrobblesPerTrack(),
     per: () => new Per(),
     hindex: () => new HIndex(),
+    help: () => new Help(),
     toppercent: () => new TopPercent(),
     sumtop: () => new SumTop(),
     crowns: () => new Crowns(),

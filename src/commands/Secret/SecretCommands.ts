@@ -6,6 +6,7 @@ export default class SecretCommands extends BaseCommand {
   idSeed = "2ne1 minzy";
 
   description = "Shows the secret commands";
+  subcategory = "developer";
   secretCommand = true;
   devCommand = true;
 

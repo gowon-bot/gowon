@@ -4,6 +4,7 @@ import { Emoji } from "../../lib/Emoji";
 export default class Pong extends BaseCommand {
   idSeed = "2ne1 dara";
 
+  subcategory = "fun";
   description = "!gnoP !gniP";
   secretCommand = true;
 

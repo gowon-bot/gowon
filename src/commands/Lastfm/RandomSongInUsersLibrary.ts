@@ -35,9 +35,9 @@ export default class RandomsongInUsersLibrary extends LastFMBaseCommand<
   async run() {
     let poolAmount = this.parsedArguments.poolAmount!;
 
-    let { username } = await this.parseMentions();
+    let { requestable, username } = await this.parseMentions();
 
-    let trackCount = await this.lastFMService.trackCount(username);
+    let trackCount = await this.lastFMService.trackCount(requestable);
 
     let bound =
       poolAmount && poolAmount < trackCount ? poolAmount : trackCount / 2;
@@ -48,7 +48,7 @@ export default class RandomsongInUsersLibrary extends LastFMBaseCommand<
 
     let randomSong = (
       await this.lastFMService.topTracks({
-        username,
+        username: requestable,
         limit: 1,
         page: randomIndex,
       })

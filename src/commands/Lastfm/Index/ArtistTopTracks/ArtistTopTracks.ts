@@ -6,10 +6,10 @@ import { Arguments } from "../../../../lib/arguments/arguments";
 import { standardMentions } from "../../../../lib/arguments/mentions/mentions";
 import { IndexingBaseCommand } from "../../../../lib/indexing/IndexingCommand";
 import {
-  ArtistTopAlbumsConnector,
-  ArtistTopAlbumsParams,
-  ArtistTopAlbumsResponse,
-} from "./ArtistTopAlbums.connector";
+  ArtistTopTracksConnector,
+  ArtistTopTracksParams,
+  ArtistTopTracksResponse,
+} from "./ArtistTopTracks.connector";
 import { displayNumber } from "../../../../lib/views/displays";
 
 const args = {
@@ -19,19 +19,18 @@ const args = {
   mentions: standardMentions,
 } as const;
 
-export default class IndexArtistTopAlbums extends IndexingBaseCommand<
-  ArtistTopAlbumsResponse,
-  ArtistTopAlbumsParams,
+export default class ArtistTopTracks extends IndexingBaseCommand<
+  ArtistTopTracksResponse,
+  ArtistTopTracksParams,
   typeof args
 > {
-  connector = new ArtistTopAlbumsConnector();
+  connector = new ArtistTopTracksConnector();
 
-  idSeed = "redsquare bomin";
+  idSeed = "weeekly soojin";
 
-  aliases = ["atl", "iatl"];
-
-  description = "Displays your top scrobbled albums from an artist";
-  secretCommand = true;
+  aliases = ["att", "at", "iatt", "favs"];
+  subcategory = "library";
+  description = "Displays your top scrobbled tracks from an artist";
 
   rollout = {
     guilds: this.indexerGuilds,
@@ -42,10 +41,10 @@ export default class IndexArtistTopAlbums extends IndexingBaseCommand<
   async run() {
     let artistName = this.parsedArguments.artist;
 
-    let { username, senderUser, senderUsername, dbUser, perspective } =
+    let { username, senderUser, senderRequestable, dbUser, perspective } =
       await this.parseMentions({
         senderRequired: !artistName,
-        reverseLookup: { lastFM: true },
+        reverseLookup: { required: true },
       });
 
     const user = (dbUser || senderUser)!;
@@ -53,7 +52,8 @@ export default class IndexArtistTopAlbums extends IndexingBaseCommand<
     await this.throwIfNotIndexed(user, perspective);
 
     if (!artistName) {
-      artistName = (await this.lastFMService.nowPlaying(senderUsername)).artist;
+      artistName = (await this.lastFMService.nowPlaying(senderRequestable))
+        .artist;
     } else {
       const lfmArtist = await this.lastFMService.artistInfo({
         artist: artistName,
@@ -73,39 +73,39 @@ export default class IndexArtistTopAlbums extends IndexingBaseCommand<
       throw new IndexerError(errors.errors[0].message);
     }
 
-    const { topAlbums, artist } = response.artistTopAlbums;
+    const { topTracks, artist } = response.artistTopTracks;
 
-    if (topAlbums.length < 1) {
+    if (topTracks.length < 1) {
       throw new LogicError(
         `${
           perspective.plusToHave
-        } no scrobbles of any albums from ${artist.name.strong()}!`
+        } no scrobbles of any songs from ${artist.name.strong()}!`
       );
     }
-
     const embed = new MessageEmbed()
-      .setTitle(`Top ${artist.name} albums for ${username}`)
-      .setURL(LinkGenerator.artistPage(artist.name));
+      .setTitle(`Top ${artist.name} tracks for ${username}`)
+      .setURL(LinkGenerator.libraryArtistTopTracks(username, artist.name));
 
     const simpleScrollingEmbed = new SimpleScrollingEmbed(
       this.message,
       embed,
       {
-        items: topAlbums,
         pageSize: 15,
-        pageRenderer(albums) {
-          return albums
+        items: topTracks,
+
+        pageRenderer(tracks) {
+          return tracks
             .map(
-              (album) =>
+              (track) =>
                 `${displayNumber(
-                  album.playcount,
+                  track.playcount,
                   "play"
-                )} - ${album.album.name.strong()}`
+                )} - ${track.name.strong()}`
             )
             .join("\n");
         },
       },
-      { itemName: "album" }
+      { itemName: "track" }
     );
 
     simpleScrollingEmbed.send();

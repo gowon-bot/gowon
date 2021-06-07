@@ -4,11 +4,15 @@ import { displayLink } from "../../lib/views/displays";
 export default class Github extends BaseCommand {
   idSeed = "apink chorom";
 
-  aliases = ["gh"];
-  secretCommand = true;
+  subcategory = "about";
+  aliases = ["gh", "source"];
   description = "Displays the github link for the bot";
 
   async run() {
+    const author = await this.gowonClient.client.users.fetch(
+      this.gowonClient.specialUsers.developers[0].id
+    );
+
     const embed = this.newEmbed()
       .setTitle("Gowon's source code </>")
       .setDescription(
@@ -23,7 +27,7 @@ export default class Github extends BaseCommand {
 The bot is written in Typescript with Discord.js, and the indexer is written in Go serving a GraphQL api; both use Postgres as a database.`
       )
       .setFooter(
-        "Made with <3 by John🥳#2527",
+        `Made with <3 by ${author.tag}`,
         (
           await this.gowonClient.client.users.fetch("267794154459889664")
         ).avatarURL({ dynamic: true }) ?? undefined

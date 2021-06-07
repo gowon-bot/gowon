@@ -1,0 +1,28 @@
+import { displayNumber } from "../../views/displays";
+import { BaseNowPlayingComponent } from "./BaseNowPlayingComponent";
+
+const scrobblesRequirements = [] as const;
+
+export class ScrobblesComponent extends BaseNowPlayingComponent<
+  typeof scrobblesRequirements
+> {
+  static componentName = "scrobbles";
+  readonly requirements = scrobblesRequirements;
+
+  present() {
+    if (this.values.recentTracks) {
+      return {
+        string: `${displayNumber(
+          this.values.recentTracks.meta.total,
+          "total scrobble"
+        )}`,
+        size: 1,
+      };
+    } else {
+      return {
+        string: "",
+        size: 0,
+      };
+    }
+  }
+}

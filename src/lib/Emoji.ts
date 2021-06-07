@@ -1,9 +1,16 @@
 const extractionRegex = /<a?:\w+:([0-9]+)>/i;
+const nameExtractionRegex = /<a?(:\w+:)[0-9]+>/i;
 
-function extractEmojiID(emoji: string): string {
+export function extractEmojiID(emoji: string): string {
   const id = emoji.match(extractionRegex);
 
   return (id as RegExpMatchArray)[1];
+}
+
+export function extractEmojiName(emoji: string): string {
+  const name = emoji.match(nameExtractionRegex);
+
+  return (name as RegExpMatchArray)[1];
 }
 
 export const Emoji = {
@@ -21,6 +28,12 @@ export const Emoji = {
   ish: "<:ish:785397271725604875>",
   fmbot: "<:fmbot:822230495713689650>",
   rem: "<:rem:826270521788072026>",
+  gowonRated: "<:gowonRated:843400034770223114>",
+  blank: "<:blank:848334266928463882>",
+
+  fullStar: "<:fullStar:843763033858899968>",
+  halfStar: "<:halfStar:843763307994284032>",
+  emptyStar: "<:emptyStar:843763307428315148>",
 
   arrowLeft: "<:arrowleft:825600908594905107>",
   arrowRight: "<:arrowRight:825626338534490162>",

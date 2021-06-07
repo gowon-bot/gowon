@@ -39,9 +39,8 @@ export default class Update extends IndexingBaseCommand<
   connector = new UpdateUserConnector();
 
   idSeed = "bvndit yiyeon";
-
+  subcategory = "library";
   description = "Updates a user's cached data based on their lastest scrobbles";
-  secretCommand = true;
 
   rollout = {
     guilds: this.indexerGuilds,
@@ -80,7 +79,7 @@ export default class Update extends IndexingBaseCommand<
 
     this.stopwatch.start();
     const response = await this.query({
-      user: { lastFMUsername: senderUsername, discordID: this.author.id },
+      user: { discordID: this.author.id },
     });
 
     const errors = this.parseErrors(response);
@@ -88,7 +87,7 @@ export default class Update extends IndexingBaseCommand<
     if (errors) {
       if (responseHasError(errors, IndexerErrorResponses.UserDoesntExist)) {
         throw new IndexerError(
-          `Couldn't find you logged into the indexer, try running \`${this.prefix}login ${senderUsername}\` again`
+          `Couldn't find you logged into the indexer, try running \`${this.prefix}login\` again`
         );
       } else {
         throw new IndexerError(errors.errors[0].message);

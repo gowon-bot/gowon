@@ -1,6 +1,6 @@
-import { formatDistanceToNow } from "date-fns";
 import { displayNumber } from "../lib/views/displays";
 import { toInt } from "./lastFM";
+import { formatDistanceToNow } from "date-fns";
 
 export function addS(string: string, number: number) {
   return number === 1 ? string : string + "s";

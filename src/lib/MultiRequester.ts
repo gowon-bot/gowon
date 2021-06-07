@@ -1,11 +1,12 @@
 import { promiseAllSettled } from "../helpers";
+import { Requestable } from "../services/LastFM/LastFMAPIService";
 
 export interface FetchedResponses<T> {
   [username: string]: T | undefined;
 }
 
 export class MultiRequester {
-  constructor(public usernames: string[]) {}
+  constructor(public requestables: Requestable[]) {}
 
   async fetch<T, ParamsT>(
     method: (params: ParamsT) => Promise<T>,
@@ -24,28 +25,32 @@ export class MultiRequester {
   ): Promise<FetchedResponses<T>> {
     if (params instanceof Array) {
       let fetched = await promiseAllSettled(
-        this.usernames.map((u) =>
+        this.requestables.map((u) =>
           method(...params.insertAtIndex(options?.usernameInPosition || 0, u))
         )
       );
 
       return fetched.reduce((acc, f, idx) => {
-        acc[this.usernames[idx]] =
+        acc[requestableAsKey(this.requestables[idx])] =
           f.status === "fulfilled" ? f.value : undefined;
         return acc;
       }, {} as FetchedResponses<T>);
     } else {
       let fetched = await promiseAllSettled(
-        this.usernames.map(async (u) =>
+        this.requestables.map(async (u) =>
           method({ ...params, username: u } as ParamsT)
         )
       );
 
       return fetched.reduce((acc, f, idx) => {
-        acc[this.usernames[idx]] =
+        acc[requestableAsKey(this.requestables[idx])] =
           f.status === "fulfilled" ? f.value : undefined;
         return acc;
       }, {} as FetchedResponses<T>);
     }
   }
+}
+
+function requestableAsKey(requestable: Requestable): string {
+  return typeof requestable === "string" ? requestable : requestable.username;
 }

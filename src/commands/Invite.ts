@@ -5,6 +5,7 @@ import { Emoji } from "../lib/Emoji";
 export default class Invite extends BaseCommand {
   idSeed = "iz*one sakura";
 
+  subcategory = "about";
   description = "Invite the bot to your server!";
 
   async run() {

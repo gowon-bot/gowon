@@ -1,5 +1,7 @@
 // Responses
 
+import { Requestable } from "./LastFMAPIService";
+
 export interface RawPagedCollection<T = {}> {
   "@attr": {
     page: string;
@@ -442,6 +444,14 @@ export interface RawTagTopTracksResponse {
   tracks: RawTagTopTracks;
 }
 
+export interface RawLastFMSession {
+  session: {
+    subscriber: number;
+    name: string;
+    key: string;
+  };
+}
+
 /// ==================
 // Inputs
 /// ==================
@@ -449,7 +459,7 @@ export interface RawTagTopTracksResponse {
 export interface Params {}
 
 export interface UsernameParams {
-  username?: string;
+  username?: Requestable;
 }
 
 export interface TimeframeParams {
@@ -554,9 +564,7 @@ export interface GetArtistCorrectionParams {
   artist: string;
 }
 
-export interface UserGetFriendsParams extends PagedParams {
-  username: string;
-}
+export interface UserGetFriendsParams extends PagedParams, UsernameParams {}
 
 export interface TagTopTracksParams extends PagedParams {
   tag: string;

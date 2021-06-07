@@ -27,15 +27,15 @@ export default class ArtistPage extends LastFMBaseCommand<typeof args> {
   async run() {
     let artist = this.parsedArguments.artist;
 
-    let { username } = await this.parseMentions();
+    let { requestable } = await this.parseMentions();
 
     if (!artist) {
-      artist = (await this.lastFMService.nowPlaying(username)).artist;
+      artist = (await this.lastFMService.nowPlaying(requestable)).artist;
     }
 
     let artistDetails = await this.lastFMService.artistInfo({
       artist,
-      username,
+      username: requestable,
     });
 
     this.send(

@@ -1,9 +1,11 @@
+import { buildRequestable } from "../../helpers/parseMentions";
 import { MultiRequester } from "../../lib/MultiRequester";
 import { LastFMBaseCommand } from "./LastFMBaseCommand";
 
 export default class Server extends LastFMBaseCommand {
   idSeed = "april rachel";
 
+  subcategory = "nowplaying";
   description = "Shows what the server is listening to";
   aliases = ["sfm"];
   usage = [""];
@@ -17,7 +19,7 @@ export default class Server extends LastFMBaseCommand {
     });
 
     let nowPlayings = await new MultiRequester(
-      users.map((u) => u.lastFMUsername)
+      users.map((u) => buildRequestable(u.lastFMUsername, u).requestable)
     ).fetch(this.lastFMService.nowPlaying.bind(this.lastFMService), []);
 
     let embed = this.newEmbed()

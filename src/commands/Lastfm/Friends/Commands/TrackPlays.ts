@@ -27,7 +27,9 @@ export class TrackPlays extends FriendsChildCommand<typeof args> {
       track = this.parsedArguments.track as string;
 
     if (!artist || !track) {
-      let nowPlaying = await this.lastFMService.nowPlaying(this.senderUsername);
+      let nowPlaying = await this.lastFMService.nowPlaying(
+        this.senderRequestable
+      );
 
       if (!artist) artist = nowPlaying.artist;
       if (!track) track = nowPlaying.name;
@@ -35,7 +37,7 @@ export class TrackPlays extends FriendsChildCommand<typeof args> {
 
     let trackDetails = await new MultiRequester([
       ...this.friendUsernames,
-      this.senderUsername,
+      this.senderRequestable,
     ]).fetch(this.lastFMService.trackInfo.bind(this.lastFMService), {
       artist,
       track,

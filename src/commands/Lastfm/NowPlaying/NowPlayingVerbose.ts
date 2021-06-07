@@ -13,20 +13,24 @@ export default class NowPlayingVerbose extends NowPlayingBaseCommand {
   crownsService = new CrownsService(this.logger);
 
   async run() {
-    let { username, discordUser } = await this.nowPlayingMentions();
+    let { username, discordUser, requestable } =
+      await this.nowPlayingMentions();
 
-    let nowPlaying = await this.lastFMService.nowPlaying(username);
+    let nowPlaying = await this.lastFMService.nowPlaying(requestable);
 
     if (nowPlaying.isNowPlaying) this.scrobble(nowPlaying);
 
     this.tagConsolidator.blacklistTags(nowPlaying.artist, nowPlaying.name);
 
     let [artistInfo, trackInfo, crown] = await promiseAllSettled([
-      this.lastFMService.artistInfo({ artist: nowPlaying.artist, username }),
+      this.lastFMService.artistInfo({
+        artist: nowPlaying.artist,
+        username: requestable,
+      }),
       this.lastFMService.trackInfo({
         artist: nowPlaying.artist,
         track: nowPlaying.name,
-        username,
+        username: requestable,
       }),
       this.crownsService.getCrownDisplay(nowPlaying.artist, this.guild),
     ]);
@@ -94,6 +98,7 @@ export default class NowPlayingVerbose extends NowPlayingBaseCommand {
 
     let sentMessage = await this.send(nowPlayingEmbed);
 
+    await this.customReactions(sentMessage);
     await this.easterEggs(sentMessage, nowPlaying);
   }
 }

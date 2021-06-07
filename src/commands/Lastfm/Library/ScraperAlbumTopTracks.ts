@@ -12,11 +12,13 @@ const args = {
   mentions: standardMentions,
 } as const;
 
-export default class AlbumTopTracks extends LastFMBaseCommand<typeof args> {
+export default class ScraperAlbumTopTracks extends LastFMBaseCommand<
+  typeof args
+> {
   idSeed = "nature sunshine";
 
   description = "Shows your top tracks from an album";
-  aliases = ["ltt"];
+  aliases = ["sltt"];
   usage = ["", "artist | album @user"];
   subcategory = "library";
 

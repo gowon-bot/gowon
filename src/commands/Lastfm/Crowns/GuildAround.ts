@@ -21,7 +21,7 @@ export class GuildAround extends CrownsChildCommand {
   async run() {
     let { discordUser } = await this.parseMentions({
       fetchDiscordUser: true,
-      reverseLookup: { lastFM: true },
+      reverseLookup: { required: true },
     });
 
     const perspective = this.usersService.discordPerspective(

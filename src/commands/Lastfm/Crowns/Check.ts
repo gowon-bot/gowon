@@ -29,7 +29,7 @@ export class Check extends CrownsChildCommand<typeof args> {
   async run(message: Message) {
     let artist = this.parsedArguments.artist;
 
-    let { username, senderUser } = await this.parseMentions();
+    let { senderUser, requestable } = await this.parseMentions();
 
     if (await senderUser?.inPurgatory(message)) throw new PurgatoryError();
     if (await senderUser?.inactive(message)) throw new InactiveError();
@@ -37,7 +37,7 @@ export class Check extends CrownsChildCommand<typeof args> {
     if (await senderUser?.isOptedOut(message)) throw new OptedOutError();
 
     if (!artist) {
-      let response = await this.lastFMService.nowPlaying(username);
+      let response = await this.lastFMService.nowPlaying(requestable);
       if (!response.isNowPlaying)
         throw new LogicError(
           "you don't appear to be currently scrobbling anything."
@@ -47,7 +47,7 @@ export class Check extends CrownsChildCommand<typeof args> {
 
     let artistDetails = await this.lastFMService.artistInfo({
       artist,
-      username,
+      username: requestable,
     });
 
     let crownCheck = await this.crownsService.checkCrown({

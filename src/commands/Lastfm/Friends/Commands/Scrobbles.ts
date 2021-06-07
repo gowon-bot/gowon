@@ -31,7 +31,7 @@ export class Scrobbles extends FriendsChildCommand<typeof args> {
 
     let scrobbles = await new MultiRequester([
       ...this.friendUsernames,
-      this.senderUsername,
+      this.senderRequestable,
     ]).fetch(this.lastFMService.getNumberScrobbles.bind(this.lastFMService), [
       timeRange.from,
       timeRange.to,

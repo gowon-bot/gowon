@@ -30,17 +30,18 @@ export default class ArtistInfo extends InfoCommand<typeof args> {
   async run() {
     let artist = this.parsedArguments.artist;
 
-    let { senderUsername, username, perspective } = await this.parseMentions({
-      senderRequired: !artist,
-    });
+    let { senderRequestable, requestable, perspective } =
+      await this.parseMentions({
+        senderRequired: !artist,
+      });
 
     if (!artist) {
-      artist = (await this.lastFMService.nowPlaying(senderUsername)).artist;
+      artist = (await this.lastFMService.nowPlaying(senderRequestable)).artist;
     }
 
     let [artistInfo, userInfo, spotifyArtist] = await Promise.all([
-      this.lastFMService.artistInfo({ artist, username }),
-      this.lastFMService.userInfo({ username }),
+      this.lastFMService.artistInfo({ artist, username: requestable }),
+      this.lastFMService.userInfo({ username: requestable }),
       this.spotifyService.searchArtist(artist),
     ]);
 

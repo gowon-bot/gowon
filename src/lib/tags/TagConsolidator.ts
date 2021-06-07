@@ -6,6 +6,8 @@ function isTagArray(tags: string[] | RawTag[]): tags is RawTag[] {
 }
 
 export class TagConsolidator {
+  static readonly tagJoin = " ‧ ";
+
   blacklistedTags: string[];
   regexBlacklist: RegExp[];
   explicitTags: string[];

@@ -24,10 +24,10 @@ export default class AlbumPlaysequal extends LastFMBaseCommand<typeof args> {
   async run() {
     let plays = this.parsedArguments.plays!;
 
-    let { username, perspective } = await this.parseMentions();
+    let { requestable, perspective } = await this.parseMentions();
 
     let topAlbums = await this.lastFMService.topAlbums({
-      username,
+      username: requestable,
       limit: 1000,
     });
 

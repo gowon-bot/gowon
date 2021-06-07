@@ -17,7 +17,7 @@ export class Joined extends FriendsChildCommand {
   async run() {
     let joineds = await new MultiRequester([
       ...this.friendUsernames,
-      this.senderUsername,
+      this.senderRequestable,
     ]).fetch(this.lastFMService.userInfo.bind(this.lastFMService), {});
 
     let joinDates = Object.keys(joineds).reduce((acc, username) => {

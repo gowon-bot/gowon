@@ -30,10 +30,10 @@ export default class AlbumAt extends LastFMBaseCommand<typeof args> {
   async run() {
     let rank = this.parsedArguments.rank;
 
-    let { username, perspective } = await this.parseMentions();
+    let { requestable, perspective } = await this.parseMentions();
 
     let topAlbums = await this.lastFMService.topAlbums({
-      username,
+      username: requestable,
       limit: 1,
       page: rank,
     });

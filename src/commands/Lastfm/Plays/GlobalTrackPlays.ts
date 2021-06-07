@@ -28,12 +28,13 @@ export default class GlobalTrackPlays extends LastFMBaseCommand<typeof args> {
     let artist = this.parsedArguments.artist,
       track = this.parsedArguments.track;
 
-    let { username, perspective, senderUsername } = await this.parseMentions({
-      senderRequired: !artist || !track,
-    });
+    let { requestable, perspective, senderRequestable } =
+      await this.parseMentions({
+        senderRequired: !artist || !track,
+      });
 
     if (!artist || !track) {
-      let nowPlaying = await this.lastFMService.nowPlaying(senderUsername);
+      let nowPlaying = await this.lastFMService.nowPlaying(senderRequestable);
 
       if (!artist) artist = nowPlaying.artist;
       if (!track) track = nowPlaying.name;
@@ -42,7 +43,7 @@ export default class GlobalTrackPlays extends LastFMBaseCommand<typeof args> {
     let trackDetails = await this.lastFMService.trackInfo({
       artist,
       track,
-      username,
+      username: requestable,
     });
 
     let percentage = calculatePercent(

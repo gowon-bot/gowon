@@ -2,7 +2,8 @@ import { BaseCommand } from "../../lib/command/BaseCommand";
 
 export default class Regular extends BaseCommand {
   idSeed = "2ne1 park bom";
-  
+
+  subcategory = "fun";
   description = "Regular, huh?";
   secretCommand = true;
 

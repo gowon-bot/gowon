@@ -30,13 +30,13 @@ export class ArtistPlays extends FriendsChildCommand<typeof args> {
     let artist = this.parsedArguments.artist;
 
     if (!artist) {
-      artist = (await this.lastFMService.nowPlaying(this.senderUsername))
+      artist = (await this.lastFMService.nowPlaying(this.senderRequestable))
         .artist;
     }
 
     let artistDetails = await new MultiRequester([
       ...this.friendUsernames,
-      this.senderUsername,
+      this.senderRequestable,
     ]).fetch(this.lastFMService.artistInfo.bind(this.lastFMService), {
       artist,
     });

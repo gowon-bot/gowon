@@ -31,20 +31,21 @@ export default class AlbumInfo extends InfoCommand<typeof args> {
     let artist = this.parsedArguments.artist,
       album = this.parsedArguments.album;
 
-    let { senderUsername, username, perspective } = await this.parseMentions({
-      senderRequired: !artist || !album,
-    });
+    let { senderRequestable, requestable, perspective } =
+      await this.parseMentions({
+        senderRequired: !artist || !album,
+      });
 
     if (!artist || !album) {
-      let nowPlaying = await this.lastFMService.nowPlaying(senderUsername);
+      let nowPlaying = await this.lastFMService.nowPlaying(senderRequestable);
 
       if (!artist) artist = nowPlaying.artist;
       if (!album) album = nowPlaying.album;
     }
 
     let [albumInfo, userInfo, spotifyAlbum] = await Promise.all([
-      this.lastFMService.albumInfo({ artist, album, username }),
-      this.lastFMService.userInfo({ username }),
+      this.lastFMService.albumInfo({ artist, album, username: requestable }),
+      this.lastFMService.userInfo({ username: requestable }),
       this.spotifyService.searchAlbum(artist, album),
     ]);
 

@@ -9,6 +9,7 @@ const args = {
 export default class ID extends BaseCommand<typeof args> {
   idSeed = "exid hyerin";
 
+  subcategory = "developer";
   description = "Show your, or another person's discord ID";
   usage = ["", "discord username"];
 
@@ -17,7 +18,7 @@ export default class ID extends BaseCommand<typeof args> {
   async run() {
     let { discordUser } = await this.parseMentions({
       fetchDiscordUser: true,
-      reverseLookup: { lastFM: true },
+      reverseLookup: { required: true },
       usernameRequired: false,
     });
 

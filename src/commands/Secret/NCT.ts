@@ -3,6 +3,7 @@ import { BaseCommand } from "../../lib/command/BaseCommand";
 export default class NCT extends BaseCommand {
   idSeed = "iz*one hitomi";
 
+  subcategory = "fun";
   description = "thot";
   secretCommand = true;
 

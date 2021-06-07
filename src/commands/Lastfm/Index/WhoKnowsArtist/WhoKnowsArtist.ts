@@ -31,8 +31,8 @@ export default class WhoKnowsArtist extends IndexingBaseCommand<
   variations: Variation[] = [{ name: "update", variation: "uwk" }];
 
   description = "See who knows an artist";
-  secretCommand = true;
 
+  subcategory = "whoknows";
   rollout = {
     guilds: this.indexerGuilds,
   };
@@ -42,12 +42,13 @@ export default class WhoKnowsArtist extends IndexingBaseCommand<
   async run() {
     let artistName = this.parsedArguments.artist;
 
-    let { senderUsername } = await this.parseMentions({
+    let { senderRequestable } = await this.parseMentions({
       senderRequired: !artistName,
     });
 
     if (!artistName) {
-      artistName = (await this.lastFMService.nowPlaying(senderUsername)).artist;
+      artistName = (await this.lastFMService.nowPlaying(senderRequestable))
+        .artist;
     } else {
       const lfmArtist = await this.lastFMService.artistInfo({
         artist: artistName,
@@ -57,7 +58,7 @@ export default class WhoKnowsArtist extends IndexingBaseCommand<
     }
 
     if (this.variationWasUsed("update")) {
-      await this.updateAndWait(senderUsername);
+      await this.updateAndWait(this.author.id);
     }
 
     const response = await this.query({
