@@ -23,7 +23,7 @@ export class SumTop extends OverviewChildCommand<typeof args> {
   aliases = ["toppct"];
   description =
     "Shows what percent of your scrobbles are made up by your top artists";
-  usage = ["", "top", "top @user"];
+  usage = ["", "time_period top", "time_period top @user"];
 
   arguments: Arguments = args;
 

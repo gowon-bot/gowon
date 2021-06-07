@@ -23,6 +23,7 @@ export class TopPercent extends OverviewChildCommand<typeof args> {
 
   aliases = ["toppct", "apct"];
   description = "Shows how many artists make up at least 50% of your scrobbles";
+  usage = ["", "time_period percent", "time_period percent @user"];
 
   arguments: Arguments = args;
 

@@ -25,7 +25,7 @@ export abstract class OverviewChildCommand<
 > extends LastFMBaseChildCommand<T> {
   parentName = "overview";
   subcategory = "overview";
-  usage = ["", "@user or lfm:username"];
+  usage = ["", "time_period @user or lfm:username"];
 
   arguments: Arguments = {
     inputs: overviewInputs,
