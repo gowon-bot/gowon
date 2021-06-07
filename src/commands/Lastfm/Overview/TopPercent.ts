@@ -1,4 +1,4 @@
-import { OverviewChildCommand } from "./OverviewChildCommand";
+import { OverviewChildCommand, overviewInputs } from "./OverviewChildCommand";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
@@ -8,7 +8,13 @@ import { displayNumber } from "../../../lib/views/displays";
 const args = {
   mentions: standardMentions,
   inputs: {
-    percent: { regex: /[0-9]+/, index: 0, default: 50, number: true },
+    percent: {
+      regex: /[0-9]{1,3}(?!\w)(?! [mw])/g,
+      index: 0,
+      default: 50,
+      number: true,
+    },
+    ...overviewInputs,
   },
 } as const;
 
@@ -27,21 +33,16 @@ export class TopPercent extends OverviewChildCommand<typeof args> {
   async run() {
     let percent = this.parsedArguments.percent!;
 
-    let { username, perspective } = await this.parseMentions();
-
-    let { badge, colour, image } = await this.getAuthorDetails();
+    let { perspective } = await this.parseMentions();
 
     let toppct = await this.calculator.topPercent(percent);
 
-    let embed = this.newEmbed()
-      .setAuthor(username + badge, image)
-      .setColor(colour)
-      .setDescription(
-        `${toppct.count.asString.strong()} artists (a total of ${displayNumber(
-          toppct.total.asNumber,
-          "scrobble"
-        )}) make up ${percent}% of ${perspective.possessive} scrobbles!`
-      );
+    let embed = (await this.overviewEmbed()).setDescription(
+      `${toppct.count.asString.strong()} artists (a total of ${displayNumber(
+        toppct.total.asNumber,
+        "scrobble"
+      )}) make up ${percent}% of ${perspective.possessive} scrobbles!`
+    );
 
     await this.send(embed);
   }

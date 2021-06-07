@@ -17,6 +17,8 @@ import {
 } from "../../services/LastFM/converters/TopTypes";
 import { displayDate, displayNumber } from "../views/displays";
 import { Requestable } from "../../services/LastFM/LastFMAPIService";
+import { LastFMPeriod } from "../../services/LastFM/LastFMService.types";
+import { periodToRange } from "../../helpers/date";
 
 export class Stat {
   public asString: string;
@@ -39,6 +41,7 @@ export class OverviewStatsCalculator {
     topTracks?: TopTracks;
     crownsRank?: CrownRankResponse;
     crownsCount?: number;
+    scrobbleCount?: number;
   } = {};
 
   private lastFMService: LastFMService;
@@ -48,7 +51,8 @@ export class OverviewStatsCalculator {
   constructor(
     private requestable: Requestable,
     private serverID: string,
-    private userID?: string,
+    private userID: string | undefined,
+    private timePeriod: LastFMPeriod,
     logger?: Logger
   ) {
     this.lastFMService = new LastFMService(logger);
@@ -73,6 +77,20 @@ export class OverviewStatsCalculator {
     ]);
   }
 
+  async scrobbleCount(): Promise<number> {
+    if (!this.cache.scrobbleCount) {
+      const timeRange = periodToRange(this.timePeriod);
+
+      this.cache.scrobbleCount = await this.lastFMService.getNumberScrobbles(
+        this.requestable,
+        timeRange.from,
+        timeRange.to
+      );
+    }
+
+    return this.cache.scrobbleCount;
+  }
+
   async userInfo(): Promise<UserInfo> {
     if (!this.cache.userInfo)
       this.cache.userInfo = await this.lastFMService.userInfo({
@@ -87,6 +105,7 @@ export class OverviewStatsCalculator {
       this.cache.topArtists = await this.lastFMService.topArtists({
         username: this.requestable,
         limit: 1000,
+        period: this.timePeriod,
       });
 
     return this.cache.topArtists;
@@ -97,6 +116,7 @@ export class OverviewStatsCalculator {
       this.cache.topAlbums = await this.lastFMService.topAlbums({
         username: this.requestable,
         limit: 1,
+        period: this.timePeriod,
       });
 
     return this.cache.topAlbums;
@@ -107,6 +127,7 @@ export class OverviewStatsCalculator {
       this.cache.topTracks = await this.lastFMService.topTracks({
         username: this.requestable,
         limit: 1,
+        period: this.timePeriod,
       });
 
     return this.cache.topTracks;
@@ -140,22 +161,20 @@ export class OverviewStatsCalculator {
   }
 
   async totalScrobbles(): Promise<Stat> {
-    let userInfo = await this.userInfo();
+    let scrobbleCount = await this.scrobbleCount();
 
-    return new Stat(
-      userInfo.scrobbleCount,
-      displayNumber(userInfo.scrobbleCount)
-    );
+    return new Stat(scrobbleCount, displayNumber(scrobbleCount));
   }
 
   async avgPerDay(): Promise<Stat> {
-    let userInfo = await this.userInfo();
-
-    let scrobbles = userInfo.scrobbleCount;
+    let [userInfo, scrobbleCount] = await Promise.all([
+      this.userInfo(),
+      this.scrobbleCount(),
+    ]);
 
     let diff = Math.abs(differenceInDays(userInfo.registeredAt, new Date()));
 
-    return new Stat(scrobbles / diff, (scrobbles / diff).toFixed(0));
+    return new Stat(scrobbleCount / diff, (scrobbleCount / diff).toFixed(0));
   }
 
   async totalArtists(): Promise<Stat> {
@@ -168,12 +187,12 @@ export class OverviewStatsCalculator {
   }
 
   async avgScrobblesPerArtist(): Promise<Stat> {
-    let [userInfo, topArtists] = await Promise.all([
-      this.userInfo(),
+    let [scrobbleCount, topArtists] = await Promise.all([
+      this.scrobbleCount(),
       this.topArtists(),
     ]);
 
-    let average = ~~(userInfo.scrobbleCount / topArtists.meta.total);
+    let average = ~~(scrobbleCount / topArtists.meta.total);
 
     return new Stat(average, average.toFixed(0));
   }
@@ -185,12 +204,12 @@ export class OverviewStatsCalculator {
   }
 
   async avgScrobblesPerAlbum(): Promise<Stat> {
-    let [userInfo, topAlbums] = await Promise.all([
-      this.userInfo(),
+    let [scrobbleCount, topAlbums] = await Promise.all([
+      this.scrobbleCount(),
       this.topAlbums(),
     ]);
 
-    let average = ~~(userInfo.scrobbleCount / topAlbums.meta.total);
+    let average = ~~(scrobbleCount / topAlbums.meta.total);
 
     return new Stat(average, average.toFixed(0));
   }
@@ -202,12 +221,12 @@ export class OverviewStatsCalculator {
   }
 
   async avgScrobblesPerTrack(): Promise<Stat> {
-    let [userInfo, topTracks] = await Promise.all([
-      this.userInfo(),
+    let [scrobbleCount, topTracks] = await Promise.all([
+      this.scrobbleCount(),
       this.topTracks(),
     ]);
 
-    let average = ~~(userInfo.scrobbleCount / topTracks.meta.total);
+    let average = ~~(scrobbleCount / topTracks.meta.total);
 
     return new Stat(average, average.toFixed(0));
   }
@@ -272,12 +291,12 @@ export class OverviewStatsCalculator {
     count: Stat;
     total: Stat;
   }> {
-    let [topArtists, userInfo] = await Promise.all([
+    let [topArtists, scrobbleCount] = await Promise.all([
       this.topArtists(),
-      this.userInfo(),
+      this.scrobbleCount(),
     ]);
 
-    let halfOfScrobbles = userInfo.scrobbleCount * (percent / 100);
+    let halfOfScrobbles = scrobbleCount * (percent / 100);
     let sum = 0;
 
     for (
@@ -299,7 +318,12 @@ export class OverviewStatsCalculator {
     }
 
     return {
-      count: new Stat(1000, "1000+"),
+      count: new Stat(
+        topArtists.artists.length,
+        topArtists.artists.length === 1000
+          ? "1000+"
+          : `${topArtists.artists.length}`
+      ),
       total: new Stat(sum, sum.toLocaleString()),
     };
   }
@@ -313,14 +337,14 @@ export class OverviewStatsCalculator {
   }
 
   async sumTopPercent(number = 10): Promise<Stat> {
-    let totalScrobbles = (await this.userInfo()).scrobbleCount;
+    let scrobbleCount = await this.scrobbleCount();
     let topArtists = (await this.topArtists()).artists
       .slice(0, number)
       .reduce((sum, artist) => sum + artist.userPlaycount, 0);
 
     return new Stat(
-      topArtists / totalScrobbles,
-      calculatePercent(topArtists, totalScrobbles)
+      topArtists / scrobbleCount,
+      calculatePercent(topArtists, scrobbleCount)
     );
   }
 
@@ -366,14 +390,14 @@ export class OverviewStatsCalculator {
 
   async scrobblesPerCrown(): Promise<Stat | undefined> {
     if (!this.userID) return undefined;
-    let [crownsCount, userInfo] = await Promise.all([
+    let [crownsCount, scrobbleCount] = await Promise.all([
       this.crownsCount(),
-      this.userInfo(),
+      this.scrobbleCount(),
     ]);
 
     return new Stat(
-      userInfo.scrobbleCount / crownsCount!,
-      (userInfo.scrobbleCount / crownsCount!).toFixed(2)
+      scrobbleCount / crownsCount!,
+      (scrobbleCount / crownsCount!).toFixed(2)
     );
   }
 

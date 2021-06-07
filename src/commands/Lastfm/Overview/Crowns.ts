@@ -11,8 +11,7 @@ export class Crowns extends OverviewChildCommand {
   description = "Shows some stats about crowns";
 
   async run() {
-    let { badge, colour, image } = await this.getAuthorDetails();
-    let { username, perspective } = await this.parseMentions();
+    let { perspective } = await this.parseMentions();
 
     let [crownRank, apc, spc] = await Promise.all([
       this.calculator.crownsRank(),
@@ -26,9 +25,8 @@ export class Crowns extends OverviewChildCommand {
       );
 
     if (await this.calculator.hasCrownStats()) {
-      let embed = this.newEmbed()
-        .setAuthor(username + badge, image)
-        .setColor(colour).setDescription(`You have ${displayNumber(
+      let embed = (await this.overviewEmbed())
+        .setDescription(`You have ${displayNumber(
         crownRank!.count,
         "crown"
       ).strong()} (ranked ${getOrdinal(toInt(crownRank!.rank)).italic()})

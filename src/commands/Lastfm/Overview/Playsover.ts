@@ -9,17 +9,14 @@ export class Playsover extends OverviewChildCommand {
     "Shows how many artists you have over some common scrobble tiers";
 
   async run() {
-    let { username, perspective } = await this.parseMentions();
+    let { perspective } = await this.parseMentions();
 
     // Cache the top artists response
     await this.calculator.topArtists();
 
-    let { badge, colour, image } = await this.getAuthorDetails();
     let artistCount = await this.calculator.totalArtists();
 
-    let embed = this.newEmbed()
-      .setAuthor(username + badge, image)
-      .setColor(colour).setDescription(`Among ${
+    let embed = (await this.overviewEmbed()).setDescription(`Among ${
       perspective.possessivePronoun
     } top ${displayNumber(
       artistCount.asNumber > 1000 ? 1000 : artistCount.asNumber,

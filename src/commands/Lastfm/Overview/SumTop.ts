@@ -1,4 +1,4 @@
-import { OverviewChildCommand } from "./OverviewChildCommand";
+import { OverviewChildCommand, overviewInputs } from "./OverviewChildCommand";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { LogicError } from "../../../errors";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
@@ -7,7 +7,13 @@ import { displayNumber } from "../../../lib/views/displays";
 const args = {
   mentions: standardMentions,
   inputs: {
-    top: { index: 0, regex: /[0-9]{1,4}/, default: 10, number: true },
+    top: {
+      index: 0,
+      regex: /[0-9]{1,10}(?!\w)(?! [mw])/g,
+      default: 10,
+      number: true,
+    },
+    ...overviewInputs,
   },
 } as const;
 
@@ -24,7 +30,7 @@ export class SumTop extends OverviewChildCommand<typeof args> {
   async run() {
     let top = this.parsedArguments.top!;
 
-    let { username, perspective } = await this.parseMentions();
+    let { perspective } = await this.parseMentions();
 
     if (top > 1000 || top < 2)
       throw new LogicError("Please enter a valid number (between 2 and 1000)");
@@ -35,26 +41,22 @@ export class SumTop extends OverviewChildCommand<typeof args> {
       this.calculator.userInfo(),
     ]);
 
-    let { badge, colour, image } = await this.getAuthorDetails();
     let [sumtop, sumtoppct] = await Promise.all([
       this.calculator.sumTop(top),
       this.calculator.sumTopPercent(top),
     ]);
 
-    let embed = this.newEmbed()
-      .setAuthor(username + badge, image)
-      .setColor(colour)
-      .setDescription(
-        `${perspective.upper.possessive} top ${displayNumber(
-          top,
-          "artist"
-        ).strong()} make up ${displayNumber(
-          sumtop.asNumber,
-          "scrobble"
-        ).strong()} (${sumtoppct.asString.strong()}% of ${
-          perspective.possessivePronoun
-        } total scrobbles!)`
-      );
+    let embed = (await this.overviewEmbed()).setDescription(
+      `${perspective.upper.possessive} top ${displayNumber(
+        top,
+        "artist"
+      ).strong()} make up ${displayNumber(
+        sumtop.asNumber,
+        "scrobble"
+      ).strong()} (${sumtoppct.asString.strong()}% of ${
+        perspective.possessivePronoun
+      } total scrobbles!)`
+    );
 
     await this.send(embed);
   }

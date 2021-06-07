@@ -175,3 +175,7 @@ export function humanizedTimeRangeParser(
       : options.overallMessage!;
   };
 }
+
+export function periodToRange(period: LastFMPeriod): TimeRange {
+  return timeRangeParser()(period);
+}

@@ -10,19 +10,13 @@ export class HIndex extends OverviewChildCommand {
     "Hindex is meant to quantify how many different artists you actively listen to.";
 
   async run() {
-    let { username, perspective } = await this.parseMentions();
+    let { perspective } = await this.parseMentions();
 
-    let { badge, colour, image } = await this.getAuthorDetails();
     let hindex = await this.calculator.hIndex();
 
-    let embed = this.newEmbed()
-      .setAuthor(username + badge, image)
-      .setColor(colour)
-      .setDescription(
-        `${
-          perspective.upper.possessive
-        } H-index is ${hindex.asString.strong()}!`
-      );
+    let embed = (await this.overviewEmbed()).setDescription(
+      `${perspective.upper.possessive} H-index is ${hindex.asString.strong()}!`
+    );
 
     await this.send(embed);
   }

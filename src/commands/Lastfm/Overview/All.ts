@@ -25,7 +25,7 @@ export class All extends OverviewChildCommand {
       await this.calculator.cacheAll(),
     ]);
 
-    let { colour, badge, image } = await this.getAuthorDetails();
+    let { image } = await this.getAuthorDetails();
 
     let rank = await this.calculator.crownsRank();
     let breadth: { rating: number; ratingString: string } | undefined;
@@ -33,16 +33,8 @@ export class All extends OverviewChildCommand {
       breadth = await this.calculator.breadth();
     } catch {}
 
-    let embed = this.newEmbed()
-      .setAuthor(
-        this.requestable + badge,
-        image,
-        LinkGenerator.userPage(this.username)
-      )
-      .setThumbnail(image)
-      .setColor(colour)
-      .setDescription(
-        `
+    let embed = (await this.overviewEmbed()).setThumbnail(image).setDescription(
+      `
 ${
   this.gowonClient.isDeveloper(this.discordID)
     ? `${Emoji.typescript} _Author_\n`
@@ -72,21 +64,19 @@ _Following ${displayNumber(friends.meta.total, "user")}_
 
 **H-Index**: ${await this.calculator.hIndex()}
 **# of artists to equal 50% of scrobbles**: ${
-          (await this.calculator.topPercent(50)).count
-        }
+        (await this.calculator.topPercent(50)).count
+      }
 **Total scrobbles for top 10 artists**: ${await this.calculator.sumTop(10)}
 ${perspective.upper.possessive} top 10 artists account for: ${(
-          await this.calculator.sumTopPercent(10)
-        ).asString.strong()}% of ${
-          perspective.possessivePronoun
-        } total scrobbles
+        await this.calculator.sumTopPercent(10)
+      ).asString.strong()}% of ${perspective.possessivePronoun} total scrobbles
 
 Among ${perspective.possessivePronoun} top ${displayNumber(
-          (await this.calculator.totalArtists()).asNumber > 1000
-            ? 1000
-            : (await this.calculator.totalArtists()).asNumber,
-          "artist"
-        )}, ${perspective.plusToHave}...
+        (await this.calculator.totalArtists()).asNumber > 1000
+          ? 1000
+          : (await this.calculator.totalArtists()).asNumber,
+        "artist"
+      )}, ${perspective.plusToHave}...
         ${(await this.calculator.tierPlaysOver(this.playsoverTiers, 6))
           .map(
             (po) =>
@@ -97,20 +87,20 @@ Among ${perspective.possessivePronoun} top ${displayNumber(
               )}`
           )
           .join("\n")}` +
-          ((await this.calculator.hasCrownStats())
-            ? `\n\n**Total crowns**: ${rank!.count} (ranked ${getOrdinal(
-                toInt(rank!.rank)
-              ).italic()})
+        ((await this.calculator.hasCrownStats())
+          ? `\n\n**Total crowns**: ${rank!.count} (ranked ${getOrdinal(
+              toInt(rank!.rank)
+            ).italic()})
 For every ${displayNumber(
-                (await this.calculator.artistsPerCrown())!.asString,
-                "eligible artist"
-              ).strong()}, ${perspective.plusToHave} a crown
+              (await this.calculator.artistsPerCrown())!.asString,
+              "eligible artist"
+            ).strong()}, ${perspective.plusToHave} a crown
 For every ${displayNumber(
-                (await this.calculator.scrobblesPerCrown())!.asString,
-                "scrobble"
-              ).strong()}, ${perspective.plusToHave} a crown`
-            : "") +
-          `
+              (await this.calculator.scrobblesPerCrown())!.asString,
+              "scrobble"
+            ).strong()}, ${perspective.plusToHave} a crown`
+          : "") +
+        `
 
 ${
   breadth
@@ -119,7 +109,7 @@ ${
       })_\n`
     : ""
 }**Number of unique tags**: ${(await this.calculator.uniqueTags()).toString()}`
-      );
+    );
 
     await this.send(embed);
   }
