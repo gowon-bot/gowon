@@ -25,7 +25,7 @@ export function buildRequestables({
   let requestables = {} as Partial<Requestables>;
 
   const senderRequestable = buildRequestable(
-    senderUser!.lastFMUsername,
+    senderUser?.lastFMUsername!,
     senderUser
   );
   requestables.senderRequestable = senderRequestable.requestable;

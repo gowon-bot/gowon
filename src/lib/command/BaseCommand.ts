@@ -204,7 +204,7 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
         if (!mentionedUser?.lastFMUsername && usernameRequired)
           throw new UsernameNotRegisteredError();
 
-        mentionedUsername = mentionedUser.lastFMUsername;
+        mentionedUsername = mentionedUser?.lastFMUsername;
       } catch {
         if (usernameRequired) throw new UsernameNotRegisteredError();
       }
