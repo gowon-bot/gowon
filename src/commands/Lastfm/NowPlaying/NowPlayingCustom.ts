@@ -35,6 +35,8 @@ export default class NowPlayingCustom extends NowPlayingBaseCommand {
     });
     const nowPlaying = recentTracks.first();
 
+    if (nowPlaying.isNowPlaying) this.scrobble(nowPlaying);
+
     const builder = new NowPlayingBuilder(config);
 
     const requirements = builder.generateRequirements();

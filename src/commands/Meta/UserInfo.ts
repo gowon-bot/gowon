@@ -50,9 +50,15 @@ export default class UserInfo extends BaseCommand<typeof args> {
     const lineConsolidator = new LineConsolidator();
 
     lineConsolidator.addLines(
-      `${Emoji.checkmark} Authenticated!
-
-**Commands run**: ${displayNumber(commandRunCount)}`,
+      {
+        string: `${Emoji.checkmark} Authenticated!\n`,
+        shouldDisplay: !!user.lastFMSession,
+      },
+      {
+        string: `${Emoji.bruh} Not authenticated! \`${this.prefix}login\`\n`,
+        shouldDisplay: !user.lastFMSession,
+      },
+      `**Commands run**: ${displayNumber(commandRunCount)}`,
       {
         shouldDisplay: topCommands.length > 0,
         string: `**Top commands**: \n${topCommands

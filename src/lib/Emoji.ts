@@ -30,6 +30,7 @@ export const Emoji = {
   rem: "<:rem:826270521788072026>",
   gowonRated: "<:gowonRated:843400034770223114>",
   blank: "<:blank:848334266928463882>",
+  bruh: "<a:bruh:851935710298767371>",
 
   fullStar: "<:fullStar:843763033858899968>",
   halfStar: "<:halfStar:843763307994284032>",
