@@ -79,14 +79,20 @@ ${filteredOut.map((f) => `- ${f}`).join("\n")}\`\`\``
         `${presetConfig ? `Using preset ${newConfig[0].code()}` : ""}
         ${filteredDisplay}
         ${filteredOutDisplay}`.trim()
+      )
+      .setFooter(
+        filteredOut.length
+          ? `See ${this.prefix}npc help for a list of all available options`
+          : ""
       );
 
     await this.send(embed);
   }
 
-  private filterBadOptions(
-    options: string[]
-  ): { filteredOut: string[]; filtered: string[] } {
+  private filterBadOptions(options: string[]): {
+    filteredOut: string[];
+    filtered: string[];
+  } {
     const availableOptions = Object.keys(componentMap);
 
     const filteredOut = [] as string[];

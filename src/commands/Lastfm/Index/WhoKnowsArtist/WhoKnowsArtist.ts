@@ -5,6 +5,7 @@ import { Arguments } from "../../../../lib/arguments/arguments";
 import { Variation } from "../../../../lib/command/BaseCommand";
 import { IndexingBaseCommand } from "../../../../lib/indexing/IndexingCommand";
 import { displayLink, displayNumber } from "../../../../lib/views/displays";
+import { NicknameService } from "../../../../services/guilds/NicknameService";
 import {
   WhoKnowsArtistConnector,
   WhoKnowsArtistParams,
@@ -39,6 +40,12 @@ export default class WhoKnowsArtist extends IndexingBaseCommand<
 
   arguments: Arguments = args;
 
+  nicknameService = new NicknameService(this.logger);
+
+  async prerun() {
+    await this.nicknameService.init();
+  }
+
   async run() {
     let artistName = this.parsedArguments.artist;
 
@@ -72,6 +79,12 @@ export default class WhoKnowsArtist extends IndexingBaseCommand<
       throw new IndexerError(errors.errors[0].message);
     }
 
+    await this.nicknameService.cacheNicknames(
+      response.whoKnowsArtist.rows.map((u) => u.user),
+      this.guild.id,
+      this.gowonClient
+    );
+
     const { rows, artist } = response.whoKnowsArtist;
 
     const embed = new MessageEmbed()
@@ -82,7 +95,7 @@ export default class WhoKnowsArtist extends IndexingBaseCommand<
           : rows.map(
               (wk, index) =>
                 `${index + 1}. ${displayLink(
-                  wk.user.username,
+                  this.nicknameService.cacheGetNickname(wk.user.discordID),
                   LinkGenerator.userPage(wk.user.username)
                 )} - **${displayNumber(wk.playcount, "**play")}`
             )

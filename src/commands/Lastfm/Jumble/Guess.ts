@@ -1,5 +1,4 @@
 import { JumbleChildCommand } from "./JumbleChildCommand";
-import { Message } from "discord.js";
 import { jumbleRedisKey, JumbledArtist } from "./JumbleParentCommand";
 import { LogicError } from "../../../errors";
 import { Arguments } from "../../../lib/arguments/arguments";
@@ -17,11 +16,10 @@ export class Guess extends JumbleChildCommand<typeof args> {
 
   arguments: Arguments = args;
 
-  async run(message: Message) {
+  async run() {
     let guess = this.parsedArguments.guess;
 
     let jumbledArtist = await this.sessionGetJSON<JumbledArtist>(
-      message,
       jumbleRedisKey
     );
 
@@ -35,16 +33,20 @@ export class Guess extends JumbleChildCommand<typeof args> {
       guess.toLowerCase().replace(/\s+/g, " ") ===
       jumbledArtist.unjumbled.toLowerCase().replace(/\s+/g, " ")
     ) {
-      this.redisService.sessionDelete(message, jumbleRedisKey);
+      this.redisService.sessionDelete(
+        this.author.id,
+        this.guild.id,
+        jumbleRedisKey
+      );
 
       await this.reply(
         `you are correct! The artist was ${jumbledArtist.unjumbled.strong()}`
       );
     } else {
-      await message.react(
+      await this.message.react(
         shuffle(["😔", "😖", "😠", "😕", "😣", "😐", "😪"])[0]
       );
-      message.channel.stopTyping();
+      this.message.channel.stopTyping();
     }
   }
 }

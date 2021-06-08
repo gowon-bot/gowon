@@ -18,20 +18,22 @@ export abstract class JumbleChildCommand<
 
   jumbleCalculator!: JumbleCalculator;
 
-  async sessionSetJSON(
-    message: Message,
-    key: string,
-    value: Object | Array<unknown>
-  ) {
-    return this.redisService.sessionSet(message, key, JSON.stringify(value));
+  async sessionSetJSON(key: string, value: Object | Array<unknown>) {
+    return this.redisService.sessionSet(
+      this.author.id,
+      this.guild.id,
+      key,
+      JSON.stringify(value)
+    );
   }
 
-  async sessionGetJSON<T extends Object>(
-    message: Message,
-    key: string
-  ): Promise<T> {
+  async sessionGetJSON<T extends Object>(key: string): Promise<T> {
     return JSON.parse(
-      (await this.redisService.sessionGet(message, key)) || "{}"
+      (await this.redisService.sessionGet(
+        this.author.id,
+        this.guild.id,
+        key
+      )) || "{}"
     ) as T;
   }
 

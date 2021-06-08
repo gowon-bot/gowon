@@ -28,4 +28,25 @@ export class MetaService extends BaseService {
   async countCommandRuns(commandID: string) {
     return await CommandRun.count({ commandID });
   }
+
+  async hasRunCommand(
+    userID: string,
+    commandID: string,
+    tolerance = 0
+  ): Promise<boolean> {
+    this.log(`Checking if ${userID} has run ${commandID}`);
+
+    return (
+      (
+        await CommandRun.find({
+          take: tolerance + 1,
+          where: {
+            commandID,
+            userID,
+          },
+        })
+      ).length ===
+      tolerance + 1
+    );
+  }
 }

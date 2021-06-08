@@ -1,7 +1,9 @@
+import { MessageEmbed } from "discord.js";
 import { User } from "../../../database/entity/User";
 import { indexerGuilds } from "../../../lib/indexing/IndexingCommand";
 import { DatasourceService } from "../../../lib/nowplaying/DatasourceService";
 import { NowPlayingBuilder } from "../../../lib/nowplaying/NowPlayingBuilder";
+import { MetaService } from "../../../services/dbservices/MetaService";
 import { ConfigService } from "../../../services/dbservices/NowPlayingService";
 import { Requestable } from "../../../services/LastFM/LastFMAPIService";
 import { NowPlayingBaseCommand } from "./NowPlayingBaseCommand";
@@ -19,6 +21,7 @@ export default class NowPlayingCustom extends NowPlayingBaseCommand {
 
   datasourceService = new DatasourceService(this.logger);
   configService = new ConfigService(this.logger);
+  metaService = new MetaService(this.logger);
 
   async run() {
     let { username, senderUser, dbUser, requestable } =
@@ -47,7 +50,11 @@ export default class NowPlayingCustom extends NowPlayingBaseCommand {
 
     const baseEmbed = this.nowPlayingEmbed(nowPlaying, username);
 
-    const embed = await builder.asEmbed(resolvedRequirements, baseEmbed);
+    let embed = await builder.asEmbed(resolvedRequirements, baseEmbed);
+
+    if (config.length === 0) {
+      embed = await this.handleBlankConfig(embed);
+    }
 
     const sentMessage = await this.send(embed);
 
@@ -82,5 +89,15 @@ export default class NowPlayingCustom extends NowPlayingBaseCommand {
       username: usernameToUse,
       dbUser: (dbUser?.lastFMUsername === username ? dbUser : senderUser)!,
     };
+  }
+
+  private async handleBlankConfig(embed: MessageEmbed): Promise<MessageEmbed> {
+    if (!(await this.metaService.hasRunCommand(this.author.id, this.id, 1))) {
+      embed.setFooter(
+        `You can customize what gets shown here! See ${this.prefix}npc help for more information`
+      );
+    }
+
+    return embed;
   }
 }

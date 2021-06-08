@@ -12,7 +12,6 @@ export class Hint extends JumbleChildCommand {
 
   async run(message: Message) {
     let jumbledArtist = await this.sessionGetJSON<JumbledArtist>(
-      message,
       jumbleRedisKey
     );
 
@@ -27,7 +26,7 @@ export class Hint extends JumbleChildCommand {
 
     jumbledArtist.currenthint = hint;
 
-    this.sessionSetJSON(message, jumbleRedisKey, jumbledArtist);
+    this.sessionSetJSON(jumbleRedisKey, jumbledArtist);
 
     let embed = this.newEmbed()
       .setAuthor(

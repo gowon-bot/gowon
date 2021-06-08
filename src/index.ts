@@ -13,7 +13,7 @@ import { RedisService } from "./services/RedisService";
 import config from "../config.json";
 import { GraphQLAPI } from "./api";
 import { GowonClient } from "./lib/GowonClient";
-import { GuildEventService as GuildEventService } from "./services/GuildEventService";
+import { GuildEventService } from "./services/guilds/GuildEventService";
 import { GowonService } from "./services/GowonService";
 
 const client = new GowonClient(
@@ -81,6 +81,10 @@ async function start() {
 
   client.client.on("guildCreate", (guild) => {
     guildEventService.handleNewGuild(guild);
+  });
+
+  client.client.on("guildDelete", (guild) => {
+    guildEventService.handleGuildLeave(guild);
   });
 
   client.client.on("guildMemberAdd", (guildMember) => {

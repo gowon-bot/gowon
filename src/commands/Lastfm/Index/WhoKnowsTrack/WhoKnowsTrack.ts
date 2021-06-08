@@ -5,6 +5,7 @@ import { Arguments } from "../../../../lib/arguments/arguments";
 import { Variation } from "../../../../lib/command/BaseCommand";
 import { IndexingBaseCommand } from "../../../../lib/indexing/IndexingCommand";
 import { displayLink, displayNumber } from "../../../../lib/views/displays";
+import { NicknameService } from "../../../../services/guilds/NicknameService";
 import {
   WhoKnowsTrackConnector,
   WhoKnowsTrackParams,
@@ -38,6 +39,12 @@ export default class WhoKnowsTrack extends IndexingBaseCommand<
   description = "See who knows a track";
 
   arguments: Arguments = args;
+
+  nicknameService = new NicknameService(this.logger);
+
+  async prerun() {
+    await this.nicknameService.init();
+  }
 
   async run() {
     let artistName = this.parsedArguments.artist,
@@ -79,6 +86,12 @@ export default class WhoKnowsTrack extends IndexingBaseCommand<
 
     const { rows, track } = response.whoKnowsTrack;
 
+    await this.nicknameService.cacheNicknames(
+      response.whoKnowsTrack.rows.map((u) => u.user),
+      this.guild.id,
+      this.gowonClient
+    );
+
     const embed = new MessageEmbed()
       .setTitle(`Who knows ${track.name.italic()} by ${track.artist.strong()}?`)
       .setDescription(
@@ -87,7 +100,7 @@ export default class WhoKnowsTrack extends IndexingBaseCommand<
           : rows.map(
               (wk, index) =>
                 `${index + 1}. ${displayLink(
-                  wk.user.username,
+                  this.nicknameService.cacheGetNickname(wk.user.discordID),
                   LinkGenerator.userPage(wk.user.username)
                 )} - **${displayNumber(wk.playcount, "**play")}`
             )

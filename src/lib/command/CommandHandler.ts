@@ -9,6 +9,7 @@ import { MetaService } from "../../services/dbservices/MetaService";
 import Prefix from "../../commands/Meta/Prefix";
 import { GowonClient } from "../GowonClient";
 import { RunAs } from "./RunAs";
+import { NicknameService } from "../../services/guilds/NicknameService";
 
 export class CommandHandler {
   gowonService = GowonService.getInstance();
@@ -17,6 +18,7 @@ export class CommandHandler {
   client!: GowonClient;
   adminService = new AdminService(this.client);
   private logger = new Logger();
+  private nicknameService = new NicknameService(this.logger);
 
   setClient(client: GowonClient) {
     this.client = client;
@@ -24,9 +26,16 @@ export class CommandHandler {
 
   async init() {
     await this.commandManager.init();
+    this.nicknameService.init();
   }
 
   async handle(message: Message): Promise<void> {
+    this.nicknameService.recordNickname(
+      message.author.id,
+      message.guild!.id,
+      message.member?.nickname || message.author.username
+    );
+
     if (
       !(message.content.toLowerCase() === "not good bot") &&
       (message.content.toLowerCase() === "good bot" ||

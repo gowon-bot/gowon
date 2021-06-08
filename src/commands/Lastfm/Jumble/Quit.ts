@@ -1,5 +1,4 @@
 import { JumbleChildCommand } from "./JumbleChildCommand";
-import { Message } from "discord.js";
 import { jumbleRedisKey, JumbledArtist } from "./JumbleParentCommand";
 import { LogicError } from "../../../errors";
 
@@ -10,16 +9,19 @@ export class Quit extends JumbleChildCommand {
   aliases = ["giveup", "cancel"];
   usage = "";
 
-  async run(message: Message) {
+  async run() {
     let jumbledArtist = await this.sessionGetJSON<JumbledArtist>(
-      message,
       jumbleRedisKey
     );
 
     if (!jumbledArtist.jumbled)
       throw new LogicError("you haven't jumbled an artist yet!");
 
-    this.redisService.sessionDelete(message, jumbleRedisKey);
+    this.redisService.sessionDelete(
+      this.author.id,
+      this.guild.id,
+      jumbleRedisKey
+    );
 
     await this.traditionalReply(
       `The artist was ${jumbledArtist.unjumbled.strong()}!`

@@ -1,12 +1,12 @@
 import { Guild, GuildMember } from "discord.js";
-import { CommandManager } from "../lib/command/CommandManager";
-import { GowonClient } from "../lib/GowonClient";
-import { Logger } from "../lib/Logger";
-import { displayNumber } from "../lib/views/displays";
-import { BaseService } from "./BaseService";
-import { AdminService } from "./dbservices/AdminService";
-import { GowonService } from "./GowonService";
-import { IndexingService } from "./indexing/IndexingService";
+import { CommandManager } from "../../lib/command/CommandManager";
+import { GowonClient } from "../../lib/GowonClient";
+import { Logger } from "../../lib/Logger";
+import { displayNumber } from "../../lib/views/displays";
+import { BaseService } from "../BaseService";
+import { AdminService } from "../dbservices/AdminService";
+import { GowonService } from "../GowonService";
+import { IndexingService } from "../indexing/IndexingService";
 
 export class GuildEventService extends BaseService {
   gowonService = GowonService.getInstance();
@@ -27,6 +27,10 @@ export class GuildEventService extends BaseService {
 
     await this.setupPermissions(guild);
     await this.pingDeveloper(guild);
+  }
+
+  public async handleGuildLeave(guild: Guild) {
+    await this.pingDeveloper(guild, true);
   }
 
   public async handleNewUser(guildMember: GuildMember) {
@@ -94,15 +98,15 @@ export class GuildEventService extends BaseService {
     }
   }
 
-  private async pingDeveloper(guild: Guild) {
+  private async pingDeveloper(guild: Guild, leave = false) {
     const developerID = this.gowonClient.specialUsers.developers[0].id;
 
     await this.gowonClient.client.users
       .resolve(developerID)
       ?.send(
-        `Gowon just joined ${guild.name} (${displayNumber(
+        `Gowon just ${leave ? "left" : "joined"} ${guild.name} (${displayNumber(
           guild.memberCount,
-          "members"
+          "member"
         )})`
       );
   }

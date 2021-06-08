@@ -1,7 +1,6 @@
 import { BaseService } from "./BaseService";
 import redis, { RedisError } from "redis";
 import { promisify } from "util";
-import { Message } from "discord.js";
 import { Logger } from "../lib/Logger";
 import { fromUnixTime } from "date-fns";
 
@@ -29,9 +28,12 @@ export class RedisService extends BaseService {
     return "gowon:" + key;
   }
 
-  private genSessionKey(message: Message, key: string): string {
-    return `${this.sessionPrefix}-${message.author.id}:${message.guild
-      ?.id!}-${key}`;
+  private genSessionKey(
+    discordID: string,
+    guildID: string,
+    key: string
+  ): string {
+    return `${this.sessionPrefix}-${discordID}:${guildID}-${key}`;
   }
 
   private handleRedisError(error: RedisError): void {
@@ -63,16 +65,21 @@ export class RedisService extends BaseService {
     this.client.del(this.genKey(key));
   }
 
-  async sessionGet(message: Message, key: string) {
-    return this.get(this.genSessionKey(message, key));
+  async sessionGet(discordID: string, guildID: string, key: string) {
+    return this.get(this.genSessionKey(discordID, guildID, key));
   }
 
-  async sessionSet(message: Message, key: string, value: any) {
-    return this.set(this.genSessionKey(message, key), value);
+  async sessionSet(
+    discordID: string,
+    guildID: string,
+    key: string,
+    value: any
+  ) {
+    return this.set(this.genSessionKey(discordID, guildID, key), value);
   }
 
-  async sessionDelete(message: Message, key: string) {
-    return this.delete(this.genSessionKey(message, key));
+  async sessionDelete(discordID: string, guildID: string, key: string) {
+    return this.delete(this.genSessionKey(discordID, guildID, key));
   }
 
   public encodeDate(date: Date): string {

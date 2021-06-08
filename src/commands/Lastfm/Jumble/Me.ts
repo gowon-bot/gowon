@@ -41,7 +41,6 @@ export class Me extends JumbleChildCommand<typeof args> {
 
   async run(message: Message, runAs: RunAs) {
     let alreadyJumbled = await this.sessionGetJSON<JumbledArtist>(
-      message,
       jumbleRedisKey
     );
 
@@ -77,7 +76,7 @@ export class Me extends JumbleChildCommand<typeof args> {
       currenthint: artist.name.replace(/[^\s]/g, this.hintChar),
     };
 
-    this.sessionSetJSON(message, jumbleRedisKey, jumbledArtist);
+    this.sessionSetJSON(jumbleRedisKey, jumbledArtist);
 
     let tags = this.tagConsolidator
       .blacklistTags(artist.name)
@@ -128,7 +127,7 @@ export class Me extends JumbleChildCommand<typeof args> {
   private async handleAlreadyJumbled(message: Message, jumble: JumbledArtist) {
     jumble.jumbled = this.jumble(jumble.unjumbled);
 
-    this.sessionSetJSON(message, jumbleRedisKey, jumble);
+    this.sessionSetJSON(jumbleRedisKey, jumble);
 
     let embed = this.newEmbed()
       .setAuthor(
