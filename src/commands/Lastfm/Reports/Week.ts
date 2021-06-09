@@ -78,8 +78,9 @@ export default class Week extends LastFMBaseCommand<typeof args> {
       (a, b) => week.top.artists[b] - week.top.artists[a]
     );
 
-    let embed = this.newEmbed().setTitle(`${perspective.possessive} week`)
-      .setDescription(`
+    let embed = this.newEmbed()
+      .setAuthor(...this.generateEmbedAuthor())
+      .setTitle(`${perspective.upper.possessive} week`).setDescription(`
       _${displayDate(sub(new Date(), { weeks: 1 }))} - ${displayDate(
       new Date()
     )}_

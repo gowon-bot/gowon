@@ -51,6 +51,7 @@ import {
   RawTagTopTracks,
   RawTagTopTracksResponse,
   RawLastFMSession,
+  TrackLoveParams,
 } from "./LastFMService.types";
 import config from "../../../config.json";
 import {
@@ -270,6 +271,10 @@ export class LastFMAPIService extends BaseService {
     return (
       await this.request<RawTagTopTracksResponse>("tag.getTopTracks", params)
     ).tracks;
+  }
+
+  async love(params: TrackLoveParams): Promise<void> {
+    return await this.request("track.love", params, { post: true });
   }
 
   private async request<T>(

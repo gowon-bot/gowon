@@ -556,6 +556,11 @@ export interface ScrobbleParams {
   duration?: number;
 }
 
+export interface TrackLoveParams extends UsernameParams {
+  track: string;
+  artist: string;
+}
+
 export interface GetSessionParams {
   token: string;
 }

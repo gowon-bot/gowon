@@ -77,8 +77,9 @@ export default class Day extends LastFMBaseCommand<typeof args> {
       (a, b) => day.top.artists[b] - day.top.artists[a]
     );
 
-    let embed = this.newEmbed().setTitle(`${perspective.possessive} day`)
-      .setDescription(`
+    let embed = this.newEmbed()
+      .setAuthor(...this.generateEmbedAuthor())
+      .setTitle(`${perspective.upper.possessive} day`).setDescription(`
       _${displayDate(sub(new Date(), { days: 1 }))} - ${displayDate(
       new Date()
     )}_

@@ -76,8 +76,9 @@ export default class Month extends LastFMBaseCommand<typeof args> {
       (a, b) => month.top.artists[b] - month.top.artists[a]
     );
 
-    let embed = this.newEmbed().setTitle(`${perspective.possessive} month`)
-      .setDescription(`
+    let embed = this.newEmbed()
+      .setAuthor(...this.generateEmbedAuthor())
+      .setTitle(`${perspective.upper.possessive} month`).setDescription(`
       _${displayDate(sub(new Date(), { months: 1 }))} - ${displayDate(
       new Date()
     )}_
