@@ -56,7 +56,7 @@ export default class Love extends LastFMBaseCommand<typeof args> {
 
     const embed = this.newEmbed()
       .setAuthor("Loved! ❤️", this.author.avatarURL() || undefined)
-      .setTitle(trackInfo.name.italic())
+      .setTitle(trackInfo.name)
       .setDescription(
         `by ${trackInfo.artist.name.strong()}${
           album ? ` from ${album.italic()}` : ""

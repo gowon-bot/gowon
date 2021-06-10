@@ -47,7 +47,8 @@
     ".*\\banal\\b.*",
     ".*\\fisting\\b.*",
     ".*taeminification.*",
-    ".*dilf.*"
+    ".*dilf.*",
+    ".*gdchill.*"
   ],
   "explicit": [
     [19, 12, 21, 20],

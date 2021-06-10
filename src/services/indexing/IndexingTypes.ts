@@ -24,6 +24,12 @@ export interface TrackInput {
   album?: AlbumInput;
 }
 
+export interface TrackInput {
+  name?: string;
+  artist?: ArtistInput;
+  album?: AlbumInput;
+}
+
 export interface WhoKnowsSettings {
   guildID?: string;
   limit?: number;
@@ -42,6 +48,11 @@ export interface IndexerArtist {
 export interface IndexerAlbum {
   name: string;
   artist: IndexerArtist;
+}
+
+export interface IndexerAmbiguousTrack {
+  name: string;
+  artist: string;
 }
 
 export interface IndexerRateYourMusicAlbum {
