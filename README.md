@@ -2,7 +2,7 @@
 
 Gowon is a Last.FM discord bot in active development.
 
-Check out the indexing server over at [jivison/gowon-indexer](https://github.com/jivison/gowon-indexer)
+Check out the indexing server over at [jivison/mirrorball](https://github.com/jivison/mirrorball)
 
 ## Running yourself
 
