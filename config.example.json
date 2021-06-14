@@ -5,8 +5,9 @@
   "lastFMAPIKey": "Get this from https://last.fm/api",
   "lastFMSecret": "Get this from https://last.fm/api",
 
-  "discordToken": "Get this from the discord developer portal",
-  "discordClientID": "",
+  "discordClientSecret": "Get these from the discord developer portal",
+  "discordToken": "^",
+  "discordClientID": "^",
 
   "defaultPrefix": ".",
 
@@ -19,8 +20,5 @@
 
   "lastFMBotUsername": "use this if you want the bot to scrobble tracks (you will need to configure who it will scrobble yourself. By default, it's alpha testers in specialUsers.json)",
   "lastFMBotPassword": "use this if you want the bot to scrobble tracks",
-  "lastFMBotSessionKey": "use this if you want the bot to scrobble tracks",
-
-  "spotifyClientID": "Get this from the spotify application dashboard",
-  "spotifyClientSecret": "Get this from the spotify application dashboard"
+  "lastFMBotSessionKey": "use this if you want the bot to scrobble tracks"
 }

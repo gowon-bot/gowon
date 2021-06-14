@@ -1,40 +1,25 @@
-import { User } from "../../database/entity/User";
+import { DiscordService } from "../../services/Discord/DiscordService";
+
+export interface SimpleUser {
+  discordID: string;
+  username: string;
+  avatarURL: string;
+}
+
+const discordService = new DiscordService();
 
 export default {
-  queries: {
-    async user(_: any, args: { id: number }) {
-      return await User.findOne(args);
-    },
-
-    async userByDiscordID(_: any, args: { discordID: string }) {
-      return await User.findOne(args);
-    },
-
-    async users() {
-      return await User.find();
-    },
-  },
+  queries: {},
 
   mutations: {
-    async login(
+    async discordAuthenticate(
       _: any,
-      args: { code: string; discordID: string }
-    ): Promise<User> {
-      let user = await User.findOne({
-        discordID: args.discordID,
-      });
+      args: { code: string }
+    ): Promise<SimpleUser> {
+      const accessToken = await discordService.getAccessToken(args.code);
+      const user = await discordService.getUser(accessToken.access_token);
 
-      if (!user) {
-        user = User.create({
-          discordID: args.discordID,
-          discordAuthCode: args.code,
-        });
-
-        return await user.save();
-      } else {
-        user.discordAuthCode = args.code;
-        return await user.save();
-      }
+      return user;
     },
   },
 };
