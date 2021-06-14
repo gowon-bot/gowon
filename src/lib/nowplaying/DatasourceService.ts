@@ -92,28 +92,40 @@ export class DatasourceService extends BaseService {
     return resolvedMap;
   }
 
-  async artistInfo(): Promise<ArtistInfo> {
-    const nowPlaying = this.nowPlaying;
+  async artistInfo(): Promise<ArtistInfo | undefined> {
+    try {
+      const nowPlaying = this.nowPlaying;
 
-    return await this.lastFMService.artistInfo({
-      artist: nowPlaying.artist,
-      username: this.resources.requestable,
-    });
+      return await this.lastFMService.artistInfo({
+        artist: nowPlaying.artist,
+        username: this.resources.requestable,
+      });
+    } catch {
+      return undefined;
+    }
   }
 
-  async trackInfo(): Promise<TrackInfo> {
-    return await this.lastFMService.trackInfo({
-      artist: this.nowPlaying.artist,
-      track: this.nowPlaying.name,
-      username: this.resources.requestable,
-    });
+  async trackInfo(): Promise<TrackInfo | undefined> {
+    try {
+      return await this.lastFMService.trackInfo({
+        artist: this.nowPlaying.artist,
+        track: this.nowPlaying.name,
+        username: this.resources.requestable,
+      });
+    } catch {
+      return undefined;
+    }
   }
 
   async artistCrown(): Promise<CrownDisplay | undefined> {
-    return await this.crownsService.getCrownDisplay(
-      this.nowPlaying.artist,
-      this.resources.message.guild!
-    );
+    try {
+      return await this.crownsService.getCrownDisplay(
+        this.nowPlaying.artist,
+        this.resources.message.guild!
+      );
+    } catch {
+      return undefined;
+    }
   }
 
   albumPlays(): QueryPart {
