@@ -1,4 +1,3 @@
-import { fetch } from "apollo-env";
 import { LogicError } from "../../../../errors";
 import { Arguments } from "../../../../lib/arguments/arguments";
 import {
@@ -9,6 +8,7 @@ import {
 import streamToString from "stream-to-string";
 import { Emoji } from "../../../../lib/Emoji";
 import { RateYourMusicIndexingChildCommand } from "./RateYourMusicChildCommand";
+import fetch from "node-fetch";
 
 const args = {
   inputs: {
