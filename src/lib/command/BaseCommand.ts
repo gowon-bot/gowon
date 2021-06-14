@@ -37,6 +37,7 @@ import {
   buildRequestables,
   compareUsernames,
 } from "../../helpers/parseMentions";
+import { Chance } from "chance";
 
 export interface Variation {
   name: string;
@@ -190,6 +191,10 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     try {
       senderUser = await this.usersService.getUser(this.message.author.id);
     } catch {}
+
+    if (senderUser && Chance().bool({ likelihood: 10 })) {
+      senderUser.mirrorballUpdate();
+    }
 
     if (lfmUser) {
       mentionedUsername = lfmUser;

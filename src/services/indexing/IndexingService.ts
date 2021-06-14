@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client/core";
 import { DocumentNode } from "graphql";
 import { IndexingWebhookService } from "../../api/indexing/IndexingWebhookService";
-import { indexerClient } from "../../lib/indexing/client";
+import { mirrorballClient } from "../../lib/indexing/client";
 import { BaseService } from "../BaseService";
 import { UsersService } from "../dbservices/UsersService";
 import { UserType } from "./IndexingTypes";
@@ -23,7 +23,7 @@ export class IndexingService extends BaseService {
       )}`
     );
 
-    return await indexerClient.query({
+    return await mirrorballClient.query({
       query,
       variables,
       fetchPolicy: "no-cache",

@@ -19,6 +19,7 @@ import {
 } from "../../../services/LastFM/converters/RecentTracks";
 import { displayNumber } from "../../../lib/views/displays";
 import { Requestable } from "../../../services/LastFM/LastFMAPIService";
+import { Chance } from "chance";
 
 const args = {
   inputs: {
@@ -53,6 +54,7 @@ export abstract class NowPlayingBaseCommand<
     let otherWords = this.parsedArguments.otherWords;
 
     let {
+      senderUser,
       username,
       senderUsername,
       discordUser,
@@ -65,6 +67,10 @@ export abstract class NowPlayingBaseCommand<
             fetchDiscordUser: true,
           }
     );
+
+    if (senderUser && Chance().bool({ likelihood: 10 })) {
+      senderUser.mirrorballUpdate();
+    }
 
     if (
       otherWords &&

@@ -23,6 +23,9 @@ import {
 import { Friend } from "./Friend";
 import { userHasRole } from "../../helpers/discord";
 import { GowonService } from "../../services/GowonService";
+import { mirrorballClient } from "../../lib/indexing/client";
+import gql from "graphql-tag";
+import { Logger } from "../../lib/Logger";
 
 @Entity({ name: "users" })
 export class User extends BaseEntity {
@@ -140,5 +143,23 @@ export class User extends BaseEntity {
     });
 
     return !!setting;
+  }
+
+  async mirrorballUpdate(): Promise<void> {
+    Logger.log("User", `updating ${this.discordID}`);
+    if (!this.isIndexed) {
+      return;
+    }
+
+    mirrorballClient.mutate({
+      mutation: gql`
+        mutation Update($discordID: String!) {
+          update(user: { discordID: $discordID }) {
+            success
+          }
+        }
+      `,
+      variables: { discordID: this.discordID },
+    });
   }
 }
