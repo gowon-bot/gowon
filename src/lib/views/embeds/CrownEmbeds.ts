@@ -214,4 +214,23 @@ It's a tie! ${holderUsername} will keep the crown for ${
         Yoink! The crown for ${this.crownCheck.artistName.strong()} was stolen from ${holderUsername} because they were crown banned!`
     );
   }
+
+  async loggedOut(): Promise<MessageEmbed> {
+    let holderUsername = await this.holderUsername();
+
+    return this.embed.setDescription(
+      `
+:crown: → ${this.user.username.code()} - ${displayNumber(
+        this.crownCheck.crown!.plays,
+        "play"
+      )}
+
+:pensive: → ${holderUsername?.code()} - ~~${displayNumber(
+        this.crownCheck.oldCrown?.plays!,
+        "play"
+      )}~~
+
+        Yoink! The crown for ${this.crownCheck.artistName.strong()} was stolen from ${holderUsername} because they were logged out!`
+    );
+  }
 }

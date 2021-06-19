@@ -53,7 +53,8 @@ export type InvalidCrownState =
   | CrownState.inactivity
   | CrownState.left
   | CrownState.purgatory
-  | CrownState.banned;
+  | CrownState.banned
+  | CrownState.loggedOut;
 
 @Entity({ name: "crowns" })
 export class Crown extends BaseEntity {
@@ -187,6 +188,9 @@ export class Crown extends BaseEntity {
     failed: boolean;
     reason?: InvalidCrownState;
   }> {
+    if (!this.user.lastFMUsername)
+      return { failed: true, reason: CrownState.loggedOut };
+
     if (!(await this.userStillInServer(message)))
       return { failed: true, reason: CrownState.left };
 

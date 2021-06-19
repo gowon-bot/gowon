@@ -34,7 +34,8 @@ export default class Login extends IndexingBaseCommand<
   delegates: Delegate<typeof args>[] = [
     {
       delegateTo: SimpleLogin,
-      when: () => !this.indexerGuilds.includes(this.guild.id),
+      when: () => true,
+      //  () => !this.indexerGuilds.includes(this.guild.id),
     },
   ];
 

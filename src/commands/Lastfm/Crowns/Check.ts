@@ -97,6 +97,8 @@ export class Check extends CrownsChildCommand<typeof args> {
         ? embeds.left()
         : crownCheck.state === CrownState.banned
         ? embeds.banned()
+        : crownCheck.state === CrownState.loggedOut
+        ? embeds.loggedOut()
         : this.newEmbed();
 
     await this.send(await embed);

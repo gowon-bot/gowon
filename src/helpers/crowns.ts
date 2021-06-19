@@ -9,5 +9,7 @@ export function createInvalidBadge(state?: CrownState): string {
     ? " [Purgatory]"
     : state === CrownState.banned
     ? " [Crown banned]"
+    : state === CrownState.loggedOut
+    ? " [Logged out]"
     : "";
 }

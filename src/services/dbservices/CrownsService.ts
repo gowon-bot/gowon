@@ -38,6 +38,7 @@ export enum CrownState {
   purgatory = "Purgatory",
   left = "Left",
   banned = "Banned",
+  loggedOut = "Logged out",
 }
 
 export interface CrownCheck {

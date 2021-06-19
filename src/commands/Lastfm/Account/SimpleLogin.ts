@@ -1,20 +1,13 @@
-import { Message } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { differenceInDays } from "date-fns";
-import { DiscordIDMention } from "../../../lib/arguments/mentions/DiscordIDMention";
-import { LogicError } from "../../../errors";
 import { UserInfo } from "../../../services/LastFM/converters/InfoTypes";
 
 const args = {
   inputs: {
     username: { index: 0 },
-  },
-  mentions: {
-    user: { index: 0 },
-    userID: { mention: new DiscordIDMention(true), index: 0 },
   },
 } as const;
 
@@ -35,23 +28,8 @@ export default class SimpleLogin extends LastFMBaseCommand<typeof args> {
     }),
   };
 
-  async run(message: Message) {
+  async run() {
     let username = this.parsedArguments.username!;
-
-    let { discordUser } = await this.parseMentions({
-      fetchDiscordUser: true,
-      usernameRequired: false,
-    });
-
-    if (
-      discordUser &&
-      discordUser.id !== this.author.id &&
-      !this.message.member?.permissions?.has("ADMINISTRATOR")
-    ) {
-      throw new LogicError(
-        "you are not able to set usernames for other users!"
-      );
-    }
 
     if (username === "<username>") {
       await this.traditionalReply(
@@ -65,10 +43,7 @@ export default class SimpleLogin extends LastFMBaseCommand<typeof args> {
     try {
       userInfo = await this.lastFMService.userInfo({ username });
 
-      await this.usersService.setUsername(
-        (discordUser || message.author).id,
-        userInfo.name
-      );
+      await this.usersService.setUsername(this.author.id, userInfo.name);
 
       this.send(
         `Logged in as ${userInfo.name.code()}${
