@@ -2,6 +2,7 @@ import { RawLastFMErrorResponse } from "./services/LastFM/LastFMService.types";
 import { parseError, parseErrorSix } from "./helpers/error";
 import { Response } from "node-fetch";
 import { displayNumber } from "./lib/views/displays";
+import { Emoji } from "./lib/Emoji";
 
 export abstract class ClientError extends Error {
   name = "ClientError";
@@ -42,7 +43,7 @@ export class LastFMConnectionError extends ClientError {
   response: Response;
 
   constructor(response: Response) {
-    super("there was a problem connecting to Last.fm");
+    super("there was a problem connecting to Last.fm " + Emoji.shitsfucked);
     this.response = response;
   }
 }

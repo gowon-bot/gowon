@@ -9,7 +9,6 @@
     "aoty",
     "songs seen live",
     "fave",
-    "love at first listen",
     "played",
     "personal favourites",
     "personal favorites",
@@ -57,7 +56,9 @@
     ".*gdchill.*",
     ".*horny.*",
     ".*dildo.*",
-    "gays?"
+    "gays?",
+    "love at first listen.*",
+    ".*bestys.*"
   ],
   "explicit": [
     [19, 12, 21, 20],

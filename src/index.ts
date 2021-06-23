@@ -9,7 +9,7 @@ import pm2 from "pm2";
 import { CommandHandler } from "./lib/command/CommandHandler";
 import { Client, GuildMember } from "discord.js";
 import { DB } from "./database";
-import { RedisService } from "./services/RedisService";
+import { RedisInteractionService } from "./services/redis/RedisInteractionService";
 import config from "../config.json";
 import { GraphQLAPI } from "./api";
 import { GowonClient } from "./lib/GowonClient";
@@ -33,7 +33,7 @@ const client = new GowonClient(
   config.environment
 );
 const handler = new CommandHandler();
-const redisService = new RedisService();
+const redisService = RedisInteractionService.getInstance();
 const guildEventService = new GuildEventService(client);
 const db = new DB();
 const api = new GraphQLAPI();

@@ -1,4 +1,3 @@
-import { MessageEmbed } from "discord.js";
 import { IndexerError, LogicError } from "../../../../errors";
 import { SimpleScrollingEmbed } from "../../../../lib/views/embeds/SimpleScrollingEmbed";
 import { LinkGenerator } from "../../../../helpers/lastFM";
@@ -91,7 +90,7 @@ export default class AlbumTopTracks extends IndexingBaseCommand<
         } no scrobbles of any songs from ${album.name.italic()} by ${album.artist.name.strong()}!`
       );
     }
-    const embed = new MessageEmbed()
+    const embed = this.newEmbed()
       .setTitle(
         `Top tracks on ${album.name.italic()} by ${album.artist.name.strong()} for ${username}`
       )

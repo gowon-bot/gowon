@@ -1,4 +1,3 @@
-import { MessageEmbed } from "discord.js";
 import { IndexerError, LogicError } from "../../../../errors";
 import { SimpleScrollingEmbed } from "../../../../lib/views/embeds/SimpleScrollingEmbed";
 import { LinkGenerator } from "../../../../helpers/lastFM";
@@ -84,7 +83,7 @@ export default class ArtistTopAlbums extends IndexingBaseCommand<
       );
     }
 
-    const embed = new MessageEmbed()
+    const embed = this.newEmbed()
       .setTitle(`Top ${artist.name} albums for ${username}`)
       .setURL(LinkGenerator.libraryArtistTopAlbums(username, artist.name));
 

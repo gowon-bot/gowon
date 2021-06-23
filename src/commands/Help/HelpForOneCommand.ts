@@ -51,7 +51,7 @@ export default class HelpForOneCommand extends BaseCommand<typeof args> {
       !(await this.adminService.can.run(command, message, this.gowonClient))
         .passed
     ) {
-      return;
+      throw new CommandNotFoundError();
     }
 
     if (command instanceof ParentCommand)

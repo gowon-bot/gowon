@@ -1,11 +1,14 @@
-import { MessageEmbed } from "discord.js";
 import { IndexerError } from "../../../../errors";
 import { LinkGenerator } from "../../../../helpers/lastFM";
 import { convertIndexerDate } from "../../../../helpers/mirrorball";
 import { Arguments } from "../../../../lib/arguments/arguments";
 import { Variation } from "../../../../lib/command/BaseCommand";
 import { IndexingBaseCommand } from "../../../../lib/indexing/IndexingCommand";
-import { displayDate, displayLink } from "../../../../lib/views/displays";
+import {
+  displayDate,
+  displayLink,
+  displayNumberedList,
+} from "../../../../lib/views/displays";
 import { NicknameService } from "../../../../services/guilds/NicknameService";
 import {
   WhoFirstArtistConnector,
@@ -49,10 +52,6 @@ export default class WhoFirstArtist extends IndexingBaseCommand<
 
   nicknameService = new NicknameService(this.logger);
 
-  async prerun() {
-    await this.nicknameService.init();
-  }
-
   async run() {
     let artistName = this.parsedArguments.artist;
     const whoLast = this.variationWasUsed("wholast");
@@ -92,19 +91,21 @@ export default class WhoFirstArtist extends IndexingBaseCommand<
 
     const { rows, artist } = response.whoFirstArtist;
 
-    const embed = new MessageEmbed()
+    const embed = this.newEmbed()
       .setTitle(
         `Who ${whoLast ? "last" : "first"} scrobbled ${artist.name.strong()}?`
       )
       .setDescription(
         !artist || rows.length === 0
           ? `No one has scrobbled this artist`
-          : rows.map(
-              (wk, index) =>
-                `${index + 1}. ${displayLink(
-                  this.nicknameService.cacheGetNickname(wk.user.discordID),
-                  LinkGenerator.userPage(wk.user.username)
-                )} - ${displayDate(convertIndexerDate(wk.scrobbledAt))}`
+          : displayNumberedList(
+              rows.map(
+                (wk) =>
+                  `${displayLink(
+                    this.nicknameService.cacheGetNickname(wk.user.discordID),
+                    LinkGenerator.userPage(wk.user.username)
+                  )} - ${displayDate(convertIndexerDate(wk.scrobbledAt))}`
+              )
             )
       );
 

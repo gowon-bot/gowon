@@ -26,13 +26,12 @@ export class CommandHandler {
 
   async init() {
     await this.commandManager.init();
-    this.nicknameService.init();
   }
 
   async handle(message: Message): Promise<void> {
     this.nicknameService.recordNickname(
       message.author.id,
-      message.guild!.id,
+      message.guild?.id,
       message.member?.nickname || message.author.username
     );
 

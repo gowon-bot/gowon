@@ -1,19 +1,13 @@
 import { GowonClient } from "../../lib/GowonClient";
 import { BaseService } from "../BaseService";
-import { RedisService } from "../RedisService";
+import { RedisService } from "../redis/RedisService";
 
 export class NicknameService extends BaseService {
-  redisService = new RedisService({
+  redisService = new RedisService(this.logger, {
     defaultExpiry: 30 * 24 * 60 * 60,
-    sessionPrefix: "nickname",
-    logger: this.logger,
   });
 
   private cache: { [discordID: string]: string } = {};
-
-  async init() {
-    await this.redisService.init();
-  }
 
   async cacheNicknames(
     users: { discordID: string }[],
@@ -34,7 +28,13 @@ export class NicknameService extends BaseService {
     return this.cache[discordID];
   }
 
-  async recordNickname(discordID: string, guildID: string, nickname: string) {
+  async recordNickname(
+    discordID: string,
+    guildID: string | undefined,
+    nickname: string
+  ) {
+    if (!guildID) return;
+
     await this.redisService.sessionSet(
       discordID,
       guildID,

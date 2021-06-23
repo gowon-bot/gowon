@@ -1,10 +1,13 @@
-import { MessageEmbed } from "discord.js";
 import { IndexerError } from "../../../../errors";
 import { LinkGenerator } from "../../../../helpers/lastFM";
 import { Arguments } from "../../../../lib/arguments/arguments";
 import { Variation } from "../../../../lib/command/BaseCommand";
 import { IndexingBaseCommand } from "../../../../lib/indexing/IndexingCommand";
-import { displayLink, displayNumber } from "../../../../lib/views/displays";
+import {
+  displayLink,
+  displayNumber,
+  displayNumberedList,
+} from "../../../../lib/views/displays";
 import { NicknameService } from "../../../../services/guilds/NicknameService";
 import {
   WhoKnowsTrackConnector,
@@ -41,10 +44,6 @@ export default class WhoKnowsTrack extends IndexingBaseCommand<
   arguments: Arguments = args;
 
   nicknameService = new NicknameService(this.logger);
-
-  async prerun() {
-    await this.nicknameService.init();
-  }
 
   async run() {
     let artistName = this.parsedArguments.artist,
@@ -92,17 +91,19 @@ export default class WhoKnowsTrack extends IndexingBaseCommand<
       this.gowonClient
     );
 
-    const embed = new MessageEmbed()
+    const embed = this.newEmbed()
       .setTitle(`Who knows ${track.name.italic()} by ${track.artist.strong()}?`)
       .setDescription(
         !track || rows.length === 0
           ? `No one knows this track`
-          : rows.map(
-              (wk, index) =>
-                `${index + 1}. ${displayLink(
-                  this.nicknameService.cacheGetNickname(wk.user.discordID),
-                  LinkGenerator.userPage(wk.user.username)
-                )} - **${displayNumber(wk.playcount, "**play")}`
+          : displayNumberedList(
+              rows.map(
+                (wk) =>
+                  `${displayLink(
+                    this.nicknameService.cacheGetNickname(wk.user.discordID),
+                    LinkGenerator.userPage(wk.user.username)
+                  )} - **${displayNumber(wk.playcount, "**play")}`
+              )
             )
       );
 
