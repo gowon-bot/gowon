@@ -106,14 +106,20 @@ export abstract class IndexingBaseCommand<
   protected async notifyUser(
     perspective: Perspective,
     type: "update" | "index",
-    replyTo?: Message
+    replyTo?: Message,
+    error?: string
   ) {
-    this.reply(
-      `${perspective.upper.plusToHave} been ${
+    let message: string;
+
+    if (error) {
+      message = `An error occurred: ${error}\nPlease try again`;
+    } else {
+      message = `${perspective.upper.plusToHave} been ${
         type === "index" ? "fully indexed" : "updated"
-      } successfully!`,
-      { ping: true, to: replyTo }
-    );
+      } successfully!`;
+    }
+
+    this.reply(message, { ping: true, to: replyTo });
   }
 
   protected async throwIfNotIndexed(

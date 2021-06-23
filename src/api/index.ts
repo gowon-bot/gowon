@@ -43,10 +43,13 @@ export class GraphQLAPI {
     app.use("/api", bodyParser.json());
 
     app.post("/api/indexingWebhook", (req, res) => {
-      const body = req.body as { data?: { token?: string } };
+      const body = req.body as { data?: { token?: string; error?: string } };
 
       if (body?.data?.token) {
-        IndexingWebhookService.getInstance().handleRequest(body.data.token);
+        IndexingWebhookService.getInstance().handleRequest(
+          body.data.token,
+          body.data.error
+        );
         res.status(200).send();
       } else {
         res.status(400).send("Please send a token in valid json format");

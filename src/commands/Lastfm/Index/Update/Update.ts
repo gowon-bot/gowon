@@ -77,6 +77,10 @@ export default class Update extends IndexingBaseCommand<
 
     const { senderUsername, perspective } = await this.parseMentions();
 
+    const sentMessage = await this.traditionalReply(
+      `Updating user ${senderUsername.code()}`
+    );
+
     this.stopwatch.start();
     const response = await this.query({
       user: { discordID: this.author.id },
@@ -92,6 +96,13 @@ export default class Update extends IndexingBaseCommand<
       } else {
         throw new IndexerError(errors.errors[0].message);
       }
+    } else {
+      if (response.update.taskName === IndexerTaskNames.indexUser) {
+        await sentMessage.edit(
+          sentMessage.content +
+            ". Since you haven't been fully indexed yet, this may take a while"
+        );
+      }
     }
 
     await this.concurrencyManager.registerUser(
@@ -99,14 +110,7 @@ export default class Update extends IndexingBaseCommand<
       this.author.id
     );
 
-    const sentMessage = await this.traditionalReply(
-      `Updating user ${senderUsername.code()}` +
-        (response.update.taskName === IndexerTaskNames.indexUser
-          ? ". Since you haven't been fully indexed yet, this may take a while"
-          : "")
-    );
-
-    this.indexingService.webhook.onResponse(response.update.token, () => {
+    this.indexingService.webhook.onResponse(response.update.token, (error) => {
       this.concurrencyManager.unregisterUser(
         ConcurrentActions.Indexing,
         this.author.id
@@ -116,11 +120,16 @@ export default class Update extends IndexingBaseCommand<
           perspective,
           response.update.taskName === IndexerTaskNames.indexUser
             ? "index"
-            : "update"
+            : "update",
+          undefined,
+          error
         );
       } else {
         sentMessage.edit(
-          `<@${this.author.id}>, Updated user ${senderUsername.code()}!`
+          `<@${this.author.id}>, ` +
+            (error
+              ? `An error ocurred: ${error}\nPlease try again`
+              : `Updated user ${senderUsername.code()}!`)
         );
       }
     });

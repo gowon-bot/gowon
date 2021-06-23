@@ -1,3 +1,5 @@
+type IndexingCallback = (error?: string) => void;
+
 export class IndexingWebhookService {
   private static instance?: IndexingWebhookService;
 
@@ -10,16 +12,20 @@ export class IndexingWebhookService {
   }
 
   // Instance methods
-  private listeners: { [token: string]: () => void } = {};
+  private listeners: { [token: string]: IndexingCallback } = {};
 
-  handleRequest(token: string) {
-    this.notifyListeners(token);
+  handleRequest(token: string, error?: string) {
+    this.notifyListeners(token, error);
   }
 
   waitForResponse(token: string, timeout?: number): Promise<void> {
     return new Promise((resolve, reject) => {
-      this.listen(token, () => {
-        resolve();
+      this.listen(token, (error) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve();
+        }
       });
 
       if (timeout) {
@@ -31,18 +37,18 @@ export class IndexingWebhookService {
     });
   }
 
-  onResponse(token: string, callback: () => void) {
+  onResponse(token: string, callback: IndexingCallback) {
     this.listen(token, callback);
   }
 
-  private notifyListeners(token: string) {
+  private notifyListeners(token: string, error?: string) {
     if (this.listeners[token]) {
-      this.listeners[token]();
+      this.listeners[token](error);
       delete this.listeners[token];
     }
   }
 
-  private listen(token: string, callback: () => void) {
+  private listen(token: string, callback: IndexingCallback) {
     this.listeners[token] = callback;
   }
 }
