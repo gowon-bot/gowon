@@ -16,7 +16,7 @@ const args = {
 export default class TagCombo extends LastFMBaseCommand<typeof args> {
   idSeed = "secret number dita";
 
-  aliases = ["tagstreak", "tac"];
+  aliases = ["tagstreak", "tac", "tagscombo", "combotags"];
   description = `Shows your current streak\n Max combo: ${displayNumber(
     this.gowonService.constants.hardPageLimit * 1000
   )}`;

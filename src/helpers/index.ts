@@ -208,3 +208,7 @@ export class Stopwatch {
     return process.hrtime.bigint();
   }
 }
+
+export function isNumeric(value: string): boolean {
+  return /^-?\d+$/.test(value);
+}

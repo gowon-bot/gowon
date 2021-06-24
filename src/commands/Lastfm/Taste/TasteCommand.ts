@@ -4,7 +4,7 @@ import {
   Taste as TasteType,
   TasteArtist,
 } from "../../../lib/calculators/TasteCalculator";
-import { StringPadder } from "../../../helpers";
+import { isNumeric, StringPadder } from "../../../helpers";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { LastFMPeriod } from "../../../services/LastFM/LastFMService.types";
 import { Paginator } from "../../../lib/Paginator";
@@ -77,8 +77,14 @@ export abstract class TasteCommand<
             parsedArguments[argName]
           );
         } else if (argName === "username" || argName === "username2") {
-          if (!this.durationParser.isDuration(parsedArguments[argName]))
-            username = parsedArguments[argName] as string;
+          const usernameArgument = parsedArguments[argName] as string;
+
+          if (
+            !this.durationParser.isDuration(usernameArgument) &&
+            !isNumeric(usernameArgument)
+          ) {
+            username = usernameArgument;
+          }
         } else if (argName === "lfmUser" || argName === "lfmUser2") {
           username = parsedArguments[argName] as string;
         } else {
