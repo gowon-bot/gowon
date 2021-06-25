@@ -329,16 +329,16 @@ export class LastFMAPIService extends BaseService {
       )}`
     );
 
-    let qparams = (params as any).api_key
+    const qparams = (params as any).api_key
       ? stringify({ ...params })
       : this.buildParams({ method, ...params });
 
-    let response = await fetch(this.url + "?" + qparams, fetchOptions);
+    const response = await fetch(this.url + "?" + qparams, fetchOptions);
 
     if (`${response.status}`.startsWith("3"))
       throw new LastFMConnectionError(response);
 
-    let jsonResponse = await response.json();
+    const jsonResponse = await response.json();
 
     if (jsonResponse.error) throw new LastFMError(jsonResponse);
 

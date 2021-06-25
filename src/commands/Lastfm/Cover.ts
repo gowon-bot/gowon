@@ -45,6 +45,14 @@ export default class Cover extends LastFMBaseCommand<typeof args> {
       if (!album) album = nowPlaying.album;
     }
 
+    if (
+      artist.toLowerCase() === "f(x)" &&
+      album.toLowerCase() === "blue tape"
+    ) {
+      this.blueTape();
+      return;
+    }
+
     if (nowPlaying?.artist === artist && nowPlaying?.album === album) {
       await this.sendFromNowPlaying(nowPlaying);
     } else {
@@ -97,5 +105,12 @@ export default class Cover extends LastFMBaseCommand<typeof args> {
         )}.`
       );
     }
+  }
+
+  private async blueTape() {
+    await this.sendWithFiles(
+      `Cover for ${"Blue Tape".strong()} by ${"f(x)".strong()}. *(Thanks to jopping and ember for the image)*`,
+      ["http://gowon.ca/images/blueTape.png"]
+    );
   }
 }
