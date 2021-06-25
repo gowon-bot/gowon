@@ -27,7 +27,7 @@ export class RedisService extends BaseService {
   }
 
   async sessionGet(discordID: string, guildID: string, key: string) {
-    return this.get(this.sessionKey(discordID, guildID, key));
+    return this.redis.get(this.sessionKey(discordID, guildID, key));
   }
 
   // Set
