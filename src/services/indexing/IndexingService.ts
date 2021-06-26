@@ -56,9 +56,6 @@ export class IndexingService extends BaseService {
     userType: UserType,
     session: string | undefined
   ) {
-    console.log("session:");
-    console.log({ username, discordID, userType, session });
-
     return await this.genericRequest(
       gql`
         mutation login(

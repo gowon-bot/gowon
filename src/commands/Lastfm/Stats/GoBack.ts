@@ -6,7 +6,7 @@ import {
 } from "../../../helpers/date";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { LogicError } from "../../../errors";
-import { TrackEmbed } from "../../../lib/views/embeds";
+import { trackEmbed } from "../../../lib/views/embeds";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
@@ -78,7 +78,7 @@ export default class GoBack extends LastFMBaseCommand<typeof args> {
         `${perspective.plusToHave} not scrobbled any tracks in that time period!`
       );
 
-    let embed = TrackEmbed(track).setAuthor(
+    let embed = trackEmbed(track).setAuthor(
       date
         ? `On ${displayDate(date)} ${perspective.name} scrobbled:`
         : `${humanTimeRange} ago ${perspective.name} scrobbled:`

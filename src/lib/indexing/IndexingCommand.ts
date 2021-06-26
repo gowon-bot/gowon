@@ -13,6 +13,7 @@ import {
   ConcurrencyManager,
   ConcurrentActions,
 } from "../caches/ConcurrencyManager";
+import { errorEmbed } from "../views/embeds";
 
 export const indexerGuilds = ["768596255697272862", "769112727103995904"];
 
@@ -44,6 +45,8 @@ export abstract class IndexingBaseCommand<
     '"Indexing" means downloading all your last.fm data. This is required for many commands to function, and is recommended.';
   readonly indexingInProgressHelp =
     "\n\nIndexing... (this may take a while - I'll ping you when I'm done!)";
+  readonly indexingErrorMessage =
+    "An unexpected error ocurred, please try again!";
 
   protected get query(): (variables: ParamsT) => Promise<ResponseT> {
     return async (variables) => {
@@ -109,17 +112,29 @@ export abstract class IndexingBaseCommand<
     replyTo?: Message,
     error?: string
   ) {
-    let message: string;
+    let message: MessageEmbed;
 
     if (error) {
-      message = `An error occurred: ${error}\nPlease try again`;
+      message = errorEmbed(
+        this.newEmbed(),
+        this.author,
+        this.indexingErrorMessage
+      );
     } else {
-      message = `${perspective.upper.plusToHave} been ${
-        type === "index" ? "fully indexed" : "updated"
-      } successfully!`;
+      message = this.newEmbed()
+        .setAuthor(
+          ...this.generateEmbedAuthor(type === "index" ? "Indexing" : "Update")
+        )
+        .setDescription(
+          `${perspective.upper.plusToHave} been ${
+            type === "index" ? "fully indexed" : "updated"
+          } successfully!`
+        );
     }
 
-    this.reply(message, { ping: true, to: replyTo });
+    (replyTo || this.message).channel.send(`<@!${this.message.author.id}>`, {
+      embed: message,
+    });
   }
 
   protected async throwIfNotIndexed(
@@ -135,13 +150,12 @@ export abstract class IndexingBaseCommand<
     if (!user.isIndexed) {
       const isAuthor = perspective.name === "you";
 
-      const embed = this.newEmbed()
-        .setAuthor(...this.generateEmbedAuthor("Error"))
-        .setColor(this.errorColour)
-        .setDescription(
-          `This command requires ${perspective.name} to be indexed to execute!` +
-            (isAuthor ? " Would you like to index now?" : "")
-        );
+      const embed = errorEmbed(
+        this.newEmbed(),
+        this.author,
+        `This command requires ${perspective.name} to be indexed to execute!` +
+          (isAuthor ? " Would you like to index now?" : "")
+      ).setAuthor(...this.generateEmbedAuthor("Error"));
 
       if (isAuthor) {
         const confirmationEmbed = new ConfirmationEmbed(

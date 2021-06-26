@@ -28,7 +28,7 @@ import { Argument, Mention } from "./ArgumentType";
 import { RunAs } from "./RunAs";
 import { ucFirst } from "../../helpers";
 import { checkRollout } from "../../helpers/permissions";
-import { gowonEmbed } from "../views/embeds";
+import { errorEmbed, gowonEmbed } from "../views/embeds";
 import {
   isSessionKey,
   Requestable,
@@ -127,8 +127,6 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
   children?: CommandManager;
   parentName?: string;
 
-  protected readonly errorColour = "#ED008E";
-
   async getChild(_: string, __: string): Promise<Command | undefined> {
     return undefined;
   }
@@ -192,7 +190,11 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
       senderUser = await this.usersService.getUser(this.message.author.id);
     } catch {}
 
-    if (senderUser && Chance().bool({ likelihood: 10 })) {
+    if (
+      senderUser &&
+      Chance().bool({ likelihood: 10 }) &&
+      !["update", "index"].includes(this.name)
+    ) {
       senderUser.mirrorballUpdate();
     }
 
@@ -491,16 +493,9 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
   }
 
   protected async sendError(message: string, footer = "") {
-    const errorEmbed = this.newEmbed()
-      .setColor(this.errorColour)
-      .setAuthor(
-        `Error | ${this.author.username}#${this.author.discriminator}`,
-        this.author.avatarURL() ?? undefined
-      )
-      .setDescription(ucFirst(message))
-      .setFooter(footer);
+    const embed = errorEmbed(this.newEmbed(), this.author, message, footer);
 
-    await this.send(errorEmbed);
+    await this.send(embed);
   }
 
   protected get scopes() {

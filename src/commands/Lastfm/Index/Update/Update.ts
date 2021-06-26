@@ -6,6 +6,7 @@ import {
 } from "../../../../lib/caches/ConcurrencyManager";
 import { Delegate } from "../../../../lib/command/BaseCommand";
 import { IndexingBaseCommand } from "../../../../lib/indexing/IndexingCommand";
+import { errorEmbed } from "../../../../lib/views/embeds";
 import {
   IndexerErrorResponses,
   responseHasError,
@@ -77,9 +78,11 @@ export default class Update extends IndexingBaseCommand<
 
     const { senderUsername, perspective } = await this.parseMentions();
 
-    const sentMessage = await this.traditionalReply(
-      `Updating user ${senderUsername.code()}`
-    );
+    const embed = this.newEmbed()
+      .setAuthor(...this.generateEmbedAuthor("Update"))
+      .setDescription(`Updating user ${senderUsername.code()}`);
+
+    const sentMessage = await this.send(embed);
 
     this.stopwatch.start();
     const response = await this.query({
@@ -91,7 +94,7 @@ export default class Update extends IndexingBaseCommand<
     if (errors) {
       if (responseHasError(errors, IndexerErrorResponses.UserDoesntExist)) {
         throw new IndexerError(
-          `Couldn't find you logged into the indexer, try running \`${this.prefix}login\` again`
+          `Couldn't find you logged into the indexer, try running \`${this.prefix}logout\`, then \`${this.prefix}login\` again`
         );
       } else {
         throw new IndexerError(errors.errors[0].message);
@@ -99,8 +102,10 @@ export default class Update extends IndexingBaseCommand<
     } else {
       if (response.update.taskName === IndexerTaskNames.indexUser) {
         await sentMessage.edit(
-          sentMessage.content +
-            ". Since you haven't been fully indexed yet, this may take a while"
+          embed.setDescription(
+            embed.description +
+              ". Since you haven't been fully indexed yet, this may take a while"
+          )
         );
       }
     }
@@ -125,12 +130,19 @@ export default class Update extends IndexingBaseCommand<
           error
         );
       } else {
-        sentMessage.edit(
-          `<@${this.author.id}>, ` +
-            (error
-              ? `An error ocurred: ${error}\nPlease try again`
-              : `Updated user ${senderUsername.code()}!`)
-        );
+        if (error) {
+          sentMessage.edit(
+            errorEmbed(
+              embed,
+              this.author,
+              embed.description + "\n\n" + this.indexingErrorMessage
+            )
+          );
+        } else {
+          sentMessage.edit(
+            embed.setDescription(`Updated user ${senderUsername.code()}!`)
+          );
+        }
       }
     });
   }

@@ -1,5 +1,8 @@
-import { GuildMember, MessageEmbed } from "discord.js";
+import { GuildMember, MessageEmbed, User } from "discord.js";
+import { ucFirst } from "../../../helpers";
 import { ImageCollection } from "../../../services/LastFM/converters/BaseConverter";
+
+export const errorColour = "#ED008E";
 
 export function gowonEmbed(member?: GuildMember, embed?: MessageEmbed) {
   const gowonEmbed = (embed || new MessageEmbed()).setColor(
@@ -16,7 +19,7 @@ interface SimpleTrack {
   images: ImageCollection;
 }
 
-export function TrackEmbed(
+export function trackEmbed(
   track: SimpleTrack,
   imageSize = "large"
 ): MessageEmbed {
@@ -30,4 +33,20 @@ export function TrackEmbed(
       `by ${artist.strong()}` + (album ? ` from ${album.italic()}` : "")
     )
     .setThumbnail(track.images.get(imageSize) || "");
+}
+
+export function errorEmbed(
+  from: MessageEmbed,
+  author: User,
+  message: string,
+  footer: string = ""
+): MessageEmbed {
+  return from
+    .setColor(errorColour)
+    .setAuthor(
+      `Error | ${author.username}#${author.discriminator}`,
+      author.avatarURL() ?? undefined
+    )
+    .setDescription(ucFirst(message))
+    .setFooter(footer);
 }
