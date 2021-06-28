@@ -1,8 +1,8 @@
 import { CrownDisplay } from "../../services/dbservices/CrownsService";
 import {
-  IndexerAlbum,
-  IndexerArtist,
-  IndexerRateYourMusicAlbum,
+  MirrorballAlbum,
+  MirrorballArtist,
+  MirrorballRateYourMusicAlbum,
 } from "../../services/indexing/IndexingTypes";
 import {
   ArtistInfo,
@@ -18,9 +18,9 @@ export type RequirementMap = {
   artistCrown: CrownDisplay | undefined;
 
   // Indexer data
-  albumPlays: [{ album: IndexerAlbum; playcount: number }];
-  artistPlays: [{ artist: IndexerArtist; playcount: number }];
+  albumPlays: [{ album: MirrorballAlbum; playcount: number }];
+  artistPlays: [{ artist: MirrorballArtist; playcount: number }];
   albumRating: [
-    { rating: number; rateYourMusicAlbum: IndexerRateYourMusicAlbum }
+    { rating: number; rateYourMusicAlbum: MirrorballRateYourMusicAlbum }
   ];
 };

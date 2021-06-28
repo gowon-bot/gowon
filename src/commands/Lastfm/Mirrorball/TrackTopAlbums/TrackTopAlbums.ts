@@ -118,7 +118,7 @@ export default class TrackTopAlbums extends IndexingBaseCommand<
             .join("\n");
         },
       },
-      { itemName: "track" }
+      { itemName: "album" }
     );
 
     simpleScrollingEmbed.send();

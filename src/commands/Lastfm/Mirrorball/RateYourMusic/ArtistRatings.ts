@@ -6,7 +6,7 @@ import {
   ArtistRatingsResponse,
 } from "./connectors";
 import { RateYourMusicIndexingChildCommand } from "./RateYourMusicChildCommand";
-import { IndexerRateYourMusicAlbum } from "../../../../services/indexing/IndexingTypes";
+import { MirrorballRateYourMusicAlbum } from "../../../../services/indexing/IndexingTypes";
 import { mean } from "mathjs";
 import { mostCommonOccurrence } from "../../../../helpers/stats";
 import { SimpleScrollingEmbed } from "../../../../lib/views/embeds/SimpleScrollingEmbed";
@@ -22,7 +22,7 @@ const args = {
 
 type Rating = {
   rating: number;
-  rateYourMusicAlbum: IndexerRateYourMusicAlbum;
+  rateYourMusicAlbum: MirrorballRateYourMusicAlbum;
 };
 
 export class ArtistRatings extends RateYourMusicIndexingChildCommand<
@@ -137,7 +137,7 @@ export class ArtistRatings extends RateYourMusicIndexingChildCommand<
   private getArtistName(
     ratings: {
       rating: number;
-      rateYourMusicAlbum: IndexerRateYourMusicAlbum;
+      rateYourMusicAlbum: MirrorballRateYourMusicAlbum;
     }[]
   ): string {
     return mostCommonOccurrence(

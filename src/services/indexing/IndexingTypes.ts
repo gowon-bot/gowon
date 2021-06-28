@@ -41,21 +41,27 @@ export interface TaskStartResponse {
   success: boolean;
 }
 
-export interface IndexerArtist {
+export interface MirrorballArtist {
   name: string;
 }
 
-export interface IndexerAlbum {
+export interface MirrorballAlbum {
   name: string;
-  artist: IndexerArtist;
+  artist: MirrorballArtist;
 }
 
-export interface IndexerAmbiguousTrack {
+export interface MirrorballAmbiguousTrack {
   name: string;
   artist: string;
 }
 
-export interface IndexerRateYourMusicAlbum {
+export interface MirrorballTrack {
+  name: string;
+  artist: MirrorballArtist;
+  album: MirrorballAlbum;
+}
+
+export interface MirrorballRateYourMusicAlbum {
   title: string;
   artistName: string;
 }

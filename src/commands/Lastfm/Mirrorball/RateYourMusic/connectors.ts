@@ -3,7 +3,7 @@ import { BaseConnector } from "../../../../lib/indexing/BaseConnector";
 import {
   AlbumInput,
   ArtistInput,
-  IndexerRateYourMusicAlbum,
+  MirrorballRateYourMusicAlbum,
   UserInput,
 } from "../../../../services/indexing/IndexingTypes";
 
@@ -30,7 +30,9 @@ export class ImportRatingsConnector extends BaseConnector<
 
 // Rating
 export interface RatingResponse {
-  ratings: [{ rating: number; rateYourMusicAlbum: IndexerRateYourMusicAlbum }];
+  ratings: [
+    { rating: number; rateYourMusicAlbum: MirrorballRateYourMusicAlbum }
+  ];
 }
 
 export interface RatingParams {
@@ -59,7 +61,10 @@ export class RatingConnector extends BaseConnector<
 
 // ArtistRatings
 export interface ArtistRatingsResponse {
-  ratings: { rating: number; rateYourMusicAlbum: IndexerRateYourMusicAlbum }[];
+  ratings: {
+    rating: number;
+    rateYourMusicAlbum: MirrorballRateYourMusicAlbum;
+  }[];
   artist?: {
     artistName: string;
     artistNativeName: string;
@@ -100,7 +105,10 @@ export class ArtistRatingsConnector extends BaseConnector<
 
 // Stats
 export interface StatsResponse {
-  ratings: { rating: number; rateYourMusicAlbum: IndexerRateYourMusicAlbum }[];
+  ratings: {
+    rating: number;
+    rateYourMusicAlbum: MirrorballRateYourMusicAlbum;
+  }[];
 }
 
 export interface StatsParams {
