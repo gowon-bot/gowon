@@ -13,11 +13,13 @@ const args = {
   mentions: standardMentions,
 } as const;
 
-export default class LastScrobbled extends LastFMBaseCommand<typeof args> {
+export default class ScraperLastScrobbled extends LastFMBaseCommand<
+  typeof args
+> {
   idSeed = "gwsn lena";
 
   description = "Shows the last time you scrobbled a song";
-  aliases = ["last"];
+  aliases = ["slast"];
   usage = ["", "artist | track @user"];
   subcategory = "library";
 

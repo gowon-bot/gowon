@@ -31,7 +31,7 @@ export class MultiRequester {
       );
 
       return fetched.reduce((acc, f, idx) => {
-        acc[requestableAsKey(this.requestables[idx])] =
+        acc[requestableAsUsername(this.requestables[idx])] =
           f.status === "fulfilled" ? f.value : undefined;
         return acc;
       }, {} as FetchedResponses<T>);
@@ -43,7 +43,7 @@ export class MultiRequester {
       );
 
       return fetched.reduce((acc, f, idx) => {
-        acc[requestableAsKey(this.requestables[idx])] =
+        acc[requestableAsUsername(this.requestables[idx])] =
           f.status === "fulfilled" ? f.value : undefined;
         return acc;
       }, {} as FetchedResponses<T>);
@@ -51,6 +51,6 @@ export class MultiRequester {
   }
 }
 
-function requestableAsKey(requestable: Requestable): string {
+export function requestableAsUsername(requestable: Requestable): string {
   return typeof requestable === "string" ? requestable : requestable.username;
 }

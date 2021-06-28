@@ -4,7 +4,7 @@ import { toInt } from "../../../../helpers/lastFM";
 import { Arguments } from "../../../../lib/arguments/arguments";
 import { standardMentions } from "../../../../lib/arguments/mentions/mentions";
 import { displayNumber, displayRating } from "../../../../lib/views/displays";
-import { IndexerRateYourMusicAlbum } from "../../../../services/indexing/IndexingTypes";
+import { MirrorballRateYourMusicAlbum } from "../../../../services/indexing/IndexingTypes";
 import { StatsConnector, StatsParams, StatsResponse } from "./connectors";
 import { RateYourMusicIndexingChildCommand } from "./RateYourMusicChildCommand";
 
@@ -88,7 +88,7 @@ ${Object.entries(ratingsCounts)
   private getRatingsCounts(
     ratings: {
       rating: number;
-      rateYourMusicAlbum: IndexerRateYourMusicAlbum;
+      rateYourMusicAlbum: MirrorballRateYourMusicAlbum;
     }[]
   ): Curve {
     const curve = {} as Curve;

@@ -2,13 +2,13 @@ import { gql } from "apollo-server-express";
 import { BaseConnector } from "../../../../lib/indexing/BaseConnector";
 import {
   AlbumInput,
-  IndexerAlbum,
+  MirrorballAlbum,
   UserInput,
 } from "../../../../services/indexing/IndexingTypes";
 
 export interface AlbumTopTracksResponse {
   albumTopTracks: {
-    album: IndexerAlbum;
+    album: MirrorballAlbum;
 
     topTracks: {
       playcount: number;

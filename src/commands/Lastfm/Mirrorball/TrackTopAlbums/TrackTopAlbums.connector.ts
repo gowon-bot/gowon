@@ -1,14 +1,14 @@
 import { gql } from "apollo-server-express";
 import { BaseConnector } from "../../../../lib/indexing/BaseConnector";
 import {
-  IndexerAmbiguousTrack,
+  MirrorballAmbiguousTrack,
   TrackInput,
   UserInput,
 } from "../../../../services/indexing/IndexingTypes";
 
 export interface TrackTopAlbumsResponse {
   trackTopAlbums: {
-    track: IndexerAmbiguousTrack;
+    track: MirrorballAmbiguousTrack;
 
     topAlbums: {
       playcount: number;
