@@ -27,21 +27,16 @@ export default class TrackInfo extends InfoCommand<typeof args> {
   lineConsolidator = new LineConsolidator();
 
   async run() {
-    let artist = this.parsedArguments.artist,
-      track = this.parsedArguments.track;
+    const { senderRequestable } = await this.parseMentions({
+      senderRequired:
+        !this.parsedArguments.artist || !this.parsedArguments.track,
+    });
 
-    if (!artist || !track) {
-      let { senderRequestable } = await this.parseMentions({
-        senderRequired: true,
-      });
+    const { artist, track } = await this.lastFMArguments.getTrack(
+      senderRequestable
+    );
 
-      let nowPlaying = await this.lastFMService.nowPlaying(senderRequestable);
-
-      if (!artist) artist = nowPlaying.artist;
-      if (!track) track = nowPlaying.name;
-    }
-
-    let [trackInfo, spotifyTrack] = await Promise.all([
+    const [trackInfo, spotifyTrack] = await Promise.all([
       this.lastFMService.trackInfo({ artist, track }),
       this.spotifyService.searchTrack(artist, track),
     ]);
@@ -49,12 +44,12 @@ export default class TrackInfo extends InfoCommand<typeof args> {
     this.tagConsolidator.blacklistTags(trackInfo.artist.name, trackInfo.name);
     this.tagConsolidator.addTags(trackInfo.tags);
 
-    let linkConsolidator = new LinkConsolidator([
+    const linkConsolidator = new LinkConsolidator([
       LinkConsolidator.spotify(spotifyTrack?.external_urls?.spotify),
       LinkConsolidator.lastfm(trackInfo.url),
     ]);
 
-    let duration = toInt(trackInfo.duration);
+    const duration = toInt(trackInfo.duration);
 
     this.lineConsolidator.addLines(
       (duration
@@ -84,7 +79,7 @@ export default class TrackInfo extends InfoCommand<typeof args> {
       }
     );
 
-    let embed = this.newEmbed()
+    const embed = this.newEmbed()
       .setTitle(
         trackInfo.name.italic() + " by " + trackInfo.artist.name.strong()
       )

@@ -27,11 +27,10 @@ export default class PopularTracks extends InfoCommand<typeof args> {
   arguments: Arguments = args;
 
   async run() {
-    let artist = this.parsedArguments.artist,
-      position = {
-        start: toInt(this.parsedArguments.positions![0]),
-        end: -1,
-      };
+    let position = {
+      start: toInt(this.parsedArguments.positions![0]),
+      end: -1,
+    };
 
     position.end =
       toInt((this.parsedArguments.positions as string[])[1]) ||
@@ -45,9 +44,7 @@ export default class PopularTracks extends InfoCommand<typeof args> {
 
     let { senderRequestable } = await this.parseMentions();
 
-    if (!artist) {
-      artist = (await this.lastFMService.nowPlaying(senderRequestable)).artist;
-    }
+    const artist = await this.lastFMArguments.getArtist(senderRequestable);
 
     // https://i0.wp.com/media.boingboing.net/wp-content/uploads/2016/11/bcf.png?fit=680%2C445&ssl=1
     let limit =

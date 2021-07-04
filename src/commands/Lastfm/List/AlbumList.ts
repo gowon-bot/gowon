@@ -13,13 +13,13 @@ export default class AlbumList extends ListCommand {
   async run() {
     const { requestable, username } = await this.parseMentions();
 
-    let topAlbums = await this.lastFMService.topAlbums({
+    const topAlbums = await this.lastFMService.topAlbums({
       username: requestable,
       limit: this.listAmount,
       period: this.timePeriod,
     });
 
-    let messageEmbed = this.newEmbed()
+    const messageEmbed = this.newEmbed()
       .setTitle(
         `Top ${displayNumber(this.listAmount, "album")} for \`${username}\` ${
           this.humanReadableTimePeriod

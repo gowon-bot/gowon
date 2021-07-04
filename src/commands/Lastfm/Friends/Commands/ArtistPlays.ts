@@ -27,14 +27,9 @@ export class ArtistPlays extends FriendsChildCommand<typeof args> {
   throwIfNoFriends = true;
 
   async run() {
-    let artist = this.parsedArguments.artist;
+    const artist = await this.lastFMArguments.getArtist(this.senderRequestable);
 
-    if (!artist) {
-      artist = (await this.lastFMService.nowPlaying(this.senderRequestable))
-        .artist;
-    }
-
-    let artistDetails = await new MultiRequester([
+    const artistDetails = await new MultiRequester([
       ...this.friendUsernames,
       this.senderRequestable,
     ]).fetch(this.lastFMService.artistInfo.bind(this.lastFMService), {
@@ -43,10 +38,10 @@ export class ArtistPlays extends FriendsChildCommand<typeof args> {
 
     if (!artistDetails) throw new LastFMEntityNotFoundError("artist");
 
-    let artistName = Object.values(artistDetails).filter((v) => v?.name)[0]!
+    const artistName = Object.values(artistDetails).filter((v) => v?.name)[0]!
       .name;
 
-    let embed = this.newEmbed()
+    const embed = this.newEmbed()
       .setTitle(`Your friends plays of ${artistName}`)
       .setURL(LinkGenerator.listenersYouKnow(artistName))
       .setDescription(
@@ -57,7 +52,7 @@ export class ArtistPlays extends FriendsChildCommand<typeof args> {
               (artistDetails[a]?.userPlaycount ?? -Infinity)
           )
           .map((username) => {
-            let ad = artistDetails[username];
+            const ad = artistDetails[username];
 
             if (!ad || isNaN(ad.userPlaycount)) {
               return this.displayMissingFriend(username);

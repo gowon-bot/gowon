@@ -46,27 +46,13 @@ export default class WhoKnowsTrack extends IndexingBaseCommand<
   nicknameService = new NicknameService(this.logger);
 
   async run() {
-    let artistName = this.parsedArguments.artist,
-      trackName = this.parsedArguments.track;
-
-    let { senderRequestable } = await this.parseMentions({
-      senderRequired: !artistName || !trackName,
+    const { senderRequestable } = await this.parseMentions({
+      senderRequired:
+        !this.parsedArguments.artist || !this.parsedArguments.track,
     });
 
-    if (!artistName || !trackName) {
-      let nowPlaying = await this.lastFMService.nowPlaying(senderRequestable);
-
-      if (!artistName) artistName = nowPlaying.artist;
-      if (!trackName) trackName = nowPlaying.name;
-    } else {
-      const lfmTrack = await this.lastFMService.trackInfo({
-        artist: artistName,
-        track: trackName,
-      });
-
-      artistName = lfmTrack.artist.name;
-      trackName = lfmTrack.name;
-    }
+    const { artist: artistName, track: trackName } =
+      await this.lastFMArguments.getTrack(senderRequestable);
 
     if (this.variationWasUsed("update")) {
       await this.updateAndWait(this.author.id);

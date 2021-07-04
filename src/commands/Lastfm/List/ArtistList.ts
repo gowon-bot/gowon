@@ -11,15 +11,15 @@ export default class ArtistList extends ListCommand {
   aliases = ["alist", "topartists", "topartist", "artists", "al"];
 
   async run() {
-    let { requestable, username } = await this.parseMentions();
+    const { requestable, username } = await this.parseMentions();
 
-    let topArtists = await this.lastFMService.topArtists({
+    const topArtists = await this.lastFMService.topArtists({
       username: requestable,
       limit: this.listAmount,
       period: this.timePeriod,
     });
 
-    let messageEmbed = this.newEmbed()
+    const messageEmbed = this.newEmbed()
       .setTitle(
         `Top ${displayNumber(this.listAmount, "artist")} for \`${username}\` ${
           this.humanReadableTimePeriod

@@ -28,20 +28,16 @@ export default class TrackRank extends LastFMBaseCommand<typeof args> {
   arguments: Arguments = args;
 
   async run() {
-    let track = this.parsedArguments.track,
-      artist = this.parsedArguments.artist;
-
-    let { requestable, senderRequestable, perspective } =
+    const { requestable, senderRequestable, perspective } =
       await this.parseMentions({
-        senderRequired: !track || !artist,
+        senderRequired:
+          !this.parsedArguments.track || !this.parsedArguments.artist,
       });
 
-    if (!track || !artist) {
-      let nowPlaying = await this.lastFMService.nowPlaying(senderRequestable);
-
-      if (!artist) artist = nowPlaying.artist;
-      if (!track) track = nowPlaying.name;
-    }
+    const { artist, track } = await this.lastFMArguments.getTrack(
+      senderRequestable,
+      true
+    );
 
     let topTracks = await this.lastFMService.topTracks({
       username: requestable,

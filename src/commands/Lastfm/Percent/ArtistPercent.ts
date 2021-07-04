@@ -23,15 +23,12 @@ export default class ArtistPercent extends LastFMBaseCommand<typeof args> {
   arguments: Arguments = args;
 
   async run() {
-    let artist = this.parsedArguments.artist;
-
-    let { requestable, senderRequestable, perspective } =
+    const { requestable, senderRequestable, perspective } =
       await this.parseMentions({
-        senderRequired: !artist,
+        senderRequired: !this.parsedArguments.artist,
       });
 
-    if (!artist)
-      artist = (await this.lastFMService.nowPlaying(senderRequestable)).artist;
+    const artist = await this.lastFMArguments.getArtist(senderRequestable);
 
     let [artistInfo, userInfo] = await Promise.all([
       this.lastFMService.artistInfo({ artist, username: requestable }),

@@ -12,11 +12,11 @@ export class ContentiousCrowns extends CrownsChildCommand {
   usage = "";
 
   async run(message: Message) {
-    let serverUsers = await this.serverUserIDs({
+    const serverUsers = await this.serverUserIDs({
       filterCrownBannedUsers: true,
     });
 
-    let [crowns, crownsCount] = await Promise.all([
+    const [crowns, crownsCount] = await Promise.all([
       this.crownsService.listContentiousCrownsInServer(
         message.guild?.id!,
         undefined,
@@ -25,12 +25,12 @@ export class ContentiousCrowns extends CrownsChildCommand {
       this.crownsService.countAllInServer(message.guild?.id!, serverUsers),
     ]);
 
-    let filteredCrowns = crowns.filter((c) => c.version > 0);
+    const filteredCrowns = crowns.filter((c) => c.version > 0);
 
     if (!filteredCrowns.length)
       throw new LogicError("no crowns have been stolen yet!");
 
-    let embed = this.newEmbed()
+    const embed = this.newEmbed()
       .setTitle(`Most contentious crowns in ${message.guild?.name}`)
       .setDescription(
         `There are **${displayNumber(crownsCount, "** crown")} in ${

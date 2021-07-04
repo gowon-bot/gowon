@@ -24,22 +24,17 @@ export default class AlbumPercent extends LastFMBaseCommand<typeof args> {
   arguments: Arguments = args;
 
   async run() {
-    let artist = this.parsedArguments.artist,
-      album = this.parsedArguments.album;
-
     let { requestable, senderRequestable, perspective } =
       await this.parseMentions({
-        senderRequired: !artist || !album,
+        senderRequired:
+          !this.parsedArguments.artist || !this.parsedArguments.album,
       });
 
-    if (!artist || !album) {
-      let nowPlaying = await this.lastFMService.nowPlaying(senderRequestable);
+    const { artist, album } = await this.lastFMArguments.getAlbum(
+      senderRequestable
+    );
 
-      if (!artist) artist = nowPlaying.artist;
-      if (!album) album = nowPlaying.album;
-    }
-
-    let [artistInfo, albumInfo] = await Promise.all([
+    const [artistInfo, albumInfo] = await Promise.all([
       this.lastFMService.artistInfo({ artist, username: requestable }),
       this.lastFMService.albumInfo({ artist, album, username: requestable }),
     ]);

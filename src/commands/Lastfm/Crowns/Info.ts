@@ -25,17 +25,13 @@ export class Info extends CrownsChildCommand<typeof args> {
   redirectsService = new RedirectsService(this.logger);
 
   async run(message: Message) {
-    let artist = this.parsedArguments.artist;
-
     let { senderUser, senderRequestable } = await this.parseMentions({
-      usernameRequired: !artist,
+      usernameRequired: !this.parsedArguments.artist,
     });
 
-    if (!artist) {
-      artist = (await this.lastFMService.nowPlaying(senderRequestable)).artist;
-    }
+    const artist = await this.lastFMArguments.getArtist(senderRequestable);
 
-    let artistDetails = await this.lastFMService.artistInfo(
+    const artistDetails = await this.lastFMService.artistInfo(
       senderRequestable
         ? {
             artist,

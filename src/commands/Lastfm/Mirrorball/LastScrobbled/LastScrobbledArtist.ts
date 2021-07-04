@@ -27,8 +27,10 @@ export default class LastScrobbledArtist extends IndexingBaseCommand<
 
   idSeed = "shasha wanlim";
 
-  aliases = ["lasta", "la"];
-  variations: Variation[] = [{ name: "first", variation: ["firsta", "fa"] }];
+  aliases = ["last", "lasta", "la"];
+  variations: Variation[] = [
+    { name: "first", variation: ["first", "firsta", "fa"] },
+  ];
 
   subcategory = "library";
   description = "Shows the last time you scrobbled an artist";
@@ -40,11 +42,9 @@ export default class LastScrobbledArtist extends IndexingBaseCommand<
   arguments: Arguments = args;
 
   async run() {
-    let artistName = this.parsedArguments.artist;
-
     const { senderUser, senderRequestable, dbUser, perspective } =
       await this.parseMentions({
-        senderRequired: !artistName,
+        senderRequired: !this.parsedArguments.artist,
         reverseLookup: { required: true },
       });
 
@@ -52,16 +52,10 @@ export default class LastScrobbledArtist extends IndexingBaseCommand<
 
     await this.throwIfNotIndexed(user, perspective);
 
-    if (!artistName) {
-      artistName = (await this.lastFMService.nowPlaying(senderRequestable))
-        .artist;
-    } else {
-      const lfmArtist = await this.lastFMService.artistInfo({
-        artist: artistName,
-      });
-
-      artistName = lfmArtist.name;
-    }
+    const artistName = await this.lastFMArguments.getArtist(
+      senderRequestable,
+      true
+    );
 
     const response = await this.query({
       track: { artist: { name: artistName } },

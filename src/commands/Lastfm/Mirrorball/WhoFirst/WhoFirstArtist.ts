@@ -53,23 +53,16 @@ export default class WhoFirstArtist extends IndexingBaseCommand<
   nicknameService = new NicknameService(this.logger);
 
   async run() {
-    let artistName = this.parsedArguments.artist;
     const whoLast = this.variationWasUsed("wholast");
 
     let { senderRequestable } = await this.parseMentions({
-      senderRequired: !artistName,
+      senderRequired: !this.parsedArguments.artist,
     });
 
-    if (!artistName) {
-      artistName = (await this.lastFMService.nowPlaying(senderRequestable))
-        .artist;
-    } else {
-      const lfmArtist = await this.lastFMService.artistInfo({
-        artist: artistName,
-      });
-
-      artistName = lfmArtist.name;
-    }
+    const artistName = await this.lastFMArguments.getArtist(
+      senderRequestable,
+      true
+    );
 
     const response = await this.query({
       whoLast,

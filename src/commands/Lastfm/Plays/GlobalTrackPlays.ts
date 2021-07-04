@@ -25,28 +25,23 @@ export default class GlobalTrackPlays extends LastFMBaseCommand<typeof args> {
   arguments: Arguments = args;
 
   async run() {
-    let artist = this.parsedArguments.artist,
-      track = this.parsedArguments.track;
-
     let { requestable, perspective, senderRequestable } =
       await this.parseMentions({
-        senderRequired: !artist || !track,
+        senderRequired:
+          !this.parsedArguments.artist || !this.parsedArguments.track,
       });
 
-    if (!artist || !track) {
-      let nowPlaying = await this.lastFMService.nowPlaying(senderRequestable);
+    const { artist, track } = await this.lastFMArguments.getTrack(
+      senderRequestable
+    );
 
-      if (!artist) artist = nowPlaying.artist;
-      if (!track) track = nowPlaying.name;
-    }
-
-    let trackDetails = await this.lastFMService.trackInfo({
+    const trackDetails = await this.lastFMService.trackInfo({
       artist,
       track,
       username: requestable,
     });
 
-    let percentage = calculatePercent(
+    const percentage = calculatePercent(
       trackDetails.userPlaycount,
       trackDetails.globalPlaycount
     );

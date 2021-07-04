@@ -20,7 +20,7 @@ export default class List extends ListCommand {
   arguments: Arguments = args;
 
   async run() {
-    let type = (this.parsedArguments as any).type as string,
+    const type = (this.parsedArguments as any).type as string,
       period = (this.parsedArguments as any).period as string,
       amount = (this.parsedArguments as any).amount as string;
 

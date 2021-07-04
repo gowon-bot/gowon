@@ -24,22 +24,17 @@ export default class TrackPercent extends LastFMBaseCommand<typeof args> {
   arguments: Arguments = args;
 
   async run() {
-    let artist = this.parsedArguments.artist,
-      track = this.parsedArguments.track;
-
-    let { requestable, senderRequestable, perspective } =
+    const { requestable, senderRequestable, perspective } =
       await this.parseMentions({
-        senderRequired: !artist || !track,
+        senderRequired:
+          !this.parsedArguments.artist || !this.parsedArguments.track,
       });
 
-    if (!artist || !track) {
-      let nowPlaying = await this.lastFMService.nowPlaying(senderRequestable);
+    const { artist, track } = await this.lastFMArguments.getTrack(
+      senderRequestable
+    );
 
-      if (!artist) artist = nowPlaying.artist;
-      if (!track) track = nowPlaying.name;
-    }
-
-    let [artistInfo, trackInfo] = await Promise.all([
+    const [artistInfo, trackInfo] = await Promise.all([
       this.lastFMService.artistInfo({ artist, username: requestable }),
       this.lastFMService.trackInfo({ artist, track, username: requestable }),
     ]);

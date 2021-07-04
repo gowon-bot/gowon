@@ -28,31 +28,27 @@ export default class ArtistInfo extends InfoCommand<typeof args> {
   lineConsolidator = new LineConsolidator();
 
   async run() {
-    let artist = this.parsedArguments.artist;
-
     let { senderRequestable, requestable, perspective } =
       await this.parseMentions({
-        senderRequired: !artist,
+        senderRequired: !this.parsedArguments.artist,
       });
 
-    if (!artist) {
-      artist = (await this.lastFMService.nowPlaying(senderRequestable)).artist;
-    }
+    const artist = await this.lastFMArguments.getArtist(senderRequestable);
 
-    let [artistInfo, userInfo, spotifyArtist] = await Promise.all([
+    const [artistInfo, userInfo, spotifyArtist] = await Promise.all([
       this.lastFMService.artistInfo({ artist, username: requestable }),
       this.lastFMService.userInfo({ username: requestable }),
       this.spotifyService.searchArtist(artist),
     ]);
 
-    let crown = await this.crownsService.getCrownDisplay(
+    const crown = await this.crownsService.getCrownDisplay(
       artistInfo.name,
       this.guild
     );
 
     this.tagConsolidator.addTags(artistInfo.tags);
 
-    let linkConsolidator = new LinkConsolidator([
+    const linkConsolidator = new LinkConsolidator([
       LinkConsolidator.spotify(spotifyArtist?.external_urls?.spotify),
       LinkConsolidator.lastfm(artistInfo.url),
     ]);
@@ -90,13 +86,13 @@ export default class ArtistInfo extends InfoCommand<typeof args> {
       }
     );
 
-    let percentage = calculatePercent(
+    const percentage = calculatePercent(
       artistInfo.userPlaycount,
       artistInfo.globalPlaycount,
       4
     );
 
-    let embed = this.newEmbed()
+    const embed = this.newEmbed()
       .setTitle(artistInfo.name)
       .setURL(artistInfo.url)
       .setDescription(this.lineConsolidator.consolidate())

@@ -14,6 +14,7 @@ import {
   ConcurrentActions,
 } from "../caches/ConcurrencyManager";
 import { errorEmbed } from "../views/embeds";
+import { LastFMArguments } from "../../services/LastFM/LastFMArguments";
 
 export const indexerGuilds = ["768596255697272862", "769112727103995904"];
 
@@ -37,6 +38,7 @@ export abstract class IndexingBaseCommand<
   abstract connector: Connector<ResponseT, ParamsT>;
   indexingService = new IndexingService(this.logger);
   lastFMService = new LastFMService(this.logger);
+  lastFMArguments = new LastFMArguments(this, this.lastFMService, this.logger);
   concurrencyManager = new ConcurrencyManager();
 
   protected readonly indexerGuilds = indexerGuilds;

@@ -19,17 +19,17 @@ export class CrownRanks extends CrownsChildCommand<typeof args> {
   arguments: Arguments = args;
 
   async run() {
-    let { discordUser } = await this.parseMentions({
+    const { discordUser } = await this.parseMentions({
       fetchDiscordUser: true,
       reverseLookup: { required: true },
     });
 
-    let perspective = this.usersService.discordPerspective(
+    const perspective = this.usersService.discordPerspective(
       this.author,
       discordUser
     );
 
-    let [crownRanks, crownsCount] = await Promise.all([
+    const [crownRanks, crownsCount] = await Promise.all([
       this.crownsService.crownRanks(this.guild.id, discordUser!.id),
       this.crownsService.count(discordUser!.id, this.guild.id),
     ]);
@@ -39,7 +39,7 @@ export class CrownRanks extends CrownsChildCommand<typeof args> {
         `${perspective.name} doesn't have any crowns in this server!`
       );
 
-    let embed = this.newEmbed()
+    const embed = this.newEmbed()
       .setTitle(`The ranks of ${discordUser?.username}'s top crowns in Last.fm`)
       .setDescription(
         crownRanks

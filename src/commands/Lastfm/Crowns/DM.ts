@@ -20,16 +20,16 @@ export class DM extends CrownsChildCommand<typeof args> {
   async run() {
     const crownsPerMessage = 40;
 
-    let { discordUser: user } = await this.parseMentions({
+    const { discordUser: user } = await this.parseMentions({
       fetchDiscordUser: true,
       reverseLookup: { required: true },
     });
 
-    let discordID = user?.id || this.author.id;
+    const discordID = user?.id || this.author.id;
 
-    let perspective = this.usersService.discordPerspective(this.author, user);
+    const perspective = this.usersService.discordPerspective(this.author, user);
 
-    let [crowns, crownsCount] = await Promise.all([
+    const [crowns, crownsCount] = await Promise.all([
       this.crownsService.listTopCrowns(discordID, this.guild.id, -1),
       this.crownsService.count(discordID, this.guild.id),
     ]);
@@ -38,7 +38,7 @@ export class DM extends CrownsChildCommand<typeof args> {
       `sending you a list of ${perspective.possessive} crowns...`
     );
 
-    let chunks = chunkArray(crowns, crownsPerMessage);
+    const chunks = chunkArray(crowns, crownsPerMessage);
 
     this.author.send(
       `${perspective.upper.plusToHave} ${displayNumber(

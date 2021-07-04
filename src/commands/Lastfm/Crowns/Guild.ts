@@ -33,16 +33,16 @@ export class Guild extends CrownsChildCommand<typeof args> {
   ];
 
   async run() {
-    let serverUsers = await this.serverUserIDs({
+    const serverUsers = await this.serverUserIDs({
       filterCrownBannedUsers: true,
     });
 
-    let [holders, crownsCount] = await Promise.all([
+    const [holders, crownsCount] = await Promise.all([
       this.crownsService.guild(this.guild, 20, serverUsers),
       this.crownsService.countAllInServer(this.guild.id, serverUsers),
     ]);
 
-    let embed = this.newEmbed()
+    const embed = this.newEmbed()
       .setTitle(`${this.guild.name}'s crown leaderboard`)
       .setDescription(
         `There ${crownsCount === 1 ? "is" : "are"} **${displayNumber(

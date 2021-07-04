@@ -28,21 +28,16 @@ export class Rating extends RateYourMusicIndexingChildCommand<
   arguments: Arguments = args;
 
   async run() {
-    let artist = this.parsedArguments.artist!,
-      album = this.parsedArguments.album!;
-
     const { senderRequestable, dbUser, senderUser } = await this.parseMentions({
-      senderRequired: !artist || !album,
+      senderRequired:
+        !this.parsedArguments.artist || !this.parsedArguments.album,
     });
 
     const user = (dbUser || senderUser)!;
 
-    if (!artist || !album) {
-      let nowPlaying = await this.lastFMService.nowPlaying(senderRequestable);
-
-      if (!artist) artist = nowPlaying.artist;
-      if (!album) album = nowPlaying.album;
-    }
+    const { artist, album } = await this.lastFMArguments.getAlbum(
+      senderRequestable
+    );
 
     const response = await this.query({
       user: { lastFMUsername: user.lastFMUsername, discordID: user.discordID },

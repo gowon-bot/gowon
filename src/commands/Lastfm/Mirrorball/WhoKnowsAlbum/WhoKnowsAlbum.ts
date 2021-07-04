@@ -47,27 +47,13 @@ export default class WhoKnowsAlbum extends IndexingBaseCommand<
   nicknameService = new NicknameService(this.logger);
 
   async run() {
-    let artistName = this.parsedArguments.artist,
-      albumName = this.parsedArguments.album;
-
     let { senderRequestable } = await this.parseMentions({
-      senderRequired: !artistName || !albumName,
+      senderRequired:
+        !this.parsedArguments.artist || !this.parsedArguments.album,
     });
 
-    if (!artistName || !albumName) {
-      let nowPlaying = await this.lastFMService.nowPlaying(senderRequestable);
-
-      if (!artistName) artistName = nowPlaying.artist;
-      if (!albumName) albumName = nowPlaying.album;
-    } else {
-      const lfmAlbum = await this.lastFMService.albumInfo({
-        artist: artistName,
-        album: albumName,
-      });
-
-      artistName = lfmAlbum.artist;
-      albumName = lfmAlbum.name;
-    }
+    const { artist: artistName, album: albumName } =
+      await this.lastFMArguments.getAlbum(senderRequestable, true);
 
     if (this.variationWasUsed("update")) {
       await this.updateAndWait(this.author.id);

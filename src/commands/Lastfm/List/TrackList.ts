@@ -11,15 +11,15 @@ export default class TrackList extends ListCommand {
   aliases = ["tlist", "toptracks", "toptrack", "tracks", "tl", "topsongs"];
 
   async run() {
-    let { requestable, username } = await this.parseMentions();
+    const { requestable, username } = await this.parseMentions();
 
-    let topTracks = await this.lastFMService.topTracks({
+    const topTracks = await this.lastFMService.topTracks({
       username: requestable,
       limit: this.listAmount,
       period: this.timePeriod,
     });
 
-    let messageEmbed = this.newEmbed()
+    const messageEmbed = this.newEmbed()
       .setTitle(
         `Top ${displayNumber(this.listAmount, "track")} for \`${username}\` ${
           this.humanReadableTimePeriod

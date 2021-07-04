@@ -28,22 +28,17 @@ export default class AlbumInfo extends InfoCommand<typeof args> {
   lineConsolidator = new LineConsolidator();
 
   async run() {
-    let artist = this.parsedArguments.artist,
-      album = this.parsedArguments.album;
-
-    let { senderRequestable, requestable, perspective } =
+    const { senderRequestable, requestable, perspective } =
       await this.parseMentions({
-        senderRequired: !artist || !album,
+        senderRequired:
+          !this.parsedArguments.artist || !this.parsedArguments.album,
       });
 
-    if (!artist || !album) {
-      let nowPlaying = await this.lastFMService.nowPlaying(senderRequestable);
+    const { artist, album } = await this.lastFMArguments.getAlbum(
+      senderRequestable
+    );
 
-      if (!artist) artist = nowPlaying.artist;
-      if (!album) album = nowPlaying.album;
-    }
-
-    let [albumInfo, userInfo, spotifyAlbum] = await Promise.all([
+    const [albumInfo, userInfo, spotifyAlbum] = await Promise.all([
       this.lastFMService.albumInfo({ artist, album, username: requestable }),
       this.lastFMService.userInfo({ username: requestable }),
       this.spotifyService.searchAlbum(artist, album),
@@ -52,12 +47,12 @@ export default class AlbumInfo extends InfoCommand<typeof args> {
     this.tagConsolidator.blacklistTags(albumInfo.artist, albumInfo.name);
     this.tagConsolidator.addTags(albumInfo.tags);
 
-    let linkConsolidator = new LinkConsolidator([
+    const linkConsolidator = new LinkConsolidator([
       LinkConsolidator.spotify(spotifyAlbum?.external_urls?.spotify),
       LinkConsolidator.lastfm(albumInfo.url),
     ]);
 
-    let albumDuration = albumInfo.tracks.reduce(
+    const albumDuration = albumInfo.tracks.reduce(
       (sum, t) => sum + t.duration,
       0
     );
@@ -96,12 +91,12 @@ export default class AlbumInfo extends InfoCommand<typeof args> {
       }
     );
 
-    let percentage = calculatePercent(
+    const percentage = calculatePercent(
       albumInfo.userPlaycount,
       albumInfo.globalPlaycount
     );
 
-    let embed = this.newEmbed()
+    const embed = this.newEmbed()
       .setTitle(albumInfo.name.italic() + " by " + albumInfo.artist.strong())
       .setDescription(this.lineConsolidator.consolidate())
       .setURL(albumInfo.url)

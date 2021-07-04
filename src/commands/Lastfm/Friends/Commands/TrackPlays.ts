@@ -23,19 +23,11 @@ export class TrackPlays extends FriendsChildCommand<typeof args> {
   throwIfNoFriends = true;
 
   async run() {
-    let artist = this.parsedArguments.artist as string,
-      track = this.parsedArguments.track as string;
+    const { artist, track } = await this.lastFMArguments.getTrack(
+      this.senderRequestable
+    );
 
-    if (!artist || !track) {
-      let nowPlaying = await this.lastFMService.nowPlaying(
-        this.senderRequestable
-      );
-
-      if (!artist) artist = nowPlaying.artist;
-      if (!track) track = nowPlaying.name;
-    }
-
-    let trackDetails = await new MultiRequester([
+    const trackDetails = await new MultiRequester([
       ...this.friendUsernames,
       this.senderRequestable,
     ]).fetch(this.lastFMService.trackInfo.bind(this.lastFMService), {
@@ -43,11 +35,11 @@ export class TrackPlays extends FriendsChildCommand<typeof args> {
       track,
     });
 
-    let trackInfo = Object.values(trackDetails).filter((v) => v?.name)[0]!;
+    const trackInfo = Object.values(trackDetails).filter((v) => v?.name)[0]!;
 
     if (!trackInfo) throw new LastFMEntityNotFoundError("track");
 
-    let embed = this.newEmbed()
+    const embed = this.newEmbed()
       .setTitle(
         `Your friends plays of ${trackInfo.name} by ${trackInfo.artist.name}`
       )
@@ -59,7 +51,7 @@ export class TrackPlays extends FriendsChildCommand<typeof args> {
               (trackDetails[a]?.userPlaycount ?? -Infinity)
           )
           .map((username) => {
-            let td = trackDetails[username];
+            const td = trackDetails[username];
 
             if (!td || isNaN(td.userPlaycount)) {
               return this.displayMissingFriend(username);
