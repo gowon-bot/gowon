@@ -278,7 +278,7 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
 
     if (authentificationRequired && !isSessionKey(requestables?.requestable)) {
       throw new LogicError(
-        "This command requires you to be authenticated, please logout and then login in again!"
+        `This command requires you to be authenticated, please login in again! (\`${this.prefix}login\`)`
       );
     }
 
