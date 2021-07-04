@@ -38,8 +38,8 @@ export class Set extends NowPlayingConfigChildCommand<typeof args> {
   };
 
   async run() {
-    const newConfig = (this.parsedArguments.config || []).map((c) =>
-      c.toLowerCase()
+    const newConfig = this.parseConfig(this.parsedArguments.config || []).map(
+      (c) => c.toLowerCase()
     );
 
     const { senderUser } = await this.parseMentions({

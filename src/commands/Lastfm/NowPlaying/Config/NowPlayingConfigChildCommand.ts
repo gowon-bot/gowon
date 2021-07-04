@@ -1,3 +1,4 @@
+import { flatDeep } from "../../../../helpers";
 import { Arguments } from "../../../../lib/arguments/arguments";
 import { mirrorballGuilds } from "../../../../lib/indexing/MirrorballCommands";
 import { ConfigService } from "../../../../services/dbservices/NowPlayingService";
@@ -32,5 +33,9 @@ export abstract class NowPlayingConfigChildCommand<
     return `${option.code()} isn't a valid option. See \`${
       this.prefix
     }npc help\` for a list of available options`;
+  }
+
+  protected parseConfig(config: string[]): string[] {
+    return flatDeep([...config.map((c) => c.split(/,\s*/))]).filter((c) => !!c);
   }
 }

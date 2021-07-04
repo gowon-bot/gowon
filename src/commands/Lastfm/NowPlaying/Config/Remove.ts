@@ -1,5 +1,5 @@
-import { LogicError } from "../../../../errors";
 import { Arguments } from "../../../../lib/arguments/arguments";
+import { LineConsolidator } from "../../../../lib/LineConsolidator";
 import { componentMap } from "../../../../lib/nowplaying/componentMap";
 import { Validation } from "../../../../lib/validation/ValidationChecker";
 import { validators } from "../../../../lib/validation/validators";
@@ -7,23 +7,28 @@ import { NowPlayingConfigChildCommand } from "./NowPlayingConfigChildCommand";
 
 const args = {
   inputs: {
-    option: { index: 0 },
+    options: { index: { start: 0 }, join: false },
   },
 } as const;
 
 export class Remove extends NowPlayingConfigChildCommand<typeof args> {
   idSeed = "sonamoo d ana";
 
-  description = "Remove an option from your current config";
-  usage = ["option"];
+  description = "Remove options from your current config";
+  usage = ["option", "option1 option2 ...optionN"];
 
   arguments: Arguments = args;
   validation: Validation = {
-    option: new validators.Required({}),
+    options: {
+      validator: new validators.LengthRange({ min: 1 }),
+      friendlyName: "option",
+    },
   };
 
   async run() {
-    const filterOption = this.parsedArguments.option!.toLowerCase();
+    const newOptions = this.parseConfig(this.parsedArguments.options || []).map(
+      (c) => c.toLowerCase()
+    );
 
     const { senderUser } = await this.parseMentions({
       senderRequired: true,
@@ -31,28 +36,44 @@ export class Remove extends NowPlayingConfigChildCommand<typeof args> {
 
     let config = await this.configService.getConfigForUser(senderUser!);
 
-    if (!Object.keys(componentMap).includes(filterOption)) {
-      throw new LogicError(this.notAnOptionError(filterOption));
-    } else if (!config.includes(filterOption)) {
-      throw new LogicError(
-        `${filterOption.code()} is already not in your config!\n\nYour config: ${config
-          .map((c) => c.code())
-          .join(", ")}`
-      );
-    }
+    const included = newOptions.filter(
+      (c) => Object.keys(componentMap).includes(c) && config.includes(c)
+    );
+    const ignored = newOptions.filter(
+      (c) => !Object.keys(componentMap).includes(c)
+    );
 
-    config = config.filter((c) => c !== filterOption);
+    config = config.filter((c) => !included.includes(c));
     await this.configService.saveConfigForUser(senderUser!, config);
 
     const embed = this.newEmbed().setAuthor(
       ...this.generateEmbedAuthor("Config remove")
     );
 
-    embed.setDescription(
-      config.length
-        ? config.map((c) => c.code()).join(", ")
-        : "Empty config (your footer will be blank)"
+    const consolidator = new LineConsolidator();
+
+    consolidator.addLines(
+      {
+        string: `**Ignored**: ${ignored.map((c) => c.code()).join(", ")}`,
+        shouldDisplay: !!ignored.length,
+      },
+      {
+        string: `Your new config: ${config.map((c) => c.code()).join(", ")}`,
+        shouldDisplay: !!config.length,
+      },
+      {
+        string: "Empty config (your footer will be blank)",
+        shouldDisplay: !config.length,
+      }
     );
+
+    embed
+      .setDescription(consolidator.consolidate())
+      .setFooter(
+        ignored.length
+          ? `Nonexistant config was ignored. See ${this.prefix}npc help for a list of options`
+          : ""
+      );
 
     await this.send(embed);
   }
