@@ -28,7 +28,7 @@ export class ImportRatings extends RateYourMusicIndexingChildCommand<
   description = "Import your rateyourmusic ratings";
 
   rollout = {
-    guilds: this.indexerGuilds,
+    guilds: this.mirrorballGuilds,
   };
 
   arguments: Arguments = args;

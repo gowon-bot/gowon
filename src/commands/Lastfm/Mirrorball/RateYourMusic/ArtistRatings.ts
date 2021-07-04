@@ -37,7 +37,7 @@ export class ArtistRatings extends RateYourMusicIndexingChildCommand<
   description = "Shows your top rated albums from an artist";
 
   rollout = {
-    guilds: this.indexerGuilds,
+    guilds: this.mirrorballGuilds,
   };
 
   arguments: Arguments = args;

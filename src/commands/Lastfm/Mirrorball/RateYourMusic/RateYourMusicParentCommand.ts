@@ -1,6 +1,6 @@
 import { CommandManager } from "../../../../lib/command/CommandManager";
 import { ParentCommand } from "../../../../lib/command/ParentCommand";
-import { indexerGuilds } from "../../../../lib/indexing/IndexingCommand";
+import { mirrorballGuilds } from "../../../../lib/indexing/MirrorballCommands";
 import { ArtistRatings } from "./ArtistRatings";
 import { Help } from "./Help";
 import { ImportRatings } from "./Import";
@@ -17,7 +17,7 @@ export default class RateYourMusicParentCommand extends ParentCommand {
   friendlyName = "rateyourmusic";
 
   rollout = {
-    guilds: indexerGuilds,
+    guilds: mirrorballGuilds,
   };
 
   canSkipPrefixFor = ["importratings", "rating", "artistratings"];

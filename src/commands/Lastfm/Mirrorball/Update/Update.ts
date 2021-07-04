@@ -5,7 +5,7 @@ import {
   ConcurrentActions,
 } from "../../../../lib/caches/ConcurrencyManager";
 import { Delegate } from "../../../../lib/command/BaseCommand";
-import { IndexingBaseCommand } from "../../../../lib/indexing/IndexingCommand";
+import { MirrorballBaseCommand } from "../../../../lib/indexing/MirrorballCommands";
 import { errorEmbed } from "../../../../lib/views/embeds";
 import {
   IndexerErrorResponses,
@@ -32,7 +32,7 @@ const args = {
   },
 } as const;
 
-export default class Update extends IndexingBaseCommand<
+export default class Update extends MirrorballBaseCommand<
   UpdateUserResponse,
   UpdateUserParams,
   typeof args
@@ -44,7 +44,7 @@ export default class Update extends IndexingBaseCommand<
   description = "Updates a user's cached data based on their lastest scrobbles";
 
   rollout = {
-    guilds: this.indexerGuilds,
+    guilds: this.mirrorballGuilds,
   };
 
   delegates: Delegate<typeof args>[] = [
@@ -76,7 +76,9 @@ export default class Update extends IndexingBaseCommand<
   async run() {
     this.indexingService.quietAddUserToGuild(this.author.id, this.guild.id);
 
-    const { senderUsername, perspective } = await this.parseMentions();
+    const { senderUsername, perspective } = await this.parseMentions({
+      authentificationRequired: true,
+    });
 
     const embed = this.newEmbed()
       .setAuthor(...this.generateEmbedAuthor("Update"))

@@ -2,7 +2,7 @@ import { IndexerError } from "../../../../errors";
 import { LinkGenerator } from "../../../../helpers/lastFM";
 import { Arguments } from "../../../../lib/arguments/arguments";
 import { Variation } from "../../../../lib/command/BaseCommand";
-import { IndexingBaseCommand } from "../../../../lib/indexing/IndexingCommand";
+import { MirrorballBaseCommand } from "../../../../lib/indexing/MirrorballCommands";
 import {
   displayLink,
   displayNumber,
@@ -22,7 +22,7 @@ const args = {
   },
 } as const;
 
-export default class WhoKnowsAlbum extends IndexingBaseCommand<
+export default class WhoKnowsAlbum extends MirrorballBaseCommand<
   WhoKnowsAlbumResponse,
   WhoKnowsAlbumParams,
   typeof args
@@ -39,7 +39,7 @@ export default class WhoKnowsAlbum extends IndexingBaseCommand<
   description = "See who knows an album";
 
   rollout = {
-    guilds: this.indexerGuilds,
+    guilds: this.mirrorballGuilds,
   };
 
   arguments: Arguments = args;

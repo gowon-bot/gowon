@@ -2,7 +2,7 @@ import { IndexerError } from "../../../../errors";
 import { convertIndexerDate } from "../../../../helpers/mirrorball";
 import { Arguments } from "../../../../lib/arguments/arguments";
 import { Variation } from "../../../../lib/command/BaseCommand";
-import { IndexingBaseCommand } from "../../../../lib/indexing/IndexingCommand";
+import { MirrorballBaseCommand } from "../../../../lib/indexing/MirrorballCommands";
 import { displayDate } from "../../../../lib/views/displays";
 import {
   LastScrobbledConnector,
@@ -17,7 +17,7 @@ const args = {
   },
 } as const;
 
-export default class LastScrobbledTrack extends IndexingBaseCommand<
+export default class LastScrobbledTrack extends MirrorballBaseCommand<
   LastScrobbledResponse,
   LastScrobbledParams,
   typeof args
@@ -33,7 +33,7 @@ export default class LastScrobbledTrack extends IndexingBaseCommand<
   description = "Shows the last time you scrobbled an track";
 
   rollout = {
-    guilds: this.indexerGuilds,
+    guilds: this.mirrorballGuilds,
   };
 
   arguments: Arguments = args;

@@ -192,7 +192,7 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
 
     if (
       senderUser &&
-      Chance().bool({ likelihood: 10 }) &&
+      Chance().bool({ likelihood: 3 }) &&
       !["update", "index"].includes(this.name)
     ) {
       senderUser.mirrorballUpdate();

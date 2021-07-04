@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client/core";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { BaseConnector } from "../../../lib/indexing/BaseConnector";
-import { IndexingBaseCommand } from "../../../lib/indexing/IndexingCommand";
+import { MirrorballBaseCommand } from "../../../lib/indexing/MirrorballCommands";
 
 type Response = { ping: string };
 type Params = {};
@@ -19,7 +19,7 @@ const args = {
   mentions: {},
 } as const;
 
-export default class PingIndexer extends IndexingBaseCommand<
+export default class PingIndexer extends MirrorballBaseCommand<
   Response,
   Params,
   typeof args

@@ -1,8 +1,8 @@
-import { ErrorResponse } from "../../lib/indexing/IndexingCommand";
+import { ErrorResponse } from "../../lib/indexing/MirrorballCommands";
 
 export enum IndexerErrorResponses {
   UserDoesntExist = "That user doesn't exist",
-  ArtistDoesntExist = "That artist doesn't exist"
+  ArtistDoesntExist = "That artist doesn't exist",
 }
 
 export function responseHasError(

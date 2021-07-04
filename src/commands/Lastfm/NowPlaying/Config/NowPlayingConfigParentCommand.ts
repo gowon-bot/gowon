@@ -1,5 +1,5 @@
 import { CommandManager } from "../../../../lib/command/CommandManager";
-import { indexerGuilds } from "../../../../lib/indexing/IndexingCommand";
+import { mirrorballGuilds } from "../../../../lib/indexing/MirrorballCommands";
 import { LastFMBaseParentCommand } from "../../LastFMBaseCommand";
 import { Add } from "./Add";
 import { Help } from "./Help";
@@ -18,7 +18,7 @@ export default class NowPlayingConfigParentCommand extends LastFMBaseParentComma
   customHelp = Help;
 
   rollout = {
-    guilds: indexerGuilds,
+    guilds: mirrorballGuilds,
   };
 
   prefixes = ["npc", "nowplayingconfig"];

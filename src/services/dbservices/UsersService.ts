@@ -40,16 +40,16 @@ export class UsersService extends BaseService {
 
     if (user) {
       user.lastFMUsername = lastFMUsername;
-      await user.save();
-      return user.lastFMUsername;
+      user.lastFMSession = "";
     } else {
       user = User.create({
         discordID,
         lastFMUsername: lastFMUsername,
       });
-      await user.save();
-      return user.lastFMUsername!;
     }
+
+    await user.save();
+    return user.lastFMUsername;
   }
 
   async setLastFMSession(

@@ -1,6 +1,6 @@
 import { MessageEmbed } from "discord.js";
 import { User } from "../../../database/entity/User";
-import { indexerGuilds } from "../../../lib/indexing/IndexingCommand";
+import { mirrorballGuilds } from "../../../lib/indexing/MirrorballCommands";
 import { DatasourceService } from "../../../lib/nowplaying/DatasourceService";
 import { NowPlayingBuilder } from "../../../lib/nowplaying/NowPlayingBuilder";
 import { MetaService } from "../../../services/dbservices/MetaService";
@@ -16,7 +16,7 @@ export default class NowPlayingCustom extends NowPlayingBaseCommand {
   aliases = ["fmx", "npx"];
 
   rollout = {
-    guilds: indexerGuilds,
+    guilds: mirrorballGuilds,
   };
 
   datasourceService = new DatasourceService(this.logger);
@@ -79,6 +79,7 @@ export default class NowPlayingCustom extends NowPlayingBaseCommand {
       requestable,
       senderRequestable,
     } = await this.parseMentions({
+      authentificationRequired: true,
       senderRequired: true,
     });
 

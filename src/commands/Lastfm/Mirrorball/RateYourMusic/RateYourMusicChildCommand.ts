@@ -1,9 +1,9 @@
 import { Arguments } from "../../../../lib/arguments/arguments";
 import { ChildCommand } from "../../../../lib/command/ParentCommand";
 import {
-  indexerGuilds,
-  IndexingChildCommand,
-} from "../../../../lib/indexing/IndexingCommand";
+  mirrorballGuilds,
+  MirrorballChildCommand,
+} from "../../../../lib/indexing/MirrorballCommands";
 import { LastFMService } from "../../../../services/LastFM/LastFMService";
 
 export abstract class RateYourMusicChildCommand<
@@ -12,7 +12,7 @@ export abstract class RateYourMusicChildCommand<
   lastFMService = new LastFMService(this.logger);
 
   rollout = {
-    guilds: indexerGuilds,
+    guilds: mirrorballGuilds,
   };
 
   category = "lastfm";
@@ -24,11 +24,11 @@ export abstract class RateYourMusicIndexingChildCommand<
   ResponseT,
   ParamsT,
   T extends Arguments = Arguments
-> extends IndexingChildCommand<ResponseT, ParamsT, T> {
+> extends MirrorballChildCommand<ResponseT, ParamsT, T> {
   lastFMService = new LastFMService(this.logger);
 
   rollout = {
-    guilds: indexerGuilds,
+    guilds: mirrorballGuilds,
   };
 
   category = "lastfm";

@@ -3,7 +3,7 @@ import { LinkGenerator } from "../../../../helpers/lastFM";
 import { convertIndexerDate } from "../../../../helpers/mirrorball";
 import { Arguments } from "../../../../lib/arguments/arguments";
 import { Variation } from "../../../../lib/command/BaseCommand";
-import { IndexingBaseCommand } from "../../../../lib/indexing/IndexingCommand";
+import { MirrorballBaseCommand } from "../../../../lib/indexing/MirrorballCommands";
 import {
   displayDate,
   displayLink,
@@ -22,7 +22,7 @@ const args = {
   },
 } as const;
 
-export default class WhoFirstArtist extends IndexingBaseCommand<
+export default class WhoFirstArtist extends MirrorballBaseCommand<
   WhoFirstArtistResponse,
   WhoFirstArtistParams,
   typeof args
@@ -45,7 +45,7 @@ export default class WhoFirstArtist extends IndexingBaseCommand<
 
   subcategory = "whofirst";
   rollout = {
-    guilds: this.indexerGuilds,
+    guilds: this.mirrorballGuilds,
   };
 
   arguments: Arguments = args;

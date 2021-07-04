@@ -16,7 +16,11 @@ import {
 import { errorEmbed } from "../views/embeds";
 import { LastFMArguments } from "../../services/LastFM/LastFMArguments";
 
-export const indexerGuilds = ["768596255697272862", "769112727103995904"];
+export const mirrorballGuilds = [
+  "768596255697272862",
+  "769112727103995904",
+  "857781722065010698",
+];
 
 export interface ErrorResponse {
   errors: { message: string }[];
@@ -30,7 +34,7 @@ function hasErrors(response: any): response is ErrorResponse {
   );
 }
 
-export abstract class IndexingBaseCommand<
+export abstract class MirrorballBaseCommand<
   ResponseT,
   ParamsT,
   ArgumentsT extends Arguments = Arguments
@@ -41,7 +45,7 @@ export abstract class IndexingBaseCommand<
   lastFMArguments = new LastFMArguments(this, this.lastFMService, this.logger);
   concurrencyManager = new ConcurrencyManager();
 
-  protected readonly indexerGuilds = indexerGuilds;
+  protected readonly mirrorballGuilds = mirrorballGuilds;
 
   readonly indexingHelp =
     '"Indexing" means downloading all your last.fm data. This is required for many commands to function, and is recommended.';
@@ -209,11 +213,11 @@ export abstract class IndexingBaseCommand<
   }
 }
 
-export abstract class IndexingChildCommand<
+export abstract class MirrorballChildCommand<
   ResponseT,
   ParamsT,
   T extends Arguments
-> extends IndexingBaseCommand<ResponseT, ParamsT, T> {
+> extends MirrorballBaseCommand<ResponseT, ParamsT, T> {
   shouldBeIndexed = false;
   abstract parentName: string;
 }

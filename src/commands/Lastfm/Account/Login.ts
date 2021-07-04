@@ -5,7 +5,7 @@ import { Arguments } from "../../../lib/arguments/arguments";
 import { Delegate } from "../../../lib/command/BaseCommand";
 import { EmojiRaw } from "../../../lib/Emoji";
 import { EmptyConnector } from "../../../lib/indexing/BaseConnector";
-import { IndexingBaseCommand } from "../../../lib/indexing/IndexingCommand";
+import { MirrorballBaseCommand } from "../../../lib/indexing/MirrorballCommands";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { displayLink } from "../../../lib/views/displays";
 import { ConfirmationEmbed } from "../../../lib/views/embeds/ConfirmationEmbed";
@@ -14,7 +14,7 @@ import SimpleLogin from "./SimpleLogin";
 
 const args = {} as const;
 
-export default class Login extends IndexingBaseCommand<
+export default class Login extends MirrorballBaseCommand<
   never,
   never,
   typeof args
@@ -34,7 +34,7 @@ export default class Login extends IndexingBaseCommand<
   delegates: Delegate<typeof args>[] = [
     {
       delegateTo: SimpleLogin,
-      when: () => !this.indexerGuilds.includes(this.guild.id),
+      when: () => !this.mirrorballGuilds.includes(this.guild.id),
     },
   ];
 

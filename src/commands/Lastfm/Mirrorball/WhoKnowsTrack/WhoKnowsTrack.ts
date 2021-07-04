@@ -2,7 +2,7 @@ import { IndexerError } from "../../../../errors";
 import { LinkGenerator } from "../../../../helpers/lastFM";
 import { Arguments } from "../../../../lib/arguments/arguments";
 import { Variation } from "../../../../lib/command/BaseCommand";
-import { IndexingBaseCommand } from "../../../../lib/indexing/IndexingCommand";
+import { MirrorballBaseCommand } from "../../../../lib/indexing/MirrorballCommands";
 import {
   displayLink,
   displayNumber,
@@ -22,7 +22,7 @@ const args = {
   },
 } as const;
 
-export default class WhoKnowsTrack extends IndexingBaseCommand<
+export default class WhoKnowsTrack extends MirrorballBaseCommand<
   WhoKnowsTrackResponse,
   WhoKnowsTrackParams,
   typeof args
@@ -34,7 +34,7 @@ export default class WhoKnowsTrack extends IndexingBaseCommand<
   aliases = ["wkt"];
   subcategory = "whoknows";
   rollout = {
-    guilds: this.indexerGuilds,
+    guilds: this.mirrorballGuilds,
   };
 
   variations: Variation[] = [{ name: "update", variation: "uwkt" }];

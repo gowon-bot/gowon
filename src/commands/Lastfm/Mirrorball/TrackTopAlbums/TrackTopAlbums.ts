@@ -3,7 +3,7 @@ import { SimpleScrollingEmbed } from "../../../../lib/views/embeds/SimpleScrolli
 import { LinkGenerator } from "../../../../helpers/lastFM";
 import { Arguments } from "../../../../lib/arguments/arguments";
 import { standardMentions } from "../../../../lib/arguments/mentions/mentions";
-import { IndexingBaseCommand } from "../../../../lib/indexing/IndexingCommand";
+import { MirrorballBaseCommand } from "../../../../lib/indexing/MirrorballCommands";
 import {
   TrackTopAlbumsConnector,
   TrackTopAlbumsParams,
@@ -19,7 +19,7 @@ const args = {
   mentions: standardMentions,
 } as const;
 
-export default class TrackTopAlbums extends IndexingBaseCommand<
+export default class TrackTopAlbums extends MirrorballBaseCommand<
   TrackTopAlbumsResponse,
   TrackTopAlbumsParams,
   typeof args
@@ -33,7 +33,7 @@ export default class TrackTopAlbums extends IndexingBaseCommand<
   description = "Displays your top scrobbled albums from a track";
 
   rollout = {
-    guilds: this.indexerGuilds,
+    guilds: this.mirrorballGuilds,
   };
 
   arguments: Arguments = args;

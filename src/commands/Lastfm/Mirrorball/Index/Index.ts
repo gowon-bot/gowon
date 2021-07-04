@@ -5,7 +5,7 @@ import {
   ConcurrencyManager,
   ConcurrentActions,
 } from "../../../../lib/caches/ConcurrencyManager";
-import { IndexingBaseCommand } from "../../../../lib/indexing/IndexingCommand";
+import { MirrorballBaseCommand as MirrorballBaseCommand } from "../../../../lib/indexing/MirrorballCommands";
 import { Validation } from "../../../../lib/validation/ValidationChecker";
 import { validators } from "../../../../lib/validation/validators";
 import { IndexingService } from "../../../../services/indexing/IndexingService";
@@ -19,7 +19,7 @@ const args = {
   inputs: {},
 } as const;
 
-export default class Index extends IndexingBaseCommand<
+export default class Index extends MirrorballBaseCommand<
   IndexUserResponse,
   IndexUserParams,
   typeof args
@@ -35,7 +35,7 @@ export default class Index extends IndexingBaseCommand<
     "Fully index a user, deleting any previous data and replacing it";
 
   rollout = {
-    guilds: this.indexerGuilds,
+    guilds: this.mirrorballGuilds,
   };
 
   indexingService = new IndexingService();
@@ -63,7 +63,9 @@ export default class Index extends IndexingBaseCommand<
   }
 
   async run() {
-    const { senderUsername } = await this.parseMentions();
+    const { senderUsername } = await this.parseMentions({
+      authentificationRequired: true,
+    });
 
     this.indexingService.quietAddUserToGuild(this.author.id, this.guild.id);
 

@@ -1,7 +1,7 @@
 import { IndexerError } from "../../../../errors";
 import { Arguments } from "../../../../lib/arguments/arguments";
 import { standardMentions } from "../../../../lib/arguments/mentions/mentions";
-import { IndexingBaseCommand } from "../../../../lib/indexing/IndexingCommand";
+import { MirrorballBaseCommand } from "../../../../lib/indexing/MirrorballCommands";
 import {
   LastScrobbledConnector,
   LastScrobbledParams,
@@ -18,7 +18,7 @@ const args = {
   mentions: standardMentions,
 } as const;
 
-export default class LastScrobbledArtist extends IndexingBaseCommand<
+export default class LastScrobbledArtist extends MirrorballBaseCommand<
   LastScrobbledResponse,
   LastScrobbledParams,
   typeof args
@@ -36,7 +36,7 @@ export default class LastScrobbledArtist extends IndexingBaseCommand<
   description = "Shows the last time you scrobbled an artist";
 
   rollout = {
-    guilds: this.indexerGuilds,
+    guilds: this.mirrorballGuilds,
   };
 
   arguments: Arguments = args;

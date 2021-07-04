@@ -22,7 +22,7 @@ export class Rating extends RateYourMusicIndexingChildCommand<
   description = "Shows what you've rated an album";
 
   rollout = {
-    guilds: this.indexerGuilds,
+    guilds: this.mirrorballGuilds,
   };
 
   arguments: Arguments = args;

@@ -7,6 +7,7 @@ import { AdminService } from "../../services/dbservices/AdminService";
 import HelpForOneCommand from "./HelpForOneCommand";
 import { ucFirst } from "../../helpers";
 import { SimpleScrollingEmbed } from "../../lib/views/embeds/SimpleScrollingEmbed";
+import QuickHelp from "./QuickHelp";
 
 interface GroupedCommands {
   [category: string]: Command[];
@@ -14,6 +15,7 @@ interface GroupedCommands {
 
 const args = {
   inputs: {
+    all: { regex: /\b(all|commands|)\b/, index: 0 },
     command: { index: { start: 0 } },
   },
 } as const;
@@ -24,15 +26,16 @@ export default class Help extends BaseCommand<typeof args> {
   aliases = ["h"];
   subcategory = "about";
   description = "Displays the help menu, or help about a given command";
-  usage = ["", "command"];
+  usage = ["", "all", "<command>"];
 
   arguments: Arguments = args;
 
   delegates: Delegate<typeof args>[] = [
     {
-      when: (args) => !!args.command,
+      when: (args) => !!args.command && !args.all,
       delegateTo: HelpForOneCommand,
     },
+    { when: (args) => !args.all && !args.command, delegateTo: QuickHelp },
   ];
 
   commandManager = new CommandManager();

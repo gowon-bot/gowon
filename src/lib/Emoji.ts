@@ -32,6 +32,7 @@ export const Emoji = {
   blank: "<:blank:848334266928463882>",
   bruh: "<a:bruh:851935710298767371>",
   shitsfucked: "<:shitsfucked:857123087194521643>",
+  gowonPeek: "<:gowonpeek:790528424933589002>",
 
   fullStar: "<:fullStar:843763033858899968>",
   halfStar: "<:halfStar:843763307994284032>",

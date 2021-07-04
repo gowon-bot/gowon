@@ -1,5 +1,5 @@
 import { Arguments } from "../../../../lib/arguments/arguments";
-import { indexerGuilds } from "../../../../lib/indexing/IndexingCommand";
+import { mirrorballGuilds } from "../../../../lib/indexing/MirrorballCommands";
 import { ConfigService } from "../../../../services/dbservices/NowPlayingService";
 import { LastFMBaseChildCommand } from "../../LastFMBaseCommand";
 
@@ -10,7 +10,7 @@ export abstract class NowPlayingConfigChildCommand<
   subcategory = "nowplaying";
 
   rollout = {
-    guilds: indexerGuilds,
+    guilds: mirrorballGuilds,
   };
 
   configService = new ConfigService();

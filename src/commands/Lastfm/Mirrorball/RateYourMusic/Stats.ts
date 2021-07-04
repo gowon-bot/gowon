@@ -27,7 +27,7 @@ export class Stats extends RateYourMusicIndexingChildCommand<
   description = "Shows what you've rated an artists albums";
 
   rollout = {
-    guilds: this.indexerGuilds,
+    guilds: this.mirrorballGuilds,
   };
 
   arguments: Arguments = args;

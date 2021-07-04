@@ -10,6 +10,7 @@ import Prefix from "../../commands/Meta/Prefix";
 import { GowonClient } from "../GowonClient";
 import { RunAs } from "./RunAs";
 import { NicknameService } from "../../services/guilds/NicknameService";
+import Help from "../../commands/Help/Help";
 
 export class CommandHandler {
   gowonService = GowonService.getInstance();
@@ -52,6 +53,7 @@ export class CommandHandler {
       message.react("😔");
     }
 
+    await this.runHelpCommandIfMentioned(message);
     await this.runPrefixCommandIfMentioned(message, this.client);
     await this.gers(message);
     await this.yesMaam(message);
@@ -123,6 +125,21 @@ export class CommandHandler {
       prefixCommand.gowonClient = this.client;
 
       await prefixCommand.execute(message, new RunAs());
+    }
+  }
+
+  async runHelpCommandIfMentioned(message: Message) {
+    if (
+      message.mentions.users.has(this.client.client.user!.id) &&
+      message.content.split(/\s+/)[1]?.toLowerCase() === "help" &&
+      !message.author.bot
+    ) {
+      const helpCommand = new Help();
+      helpCommand.gowonClient = this.client;
+
+      message.content = "";
+
+      await helpCommand.execute(message, new RunAs());
     }
   }
 
