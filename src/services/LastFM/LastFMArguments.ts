@@ -61,7 +61,7 @@ export class LastFMArguments extends BaseService {
       const nowPlaying = await this.lastFMService.nowPlaying(requestable);
 
       if (!artist) artist = nowPlaying.artist;
-      if (!track) track = nowPlaying.album;
+      if (!track) track = nowPlaying.name;
     } else if (artist && redirect) {
       artist = (await this.redirectsService.getRedirect(artist))?.to || artist;
     }
