@@ -1,5 +1,4 @@
 import { DocumentNode } from "apollo-link";
-import { format } from "date-fns";
 import { cleanURL, sanitizeForDiscord } from "../../helpers/discord";
 import { Emoji } from "../Emoji";
 
@@ -29,12 +28,19 @@ export function displayLink(text: string, link: string): string {
 }
 
 export function displayDate(date: Date): string {
-  return format(date, "MMMM do, yyyy");
+  return discordTimestamp(date, "D");
 }
 
 export function displayDateTime(date: Date | undefined): string {
   if (!date) return "";
-  return format(date, "h:mma 'on' MMMM do, yyyy");
+  return discordTimestamp(date, "f");
+}
+
+export function discordTimestamp(
+  date: Date,
+  flag: "t" | "T" | "d" | "D" | "f" | "F" | "R" = "f"
+) {
+  return `<t:${Math.round(+date / 1000)}:${flag}>`;
 }
 
 export function displayNumberedList(list: any[], startAt = 0): string {

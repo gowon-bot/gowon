@@ -29,7 +29,7 @@ export default class Month extends LastFMBaseCommand<typeof args> {
 
     let paginator = new Paginator(
       this.lastFMService.recentTracks.bind(this.lastFMService),
-      4,
+      6,
       {
         from: ~~(sub(new Date(), { months: 1 }).getTime() / 1000),
         to: ~~(new Date().getTime() / 1000),

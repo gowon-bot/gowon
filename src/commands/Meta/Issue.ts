@@ -1,8 +1,9 @@
+import { format } from "date-fns";
 import { Arguments } from "../../lib/arguments/arguments";
 import { BaseCommand, Variation } from "../../lib/command/BaseCommand";
 import { Validation } from "../../lib/validation/ValidationChecker";
 import { validators } from "../../lib/validation/validators";
-import { displayDateTime, displayLink } from "../../lib/views/displays";
+import { displayLink } from "../../lib/views/displays";
 import { GithubService } from "../../services/Github/GithubService";
 
 const args = {
@@ -66,7 +67,7 @@ ${displayLink("Jump to message", this.message.url)}
 **Author**: ${this.author.username} (${
       this.message.member?.nickname || "*No Nickname*"
     })
-**Ran at**: ${displayDateTime(new Date())}
+**Ran at**: ${format(new Date(), "h:mma 'on' MMMM do, yyyy")}
 **Channel:** \\#${
       this.message.guild?.channels.cache.find(
         (c) => c.id === this.message.channel.id

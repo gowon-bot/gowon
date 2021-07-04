@@ -1,6 +1,6 @@
 import { displayNumber } from "../lib/views/displays";
 import { toInt } from "./lastFM";
-import { formatDistanceToNow } from "date-fns";
+import { discordTimestamp } from "../lib/views/displays";
 
 export function addS(string: string, number: number) {
   return number === 1 ? string : string + "s";
@@ -38,7 +38,7 @@ export function abbreviateNumber(number: number | string) {
 }
 
 export function ago(date: Date): string {
-  return formatDistanceToNow(date) + " ago";
+  return discordTimestamp(date, "R");
 }
 
 export function ucFirst(string: string): string {

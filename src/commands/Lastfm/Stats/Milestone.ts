@@ -52,11 +52,16 @@ export default class Milestone extends LastFMBaseCommand<typeof args> {
 
     if (!track) throw new BadLastFMResponseError();
 
-    let embed = this.newEmbed(trackEmbed(track))
+    let embed = this.newEmbed(trackEmbed(track));
+
+    embed = embed
       .setAuthor(
         `${perspective.upper.possessive} ${getOrdinal(milestone)} track was:`
       )
-      .setFooter(`Scrobbled at ${displayDateTime(track.scrobbledAt)}`);
+      .setDescription(
+        embed.description +
+          `\n\nScrobbled at ${displayDateTime(track.scrobbledAt)}`
+      );
 
     await this.send(embed);
   }

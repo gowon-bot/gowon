@@ -1,9 +1,5 @@
 import { Arguments } from "../../../lib/arguments/arguments";
-import {
-  timeRangeParser,
-  humanizedTimeRangeParser,
-  parseDate,
-} from "../../../helpers/date";
+import { timeRangeParser, parseDate } from "../../../helpers/date";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { LogicError } from "../../../errors";
 import { trackEmbed } from "../../../lib/views/embeds";
@@ -12,18 +8,11 @@ import { validators } from "../../../lib/validation/validators";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { GowonService } from "../../../services/GowonService";
 import { displayDate } from "../../../lib/views/displays";
+import { ago } from "../../../helpers";
 
 const args = {
   inputs: {
     timeRange: { custom: timeRangeParser(), index: -1 },
-    humanizedTimeRange: {
-      custom: humanizedTimeRangeParser({
-        raw: true,
-        noOverall: true,
-        cleanSingleDurations: false,
-      }),
-      index: -1,
-    },
     date: {
       custom: (string: string) =>
         parseDate(
@@ -58,7 +47,6 @@ export default class GoBack extends LastFMBaseCommand<typeof args> {
 
   async run() {
     let timeRange = this.parsedArguments.timeRange!,
-      humanTimeRange = this.parsedArguments.humanizedTimeRange!,
       date = this.parsedArguments.date!;
 
     if (!date && !timeRange.from)
@@ -78,10 +66,13 @@ export default class GoBack extends LastFMBaseCommand<typeof args> {
         `${perspective.plusToHave} not scrobbled any tracks in that time period!`
       );
 
-    let embed = trackEmbed(track).setAuthor(
-      date
-        ? `On ${displayDate(date)} ${perspective.name} scrobbled:`
-        : `${humanTimeRange} ago ${perspective.name} scrobbled:`
+    let embed = trackEmbed(track);
+
+    embed.setDescription(
+      embed.description +
+        (date
+          ? `\n\nScrobbled on ${displayDate(date)}`
+          : `\n\nScrobbled ${ago(timeRange.from!)}`)
     );
 
     await this.send(embed);
