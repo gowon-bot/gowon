@@ -16,11 +16,5 @@ export class Friend extends BaseEntity {
   user!: User;
 
   @Column()
-  serverID!: string;
-
-  @Column()
   friendUsername!: string;
 }
-
-
-

@@ -35,10 +35,7 @@ export abstract class FriendsChildCommand<
 
     this.user = user;
 
-    this.friendUsernames = await this.friendsService.getUsernames(
-      message.guild?.id!,
-      user
-    );
+    this.friendUsernames = await this.friendsService.getUsernames(user);
   }
 
   protected displayMissingFriend(username: string, entity = "playcount") {

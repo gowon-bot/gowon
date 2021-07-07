@@ -18,10 +18,7 @@ export class List extends FriendsChildCommand {
       []
     );
 
-    let numberOfFriends = await this.friendsService.friendsCount(
-      message.guild?.id!,
-      this.user
-    );
+    let numberOfFriends = await this.friendsService.friendsCount(this.user);
 
     let embed = this.newEmbed()
       .setTitle(

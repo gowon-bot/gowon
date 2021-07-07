@@ -42,19 +42,12 @@ export class Add extends FriendsChildCommand<typeof args> {
 
     let user = await this.usersService.getUser(message.author.id);
 
-    let friends = await this.friendsService.getUsernames(
-      message.guild?.id!,
-      senderUser!
-    );
+    let friends = await this.friendsService.getUsernames(senderUser!);
 
     if (friends.includes(username.toLowerCase()))
       throw new AlreadyFriendsError();
 
-    let friend = await this.friendsService.addFriend(
-      message.guild?.id!,
-      user,
-      username
-    );
+    let friend = await this.friendsService.addFriend(user, username);
 
     await this.send(
       this.newEmbed().setDescription(

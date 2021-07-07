@@ -42,7 +42,7 @@ export class Remove extends FriendsChildCommand<typeof args> {
 
     let user = await this.usersService.getUser(message.author.id);
 
-    await this.friendsService.removeFriend(message.guild?.id!, user, username);
+    await this.friendsService.removeFriend(user, username);
 
     await this.send(
       this.newEmbed().setDescription(
