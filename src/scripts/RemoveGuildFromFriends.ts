@@ -18,7 +18,7 @@ export default async function () {
       if (existing) {
         existing[1] = existing[1] + 1;
       } else {
-        acc.push([friend.friendUsername, 1, friend.id]);
+        acc.push([friend.friendUsername!, 1, friend.id]);
       }
 
       return acc;
