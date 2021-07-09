@@ -9,6 +9,7 @@ import { TrackPlays } from "./Commands/TrackPlays";
 import { Scrobbles } from "./Commands/Scrobbles";
 import { RemoveAll } from "./RemoveAll";
 import { Joined } from "./Commands/Joined";
+import { Rating } from "./Commands/Rating";
 
 export default class FriendsParentCommand extends LastFMBaseParentCommand {
   idSeed = "nature lu";
@@ -33,5 +34,6 @@ export default class FriendsParentCommand extends LastFMBaseParentCommand {
     trackplays: () => new TrackPlays(),
     scrobbles: () => new Scrobbles(),
     joined: () => new Joined(),
+    rating: () => new Rating(),
   });
 }

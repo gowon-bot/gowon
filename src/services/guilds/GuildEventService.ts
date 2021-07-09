@@ -69,10 +69,10 @@ export class GuildEventService extends BaseService {
       { command: "crowns banartist", dev: false },
       { command: "crowns unban", dev: false },
       { command: "crowns unbanartist", dev: false },
-      { command: "lastscrobbled", dev: true },
-      { command: "artisttoptracks", dev: true },
-      { command: "artisttopalbums", dev: true },
-      { command: "albumtoptracks", dev: true },
+      { command: "scraperlastscrobbled", dev: true },
+      { command: "scraperartisttoptracks", dev: true },
+      { command: "scraperartisttopalbums", dev: true },
+      { command: "scraperalbumtoptracks", dev: true },
     ];
 
     for (let commandName of commands) {

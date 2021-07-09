@@ -1,5 +1,4 @@
 import { FriendsChildCommand } from "./FriendsChildCommand";
-import { Message } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { LogicError } from "../../../errors";
 import { Validation } from "../../../lib/validation/ValidationChecker";
@@ -32,17 +31,18 @@ export class Remove extends FriendsChildCommand<typeof args> {
 
   async prerun() {}
 
-  async run(message: Message) {
-    let { username, senderUsername } = await this.parseMentions({
-      inputArgumentName: "friendUsername",
-    });
+  async run() {
+    const { username, senderUsername, senderUser, dbUser } =
+      await this.parseMentions({
+        inputArgumentName: "friendUsername",
+        senderRequired: true,
+      });
 
-    if (username === senderUsername)
+    if (username === senderUsername) {
       throw new LogicError("you can't be friends with yourself!");
+    }
 
-    let user = await this.usersService.getUser(message.author.id);
-
-    await this.friendsService.removeFriend(user, username);
+    await this.friendsService.removeFriend(senderUser!, dbUser || username);
 
     await this.send(
       this.newEmbed().setDescription(

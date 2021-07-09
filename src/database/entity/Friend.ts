@@ -15,6 +15,9 @@ export class Friend extends BaseEntity {
   @ManyToOne((_) => User, (user) => user.friends, { eager: true })
   user!: User;
 
-  @Column()
-  friendUsername!: string;
+  @ManyToOne((_) => User, { eager: true, nullable: true })
+  friend?: User;
+
+  @Column({ nullable: true })
+  friendUsername?: string;
 }

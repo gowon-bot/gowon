@@ -31,7 +31,10 @@ export class ImportRatingsConnector extends BaseConnector<
 // Rating
 export interface RatingResponse {
   ratings: [
-    { rating: number; rateYourMusicAlbum: MirrorballRateYourMusicAlbum }
+    {
+      rating: number;
+      rateYourMusicAlbum: MirrorballRateYourMusicAlbum;
+    }
   ];
 }
 

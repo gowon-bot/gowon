@@ -13,34 +13,53 @@ export class FriendsService extends BaseService {
   private lastFMService = new LastFMService(this.logger);
   private friendsLimit = 10;
 
-  async addFriend(user: User, friendUsername: string): Promise<Friend> {
-    this.log(`Adding friend ${friendUsername} for user ${user.lastFMUsername}`);
+  async addFriend(user: User, friendToAdd: string | User): Promise<Friend> {
+    this.log(`Adding friend ${friendToAdd} for user ${user.lastFMUsername}`);
 
-    if ((await this.friendsCount(user)) >= this.friendsLimit)
+    if ((await this.friendsCount(user)) >= this.friendsLimit) {
       throw new TooManyFriendsError(this.friendsLimit);
+    }
 
-    let friend = await Friend.findOne({ user, friendUsername });
+    let friend: Friend | undefined;
+
+    if (friendToAdd instanceof User) {
+      friend = await Friend.findOne({ user, friend: friendToAdd });
+    } else {
+      if (!(await this.lastFMService.userExists(friendToAdd))) {
+        throw new LastFMUserDoesntExistError();
+      }
+
+      friend = await Friend.findOne({ user, friendUsername: friendToAdd });
+    }
 
     if (friend) throw new AlreadyFriendsError();
 
-    if (!(await this.lastFMService.userExists(friendUsername)))
-      throw new LastFMUserDoesntExistError();
+    friend = Friend.create({ user });
 
-    friend = Friend.create({
-      user,
-      friendUsername: friendUsername.toLowerCase(),
-    });
+    if (friendToAdd instanceof User) {
+      friend.friend = friendToAdd;
+    } else {
+      friend.friendUsername = friendToAdd;
+    }
+
     await friend.save();
     return friend;
   }
 
-  async removeFriend(user: User, friendUsername: string): Promise<void> {
+  async removeFriend(user: User, friendToRemove: string | User): Promise<void> {
     this.log(
-      `Removing friend ${friendUsername} for user ${user.lastFMUsername}`
+      `Removing friend ${friendToRemove} for user ${user.lastFMUsername}`
     );
+
     let friend = await Friend.findOne({
       user,
-      friendUsername: friendUsername.toLowerCase(),
+      ...(friendToRemove instanceof User
+        ? {
+            friend: friendToRemove,
+          }
+        : {
+            friendUsername: friendToRemove.toLowerCase(),
+          }),
     });
 
     if (!friend) throw new NotFriendsError();
@@ -62,9 +81,33 @@ export class FriendsService extends BaseService {
     return await Friend.find({ user });
   }
 
+  async isAlreadyFriends(
+    authorUser: User,
+    username?: string,
+    user?: User
+  ): Promise<boolean> {
+    const friends = await Friend.find({ user: authorUser });
+
+    return friends.some(
+      (f) =>
+        (username && f.friendUsername === username) ||
+        (user && f.friend?.id === user?.id)
+    );
+  }
+
+  async isNotFriends(
+    authorUser: User,
+    username?: string,
+    user?: User
+  ): Promise<boolean> {
+    return await this.isAlreadyFriends(authorUser, username, user);
+  }
+
   async getUsernames(user: User): Promise<string[]> {
-    return (await this.listFriends(user)).map((f) =>
-      f.friendUsername.toLowerCase()
+    return (await this.listFriends(user)).map(
+      (f) =>
+        (f.friend?.lastFMUsername?.toLowerCase() ||
+          f.friendUsername?.toLowerCase())!
     );
   }
 
