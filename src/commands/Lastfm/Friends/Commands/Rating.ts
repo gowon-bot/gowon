@@ -5,6 +5,7 @@ import { IndexingService } from "../../../../services/indexing/IndexingService";
 import { RatingResponse } from "../../Mirrorball/RateYourMusic/connectors";
 import { displayRating } from "../../../../lib/views/displays";
 import { mirrorballGuilds } from "../../../../lib/indexing/MirrorballCommands";
+import { LogicError } from "../../../../errors";
 
 const args = {
   inputs: {
@@ -80,7 +81,15 @@ export class Rating extends FriendsChildCommand<typeof args> {
 
     const filteredRatings = ratings.filter((r) => r[1].ratings.length);
 
+    if (!filteredRatings.length) {
+      throw new LogicError(
+        `Couldn't find that album in your or your friends' ratings!`
+      );
+    }
+
     const { rateYourMusicAlbum } = filteredRatings[0][1].ratings[0];
+
+    const albumInfo = await this.lastFMService.albumInfo({ artist, album });
 
     const embed = this.newEmbed()
       .setTitle(
@@ -88,12 +97,13 @@ export class Rating extends FriendsChildCommand<typeof args> {
       )
       .setDescription(
         filteredRatings
-          .sort((a, b) => a[1].ratings[0].rating - b[1].ratings[0].rating)
+          .sort((a, b) => b[1].ratings[0].rating - a[1].ratings[0].rating)
           .map(
             ([username, rating]) =>
               `${username.code()} - ${displayRating(rating.ratings[0].rating)}`
           )
-      );
+      )
+      .setThumbnail(albumInfo.images.get("large")!);
 
     await this.send(embed);
   }
