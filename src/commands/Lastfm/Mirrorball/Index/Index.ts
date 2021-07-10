@@ -8,7 +8,6 @@ import {
 import { MirrorballBaseCommand as MirrorballBaseCommand } from "../../../../lib/indexing/MirrorballCommands";
 import { Validation } from "../../../../lib/validation/ValidationChecker";
 import { validators } from "../../../../lib/validation/validators";
-import { IndexingService } from "../../../../services/indexing/IndexingService";
 import {
   IndexUserParams,
   IndexUserResponse,
@@ -37,8 +36,6 @@ export default class Index extends MirrorballBaseCommand<
   rollout = {
     guilds: this.mirrorballGuilds,
   };
-
-  indexingService = new IndexingService();
 
   arguments: Arguments = args;
 

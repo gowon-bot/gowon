@@ -1,6 +1,5 @@
 import { BaseCommand } from "../../lib/command/BaseCommand";
 import { Arguments } from "../../lib/arguments/arguments";
-import { IndexingService } from "../../services/indexing/IndexingService";
 import { Stopwatch } from "../../helpers";
 import { Message, MessageEmbed } from "discord.js";
 import { LogicError } from "../../errors";
@@ -18,8 +17,6 @@ export default class Status extends BaseCommand<typeof args> {
   usage = "";
 
   arguments: Arguments = args;
-
-  indexingService = new IndexingService(this.logger);
 
   async run() {
     const embed = this.newEmbed()

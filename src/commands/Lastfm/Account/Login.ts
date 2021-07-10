@@ -1,4 +1,6 @@
-import { Message } from "discord.js";
+import { Message, MessageEmbed } from "discord.js";
+import { User } from "../../../database/entity/User";
+import { sleep } from "../../../helpers";
 import { ReactionCollectorFilter } from "../../../helpers/discord";
 import { LinkGenerator } from "../../../helpers/lastFM";
 import { Arguments } from "../../../lib/arguments/arguments";
@@ -10,6 +12,7 @@ import { Validation } from "../../../lib/validation/ValidationChecker";
 import { displayLink } from "../../../lib/views/displays";
 import { ConfirmationEmbed } from "../../../lib/views/embeds/ConfirmationEmbed";
 import { UserType } from "../../../services/indexing/IndexingTypes";
+import { LastFMSession } from "../../../services/LastFM/converters/Misc";
 import SimpleLogin from "./SimpleLogin";
 
 const args = {} as const;
@@ -64,51 +67,12 @@ export default class Login extends MirrorballBaseCommand<
     const filter: ReactionCollectorFilter = (reaction, user) =>
       reaction.emoji.id === EmojiRaw.checkmark && user.id === this.author.id;
 
-    const reactionCollector = sentMessage.createReactionCollector(filter, {
-      time: 5 * 60 * 1000,
-    });
+    const poll = this.pollForLastFMResponse(token);
+    const reaction = this.listenForReaction(filter, sentMessage, token, embed);
 
-    reactionCollector.on("collect", async () => {
-      if (await this.handleCreateSession(token, sentMessage)) {
-        reactionCollector.stop();
-      } else if (!embed.footer?.text?.includes("didn't work")) {
-        await sentMessage.edit(
-          embed.setFooter(
-            "Hmm that didn't work, please ensure you've authenticated with the link and try again"
-          )
-        );
-      }
-    });
+    const user = await Promise.race([poll, reaction]);
 
-    reactionCollector.on("error", () => reactionCollector.stop());
-
-    reactionCollector.on("end", async (_: any, reason) => {
-      if (reason === "time") {
-        await sentMessage.edit(
-          embed.setFooter("This login link has expired, please try again")
-        );
-      }
-    });
-  }
-
-  private async handleCreateSession(
-    token: string,
-    sentMessage: Message
-  ): Promise<boolean> {
-    try {
-      const session = await this.lastFMService.getSession({ token });
-
-      const user = await this.usersService.setLastFMSession(
-        this.author.id,
-        session
-      );
-
-      await this.handleIndexerLogin(
-        this.author.id,
-        session.username,
-        session.key
-      );
-
+    if (user) {
       const successEmbed = this.newEmbed()
         .setDescription(
           `Success! You've been logged in as ${user.lastFMUsername}\n\nWould you like to index your data?`
@@ -126,15 +90,33 @@ export default class Login extends MirrorballBaseCommand<
         this.impromptuIndex(
           successEmbed,
           confirmationEmbed,
-          session.username,
+          user.lastFMUsername,
           this.author.id
         );
       }
+    }
+  }
+
+  private async handleCreateSession(
+    token: string
+  ): Promise<{ success: boolean; user?: User }> {
+    let user: User;
+
+    try {
+      const session = await this.lastFMService.getSession({ token });
+
+      user = await this.usersService.setLastFMSession(this.author.id, session);
+
+      await this.handleIndexerLogin(
+        this.author.id,
+        session.username,
+        session.key
+      );
     } catch (e) {
-      return false;
+      return { success: false };
     }
 
-    return true;
+    return { success: true, user };
   }
 
   private async handleIndexerLogin(
@@ -151,5 +133,82 @@ export default class Login extends MirrorballBaseCommand<
     try {
       await this.indexingService.quietAddUserToGuild(discordID, this.guild.id);
     } catch (e) {}
+  }
+
+  private async pollForLastFMResponse(
+    token: string
+  ): Promise<User | undefined> {
+    const intervals = [3000, 6000, 10000, 20000];
+
+    let session: LastFMSession | undefined;
+
+    for (const interval of intervals) {
+      await sleep(interval);
+      try {
+        session = await this.lastFMService.getSession({ token });
+        break;
+      } catch {
+        continue;
+      }
+    }
+
+    if (session) {
+      const user = await this.usersService.setLastFMSession(
+        this.author.id,
+        session
+      );
+
+      await this.handleIndexerLogin(
+        this.author.id,
+        session.username,
+        session.key
+      );
+
+      return user;
+    }
+
+    return;
+  }
+
+  private async listenForReaction(
+    filter: ReactionCollectorFilter,
+    sentMessage: Message,
+    token: string,
+    embed: MessageEmbed
+  ): Promise<User | undefined> {
+    return new Promise((resolve, reject) => {
+      const reactionCollector = sentMessage.createReactionCollector(filter, {
+        time: 5 * 60 * 1000,
+      });
+
+      reactionCollector.on("collect", async () => {
+        const { success, user } = await this.handleCreateSession(token);
+
+        if (success) {
+          reactionCollector.stop();
+          resolve(user!);
+        } else if (!embed.footer?.text?.includes("didn't work")) {
+          await sentMessage.edit(
+            embed.setFooter(
+              "Hmm that didn't work, please ensure you've authenticated with the link and try again"
+            )
+          );
+        }
+      });
+
+      reactionCollector.on("error", () => {
+        reactionCollector.stop();
+        reject();
+      });
+
+      reactionCollector.on("end", async (_: any, reason) => {
+        if (reason === "time") {
+          await sentMessage.edit(
+            embed.setFooter("This login link has expired, please try again")
+          );
+        }
+        resolve(undefined);
+      });
+    });
   }
 }

@@ -1,5 +1,4 @@
 import { ConfirmationEmbed } from "../../../lib/views/embeds/ConfirmationEmbed";
-import { IndexingService } from "../../../services/indexing/IndexingService";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 export default class Logout extends LastFMBaseCommand {
@@ -8,8 +7,6 @@ export default class Logout extends LastFMBaseCommand {
   description = "Unsets your Last.fm username in Gowon";
   subcategory = "accounts";
   usage = "";
-
-  indexingService = new IndexingService(this.logger);
 
   async run() {
     const embed = this.newEmbed()

@@ -1,6 +1,5 @@
 import { BaseCommand } from "../command/BaseCommand";
 import { Connector } from "./BaseConnector";
-import { IndexingService } from "../../services/indexing/IndexingService";
 import { Arguments } from "../arguments/arguments";
 import { IndexerError, LogicError, UserNotIndexedError } from "../../errors";
 import { gql } from "@apollo/client/core";
@@ -40,7 +39,6 @@ export abstract class MirrorballBaseCommand<
   ArgumentsT extends Arguments = Arguments
 > extends BaseCommand<ArgumentsT> {
   abstract connector: Connector<ResponseT, ParamsT>;
-  indexingService = new IndexingService(this.logger);
   lastFMService = new LastFMService(this.logger);
   lastFMArguments = new LastFMArguments(this, this.lastFMService, this.logger);
   concurrencyManager = new ConcurrencyManager();

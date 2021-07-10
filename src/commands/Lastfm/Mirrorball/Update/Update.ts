@@ -12,7 +12,6 @@ import {
   responseHasError,
 } from "../../../../services/indexing/IndexerErrorResposes";
 import { IndexerTaskNames } from "../../../../services/indexing/IndexerTaskNames";
-import { IndexingService } from "../../../../services/indexing/IndexingService";
 import Index from "../Index/Index";
 import {
   UpdateUserConnector,
@@ -52,8 +51,6 @@ export default class Update extends MirrorballBaseCommand<
   ];
 
   arguments = args;
-
-  indexingService = new IndexingService(this.logger);
 
   stopwatch = new Stopwatch();
 

@@ -1,7 +1,6 @@
 import { FriendsChildCommand } from "../FriendsChildCommand";
 import { Arguments } from "../../../../lib/arguments/arguments";
 import gql from "graphql-tag";
-import { IndexingService } from "../../../../services/indexing/IndexingService";
 import { RatingResponse } from "../../Mirrorball/RateYourMusic/connectors";
 import { displayNumber, displayRating } from "../../../../lib/views/displays";
 import { mirrorballGuilds } from "../../../../lib/indexing/MirrorballCommands";
@@ -29,8 +28,6 @@ export class Rating extends FriendsChildCommand<typeof args> {
   rollout = {
     guilds: mirrorballGuilds,
   };
-
-  indexingService = new IndexingService(this.logger);
 
   async run() {
     const { senderUser, senderUsername } = await this.parseMentions({

@@ -27,7 +27,7 @@ export default class LastScrobbledTrack extends MirrorballBaseCommand<
   idSeed = "shasha hwi a";
 
   aliases = ["lastt", "lt"];
-  variations: Variation[] = [{ name: "first", variation: ["firstl", "ft"] }];
+  variations: Variation[] = [{ name: "first", variation: ["firstt", "ft"] }];
 
   subcategory = "library";
   description = "Shows the last time you scrobbled an track";
