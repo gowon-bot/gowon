@@ -6,6 +6,7 @@ import { Help } from "./Help";
 import { ImportRatings } from "./Import";
 import { Link } from "./Link";
 import { Rating } from "./Rating";
+import { Ratings } from "./Ratings";
 import { Stats } from "./Stats";
 
 export default class RateYourMusicParentCommand extends ParentCommand {
@@ -20,7 +21,7 @@ export default class RateYourMusicParentCommand extends ParentCommand {
     guilds: mirrorballGuilds,
   };
 
-  canSkipPrefixFor = ["importratings", "rating", "artistratings"];
+  canSkipPrefixFor = ["importratings", "rating", "artistratings", "ratings"];
 
   prefixes = ["rateyourmusic", "rym", "ryms"];
   default = () => new Link();
@@ -32,5 +33,6 @@ export default class RateYourMusicParentCommand extends ParentCommand {
     artistratings: () => new ArtistRatings(),
     stats: () => new Stats(),
     help: () => new Help(),
+    ratings: () => new Ratings(),
   });
 }

@@ -77,7 +77,7 @@ export class Rating extends FriendsChildCommand<typeof args> {
       })
     )) as [string, RatingResponse][];
 
-    const filteredRatings = ratings.filter((r) => r[1].ratings.length);
+    const filteredRatings = ratings.filter((r) => r[1].ratings.ratings.length);
 
     if (!filteredRatings.length) {
       throw new LogicError(
@@ -85,7 +85,7 @@ export class Rating extends FriendsChildCommand<typeof args> {
       );
     }
 
-    const { rateYourMusicAlbum } = filteredRatings[0][1].ratings[0];
+    const { rateYourMusicAlbum } = filteredRatings[0][1].ratings.ratings[0];
 
     const albumInfo = await this.lastFMService.albumInfo({ artist, album });
 
@@ -95,18 +95,22 @@ export class Rating extends FriendsChildCommand<typeof args> {
       )
       .setDescription(
         `_Average ${(
-          (mean(filteredRatings.map((r) => r[1].ratings[0].rating)) as number) /
-          2
+          (mean(
+            filteredRatings.map((r) => r[1].ratings.ratings[0].rating)
+          ) as number) / 2
         ).toPrecision(2)}/5 from ${displayNumber(
           filteredRatings.length,
           "rating"
         )}_\n\n` +
           filteredRatings
-            .sort((a, b) => b[1].ratings[0].rating - a[1].ratings[0].rating)
+            .sort(
+              (a, b) =>
+                b[1].ratings.ratings[0].rating - a[1].ratings.ratings[0].rating
+            )
             .map(
               ([username, rating]) =>
                 `${username.code()} - ${displayRating(
-                  rating.ratings[0].rating
+                  rating.ratings.ratings[0].rating
                 )}`
             )
             .join("\n")

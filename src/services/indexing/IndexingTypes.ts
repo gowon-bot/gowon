@@ -65,3 +65,12 @@ export interface MirrorballRateYourMusicAlbum {
   title: string;
   artistName: string;
 }
+
+export interface MirrorballPageInfo {
+  recordCount: number;
+}
+
+export interface MirrorballRating {
+  rating: number;
+  rateYourMusicAlbum: MirrorballRateYourMusicAlbum;
+}

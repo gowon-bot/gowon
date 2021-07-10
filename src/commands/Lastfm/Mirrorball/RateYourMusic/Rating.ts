@@ -50,11 +50,11 @@ export class Rating extends RateYourMusicIndexingChildCommand<
       throw new UnknownIndexerError();
     }
 
-    if (!response.ratings.length) {
+    if (!response.ratings.ratings.length) {
       throw new LogicError("Couldn't find this album in your ratings!");
     }
 
-    const { rating, rateYourMusicAlbum } = response.ratings[0];
+    const { rating, rateYourMusicAlbum } = response.ratings.ratings[0];
 
     const albumInfo = await this.lastFMService.albumInfo({ artist, album });
 

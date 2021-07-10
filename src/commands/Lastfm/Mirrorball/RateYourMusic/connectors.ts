@@ -3,6 +3,7 @@ import { BaseConnector } from "../../../../lib/indexing/BaseConnector";
 import {
   AlbumInput,
   ArtistInput,
+  MirrorballPageInfo,
   MirrorballRateYourMusicAlbum,
   UserInput,
 } from "../../../../services/indexing/IndexingTypes";
@@ -30,12 +31,15 @@ export class ImportRatingsConnector extends BaseConnector<
 
 // Rating
 export interface RatingResponse {
-  ratings: [
-    {
-      rating: number;
-      rateYourMusicAlbum: MirrorballRateYourMusicAlbum;
-    }
-  ];
+  ratings: {
+    ratings: [
+      {
+        rating: number;
+        rateYourMusicAlbum: MirrorballRateYourMusicAlbum;
+      }
+    ];
+  };
+  pageInfo: MirrorballPageInfo;
 }
 
 export interface RatingParams {
@@ -52,10 +56,15 @@ export class RatingConnector extends BaseConnector<
       ratings(
         settings: { user: $user, album: $album, pageInput: { limit: 1 } }
       ) {
-        rating
-        rateYourMusicAlbum {
-          title
-          artistName
+        ratings {
+          rating
+          rateYourMusicAlbum {
+            title
+            artistName
+          }
+        }
+        pageInfo {
+          recordCount
         }
       }
     }
@@ -65,9 +74,11 @@ export class RatingConnector extends BaseConnector<
 // ArtistRatings
 export interface ArtistRatingsResponse {
   ratings: {
-    rating: number;
-    rateYourMusicAlbum: MirrorballRateYourMusicAlbum;
-  }[];
+    ratings: {
+      rating: number;
+      rateYourMusicAlbum: MirrorballRateYourMusicAlbum;
+    }[];
+  };
   artist?: {
     artistName: string;
     artistNativeName: string;
@@ -91,10 +102,12 @@ export class ArtistRatingsConnector extends BaseConnector<
       $artistKeywords: String!
     ) {
       ratings(settings: { user: $user, album: { artist: $artist } }) {
-        rating
-        rateYourMusicAlbum {
-          title
-          artistName
+        ratings {
+          rating
+          rateYourMusicAlbum {
+            title
+            artistName
+          }
         }
       }
 
@@ -109,9 +122,11 @@ export class ArtistRatingsConnector extends BaseConnector<
 // Stats
 export interface StatsResponse {
   ratings: {
-    rating: number;
-    rateYourMusicAlbum: MirrorballRateYourMusicAlbum;
-  }[];
+    ratings: {
+      rating: number;
+      rateYourMusicAlbum: MirrorballRateYourMusicAlbum;
+    }[];
+  };
 }
 
 export interface StatsParams {
@@ -122,10 +137,53 @@ export class StatsConnector extends BaseConnector<StatsResponse, StatsParams> {
   query = gql`
     query stats($user: UserInput) {
       ratings(settings: { user: $user }) {
-        rating
-        rateYourMusicAlbum {
-          title
-          artistName
+        ratings {
+          rating
+          rateYourMusicAlbum {
+            title
+            artistName
+          }
+        }
+      }
+    }
+  `;
+}
+
+// Ratings
+export interface RatingsResponse {
+  ratings: {
+    ratings: {
+      rating: number;
+      rateYourMusicAlbum: MirrorballRateYourMusicAlbum;
+    }[];
+    pageInfo: MirrorballPageInfo;
+  };
+}
+
+export interface RatingsParams {
+  user: UserInput;
+  pageInput: { limit: number; offset: number };
+  rating?: number;
+}
+
+export class RatingsConnector extends BaseConnector<
+  RatingsResponse,
+  RatingsParams
+> {
+  query = gql`
+    query stats($user: UserInput, $pageInput: PageInput, $rating: Int) {
+      ratings(
+        settings: { user: $user, pageInput: $pageInput, rating: $rating }
+      ) {
+        ratings {
+          rating
+          rateYourMusicAlbum {
+            title
+            artistName
+          }
+        }
+        pageInfo {
+          recordCount
         }
       }
     }

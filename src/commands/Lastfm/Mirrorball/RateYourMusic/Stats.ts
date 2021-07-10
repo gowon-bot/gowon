@@ -54,23 +54,25 @@ export class Stats extends RateYourMusicIndexingChildCommand<
       throw new UnknownIndexerError();
     }
 
-    if (!response.ratings.length) {
+    if (!response.ratings.ratings.length) {
       throw new LogicError(
         `You don't have any ratings imported yet! To import your ratings see \`${this.prefix}ryms help\``
       );
     }
 
-    const ratingsCounts = this.getRatingsCounts(response.ratings);
+    const ratingsCounts = this.getRatingsCounts(response.ratings.ratings);
 
     const embed = this.newEmbed()
       .setTitle(`${perspective.upper.possessive} RateYourMusic statistics`)
       .setDescription(
         `_${displayNumber(
-          response.ratings.length,
+          response.ratings.ratings.length,
 
           "total rating"
         )}, Average rating: ${displayNumber(
-          (mean(response.ratings.map((r) => r.rating)) / 2).toPrecision(3)
+          (mean(response.ratings.ratings.map((r) => r.rating)) / 2).toPrecision(
+            3
+          )
         )}_
         
 ${Object.entries(ratingsCounts)

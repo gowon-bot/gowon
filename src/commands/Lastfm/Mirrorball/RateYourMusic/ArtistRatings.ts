@@ -6,7 +6,7 @@ import {
   ArtistRatingsResponse,
 } from "./connectors";
 import { RateYourMusicIndexingChildCommand } from "./RateYourMusicChildCommand";
-import { MirrorballRateYourMusicAlbum } from "../../../../services/indexing/IndexingTypes";
+import { MirrorballRating } from "../../../../services/indexing/IndexingTypes";
 import { mean } from "mathjs";
 import { mostCommonOccurrence } from "../../../../helpers/stats";
 import { SimpleScrollingEmbed } from "../../../../lib/views/embeds/SimpleScrollingEmbed";
@@ -19,11 +19,6 @@ const args = {
   },
   mentions: standardMentions,
 } as const;
-
-type Rating = {
-  rating: number;
-  rateYourMusicAlbum: MirrorballRateYourMusicAlbum;
-};
 
 export class ArtistRatings extends RateYourMusicIndexingChildCommand<
   ArtistRatingsResponse,
@@ -68,14 +63,14 @@ export class ArtistRatings extends RateYourMusicIndexingChildCommand<
 
     let artistName =
       response.artist?.artistName ||
-      this.getArtistName(response.ratings) ||
+      this.getArtistName(response.ratings.ratings) ||
       artist;
 
     if (errors) {
       throw new UnknownIndexerError();
     }
 
-    if (!response.ratings.length) {
+    if (!response.ratings.ratings.length) {
       throw new LogicError(
         `Couldn't find any albums by that artist in ${perspective.possessive} ratings!`
       );
@@ -93,9 +88,9 @@ export class ArtistRatings extends RateYourMusicIndexingChildCommand<
       );
 
     const header = `**Average**: ${(
-      (mean(response.ratings.map((r) => r.rating)) as number) / 2
+      (mean(response.ratings.ratings.map((r) => r.rating)) as number) / 2
     ).toPrecision(2)}/5 from ${displayNumber(
-      response.ratings.length,
+      response.ratings.ratings.length,
       "rating"
     )}`;
 
@@ -103,7 +98,7 @@ export class ArtistRatings extends RateYourMusicIndexingChildCommand<
       this.message,
       embed,
       {
-        items: response.ratings,
+        items: response.ratings.ratings,
         pageSize: 10,
         pageRenderer: (items) =>
           header + "\n\n" + this.generateTable(items, artistName!),
@@ -114,7 +109,10 @@ export class ArtistRatings extends RateYourMusicIndexingChildCommand<
     simpleScrollingEmbed.send();
   }
 
-  private generateTable(ratings: Rating[], artistName: string): string {
+  private generateTable(
+    ratings: MirrorballRating[],
+    artistName: string
+  ): string {
     return ratings
       .map((r, idx) => {
         return (
@@ -130,12 +128,7 @@ export class ArtistRatings extends RateYourMusicIndexingChildCommand<
       .join("\n");
   }
 
-  private getArtistName(
-    ratings: {
-      rating: number;
-      rateYourMusicAlbum: MirrorballRateYourMusicAlbum;
-    }[]
-  ): string {
+  private getArtistName(ratings: MirrorballRating[]): string {
     return mostCommonOccurrence(
       ratings.map((r) => r.rateYourMusicAlbum.artistName)
     )!;
