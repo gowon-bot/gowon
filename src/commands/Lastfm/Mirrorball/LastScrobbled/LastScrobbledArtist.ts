@@ -1,4 +1,4 @@
-import { IndexerError } from "../../../../errors";
+import { MirrorballError } from "../../../../errors";
 import { Arguments } from "../../../../lib/arguments/arguments";
 import { standardMentions } from "../../../../lib/arguments/mentions/mentions";
 import { MirrorballBaseCommand } from "../../../../lib/indexing/MirrorballCommands";
@@ -9,7 +9,7 @@ import {
 } from "./connector";
 import { displayDate } from "../../../../lib/views/displays";
 import { Variation } from "../../../../lib/command/BaseCommand";
-import { convertIndexerDate } from "../../../../helpers/mirrorball";
+import { convertMirrorballDate } from "../../../../helpers/mirrorball";
 
 const args = {
   inputs: {
@@ -68,7 +68,7 @@ export default class LastScrobbledArtist extends MirrorballBaseCommand<
     const errors = this.parseErrors(response);
 
     if (errors) {
-      throw new IndexerError(errors.errors[0].message);
+      throw new MirrorballError(errors.errors[0].message);
     }
 
     const [play] = response.plays;
@@ -83,7 +83,7 @@ export default class LastScrobbledArtist extends MirrorballBaseCommand<
         `${perspective.upper.name} ${
           this.variationWasUsed("first") ? "first" : "last"
         } scrobbled ${play.track.artist.name.strong()} on ${displayDate(
-          convertIndexerDate(play.scrobbledAt)
+          convertMirrorballDate(play.scrobbledAt)
         )}`
       );
 

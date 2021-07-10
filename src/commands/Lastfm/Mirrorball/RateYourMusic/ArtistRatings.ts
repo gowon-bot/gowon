@@ -1,4 +1,4 @@
-import { LogicError, UnknownIndexerError } from "../../../../errors";
+import { LogicError, UnknownMirrorballError } from "../../../../errors";
 import { Arguments } from "../../../../lib/arguments/arguments";
 import {
   ArtistRatingsConnector,
@@ -6,7 +6,7 @@ import {
   ArtistRatingsResponse,
 } from "./connectors";
 import { RateYourMusicIndexingChildCommand } from "./RateYourMusicChildCommand";
-import { MirrorballRating } from "../../../../services/indexing/IndexingTypes";
+import { MirrorballRating } from "../../../../services/mirrorball/MirrorballTypes";
 import { mean } from "mathjs";
 import { mostCommonOccurrence } from "../../../../helpers/stats";
 import { SimpleScrollingEmbed } from "../../../../lib/views/embeds/SimpleScrollingEmbed";
@@ -67,7 +67,7 @@ export class ArtistRatings extends RateYourMusicIndexingChildCommand<
       artist;
 
     if (errors) {
-      throw new UnknownIndexerError();
+      throw new UnknownMirrorballError();
     }
 
     if (!response.ratings.ratings.length) {

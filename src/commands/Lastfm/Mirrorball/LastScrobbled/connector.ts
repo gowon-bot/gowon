@@ -4,7 +4,7 @@ import {
   MirrorballTrack,
   TrackInput,
   UserInput,
-} from "../../../../services/indexing/IndexingTypes";
+} from "../../../../services/mirrorball/MirrorballTypes";
 
 // LastScrobbledArtist
 export interface LastScrobbledResponse {

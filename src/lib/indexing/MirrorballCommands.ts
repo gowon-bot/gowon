@@ -1,7 +1,7 @@
 import { BaseCommand } from "../command/BaseCommand";
 import { Connector } from "./BaseConnector";
 import { Arguments } from "../arguments/arguments";
-import { IndexerError, LogicError, UserNotIndexedError } from "../../errors";
+import { MirrorballError, LogicError, UserNotIndexedError } from "../../errors";
 import { gql } from "@apollo/client/core";
 import { LastFMService } from "../../services/LastFM/LastFMService";
 import { Perspective } from "../Perspective";
@@ -58,7 +58,7 @@ export abstract class MirrorballBaseCommand<
 
       try {
         const rawResponse = await this.connector.request(
-          this.indexingService,
+          this.mirrorballService,
           variables
         );
 
@@ -71,7 +71,7 @@ export abstract class MirrorballBaseCommand<
         if (e.graphQLErrors?.length) {
           (response as any).errors = e.graphQLErrors;
         } else if (e.networkError) {
-          throw new IndexerError(
+          throw new MirrorballError(
             "The indexing service is not responding, please try again later."
           );
         }
@@ -99,13 +99,13 @@ export abstract class MirrorballBaseCommand<
       }
     `;
 
-    const response = (await this.indexingService.genericRequest(query, {
+    const response = (await this.mirrorballService.genericRequest(query, {
       user: { discordID },
     })) as {
       update: { token: string };
     };
 
-    return await this.indexingService.webhook
+    return await this.mirrorballService.webhook
       .waitForResponse(response.update.token, timeout)
       .catch(() => {});
   }
@@ -201,7 +201,7 @@ export abstract class MirrorballBaseCommand<
       ConcurrentActions.Indexing,
       discordID
     );
-    await this.indexingService.fullIndex(discordID);
+    await this.mirrorballService.fullIndex(discordID);
     this.concurrencyManager.registerUser(ConcurrentActions.Indexing, discordID);
     this.notifyUser(
       Perspective.buildPerspective(username, false),

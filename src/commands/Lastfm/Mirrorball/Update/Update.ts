@@ -1,4 +1,4 @@
-import { IndexerError, LogicError } from "../../../../errors";
+import { MirrorballError, LogicError } from "../../../../errors";
 import { Stopwatch } from "../../../../helpers";
 import {
   ConcurrencyManager,
@@ -8,10 +8,10 @@ import { Delegate } from "../../../../lib/command/BaseCommand";
 import { MirrorballBaseCommand } from "../../../../lib/indexing/MirrorballCommands";
 import { errorEmbed } from "../../../../lib/views/embeds";
 import {
-  IndexerErrorResponses,
+  MirrorballErrorResponses,
   responseHasError,
-} from "../../../../services/indexing/IndexerErrorResposes";
-import { IndexerTaskNames } from "../../../../services/indexing/IndexerTaskNames";
+} from "../../../../services/mirrorball/MirrorballErrorResponses";
+import { MirrorballTaskNames } from "../../../../services/mirrorball/MirrorballTaskNames";
 import Index from "../Index/Index";
 import {
   UpdateUserConnector,
@@ -71,7 +71,7 @@ export default class Update extends MirrorballBaseCommand<
   }
 
   async run() {
-    this.indexingService.quietAddUserToGuild(this.author.id, this.guild.id);
+    this.mirrorballService.quietAddUserToGuild(this.author.id, this.guild.id);
 
     const { senderUsername, perspective } = await this.parseMentions({
       authentificationRequired: true,
@@ -91,15 +91,15 @@ export default class Update extends MirrorballBaseCommand<
     const errors = this.parseErrors(response);
 
     if (errors) {
-      if (responseHasError(errors, IndexerErrorResponses.UserDoesntExist)) {
-        throw new IndexerError(
+      if (responseHasError(errors, MirrorballErrorResponses.UserDoesntExist)) {
+        throw new MirrorballError(
           `Couldn't find you logged into the indexer, try running \`${this.prefix}logout\`, then \`${this.prefix}login\` again`
         );
       } else {
-        throw new IndexerError(errors.errors[0].message);
+        throw new MirrorballError(errors.errors[0].message);
       }
     } else {
-      if (response.update.taskName === IndexerTaskNames.indexUser) {
+      if (response.update.taskName === MirrorballTaskNames.indexUser) {
         await sentMessage.edit(
           embed.setDescription(
             embed.description +
@@ -114,35 +114,38 @@ export default class Update extends MirrorballBaseCommand<
       this.author.id
     );
 
-    this.indexingService.webhook.onResponse(response.update.token, (error) => {
-      this.concurrencyManager.unregisterUser(
-        ConcurrentActions.Indexing,
-        this.author.id
-      );
-      if (this.stopwatch.elapsedInSeconds > 5) {
-        this.notifyUser(
-          perspective,
-          response.update.taskName === IndexerTaskNames.indexUser
-            ? "index"
-            : "update",
-          undefined,
-          error
+    this.mirrorballService.webhook.onResponse(
+      response.update.token,
+      (error) => {
+        this.concurrencyManager.unregisterUser(
+          ConcurrentActions.Indexing,
+          this.author.id
         );
-      } else {
-        if (error) {
-          sentMessage.edit(
-            errorEmbed(
-              embed,
-              this.author,
-              embed.description + "\n\n" + this.indexingErrorMessage
-            )
+        if (this.stopwatch.elapsedInSeconds > 5) {
+          this.notifyUser(
+            perspective,
+            response.update.taskName === MirrorballTaskNames.indexUser
+              ? "index"
+              : "update",
+            undefined,
+            error
           );
         } else {
-          sentMessage.edit(
-            embed.setDescription(`Updated user ${senderUsername.code()}!`)
-          );
+          if (error) {
+            sentMessage.edit(
+              errorEmbed(
+                embed,
+                this.author,
+                embed.description + "\n\n" + this.indexingErrorMessage
+              )
+            );
+          } else {
+            sentMessage.edit(
+              embed.setDescription(`Updated user ${senderUsername.code()}!`)
+            );
+          }
         }
       }
-    });
+    );
   }
 }

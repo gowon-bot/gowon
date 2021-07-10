@@ -301,12 +301,12 @@ export class LastFMEntityNotFoundError extends ClientError {
   }
 }
 
-export class IndexerError extends ClientError {
-  name = "IndexerError";
+export class MirrorballError extends ClientError {
+  name = "MirrorballError";
 }
 
-export class UnknownIndexerError extends ClientError {
-  name = "UnknownIndexerError";
+export class UnknownMirrorballError extends ClientError {
+  name = "UnknownMirrorballError";
 
   constructor() {
     super("Something went wrong while communicating with the indexing server.");

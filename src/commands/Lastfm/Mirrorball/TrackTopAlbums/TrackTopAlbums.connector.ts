@@ -4,7 +4,7 @@ import {
   MirrorballAmbiguousTrack,
   TrackInput,
   UserInput,
-} from "../../../../services/indexing/IndexingTypes";
+} from "../../../../services/mirrorball/MirrorballTypes";
 
 export interface TrackTopAlbumsResponse {
   trackTopAlbums: {

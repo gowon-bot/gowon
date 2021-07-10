@@ -3,8 +3,8 @@ import { RatingsParams, RatingsResponse, RatingsConnector } from "./connectors";
 import { RateYourMusicIndexingChildCommand } from "./RateYourMusicChildCommand";
 import { standardMentions } from "../../../../lib/arguments/mentions/mentions";
 import { PaginatedCacheManager } from "../../../../lib/PaginatedCacheManager";
-import { LogicError, UnknownIndexerError } from "../../../../errors";
-import { MirrorballRating } from "../../../../services/indexing/IndexingTypes";
+import { LogicError, UnknownMirrorballError } from "../../../../errors";
+import { MirrorballRating } from "../../../../services/mirrorball/MirrorballTypes";
 import { displayRating } from "../../../../lib/views/displays";
 import { ScrollingEmbed } from "../../../../lib/views/embeds/ScrollingEmbed";
 import { Validation } from "../../../../lib/validation/ValidationChecker";
@@ -72,7 +72,7 @@ export class Ratings extends RateYourMusicIndexingChildCommand<
     const errors = this.parseErrors(initialPages);
 
     if (errors) {
-      throw new UnknownIndexerError();
+      throw new UnknownMirrorballError();
     }
 
     if (!initialPages.ratings.pageInfo.recordCount) {

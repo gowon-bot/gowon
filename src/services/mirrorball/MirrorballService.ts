@@ -4,9 +4,9 @@ import { IndexingWebhookService } from "../../api/indexing/IndexingWebhookServic
 import { mirrorballClient } from "../../lib/indexing/client";
 import { BaseService } from "../BaseService";
 import { UsersService } from "../dbservices/UsersService";
-import { UserType } from "./IndexingTypes";
+import { UserType } from "./MirrorballTypes";
 
-export class IndexingService extends BaseService {
+export class MirrorballService extends BaseService {
   private usersService = new UsersService(this.logger);
 
   private readonly baseURL = "http://localhost:8080/graphql";

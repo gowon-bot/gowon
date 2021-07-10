@@ -62,7 +62,7 @@ import {
 } from "../../errors";
 import { BaseService } from "../BaseService";
 import { toInt } from "../../helpers/lastFM";
-import { MirrorballCacheService } from "../indexing/MirrorballCacheService";
+import { MirrorballCacheService } from "../mirrorball/MirrorballCacheService";
 
 export interface SessionKey {
   username: string;

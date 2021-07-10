@@ -1,4 +1,4 @@
-import { IndexerError, LogicError } from "../../../../errors";
+import { MirrorballError, LogicError } from "../../../../errors";
 import { SimpleScrollingEmbed } from "../../../../lib/views/embeds/SimpleScrollingEmbed";
 import { LinkGenerator } from "../../../../helpers/lastFM";
 import { Arguments } from "../../../../lib/arguments/arguments";
@@ -61,7 +61,7 @@ export default class AlbumTopTracks extends MirrorballBaseCommand<
     const errors = this.parseErrors(response);
 
     if (errors) {
-      throw new IndexerError(errors.errors[0].message);
+      throw new MirrorballError(errors.errors[0].message);
     }
 
     const { topTracks, album } = response.albumTopTracks;

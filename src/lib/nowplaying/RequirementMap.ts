@@ -3,7 +3,7 @@ import {
   MirrorballAlbum,
   MirrorballArtist,
   MirrorballRateYourMusicAlbum,
-} from "../../services/indexing/IndexingTypes";
+} from "../../services/mirrorball/MirrorballTypes";
 import {
   ArtistInfo,
   TrackInfo,
@@ -17,7 +17,7 @@ export type RequirementMap = {
   // Gowon data
   artistCrown: CrownDisplay | undefined;
 
-  // Indexer data
+  // Mirrorball data
   albumPlays: [{ album: MirrorballAlbum; playcount: number }];
   artistPlays: [{ artist: MirrorballArtist; playcount: number }];
   albumRating: [

@@ -1,4 +1,4 @@
-import { IndexerError } from "../../../../errors";
+import { MirrorballError } from "../../../../errors";
 import { LinkGenerator } from "../../../../helpers/lastFM";
 import { Arguments } from "../../../../lib/arguments/arguments";
 import { Variation } from "../../../../lib/command/BaseCommand";
@@ -66,7 +66,7 @@ export default class WhoKnowsTrack extends MirrorballBaseCommand<
     const errors = this.parseErrors(response);
 
     if (errors) {
-      throw new IndexerError(errors.errors[0].message);
+      throw new MirrorballError(errors.errors[0].message);
     }
 
     const { rows, track } = response.whoKnowsTrack;

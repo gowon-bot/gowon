@@ -1,4 +1,4 @@
-import { LogicError, UnknownIndexerError } from "../../../../errors";
+import { LogicError, UnknownMirrorballError } from "../../../../errors";
 import { Arguments } from "../../../../lib/arguments/arguments";
 import { displayRating } from "../../../../lib/views/displays";
 import { RatingConnector, RatingParams, RatingResponse } from "./connectors";
@@ -47,7 +47,7 @@ export class Rating extends RateYourMusicIndexingChildCommand<
     const errors = this.parseErrors(response);
 
     if (errors) {
-      throw new UnknownIndexerError();
+      throw new UnknownMirrorballError();
     }
 
     if (!response.ratings.ratings.length) {

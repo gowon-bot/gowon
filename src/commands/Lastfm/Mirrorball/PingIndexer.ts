@@ -19,14 +19,15 @@ const args = {
   mentions: {},
 } as const;
 
-export default class PingIndexer extends MirrorballBaseCommand<
+export default class PingMirrorball extends MirrorballBaseCommand<
   Response,
   Params,
   typeof args
 > {
   idSeed = "exid jeonghwa";
+  aliases = ["pingindexer"];
 
-  description = "Ping the indexer";
+  description = "Ping Mirrorball";
   subcategory = "developer";
   secretCommand = true;
 

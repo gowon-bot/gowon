@@ -1,20 +1,21 @@
 import { gql } from "@apollo/client/core";
 import { DocumentNode } from "graphql";
-import { IndexingService } from "../../services/indexing/IndexingService";
+import { MirrorballService } from "../../services/mirrorball/MirrorballService";
 
 export interface Connector<ResponseT, ParamsT> {
   request(
-    indexingService: IndexingService,
+    mirrorballService: MirrorballService,
     vars?: ParamsT
   ): Promise<{ data: ResponseT } | ResponseT>;
 }
 
 export abstract class BaseConnector<ResponseT, ParamsT>
-  implements Connector<ResponseT, ParamsT> {
+  implements Connector<ResponseT, ParamsT>
+{
   abstract query: DocumentNode;
 
-  async request(indexingService: IndexingService, variables?: ParamsT) {
-    return await indexingService.genericRequest(this.query, variables || {});
+  async request(mirrorballService: MirrorballService, variables?: ParamsT) {
+    return await mirrorballService.genericRequest(this.query, variables || {});
   }
 
   fragments = {

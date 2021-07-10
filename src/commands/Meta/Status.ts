@@ -22,28 +22,28 @@ export default class Status extends BaseCommand<typeof args> {
     const embed = this.newEmbed()
       .setTitle("Gowon status:")
       .setDescription(
-        "**Latency**: ```\nIndexer.....pinging\nDiscord.....pinging\n```"
+        "**Latency**: ```\nMirrorball.....pinging\nDiscord.....pinging\n```"
       );
 
-    const indexerLatency = await this.indexerLatency();
+    const mirrorballLatency = await this.mirrorballLatency();
     const [sentMessage, discordLatency] = await this.discordLatency(embed);
 
     await sentMessage.edit(
       embed.setDescription(
         "**Latency**:\n```\n" +
-          `Indexer.....${this.displayLatency(indexerLatency)}
+          `Mirrorball.....${this.displayLatency(mirrorballLatency)}
 Discord.....${this.displayLatency(discordLatency)}` +
           "\n```"
       )
     );
   }
 
-  private async indexerLatency(): Promise<Stopwatch> {
+  private async mirrorballLatency(): Promise<Stopwatch> {
     const stopwatch = new Stopwatch();
     stopwatch.start();
 
     try {
-      await this.indexingService.ping();
+      await this.mirrorballService.ping();
     } catch {
       return stopwatch.zero();
     }

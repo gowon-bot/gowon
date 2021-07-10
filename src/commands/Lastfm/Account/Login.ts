@@ -11,7 +11,7 @@ import { MirrorballBaseCommand } from "../../../lib/indexing/MirrorballCommands"
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { displayLink } from "../../../lib/views/displays";
 import { ConfirmationEmbed } from "../../../lib/views/embeds/ConfirmationEmbed";
-import { UserType } from "../../../services/indexing/IndexingTypes";
+import { UserType } from "../../../services/mirrorball/MirrorballTypes";
 import { LastFMSession } from "../../../services/LastFM/converters/Misc";
 import SimpleLogin from "./SimpleLogin";
 
@@ -107,7 +107,7 @@ export default class Login extends MirrorballBaseCommand<
 
       user = await this.usersService.setLastFMSession(this.author.id, session);
 
-      await this.handleIndexerLogin(
+      await this.handleMirrorballLogin(
         this.author.id,
         session.username,
         session.key
@@ -119,19 +119,22 @@ export default class Login extends MirrorballBaseCommand<
     return { success: true, user };
   }
 
-  private async handleIndexerLogin(
+  private async handleMirrorballLogin(
     discordID: string,
     username: string,
     session: string | undefined
   ) {
-    await this.indexingService.login(
+    await this.mirrorballService.login(
       username,
       discordID,
       UserType.Lastfm,
       session
     );
     try {
-      await this.indexingService.quietAddUserToGuild(discordID, this.guild.id);
+      await this.mirrorballService.quietAddUserToGuild(
+        discordID,
+        this.guild.id
+      );
     } catch (e) {}
   }
 
@@ -158,7 +161,7 @@ export default class Login extends MirrorballBaseCommand<
         session
       );
 
-      await this.handleIndexerLogin(
+      await this.handleMirrorballLogin(
         this.author.id,
         session.username,
         session.key

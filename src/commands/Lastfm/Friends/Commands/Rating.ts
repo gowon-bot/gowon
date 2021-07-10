@@ -61,7 +61,7 @@ export class Rating extends FriendsChildCommand<typeof args> {
 
     const ratings = (await Promise.all(
       friendIDs.map(async (friendID) => {
-        const response = await this.indexingService.genericRequest(query, {
+        const response = await this.mirrorballService.genericRequest(query, {
           user: { discordID: friendID },
           album: { name: album, artist: { name: artist } },
         });

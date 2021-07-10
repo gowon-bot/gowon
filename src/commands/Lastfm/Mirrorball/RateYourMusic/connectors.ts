@@ -6,7 +6,7 @@ import {
   MirrorballPageInfo,
   MirrorballRateYourMusicAlbum,
   UserInput,
-} from "../../../../services/indexing/IndexingTypes";
+} from "../../../../services/mirrorball/MirrorballTypes";
 
 // ImportRatings
 export interface ImportRatingsResponse {

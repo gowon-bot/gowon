@@ -1,4 +1,4 @@
-import { IndexerError, LogicError } from "../../../../errors";
+import { MirrorballError, LogicError } from "../../../../errors";
 import { ConfirmationEmbed } from "../../../../lib/views/embeds/ConfirmationEmbed";
 import { Arguments } from "../../../../lib/arguments/arguments";
 import {
@@ -64,7 +64,7 @@ export default class Index extends MirrorballBaseCommand<
       authentificationRequired: true,
     });
 
-    this.indexingService.quietAddUserToGuild(this.author.id, this.guild.id);
+    this.mirrorballService.quietAddUserToGuild(this.author.id, this.guild.id);
 
     const indexingUsername = senderUsername;
 
@@ -103,7 +103,7 @@ export default class Index extends MirrorballBaseCommand<
     const errors = this.parseErrors(response);
 
     if (errors) {
-      throw new IndexerError("An unknown error occurred");
+      throw new MirrorballError("An unknown error occurred");
     }
 
     this.concurrencyManager.registerUser(
@@ -111,7 +111,7 @@ export default class Index extends MirrorballBaseCommand<
       this.author.id
     );
 
-    this.indexingService.webhook.onResponse(response.fullIndex.token, () => {
+    this.mirrorballService.webhook.onResponse(response.fullIndex.token, () => {
       this.concurrencyManager.unregisterUser(
         ConcurrentActions.Indexing,
         this.author.id

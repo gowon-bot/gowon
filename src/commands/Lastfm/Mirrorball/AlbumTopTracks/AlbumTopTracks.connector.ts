@@ -4,7 +4,7 @@ import {
   AlbumInput,
   MirrorballAlbum,
   UserInput,
-} from "../../../../services/indexing/IndexingTypes";
+} from "../../../../services/mirrorball/MirrorballTypes";
 
 export interface AlbumTopTracksResponse {
   albumTopTracks: {

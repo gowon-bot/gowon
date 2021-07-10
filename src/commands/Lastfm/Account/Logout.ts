@@ -26,7 +26,7 @@ export default class Logout extends LastFMBaseCommand {
 
     if (confirmation) {
       await this.usersService.clearUsername(this.author.id);
-      await this.indexingService.logout(this.author.id);
+      await this.mirrorballService.logout(this.author.id);
 
       await confirmationEmbed.sentMessage?.edit(
         embed.setDescription("Logged out successfully.")

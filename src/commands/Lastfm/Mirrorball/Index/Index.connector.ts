@@ -3,7 +3,7 @@ import { BaseConnector } from "../../../../lib/indexing/BaseConnector";
 import {
   TaskStartResponse,
   UserInput,
-} from "../../../../services/indexing/IndexingTypes";
+} from "../../../../services/mirrorball/MirrorballTypes";
 
 export interface IndexUserResponse {
   fullIndex: TaskStartResponse;

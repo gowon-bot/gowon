@@ -3,7 +3,7 @@ import { BaseConnector } from "../../../../lib/indexing/BaseConnector";
 import {
   ArtistInput,
   WhoKnowsSettings,
-} from "../../../../services/indexing/IndexingTypes";
+} from "../../../../services/mirrorball/MirrorballTypes";
 
 // WhoFirstArtist
 export interface WhoFirstArtistResponse {

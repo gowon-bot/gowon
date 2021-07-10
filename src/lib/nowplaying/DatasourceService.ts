@@ -5,8 +5,8 @@ import {
   CrownDisplay,
   CrownsService,
 } from "../../services/dbservices/CrownsService";
-import { IndexingService } from "../../services/indexing/IndexingService";
-import { UserInput } from "../../services/indexing/IndexingTypes";
+import { MirrorballService } from "../../services/mirrorball/MirrorballService";
+import { UserInput } from "../../services/mirrorball/MirrorballTypes";
 import {
   ArtistInfo,
   TrackInfo,
@@ -34,7 +34,7 @@ export interface Resources {
 
 export class DatasourceService extends BaseService {
   lastFMService = new LastFMService(this.logger);
-  indexingService = new IndexingService(this.logger);
+  mirrorballService = new MirrorballService(this.logger);
   crownsService = new CrownsService(this.logger);
 
   resources!: Resources;
@@ -177,7 +177,7 @@ class GraphQLDatasource {
     const { query, variables } = buildQuery(this.parts);
 
     return async () => ({
-      graphQLData: await datasourceService.indexingService.genericRequest(
+      graphQLData: await datasourceService.mirrorballService.genericRequest(
         query,
         variables
       ),

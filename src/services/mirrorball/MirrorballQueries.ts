@@ -1,20 +1,14 @@
 import { gql } from "@apollo/client/core";
 
-export type IndexingQuery = keyof typeof IndexingQueries;
+export type MirrorballQuery = keyof typeof MirrorballQueries;
 
-export function isIndexingQuery(
+export function isMirrorballQuery(
   query: Uppercase<string>
-): query is IndexingQuery {
-  return Object.keys(IndexingQueries).includes(query);
+): query is MirrorballQuery {
+  return Object.keys(MirrorballQueries).includes(query);
 }
 
-export const IndexingQueries = {
-  TEST: gql`
-    query testQuery {
-      test
-    }
-  `,
-
+export const MirrorballQueries = {
   FULL_INDEX: gql`
     mutation indexUser($username: String!) {
       indexUser(username: $username) {

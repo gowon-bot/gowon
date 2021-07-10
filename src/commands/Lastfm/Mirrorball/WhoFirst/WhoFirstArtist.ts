@@ -1,6 +1,6 @@
-import { IndexerError } from "../../../../errors";
+import { MirrorballError } from "../../../../errors";
 import { LinkGenerator } from "../../../../helpers/lastFM";
-import { convertIndexerDate } from "../../../../helpers/mirrorball";
+import { convertMirrorballDate } from "../../../../helpers/mirrorball";
 import { Arguments } from "../../../../lib/arguments/arguments";
 import { Variation } from "../../../../lib/command/BaseCommand";
 import { MirrorballBaseCommand } from "../../../../lib/indexing/MirrorballCommands";
@@ -73,7 +73,7 @@ export default class WhoFirstArtist extends MirrorballBaseCommand<
     const errors = this.parseErrors(response);
 
     if (errors) {
-      throw new IndexerError(errors.errors[0].message);
+      throw new MirrorballError(errors.errors[0].message);
     }
 
     await this.nicknameService.cacheNicknames(
@@ -97,7 +97,7 @@ export default class WhoFirstArtist extends MirrorballBaseCommand<
                   `${displayLink(
                     this.nicknameService.cacheGetNickname(wk.user.discordID),
                     LinkGenerator.userPage(wk.user.username)
-                  )} - ${displayDate(convertIndexerDate(wk.scrobbledAt))}`
+                  )} - ${displayDate(convertMirrorballDate(wk.scrobbledAt))}`
               )
             )
       );

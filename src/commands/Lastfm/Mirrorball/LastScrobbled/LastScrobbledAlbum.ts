@@ -1,5 +1,5 @@
-import { IndexerError } from "../../../../errors";
-import { convertIndexerDate } from "../../../../helpers/mirrorball";
+import { MirrorballError } from "../../../../errors";
+import { convertMirrorballDate } from "../../../../helpers/mirrorball";
 import { Arguments } from "../../../../lib/arguments/arguments";
 import { Variation } from "../../../../lib/command/BaseCommand";
 import { MirrorballBaseCommand } from "../../../../lib/indexing/MirrorballCommands";
@@ -66,7 +66,7 @@ export default class LastScrobbledAlbum extends MirrorballBaseCommand<
     const errors = this.parseErrors(response);
 
     if (errors) {
-      throw new IndexerError(errors.errors[0].message);
+      throw new MirrorballError(errors.errors[0].message);
     }
 
     const [play] = response.plays;
@@ -81,7 +81,7 @@ export default class LastScrobbledAlbum extends MirrorballBaseCommand<
         `${perspective.upper.name} ${
           this.variationWasUsed("first") ? "first" : "last"
         } scrobbled ${play.track.album.name.italic()} by ${play.track.artist.name.strong()} on ${displayDate(
-          convertIndexerDate(play.scrobbledAt)
+          convertMirrorballDate(play.scrobbledAt)
         )}`
       );
 

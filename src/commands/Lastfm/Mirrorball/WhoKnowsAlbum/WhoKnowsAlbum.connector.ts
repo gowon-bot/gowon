@@ -3,7 +3,7 @@ import { BaseConnector } from "../../../../lib/indexing/BaseConnector";
 import {
   AlbumInput,
   WhoKnowsSettings,
-} from "../../../../services/indexing/IndexingTypes";
+} from "../../../../services/mirrorball/MirrorballTypes";
 
 export interface WhoKnowsAlbumResponse {
   whoKnowsAlbum: {

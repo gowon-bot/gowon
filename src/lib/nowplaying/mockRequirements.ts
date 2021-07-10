@@ -151,7 +151,7 @@ export const mockRequirements = (
       }),
     },
 
-    // Indexer types
+    // Mirrorball types
     albumPlays: [
       {
         album: { name: nowPlaying.album, artist: { name: nowPlaying.artist } },

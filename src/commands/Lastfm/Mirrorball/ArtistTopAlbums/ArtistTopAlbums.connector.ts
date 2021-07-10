@@ -3,7 +3,7 @@ import { BaseConnector } from "../../../../lib/indexing/BaseConnector";
 import {
   ArtistInput,
   UserInput,
-} from "../../../../services/indexing/IndexingTypes";
+} from "../../../../services/mirrorball/MirrorballTypes";
 
 export interface ArtistTopAlbumsResponse {
   artistTopAlbums: {

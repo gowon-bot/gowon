@@ -6,13 +6,13 @@ import { displayNumber } from "../../lib/views/displays";
 import { BaseService } from "../BaseService";
 import { AdminService } from "../dbservices/AdminService";
 import { GowonService } from "../GowonService";
-import { IndexingService } from "../indexing/IndexingService";
+import { MirrorballService } from "../mirrorball/MirrorballService";
 
 export class GuildEventService extends BaseService {
   gowonService = GowonService.getInstance();
   adminService = new AdminService(this.gowonClient);
   commandManager = new CommandManager();
-  indexingService = new IndexingService();
+  mirrorballService = new MirrorballService();
 
   constructor(private gowonClient: GowonClient, logger?: Logger) {
     super(logger);
@@ -36,7 +36,7 @@ export class GuildEventService extends BaseService {
   public async handleNewUser(guildMember: GuildMember) {
     this.log("Handling new user");
     try {
-      await this.indexingService.quietAddUserToGuild(
+      await this.mirrorballService.quietAddUserToGuild(
         guildMember.user.id,
         guildMember.guild.id
       );
@@ -50,7 +50,7 @@ export class GuildEventService extends BaseService {
   public async handleUserLeave(guildMember: GuildMember) {
     this.log("Handling user leave");
     try {
-      await this.indexingService.quietRemoveUserFromGuild(
+      await this.mirrorballService.quietRemoveUserFromGuild(
         guildMember.user.id,
         guildMember.guild.id
       );

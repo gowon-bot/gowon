@@ -1,10 +1,10 @@
 import { mean } from "mathjs";
-import { LogicError, UnknownIndexerError } from "../../../../errors";
+import { LogicError, UnknownMirrorballError } from "../../../../errors";
 import { toInt } from "../../../../helpers/lastFM";
 import { Arguments } from "../../../../lib/arguments/arguments";
 import { standardMentions } from "../../../../lib/arguments/mentions/mentions";
 import { displayNumber, displayRating } from "../../../../lib/views/displays";
-import { MirrorballRateYourMusicAlbum } from "../../../../services/indexing/IndexingTypes";
+import { MirrorballRateYourMusicAlbum } from "../../../../services/mirrorball/MirrorballTypes";
 import { StatsConnector, StatsParams, StatsResponse } from "./connectors";
 import { RateYourMusicIndexingChildCommand } from "./RateYourMusicChildCommand";
 
@@ -51,7 +51,7 @@ export class Stats extends RateYourMusicIndexingChildCommand<
     const errors = this.parseErrors(response);
 
     if (errors) {
-      throw new UnknownIndexerError();
+      throw new UnknownMirrorballError();
     }
 
     if (!response.ratings.ratings.length) {

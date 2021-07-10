@@ -38,7 +38,7 @@ import {
   compareUsernames,
 } from "../../helpers/parseMentions";
 import { Chance } from "chance";
-import { IndexingService } from "../../services/indexing/IndexingService";
+import { MirrorballService } from "../../services/mirrorball/MirrorballService";
 
 export interface Variation {
   name: string;
@@ -123,7 +123,7 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
   usersService = new UsersService(this.logger);
   gowonService = GowonService.getInstance();
   track = new TrackingService(this.logger);
-  indexingService = new IndexingService(this.logger);
+  mirrorballService = new MirrorballService(this.logger);
 
   hasChildren = false;
   children?: CommandManager;
@@ -197,7 +197,7 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
       Chance().bool({ likelihood: 2 }) &&
       !["update", "index"].includes(this.name)
     ) {
-      this.indexingService.quietAddUserToGuild(this.author.id, this.guild.id);
+      this.mirrorballService.quietAddUserToGuild(this.author.id, this.guild.id);
       senderUser.mirrorballUpdate();
     }
 
