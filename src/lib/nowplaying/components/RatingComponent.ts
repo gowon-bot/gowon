@@ -10,7 +10,7 @@ export class RatingComponent extends BaseNowPlayingComponent<
   readonly requirements = ratingRequirements;
 
   present() {
-    const albumRating = this.values.albumRating[0];
+    const albumRating = this.values.albumRating.ratings[0];
 
     if (albumRating) {
       return {

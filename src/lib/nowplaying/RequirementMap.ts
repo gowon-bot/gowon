@@ -2,7 +2,6 @@ import { CrownDisplay } from "../../services/dbservices/CrownsService";
 import {
   MirrorballAlbum,
   MirrorballArtist,
-  MirrorballRateYourMusicAlbum,
   MirrorballRating,
 } from "../../services/mirrorball/MirrorballTypes";
 import {
