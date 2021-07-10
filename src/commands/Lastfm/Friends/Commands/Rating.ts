@@ -3,9 +3,10 @@ import { Arguments } from "../../../../lib/arguments/arguments";
 import gql from "graphql-tag";
 import { IndexingService } from "../../../../services/indexing/IndexingService";
 import { RatingResponse } from "../../Mirrorball/RateYourMusic/connectors";
-import { displayRating } from "../../../../lib/views/displays";
+import { displayNumber, displayRating } from "../../../../lib/views/displays";
 import { mirrorballGuilds } from "../../../../lib/indexing/MirrorballCommands";
 import { LogicError } from "../../../../errors";
+import { mean } from "mathjs";
 
 const args = {
   inputs: {
@@ -96,12 +97,21 @@ export class Rating extends FriendsChildCommand<typeof args> {
         `Your friends ratings of ${rateYourMusicAlbum.title} by ${rateYourMusicAlbum.artistName}`
       )
       .setDescription(
-        filteredRatings
-          .sort((a, b) => b[1].ratings[0].rating - a[1].ratings[0].rating)
-          .map(
-            ([username, rating]) =>
-              `${username.code()} - ${displayRating(rating.ratings[0].rating)}`
-          )
+        `_Average ${(
+          (mean(filteredRatings.map((r) => r[1].ratings[0].rating)) as number) /
+          2
+        ).toPrecision(2)}/5 from ${displayNumber(
+          filteredRatings.length,
+          "rating"
+        )}_\n\n` +
+          filteredRatings
+            .sort((a, b) => b[1].ratings[0].rating - a[1].ratings[0].rating)
+            .map(
+              ([username, rating]) =>
+                `${username.code()} - ${displayRating(
+                  rating.ratings[0].rating
+                )}`
+            )
       )
       .setThumbnail(albumInfo.images.get("large")!);
 

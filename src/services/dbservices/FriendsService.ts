@@ -8,6 +8,7 @@ import {
 import { BaseService } from "../BaseService";
 import { User } from "../../database/entity/User";
 import { LastFMService } from "../LastFM/LastFMService";
+import { FindConditions, ILike, WhereExpression } from "typeorm";
 
 export class FriendsService extends BaseService {
   private lastFMService = new LastFMService(this.logger);
@@ -51,15 +52,29 @@ export class FriendsService extends BaseService {
       `Removing friend ${friendToRemove} for user ${user.lastFMUsername}`
     );
 
-    let friend = await Friend.findOne({
-      user,
-      ...(friendToRemove instanceof User
-        ? {
-            friend: friendToRemove,
-          }
-        : {
-            friendUsername: friendToRemove.toLowerCase(),
-          }),
+    let where: any;
+
+    if (friendToRemove instanceof User) {
+      where = [
+        {
+          user,
+          friend: friendToRemove,
+        },
+        {
+          user,
+          friendUsername: ILike(friendToRemove.lastFMUsername),
+        },
+      ];
+    } else {
+      where = {
+        friendUsername: ILike(friendToRemove),
+      };
+    }
+
+    console.log(where);
+
+    const friend = await Friend.findOne({
+      where,
     });
 
     if (!friend) throw new NotFriendsError();
