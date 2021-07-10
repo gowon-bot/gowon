@@ -8,7 +8,7 @@ import {
 import { BaseService } from "../BaseService";
 import { User } from "../../database/entity/User";
 import { LastFMService } from "../LastFM/LastFMService";
-import { FindConditions, ILike, WhereExpression } from "typeorm";
+import { ILike } from "typeorm";
 
 export class FriendsService extends BaseService {
   private lastFMService = new LastFMService(this.logger);
