@@ -62,6 +62,7 @@ import {
 } from "../../errors";
 import { BaseService } from "../BaseService";
 import { toInt } from "../../helpers/lastFM";
+import { MirrorballCacheService } from "../indexing/MirrorballCacheService";
 
 export interface SessionKey {
   username: string;
@@ -77,6 +78,8 @@ export function isSessionKey(
 }
 
 export class LastFMAPIService extends BaseService {
+  private mirrorballCacheService = new MirrorballCacheService(this.logger);
+
   url = "https://ws.audioscrobbler.com/2.0/";
 
   get apikey(): string {
@@ -135,6 +138,8 @@ export class LastFMAPIService extends BaseService {
         post: true,
       })
     ).artist;
+
+    this.mirrorballCacheService.cacheArtistInfo(response);
 
     if (
       params.username &&
@@ -218,6 +223,9 @@ export class LastFMAPIService extends BaseService {
       "tag.gettopartists",
       params
     );
+
+    this.mirrorballCacheService.cacheTagTopArtists(response.topartists);
+
     return response.topartists;
   }
 
