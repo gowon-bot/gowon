@@ -3,6 +3,7 @@ import {
   MirrorballAlbum,
   MirrorballArtist,
   MirrorballRateYourMusicAlbum,
+  MirrorballRating,
 } from "../../services/mirrorball/MirrorballTypes";
 import {
   ArtistInfo,
@@ -20,7 +21,5 @@ export type RequirementMap = {
   // Mirrorball data
   albumPlays: [{ album: MirrorballAlbum; playcount: number }];
   artistPlays: [{ artist: MirrorballArtist; playcount: number }];
-  albumRating: [
-    { rating: number; rateYourMusicAlbum: MirrorballRateYourMusicAlbum }
-  ];
+  albumRating: { ratings: [MirrorballRating] };
 };

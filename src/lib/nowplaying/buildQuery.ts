@@ -44,10 +44,12 @@ const nowPlayingQuery = gql`
     albumRating: ratings(
       settings: { user: $user, album: $lrAlbum, pageInput: { limit: 1 } }
     ) @include(if: $albumRating) {
-      rating
-      rateYourMusicAlbum {
-        title
-        artistName
+      ratings {
+        rating
+        rateYourMusicAlbum {
+          title
+          artistName
+        }
       }
     }
   }

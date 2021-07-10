@@ -164,14 +164,16 @@ export const mockRequirements = (
         playcount: 6360,
       },
     ],
-    albumRating: [
-      {
-        rating: 7,
-        rateYourMusicAlbum: {
-          title: nowPlaying.album,
-          artistName: nowPlaying.artist,
+    albumRating: {
+      ratings: [
+        {
+          rating: 7,
+          rateYourMusicAlbum: {
+            title: nowPlaying.album,
+            artistName: nowPlaying.artist,
+          },
         },
-      },
-    ],
+      ],
+    },
   };
 };
