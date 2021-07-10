@@ -26,9 +26,10 @@ export class Ratings extends RateYourMusicIndexingChildCommand<
 
   connector = new RatingsConnector();
 
-  aliases = ["ara"];
-  idSeed = "sonamoo sumin";
-  description = "Shows your top rated albums from an artist";
+  aliases = ["rat"];
+  idSeed = "hot issue yewon";
+  description =
+    "Shows your top rated albums, or albums you've given a specific rating";
   usage = ["", "rating"];
 
   rollout = {
