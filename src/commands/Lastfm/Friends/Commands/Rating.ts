@@ -112,6 +112,7 @@ export class Rating extends FriendsChildCommand<typeof args> {
                   rating.ratings[0].rating
                 )}`
             )
+            .join("\n")
       )
       .setThumbnail(albumInfo.images.get("large")!);
 
