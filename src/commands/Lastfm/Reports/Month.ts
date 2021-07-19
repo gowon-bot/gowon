@@ -4,6 +4,7 @@ import { Arguments } from "../../../lib/arguments/arguments";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { ReportCalculator } from "../../../lib/calculators/ReportCalculator";
 import { Paginator } from "../../../lib/Paginator";
+import { TagConsolidator } from "../../../lib/tags/TagConsolidator";
 import { displayDate, displayNumber } from "../../../lib/views/displays";
 import { RedirectsService } from "../../../services/dbservices/RedirectsService";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
@@ -76,6 +77,10 @@ export default class Month extends LastFMBaseCommand<typeof args> {
       (a, b) => month.top.artists[b] - month.top.artists[a]
     );
 
+    const tagConsolidator = new TagConsolidator();
+
+    tagConsolidator.addTags(month.top.tags);
+
     let embed = this.newEmbed()
       .setAuthor(...this.generateEmbedAuthor())
       .setTitle(`${perspective.upper.possessive} month`).setDescription(`
@@ -89,6 +94,8 @@ export default class Month extends LastFMBaseCommand<typeof args> {
       month.total.tracks,
       "track"
     )}_
+
+${tagConsolidator.consolidateAsStrings(10).join(", ").italic()}
   
 **Top Tracks**:
  • ${topTracks

@@ -25,25 +25,22 @@ export default class TagCombo extends LastFMBaseCommand<typeof args> {
 
   arguments: Arguments = args;
 
-  tagsService = new TagsService(this.lastFMService, this.logger);
+  tagsService = new TagsService(this.logger);
 
   showLoadingAfter = this.gowonService.constants.defaultLoadingTime;
 
   async run() {
-    let { requestable, username } = await this.parseMentions();
+    const { requestable, username } = await this.parseMentions();
 
-    let paginator = new Paginator(
+    const paginator = new Paginator(
       this.lastFMService.recentTracks.bind(this.lastFMService),
       this.gowonService.constants.hardPageLimit,
       { username: requestable, limit: 1000 }
     );
 
-    let comboCalculator = new TagComboCalculator(
-      this.tagsService,
-      this.lastFMService
-    );
+    const comboCalculator = new TagComboCalculator(this.tagsService);
 
-    let combo = await comboCalculator.calculate(paginator);
+    const combo = await comboCalculator.calculate(paginator);
 
     const sorted = Object.keys(combo.comboCollection)
       .filter((t) => combo.comboCollection[t].plays > 0)
@@ -53,7 +50,7 @@ export default class TagCombo extends LastFMBaseCommand<typeof args> {
           combo.comboCollection[b].plays - combo.comboCollection[a].plays
       );
 
-    let embed = this.newEmbed()
+    const embed = this.newEmbed()
       .setTitle(
         `Streak for ${username} (from recent ${displayNumber(
           comboCalculator.totalTracks,

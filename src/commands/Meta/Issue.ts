@@ -95,7 +95,7 @@ ${displayLink("Jump to message", this.message.url)}
       );
     } else {
       await this.send(
-        "There was an issue submitting feedback, you can dm the author at John🥳#2527"
+        "There was an issue submitting feedback, you can dm the author at john!#2527"
       );
     }
   }

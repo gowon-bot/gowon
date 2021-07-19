@@ -53,7 +53,7 @@ export class TagsComponent extends BaseCompoundComponent<typeof requirements> {
 
     return {
       string: tagConsolidator
-        .consolidate(Infinity, false)
+        .consolidateAsStrings(Infinity, false)
         .join(TagConsolidator.tagJoin),
       size: rowSize,
     };

@@ -1,6 +1,9 @@
+import gql from "graphql-tag";
 import { RedirectsService } from "../../services/dbservices/RedirectsService";
 import { RecentTracks } from "../../services/LastFM/converters/RecentTracks";
+import { MirrorballTag } from "../../services/mirrorball/MirrorballTypes";
 import { RedirectsCache } from "../caches/RedirectsCache";
+import { mirrorballClient } from "../indexing/client";
 
 interface Count {
   [name: string]: number;
@@ -10,12 +13,14 @@ interface Top {
   artists: Count;
   albums: Count;
   tracks: Count;
+  tags: MirrorballTag[];
 }
 
 interface TotalCounts {
   artists: number;
   albums: number;
   tracks: number;
+  tags: number;
 }
 
 interface Report {
@@ -28,6 +33,7 @@ export class ReportCalculator {
     artists: {},
     albums: {},
     tracks: {},
+    tags: [],
   };
 
   constructor(
@@ -44,17 +50,22 @@ export class ReportCalculator {
         track.name,
         await this.redirectsCache.getRedirect(track.artist)
       );
+
       this.logCount(
         "artists",
         await this.redirectsCache.getRedirect(track.artist)
       );
-      if (track.album)
+
+      if (track.album) {
         this.logCount(
           "albums",
           track.album,
           await this.redirectsCache.getRedirect(track.artist)
         );
+      }
     }
+
+    await this.countTags();
 
     return {
       top: this.top,
@@ -85,6 +96,31 @@ export class ReportCalculator {
       artists: Object.values(this.top.artists).length,
       albums: Object.values(this.top.albums).length,
       tracks: Object.values(this.top.tracks).length,
+      tags: Object.values(this.top.tags).length,
     };
+  }
+
+  private async countTags(): Promise<void> {
+    const query = gql`
+      query tags($artists: [ArtistInput!]!) {
+        tags(settings: { artists: $artists }, requireTagsForMissing: true) {
+          tags {
+            name
+            occurrences
+          }
+        }
+      }
+    `;
+
+    const artists = Object.keys(this.top.artists).map((name) => ({ name }));
+
+    const response = await mirrorballClient.query<{
+      tags: { tags: MirrorballTag[] };
+    }>({
+      query,
+      variables: { artists },
+    });
+
+    this.top.tags = response.data.tags.tags;
   }
 }

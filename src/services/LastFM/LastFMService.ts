@@ -1,6 +1,5 @@
 import { add } from "date-fns";
 import { BadLastFMResponseError, LogicError } from "../../errors";
-import { TagsService } from "../dbservices/tags/TagsService";
 import { LastFMScraper } from "../scrapingServices/LastFMScraper";
 import { LastFMAPIService, Requestable } from "./LastFMAPIService";
 import {
@@ -46,21 +45,10 @@ import { requestableAsUsername } from "../../lib/MultiRequester";
 export class LastFMService extends LastFMAPIService {
   scraper = new LastFMScraper(this.logger);
 
-  private tagsService = new TagsService(this, this.logger);
-
   async artistInfo(params: ArtistInfoParams): Promise<ArtistInfo> {
     let response: ArtistInfo;
 
-    try {
-      response = new ArtistInfo(await this._artistInfo(params));
-
-      this.tagsService.cacheTagsFromArtistInfo(response);
-    } catch (e) {
-      if (e.name === "LastFMError:6")
-        await this.tagsService.cacheTagsForArtistNotFound(params.artist);
-
-      throw e;
-    }
+    response = new ArtistInfo(await this._artistInfo(params));
 
     return response;
   }

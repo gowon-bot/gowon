@@ -61,40 +61,40 @@ export default class TagTaste extends TasteCommand<typeof args> {
     },
   };
 
-  tagService = new TagsService(this.lastFMService, this.logger);
+  tagService = new TagsService(this.logger);
 
   async run() {
-    let artistAmount = this.parsedArguments.artistAmount!,
+    const artistAmount = this.parsedArguments.artistAmount!,
       tag = this.parsedArguments.tag!;
 
-    let [userOneUsername, userTwoUsername] = await this.getUsernames();
+    const [userOneUsername, userTwoUsername] = await this.getUsernames();
 
     const [senderPaginator, mentionedPaginator] = this.getPaginators(
       userOneUsername,
       userTwoUsername
     );
 
-    let [senderArtists, mentionedArtists] = await Promise.all([
+    const [senderArtists, mentionedArtists] = await Promise.all([
       senderPaginator.getAllToConcatonable(),
       mentionedPaginator.getAllToConcatonable(),
     ]);
 
-    let senderArtistsFiltered = await this.tagService.filter(
+    const senderArtistsFiltered = await this.tagService.filter(
       senderArtists.artists,
       [tag]
     );
-    let mentionedArtistsFiltered = await this.tagService.filter(
+    const mentionedArtistsFiltered = await this.tagService.filter(
       mentionedArtists.artists,
       [tag]
     );
 
-    let tasteCalculator = new TasteCalculator(
+    const tasteCalculator = new TasteCalculator(
       senderArtistsFiltered,
       mentionedArtistsFiltered,
       artistAmount
     );
 
-    let taste = tasteCalculator.calculate();
+    const taste = tasteCalculator.calculate();
 
     if (taste.artists.length === 0)
       throw new LogicError(
@@ -108,7 +108,7 @@ export default class TagTaste extends TasteCommand<typeof args> {
       taste.percent
     }% match) found.`;
 
-    let embed = this.newEmbed()
+    const embed = this.newEmbed()
       .setTitle(
         `${tag} taste comparison for ${sanitizeForDiscord(
           userOneUsername

@@ -71,8 +71,6 @@ export class FriendsService extends BaseService {
       };
     }
 
-    console.log(where);
-
     const friend = await Friend.findOne({
       where,
     });

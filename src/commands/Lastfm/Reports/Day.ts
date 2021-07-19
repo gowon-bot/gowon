@@ -4,6 +4,7 @@ import { Arguments } from "../../../lib/arguments/arguments";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { ReportCalculator } from "../../../lib/calculators/ReportCalculator";
 import { Paginator } from "../../../lib/Paginator";
+import { TagConsolidator } from "../../../lib/tags/TagConsolidator";
 import { displayDate, displayNumber } from "../../../lib/views/displays";
 import { RedirectsService } from "../../../services/dbservices/RedirectsService";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
@@ -65,17 +66,21 @@ export default class Day extends LastFMBaseCommand<typeof args> {
 
     let day = await reportCalculator.calculate();
 
-    let topTracks = Object.keys(day.top.tracks).sort(
+    const topTracks = Object.keys(day.top.tracks).sort(
       (a, b) => day.top.tracks[b] - day.top.tracks[a]
     );
 
-    let topAlbums = Object.keys(day.top.albums).sort(
+    const topAlbums = Object.keys(day.top.albums).sort(
       (a, b) => day.top.albums[b] - day.top.albums[a]
     );
 
-    let topArtists = Object.keys(day.top.artists).sort(
+    const topArtists = Object.keys(day.top.artists).sort(
       (a, b) => day.top.artists[b] - day.top.artists[a]
     );
+
+    const tagConsolidator = new TagConsolidator();
+
+    tagConsolidator.addTags(day.top.tags);
 
     let embed = this.newEmbed()
       .setAuthor(...this.generateEmbedAuthor())
@@ -90,7 +95,9 @@ export default class Day extends LastFMBaseCommand<typeof args> {
       day.total.tracks,
       "track"
     )}_
-  
+
+${tagConsolidator.consolidateAsStrings(10).join(", ").italic()}
+
 **Top Tracks**:
  • ${topTracks
       .slice(0, 3)

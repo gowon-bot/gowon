@@ -81,7 +81,7 @@ export class Me extends JumbleChildCommand<typeof args> {
     let tags = this.tagConsolidator
       .blacklistTags(artist.name)
       .addTags(artistInfo.tags)
-      .consolidate();
+      .consolidateAsStrings();
 
     let lineConsolidator = new LineConsolidator();
 
@@ -119,7 +119,8 @@ export class Me extends JumbleChildCommand<typeof args> {
       
       **Hints**:
       _${lineConsolidator.consolidate()}_`
-      );
+      )
+      .setFooter(`Run "!j <your guess>" to make a guess or "!j quit" to quit`);
 
     await this.send(embed);
   }

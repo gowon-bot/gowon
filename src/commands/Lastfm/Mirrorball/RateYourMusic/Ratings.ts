@@ -51,8 +51,6 @@ export class Ratings extends RateYourMusicIndexingChildCommand<
       rating = parseFloat(this.parsedArguments.rating) * 2;
     }
 
-    console.log(rating);
-
     const { dbUser, senderUser, discordUser } = await this.parseMentions({
       fetchDiscordUser: true,
     });

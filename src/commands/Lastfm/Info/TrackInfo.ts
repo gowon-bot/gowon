@@ -70,7 +70,7 @@ export default class TrackInfo extends InfoCommand<typeof args> {
       {
         shouldDisplay: this.tagConsolidator.hasAnyTags(),
         string: `**Tags:** ${this.tagConsolidator
-          .consolidate(Infinity, false)
+          .consolidateAsStrings(Infinity, false)
           .join(" ‧ ")}`,
       },
       {

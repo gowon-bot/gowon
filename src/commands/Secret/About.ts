@@ -12,7 +12,6 @@ import {
 } from "../../lib/views/displays";
 import { CrownEventString } from "../../services/dbservices/CrownsHistoryService";
 import { RedirectsService } from "../../services/dbservices/RedirectsService";
-import { TagsService } from "../../services/dbservices/tags/TagsService";
 import { LastFMService } from "../../services/LastFM/LastFMService";
 
 export default class About extends BaseCommand {
@@ -26,7 +25,6 @@ export default class About extends BaseCommand {
 
   lastFMService = new LastFMService(this.logger);
   redirectsService = new RedirectsService(this.logger);
-  tagsService = new TagsService(this.lastFMService, this.logger);
   commandManager = new CommandManager();
 
   async run(_: any) {
@@ -48,7 +46,6 @@ export default class About extends BaseCommand {
     let artistCount = await this.lastFMService.artistCount("gowon_");
 
     let cachedRedirects = await this.redirectsService.countAllRedirects();
-    let cachedTags = await this.tagsService.countAllCachedArtists();
 
     let embed = this.newEmbed()
       .setAuthor(`About ${this.gowonClient.client.user?.username || "Gowon"}`)
@@ -87,9 +84,7 @@ Total commands: ${displayNumber(commandCount)}`,
         },
         {
           name: "Cache stats",
-          value: `Cached redirects: ${displayNumber(
-            cachedRedirects
-          )}\nArtists with cached tags: ${displayNumber(cachedTags)}`,
+          value: `Cached redirects: ${displayNumber(cachedRedirects)}\n`,
           inline: true,
         },
         {

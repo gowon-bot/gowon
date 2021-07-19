@@ -37,8 +37,8 @@ import {
   buildRequestables,
   compareUsernames,
 } from "../../helpers/parseMentions";
-import { Chance } from "chance";
 import { MirrorballService } from "../../services/mirrorball/MirrorballService";
+import { Chance } from "chance";
 
 export interface Variation {
   name: string;
@@ -192,15 +192,6 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
       senderUser = await this.usersService.getUser(this.message.author.id);
     } catch {}
 
-    if (
-      senderUser &&
-      Chance().bool({ likelihood: 2 }) &&
-      !["update", "index"].includes(this.name)
-    ) {
-      this.mirrorballService.quietAddUserToGuild(this.author.id, this.guild.id);
-      senderUser.mirrorballUpdate();
-    }
-
     if (lfmUser) {
       mentionedUsername = lfmUser;
     } else if (user?.id || userID) {
@@ -307,6 +298,22 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
           this.message.react(Emoji.loading);
         }
       }, this.showLoadingAfter * 1000);
+    }
+    if (Chance().bool({ likelihood: 33 })) {
+      this.usersService
+        .getUser(this.author.id)
+        .then(async (senderUser) => {
+          if (senderUser && !["update", "index"].includes(this.name)) {
+            await Promise.all([
+              this.mirrorballService.quietAddUserToGuild(
+                this.author.id,
+                this.guild.id
+              ),
+              senderUser.mirrorballUpdate(),
+            ]);
+          }
+        })
+        .catch();
     }
   }
 

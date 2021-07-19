@@ -5,8 +5,6 @@ import { CrownRankResponse } from "../../database/entity/Crown";
 import { log } from "mathjs";
 import { LogicError } from "../../errors";
 import { differenceInDays } from "date-fns";
-import { TagsCache } from "../caches/TagsCache";
-import { TagsService } from "../../services/dbservices/tags/TagsService";
 import { toInt } from "../../helpers/lastFM";
 import { LastFMService } from "../../services/LastFM/LastFMService";
 import { UserInfo } from "../../services/LastFM/converters/InfoTypes";
@@ -19,6 +17,9 @@ import { displayDate, displayNumber } from "../views/displays";
 import { Requestable } from "../../services/LastFM/LastFMAPIService";
 import { LastFMPeriod } from "../../services/LastFM/LastFMService.types";
 import { periodToRange } from "../../helpers/date";
+import { mirrorballClient } from "../indexing/client";
+import gql from "graphql-tag";
+import { MirrorballPageInfo } from "../../services/mirrorball/MirrorballTypes";
 
 export class Stat {
   public asString: string;
@@ -46,7 +47,6 @@ export class OverviewStatsCalculator {
 
   private lastFMService: LastFMService;
   private crownsService: CrownsService;
-  private tagsCache: TagsCache;
 
   constructor(
     private requestable: Requestable,
@@ -57,10 +57,6 @@ export class OverviewStatsCalculator {
   ) {
     this.lastFMService = new LastFMService(logger);
     this.crownsService = new CrownsService(logger);
-    this.tagsCache = new TagsCache(
-      new TagsService(this.lastFMService, logger),
-      this.lastFMService
-    );
   }
 
   async hasCrownStats(): Promise<boolean> {
@@ -418,7 +414,9 @@ export class OverviewStatsCalculator {
     let rating = log((top50 * Math.pow(hindex, 1.5)) / sumTop + 1, 2) * 5;
 
     let ratingString =
-      rating > 40
+      rating.toFixed(1) === "6.9"
+        ? "nice"
+        : rating > 40
         ? "what the fuck"
         : rating > 35
         ? "really high!"
@@ -439,12 +437,27 @@ export class OverviewStatsCalculator {
 
   async uniqueTags(): Promise<Stat> {
     const topArtists = await this.topArtists();
-    const tags = [];
+    const query = gql`
+      query tags($artists: [ArtistInput!]!) {
+        tags(settings: { artists: $artists }, requireTagsForMissing: true) {
+          pageInfo {
+            recordCount
+          }
+        }
+      }
+    `;
 
-    for (let artist of topArtists.artists) {
-      tags.push(...(await this.tagsCache.getTags(artist.name)));
-    }
+    const artists = topArtists.artists.map((a) => ({ name: a.name }));
 
-    return new Stat([...new Set(tags)].length);
+    const response = await mirrorballClient.query<{
+      tags: { pageInfo: MirrorballPageInfo };
+    }>({
+      query,
+      variables: {
+        artists,
+      },
+    });
+
+    return new Stat(response.data.tags.pageInfo.recordCount);
   }
 }

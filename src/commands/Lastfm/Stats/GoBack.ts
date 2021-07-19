@@ -66,7 +66,7 @@ export default class GoBack extends LastFMBaseCommand<typeof args> {
         `${perspective.plusToHave} not scrobbled any tracks in that time period!`
       );
 
-    let embed = trackEmbed(track);
+    let embed = this.newEmbed(trackEmbed(track));
 
     embed.setDescription(
       embed.description +

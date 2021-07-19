@@ -58,7 +58,7 @@ export default class NowPlaying extends NowPlayingBaseCommand {
     lineConsolidator.addLines(
       {
         shouldDisplay: this.tagConsolidator.hasAnyTags(),
-        string: this.tagConsolidator.tags.join(" ‧ "),
+        string: this.tagConsolidator.consolidateAsStrings().join(" ‧ "),
       },
       {
         shouldDisplay: !!artistInfo.value && !!crownString,

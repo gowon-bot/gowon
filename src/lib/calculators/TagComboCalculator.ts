@@ -1,5 +1,4 @@
 import { TagsService } from "../../services/dbservices/tags/TagsService";
-import { LastFMService } from "../../services/LastFM/LastFMService";
 import {
   RecentTrack,
   RecentTracks,
@@ -16,18 +15,15 @@ export interface TagComboDetails {
 }
 
 export class TagComboCalculator {
-  private combo = new TagCombo(
-    new TagsCache(this.tagsService, this.lastFMService)
-  );
+  private combo = new TagCombo(new TagsCache(this.tagsService));
   public totalTracks = 0;
 
-  constructor(
-    private tagsService: TagsService,
-    private lastFMService: LastFMService
-  ) {}
+  constructor(private tagsService: TagsService) {}
 
   async calculate(paginator: Paginator<any, RecentTracks>): Promise<TagCombo> {
     for await (let page of paginator.iterator()) {
+      await this.cacheTags(page.tracks);
+
       let tracks = await this.extractTracks(page, paginator.currentPage);
 
       this.totalTracks += tracks.filter((t) => !t.isNowPlaying).length;
@@ -75,12 +71,16 @@ export class TagComboCalculator {
   ): Promise<void> {
     await this.combo.increment(track, last);
   }
+
+  private async cacheTags(tracks: RecentTrack[]) {
+    await this.combo.tagsCache.initialCache(tracks.map((t) => t.artist));
+  }
 }
 
 export class TagCombo {
   comboCollection: { [tag: string]: TagComboDetails } = {};
 
-  constructor(private tagsCache: TagsCache) {}
+  constructor(public tagsCache: TagsCache) {}
 
   hasAnyConsecutivePlays(): boolean {
     return !!Object.values(this.comboCollection).filter((i) => i.plays > 1)
@@ -91,6 +91,8 @@ export class TagCombo {
     const nowplaying = !!track.isNowPlaying;
 
     const tags = await this.getTags(track);
+
+    console.log(tags);
 
     for (let tag of tags) {
       const defaultDetails = {
@@ -120,9 +122,9 @@ export class TagCombo {
   }
 
   async shouldContinue(): Promise<boolean> {
-    return !!Object.values(this.comboCollection)
+    return Object.values(this.comboCollection)
       .map((t) => t.shouldIncrement)
-      .filter((t) => t).length;
+      .some((t) => !!t);
   }
 
   private async getTags(track: RecentTrack) {
@@ -130,7 +132,7 @@ export class TagCombo {
 
     return new TagConsolidator()
       .addTags(tags)
-      .consolidate(Infinity, false)
+      .consolidateAsStrings(Infinity, false)
       .map((t) => t.toLowerCase());
   }
 }

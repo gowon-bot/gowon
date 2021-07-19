@@ -92,7 +92,9 @@ export default class FakeNowPlaying extends NowPlayingBaseCommand<typeof args> {
     let artistPlays = this.artistPlays(artistInfo, nowPlaying, isCrownHolder);
     let noArtistData = this.noArtistData(nowPlaying);
     let trackPlays = this.trackPlays(trackInfo);
-    let tags = this.tagConsolidator.consolidate(Infinity, false).join(" ‧ ");
+    let tags = this.tagConsolidator
+      .consolidateAsStrings(Infinity, false)
+      .join(" ‧ ");
 
     let lineConsolidator = new LineConsolidator();
     lineConsolidator.addLines(

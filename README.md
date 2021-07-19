@@ -57,3 +57,4 @@ There are now too many commands to list in the README, see `!help` for a list of
 Somethings broken? Just curious how something works?
 
 Feel free to shoot me a Discord dm at `john!#2527`
+or join the support server! https://discord.gg/9Vr7Df7TZf

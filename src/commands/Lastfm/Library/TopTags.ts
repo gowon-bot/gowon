@@ -1,9 +1,18 @@
+import gql from "graphql-tag";
 import { generateHumanPeriod, generatePeriod } from "../../../helpers/date";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
+import { mirrorballClient } from "../../../lib/indexing/client";
 import { TagConsolidator } from "../../../lib/tags/TagConsolidator";
-import { displayNumber } from "../../../lib/views/displays";
-import { TagsService } from "../../../services/dbservices/tags/TagsService";
+import {
+  displayNumber,
+  displayNumberedList,
+} from "../../../lib/views/displays";
+import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingEmbed";
+import {
+  MirrorballPageInfo,
+  MirrorballTag,
+} from "../../../services/mirrorball/MirrorballTypes";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 const args = {
@@ -26,13 +35,9 @@ export default class TopTags extends LastFMBaseCommand<typeof args> {
 
   subcategory = "tags";
   description = "Displays your top tags";
-  aliases = [];
+  aliases = ["tags", "tta"];
 
   arguments: Arguments = args;
-
-  tagsService = new TagsService(this.lastFMService, this.logger);
-
-  showLoadingAfter = this.gowonService.constants.defaultLoadingTime;
 
   async run() {
     const { requestable, perspective } = await this.parseMentions();
@@ -43,45 +48,61 @@ export default class TopTags extends LastFMBaseCommand<typeof args> {
       period: this.parsedArguments.timePeriod,
     });
 
-    let tagsCount: { [artist: string]: number } = {};
-
-    for (let artist of topArtists.artists) {
-      let artistTags = await this.tagsService.getTags(artist.name);
-
-      if (!artistTags) {
-        artistTags = await this.lastFMService.getArtistTags(artist.name);
+    const query = gql`
+      query tags($artists: [ArtistInput!]!) {
+        tags(settings: { artists: $artists }) {
+          tags {
+            name
+            occurrences
+          }
+          pageInfo {
+            recordCount
+          }
+        }
       }
+    `;
 
-      let tagConsolidator = new TagConsolidator().addTags(
-        artistTags.map((t) => t.toLowerCase())
-      );
+    const artists = topArtists.artists.map((a) => ({ name: a.name }));
 
-      for (let tag of tagConsolidator.consolidate(Infinity, false)) {
-        if (!tagsCount[tag]) tagsCount[tag] = 0;
-        tagsCount[tag]++;
-      }
-    }
+    const response = await mirrorballClient.query<{
+      tags: { tags: MirrorballTag[]; pageInfo: MirrorballPageInfo };
+    }>({
+      query,
+      variables: { artists },
+    });
 
-    let topTags = Object.keys(tagsCount).sort(
-      (a, b) => tagsCount[b] - tagsCount[a]
-    );
-
-    let topTopTags = topTags.slice(0, 10);
-
-    let embed = this.newEmbed()
+    const embed = this.newEmbed()
+      .setAuthor(...this.generateEmbedAuthor("Top tags"))
       .setTitle(
         `${perspective.possessive} top tags ${this.parsedArguments.humanReadableTimePeriod}`
-      )
-      .setDescription(
-        `_${displayNumber(topTags.length, "unique tag")}_\n` +
-          topTopTags
-            .map(
-              (tt, idx) =>
-                `${idx + 1}. ${tt} (${displayNumber(tagsCount[tt], "artist")})`
-            )
-            .join("\n")
       );
 
-    await this.send(embed);
+    const tagConsolidator = new TagConsolidator();
+
+    tagConsolidator.addTags(response.data.tags.tags);
+
+    const scrollingEmbed = new SimpleScrollingEmbed(
+      this.message,
+      embed,
+      {
+        items: tagConsolidator.consolidate(),
+        pageSize: 15,
+        pageRenderer(tags, { offset }) {
+          return displayNumberedList(
+            tags.map(
+              (t) =>
+                `${t.name.strong()} - (${displayNumber(
+                  t.occurrences,
+                  "artist"
+                )})`
+            ),
+            offset
+          );
+        },
+      },
+      { itemName: "tag" }
+    );
+
+    await scrollingEmbed.send();
   }
 }

@@ -8,6 +8,8 @@ import redirectResolvers from "./resolvers/redirectResolvers";
 import { IndexingWebhookService } from "./indexing/IndexingWebhookService";
 import bodyParser from "body-parser";
 
+export const gowonAPIPort = 3000;
+
 export class GraphQLAPI {
   usersService = new UsersService();
 
@@ -56,8 +58,6 @@ export class GraphQLAPI {
       }
     });
 
-    app.listen(3000, () => {
-      console.log("Gowon API running at http://localhost:3000");
-    });
+    app.listen(gowonAPIPort);
   }
 }

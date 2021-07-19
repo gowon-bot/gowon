@@ -1,8 +1,10 @@
+import { sum } from "mathjs";
 import { RawTag } from "../../services/LastFM/LastFMService.types";
+import { MirrorballTag } from "../../services/mirrorball/MirrorballTypes";
 import blacklistedTags from "./blacklistedTags.json";
 
-function isTagArray(tags: string[] | RawTag[]): tags is RawTag[] {
-  return (tags as RawTag[])[0]?.name !== undefined;
+function isMirrorballTag(tag: any | MirrorballTag): tag is MirrorballTag {
+  return !!tag.name && !!tag.occurrences;
 }
 
 export class TagConsolidator {
@@ -11,6 +13,9 @@ export class TagConsolidator {
   blacklistedTags: string[];
   regexBlacklist: RegExp[];
   explicitTags: string[];
+
+  tags: MirrorballTag[] = [];
+  characterLimit = 30;
 
   constructor() {
     this.blacklistedTags = blacklistedTags.strings.map((tag) =>
@@ -27,23 +32,21 @@ export class TagConsolidator {
     return this;
   }
 
-  tags: string[] = [];
-  characterLimit = 30;
-
   hasAnyTags(): boolean {
     return !!this.tags.length;
   }
 
-  addTags(tags: RawTag[] | string[]): TagConsolidator {
-    let tagStrings = isTagArray(tags)
-      ? tags.map((t) => t.name.toLowerCase())
-      : tags.map((t) => t.toLowerCase());
+  addTags(tags: RawTag[] | string[] | MirrorballTag[]): TagConsolidator {
+    const convertedTags = this.convertTags(tags);
 
-    this.tags.push(...this.filterTags(tagStrings));
+    this.tags.push(...this.filterTags(convertedTags));
     return this;
   }
 
-  consolidate(max: number = Infinity, useCharacterLimit = true): string[] {
+  consolidate(
+    max: number = Infinity,
+    useCharacterLimit = true
+  ): MirrorballTag[] {
     let { fixer, reverser } = TagConsolidator.tagFixer();
 
     let tagCounts = this.tags.reduce((acc, tag) => {
@@ -51,7 +54,7 @@ export class TagConsolidator {
 
       if (!acc[fixedTagName]) acc[fixedTagName] = 0;
 
-      acc[fixedTagName]++;
+      acc[fixedTagName] += tag.occurrences;
 
       return acc;
     }, {} as { [tagName: string]: number });
@@ -59,13 +62,20 @@ export class TagConsolidator {
     return Object.keys(tagCounts)
       .sort((a, b) => tagCounts[b] - tagCounts[a])
       .map((t) => reverser(t))
-      .filter((t) => !useCharacterLimit || t.length <= this.characterLimit)
+      .filter((t) => !useCharacterLimit || t.name.length <= this.characterLimit)
       .slice(0, max);
+  }
+
+  consolidateAsStrings(
+    max: number = Infinity,
+    useCharacterLimit = true
+  ): string[] {
+    return this.consolidate(max, useCharacterLimit).map((t) => t.name);
   }
 
   hasTag(...tags: string[]): boolean {
     for (let tag of tags) {
-      if (this.consolidate().includes(tag)) return true;
+      if (this.consolidateAsStrings().includes(tag)) return true;
     }
 
     return false;
@@ -80,51 +90,80 @@ export class TagConsolidator {
   }
 
   static tagFixer(): {
-    fixer: (tag: string) => string;
-    reverser: (tag: string) => string;
+    fixer: (tag: MirrorballTag) => string;
+    reverser: (tag: string) => MirrorballTag;
   } {
     let tagMap: { [fixedTag: string]: { [tag: string]: number } } = {};
 
-    function fixer(tag: string): string {
-      let fixedTag = tag.replace(/ |-|_|'/g, "").toLowerCase();
+    function fixer(tag: MirrorballTag): string {
+      const tagName = tag.name;
+      const fixedTag = tag.name.replace(/ |-|_|'/g, "").toLowerCase();
 
       if (!tagMap[fixedTag]) tagMap[fixedTag] = {};
-      if (!tagMap[fixedTag][tag]) tagMap[fixedTag][tag] = 0;
+      if (!tagMap[fixedTag][tagName]) tagMap[fixedTag][tagName] = 0;
 
-      !tagMap[fixedTag][tag]++;
+      tagMap[fixedTag][tagName] += tag.occurrences;
 
       return fixedTag;
     }
 
-    function reverser(fixedTag: string): string {
-      return (
-        Object.keys(tagMap[fixedTag]).sort(
-          (a, b) => tagMap[fixedTag][b] - tagMap[fixedTag][a]
-        )[0] || fixedTag
-      );
+    function reverser(fixedTag: string): MirrorballTag {
+      const foundTag = Object.keys(tagMap[fixedTag]).sort(
+        (a, b) => tagMap[fixedTag][b] - tagMap[fixedTag][a]
+      )[0];
+
+      if (foundTag) {
+        return {
+          name: foundTag,
+          occurrences: sum(Object.values(tagMap[fixedTag])),
+        };
+      }
+
+      return { name: fixedTag, occurrences: 1 };
     }
 
     return { reverser, fixer };
   }
 
-  private filterTags(tags: string[]): string[] {
+  private filterTags(tags: MirrorballTag[]): MirrorballTag[] {
     return tags
       .filter(
-        (tag) => !this.blacklistedTags.includes(this.normalizeTagName(tag))
+        (tag) => !this.blacklistedTags.includes(this.normalizeTagName(tag.name))
       )
       .filter(this.regexTagFilter.bind(this))
       .filter(this.explicitTagFilter.bind(this));
   }
 
-  private explicitTagFilter(tag: string): boolean {
-    return !this.explicitTags.some((eTag) => tag.includes(eTag));
+  private explicitTagFilter(tag: MirrorballTag): boolean {
+    return !this.explicitTags.some((eTag) => tag.name.includes(eTag));
   }
 
-  private regexTagFilter(tag: string): boolean {
-    return !this.regexBlacklist.some((regex) => regex.test(tag));
+  private regexTagFilter(tag: MirrorballTag): boolean {
+    return !this.regexBlacklist.some((regex) => regex.test(tag.name));
   }
 
   private normalizeTagName(tag: string): string {
     return tag.replace(/\s+/g, "").toLowerCase();
+  }
+
+  private convertTags(
+    tags: (string | RawTag | MirrorballTag)[]
+  ): MirrorballTag[] {
+    const convertedTags = [] as MirrorballTag[];
+
+    for (const tag of tags) {
+      if (isMirrorballTag(tag)) {
+        convertedTags.push({
+          name: tag.name.toLowerCase(),
+          occurrences: tag.occurrences,
+        });
+      } else if (typeof tag === "string") {
+        convertedTags.push({ name: tag.toLowerCase(), occurrences: 1 });
+      } else {
+        convertedTags.push({ name: tag.name.toLowerCase(), occurrences: 1 });
+      }
+    }
+
+    return convertedTags;
   }
 }

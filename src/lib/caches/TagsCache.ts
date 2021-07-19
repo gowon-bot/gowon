@@ -1,5 +1,4 @@
 import { TagsService } from "../../services/dbservices/tags/TagsService";
-import { LastFMService } from "../../services/LastFM/LastFMService";
 
 interface TagsCacheObject {
   [artist: string]: string[];
@@ -7,22 +6,22 @@ interface TagsCacheObject {
 
 export class TagsCache {
   private cache: TagsCacheObject = {};
-  constructor(
-    private tagsService: TagsService,
-    private lastFMService: LastFMService
-  ) {}
+  constructor(private tagsService: TagsService) {}
+
+  async initialCache(artistNames: string[], requireTags?: boolean) {
+    const artistMap = await this.tagsService.getTagsForArtistsMap(
+      artistNames,
+      requireTags
+    );
+
+    Object.keys(artistMap).map((artist) => {
+      this.cache[artist.toLowerCase()] = artistMap[artist];
+    });
+  }
 
   async getTags(artist: string): Promise<string[]> {
     let artistName = artist.toLowerCase();
 
-    if (this.cache[artistName]) return this.cache[artistName];
-
-    const tags =
-      (await this.tagsService.getTags(artist)) ||
-      (await this.lastFMService.getArtistTags(artist));
-
-    this.cache[artistName] = tags;
-
-    return tags;
+    return this.cache[artistName] || [];
   }
 }

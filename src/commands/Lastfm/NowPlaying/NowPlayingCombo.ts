@@ -98,7 +98,7 @@ export default class NowPlayingCombo extends NowPlayingBaseCommand {
       // Second line
       {
         shouldDisplay: this.tagConsolidator.hasAnyTags(),
-        string: this.tagConsolidator.consolidate(Infinity).join(" ‧ "),
+        string: this.tagConsolidator.consolidateAsStrings(Infinity).join(" ‧ "),
       }
     );
 

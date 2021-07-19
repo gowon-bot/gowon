@@ -6,12 +6,10 @@ export function sanitizeForDiscord(string: string): string {
   const characters = ["||", "*", "_", "`"];
 
   for (let character of characters) {
-    if (string.split(character).length - 1 >= 2) {
-      string = string.replace(
-        new RegExp(escapeStringRegexp(character), "g"),
-        (match) => `\\${match}`
-      );
-    }
+    string = string.replace(
+      new RegExp(escapeStringRegexp(character), "g"),
+      (match) => `\\${match}`
+    );
   }
 
   return string.replace(/\n/g, " ");
@@ -53,7 +51,7 @@ export function userHasRole(
 }
 
 export function cleanURL(url: string): string {
-  return url.replace(/\)/g, "%29").replace(/,/g, "%2C");
+  return url.replace(/\)/g, "%29").replace(/,/g, "%2C").replace(/_/g, "%5f");
 }
 
 export type ReactionCollectorFilter = (

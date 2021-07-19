@@ -5,6 +5,7 @@ import { Arguments } from "../../../lib/arguments/arguments";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { ReportCalculator } from "../../../lib/calculators/ReportCalculator";
 import { Paginator } from "../../../lib/Paginator";
+import { TagConsolidator } from "../../../lib/tags/TagConsolidator";
 import { displayDate, displayNumber } from "../../../lib/views/displays";
 import { RedirectsService } from "../../../services/dbservices/RedirectsService";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
@@ -78,6 +79,10 @@ export default class Week extends LastFMBaseCommand<typeof args> {
       (a, b) => week.top.artists[b] - week.top.artists[a]
     );
 
+    const tagConsolidator = new TagConsolidator();
+
+    tagConsolidator.addTags(week.top.tags);
+
     let embed = this.newEmbed()
       .setAuthor(...this.generateEmbedAuthor())
       .setTitle(`${perspective.upper.possessive} week`).setDescription(`
@@ -91,6 +96,8 @@ export default class Week extends LastFMBaseCommand<typeof args> {
       week.total.tracks,
       "track"
     )}_
+
+${tagConsolidator.consolidateAsStrings(10).join(", ").italic()}
   
 **Top Tracks**:
  • ${topTracks

@@ -74,3 +74,8 @@ export interface MirrorballRating {
   rating: number;
   rateYourMusicAlbum: MirrorballRateYourMusicAlbum;
 }
+
+export interface MirrorballTag {
+  name: string;
+  occurrences: number;
+}
