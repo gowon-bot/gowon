@@ -15,7 +15,16 @@ export default async function () {
     const tagsVariable = tag.tags.map((t) => ({ name: t }));
     const artist = tag.artistName;
 
-    console.log(`Processing ${artist}`);
+    console.log(
+      `Processing ${artist} with tags "${tagsVariable
+        .map((t) => t.name)
+        .join(", ")}"`
+    );
+
+    console.log({
+      name: artist,
+      tags: tagsVariable,
+    });
 
     await mirrorballClient.mutate({
       mutation,

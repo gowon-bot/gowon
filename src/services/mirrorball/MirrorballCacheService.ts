@@ -8,7 +8,11 @@ export class MirrorballCacheService extends BaseService {
     try {
       const mutation = gql`
         mutation tagArtist($artist: String!, $tags: [TagInput!]!) {
-          tagArtists(artists: [{ name: $artist }], tags: $tags)
+          tagArtists(
+            artists: [{ name: $artist }]
+            tags: $tags
+            markAsChecked: true
+          )
         }
       `;
 
