@@ -12,6 +12,7 @@ import { mostCommonOccurrence } from "../../../../helpers/stats";
 import { SimpleScrollingEmbed } from "../../../../lib/views/embeds/SimpleScrollingEmbed";
 import { displayNumber, displayRating } from "../../../../lib/views/displays";
 import { standardMentions } from "../../../../lib/arguments/mentions/mentions";
+import { sanitizeForDiscord } from "../../../../helpers/discord";
 
 const args = {
   inputs: {
@@ -119,10 +120,12 @@ export class ArtistRatings extends RateYourMusicIndexingChildCommand<
           displayRating(ratings[idx].rating) +
           // this is a special space
           " " +
-          r.rateYourMusicAlbum.title +
-          (r.rateYourMusicAlbum.artistName !== artistName
-            ? ` — ${r.rateYourMusicAlbum.artistName}`.italic()
-            : "")
+          sanitizeForDiscord(r.rateYourMusicAlbum.title) +
+          sanitizeForDiscord(
+            r.rateYourMusicAlbum.artistName !== artistName
+              ? ` — ${r.rateYourMusicAlbum.artistName}`.italic()
+              : ""
+          )
         );
       })
       .join("\n");
