@@ -12,6 +12,7 @@ import { ArtistCrownComponent } from "./components/ArtistCrownComponent";
 import { ArtistPlaysAndCrownComponent } from "./compoundComponents/ArtistPlaysAndCrown";
 import { RatingComponent } from "./components/RatingComponent";
 import { LovedComponent } from "./components/LovedComponent";
+import { ListenersComponent } from "./components/ListenersComponent";
 
 // Types
 export type NowPlayingComponent = {
@@ -33,6 +34,7 @@ const componentList = [
   ScrobblesComponent,
   ArtistCrownComponent,
   RatingComponent,
+  ListenersComponent,
 
   // Placeholder components
   ArtistTagsComponent,

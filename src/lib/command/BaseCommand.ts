@@ -181,12 +181,23 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
   }> {
     let user = this.parsedArguments[userArgumentName] as any as User,
       userID = this.parsedArguments[idMentionArgumentName] as any as string,
-      lfmUser = this.parsedArguments[lfmMentionArgumentName] as any as string;
+      lfmUser = this.parsedArguments[lfmMentionArgumentName] as any as string,
+      discordUsername = (this.parsedArguments as any)[
+        "discordUsername"
+      ] as string;
 
     let mentionedUsername: string | undefined;
     let dbUser: User | undefined;
     let discordUser: DiscordUser | undefined;
     let senderUser: User | undefined;
+
+    if (discordUsername) {
+      discordUser = (await this.guild.members.fetch()).find(
+        (member) =>
+          member.user.username === discordUsername ||
+          member.nickname === discordUsername
+      )?.user;
+    }
 
     try {
       senderUser = await this.usersService.getUser(this.message.author.id);
@@ -194,10 +205,10 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
 
     if (lfmUser) {
       mentionedUsername = lfmUser;
-    } else if (user?.id || userID) {
+    } else if (user?.id || userID || discordUser) {
       try {
         let mentionedUser = await this.usersService.getUser(
-          userID || `${user?.id}`
+          discordUser?.id || userID || `${user?.id}`
         );
 
         dbUser = mentionedUser;

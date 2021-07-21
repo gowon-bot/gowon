@@ -40,10 +40,12 @@ export default class NowPlayingVerbose extends NowPlayingBaseCommand {
       discordUser
     );
 
-    if (trackInfo.value)
+    if (trackInfo.value) {
       this.tagConsolidator.addTags(trackInfo.value?.tags || []);
-    if (artistInfo.value)
+    }
+    if (artistInfo.value) {
       this.tagConsolidator.addTags(artistInfo.value?.tags || []);
+    }
 
     let artistPlays = this.artistPlays(artistInfo, nowPlaying, isCrownHolder);
     let noArtistData = this.noArtistData(nowPlaying);

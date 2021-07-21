@@ -4,6 +4,7 @@ import { Parser } from "../parser";
 import { Mention } from "./BaseMention";
 import { DiscordIDMention } from "./DiscordIDMention";
 import { LastFMMention } from "./LastFMMention";
+import { UsernameMention } from "./UsernameMention";
 
 export interface MentionOptions {
   index: number | Slice;
@@ -19,6 +20,7 @@ export const standardMentions = {
   user: { index: 0 },
   userID: { mention: new DiscordIDMention(true), index: 0 },
   lfmUser: { mention: new LastFMMention(true), index: 0 },
+  discordUsername: { mention: new UsernameMention(true), index: 0 },
 } as const;
 
 export class MentionParser extends Parser {

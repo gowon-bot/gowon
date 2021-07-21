@@ -7,7 +7,7 @@ export default class Ping extends BaseCommand {
 
   subcategory = "developer";
   description = "Ping! Pong!";
-  aliases = ["🏓", "pin"];
+  aliases = ["🏓", "pin", "pingu"];
   secretCommand = true;
 
   async run(_: any, runAs: RunAs) {
@@ -16,8 +16,17 @@ export default class Ping extends BaseCommand {
       return;
     }
 
-    await this.reply(`Pon${runAs.variationWasUsed("pin") ? "" : "g"} 🏓`, {
-      ping: false,
-    });
+    await this.reply(
+      `Pon${
+        runAs.variationWasUsed("pingu")
+          ? "gu"
+          : runAs.variationWasUsed("pin")
+          ? ""
+          : "g"
+      } 🏓`,
+      {
+        ping: false,
+      }
+    );
   }
 }
