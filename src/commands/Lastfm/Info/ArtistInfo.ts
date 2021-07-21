@@ -6,6 +6,7 @@ import { LinkConsolidator } from "../../../helpers/lastFM";
 import { LineConsolidator } from "../../../lib/LineConsolidator";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { displayNumber } from "../../../lib/views/displays";
+import { TagsService } from "../../../services/dbservices/tags/TagsService";
 
 const args = {
   inputs: {
@@ -24,7 +25,8 @@ export default class ArtistInfo extends InfoCommand<typeof args> {
 
   arguments: Arguments = args;
 
-  crownsService = new CrownsService();
+  tagsService = new TagsService(this.logger);
+  crownsService = new CrownsService(this.logger);
   lineConsolidator = new LineConsolidator();
 
   async run() {
@@ -46,7 +48,10 @@ export default class ArtistInfo extends InfoCommand<typeof args> {
       this.guild
     );
 
+    const tags = await this.tagsService.getTagsForArtists([{ name: artist }]);
+
     this.tagConsolidator.addTags(artistInfo.tags);
+    this.tagConsolidator.addTags(tags);
 
     const linkConsolidator = new LinkConsolidator([
       LinkConsolidator.spotify(spotifyArtist?.external_urls?.spotify),

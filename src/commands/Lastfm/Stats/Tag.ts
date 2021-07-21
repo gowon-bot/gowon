@@ -1,6 +1,8 @@
+import gql from "graphql-tag";
 import { calculatePercent } from "../../../helpers/stats";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
+import { mirrorballClient } from "../../../lib/indexing/client";
 import { Paginator } from "../../../lib/Paginator";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
@@ -37,32 +39,35 @@ export default class Tag extends LastFMBaseCommand<typeof args> {
   };
 
   async run() {
-    let tag = this.parsedArguments.tag!;
+    const tag = this.parsedArguments.tag!;
 
-    let { requestable, perspective } = await this.parseMentions({
+    const { requestable, perspective } = await this.parseMentions({
       asCode: false,
     });
 
-    let paginator = new Paginator(
+    const paginator = new Paginator(
       this.lastFMService.topArtists.bind(this.lastFMService),
       2,
       { username: requestable, limit: 1000 }
     );
 
-    let [tagTopArtists, userTopArtists] = await Promise.all([
-      this.lastFMService.tagTopArtists({ tag, limit: 1000 }),
-      paginator.getAllToConcatonable({
-        concurrent: false,
-      }),
+    const [tagTopArtists, userTopArtists, mirrorballArtists] =
+      await Promise.all([
+        this.lastFMService.tagTopArtists({ tag, limit: 1000 }),
+        paginator.getAllToConcatonable({
+          concurrent: false,
+        }),
+        this.mirrorballArtists(tag),
+      ]);
+
+    const tagArtistNames = new Set([
+      ...tagTopArtists!.artists.map(this.artistNameTransform),
+      ...mirrorballArtists.map(this.artistNameTransform),
     ]);
 
-    let tagArtistNames = tagTopArtists!.artists.map((a) =>
-      a.name.toLowerCase().replace(/\s+/g, "-")
-    );
+    const overlap = this.calculateOverlap(userTopArtists, tagArtistNames);
 
-    let overlap = this.calculateOverlap(userTopArtists, tagArtistNames);
-
-    let embed = this.newEmbed()
+    const embed = this.newEmbed()
       .setAuthor(this.author.username, this.author.avatarURL() || "")
       .setTitle(
         `${perspective.upper.possessive} top ${tagTopArtists.meta.tag} artists`
@@ -73,13 +78,13 @@ _Comparing ${perspective.possessive} top ${displayNumber(
           userTopArtists.artists.length,
           "artist"
         )} and the top ${displayNumber(
-          tagArtistNames.length,
+          tagArtistNames.size,
           "artist"
         )} of the tag_\n` +
           (overlap.length
             ? `${displayNumber(overlap.length, "artist")} (${calculatePercent(
                 overlap.length,
-                tagArtistNames.length
+                tagArtistNames.size
               )}% match) (${displayNumber(
                 overlap.reduce((sum, o) => sum + o.plays, 0),
                 "scrobble"
@@ -103,16 +108,40 @@ _Comparing ${perspective.possessive} top ${displayNumber(
 
   calculateOverlap(
     userTopArtists: TopArtists,
-    tagArtistNames: string[]
+    tagArtistNames: Set<string>
   ): Overlap[] {
     return userTopArtists.artists.reduce((acc, a) => {
-      if (tagArtistNames.includes(a.name.toLowerCase().replace(/\s+/g, "-")))
+      if (tagArtistNames.has(a.name.toLowerCase().replace(/\s+/g, "-"))) {
         acc.push({
           artist: a.name,
           plays: a.userPlaycount,
         });
+      }
 
       return acc;
     }, [] as Overlap[]);
+  }
+
+  private async mirrorballArtists(tag: string): Promise<{ name: string }[]> {
+    const query = gql`
+      query artists($tag: String!) {
+        artists(tag: { name: $tag }) {
+          name
+        }
+      }
+    `;
+
+    const response = await mirrorballClient.query<{
+      artists: { name: string }[];
+    }>({
+      query,
+      variables: { tag },
+    });
+
+    return response.data.artists;
+  }
+
+  private artistNameTransform(a: { name: string }) {
+    return a.name.toLowerCase().replace(/\s+/g, "-");
   }
 }
