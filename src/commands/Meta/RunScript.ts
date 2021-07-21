@@ -29,7 +29,7 @@ export default class RunScript extends BaseCommand<typeof args> {
 
     const script = this.parsedArguments.script!;
 
-    this.scriptsManager.runScript(script);
+    this.scriptsManager.runScript(script, this);
 
     await this.reply(`Running script ${script.code()}`);
   }

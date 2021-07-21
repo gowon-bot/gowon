@@ -1,6 +1,8 @@
 import { Guild, GuildMember } from "discord.js";
+import gql from "graphql-tag";
 import { CommandManager } from "../../lib/command/CommandManager";
 import { GowonClient } from "../../lib/GowonClient";
+import { mirrorballClient } from "../../lib/indexing/client";
 import { Logger } from "../../lib/Logger";
 import { displayNumber } from "../../lib/views/displays";
 import { BaseService } from "../BaseService";
@@ -27,6 +29,7 @@ export class GuildEventService extends BaseService {
 
     await this.setupPermissions(guild);
     await this.pingDeveloper(guild);
+    await this.registerUsers(guild);
   }
 
   public async handleGuildLeave(guild: Guild) {
@@ -109,5 +112,23 @@ export class GuildEventService extends BaseService {
           "member"
         )})`
       );
+  }
+
+  private async registerUsers(guild: Guild) {
+    const members = await guild.members.fetch();
+
+    const mutation = gql`
+      mutation syncGuild($guildID: String!, $discordIDs: [String!]!) {
+        syncGuild(guildID: $guildID, discordIDs: $discordIDs)
+      }
+    `;
+
+    const discordIDs = members.map((m) => m.id);
+    const guildID = guild.id;
+
+    await mirrorballClient.mutate({
+      mutation,
+      variables: { discordIDs, guildID },
+    });
   }
 }

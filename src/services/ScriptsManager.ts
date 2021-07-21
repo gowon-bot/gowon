@@ -1,10 +1,13 @@
 import { promisify } from "util";
 import _glob from "glob";
 import { LogicError } from "../errors";
+import { BaseCommand } from "../lib/command/BaseCommand";
 const glob = promisify(_glob);
 
+type Script = (command: BaseCommand) => void;
+
 interface Scripts {
-  [key: string]: () => void;
+  [key: string]: Script;
 }
 
 async function generateScripts(): Promise<Scripts> {
@@ -39,13 +42,11 @@ export class ScriptsManager {
     this.isInitialized = true;
   }
 
-  public runScript(scriptName: string) {
-    const script = this.scripts[scriptName.toLowerCase()] as
-      | (() => void)
-      | undefined;
+  public runScript(scriptName: string, asCommand: BaseCommand) {
+    const script = this.scripts[scriptName.toLowerCase()] as Script | undefined;
 
     if (script) {
-      script();
+      script(asCommand);
     } else {
       throw new LogicError(`Script ${scriptName.code()} not found!`);
     }
