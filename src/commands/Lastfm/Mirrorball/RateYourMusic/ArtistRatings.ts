@@ -116,17 +116,14 @@ export class ArtistRatings extends RateYourMusicIndexingChildCommand<
   ): string {
     return ratings
       .map((r, idx) => {
-        return (
-          displayRating(ratings[idx].rating) +
+        return displayRating(ratings[idx].rating) +
           // this is a special space
           " " +
           sanitizeForDiscord(r.rateYourMusicAlbum.title) +
-          sanitizeForDiscord(
-            r.rateYourMusicAlbum.artistName !== artistName
-              ? ` — ${r.rateYourMusicAlbum.artistName}`.italic()
-              : ""
-          )
-        );
+          r.rateYourMusicAlbum.artistName !==
+          artistName
+          ? ` — ${sanitizeForDiscord(r.rateYourMusicAlbum.artistName)}`.italic()
+          : "";
       })
       .join("\n");
   }
