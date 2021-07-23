@@ -97,14 +97,15 @@ export default class Tag extends LastFMBaseCommand<typeof args> {
 
     const scrollingEmbed = new SimpleScrollingEmbed(this.message, embed, {
       items: overlap,
-      pageSize: 15,
-      pageRenderer(overlap) {
+      pageSize: 20,
+      pageRenderer(overlap, { offset }) {
         return (
           description +
           displayNumberedList(
             overlap.map(
               (o) => `${o.artist.strong()} - ${displayNumber(o.plays, "play")}`
-            )
+            ),
+            offset
           )
         );
       },

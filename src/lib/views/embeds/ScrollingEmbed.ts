@@ -139,7 +139,7 @@ export class ScrollingEmbed {
       if (this.options.totalPages < 2) return;
 
       const collector = new ReactionCollector(this.sentMessage, this.filter, {
-        time: 2 * 60 * 1000,
+        time: 3 * 60 * 1000,
       });
 
       collector.on("collect", async (reaction: MessageReaction, user: User) => {
