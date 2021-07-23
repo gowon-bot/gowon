@@ -43,10 +43,12 @@ export class Rating extends FriendsChildCommand<typeof args> {
         ratings(
           settings: { user: $user, album: $album, pageInput: { limit: 1 } }
         ) {
-          rating
-          rateYourMusicAlbum {
-            title
-            artistName
+          ratings {
+            rating
+            rateYourMusicAlbum {
+              title
+              artistName
+            }
           }
         }
       }

@@ -6,7 +6,11 @@ import { mirrorballClient } from "../../../lib/indexing/client";
 import { Paginator } from "../../../lib/Paginator";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
-import { displayNumber } from "../../../lib/views/displays";
+import {
+  displayNumber,
+  displayNumberedList,
+} from "../../../lib/views/displays";
+import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingEmbed";
 import { TopArtists } from "../../../services/LastFM/converters/TopTypes";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
@@ -67,43 +71,46 @@ export default class Tag extends LastFMBaseCommand<typeof args> {
 
     const overlap = this.calculateOverlap(userTopArtists, tagArtistNames);
 
+    const description =
+      `_Comparing ${perspective.possessive} top ${displayNumber(
+        userTopArtists.artists.length,
+        "artist"
+      )} and the top ${displayNumber(
+        tagArtistNames.size,
+        "artist"
+      )} of the tag_\n` +
+      (overlap.length
+        ? `${displayNumber(overlap.length, "artist")} (${calculatePercent(
+            overlap.length,
+            tagArtistNames.size
+          )}% match) (${displayNumber(
+            overlap.reduce((sum, o) => sum + o.plays, 0),
+            "scrobble"
+          )})\n\n`
+        : "Couldn't find any matching artists!");
+
     const embed = this.newEmbed()
       .setAuthor(this.author.username, this.author.avatarURL() || "")
       .setTitle(
         `${perspective.upper.possessive} top ${tagTopArtists.meta.tag} artists`
-      )
-      .setDescription(
-        `
-_Comparing ${perspective.possessive} top ${displayNumber(
-          userTopArtists.artists.length,
-          "artist"
-        )} and the top ${displayNumber(
-          tagArtistNames.size,
-          "artist"
-        )} of the tag_\n` +
-          (overlap.length
-            ? `${displayNumber(overlap.length, "artist")} (${calculatePercent(
-                overlap.length,
-                tagArtistNames.size
-              )}% match) (${displayNumber(
-                overlap.reduce((sum, o) => sum + o.plays, 0),
-                "scrobble"
-              )})\n\n` +
-              `${overlap
-                .slice(0, 20)
-                .map(
-                  (o, idx) =>
-                    `${idx + 1}. ${o.artist.strong()} - ${displayNumber(
-                      o.plays,
-                      "play"
-                    )}`
-                )
-                .join("\n")}
-`
-            : "Couldn't find any matching artists!")
       );
 
-    await this.send(embed);
+    const scrollingEmbed = new SimpleScrollingEmbed(this.message, embed, {
+      items: overlap,
+      pageSize: 15,
+      pageRenderer(overlap) {
+        return (
+          description +
+          displayNumberedList(
+            overlap.map(
+              (o) => `${o.artist.strong()} - ${displayNumber(o.plays, "play")}`
+            )
+          )
+        );
+      },
+    });
+
+    scrollingEmbed.send();
   }
 
   calculateOverlap(
