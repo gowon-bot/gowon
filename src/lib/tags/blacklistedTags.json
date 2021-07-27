@@ -54,7 +54,8 @@
     "jihad",
     "allahu akbar",
     "pool is closed",
-    "rock against kafir"
+    "rock against kafir",
+    "jap"
   ],
   "regex": [
     "better than .*",
@@ -73,7 +74,8 @@
     "love at first listen.*",
     ".*bestys.*",
     ".*jpoptrasher.*",
-    ".*labi.*"
+    ".*labi.*",
+    ".*sex.*"
   ],
   "explicit": [
     [19, 12, 21, 20],

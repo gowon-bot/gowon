@@ -65,7 +65,8 @@ export default class TrackInfo extends InfoCommand<typeof args> {
       },
       {
         shouldDisplay: !!trackInfo.wiki,
-        string: this.scrubReadMore(trackInfo.wiki?.summary?.trimRight())!,
+        string:
+          this.scrubReadMore(trackInfo.wiki?.summary?.trimRight())! + "\n",
       },
       {
         shouldDisplay: this.tagConsolidator.hasAnyTags(),

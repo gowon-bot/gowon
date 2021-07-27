@@ -40,7 +40,7 @@ export default class TrackAt extends LastFMBaseCommand<typeof args> {
 
     if (!track)
       throw new LogicError(
-        `${perspective.upper.name} haven't scrobbled an album at that position!`
+        `${perspective.upper.name} haven't scrobbled an track at that position!`
       );
 
     await this.traditionalReply(

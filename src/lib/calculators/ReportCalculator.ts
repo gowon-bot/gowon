@@ -44,7 +44,7 @@ export class ReportCalculator {
   redirectsCache = new RedirectsCache(this.redirectsService);
 
   async calculate(): Promise<Report> {
-    for (let track of this.tracks.tracks) {
+    for (const track of this.tracks.withoutNowPlaying) {
       this.logCount(
         "tracks",
         track.name,

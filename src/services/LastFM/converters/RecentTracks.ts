@@ -67,6 +67,10 @@ export class RecentTracks
     };
   }
 
+  get withoutNowPlaying(): RecentTrack[] {
+    return this.tracks.filter((t) => !t.isNowPlaying);
+  }
+
   first(): RecentTrack {
     return this.tracks[0];
   }

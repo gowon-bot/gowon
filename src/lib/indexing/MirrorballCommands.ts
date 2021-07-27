@@ -20,6 +20,7 @@ export const mirrorballGuilds = [
   "769112727103995904",
   "857781722065010698",
   "682909819702738967",
+  "712417547634343996",
 ];
 
 export interface ErrorResponse {
