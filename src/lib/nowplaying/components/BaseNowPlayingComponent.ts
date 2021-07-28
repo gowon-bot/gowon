@@ -34,7 +34,7 @@ export class AnyIn {
   constructor(public options: string[]) {}
 }
 
-function isAnyIn(value: AnyIn | string[]): value is AnyIn {
+function isAnyIn(value: AnyIn | any): value is AnyIn {
   return value instanceof AnyIn;
 }
 
@@ -44,7 +44,7 @@ export abstract class BaseCompoundComponent<
   static replaceComponentsInArray(
     components: string[],
     compoundName: string,
-    replaces: string[] | AnyIn
+    replaces: Array<string | AnyIn> | AnyIn
   ): string[] {
     if (components.includes(compoundName)) {
       return components;
@@ -52,7 +52,7 @@ export abstract class BaseCompoundComponent<
 
     const replaceArray = isAnyIn(replaces) ? replaces.options : replaces;
 
-    let { withoutReplaces, firstIndex } = filterComponents(
+    let { withoutReplaces, firstIndex, replaced } = filterComponents(
       compoundName,
       components,
       replaceArray
@@ -61,7 +61,7 @@ export abstract class BaseCompoundComponent<
 
     const shouldReplace = isAnyIn(replaces)
       ? difference > 0
-      : difference === replaceArray.length;
+      : calculateShouldReplace(difference, replaceArray, replaced);
 
     if (shouldReplace) {
       if (firstIndex !== undefined) {
@@ -83,24 +83,54 @@ export abstract class BaseCompoundComponent<
 function filterComponents(
   compoundName: string,
   components: string[],
-  replaces: string[]
-): { firstIndex?: number; withoutReplaces: string[] } {
+  replaces: Array<string | AnyIn>
+): { firstIndex?: number; withoutReplaces: string[]; replaced: string[] } {
+  const replaced = [] as string[];
   const withoutReplaces = [] as string[];
   let firstIndex: number | undefined = undefined;
 
   for (let cIndex = 0; cIndex < components.length; cIndex++) {
     const component = components[cIndex];
 
-    if (!replaces.includes(component)) {
+    if (!arrayIncludes(replaces, component)) {
       withoutReplaces.push(component);
-    } else if (firstIndex === undefined) {
-      firstIndex = cIndex;
+    } else {
+      replaced.push(component);
+
+      if (firstIndex === undefined) {
+        firstIndex = cIndex;
+      }
     }
   }
 
   return {
+    replaced,
     withoutReplaces,
     // The tags component should always appear last
     firstIndex: compoundName === "tags" ? undefined : firstIndex,
   };
+}
+
+function arrayIncludes(
+  array: Array<string | AnyIn>,
+  includes: string
+): boolean {
+  return array.some((e) => {
+    if (isAnyIn(e)) {
+      return e.options.includes(includes);
+    }
+    return e === includes;
+  });
+}
+
+function calculateShouldReplace(
+  difference: number,
+  replaces: Array<string | AnyIn>,
+  replaced: string[]
+): boolean {
+  const noAnyIn = replaces.filter((r) => !isAnyIn(r)).sort() as string[];
+
+  return (
+    difference >= noAnyIn.length && noAnyIn.every((e) => replaced.includes(e))
+  );
 }

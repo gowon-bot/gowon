@@ -90,3 +90,14 @@ export interface PageInput {
   limit: number;
   offset: number;
 }
+
+export interface PlaysInput {
+  timerange?: MirrorballTimerange;
+  user?: UserInput;
+  sort?: string;
+}
+
+export interface PlaysParams {
+  playsInput?: PlaysInput;
+  pageInput?: PageInput;
+}

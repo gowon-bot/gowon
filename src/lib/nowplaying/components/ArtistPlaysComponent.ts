@@ -1,4 +1,5 @@
 import { displayNumber } from "../../views/displays";
+import { getArtistPlays } from "../helpers/artist";
 import { BaseNowPlayingComponent } from "./BaseNowPlayingComponent";
 
 const artistPlaysRequirements = ["artistInfo", "artistPlays"] as const;
@@ -10,9 +11,9 @@ export class ArtistPlaysComponent extends BaseNowPlayingComponent<
   readonly requirements = artistPlaysRequirements;
 
   present() {
-    const { plays, name } = this.getPlays();
+    const { plays, name } = getArtistPlays(this.values);
 
-    if (plays && name) {
+    if (plays !== undefined && name) {
       return {
         string: `${displayNumber(plays, `${name} scrobble`)}`,
         size: 1,
@@ -23,21 +24,5 @@ export class ArtistPlaysComponent extends BaseNowPlayingComponent<
         size: 2,
       };
     }
-  }
-
-  private getPlays(): { plays: number | undefined; name: string | undefined } {
-    if (this.values.artistInfo?.userPlaycount) {
-      return {
-        plays: this.values.artistInfo.userPlaycount,
-        name: this.values.artistInfo.name,
-      };
-    } else if (this.values.artistPlays.length) {
-      return {
-        plays: this.values.artistPlays[0].playcount,
-        name: this.values.artistPlays[0].artist.name,
-      };
-    }
-
-    return { plays: undefined, name: undefined };
   }
 }

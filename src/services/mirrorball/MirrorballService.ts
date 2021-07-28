@@ -178,4 +178,24 @@ export class MirrorballService extends BaseService {
 
     return response.data?.plays?.pageInfo?.recordCount || 0;
   }
+
+  public async updateAndWait(discordID: string, timeout = 2000): Promise<void> {
+    const query = gql`
+      mutation update($user: UserInput!) {
+        update(user: $user) {
+          token
+        }
+      }
+    `;
+
+    const response = (await this.genericRequest(query, {
+      user: { discordID },
+    })) as {
+      update: { token: string };
+    };
+
+    return await this.webhook
+      .waitForResponse(response.update.token, timeout)
+      .catch(() => {});
+  }
 }

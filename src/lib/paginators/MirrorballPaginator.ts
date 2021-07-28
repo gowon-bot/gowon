@@ -1,6 +1,6 @@
 import { Paginator } from "./Paginator";
 
-type MirrorballQueryFunction<P, R> = (params: P) => Promise<R>;
+export type MirrorballQueryFunction<P, R> = (params: P) => Promise<R>;
 
 function onPage<P, R>(
   callback: MirrorballQueryFunction<P, R>,

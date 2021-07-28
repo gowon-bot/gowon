@@ -3,9 +3,7 @@ import { BaseConnector } from "../../../../lib/indexing/BaseConnector";
 import {
   MirrorballPageInfo,
   MirrorballPlay,
-  MirrorballTimerange,
-  PageInput,
-  UserInput,
+  PlaysParams,
 } from "../../../../services/mirrorball/MirrorballTypes";
 
 export interface YearResponse {
@@ -15,10 +13,7 @@ export interface YearResponse {
   };
 }
 
-export interface YearParams {
-  playsInput: { timerange: MirrorballTimerange; user: UserInput };
-  pageInput?: PageInput;
-}
+export type YearParams = PlaysParams;
 
 export class YearConnector extends BaseConnector<YearResponse, YearParams> {
   query = gql`

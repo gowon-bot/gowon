@@ -42,6 +42,8 @@ export const mockRequirements = (
     username: "gowon_",
     requestable: "gowon_",
     dbUser,
+    requirements: [],
+    components: [],
 
     // Lastfm Types
     artistInfo: new ArtistInfo({

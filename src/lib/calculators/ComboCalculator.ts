@@ -27,7 +27,7 @@ export class ComboCalculator {
     recentTracks: Paginator<any, RecentTracks> | RecentTracks
   ): Promise<Combo> {
     if (isPaginator(recentTracks)) {
-      for await (let page of recentTracks.iterator()) {
+      for await (const page of recentTracks.iterator()) {
         const shouldContinue = await this.handlePage(
           page,
           recentTracks.currentPage,

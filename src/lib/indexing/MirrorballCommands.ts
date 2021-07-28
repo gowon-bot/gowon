@@ -2,7 +2,6 @@ import { BaseCommand } from "../command/BaseCommand";
 import { Connector } from "./BaseConnector";
 import { Arguments } from "../arguments/arguments";
 import { MirrorballError, LogicError, UserNotIndexedError } from "../../errors";
-import { gql } from "@apollo/client/core";
 import { LastFMService } from "../../services/LastFM/LastFMService";
 import { Perspective } from "../Perspective";
 import { Message, MessageEmbed } from "discord.js";
@@ -93,23 +92,7 @@ export abstract class MirrorballBaseCommand<
     discordID: string,
     timeout = 2000
   ): Promise<void> {
-    const query = gql`
-      mutation update($user: UserInput!) {
-        update(user: $user) {
-          token
-        }
-      }
-    `;
-
-    const response = (await this.mirrorballService.genericRequest(query, {
-      user: { discordID },
-    })) as {
-      update: { token: string };
-    };
-
-    return await this.mirrorballService.webhook
-      .waitForResponse(response.update.token, timeout)
-      .catch(() => {});
+    return await this.mirrorballService.updateAndWait(discordID, timeout);
   }
 
   protected async notifyUser(

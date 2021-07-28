@@ -13,6 +13,8 @@ import { ArtistPlaysAndCrownComponent } from "./compoundComponents/ArtistPlaysAn
 import { RatingComponent } from "./components/RatingComponent";
 import { LovedComponent } from "./components/LovedComponent";
 import { ListenersComponent } from "./components/ListenersComponent";
+import { ArtistComboComponent } from "./components/ArtistComboComponent";
+import { ArtistPlaysInARowComponent } from "./compoundComponents/ArtistPlaysInARowComponent";
 
 // Types
 export type NowPlayingComponent = {
@@ -31,6 +33,7 @@ const componentList = [
   ArtistPlaysComponent,
   AlbumPlaysComponent,
   TrackPlaysComponent,
+  ArtistComboComponent,
   ScrobblesComponent,
   ArtistCrownComponent,
   RatingComponent,
@@ -42,6 +45,7 @@ const componentList = [
 ] as const;
 
 export const compoundComponentList = [
+  ArtistPlaysInARowComponent,
   ArtistPlaysAndCrownComponent,
 
   // TagsComponent should always be last because it takes up the most space

@@ -13,4 +13,3 @@ Array.prototype.insertAtIndex = function <T>(
 
   return arrayCopy;
 };
-

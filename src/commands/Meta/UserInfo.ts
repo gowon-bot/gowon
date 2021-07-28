@@ -2,7 +2,6 @@ import { BaseCommand } from "../../lib/command/BaseCommand";
 import { Arguments } from "../../lib/arguments/arguments";
 import { BotStatsService } from "../../services/dbservices/BotStatsService";
 import { standardMentions } from "../../lib/arguments/mentions/mentions";
-import { LogicError } from "../../errors";
 import { LineConsolidator } from "../../lib/LineConsolidator";
 import { CommandManager } from "../../lib/command/CommandManager";
 import { displayNumber } from "../../lib/views/displays";

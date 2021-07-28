@@ -19,18 +19,25 @@ import { Requestable } from "../../services/LastFM/LastFMAPIService";
 import { LastFMService } from "../../services/LastFM/LastFMService";
 import { buildQuery, isQueryPart, QueryPart } from "./buildQuery";
 import { NowPlayingRequirement } from "./components/BaseNowPlayingComponent";
+import { Logger } from "../Logger";
 
 export interface ResolvedRequirements {
   [requirement: string]: any;
 }
 
-export interface Resources {
+export interface InputResources {
   recentTracks: RecentTracks;
   message: Message;
   requestable: Requestable;
   username: string;
   dbUser: User;
+  components: string[];
 }
+
+export type Resources = InputResources & {
+  logger?: Logger;
+  requirements: NowPlayingRequirement[];
+};
 
 export class DatasourceService extends BaseService {
   lastFMService = new LastFMService(this.logger);
@@ -45,9 +52,12 @@ export class DatasourceService extends BaseService {
 
   async resolveRequirements(
     requirements: NowPlayingRequirement[],
-    resources: Resources
+    resources: InputResources
   ): Promise<ResolvedRequirements> {
-    this.resources = resources;
+    this.resources = Object.assign(resources, {
+      logger: this.logger,
+      requirements,
+    });
 
     const graphQLDatasource = new GraphQLDatasource();
 
