@@ -4,7 +4,7 @@ import {
   RecentTracks,
 } from "../../services/LastFM/converters/RecentTracks";
 import { TagsCache } from "../caches/TagsCache";
-import { Paginator } from "../Paginator";
+import { Paginator } from "../paginators/Paginator";
 import { TagConsolidator } from "../tags/TagConsolidator";
 
 export interface TagComboDetails {

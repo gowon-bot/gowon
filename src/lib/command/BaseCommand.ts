@@ -10,7 +10,9 @@ import { UsersService } from "../../services/dbservices/UsersService";
 import { Arguments, ArgumentParser } from "../arguments/arguments";
 import {
   LogicError,
-  ReverseLookupError,
+  MentionedUserNotIndexedError,
+  LastFMReverseLookupError,
+  SenderUserNotIndexedError,
   UnknownError,
   UsernameNotRegisteredError,
 } from "../../errors";
@@ -154,6 +156,7 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     fetchDiscordUser = false,
     reverseLookup = { required: false },
     authentificationRequired,
+    requireIndexed,
   }: {
     senderRequired?: boolean;
     usernameRequired?: boolean;
@@ -165,6 +168,7 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     fetchDiscordUser?: boolean;
     reverseLookup?: { required?: boolean };
     authentificationRequired?: boolean;
+    requireIndexed?: boolean;
   } = {}): Promise<{
     senderUsername: string;
     senderRequestable: Requestable;
@@ -175,8 +179,9 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     mentionedUsername?: string;
     perspective: Perspective;
 
-    dbUser?: User;
+    mentionedDBUser?: User;
     senderUser?: User;
+    dbUser: User;
     discordUser?: DiscordUser;
   }> {
     let user = this.parsedArguments[userArgumentName] as any as User,
@@ -187,7 +192,7 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
       ] as string;
 
     let mentionedUsername: string | undefined;
-    let dbUser: User | undefined;
+    let mentionedDBUser: User | undefined;
     let discordUser: DiscordUser | undefined;
     let senderUser: User | undefined;
 
@@ -207,14 +212,15 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
       mentionedUsername = lfmUser;
     } else if (user?.id || userID || discordUser) {
       try {
-        let mentionedUser = await this.usersService.getUser(
+        const mentionedUser = await this.usersService.getUser(
           discordUser?.id || userID || `${user?.id}`
         );
 
-        dbUser = mentionedUser;
+        mentionedDBUser = mentionedUser;
 
-        if (!mentionedUser?.lastFMUsername && usernameRequired)
+        if (!mentionedUser?.lastFMUsername && usernameRequired) {
           throw new UsernameNotRegisteredError();
+        }
 
         mentionedUsername = mentionedUser?.lastFMUsername;
       } catch {
@@ -226,37 +232,41 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
       ] as any as string;
     }
 
-    let perspective = this.usersService.perspective(
+    const perspective = this.usersService.perspective(
       senderUser?.lastFMUsername || "<no user>",
       mentionedUsername,
       asCode
     );
 
-    if (!dbUser && mentionedUsername) {
-      dbUser = await this.usersService.getUserFromLastFMUsername(
+    if (!mentionedDBUser && mentionedUsername) {
+      mentionedDBUser = await this.usersService.getUserFromLastFMUsername(
         mentionedUsername
       );
 
-      if (reverseLookup.required && !dbUser)
-        throw new ReverseLookupError("Last.fm username");
+      if (reverseLookup.required && !mentionedDBUser)
+        throw new LastFMReverseLookupError(
+          mentionedUsername,
+          requireIndexed,
+          this.prefix
+        );
     }
 
-    let username = mentionedUsername || senderUser?.lastFMUsername;
+    const username = mentionedUsername || senderUser?.lastFMUsername;
 
     if (fetchDiscordUser) {
       let fetchedUser: DiscordUser | undefined;
 
       try {
         fetchedUser = await this.gowonClient.client.users.fetch(
-          dbUser?.discordID || userID || this.author.id
+          mentionedDBUser?.discordID || userID || this.author.id
         );
       } catch {}
 
       if (
         fetchedUser &&
         (compareUsernames(username, senderUser?.lastFMUsername) ||
-          (compareUsernames(username, dbUser?.lastFMUsername) &&
-            dbUser?.discordID === fetchedUser.id) ||
+          (compareUsernames(username, mentionedDBUser?.lastFMUsername) &&
+            mentionedDBUser?.discordID === fetchedUser.id) ||
           userID === fetchedUser.id)
       ) {
         discordUser = fetchedUser;
@@ -278,7 +288,7 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     const requestables = buildRequestables({
       senderUser,
       mentionedUsername,
-      mentionedUser: dbUser,
+      mentionedUser: mentionedDBUser,
     });
 
     if (authentificationRequired && !isSessionKey(requestables?.requestable)) {
@@ -287,12 +297,23 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
       );
     }
 
+    const dbUser = mentionedDBUser || senderUser;
+
+    if (requireIndexed && dbUser && !dbUser.isIndexed) {
+      if (dbUser.id === mentionedDBUser?.id) {
+        throw new MentionedUserNotIndexedError(this.prefix);
+      } else if (dbUser.id === senderUser?.id) {
+        throw new SenderUserNotIndexedError(this.prefix);
+      }
+    }
+
     return {
       mentionedUsername,
       perspective,
-      dbUser,
+      mentionedDBUser,
       senderUser,
       discordUser,
+      dbUser: dbUser!,
       ...requestables!,
     };
   }

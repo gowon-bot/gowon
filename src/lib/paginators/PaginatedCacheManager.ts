@@ -1,4 +1,4 @@
-import { chunkArray } from "../helpers";
+import { chunkArray } from "../../helpers";
 
 type OnPageRequestCallback<T> =
   | ((pageNumber: number) => T[])

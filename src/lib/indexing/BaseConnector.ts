@@ -14,6 +14,9 @@ export abstract class BaseConnector<ResponseT, ParamsT>
 {
   abstract query: DocumentNode;
 
+  protected paginate = false;
+  protected pagesToRequest?: number;
+
   async request(mirrorballService: MirrorballService, variables?: ParamsT) {
     return await mirrorballService.genericRequest(this.query, variables || {});
   }

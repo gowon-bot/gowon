@@ -4,7 +4,7 @@ import {
   RecentTracks,
 } from "../../services/LastFM/converters/RecentTracks";
 import { RedirectsCache } from "../caches/RedirectsCache";
-import { isPaginator, Paginator } from "../Paginator";
+import { isPaginator, Paginator } from "../paginators/Paginator";
 
 export interface ComboDetails {
   plays: number;

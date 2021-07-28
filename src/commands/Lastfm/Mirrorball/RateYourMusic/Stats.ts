@@ -33,11 +33,11 @@ export class Stats extends RateYourMusicIndexingChildCommand<
   arguments: Arguments = args;
 
   async run() {
-    const { dbUser, senderUser, discordUser } = await this.parseMentions({
+    const { dbUser, discordUser } = await this.parseMentions({
       fetchDiscordUser: true,
+      reverseLookup: { required: true },
+      requireIndexed: true,
     });
-
-    const user = (dbUser || senderUser)!;
 
     const perspective = this.usersService.discordPerspective(
       this.author,
@@ -45,7 +45,7 @@ export class Stats extends RateYourMusicIndexingChildCommand<
     );
 
     const response = await this.query({
-      user: { discordID: user.discordID },
+      user: { discordID: dbUser.discordID },
     });
 
     const errors = this.parseErrors(response);

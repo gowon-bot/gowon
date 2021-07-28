@@ -2,7 +2,7 @@ import { Arguments } from "../../../../lib/arguments/arguments";
 import { RatingsParams, RatingsResponse, RatingsConnector } from "./connectors";
 import { RateYourMusicIndexingChildCommand } from "./RateYourMusicChildCommand";
 import { standardMentions } from "../../../../lib/arguments/mentions/mentions";
-import { PaginatedCacheManager } from "../../../../lib/PaginatedCacheManager";
+import { PaginatedCacheManager } from "../../../../lib/paginators/PaginatedCacheManager";
 import { LogicError, UnknownMirrorballError } from "../../../../errors";
 import { MirrorballRating } from "../../../../services/mirrorball/MirrorballTypes";
 import { displayRating } from "../../../../lib/views/displays";
@@ -51,11 +51,11 @@ export class Ratings extends RateYourMusicIndexingChildCommand<
       rating = parseFloat(this.parsedArguments.rating) * 2;
     }
 
-    const { dbUser, senderUser, discordUser } = await this.parseMentions({
+    const { dbUser, discordUser } = await this.parseMentions({
       fetchDiscordUser: true,
+      reverseLookup: { required: true },
+      requireIndexed: true,
     });
-
-    const user = (dbUser || senderUser)!;
 
     const perspective = this.usersService.discordPerspective(
       this.author,
@@ -64,7 +64,10 @@ export class Ratings extends RateYourMusicIndexingChildCommand<
 
     const initialPages = await this.query({
       rating,
-      user: { lastFMUsername: user.lastFMUsername, discordID: user.discordID },
+      user: {
+        lastFMUsername: dbUser.lastFMUsername,
+        discordID: dbUser.discordID,
+      },
       pageInput: { limit: this.pageSize * 3, offset: 0 },
     });
 
@@ -81,8 +84,8 @@ export class Ratings extends RateYourMusicIndexingChildCommand<
     const paginatedCacheManager = new PaginatedCacheManager(async (page) => {
       const response = await this.query({
         user: {
-          lastFMUsername: user.lastFMUsername,
-          discordID: user.discordID,
+          lastFMUsername: dbUser.lastFMUsername,
+          discordID: dbUser.discordID,
         },
         rating,
         pageInput: { limit: this.pageSize, offset: this.pageSize * (page - 1) },

@@ -4,7 +4,7 @@ import { IndexingWebhookService } from "../../api/indexing/IndexingWebhookServic
 import { mirrorballClient } from "../../lib/indexing/client";
 import { BaseService } from "../BaseService";
 import { UsersService } from "../dbservices/UsersService";
-import { UserType } from "./MirrorballTypes";
+import { MirrorballPageInfo, UserType } from "./MirrorballTypes";
 
 export class MirrorballService extends BaseService {
   private usersService = new UsersService(this.logger);
@@ -151,5 +151,31 @@ export class MirrorballService extends BaseService {
     );
 
     await this.webhook.waitForResponse(response.fullIndex.token);
+  }
+
+  public async getCachedPlaycount(discordID: string): Promise<number> {
+    const query = gql`
+      query cachedPlaycount($discordID: String!) {
+        plays(
+          playsInput: { user: { discordID: $discordID } }
+          pageInput: { limit: 1 }
+        ) {
+          pageInfo {
+            recordCount
+          }
+        }
+      }
+    `;
+
+    const response = await mirrorballClient.query<{
+      plays: { pageInfo: MirrorballPageInfo };
+    }>({
+      query,
+      variables: { discordID },
+    });
+
+    console.log(response);
+
+    return response.data?.plays?.pageInfo?.recordCount || 0;
   }
 }

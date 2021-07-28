@@ -41,23 +41,21 @@ export default class LastScrobbledAlbum extends MirrorballBaseCommand<
   arguments: Arguments = args;
 
   async run() {
-    const { senderRequestable, senderUser, dbUser, perspective } =
-      await this.parseMentions({
+    const { senderRequestable, dbUser, perspective } = await this.parseMentions(
+      {
         senderRequired:
           !this.parsedArguments.artist || !this.parsedArguments.album,
         reverseLookup: { required: true },
-      });
-
-    const user = (dbUser || senderUser)!;
-
-    await this.throwIfNotIndexed(user, perspective);
+        requireIndexed: true,
+      }
+    );
 
     const { artist: artistName, album: albumName } =
       await this.lastFMArguments.getAlbum(senderRequestable, true);
 
     const response = await this.query({
       track: { album: { name: albumName, artist: { name: artistName } } },
-      user: { discordID: user.discordID },
+      user: { discordID: dbUser.discordID },
       sort: this.variationWasUsed("first")
         ? "scrobbled_at asc"
         : "scrobbled_at desc",

@@ -39,23 +39,20 @@ export default class AlbumTopTracks extends MirrorballBaseCommand<
   arguments: Arguments = args;
 
   async run() {
-    const { username, senderUser, senderRequestable, dbUser, perspective } =
+    const { username, dbUser, senderRequestable, perspective } =
       await this.parseMentions({
         senderRequired:
           !this.parsedArguments.artist || !this.parsedArguments.album,
         reverseLookup: { required: true },
+        requireIndexed: true,
       });
 
     const { artist: artistName, album: albumName } =
       await this.lastFMArguments.getAlbum(senderRequestable, true);
 
-    const user = (dbUser || senderUser)!;
-
-    await this.throwIfNotIndexed(user, perspective);
-
     const response = await this.query({
       album: { name: albumName, artist: { name: artistName } },
-      user: { discordID: user.discordID },
+      user: { discordID: dbUser.discordID },
     });
 
     const errors = this.parseErrors(response);

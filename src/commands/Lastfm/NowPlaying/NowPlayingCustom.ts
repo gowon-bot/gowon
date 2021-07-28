@@ -75,7 +75,7 @@ export default class NowPlayingCustom extends NowPlayingBaseCommand {
       senderUser,
       username,
       senderUsername,
-      dbUser,
+      mentionedDBUser,
       requestable,
       senderRequestable,
     } = await this.parseMentions({
@@ -90,7 +90,9 @@ export default class NowPlayingCustom extends NowPlayingBaseCommand {
       requestable: requestableToUse,
       senderUser: senderUser!,
       username: usernameToUse,
-      dbUser: (dbUser?.lastFMUsername === username ? dbUser : senderUser)!,
+      dbUser: (mentionedDBUser?.lastFMUsername === username
+        ? mentionedDBUser
+        : senderUser)!,
     };
   }
 

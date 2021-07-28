@@ -7,7 +7,7 @@ import {
 import { isNumeric, StringPadder } from "../../../helpers";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { LastFMPeriod } from "../../../services/LastFM/LastFMService.types";
-import { Paginator } from "../../../lib/Paginator";
+import { Paginator } from "../../../lib/paginators/Paginator";
 import { LastFMMention } from "../../../lib/arguments/mentions/LastFMMention";
 import { DiscordIDMention } from "../../../lib/arguments/mentions/DiscordIDMention";
 import { LogicError } from "../../../errors";

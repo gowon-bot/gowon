@@ -1,3 +1,5 @@
+export type MirrorballDate = string;
+
 export enum UserType {
   Lastfm = "Lastfm",
   Wavy = "Wavy",
@@ -16,12 +18,6 @@ export interface ArtistInput {
 export interface AlbumInput {
   name?: string;
   artist?: ArtistInput;
-}
-
-export interface TrackInput {
-  name?: string;
-  artist?: ArtistInput;
-  album?: AlbumInput;
 }
 
 export interface TrackInput {
@@ -78,4 +74,19 @@ export interface MirrorballRating {
 export interface MirrorballTag {
   name: string;
   occurrences: number;
+}
+
+export interface MirrorballTimerange {
+  from: MirrorballDate;
+  to: MirrorballDate;
+}
+
+export interface MirrorballPlay {
+  track: MirrorballTrack;
+  scrobbledAt: MirrorballDate;
+}
+
+export interface PageInput {
+  limit: number;
+  offset: number;
 }

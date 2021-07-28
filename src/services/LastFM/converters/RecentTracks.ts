@@ -1,4 +1,8 @@
 import { fromUnixTime } from "date-fns";
+import {
+  MirrorballPageInfo,
+  MirrorballPlay,
+} from "../../mirrorball/MirrorballTypes";
 import { RawRecentTracks, RawTrack } from "../LastFMService.types";
 import {
   BaseConverter,
@@ -65,6 +69,36 @@ export class RecentTracks
       total: this.number(attr.total),
       totalPages: this.number(attr.totalPages),
     };
+  }
+
+  static fromMirrorballPlaysResponse(
+    response: {
+      plays: { plays: MirrorballPlay[]; pageInfo: MirrorballPageInfo };
+    },
+    pageSize: number
+  ): RecentTracks {
+    return new RecentTracks({
+      track: response.plays.plays.map((p) => {
+        return {
+          name: p.track.name,
+          artist: {
+            "#text": p.track.artist.name,
+          },
+          album: {
+            "#text": p.track.album?.name,
+          },
+        } as RawTrack;
+      }),
+      "@attr": {
+        page: "0",
+        total: `${response.plays.pageInfo.recordCount}`,
+        perPage: `${pageSize}`,
+        totalPages: `${Math.ceil(
+          response.plays.pageInfo.recordCount / pageSize
+        )}`,
+        user: "",
+      },
+    });
   }
 
   get withoutNowPlaying(): RecentTrack[] {

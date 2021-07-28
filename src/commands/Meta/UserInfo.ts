@@ -29,22 +29,22 @@ export default class UserInfo extends BaseCommand<typeof args> {
   async run() {
     await this.commandManager.init();
 
-    const { dbUser, discordUser, senderUser } = await this.parseMentions({
+    const { dbUser, discordUser } = await this.parseMentions({
       fetchDiscordUser: true,
       reverseLookup: { required: true },
+      requireIndexed: true,
     });
 
-    const user = dbUser || senderUser;
-
-    if (!user || !discordUser)
-      throw new LogicError("that user couldn't be found!");
-
     const commandRunCount = await this.botStatsService.countUserCommandRuns(
-      user.discordID
+      dbUser.discordID
     );
 
     const topCommands = await this.botStatsService.userTopCommands(
-      user.discordID
+      dbUser.discordID
+    );
+
+    const cachedPlaycount = await this.mirrorballService.getCachedPlaycount(
+      discordUser?.id || dbUser.discordID
     );
 
     const lineConsolidator = new LineConsolidator();
@@ -52,12 +52,13 @@ export default class UserInfo extends BaseCommand<typeof args> {
     lineConsolidator.addLines(
       {
         string: `${Emoji.checkmark} Authenticated!\n`,
-        shouldDisplay: !!user.lastFMSession,
+        shouldDisplay: !!dbUser.lastFMSession,
       },
       {
         string: `${Emoji.bruh} Not authenticated! \`${this.prefix}login\`\n`,
-        shouldDisplay: !user.lastFMSession,
+        shouldDisplay: !dbUser.lastFMSession,
       },
+      `**Cached scrobbles**: ${displayNumber(cachedPlaycount)}`,
       `**Commands run**: ${displayNumber(commandRunCount)}`,
       {
         shouldDisplay: topCommands.length > 0,
@@ -79,7 +80,7 @@ export default class UserInfo extends BaseCommand<typeof args> {
 
     const embed = this.newEmbed()
       .setTitle(
-        `User info for ${discordUser.username}#${discordUser.discriminator}`
+        `User info for ${discordUser!.username}#${discordUser!.discriminator}`
       )
       .setDescription(lineConsolidator.consolidate());
 

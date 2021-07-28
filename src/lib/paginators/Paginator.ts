@@ -1,5 +1,5 @@
-import { sleep } from "../helpers";
-import { Params } from "../services/LastFM/LastFMService.types";
+import { sleep } from "../../helpers";
+import { Params } from "../../services/LastFM/LastFMService.types";
 
 export function isPaginator<T = any>(
   value: Paginator<T> | any

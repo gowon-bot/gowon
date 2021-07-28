@@ -1,7 +1,7 @@
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { ucFirst } from "../../../helpers";
-import { Paginator } from "../../../lib/Paginator";
+import { Paginator } from "../../../lib/paginators/Paginator";
 import { RedirectsService } from "../../../services/dbservices/RedirectsService";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import {

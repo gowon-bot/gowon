@@ -15,19 +15,21 @@ export class Ban extends CrownsChildCommand<typeof args> {
   arguments: Arguments = args;
 
   async run() {
-    let { dbUser, senderUser, discordUser } = await this.parseMentions({
-      fetchDiscordUser: true,
-      reverseLookup: { required: true },
-    });
+    let { mentionedDBUser, senderUser, discordUser } = await this.parseMentions(
+      {
+        fetchDiscordUser: true,
+        reverseLookup: { required: true },
+      }
+    );
 
-    if (!dbUser) throw new LogicError("please mention a valid user");
+    if (!mentionedDBUser) throw new LogicError("please mention a valid user");
 
-    if (dbUser.discordID === senderUser?.discordID)
+    if (mentionedDBUser.discordID === senderUser?.discordID)
       throw new LogicError("you can't crown ban yourself?");
 
-    await this.crownsService.banUser(dbUser, this.guild.id);
+    await this.crownsService.banUser(mentionedDBUser, this.guild.id);
     this.crownsService.scribe.ban(
-      dbUser,
+      mentionedDBUser,
       this.message.author,
       discordUser!,
       this.guild.id
@@ -35,7 +37,7 @@ export class Ban extends CrownsChildCommand<typeof args> {
 
     await this.traditionalReply(
       `successfully banned ${
-        (await dbUser.toDiscordUser(this.guild))!.username
+        (await mentionedDBUser.toDiscordUser(this.guild))!.username
       }`
     );
   }

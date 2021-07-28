@@ -243,14 +243,6 @@ export class CrownBannedError extends ClientError {
   }
 }
 
-export class ReverseLookupError extends ClientError {
-  name = "ReverseLookupError";
-
-  constructor(entityName: string) {
-    super(`a user with that ${entityName} couldn't be found!`);
-  }
-}
-
 export class FriendNotFoundError extends ClientError {
   name = "FriendNotFoundError";
 
@@ -318,5 +310,37 @@ export class UserNotIndexedError extends ClientError {
 
   constructor() {
     super("That user hasn't been indexed yet!");
+  }
+}
+
+export class SenderUserNotIndexedError extends ClientError {
+  name = "SenderUserNotIndexedError";
+
+  constructor(prefix?: string) {
+    super(
+      `You need to be indexed to run this command, run \`${prefix}index\` to index yourself`
+    );
+  }
+}
+
+export class MentionedUserNotIndexedError extends ClientError {
+  name = "SenderUserNotIndexedError";
+
+  constructor(prefix?: string) {
+    super(
+      `The user you mentioned hasn't been indexed yet, or isn't signed into the bot.\n*Run \`${prefix}\ index\` to index yourself*`
+    );
+  }
+}
+
+export class LastFMReverseLookupError extends ClientError {
+  name = "LastFMReverseLookupError";
+
+  constructor(username: string, requireIndexed = false, prefix?: string) {
+    super(
+      requireIndexed
+        ? `The user you mentioned hasn't been indexed yet, or isn't signed into the bot.\n*Run \`${prefix}\ index\` to index yourself*`
+        : `This command requires that \`${username}\` be signed into Gowon!`
+    );
   }
 }

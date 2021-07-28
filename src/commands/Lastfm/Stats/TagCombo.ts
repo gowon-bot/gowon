@@ -1,7 +1,7 @@
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
-import { Paginator } from "../../../lib/Paginator";
+import { Paginator } from "../../../lib/paginators/Paginator";
 import {
   TagComboCalculator,
   TagCombo as TagComboType,

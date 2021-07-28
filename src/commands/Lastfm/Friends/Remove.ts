@@ -32,7 +32,7 @@ export class Remove extends FriendsChildCommand<typeof args> {
   async prerun() {}
 
   async run() {
-    const { username, senderUsername, senderUser, dbUser } =
+    const { username, senderUsername, senderUser, mentionedDBUser } =
       await this.parseMentions({
         inputArgumentName: "friendUsername",
         senderRequired: true,
@@ -42,7 +42,10 @@ export class Remove extends FriendsChildCommand<typeof args> {
       throw new LogicError("you can't be friends with yourself!");
     }
 
-    await this.friendsService.removeFriend(senderUser!, dbUser || username);
+    await this.friendsService.removeFriend(
+      senderUser!,
+      mentionedDBUser || username
+    );
 
     await this.send(
       this.newEmbed().setDescription(

@@ -39,15 +39,12 @@ export default class ArtistTopAlbums extends MirrorballBaseCommand<
   arguments: Arguments = args;
 
   async run() {
-    const { username, senderUser, senderRequestable, dbUser, perspective } =
+    const { username, dbUser, senderRequestable, perspective } =
       await this.parseMentions({
         senderRequired: !this.parsedArguments.artist,
         reverseLookup: { required: true },
+        requireIndexed: true,
       });
-
-    const user = (dbUser || senderUser)!;
-
-    await this.throwIfNotIndexed(user, perspective);
 
     const artistName = await this.lastFMArguments.getArtist(
       senderRequestable,
@@ -56,7 +53,7 @@ export default class ArtistTopAlbums extends MirrorballBaseCommand<
 
     const response = await this.query({
       artist: { name: artistName },
-      user: { discordID: user.discordID },
+      user: { discordID: dbUser.discordID },
     });
 
     const errors = this.parseErrors(response);

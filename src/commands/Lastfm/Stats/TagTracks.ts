@@ -1,7 +1,7 @@
 import { calculatePercent } from "../../../helpers/stats";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
-import { Paginator } from "../../../lib/Paginator";
+import { Paginator } from "../../../lib/paginators/Paginator";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { displayNumber } from "../../../lib/views/displays";

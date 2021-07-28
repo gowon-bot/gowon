@@ -15,18 +15,23 @@ export class Unban extends CrownsChildCommand<typeof args> {
   arguments: Arguments = args;
 
   async run() {
-    let { dbUser, senderUser, discordUser } = await this.parseMentions({
-      reverseLookup: { required: true },
-      fetchDiscordUser: true,
-    });
+    let { mentionedDBUser, senderUser, discordUser } = await this.parseMentions(
+      {
+        reverseLookup: { required: true },
+        fetchDiscordUser: true,
+      }
+    );
 
-    if (!dbUser || dbUser.discordID === senderUser?.discordID) {
+    if (
+      !mentionedDBUser ||
+      mentionedDBUser.discordID === senderUser?.discordID
+    ) {
       throw new LogicError(`please mention a valid user`);
     }
 
-    await this.crownsService.unbanUser(dbUser, this.guild.id);
+    await this.crownsService.unbanUser(mentionedDBUser, this.guild.id);
     this.crownsService.scribe.unban(
-      dbUser,
+      mentionedDBUser,
       this.message.author,
       discordUser!,
       this.guild.id
@@ -34,7 +39,7 @@ export class Unban extends CrownsChildCommand<typeof args> {
 
     await this.traditionalReply(
       `successfully unbanned ${
-        (await dbUser.toDiscordUser(this.guild))!.username
+        (await mentionedDBUser.toDiscordUser(this.guild))!.username
       }`
     );
   }

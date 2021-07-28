@@ -39,15 +39,15 @@ export class ArtistRatings extends RateYourMusicIndexingChildCommand<
   arguments: Arguments = args;
 
   async run() {
-    let { senderRequestable, dbUser, senderUser, discordUser } =
-      await this.parseMentions({
+    const { senderRequestable, dbUser, discordUser } = await this.parseMentions(
+      {
         senderRequired: !this.parsedArguments.artist,
         fetchDiscordUser: true,
-      });
+        requireIndexed: true,
+      }
+    );
 
     const artist = await this.lastFMArguments.getArtist(senderRequestable);
-
-    const user = (dbUser || senderUser)!;
 
     const perspective = this.usersService.discordPerspective(
       this.author,
@@ -55,7 +55,10 @@ export class ArtistRatings extends RateYourMusicIndexingChildCommand<
     );
 
     const response = await this.query({
-      user: { lastFMUsername: user.lastFMUsername, discordID: user.discordID },
+      user: {
+        lastFMUsername: dbUser.lastFMUsername,
+        discordID: dbUser.discordID,
+      },
       artist: { name: artist },
       artistKeywords: artist,
     });

@@ -39,23 +39,20 @@ export default class TrackTopAlbums extends MirrorballBaseCommand<
   arguments: Arguments = args;
 
   async run() {
-    const { username, senderUser, senderRequestable, dbUser, perspective } =
+    const { username, dbUser, senderRequestable, perspective } =
       await this.parseMentions({
         senderRequired:
           !this.parsedArguments.artist || !this.parsedArguments.track,
         reverseLookup: { required: true },
+        requireIndexed: true,
       });
-
-    const user = (dbUser || senderUser)!;
-
-    await this.throwIfNotIndexed(user, perspective);
 
     const { artist: artistName, track: trackName } =
       await this.lastFMArguments.getTrack(senderRequestable, true);
 
     const response = await this.query({
       track: { name: trackName, artist: { name: artistName } },
-      user: { discordID: user.discordID },
+      user: { discordID: dbUser.discordID },
     });
 
     const errors = this.parseErrors(response);

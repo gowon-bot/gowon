@@ -1,6 +1,6 @@
 import { LogicError } from "../../../errors";
 import { Variation } from "../../../lib/command/BaseCommand";
-import { Paginator } from "../../../lib/Paginator";
+import { Paginator } from "../../../lib/paginators/Paginator";
 import { displayNumber } from "../../../lib/views/displays";
 import { SearchCommand } from "./SearchCommand";
 

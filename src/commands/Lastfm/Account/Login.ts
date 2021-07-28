@@ -26,9 +26,11 @@ export default class Login extends MirrorballBaseCommand<
 
   connector = new EmptyConnector();
 
+  aliases = ["fmlogin", "set", "fmset"];
+
   description = "Sets your Last.fm username in Gowon";
   subcategory = "accounts";
-  usage = "username";
+  usage = "";
 
   arguments: Arguments = args;
 

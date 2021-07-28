@@ -32,7 +32,7 @@ export class Add extends FriendsChildCommand<typeof args> {
   async prerun() {}
 
   async run() {
-    const { username, senderUsername, senderUser, dbUser } =
+    const { username, senderUsername, senderUser, mentionedDBUser } =
       await this.parseMentions({
         inputArgumentName: "friendUsername",
         senderRequired: true,
@@ -43,14 +43,18 @@ export class Add extends FriendsChildCommand<typeof args> {
     }
 
     if (
-      await this.friendsService.isAlreadyFriends(senderUser!, username, dbUser)
+      await this.friendsService.isAlreadyFriends(
+        senderUser!,
+        username,
+        mentionedDBUser
+      )
     ) {
       throw new AlreadyFriendsError();
     }
 
     const friend = await this.friendsService.addFriend(
       senderUser!,
-      dbUser || username
+      mentionedDBUser || username
     );
 
     await this.send(
