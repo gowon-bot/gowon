@@ -95,21 +95,27 @@ export default class Tag extends LastFMBaseCommand<typeof args> {
         `${perspective.upper.possessive} top ${tagTopArtists.meta.tag} artists`
       );
 
-    const scrollingEmbed = new SimpleScrollingEmbed(this.message, embed, {
-      items: overlap,
-      pageSize: 20,
-      pageRenderer(overlap, { offset }) {
-        return (
-          description +
-          displayNumberedList(
-            overlap.map(
-              (o) => `${o.artist.strong()} - ${displayNumber(o.plays, "play")}`
-            ),
-            offset
-          )
-        );
+    const scrollingEmbed = new SimpleScrollingEmbed(
+      this.message,
+      embed,
+      {
+        items: overlap,
+        pageSize: 20,
+        pageRenderer(overlap, { offset }) {
+          return (
+            description +
+            displayNumberedList(
+              overlap.map(
+                (o) =>
+                  `${o.artist.strong()} - ${displayNumber(o.plays, "play")}`
+              ),
+              offset
+            )
+          );
+        },
       },
-    });
+      { itemName: "artist" }
+    );
 
     scrollingEmbed.send();
   }
