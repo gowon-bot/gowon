@@ -6,7 +6,7 @@ import {
   TagComboCalculator,
   TagCombo as TagComboType,
 } from "../../../lib/calculators/TagComboCalculator";
-import { TagsService } from "../../../services/dbservices/tags/TagsService";
+import { TagsService } from "../../../services/mirrorball/services/TagsService";
 import { displayNumber } from "../../../lib/views/displays";
 
 const args = {

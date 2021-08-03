@@ -31,7 +31,7 @@
     "cross-fetch": "^3.1.4",
     "date-fns": "^2.16.1",
     "debug": "^4.1.1",
-    "discord.js": "discordjs/discord.js",
+    "discord.js": "^12.5.3",
     "emoji-regex": "^9.2.2",
     "escape-string-regexp": "^4.0.0",
     "express": "^4.17.1",

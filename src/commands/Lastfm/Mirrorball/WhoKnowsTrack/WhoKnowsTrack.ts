@@ -77,8 +77,23 @@ export default class WhoKnowsTrack extends MirrorballBaseCommand<
       this.gowonClient
     );
 
+    let trackDisplay = track.name;
+    let artistDisplay = track.artist;
+
+    if (!trackDisplay && !artistDisplay) {
+      const trackResponse = await this.lastFMService.correctTrack({
+        artist: artistName,
+        track: trackName,
+      });
+
+      trackDisplay = trackResponse.track;
+      artistDisplay = trackResponse.artist;
+    }
+
     const embed = this.newEmbed()
-      .setTitle(`Who knows ${track.name.italic()} by ${track.artist.strong()}?`)
+      .setTitle(
+        `Who knows ${trackDisplay.italic()} by ${artistDisplay.strong()}?`
+      )
       .setDescription(
         !track || rows.length === 0
           ? `No one knows this track`

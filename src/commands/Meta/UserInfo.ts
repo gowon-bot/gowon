@@ -31,7 +31,6 @@ export default class UserInfo extends BaseCommand<typeof args> {
     const { dbUser, discordUser } = await this.parseMentions({
       fetchDiscordUser: true,
       reverseLookup: { required: true },
-      requireIndexed: true,
     });
 
     const commandRunCount = await this.botStatsService.countUserCommandRuns(

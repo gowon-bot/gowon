@@ -14,6 +14,7 @@ import { validators } from "../../../lib/validation/validators";
 import { sanitizeForDiscord } from "../../../helpers/discord";
 import { LinkGenerator } from "../../../helpers/lastFM";
 import { displayNumber } from "../../../lib/views/displays";
+import { ArtistsService } from "../../../services/mirrorball/services/ArtistsService";
 
 const args = {
   inputs: {
@@ -45,9 +46,12 @@ export default class Combo extends LastFMBaseCommand<typeof args> {
   };
 
   redirectsService = new RedirectsService(this.logger);
+  artistsService = new ArtistsService(this.logger);
 
   async run() {
     let artists = this.parsedArguments.artists!;
+
+    artists = await this.artistsService.correctArtistNames(artists);
 
     let { requestable, username } = await this.parseMentions();
 

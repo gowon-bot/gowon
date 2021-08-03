@@ -6,7 +6,7 @@ import { LinkConsolidator } from "../../../helpers/lastFM";
 import { LineConsolidator } from "../../../lib/LineConsolidator";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { displayNumber } from "../../../lib/views/displays";
-import { TagsService } from "../../../services/dbservices/tags/TagsService";
+import { TagsService } from "../../../services/mirrorball/services/TagsService";
 
 const args = {
   inputs: {

@@ -1,7 +1,7 @@
 import gql from "graphql-tag";
 import { mirrorballClient } from "../../../lib/indexing/client";
 import { BaseService } from "../../BaseService";
-import { ArtistInput, MirrorballTag } from "../../mirrorball/MirrorballTypes";
+import { ArtistInput, MirrorballTag } from "../MirrorballTypes";
 
 export class TagsService extends BaseService {
   async getTagsForArtists(artists: ArtistInput[]): Promise<MirrorballTag[]> {

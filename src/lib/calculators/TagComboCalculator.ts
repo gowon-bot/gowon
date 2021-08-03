@@ -1,4 +1,4 @@
-import { TagsService } from "../../services/dbservices/tags/TagsService";
+import { TagsService } from "../../services/mirrorball/services/TagsService";
 import {
   RecentTrack,
   RecentTracks,

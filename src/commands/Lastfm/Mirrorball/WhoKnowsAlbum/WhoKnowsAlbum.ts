@@ -31,9 +31,9 @@ export default class WhoKnowsAlbum extends MirrorballBaseCommand<
 
   idSeed = "redsquare green";
 
-  aliases = ["wkl"];
+  aliases = ["wkl", "wka"];
 
-  variations: Variation[] = [{ name: "update", variation: "uwkl" }];
+  variations: Variation[] = [{ name: "update", variation: ["uwkl", "uwka"] }];
 
   subcategory = "whoknows";
   description = "See who knows an album";

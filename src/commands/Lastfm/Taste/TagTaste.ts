@@ -5,7 +5,7 @@ import { Variation } from "../../../lib/command/BaseCommand";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { LogicError } from "../../../errors";
-import { TagsService } from "../../../services/dbservices/tags/TagsService";
+import { TagsService } from "../../../services/mirrorball/services/TagsService";
 import { TasteCommand, tasteMentions } from "./TasteCommand";
 import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingEmbed";
 import { displayNumber } from "../../../lib/views/displays";

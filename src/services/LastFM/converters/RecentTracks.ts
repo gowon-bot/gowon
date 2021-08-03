@@ -101,6 +101,14 @@ export class RecentTracks
     });
   }
 
+  get isNowPlaying(): boolean {
+    return this.tracks.slice(0, 5).some((t) => t.isNowPlaying);
+  }
+
+  get nowPlaying(): RecentTrack | undefined {
+    return this.tracks.slice(0, 5).find((t) => t.isNowPlaying);
+  }
+
   get withoutNowPlaying(): RecentTrack[] {
     return this.tracks.filter((t) => !t.isNowPlaying);
   }

@@ -1,7 +1,11 @@
+import { LinkGenerator } from "../../../helpers/lastFM";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
+import { requestableAsUsername } from "../../../lib/MultiRequester";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
+import { displayLink, displayNumberedList } from "../../../lib/views/displays";
+import { RecentTrack } from "../../../services/LastFM/converters/RecentTracks";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 const args = {
@@ -25,28 +29,40 @@ export default class Recent extends LastFMBaseCommand<typeof args> {
   };
 
   async run() {
-    let amount = this.parsedArguments.amount;
+    const amount = this.parsedArguments.amount;
 
-    let { requestable, perspective } = await this.parseMentions();
+    const { requestable, perspective } = await this.parseMentions();
 
-    let recentTracks = await this.lastFMService.recentTracks({
+    const recentTracks = await this.lastFMService.recentTracks({
       username: requestable,
       limit: amount,
     });
 
-    let embed = this.newEmbed()
-      .setTitle(`${perspective.upper.possessive} recent tracks`)
+    const embed = this.newEmbed()
+      .setAuthor(
+        ...this.generateEmbedAuthor(
+          `${perspective.upper.possessive.replace(/`/g, "")} recent tracks`
+        ),
+        LinkGenerator.userPage(requestableAsUsername(requestable))
+      )
       .setDescription(
-        recentTracks.tracks
-          .map(
-            (t) =>
-              `${t.name} by ${t.artist.strong()} ${
-                t.album ? `from ${t.album.italic()}` : ""
-              }`
+        (recentTracks.isNowPlaying
+          ? `\`${amount! > 9 ? " " : ""}•\`. ` +
+            this.displayTrack(recentTracks.nowPlaying!) +
+            "\n"
+          : "") +
+          displayNumberedList(
+            recentTracks.withoutNowPlaying.map(this.displayTrack)
           )
-          .join("\n")
-      );
+      )
+      .setThumbnail(recentTracks.first().images.get("large") || "");
 
     await this.send(embed);
+  }
+
+  private displayTrack(t: RecentTrack) {
+    return `${displayLink(t.name, t.url)} by ${t.artist.strong()} ${
+      t.album ? `\nfrom ${t.album.italic()}\n` : ""
+    }`;
   }
 }
