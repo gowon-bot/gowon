@@ -8,6 +8,7 @@ import {
   displayNumber,
   displayNumberedList,
 } from "../../../../lib/views/displays";
+import { CrownsService } from "../../../../services/dbservices/CrownsService";
 import { NicknameService } from "../../../../services/guilds/NicknameService";
 import {
   WhoKnowsArtistConnector,
@@ -30,7 +31,7 @@ export default class WhoKnowsArtist extends MirrorballBaseCommand<
 
   idSeed = "bvndit songhee";
 
-  aliases = ["wk"];
+  aliases = ["wk", "fmwk"];
 
   variations: Variation[] = [{ name: "update", variation: "uwk" }];
 
@@ -44,9 +45,10 @@ export default class WhoKnowsArtist extends MirrorballBaseCommand<
   arguments: Arguments = args;
 
   nicknameService = new NicknameService(this.logger);
+  crownsService = new CrownsService(this.logger);
 
   async run() {
-    let { senderRequestable } = await this.parseMentions({
+    const { senderRequestable } = await this.parseMentions({
       senderRequired: !this.parsedArguments.artist,
     });
 
@@ -54,6 +56,8 @@ export default class WhoKnowsArtist extends MirrorballBaseCommand<
       senderRequestable,
       true
     );
+
+    const crown = await this.crownsService.getCrown(artistName, this.guild.id);
 
     if (this.variationWasUsed("update")) {
       await this.updateAndWait(this.author.id);
@@ -89,7 +93,9 @@ export default class WhoKnowsArtist extends MirrorballBaseCommand<
                   `${displayLink(
                     this.nicknameService.cacheGetNickname(wk.user.discordID),
                     LinkGenerator.userPage(wk.user.username)
-                  )} - **${displayNumber(wk.playcount, "**play")}`
+                  )} - **${displayNumber(wk.playcount, "**play")}${
+                    crown?.user?.discordID === wk.user.discordID ? " 👑" : ""
+                  }`
               )
             )
       );

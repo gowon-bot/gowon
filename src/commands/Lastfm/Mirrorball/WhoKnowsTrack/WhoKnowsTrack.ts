@@ -31,7 +31,7 @@ export default class WhoKnowsTrack extends MirrorballBaseCommand<
 
   idSeed = "redsquare lina";
 
-  aliases = ["wkt"];
+  aliases = ["wkt", "fmwkt"];
   subcategory = "whoknows";
   rollout = {
     guilds: this.mirrorballGuilds,
