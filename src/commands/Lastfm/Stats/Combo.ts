@@ -51,7 +51,9 @@ export default class Combo extends LastFMBaseCommand<typeof args> {
   async run() {
     let artists = this.parsedArguments.artists!;
 
-    artists = await this.artistsService.correctArtistNames(artists);
+    if (artists.length) {
+      artists = await this.artistsService.correctArtistNames(artists);
+    }
 
     let { requestable, username } = await this.parseMentions();
 
