@@ -86,7 +86,7 @@ export class Current extends ComboChildCommand<typeof args> {
     lineConsolidator.addLines(
       {
         string:
-          this.displayCombo(combo, "artist") +
+          this.displayCurrentCombo(combo, "artist") +
           ` (${combo.artistNames
             .map((a) => displayLink(a, LinkGenerator.artistPage(a)))
             .join(", ")})`,
@@ -94,7 +94,7 @@ export class Current extends ComboChildCommand<typeof args> {
       },
       {
         string:
-          this.displayCombo(combo, "album") +
+          this.displayCurrentCombo(combo, "album") +
           ` (${displayLink(
             combo.album.name,
             LinkGenerator.albumPage(combo.artistName, combo.albumName)
@@ -103,7 +103,7 @@ export class Current extends ComboChildCommand<typeof args> {
       },
       {
         string:
-          this.displayCombo(combo, "track") +
+          this.displayCurrentCombo(combo, "track") +
           ` (${displayLink(
             combo.track.name,
             LinkGenerator.trackPage(combo.artistName, combo.trackName)
@@ -147,7 +147,7 @@ export class Current extends ComboChildCommand<typeof args> {
     await this.send(embed);
   }
 
-  private displayCombo(
+  private displayCurrentCombo(
     combo: ComboType,
     entity: "artist" | "album" | "track"
   ): string {
