@@ -46,7 +46,6 @@ export class Me extends JumbleChildCommand<typeof args> {
 
     if (alreadyJumbled?.jumbled) {
       this.handleAlreadyJumbled(message, alreadyJumbled);
-      message.channel.stopTyping();
       return;
     }
 

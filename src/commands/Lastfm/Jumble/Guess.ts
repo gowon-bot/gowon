@@ -46,7 +46,6 @@ export class Guess extends JumbleChildCommand<typeof args> {
       await this.message.react(
         shuffle(["😔", "😖", "😠", "😕", "😣", "😐", "😪"])[0]
       );
-      this.message.channel.stopTyping();
     }
   }
 }

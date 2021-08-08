@@ -61,6 +61,7 @@ export default class Day extends LastFMBaseCommand<typeof args> {
 
     let reportCalculator = new ReportCalculator(
       this.redirectsService,
+      this.mirrorballService,
       firstPage
     );
 

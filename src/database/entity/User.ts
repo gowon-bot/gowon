@@ -26,6 +26,7 @@ import { GowonService } from "../../services/GowonService";
 import { mirrorballClient } from "../../lib/indexing/client";
 import gql from "graphql-tag";
 import { Logger } from "../../lib/Logger";
+import { Combo } from "./Combo";
 
 @Entity({ name: "users" })
 export class User extends BaseEntity {
@@ -52,6 +53,9 @@ export class User extends BaseEntity {
 
   @OneToMany((_) => Friend, (friend) => friend.user)
   friends!: Friend[];
+
+  @OneToMany((_) => Combo, (combo) => combo.user)
+  combos!: Combo[];
 
   static async toDiscordUser(
     guild: Guild,

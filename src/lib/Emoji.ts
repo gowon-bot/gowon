@@ -34,6 +34,7 @@ export const Emoji = {
   shitsfucked: "<:shitsfucked:857123087194521643>",
   gowonPeek: "<:gowonpeek:790528424933589002>",
   fuckyou: "<a:fuckyou:858239446577840140>",
+  gowonLitDance: "<a:gowonLitDance:861185566233985044>",
 
   fullStar: "<:fullStar:843763033858899968>",
   halfStar: "<:halfStar:843763307994284032>",

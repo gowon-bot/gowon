@@ -63,7 +63,7 @@ export default class Login extends MirrorballBaseCommand<
         )} and authenticate with Last.fm, then click the react to let Gowon know you're done.\n\nDon't have an account? You can create one at https://last.fm/join`
       );
 
-    const sentMessage = await this.author.send(embed);
+    const sentMessage = await this.author.send({ embeds: [embed] });
     await sentMessage.react(EmojiRaw.checkmark);
 
     const filter: ReactionCollectorFilter = (reaction, user) =>
@@ -84,10 +84,10 @@ export default class Login extends MirrorballBaseCommand<
       const confirmationEmbed = new ConfirmationEmbed(
         sentMessage,
         successEmbed,
-        this.gowonClient
+        this.gowonClient,
+        this.author.id
       );
 
-      this.stopTyping();
       if (await confirmationEmbed.awaitConfirmation()) {
         this.impromptuIndex(
           successEmbed,
@@ -182,7 +182,8 @@ export default class Login extends MirrorballBaseCommand<
     embed: MessageEmbed
   ): Promise<User | undefined> {
     return new Promise((resolve, reject) => {
-      const reactionCollector = sentMessage.createReactionCollector(filter, {
+      const reactionCollector = sentMessage.createReactionCollector({
+        filter,
         time: 5 * 60 * 1000,
       });
 
@@ -193,11 +194,13 @@ export default class Login extends MirrorballBaseCommand<
           reactionCollector.stop();
           resolve(user!);
         } else if (!embed.footer?.text?.includes("didn't work")) {
-          await sentMessage.edit(
-            embed.setFooter(
-              "Hmm that didn't work, please ensure you've authenticated with the link and try again"
-            )
-          );
+          await sentMessage.edit({
+            embeds: [
+              embed.setFooter(
+                "Hmm that didn't work, please ensure you've authenticated with the link and try again"
+              ),
+            ],
+          });
         }
       });
 
@@ -208,11 +211,13 @@ export default class Login extends MirrorballBaseCommand<
 
       reactionCollector.on("end", async (_: any, reason) => {
         if (reason === "time") {
-          await sentMessage.edit(
-            embed.setFooter("This login link has expired, please try again")
-          );
+          await sentMessage.edit({
+            embeds: [
+              embed.setFooter("This login link has expired, please try again"),
+            ],
+          });
+          resolve(undefined);
         }
-        resolve(undefined);
       });
     });
   }

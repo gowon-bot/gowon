@@ -2,7 +2,6 @@ import gql from "graphql-tag";
 import { calculatePercent } from "../../../helpers/stats";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
-import { mirrorballClient } from "../../../lib/indexing/client";
 import { Paginator } from "../../../lib/paginators/Paginator";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
@@ -145,14 +144,11 @@ export default class Tag extends LastFMBaseCommand<typeof args> {
       }
     `;
 
-    const response = await mirrorballClient.query<{
+    const response = await this.mirrorballService.query<{
       artists: { name: string }[];
-    }>({
-      query,
-      variables: { tag },
-    });
+    }>(query, { tag });
 
-    return response.data.artists;
+    return response.artists;
   }
 
   private artistNameTransform(a: { name: string }) {

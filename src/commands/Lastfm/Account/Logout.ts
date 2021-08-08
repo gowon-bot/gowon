@@ -21,16 +21,15 @@ export default class Logout extends LastFMBaseCommand {
       this.gowonClient
     );
 
-    this.stopTyping();
     const confirmation = await confirmationEmbed.awaitConfirmation();
 
     if (confirmation) {
       await this.usersService.clearUsername(this.author.id);
       await this.mirrorballService.logout(this.author.id);
 
-      await confirmationEmbed.sentMessage?.edit(
-        embed.setDescription("Logged out successfully.")
-      );
+      await confirmationEmbed.sentMessage?.edit({
+        embeds: [embed.setDescription("Logged out successfully.")],
+      });
     }
   }
 }

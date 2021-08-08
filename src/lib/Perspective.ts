@@ -52,7 +52,7 @@ export class Perspective {
 
   // Instance methods
   constructor(
-    private different: boolean,
+    public different: boolean,
     private _name: string,
     private _possessive: string,
     private _pronoun: string,

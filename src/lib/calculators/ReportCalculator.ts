@@ -1,9 +1,9 @@
 import gql from "graphql-tag";
 import { RedirectsService } from "../../services/dbservices/RedirectsService";
 import { RecentTracks } from "../../services/LastFM/converters/RecentTracks";
+import { MirrorballService } from "../../services/mirrorball/MirrorballService";
 import { MirrorballTag } from "../../services/mirrorball/MirrorballTypes";
 import { RedirectsCache } from "../caches/RedirectsCache";
-import { mirrorballClient } from "../indexing/client";
 
 interface Count {
   [name: string]: number;
@@ -38,6 +38,7 @@ export class ReportCalculator {
 
   constructor(
     private redirectsService: RedirectsService,
+    private mirrorballService: MirrorballService,
     private tracks: RecentTracks
   ) {}
 
@@ -114,13 +115,10 @@ export class ReportCalculator {
 
     const artists = Object.keys(this.top.artists).map((name) => ({ name }));
 
-    const response = await mirrorballClient.query<{
+    const response = await this.mirrorballService.query<{
       tags: { tags: MirrorballTag[] };
-    }>({
-      query,
-      variables: { artists },
-    });
+    }>(query, { artists });
 
-    this.top.tags = response.data.tags.tags;
+    this.top.tags = response.tags.tags;
   }
 }

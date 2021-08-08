@@ -77,9 +77,9 @@ export class React extends NowPlayingConfigChildCommand<typeof args> {
       await this.gowonService.settingsManager.set("reacts", {
         userID: this.author.id,
       });
-      confirmationEmbed.sentMessage!.edit(
-        embed.setDescription("Successfully cleared your reactions!")
-      );
+      confirmationEmbed.sentMessage!.edit({
+        embeds: [embed.setDescription("Successfully cleared your reactions!")],
+      });
     }
   }
 

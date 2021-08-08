@@ -40,7 +40,7 @@ export default class TagInfo extends InfoCommand<typeof args> {
         { name: "Uses", value: displayNumber(tagInfo.uses), inline: true }
       )
       .setURL(this.getLinkFromBio(tagInfo.wiki.summary) || "")
-      .setDescription(this.scrubReadMore(tagInfo.wiki.summary));
+      .setDescription(this.scrubReadMore(tagInfo.wiki.summary) || "");
 
     this.send(embed);
   }

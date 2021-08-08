@@ -50,25 +50,26 @@ export abstract class PermissionsChildCommand extends AdminBaseChildCommand<
 
     this.aliases = this.parsedArguments.command!.split(/\s*\//);
 
-    let command = await this.commandManager.find(
+    const command = await this.commandManager.find(
       this.aliases.join(" "),
       this.guild.id
     );
 
-    if (!command.command && this.throwOnNoCommand)
+    if (!command.command && this.throwOnNoCommand) {
       throw new CommandNotFoundError();
+    }
 
     if (command.command) this.command = command.command;
     this.runAs = command.runAs;
     let userIDs = this.parsedArguments.userIDs || [];
     let roleIDs = this.parsedArguments.roleIDs || [];
 
-    let { users: userMentions, roles: roleMentions } = message.mentions;
+    const { users: userMentions, roles: roleMentions } = message.mentions;
 
-    let users = userMentions.array();
-    let roles = roleMentions.array();
+    const users = Array.from(userMentions.values());
+    const roles = Array.from(roleMentions.values());
 
-    for (let role of await Promise.all(
+    for (const role of await Promise.all(
       roleIDs.map((id) => Permission.toDiscordRole(message, id))
     )) {
       roles.push(role!);

@@ -1,4 +1,4 @@
-import { GuildMember, MessageEmbed, User } from "discord.js";
+import { GuildMember, HexColorString, MessageEmbed, User } from "discord.js";
 import { ucFirst } from "../../../helpers";
 import { ImageCollection } from "../../../services/LastFM/converters/BaseConverter";
 
@@ -6,7 +6,7 @@ export const errorColour = "#ED008E";
 
 export function gowonEmbed(member?: GuildMember, embed?: MessageEmbed) {
   const gowonEmbed = (embed || new MessageEmbed()).setColor(
-    member?.roles?.color?.hexColor || "black"
+    (member?.roles?.color?.hexColor as HexColorString) || "black"
   );
 
   return gowonEmbed;

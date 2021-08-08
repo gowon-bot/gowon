@@ -14,7 +14,7 @@ export class ServerReport extends MetaChildCommand<typeof args> {
   arguments: Arguments = args;
 
   async run() {
-    let servers = this.gowonClient.client.guilds.cache.array();
+    let servers = Array.from(this.gowonClient.client.guilds.cache.values());
 
     servers = servers.sort((a, b) => b.memberCount - a.memberCount);
 
@@ -34,7 +34,7 @@ export class ServerReport extends MetaChildCommand<typeof args> {
     });
 
     scrollingEmbed.scrollingEmbed.customSend(async (embed) => {
-      return await this.author.send(embed);
+      return await this.author.send({ embeds: [embed] });
     });
   }
 }

@@ -11,8 +11,8 @@ export class MirrorballService extends BaseService {
 
   private readonly baseURL = "http://localhost:8080/graphql";
 
-  private async sendRequest(
-    query: DocumentNode,
+  private async makeRequest(
+    { query, mutation }: { query?: DocumentNode; mutation?: DocumentNode },
     variables?: object
   ): Promise<any> {
     this.log(
@@ -23,24 +23,51 @@ export class MirrorballService extends BaseService {
       )}`
     );
 
-    return await mirrorballClient.query({
-      query,
-      variables,
-      fetchPolicy: "no-cache",
-    });
+    return query
+      ? await mirrorballClient.query({
+          query,
+          variables,
+          fetchPolicy: "no-cache",
+        })
+      : mutation
+      ? await mirrorballClient.mutate({
+          mutation,
+          variables,
+          fetchPolicy: "no-cache",
+        })
+      : undefined;
   }
 
   public webhook = IndexingWebhookService.getInstance();
 
-  async genericRequest<T = any>(
+  async query<T = any>(
     query: DocumentNode,
-    variables: { [key: string]: any }
+    variables?: { [key: string]: any }
   ): Promise<T> {
-    return (await this.sendRequest(query, variables)).data;
+    const response = await this.makeRequest({ query }, variables);
+
+    if (response.error) {
+      throw response.error || response.errors;
+    }
+
+    return response.data;
+  }
+
+  async mutate<T = any>(
+    mutation: DocumentNode,
+    variables?: { [key: string]: any }
+  ): Promise<T> {
+    const response = await this.makeRequest({ mutation }, variables);
+
+    if (response.error) {
+      throw response.error || response.errors;
+    }
+
+    return response.data;
   }
 
   public async ping(): Promise<{ ping: string }> {
-    return await this.genericRequest(
+    return await this.query(
       gql`
         query {
           ping
@@ -56,7 +83,7 @@ export class MirrorballService extends BaseService {
     userType: UserType,
     session: string | undefined
   ) {
-    return await this.genericRequest(
+    return await this.query(
       gql`
         mutation login(
           $username: String!
@@ -79,7 +106,7 @@ export class MirrorballService extends BaseService {
   }
 
   public async logout(discordID: string) {
-    return await this.genericRequest(
+    return await this.query(
       gql`
         mutation logout($discordID: String!) {
           logout(discordID: $discordID)
@@ -94,7 +121,7 @@ export class MirrorballService extends BaseService {
     guildID: string
   ): Promise<Error | undefined> {
     try {
-      await this.genericRequest(
+      await this.query(
         gql`
           mutation addUserToGuild($discordID: String!, $guildID: String!) {
             addUserToGuild(discordID: $discordID, guildID: $guildID) {
@@ -119,7 +146,7 @@ export class MirrorballService extends BaseService {
     guildID: string
   ): Promise<Error | undefined> {
     try {
-      await this.genericRequest(
+      await this.query(
         gql`
           mutation removeUserFromGuild($discordID: String!, $guildID: String!) {
             removeUserFromGuild(discordID: $discordID, guildID: $guildID)
@@ -137,7 +164,7 @@ export class MirrorballService extends BaseService {
   public async fullIndex(discordID: string) {
     await this.usersService.setAsIndexed(discordID);
 
-    const response = await this.genericRequest<{
+    const response = await this.query<{
       fullIndex: { token: string };
     }>(
       gql`
@@ -188,7 +215,7 @@ export class MirrorballService extends BaseService {
       }
     `;
 
-    const response = (await this.genericRequest(query, {
+    const response = (await this.query(query, {
       user: { discordID },
     })) as {
       update: { token: string };

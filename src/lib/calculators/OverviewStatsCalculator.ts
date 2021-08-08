@@ -17,9 +17,9 @@ import { displayDate, displayNumber } from "../views/displays";
 import { Requestable } from "../../services/LastFM/LastFMAPIService";
 import { LastFMPeriod } from "../../services/LastFM/LastFMService.types";
 import { periodToRange } from "../../helpers/date";
-import { mirrorballClient } from "../indexing/client";
 import gql from "graphql-tag";
 import { MirrorballPageInfo } from "../../services/mirrorball/MirrorballTypes";
+import { MirrorballService } from "../../services/mirrorball/MirrorballService";
 
 export class Stat {
   public asString: string;
@@ -47,6 +47,7 @@ export class OverviewStatsCalculator {
 
   private lastFMService: LastFMService;
   private crownsService: CrownsService;
+  private mirrorballService: MirrorballService;
 
   constructor(
     private requestable: Requestable,
@@ -57,6 +58,7 @@ export class OverviewStatsCalculator {
   ) {
     this.lastFMService = new LastFMService(logger);
     this.crownsService = new CrownsService(logger);
+    this.mirrorballService = new MirrorballService(logger);
   }
 
   async hasCrownStats(): Promise<boolean> {
@@ -449,15 +451,10 @@ export class OverviewStatsCalculator {
 
     const artists = topArtists.artists.map((a) => ({ name: a.name }));
 
-    const response = await mirrorballClient.query<{
+    const response = await this.mirrorballService.query<{
       tags: { pageInfo: MirrorballPageInfo };
-    }>({
-      query,
-      variables: {
-        artists,
-      },
-    });
+    }>(query, { artists });
 
-    return new Stat(response.data.tags.pageInfo.recordCount);
+    return new Stat(response.tags.pageInfo.recordCount);
   }
 }

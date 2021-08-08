@@ -121,8 +121,9 @@ export abstract class MirrorballBaseCommand<
         );
     }
 
-    (replyTo || this.message).channel.send(`<@!${this.message.author.id}>`, {
-      embed: message,
+    (replyTo || this.message).channel.send({
+      content: `<@!${this.message.author.id}>`,
+      embeds: [message],
     });
   }
 
@@ -176,12 +177,13 @@ export abstract class MirrorballBaseCommand<
     username: string,
     discordID: string
   ) {
-    this.stopTyping();
-    await confirmationEmbed.sentMessage!.edit(
-      embed.setDescription(
-        embed.description + "\n" + this.indexingInProgressHelp
-      )
-    );
+    await confirmationEmbed.sentMessage!.edit({
+      embeds: [
+        embed.setDescription(
+          embed.description + "\n" + this.indexingInProgressHelp
+        ),
+      ],
+    });
     await this.concurrencyManager.registerUser(
       ConcurrentActions.Indexing,
       discordID

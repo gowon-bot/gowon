@@ -62,7 +62,7 @@ export default class Recent extends LastFMBaseCommand<typeof args> {
 
   private displayTrack(t: RecentTrack) {
     return `${displayLink(t.name, t.url)} by ${t.artist.strong()} ${
-      t.album ? `\nfrom ${t.album.italic()}\n` : ""
+      t.album ? `\nfrom ${t.album.italic()}\n` : "\n"
     }`;
   }
 }

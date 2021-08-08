@@ -22,17 +22,10 @@ async function start() {
     );
     console.log(chalk`\n{white Setup complete!}\n`);
 
-    client.client.user!.setPresence({
-      activity: {
-        name: "One & Only",
-        type: "LISTENING",
-        url: "https://github.com/jivison/gowon",
-      },
-    });
     handler.setClient(client);
   });
 
-  client.client.on("message", (msg) => {
+  client.client.on("messageCreate", (msg) => {
     handler.handle(msg);
   });
 

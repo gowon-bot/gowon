@@ -2,7 +2,6 @@ import { Guild, GuildMember } from "discord.js";
 import gql from "graphql-tag";
 import { CommandManager } from "../../lib/command/CommandManager";
 import { GowonClient } from "../../lib/GowonClient";
-import { mirrorballClient } from "../../lib/indexing/client";
 import { Logger } from "../../lib/Logger";
 import { displayNumber } from "../../lib/views/displays";
 import { BaseService } from "../BaseService";
@@ -14,7 +13,7 @@ export class GuildEventService extends BaseService {
   gowonService = GowonService.getInstance();
   adminService = new AdminService(this.gowonClient);
   commandManager = new CommandManager();
-  mirrorballService = new MirrorballService();
+  mirrorballService = new MirrorballService(this.logger);
 
   constructor(private gowonClient: GowonClient, logger?: Logger) {
     super(logger);
@@ -126,9 +125,6 @@ export class GuildEventService extends BaseService {
     const discordIDs = members.map((m) => m.id);
     const guildID = guild.id;
 
-    await mirrorballClient.mutate({
-      mutation,
-      variables: { discordIDs, guildID },
-    });
+    await this.mirrorballService.mutate(mutation, { discordIDs, guildID });
   }
 }

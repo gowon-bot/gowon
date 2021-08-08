@@ -72,7 +72,7 @@ export class MentionParser extends Parser {
           return undefined;
         } else {
           return this.getElementFromIndex(
-            message.mentions.users.array(),
+            Array.from(message.mentions.users.values()),
             mentionOptions.index,
             { join: mentionOptions.join }
           );
@@ -84,7 +84,7 @@ export class MentionParser extends Parser {
       });
     } else
       return this.getElementFromIndex(
-        message.mentions.users.array(),
+        Array.from(message.mentions.users.values()),
         mentionOptions.index,
         { join: mentionOptions.join }
       );

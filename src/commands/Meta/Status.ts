@@ -28,14 +28,16 @@ export default class Status extends BaseCommand<typeof args> {
     const mirrorballLatency = await this.mirrorballLatency();
     const [sentMessage, discordLatency] = await this.discordLatency(embed);
 
-    await sentMessage.edit(
-      embed.setDescription(
-        "**Latency**:\n```\n" +
-          `Mirrorball.....${this.displayLatency(mirrorballLatency)}
+    await sentMessage.edit({
+      embeds: [
+        embed.setDescription(
+          "**Latency**:\n```\n" +
+            `Mirrorball.....${this.displayLatency(mirrorballLatency)}
 Discord.....${this.displayLatency(discordLatency)}` +
-          "\n```"
-      )
-    );
+            "\n```"
+        ),
+      ],
+    });
   }
 
   private async mirrorballLatency(): Promise<Stopwatch> {

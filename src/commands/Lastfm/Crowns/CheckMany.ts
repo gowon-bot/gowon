@@ -69,10 +69,12 @@ export class CheckMany extends CrownsChildCommand<typeof args> {
     let embed = this.newEmbed()
       .setTitle(`Crown checks for ${checkedCrowns.length} artists`)
       .setDescription(
-        Object.keys(display).map(
-          (state) =>
-            `${state}: ${display[state].map((a) => a.code()).join(", ")}`
-        )
+        Object.keys(display)
+          .map(
+            (state) =>
+              `${state}: ${display[state].map((a) => a.code()).join(", ")}`
+          )
+          .join("\n")
       );
 
     await this.send(embed);

@@ -187,7 +187,7 @@ class GraphQLDatasource {
     const { query, variables } = buildQuery(this.parts);
 
     return async () => ({
-      graphQLData: await datasourceService.mirrorballService.genericRequest(
+      graphQLData: await datasourceService.mirrorballService.query(
         query,
         variables
       ),

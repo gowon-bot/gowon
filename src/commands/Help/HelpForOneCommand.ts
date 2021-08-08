@@ -154,7 +154,6 @@ export default class HelpForOneCommand extends BaseCommand<typeof args> {
     command.gowonClient = this.gowonClient;
     command.delegatedFrom = this;
     await command.execute(this.message, this.runAs);
-    this.message.channel.stopTyping();
     return;
   }
 }

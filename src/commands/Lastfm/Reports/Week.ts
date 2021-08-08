@@ -62,6 +62,7 @@ export default class Week extends LastFMBaseCommand<typeof args> {
 
     let reportCalculator = new ReportCalculator(
       this.redirectsService,
+      this.mirrorballService,
       firstPage
     );
 

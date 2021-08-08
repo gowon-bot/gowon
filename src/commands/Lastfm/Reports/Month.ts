@@ -60,6 +60,7 @@ export default class Month extends LastFMBaseCommand<typeof args> {
 
     let reportCalculator = new ReportCalculator(
       this.redirectsService,
+      this.mirrorballService,
       firstPage
     );
 

@@ -1,3 +1,4 @@
+import { TextChannel } from "discord.js";
 import { Variation } from "../../../lib/command/BaseCommand";
 import { validators } from "../../../lib/validation/validators";
 import { PermissionsChildCommand } from "./PermissionsChildCommand";
@@ -20,14 +21,18 @@ export class ChannelBlacklist extends PermissionsChildCommand {
   };
 
   async run() {
-    let mentionedChannels = this.message.mentions.channels.array();
+    const mentionedChannels = Array.from(
+      this.message.mentions.channels.values()
+    );
 
-    let blacklistedChannels = {
+    const blacklistedChannels = {
       success: [] as string[],
       failed: [] as { channel: string; reason: string }[],
     };
 
-    for (let channel of mentionedChannels) {
+    for (const channel of mentionedChannels as TextChannel[]) {
+      if (channel.type !== "GUILD_TEXT") continue;
+
       try {
         !this.variationWasUsed("i")
           ? await this.adminService.blacklistCommandFromChannel(

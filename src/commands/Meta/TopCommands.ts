@@ -37,13 +37,15 @@ export class TopCommands extends MetaChildCommand<typeof args> {
     let embed = this.newEmbed()
       .setTitle(`Top commands in ${message.guild?.name!} ${humanizedTimeRange}`)
       .setDescription(
-        topCommands.map(
-          (tc) =>
-            `${displayNumber(tc.count, "run")} - ${(
-              commandManager.findByID(tc.commandID)?.friendlyNameWithParent ??
-              "[unknown command]"
-            ).strong()}`
-        )
+        topCommands
+          .map(
+            (tc) =>
+              `${displayNumber(tc.count, "run")} - ${(
+                commandManager.findByID(tc.commandID)?.friendlyNameWithParent ??
+                "[unknown command]"
+              ).strong()}`
+          )
+          .join("\n")
       );
 
     await this.send(embed);

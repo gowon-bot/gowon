@@ -40,6 +40,7 @@ export class List extends FriendsChildCommand {
               np.album ? `from ${np.album.italic()}` : ""
             }`;
           })
+          .join("\n")
       );
 
     await this.send(embed);

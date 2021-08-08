@@ -16,6 +16,7 @@ export default class Test extends BaseCommand<typeof args> {
   arguments = args;
 
   async run() {
-    await this.send("Hello, world!");
+    // await this.send("Hello, world!");
+    await this.message.reply("test");
   }
 }

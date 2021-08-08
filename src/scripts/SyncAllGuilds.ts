@@ -7,7 +7,7 @@ export default async function syncAllGuilds({
 }: {
   gowonClient: GowonClient;
 }) {
-  const guilds = gowonClient.client.guilds.cache.array();
+  const guilds = gowonClient.client.guilds.cache.values();
 
   for (const guild of guilds) {
     const members = await guild.members.fetch();

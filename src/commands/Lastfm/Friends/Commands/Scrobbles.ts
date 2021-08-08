@@ -52,6 +52,7 @@ export class Scrobbles extends FriendsChildCommand<typeof args> {
 
             return `${username.code()} - **${displayNumber(s, "**scrobble")}`;
           })
+          .join("\n")
       );
 
     await this.send(embed);

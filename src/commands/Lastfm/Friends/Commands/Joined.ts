@@ -47,6 +47,7 @@ export class Joined extends FriendsChildCommand {
 
             return `${username.code()} - ${displayDate(s)}`;
           })
+          .join("\n")
       );
 
     await this.send(embed);

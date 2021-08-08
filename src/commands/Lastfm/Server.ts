@@ -35,6 +35,7 @@ export default class Server extends LastFMBaseCommand {
               np.album ? `from ${np.album.italic()}` : ""
             } ${np.isNowPlaying ? "_(listening now)_" : ""}`;
           })
+          .join("\n")
       );
 
     await this.send(embed);

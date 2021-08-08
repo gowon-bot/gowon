@@ -1,9 +1,11 @@
 import gql from "graphql-tag";
-import { mirrorballClient } from "../../../lib/indexing/client";
 import { BaseService } from "../../BaseService";
+import { MirrorballService } from "../MirrorballService";
 import { MirrorballArtist } from "../MirrorballTypes";
 
 export class ArtistsService extends BaseService {
+  mirrorballService = new MirrorballService(this.logger);
+
   async correctArtistNames(artistNames: string[]): Promise<string[]> {
     const artists = artistNames.map((a) => ({ name: a }));
 
@@ -15,18 +17,14 @@ export class ArtistsService extends BaseService {
       }
     `;
 
-    const response = await mirrorballClient.query<{
+    const response = await this.mirrorballService.query<{
       artists: MirrorballArtist[];
-    }>({
-      query,
-      variables: { artists },
-    });
+    }>(query, { artists });
 
     return artistNames.map(
       (a) =>
-        response.data.artists.find(
-          (ma) => a.toLowerCase() === ma.name.toLowerCase()
-        )?.name || a
+        response.artists.find((ma) => a.toLowerCase() === ma.name.toLowerCase())
+          ?.name || a
     );
   }
 }

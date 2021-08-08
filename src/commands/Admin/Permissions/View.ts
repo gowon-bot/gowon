@@ -107,13 +107,15 @@ export class View extends PermissionsChildCommand {
         .setTitle(`Permissions for ${message.guild?.name}`)
         .setDescription(
           permissions.length
-            ? Object.keys(groupedPermissions).map(
-                (p) =>
-                  `${p.code()} - ${displayNumber(
-                    groupedPermissions[p],
-                    "permission"
-                  )}`
-              )
+            ? Object.keys(groupedPermissions)
+                .map(
+                  (p) =>
+                    `${p.code()} - ${displayNumber(
+                      groupedPermissions[p],
+                      "permission"
+                    )}`
+                )
+                .join("\n")
             : "This server doesn't have any permissions set yet!"
         );
     }

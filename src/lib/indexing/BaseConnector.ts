@@ -18,7 +18,7 @@ export abstract class BaseConnector<ResponseT, ParamsT>
   protected pagesToRequest?: number;
 
   async request(mirrorballService: MirrorballService, variables?: ParamsT) {
-    return await mirrorballService.genericRequest(this.query, variables || {});
+    return await mirrorballService.query(this.query, variables || {});
   }
 
   fragments = {

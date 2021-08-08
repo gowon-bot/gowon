@@ -59,7 +59,7 @@ export default class TagCombo extends LastFMBaseCommand<typeof args> {
       )
       .setDescription(
         combo.hasAnyConsecutivePlays()
-          ? sorted.map((t) => this.displayCombo(combo, t))
+          ? sorted.map((t) => this.displayCombo(combo, t)).join("\n")
           : "No consecutive plays found!"
       );
 

@@ -1,9 +1,11 @@
 import gql from "graphql-tag";
-import { mirrorballClient } from "../../../lib/indexing/client";
 import { BaseService } from "../../BaseService";
+import { MirrorballService } from "../MirrorballService";
 import { ArtistInput, MirrorballTag } from "../MirrorballTypes";
 
 export class TagsService extends BaseService {
+  mirrorballService = new MirrorballService(this.logger);
+
   async getTagsForArtists(artists: ArtistInput[]): Promise<MirrorballTag[]> {
     const query = gql`
       query tags($artists: [ArtistInput!]!) {
@@ -16,11 +18,11 @@ export class TagsService extends BaseService {
       }
     `;
 
-    const response = await mirrorballClient.query<{
+    const response = await this.mirrorballService.query<{
       tags: { tags: MirrorballTag[] };
-    }>({ query, variables: { artists } });
+    }>(query, { artists });
 
-    return response.data.tags.tags;
+    return response.tags.tags;
   }
 
   async getTagsForArtistsMap(
@@ -38,17 +40,14 @@ export class TagsService extends BaseService {
       }
     `;
 
-    const response = await mirrorballClient.query<{
+    const response = await this.mirrorballService.query<{
       artists: { name: string; tags: string[] }[];
-    }>({
-      query,
-      variables: {
-        requireTags,
-        artists: artists.map((a) => ({ name: a })),
-      },
+    }>(query, {
+      requireTags,
+      artists: artists.map((a) => ({ name: a })),
     });
 
-    return response.data.artists.reduce((acc, val) => {
+    return response.artists.reduce((acc, val) => {
       acc[val.name] = val.tags;
 
       return acc;

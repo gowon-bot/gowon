@@ -1,9 +1,11 @@
 import gql from "graphql-tag";
-import { mirrorballClient } from "../../lib/indexing/client";
 import { BaseService } from "../BaseService";
 import { RawArtistInfo, RawTagTopArtists } from "../LastFM/LastFMService.types";
+import { MirrorballService } from "./MirrorballService";
 
 export class MirrorballCacheService extends BaseService {
+  private mirrorballService = new MirrorballService(this.logger);
+
   async cacheArtistInfo(artistInfo: RawArtistInfo) {
     try {
       const mutation = gql`
@@ -18,9 +20,9 @@ export class MirrorballCacheService extends BaseService {
 
       const tags = artistInfo.tags.tag.map((t) => ({ name: t.name }));
 
-      await mirrorballClient.mutate({
-        mutation,
-        variables: { artist: artistInfo.name, tags },
+      await this.mirrorballService.mutate(mutation, {
+        artist: artistInfo.name,
+        tags,
       });
     } catch {}
   }
@@ -36,7 +38,7 @@ export class MirrorballCacheService extends BaseService {
         }
       `;
 
-      await mirrorballClient.mutate({ mutation, variables: { tag, artists } });
+      await this.mirrorballService.mutate(mutation, { tag, artists });
     } catch {}
   }
 }

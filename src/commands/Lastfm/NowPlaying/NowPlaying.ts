@@ -111,7 +111,7 @@ export default class NowPlaying extends NowPlayingBaseCommand {
       (match) => reverse(match)
     );
 
-    embed.setAuthor(author, undefined, embed.author?.url!);
+    embed.setAuthor(author!, undefined, embed.author?.url!);
 
     return embed;
   }

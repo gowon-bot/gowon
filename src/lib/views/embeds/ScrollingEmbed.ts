@@ -71,7 +71,9 @@ export class ScrollingEmbed {
   public async send() {
     this.generateEmbed();
 
-    this.sentMessage = await this.message.channel.send(this.embed);
+    this.sentMessage = await this.message.channel.send({
+      embeds: [this.embed],
+    });
 
     await this.react();
   }
@@ -100,7 +102,10 @@ export class ScrollingEmbed {
 
   private generateEmbed() {
     this.embed.setFooter(
-      this.options.customFooter(this.currentPage, this.options.totalPages)
+      this.options.customFooter(
+        this.currentPage,
+        this.options.totalPages
+      ) as string
     );
 
     if (isEmbedFields(this.currentItems)) {
@@ -138,7 +143,8 @@ export class ScrollingEmbed {
     return new Promise(async (resolve, reject) => {
       if (this.options.totalPages < 2) return;
 
-      const collector = new ReactionCollector(this.sentMessage, this.filter, {
+      const collector = new ReactionCollector(this.sentMessage, {
+        filter: this.filter,
         time: 3 * 60 * 1000,
       });
 
@@ -180,7 +186,7 @@ export class ScrollingEmbed {
 
           this.generateEmbed();
 
-          this.sentMessage.edit({ embed: this.embed });
+          this.sentMessage.edit({ embeds: [this.embed] });
         });
       });
 
@@ -207,7 +213,7 @@ export class ScrollingEmbed {
   private async removeReaction(emoji: Emoji, userId: string) {
     if (this.message.guild?.me?.permissions?.has("MANAGE_MESSAGES")) {
       await this.sentMessage!.reactions.resolve(
-        emoji.id ?? emoji.name
+        (emoji.id ?? emoji.name)!
       )!.users.remove(userId);
     }
   }

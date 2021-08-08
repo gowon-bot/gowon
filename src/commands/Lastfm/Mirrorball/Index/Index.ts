@@ -89,9 +89,9 @@ export default class Index extends MirrorballBaseCommand<
     if (!(await confirmationEmbed.awaitConfirmation())) {
       return;
     } else {
-      confirmationEmbed.sentMessage?.edit(
-        embed.setDescription(this.indexingInProgressHelp)
-      );
+      confirmationEmbed.sentMessage?.edit({
+        embeds: [embed.setDescription(this.indexingInProgressHelp)],
+      });
     }
 
     let response = await this.query({

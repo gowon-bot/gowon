@@ -12,7 +12,9 @@ export abstract class LinkGenerator {
   static baseURL = "https://www.last.fm/";
 
   static encode(string: string): string {
-    return cleanURL(encodeURIComponent(string));
+    return cleanURL(
+      encodeURIComponent(string).replace(/%2B/g, "%252B").replace(/%20/g, "+")
+    );
   }
 
   // https://www.last.fm/music/Red+Velvet

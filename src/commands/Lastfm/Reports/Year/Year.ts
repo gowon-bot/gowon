@@ -85,6 +85,7 @@ export default class Year extends MirrorballBaseCommand<
 
     const reportCalculator = new ReportCalculator(
       this.redirectsService,
+      this.mirrorballService,
       firstPage
     );
 

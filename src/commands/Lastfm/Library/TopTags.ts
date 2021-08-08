@@ -2,7 +2,6 @@ import gql from "graphql-tag";
 import { generateHumanPeriod, generatePeriod } from "../../../helpers/date";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
-import { mirrorballClient } from "../../../lib/indexing/client";
 import { TagConsolidator } from "../../../lib/tags/TagConsolidator";
 import {
   displayNumber,
@@ -64,12 +63,9 @@ export default class TopTags extends LastFMBaseCommand<typeof args> {
 
     const artists = topArtists.artists.map((a) => ({ name: a.name }));
 
-    const response = await mirrorballClient.query<{
+    const response = await this.mirrorballService.query<{
       tags: { tags: MirrorballTag[]; pageInfo: MirrorballPageInfo };
-    }>({
-      query,
-      variables: { artists },
-    });
+    }>(query, { artists });
 
     const embed = this.newEmbed()
       .setAuthor(...this.generateEmbedAuthor("Top tags"))
@@ -79,7 +75,7 @@ export default class TopTags extends LastFMBaseCommand<typeof args> {
 
     const tagConsolidator = new TagConsolidator();
 
-    tagConsolidator.addTags(response.data.tags.tags);
+    tagConsolidator.addTags(response.tags.tags);
 
     const scrollingEmbed = new SimpleScrollingEmbed(
       this.message,

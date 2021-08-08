@@ -58,14 +58,16 @@ export class DM extends CrownsChildCommand<typeof args> {
             }`
           )
           .setDescription(
-            chunk.map(
-              (c, i) =>
-                `${chunkIdx * crownsPerMessage + 1 + i}) ${
-                  c.artistName
-                } ― ${displayNumber(c.plays, "play").strong()}`
-            )
+            chunk
+              .map(
+                (c, i) =>
+                  `${chunkIdx * crownsPerMessage + 1 + i}) ${
+                    c.artistName
+                  } ― ${displayNumber(c.plays, "play").strong()}`
+              )
+              .join("\n")
           )
       )
-      .forEach((e) => this.author.send(e));
+      .forEach((e) => this.author.send({ embeds: [e] }));
   }
 }

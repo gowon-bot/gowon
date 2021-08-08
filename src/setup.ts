@@ -27,6 +27,16 @@ export const client = new GowonClient(
       "DIRECT_MESSAGE_REACTIONS",
       "DIRECT_MESSAGE_TYPING",
     ],
+    presence: {
+      status: "online",
+      activities: [
+        {
+          name: "One & Only",
+          type: "LISTENING",
+          url: "https://gowon.ca",
+        },
+      ],
+    },
   }),
   config.environment
 );

@@ -62,6 +62,7 @@ export class TrackPlays extends FriendsChildCommand<typeof args> {
               "**scrobble"
             )}`;
           })
+          .join("\n")
       );
 
     await this.send(embed);

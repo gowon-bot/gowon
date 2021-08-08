@@ -1,6 +1,6 @@
 import { LastFMBaseChildCommand } from "../LastFMBaseCommand";
 import { OverviewStatsCalculator } from "../../../lib/calculators/OverviewStatsCalculator";
-import { Message, MessageEmbed } from "discord.js";
+import { HexColorString, Message, MessageEmbed } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { ucFirst } from "../../../helpers";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
@@ -110,7 +110,7 @@ export abstract class OverviewChildCommand<
 
     return this.newEmbed()
       .setAuthor(this.username + badge, image)
-      .setColor(colour)
+      .setColor(colour as HexColorString)
       .setFooter(useFooter ? this.getFooter() : "");
   }
 

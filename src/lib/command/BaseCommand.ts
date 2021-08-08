@@ -335,7 +335,10 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
       this.usersService
         .getUser(this.author.id)
         .then(async (senderUser) => {
-          if (senderUser && !["update", "index"].includes(this.name)) {
+          if (
+            senderUser &&
+            !["update", "index", "login", "logout"].includes(this.name)
+          ) {
             await Promise.all([
               this.mirrorballService.quietAddUserToGuild(
                 this.author.id,
@@ -350,7 +353,6 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
   }
 
   async teardown() {
-    this.stopTyping();
     this.logger.closeCommandHeader(this);
     this.isCompleted = true;
 
@@ -382,7 +384,6 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
           command.gowonClient = this.gowonClient;
           command.delegatedFrom = this;
           await command.execute(message, runAs);
-          this.message.channel.stopTyping();
           return;
         }
       }
@@ -417,28 +418,38 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     this.responses.push(res);
   }
 
-  async sendWithFiles(message: MessageEmbed | string, files: [string]) {
-    this.addResponse(message);
-    await this.message.channel.send(message, {
-      files,
-    });
+  async sendWithFiles(content: MessageEmbed | string, files: [string]) {
+    this.addResponse(content);
+
+    if (typeof content === "string") {
+      await this.message.channel.send({ content, files });
+    } else {
+      await this.message.channel.send({ embeds: [content], files });
+    }
   }
 
   async send(
-    message: MessageEmbed | string,
+    content: MessageEmbed | string,
     withEmbed?: MessageEmbed
   ): Promise<Message> {
-    this.addResponse(message);
+    this.addResponse(content);
 
     if (withEmbed) {
-      return await this.message.channel.send(message, { embed: withEmbed });
+      return await this.message.channel.send({
+        content: content as string,
+        embeds: [withEmbed],
+      });
     }
 
-    return await this.message.channel.send(message);
+    if (typeof content === "string") {
+      return await this.message.channel.send({ content });
+    } else {
+      return await this.message.channel.send({ embeds: [content] });
+    }
   }
 
   async reply(
-    message: string,
+    content: string,
     settings: {
       to?: MessageResolvable;
       ping?: boolean;
@@ -446,12 +457,15 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
   ): Promise<Message> {
     const settingsWithDefaults = Object.assign({ ping: false }, settings);
 
-    message = typeof message === "string" ? ucFirst(message) : message;
+    content = typeof content === "string" ? ucFirst(content) : content;
 
-    this.addResponse(message);
+    this.addResponse(content);
 
-    return await this.message.reply(message, {
-      replyTo: settingsWithDefaults.to,
+    return await this.message.channel.send({
+      content,
+      reply: {
+        messageReference: settingsWithDefaults.to || this.message,
+      },
       allowedMentions: { repliedUser: settingsWithDefaults.ping },
     });
   }
@@ -553,13 +567,7 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     // To reduce the amount of errors when discord is crashing
     // this is try / caught
     try {
-      this.message.channel.startTyping();
-    } catch {}
-  }
-
-  protected stopTyping() {
-    try {
-      this.message.channel.stopTyping();
+      this.message.channel.sendTyping();
     } catch {}
   }
 }

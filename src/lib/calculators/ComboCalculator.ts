@@ -55,7 +55,10 @@ export class ComboCalculator {
     for (let trackIndex = 0; trackIndex < tracks.length; trackIndex++) {
       let track = tracks[trackIndex];
 
-      if (!(await this.shouldContinue(track))) return false;
+      if (!(await this.shouldContinue(track))) {
+        this.combo.firstScrobble = tracks[trackIndex - 1];
+        return false;
+      }
 
       await this.incrementCombo(
         track,
@@ -97,6 +100,9 @@ export class Combo {
   album!: ComboDetails;
   track!: ComboDetails;
 
+  lastScrobble!: RecentTrack;
+  firstScrobble!: RecentTrack;
+
   private redirectsCache = new RedirectsCache(this.redirectsService);
 
   constructor(
@@ -112,6 +118,8 @@ export class Combo {
 
   imprint(track: RecentTrack) {
     let nowplaying = !!track.isNowPlaying;
+
+    this.lastScrobble = track;
 
     let defaultDetails = {
       nowplaying,

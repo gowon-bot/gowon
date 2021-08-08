@@ -100,12 +100,14 @@ export default class Update extends MirrorballBaseCommand<
       }
     } else {
       if (response.update.taskName === MirrorballTaskNames.indexUser) {
-        await sentMessage.edit(
-          embed.setDescription(
-            embed.description +
-              ". Since you haven't been fully indexed yet, this may take a while"
-          )
-        );
+        await sentMessage.edit({
+          embeds: [
+            embed.setDescription(
+              embed.description +
+                ". Since you haven't been fully indexed yet, this may take a while"
+            ),
+          ],
+        });
       }
     }
 
@@ -132,17 +134,21 @@ export default class Update extends MirrorballBaseCommand<
           );
         } else {
           if (error) {
-            sentMessage.edit(
-              errorEmbed(
-                embed,
-                this.author,
-                embed.description + "\n\n" + this.indexingErrorMessage
-              )
-            );
+            sentMessage.edit({
+              embeds: [
+                errorEmbed(
+                  embed,
+                  this.author,
+                  embed.description + "\n\n" + this.indexingErrorMessage
+                ),
+              ],
+            });
           } else {
-            sentMessage.edit(
-              embed.setDescription(`Updated user ${senderUsername.code()}!`)
-            );
+            sentMessage.edit({
+              embeds: [
+                embed.setDescription(`Updated user ${senderUsername.code()}!`),
+              ],
+            });
           }
         }
       }
