@@ -71,8 +71,10 @@ export default class ArtistTopTracks extends MirrorballBaseCommand<
       );
     }
     const embed = this.newEmbed()
-      .setTitle(`Top ${artist.name} tracks for ${username}`)
+      .setTitle(`Top ${artist.name.strong()} tracks for ${username}`)
       .setURL(LinkGenerator.libraryArtistTopTracks(username, artist.name));
+
+    const totalScrobbles = topTracks.reduce((sum, t) => sum + t.playcount, 0);
 
     const simpleScrollingEmbed = new SimpleScrollingEmbed(
       this.message,
@@ -93,7 +95,14 @@ export default class ArtistTopTracks extends MirrorballBaseCommand<
             .join("\n");
         },
       },
-      { itemName: "track" }
+      {
+        itemName: "track",
+        embedDescription:
+          `${displayNumber(totalScrobbles, "total scrobble")}, ${displayNumber(
+            topTracks.length,
+            "total track"
+          )}`.italic() + "\n",
+      }
     );
 
     simpleScrollingEmbed.send();

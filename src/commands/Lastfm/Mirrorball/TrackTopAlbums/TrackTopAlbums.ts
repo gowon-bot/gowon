@@ -70,6 +70,9 @@ export default class TrackTopAlbums extends MirrorballBaseCommand<
         } no scrobbles for ${track.name.italic()} by ${track.artist.strong()}!`
       );
     }
+
+    const totalScrobbles = topAlbums.reduce((sum, l) => sum + l.playcount, 0);
+
     const embed = this.newEmbed()
       .setTitle(
         `Top albums for ${track.name.italic()} by ${track.artist.strong()} in ${
@@ -98,7 +101,14 @@ export default class TrackTopAlbums extends MirrorballBaseCommand<
             .join("\n");
         },
       },
-      { itemName: "album" }
+      {
+        itemName: "album",
+        embedDescription:
+          `${displayNumber(totalScrobbles, "total scrobble")}, ${displayNumber(
+            topAlbums.length,
+            "total album"
+          )}`.italic() + "\n",
+      }
     );
 
     simpleScrollingEmbed.send();

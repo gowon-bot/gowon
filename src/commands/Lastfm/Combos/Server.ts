@@ -1,27 +1,29 @@
 import { Arguments } from "../../../lib/arguments/arguments";
-import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { ComboChildCommand } from "./ComboChildCommand";
 import { LogicError } from "../../../errors";
 import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingEmbed";
 import { displayNumberedList } from "../../../lib/views/displays";
+import { Combo } from "../../../database/entity/Combo";
+import { NicknameService } from "../../../services/guilds/NicknameService";
 import { ArtistsService } from "../../../services/mirrorball/services/ArtistsService";
 
 const args = {
   inputs: {
     artistName: { index: { start: 0 } },
   },
-  mentions: standardMentions,
 } as const;
 
-export class Combos extends ComboChildCommand<typeof args> {
-  idSeed = "wonder girls yeeun";
+export class ServerCombos extends ComboChildCommand<typeof args> {
+  idSeed = "wonder girls hyelim";
 
-  aliases = ["streaks"];
-  description = "Shows your largest combos";
+  aliases = ["server"];
+  description = "Shows your server's largest combos";
   subcategory = "library stats";
-  usage = ["", "artist name"];
+  usage = [""];
 
   arguments: Arguments = args;
+
+  nicknameService = new NicknameService(this.logger);
 
   artistsService = new ArtistsService(this.logger);
 
@@ -32,13 +34,22 @@ export class Combos extends ComboChildCommand<typeof args> {
       [artistName] = await this.artistsService.correctArtistNames([artistName]);
     }
 
-    const { perspective, dbUser } = await this.parseMentions();
+    const serverUsers = await this.serverUserIDs();
 
-    const combos = await this.comboService.listCombos(dbUser, artistName);
+    await this.nicknameService.cacheNicknames(
+      serverUsers,
+      this.guild.id,
+      this.gowonClient
+    );
+
+    const combos = await this.comboService.listCombosForUsers(
+      serverUsers,
+      artistName
+    );
 
     if (!combos.length) {
       throw new LogicError(
-        `${perspective.plusToHave} no ${
+        `This server doesn't have any ${
           artistName ? `${artistName} ` : ""
         }combos saved yet! \`${this.prefix}combo\` saves your combo`
       );
@@ -46,13 +57,17 @@ export class Combos extends ComboChildCommand<typeof args> {
 
     const embed = this.newEmbed().setAuthor(
       ...this.generateEmbedAuthor(
-        `${perspective.upper.possessive.replace(/`/g, "")} top ${
-          artistName ? `${artistName} ` : ""
-        }combos`
+        `${this.guild.name}'s top ${artistName ? `${artistName} ` : ""}combos`
       )
     );
 
-    const displayCombo = this.displayCombo.bind(this);
+    const displayCombo = ((combo: Combo) => {
+      const nickname = this.nicknameService.cacheGetNickname(
+        combo.user.discordID
+      );
+
+      return nickname.strong() + ": " + this.displayCombo(combo);
+    }).bind(this);
 
     const scrollingEmbed = new SimpleScrollingEmbed(
       this.message,

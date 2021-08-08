@@ -2,6 +2,7 @@ import { Combo } from "../../lib/calculators/ComboCalculator";
 import { Combo as DBCombo } from "../../database/entity/Combo";
 import { BaseService } from "../BaseService";
 import { User } from "../../database/entity/User";
+import { ILike, In } from "typeorm";
 
 export class ComboService extends BaseService {
   async saveCombo(combo: Combo, user: User): Promise<DBCombo> {
@@ -46,9 +47,23 @@ export class ComboService extends BaseService {
     return await dbCombo.save();
   }
 
-  async listCombos(user: User): Promise<DBCombo[]> {
+  async listCombos(user: User, artist?: string): Promise<DBCombo[]> {
     return await DBCombo.find({
-      where: { user },
+      where: artist ? { user, artistName: ILike(artist) } : { user },
+      order: { artistPlays: "DESC", albumPlays: "DESC", trackPlays: "DESC" },
+    });
+  }
+
+  async listCombosForUsers(
+    userIDs: string[],
+    artist?: string
+  ): Promise<DBCombo[]> {
+    const users = await User.find({ discordID: In(userIDs) });
+
+    const user = In(users.map((u) => u.id));
+
+    return await DBCombo.find({
+      where: artist ? { user, artistName: ILike(artist) } : { user },
       order: { artistPlays: "DESC", albumPlays: "DESC", trackPlays: "DESC" },
     });
   }

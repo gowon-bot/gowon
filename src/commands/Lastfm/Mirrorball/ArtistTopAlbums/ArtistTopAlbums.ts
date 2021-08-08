@@ -72,6 +72,8 @@ export default class ArtistTopAlbums extends MirrorballBaseCommand<
       );
     }
 
+    const totalScrobbles = topAlbums.reduce((sum, l) => sum + l.playcount, 0);
+
     const embed = this.newEmbed()
       .setTitle(`Top ${artist.name} albums for ${username}`)
       .setURL(LinkGenerator.libraryArtistTopAlbums(username, artist.name));
@@ -94,7 +96,14 @@ export default class ArtistTopAlbums extends MirrorballBaseCommand<
             .join("\n");
         },
       },
-      { itemName: "album" }
+      {
+        itemName: "album",
+        embedDescription:
+          `${displayNumber(totalScrobbles, "total scrobble")}, ${displayNumber(
+            topAlbums.length,
+            "total album"
+          )}`.italic() + "\n",
+      }
     );
 
     simpleScrollingEmbed.send();

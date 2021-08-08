@@ -2,6 +2,7 @@ import { CommandManager } from "../../../lib/command/CommandManager";
 import { LastFMBaseParentCommand } from "../LastFMBaseCommand";
 import { Current } from "./Current";
 import { Combos } from "./Combos";
+import { ServerCombos } from "./Server";
 
 export default class ComboParentCommand extends LastFMBaseParentCommand {
   idSeed = "weeekly soeun";
@@ -19,5 +20,6 @@ export default class ComboParentCommand extends LastFMBaseParentCommand {
   children = new CommandManager({
     view: () => new Current(),
     combos: () => new Combos(),
+    server: () => new ServerCombos(),
   });
 }

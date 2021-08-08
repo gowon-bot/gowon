@@ -10,15 +10,18 @@ export class NicknameService extends BaseService {
   private cache: { [discordID: string]: string } = {};
 
   async cacheNicknames(
-    users: { discordID: string }[],
+    users: Array<{ discordID: string } | string>,
     guildID: string,
     gowonClient: GowonClient
   ) {
+    const discordIDs: string[] =
+      typeof users[0] === "string" ? users : users.map((u: any) => u.discordID);
+
     (
       await Promise.all(
-        users.map(async (u) => ({
-          discordID: u.discordID,
-          nickname: await this.getUsername(u.discordID, guildID, gowonClient),
+        discordIDs.map(async (u) => ({
+          discordID: u,
+          nickname: await this.getUsername(u, guildID, gowonClient),
         }))
       )
     ).forEach((u) => (this.cache[u.discordID] = u.nickname));
