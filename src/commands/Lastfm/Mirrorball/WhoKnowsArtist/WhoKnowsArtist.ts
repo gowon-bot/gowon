@@ -48,7 +48,7 @@ export default class WhoKnowsArtist extends MirrorballBaseCommand<
   crownsService = new CrownsService(this.logger);
 
   async run() {
-    const { senderRequestable } = await this.parseMentions({
+    const { senderRequestable, senderUser } = await this.parseMentions({
       senderRequired: !this.parsedArguments.artist,
     });
 
@@ -98,6 +98,11 @@ export default class WhoKnowsArtist extends MirrorballBaseCommand<
                   }`
               )
             )
+      )
+      .setFooter(
+        senderUser?.isIndexed
+          ? ""
+          : `Don't see yourself? Run ${this.prefix}index to download all your data!`
       );
 
     await this.send(embed);

@@ -28,22 +28,24 @@ export default class Randomsong extends LastFMBaseCommand<typeof args> {
   ];
 
   async run() {
-    let serverUsers = (await this.guild.members.fetch()).map((u) => `${u.id}`);
+    const serverUsers = (await this.guild.members.fetch()).map(
+      (u) => `${u.id}`
+    );
 
-    let randomUser = await this.usersService.randomUser({
+    const randomUser = await this.usersService.randomUser({
       userIDs: serverUsers,
     });
 
-    let randomSongs = await this.lastFMService.recentTracks({
+    const randomSongs = await this.lastFMService.recentTracks({
       username: buildRequestable(randomUser.lastFMUsername, randomUser)
         .requestable,
       limit: 100,
     });
 
-    let randomSong =
+    const randomSong =
       randomSongs.tracks[~~(randomSongs.tracks.length * Math.random())];
 
-    let embed = this.newEmbed()
+    const embed = this.newEmbed()
       .setAuthor(`Scrobbled by ${randomUser.lastFMUsername}`)
       .setTitle(randomSong.name)
       .setDescription(

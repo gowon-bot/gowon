@@ -3,6 +3,7 @@ import { Arguments } from "../../lib/arguments/arguments";
 import { standardMentions } from "../../lib/arguments/mentions/mentions";
 import { Validation } from "../../lib/validation/ValidationChecker";
 import { validators } from "../../lib/validation/validators";
+import { TrackInfo } from "../../services/LastFM/converters/InfoTypes";
 import { LastFMBaseCommand } from "./LastFMBaseCommand";
 
 const args = {
@@ -33,20 +34,20 @@ export default class RandomsongInUsersLibrary extends LastFMBaseCommand<
   };
 
   async run() {
-    let poolAmount = this.parsedArguments.poolAmount!;
+    const poolAmount = this.parsedArguments.poolAmount!;
 
-    let { requestable, username } = await this.parseMentions();
+    const { requestable, username } = await this.parseMentions();
 
-    let trackCount = await this.lastFMService.trackCount(requestable);
+    const trackCount = await this.lastFMService.trackCount(requestable);
 
-    let bound =
+    const bound =
       poolAmount && poolAmount < trackCount ? poolAmount : trackCount / 2;
 
     let randomIndex = Math.floor(Math.random() * (bound - 1));
 
     randomIndex = randomIndex < 0 ? 0 : randomIndex;
 
-    let randomSong = (
+    const randomSong = (
       await this.lastFMService.topTracks({
         username: requestable,
         limit: 1,
@@ -54,19 +55,23 @@ export default class RandomsongInUsersLibrary extends LastFMBaseCommand<
       })
     ).tracks[0];
 
-    let trackInfo = await this.lastFMService.trackInfo({
-      track: randomSong.name,
-      artist: randomSong.artist.name,
-    });
+    let trackInfo: TrackInfo | undefined = undefined;
 
-    let embed = this.newEmbed()
+    try {
+      trackInfo = await this.lastFMService.trackInfo({
+        track: randomSong.name,
+        artist: randomSong.artist.name,
+      });
+    } catch {}
+
+    const embed = this.newEmbed()
       .setAuthor(`${username}'s ${getOrdinal(randomIndex - 1)} top track`)
       .setTitle(randomSong.name)
       .setDescription(
         `by ${randomSong.artist.name.strong()}` +
-          (trackInfo.album ? ` from ${trackInfo.album.name.italic()}` : "")
+          (trackInfo?.album ? ` from ${trackInfo.album.name.italic()}` : "")
       )
-      .setThumbnail(trackInfo.album?.images.get("large") || "");
+      .setThumbnail(trackInfo?.album?.images.get("large") || "");
 
     await this.send(embed);
   }

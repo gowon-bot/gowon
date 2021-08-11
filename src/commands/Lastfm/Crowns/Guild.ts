@@ -16,7 +16,7 @@ export class Guild extends CrownsChildCommand<typeof args> {
   idSeed = "weki meki rina";
 
   description = "Shows the server's crowns leaderboard";
-  aliases = ["leaderboard", "ldb"];
+  aliases = ["leaderboard", "ldb", "lb"];
   usage = "";
 
   arguments: Arguments = args;
