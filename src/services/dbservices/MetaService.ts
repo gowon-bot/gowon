@@ -8,6 +8,8 @@ import { TimeRange } from "../../helpers/date";
 
 export class MetaService extends BaseService {
   async recordCommandRun(commandID: string, message: Message) {
+    this.log(`Logging command ${commandID} in ${message.guild?.id}`);
+
     let commandRun = CommandRun.create({
       commandID,
       channelID: message.channel.id,
@@ -22,10 +24,14 @@ export class MetaService extends BaseService {
     serverID: string,
     timeRange?: TimeRange
   ): Promise<MostUsedCommandsResponse[]> {
+    this.log(`Counting most used commands in ${serverID}`);
+
     return await CommandRun.mostUsedCommands(serverID, timeRange);
   }
 
   async countCommandRuns(commandID: string) {
+    this.log(`Counting command runs for command ${commandID}`);
+
     return await CommandRun.count({ commandID });
   }
 

@@ -18,7 +18,7 @@ export class View extends NowPlayingConfigChildCommand<typeof args> {
       senderRequired: true,
     });
 
-    const config = await this.configService.getConfigForUser(senderUser!);
+    const config = await this.configService.getConfigNoUnused(senderUser!);
 
     const embed = this.newEmbed()
       .setAuthor(...this.generateEmbedAuthor("Config view"))

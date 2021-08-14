@@ -32,11 +32,14 @@ export class GuildEventService extends BaseService {
   }
 
   public async handleGuildLeave(guild: Guild) {
+    this.log(`tearing down Gowon for ${guild.name}`);
+
     await this.pingDeveloper(guild, true);
   }
 
   public async handleNewUser(guildMember: GuildMember) {
     this.log("Handling new user");
+
     try {
       await this.mirrorballService.quietAddUserToGuild(
         guildMember.user.id,
@@ -51,6 +54,7 @@ export class GuildEventService extends BaseService {
 
   public async handleUserLeave(guildMember: GuildMember) {
     this.log("Handling user leave");
+
     try {
       await this.mirrorballService.quietRemoveUserFromGuild(
         guildMember.user.id,

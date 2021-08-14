@@ -49,6 +49,10 @@ export class CrownsHistoryService extends BaseService {
         this.logEvent(_crown, event, perpetuator, options);
       }
     } else {
+      this.log(
+        `Logging crown event: ${event} for crown ${crown.artistName} in ${crown.serverID}`
+      );
+
       let history = CrownEvent.create({
         crown,
         event,
@@ -223,6 +227,7 @@ export class CrownsHistoryService extends BaseService {
     crown: Crown,
     eventTypes?: CrownEventString[]
   ): Promise<CrownEvent[]> {
+    this.log(`Fetching history for ${crown.artistName} in ${crown.serverID}`);
     let findOptions: FindConditions<CrownEvent> = { crown };
 
     if (eventTypes) findOptions.event = In(eventTypes);

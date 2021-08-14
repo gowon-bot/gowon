@@ -1,4 +1,5 @@
 import gql from "graphql-tag";
+import { displayNumber } from "../../../lib/views/displays";
 import { BaseService } from "../../BaseService";
 import { MirrorballService } from "../MirrorballService";
 import { ArtistInput, MirrorballTag } from "../MirrorballTypes";
@@ -7,6 +8,8 @@ export class TagsService extends BaseService {
   mirrorballService = new MirrorballService(this.logger);
 
   async getTagsForArtists(artists: ArtistInput[]): Promise<MirrorballTag[]> {
+    this.log(`Getting tags for ${displayNumber(artists.length, "artist")}`);
+
     const query = gql`
       query tags($artists: [ArtistInput!]!) {
         tags(settings: { artists: $artists }) {
@@ -31,6 +34,8 @@ export class TagsService extends BaseService {
   ): Promise<{
     [artistName: string]: string[];
   }> {
+    this.log(`Getting tags for ${displayNumber(artists.length, "artist")}`);
+
     const query = gql`
       query artists($artists: [ArtistInput!]!, $requireTags: Boolean) {
         artists(inputs: $artists, requireTagsForMissing: $requireTags) {

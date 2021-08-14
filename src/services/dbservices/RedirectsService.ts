@@ -30,6 +30,8 @@ export class RedirectsService extends BaseService {
   }
 
   async getRedirect(artistName: string): Promise<ArtistRedirect | undefined> {
+    this.log(`Fetching redirect for ${artistName}`);
+
     let redirect = await ArtistRedirect.check(artistName);
 
     if (!redirect) {
@@ -63,10 +65,13 @@ export class RedirectsService extends BaseService {
 
   async listRedirects(artistName: string): Promise<ArtistRedirect[]> {
     this.log(`Listing redirects for ${artistName}`);
+
     return await ArtistRedirect.find({ to: artistName });
   }
 
   async countAllRedirects(): Promise<number> {
+    this.log(`Counting all redirects`);
+
     return await ArtistRedirect.count();
   }
 }

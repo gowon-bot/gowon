@@ -15,6 +15,7 @@ import { buildRequestable } from "../../helpers/parseMentions";
 export class UsersService extends BaseService {
   async getUsername(discordID: string): Promise<string> {
     this.log(`fetching username with discordID ${discordID}`);
+
     let user = await User.findOne({ where: { discordID } });
 
     if (user && user.lastFMUsername) {
@@ -24,6 +25,7 @@ export class UsersService extends BaseService {
 
   async getRequestable(discordID: string): Promise<Requestable> {
     this.log(`fetching requestable with discordID ${discordID}`);
+
     let user = await User.findOne({ where: { discordID } });
 
     if (user && user.lastFMUsername) {
@@ -36,6 +38,7 @@ export class UsersService extends BaseService {
     lastFMUsername: string
   ): Promise<string> {
     this.log(`setting user ${discordID} with username ${lastFMUsername}`);
+
     let user = await User.findOne({ where: { discordID } });
 
     if (user) {
@@ -59,6 +62,7 @@ export class UsersService extends BaseService {
     this.log(
       `setting user ${discordID} with session ${lastFMSession.username}`
     );
+
     let user = await User.findOne({ where: { discordID } });
 
     if (user) {
@@ -78,6 +82,7 @@ export class UsersService extends BaseService {
 
   async clearUsername(discordID: string): Promise<void> {
     this.log(`clearing username and session for ${discordID}`);
+
     let user = await User.findOne({ where: { discordID } });
 
     if (user?.lastFMUsername || user?.lastFMSession) {
@@ -104,6 +109,7 @@ export class UsersService extends BaseService {
 
   async getUser(discordID: string): Promise<User> {
     this.log(`fetching user with discordID ${discordID}`);
+
     let user = await User.findOne({ where: { discordID } });
 
     if (!user) throw new RecordNotFoundError("user");
@@ -112,12 +118,14 @@ export class UsersService extends BaseService {
   }
 
   async countUsers(): Promise<number> {
-    this.log("counting users");
+    this.log("counting all users");
+
     return await User.count();
   }
 
   async getUserFromLastFMUsername(username: string): Promise<User | undefined> {
     this.log(`looking for user with username ${username}`);
+
     return await User.findOne({
       where: { lastFMUsername: ILike(username) },
     });

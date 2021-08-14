@@ -1,4 +1,3 @@
-import { MessageEmbed } from "discord.js";
 import { User } from "../../../database/entity/User";
 import { mirrorballGuilds } from "../../../lib/indexing/MirrorballCommands";
 import { DatasourceService } from "../../../lib/nowplaying/DatasourceService";
@@ -55,10 +54,6 @@ export default class NowPlayingCustom extends NowPlayingBaseCommand {
 
     let embed = await builder.asEmbed(resolvedRequirements, baseEmbed);
 
-    if (config.length === 0) {
-      embed = await this.handleBlankConfig(embed);
-    }
-
     const sentMessage = await this.send(embed);
 
     await this.customReactions(sentMessage);
@@ -95,15 +90,5 @@ export default class NowPlayingCustom extends NowPlayingBaseCommand {
         ? mentionedDBUser
         : senderUser)!,
     };
-  }
-
-  private async handleBlankConfig(embed: MessageEmbed): Promise<MessageEmbed> {
-    if (!(await this.metaService.hasRunCommand(this.author.id, this.id, 1))) {
-      embed.setFooter(
-        `You can customize what gets shown here! See ${this.prefix}npc help for more information`
-      );
-    }
-
-    return embed;
   }
 }

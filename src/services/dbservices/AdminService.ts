@@ -281,6 +281,10 @@ export class AdminService extends BaseService {
     commandID: string,
     channelID: string
   ): Promise<ChannelBlacklist> {
+    this.log(
+      `unblacklisting ${commandID} in #${channelID} in the server ${serverID}`
+    );
+
     let channelBlacklist = await ChannelBlacklist.findOne({
       serverID,
       commandID,

@@ -59,6 +59,7 @@ export class SpotifyService extends BaseService {
 
   async request<T>(path: string, params: { [key: string]: any }): Promise<T> {
     this.log(`made API request to ${path} with params ${params}`);
+
     let response = await fetch(this.url + path + "?" + stringify(params), {
       headers: await this.headers(),
     });

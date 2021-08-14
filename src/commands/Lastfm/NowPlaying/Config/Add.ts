@@ -34,7 +34,7 @@ export class Add extends NowPlayingConfigChildCommand<typeof args> {
       senderRequired: true,
     });
 
-    const config = await this.configService.getConfigForUser(senderUser!);
+    const config = await this.configService.getConfigNoUnused(senderUser!);
 
     const notIncluded = newOptions.filter(
       (c) => Object.keys(componentMap).includes(c) && !config.includes(c)

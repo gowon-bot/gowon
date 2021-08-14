@@ -1,4 +1,5 @@
 import gql from "graphql-tag";
+import { displayNumber } from "../../../lib/views/displays";
 import { BaseService } from "../../BaseService";
 import { MirrorballService } from "../MirrorballService";
 import { MirrorballArtist } from "../MirrorballTypes";
@@ -7,6 +8,12 @@ export class ArtistsService extends BaseService {
   mirrorballService = new MirrorballService(this.logger);
 
   async correctArtistNames(artistNames: string[]): Promise<string[]> {
+    this.log(
+      `Correcting artist names for ${displayNumber(
+        artistNames.length,
+        "artist"
+      )}`
+    );
     const artists = artistNames.map((a) => ({ name: a }));
 
     const query = gql`

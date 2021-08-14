@@ -40,14 +40,24 @@ export class RedisInteractionService extends BaseService {
   }
 
   async set(key: string, value: any, expiresAfter: number) {
+    if (!key.includes("-nickname")) {
+      this.log(
+        `Setting ${key} as ${value !== undefined ? value : "(no value)"}`
+      );
+    }
+
     await this.setAsync(this.genKey(key), expiresAfter, value ?? "");
   }
 
   async get(key: string): Promise<string | undefined> {
+    this.log(`Getting ${key}`);
+
     return (await this.getAsync(this.genKey(key))) ?? undefined;
   }
 
   delete(key: string) {
+    this.log(`Deleting ${key}`);
+
     this.client.del(this.genKey(key));
   }
 }

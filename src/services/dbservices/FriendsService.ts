@@ -82,6 +82,7 @@ export class FriendsService extends BaseService {
 
   async clearFriends(user: User): Promise<number> {
     this.log(`Removing friend all friends for user ${user.lastFMUsername}`);
+
     let friendsDeleted = await Friend.delete({
       user,
     });
@@ -91,6 +92,7 @@ export class FriendsService extends BaseService {
 
   async listFriends(user: User): Promise<Friend[]> {
     this.log(`Listing friends for user ${user?.lastFMUsername}`);
+
     return await Friend.find({ user });
   }
 
@@ -99,6 +101,10 @@ export class FriendsService extends BaseService {
     username?: string,
     user?: User
   ): Promise<boolean> {
+    this.log(
+      `Checking if ${authorUser.discordID} is already friends with ${username}`
+    );
+
     const friends = await Friend.find({ user: authorUser });
 
     return friends.some(
@@ -106,14 +112,6 @@ export class FriendsService extends BaseService {
         (username && f.friendUsername === username) ||
         (user && f.friend?.id === user?.id)
     );
-  }
-
-  async isNotFriends(
-    authorUser: User,
-    username?: string,
-    user?: User
-  ): Promise<boolean> {
-    return await this.isAlreadyFriends(authorUser, username, user);
   }
 
   async getUsernames(user: User): Promise<string[]> {
@@ -126,6 +124,7 @@ export class FriendsService extends BaseService {
 
   async friendsCount(user: User): Promise<number> {
     this.log(`Counting friends for user ${user.lastFMUsername}`);
+
     return (await this.listFriends(user)).length;
   }
 }

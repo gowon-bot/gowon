@@ -34,7 +34,7 @@ export class Remove extends NowPlayingConfigChildCommand<typeof args> {
       senderRequired: true,
     });
 
-    let config = await this.configService.getConfigForUser(senderUser!);
+    let config = await this.configService.getConfigNoUnused(senderUser!);
 
     const included = newOptions.filter(
       (c) => Object.keys(componentMap).includes(c) && config.includes(c)

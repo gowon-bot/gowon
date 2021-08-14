@@ -73,109 +73,6 @@ export class CrownsService extends BaseService {
 
   private redirectsService = new RedirectsService(this.logger);
 
-  private async handleSelfCrown(
-    crown: Crown,
-    plays: number
-  ): Promise<CrownState> {
-    if (crown.plays === plays) {
-      return CrownState.updated;
-    } else if (plays < this.threshold) {
-      // delete the crown
-      return CrownState.updated;
-    } else {
-      crown.plays = plays;
-      await crown.save();
-      return CrownState.updated;
-    }
-  }
-
-  private async handleCrown(
-    crown: Crown,
-    plays: number,
-    user: User
-  ): Promise<CrownState> {
-    if (crown.plays < plays) {
-      crown.user = user;
-      crown.plays = plays;
-      crown.version++;
-      crown.lastStolen = new Date();
-
-      await crown.save();
-
-      return CrownState.snatched;
-    } else if (plays < crown.plays) return CrownState.fail;
-    else if (plays < this.threshold) return CrownState.tooLow;
-    else if (crown.plays === plays) return CrownState.tie;
-    else return CrownState.fail;
-  }
-
-  private async handleInvalidHolder(
-    crown: Crown,
-    reason: InvalidCrownState,
-    plays: number,
-    user: User,
-    artistName: string,
-    artistRedirect: ArtistRedirect
-  ): Promise<CrownCheck> {
-    if (plays < this.threshold) {
-      return {
-        state: CrownState.fail,
-        crown,
-        artistName,
-        redirect: artistRedirect,
-      };
-    }
-
-    crown.user = user;
-    crown.plays = plays;
-
-    await crown.save();
-
-    return {
-      crown,
-      state: reason,
-      artistName,
-      redirect: artistRedirect,
-    };
-  }
-
-  async handleNewCrown(
-    crownOptions: {
-      user: User;
-      artistName: string;
-      plays: number;
-      serverID: string;
-    },
-    crown?: Crown
-  ): Promise<Crown> {
-    if (crown && crown.deletedAt) {
-      crown.user = crownOptions.user;
-      crown.plays = crownOptions.plays;
-      crown.lastStolen = new Date();
-      crown.deletedAt = null;
-
-      return await crown.save();
-    } else {
-      let redirect = await this.redirectsService.checkRedirect(
-        crownOptions.artistName
-      );
-
-      let artistName = redirect || crownOptions.artistName;
-
-      let newCrown = Crown.create({
-        ...crownOptions,
-        artistName,
-        version: 0,
-        lastStolen: new Date(),
-        redirectedFrom: redirect,
-      });
-
-      await newCrown.save();
-
-      return newCrown;
-    }
-  }
-
   async checkCrown(crownOptions: CrownOptions): Promise<CrownCheck> {
     let { discordID, artistName, plays, message } = crownOptions;
     this.log(`Checking crown for user ${discordID} and artist ${artistName}`);
@@ -289,7 +186,7 @@ export class CrownsService extends BaseService {
       caseSensitive?: boolean;
     } = { refresh: false, showDeleted: true, noRedirect: false }
   ): Promise<Crown | undefined> {
-    this.log("Fetching crown for " + artistName);
+    this.log(`Fetching crown for ${artistName} in ${serverID}`);
 
     let crownArtistName = artistName;
     let redirectedFrom: string | undefined = undefined;
@@ -324,7 +221,7 @@ export class CrownsService extends BaseService {
   }
 
   async killCrown(artistName: string, serverID: string) {
-    this.log("Killing crown for " + artistName);
+    this.log(`Killing crown for ${artistName} in ${serverID}`);
     let crown = await Crown.findOne({ where: { artistName, serverID } });
 
     if (crown) await Crown.softRemove(crown);
@@ -512,15 +409,19 @@ export class CrownsService extends BaseService {
     serverID: string,
     userID: string
   ): Promise<number> {
-    let user = await User.findOne({ where: { discordID: userID } });
+    this.log(`Wiping crowns for user ${userID} in ${serverID}`);
 
-    let crown = await Crown.find({ serverID, user });
-    let result = await Crown.softRemove(crown);
+    const user = await User.findOne({ where: { discordID: userID } });
+
+    const crown = await Crown.find({ serverID, user });
+    const result = await Crown.softRemove(crown);
 
     return result.length;
   }
 
   async optOut(guildID: string, userID: string): Promise<number> {
+    this.log(`Opting out user ${userID} out of crowns in ${guildID}`);
+
     await this.gowonService.settingsManager.set(
       "optedOut",
       {
@@ -534,6 +435,8 @@ export class CrownsService extends BaseService {
   }
 
   async optIn(guildID: string, userID: string): Promise<void> {
+    this.log(`Opting in user ${userID} out of crowns in ${guildID}`);
+
     this.gowonService.settingsManager.set("optedOut", {
       guildID,
       userID,
@@ -541,6 +444,8 @@ export class CrownsService extends BaseService {
   }
 
   async isUserOptedOut(guildID: string, userID: string): Promise<boolean> {
+    this.log(`Checking if ${userID} is opted out in ${guildID}`);
+
     const setting = this.gowonService.settingsManager.get("optedOut", {
       guildID,
       userID,
@@ -550,6 +455,8 @@ export class CrownsService extends BaseService {
   }
 
   async banUser(user: User, serverID: string): Promise<CrownBan> {
+    this.log(`Crown banning user ${user.discordID} in ${serverID}`);
+
     let existingCrownBan = await CrownBan.findOne({ user });
 
     if (existingCrownBan) throw new AlreadyBannedError();
@@ -575,6 +482,8 @@ export class CrownsService extends BaseService {
   }
 
   async unbanUser(user: User, serverID: string): Promise<void> {
+    this.log(`Crown unbanning user ${user.discordID} in ${serverID}`);
+
     let crownBan = await CrownBan.findOne({ user });
 
     if (!crownBan) throw new NotBannedError();
@@ -596,6 +505,8 @@ export class CrownsService extends BaseService {
   }
 
   async getCrownBannedUsers(serverID: string): Promise<CrownBan[]> {
+    this.log(`Fetching crown banned users for server ${serverID}`);
+
     return await CrownBan.find({
       where: { user: { serverID } },
     });
@@ -606,6 +517,8 @@ export class CrownsService extends BaseService {
     discordID: string,
     userIDs?: string[]
   ): Promise<GuildAtResponse> {
+    this.log(`Fetching guild around user ${discordID} for server ${serverID}`);
+
     return await Crown.guildAround(serverID, discordID, userIDs);
   }
 
@@ -614,6 +527,8 @@ export class CrownsService extends BaseService {
     rank: number,
     userIDs?: string[]
   ): Promise<GuildAtResponse> {
+    this.log(`Fetching guild at ${rank} for server ${serverID}`);
+
     return await Crown.guildAt(serverID, rank, userIDs);
   }
 
@@ -625,6 +540,8 @@ export class CrownsService extends BaseService {
     serverID: string,
     artistName: string
   ): Promise<ArtistCrownBan> {
+    this.log(`Crown banning artist ${artistName} in ${serverID}`);
+
     let existingCrownBan = await ArtistCrownBan.findOne({
       artistName,
       serverID,
@@ -657,6 +574,8 @@ export class CrownsService extends BaseService {
     serverID: string,
     artistName: string
   ): Promise<ArtistCrownBan> {
+    this.log(`Crown unbanning artist ${artistName} in ${serverID}`);
+
     let crownBan = await ArtistCrownBan.findOne({
       artistName,
       serverID,
@@ -682,6 +601,43 @@ export class CrownsService extends BaseService {
     return crownBan;
   }
 
+  private async handleNewCrown(
+    crownOptions: {
+      user: User;
+      artistName: string;
+      plays: number;
+      serverID: string;
+    },
+    crown?: Crown
+  ): Promise<Crown> {
+    if (crown && crown.deletedAt) {
+      crown.user = crownOptions.user;
+      crown.plays = crownOptions.plays;
+      crown.lastStolen = new Date();
+      crown.deletedAt = null;
+
+      return await crown.save();
+    } else {
+      let redirect = await this.redirectsService.checkRedirect(
+        crownOptions.artistName
+      );
+
+      let artistName = redirect || crownOptions.artistName;
+
+      let newCrown = Crown.create({
+        ...crownOptions,
+        artistName,
+        version: 0,
+        lastStolen: new Date(),
+        redirectedFrom: redirect,
+      });
+
+      await newCrown.save();
+
+      return newCrown;
+    }
+  }
+
   private async filterByDiscordID(
     findOptions: any,
     userIDs?: string[]
@@ -701,5 +657,71 @@ export class CrownsService extends BaseService {
     }
 
     return findOptions;
+  }
+
+  private async handleSelfCrown(
+    crown: Crown,
+    plays: number
+  ): Promise<CrownState> {
+    if (crown.plays === plays) {
+      return CrownState.updated;
+    } else if (plays < this.threshold) {
+      // delete the crown
+      return CrownState.updated;
+    } else {
+      crown.plays = plays;
+      await crown.save();
+      return CrownState.updated;
+    }
+  }
+
+  private async handleCrown(
+    crown: Crown,
+    plays: number,
+    user: User
+  ): Promise<CrownState> {
+    if (crown.plays < plays) {
+      crown.user = user;
+      crown.plays = plays;
+      crown.version++;
+      crown.lastStolen = new Date();
+
+      await crown.save();
+
+      return CrownState.snatched;
+    } else if (plays < crown.plays) return CrownState.fail;
+    else if (plays < this.threshold) return CrownState.tooLow;
+    else if (crown.plays === plays) return CrownState.tie;
+    else return CrownState.fail;
+  }
+
+  private async handleInvalidHolder(
+    crown: Crown,
+    reason: InvalidCrownState,
+    plays: number,
+    user: User,
+    artistName: string,
+    artistRedirect: ArtistRedirect
+  ): Promise<CrownCheck> {
+    if (plays < this.threshold) {
+      return {
+        state: CrownState.fail,
+        crown,
+        artistName,
+        redirect: artistRedirect,
+      };
+    }
+
+    crown.user = user;
+    crown.plays = plays;
+
+    await crown.save();
+
+    return {
+      crown,
+      state: reason,
+      artistName,
+      redirect: artistRedirect,
+    };
   }
 }

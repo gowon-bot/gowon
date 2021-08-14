@@ -1,4 +1,5 @@
 import { GowonClient } from "../../lib/GowonClient";
+import { displayNumber } from "../../lib/views/displays";
 import { BaseService } from "../BaseService";
 import { RedisService } from "../redis/RedisService";
 
@@ -14,6 +15,13 @@ export class NicknameService extends BaseService {
     guildID: string,
     gowonClient: GowonClient
   ) {
+    this.log(
+      `Caching nicknames for ${displayNumber(
+        users.length,
+        "user"
+      )} in ${guildID}`
+    );
+
     const discordIDs: string[] =
       typeof users[0] === "string" ? users : users.map((u: any) => u.discordID);
 

@@ -15,6 +15,7 @@ import { LovedComponent } from "./components/LovedComponent";
 import { ListenersComponent } from "./components/ListenersComponent";
 import { ArtistComboComponent } from "./components/ArtistComboComponent";
 import { ArtistPlaysInARowComponent } from "./compoundComponents/ArtistPlaysInARowComponent";
+import { UNUSED_CONFIG } from "../../services/dbservices/NowPlayingService";
 
 // Types
 export type NowPlayingComponent = {
@@ -81,6 +82,10 @@ export function getComponentByName(
 }
 
 export function sortConfigOptions(config: string[]): string[] {
+  if (config[0] === UNUSED_CONFIG) {
+    return config;
+  }
+
   const options = [];
 
   for (const component of componentList) {

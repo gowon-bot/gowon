@@ -15,12 +15,14 @@ export class MirrorballService extends BaseService {
     { query, mutation }: { query?: DocumentNode; mutation?: DocumentNode },
     variables?: object
   ): Promise<any> {
+    const stringifiedVariables = JSON.stringify(variables, undefined, 2);
+
     this.log(
-      `Sending request to ${this.baseURL} with variables ${JSON.stringify(
-        variables,
-        undefined,
-        2
-      )}`
+      `Sending request to ${this.baseURL} with variables ${
+        stringifiedVariables.length > 500
+          ? stringifiedVariables.slice(0, 1000) + "..."
+          : stringifiedVariables
+      }`
     );
 
     return query

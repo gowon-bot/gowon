@@ -1,11 +1,13 @@
 import { MessageEmbed } from "discord.js";
 import { sum } from "mathjs";
+import { UNUSED_CONFIG } from "../../services/dbservices/NowPlayingService";
 import {
   compoundComponentList,
   getComponentByName,
   NowPlayingComponent,
 } from "./componentMap";
 import { PresentedComponent } from "./components/BaseNowPlayingComponent";
+import { UnusedComponent } from "./components/UnusedComponent";
 import { ResolvedRequirements } from "./DatasourceService";
 
 export const rowSize = 3 as const;
@@ -14,6 +16,11 @@ export class NowPlayingBuilder {
   components: NowPlayingComponent[];
 
   constructor(componentNames: string[]) {
+    if (componentNames[0] === UNUSED_CONFIG) {
+      this.components = [UnusedComponent];
+      return;
+    }
+
     let compoundedComponentNames = componentNames;
 
     for (const compoundComponent of compoundComponentList) {
