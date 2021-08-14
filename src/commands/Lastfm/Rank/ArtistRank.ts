@@ -4,6 +4,7 @@ import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { RedirectsCache } from "../../../lib/caches/RedirectsCache";
 import { RedirectsService } from "../../../services/dbservices/RedirectsService";
 import { displayNumber } from "../../../lib/views/displays";
+import { LogicError } from "../../../errors";
 
 const args = {
   inputs: {
@@ -52,8 +53,8 @@ export default class ArtistRank extends LastFMBaseCommand<typeof args> {
     ).findIndex((a) => a.toLowerCase() === artistName.toLowerCase());
 
     if (rank === -1) {
-      await this.traditionalReply(
-        `that artist wasn't found in ${
+      throw new LogicError(
+        `That artist wasn't found in ${
           perspective.possessive
         } top ${displayNumber(topArtists.artists.length, "artist")}`
       );

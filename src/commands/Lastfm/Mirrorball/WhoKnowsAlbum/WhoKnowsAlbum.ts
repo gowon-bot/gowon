@@ -47,7 +47,7 @@ export default class WhoKnowsAlbum extends MirrorballBaseCommand<
   nicknameService = new NicknameService(this.logger);
 
   async run() {
-    let { senderRequestable } = await this.parseMentions({
+    let { senderRequestable, senderUser } = await this.parseMentions({
       senderRequired:
         !this.parsedArguments.artist || !this.parsedArguments.album,
     });
@@ -86,13 +86,18 @@ export default class WhoKnowsAlbum extends MirrorballBaseCommand<
         !album || rows.length === 0
           ? `No one knows this album`
           : displayNumberedList(
-              rows.map(
-                (wk) =>
-                  `${displayLink(
-                    this.nicknameService.cacheGetNickname(wk.user.discordID),
-                    LinkGenerator.userPage(wk.user.username)
-                  )} - **${displayNumber(wk.playcount, "**play")}`
-              )
+              rows.map((wk) => {
+                const nickname = displayLink(
+                  this.nicknameService.cacheGetNickname(wk.user.discordID),
+                  LinkGenerator.userPage(wk.user.username)
+                );
+
+                return `${
+                  wk.user.discordID === senderUser?.discordID
+                    ? nickname.strong()
+                    : nickname
+                } - **${displayNumber(wk.playcount, "**play")}`;
+              })
             )
       );
 

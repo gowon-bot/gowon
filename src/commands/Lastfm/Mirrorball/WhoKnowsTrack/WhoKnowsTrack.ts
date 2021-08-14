@@ -46,7 +46,7 @@ export default class WhoKnowsTrack extends MirrorballBaseCommand<
   nicknameService = new NicknameService(this.logger);
 
   async run() {
-    const { senderRequestable } = await this.parseMentions({
+    const { senderRequestable, senderUser } = await this.parseMentions({
       senderRequired:
         !this.parsedArguments.artist || !this.parsedArguments.track,
     });
@@ -98,13 +98,18 @@ export default class WhoKnowsTrack extends MirrorballBaseCommand<
         !track || rows.length === 0
           ? `No one knows this track`
           : displayNumberedList(
-              rows.map(
-                (wk) =>
-                  `${displayLink(
-                    this.nicknameService.cacheGetNickname(wk.user.discordID),
-                    LinkGenerator.userPage(wk.user.username)
-                  )} - **${displayNumber(wk.playcount, "**play")}`
-              )
+              rows.map((wk) => {
+                const nickname = displayLink(
+                  this.nicknameService.cacheGetNickname(wk.user.discordID),
+                  LinkGenerator.userPage(wk.user.username)
+                );
+
+                return `${
+                  wk.user.discordID === senderUser?.discordID
+                    ? nickname.strong()
+                    : nickname
+                } - **${displayNumber(wk.playcount, "**play")}`;
+              })
             )
       );
 

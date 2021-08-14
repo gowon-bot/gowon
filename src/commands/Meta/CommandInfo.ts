@@ -32,7 +32,7 @@ export default class CommandInfo extends MetaBaseCommand<typeof args> {
   commandManager = new CommandManager();
 
   async run() {
-    let searchString = this.parsedArguments.searchString!;
+    const searchString = this.parsedArguments.searchString!;
 
     await this.commandManager.init();
 
@@ -45,13 +45,13 @@ export default class CommandInfo extends MetaBaseCommand<typeof args> {
 
     const count = await this.metaService.countCommandRuns(command.id);
 
-    let embed = this.newEmbed().setTitle(
+    const embed = this.newEmbed().setTitle(
       `Info about ${runAs.toCommandFriendlyName()}`
     ).setDescription(`
       **Name**: ${command.name}${
       command.parentName ? `\n**Parent**: ${command.parentName}` : ""
     }
-      **Id**: ${command.idSeed} — ${command.id.italic()}${
+      **ID**: ${command.idSeed} — ${command.id.italic()}${
       command.hasChildren
         ? `\n**Number of children**: ${command.children?.list().length || 0}`
         : ""
@@ -60,9 +60,7 @@ export default class CommandInfo extends MetaBaseCommand<typeof args> {
       command.subcategory ? ` > ${command.subcategory}` : ""
     }
     
-    Run ${displayNumber(count, "time")}
-      
-    `);
+    Run ${displayNumber(count, "time")}`);
 
     await this.send(embed);
   }

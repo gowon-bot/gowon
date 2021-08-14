@@ -2,6 +2,7 @@ import { Arguments } from "../../../lib/arguments/arguments";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { displayNumber } from "../../../lib/views/displays";
+import { LogicError } from "../../../errors";
 
 const args = {
   inputs: {
@@ -51,8 +52,8 @@ export default class TrackRank extends LastFMBaseCommand<typeof args> {
     );
 
     if (rank === -1) {
-      await this.traditionalReply(
-        `that track wasn't found in ${
+      throw new LogicError(
+        `That track wasn't found in ${
           perspective.possessive
         } top ${displayNumber(topTracks.tracks.length, "track")}`
       );

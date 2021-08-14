@@ -22,7 +22,7 @@ export default class ArtistAround extends LastFMBaseCommand<typeof args> {
   idSeed = "hot issue dain";
 
   aliases = ["around", "aar"];
-  description = "Shows the ranks around an artist is in your top 1000 artists";
+  description = "Shows the ranks around an artist in your top 1000 artists";
   subcategory = "ranks";
   usage = ["artist @user"];
 
@@ -62,8 +62,6 @@ export default class ArtistAround extends LastFMBaseCommand<typeof args> {
         } top ${displayNumber(topArtists.artists.length, "artist")}`
       );
     }
-
-    console.log(rank);
 
     const start = rank < 5 ? 0 : rank - 5;
     const stop =

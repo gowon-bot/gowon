@@ -199,8 +199,8 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     if (discordUsername) {
       discordUser = (await this.guild.members.fetch()).find(
         (member) =>
-          member.user.username === discordUsername ||
-          member.nickname === discordUsername
+          member.user.username.toLowerCase() === discordUsername ||
+          member.nickname?.toLowerCase() === discordUsername
       )?.user;
     }
 

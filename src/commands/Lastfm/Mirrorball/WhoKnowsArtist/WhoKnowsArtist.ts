@@ -88,15 +88,20 @@ export default class WhoKnowsArtist extends MirrorballBaseCommand<
         !artist || rows.length === 0
           ? `No one knows this artist`
           : displayNumberedList(
-              rows.map(
-                (wk) =>
-                  `${displayLink(
-                    this.nicknameService.cacheGetNickname(wk.user.discordID),
-                    LinkGenerator.userPage(wk.user.username)
-                  )} - **${displayNumber(wk.playcount, "**play")}${
-                    crown?.user?.discordID === wk.user.discordID ? " 👑" : ""
-                  }`
-              )
+              rows.map((wk) => {
+                const nickname = displayLink(
+                  this.nicknameService.cacheGetNickname(wk.user.discordID),
+                  LinkGenerator.userPage(wk.user.username)
+                );
+
+                return `${
+                  wk.user.discordID === senderUser?.discordID
+                    ? nickname.strong()
+                    : nickname
+                } - **${displayNumber(wk.playcount, "**play")}${
+                  crown?.user?.discordID === wk.user.discordID ? " 👑" : ""
+                }`;
+              })
             )
       )
       .setFooter(
