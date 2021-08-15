@@ -9,6 +9,11 @@ import {
   TrackInfo,
 } from "../../services/LastFM/converters/InfoTypes";
 
+type ArtistRank = {
+  rank: number;
+  listeners: number;
+};
+
 export type RequirementMap = {
   // Lastfm data
   artistInfo: ArtistInfo;
@@ -21,4 +26,6 @@ export type RequirementMap = {
   albumPlays: [{ album: MirrorballAlbum; playcount: number }];
   artistPlays: [{ artist: MirrorballArtist; playcount: number }];
   albumRating: { ratings: [MirrorballRating] };
+  globalArtistRank: ArtistRank;
+  serverArtistRank: ArtistRank;
 };

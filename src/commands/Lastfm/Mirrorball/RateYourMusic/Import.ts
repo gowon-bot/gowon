@@ -37,6 +37,8 @@ export class ImportRatings extends RateYourMusicIndexingChildCommand<
 
     const ratings = await this.getRatings();
 
+    this.message.react(Emoji.checkmark);
+
     const response = await this.query({
       csv: ratings,
       user: { discordID: this.author.id },

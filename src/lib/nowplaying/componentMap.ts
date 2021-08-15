@@ -16,6 +16,8 @@ import { ListenersComponent } from "./components/ListenersComponent";
 import { ArtistComboComponent } from "./components/ArtistComboComponent";
 import { ArtistPlaysInARowComponent } from "./compoundComponents/ArtistPlaysInARowComponent";
 import { UNUSED_CONFIG } from "../../services/dbservices/NowPlayingService";
+import { GlobalArtistRankComponent } from "./components/GlobalArtistRankComponent";
+import { ServerArtistRankComponent } from "./components/ServerRankComponent";
 
 // Types
 export type NowPlayingComponent = {
@@ -39,6 +41,8 @@ const componentList = [
   ArtistCrownComponent,
   RatingComponent,
   ListenersComponent,
+  ServerArtistRankComponent,
+  GlobalArtistRankComponent,
 
   // Placeholder components
   ArtistTagsComponent,

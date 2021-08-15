@@ -32,6 +32,7 @@ export interface InputResources {
   username: string;
   dbUser: User;
   components: string[];
+  prefix: string;
 }
 
 export type Resources = InputResources & {
@@ -167,6 +168,23 @@ export class DatasourceService extends BaseService {
     };
 
     return { query: "albumRating", variables: { user, lrAlbum } };
+  }
+
+  globalArtistRank(): QueryPart {
+    const user: UserInput = { discordID: this.resources.dbUser.discordID };
+    const arArtist = { name: this.nowPlaying.artist };
+
+    return { query: "globalArtistRank", variables: { user, arArtist } };
+  }
+
+  serverArtistRank(): QueryPart {
+    const user: UserInput = { discordID: this.resources.dbUser.discordID };
+    const arArtist = { name: this.nowPlaying.artist };
+
+    return {
+      query: "serverArtistRank",
+      variables: { user, arArtist, serverID: this.resources.message.guild?.id },
+    };
   }
 }
 

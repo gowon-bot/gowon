@@ -45,6 +45,7 @@ export default class NowPlayingCustom extends NowPlayingBaseCommand {
         dbUser,
         message: this.message,
         components: config,
+        prefix: this.prefix,
       });
 
     const baseEmbed = this.nowPlayingEmbed(nowPlaying, username);

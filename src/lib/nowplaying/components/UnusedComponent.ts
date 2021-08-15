@@ -6,7 +6,7 @@ export class UnusedComponent extends BaseNowPlayingComponent<never[]> {
 
   present() {
     return {
-      string: `You can customize what gets shown here! See !npc help for more information`,
+      string: `You can customize what gets shown here! See ${this.values.prefix}npc help for more information`,
       size: 4,
     };
   }

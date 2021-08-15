@@ -1,6 +1,12 @@
 import { DocumentNode, gql } from "@apollo/client/core";
 
-const queryParts = ["artistPlays", "albumPlays", "albumRating"] as const;
+const queryParts = [
+  "artistPlays",
+  "albumPlays",
+  "albumRating",
+  "globalArtistRank",
+  "serverArtistRank",
+] as const;
 export type QueryPartName = typeof queryParts[number];
 
 export interface QueryPart {
@@ -17,10 +23,14 @@ const nowPlayingQuery = gql`
     $artistPlays: Boolean!
     $albumPlays: Boolean!
     $albumRating: Boolean!
+    $globalArtistRank: Boolean!
+    $serverArtistRank: Boolean!
     $user: UserInput!
     $apSettings: ArtistPlaysSettings
     $lpSettings: AlbumPlaysSettings
     $lrAlbum: AlbumInput
+    $arArtist: ArtistInput!
+    $serverID: String
   ) {
     artistPlays: artistPlays(user: $user, settings: $apSettings)
       @include(if: $artistPlays) {
@@ -51,6 +61,21 @@ const nowPlayingQuery = gql`
           artistName
         }
       }
+    }
+
+    globalArtistRank: artistRank(artist: $arArtist, userInput: $user)
+      @include(if: $globalArtistRank) {
+      rank
+      listeners
+    }
+
+    serverArtistRank: artistRank(
+      artist: $arArtist
+      userInput: $user
+      serverID: $serverID
+    ) @include(if: $serverArtistRank) {
+      rank
+      listeners
     }
   }
 `;

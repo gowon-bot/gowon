@@ -37,6 +37,10 @@ export interface TaskStartResponse {
   success: boolean;
 }
 
+export interface MirrorballUser {
+  discordID: string;
+}
+
 export interface MirrorballArtist {
   name: string;
 }
@@ -100,4 +104,9 @@ export interface PlaysInput {
 export interface PlaysParams {
   playsInput?: PlaysInput;
   pageInput?: PageInput;
+}
+
+export interface MirrorballArtistCount {
+  playcount: number;
+  user: MirrorballUser;
 }

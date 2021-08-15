@@ -9,10 +9,13 @@ import { displayRating } from "../../../../lib/views/displays";
 import { ScrollingEmbed } from "../../../../lib/views/embeds/ScrollingEmbed";
 import { Validation } from "../../../../lib/validation/ValidationChecker";
 import { validators } from "../../../../lib/validation/validators";
+import { Delegate } from "../../../../lib/command/BaseCommand";
+import { ArtistRatings } from "./ArtistRatings";
 
 const args = {
   inputs: {
     rating: { index: 0 },
+    ara: { index: 0, regex: /\bara\b/ },
   },
   mentions: standardMentions,
 } as const;
@@ -31,6 +34,10 @@ export class Ratings extends RateYourMusicIndexingChildCommand<
   description =
     "Shows your top rated albums, or albums you've given a specific rating";
   usage = ["", "rating"];
+
+  delegates: Delegate<typeof args>[] = [
+    { delegateTo: ArtistRatings, when: (args) => !!args.ara },
+  ];
 
   validation: Validation = {
     rating: new validators.Choices({
@@ -74,7 +81,11 @@ export class Ratings extends RateYourMusicIndexingChildCommand<
     }
 
     if (!initialPages.ratings.pageInfo.recordCount) {
-      throw new LogicError("Couldn't find this album in your ratings!");
+      throw new LogicError(
+        rating
+          ? `Couldn't find any albums rated ${perspective.plusToHave} rated ${rating}`
+          : `Couldn't find any ratings! See \`${this.prefix}ryms help\` for help on how to import`
+      );
     }
 
     const paginatedCacheManager = new PaginatedCacheManager(async (page) => {
@@ -97,7 +108,11 @@ export class Ratings extends RateYourMusicIndexingChildCommand<
 
     const embed = this.newEmbed()
       .setAuthor(...this.generateEmbedAuthor("Ratings"))
-      .setTitle(`${perspective.upper.possessive} top rated albums`);
+      .setTitle(
+        rating
+          ? `${perspective.upper.possessive} albums rated ${rating}`
+          : `${perspective.upper.possessive} top rated albums`
+      );
 
     const scrollingEmbed = new ScrollingEmbed(this.message, embed, {
       initialItems: this.generateTable(

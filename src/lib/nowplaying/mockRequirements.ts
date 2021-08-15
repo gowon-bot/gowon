@@ -44,6 +44,7 @@ export const mockRequirements = (
     dbUser,
     requirements: [],
     components: [],
+    prefix: "!",
 
     // Lastfm Types
     artistInfo: new ArtistInfo({
@@ -177,5 +178,10 @@ export const mockRequirements = (
         },
       ],
     },
+    serverArtistRank: {
+      rank: 4,
+      listeners: 678,
+    },
+    globalArtistRank: { rank: 4, listeners: 678 },
   };
 };

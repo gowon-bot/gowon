@@ -16,7 +16,7 @@ const args = {
 export class Combos extends ComboChildCommand<typeof args> {
   idSeed = "wonder girls yeeun";
 
-  aliases = ["streaks"];
+  aliases = ["streaks", "cbs"];
   description = "Shows your largest combos";
   subcategory = "library stats";
   usage = ["", "artist name"];
