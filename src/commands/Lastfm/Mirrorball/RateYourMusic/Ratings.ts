@@ -9,8 +9,6 @@ import { displayRating } from "../../../../lib/views/displays";
 import { ScrollingEmbed } from "../../../../lib/views/embeds/ScrollingEmbed";
 import { Validation } from "../../../../lib/validation/ValidationChecker";
 import { validators } from "../../../../lib/validation/validators";
-import { Delegate } from "../../../../lib/command/BaseCommand";
-import { ArtistRatings } from "./ArtistRatings";
 
 const args = {
   inputs: {
@@ -34,10 +32,6 @@ export class Ratings extends RateYourMusicIndexingChildCommand<
   description =
     "Shows your top rated albums, or albums you've given a specific rating";
   usage = ["", "rating"];
-
-  delegates: Delegate<typeof args>[] = [
-    { delegateTo: ArtistRatings, when: (args) => !!args.ara },
-  ];
 
   validation: Validation = {
     rating: new validators.Choices({
