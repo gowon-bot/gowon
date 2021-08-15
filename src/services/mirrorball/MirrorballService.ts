@@ -203,8 +203,6 @@ export class MirrorballService extends BaseService {
       variables: { discordID },
     });
 
-    console.log(response);
-
     return response.data?.plays?.pageInfo?.recordCount || 0;
   }
 

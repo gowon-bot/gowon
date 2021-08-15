@@ -32,10 +32,6 @@ export class Ratings extends RateYourMusicIndexingChildCommand<
     "Shows your top rated albums, or albums you've given a specific rating";
   usage = ["", "rating"];
 
-  rollout = {
-    guilds: this.mirrorballGuilds,
-  };
-
   validation: Validation = {
     rating: new validators.Choices({
       choices: ["0.5", "1", "1.5", "2", "2.5", "3", "3.5", "4", "4.5", "5"],

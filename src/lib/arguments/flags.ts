@@ -75,3 +75,11 @@ export class FlagParser<FlagsType extends Flags> {
     return strings.map(escapeStringRegexp);
   }
 }
+
+export const FLAGS = {
+  noRedirect: {
+    description: "Skip Last.fm's redirect",
+    longnames: ["noredirect", "no-redirect"],
+    shortnames: ["nr"],
+  },
+};

@@ -33,10 +33,6 @@ export default class Index extends MirrorballBaseCommand<
   description =
     "Fully index a user, deleting any previous data and replacing it";
 
-  rollout = {
-    guilds: this.mirrorballGuilds,
-  };
-
   arguments: Arguments = args;
 
   validation: Validation = {

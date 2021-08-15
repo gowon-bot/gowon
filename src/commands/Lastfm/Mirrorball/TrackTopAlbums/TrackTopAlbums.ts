@@ -32,10 +32,6 @@ export default class TrackTopAlbums extends MirrorballBaseCommand<
   subcategory = "library";
   description = "Displays your top scrobbled albums from a track";
 
-  rollout = {
-    guilds: this.mirrorballGuilds,
-  };
-
   arguments: Arguments = args;
 
   async run() {

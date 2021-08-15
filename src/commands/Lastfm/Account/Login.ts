@@ -4,7 +4,6 @@ import { sleep } from "../../../helpers";
 import { ReactionCollectorFilter } from "../../../helpers/discord";
 import { LinkGenerator } from "../../../helpers/lastFM";
 import { Arguments } from "../../../lib/arguments/arguments";
-import { Delegate } from "../../../lib/command/BaseCommand";
 import { EmojiRaw } from "../../../lib/Emoji";
 import { EmptyConnector } from "../../../lib/indexing/BaseConnector";
 import { MirrorballBaseCommand } from "../../../lib/indexing/MirrorballCommands";
@@ -13,7 +12,6 @@ import { displayLink } from "../../../lib/views/displays";
 import { ConfirmationEmbed } from "../../../lib/views/embeds/ConfirmationEmbed";
 import { UserType } from "../../../services/mirrorball/MirrorballTypes";
 import { LastFMSession } from "../../../services/LastFM/converters/Misc";
-import SimpleLogin from "./SimpleLogin";
 
 const args = {} as const;
 
@@ -35,13 +33,6 @@ export default class Login extends MirrorballBaseCommand<
   arguments: Arguments = args;
 
   validation: Validation = {};
-
-  delegates: Delegate<typeof args>[] = [
-    {
-      delegateTo: SimpleLogin,
-      when: () => !this.mirrorballGuilds.includes(this.guild.id),
-    },
-  ];
 
   async run() {
     const { token } = await this.lastFMService.getToken();

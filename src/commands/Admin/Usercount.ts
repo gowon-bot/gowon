@@ -1,4 +1,3 @@
-import { Message } from "discord.js";
 import { displayNumber } from "../../lib/views/displays";
 import { AdminBaseCommand } from "./AdminBaseCommand";
 
@@ -10,12 +9,12 @@ export default class Usercount extends AdminBaseCommand {
   usage = "";
   devCommand = true;
 
-  async run(message: Message) {
+  async run() {
     let usercount = await this.usersService.countUsers();
 
     await this.send(
       this.newEmbed()
-        .setAuthor(message.guild?.name!, message.guild?.iconURL() as string)
+        .setAuthor(...this.generateEmbedAuthor("User count"))
         .setDescription(
           `There are ${displayNumber(
             usercount,

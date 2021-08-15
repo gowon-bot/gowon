@@ -1,6 +1,5 @@
 import { flatDeep } from "../../../../helpers";
 import { Arguments } from "../../../../lib/arguments/arguments";
-import { mirrorballGuilds } from "../../../../lib/indexing/MirrorballCommands";
 import { ConfigService } from "../../../../services/dbservices/NowPlayingService";
 import { LastFMBaseChildCommand } from "../../LastFMBaseCommand";
 
@@ -9,10 +8,6 @@ export abstract class NowPlayingConfigChildCommand<
 > extends LastFMBaseChildCommand<T> {
   parentName = "nowplayingconfig";
   subcategory = "nowplaying";
-
-  rollout = {
-    guilds: mirrorballGuilds,
-  };
 
   configService = new ConfigService();
 

@@ -42,10 +42,6 @@ export default class Update extends MirrorballBaseCommand<
   subcategory = "library";
   description = "Updates a user's cached data based on their lastest scrobbles";
 
-  rollout = {
-    guilds: this.mirrorballGuilds,
-  };
-
   delegates: Delegate<typeof args>[] = [
     { when: (args) => args.full, delegateTo: Index },
   ];

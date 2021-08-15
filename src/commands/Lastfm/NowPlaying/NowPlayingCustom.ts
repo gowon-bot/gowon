@@ -1,5 +1,4 @@
 import { User } from "../../../database/entity/User";
-import { mirrorballGuilds } from "../../../lib/indexing/MirrorballCommands";
 import { DatasourceService } from "../../../lib/nowplaying/DatasourceService";
 import { NowPlayingBuilder } from "../../../lib/nowplaying/NowPlayingBuilder";
 import { MetaService } from "../../../services/dbservices/MetaService";
@@ -14,9 +13,7 @@ export default class NowPlayingCustom extends NowPlayingBaseCommand {
     "Displays the now playing or last played track from Last.fm. See `npc help` for details on how to customize your embeds.";
   aliases = ["fmx", "npx"];
 
-  rollout = {
-    guilds: mirrorballGuilds,
-  };
+  secretCommand = true;
 
   datasourceService = new DatasourceService(this.logger);
   configService = new ConfigService(this.logger);

@@ -34,10 +34,6 @@ export default class LastScrobbledAlbum extends MirrorballBaseCommand<
   subcategory = "library";
   description = "Shows the last time you scrobbled an album";
 
-  rollout = {
-    guilds: this.mirrorballGuilds,
-  };
-
   arguments: Arguments = args;
 
   async run() {

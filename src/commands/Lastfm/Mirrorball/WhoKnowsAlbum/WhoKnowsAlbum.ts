@@ -38,10 +38,6 @@ export default class WhoKnowsAlbum extends MirrorballBaseCommand<
   subcategory = "whoknows";
   description = "See who knows an album";
 
-  rollout = {
-    guilds: this.mirrorballGuilds,
-  };
-
   arguments: Arguments = args;
 
   nicknameService = new NicknameService(this.logger);
@@ -78,7 +74,7 @@ export default class WhoKnowsAlbum extends MirrorballBaseCommand<
       this.gowonClient
     );
 
-    const embed = this.newEmbed()
+    const embed = this.whoKnowsEmbed()
       .setTitle(
         `Who knows ${album.name.italic()} by ${album.artist.name.strong()}?`
       )

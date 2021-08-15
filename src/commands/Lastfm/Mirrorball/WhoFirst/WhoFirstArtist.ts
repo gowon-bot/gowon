@@ -2,6 +2,7 @@ import { MirrorballError } from "../../../../errors";
 import { LinkGenerator } from "../../../../helpers/lastFM";
 import { convertMirrorballDate } from "../../../../helpers/mirrorball";
 import { Arguments } from "../../../../lib/arguments/arguments";
+import { FLAGS } from "../../../../lib/arguments/flags";
 import { Variation } from "../../../../lib/command/BaseCommand";
 import { MirrorballBaseCommand } from "../../../../lib/indexing/MirrorballCommands";
 import {
@@ -19,6 +20,9 @@ import {
 const args = {
   inputs: {
     artist: { index: { start: 0 } },
+  },
+  flags: {
+    noRedirect: FLAGS.noRedirect,
   },
 } as const;
 
@@ -44,9 +48,6 @@ export default class WhoFirstArtist extends MirrorballBaseCommand<
   description = "See who first scrobbled an artist";
 
   subcategory = "whofirst";
-  rollout = {
-    guilds: this.mirrorballGuilds,
-  };
 
   arguments: Arguments = args;
 
@@ -61,7 +62,7 @@ export default class WhoFirstArtist extends MirrorballBaseCommand<
 
     const artistName = await this.lastFMArguments.getArtist(
       senderRequestable,
-      true
+      !this.parsedArguments.noRedirect
     );
 
     const response = await this.query({
@@ -84,7 +85,7 @@ export default class WhoFirstArtist extends MirrorballBaseCommand<
 
     const { rows, artist } = response.whoFirstArtist;
 
-    const embed = this.newEmbed()
+    const embed = this.whoKnowsEmbed()
       .setTitle(
         `Who ${whoLast ? "last" : "first"} scrobbled ${artist.name.strong()}?`
       )

@@ -10,10 +10,14 @@ import {
   ArtistTopTracksResponse,
 } from "./ArtistTopTracks.connector";
 import { displayNumber } from "../../../../lib/views/displays";
+import { FLAGS } from "../../../../lib/arguments/flags";
 
 const args = {
   inputs: {
     artist: { index: { start: 0 } },
+  },
+  flags: {
+    noRedirect: FLAGS.noRedirect,
   },
   mentions: standardMentions,
 } as const;
@@ -31,10 +35,6 @@ export default class ArtistTopTracks extends MirrorballBaseCommand<
   subcategory = "library";
   description = "Displays your top scrobbled tracks from an artist";
 
-  rollout = {
-    guilds: this.mirrorballGuilds,
-  };
-
   arguments: Arguments = args;
 
   async run() {
@@ -47,7 +47,7 @@ export default class ArtistTopTracks extends MirrorballBaseCommand<
 
     const artistName = await this.lastFMArguments.getArtist(
       senderRequestable,
-      true
+      !this.parsedArguments.noRedirect
     );
 
     const response = await this.query({

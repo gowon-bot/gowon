@@ -63,14 +63,21 @@ export default class UserInfo extends BaseCommand<typeof args> {
         string: `**Top commands**: \n${topCommands
           .slice(0, 5)
           .map((c) => {
-            const command = this.commandManager.findByID(c.commandID);
+            const command = this.commandManager.findByID(c.commandID, {
+              includeArchived: true,
+              includeSecret: true,
+            });
 
             // This is a special space
             return ` ${
-              command?.friendlyNameWithParent ||
-              command?.friendlyName ||
-              "<unknown command>"
-            } - ${displayNumber(c.uses)}`;
+              command?.secretCommand
+                ? "<secret command>"
+                : command?.friendlyNameWithParent ||
+                  command?.friendlyName ||
+                  "<unknown command>"
+            }${command?.archived ? " [archived]" : ""} - ${displayNumber(
+              c.uses
+            )}`;
           })
           .join("\n")}`,
       }

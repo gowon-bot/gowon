@@ -3,6 +3,7 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { displayNumber } from "../../../lib/views/displays";
 import { LogicError } from "../../../errors";
+import { toInt } from "../../../helpers/lastFM";
 
 const args = {
   inputs: {
@@ -52,10 +53,15 @@ export default class AlbumRank extends LastFMBaseCommand<typeof args> {
     );
 
     if (rank === -1) {
+      const isNumber = !isNaN(toInt(this.parsedArguments.artist));
+
       throw new LogicError(
         `That album wasn't found in ${
           perspective.possessive
-        } top ${displayNumber(topAlbums.albums.length, "album")}`
+        } top ${displayNumber(topAlbums.albums.length, "album")}`,
+        isNumber
+          ? `Looking to find the album at rank ${this.parsedArguments.artist}? Run ${this.prefix}ala ${this.parsedArguments.artist}`
+          : ""
       );
     } else {
       await this.traditionalReply(

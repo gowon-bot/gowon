@@ -14,6 +14,7 @@ const args = {
 export default class SimpleLogin extends LastFMBaseCommand<typeof args> {
   idSeed = "loona jinsoul";
 
+  archived = true;
   shouldBeIndexed = false;
 
   description = "Sets your Last.fm username in Gowon";

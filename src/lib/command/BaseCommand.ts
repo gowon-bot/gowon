@@ -84,6 +84,10 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
   variations: Variation[] = [];
   description: string = "No description for this command";
   secretCommand: boolean = false;
+
+  // Archived are commands that can't be run, but stick around for data purposes
+  // Should be used to 'decommission' commands that aren't needed anymore
+  archived = false;
   shouldBeIndexed: boolean = true;
   devCommand: boolean = false;
   customHelp?: { new (): Command } | undefined;

@@ -10,10 +10,14 @@ import {
 import { displayDate } from "../../../../lib/views/displays";
 import { Variation } from "../../../../lib/command/BaseCommand";
 import { convertMirrorballDate } from "../../../../helpers/mirrorball";
+import { FLAGS } from "../../../../lib/arguments/flags";
 
 const args = {
   inputs: {
     artist: { index: { start: 0 } },
+  },
+  flags: {
+    noRedirect: FLAGS.noRedirect,
   },
   mentions: standardMentions,
 } as const;
@@ -28,16 +32,13 @@ export default class LastScrobbledArtist extends MirrorballBaseCommand<
   idSeed = "shasha wanlim";
 
   aliases = ["last", "lasta", "la"];
+
   variations: Variation[] = [
     { name: "first", variation: ["first", "firsta", "fa"] },
   ];
 
   subcategory = "library";
   description = "Shows the last time you scrobbled an artist";
-
-  rollout = {
-    guilds: this.mirrorballGuilds,
-  };
 
   arguments: Arguments = args;
 
@@ -52,7 +53,7 @@ export default class LastScrobbledArtist extends MirrorballBaseCommand<
 
     const artistName = await this.lastFMArguments.getArtist(
       senderRequestable,
-      true
+      !this.parsedArguments.noRedirect
     );
 
     const response = await this.query({

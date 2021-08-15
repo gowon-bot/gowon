@@ -26,10 +26,6 @@ export class Stats extends RateYourMusicIndexingChildCommand<
   idSeed = "shasha hakyung";
   description = "Shows what you've rated an artists albums";
 
-  rollout = {
-    guilds: this.mirrorballGuilds,
-  };
-
   arguments: Arguments = args;
 
   async run() {

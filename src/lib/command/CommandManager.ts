@@ -63,12 +63,17 @@ export class CommandManager {
 
   findByID(
     id: string,
-    { includeSecret }: { includeSecret?: boolean } = {}
+    {
+      includeSecret,
+      includeArchived,
+    }: { includeSecret?: boolean; includeArchived?: boolean } = {}
   ): Command | undefined {
-    return this.deepList(includeSecret).find((c) => c.id === id);
+    return this.deepList(includeSecret, includeArchived).find(
+      (c) => c.id === id
+    );
   }
 
-  list(showSecret: boolean = false): Command[] {
+  list(showSecret: boolean = false, showArchived = false): Command[] {
     let commandGetterList = Object.values(this.commands);
 
     let commandsList = commandGetterList
@@ -77,18 +82,22 @@ export class CommandManager {
       })
       .filter((c) => (c.parentName ? true : c.shouldBeIndexed));
 
-    return showSecret
-      ? commandsList
-      : commandsList.filter((c) => !c.secretCommand);
+    return commandsList.filter(
+      (c) => (showSecret || !c.secretCommand) && (showArchived || !c.archived)
+    );
   }
 
-  deepList(showSecret: boolean = false): Command[] {
+  deepList(showSecret = false, showArchived = false): Command[] {
     let shallowCommands = this.list();
 
     return flatDeep<Command>(
       shallowCommands.map((sc) =>
-        sc.hasChildren ? [sc, ...(sc.children?.deepList(showSecret) || [])] : sc
+        sc.hasChildren
+          ? [sc, ...(sc.children?.deepList(showSecret, showArchived) || [])]
+          : sc
       )
-    ).filter((c) => showSecret || !c.secretCommand);
+    ).filter(
+      (c) => (showSecret || !c.secretCommand) && (showArchived || !c.archived)
+    );
   }
 }

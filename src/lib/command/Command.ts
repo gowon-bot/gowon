@@ -15,6 +15,7 @@ export interface Command {
   aliases: Array<string>;
   arguments: Arguments;
   secretCommand: boolean;
+  archived: boolean;
   shouldBeIndexed: boolean;
   devCommand?: boolean;
   customHelp?: { new (): Command };

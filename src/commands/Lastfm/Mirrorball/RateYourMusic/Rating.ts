@@ -21,10 +21,6 @@ export class Rating extends RateYourMusicIndexingChildCommand<
   idSeed = "sonamoo newsun";
   description = "Shows what you've rated an album";
 
-  rollout = {
-    guilds: this.mirrorballGuilds,
-  };
-
   arguments: Arguments = args;
 
   async run() {

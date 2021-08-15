@@ -3,7 +3,6 @@ import { Arguments } from "../../../../lib/arguments/arguments";
 import gql from "graphql-tag";
 import { RatingResponse } from "../../Mirrorball/RateYourMusic/connectors";
 import { displayNumber, displayRating } from "../../../../lib/views/displays";
-import { mirrorballGuilds } from "../../../../lib/indexing/MirrorballCommands";
 import { LogicError } from "../../../../errors";
 import { mean } from "mathjs";
 
@@ -24,10 +23,6 @@ export class Rating extends FriendsChildCommand<typeof args> {
   arguments: Arguments = args;
 
   throwIfNoFriends = true;
-
-  rollout = {
-    guilds: mirrorballGuilds,
-  };
 
   async run() {
     const { senderUser, senderUsername } = await this.parseMentions({

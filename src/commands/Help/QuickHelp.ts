@@ -4,7 +4,6 @@ import { Arguments } from "../../lib/arguments/arguments";
 import { AdminService } from "../../services/dbservices/AdminService";
 
 import { Emoji } from "../../lib/Emoji";
-import { mirrorballGuilds } from "../../lib/indexing/MirrorballCommands";
 
 const args = {} as const;
 
@@ -27,13 +26,9 @@ export default class QuickHelp extends BaseCommand<typeof args> {
       ...this.generateEmbedAuthor("Quick help")
     ).setDescription(`Welcome to Gowon! ${Emoji.gowonPeek}
       
-Use \`${this.prefix}login${
-      !mirrorballGuilds.includes(this.guild.id) ? " <username>" : ""
-    }\` to login
+Use \`${this.prefix}login\` to login
 To see a list of all commands see \`${this.prefix}help all\`
-To change prefix, run \`@Gowon prefix <prefix>\` (the current prefix is \`${
-      this.prefix
-    }\`)
+To change prefix, run \`@Gowon prefix <prefix>\` (the current prefix is \`${this.prefix}\`)
 
 More questions? Come visit the support server: https://discord.gg/9Vr7Df7TZf`);
 

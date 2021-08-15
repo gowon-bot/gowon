@@ -1,6 +1,7 @@
 import { MirrorballError } from "../../../../errors";
 import { LinkGenerator } from "../../../../helpers/lastFM";
 import { Arguments } from "../../../../lib/arguments/arguments";
+import { FLAGS } from "../../../../lib/arguments/flags";
 import { Variation } from "../../../../lib/command/BaseCommand";
 import { MirrorballBaseCommand } from "../../../../lib/indexing/MirrorballCommands";
 import {
@@ -20,6 +21,9 @@ const args = {
   inputs: {
     artist: { index: { start: 0 } },
   },
+  flags: {
+    noRedirect: FLAGS.noRedirect,
+  },
 } as const;
 
 export default class WhoKnowsArtist extends MirrorballBaseCommand<
@@ -38,9 +42,6 @@ export default class WhoKnowsArtist extends MirrorballBaseCommand<
   description = "See who knows an artist";
 
   subcategory = "whoknows";
-  rollout = {
-    guilds: this.mirrorballGuilds,
-  };
 
   arguments: Arguments = args;
 
@@ -54,7 +55,7 @@ export default class WhoKnowsArtist extends MirrorballBaseCommand<
 
     const artistName = await this.lastFMArguments.getArtist(
       senderRequestable,
-      true
+      !this.parsedArguments.noRedirect
     );
 
     const crown = await this.crownsService.getCrown(artistName, this.guild.id);
@@ -82,7 +83,7 @@ export default class WhoKnowsArtist extends MirrorballBaseCommand<
 
     const { rows, artist } = response.whoKnowsArtist;
 
-    const embed = this.newEmbed()
+    const embed = this.whoKnowsEmbed()
       .setTitle(`Who knows ${artist.name.strong()}?`)
       .setDescription(
         !artist || rows.length === 0

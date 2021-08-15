@@ -29,10 +29,6 @@ export default class Year extends MirrorballBaseCommand<
 
   arguments: Arguments = args;
 
-  rollout = {
-    guilds: this.mirrorballGuilds,
-  };
-
   connector = new YearConnector();
   redirectsService = new RedirectsService(this.logger);
 

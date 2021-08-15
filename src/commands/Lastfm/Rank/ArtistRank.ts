@@ -5,6 +5,7 @@ import { RedirectsCache } from "../../../lib/caches/RedirectsCache";
 import { RedirectsService } from "../../../services/dbservices/RedirectsService";
 import { displayNumber } from "../../../lib/views/displays";
 import { LogicError } from "../../../errors";
+import { toInt } from "../../../helpers/lastFM";
 
 const args = {
   inputs: {
@@ -53,10 +54,15 @@ export default class ArtistRank extends LastFMBaseCommand<typeof args> {
     ).findIndex((a) => a.toLowerCase() === artistName.toLowerCase());
 
     if (rank === -1) {
+      const isNumber = !isNaN(toInt(this.parsedArguments.artist));
+
       throw new LogicError(
         `That artist wasn't found in ${
           perspective.possessive
-        } top ${displayNumber(topArtists.artists.length, "artist")}`
+        } top ${displayNumber(topArtists.artists.length, "artist")}`,
+        isNumber
+          ? `Looking to find the artist at rank ${this.parsedArguments.artist}? Run ${this.prefix}aa ${this.parsedArguments.artist}`
+          : ""
       );
     } else {
       await this.traditionalReply(

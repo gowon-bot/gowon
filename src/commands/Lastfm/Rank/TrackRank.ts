@@ -3,6 +3,7 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { displayNumber } from "../../../lib/views/displays";
 import { LogicError } from "../../../errors";
+import { toInt } from "../../../helpers/lastFM";
 
 const args = {
   inputs: {
@@ -52,10 +53,15 @@ export default class TrackRank extends LastFMBaseCommand<typeof args> {
     );
 
     if (rank === -1) {
+      const isNumber = !isNaN(toInt(this.parsedArguments.artist));
+
       throw new LogicError(
         `That track wasn't found in ${
           perspective.possessive
-        } top ${displayNumber(topTracks.tracks.length, "track")}`
+        } top ${displayNumber(topTracks.tracks.length, "track")}`,
+        isNumber
+          ? `Looking to find the artist at rank ${this.parsedArguments.artist}? Run ${this.prefix}aa ${this.parsedArguments.artist}`
+          : ""
       );
     } else {
       await this.traditionalReply(

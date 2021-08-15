@@ -27,13 +27,14 @@ export class ImportRatings extends RateYourMusicIndexingChildCommand<
   aliases = ["rymimport", "rymsimport"];
   description = "Import your rateyourmusic ratings";
 
-  rollout = {
-    guilds: this.mirrorballGuilds,
-  };
-
   arguments: Arguments = args;
 
   async run() {
+    await this.parseMentions({
+      senderRequired: true,
+      requireIndexed: true,
+    });
+
     const ratings = await this.getRatings();
 
     const response = await this.query({

@@ -1,5 +1,4 @@
 import { CommandManager } from "../../../../lib/command/CommandManager";
-import { mirrorballGuilds } from "../../../../lib/indexing/MirrorballCommands";
 import { LastFMBaseParentCommand } from "../../LastFMBaseCommand";
 import { Add } from "./Add";
 import { Help } from "./Help";
@@ -16,10 +15,6 @@ export default class NowPlayingConfigParentCommand extends LastFMBaseParentComma
   description = "Allows you to change how your nowplaying embeds look";
   friendlyName = "nowplayingconfig";
   customHelp = Help;
-
-  rollout = {
-    guilds: mirrorballGuilds,
-  };
 
   prefixes = ["npc", "nowplayingconfig"];
   default = () => new View();

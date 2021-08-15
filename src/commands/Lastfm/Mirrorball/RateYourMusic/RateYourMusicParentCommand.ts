@@ -1,6 +1,5 @@
 import { CommandManager } from "../../../../lib/command/CommandManager";
 import { ParentCommand } from "../../../../lib/command/ParentCommand";
-import { mirrorballGuilds } from "../../../../lib/indexing/MirrorballCommands";
 import { ArtistRatings } from "./ArtistRatings";
 import { Help } from "./Help";
 import { ImportRatings } from "./Import";
@@ -16,10 +15,6 @@ export default class RateYourMusicParentCommand extends ParentCommand {
   description =
     "Allows you to import and view stats about your rateyourmusic data";
   friendlyName = "rateyourmusic";
-
-  rollout = {
-    guilds: mirrorballGuilds,
-  };
 
   canSkipPrefixFor = ["importratings", "rating", "artistratings", "ratings"];
 

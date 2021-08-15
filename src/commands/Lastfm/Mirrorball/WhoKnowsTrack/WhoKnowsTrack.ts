@@ -33,9 +33,6 @@ export default class WhoKnowsTrack extends MirrorballBaseCommand<
 
   aliases = ["wkt", "fmwkt"];
   subcategory = "whoknows";
-  rollout = {
-    guilds: this.mirrorballGuilds,
-  };
 
   variations: Variation[] = [{ name: "update", variation: "uwkt" }];
 
@@ -90,7 +87,7 @@ export default class WhoKnowsTrack extends MirrorballBaseCommand<
       artistDisplay = trackResponse.artist;
     }
 
-    const embed = this.newEmbed()
+    const embed = this.whoKnowsEmbed()
       .setTitle(
         `Who knows ${trackDisplay.italic()} by ${artistDisplay.strong()}?`
       )

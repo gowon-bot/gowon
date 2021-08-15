@@ -32,10 +32,6 @@ export class ArtistRatings extends RateYourMusicIndexingChildCommand<
   idSeed = "sonamoo sumin";
   description = "Shows your top rated albums from an artist";
 
-  rollout = {
-    guilds: this.mirrorballGuilds,
-  };
-
   arguments: Arguments = args;
 
   async run() {

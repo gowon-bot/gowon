@@ -14,15 +14,6 @@ import {
 import { errorEmbed } from "../views/embeds";
 import { LastFMArguments } from "../../services/LastFM/LastFMArguments";
 
-export const mirrorballGuilds = [
-  "768596255697272862",
-  "769112727103995904",
-  "857781722065010698",
-  "682909819702738967",
-  "712417547634343996",
-  "350020460672581635",
-];
-
 export interface ErrorResponse {
   errors: { message: string }[];
 }
@@ -44,8 +35,6 @@ export abstract class MirrorballBaseCommand<
   lastFMService = new LastFMService(this.logger);
   lastFMArguments = new LastFMArguments(this, this.lastFMService, this.logger);
   concurrencyManager = new ConcurrencyManager();
-
-  protected readonly mirrorballGuilds = mirrorballGuilds;
 
   readonly indexingHelp =
     '"Indexing" means downloading all your last.fm data. This is required for many commands to function, and is recommended.';
@@ -195,6 +184,13 @@ export abstract class MirrorballBaseCommand<
       Perspective.buildPerspective(username, false),
       "index",
       confirmationEmbed.sentMessage
+    );
+  }
+
+  protected whoKnowsEmbed(): MessageEmbed {
+    return this.newEmbed().setAuthor(
+      this.guild.name,
+      this.guild.iconURL() || ""
     );
   }
 }
