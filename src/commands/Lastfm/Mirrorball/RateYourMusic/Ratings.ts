@@ -13,7 +13,6 @@ import { validators } from "../../../../lib/validation/validators";
 const args = {
   inputs: {
     rating: { index: 0 },
-    ara: { index: 0, regex: /\bara\b/ },
   },
   mentions: standardMentions,
 } as const;

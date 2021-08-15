@@ -18,6 +18,11 @@ export function isQueryPart(value: any): value is QueryPart {
   return value.query && value.variables;
 }
 
+// Some variables must be defined, so these are defaults
+const startingVariables = {
+  arArtist: {},
+};
+
 const nowPlayingQuery = gql`
   query nowPlayingQuery(
     $artistPlays: Boolean!
@@ -90,7 +95,7 @@ export function buildQuery(parts: QueryPart[]): {
     return acc;
   }, {} as { [query: string]: boolean });
 
-  let variables = {} as { [query: string]: any };
+  let variables = startingVariables as { [query: string]: any };
 
   for (const part of parts) {
     queryControls[part.query] = true;
