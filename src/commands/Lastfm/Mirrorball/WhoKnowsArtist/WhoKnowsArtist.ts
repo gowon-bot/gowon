@@ -89,6 +89,8 @@ export default class WhoKnowsArtist extends MirrorballBaseCommand<
 
     const lineConsolidator = new LineConsolidator();
 
+    console.log(rank > 15);
+
     lineConsolidator.addLines(
       {
         shouldDisplay: !artist || rows.length === 0,
@@ -115,10 +117,11 @@ export default class WhoKnowsArtist extends MirrorballBaseCommand<
       },
       {
         shouldDisplay: rank > 15,
-        string: `\n\`${rank}.\` ${this.message.member!.nickname!.strong()} - **${displayNumber(
-          playcount,
-          "play"
-        )}**${crown?.user?.discordID === this.author.id ? " 👑" : ""}`,
+        string: `\n\`${rank}.\` ${(
+          this.message.member?.nickname || this.message.author.username
+        ).strong()} - **${displayNumber(playcount, "play")}**${
+          crown?.user?.discordID === this.author.id ? " 👑" : ""
+        }`,
       }
     );
 
