@@ -33,7 +33,7 @@ export default class Status extends BaseCommand<typeof args> {
         embed.setDescription(
           "**Latency**:\n```\n" +
             `Mirrorball.....${this.displayLatency(mirrorballLatency)}
-Discord.....${this.displayLatency(discordLatency)}` +
+Discord........${this.displayLatency(discordLatency)}` +
             "\n```"
         ),
       ],

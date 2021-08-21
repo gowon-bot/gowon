@@ -2,7 +2,7 @@ export function getArtistPlays(values: any): {
   plays: number | undefined;
   name: string | undefined;
 } {
-  if (values.artistInfo?.userPlaycount) {
+  if (values.artistInfo?.userPlaycount !== undefined) {
     return {
       plays: values.artistInfo.userPlaycount,
       name: values.artistInfo.name,

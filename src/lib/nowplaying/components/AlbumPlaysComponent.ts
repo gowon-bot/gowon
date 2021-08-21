@@ -12,16 +12,12 @@ export class AlbumPlaysComponent extends BaseNowPlayingComponent<
   present() {
     const albumPlays = this.values.albumPlays[0];
 
-    if (albumPlays) {
-      return {
-        string: `${displayNumber(
-          albumPlays.playcount,
-          "scrobble"
-        )} of this album`,
-        size: 1,
-      };
-    }
-
-    return { string: "", size: 0 };
+    return {
+      string: `${displayNumber(
+        albumPlays ? albumPlays.playcount : 0,
+        "scrobble"
+      )} of this album`,
+      size: 1,
+    };
   }
 }

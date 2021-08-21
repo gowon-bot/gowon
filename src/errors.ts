@@ -328,7 +328,7 @@ export class MentionedUserNotIndexedError extends ClientError {
 
   constructor(prefix?: string) {
     super(
-      `The user you mentioned hasn't been indexed yet, or isn't signed into the bot.\n*Run \`${prefix}\ index\` to index yourself*`
+      `The user you mentioned hasn't been indexed yet, or isn't signed into the bot.\n*Run \`${prefix}index\` to index yourself*`
     );
   }
 }
@@ -339,7 +339,7 @@ export class LastFMReverseLookupError extends ClientError {
   constructor(username: string, requireIndexed = false, prefix?: string) {
     super(
       requireIndexed
-        ? `The user you mentioned hasn't been indexed yet, or isn't signed into the bot.\n*Run \`${prefix}\ index\` to index yourself*`
+        ? `The user you mentioned hasn't been indexed yet, or isn't signed into the bot.\n*Run \`${prefix}index\` to index yourself*`
         : `This command requires that \`${username}\` be signed into Gowon!`
     );
   }
