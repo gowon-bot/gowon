@@ -73,6 +73,7 @@ export default class ArtistTopAlbums extends MirrorballBaseCommand<
     }
 
     const totalScrobbles = topAlbums.reduce((sum, l) => sum + l.playcount, 0);
+    const average = totalScrobbles / topAlbums.length;
 
     const embed = this.newEmbed()
       .setTitle(`Top ${artist.name} albums for ${username}`)
@@ -102,7 +103,10 @@ export default class ArtistTopAlbums extends MirrorballBaseCommand<
           `${displayNumber(totalScrobbles, "total scrobble")}, ${displayNumber(
             topAlbums.length,
             "total album"
-          )}`.italic() + "\n",
+          )}, ${displayNumber(
+            average.toPrecision(2),
+            "average scrobble"
+          )} per album`.italic() + "\n",
       }
     );
 

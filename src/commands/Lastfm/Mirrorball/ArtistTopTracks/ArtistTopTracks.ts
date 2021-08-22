@@ -75,6 +75,7 @@ export default class ArtistTopTracks extends MirrorballBaseCommand<
       .setURL(LinkGenerator.libraryArtistTopTracks(username, artist.name));
 
     const totalScrobbles = topTracks.reduce((sum, t) => sum + t.playcount, 0);
+    const average = totalScrobbles / topTracks.length;
 
     const simpleScrollingEmbed = new SimpleScrollingEmbed(
       this.message,
@@ -101,7 +102,10 @@ export default class ArtistTopTracks extends MirrorballBaseCommand<
           `${displayNumber(totalScrobbles, "total scrobble")}, ${displayNumber(
             topTracks.length,
             "total track"
-          )}`.italic() + "\n",
+          )}, ${displayNumber(
+            average.toPrecision(2),
+            "average scrobble"
+          )} per track`.italic() + "\n",
       }
     );
 

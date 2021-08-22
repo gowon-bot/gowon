@@ -68,6 +68,7 @@ export default class AlbumTopTracks extends MirrorballBaseCommand<
     }
 
     const totalScrobbles = topTracks.reduce((sum, t) => sum + t.playcount, 0);
+    const average = totalScrobbles / topTracks.length;
 
     const embed = this.newEmbed()
       .setTitle(
@@ -102,7 +103,10 @@ export default class AlbumTopTracks extends MirrorballBaseCommand<
           `${displayNumber(totalScrobbles, "total scrobble")}, ${displayNumber(
             topTracks.length,
             "total track"
-          )}`.italic() + "\n",
+          )}, ${displayNumber(
+            average.toPrecision(2),
+            "average scrobble"
+          )} per track`.italic() + "\n",
       }
     );
 

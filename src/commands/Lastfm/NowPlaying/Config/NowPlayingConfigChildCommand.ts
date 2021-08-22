@@ -1,5 +1,6 @@
 import { flatDeep } from "../../../../helpers";
 import { Arguments } from "../../../../lib/arguments/arguments";
+import { componentMap } from "../../../../lib/nowplaying/componentMap";
 import { ConfigService } from "../../../../services/dbservices/NowPlayingService";
 import { LastFMBaseChildCommand } from "../../LastFMBaseCommand";
 
@@ -22,6 +23,7 @@ export abstract class NowPlayingConfigChildCommand<
       "artist-crown",
       "loved",
     ],
+    all: Object.keys(componentMap),
   };
 
   protected notAnOptionError(option: string): string {
