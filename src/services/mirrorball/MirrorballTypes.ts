@@ -5,6 +5,13 @@ export enum UserType {
   Wavy = "Wavy",
 }
 
+export enum MirrorballPrivacy {
+  Private = "PRIVATE",
+  Discord = "DISCORD",
+  FMUsername = "FMUSERNAME",
+  Unset = "UNSET",
+}
+
 export interface UserInput {
   discordID?: string;
   lastFMUsername?: string;
@@ -39,6 +46,8 @@ export interface TaskStartResponse {
 
 export interface MirrorballUser {
   discordID: string;
+  privacy: MirrorballPrivacy;
+  username: string;
 }
 
 export interface MirrorballArtist {

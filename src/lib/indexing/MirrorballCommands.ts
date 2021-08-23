@@ -186,13 +186,6 @@ export abstract class MirrorballBaseCommand<
       confirmationEmbed.sentMessage
     );
   }
-
-  protected whoKnowsEmbed(): MessageEmbed {
-    return this.newEmbed().setAuthor(
-      this.guild.name,
-      this.guild.iconURL() || ""
-    );
-  }
 }
 
 export abstract class MirrorballChildCommand<

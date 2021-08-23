@@ -1,21 +1,17 @@
-import { MirrorballError } from "../../../../errors";
-import { LinkGenerator } from "../../../../helpers/lastFM";
-import { Arguments } from "../../../../lib/arguments/arguments";
-import { FLAGS } from "../../../../lib/arguments/flags";
-import { Variation } from "../../../../lib/command/BaseCommand";
-import { MirrorballBaseCommand } from "../../../../lib/indexing/MirrorballCommands";
-import { LineConsolidator } from "../../../../lib/LineConsolidator";
+import { MirrorballError } from "../../../../../errors";
+import { LinkGenerator } from "../../../../../helpers/lastFM";
+import { Arguments } from "../../../../../lib/arguments/arguments";
+import { FLAGS } from "../../../../../lib/arguments/flags";
+import { Variation } from "../../../../../lib/command/BaseCommand";
+import { VARIATIONS } from "../../../../../lib/command/variations";
+import { LineConsolidator } from "../../../../../lib/LineConsolidator";
 import {
   displayLink,
   displayNumber,
   displayNumberedList,
-} from "../../../../lib/views/displays";
-import { CrownsService } from "../../../../services/dbservices/CrownsService";
-import {
-  NicknameService,
-  UnknownUserDisplay,
-} from "../../../../services/guilds/NicknameService";
-import { WhoKnowsService } from "../../../../services/guilds/WhoKnowsService";
+} from "../../../../../lib/views/displays";
+import { CrownsService } from "../../../../../services/dbservices/CrownsService";
+import { WhoKnowsBaseCommand } from "../WhoKnowsBaseCommand";
 import {
   WhoKnowsArtistConnector,
   WhoKnowsArtistParams,
@@ -31,7 +27,7 @@ const args = {
   },
 } as const;
 
-export default class WhoKnowsArtist extends MirrorballBaseCommand<
+export default class WhoKnowsArtist extends WhoKnowsBaseCommand<
   WhoKnowsArtistResponse,
   WhoKnowsArtistParams,
   typeof args
@@ -42,7 +38,7 @@ export default class WhoKnowsArtist extends MirrorballBaseCommand<
 
   aliases = ["wk", "fmwk"];
 
-  variations: Variation[] = [{ name: "update", variation: "uwk" }];
+  variations: Variation[] = [VARIATIONS.update("wk"), VARIATIONS.global("wk")];
 
   description = "See who knows an artist";
 
@@ -50,9 +46,7 @@ export default class WhoKnowsArtist extends MirrorballBaseCommand<
 
   arguments: Arguments = args;
 
-  nicknameService = new NicknameService(this.logger);
   crownsService = new CrownsService(this.logger);
-  whoKnowsService = new WhoKnowsService(this.logger);
 
   async run() {
     const { senderRequestable, senderUser } = await this.parseMentions({
@@ -70,9 +64,14 @@ export default class WhoKnowsArtist extends MirrorballBaseCommand<
       await this.updateAndWait(this.author.id);
     }
 
+    const guildID = this.variationWasUsed("global") ? undefined : this.guild.id;
+
     const response = await this.query({
       artist: { name: artistName },
-      settings: { guildID: this.guild.id, limit: 15 },
+      settings: {
+        guildID,
+        limit: 15,
+      },
       serverID: this.guild.id,
       user: { discordID: this.author.id },
     });
@@ -83,18 +82,12 @@ export default class WhoKnowsArtist extends MirrorballBaseCommand<
       throw new MirrorballError(errors.errors[0].message);
     }
 
-    await this.nicknameService.cacheNicknames(
-      response.whoKnowsArtist.rows.map((u) => u.user),
-      this.guild.id,
-      this.gowonClient
-    );
+    await this.cacheUserInfo(response.whoKnowsArtist.rows.map((u) => u.user));
 
     const { rows, artist } = response.whoKnowsArtist;
     const { rank, playcount } = response.artistRank;
 
     const lineConsolidator = new LineConsolidator();
-
-    console.log(rank > 15);
 
     lineConsolidator.addLines(
       {
@@ -104,32 +97,13 @@ export default class WhoKnowsArtist extends MirrorballBaseCommand<
       {
         shouldDisplay: artist && rows.length !== 0,
         string: displayNumberedList(
-          rows.map((wk) => {
-            const nickname = this.nicknameService.cacheGetNickname(
-              wk.user.discordID
-            );
-
-            const isUnknown = nickname === UnknownUserDisplay;
-
-            if (isUnknown) {
-              this.whoKnowsService.recordUnknownMember(
-                this.guild.id,
-                wk.user.discordID
-              );
-            }
-
-            const nicknameDisplay = isUnknown
-              ? nickname
-              : displayLink(nickname, LinkGenerator.userPage(wk.user.username));
-
-            return `${
-              wk.user.discordID === senderUser?.discordID
-                ? nicknameDisplay.strong()
-                : nicknameDisplay
-            } - **${displayNumber(wk.playcount, "**play")}${
-              crown?.user?.discordID === wk.user.discordID ? " 👑" : ""
-            }`;
-          })
+          rows.map(
+            (wk) =>
+              `${this.displayUser(wk.user)} - **${displayNumber(
+                wk.playcount,
+                "**play"
+              )}${crown?.user?.discordID === wk.user.discordID ? " 👑" : ""}`
+          )
         ),
       },
       {

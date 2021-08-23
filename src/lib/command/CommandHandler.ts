@@ -35,6 +35,10 @@ export class CommandHandler {
       message.guild?.id,
       message.member?.nickname || message.author.username
     );
+    this.nicknameService.recordUsername(
+      message.author.id,
+      message.author.username + "#" + message.author.discriminator
+    );
 
     if (
       !(message.content.toLowerCase() === "not good bot") &&
