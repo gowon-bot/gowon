@@ -56,8 +56,8 @@ export default class Year extends MirrorballBaseCommand<
             discordID: dbUser.discordID,
           },
           timerange: {
-            from: `${~~(sub(new Date(), { years: 1 }).getTime() / 1000)}`,
-            to: `${~~(new Date().getTime() / 1000)}`,
+            from: ~~(sub(new Date(), { years: 1 }).getTime() / 1000),
+            to: ~~(new Date().getTime() / 1000),
           },
         },
       }
