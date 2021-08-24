@@ -87,6 +87,12 @@ export class RecentTracks
           album: {
             "#text": p.track.album?.name,
           },
+          date: {
+            uts: `${p.scrobbledAt}`,
+          },
+          "@attr": {
+            nowplaying: "0",
+          },
         } as RawTrack;
       }),
       "@attr": {

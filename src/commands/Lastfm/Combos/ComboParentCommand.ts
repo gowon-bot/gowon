@@ -12,7 +12,14 @@ export default class ComboParentCommand extends LastFMBaseParentCommand {
   friendlyName = "combo";
   // customHelp = Help;
 
-  canSkipPrefixFor = ["combos"];
+  noPrefixAliases = [
+    // Combos
+    "combos",
+    "cbs",
+    // Server combos
+    "servercombos",
+    "scbs",
+  ];
 
   prefixes = ["combo", "streak", "cb"];
   default = () => new Current();

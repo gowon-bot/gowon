@@ -34,7 +34,17 @@ export default class CrownsParentCommand extends LastFMBaseParentCommand {
 
   prefixes = ["crowns", "cw"];
   default = () => new List();
-  canSkipPrefixFor = ["info", "check", "checkmany"];
+  noPrefixAliases = [
+    // Check
+    "c",
+    "w",
+    // Checkmany
+    "cm",
+    // Info
+    "wh",
+    // History
+    "ch",
+  ];
 
   children: CommandManager = new CommandManager({
     check: () => new Check(),

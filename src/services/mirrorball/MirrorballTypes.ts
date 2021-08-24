@@ -1,4 +1,4 @@
-export type MirrorballDate = string;
+export type MirrorballDate = number;
 
 export enum UserType {
   Lastfm = "Lastfm",

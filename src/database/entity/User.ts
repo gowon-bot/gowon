@@ -149,6 +149,15 @@ export class User extends BaseEntity {
     return !!setting;
   }
 
+  async canClaimCrowns(message: Message): Promise<boolean> {
+    return (
+      !(await this.inPurgatory(message)) &&
+      !(await this.inactive(message)) &&
+      !(await this.isCrownBanned(message)) &&
+      !(await this.isOptedOut(message))
+    );
+  }
+
   async mirrorballUpdate(): Promise<void> {
     Logger.log("User", `updating ${this.discordID}`);
     if (!this.isIndexed) {

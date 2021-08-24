@@ -43,6 +43,8 @@ export function playsQuery(
       query plays($playsInput: PlaysInput!, $pageInput: PageInput) {
         plays(playsInput: $playsInput, pageInput: $pageInput) {
           plays {
+            scrobbledAt
+
             track {
               name
               artist {
@@ -66,6 +68,12 @@ export function playsQuery(
     const recentTracks = RecentTracks.fromMirrorballPlaysResponse(
       response.data,
       1000
+    );
+
+    console.log(
+      recentTracks.tracks
+        .slice(0, 30)
+        .map((t, idx) => `${idx + 1}` + ". " + t.name)
     );
 
     if (variables.pageInput?.offset === 0) {

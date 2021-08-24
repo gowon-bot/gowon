@@ -6,6 +6,8 @@ import { RedirectsService } from "../../../services/dbservices/RedirectsService"
 import { createInvalidBadge } from "../../../helpers/crowns";
 import { ArtistCrownBannedError } from "../../../errors";
 import { displayNumber } from "../../../lib/views/displays";
+import { LineConsolidator } from "../../../lib/LineConsolidator";
+import { User } from "../../../database/entity/User";
 
 const args = {
   inputs: {
@@ -63,13 +65,15 @@ export class Info extends CrownsChildCommand<typeof args> {
         throw new ArtistCrownBannedError(redirectArtistName);
       }
 
-      await this.traditionalReply(
-        `no one has the crown for ${redirectArtistName.strong()}${
-          redirectArtistName !== artistDetails.name
-            ? ` _(redirected from ${artistDetails.name})_`
-            : ""
-        }`
+      await this.handleNoCrown(
+        senderUser,
+        redirectArtistName,
+        artistDetails.userPlaycount,
+        redirectArtistName !== artistDetails.name
+          ? artistDetails.name
+          : undefined
       );
+
       return;
     }
 
@@ -110,5 +114,44 @@ export class Info extends CrownsChildCommand<typeof args> {
 
       await this.send(embed);
     }
+  }
+
+  private async handleNoCrown(
+    senderUser: User | undefined,
+    artistName: string,
+    playcount?: number,
+    redirectedFrom?: string
+  ) {
+    const lineConsolidator = new LineConsolidator();
+
+    const userCanClaimCrowns =
+      (await senderUser?.canClaimCrowns(this.message)) || false;
+
+    lineConsolidator.addLines(
+      `No one has the crown for ${artistName.strong()}` +
+        (redirectedFrom ? ` _(redirected from ${redirectedFrom})_` : ""),
+      {
+        shouldDisplay:
+          !!playcount &&
+          playcount > this.crownsService.threshold &&
+          userCanClaimCrowns,
+
+        string: `\nYou can claim it with \`${this.prefix}c ${artistName}\``,
+
+        else: userCanClaimCrowns
+          ? `\nYou need ${displayNumber(
+              this.crownsService.threshold,
+              "play"
+            )} to claim it`
+          : `\nYou can't claim this crown`,
+      }
+    );
+
+    const embed = this.newEmbed()
+      .setAuthor(...this.generateEmbedAuthor("Crown info"))
+      .setTitle(`Who has ${artistName.strong()}?`)
+      .setDescription(lineConsolidator.consolidate());
+
+    await this.send(embed);
   }
 }

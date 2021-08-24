@@ -15,7 +15,7 @@ const args = {
 export class History extends CrownsChildCommand<typeof args> {
   idSeed = "wjsn cheng xiao";
 
-  aliases = ["hist"];
+  aliases = ["hist", "ch"];
   description = "Shows a crown's history";
   usage = ["", "artist"];
 
@@ -43,10 +43,9 @@ export class History extends CrownsChildCommand<typeof args> {
     );
 
     if (!crown) {
-      await this.send(
-        `There is no history for the ${artistDetails.name.strong()} crown!`
+      throw new LogicError(
+        `There is no history for the ${artistDetails.name.strong()} crown yet!`
       );
-      return;
     }
 
     let history = await this.crownsService.scribe.getHistory(crown, [

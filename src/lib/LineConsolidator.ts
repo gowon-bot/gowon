@@ -1,6 +1,7 @@
 export interface Line {
   shouldDisplay: boolean;
   string: string;
+  else?: string;
 }
 
 export class LineConsolidator {
@@ -16,8 +17,8 @@ export class LineConsolidator {
 
   consolidate(): string {
     return this.lines
-      .filter((l) => l.shouldDisplay)
-      .map((l) => l.string)
+      .filter((l) => l.shouldDisplay || !!l.else)
+      .map((l) => (l.shouldDisplay ? l.string : l.else) || "")
       .join("\n");
   }
 }

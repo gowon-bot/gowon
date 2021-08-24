@@ -8,7 +8,12 @@ export abstract class ParentCommand extends BaseCommand {
   hasChildren = true;
   default?: () => Command;
   prefixes: string | Array<string> = "";
-  canSkipPrefixFor: Array<string> = [];
+
+  // A list of aliases that can "bypass" the parent prefix
+  // eg, if you had crownsparentcommand, and put `c` in this array,
+  // both `!c` and `!crowns c` would work.
+  // Formerly `canSkipPrefixFor`
+  noPrefixAliases: Array<string> = [];
 
   async getChild(
     child: string,

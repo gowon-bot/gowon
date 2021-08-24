@@ -16,7 +16,7 @@ const args = {
 export class ServerCombos extends ComboChildCommand<typeof args> {
   idSeed = "wonder girls hyelim";
 
-  aliases = ["server"];
+  aliases = ["server", "scbs"];
   description = "Shows your server's largest combos";
   subcategory = "library stats";
   usage = [""];

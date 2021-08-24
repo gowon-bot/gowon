@@ -8,17 +8,14 @@ export class AliasChecker {
 
   constructor(private aliasesString: string) {}
 
-  async parentCommandGetChildSkipPrefix(
+  async parentCommandGetChildNoPrefix(
     command: ParentCommand,
     childAlias: string,
     serverID: string
   ): Promise<Command | undefined> {
     const child = await command.children.find(childAlias, serverID);
 
-    if (
-      child.command &&
-      command.canSkipPrefixFor.includes(child.command.name)
-    ) {
+    if (child.command && command.noPrefixAliases.includes(childAlias)) {
       return child.command;
     }
 
@@ -95,7 +92,7 @@ export class AliasChecker {
           checks.slice(check_i + 1).join(" ") || "",
           serverID
         );
-        let childNoPrefix = await this.parentCommandGetChildSkipPrefix(
+        let childNoPrefix = await this.parentCommandGetChildNoPrefix(
           command,
           check,
           serverID
