@@ -1,4 +1,4 @@
-import { CommandManager } from "./CommandManager";
+import { CommandRegistry } from "./CommandRegistry";
 import { Message } from "discord.js";
 import { GowonService } from "../../services/GowonService";
 import { AdminService } from "../../services/dbservices/AdminService";
@@ -15,7 +15,7 @@ import Help from "../../commands/Help/Help";
 export class CommandHandler {
   gowonService = GowonService.getInstance();
   metaService = new MetaService();
-  commandManager = new CommandManager();
+  commandRegistry = new CommandRegistry();
   client!: GowonClient;
   adminService = new AdminService(this.client);
   private logger = new Logger();
@@ -26,7 +26,7 @@ export class CommandHandler {
   }
 
   async init() {
-    await this.commandManager.init();
+    await this.commandRegistry.init();
   }
 
   async handle(message: Message): Promise<void> {
@@ -68,7 +68,7 @@ export class CommandHandler {
         )
       )
     ) {
-      let { command, runAs } = await this.commandManager.find(
+      let { command, runAs } = await this.commandRegistry.find(
         message.content,
         message.guild.id
       );

@@ -28,7 +28,7 @@ export class Disable extends PermissionsChildCommand {
     );
 
     await this.send(
-      `Successfully disabled ${this.commandManager
+      `Successfully disabled ${this.commandRegistry
         .findByID(disabledCommand.commandID, { includeSecret: true })
         ?.name?.code()}`
     );

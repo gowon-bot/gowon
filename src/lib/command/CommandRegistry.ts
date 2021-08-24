@@ -33,7 +33,7 @@ async function generateCommands(): Promise<Commands> {
   }, {} as Commands);
 }
 
-export class CommandManager {
+export class CommandRegistry {
   isInitialized = false;
 
   constructor(public commands: Commands = {}) {}
@@ -99,5 +99,18 @@ export class CommandManager {
     ).filter(
       (c) => (showSecret || !c.secretCommand) && (showArchived || !c.archived)
     );
+  }
+
+  search(commands: Command[], keywords?: string): Command[] {
+    return keywords
+      ? commands.filter(
+          (command) =>
+            command.name.toLowerCase().includes(keywords) ||
+            !!command.aliases.find((a) => a.toLowerCase().includes(keywords)) ||
+            !!flatDeep(
+              command.variations.map((v) => [v.variation, v.name])
+            ).find((v) => v.toLowerCase().includes(keywords))
+        )
+      : commands;
   }
 }

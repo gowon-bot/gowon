@@ -17,7 +17,7 @@ import {
   UsernameNotRegisteredError,
 } from "../../errors";
 import { GowonService } from "../../services/GowonService";
-import { CommandManager } from "./CommandManager";
+import { CommandRegistry } from "./CommandRegistry";
 import { Logger } from "../Logger";
 import { Command, Rollout } from "./Command";
 import { TrackingService } from "../../services/TrackingService";
@@ -132,7 +132,7 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
   mirrorballService = new MirrorballService(this.logger);
 
   hasChildren = false;
-  children?: CommandManager;
+  children?: CommandRegistry;
   parentName?: string;
 
   async getChild(_: string, __: string): Promise<Command | undefined> {

@@ -3,7 +3,7 @@ import { Arguments } from "../../lib/arguments/arguments";
 import { BotStatsService } from "../../services/dbservices/BotStatsService";
 import { standardMentions } from "../../lib/arguments/mentions/mentions";
 import { LineConsolidator } from "../../lib/LineConsolidator";
-import { CommandManager } from "../../lib/command/CommandManager";
+import { CommandRegistry } from "../../lib/command/CommandRegistry";
 import { displayNumber } from "../../lib/views/displays";
 import { Emoji } from "../../lib/Emoji";
 
@@ -23,10 +23,10 @@ export default class UserInfo extends BaseCommand<typeof args> {
   arguments: Arguments = args;
 
   botStatsService = new BotStatsService();
-  commandManager = new CommandManager();
+  commandRegistry = new CommandRegistry();
 
   async run() {
-    await this.commandManager.init();
+    await this.commandRegistry.init();
 
     const { dbUser, discordUser } = await this.parseMentions({
       fetchDiscordUser: true,
@@ -63,7 +63,7 @@ export default class UserInfo extends BaseCommand<typeof args> {
         string: `**Top commands**: \n${topCommands
           .slice(0, 5)
           .map((c) => {
-            const command = this.commandManager.findByID(c.commandID, {
+            const command = this.commandRegistry.findByID(c.commandID, {
               includeArchived: true,
               includeSecret: true,
             });

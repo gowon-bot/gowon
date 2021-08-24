@@ -1,5 +1,5 @@
 import { Message } from "discord.js";
-import { CommandManager } from "../../../lib/command/CommandManager";
+import { CommandRegistry } from "../../../lib/command/CommandRegistry";
 import { PermissionsChildCommand } from "../Permissions/PermissionsChildCommand";
 
 export class Enable extends PermissionsChildCommand {
@@ -9,7 +9,7 @@ export class Enable extends PermissionsChildCommand {
   usage = "command";
   shouldBeIndexed = false;
 
-  commandManager = new CommandManager();
+  commandRegistry = new CommandRegistry();
 
   async run(message: Message) {
     let disabledCommand = await this.adminService.enableCommand(
@@ -19,7 +19,7 @@ export class Enable extends PermissionsChildCommand {
     );
 
     await this.send(
-      `Successfully re-enabled ${this.commandManager
+      `Successfully re-enabled ${this.commandRegistry
         .findByID(disabledCommand.commandID, { includeSecret: true })
         ?.name.code()}`
     );

@@ -4,7 +4,7 @@ import { Friend } from "../../database/entity/Friend";
 import { CommandRun } from "../../database/entity/meta/CommandRun";
 import { CrownEvent } from "../../database/entity/meta/CrownEvent";
 import { BaseCommand } from "../../lib/command/BaseCommand";
-import { CommandManager } from "../../lib/command/CommandManager";
+import { CommandRegistry } from "../../lib/command/CommandRegistry";
 import {
   displayDate,
   displayLink,
@@ -25,10 +25,10 @@ export default class About extends BaseCommand {
 
   lastFMService = new LastFMService(this.logger);
   redirectsService = new RedirectsService(this.logger);
-  commandManager = new CommandManager();
+  commandRegistry = new CommandRegistry();
 
   async run(_: any) {
-    await this.commandManager.init();
+    await this.commandRegistry.init();
 
     const author = await this.gowonClient.client.users.fetch(
       this.gowonClient.specialUsers.developers[0].id
@@ -40,7 +40,7 @@ export default class About extends BaseCommand {
     });
     let commandsRun = await CommandRun.count();
     let friends = await Friend.count();
-    let commandCount = this.commandManager.deepList().length;
+    let commandCount = this.commandRegistry.deepList().length;
 
     let userInfo = await this.lastFMService.userInfo({ username: "gowon_" });
     let artistCount = await this.lastFMService.artistCount("gowon_");

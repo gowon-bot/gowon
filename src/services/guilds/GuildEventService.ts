@@ -1,6 +1,6 @@
 import { Guild, GuildMember } from "discord.js";
 import gql from "graphql-tag";
-import { CommandManager } from "../../lib/command/CommandManager";
+import { CommandRegistry } from "../../lib/command/CommandRegistry";
 import { GowonClient } from "../../lib/GowonClient";
 import { Logger } from "../../lib/Logger";
 import { displayNumber } from "../../lib/views/displays";
@@ -12,7 +12,7 @@ import { MirrorballService } from "../mirrorball/MirrorballService";
 export class GuildEventService extends BaseService {
   gowonService = GowonService.getInstance();
   adminService = new AdminService(this.gowonClient);
-  commandManager = new CommandManager();
+  commandRegistry = new CommandRegistry();
   mirrorballService = new MirrorballService(this.logger);
 
   constructor(private gowonClient: GowonClient, logger?: Logger) {
@@ -20,7 +20,7 @@ export class GuildEventService extends BaseService {
   }
 
   async init() {
-    await this.commandManager.init();
+    await this.commandRegistry.init();
   }
 
   public async handleNewGuild(guild: Guild) {
@@ -82,7 +82,7 @@ export class GuildEventService extends BaseService {
     ];
 
     for (let commandName of commands) {
-      const { command, runAs } = await this.commandManager.find(
+      const { command, runAs } = await this.commandRegistry.find(
         commandName.command,
         guild.id
       );

@@ -2,7 +2,7 @@ import { BaseCommand } from "../../lib/command/BaseCommand";
 import { Arguments } from "../../lib/arguments/arguments";
 import { Validation } from "../../lib/validation/ValidationChecker";
 import { validators } from "../../lib/validation/validators";
-import { CommandManager } from "../../lib/command/CommandManager";
+import { CommandRegistry } from "../../lib/command/CommandRegistry";
 import { Command } from "../../lib/command/Command";
 import { AdminService } from "../../services/dbservices/AdminService";
 import { displayNumber } from "../../lib/views/displays";
@@ -29,7 +29,7 @@ export default class CommandSearch extends BaseCommand<typeof args> {
     keywords: new validators.Required({}),
   };
 
-  commandManager = new CommandManager();
+  commandRegistry = new CommandRegistry();
   adminService = new AdminService(this.gowonClient, this.logger);
 
   async run() {
@@ -37,9 +37,9 @@ export default class CommandSearch extends BaseCommand<typeof args> {
       .keywords!.toLowerCase()
       .replace(/\s+/, "");
 
-    await this.commandManager.init();
+    await this.commandRegistry.init();
 
-    const commandList = this.commandManager.deepList();
+    const commandList = this.commandRegistry.deepList();
 
     const commands = await this.adminService.can.viewList(
       commandList,
@@ -47,7 +47,7 @@ export default class CommandSearch extends BaseCommand<typeof args> {
       this.gowonClient
     );
 
-    const foundCommands = commands.filter(this.filter(keywords));
+    const foundCommands = this.commandRegistry.search(commands, keywords);
 
     const embed = this.newEmbed()
       .setTitle(`Command search results for ${keywords.code()}`)
@@ -69,16 +69,6 @@ export default class CommandSearch extends BaseCommand<typeof args> {
       );
 
     await this.send(embed);
-  }
-
-  private filter(keywords: string): (command: Command) => boolean {
-    return (command) =>
-      command.name.toLowerCase().includes(keywords) ||
-      !!command.aliases.find((a) => a.toLowerCase().includes(keywords)) ||
-      !!command.variations
-        .map((v) => v.variation)
-        .flat()
-        .find((v) => v.toLowerCase().includes(keywords));
   }
 
   private displayCommand(command: Command, keywords: string) {

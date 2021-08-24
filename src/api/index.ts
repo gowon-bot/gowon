@@ -3,26 +3,29 @@ import { ApolloServer, Config } from "apollo-server-express";
 import { UsersService } from "../services/dbservices/UsersService";
 import { typeDefs } from "./graphql/schema.gql";
 import userResolvers from "./resolvers/userResolvers";
-import crownResolvers from "./resolvers/crownResolvers";
-import redirectResolvers from "./resolvers/redirectResolvers";
+import commandResolversFunc from "./resolvers/commandResolvers";
 import { IndexingWebhookService } from "./indexing/IndexingWebhookService";
 import bodyParser from "body-parser";
+import { CommandRegistry } from "../lib/command/CommandRegistry";
 
 export const gowonAPIPort = 3000;
 
 export class GraphQLAPI {
   usersService = new UsersService();
+  commandRegistry = new CommandRegistry();
 
   async init() {
+    await this.commandRegistry.init();
+
     const app = express();
+
+    const commandResolvers = commandResolversFunc(this.commandRegistry);
 
     const config: Config = {
       typeDefs,
       resolvers: {
         Query: {
-          ...userResolvers.queries,
-          ...crownResolvers.queries,
-          ...redirectResolvers.queries,
+          ...commandResolvers.queries,
         },
         Mutation: {
           ...userResolvers.mutations,

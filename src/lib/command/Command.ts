@@ -2,7 +2,7 @@ import { Message } from "discord.js";
 import { Arguments } from "../arguments/arguments";
 import { GowonClient } from "../GowonClient";
 import { Variation } from "./BaseCommand";
-import { CommandManager } from "./CommandManager";
+import { CommandRegistry } from "./CommandRegistry";
 import { ParentCommand } from "./ParentCommand";
 import { RunAs } from "./RunAs";
 
@@ -31,7 +31,7 @@ export interface Command {
   delegatedFrom?: Command;
 
   hasChildren: boolean;
-  children?: CommandManager;
+  children?: CommandRegistry;
   parentName?: string;
   parent?: ParentCommand;
   gowonClient?: GowonClient;

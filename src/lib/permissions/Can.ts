@@ -3,7 +3,7 @@ import { GuildMember, Message } from "discord.js";
 import { Permission } from "../../database/entity/Permission";
 import { Command } from "../command/Command";
 import { ChildCommand } from "../command/ParentCommand";
-import { CommandManager } from "../command/CommandManager";
+import { CommandRegistry } from "../command/CommandRegistry";
 import { In } from "typeorm";
 import { GowonService } from "../../services/GowonService";
 import { GowonClient } from "../GowonClient";
@@ -21,7 +21,7 @@ export interface CanCheck {
 }
 
 export class Can {
-  commandManager = new CommandManager();
+  commandRegistry = new CommandRegistry();
   private gowonService = GowonService.getInstance();
 
   cachedPermissons: {
@@ -34,9 +34,9 @@ export class Can {
     child: ChildCommand,
     serverID: string
   ): Promise<string[]> {
-    if (!this.commandManager.isInitialized) await this.commandManager.init();
+    if (!this.commandRegistry.isInitialized) await this.commandRegistry.init();
 
-    let runAs = await this.commandManager.find(child.parentName, serverID);
+    let runAs = await this.commandRegistry.find(child.parentName, serverID);
 
     return runAs.runAs.toCommandArray().map((c) => c.id);
   }

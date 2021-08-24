@@ -1,4 +1,4 @@
-import { CommandManager } from "../../../lib/command/CommandManager";
+import { CommandRegistry } from "../../../lib/command/CommandRegistry";
 import { LastFMBaseParentCommand } from "../LastFMBaseCommand";
 import { Check } from "./Check";
 import { Info } from "./Info";
@@ -46,7 +46,7 @@ export default class CrownsParentCommand extends LastFMBaseParentCommand {
     "ch",
   ];
 
-  children: CommandManager = new CommandManager({
+  children: CommandRegistry = new CommandRegistry({
     check: () => new Check(),
     info: () => new Info(),
     list: () => new List(),

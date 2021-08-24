@@ -1,10 +1,10 @@
 import { Arguments } from "../arguments/arguments";
 import { BaseCommand } from "./BaseCommand";
 import { Command } from "./Command";
-import { CommandManager } from "./CommandManager";
+import { CommandRegistry } from "./CommandRegistry";
 
 export abstract class ParentCommand extends BaseCommand {
-  abstract children: CommandManager;
+  abstract children: CommandRegistry;
   hasChildren = true;
   default?: () => Command;
   prefixes: string | Array<string> = "";

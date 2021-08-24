@@ -10,61 +10,32 @@ export const typeDefs = gql`
     discordAuthCode: String
   }
 
-  type Crown {
+  type Command {
     id: ID!
-    serverID: String!
-    artistName: String!
-    plays: Int!
-    version: Int!
-    lastStolen: Date!
-    createdAt: Date!
-    deletedAt: Date
+    idSeed: String!
+    name: String!
+    friendlyName: String!
+    description: String!
+    parentName: String
 
-    user: User!
+    aliases: [String!]!
+    variations: [Variation!]!
+
+    category: String
+    subcategory: String
+    usage: [String!]!
+
+    hasChildren: Boolean!
   }
 
-  type SimpleCrown {
-    plays: Int
-    artistName: String
-  }
-
-  type CrownEvent {
-    id: ID!
-    event: String!
-    snatchedEvent: String
-
-    perpetuatorDiscordID: String!
-    perpetuatorUsername: String!
-    secondaryUserDiscordID: String
-    secondaryUsername: String
-
-    crown: Crown!
-
-    oldCrown: SimpleCrown
-    newCrown: SimpleCrown!
-
-    happenedAt: Date!
-  }
-
-  type Redirect {
-    from: String!
-    to: String!
+  type Variation {
+    name: String!
+    variation: [String!]!
+    description: String
   }
 
   type Query {
-    # User queries
-    user(id: ID!): User
-    users: [User!]!
-    userByDiscordID(discordID: String!): User
-
-    # Crown queries
-    crown(id: ID!): Crown
-    crownsByUser(discordID: String): [Crown!]!
-    crownsByServer(serverID: String!): [Crown!]!
-    crownHistory(crownID: ID!): [CrownEvent!]!
-
-    # Redirects
-    artistRedirects(artistName: String!): [Redirect!]!
+    commands(keywords: String): [Command!]!
   }
 
   type Mutation {

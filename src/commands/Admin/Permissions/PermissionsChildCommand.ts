@@ -1,6 +1,6 @@
 import { AdminBaseChildCommand } from "../AdminBaseCommand";
 import { Arguments } from "../../../lib/arguments/arguments";
-import { CommandManager } from "../../../lib/command/CommandManager";
+import { CommandRegistry } from "../../../lib/command/CommandRegistry";
 import { Command } from "../../../lib/command/Command";
 import { CommandNotFoundError } from "../../../errors";
 import { Permission } from "../../../database/entity/Permission";
@@ -33,7 +33,7 @@ export abstract class PermissionsChildCommand extends AdminBaseChildCommand<
   parentName = "permissions";
   subcategory = "permissions";
 
-  commandManager = new CommandManager();
+  commandRegistry = new CommandRegistry();
   command!: Command;
   aliases!: string[];
   runAs!: RunAs;
@@ -46,11 +46,11 @@ export abstract class PermissionsChildCommand extends AdminBaseChildCommand<
   arguments: Arguments = args;
 
   async prerun(message: Message) {
-    await this.commandManager.init();
+    await this.commandRegistry.init();
 
     this.aliases = this.parsedArguments.command!.split(/\s*\//);
 
-    const command = await this.commandManager.find(
+    const command = await this.commandRegistry.find(
       this.aliases.join(" "),
       this.guild.id
     );

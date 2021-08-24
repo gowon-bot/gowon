@@ -1,6 +1,6 @@
 import { CommandNotFoundError } from "../../errors";
 import { Arguments } from "../../lib/arguments/arguments";
-import { CommandManager } from "../../lib/command/CommandManager";
+import { CommandRegistry } from "../../lib/command/CommandRegistry";
 import { Validation } from "../../lib/validation/ValidationChecker";
 import { validators } from "../../lib/validation/validators";
 import { displayNumber } from "../../lib/views/displays";
@@ -29,14 +29,14 @@ export default class CommandInfo extends MetaBaseCommand<typeof args> {
   devCommand = true;
   description = "Displays some info about a command";
 
-  commandManager = new CommandManager();
+  commandRegistry = new CommandRegistry();
 
   async run() {
     const searchString = this.parsedArguments.searchString!;
 
-    await this.commandManager.init();
+    await this.commandRegistry.init();
 
-    const { command, runAs } = await this.commandManager.find(
+    const { command, runAs } = await this.commandRegistry.find(
       searchString,
       this.guild.id
     );

@@ -1,6 +1,6 @@
 import { BaseCommand } from "../../lib/command/BaseCommand";
 import { Message } from "discord.js";
-import { CommandManager } from "../../lib/command/CommandManager";
+import { CommandRegistry } from "../../lib/command/CommandRegistry";
 import { Arguments } from "../../lib/arguments/arguments";
 import { AdminService } from "../../services/dbservices/AdminService";
 import { CommandNotFoundError } from "../../errors";
@@ -22,13 +22,13 @@ export default class HelpForOneCommand extends BaseCommand<typeof args> {
 
   arguments: Arguments = args;
 
-  commandManager = new CommandManager();
+  commandRegistry = new CommandRegistry();
   adminService = new AdminService(this.gowonClient);
 
   async run(message: Message) {
     let command = this.parsedArguments.command!;
 
-    await this.commandManager.init();
+    await this.commandRegistry.init();
 
     let embed = await this.helpForOneCommand(message, command);
 
@@ -38,7 +38,7 @@ export default class HelpForOneCommand extends BaseCommand<typeof args> {
   }
 
   private async helpForOneCommand(message: Message, input: string) {
-    let { command } = await this.commandManager.find(input, this.guild.id);
+    let { command } = await this.commandRegistry.find(input, this.guild.id);
 
     if (!command) throw new CommandNotFoundError();
 

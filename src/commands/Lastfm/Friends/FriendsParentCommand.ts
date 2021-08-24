@@ -1,4 +1,4 @@
-import { CommandManager } from "../../../lib/command/CommandManager";
+import { CommandRegistry } from "../../../lib/command/CommandRegistry";
 import { LastFMBaseParentCommand } from "../LastFMBaseCommand";
 import { Add } from "./Add";
 import { List } from "./List";
@@ -22,7 +22,7 @@ export default class FriendsParentCommand extends LastFMBaseParentCommand {
   prefixes = ["friends", "fr"];
   default = () => new List();
 
-  children: CommandManager = new CommandManager({
+  children: CommandRegistry = new CommandRegistry({
     add: () => new Add(),
     list: () => new List(),
     remove: () => new Remove(),

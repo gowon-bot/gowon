@@ -72,7 +72,7 @@ export function playsQuery(
 
     console.log(
       recentTracks.tracks
-        .slice(0, 30)
+        .slice(0, 60)
         .map((t, idx) => `${idx + 1}` + ". " + t.name)
     );
 

@@ -1,4 +1,4 @@
-import { CommandManager } from "../../../../lib/command/CommandManager";
+import { CommandRegistry } from "../../../../lib/command/CommandRegistry";
 import { LastFMBaseParentCommand } from "../../LastFMBaseCommand";
 import { Add } from "./Add";
 import { Help } from "./Help";
@@ -20,7 +20,7 @@ export default class NowPlayingConfigParentCommand extends LastFMBaseParentComma
   default = () => new View();
   canSkipPrefixFor = ["react"];
 
-  children: CommandManager = new CommandManager({
+  children: CommandRegistry = new CommandRegistry({
     view: () => new View(),
     set: () => new Set(),
     help: () => new Help(),

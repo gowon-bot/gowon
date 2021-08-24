@@ -1,4 +1,4 @@
-import { CommandManager } from "../../lib/command/CommandManager";
+import { CommandRegistry } from "../../lib/command/CommandRegistry";
 import Issue from "./Issue";
 import { MetaBaseParentCommand } from "./MetaBaseCommand";
 import { TopCommands } from "./TopCommands";
@@ -11,7 +11,7 @@ export default class MetaParentCommamnd extends MetaBaseParentCommand {
   prefixes = ["meta"];
   devCommand = true;
 
-  children: CommandManager = new CommandManager({
+  children: CommandRegistry = new CommandRegistry({
     topcommands: () => new TopCommands(),
     feedback: () => new Issue(),
     serverreport: () => new ServerReport(),

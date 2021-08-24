@@ -1,4 +1,4 @@
-import { CommandManager } from "../../../lib/command/CommandManager";
+import { CommandRegistry } from "../../../lib/command/CommandRegistry";
 import { AdminBaseParentCommand } from "../AdminBaseCommand";
 import { Blacklist } from "./Blacklist";
 import { Help } from "./Help";
@@ -20,7 +20,7 @@ export default class PermissionsParentCommand extends AdminBaseParentCommand {
 
   prefixes = ["permissions", "perms"];
 
-  children: CommandManager = new CommandManager({
+  children: CommandRegistry = new CommandRegistry({
     blacklist: () => new Blacklist(),
     help: () => new Help(),
     delist: () => new Delist(),

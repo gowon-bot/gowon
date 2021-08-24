@@ -1,4 +1,4 @@
-import { CommandManager } from "../../../lib/command/CommandManager";
+import { CommandRegistry } from "../../../lib/command/CommandRegistry";
 import { LastFMBaseParentCommand } from "../LastFMBaseCommand";
 import { All } from "./All";
 import { Joined } from "./Joined";
@@ -27,7 +27,7 @@ export default class OverviewParentCommand extends LastFMBaseParentCommand {
   prefixes = ["o", "overview"];
   default = () => new All();
 
-  children: CommandManager = new CommandManager({
+  children: CommandRegistry = new CommandRegistry({
     all: () => new All(),
     joined: () => new Joined(),
     scrobbles: () => new AvgPerDay(),
