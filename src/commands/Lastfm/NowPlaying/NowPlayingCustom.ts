@@ -13,8 +13,6 @@ export default class NowPlayingCustom extends NowPlayingBaseCommand {
     "Displays the now playing or last played track from Last.fm. See `npc help` for details on how to customize your embeds.";
   aliases = ["fmx", "npx"];
 
-  secretCommand = true;
-
   datasourceService = new DatasourceService(this.logger);
   configService = new ConfigService(this.logger);
   metaService = new MetaService(this.logger);
