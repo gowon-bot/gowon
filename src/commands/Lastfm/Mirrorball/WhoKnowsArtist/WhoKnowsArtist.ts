@@ -11,7 +11,11 @@ import {
   displayNumberedList,
 } from "../../../../lib/views/displays";
 import { CrownsService } from "../../../../services/dbservices/CrownsService";
-import { NicknameService } from "../../../../services/guilds/NicknameService";
+import {
+  NicknameService,
+  UnknownUserDisplay,
+} from "../../../../services/guilds/NicknameService";
+import { WhoKnowsService } from "../../../../services/guilds/WhoKnowsService";
 import {
   WhoKnowsArtistConnector,
   WhoKnowsArtistParams,
@@ -48,6 +52,7 @@ export default class WhoKnowsArtist extends MirrorballBaseCommand<
 
   nicknameService = new NicknameService(this.logger);
   crownsService = new CrownsService(this.logger);
+  whoKnowsService = new WhoKnowsService(this.logger);
 
   async run() {
     const { senderRequestable, senderUser } = await this.parseMentions({
@@ -100,15 +105,27 @@ export default class WhoKnowsArtist extends MirrorballBaseCommand<
         shouldDisplay: artist && rows.length !== 0,
         string: displayNumberedList(
           rows.map((wk) => {
-            const nickname = displayLink(
-              this.nicknameService.cacheGetNickname(wk.user.discordID),
-              LinkGenerator.userPage(wk.user.username)
+            const nickname = this.nicknameService.cacheGetNickname(
+              wk.user.discordID
             );
+
+            const isUnknown = nickname === UnknownUserDisplay;
+
+            if (isUnknown) {
+              this.whoKnowsService.recordUnknownMember(
+                this.guild.id,
+                wk.user.discordID
+              );
+            }
+
+            const nicknameDisplay = isUnknown
+              ? nickname
+              : displayLink(nickname, LinkGenerator.userPage(wk.user.username));
 
             return `${
               wk.user.discordID === senderUser?.discordID
-                ? nickname.strong()
-                : nickname
+                ? nicknameDisplay.strong()
+                : nicknameDisplay
             } - **${displayNumber(wk.playcount, "**play")}${
               crown?.user?.discordID === wk.user.discordID ? " 👑" : ""
             }`;

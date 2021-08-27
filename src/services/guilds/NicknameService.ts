@@ -3,9 +3,11 @@ import { displayNumber } from "../../lib/views/displays";
 import { BaseService } from "../BaseService";
 import { RedisService } from "../redis/RedisService";
 
+export const UnknownUserDisplay = "<Unknown user>";
+
 export class NicknameService extends BaseService {
   redisService = new RedisService(this.logger, {
-    defaultExpiry: 30 * 24 * 60 * 60,
+    defaultExpirySeconds: 30 * 24 * 60 * 60,
   });
 
   private cache: { [discordID: string]: string } = {};
@@ -65,18 +67,22 @@ export class NicknameService extends BaseService {
       "nickname"
     );
 
-    if (!nickname || nickname === "<Unknown user>") {
+    if (!nickname) {
       try {
         this.log(`Fetching nickname for ${discordID} in ${guildID}`);
         const user = await gowonClient.client.guilds
           .resolve(guildID)
           ?.members.fetch(discordID);
 
-        nickname = user?.nickname || user?.user.username || "<Unknown user>";
+        nickname = user?.nickname || user?.user.username;
+
+        if (!nickname) {
+          return UnknownUserDisplay;
+        }
 
         this.recordNickname(discordID, guildID, nickname);
       } catch {
-        return "<Unknown user>";
+        return UnknownUserDisplay;
       }
     }
 

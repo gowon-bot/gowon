@@ -12,12 +12,12 @@ export class RedisService extends BaseService {
   constructor(
     logger: Logger | undefined,
     options: {
-      defaultExpiry?: number;
+      defaultExpirySeconds?: number;
       prefix?: string;
     } = {}
   ) {
     super(logger);
-    this.defaultExpiry = options.defaultExpiry || 600;
+    this.defaultExpiry = options.defaultExpirySeconds || 600;
     this.prefix = options.prefix || "";
   }
 

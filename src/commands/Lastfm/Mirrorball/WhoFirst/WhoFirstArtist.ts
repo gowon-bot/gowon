@@ -10,7 +10,11 @@ import {
   displayLink,
   displayNumberedList,
 } from "../../../../lib/views/displays";
-import { NicknameService } from "../../../../services/guilds/NicknameService";
+import {
+  NicknameService,
+  UnknownUserDisplay,
+} from "../../../../services/guilds/NicknameService";
+import { WhoKnowsService } from "../../../../services/guilds/WhoKnowsService";
 import {
   WhoFirstArtistConnector,
   WhoFirstArtistParams,
@@ -52,11 +56,12 @@ export default class WhoFirstArtist extends MirrorballBaseCommand<
   arguments: Arguments = args;
 
   nicknameService = new NicknameService(this.logger);
+  whoKnowsService = new WhoKnowsService(this.logger);
 
   async run() {
     const whoLast = this.variationWasUsed("wholast");
 
-    let { senderRequestable } = await this.parseMentions({
+    let { senderRequestable, senderUser } = await this.parseMentions({
       senderRequired: !this.parsedArguments.artist,
     });
 
@@ -93,13 +98,33 @@ export default class WhoFirstArtist extends MirrorballBaseCommand<
         !artist || rows.length === 0
           ? `No one has scrobbled this artist`
           : displayNumberedList(
-              rows.map(
-                (wk) =>
-                  `${displayLink(
-                    this.nicknameService.cacheGetNickname(wk.user.discordID),
-                    LinkGenerator.userPage(wk.user.username)
-                  )} - ${displayDate(convertMirrorballDate(wk.scrobbledAt))}`
-              )
+              rows.map((wk) => {
+                const nickname = this.nicknameService.cacheGetNickname(
+                  wk.user.discordID
+                );
+
+                const isUnknown = nickname === UnknownUserDisplay;
+
+                if (isUnknown) {
+                  this.whoKnowsService.recordUnknownMember(
+                    this.guild.id,
+                    wk.user.discordID
+                  );
+                }
+
+                const nicknameDisplay = isUnknown
+                  ? nickname
+                  : displayLink(
+                      nickname,
+                      LinkGenerator.userPage(wk.user.username)
+                    );
+
+                return `${
+                  wk.user.discordID === senderUser?.discordID
+                    ? nicknameDisplay.strong()
+                    : nicknameDisplay
+                } - ${displayDate(convertMirrorballDate(wk.scrobbledAt))}`;
+              })
             )
       );
 

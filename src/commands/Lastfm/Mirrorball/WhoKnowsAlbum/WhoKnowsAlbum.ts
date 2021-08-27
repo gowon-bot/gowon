@@ -8,7 +8,11 @@ import {
   displayNumber,
   displayNumberedList,
 } from "../../../../lib/views/displays";
-import { NicknameService } from "../../../../services/guilds/NicknameService";
+import {
+  NicknameService,
+  UnknownUserDisplay,
+} from "../../../../services/guilds/NicknameService";
+import { WhoKnowsService } from "../../../../services/guilds/WhoKnowsService";
 import {
   WhoKnowsAlbumConnector,
   WhoKnowsAlbumParams,
@@ -41,6 +45,7 @@ export default class WhoKnowsAlbum extends MirrorballBaseCommand<
   arguments: Arguments = args;
 
   nicknameService = new NicknameService(this.logger);
+  whoKnowsService = new WhoKnowsService(this.logger);
 
   async run() {
     let { senderRequestable, senderUser } = await this.parseMentions({
@@ -83,15 +88,30 @@ export default class WhoKnowsAlbum extends MirrorballBaseCommand<
           ? `No one knows this album`
           : displayNumberedList(
               rows.map((wk) => {
-                const nickname = displayLink(
-                  this.nicknameService.cacheGetNickname(wk.user.discordID),
-                  LinkGenerator.userPage(wk.user.username)
+                const nickname = this.nicknameService.cacheGetNickname(
+                  wk.user.discordID
                 );
+
+                const isUnknown = nickname === UnknownUserDisplay;
+
+                if (isUnknown) {
+                  this.whoKnowsService.recordUnknownMember(
+                    this.guild.id,
+                    wk.user.discordID
+                  );
+                }
+
+                const nicknameDisplay = isUnknown
+                  ? nickname
+                  : displayLink(
+                      nickname,
+                      LinkGenerator.userPage(wk.user.username)
+                    );
 
                 return `${
                   wk.user.discordID === senderUser?.discordID
-                    ? nickname.strong()
-                    : nickname
+                    ? nicknameDisplay.strong()
+                    : nicknameDisplay
                 } - **${displayNumber(wk.playcount, "**play")}`;
               })
             )
