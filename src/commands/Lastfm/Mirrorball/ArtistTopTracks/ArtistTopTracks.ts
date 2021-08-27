@@ -103,7 +103,7 @@ export default class ArtistTopTracks extends MirrorballBaseCommand<
             topTracks.length,
             "total track"
           )}, ${displayNumber(
-            average.toPrecision(2),
+            average.toFixed(2),
             "average scrobble"
           )} per track`.italic() + "\n",
       }

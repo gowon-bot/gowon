@@ -58,7 +58,7 @@ export class NicknameService extends BaseService {
     discordID: string,
     guildID: string,
     gowonClient: GowonClient
-  ) {
+  ): Promise<string> {
     let nickname = await this.redisService.sessionGet(
       discordID,
       guildID,
@@ -66,14 +66,18 @@ export class NicknameService extends BaseService {
     );
 
     if (!nickname || nickname === "<Unknown user>") {
-      this.log(`Fetching nickname for ${discordID} in ${guildID}`);
-      const user = await gowonClient.client.guilds
-        .resolve(guildID)
-        ?.members.fetch(discordID);
+      try {
+        this.log(`Fetching nickname for ${discordID} in ${guildID}`);
+        const user = await gowonClient.client.guilds
+          .resolve(guildID)
+          ?.members.fetch(discordID);
 
-      nickname = user?.nickname || user?.user.username || "<Unknown user>";
+        nickname = user?.nickname || user?.user.username || "<Unknown user>";
 
-      this.recordNickname(discordID, guildID, nickname);
+        this.recordNickname(discordID, guildID, nickname);
+      } catch {
+        return "<Unknown user>";
+      }
     }
 
     return nickname;

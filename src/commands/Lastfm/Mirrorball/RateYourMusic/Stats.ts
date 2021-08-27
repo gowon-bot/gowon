@@ -66,9 +66,7 @@ export class Stats extends RateYourMusicIndexingChildCommand<
 
           "total rating"
         )}, Average rating: ${displayNumber(
-          (mean(response.ratings.ratings.map((r) => r.rating)) / 2).toPrecision(
-            3
-          )
+          (mean(response.ratings.ratings.map((r) => r.rating)) / 2).toFixed(3)
         )}_
         
 ${Object.entries(ratingsCounts)

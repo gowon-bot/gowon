@@ -95,7 +95,7 @@ export class Rating extends FriendsChildCommand<typeof args> {
           (mean(
             filteredRatings.map((r) => r[1].ratings.ratings[0].rating)
           ) as number) / 2
-        ).toPrecision(2)}/5 from ${displayNumber(
+        ).toFixed(2)}/5 from ${displayNumber(
           filteredRatings.length,
           "rating"
         )}_\n\n` +

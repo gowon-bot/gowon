@@ -89,7 +89,7 @@ export class ArtistRatings extends RateYourMusicIndexingChildCommand<
 
     const header = `**Average**: ${(
       (mean(response.ratings.ratings.map((r) => r.rating)) as number) / 2
-    ).toPrecision(2)}/5 from ${displayNumber(
+    ).toFixed(2)}/5 from ${displayNumber(
       response.ratings.ratings.length,
       "rating"
     )}`;

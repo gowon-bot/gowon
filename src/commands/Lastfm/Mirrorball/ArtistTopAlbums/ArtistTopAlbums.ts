@@ -104,7 +104,7 @@ export default class ArtistTopAlbums extends MirrorballBaseCommand<
             topAlbums.length,
             "total album"
           )}, ${displayNumber(
-            average.toPrecision(2),
+            average.toFixed(2),
             "average scrobble"
           )} per album`.italic() + "\n",
       }
