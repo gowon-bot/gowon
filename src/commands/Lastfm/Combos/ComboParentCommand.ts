@@ -5,7 +5,7 @@ import { Combos } from "./Combos";
 import { ServerCombos } from "./Server";
 
 export default class ComboParentCommand extends LastFMBaseParentCommand {
-  idSeed = "weeekly soeun";
+  idSeed = "hello venus lime";
 
   subcategory = "stats";
   description = "Allows you to view and manage your combos";

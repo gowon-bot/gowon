@@ -1,6 +1,5 @@
 import { Chance } from "chance";
 import { BaseCommand } from "../../lib/command/BaseCommand";
-import { RunAs } from "../../lib/command/RunAs";
 
 export default class Ping extends BaseCommand {
   idSeed = "blackpink lisa";
@@ -10,7 +9,7 @@ export default class Ping extends BaseCommand {
   aliases = ["🏓", "pin", "pingu"];
   secretCommand = true;
 
-  async run(_: any, runAs: RunAs) {
+  async run() {
     if (Chance().bool({ likelihood: 20 })) {
       await this.reply("PANG! 🏌️");
       return;
@@ -18,9 +17,9 @@ export default class Ping extends BaseCommand {
 
     await this.reply(
       `Pon${
-        runAs.variationWasUsed("pingu")
+        this.runAs.variationWasUsed("pingu")
           ? "gu"
-          : runAs.variationWasUsed("pin")
+          : this.runAs.variationWasUsed("pin")
           ? ""
           : "g"
       } 🏓`,

@@ -5,6 +5,7 @@ import { RunAs } from "./RunAs";
 
 import { promisify } from "util";
 import _glob from "glob";
+import { ParentCommand } from "./ParentCommand";
 const glob = promisify(_glob);
 
 interface Commands {
@@ -102,15 +103,62 @@ export class CommandRegistry {
   }
 
   search(commands: Command[], keywords?: string): Command[] {
-    return keywords
-      ? commands.filter(
-          (command) =>
-            command.name.toLowerCase().includes(keywords) ||
-            !!command.aliases.find((a) => a.toLowerCase().includes(keywords)) ||
-            !!flatDeep(
-              command.variations.map((v) => [v.variation, v.name])
-            ).find((v) => v.toLowerCase().includes(keywords))
-        )
-      : commands;
+    if (!keywords) {
+      return commands.sort((a, b) =>
+        a.friendlyName.localeCompare(b.friendlyName)
+      );
+    }
+
+    let filteredCommands = commands
+      .filter(
+        (command) =>
+          (command.friendlyNameWithParent || command.name)
+            .toLowerCase()
+            .includes(keywords) ||
+          !!command.aliases.find((a) => a.toLowerCase().includes(keywords)) ||
+          !!flatDeep(command.variations.map((v) => [v.variation, v.name])).find(
+            (v) => v.toLowerCase().includes(keywords)
+          ) ||
+          checkPrefixes(command, keywords)
+      )
+      .sort((a, b) => a.friendlyName.localeCompare(b.friendlyName));
+
+    const exactMatch = filteredCommands.filter(
+      (c) =>
+        (c.friendlyNameWithParent || c.name).toLowerCase() ===
+          keywords.toLowerCase() ||
+        c.aliases.find((a) => a.toLowerCase() === keywords.toLowerCase()) ||
+        checkPrefixes(c, keywords, true)
+    );
+
+    if (exactMatch.length) {
+      return [
+        ...exactMatch,
+        ...filteredCommands.filter(
+          (c) => !exactMatch.some((m) => c.id === m.id)
+        ),
+      ];
+    }
+
+    return filteredCommands;
   }
+}
+
+function checkPrefixes(
+  command: Command,
+  keywords: string,
+  exact = false
+): boolean {
+  if (command instanceof ParentCommand && command.prefixes) {
+    const prefixes =
+      command.prefixes instanceof Array ? command.prefixes : [command.prefixes];
+
+    return prefixes.some((p) =>
+      exact
+        ? p.toLowerCase() === keywords.toLowerCase()
+        : p.toLowerCase().includes(keywords.toLowerCase())
+    );
+  }
+
+  return false;
 }

@@ -26,6 +26,7 @@ export const typeDefs = gql`
     usage: [String!]!
 
     hasChildren: Boolean!
+    children: [Command!]!
   }
 
   type Variation {

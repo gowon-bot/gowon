@@ -8,9 +8,7 @@ export default (registry: CommandRegistry) => ({
 
       const results = registry.search(commands, keywords);
 
-      return results
-        .map(commandToData)
-        .sort((a, b) => a.friendlyName.localeCompare(b.friendlyName));
+      return results.map(commandToData);
     },
   },
 });
@@ -31,6 +29,7 @@ export interface CommandResponse {
   usage: string[];
 
   hasChildren: boolean;
+  children: CommandResponse[];
 }
 
 export interface VariationResponse {
@@ -60,6 +59,7 @@ function commandToData(command: Command): CommandResponse {
     usage: convertToArray(command.usage),
 
     hasChildren: command.hasChildren,
+    children: command.children?.list().map((c) => commandToData(c)) || [],
   };
 }
 
