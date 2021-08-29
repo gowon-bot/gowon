@@ -40,9 +40,6 @@ export class GraphQLAPI {
     server.applyMiddleware({
       app,
       path: "/graphql",
-      cors: {
-        origin: "http://localhost:3001",
-      },
     });
 
     app.use("/api", bodyParser.json());
