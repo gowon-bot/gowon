@@ -68,6 +68,7 @@ export function flatDeep<T = any>(arr: Array<any>, d = Infinity): Array<T> {
 export function getOrdinal(number: number): string {
   if (`${number}`.endsWith("11")) return displayNumber(number) + "th";
   if (`${number}`.endsWith("12")) return displayNumber(number) + "th";
+  if (`${number}`.endsWith("13")) return displayNumber(number) + "th";
 
   let ordinals = [
     "th",

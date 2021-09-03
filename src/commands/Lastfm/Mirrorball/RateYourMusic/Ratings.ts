@@ -103,7 +103,7 @@ export class Ratings extends RateYourMusicIndexingChildCommand<
       .setAuthor(...this.generateEmbedAuthor("Ratings"))
       .setTitle(
         rating
-          ? `${perspective.upper.possessive} albums rated ${rating}`
+          ? `${perspective.upper.possessive} albums rated ${rating / 2}`
           : `${perspective.upper.possessive} top rated albums`
       );
 

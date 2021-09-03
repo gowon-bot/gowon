@@ -39,7 +39,7 @@ export default class Update extends MirrorballBaseCommand<
   connector = new UpdateUserConnector();
 
   idSeed = "bvndit yiyeon";
-  aliases = ["u"];
+  aliases = ["u", "🆙date"];
   subcategory = "library";
   description = "Updates a user's cached data based on their lastest scrobbles";
 
