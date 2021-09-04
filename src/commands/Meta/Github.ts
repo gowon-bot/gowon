@@ -19,12 +19,15 @@ export default class Github extends BaseCommand {
         `You can find the bot repo at ${displayLink(
           "jivison/gowon",
           "https://github.com/jivison/gowon"
-        )} and the indexing repo at ${displayLink(
+        )}, the indexing repo at ${displayLink(
           "jivison/mirrorball",
           "https://github.com/jivison/mirrorball"
+        )}, and the website repo at ${displayLink(
+          "jivison/gowon.ca",
+          "https://github.com/jivison/gowon.ca"
         )}
       
-The bot is written in Typescript with Discord.js, and Mirrorball (the indexing server) is written in Go serving a GraphQL api; both use Postgres as a database.`
+The bot is written in Typescript with Discord.js, Mirrorball (the indexing server) is written in Go serving a GraphQL api, and Gowon.ca is built with Typescript and React`
       )
       .setFooter(
         `Made with <3 by ${author.tag}`,
