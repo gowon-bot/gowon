@@ -111,7 +111,7 @@ export default class WhoKnowsArtist extends WhoKnowsBaseCommand<
         ),
       },
       {
-        shouldDisplay: rank > 15 && !!senderUser,
+        shouldDisplay: !this.isGlobal() && rank > 15 && !!senderUser,
         string: `\n\`${rank}.\` ${displayLink(
           this.message.member?.nickname || this.message.author.username,
           LinkGenerator.userPage(senderUser?.lastFMUsername!)
