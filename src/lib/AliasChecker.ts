@@ -45,9 +45,11 @@ export class AliasChecker {
       const variations =
         v.variation instanceof Array ? v.variation : [v.variation];
 
-      return !!variations.find(
+      const found = !!variations.find(
         (v) => v.toLowerCase() === variation.toLowerCase()
       );
+
+      if (found) return found;
     }
     return false;
   }

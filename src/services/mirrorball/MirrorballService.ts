@@ -4,7 +4,7 @@ import { IndexingWebhookService } from "../../api/indexing/IndexingWebhookServic
 import { mirrorballClient } from "../../lib/indexing/client";
 import { BaseService } from "../BaseService";
 import { UsersService } from "../dbservices/UsersService";
-import { MirrorballPageInfo, UserType } from "./MirrorballTypes";
+import { MirrorballPageInfo, MirrorballUserType } from "./MirrorballTypes";
 
 export class MirrorballService extends BaseService {
   private usersService = new UsersService(this.logger);
@@ -82,7 +82,7 @@ export class MirrorballService extends BaseService {
   public async login(
     username: string,
     discordID: string,
-    userType: UserType,
+    userType: MirrorballUserType,
     session: string | undefined
   ) {
     return await this.query(

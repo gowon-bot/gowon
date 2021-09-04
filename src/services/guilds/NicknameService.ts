@@ -10,7 +10,8 @@ export class NicknameService extends BaseService {
     defaultExpirySeconds: 30 * 24 * 60 * 60,
   });
 
-  private cache: { [discordID: string]: string } = {};
+  private nicknameCache: { [discordID: string]: string } = {};
+  private usernameCache: { [discordID: string]: string } = {};
 
   async cacheNicknames(
     users: Array<{ discordID: string } | string>,
@@ -31,14 +32,42 @@ export class NicknameService extends BaseService {
       await Promise.all(
         discordIDs.map(async (u) => ({
           discordID: u,
-          nickname: await this.getUsername(u, guildID, gowonClient),
+          info: await this.getNickname(u, guildID, gowonClient),
         }))
       )
-    ).forEach((u) => (this.cache[u.discordID] = u.nickname));
+    ).forEach((u) => {
+      if (u.info.nickname) this.nicknameCache[u.discordID] = u.info.nickname;
+      if (u.info.username) this.usernameCache[u.discordID] = u.info.username;
+    });
+  }
+
+  async cacheUsernames(
+    users: Array<{ discordID: string } | string>,
+    gowonClient: GowonClient
+  ) {
+    this.log(`Caching usernames for ${displayNumber(users.length, "user")}`);
+
+    const discordIDs: string[] =
+      typeof users[0] === "string" ? users : users.map((u: any) => u.discordID);
+
+    (
+      await Promise.all(
+        discordIDs.map(async (u) => ({
+          discordID: u,
+          username: await this.getUsername(u, gowonClient),
+        }))
+      )
+    ).forEach((u) => {
+      this.usernameCache[u.discordID] = u.username;
+    });
   }
 
   cacheGetNickname(discordID: string): string {
-    return this.cache[discordID];
+    return this.nicknameCache[discordID];
+  }
+
+  cacheGetUsername(discordID: string): string {
+    return this.usernameCache[discordID];
   }
 
   async recordNickname(
@@ -56,36 +85,66 @@ export class NicknameService extends BaseService {
     );
   }
 
-  async getUsername(
+  async recordUsername(discordID: string, username: string) {
+    await this.redisService.set(this.generateUsernameKey(discordID), username);
+  }
+
+  async getNickname(
     discordID: string,
     guildID: string,
     gowonClient: GowonClient
-  ): Promise<string> {
+  ): Promise<{ nickname?: string; username?: string }> {
     let nickname = await this.redisService.sessionGet(
       discordID,
       guildID,
       "nickname"
     );
+    let username: string | undefined;
 
-    if (!nickname) {
+    if (!nickname || nickname === "<Unknown user>") {
+      this.log(`Fetching nickname for ${discordID} in ${guildID}`);
+
       try {
-        this.log(`Fetching nickname for ${discordID} in ${guildID}`);
         const user = await gowonClient.client.guilds
           .resolve(guildID)
           ?.members.fetch(discordID);
 
-        nickname = user?.nickname || user?.user.username;
-
-        if (!nickname) {
-          return UnknownUserDisplay;
-        }
+        nickname = user?.nickname || user?.user.username || UnknownUserDisplay;
+        username = user?.user.username;
 
         this.recordNickname(discordID, guildID, nickname);
+      } catch {}
+    }
+
+    return { nickname, username };
+  }
+
+  async getUsername(
+    discordID: string,
+    gowonClient: GowonClient
+  ): Promise<string> {
+    let username =
+      this.cacheGetUsername(discordID) ||
+      (await this.redisService.get(this.generateUsernameKey(discordID)));
+
+    if (!username || username === UnknownUserDisplay) {
+      this.log(`Fetching username for ${discordID}`);
+      try {
+        const user = await gowonClient.client.users.fetch(discordID);
+
+        username = user ? user.username + "#" + user.discriminator : undefined;
+
+        if (username) this.recordUsername(discordID, username);
+        else username = UnknownUserDisplay;
       } catch {
-        return UnknownUserDisplay;
+        username = UnknownUserDisplay;
       }
     }
 
-    return nickname;
+    return username;
+  }
+
+  protected generateUsernameKey(discordID: string) {
+    return `${discordID}-username`;
   }
 }

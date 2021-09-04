@@ -1,9 +1,10 @@
 import { gql } from "apollo-server-express";
-import { BaseConnector } from "../../../../lib/indexing/BaseConnector";
+import { BaseConnector } from "../../../../../lib/indexing/BaseConnector";
 import {
   AlbumInput,
+  MirrorballUser,
   WhoKnowsSettings,
-} from "../../../../services/mirrorball/MirrorballTypes";
+} from "../../../../../services/mirrorball/MirrorballTypes";
 
 export interface WhoKnowsAlbumResponse {
   whoKnowsAlbum: {
@@ -16,10 +17,7 @@ export interface WhoKnowsAlbumResponse {
 
     rows: {
       playcount: number;
-      user: {
-        username: string;
-        discordID: string;
-      };
+      user: MirrorballUser;
     }[];
   };
 }
@@ -48,6 +46,7 @@ export class WhoKnowsAlbumConnector extends BaseConnector<
           user {
             username
             discordID
+            privacy
           }
         }
       }

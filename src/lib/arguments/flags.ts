@@ -82,4 +82,4 @@ export const FLAGS = {
     longnames: ["noredirect", "no-redirect"],
     shortnames: ["nr"],
   },
-};
+} as const;
