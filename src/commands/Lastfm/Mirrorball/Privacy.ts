@@ -61,7 +61,9 @@ export default class Privacy extends BaseCommand<typeof args> {
 Your current privacy: \`${(mirrorballUser?.privacy || "unset").toLowerCase()}\`
       
 The options for privacy are:
-- \`discord\`: Discord username and discriminator are shown (${this.author.tag})
+- \`discord\`: Discord username and discriminator are shown, and your last.fm will be linked (${
+            this.author.tag
+          })
 - \`fmusername\`: Last.fm username is shown (${senderUsername})
 - \`private\`: Your identity will be hidden (${PrivateUserDisplay})
 
