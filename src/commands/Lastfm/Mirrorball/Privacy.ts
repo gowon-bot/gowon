@@ -55,13 +55,10 @@ export default class Privacy extends BaseCommand<typeof args> {
         })`
       );
     } else {
-      embed.setDescription(
-        `
-Your current privacy: \`${(
-          (mirrorballUser?.privacy !== MirrorballPrivacy.Unset
-            ? mirrorballUser?.privacy
-            : undefined) || MirrorballPrivacy.Private
-        ).toLowerCase()}\`
+      embed
+        .setDescription(
+          `
+Your current privacy: \`${(mirrorballUser?.privacy || "unset").toLowerCase()}\`
       
 The options for privacy are:
 - \`discord\`: Discord username and discriminator are shown (${this.author.tag})
@@ -69,7 +66,14 @@ The options for privacy are:
 - \`private\`: Your identity will be hidden (${PrivateUserDisplay})
 
 You can set your privacy with \`${this.prefix}privacy <option>\``
-      );
+        )
+        .setFooter(
+          this.privacyHelp +
+            (!mirrorballUser?.privacy ||
+            mirrorballUser.privacy === MirrorballPrivacy.Unset
+              ? "\nGowon will not reveal any information about you until you set your privacy"
+              : "")
+        );
     }
 
     await this.send(embed);

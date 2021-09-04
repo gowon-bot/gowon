@@ -1,4 +1,5 @@
 import { MessageEmbed } from "discord.js";
+import { User } from "../../../../database/entity/User";
 import { LinkGenerator } from "../../../../helpers/lastFM";
 import { Emoji } from "../../../../lib/Emoji";
 import { MirrorballBaseCommand } from "../../../../lib/indexing/MirrorballCommands";
@@ -22,10 +23,33 @@ export abstract class WhoKnowsBaseCommand<
   nicknameService = new NicknameService(this.logger);
   whoKnowsService = new WhoKnowsService(this.logger);
 
+  protected notIndexedHelp() {
+    return `Don't see yourself? Run ${this.prefix}index to download all your data!`;
+  }
+  protected unsetPrivacyHelp() {
+    return `Your privacy is currently unset! See ${this.prefix}privacy for more info`;
+  }
+
+  protected isGlobal() {
+    return this.variationWasUsed("global");
+  }
+
+  protected footerHelp(
+    senderUser?: User,
+    senderMirrorballUser?: MirrorballUser
+  ) {
+    return !senderUser?.isIndexed
+      ? this.notIndexedHelp()
+      : this.isGlobal() &&
+        senderMirrorballUser?.privacy === MirrorballPrivacy.Unset
+      ? this.unsetPrivacyHelp()
+      : "";
+  }
+
   protected whoKnowsEmbed(): MessageEmbed {
     return this.newEmbed().setAuthor(
-      this.variationWasUsed("global") ? "Gowon" : this.guild.name,
-      this.variationWasUsed("global")
+      this.isGlobal() ? "Gowon" : this.guild.name,
+      this.isGlobal()
         ? "https://gowon.ca/assets/gowonnies.png"
         : this.guild.iconURL() || ""
     );
@@ -77,7 +101,7 @@ export abstract class WhoKnowsBaseCommand<
       this.guild.id,
       this.gowonClient
     );
-    if (this.variationWasUsed("global")) {
+    if (this.isGlobal()) {
       await this.nicknameService.cacheUsernames(users, this.gowonClient);
     }
   }

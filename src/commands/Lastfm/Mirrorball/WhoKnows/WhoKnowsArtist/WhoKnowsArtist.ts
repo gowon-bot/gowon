@@ -49,16 +49,18 @@ export default class WhoKnowsArtist extends WhoKnowsBaseCommand<
   crownsService = new CrownsService(this.logger);
 
   async run() {
-    const { senderRequestable, senderUser } = await this.parseMentions({
-      senderRequired: !this.parsedArguments.artist,
-    });
+    const { senderRequestable, senderUser, senderMirrorballUser } =
+      await this.parseMentions({
+        senderRequired: !this.parsedArguments.artist,
+        fetchMirrorballUser: true,
+      });
 
     const artistName = await this.lastFMArguments.getArtist(
       senderRequestable,
       !this.parsedArguments.noRedirect
     );
 
-    const crown = this.variationWasUsed("global")
+    const crown = this.isGlobal()
       ? undefined
       : await this.crownsService.getCrown(artistName, this.guild.id);
 
@@ -66,7 +68,7 @@ export default class WhoKnowsArtist extends WhoKnowsBaseCommand<
       await this.updateAndWait(this.author.id);
     }
 
-    const guildID = this.variationWasUsed("global") ? undefined : this.guild.id;
+    const guildID = this.isGlobal() ? undefined : this.guild.id;
 
     const response = await this.query({
       artist: { name: artistName },
@@ -122,15 +124,11 @@ export default class WhoKnowsArtist extends WhoKnowsBaseCommand<
     const embed = this.whoKnowsEmbed()
       .setTitle(
         `Who knows ${artist.name.strong()}${
-          this.variationWasUsed("global") ? " globally" : ""
+          this.isGlobal() ? " globally" : ""
         }?`
       )
       .setDescription(lineConsolidator.consolidate())
-      .setFooter(
-        senderUser?.isIndexed
-          ? ""
-          : `Don't see yourself? Run ${this.prefix}index to download all your data!`
-      );
+      .setFooter(this.footerHelp(senderUser, senderMirrorballUser));
 
     await this.send(embed);
   }

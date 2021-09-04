@@ -51,9 +51,11 @@ export default class WhoFirstArtist extends WhoKnowsBaseCommand<
   async run() {
     const whoLast = this.variationWasUsed("wholast");
 
-    let { senderRequestable } = await this.parseMentions({
-      senderRequired: !this.parsedArguments.artist,
-    });
+    let { senderRequestable, senderUser, senderMirrorballUser } =
+      await this.parseMentions({
+        senderRequired: !this.parsedArguments.artist,
+        fetchMirrorballUser: true,
+      });
 
     const artistName = await this.lastFMArguments.getArtist(
       senderRequestable,
@@ -64,7 +66,7 @@ export default class WhoFirstArtist extends WhoKnowsBaseCommand<
       whoLast,
       artist: { name: artistName },
       settings: {
-        guildID: this.variationWasUsed("global") ? "" : this.guild.id,
+        guildID: this.isGlobal() ? "" : this.guild.id,
         limit: 20,
       },
     });
@@ -82,7 +84,7 @@ export default class WhoFirstArtist extends WhoKnowsBaseCommand<
     const embed = this.whoKnowsEmbed()
       .setTitle(
         `Who ${whoLast ? "last" : "first"} scrobbled ${artist.name.strong()}${
-          this.variationWasUsed("global") ? " globally" : ""
+          this.isGlobal() ? " globally" : ""
         }?`
       )
       .setDescription(
@@ -96,7 +98,8 @@ export default class WhoFirstArtist extends WhoKnowsBaseCommand<
                   )}`
               )
             )
-      );
+      )
+      .setFooter(this.footerHelp(senderUser, senderMirrorballUser));
 
     await this.send(embed);
   }

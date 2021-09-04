@@ -42,10 +42,12 @@ export default class WhoKnowsTrack extends WhoKnowsBaseCommand<
   arguments: Arguments = args;
 
   async run() {
-    const { senderRequestable } = await this.parseMentions({
-      senderRequired:
-        !this.parsedArguments.artist || !this.parsedArguments.track,
-    });
+    const { senderRequestable, senderMirrorballUser, senderUser } =
+      await this.parseMentions({
+        senderRequired:
+          !this.parsedArguments.artist || !this.parsedArguments.track,
+        fetchMirrorballUser: true,
+      });
 
     const { artist: artistName, track: trackName } =
       await this.lastFMArguments.getTrack(senderRequestable);
@@ -57,7 +59,7 @@ export default class WhoKnowsTrack extends WhoKnowsBaseCommand<
     const response = await this.query({
       track: { name: trackName, artist: { name: artistName } },
       settings: {
-        guildID: this.variationWasUsed("global") ? undefined : this.guild.id,
+        guildID: this.isGlobal() ? undefined : this.guild.id,
         limit: 20,
       },
     });
@@ -88,7 +90,7 @@ export default class WhoKnowsTrack extends WhoKnowsBaseCommand<
     const embed = this.whoKnowsEmbed()
       .setTitle(
         `Who knows ${trackDisplay.italic()} by ${artistDisplay.strong()}${
-          this.variationWasUsed("global") ? " globally" : ""
+          this.isGlobal() ? " globally" : ""
         }?`
       )
       .setDescription(
@@ -103,7 +105,8 @@ export default class WhoKnowsTrack extends WhoKnowsBaseCommand<
                   )}`
               )
             )
-      );
+      )
+      .setFooter(this.footerHelp(senderUser, senderMirrorballUser));
 
     await this.send(embed);
   }
