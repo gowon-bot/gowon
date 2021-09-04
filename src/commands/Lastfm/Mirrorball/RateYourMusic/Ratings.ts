@@ -114,6 +114,7 @@ export class Ratings extends RateYourMusicIndexingChildCommand<
       totalPages: Math.ceil(
         initialPages.ratings.pageInfo.recordCount / this.pageSize
       ),
+      totalItems: initialPages.ratings.pageInfo.recordCount,
       itemName: "rating",
     });
 

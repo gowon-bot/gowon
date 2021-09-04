@@ -10,7 +10,7 @@ import { MirrorballBaseCommand } from "../../../lib/indexing/MirrorballCommands"
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { displayLink } from "../../../lib/views/displays";
 import { ConfirmationEmbed } from "../../../lib/views/embeds/ConfirmationEmbed";
-import { UserType } from "../../../services/mirrorball/MirrorballTypes";
+import { MirrorballUserType } from "../../../services/mirrorball/MirrorballTypes";
 import { LastFMSession } from "../../../services/LastFM/converters/Misc";
 
 const args = {} as const;
@@ -120,7 +120,7 @@ export default class Login extends MirrorballBaseCommand<
     await this.mirrorballService.login(
       username,
       discordID,
-      UserType.Lastfm,
+      MirrorballUserType.Lastfm,
       session
     );
     try {

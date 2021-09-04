@@ -41,6 +41,11 @@ import {
 } from "../../helpers/parseMentions";
 import { MirrorballService } from "../../services/mirrorball/MirrorballService";
 import { Chance } from "chance";
+import {
+  MirrorballUser,
+  UserInput,
+} from "../../services/mirrorball/MirrorballTypes";
+import { MirrorballUsersService } from "../../services/mirrorball/services/MirrorballUsersService";
 
 export interface Variation {
   name: string;
@@ -127,6 +132,7 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
   }
 
   usersService = new UsersService(this.logger);
+  mirrorballUsersService = new MirrorballUsersService(this.logger);
   gowonService = GowonService.getInstance();
   track = new TrackingService(this.logger);
   mirrorballService = new MirrorballService(this.logger);
@@ -158,6 +164,7 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     idMentionArgumentName = "userID" as ArgumentName<ArgumentsType>,
     asCode = true,
     fetchDiscordUser = false,
+    fetchMirrorballUser = false,
     reverseLookup = { required: false },
     authentificationRequired,
     requireIndexed,
@@ -170,6 +177,7 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     idMentionArgumentName?: ArgumentName<ArgumentsType>;
     asCode?: boolean;
     fetchDiscordUser?: boolean;
+    fetchMirrorballUser?: boolean;
     reverseLookup?: { required?: boolean };
     authentificationRequired?: boolean;
     requireIndexed?: boolean;
@@ -187,6 +195,9 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     senderUser?: User;
     dbUser: User;
     discordUser?: DiscordUser;
+
+    senderMirrorballUser?: MirrorballUser;
+    mirrorballUser?: MirrorballUser;
   }> {
     let user = this.parsedArguments[userArgumentName] as any as User,
       userID = this.parsedArguments[idMentionArgumentName] as any as string,
@@ -196,9 +207,13 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
       ] as string;
 
     let mentionedUsername: string | undefined;
-    let mentionedDBUser: User | undefined;
     let discordUser: DiscordUser | undefined;
-    let senderUser: User | undefined;
+
+    let senderDBUser: User | undefined;
+    let mentionedDBUser: User | undefined;
+
+    let senderMirrorballUser: MirrorballUser | undefined;
+    let mentionedMirrorballUser: MirrorballUser | undefined;
 
     if (discordUsername) {
       discordUser = (await this.guild.members.fetch()).find(
@@ -209,7 +224,7 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     }
 
     try {
-      senderUser = await this.usersService.getUser(this.message.author.id);
+      senderDBUser = await this.usersService.getUser(this.message.author.id);
     } catch {}
 
     if (lfmUser) {
@@ -237,7 +252,7 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     }
 
     const perspective = this.usersService.perspective(
-      senderUser?.lastFMUsername || "<no user>",
+      senderDBUser?.lastFMUsername || "<no user>",
       mentionedUsername,
       asCode
     );
@@ -255,7 +270,7 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
         );
     }
 
-    const username = mentionedUsername || senderUser?.lastFMUsername;
+    const username = mentionedUsername || senderDBUser?.lastFMUsername;
 
     if (fetchDiscordUser) {
       let fetchedUser: DiscordUser | undefined;
@@ -268,7 +283,7 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
 
       if (
         fetchedUser &&
-        (compareUsernames(username, senderUser?.lastFMUsername) ||
+        (compareUsernames(username, senderDBUser?.lastFMUsername) ||
           (compareUsernames(username, mentionedDBUser?.lastFMUsername) &&
             mentionedDBUser?.discordID === fetchedUser.id) ||
           userID === fetchedUser.id)
@@ -279,9 +294,23 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
       } else discordUser = undefined;
     }
 
+    if (fetchMirrorballUser) {
+      const inputs: UserInput[] = [{ discordID: this.author.id }];
+
+      const mentionedID =
+        mentionedDBUser?.discordID || discordUser?.id || userID;
+
+      if (mentionedID) {
+        inputs.push({ discordID: mentionedID });
+      }
+
+      [senderMirrorballUser, mentionedMirrorballUser] =
+        (await this.mirrorballUsersService.getMirrorballUser(inputs)) || [];
+    }
+
     if (
       usernameRequired &&
-      (!username || (senderRequired && !senderUser?.lastFMUsername))
+      (!username || (senderRequired && !senderDBUser?.lastFMUsername))
     ) {
       throw new LogicError(
         `please sign in with a last.fm account! (\`${this.prefix}login\`)`,
@@ -290,7 +319,7 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     }
 
     const requestables = buildRequestables({
-      senderUser,
+      senderUser: senderDBUser,
       mentionedUsername,
       mentionedUser: mentionedDBUser,
     });
@@ -301,23 +330,31 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
       );
     }
 
-    const dbUser = mentionedDBUser || senderUser;
+    const dbUser = mentionedDBUser || senderDBUser;
 
     if (requireIndexed && dbUser && !dbUser.isIndexed) {
       if (dbUser.id === mentionedDBUser?.id) {
         throw new MentionedUserNotIndexedError(this.prefix);
-      } else if (dbUser.id === senderUser?.id) {
+      } else if (dbUser.id === senderDBUser?.id) {
         throw new SenderUserNotIndexedError(this.prefix);
       }
     }
+
+    const mirrorballUser =
+      (mentionedMirrorballUser?.username?.toLowerCase() ===
+      mentionedUsername?.toLowerCase()
+        ? mentionedMirrorballUser
+        : undefined) || (!mentionedUsername ? senderMirrorballUser : undefined);
 
     return {
       mentionedUsername,
       perspective,
       mentionedDBUser,
-      senderUser,
+      senderUser: senderDBUser,
       discordUser,
       dbUser: dbUser!,
+      senderMirrorballUser,
+      mirrorballUser,
       ...requestables!,
     };
   }
