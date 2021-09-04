@@ -12,6 +12,7 @@ import {
   MirrorballPrivacy,
   MirrorballUser,
 } from "../../../../services/mirrorball/MirrorballTypes";
+import { PrivateUserDisplay } from "../../../../services/mirrorball/services/MirrorballUsersService";
 
 export abstract class WhoKnowsBaseCommand<
   R,
@@ -66,7 +67,7 @@ export abstract class WhoKnowsBaseCommand<
 
       case MirrorballPrivacy.Private:
       case MirrorballPrivacy.Unset:
-        return "Private user";
+        return PrivateUserDisplay;
     }
   }
 

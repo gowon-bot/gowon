@@ -1,7 +1,7 @@
 import { BaseCommand } from "../../../lib/command/BaseCommand";
 import { validators } from "../../../lib/validation/validators";
 import { MirrorballPrivacy } from "../../../services/mirrorball/MirrorballTypes";
-import { privateUser } from "../../../services/mirrorball/services/MirrorballUsersService";
+import { PrivateUserDisplay } from "../../../services/mirrorball/services/MirrorballUsersService";
 
 const args = {
   inputs: {
@@ -51,7 +51,7 @@ export default class Privacy extends BaseCommand<typeof args> {
             ? this.author.tag
             : privacy.toUpperCase() === "FMUSERNAME"
             ? senderUsername
-            : privateUser
+            : PrivateUserDisplay
         })`
       );
     } else {
@@ -66,7 +66,7 @@ Your current privacy: \`${(
 The options for privacy are:
 - \`discord\`: Discord username and discriminator are shown (${this.author.tag})
 - \`fmusername\`: Last.fm username is shown (${senderUsername})
-- \`private\`: Your identity will be hidden (${privateUser})
+- \`private\`: Your identity will be hidden (${PrivateUserDisplay})
 
 You can set your privacy with \`${this.prefix}privacy <option>\``
       );

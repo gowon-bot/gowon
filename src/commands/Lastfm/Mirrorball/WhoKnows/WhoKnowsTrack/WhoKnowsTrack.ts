@@ -87,7 +87,9 @@ export default class WhoKnowsTrack extends WhoKnowsBaseCommand<
 
     const embed = this.whoKnowsEmbed()
       .setTitle(
-        `Who knows ${trackDisplay.italic()} by ${artistDisplay.strong()}?`
+        `Who knows ${trackDisplay.italic()} by ${artistDisplay.strong()}${
+          this.variationWasUsed("global") ? " globally" : ""
+        }?`
       )
       .setDescription(
         !track || rows.length === 0

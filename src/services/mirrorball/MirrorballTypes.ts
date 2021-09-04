@@ -6,10 +6,10 @@ export enum MirrorballUserType {
 }
 
 export enum MirrorballPrivacy {
-  Private = "Private",
-  Discord = "Discord",
-  FMUsername = "FMUsername",
-  Unset = "Unset",
+  Private = "PRIVATE",
+  Discord = "DISCORD",
+  FMUsername = "FMUSERNAME",
+  Unset = "UNSET",
 }
 
 export interface UserInput {

@@ -7,7 +7,7 @@ import {
   UserInput,
 } from "../MirrorballTypes";
 
-export const privateUser = "Private user";
+export const PrivateUserDisplay = "Private user";
 
 export class MirrorballUsersService extends BaseService {
   private mirrorballService = new MirrorballService(this.logger);
@@ -47,21 +47,7 @@ export class MirrorballUsersService extends BaseService {
 
     await this.mirrorballService.mutate(mutation, {
       discordID,
-      privacy: this.correctPrivacy(privacy),
+      privacy: privacy.toUpperCase(),
     });
-  }
-
-  correctPrivacy(privacy: string): MirrorballPrivacy {
-    switch (privacy.toUpperCase()) {
-      case "DISCORD":
-        return MirrorballPrivacy.Discord;
-
-      case "FMUSERNAME":
-        return MirrorballPrivacy.FMUsername;
-
-      case "PRIVATE":
-      default:
-        return MirrorballPrivacy.Private;
-    }
   }
 }

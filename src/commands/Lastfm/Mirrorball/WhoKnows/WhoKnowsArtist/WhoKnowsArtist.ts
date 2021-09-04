@@ -58,7 +58,9 @@ export default class WhoKnowsArtist extends WhoKnowsBaseCommand<
       !this.parsedArguments.noRedirect
     );
 
-    const crown = await this.crownsService.getCrown(artistName, this.guild.id);
+    const crown = this.variationWasUsed("global")
+      ? undefined
+      : await this.crownsService.getCrown(artistName, this.guild.id);
 
     if (this.variationWasUsed("update")) {
       await this.updateAndWait(this.author.id);
@@ -118,7 +120,11 @@ export default class WhoKnowsArtist extends WhoKnowsBaseCommand<
     );
 
     const embed = this.whoKnowsEmbed()
-      .setTitle(`Who knows ${artist.name.strong()}?`)
+      .setTitle(
+        `Who knows ${artist.name.strong()}${
+          this.variationWasUsed("global") ? " globally" : ""
+        }?`
+      )
       .setDescription(lineConsolidator.consolidate())
       .setFooter(
         senderUser?.isIndexed

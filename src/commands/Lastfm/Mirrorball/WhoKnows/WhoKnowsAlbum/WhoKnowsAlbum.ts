@@ -74,7 +74,9 @@ export default class WhoKnowsAlbum extends WhoKnowsBaseCommand<
 
     const embed = this.whoKnowsEmbed()
       .setTitle(
-        `Who knows ${album.name.italic()} by ${album.artist.name.strong()}?`
+        `Who knows ${album.name.italic()} by ${album.artist.name.strong()}${
+          this.variationWasUsed("global") ? " globally" : ""
+        }?`
       )
       .setDescription(
         !album || rows.length === 0

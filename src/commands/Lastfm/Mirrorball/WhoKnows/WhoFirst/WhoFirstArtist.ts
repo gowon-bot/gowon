@@ -81,7 +81,9 @@ export default class WhoFirstArtist extends WhoKnowsBaseCommand<
 
     const embed = this.whoKnowsEmbed()
       .setTitle(
-        `Who ${whoLast ? "last" : "first"} scrobbled ${artist.name.strong()}?`
+        `Who ${whoLast ? "last" : "first"} scrobbled ${artist.name.strong()}${
+          this.variationWasUsed("global") ? " globally" : ""
+        }?`
       )
       .setDescription(
         !artist || rows.length === 0
