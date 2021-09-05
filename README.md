@@ -60,3 +60,5 @@ Somethings broken? Just curious how something works?
 
 Feel free to shoot me a Discord dm at `john!#2527`
 or join the support server! https://discord.gg/9Vr7Df7TZf
+
+Become a patreon at https://www.patreon.com/gowon_

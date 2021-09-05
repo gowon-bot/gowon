@@ -49,8 +49,16 @@ export default class UserInfo extends BaseCommand<typeof args> {
 
     lineConsolidator.addLines(
       {
-        string: `${Emoji.checkmark} Authenticated!\n`,
+        string: `${Emoji.gowonPatreon} Patron!`,
+        shouldDisplay: dbUser.isPatron,
+      },
+      {
+        string: `${Emoji.checkmark} Authenticated!`,
         shouldDisplay: !!dbUser.lastFMSession,
+      },
+      {
+        string: "",
+        shouldDisplay: dbUser.isPatron || !!dbUser.lastFMSession,
       },
       {
         string: `${Emoji.bruh} Not authenticated! \`${this.prefix}login\`\n`,

@@ -4,8 +4,6 @@ import { Emoji } from "../../lib/Emoji";
 export default class Vote extends BaseCommand {
   idSeed = "hot issue yebin";
 
-  shouldBeIndexed = false;
-
   subcategory = "about";
   description = "Vote for Gowon on top.gg!";
   aliases = ["topgg"];

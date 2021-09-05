@@ -166,4 +166,14 @@ export class UsersService extends BaseService {
 
     await user.save();
   }
+
+  async setPatron(discordID: string, value: boolean) {
+    this.log(`Setting user with id ${discordID} as a patron`);
+
+    const user = await this.getUser(discordID);
+
+    user.isPatron = value;
+
+    await user.save();
+  }
 }

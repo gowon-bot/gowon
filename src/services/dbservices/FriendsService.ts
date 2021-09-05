@@ -13,12 +13,24 @@ import { ILike } from "typeorm";
 export class FriendsService extends BaseService {
   private lastFMService = new LastFMService(this.logger);
   private friendsLimit = 10;
+  private patronFriendsLimit = 15;
 
-  async addFriend(user: User, friendToAdd: string | User): Promise<Friend> {
+  async addFriend(
+    user: User,
+    friendToAdd: string | User,
+    prefix: string
+  ): Promise<Friend> {
     this.log(`Adding friend ${friendToAdd} for user ${user.lastFMUsername}`);
 
-    if ((await this.friendsCount(user)) >= this.friendsLimit) {
-      throw new TooManyFriendsError(this.friendsLimit);
+    if (
+      (await this.friendsCount(user)) >=
+      (user.isPatron ? this.patronFriendsLimit : this.friendsLimit)
+    ) {
+      throw new TooManyFriendsError(
+        user.isPatron ? this.patronFriendsLimit : this.friendsLimit,
+        prefix,
+        !user.isPatron
+      );
     }
 
     let friend: Friend | undefined;

@@ -48,6 +48,9 @@ export class User extends BaseEntity {
   @Column({ nullable: true })
   lastFMSession?: string;
 
+  @Column({ default: false })
+  isPatron!: boolean;
+
   @OneToMany((_) => Crown, (crown) => crown.user)
   crowns!: Crown[];
 

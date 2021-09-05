@@ -54,7 +54,8 @@ export class Add extends FriendsChildCommand<typeof args> {
 
     const friend = await this.friendsService.addFriend(
       senderUser!,
-      mentionedDBUser || username
+      mentionedDBUser || username,
+      this.prefix
     );
 
     await this.send(

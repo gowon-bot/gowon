@@ -9,7 +9,7 @@ export abstract class ClientError extends Error {
   isClientFacing = true;
   silent = false;
 
-  constructor(public message: string) {
+  constructor(public message: string, public footer = "") {
     super(message);
   }
 }
@@ -204,8 +204,13 @@ export class OptedOutError extends ClientError {
 export class TooManyFriendsError extends ClientError {
   name = "TooManyFriendsError";
 
-  constructor(limit: number) {
-    super(`you cannot have more than ${displayNumber(limit, "friend")}`);
+  constructor(limit: number, prefix: string, showPatreon = false) {
+    super(
+      `you cannot have more than ${displayNumber(limit, "friend")}`,
+      showPatreon
+        ? `You can become a Patron to increase your limit to 15. See ${prefix}patreon for more information.`
+        : ""
+    );
   }
 }
 

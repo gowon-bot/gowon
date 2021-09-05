@@ -35,6 +35,7 @@ export const Emoji = {
   gowonPeek: "<:gowonpeek:790528424933589002>",
   fuckyou: "<a:fuckyou:858239446577840140>",
   gowonLitDance: "<a:gowonLitDance:861185566233985044>",
+  gowonPatreon: "<:gowonpatreon:883948448301334589>",
 
   fullStar: "<:fullStar:843763033858899968>",
   halfStar: "<:halfStar:843763307994284032>",
