@@ -61,7 +61,7 @@ export default class LastScrobbledTrack extends MirrorballBaseCommand<
       throw new MirrorballError(errors.errors[0].message);
     }
 
-    const [play] = response.plays;
+    const [play] = response.plays.plays;
 
     const embed = this.newEmbed()
       .setAuthor(

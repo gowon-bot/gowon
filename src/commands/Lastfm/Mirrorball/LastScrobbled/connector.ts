@@ -8,12 +8,14 @@ import {
 
 // LastScrobbledArtist
 export interface LastScrobbledResponse {
-  plays: [
-    {
-      scrobbledAt: number;
-      track: MirrorballTrack;
-    }
-  ];
+  plays: {
+    plays: [
+      {
+        scrobbledAt: number;
+        track: MirrorballTrack;
+      }
+    ];
+  };
 }
 
 export interface LastScrobbledParams {
@@ -36,18 +38,20 @@ export class LastScrobbledConnector extends BaseConnector<
         playsInput: { user: $user, track: $track, sort: $sort }
         pageInput: { limit: 1 }
       ) {
-        scrobbledAt
+        plays {
+          scrobbledAt
 
-        track {
-          artist {
+          track {
+            artist {
+              name
+            }
+
+            album {
+              name
+            }
+
             name
           }
-
-          album {
-            name
-          }
-
-          name
         }
       }
     }

@@ -22,5 +22,7 @@
   "lastFMBotSessionKey": "use this if you want the bot to scrobble tracks",
 
   "spotifyClientID": "Get this from the spotify application dashboard",
-  "spotifyClientSecret": "Get this from the spotify application dashboard"
+  "spotifyClientSecret": "Get this from the spotify application dashboard",
+
+  "mirrorballPassword": "this needs to match the MIRRORBALL_PASSWORD .env variable in Mirrorball"
 }
