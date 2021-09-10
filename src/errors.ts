@@ -208,7 +208,7 @@ export class TooManyFriendsError extends ClientError {
     super(
       `you cannot have more than ${displayNumber(limit, "friend")}`,
       showPatreon
-        ? `You can become a Patron to increase your limit to 15. See ${prefix}patreon for more information.`
+        ? `You can become a Patron to increase your limit to 15. See \`${prefix}patreon\` for more information.`
         : ""
     );
   }

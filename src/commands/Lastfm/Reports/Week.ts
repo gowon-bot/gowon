@@ -27,7 +27,7 @@ export default class Week extends LastFMBaseCommand<typeof args> {
   redirectsService = new RedirectsService(this.logger);
 
   async run() {
-    let { requestable, perspective } = await this.parseMentions();
+    let { requestable, perspective, senderUser } = await this.parseMentions();
 
     let paginator = new Paginator(
       this.lastFMService.recentTracks.bind(this.lastFMService),
@@ -48,9 +48,9 @@ export default class Week extends LastFMBaseCommand<typeof args> {
       );
     }
 
-    if (firstPage.meta.totalPages > 4) {
+    if (senderUser && !senderUser?.isPatron && firstPage.meta.totalPages > 4) {
       throw new LogicError(
-        `${perspective.plusToHave} too many scrobbles this week to see an overview!`
+        `${perspective.plusToHave} too many scrobbles this week to see an overview!\n\nYou can become a Patron to remove the limit. See \`${this.prefix}patreon\` for more information.`
       );
     }
 
