@@ -63,10 +63,6 @@ export function playsQuery(
       }
     `;
 
-    variables.playsInput = Object.assign(variables.playsInput || {}, {
-      sort: "scrobbled_at desc",
-    });
-
     const response = await mirrorballClient.query({ query, variables });
 
     const recentTracks = RecentTracks.fromMirrorballPlaysResponse(

@@ -40,7 +40,7 @@ export class RedisInteractionService extends BaseService {
   }
 
   async set(key: string, value: any, expiresAfter: number) {
-    if (!key.includes("-nickname")) {
+    if (!key.includes("-nickname") && !key.includes("-username")) {
       this.log(
         `Setting ${key} as ${value !== undefined ? value : "(no value)"}`
       );

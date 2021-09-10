@@ -16,6 +16,7 @@ export default class SetPatron extends BaseCommand<typeof args> {
   description = "Sets a user as a patron";
   aliases = ["setp"];
   secretCommand = true;
+  devCommand = true;
 
   variations: Variation[] = [
     {
@@ -36,7 +37,6 @@ export default class SetPatron extends BaseCommand<typeof args> {
     try {
       await this.usersService.setPatron(id!, !this.variationWasUsed("unset"));
     } catch (e) {
-      console.error(e);
       throw new LogicError(
         `Something went wrong setting that user as a patron`
       );
