@@ -63,17 +63,15 @@ export function playsQuery(
       }
     `;
 
+    variables.playsInput = Object.assign(variables.playsInput || {}, {
+      sort: "scrobbled_at desc",
+    });
+
     const response = await mirrorballClient.query({ query, variables });
 
     const recentTracks = RecentTracks.fromMirrorballPlaysResponse(
       response.data,
       1000
-    );
-
-    console.log(
-      recentTracks.tracks
-        .slice(0, 60)
-        .map((t, idx) => `${idx + 1}` + ". " + t.name)
     );
 
     if (variables.pageInput?.offset === 0) {
