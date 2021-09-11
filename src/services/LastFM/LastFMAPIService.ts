@@ -63,6 +63,7 @@ import {
 import { BaseService } from "../BaseService";
 import { toInt } from "../../helpers/lastFM";
 import { MirrorballCacheService } from "../mirrorball/MirrorballCacheService";
+import { SimpleMap } from "../../helpers/types";
 
 export interface SessionKey {
   username: string;
@@ -383,9 +384,7 @@ export class LastFMAPIService extends BaseService {
     return params as T;
   }
 
-  private parseUsername(params: { [key: string]: any }): {
-    [key: string]: any;
-  } {
+  private parseUsername(params: SimpleMap): SimpleMap {
     const username = params.username as Requestable | undefined;
 
     if (!username || !isSessionKey(username)) {
@@ -395,9 +394,7 @@ export class LastFMAPIService extends BaseService {
     return { ...params, username: username.username, sk: username.session };
   }
 
-  private cleanParametersForDisplay(params: { [key: string]: any }): {
-    [key: string]: any;
-  } {
+  private cleanParametersForDisplay(params: SimpleMap): SimpleMap {
     return Object.entries(params)
       .filter(([key]) => !["api_sig", "api_key", "format", "sk"].includes(key))
       .reduce((acc, [key, val]) => {

@@ -1,4 +1,4 @@
-import { CommandRegistry } from "../../../../lib/command/CommandRegistry";
+import { CommandGroup } from "../../../../lib/command/CommandGroup";
 import { ParentCommand } from "../../../../lib/command/ParentCommand";
 import { ArtistRatings } from "./ArtistRatings";
 import { Help } from "./Help";
@@ -33,13 +33,13 @@ export default class RateYourMusicParentCommand extends ParentCommand {
   prefixes = ["rateyourmusic", "rym", "ryms"];
   default = () => new Link();
 
-  children = new CommandRegistry({
-    importratings: () => new ImportRatings(),
-    link: () => new Link(),
-    rating: () => new Rating(),
-    artistratings: () => new ArtistRatings(),
-    stats: () => new Stats(),
-    help: () => new Help(),
-    ratings: () => new Ratings(),
-  });
+  children = new CommandGroup([
+    ImportRatings,
+    Link,
+    Rating,
+    ArtistRatings,
+    Stats,
+    Help,
+    Ratings,
+  ]);
 }

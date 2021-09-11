@@ -2,6 +2,7 @@ import { BaseScraper, ScrapingError } from "./BaseScraper";
 import { parseDate } from "../../helpers/date";
 import { Logger } from "../../lib/Logger";
 import { toInt } from "../../helpers/lastFM";
+import { SimpleMap } from "../../helpers/types";
 
 export interface TopTrack {
   track: string;
@@ -11,10 +12,6 @@ export interface TopTrack {
 export interface TopAlbum {
   album: string;
   playcount: number;
-}
-
-interface Metadata {
-  [key: string]: string;
 }
 
 export interface Top<T> {
@@ -188,7 +185,7 @@ export class LastFMScraper extends BaseScraper {
     );
   }
 
-  private getMetadataItems(page: cheerio.Root): Metadata {
+  private getMetadataItems(page: cheerio.Root): SimpleMap<string> {
     let items = page(".metadata-list > .metadata-item").toArray();
 
     return items.reduce((acc, val) => {
@@ -198,6 +195,6 @@ export class LastFMScraper extends BaseScraper {
       acc[key] = value;
 
       return acc;
-    }, {} as Metadata);
+    }, {} as SimpleMap<string>);
   }
 }

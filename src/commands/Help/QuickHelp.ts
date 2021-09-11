@@ -1,5 +1,4 @@
 import { BaseCommand } from "../../lib/command/BaseCommand";
-import { CommandRegistry } from "../../lib/command/CommandRegistry";
 import { Arguments } from "../../lib/arguments/arguments";
 import { AdminService } from "../../services/dbservices/AdminService";
 
@@ -16,12 +15,9 @@ export default class QuickHelp extends BaseCommand<typeof args> {
 
   arguments: Arguments = args;
 
-  commandRegistry = new CommandRegistry();
   adminService = new AdminService(this.gowonClient);
 
   async run() {
-    await this.commandRegistry.init();
-
     const embed = this.newEmbed().setAuthor(
       ...this.generateEmbedAuthor("Quick help")
     ).setDescription(`Welcome to Gowon! ${Emoji.gowonPeek}

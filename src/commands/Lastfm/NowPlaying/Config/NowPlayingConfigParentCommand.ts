@@ -1,11 +1,11 @@
-import { CommandRegistry } from "../../../../lib/command/CommandRegistry";
+import { CommandGroup } from "../../../../lib/command/CommandGroup";
 import { LastFMBaseParentCommand } from "../../LastFMBaseCommand";
 import { Add } from "./Add";
 import { Help } from "./Help";
 import { Preview } from "./Preview";
 import { React } from "./React";
 import { Remove } from "./Remove";
-import { Set } from "./Set";
+import { Set as SetCommand } from "./Set";
 import { View } from "./View";
 
 export default class NowPlayingConfigParentCommand extends LastFMBaseParentCommand {
@@ -21,13 +21,13 @@ export default class NowPlayingConfigParentCommand extends LastFMBaseParentComma
 
   noPrefixAliases = ["react", "reacts", "reactions"];
 
-  children: CommandRegistry = new CommandRegistry({
-    view: () => new View(),
-    set: () => new Set(),
-    help: () => new Help(),
-    preview: () => new Preview(),
-    add: () => new Add(),
-    remove: () => new Remove(),
-    react: () => new React(),
-  });
+  children: CommandGroup = new CommandGroup([
+    View,
+    SetCommand,
+    Help,
+    Preview,
+    Add,
+    Remove,
+    React,
+  ]);
 }

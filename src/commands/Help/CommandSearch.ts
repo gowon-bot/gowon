@@ -2,7 +2,6 @@ import { BaseCommand } from "../../lib/command/BaseCommand";
 import { Arguments } from "../../lib/arguments/arguments";
 import { Validation } from "../../lib/validation/ValidationChecker";
 import { validators } from "../../lib/validation/validators";
-import { CommandRegistry } from "../../lib/command/CommandRegistry";
 import { Command } from "../../lib/command/Command";
 import { AdminService } from "../../services/dbservices/AdminService";
 import { displayNumber } from "../../lib/views/displays";
@@ -29,15 +28,12 @@ export default class CommandSearch extends BaseCommand<typeof args> {
     keywords: new validators.Required({}),
   };
 
-  commandRegistry = new CommandRegistry();
   adminService = new AdminService(this.gowonClient, this.logger);
 
   async run() {
     const keywords = this.parsedArguments
       .keywords!.toLowerCase()
       .replace(/\s+/, "");
-
-    await this.commandRegistry.init();
 
     const commandList = this.commandRegistry.deepList();
 

@@ -1,6 +1,7 @@
 import { gql } from "@apollo/client/core";
 import { DocumentNode } from "graphql";
 import { IndexingWebhookService } from "../../api/indexing/IndexingWebhookService";
+import { SimpleMap } from "../../helpers/types";
 import { mirrorballClient } from "../../lib/indexing/client";
 import { BaseService } from "../BaseService";
 import { UsersService } from "../dbservices/UsersService";
@@ -42,10 +43,7 @@ export class MirrorballService extends BaseService {
 
   public webhook = IndexingWebhookService.getInstance();
 
-  async query<T = any>(
-    query: DocumentNode,
-    variables?: { [key: string]: any }
-  ): Promise<T> {
+  async query<T = any>(query: DocumentNode, variables?: SimpleMap): Promise<T> {
     const response = await this.makeRequest({ query }, variables);
 
     if (response.error) {
@@ -57,7 +55,7 @@ export class MirrorballService extends BaseService {
 
   async mutate<T = any>(
     mutation: DocumentNode,
-    variables?: { [key: string]: any }
+    variables?: SimpleMap
   ): Promise<T> {
     const response = await this.makeRequest({ mutation }, variables);
 

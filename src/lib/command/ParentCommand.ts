@@ -1,10 +1,10 @@
 import { Arguments } from "../arguments/arguments";
 import { BaseCommand } from "./BaseCommand";
 import { Command } from "./Command";
-import { CommandRegistry } from "./CommandRegistry";
+import { CommandGroup } from "./CommandGroup";
 
 export abstract class ParentCommand extends BaseCommand {
-  abstract children: CommandRegistry;
+  abstract children: CommandGroup;
   hasChildren = true;
   default?: () => Command;
   prefixes: string | Array<string> = "";
@@ -19,7 +19,11 @@ export abstract class ParentCommand extends BaseCommand {
     child: string,
     serverID: string
   ): Promise<Command | undefined> {
-    let childCommand = await this.children.find(child, serverID);
+    let childCommand = await this.commandRegistry.find(
+      child,
+      serverID,
+      this.children.commands
+    );
 
     if (childCommand.command) {
       return childCommand.command;

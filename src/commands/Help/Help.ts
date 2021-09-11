@@ -1,7 +1,6 @@
 import { BaseCommand, Delegate } from "../../lib/command/BaseCommand";
 import { Command } from "../../lib/command/Command";
 import { EmbedField, Message } from "discord.js";
-import { CommandRegistry } from "../../lib/command/CommandRegistry";
 import { Arguments } from "../../lib/arguments/arguments";
 import { AdminService } from "../../services/dbservices/AdminService";
 import HelpForOneCommand from "./HelpForOneCommand";
@@ -38,12 +37,9 @@ export default class Help extends BaseCommand<typeof args> {
     { when: (args) => !args.all && !args.command, delegateTo: QuickHelp },
   ];
 
-  commandRegistry = new CommandRegistry();
   adminService = new AdminService(this.gowonClient);
 
   async run(message: Message) {
-    await this.commandRegistry.init();
-
     await this.helpForAllCommands(message);
   }
 

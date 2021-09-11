@@ -1,4 +1,3 @@
-import { CommandRegistry } from "./CommandRegistry";
 import { Message } from "discord.js";
 import { GowonService } from "../../services/GowonService";
 import { AdminService } from "../../services/dbservices/AdminService";
@@ -11,11 +10,13 @@ import { GowonClient } from "../GowonClient";
 import { RunAs } from "./RunAs";
 import { NicknameService } from "../../services/guilds/NicknameService";
 import Help from "../../commands/Help/Help";
+import { CommandRegistry } from "./CommandRegistry";
+import { Command } from "./Command";
 
 export class CommandHandler {
   gowonService = GowonService.getInstance();
   metaService = new MetaService();
-  commandRegistry = new CommandRegistry();
+  commandRegistry = CommandRegistry.getInstance();
   client!: GowonClient;
   adminService = new AdminService(this.client);
   private logger = new Logger();
@@ -79,11 +80,13 @@ export class CommandHandler {
 
       if (!command) return;
 
-      if (command instanceof ParentCommand)
+      if (command instanceof ParentCommand) {
         command = (command.default && command.default()) || command;
+      }
 
-      if (command.devCommand && !this.client.isDeveloper(message.author.id))
+      if (command.devCommand && !this.client.isDeveloper(message.author.id)) {
         return;
+      }
 
       let canCheck = await this.adminService.can.run(
         command,
@@ -104,13 +107,12 @@ export class CommandHandler {
 
         return;
       }
+
       this.logger.logCommandHandle(runAs);
 
       this.metaService.recordCommandRun(command.id, message);
 
-      command.gowonClient = this.client;
-
-      await command.execute(message, runAs);
+      this.runCommand(command, message, runAs);
     }
   }
 
@@ -168,5 +170,13 @@ export class CommandHandler {
     ) {
       await message.reply("Yes ma'am!");
     }
+  }
+
+  private async runCommand(command: Command, message: Message, runAs: RunAs) {
+    const newCommand = command.copy();
+
+    newCommand.gowonClient = this.client;
+
+    await newCommand.execute.bind(newCommand)(message, runAs);
   }
 }

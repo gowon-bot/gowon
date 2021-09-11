@@ -10,6 +10,7 @@ import {
   SpotifyEntity,
   SpotifyToken,
 } from "./SpotifyService.types";
+import { SimpleMap } from "../../helpers/types";
 
 export class SpotifyService extends BaseService {
   url = "https://api.spotify.com/v1/";
@@ -57,7 +58,7 @@ export class SpotifyService extends BaseService {
     };
   }
 
-  async request<T>(path: string, params: { [key: string]: any }): Promise<T> {
+  async request<T>(path: string, params: SimpleMap): Promise<T> {
     this.log(`made API request to ${path} with params ${params}`);
 
     let response = await fetch(this.url + path + "?" + stringify(params), {

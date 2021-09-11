@@ -1,58 +1,48 @@
-import { Command } from "./Command";
-import { AliasChecker } from "../AliasChecker";
-import { flatDeep } from "../../helpers";
-import { RunAs } from "./RunAs";
+import { Commands } from "./CommandGroup";
 
 import { promisify } from "util";
 import _glob from "glob";
+import { Command } from "./Command";
+import { AliasChecker } from "../AliasChecker";
+import { RunAs } from "./RunAs";
+import { flatDeep } from "../../helpers";
 import { ParentCommand } from "./ParentCommand";
 const glob = promisify(_glob);
 
-interface Commands {
-  [key: string]: () => Command;
-}
-
-async function generateCommands(): Promise<Commands> {
-  const files = await glob(
-    require("path").dirname(require.main?.filename) + "/commands/**/*.js"
-  );
-
-  return files.reduce((acc, file) => {
-    const command = require(file).default;
-
-    if (command?.constructor) {
-      let commandNameSplit = file.split("/");
-
-      let commandName = commandNameSplit[commandNameSplit.length - 1]
-        .slice(0, -3)
-        .toLowerCase();
-
-      acc[commandName] = () => new command();
-    }
-
-    return acc;
-  }, {} as Commands);
-}
+type Registry = Array<Command>;
 
 export class CommandRegistry {
-  isInitialized = false;
+  private constructor() {}
 
-  constructor(public commands: Commands = {}) {}
+  private static instance: CommandRegistry;
 
-  async init() {
-    this.commands = await generateCommands();
-    this.isInitialized = true;
+  public static getInstance(): CommandRegistry {
+    if (!this.instance) this.instance = new CommandRegistry();
+
+    return this.instance;
+  }
+
+  private pool: Registry = [];
+
+  public async init() {
+    const commands = await generateCommands();
+
+    for (const command of Object.values(commands)) {
+      this.pool.push(new command());
+    }
   }
 
   async find(
     messageString: string,
-    serverID: string
+    serverID: string,
+    commands?: Command[]
   ): Promise<{ command?: Command; runAs: RunAs }> {
     let checker = new AliasChecker(messageString);
 
-    for (let command of this.list(true)) {
+    for (let command of commands || this.list(true)) {
       if (await checker.check(command, serverID)) {
-        let runAs = await checker.getRunAs(command, serverID);
+        const runAs = await checker.getRunAs(command, serverID);
+
         return {
           command: runAs.last()?.command!,
           runAs,
@@ -60,6 +50,15 @@ export class CommandRegistry {
       }
     }
     return { runAs: new RunAs() };
+  }
+
+  async findAndCopy(
+    messageString: string,
+    serverID: string
+  ): Promise<{ command?: Command; runAs: RunAs }> {
+    const { command, runAs } = await this.find(messageString, serverID);
+
+    return { runAs, command: command?.copy() };
   }
 
   findByID(
@@ -75,16 +74,11 @@ export class CommandRegistry {
   }
 
   list(showSecret: boolean = false, showArchived = false): Command[] {
-    let commandGetterList = Object.values(this.commands);
-
-    let commandsList = commandGetterList
-      .map((c) => {
-        return c();
-      })
-      .filter((c) => (c.parentName ? true : c.shouldBeIndexed));
-
-    return commandsList.filter(
-      (c) => (showSecret || !c.secretCommand) && (showArchived || !c.archived)
+    return this.pool.filter(
+      (c) =>
+        (c.parentName ? true : c.shouldBeIndexed) &&
+        (showSecret || !c.secretCommand) &&
+        (showArchived || !c.archived)
     );
   }
 
@@ -93,9 +87,7 @@ export class CommandRegistry {
 
     return flatDeep<Command>(
       shallowCommands.map((sc) =>
-        sc.hasChildren
-          ? [sc, ...(sc.children?.deepList(showSecret, showArchived) || [])]
-          : sc
+        sc.hasChildren ? [sc, ...(sc.children?.asDeepList() || [])] : sc
       )
     ).filter(
       (c) => (showSecret || !c.secretCommand) && (showArchived || !c.archived)
@@ -142,6 +134,28 @@ export class CommandRegistry {
 
     return filteredCommands;
   }
+}
+
+async function generateCommands(): Promise<Commands> {
+  const files = await glob(
+    require("path").dirname(require.main?.filename) + "/commands/**/*.js"
+  );
+
+  return files.reduce((acc, file) => {
+    const command = require(file).default;
+
+    if (command?.constructor) {
+      let commandNameSplit = file.split("/");
+
+      let commandName = commandNameSplit[commandNameSplit.length - 1]
+        .slice(0, -3)
+        .toLowerCase();
+
+      acc[commandName] = command;
+    }
+
+    return acc;
+  }, {} as Commands);
 }
 
 function checkPrefixes(

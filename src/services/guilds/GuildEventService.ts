@@ -12,7 +12,7 @@ import { MirrorballService } from "../mirrorball/MirrorballService";
 export class GuildEventService extends BaseService {
   gowonService = GowonService.getInstance();
   adminService = new AdminService(this.gowonClient);
-  commandRegistry = new CommandRegistry();
+  commandRegistry = CommandRegistry.getInstance();
   mirrorballService = new MirrorballService(this.logger);
 
   constructor(private gowonClient: GowonClient, logger?: Logger) {

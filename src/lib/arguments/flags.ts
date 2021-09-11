@@ -1,4 +1,5 @@
 import escapeStringRegexp from "escape-string-regexp";
+import { SimpleMap } from "../../helpers/types";
 
 export interface Flag {
   description: string;
@@ -24,7 +25,7 @@ export class FlagParser<FlagsType extends Flags> {
     }
 
     let cleanedString = `${string}`;
-    const flagsMap: { [key: string]: boolean } = {};
+    const flagsMap: SimpleMap<boolean> = {};
 
     for (const [flagName, flag] of Object.entries(flags)) {
       if (this.stringHasFlag(cleanedString, flag)) {

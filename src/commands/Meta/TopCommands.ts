@@ -1,6 +1,5 @@
 import { Message } from "discord.js";
 import { MetaChildCommand } from "./MetaChildCommand";
-import { CommandRegistry } from "../../lib/command/CommandRegistry";
 import { Arguments } from "../../lib/arguments/arguments";
 import { timeRangeParser, humanizedTimeRangeParser } from "../../helpers/date";
 import { displayNumber } from "../../lib/views/displays";
@@ -31,9 +30,6 @@ export class TopCommands extends MetaChildCommand<typeof args> {
       await this.metaService.mostUsedCommands(message.guild?.id!, timeRange)
     ).slice(0, 10);
 
-    let commandRegistry = new CommandRegistry();
-    await commandRegistry.init();
-
     let embed = this.newEmbed()
       .setTitle(`Top commands in ${message.guild?.name!} ${humanizedTimeRange}`)
       .setDescription(
@@ -41,7 +37,7 @@ export class TopCommands extends MetaChildCommand<typeof args> {
           .map(
             (tc) =>
               `${displayNumber(tc.count, "run")} - ${(
-                commandRegistry.findByID(tc.commandID)
+                this.commandRegistry.findByID(tc.commandID)
                   ?.friendlyNameWithParent ?? "[unknown command]"
               ).strong()}`
           )

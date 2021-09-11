@@ -3,11 +3,11 @@ import { GuildMember, Message } from "discord.js";
 import { Permission } from "../../database/entity/Permission";
 import { Command } from "../command/Command";
 import { ChildCommand } from "../command/ParentCommand";
-import { CommandRegistry } from "../command/CommandRegistry";
 import { In } from "typeorm";
 import { GowonService } from "../../services/GowonService";
 import { GowonClient } from "../GowonClient";
 import { checkRollout } from "../../helpers/permissions";
+import { CommandRegistry } from "../command/CommandRegistry";
 
 export enum CheckFailReason {
   disabled = "disabled",
@@ -21,7 +21,7 @@ export interface CanCheck {
 }
 
 export class Can {
-  commandRegistry = new CommandRegistry();
+  private commandRegistry = CommandRegistry.getInstance();
   private gowonService = GowonService.getInstance();
 
   cachedPermissons: {
@@ -34,8 +34,6 @@ export class Can {
     child: ChildCommand,
     serverID: string
   ): Promise<string[]> {
-    if (!this.commandRegistry.isInitialized) await this.commandRegistry.init();
-
     let runAs = await this.commandRegistry.find(child.parentName, serverID);
 
     return runAs.runAs.toCommandArray().map((c) => c.id);

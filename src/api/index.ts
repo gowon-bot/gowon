@@ -12,7 +12,7 @@ export const gowonAPIPort = 3000;
 
 export class GraphQLAPI {
   usersService = new UsersService();
-  commandRegistry = new CommandRegistry();
+  commandRegistry = CommandRegistry.getInstance();
 
   async init() {
     await this.commandRegistry.init();

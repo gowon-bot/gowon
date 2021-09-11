@@ -1,3 +1,4 @@
+import { SimpleMap } from "../../helpers/types";
 import { ParsedArguments } from "../arguments/arguments";
 
 export interface Validator {
@@ -12,9 +13,7 @@ type ValidatorOptions =
   | Validator
   | { validator: Validator; dependsOn?: string[]; friendlyName?: string };
 
-export interface Validation {
-  [key: string]: Array<ValidatorOptions> | ValidatorOptions;
-}
+export type Validation = SimpleMap<Array<ValidatorOptions> | ValidatorOptions>;
 
 function isValidator(validator: ValidatorOptions): validator is Validator {
   return (validator as Validator).validate !== undefined;

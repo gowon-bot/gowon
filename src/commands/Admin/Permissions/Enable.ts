@@ -1,5 +1,4 @@
 import { Message } from "discord.js";
-import { CommandRegistry } from "../../../lib/command/CommandRegistry";
 import { PermissionsChildCommand } from "../Permissions/PermissionsChildCommand";
 
 export class Enable extends PermissionsChildCommand {
@@ -8,8 +7,6 @@ export class Enable extends PermissionsChildCommand {
   description = "Re-enable a command";
   usage = "command";
   shouldBeIndexed = false;
-
-  commandRegistry = new CommandRegistry();
 
   async run(message: Message) {
     let disabledCommand = await this.adminService.enableCommand(

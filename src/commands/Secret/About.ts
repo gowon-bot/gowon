@@ -4,7 +4,6 @@ import { Friend } from "../../database/entity/Friend";
 import { CommandRun } from "../../database/entity/meta/CommandRun";
 import { CrownEvent } from "../../database/entity/meta/CrownEvent";
 import { BaseCommand } from "../../lib/command/BaseCommand";
-import { CommandRegistry } from "../../lib/command/CommandRegistry";
 import {
   displayDate,
   displayLink,
@@ -25,11 +24,8 @@ export default class About extends BaseCommand {
 
   lastFMService = new LastFMService(this.logger);
   redirectsService = new RedirectsService(this.logger);
-  commandRegistry = new CommandRegistry();
 
-  async run(_: any) {
-    await this.commandRegistry.init();
-
+  async run() {
     const author = await this.gowonClient.client.users.fetch(
       this.gowonClient.specialUsers.developers[0].id
     );

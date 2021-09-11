@@ -17,7 +17,7 @@ import {
   UsernameNotRegisteredError,
 } from "../../errors";
 import { GowonService } from "../../services/GowonService";
-import { CommandRegistry } from "./CommandRegistry";
+import { CommandGroup } from "./CommandGroup";
 import { Logger } from "../Logger";
 import { Command, Rollout } from "./Command";
 import { TrackingService } from "../../services/TrackingService";
@@ -46,6 +46,7 @@ import {
   UserInput,
 } from "../../services/mirrorball/MirrorballTypes";
 import { MirrorballUsersService } from "../../services/mirrorball/services/MirrorballUsersService";
+import { CommandRegistry } from "./CommandRegistry";
 
 export interface Variation {
   name: string;
@@ -136,9 +137,10 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
   gowonService = GowonService.getInstance();
   track = new TrackingService(this.logger);
   mirrorballService = new MirrorballService(this.logger);
+  commandRegistry = CommandRegistry.getInstance();
 
   hasChildren = false;
-  children?: CommandRegistry;
+  children?: CommandGroup;
   parentName?: string;
 
   async getChild(_: string, __: string): Promise<Command | undefined> {
@@ -522,6 +524,11 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     if (this.gowonClient.isDeveloper(this.author.id)) return true;
 
     return checkRollout(this.rollout, this.message);
+  }
+
+  public copy(): Command {
+    return this.constructor();
+    // return Object.create(Object.getPrototypeOf(this));
   }
 
   protected async fetchUsername(id: string): Promise<string> {

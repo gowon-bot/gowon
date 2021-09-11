@@ -1,6 +1,5 @@
 import { BaseCommand } from "../../lib/command/BaseCommand";
 import { Message } from "discord.js";
-import { CommandRegistry } from "../../lib/command/CommandRegistry";
 import { Arguments } from "../../lib/arguments/arguments";
 import { AdminService } from "../../services/dbservices/AdminService";
 import { CommandNotFoundError } from "../../errors";
@@ -22,13 +21,10 @@ export default class HelpForOneCommand extends BaseCommand<typeof args> {
 
   arguments: Arguments = args;
 
-  commandRegistry = new CommandRegistry();
   adminService = new AdminService(this.gowonClient);
 
   async run(message: Message) {
     let command = this.parsedArguments.command!;
-
-    await this.commandRegistry.init();
 
     let embed = await this.helpForOneCommand(message, command);
 
@@ -107,7 +103,7 @@ export default class HelpForOneCommand extends BaseCommand<typeof args> {
     command: ParentCommand
   ) {
     let commands = await this.adminService.can.viewList(
-      command.children.list(),
+      command.children.commands,
       message,
       this.gowonClient
     );

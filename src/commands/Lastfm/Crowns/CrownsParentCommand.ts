@@ -1,4 +1,4 @@
-import { CommandRegistry } from "../../../lib/command/CommandRegistry";
+import { CommandGroup } from "../../../lib/command/CommandGroup";
 import { LastFMBaseParentCommand } from "../LastFMBaseCommand";
 import { Check } from "./Check";
 import { Info } from "./Info";
@@ -46,29 +46,29 @@ export default class CrownsParentCommand extends LastFMBaseParentCommand {
     "ch",
   ];
 
-  children: CommandRegistry = new CommandRegistry({
-    check: () => new Check(),
-    info: () => new Info(),
-    list: () => new List(),
-    checkmany: () => new CheckMany(),
-    topcrowns: () => new TopCrowns(),
-    contentiouscrowns: () => new ContentiousCrowns(),
-    guild: () => new Guild(),
-    dm: () => new DM(),
-    setinactiverole: () => new SetInactiveRole(),
-    setpurgatoryrole: () => new SetPurgatoryRole(),
-    optout: () => new OptOut(),
-    optin: () => new OptIn(),
-    rank: () => new Rank(),
-    kill: () => new Kill(),
-    recentlystolen: () => new RecentlyStolen(),
-    ban: () => new Ban(),
-    unban: () => new Unban(),
-    crownranks: () => new CrownRanks(),
-    banartist: () => new BanArtist(),
-    unbanartist: () => new UnbanArtist(),
-    history: () => new History(),
-    guildat: () => new GuildAt(),
-    guildaround: () => new GuildAround(),
-  });
+  children: CommandGroup = new CommandGroup([
+    Check,
+    Info,
+    List,
+    CheckMany,
+    TopCrowns,
+    ContentiousCrowns,
+    Guild,
+    DM,
+    SetInactiveRole,
+    SetPurgatoryRole,
+    OptOut,
+    OptIn,
+    Rank,
+    Kill,
+    RecentlyStolen,
+    Ban,
+    Unban,
+    CrownRanks,
+    BanArtist,
+    UnbanArtist,
+    History,
+    GuildAt,
+    GuildAround,
+  ]);
 }

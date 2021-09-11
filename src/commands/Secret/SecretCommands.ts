@@ -1,6 +1,5 @@
 import { BaseCommand } from "../../lib/command/BaseCommand";
 import { Message } from "discord.js";
-import { CommandRegistry } from "../../lib/command/CommandRegistry";
 
 export default class SecretCommands extends BaseCommand {
   idSeed = "2ne1 minzy";
@@ -10,11 +9,7 @@ export default class SecretCommands extends BaseCommand {
   secretCommand = true;
   devCommand = true;
 
-  commandRegistry = new CommandRegistry();
-
   async run(message: Message) {
-    await this.commandRegistry.init();
-
     let commands = this.commandRegistry
       .list(true)
       .filter((c) => c.secretCommand);
