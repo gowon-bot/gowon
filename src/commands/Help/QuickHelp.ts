@@ -27,7 +27,7 @@ export default class QuickHelp extends BaseCommand<typeof args> {
     ).setDescription(`Welcome to Gowon! ${Emoji.gowonPeek}
       
 Use \`${this.prefix}login\` to login
-To see a list of all commands see \`${this.prefix}help all\`
+To see a list of all commands see \`${this.prefix}help all\`, or visit https://gowon.ca/commands
 To change prefix, run \`@Gowon prefix <prefix>\` (the current prefix is \`${this.prefix}\`)
 
 More questions? Come visit the support server: https://discord.gg/9Vr7Df7TZf`);

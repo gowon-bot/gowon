@@ -123,7 +123,7 @@ export class ScrollingEmbed {
     let footer = "";
 
     if (this.options.totalPages >= 0) {
-      footer += `Page ${this.currentPage} of ${this.options.totalPages}`;
+      footer += `Page ${this.currentPage} of ${this.options.totalPages || 1}`;
     }
 
     if (this.options.totalItems >= 0) {

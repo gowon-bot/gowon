@@ -85,9 +85,9 @@ export class Me extends JumbleChildCommand<typeof args> {
     let lineConsolidator = new LineConsolidator();
 
     lineConsolidator.addLines(
-      `This artist has **${abbreviateNumber(
-        artistInfo.listeners
-      )}** listeners on Last.fm and you have scrobbled them **${displayNumber(
+      `This artist has **${abbreviateNumber(artistInfo.listeners)}** listener${
+        artistInfo.listeners === 1 ? "" : "s"
+      } on Last.fm and you have scrobbled them **${displayNumber(
         artist.userPlaycount,
         "**time"
       )} (ranked #${displayNumber(artist.rank)}).`,
@@ -119,7 +119,9 @@ export class Me extends JumbleChildCommand<typeof args> {
       **Hints**:
       _${lineConsolidator.consolidate()}_`
       )
-      .setFooter(`Run "!j <your guess>" to make a guess or "!j quit" to quit`);
+      .setFooter(
+        `Run "${this.prefix}j <your guess>" to make a guess or "${this.prefix}j quit" to quit`
+      );
 
     await this.send(embed);
   }

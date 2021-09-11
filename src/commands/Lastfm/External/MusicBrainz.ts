@@ -41,7 +41,7 @@ export default class MusicBrainz extends LastFMBaseCommand<typeof args> {
     let encodedKeywords = encodeURIComponent(keywords);
 
     let embed = this.newEmbed()
-      .setAuthor(`Music search for "${keywords}"`)
+      .setAuthor(`MusicBrainz search for "${keywords}"`)
       .setTitle("Click here to view the results")
       .setURL(
         `https://musicbrainz.org/search?query=${encodedKeywords}&type=${
