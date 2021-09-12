@@ -7,9 +7,11 @@ import { AliasChecker } from "../AliasChecker";
 import { RunAs } from "./RunAs";
 import { flatDeep } from "../../helpers";
 import { ParentCommand } from "./ParentCommand";
+import { SimpleMap } from "../../helpers/types";
 const glob = promisify(_glob);
 
 type Registry = Array<Command>;
+type CommandFactory = SimpleMap<{ new (): Command }>;
 
 export class CommandRegistry {
   private constructor() {}
@@ -23,6 +25,7 @@ export class CommandRegistry {
   }
 
   private pool: Registry = [];
+  private factory: CommandFactory = {};
 
   public async init() {
     const commands = await generateCommands();
@@ -30,8 +33,16 @@ export class CommandRegistry {
     this.pool = [];
 
     for (const command of Object.values(commands)) {
-      this.pool.push(new command());
+      const instance = new command();
+
+      this.factory[instance.id] = command;
+
+      this.pool.push(instance);
     }
+  }
+
+  public make(commandID: string) {
+    return new this.factory[commandID]();
   }
 
   async find(

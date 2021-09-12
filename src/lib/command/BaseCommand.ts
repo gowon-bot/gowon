@@ -547,8 +547,7 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
   }
 
   public copy(): Command {
-    return this.constructor();
-    // return Object.create(Object.getPrototypeOf(this));
+    return CommandRegistry.getInstance().make(this.id);
   }
 
   protected async fetchUsername(id: string): Promise<string> {
