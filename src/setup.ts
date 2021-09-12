@@ -61,7 +61,6 @@ export async function setup() {
     connectToRedis(),
     connectToPM2(),
     connectToMirrorball(),
-    initializedCommandHandler(),
     intializeAPI(),
     initializeGuildEventService(),
   ]);
@@ -72,10 +71,6 @@ export async function setup() {
 
 function connectToDB() {
   return logStartup(() => db.connect(), "Connected to database");
-}
-
-function initializedCommandHandler() {
-  return logStartup(() => handler.init(), "Initialized command handler");
 }
 
 function connectToRedis() {

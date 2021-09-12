@@ -16,8 +16,6 @@ export class GraphQLAPI {
   commandRegistry = CommandRegistry.getInstance();
 
   async init() {
-    await this.commandRegistry.init();
-
     const app = express();
 
     const commandResolvers = commandResolversFunc(this.commandRegistry);

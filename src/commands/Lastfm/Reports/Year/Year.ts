@@ -1,5 +1,6 @@
 import { sub } from "date-fns";
 import { LogicError } from "../../../../errors";
+import { SimpleMap } from "../../../../helpers/types";
 import { Arguments } from "../../../../lib/arguments/arguments";
 import { standardMentions } from "../../../../lib/arguments/mentions/mentions";
 import { ReportCalculator } from "../../../../lib/calculators/ReportCalculator";
@@ -27,6 +28,8 @@ export default class Year extends MirrorballBaseCommand<
   aliases = ["yearly"];
   subcategory = "reports";
   usage = ["", "@user"];
+
+  devCommand = true;
 
   arguments: Arguments = args;
 
@@ -142,7 +145,10 @@ ${tagConsolidator.consolidateAsStrings(10).join(", ").italic()}
     await this.send(embed);
   }
 
-  private async queryAndConvert(params: YearParams): Promise<RecentTracks> {
+  private async queryAndConvert(
+    _: SimpleMap,
+    params: YearParams
+  ): Promise<RecentTracks> {
     const response = await this.query(params);
 
     return RecentTracks.fromMirrorballPlaysResponse(response, this.pageSize);

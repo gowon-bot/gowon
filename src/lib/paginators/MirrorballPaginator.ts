@@ -11,7 +11,7 @@ function onPage<P extends SimpleMap, R>(
   pageSize: number,
   ctx: SimpleMap
 ): (ctx: SimpleMap, params: P & { page?: number }) => Promise<R> {
-  return (params) => {
+  return (_, params) => {
     const newParams = Object.assign(params, {
       pageInput: {
         limit: pageSize,

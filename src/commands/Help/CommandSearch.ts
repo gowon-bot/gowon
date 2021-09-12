@@ -17,7 +17,7 @@ const args = {
 export default class CommandSearch extends BaseCommand<typeof args> {
   idSeed = "exid solji";
 
-  aliases = ["command", "searchcommands", "searchcommand"];
+  aliases = ["command", "searchcommands", "searchcommand", "sc"];
   subcategory = "about";
   description = "Search the list of commands for a keyword";
 
@@ -62,7 +62,7 @@ export default class CommandSearch extends BaseCommand<typeof args> {
           "command"
         )}, found ${displayNumber(foundCommands.length, "result")}` +
           (foundCommands.length > 12
-            ? "\nTry narrowing down your search to see more results"
+            ? "\nTry narrowing down your search to see more results, or go to https://gowon.ca/commands"
             : "")
       );
 

@@ -27,6 +27,8 @@ export class CommandRegistry {
   public async init() {
     const commands = await generateCommands();
 
+    this.pool = [];
+
     for (const command of Object.values(commands)) {
       this.pool.push(new command());
     }

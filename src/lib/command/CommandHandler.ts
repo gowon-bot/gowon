@@ -36,10 +36,6 @@ export class CommandHandler {
     };
   }
 
-  async init() {
-    await this.commandRegistry.init();
-  }
-
   async handle(message: Message): Promise<void> {
     this.nicknameService.recordNickname(
       this.context,

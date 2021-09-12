@@ -54,7 +54,6 @@ export class MirrorballService extends BaseService {
     variables?: SimpleMap
   ): Promise<T> {
     const response = await this.makeRequest(ctx, { query }, variables);
-    console.log(response);
 
     if (response.error) {
       throw response.errors || response.error;
