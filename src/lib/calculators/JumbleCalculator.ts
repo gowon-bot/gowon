@@ -1,12 +1,11 @@
 import { LastFMService } from "../../services/LastFM/LastFMService";
 import { TopArtist } from "../../services/LastFM/converters/TopTypes";
-import { SimpleMap } from "../../helpers/types";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 
 export class JumbleCalculator {
   private lastFMService = ServiceRegistry.get(LastFMService);
 
-  constructor(private ctx: SimpleMap, private username: string) {}
+  constructor(private ctx: any, private username: string) {}
 
   async getArtist(
     poolAmount: number,

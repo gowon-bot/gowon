@@ -16,7 +16,7 @@ import { gowonAPIPort } from "./api";
 async function start() {
   await setup();
 
-  const ctx = { client };
+  const ctx = { client } as any;
 
   client.client.on("ready", () => {
     console.log(

@@ -153,7 +153,6 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
       {
         logger: this.logger,
         command: this,
-        client: this.gowonClient,
       },
       customContext
     );
@@ -407,11 +406,7 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
             !["update", "index", "login", "logout"].includes(this.name)
           ) {
             await Promise.all([
-              this.mirrorballService.quietAddUserToGuild(
-                this.ctx,
-                this.author.id,
-                this.guild.id
-              ),
+              this.mirrorballService.quietAddUserToGuild(this.ctx),
               senderUser.mirrorballUpdate(),
             ]);
           }

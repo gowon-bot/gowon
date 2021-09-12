@@ -1,6 +1,6 @@
 import { BaseCommand, Delegate } from "../../lib/command/BaseCommand";
 import { Command } from "../../lib/command/Command";
-import { EmbedField, Message } from "discord.js";
+import { EmbedField } from "discord.js";
 import { Arguments } from "../../lib/arguments/arguments";
 import { AdminService } from "../../services/dbservices/AdminService";
 import HelpForOneCommand from "./HelpForOneCommand";
@@ -40,16 +40,14 @@ export default class Help extends BaseCommand<typeof args> {
 
   adminService = ServiceRegistry.get(AdminService);
 
-  async run(message: Message) {
-    await this.helpForAllCommands(message);
+  async run() {
+    await this.helpForAllCommands();
   }
 
-  private async helpForAllCommands(message: Message) {
+  private async helpForAllCommands() {
     let commands = await this.adminService.can.viewList(
       this.ctx,
-      this.commandRegistry.list(),
-      message,
-      this.gowonClient
+      this.commandRegistry.list()
     );
 
     const footer = (page: number, totalPages: number) =>

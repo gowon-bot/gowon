@@ -52,8 +52,7 @@ export default class ArtistInfo extends InfoCommand<typeof args> {
 
     const crown = await this.crownsService.getCrownDisplay(
       this.ctx,
-      artistInfo.name,
-      this.guild
+      artistInfo.name
     );
 
     const tags = await this.tagsService.getTagsForArtists(this.ctx, [

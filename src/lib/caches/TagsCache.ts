@@ -1,4 +1,3 @@
-import { SimpleMap } from "../../helpers/types";
 import { TagsService } from "../../services/mirrorball/services/TagsService";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 
@@ -10,7 +9,7 @@ export class TagsCache {
   private cache: TagsCacheObject = {};
   private tagsService = ServiceRegistry.get(TagsService);
 
-  constructor(private ctx: SimpleMap) {}
+  constructor(private ctx: any) {}
 
   async initialCache(artistNames: string[], requireTags?: boolean) {
     const artistMap = await this.tagsService.getTagsForArtistsMap(

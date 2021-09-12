@@ -41,11 +41,7 @@ export default class NowPlayingCombo extends NowPlayingBaseCommand {
         artist: nowPlaying.artist,
         username: requestable,
       }),
-      this.crownsService.getCrownDisplay(
-        this.ctx,
-        nowPlaying.artist,
-        this.guild
-      ),
+      this.crownsService.getCrownDisplay(this.ctx, nowPlaying.artist),
     ]);
 
     if (artistInfo.value) {

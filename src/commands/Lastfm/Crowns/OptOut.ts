@@ -32,7 +32,6 @@ export class OptOut extends CrownsChildCommand {
 
       const numberOfCrowns = await this.crownsService.optOut(
         this.ctx,
-        message.guild?.id!,
         message.author.id
       );
 

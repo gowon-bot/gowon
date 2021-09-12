@@ -35,7 +35,6 @@ export class Rank extends CrownsChildCommand<typeof args> {
     let rank = await this.crownsService.getRank(
       this.ctx,
       discordID,
-      message.guild?.id!,
       await this.serverUserIDs({ filterCrownBannedUsers: true })
     );
 

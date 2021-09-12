@@ -153,8 +153,7 @@ export class DatasourceService extends BaseService<
     try {
       return await this.crownsService.getCrownDisplay(
         ctx,
-        this.nowPlaying(ctx).artist,
-        ctx.resources!.message.guild!
+        this.nowPlaying(ctx).artist
       );
     } catch {
       return undefined;

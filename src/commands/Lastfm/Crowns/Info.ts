@@ -54,7 +54,6 @@ export class Info extends CrownsChildCommand<typeof args> {
     let crown = await this.crownsService.getCrown(
       this.ctx,
       redirectArtistName,
-      this.guild.id,
       {
         showDeleted: false,
         noRedirect: true,

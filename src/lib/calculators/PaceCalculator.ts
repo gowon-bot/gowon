@@ -1,6 +1,5 @@
 import { add, differenceInSeconds } from "date-fns";
 import { TimeRange } from "../../helpers/date";
-import { SimpleMap } from "../../helpers/types";
 import { Requestable } from "../../services/LastFM/LastFMAPIService";
 import { LastFMService } from "../../services/LastFM/LastFMService";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
@@ -14,7 +13,7 @@ export interface PacePrediction {
 export class PaceCalculator {
   private lastFMService = ServiceRegistry.get(LastFMService);
 
-  constructor(private ctx: SimpleMap, private requestable: Requestable) {}
+  constructor(private ctx: any, private requestable: Requestable) {}
 
   private calculateScrobblesPerHour(
     scrobbles: number,

@@ -17,12 +17,7 @@ export class Quit extends JumbleChildCommand {
     if (!jumbledArtist.jumbled)
       throw new LogicError("you haven't jumbled an artist yet!");
 
-    this.redisService.sessionDelete(
-      this.ctx,
-      this.author.id,
-      this.guild.id,
-      jumbleRedisKey
-    );
+    this.redisService.sessionDelete(this.ctx, jumbleRedisKey);
 
     await this.traditionalReply(
       `The artist was ${jumbledArtist.unjumbled.strong()}!`

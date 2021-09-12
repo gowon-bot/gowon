@@ -30,8 +30,8 @@ export class CrownRanks extends CrownsChildCommand<typeof args> {
     );
 
     const [crownRanks, crownsCount] = await Promise.all([
-      this.crownsService.crownRanks(this.guild.id, discordUser!.id),
-      this.crownsService.count(this.ctx, discordUser!.id, this.guild.id),
+      this.crownsService.crownRanks(this.ctx, discordUser!.id),
+      this.crownsService.count(this.ctx, discordUser!.id),
     ]);
 
     if (!crownsCount)

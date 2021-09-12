@@ -117,13 +117,11 @@ export class CrownsHistoryService extends BaseService<CrownsHistoryServiceContex
     ctx: CrownsHistoryServiceContext,
     user: User,
     banner: DiscordUser,
-    banTarget: DiscordUser,
-    serverID: string
+    banTarget: DiscordUser
   ) {
     let crowns = await ctx.crownsService.listTopCrowns(
       ctx,
       user.discordID,
-      serverID,
       undefined
     );
 
@@ -136,13 +134,11 @@ export class CrownsHistoryService extends BaseService<CrownsHistoryServiceContex
     ctx: CrownsHistoryServiceContext,
     user: User,
     unbanner: DiscordUser,
-    unbanTarget: DiscordUser,
-    serverID: string
+    unbanTarget: DiscordUser
   ) {
     let crowns = await ctx.crownsService.listTopCrowns(
       ctx,
       user.discordID,
-      serverID,
       undefined
     );
 
@@ -155,7 +151,6 @@ export class CrownsHistoryService extends BaseService<CrownsHistoryServiceContex
     let crowns = await ctx.crownsService.listTopCrowns(
       ctx,
       discordUser.user.id,
-      discordUser.guild.id,
       -1
     );
 

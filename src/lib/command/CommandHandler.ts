@@ -28,23 +28,27 @@ export class CommandHandler {
     this.client = client;
   }
 
-  get context() {
+  context(message: Message): any {
     return {
       logger: this.logger,
       client: this.client,
+      command: {
+        message,
+        guild: message.guild!,
+        author: message.author,
+      },
       adminService: this.adminService,
     };
   }
 
   async handle(message: Message): Promise<void> {
     this.nicknameService.recordNickname(
-      this.context,
+      this.context(message),
       message.author.id,
-      message.guild?.id,
       message.member?.nickname || message.author.username
     );
     this.nicknameService.recordUsername(
-      this.context,
+      this.context(message),
       message.author.id,
       message.author.username + "#" + message.author.discriminator
     );
@@ -97,10 +101,8 @@ export class CommandHandler {
       }
 
       let canCheck = await this.adminService.can.run(
-        this.context,
+        this.context(message),
         command,
-        message,
-        this.client,
         {
           useChannel: true,
         }
@@ -119,7 +121,11 @@ export class CommandHandler {
 
       this.logger.logCommandHandle(runAs);
 
-      this.metaService.recordCommandRun(this.context, command.id, message);
+      this.metaService.recordCommandRun(
+        this.context(message),
+        command.id,
+        message
+      );
 
       this.runCommand(command, message, runAs);
     }

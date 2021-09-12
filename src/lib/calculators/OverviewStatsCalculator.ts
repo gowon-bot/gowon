@@ -20,7 +20,6 @@ import gql from "graphql-tag";
 import { MirrorballPageInfo } from "../../services/mirrorball/MirrorballTypes";
 import { MirrorballService } from "../../services/mirrorball/MirrorballService";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
-import { SimpleMap } from "../../helpers/types";
 
 export class Stat {
   public asString: string;
@@ -51,9 +50,8 @@ export class OverviewStatsCalculator {
   private mirrorballService = ServiceRegistry.get(MirrorballService);
 
   constructor(
-    private ctx: SimpleMap,
+    private ctx: any,
     private requestable: Requestable,
-    private serverID: string,
     private userID: string | undefined,
     private timePeriod: LastFMPeriod
   ) {}
@@ -142,8 +140,7 @@ export class OverviewStatsCalculator {
     if (!this.cache.crownsRank)
       this.cache.crownsRank = await this.crownsService.getRank(
         this.ctx,
-        this.userID,
-        this.serverID
+        this.userID
       );
 
     return this.cache.crownsRank;

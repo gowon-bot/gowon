@@ -91,10 +91,11 @@ export class MirrorballService extends BaseService {
   public async login(
     ctx: BaseServiceContext,
     username: string,
-    discordID: string,
     userType: MirrorballUserType,
     session: string | undefined
   ) {
+    const discordID = this.author(ctx).id;
+
     return await this.query(
       ctx,
       gql`
@@ -118,7 +119,9 @@ export class MirrorballService extends BaseService {
     );
   }
 
-  public async logout(ctx: BaseServiceContext, discordID: string) {
+  public async logout(ctx: BaseServiceContext) {
+    const discordID = this.author(ctx).id;
+
     return await this.query(
       ctx,
       gql`
@@ -131,10 +134,11 @@ export class MirrorballService extends BaseService {
   }
 
   public async quietAddUserToGuild(
-    ctx: BaseServiceContext,
-    discordID: string,
-    guildID: string
+    ctx: BaseServiceContext
   ): Promise<Error | undefined> {
+    const discordID = this.author(ctx).id;
+    const guildID = this.guild(ctx).id;
+
     try {
       await this.query(
         ctx,
@@ -158,10 +162,11 @@ export class MirrorballService extends BaseService {
   }
 
   public async quietRemoveUserFromGuild(
-    ctx: BaseServiceContext,
-    discordID: string,
-    guildID: string
+    ctx: BaseServiceContext
   ): Promise<Error | undefined> {
+    const discordID = this.author(ctx).id;
+    const guildID = this.guild(ctx).id;
+
     try {
       await this.query(
         ctx,
@@ -179,7 +184,9 @@ export class MirrorballService extends BaseService {
     return;
   }
 
-  public async fullIndex(ctx: BaseServiceContext, discordID: string) {
+  public async fullIndex(ctx: BaseServiceContext) {
+    const discordID = this.author(ctx).id;
+
     await this.usersService.setAsIndexed(ctx, discordID);
 
     const response = await this.query<{

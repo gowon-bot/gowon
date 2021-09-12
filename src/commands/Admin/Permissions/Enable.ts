@@ -1,4 +1,3 @@
-import { Message } from "discord.js";
 import { PermissionsChildCommand } from "../Permissions/PermissionsChildCommand";
 
 export class Enable extends PermissionsChildCommand {
@@ -8,12 +7,10 @@ export class Enable extends PermissionsChildCommand {
   usage = "command";
   shouldBeIndexed = false;
 
-  async run(message: Message) {
+  async run() {
     let disabledCommand = await this.adminService.enableCommand(
       this.ctx,
-      this.command.id,
-      message.guild?.id!,
-      this.author.id
+      this.command.id
     );
 
     await this.send(

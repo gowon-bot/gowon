@@ -38,12 +38,7 @@ export class ServerCombos extends ComboChildCommand<typeof args> {
 
     const serverUsers = await this.serverUserIDs();
 
-    await this.nicknameService.cacheNicknames(
-      this.ctx,
-      serverUsers,
-      this.guild.id,
-      this.gowonClient
-    );
+    await this.nicknameService.cacheNicknames(this.ctx, serverUsers);
 
     const combos = await this.comboService.listCombosForUsers(
       this.ctx,

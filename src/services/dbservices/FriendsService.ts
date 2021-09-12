@@ -21,8 +21,7 @@ export class FriendsService extends BaseService {
   async addFriend(
     ctx: BaseServiceContext,
     user: User,
-    friendToAdd: string | User,
-    prefix: string
+    friendToAdd: string | User
   ): Promise<Friend> {
     this.log(
       ctx,
@@ -35,7 +34,7 @@ export class FriendsService extends BaseService {
     ) {
       throw new TooManyFriendsError(
         user.isPatron ? this.patronFriendsLimit : this.friendsLimit,
-        prefix,
+        ctx.command.prefix,
         !user.isPatron
       );
     }

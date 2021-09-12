@@ -42,11 +42,9 @@ export class MirrorballUsersService extends BaseService {
     return undefined;
   }
 
-  async updatePrivacy(
-    ctx: BaseServiceContext,
-    discordID: string,
-    privacy: MirrorballPrivacy
-  ) {
+  async updatePrivacy(ctx: BaseServiceContext, privacy: MirrorballPrivacy) {
+    const discordID = this.author(ctx).id;
+
     const mutation = gql`
       mutation updatePrivacy($discordID: String!, $privacy: Privacy!) {
         updatePrivacy(user: { discordID: $discordID }, privacy: $privacy)

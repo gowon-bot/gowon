@@ -33,12 +33,7 @@ export class Guess extends JumbleChildCommand<typeof args> {
       guess.toLowerCase().replace(/\s+/g, " ") ===
       jumbledArtist.unjumbled.toLowerCase().replace(/\s+/g, " ")
     ) {
-      this.redisService.sessionDelete(
-        this.ctx,
-        this.author.id,
-        this.guild.id,
-        jumbleRedisKey
-      );
+      this.redisService.sessionDelete(this.ctx, jumbleRedisKey);
 
       await this.reply(
         `you are correct! The artist was ${jumbledArtist.unjumbled.strong()}`

@@ -64,7 +64,7 @@ export default class WhoKnowsArtist extends WhoKnowsBaseCommand<
 
     const crown = this.isGlobal()
       ? undefined
-      : await this.crownsService.getCrown(this.ctx, artistName, this.guild.id);
+      : await this.crownsService.getCrown(this.ctx, artistName);
 
     if (this.variationWasUsed("update")) {
       await this.updateAndWait(this.author.id);

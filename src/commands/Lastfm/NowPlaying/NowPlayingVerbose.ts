@@ -33,11 +33,7 @@ export default class NowPlayingVerbose extends NowPlayingBaseCommand {
         track: nowPlaying.name,
         username: requestable,
       }),
-      this.crownsService.getCrownDisplay(
-        this.ctx,
-        nowPlaying.artist,
-        this.guild
-      ),
+      this.crownsService.getCrownDisplay(this.ctx, nowPlaying.artist),
     ]);
 
     let { crownString, isCrownHolder } = await this.crownDetails(

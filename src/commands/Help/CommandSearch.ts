@@ -40,9 +40,7 @@ export default class CommandSearch extends BaseCommand<typeof args> {
 
     const commands = await this.adminService.can.viewList(
       this.ctx,
-      commandList,
-      this.message,
-      this.gowonClient
+      commandList
     );
 
     const foundCommands = this.commandRegistry.search(commands, keywords);

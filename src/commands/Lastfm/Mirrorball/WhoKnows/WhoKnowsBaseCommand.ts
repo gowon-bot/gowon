@@ -61,11 +61,7 @@ export abstract class WhoKnowsBaseCommand<
 
     if (nickname) {
       if (nickname === UnknownUserDisplay) {
-        this.whoKnowsService.recordUnknownMember(
-          this.ctx,
-          this.guild.id,
-          user.discordID
-        );
+        this.whoKnowsService.recordUnknownMember(this.ctx, user.discordID);
 
         return nickname;
       }
@@ -101,18 +97,9 @@ export abstract class WhoKnowsBaseCommand<
   }
 
   protected async cacheUserInfo(users: MirrorballUser[]) {
-    await this.nicknameService.cacheNicknames(
-      this.ctx,
-      users,
-      this.guild.id,
-      this.gowonClient
-    );
+    await this.nicknameService.cacheNicknames(this.ctx, users);
     if (this.isGlobal()) {
-      await this.nicknameService.cacheUsernames(
-        this.ctx,
-        users,
-        this.gowonClient
-      );
+      await this.nicknameService.cacheUsernames(this.ctx, users);
     }
   }
 }

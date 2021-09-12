@@ -51,8 +51,6 @@ export class Check extends CrownsChildCommand<typeof args> {
     });
 
     let crownCheck = await this.crownsService.checkCrown(this.ctx, {
-      message,
-      discordID: message.author.id,
       artistName: artistDetails.name,
       plays: artistDetails.userPlaycount,
     });

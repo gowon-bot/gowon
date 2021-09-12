@@ -180,7 +180,7 @@ export abstract class MirrorballBaseCommand<
       ConcurrentActions.Indexing,
       discordID
     );
-    await this.mirrorballService.fullIndex(this.ctx, discordID);
+    await this.mirrorballService.fullIndex(this.ctx);
     this.concurrencyManager.registerUser(ConcurrentActions.Indexing, discordID);
     this.notifyUser(
       Perspective.buildPerspective(username, false),

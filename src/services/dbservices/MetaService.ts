@@ -26,9 +26,10 @@ export class MetaService extends BaseService {
 
   async mostUsedCommands(
     ctx: BaseServiceContext,
-    serverID: string,
     timeRange?: TimeRange
   ): Promise<MostUsedCommandsResponse[]> {
+    const serverID = this.guild(ctx).id;
+
     this.log(ctx, `Counting most used commands in ${serverID}`);
 
     return await CommandRun.mostUsedCommands(serverID, timeRange);

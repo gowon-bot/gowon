@@ -1,5 +1,4 @@
 import gql from "graphql-tag";
-import { SimpleMap } from "../../helpers/types";
 import { RedirectsService } from "../../services/dbservices/RedirectsService";
 import { RecentTracks } from "../../services/LastFM/converters/RecentTracks";
 import { MirrorballService } from "../../services/mirrorball/MirrorballService";
@@ -41,7 +40,7 @@ export class ReportCalculator {
   private redirectsService = ServiceRegistry.get(RedirectsService);
   private mirrorballService = ServiceRegistry.get(MirrorballService);
 
-  constructor(private ctx: SimpleMap, private tracks: RecentTracks) {}
+  constructor(private ctx: any, private tracks: RecentTracks) {}
 
   redirectsCache = new RedirectsCache(this.redirectsService);
 

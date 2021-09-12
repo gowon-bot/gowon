@@ -1,8 +1,15 @@
 import { Logger } from "../lib/Logger";
 import chalk from "chalk";
 import { SimpleMap } from "../helpers/types";
+import { Guild } from "discord.js";
+import { BaseCommand } from "../lib/command/BaseCommand";
+import { GowonClient } from "../lib/GowonClient";
 
-export type BaseServiceContext = { logger?: Logger };
+export type BaseServiceContext = {
+  logger?: Logger;
+  command: BaseCommand;
+  client: GowonClient;
+};
 
 export class BaseService<
   Context extends BaseServiceContext = BaseServiceContext,
@@ -26,5 +33,13 @@ export class BaseService<
 
   protected bearerAuthorization(token: string) {
     return `Bearer ${token}`;
+  }
+
+  protected guild(ctx: SimpleMap): Guild {
+    return ctx.command.guild;
+  }
+
+  protected author(ctx: SimpleMap): Guild {
+    return ctx.command.author;
   }
 }

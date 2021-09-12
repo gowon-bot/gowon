@@ -38,8 +38,8 @@ export class Guild extends CrownsChildCommand<typeof args> {
     });
 
     const [holders, crownsCount] = await Promise.all([
-      this.crownsService.guild(this.ctx, this.guild, 20, serverUsers),
-      this.crownsService.countAllInServer(this.ctx, this.guild.id, serverUsers),
+      this.crownsService.guildLeaderboard(this.ctx, 20, serverUsers),
+      this.crownsService.countAllInServer(this.ctx, serverUsers),
     ]);
 
     const embed = this.newEmbed()

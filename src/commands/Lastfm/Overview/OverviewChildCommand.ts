@@ -99,7 +99,6 @@ export abstract class OverviewChildCommand<
     this.calculator = new OverviewStatsCalculator(
       this.ctx,
       requestable,
-      this.message.guild?.id!,
       this.discordID,
       this.timePeriod
     );

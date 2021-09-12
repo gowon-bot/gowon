@@ -20,13 +20,8 @@ export class RedisService extends BaseService {
     return this.redis.get(ctx, this.prefixedKey(ctx, key));
   }
 
-  async sessionGet(
-    ctx: RedisServiceContext,
-    discordID: string,
-    guildID: string,
-    key: string
-  ) {
-    return this.redis.get(ctx, this.sessionKey(ctx, discordID, guildID, key));
+  async sessionGet(ctx: RedisServiceContext, key: string) {
+    return this.redis.get(ctx, this.sessionKey(ctx, key));
   }
 
   // Set
@@ -46,15 +41,13 @@ export class RedisService extends BaseService {
 
   async sessionSet(
     ctx: RedisServiceContext,
-    discordID: string,
-    guildID: string,
     key: string,
     value: any,
     expiresAfter?: number
   ) {
     return this.redis.set(
       ctx,
-      this.sessionKey(ctx, discordID, guildID, key),
+      this.sessionKey(ctx, key),
       value,
       expiresAfter || this.getDefaultExpiry(ctx)
     );
@@ -65,16 +58,8 @@ export class RedisService extends BaseService {
     return this.redis.delete(ctx, this.prefixedKey(ctx, key));
   }
 
-  sessionDelete(
-    ctx: RedisServiceContext,
-    discordID: string,
-    guildID: string,
-    key: string
-  ) {
-    return this.redis.delete(
-      ctx,
-      this.sessionKey(ctx, discordID, guildID, key)
-    );
+  sessionDelete(ctx: RedisServiceContext, key: string) {
+    return this.redis.delete(ctx, this.sessionKey(ctx, key));
   }
 
   // Helpers
@@ -91,12 +76,10 @@ export class RedisService extends BaseService {
     return this.getPrefix(ctx) ? `${this.getPrefix(ctx)}-${key}` : key;
   }
 
-  private sessionKey(
-    ctx: RedisServiceContext,
-    discordID: string,
-    guildID: string,
-    key: string
-  ): string {
+  private sessionKey(ctx: RedisServiceContext, key: string): string {
+    const discordID = this.author(ctx).id;
+    const guildID = this.guild(ctx).id;
+
     return this.prefixedKey(ctx, `${discordID}:${guildID}-${key}`);
   }
 

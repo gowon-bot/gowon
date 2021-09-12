@@ -35,6 +35,7 @@ type MutableContext = {
 
 export class Can extends BaseService<CanContext, MutableContext> {
   private commandRegistry = CommandRegistry.getInstance();
+
   private get gowonService() {
     return ServiceRegistry.get(GowonService);
   }
@@ -46,10 +47,13 @@ export class Can extends BaseService<CanContext, MutableContext> {
   }
 
   private async getParentIDs(
-    child: ChildCommand,
-    serverID: string
+    ctx: CanContext,
+    child: ChildCommand
   ): Promise<string[]> {
-    let runAs = await this.commandRegistry.find(child.parentName, serverID);
+    const runAs = await this.commandRegistry.find(
+      child.parentName,
+      this.guild(ctx).id
+    );
 
     return runAs.runAs.toCommandArray().map((c) => c.id);
   }
@@ -84,10 +88,12 @@ export class Can extends BaseService<CanContext, MutableContext> {
   }
 
   private async canRunInChannel(
-    serverID: string,
-    commandID: string,
-    channelID: string
+    ctx: CanContext,
+    commandID: string
   ): Promise<boolean> {
+    const serverID = this.guild(ctx).id;
+    const channelID = ctx.command.message.channel.id;
+
     let channelBlacklists = await this.gowonService.getChannelBlacklists(
       serverID
     );
@@ -100,29 +106,26 @@ export class Can extends BaseService<CanContext, MutableContext> {
   async run(
     ctx: CanContext,
     command: Command,
-    message: Message,
-    client: GowonClient,
     { useChannel }: { useChannel?: boolean } = { useChannel: false }
   ): Promise<CanCheck> {
+    const client = ctx.client;
+    const message = ctx.command.message as Message;
+
     if (client.isDeveloper(message.author.id)) return { passed: true };
 
-    if (command.devCommand)
+    if (command.devCommand) {
       return { passed: false, reason: CheckFailReason.forbidden };
+    }
 
-    if (!this.checkRollout(command, message))
+    if (!this.checkRollout(ctx, command)) {
       return { passed: false, reason: CheckFailReason.disabled };
+    }
 
     const isAdmin = message.member?.permissions?.has("ADMINISTRATOR");
 
-    if (
-      useChannel &&
-      !(await this.canRunInChannel(
-        message.guild!.id,
-        command.id,
-        message.channel.id
-      ))
-    )
+    if (useChannel && !(await this.canRunInChannel(ctx, command.id))) {
       return { passed: false, reason: CheckFailReason.blacklistedFromChannel };
+    }
 
     let permissions: Permission[];
 
@@ -133,31 +136,22 @@ export class Can extends BaseService<CanContext, MutableContext> {
           serverID: message.guild?.id,
           commandID:
             command instanceof ChildCommand
-              ? In([
-                  command.id,
-                  ...(await this.getParentIDs(command, message.guild!.id)),
-                ])
+              ? In([command.id, ...(await this.getParentIDs(ctx, command))])
               : command.id,
         },
       }));
 
-    if (!this.getCachedPermissions(ctx)[command.id])
+    if (!this.getCachedPermissions(ctx)[command.id]) {
       this.getCachedPermissions(ctx)[command.id] = permissions;
+    }
 
-    let disabled = (
+    const disabled = (
       await Promise.all(
         (command instanceof ChildCommand
-          ? [
-              command.id,
-              ...(await this.getParentIDs(command, message.guild!.id)),
-            ]
+          ? [command.id, ...(await this.getParentIDs(ctx, command))]
           : [command.id]
         ).map((id) => {
-          return ctx.adminService.isCommandDisabled(
-            ctx,
-            id,
-            message.guild?.id!
-          );
+          return ctx.adminService.isCommandDisabled(ctx, id);
         })
       )
     ).reduce((acc, c) => {
@@ -168,7 +162,7 @@ export class Can extends BaseService<CanContext, MutableContext> {
       return false;
     }, false);
 
-    let hasPermission = this.userHasPermissions(message.member!, permissions);
+    const hasPermission = this.userHasPermissions(message.member!, permissions);
 
     return {
       passed: !disabled && hasPermission,
@@ -181,13 +175,10 @@ export class Can extends BaseService<CanContext, MutableContext> {
     };
   }
 
-  async viewList(
-    ctx: CanContext,
-    commands: Command[],
-    message: Message,
-    guild: GowonClient
-  ): Promise<Command[]> {
-    let allPermissions = await Permission.find({
+  async viewList(ctx: CanContext, commands: Command[]): Promise<Command[]> {
+    const message = ctx.command.message;
+
+    const allPermissions = await Permission.find({
       where: { serverID: message.guild?.id! },
     });
 
@@ -198,10 +189,10 @@ export class Can extends BaseService<CanContext, MutableContext> {
       this.getCachedPermissions(ctx)[c.id].push(c);
     });
 
-    let passed = [] as Command[];
+    const passed = [] as Command[];
 
-    for (let command of commands) {
-      let check = await this.run(ctx, command, message, guild);
+    for (const command of commands) {
+      const check = await this.run(ctx, command);
 
       if (check.passed) passed.push(command);
     }
@@ -209,7 +200,7 @@ export class Can extends BaseService<CanContext, MutableContext> {
     return passed;
   }
 
-  private checkRollout(command: Command, message: Message) {
-    return checkRollout(command.rollout, message);
+  private checkRollout(ctx: CanContext, command: Command) {
+    return checkRollout(command.rollout, ctx.command.message);
   }
 }

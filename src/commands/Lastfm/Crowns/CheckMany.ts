@@ -50,8 +50,6 @@ export class CheckMany extends CrownsChildCommand<typeof args> {
 
     let crownChecks = artistDetailsList.map((ad) =>
       this.crownsService.checkCrown(this.ctx, {
-        message,
-        discordID: message.author.id,
         artistName: ad.name,
         plays: toInt(ad.userPlaycount),
       })

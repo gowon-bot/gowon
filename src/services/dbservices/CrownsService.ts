@@ -14,7 +14,7 @@ import {
   NotBannedError,
   RecordNotFoundError,
 } from "../../errors";
-import { Guild, Message, User as DiscordUser } from "discord.js";
+import { User as DiscordUser } from "discord.js";
 import { BaseService, BaseServiceContext } from "../BaseService";
 import { FindManyOptions, ILike, In } from "typeorm";
 import { Setting } from "../../database/entity/Setting";
@@ -52,8 +52,6 @@ export interface CrownCheck {
 }
 
 export interface CrownOptions {
-  message: Message;
-  discordID: string;
   artistName: string;
   plays: number;
 }
@@ -87,10 +85,14 @@ export class CrownsService extends BaseService {
     ctx: BaseServiceContext,
     crownOptions: CrownOptions
   ): Promise<CrownCheck> {
-    let { discordID, artistName, plays, message } = crownOptions;
+    const { artistName, plays } = crownOptions;
+    const message = ctx.command.message;
+    const author = this.author(ctx);
+    const guild = this.guild(ctx);
+
     this.log(
       ctx,
-      `Checking crown for user ${discordID} and artist ${artistName}`
+      `Checking crown for user ${author.id} and artist ${artistName}`
     );
 
     let redirect = (await this.redirectsService.getRedirect(ctx, artistName))!;
@@ -98,20 +100,17 @@ export class CrownsService extends BaseService {
     let redirectedArtistName = redirect.to || redirect.from;
 
     if (
-      await this.gowonService.isArtistCrownBanned(
-        message.guild!,
-        redirectedArtistName
-      )
+      await this.gowonService.isArtistCrownBanned(guild!, redirectedArtistName)
     ) {
       throw new ArtistCrownBannedError(redirectedArtistName);
     }
 
     let [crown, user] = await Promise.all([
-      this.getCrown(ctx, redirectedArtistName, message.guild?.id!, {
+      this.getCrown(ctx, redirectedArtistName, {
         showDeleted: true,
         noRedirect: true,
       }),
-      User.findOne({ where: { discordID } }),
+      User.findOne({ where: { discordID: author.id } }),
     ]);
 
     if (redirect.to && crown) {
@@ -166,10 +165,7 @@ export class CrownsService extends BaseService {
         };
       this.log(
         ctx,
-        "Creating crown for " +
-          redirectedArtistName +
-          " in server " +
-          message.guild?.id!
+        "Creating crown for " + redirectedArtistName + " in server " + guild.id!
       );
 
       let newCrown = await this.handleNewCrown(
@@ -178,7 +174,6 @@ export class CrownsService extends BaseService {
           user,
           plays,
           artistName: redirectedArtistName,
-          serverID: message.guild!.id,
         },
         crown
       );
@@ -196,7 +191,6 @@ export class CrownsService extends BaseService {
   async getCrown(
     ctx: BaseServiceContext,
     artistName: string,
-    serverID: string,
     options: {
       refresh?: boolean;
       requester?: DiscordUser;
@@ -205,6 +199,8 @@ export class CrownsService extends BaseService {
       caseSensitive?: boolean;
     } = { refresh: false, showDeleted: true, noRedirect: false }
   ): Promise<Crown | undefined> {
+    const serverID = this.guild(ctx).id;
+
     this.log(ctx, `Fetching crown for ${artistName} in ${serverID}`);
 
     let crownArtistName = artistName;
@@ -239,11 +235,9 @@ export class CrownsService extends BaseService {
       : crown;
   }
 
-  async killCrown(
-    ctx: BaseServiceContext,
-    artistName: string,
-    serverID: string
-  ) {
+  async killCrown(ctx: BaseServiceContext, artistName: string) {
+    const serverID = this.guild(ctx).id;
+
     this.log(ctx, `Killing crown for ${artistName} in ${serverID}`);
     let crown = await Crown.findOne({ where: { artistName, serverID } });
 
@@ -252,17 +246,16 @@ export class CrownsService extends BaseService {
 
   async getCrownDisplay(
     ctx: BaseServiceContext,
-    artistName: string,
-    guild: Guild
+    artistName: string
   ): Promise<CrownDisplay | undefined> {
-    let crown = await this.getCrown(ctx, artistName, guild.id, {
+    let crown = await this.getCrown(ctx, artistName, {
       showDeleted: false,
       refresh: false,
     });
 
     if (!crown) return;
 
-    let user = await crown.user.toDiscordUser(guild);
+    let user = await crown.user.toDiscordUser(this.guild(ctx));
 
     return { crown, user };
   }
@@ -270,9 +263,10 @@ export class CrownsService extends BaseService {
   async listTopCrowns(
     ctx: BaseServiceContext,
     discordID: string,
-    serverID: string,
     limit = 10
   ): Promise<Crown[]> {
+    const serverID = this.guild(ctx).id;
+
     this.log(
       ctx,
       "Listing crowns for user " + discordID + " in server " + serverID
@@ -293,10 +287,11 @@ export class CrownsService extends BaseService {
 
   async listTopCrownsInServer(
     ctx: BaseServiceContext,
-    serverID: string,
     limit = 10,
     userIDs?: string[]
   ): Promise<Crown[]> {
+    const serverID = this.guild(ctx).id;
+
     this.log(ctx, "Listing crowns in server " + serverID);
 
     return await Crown.find(
@@ -311,11 +306,9 @@ export class CrownsService extends BaseService {
     );
   }
 
-  async count(
-    ctx: BaseServiceContext,
-    discordID: string,
-    serverID: string
-  ): Promise<number> {
+  async count(ctx: BaseServiceContext, discordID: string): Promise<number> {
+    const serverID = this.guild(ctx).id;
+
     this.log(
       ctx,
       "Counting crowns for user " + discordID + " in server " + serverID
@@ -332,9 +325,10 @@ export class CrownsService extends BaseService {
   async getRank(
     ctx: BaseServiceContext,
     discordID: string,
-    serverID: string,
     userIDs?: string[]
   ): Promise<CrownRankResponse> {
+    const serverID = this.guild(ctx).id;
+
     this.log(ctx, "Ranking user " + discordID + " in server " + serverID);
     let user = await User.findOne({ where: { discordID } });
 
@@ -345,9 +339,9 @@ export class CrownsService extends BaseService {
 
   async countAllInServer(
     ctx: BaseServiceContext,
-    serverID: string,
     userIDs?: string[]
   ): Promise<number> {
+    const serverID = this.guild(ctx).id;
     this.log(ctx, "Counting crowns for server " + serverID);
 
     return await Crown.count(
@@ -362,10 +356,10 @@ export class CrownsService extends BaseService {
 
   async listContentiousCrownsInServer(
     ctx: BaseServiceContext,
-    serverID: string,
     limit = 10,
     userIDs?: string[]
   ): Promise<Crown[]> {
+    const serverID = this.guild(ctx).id;
     this.log(ctx, "Listing contentious crowns in server " + serverID);
 
     return await Crown.find(
@@ -382,10 +376,10 @@ export class CrownsService extends BaseService {
 
   async listRecentlyStolen(
     ctx: BaseServiceContext,
-    serverID: string,
     limit = 10,
     userIDs?: string[]
   ): Promise<Crown[]> {
+    const serverID = this.guild(ctx).id;
     this.log(ctx, "Listing recently stolen crowns in server " + serverID);
 
     return await Crown.find(
@@ -400,12 +394,13 @@ export class CrownsService extends BaseService {
     );
   }
 
-  async guild(
+  async guildLeaderboard(
     ctx: BaseServiceContext,
-    guild: Guild,
     limit = 10,
     userIDs?: string[]
   ): Promise<CrownHolder[]> {
+    const guild = this.guild(ctx);
+
     this.log(ctx, "Listing top crown holders in server " + guild.id);
 
     let users = await Crown.guild(guild.id, limit, userIDs);
@@ -419,9 +414,11 @@ export class CrownsService extends BaseService {
   }
 
   async setInactiveRole(
-    guildID: string,
+    ctx: BaseServiceContext,
     roleID?: string
   ): Promise<Setting | undefined> {
+    const guildID = this.guild(ctx).id;
+
     const setting = await this.gowonService.settingsManager.set(
       "inactiveRole",
       { guildID },
@@ -432,9 +429,11 @@ export class CrownsService extends BaseService {
   }
 
   async setPurgatoryRole(
-    guildID: string,
+    ctx: BaseServiceContext,
     roleID?: string
   ): Promise<Setting | undefined> {
+    const guildID = this.guild(ctx).id;
+
     const setting = await this.gowonService.settingsManager.set(
       "purgatoryRole",
       { guildID },
@@ -446,9 +445,10 @@ export class CrownsService extends BaseService {
 
   private async wipeUsersCrowns(
     ctx: BaseServiceContext,
-    serverID: string,
     userID: string
   ): Promise<number> {
+    const serverID = this.guild(ctx).id;
+
     this.log(ctx, `Wiping crowns for user ${userID} in ${serverID}`);
 
     const user = await User.findOne({ where: { discordID: userID } });
@@ -459,11 +459,9 @@ export class CrownsService extends BaseService {
     return result.length;
   }
 
-  async optOut(
-    ctx: BaseServiceContext,
-    guildID: string,
-    userID: string
-  ): Promise<number> {
+  async optOut(ctx: BaseServiceContext, userID: string): Promise<number> {
+    const guildID = this.guild(ctx).id;
+
     this.log(ctx, `Opting out user ${userID} out of crowns in ${guildID}`);
 
     await this.gowonService.settingsManager.set(
@@ -475,14 +473,12 @@ export class CrownsService extends BaseService {
       "true"
     );
 
-    return await this.wipeUsersCrowns(ctx, guildID, userID);
+    return await this.wipeUsersCrowns(ctx, userID);
   }
 
-  async optIn(
-    ctx: BaseServiceContext,
-    guildID: string,
-    userID: string
-  ): Promise<void> {
+  async optIn(ctx: BaseServiceContext, userID: string): Promise<void> {
+    const guildID = this.guild(ctx).id;
+
     this.log(ctx, `Opting in user ${userID} out of crowns in ${guildID}`);
 
     this.gowonService.settingsManager.set("optedOut", {
@@ -493,9 +489,10 @@ export class CrownsService extends BaseService {
 
   async isUserOptedOut(
     ctx: BaseServiceContext,
-    guildID: string,
     userID: string
   ): Promise<boolean> {
+    const guildID = this.guild(ctx).id;
+
     this.log(ctx, `Checking if ${userID} is opted out in ${guildID}`);
 
     const setting = this.gowonService.settingsManager.get("optedOut", {
@@ -506,11 +503,9 @@ export class CrownsService extends BaseService {
     return !!setting;
   }
 
-  async banUser(
-    ctx: BaseServiceContext,
-    user: User,
-    serverID: string
-  ): Promise<CrownBan> {
+  async banUser(ctx: BaseServiceContext, user: User): Promise<CrownBan> {
+    const serverID = this.guild(ctx).id;
+
     this.log(ctx, `Crown banning user ${user.discordID} in ${serverID}`);
 
     let existingCrownBan = await CrownBan.findOne({ user });
@@ -537,11 +532,9 @@ export class CrownsService extends BaseService {
     return crownBan;
   }
 
-  async unbanUser(
-    ctx: BaseServiceContext,
-    user: User,
-    serverID: string
-  ): Promise<void> {
+  async unbanUser(ctx: BaseServiceContext, user: User): Promise<void> {
+    const serverID = this.guild(ctx).id;
+
     this.log(ctx, `Crown unbanning user ${user.discordID} in ${serverID}`);
 
     let crownBan = await CrownBan.findOne({ user });
@@ -564,10 +557,9 @@ export class CrownsService extends BaseService {
     );
   }
 
-  async getCrownBannedUsers(
-    ctx: BaseServiceContext,
-    serverID: string
-  ): Promise<CrownBan[]> {
+  async getCrownBannedUsers(ctx: BaseServiceContext): Promise<CrownBan[]> {
+    const serverID = this.guild(ctx).id;
+
     this.log(ctx, `Fetching crown banned users for server ${serverID}`);
 
     return await CrownBan.find({
@@ -591,24 +583,31 @@ export class CrownsService extends BaseService {
 
   async guildAt(
     ctx: BaseServiceContext,
-    serverID: string,
     rank: number,
     userIDs?: string[]
   ): Promise<GuildAtResponse> {
+    const serverID = this.guild(ctx).id;
+
     this.log(ctx, `Fetching guild at ${rank} for server ${serverID}`);
 
     return await Crown.guildAt(serverID, rank, userIDs);
   }
 
-  async crownRanks(serverID: string, discordID: string): Promise<CrownRank[]> {
+  async crownRanks(
+    ctx: BaseServiceContext,
+    discordID: string
+  ): Promise<CrownRank[]> {
+    const serverID = this.guild(ctx).id;
+
     return await Crown.crownRanks(serverID, discordID);
   }
 
   async artistCrownBan(
     ctx: BaseServiceContext,
-    serverID: string,
     artistName: string
   ): Promise<ArtistCrownBan> {
+    const serverID = this.guild(ctx).id;
+
     this.log(ctx, `Crown banning artist ${artistName} in ${serverID}`);
 
     let existingCrownBan = await ArtistCrownBan.findOne({
@@ -641,9 +640,10 @@ export class CrownsService extends BaseService {
 
   async artistCrownUnban(
     ctx: BaseServiceContext,
-    serverID: string,
     artistName: string
   ): Promise<ArtistCrownBan> {
+    const serverID = this.guild(ctx).id;
+
     this.log(ctx, `Crown unbanning artist ${artistName} in ${serverID}`);
 
     let crownBan = await ArtistCrownBan.findOne({
@@ -677,7 +677,6 @@ export class CrownsService extends BaseService {
       user: User;
       artistName: string;
       plays: number;
-      serverID: string;
     },
     crown?: Crown
   ): Promise<Crown> {
@@ -698,6 +697,7 @@ export class CrownsService extends BaseService {
 
       let newCrown = Crown.create({
         ...crownOptions,
+        serverID: this.guild(ctx).id,
         artistName,
         version: 0,
         lastStolen: new Date(),

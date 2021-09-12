@@ -40,11 +40,7 @@ export default class NowPlaying extends NowPlayingBaseCommand {
         artist: nowPlaying.artist,
         username: requestable,
       }),
-      this.crownsService.getCrownDisplay(
-        this.ctx,
-        nowPlaying.artist,
-        this.guild
-      ),
+      this.crownsService.getCrownDisplay(this.ctx, nowPlaying.artist),
     ]);
 
     let { crownString, isCrownHolder } = await this.crownDetails(

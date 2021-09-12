@@ -31,13 +31,12 @@ export class Ban extends CrownsChildCommand<typeof args> {
     if (mentionedDBUser.discordID === senderUser?.discordID)
       throw new LogicError("you can't crown ban yourself?");
 
-    await this.crownsService.banUser(this.ctx, mentionedDBUser, this.guild.id);
+    await this.crownsService.banUser(this.ctx, mentionedDBUser);
     this.crownsService.scribe.ban(
       this.ctx,
       mentionedDBUser,
       this.message.author,
-      discordUser!,
-      this.guild.id
+      discordUser!
     );
 
     await this.traditionalReply(

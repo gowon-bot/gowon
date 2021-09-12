@@ -1,4 +1,3 @@
-import { SimpleMap } from "../../helpers/types";
 import { RedirectsService } from "../../services/dbservices/RedirectsService";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 
@@ -11,7 +10,7 @@ export class RedirectsCache {
 
   private cache: RedirectsCacheObject = {};
 
-  constructor(private ctx: SimpleMap) {}
+  constructor(private ctx: any) {}
 
   async getRedirect(artist: string): Promise<string> {
     let artistName = artist.toLowerCase();

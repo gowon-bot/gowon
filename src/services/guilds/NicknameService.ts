@@ -1,4 +1,3 @@
-import { GowonClient } from "../../lib/GowonClient";
 import { displayNumber } from "../../lib/views/displays";
 import { BaseService, BaseServiceContext } from "../BaseService";
 import { RedisService } from "../redis/RedisService";
@@ -20,10 +19,10 @@ export class NicknameService extends BaseService {
 
   async cacheNicknames(
     ctx: BaseServiceContext,
-    users: Array<{ discordID: string } | string>,
-    guildID: string,
-    gowonClient: GowonClient
+    users: Array<{ discordID: string } | string>
   ) {
+    const guildID = this.guild(ctx).id;
+
     this.log(
       this.ctx(ctx),
       `Caching nicknames for ${displayNumber(
@@ -39,7 +38,7 @@ export class NicknameService extends BaseService {
       await Promise.all(
         discordIDs.map(async (u) => ({
           discordID: u,
-          info: await this.getNickname(ctx, u, guildID, gowonClient),
+          info: await this.getNickname(ctx, u),
         }))
       )
     ).forEach((u) => {
@@ -50,8 +49,7 @@ export class NicknameService extends BaseService {
 
   async cacheUsernames(
     ctx: BaseServiceContext,
-    users: Array<{ discordID: string } | string>,
-    gowonClient: GowonClient
+    users: Array<{ discordID: string } | string>
   ) {
     this.log(
       ctx,
@@ -65,7 +63,7 @@ export class NicknameService extends BaseService {
       await Promise.all(
         discordIDs.map(async (u) => ({
           discordID: u,
-          username: await this.getUsername(ctx, u, gowonClient),
+          username: await this.getUsername(ctx, u),
         }))
       )
     ).forEach((u) => {
@@ -84,16 +82,15 @@ export class NicknameService extends BaseService {
   async recordNickname(
     ctx: BaseServiceContext,
     discordID: string,
-    guildID: string | undefined,
     nickname: string
   ) {
+    const guildID = this.guild(ctx)?.id;
+
     if (!guildID) return;
 
-    await this.redisService.sessionSet(
+    await this.redisService.set(
       this.ctx(ctx),
-      discordID,
-      guildID,
-      "nickname",
+      this.generateNicknameKey(discordID, guildID),
       nickname
     );
   }
@@ -112,14 +109,12 @@ export class NicknameService extends BaseService {
 
   async getNickname(
     ctx: BaseServiceContext,
-    discordID: string,
-    guildID: string,
-    gowonClient: GowonClient
+    discordID: string
   ): Promise<{ nickname?: string; username?: string }> {
+    const guildID = this.guild(ctx).id;
+
     let nickname = await this.redisService.sessionGet(
       this.ctx(ctx),
-      discordID,
-      guildID,
       "nickname"
     );
     let username: string | undefined;
@@ -128,14 +123,14 @@ export class NicknameService extends BaseService {
       this.log(ctx, `Fetching nickname for ${discordID} in ${guildID}`);
 
       try {
-        const user = await gowonClient.client.guilds
+        const user = await ctx.client.client.guilds
           .resolve(guildID)
           ?.members.fetch(discordID);
 
         nickname = user?.nickname || user?.user.username || UnknownUserDisplay;
         username = user?.user.username;
 
-        this.recordNickname(this.ctx(ctx), discordID, guildID, nickname);
+        this.recordNickname(this.ctx(ctx), discordID, nickname);
       } catch {}
     }
 
@@ -144,8 +139,7 @@ export class NicknameService extends BaseService {
 
   async getUsername(
     ctx: BaseServiceContext,
-    discordID: string,
-    gowonClient: GowonClient
+    discordID: string
   ): Promise<string> {
     let username =
       this.cacheGetUsername(discordID) ||
@@ -157,7 +151,7 @@ export class NicknameService extends BaseService {
     if (!username || username === UnknownUserDisplay) {
       this.log(ctx, `Fetching username for ${discordID}`);
       try {
-        const user = await gowonClient.client.users.fetch(discordID);
+        const user = await ctx.client.client.users.fetch(discordID);
 
         username = user ? user.username + "#" + user.discriminator : undefined;
 
@@ -173,5 +167,9 @@ export class NicknameService extends BaseService {
 
   protected generateUsernameKey(discordID: string) {
     return `${discordID}-username`;
+  }
+
+  protected generateNicknameKey(discordID: string, guildID: string) {
+    return `${discordID}-${guildID}-username`;
   }
 }

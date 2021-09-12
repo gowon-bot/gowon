@@ -1,6 +1,5 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
 import { Arguments } from "../../../lib/arguments/arguments";
-import { Message } from "discord.js";
 import { CrownEventString } from "../../../services/dbservices/CrownsHistoryService";
 import { LogicError } from "../../../errors";
 import { CrownEvent } from "../../../database/entity/meta/CrownEvent";
@@ -21,7 +20,7 @@ export class History extends CrownsChildCommand<typeof args> {
 
   arguments: Arguments = args;
 
-  async run(message: Message) {
+  async run() {
     let artist = this.parsedArguments.artist;
 
     let { senderUsername } = await this.parseMentions({
@@ -40,7 +39,6 @@ export class History extends CrownsChildCommand<typeof args> {
     let crown = await this.crownsService.getCrown(
       this.ctx,
       artistDetails.name,
-      message.guild?.id!,
       { refresh: false }
     );
 

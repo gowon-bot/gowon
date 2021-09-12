@@ -1,6 +1,5 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
 import { Arguments } from "../../../lib/arguments/arguments";
-import { Message } from "discord.js";
 import { LogicError } from "../../../errors";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
@@ -24,18 +23,13 @@ export class Kill extends CrownsChildCommand<typeof args> {
     artist: new validators.Required({}),
   };
 
-  async run(message: Message) {
+  async run() {
     const artist = this.parsedArguments.artist!;
 
-    const crown = await this.crownsService.getCrown(
-      this.ctx,
-      artist,
-      message.guild?.id!,
-      {
-        noRedirect: true,
-        caseSensitive: true,
-      }
-    );
+    const crown = await this.crownsService.getCrown(this.ctx, artist, {
+      noRedirect: true,
+      caseSensitive: true,
+    });
 
     if (!crown) {
       throw new LogicError(
@@ -56,14 +50,14 @@ export class Kill extends CrownsChildCommand<typeof args> {
     );
 
     if (await confirmationEmbed.awaitConfirmation()) {
-      await this.crownsService.killCrown(this.ctx, artist, message.guild?.id!);
-      this.crownsService.scribe.kill(this.ctx, crown, message.author);
+      await this.crownsService.killCrown(this.ctx, artist);
+      this.crownsService.scribe.kill(this.ctx, crown, this.author);
 
       await this.send(
         this.newEmbed()
           .setAuthor(
-            message.member?.nickname || message.author.username,
-            message.author.avatarURL() || undefined
+            this.message.member?.nickname || this.author.username,
+            this.author.avatarURL() || undefined
           )
           .setDescription(
             `Successfully killed the crown for ${artist.strong()}`

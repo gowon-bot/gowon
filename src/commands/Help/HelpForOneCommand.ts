@@ -44,16 +44,7 @@ export default class HelpForOneCommand extends BaseCommand<typeof args> {
       return;
     }
 
-    if (
-      !(
-        await this.adminService.can.run(
-          this.ctx,
-          command,
-          message,
-          this.gowonClient
-        )
-      ).passed
-    ) {
+    if (!(await this.adminService.can.run(this.ctx, command)).passed) {
       throw new CommandNotFoundError();
     }
 
@@ -111,9 +102,7 @@ export default class HelpForOneCommand extends BaseCommand<typeof args> {
   ) {
     let commands = await this.adminService.can.viewList(
       this.ctx,
-      command.children.commands,
-      message,
-      this.gowonClient
+      command.children.commands
     );
 
     const shortestPrefix =

@@ -104,11 +104,7 @@ export default class Login extends MirrorballBaseCommand<
         session
       );
 
-      await this.handleMirrorballLogin(
-        this.author.id,
-        session.username,
-        session.key
-      );
+      await this.handleMirrorballLogin(session.username, session.key);
     } catch (e) {
       return { success: false };
     }
@@ -117,23 +113,17 @@ export default class Login extends MirrorballBaseCommand<
   }
 
   private async handleMirrorballLogin(
-    discordID: string,
     username: string,
     session: string | undefined
   ) {
     await this.mirrorballService.login(
       this.ctx,
       username,
-      discordID,
       MirrorballUserType.Lastfm,
       session
     );
     try {
-      await this.mirrorballService.quietAddUserToGuild(
-        this.ctx,
-        discordID,
-        this.guild.id
-      );
+      await this.mirrorballService.quietAddUserToGuild(this.ctx);
     } catch (e) {}
   }
 
@@ -161,11 +151,7 @@ export default class Login extends MirrorballBaseCommand<
         session
       );
 
-      await this.handleMirrorballLogin(
-        this.author.id,
-        session.username,
-        session.key
-      );
+      await this.handleMirrorballLogin(session.username, session.key);
 
       return user;
     }

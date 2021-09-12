@@ -73,7 +73,7 @@ export default class FakeNowPlaying extends NowPlayingBaseCommand<typeof args> {
         track: trackName,
         username: senderRequestable,
       }),
-      this.crownsService.getCrownDisplay(this.ctx, artistName, this.guild),
+      this.crownsService.getCrownDisplay(this.ctx, artistName),
     ]);
 
     let { crownString, isCrownHolder } = await this.crownDetails(

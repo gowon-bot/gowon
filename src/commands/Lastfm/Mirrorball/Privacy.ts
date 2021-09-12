@@ -43,11 +43,7 @@ export default class Privacy extends BaseCommand<typeof args> {
       .setFooter(this.privacyHelp);
 
     if (privacy) {
-      await this.mirrorballUsersService.updatePrivacy(
-        this.ctx,
-        this.author.id,
-        privacy
-      );
+      await this.mirrorballUsersService.updatePrivacy(this.ctx, privacy);
 
       embed.setDescription(
         `Your new privacy is: \`${privacy.toLowerCase()}\` (${

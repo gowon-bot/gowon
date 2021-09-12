@@ -100,7 +100,7 @@ export class Crown extends BaseEntity {
       options.onlyIfOwnerIs === this.user.discordID
     ) {
       this.plays = await ServiceRegistry.get(LastFMService).getArtistPlays(
-        { logger: options.logger },
+        { logger: options.logger } as any,
         this.user.lastFMUsername,
         this.artistName
       );

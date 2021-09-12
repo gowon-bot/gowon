@@ -21,23 +21,12 @@ export abstract class JumbleChildCommand<
   });
 
   async sessionSetJSON(key: string, value: Object | Array<unknown>) {
-    return this.redisService.sessionSet(
-      this.ctx,
-      this.author.id,
-      this.guild.id,
-      key,
-      JSON.stringify(value)
-    );
+    return this.redisService.sessionSet(this.ctx, key, JSON.stringify(value));
   }
 
   async sessionGetJSON<T extends Object>(key: string): Promise<T> {
     return JSON.parse(
-      (await this.redisService.sessionGet(
-        this.ctx,
-        this.author.id,
-        this.guild.id,
-        key
-      )) || "{}"
+      (await this.redisService.sessionGet(this.ctx, key)) || "{}"
     ) as T;
   }
 

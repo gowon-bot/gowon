@@ -1,5 +1,4 @@
 import { promiseAllSettled } from "../helpers";
-import { SimpleMap } from "../helpers/types";
 import { Requestable } from "../services/LastFM/LastFMAPIService";
 
 export interface FetchedResponses<T> {
@@ -7,20 +6,20 @@ export interface FetchedResponses<T> {
 }
 
 export class MultiRequester {
-  constructor(private ctx: SimpleMap, public requestables: Requestable[]) {}
+  constructor(private ctx: any, public requestables: Requestable[]) {}
 
   async fetch<T, ParamsT>(
-    method: (ctx: SimpleMap, params: ParamsT) => Promise<T>,
+    method: (ctx: any, params: ParamsT) => Promise<T>,
     params: ParamsT,
     options?: {}
   ): Promise<FetchedResponses<T>>;
   async fetch<T>(
-    method: (ctx: SimpleMap, ...params: any[]) => Promise<T>,
+    method: (ctx: any, ...params: any[]) => Promise<T>,
     params: any[],
     options?: { usernameInPosition?: number }
   ): Promise<FetchedResponses<T>>;
   async fetch<T, ParamsT>(
-    method: (ctx: SimpleMap, ...params: any[]) => Promise<T>,
+    method: (ctx: any, ...params: any[]) => Promise<T>,
     params: any,
     options?: any
   ): Promise<FetchedResponses<T>> {

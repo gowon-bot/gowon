@@ -16,33 +16,23 @@ export class WhoKnowsService extends BaseService {
     prefix: "whoknows",
   };
 
-  async recordUnknownMember(
-    ctx: BaseServiceContext,
-    guildID: string,
-    userID: string
-  ) {
+  async recordUnknownMember(ctx: BaseServiceContext, userID: string) {
+    const guildID = this.guild(ctx).id;
+
     this.log(ctx, `Handling unknown use ${userID} in ${guildID}`);
 
     const existingTries = await this.redis.sessionGet(
       this.ctx(ctx),
-      userID,
-      guildID,
       this.retryKey()
     );
 
     if (existingTries && toInt(existingTries) === 2) {
-      this.mirrorballService.quietRemoveUserFromGuild(ctx, userID, guildID);
-      this.redis.sessionDelete(this.ctx(ctx), userID, guildID, this.retryKey());
+      this.mirrorballService.quietRemoveUserFromGuild(ctx);
+      this.redis.sessionDelete(this.ctx(ctx), this.retryKey());
     } else {
       const newTries = existingTries ? toInt(existingTries) + 1 : 1;
 
-      await this.redis.sessionSet(
-        this.ctx(ctx),
-        userID,
-        guildID,
-        this.retryKey(),
-        newTries
-      );
+      await this.redis.sessionSet(this.ctx(ctx), this.retryKey(), newTries);
     }
   }
 
