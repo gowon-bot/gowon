@@ -25,7 +25,7 @@ export default class ArtistPlaysover extends LastFMBaseCommand<typeof args> {
 
     let { requestable, perspective } = await this.parseMentions();
 
-    let topArtists = await this.lastFMService.topArtists({
+    let topArtists = await this.lastFMService.topArtists(this.ctx, {
       username: requestable,
       limit: 1000,
     });

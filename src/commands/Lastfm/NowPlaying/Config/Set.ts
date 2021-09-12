@@ -53,14 +53,22 @@ export class Set extends NowPlayingConfigChildCommand<typeof args> {
 
     if (presetConfig) {
       filtered = presetConfig;
-      await this.configService.saveConfigForUser(senderUser!, filtered);
+      await this.configService.saveConfigForUser(
+        this.ctx,
+        senderUser!,
+        filtered
+      );
     } else {
       const filteredOptions = this.filterBadOptions(newConfig);
       filtered = filteredOptions.filtered;
       filteredOut = filteredOptions.filteredOut;
 
       if (filtered.length) {
-        await this.configService.saveConfigForUser(senderUser!, filtered);
+        await this.configService.saveConfigForUser(
+          this.ctx,
+          senderUser!,
+          filtered
+        );
       }
     }
 

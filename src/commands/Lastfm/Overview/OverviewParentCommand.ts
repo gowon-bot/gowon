@@ -1,4 +1,4 @@
-import { CommandRegistry } from "../../../lib/command/CommandRegistry";
+import { CommandGroup } from "../../../lib/command/CommandGroup";
 import { LastFMBaseParentCommand } from "../LastFMBaseCommand";
 import { All } from "./All";
 import { Joined } from "./Joined";
@@ -27,20 +27,20 @@ export default class OverviewParentCommand extends LastFMBaseParentCommand {
   prefixes = ["o", "overview"];
   default = () => new All();
 
-  children: CommandRegistry = new CommandRegistry({
-    all: () => new All(),
-    joined: () => new Joined(),
-    scrobbles: () => new AvgPerDay(),
-    scrobblesPerArtist: () => new ScrobblesPerArtist(),
-    scrobblesPerAlbum: () => new ScrobblesPerAlbum(),
-    scrobblesPerTrack: () => new ScrobblesPerTrack(),
-    per: () => new Per(),
-    hindex: () => new HIndex(),
-    help: () => new Help(),
-    toppercent: () => new TopPercent(),
-    sumtop: () => new SumTop(),
-    crowns: () => new Crowns(),
-    breadth: () => new Breadth(),
-    playsover: () => new Playsover(),
-  });
+  children: CommandGroup = new CommandGroup([
+    All,
+    Joined,
+    AvgPerDay,
+    ScrobblesPerArtist,
+    ScrobblesPerAlbum,
+    ScrobblesPerTrack,
+    Per,
+    HIndex,
+    Help,
+    TopPercent,
+    SumTop,
+    Crowns,
+    Breadth,
+    Playsover,
+  ]);
 }

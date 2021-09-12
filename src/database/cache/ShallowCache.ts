@@ -1,3 +1,5 @@
+import { SimpleMap } from "../../helpers/types";
+
 export enum CacheKey {}
 export enum CacheScopedKey {
   CrownBannedUsers = "crownBannedUsers",
@@ -6,16 +8,12 @@ export enum CacheScopedKey {
 }
 export type ShallowCacheKey = CacheKey | CacheScopedKey;
 
-interface Cache {
-  [key: string]: any;
-}
-
 function isScoped(key: CacheKey | CacheScopedKey): key is CacheScopedKey {
   return Object.values(CacheScopedKey).includes(key as any);
 }
 
 export class ShallowCache {
-  private cache: Cache = {};
+  private cache: SimpleMap = {};
 
   remember<T = any>(key: CacheKey, value: any): T;
   remember<T = any>(key: CacheScopedKey, value: any, scope: string): T;

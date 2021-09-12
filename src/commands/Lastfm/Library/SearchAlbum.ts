@@ -2,6 +2,7 @@ import { LogicError } from "../../../errors";
 import { Variation } from "../../../lib/command/BaseCommand";
 import { Paginator } from "../../../lib/paginators/Paginator";
 import { displayNumber } from "../../../lib/views/displays";
+import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingEmbed";
 import { SearchCommand } from "./SearchCommand";
 
 export default class SearchAlbum extends SearchCommand {
@@ -21,21 +22,22 @@ export default class SearchAlbum extends SearchCommand {
   ];
 
   async run() {
-    let keywords = this.parsedArguments.keywords!;
+    const keywords = this.parsedArguments.keywords!;
 
     const { requestable, perspective } = await this.parseMentions();
 
-    let paginator = new Paginator(
+    const paginator = new Paginator(
       this.lastFMService.topAlbums.bind(this.lastFMService),
       this.variationWasUsed("deep") ? 4 : 2,
-      { username: requestable, limit: 1000 }
+      { username: requestable, limit: 1000 },
+      this.ctx
     );
 
-    let topAlbums = await paginator.getAllToConcatonable({
+    const topAlbums = await paginator.getAllToConcatonable({
       concurrent: this.variationWasUsed("deep"),
     });
 
-    let filtered = topAlbums.albums.filter((a) =>
+    const filtered = topAlbums.albums.filter((a) =>
       this.clean(a.name).includes(this.clean(keywords))
     );
 
@@ -45,25 +47,37 @@ export default class SearchAlbum extends SearchCommand {
       );
     }
 
-    let embed = this.newEmbed()
-      .setTitle(
-        `Search results in ${perspective.possessive} top ${displayNumber(
-          topAlbums.albums.length,
-          "album"
-        )}`
-      )
-      .setDescription(
-        filtered.length
-          ? `Albums matching ${keywords.code()}
-\`\`\`
-${filtered
-  .slice(0, 25)
-  .map((l) => `${l.rank}. ${l.artist.name} - ${l.name}`)
-  .join("\n")}
-\`\`\``
-          : `No results found for ${keywords.code()}!`
-      );
+    const embed = this.newEmbed().setTitle(
+      `Search results in ${perspective.possessive} top ${displayNumber(
+        topAlbums.albums.length,
+        "album"
+      )}`
+    );
 
-    await this.send(embed);
+    if (!filtered.length) {
+      embed.setDescription(`No results found for ${keywords.code()}!`);
+      await this.send(embed);
+      return;
+    }
+
+    const scrollingEmbed = new SimpleScrollingEmbed(
+      this.message,
+      embed,
+      {
+        items: filtered,
+        pageSize: 15,
+        pageRenderer(items) {
+          return `Albums matching ${keywords.code()}
+\`\`\`\n${items
+            .map((l) => `${l.rank}. ${l.artist.name} - ${l.name}`)
+            .join("\n")}\`\`\``;
+        },
+      },
+      {
+        itemName: "result",
+      }
+    );
+
+    scrollingEmbed.send();
   }
 }

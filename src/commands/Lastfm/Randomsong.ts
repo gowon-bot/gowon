@@ -32,11 +32,11 @@ export default class Randomsong extends LastFMBaseCommand<typeof args> {
       (u) => `${u.id}`
     );
 
-    const randomUser = await this.usersService.randomUser({
+    const randomUser = await this.usersService.randomUser(this.ctx, {
       userIDs: serverUsers,
     });
 
-    const randomSongs = await this.lastFMService.recentTracks({
+    const randomSongs = await this.lastFMService.recentTracks(this.ctx, {
       username: buildRequestable(randomUser.lastFMUsername, randomUser)
         .requestable,
       limit: 100,

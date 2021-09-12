@@ -51,12 +51,13 @@ export default class Tag extends LastFMBaseCommand<typeof args> {
     const paginator = new Paginator(
       this.lastFMService.topArtists.bind(this.lastFMService),
       2,
-      { username: requestable, limit: 1000 }
+      { username: requestable, limit: 1000 },
+      this.ctx
     );
 
     const [tagTopArtists, userTopArtists, mirrorballArtists] =
       await Promise.all([
-        this.lastFMService.tagTopArtists({ tag, limit: 1000 }),
+        this.lastFMService.tagTopArtists(this.ctx, { tag, limit: 1000 }),
         paginator.getAllToConcatonable({
           concurrent: false,
         }),
@@ -146,7 +147,7 @@ export default class Tag extends LastFMBaseCommand<typeof args> {
 
     const response = await this.mirrorballService.query<{
       artists: { name: string }[];
-    }>(query, { tag });
+    }>(this.ctx, query, { tag });
 
     return response.artists;
   }

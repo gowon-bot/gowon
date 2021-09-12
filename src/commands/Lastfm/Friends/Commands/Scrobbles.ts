@@ -29,7 +29,7 @@ export class Scrobbles extends FriendsChildCommand<typeof args> {
     let timeRange = this.parsedArguments.timeRange!,
       humanTimeRange = this.parsedArguments.humanizedTimeRange!;
 
-    let scrobbles = await new MultiRequester([
+    let scrobbles = await new MultiRequester(this.ctx, [
       ...this.friendUsernames,
       this.senderRequestable,
     ]).fetch(this.lastFMService.getNumberScrobbles.bind(this.lastFMService), [

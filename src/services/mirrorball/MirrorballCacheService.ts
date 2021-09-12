@@ -1,14 +1,17 @@
 import gql from "graphql-tag";
 import { displayNumber } from "../../lib/views/displays";
-import { BaseService } from "../BaseService";
+import { BaseService, BaseServiceContext } from "../BaseService";
 import { RawArtistInfo, RawTagTopArtists } from "../LastFM/LastFMService.types";
+import { ServiceRegistry } from "../ServicesRegistry";
 import { MirrorballService } from "./MirrorballService";
 
 export class MirrorballCacheService extends BaseService {
-  private mirrorballService = new MirrorballService(this.logger);
+  private get mirrorballService() {
+    return ServiceRegistry.get(MirrorballService);
+  }
 
-  async cacheArtistInfo(artistInfo: RawArtistInfo) {
-    this.log(`Caching artist info for ${artistInfo.name} to Mirrorball`);
+  async cacheArtistInfo(ctx: BaseServiceContext, artistInfo: RawArtistInfo) {
+    this.log(ctx, `Caching artist info for ${artistInfo.name} to Mirrorball`);
 
     try {
       const mutation = gql`
@@ -23,15 +26,19 @@ export class MirrorballCacheService extends BaseService {
 
       const tags = artistInfo.tags.tag.map((t) => ({ name: t.name }));
 
-      await this.mirrorballService.mutate(mutation, {
+      await this.mirrorballService.mutate(ctx, mutation, {
         artist: artistInfo.name,
         tags,
       });
     } catch {}
   }
 
-  async cacheTagTopArtists(tagTopArtists: RawTagTopArtists) {
+  async cacheTagTopArtists(
+    ctx: BaseServiceContext,
+    tagTopArtists: RawTagTopArtists
+  ) {
     this.log(
+      ctx,
       `Caching ${displayNumber(tagTopArtists.artist.length, "artists")} as ${
         tagTopArtists["@attr"].tag
       } to Mirrorball`
@@ -47,7 +54,7 @@ export class MirrorballCacheService extends BaseService {
         }
       `;
 
-      await this.mirrorballService.mutate(mutation, { tag, artists });
+      await this.mirrorballService.mutate(ctx, mutation, { tag, artists });
     } catch {}
   }
 }

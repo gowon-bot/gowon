@@ -2,6 +2,7 @@ import { parseJSON } from "date-fns";
 import { ago } from "../../helpers";
 import { BaseCommand } from "../../lib/command/BaseCommand";
 import { GithubService } from "../../services/Github/GithubService";
+import { ServiceRegistry } from "../../services/ServicesRegistry";
 
 export default class LatestCommit extends BaseCommand {
   idSeed = "apink naeun";
@@ -11,10 +12,13 @@ export default class LatestCommit extends BaseCommand {
   secretCommand = true;
   description = "Displays the most recent commit to the Gowon repository";
 
-  githubService = new GithubService(this.logger);
+  githubService = ServiceRegistry.get(GithubService);
 
   async run() {
-    let branch = await this.githubService.getBranch("lfm-server-changes");
+    let branch = await this.githubService.getBranch(
+      this.ctx,
+      "lfm-server-changes"
+    );
 
     let committedAt = parseJSON(branch.commit.commit.author.date);
 

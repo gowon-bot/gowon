@@ -44,7 +44,7 @@ export default class AlbumTopTracks extends MirrorballBaseCommand<
       });
 
     const { artist: artistName, album: albumName } =
-      await this.lastFMArguments.getAlbum(senderRequestable, true);
+      await this.lastFMArguments.getAlbum(this.ctx, senderRequestable, true);
 
     const response = await this.query({
       album: { name: albumName, artist: { name: artistName } },

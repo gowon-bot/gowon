@@ -68,7 +68,7 @@ export default class Update extends MirrorballBaseCommand<
   }
 
   async run() {
-    this.mirrorballService.quietAddUserToGuild(this.author.id, this.guild.id);
+    this.mirrorballService.quietAddUserToGuild(this.ctx);
 
     const { senderUsername, perspective } = await this.parseMentions({
       authentificationRequired: true,

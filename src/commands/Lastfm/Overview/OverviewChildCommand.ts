@@ -1,6 +1,6 @@
 import { LastFMBaseChildCommand } from "../LastFMBaseCommand";
 import { OverviewStatsCalculator } from "../../../lib/calculators/OverviewStatsCalculator";
-import { HexColorString, Message, MessageEmbed } from "discord.js";
+import { HexColorString, MessageEmbed } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { ucFirst } from "../../../helpers";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
@@ -74,7 +74,7 @@ export abstract class OverviewChildCommand<
     return { colour, badge, image };
   }
 
-  async prerun(message: Message) {
+  async prerun() {
     let {
       senderRequestable,
       senderUsername,
@@ -97,11 +97,10 @@ export abstract class OverviewChildCommand<
     ).humanReadableTimePeriod;
 
     this.calculator = new OverviewStatsCalculator(
+      this.ctx,
       requestable,
-      message.guild?.id!,
       this.discordID,
-      this.timePeriod,
-      this.logger
+      this.timePeriod
     );
   }
 

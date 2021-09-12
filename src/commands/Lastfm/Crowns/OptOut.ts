@@ -10,6 +10,10 @@ export class OptOut extends CrownsChildCommand {
     "Opts you out of the crowns game, deleting all your crowns, and preventing you from getting new ones";
   usage = "";
 
+  ctx = this.generateContext({
+    crownsService: this.crownsService,
+  });
+
   async run(message: Message) {
     const embed = this.newEmbed()
       .setAuthor(...this.generateEmbedAuthor("Crown opt-out"))
@@ -23,13 +27,11 @@ export class OptOut extends CrownsChildCommand {
       this.gowonClient
     );
 
-    console.log("Awaiting confirmation");
-
     if (await confirmationEmbed.awaitConfirmation()) {
-      await this.crownsService.scribe.optOut(message.member!);
+      await this.crownsService.scribe.optOut(this.ctx, message.member!);
 
       const numberOfCrowns = await this.crownsService.optOut(
-        message.guild?.id!,
+        this.ctx,
         message.author.id
       );
 

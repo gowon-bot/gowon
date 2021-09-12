@@ -1,4 +1,4 @@
-import { CommandRegistry } from "../../../lib/command/CommandRegistry";
+import { CommandGroup } from "../../../lib/command/CommandGroup";
 import { LastFMBaseParentCommand } from "../LastFMBaseCommand";
 import { Me } from "./Me";
 import { Guess } from "./Guess";
@@ -25,10 +25,5 @@ export default class JumbleParentCommand extends LastFMBaseParentCommand {
   prefixes = ["jumble", "j"];
   default = () => new Guess();
 
-  children: CommandRegistry = new CommandRegistry({
-    me: () => new Me(),
-    hint: () => new Hint(),
-    guess: () => new Guess(),
-    giveup: () => new Quit(),
-  });
+  children: CommandGroup = new CommandGroup([Me, Hint, Guess, Quit]);
 }

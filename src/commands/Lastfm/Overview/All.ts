@@ -18,7 +18,7 @@ export class All extends OverviewChildCommand {
     );
 
     let [friends] = await Promise.all([
-      this.lastFMService.userGetFriends({
+      this.lastFMService.userGetFriends(this.ctx, {
         username: this.requestable,
         limit: 1,
       }),

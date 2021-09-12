@@ -2,10 +2,10 @@ import { BaseCommand } from "../../lib/command/BaseCommand";
 import { Arguments } from "../../lib/arguments/arguments";
 import { Validation } from "../../lib/validation/ValidationChecker";
 import { validators } from "../../lib/validation/validators";
-import { CommandRegistry } from "../../lib/command/CommandRegistry";
 import { Command } from "../../lib/command/Command";
 import { AdminService } from "../../services/dbservices/AdminService";
 import { displayNumber } from "../../lib/views/displays";
+import { ServiceRegistry } from "../../services/ServicesRegistry";
 
 const args = {
   inputs: {
@@ -17,7 +17,7 @@ const args = {
 export default class CommandSearch extends BaseCommand<typeof args> {
   idSeed = "exid solji";
 
-  aliases = ["command", "searchcommands", "searchcommand"];
+  aliases = ["command", "searchcommands", "searchcommand", "sc"];
   subcategory = "about";
   description = "Search the list of commands for a keyword";
 
@@ -29,22 +29,18 @@ export default class CommandSearch extends BaseCommand<typeof args> {
     keywords: new validators.Required({}),
   };
 
-  commandRegistry = new CommandRegistry();
-  adminService = new AdminService(this.gowonClient, this.logger);
+  adminService = ServiceRegistry.get(AdminService);
 
   async run() {
     const keywords = this.parsedArguments
       .keywords!.toLowerCase()
       .replace(/\s+/, "");
 
-    await this.commandRegistry.init();
-
     const commandList = this.commandRegistry.deepList();
 
     const commands = await this.adminService.can.viewList(
-      commandList,
-      this.message,
-      this.gowonClient
+      this.ctx,
+      commandList
     );
 
     const foundCommands = this.commandRegistry.search(commands, keywords);
@@ -64,7 +60,7 @@ export default class CommandSearch extends BaseCommand<typeof args> {
           "command"
         )}, found ${displayNumber(foundCommands.length, "result")}` +
           (foundCommands.length > 12
-            ? "\nTry narrowing down your search to see more results"
+            ? "\nTry narrowing down your search to see more results, or go to https://gowon.ca/commands"
             : "")
       );
 

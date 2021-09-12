@@ -13,12 +13,15 @@ export class List extends FriendsChildCommand {
   throwIfNoFriends = true;
 
   async run(message: Message) {
-    let nowPlayings = await new MultiRequester(this.friendUsernames).fetch(
-      this.lastFMService.nowPlaying.bind(this.lastFMService),
-      []
-    );
+    let nowPlayings = await new MultiRequester(
+      this.ctx,
+      this.friendUsernames
+    ).fetch(this.lastFMService.nowPlaying.bind(this.lastFMService), []);
 
-    let numberOfFriends = await this.friendsService.friendsCount(this.user);
+    let numberOfFriends = await this.friendsService.friendsCount(
+      this.ctx,
+      this.user
+    );
 
     let embed = this.newEmbed()
       .setTitle(

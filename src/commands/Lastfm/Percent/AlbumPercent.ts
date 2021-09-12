@@ -31,12 +31,20 @@ export default class AlbumPercent extends LastFMBaseCommand<typeof args> {
       });
 
     const { artist, album } = await this.lastFMArguments.getAlbum(
+      this.ctx,
       senderRequestable
     );
 
     const [artistInfo, albumInfo] = await Promise.all([
-      this.lastFMService.artistInfo({ artist, username: requestable }),
-      this.lastFMService.albumInfo({ artist, album, username: requestable }),
+      this.lastFMService.artistInfo(this.ctx, {
+        artist,
+        username: requestable,
+      }),
+      this.lastFMService.albumInfo(this.ctx, {
+        artist,
+        album,
+        username: requestable,
+      }),
     ]);
 
     await this.traditionalReply(

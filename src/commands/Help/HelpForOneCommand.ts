@@ -1,6 +1,5 @@
 import { BaseCommand } from "../../lib/command/BaseCommand";
 import { Message } from "discord.js";
-import { CommandRegistry } from "../../lib/command/CommandRegistry";
 import { Arguments } from "../../lib/arguments/arguments";
 import { AdminService } from "../../services/dbservices/AdminService";
 import { CommandNotFoundError } from "../../errors";
@@ -8,6 +7,7 @@ import { flatDeep } from "../../helpers";
 import { ParentCommand } from "../../lib/command/ParentCommand";
 import { LineConsolidator } from "../../lib/LineConsolidator";
 import { Command } from "../../lib/command/Command";
+import { ServiceRegistry } from "../../services/ServicesRegistry";
 
 const args = {
   inputs: {
@@ -22,13 +22,10 @@ export default class HelpForOneCommand extends BaseCommand<typeof args> {
 
   arguments: Arguments = args;
 
-  commandRegistry = new CommandRegistry();
-  adminService = new AdminService(this.gowonClient);
+  adminService = ServiceRegistry.get(AdminService);
 
   async run(message: Message) {
     let command = this.parsedArguments.command!;
-
-    await this.commandRegistry.init();
 
     let embed = await this.helpForOneCommand(message, command);
 
@@ -47,10 +44,7 @@ export default class HelpForOneCommand extends BaseCommand<typeof args> {
       return;
     }
 
-    if (
-      !(await this.adminService.can.run(command, message, this.gowonClient))
-        .passed
-    ) {
+    if (!(await this.adminService.can.run(this.ctx, command)).passed) {
       throw new CommandNotFoundError();
     }
 
@@ -107,9 +101,8 @@ export default class HelpForOneCommand extends BaseCommand<typeof args> {
     command: ParentCommand
   ) {
     let commands = await this.adminService.can.viewList(
-      command.children.list(),
-      message,
-      this.gowonClient
+      this.ctx,
+      command.children.commands
     );
 
     const shortestPrefix =

@@ -6,27 +6,30 @@ export interface FetchedResponses<T> {
 }
 
 export class MultiRequester {
-  constructor(public requestables: Requestable[]) {}
+  constructor(private ctx: any, public requestables: Requestable[]) {}
 
   async fetch<T, ParamsT>(
-    method: (params: ParamsT) => Promise<T>,
+    method: (ctx: any, params: ParamsT) => Promise<T>,
     params: ParamsT,
     options?: {}
   ): Promise<FetchedResponses<T>>;
   async fetch<T>(
-    method: (...params: any[]) => Promise<T>,
+    method: (ctx: any, ...params: any[]) => Promise<T>,
     params: any[],
     options?: { usernameInPosition?: number }
   ): Promise<FetchedResponses<T>>;
   async fetch<T, ParamsT>(
-    method: (...params: any[]) => Promise<T>,
+    method: (ctx: any, ...params: any[]) => Promise<T>,
     params: any,
     options?: any
   ): Promise<FetchedResponses<T>> {
     if (params instanceof Array) {
       let fetched = await promiseAllSettled(
         this.requestables.map((u) =>
-          method(...params.insertAtIndex(options?.usernameInPosition || 0, u))
+          method(
+            this.ctx,
+            ...params.insertAtIndex(options?.usernameInPosition || 0, u)
+          )
         )
       );
 
@@ -38,7 +41,7 @@ export class MultiRequester {
     } else {
       let fetched = await promiseAllSettled(
         this.requestables.map(async (u) =>
-          method({ ...params, username: u } as ParamsT)
+          method(this.ctx, { ...params, username: u } as ParamsT)
         )
       );
 

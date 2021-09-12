@@ -2,6 +2,7 @@ import { add, differenceInSeconds } from "date-fns";
 import { TimeRange } from "../../helpers/date";
 import { Requestable } from "../../services/LastFM/LastFMAPIService";
 import { LastFMService } from "../../services/LastFM/LastFMService";
+import { ServiceRegistry } from "../../services/ServicesRegistry";
 
 export interface PacePrediction {
   scrobbleRate: number;
@@ -10,10 +11,9 @@ export interface PacePrediction {
 }
 
 export class PaceCalculator {
-  constructor(
-    private lastFMService: LastFMService,
-    private requestable: Requestable
-  ) {}
+  private lastFMService = ServiceRegistry.get(LastFMService);
+
+  constructor(private ctx: any, private requestable: Requestable) {}
 
   private calculateScrobblesPerHour(
     scrobbles: number,
@@ -37,7 +37,7 @@ export class PaceCalculator {
   private async calculateFromOverall(
     milestone: number
   ): Promise<PacePrediction> {
-    let userInfo = await this.lastFMService.userInfo({
+    let userInfo = await this.lastFMService.userInfo(this.ctx, {
       username: this.requestable,
     });
 
@@ -58,8 +58,9 @@ export class PaceCalculator {
     milestone: number
   ): Promise<PacePrediction> {
     let [totalScrobbles, scrobblesOverTimeRange] = await Promise.all([
-      this.lastFMService.getNumberScrobbles(this.requestable),
+      this.lastFMService.getNumberScrobbles(this.ctx, this.requestable),
       this.lastFMService.getNumberScrobbles(
+        this.ctx,
         this.requestable,
         timeRange.from,
         timeRange.to
@@ -80,6 +81,7 @@ export class PaceCalculator {
 
   private async getNearestMilestone(): Promise<number> {
     let overallScrobbles = await this.lastFMService.getNumberScrobbles(
+      this.ctx,
       this.requestable
     );
 

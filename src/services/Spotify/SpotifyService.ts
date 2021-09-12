@@ -1,5 +1,5 @@
 import fetch from "node-fetch";
-import { BaseService } from "../BaseService";
+import { BaseService, BaseServiceContext } from "../BaseService";
 import config from "../../../config.json";
 import { URLSearchParams } from "url";
 import { add, isBefore } from "date-fns";
@@ -10,6 +10,7 @@ import {
   SpotifyEntity,
   SpotifyToken,
 } from "./SpotifyService.types";
+import { SimpleMap } from "../../helpers/types";
 
 export class SpotifyService extends BaseService {
   url = "https://api.spotify.com/v1/";
@@ -22,18 +23,18 @@ export class SpotifyService extends BaseService {
     return isBefore(new Date(), dateExpires);
   }
 
-  private async token(): Promise<string> {
+  private async token(ctx: BaseServiceContext): Promise<string> {
     if (this._token && this.tokenIsValid(this._token))
       return this._token.access_token;
     else {
-      let token = await this.fetchToken();
+      let token = await this.fetchToken(ctx);
       this._token = token;
       return token.access_token;
     }
   }
 
-  private async fetchToken(): Promise<SpotifyToken> {
-    this.log("fetching new token");
+  private async fetchToken(ctx: BaseServiceContext): Promise<SpotifyToken> {
+    this.log(ctx, "fetching new token");
     let params = new URLSearchParams();
     params.append("grant_type", "client_credentials");
 
@@ -51,34 +52,42 @@ export class SpotifyService extends BaseService {
     return (await response.json()) as SpotifyToken;
   }
 
-  private async headers() {
+  private async headers(ctx: BaseServiceContext) {
     return {
-      Authorization: this.bearerAuthorization(await this.token()),
+      Authorization: this.bearerAuthorization(await this.token(ctx)),
     };
   }
 
-  async request<T>(path: string, params: { [key: string]: any }): Promise<T> {
-    this.log(`made API request to ${path} with params ${params}`);
+  async request<T>(
+    ctx: BaseServiceContext,
+    path: string,
+    params: SimpleMap
+  ): Promise<T> {
+    this.log(ctx, `made API request to ${path} with params ${params}`);
 
     let response = await fetch(this.url + path + "?" + stringify(params), {
-      headers: await this.headers(),
+      headers: await this.headers(ctx),
     });
 
     return (await response.json()) as T;
   }
 
   async search(
+    ctx: BaseServiceContext,
     querystring: string,
     entityType: SpotifyEntity[] = []
   ): Promise<SearchResponse> {
-    return await this.request("search", {
+    return await this.request(ctx, "search", {
       q: querystring,
       type: entityType.join(","),
     });
   }
 
-  async searchArtist(artist: string): Promise<SearchItem | undefined> {
-    let search = await this.search(artist, ["artist"]);
+  async searchArtist(
+    ctx: BaseServiceContext,
+    artist: string
+  ): Promise<SearchItem | undefined> {
+    let search = await this.search(ctx, artist, ["artist"]);
 
     return (
       search.artists.items.find((a) => this.compare(a.name, artist)) ||
@@ -87,29 +96,37 @@ export class SpotifyService extends BaseService {
   }
 
   async searchAlbum(
+    ctx: BaseServiceContext,
     artist: string,
     album: string
   ): Promise<SearchItem | undefined> {
-    let search = await this.search(artist + " " + album, ["album"]);
+    let search = await this.search(ctx, artist + " " + album, ["album"]);
 
     return search.albums.items[0];
   }
 
   async searchTrack(
+    ctx: BaseServiceContext,
     artist: string,
     track: string
   ): Promise<SearchItem | undefined> {
-    return await this.searchTrackRaw(artist + " " + track);
+    return await this.searchTrackRaw(ctx, artist + " " + track);
   }
 
-  async searchTrackRaw(keywords: string): Promise<SearchItem | undefined> {
-    let search = await this.search(keywords, ["track"]);
+  async searchTrackRaw(
+    ctx: BaseServiceContext,
+    keywords: string
+  ): Promise<SearchItem | undefined> {
+    let search = await this.search(ctx, keywords, ["track"]);
 
     return search.tracks.items[0];
   }
 
-  async searchAlbumRaw(keywords: string): Promise<SearchItem | undefined> {
-    let search = await this.search(keywords, ["album"]);
+  async searchAlbumRaw(
+    ctx: BaseServiceContext,
+    keywords: string
+  ): Promise<SearchItem | undefined> {
+    let search = await this.search(ctx, keywords, ["album"]);
 
     return search.albums.items[0];
   }

@@ -32,6 +32,7 @@ export class Rating extends RateYourMusicIndexingChildCommand<
     });
 
     const { artist, album } = await this.lastFMArguments.getAlbum(
+      this.ctx,
       senderRequestable
     );
 
@@ -55,7 +56,10 @@ export class Rating extends RateYourMusicIndexingChildCommand<
 
     const { rating, rateYourMusicAlbum } = response.ratings.ratings[0];
 
-    const albumInfo = await this.lastFMService.albumInfo({ artist, album });
+    const albumInfo = await this.lastFMService.albumInfo(this.ctx, {
+      artist,
+      album,
+    });
 
     const embed = this.newEmbed()
       .setAuthor(...this.generateEmbedAuthor("Rating"))

@@ -3,6 +3,7 @@ import { LineConsolidator } from "../../../lib/LineConsolidator";
 import { NowPlayingBaseCommand } from "./NowPlayingBaseCommand";
 import { promiseAllSettled } from "../../../helpers";
 import { MessageEmbed } from "discord.js";
+import { ServiceRegistry } from "../../../services/ServicesRegistry";
 
 const reverse = (s: string) =>
   s.split("").reverse().join("").replace("(", ")").replace(")", "(");
@@ -15,13 +16,13 @@ export default class NowPlaying extends NowPlayingBaseCommand {
   aliases = ["np", "fm", "mf"];
   description = "Displays the now playing or last played track from Last.fm";
 
-  crownsService = new CrownsService(this.logger);
+  crownsService = ServiceRegistry.get(CrownsService);
 
   async run() {
     let { username, requestable, discordUser } =
       await this.nowPlayingMentions();
 
-    let nowPlayingResponse = await this.lastFMService.recentTracks({
+    let nowPlayingResponse = await this.lastFMService.recentTracks(this.ctx, {
       username: requestable,
       limit: 1,
     });
@@ -35,11 +36,11 @@ export default class NowPlaying extends NowPlayingBaseCommand {
     let nowPlayingEmbed = this.nowPlayingEmbed(nowPlaying, username);
 
     let [artistInfo, crown] = await promiseAllSettled([
-      this.lastFMService.artistInfo({
+      this.lastFMService.artistInfo(this.ctx, {
         artist: nowPlaying.artist,
         username: requestable,
       }),
-      this.crownsService.getCrownDisplay(nowPlaying.artist, this.guild),
+      this.crownsService.getCrownDisplay(this.ctx, nowPlaying.artist),
     ]);
 
     let { crownString, isCrownHolder } = await this.crownDetails(

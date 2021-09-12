@@ -41,7 +41,7 @@ export default class TopTags extends LastFMBaseCommand<typeof args> {
   async run() {
     const { requestable, perspective } = await this.parseMentions();
 
-    let topArtists = await this.lastFMService.topArtists({
+    let topArtists = await this.lastFMService.topArtists(this.ctx, {
       username: requestable,
       limit: 1000,
       period: this.parsedArguments.timePeriod,
@@ -65,7 +65,7 @@ export default class TopTags extends LastFMBaseCommand<typeof args> {
 
     const response = await this.mirrorballService.query<{
       tags: { tags: MirrorballTag[]; pageInfo: MirrorballPageInfo };
-    }>(query, { artists });
+    }>(this.ctx, query, { artists });
 
     const embed = this.newEmbed()
       .setAuthor(...this.generateEmbedAuthor("Top tags"))

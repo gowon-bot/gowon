@@ -1,13 +1,21 @@
 import { ArtistRedirect } from "../../database/entity/ArtistRedirect";
 import { RecordNotFoundError } from "../../errors";
-import { BaseService } from "../BaseService";
+import { BaseService, BaseServiceContext } from "../BaseService";
 import { LastFMService } from "../LastFM/LastFMService";
+import { ServiceRegistry } from "../ServicesRegistry";
 
 export class RedirectsService extends BaseService {
-  lastFMService = new LastFMService(this.logger);
+  get lastFMService() {
+    return ServiceRegistry.get(LastFMService);
+  }
 
-  async setRedirect(from: string, to?: string): Promise<ArtistRedirect> {
+  async setRedirect(
+    ctx: BaseServiceContext,
+    from: string,
+    to?: string
+  ): Promise<ArtistRedirect> {
     this.log(
+      ctx,
       to
         ? `Setting redirect from ${from} to ${to}`
         : `Marking ${from} as no redirect`
@@ -18,8 +26,11 @@ export class RedirectsService extends BaseService {
     return await redirect.save();
   }
 
-  async removeRedirect(from: string): Promise<ArtistRedirect> {
-    this.log(`Removing redirect from ${from}`);
+  async removeRedirect(
+    ctx: BaseServiceContext,
+    from: string
+  ): Promise<ArtistRedirect> {
+    this.log(ctx, `Removing redirect from ${from}`);
     let redirect = await ArtistRedirect.findOne({ from });
 
     if (!redirect) throw new RecordNotFoundError("redirect");
@@ -29,22 +40,26 @@ export class RedirectsService extends BaseService {
     return redirect;
   }
 
-  async getRedirect(artistName: string): Promise<ArtistRedirect | undefined> {
-    this.log(`Fetching redirect for ${artistName}`);
+  async getRedirect(
+    ctx: BaseServiceContext,
+    artistName: string
+  ): Promise<ArtistRedirect | undefined> {
+    this.log(ctx, `Fetching redirect for ${artistName}`);
 
     let redirect = await ArtistRedirect.check(artistName);
 
     if (!redirect) {
       try {
-        let lastFMRedirect = await this.lastFMService.getArtistCorrection({
+        let lastFMRedirect = await this.lastFMService.getArtistCorrection(ctx, {
           artist: artistName,
         });
 
         if (lastFMRedirect.name.toLowerCase() === artistName.toLowerCase()) {
-          let newRedirect = await this.setRedirect(lastFMRedirect.name);
+          let newRedirect = await this.setRedirect(ctx, lastFMRedirect.name);
           return newRedirect;
         } else {
           let newRedirect = await this.setRedirect(
+            ctx,
             artistName,
             lastFMRedirect.name
           );
@@ -57,20 +72,26 @@ export class RedirectsService extends BaseService {
     } else return redirect;
   }
 
-  async checkRedirect(artistName: string): Promise<string> {
-    let redirect = await this.getRedirect(artistName);
+  async checkRedirect(
+    ctx: BaseServiceContext,
+    artistName: string
+  ): Promise<string> {
+    let redirect = await this.getRedirect(ctx, artistName);
 
     return redirect?.to || redirect?.from!;
   }
 
-  async listRedirects(artistName: string): Promise<ArtistRedirect[]> {
-    this.log(`Listing redirects for ${artistName}`);
+  async listRedirects(
+    ctx: BaseServiceContext,
+    artistName: string
+  ): Promise<ArtistRedirect[]> {
+    this.log(ctx, `Listing redirects for ${artistName}`);
 
     return await ArtistRedirect.find({ to: artistName });
   }
 
-  async countAllRedirects(): Promise<number> {
-    this.log(`Counting all redirects`);
+  async countAllRedirects(ctx: BaseServiceContext): Promise<number> {
+    this.log(ctx, `Counting all redirects`);
 
     return await ArtistRedirect.count();
   }

@@ -5,7 +5,7 @@ import {
   AlreadyLoggedOutError,
   RecordNotFoundError,
 } from "../../errors";
-import { BaseService } from "../BaseService";
+import { BaseService, BaseServiceContext } from "../BaseService";
 import { Perspective } from "../../lib/Perspective";
 import { ILike } from "typeorm";
 import { LastFMSession } from "../LastFM/converters/Misc";
@@ -13,8 +13,11 @@ import { Requestable } from "../LastFM/LastFMAPIService";
 import { buildRequestable } from "../../helpers/parseMentions";
 
 export class UsersService extends BaseService {
-  async getUsername(discordID: string): Promise<string> {
-    this.log(`fetching username with discordID ${discordID}`);
+  async getUsername(
+    ctx: BaseServiceContext,
+    discordID: string
+  ): Promise<string> {
+    this.log(ctx, `fetching username with discordID ${discordID}`);
 
     let user = await User.findOne({ where: { discordID } });
 
@@ -23,8 +26,11 @@ export class UsersService extends BaseService {
     } else throw new UsernameNotRegisteredError();
   }
 
-  async getRequestable(discordID: string): Promise<Requestable> {
-    this.log(`fetching requestable with discordID ${discordID}`);
+  async getRequestable(
+    ctx: BaseServiceContext,
+    discordID: string
+  ): Promise<Requestable> {
+    this.log(ctx, `fetching requestable with discordID ${discordID}`);
 
     let user = await User.findOne({ where: { discordID } });
 
@@ -34,10 +40,11 @@ export class UsersService extends BaseService {
   }
 
   async setUsername(
+    ctx: BaseServiceContext,
     discordID: string,
     lastFMUsername: string
   ): Promise<string> {
-    this.log(`setting user ${discordID} with username ${lastFMUsername}`);
+    this.log(ctx, `setting user ${discordID} with username ${lastFMUsername}`);
 
     let user = await User.findOne({ where: { discordID } });
 
@@ -56,10 +63,12 @@ export class UsersService extends BaseService {
   }
 
   async setLastFMSession(
+    ctx: BaseServiceContext,
     discordID: string,
     lastFMSession: LastFMSession
   ): Promise<User> {
     this.log(
+      ctx,
       `setting user ${discordID} with session ${lastFMSession.username}`
     );
 
@@ -80,8 +89,11 @@ export class UsersService extends BaseService {
     return user;
   }
 
-  async clearUsername(discordID: string): Promise<void> {
-    this.log(`clearing username and session for ${discordID}`);
+  async clearUsername(
+    ctx: BaseServiceContext,
+    discordID: string
+  ): Promise<void> {
+    this.log(ctx, `clearing username and session for ${discordID}`);
 
     let user = await User.findOne({ where: { discordID } });
 
@@ -107,8 +119,8 @@ export class UsersService extends BaseService {
     return Perspective.discordPerspective(author, mentioned);
   }
 
-  async getUser(discordID: string): Promise<User> {
-    this.log(`fetching user with discordID ${discordID}`);
+  async getUser(ctx: BaseServiceContext, discordID: string): Promise<User> {
+    this.log(ctx, `fetching user with discordID ${discordID}`);
 
     let user = await User.findOne({ where: { discordID } });
 
@@ -117,33 +129,43 @@ export class UsersService extends BaseService {
     return user;
   }
 
-  async countUsers(): Promise<number> {
-    this.log("counting all users");
+  async countUsers(ctx: BaseServiceContext): Promise<number> {
+    this.log(ctx, "counting all users");
 
     return await User.count();
   }
 
-  async getUserFromLastFMUsername(username: string): Promise<User | undefined> {
-    this.log(`looking for user with username ${username}`);
+  async getUserFromLastFMUsername(
+    ctx: BaseServiceContext,
+    username: string
+  ): Promise<User | undefined> {
+    this.log(ctx, `looking for user with username ${username}`);
 
     return await User.findOne({
       where: { lastFMUsername: ILike(username) },
     });
   }
 
-  async randomUser(): Promise<User>;
-  async randomUser(options?: { limit?: 1; userIDs?: string[] }): Promise<User>;
-  async randomUser(options?: {
-    limit?: number;
-    userIDs?: string[];
-  }): Promise<User[]>;
+  async randomUser(ctx: BaseServiceContext): Promise<User>;
   async randomUser(
+    ctx: BaseServiceContext,
+    options?: { limit?: 1; userIDs?: string[] }
+  ): Promise<User>;
+  async randomUser(
+    ctx: BaseServiceContext,
+    options?: {
+      limit?: number;
+      userIDs?: string[];
+    }
+  ): Promise<User[]>;
+  async randomUser(
+    ctx: BaseServiceContext,
     options: {
       limit?: number;
       userIDs?: string[];
     } = {}
   ): Promise<User | User[]> {
-    this.log("Fetching a random user...");
+    this.log(ctx, "Fetching a random user...");
 
     let users = await User.random({
       limit: options.limit || 1,
@@ -157,20 +179,20 @@ export class UsersService extends BaseService {
     }
   }
 
-  async setAsIndexed(discordID: string) {
-    this.log(`Setting user with id ${discordID} as indexed`);
+  async setAsIndexed(ctx: BaseServiceContext, discordID: string) {
+    this.log(ctx, `Setting user with id ${discordID} as indexed`);
 
-    const user = await this.getUser(discordID);
+    const user = await this.getUser(ctx, discordID);
 
     user.isIndexed = true;
 
     await user.save();
   }
 
-  async setPatron(discordID: string, value: boolean) {
-    this.log(`Setting user with id ${discordID} as a patron`);
+  async setPatron(ctx: BaseServiceContext, discordID: string, value: boolean) {
+    this.log(ctx, `Setting user with id ${discordID} as a patron`);
 
-    const user = await this.getUser(discordID);
+    const user = await this.getUser(ctx, discordID);
 
     user.isPatron = value;
 

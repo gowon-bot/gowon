@@ -5,13 +5,14 @@ import { User } from "../../../database/entity/User";
 import { LogicError } from "../../../errors";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { Requestable } from "../../../services/LastFM/LastFMAPIService";
+import { ServiceRegistry } from "../../../services/ServicesRegistry";
 
 export abstract class FriendsChildCommand<
   T extends Arguments = Arguments
 > extends LastFMBaseChildCommand<T> {
   parentName = "friends";
 
-  friendsService = new FriendsService(this.logger);
+  friendsService = ServiceRegistry.get(FriendsService);
 
   friendUsernames: string[] = [];
   senderRequestable!: Requestable;
@@ -19,10 +20,10 @@ export abstract class FriendsChildCommand<
 
   throwIfNoFriends = false;
 
-  async prerun(message: Message) {
+  async prerun() {
     let [, senderRequestable] = await Promise.all([
-      this.setFriendUsernames(message),
-      this.usersService.getRequestable(message.author.id),
+      this.setFriendUsernames(this.message),
+      this.usersService.getRequestable(this.ctx, this.author.id),
     ]);
     this.senderRequestable = senderRequestable;
 
@@ -31,11 +32,14 @@ export abstract class FriendsChildCommand<
   }
 
   async setFriendUsernames(message: Message) {
-    let user = await this.usersService.getUser(message.author.id);
+    let user = await this.usersService.getUser(this.ctx, message.author.id);
 
     this.user = user;
 
-    this.friendUsernames = await this.friendsService.getUsernames(user);
+    this.friendUsernames = await this.friendsService.getUsernames(
+      this.ctx,
+      user
+    );
   }
 
   protected displayMissingFriend(username: string, entity = "playcount") {

@@ -1,6 +1,5 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
 import { Arguments } from "../../../lib/arguments/arguments";
-import { Message } from "discord.js";
 import { CrownEventString } from "../../../services/dbservices/CrownsHistoryService";
 import { LogicError } from "../../../errors";
 import { CrownEvent } from "../../../database/entity/meta/CrownEvent";
@@ -21,7 +20,7 @@ export class History extends CrownsChildCommand<typeof args> {
 
   arguments: Arguments = args;
 
-  async run(message: Message) {
+  async run() {
     let artist = this.parsedArguments.artist;
 
     let { senderUsername } = await this.parseMentions({
@@ -29,16 +28,17 @@ export class History extends CrownsChildCommand<typeof args> {
     });
 
     if (!artist) {
-      artist = (await this.lastFMService.nowPlaying(senderUsername)).artist;
+      artist = (await this.lastFMService.nowPlaying(this.ctx, senderUsername))
+        .artist;
     }
 
-    let artistDetails = await this.lastFMService.artistInfo({
+    let artistDetails = await this.lastFMService.artistInfo(this.ctx, {
       artist,
     });
 
     let crown = await this.crownsService.getCrown(
+      this.ctx,
       artistDetails.name,
-      message.guild?.id!,
       { refresh: false }
     );
 
@@ -48,7 +48,7 @@ export class History extends CrownsChildCommand<typeof args> {
       );
     }
 
-    let history = await this.crownsService.scribe.getHistory(crown, [
+    let history = await this.crownsService.scribe.getHistory(this.ctx, crown, [
       CrownEventString.snatched,
       CrownEventString.created,
     ]);

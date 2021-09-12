@@ -10,7 +10,7 @@ export default class Usercount extends AdminBaseCommand {
   devCommand = true;
 
   async run() {
-    let usercount = await this.usersService.countUsers();
+    let usercount = await this.usersService.countUsers(this.ctx);
 
     await this.send(
       this.newEmbed()

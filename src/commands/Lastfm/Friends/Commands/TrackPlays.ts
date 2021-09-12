@@ -24,10 +24,11 @@ export class TrackPlays extends FriendsChildCommand<typeof args> {
 
   async run() {
     const { artist, track } = await this.lastFMArguments.getTrack(
+      this.ctx,
       this.senderRequestable
     );
 
-    const trackDetails = await new MultiRequester([
+    const trackDetails = await new MultiRequester(this.ctx, [
       ...this.friendUsernames,
       this.senderRequestable,
     ]).fetch(this.lastFMService.trackInfo.bind(this.lastFMService), {

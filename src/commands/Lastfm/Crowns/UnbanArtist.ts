@@ -24,14 +24,11 @@ export class UnbanArtist extends CrownsChildCommand<typeof args> {
     let artist = this.parsedArguments.artist!;
 
     let artistCrownBan = await this.crownsService.artistCrownUnban(
-      this.guild.id,
+      this.ctx,
       artist
     );
 
-    await this.crownsService.killCrown(
-      artistCrownBan.artistName,
-      this.guild.id
-    );
+    await this.crownsService.killCrown(this.ctx, artistCrownBan.artistName);
 
     await this.traditionalReply(
       `succesfully unbanned ${artistCrownBan.artistName.strong()} from the crowns game.`

@@ -1,5 +1,6 @@
 import { sub } from "date-fns";
 import { LogicError } from "../../../../errors";
+import { SimpleMap } from "../../../../helpers/types";
 import { Arguments } from "../../../../lib/arguments/arguments";
 import { standardMentions } from "../../../../lib/arguments/mentions/mentions";
 import { ReportCalculator } from "../../../../lib/calculators/ReportCalculator";
@@ -9,6 +10,7 @@ import { TagConsolidator } from "../../../../lib/tags/TagConsolidator";
 import { displayDate, displayNumber } from "../../../../lib/views/displays";
 import { RedirectsService } from "../../../../services/dbservices/RedirectsService";
 import { RecentTracks } from "../../../../services/LastFM/converters/RecentTracks";
+import { ServiceRegistry } from "../../../../services/ServicesRegistry";
 import { YearConnector, YearParams, YearResponse } from "./Year.connector";
 
 const args = {
@@ -27,10 +29,12 @@ export default class Year extends MirrorballBaseCommand<
   subcategory = "reports";
   usage = ["", "@user"];
 
+  devCommand = true;
+
   arguments: Arguments = args;
 
   connector = new YearConnector();
-  redirectsService = new RedirectsService(this.logger);
+  redirectsService = ServiceRegistry.get(RedirectsService);
 
   private readonly pageSize = 5000;
 
@@ -60,7 +64,8 @@ export default class Year extends MirrorballBaseCommand<
             to: `${~~(new Date().getTime() / 1000)}`,
           },
         },
-      }
+      },
+      this.ctx
     );
 
     const firstPage = await paginator.getNext();
@@ -79,11 +84,7 @@ export default class Year extends MirrorballBaseCommand<
 
     firstPage.concat(restPages);
 
-    const reportCalculator = new ReportCalculator(
-      this.redirectsService,
-      this.mirrorballService,
-      firstPage
-    );
+    const reportCalculator = new ReportCalculator(this.ctx, firstPage);
 
     const month = await reportCalculator.calculate();
 
@@ -144,7 +145,10 @@ ${tagConsolidator.consolidateAsStrings(10).join(", ").italic()}
     await this.send(embed);
   }
 
-  private async queryAndConvert(params: YearParams): Promise<RecentTracks> {
+  private async queryAndConvert(
+    _: SimpleMap,
+    params: YearParams
+  ): Promise<RecentTracks> {
     const response = await this.query(params);
 
     return RecentTracks.fromMirrorballPlaysResponse(response, this.pageSize);

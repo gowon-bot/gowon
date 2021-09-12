@@ -1,4 +1,4 @@
-import { CommandRegistry } from "../../../lib/command/CommandRegistry";
+import { CommandGroup } from "../../../lib/command/CommandGroup";
 import { LastFMBaseParentCommand } from "../LastFMBaseCommand";
 import { Add } from "./Add";
 import { List } from "./List";
@@ -22,18 +22,18 @@ export default class FriendsParentCommand extends LastFMBaseParentCommand {
   prefixes = ["friends", "fr"];
   default = () => new List();
 
-  children: CommandRegistry = new CommandRegistry({
-    add: () => new Add(),
-    list: () => new List(),
-    remove: () => new Remove(),
-    removeAll: () => new RemoveAll(),
+  children: CommandGroup = new CommandGroup([
+    Add,
+    List,
+    Remove,
+    RemoveAll,
 
     // Commands/
-    artistplays: () => new ArtistPlays(),
-    albumplays: () => new AlbumPlays(),
-    trackplays: () => new TrackPlays(),
-    scrobbles: () => new Scrobbles(),
-    joined: () => new Joined(),
-    rating: () => new Rating(),
-  });
+    ArtistPlays,
+    AlbumPlays,
+    TrackPlays,
+    Scrobbles,
+    Joined,
+    Rating,
+  ]);
 }

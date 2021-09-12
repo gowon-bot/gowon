@@ -1,4 +1,3 @@
-import { CommandRegistry } from "./CommandRegistry";
 import { Message } from "discord.js";
 import { GowonService } from "../../services/GowonService";
 import { AdminService } from "../../services/dbservices/AdminService";
@@ -11,31 +10,45 @@ import { GowonClient } from "../GowonClient";
 import { RunAs } from "./RunAs";
 import { NicknameService } from "../../services/guilds/NicknameService";
 import Help from "../../commands/Help/Help";
+import { CommandRegistry } from "./CommandRegistry";
+import { Command } from "./Command";
+import { ServiceRegistry } from "../../services/ServicesRegistry";
 
 export class CommandHandler {
-  gowonService = GowonService.getInstance();
-  metaService = new MetaService();
-  commandRegistry = new CommandRegistry();
+  commandRegistry = CommandRegistry.getInstance();
   client!: GowonClient;
-  adminService = new AdminService(this.client);
+
+  adminService = ServiceRegistry.get(AdminService);
+  metaService = ServiceRegistry.get(MetaService);
+  gowonService = ServiceRegistry.get(GowonService);
+  private nicknameService = ServiceRegistry.get(NicknameService);
   private logger = new Logger();
-  private nicknameService = new NicknameService(this.logger);
 
   setClient(client: GowonClient) {
     this.client = client;
   }
 
-  async init() {
-    await this.commandRegistry.init();
+  context(message: Message): any {
+    return {
+      logger: this.logger,
+      client: this.client,
+      command: {
+        message,
+        guild: message.guild!,
+        author: message.author,
+      },
+      adminService: this.adminService,
+    };
   }
 
   async handle(message: Message): Promise<void> {
     this.nicknameService.recordNickname(
+      this.context(message),
       message.author.id,
-      message.guild?.id,
       message.member?.nickname || message.author.username
     );
     this.nicknameService.recordUsername(
+      this.context(message),
       message.author.id,
       message.author.username + "#" + message.author.discriminator
     );
@@ -79,16 +92,17 @@ export class CommandHandler {
 
       if (!command) return;
 
-      if (command instanceof ParentCommand)
+      if (command instanceof ParentCommand) {
         command = (command.default && command.default()) || command;
+      }
 
-      if (command.devCommand && !this.client.isDeveloper(message.author.id))
+      if (command.devCommand && !this.client.isDeveloper(message.author.id)) {
         return;
+      }
 
       let canCheck = await this.adminService.can.run(
+        this.context(message),
         command,
-        message,
-        this.client,
         {
           useChannel: true,
         }
@@ -104,13 +118,16 @@ export class CommandHandler {
 
         return;
       }
+
       this.logger.logCommandHandle(runAs);
 
-      this.metaService.recordCommandRun(command.id, message);
+      this.metaService.recordCommandRun(
+        this.context(message),
+        command.id,
+        message
+      );
 
-      command.gowonClient = this.client;
-
-      await command.execute(message, runAs);
+      this.runCommand(command, message, runAs);
     }
   }
 
@@ -168,5 +185,13 @@ export class CommandHandler {
     ) {
       await message.reply("Yes ma'am!");
     }
+  }
+
+  private async runCommand(command: Command, message: Message, runAs: RunAs) {
+    const newCommand = command.copy();
+
+    newCommand.gowonClient = this.client;
+
+    await newCommand.execute.bind(newCommand)(message, runAs);
   }
 }

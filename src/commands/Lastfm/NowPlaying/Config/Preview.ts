@@ -38,7 +38,9 @@ export class Preview extends NowPlayingConfigChildCommand<typeof args> {
 
     const nowPlayingBuilder = new NowPlayingBuilder([option]);
 
-    const requirements = new (componentMap[option] as any)().requirements;
+    const requirements = new (componentMap[option] as any)({
+      logger: this.logger,
+    }).requirements;
     const mockRequirements = this.resolveMockRequirements(requirements);
     const nowPlaying = mockRequirements.recentTracks.first() as RecentTrack;
     const links = LinkGenerator.generateTrackLinksForEmbed(nowPlaying);

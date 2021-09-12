@@ -2,6 +2,7 @@ import { flatDeep } from "../../../../helpers";
 import { Arguments } from "../../../../lib/arguments/arguments";
 import { componentMap } from "../../../../lib/nowplaying/componentMap";
 import { ConfigService } from "../../../../services/dbservices/NowPlayingService";
+import { ServiceRegistry } from "../../../../services/ServicesRegistry";
 import { LastFMBaseChildCommand } from "../../LastFMBaseCommand";
 
 export abstract class NowPlayingConfigChildCommand<
@@ -10,7 +11,7 @@ export abstract class NowPlayingConfigChildCommand<
   parentName = "nowplayingconfig";
   subcategory = "nowplaying";
 
-  configService = new ConfigService();
+  configService = ServiceRegistry.get(ConfigService);
 
   readonly presets = {
     blank: [],

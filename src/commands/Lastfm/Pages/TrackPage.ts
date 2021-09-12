@@ -24,9 +24,12 @@ export default class TrackPage extends LastFMBaseCommand<typeof args> {
   async run() {
     const { requestable } = await this.parseMentions();
 
-    const { artist, track } = await this.lastFMArguments.getTrack(requestable);
+    const { artist, track } = await this.lastFMArguments.getTrack(
+      this.ctx,
+      requestable
+    );
 
-    const trackDetails = await this.lastFMService.trackInfo({
+    const trackDetails = await this.lastFMService.trackInfo(this.ctx, {
       artist,
       track,
       username: requestable,

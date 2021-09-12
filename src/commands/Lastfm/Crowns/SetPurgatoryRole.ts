@@ -12,7 +12,7 @@ export class SetPurgatoryRole extends CrownsChildCommand {
 
     purgatoryRole = purgatoryRole ?? {};
 
-    await this.crownsService.setPurgatoryRole(this.guild.id, purgatoryRole.id);
+    await this.crownsService.setPurgatoryRole(this.ctx, purgatoryRole.id);
 
     const embed = this.newEmbed().setDescription(
       purgatoryRole.name

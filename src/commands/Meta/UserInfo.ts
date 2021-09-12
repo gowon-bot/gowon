@@ -3,9 +3,9 @@ import { Arguments } from "../../lib/arguments/arguments";
 import { BotStatsService } from "../../services/dbservices/BotStatsService";
 import { standardMentions } from "../../lib/arguments/mentions/mentions";
 import { LineConsolidator } from "../../lib/LineConsolidator";
-import { CommandRegistry } from "../../lib/command/CommandRegistry";
 import { displayNumber } from "../../lib/views/displays";
 import { Emoji } from "../../lib/Emoji";
+import { ServiceRegistry } from "../../services/ServicesRegistry";
 
 const args = {
   inputs: {},
@@ -22,26 +22,26 @@ export default class UserInfo extends BaseCommand<typeof args> {
 
   arguments: Arguments = args;
 
-  botStatsService = new BotStatsService();
-  commandRegistry = new CommandRegistry();
+  botStatsService = ServiceRegistry.get(BotStatsService);
 
   async run() {
-    await this.commandRegistry.init();
-
     const { dbUser, discordUser } = await this.parseMentions({
       fetchDiscordUser: true,
       reverseLookup: { required: true },
     });
 
     const commandRunCount = await this.botStatsService.countUserCommandRuns(
+      this.ctx,
       dbUser.discordID
     );
 
     const topCommands = await this.botStatsService.userTopCommands(
+      this.ctx,
       dbUser.discordID
     );
 
     const cachedPlaycount = await this.mirrorballService.getCachedPlaycount(
+      this.ctx,
       discordUser?.id || dbUser.discordID
     );
 

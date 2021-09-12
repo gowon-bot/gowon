@@ -27,9 +27,12 @@ export class ArtistPlays extends FriendsChildCommand<typeof args> {
   throwIfNoFriends = true;
 
   async run() {
-    const artist = await this.lastFMArguments.getArtist(this.senderRequestable);
+    const artist = await this.lastFMArguments.getArtist(
+      this.ctx,
+      this.senderRequestable
+    );
 
-    const artistDetails = await new MultiRequester([
+    const artistDetails = await new MultiRequester(this.ctx, [
       ...this.friendUsernames,
       this.senderRequestable,
     ]).fetch(this.lastFMService.artistInfo.bind(this.lastFMService), {

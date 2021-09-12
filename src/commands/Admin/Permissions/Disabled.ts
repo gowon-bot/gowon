@@ -11,9 +11,7 @@ export class Disabled extends PermissionsChildCommand {
   async prerun() {}
 
   async run(message: Message) {
-    let disabledCommands = await this.adminService.listDisabled(
-      message.guild?.id!
-    );
+    let disabledCommands = await this.adminService.listDisabled(this.ctx);
 
     let embed = this.newEmbed()
       .setTitle(`Disabled commands in ${message.guild?.name}`)

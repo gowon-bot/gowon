@@ -26,7 +26,7 @@ export default class LastFMAccount extends LastFMBaseCommand<typeof args> {
       inputArgumentName: "username",
     });
 
-    if (!(await this.lastFMService.userExists(username)))
+    if (!(await this.lastFMService.userExists(this.ctx, username)))
       throw new RecordNotFoundError("user");
 
     let link = LinkGenerator.userPage(username);

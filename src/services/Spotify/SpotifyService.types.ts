@@ -1,3 +1,5 @@
+import { SimpleMap } from "../../helpers/types";
+
 export type SpotifyEntity =
   | "album"
   | "artist"
@@ -32,14 +34,12 @@ export interface SearchItem {
   uri: string;
 }
 
-export interface SearchResponse {
-  [key: string]: {
-    href: string;
-    items: SearchItem[];
-    limit: string;
-    next: string | undefined;
-    offset: null;
-    previous: string | undefined;
-    total: number;
-  };
-}
+export type SearchResponse = SimpleMap<{
+  href: string;
+  items: SearchItem[];
+  limit: string;
+  next: string | undefined;
+  offset: null;
+  previous: string | undefined;
+  total: number;
+}>;

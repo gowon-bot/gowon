@@ -5,6 +5,7 @@ import { promiseAllSettled } from "../../../helpers";
 import { ComboCalculator } from "../../../lib/calculators/ComboCalculator";
 import { RedirectsService } from "../../../services/dbservices/RedirectsService";
 import { displayNumber } from "../../../lib/views/displays";
+import { ServiceRegistry } from "../../../services/ServicesRegistry";
 
 export default class NowPlayingCombo extends NowPlayingBaseCommand {
   idSeed = "iz*one wonyoung";
@@ -13,14 +14,14 @@ export default class NowPlayingCombo extends NowPlayingBaseCommand {
   description =
     "Displays the now playing or last played track from Last.fm, plus any combos";
 
-  crownsService = new CrownsService(this.logger);
-  redirectsService = new RedirectsService(this.logger);
+  crownsService = ServiceRegistry.get(CrownsService);
+  redirectsService = ServiceRegistry.get(RedirectsService);
 
   async run() {
     let { username, requestable, discordUser } =
       await this.nowPlayingMentions();
 
-    let recentTracks = await this.lastFMService.recentTracks({
+    let recentTracks = await this.lastFMService.recentTracks(this.ctx, {
       username: requestable,
       limit: 1000,
     });
@@ -36,11 +37,11 @@ export default class NowPlayingCombo extends NowPlayingBaseCommand {
     if (nowPlaying.isNowPlaying) this.scrobble(nowPlaying);
 
     let [artistInfo, crown] = await promiseAllSettled([
-      this.lastFMService.artistInfo({
+      this.lastFMService.artistInfo(this.ctx, {
         artist: nowPlaying.artist,
         username: requestable,
       }),
-      this.crownsService.getCrownDisplay(nowPlaying.artist, this.guild),
+      this.crownsService.getCrownDisplay(this.ctx, nowPlaying.artist),
     ]);
 
     if (artistInfo.value) {

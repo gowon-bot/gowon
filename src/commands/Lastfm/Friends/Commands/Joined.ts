@@ -15,7 +15,7 @@ export class Joined extends FriendsChildCommand {
   throwIfNoFriends = true;
 
   async run() {
-    let joineds = await new MultiRequester([
+    let joineds = await new MultiRequester(this.ctx, [
       ...this.friendUsernames,
       this.senderRequestable,
     ]).fetch(this.lastFMService.userInfo.bind(this.lastFMService), {});

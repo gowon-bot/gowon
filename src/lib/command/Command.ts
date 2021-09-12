@@ -2,7 +2,7 @@ import { Message } from "discord.js";
 import { Arguments } from "../arguments/arguments";
 import { GowonClient } from "../GowonClient";
 import { Variation } from "./BaseCommand";
-import { CommandRegistry } from "./CommandRegistry";
+import { CommandGroup } from "./CommandGroup";
 import { ParentCommand } from "./ParentCommand";
 import { RunAs } from "./RunAs";
 
@@ -31,13 +31,15 @@ export interface Command {
   delegatedFrom?: Command;
 
   hasChildren: boolean;
-  children?: CommandRegistry;
+  children?: CommandGroup;
   parentName?: string;
   parent?: ParentCommand;
   gowonClient?: GowonClient;
   getChild(name: string, serverID: string): Promise<Command | undefined>;
 
   rollout: Rollout;
+
+  copy(): Command;
 }
 
 export interface Rollout {

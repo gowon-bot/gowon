@@ -1,23 +1,29 @@
 import { gql } from "@apollo/client/core";
 import { DocumentNode } from "graphql";
 import { IndexingWebhookService } from "../../api/indexing/IndexingWebhookService";
+import { SimpleMap } from "../../helpers/types";
 import { mirrorballClient } from "../../lib/indexing/client";
-import { BaseService } from "../BaseService";
+import { BaseService, BaseServiceContext } from "../BaseService";
 import { UsersService } from "../dbservices/UsersService";
+import { ServiceRegistry } from "../ServicesRegistry";
 import { MirrorballPageInfo, MirrorballUserType } from "./MirrorballTypes";
 
 export class MirrorballService extends BaseService {
-  private usersService = new UsersService(this.logger);
+  private get usersService() {
+    return ServiceRegistry.get(UsersService);
+  }
 
   private readonly baseURL = "http://localhost:8080/graphql";
 
   private async makeRequest(
+    ctx: BaseServiceContext,
     { query, mutation }: { query?: DocumentNode; mutation?: DocumentNode },
     variables?: object
   ): Promise<any> {
     const stringifiedVariables = JSON.stringify(variables, undefined, 2);
 
     this.log(
+      ctx,
       `Sending request to ${this.baseURL} with variables ${
         stringifiedVariables.length > 500
           ? stringifiedVariables.slice(0, 1000) + "..."
@@ -43,33 +49,36 @@ export class MirrorballService extends BaseService {
   public webhook = IndexingWebhookService.getInstance();
 
   async query<T = any>(
+    ctx: BaseServiceContext,
     query: DocumentNode,
-    variables?: { [key: string]: any }
+    variables?: SimpleMap
   ): Promise<T> {
-    const response = await this.makeRequest({ query }, variables);
+    const response = await this.makeRequest(ctx, { query }, variables);
 
     if (response.error) {
-      throw response.error || response.errors;
+      throw response.errors || response.error;
     }
 
     return response.data;
   }
 
   async mutate<T = any>(
+    ctx: BaseServiceContext,
     mutation: DocumentNode,
-    variables?: { [key: string]: any }
+    variables?: SimpleMap
   ): Promise<T> {
-    const response = await this.makeRequest({ mutation }, variables);
+    const response = await this.makeRequest(ctx, { mutation }, variables);
 
     if (response.error) {
-      throw response.error || response.errors;
+      throw response.errors || response.error;
     }
 
     return response.data;
   }
 
-  public async ping(): Promise<{ ping: string }> {
+  public async ping(ctx: BaseServiceContext): Promise<{ ping: string }> {
     return await this.query(
+      ctx,
       gql`
         query {
           ping
@@ -80,12 +89,15 @@ export class MirrorballService extends BaseService {
   }
 
   public async login(
+    ctx: BaseServiceContext,
     username: string,
-    discordID: string,
     userType: MirrorballUserType,
     session: string | undefined
   ) {
+    const discordID = this.author(ctx).id;
+
     return await this.query(
+      ctx,
       gql`
         mutation login(
           $username: String!
@@ -107,8 +119,11 @@ export class MirrorballService extends BaseService {
     );
   }
 
-  public async logout(discordID: string) {
+  public async logout(ctx: BaseServiceContext) {
+    const discordID = this.author(ctx).id;
+
     return await this.query(
+      ctx,
       gql`
         mutation logout($discordID: String!) {
           logout(discordID: $discordID)
@@ -119,11 +134,14 @@ export class MirrorballService extends BaseService {
   }
 
   public async quietAddUserToGuild(
-    discordID: string,
-    guildID: string
+    ctx: BaseServiceContext
   ): Promise<Error | undefined> {
+    const discordID = this.author(ctx).id;
+    const guildID = this.guild(ctx).id;
+
     try {
       await this.query(
+        ctx,
         gql`
           mutation addUserToGuild($discordID: String!, $guildID: String!) {
             addUserToGuild(discordID: $discordID, guildID: $guildID) {
@@ -144,11 +162,14 @@ export class MirrorballService extends BaseService {
   }
 
   public async quietRemoveUserFromGuild(
-    discordID: string,
-    guildID: string
+    ctx: BaseServiceContext
   ): Promise<Error | undefined> {
+    const discordID = this.author(ctx).id;
+    const guildID = this.guild(ctx).id;
+
     try {
       await this.query(
+        ctx,
         gql`
           mutation removeUserFromGuild($discordID: String!, $guildID: String!) {
             removeUserFromGuild(discordID: $discordID, guildID: $guildID)
@@ -163,12 +184,15 @@ export class MirrorballService extends BaseService {
     return;
   }
 
-  public async fullIndex(discordID: string) {
-    await this.usersService.setAsIndexed(discordID);
+  public async fullIndex(ctx: BaseServiceContext) {
+    const discordID = this.author(ctx).id;
+
+    await this.usersService.setAsIndexed(ctx, discordID);
 
     const response = await this.query<{
       fullIndex: { token: string };
     }>(
+      ctx,
       gql`
         mutation fullIndex($discordID: String!) {
           fullIndex(user: { discordID: $discordID }, forceUserCreate: true) {
@@ -182,7 +206,10 @@ export class MirrorballService extends BaseService {
     await this.webhook.waitForResponse(response.fullIndex.token);
   }
 
-  public async getCachedPlaycount(discordID: string): Promise<number> {
+  public async getCachedPlaycount(
+    ctx: BaseServiceContext,
+    discordID: string
+  ): Promise<number> {
     const query = gql`
       query cachedPlaycount($discordID: String!) {
         plays(
@@ -196,17 +223,18 @@ export class MirrorballService extends BaseService {
       }
     `;
 
-    const response = await mirrorballClient.query<{
+    const response = await this.query<{
       plays: { pageInfo: MirrorballPageInfo };
-    }>({
-      query,
-      variables: { discordID },
-    });
+    }>(ctx, query, { discordID });
 
-    return response.data?.plays?.pageInfo?.recordCount || 0;
+    return response?.plays?.pageInfo?.recordCount || 0;
   }
 
-  public async updateAndWait(discordID: string, timeout = 2000): Promise<void> {
+  public async updateAndWait(
+    ctx: BaseServiceContext,
+    discordID: string,
+    timeout = 2000
+  ): Promise<void> {
     const query = gql`
       mutation update($user: UserInput!) {
         update(user: $user) {
@@ -215,11 +243,11 @@ export class MirrorballService extends BaseService {
       }
     `;
 
-    const response = (await this.query(query, {
-      user: { discordID },
-    })) as {
+    const response = await this.query<{
       update: { token: string };
-    };
+    }>(ctx, query, {
+      user: { discordID },
+    });
 
     return await this.webhook
       .waitForResponse(response.update.token, timeout)

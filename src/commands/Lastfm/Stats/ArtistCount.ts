@@ -35,6 +35,7 @@ export default class ArtistCount extends LastFMBaseCommand<typeof args> {
     let { requestable, perspective } = await this.parseMentions();
 
     let scrobbles = await this.lastFMService.artistCount(
+      this.ctx,
       requestable,
       timePeriod
     );

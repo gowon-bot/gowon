@@ -1,4 +1,5 @@
 import { TagsService } from "../../services/mirrorball/services/TagsService";
+import { ServiceRegistry } from "../../services/ServicesRegistry";
 
 interface TagsCacheObject {
   [artist: string]: string[];
@@ -6,10 +7,13 @@ interface TagsCacheObject {
 
 export class TagsCache {
   private cache: TagsCacheObject = {};
-  constructor(private tagsService: TagsService) {}
+  private tagsService = ServiceRegistry.get(TagsService);
+
+  constructor(private ctx: any) {}
 
   async initialCache(artistNames: string[], requireTags?: boolean) {
     const artistMap = await this.tagsService.getTagsForArtistsMap(
+      this.ctx,
       artistNames,
       requireTags
     );

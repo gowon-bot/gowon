@@ -13,7 +13,7 @@ export default class TrackList extends ListCommand {
   async run() {
     const { requestable, username } = await this.parseMentions();
 
-    const topTracks = await this.lastFMService.topTracks({
+    const topTracks = await this.lastFMService.topTracks(this.ctx, {
       username: requestable,
       limit: this.listAmount,
       period: this.timePeriod,

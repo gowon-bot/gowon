@@ -1,5 +1,5 @@
 import { PermissionsChildCommand } from "./PermissionsChildCommand";
-import { Message, User, Role } from "discord.js";
+import { User, Role } from "discord.js";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 
@@ -15,17 +15,13 @@ export class Delist extends PermissionsChildCommand {
     command: new validators.Required({}),
   };
 
-  async run(message: Message) {
+  async run() {
     let delisted: Array<Role | User> = [];
     let failed: Array<{ entity: Role | User; reason: string }> = [];
 
     for (let entity of [...this.users, ...this.roles]) {
       try {
-        await this.adminService.delist(
-          entity.id,
-          message.guild?.id!,
-          this.command.id
-        );
+        await this.adminService.delist(this.ctx, entity.id, this.command.id);
 
         delisted.push(entity);
       } catch (e) {

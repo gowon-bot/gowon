@@ -1,6 +1,5 @@
 import { CommandNotFoundError } from "../../errors";
 import { Arguments } from "../../lib/arguments/arguments";
-import { CommandRegistry } from "../../lib/command/CommandRegistry";
 import { Validation } from "../../lib/validation/ValidationChecker";
 import { validators } from "../../lib/validation/validators";
 import { displayNumber } from "../../lib/views/displays";
@@ -29,12 +28,8 @@ export default class CommandInfo extends MetaBaseCommand<typeof args> {
   devCommand = true;
   description = "Displays some info about a command";
 
-  commandRegistry = new CommandRegistry();
-
   async run() {
     const searchString = this.parsedArguments.searchString!;
-
-    await this.commandRegistry.init();
 
     const { command, runAs } = await this.commandRegistry.find(
       searchString,
@@ -43,7 +38,7 @@ export default class CommandInfo extends MetaBaseCommand<typeof args> {
 
     if (!command) throw new CommandNotFoundError();
 
-    const count = await this.metaService.countCommandRuns(command.id);
+    const count = await this.metaService.countCommandRuns(this.ctx, command.id);
 
     const embed = this.newEmbed().setTitle(
       `Info about ${runAs.toCommandFriendlyName()}`
@@ -53,7 +48,7 @@ export default class CommandInfo extends MetaBaseCommand<typeof args> {
     }
       **ID**: ${command.idSeed} — ${command.id.italic()}${
       command.hasChildren
-        ? `\n**Number of children**: ${command.children?.list().length || 0}`
+        ? `\n**Number of children**: ${command.children?.commands?.length || 0}`
         : ""
     }
     **Category**: ${command.category || "(no category)"}${

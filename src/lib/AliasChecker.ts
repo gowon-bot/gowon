@@ -2,9 +2,12 @@ import { Command } from "./command/Command";
 import { GowonService } from "../services/GowonService";
 import { ParentCommand } from "./command/ParentCommand";
 import { RunAs } from "./command/RunAs";
+import { CommandRegistry } from "./command/CommandRegistry";
+import { ServiceRegistry } from "../services/ServicesRegistry";
 
 export class AliasChecker {
-  private gowonService = GowonService.getInstance();
+  private gowonService = ServiceRegistry.get(GowonService);
+  private commandRegistry = CommandRegistry.getInstance();
 
   constructor(private aliasesString: string) {}
 
@@ -13,7 +16,11 @@ export class AliasChecker {
     childAlias: string,
     serverID: string
   ): Promise<Command | undefined> {
-    const child = await command.children.find(childAlias, serverID);
+    const child = await this.commandRegistry.find(
+      childAlias,
+      serverID,
+      command.children.commands
+    );
 
     if (child.command && command.noPrefixAliases.includes(childAlias)) {
       return child.command;

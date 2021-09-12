@@ -1,4 +1,4 @@
-import { CommandRegistry } from "../../../lib/command/CommandRegistry";
+import { CommandGroup } from "../../../lib/command/CommandGroup";
 import { AdminBaseParentCommand } from "../AdminBaseCommand";
 import { Blacklist } from "./Blacklist";
 import { Help } from "./Help";
@@ -20,14 +20,14 @@ export default class PermissionsParentCommand extends AdminBaseParentCommand {
 
   prefixes = ["permissions", "perms"];
 
-  children: CommandRegistry = new CommandRegistry({
-    blacklist: () => new Blacklist(),
-    help: () => new Help(),
-    delist: () => new Delist(),
-    list: () => new View(),
-    enable: () => new Enable(),
-    disable: () => new Disable(),
-    disabled: () => new Disabled(),
-    channelblacklist: () => new ChannelBlacklist(),
-  });
+  children: CommandGroup = new CommandGroup([
+    Blacklist,
+    Help,
+    Delist,
+    View,
+    Enable,
+    Disable,
+    Disabled,
+    ChannelBlacklist,
+  ]);
 }

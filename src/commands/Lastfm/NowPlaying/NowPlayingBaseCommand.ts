@@ -96,6 +96,7 @@ export abstract class NowPlayingBaseCommand<
       this.gowonClient.isAlphaTester(this.author.id)
     ) {
       this.lastFMService.scrobbleTrack(
+        this.ctx,
         {
           artist: track.artist,
           track: track.name,

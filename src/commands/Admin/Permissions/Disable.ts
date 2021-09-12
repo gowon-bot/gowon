@@ -1,4 +1,3 @@
-import { Message } from "discord.js";
 import { CommandNotFoundError, LogicError } from "../../../errors";
 import { PermissionsChildCommand } from "./PermissionsChildCommand";
 import { Arguments } from "../../../lib/arguments/arguments";
@@ -14,7 +13,7 @@ export class Disable extends PermissionsChildCommand {
     inputs: this.arguments.inputs,
   };
 
-  async run(message: Message) {
+  async run() {
     if (!this.command) throw new CommandNotFoundError();
     if (["enable", "disable"].includes(this.command.name))
       throw new LogicError(
@@ -22,8 +21,8 @@ export class Disable extends PermissionsChildCommand {
       );
 
     let disabledCommand = await this.adminService.disableCommand(
+      this.ctx,
       this.command.id,
-      message.guild?.id!,
       this.runAs.toCommandFriendlyName()
     );
 

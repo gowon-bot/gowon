@@ -50,7 +50,7 @@ export default class WhoKnowsTrack extends WhoKnowsBaseCommand<
       });
 
     const { artist: artistName, track: trackName } =
-      await this.lastFMArguments.getTrack(senderRequestable);
+      await this.lastFMArguments.getTrack(this.ctx, senderRequestable);
 
     if (this.variationWasUsed("update")) {
       await this.updateAndWait(this.author.id);
@@ -78,7 +78,7 @@ export default class WhoKnowsTrack extends WhoKnowsBaseCommand<
     let artistDisplay = track.artist;
 
     if (!trackDisplay && !artistDisplay) {
-      const trackResponse = await this.lastFMService.correctTrack({
+      const trackResponse = await this.lastFMService.correctTrack(this.ctx, {
         artist: artistName,
         track: trackName,
       });

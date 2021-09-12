@@ -7,16 +7,15 @@ import commandResolversFunc from "./resolvers/commandResolvers";
 import { IndexingWebhookService } from "./indexing/IndexingWebhookService";
 import bodyParser from "body-parser";
 import { CommandRegistry } from "../lib/command/CommandRegistry";
+import { ServiceRegistry } from "../services/ServicesRegistry";
 
 export const gowonAPIPort = 3000;
 
 export class GraphQLAPI {
-  usersService = new UsersService();
-  commandRegistry = new CommandRegistry();
+  usersService = ServiceRegistry.get(UsersService);
+  commandRegistry = CommandRegistry.getInstance();
 
   async init() {
-    await this.commandRegistry.init();
-
     const app = express();
 
     const commandResolvers = commandResolversFunc(this.commandRegistry);

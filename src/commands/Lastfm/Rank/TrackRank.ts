@@ -37,11 +37,12 @@ export default class TrackRank extends LastFMBaseCommand<typeof args> {
       });
 
     const { artist, track } = await this.lastFMArguments.getTrack(
+      this.ctx,
       senderRequestable,
       true
     );
 
-    let topTracks = await this.lastFMService.topTracks({
+    let topTracks = await this.lastFMService.topTracks(this.ctx, {
       username: requestable,
       limit: 1000,
     });

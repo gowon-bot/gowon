@@ -32,10 +32,11 @@ export default class GlobalTrackPlays extends LastFMBaseCommand<typeof args> {
       });
 
     const { artist, track } = await this.lastFMArguments.getTrack(
+      this.ctx,
       senderRequestable
     );
 
-    const trackDetails = await this.lastFMService.trackInfo({
+    const trackDetails = await this.lastFMService.trackInfo(this.ctx, {
       artist,
       track,
       username: requestable,

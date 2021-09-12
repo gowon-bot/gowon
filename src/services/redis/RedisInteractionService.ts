@@ -1,22 +1,8 @@
-import { BaseService } from "../BaseService";
+import { BaseService, BaseServiceContext } from "../BaseService";
 import redis, { RedisError } from "redis";
 import { promisify } from "util";
 
 export class RedisInteractionService extends BaseService {
-  private static instance: RedisInteractionService | undefined;
-
-  public static getInstance(): RedisInteractionService {
-    if (!this.instance) {
-      this.instance = new RedisInteractionService();
-    }
-
-    return this.instance;
-  }
-
-  private constructor() {
-    super();
-  }
-
   client = redis.createClient();
 
   private setAsync = promisify(this.client.setex).bind(this.client);
@@ -39,9 +25,15 @@ export class RedisInteractionService extends BaseService {
     this.client.on("error", this.handleRedisError);
   }
 
-  async set(key: string, value: any, expiresAfter: number) {
+  async set(
+    ctx: BaseServiceContext,
+    key: string,
+    value: any,
+    expiresAfter: number
+  ) {
     if (!key.includes("-nickname") && !key.includes("-username")) {
       this.log(
+        ctx,
         `Setting ${key} as ${value !== undefined ? value : "(no value)"}`
       );
     }
@@ -49,14 +41,14 @@ export class RedisInteractionService extends BaseService {
     await this.setAsync(this.genKey(key), expiresAfter, value ?? "");
   }
 
-  async get(key: string): Promise<string | undefined> {
-    this.log(`Getting ${key}`);
+  async get(ctx: BaseServiceContext, key: string): Promise<string | undefined> {
+    this.log(ctx, `Getting ${key}`);
 
     return (await this.getAsync(this.genKey(key))) ?? undefined;
   }
 
-  delete(key: string) {
-    this.log(`Deleting ${key}`);
+  delete(ctx: BaseServiceContext, key: string) {
+    this.log(ctx, `Deleting ${key}`);
 
     this.client.del(this.genKey(key));
   }

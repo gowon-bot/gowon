@@ -9,6 +9,7 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { GowonService } from "../../../services/GowonService";
 import { displayDate, displayNumber } from "../../../lib/views/displays";
+import { ServiceRegistry } from "../../../services/ServicesRegistry";
 
 const args = {
   inputs: {
@@ -18,7 +19,7 @@ const args = {
       custom: (string: string) =>
         parseDate(
           string.trim(),
-          ...GowonService.getInstance().constants.dateParsers
+          ...ServiceRegistry.get(GowonService).constants.dateParsers
         ),
       index: -1,
     },
@@ -50,6 +51,7 @@ export default class Scrobbles extends LastFMBaseCommand<typeof args> {
     let { requestable, perspective } = await this.parseMentions();
 
     let scrobbles = await this.lastFMService.getNumberScrobbles(
+      this.ctx,
       requestable,
       date || timeRange.from,
       date ? new Date() : timeRange.to

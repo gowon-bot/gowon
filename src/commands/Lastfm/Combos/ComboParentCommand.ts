@@ -1,4 +1,4 @@
-import { CommandRegistry } from "../../../lib/command/CommandRegistry";
+import { CommandGroup } from "../../../lib/command/CommandGroup";
 import { LastFMBaseParentCommand } from "../LastFMBaseCommand";
 import { Current } from "./Current";
 import { Combos } from "./Combos";
@@ -24,9 +24,5 @@ export default class ComboParentCommand extends LastFMBaseParentCommand {
   prefixes = ["combo", "streak", "cb"];
   default = () => new Current();
 
-  children = new CommandRegistry({
-    view: () => new Current(),
-    combos: () => new Combos(),
-    server: () => new ServerCombos(),
-  });
+  children = new CommandGroup([Current, Combos, ServerCombos]);
 }

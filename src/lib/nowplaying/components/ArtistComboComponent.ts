@@ -11,7 +11,11 @@ export class ArtistComboComponent extends BaseNowPlayingComponent<
   readonly requirements = artistComboRequirements;
 
   async present() {
-    const combo = await getCombo(playsQuery(this.nowPlaying), this.values);
+    const combo = await getCombo(
+      this.ctx,
+      playsQuery(this.nowPlaying),
+      this.values
+    );
 
     if (combo.artist.plays > 1) {
       return {

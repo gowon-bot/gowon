@@ -2,13 +2,11 @@ import { promisify } from "util";
 import _glob from "glob";
 import { LogicError } from "../errors";
 import { BaseCommand } from "../lib/command/BaseCommand";
+import { SimpleMap } from "../helpers/types";
 const glob = promisify(_glob);
 
 type Script = (command: BaseCommand) => void;
-
-interface Scripts {
-  [key: string]: Script;
-}
+type Scripts = SimpleMap<Script>;
 
 async function generateScripts(): Promise<Scripts> {
   const files = await glob(

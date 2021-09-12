@@ -1,6 +1,7 @@
 import { Client, Message, User as DiscordUser } from "discord.js";
 import { User } from "../database/entity/User";
 import { GowonService } from "../services/GowonService";
+import { ServiceRegistry } from "../services/ServicesRegistry";
 import { isUnicodeEmoji } from "./arguments/custom/EmojiParser";
 import specialUsers from "./specialUsers.json";
 
@@ -68,7 +69,7 @@ export class GowonClient {
       }
     }
 
-    return GowonService.getInstance().constants.unknownUserDisplay;
+    return ServiceRegistry.get(GowonService).constants.unknownUserDisplay;
   }
 
   displayEmoji(resolvable: string): string {

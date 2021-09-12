@@ -92,8 +92,6 @@ export class TagCombo {
 
     const tags = await this.getTags(track);
 
-    console.log(tags);
-
     for (let tag of tags) {
       const defaultDetails = {
         nowplaying,

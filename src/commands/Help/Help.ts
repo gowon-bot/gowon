@@ -1,13 +1,13 @@
 import { BaseCommand, Delegate } from "../../lib/command/BaseCommand";
 import { Command } from "../../lib/command/Command";
-import { EmbedField, Message } from "discord.js";
-import { CommandRegistry } from "../../lib/command/CommandRegistry";
+import { EmbedField } from "discord.js";
 import { Arguments } from "../../lib/arguments/arguments";
 import { AdminService } from "../../services/dbservices/AdminService";
 import HelpForOneCommand from "./HelpForOneCommand";
 import { ucFirst } from "../../helpers";
 import { SimpleScrollingEmbed } from "../../lib/views/embeds/SimpleScrollingEmbed";
 import QuickHelp from "./QuickHelp";
+import { ServiceRegistry } from "../../services/ServicesRegistry";
 
 interface GroupedCommands {
   [category: string]: Command[];
@@ -38,20 +38,16 @@ export default class Help extends BaseCommand<typeof args> {
     { when: (args) => !args.all && !args.command, delegateTo: QuickHelp },
   ];
 
-  commandRegistry = new CommandRegistry();
-  adminService = new AdminService(this.gowonClient);
+  adminService = ServiceRegistry.get(AdminService);
 
-  async run(message: Message) {
-    await this.commandRegistry.init();
-
-    await this.helpForAllCommands(message);
+  async run() {
+    await this.helpForAllCommands();
   }
 
-  private async helpForAllCommands(message: Message) {
+  private async helpForAllCommands() {
     let commands = await this.adminService.can.viewList(
-      this.commandRegistry.list(),
-      message,
-      this.gowonClient
+      this.ctx,
+      this.commandRegistry.list()
     );
 
     const footer = (page: number, totalPages: number) =>

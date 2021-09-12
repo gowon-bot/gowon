@@ -2,72 +2,76 @@ import { Guild, GuildMember } from "discord.js";
 import gql from "graphql-tag";
 import { CommandRegistry } from "../../lib/command/CommandRegistry";
 import { GowonClient } from "../../lib/GowonClient";
-import { Logger } from "../../lib/Logger";
 import { displayNumber } from "../../lib/views/displays";
-import { BaseService } from "../BaseService";
+import { BaseService, BaseServiceContext } from "../BaseService";
 import { AdminService } from "../dbservices/AdminService";
-import { GowonService } from "../GowonService";
 import { MirrorballService } from "../mirrorball/MirrorballService";
+import { ServiceRegistry } from "../ServicesRegistry";
 
-export class GuildEventService extends BaseService {
-  gowonService = GowonService.getInstance();
-  adminService = new AdminService(this.gowonClient);
-  commandRegistry = new CommandRegistry();
-  mirrorballService = new MirrorballService(this.logger);
+type GuildEventServiceContext = BaseServiceContext & {
+  client: GowonClient;
+};
 
-  constructor(private gowonClient: GowonClient, logger?: Logger) {
-    super(logger);
+export class GuildEventService extends BaseService<GuildEventServiceContext> {
+  get adminService() {
+    return ServiceRegistry.get(AdminService);
   }
+  get mirrorballService() {
+    return ServiceRegistry.get(MirrorballService);
+  }
+  commandRegistry = CommandRegistry.getInstance();
 
   async init() {
     await this.commandRegistry.init();
   }
 
-  public async handleNewGuild(guild: Guild) {
-    this.log(`setting up Gowon for ${guild.name}`);
+  public async handleNewGuild(ctx: GuildEventServiceContext, guild: Guild) {
+    this.log(ctx, `setting up Gowon for ${guild.name}`);
 
-    await this.setupPermissions(guild);
-    await this.pingDeveloper(guild);
-    await this.registerUsers(guild);
+    await this.setupPermissions(ctx, guild);
+    await this.pingDeveloper(ctx, guild);
+    await this.registerUsers(ctx, guild);
   }
 
-  public async handleGuildLeave(guild: Guild) {
-    this.log(`tearing down Gowon for ${guild.name}`);
+  public async handleGuildLeave(ctx: GuildEventServiceContext, guild: Guild) {
+    this.log(ctx, `tearing down Gowon for ${guild.name}`);
 
-    await this.pingDeveloper(guild, true);
+    await this.pingDeveloper(ctx, guild, true);
   }
 
-  public async handleNewUser(guildMember: GuildMember) {
-    this.log("Handling new user");
+  public async handleNewUser(
+    ctx: GuildEventServiceContext,
+    guildMember: GuildMember
+  ) {
+    this.log(ctx, "Handling new user");
 
     try {
-      await this.mirrorballService.quietAddUserToGuild(
-        guildMember.user.id,
-        guildMember.guild.id
-      );
+      await this.mirrorballService.quietAddUserToGuild(ctx);
     } catch (e) {
       this.log(
+        ctx,
         `Failed to log in guildMember ${guildMember.user.id} in ${guildMember.guild.id} (${e})`
       );
     }
   }
 
-  public async handleUserLeave(guildMember: GuildMember) {
-    this.log("Handling user leave");
+  public async handleUserLeave(
+    ctx: GuildEventServiceContext,
+    guildMember: GuildMember
+  ) {
+    this.log(ctx, "Handling user leave");
 
     try {
-      await this.mirrorballService.quietRemoveUserFromGuild(
-        guildMember.user.id,
-        guildMember.guild.id
-      );
+      await this.mirrorballService.quietRemoveUserFromGuild(ctx);
     } catch (e) {
       this.log(
+        ctx,
         `Failed to log out guildMember ${guildMember.user.id} in ${guildMember.guild.id} (${e})`
       );
     }
   }
 
-  private async setupPermissions(guild: Guild) {
+  private async setupPermissions(ctx: GuildEventServiceContext, guild: Guild) {
     let commands = [
       { command: "permissions", dev: false },
       { command: "crowns kill", dev: false },
@@ -90,13 +94,14 @@ export class GuildEventService extends BaseService {
       if (command) {
         try {
           await this.adminService.disableCommand(
+            ctx,
             command.id,
-            guild.id,
             runAs.toCommandFriendlyName(),
             commandName.dev
           );
         } catch (e) {
           this.log(
+            ctx,
             `Error while setting up permissions for ${guild.name}:${e.message}`
           );
         }
@@ -104,10 +109,14 @@ export class GuildEventService extends BaseService {
     }
   }
 
-  private async pingDeveloper(guild: Guild, leave = false) {
-    const developerID = this.gowonClient.specialUsers.developers[0].id;
+  private async pingDeveloper(
+    ctx: GuildEventServiceContext,
+    guild: Guild,
+    leave = false
+  ) {
+    const developerID = ctx.client.specialUsers.developers[0].id;
 
-    await this.gowonClient.client.users
+    await ctx.client.client.users
       .resolve(developerID)
       ?.send(
         `Gowon just ${leave ? "left" : "joined"} ${guild.name} (${displayNumber(
@@ -117,7 +126,7 @@ export class GuildEventService extends BaseService {
       );
   }
 
-  private async registerUsers(guild: Guild) {
+  private async registerUsers(ctx: GuildEventServiceContext, guild: Guild) {
     const members = await guild.members.fetch();
 
     const mutation = gql`
@@ -129,6 +138,6 @@ export class GuildEventService extends BaseService {
     const discordIDs = members.map((m) => m.id);
     const guildID = guild.id;
 
-    await this.mirrorballService.mutate(mutation, { discordIDs, guildID });
+    await this.mirrorballService.mutate(ctx, mutation, { discordIDs, guildID });
   }
 }

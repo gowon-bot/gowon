@@ -11,9 +11,10 @@ export class Paginator<ParamsT extends Params = Params, ResponseT = any> {
   currentPage: number = 0;
 
   constructor(
-    private readonly method: (params: ParamsT) => Promise<ResponseT>,
+    private readonly method: (ctx: any, params: ParamsT) => Promise<ResponseT>,
     public maxPages: number,
-    private params: ParamsT
+    private params: ParamsT,
+    private ctx: any
   ) {}
 
   async getNext(): Promise<ResponseT | undefined> {
@@ -21,7 +22,7 @@ export class Paginator<ParamsT extends Params = Params, ResponseT = any> {
 
     if (this.currentPage > this.maxPages) return;
 
-    return await this.method({
+    return await this.method(this.ctx, {
       ...this.params,
       page: this.currentPage,
     });
@@ -30,16 +31,18 @@ export class Paginator<ParamsT extends Params = Params, ResponseT = any> {
   async *iterator() {
     for (let page = this.currentPage + 1; page <= this.maxPages; page++) {
       this.currentPage += 1;
-      yield await this.method({
+      yield await this.method(this.ctx, {
         ...this.params,
         page: this.currentPage,
       });
     }
   }
 
-  async *pagesIterator(method: (params: ParamsT) => Promise<ResponseT>) {
+  async *pagesIterator(
+    method: (ctx: any, params: ParamsT) => Promise<ResponseT>
+  ) {
     for (let page = this.currentPage + 1; page <= this.maxPages; page++) {
-      yield await method({
+      yield await method(this.ctx, {
         ...this.params,
         page,
       });
@@ -47,13 +50,13 @@ export class Paginator<ParamsT extends Params = Params, ResponseT = any> {
   }
 
   private generatePages(
-    method: (params: ParamsT) => Promise<ResponseT>
+    method: (ctx: any, params: ParamsT) => Promise<ResponseT>
   ): Promise<ResponseT>[] {
     let pages = [];
 
     for (let page = this.currentPage + 1; page <= this.maxPages; page++) {
       pages.push(
-        method({
+        method(this.ctx, {
           ...this.params,
           page,
         })

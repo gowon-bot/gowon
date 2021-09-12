@@ -24,7 +24,10 @@ export class Link extends RateYourMusicChildCommand<typeof args> {
     });
 
     if (!keywords) {
-      let nowplaying = await this.lastFMService.nowPlaying(requestable);
+      let nowplaying = await this.lastFMService.nowPlaying(
+        this.ctx,
+        requestable
+      );
 
       keywords = `${nowplaying.artist} - ${this.cleanAlbumName(
         nowplaying.album

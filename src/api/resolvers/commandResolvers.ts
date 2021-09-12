@@ -59,7 +59,7 @@ function commandToData(command: Command): CommandResponse {
     usage: convertToArray(command.usage),
 
     hasChildren: command.hasChildren,
-    children: command.children?.list().map((c) => commandToData(c)) || [],
+    children: command.children?.commands.map((c) => commandToData(c)) || [],
   };
 }
 

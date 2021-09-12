@@ -36,12 +36,12 @@ export class ChannelBlacklist extends PermissionsChildCommand {
       try {
         !this.variationWasUsed("i")
           ? await this.adminService.blacklistCommandFromChannel(
-              this.guild.id,
+              this.ctx,
               this.command.id,
               channel.id
             )
           : await this.adminService.unblacklistCommandFromChannel(
-              this.guild.id,
+              this.ctx,
               this.command.id,
               channel.id
             );

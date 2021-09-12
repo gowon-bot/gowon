@@ -25,19 +25,22 @@ export default class ArtistPlays extends LastFMBaseCommand<typeof args> {
   arguments: Arguments = args;
 
   async run(_: any, runAs: RunAs) {
-    let { perspective, senderRequestable, requestable } =
+    const { perspective, senderRequestable, requestable } =
       await this.parseMentions({
         senderRequired: !this.parsedArguments.artist,
       });
 
-    const artist = await this.lastFMArguments.getArtist(senderRequestable);
+    const artist = await this.lastFMArguments.getArtist(
+      this.ctx,
+      senderRequestable
+    );
 
-    const artistDetails = await this.lastFMService.artistInfo({
+    const artistDetails = await this.lastFMService.artistInfo(this.ctx, {
       artist,
       username: requestable,
     });
 
-    let prefix = this.prefix;
+    const prefix = this.prefix;
 
     await this.traditionalReply(
       `${perspective.plusToHave}` +

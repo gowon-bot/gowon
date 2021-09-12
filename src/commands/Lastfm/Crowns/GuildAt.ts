@@ -29,7 +29,7 @@ export class GuildAt extends CrownsChildCommand<typeof args> {
     let rank = this.parsedArguments.rank!;
 
     let guildAt = await this.crownsService.guildAt(
-      this.guild.id,
+      this.ctx,
       rank,
       await this.serverUserIDs({ filterCrownBannedUsers: true })
     );

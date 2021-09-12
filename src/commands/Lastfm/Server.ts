@@ -13,12 +13,13 @@ export default class Server extends LastFMBaseCommand {
   async run() {
     let serverUsers = await this.serverUserIDs();
 
-    let users = await this.usersService.randomUser({
+    let users = await this.usersService.randomUser(this.ctx, {
       limit: 10,
       userIDs: serverUsers,
     });
 
     let nowPlayings = await new MultiRequester(
+      this.ctx,
       users.map((u) => buildRequestable(u.lastFMUsername, u).requestable)
     ).fetch(this.lastFMService.nowPlaying.bind(this.lastFMService), []);
 

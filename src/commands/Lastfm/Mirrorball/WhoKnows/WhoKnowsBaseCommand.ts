@@ -14,14 +14,15 @@ import {
   MirrorballUser,
 } from "../../../../services/mirrorball/MirrorballTypes";
 import { PrivateUserDisplay } from "../../../../services/mirrorball/services/MirrorballUsersService";
+import { ServiceRegistry } from "../../../../services/ServicesRegistry";
 
 export abstract class WhoKnowsBaseCommand<
   R,
   P,
   A
 > extends MirrorballBaseCommand<R, P, A> {
-  nicknameService = new NicknameService(this.logger);
-  whoKnowsService = new WhoKnowsService(this.logger);
+  nicknameService = ServiceRegistry.get(NicknameService);
+  whoKnowsService = ServiceRegistry.get(WhoKnowsService);
 
   protected notIndexedHelp() {
     return `Don't see yourself? Run ${this.prefix}index to download all your data!`;
@@ -60,7 +61,7 @@ export abstract class WhoKnowsBaseCommand<
 
     if (nickname) {
       if (nickname === UnknownUserDisplay) {
-        this.whoKnowsService.recordUnknownMember(this.guild.id, user.discordID);
+        this.whoKnowsService.recordUnknownMember(this.ctx, user.discordID);
 
         return nickname;
       }
@@ -96,13 +97,9 @@ export abstract class WhoKnowsBaseCommand<
   }
 
   protected async cacheUserInfo(users: MirrorballUser[]) {
-    await this.nicknameService.cacheNicknames(
-      users,
-      this.guild.id,
-      this.gowonClient
-    );
+    await this.nicknameService.cacheNicknames(this.ctx, users);
     if (this.isGlobal()) {
-      await this.nicknameService.cacheUsernames(users, this.gowonClient);
+      await this.nicknameService.cacheUsernames(this.ctx, users);
     }
   }
 }

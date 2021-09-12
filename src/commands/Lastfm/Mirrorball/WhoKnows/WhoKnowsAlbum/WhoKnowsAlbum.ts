@@ -50,7 +50,7 @@ export default class WhoKnowsAlbum extends WhoKnowsBaseCommand<
       });
 
     const { artist: artistName, album: albumName } =
-      await this.lastFMArguments.getAlbum(senderRequestable, true);
+      await this.lastFMArguments.getAlbum(this.ctx, senderRequestable, true);
 
     if (this.variationWasUsed("update")) {
       await this.updateAndWait(this.author.id);

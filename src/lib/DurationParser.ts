@@ -1,4 +1,5 @@
 import { Duration } from "date-fns";
+import { SimpleMap } from "../helpers/types";
 
 export interface Shorthand {
   friendlyName: string;
@@ -47,7 +48,7 @@ export class DurationParser {
     );
 
     let match = (string.trim().match(regex) || [])[0];
-    let duration = {} as { [key: string]: number };
+    let duration = {} as SimpleMap<number>;
 
     if (match) {
       let [amount, period] = this.getAmountAndPeriod(match);

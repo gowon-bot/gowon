@@ -1,6 +1,6 @@
 import { Message } from "discord.js";
 import { User } from "../../database/entity/User";
-import { BaseService } from "../../services/BaseService";
+import { BaseService, BaseServiceContext } from "../../services/BaseService";
 import {
   CrownDisplay,
   CrownsService,
@@ -20,6 +20,7 @@ import { LastFMService } from "../../services/LastFM/LastFMService";
 import { buildQuery, isQueryPart, QueryPart } from "./buildQuery";
 import { NowPlayingRequirement } from "./components/BaseNowPlayingComponent";
 import { Logger } from "../Logger";
+import { ServiceRegistry } from "../../services/ServicesRegistry";
 
 export interface ResolvedRequirements {
   [requirement: string]: any;
@@ -40,23 +41,37 @@ export type Resources = InputResources & {
   requirements: NowPlayingRequirement[];
 };
 
-export class DatasourceService extends BaseService {
-  lastFMService = new LastFMService(this.logger);
-  mirrorballService = new MirrorballService(this.logger);
-  crownsService = new CrownsService(this.logger);
+type MutableDatasourceServiceContext = {
+  resources?: Resources;
+};
 
-  resources!: Resources;
+export class DatasourceService extends BaseService<
+  BaseServiceContext,
+  MutableDatasourceServiceContext
+> {
+  get lastFMService() {
+    return ServiceRegistry.get(LastFMService);
+  }
+  get mirrorballService() {
+    return ServiceRegistry.get(MirrorballService);
+  }
+  get crownsService() {
+    return ServiceRegistry.get(CrownsService);
+  }
 
-  private get nowPlaying(): RecentTrack {
-    return this.resources.recentTracks.first();
+  private nowPlaying(
+    ctx: BaseServiceContext & MutableDatasourceServiceContext
+  ): RecentTrack {
+    return ctx.resources!.recentTracks.first();
   }
 
   async resolveRequirements(
+    ctx: BaseServiceContext & MutableDatasourceServiceContext,
     requirements: NowPlayingRequirement[],
     resources: InputResources
   ): Promise<ResolvedRequirements> {
-    this.resources = Object.assign(resources, {
-      logger: this.logger,
+    ctx.resources = Object.assign(resources, {
+      logger: ctx.logger,
       requirements,
     });
 
@@ -69,7 +84,7 @@ export class DatasourceService extends BaseService {
       const data = (this as any)[key];
 
       if (requirements.includes(key as NowPlayingRequirement)) {
-        const resolvedData = data.bind(this)();
+        const resolvedData = data.bind(this)(ctx);
 
         if (isQueryPart(resolvedData)) {
           graphQLDatasource.addPart(resolvedData);
@@ -81,7 +96,7 @@ export class DatasourceService extends BaseService {
     }
 
     if (graphQLDatasource.hasAnyParts()) {
-      resolvers.push(graphQLDatasource.asResolver(this)());
+      resolvers.push(graphQLDatasource.asResolver(ctx, this)());
     }
 
     const resolved = await Promise.all(resolvers);
@@ -103,87 +118,103 @@ export class DatasourceService extends BaseService {
     return resolvedMap;
   }
 
-  async artistInfo(): Promise<ArtistInfo | undefined> {
+  async artistInfo(
+    ctx: BaseServiceContext & MutableDatasourceServiceContext
+  ): Promise<ArtistInfo | undefined> {
     try {
       const nowPlaying = this.nowPlaying;
 
-      return await this.lastFMService.artistInfo({
-        artist: nowPlaying.artist,
-        username: this.resources.requestable,
+      return await this.lastFMService.artistInfo(ctx, {
+        artist: nowPlaying(ctx).artist,
+        username: ctx.resources!.requestable,
       });
     } catch {
       return undefined;
     }
   }
 
-  async trackInfo(): Promise<TrackInfo | undefined> {
+  async trackInfo(
+    ctx: BaseServiceContext & MutableDatasourceServiceContext
+  ): Promise<TrackInfo | undefined> {
     try {
-      return await this.lastFMService.trackInfo({
-        artist: this.nowPlaying.artist,
-        track: this.nowPlaying.name,
-        username: this.resources.requestable,
+      return await this.lastFMService.trackInfo(ctx, {
+        artist: this.nowPlaying(ctx).artist,
+        track: this.nowPlaying(ctx).name,
+        username: ctx.resources!.requestable,
       });
     } catch {
       return undefined;
     }
   }
 
-  async artistCrown(): Promise<CrownDisplay | undefined> {
+  async artistCrown(
+    ctx: BaseServiceContext & MutableDatasourceServiceContext
+  ): Promise<CrownDisplay | undefined> {
     try {
       return await this.crownsService.getCrownDisplay(
-        this.nowPlaying.artist,
-        this.resources.message.guild!
+        ctx,
+        this.nowPlaying(ctx).artist
       );
     } catch {
       return undefined;
     }
   }
 
-  albumPlays(): QueryPart {
-    const user: UserInput = { discordID: this.resources.dbUser.discordID };
+  albumPlays(
+    ctx: BaseServiceContext & MutableDatasourceServiceContext
+  ): QueryPart {
+    const user: UserInput = { discordID: ctx.resources!.dbUser.discordID };
     const lpSettings = {
       album: {
-        name: this.nowPlaying.album,
-        artist: { name: this.nowPlaying.artist },
+        name: this.nowPlaying(ctx).album,
+        artist: { name: this.nowPlaying(ctx).artist },
       },
     };
 
     return { query: "albumPlays", variables: { user, lpSettings } };
   }
 
-  artistPlays(): QueryPart {
-    const user: UserInput = { discordID: this.resources.dbUser.discordID };
+  artistPlays(
+    ctx: BaseServiceContext & MutableDatasourceServiceContext
+  ): QueryPart {
+    const user: UserInput = { discordID: ctx.resources!.dbUser.discordID };
     const apSettings = {
-      artist: { name: this.nowPlaying.artist },
+      artist: { name: this.nowPlaying(ctx).artist },
     };
 
     return { query: "artistPlays", variables: { user, apSettings } };
   }
 
-  albumRating(): QueryPart {
-    const user: UserInput = { discordID: this.resources.dbUser.discordID };
+  albumRating(
+    ctx: BaseServiceContext & MutableDatasourceServiceContext
+  ): QueryPart {
+    const user: UserInput = { discordID: ctx.resources!.dbUser.discordID };
     const lrAlbum = {
-      name: this.nowPlaying.album,
-      artist: { name: this.nowPlaying.artist },
+      name: this.nowPlaying(ctx).album,
+      artist: { name: this.nowPlaying(ctx).artist },
     };
 
     return { query: "albumRating", variables: { user, lrAlbum } };
   }
 
-  globalArtistRank(): QueryPart {
-    const user: UserInput = { discordID: this.resources.dbUser.discordID };
-    const arArtist = { name: this.nowPlaying.artist };
+  globalArtistRank(
+    ctx: BaseServiceContext & MutableDatasourceServiceContext
+  ): QueryPart {
+    const user: UserInput = { discordID: ctx.resources!.dbUser.discordID };
+    const arArtist = { name: this.nowPlaying(ctx).artist };
 
     return { query: "globalArtistRank", variables: { user, arArtist } };
   }
 
-  serverArtistRank(): QueryPart {
-    const user: UserInput = { discordID: this.resources.dbUser.discordID };
-    const arArtist = { name: this.nowPlaying.artist };
+  serverArtistRank(
+    ctx: BaseServiceContext & MutableDatasourceServiceContext
+  ): QueryPart {
+    const user: UserInput = { discordID: ctx.resources!.dbUser.discordID };
+    const arArtist = { name: this.nowPlaying(ctx).artist };
 
     return {
       query: "serverArtistRank",
-      variables: { user, arArtist, serverID: this.resources.message.guild?.id },
+      variables: { user, arArtist, serverID: ctx.resources!.message.guild?.id },
     };
   }
 }
@@ -200,12 +231,14 @@ class GraphQLDatasource {
   }
 
   asResolver(
+    ctx: BaseServiceContext,
     datasourceService: DatasourceService
   ): (..._: any[]) => Promise<any> {
     const { query, variables } = buildQuery(this.parts);
 
     return async () => ({
       graphQLData: await datasourceService.mirrorballService.query(
+        ctx,
         query,
         variables
       ),

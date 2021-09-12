@@ -44,7 +44,10 @@ export default class PopularTracks extends InfoCommand<typeof args> {
 
     let { senderRequestable } = await this.parseMentions();
 
-    const artist = await this.lastFMArguments.getArtist(senderRequestable);
+    const artist = await this.lastFMArguments.getArtist(
+      this.ctx,
+      senderRequestable
+    );
 
     // https://i0.wp.com/media.boingboing.net/wp-content/uploads/2016/11/bcf.png?fit=680%2C445&ssl=1
     let limit =
@@ -56,7 +59,7 @@ export default class PopularTracks extends InfoCommand<typeof args> {
       sliceStart = (position.start % 10) - (position.start % 10 === 0 ? -9 : 1),
       sliceEnd = sliceStart + (position.end - position.start) + 1;
 
-    let topTracks = await this.lastFMService.artistPopularTracks({
+    let topTracks = await this.lastFMService.artistPopularTracks(this.ctx, {
       artist,
       limit,
       page,

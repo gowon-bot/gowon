@@ -29,15 +29,21 @@ export default class Love extends LastFMBaseCommand<typeof args> {
     let nowPlaying: RecentTrack | undefined;
 
     if (!artist || !track) {
-      nowPlaying = await this.lastFMService.nowPlaying(senderRequestable);
+      nowPlaying = await this.lastFMService.nowPlaying(
+        this.ctx,
+        senderRequestable
+      );
 
       if (!artist) artist = nowPlaying.artist;
       if (!track) track = nowPlaying.name;
     }
 
-    const trackInfo = await this.lastFMService.trackInfo({ artist, track });
+    const trackInfo = await this.lastFMService.trackInfo(this.ctx, {
+      artist,
+      track,
+    });
 
-    await this.lastFMService.love({
+    await this.lastFMService.love(this.ctx, {
       artist,
       track,
       username: senderRequestable,

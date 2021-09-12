@@ -1,5 +1,4 @@
 import { MetaBaseChildCommand } from "./MetaBaseCommand";
-import { CommandRegistry } from "../../lib/command/CommandRegistry";
 import { Arguments } from "../../lib/arguments/arguments";
 
 export abstract class MetaChildCommand<
@@ -8,6 +7,4 @@ export abstract class MetaChildCommand<
   parentName = "meta";
   subcategory = "meta";
   devCommand = true;
-
-  commandRegistry = new CommandRegistry();
 }

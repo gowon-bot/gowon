@@ -26,12 +26,18 @@ export default class SpotifyAlbum extends SpotifyBaseCommand<typeof args> {
     });
 
     if (!keywords) {
-      let nowplaying = await this.lastFMService.nowPlaying(requestable);
+      let nowplaying = await this.lastFMService.nowPlaying(
+        this.ctx,
+        requestable
+      );
 
       keywords = `${nowplaying.artist} - ${nowplaying.album}`;
     }
 
-    const spotifyAlbum = await this.spotifyService.searchAlbumRaw(keywords);
+    const spotifyAlbum = await this.spotifyService.searchAlbumRaw(
+      this.ctx,
+      keywords
+    );
 
     if (!spotifyAlbum)
       throw new LogicError(

@@ -27,6 +27,7 @@ import { mirrorballClient } from "../../lib/indexing/client";
 import gql from "graphql-tag";
 import { Logger } from "../../lib/Logger";
 import { Combo } from "./Combo";
+import { ServiceRegistry } from "../../services/ServicesRegistry";
 
 @Entity({ name: "users" })
 export class User extends BaseEntity {
@@ -123,26 +124,26 @@ export class User extends BaseEntity {
   async inPurgatory(message: Message): Promise<boolean> {
     return userHasRole(
       await this.asGuildMember(message),
-      await GowonService.getInstance().getPurgatoryRole(message.guild!)
+      await ServiceRegistry.get(GowonService).getPurgatoryRole(message.guild!)
     );
   }
 
   async inactive(message: Message): Promise<boolean> {
     return userHasRole(
       await this.asGuildMember(message),
-      await GowonService.getInstance().getInactiveRole(message.guild!)
+      await ServiceRegistry.get(GowonService).getInactiveRole(message.guild!)
     );
   }
 
   async isCrownBanned(message: Message): Promise<boolean> {
-    return GowonService.getInstance().isUserCrownBanned(
+    return ServiceRegistry.get(GowonService).isUserCrownBanned(
       message.guild!,
       this.discordID
     );
   }
 
   async isOptedOut(message: Message): Promise<boolean> {
-    const settingsManager = GowonService.getInstance().settingsManager;
+    const settingsManager = ServiceRegistry.get(GowonService).settingsManager;
 
     const setting = settingsManager.get("optedOut", {
       guildID: message.guild!.id,

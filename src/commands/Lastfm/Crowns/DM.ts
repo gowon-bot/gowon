@@ -30,8 +30,8 @@ export class DM extends CrownsChildCommand<typeof args> {
     const perspective = this.usersService.discordPerspective(this.author, user);
 
     const [crowns, crownsCount] = await Promise.all([
-      this.crownsService.listTopCrowns(discordID, this.guild.id, -1),
-      this.crownsService.count(discordID, this.guild.id),
+      this.crownsService.listTopCrowns(this.ctx, discordID, -1),
+      this.crownsService.count(this.ctx, discordID),
     ]);
 
     this.traditionalReply(

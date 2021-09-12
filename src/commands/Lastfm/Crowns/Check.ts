@@ -37,7 +37,7 @@ export class Check extends CrownsChildCommand<typeof args> {
     if (await senderUser?.isOptedOut(message)) throw new OptedOutError();
 
     if (!artist) {
-      let response = await this.lastFMService.nowPlaying(requestable);
+      let response = await this.lastFMService.nowPlaying(this.ctx, requestable);
       if (!response.isNowPlaying)
         throw new LogicError(
           "you don't appear to be currently scrobbling anything."
@@ -45,14 +45,12 @@ export class Check extends CrownsChildCommand<typeof args> {
       artist = response.artist;
     }
 
-    let artistDetails = await this.lastFMService.artistInfo({
+    let artistDetails = await this.lastFMService.artistInfo(this.ctx, {
       artist,
       username: requestable,
     });
 
-    let crownCheck = await this.crownsService.checkCrown({
-      message,
-      discordID: message.author.id,
+    let crownCheck = await this.crownsService.checkCrown(this.ctx, {
       artistName: artistDetails.name,
       plays: artistDetails.userPlaycount,
     });
@@ -73,7 +71,7 @@ export class Check extends CrownsChildCommand<typeof args> {
         crownCheck.crown.plays === crownCheck.oldCrown?.plays
       )
     ) {
-      this.crownsService.scribe.handleCheck(crownCheck, message);
+      this.crownsService.scribe.handleCheck(this.ctx, crownCheck, message);
     }
 
     let embed =

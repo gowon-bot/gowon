@@ -1,14 +1,23 @@
 import gql from "graphql-tag";
 import { displayNumber } from "../../../lib/views/displays";
-import { BaseService } from "../../BaseService";
+import { BaseService, BaseServiceContext } from "../../BaseService";
+import { ServiceRegistry } from "../../ServicesRegistry";
 import { MirrorballService } from "../MirrorballService";
 import { ArtistInput, MirrorballTag } from "../MirrorballTypes";
 
 export class TagsService extends BaseService {
-  mirrorballService = new MirrorballService(this.logger);
+  get mirrorballService() {
+    return ServiceRegistry.get(MirrorballService);
+  }
 
-  async getTagsForArtists(artists: ArtistInput[]): Promise<MirrorballTag[]> {
-    this.log(`Getting tags for ${displayNumber(artists.length, "artist")}`);
+  async getTagsForArtists(
+    ctx: BaseServiceContext,
+    artists: ArtistInput[]
+  ): Promise<MirrorballTag[]> {
+    this.log(
+      ctx,
+      `Getting tags for ${displayNumber(artists.length, "artist")}`
+    );
 
     const query = gql`
       query tags($artists: [ArtistInput!]!) {
@@ -23,18 +32,22 @@ export class TagsService extends BaseService {
 
     const response = await this.mirrorballService.query<{
       tags: { tags: MirrorballTag[] };
-    }>(query, { artists });
+    }>(ctx, query, { artists });
 
     return response.tags.tags;
   }
 
   async getTagsForArtistsMap(
+    ctx: BaseServiceContext,
     artists: string[],
     requireTags = false
   ): Promise<{
     [artistName: string]: string[];
   }> {
-    this.log(`Getting tags for ${displayNumber(artists.length, "artist")}`);
+    this.log(
+      ctx,
+      `Getting tags for ${displayNumber(artists.length, "artist")}`
+    );
 
     const query = gql`
       query artists($artists: [ArtistInput!]!, $requireTags: Boolean) {
@@ -47,7 +60,7 @@ export class TagsService extends BaseService {
 
     const response = await this.mirrorballService.query<{
       artists: { name: string; tags: string[] }[];
-    }>(query, {
+    }>(ctx, query, {
       requireTags,
       artists: artists.map((a) => ({ name: a })),
     });
@@ -60,6 +73,7 @@ export class TagsService extends BaseService {
   }
 
   async filter<T extends { name: string }>(
+    ctx: BaseServiceContext,
     artists: T[],
     allowedTags: string[]
   ): Promise<T[]> {
@@ -67,7 +81,7 @@ export class TagsService extends BaseService {
 
     const artistNames = artists.map((a) => a.name.toLowerCase());
 
-    const tagMap = await this.getTagsForArtistsMap(artistNames);
+    const tagMap = await this.getTagsForArtistsMap(ctx, artistNames);
 
     const filteredArtists = artists.filter((a) => {
       return (

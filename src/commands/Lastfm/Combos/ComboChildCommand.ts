@@ -10,6 +10,7 @@ import {
   displayNumber,
 } from "../../../lib/views/displays";
 import { LinkGenerator } from "../../../helpers/lastFM";
+import { ServiceRegistry } from "../../../services/ServicesRegistry";
 
 export abstract class ComboChildCommand<
   T extends Arguments = Arguments
@@ -17,7 +18,7 @@ export abstract class ComboChildCommand<
   parentName = "combo";
   subcategory = "stats";
 
-  comboService = new ComboService(this.logger);
+  comboService = ServiceRegistry.get(ComboService);
 
   protected displayCombo(combo: Combo): string {
     const lineConsolidator = new LineConsolidator();

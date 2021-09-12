@@ -1,6 +1,5 @@
 import { add } from "date-fns";
 import { BadLastFMResponseError, LogicError } from "../../errors";
-import { LastFMScraper } from "../scrapingServices/LastFMScraper";
 import { LastFMAPIService, Requestable } from "./LastFMAPIService";
 import {
   AlbumInfoParams,
@@ -41,89 +40,141 @@ import { RecentTrack, RecentTracks } from "./converters/RecentTracks";
 import { TopAlbums, TopArtists, TopTracks } from "./converters/TopTypes";
 import { displayNumber } from "../../lib/views/displays";
 import { requestableAsUsername } from "../../lib/MultiRequester";
+import { BaseServiceContext } from "../BaseService";
 
 export class LastFMService extends LastFMAPIService {
-  scraper = new LastFMScraper(this.logger);
-
-  async artistInfo(params: ArtistInfoParams): Promise<ArtistInfo> {
+  async artistInfo(
+    ctx: BaseServiceContext,
+    params: ArtistInfoParams
+  ): Promise<ArtistInfo> {
     let response: ArtistInfo;
 
-    response = new ArtistInfo(await this._artistInfo(params));
+    response = new ArtistInfo(await this._artistInfo(ctx, params));
 
     return response;
   }
 
-  async albumInfo(params: AlbumInfoParams): Promise<AlbumInfo> {
-    return new AlbumInfo(await this._albumInfo(params));
+  async albumInfo(
+    ctx: BaseServiceContext,
+    params: AlbumInfoParams
+  ): Promise<AlbumInfo> {
+    return new AlbumInfo(await this._albumInfo(ctx, params));
   }
 
-  async trackInfo(params: TrackInfoParams): Promise<TrackInfo> {
-    return new TrackInfo(await this._trackInfo(params));
+  async trackInfo(
+    ctx: BaseServiceContext,
+    params: TrackInfoParams
+  ): Promise<TrackInfo> {
+    return new TrackInfo(await this._trackInfo(ctx, params));
   }
 
-  async userInfo(params: UserInfoParams): Promise<UserInfo> {
-    return new UserInfo(await this._userInfo(params));
+  async userInfo(
+    ctx: BaseServiceContext,
+    params: UserInfoParams
+  ): Promise<UserInfo> {
+    return new UserInfo(await this._userInfo(ctx, params));
   }
 
-  async tagInfo(params: TagInfoParams): Promise<TagInfo> {
-    return new TagInfo(await this._tagInfo(params));
+  async tagInfo(
+    ctx: BaseServiceContext,
+    params: TagInfoParams
+  ): Promise<TagInfo> {
+    return new TagInfo(await this._tagInfo(ctx, params));
   }
 
-  async topArtists(params: TopArtistsParams): Promise<TopArtists> {
-    return new TopArtists(await this._topArtists(params));
+  async topArtists(
+    ctx: BaseServiceContext,
+    params: TopArtistsParams
+  ): Promise<TopArtists> {
+    return new TopArtists(await this._topArtists(ctx, params));
   }
 
-  async topAlbums(params: TopAlbumsParams): Promise<TopAlbums> {
-    return new TopAlbums(await this._topAlbums(params));
+  async topAlbums(
+    ctx: BaseServiceContext,
+    params: TopAlbumsParams
+  ): Promise<TopAlbums> {
+    return new TopAlbums(await this._topAlbums(ctx, params));
   }
 
-  async topTracks(params: TopTracksParams): Promise<TopTracks> {
-    return new TopTracks(await this._topTracks(params));
+  async topTracks(
+    ctx: BaseServiceContext,
+    params: TopTracksParams
+  ): Promise<TopTracks> {
+    return new TopTracks(await this._topTracks(ctx, params));
   }
 
-  async recentTracks(params: RecentTracksParams): Promise<RecentTracks> {
-    return new RecentTracks(await this._recentTracks(params));
+  async recentTracks(
+    ctx: BaseServiceContext,
+    params: RecentTracksParams
+  ): Promise<RecentTracks> {
+    return new RecentTracks(await this._recentTracks(ctx, params));
   }
 
   async artistPopularTracks(
+    ctx: BaseServiceContext,
     params: ArtistPopularTracksParams
   ): Promise<ArtistPopularTracks> {
-    return new ArtistPopularTracks(await this._artistPopularTracks(params));
+    return new ArtistPopularTracks(
+      await this._artistPopularTracks(ctx, params)
+    );
   }
 
-  async tagTopArtists(params: TagTopArtistsParams): Promise<TagTopArtists> {
-    return new TagTopArtists(await this._tagTopArtists(params));
+  async tagTopArtists(
+    ctx: BaseServiceContext,
+    params: TagTopArtistsParams
+  ): Promise<TagTopArtists> {
+    return new TagTopArtists(await this._tagTopArtists(ctx, params));
   }
 
-  async trackSearch(params: TrackSearchParams): Promise<TrackSearch> {
-    return new TrackSearch(await this._trackSearch(params));
+  async trackSearch(
+    ctx: BaseServiceContext,
+    params: TrackSearchParams
+  ): Promise<TrackSearch> {
+    return new TrackSearch(await this._trackSearch(ctx, params));
   }
 
   async getArtistCorrection(
+    ctx: BaseServiceContext,
     params: GetArtistCorrectionParams
   ): Promise<ArtistCorrection> {
-    return new ArtistCorrection(await this._getArtistCorrection(params));
+    return new ArtistCorrection(await this._getArtistCorrection(ctx, params));
   }
 
-  async userGetFriends(params: UserGetFriendsParams): Promise<Friends> {
-    return new Friends(await this._userGetFriends(params));
+  async userGetFriends(
+    ctx: BaseServiceContext,
+    params: UserGetFriendsParams
+  ): Promise<Friends> {
+    return new Friends(await this._userGetFriends(ctx, params));
   }
 
-  async tagTopTracks(params: TagTopTracksParams): Promise<TagTopTracks> {
-    return new TagTopTracks(await this._tagTopTracks(params));
+  async tagTopTracks(
+    ctx: BaseServiceContext,
+    params: TagTopTracksParams
+  ): Promise<TagTopTracks> {
+    return new TagTopTracks(await this._tagTopTracks(ctx, params));
   }
 
-  async getSession(params: GetSessionParams): Promise<LastFMSession> {
-    return new LastFMSession(await this._getSession(params));
+  async getSession(
+    ctx: BaseServiceContext,
+    params: GetSessionParams
+  ): Promise<LastFMSession> {
+    return new LastFMSession(await this._getSession(ctx, params));
   }
 
   // Derived methods
-  async nowPlaying(username: Requestable): Promise<RecentTrack> {
-    return (await this.recentTracks({ limit: 1, username })).first();
+  async nowPlaying(
+    ctx: BaseServiceContext,
+    username: Requestable
+  ): Promise<RecentTrack> {
+    return (await this.recentTracks(ctx, { limit: 1, username })).first();
   }
 
-  async getArtistPlays(username: Requestable, artist: string): Promise<number> {
-    let playcount = (await this.artistInfo({ artist, username }))
+  async getArtistPlays(
+    ctx: BaseServiceContext,
+    username: Requestable,
+    artist: string
+  ): Promise<number> {
+    let playcount = (await this.artistInfo(ctx, { artist, username }))
       ?.userPlaycount;
 
     if (isNaN(playcount)) throw new BadLastFMResponseError();
@@ -131,9 +182,12 @@ export class LastFMService extends LastFMAPIService {
     return playcount;
   }
 
-  async userExists(username: Requestable): Promise<boolean> {
+  async userExists(
+    ctx: BaseServiceContext,
+    username: Requestable
+  ): Promise<boolean> {
     try {
-      let user = await this.userInfo({ username });
+      let user = await this.userInfo(ctx, { username });
 
       return !!user.name;
     } catch (e) {
@@ -144,14 +198,18 @@ export class LastFMService extends LastFMAPIService {
     }
   }
 
-  async correctArtist(params: ArtistInfoParams): Promise<string> {
-    return (await this.artistInfo(params)).name;
+  async correctArtist(
+    ctx: BaseServiceContext,
+    params: ArtistInfoParams
+  ): Promise<string> {
+    return (await this.artistInfo(ctx, params)).name;
   }
 
   async correctAlbum(
+    ctx: BaseServiceContext,
     params: AlbumInfoParams
   ): Promise<{ artist: string; album: string }> {
-    let response = await this.albumInfo(params);
+    let response = await this.albumInfo(ctx, params);
 
     return {
       artist: response.artist,
@@ -160,9 +218,10 @@ export class LastFMService extends LastFMAPIService {
   }
 
   async correctTrack(
+    ctx: BaseServiceContext,
     params: TrackInfoParams
   ): Promise<{ artist: string; track: string }> {
-    let response = await this.trackInfo(params);
+    let response = await this.trackInfo(ctx, params);
 
     return {
       artist: response.artist.name,
@@ -170,19 +229,23 @@ export class LastFMService extends LastFMAPIService {
     };
   }
 
-  async getArtistTags(artist: string): Promise<string[]> {
+  async getArtistTags(
+    ctx: BaseServiceContext,
+    artist: string
+  ): Promise<string[]> {
     try {
-      return (await this.artistInfo({ artist }))?.tags || [];
+      return (await this.artistInfo(ctx, { artist }))?.tags || [];
     } catch {
       return [];
     }
   }
 
   async artistCount(
+    ctx: BaseServiceContext,
     username: Requestable,
     timePeriod: LastFMPeriod = "overall"
   ): Promise<number> {
-    let topArtists = await this.topArtists({
+    let topArtists = await this.topArtists(ctx, {
       username,
       limit: 1,
       period: timePeriod,
@@ -192,10 +255,11 @@ export class LastFMService extends LastFMAPIService {
   }
 
   async albumCount(
+    ctx: BaseServiceContext,
     username: Requestable,
     timePeriod: LastFMPeriod = "overall"
   ): Promise<number> {
-    let topArtists = await this.topAlbums({
+    let topArtists = await this.topAlbums(ctx, {
       username,
       limit: 1,
       period: timePeriod,
@@ -205,10 +269,11 @@ export class LastFMService extends LastFMAPIService {
   }
 
   async trackCount(
+    ctx: BaseServiceContext,
     username: Requestable,
     timePeriod: LastFMPeriod = "overall"
   ): Promise<number> {
-    let topTracks = await this.topTracks({
+    let topTracks = await this.topTracks(ctx, {
       username,
       limit: 1,
       period: timePeriod,
@@ -218,12 +283,14 @@ export class LastFMService extends LastFMAPIService {
   }
 
   async getMilestone(
+    ctx: BaseServiceContext,
     username: Requestable,
     milestone: number
   ): Promise<RecentTrack> {
-    let total = (await this.recentTracks({ username, limit: 1 })).meta.total;
+    let total = (await this.recentTracks(ctx, { username, limit: 1 })).meta
+      .total;
 
-    let response = await this.recentTracks({
+    let response = await this.recentTracks(ctx, {
       username,
       page: total - milestone + 1,
       limit: 1,
@@ -242,6 +309,7 @@ export class LastFMService extends LastFMAPIService {
   }
 
   async getNumberScrobbles(
+    ctx: BaseServiceContext,
     username: Requestable,
     from?: Date,
     to?: Date
@@ -251,12 +319,16 @@ export class LastFMService extends LastFMAPIService {
     if (from) params.from = ~~(from.getTime() / 1000);
     if (to) params.to = ~~(to.getTime() / 1000);
 
-    let recentTracks = await this.recentTracks(params);
+    let recentTracks = await this.recentTracks(ctx, params);
 
     return recentTracks.meta.total || 0;
   }
 
-  async goBack(username: Requestable, when: Date): Promise<RecentTrack> {
+  async goBack(
+    ctx: BaseServiceContext,
+    username: Requestable,
+    when: Date
+  ): Promise<RecentTrack> {
     let to = add(when, { hours: 6 });
 
     let params = {
@@ -266,7 +338,7 @@ export class LastFMService extends LastFMAPIService {
       to: ~~(to.getTime() / 1000),
     };
 
-    let recentTracks = await this.recentTracks(params);
+    let recentTracks = await this.recentTracks(ctx, params);
 
     return recentTracks.tracks[1] ?? recentTracks.first();
   }

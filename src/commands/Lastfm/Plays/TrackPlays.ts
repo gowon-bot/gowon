@@ -29,6 +29,7 @@ export default class TrackPlays extends LastFMBaseCommand<typeof args> {
       });
 
     let { artist, track } = await this.lastFMArguments.getTrack(
+      this.ctx,
       senderRequestable
     );
 
@@ -36,7 +37,7 @@ export default class TrackPlays extends LastFMBaseCommand<typeof args> {
       artist.toLowerCase() === "iu" && track.toLowerCase() === "ham ham";
     if (hamham) track = "Jam Jam";
 
-    const trackDetails = await this.lastFMService.trackInfo({
+    const trackDetails = await this.lastFMService.trackInfo(this.ctx, {
       artist,
       track,
       username: requestable,

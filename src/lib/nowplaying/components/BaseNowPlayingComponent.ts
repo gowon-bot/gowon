@@ -16,6 +16,10 @@ export abstract class BaseNowPlayingComponent<
   static readonly componentName: string;
   abstract readonly requirements: Requirements;
 
+  protected ctx = {
+    logger: this.values.logger,
+  };
+
   constructor(
     protected values: Pick<RequirementMap, Requirements[number]> & Resources
   ) {}

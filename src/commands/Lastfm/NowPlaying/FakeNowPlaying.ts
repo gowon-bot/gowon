@@ -6,6 +6,7 @@ import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { RecentTrack } from "../../../services/LastFM/converters/RecentTracks";
 import { LogicError } from "../../../errors";
 import { LinkGenerator } from "../../../helpers/lastFM";
+import { ServiceRegistry } from "../../../services/ServicesRegistry";
 
 const args = {
   inputs: {
@@ -27,7 +28,7 @@ export default class FakeNowPlaying extends NowPlayingBaseCommand<typeof args> {
     "Displays any given track as if it were your currently playing song";
   usage = ["search term", "artist | track"];
 
-  crownsService = new CrownsService(this.logger);
+  crownsService = ServiceRegistry.get(CrownsService);
 
   async run() {
     let trackName = this.parsedArguments.track,
@@ -38,13 +39,16 @@ export default class FakeNowPlaying extends NowPlayingBaseCommand<typeof args> {
 
     if (querystring.includes("|") || !querystring.trim()) {
       if (!artistName || !trackName) {
-        let nowPlaying = await this.lastFMService.nowPlaying(senderRequestable);
+        let nowPlaying = await this.lastFMService.nowPlaying(
+          this.ctx,
+          senderRequestable
+        );
 
         if (!artistName) artistName = nowPlaying.artist;
         if (!trackName) trackName = nowPlaying.name;
       }
     } else {
-      let results = await this.lastFMService.trackSearch({
+      let results = await this.lastFMService.trackSearch(this.ctx, {
         track: querystring,
         limit: 1,
       });
@@ -60,16 +64,16 @@ export default class FakeNowPlaying extends NowPlayingBaseCommand<typeof args> {
     this.tagConsolidator.blacklistTags(artistName, trackName);
 
     let [artistInfo, trackInfo, crown] = await promiseAllSettled([
-      this.lastFMService.artistInfo({
+      this.lastFMService.artistInfo(this.ctx, {
         artist: artistName,
         username: senderRequestable,
       }),
-      this.lastFMService.trackInfo({
+      this.lastFMService.trackInfo(this.ctx, {
         artist: artistName,
         track: trackName,
         username: senderRequestable,
       }),
-      this.crownsService.getCrownDisplay(artistName, this.guild),
+      this.crownsService.getCrownDisplay(this.ctx, artistName),
     ]);
 
     let { crownString, isCrownHolder } = await this.crownDetails(
