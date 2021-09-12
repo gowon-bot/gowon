@@ -1,45 +1,51 @@
 import { fromUnixTime } from "date-fns";
-import { Logger } from "../../lib/Logger";
-import { BaseService } from "../BaseService";
+import { BaseService, BaseServiceContext } from "../BaseService";
+import { ServiceRegistry } from "../ServicesRegistry";
 import { RedisInteractionService } from "./RedisInteractionService";
 
+type RedisServiceContext = BaseServiceContext & {
+  options: {
+    defaultExpirySeconds?: number;
+    prefix?: string;
+  };
+};
+
 export class RedisService extends BaseService {
-  private redis = RedisInteractionService.getInstance();
-
-  defaultExpiry: number;
-  prefix: string;
-
-  constructor(
-    logger: Logger | undefined,
-    options: {
-      defaultExpirySeconds?: number;
-      prefix?: string;
-    } = {}
-  ) {
-    super(logger);
-    this.defaultExpiry = options.defaultExpirySeconds || 600;
-    this.prefix = options.prefix || "";
+  private get redis() {
+    return ServiceRegistry.get(RedisInteractionService);
   }
 
   // Get
-  async get(key: string) {
-    return this.redis.get(this.prefixedKey(key));
+  async get(ctx: RedisServiceContext, key: string) {
+    return this.redis.get(ctx, this.prefixedKey(ctx, key));
   }
 
-  async sessionGet(discordID: string, guildID: string, key: string) {
-    return this.redis.get(this.sessionKey(discordID, guildID, key));
+  async sessionGet(
+    ctx: RedisServiceContext,
+    discordID: string,
+    guildID: string,
+    key: string
+  ) {
+    return this.redis.get(ctx, this.sessionKey(ctx, discordID, guildID, key));
   }
 
   // Set
-  async set(key: string, value: string, expiresAfter?: number) {
+  async set(
+    ctx: RedisServiceContext,
+    key: string,
+    value: string,
+    expiresAfter?: number
+  ) {
     this.redis.set(
-      this.prefixedKey(key),
+      ctx,
+      this.prefixedKey(ctx, key),
       value,
-      expiresAfter || this.defaultExpiry
+      expiresAfter || this.getDefaultExpiry(ctx)
     );
   }
 
   async sessionSet(
+    ctx: RedisServiceContext,
     discordID: string,
     guildID: string,
     key: string,
@@ -47,19 +53,28 @@ export class RedisService extends BaseService {
     expiresAfter?: number
   ) {
     return this.redis.set(
-      this.sessionKey(discordID, guildID, key),
+      ctx,
+      this.sessionKey(ctx, discordID, guildID, key),
       value,
-      expiresAfter || this.defaultExpiry
+      expiresAfter || this.getDefaultExpiry(ctx)
     );
   }
 
   // Delete
-  delete(key: string) {
-    return this.redis.delete(this.prefixedKey(key));
+  delete(ctx: RedisServiceContext, key: string) {
+    return this.redis.delete(ctx, this.prefixedKey(ctx, key));
   }
 
-  sessionDelete(discordID: string, guildID: string, key: string) {
-    return this.redis.delete(this.sessionKey(discordID, guildID, key));
+  sessionDelete(
+    ctx: RedisServiceContext,
+    discordID: string,
+    guildID: string,
+    key: string
+  ) {
+    return this.redis.delete(
+      ctx,
+      this.sessionKey(ctx, discordID, guildID, key)
+    );
   }
 
   // Helpers
@@ -72,11 +87,24 @@ export class RedisService extends BaseService {
   }
 
   // Private methods
-  private prefixedKey(key: string): string {
-    return this.prefix ? `${this.prefix}-${key}` : key;
+  private prefixedKey(ctx: RedisServiceContext, key: string): string {
+    return this.getPrefix(ctx) ? `${this.getPrefix(ctx)}-${key}` : key;
   }
 
-  private sessionKey(discordID: string, guildID: string, key: string): string {
-    return this.prefixedKey(`${discordID}:${guildID}-${key}`);
+  private sessionKey(
+    ctx: RedisServiceContext,
+    discordID: string,
+    guildID: string,
+    key: string
+  ): string {
+    return this.prefixedKey(ctx, `${discordID}:${guildID}-${key}`);
+  }
+
+  private getDefaultExpiry(ctx: RedisServiceContext): number {
+    return ctx.options?.defaultExpirySeconds || 600;
+  }
+
+  private getPrefix(ctx: RedisServiceContext): string {
+    return ctx.options?.prefix || "";
   }
 }

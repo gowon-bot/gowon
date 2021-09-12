@@ -1,5 +1,6 @@
 import { gql } from "@apollo/client/core";
-import { BaseService } from "../../BaseService";
+import { BaseService, BaseServiceContext } from "../../BaseService";
+import { ServiceRegistry } from "../../ServicesRegistry";
 import { MirrorballService } from "../MirrorballService";
 import {
   MirrorballPrivacy,
@@ -10,9 +11,12 @@ import {
 export const PrivateUserDisplay = "Private user";
 
 export class MirrorballUsersService extends BaseService {
-  private mirrorballService = new MirrorballService(this.logger);
+  private get mirrorballService() {
+    return ServiceRegistry.get(MirrorballService);
+  }
 
   async getMirrorballUser(
+    ctx: BaseServiceContext,
     inputs: UserInput[]
   ): Promise<MirrorballUser[] | undefined> {
     const query = gql`
@@ -31,21 +35,25 @@ export class MirrorballUsersService extends BaseService {
     try {
       const response = await this.mirrorballService.query<{
         users: [MirrorballUser];
-      }>(query, { inputs });
+      }>(ctx, query, { inputs });
       return response.users;
     } catch {}
 
     return undefined;
   }
 
-  async updatePrivacy(discordID: string, privacy: MirrorballPrivacy) {
+  async updatePrivacy(
+    ctx: BaseServiceContext,
+    discordID: string,
+    privacy: MirrorballPrivacy
+  ) {
     const mutation = gql`
       mutation updatePrivacy($discordID: String!, $privacy: Privacy!) {
         updatePrivacy(user: { discordID: $discordID }, privacy: $privacy)
       }
     `;
 
-    await this.mirrorballService.mutate(mutation, {
+    await this.mirrorballService.mutate(ctx, mutation, {
       discordID,
       privacy: privacy.toUpperCase(),
     });

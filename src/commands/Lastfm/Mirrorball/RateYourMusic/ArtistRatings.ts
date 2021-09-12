@@ -43,7 +43,10 @@ export class ArtistRatings extends RateYourMusicIndexingChildCommand<
       }
     );
 
-    const artist = await this.lastFMArguments.getArtist(senderRequestable);
+    const artist = await this.lastFMArguments.getArtist(
+      this.ctx,
+      senderRequestable
+    );
 
     const perspective = this.usersService.discordPerspective(
       this.author,

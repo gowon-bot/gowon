@@ -28,7 +28,8 @@ export default class SearchAlbum extends SearchCommand {
     let paginator = new Paginator(
       this.lastFMService.topAlbums.bind(this.lastFMService),
       this.variationWasUsed("deep") ? 4 : 2,
-      { username: requestable, limit: 1000 }
+      { username: requestable, limit: 1000 },
+      this.ctx
     );
 
     let topAlbums = await paginator.getAllToConcatonable({

@@ -38,7 +38,10 @@ export default class RandomsongInUsersLibrary extends LastFMBaseCommand<
 
     const { requestable, username } = await this.parseMentions();
 
-    const trackCount = await this.lastFMService.trackCount(requestable);
+    const trackCount = await this.lastFMService.trackCount(
+      this.ctx,
+      requestable
+    );
 
     const bound =
       poolAmount && poolAmount < trackCount ? poolAmount : trackCount / 2;
@@ -48,7 +51,7 @@ export default class RandomsongInUsersLibrary extends LastFMBaseCommand<
     randomIndex = randomIndex < 0 ? 0 : randomIndex;
 
     const randomSong = (
-      await this.lastFMService.topTracks({
+      await this.lastFMService.topTracks(this.ctx, {
         username: requestable,
         limit: 1,
         page: randomIndex,
@@ -58,7 +61,7 @@ export default class RandomsongInUsersLibrary extends LastFMBaseCommand<
     let trackInfo: TrackInfo | undefined = undefined;
 
     try {
-      trackInfo = await this.lastFMService.trackInfo({
+      trackInfo = await this.lastFMService.trackInfo(this.ctx, {
         track: randomSong.name,
         artist: randomSong.artist.name,
       });

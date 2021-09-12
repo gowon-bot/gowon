@@ -47,6 +47,8 @@ import {
 } from "../../services/mirrorball/MirrorballTypes";
 import { MirrorballUsersService } from "../../services/mirrorball/services/MirrorballUsersService";
 import { CommandRegistry } from "./CommandRegistry";
+import { ServiceRegistry } from "../../services/ServicesRegistry";
+import { SimpleMap } from "../../helpers/types";
 
 export interface Variation {
   name: string;
@@ -132,16 +134,30 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     );
   }
 
-  usersService = new UsersService(this.logger);
-  mirrorballUsersService = new MirrorballUsersService(this.logger);
-  gowonService = GowonService.getInstance();
-  track = new TrackingService(this.logger);
-  mirrorballService = new MirrorballService(this.logger);
   commandRegistry = CommandRegistry.getInstance();
+
+  track = ServiceRegistry.get(TrackingService);
+  usersService = ServiceRegistry.get(UsersService);
+  gowonService = ServiceRegistry.get(GowonService);
+  mirrorballService = ServiceRegistry.get(MirrorballService);
+  mirrorballUsersService = ServiceRegistry.get(MirrorballUsersService);
 
   hasChildren = false;
   children?: CommandGroup;
   parentName?: string;
+
+  ctx = this.generateContext({});
+
+  generateContext(customContext: SimpleMap): any {
+    return Object.assign(
+      {
+        logger: this.logger,
+        command: this,
+        client: this.gowonClient,
+      },
+      customContext
+    );
+  }
 
   async getChild(_: string, __: string): Promise<Command | undefined> {
     return undefined;
@@ -226,7 +242,10 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     }
 
     try {
-      senderDBUser = await this.usersService.getUser(this.message.author.id);
+      senderDBUser = await this.usersService.getUser(
+        this.ctx,
+        this.message.author.id
+      );
     } catch {}
 
     if (lfmUser) {
@@ -234,6 +253,7 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     } else if (user?.id || userID || discordUser) {
       try {
         const mentionedUser = await this.usersService.getUser(
+          this.ctx,
           discordUser?.id || userID || `${user?.id}`
         );
 
@@ -261,6 +281,7 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
 
     if (!mentionedDBUser && mentionedUsername) {
       mentionedDBUser = await this.usersService.getUserFromLastFMUsername(
+        this.ctx,
         mentionedUsername
       );
 
@@ -307,7 +328,10 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
       }
 
       [senderMirrorballUser, mentionedMirrorballUser] =
-        (await this.mirrorballUsersService.getMirrorballUser(inputs)) || [];
+        (await this.mirrorballUsersService.getMirrorballUser(
+          this.ctx,
+          inputs
+        )) || [];
     }
 
     if (
@@ -361,7 +385,7 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     };
   }
 
-  async prerun(_: Message): Promise<void> {}
+  async prerun(): Promise<void> {}
 
   async setup() {
     this.startTyping();
@@ -376,7 +400,7 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     }
     if (Chance().bool({ likelihood: 33 })) {
       this.usersService
-        .getUser(this.author.id)
+        .getUser(this.ctx, this.author.id)
         .then(async (senderUser) => {
           if (
             senderUser &&
@@ -384,6 +408,7 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
           ) {
             await Promise.all([
               this.mirrorballService.quietAddUserToGuild(
+                this.ctx,
                 this.author.id,
                 this.guild.id
               ),
@@ -435,11 +460,11 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
 
       new ValidationChecker(this.parsedArguments, this.validation).validate();
 
-      await this.prerun(message);
+      await this.prerun();
       await this.run(message, runAs);
     } catch (e) {
       this.logger.logError(e);
-      this.track.error(e);
+      this.track.error(this.ctx, e);
 
       if (e.isClientFacing && !e.silent) {
         await this.sendError(e.message, e.footer);

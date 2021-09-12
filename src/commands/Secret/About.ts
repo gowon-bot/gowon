@@ -12,6 +12,7 @@ import {
 import { CrownEventString } from "../../services/dbservices/CrownsHistoryService";
 import { RedirectsService } from "../../services/dbservices/RedirectsService";
 import { LastFMService } from "../../services/LastFM/LastFMService";
+import { ServiceRegistry } from "../../services/ServicesRegistry";
 
 export default class About extends BaseCommand {
   idSeed = "gfriend sinb";
@@ -22,8 +23,8 @@ export default class About extends BaseCommand {
 
   startDate = new Date(2020, 6, 9);
 
-  lastFMService = new LastFMService(this.logger);
-  redirectsService = new RedirectsService(this.logger);
+  lastFMService = ServiceRegistry.get(LastFMService);
+  redirectsService = ServiceRegistry.get(RedirectsService);
 
   async run() {
     const author = await this.gowonClient.client.users.fetch(
@@ -38,10 +39,14 @@ export default class About extends BaseCommand {
     let friends = await Friend.count();
     let commandCount = this.commandRegistry.deepList().length;
 
-    let userInfo = await this.lastFMService.userInfo({ username: "gowon_" });
-    let artistCount = await this.lastFMService.artistCount("gowon_");
+    let userInfo = await this.lastFMService.userInfo(this.ctx, {
+      username: "gowon_",
+    });
+    let artistCount = await this.lastFMService.artistCount(this.ctx, "gowon_");
 
-    let cachedRedirects = await this.redirectsService.countAllRedirects();
+    let cachedRedirects = await this.redirectsService.countAllRedirects(
+      this.ctx
+    );
 
     let embed = this.newEmbed()
       .setAuthor(`About ${this.gowonClient.client.user?.username || "Gowon"}`)

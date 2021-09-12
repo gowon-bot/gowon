@@ -8,6 +8,7 @@ import {
 } from "../../../lib/calculators/TagComboCalculator";
 import { TagsService } from "../../../services/mirrorball/services/TagsService";
 import { displayNumber } from "../../../lib/views/displays";
+import { ServiceRegistry } from "../../../services/ServicesRegistry";
 
 const args = {
   mentions: standardMentions,
@@ -25,7 +26,7 @@ export default class TagCombo extends LastFMBaseCommand<typeof args> {
 
   arguments: Arguments = args;
 
-  tagsService = new TagsService(this.logger);
+  tagsService = ServiceRegistry.get(TagsService);
 
   showLoadingAfter = this.gowonService.constants.defaultLoadingTime;
 
@@ -35,7 +36,8 @@ export default class TagCombo extends LastFMBaseCommand<typeof args> {
     const paginator = new Paginator(
       this.lastFMService.recentTracks.bind(this.lastFMService),
       this.gowonService.constants.hardPageLimit,
-      { username: requestable, limit: 1000 }
+      { username: requestable, limit: 1000 },
+      this.ctx
     );
 
     const comboCalculator = new TagComboCalculator(this.tagsService);

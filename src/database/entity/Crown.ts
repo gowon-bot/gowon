@@ -17,6 +17,7 @@ import { GowonService } from "../../services/GowonService";
 import { CrownsQueries } from "../queries";
 import { toInt } from "../../helpers/lastFM";
 import { LastFMService } from "../../services/LastFM/LastFMService";
+import { ServiceRegistry } from "../../services/ServicesRegistry";
 
 export interface CrownRankResponse {
   count: string;
@@ -98,7 +99,8 @@ export class Crown extends BaseEntity {
       !options.onlyIfOwnerIs ||
       options.onlyIfOwnerIs === this.user.discordID
     ) {
-      this.plays = await new LastFMService(options.logger).getArtistPlays(
+      this.plays = await ServiceRegistry.get(LastFMService).getArtistPlays(
+        { logger: options.logger },
         this.user.lastFMUsername,
         this.artistName
       );
@@ -201,7 +203,7 @@ export class Crown extends BaseEntity {
       return { failed: true, reason: CrownState.purgatory };
 
     if (
-      await GowonService.getInstance().isUserCrownBanned(
+      await ServiceRegistry.get(GowonService).isUserCrownBanned(
         message.guild!,
         this.user.discordID
       )

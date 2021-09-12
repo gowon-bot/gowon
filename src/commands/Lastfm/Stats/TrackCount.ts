@@ -35,6 +35,7 @@ export default class TrackCount extends LastFMBaseCommand<typeof args> {
     let { requestable, perspective } = await this.parseMentions();
 
     let scrobbles = await this.lastFMService.trackCount(
+      this.ctx,
       requestable,
       timePeriod
     );

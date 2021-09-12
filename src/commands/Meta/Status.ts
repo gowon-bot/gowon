@@ -45,7 +45,7 @@ Discord........${this.displayLatency(discordLatency)}` +
     stopwatch.start();
 
     try {
-      await this.mirrorballService.ping();
+      await this.mirrorballService.ping(this.ctx);
     } catch {
       return stopwatch.zero();
     }

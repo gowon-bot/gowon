@@ -39,30 +39,31 @@ export default class TagTracks extends LastFMBaseCommand<typeof args> {
   };
 
   async run() {
-    let tag = this.parsedArguments.tag!;
+    const tag = this.parsedArguments.tag!;
 
-    let { requestable, perspective } = await this.parseMentions({
+    const { requestable, perspective } = await this.parseMentions({
       asCode: false,
     });
 
-    let paginator = new Paginator(
+    const paginator = new Paginator(
       this.lastFMService.topTracks.bind(this.lastFMService),
       3,
-      { username: requestable, limit: 1000 }
+      { username: requestable, limit: 1000 },
+      this.ctx
     );
 
-    let [tagTopTracks, userTopTracks] = await Promise.all([
-      this.lastFMService.tagTopTracks({ tag, limit: 1000 }),
+    const [tagTopTracks, userTopTracks] = await Promise.all([
+      this.lastFMService.tagTopTracks(this.ctx, { tag, limit: 1000 }),
       paginator.getAllToConcatonable({ concurrent: false }),
     ]);
 
-    let tagTrackNames = tagTopTracks!.tracks.map((t) =>
+    const tagTrackNames = tagTopTracks!.tracks.map((t) =>
       this.generateTrackName(t.artist.name, t.name)
     );
 
-    let overlap = this.calculateOverlap(userTopTracks, tagTrackNames);
+    const overlap = this.calculateOverlap(userTopTracks, tagTrackNames);
 
-    let embed = this.newEmbed()
+    const embed = this.newEmbed()
       .setAuthor(this.author.username, this.author.avatarURL() || "")
       .setTitle(
         `${perspective.upper.possessive} top ${tagTopTracks.meta.tag} tracks`

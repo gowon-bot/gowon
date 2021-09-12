@@ -1,4 +1,3 @@
-import { Message } from "discord.js";
 import { LogicError } from "../../errors";
 import { LinkGenerator } from "../../helpers/lastFM";
 import { Arguments } from "../../lib/arguments/arguments";
@@ -28,7 +27,7 @@ export default class Cover extends LastFMBaseCommand<typeof args> {
   private readonly defaultImageURL =
     "https://lastfm.freetls.fastly.net/i/u/174s/2a96cbd8b46e442fc41c2b86b821562f.png";
 
-  async run(_: Message) {
+  async run() {
     let artist = this.parsedArguments.artist,
       album = this.parsedArguments.album;
 
@@ -39,7 +38,7 @@ export default class Cover extends LastFMBaseCommand<typeof args> {
     let nowPlaying: RecentTrack | undefined = undefined;
 
     if (!artist || !album) {
-      nowPlaying = await this.lastFMService.nowPlaying(requestable);
+      nowPlaying = await this.lastFMService.nowPlaying(this.ctx, requestable);
 
       if (!artist) artist = nowPlaying.artist;
       if (!album) album = nowPlaying.album;
@@ -56,7 +55,7 @@ export default class Cover extends LastFMBaseCommand<typeof args> {
     if (nowPlaying?.artist === artist && nowPlaying?.album === album) {
       await this.sendFromNowPlaying(nowPlaying);
     } else {
-      const albumDetails = await this.lastFMService.albumInfo({
+      const albumDetails = await this.lastFMService.albumInfo(this.ctx, {
         artist,
         album,
       });

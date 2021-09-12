@@ -16,6 +16,7 @@ import { ArtistsService } from "../../../services/mirrorball/services/ArtistsSer
 import { Emoji } from "../../../lib/Emoji";
 import { ComboChildCommand } from "./ComboChildCommand";
 import { formatDistance } from "date-fns";
+import { ServiceRegistry } from "../../../services/ServicesRegistry";
 
 const args = {
   inputs: {
@@ -46,14 +47,14 @@ export class Current extends ComboChildCommand<typeof args> {
     artists: new validators.LengthRange({ max: 10 }),
   };
 
-  redirectsService = new RedirectsService(this.logger);
-  artistsService = new ArtistsService(this.logger);
+  redirectsService = ServiceRegistry.get(RedirectsService);
+  artistsService = ServiceRegistry.get(ArtistsService);
 
   async run() {
     let artists = this.parsedArguments.artists!;
 
     if (artists.length) {
-      artists = await this.artistsService.correctArtistNames(artists);
+      artists = await this.artistsService.correctArtistNames(this.ctx, artists);
     }
 
     const { requestable, username, perspective, senderUser } =
@@ -62,7 +63,8 @@ export class Current extends ComboChildCommand<typeof args> {
     const paginator = new Paginator(
       this.lastFMService.recentTracks.bind(this.lastFMService),
       this.gowonService.constants.hardPageLimit,
-      { username: requestable, limit: 1000 }
+      { username: requestable, limit: 1000 },
+      this.ctx
     );
 
     const comboCalculator = new ComboCalculator(this.redirectsService, artists);
@@ -77,7 +79,7 @@ export class Current extends ComboChildCommand<typeof args> {
       !perspective.different &&
       senderUser
     ) {
-      await this.comboService.saveCombo(combo, senderUser);
+      await this.comboService.saveCombo(this.ctx, combo, senderUser);
       comboSaved = true;
     }
 
@@ -135,7 +137,10 @@ export class Current extends ComboChildCommand<typeof args> {
       );
 
     if (combo.hasAnyConsecutivePlays()) {
-      const nowplaying = await this.lastFMService.nowPlaying(requestable);
+      const nowplaying = await this.lastFMService.nowPlaying(
+        this.ctx,
+        requestable
+      );
 
       embed.setThumbnail(nowplaying.images.get("large")!);
     } else {

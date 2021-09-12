@@ -24,11 +24,13 @@ export class BanArtist extends CrownsChildCommand<typeof args> {
     let artist = this.parsedArguments.artist!;
 
     let artistCrownBan = await this.crownsService.artistCrownBan(
+      this.ctx,
       this.guild.id,
       artist
     );
 
     await this.crownsService.killCrown(
+      this.ctx,
       artistCrownBan.artistName,
       this.guild.id
     );

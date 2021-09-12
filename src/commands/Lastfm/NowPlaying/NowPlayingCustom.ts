@@ -1,9 +1,9 @@
 import { User } from "../../../database/entity/User";
 import { DatasourceService } from "../../../lib/nowplaying/DatasourceService";
 import { NowPlayingBuilder } from "../../../lib/nowplaying/NowPlayingBuilder";
-import { MetaService } from "../../../services/dbservices/MetaService";
 import { ConfigService } from "../../../services/dbservices/NowPlayingService";
 import { Requestable } from "../../../services/LastFM/LastFMAPIService";
+import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { NowPlayingBaseCommand } from "./NowPlayingBaseCommand";
 
 export default class NowPlayingCustom extends NowPlayingBaseCommand {
@@ -13,17 +13,19 @@ export default class NowPlayingCustom extends NowPlayingBaseCommand {
     "Displays the now playing or last played track from Last.fm. See `npc help` for details on how to customize your embeds.";
   aliases = ["fmx", "npx"];
 
-  datasourceService = new DatasourceService(this.logger);
-  configService = new ConfigService(this.logger);
-  metaService = new MetaService(this.logger);
+  datasourceService = ServiceRegistry.get(DatasourceService);
+  configService = ServiceRegistry.get(ConfigService);
 
   async run() {
     let { username, senderUser, dbUser, requestable } =
       await this.customMentions();
 
-    const config = await this.configService.getConfigForUser(senderUser);
+    const config = await this.configService.getConfigForUser(
+      this.ctx,
+      senderUser
+    );
 
-    const recentTracks = await this.lastFMService.recentTracks({
+    const recentTracks = await this.lastFMService.recentTracks(this.ctx, {
       username: requestable,
       limit: 1,
     });
@@ -36,7 +38,7 @@ export default class NowPlayingCustom extends NowPlayingBaseCommand {
     const requirements = builder.generateRequirements();
 
     const resolvedRequirements =
-      await this.datasourceService.resolveRequirements(requirements, {
+      await this.datasourceService.resolveRequirements(this.ctx, requirements, {
         recentTracks,
         requestable,
         username,

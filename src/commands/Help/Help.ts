@@ -7,6 +7,7 @@ import HelpForOneCommand from "./HelpForOneCommand";
 import { ucFirst } from "../../helpers";
 import { SimpleScrollingEmbed } from "../../lib/views/embeds/SimpleScrollingEmbed";
 import QuickHelp from "./QuickHelp";
+import { ServiceRegistry } from "../../services/ServicesRegistry";
 
 interface GroupedCommands {
   [category: string]: Command[];
@@ -37,7 +38,7 @@ export default class Help extends BaseCommand<typeof args> {
     { when: (args) => !args.all && !args.command, delegateTo: QuickHelp },
   ];
 
-  adminService = new AdminService(this.gowonClient);
+  adminService = ServiceRegistry.get(AdminService);
 
   async run(message: Message) {
     await this.helpForAllCommands(message);
@@ -45,6 +46,7 @@ export default class Help extends BaseCommand<typeof args> {
 
   private async helpForAllCommands(message: Message) {
     let commands = await this.adminService.can.viewList(
+      this.ctx,
       this.commandRegistry.list(),
       message,
       this.gowonClient

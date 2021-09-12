@@ -5,6 +5,7 @@ import { LogicError } from "../../../errors";
 import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingEmbed";
 import { displayNumberedList } from "../../../lib/views/displays";
 import { ArtistsService } from "../../../services/mirrorball/services/ArtistsService";
+import { ServiceRegistry } from "../../../services/ServicesRegistry";
 
 const args = {
   inputs: {
@@ -23,18 +24,24 @@ export class Combos extends ComboChildCommand<typeof args> {
 
   arguments: Arguments = args;
 
-  artistsService = new ArtistsService(this.logger);
+  artistsService = ServiceRegistry.get(ArtistsService);
 
   async run() {
     let artistName = this.parsedArguments.artistName;
 
     if (artistName) {
-      [artistName] = await this.artistsService.correctArtistNames([artistName]);
+      [artistName] = await this.artistsService.correctArtistNames(this.ctx, [
+        artistName,
+      ]);
     }
 
     const { perspective, dbUser } = await this.parseMentions();
 
-    const combos = await this.comboService.listCombos(dbUser, artistName);
+    const combos = await this.comboService.listCombos(
+      this.ctx,
+      dbUser,
+      artistName
+    );
 
     if (!combos.length) {
       throw new LogicError(

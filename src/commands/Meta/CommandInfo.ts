@@ -38,7 +38,7 @@ export default class CommandInfo extends MetaBaseCommand<typeof args> {
 
     if (!command) throw new CommandNotFoundError();
 
-    const count = await this.metaService.countCommandRuns(command.id);
+    const count = await this.metaService.countCommandRuns(this.ctx, command.id);
 
     const embed = this.newEmbed().setTitle(
       `Info about ${runAs.toCommandFriendlyName()}`

@@ -1,24 +1,31 @@
 import { GowonClient } from "../../lib/GowonClient";
 import { displayNumber } from "../../lib/views/displays";
-import { BaseService } from "../BaseService";
+import { BaseService, BaseServiceContext } from "../BaseService";
 import { RedisService } from "../redis/RedisService";
+import { ServiceRegistry } from "../ServicesRegistry";
 
 export const UnknownUserDisplay = "<Unknown user>";
 
 export class NicknameService extends BaseService {
-  redisService = new RedisService(this.logger, {
+  get redisService() {
+    return ServiceRegistry.get(RedisService);
+  }
+
+  customContext = {
     defaultExpirySeconds: 30 * 24 * 60 * 60,
-  });
+  };
 
   private nicknameCache: { [discordID: string]: string } = {};
   private usernameCache: { [discordID: string]: string } = {};
 
   async cacheNicknames(
+    ctx: BaseServiceContext,
     users: Array<{ discordID: string } | string>,
     guildID: string,
     gowonClient: GowonClient
   ) {
     this.log(
+      this.ctx(ctx),
       `Caching nicknames for ${displayNumber(
         users.length,
         "user"
@@ -32,7 +39,7 @@ export class NicknameService extends BaseService {
       await Promise.all(
         discordIDs.map(async (u) => ({
           discordID: u,
-          info: await this.getNickname(u, guildID, gowonClient),
+          info: await this.getNickname(ctx, u, guildID, gowonClient),
         }))
       )
     ).forEach((u) => {
@@ -42,10 +49,14 @@ export class NicknameService extends BaseService {
   }
 
   async cacheUsernames(
+    ctx: BaseServiceContext,
     users: Array<{ discordID: string } | string>,
     gowonClient: GowonClient
   ) {
-    this.log(`Caching usernames for ${displayNumber(users.length, "user")}`);
+    this.log(
+      ctx,
+      `Caching usernames for ${displayNumber(users.length, "user")}`
+    );
 
     const discordIDs: string[] =
       typeof users[0] === "string" ? users : users.map((u: any) => u.discordID);
@@ -54,7 +65,7 @@ export class NicknameService extends BaseService {
       await Promise.all(
         discordIDs.map(async (u) => ({
           discordID: u,
-          username: await this.getUsername(u, gowonClient),
+          username: await this.getUsername(ctx, u, gowonClient),
         }))
       )
     ).forEach((u) => {
@@ -71,6 +82,7 @@ export class NicknameService extends BaseService {
   }
 
   async recordNickname(
+    ctx: BaseServiceContext,
     discordID: string,
     guildID: string | undefined,
     nickname: string
@@ -78,6 +90,7 @@ export class NicknameService extends BaseService {
     if (!guildID) return;
 
     await this.redisService.sessionSet(
+      this.ctx(ctx),
       discordID,
       guildID,
       "nickname",
@@ -85,16 +98,26 @@ export class NicknameService extends BaseService {
     );
   }
 
-  async recordUsername(discordID: string, username: string) {
-    await this.redisService.set(this.generateUsernameKey(discordID), username);
+  async recordUsername(
+    ctx: BaseServiceContext,
+    discordID: string,
+    username: string
+  ) {
+    await this.redisService.set(
+      this.ctx(ctx),
+      this.generateUsernameKey(discordID),
+      username
+    );
   }
 
   async getNickname(
+    ctx: BaseServiceContext,
     discordID: string,
     guildID: string,
     gowonClient: GowonClient
   ): Promise<{ nickname?: string; username?: string }> {
     let nickname = await this.redisService.sessionGet(
+      this.ctx(ctx),
       discordID,
       guildID,
       "nickname"
@@ -102,7 +125,7 @@ export class NicknameService extends BaseService {
     let username: string | undefined;
 
     if (!nickname || nickname === "<Unknown user>") {
-      this.log(`Fetching nickname for ${discordID} in ${guildID}`);
+      this.log(ctx, `Fetching nickname for ${discordID} in ${guildID}`);
 
       try {
         const user = await gowonClient.client.guilds
@@ -112,7 +135,7 @@ export class NicknameService extends BaseService {
         nickname = user?.nickname || user?.user.username || UnknownUserDisplay;
         username = user?.user.username;
 
-        this.recordNickname(discordID, guildID, nickname);
+        this.recordNickname(this.ctx(ctx), discordID, guildID, nickname);
       } catch {}
     }
 
@@ -120,21 +143,25 @@ export class NicknameService extends BaseService {
   }
 
   async getUsername(
+    ctx: BaseServiceContext,
     discordID: string,
     gowonClient: GowonClient
   ): Promise<string> {
     let username =
       this.cacheGetUsername(discordID) ||
-      (await this.redisService.get(this.generateUsernameKey(discordID)));
+      (await this.redisService.get(
+        this.ctx(ctx),
+        this.generateUsernameKey(discordID)
+      ));
 
     if (!username || username === UnknownUserDisplay) {
-      this.log(`Fetching username for ${discordID}`);
+      this.log(ctx, `Fetching username for ${discordID}`);
       try {
         const user = await gowonClient.client.users.fetch(discordID);
 
         username = user ? user.username + "#" + user.discriminator : undefined;
 
-        if (username) this.recordUsername(discordID, username);
+        if (username) this.recordUsername(ctx, discordID, username);
         else username = UnknownUserDisplay;
       } catch {
         username = UnknownUserDisplay;

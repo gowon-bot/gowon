@@ -42,9 +42,13 @@ export default class SimpleLogin extends LastFMBaseCommand<typeof args> {
     let userInfo: UserInfo | undefined;
 
     try {
-      userInfo = await this.lastFMService.userInfo({ username });
+      userInfo = await this.lastFMService.userInfo(this.ctx, { username });
 
-      await this.usersService.setUsername(this.author.id, userInfo.name);
+      await this.usersService.setUsername(
+        this.ctx,
+        this.author.id,
+        userInfo.name
+      );
 
       this.send(
         `Logged in as ${userInfo.name.code()}${

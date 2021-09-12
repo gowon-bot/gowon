@@ -10,9 +10,9 @@ export class RemoveAll extends FriendsChildCommand {
   async prerun() {}
 
   async run() {
-    const user = await this.usersService.getUser(this.author.id);
+    const user = await this.usersService.getUser(this.ctx, this.author.id);
 
-    const deletedCount = await this.friendsService.clearFriends(user);
+    const deletedCount = await this.friendsService.clearFriends(this.ctx, user);
 
     await this.send(
       this.newEmbed().setDescription(

@@ -44,6 +44,7 @@ export class Add extends FriendsChildCommand<typeof args> {
 
     if (
       await this.friendsService.isAlreadyFriends(
+        this.ctx,
         senderUser!,
         username,
         mentionedDBUser
@@ -53,6 +54,7 @@ export class Add extends FriendsChildCommand<typeof args> {
     }
 
     const friend = await this.friendsService.addFriend(
+      this.ctx,
       senderUser!,
       mentionedDBUser || username,
       this.prefix

@@ -26,12 +26,18 @@ export default class SpotifyArtist extends SpotifyBaseCommand<typeof args> {
     });
 
     if (!keywords) {
-      let nowplaying = await this.lastFMService.nowPlaying(requestable);
+      let nowplaying = await this.lastFMService.nowPlaying(
+        this.ctx,
+        requestable
+      );
 
       keywords = nowplaying.artist;
     }
 
-    const spotifyArtist = await this.spotifyService.searchArtist(keywords);
+    const spotifyArtist = await this.spotifyService.searchArtist(
+      this.ctx,
+      keywords
+    );
 
     if (!spotifyArtist)
       throw new LogicError(

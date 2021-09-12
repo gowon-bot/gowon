@@ -35,7 +35,7 @@ export default class Login extends MirrorballBaseCommand<
   validation: Validation = {};
 
   async run() {
-    const { token } = await this.lastFMService.getToken();
+    const { token } = await this.lastFMService.getToken(this.ctx);
 
     const url = LinkGenerator.authURL(this.lastFMService.apikey, token);
 
@@ -96,9 +96,13 @@ export default class Login extends MirrorballBaseCommand<
     let user: User;
 
     try {
-      const session = await this.lastFMService.getSession({ token });
+      const session = await this.lastFMService.getSession(this.ctx, { token });
 
-      user = await this.usersService.setLastFMSession(this.author.id, session);
+      user = await this.usersService.setLastFMSession(
+        this.ctx,
+        this.author.id,
+        session
+      );
 
       await this.handleMirrorballLogin(
         this.author.id,
@@ -118,6 +122,7 @@ export default class Login extends MirrorballBaseCommand<
     session: string | undefined
   ) {
     await this.mirrorballService.login(
+      this.ctx,
       username,
       discordID,
       MirrorballUserType.Lastfm,
@@ -125,6 +130,7 @@ export default class Login extends MirrorballBaseCommand<
     );
     try {
       await this.mirrorballService.quietAddUserToGuild(
+        this.ctx,
         discordID,
         this.guild.id
       );
@@ -141,7 +147,7 @@ export default class Login extends MirrorballBaseCommand<
     for (const interval of intervals) {
       await sleep(interval);
       try {
-        session = await this.lastFMService.getSession({ token });
+        session = await this.lastFMService.getSession(this.ctx, { token });
         break;
       } catch {
         continue;
@@ -150,6 +156,7 @@ export default class Login extends MirrorballBaseCommand<
 
     if (session) {
       const user = await this.usersService.setLastFMSession(
+        this.ctx,
         this.author.id,
         session
       );

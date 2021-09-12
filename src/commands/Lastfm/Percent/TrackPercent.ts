@@ -31,12 +31,20 @@ export default class TrackPercent extends LastFMBaseCommand<typeof args> {
       });
 
     const { artist, track } = await this.lastFMArguments.getTrack(
+      this.ctx,
       senderRequestable
     );
 
     const [artistInfo, trackInfo] = await Promise.all([
-      this.lastFMService.artistInfo({ artist, username: requestable }),
-      this.lastFMService.trackInfo({ artist, track, username: requestable }),
+      this.lastFMService.artistInfo(this.ctx, {
+        artist,
+        username: requestable,
+      }),
+      this.lastFMService.trackInfo(this.ctx, {
+        artist,
+        track,
+        username: requestable,
+      }),
     ]);
 
     await this.traditionalReply(

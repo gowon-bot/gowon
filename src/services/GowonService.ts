@@ -9,18 +9,6 @@ import { RunAs } from "../lib/command/RunAs";
 import { SettingsManager } from "../lib/settings/SettingsManager";
 
 export class GowonService {
-  // Static methods/properties
-  private static instance: GowonService;
-
-  private constructor() {}
-
-  static getInstance(): GowonService {
-    if (!this.instance) {
-      this.instance = new GowonService();
-    }
-    return this.instance;
-  }
-
   // Instance methods/properties
   customPrefixes = {
     lastfm: "lfm:",

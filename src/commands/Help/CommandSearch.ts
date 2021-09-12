@@ -5,6 +5,7 @@ import { validators } from "../../lib/validation/validators";
 import { Command } from "../../lib/command/Command";
 import { AdminService } from "../../services/dbservices/AdminService";
 import { displayNumber } from "../../lib/views/displays";
+import { ServiceRegistry } from "../../services/ServicesRegistry";
 
 const args = {
   inputs: {
@@ -28,7 +29,7 @@ export default class CommandSearch extends BaseCommand<typeof args> {
     keywords: new validators.Required({}),
   };
 
-  adminService = new AdminService(this.gowonClient, this.logger);
+  adminService = ServiceRegistry.get(AdminService);
 
   async run() {
     const keywords = this.parsedArguments
@@ -38,6 +39,7 @@ export default class CommandSearch extends BaseCommand<typeof args> {
     const commandList = this.commandRegistry.deepList();
 
     const commands = await this.adminService.can.viewList(
+      this.ctx,
       commandList,
       this.message,
       this.gowonClient

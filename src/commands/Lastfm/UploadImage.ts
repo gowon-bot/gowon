@@ -1,4 +1,3 @@
-import { Message } from "discord.js";
 import { LogicError } from "../../errors";
 import { LinkGenerator } from "../../helpers/lastFM";
 import { Arguments } from "../../lib/arguments/arguments";
@@ -16,10 +15,13 @@ export default class ImageUpload extends LastFMBaseCommand<typeof args> {
 
   arguments: Arguments = args;
 
-  async run(_: Message) {
+  async run() {
     const { senderRequestable } = await this.parseMentions();
 
-    const nowPlaying = await this.lastFMService.nowPlaying(senderRequestable);
+    const nowPlaying = await this.lastFMService.nowPlaying(
+      this.ctx,
+      senderRequestable
+    );
 
     if (!nowPlaying.album) {
       throw new LogicError(

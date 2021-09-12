@@ -29,6 +29,7 @@ export class View extends PermissionsChildCommand {
       permissions = await addNamesToPermissions(
         message,
         await this.adminService.listPermissionsForCommand(
+          this.ctx,
           message.guild?.id!,
           this.command.id
         )
@@ -61,6 +62,7 @@ export class View extends PermissionsChildCommand {
       permissions = await addNamesToPermissions(
         message,
         await this.adminService.listPermissionsForEntity(
+          this.ctx,
           message.guild?.id!,
           entity.id
         )
@@ -93,7 +95,7 @@ export class View extends PermissionsChildCommand {
     } else {
       permissions = await addNamesToPermissions(
         message,
-        await this.adminService.listPermissions(message.guild?.id!)
+        await this.adminService.listPermissions(this.ctx, message.guild?.id!)
       );
 
       let groupedPermissions = permissions.reduce((acc, p) => {

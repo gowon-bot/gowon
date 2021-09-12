@@ -4,13 +4,14 @@ import { SpotifyService } from "../../services/Spotify/SpotifyService";
 import { Arguments } from "../../lib/arguments/arguments";
 import { LastFMService } from "../../services/LastFM/LastFMService";
 import { LastFMArguments } from "../../services/LastFM/LastFMArguments";
+import { ServiceRegistry } from "../../services/ServicesRegistry";
 
 export abstract class LastFMBaseCommand<
   T extends Arguments = Arguments
 > extends BaseCommand<T> {
-  lastFMService = new LastFMService(this.logger);
-  spotifyService = new SpotifyService(this.logger);
-  lastFMArguments = new LastFMArguments(this, this.lastFMService, this.logger);
+  lastFMService = ServiceRegistry.get(LastFMService);
+  spotifyService = ServiceRegistry.get(SpotifyService);
+  lastFMArguments = ServiceRegistry.get(LastFMArguments);
 
   category = "lastfm";
 }
@@ -22,8 +23,9 @@ export abstract class LastFMBaseParentCommand extends ParentCommand {
 export abstract class LastFMBaseChildCommand<
   T extends Arguments = Arguments
 > extends ChildCommand<T> {
-  lastFMService = new LastFMService(this.logger);
-  spotifyService = new SpotifyService(this.logger);
-  lastFMArguments = new LastFMArguments(this, this.lastFMService, this.logger);
+  lastFMService = ServiceRegistry.get(LastFMService);
+  spotifyService = ServiceRegistry.get(SpotifyService);
+  lastFMArguments = ServiceRegistry.get(LastFMArguments);
+
   category = "lastfm";
 }

@@ -10,6 +10,7 @@ export class Enable extends PermissionsChildCommand {
 
   async run(message: Message) {
     let disabledCommand = await this.adminService.enableCommand(
+      this.ctx,
       this.command.id,
       message.guild?.id!,
       this.author.id

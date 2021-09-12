@@ -8,6 +8,7 @@ import { ArtistCrownBannedError } from "../../../errors";
 import { displayNumber } from "../../../lib/views/displays";
 import { LineConsolidator } from "../../../lib/LineConsolidator";
 import { User } from "../../../database/entity/User";
+import { ServiceRegistry } from "../../../services/ServicesRegistry";
 
 const args = {
   inputs: {
@@ -24,16 +25,20 @@ export class Info extends CrownsChildCommand<typeof args> {
 
   arguments: Arguments = args;
 
-  redirectsService = new RedirectsService(this.logger);
+  redirectsService = ServiceRegistry.get(RedirectsService);
 
   async run(message: Message) {
     let { senderUser, senderRequestable } = await this.parseMentions({
       usernameRequired: !this.parsedArguments.artist,
     });
 
-    const artist = await this.lastFMArguments.getArtist(senderRequestable);
+    const artist = await this.lastFMArguments.getArtist(
+      this.ctx,
+      senderRequestable
+    );
 
     const artistDetails = await this.lastFMService.artistInfo(
+      this.ctx,
       senderRequestable
         ? {
             artist,
@@ -43,10 +48,11 @@ export class Info extends CrownsChildCommand<typeof args> {
     );
 
     let redirectArtistName =
-      (await this.redirectsService.getRedirect(artistDetails.name))?.to ||
-      artistDetails.name;
+      (await this.redirectsService.getRedirect(this.ctx, artistDetails.name))
+        ?.to || artistDetails.name;
 
     let crown = await this.crownsService.getCrown(
+      this.ctx,
       redirectArtistName,
       this.guild.id,
       {

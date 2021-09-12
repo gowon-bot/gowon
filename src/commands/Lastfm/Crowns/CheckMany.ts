@@ -34,17 +34,22 @@ export class CheckMany extends CrownsChildCommand<typeof args> {
     let { requestable } = await this.parseMentions();
 
     if (!artists) {
-      artists = [(await this.lastFMService.nowPlaying(requestable)).artist];
+      artists = [
+        (await this.lastFMService.nowPlaying(this.ctx, requestable)).artist,
+      ];
     }
 
     let artistDetailsList = await Promise.all(
       artists.map((artist) =>
-        this.lastFMService.artistInfo({ artist, username: requestable })
+        this.lastFMService.artistInfo(this.ctx, {
+          artist,
+          username: requestable,
+        })
       )
     );
 
     let crownChecks = artistDetailsList.map((ad) =>
-      this.crownsService.checkCrown({
+      this.crownsService.checkCrown(this.ctx, {
         message,
         discordID: message.author.id,
         artistName: ad.name,
@@ -55,7 +60,7 @@ export class CheckMany extends CrownsChildCommand<typeof args> {
     let checkedCrowns = await Promise.all(crownChecks);
 
     checkedCrowns.forEach((cc) =>
-      this.crownsService.scribe.handleCheck(cc, message)
+      this.crownsService.scribe.handleCheck(this.ctx, cc, message)
     );
 
     let display = checkedCrowns.reduce((acc, cc, idx) => {

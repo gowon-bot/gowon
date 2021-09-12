@@ -30,7 +30,7 @@ export default class TrackAt extends LastFMBaseCommand<typeof args> {
 
     let { requestable, perspective } = await this.parseMentions();
 
-    let topTracks = await this.lastFMService.topTracks({
+    let topTracks = await this.lastFMService.topTracks(this.ctx, {
       username: requestable,
       limit: 1,
       page: rank,

@@ -1,11 +1,16 @@
+import { SimpleMap } from "../../helpers/types";
 import { Paginator } from "./Paginator";
 
-export type MirrorballQueryFunction<P, R> = (params: P) => Promise<R>;
+export type MirrorballQueryFunction<P, R> = (
+  ctx: SimpleMap,
+  params: P
+) => Promise<R>;
 
-function onPage<P, R>(
+function onPage<P extends SimpleMap, R>(
   callback: MirrorballQueryFunction<P, R>,
-  pageSize: number
-): (params: P & { page?: number }) => Promise<R> {
+  pageSize: number,
+  ctx: SimpleMap
+): (ctx: SimpleMap, params: P & { page?: number }) => Promise<R> {
   return (params) => {
     const newParams = Object.assign(params, {
       pageInput: {
@@ -16,7 +21,7 @@ function onPage<P, R>(
 
     delete newParams["page"];
 
-    return Promise.resolve(callback(newParams));
+    return Promise.resolve(callback(ctx, newParams as any));
   };
 }
 
@@ -25,8 +30,9 @@ export class MirrorballPaginator<P, R> extends Paginator<P, R> {
     callback: MirrorballQueryFunction<P, R>,
     pageSize: number,
     maxPages: number,
-    params: P
+    params: P,
+    ctx: SimpleMap
   ) {
-    super(onPage(callback, pageSize), maxPages, params);
+    super(onPage(callback, pageSize, ctx), maxPages, params, ctx);
   }
 }

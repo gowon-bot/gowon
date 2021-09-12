@@ -35,7 +35,11 @@ export default class SetPatron extends BaseCommand<typeof args> {
     const id = this.parsedArguments.userID;
 
     try {
-      await this.usersService.setPatron(id!, !this.variationWasUsed("unset"));
+      await this.usersService.setPatron(
+        this.ctx,
+        id!,
+        !this.variationWasUsed("unset")
+      );
     } catch (e) {
       throw new LogicError(
         `Something went wrong setting that user as a patron`

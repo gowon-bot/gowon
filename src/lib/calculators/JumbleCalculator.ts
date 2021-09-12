@@ -1,14 +1,18 @@
 import { LastFMService } from "../../services/LastFM/LastFMService";
 import { TopArtist } from "../../services/LastFM/converters/TopTypes";
+import { SimpleMap } from "../../helpers/types";
+import { ServiceRegistry } from "../../services/ServicesRegistry";
 
 export class JumbleCalculator {
-  constructor(private username: string, private lastFMService: LastFMService) {}
+  private lastFMService = ServiceRegistry.get(LastFMService);
+
+  constructor(private ctx: SimpleMap, private username: string) {}
 
   async getArtist(
     poolAmount: number,
     options: { nonAscii?: boolean } = {}
   ): Promise<TopArtist | undefined> {
-    let topArtists = await this.lastFMService.topArtists({
+    let topArtists = await this.lastFMService.topArtists(this.ctx, {
       username: this.username,
       limit: poolAmount,
     });

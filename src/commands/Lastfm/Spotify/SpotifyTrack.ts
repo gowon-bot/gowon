@@ -26,12 +26,18 @@ export default class SpotifyTrack extends SpotifyBaseCommand<typeof args> {
     });
 
     if (!keywords) {
-      let nowplaying = await this.lastFMService.nowPlaying(requestable);
+      let nowplaying = await this.lastFMService.nowPlaying(
+        this.ctx,
+        requestable
+      );
 
       keywords = `${nowplaying.artist} - ${nowplaying.name}`;
     }
 
-    const spotifyTrack = await this.spotifyService.searchTrackRaw(keywords);
+    const spotifyTrack = await this.spotifyService.searchTrackRaw(
+      this.ctx,
+      keywords
+    );
 
     if (!spotifyTrack)
       throw new LogicError(

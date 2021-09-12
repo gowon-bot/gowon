@@ -27,7 +27,7 @@ export default class TagInfo extends InfoCommand<typeof args> {
   async run() {
     let tag = this.parsedArguments.tag!;
 
-    let tagInfo = await this.lastFMService.tagInfo({ tag });
+    let tagInfo = await this.lastFMService.tagInfo(this.ctx, { tag });
 
     let embed = this.newEmbed()
       .setTitle(tagInfo.name)

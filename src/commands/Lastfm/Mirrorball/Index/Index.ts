@@ -60,7 +60,11 @@ export default class Index extends MirrorballBaseCommand<
       authentificationRequired: true,
     });
 
-    this.mirrorballService.quietAddUserToGuild(this.author.id, this.guild.id);
+    this.mirrorballService.quietAddUserToGuild(
+      this.ctx,
+      this.author.id,
+      this.guild.id
+    );
 
     const indexingUsername = senderUsername;
 
@@ -112,7 +116,7 @@ export default class Index extends MirrorballBaseCommand<
         ConcurrentActions.Indexing,
         this.author.id
       );
-      this.usersService.setAsIndexed(this.author.id);
+      this.usersService.setAsIndexed(this.ctx, this.author.id);
       this.notifyUser(perspective, "index");
     });
   }

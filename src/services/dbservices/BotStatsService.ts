@@ -1,5 +1,5 @@
 import { CommandRun } from "../../database/entity/meta/CommandRun";
-import { BaseService } from "../BaseService";
+import { BaseService, BaseServiceContext } from "../BaseService";
 
 type UserTopCommands = {
   commandID: string;
@@ -7,13 +7,19 @@ type UserTopCommands = {
 }[];
 
 export class BotStatsService extends BaseService {
-  async countUserCommandRuns(discordID: string): Promise<number> {
-    this.log(`Counting command runs for user ${discordID}`);
+  async countUserCommandRuns(
+    ctx: BaseServiceContext,
+    discordID: string
+  ): Promise<number> {
+    this.log(ctx, `Counting command runs for user ${discordID}`);
     return await CommandRun.count({ userID: discordID });
   }
 
-  async userTopCommands(discordID: string): Promise<UserTopCommands> {
-    this.log(`Fetching top commands for user ${discordID}`);
+  async userTopCommands(
+    ctx: BaseServiceContext,
+    discordID: string
+  ): Promise<UserTopCommands> {
+    this.log(ctx, `Fetching top commands for user ${discordID}`);
 
     return (await CommandRun.getRepository().query(
       `SELECT

@@ -13,6 +13,7 @@ import { RedisInteractionService } from "./services/redis/RedisInteractionServic
 import pm2 from "pm2";
 import { mirrorballClient } from "./lib/indexing/client";
 import gql from "graphql-tag";
+import { ServiceRegistry } from "./services/ServicesRegistry";
 
 export const client = new GowonClient(
   new Client({
@@ -42,11 +43,11 @@ export const client = new GowonClient(
 );
 
 export const handler = new CommandHandler();
-const redisService = RedisInteractionService.getInstance();
-export const guildEventService = new GuildEventService(client);
 const db = new DB();
 const api = new GraphQLAPI();
-const gowonService = GowonService.getInstance();
+const gowonService = ServiceRegistry.get(GowonService);
+const redisService = ServiceRegistry.get(RedisInteractionService);
+export const guildEventService = ServiceRegistry.get(GuildEventService);
 
 export async function setup() {
   console.log(
@@ -135,6 +136,7 @@ async function logStartup(func: () => any, logItem: string): Promise<void> {
     console.log(
       chalk`{red ${logItem}${" ".repeat(32 - logItem.length)} FAILED}`
     );
+    console.error(e);
     return;
   }
   stopwatch.stop();

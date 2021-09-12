@@ -5,6 +5,7 @@ import { Validation } from "../../lib/validation/ValidationChecker";
 import { validators } from "../../lib/validation/validators";
 import { displayLink } from "../../lib/views/displays";
 import { GithubService } from "../../services/Github/GithubService";
+import { ServiceRegistry } from "../../services/ServicesRegistry";
 
 const args = {
   inputs: {
@@ -51,7 +52,7 @@ export default class Issue extends BaseCommand<typeof args> {
     title: new validators.Required({}),
   };
 
-  githubService = new GithubService(this.logger);
+  githubService = ServiceRegistry.get(GithubService);
 
   async run() {
     let title = this.parsedArguments.title!,
@@ -83,7 +84,7 @@ ${displayLink("Jump to message", this.message.url)}
     else if (this.variationWasUsed("documentation"))
       labels.push("documentation");
 
-    let issue = await this.githubService.createIssue({
+    let issue = await this.githubService.createIssue(this.ctx, {
       title,
       body: body + metadata,
       labels: labels,

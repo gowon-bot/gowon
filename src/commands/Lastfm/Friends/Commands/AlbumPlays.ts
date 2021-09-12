@@ -24,10 +24,11 @@ export class AlbumPlays extends FriendsChildCommand<typeof args> {
 
   async run() {
     const { artist, album } = await this.lastFMArguments.getAlbum(
+      this.ctx,
       this.senderRequestable
     );
 
-    const albumDetails = await new MultiRequester([
+    const albumDetails = await new MultiRequester(this.ctx, [
       ...this.friendUsernames,
       this.senderRequestable,
     ]).fetch(this.lastFMService.albumInfo.bind(this.lastFMService), {

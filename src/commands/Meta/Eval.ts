@@ -3,6 +3,7 @@ import { BaseCommand } from "../../lib/command/BaseCommand";
 import { Validation } from "../../lib/validation/ValidationChecker";
 import { validators } from "../../lib/validation/validators";
 import { LastFMService } from "../../services/LastFM/LastFMService";
+import { ServiceRegistry } from "../../services/ServicesRegistry";
 
 const args = {
   inputs: {
@@ -23,7 +24,7 @@ export default class Eval extends BaseCommand<typeof args> {
     script: new validators.Required({}),
   };
 
-  lastFMService = new LastFMService(this.logger);
+  lastFMService = ServiceRegistry.get(LastFMService);
 
   async run() {
     // Permissions failsafe

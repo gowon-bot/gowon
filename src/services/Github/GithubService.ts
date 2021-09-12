@@ -1,4 +1,4 @@
-import { BaseService } from "../BaseService";
+import { BaseService, BaseServiceContext } from "../BaseService";
 import {
   Params,
   CreateIssueParams,
@@ -32,10 +32,12 @@ export class GithubService extends BaseService {
   }
 
   async request<T>(
+    ctx: BaseServiceContext,
     path: string,
     options: { params?: Params; verb?: "POST" | "GET" } = {}
   ): Promise<T> {
     this.log(
+      ctx,
       `made github API request for ${path}` + options.params
         ? `with params ${JSON.stringify(options.params)}`
         : ""
@@ -52,8 +54,12 @@ export class GithubService extends BaseService {
     return response.data as T;
   }
 
-  async createIssue(params: CreateIssueParams): Promise<CreateIssueResponse> {
+  async createIssue(
+    ctx: BaseServiceContext,
+    params: CreateIssueParams
+  ): Promise<CreateIssueResponse> {
     return await this.request<CreateIssueResponse>(
+      ctx,
       `/repos/${this.owner}/${this.repo}/issues`,
       {
         params,
@@ -62,8 +68,12 @@ export class GithubService extends BaseService {
     );
   }
 
-  async getBranch(branch = "master"): Promise<GetBranchResponse> {
+  async getBranch(
+    ctx: BaseServiceContext,
+    branch = "master"
+  ): Promise<GetBranchResponse> {
     return await this.request<GetBranchResponse>(
+      ctx,
       `/repos/${this.owner}/${this.repo}/branches/${branch}`,
       {
         verb: "GET",

@@ -33,12 +33,13 @@ export default class TrackInfo extends InfoCommand<typeof args> {
     });
 
     const { artist, track } = await this.lastFMArguments.getTrack(
+      this.ctx,
       senderRequestable
     );
 
     const [trackInfo, spotifyTrack] = await Promise.all([
-      this.lastFMService.trackInfo({ artist, track }),
-      this.spotifyService.searchTrack(artist, track),
+      this.lastFMService.trackInfo(this.ctx, { artist, track }),
+      this.spotifyService.searchTrack(this.ctx, artist, track),
     ]);
 
     this.tagConsolidator.blacklistTags(trackInfo.artist.name, trackInfo.name);

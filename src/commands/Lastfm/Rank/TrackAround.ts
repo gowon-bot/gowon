@@ -40,11 +40,12 @@ export default class TrackAround extends LastFMBaseCommand<typeof args> {
       });
 
     const { artist, track } = await this.lastFMArguments.getTrack(
+      this.ctx,
       senderRequestable,
       true
     );
 
-    const topTracks = await this.lastFMService.topTracks({
+    const topTracks = await this.lastFMService.topTracks(this.ctx, {
       username: requestable,
       limit: 1000,
     });

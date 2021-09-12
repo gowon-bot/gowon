@@ -27,7 +27,11 @@ export class ArtistPlaysInARowComponent extends BaseCompoundComponent<
 
   async present() {
     const crown = this.values.artistCrown;
-    const combo = await getCombo(playsQuery(this.nowPlaying), this.values);
+    const combo = await getCombo(
+      this.ctx,
+      playsQuery(this.nowPlaying),
+      this.values
+    );
     const { plays, name } = getArtistPlays(this.values);
 
     let crownString = "";

@@ -37,11 +37,12 @@ export default class AlbumRank extends LastFMBaseCommand<typeof args> {
       });
 
     const { artist, album } = await this.lastFMArguments.getAlbum(
+      this.ctx,
       senderRequestable,
       true
     );
 
-    const topAlbums = await this.lastFMService.topAlbums({
+    const topAlbums = await this.lastFMService.topAlbums(this.ctx, {
       username: requestable,
       limit: 1000,
     });

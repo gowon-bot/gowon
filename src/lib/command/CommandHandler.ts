@@ -12,18 +12,28 @@ import { NicknameService } from "../../services/guilds/NicknameService";
 import Help from "../../commands/Help/Help";
 import { CommandRegistry } from "./CommandRegistry";
 import { Command } from "./Command";
+import { ServiceRegistry } from "../../services/ServicesRegistry";
 
 export class CommandHandler {
-  gowonService = GowonService.getInstance();
-  metaService = new MetaService();
   commandRegistry = CommandRegistry.getInstance();
   client!: GowonClient;
-  adminService = new AdminService(this.client);
+
+  adminService = ServiceRegistry.get(AdminService);
+  metaService = ServiceRegistry.get(MetaService);
+  gowonService = ServiceRegistry.get(GowonService);
+  private nicknameService = ServiceRegistry.get(NicknameService);
   private logger = new Logger();
-  private nicknameService = new NicknameService(this.logger);
 
   setClient(client: GowonClient) {
     this.client = client;
+  }
+
+  get context() {
+    return {
+      logger: this.logger,
+      client: this.client,
+      adminService: this.adminService,
+    };
   }
 
   async init() {
@@ -32,11 +42,13 @@ export class CommandHandler {
 
   async handle(message: Message): Promise<void> {
     this.nicknameService.recordNickname(
+      this.context,
       message.author.id,
       message.guild?.id,
       message.member?.nickname || message.author.username
     );
     this.nicknameService.recordUsername(
+      this.context,
       message.author.id,
       message.author.username + "#" + message.author.discriminator
     );
@@ -89,6 +101,7 @@ export class CommandHandler {
       }
 
       let canCheck = await this.adminService.can.run(
+        this.context,
         command,
         message,
         this.client,
@@ -110,7 +123,7 @@ export class CommandHandler {
 
       this.logger.logCommandHandle(runAs);
 
-      this.metaService.recordCommandRun(command.id, message);
+      this.metaService.recordCommandRun(this.context, command.id, message);
 
       this.runCommand(command, message, runAs);
     }

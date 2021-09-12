@@ -8,6 +8,7 @@ import {
   displayNumberedList,
 } from "../../../lib/views/displays";
 import { LogicError } from "../../../errors";
+import { ServiceRegistry } from "../../../services/ServicesRegistry";
 
 const args = {
   inputs: {
@@ -28,7 +29,7 @@ export default class ArtistAround extends LastFMBaseCommand<typeof args> {
 
   arguments: Arguments = args;
 
-  redirectsService = new RedirectsService(this.logger);
+  redirectsService = ServiceRegistry.get(RedirectsService);
   redirectsCache = new RedirectsCache(this.redirectsService);
 
   async run() {
@@ -38,11 +39,12 @@ export default class ArtistAround extends LastFMBaseCommand<typeof args> {
       });
 
     const artistName = await this.lastFMArguments.getArtist(
+      this.ctx,
       senderRequestable,
       true
     );
 
-    const topArtists = await this.lastFMService.topArtists({
+    const topArtists = await this.lastFMService.topArtists(this.ctx, {
       username: requestable,
       limit: 1000,
     });

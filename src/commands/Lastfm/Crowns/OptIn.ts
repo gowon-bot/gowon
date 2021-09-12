@@ -22,7 +22,11 @@ export class OptIn extends CrownsChildCommand {
     );
 
     if (await confirmationEmbed.awaitConfirmation()) {
-      await this.crownsService.optIn(message.guild?.id!, message.author.id);
+      await this.crownsService.optIn(
+        this.ctx,
+        message.guild?.id!,
+        message.author.id
+      );
 
       await confirmationEmbed.sentMessage?.edit({
         embeds: [embed.setDescription("Opted you back in!")],

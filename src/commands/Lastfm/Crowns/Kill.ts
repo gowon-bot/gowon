@@ -28,6 +28,7 @@ export class Kill extends CrownsChildCommand<typeof args> {
     const artist = this.parsedArguments.artist!;
 
     const crown = await this.crownsService.getCrown(
+      this.ctx,
       artist,
       message.guild?.id!,
       {
@@ -55,8 +56,8 @@ export class Kill extends CrownsChildCommand<typeof args> {
     );
 
     if (await confirmationEmbed.awaitConfirmation()) {
-      await this.crownsService.killCrown(artist, message.guild?.id!);
-      this.crownsService.scribe.kill(crown, message.author);
+      await this.crownsService.killCrown(this.ctx, artist, message.guild?.id!);
+      this.crownsService.scribe.kill(this.ctx, crown, message.author);
 
       await this.send(
         this.newEmbed()
@@ -67,10 +68,6 @@ export class Kill extends CrownsChildCommand<typeof args> {
           .setDescription(
             `Successfully killed the crown for ${artist.strong()}`
           )
-      );
-    } else {
-      await this.traditionalReply(
-        `No reaction, cancelling crown kill for ${artist.strong()}`
       );
     }
   }

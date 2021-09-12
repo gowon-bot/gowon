@@ -70,10 +70,12 @@ export abstract class TasteCommand<
 
         if (argName === "user" || argName === "user2") {
           username = await this.usersService.getUsername(
+            this.ctx,
             parsedArguments[argName].id
           );
         } else if (argName === "userID" || argName === "userID2") {
           username = await this.usersService.getUsername(
+            this.ctx,
             parsedArguments[argName]
           );
         } else if (argName === "username" || argName === "username2") {
@@ -98,7 +100,10 @@ export abstract class TasteCommand<
     let [userOneUsername, userTwoUsername] = usernames;
 
     if (!userTwoUsername) {
-      let senderUsername = await this.usersService.getUsername(this.author.id);
+      let senderUsername = await this.usersService.getUsername(
+        this.ctx,
+        this.author.id
+      );
 
       userTwoUsername = userOneUsername;
       userOneUsername = senderUsername;
@@ -124,13 +129,15 @@ export abstract class TasteCommand<
     let senderPaginator = new Paginator(
       this.lastFMService.topArtists.bind(this.lastFMService),
       maxPages,
-      { ...params, username: usernameOne }
+      { ...params, username: usernameOne },
+      this.ctx
     );
 
     let mentionedPaginator = new Paginator(
       this.lastFMService.topArtists.bind(this.lastFMService),
       maxPages,
-      { ...params, username: usernameTwo }
+      { ...params, username: usernameTwo },
+      this.ctx
     );
 
     return [senderPaginator, mentionedPaginator] as const;

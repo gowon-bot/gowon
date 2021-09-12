@@ -1,15 +1,14 @@
 import { LastFMBaseChildCommand } from "../LastFMBaseCommand";
-import { Message } from "discord.js";
 import { JumbleCalculator } from "../../../lib/calculators/JumbleCalculator";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { RedisService } from "../../../services/redis/RedisService";
+import { ServiceRegistry } from "../../../services/ServicesRegistry";
 
 export abstract class JumbleChildCommand<
   T extends Arguments = Arguments
 > extends LastFMBaseChildCommand<T> {
-  redisService = new RedisService(this.logger, {
-    prefix: "jumble",
-  });
+  redisService = ServiceRegistry.get(RedisService);
+
   parentName = "jumble";
   subcategory = "jumble";
 
@@ -17,8 +16,13 @@ export abstract class JumbleChildCommand<
 
   jumbleCalculator!: JumbleCalculator;
 
+  ctx = this.generateContext({
+    prefix: "jumble",
+  });
+
   async sessionSetJSON(key: string, value: Object | Array<unknown>) {
     return this.redisService.sessionSet(
+      this.ctx,
       this.author.id,
       this.guild.id,
       key,
@@ -29,6 +33,7 @@ export abstract class JumbleChildCommand<
   async sessionGetJSON<T extends Object>(key: string): Promise<T> {
     return JSON.parse(
       (await this.redisService.sessionGet(
+        this.ctx,
         this.author.id,
         this.guild.id,
         key
@@ -36,12 +41,12 @@ export abstract class JumbleChildCommand<
     ) as T;
   }
 
-  async prerun(message: Message) {
-    let senderUsername = await this.usersService.getUsername(message.author.id);
-
-    this.jumbleCalculator = new JumbleCalculator(
-      senderUsername,
-      this.lastFMService
+  async prerun() {
+    let senderUsername = await this.usersService.getUsername(
+      this.ctx,
+      this.message.author.id
     );
+
+    this.jumbleCalculator = new JumbleCalculator(this.ctx, senderUsername);
   }
 }

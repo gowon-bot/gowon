@@ -34,6 +34,7 @@ export class Guess extends JumbleChildCommand<typeof args> {
       jumbledArtist.unjumbled.toLowerCase().replace(/\s+/g, " ")
     ) {
       this.redisService.sessionDelete(
+        this.ctx,
         this.author.id,
         this.guild.id,
         jumbleRedisKey

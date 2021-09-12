@@ -11,7 +11,10 @@ export default class AmIScrobbling extends LastFMBaseCommand {
   async run() {
     let { senderRequestable } = await this.parseMentions();
 
-    let nowPlaying = await this.lastFMService.nowPlaying(senderRequestable);
+    let nowPlaying = await this.lastFMService.nowPlaying(
+      this.ctx,
+      senderRequestable
+    );
 
     await this.traditionalReply(
       nowPlaying.isNowPlaying ? "probably." : "probably not."

@@ -4,10 +4,12 @@ import { Permission } from "../../database/entity/Permission";
 import { Command } from "../command/Command";
 import { ChildCommand } from "../command/ParentCommand";
 import { In } from "typeorm";
-import { GowonService } from "../../services/GowonService";
 import { GowonClient } from "../GowonClient";
 import { checkRollout } from "../../helpers/permissions";
 import { CommandRegistry } from "../command/CommandRegistry";
+import { BaseService, BaseServiceContext } from "../../services/BaseService";
+import { ServiceRegistry } from "../../services/ServicesRegistry";
+import { GowonService } from "../../services/GowonService";
 
 export enum CheckFailReason {
   disabled = "disabled",
@@ -20,15 +22,28 @@ export interface CanCheck {
   reason?: CheckFailReason;
 }
 
-export class Can {
-  private commandRegistry = CommandRegistry.getInstance();
-  private gowonService = GowonService.getInstance();
+type CanContext = BaseServiceContext & {
+  adminService: AdminService;
+  client: GowonClient;
+};
 
-  cachedPermissons: {
+type MutableContext = {
+  cachedPermissons?: {
     [commandID: string]: Permission[];
-  } = {};
+  };
+};
 
-  constructor(private adminService: AdminService) {}
+export class Can extends BaseService<CanContext, MutableContext> {
+  private commandRegistry = CommandRegistry.getInstance();
+  private get gowonService() {
+    return ServiceRegistry.get(GowonService);
+  }
+
+  private getCachedPermissions(ctx: CanContext & MutableContext) {
+    if (!ctx.cachedPermissons) ctx.cachedPermissons = {};
+
+    return ctx.cachedPermissons;
+  }
 
   private async getParentIDs(
     child: ChildCommand,
@@ -83,6 +98,7 @@ export class Can {
   }
 
   async run(
+    ctx: CanContext,
     command: Command,
     message: Message,
     client: GowonClient,
@@ -111,7 +127,7 @@ export class Can {
     let permissions: Permission[];
 
     permissions =
-      this.cachedPermissons[command.id] ||
+      this.getCachedPermissions(ctx)[command.id] ||
       (await Permission.find({
         where: {
           serverID: message.guild?.id,
@@ -125,8 +141,8 @@ export class Can {
         },
       }));
 
-    if (!this.cachedPermissons[command.id])
-      this.cachedPermissons[command.id] = permissions;
+    if (!this.getCachedPermissions(ctx)[command.id])
+      this.getCachedPermissions(ctx)[command.id] = permissions;
 
     let disabled = (
       await Promise.all(
@@ -137,7 +153,11 @@ export class Can {
             ]
           : [command.id]
         ).map((id) => {
-          return this.adminService.isCommandDisabled(id, message.guild?.id!);
+          return ctx.adminService.isCommandDisabled(
+            ctx,
+            id,
+            message.guild?.id!
+          );
         })
       )
     ).reduce((acc, c) => {
@@ -162,6 +182,7 @@ export class Can {
   }
 
   async viewList(
+    ctx: CanContext,
     commands: Command[],
     message: Message,
     guild: GowonClient
@@ -171,15 +192,16 @@ export class Can {
     });
 
     allPermissions.forEach((c) => {
-      if (!this.cachedPermissons[c.id]) this.cachedPermissons[c.id] = [];
+      if (!this.getCachedPermissions(ctx)[c.id])
+        this.getCachedPermissions(ctx)[c.id] = [];
 
-      this.cachedPermissons[c.id].push(c);
+      this.getCachedPermissions(ctx)[c.id].push(c);
     });
 
     let passed = [] as Command[];
 
     for (let command of commands) {
-      let check = await this.run(command, message, guild);
+      let check = await this.run(ctx, command, message, guild);
 
       if (check.passed) passed.push(command);
     }

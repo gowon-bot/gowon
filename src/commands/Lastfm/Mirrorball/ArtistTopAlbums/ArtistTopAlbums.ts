@@ -47,6 +47,7 @@ export default class ArtistTopAlbums extends MirrorballBaseCommand<
       });
 
     const artistName = await this.lastFMArguments.getArtist(
+      this.ctx,
       senderRequestable,
       !this.parsedArguments.noRedirect
     );

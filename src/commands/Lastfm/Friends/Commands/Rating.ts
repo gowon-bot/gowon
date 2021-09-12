@@ -30,6 +30,7 @@ export class Rating extends FriendsChildCommand<typeof args> {
     });
 
     const { artist, album } = await this.lastFMArguments.getAlbum(
+      this.ctx,
       this.senderRequestable
     );
 
@@ -49,7 +50,10 @@ export class Rating extends FriendsChildCommand<typeof args> {
       }
     `;
 
-    const friends = await this.friendsService.listFriends(senderUser!);
+    const friends = await this.friendsService.listFriends(
+      this.ctx,
+      senderUser!
+    );
 
     const friendIDs = [
       ...(friends.map((f) => f.friend?.discordID).filter((f) => !!f) || []),
@@ -58,7 +62,7 @@ export class Rating extends FriendsChildCommand<typeof args> {
 
     const ratings = (await Promise.all(
       friendIDs.map(async (friendID) => {
-        const response = await this.mirrorballService.query(query, {
+        const response = await this.mirrorballService.query(this.ctx, query, {
           user: { discordID: friendID },
           album: { name: album, artist: { name: artist } },
         });
@@ -84,7 +88,10 @@ export class Rating extends FriendsChildCommand<typeof args> {
 
     const { rateYourMusicAlbum } = filteredRatings[0][1].ratings.ratings[0];
 
-    const albumInfo = await this.lastFMService.albumInfo({ artist, album });
+    const albumInfo = await this.lastFMService.albumInfo(this.ctx, {
+      artist,
+      album,
+    });
 
     const embed = this.newEmbed()
       .setTitle(

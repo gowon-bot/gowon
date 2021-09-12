@@ -9,6 +9,7 @@ import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { GowonService } from "../../../services/GowonService";
 import { displayDate } from "../../../lib/views/displays";
 import { ago } from "../../../helpers";
+import { ServiceRegistry } from "../../../services/ServicesRegistry";
 
 const args = {
   inputs: {
@@ -17,7 +18,7 @@ const args = {
       custom: (string: string) =>
         parseDate(
           string.trim(),
-          ...GowonService.getInstance().constants.dateParsers
+          ...ServiceRegistry.get(GowonService).constants.dateParsers
         ),
       index: -1,
     },
@@ -57,6 +58,7 @@ export default class GoBack extends LastFMBaseCommand<typeof args> {
     });
 
     let track = await this.lastFMService.goBack(
+      this.ctx,
       requestable,
       date || timeRange.from!
     );

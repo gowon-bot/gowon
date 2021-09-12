@@ -1,4 +1,5 @@
 import gql from "graphql-tag";
+import { SimpleMap } from "../../../helpers/types";
 import { RedirectsService } from "../../../services/dbservices/RedirectsService";
 import {
   RecentTrack,
@@ -6,6 +7,7 @@ import {
 } from "../../../services/LastFM/converters/RecentTracks";
 import { MirrorballService } from "../../../services/mirrorball/MirrorballService";
 import { PlaysParams } from "../../../services/mirrorball/MirrorballTypes";
+import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { Combo, ComboCalculator } from "../../calculators/ComboCalculator";
 import { mirrorballClient } from "../../indexing/client";
 import {
@@ -14,21 +16,27 @@ import {
 } from "../../paginators/MirrorballPaginator";
 
 export async function getCombo(
+  ctx: SimpleMap,
   queryFunc: MirrorballQueryFunction<any, any>,
   values: any
 ): Promise<Combo> {
-  const mirrorballService = new MirrorballService(values.logger);
+  const mirrorballService = ServiceRegistry.get(MirrorballService);
+  const redirectsService = ServiceRegistry.get(RedirectsService);
 
-  await mirrorballService.updateAndWait(values.dbUser.discordID, 5000);
+  await mirrorballService.updateAndWait(values, values.dbUser.discordID, 5000);
 
-  const paginator = new MirrorballPaginator(queryFunc, 1000, 10, {
-    playsInput: {
-      user: { discordID: values.dbUser.discordID },
-      sort: "scrobbled_at desc",
+  const paginator = new MirrorballPaginator(
+    queryFunc,
+    1000,
+    10,
+    {
+      playsInput: {
+        user: { discordID: values.dbUser.discordID },
+        sort: "scrobbled_at desc",
+      },
     },
-  });
-
-  const redirectsService = new RedirectsService(values.logger);
+    ctx
+  );
 
   const comboCalculator = new ComboCalculator(redirectsService, []);
 

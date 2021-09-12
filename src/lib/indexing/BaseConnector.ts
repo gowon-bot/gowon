@@ -1,10 +1,13 @@
 import { gql } from "@apollo/client/core";
 import { DocumentNode } from "graphql";
+import { SimpleMap } from "../../helpers/types";
+import { BaseServiceContext } from "../../services/BaseService";
 import { MirrorballService } from "../../services/mirrorball/MirrorballService";
+import { ServiceRegistry } from "../../services/ServicesRegistry";
 
 export interface Connector<ResponseT, ParamsT> {
   request(
-    mirrorballService: MirrorballService,
+    ctx: SimpleMap,
     vars?: ParamsT
   ): Promise<{ data: ResponseT } | ResponseT>;
 }
@@ -17,8 +20,10 @@ export abstract class BaseConnector<ResponseT, ParamsT>
   protected paginate = false;
   protected pagesToRequest?: number;
 
-  async request(mirrorballService: MirrorballService, variables?: ParamsT) {
-    return await mirrorballService.query(this.query, variables || {});
+  private mirrorballService = ServiceRegistry.get(MirrorballService);
+
+  async request(ctx: BaseServiceContext, variables?: ParamsT) {
+    return await this.mirrorballService.query(ctx, this.query, variables || {});
   }
 
   fragments = {

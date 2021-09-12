@@ -1,8 +1,10 @@
 import gql from "graphql-tag";
+import { SimpleMap } from "../../helpers/types";
 import { RedirectsService } from "../../services/dbservices/RedirectsService";
 import { RecentTracks } from "../../services/LastFM/converters/RecentTracks";
 import { MirrorballService } from "../../services/mirrorball/MirrorballService";
 import { MirrorballTag } from "../../services/mirrorball/MirrorballTypes";
+import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { RedirectsCache } from "../caches/RedirectsCache";
 
 interface Count {
@@ -36,11 +38,10 @@ export class ReportCalculator {
     tags: [],
   };
 
-  constructor(
-    private redirectsService: RedirectsService,
-    private mirrorballService: MirrorballService,
-    private tracks: RecentTracks
-  ) {}
+  private redirectsService = ServiceRegistry.get(RedirectsService);
+  private mirrorballService = ServiceRegistry.get(MirrorballService);
+
+  constructor(private ctx: SimpleMap, private tracks: RecentTracks) {}
 
   redirectsCache = new RedirectsCache(this.redirectsService);
 
@@ -117,7 +118,7 @@ export class ReportCalculator {
 
     const response = await this.mirrorballService.query<{
       tags: { tags: MirrorballTag[] };
-    }>(query, { artists });
+    }>(this.ctx, query, { artists });
 
     this.top.tags = response.tags.tags;
   }

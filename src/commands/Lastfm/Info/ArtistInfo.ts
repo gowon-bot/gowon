@@ -7,6 +7,7 @@ import { LineConsolidator } from "../../../lib/LineConsolidator";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { displayNumber } from "../../../lib/views/displays";
 import { TagsService } from "../../../services/mirrorball/services/TagsService";
+import { ServiceRegistry } from "../../../services/ServicesRegistry";
 
 const args = {
   inputs: {
@@ -25,8 +26,8 @@ export default class ArtistInfo extends InfoCommand<typeof args> {
 
   arguments: Arguments = args;
 
-  tagsService = new TagsService(this.logger);
-  crownsService = new CrownsService(this.logger);
+  tagsService = ServiceRegistry.get(TagsService);
+  crownsService = ServiceRegistry.get(CrownsService);
   lineConsolidator = new LineConsolidator();
 
   async run() {
@@ -35,20 +36,29 @@ export default class ArtistInfo extends InfoCommand<typeof args> {
         senderRequired: !this.parsedArguments.artist,
       });
 
-    const artist = await this.lastFMArguments.getArtist(senderRequestable);
+    const artist = await this.lastFMArguments.getArtist(
+      this.ctx,
+      senderRequestable
+    );
 
     const [artistInfo, userInfo, spotifyArtist] = await Promise.all([
-      this.lastFMService.artistInfo({ artist, username: requestable }),
-      this.lastFMService.userInfo({ username: requestable }),
-      this.spotifyService.searchArtist(artist),
+      this.lastFMService.artistInfo(this.ctx, {
+        artist,
+        username: requestable,
+      }),
+      this.lastFMService.userInfo(this.ctx, { username: requestable }),
+      this.spotifyService.searchArtist(this.ctx, artist),
     ]);
 
     const crown = await this.crownsService.getCrownDisplay(
+      this.ctx,
       artistInfo.name,
       this.guild
     );
 
-    const tags = await this.tagsService.getTagsForArtists([{ name: artist }]);
+    const tags = await this.tagsService.getTagsForArtists(this.ctx, [
+      { name: artist },
+    ]);
 
     this.tagConsolidator.addTags(artistInfo.tags);
     this.tagConsolidator.addTags(tags);

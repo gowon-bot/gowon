@@ -3,9 +3,10 @@ import { GowonService } from "../services/GowonService";
 import { ParentCommand } from "./command/ParentCommand";
 import { RunAs } from "./command/RunAs";
 import { CommandRegistry } from "./command/CommandRegistry";
+import { ServiceRegistry } from "../services/ServicesRegistry";
 
 export class AliasChecker {
-  private gowonService = GowonService.getInstance();
+  private gowonService = ServiceRegistry.get(GowonService);
   private commandRegistry = CommandRegistry.getInstance();
 
   constructor(private aliasesString: string) {}

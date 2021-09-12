@@ -11,7 +11,7 @@ export default class NowPlayingCompact extends NowPlayingBaseCommand {
       noDiscordUser: true,
     });
 
-    let nowPlaying = await this.lastFMService.nowPlaying(requestable);
+    let nowPlaying = await this.lastFMService.nowPlaying(this.ctx, requestable);
 
     let nowPlayingEmbed = this.nowPlayingEmbed(nowPlaying, username);
 

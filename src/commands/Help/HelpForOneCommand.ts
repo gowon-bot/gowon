@@ -7,6 +7,7 @@ import { flatDeep } from "../../helpers";
 import { ParentCommand } from "../../lib/command/ParentCommand";
 import { LineConsolidator } from "../../lib/LineConsolidator";
 import { Command } from "../../lib/command/Command";
+import { ServiceRegistry } from "../../services/ServicesRegistry";
 
 const args = {
   inputs: {
@@ -21,7 +22,7 @@ export default class HelpForOneCommand extends BaseCommand<typeof args> {
 
   arguments: Arguments = args;
 
-  adminService = new AdminService(this.gowonClient);
+  adminService = ServiceRegistry.get(AdminService);
 
   async run(message: Message) {
     let command = this.parsedArguments.command!;
@@ -44,8 +45,14 @@ export default class HelpForOneCommand extends BaseCommand<typeof args> {
     }
 
     if (
-      !(await this.adminService.can.run(command, message, this.gowonClient))
-        .passed
+      !(
+        await this.adminService.can.run(
+          this.ctx,
+          command,
+          message,
+          this.gowonClient
+        )
+      ).passed
     ) {
       throw new CommandNotFoundError();
     }
@@ -103,6 +110,7 @@ export default class HelpForOneCommand extends BaseCommand<typeof args> {
     command: ParentCommand
   ) {
     let commands = await this.adminService.can.viewList(
+      this.ctx,
       command.children.commands,
       message,
       this.gowonClient

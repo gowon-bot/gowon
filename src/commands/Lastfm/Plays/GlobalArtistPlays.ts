@@ -29,9 +29,12 @@ export default class GlobalArtistPlays extends LastFMBaseCommand<typeof args> {
         senderRequired: !this.parsedArguments.artist,
       });
 
-    const artist = await this.lastFMArguments.getArtist(senderRequestable);
+    const artist = await this.lastFMArguments.getArtist(
+      this.ctx,
+      senderRequestable
+    );
 
-    const artistDetails = await this.lastFMService.artistInfo({
+    const artistDetails = await this.lastFMService.artistInfo(this.ctx, {
       artist,
       username: requestable,
     });

@@ -43,6 +43,7 @@ export class Remove extends FriendsChildCommand<typeof args> {
     }
 
     await this.friendsService.removeFriend(
+      this.ctx,
       senderUser!,
       mentionedDBUser || username
     );

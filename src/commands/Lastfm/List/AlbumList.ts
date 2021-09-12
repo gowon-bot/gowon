@@ -13,7 +13,7 @@ export default class AlbumList extends ListCommand {
   async run() {
     const { requestable, username } = await this.parseMentions();
 
-    const topAlbums = await this.lastFMService.topAlbums({
+    const topAlbums = await this.lastFMService.topAlbums(this.ctx, {
       username: requestable,
       limit: this.listAmount,
       period: this.timePeriod,

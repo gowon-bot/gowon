@@ -9,6 +9,7 @@ import { TagConsolidator } from "../../../../lib/tags/TagConsolidator";
 import { displayDate, displayNumber } from "../../../../lib/views/displays";
 import { RedirectsService } from "../../../../services/dbservices/RedirectsService";
 import { RecentTracks } from "../../../../services/LastFM/converters/RecentTracks";
+import { ServiceRegistry } from "../../../../services/ServicesRegistry";
 import { YearConnector, YearParams, YearResponse } from "./Year.connector";
 
 const args = {
@@ -30,7 +31,7 @@ export default class Year extends MirrorballBaseCommand<
   arguments: Arguments = args;
 
   connector = new YearConnector();
-  redirectsService = new RedirectsService(this.logger);
+  redirectsService = ServiceRegistry.get(RedirectsService);
 
   private readonly pageSize = 5000;
 
@@ -60,7 +61,8 @@ export default class Year extends MirrorballBaseCommand<
             to: `${~~(new Date().getTime() / 1000)}`,
           },
         },
-      }
+      },
+      this.ctx
     );
 
     const firstPage = await paginator.getNext();
@@ -79,11 +81,7 @@ export default class Year extends MirrorballBaseCommand<
 
     firstPage.concat(restPages);
 
-    const reportCalculator = new ReportCalculator(
-      this.redirectsService,
-      this.mirrorballService,
-      firstPage
-    );
+    const reportCalculator = new ReportCalculator(this.ctx, firstPage);
 
     const month = await reportCalculator.calculate();
 

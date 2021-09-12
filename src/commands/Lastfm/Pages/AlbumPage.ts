@@ -24,9 +24,12 @@ export default class AlbumPage extends LastFMBaseCommand<typeof args> {
   async run() {
     const { requestable } = await this.parseMentions();
 
-    const { artist, album } = await this.lastFMArguments.getAlbum(requestable);
+    const { artist, album } = await this.lastFMArguments.getAlbum(
+      this.ctx,
+      requestable
+    );
 
-    const albumDetails = await this.lastFMService.albumInfo({
+    const albumDetails = await this.lastFMService.albumInfo(this.ctx, {
       artist,
       album,
       username: requestable,

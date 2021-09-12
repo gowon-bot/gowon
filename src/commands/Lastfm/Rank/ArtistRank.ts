@@ -6,6 +6,7 @@ import { RedirectsService } from "../../../services/dbservices/RedirectsService"
 import { displayNumber } from "../../../lib/views/displays";
 import { LogicError } from "../../../errors";
 import { toInt } from "../../../helpers/lastFM";
+import { ServiceRegistry } from "../../../services/ServicesRegistry";
 
 const args = {
   inputs: {
@@ -26,7 +27,7 @@ export default class ArtistRank extends LastFMBaseCommand<typeof args> {
 
   arguments: Arguments = args;
 
-  redirectsService = new RedirectsService(this.logger);
+  redirectsService = ServiceRegistry.get(RedirectsService);
   redirectsCache = new RedirectsCache(this.redirectsService);
 
   async run() {
@@ -36,11 +37,12 @@ export default class ArtistRank extends LastFMBaseCommand<typeof args> {
       });
 
     const artistName = await this.lastFMArguments.getArtist(
+      this.ctx,
       senderRequestable,
       true
     );
 
-    const topArtists = await this.lastFMService.topArtists({
+    const topArtists = await this.lastFMService.topArtists(this.ctx, {
       username: requestable,
       limit: 1000,
     });

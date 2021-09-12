@@ -29,14 +29,16 @@ export class History extends CrownsChildCommand<typeof args> {
     });
 
     if (!artist) {
-      artist = (await this.lastFMService.nowPlaying(senderUsername)).artist;
+      artist = (await this.lastFMService.nowPlaying(this.ctx, senderUsername))
+        .artist;
     }
 
-    let artistDetails = await this.lastFMService.artistInfo({
+    let artistDetails = await this.lastFMService.artistInfo(this.ctx, {
       artist,
     });
 
     let crown = await this.crownsService.getCrown(
+      this.ctx,
       artistDetails.name,
       message.guild?.id!,
       { refresh: false }
@@ -48,7 +50,7 @@ export class History extends CrownsChildCommand<typeof args> {
       );
     }
 
-    let history = await this.crownsService.scribe.getHistory(crown, [
+    let history = await this.crownsService.scribe.getHistory(this.ctx, crown, [
       CrownEventString.snatched,
       CrownEventString.created,
     ]);

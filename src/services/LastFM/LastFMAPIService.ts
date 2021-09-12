@@ -60,10 +60,11 @@ import {
   BadLastFMResponseError,
   RecordNotFoundError,
 } from "../../errors";
-import { BaseService } from "../BaseService";
+import { BaseService, BaseServiceContext } from "../BaseService";
 import { toInt } from "../../helpers/lastFM";
 import { MirrorballCacheService } from "../mirrorball/MirrorballCacheService";
 import { SimpleMap } from "../../helpers/types";
+import { ServiceRegistry } from "../ServicesRegistry";
 
 export interface SessionKey {
   username: string;
@@ -79,7 +80,9 @@ export function isSessionKey(
 }
 
 export class LastFMAPIService extends BaseService {
-  private mirrorballCacheService = new MirrorballCacheService(this.logger);
+  private get mirrorballCacheService() {
+    return ServiceRegistry.get<MirrorballCacheService>(MirrorballCacheService);
+  }
 
   url = "https://ws.audioscrobbler.com/2.0/";
 
@@ -101,9 +104,13 @@ export class LastFMAPIService extends BaseService {
     });
   }
 
-  async _recentTracks(params: RecentTracksParams): Promise<RawRecentTracks> {
+  async _recentTracks(
+    ctx: BaseServiceContext,
+    params: RecentTracksParams
+  ): Promise<RawRecentTracks> {
     return (
       await this.request<RawRecentTracksResponse>(
+        ctx,
         "user.getrecenttracks",
         params
       )
@@ -111,17 +118,25 @@ export class LastFMAPIService extends BaseService {
   }
 
   async _recentTracksExtended(
+    ctx: BaseServiceContext,
     params: RecentTracksParams
   ): Promise<RawRecentTracksExtended> {
-    return await this.request<RawRecentTracksExtended>("user.getrecenttracks", {
-      ...params,
-      extended: 1,
-    });
+    return await this.request<RawRecentTracksExtended>(
+      ctx,
+      "user.getrecenttracks",
+      {
+        ...params,
+        extended: 1,
+      }
+    );
   }
 
-  async _trackInfo(params: TrackInfoParams): Promise<RawTrackInfo> {
+  async _trackInfo(
+    ctx: BaseServiceContext,
+    params: TrackInfoParams
+  ): Promise<RawTrackInfo> {
     let response = (
-      await this.request<RawTrackInfoResponse>("track.getInfo", params)
+      await this.request<RawTrackInfoResponse>(ctx, "track.getInfo", params)
     ).track;
 
     if (
@@ -133,14 +148,17 @@ export class LastFMAPIService extends BaseService {
     return response;
   }
 
-  async _artistInfo(params: ArtistInfoParams): Promise<RawArtistInfo> {
+  async _artistInfo(
+    ctx: BaseServiceContext,
+    params: ArtistInfoParams
+  ): Promise<RawArtistInfo> {
     let response = (
-      await this.request<RawArtistInfoResponse>("artist.getInfo", params, {
+      await this.request<RawArtistInfoResponse>(ctx, "artist.getInfo", params, {
         post: true,
       })
     ).artist;
 
-    this.mirrorballCacheService.cacheArtistInfo(response);
+    this.mirrorballCacheService.cacheArtistInfo(ctx, response);
 
     if (
       params.username &&
@@ -152,9 +170,12 @@ export class LastFMAPIService extends BaseService {
     return response;
   }
 
-  async _albumInfo(params: AlbumInfoParams): Promise<RawAlbumInfo> {
+  async _albumInfo(
+    ctx: BaseServiceContext,
+    params: AlbumInfoParams
+  ): Promise<RawAlbumInfo> {
     let response = (
-      await this.request<RawAlbumInfoResponse>("album.getInfo", params)
+      await this.request<RawAlbumInfoResponse>(ctx, "album.getInfo", params)
     ).album;
 
     if (
@@ -166,18 +187,29 @@ export class LastFMAPIService extends BaseService {
     return response;
   }
 
-  async _userInfo(params: UserInfoParams): Promise<RawUserInfo> {
-    return (await this.request<RawUserInfoResponse>("user.getInfo", params))
-      .user;
-  }
-
-  async _tagInfo(params: TagInfoParams): Promise<RawTagInfo> {
-    return (await this.request<RawTagInfoResponse>("tag.getInfo", params)).tag;
-  }
-
-  async _topArtists(params: TopArtistsParams): Promise<RawTopArtists> {
+  async _userInfo(
+    ctx: BaseServiceContext,
+    params: UserInfoParams
+  ): Promise<RawUserInfo> {
     return (
-      await this.request<RawTopArtistsResponse>("user.getTopArtists", {
+      await this.request<RawUserInfoResponse>(ctx, "user.getInfo", params)
+    ).user;
+  }
+
+  async _tagInfo(
+    ctx: BaseServiceContext,
+    params: TagInfoParams
+  ): Promise<RawTagInfo> {
+    return (await this.request<RawTagInfoResponse>(ctx, "tag.getInfo", params))
+      .tag;
+  }
+
+  async _topArtists(
+    ctx: BaseServiceContext,
+    params: TopArtistsParams
+  ): Promise<RawTopArtists> {
+    return (
+      await this.request<RawTopArtistsResponse>(ctx, "user.getTopArtists", {
         limit: 50,
         page: 1,
         period: "overall",
@@ -186,9 +218,12 @@ export class LastFMAPIService extends BaseService {
     ).topartists;
   }
 
-  async _topAlbums(params: TopAlbumsParams): Promise<RawTopAlbums> {
+  async _topAlbums(
+    ctx: BaseServiceContext,
+    params: TopAlbumsParams
+  ): Promise<RawTopAlbums> {
     return (
-      await this.request<RawTopAlbumsResponse>("user.getTopAlbums", {
+      await this.request<RawTopAlbumsResponse>(ctx, "user.getTopAlbums", {
         limit: 50,
         page: 1,
         period: "overall",
@@ -197,9 +232,12 @@ export class LastFMAPIService extends BaseService {
     ).topalbums;
   }
 
-  async _topTracks(params: TopTracksParams): Promise<RawTopTracks> {
+  async _topTracks(
+    ctx: BaseServiceContext,
+    params: TopTracksParams
+  ): Promise<RawTopTracks> {
     return (
-      await this.request<RawTopTracksResponse>("user.getTopTracks", {
+      await this.request<RawTopTracksResponse>(ctx, "user.getTopTracks", {
         page: 1,
         limit: 50,
         period: "overall",
@@ -209,9 +247,11 @@ export class LastFMAPIService extends BaseService {
   }
 
   async _artistPopularTracks(
+    ctx: BaseServiceContext,
     params: ArtistPopularTracksParams
   ): Promise<RawArtistPopularTracks> {
     let response = await this.request<RawArtistPopularTracksResponse>(
+      ctx,
       "artist.getTopTracks",
       params
     );
@@ -219,21 +259,27 @@ export class LastFMAPIService extends BaseService {
     return response.toptracks;
   }
 
-  async _tagTopArtists(params: TagTopArtistsParams): Promise<RawTagTopArtists> {
+  async _tagTopArtists(
+    ctx: BaseServiceContext,
+    params: TagTopArtistsParams
+  ): Promise<RawTagTopArtists> {
     let response = await this.request<RawTagTopArtistsResponse>(
+      ctx,
       "tag.gettopartists",
       params
     );
 
-    this.mirrorballCacheService.cacheTagTopArtists(response.topartists);
+    this.mirrorballCacheService.cacheTagTopArtists(ctx, response.topartists);
 
     return response.topartists;
   }
 
   async _trackSearch(
+    ctx: BaseServiceContext,
     params: TrackSearchParams
   ): Promise<RawTrackSearchResponse> {
     let response = await this.request<RawTrackSearchResponse>(
+      ctx,
       "track.search",
       this.cleanSearchParams<TrackSearchParams>(params)
     );
@@ -242,9 +288,11 @@ export class LastFMAPIService extends BaseService {
   }
 
   async _getArtistCorrection(
+    ctx: BaseServiceContext,
     params: GetArtistCorrectionParams
   ): Promise<RawArtistCorrection> {
     let response = await this.request<RawGetArtistCorrectionResponse>(
+      ctx,
       "artist.getCorrection",
       params
     );
@@ -255,10 +303,17 @@ export class LastFMAPIService extends BaseService {
     return response.corrections.correction.artist;
   }
 
-  async _userGetFriends(params: UserGetFriendsParams): Promise<RawFriends> {
+  async _userGetFriends(
+    ctx: BaseServiceContext,
+    params: UserGetFriendsParams
+  ): Promise<RawFriends> {
     try {
       return (
-        await this.request<RawUserGetFriendsResponse>("user.getFriends", params)
+        await this.request<RawUserGetFriendsResponse>(
+          ctx,
+          "user.getFriends",
+          params
+        )
       ).friends;
     } catch (e) {
       if (e.response?.message === "no such page") {
@@ -276,17 +331,25 @@ export class LastFMAPIService extends BaseService {
     }
   }
 
-  async _tagTopTracks(params: TagTopTracksParams): Promise<RawTagTopTracks> {
+  async _tagTopTracks(
+    ctx: BaseServiceContext,
+    params: TagTopTracksParams
+  ): Promise<RawTagTopTracks> {
     return (
-      await this.request<RawTagTopTracksResponse>("tag.getTopTracks", params)
+      await this.request<RawTagTopTracksResponse>(
+        ctx,
+        "tag.getTopTracks",
+        params
+      )
     ).tracks;
   }
 
-  async love(params: TrackLoveParams): Promise<void> {
-    return await this.request("track.love", params, { post: true });
+  async love(ctx: BaseServiceContext, params: TrackLoveParams): Promise<void> {
+    return await this.request(ctx, "track.love", params, { post: true });
   }
 
   private async request<T>(
+    ctx: BaseServiceContext,
     method: string,
     params: Params,
     options: { post?: boolean; forceSignature?: boolean } = {
@@ -301,7 +364,7 @@ export class LastFMAPIService extends BaseService {
     });
 
     if (!options.forceSignature && !builtParams.sk) {
-      return await this.unauthedRequest<T>(method, params);
+      return await this.unauthedRequest<T>(ctx, method, params);
     }
 
     let signature = Object.keys(builtParams)
@@ -316,6 +379,7 @@ export class LastFMAPIService extends BaseService {
       .digest("hex");
 
     return await this.unauthedRequest<T>(
+      ctx,
       method,
       { ...builtParams, api_sig },
       {
@@ -326,11 +390,13 @@ export class LastFMAPIService extends BaseService {
   }
 
   private async unauthedRequest<T>(
+    ctx: BaseServiceContext,
     method: string,
     params: Params,
     fetchOptions?: RequestInit
   ): Promise<T> {
     this.log(
+      ctx,
       `made ${
         (params as any).sk ? "authenticated " : ""
       }API request for ${method} with params ${JSON.stringify(
@@ -354,18 +420,31 @@ export class LastFMAPIService extends BaseService {
     return jsonResponse as T;
   }
 
-  async getToken(): Promise<{ token: string }> {
-    return await this.request("auth.getToken", {}, { forceSignature: true });
+  async getToken(ctx: BaseServiceContext): Promise<{ token: string }> {
+    return await this.request(
+      ctx,
+      "auth.getToken",
+      {},
+      { forceSignature: true }
+    );
   }
 
-  async _getSession(params: GetSessionParams): Promise<RawLastFMSession> {
-    return await this.request("auth.getSession", params, {
+  async _getSession(
+    ctx: BaseServiceContext,
+    params: GetSessionParams
+  ): Promise<RawLastFMSession> {
+    return await this.request(ctx, "auth.getSession", params, {
       forceSignature: true,
     });
   }
 
-  async scrobbleTrack(params: ScrobbleParams, sk?: string) {
+  async scrobbleTrack(
+    ctx: BaseServiceContext,
+    params: ScrobbleParams,
+    sk?: string
+  ) {
     return await this.request(
+      ctx,
       "track.scrobble",
       {
         ...params,

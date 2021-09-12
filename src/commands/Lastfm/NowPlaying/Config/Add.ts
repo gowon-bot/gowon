@@ -34,7 +34,10 @@ export class Add extends NowPlayingConfigChildCommand<typeof args> {
       senderRequired: true,
     });
 
-    const config = await this.configService.getConfigNoUnused(senderUser!);
+    const config = await this.configService.getConfigNoUnused(
+      this.ctx,
+      senderUser!
+    );
 
     const notIncluded = newOptions.filter(
       (c) => Object.keys(componentMap).includes(c) && !config.includes(c)
@@ -45,7 +48,7 @@ export class Add extends NowPlayingConfigChildCommand<typeof args> {
 
     config.push(...notIncluded);
 
-    await this.configService.saveConfigForUser(senderUser!, config);
+    await this.configService.saveConfigForUser(this.ctx, senderUser!, config);
 
     const embed = this.newEmbed().setAuthor(
       ...this.generateEmbedAuthor("Config add")

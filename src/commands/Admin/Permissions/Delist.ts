@@ -22,6 +22,7 @@ export class Delist extends PermissionsChildCommand {
     for (let entity of [...this.users, ...this.roles]) {
       try {
         await this.adminService.delist(
+          this.ctx,
           entity.id,
           message.guild?.id!,
           this.command.id

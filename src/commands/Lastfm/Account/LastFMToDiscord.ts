@@ -27,7 +27,10 @@ export default class LastFmToDiscord extends LastFMBaseCommand<typeof args> {
   async run() {
     let username = this.parsedArguments.username!;
 
-    let user = await this.usersService.getUserFromLastFMUsername(username);
+    let user = await this.usersService.getUserFromLastFMUsername(
+      this.ctx,
+      username
+    );
 
     let member = user
       ? await this.guild.members.fetch(user.discordID)
@@ -38,12 +41,16 @@ export default class LastFmToDiscord extends LastFMBaseCommand<typeof args> {
         `couldn't find anyone logged in as ${username.code()} in this server.`
       );
 
-    this.traditionalReply(
-      `${(member.nickname || member.user.username).strong()} (${
-        member.user.username
-      }#${
-        member.user.discriminator
-      }) is logged in as ${username.toLowerCase().code()}.`
-    );
+    const embed = this.newEmbed()
+      .setAuthor(...this.generateEmbedAuthor("Account lookup"))
+      .setDescription(
+        `${(member.nickname || member.user.username).strong()} (${
+          member.user.username
+        }#${member.user.discriminator}) is logged in as ${username
+          .toLowerCase()
+          .code()}.`
+      );
+
+    await this.send(embed);
   }
 }

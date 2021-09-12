@@ -11,6 +11,7 @@ import {
   displayNumberedList,
 } from "../../../../../lib/views/displays";
 import { CrownsService } from "../../../../../services/dbservices/CrownsService";
+import { ServiceRegistry } from "../../../../../services/ServicesRegistry";
 import { WhoKnowsBaseCommand } from "../WhoKnowsBaseCommand";
 import {
   WhoKnowsArtistConnector,
@@ -46,7 +47,7 @@ export default class WhoKnowsArtist extends WhoKnowsBaseCommand<
 
   arguments: Arguments = args;
 
-  crownsService = new CrownsService(this.logger);
+  crownsService = ServiceRegistry.get(CrownsService);
 
   async run() {
     const { senderRequestable, senderUser, senderMirrorballUser } =
@@ -56,13 +57,14 @@ export default class WhoKnowsArtist extends WhoKnowsBaseCommand<
       });
 
     const artistName = await this.lastFMArguments.getArtist(
+      this.ctx,
       senderRequestable,
       !this.parsedArguments.noRedirect
     );
 
     const crown = this.isGlobal()
       ? undefined
-      : await this.crownsService.getCrown(artistName, this.guild.id);
+      : await this.crownsService.getCrown(this.ctx, artistName, this.guild.id);
 
     if (this.variationWasUsed("update")) {
       await this.updateAndWait(this.author.id);

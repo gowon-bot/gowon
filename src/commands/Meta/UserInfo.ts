@@ -5,6 +5,7 @@ import { standardMentions } from "../../lib/arguments/mentions/mentions";
 import { LineConsolidator } from "../../lib/LineConsolidator";
 import { displayNumber } from "../../lib/views/displays";
 import { Emoji } from "../../lib/Emoji";
+import { ServiceRegistry } from "../../services/ServicesRegistry";
 
 const args = {
   inputs: {},
@@ -21,7 +22,7 @@ export default class UserInfo extends BaseCommand<typeof args> {
 
   arguments: Arguments = args;
 
-  botStatsService = new BotStatsService();
+  botStatsService = ServiceRegistry.get(BotStatsService);
 
   async run() {
     const { dbUser, discordUser } = await this.parseMentions({
@@ -30,14 +31,17 @@ export default class UserInfo extends BaseCommand<typeof args> {
     });
 
     const commandRunCount = await this.botStatsService.countUserCommandRuns(
+      this.ctx,
       dbUser.discordID
     );
 
     const topCommands = await this.botStatsService.userTopCommands(
+      this.ctx,
       dbUser.discordID
     );
 
     const cachedPlaycount = await this.mirrorballService.getCachedPlaycount(
+      this.ctx,
       discordUser?.id || dbUser.discordID
     );
 

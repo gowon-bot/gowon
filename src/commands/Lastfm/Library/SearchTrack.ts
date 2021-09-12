@@ -28,7 +28,8 @@ export default class SearchTrack extends SearchCommand {
     let paginator = new Paginator(
       this.lastFMService.topTracks.bind(this.lastFMService),
       this.variationWasUsed("deep") ? 6 : 3,
-      { username: requestable, limit: 1000 }
+      { username: requestable, limit: 1000 },
+      this.ctx
     );
 
     let topTracks = await paginator.getAllToConcatonable({

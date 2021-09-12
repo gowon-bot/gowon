@@ -14,8 +14,13 @@ export class TopCrowns extends CrownsChildCommand {
     });
 
     let [crowns, crownsCount] = await Promise.all([
-      this.crownsService.listTopCrownsInServer(this.guild.id, 10, serverUsers),
-      this.crownsService.countAllInServer(this.guild.id, serverUsers),
+      this.crownsService.listTopCrownsInServer(
+        this.ctx,
+        this.guild.id,
+        10,
+        serverUsers
+      ),
+      this.crownsService.countAllInServer(this.ctx, this.guild.id, serverUsers),
     ]);
 
     let embed = this.newEmbed()

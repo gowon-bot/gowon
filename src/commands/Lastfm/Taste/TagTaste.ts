@@ -9,6 +9,7 @@ import { TagsService } from "../../../services/mirrorball/services/TagsService";
 import { TasteCommand, tasteMentions } from "./TasteCommand";
 import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingEmbed";
 import { displayNumber } from "../../../lib/views/displays";
+import { ServiceRegistry } from "../../../services/ServicesRegistry";
 
 const args = {
   inputs: {
@@ -61,7 +62,7 @@ export default class TagTaste extends TasteCommand<typeof args> {
     },
   };
 
-  tagService = new TagsService(this.logger);
+  tagService = ServiceRegistry.get(TagsService);
 
   async run() {
     const artistAmount = this.parsedArguments.artistAmount!,
@@ -80,10 +81,12 @@ export default class TagTaste extends TasteCommand<typeof args> {
     ]);
 
     const senderArtistsFiltered = await this.tagService.filter(
+      this.ctx,
       senderArtists.artists,
       [tag]
     );
     const mentionedArtistsFiltered = await this.tagService.filter(
+      this.ctx,
       mentionedArtists.artists,
       [tag]
     );

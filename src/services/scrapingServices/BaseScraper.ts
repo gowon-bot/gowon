@@ -1,6 +1,5 @@
-import { BaseService } from "../BaseService";
-import axios, { AxiosInstance } from "axios";
-import { Logger } from "../../lib/Logger";
+import { BaseService, BaseServiceContext } from "../BaseService";
+import axios from "axios";
 import cheerio from "cheerio";
 import chalk from "chalk";
 import { ClientError } from "../../errors";
@@ -13,18 +12,17 @@ export class ScrapingError extends ClientError {
   }
 }
 
-export class BaseScraper extends BaseService {
-  axios: AxiosInstance;
+type BaseScraperContext = BaseServiceContext & { url: string };
 
-  constructor(logger: Logger | undefined, private url: string) {
-    super(logger);
+export class BaseScraper extends BaseService<BaseScraperContext> {
+  axios = axios.create();
 
-    this.axios = axios.create();
-  }
-
-  protected async fetch(path: string): Promise<cheerio.Root> {
-    this.log(chalk`Made scraping request for {cyan '${this.url + path}'}`);
-    let response = await this.axios.get(this.url + path);
+  protected async fetch(
+    ctx: BaseScraperContext,
+    path: string
+  ): Promise<cheerio.Root> {
+    this.log(ctx, chalk`Made scraping request for {cyan '${ctx.url + path}'}`);
+    let response = await this.axios.get(ctx.url + path);
     return cheerio.load(response.data);
   }
 }

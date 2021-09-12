@@ -81,10 +81,11 @@ ${
     ? chalk`{cyan Delegated from}: ${
         (delegatedFrom.parentName ? delegatedFrom.parentName + ":" : "") +
         delegatedFrom.name
-      }`
+      }\n`
     : ""
-}
-{cyan Ran at}: ${message.createdAt} {cyan by} ${message.author.username}
+}{cyan Ran at}: ${message.createdAt} {cyan by} ${
+        message.author.username
+      } {cyan in} ${message.guild?.name || "{red DMs}"}
 {cyan with arguments}: ${Logger.formatObject(command.parsedArguments)}
 {cyan as}: ${runAs.join(" ")}
 

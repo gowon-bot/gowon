@@ -27,7 +27,11 @@ export class TopCommands extends MetaChildCommand<typeof args> {
       humanizedTimeRange = this.parsedArguments.humanizedTimeRange;
 
     let topCommands = (
-      await this.metaService.mostUsedCommands(message.guild?.id!, timeRange)
+      await this.metaService.mostUsedCommands(
+        this.ctx,
+        message.guild?.id!,
+        timeRange
+      )
     ).slice(0, 10);
 
     let embed = this.newEmbed()

@@ -35,13 +35,18 @@ export default class AlbumInfo extends InfoCommand<typeof args> {
       });
 
     const { artist, album } = await this.lastFMArguments.getAlbum(
+      this.ctx,
       senderRequestable
     );
 
     const [albumInfo, userInfo, spotifyAlbum] = await Promise.all([
-      this.lastFMService.albumInfo({ artist, album, username: requestable }),
-      this.lastFMService.userInfo({ username: requestable }),
-      this.spotifyService.searchAlbum(artist, album),
+      this.lastFMService.albumInfo(this.ctx, {
+        artist,
+        album,
+        username: requestable,
+      }),
+      this.lastFMService.userInfo(this.ctx, { username: requestable }),
+      this.spotifyService.searchAlbum(this.ctx, artist, album),
     ]);
 
     this.tagConsolidator.blacklistTags(albumInfo.artist, albumInfo.name);

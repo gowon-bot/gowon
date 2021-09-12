@@ -10,6 +10,7 @@ export class RecentlyStolen extends CrownsChildCommand {
 
   async run() {
     let crowns = await this.crownsService.listRecentlyStolen(
+      this.ctx,
       this.guild.id,
       10,
       await this.serverUserIDs({ filterCrownBannedUsers: true })

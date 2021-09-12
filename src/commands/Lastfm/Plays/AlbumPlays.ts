@@ -30,10 +30,11 @@ export default class AlbumPlays extends LastFMBaseCommand<typeof args> {
       });
 
     const { artist, album } = await this.lastFMArguments.getAlbum(
+      this.ctx,
       senderRequestable
     );
 
-    let albumDetails = await this.lastFMService.albumInfo({
+    let albumDetails = await this.lastFMService.albumInfo(this.ctx, {
       artist,
       album,
       username: requestable,

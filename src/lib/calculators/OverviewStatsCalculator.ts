@@ -1,5 +1,4 @@
 import { CrownsService } from "../../services/dbservices/CrownsService";
-import { Logger } from "../Logger";
 import { calculatePercent } from "../../helpers/stats";
 import { CrownRankResponse } from "../../database/entity/Crown";
 import { log } from "mathjs";
@@ -20,6 +19,8 @@ import { periodToRange } from "../../helpers/date";
 import gql from "graphql-tag";
 import { MirrorballPageInfo } from "../../services/mirrorball/MirrorballTypes";
 import { MirrorballService } from "../../services/mirrorball/MirrorballService";
+import { ServiceRegistry } from "../../services/ServicesRegistry";
+import { SimpleMap } from "../../helpers/types";
 
 export class Stat {
   public asString: string;
@@ -45,21 +46,17 @@ export class OverviewStatsCalculator {
     scrobbleCount?: number;
   } = {};
 
-  private lastFMService: LastFMService;
-  private crownsService: CrownsService;
-  private mirrorballService: MirrorballService;
+  private lastFMService = ServiceRegistry.get(LastFMService);
+  private crownsService = ServiceRegistry.get(CrownsService);
+  private mirrorballService = ServiceRegistry.get(MirrorballService);
 
   constructor(
+    private ctx: SimpleMap,
     private requestable: Requestable,
     private serverID: string,
     private userID: string | undefined,
-    private timePeriod: LastFMPeriod,
-    logger?: Logger
-  ) {
-    this.lastFMService = new LastFMService(logger);
-    this.crownsService = new CrownsService(logger);
-    this.mirrorballService = new MirrorballService(logger);
-  }
+    private timePeriod: LastFMPeriod
+  ) {}
 
   async hasCrownStats(): Promise<boolean> {
     return !!this.userID && !!(await this.crownsCount());
@@ -80,6 +77,7 @@ export class OverviewStatsCalculator {
       const timeRange = periodToRange(this.timePeriod);
 
       this.cache.scrobbleCount = await this.lastFMService.getNumberScrobbles(
+        this.ctx,
         this.requestable,
         timeRange.from,
         timeRange.to
@@ -91,7 +89,7 @@ export class OverviewStatsCalculator {
 
   async userInfo(): Promise<UserInfo> {
     if (!this.cache.userInfo)
-      this.cache.userInfo = await this.lastFMService.userInfo({
+      this.cache.userInfo = await this.lastFMService.userInfo(this.ctx, {
         username: this.requestable,
       });
 
@@ -100,7 +98,7 @@ export class OverviewStatsCalculator {
 
   async topArtists(): Promise<TopArtists> {
     if (!this.cache.topArtists)
-      this.cache.topArtists = await this.lastFMService.topArtists({
+      this.cache.topArtists = await this.lastFMService.topArtists(this.ctx, {
         username: this.requestable,
         limit: 1000,
         period: this.timePeriod,
@@ -111,7 +109,7 @@ export class OverviewStatsCalculator {
 
   async topAlbums(): Promise<TopAlbums> {
     if (!this.cache.topAlbums)
-      this.cache.topAlbums = await this.lastFMService.topAlbums({
+      this.cache.topAlbums = await this.lastFMService.topAlbums(this.ctx, {
         username: this.requestable,
         limit: 1,
         period: this.timePeriod,
@@ -122,7 +120,7 @@ export class OverviewStatsCalculator {
 
   async topTracks(): Promise<TopTracks> {
     if (!this.cache.topTracks)
-      this.cache.topTracks = await this.lastFMService.topTracks({
+      this.cache.topTracks = await this.lastFMService.topTracks(this.ctx, {
         username: this.requestable,
         limit: 1,
         period: this.timePeriod,
@@ -143,6 +141,7 @@ export class OverviewStatsCalculator {
     if (!this.userID) return undefined;
     if (!this.cache.crownsRank)
       this.cache.crownsRank = await this.crownsService.getRank(
+        this.ctx,
         this.userID,
         this.serverID
       );
@@ -453,7 +452,7 @@ export class OverviewStatsCalculator {
 
     const response = await this.mirrorballService.query<{
       tags: { pageInfo: MirrorballPageInfo };
-    }>(query, { artists });
+    }>(this.ctx, query, { artists });
 
     return new Stat(response.tags.pageInfo.recordCount);
   }

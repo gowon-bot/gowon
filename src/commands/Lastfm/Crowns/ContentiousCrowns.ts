@@ -18,11 +18,16 @@ export class ContentiousCrowns extends CrownsChildCommand {
 
     const [crowns, crownsCount] = await Promise.all([
       this.crownsService.listContentiousCrownsInServer(
+        this.ctx,
         message.guild?.id!,
         undefined,
         serverUsers
       ),
-      this.crownsService.countAllInServer(message.guild?.id!, serverUsers),
+      this.crownsService.countAllInServer(
+        this.ctx,
+        message.guild?.id!,
+        serverUsers
+      ),
     ]);
 
     const filteredCrowns = crowns.filter((c) => c.version > 0);

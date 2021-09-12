@@ -32,6 +32,7 @@ export class GuildAround extends CrownsChildCommand {
     let discordID = discordUser?.id || this.author.id;
 
     let guildAround = await this.crownsService.guildAround(
+      this.ctx,
       this.guild.id,
       discordID,
       await this.serverUserIDs({ filterCrownBannedUsers: true })

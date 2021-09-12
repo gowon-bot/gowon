@@ -7,6 +7,7 @@ import { Paginator } from "../../../lib/paginators/Paginator";
 import { TagConsolidator } from "../../../lib/tags/TagConsolidator";
 import { displayDate, displayNumber } from "../../../lib/views/displays";
 import { RedirectsService } from "../../../services/dbservices/RedirectsService";
+import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 const args = {
@@ -23,7 +24,7 @@ export default class Month extends LastFMBaseCommand<typeof args> {
 
   arguments: Arguments = args;
 
-  redirectsService = new RedirectsService(this.logger);
+  redirectsService = ServiceRegistry.get(RedirectsService);
 
   async run() {
     let { requestable, perspective, senderUser } = await this.parseMentions();
@@ -36,7 +37,8 @@ export default class Month extends LastFMBaseCommand<typeof args> {
         to: ~~(new Date().getTime() / 1000),
         username: requestable,
         limit: 1000,
-      }
+      },
+      this.ctx
     );
 
     let firstPage = await paginator.getNext();
@@ -58,11 +60,7 @@ export default class Month extends LastFMBaseCommand<typeof args> {
 
     firstPage.concat(restPages);
 
-    let reportCalculator = new ReportCalculator(
-      this.redirectsService,
-      this.mirrorballService,
-      firstPage
-    );
+    let reportCalculator = new ReportCalculator(this.ctx, firstPage);
 
     let month = await reportCalculator.calculate();
 

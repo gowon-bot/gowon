@@ -33,7 +33,10 @@ export default class MusicBrainz extends LastFMBaseCommand<typeof args> {
     });
 
     if (!keywords) {
-      let nowplaying = await this.lastFMService.nowPlaying(requestable);
+      let nowplaying = await this.lastFMService.nowPlaying(
+        this.ctx,
+        requestable
+      );
 
       keywords = `${nowplaying.artist} - ${nowplaying.album}`;
     }

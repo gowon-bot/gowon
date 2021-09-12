@@ -5,6 +5,7 @@ import { Parser } from "./parser";
 import escapeStringRegexp from "escape-string-regexp";
 import { RunAs } from "../command/RunAs";
 import { Flag, FlagParser } from "./flags";
+import { ServiceRegistry } from "../../services/ServicesRegistry";
 
 export type ParsedArgument = any;
 
@@ -42,7 +43,7 @@ export interface ParsedArguments {
 
 export class ArgumentParser extends Parser {
   parsedArguments: ParsedArguments = {};
-  gowonService = GowonService.getInstance();
+  gowonService = ServiceRegistry.get(GowonService);
   mentionParser = new MentionParser(this);
   flagParser = new FlagParser();
 

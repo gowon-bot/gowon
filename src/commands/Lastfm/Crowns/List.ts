@@ -29,9 +29,9 @@ export class List extends CrownsChildCommand<typeof args> {
     let perspective = this.usersService.discordPerspective(this.author, user);
 
     let [crowns, crownsCount, rank] = await Promise.all([
-      this.crownsService.listTopCrowns(discordID, this.guild.id),
-      this.crownsService.count(discordID, this.guild.id),
-      this.crownsService.getRank(discordID, this.guild.id),
+      this.crownsService.listTopCrowns(this.ctx, discordID, this.guild.id),
+      this.crownsService.count(this.ctx, discordID, this.guild.id),
+      this.crownsService.getRank(this.ctx, discordID, this.guild.id),
     ]);
 
     if (!crownsCount)

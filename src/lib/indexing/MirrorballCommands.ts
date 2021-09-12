@@ -13,6 +13,7 @@ import {
 } from "../caches/ConcurrencyManager";
 import { errorEmbed } from "../views/embeds";
 import { LastFMArguments } from "../../services/LastFM/LastFMArguments";
+import { ServiceRegistry } from "../../services/ServicesRegistry";
 
 export interface ErrorResponse {
   errors: { message: string }[];
@@ -32,8 +33,8 @@ export abstract class MirrorballBaseCommand<
   ArgumentsT extends Arguments = Arguments
 > extends BaseCommand<ArgumentsT> {
   abstract connector: Connector<ResponseT, ParamsT>;
-  lastFMService = new LastFMService(this.logger);
-  lastFMArguments = new LastFMArguments(this, this.lastFMService, this.logger);
+  lastFMService = ServiceRegistry.get(LastFMService);
+  lastFMArguments = ServiceRegistry.get(LastFMArguments);
   concurrencyManager = new ConcurrencyManager();
 
   readonly indexingHelp =
@@ -48,10 +49,7 @@ export abstract class MirrorballBaseCommand<
       let response: ResponseT = {} as any;
 
       try {
-        const rawResponse = await this.connector.request(
-          this.mirrorballService,
-          variables
-        );
+        const rawResponse = await this.connector.request(this.ctx, variables);
 
         if ((rawResponse as any).data) {
           response = (rawResponse as any).data;
@@ -82,7 +80,11 @@ export abstract class MirrorballBaseCommand<
     discordID: string,
     timeout = 2000
   ): Promise<void> {
-    return await this.mirrorballService.updateAndWait(discordID, timeout);
+    return await this.mirrorballService.updateAndWait(
+      this.ctx,
+      discordID,
+      timeout
+    );
   }
 
   protected async notifyUser(
@@ -178,7 +180,7 @@ export abstract class MirrorballBaseCommand<
       ConcurrentActions.Indexing,
       discordID
     );
-    await this.mirrorballService.fullIndex(discordID);
+    await this.mirrorballService.fullIndex(this.ctx, discordID);
     this.concurrencyManager.registerUser(ConcurrentActions.Indexing, discordID);
     this.notifyUser(
       Perspective.buildPerspective(username, false),

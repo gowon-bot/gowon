@@ -64,7 +64,7 @@ export class Me extends JumbleChildCommand<typeof args> {
 
     const { senderRequestable } = await this.parseMentions();
 
-    const artistInfo = await this.lastFMService.artistInfo({
+    const artistInfo = await this.lastFMService.artistInfo(this.ctx, {
       artist: artist.name,
       username: senderRequestable,
     });

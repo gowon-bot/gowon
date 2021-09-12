@@ -3,7 +3,7 @@ import { Arguments } from "../../../lib/arguments/arguments";
 import { Command } from "../../../lib/command/Command";
 import { CommandNotFoundError } from "../../../errors";
 import { Permission } from "../../../database/entity/Permission";
-import { Message, User as DiscordUser, Role } from "discord.js";
+import { User as DiscordUser, Role } from "discord.js";
 import { User } from "../../../database/entity/User";
 import { CustomMention } from "../../../lib/arguments/mentions/CustomMention";
 import { RunAs } from "../../../lib/command/RunAs";
@@ -43,7 +43,7 @@ export abstract class PermissionsChildCommand extends AdminBaseChildCommand<
 
   arguments: Arguments = args;
 
-  async prerun(message: Message) {
+  async prerun() {
     this.aliases = this.parsedArguments.command!.split(/\s*\//);
 
     const command = await this.commandRegistry.find(
@@ -60,13 +60,13 @@ export abstract class PermissionsChildCommand extends AdminBaseChildCommand<
     let userIDs = this.parsedArguments.userIDs || [];
     let roleIDs = this.parsedArguments.roleIDs || [];
 
-    const { users: userMentions, roles: roleMentions } = message.mentions;
+    const { users: userMentions, roles: roleMentions } = this.message.mentions;
 
     const users = Array.from(userMentions.values());
     const roles = Array.from(roleMentions.values());
 
     for (const role of await Promise.all(
-      roleIDs.map((id) => Permission.toDiscordRole(message, id))
+      roleIDs.map((id) => Permission.toDiscordRole(this.message, id))
     )) {
       roles.push(role!);
     }

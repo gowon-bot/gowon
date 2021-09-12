@@ -5,25 +5,32 @@ import {
   LastFMUserDoesntExistError,
   TooManyFriendsError,
 } from "../../errors";
-import { BaseService } from "../BaseService";
+import { BaseService, BaseServiceContext } from "../BaseService";
 import { User } from "../../database/entity/User";
 import { LastFMService } from "../LastFM/LastFMService";
 import { ILike } from "typeorm";
+import { ServiceRegistry } from "../ServicesRegistry";
 
 export class FriendsService extends BaseService {
-  private lastFMService = new LastFMService(this.logger);
+  private get lastFMService() {
+    return ServiceRegistry.get(LastFMService);
+  }
   private friendsLimit = 10;
   private patronFriendsLimit = 15;
 
   async addFriend(
+    ctx: BaseServiceContext,
     user: User,
     friendToAdd: string | User,
     prefix: string
   ): Promise<Friend> {
-    this.log(`Adding friend ${friendToAdd} for user ${user.lastFMUsername}`);
+    this.log(
+      ctx,
+      `Adding friend ${friendToAdd} for user ${user.lastFMUsername}`
+    );
 
     if (
-      (await this.friendsCount(user)) >=
+      (await this.friendsCount(ctx, user)) >=
       (user.isPatron ? this.patronFriendsLimit : this.friendsLimit)
     ) {
       throw new TooManyFriendsError(
@@ -38,7 +45,7 @@ export class FriendsService extends BaseService {
     if (friendToAdd instanceof User) {
       friend = await Friend.findOne({ user, friend: friendToAdd });
     } else {
-      if (!(await this.lastFMService.userExists(friendToAdd))) {
+      if (!(await this.lastFMService.userExists(ctx, friendToAdd))) {
         throw new LastFMUserDoesntExistError();
       }
 
@@ -59,8 +66,13 @@ export class FriendsService extends BaseService {
     return friend;
   }
 
-  async removeFriend(user: User, friendToRemove: string | User): Promise<void> {
+  async removeFriend(
+    ctx: BaseServiceContext,
+    user: User,
+    friendToRemove: string | User
+  ): Promise<void> {
     this.log(
+      ctx,
       `Removing friend ${friendToRemove} for user ${user.lastFMUsername}`
     );
 
@@ -92,8 +104,11 @@ export class FriendsService extends BaseService {
     await friend.remove();
   }
 
-  async clearFriends(user: User): Promise<number> {
-    this.log(`Removing friend all friends for user ${user.lastFMUsername}`);
+  async clearFriends(ctx: BaseServiceContext, user: User): Promise<number> {
+    this.log(
+      ctx,
+      `Removing friend all friends for user ${user.lastFMUsername}`
+    );
 
     let friendsDeleted = await Friend.delete({
       user,
@@ -102,18 +117,20 @@ export class FriendsService extends BaseService {
     return friendsDeleted.affected ?? 0;
   }
 
-  async listFriends(user: User): Promise<Friend[]> {
-    this.log(`Listing friends for user ${user?.lastFMUsername}`);
+  async listFriends(ctx: BaseServiceContext, user: User): Promise<Friend[]> {
+    this.log(ctx, `Listing friends for user ${user?.lastFMUsername}`);
 
     return await Friend.find({ user });
   }
 
   async isAlreadyFriends(
+    ctx: BaseServiceContext,
     authorUser: User,
     username?: string,
     user?: User
   ): Promise<boolean> {
     this.log(
+      ctx,
       `Checking if ${authorUser.discordID} is already friends with ${username}`
     );
 
@@ -126,17 +143,17 @@ export class FriendsService extends BaseService {
     );
   }
 
-  async getUsernames(user: User): Promise<string[]> {
-    return (await this.listFriends(user)).map(
+  async getUsernames(ctx: BaseServiceContext, user: User): Promise<string[]> {
+    return (await this.listFriends(ctx, user)).map(
       (f) =>
         (f.friend?.lastFMUsername?.toLowerCase() ||
           f.friendUsername?.toLowerCase())!
     );
   }
 
-  async friendsCount(user: User): Promise<number> {
-    this.log(`Counting friends for user ${user.lastFMUsername}`);
+  async friendsCount(ctx: BaseServiceContext, user: User): Promise<number> {
+    this.log(ctx, `Counting friends for user ${user.lastFMUsername}`);
 
-    return (await this.listFriends(user)).length;
+    return (await this.listFriends(ctx, user)).length;
   }
 }

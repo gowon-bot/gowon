@@ -14,6 +14,10 @@ export class Unban extends CrownsChildCommand<typeof args> {
   usage = "@user";
   arguments: Arguments = args;
 
+  ctx = this.generateContext({
+    crownsService: this.crownsService,
+  });
+
   async run() {
     let { mentionedDBUser, senderUser, discordUser } = await this.parseMentions(
       {
@@ -29,8 +33,13 @@ export class Unban extends CrownsChildCommand<typeof args> {
       throw new LogicError(`please mention a valid user`);
     }
 
-    await this.crownsService.unbanUser(mentionedDBUser, this.guild.id);
+    await this.crownsService.unbanUser(
+      this.ctx,
+      mentionedDBUser,
+      this.guild.id
+    );
     this.crownsService.scribe.unban(
+      this.ctx,
       mentionedDBUser,
       this.message.author,
       discordUser!,

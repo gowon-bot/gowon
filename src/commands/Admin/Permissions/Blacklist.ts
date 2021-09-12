@@ -32,6 +32,7 @@ export class Blacklist extends PermissionsChildCommand {
     for (let role of this.roles) {
       try {
         await this.adminService.whiteOrBlacklist(
+          this.ctx,
           role.id,
           this.message.guild?.id!,
           this.command.id,
@@ -52,6 +53,7 @@ export class Blacklist extends PermissionsChildCommand {
     for (let user of this.users) {
       try {
         await this.adminService.whiteOrBlacklist(
+          this.ctx,
           user.id,
           this.message.guild?.id!,
           this.command.id,

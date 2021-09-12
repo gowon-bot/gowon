@@ -1,6 +1,5 @@
 import { Arguments } from "../../../lib/arguments/arguments";
 import { generatePeriod, generateHumanPeriod } from "../../../helpers/date";
-import { Message } from "discord.js";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { LastFMPeriod } from "../../../services/LastFM/LastFMService.types";
 import { Validation } from "../../../lib/validation/ValidationChecker";
@@ -47,7 +46,7 @@ export abstract class ListCommand extends LastFMBaseCommand<typeof args> {
   humanReadableTimePeriod!: string;
   listAmount!: number;
 
-  async prerun(_: Message): Promise<void> {
+  async prerun(): Promise<void> {
     this.timePeriod = this.parsedArguments.timePeriod!;
     this.humanReadableTimePeriod =
       this.parsedArguments.humanReadableTimePeriod!;

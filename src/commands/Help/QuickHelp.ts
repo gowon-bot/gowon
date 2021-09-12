@@ -3,6 +3,7 @@ import { Arguments } from "../../lib/arguments/arguments";
 import { AdminService } from "../../services/dbservices/AdminService";
 
 import { Emoji } from "../../lib/Emoji";
+import { ServiceRegistry } from "../../services/ServicesRegistry";
 
 const args = {} as const;
 
@@ -15,7 +16,7 @@ export default class QuickHelp extends BaseCommand<typeof args> {
 
   arguments: Arguments = args;
 
-  adminService = new AdminService(this.gowonClient);
+  adminService = ServiceRegistry.get(AdminService);
 
   async run() {
     const embed = this.newEmbed().setAuthor(

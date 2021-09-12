@@ -28,7 +28,8 @@ export default class SearchArtist extends SearchCommand {
     let paginator = new Paginator(
       this.lastFMService.topArtists.bind(this.lastFMService),
       this.variationWasUsed("deep") ? 4 : 2,
-      { username: requestable, limit: 1000 }
+      { username: requestable, limit: 1000 },
+      this.ctx
     );
 
     let topArtists = await paginator.getAllToConcatonable({

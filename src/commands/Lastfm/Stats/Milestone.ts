@@ -48,7 +48,11 @@ export default class Milestone extends LastFMBaseCommand<typeof args> {
       asCode: false,
     });
 
-    let track = await this.lastFMService.getMilestone(requestable, milestone);
+    let track = await this.lastFMService.getMilestone(
+      this.ctx,
+      requestable,
+      milestone
+    );
 
     if (!track) throw new BadLastFMResponseError();
 
