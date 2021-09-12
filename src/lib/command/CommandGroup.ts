@@ -7,9 +7,11 @@ export type Commands = SimpleMap<CommandImpl>;
 
 export class CommandGroup {
   public commands: Command[];
+  public commandClasses: CommandImpl[];
 
   constructor(commands: CommandImpl[]) {
     this.commands = commands.map((c) => new c());
+    this.commandClasses = commands;
   }
 
   asDeepList(): Array<Command> {
