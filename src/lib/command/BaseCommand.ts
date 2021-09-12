@@ -406,7 +406,11 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
             !["update", "index", "login", "logout"].includes(this.name)
           ) {
             await Promise.all([
-              this.mirrorballService.quietAddUserToGuild(this.ctx),
+              this.mirrorballService.quietAddUserToGuild(
+                this.ctx,
+                this.author.id,
+                this.guild.id
+              ),
               senderUser.mirrorballUpdate(),
             ]);
           }

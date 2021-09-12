@@ -123,7 +123,11 @@ export default class Login extends MirrorballBaseCommand<
       session
     );
     try {
-      await this.mirrorballService.quietAddUserToGuild(this.ctx);
+      await this.mirrorballService.quietAddUserToGuild(
+        this.ctx,
+        this.author.id,
+        this.guild.id
+      );
     } catch (e) {}
   }
 

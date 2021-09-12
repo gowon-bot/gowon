@@ -60,7 +60,11 @@ export default class Index extends MirrorballBaseCommand<
       authentificationRequired: true,
     });
 
-    this.mirrorballService.quietAddUserToGuild(this.ctx);
+    this.mirrorballService.quietAddUserToGuild(
+      this.ctx,
+      this.author.id,
+      this.guild.id
+    );
 
     const indexingUsername = senderUsername;
 

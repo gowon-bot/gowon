@@ -53,7 +53,7 @@ export class Logger {
   }
 
   openCommandHeader(command: BaseCommand): void {
-    this.header = chalk`\n==============={yellow ${
+    this.header = chalk`\n\n==============={yellow ${
       (command.parentName ? command.parentName + ":" : "") + command.name
     }}====================`;
   }
@@ -65,7 +65,7 @@ export class Logger {
         this.header +
           chalk`\n=============={yellow /${
             (command.parentName ? command.parentName + ":" : "") + command.name
-          }}====================`
+          }}====================\n`
       );
   }
 

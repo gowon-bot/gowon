@@ -27,7 +27,7 @@ export class WhoKnowsService extends BaseService {
     );
 
     if (existingTries && toInt(existingTries) === 2) {
-      this.mirrorballService.quietRemoveUserFromGuild(ctx);
+      this.mirrorballService.quietRemoveUserFromGuild(ctx, userID, guildID);
       this.redis.sessionDelete(this.ctx(ctx), this.retryKey());
     } else {
       const newTries = existingTries ? toInt(existingTries) + 1 : 1;

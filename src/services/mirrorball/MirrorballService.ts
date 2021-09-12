@@ -134,11 +134,10 @@ export class MirrorballService extends BaseService {
   }
 
   public async quietAddUserToGuild(
-    ctx: BaseServiceContext
+    ctx: BaseServiceContext,
+    discordID: string,
+    guildID: string
   ): Promise<Error | undefined> {
-    const discordID = this.author(ctx).id;
-    const guildID = this.guild(ctx).id;
-
     try {
       await this.query(
         ctx,
@@ -162,11 +161,10 @@ export class MirrorballService extends BaseService {
   }
 
   public async quietRemoveUserFromGuild(
-    ctx: BaseServiceContext
+    ctx: BaseServiceContext,
+    discordID: string,
+    guildID: string
   ): Promise<Error | undefined> {
-    const discordID = this.author(ctx).id;
-    const guildID = this.guild(ctx).id;
-
     try {
       await this.query(
         ctx,

@@ -46,7 +46,11 @@ export class GuildEventService extends BaseService<GuildEventServiceContext> {
     this.log(ctx, "Handling new user");
 
     try {
-      await this.mirrorballService.quietAddUserToGuild(ctx);
+      await this.mirrorballService.quietAddUserToGuild(
+        ctx,
+        guildMember.user.id,
+        guildMember.guild.id
+      );
     } catch (e) {
       this.log(
         ctx,
@@ -62,7 +66,11 @@ export class GuildEventService extends BaseService<GuildEventServiceContext> {
     this.log(ctx, "Handling user leave");
 
     try {
-      await this.mirrorballService.quietRemoveUserFromGuild(ctx);
+      await this.mirrorballService.quietRemoveUserFromGuild(
+        ctx,
+        guildMember.user.id,
+        guildMember.guild.id
+      );
     } catch (e) {
       this.log(
         ctx,
