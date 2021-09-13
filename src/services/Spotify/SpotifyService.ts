@@ -11,6 +11,7 @@ import {
   SpotifyToken,
 } from "./SpotifyService.types";
 import { SimpleMap } from "../../helpers/types";
+import { SpotifyConnectionError } from "../../errors";
 
 export class SpotifyService extends BaseService {
   url = "https://api.spotify.com/v1/";
@@ -65,9 +66,13 @@ export class SpotifyService extends BaseService {
   ): Promise<T> {
     this.log(ctx, `made API request to ${path} with params ${params}`);
 
-    let response = await fetch(this.url + path + "?" + stringify(params), {
+    const response = await fetch(this.url + path + "?" + stringify(params), {
       headers: await this.headers(ctx),
     });
+
+    if (`${response.status}`.startsWith("4")) {
+      throw new SpotifyConnectionError(ctx.command.prefix);
+    }
 
     return (await response.json()) as T;
   }

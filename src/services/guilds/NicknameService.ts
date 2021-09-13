@@ -131,9 +131,7 @@ export class NicknameService extends BaseService {
         username = user?.user.username;
 
         this.recordNickname(this.ctx(ctx), discordID, nickname);
-      } catch (e) {
-        console.log(e);
-      }
+      } catch (e) {}
     }
 
     return { nickname, username };

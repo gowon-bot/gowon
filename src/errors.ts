@@ -359,3 +359,14 @@ export class LastFMReverseLookupError extends ClientError {
     );
   }
 }
+
+export class SpotifyConnectionError extends ClientError {
+  name = "SpotifyConnectionError";
+
+  constructor(prefix: string) {
+    super(
+      "There was an issue connecting to Spotify, please try again in a few moments",
+      `If the issue persists, please let us know in the support server (${prefix}help)`
+    );
+  }
+}
