@@ -113,9 +113,9 @@ export class NicknameService extends BaseService {
   ): Promise<{ nickname?: string; username?: string }> {
     const guildID = this.guild(ctx).id;
 
-    let nickname = await this.redisService.sessionGet(
+    let nickname = await this.redisService.get(
       this.ctx(ctx),
-      "nickname"
+      this.generateNicknameKey(discordID, guildID)
     );
     let username: string | undefined;
 
