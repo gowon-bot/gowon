@@ -35,7 +35,7 @@ export class CommandRegistry {
     for (const command of Object.values(commands)) {
       const instance = new command();
 
-      if (instance.archived) {
+      if (instance.archived || !instance.shouldBeIndexed) {
         continue;
       }
 

@@ -40,6 +40,7 @@ export interface Command {
   rollout: Rollout;
 
   copy(): Command;
+  setClient(client: GowonClient): void;
 }
 
 export interface Rollout {

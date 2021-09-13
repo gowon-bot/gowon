@@ -143,7 +143,7 @@ export class CommandHandler {
         message.content.split(/\s+/)[2] || undefined;
 
       const prefixCommand = new Prefix().setPrefix(prefix);
-      prefixCommand.gowonClient = this.client;
+      prefixCommand.setClient(this.client);
 
       await prefixCommand.execute(message, new RunAs());
     }
@@ -156,7 +156,7 @@ export class CommandHandler {
       !message.author.bot
     ) {
       const helpCommand = new Help();
-      helpCommand.gowonClient = this.client;
+      helpCommand.setClient(this.client);
 
       message.content = "";
 
@@ -190,7 +190,7 @@ export class CommandHandler {
   private async runCommand(command: Command, message: Message, runAs: RunAs) {
     const newCommand = command.copy();
 
-    newCommand.gowonClient = this.client;
+    newCommand.setClient(this.client);
 
     await newCommand.execute.bind(newCommand)(message, runAs);
   }

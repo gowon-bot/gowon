@@ -328,6 +328,16 @@ export class SenderUserNotIndexedError extends ClientError {
   }
 }
 
+export class SenderUserNotAuthenticatedError extends ClientError {
+  name = "SenderUserNotAuthenticatedError";
+
+  constructor(prefix?: string) {
+    super(
+      `This command requires you to be authenticated, please login in again! (\`${prefix}login\`)`
+    );
+  }
+}
+
 export class MentionedUserNotIndexedError extends ClientError {
   name = "SenderUserNotIndexedError";
 

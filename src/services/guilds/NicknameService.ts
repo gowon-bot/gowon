@@ -131,7 +131,9 @@ export class NicknameService extends BaseService {
         username = user?.user.username;
 
         this.recordNickname(this.ctx(ctx), discordID, nickname);
-      } catch {}
+      } catch (e) {
+        console.log(e);
+      }
     }
 
     return { nickname, username };
@@ -170,6 +172,6 @@ export class NicknameService extends BaseService {
   }
 
   protected generateNicknameKey(discordID: string, guildID: string) {
-    return `${discordID}-${guildID}-username`;
+    return `${discordID}-${guildID}-nickname`;
   }
 }

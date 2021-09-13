@@ -15,6 +15,7 @@ import {
   SenderUserNotIndexedError,
   UnknownError,
   UsernameNotRegisteredError,
+  SenderUserNotAuthenticatedError,
 } from "../../errors";
 import { GowonService } from "../../services/GowonService";
 import { CommandGroup } from "./CommandGroup";
@@ -168,6 +169,11 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
 
   get prefix(): string {
     return this.gowonService.prefix(this.guild.id);
+  }
+
+  public setClient(client: GowonClient) {
+    this.gowonClient = client;
+    this.ctx.client = client;
   }
 
   abstract run(message: Message, runAs: RunAs): Promise<void>;
@@ -350,9 +356,7 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     });
 
     if (authentificationRequired && !isSessionKey(requestables?.requestable)) {
-      throw new LogicError(
-        `This command requires you to be authenticated, please login in again! (\`${this.prefix}login\`)`
-      );
+      throw new SenderUserNotAuthenticatedError(this.prefix);
     }
 
     const dbUser = mentionedDBUser || senderDBUser;
@@ -361,6 +365,9 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
       if (dbUser.id === mentionedDBUser?.id) {
         throw new MentionedUserNotIndexedError(this.prefix);
       } else if (dbUser.id === senderDBUser?.id) {
+        if (!senderDBUser.lastFMSession) {
+          throw new SenderUserNotAuthenticatedError(this.prefix);
+        }
         throw new SenderUserNotIndexedError(this.prefix);
       }
     }

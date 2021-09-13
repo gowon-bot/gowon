@@ -144,7 +144,7 @@ export default class HelpForOneCommand extends BaseCommand<typeof args> {
 
   private async runCustomHelp(commandClass: Command) {
     let command = new commandClass.customHelp!();
-    command.gowonClient = this.gowonClient;
+    command.setClient(this.gowonClient);
     command.delegatedFrom = this;
     await command.execute(this.message, this.runAs);
     return;
