@@ -71,6 +71,7 @@ export class SpotifyService extends BaseService {
     });
 
     if (`${response.status}`.startsWith("4")) {
+      console.error(response);
       throw new SpotifyConnectionError(ctx.command.prefix);
     }
 
