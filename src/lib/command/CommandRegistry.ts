@@ -35,9 +35,15 @@ export class CommandRegistry {
     for (const command of Object.values(commands)) {
       const instance = new command();
 
+      if (instance.archived) {
+        continue;
+      }
+
       if (instance.hasChildren) {
         instance.children!.commandClasses.forEach((c) => {
-          this.factory[new c().id] = c;
+          const childInstance = new c();
+
+          if (!childInstance.archived) this.factory[childInstance.id] = c;
         });
       }
 
