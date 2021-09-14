@@ -62,6 +62,7 @@ export class ServerCombos extends ComboChildCommand<typeof args> {
 
     const displayCombo = ((combo: Combo) => {
       const nickname = this.nicknameService.cacheGetNickname(
+        this.ctx,
         combo.user.discordID
       );
 

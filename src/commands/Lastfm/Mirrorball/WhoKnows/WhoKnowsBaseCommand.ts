@@ -57,7 +57,10 @@ export abstract class WhoKnowsBaseCommand<
   }
 
   protected displayUser(user: MirrorballUser): string {
-    let nickname = this.nicknameService.cacheGetNickname(user.discordID);
+    let nickname = this.nicknameService.cacheGetNickname(
+      this.ctx,
+      user.discordID
+    );
 
     if (nickname) {
       if (nickname === UnknownUserDisplay) {
@@ -78,7 +81,7 @@ export abstract class WhoKnowsBaseCommand<
       case MirrorballPrivacy.Discord:
         return displayLink(
           nickname ||
-            this.nicknameService.cacheGetUsername(user.discordID) ||
+            this.nicknameService.cacheGetUsername(this.ctx, user.discordID) ||
             UnknownUserDisplay,
           LinkGenerator.userPage(user.username)
         );

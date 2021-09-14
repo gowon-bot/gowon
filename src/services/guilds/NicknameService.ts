@@ -5,20 +5,27 @@ import { ServiceRegistry } from "../ServicesRegistry";
 
 export const UnknownUserDisplay = "<Unknown user>";
 
-export class NicknameService extends BaseService {
+type NicknameServiceMutableContext = {
+  nicknameCache?: { [discordID: string]: string };
+  usernameCache?: { [discordID: string]: string };
+};
+
+export class NicknameService extends BaseService<
+  BaseServiceContext,
+  NicknameServiceMutableContext
+> {
   get redisService() {
     return ServiceRegistry.get(RedisService);
   }
 
   customContext = {
     defaultExpirySeconds: 30 * 24 * 60 * 60,
+    nicknameCache: {},
+    usernameCache: {},
   };
 
-  private nicknameCache: { [discordID: string]: string } = {};
-  private usernameCache: { [discordID: string]: string } = {};
-
   async cacheNicknames(
-    ctx: BaseServiceContext,
+    ctx: BaseServiceContext & NicknameServiceMutableContext,
     users: Array<{ discordID: string } | string>
   ) {
     const guildID = this.guild(ctx).id;
@@ -42,13 +49,15 @@ export class NicknameService extends BaseService {
         }))
       )
     ).forEach((u) => {
-      if (u.info.nickname) this.nicknameCache[u.discordID] = u.info.nickname;
-      if (u.info.username) this.usernameCache[u.discordID] = u.info.username;
+      if (u.info.nickname)
+        this.ctx(ctx).nicknameCache![u.discordID] = u.info.nickname;
+      if (u.info.username)
+        this.ctx(ctx).usernameCache![u.discordID] = u.info.username;
     });
   }
 
   async cacheUsernames(
-    ctx: BaseServiceContext,
+    ctx: BaseServiceContext & NicknameServiceMutableContext,
     users: Array<{ discordID: string } | string>
   ) {
     this.log(
@@ -67,16 +76,22 @@ export class NicknameService extends BaseService {
         }))
       )
     ).forEach((u) => {
-      this.usernameCache[u.discordID] = u.username;
+      this.ctx(ctx).usernameCache![u.discordID] = u.username;
     });
   }
 
-  cacheGetNickname(discordID: string): string {
-    return this.nicknameCache[discordID];
+  cacheGetNickname(
+    ctx: BaseServiceContext & NicknameServiceMutableContext,
+    discordID: string
+  ): string {
+    return this.ctx(ctx).nicknameCache![discordID];
   }
 
-  cacheGetUsername(discordID: string): string {
-    return this.usernameCache[discordID];
+  cacheGetUsername(
+    ctx: BaseServiceContext & NicknameServiceMutableContext,
+    discordID: string
+  ): string {
+    return this.ctx(ctx).usernameCache![discordID];
   }
 
   async recordNickname(
@@ -142,7 +157,7 @@ export class NicknameService extends BaseService {
     discordID: string
   ): Promise<string> {
     let username =
-      this.cacheGetUsername(discordID) ||
+      this.cacheGetUsername(ctx, discordID) ||
       (await this.redisService.get(
         this.ctx(ctx),
         this.generateUsernameKey(discordID)
