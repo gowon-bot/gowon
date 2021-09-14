@@ -20,14 +20,14 @@ export class FlagParser<FlagsType extends Flags> {
     string: string,
     flags?: Flags
   ): { string: string; flags: FlagsMap<FlagsType> } {
-    if (!flags) {
-      return { string, flags: {} };
-    }
+    const flagsToParse = Object.assign(flags || {}, {
+      debug: debugFlag,
+    }) as Flags;
 
     let cleanedString = `${string}`;
     const flagsMap: SimpleMap<boolean> = {};
 
-    for (const [flagName, flag] of Object.entries(flags)) {
+    for (const [flagName, flag] of Object.entries(flagsToParse)) {
       if (this.stringHasFlag(cleanedString, flag)) {
         flagsMap[flagName] = true;
         cleanedString = this.removeFlagFromString(cleanedString, flag);
@@ -76,6 +76,12 @@ export class FlagParser<FlagsType extends Flags> {
     return strings.map(escapeStringRegexp);
   }
 }
+
+const debugFlag = {
+  description: "Developer only",
+  longnames: ["debug"],
+  shortnames: [],
+};
 
 export const FLAGS = {
   noRedirect: {

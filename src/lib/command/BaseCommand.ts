@@ -85,6 +85,8 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
    */
   abstract idSeed: string;
 
+  protected debug = false;
+
   logger = new Logger();
 
   name: string = this.constructor.name.toLowerCase();
@@ -427,6 +429,10 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
   }
 
   async teardown() {
+    if (this.debug) {
+      console.log(this.constructor.name + "", this);
+    }
+
     this.logger.closeCommandHeader(this);
     this.isCompleted = true;
 
@@ -452,9 +458,13 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     try {
       this.parsedArguments = this.parseArguments(runAs) as any;
 
-      for (let delegate of this.delegates) {
+      if ((this.parsedArguments as any).debug) {
+        this.debug = true;
+      }
+
+      for (const delegate of this.delegates) {
         if (delegate.when(this.parsedArguments)) {
-          let command = new delegate.delegateTo();
+          const command = new delegate.delegateTo();
           command.gowonClient = this.gowonClient;
           command.delegatedFrom = this;
           await command.execute(message, runAs);
