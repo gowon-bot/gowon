@@ -31,19 +31,31 @@ export class MirrorballService extends BaseService {
       }`
     );
 
-    return query
-      ? await mirrorballClient.query({
-          query,
-          variables,
-          fetchPolicy: "no-cache",
-        })
-      : mutation
-      ? await mirrorballClient.mutate({
-          mutation,
-          variables,
-          fetchPolicy: "no-cache",
-        })
-      : undefined;
+    try {
+      return query
+        ? await mirrorballClient.query({
+            query,
+            variables,
+            fetchPolicy: "no-cache",
+          })
+        : mutation
+        ? await mirrorballClient.mutate({
+            mutation,
+            variables,
+            fetchPolicy: "no-cache",
+          })
+        : undefined;
+    } catch (e) {
+      const operationName = (
+        (query?.definitions[0] || mutation?.definitions[0]) as any
+      ).name.value;
+
+      // It's often hard to tell which operation network errors are occurring on
+      // when multiple queries/mutations are run in a single command
+      e.message = operationName + ": " + e.message;
+
+      throw e;
+    }
   }
 
   public webhook = IndexingWebhookService.getInstance();

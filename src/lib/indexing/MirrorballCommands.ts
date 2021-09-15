@@ -60,6 +60,7 @@ export abstract class MirrorballBaseCommand<
         if (e.graphQLErrors?.length) {
           (response as any).errors = e.graphQLErrors;
         } else if (e.networkError) {
+          this.logger.logError(e);
           throw new MirrorballError(
             "The indexing service is not responding, please try again later."
           );
