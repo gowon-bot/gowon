@@ -18,6 +18,7 @@ import {
   UpdateUserParams,
   UpdateUserResponse,
 } from "./Update.connector";
+import { ServiceRegistry } from "../../../../services/ServicesRegistry";
 
 const args = {
   inputs: {},
@@ -51,7 +52,7 @@ export default class Update extends MirrorballBaseCommand<
 
   stopwatch = new Stopwatch();
 
-  concurrencyService = new ConcurrencyService();
+  concurrencyService = ServiceRegistry.get(ConcurrencyService);
 
   async prerun() {
     if (

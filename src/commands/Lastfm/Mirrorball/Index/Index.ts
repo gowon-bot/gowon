@@ -13,6 +13,7 @@ import {
   IndexUserResponse,
   IndexUserConnector,
 } from "./Index.connector";
+import { ServiceRegistry } from "../../../../services/ServicesRegistry";
 
 const args = {
   inputs: {},
@@ -39,7 +40,7 @@ export default class Index extends MirrorballBaseCommand<
     username: new validators.Required({}),
   };
 
-  concurrencyService = new ConcurrencyService();
+  concurrencyService = ServiceRegistry.get(ConcurrencyService);
 
   async prerun() {
     if (
