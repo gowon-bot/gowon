@@ -90,8 +90,6 @@ export default class WhoKnowsArtist extends WhoKnowsBaseCommand<
 
     await this.cacheUserInfo(response.whoKnowsArtist.rows.map((u) => u.user));
 
-    console.log(this.ctx);
-
     const { rows, artist } = response.whoKnowsArtist;
     const { rank, playcount } = response.artistRank;
 

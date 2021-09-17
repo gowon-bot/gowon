@@ -19,9 +19,12 @@ export class SpotifyService extends BaseService {
   tokenURL = "https://accounts.spotify.com/api/token";
 
   private _token?: SpotifyToken;
+  private tokenFetchedAt = new Date();
 
   private tokenIsValid(token: SpotifyToken): boolean {
-    const dateExpires = add(new Date(), { seconds: token.expires_in });
+    const dateExpires = add(this.tokenFetchedAt, {
+      seconds: token.expires_in - 5,
+    });
 
     return isBefore(new Date(), dateExpires);
   }
@@ -54,12 +57,12 @@ export class SpotifyService extends BaseService {
 
     const jsonResponse = await response.json();
 
+    this.tokenFetchedAt = new Date();
+
     return jsonResponse as SpotifyToken;
   }
 
   private async headers(ctx: BaseServiceContext) {
-    this.log(ctx, `SPOTIFY TOKEN: ${await this.token(ctx)}`);
-
     return {
       Authorization: this.bearerAuthorization(await this.token(ctx)),
     };
@@ -80,7 +83,6 @@ export class SpotifyService extends BaseService {
     });
 
     if (`${response.status}`.startsWith("4")) {
-      console.error(response);
       throw new SpotifyConnectionError(ctx.command.prefix);
     }
 
