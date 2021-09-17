@@ -78,7 +78,7 @@ export default class WhoKnowsArtist extends WhoKnowsBaseCommand<
         guildID,
         limit: 15,
       },
-      serverID: this.guild.id,
+      serverID: guildID,
       user: { discordID: this.author.id },
     });
 
@@ -113,13 +113,15 @@ export default class WhoKnowsArtist extends WhoKnowsBaseCommand<
         ),
       },
       {
-        shouldDisplay: !this.isGlobal() && rank > 15 && !!senderUser,
-        string: `\n\`${rank}.\` ${displayLink(
-          this.message.member?.nickname || this.message.author.username,
-          LinkGenerator.userPage(senderUser?.lastFMUsername!)
-        ).strong()} - **${displayNumber(playcount, "**play")}${
-          crown?.user?.discordID === this.author.id ? " 👑" : ""
-        }`,
+        shouldDisplay: rank > 15 && !!senderUser,
+        string:
+          `\n\`${rank}.\` ` +
+          displayLink(
+            this.message.member?.nickname || this.message.author.username,
+            LinkGenerator.userPage(senderUser?.lastFMUsername!)
+          ).strong() +
+          `- **${displayNumber(playcount, "**play")}` +
+          (crown?.user?.discordID === this.author.id ? " 👑" : ""),
       }
     );
 

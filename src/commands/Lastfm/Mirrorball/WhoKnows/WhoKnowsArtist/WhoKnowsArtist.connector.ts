@@ -26,7 +26,7 @@ export interface WhoKnowsArtistResponse {
 export interface WhoKnowsArtistParams {
   artist: ArtistInput;
   settings?: WhoKnowsSettings;
-  serverID: string;
+  serverID?: string;
   user: UserInput;
 }
 
@@ -38,7 +38,7 @@ export class WhoKnowsArtistConnector extends BaseConnector<
     query whoKnowsArtist(
       $artist: ArtistInput!
       $settings: WhoKnowsSettings
-      $serverID: String!
+      $serverID: String
       $user: UserInput!
     ) {
       whoKnowsArtist(artist: $artist, settings: $settings) {
