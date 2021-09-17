@@ -22,6 +22,7 @@ export class SpotifyService extends BaseService {
 
   private tokenIsValid(token: SpotifyToken): boolean {
     const dateExpires = add(new Date(), { seconds: token.expires_in });
+
     return isBefore(new Date(), dateExpires);
   }
 
@@ -53,12 +54,12 @@ export class SpotifyService extends BaseService {
 
     const jsonResponse = await response.json();
 
-    console.log(jsonResponse);
-
     return jsonResponse as SpotifyToken;
   }
 
   private async headers(ctx: BaseServiceContext) {
+    this.log(ctx, `SPOTIFY TOKEN: ${await this.token(ctx)}`);
+
     return {
       Authorization: this.bearerAuthorization(await this.token(ctx)),
     };
