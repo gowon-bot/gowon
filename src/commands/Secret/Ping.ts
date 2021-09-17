@@ -10,7 +10,10 @@ export default class Ping extends BaseCommand {
   secretCommand = true;
 
   async run() {
-    if (Chance().bool({ likelihood: 20 })) {
+    if (
+      this.runAs.variationWasUsed("ping") &&
+      Chance().bool({ likelihood: 20 })
+    ) {
       await this.reply("PANG! 🏌️");
       return;
     }

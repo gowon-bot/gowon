@@ -1,3 +1,4 @@
+import { SimpleMap } from "../../helpers/types";
 import { displayNumber } from "../../lib/views/displays";
 import { BaseService, BaseServiceContext } from "../BaseService";
 import { RedisService } from "../redis/RedisService";
@@ -20,8 +21,6 @@ export class NicknameService extends BaseService<
 
   customContext = {
     defaultExpirySeconds: 30 * 24 * 60 * 60,
-    nicknameCache: {},
-    usernameCache: {},
   };
 
   async cacheNicknames(
@@ -50,9 +49,9 @@ export class NicknameService extends BaseService<
       )
     ).forEach((u) => {
       if (u.info.nickname)
-        this.ctx(ctx).nicknameCache![u.discordID] = u.info.nickname;
+        this.nicknameCache(ctx)[u.discordID] = u.info.nickname;
       if (u.info.username)
-        this.ctx(ctx).usernameCache![u.discordID] = u.info.username;
+        this.usernameCache(ctx)[u.discordID] = u.info.username;
     });
   }
 
@@ -76,7 +75,7 @@ export class NicknameService extends BaseService<
         }))
       )
     ).forEach((u) => {
-      this.ctx(ctx).usernameCache![u.discordID] = u.username;
+      this.usernameCache(ctx)[u.discordID] = u.username;
     });
   }
 
@@ -84,14 +83,14 @@ export class NicknameService extends BaseService<
     ctx: BaseServiceContext & NicknameServiceMutableContext,
     discordID: string
   ): string {
-    return this.ctx(ctx).nicknameCache![discordID];
+    return this.nicknameCache(ctx)[discordID];
   }
 
   cacheGetUsername(
     ctx: BaseServiceContext & NicknameServiceMutableContext,
     discordID: string
   ): string {
-    return this.ctx(ctx).usernameCache![discordID];
+    return this.usernameCache(ctx)[discordID];
   }
 
   async recordNickname(
@@ -186,5 +185,21 @@ export class NicknameService extends BaseService<
 
   protected generateNicknameKey(discordID: string, guildID: string) {
     return `${discordID}-${guildID}-nickname`;
+  }
+
+  private nicknameCache(
+    ctx: BaseServiceContext & NicknameServiceMutableContext
+  ): SimpleMap<string> {
+    if (!ctx.nicknameCache) ctx.nicknameCache = {};
+
+    return ctx.nicknameCache;
+  }
+
+  private usernameCache(
+    ctx: BaseServiceContext & NicknameServiceMutableContext
+  ): SimpleMap<string> {
+    if (!ctx.usernameCache) ctx.usernameCache = {};
+
+    return ctx.usernameCache;
   }
 }
