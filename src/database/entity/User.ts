@@ -28,6 +28,7 @@ import gql from "graphql-tag";
 import { Logger } from "../../lib/Logger";
 import { Combo } from "./Combo";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
+import { SettingsService } from "../../lib/settings/SettingsManager";
 
 @Entity({ name: "users" })
 export class User extends BaseEntity {
@@ -143,9 +144,9 @@ export class User extends BaseEntity {
   }
 
   async isOptedOut(message: Message): Promise<boolean> {
-    const settingsManager = ServiceRegistry.get(GowonService).settingsManager;
+    const settingsService = ServiceRegistry.get(SettingsService);
 
-    const setting = settingsManager.get("optedOut", {
+    const setting = settingsService.get("optedOut", {
       guildID: message.guild!.id,
       userID: this.discordID,
     });

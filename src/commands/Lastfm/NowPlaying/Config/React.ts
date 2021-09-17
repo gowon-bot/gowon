@@ -6,7 +6,9 @@ import {
 } from "../../../../lib/arguments/custom/EmojiParser";
 import { extractEmojiName } from "../../../../lib/Emoji";
 import { LineConsolidator } from "../../../../lib/LineConsolidator";
+import { SettingsService } from "../../../../lib/settings/SettingsManager";
 import { ConfirmationEmbed } from "../../../../lib/views/embeds/ConfirmationEmbed";
+import { ServiceRegistry } from "../../../../services/ServicesRegistry";
 import { NowPlayingConfigChildCommand } from "./NowPlayingConfigChildCommand";
 
 const args = {
@@ -32,6 +34,8 @@ export class React extends NowPlayingConfigChildCommand<typeof args> {
 
   arguments: Arguments = args;
 
+  settingsService = ServiceRegistry.get(SettingsService);
+
   async run() {
     const emojis = this.parsedArguments.emojis!;
     const clear = this.parsedArguments.clear;
@@ -42,7 +46,7 @@ export class React extends NowPlayingConfigChildCommand<typeof args> {
       await this.saveReacts(emojis);
     } else {
       const reactions = JSON.parse(
-        this.gowonService.settingsManager.get("reacts", {
+        this.settingsService.get("reacts", {
           userID: this.author.id,
         }) || "[]"
       ) as string[];
@@ -74,7 +78,7 @@ export class React extends NowPlayingConfigChildCommand<typeof args> {
     );
 
     if (await confirmationEmbed.awaitConfirmation()) {
-      await this.gowonService.settingsManager.set("reacts", {
+      await this.settingsService.set(this.ctx, "reacts", {
         userID: this.author.id,
       });
       confirmationEmbed.sentMessage!.edit({
@@ -105,7 +109,8 @@ export class React extends NowPlayingConfigChildCommand<typeof args> {
     if (emojisToSave.length > 5) {
       throw new LogicError("You can't have more than 5 reactions!");
     } else if (emojisToSave.length) {
-      this.gowonService.settingsManager.set(
+      this.settingsService.set(
+        this.ctx,
         "reacts",
         { userID: this.author.id },
         JSON.stringify(emojisToSave.map((e) => e.resolvable))

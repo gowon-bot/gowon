@@ -1,9 +1,9 @@
 import { MirrorballError, LogicError } from "../../../../errors";
 import { Stopwatch } from "../../../../helpers";
 import {
-  ConcurrencyManager,
+  ConcurrencyService,
   ConcurrentActions,
-} from "../../../../lib/caches/ConcurrencyManager";
+} from "../../../../services/ConcurrencyService";
 import { Delegate } from "../../../../lib/command/BaseCommand";
 import { MirrorballBaseCommand } from "../../../../lib/indexing/MirrorballCommands";
 import { errorEmbed } from "../../../../lib/views/embeds";
@@ -51,11 +51,11 @@ export default class Update extends MirrorballBaseCommand<
 
   stopwatch = new Stopwatch();
 
-  concurrencyManager = new ConcurrencyManager();
+  concurrencyService = new ConcurrencyService();
 
   async prerun() {
     if (
-      await this.concurrencyManager.isUserDoingAction(
+      await this.concurrencyService.isUserDoingAction(
         this.author.id,
         ConcurrentActions.Indexing,
         ConcurrentActions.Updating
@@ -112,7 +112,7 @@ export default class Update extends MirrorballBaseCommand<
       }
     }
 
-    await this.concurrencyManager.registerUser(
+    await this.concurrencyService.registerUser(
       ConcurrentActions.Updating,
       this.author.id
     );
@@ -120,7 +120,7 @@ export default class Update extends MirrorballBaseCommand<
     this.mirrorballService.webhook.onResponse(
       response.update.token,
       (error) => {
-        this.concurrencyManager.unregisterUser(
+        this.concurrencyService.unregisterUser(
           ConcurrentActions.Indexing,
           this.author.id
         );

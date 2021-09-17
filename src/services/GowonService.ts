@@ -6,15 +6,14 @@ import { CrownBan } from "../database/entity/CrownBan";
 import { ChannelBlacklist } from "../database/entity/ChannelBlacklist";
 import { ArtistCrownBan } from "../database/entity/ArtistCrownBan";
 import { RunAs } from "../lib/command/RunAs";
-import { SettingsManager } from "../lib/settings/SettingsManager";
+import { SettingsService } from "../lib/settings/SettingsManager";
+import { ServiceRegistry } from "./ServicesRegistry";
 
 export class GowonService {
-  // Instance methods/properties
   customPrefixes = {
     lastfm: "lfm:",
   };
 
-  settingsManager = new SettingsManager();
   shallowCache = new ShallowCache();
 
   constants = {
@@ -32,9 +31,13 @@ export class GowonService {
     defaultLoadingTime: 5,
   } as const;
 
+  private get settingsService() {
+    return ServiceRegistry.get(SettingsService);
+  }
+
   prefix(guildID: string): string {
     return (
-      this.settingsManager.get("prefix", { guildID }) || config.defaultPrefix
+      this.settingsService.get("prefix", { guildID }) || config.defaultPrefix
     );
   }
 
@@ -53,11 +56,11 @@ export class GowonService {
   }
 
   async getInactiveRole(guild: Guild): Promise<string | undefined> {
-    return this.settingsManager.get("inactiveRole", { guildID: guild.id });
+    return this.settingsService.get("inactiveRole", { guildID: guild.id });
   }
 
   async getPurgatoryRole(guild: Guild): Promise<string | undefined> {
-    return this.settingsManager.get("purgatoryRole", { guildID: guild.id });
+    return this.settingsService.get("purgatoryRole", { guildID: guild.id });
   }
 
   async getCrownBannedUsers(guild: Guild): Promise<string[]> {

@@ -101,7 +101,7 @@ export class SpotifyService extends BaseService {
     ctx: BaseServiceContext,
     artist: string
   ): Promise<SearchItem | undefined> {
-    let search = await this.search(ctx, artist, ["artist"]);
+    const search = await this.search(ctx, artist, ["artist"]);
 
     return (
       search.artists.items.find((a) => this.compare(a.name, artist)) ||
@@ -114,7 +114,7 @@ export class SpotifyService extends BaseService {
     artist: string,
     album: string
   ): Promise<SearchItem | undefined> {
-    let search = await this.search(ctx, artist + " " + album, ["album"]);
+    const search = await this.search(ctx, artist + " " + album, ["album"]);
 
     return search.albums.items[0];
   }
@@ -131,7 +131,7 @@ export class SpotifyService extends BaseService {
     ctx: BaseServiceContext,
     keywords: string
   ): Promise<SearchItem | undefined> {
-    let search = await this.search(ctx, keywords, ["track"]);
+    const search = await this.search(ctx, keywords, ["track"]);
 
     return search.tracks.items[0];
   }
@@ -140,7 +140,7 @@ export class SpotifyService extends BaseService {
     ctx: BaseServiceContext,
     keywords: string
   ): Promise<SearchItem | undefined> {
-    let search = await this.search(ctx, keywords, ["album"]);
+    const search = await this.search(ctx, keywords, ["album"]);
 
     return search.albums.items[0];
   }

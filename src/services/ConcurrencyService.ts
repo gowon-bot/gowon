@@ -1,3 +1,5 @@
+import { BaseService } from "./BaseService";
+
 export enum ConcurrentActions {
   Indexing = "Indexing",
   Updating = "Updating",
@@ -7,10 +9,11 @@ interface ConcurrencyCache {
   [action: string]: Set<string>;
 }
 
-export class ConcurrencyManager {
+export class ConcurrencyService extends BaseService {
   cache: ConcurrencyCache = {};
 
   constructor() {
+    super();
     for (const action of Object.values(ConcurrentActions)) {
       this.cache[action] = new Set();
     }

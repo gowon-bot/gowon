@@ -2,9 +2,9 @@ import { MirrorballError, LogicError } from "../../../../errors";
 import { ConfirmationEmbed } from "../../../../lib/views/embeds/ConfirmationEmbed";
 import { Arguments } from "../../../../lib/arguments/arguments";
 import {
-  ConcurrencyManager,
+  ConcurrencyService,
   ConcurrentActions,
-} from "../../../../lib/caches/ConcurrencyManager";
+} from "../../../../services/ConcurrencyService";
 import { MirrorballBaseCommand as MirrorballBaseCommand } from "../../../../lib/indexing/MirrorballCommands";
 import { Validation } from "../../../../lib/validation/ValidationChecker";
 import { validators } from "../../../../lib/validation/validators";
@@ -39,11 +39,11 @@ export default class Index extends MirrorballBaseCommand<
     username: new validators.Required({}),
   };
 
-  concurrencyManager = new ConcurrencyManager();
+  concurrencyService = new ConcurrencyService();
 
   async prerun() {
     if (
-      await this.concurrencyManager.isUserDoingAction(
+      await this.concurrencyService.isUserDoingAction(
         this.author.id,
         ConcurrentActions.Indexing,
         ConcurrentActions.Updating
@@ -106,13 +106,13 @@ export default class Index extends MirrorballBaseCommand<
       throw new MirrorballError("An unknown error occurred");
     }
 
-    this.concurrencyManager.registerUser(
+    this.concurrencyService.registerUser(
       ConcurrentActions.Indexing,
       this.author.id
     );
 
     this.mirrorballService.webhook.onResponse(response.fullIndex.token, () => {
-      this.concurrencyManager.unregisterUser(
+      this.concurrencyService.unregisterUser(
         ConcurrentActions.Indexing,
         this.author.id
       );

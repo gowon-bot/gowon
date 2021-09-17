@@ -8,9 +8,9 @@ import { Message, MessageEmbed } from "discord.js";
 import { User as DBUser } from "../../database/entity/User";
 import { ConfirmationEmbed } from "../views/embeds/ConfirmationEmbed";
 import {
-  ConcurrencyManager,
+  ConcurrencyService,
   ConcurrentActions,
-} from "../caches/ConcurrencyManager";
+} from "../../services/ConcurrencyService";
 import { errorEmbed } from "../views/embeds";
 import { LastFMArguments } from "../../services/LastFM/LastFMArguments";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
@@ -35,7 +35,7 @@ export abstract class MirrorballBaseCommand<
   abstract connector: Connector<ResponseT, ParamsT>;
   lastFMService = ServiceRegistry.get(LastFMService);
   lastFMArguments = ServiceRegistry.get(LastFMArguments);
-  concurrencyManager = new ConcurrencyManager();
+  concurrencyService = ServiceRegistry.get(ConcurrencyService);
 
   readonly indexingHelp =
     '"Indexing" means downloading all your last.fm data. This is required for many commands to function, and is recommended.';
@@ -177,12 +177,12 @@ export abstract class MirrorballBaseCommand<
         ),
       ],
     });
-    await this.concurrencyManager.registerUser(
+    await this.concurrencyService.registerUser(
       ConcurrentActions.Indexing,
       discordID
     );
     await this.mirrorballService.fullIndex(this.ctx);
-    this.concurrencyManager.registerUser(ConcurrentActions.Indexing, discordID);
+    this.concurrencyService.registerUser(ConcurrentActions.Indexing, discordID);
     this.notifyUser(
       Perspective.buildPerspective(username, false),
       "index",

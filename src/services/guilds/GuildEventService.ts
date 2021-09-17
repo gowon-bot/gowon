@@ -28,6 +28,8 @@ export class GuildEventService extends BaseService<GuildEventServiceContext> {
   public async handleNewGuild(ctx: GuildEventServiceContext, guild: Guild) {
     this.log(ctx, `setting up Gowon for ${guild.name}`);
 
+    ctx.command = { message: { guild } } as any;
+
     await this.setupPermissions(ctx, guild);
     await this.pingDeveloper(ctx, guild);
     await this.registerUsers(ctx, guild);
@@ -35,6 +37,8 @@ export class GuildEventService extends BaseService<GuildEventServiceContext> {
 
   public async handleGuildLeave(ctx: GuildEventServiceContext, guild: Guild) {
     this.log(ctx, `tearing down Gowon for ${guild.name}`);
+
+    ctx.command = { message: { guild } } as any;
 
     await this.pingDeveloper(ctx, guild, true);
   }

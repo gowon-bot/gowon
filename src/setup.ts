@@ -7,13 +7,13 @@ import { DB } from "./database";
 import { Stopwatch, ucFirst } from "./helpers";
 import { CommandHandler } from "./lib/command/CommandHandler";
 import { GowonClient } from "./lib/GowonClient";
-import { GowonService } from "./services/GowonService";
 import { GuildEventService } from "./services/guilds/GuildEventService";
 import { RedisInteractionService } from "./services/redis/RedisInteractionService";
 import pm2 from "pm2";
 import { mirrorballClient } from "./lib/indexing/client";
 import gql from "graphql-tag";
 import { ServiceRegistry } from "./services/ServicesRegistry";
+import { SettingsService } from "./lib/settings/SettingsManager";
 
 export const client = new GowonClient(
   new Client({
@@ -45,7 +45,7 @@ export const client = new GowonClient(
 export const handler = new CommandHandler();
 const db = new DB();
 const api = new GraphQLAPI();
-const gowonService = ServiceRegistry.get(GowonService);
+const settingsService = ServiceRegistry.get(SettingsService);
 const redisService = ServiceRegistry.get(RedisInteractionService);
 export const guildEventService = ServiceRegistry.get(GuildEventService);
 
@@ -90,7 +90,7 @@ function initializeGuildEventService() {
 
 function initializeSettingsManager() {
   return logStartup(
-    () => gowonService.settingsManager.init(),
+    () => settingsService.init(),
     "Initialized settings manager"
   );
 }

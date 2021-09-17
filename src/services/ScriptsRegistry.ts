@@ -28,7 +28,7 @@ async function generateScripts(): Promise<Scripts> {
   }, {} as Scripts);
 }
 
-export class ScriptsManager {
+export class ScriptsRegistry {
   isInitialized = false;
 
   scripts = {} as Scripts;

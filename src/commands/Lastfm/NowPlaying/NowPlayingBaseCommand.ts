@@ -20,6 +20,8 @@ import {
 import { displayNumber } from "../../../lib/views/displays";
 import { Requestable } from "../../../services/LastFM/LastFMAPIService";
 import { Chance } from "chance";
+import { ServiceRegistry } from "../../../services/ServicesRegistry";
+import { SettingsService } from "../../../lib/settings/SettingsManager";
 
 const args = {
   inputs: {
@@ -40,6 +42,7 @@ export abstract class NowPlayingBaseCommand<
 
   arguments: Arguments = args;
 
+  settingsService = ServiceRegistry.get(SettingsService);
   tagConsolidator = new TagConsolidator();
 
   protected async nowPlayingMentions(
@@ -212,7 +215,7 @@ export abstract class NowPlayingBaseCommand<
 
   protected async customReactions(sentMessage: Message) {
     const reactions = JSON.parse(
-      this.gowonService.settingsManager.get("reacts", {
+      this.settingsService.get("reacts", {
         userID: this.author.id,
       }) || "[]"
     ) as string[];
@@ -228,7 +231,8 @@ export abstract class NowPlayingBaseCommand<
     }
 
     if (badReactions.length) {
-      await this.gowonService.settingsManager.set(
+      await this.settingsService.set(
+        this.ctx,
         "reacts",
         { userID: this.author.id },
         JSON.stringify(reactions.filter((r) => !badReactions.includes(r)))

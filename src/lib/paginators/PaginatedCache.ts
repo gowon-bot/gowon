@@ -4,12 +4,12 @@ type OnPageRequestCallback<T> =
   | ((pageNumber: number) => T[])
   | ((pageNumber: number) => Promise<T[]>);
 
-export class PaginatedCacheManager<T> {
+export class PaginatedCache<T> {
   items: T[][] = [];
 
   constructor(private onPageRequest: OnPageRequestCallback<T>) {}
 
-  public cacheInitial(items: T[], pageSize = 10): PaginatedCacheManager<T> {
+  public cacheInitial(items: T[], pageSize = 10): PaginatedCache<T> {
     this.items = chunkArray(items, pageSize);
     return this;
   }

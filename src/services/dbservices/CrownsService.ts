@@ -28,6 +28,7 @@ import { toInt } from "../../helpers/lastFM";
 import { ServiceRegistry } from "../ServicesRegistry";
 import { GowonService } from "../GowonService";
 import { CrownsHistoryService } from "./CrownsHistoryService";
+import { SettingsService } from "../../lib/settings/SettingsManager";
 
 export enum CrownState {
   tie = "Tie",
@@ -75,6 +76,9 @@ export class CrownsService extends BaseService {
   }
   private get gowonService() {
     return ServiceRegistry.get(GowonService);
+  }
+  private get settingsService() {
+    return ServiceRegistry.get(SettingsService);
   }
 
   get threshold() {
@@ -419,7 +423,8 @@ export class CrownsService extends BaseService {
   ): Promise<Setting | undefined> {
     const guildID = this.guild(ctx).id;
 
-    const setting = await this.gowonService.settingsManager.set(
+    const setting = await this.settingsService.set(
+      ctx,
       "inactiveRole",
       { guildID },
       roleID
@@ -434,7 +439,8 @@ export class CrownsService extends BaseService {
   ): Promise<Setting | undefined> {
     const guildID = this.guild(ctx).id;
 
-    const setting = await this.gowonService.settingsManager.set(
+    const setting = await this.settingsService.set(
+      ctx,
       "purgatoryRole",
       { guildID },
       roleID
@@ -464,7 +470,8 @@ export class CrownsService extends BaseService {
 
     this.log(ctx, `Opting out user ${userID} out of crowns in ${guildID}`);
 
-    await this.gowonService.settingsManager.set(
+    await this.settingsService.set(
+      ctx,
       "optedOut",
       {
         guildID,
@@ -481,7 +488,7 @@ export class CrownsService extends BaseService {
 
     this.log(ctx, `Opting in user ${userID} out of crowns in ${guildID}`);
 
-    this.gowonService.settingsManager.set("optedOut", {
+    this.settingsService.set(ctx, "optedOut", {
       guildID,
       userID,
     });
@@ -495,7 +502,7 @@ export class CrownsService extends BaseService {
 
     this.log(ctx, `Checking if ${userID} is opted out in ${guildID}`);
 
-    const setting = this.gowonService.settingsManager.get("optedOut", {
+    const setting = this.settingsService.get("optedOut", {
       guildID,
       userID,
     });

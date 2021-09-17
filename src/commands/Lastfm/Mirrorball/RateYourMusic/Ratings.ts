@@ -2,7 +2,7 @@ import { Arguments } from "../../../../lib/arguments/arguments";
 import { RatingsParams, RatingsResponse, RatingsConnector } from "./connectors";
 import { RateYourMusicIndexingChildCommand } from "./RateYourMusicChildCommand";
 import { standardMentions } from "../../../../lib/arguments/mentions/mentions";
-import { PaginatedCacheManager } from "../../../../lib/paginators/PaginatedCacheManager";
+import { PaginatedCache } from "../../../../lib/paginators/PaginatedCache";
 import { LogicError, UnknownMirrorballError } from "../../../../errors";
 import { MirrorballRating } from "../../../../services/mirrorball/MirrorballTypes";
 import { displayRating } from "../../../../lib/views/displays";
@@ -81,7 +81,7 @@ export class Ratings extends RateYourMusicIndexingChildCommand<
       );
     }
 
-    const paginatedCacheManager = new PaginatedCacheManager(async (page) => {
+    const paginatedCache = new PaginatedCache(async (page) => {
       const response = await this.query({
         user: {
           lastFMUsername: dbUser.lastFMUsername,
@@ -94,10 +94,7 @@ export class Ratings extends RateYourMusicIndexingChildCommand<
       return response.ratings.ratings;
     });
 
-    paginatedCacheManager.cacheInitial(
-      initialPages.ratings.ratings,
-      this.pageSize
-    );
+    paginatedCache.cacheInitial(initialPages.ratings.ratings, this.pageSize);
 
     const embed = this.newEmbed()
       .setAuthor(...this.generateEmbedAuthor("Ratings"))
@@ -119,7 +116,7 @@ export class Ratings extends RateYourMusicIndexingChildCommand<
     });
 
     scrollingEmbed.onPageChange(async (page) => {
-      return this.generateTable(await paginatedCacheManager.getPage(page));
+      return this.generateTable(await paginatedCache.getPage(page));
     });
 
     scrollingEmbed.send();

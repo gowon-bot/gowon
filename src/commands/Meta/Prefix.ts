@@ -1,4 +1,6 @@
 import { BaseCommand } from "../../lib/command/BaseCommand";
+import { SettingsService } from "../../lib/settings/SettingsManager";
+import { ServiceRegistry } from "../../services/ServicesRegistry";
 
 export default class Prefix extends BaseCommand {
   idSeed = "apink hayoung";
@@ -9,6 +11,8 @@ export default class Prefix extends BaseCommand {
 
   newPrefix?: string;
 
+  settingsService = ServiceRegistry.get(SettingsService);
+
   setPrefix(prefix?: string): Prefix {
     this.newPrefix = prefix;
     return this;
@@ -16,7 +20,8 @@ export default class Prefix extends BaseCommand {
 
   async run() {
     if (this.newPrefix) {
-      await this.gowonService.settingsManager.set(
+      await this.settingsService.set(
+        this.ctx,
         "prefix",
         this.scopes.guild,
         this.newPrefix

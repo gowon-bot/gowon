@@ -1,4 +1,5 @@
 import { SimpleMap } from "../helpers/types";
+import { ConcurrencyService } from "./ConcurrencyService";
 import { DatasourceService } from "../lib/nowplaying/DatasourceService";
 import { Can } from "../lib/permissions/Can";
 import { AdminService } from "./dbservices/AdminService";
@@ -28,6 +29,7 @@ import { RedisInteractionService } from "./redis/RedisInteractionService";
 import { RedisService } from "./redis/RedisService";
 import { SpotifyService } from "./Spotify/SpotifyService";
 import { TrackingService } from "./TrackingService";
+import { SettingsService } from "../lib/settings/SettingsManager";
 
 type Service<T = any> = { new (): T };
 
@@ -41,6 +43,7 @@ const services: Service[] = [
   CrownsService,
   CrownsHistoryService,
   ComboService,
+  ConcurrencyService,
   ConfigService,
   DatasourceService,
   FriendsService,
@@ -58,6 +61,7 @@ const services: Service[] = [
   RedirectsService,
   RedisService,
   RedisInteractionService,
+  SettingsService,
   SpotifyService,
   TagsService,
   TrackingService,

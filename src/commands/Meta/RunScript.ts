@@ -1,7 +1,7 @@
 import { BaseCommand } from "../../lib/command/BaseCommand";
 import { Validation } from "../../lib/validation/ValidationChecker";
 import { validators } from "../../lib/validation/validators";
-import { ScriptsManager } from "../../services/ScriptsManager";
+import { ScriptsRegistry } from "../../services/ScriptsRegistry";
 
 const args = {
   inputs: {
@@ -22,14 +22,14 @@ export default class RunScript extends BaseCommand<typeof args> {
     script: new validators.Required({}),
   };
 
-  scriptsManager = new ScriptsManager();
+  scriptsRegistry = new ScriptsRegistry();
 
   async run() {
-    await this.scriptsManager.init();
+    await this.scriptsRegistry.init();
 
     const script = this.parsedArguments.script!;
 
-    this.scriptsManager.runScript(script, this);
+    this.scriptsRegistry.runScript(script, this);
 
     await this.reply(`Running script ${script.code()}`);
   }

@@ -1,6 +1,5 @@
-import chalk from "chalk";
 import { Setting } from "../../database/entity/Setting";
-import { Logger } from "../Logger";
+import { BaseService, BaseServiceContext } from "../../services/BaseService";
 import { Settings, SettingsMap } from "./Settings";
 import {
   UserScope,
@@ -18,10 +17,11 @@ interface Cache {
   };
 }
 
-export class SettingsManager {
+export class SettingsService extends BaseService {
   public cache: Cache;
 
-  constructor(private logger?: Logger) {
+  constructor() {
+    super();
     this.cache = Object.keys(Settings).reduce((acc, val) => {
       const setting: BaseSetting = (Settings as any)[val];
       acc[setting.name] = {};
@@ -48,11 +48,12 @@ export class SettingsManager {
   }
 
   async set(
+    ctx: BaseServiceContext,
     settingName: SettingName,
     scope: Scope,
     value?: string
   ): Promise<Setting | undefined> {
-    this.log(`Setting ${settingName} for ${JSON.stringify(scope)}`);
+    this.log(ctx, `Setting ${settingName} for ${JSON.stringify(scope)}`);
 
     const setting = Settings[settingName];
     const stringScope = JSON.stringify(setting.transformScope(scope as any));
@@ -83,9 +84,5 @@ export class SettingsManager {
     } else {
       this.cache[settingName][scope] = setting.value;
     }
-  }
-
-  protected log(msg: string): void {
-    Logger.log(this.constructor.name, chalk`{grey ${msg}}`, this.logger);
   }
 }
