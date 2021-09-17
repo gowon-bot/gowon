@@ -12,6 +12,7 @@ import {
 } from "./SpotifyService.types";
 import { SimpleMap } from "../../helpers/types";
 import { SpotifyConnectionError } from "../../errors";
+import { Logger } from "../../lib/Logger";
 
 export class SpotifyService extends BaseService {
   url = "https://api.spotify.com/v1/";
@@ -20,15 +21,15 @@ export class SpotifyService extends BaseService {
   private _token?: SpotifyToken;
 
   private tokenIsValid(token: SpotifyToken): boolean {
-    let dateExpires = add(new Date(), { seconds: token.expires_in });
+    const dateExpires = add(new Date(), { seconds: token.expires_in });
     return isBefore(new Date(), dateExpires);
   }
 
   private async token(ctx: BaseServiceContext): Promise<string> {
-    if (this._token && this.tokenIsValid(this._token))
+    if (this._token && this.tokenIsValid(this._token)) {
       return this._token.access_token;
-    else {
-      let token = await this.fetchToken(ctx);
+    } else {
+      const token = await this.fetchToken(ctx);
       this._token = token;
       return token.access_token;
     }
@@ -36,10 +37,10 @@ export class SpotifyService extends BaseService {
 
   private async fetchToken(ctx: BaseServiceContext): Promise<SpotifyToken> {
     this.log(ctx, "fetching new token");
-    let params = new URLSearchParams();
+    const params = new URLSearchParams();
     params.append("grant_type", "client_credentials");
 
-    let response = await fetch(this.tokenURL, {
+    const response = await fetch(this.tokenURL, {
       method: "POST",
       body: params,
       headers: {
@@ -50,7 +51,11 @@ export class SpotifyService extends BaseService {
       },
     });
 
-    return (await response.json()) as SpotifyToken;
+    const jsonResponse = await response.json();
+
+    console.log(jsonResponse);
+
+    return jsonResponse as SpotifyToken;
   }
 
   private async headers(ctx: BaseServiceContext) {
@@ -64,7 +69,10 @@ export class SpotifyService extends BaseService {
     path: string,
     params: SimpleMap
   ): Promise<T> {
-    this.log(ctx, `made API request to ${path} with params ${params}`);
+    this.log(
+      ctx,
+      `made API request to ${path} with params ${Logger.formatObject(params)}`
+    );
 
     const response = await fetch(this.url + path + "?" + stringify(params), {
       headers: await this.headers(ctx),

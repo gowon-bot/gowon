@@ -97,7 +97,7 @@ ${
 
   logError(error: any): void {
     if (error.isClientFacing) {
-      this.header += "\n" + chalk`{red ERROR: ${error}}`;
+      this.header += "\n" + chalk.red(`ERROR: ${error}`);
     } else if (error instanceof Error) {
       this.header += "\n" + chalk.red("ERROR: " + error.stack);
     } else {
