@@ -105,9 +105,7 @@ export class Ratings extends RateYourMusicIndexingChildCommand<
       );
 
     const scrollingEmbed = new ScrollingEmbed(this.message, embed, {
-      initialItems: this.generateTable(
-        initialPages.ratings.ratings.slice(0, 10)
-      ),
+      initialItems: this.generateTable(await paginatedCache.getPage(1)),
       totalPages: Math.ceil(
         initialPages.ratings.pageInfo.recordCount / this.pageSize
       ),

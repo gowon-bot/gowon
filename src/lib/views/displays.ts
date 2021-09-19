@@ -43,15 +43,18 @@ export function discordTimestamp(
   return `<t:${Math.round(+date / 1000)}:${flag}>`;
 }
 
-export function displayNumberedList(list: any[], startAt = 0): string {
+export function displayNumberedList(
+  list: any[],
+  startAt = 0,
+  step = 1
+): string {
   return list
     .map((val, idx) => {
-      const spaces =
-        `${startAt + list.length}`.length - `${idx + startAt + 1}`.length;
+      const displayIdx = idx * step + startAt + (step === 1 ? 1 : 0);
 
-      return `\`${" ".repeat(spaces)}${displayNumber(
-        idx + startAt + 1
-      )}\`. ${val}`;
+      const spaces = `${startAt + list.length}`.length - `${displayIdx}`.length;
+
+      return `\`${" ".repeat(spaces)}${displayNumber(displayIdx)}\`. ${val}`;
     })
     .join("\n");
 }

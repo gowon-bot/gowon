@@ -30,7 +30,7 @@ export default class LastScrobbledTrack extends MirrorballBaseCommand<
   variations: Variation[] = [{ name: "first", variation: ["firstt", "ft"] }];
 
   subcategory = "library";
-  description = "Shows the last time you scrobbled an track";
+  description = "Shows the last time you scrobbled a track";
 
   arguments: Arguments = args;
 
