@@ -465,7 +465,7 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
       for (const delegate of this.delegates) {
         if (delegate.when(this.parsedArguments)) {
           const command = new delegate.delegateTo();
-          command.gowonClient = this.gowonClient;
+          command.setClient(this.gowonClient);
           command.delegatedFrom = this;
           await command.execute(message, runAs);
           return;
