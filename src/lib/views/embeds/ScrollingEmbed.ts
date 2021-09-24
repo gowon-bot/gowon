@@ -151,8 +151,6 @@ export class ScrollingEmbed {
       collector.on("collect", async (reaction: MessageReaction, user: User) => {
         const emoji = reaction.emoji;
 
-        this.removeReaction(emoji, user.id);
-
         let page = this.currentPage;
         const emojiResolvable = emoji.id ?? emoji.name;
 
@@ -182,6 +180,8 @@ export class ScrollingEmbed {
         Promise.resolve(
           this.onPageChangeCallback(this.currentPage, this.options.totalPages)
         ).then((items) => {
+          this.removeReaction(emoji, user.id);
+
           this.currentItems = items;
 
           this.generateEmbed();

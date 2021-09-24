@@ -2,7 +2,7 @@ import { MirrorballError, LogicError } from "../../../../errors";
 import { Stopwatch } from "../../../../helpers";
 import {
   ConcurrencyService,
-  ConcurrentActions,
+  ConcurrentAction,
 } from "../../../../services/ConcurrencyService";
 import { Delegate } from "../../../../lib/command/BaseCommand";
 import { MirrorballBaseCommand } from "../../../../lib/indexing/MirrorballCommands";
@@ -58,8 +58,8 @@ export default class Update extends MirrorballBaseCommand<
     if (
       await this.concurrencyService.isUserDoingAction(
         this.author.id,
-        ConcurrentActions.Indexing,
-        ConcurrentActions.Updating
+        ConcurrentAction.Indexing,
+        ConcurrentAction.Updating
       )
     ) {
       throw new LogicError(
@@ -113,8 +113,9 @@ export default class Update extends MirrorballBaseCommand<
       }
     }
 
-    await this.concurrencyService.registerUser(
-      ConcurrentActions.Updating,
+    this.concurrencyService.registerUser(
+      this.ctx,
+      ConcurrentAction.Updating,
       this.author.id
     );
 
@@ -122,7 +123,8 @@ export default class Update extends MirrorballBaseCommand<
       response.update.token,
       (error) => {
         this.concurrencyService.unregisterUser(
-          ConcurrentActions.Indexing,
+          this.ctx,
+          ConcurrentAction.Updating,
           this.author.id
         );
         if (this.stopwatch.elapsedInSeconds > 5) {

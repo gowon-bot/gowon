@@ -9,7 +9,7 @@ import { User as DBUser } from "../../database/entity/User";
 import { ConfirmationEmbed } from "../views/embeds/ConfirmationEmbed";
 import {
   ConcurrencyService,
-  ConcurrentActions,
+  ConcurrentAction,
 } from "../../services/ConcurrencyService";
 import { errorEmbed } from "../views/embeds";
 import { LastFMArguments } from "../../services/LastFM/LastFMArguments";
@@ -177,12 +177,17 @@ export abstract class MirrorballBaseCommand<
         ),
       ],
     });
-    await this.concurrencyService.registerUser(
-      ConcurrentActions.Indexing,
+    this.concurrencyService.registerUser(
+      this.ctx,
+      ConcurrentAction.Indexing,
       discordID
     );
     await this.mirrorballService.fullIndex(this.ctx);
-    this.concurrencyService.registerUser(ConcurrentActions.Indexing, discordID);
+    this.concurrencyService.registerUser(
+      this.ctx,
+      ConcurrentAction.Indexing,
+      discordID
+    );
     this.notifyUser(
       Perspective.buildPerspective(username, false),
       "index",

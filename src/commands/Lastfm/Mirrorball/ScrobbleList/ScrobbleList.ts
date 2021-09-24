@@ -2,6 +2,7 @@ import { MirrorballError } from "../../../../errors";
 import { toInt } from "../../../../helpers/lastFM";
 import { convertMirrorballDate } from "../../../../helpers/mirrorball";
 import { Arguments } from "../../../../lib/arguments/arguments";
+import { standardMentions } from "../../../../lib/arguments/mentions/mentions";
 import { MirrorballBaseCommand } from "../../../../lib/indexing/MirrorballCommands";
 import { PaginatedCache } from "../../../../lib/paginators/PaginatedCache";
 import {
@@ -24,6 +25,7 @@ const args = {
     artist: { index: 0, splitOn: "|" },
     track: { index: 1, splitOn: "|" },
   },
+  mentions: standardMentions,
 } as const;
 
 export default class ScrobbleList extends MirrorballBaseCommand<

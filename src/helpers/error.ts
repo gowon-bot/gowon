@@ -1,3 +1,4 @@
+import { Emoji } from "../lib/Emoji";
 import { RawLastFMErrorResponse } from "../services/LastFM/LastFMService.types";
 
 export function parseErrorSix(message: string): string {
@@ -17,7 +18,10 @@ export function parseError(error: RawLastFMErrorResponse): string {
       return parseErrorSix(error.message);
 
     case 8:
-      return "Last.fm is having issues at the moment, please try again in a few moments...";
+      return (
+        Emoji[404] +
+        " Last.fm is having issues at the moment, please try again in a few moments..."
+      );
 
     case 17:
       return "that user's recent tracks are probably set to private. To turn off hidden recent tracks, visit your privacy settings in last.fm";

@@ -3,7 +3,7 @@ import { ConfirmationEmbed } from "../../../../lib/views/embeds/ConfirmationEmbe
 import { Arguments } from "../../../../lib/arguments/arguments";
 import {
   ConcurrencyService,
-  ConcurrentActions,
+  ConcurrentAction,
 } from "../../../../services/ConcurrencyService";
 import { MirrorballBaseCommand as MirrorballBaseCommand } from "../../../../lib/indexing/MirrorballCommands";
 import { Validation } from "../../../../lib/validation/ValidationChecker";
@@ -46,8 +46,8 @@ export default class Index extends MirrorballBaseCommand<
     if (
       await this.concurrencyService.isUserDoingAction(
         this.author.id,
-        ConcurrentActions.Indexing,
-        ConcurrentActions.Updating
+        ConcurrentAction.Indexing,
+        ConcurrentAction.Updating
       )
     ) {
       throw new LogicError(
@@ -108,13 +108,15 @@ export default class Index extends MirrorballBaseCommand<
     }
 
     this.concurrencyService.registerUser(
-      ConcurrentActions.Indexing,
+      this.ctx,
+      ConcurrentAction.Indexing,
       this.author.id
     );
 
     this.mirrorballService.webhook.onResponse(response.fullIndex.token, () => {
       this.concurrencyService.unregisterUser(
-        ConcurrentActions.Indexing,
+        this.ctx,
+        ConcurrentAction.Indexing,
         this.author.id
       );
       this.usersService.setAsIndexed(this.ctx, this.author.id);

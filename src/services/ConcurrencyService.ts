@@ -1,8 +1,9 @@
-import { BaseService } from "./BaseService";
+import { BaseService, BaseServiceContext } from "./BaseService";
 
-export enum ConcurrentActions {
+export enum ConcurrentAction {
   Indexing = "Indexing",
   Updating = "Updating",
+  RYMImport = "RYMImport",
 }
 
 interface ConcurrencyCache {
@@ -10,29 +11,48 @@ interface ConcurrencyCache {
 }
 
 export class ConcurrencyService extends BaseService {
+  readonly defaultTimeout = 10 * 60 * 60;
+
   cache: ConcurrencyCache = {};
 
   constructor() {
     super();
-    for (const action of Object.values(ConcurrentActions)) {
+    for (const action of Object.values(ConcurrentAction)) {
       this.cache[action] = new Set();
     }
   }
 
-  async registerUser(action: ConcurrentActions, discordID: string) {
+  registerUser(
+    ctx: BaseServiceContext,
+    action: ConcurrentAction,
+    discordID: string
+  ) {
+    this.log(ctx, `Registering user ${discordID} as doing ${action}`);
     this.cache[action].add(discordID);
+    this.makeEphemeral(action, discordID);
   }
 
-  unregisterUser(action: ConcurrentActions, discordID: string) {
+  unregisterUser(
+    ctx: BaseServiceContext,
+    action: ConcurrentAction,
+    discordID: string
+  ) {
+    this.log(ctx, `Unregistering user ${discordID} as doing ${action}`);
     this.cache[action].delete(discordID);
   }
 
   async isUserDoingAction(
     discordID: string,
-    ...actions: ConcurrentActions[]
+    ...actions: ConcurrentAction[]
   ): Promise<boolean> {
     return actions.some((action) => {
       return this.cache[action].has(discordID);
     });
+  }
+
+  private makeEphemeral(action: ConcurrentAction, discordID: string) {
+    setTimeout(() => {
+      this.cache[action].delete(discordID);
+    }, this.defaultTimeout);
   }
 }

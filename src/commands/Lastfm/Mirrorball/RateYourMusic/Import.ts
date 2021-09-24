@@ -1,4 +1,4 @@
-import { LogicError } from "../../../../errors";
+import { AlreadyImportingRatingsError, LogicError } from "../../../../errors";
 import { Arguments } from "../../../../lib/arguments/arguments";
 import {
   ImportRatingsConnector,
@@ -9,6 +9,7 @@ import streamToString from "stream-to-string";
 import { Emoji } from "../../../../lib/Emoji";
 import { RateYourMusicIndexingChildCommand } from "./RateYourMusicChildCommand";
 import fetch from "node-fetch";
+import { ConcurrentAction } from "../../../../services/ConcurrencyService";
 
 const args = {
   inputs: {
@@ -29,6 +30,17 @@ export class ImportRatings extends RateYourMusicIndexingChildCommand<
 
   arguments: Arguments = args;
 
+  async prerun() {
+    if (
+      await this.concurrencyService.isUserDoingAction(
+        this.author.id,
+        ConcurrentAction.RYMImport
+      )
+    ) {
+      throw new AlreadyImportingRatingsError();
+    }
+  }
+
   async run() {
     await this.parseMentions({
       senderRequired: true,
@@ -37,12 +49,26 @@ export class ImportRatings extends RateYourMusicIndexingChildCommand<
 
     const ratings = await this.getRatings();
 
-    this.message.react(Emoji.checkmark);
+    this.message.react(Emoji.loading);
 
-    const response = await this.query({
-      csv: ratings,
-      user: { discordID: this.author.id },
-    });
+    this.concurrencyService.registerUser(
+      this.ctx,
+      ConcurrentAction.RYMImport,
+      this.author.id
+    );
+
+    let response: ImportRatingsResponse;
+
+    try {
+      response = await this.query({
+        csv: ratings,
+        user: { discordID: this.author.id },
+      });
+      this.unregisterConcurrency();
+    } catch (e) {
+      this.unregisterConcurrency();
+      throw e;
+    }
 
     const errors = this.parseErrors(response);
 
@@ -107,5 +133,13 @@ export class ImportRatings extends RateYourMusicIndexingChildCommand<
     );
 
     return rawMessageContent;
+  }
+
+  private unregisterConcurrency() {
+    this.concurrencyService.unregisterUser(
+      this.ctx,
+      ConcurrentAction.RYMImport,
+      this.author.id
+    );
   }
 }

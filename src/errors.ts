@@ -370,3 +370,13 @@ export class SpotifyConnectionError extends ClientError {
     );
   }
 }
+
+export class AlreadyImportingRatingsError extends ClientError {
+  name = "AlreadyImportingRatingsError";
+
+  constructor() {
+    super(
+      "Your ratings are already being processed, please wait until Gowon is finished until trying again!"
+    );
+  }
+}
