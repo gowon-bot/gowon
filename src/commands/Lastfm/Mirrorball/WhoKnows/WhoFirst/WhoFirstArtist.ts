@@ -3,6 +3,7 @@ import { convertMirrorballDate } from "../../../../../helpers/mirrorball";
 import { Arguments } from "../../../../../lib/arguments/arguments";
 import { FLAGS } from "../../../../../lib/arguments/flags";
 import { Variation } from "../../../../../lib/command/BaseCommand";
+import { VARIATIONS } from "../../../../../lib/command/variations";
 import {
   displayDate,
   displayNumberedList,
@@ -37,9 +38,10 @@ export default class WhoFirstArtist extends WhoKnowsBaseCommand<
   variations: Variation[] = [
     {
       name: "wholast",
-      variation: ["wholastartist", "wl"],
+      variation: ["wholastartist", "wl", "gwl"],
       description: "Shows who *last* scrobbled an artist",
     },
+    VARIATIONS.global("wf", "wl"),
   ];
 
   description = "See who first scrobbled an artist";
@@ -67,7 +69,7 @@ export default class WhoFirstArtist extends WhoKnowsBaseCommand<
       whoLast,
       artist: { name: artistName },
       settings: {
-        guildID: this.isGlobal() ? "" : this.guild.id,
+        guildID: this.isGlobal() ? undefined : this.guild.id,
         limit: 20,
       },
     });
