@@ -10,6 +10,7 @@ import { User } from "../../database/entity/User";
 import { LastFMService } from "../LastFM/LastFMService";
 import { ILike } from "typeorm";
 import { ServiceRegistry } from "../ServicesRegistry";
+import { sqlLikeEscape } from "../../helpers/database";
 
 export class FriendsService extends BaseService {
   private get lastFMService() {
@@ -25,7 +26,11 @@ export class FriendsService extends BaseService {
   ): Promise<Friend> {
     this.log(
       ctx,
-      `Adding friend ${friendToAdd} for user ${user.lastFMUsername}`
+      `Adding friend ${
+        typeof friendToAdd === "string"
+          ? friendToAdd
+          : friendToAdd.lastFMUsername
+      } for user ${user.lastFMUsername}`
     );
 
     if (
@@ -72,7 +77,11 @@ export class FriendsService extends BaseService {
   ): Promise<void> {
     this.log(
       ctx,
-      `Removing friend ${friendToRemove} for user ${user.lastFMUsername}`
+      `Removing friend ${
+        typeof friendToRemove === "string"
+          ? friendToRemove
+          : friendToRemove.lastFMUsername
+      } for user ${user.lastFMUsername}`
     );
 
     let where: any;
@@ -85,12 +94,12 @@ export class FriendsService extends BaseService {
         },
         {
           user,
-          friendUsername: ILike(friendToRemove.lastFMUsername),
+          friendUsername: ILike(sqlLikeEscape(friendToRemove.lastFMUsername)),
         },
       ];
     } else {
       where = {
-        friendUsername: ILike(friendToRemove),
+        friendUsername: ILike(sqlLikeEscape(friendToRemove)),
       };
     }
 

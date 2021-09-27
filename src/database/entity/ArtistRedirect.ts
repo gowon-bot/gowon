@@ -5,6 +5,7 @@ import {
   Column,
   ILike,
 } from "typeorm";
+import { sqlLikeEscape } from "../../helpers/database";
 
 @Entity({ name: "artist_redirects" })
 export class ArtistRedirect extends BaseEntity {
@@ -18,7 +19,7 @@ export class ArtistRedirect extends BaseEntity {
   to?: string;
 
   static async check(artistName: string): Promise<ArtistRedirect | undefined> {
-    return await this.findOne({ from: ILike(artistName) });
+    return await this.findOne({ from: ILike(sqlLikeEscape(artistName)) });
   }
 
   redirectDisplay(): string {

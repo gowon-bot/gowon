@@ -29,6 +29,7 @@ import { ServiceRegistry } from "../ServicesRegistry";
 import { GowonService } from "../GowonService";
 import { CrownsHistoryService } from "./CrownsHistoryService";
 import { SettingsService } from "../../lib/settings/SettingsManager";
+import { sqlLikeEscape } from "../../helpers/database";
 
 export enum CrownState {
   tie = "Tie",
@@ -223,7 +224,7 @@ export class CrownsService extends BaseService {
       where: {
         artistName: options.caseSensitive
           ? crownArtistName
-          : ILike(crownArtistName),
+          : ILike(sqlLikeEscape(crownArtistName)),
         serverID,
       },
       withDeleted: options.showDeleted,

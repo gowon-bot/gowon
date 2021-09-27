@@ -15,6 +15,7 @@ const args = {
 export class Remove extends FriendsChildCommand<typeof args> {
   idSeed = "nature haru";
 
+  aliases = ["removefriend", "removefriends"];
   description = "Removes a friend";
   usage = ["lfm_username", "@user"];
 

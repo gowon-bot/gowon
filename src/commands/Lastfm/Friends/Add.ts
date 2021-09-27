@@ -15,6 +15,8 @@ const args = {
 export class Add extends FriendsChildCommand<typeof args> {
   idSeed = "nature aurora";
 
+  aliases = ["addfriend", "addfriends"];
+
   description = "Adds a friend";
   usage = ["lfm_username", "@user"];
 

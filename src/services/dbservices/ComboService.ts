@@ -4,6 +4,7 @@ import { BaseService, BaseServiceContext } from "../BaseService";
 import { User } from "../../database/entity/User";
 import { ILike, In } from "typeorm";
 import { displayNumber } from "../../lib/views/displays";
+import { sqlLikeEscape } from "../../helpers/database";
 
 export class ComboService extends BaseService {
   async saveCombo(
@@ -83,7 +84,9 @@ export class ComboService extends BaseService {
   ): Promise<DBCombo[]> {
     this.log(ctx, `Listing combos for user ${user.discordID}`);
     return await DBCombo.find({
-      where: artist ? { user, artistName: ILike(artist) } : { user },
+      where: artist
+        ? { user, artistName: ILike(sqlLikeEscape(artist)) }
+        : { user },
       order: { artistPlays: "DESC", albumPlays: "DESC", trackPlays: "DESC" },
     });
   }
@@ -102,7 +105,9 @@ export class ComboService extends BaseService {
     const user = In(users.map((u) => u.id));
 
     return await DBCombo.find({
-      where: artist ? { user, artistName: ILike(artist) } : { user },
+      where: artist
+        ? { user, artistName: ILike(sqlLikeEscape(artist)) }
+        : { user },
       order: { artistPlays: "DESC", albumPlays: "DESC", trackPlays: "DESC" },
     });
   }

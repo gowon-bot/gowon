@@ -4,6 +4,7 @@ import { FriendsChildCommand } from "./FriendsChildCommand";
 export class RemoveAll extends FriendsChildCommand {
   idSeed = "nature loha";
 
+  aliases = ["clear"];
   description = "Removes all your friends";
   usage = [""];
 

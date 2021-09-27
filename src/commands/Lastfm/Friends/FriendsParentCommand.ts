@@ -22,6 +22,15 @@ export default class FriendsParentCommand extends LastFMBaseParentCommand {
   prefixes = ["friends", "fr"];
   default = () => new List();
 
+  noPrefixAliases = [
+    // add
+    "addfriend",
+    "addfriends",
+    // remove
+    "removefriend",
+    "removefriends",
+  ];
+
   children: CommandGroup = new CommandGroup([
     Add,
     List,

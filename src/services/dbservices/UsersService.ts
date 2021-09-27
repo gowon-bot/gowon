@@ -11,6 +11,7 @@ import { ILike } from "typeorm";
 import { LastFMSession } from "../LastFM/converters/Misc";
 import { Requestable } from "../LastFM/LastFMAPIService";
 import { buildRequestable } from "../../helpers/parseMentions";
+import { sqlLikeEscape } from "../../helpers/database";
 
 export class UsersService extends BaseService {
   async getUsername(
@@ -142,7 +143,7 @@ export class UsersService extends BaseService {
     this.log(ctx, `looking for user with username ${username}`);
 
     return await User.findOne({
-      where: { lastFMUsername: ILike(username) },
+      where: { lastFMUsername: ILike(sqlLikeEscape(username)) },
     });
   }
 

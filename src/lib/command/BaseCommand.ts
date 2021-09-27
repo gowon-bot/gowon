@@ -68,13 +68,11 @@ type ArgumentName<T extends Arguments> =
 
 export type ParsedArguments<T extends Arguments> = {
   [K in keyof T["inputs"]]?: Argument<T["inputs"][K]>;
-} &
-  {
-    [K in keyof T["mentions"]]?: Mention<T["mentions"][K]>;
-  } &
-  {
-    [K in keyof T["flags"]]: boolean;
-  };
+} & {
+  [K in keyof T["mentions"]]?: Mention<T["mentions"][K]>;
+} & {
+  [K in keyof T["flags"]]: boolean;
+};
 
 export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
   implements Command
