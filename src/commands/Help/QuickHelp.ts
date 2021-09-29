@@ -1,7 +1,6 @@
 import { BaseCommand } from "../../lib/command/BaseCommand";
 import { Arguments } from "../../lib/arguments/arguments";
 import { AdminService } from "../../services/dbservices/AdminService";
-
 import { Emoji } from "../../lib/Emoji";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 
