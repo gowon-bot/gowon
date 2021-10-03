@@ -31,6 +31,10 @@ export default class CommandSearch extends BaseCommand<typeof args> {
 
   adminService = ServiceRegistry.get(AdminService);
 
+  ctx = this.generateContext({
+    adminService: this.adminService,
+  });
+
   async run() {
     const keywords = this.parsedArguments
       .keywords!.toLowerCase()

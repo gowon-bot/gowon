@@ -24,6 +24,10 @@ export default class HelpForOneCommand extends BaseCommand<typeof args> {
 
   adminService = ServiceRegistry.get(AdminService);
 
+  ctx = this.generateContext({
+    adminService: this.adminService,
+  });
+
   async run(message: Message) {
     let command = this.parsedArguments.command!;
 
