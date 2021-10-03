@@ -131,10 +131,12 @@ export class CommandRegistry {
         (command) =>
           (command.friendlyNameWithParent || command.name)
             .toLowerCase()
-            .includes(keywords) ||
-          !!command.aliases.find((a) => a.toLowerCase().includes(keywords)) ||
+            .includes(keywords.toLowerCase()) ||
+          !!command.aliases.find((a) =>
+            a.toLowerCase().includes(keywords.toLowerCase())
+          ) ||
           !!flatDeep(command.variations.map((v) => [v.variation, v.name])).find(
-            (v) => v.toLowerCase().includes(keywords)
+            (v) => v.toLowerCase().includes(keywords.toLowerCase())
           ) ||
           checkPrefixes(command, keywords)
       )
