@@ -2,13 +2,14 @@ import { ServerResponse } from "http";
 import {
   collectDefaultMetrics,
   Counter,
+  Gauge,
   Histogram,
   Registry,
 } from "prom-client";
 import { BaseService } from "../services/BaseService";
 
 export class AnalyticsCollector extends BaseService {
-  register: Registry;
+  private register: Registry;
 
   metrics = {
     discordLatency: new Histogram({
@@ -29,6 +30,14 @@ export class AnalyticsCollector extends BaseService {
     commandErrors: new Counter({
       name: "command_errors",
       help: "Nunber of commands errored",
+    }),
+    guildCount: new Gauge({
+      name: "guild_count",
+      help: "Number of guilds Gowon is in",
+    }),
+    userCount: new Gauge({
+      name: "user_count",
+      help: "Number of registered users",
     }),
   } as const;
 

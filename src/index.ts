@@ -12,11 +12,17 @@ import config from "../config.json";
 import { client, handler, guildEventService, setup } from "./setup";
 import chalk from "chalk";
 import { gowonAPIPort } from "./api";
+import { AnalyticsCollector } from "./analytics/AnalyticsCollector";
+import { UsersService } from "./services/dbservices/UsersService";
+import { Logger } from "./lib/Logger";
 
 async function start() {
   await setup();
 
-  const ctx = { client } as any;
+  const ctx = { client, logger: new Logger() } as any;
+
+  const analyticsCollector = ServiceRegistry.get(AnalyticsCollector);
+  const usersService = ServiceRegistry.get(UsersService);
 
   client.client.on("ready", () => {
     console.log(
@@ -35,10 +41,12 @@ async function start() {
   });
 
   client.client.on("guildCreate", (guild) => {
+    analyticsCollector.metrics.guildCount.inc();
     guildEventService.handleNewGuild(ctx, guild);
   });
 
   client.client.on("guildDelete", (guild) => {
+    analyticsCollector.metrics.guildCount.dec();
     guildEventService.handleGuildLeave(ctx, guild);
   });
 
@@ -51,6 +59,12 @@ async function start() {
   });
 
   client.client.login(config.discordToken);
+
+  const guildCount = (await client.client.guilds.fetch()).size;
+  const userCount = await usersService.countUsers(ctx);
+
+  analyticsCollector.metrics.guildCount.set(guildCount);
+  analyticsCollector.metrics.userCount.set(userCount);
 }
 
 start();
