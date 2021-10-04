@@ -30,7 +30,7 @@ const args = {
 export default class Scrobbles extends LastFMBaseCommand<typeof args> {
   idSeed = "wooah songyee";
 
-  aliases = ["s"];
+  aliases = ["s", "scrabbles"];
   description =
     "Shows you how many scrobbles you have over a given time period";
   subcategory = "library stats";

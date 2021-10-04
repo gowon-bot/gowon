@@ -45,6 +45,11 @@ export class ReportCalculator {
   redirectsCache = new RedirectsCache(this.redirectsService);
 
   async calculate(): Promise<Report> {
+    await this.redirectsCache.initialCache(
+      this.ctx,
+      Array.from(new Set(this.tracks.withoutNowPlaying.map((t) => t.artist)))
+    );
+
     for (const track of this.tracks.withoutNowPlaying) {
       this.logCount(
         "tracks",

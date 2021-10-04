@@ -27,9 +27,9 @@ export default class Month extends LastFMBaseCommand<typeof args> {
   redirectsService = ServiceRegistry.get(RedirectsService);
 
   async run() {
-    let { requestable, perspective, senderUser } = await this.parseMentions();
+    const { requestable, perspective, senderUser } = await this.parseMentions();
 
-    let paginator = new Paginator(
+    const paginator = new Paginator(
       this.lastFMService.recentTracks.bind(this.lastFMService),
       6,
       {
@@ -41,7 +41,7 @@ export default class Month extends LastFMBaseCommand<typeof args> {
       this.ctx
     );
 
-    let firstPage = await paginator.getNext();
+    const firstPage = await paginator.getNext();
 
     if (!firstPage || firstPage.meta.total < 1) {
       throw new LogicError(
@@ -56,23 +56,23 @@ export default class Month extends LastFMBaseCommand<typeof args> {
     }
     paginator.maxPages = firstPage.meta.totalPages;
 
-    let restPages = await paginator.getAllToConcatonable();
+    const restPages = await paginator.getAllToConcatonable();
 
     firstPage.concat(restPages);
 
-    let reportCalculator = new ReportCalculator(this.ctx, firstPage);
+    const reportCalculator = new ReportCalculator(this.ctx, firstPage);
 
-    let month = await reportCalculator.calculate();
+    const month = await reportCalculator.calculate();
 
-    let topTracks = Object.keys(month.top.tracks).sort(
+    const topTracks = Object.keys(month.top.tracks).sort(
       (a, b) => month.top.tracks[b] - month.top.tracks[a]
     );
 
-    let topAlbums = Object.keys(month.top.albums).sort(
+    const topAlbums = Object.keys(month.top.albums).sort(
       (a, b) => month.top.albums[b] - month.top.albums[a]
     );
 
-    let topArtists = Object.keys(month.top.artists).sort(
+    const topArtists = Object.keys(month.top.artists).sort(
       (a, b) => month.top.artists[b] - month.top.artists[a]
     );
 
@@ -80,7 +80,7 @@ export default class Month extends LastFMBaseCommand<typeof args> {
 
     tagConsolidator.addTags(month.top.tags);
 
-    let embed = this.newEmbed()
+    const embed = this.newEmbed()
       .setAuthor(...this.generateEmbedAuthor())
       .setTitle(`${perspective.upper.possessive} month`).setDescription(`
       _${displayDate(sub(new Date(), { months: 1 }))} - ${displayDate(

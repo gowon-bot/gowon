@@ -1,5 +1,6 @@
 import { ArtistRedirect } from "../../database/entity/ArtistRedirect";
 import { RecordNotFoundError } from "../../errors";
+import { displayNumber } from "../../lib/views/displays";
 import { BaseService, BaseServiceContext } from "../BaseService";
 import { LastFMService } from "../LastFM/LastFMService";
 import { ServiceRegistry } from "../ServicesRegistry";
@@ -49,26 +50,7 @@ export class RedirectsService extends BaseService {
     let redirect = await ArtistRedirect.check(artistName);
 
     if (!redirect) {
-      try {
-        let lastFMRedirect = await this.lastFMService.getArtistCorrection(ctx, {
-          artist: artistName,
-        });
-
-        if (lastFMRedirect.name.toLowerCase() === artistName.toLowerCase()) {
-          let newRedirect = await this.setRedirect(ctx, lastFMRedirect.name);
-          return newRedirect;
-        } else {
-          let newRedirect = await this.setRedirect(
-            ctx,
-            artistName,
-            lastFMRedirect.name
-          );
-          return newRedirect;
-        }
-      } catch (e) {
-        if (e.name === "LastFMError") return undefined;
-        else throw e;
-      }
+      return await this.createRedirect(ctx, artistName);
     } else return redirect;
   }
 
@@ -94,5 +76,63 @@ export class RedirectsService extends BaseService {
     this.log(ctx, `Counting all redirects`);
 
     return await ArtistRedirect.count();
+  }
+
+  async getRedirectsForArtistsMap(
+    ctx: BaseServiceContext,
+    artists: string[]
+  ): Promise<{ [artistName: string]: string | undefined }> {
+    this.log(
+      ctx,
+      `Getting redirects for ${displayNumber(artists.length, "artist")}`
+    );
+
+    const map: { [artistName: string]: string | undefined } = {};
+
+    const redirects = await ArtistRedirect.createQueryBuilder("artist_redirect")
+      .where("LOWER(artist_redirect.from) IN (:...artists)", {
+        artists: artists.map((a) => a.toLowerCase()),
+      })
+      .getMany();
+
+    for (const redirect of redirects) {
+      map[redirect.from.toLowerCase()] = redirect.to || redirect.from;
+    }
+
+    for (const artist of artists) {
+      if (!map[artist.toLowerCase()]) {
+        const redirect = await this.createRedirect(ctx, artist);
+
+        map[artist.toLowerCase()] = redirect?.to || redirect?.from;
+      }
+    }
+
+    return map;
+  }
+
+  private async createRedirect(
+    ctx: BaseServiceContext,
+    artistName: string
+  ): Promise<ArtistRedirect | undefined> {
+    try {
+      const lastFMRedirect = await this.lastFMService.getArtistCorrection(ctx, {
+        artist: artistName,
+      });
+
+      if (lastFMRedirect.name.toLowerCase() === artistName.toLowerCase()) {
+        let newRedirect = await this.setRedirect(ctx, lastFMRedirect.name);
+        return newRedirect;
+      } else {
+        let newRedirect = await this.setRedirect(
+          ctx,
+          artistName,
+          lastFMRedirect.name
+        );
+        return newRedirect;
+      }
+    } catch (e) {
+      if (e.name === "LastFMError") return undefined;
+      else throw e;
+    }
   }
 }
