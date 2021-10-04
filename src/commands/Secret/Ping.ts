@@ -12,7 +12,10 @@ export default class Ping extends BaseCommand {
   async run() {
     if (this.runAs.variationWasUsed("pung")) {
       // PUNG! by Yukika
-      await this.reply("https://open.spotify.com/track/2YnPNuWGG3zlwyUyG0hBOd");
+      await this.reply(
+        "https://open.spotify.com/track/2YnPNuWGG3zlwyUyG0hBOd",
+        { noUppercase: true }
+      );
     } else if (
       this.runAs.variationWasUsed("ping") &&
       Chance().bool({ likelihood: 20 })

@@ -535,11 +535,15 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     settings: {
       to?: MessageResolvable;
       ping?: boolean;
+      noUppercase?: boolean;
     } = {}
   ): Promise<Message> {
     const settingsWithDefaults = Object.assign({ ping: false }, settings);
 
-    content = typeof content === "string" ? ucFirst(content) : content;
+    content =
+      typeof content === "string" && !settings.noUppercase
+        ? ucFirst(content)
+        : content;
 
     this.addResponse(content);
 
