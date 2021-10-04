@@ -6,29 +6,31 @@ export default class Ping extends BaseCommand {
 
   subcategory = "developer";
   description = "Ping! Pong!";
-  aliases = ["🏓", "pin", "pingu"];
+  aliases = ["🏓", "pin", "pingu", "pung"];
   secretCommand = true;
 
   async run() {
-    if (
+    if (this.runAs.variationWasUsed("pung")) {
+      // PUNG! by Yukika
+      await this.reply("https://open.spotify.com/track/2YnPNuWGG3zlwyUyG0hBOd");
+    } else if (
       this.runAs.variationWasUsed("ping") &&
       Chance().bool({ likelihood: 20 })
     ) {
       await this.reply("PANG! 🏌️");
-      return;
+    } else {
+      await this.reply(
+        `Pon${
+          this.runAs.variationWasUsed("pingu")
+            ? "gu"
+            : this.runAs.variationWasUsed("pin")
+            ? ""
+            : "g"
+        } 🏓`,
+        {
+          ping: false,
+        }
+      );
     }
-
-    await this.reply(
-      `Pon${
-        this.runAs.variationWasUsed("pingu")
-          ? "gu"
-          : this.runAs.variationWasUsed("pin")
-          ? ""
-          : "g"
-      } 🏓`,
-      {
-        ping: false,
-      }
-    );
   }
 }
