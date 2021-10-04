@@ -65,6 +65,7 @@ import { toInt } from "../../helpers/lastFM";
 import { MirrorballCacheService } from "../mirrorball/MirrorballCacheService";
 import { SimpleMap } from "../../helpers/types";
 import { ServiceRegistry } from "../ServicesRegistry";
+import { AnalyticsCollector } from "../../analytics/AnalyticsCollector";
 
 export interface SessionKey {
   username: string;
@@ -81,7 +82,11 @@ export function isSessionKey(
 
 export class LastFMAPIService extends BaseService {
   private get mirrorballCacheService() {
-    return ServiceRegistry.get<MirrorballCacheService>(MirrorballCacheService);
+    return ServiceRegistry.get(MirrorballCacheService);
+  }
+
+  private get analyticsCollector() {
+    return ServiceRegistry.get(AnalyticsCollector);
   }
 
   url = "https://ws.audioscrobbler.com/2.0/";
@@ -408,7 +413,9 @@ export class LastFMAPIService extends BaseService {
       ? stringify({ ...params })
       : this.buildParams({ method, ...params });
 
+    const end = this.analyticsCollector.metrics.lastFMLatency.startTimer();
     const response = await fetch(this.url + "?" + qparams, fetchOptions);
+    end({ category: method.split(".")[0], action: method.split(".")[1] });
 
     if (`${response.status}`.startsWith("3"))
       throw new LastFMConnectionError(response);

@@ -12,8 +12,14 @@ import { LastFMSession } from "../LastFM/converters/Misc";
 import { Requestable } from "../LastFM/LastFMAPIService";
 import { buildRequestable } from "../../helpers/parseMentions";
 import { sqlLikeEscape } from "../../helpers/database";
+import { ServiceRegistry } from "../ServicesRegistry";
+import { AnalyticsCollector } from "../../analytics/AnalyticsCollector";
 
 export class UsersService extends BaseService {
+  get analyticsCollector() {
+    return ServiceRegistry.get(AnalyticsCollector);
+  }
+
   async getUsername(
     ctx: BaseServiceContext,
     discordID: string
@@ -53,6 +59,7 @@ export class UsersService extends BaseService {
       user.lastFMUsername = lastFMUsername;
       user.lastFMSession = "";
     } else {
+      this.analyticsCollector.metrics.userCount.inc();
       user = User.create({
         discordID,
         lastFMUsername: lastFMUsername,
@@ -79,6 +86,7 @@ export class UsersService extends BaseService {
       user.lastFMUsername = lastFMSession.username;
       user.lastFMSession = lastFMSession.key;
     } else {
+      this.analyticsCollector.metrics.userCount.inc();
       user = User.create({
         discordID,
         lastFMUsername: lastFMSession.username,

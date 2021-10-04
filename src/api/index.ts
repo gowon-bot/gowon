@@ -8,12 +8,14 @@ import { IndexingWebhookService } from "./indexing/IndexingWebhookService";
 import bodyParser from "body-parser";
 import { CommandRegistry } from "../lib/command/CommandRegistry";
 import { ServiceRegistry } from "../services/ServicesRegistry";
+import { AnalyticsCollector } from "../analytics/AnalyticsCollector";
 
 export const gowonAPIPort = 3000;
 
 export class GraphQLAPI {
   usersService = ServiceRegistry.get(UsersService);
   commandRegistry = CommandRegistry.getInstance();
+  analyticsCollector = ServiceRegistry.get(AnalyticsCollector);
 
   async init() {
     const app = express();
@@ -56,6 +58,16 @@ export class GraphQLAPI {
         res.status(400).send("Please send a token in valid json format");
       }
     });
+
+    app.get(
+      "/metrics",
+      this.analyticsCollector.handler.bind(this.analyticsCollector)
+    );
+
+    app.post(
+      "/metrics",
+      this.analyticsCollector.handler.bind(this.analyticsCollector)
+    );
 
     app.listen(gowonAPIPort);
   }
