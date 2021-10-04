@@ -30,6 +30,7 @@ import { RedisService } from "./redis/RedisService";
 import { SpotifyService } from "./Spotify/SpotifyService";
 import { TrackingService } from "./TrackingService";
 import { SettingsService } from "../lib/settings/SettingsManager";
+import { AnalyticsCollector } from "../analytics/AnalyticsCollector";
 
 type Service<T = any> = { new (): T };
 
@@ -37,6 +38,7 @@ export type Context = SimpleMap<any>;
 
 const services: Service[] = [
   AdminService,
+  AnalyticsCollector,
   ArtistsService,
   BotStatsService,
   Can,

@@ -50,6 +50,7 @@ import { MirrorballUsersService } from "../../services/mirrorball/services/Mirro
 import { CommandRegistry } from "./CommandRegistry";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { SimpleMap } from "../../helpers/types";
+import { AnalyticsCollector } from "../../analytics/AnalyticsCollector";
 
 export interface Variation {
   name: string;
@@ -141,6 +142,7 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
   usersService = ServiceRegistry.get(UsersService);
   gowonService = ServiceRegistry.get(GowonService);
   mirrorballService = ServiceRegistry.get(MirrorballService);
+  analyticsCollector = ServiceRegistry.get(AnalyticsCollector);
   mirrorballUsersService = ServiceRegistry.get(MirrorballUsersService);
 
   hasChildren = false;
@@ -471,6 +473,7 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
       }
 
       this.logger.logCommand(this, message, runAs.toArray().join(" "));
+      this.analyticsCollector.metrics.commandRuns.inc();
 
       new ValidationChecker(this.parsedArguments, this.validation).validate();
 
@@ -478,6 +481,7 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
       await this.run(message, runAs);
     } catch (e) {
       this.logger.logError(e);
+      this.analyticsCollector.metrics.commandErrors.inc();
       this.track.error(this.ctx, e);
 
       if (e.isClientFacing && !e.silent) {
@@ -503,11 +507,14 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
   async sendWithFiles(content: MessageEmbed | string, files: [string]) {
     this.addResponse(content);
 
+    const end = this.analyticsCollector.metrics.discordLatency.startTimer();
+
     if (typeof content === "string") {
       await this.message.channel.send({ content, files });
     } else {
       await this.message.channel.send({ embeds: [content], files });
     }
+    end();
   }
 
   async send(
@@ -523,11 +530,19 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
       });
     }
 
+    const end = this.analyticsCollector.metrics.discordLatency.startTimer();
+
+    let response: Message;
+
     if (typeof content === "string") {
-      return await this.message.channel.send({ content });
+      response = await this.message.channel.send({ content });
     } else {
-      return await this.message.channel.send({ embeds: [content] });
+      response = await this.message.channel.send({ embeds: [content] });
     }
+
+    end();
+
+    return response;
   }
 
   async reply(
@@ -547,20 +562,33 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
 
     this.addResponse(content);
 
-    return await this.message.channel.send({
+    const end = this.analyticsCollector.metrics.discordLatency.startTimer();
+
+    const response = await this.message.channel.send({
       content,
       reply: {
         messageReference: settingsWithDefaults.to || this.message,
       },
       allowedMentions: { repliedUser: settingsWithDefaults.ping },
     });
+
+    end();
+
+    return response;
   }
 
   async traditionalReply(message: string): Promise<Message> {
     this.addResponse(message);
-    return await this.message.channel.send(
+
+    const end = this.analyticsCollector.metrics.discordLatency.startTimer();
+
+    const response = await this.message.channel.send(
       `<@!${this.author.id}>, ` + message.trimStart()
     );
+
+    end();
+
+    return response;
   }
 
   checkRollout(): boolean {
