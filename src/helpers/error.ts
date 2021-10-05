@@ -9,6 +9,8 @@ export function parseErrorSix(message: string): string {
     return "that album could not be found!";
   else if (message.toLowerCase().includes("user"))
     return "that user could not be found!";
+  else if (message.toLowerCase().includes("redirect"))
+    return "that redirect could not be found!";
   else return "that track could not be found!";
 }
 

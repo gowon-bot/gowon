@@ -60,7 +60,7 @@ export default class Scrobbles extends LastFMBaseCommand<typeof args> {
     let sentMessage = await this.traditionalReply(
       `${perspective.plusToHave} ${displayNumber(
         scrobbles,
-        "scrobble"
+        `scr${this.runAs.variationWasUsed("scrabbles") ? "a" : "o"}bble`
       ).strong()} ${date ? `since ${displayDate(date)}` : humanTimeRange}`
     );
 

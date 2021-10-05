@@ -58,7 +58,6 @@ import {
   LastFMConnectionError,
   LastFMError,
   BadLastFMResponseError,
-  RecordNotFoundError,
 } from "../../errors";
 import { BaseService, BaseServiceContext } from "../BaseService";
 import { toInt } from "../../helpers/lastFM";
@@ -302,8 +301,9 @@ export class LastFMAPIService extends BaseService {
       params
     );
 
+    // Last.fm doesn't throw an error when an artist doesn't exist
     if (!response.corrections?.correction)
-      throw new RecordNotFoundError("artist");
+      throw new LastFMError({ error: 6, message: "redirect" });
 
     return response.corrections.correction.artist;
   }

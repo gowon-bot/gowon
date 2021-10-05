@@ -27,9 +27,9 @@ export default class Day extends LastFMBaseCommand<typeof args> {
   redirectsService = ServiceRegistry.get(RedirectsService);
 
   async run() {
-    let { requestable, perspective, senderUser } = await this.parseMentions();
+    const { requestable, perspective, senderUser } = await this.parseMentions();
 
-    let paginator = new Paginator(
+    const paginator = new Paginator(
       this.lastFMService.recentTracks.bind(this.lastFMService),
       4,
       {
@@ -41,7 +41,7 @@ export default class Day extends LastFMBaseCommand<typeof args> {
       this.ctx
     );
 
-    let firstPage = await paginator.getNext();
+    const firstPage = await paginator.getNext();
 
     if (!firstPage || firstPage.meta.total < 1) {
       throw new LogicError(
@@ -57,13 +57,13 @@ export default class Day extends LastFMBaseCommand<typeof args> {
 
     paginator.maxPages = firstPage.meta.totalPages;
 
-    let restPages = await paginator.getAllToConcatonable();
+    const restPages = await paginator.getAllToConcatonable();
 
     firstPage.concat(restPages);
 
-    let reportCalculator = new ReportCalculator(this.ctx, firstPage);
+    const reportCalculator = new ReportCalculator(this.ctx, firstPage);
 
-    let day = await reportCalculator.calculate();
+    const day = await reportCalculator.calculate();
 
     const topTracks = Object.keys(day.top.tracks).sort(
       (a, b) => day.top.tracks[b] - day.top.tracks[a]
@@ -81,7 +81,7 @@ export default class Day extends LastFMBaseCommand<typeof args> {
 
     tagConsolidator.addTags(day.top.tags);
 
-    let embed = this.newEmbed()
+    const embed = this.newEmbed()
       .setAuthor(...this.generateEmbedAuthor())
       .setTitle(`${perspective.upper.possessive} day`).setDescription(`
       _${displayDate(sub(new Date(), { days: 1 }))} - ${displayDate(
@@ -94,9 +94,11 @@ export default class Day extends LastFMBaseCommand<typeof args> {
       day.total.tracks,
       "track"
     )}_
-
-${tagConsolidator.consolidateAsStrings(10).join(", ").italic()}
-
+${
+  tagConsolidator.hasAnyTags()
+    ? `\n${tagConsolidator.consolidateAsStrings(10).join(", ").italic()}\n`
+    : ""
+}
 **Top Tracks**:
  • ${topTracks
       .slice(0, 3)
