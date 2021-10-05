@@ -347,7 +347,7 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     ) {
       throw new LogicError(
         `please sign in with a last.fm account! (\`${this.prefix}login\`)`,
-        `Don't have a one? You can create one at https://last.fm/join`
+        `Don't have one? You can create one at https://last.fm/join`
       );
     }
 

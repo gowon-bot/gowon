@@ -41,12 +41,12 @@ async function start() {
   });
 
   client.client.on("guildCreate", (guild) => {
-    analyticsCollector.metrics.guildCount.inc();
+    analyticsCollector.metrics.guildCount.set(client.client.guilds.cache.size);
     guildEventService.handleNewGuild(ctx, guild);
   });
 
   client.client.on("guildDelete", (guild) => {
-    analyticsCollector.metrics.guildCount.dec();
+    analyticsCollector.metrics.guildCount.set(client.client.guilds.cache.size);
     guildEventService.handleGuildLeave(ctx, guild);
   });
 
@@ -60,7 +60,7 @@ async function start() {
 
   client.client.login(config.discordToken);
 
-  const guildCount = (await client.client.guilds.fetch()).size;
+  const guildCount = client.client.guilds.cache.size;
   const userCount = await usersService.countUsers(ctx);
 
   analyticsCollector.metrics.guildCount.set(guildCount);
