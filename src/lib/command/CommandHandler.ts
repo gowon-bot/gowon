@@ -192,6 +192,8 @@ export class CommandHandler {
 
     newCommand.setClient(this.client);
 
-    await newCommand.execute.bind(newCommand)(message, runAs);
+    try {
+      await newCommand.execute.bind(newCommand)(message, runAs);
+    } catch {}
   }
 }
