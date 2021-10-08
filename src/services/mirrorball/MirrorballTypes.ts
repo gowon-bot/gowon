@@ -9,6 +9,7 @@ export enum MirrorballPrivacy {
   Private = "PRIVATE",
   Discord = "DISCORD",
   FMUsername = "FMUSERNAME",
+  Both = "BOTH",
   Unset = "UNSET",
 }
 

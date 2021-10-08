@@ -20,7 +20,7 @@ To import your ratings, you can do one of two things:
 
 - Copy the entire page, then paste it into Discord with \`${this.prefix}rymimport \`, Discord will convert it to a file for you (if not Gowon will still handle it). Or,
 
-- Download the export as a csv file, and then attatch it in Discord with \`${this.prefix}rymimport\``
+- Download the export as a file, and then attatch it in Discord with \`${this.prefix}rymimport\``
       );
 
     await this.send(embed);

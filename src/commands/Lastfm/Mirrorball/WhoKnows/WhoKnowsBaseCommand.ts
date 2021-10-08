@@ -79,11 +79,9 @@ export abstract class WhoKnowsBaseCommand<
 
     switch (user.privacy) {
       case MirrorballPrivacy.Discord:
-        return displayLink(
-          nickname ||
-            this.nicknameService.cacheGetUsername(this.ctx, user.discordID) ||
-            UnknownUserDisplay,
-          LinkGenerator.userPage(user.username)
+        return (
+          this.nicknameService.cacheGetUsername(this.ctx, user.discordID) ||
+          UnknownUserDisplay
         );
 
       case MirrorballPrivacy.FMUsername:
@@ -91,6 +89,12 @@ export abstract class WhoKnowsBaseCommand<
           Emoji.lastfm +
           " " +
           displayLink(user.username, LinkGenerator.userPage(user.username))
+        );
+      case MirrorballPrivacy.Both:
+        return displayLink(
+          this.nicknameService.cacheGetUsername(this.ctx, user.discordID) ||
+            UnknownUserDisplay,
+          LinkGenerator.userPage(user.username)
         );
 
       case MirrorballPrivacy.Private:

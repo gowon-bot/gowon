@@ -1,5 +1,8 @@
+import { LinkGenerator } from "../../../helpers/lastFM";
 import { BaseCommand } from "../../../lib/command/BaseCommand";
+import { Emoji } from "../../../lib/Emoji";
 import { validators } from "../../../lib/validation/validators";
+import { displayLink } from "../../../lib/views/displays";
 import { MirrorballPrivacy } from "../../../services/mirrorball/MirrorballTypes";
 import { PrivateUserDisplay } from "../../../services/mirrorball/services/MirrorballUsersService";
 
@@ -22,7 +25,7 @@ export default class Privacy extends BaseCommand<typeof args> {
   validation = {
     privacy: new validators.Choices({
       ignoreCase: true,
-      choices: ["Discord", "FMUsername", "Private"],
+      choices: ["Discord", "FMUsername", "Private", "Both"],
     }),
   };
 
@@ -30,7 +33,7 @@ export default class Privacy extends BaseCommand<typeof args> {
     "Your privacy determines what users in other servers can see about you on global leaderboards";
 
   async run() {
-    const privacy = this.parsedArguments.privacy as
+    const privacy = this.parsedArguments.privacy?.toUpperCase() as
       | MirrorballPrivacy
       | undefined;
 
@@ -47,10 +50,18 @@ export default class Privacy extends BaseCommand<typeof args> {
 
       embed.setDescription(
         `Your new privacy is: \`${privacy.toLowerCase()}\` (${
-          privacy.toUpperCase() === "DISCORD"
+          privacy === "DISCORD"
             ? this.author.tag
-            : privacy.toUpperCase() === "FMUSERNAME"
-            ? senderUsername
+            : privacy === "FMUSERNAME"
+            ? displayLink(
+                senderUsername,
+                LinkGenerator.userPage(senderUsername)
+              )
+            : privacy === "BOTH"
+            ? displayLink(
+                this.author.tag,
+                LinkGenerator.userPage(senderUsername)
+              )
             : PrivateUserDisplay
         })`
       );
@@ -61,10 +72,15 @@ export default class Privacy extends BaseCommand<typeof args> {
 Your current privacy: \`${(mirrorballUser?.privacy || "unset").toLowerCase()}\`
       
 The options for privacy are:
-- \`discord\`: Discord username and discriminator are shown, and your last.fm will be linked (${
-            this.author.tag
-          })
-- \`fmusername\`: Last.fm username is shown (${senderUsername})
+- \`fmusername\`: Last.fm username is shown (${Emoji.lastfm} ${displayLink(
+            senderUsername,
+            LinkGenerator.userPage(senderUsername)
+          )})
+- \`discord\`: Discord username and discriminator are shown (${this.author.tag})
+- \`both\`: Discord username and discriminator are shown, and last.fm linked (${displayLink(
+            this.author.tag,
+            LinkGenerator.userPage(senderUsername)
+          )})
 - \`private\`: Your identity will be hidden (${PrivateUserDisplay})
 
 You can set your privacy with \`${this.prefix}privacy <option>\``
