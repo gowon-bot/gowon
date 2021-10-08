@@ -54,7 +54,7 @@ export default class Login extends MirrorballBaseCommand<
         )} and authenticate with Last.fm, then click the react to let Gowon know you're done.\n\nDon't have an account? You can create one at https://last.fm/join`
       );
 
-    const sentMessage = await this.author.send({ embeds: [embed] });
+    const sentMessage = await this.dmAuthor(embed);
     await sentMessage.react(EmojiRaw.checkmark);
 
     const filter: ReactionCollectorFilter = (reaction, user) =>

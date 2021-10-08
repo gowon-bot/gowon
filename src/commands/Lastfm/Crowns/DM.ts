@@ -40,7 +40,7 @@ export class DM extends CrownsChildCommand<typeof args> {
 
     const chunks = chunkArray(crowns, crownsPerMessage);
 
-    this.author.send(
+    this.dmAuthor(
       `${perspective.upper.plusToHave} ${displayNumber(
         crownsCount,
         "crown"
@@ -68,6 +68,6 @@ export class DM extends CrownsChildCommand<typeof args> {
               .join("\n")
           )
       )
-      .forEach((e) => this.author.send({ embeds: [e] }));
+      .forEach((e) => this.dmAuthor(e));
   }
 }

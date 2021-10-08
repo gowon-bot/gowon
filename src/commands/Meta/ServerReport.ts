@@ -34,7 +34,7 @@ export class ServerReport extends MetaChildCommand<typeof args> {
     });
 
     scrollingEmbed.scrollingEmbed.customSend(async (embed) => {
-      return await this.author.send({ embeds: [embed] });
+      return await this.dmAuthor(embed);
     });
   }
 }
