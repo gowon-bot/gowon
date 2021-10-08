@@ -47,6 +47,11 @@ export default class ArtistRank extends LastFMBaseCommand<typeof args> {
       limit: 1000,
     });
 
+    await this.redirectsCache.initialCache(
+      this.ctx,
+      topArtists.artists.map((a) => a.name)
+    );
+
     const rank = (
       await Promise.all(
         topArtists.artists.map(
