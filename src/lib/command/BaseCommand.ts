@@ -16,6 +16,7 @@ import {
   UnknownError,
   UsernameNotRegisteredError,
   SenderUserNotAuthenticatedError,
+  DMsAreOffError,
 } from "../../errors";
 import { GowonService } from "../../services/GowonService";
 import { CommandGroup } from "./CommandGroup";
@@ -571,6 +572,30 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
       },
       allowedMentions: { repliedUser: settingsWithDefaults.ping },
     });
+
+    end();
+
+    return response;
+  }
+
+  async dmAuthor(content: string | MessageEmbed): Promise<Message> {
+    const end = this.analyticsCollector.metrics.discordLatency.startTimer();
+
+    let response: Message;
+
+    try {
+      if (typeof content === "string") {
+        response = await this.author.send({ content });
+      } else {
+        response = await this.author.send({ embeds: [content] });
+      }
+    } catch (e) {
+      throw e.message
+        ?.toLowerCase()
+        ?.includes("cannot send messages to this user")
+        ? new DMsAreOffError()
+        : e;
+    }
 
     end();
 

@@ -380,3 +380,13 @@ export class AlreadyImportingRatingsError extends ClientError {
     );
   }
 }
+
+export class DMsAreOffError extends ClientError {
+  name = "DMsAreOffError";
+
+  constructor() {
+    super(
+      "You have your DMs turned off! Please re-enable them to allow Gowon to DM you."
+    );
+  }
+}
