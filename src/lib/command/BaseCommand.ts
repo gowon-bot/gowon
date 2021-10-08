@@ -425,7 +425,7 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
             ]);
           }
         })
-        .catch();
+        .catch(() => {});
     }
   }
 
