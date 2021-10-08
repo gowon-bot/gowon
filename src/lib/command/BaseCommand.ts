@@ -480,7 +480,7 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
 
       await this.prerun();
       await this.run(message, runAs);
-    } catch (e) {
+    } catch (e: any) {
       this.logger.logError(e);
       this.analyticsCollector.metrics.commandErrors.inc();
       this.track.error(this.ctx, e);
@@ -589,7 +589,7 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
       } else {
         response = await this.author.send({ embeds: [content] });
       }
-    } catch (e) {
+    } catch (e: any) {
       throw e.message
         ?.toLowerCase()
         ?.includes("cannot send messages to this user")

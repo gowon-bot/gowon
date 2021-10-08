@@ -56,7 +56,7 @@ export abstract class MirrorballBaseCommand<
         } else {
           response = rawResponse as ResponseT;
         }
-      } catch (e) {
+      } catch (e: any) {
         if (e.graphQLErrors?.length) {
           (response as any).errors = e.graphQLErrors;
         } else if (e.networkError) {

@@ -130,7 +130,7 @@ export class RedirectsService extends BaseService {
         );
         return newRedirect;
       }
-    } catch (e) {
+    } catch (e: any) {
       if (e.name === "LastFMError:6") return undefined;
       else throw e;
     }

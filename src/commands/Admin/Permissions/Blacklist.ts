@@ -41,7 +41,7 @@ export class Blacklist extends PermissionsChildCommand {
         );
 
         createdRolePermissions.push(role);
-      } catch (e) {
+      } catch (e: any) {
         failed.push({
           entity: role,
           reason: e.message,
@@ -61,7 +61,7 @@ export class Blacklist extends PermissionsChildCommand {
         );
 
         createdUserPermissions.push(user);
-      } catch (e) {
+      } catch (e: any) {
         failed.push({
           entity: user,
           reason: e.message,

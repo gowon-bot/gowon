@@ -47,7 +47,7 @@ export class ChannelBlacklist extends PermissionsChildCommand {
             );
 
         blacklistedChannels.success.push(channel.name);
-      } catch (e) {
+      } catch (e: any) {
         blacklistedChannels.failed.push({
           channel: channel.name,
           reason: e.message,

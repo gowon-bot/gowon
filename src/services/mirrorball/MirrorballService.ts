@@ -45,16 +45,18 @@ export class MirrorballService extends BaseService {
             fetchPolicy: "no-cache",
           })
         : undefined;
-    } catch (e) {
-      const operationName = (
-        (query?.definitions[0] || mutation?.definitions[0]) as any
-      ).name.value;
+    } catch (e: any) {
+      if (e.message) {
+        const operationName = (
+          (query?.definitions[0] || mutation?.definitions[0]) as any
+        ).name.value;
 
-      // It's often hard to tell which operation network errors are occurring on
-      // when multiple queries/mutations are run in a single command
-      e.message = operationName + ": " + e.message;
+        // It's often hard to tell which operation network errors are occurring on
+        // when multiple queries/mutations are run in a single command
+        e.message = operationName + ": " + e.message;
 
-      throw e;
+        throw e;
+      }
     }
   }
 
@@ -166,7 +168,9 @@ export class MirrorballService extends BaseService {
         { discordID, guildID }
       );
     } catch (e) {
-      return e;
+      if (e instanceof Error) {
+        return e;
+      }
     }
 
     return;
@@ -188,7 +192,9 @@ export class MirrorballService extends BaseService {
         { discordID, guildID }
       );
     } catch (e) {
-      return e;
+      if (e instanceof Error) {
+        return e;
+      }
     }
 
     return;

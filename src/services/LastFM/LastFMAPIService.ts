@@ -320,7 +320,7 @@ export class LastFMAPIService extends BaseService {
           params
         )
       ).friends;
-    } catch (e) {
+    } catch (e: any) {
       if (e.response?.message === "no such page") {
         return {
           user: [],

@@ -190,7 +190,7 @@ export class LastFMService extends LastFMAPIService {
       let user = await this.userInfo(ctx, { username });
 
       return !!user.name;
-    } catch (e) {
+    } catch (e: any) {
       if (e.name === "LastFMConnectionError" || e.name === "LastFMError:8") {
         return false;
       }

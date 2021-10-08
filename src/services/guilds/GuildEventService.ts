@@ -111,7 +111,7 @@ export class GuildEventService extends BaseService<GuildEventServiceContext> {
             runAs.toCommandFriendlyName(),
             commandName.dev
           );
-        } catch (e) {
+        } catch (e: any) {
           this.log(
             ctx,
             `Error while setting up permissions for ${guild.name}:${e.message}`

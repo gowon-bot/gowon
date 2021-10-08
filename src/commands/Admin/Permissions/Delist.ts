@@ -24,7 +24,7 @@ export class Delist extends PermissionsChildCommand {
         await this.adminService.delist(this.ctx, entity.id, this.command.id);
 
         delisted.push(entity);
-      } catch (e) {
+      } catch (e: any) {
         failed.push({ entity, reason: e.message });
       }
     }
