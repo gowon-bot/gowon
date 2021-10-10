@@ -6,7 +6,7 @@ export default class Ping extends BaseCommand {
 
   subcategory = "developer";
   description = "Ping! Pong!";
-  aliases = ["🏓", "pin", "pingu", "pung"];
+  aliases = ["🏓", "pin", "pingu", "pung", "peng"];
   secretCommand = true;
 
   async run() {
@@ -16,6 +16,8 @@ export default class Ping extends BaseCommand {
         "https://open.spotify.com/track/2YnPNuWGG3zlwyUyG0hBOd",
         { noUppercase: true }
       );
+    } else if (this.runAs.variationWasUsed("peng")) {
+      await this.reply("ting", { noUppercase: true });
     } else if (
       this.runAs.variationWasUsed("ping") &&
       Chance().bool({ likelihood: 20 })

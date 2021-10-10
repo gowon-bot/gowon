@@ -7,9 +7,9 @@ export class Joined extends OverviewChildCommand {
   description = "Shows when a user joined Last.fm";
 
   async run() {
-    let joined = await this.calculator.joined();
+    const joined = await this.calculator.joined();
 
-    let embed = (await this.overviewEmbed()).setDescription(
+    const embed = (await this.overviewEmbed()).setDescription(
       `Scrobbling since ${joined}`
     );
 

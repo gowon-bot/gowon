@@ -20,6 +20,7 @@ import gql from "graphql-tag";
 import { MirrorballPageInfo } from "../../services/mirrorball/MirrorballTypes";
 import { MirrorballService } from "../../services/mirrorball/MirrorballService";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
+import { ago } from "../../helpers";
 
 export class Stat {
   public asString: string;
@@ -147,7 +148,9 @@ export class OverviewStatsCalculator {
   }
 
   async joined(): Promise<string> {
-    return displayDate((await this.userInfo()).registeredAt);
+    return `${displayDate((await this.userInfo()).registeredAt)} (${ago(
+      (await this.userInfo()).registeredAt
+    )})`;
   }
 
   async country(): Promise<string> {
