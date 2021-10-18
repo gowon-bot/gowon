@@ -1,8 +1,9 @@
 import { BaseCommand } from "./command/BaseCommand";
-import { Message } from "discord.js";
+import { Message, User } from "discord.js";
 import chalk from "chalk";
 import { format } from "date-fns";
 import { RunAs } from "./command/RunAs";
+import { SimpleMap } from "../helpers/types";
 
 export class Logger {
   static output = true;
@@ -86,7 +87,9 @@ ${
 }{cyan Ran at}: ${message.createdAt} {cyan by} ${
         message.author.username
       } {cyan in} ${message.guild?.name || "{red DMs}"}
-{cyan with arguments}: ${Logger.formatObject(command.parsedArguments)}
+{cyan with arguments}: ${Logger.formatObject(
+        this.sanitizeParamsForDisplay(command.parsedArguments)
+      )}
 {cyan as}: ${runAs.join(" ")}
 
 {cyan Raw message content}:
@@ -103,5 +106,17 @@ ${
     } else {
       this.header += "\n" + chalk.red("ERROR: " + error);
     }
+  }
+
+  private sanitizeParamsForDisplay(params: SimpleMap): SimpleMap {
+    return Object.entries(params).reduce((acc, [key, value]) => {
+      if (value instanceof User) {
+        acc[key] = `<Discord User '${value.tag}' (${value.id})>`;
+      } else if (key !== "debug") {
+        acc[key] = value;
+      }
+
+      return acc;
+    }, {} as SimpleMap);
   }
 }
