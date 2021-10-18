@@ -31,6 +31,7 @@ import { SpotifyService } from "./Spotify/SpotifyService";
 import { TrackingService } from "./TrackingService";
 import { SettingsService } from "../lib/settings/SettingsManager";
 import { AnalyticsCollector } from "../analytics/AnalyticsCollector";
+import { WordBlacklistService } from "./WordBlacklistService";
 
 type Service<T = any> = { new (): T };
 
@@ -69,6 +70,7 @@ const services: Service[] = [
   TrackingService,
   UsersService,
   WhoKnowsService,
+  WordBlacklistService,
 ];
 
 export class ServiceRegistry {

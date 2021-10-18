@@ -180,7 +180,7 @@ export class CommandHandler {
     if (
       (message.content.includes(`<@${id}>`) ||
         message.content.includes(`<@!${id}>`)) &&
-      message.content.split(/\s+/)[1].toLowerCase() === "you" &&
+      message.content.split(/\s+/)[1]?.toLowerCase() === "you" &&
       this.client.isBot(message.author.id, "rem")
     ) {
       await message.reply("Yes ma'am!");

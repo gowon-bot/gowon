@@ -1,0 +1,102 @@
+{
+  "base": {
+    "strings": [
+      "fuck",
+      "shit",
+      "cunt",
+      "bitch",
+      "ass",
+      "white power",
+      "jihad",
+      "jap",
+      "suicide"
+    ],
+    "regex": [
+      ".*\\banal\\b.*",
+      ".*\\fisting\\b.*",
+      ".*sex.*",
+      ".*rape.*",
+      ".*dildo.*"
+    ],
+    "explicit": [
+      [19, 12, 21, 20],
+      [14, 9, 7, 7, 5, 18],
+      [14, 9, 7, 7, 1],
+      [6, 1, 7, 7, 15, 20],
+      [23, 8, 15, 18, 5]
+    ]
+  },
+
+  "tags": {
+    "strings": [
+      "seen live",
+      "albumsiown",
+      "check out",
+      "all",
+      "amazing",
+      "soty",
+      "aoty",
+      "songs seen live",
+      "fave",
+      "played",
+      "personal favourites",
+      "personal favorites",
+      "hino",
+      "disgusting",
+      "flop",
+      "bots",
+      "1m",
+      "2w",
+      "tanked",
+      "cunty",
+      "mommy milkers",
+      "sit back and take that light like a good girl",
+      "I want her ass",
+      "check later",
+      "garbage",
+      "racism",
+      "fuck sophie",
+      "like it hot by gwsn",
+      "if this song were a girl i would fuck her or at least touch her tits",
+      "music for fingering your girlfriends pussy",
+      "Id do her",
+      "gwsn hate men",
+      "scat",
+      "kid rock",
+      "hipster",
+      "pretentious",
+      "overrated",
+      "esquizo",
+      "crap",
+      "trash",
+      "boneriffic",
+      "liked",
+      "loved",
+      "spambo",
+      "saw live",
+      "banned",
+
+      "==== Offensive Tags ====",
+      "osama is not dead",
+      "allahu akbar",
+      "pool is closed",
+      "rock against kafir"
+    ],
+    "regex": [
+      "better than .*",
+      "best of \\d{4}",
+      ".* ?step on me ?.*",
+      "hi \\w+",
+      ".*comeback.*",
+      ".*taeminification.*",
+      ".*dilf.*",
+      ".*horny.*",
+      ".*gdchill.*",
+      "gays?",
+      "love at first listen.*",
+      ".*bestys.*",
+      ".*jpoptrasher.*",
+      ".*labi.*"
+    ]
+  }
+}

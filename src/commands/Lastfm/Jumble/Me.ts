@@ -9,6 +9,8 @@ import { LineConsolidator } from "../../../lib/LineConsolidator";
 import { TagConsolidator } from "../../../lib/tags/TagConsolidator";
 import { RunAs } from "../../../lib/command/RunAs";
 import { displayNumber } from "../../../lib/views/displays";
+import { ServiceRegistry } from "../../../services/ServicesRegistry";
+import { WordBlacklistService } from "../../../services/WordBlacklistService";
 
 const args = {
   inputs: {
@@ -38,6 +40,7 @@ export class Me extends JumbleChildCommand<typeof args> {
   arguments: Arguments = args;
 
   tagConsolidator = new TagConsolidator();
+  wordBlacklistService = ServiceRegistry.get(WordBlacklistService);
 
   async run(message: Message, runAs: RunAs) {
     let alreadyJumbled = await this.sessionGetJSON<JumbledArtist>(
@@ -145,9 +148,9 @@ export class Me extends JumbleChildCommand<typeof args> {
   }
 
   private jumble(artistName: string): string {
-    let jumbled = artistName
+    const jumbled = artistName
       .split(/ /)
-      .map((t) => shuffle(t.split("")).join(""))
+      .map((t) => this.jumbleItem(t))
       .join(" ")
       .toLowerCase();
 
@@ -156,5 +159,13 @@ export class Me extends JumbleChildCommand<typeof args> {
     }
 
     return jumbled;
+  }
+
+  private jumbleItem(item: string): string {
+    const jumbled = shuffle(item.split("")).join("");
+
+    return jumbled === item || !this.wordBlacklistService.isAllowed(item)
+      ? this.jumbleItem(item)
+      : jumbled;
   }
 }

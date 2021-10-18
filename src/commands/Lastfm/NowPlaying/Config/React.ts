@@ -143,7 +143,7 @@ export class React extends NowPlayingConfigChildCommand<typeof args> {
 
     if (emojisIgnored.length) {
       embed.setFooter(
-        "Gowon needs to share a server with an emoji to be able to react with it"
+        "Gowon needs to share a server with an emoji to be able to react with it\nRecently-added emojis may take a little while for Gowon to be able to recognize"
       );
     }
 

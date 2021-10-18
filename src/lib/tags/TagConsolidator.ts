@@ -1,34 +1,26 @@
 import { sum } from "mathjs";
 import { RawTag } from "../../services/LastFM/LastFMService.types";
 import { MirrorballTag } from "../../services/mirrorball/MirrorballTypes";
-import blacklistedTags from "./blacklistedTags.json";
+import { ServiceRegistry } from "../../services/ServicesRegistry";
+import { WordBlacklistService } from "../../services/WordBlacklistService";
 
 function isMirrorballTag(tag: any | MirrorballTag): tag is MirrorballTag {
   return !!tag.name && !!tag.occurrences;
 }
 
 export class TagConsolidator {
+  get wordBlacklistService() {
+    return ServiceRegistry.get(WordBlacklistService);
+  }
+
   static readonly tagJoin = " ‧ ";
 
-  blacklistedTags: string[];
-  regexBlacklist: RegExp[];
-  explicitTags: string[];
-
+  customBlacklist = [] as string[];
   tags: MirrorballTag[] = [];
   characterLimit = 30;
 
-  constructor() {
-    this.blacklistedTags = blacklistedTags.strings.map((tag) =>
-      this.normalizeTagName(tag)
-    );
-    this.explicitTags = this.parseExplicitTags(blacklistedTags.explicit);
-    this.regexBlacklist = blacklistedTags.regex.map(
-      (regex) => new RegExp(`^${regex}$`, "i")
-    );
-  }
-
   blacklistTags(...nonTags: string[]): TagConsolidator {
-    this.blacklistedTags.push(...nonTags.map(this.normalizeTagName));
+    this.customBlacklist.push(...nonTags);
     return this;
   }
 
@@ -81,19 +73,11 @@ export class TagConsolidator {
     return false;
   }
 
-  parseExplicitTags(tags: number[][]): string[] {
-    const letters = "abcdefghijklmnopqrstuvwxyz";
-
-    return tags.map((tag) =>
-      tag.map((letter) => letters.charAt(letter - 1)).join("")
-    );
-  }
-
   static tagFixer(): {
     fixer: (tag: MirrorballTag) => string;
     reverser: (tag: string) => MirrorballTag;
   } {
-    let tagMap: { [fixedTag: string]: { [tag: string]: number } } = {};
+    const tagMap: { [fixedTag: string]: { [tag: string]: number } } = {};
 
     function fixer(tag: MirrorballTag): string {
       const tagName = tag.name;
@@ -126,24 +110,11 @@ export class TagConsolidator {
   }
 
   private filterTags(tags: MirrorballTag[]): MirrorballTag[] {
-    return tags
-      .filter(
-        (tag) => !this.blacklistedTags.includes(this.normalizeTagName(tag.name))
-      )
-      .filter(this.regexTagFilter.bind(this))
-      .filter(this.explicitTagFilter.bind(this));
-  }
-
-  private explicitTagFilter(tag: MirrorballTag): boolean {
-    return !this.explicitTags.some((eTag) => tag.name.includes(eTag));
-  }
-
-  private regexTagFilter(tag: MirrorballTag): boolean {
-    return !this.regexBlacklist.some((regex) => regex.test(tag.name));
-  }
-
-  private normalizeTagName(tag: string): string {
-    return tag.replace(/\s+/g, "").toLowerCase();
+    return this.wordBlacklistService.filter(
+      tags,
+      ["base", "tags"],
+      this.customBlacklist
+    );
   }
 
   private convertTags(
