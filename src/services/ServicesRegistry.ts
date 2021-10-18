@@ -32,6 +32,7 @@ import { TrackingService } from "./TrackingService";
 import { SettingsService } from "../lib/settings/SettingsManager";
 import { AnalyticsCollector } from "../analytics/AnalyticsCollector";
 import { WordBlacklistService } from "./WordBlacklistService";
+import { RollbarService } from "./Rollbar/RollbarService";
 
 type Service<T = any> = { new (): T };
 
@@ -64,6 +65,7 @@ const services: Service[] = [
   RedirectsService,
   RedisService,
   RedisInteractionService,
+  RollbarService,
   SettingsService,
   SpotifyService,
   TagsService,

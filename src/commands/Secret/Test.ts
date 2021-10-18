@@ -1,4 +1,7 @@
+import { LogicError } from "../../errors";
 import { BaseCommand } from "../../lib/command/BaseCommand";
+import { RollbarService } from "../../services/Rollbar/RollbarService";
+import { ServiceRegistry } from "../../services/ServicesRegistry";
 
 const args = {
   inputs: {},
@@ -15,7 +18,10 @@ export default class Test extends BaseCommand<typeof args> {
 
   arguments = args;
 
+  rollbarService = ServiceRegistry.get(RollbarService);
+
   async run() {
-    await this.send("Hello, world!");
+    throw new LogicError("Hello, world!");
+    // await this.send("Hello, world!");
   }
 }

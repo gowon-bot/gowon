@@ -25,11 +25,11 @@ export class ComboService extends BaseService {
     dbCombo.artistPlays = combo.artist.plays || undefined;
     dbCombo.albumPlays = combo.album.plays || undefined;
     dbCombo.trackPlays = combo.track.plays || undefined;
-    dbCombo.lastScrobble = combo.lastScrobble?.scrobbledAt;
+    dbCombo.lastScrobble = combo.lastScrobble.scrobbledAt;
     dbCombo.trackName =
-      combo.track.plays > 1 ? combo.lastScrobble?.name : undefined;
+      combo.track.plays > 1 ? combo.lastScrobble.name : undefined;
     dbCombo.albumName =
-      combo.album.plays > 1 ? combo.lastScrobble?.album : undefined;
+      combo.album.plays > 1 ? combo.lastScrobble.album : undefined;
 
     return await dbCombo.save();
   }

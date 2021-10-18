@@ -52,6 +52,7 @@ import { CommandRegistry } from "./CommandRegistry";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { SimpleMap } from "../../helpers/types";
 import { AnalyticsCollector } from "../../analytics/AnalyticsCollector";
+import { RollbarService } from "../../services/Rollbar/RollbarService";
 
 export interface Variation {
   name: string;
@@ -142,6 +143,7 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
   track = ServiceRegistry.get(TrackingService);
   usersService = ServiceRegistry.get(UsersService);
   gowonService = ServiceRegistry.get(GowonService);
+  rollbarService = ServiceRegistry.get(RollbarService);
   mirrorballService = ServiceRegistry.get(MirrorballService);
   analyticsCollector = ServiceRegistry.get(AnalyticsCollector);
   mirrorballUsersService = ServiceRegistry.get(MirrorballUsersService);
@@ -483,7 +485,7 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     } catch (e: any) {
       this.logger.logError(e);
       this.analyticsCollector.metrics.commandErrors.inc();
-      this.track.error(this.ctx, e);
+      this.rollbarService.logError(this.ctx, e);
 
       if (e.isClientFacing && !e.silent) {
         await this.sendError(e.message, e.footer);
