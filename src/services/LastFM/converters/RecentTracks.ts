@@ -1,4 +1,5 @@
 import { fromUnixTime } from "date-fns";
+import { BadLastFMResponseError } from "../../../errors";
 import {
   MirrorballPageInfo,
   MirrorballPlay,
@@ -60,7 +61,7 @@ export class RecentTracks
 
     const attr = recentTracks["@attr"];
 
-    this.tracks = recentTracks.track.map((t) => new RecentTrack(t));
+    this.tracks = this.array(recentTracks.track).map((t) => new RecentTrack(t));
 
     this.meta = {
       user: attr.page,
@@ -120,6 +121,10 @@ export class RecentTracks
   }
 
   first(): RecentTrack {
+    if (!this.tracks[0]) {
+      throw new BadLastFMResponseError();
+    }
+
     return this.tracks[0];
   }
 

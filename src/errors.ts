@@ -218,7 +218,10 @@ export class BadLastFMResponseError extends ClientError {
   name = "BadLastFMResponseError";
 
   constructor() {
-    super("Last.fm is having issues at the moment, please try again later...");
+    super(
+      Emoji[404] +
+        " Last.fm is having issues at the moment, please try again later..."
+    );
   }
 }
 
