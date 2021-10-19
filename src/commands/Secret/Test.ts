@@ -1,4 +1,3 @@
-import { LogicError } from "../../errors";
 import { BaseCommand } from "../../lib/command/BaseCommand";
 import { RollbarService } from "../../services/Rollbar/RollbarService";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
@@ -21,7 +20,6 @@ export default class Test extends BaseCommand<typeof args> {
   rollbarService = ServiceRegistry.get(RollbarService);
 
   async run() {
-    throw new LogicError("Hello, world!");
-    // await this.send("Hello, world!");
+    await this.send("Hello, world!");
   }
 }

@@ -164,6 +164,10 @@ export class Me extends JumbleChildCommand<typeof args> {
   private jumbleItem(item: string): string {
     const jumbled = shuffle(item.split("")).join("");
 
+    if (item.length == 1) {
+      return item;
+    }
+
     return jumbled === item || !this.wordBlacklistService.isAllowed(item)
       ? this.jumbleItem(item)
       : jumbled;
