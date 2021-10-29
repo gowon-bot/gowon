@@ -11,7 +11,7 @@
       "jap",
       "suicide"
     ],
-    "regex": [
+    "regexes": [
       ".*\\banal\\b.*",
       ".*\\fisting\\b.*",
       ".*sex.*",
@@ -82,7 +82,7 @@
       "pool is closed",
       "rock against kafir"
     ],
-    "regex": [
+    "regexes": [
       "better than .*",
       "best of \\d{4}",
       ".* ?step on me ?.*",

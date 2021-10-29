@@ -28,9 +28,7 @@ export class WordBlacklistService extends BaseService {
 
   constructor() {
     super();
-    this.blacklist = this.parseRawBlacklist(
-      blacklist as any as RawWordBlacklist
-    );
+    this.blacklist = this.parseRawBlacklist(blacklist);
   }
 
   filter<T extends string | { name: string }>(
