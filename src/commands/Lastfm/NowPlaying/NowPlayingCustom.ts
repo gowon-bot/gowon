@@ -1,4 +1,5 @@
 import { User } from "../../../database/entity/User";
+import { Variation } from "../../../lib/command/BaseCommand";
 import { DatasourceService } from "../../../lib/nowplaying/DatasourceService";
 import { NowPlayingBuilder } from "../../../lib/nowplaying/NowPlayingBuilder";
 import { ConfigService } from "../../../services/dbservices/NowPlayingService";
@@ -12,6 +13,7 @@ export default class NowPlayingCustom extends NowPlayingBaseCommand {
   description =
     "Displays the now playing or last played track from Last.fm. See `npc help` for details on how to customize your embeds.";
   aliases = ["fmx", "npx"];
+  variations: Variation[] = [{ name: "badTyping", variation: "fmz" }];
 
   datasourceService = ServiceRegistry.get(DatasourceService);
   configService = ServiceRegistry.get(ConfigService);
@@ -50,7 +52,13 @@ export default class NowPlayingCustom extends NowPlayingBaseCommand {
 
     const baseEmbed = this.nowPlayingEmbed(nowPlaying, username);
 
-    let embed = await builder.asEmbed(resolvedRequirements, baseEmbed);
+    const embed = await builder.asEmbed(resolvedRequirements, baseEmbed);
+
+    if (this.variationWasUsed("badTyping")) {
+      embed.setFooter(
+        embed.footer?.text?.replaceAll(/scrobbles/gi, "scrobblez") || ""
+      );
+    }
 
     const sentMessage = await this.send(embed);
 
