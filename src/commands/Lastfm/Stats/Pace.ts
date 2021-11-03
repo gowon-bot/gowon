@@ -11,6 +11,7 @@ import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { displayDate, displayNumber } from "../../../lib/views/displays";
+import { ago } from "../../../helpers";
 
 const args = {
   inputs: {
@@ -90,7 +91,9 @@ export default class Pace extends LastFMBaseCommand<typeof args> {
         )}, ${perspective.name} will hit **${displayNumber(
           pace.milestone,
           "**scrobble"
-        )} on ${displayDate(pace.prediction).strong()}`
+        )} on ${displayDate(pace.prediction).strong()} (${ago(
+          pace.prediction
+        )})`
       );
 
     await this.send(embed);
