@@ -4,7 +4,11 @@ import { Arguments } from "../../../lib/arguments/arguments";
 import { LogicError } from "../../../errors";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { toInt } from "../../../helpers/lastFM";
-import { displayNumber } from "../../../lib/views/displays";
+import {
+  displayNumber,
+  displayNumberedList,
+} from "../../../lib/views/displays";
+import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingEmbed";
 
 const args = {
   mentions: standardMentions,
@@ -19,46 +23,60 @@ export class List extends CrownsChildCommand<typeof args> {
   arguments: Arguments = args;
 
   async run() {
-    let { discordUser: user } = await this.parseMentions({
+    const { dbUser, discordUser } = await this.parseMentions({
       fetchDiscordUser: true,
       reverseLookup: { required: true },
     });
 
-    let discordID = user?.id || this.author.id;
+    const discordID = dbUser.discordID;
 
-    let perspective = this.usersService.discordPerspective(this.author, user);
+    const perspective = this.usersService.discordPerspective(
+      this.author,
+      discordUser
+    );
 
-    let [crowns, crownsCount, rank] = await Promise.all([
-      this.crownsService.listTopCrowns(this.ctx, discordID),
+    const [crowns, crownsCount, rank] = await Promise.all([
+      this.crownsService.listTopCrowns(this.ctx, discordID, -1),
       this.crownsService.count(this.ctx, discordID),
       this.crownsService.getRank(this.ctx, discordID),
     ]);
 
-    if (!crownsCount)
+    if (!crownsCount) {
       throw new LogicError(
         `${perspective.name} don't have any crowns in this server!`
       );
+    }
 
-    let embed = this.newEmbed()
-      .setTitle(`${perspective.upper.possessive} crowns`)
-      .setDescription(
-        crowns
-          .map(
-            (c, idx) =>
-              `${idx + 1}. ${c.artistName} - ${displayNumber(
-                c.plays,
-                "play"
-              ).strong()}`
-          )
-          .join("\n") +
-          `\n\n${perspective.upper.plusToHave} **${displayNumber(
-            crownsCount,
-            "** crown"
-          )} in ${this.guild.name} (ranked ${getOrdinal(
-            toInt(rank.rank)
-          ).strong()})`
-      );
+    const embed = this.newEmbed()
+      .setAuthor(...this.generateEmbedAuthor("Crowns"))
+      .setTitle(`${perspective.upper.possessive} crowns in ${this.guild.name}`);
 
-    await this.send(embed);
+    const scrollingEmbed = new SimpleScrollingEmbed(
+      this.message,
+      embed,
+      {
+        pageSize: 15,
+        items: crowns,
+        pageRenderer(crownsPage, { offset }) {
+          return displayNumberedList(
+            crownsPage.map(
+              (c) =>
+                `${c.artistName} - ${displayNumber(c.plays, "play").strong()}`
+            ),
+            offset
+          );
+        },
+      },
+      {
+        itemName: "crown",
+        customFooter: (page: number, totalPages: number) =>
+          `Page ${page} of ${totalPages} • ${displayNumber(
+            crowns.length,
+            "crown"
+          )} • ranked ${getOrdinal(toInt(rank.rank))}`,
+      }
+    );
+
+    scrollingEmbed.send();
   }
 }

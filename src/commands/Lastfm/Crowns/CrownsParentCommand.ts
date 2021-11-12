@@ -23,6 +23,7 @@ import { CrownRanks } from "./CrownRanks";
 import { BanArtist } from "./BanArtist";
 import { UnbanArtist } from "./UnbanArtist";
 import { GuildAt } from "./GuildAt";
+import { Tag } from "./Tag";
 
 export default class CrownsParentCommand extends LastFMBaseParentCommand {
   idSeed = "weki meki lua";
@@ -47,28 +48,29 @@ export default class CrownsParentCommand extends LastFMBaseParentCommand {
   ];
 
   children: CommandGroup = new CommandGroup([
+    Ban,
+    BanArtist,
     Check,
+    CheckMany,
+    ContentiousCrowns,
+    CrownRanks,
+    DM,
+    Guild,
+    GuildAround,
+    GuildAt,
+    History,
     Info,
     List,
-    CheckMany,
-    TopCrowns,
-    ContentiousCrowns,
-    Guild,
-    DM,
+    Kill,
+    OptIn,
+    OptOut,
+    Rank,
+    RecentlyStolen,
     SetInactiveRole,
     SetPurgatoryRole,
-    OptOut,
-    OptIn,
-    Rank,
-    Kill,
-    RecentlyStolen,
-    Ban,
+    Tag,
+    TopCrowns,
     Unban,
-    CrownRanks,
-    BanArtist,
     UnbanArtist,
-    History,
-    GuildAt,
-    GuildAround,
   ]);
 }

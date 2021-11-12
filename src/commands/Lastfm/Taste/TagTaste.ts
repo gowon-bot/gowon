@@ -80,12 +80,12 @@ export default class TagTaste extends TasteCommand<typeof args> {
       mentionedPaginator.getAllToConcatonable(),
     ]);
 
-    const senderArtistsFiltered = await this.tagService.filter(
+    const senderArtistsFiltered = await this.tagService.filterArtists(
       this.ctx,
       senderArtists.artists,
       [tag]
     );
-    const mentionedArtistsFiltered = await this.tagService.filter(
+    const mentionedArtistsFiltered = await this.tagService.filterArtists(
       this.ctx,
       mentionedArtists.artists,
       [tag]

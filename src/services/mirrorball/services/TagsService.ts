@@ -72,7 +72,7 @@ export class TagsService extends BaseService {
     }, {} as { [artistName: string]: string[] });
   }
 
-  async filter<T extends { name: string }>(
+  async filterArtists<T extends { name: string }>(
     ctx: BaseServiceContext,
     artists: T[],
     allowedTags: string[]
