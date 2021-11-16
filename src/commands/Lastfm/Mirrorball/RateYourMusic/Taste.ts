@@ -6,19 +6,13 @@ import {
 } from "./connectors";
 import { RateYourMusicIndexingChildCommand } from "./RateYourMusicChildCommand";
 import { standardMentions } from "../../../../lib/arguments/mentions/mentions";
-import {
-  LogicError,
-  MentionedUserNotIndexedError,
-  NoRatingsError,
-  SenderUserNotIndexedError,
-} from "../../../../errors";
+import { LogicError, NoRatingsError } from "../../../../errors";
 import {
   RatingsTasteCalculator,
   TasteRating,
 } from "../../../../lib/calculators/RatingsTasteCalculator";
 import { displayNumber, displayRating } from "../../../../lib/views/displays";
 import { SimpleScrollingEmbed } from "../../../../lib/views/embeds/SimpleScrollingEmbed";
-import { mirrorballUserToInput } from "../../../../helpers/mirrorball";
 import { sanitizeForDiscord } from "../../../../helpers/discord";
 
 const args = {
