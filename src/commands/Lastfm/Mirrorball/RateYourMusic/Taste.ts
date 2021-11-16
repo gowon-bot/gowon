@@ -53,21 +53,19 @@ export class Taste extends RateYourMusicIndexingChildCommand<
   arguments: Arguments = args;
 
   async run() {
-    const { mirrorballUser, senderMirrorballUser, discordUser } =
-      await this.parseMentions({
-        fetchMirrorballUser: true,
-        fetchDiscordUser: true,
-      });
+    const { discordUser } = await this.parseMentions({
+      fetchDiscordUser: true,
+    });
 
-    if (!senderMirrorballUser) {
-      throw new SenderUserNotIndexedError(this.prefix);
-    } else if (!mirrorballUser) {
-      throw new MentionedUserNotIndexedError(this.prefix);
+    if (!discordUser || discordUser?.id === this.author.id) {
+      throw new LogicError(
+        "Please mention a user to compare your ratings with!"
+      );
     }
 
     const ratings = await this.query({
-      mentioned: mirrorballUserToInput(mirrorballUser),
-      sender: mirrorballUserToInput(senderMirrorballUser),
+      mentioned: { discordID: discordUser.id },
+      sender: { discordID: this.author.id },
     });
 
     if (!ratings.sender.ratings?.length) {
