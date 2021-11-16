@@ -172,6 +172,7 @@ export const mockRequirements = (
         {
           rating: 7,
           rateYourMusicAlbum: {
+            rateYourMusicID: "",
             title: nowPlaying.album,
             artistName: nowPlaying.artist,
           },
