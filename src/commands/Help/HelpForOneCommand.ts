@@ -82,11 +82,32 @@ export default class HelpForOneCommand extends BaseCommand<typeof args> {
       },
       {
         shouldDisplay: !!command.aliases.length,
-        string: `\n**Aliases**: ${command.aliases.map((a) => a.code())}\n`,
+        string:
+          (command.usage ? "\n" : "") +
+          `**Aliases**: ${command.aliases.map((a) => a.code())}\n`,
       },
       {
         shouldDisplay: !!command.variations.length,
-        string: "**Variations**:\n" + variations,
+        string:
+          "**Variations**:\n" +
+          variations +
+          (command.arguments.flags ? "\n" : ""),
+      },
+      {
+        shouldDisplay: !!command.arguments.flags,
+        string:
+          "**Flags**:\n" +
+          Object.values(command.arguments?.flags || {})
+            .map(
+              (f) =>
+                `${[
+                  ...f.longnames.map((n) => `--${n}`),
+                  ...f.shortnames.map((n) => `-${n}`),
+                ]
+                  .map((flag) => flag.code())
+                  .join(", ")} - ${f.description}`
+            )
+            .join("\n"),
       }
     );
 
@@ -128,6 +149,7 @@ export default class HelpForOneCommand extends BaseCommand<typeof args> {
             .join(", ") +
           "\n",
       },
+
       "**Commands**:",
       commands
         .map(

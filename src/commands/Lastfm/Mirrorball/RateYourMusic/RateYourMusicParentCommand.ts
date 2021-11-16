@@ -7,6 +7,7 @@ import { Link } from "./Link";
 import { Rating } from "./Rating";
 import { Ratings } from "./Ratings";
 import { Stats } from "./Stats";
+import { Taste } from "./Taste";
 
 export default class RateYourMusicParentCommand extends ParentCommand {
   idSeed = "sonamoo euijin";
@@ -28,18 +29,22 @@ export default class RateYourMusicParentCommand extends ParentCommand {
     "artistratings",
     // Ratings
     "ratings",
+    // Taste
+    "tasteratings",
+    "ratingstaste",
   ];
 
   prefixes = ["rateyourmusic", "rym", "ryms"];
   default = () => new Link();
 
   children = new CommandGroup([
+    ArtistRatings,
+    Help,
     ImportRatings,
     Link,
     Rating,
-    ArtistRatings,
-    Stats,
-    Help,
     Ratings,
+    Stats,
+    Taste,
   ]);
 }

@@ -189,3 +189,63 @@ export class RatingsConnector extends BaseConnector<
     }
   `;
 }
+
+// Ratings
+export interface RatingsTasteResponse {
+  sender: {
+    ratings: {
+      rating: number;
+      rateYourMusicAlbum: MirrorballRateYourMusicAlbum;
+    }[];
+    pageInfo: MirrorballPageInfo;
+  };
+  mentioned: {
+    ratings: {
+      rating: number;
+      rateYourMusicAlbum: MirrorballRateYourMusicAlbum;
+    }[];
+    pageInfo: MirrorballPageInfo;
+  };
+}
+
+export interface RatingsTasteParams {
+  sender: UserInput;
+  mentioned: UserInput;
+}
+
+export class RatingsTasteConnector extends BaseConnector<
+  RatingsTasteResponse,
+  RatingsTasteParams
+> {
+  query = gql`
+    query stats($sender: UserInput, $mentioned: UserInput) {
+      sender: ratings(settings: { user: $sender }) {
+        ratings {
+          rating
+          rateYourMusicAlbum {
+            rateYourMusicID
+            title
+            artistName
+          }
+        }
+        pageInfo {
+          recordCount
+        }
+      }
+
+      mentioned: ratings(settings: { user: $mentioned }) {
+        ratings {
+          rating
+          rateYourMusicAlbum {
+            rateYourMusicID
+            title
+            artistName
+          }
+        }
+        pageInfo {
+          recordCount
+        }
+      }
+    }
+  `;
+}

@@ -75,6 +75,7 @@ export interface MirrorballTrack {
 }
 
 export interface MirrorballRateYourMusicAlbum {
+  rateYourMusicID: string;
   title: string;
   artistName: string;
 }

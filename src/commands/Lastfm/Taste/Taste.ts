@@ -67,7 +67,7 @@ export default class Taste extends TasteCommand<typeof args> {
   };
 
   async run() {
-    let artistAmount = this.parsedArguments.artistAmount!,
+    const artistAmount = this.parsedArguments.artistAmount!,
       humanReadableTimePeriod = this.parsedArguments.humanReadableTimePeriod!;
 
     const [userOneUsername, userTwoUsername] = await this.getUsernames();
@@ -77,18 +77,18 @@ export default class Taste extends TasteCommand<typeof args> {
       userTwoUsername
     );
 
-    let [senderArtists, mentionedArtists] = await Promise.all([
+    const [senderArtists, mentionedArtists] = await Promise.all([
       senderPaginator.getAllToConcatonable(),
       mentionedPaginator.getAllToConcatonable(),
     ]);
 
-    let tasteCalculator = new TasteCalculator(
+    const tasteCalculator = new TasteCalculator(
       senderArtists.artists,
       mentionedArtists.artists,
       artistAmount
     );
 
-    let taste = tasteCalculator.calculate();
+    const taste = tasteCalculator.calculate();
 
     if (taste.artists.length === 0)
       throw new LogicError(
@@ -105,7 +105,7 @@ export default class Taste extends TasteCommand<typeof args> {
             taste.percent
           }% match) found.`;
 
-    let embed = this.newEmbed()
+    const embed = this.newEmbed()
       .setTitle(
         `Taste comparison for ${sanitizeForDiscord(
           userOneUsername

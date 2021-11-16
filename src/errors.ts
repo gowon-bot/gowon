@@ -3,6 +3,7 @@ import { parseError, parseErrorSix } from "./helpers/error";
 import { Response } from "node-fetch";
 import { displayNumber } from "./lib/views/displays";
 import { Emoji } from "./lib/Emoji";
+import { Perspective } from "./lib/Perspective";
 
 export abstract class ClientError extends Error {
   name = "ClientError";
@@ -390,6 +391,18 @@ export class DMsAreOffError extends ClientError {
   constructor() {
     super(
       "You have your DMs turned off! Please re-enable them to allow Gowon to DM you."
+    );
+  }
+}
+
+export class NoRatingsError extends ClientError {
+  name = "NoRatingsError";
+
+  constructor(prefix: string, rating?: number, perspective?: Perspective) {
+    super(
+      rating
+        ? `Couldn't find any albums rated ${perspective?.plusToHave} rated ${rating}`
+        : `Couldn't find any ratings! See \`${prefix}ryms help\` for help on how to import`
     );
   }
 }

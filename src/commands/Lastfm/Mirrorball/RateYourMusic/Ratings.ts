@@ -3,7 +3,7 @@ import { RatingsParams, RatingsResponse, RatingsConnector } from "./connectors";
 import { RateYourMusicIndexingChildCommand } from "./RateYourMusicChildCommand";
 import { standardMentions } from "../../../../lib/arguments/mentions/mentions";
 import { PaginatedCache } from "../../../../lib/paginators/PaginatedCache";
-import { LogicError, UnknownMirrorballError } from "../../../../errors";
+import { NoRatingsError, UnknownMirrorballError } from "../../../../errors";
 import { MirrorballRating } from "../../../../services/mirrorball/MirrorballTypes";
 import { displayRating } from "../../../../lib/views/displays";
 import { ScrollingEmbed } from "../../../../lib/views/embeds/ScrollingEmbed";
@@ -74,11 +74,7 @@ export class Ratings extends RateYourMusicIndexingChildCommand<
     }
 
     if (!initialPages.ratings.pageInfo.recordCount) {
-      throw new LogicError(
-        rating
-          ? `Couldn't find any albums rated ${perspective.plusToHave} rated ${rating}`
-          : `Couldn't find any ratings! See \`${this.prefix}ryms help\` for help on how to import`
-      );
+      throw new NoRatingsError(this.prefix, rating, perspective);
     }
 
     const paginatedCache = new PaginatedCache(async (page) => {
