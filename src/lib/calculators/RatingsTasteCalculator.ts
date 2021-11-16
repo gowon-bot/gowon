@@ -28,8 +28,6 @@ export class RatingsTasteCalculator {
           abs(rating.rating - r.rating) <= this.ratingThreshold
       );
 
-      console.log(userTwoRating);
-
       if (userTwoRating) {
         acc.push({ userOneRating: rating, userTwoRating });
       }

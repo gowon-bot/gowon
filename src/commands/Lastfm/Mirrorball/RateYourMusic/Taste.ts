@@ -26,8 +26,8 @@ const args = {
     },
     strict: {
       description: "Only show ratings that are exactly the same",
-      longnames: ["strict"],
-      shortnames: ["s"],
+      longnames: ["strict", "exact"],
+      shortnames: ["s", "e"],
     },
   },
 } as const;
