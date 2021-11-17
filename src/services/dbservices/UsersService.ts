@@ -16,6 +16,7 @@ import { ServiceRegistry } from "../ServicesRegistry";
 import { AnalyticsCollector } from "../../analytics/AnalyticsCollector";
 import { CommandAccessRoleName } from "../../lib/command/access/roles";
 import { GowonContext } from "../../lib/context/Context";
+import { SpotifyCode } from "../Spotify/SpotifyService.types";
 
 export class UsersService extends BaseService {
   get analyticsCollector() {
@@ -216,5 +217,26 @@ export class UsersService extends BaseService {
     await user.save();
 
     return user;
+  }
+
+  async getSpotifyCode(
+    ctx: GowonContext,
+    discordID: string
+  ): Promise<SpotifyCode | undefined> {
+    const user = await this.getUser(ctx, discordID);
+
+    return user.spotifyCode ? { code: user.spotifyCode, state: "" } : undefined;
+  }
+
+  async setSpotifyCode(
+    ctx: GowonContext,
+    discordID: string,
+    code: SpotifyCode
+  ) {
+    const user = await this.getUser(ctx, discordID);
+
+    user.spotifyCode = code.code;
+
+    await user.save();
   }
 }

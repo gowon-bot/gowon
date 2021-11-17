@@ -14,6 +14,10 @@ export interface SpotifyToken {
   expires_in: number;
 }
 
+export interface PersonalSpotifyToken extends SpotifyToken {
+  fetchedAt: number;
+}
+
 export interface Image {
   height: number;
   width: number;
@@ -43,3 +47,34 @@ export type SearchResponse = SimpleMap<{
   previous: string | undefined;
   total: number;
 }>;
+
+export interface SpotifyAuthUser {
+  discordID: string;
+  state: string;
+}
+
+export interface SpotifyCode {
+  code: string;
+  state: string;
+}
+
+export interface SpotifyCodeError {
+  error: string;
+  state: string;
+}
+
+export type SpotifyCodeResponse = SpotifyCode | SpotifyCodeError;
+
+export function isSpotifyCodeError(
+  response: SpotifyCodeResponse
+): response is SpotifyCodeError {
+  return !(response as SpotifyCode).code;
+}
+
+export class InvalidStateError extends Error {
+  name = "InvalidStateError";
+
+  constructor() {
+    super("The provided state didn't match the expected state");
+  }
+}
