@@ -38,17 +38,6 @@ export class SpotifyService extends BaseSpotifyService {
   private _token?: SpotifyToken;
   private tokenFetchedAt = new Date();
 
-  generateURI<T extends SpotifyEntityName>(
-    entity: T,
-    id: string
-  ): SpotifyURI<T> {
-    return `spotify:${entity}:${id}`;
-  }
-
-  getIDFromURI(uri: SpotifyURI<SpotifyEntityName>): string {
-    return uri.split(":")[2];
-  }
-
   private async token(ctx: BaseServiceContext): Promise<string> {
     if (this._token && this.tokenIsValid(this._token, this.tokenFetchedAt)) {
       return this._token.access_token;
@@ -309,5 +298,11 @@ export class SpotifyService extends BaseSpotifyService {
         return false;
       }) || tracks[0]
     );
+  }
+
+  private ensureAuthenticated(ctx: SpotifyServiceContext) {
+    if (!ctx.spotifyToken) {
+      throw new NotAuthenticatedWithSpotifyError(ctx.command.prefix);
+    }
   }
 }
