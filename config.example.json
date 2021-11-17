@@ -26,5 +26,8 @@
 
   "mirrorballPassword": "this needs to match the MIRRORBALL_PASSWORD .env variable in Mirrorball",
 
-  "rollbarToken": "Get this from rollbar.com (for error reporting)"
+  "rollbarToken": "Get this from rollbar.com (for error reporting)",
+
+  "gowonAPIPort": 3000,
+  "gowonAPIURL": "http://localhost:3000 <-- This is where Gowon should send webhooks"
 }

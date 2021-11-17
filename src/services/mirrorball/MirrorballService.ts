@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client/core";
 import { DocumentNode } from "graphql";
-import { IndexingWebhookService } from "../../api/indexing/IndexingWebhookService";
+import { IndexingWebhookService } from "../../api/webhooks/IndexingWebhookService";
 import { SimpleMap } from "../../helpers/types";
 import { mirrorballClient } from "../../lib/indexing/client";
 import { BaseService, BaseServiceContext } from "../BaseService";

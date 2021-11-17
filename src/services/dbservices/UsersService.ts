@@ -15,6 +15,7 @@ import { sqlLikeEscape } from "../../helpers/database";
 import { ServiceRegistry } from "../ServicesRegistry";
 import { AnalyticsCollector } from "../../analytics/AnalyticsCollector";
 import { CommandAccessRoleName } from "../../lib/command/access/roles";
+import { SpotifyCode } from "../Spotify/SpotifyService.types";
 
 export class UsersService extends BaseService {
   get analyticsCollector() {
@@ -221,5 +222,26 @@ export class UsersService extends BaseService {
     await user.save();
 
     return user;
+  }
+
+  async getSpotifyCode(
+    ctx: BaseServiceContext,
+    discordID: string
+  ): Promise<SpotifyCode | undefined> {
+    const user = await this.getUser(ctx, discordID);
+
+    return user.spotifyCode ? { code: user.spotifyCode, state: "" } : undefined;
+  }
+
+  async setSpotifyCode(
+    ctx: BaseServiceContext,
+    discordID: string,
+    code: SpotifyCode
+  ) {
+    const user = await this.getUser(ctx, discordID);
+
+    user.spotifyCode = code.code;
+
+    await user.save();
   }
 }

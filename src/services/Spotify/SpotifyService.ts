@@ -1,36 +1,34 @@
-import fetch from "node-fetch";
-import { BaseService, BaseServiceContext } from "../BaseService";
+import fetch, { Response } from "node-fetch";
+import { BaseServiceContext } from "../BaseService";
 import config from "../../../config.json";
 import { URLSearchParams } from "url";
-import { add, isBefore } from "date-fns";
 import { stringify } from "querystring";
 import {
+  PersonalSpotifyToken,
   SearchItem,
   SearchResponse,
+  SpotifyCode,
   SpotifyEntity,
   SpotifyToken,
 } from "./SpotifyService.types";
 import { SimpleMap } from "../../helpers/types";
-import { SpotifyConnectionError } from "../../errors";
+import {
+  NotAuthenticatedWithSpotifyError,
+  SpotifyConnectionError,
+} from "../../errors";
 import { Logger } from "../../lib/Logger";
+import { BaseSpotifyService } from "./BaseSpotifyService";
 
-export class SpotifyService extends BaseService {
-  url = "https://api.spotify.com/v1/";
-  tokenURL = "https://accounts.spotify.com/api/token";
+export type SpotifyServiceContext = BaseServiceContext & {
+  spotifyToken?: PersonalSpotifyToken;
+};
 
+export class SpotifyService extends BaseSpotifyService {
   private _token?: SpotifyToken;
   private tokenFetchedAt = new Date();
 
-  private tokenIsValid(token: SpotifyToken): boolean {
-    const dateExpires = add(this.tokenFetchedAt, {
-      seconds: token.expires_in - 5,
-    });
-
-    return isBefore(new Date(), dateExpires);
-  }
-
   private async token(ctx: BaseServiceContext): Promise<string> {
-    if (this._token && this.tokenIsValid(this._token)) {
+    if (this._token && this.tokenIsValid(this._token, this.tokenFetchedAt)) {
       return this._token.access_token;
     } else {
       const token = await this.fetchToken(ctx);
@@ -39,10 +37,20 @@ export class SpotifyService extends BaseService {
     }
   }
 
-  private async fetchToken(ctx: BaseServiceContext): Promise<SpotifyToken> {
+  async fetchToken(
+    ctx: BaseServiceContext,
+    code?: SpotifyCode
+  ): Promise<SpotifyToken> {
     this.log(ctx, "fetching new token");
     const params = new URLSearchParams();
-    params.append("grant_type", "client_credentials");
+
+    if (code) {
+      params.append("grant_type", "authorization_code");
+      params.append("redirect_uri", this.generateRedirectURI());
+      params.append("code", code.code);
+    } else {
+      params.append("grant_type", "client_credentials");
+    }
 
     const response = await fetch(this.tokenURL, {
       method: "POST",
@@ -57,30 +65,57 @@ export class SpotifyService extends BaseService {
 
     const jsonResponse = await response.json();
 
+    if (code) {
+      const token = jsonResponse as PersonalSpotifyToken;
+
+      token.fetchedAt = new Date().getTime();
+    }
+
+    if (jsonResponse.error) {
+      throw new SpotifyConnectionError(ctx.command.prefix);
+    }
+
     this.tokenFetchedAt = new Date();
 
     return jsonResponse as SpotifyToken;
   }
 
-  private async headers(ctx: BaseServiceContext) {
+  private async headers(ctx: SpotifyServiceContext) {
+    const token = ctx.spotifyToken?.access_token || (await this.token(ctx));
+
     return {
-      Authorization: this.bearerAuthorization(await this.token(ctx)),
+      Authorization: this.bearerAuthorization(token),
     };
   }
 
   async request<T>(
-    ctx: BaseServiceContext,
+    ctx: SpotifyServiceContext,
     path: string,
-    params: SimpleMap
+    params: SimpleMap,
+    post = false
   ): Promise<T> {
     this.log(
       ctx,
       `made API request to ${path} with params ${Logger.formatObject(params)}`
     );
 
-    const response = await fetch(this.url + path + "?" + stringify(params), {
-      headers: await this.headers(ctx),
-    });
+    const headers = await this.headers(ctx);
+
+    let response: Response;
+
+    if (post) {
+      response = await fetch(this.apiURL + path, {
+        headers,
+        method: "POST",
+        body: JSON.stringify(params),
+      });
+    } else {
+      response = await fetch(this.apiURL + path + "?" + stringify(params), {
+        headers,
+      });
+    }
+
+    console.log(await response.json());
 
     if (`${response.status}`.startsWith("4")) {
       throw new SpotifyConnectionError(ctx.command.prefix);
@@ -148,6 +183,23 @@ export class SpotifyService extends BaseService {
     return search.albums.items[0];
   }
 
+  async createPlaylist(ctx: SpotifyServiceContext, name: string) {
+    this.ensureAuthenticated(ctx);
+
+    const response = await this.request(
+      ctx,
+      `users/xlm1c9jushfd8b87dl9mxxqs2/playlists`,
+      {
+        name,
+        description: "hello from gowon",
+        public: true,
+      },
+      true
+    );
+
+    console.log(response);
+  }
+
   getImageFromSearchItem(si: SearchItem): string {
     return (
       si.images.sort((a, b) => b.height * b.width - a.height * a.width)[0]
@@ -160,5 +212,11 @@ export class SpotifyService extends BaseService {
       string1.toLowerCase().replace(/'"`‘’:/, "") ===
       string2.toLowerCase().replace(/'"`‘’:/, "")
     );
+  }
+
+  private ensureAuthenticated(ctx: SpotifyServiceContext) {
+    if (!ctx.spotifyToken) {
+      throw new NotAuthenticatedWithSpotifyError(ctx.command.prefix);
+    }
   }
 }

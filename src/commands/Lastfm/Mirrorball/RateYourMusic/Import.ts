@@ -26,7 +26,8 @@ export class ImportRatings extends RateYourMusicIndexingChildCommand<
 
   idSeed = "sonamoo high d";
   aliases = ["rymimport", "rymsimport"];
-  description = "Import your rateyourmusic ratings";
+  description =
+    "Import your rateyourmusic ratings. See ryms help for more info on how to import";
 
   arguments: Arguments = args;
 
