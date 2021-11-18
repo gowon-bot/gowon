@@ -1,6 +1,4 @@
 import { BaseCommand } from "../../lib/command/BaseCommand";
-import { RollbarService } from "../../services/Rollbar/RollbarService";
-import { ServiceRegistry } from "../../services/ServicesRegistry";
 
 const args = {
   inputs: {},
@@ -16,8 +14,6 @@ export default class Test extends BaseCommand<typeof args> {
   subcategory = "developer";
 
   arguments = args;
-
-  rollbarService = ServiceRegistry.get(RollbarService);
 
   async run() {
     await this.send("Hello, world!");

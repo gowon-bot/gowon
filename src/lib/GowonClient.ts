@@ -1,9 +1,18 @@
 import { Client, Message, User as DiscordUser } from "discord.js";
 import { User } from "../database/entity/User";
+import { flatDeep } from "../helpers";
 import { GowonService } from "../services/GowonService";
 import { ServiceRegistry } from "../services/ServicesRegistry";
 import { isUnicodeEmoji } from "./arguments/custom/EmojiParser";
 import specialUsers from "./specialUsers.json";
+
+export type BotName =
+  | "rem"
+  | "gowon"
+  | "gowon development"
+  | "chuu"
+  | "fmbot"
+  | "fmbot develop";
 
 export class GowonClient {
   public hasPM2 = false;
@@ -31,18 +40,22 @@ export class GowonClient {
     );
   }
 
-  isDeveloperOf(bot: "chuu" | "fmbot" | "rem", userID?: string) {
+  isDeveloperOf(
+    bot: Exclude<BotName, "gowon" | "gowon development" | "fmbot develop">,
+    userID?: string
+  ) {
     return this.specialUsers.otherBotDevelopers[bot].some(
       (dev) => dev.id === userID
     );
   }
 
-  isBot(
-    userID: string | undefined,
-    botName: "rem" | "gowon" | "gowon development"
-  ) {
+  isBot(userID: string | undefined, botName: BotName | BotName[]) {
+    const botNames = flatDeep([botName]);
+
+    console.log(botNames);
+
     return this.specialUsers.bots.some(
-      (bot) => bot.name === botName && bot.id === userID
+      (bot) => botNames.includes(bot.name) && bot.id === userID
     );
   }
 

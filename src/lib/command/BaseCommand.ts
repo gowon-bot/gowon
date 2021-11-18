@@ -53,6 +53,7 @@ import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { SimpleMap } from "../../helpers/types";
 import { AnalyticsCollector } from "../../analytics/AnalyticsCollector";
 import { RollbarService } from "../../services/Rollbar/RollbarService";
+import { NowPlayingEmbedParsingService } from "../../services/NowPlayingEmbedParsingService";
 
 export interface Variation {
   name: string;
@@ -147,6 +148,9 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
   mirrorballService = ServiceRegistry.get(MirrorballService);
   analyticsCollector = ServiceRegistry.get(AnalyticsCollector);
   mirrorballUsersService = ServiceRegistry.get(MirrorballUsersService);
+  nowPlayingEmbedParsingService = ServiceRegistry.get(
+    NowPlayingEmbedParsingService
+  );
 
   hasChildren = false;
   children?: CommandGroup;
@@ -227,12 +231,29 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     senderMirrorballUser?: MirrorballUser;
     mirrorballUser?: MirrorballUser;
   }> {
-    let user = this.parsedArguments[userArgumentName] as any as User,
+    let user = this.parsedArguments[userArgumentName] as any as DiscordUser,
       userID = this.parsedArguments[idMentionArgumentName] as any as string,
       lfmUser = this.parsedArguments[lfmMentionArgumentName] as any as string,
       discordUsername = (this.parsedArguments as any)[
         "discordUsername"
       ] as string;
+
+    if (user && this.message.reference) {
+      const reply = await this.message.fetchReference();
+
+      if (this.nowPlayingEmbedParsingService.hasParsableEmbed(this.ctx, reply))
+        if (
+          this.gowonClient.isBot(user.id, [
+            "gowon",
+            "gowon development",
+            "fmbot",
+            "fmbot develop",
+            "chuu",
+          ])
+        ) {
+          user = (Array.from(this.message.mentions.users)[1] || [])[1];
+        }
+    }
 
     let mentionedUsername: string | undefined;
     let discordUser: DiscordUser | undefined;

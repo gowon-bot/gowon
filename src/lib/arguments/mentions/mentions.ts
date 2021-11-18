@@ -71,8 +71,10 @@ export class MentionParser extends Parser {
         if (mentionOptions.mention.ndmpOnly) {
           return undefined;
         } else {
+          const messageMentions = message.mentions.users.values();
+
           return this.getElementFromIndex(
-            Array.from(message.mentions.users.values()),
+            Array.from(messageMentions),
             mentionOptions.index,
             { join: mentionOptions.join }
           );

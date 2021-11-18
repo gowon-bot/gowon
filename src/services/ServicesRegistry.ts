@@ -33,6 +33,7 @@ import { SettingsService } from "../lib/settings/SettingsManager";
 import { AnalyticsCollector } from "../analytics/AnalyticsCollector";
 import { WordBlacklistService } from "./WordBlacklistService";
 import { RollbarService } from "./Rollbar/RollbarService";
+import { NowPlayingEmbedParsingService } from "./NowPlayingEmbedParsingService";
 
 type Service<T = any> = { new (): T };
 
@@ -61,6 +62,7 @@ const services: Service[] = [
   MirrorballCacheService,
   MirrorballUsersService,
   NicknameService,
+  NowPlayingEmbedParsingService,
   PM2Service,
   RedirectsService,
   RedisService,
