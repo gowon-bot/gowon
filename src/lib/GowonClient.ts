@@ -52,8 +52,6 @@ export class GowonClient {
   isBot(userID: string | undefined, botName: BotName | BotName[]) {
     const botNames = flatDeep([botName]);
 
-    console.log(botNames);
-
     return this.specialUsers.bots.some(
       (bot) => botNames.includes(bot.name) && bot.id === userID
     );

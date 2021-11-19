@@ -14,7 +14,7 @@ const args = {
 export default class LastFMAccount extends LastFMBaseCommand<typeof args> {
   idSeed = "loona kim lip";
 
-  aliases = ["lfm"];
+  aliases = ["lfm", "link"];
   description = "Links the last.fm profile page for a user";
   subcategory = "accounts";
   usage = ["", "@user"];
