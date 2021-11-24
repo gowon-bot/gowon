@@ -16,6 +16,10 @@ export default class SpotifyArtist extends SpotifyBaseCommand<typeof args> {
 
   arguments = args;
 
+  customContext = {
+    mutable: {},
+  };
+
   async run() {
     let keywords = this.parsedArguments.keywords;
 

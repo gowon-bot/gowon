@@ -16,6 +16,10 @@ export default class SpotifyTrack extends SpotifyBaseCommand<typeof args> {
 
   arguments = args;
 
+  customContext = {
+    mutable: {},
+  };
+
   async run() {
     let keywords = this.parsedArguments.keywords;
 
@@ -29,7 +33,7 @@ export default class SpotifyTrack extends SpotifyBaseCommand<typeof args> {
         requestable
       );
 
-      keywords = `${nowplaying.artist} - ${nowplaying.name}`;
+      keywords = `${nowplaying.name} ${nowplaying.artist}`;
     }
 
     const spotifyTrack = await this.spotifyService.searchTrackRaw(

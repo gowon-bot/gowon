@@ -8,6 +8,9 @@ export type SpotifyEntity =
   | "show"
   | "episode";
 
+export type SpotifyURI<T extends SpotifyEntity> = `spotify:${T}:${string}`;
+export type SpotifyTrackURI = SpotifyURI<"track">;
+
 export interface SpotifyToken {
   access_token: string;
   token_type: "bearer";
@@ -35,7 +38,7 @@ export interface SearchItem {
   popularity: 0;
   name: string;
   type: SpotifyEntity;
-  uri: string;
+  uri: SpotifyURI<SpotifyEntity>;
 }
 
 export type SearchResponse = SimpleMap<{
@@ -77,4 +80,59 @@ export class InvalidStateError extends Error {
   constructor() {
     super("The provided state didn't match the expected state");
   }
+}
+
+export interface SpotifySimpleArtist {
+  external_urls: {
+    spotify: string;
+  };
+  href: string;
+  id: string;
+  name: string;
+  type: string;
+  uri: SpotifyURI<"artist">;
+}
+
+export interface SpotifyGetTrackResponse {
+  album: {
+    album_type: string;
+    artists: SpotifySimpleArtist[];
+    available_markets: string[];
+    external_urls: {
+      spotify: string;
+    };
+    href: string;
+    id: string;
+    images: {
+      height: number;
+      url: string;
+      width: number;
+    }[];
+    name: string;
+    release_date: string;
+    release_date_precision: string;
+    total_tracks: number;
+    type: string;
+    uri: SpotifyURI<"album">;
+  };
+  artists: SpotifySimpleArtist[];
+  available_markets: string[];
+  disc_number: number;
+  duration_ms: number;
+  explicit: boolean;
+  external_ids: {
+    isrc: string;
+  };
+  external_urls: {
+    spotify: string;
+  };
+  href: string;
+  id: string;
+  is_local: boolean;
+  name: string;
+  popularity: number;
+  preview_url: string;
+  track_number: number;
+  type: string;
+  uri: SpotifyURI<"track">;
 }

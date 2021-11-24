@@ -17,7 +17,10 @@ import { fromUnixTime } from "date-fns";
 import { NotAuthenticatedWithSpotifyError } from "../../errors";
 
 export class SpotifyAuthenticationService extends BaseSpotifyService {
-  private readonly scope = "playlist-modify-public";
+  private readonly scope = [
+    "playlist-modify-public",
+    "user-modify-playback-state",
+  ].join(" ");
 
   customContext = {
     prefix: "spotify-token",
@@ -67,8 +70,6 @@ export class SpotifyAuthenticationService extends BaseSpotifyService {
 
     if (tokenString) {
       const token = JSON.parse(tokenString) as PersonalSpotifyToken;
-
-      console.log(token);
 
       if (this.tokenIsValid(token, fromUnixTime(token.fetchedAt))) {
         return token;
