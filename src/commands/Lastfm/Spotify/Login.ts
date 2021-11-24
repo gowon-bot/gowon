@@ -3,7 +3,7 @@ import { Arguments } from "../../../lib/arguments/arguments";
 import { displayLink } from "../../../lib/views/displays";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { SpotifyAuthenticationService } from "../../../services/Spotify/SpotifyAuthenticationService";
-import { SpotifyBaseCommand } from "./SpotifyBaseCommand";
+import { SpotifyBaseCommand } from "./SpotifyBaseCommands";
 
 const args = {} as const;
 

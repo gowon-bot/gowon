@@ -9,7 +9,10 @@ import {
   SearchResponse,
   SpotifyCode,
   SpotifyEntity,
+  SpotifyGetTrackResponse,
   SpotifyToken,
+  SpotifyTrackURI,
+  SpotifyURI,
 } from "./SpotifyService.types";
 import { SimpleMap } from "../../helpers/types";
 import {
@@ -23,9 +26,25 @@ export type SpotifyServiceContext = BaseServiceContext & {
   spotifyToken?: PersonalSpotifyToken;
 };
 
+interface SpotifyRequestOptions {
+  path: string;
+  params?: SimpleMap;
+  method?: "POST" | "GET";
+  useBody?: boolean;
+  expectNoContent?: boolean;
+}
+
 export class SpotifyService extends BaseSpotifyService {
   private _token?: SpotifyToken;
   private tokenFetchedAt = new Date();
+
+  generateURI<T extends SpotifyEntity>(entity: T, id: string): SpotifyURI<T> {
+    return `spotify:${entity}:${id}`;
+  }
+
+  getIDFromURI(uri: SpotifyURI<SpotifyEntity>): string {
+    return uri.split(":")[2];
+  }
 
   private async token(ctx: BaseServiceContext): Promise<string> {
     if (this._token && this.tokenIsValid(this._token, this.tokenFetchedAt)) {
@@ -90,48 +109,64 @@ export class SpotifyService extends BaseSpotifyService {
 
   async request<T>(
     ctx: SpotifyServiceContext,
-    path: string,
-    params: SimpleMap,
-    post = false
-  ): Promise<T> {
+    options: SpotifyRequestOptions & { expectNoContent: true }
+  ): Promise<undefined>;
+  async request<T>(
+    ctx: SpotifyServiceContext,
+    options: SpotifyRequestOptions
+  ): Promise<T>;
+  async request<T>(
+    ctx: SpotifyServiceContext,
+    options: SpotifyRequestOptions
+  ): Promise<T | undefined> {
+    options = Object.assign({ method: "GET", params: {} }, options);
+
     this.log(
       ctx,
-      `made API request to ${path} with params ${Logger.formatObject(params)}`
+      `made API request to ${options.path} with params ${Logger.formatObject(
+        options.params
+      )}`
     );
 
     const headers = await this.headers(ctx);
 
     let response: Response;
 
-    if (post) {
-      response = await fetch(this.apiURL + path, {
-        headers,
-        method: "POST",
-        body: JSON.stringify(params),
+    if (options.useBody) {
+      response = await fetch(this.apiURL + options.path, {
+        headers: { ...headers, "Content-Type": "application/json" },
+        body: JSON.stringify(options.params),
+        method: options.method,
       });
     } else {
-      response = await fetch(this.apiURL + path + "?" + stringify(params), {
-        headers,
-      });
+      response = await fetch(
+        this.apiURL + options.path + "?" + stringify(options.params),
+        {
+          headers,
+          method: options.method,
+        }
+      );
     }
-
-    console.log(await response.json());
 
     if (`${response.status}`.startsWith("4")) {
       throw new SpotifyConnectionError(ctx.command.prefix);
     }
 
-    return (await response.json()) as T;
+    return response.status !== 204 ? ((await response.json()) as T) : undefined;
   }
 
+  // Search
   async search(
     ctx: BaseServiceContext,
     querystring: string,
     entityType: SpotifyEntity[] = []
   ): Promise<SearchResponse> {
-    return await this.request(ctx, "search", {
-      q: querystring,
-      type: entityType.join(","),
+    return await this.request(ctx, {
+      path: "search",
+      params: {
+        q: querystring,
+        type: entityType.join(","),
+      },
     });
   }
 
@@ -183,21 +218,33 @@ export class SpotifyService extends BaseSpotifyService {
     return search.albums.items[0];
   }
 
-  async createPlaylist(ctx: SpotifyServiceContext, name: string) {
+  // Tracks
+  async getTrack(ctx: SpotifyServiceContext, id: string) {
+    return await this.request<SpotifyGetTrackResponse>(ctx, {
+      path: `tracks/${id}`,
+    });
+  }
+
+  // Player
+  async queue(ctx: SpotifyServiceContext, uri: SpotifyTrackURI): Promise<void> {
     this.ensureAuthenticated(ctx);
 
-    const response = await this.request(
-      ctx,
-      `users/xlm1c9jushfd8b87dl9mxxqs2/playlists`,
-      {
-        name,
-        description: "hello from gowon",
-        public: true,
-      },
-      true
-    );
+    await this.request(ctx, {
+      path: "me/player/queue",
+      params: { uri },
+      method: "POST",
+      expectNoContent: true,
+    });
+  }
 
-    console.log(response);
+  async next(ctx: SpotifyServiceContext): Promise<void> {
+    this.ensureAuthenticated(ctx);
+
+    await this.request(ctx, {
+      path: "me/player/next",
+      method: "POST",
+      expectNoContent: true,
+    });
   }
 
   getImageFromSearchItem(si: SearchItem): string {

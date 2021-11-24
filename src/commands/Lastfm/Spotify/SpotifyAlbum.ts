@@ -1,7 +1,7 @@
 import { LogicError } from "../../../errors";
 import { Arguments } from "../../../lib/arguments/arguments";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
-import { SpotifyBaseCommand } from "./SpotifyBaseCommand";
+import { SpotifyBaseCommand } from "./SpotifyBaseCommands";
 
 const args = {
   inputs: {

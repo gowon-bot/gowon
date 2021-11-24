@@ -775,4 +775,16 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
 
     return member?.user;
   }
+
+  protected isReply(): boolean {
+    return !!this.message.reference;
+  }
+
+  protected async getRepliedMessage(): Promise<Message | undefined> {
+    if (this.message.reference) {
+      return await this.message.fetchReference();
+    }
+
+    return undefined;
+  }
 }
