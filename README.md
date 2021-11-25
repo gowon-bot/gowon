@@ -37,14 +37,13 @@ There are now too many commands to list in the README, see `!help` for a list of
 
 - All my alpha testers, for breaking everything:
 
-  - RTFL
-  - Thot
+  - Luca
+  - Kat
   - Mex ([Go checkout REM](https://github.com/yayuyokitano/REM))
   - DunsterJR
   - Manu
-  - Himiko
+  - Ten
   - Dana
-  - Turbie
   - Itsuko
   - Catchy
 
