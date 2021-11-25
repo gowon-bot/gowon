@@ -28,21 +28,17 @@ export default class Cover extends LastFMBaseCommand<typeof args> {
     "https://lastfm.freetls.fastly.net/i/u/174s/2a96cbd8b46e442fc41c2b86b821562f.png";
 
   async run() {
-    let artist = this.parsedArguments.artist,
-      album = this.parsedArguments.album;
-
-    let { requestable } = await this.parseMentions({
-      usernameRequired: !artist || !album,
+    const { requestable } = await this.parseMentions({
+      usernameRequired:
+        !this.parsedArguments.artist || !this.parsedArguments.album,
     });
 
-    let nowPlaying: RecentTrack | undefined = undefined;
+    const { artist, album } = await this.lastFMArguments.getAlbum(
+      this.ctx,
+      requestable
+    );
 
-    if (!artist || !album) {
-      nowPlaying = await this.lastFMService.nowPlaying(this.ctx, requestable);
-
-      if (!artist) artist = nowPlaying.artist;
-      if (!album) album = nowPlaying.album;
-    }
+    const nowPlaying = this.ctx.nowplaying as RecentTrack;
 
     if (
       artist.toLowerCase() === "f(x)" &&
@@ -65,13 +61,13 @@ export default class Cover extends LastFMBaseCommand<typeof args> {
   }
 
   private async sendFromAlbumDetails(albumInfo: AlbumInfo) {
-    let image = albumInfo.images.get("extralarge");
+    const image = albumInfo.images.get("extralarge");
 
     await this.sendCoverImage(albumInfo.artist, albumInfo.name, image);
   }
 
   private async sendFromNowPlaying(nowPlaying: RecentTrack) {
-    let image = nowPlaying.images.get("extralarge");
+    const image = nowPlaying.images.get("extralarge");
 
     await this.sendCoverImage(nowPlaying.artist, nowPlaying.album, image);
   }

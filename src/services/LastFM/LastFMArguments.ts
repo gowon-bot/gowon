@@ -1,4 +1,3 @@
-import { BaseCommand } from "../../lib/command/BaseCommand";
 import { BaseService, BaseServiceContext } from "../BaseService";
 import { RedirectsService } from "../dbservices/RedirectsService";
 import { NowPlayingEmbedParsingService } from "../NowPlayingEmbedParsingService";
@@ -7,11 +6,9 @@ import { RecentTrack } from "./converters/RecentTracks";
 import { Requestable } from "./LastFMAPIService";
 import { LastFMService } from "./LastFMService";
 
-type LastFMArgumentsContext = BaseServiceContext & {
-  command: BaseCommand;
-};
+type LastFMArgumentsMutableContext = { nowplaying: RecentTrack };
 
-export class LastFMArguments extends BaseService {
+export class LastFMArguments extends BaseService<BaseServiceContext> {
   private get redirectsService() {
     return ServiceRegistry.get(RedirectsService);
   }
@@ -23,7 +20,7 @@ export class LastFMArguments extends BaseService {
   }
 
   async getArtist(
-    ctx: LastFMArgumentsContext,
+    ctx: BaseServiceContext & LastFMArgumentsMutableContext,
     requestable: Requestable,
     redirect?: boolean
   ): Promise<string> {
@@ -40,7 +37,7 @@ export class LastFMArguments extends BaseService {
   }
 
   async getAlbum(
-    ctx: LastFMArgumentsContext,
+    ctx: BaseServiceContext & LastFMArgumentsMutableContext,
     requestable: Requestable,
     redirect?: boolean
   ): Promise<{ artist: string; album: string }> {
@@ -61,7 +58,7 @@ export class LastFMArguments extends BaseService {
   }
 
   async getTrack(
-    ctx: LastFMArgumentsContext,
+    ctx: BaseServiceContext & LastFMArgumentsMutableContext,
     requestable: Requestable,
     redirect?: boolean
   ): Promise<{ artist: string; track: string }> {
@@ -81,12 +78,12 @@ export class LastFMArguments extends BaseService {
     return { artist, track };
   }
 
-  private parsedArguments(ctx: LastFMArgumentsContext): any {
+  private parsedArguments(ctx: BaseServiceContext): any {
     return ctx.command.parsedArguments as any;
   }
 
   private async getNowPlaying(
-    ctx: BaseServiceContext,
+    ctx: BaseServiceContext & LastFMArgumentsMutableContext,
     requestable: Requestable
   ): Promise<RecentTrack> {
     const originalMessage = ctx.command.message;
@@ -105,6 +102,10 @@ export class LastFMArguments extends BaseService {
         return this.nowPlayingEmbedParsingService.parseChuuEmbed(embed);
     }
 
-    return await this.lastFMService.nowPlaying(ctx, requestable);
+    const nowplaying = await this.lastFMService.nowPlaying(ctx, requestable);
+
+    ctx.nowplaying = nowplaying;
+
+    return nowplaying;
   }
 }
