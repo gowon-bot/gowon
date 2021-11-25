@@ -3,12 +3,17 @@ import { LinkGenerator } from "../../helpers/lastFM";
 import { Arguments } from "../../lib/arguments/arguments";
 import { LastFMBaseCommand } from "./LastFMBaseCommand";
 
-const args = {} as const;
+const args = {
+  inputs: {
+    artist: { index: 0, splitOn: "|" },
+    album: { index: 1, splitOn: "|" },
+  },
+} as const;
 
 export default class ImageUpload extends LastFMBaseCommand<typeof args> {
   idSeed = "shasha gowoon";
 
-  aliases = ["iu"];
+  aliases = ["iu", "아이유"];
   description =
     "Links you directly to the upload page for your currently playing album";
   usage = [""];
@@ -18,21 +23,17 @@ export default class ImageUpload extends LastFMBaseCommand<typeof args> {
   async run() {
     const { senderRequestable } = await this.parseMentions();
 
-    const nowPlaying = await this.lastFMService.nowPlaying(
+    const { artist, album } = await this.lastFMArguments.getAlbum(
       this.ctx,
       senderRequestable
     );
 
-    if (!nowPlaying.album) {
+    if (!album) {
       throw new LogicError(
         "You can't upload an image for a track with no album!"
       );
     }
 
-    await this.send(
-      "<" +
-        LinkGenerator.imageUploadLink(nowPlaying.artist, nowPlaying.album) +
-        ">"
-    );
+    await this.send("<" + LinkGenerator.imageUploadLink(artist, album) + ">");
   }
 }
