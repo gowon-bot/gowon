@@ -29,6 +29,7 @@ import { Logger } from "../../lib/Logger";
 import { Combo } from "./Combo";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { SettingsService } from "../../lib/settings/SettingsManager";
+import { CommandAccessRoleName } from "../../lib/command/access/roles";
 
 @Entity({ name: "users" })
 export class User extends BaseEntity {
@@ -61,6 +62,9 @@ export class User extends BaseEntity {
 
   @OneToMany((_) => Combo, (combo) => combo.user)
   combos!: Combo[];
+
+  @Column("simple-array", { nullable: true })
+  roles?: CommandAccessRoleName[];
 
   static async toDiscordUser(
     guild: Guild,

@@ -406,3 +406,21 @@ export class NoRatingsError extends ClientError {
     );
   }
 }
+
+export class AccessDeniedError extends ClientError {
+  name = "AccessDeniedError";
+
+  constructor() {
+    super("You don't have access to run this command!");
+  }
+}
+
+export class CommandInBetaError extends ClientError {
+  name = "CommandInBetaError";
+
+  constructor() {
+    super(
+      "This command is still in beta!\nStay tuned for more info in the support server: https://discord.gg/9Vr7Df7TZf"
+    );
+  }
+}

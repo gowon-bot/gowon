@@ -47,6 +47,11 @@ export const Emoji = {
   arrowFirst: "<:arrowFirst:825626330648412180>",
   arrowLast: "<:arrowLast:825626334436917248>",
   checkmark: "<:checkmark:825628201354657823>",
+
+  // Roles
+  contentmoderator: "<:contentmoderator:913203995542175794>",
+  betatester: "<:betatester:913203995663798322>",
+  developer: "<:developer:913203995470888990>",
 } as const;
 
 export const EmojiRaw = Object.entries(Emoji).reduce(

@@ -11,7 +11,8 @@ export class ValidationError extends ClientError {
 
 export abstract class BaseValidator<
   T extends ValidatorOptions = ValidatorOptions
-> implements Validator {
+> implements Validator
+{
   constructor(protected options: T) {}
 
   protected throw(message: string) {

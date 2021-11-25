@@ -6,6 +6,7 @@ import { LineConsolidator } from "../../lib/LineConsolidator";
 import { displayNumber } from "../../lib/views/displays";
 import { Emoji } from "../../lib/Emoji";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
+import { roles } from "../../lib/command/access/roles";
 
 const args = {
   inputs: {},
@@ -30,24 +31,24 @@ export default class UserInfo extends BaseCommand<typeof args> {
       reverseLookup: { required: true },
     });
 
-    const commandRunCount = await this.botStatsService.countUserCommandRuns(
-      this.ctx,
-      dbUser.discordID
-    );
-
-    const topCommands = await this.botStatsService.userTopCommands(
-      this.ctx,
-      dbUser.discordID
-    );
-
-    const cachedPlaycount = await this.mirrorballService.getCachedPlaycount(
-      this.ctx,
-      discordUser?.id || dbUser.discordID
-    );
+    const [commandRunCount, topCommands, cachedPlaycount] = await Promise.all([
+      this.botStatsService.countUserCommandRuns(this.ctx, dbUser.discordID),
+      this.botStatsService.userTopCommands(this.ctx, dbUser.discordID),
+      this.mirrorballService.getCachedPlaycount(
+        this.ctx,
+        discordUser?.id || dbUser.discordID
+      ),
+    ]);
 
     const lineConsolidator = new LineConsolidator();
 
     lineConsolidator.addLines(
+      {
+        string: `${dbUser.roles
+          ?.map((r) => `${Emoji[r]} ${roles[r].friendlyName}`)
+          ?.join("\n")}`,
+        shouldDisplay: !!dbUser.roles?.length,
+      },
       {
         string: `${Emoji.gowonPatreon} Patron!`,
         shouldDisplay: dbUser.isPatron,

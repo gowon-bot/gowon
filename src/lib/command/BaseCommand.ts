@@ -54,6 +54,7 @@ import { SimpleMap } from "../../helpers/types";
 import { AnalyticsCollector } from "../../analytics/AnalyticsCollector";
 import { RollbarService } from "../../services/Rollbar/RollbarService";
 import { NowPlayingEmbedParsingService } from "../../services/NowPlayingEmbedParsingService";
+import { CommandAccess } from "./access/access";
 
 export interface Variation {
   name: string;
@@ -89,36 +90,65 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
 
   protected debug = false;
 
-  logger = new Logger();
-
+  /**
+   * Indexing metadata
+   * (properties related to how commands are found)
+   */
   name: string = this.constructor.name.toLowerCase();
   friendlyName: string = this.constructor.name.toLowerCase();
   aliases: Array<string> = [];
   variations: Variation[] = [];
-  description: string = "No description for this command";
-  secretCommand: boolean = false;
+  delegates: Delegate<ArgumentsType>[] = [];
+  delegatedFrom?: Command;
 
+  /**
+   * Parent-child metadata
+   * (properties related to a commands parents or children)
+   */
+  hasChildren = false;
+  children?: CommandGroup;
+  parentName?: string;
+
+  /**
+   * Descriptive metadata
+   * (properties related to decribing commands for end users)
+   */
+  description: string = "No description for this command";
+  category: string | undefined = undefined;
+  subcategory: string | undefined = undefined;
+  usage: string | string[] = "";
+  customHelp?: { new (): Command } | undefined;
+
+  /**
+   * Authentication metadata
+   * (properties related to who can access commands)
+   */
   // Archived are commands that can't be run, but stick around for data purposes
   // Should be used to 'decommission' commands that aren't needed anymore
   archived = false;
+  secretCommand: boolean = false;
   shouldBeIndexed: boolean = true;
   devCommand: boolean = false;
-  customHelp?: { new (): Command } | undefined;
+  access?: CommandAccess;
+  rollout: Rollout = {};
 
+  /**
+   * Argument metadata
+   * (properties related to what arguments a command takes)
+   */
   arguments: Arguments = {};
   validation: Validation = {};
 
+  /**
+   * Run-specific data
+   * (properties set before a command is run)
+   */
   // Has to be any typed because the parsed flags aren't optionally typed
   // because they always will be either true or false
   // this is set by the FlagParser when this.parseArguments() is called
   parsedArguments: ParsedArguments<ArgumentsType> = {} as any;
 
-  category: string | undefined = undefined;
-  subcategory: string | undefined = undefined;
-  usage: string | string[] = "";
-
-  delegates: Delegate<ArgumentsType>[] = [];
-  delegatedFrom?: Command;
+  logger = new Logger();
 
   message!: Message;
   runAs!: RunAs;
@@ -126,12 +156,15 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
   author!: DiscordUser;
   gowonClient!: GowonClient;
 
+  ctx = this.generateContext({});
+
+  /**
+   * Misc metadata
+   */
   responses: Array<MessageEmbed | string> = [];
 
   showLoadingAfter?: number;
   isCompleted = false;
-
-  rollout: Rollout = {};
 
   get friendlyNameWithParent(): string {
     return (
@@ -151,12 +184,6 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
   nowPlayingEmbedParsingService = ServiceRegistry.get(
     NowPlayingEmbedParsingService
   );
-
-  hasChildren = false;
-  children?: CommandGroup;
-  parentName?: string;
-
-  ctx = this.generateContext({});
 
   generateContext(customContext: SimpleMap): any {
     return Object.assign(

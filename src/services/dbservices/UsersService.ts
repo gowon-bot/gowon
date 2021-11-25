@@ -14,6 +14,7 @@ import { buildRequestable } from "../../helpers/parseMentions";
 import { sqlLikeEscape } from "../../helpers/database";
 import { ServiceRegistry } from "../ServicesRegistry";
 import { AnalyticsCollector } from "../../analytics/AnalyticsCollector";
+import { CommandAccessRoleName } from "../../lib/command/access/roles";
 
 export class UsersService extends BaseService {
   get analyticsCollector() {
@@ -206,5 +207,19 @@ export class UsersService extends BaseService {
     user.isPatron = value;
 
     await user.save();
+  }
+
+  async setRoles(
+    ctx: BaseServiceContext,
+    discordID: string,
+    roles: CommandAccessRoleName[]
+  ): Promise<User> {
+    const user = await this.getUser(ctx, discordID);
+
+    user.roles = roles;
+
+    await user.save();
+
+    return user;
   }
 }
