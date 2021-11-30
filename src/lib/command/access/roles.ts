@@ -11,7 +11,7 @@ export const roles = {
   developer: {
     friendlyName: "Developer",
     name: "developer",
-    permissions: Object.values(permissions),
+    permissions: [],
     extends: ["contentmoderator", "betatester"],
   },
   contentmoderator: {
