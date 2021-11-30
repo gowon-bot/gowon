@@ -34,6 +34,7 @@ import { AnalyticsCollector } from "../analytics/AnalyticsCollector";
 import { WordBlacklistService } from "./WordBlacklistService";
 import { RollbarService } from "./Rollbar/RollbarService";
 import { NowPlayingEmbedParsingService } from "./NowPlayingEmbedParsingService";
+import { ChartService } from "./pantomime/ChartService";
 
 type Service<T = any> = { new (): T };
 
@@ -45,6 +46,7 @@ const services: Service[] = [
   ArtistsService,
   BotStatsService,
   Can,
+  ChartService,
   CrownsService,
   CrownsHistoryService,
   ComboService,
