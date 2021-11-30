@@ -1,4 +1,4 @@
-import { CommandPermission, permissions } from "./permissions";
+import { CommandPermission } from "./permissions";
 
 export interface CommandAccessRole {
   readonly friendlyName: string;
