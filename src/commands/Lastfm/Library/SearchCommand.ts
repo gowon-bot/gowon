@@ -48,7 +48,7 @@ export abstract class SearchCommand extends LastFMBaseCommand<typeof args> {
   }
 
   private processChinese(input:string) {
-    return [pinyin(input).join(""), pinyin(input, {style: pinyin.STYLE_NORMAL}).join("")].join("").replace(/\s+/g, "");
+    return [pinyin(input).join(""), pinyin(input, {style: pinyin.STYLE_NORMAL}).join(""), input].join("").replace(/\s+/g, "");
   }
 
   private async processText(input:string, language:string, isKeyword:boolean):Promise<{text:string, noWhitespace:boolean}> {
