@@ -1,7 +1,6 @@
 import { Arguments } from "../../../lib/arguments/arguments";
 import { TasteCalculator } from "../../../lib/calculators/TasteCalculator";
 import { sanitizeForDiscord } from "../../../helpers/discord";
-import { generatePeriod, generateHumanPeriod } from "../../../helpers/date";
 import { Variation } from "../../../lib/command/BaseCommand";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
@@ -9,6 +8,8 @@ import { LogicError } from "../../../errors";
 import { TasteCommand, tasteMentions } from "./TasteCommand";
 import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingEmbed";
 import { displayNumber } from "../../../lib/views/displays";
+import { TimePeriodParser } from "../../../lib/arguments/custom/TimePeriodParser";
+import { humanizePeriod } from "../../../helpers/date";
 
 const args = {
   inputs: {
@@ -18,16 +19,7 @@ const args = {
       default: 1000,
       number: true,
     },
-    timePeriod: {
-      custom: (messageString: string) =>
-        generatePeriod(messageString, "overall"),
-      index: -1,
-    },
-    humanReadableTimePeriod: {
-      custom: (messageString: string) =>
-        generateHumanPeriod(messageString, "overall"),
-      index: -1,
-    },
+    timePeriod: { custom: new TimePeriodParser() },
     username: {
       regex: /[\w\-\!]+/gi,
       index: 0,
@@ -67,8 +59,8 @@ export default class Taste extends TasteCommand<typeof args> {
   };
 
   async run() {
-    const artistAmount = this.parsedArguments.artistAmount!,
-      humanReadableTimePeriod = this.parsedArguments.humanReadableTimePeriod!;
+    const artistAmount = this.parsedArguments.artistAmount!;
+    const humanizedPeriod = humanizePeriod(this.parsedArguments.timePeriod!);
 
     const [userOneUsername, userTwoUsername] = await this.getUsernames();
 
@@ -109,9 +101,7 @@ export default class Taste extends TasteCommand<typeof args> {
       .setTitle(
         `Taste comparison for ${sanitizeForDiscord(
           userOneUsername
-        )} and ${sanitizeForDiscord(
-          userTwoUsername
-        )} ${humanReadableTimePeriod}`
+        )} and ${sanitizeForDiscord(userTwoUsername)} ${humanizedPeriod}`
       )
       .setDescription(embedDescription);
 

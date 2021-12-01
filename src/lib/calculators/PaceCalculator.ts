@@ -19,7 +19,7 @@ export class PaceCalculator {
     scrobbles: number,
     timeRange: TimeRange
   ): number {
-    let diff = differenceInSeconds(timeRange.to!, timeRange.from!) / 3600;
+    const diff = differenceInSeconds(timeRange.to!, timeRange.from!) / 3600;
 
     return scrobbles / diff;
   }
@@ -29,7 +29,7 @@ export class PaceCalculator {
     currentScrobbles: number,
     rate: number
   ): Date {
-    let hoursToGoal = (milestone - currentScrobbles) / rate;
+    const hoursToGoal = (milestone - currentScrobbles) / rate;
 
     return add(new Date(), { hours: hoursToGoal });
   }
@@ -37,14 +37,17 @@ export class PaceCalculator {
   private async calculateFromOverall(
     milestone: number
   ): Promise<PacePrediction> {
-    let userInfo = await this.lastFMService.userInfo(this.ctx, {
+    const userInfo = await this.lastFMService.userInfo(this.ctx, {
       username: this.requestable,
     });
 
-    let rate = this.calculateScrobblesPerHour(userInfo.scrobbleCount, {
-      from: userInfo.registeredAt,
-      to: new Date(),
-    });
+    const rate = this.calculateScrobblesPerHour(
+      userInfo.scrobbleCount,
+      new TimeRange({
+        from: userInfo.registeredAt,
+        to: new Date(),
+      })
+    );
 
     return {
       scrobbleRate: rate,
@@ -57,7 +60,7 @@ export class PaceCalculator {
     timeRange: TimeRange,
     milestone: number
   ): Promise<PacePrediction> {
-    let [totalScrobbles, scrobblesOverTimeRange] = await Promise.all([
+    const [totalScrobbles, scrobblesOverTimeRange] = await Promise.all([
       this.lastFMService.getNumberScrobbles(this.ctx, this.requestable),
       this.lastFMService.getNumberScrobbles(
         this.ctx,
@@ -67,7 +70,7 @@ export class PaceCalculator {
       ),
     ]);
 
-    let rate = this.calculateScrobblesPerHour(
+    const rate = this.calculateScrobblesPerHour(
       scrobblesOverTimeRange,
       timeRange
     );
@@ -80,7 +83,7 @@ export class PaceCalculator {
   }
 
   private async getNearestMilestone(): Promise<number> {
-    let overallScrobbles = await this.lastFMService.getNumberScrobbles(
+    const overallScrobbles = await this.lastFMService.getNumberScrobbles(
       this.ctx,
       this.requestable
     );

@@ -1,4 +1,5 @@
 import { User } from "discord.js";
+import { CustomArgumentParser } from "../arguments/custom/custom";
 import { Mention as CustomMention } from "../arguments/mentions/BaseMention";
 
 type StringArrayConfig = {
@@ -8,13 +9,16 @@ type StringArrayConfig = {
 
 type NumberConfig = { number: true };
 
-type CustomConfig = { custom: (...args: any) => any };
+type CustomConfig = {
+  custom: ((messageString: string) => any) | CustomArgumentParser<any>;
+};
 
-type UnwrapCustom<T extends CustomConfig> = T["custom"] extends (
-  ...args: any
-) => infer U
-  ? U
-  : never;
+type UnwrapCustom<T extends CustomConfig> =
+  T["custom"] extends CustomArgumentParser<infer U>
+    ? U
+    : T["custom"] extends (...args: any) => infer V
+    ? V
+    : never;
 
 export type Argument<T> = T extends CustomConfig
   ? UnwrapCustom<T>

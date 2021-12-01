@@ -1,8 +1,4 @@
 import { Arguments } from "../../../lib/arguments/arguments";
-import {
-  timeRangeParser,
-  humanizedTimeRangeParser,
-} from "../../../helpers/date";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { PaceCalculator } from "../../../lib/calculators/PaceCalculator";
 import { LogicError } from "../../../errors";
@@ -12,19 +8,13 @@ import { validators } from "../../../lib/validation/validators";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { displayDate, displayNumber } from "../../../lib/views/displays";
 import { ago } from "../../../helpers";
+import { TimeRangeParser } from "../../../lib/arguments/custom/TimeRangeParser";
+import { humanizeTimeRange } from "../../../helpers/date";
 
 const args = {
   inputs: {
     timeRange: {
-      custom: timeRangeParser({ default: { weeks: 1 }, useOverall: true }),
-      index: -1,
-    },
-    humanizedTimeRange: {
-      custom: humanizedTimeRangeParser({
-        default: "week",
-        overallMessage: "since <user> began scrobbling",
-      }),
-      index: -1,
+      custom: new TimeRangeParser({ fallback: { weeks: 1 }, useOverall: true }),
     },
     milestone: {
       index: 0,
@@ -56,39 +46,45 @@ export default class Pace extends LastFMBaseCommand<typeof args> {
   };
 
   async run() {
-    let timeRange = this.parsedArguments.timeRange!,
-      humanizedTimeRange = this.parsedArguments.humanizedTimeRange!,
+    const timeRange = this.parsedArguments.timeRange!,
       milestone = this.parsedArguments.milestone;
 
-    let { requestable, username, perspective } = await this.parseMentions();
+    const { requestable, perspective } = await this.parseMentions();
 
-    let paceCalculator = new PaceCalculator(this.lastFMService, requestable);
+    const paceCalculator = new PaceCalculator(this.lastFMService, requestable);
 
-    let pace = await paceCalculator.calculate(timeRange, milestone);
+    const pace = await paceCalculator.calculate(timeRange, milestone);
 
-    if (!isValid(pace.prediction))
+    if (!isValid(pace.prediction)) {
       throw new LogicError(
         "An error occurred while calculating the pace. Try again with a more reasonable time frame..."
       );
+    }
 
-    if (isBefore(pace.prediction, new Date()))
+    if (isBefore(pace.prediction, new Date())) {
       throw new LogicError(
         `${perspective.plusToHave} already passed ${displayNumber(
           milestone!,
           "scrobble"
         )}!`
       );
+    }
 
-    let embed = this.newEmbed()
-      .setAuthor("Pace for " + username)
+    const humanizedTimeRange = humanizeTimeRange(timeRange, {
+      fallback: "week",
+      useOverall: true,
+      overallMessage: `since ${perspective.pronoun} began scrobbling`,
+    });
+
+    const embed = this.newEmbed()
+      .setAuthor(...this.generateEmbedAuthor("Pace"))
       .setDescription(
         `At a rate of **${displayNumber(
           pace.scrobbleRate.toFixed(2),
           "scrobble"
-        )}/hour** ${humanizedTimeRange.replace(
-          "<user>",
-          perspective.pronoun
-        )}, ${perspective.name} will hit **${displayNumber(
+        )}/hour** ${humanizedTimeRange}, ${
+          perspective.name
+        } will hit **${displayNumber(
           pace.milestone,
           "**scrobble"
         )} on ${displayDate(pace.prediction).strong()} (${ago(

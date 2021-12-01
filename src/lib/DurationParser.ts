@@ -110,7 +110,7 @@ export class DurationParser {
   }
 
   private buildShorthandRegex(): RegExp {
-    let shorthands = this.shorthands
+    const shorthands = this.shorthands
       .map((s) => [...s.acronyms, s.friendlyName])
       .flat()
       .join("|");

@@ -46,14 +46,14 @@ export abstract class TasteCommand<
   arguments: Arguments = { mentions: tasteMentions };
 
   protected async getUsernames(): Promise<[string, string]> {
-    let usernames: string[] = [];
+    const usernames: string[] = [];
 
     // The following code is for parsing users
     // it essentially checks through the following arguments, checking if each one exists
     // if it does, it adds it to the usernames list (after two it stops checking)
     // if there's only one username, it makes the first user the sender, then the second user the mentioned user
     // this is because the order of the users matters for display
-    for (let argName of [
+    for (const argName of [
       "user",
       "user2",
       "userID",
@@ -100,7 +100,7 @@ export abstract class TasteCommand<
     let [userOneUsername, userTwoUsername] = usernames;
 
     if (!userTwoUsername) {
-      let senderUsername = await this.usersService.getUsername(
+      const senderUsername = await this.usersService.getUsername(
         this.ctx,
         this.author.id
       );
@@ -116,24 +116,24 @@ export abstract class TasteCommand<
   }
 
   protected getPaginators(usernameOne: string, usernameTwo: string) {
-    let artistAmount = (this.parsedArguments as any).artistAmount as number,
+    const artistAmount = (this.parsedArguments as any).artistAmount as number,
       timePeriod = ((this.parsedArguments as any).timePeriod ||
         "overall") as LastFMPeriod;
 
-    let maxPages = artistAmount > 1000 ? 2 : 1;
-    let params = {
+    const maxPages = artistAmount > 1000 ? 2 : 1;
+    const params = {
       limit: artistAmount > 1000 ? Math.ceil(artistAmount / 2) : artistAmount,
       period: timePeriod,
     };
 
-    let senderPaginator = new Paginator(
+    const senderPaginator = new Paginator(
       this.lastFMService.topArtists.bind(this.lastFMService),
       maxPages,
       { ...params, username: usernameOne },
       this.ctx
     );
 
-    let mentionedPaginator = new Paginator(
+    const mentionedPaginator = new Paginator(
       this.lastFMService.topArtists.bind(this.lastFMService),
       maxPages,
       { ...params, username: usernameTwo },
@@ -148,32 +148,34 @@ export abstract class TasteCommand<
     userTwoUsername: string,
     artists: TasteArtist[]
   ): string {
-    let padder = new StringPadder((val) => `${val}`);
-    let maxArtists = 20;
+    const padder = new StringPadder((val) => `${val}`);
+    const maxArtists = 20;
 
-    let paddedPlays1 = padder.generatedPaddedList(
+    const paddedPlays1 = padder.generatedPaddedList(
       [
         userOneUsername,
         ...artists.slice(0, maxArtists).map((a) => a.user1plays),
       ],
       true
     );
-    let paddedPlays2 = padder.generatedPaddedList([
+
+    const paddedPlays2 = padder.generatedPaddedList([
       userTwoUsername,
       ...artists.slice(0, maxArtists).map((a) => a.user2plays),
     ]);
-    let longestArtist = padder.maxLength(
+
+    const longestArtist = padder.maxLength(
       artists.slice(0, maxArtists).map((a) => a.name)
     );
 
-    let headers = [
+    const headers = [
       `${paddedPlays1[0]}   ${paddedPlays2[0]}   Artist`,
       "=".repeat(
         `${paddedPlays1[0]}   ${paddedPlays2[0]}   `.length + longestArtist
       ),
     ];
 
-    let table = artists
+    const table = artists
       .slice(0, maxArtists)
       .map(
         (a, idx) =>

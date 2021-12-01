@@ -88,7 +88,7 @@ Among ${perspective.possessivePronoun} top ${displayNumber(
           )
           .join("\n")}` +
         ((await this.calculator.hasCrownStats()) &&
-        this.humanReadableTimePeriod === "overall"
+        this.humanizedPeriod === "overall"
           ? `\n\n**Total crowns**: ${rank!.count} (ranked ${getOrdinal(
               toInt(rank!.rank)
             ).italic()})

@@ -20,11 +20,8 @@ export default class AlbumList extends ListCommand {
     });
 
     const messageEmbed = this.newEmbed()
-      .setTitle(
-        `Top ${displayNumber(this.listAmount, "album")} for \`${username}\` ${
-          this.humanReadableTimePeriod
-        }`
-      )
+      .setAuthor(...this.generateEmbedAuthor("Top albums"))
+      .setTitle(`Top albums for \`${username}\` ${this.humanizedPeriod}`)
       .setDescription(
         displayNumberedList(
           topAlbums.albums.map(

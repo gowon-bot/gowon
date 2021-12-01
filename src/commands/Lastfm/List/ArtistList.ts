@@ -20,11 +20,8 @@ export default class ArtistList extends ListCommand {
     });
 
     const messageEmbed = this.newEmbed()
-      .setTitle(
-        `Top ${displayNumber(this.listAmount, "artist")} for \`${username}\` ${
-          this.humanReadableTimePeriod
-        }`
-      )
+      .setAuthor(...this.generateEmbedAuthor("Top artists"))
+      .setTitle(`Top artists for \`${username}\` ${this.humanizedPeriod}`)
       .setDescription(
         displayNumberedList(
           topArtists.artists.map(

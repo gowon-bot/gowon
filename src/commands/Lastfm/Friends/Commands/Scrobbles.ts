@@ -1,16 +1,13 @@
 import { FriendsChildCommand } from "../FriendsChildCommand";
 import { MultiRequester } from "../../../../lib/MultiRequester";
 import { Arguments } from "../../../../lib/arguments/arguments";
-import {
-  humanizedTimeRangeParser,
-  timeRangeParser,
-} from "../../../../helpers/date";
+
 import { displayNumber } from "../../../../lib/views/displays";
+import { TimeRangeParser } from "../../../../lib/arguments/custom/TimeRangeParser";
 
 const args = {
   inputs: {
-    timeRange: { custom: timeRangeParser(), index: -1 },
-    humanizedTimeRange: { custom: humanizedTimeRangeParser(), index: -1 },
+    timeRange: { custom: new TimeRangeParser({ useOverall: true }) },
   },
 } as const;
 
@@ -26,10 +23,9 @@ export class Scrobbles extends FriendsChildCommand<typeof args> {
   throwIfNoFriends = true;
 
   async run() {
-    let timeRange = this.parsedArguments.timeRange!,
-      humanTimeRange = this.parsedArguments.humanizedTimeRange!;
+    const timeRange = this.parsedArguments.timeRange!;
 
-    let scrobbles = await new MultiRequester(this.ctx, [
+    const scrobbles = await new MultiRequester(this.ctx, [
       ...this.friendUsernames,
       this.senderRequestable,
     ]).fetch(this.lastFMService.getNumberScrobbles.bind(this.lastFMService), [
@@ -37,8 +33,8 @@ export class Scrobbles extends FriendsChildCommand<typeof args> {
       timeRange.to,
     ]);
 
-    let embed = this.newEmbed()
-      .setTitle(`Your friends scrobbles ${humanTimeRange}`)
+    const embed = this.newEmbed()
+      .setTitle(`Your friends scrobbles ${timeRange.humanized}`)
       .setDescription(
         Object.keys(scrobbles)
           .sort(

@@ -20,11 +20,8 @@ export default class TrackList extends ListCommand {
     });
 
     const messageEmbed = this.newEmbed()
-      .setTitle(
-        `Top ${displayNumber(this.listAmount, "track")} for \`${username}\` ${
-          this.humanReadableTimePeriod
-        }`
-      )
+      .setAuthor(...this.generateEmbedAuthor("Top tracks"))
+      .setTitle(`Top tracks for \`${username}\` ${this.humanizedPeriod}`)
       .setDescription(
         displayNumberedList(
           topTracks.tracks.map(

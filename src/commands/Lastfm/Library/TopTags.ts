@@ -1,6 +1,7 @@
 import gql from "graphql-tag";
-import { generateHumanPeriod, generatePeriod } from "../../../helpers/date";
+import { humanizePeriod } from "../../../helpers/date";
 import { Arguments } from "../../../lib/arguments/arguments";
+import { TimePeriodParser } from "../../../lib/arguments/custom/TimePeriodParser";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { TagConsolidator } from "../../../lib/tags/TagConsolidator";
 import {
@@ -16,15 +17,7 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 const args = {
   inputs: {
-    timePeriod: {
-      custom: (messageString: string) => generatePeriod(messageString, "7day"),
-      index: -1,
-    },
-    humanReadableTimePeriod: {
-      custom: (messageString: string) =>
-        generateHumanPeriod(messageString, "7day"),
-      index: -1,
-    },
+    period: { custom: new TimePeriodParser({ fallback: "7day" }) },
   },
   mentions: standardMentions,
 } as const;
@@ -39,12 +32,14 @@ export default class TopTags extends LastFMBaseCommand<typeof args> {
   arguments: Arguments = args;
 
   async run() {
+    const period = this.parsedArguments.period!;
+
     const { requestable, perspective } = await this.parseMentions();
 
-    let topArtists = await this.lastFMService.topArtists(this.ctx, {
+    const topArtists = await this.lastFMService.topArtists(this.ctx, {
       username: requestable,
       limit: 1000,
-      period: this.parsedArguments.timePeriod,
+      period,
     });
 
     const query = gql`
@@ -69,9 +64,7 @@ export default class TopTags extends LastFMBaseCommand<typeof args> {
 
     const embed = this.newEmbed()
       .setAuthor(...this.generateEmbedAuthor("Top tags"))
-      .setTitle(
-        `${perspective.possessive} top tags ${this.parsedArguments.humanReadableTimePeriod}`
-      );
+      .setTitle(`${perspective.possessive} top tags ${humanizePeriod(period)}`);
 
     const tagConsolidator = new TagConsolidator();
 

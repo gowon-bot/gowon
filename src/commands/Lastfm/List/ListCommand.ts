@@ -1,22 +1,15 @@
 import { Arguments } from "../../../lib/arguments/arguments";
-import { generatePeriod, generateHumanPeriod } from "../../../helpers/date";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { LastFMPeriod } from "../../../services/LastFM/LastFMService.types";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
+import { TimePeriodParser } from "../../../lib/arguments/custom/TimePeriodParser";
+import { humanizePeriod } from "../../../helpers/date";
 
 const args = {
   inputs: {
-    timePeriod: {
-      custom: (messageString: string) => generatePeriod(messageString, "7day"),
-      index: -1,
-    },
-    humanReadableTimePeriod: {
-      custom: (messageString: string) =>
-        generateHumanPeriod(messageString, "7day"),
-      index: -1,
-    },
+    timePeriod: { custom: new TimePeriodParser({ fallback: "7day" }) },
     listAmount: {
       index: 0,
       regex: /[0-9]{1,4}(?!\w)(?! [mw])/g,
@@ -43,13 +36,12 @@ export abstract class ListCommand extends LastFMBaseCommand<typeof args> {
   };
 
   timePeriod!: LastFMPeriod;
-  humanReadableTimePeriod!: string;
+  humanizedPeriod!: string;
   listAmount!: number;
 
   async prerun(): Promise<void> {
     this.timePeriod = this.parsedArguments.timePeriod!;
-    this.humanReadableTimePeriod =
-      this.parsedArguments.humanReadableTimePeriod!;
     this.listAmount = this.parsedArguments.listAmount!;
+    this.humanizedPeriod = humanizePeriod(this.timePeriod);
   }
 }

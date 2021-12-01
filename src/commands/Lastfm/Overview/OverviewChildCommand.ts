@@ -5,18 +5,13 @@ import { Arguments } from "../../../lib/arguments/arguments";
 import { ucFirst } from "../../../helpers";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { Requestable } from "../../../services/LastFM/LastFMAPIService";
-import { generateHumanPeriod, generatePeriod } from "../../../helpers/date";
 import { LastFMPeriod } from "../../../services/LastFM/LastFMService.types";
+import { TimePeriodParser } from "../../../lib/arguments/custom/TimePeriodParser";
+import { humanizePeriod } from "../../../helpers/date";
 
 export const overviewInputs = {
   timePeriod: {
-    custom: (messageString: string) => generatePeriod(messageString, "overall"),
-    index: -1,
-  },
-  humanReadableTimePeriod: {
-    custom: (messageString: string) =>
-      generateHumanPeriod(messageString, "overall"),
-    index: -1,
+    custom: new TimePeriodParser(),
   },
 } as const;
 
@@ -39,7 +34,7 @@ export abstract class OverviewChildCommand<
   senderUsername!: string;
   discordID?: string;
   timePeriod!: LastFMPeriod;
-  humanReadableTimePeriod!: string;
+  humanizedPeriod!: string;
 
   protected readonly playsoverTiers = [
     20_000, 15_000, 10_000, 5000, 2000, 1000, 500, 250, 100, 50, 10, 1,
@@ -50,17 +45,17 @@ export abstract class OverviewChildCommand<
     colour: string;
     image: string;
   }> {
-    let image = (await this.calculator.userInfo()).images.get("large")!;
+    const image = (await this.calculator.userInfo()).images.get("large")!;
 
-    let userType = (await this.calculator.userInfo()).type;
-    let badge =
+    const userType = (await this.calculator.userInfo()).type;
+    const badge =
       userType !== "user"
         ? userType === "subscriber"
           ? " [Pro]"
           : ` [${ucFirst(userType)}]`
         : "";
 
-    let colour =
+    const colour =
       userType === "alum"
         ? "#9804fe"
         : userType === "mod"
@@ -75,7 +70,7 @@ export abstract class OverviewChildCommand<
   }
 
   async prerun() {
-    let {
+    const {
       senderRequestable,
       senderUsername,
       requestable,
@@ -92,9 +87,7 @@ export abstract class OverviewChildCommand<
     this.discordID = discordUser?.id;
 
     this.timePeriod = (this.parsedArguments as any).timePeriod as LastFMPeriod;
-    this.humanReadableTimePeriod = (
-      this.parsedArguments as any
-    ).humanReadableTimePeriod;
+    this.humanizedPeriod = humanizePeriod(this.timePeriod);
 
     this.calculator = new OverviewStatsCalculator(
       this.ctx,
@@ -105,7 +98,7 @@ export abstract class OverviewChildCommand<
   }
 
   protected async overviewEmbed(useFooter = true): Promise<MessageEmbed> {
-    let { badge, colour, image } = await this.getAuthorDetails();
+    const { badge, colour, image } = await this.getAuthorDetails();
 
     return this.newEmbed()
       .setAuthor(this.username + badge, image)
@@ -114,8 +107,8 @@ export abstract class OverviewChildCommand<
   }
 
   protected getFooter(): string {
-    return this.humanReadableTimePeriod === "overall"
+    return this.humanizedPeriod === "overall"
       ? "Showing data from all time"
-      : `Showing data ${this.humanReadableTimePeriod}`;
+      : `Showing data ${this.humanizedPeriod}`;
   }
 }

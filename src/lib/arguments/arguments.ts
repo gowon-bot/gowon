@@ -6,6 +6,7 @@ import escapeStringRegexp from "escape-string-regexp";
 import { RunAs } from "../command/RunAs";
 import { Flag, FlagParser } from "./flags";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
+import { CustomArgumentParser, isCustomParser } from "./custom/custom";
 
 export type ParsedArgument = any;
 
@@ -15,13 +16,15 @@ export interface Slice {
 }
 
 export interface InputArguments {
-  index: number | Slice;
+  index?: number | Slice;
   default?: any;
   join?: boolean;
   splitOn?: string;
   regex?: RegExp;
   optional?: boolean;
-  custom?: (messageString: string) => ParsedArgument;
+  custom?:
+    | ((messageString: string) => ParsedArgument)
+    | CustomArgumentParser<any>;
   number?: boolean;
 }
 
@@ -78,7 +81,9 @@ export class ArgumentParser extends Parser {
         .reduce((acc, arg) => {
           let argOptions = this.args.inputs![arg];
           if (argOptions.custom) {
-            acc[arg] = argOptions.custom(messageString);
+            acc[arg] = isCustomParser(argOptions.custom)
+              ? argOptions.custom.parse(messageString)
+              : argOptions.custom(messageString);
           }
           return acc;
         }, {} as ParsedArguments);
@@ -103,7 +108,7 @@ export class ArgumentParser extends Parser {
 
         acc[arg] = this.getElementFromIndex(
           array,
-          argOptions.index,
+          argOptions.index || 0,
           argOptions
         );
 
@@ -162,13 +167,13 @@ export function groupArgumentsBySplit(args: Arguments): GroupedArguments {
     if (arg.splitOn) {
       acc[arg.splitOn].push({
         name: argName,
-        index: arg.index,
+        index: arg.index || 0,
         optional: arg.optional ?? false,
       });
     } else {
       acc[" "].push({
         name: argName,
-        index: arg.index,
+        index: arg.index || 0,
         optional: arg.optional ?? false,
       });
     }

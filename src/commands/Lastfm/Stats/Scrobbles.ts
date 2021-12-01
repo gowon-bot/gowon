@@ -1,27 +1,22 @@
 import { Message } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
-import {
-  timeRangeParser,
-  humanizedTimeRangeParser,
-  parseDate,
-} from "../../../helpers/date";
+import { parseDate } from "../../../helpers/date";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { GowonService } from "../../../services/GowonService";
 import { displayDate, displayNumber } from "../../../lib/views/displays";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
+import { TimeRangeParser } from "../../../lib/arguments/custom/TimeRangeParser";
 
 const args = {
   inputs: {
-    timeRange: { custom: timeRangeParser(), index: -1 },
-    humanizedTimeRange: { custom: humanizedTimeRangeParser(), index: -1 },
+    timeRange: { custom: new TimeRangeParser({ useOverall: true }) },
     date: {
       custom: (string: string) =>
         parseDate(
           string.trim(),
           ...ServiceRegistry.get(GowonService).constants.dateParsers
         ),
-      index: -1,
     },
   },
   mentions: standardMentions,
@@ -44,31 +39,26 @@ export default class Scrobbles extends LastFMBaseCommand<typeof args> {
       return;
     }
 
-    let timeRange = this.parsedArguments.timeRange!,
-      humanTimeRange = this.parsedArguments.humanizedTimeRange!,
+    const timeRange = this.parsedArguments.timeRange!,
       date = this.parsedArguments.date;
 
-    let { requestable, perspective } = await this.parseMentions();
+    const { requestable, perspective } = await this.parseMentions();
 
-    let scrobbles = await this.lastFMService.getNumberScrobbles(
+    const scrobbles = await this.lastFMService.getNumberScrobbles(
       this.ctx,
       requestable,
       date || timeRange.from,
       date ? new Date() : timeRange.to
     );
 
-    let sentMessage = await this.traditionalReply(
+    const sentMessage = await this.traditionalReply(
       `${perspective.plusToHave} ${displayNumber(
         scrobbles,
         `scr${this.runAs.variationWasUsed("scrabbles") ? "a" : "o"}bble`
-      ).strong()} ${date ? `since ${displayDate(date)}` : humanTimeRange}`
+      ).strong()} ${date ? `since ${displayDate(date)}` : timeRange.humanized}`
     );
 
-    if (
-      humanTimeRange === "overall" &&
-      scrobbles % 25000 === 0 &&
-      scrobbles > 0
-    ) {
+    if (timeRange.isOverall && scrobbles % 25000 === 0 && scrobbles > 0) {
       await sentMessage.react("🥳");
     }
   }

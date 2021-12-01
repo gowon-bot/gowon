@@ -1,18 +1,14 @@
 import { Arguments } from "../../../lib/arguments/arguments";
-import { generatePeriod, generateHumanPeriod } from "../../../helpers/date";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { displayNumber } from "../../../lib/views/displays";
+import { TimePeriodParser } from "../../../lib/arguments/custom/TimePeriodParser";
+import { humanizePeriod } from "../../../helpers/date";
 
 const args = {
   inputs: {
     timePeriod: {
-      custom: (messageString: string) => generatePeriod(messageString),
-      index: -1,
-    },
-    humanReadableTimePeriod: {
-      custom: (messageString: string) => generateHumanPeriod(messageString),
-      index: -1,
+      custom: new TimePeriodParser(),
     },
   },
   mentions: standardMentions,
@@ -28,12 +24,12 @@ export default class AlbumCount extends LastFMBaseCommand<typeof args> {
   arguments: Arguments = args;
 
   async run() {
-    let timePeriod = this.parsedArguments.timePeriod,
-      humanReadableTimePeriod = this.parsedArguments.humanReadableTimePeriod;
+    const timePeriod = this.parsedArguments.timePeriod!;
+    const humanizedPeriod = humanizePeriod(timePeriod);
 
-    let { requestable, perspective } = await this.parseMentions();
+    const { requestable, perspective } = await this.parseMentions();
 
-    let scrobbles = await this.lastFMService.albumCount(
+    const albumCount = await this.lastFMService.albumCount(
       this.ctx,
       requestable,
       timePeriod
@@ -41,9 +37,9 @@ export default class AlbumCount extends LastFMBaseCommand<typeof args> {
 
     await this.traditionalReply(
       `${perspective.plusToHave} scrobbled ${displayNumber(
-        scrobbles,
+        albumCount,
         "album"
-      ).strong()} ${humanReadableTimePeriod}`
+      ).strong()} ${humanizedPeriod}`
     );
   }
 }
