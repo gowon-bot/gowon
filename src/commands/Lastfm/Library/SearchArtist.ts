@@ -37,9 +37,22 @@ export default class SearchArtist extends SearchCommand {
       concurrent: this.variationWasUsed("deep"),
     });
 
-    const filtered = topArtists.artists.filter((a) =>
-      this.clean(a.name).includes(this.clean(keywords))
-    );
+		const filteredKeywords = {
+			whitespace: (await this.clean(keywords, true)).text,
+			noWhitespace: (await this.clean(keywords, true)).text.replace(/\s+/g, "")
+		}
+
+    const filtered = await this.asyncFilter(topArtists.artists, async (a) => {
+
+			const currentString = (await this.clean(a.name, false));
+			let currentKeywords = "";
+			if (currentString.noWhitespace) {
+				currentKeywords = filteredKeywords.noWhitespace;
+			} else {
+				currentKeywords = filteredKeywords.whitespace;
+			}
+			return currentString.text.includes(currentKeywords);
+		});
 
     if (
       filtered.length !== 0 &&
