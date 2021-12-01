@@ -38,20 +38,20 @@ export default class SearchTrack extends SearchCommand {
     });
 
     const filteredKeywords = {
-			whitespace: (await this.clean(keywords, true)).text,
-			noWhitespace: (await this.clean(keywords, true)).text.replace(/\s+/g, "")
-		}
+      whitespace: (await this.clean(keywords, true)).text,
+      noWhitespace: (await this.clean(keywords, true)).text.replace(/\s+/g, "")
+    }
 
     const filtered = await this.asyncFilter(topTracks.tracks, async (t) => {
-			const currentString = (await this.clean(t.name, false));
-			let currentKeywords = "";
-			if (currentString.noWhitespace) {
-				currentKeywords = filteredKeywords.noWhitespace;
-			} else {
-				currentKeywords = filteredKeywords.whitespace;
-			}
-			return currentString.text.includes(currentKeywords);
-		});
+      const currentString = (await this.clean(t.name, false));
+      let currentKeywords = "";
+      if (currentString.noWhitespace) {
+        currentKeywords = filteredKeywords.noWhitespace;
+      } else {
+        currentKeywords = filteredKeywords.whitespace;
+      }
+      return currentString.text.includes(currentKeywords);
+    });
 
     if (filtered.length !== 0 && filtered.length === topTracks.tracks.length) {
       throw new LogicError(

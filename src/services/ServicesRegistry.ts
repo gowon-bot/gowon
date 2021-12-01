@@ -60,7 +60,7 @@ const services: Service[] = [
   GuildEventService,
   LastFMService,
   LastFMArguments,
-	MecabService,
+  MecabService,
   MetaService,
   MirrorballService,
   MirrorballCacheService,
