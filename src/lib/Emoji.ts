@@ -46,7 +46,7 @@ export const Emoji = {
   arrowRight: "<:arrowRight:825626338534490162>",
   arrowFirst: "<:arrowFirst:825626330648412180>",
   arrowLast: "<:arrowLast:825626334436917248>",
-  checkmark: "<:remirite:733081830705725512>",
+  checkmark: "<:checkmark:825628201354657823>",
 
   // Roles
   contentmoderator: "<:contentmoderator:913203995542175794>",
