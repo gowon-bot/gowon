@@ -59,7 +59,7 @@ export class NamedRangeParser {
     }
 
     const namedRange = new NamedRange(
-      ...this.constructHumanized(m1, y1, m2, y2)
+      ...this.constructHumanized(m1, y1, hyphen, m2, y2)
     );
 
     const date1 = this.constructDate("start", m1, y1);
@@ -139,16 +139,18 @@ export class NamedRangeParser {
   private constructHumanized(
     m1?: string,
     y1?: string,
+    hyphen?: string,
     m2?: string,
     y2?: string
   ): [string, string] {
-    let from = [] as string[];
-    let to = [] as string[];
+    const from = [] as string[];
+    const to = [] as string[];
 
     if (m1) from.push(ucFirst(this.months[this.getMonthNumber(m1)][0]));
     if (y1) from.push(`${y1}`);
     if (m2) to.push(ucFirst(this.months[this.getMonthNumber(m2)][0]));
     if (y2) to.push(`${y2}`);
+    if (hyphen && !m2 && !y2) to.push("today");
 
     return [from.join(" "), to.join(" ")];
   }

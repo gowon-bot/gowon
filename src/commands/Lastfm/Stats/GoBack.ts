@@ -21,7 +21,6 @@ const args = {
           string.trim(),
           ...ServiceRegistry.get(GowonService).constants.dateParsers
         ),
-      index: -1,
     },
   },
   mentions: standardMentions,
