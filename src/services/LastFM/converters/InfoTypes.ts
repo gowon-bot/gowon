@@ -1,4 +1,3 @@
-import { fromUnixTime } from "date-fns";
 import {
   RawArtistInfo,
   RawTrackInfo,
@@ -190,7 +189,7 @@ export class UserInfo extends BaseConverter {
     this.url = userInfo.url;
     this.country = userInfo.country;
     this.images = new ImageCollection(userInfo.image);
-    this.registeredAt = fromUnixTime(this.number(userInfo.registered.unixtime));
+    this.registeredAt = this.date(userInfo.registered.unixtime);
     this.type = userInfo.type as LastFMUserType;
     this.age = this.number(userInfo.age);
     this.realName = userInfo.realname;

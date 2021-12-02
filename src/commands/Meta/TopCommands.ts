@@ -3,7 +3,7 @@ import { MetaChildCommand } from "./MetaChildCommand";
 import { Arguments } from "../../lib/arguments/arguments";
 import { displayNumber } from "../../lib/views/displays";
 import { TimeRangeParser } from "../../lib/arguments/custom/TimeRangeParser";
-import { humanizeTimeRange } from "../../helpers/date";
+import { humanizeTimeRange } from "../../lib/timeAndDate/helpers";
 
 const args = {
   inputs: {

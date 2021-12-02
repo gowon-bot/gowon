@@ -5,14 +5,14 @@ import {
   BaseEntity,
   CreateDateColumn,
 } from "typeorm";
-import { TimeRange } from "../../../helpers/date";
+import { TimeRange } from "../../../lib/timeAndDate/helpers";
 
 export interface MostUsedCommandsResponse {
   commandID: string;
   count: number;
 }
 
-const tableName = "command_runs"
+const tableName = "command_runs";
 
 @Entity({ name: tableName })
 export class CommandRun extends BaseEntity {

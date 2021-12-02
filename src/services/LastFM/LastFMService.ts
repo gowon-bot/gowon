@@ -7,6 +7,7 @@ import {
   ArtistPopularTracksParams,
   GetArtistCorrectionParams,
   GetSessionParams,
+  isTimeframeParams,
   LastFMPeriod,
   RecentTracksParams,
   TagInfoParams,
@@ -18,6 +19,7 @@ import {
   TrackInfoParams,
   TrackSearchParams,
   UserGetFriendsParams,
+  UserGetWeeklyChartParams,
   UserInfoParams,
 } from "./LastFMService.types";
 import {
@@ -84,22 +86,40 @@ export class LastFMService extends LastFMAPIService {
 
   async topArtists(
     ctx: BaseServiceContext,
-    params: TopArtistsParams
+    params: TopArtistsParams | UserGetWeeklyChartParams
   ): Promise<TopArtists> {
+    if (isTimeframeParams(params)) {
+      return TopArtists.fromWeeklyChart(
+        await this._userGetWeeklyArtistChart(ctx, params)
+      );
+    }
+
     return new TopArtists(await this._topArtists(ctx, params));
   }
 
   async topAlbums(
     ctx: BaseServiceContext,
-    params: TopAlbumsParams
+    params: TopAlbumsParams | UserGetWeeklyChartParams
   ): Promise<TopAlbums> {
+    if (isTimeframeParams(params)) {
+      return TopAlbums.fromWeeklyChart(
+        await this._userGetWeeklyAlbumChart(ctx, params)
+      );
+    }
+
     return new TopAlbums(await this._topAlbums(ctx, params));
   }
 
   async topTracks(
     ctx: BaseServiceContext,
-    params: TopTracksParams
+    params: TopTracksParams | UserGetWeeklyChartParams
   ): Promise<TopTracks> {
+    if (isTimeframeParams(params)) {
+      return TopTracks.fromWeeklyChart(
+        await this._userGetWeeklyTrackChart(ctx, params)
+      );
+    }
+
     return new TopTracks(await this._topTracks(ctx, params));
   }
 

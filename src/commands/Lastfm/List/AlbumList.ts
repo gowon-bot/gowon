@@ -17,11 +17,16 @@ export default class AlbumList extends ListCommand {
       username: requestable,
       limit: this.listAmount,
       period: this.timePeriod,
+      ...this.timeRange?.asTimeframeParams,
     });
 
     const messageEmbed = this.newEmbed()
       .setAuthor(...this.generateEmbedAuthor("Top albums"))
-      .setTitle(`Top albums for \`${username}\` ${this.humanizedPeriod}`)
+      .setTitle(
+        `Top albums for \`${username}\` ${
+          this.timeRange?.humanized || this.humanizedPeriod
+        }`
+      )
       .setDescription(
         displayNumberedList(
           topAlbums.albums.map(

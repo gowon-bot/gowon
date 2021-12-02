@@ -9,7 +9,7 @@ import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { displayDate, displayNumber } from "../../../lib/views/displays";
 import { ago } from "../../../helpers";
 import { TimeRangeParser } from "../../../lib/arguments/custom/TimeRangeParser";
-import { humanizeTimeRange } from "../../../helpers/date";
+import { humanizeTimeRange } from "../../../lib/timeAndDate/helpers";
 
 const args = {
   inputs: {

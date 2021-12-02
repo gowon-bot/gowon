@@ -1,5 +1,5 @@
-import { BaseValidator, ValidatorOptions } from "./BaseValidator";
-import { TimeRange as TimeRangeType } from "../../../helpers/date";
+import { TimeRange as TimeRangeType } from "../../timeAndDate/helpers";
+import { ValidatorOptions, BaseValidator } from "./BaseValidator";
 
 interface TimeRangeValidatorOptions extends ValidatorOptions {
   requireFrom?: boolean;

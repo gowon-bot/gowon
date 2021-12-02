@@ -4,7 +4,7 @@ import {
   CommandRun,
   MostUsedCommandsResponse,
 } from "../../database/entity/meta/CommandRun";
-import { TimeRange } from "../../helpers/date";
+import { TimeRange } from "../../lib/timeAndDate/helpers";
 
 export class MetaService extends BaseService {
   async recordCommandRun(

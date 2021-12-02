@@ -20,7 +20,7 @@ import { MirrorballPageInfo } from "../../services/mirrorball/MirrorballTypes";
 import { MirrorballService } from "../../services/mirrorball/MirrorballService";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { ago } from "../../helpers";
-import { TimeRange } from "../../helpers/date";
+import { TimeRange } from "../timeAndDate/helpers";
 
 export class Stat {
   public asString: string;

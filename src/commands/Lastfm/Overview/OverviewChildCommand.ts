@@ -7,12 +7,10 @@ import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { Requestable } from "../../../services/LastFM/LastFMAPIService";
 import { LastFMPeriod } from "../../../services/LastFM/LastFMService.types";
 import { TimePeriodParser } from "../../../lib/arguments/custom/TimePeriodParser";
-import { humanizePeriod } from "../../../helpers/date";
+import { humanizePeriod } from "../../../lib/timeAndDate/helpers";
 
 export const overviewInputs = {
-  timePeriod: {
-    custom: new TimePeriodParser(),
-  },
+  timePeriod: { custom: new TimePeriodParser() },
 } as const;
 
 export abstract class OverviewChildCommand<

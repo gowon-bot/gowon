@@ -1,5 +1,5 @@
 import { Arguments } from "../../../lib/arguments/arguments";
-import { parseDate } from "../../../helpers/date";
+import { parseDate } from "../../../lib/timeAndDate/helpers";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { LogicError } from "../../../errors";
 import { trackEmbed } from "../../../lib/views/embeds";

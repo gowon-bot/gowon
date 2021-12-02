@@ -17,11 +17,16 @@ export default class TrackList extends ListCommand {
       username: requestable,
       limit: this.listAmount,
       period: this.timePeriod,
+      ...this.timeRange?.asTimeframeParams,
     });
 
     const messageEmbed = this.newEmbed()
       .setAuthor(...this.generateEmbedAuthor("Top tracks"))
-      .setTitle(`Top tracks for \`${username}\` ${this.humanizedPeriod}`)
+      .setTitle(
+        `Top tracks for \`${username}\` ${
+          this.timeRange?.humanized || this.humanizedPeriod
+        }`
+      )
       .setDescription(
         displayNumberedList(
           topTracks.tracks.map(

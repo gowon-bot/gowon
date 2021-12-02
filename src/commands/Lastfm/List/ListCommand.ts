@@ -5,14 +5,16 @@ import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { TimePeriodParser } from "../../../lib/arguments/custom/TimePeriodParser";
-import { humanizePeriod } from "../../../helpers/date";
+import { humanizePeriod, TimeRange } from "../../../lib/timeAndDate/helpers";
+import { TimeRangeParser } from "../../../lib/arguments/custom/TimeRangeParser";
 
 const args = {
   inputs: {
     timePeriod: { custom: new TimePeriodParser({ fallback: "7day" }) },
+    timeRange: { custom: new TimeRangeParser() },
     listAmount: {
       index: 0,
-      regex: /[0-9]{1,4}(?!\w)(?! [mw])/g,
+      regex: /\b[0-9]{1,2}(?!\w)(?! [mw])/g,
       default: 10,
       number: true,
     },
@@ -35,11 +37,13 @@ export abstract class ListCommand extends LastFMBaseCommand<typeof args> {
     },
   };
 
+  timeRange?: TimeRange;
   timePeriod!: LastFMPeriod;
   humanizedPeriod!: string;
   listAmount!: number;
 
   async prerun(): Promise<void> {
+    this.timeRange = this.parsedArguments.timeRange;
     this.timePeriod = this.parsedArguments.timePeriod!;
     this.listAmount = this.parsedArguments.listAmount!;
     this.humanizedPeriod = humanizePeriod(this.timePeriod);

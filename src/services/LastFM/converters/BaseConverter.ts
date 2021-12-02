@@ -1,3 +1,4 @@
+import { fromUnixTime } from "date-fns";
 import { toInt } from "../../../helpers/lastFM";
 import { RawTag } from "../LastFMService.types";
 import { RawImage } from "../LastFMService.types";
@@ -45,5 +46,9 @@ export abstract class BaseConverter {
     }
 
     return [value];
+  }
+
+  protected date(value: string): Date {
+    return fromUnixTime(this.number(value));
   }
 }

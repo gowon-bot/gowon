@@ -1,6 +1,6 @@
 import { Message } from "discord.js";
 import { Arguments } from "../../../lib/arguments/arguments";
-import { parseDate } from "../../../helpers/date";
+import { parseDate } from "../../../lib/timeAndDate/helpers";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { GowonService } from "../../../services/GowonService";

@@ -1,5 +1,5 @@
 import { Duration } from "date-fns";
-import { SimpleMap } from "../helpers/types";
+import { SimpleMap } from "../../helpers/types";
 
 export interface Shorthand {
   friendlyName: string;
@@ -36,24 +36,24 @@ export class DurationParser {
   ];
 
   parse(string: string): Duration {
-    let shorthand = this.parseShorthands(string);
+    const shorthand = this.parseShorthands(string);
 
     if (shorthand) return shorthand;
 
-    let durations = Object.values(this.durations).flat().join("|");
+    const durations = Object.values(this.durations).flat().join("|");
 
-    let regex = new RegExp(
+    const regex = new RegExp(
       `(?<=^|\\s)(-?[0-9,.])*\\s*(${durations})(?=\\s|$)`,
       "gi"
     );
 
-    let match = (string.trim().match(regex) || [])[0];
-    let duration = {} as SimpleMap<number>;
+    const match = (string.trim().match(regex) || [])[0];
+    const duration = {} as SimpleMap<number>;
 
     if (match) {
-      let [amount, period] = this.getAmountAndPeriod(match);
+      const [amount, period] = this.getAmountAndPeriod(match);
 
-      for (let [durationKey, matchers] of Object.entries(this.durations)) {
+      for (const [durationKey, matchers] of Object.entries(this.durations)) {
         if (matchers.includes(period)) {
           duration[durationKey] =
             amount < 1 ? Math.ceil(amount) : Math.round(amount);
@@ -65,7 +65,7 @@ export class DurationParser {
   }
 
   isDuration(string: string): boolean {
-    let duration = this.parse(string);
+    const duration = this.parse(string);
 
     return Object.keys(duration).length > 0;
   }
@@ -79,8 +79,9 @@ export class DurationParser {
       .map((s) => s.trim().toLowerCase());
 
     if (!period) {
-      let secondaryMatch = (Array.from(amount.matchAll(/(-?[0-9.]+)(\w+)/gi)) ||
-        [])[0];
+      const secondaryMatch = (Array.from(
+        amount.matchAll(/(-?[0-9.]+)(\w+)/gi)
+      ) || [])[0];
 
       if (!secondaryMatch) return [1, amount.replace(".", "")];
 
@@ -94,12 +95,12 @@ export class DurationParser {
   }
 
   private parseShorthands(string: string): Duration | undefined {
-    let regex = this.buildShorthandRegex();
+    const regex = this.buildShorthandRegex();
 
-    let match = (string.trim().match(regex) || [])[0];
+    const match = (string.trim().match(regex) || [])[0];
 
     if (match) {
-      let shorthand = this.findShorthand(match);
+      const shorthand = this.findShorthand(match);
 
       if (shorthand) {
         return shorthand.duration;

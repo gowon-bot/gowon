@@ -5,6 +5,9 @@ import {
   RawTopArtists,
   RawTopTrack,
   RawTopTracks,
+  RawUserGetWeeklyAlbumChart,
+  RawUserGetWeeklyArtistChart,
+  RawUserGetWeeklyTrackChart,
 } from "../LastFMService.types";
 import {
   BaseConverter,
@@ -68,6 +71,27 @@ export class TopArtists
       this.artists = this.artists.concat(topArtists.artists);
     }
   }
+
+  static fromWeeklyChart(chart: RawUserGetWeeklyArtistChart) {
+    return new TopArtists({
+      "@attr": {
+        user: chart.weeklyartistchart["@attr"].user,
+        page: "1",
+        perPage: `${chart.weeklyartistchart.artist.length}`,
+        total: `${chart.weeklyartistchart.artist.length}`,
+        totalPages: "1",
+      },
+      artist: chart.weeklyartistchart.artist.map((a) => ({
+        "@attr": { rank: a["@attr"].rank },
+        mbid: a.mbid,
+        url: a.url,
+        playcount: a.playcount,
+        image: [],
+        name: a.name,
+        streamable: "0",
+      })),
+    });
+  }
 }
 
 export class TopAlbum extends BaseConverter {
@@ -130,6 +154,28 @@ export class TopAlbums
     if (topAlbums) {
       this.albums = this.albums.concat(topAlbums.albums);
     }
+  }
+
+  static fromWeeklyChart(chart: RawUserGetWeeklyAlbumChart) {
+    return new TopAlbums({
+      "@attr": {
+        user: chart.weeklyalbumchart["@attr"].user,
+        page: "1",
+        perPage: `${chart.weeklyalbumchart.album.length}`,
+        total: `${chart.weeklyalbumchart.album.length}`,
+        totalPages: "1",
+      },
+      album: chart.weeklyalbumchart.album.map((l) => ({
+        "@attr": { rank: l["@attr"].rank },
+        artist: { mbid: l.artist.mbid, name: l.artist["#text"], url: "" },
+        mbid: l.mbid,
+        url: l.url,
+        playcount: l.playcount,
+        image: [],
+        name: l.name,
+        streamable: "0",
+      })),
+    });
   }
 }
 
@@ -195,5 +241,28 @@ export class TopTracks
     if (topTracks) {
       this.tracks = this.tracks.concat(topTracks.tracks);
     }
+  }
+
+  static fromWeeklyChart(chart: RawUserGetWeeklyTrackChart) {
+    return new TopTracks({
+      "@attr": {
+        user: chart.weeklytrackchart["@attr"].user,
+        page: "1",
+        perPage: `${chart.weeklytrackchart.track.length}`,
+        total: `${chart.weeklytrackchart.track.length}`,
+        totalPages: "1",
+      },
+      track: chart.weeklytrackchart.track.map((t) => ({
+        "@attr": { rank: t["@attr"].rank },
+        artist: { mbid: t.artist.mbid, name: t.artist["#text"], url: "" },
+        url: t.url,
+        playcount: t.playcount,
+        image: [],
+        mbid: "",
+        duration: "",
+        name: t.name,
+        streamable: { fulltrack: "", "#text": "" },
+      })),
+    });
   }
 }

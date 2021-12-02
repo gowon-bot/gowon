@@ -1,7 +1,9 @@
-// Responses
-
+import { SimpleMap } from "../../helpers/types";
 import { Requestable } from "./LastFMAPIService";
 
+/// ==================
+//  Responses
+/// ==================
 export interface RawPagedCollection<T = {}> {
   "@attr": {
     page: string;
@@ -452,8 +454,66 @@ export interface RawLastFMSession {
   };
 }
 
+export interface RawWeeklyChartAttr {
+  from: string;
+  user: string;
+  to: string;
+}
+
+export interface RawWeeklyArtist {
+  mbid: string;
+  url: string;
+  name: string;
+  playcount: string;
+  "@attr": { rank: string };
+}
+
+export interface RawUserGetWeeklyArtistChart {
+  weeklyartistchart: {
+    artist: RawWeeklyArtist[];
+    "@attr": RawWeeklyChartAttr;
+  };
+}
+
+export interface RawWeeklyAlbum {
+  artist: {
+    mbid: string;
+    "#text": string;
+  };
+  mbid: string;
+  url: string;
+  name: string;
+  playcount: string;
+  "@attr": { rank: string };
+}
+
+export interface RawUserGetWeeklyAlbumChart {
+  weeklyalbumchart: {
+    album: RawWeeklyAlbum[];
+    "@attr": RawWeeklyChartAttr;
+  };
+}
+
+export interface RawWeeklyTrack {
+  artist: {
+    mbid: string;
+    "#text": string;
+  };
+  url: string;
+  name: string;
+  playcount: string;
+  "@attr": { rank: string };
+}
+
+export interface RawUserGetWeeklyTrackChart {
+  weeklytrackchart: {
+    track: RawWeeklyTrack[];
+    "@attr": RawWeeklyChartAttr;
+  };
+}
+
 /// ==================
-// Inputs
+//  Inputs
 /// ==================
 
 export interface Params {}
@@ -573,4 +633,19 @@ export interface UserGetFriendsParams extends PagedParams, UsernameParams {}
 
 export interface TagTopTracksParams extends PagedParams {
   tag: string;
+}
+
+export interface UserGetWeeklyChartParams
+  extends UsernameParams,
+    TimeframeParams,
+    PagedParams {}
+
+/// ==================
+//  Functions
+/// ==================
+
+export function isTimeframeParams(
+  params: SimpleMap
+): params is UserGetWeeklyChartParams {
+  return !!params.from || !!params.to;
 }

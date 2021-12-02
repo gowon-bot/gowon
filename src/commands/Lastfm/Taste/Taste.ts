@@ -9,17 +9,19 @@ import { TasteCommand, tasteMentions } from "./TasteCommand";
 import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingEmbed";
 import { displayNumber } from "../../../lib/views/displays";
 import { TimePeriodParser } from "../../../lib/arguments/custom/TimePeriodParser";
-import { humanizePeriod } from "../../../helpers/date";
+import { humanizePeriod } from "../../../lib/timeAndDate/helpers";
+import { TimeRangeParser } from "../../../lib/arguments/custom/TimeRangeParser";
 
 const args = {
   inputs: {
     artistAmount: {
       index: 0,
-      regex: /\b[0-9]+\b/g,
+      regex: /\b([13-9]\d*|2\d{1,2}0?)\b/g,
       default: 1000,
       number: true,
     },
     timePeriod: { custom: new TimePeriodParser() },
+    timeRange: { custom: new TimeRangeParser() },
     username: {
       regex: /[\w\-\!]+/gi,
       index: 0,
@@ -55,7 +57,10 @@ export default class Taste extends TasteCommand<typeof args> {
   arguments: Arguments = args;
 
   validation: Validation = {
-    artistAmount: { validator: new validators.Range({ min: 100, max: 2000 }) },
+    artistAmount: {
+      validator: new validators.Range({ min: 100, max: 2000 }),
+      friendlyName: "amount",
+    },
   };
 
   async run() {
@@ -82,10 +87,11 @@ export default class Taste extends TasteCommand<typeof args> {
 
     const taste = tasteCalculator.calculate();
 
-    if (taste.artists.length === 0)
+    if (taste.artists.length === 0) {
       throw new LogicError(
-        `${userOneUsername} and ${userTwoUsername} share no common artists!`
+        `${userOneUsername.code()} and ${userTwoUsername.code()} share no common artists!`
       );
+    }
 
     const embedDescription =
       userOneUsername === userTwoUsername
@@ -101,7 +107,9 @@ export default class Taste extends TasteCommand<typeof args> {
       .setTitle(
         `Taste comparison for ${sanitizeForDiscord(
           userOneUsername
-        )} and ${sanitizeForDiscord(userTwoUsername)} ${humanizedPeriod}`
+        )} and ${sanitizeForDiscord(userTwoUsername)} ${
+          this.timeRange?.humanized || humanizedPeriod
+        }`
       )
       .setDescription(embedDescription);
 

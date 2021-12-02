@@ -11,9 +11,11 @@ import { Paginator } from "../../../lib/paginators/Paginator";
 import { LastFMMention } from "../../../lib/arguments/mentions/LastFMMention";
 import { DiscordIDMention } from "../../../lib/arguments/mentions/DiscordIDMention";
 import { LogicError } from "../../../errors";
-import { DurationParser } from "../../../lib/DurationParser";
+import { DurationParser } from "../../../lib/timeAndDate/DurationParser";
 import { toInt } from "../../../helpers/lastFM";
 import { displayNumber } from "../../../lib/views/displays";
+import { TimeRange } from "../../../lib/timeAndDate/helpers";
+import { NamedRangeParser } from "../../../lib/timeAndDate/NamedRangeParser";
 
 export const tasteMentions = {
   user: { index: 0 },
@@ -42,8 +44,11 @@ export abstract class TasteCommand<
   subcategory = "taste";
 
   durationParser = new DurationParser();
+  namedRangeParser = new NamedRangeParser();
 
   arguments: Arguments = { mentions: tasteMentions };
+
+  timeRange?: TimeRange;
 
   protected async getUsernames(): Promise<[string, string]> {
     const usernames: string[] = [];
@@ -82,6 +87,7 @@ export abstract class TasteCommand<
           const usernameArgument = parsedArguments[argName] as string;
 
           if (
+            !this.namedRangeParser.isNamedRange(usernameArgument) &&
             !this.durationParser.isDuration(usernameArgument) &&
             !isNumeric(usernameArgument)
           ) {
@@ -118,12 +124,18 @@ export abstract class TasteCommand<
   protected getPaginators(usernameOne: string, usernameTwo: string) {
     const artistAmount = (this.parsedArguments as any).artistAmount as number,
       timePeriod = ((this.parsedArguments as any).timePeriod ||
-        "overall") as LastFMPeriod;
+        "overall") as LastFMPeriod,
+      timeRange = (this.parsedArguments as any).timeRange as
+        | TimeRange
+        | undefined;
+
+    this.timeRange = timeRange;
 
     const maxPages = artistAmount > 1000 ? 2 : 1;
     const params = {
       limit: artistAmount > 1000 ? Math.ceil(artistAmount / 2) : artistAmount,
       period: timePeriod,
+      ...timeRange?.asTimeframeParams,
     };
 
     const senderPaginator = new Paginator(

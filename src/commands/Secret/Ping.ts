@@ -7,7 +7,7 @@ export default class Ping extends BaseCommand {
 
   subcategory = "developer";
   description = "Ping! Pong!";
-  aliases = ["🏓", "pin", "pingu", "pung", "peng", "핑", "pingmatrix"];
+  aliases = ["🏓", "pin", "pingu", "pung", "peng", "핑", "pingmatrix", "bing"];
   secretCommand = true;
 
   async run() {
@@ -36,6 +36,8 @@ ${matrix
   .join("\n")}
   \\ ${" ".repeat(columns.join(" ").length)} /
 \`\`\``);
+    } else if (this.runAs.variationWasUsed("bing")) {
+      await this.reply("Bong 🔔");
     } else if (this.runAs.variationWasUsed("pung")) {
       // PUNG! by Yukika
       await this.reply(

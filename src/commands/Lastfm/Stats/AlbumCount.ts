@@ -3,7 +3,7 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { displayNumber } from "../../../lib/views/displays";
 import { TimePeriodParser } from "../../../lib/arguments/custom/TimePeriodParser";
-import { humanizePeriod } from "../../../helpers/date";
+import { humanizePeriod } from "../../../lib/timeAndDate/helpers";
 
 const args = {
   inputs: {

@@ -52,6 +52,10 @@ import {
   RawTagTopTracksResponse,
   RawLastFMSession,
   TrackLoveParams,
+  UserGetWeeklyChartParams,
+  RawUserGetWeeklyArtistChart,
+  RawUserGetWeeklyAlbumChart,
+  RawUserGetWeeklyTrackChart,
 } from "./LastFMService.types";
 import config from "../../../config.json";
 import {
@@ -347,6 +351,27 @@ export class LastFMAPIService extends BaseService {
         params
       )
     ).tracks;
+  }
+
+  async _userGetWeeklyArtistChart(
+    ctx: BaseServiceContext,
+    params: UserGetWeeklyChartParams
+  ): Promise<RawUserGetWeeklyArtistChart> {
+    return await this.request(ctx, "user.getWeeklyArtistChart", params);
+  }
+
+  async _userGetWeeklyAlbumChart(
+    ctx: BaseServiceContext,
+    params: UserGetWeeklyChartParams
+  ): Promise<RawUserGetWeeklyAlbumChart> {
+    return await this.request(ctx, "user.getWeeklyAlbumChart", params);
+  }
+
+  async _userGetWeeklyTrackChart(
+    ctx: BaseServiceContext,
+    params: UserGetWeeklyChartParams
+  ): Promise<RawUserGetWeeklyTrackChart> {
+    return await this.request(ctx, "user.getWeeklyTrackChart", params);
   }
 
   async love(ctx: BaseServiceContext, params: TrackLoveParams): Promise<void> {

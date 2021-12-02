@@ -1,4 +1,7 @@
-import { LastFMPeriod } from "../services/LastFM/LastFMService.types";
+import {
+  LastFMPeriod,
+  TimeframeParams,
+} from "../../services/LastFM/LastFMService.types";
 import {
   Duration,
   formatDuration,
@@ -7,14 +10,22 @@ import {
   isValid,
   sub,
 } from "date-fns";
-import { DurationParser } from "../lib/DurationParser";
-import { overallRegex } from "../lib/arguments/custom/TimePeriodParser";
+import { DurationParser } from "./DurationParser";
+import { overallRegex } from "../arguments/custom/TimePeriodParser";
+
+export class NamedRange {
+  constructor(public from: string, public to?: string) {}
+
+  get humanized() {
+    if (!this.to) return `in ${this.from}`;
+
+    return `from ${this.from} to ${this.to}`;
+  }
+}
 
 export class TimeRange {
   static fromPeriod(period: LastFMPeriod): TimeRange {
-    console.log(period);
-
-    return new TimeRange();
+    return parseTimeRange(period);
   }
 
   constructor(
@@ -23,6 +34,7 @@ export class TimeRange {
       to?: Date;
       duration?: Duration;
       isOverall?: boolean;
+      namedRange?: NamedRange;
     } = {}
   ) {}
 
@@ -42,12 +54,21 @@ export class TimeRange {
     return this.options.duration;
   }
 
-  get difference(): number {
-    return 0;
+  get namedRange(): NamedRange | undefined {
+    return this.options.namedRange;
   }
 
   get humanized(): string {
-    return humanizeTimeRange(this);
+    return this.namedRange?.humanized || humanizeTimeRange(this);
+  }
+
+  get asTimeframeParams(): TimeframeParams {
+    const params = {} as TimeframeParams;
+
+    if (this.from) params.from = ~~(this.from.getTime() / 1000);
+    if (this.to) params.to = ~~(this.to.getTime() / 1000);
+
+    return params;
   }
 }
 
@@ -137,9 +158,7 @@ export function humanizeTimeRange(
   const overallMessage = options.overallMessage || "overall";
 
   if (timeRange.duration) {
-    const timeString = humanizeDuration(
-      timeRange.duration || timeRange.difference
-    );
+    const timeString = humanizeDuration(timeRange.duration);
 
     if (timeString.length) return overThePast(timeString);
   } else if (useOverall && timeRange.isOverall) {
