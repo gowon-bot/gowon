@@ -16,7 +16,7 @@ const args = {
   inputs: {
     artistAmount: {
       index: 0,
-      regex: /\b([13-9]\d*|2\d{1,2}0?)\b/g,
+      regex: /\b(([13-9]\d*)|(2\d{1,2})|(2\d{4,})|(2000))\b/g,
       default: 1000,
       number: true,
     },

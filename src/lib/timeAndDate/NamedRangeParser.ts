@@ -30,13 +30,19 @@ export class NamedRangeParser {
 
   parse(string: string): TimeRange | undefined {
     const regex = new RegExp(
-      this.rangeRegex(`(${this.monthsRegex})?\\s*(${this.yearRegex})?`),
-      "i"
+      this.rangeRegex(`\\b(${this.monthsRegex})?\\s*(${this.yearRegex})?\\b`),
+      "gi"
     );
 
-    const matches = string.trim().match(regex);
+    const matches = string.trim().matchAll(regex);
 
-    return this.handleMatches(matches || []);
+    for (const match of matches) {
+      if (this.isValidMatch(match)) {
+        return this.handleMatches(match);
+      }
+    }
+
+    return undefined;
   }
 
   isNamedRange(string: string) {
@@ -153,5 +159,11 @@ export class NamedRangeParser {
     if (hyphen && !m2 && !y2) to.push("today");
 
     return [from.join(" "), to.join(" ")];
+  }
+
+  private isValidMatch([_, m1, __, y1, ___, ____, m2, _____, y2]: Array<
+    string | undefined
+  >): boolean {
+    return !!(m1 || y1 || m2 || y2);
   }
 }
