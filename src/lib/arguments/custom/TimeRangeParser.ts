@@ -3,7 +3,7 @@ import { parseTimeRange, TimeRange } from "../../timeAndDate/helpers";
 import { NamedRangeParser } from "../../timeAndDate/NamedRangeParser";
 import { BaseCustomParser } from "./custom";
 
-export class TimeRangeParser extends BaseCustomParser<TimeRange> {
+export class TimeRangeParser extends BaseCustomParser<TimeRange | undefined> {
   private namedRangeParser = new NamedRangeParser();
 
   constructor(
@@ -12,7 +12,7 @@ export class TimeRangeParser extends BaseCustomParser<TimeRange> {
     super();
   }
 
-  parse(string: string): TimeRange {
+  parse(string: string): TimeRange | undefined {
     const namedRange = this.namedRangeParser.parse(string);
 
     if (namedRange) return namedRange;

@@ -25,7 +25,7 @@ export class NamedRange {
 
 export class TimeRange {
   static fromPeriod(period: LastFMPeriod): TimeRange {
-    return parseTimeRange(period);
+    return parseTimeRange(period)!;
   }
 
   constructor(
@@ -171,7 +171,7 @@ export function humanizeTimeRange(
 export function parseTimeRange(
   string: string,
   options: { fallback?: Duration; useOverall?: boolean } = {}
-) {
+): TimeRange | undefined {
   const durationParser = new DurationParser();
 
   const parsedDuration = durationParser.parse(string);
@@ -186,16 +186,20 @@ export function parseTimeRange(
     });
   }
 
-  if ((options.useOverall && overallRegex.test(string)) || !options.fallback) {
+  if (options.useOverall && overallRegex.test(string)) {
     return new TimeRange({
       to: new Date(),
       isOverall: options.useOverall,
     });
   }
 
-  return new TimeRange({
-    from: sub(new Date(), options.fallback),
-    to: new Date(),
-    duration: options.fallback,
-  });
+  if (options.fallback) {
+    return new TimeRange({
+      from: sub(new Date(), options.fallback),
+      to: new Date(),
+      duration: options.fallback,
+    });
+  }
+
+  return undefined;
 }

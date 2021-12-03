@@ -160,12 +160,18 @@ export class Current extends ComboChildCommand<typeof args> {
       combo[entity].plays >= 1000
         ? ` ${Emoji.gowonLitDance}`
         : combo[entity].plays >= 100
-        ? "🔥"
+        ? this.isMex(this.author.id)
+          ? "💹"
+          : "🔥"
         : combo[entity].hitMax
         ? "+"
         : combo[entity].nowplaying
         ? "➚"
         : ""
     } in a row`;
+  }
+
+  private isMex(discordID: string) {
+    return this.gowonClient.isDeveloperOf("rem", discordID);
   }
 }

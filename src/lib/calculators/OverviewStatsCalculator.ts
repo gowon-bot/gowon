@@ -78,8 +78,8 @@ export class OverviewStatsCalculator {
       this.cache.scrobbleCount = await this.lastFMService.getNumberScrobbles(
         this.ctx,
         this.requestable,
-        timeRange.from,
-        timeRange.to
+        timeRange!.from,
+        timeRange!.to
       );
     }
 
