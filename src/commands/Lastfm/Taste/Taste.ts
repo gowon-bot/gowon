@@ -104,8 +104,9 @@ export default class Taste extends TasteCommand<typeof args> {
           }% match) found.`;
 
     const embed = this.newEmbed()
+      .setAuthor(...this.generateEmbedAuthor("Taste"))
       .setTitle(
-        `Taste comparison for ${sanitizeForDiscord(
+        `Comparison for ${sanitizeForDiscord(
           userOneUsername
         )} and ${sanitizeForDiscord(userTwoUsername)} ${
           this.timeRange?.humanized || humanizedPeriod

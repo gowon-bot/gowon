@@ -11,7 +11,7 @@ export default class AlbumList extends ListCommand {
   aliases = ["llist", "allist", "topalbums", "topalbum", "albums", "ll"];
 
   async run() {
-    const { requestable, username } = await this.parseMentions();
+    const { requestable, username, perspective } = await this.parseMentions();
 
     const topAlbums = await this.lastFMService.topAlbums(this.ctx, {
       username: requestable,
@@ -36,7 +36,8 @@ export default class AlbumList extends ListCommand {
                 "play"
               )}`
           )
-        )
+        ) ||
+          `${perspective.upper.plusToHave} no scrobbled albums over that time period`.italic()
       );
 
     await this.send(messageEmbed);

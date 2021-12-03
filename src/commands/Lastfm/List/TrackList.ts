@@ -11,7 +11,7 @@ export default class TrackList extends ListCommand {
   aliases = ["tlist", "toptracks", "toptrack", "tracks", "tl", "topsongs"];
 
   async run() {
-    const { requestable, username } = await this.parseMentions();
+    const { requestable, username, perspective } = await this.parseMentions();
 
     const topTracks = await this.lastFMService.topTracks(this.ctx, {
       username: requestable,
@@ -36,7 +36,8 @@ export default class TrackList extends ListCommand {
                 "play"
               )}`
           )
-        )
+        ) ||
+          `${perspective.upper.plusToHave} no scrobbled tracks over that time period`.italic()
       );
 
     await this.send(messageEmbed);

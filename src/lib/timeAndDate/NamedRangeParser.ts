@@ -40,7 +40,7 @@ export class NamedRangeParser {
   }
 
   isNamedRange(string: string) {
-    return !!this.getMonthNumber(string);
+    return this.getMonthNumber(string) != -1;
   }
 
   private handleMatches([_, m1, __, y1, hyphen, ___, m2, ____, y2]: Array<
