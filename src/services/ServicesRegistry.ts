@@ -35,6 +35,7 @@ import { WordBlacklistService } from "./WordBlacklistService";
 import { RollbarService } from "./Rollbar/RollbarService";
 import { NowPlayingEmbedParsingService } from "./NowPlayingEmbedParsingService";
 import { ChartService } from "./pantomime/ChartService";
+import { MecabService } from "./mecab/MecabService";
 
 type Service<T = any> = { new (): T };
 
@@ -59,6 +60,7 @@ const services: Service[] = [
   GuildEventService,
   LastFMService,
   LastFMArguments,
+  MecabService,
   MetaService,
   MirrorballService,
   MirrorballCacheService,
