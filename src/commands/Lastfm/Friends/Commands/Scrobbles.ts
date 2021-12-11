@@ -7,7 +7,9 @@ import { TimeRangeParser } from "../../../../lib/arguments/custom/TimeRangeParse
 
 const args = {
   inputs: {
-    timeRange: { custom: new TimeRangeParser({ useOverall: true }) },
+    timeRange: {
+      custom: new TimeRangeParser({ useOverall: true, fallback: "overall" }),
+    },
   },
 } as const;
 

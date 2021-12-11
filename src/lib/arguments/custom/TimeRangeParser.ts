@@ -7,7 +7,10 @@ export class TimeRangeParser extends BaseCustomParser<TimeRange | undefined> {
   private namedRangeParser = new NamedRangeParser();
 
   constructor(
-    private options: { fallback?: Duration; useOverall?: boolean } = {}
+    private options: {
+      fallback?: Duration | "overall";
+      useOverall?: boolean;
+    } = {}
   ) {
     super();
   }

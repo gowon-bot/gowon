@@ -10,7 +10,9 @@ import { TimeRangeParser } from "../../../lib/arguments/custom/TimeRangeParser";
 
 const args = {
   inputs: {
-    timeRange: { custom: new TimeRangeParser({ useOverall: true }) },
+    timeRange: {
+      custom: new TimeRangeParser({ useOverall: true, fallback: "overall" }),
+    },
     date: {
       custom: (string: string) =>
         parseDate(

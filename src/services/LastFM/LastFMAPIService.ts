@@ -378,6 +378,13 @@ export class LastFMAPIService extends BaseService {
     return await this.request(ctx, "track.love", params, { post: true });
   }
 
+  async unlove(
+    ctx: BaseServiceContext,
+    params: TrackLoveParams
+  ): Promise<void> {
+    return await this.request(ctx, "track.unlove", params, { post: true });
+  }
+
   private async request<T>(
     ctx: BaseServiceContext,
     method: string,

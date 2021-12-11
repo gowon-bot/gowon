@@ -78,8 +78,8 @@ export class OverviewStatsCalculator {
       this.cache.scrobbleCount = await this.lastFMService.getNumberScrobbles(
         this.ctx,
         this.requestable,
-        timeRange!.from,
-        timeRange!.to
+        timeRange?.from,
+        timeRange?.to
       );
     }
 
@@ -170,7 +170,7 @@ export class OverviewStatsCalculator {
     ]);
 
     const beginDate =
-      TimeRange.fromPeriod(this.timePeriod).from || userInfo.registeredAt;
+      TimeRange.fromPeriod(this.timePeriod)?.from || userInfo.registeredAt;
 
     const diff = Math.abs(differenceInDays(beginDate, new Date()));
 

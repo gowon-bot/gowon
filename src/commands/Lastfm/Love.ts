@@ -1,4 +1,5 @@
 import { Arguments } from "../../lib/arguments/arguments";
+import { Variation } from "../../lib/command/BaseCommand";
 import { RecentTrack } from "../../services/LastFM/converters/RecentTracks";
 import { LastFMBaseCommand } from "./LastFMBaseCommand";
 
@@ -12,56 +13,65 @@ const args = {
 export default class Love extends LastFMBaseCommand<typeof args> {
   idSeed = "shasha i an";
 
-  aliases = ["fml"];
   description = "Loves a track on Last.fm";
   usage = ["", "artist | track"];
+
+  variations: Variation[] = [{ name: "unlove", variation: ["unlove", "hate"] }];
 
   arguments: Arguments = args;
 
   async run() {
-    let artist = this.parsedArguments.artist,
-      track = this.parsedArguments.track;
-
     const { senderRequestable } = await this.parseMentions({
       authentificationRequired: true,
     });
 
-    let nowPlaying: RecentTrack | undefined;
+    const { artist, track } = await this.lastFMArguments.getTrack(
+      this.ctx,
+      senderRequestable
+    );
 
-    if (!artist || !track) {
-      nowPlaying = await this.lastFMService.nowPlaying(
-        this.ctx,
-        senderRequestable
-      );
+    const np = this.ctx.nowplaying as RecentTrack | undefined;
+    const parsedNp = this.ctx.parsedNowplaying as RecentTrack | undefined;
 
-      if (!artist) artist = nowPlaying.artist;
-      if (!track) track = nowPlaying.name;
-    }
+    const isNowPlaying =
+      (np && np.artist === artist && np.name == track) ||
+      (parsedNp && parsedNp.artist === artist && parsedNp.name === track);
 
     const trackInfo = await this.lastFMService.trackInfo(this.ctx, {
-      artist,
-      track,
-    });
-
-    await this.lastFMService.love(this.ctx, {
       artist,
       track,
       username: senderRequestable,
     });
 
-    const isNowPlaying =
-      nowPlaying?.artist === trackInfo.artist.name &&
-      nowPlaying?.name === trackInfo.name;
+    const title = this.variationWasUsed("unlove")
+      ? !trackInfo.loved
+        ? "Track already not loved! ❤️‍🩹"
+        : "Unloved! 💔"
+      : !trackInfo.loved
+      ? "Loved! ❤️"
+      : "Track already loved! 💞";
+
+    const action = this.variationWasUsed("unlove") ? "unlove" : "love";
+
+    if (this.variationWasUsed("unlove") ? trackInfo.loved : !trackInfo.loved) {
+      await this.lastFMService[action](this.ctx, {
+        artist,
+        track,
+        username: senderRequestable,
+      });
+    }
 
     const image =
       (isNowPlaying
-        ? nowPlaying?.images.get("large")
+        ? np?.images.get("large") || parsedNp?.images.get("large")
         : trackInfo.album?.images?.get("large")) ?? undefined;
 
-    const album = isNowPlaying ? nowPlaying?.album : trackInfo.album?.name;
+    const album = isNowPlaying
+      ? np?.album || parsedNp?.album
+      : trackInfo.album?.name;
 
     const embed = this.newEmbed()
-      .setAuthor("Loved! ❤️", this.author.avatarURL() || undefined)
+      .setAuthor(...this.generateEmbedAuthor(title))
       .setTitle(trackInfo.name)
       .setDescription(
         `by ${trackInfo.artist.name.strong()}${

@@ -6,7 +6,10 @@ import { RecentTrack } from "./converters/RecentTracks";
 import { Requestable } from "./LastFMAPIService";
 import { LastFMService } from "./LastFMService";
 
-type LastFMArgumentsMutableContext = { nowplaying: RecentTrack };
+type LastFMArgumentsMutableContext = {
+  nowplaying: RecentTrack;
+  parsedNowplaying: RecentTrack;
+};
 
 export class LastFMArguments extends BaseService<BaseServiceContext> {
   private get redirectsService() {
@@ -92,14 +95,24 @@ export class LastFMArguments extends BaseService<BaseServiceContext> {
       const reply = await originalMessage.fetchReference();
       const embed = reply.embeds[0];
 
+      let parsedNowplaying: RecentTrack | undefined = undefined;
+
       if (this.nowPlayingEmbedParsingService.hasParsableGowonEmbed(ctx, reply))
-        return this.nowPlayingEmbedParsingService.parseGowonEmbed(embed);
+        parsedNowplaying =
+          this.nowPlayingEmbedParsingService.parseGowonEmbed(embed);
 
       if (this.nowPlayingEmbedParsingService.hasParsableFmbotEmbed(ctx, reply))
-        return this.nowPlayingEmbedParsingService.parseFmbotEmbed(embed);
+        parsedNowplaying =
+          this.nowPlayingEmbedParsingService.parseFmbotEmbed(embed);
 
       if (this.nowPlayingEmbedParsingService.hasParsableChuuEmbed(ctx, reply))
-        return this.nowPlayingEmbedParsingService.parseChuuEmbed(embed);
+        parsedNowplaying =
+          this.nowPlayingEmbedParsingService.parseChuuEmbed(embed);
+
+      if (parsedNowplaying) {
+        ctx.parsedNowplaying = parsedNowplaying;
+        return parsedNowplaying;
+      }
     }
 
     const nowplaying = await this.lastFMService.nowPlaying(ctx, requestable);

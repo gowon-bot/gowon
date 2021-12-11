@@ -35,7 +35,7 @@ export class NowPlayingEmbedParsingService extends BaseService {
     const [_, artist, album] =
       embed.description?.match(this.gowonDescriptionRegex) || [];
 
-    return this.generateTrack(artist, track, album);
+    return this.generateTrack(artist, track, album, embed.thumbnail?.url);
   }
 
   hasParsableFmbotEmbed(ctx: BaseServiceContext, message: Message) {
@@ -51,7 +51,7 @@ export class NowPlayingEmbedParsingService extends BaseService {
     const [_, track, artist, album] =
       embed.description?.match(this.fmbotDescriptionRegex) || [];
 
-    return this.generateTrack(artist!, track!, album);
+    return this.generateTrack(artist!, track!, album, embed.thumbnail?.url);
   }
 
   hasParsableChuuEmbed(ctx: BaseServiceContext, message: Message) {
@@ -73,18 +73,25 @@ export class NowPlayingEmbedParsingService extends BaseService {
     const [_, artist, __, album1, album2] =
       cleanDescription.match(this.chuuDescriptionRegex) || [];
 
-    return this.generateTrack(artist, cleanTitle, album1 || album2);
+    return this.generateTrack(
+      artist,
+      cleanTitle,
+      album1 || album2,
+      embed.thumbnail?.url
+    );
   }
 
   private generateTrack(
     artist: string,
     track: string,
-    album?: string
+    album?: string,
+    image?: string
   ): RecentTrack {
     return new RecentTrack({
       artist: { "#text": artist.trim().replaceAll(/\\(?=[^\\])/g, "") },
       album: { "#text": album?.trim().replaceAll(/\\(?=[^\\])/g, "") || "" },
       name: track.trim(),
+      image: image ? [{ size: "large", "#text": image }] : [],
     } as any);
   }
 }
