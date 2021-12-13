@@ -39,8 +39,9 @@ export class MirrorballService extends BaseService {
             fetchPolicy: "no-cache",
             context: {
               headers: {
-                // This *should* be temporary
+                // These *should* be temporary
                 "Doughnut-Discord-Id": ctx.command.author.id,
+                "Is-Gowon": "true",
               },
             },
           })
@@ -51,8 +52,9 @@ export class MirrorballService extends BaseService {
             fetchPolicy: "no-cache",
             context: {
               headers: {
-                // This *should* be temporary
+                // These *should* be temporary
                 "Doughnut-Discord-Id": ctx.command.author.id,
+                "Is-Gowon": "true",
               },
             },
           })
