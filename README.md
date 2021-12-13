@@ -1,10 +1,16 @@
 # Gowon
 
+_어떤 꿈조차도 전부 이뤄질 듯한 느낌_
+
 Gowon is a Last.FM discord bot in active development.
 
 Check out the indexing server over at [jivison/mirrorball](https://github.com/jivison/mirrorball)
 
 Check out the website over at [jivison/gowon.ca](https://github.com/jivison/gowon.ca)
+
+Check out the api gateway over at [jivison/doughnut](https://github.com/jivison/doughnut)
+
+Check out the image generation server over at [jivison/pantomime](https://github.com/jivison/pantomime)
 
 ## Running yourself
 
@@ -60,4 +66,4 @@ Somethings broken? Just curious how something works?
 Feel free to shoot me a Discord dm at `john!#2527`
 or join the support server! https://discord.gg/9Vr7Df7TZf
 
-Become a patreon at (https://www.patreon.com/gowon_)[https://www.patreon.com/gowon_]
+Become a patreon at [patreon.com/gowon\_](https://www.patreon.com/gowon_)

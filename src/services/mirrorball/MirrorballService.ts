@@ -37,12 +37,24 @@ export class MirrorballService extends BaseService {
             query,
             variables,
             fetchPolicy: "no-cache",
+            context: {
+              headers: {
+                // This *should* be temporary
+                "Doughnut-Discord-Id": ctx.command.author.id,
+              },
+            },
           })
         : mutation
         ? await mirrorballClient.mutate({
             mutation,
             variables,
             fetchPolicy: "no-cache",
+            context: {
+              headers: {
+                // This *should* be temporary
+                "Doughnut-Discord-Id": ctx.command.author.id,
+              },
+            },
           })
         : undefined;
     } catch (e: any) {
