@@ -7,7 +7,7 @@ import {
   SearchItem,
   SearchResponse,
   SpotifyCode,
-  SpotifyEntity,
+  SpotifyEntityName,
   SpotifyTrack,
   SpotifyToken,
   SpotifyTrackURI,
@@ -38,11 +38,14 @@ export class SpotifyService extends BaseSpotifyService {
   private _token?: SpotifyToken;
   private tokenFetchedAt = new Date();
 
-  generateURI<T extends SpotifyEntity>(entity: T, id: string): SpotifyURI<T> {
+  generateURI<T extends SpotifyEntityName>(
+    entity: T,
+    id: string
+  ): SpotifyURI<T> {
     return `spotify:${entity}:${id}`;
   }
 
-  getIDFromURI(uri: SpotifyURI<SpotifyEntity>): string {
+  getIDFromURI(uri: SpotifyURI<SpotifyEntityName>): string {
     return uri.split(":")[2];
   }
 
@@ -160,7 +163,7 @@ export class SpotifyService extends BaseSpotifyService {
   async search<T = SearchItem>(
     ctx: SpotifyServiceContext,
     querystring: string,
-    entityType: SpotifyEntity[] = []
+    entityType: SpotifyEntityName[] = []
   ): Promise<SearchResponse<T>> {
     return await this.request(ctx, {
       path: "search",

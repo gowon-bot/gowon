@@ -1,6 +1,6 @@
 import { SimpleMap } from "../../helpers/types";
 
-export type SpotifyEntity =
+export type SpotifyEntityName =
   | "album"
   | "artist"
   | "playlist"
@@ -8,7 +8,7 @@ export type SpotifyEntity =
   | "show"
   | "episode";
 
-export type SpotifyURI<T extends SpotifyEntity> = `spotify:${T}:${string}`;
+export type SpotifyURI<T extends SpotifyEntityName> = `spotify:${T}:${string}`;
 export type SpotifyTrackURI = SpotifyURI<"track">;
 
 export interface SpotifyToken {
@@ -27,18 +27,12 @@ export interface Image {
   url: string;
 }
 
-export interface SearchItem {
-  external_urls: {
-    spotify: string;
-  };
-  genres: [];
+export interface SearchItem extends BaseSpotifyEntity<SpotifyEntityName> {
   href: string;
   id: string;
   images: Image[];
   popularity: 0;
   name: string;
-  type: SpotifyEntity;
-  uri: SpotifyURI<SpotifyEntity>;
 }
 
 export type SearchResponse<T> = SimpleMap<{
@@ -82,60 +76,70 @@ export class InvalidStateError extends Error {
   }
 }
 
-export interface SpotifySimpleArtist {
-  external_urls: {
-    spotify: string;
-  };
-  href: string;
-  id: string;
-  name: string;
-  type: string;
-  uri: SpotifyURI<"artist">;
+export interface SpotifyImage {
+  height: number;
+  url: string;
+  width: number;
 }
 
-export interface SpotifyTrack {
-  album: {
-    album_type: string;
-    artists: SpotifySimpleArtist[];
-    available_markets: string[];
-    external_urls: {
-      spotify: string;
-    };
-    href: string;
-    id: string;
-    images: {
-      height: number;
-      url: string;
-      width: number;
-    }[];
-    name: string;
-    release_date: string;
-    release_date_precision: string;
-    total_tracks: number;
-    type: string;
-    uri: SpotifyURI<"album">;
-  };
-  artists: SpotifySimpleArtist[];
-  available_markets: string[];
-  disc_number: number;
-  duration_ms: number;
-  explicit: boolean;
-  external_ids: {
-    isrc: string;
-  };
-  external_urls: {
-    spotify: string;
-  };
+export interface SpotifyExternalURLs<T extends SpotifyEntityName> {
+  spotify: `http://open.spotify.com/${T}/${string}`;
+}
+
+export interface SpotifyExternalIDs {
+  isrc: string;
+}
+
+export type SpotifyAvailableMarket = string;
+
+export interface BaseSpotifyEntity<T extends SpotifyEntityName> {
+  external_urls: SpotifyExternalURLs<T>;
   href: string;
   id: string;
-  is_local: boolean;
+  uri: SpotifyURI<T>;
   name: string;
-  popularity: number;
-  preview_url: string;
-  track_number: number;
   type: string;
-  uri: SpotifyURI<"track">;
 
   // This isn't on the response from Spotify
   isExactMatch?: boolean;
+}
+
+export interface SpotifySimpleArtist extends BaseSpotifyEntity<"artist"> {
+  genres: [];
+  followers: {
+    href: string;
+    total: number;
+  };
+  popularity: number;
+}
+
+export type SpotifyAlbumType = "album" | "single" | "compilation";
+export type SpotifyReleaseDatePrecision = "year" | "month" | "day";
+export type SpotifyRestrictionReason = "market" | "product" | "explicit";
+
+export interface SpotifyAlbum extends BaseSpotifyEntity<"album"> {
+  album_type: SpotifyAlbumType;
+  artists: SpotifySimpleArtist[];
+  available_markets: string[];
+  images: SpotifyImage[];
+  release_date: string;
+  release_date_precision: SpotifyReleaseDatePrecision;
+  restrictions?: {
+    reason: SpotifyRestrictionReason;
+  };
+  total_tracks: number;
+}
+
+export interface SpotifyTrack extends BaseSpotifyEntity<"track"> {
+  album: SpotifyAlbum;
+  artists: SpotifySimpleArtist[];
+  available_markets: SpotifyAvailableMarket[];
+  disc_number: number;
+  duration_ms: number;
+  explicit: boolean;
+  external_ids: SpotifyExternalIDs;
+  is_local: boolean;
+  popularity: number;
+  preview_url: string;
+  track_number: number;
 }
