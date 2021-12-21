@@ -60,7 +60,7 @@ export default class WhoFirstArtist extends WhoKnowsBaseCommand<
       senderUser,
       senderMirrorballUser,
       senderUsername,
-    } = await this.parseMentions({
+    } = await this.getMentions({
       senderRequired: !this.parsedArguments.artist,
       fetchMirrorballUser: true,
     });

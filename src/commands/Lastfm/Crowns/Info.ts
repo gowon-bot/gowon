@@ -26,7 +26,7 @@ export class Info extends CrownsChildCommand<typeof args> {
   redirectsService = ServiceRegistry.get(RedirectsService);
 
   async run(message: Message) {
-    let { senderUser, senderRequestable } = await this.parseMentions({
+    let { senderUser, senderRequestable } = await this.getMentions({
       usernameRequired: !this.parsedArguments.artist,
     });
 

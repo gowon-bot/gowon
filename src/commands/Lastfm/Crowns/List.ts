@@ -22,7 +22,7 @@ export class List extends CrownsChildCommand<typeof args> {
   arguments = args;
 
   async run() {
-    const { dbUser, discordUser } = await this.parseMentions({
+    const { dbUser, discordUser } = await this.getMentions({
       fetchDiscordUser: true,
       reverseLookup: { required: true },
     });

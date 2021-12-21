@@ -22,7 +22,7 @@ export default class PopularTracks extends InfoCommand<typeof args> {
   arguments = args;
 
   async run() {
-    const { senderRequestable } = await this.parseMentions();
+    const { senderRequestable } = await this.getMentions();
 
     const artist = await this.lastFMArguments.getArtist(
       this.ctx,

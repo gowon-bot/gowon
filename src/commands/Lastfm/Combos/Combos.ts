@@ -33,7 +33,7 @@ export class Combos extends ComboChildCommand<typeof args> {
       ]);
     }
 
-    const { perspective, dbUser } = await this.parseMentions();
+    const { perspective, dbUser } = await this.getMentions();
 
     const combos = await this.comboService.listCombos(
       this.ctx,

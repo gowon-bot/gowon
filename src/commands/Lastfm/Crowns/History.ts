@@ -22,7 +22,7 @@ export class History extends CrownsChildCommand<typeof args> {
   async run() {
     let artist = this.parsedArguments.artist;
 
-    let { senderUsername } = await this.parseMentions({
+    let { senderUsername } = await this.getMentions({
       senderRequired: !artist,
     });
 

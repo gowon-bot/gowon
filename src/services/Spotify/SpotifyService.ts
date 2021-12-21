@@ -8,7 +8,7 @@ import {
   SearchResponse,
   SpotifyCode,
   SpotifyEntity,
-  SpotifyGetTrackResponse,
+  SpotifyTrack,
   SpotifyToken,
   SpotifyTrackURI,
   SpotifyURI,
@@ -157,11 +157,11 @@ export class SpotifyService extends BaseSpotifyService {
   }
 
   // Search
-  async search(
+  async search<T = SearchItem>(
     ctx: SpotifyServiceContext,
     querystring: string,
     entityType: SpotifyEntity[] = []
-  ): Promise<SearchResponse> {
+  ): Promise<SearchResponse<T>> {
     return await this.request(ctx, {
       path: "search",
       params: {
@@ -177,10 +177,7 @@ export class SpotifyService extends BaseSpotifyService {
   ): Promise<SearchItem | undefined> {
     const search = await this.search(ctx, artist, ["artist"]);
 
-    return (
-      search.artists.items.find((a) => this.compare(a.name, artist)) ||
-      search.artists.items[0]
-    );
+    return this.getBestMatchingArtist(search.artists.items, artist);
   }
 
   async searchAlbum(
@@ -197,15 +194,19 @@ export class SpotifyService extends BaseSpotifyService {
     ctx: SpotifyServiceContext,
     artist: string,
     track: string
-  ): Promise<SearchItem | undefined> {
-    return await this.searchTrackRaw(ctx, artist + " " + track);
+  ): Promise<SpotifyTrack | undefined> {
+    const search = await this.search<SpotifyTrack>(ctx, artist + " " + track, [
+      "track",
+    ]);
+
+    return this.getBestMatchingTrack(search.tracks.items, artist, track);
   }
 
   async searchTrackRaw(
     ctx: SpotifyServiceContext,
     keywords: string
-  ): Promise<SearchItem | undefined> {
-    const search = await this.search(ctx, keywords, ["track"]);
+  ): Promise<SpotifyTrack | undefined> {
+    const search = await this.search<SpotifyTrack>(ctx, keywords, ["track"]);
 
     return search.tracks.items[0];
   }
@@ -221,7 +222,7 @@ export class SpotifyService extends BaseSpotifyService {
 
   // Tracks
   async getTrack(ctx: SpotifyServiceContext, id: string) {
-    return await this.request<SpotifyGetTrackResponse>(ctx, {
+    return await this.request<SpotifyTrack>(ctx, {
       path: `tracks/${id}`,
     });
   }
@@ -257,8 +258,20 @@ export class SpotifyService extends BaseSpotifyService {
 
   private compare(string1: string, string2: string) {
     return (
-      string1.toLowerCase().replace(/'"`‘’:/, "") ===
-      string2.toLowerCase().replace(/'"`‘’:/, "")
+      this.cleanBadTags(string1).toLowerCase().trim() ===
+      this.cleanBadTags(string2).toLowerCase().trim()
+    );
+  }
+
+  private cleanBadTags(string: string): string {
+    return (
+      string
+        // To do: replace this with a service that contains all the bad tags (that is easy to add to)
+        .replaceAll(
+          /(- Remastered .*| - Deluxe| - Single Version| - Album Version)/g,
+          ""
+        )
+        .replaceAll(/'"`‘’:/g, "")
     );
   }
 
@@ -266,5 +279,33 @@ export class SpotifyService extends BaseSpotifyService {
     if (!ctx.mutable.spotifyToken) {
       throw new NotAuthenticatedWithSpotifyError(ctx.command.prefix);
     }
+  }
+
+  private getBestMatchingArtist(
+    artists: SearchItem[],
+    searchArtist: string
+  ): SearchItem {
+    return (
+      artists.find((a) => this.compare(a.name, searchArtist)) || artists[0]
+    );
+  }
+
+  private getBestMatchingTrack(
+    tracks: SpotifyTrack[],
+    searchArtist: string,
+    searchTrack: string
+  ): SpotifyTrack {
+    return (
+      tracks.find((t) => {
+        if (
+          this.compare(t.artists[0].name, searchArtist) &&
+          this.compare(t.name, searchTrack)
+        ) {
+          t.isExactMatch = true;
+          return true;
+        }
+        return false;
+      }) || tracks[0]
+    );
   }
 }

@@ -30,7 +30,7 @@ export default class TagCombo extends LastFMBaseCommand<typeof args> {
   showLoadingAfter = this.gowonService.constants.defaultLoadingTime;
 
   async run() {
-    const { requestable, username } = await this.parseMentions();
+    const { requestable, username } = await this.getMentions();
 
     const paginator = new Paginator(
       this.lastFMService.recentTracks.bind(this.lastFMService),

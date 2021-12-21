@@ -30,7 +30,7 @@ export default class ArtistInfo extends InfoCommand<typeof args> {
 
   async run() {
     let { senderRequestable, requestable, perspective } =
-      await this.parseMentions({
+      await this.getMentions({
         senderRequired: !this.parsedArguments.artist,
       });
 

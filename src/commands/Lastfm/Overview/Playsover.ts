@@ -9,7 +9,7 @@ export class Playsover extends OverviewChildCommand {
     "Shows how many artists you have over some common scrobble tiers";
 
   async run() {
-    let { perspective } = await this.parseMentions();
+    let { perspective } = await this.getMentions();
 
     // Cache the top artists response
     await this.calculator.topArtists();

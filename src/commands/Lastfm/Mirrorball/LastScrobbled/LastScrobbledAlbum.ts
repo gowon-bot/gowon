@@ -34,14 +34,12 @@ export default class LastScrobbledAlbum extends MirrorballBaseCommand<
   arguments = args;
 
   async run() {
-    const { senderRequestable, dbUser, perspective } = await this.parseMentions(
-      {
-        senderRequired:
-          !this.parsedArguments.artist || !this.parsedArguments.album,
-        reverseLookup: { required: true },
-        requireIndexed: true,
-      }
-    );
+    const { senderRequestable, dbUser, perspective } = await this.getMentions({
+      senderRequired:
+        !this.parsedArguments.artist || !this.parsedArguments.album,
+      reverseLookup: { required: true },
+      requireIndexed: true,
+    });
 
     const { artist: artistName, album: albumName } =
       await this.lastFMArguments.getAlbum(this.ctx, senderRequestable, true);

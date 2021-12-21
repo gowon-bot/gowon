@@ -37,7 +37,7 @@ export default class ArtistTopTracks extends MirrorballBaseCommand<
 
   async run() {
     const { username, senderRequestable, perspective, dbUser } =
-      await this.parseMentions({
+      await this.getMentions({
         senderRequired: !this.parsedArguments.artist,
         reverseLookup: { required: true },
         requireIndexed: true,

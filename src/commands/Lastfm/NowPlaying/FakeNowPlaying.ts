@@ -34,7 +34,7 @@ export default class FakeNowPlaying extends NowPlayingBaseCommand<typeof args> {
       artistName = this.parsedArguments.artist,
       querystring = this.parsedArguments.querystring || "";
 
-    let { senderUsername, senderRequestable } = await this.parseMentions();
+    let { senderUsername, senderRequestable } = await this.getMentions();
 
     if (querystring.includes("|") || !querystring.trim()) {
       if (!artistName || !trackName) {

@@ -28,7 +28,7 @@ export default class ArtistAt extends LastFMBaseCommand<typeof args> {
   async run() {
     let rank = this.parsedArguments.rank!;
 
-    let { requestable, perspective } = await this.parseMentions();
+    let { requestable, perspective } = await this.getMentions();
 
     let topArtists = await this.lastFMService.topArtists(this.ctx, {
       username: requestable,

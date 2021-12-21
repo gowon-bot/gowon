@@ -56,7 +56,7 @@ export default class Index extends MirrorballBaseCommand<
   }
 
   async run() {
-    const { senderUsername } = await this.parseMentions({
+    const { senderUsername } = await this.getMentions({
       authentificationRequired: true,
     });
 
@@ -80,11 +80,7 @@ export default class Index extends MirrorballBaseCommand<
       )
       .setFooter({ text: this.indexingHelp });
 
-    const confirmationEmbed = new ConfirmationEmbed(
-      this.message,
-      embed,
-      this.gowonClient
-    );
+    const confirmationEmbed = new ConfirmationEmbed(this.ctx, embed);
 
     if (!(await confirmationEmbed.awaitConfirmation(this.ctx))) {
       return;

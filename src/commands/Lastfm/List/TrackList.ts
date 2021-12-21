@@ -11,7 +11,7 @@ export default class TrackList extends ListCommand {
   aliases = ["tlist", "toptracks", "toptrack", "tracks", "tl", "topsongs"];
 
   async run() {
-    const { requestable, username, perspective } = await this.parseMentions();
+    const { requestable, username, perspective } = await this.getMentions();
 
     const topTracks = await this.lastFMService.topTracks(this.ctx, {
       username: requestable,

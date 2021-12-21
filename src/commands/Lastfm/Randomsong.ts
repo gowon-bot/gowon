@@ -1,4 +1,4 @@
-import { buildRequestable } from "../../helpers/parseMentions";
+import { buildRequestable } from "../../helpers/getMentions";
 import { Delegate } from "../../lib/command/BaseCommand";
 import { standardMentions } from "../../lib/context/arguments/mentionTypes/mentions";
 import { LastFMBaseCommand } from "./LastFMBaseCommand";

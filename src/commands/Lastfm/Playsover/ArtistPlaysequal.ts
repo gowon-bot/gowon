@@ -22,7 +22,7 @@ export default class ArtistPlaysequal extends LastFMBaseCommand<typeof args> {
   async run() {
     let plays = this.parsedArguments.plays!;
 
-    let { requestable, perspective } = await this.parseMentions();
+    let { requestable, perspective } = await this.getMentions();
 
     let topArtists = await this.lastFMService.topArtists(this.ctx, {
       username: requestable,

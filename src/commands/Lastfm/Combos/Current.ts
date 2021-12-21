@@ -55,7 +55,7 @@ export class Current extends ComboChildCommand<typeof args> {
     }
 
     const { requestable, username, perspective, senderUser } =
-      await this.parseMentions();
+      await this.getMentions();
 
     const paginator = new Paginator(
       this.lastFMService.recentTracks.bind(this.lastFMService),

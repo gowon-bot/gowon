@@ -11,7 +11,7 @@ export default class ArtistList extends ListCommand {
   aliases = ["alist", "topartists", "topartist", "artists", "al"];
 
   async run() {
-    const { requestable, username, perspective } = await this.parseMentions();
+    const { requestable, username, perspective } = await this.getMentions();
 
     const topArtists = await this.lastFMService.topArtists(this.ctx, {
       username: requestable,

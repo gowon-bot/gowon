@@ -24,7 +24,7 @@ export default class SearchTrack extends SearchCommand {
   async run() {
     const keywords = this.parsedArguments.keywords!;
 
-    const { requestable, perspective } = await this.parseMentions();
+    const { requestable, perspective } = await this.getMentions();
 
     const paginator = new Paginator(
       this.lastFMService.topTracks.bind(this.lastFMService),

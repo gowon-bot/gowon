@@ -6,13 +6,13 @@ const args = {} as const;
 export default class Next extends AuthenticatedSpotifyBaseCommand<typeof args> {
   idSeed = "dreamnote habin";
 
-  description = "Queues a song in Spotify";
+  description = "Skips a song in Spotify";
   aliases = ["skip"];
 
   arguments: Arguments = args;
 
   async run() {
-    await this.fetchToken();
+    await this.getMentions({ fetchSpotifyToken: true });
 
     await this.spotifyService.next(this.ctx);
 

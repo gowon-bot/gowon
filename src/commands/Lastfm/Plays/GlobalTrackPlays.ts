@@ -23,7 +23,7 @@ export default class GlobalTrackPlays extends LastFMBaseCommand<typeof args> {
 
   async run() {
     let { requestable, perspective, senderRequestable } =
-      await this.parseMentions({
+      await this.getMentions({
         senderRequired:
           !this.parsedArguments.artist || !this.parsedArguments.track,
       });

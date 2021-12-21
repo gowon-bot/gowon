@@ -19,7 +19,7 @@ export default class ArtistPage extends LastFMBaseCommand<typeof args> {
   arguments = args;
 
   async run() {
-    const { requestable } = await this.parseMentions();
+    const { requestable } = await this.getMentions();
 
     const artist = await this.lastFMArguments.getArtist(this.ctx, requestable);
 

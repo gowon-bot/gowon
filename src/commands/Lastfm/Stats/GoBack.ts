@@ -42,7 +42,7 @@ export default class GoBack extends LastFMBaseCommand<typeof args> {
     if (!date && !timeRange.from)
       throw new LogicError("please enter a valid date or time range!");
 
-    const { requestable, perspective } = await this.parseMentions({
+    const { requestable, perspective } = await this.getMentions({
       asCode: false,
     });
 

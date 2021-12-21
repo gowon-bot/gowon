@@ -40,7 +40,7 @@ export class Set extends NowPlayingConfigChildCommand<typeof args> {
       (c) => c.toLowerCase()
     );
 
-    const { senderUser } = await this.parseMentions({
+    const { senderUser } = await this.getMentions({
       senderRequired: true,
     });
 

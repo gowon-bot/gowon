@@ -20,7 +20,7 @@ export default class Love extends LastFMBaseCommand<typeof args> {
   arguments = args;
 
   async run() {
-    const { senderRequestable } = await this.parseMentions({
+    const { senderRequestable } = await this.getMentions({
       authentificationRequired: true,
     });
 

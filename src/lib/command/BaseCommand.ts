@@ -21,21 +21,19 @@ import { Logger } from "../Logger";
 import { Command, Rollout } from "./Command";
 import { TrackingService } from "../../services/TrackingService";
 import { User } from "../../database/entity/User";
-import { Perspective } from "../Perspective";
 import { GowonClient } from "../GowonClient";
 import { Validation, ValidationChecker } from "../validation/ValidationChecker";
 import { Emoji, EmojiRaw } from "../Emoji";
 import { RunAs } from "./RunAs";
 import { checkRollout } from "../../helpers/permissions";
 import { errorEmbed, gowonEmbed } from "../views/embeds";
-import {
-  isSessionKey,
-  Requestable,
-} from "../../services/LastFM/LastFMAPIService";
+import { isSessionKey } from "../../services/LastFM/LastFMAPIService";
 import {
   buildRequestables,
   compareUsernames,
-} from "../../helpers/parseMentions";
+  GetMentionsOptions,
+  GetMentionsReturn,
+} from "../../helpers/getMentions";
 import { MirrorballService } from "../../services/mirrorball/MirrorballService";
 import { Chance } from "chance";
 import {
@@ -45,7 +43,6 @@ import {
 import { MirrorballUsersService } from "../../services/mirrorball/services/MirrorballUsersService";
 import { CommandRegistry } from "./CommandRegistry";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
-import { SimpleMap } from "../../helpers/types";
 import { AnalyticsCollector } from "../../analytics/AnalyticsCollector";
 import { RollbarService } from "../../services/Rollbar/RollbarService";
 import { NowPlayingEmbedParsingService } from "../../services/NowPlayingEmbedParsingService";
@@ -215,7 +212,7 @@ export abstract class BaseCommand<ArgumentsType extends ArgumentsMap = {}>
 
   abstract run(message: Message, runAs: RunAs): Promise<void>;
 
-  async parseMentions({
+  async getMentions({
     senderRequired = false,
     usernameRequired = true,
     userArgumentName = "user" as ArgumentName<ArgumentsType>,
@@ -228,41 +225,11 @@ export abstract class BaseCommand<ArgumentsType extends ArgumentsMap = {}>
     reverseLookup = { required: false },
     authentificationRequired,
     requireIndexed,
-    fromArguments: fromArgumentsOptions,
-  }: {
-    senderRequired?: boolean;
-    usernameRequired?: boolean;
-    userArgumentName?: ArgumentName<ArgumentsType> | string;
-    inputArgumentName?: ArgumentName<ArgumentsType> | string;
-    lfmMentionArgumentName?: ArgumentName<ArgumentsType> | string;
-    idMentionArgumentName?: ArgumentName<ArgumentsType> | string;
-    asCode?: boolean;
-    fetchDiscordUser?: boolean;
-    fetchMirrorballUser?: boolean;
-    reverseLookup?: { required?: boolean };
-    authentificationRequired?: boolean;
-    requireIndexed?: boolean;
-    fromArguments?: SimpleMap<any>;
-  } = {}): Promise<{
-    senderUsername: string;
-    senderRequestable: Requestable;
-
-    username: string;
-    requestable: Requestable;
-
-    mentionedUsername?: string;
-    perspective: Perspective;
-
-    mentionedDBUser?: User;
-    senderUser?: User;
-    dbUser: User;
-    discordUser?: DiscordUser;
-
-    senderMirrorballUser?: MirrorballUser;
-    mirrorballUser?: MirrorballUser;
-  }> {
-    const argumentsToUse =
-      fromArgumentsOptions || (this.parsedArguments as any);
+    fromArguments,
+  }: GetMentionsOptions<
+    ArgumentName<ArgumentsType>
+  > = {}): Promise<GetMentionsReturn> {
+    const argumentsToUse = fromArguments || (this.parsedArguments as any);
 
     let user = argumentsToUse[userArgumentName] as DiscordUser,
       userID = argumentsToUse[idMentionArgumentName] as string,
@@ -693,7 +660,7 @@ export abstract class BaseCommand<ArgumentsType extends ArgumentsMap = {}>
     }
   }
 
-  protected isReply(): boolean {
+  protected messageIsReply(): boolean {
     return !!this.message.reference;
   }
 

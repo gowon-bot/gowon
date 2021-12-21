@@ -29,7 +29,7 @@ export default class Recent extends LastFMBaseCommand<typeof args> {
   async run() {
     const amount = this.parsedArguments.amount;
 
-    const { requestable, perspective } = await this.parseMentions();
+    const { requestable, perspective } = await this.getMentions();
 
     const recentTracks = await this.lastFMService.recentTracks(this.ctx, {
       username: requestable,

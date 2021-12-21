@@ -23,8 +23,10 @@ export default class TrackInfo extends InfoCommand<typeof args> {
 
   lineConsolidator = new LineConsolidator();
 
+  customContext = { mutable: {} };
+
   async run() {
-    const { senderRequestable } = await this.parseMentions({
+    const { senderRequestable } = await this.getMentions({
       senderRequired:
         !this.parsedArguments.artist || !this.parsedArguments.track,
     });

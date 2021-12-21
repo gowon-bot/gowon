@@ -41,9 +41,9 @@ export interface SearchItem {
   uri: SpotifyURI<SpotifyEntity>;
 }
 
-export type SearchResponse = SimpleMap<{
+export type SearchResponse<T> = SimpleMap<{
   href: string;
-  items: SearchItem[];
+  items: T[];
   limit: string;
   next: string | undefined;
   offset: null;
@@ -93,7 +93,7 @@ export interface SpotifySimpleArtist {
   uri: SpotifyURI<"artist">;
 }
 
-export interface SpotifyGetTrackResponse {
+export interface SpotifyTrack {
   album: {
     album_type: string;
     artists: SpotifySimpleArtist[];
@@ -135,4 +135,7 @@ export interface SpotifyGetTrackResponse {
   track_number: number;
   type: string;
   uri: SpotifyURI<"track">;
+
+  // This isn't on the response from Spotify
+  isExactMatch?: boolean;
 }

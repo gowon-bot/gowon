@@ -1,5 +1,8 @@
+<<<<<<< HEAD
 billlie:
 - sheon
 - siyoon
 - haruna
 
+=======
+>>>>>>> 318f718 (Change parseMentions to getMentions, add cleaner Spotify token fetching)

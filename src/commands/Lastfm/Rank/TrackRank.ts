@@ -22,7 +22,7 @@ export default class TrackRank extends LastFMBaseCommand<typeof args> {
 
   async run() {
     const { requestable, senderRequestable, perspective } =
-      await this.parseMentions({
+      await this.getMentions({
         senderRequired:
           !this.parsedArguments.track || !this.parsedArguments.artist,
       });

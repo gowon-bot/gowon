@@ -17,7 +17,7 @@ export class Link extends RateYourMusicChildCommand<typeof args> {
   async run() {
     let keywords = this.parsedArguments.keywords;
 
-    let { requestable } = await this.parseMentions({
+    let { requestable } = await this.getMentions({
       usernameRequired: !keywords,
     });
 
