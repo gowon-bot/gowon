@@ -43,7 +43,7 @@ export default class WhoKnowsTrack extends WhoKnowsBaseCommand<
 
   async run() {
     const { senderRequestable, senderMirrorballUser, senderUser } =
-      await this.parseMentions({
+      await this.getMentions({
         senderRequired:
           !this.parsedArguments.artist || !this.parsedArguments.track,
         fetchMirrorballUser: true,

@@ -44,7 +44,7 @@ export default class Milestone extends LastFMBaseCommand<typeof args> {
   async run() {
     let milestone = this.parsedArguments.milestone!;
 
-    let { requestable, perspective } = await this.parseMentions({
+    let { requestable, perspective } = await this.getMentions({
       asCode: false,
     });
 

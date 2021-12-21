@@ -36,7 +36,7 @@ export default class RandomsongInUsersLibrary extends LastFMBaseCommand<
   async run() {
     const poolAmount = this.parsedArguments.poolAmount!;
 
-    const { requestable, username } = await this.parseMentions();
+    const { requestable, username } = await this.getMentions();
 
     const trackCount = await this.lastFMService.trackCount(
       this.ctx,

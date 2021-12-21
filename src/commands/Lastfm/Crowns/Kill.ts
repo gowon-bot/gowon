@@ -43,11 +43,7 @@ export class Kill extends CrownsChildCommand<typeof args> {
         `Are you sure you want to kill the crown for ${crown?.artistName.strong()}?`
       );
 
-    const confirmationEmbed = new ConfirmationEmbed(
-      this.message,
-      embed,
-      this.gowonClient
-    );
+    const confirmationEmbed = new ConfirmationEmbed(this.ctx, embed);
 
     if (await confirmationEmbed.awaitConfirmation()) {
       await this.crownsService.killCrown(this.ctx, artist);

@@ -28,7 +28,7 @@ export default class Week extends LastFMBaseCommand<typeof args> {
   redirectsService = ServiceRegistry.get(RedirectsService);
 
   async run() {
-    let { requestable, perspective, senderUser } = await this.parseMentions();
+    let { requestable, perspective, senderUser } = await this.getMentions();
 
     let paginator = new Paginator(
       this.lastFMService.recentTracks.bind(this.lastFMService),

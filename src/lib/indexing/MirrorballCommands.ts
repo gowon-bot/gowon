@@ -141,11 +141,7 @@ export abstract class MirrorballBaseCommand<
       ).setAuthor(this.generateEmbedAuthor("Error"));
 
       if (isAuthor) {
-        const confirmationEmbed = new ConfirmationEmbed(
-          this.message,
-          embed,
-          this.gowonClient
-        );
+        const confirmationEmbed = new ConfirmationEmbed(this.ctx, embed);
 
         if (await confirmationEmbed.awaitConfirmation()) {
           this.impromptuIndex(

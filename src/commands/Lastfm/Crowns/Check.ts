@@ -26,7 +26,7 @@ export class Check extends CrownsChildCommand<typeof args> {
   arguments: Arguments = args;
 
   async run(message: Message) {
-    const { senderUser, senderRequestable } = await this.parseMentions();
+    const { senderUser, senderRequestable } = await this.getMentions();
 
     if (await senderUser?.inPurgatory(message)) throw new PurgatoryError();
     if (await senderUser?.inactive(message)) throw new InactiveError();

@@ -26,7 +26,7 @@ export default class ArtistPlays extends LastFMBaseCommand<typeof args> {
 
   async run(_: any, runAs: RunAs) {
     const { perspective, senderRequestable, requestable } =
-      await this.parseMentions({
+      await this.getMentions({
         senderRequired: !this.parsedArguments.artist,
       });
 

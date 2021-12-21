@@ -434,3 +434,11 @@ export class NotAuthenticatedWithSpotifyError extends ClientError {
     );
   }
 }
+
+export class NotASpotifyLinkError extends ClientError {
+  name = "NotASpotifyLinkError";
+
+  constructor() {
+    super(`The message you replied to doesn't contain a Spotify link!`);
+  }
+}

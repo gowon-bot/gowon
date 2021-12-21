@@ -27,7 +27,7 @@ export default class TrackInfo extends InfoCommand<typeof args> {
   lineConsolidator = new LineConsolidator();
 
   async run() {
-    const { senderRequestable } = await this.parseMentions({
+    const { senderRequestable } = await this.getMentions({
       senderRequired:
         !this.parsedArguments.artist || !this.parsedArguments.track,
     });
@@ -41,6 +41,8 @@ export default class TrackInfo extends InfoCommand<typeof args> {
       this.lastFMService.trackInfo(this.ctx, { artist, track }),
       this.spotifyService.searchTrack(this.ctx, artist, track),
     ]);
+
+    console.log(spotifyTrack);
 
     this.tagConsolidator.blacklistTags(trackInfo.artist.name, trackInfo.name);
     this.tagConsolidator.addTags(trackInfo.tags);

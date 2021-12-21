@@ -15,11 +15,7 @@ export class OptIn extends CrownsChildCommand {
         "Are you sure you want to opt back into the crowns game?"
       );
 
-    const confirmationEmbed = new ConfirmationEmbed(
-      this.message,
-      embed,
-      this.gowonClient
-    );
+    const confirmationEmbed = new ConfirmationEmbed(this.ctx, embed);
 
     if (await confirmationEmbed.awaitConfirmation()) {
       await this.crownsService.optIn(this.ctx, message.author.id);

@@ -25,7 +25,7 @@ export default class AlbumPercent extends LastFMBaseCommand<typeof args> {
 
   async run() {
     let { requestable, senderRequestable, perspective } =
-      await this.parseMentions({
+      await this.getMentions({
         senderRequired:
           !this.parsedArguments.artist || !this.parsedArguments.album,
       });

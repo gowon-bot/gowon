@@ -34,7 +34,7 @@ export class Remove extends FriendsChildCommand<typeof args> {
 
   async run() {
     const { username, senderUsername, senderUser, mentionedDBUser } =
-      await this.parseMentions({
+      await this.getMentions({
         inputArgumentName: "friendUsername",
         senderRequired: true,
       });

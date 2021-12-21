@@ -1,4 +1,9 @@
+import {
+  GetMentionsOptions,
+  GetMentionsReturn,
+} from "../../../helpers/getMentions";
 import { Arguments } from "../../../lib/arguments/arguments";
+import { ArgumentName } from "../../../lib/command/ArgumentType";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { SpotifyAuthenticationService } from "../../../services/Spotify/SpotifyAuthenticationService";
 import { SpotifyService } from "../../../services/Spotify/SpotifyService";
@@ -13,7 +18,8 @@ export abstract class SpotifyBaseCommand<
 
   private spotifyLinkRegex = /https:\/\/open\.spotify\.com\/track\/([\w]+)\/?/i;
 
-  protected containsSpotifyLink(string: string) {
+  protected containsSpotifyLink(string?: string): boolean {
+    if (!string) return false;
     return this.spotifyLinkRegex.test(string);
   }
 
@@ -31,12 +37,22 @@ export abstract class AuthenticatedSpotifyBaseCommand<
     SpotifyAuthenticationService
   );
 
-  protected async fetchToken(discordID?: string) {
+  private async fetchToken(discordID?: string) {
     const token = await this.spotifyAuthenticationService.getTokenForUser(
       this.ctx,
       discordID || this.author.id
     );
 
     this.ctx.spotifyToken = token;
+  }
+
+  async getMentions(
+    options: GetMentionsOptions<ArgumentName<T>> & {
+      fetchSpotifyToken?: boolean;
+    }
+  ): Promise<GetMentionsReturn> {
+    if (options.fetchSpotifyToken) await this.fetchToken();
+
+    return await super.getMentions(options);
   }
 }

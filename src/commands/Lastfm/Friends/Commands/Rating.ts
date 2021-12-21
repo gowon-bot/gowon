@@ -26,7 +26,7 @@ export class Rating extends FriendsChildCommand<typeof args> {
   throwIfNoFriends = true;
 
   async run() {
-    const { senderUser, senderUsername } = await this.parseMentions({
+    const { senderUser, senderUsername } = await this.getMentions({
       senderRequired: true,
     });
 

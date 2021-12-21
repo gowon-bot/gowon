@@ -24,7 +24,7 @@ export default class SearchArtist extends SearchCommand {
   async run() {
     let keywords = this.parsedArguments.keywords!;
 
-    const { requestable, perspective } = await this.parseMentions();
+    const { requestable, perspective } = await this.getMentions();
 
     const paginator = new Paginator(
       this.lastFMService.topArtists.bind(this.lastFMService),

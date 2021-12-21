@@ -1,4 +1,5 @@
 import { User } from "discord.js";
+import { Arguments } from "../arguments/arguments";
 import { CustomArgumentParser } from "../arguments/custom/custom";
 import { Mention as CustomMention } from "../arguments/mentions/BaseMention";
 
@@ -48,3 +49,15 @@ export type Mention<T> = T extends CustomMentionArrayConfig
   : T extends CustomMentionConfig
   ? string
   : User;
+
+export type ArgumentName<T extends Arguments> =
+  | keyof T["inputs"]
+  | keyof T["mentions"];
+
+export type ParsedArguments<T extends Arguments> = {
+  [K in keyof T["inputs"]]?: Argument<T["inputs"][K]>;
+} & {
+  [K in keyof T["mentions"]]?: Mention<T["mentions"][K]>;
+} & {
+  [K in keyof T["flags"]]: boolean;
+};

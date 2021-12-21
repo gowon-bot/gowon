@@ -22,7 +22,7 @@ export default class TrackPage extends LastFMBaseCommand<typeof args> {
   arguments: Arguments = args;
 
   async run() {
-    const { requestable } = await this.parseMentions();
+    const { requestable } = await this.getMentions();
 
     const { artist, track } = await this.lastFMArguments.getTrack(
       this.ctx,

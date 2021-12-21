@@ -37,7 +37,7 @@ export default class TopTags extends LastFMBaseCommand<typeof args> {
     const timePeriod = this.parsedArguments.timePeriod!,
       timeRange = this.parsedArguments.timeRange;
 
-    const { requestable, perspective } = await this.parseMentions();
+    const { requestable, perspective } = await this.getMentions();
 
     const topArtists = await this.lastFMService.topArtists(this.ctx, {
       username: requestable,

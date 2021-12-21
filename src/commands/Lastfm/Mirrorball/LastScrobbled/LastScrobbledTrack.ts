@@ -35,14 +35,12 @@ export default class LastScrobbledTrack extends MirrorballBaseCommand<
   arguments: Arguments = args;
 
   async run() {
-    const { senderRequestable, dbUser, perspective } = await this.parseMentions(
-      {
-        senderRequired:
-          !this.parsedArguments.artist || !this.parsedArguments.track,
-        reverseLookup: { required: true },
-        requireIndexed: true,
-      }
-    );
+    const { senderRequestable, dbUser, perspective } = await this.getMentions({
+      senderRequired:
+        !this.parsedArguments.artist || !this.parsedArguments.track,
+      reverseLookup: { required: true },
+      requireIndexed: true,
+    });
 
     const { artist: artistName, track: trackName } =
       await this.lastFMArguments.getTrack(this.ctx, senderRequestable, true);

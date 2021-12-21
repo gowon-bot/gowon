@@ -26,7 +26,7 @@ export default class ArtistCount extends LastFMBaseCommand<typeof args> {
     const timePeriod = this.parsedArguments.timePeriod!;
     const humanizedPeriod = humanizePeriod(timePeriod);
 
-    const { requestable, perspective } = await this.parseMentions();
+    const { requestable, perspective } = await this.getMentions();
 
     const artistCount = await this.lastFMService.artistCount(
       this.ctx,

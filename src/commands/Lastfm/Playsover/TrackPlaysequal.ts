@@ -24,7 +24,7 @@ export default class TrackPlaysequal extends LastFMBaseCommand<typeof args> {
   async run() {
     let plays = this.parsedArguments.plays!;
 
-    let { requestable, perspective } = await this.parseMentions();
+    let { requestable, perspective } = await this.getMentions();
 
     let topTracks = await this.lastFMService.topTracks(this.ctx, {
       username: requestable,

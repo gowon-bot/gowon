@@ -63,7 +63,7 @@ export class Me extends JumbleChildCommand<typeof args> {
       throw new LogicError("No suitable artists were found in your library!");
     }
 
-    const { senderRequestable } = await this.parseMentions();
+    const { senderRequestable } = await this.getMentions();
 
     const artistInfo = await this.lastFMService.artistInfo(this.ctx, {
       artist: artist.name,

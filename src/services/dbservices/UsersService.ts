@@ -10,7 +10,7 @@ import { Perspective } from "../../lib/Perspective";
 import { ILike } from "typeorm";
 import { LastFMSession } from "../LastFM/converters/Misc";
 import { Requestable } from "../LastFM/LastFMAPIService";
-import { buildRequestable } from "../../helpers/parseMentions";
+import { buildRequestable } from "../../helpers/getMentions";
 import { sqlLikeEscape } from "../../helpers/database";
 import { ServiceRegistry } from "../ServicesRegistry";
 import { AnalyticsCollector } from "../../analytics/AnalyticsCollector";

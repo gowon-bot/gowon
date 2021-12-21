@@ -47,7 +47,7 @@ export class Taste extends RateYourMusicIndexingChildCommand<
   arguments: Arguments = args;
 
   async run() {
-    const { discordUser } = await this.parseMentions({
+    const { discordUser } = await this.getMentions({
       fetchDiscordUser: true,
     });
 

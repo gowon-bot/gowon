@@ -10,7 +10,7 @@ export class HIndex extends OverviewChildCommand {
     "Hindex is meant to quantify how many different artists you actively listen to.";
 
   async run() {
-    let { perspective } = await this.parseMentions();
+    let { perspective } = await this.getMentions();
 
     let hindex = await this.calculator.hIndex();
 

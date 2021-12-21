@@ -32,7 +32,7 @@ export class CheckMany extends CrownsChildCommand<typeof args> {
   async run(message: Message) {
     let artists = this.parsedArguments.artists;
 
-    const { requestable } = await this.parseMentions();
+    const { requestable } = await this.getMentions();
 
     if (!artists) {
       artists = [

@@ -37,7 +37,7 @@ export default class Privacy extends BaseCommand<typeof args> {
       | MirrorballPrivacy
       | undefined;
 
-    const { mirrorballUser, senderUsername } = await this.parseMentions({
+    const { mirrorballUser, senderUsername } = await this.getMentions({
       fetchMirrorballUser: true,
     });
 

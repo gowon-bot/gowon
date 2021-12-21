@@ -41,7 +41,7 @@ export default class TagTracks extends LastFMBaseCommand<typeof args> {
   async run() {
     const tag = this.parsedArguments.tag!;
 
-    const { requestable, perspective } = await this.parseMentions({
+    const { requestable, perspective } = await this.getMentions({
       asCode: false,
     });
 

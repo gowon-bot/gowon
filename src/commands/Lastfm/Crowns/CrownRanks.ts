@@ -19,7 +19,7 @@ export class CrownRanks extends CrownsChildCommand<typeof args> {
   arguments: Arguments = args;
 
   async run() {
-    const { discordUser } = await this.parseMentions({
+    const { discordUser } = await this.getMentions({
       fetchDiscordUser: true,
       reverseLookup: { required: true },
     });

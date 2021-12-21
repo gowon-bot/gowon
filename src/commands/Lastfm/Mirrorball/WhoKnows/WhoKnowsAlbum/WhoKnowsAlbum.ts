@@ -43,7 +43,7 @@ export default class WhoKnowsAlbum extends WhoKnowsBaseCommand<
 
   async run() {
     let { senderRequestable, senderUser, senderMirrorballUser } =
-      await this.parseMentions({
+      await this.getMentions({
         senderRequired:
           !this.parsedArguments.artist || !this.parsedArguments.album,
         fetchMirrorballUser: true,

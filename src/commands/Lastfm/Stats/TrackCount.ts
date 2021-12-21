@@ -25,7 +25,7 @@ export default class TrackCount extends LastFMBaseCommand<typeof args> {
   async run() {
     const timePeriod = this.parsedArguments.timePeriod!;
 
-    const { requestable, perspective } = await this.parseMentions();
+    const { requestable, perspective } = await this.getMentions();
 
     const trackCount = await this.lastFMService.trackCount(
       this.ctx,

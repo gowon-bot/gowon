@@ -47,7 +47,7 @@ export class Add extends FriendsChildCommand<typeof args> {
   async prerun() {}
 
   async run() {
-    const { senderUser } = await this.parseMentions({ senderRequired: true });
+    const { senderUser } = await this.getMentions({ senderRequired: true });
 
     const { toAdd, notFound } = await this.getFriendsFromArguments();
 

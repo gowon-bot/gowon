@@ -43,7 +43,7 @@ export class ImportRatings extends RateYourMusicIndexingChildCommand<
   }
 
   async run() {
-    await this.parseMentions({
+    await this.getMentions({
       senderRequired: true,
       requireIndexed: true,
     });

@@ -47,7 +47,7 @@ export class Ratings extends RateYourMusicIndexingChildCommand<
       rating = parseFloat(this.parsedArguments.rating) * 2;
     }
 
-    const { dbUser, discordUser } = await this.parseMentions({
+    const { dbUser, discordUser } = await this.getMentions({
       fetchDiscordUser: true,
       reverseLookup: { required: true },
       requireIndexed: true,

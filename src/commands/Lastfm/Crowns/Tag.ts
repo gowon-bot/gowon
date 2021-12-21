@@ -40,7 +40,7 @@ export class Tag extends CrownsChildCommand<typeof args> {
   async run() {
     const genres = this.parsedArguments.genres!;
 
-    const { perspective, dbUser } = await this.parseMentions();
+    const { perspective, dbUser } = await this.getMentions();
 
     const crowns = await this.crownsService.listTopCrowns(
       this.ctx,

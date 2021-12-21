@@ -74,7 +74,7 @@ export abstract class OverviewChildCommand<
       requestable,
       username,
       discordUser,
-    } = await this.parseMentions({
+    } = await this.getMentions({
       fetchDiscordUser: true,
     });
 

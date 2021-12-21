@@ -42,7 +42,7 @@ export default class PopularTracks extends InfoCommand<typeof args> {
     if (position.end - position.start > 9)
       throw new LogicError("those two positions are too far apart!");
 
-    let { senderRequestable } = await this.parseMentions();
+    let { senderRequestable } = await this.getMentions();
 
     const artist = await this.lastFMArguments.getArtist(
       this.ctx,

@@ -8,7 +8,7 @@ export class Per extends OverviewChildCommand {
     "Shows averages about your library. Average...\n- albums per artist\n- tracks per artist\n- tracks per album";
 
   async run() {
-    let { perspective } = await this.parseMentions();
+    let { perspective } = await this.getMentions();
 
     // Cache the top entities responses
     await Promise.all([

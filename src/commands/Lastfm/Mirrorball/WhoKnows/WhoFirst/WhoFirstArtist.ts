@@ -54,7 +54,7 @@ export default class WhoFirstArtist extends WhoKnowsBaseCommand<
     const whoLast = this.variationWasUsed("wholast");
 
     let { senderRequestable, senderUser, senderMirrorballUser } =
-      await this.parseMentions({
+      await this.getMentions({
         senderRequired: !this.parsedArguments.artist,
         fetchMirrorballUser: true,
       });

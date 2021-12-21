@@ -15,11 +15,7 @@ export default class Logout extends LastFMBaseCommand {
         "Are you sure you want to log out? This will delete **all** your indexed data!"
       );
 
-    const confirmationEmbed = new ConfirmationEmbed(
-      this.message,
-      embed,
-      this.gowonClient
-    );
+    const confirmationEmbed = new ConfirmationEmbed(this.ctx, embed);
 
     const confirmation = await confirmationEmbed.awaitConfirmation();
 

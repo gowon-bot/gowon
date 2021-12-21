@@ -24,7 +24,7 @@ export class Rating extends RateYourMusicIndexingChildCommand<
   arguments: Arguments = args;
 
   async run() {
-    const { senderRequestable, dbUser } = await this.parseMentions({
+    const { senderRequestable, dbUser } = await this.getMentions({
       senderRequired:
         !this.parsedArguments.artist || !this.parsedArguments.album,
       reverseLookup: { required: true },

@@ -80,7 +80,7 @@ export default class NowPlayingCustom extends NowPlayingBaseCommand {
       mentionedDBUser,
       requestable,
       senderRequestable,
-    } = await this.parseMentions({
+    } = await this.getMentions({
       authentificationRequired: true,
       senderRequired: true,
     });

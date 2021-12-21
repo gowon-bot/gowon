@@ -21,7 +21,7 @@ export default class ImageUpload extends LastFMBaseCommand<typeof args> {
   arguments: Arguments = args;
 
   async run() {
-    const { senderRequestable } = await this.parseMentions();
+    const { senderRequestable } = await this.getMentions();
 
     const { artist, album } = await this.lastFMArguments.getAlbum(
       this.ctx,

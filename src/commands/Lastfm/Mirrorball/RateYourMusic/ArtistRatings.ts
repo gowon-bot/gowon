@@ -35,13 +35,11 @@ export class ArtistRatings extends RateYourMusicIndexingChildCommand<
   arguments: Arguments = args;
 
   async run() {
-    const { senderRequestable, dbUser, discordUser } = await this.parseMentions(
-      {
-        senderRequired: !this.parsedArguments.artist,
-        fetchDiscordUser: true,
-        requireIndexed: true,
-      }
-    );
+    const { senderRequestable, dbUser, discordUser } = await this.getMentions({
+      senderRequired: !this.parsedArguments.artist,
+      fetchDiscordUser: true,
+      requireIndexed: true,
+    });
 
     const artist = await this.lastFMArguments.getArtist(
       this.ctx,

@@ -1,4 +1,4 @@
-import { buildRequestable } from "../../helpers/parseMentions";
+import { buildRequestable } from "../../helpers/getMentions";
 import { Arguments } from "../../lib/arguments/arguments";
 import { standardMentions } from "../../lib/arguments/mentions/mentions";
 import { Delegate } from "../../lib/command/BaseCommand";

@@ -1,4 +1,4 @@
-import { buildRequestable } from "../../helpers/parseMentions";
+import { buildRequestable } from "../../helpers/getMentions";
 import { MultiRequester } from "../../lib/MultiRequester";
 import { LastFMBaseCommand } from "./LastFMBaseCommand";
 
