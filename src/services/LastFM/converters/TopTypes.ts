@@ -10,12 +10,12 @@ import {
   RawUserGetWeeklyTrackChart,
 } from "../LastFMService.types";
 import {
-  BaseConverter,
+  BaseLastFMConverter,
   Concatonatable,
   ImageCollection,
 } from "./BaseConverter";
 
-export class TopArtist extends BaseConverter {
+export class TopArtist extends BaseLastFMConverter {
   rank: number;
   mbid: string;
   url: string;
@@ -38,7 +38,7 @@ export class TopArtist extends BaseConverter {
 }
 
 export class TopArtists
-  extends BaseConverter
+  extends BaseLastFMConverter
   implements Concatonatable<TopArtists>
 {
   artists: TopArtist[];
@@ -94,7 +94,7 @@ export class TopArtists
   }
 }
 
-export class TopAlbum extends BaseConverter {
+export class TopAlbum extends BaseLastFMConverter {
   artist: {
     url: string;
     name: string;
@@ -122,7 +122,7 @@ export class TopAlbum extends BaseConverter {
 }
 
 export class TopAlbums
-  extends BaseConverter
+  extends BaseLastFMConverter
   implements Concatonatable<TopAlbums>
 {
   albums: TopAlbum[];
@@ -179,7 +179,7 @@ export class TopAlbums
   }
 }
 
-export class TopTrack extends BaseConverter {
+export class TopTrack extends BaseLastFMConverter {
   rank: number;
   artist: {
     url: string;
@@ -209,7 +209,7 @@ export class TopTrack extends BaseConverter {
 }
 
 export class TopTracks
-  extends BaseConverter
+  extends BaseLastFMConverter
   implements Concatonatable<TopTracks>
 {
   tracks: TopTrack[];

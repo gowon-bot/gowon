@@ -642,16 +642,15 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     return CommandRegistry.getInstance().make(this.id);
   }
 
-  protected async fetchUsername(id: string): Promise<string> {
-    try {
-      let member = await this.guild.members.fetch(id);
-      return member.user.username;
-    } catch {
-      return this.gowonService.constants.unknownUserDisplay;
+  async getRepliedMessage(): Promise<Message | undefined> {
+    if (this.message.reference) {
+      return await this.message.fetchReference();
     }
+
+    return undefined;
   }
 
-  protected newEmbed(embed?: MessageEmbed): MessageEmbed {
+  newEmbed(embed?: MessageEmbed): MessageEmbed {
     return gowonEmbed(this.message.member ?? undefined, embed);
   }
 
@@ -662,6 +661,15 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
         : `${this.message.author.tag}`,
       iconURL: this.message.author.avatarURL() || undefined,
     };
+  }
+
+  protected async fetchUsername(id: string): Promise<string> {
+    try {
+      let member = await this.guild.members.fetch(id);
+      return member.user.username;
+    } catch {
+      return this.gowonService.constants.unknownUserDisplay;
+    }
   }
 
   protected async serverUserIDs({
@@ -746,13 +754,5 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
 
   protected messageIsReply(): boolean {
     return !!this.message.reference;
-  }
-
-  protected async getRepliedMessage(): Promise<Message | undefined> {
-    if (this.message.reference) {
-      return await this.message.fetchReference();
-    }
-
-    return undefined;
   }
 }

@@ -21,7 +21,7 @@ export function isConcatonatable<T>(
   return (value as any).concat instanceof Function;
 }
 
-export abstract class BaseConverter {
+export abstract class BaseLastFMConverter {
   protected number(value: any): number {
     return toInt(value);
   }

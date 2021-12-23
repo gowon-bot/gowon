@@ -8,8 +8,8 @@ export type SpotifyEntityName =
   | "show"
   | "episode";
 
-export type SpotifyURI<T extends SpotifyEntityName> = `spotify:${T}:${string}`;
-export type SpotifyTrackURI = SpotifyURI<"track">;
+export type RawSpotifyURI<T extends SpotifyEntityName> =
+  `spotify:${T}:${string}`;
 
 export interface SpotifyToken {
   access_token: string;
@@ -21,21 +21,7 @@ export interface PersonalSpotifyToken extends SpotifyToken {
   fetchedAt: number;
 }
 
-export interface Image {
-  height: number;
-  width: number;
-  url: string;
-}
-
-export interface SearchItem extends BaseSpotifyEntity<SpotifyEntityName> {
-  href: string;
-  id: string;
-  images: Image[];
-  popularity: 0;
-  name: string;
-}
-
-export type SearchResponse<T> = SimpleMap<{
+export type RawSearch<T> = {
   href: string;
   items: T[];
   limit: string;
@@ -43,7 +29,9 @@ export type SearchResponse<T> = SimpleMap<{
   offset: null;
   previous: string | undefined;
   total: number;
-}>;
+};
+
+export type RawSearchResponse<T> = SimpleMap<RawSearch<T>>;
 
 export interface SpotifyAuthUser {
   discordID: string;
@@ -76,6 +64,11 @@ export class InvalidStateError extends Error {
   }
 }
 
+export type SpotifyAvailableMarket = string;
+export type SpotifyAlbumType = "album" | "single" | "compilation";
+export type SpotifyReleaseDatePrecision = "year" | "month" | "day";
+export type SpotifyRestrictionReason = "market" | "product" | "explicit";
+
 export interface SpotifyImage {
   height: number;
   url: string;
@@ -90,21 +83,20 @@ export interface SpotifyExternalIDs {
   isrc: string;
 }
 
-export type SpotifyAvailableMarket = string;
-
-export interface BaseSpotifyEntity<T extends SpotifyEntityName> {
+export interface RawBaseSpotifyEntity<T extends SpotifyEntityName> {
   external_urls: SpotifyExternalURLs<T>;
   href: string;
   id: string;
-  uri: SpotifyURI<T>;
+  uri: RawSpotifyURI<T>;
   name: string;
-  type: string;
+  type: T;
 
   // This isn't on the response from Spotify
   isExactMatch?: boolean;
 }
 
-export interface SpotifySimpleArtist extends BaseSpotifyEntity<"artist"> {
+export interface RawSpotifyArtist extends RawBaseSpotifyEntity<"artist"> {
+  images: SpotifyImage[];
   genres: [];
   followers: {
     href: string;
@@ -113,13 +105,9 @@ export interface SpotifySimpleArtist extends BaseSpotifyEntity<"artist"> {
   popularity: number;
 }
 
-export type SpotifyAlbumType = "album" | "single" | "compilation";
-export type SpotifyReleaseDatePrecision = "year" | "month" | "day";
-export type SpotifyRestrictionReason = "market" | "product" | "explicit";
-
-export interface SpotifyAlbum extends BaseSpotifyEntity<"album"> {
+export interface RawSpotifyAlbum extends RawBaseSpotifyEntity<"album"> {
   album_type: SpotifyAlbumType;
-  artists: SpotifySimpleArtist[];
+  artists: RawSpotifyArtist[];
   available_markets: string[];
   images: SpotifyImage[];
   release_date: string;
@@ -130,9 +118,9 @@ export interface SpotifyAlbum extends BaseSpotifyEntity<"album"> {
   total_tracks: number;
 }
 
-export interface SpotifyTrack extends BaseSpotifyEntity<"track"> {
-  album: SpotifyAlbum;
-  artists: SpotifySimpleArtist[];
+export interface RawSpotifyTrack extends RawBaseSpotifyEntity<"track"> {
+  album: RawSpotifyAlbum;
+  artists: RawSpotifyArtist[];
   available_markets: SpotifyAvailableMarket[];
   disc_number: number;
   duration_ms: number;

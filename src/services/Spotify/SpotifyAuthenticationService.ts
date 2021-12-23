@@ -19,7 +19,9 @@ import { NotAuthenticatedWithSpotifyError } from "../../errors";
 export class SpotifyAuthenticationService extends BaseSpotifyService {
   private readonly scope = [
     "playlist-modify-public",
+    "user-library-modify",
     "user-modify-playback-state",
+    // "playlist-modify-public",
   ].join(" ");
 
   customContext = {

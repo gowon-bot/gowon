@@ -1,6 +1,6 @@
-import { LogicError } from "../../../../errors";
-import { Arguments } from "../../../../lib/arguments/arguments";
-import { AuthenticatedSpotifyBaseCommand } from "../SpotifyBaseCommands";
+import { LogicError } from "../../../errors";
+import { Arguments } from "../../../lib/arguments/arguments";
+import { AuthenticatedSpotifyBaseCommand } from "./SpotifyBaseCommands";
 
 const args = {
   inputs: {
@@ -9,12 +9,10 @@ const args = {
   },
 } as const;
 
-export default class Queue extends AuthenticatedSpotifyBaseCommand<
-  typeof args
-> {
-  idSeed = "dreamnote lara";
+export default class Like extends AuthenticatedSpotifyBaseCommand<typeof args> {
+  idSeed = "pink fantasy daewang";
 
-  description = "Queues a song in Spotify";
+  description = "Adds a song to your Spotify Liked Songs";
   aliases = ["q"];
 
   arguments: Arguments = args;
@@ -31,15 +29,15 @@ export default class Queue extends AuthenticatedSpotifyBaseCommand<
     );
 
     if (!track) {
-      throw new LogicError("Couldn't find a track to queue!");
+      throw new LogicError("Couldn't find a track to like!");
     }
 
-    await this.spotifyService.queue(this.ctx, track.uri.asString);
+    await this.spotifyService.saveTrackToLibrary(this.ctx, track.uri.asID);
 
     const embed = this.newEmbed()
-      .setAuthor(...this.generateEmbedAuthor("Spotify queue song"))
+      .setAuthor(...this.generateEmbedAuthor("Spotify like song"))
       .setDescription(
-        `Succesfully queued:
+        `Succesfully liked:
 ${track.name.italic()} by ${track.artists.primary.name.strong()}!`
       )
       .setThumbnail(track.album.images.largest.url);

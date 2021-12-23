@@ -6,7 +6,7 @@ import { RecentTrack } from "./converters/RecentTracks";
 import { Requestable } from "./LastFMAPIService";
 import { LastFMService } from "./LastFMService";
 
-type LastFMArgumentsMutableContext = {
+export type LastFMArgumentsMutableContext = {
   nowplaying: RecentTrack;
   parsedNowplaying: RecentTrack;
 };
