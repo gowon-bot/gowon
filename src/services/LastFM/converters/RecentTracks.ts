@@ -6,12 +6,12 @@ import {
 } from "../../mirrorball/MirrorballTypes";
 import { RawRecentTracks, RawTrack } from "../LastFMService.types";
 import {
-  BaseConverter,
+  BaseLastFMConverter,
   Concatonatable,
   ImageCollection,
 } from "./BaseConverter";
 
-export class RecentTrack extends BaseConverter {
+export class RecentTrack extends BaseLastFMConverter {
   artist: string;
   artistMBID: string;
   isNowPlaying: boolean;
@@ -44,7 +44,7 @@ export class RecentTrack extends BaseConverter {
 }
 
 export class RecentTracks
-  extends BaseConverter
+  extends BaseLastFMConverter
   implements Concatonatable<RecentTracks>
 {
   tracks: RecentTrack[];

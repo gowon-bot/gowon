@@ -4,14 +4,15 @@ import { URLSearchParams } from "url";
 import { stringify } from "querystring";
 import {
   PersonalSpotifyToken,
-  SearchItem,
-  SearchResponse,
+  RawSearchResponse,
   SpotifyCode,
   SpotifyEntityName,
-  SpotifyTrack,
+  RawSpotifyTrack,
   SpotifyToken,
-  SpotifyTrackURI,
-  SpotifyURI,
+  RawSpotifyURI,
+  RawSpotifyArtist,
+  RawSpotifyAlbum,
+  RawBaseSpotifyEntity,
 } from "./SpotifyService.types";
 import { SimpleMap } from "../../helpers/types";
 import {
@@ -21,6 +22,13 @@ import {
 import { Logger } from "../../lib/Logger";
 import { GowonContext } from "../../lib/context/Context";
 import { BaseSpotifyService } from "./BaseSpotifyService";
+import {
+  SpotifyAlbumSearch,
+  SpotifyArtistSearch,
+  SpotifyTrackSearch,
+} from "./converters/Search";
+import { SpotifyID, SpotifyURI } from "./converters/BaseConverter";
+import { SpotifyTrack } from "./converters/Track";
 
 export type SpotifyServiceContext = GowonContext<{
   mutable: { spotifyToken?: PersonalSpotifyToken };
@@ -29,9 +37,21 @@ export type SpotifyServiceContext = GowonContext<{
 interface SpotifyRequestOptions {
   path: string;
   params?: SimpleMap;
-  method?: "POST" | "GET";
+  method?: "POST" | "GET" | "PUT";
   useBody?: boolean;
   expectNoContent?: boolean;
+}
+
+interface Keywords {
+  keywords: string;
+}
+
+export type SpotifySearchParams<T extends object> = Keywords | T;
+
+export function isKeywords(
+  params: SpotifySearchParams<any>
+): params is Keywords {
+  return !!(params as Keywords).keywords;
 }
 
 export class SpotifyService extends BaseSpotifyService {
@@ -42,11 +62,7 @@ export class SpotifyService extends BaseSpotifyService {
     entity: T,
     id: string
   ): SpotifyURI<T> {
-    return `spotify:${entity}:${id}`;
-  }
-
-  getIDFromURI(uri: SpotifyURI<SpotifyEntityName>): string {
-    return uri.split(":")[2];
+    return new SpotifyURI(`spotify:${entity}:${id}`);
   }
 
   private async token(ctx: SpotifyServiceContext): Promise<string> {
@@ -153,6 +169,8 @@ export class SpotifyService extends BaseSpotifyService {
     }
 
     if (`${response.status}`.startsWith("4")) {
+      console.log(await response.json());
+
       throw new SpotifyConnectionError(ctx.command.prefix);
     }
 
@@ -160,11 +178,11 @@ export class SpotifyService extends BaseSpotifyService {
   }
 
   // Search
-  async search<T = SearchItem>(
+  async search<T extends RawBaseSpotifyEntity<any>>(
     ctx: SpotifyServiceContext,
     querystring: string,
-    entityType: SpotifyEntityName[] = []
-  ): Promise<SearchResponse<T>> {
+    entityType: [SpotifyEntityName] | [] = []
+  ): Promise<RawSearchResponse<T>> {
     return await this.request(ctx, {
       path: "search",
       params: {
@@ -177,61 +195,55 @@ export class SpotifyService extends BaseSpotifyService {
   async searchArtist(
     ctx: SpotifyServiceContext,
     artist: string
-  ): Promise<SearchItem | undefined> {
-    const search = await this.search(ctx, artist, ["artist"]);
+  ): Promise<SpotifyArtistSearch> {
+    const search = await this.search<RawSpotifyArtist>(ctx, artist, ["artist"]);
 
-    return this.getBestMatchingArtist(search.artists.items, artist);
+    return new SpotifyArtistSearch(search.artists, artist);
   }
 
   async searchAlbum(
     ctx: SpotifyServiceContext,
-    artist: string,
-    album: string
-  ): Promise<SearchItem | undefined> {
-    const search = await this.search(ctx, artist + " " + album, ["album"]);
+    params: SpotifySearchParams<{ artist: string; album: string }>
+  ): Promise<SpotifyAlbumSearch> {
+    const keywords = isKeywords(params)
+      ? params.keywords
+      : `${params.artist} ${params.album}`;
 
-    return search.albums.items[0];
+    const search = await this.search<RawSpotifyAlbum>(ctx, keywords, ["album"]);
+
+    return new SpotifyAlbumSearch(search.albums, params);
   }
 
   async searchTrack(
     ctx: SpotifyServiceContext,
-    artist: string,
-    track: string
-  ): Promise<SpotifyTrack | undefined> {
-    const search = await this.search<SpotifyTrack>(ctx, artist + " " + track, [
-      "track",
-    ]);
+    params: SpotifySearchParams<{ artist: string; track: string }>
+  ): Promise<SpotifyTrackSearch> {
+    const keywords = isKeywords(params)
+      ? params.keywords
+      : `${params.artist} ${params.track}`;
 
-    return this.getBestMatchingTrack(search.tracks.items, artist, track);
-  }
+    const search = await this.search<RawSpotifyTrack>(ctx, keywords, ["track"]);
 
-  async searchTrackRaw(
-    ctx: SpotifyServiceContext,
-    keywords: string
-  ): Promise<SpotifyTrack | undefined> {
-    const search = await this.search<SpotifyTrack>(ctx, keywords, ["track"]);
-
-    return search.tracks.items[0];
-  }
-
-  async searchAlbumRaw(
-    ctx: SpotifyServiceContext,
-    keywords: string
-  ): Promise<SearchItem | undefined> {
-    const search = await this.search(ctx, keywords, ["album"]);
-
-    return search.albums.items[0];
+    return new SpotifyTrackSearch(search.tracks, params);
   }
 
   // Tracks
-  async getTrack(ctx: SpotifyServiceContext, id: string) {
-    return await this.request<SpotifyTrack>(ctx, {
+  async getTrack(
+    ctx: SpotifyServiceContext,
+    id: SpotifyID
+  ): Promise<SpotifyTrack> {
+    const raw = await this.request<RawSpotifyTrack>(ctx, {
       path: `tracks/${id}`,
     });
+
+    return new SpotifyTrack(raw);
   }
 
   // Player
-  async queue(ctx: SpotifyServiceContext, uri: SpotifyTrackURI): Promise<void> {
+  async queue(
+    ctx: SpotifyServiceContext,
+    uri: RawSpotifyURI<"track">
+  ): Promise<void> {
     this.ensureAuthenticated(ctx);
 
     await this.request(ctx, {
@@ -284,31 +296,22 @@ export class SpotifyService extends BaseSpotifyService {
     }
   }
 
-  private getBestMatchingArtist(
-    artists: SearchItem[],
-    searchArtist: string
-  ): SearchItem {
-    return (
-      artists.find((a) => this.compare(a.name, searchArtist)) || artists[0]
-    );
+  // Library
+  async saveTrackToLibrary(ctx: SpotifyServiceContext, id: SpotifyID) {
+    this.ensureAuthenticated(ctx);
+
+    return await this.request(ctx, {
+      path: "me/tracks",
+      method: "PUT",
+      params: { ids: [id] },
+      expectNoContent: true,
+    });
   }
 
-  private getBestMatchingTrack(
-    tracks: SpotifyTrack[],
-    searchArtist: string,
-    searchTrack: string
-  ): SpotifyTrack {
-    return (
-      tracks.find((t) => {
-        if (
-          this.compare(t.artists[0].name, searchArtist) &&
-          this.compare(t.name, searchTrack)
-        ) {
-          t.isExactMatch = true;
-          return true;
-        }
-        return false;
-      }) || tracks[0]
-    );
+  getKeywords(params: SpotifySearchParams<any>): string {
+    if (isKeywords(params)) return params.keywords;
+    else if (params.artist)
+      return `${params.artist} ${params.album || params.track || ""}`.trim();
+    else return "";
   }
 }

@@ -23,29 +23,30 @@ export default class SpotifyArtist extends SpotifyBaseCommand<typeof args> {
   async run() {
     let keywords = this.parsedArguments.keywords;
 
-    let { requestable } = await this.getMentions({
+    const { requestable } = await this.getMentions({
       usernameRequired: !keywords,
     });
 
     if (!keywords) {
-      let nowplaying = await this.lastFMService.nowPlaying(
+      const artist = await this.lastFMArguments.getArtist(
         this.ctx,
         requestable
       );
 
-      keywords = nowplaying.artist;
+      keywords = artist;
     }
 
-    const spotifyArtist = await this.spotifyService.searchArtist(
+    const spotifyArtistSearch = await this.spotifyService.searchArtist(
       this.ctx,
       keywords
     );
 
-    if (!spotifyArtist)
+    if (!spotifyArtistSearch.hasAnyResults) {
       throw new LogicError(
-        `that artist wasn't found on spotify! Searched with \`${keywords}\``
+        `that artist wasn't found on Spotify! Searched with \`${keywords}\``
       );
+    }
 
-    await this.send(spotifyArtist.external_urls.spotify);
+    await this.send(spotifyArtistSearch.bestResult.externalURLs.spotify);
   }
 }

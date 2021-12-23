@@ -5,9 +5,12 @@ import {
 import { Arguments } from "../../../lib/arguments/arguments";
 import { ArgumentName } from "../../../lib/command/ArgumentType";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
+import { SpotifyArguments } from "../../../services/Spotify/SpotifyArguments";
 import { SpotifyAuthenticationService } from "../../../services/Spotify/SpotifyAuthenticationService";
-import { SpotifyService } from "../../../services/Spotify/SpotifyService";
-import { SpotifyTrackURI } from "../../../services/Spotify/SpotifyService.types";
+import {
+  SpotifySearchParams,
+  SpotifyService,
+} from "../../../services/Spotify/SpotifyService";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 export abstract class SpotifyBaseCommand<
@@ -15,18 +18,10 @@ export abstract class SpotifyBaseCommand<
 > extends LastFMBaseCommand<T> {
   subcategory = "spotify";
   spotifyService = ServiceRegistry.get(SpotifyService);
+  spotifyArguments = ServiceRegistry.get(SpotifyArguments);
 
-  private spotifyLinkRegex = /https:\/\/open\.spotify\.com\/track\/([\w]+)\/?/i;
-
-  protected containsSpotifyLink(string?: string): boolean {
-    if (!string) return false;
-    return this.spotifyLinkRegex.test(string);
-  }
-
-  protected getSpotifyTrackURI(string: string): SpotifyTrackURI {
-    const id = (string.match(this.spotifyLinkRegex) || [])[1];
-
-    return this.spotifyService.generateURI("track", id);
+  protected getKeywords(params: SpotifySearchParams<any>): string {
+    return this.spotifyService.getKeywords(params);
   }
 }
 

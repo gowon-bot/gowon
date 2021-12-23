@@ -39,6 +39,7 @@ import { EmojiService } from "./Discord/EmojiService";
 import { ArgumentParsingService } from "./arguments/ArgumentsParsingService";
 import { DiscordService } from "./Discord/DiscordService";
 import { SpotifyAuthenticationService } from "./Spotify/SpotifyAuthenticationService";
+import { SpotifyArguments } from "./Spotify/SpotifyArguments";
 
 type Service<T = any> = { new (): T };
 
@@ -79,6 +80,7 @@ const services: Service[] = [
   RollbarService,
   SettingsService,
   SpotifyService,
+  SpotifyArguments,
   SpotifyAuthenticationService,
   TagsService,
   TrackingService,

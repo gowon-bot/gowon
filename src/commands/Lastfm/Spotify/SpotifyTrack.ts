@@ -2,6 +2,7 @@ import { LogicError } from "../../../errors";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { SpotifyBaseCommand } from "./SpotifyBaseCommand";
+import { SpotifySearchParams } from "../../../services/Spotify/SpotifyService";
 
 const args = {
   ...standardMentions,
@@ -21,31 +22,31 @@ export default class SpotifyTrack extends SpotifyBaseCommand<typeof args> {
   };
 
   async run() {
-    let keywords = this.parsedArguments.keywords;
-
-    let { requestable } = await this.getMentions({
-      usernameRequired: !keywords,
+    const { requestable } = await this.getMentions({
+      usernameRequired: !this.parsedArguments.keywords,
     });
 
-    if (!keywords) {
-      let nowplaying = await this.lastFMService.nowPlaying(
-        this.ctx,
-        requestable
-      );
+    let params: SpotifySearchParams<{ artist: string; track: string }>;
 
-      keywords = `${nowplaying.name} ${nowplaying.artist}`;
+    if (this.parsedArguments.keywords) {
+      params = { keywords: this.parsedArguments.keywords };
+    } else {
+      params = await this.lastFMArguments.getTrack(this.ctx, requestable);
     }
 
-    const spotifyTrack = await this.spotifyService.searchTrackRaw(
+    const spotifyTrackSearch = await this.spotifyService.searchTrack(
       this.ctx,
-      keywords
+      params
     );
 
-    if (!spotifyTrack)
+    if (!spotifyTrackSearch.hasAnyResults) {
       throw new LogicError(
-        `that song wasn't found on spotify! Searched with \`${keywords}\``
+        `that song wasn't found on Spotify! Searched with \`${this.getKeywords(
+          params
+        )}\``
       );
+    }
 
-    await this.send(spotifyTrack.external_urls.spotify);
+    await this.send(spotifyTrackSearch.bestResult.externalURLs.spotify);
   }
 }

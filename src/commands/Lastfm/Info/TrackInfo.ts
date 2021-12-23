@@ -36,9 +36,9 @@ export default class TrackInfo extends InfoCommand<typeof args> {
       senderRequestable
     );
 
-    const [trackInfo, spotifyTrack] = await Promise.all([
+    const [trackInfo, spotifyTrackSearch] = await Promise.all([
       this.lastFMService.trackInfo(this.ctx, { artist, track }),
-      this.spotifyService.searchTrack(this.ctx, artist, track),
+      this.spotifyService.searchTrack(this.ctx, { artist, track }),
     ]);
 
     await this.tagConsolidator.saveServerBannedTagsInContext(this.ctx);
@@ -47,7 +47,11 @@ export default class TrackInfo extends InfoCommand<typeof args> {
     this.tagConsolidator.addTags(this.ctx, trackInfo.tags);
 
     const linkConsolidator = new LinkConsolidator([
-      LinkConsolidator.spotify(spotifyTrack?.external_urls?.spotify),
+      LinkConsolidator.spotify(
+        spotifyTrackSearch.hasAnyResults
+          ? spotifyTrackSearch.bestResult.externalURLs.spotify
+          : undefined
+      ),
       LinkConsolidator.lastfm(trackInfo.url),
     ]);
 

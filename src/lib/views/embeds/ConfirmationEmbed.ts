@@ -103,13 +103,22 @@ export class ConfirmationEmbed {
               }),
             ],
           });
-          this.sentMessage!.reactions.resolve(this.reactionEmoji)!.users.remove(
-            this.ctx.client.client.user?.id
-          );
+          await Promise.all([
+            this.removeReaction(this.reactionEmoji),
+            this.allowRejection
+              ? this.removeReaction(this.rejectionEmoji)
+              : undefined,
+          ]);
         }
 
         return resolve(false);
       });
     });
+  }
+
+  private async removeReaction(reaction: string) {
+    this.sentMessage!.reactions.resolve(reaction)!.users.remove(
+      this.ctx.client.client.user?.id
+    );
   }
 }

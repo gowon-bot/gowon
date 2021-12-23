@@ -12,10 +12,10 @@ import {
   RawTrackSearchResponse,
   RawUserInfo,
 } from "../LastFMService.types";
-import { BaseConverter, ImageCollection } from "./BaseConverter";
+import { BaseLastFMConverter, ImageCollection } from "./BaseConverter";
 import { UserInfo } from "./InfoTypes";
 
-export class ArtistPopularTrack extends BaseConverter {
+export class ArtistPopularTrack extends BaseLastFMConverter {
   name: string;
   globalPlaycount: number;
   listeners: number;
@@ -43,7 +43,7 @@ export class ArtistPopularTrack extends BaseConverter {
   }
 }
 
-export class ArtistPopularTracks extends BaseConverter {
+export class ArtistPopularTracks extends BaseLastFMConverter {
   tracks: ArtistPopularTrack[];
   meta: {
     artist: string;
@@ -70,7 +70,7 @@ export class ArtistPopularTracks extends BaseConverter {
   }
 }
 
-export class TagTopArtist extends BaseConverter {
+export class TagTopArtist extends BaseLastFMConverter {
   name: string;
   url: string;
   streamable: boolean;
@@ -88,7 +88,7 @@ export class TagTopArtist extends BaseConverter {
   }
 }
 
-export class TagTopArtists extends BaseConverter {
+export class TagTopArtists extends BaseLastFMConverter {
   artists: TagTopArtist[];
   meta: {
     tag: string;
@@ -115,7 +115,7 @@ export class TagTopArtists extends BaseConverter {
   }
 }
 
-export class SearchedTrack extends BaseConverter {
+export class SearchedTrack extends BaseLastFMConverter {
   name: string;
   artist: string;
   url: string;
@@ -137,7 +137,7 @@ export class SearchedTrack extends BaseConverter {
   }
 }
 
-export class TrackSearch extends BaseConverter {
+export class TrackSearch extends BaseLastFMConverter {
   tracks: SearchedTrack[];
   meta: {
     query: string;
@@ -162,7 +162,7 @@ export class TrackSearch extends BaseConverter {
   }
 }
 
-export class ArtistCorrection extends BaseConverter {
+export class ArtistCorrection extends BaseLastFMConverter {
   name: string;
   mbid: string;
   url: string;
@@ -176,7 +176,7 @@ export class ArtistCorrection extends BaseConverter {
   }
 }
 
-export class Friends extends BaseConverter {
+export class Friends extends BaseLastFMConverter {
   friends: UserInfo[];
   meta: {
     user: string;
@@ -206,7 +206,7 @@ export class Friends extends BaseConverter {
   }
 }
 
-export class TagTopTrack extends BaseConverter {
+export class TagTopTrack extends BaseLastFMConverter {
   name: string;
   duration: number;
   mbid: string;
@@ -232,7 +232,7 @@ export class TagTopTrack extends BaseConverter {
   }
 }
 
-export class TagTopTracks extends BaseConverter {
+export class TagTopTracks extends BaseLastFMConverter {
   tracks: TagTopTrack[];
   meta: {
     tag: string;
@@ -259,7 +259,7 @@ export class TagTopTracks extends BaseConverter {
   }
 }
 
-export class LastFMSession extends BaseConverter {
+export class LastFMSession extends BaseLastFMConverter {
   isSubscriber: boolean;
   username: string;
   key: string;

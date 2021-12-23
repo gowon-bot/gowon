@@ -5,10 +5,10 @@ import {
   RawUserInfo,
   RawTagInfo,
 } from "../LastFMService.types";
-import { BaseConverter, ImageCollection } from "./BaseConverter";
+import { BaseLastFMConverter, ImageCollection } from "./BaseConverter";
 export type LastFMUserType = "user" | "subscriber" | "alum" | "mod" | "staff";
 
-export class ArtistInfo extends BaseConverter {
+export class ArtistInfo extends BaseLastFMConverter {
   name: string;
   url: string;
   streamable: boolean;
@@ -48,7 +48,7 @@ export class ArtistInfo extends BaseConverter {
   }
 }
 
-export class TrackInfo extends BaseConverter {
+export class TrackInfo extends BaseLastFMConverter {
   name: string;
   mbid: string;
   url: string;
@@ -113,7 +113,7 @@ export class TrackInfo extends BaseConverter {
   }
 }
 
-export class AlbumInfo extends BaseConverter {
+export class AlbumInfo extends BaseLastFMConverter {
   name: string;
   artist: string;
   url: string;
@@ -166,7 +166,7 @@ export class AlbumInfo extends BaseConverter {
   }
 }
 
-export class UserInfo extends BaseConverter {
+export class UserInfo extends BaseLastFMConverter {
   playlists: number;
   scrobbleCount: number;
   name: string;
@@ -196,7 +196,7 @@ export class UserInfo extends BaseConverter {
   }
 }
 
-export class TagInfo extends BaseConverter {
+export class TagInfo extends BaseLastFMConverter {
   name: string;
   listeners: number;
   uses: number;

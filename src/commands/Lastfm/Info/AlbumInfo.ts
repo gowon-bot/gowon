@@ -36,14 +36,14 @@ export default class AlbumInfo extends InfoCommand<typeof args> {
       senderRequestable
     );
 
-    const [albumInfo, userInfo, spotifyAlbum] = await Promise.all([
+    const [albumInfo, userInfo, spotifyAlbumSearch] = await Promise.all([
       this.lastFMService.albumInfo(this.ctx, {
         artist,
         album,
         username: requestable,
       }),
       this.lastFMService.userInfo(this.ctx, { username: requestable }),
-      this.spotifyService.searchAlbum(this.ctx, artist, album),
+      this.spotifyService.searchAlbum(this.ctx, { artist, album }),
     ]);
 
     await this.tagConsolidator.saveServerBannedTagsInContext(this.ctx);
@@ -51,7 +51,11 @@ export default class AlbumInfo extends InfoCommand<typeof args> {
     this.tagConsolidator.addTags(this.ctx, albumInfo.tags);
 
     const linkConsolidator = new LinkConsolidator([
-      LinkConsolidator.spotify(spotifyAlbum?.external_urls?.spotify),
+      LinkConsolidator.spotify(
+        spotifyAlbumSearch.hasAnyResults
+          ? spotifyAlbumSearch.bestResult.externalURLs.spotify
+          : undefined
+      ),
       LinkConsolidator.lastfm(albumInfo.url),
     ]);
 
@@ -59,6 +63,12 @@ export default class AlbumInfo extends InfoCommand<typeof args> {
       (sum, t) => sum + t.duration,
       0
     );
+
+    const spotifyAlbumArt =
+      spotifyAlbumSearch.hasAnyResults &&
+      spotifyAlbumSearch.bestResult.isExactMatch
+        ? spotifyAlbumSearch.bestResult.images.largest
+        : undefined;
 
     this.lineConsolidator.addLines(
       {
@@ -105,12 +115,7 @@ export default class AlbumInfo extends InfoCommand<typeof args> {
       .setTitle(albumInfo.name.italic() + " by " + albumInfo.artist.strong())
       .setDescription(this.lineConsolidator.consolidate())
       .setURL(albumInfo.url)
-      .setImage(
-        albumInfo.images.get("large") ||
-          (spotifyAlbum &&
-            this.spotifyService.getImageFromSearchItem(spotifyAlbum)) ||
-          ""
-      )
+      .setImage(albumInfo.images.get("large") || spotifyAlbumArt?.url || "")
       .addFields(
         {
           name: "Listeners",
@@ -144,8 +149,7 @@ export default class AlbumInfo extends InfoCommand<typeof args> {
       .setFooter({
         text: albumInfo.images.get("large")
           ? "Image source: Last.fm"
-          : spotifyAlbum &&
-            this.spotifyService.getImageFromSearchItem(spotifyAlbum)
+          : spotifyAlbumArt && spotifyAlbumArt.url
           ? "Image source: Spotify"
           : "",
       });

@@ -23,6 +23,7 @@ export default class ArtistInfo extends InfoCommand<typeof args> {
   usage = ["", "artist"];
 
   arguments = args;
+  customContext = { mutable: {} };
 
   tagsService = ServiceRegistry.get(TagsService);
   crownsService = ServiceRegistry.get(CrownsService);
@@ -39,7 +40,7 @@ export default class ArtistInfo extends InfoCommand<typeof args> {
       senderRequestable
     );
 
-    const [artistInfo, userInfo, spotifyArtist] = await Promise.all([
+    const [artistInfo, userInfo, spotifyArtistSearch] = await Promise.all([
       this.lastFMService.artistInfo(this.ctx, {
         artist,
         username: requestable,
@@ -62,7 +63,11 @@ export default class ArtistInfo extends InfoCommand<typeof args> {
     this.tagConsolidator.addTags(this.ctx, tags);
 
     const linkConsolidator = new LinkConsolidator([
-      LinkConsolidator.spotify(spotifyArtist?.external_urls?.spotify),
+      LinkConsolidator.spotify(
+        spotifyArtistSearch.hasAnyResults
+          ? spotifyArtistSearch.bestResult.externalURLs.spotify
+          : undefined
+      ),
       LinkConsolidator.lastfm(artistInfo.url),
     ]);
 
@@ -125,14 +130,11 @@ ${
         "account"
       )} for ${percentage.strong()}% of all ${artistInfo.name} scrobbles!`
     : ""
-}
-        `
+}\n`
       );
 
-    if (spotifyArtist) {
-      embed.setThumbnail(
-        this.spotifyService.getImageFromSearchItem(spotifyArtist)
-      );
+    if (spotifyArtistSearch.hasAnyResults) {
+      embed.setThumbnail(spotifyArtistSearch.bestResult.images.largest.url);
       embed.setFooter({ text: "Image source: Spotify" });
     }
 
