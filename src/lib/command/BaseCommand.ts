@@ -471,7 +471,7 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
                 this.author.id,
                 this.guild.id
               ),
-              senderUser.mirrorballUpdate(),
+              senderUser.mirrorballUpdate(this.ctx),
             ]);
           }
         })

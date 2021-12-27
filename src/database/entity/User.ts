@@ -23,13 +23,14 @@ import {
 import { Friend } from "./Friend";
 import { userHasRole } from "../../helpers/discord";
 import { GowonService } from "../../services/GowonService";
-import { mirrorballClient } from "../../lib/indexing/client";
 import gql from "graphql-tag";
 import { Logger } from "../../lib/Logger";
 import { Combo } from "./Combo";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { SettingsService } from "../../lib/settings/SettingsManager";
 import { CommandAccessRoleName } from "../../lib/command/access/roles";
+import { MirrorballService } from "../../services/mirrorball/MirrorballService";
+import { BaseServiceContext } from "../../services/BaseService";
 
 @Entity({ name: "users" })
 export class User extends BaseEntity {
@@ -167,21 +168,25 @@ export class User extends BaseEntity {
     );
   }
 
-  async mirrorballUpdate(): Promise<void> {
+  async mirrorballUpdate(ctx: BaseServiceContext): Promise<void> {
+    const mirrorballService = ServiceRegistry.get(MirrorballService);
+
     Logger.log("User", `updating ${this.discordID}`);
+
     if (!this.isIndexed) {
       return;
     }
 
-    mirrorballClient.mutate({
-      mutation: gql`
+    mirrorballService.mutate(
+      ctx,
+      gql`
         mutation Update($discordID: String!) {
           update(user: { discordID: $discordID }) {
             success
           }
         }
       `,
-      variables: { discordID: this.discordID },
-    });
+      { discordID: this.discordID }
+    );
   }
 }

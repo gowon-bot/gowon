@@ -19,7 +19,6 @@ import {
 } from "../../../services/LastFM/converters/RecentTracks";
 import { displayNumber } from "../../../lib/views/displays";
 import { Requestable } from "../../../services/LastFM/LastFMAPIService";
-import { Chance } from "chance";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { SettingsService } from "../../../lib/settings/SettingsManager";
 
@@ -54,10 +53,9 @@ export abstract class NowPlayingBaseCommand<
     senderUsername: string;
     discordUser?: User;
   }> {
-    let otherWords = this.parsedArguments.otherWords;
+    const otherWords = this.parsedArguments.otherWords;
 
     let {
-      senderUser,
       username,
       senderUsername,
       discordUser,
@@ -70,10 +68,6 @@ export abstract class NowPlayingBaseCommand<
             fetchDiscordUser: true,
           }
     );
-
-    if (senderUser && Chance().bool({ likelihood: 10 })) {
-      senderUser.mirrorballUpdate();
-    }
 
     if (
       otherWords &&
@@ -115,7 +109,7 @@ export abstract class NowPlayingBaseCommand<
     nowPlaying: RecentTrack,
     username: string
   ): MessageEmbed {
-    let links = LinkGenerator.generateTrackLinksForEmbed(nowPlaying);
+    const links = LinkGenerator.generateTrackLinksForEmbed(nowPlaying);
 
     return this.newEmbed()
       .setAuthor(
