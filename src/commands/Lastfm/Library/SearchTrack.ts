@@ -62,29 +62,24 @@ export default class SearchTrack extends SearchCommand {
       return;
     }
 
-    const scrollingEmbed = new SimpleScrollingEmbed(
-      this.message,
-      embed,
-      {
-        items: filtered,
-        pageSize: 15,
-        pageRenderer(items) {
-          return `Tracks matching ${keywords.code()}
+    const scrollingEmbed = new SimpleScrollingEmbed(this.message, embed, {
+      items: filtered,
+      pageSize: 15,
+      pageRenderer(items) {
+        return `Tracks matching ${keywords.code()}
 \n${items
-            .map(
-              (t) =>
-                `\`${t.rank}\`. ${t.artist.name.italic()} - ${t.name.replaceAll(
-                  new RegExp(`${keywords}`, "gi"),
-                  (match) => match.strong()
-                )} (${displayNumber(t.userPlaycount, "play")})`
-            )
-            .join("\n")}`;
-        },
+          .map(
+            (t) =>
+              `\`${t.rank}\`. ${t.artist.name.italic()} - ${t.name.replaceAll(
+                new RegExp(`${keywords}`, "gi"),
+                (match) => match.strong()
+              )} (${displayNumber(t.userPlaycount, "play")})`
+          )
+          .join("\n")}`;
       },
-      {
-        itemName: "result",
-      }
-    );
+
+      overrides: { itemName: "result" },
+    });
 
     scrollingEmbed.send();
   }

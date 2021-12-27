@@ -1,6 +1,6 @@
 import { isKeywords, SpotifySearchParams } from "../SpotifyService";
 import {
-  RawSearch,
+  RawSpotifyItemCollection,
   RawSpotifyAlbum,
   RawSpotifyArtist,
   RawSpotifyTrack,
@@ -8,28 +8,21 @@ import {
 } from "../SpotifyService.types";
 import { SpotifyAlbum } from "./Album";
 import { SpotifyArtist } from "./Artist";
-import { BaseSpotifyConverter, SpotifyEntityConverter } from "./BaseConverter";
+import { SpotifyEntityConverter } from "./BaseConverter";
+import { SpotifyItemCollection } from "./ItemCollection";
 import { SpotifyTrack } from "./Track";
 
 export abstract class BaseSearchResponse<
   TName extends SpotifyEntityName,
   T extends SpotifyEntityConverter<TName>
-> extends BaseSpotifyConverter {
-  items: T[];
-  href: string;
-  total: number;
-
-  next?: string;
-  previous?: string;
-
+> extends SpotifyItemCollection<TName, T> {
   abstract compareMatch(item: T): boolean;
 
-  constructor(searchResponse: RawSearch<any>, itemClass: { new (i: any): T }) {
-    super();
-
-    this.items = searchResponse.items.map((i) => new itemClass(i));
-    this.href = searchResponse.href;
-    this.total = searchResponse.total;
+  constructor(
+    searchResponse: RawSpotifyItemCollection<any>,
+    itemClass: { new (i: any): T }
+  ) {
+    super(searchResponse, itemClass);
   }
 
   get hasAnyResults() {
@@ -77,7 +70,7 @@ export class SpotifyArtistSearch extends BaseSearchResponse<
   SpotifyArtist
 > {
   constructor(
-    searchResponse: RawSearch<RawSpotifyArtist>,
+    searchResponse: RawSpotifyItemCollection<RawSpotifyArtist>,
     private searchArtist: string
   ) {
     super(searchResponse, SpotifyArtist);
@@ -93,7 +86,7 @@ export class SpotifyAlbumSearch extends BaseSearchResponse<
   SpotifyAlbum
 > {
   constructor(
-    searchResponse: RawSearch<RawSpotifyAlbum>,
+    searchResponse: RawSpotifyItemCollection<RawSpotifyAlbum>,
     private params: SpotifySearchParams<{ artist: string; album: string }>
   ) {
     super(searchResponse, SpotifyAlbum);
@@ -118,7 +111,7 @@ export class SpotifyTrackSearch extends BaseSearchResponse<
   SpotifyTrack
 > {
   constructor(
-    searchResponse: RawSearch<RawSpotifyTrack>,
+    searchResponse: RawSpotifyItemCollection<RawSpotifyTrack>,
     private params: SpotifySearchParams<{ artist: string; track: string }>
   ) {
     super(searchResponse, SpotifyTrack);

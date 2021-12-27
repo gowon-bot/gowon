@@ -96,20 +96,14 @@ export class Taste extends RateYourMusicIndexingChildCommand<
         `Taste comparison for ${this.author.tag} and ${discordUser?.tag}`
       );
 
-    const scrollingEmbed = new SimpleScrollingEmbed(
-      this.message,
-      embed,
-      {
-        items: taste.ratings,
-        pageSize: 10,
-        pageRenderer: (ratings) => {
-          return (
-            embedDescription.italic() + "\n\n" + this.generateTable(ratings)
-          );
-        },
+    const scrollingEmbed = new SimpleScrollingEmbed(this.message, embed, {
+      items: taste.ratings,
+      pageSize: 10,
+      pageRenderer: (ratings) => {
+        return embedDescription.italic() + "\n\n" + this.generateTable(ratings);
       },
-      { itemName: "rating" }
-    );
+      overrides: { itemName: "rating" },
+    });
 
     scrollingEmbed.send();
   }

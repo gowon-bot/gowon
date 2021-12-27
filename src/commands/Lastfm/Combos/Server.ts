@@ -67,18 +67,14 @@ export class ServerCombos extends ComboChildCommand<typeof args> {
       return nickname.strong() + ": " + this.displayCombo(combo);
     }).bind(this);
 
-    const scrollingEmbed = new SimpleScrollingEmbed(
-      this.message,
-      embed,
-      {
-        items: combos,
-        pageSize: 5,
-        pageRenderer(combos, { offset }) {
-          return displayNumberedList(combos.map(displayCombo), offset);
-        },
+    const scrollingEmbed = new SimpleScrollingEmbed(this.message, embed, {
+      items: combos,
+      pageSize: 5,
+      pageRenderer(combos, { offset }) {
+        return displayNumberedList(combos.map(displayCombo), offset);
       },
-      { itemName: "combo" }
-    );
+      overrides: { itemName: "combo" },
+    });
 
     scrollingEmbed.send();
   }

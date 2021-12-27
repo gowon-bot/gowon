@@ -6,7 +6,8 @@ export type SpotifyEntityName =
   | "playlist"
   | "track"
   | "show"
-  | "episode";
+  | "episode"
+  | "user";
 
 export type RawSpotifyURI<T extends SpotifyEntityName> =
   `spotify:${T}:${string}`;
@@ -21,17 +22,16 @@ export interface PersonalSpotifyToken extends SpotifyToken {
   fetchedAt: number;
 }
 
-export type RawSearch<T> = {
+export type RawSpotifyItemCollection<T> = {
   href: string;
   items: T[];
   limit: string;
-  next: string | undefined;
-  offset: null;
-  previous: string | undefined;
   total: number;
+  next: string | undefined;
+  previous: string | undefined;
 };
 
-export type RawSearchResponse<T> = SimpleMap<RawSearch<T>>;
+export type RawSearchResponse<T> = SimpleMap<RawSpotifyItemCollection<T>>;
 
 export interface SpotifyAuthUser {
   discordID: string;
@@ -130,4 +130,24 @@ export interface RawSpotifyTrack extends RawBaseSpotifyEntity<"track"> {
   popularity: number;
   preview_url: string;
   track_number: number;
+}
+
+export interface RawSpotifyPlaylist extends RawBaseSpotifyEntity<"playlist"> {
+  collaborative: boolean;
+  description: string;
+  images: SpotifyImage[];
+  owner: RawSpotifyUser;
+  primary_color: string | null;
+  public: boolean;
+  snapshot_id: string;
+  tracks: { href: string; total: number };
+}
+
+export interface RawSpotifyUser
+  extends Omit<RawBaseSpotifyEntity<"user">, "name"> {
+  display_name: string;
+}
+
+export interface SpotifySnapshot {
+  snapshot_id: string;
 }

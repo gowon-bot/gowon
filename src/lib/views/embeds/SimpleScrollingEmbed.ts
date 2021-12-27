@@ -15,6 +15,8 @@ export interface SimpleOptions<T> {
     items: T[],
     pageInfo: { page: number; offset: number }
   ) => string;
+
+  overrides?: Partial<ScrollingEmbedOptions>;
 }
 
 export class SimpleScrollingEmbed<T> {
@@ -23,8 +25,7 @@ export class SimpleScrollingEmbed<T> {
   constructor(
     message: Message,
     embed: MessageEmbed,
-    private options: SimpleOptions<T>,
-    overrideOptions: Partial<ScrollingEmbedOptions> = {}
+    private options: SimpleOptions<T>
   ) {
     this.scrollingEmbed = new ScrollingEmbed(
       message,
@@ -35,7 +36,7 @@ export class SimpleScrollingEmbed<T> {
           totalPages: this.getTotalPages(),
           initialItems: this.renderItemsFromPage(1),
         },
-        overrideOptions
+        options.overrides || {}
       )
     );
 

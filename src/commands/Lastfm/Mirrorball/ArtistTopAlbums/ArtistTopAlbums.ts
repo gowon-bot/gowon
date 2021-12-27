@@ -78,25 +78,22 @@ export default class ArtistTopAlbums extends MirrorballBaseCommand<
       .setTitle(`Top ${artist.name} albums for ${username}`)
       .setURL(LinkGenerator.libraryArtistTopAlbums(username, artist.name));
 
-    const simpleScrollingEmbed = new SimpleScrollingEmbed(
-      this.message,
-      embed,
-      {
-        items: topAlbums,
-        pageSize: 15,
-        pageRenderer(albums) {
-          return albums
-            .map(
-              (album) =>
-                `${displayNumber(
-                  album.playcount,
-                  "play"
-                )} - ${album.album.name.strong()}`
-            )
-            .join("\n");
-        },
+    const simpleScrollingEmbed = new SimpleScrollingEmbed(this.message, embed, {
+      items: topAlbums,
+      pageSize: 15,
+      pageRenderer(albums) {
+        return albums
+          .map(
+            (album) =>
+              `${displayNumber(
+                album.playcount,
+                "play"
+              )} - ${album.album.name.strong()}`
+          )
+          .join("\n");
       },
-      {
+
+      overrides: {
         itemName: "album",
         embedDescription:
           `${displayNumber(totalScrobbles, "total scrobble")}, ${displayNumber(
@@ -106,8 +103,8 @@ export default class ArtistTopAlbums extends MirrorballBaseCommand<
             average.toFixed(2),
             "average scrobble"
           )} per album`.italic() + "\n",
-      }
-    );
+      },
+    });
 
     simpleScrollingEmbed.send();
   }

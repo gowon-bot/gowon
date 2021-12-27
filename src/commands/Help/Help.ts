@@ -77,15 +77,11 @@ export default class Help extends BaseCommand<typeof args> {
       });
     }
 
-    const simpleScrollingEmbed = new SimpleScrollingEmbed(
-      this.message,
-      embed,
-      {
-        items: fields,
-        pageSize: 9,
-      },
-      { customFooter: footer, embedDescription: description }
-    );
+    const simpleScrollingEmbed = new SimpleScrollingEmbed(this.message, embed, {
+      items: fields,
+      pageSize: 9,
+      overrides: { customFooter: footer, embedDescription: description },
+    });
 
     simpleScrollingEmbed.send();
   }

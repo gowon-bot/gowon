@@ -13,6 +13,7 @@ export const Settings = {
   optedOut: new GuildMemberScopedSetting("opted_out"),
   reacts: new UserScopedSetting("reacts"),
   issueMode: new BotScopedSetting("issue_mode"),
+  defaultSpotifyPlaylist: new UserScopedSetting("default_spotify_playlist"),
 } as const;
 
 export type SettingsMap = {

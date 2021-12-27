@@ -115,17 +115,13 @@ export class ArtistRatings extends RateYourMusicIndexingChildCommand<
         )
       : response.ratings.ratings;
 
-    const simpleScrollingEmbed = new SimpleScrollingEmbed(
-      this.message,
-      embed,
-      {
-        items: ratings,
-        pageSize: 10,
-        pageRenderer: (items) =>
-          header + "\n\n" + this.generateTable(items, artistName!),
-      },
-      { itemName: "rating" }
-    );
+    const simpleScrollingEmbed = new SimpleScrollingEmbed(this.message, embed, {
+      items: ratings,
+      pageSize: 10,
+      pageRenderer: (items) =>
+        header + "\n\n" + this.generateTable(items, artistName!),
+      overrides: { itemName: "rating" },
+    });
 
     simpleScrollingEmbed.send();
   }

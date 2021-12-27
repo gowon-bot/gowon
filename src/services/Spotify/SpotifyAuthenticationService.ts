@@ -21,7 +21,9 @@ export class SpotifyAuthenticationService extends BaseSpotifyService {
     "playlist-modify-public",
     "user-library-modify",
     "user-modify-playback-state",
-    // "playlist-modify-public",
+    "playlist-read-private",
+    "playlist-modify-public",
+    "playlist-modify-private",
   ].join(" ");
 
   customContext = {
