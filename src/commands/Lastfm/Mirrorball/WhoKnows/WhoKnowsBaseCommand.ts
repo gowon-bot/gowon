@@ -7,8 +7,8 @@ import { displayLink } from "../../../../lib/views/displays";
 import {
   NicknameService,
   UnknownUserDisplay,
-} from "../../../../services/guilds/NicknameService";
-import { WhoKnowsService } from "../../../../services/guilds/WhoKnowsService";
+} from "../../../../services/Discord/NicknameService";
+import { WhoKnowsService } from "../../../../services/Discord/WhoKnowsService";
 import {
   MirrorballPrivacy,
   MirrorballUser,

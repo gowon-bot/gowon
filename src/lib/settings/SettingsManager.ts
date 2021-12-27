@@ -36,7 +36,9 @@ export class SettingsService extends BaseService {
     for (const setting of settings) {
       const scope = this.buildScope(setting);
 
-      this.cache[setting.name][scope] = setting.value;
+      if (this.cache[setting.name]) {
+        this.cache[setting.name][scope] = setting.value;
+      }
     }
   }
 

@@ -5,14 +5,14 @@ import { Logger } from "../Logger";
 import { CheckFailReason } from "../permissions/Can";
 import { ParentCommand } from "./ParentCommand";
 import { MetaService } from "../../services/dbservices/MetaService";
-import Prefix from "../../commands/Meta/Prefix";
 import { GowonClient } from "../GowonClient";
 import { RunAs } from "./RunAs";
-import { NicknameService } from "../../services/guilds/NicknameService";
-import Help from "../../commands/Help/Help";
+import { NicknameService } from "../../services/Discord/NicknameService";
 import { CommandRegistry } from "./CommandRegistry";
 import { Command } from "./Command";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
+import Prefix from "../../commands/Meta/Prefix";
+import Help from "../../commands/Help/Help";
 
 export class CommandHandler {
   commandRegistry = CommandRegistry.getInstance();

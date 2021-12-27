@@ -8,6 +8,7 @@ import { extractEmojiName } from "../../../../lib/Emoji";
 import { LineConsolidator } from "../../../../lib/LineConsolidator";
 import { SettingsService } from "../../../../lib/settings/SettingsManager";
 import { ConfirmationEmbed } from "../../../../lib/views/embeds/ConfirmationEmbed";
+import { EmojiService } from "../../../../services/Discord/EmojiService";
 import { ServiceRegistry } from "../../../../services/ServicesRegistry";
 import { NowPlayingConfigChildCommand } from "./NowPlayingConfigChildCommand";
 
@@ -35,6 +36,7 @@ export class React extends NowPlayingConfigChildCommand<typeof args> {
   arguments: Arguments = args;
 
   settingsService = ServiceRegistry.get(SettingsService);
+  emojiService = ServiceRegistry.get(EmojiService);
 
   async run() {
     const emojis = this.parsedArguments.emojis!;
@@ -88,50 +90,37 @@ export class React extends NowPlayingConfigChildCommand<typeof args> {
   }
 
   private async saveReacts(emojis: EmojiMention[]) {
-    let emojisToSave = [] as EmojiMention[];
-    let emojisIgnored = [] as EmojiMention[];
+    const { valid, invalid } = this.emojiService.validateEmojis(
+      this.ctx,
+      emojis
+    );
 
-    for (const emoji of emojis) {
-      if (emoji.type === "unicode") {
-        emojisToSave.push(emoji);
-      } else {
-        const resolved = this.gowonClient.client.emojis.resolve(
-          emoji.resolvable
-        );
-
-        (resolved ? emojisToSave : emojisIgnored).push(emoji);
-      }
-    }
-
-    emojisToSave = this.uniquify(emojisToSave);
-    emojisIgnored = this.uniquify(emojisIgnored);
-
-    if (emojisToSave.length > 5) {
+    if (valid.length > 5) {
       throw new LogicError("You can't have more than 5 reactions!");
-    } else if (emojisToSave.length) {
+    } else if (valid.length) {
       this.settingsService.set(
         this.ctx,
         "reacts",
         { userID: this.author.id },
-        JSON.stringify(emojisToSave.map((e) => e.resolvable))
+        JSON.stringify(valid.map((e) => e.resolvable))
       );
     }
 
     const lineConsolidator = new LineConsolidator();
     lineConsolidator.addLines(
       {
-        shouldDisplay: !!emojisToSave.length,
-        string: `**Gowon will react with the following emojis**:\n${emojisToSave
+        shouldDisplay: !!valid.length,
+        string: `**Gowon will react with the following emojis**:\n${valid
           .map((e) => e.raw)
           .join(" ")}`,
       },
       {
-        shouldDisplay: !!emojisToSave.length && !!emojisIgnored.length,
+        shouldDisplay: !!valid.length && !!invalid.length,
         string: "",
       },
       {
-        shouldDisplay: !!emojisIgnored.length,
-        string: `**Ignored the following emojis**:\n${emojisIgnored
+        shouldDisplay: !!invalid.length,
+        string: `**Ignored the following emojis**:\n${invalid
           .map((e) => extractEmojiName(e.raw))
           .join(" ")}`,
       }
@@ -141,18 +130,12 @@ export class React extends NowPlayingConfigChildCommand<typeof args> {
       .setAuthor(...this.generateEmbedAuthor("Reacts"))
       .setDescription(lineConsolidator.consolidate());
 
-    if (emojisIgnored.length) {
+    if (invalid.length) {
       embed.setFooter(
         "Gowon needs to share a server with an emoji to be able to react with it\nRecently-added emojis may take a little while for Gowon to be able to recognize"
       );
     }
 
     await this.send(embed);
-  }
-
-  private uniquify(emojis: EmojiMention[]): EmojiMention[] {
-    return emojis.filter((value, index, self) => {
-      return self.map((e) => e.resolvable).indexOf(value.resolvable) === index;
-    });
   }
 }

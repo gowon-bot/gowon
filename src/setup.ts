@@ -7,7 +7,7 @@ import { DB } from "./database";
 import { Stopwatch, ucFirst } from "./helpers";
 import { CommandHandler } from "./lib/command/CommandHandler";
 import { GowonClient } from "./lib/GowonClient";
-import { GuildEventService } from "./services/guilds/GuildEventService";
+import { GuildEventService } from "./services/Discord/GuildEventService";
 import { RedisInteractionService } from "./services/redis/RedisInteractionService";
 import pm2 from "pm2";
 import { mirrorballClient } from "./lib/indexing/client";

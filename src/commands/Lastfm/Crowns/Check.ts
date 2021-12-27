@@ -6,7 +6,6 @@ import { CrownEmbeds } from "../../../lib/views/embeds/CrownEmbeds";
 import {
   CrownBannedError,
   InactiveError,
-  LogicError,
   OptedOutError,
   PurgatoryError,
 } from "../../../errors";
@@ -27,39 +26,33 @@ export class Check extends CrownsChildCommand<typeof args> {
   arguments: Arguments = args;
 
   async run(message: Message) {
-    let artist = this.parsedArguments.artist;
-
-    let { senderUser, requestable } = await this.parseMentions();
+    const { senderUser, senderRequestable } = await this.parseMentions();
 
     if (await senderUser?.inPurgatory(message)) throw new PurgatoryError();
     if (await senderUser?.inactive(message)) throw new InactiveError();
     if (await senderUser?.isCrownBanned(message)) throw new CrownBannedError();
     if (await senderUser?.isOptedOut(message)) throw new OptedOutError();
 
-    if (!artist) {
-      let response = await this.lastFMService.nowPlaying(this.ctx, requestable);
-      if (!response.isNowPlaying)
-        throw new LogicError(
-          "you don't appear to be currently scrobbling anything."
-        );
-      artist = response.artist;
-    }
+    const artist = await this.lastFMArguments.getArtist(
+      this.ctx,
+      senderRequestable
+    );
 
-    let artistDetails = await this.lastFMService.artistInfo(this.ctx, {
+    const artistInfo = await this.lastFMService.artistInfo(this.ctx, {
       artist,
-      username: requestable,
+      username: senderRequestable,
     });
 
-    let crownCheck = await this.crownsService.checkCrown(this.ctx, {
-      artistName: artistDetails.name,
-      plays: artistDetails.userPlaycount,
+    const crownCheck = await this.crownsService.checkCrown(this.ctx, {
+      artistName: artistInfo.name,
+      plays: artistInfo.userPlaycount,
     });
 
-    let embeds = new CrownEmbeds(
+    const embeds = new CrownEmbeds(
       crownCheck,
       this.message.author,
       this.gowonClient,
-      artistDetails.userPlaycount,
+      artistInfo.userPlaycount,
       this.message,
       this.message.member ?? undefined
     );
@@ -74,7 +67,7 @@ export class Check extends CrownsChildCommand<typeof args> {
       this.crownsService.scribe.handleCheck(this.ctx, crownCheck, message);
     }
 
-    let embed =
+    const embed =
       crownCheck.state === CrownState.newCrown
         ? embeds.newCrown()
         : crownCheck.state === CrownState.updated

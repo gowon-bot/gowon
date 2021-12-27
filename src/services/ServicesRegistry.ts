@@ -14,9 +14,9 @@ import { RedirectsService } from "./dbservices/RedirectsService";
 import { UsersService } from "./dbservices/UsersService";
 import { GithubService } from "./Github/GithubService";
 import { GowonService } from "./GowonService";
-import { GuildEventService } from "./guilds/GuildEventService";
-import { NicknameService } from "./guilds/NicknameService";
-import { WhoKnowsService } from "./guilds/WhoKnowsService";
+import { GuildEventService } from "./Discord/GuildEventService";
+import { NicknameService } from "./Discord/NicknameService";
+import { WhoKnowsService } from "./Discord/WhoKnowsService";
 import { LastFMArguments } from "./LastFM/LastFMArguments";
 import { LastFMService } from "./LastFM/LastFMService";
 import { MirrorballCacheService } from "./mirrorball/MirrorballCacheService";
@@ -35,6 +35,7 @@ import { WordBlacklistService } from "./WordBlacklistService";
 import { RollbarService } from "./Rollbar/RollbarService";
 import { NowPlayingEmbedParsingService } from "./NowPlayingEmbedParsingService";
 import { ChartService } from "./pantomime/ChartService";
+import { EmojiService } from "./Discord/EmojiService";
 
 type Service<T = any> = { new (): T };
 
@@ -53,6 +54,7 @@ const services: Service[] = [
   ConcurrencyService,
   ConfigService,
   DatasourceService,
+  EmojiService,
   FriendsService,
   GowonService,
   GithubService,

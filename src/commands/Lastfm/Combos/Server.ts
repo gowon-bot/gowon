@@ -4,7 +4,7 @@ import { LogicError } from "../../../errors";
 import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingEmbed";
 import { displayNumberedList } from "../../../lib/views/displays";
 import { Combo } from "../../../database/entity/Combo";
-import { NicknameService } from "../../../services/guilds/NicknameService";
+import { NicknameService } from "../../../services/Discord/NicknameService";
 import { ArtistsService } from "../../../services/mirrorball/services/ArtistsService";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 
