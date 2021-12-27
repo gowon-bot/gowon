@@ -26,6 +26,7 @@ export interface InputArguments {
     | ((messageString: string) => ParsedArgument)
     | CustomArgumentParser<any>;
   number?: boolean;
+  preprocessor?: (messageString: string) => string;
 }
 
 export interface Arguments {
@@ -55,13 +56,14 @@ export class ArgumentParser extends Parser {
   }
 
   parse(message: Message, runAs: RunAs): ParsedArguments {
-    let messageString = this.removeAllMentions(message.content).trim();
+    const messageString = this.removeAllMentions(message.content).trim();
 
     const mentions = this.mentionParser.parse(message);
+
     const { flags, string: stringWithNoFlags } =
       this.flagParser.parseAndRemoveFlags(messageString, this.args.flags);
 
-    let inputs = this.parseInputs(
+    const inputs = this.parseInputs(
       this.gowonService.removeCommandName(
         stringWithNoFlags,
         runAs,
@@ -72,49 +74,6 @@ export class ArgumentParser extends Parser {
     this.parsedArguments = { ...mentions, ...inputs, ...flags };
 
     return this.parsedArguments;
-  }
-
-  private parseCustomInputs(messageString: string): ParsedArguments {
-    if (this.args.inputs) {
-      let parsedArguments = Object.keys(this.args.inputs!)
-        .filter((arg) => !!this.args.inputs![arg].custom)
-        .reduce((acc, arg) => {
-          let argOptions = this.args.inputs![arg];
-          if (argOptions.custom) {
-            acc[arg] = isCustomParser(argOptions.custom)
-              ? argOptions.custom.parse(messageString)
-              : argOptions.custom(messageString);
-          }
-          return acc;
-        }, {} as ParsedArguments);
-
-      return parsedArguments;
-    } else return {};
-  }
-
-  private parseInputsWithSplit(
-    messageString: string,
-    splitFunction: (string: string, arg: InputArguments) => Array<string>,
-    filter: (arg: InputArguments) => boolean
-  ): ParsedArguments {
-    if (this.args.inputs) {
-      let argArray = Object.keys(this.args.inputs).filter((arg) =>
-        filter(this.args.inputs![arg])
-      );
-
-      return argArray.reduce((acc: ParsedArguments, arg) => {
-        let argOptions = this.args.inputs![arg];
-        let array = splitFunction(messageString, argOptions);
-
-        acc[arg] = this.getElementFromIndex(
-          array,
-          argOptions.index || 0,
-          argOptions
-        );
-
-        return acc;
-      }, {} as ParsedArguments);
-    } else return {};
   }
 
   removeAllMentions(string: string): string {
@@ -128,13 +87,13 @@ export class ArgumentParser extends Parser {
   }
 
   private parseInputs(string: string): ParsedArguments {
-    let genericArgs = this.parseInputsWithSplit(
+    const genericArgs = this.parseInputsWithSplit(
       string,
       (string) => string.trim().split(/\s+/),
       (arg) => !arg.splitOn
     );
 
-    let splitOnArgs = this.parseInputsWithSplit(
+    const splitOnArgs = this.parseInputsWithSplit(
       string,
       (string, arg) =>
         (string + " ").split(
@@ -143,15 +102,68 @@ export class ArgumentParser extends Parser {
       (arg) => !!arg.splitOn
     );
 
-    let regexArgs = this.parseInputsWithSplit(
+    const regexArgs = this.parseInputsWithSplit(
       string,
       (string, arg) => (string.match(arg.regex!) || []) as Array<string>,
       (arg) => !!arg.regex
     );
 
-    let customArgs = this.parseCustomInputs(string);
+    const customArgs = this.parseCustomInputs(string);
 
     return { ...genericArgs, ...splitOnArgs, ...regexArgs, ...customArgs };
+  }
+
+  private parseInputsWithSplit(
+    messageString: string,
+    splitFunction: (string: string, arg: InputArguments) => Array<string>,
+    filter: (arg: InputArguments) => boolean
+  ): ParsedArguments {
+    if (this.args.inputs) {
+      const argArray = Object.keys(this.args.inputs).filter((arg) =>
+        filter(this.args.inputs![arg])
+      );
+
+      return argArray.reduce((acc: ParsedArguments, arg) => {
+        const argOptions = this.args.inputs![arg];
+
+        const string = argOptions.preprocessor
+          ? argOptions.preprocessor(messageString)
+          : messageString;
+
+        const array = splitFunction(string, argOptions);
+
+        acc[arg] = this.getElementFromIndex(
+          array,
+          argOptions.index || 0,
+          argOptions
+        );
+
+        return acc;
+      }, {} as ParsedArguments);
+    } else return {};
+  }
+
+  private parseCustomInputs(messageString: string): ParsedArguments {
+    if (this.args.inputs) {
+      const parsedArguments = Object.keys(this.args.inputs!)
+        .filter((arg) => !!this.args.inputs![arg].custom)
+        .reduce((acc, arg) => {
+          const argOptions = this.args.inputs![arg];
+
+          const string = argOptions.preprocessor
+            ? argOptions.preprocessor(messageString)
+            : messageString;
+
+          if (argOptions.custom) {
+            acc[arg] = isCustomParser(argOptions.custom)
+              ? argOptions.custom.parse(string)
+              : argOptions.custom(string);
+          }
+          return acc;
+        }, {} as ParsedArguments);
+
+      return parsedArguments;
+    } else return {};
   }
 }
 

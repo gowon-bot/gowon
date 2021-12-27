@@ -78,26 +78,23 @@ export default class AlbumTopTracks extends MirrorballBaseCommand<
         LinkGenerator.libraryAlbumPage(username, album.artist.name, album.name)
       );
 
-    const simpleScrollingEmbed = new SimpleScrollingEmbed(
-      this.message,
-      embed,
-      {
-        pageSize: 15,
-        items: topTracks,
+    const simpleScrollingEmbed = new SimpleScrollingEmbed(this.message, embed, {
+      pageSize: 15,
+      items: topTracks,
 
-        pageRenderer(tracks) {
-          return tracks
-            .map(
-              (track) =>
-                `${displayNumber(
-                  track.playcount,
-                  "play"
-                )} - ${track.name.strong()}`
-            )
-            .join("\n");
-        },
+      pageRenderer(tracks) {
+        return tracks
+          .map(
+            (track) =>
+              `${displayNumber(
+                track.playcount,
+                "play"
+              )} - ${track.name.strong()}`
+          )
+          .join("\n");
       },
-      {
+
+      overrides: {
         itemName: "track",
         embedDescription:
           `${displayNumber(totalScrobbles, "total scrobble")}, ${displayNumber(
@@ -107,8 +104,8 @@ export default class AlbumTopTracks extends MirrorballBaseCommand<
             average.toFixed(2),
             "average scrobble"
           )} per track`.italic() + "\n",
-      }
-    );
+      },
+    });
 
     simpleScrollingEmbed.send();
   }

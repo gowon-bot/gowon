@@ -78,26 +78,23 @@ export default class ArtistTopTracks extends MirrorballBaseCommand<
     const totalScrobbles = topTracks.reduce((sum, t) => sum + t.playcount, 0);
     const average = totalScrobbles / topTracks.length;
 
-    const simpleScrollingEmbed = new SimpleScrollingEmbed(
-      this.message,
-      embed,
-      {
-        pageSize: 15,
-        items: topTracks,
+    const simpleScrollingEmbed = new SimpleScrollingEmbed(this.message, embed, {
+      pageSize: 15,
+      items: topTracks,
 
-        pageRenderer(tracks) {
-          return tracks
-            .map(
-              (track) =>
-                `${displayNumber(
-                  track.playcount,
-                  "play"
-                )} - ${track.name.strong()}`
-            )
-            .join("\n");
-        },
+      pageRenderer(tracks) {
+        return tracks
+          .map(
+            (track) =>
+              `${displayNumber(
+                track.playcount,
+                "play"
+              )} - ${track.name.strong()}`
+          )
+          .join("\n");
       },
-      {
+
+      overrides: {
         itemName: "track",
         embedDescription:
           `${displayNumber(totalScrobbles, "total scrobble")}, ${displayNumber(
@@ -107,8 +104,8 @@ export default class ArtistTopTracks extends MirrorballBaseCommand<
             average.toFixed(2),
             "average scrobble"
           )} per track`.italic() + "\n",
-      }
-    );
+      },
+    });
 
     simpleScrollingEmbed.send();
   }

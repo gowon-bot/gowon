@@ -60,23 +60,17 @@ export default class SearchAlbum extends SearchCommand {
       return;
     }
 
-    const scrollingEmbed = new SimpleScrollingEmbed(
-      this.message,
-      embed,
-      {
-        items: filtered,
-        pageSize: 15,
-        pageRenderer(items) {
-          return `Albums matching ${keywords.code()}
+    const scrollingEmbed = new SimpleScrollingEmbed(this.message, embed, {
+      items: filtered,
+      pageSize: 15,
+      pageRenderer(items) {
+        return `Albums matching ${keywords.code()}
 \`\`\`\n${items
-            .map((l) => `${l.rank}. ${l.artist.name} - ${l.name}`)
-            .join("\n")}\`\`\``;
-        },
+          .map((l) => `${l.rank}. ${l.artist.name} - ${l.name}`)
+          .join("\n")}\`\`\``;
       },
-      {
-        itemName: "result",
-      }
-    );
+      overrides: { itemName: "result" },
+    });
 
     scrollingEmbed.send();
   }

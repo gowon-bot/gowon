@@ -64,26 +64,22 @@ export class Tag extends CrownsChildCommand<typeof args> {
       } top crowns for the following genres: ${genres.join(", ")}`.italic() +
       "\n\n";
 
-    const scrollingEmbed = new SimpleScrollingEmbed(
-      this.message,
-      embed,
-      {
-        items: filteredCrowns,
-        pageSize: 15,
-        pageRenderer(crowns, { offset }) {
-          return (
-            description +
-            displayNumberedList(
-              crowns.map(
-                (c) => `${c.artistName} - **${displayNumber(c.plays)}**`
-              ),
-              offset
-            )
-          );
-        },
+    const scrollingEmbed = new SimpleScrollingEmbed(this.message, embed, {
+      items: filteredCrowns,
+      pageSize: 15,
+      pageRenderer(crowns, { offset }) {
+        return (
+          description +
+          displayNumberedList(
+            crowns.map(
+              (c) => `${c.artistName} - **${displayNumber(c.plays)}**`
+            ),
+            offset
+          )
+        );
       },
-      { itemName: "crown" }
-    );
+      overrides: { itemName: "crown" },
+    });
 
     scrollingEmbed.send();
   }

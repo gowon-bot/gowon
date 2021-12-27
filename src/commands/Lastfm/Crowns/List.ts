@@ -51,31 +51,27 @@ export class List extends CrownsChildCommand<typeof args> {
       .setAuthor(this.generateEmbedAuthor("Crowns"))
       .setTitle(`${perspective.upper.possessive} crowns in ${this.guild.name}`);
 
-    const scrollingEmbed = new SimpleScrollingEmbed(
-      this.message,
-      embed,
-      {
-        pageSize: 15,
-        items: crowns,
-        pageRenderer(crownsPage, { offset }) {
-          return displayNumberedList(
-            crownsPage.map(
-              (c) =>
-                `${c.artistName} - ${displayNumber(c.plays, "play").strong()}`
-            ),
-            offset
-          );
-        },
+    const scrollingEmbed = new SimpleScrollingEmbed(this.message, embed, {
+      pageSize: 15,
+      items: crowns,
+      pageRenderer(crownsPage, { offset }) {
+        return displayNumberedList(
+          crownsPage.map(
+            (c) =>
+              `${c.artistName} - ${displayNumber(c.plays, "play").strong()}`
+          ),
+          offset
+        );
       },
-      {
+      overrides: {
         itemName: "crown",
         customFooter: (page: number, totalPages: number) =>
           `Page ${page} of ${totalPages} • ${displayNumber(
             crowns.length,
             "crown"
           )} • ranked ${getOrdinal(toInt(rank.rank))}`,
-      }
-    );
+      },
+    });
 
     scrollingEmbed.send();
   }

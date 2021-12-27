@@ -11,7 +11,10 @@ import {
   SpotifySearchParams,
   SpotifyService,
 } from "../../../services/Spotify/SpotifyService";
-import { LastFMBaseCommand } from "../LastFMBaseCommand";
+import {
+  LastFMBaseCommand,
+  LastFMBaseParentCommand,
+} from "../LastFMBaseCommand";
 
 export abstract class SpotifyBaseCommand<
   T extends Arguments = Arguments
@@ -50,4 +53,15 @@ export abstract class AuthenticatedSpotifyBaseCommand<
 
     return await super.getMentions(options);
   }
+}
+
+export abstract class SpotifyBaseParentCommand extends LastFMBaseParentCommand {
+  category = "spotify";
+}
+
+export abstract class SpotifyBaseChildCommand<
+  T extends Arguments = Arguments
+> extends AuthenticatedSpotifyBaseCommand<T> {
+  shouldBeIndexed = false;
+  abstract parentName: string;
 }

@@ -14,6 +14,9 @@ import {
   RawSpotifyArtist,
   RawSpotifyAlbum,
   RawBaseSpotifyEntity,
+  RawSpotifyItemCollection,
+  RawSpotifyPlaylist,
+  SpotifySnapshot,
 } from "./SpotifyService.types";
 import { SimpleMap } from "../../helpers/types";
 import {
@@ -29,6 +32,8 @@ import {
 } from "./converters/Search";
 import { SpotifyID, SpotifyURI } from "./converters/BaseConverter";
 import { SpotifyTrack } from "./converters/Track";
+import { SpotifyItemCollection } from "./converters/ItemCollection";
+import { SpotifyPlaylist } from "./converters/Playlist";
 
 export type SpotifyServiceContext = BaseServiceContext & {
   spotifyToken?: PersonalSpotifyToken;
@@ -37,7 +42,7 @@ export type SpotifyServiceContext = BaseServiceContext & {
 interface SpotifyRequestOptions {
   path: string;
   params?: SimpleMap;
-  method?: "POST" | "GET" | "PUT";
+  method?: "POST" | "GET" | "PUT" | "DELETE";
   useBody?: boolean;
   expectNoContent?: boolean;
 }
@@ -142,9 +147,9 @@ export class SpotifyService extends BaseSpotifyService {
 
     this.log(
       ctx,
-      `made API request to ${options.path} with params ${Logger.formatObject(
-        options.params
-      )}`
+      `made API request to ${options.method} ${
+        options.path
+      } with params ${Logger.formatObject(options.params)}`
     );
 
     const headers = await this.headers(ctx);
@@ -173,7 +178,9 @@ export class SpotifyService extends BaseSpotifyService {
       throw new SpotifyConnectionError(ctx.command.prefix);
     }
 
-    return response.status !== 204 ? ((await response.json()) as T) : undefined;
+    return response.status !== 204 && !options.expectNoContent
+      ? ((await response.json()) as T)
+      : undefined;
   }
 
   // Search
@@ -263,13 +270,64 @@ export class SpotifyService extends BaseSpotifyService {
     });
   }
 
-  // Library
-  async saveTrackToLibrary(ctx: SpotifyServiceContext, id: SpotifyID) {
+  // Playlists
+  async getPlaylists(
+    ctx: SpotifyServiceContext
+  ): Promise<SpotifyItemCollection<"playlist", SpotifyPlaylist>> {
+    this.ensureAuthenticated(ctx);
+
+    const response = await this.request<
+      RawSpotifyItemCollection<RawSpotifyPlaylist>
+    >(ctx, {
+      path: "me/playlists",
+      params: { limit: 50 },
+    });
+
+    return new SpotifyItemCollection<"playlist", SpotifyPlaylist>(
+      response,
+      SpotifyPlaylist
+    );
+  }
+
+  async addToPlaylist(
+    ctx: SpotifyServiceContext,
+    playlistID: string,
+    uris: RawSpotifyURI<"track">[]
+  ): Promise<SpotifySnapshot> {
     this.ensureAuthenticated(ctx);
 
     return await this.request(ctx, {
+      path: `playlists/${playlistID}/tracks`,
+      method: "POST",
+      params: { uris },
+      useBody: true,
+    });
+  }
+
+  // Librarys
+  async saveTrackToLibrary(
+    ctx: SpotifyServiceContext,
+    id: SpotifyID
+  ): Promise<void> {
+    this.ensureAuthenticated(ctx);
+
+    await this.request(ctx, {
       path: "me/tracks",
       method: "PUT",
+      params: { ids: [id] },
+      expectNoContent: true,
+    });
+  }
+
+  async removeTrackFromLibrary(
+    ctx: SpotifyServiceContext,
+    id: SpotifyID
+  ): Promise<void> {
+    this.ensureAuthenticated(ctx);
+
+    await this.request(ctx, {
+      path: "me/tracks",
+      method: "DELETE",
       params: { ids: [id] },
       expectNoContent: true,
     });

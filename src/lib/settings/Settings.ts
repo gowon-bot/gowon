@@ -10,6 +10,7 @@ export const Settings = {
   prefix: new GuildScopedSetting("prefix"),
   optedOut: new GuildMemberScopedSetting("opted_out"),
   reacts: new UserScopedSetting("reacts"),
+  defaultSpotifyPlaylist: new UserScopedSetting("default_spotify_playlist"),
 } as const;
 
 export type SettingsMap = {
