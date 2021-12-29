@@ -1,3 +1,4 @@
+import { asyncMap } from "../../../helpers";
 import { displayNumber } from "../../../lib/views/displays";
 import { CrownsChildCommand } from "./CrownsChildCommand";
 
@@ -22,13 +23,12 @@ export class TopCrowns extends CrownsChildCommand {
       .setTitle(`Top crowns in ${this.guild.name}`)
       .setDescription(
         (
-          await Promise.all(
-            crowns.map(
-              async (c, idx) =>
-                `${idx + 1}. ${c.artistName} (${displayNumber(
-                  c.plays
-                ).strong()}, ${await this.fetchUsername(c.user.discordID)})`
-            )
+          await asyncMap(
+            crowns,
+            async (c, idx) =>
+              `${idx + 1}. ${c.artistName} (${displayNumber(
+                c.plays
+              ).strong()}, ${await this.fetchUsername(c.user.discordID)})`
           )
         ).join("\n") +
           `\n\nThere are **${displayNumber(crownsCount, "** crown")} in ${

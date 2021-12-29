@@ -17,7 +17,7 @@ export class Per extends OverviewChildCommand {
       this.calculator.topTracks(),
     ]);
 
-    let [lpa, tpa, tpl] = await Promise.all([
+    const [lpa, tpa, tpl] = await Promise.all([
       this.calculator.albumsPerArtist(),
       this.calculator.tracksPerArtist(),
       this.calculator.tracksPerAlbum(),

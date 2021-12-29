@@ -9,6 +9,7 @@ import {
 } from "../../../lib/views/displays";
 import { LogicError } from "../../../errors";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
+import { asyncMap } from "../../../helpers";
 
 const args = {
   inputs: {
@@ -55,10 +56,9 @@ export default class ArtistAround extends LastFMBaseCommand<typeof args> {
     );
 
     const rank = (
-      await Promise.all(
-        topArtists.artists.map(
-          async (a) => await this.redirectsCache.getRedirect(a.name)
-        )
+      await asyncMap(
+        topArtists.artists,
+        async (a) => await this.redirectsCache.getRedirect(a.name)
       )
     ).findIndex((a) => a.toLowerCase() === artistName.toLowerCase());
 

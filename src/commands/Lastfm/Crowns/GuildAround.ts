@@ -3,6 +3,7 @@ import { Arguments } from "../../../lib/arguments/arguments";
 import { LogicError } from "../../../errors";
 import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { displayNumber } from "../../../lib/views/displays";
+import { asyncMap } from "../../../helpers";
 
 const args = {
   mentions: standardMentions,
@@ -52,15 +53,14 @@ export class GuildAround extends CrownsChildCommand {
       )
       .setDescription(
         `${(
-          await Promise.all(
-            guildAround.users.map(
-              async (u) =>
-                `${u.rank}. ${
-                  u.discordID === author?.discordID ? "**" : ""
-                }${await this.fetchUsername(u.discordID)}${
-                  u.discordID === author?.discordID ? "**" : ""
-                } with ${displayNumber(u.count, "crown")}`
-            )
+          await asyncMap(
+            guildAround.users,
+            async (u) =>
+              `${u.rank}. ${
+                u.discordID === author?.discordID ? "**" : ""
+              }${await this.fetchUsername(u.discordID)}${
+                u.discordID === author?.discordID ? "**" : ""
+              } with ${displayNumber(u.count, "crown")}`
           )
         ).join("\n")}
         

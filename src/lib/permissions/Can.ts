@@ -10,6 +10,7 @@ import { CommandRegistry } from "../command/CommandRegistry";
 import { BaseService, BaseServiceContext } from "../../services/BaseService";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { GowonService } from "../../services/GowonService";
+import { asyncMap } from "../../helpers";
 
 export enum CheckFailReason {
   disabled = "disabled",
@@ -146,13 +147,11 @@ export class Can extends BaseService<CanContext, MutableContext> {
     }
 
     const disabled = (
-      await Promise.all(
-        (command instanceof ChildCommand
+      await asyncMap(
+        command instanceof ChildCommand
           ? [command.id, ...(await this.getParentIDs(ctx, command))]
-          : [command.id]
-        ).map((id) => {
-          return ctx.adminService.isCommandDisabled(ctx, id);
-        })
+          : [command.id],
+        (id) => ctx.adminService.isCommandDisabled(ctx, id)
       )
     ).reduce((acc, c) => {
       if (acc) return true;

@@ -7,6 +7,7 @@ import { User as DiscordUser, Role } from "discord.js";
 import { User } from "../../../database/entity/User";
 import { CustomMention } from "../../../lib/arguments/mentions/CustomMention";
 import { RunAs } from "../../../lib/command/RunAs";
+import { asyncMap } from "../../../helpers";
 
 const args = {
   inputs: {
@@ -65,14 +66,15 @@ export abstract class PermissionsChildCommand extends AdminBaseChildCommand<
     const users = Array.from(userMentions.values());
     const roles = Array.from(roleMentions.values());
 
-    for (const role of await Promise.all(
-      roleIDs.map((id) => Permission.toDiscordRole(this.message, id))
+    for (const role of await asyncMap(roleIDs, (id) =>
+      Permission.toDiscordRole(this.message, id)
     )) {
       roles.push(role!);
     }
 
-    for (let user of await Promise.all(
-      userIDs.map((id) => User.toDiscordUser(this.guild, id)!)
+    for (const user of await asyncMap(
+      userIDs,
+      (id) => User.toDiscordUser(this.guild, id)!
     )) {
       users.push(user!);
     }

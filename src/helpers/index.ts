@@ -213,3 +213,25 @@ export class Stopwatch {
 export function isNumeric(value: string): boolean {
   return /^-?\d+$/.test(value);
 }
+
+export async function asyncMap<T, U>(
+  array: T[],
+  proc: (item: T, index: number) => Promise<U> | U
+): Promise<U[]> {
+  return await Promise.all(array.map((item, idx) => proc(item, idx)));
+}
+
+export async function asyncFilter<T>(
+  array: T[],
+  proc: (item: T) => Promise<boolean> | boolean
+): Promise<T[]> {
+  const fail = Symbol();
+
+  return (
+    await Promise.all(
+      array.map(async (item) =>
+        (await Promise.resolve(proc(item))) ? item : fail
+      )
+    )
+  ).filter((i) => i !== fail) as T[];
+}

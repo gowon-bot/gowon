@@ -4,6 +4,7 @@ import { Message } from "discord.js";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { toInt } from "../../../helpers/lastFM";
+import { asyncMap } from "../../../helpers";
 
 interface CheckedCrownsDisplay {
   [state: string]: Array<string>;
@@ -31,7 +32,7 @@ export class CheckMany extends CrownsChildCommand<typeof args> {
   async run(message: Message) {
     let artists = this.parsedArguments.artists;
 
-    let { requestable } = await this.parseMentions();
+    const { requestable } = await this.parseMentions();
 
     if (!artists) {
       artists = [
@@ -39,29 +40,25 @@ export class CheckMany extends CrownsChildCommand<typeof args> {
       ];
     }
 
-    let artistDetailsList = await Promise.all(
-      artists.map((artist) =>
-        this.lastFMService.artistInfo(this.ctx, {
-          artist,
-          username: requestable,
-        })
-      )
+    const artistDetailsList = await asyncMap(artists, (artist) =>
+      this.lastFMService.artistInfo(this.ctx, {
+        artist,
+        username: requestable,
+      })
     );
 
-    let crownChecks = artistDetailsList.map((ad) =>
+    const checkedCrowns = await asyncMap(artistDetailsList, (ad) =>
       this.crownsService.checkCrown(this.ctx, {
         artistName: ad.name,
         plays: toInt(ad.userPlaycount),
       })
     );
 
-    let checkedCrowns = await Promise.all(crownChecks);
-
     checkedCrowns.forEach((cc) =>
       this.crownsService.scribe.handleCheck(this.ctx, cc, message)
     );
 
-    let display = checkedCrowns.reduce((acc, cc, idx) => {
+    const display = checkedCrowns.reduce((acc, cc, idx) => {
       acc[cc.state] = acc[cc.state] ?? [];
 
       acc[cc.state].push(artistDetailsList[idx].name);
@@ -69,7 +66,7 @@ export class CheckMany extends CrownsChildCommand<typeof args> {
       return acc;
     }, {} as CheckedCrownsDisplay);
 
-    let embed = this.newEmbed()
+    const embed = this.newEmbed()
       .setTitle(`Crown checks for ${checkedCrowns.length} artists`)
       .setDescription(
         Object.keys(display)

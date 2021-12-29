@@ -41,7 +41,7 @@ export class SumTop extends OverviewChildCommand<typeof args> {
       this.calculator.userInfo(),
     ]);
 
-    let [sumtop, sumtoppct] = await Promise.all([
+    const [sumtop, sumtoppct] = await Promise.all([
       this.calculator.sumTop(top),
       this.calculator.sumTopPercent(top),
     ]);

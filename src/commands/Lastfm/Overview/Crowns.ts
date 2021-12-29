@@ -11,9 +11,9 @@ export class Crowns extends OverviewChildCommand {
   description = "Shows some stats about crowns";
 
   async run() {
-    let { perspective } = await this.parseMentions();
+    const { perspective } = await this.parseMentions();
 
-    let [crownRank, apc, spc] = await Promise.all([
+    const [crownRank, apc, spc] = await Promise.all([
       this.calculator.crownsRank(),
       this.calculator.artistsPerCrown(),
       this.calculator.scrobblesPerCrown(),

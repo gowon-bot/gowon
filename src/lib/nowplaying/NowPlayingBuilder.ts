@@ -1,5 +1,6 @@
 import { MessageEmbed } from "discord.js";
 import { sum } from "mathjs";
+import { asyncMap } from "../../helpers";
 import { UNUSED_CONFIG } from "../../services/dbservices/NowPlayingService";
 import {
   compoundComponentList,
@@ -89,7 +90,8 @@ export class NowPlayingBuilder {
   private async getPresentedComponents(
     resolvedRequirements: ResolvedRequirements
   ): Promise<PresentedComponent[]> {
-    const promises = this.components.map(
+    const promises = await asyncMap(
+      this.components,
       async (c) =>
         [
           (c as any).componentName,
@@ -97,9 +99,7 @@ export class NowPlayingBuilder {
         ] as [string, PresentedComponent | PresentedComponent[]]
     );
 
-    const initialComponentList = this.flattenPresentedComponents(
-      await Promise.all(promises)
-    );
+    const initialComponentList = this.flattenPresentedComponents(promises);
     const newComponentList = JSON.parse(
       JSON.stringify(initialComponentList)
     ) as [string, PresentedComponent][];

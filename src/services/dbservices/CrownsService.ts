@@ -30,6 +30,7 @@ import { GowonService } from "../GowonService";
 import { CrownsHistoryService } from "./CrownsHistoryService";
 import { SettingsService } from "../../lib/settings/SettingsManager";
 import { sqlLikeEscape } from "../../helpers/database";
+import { asyncMap } from "../../helpers";
 
 export enum CrownState {
   tie = "Tie",
@@ -100,9 +101,12 @@ export class CrownsService extends BaseService {
       `Checking crown for user ${author.id} and artist ${artistName}`
     );
 
-    let redirect = (await this.redirectsService.getRedirect(ctx, artistName))!;
+    const redirect = (await this.redirectsService.getRedirect(
+      ctx,
+      artistName
+    ))!;
 
-    let redirectedArtistName = redirect.to || redirect.from;
+    const redirectedArtistName = redirect.to || redirect.from;
 
     if (
       await this.gowonService.isArtistCrownBanned(guild!, redirectedArtistName)
@@ -122,7 +126,7 @@ export class CrownsService extends BaseService {
       crown.redirectedFrom = redirect.from;
     }
 
-    let oldCrown = Object.assign({}, crown);
+    const oldCrown = Object.assign({}, crown);
     oldCrown.user = Object.assign({}, crown?.user);
 
     if (!user) throw new RecordNotFoundError("user");
@@ -130,7 +134,7 @@ export class CrownsService extends BaseService {
     let crownState: CrownState;
 
     if (crown && !crown.deletedAt) {
-      let invalidCheck = await crown.invalid(message);
+      const invalidCheck = await crown.invalid(message);
 
       if (invalidCheck.failed) {
         return {
@@ -173,7 +177,7 @@ export class CrownsService extends BaseService {
         "Creating crown for " + redirectedArtistName + " in server " + guild.id!
       );
 
-      let newCrown = await this.handleNewCrown(
+      const newCrown = await this.handleNewCrown(
         ctx,
         {
           user,
@@ -410,12 +414,10 @@ export class CrownsService extends BaseService {
 
     let users = await Crown.guild(guild.id, limit, userIDs);
 
-    return await Promise.all(
-      users.map(async (rch) => ({
-        user: (await User.toDiscordUser(guild, rch.discordID))!,
-        numberOfCrowns: toInt(rch.count),
-      }))
-    );
+    return await asyncMap(users, async (rch) => ({
+      user: (await User.toDiscordUser(guild, rch.discordID))!,
+      numberOfCrowns: toInt(rch.count),
+    }));
   }
 
   async setInactiveRole(

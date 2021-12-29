@@ -4,6 +4,7 @@ import { CrownEventString } from "../../../services/dbservices/CrownsHistoryServ
 import { LogicError } from "../../../errors";
 import { CrownEvent } from "../../../database/entity/meta/CrownEvent";
 import { displayDate } from "../../../lib/views/displays";
+import { asyncMap } from "../../../helpers";
 
 const args = {
   inputs: {
@@ -61,9 +62,7 @@ export class History extends CrownsChildCommand<typeof args> {
           `Crown history for ${crown.artistName}${crown.redirectDisplay()}`
         )
         .setDescription(
-          (await Promise.all(history.map(this.displayEvent.bind(this)))).join(
-            "\n"
-          )
+          (await asyncMap(history, this.displayEvent.bind(this))).join("\n")
         )
     );
   }

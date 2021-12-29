@@ -51,7 +51,11 @@ export function userHasRole(
 }
 
 export function cleanURL(url: string): string {
-  return url.replace(/\)/g, "%29").replace(/,/g, "%2C").replace(/_/g, "%5f");
+  return url
+    .replace(/\)/g, "%29")
+    .replace(/\(/g, "%28")
+    .replace(/,/g, "%2C")
+    .replace(/_/g, "%5f");
 }
 
 export type ReactionCollectorFilter = (

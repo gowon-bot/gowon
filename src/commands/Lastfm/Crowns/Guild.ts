@@ -4,6 +4,7 @@ import { Delegate } from "../../../lib/command/BaseCommand";
 import { GuildAround } from "./GuildAround";
 import { GuildAt } from "./GuildAt";
 import { displayNumber } from "../../../lib/views/displays";
+import { asyncMap } from "../../../helpers";
 
 const args = {
   inputs: {
@@ -50,14 +51,13 @@ export class Guild extends CrownsChildCommand<typeof args> {
           "** crown"
         )} in ${this.guild.name}\n\n` +
           (
-            await Promise.all(
-              holders.map(
-                async (h, idx) =>
-                  `${idx + 1}. ${await this.gowonClient.userDisplay(
-                    this.message,
-                    h.user
-                  )} with ${displayNumber(h.numberOfCrowns, "crown").strong()}`
-              )
+            await asyncMap(
+              holders,
+              async (h, idx) =>
+                `${idx + 1}. ${await this.gowonClient.userDisplay(
+                  this.message,
+                  h.user
+                )} with ${displayNumber(h.numberOfCrowns, "crown").strong()}`
             )
           ).join("\n")
       );

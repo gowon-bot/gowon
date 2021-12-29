@@ -5,6 +5,7 @@ import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { toInt } from "../../../helpers/lastFM";
 import { displayNumber } from "../../../lib/views/displays";
+import { asyncMap } from "../../../helpers";
 
 const args = {
   inputs: {
@@ -48,15 +49,14 @@ export class GuildAt extends CrownsChildCommand<typeof args> {
       )
       .setDescription(
         `${(
-          await Promise.all(
-            guildAt.users.map(
-              async (u) =>
-                `${u.rank}. ${
-                  u.discordID === highlighted?.discordID ? "**" : ""
-                }${await this.fetchUsername(u.discordID)}${
-                  u.discordID === highlighted?.discordID ? "**" : ""
-                } with ${displayNumber(u.count, "crown")}`
-            )
+          await asyncMap(
+            guildAt.users,
+            async (u) =>
+              `${u.rank}. ${
+                u.discordID === highlighted?.discordID ? "**" : ""
+              }${await this.fetchUsername(u.discordID)}${
+                u.discordID === highlighted?.discordID ? "**" : ""
+              } with ${displayNumber(u.count, "crown")}`
           )
         ).join("\n")}`
       );

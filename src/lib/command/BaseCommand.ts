@@ -227,19 +227,21 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     reverseLookup = { required: false },
     authentificationRequired,
     requireIndexed,
+    fromArguments: fromArgumentsOptions,
   }: {
     senderRequired?: boolean;
     usernameRequired?: boolean;
-    userArgumentName?: ArgumentName<ArgumentsType>;
-    inputArgumentName?: ArgumentName<ArgumentsType>;
-    lfmMentionArgumentName?: ArgumentName<ArgumentsType>;
-    idMentionArgumentName?: ArgumentName<ArgumentsType>;
+    userArgumentName?: ArgumentName<ArgumentsType> | string;
+    inputArgumentName?: ArgumentName<ArgumentsType> | string;
+    lfmMentionArgumentName?: ArgumentName<ArgumentsType> | string;
+    idMentionArgumentName?: ArgumentName<ArgumentsType> | string;
     asCode?: boolean;
     fetchDiscordUser?: boolean;
     fetchMirrorballUser?: boolean;
     reverseLookup?: { required?: boolean };
     authentificationRequired?: boolean;
     requireIndexed?: boolean;
+    fromArguments?: SimpleMap<any>;
   } = {}): Promise<{
     senderUsername: string;
     senderRequestable: Requestable;
@@ -258,12 +260,13 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     senderMirrorballUser?: MirrorballUser;
     mirrorballUser?: MirrorballUser;
   }> {
-    let user = this.parsedArguments[userArgumentName] as any as DiscordUser,
-      userID = this.parsedArguments[idMentionArgumentName] as any as string,
-      lfmUser = this.parsedArguments[lfmMentionArgumentName] as any as string,
-      discordUsername = (this.parsedArguments as any)[
-        "discordUsername"
-      ] as string;
+    const argumentsToUse =
+      fromArgumentsOptions || (this.parsedArguments as any);
+
+    let user = argumentsToUse[userArgumentName] as DiscordUser,
+      userID = argumentsToUse[idMentionArgumentName] as string,
+      lfmUsername = argumentsToUse[lfmMentionArgumentName] as string,
+      discordUsername = argumentsToUse["discordUsername"] as string;
 
     if (user && this.message.reference) {
       const reply = await this.message.fetchReference();
@@ -292,11 +295,7 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     let mentionedMirrorballUser: MirrorballUser | undefined;
 
     if (discordUsername) {
-      discordUser = (await this.guild.members.fetch()).find(
-        (member) =>
-          member.user.username.toLowerCase() === discordUsername ||
-          member.nickname?.toLowerCase() === discordUsername
-      )?.user;
+      discordUser = await this.getDiscordUserFromUsername(discordUsername);
     }
 
     try {
@@ -306,8 +305,8 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
       );
     } catch {}
 
-    if (lfmUser) {
-      mentionedUsername = lfmUser;
+    if (lfmUsername) {
+      mentionedUsername = lfmUsername;
     } else if (user?.id || userID || discordUser) {
       try {
         const mentionedUser = await this.usersService.getUser(
@@ -325,10 +324,8 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
       } catch {
         if (usernameRequired) throw new UsernameNotRegisteredError();
       }
-    } else if (inputArgumentName && this.parsedArguments[inputArgumentName]) {
-      mentionedUsername = this.parsedArguments[
-        inputArgumentName
-      ] as any as string;
+    } else if (inputArgumentName && argumentsToUse[inputArgumentName]) {
+      mentionedUsername = argumentsToUse[inputArgumentName] as string;
     }
 
     const perspective = this.usersService.perspective(
@@ -762,5 +759,19 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     try {
       this.message.channel.sendTyping();
     } catch {}
+  }
+
+  protected async getDiscordUserFromUsername(
+    username: string
+  ): Promise<DiscordUser | undefined> {
+    const members = await this.guild.members.fetch();
+
+    const member = members.find(
+      (m) =>
+        m.user.username.toLowerCase() === username ||
+        m.nickname?.toLowerCase() === username
+    );
+
+    return member?.user;
   }
 }

@@ -133,21 +133,20 @@ export class FriendsService extends BaseService {
 
   async isAlreadyFriends(
     ctx: BaseServiceContext,
-    authorUser: User,
-    username?: string,
-    user?: User
+    user: User,
+    friend: string | User
   ): Promise<boolean> {
     this.log(
       ctx,
-      `Checking if ${authorUser.discordID} is already friends with ${username}`
+      `Checking if ${user.discordID} is already friends with ${friend}`
     );
 
-    const friends = await Friend.find({ user: authorUser });
+    const friends = await Friend.find({ user });
 
-    return friends.some(
-      (f) =>
-        (username && f.friendUsername === username) ||
-        (user && f.friend?.id === user?.id)
+    return friends.some((f) =>
+      typeof friend === "string"
+        ? f.friendUsername === friend
+        : f.friend?.id === friend.id
     );
   }
 

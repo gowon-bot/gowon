@@ -27,11 +27,21 @@ export class UsersService extends BaseService {
   ): Promise<string> {
     this.log(ctx, `fetching username with discordID ${discordID}`);
 
-    let user = await User.findOne({ where: { discordID } });
+    const user = await User.findOne({ where: { discordID } });
 
     if (user && user.lastFMUsername) {
       return user.lastFMUsername;
     } else throw new UsernameNotRegisteredError();
+  }
+
+  async getUser(ctx: BaseServiceContext, discordID: string): Promise<User> {
+    this.log(ctx, `fetching user with discordID ${discordID}`);
+
+    const user = await User.findOne({ where: { discordID } });
+
+    if (!user) throw new RecordNotFoundError("user");
+
+    return user;
   }
 
   async getRequestable(
@@ -40,7 +50,7 @@ export class UsersService extends BaseService {
   ): Promise<Requestable> {
     this.log(ctx, `fetching requestable with discordID ${discordID}`);
 
-    let user = await User.findOne({ where: { discordID } });
+    const user = await User.findOne({ where: { discordID } });
 
     if (user && user.lastFMUsername) {
       return buildRequestable(user.lastFMUsername, user).requestable;
@@ -127,16 +137,6 @@ export class UsersService extends BaseService {
     mentioned?: DiscordUser
   ): Perspective {
     return Perspective.discordPerspective(author, mentioned);
-  }
-
-  async getUser(ctx: BaseServiceContext, discordID: string): Promise<User> {
-    this.log(ctx, `fetching user with discordID ${discordID}`);
-
-    let user = await User.findOne({ where: { discordID } });
-
-    if (!user) throw new RecordNotFoundError("user");
-
-    return user;
   }
 
   async countUsers(ctx: BaseServiceContext): Promise<number> {

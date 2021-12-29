@@ -1,3 +1,4 @@
+import { asyncMap } from "../../helpers";
 import { SimpleMap } from "../../helpers/types";
 import { displayNumber } from "../../lib/views/displays";
 import { BaseService, BaseServiceContext } from "../BaseService";
@@ -41,12 +42,10 @@ export class NicknameService extends BaseService<
       typeof users[0] === "string" ? users : users.map((u: any) => u.discordID);
 
     (
-      await Promise.all(
-        discordIDs.map(async (u) => ({
-          discordID: u,
-          info: await this.getNickname(ctx, u),
-        }))
-      )
+      await asyncMap(discordIDs, async (u) => ({
+        discordID: u,
+        info: await this.getNickname(ctx, u),
+      }))
     ).forEach((u) => {
       if (u.info.nickname)
         this.nicknameCache(ctx)[u.discordID] = u.info.nickname;
@@ -68,12 +67,10 @@ export class NicknameService extends BaseService<
       typeof users[0] === "string" ? users : users.map((u: any) => u.discordID);
 
     (
-      await Promise.all(
-        discordIDs.map(async (u) => ({
-          discordID: u,
-          username: await this.getUsername(ctx, u),
-        }))
-      )
+      await asyncMap(discordIDs, async (u) => ({
+        discordID: u,
+        username: await this.getUsername(ctx, u),
+      }))
     ).forEach((u) => {
       this.usernameCache(ctx)[u.discordID] = u.username;
     });

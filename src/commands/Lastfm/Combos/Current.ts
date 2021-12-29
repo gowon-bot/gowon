@@ -156,7 +156,7 @@ export class Current extends ComboChildCommand<typeof args> {
     combo: ComboType,
     entity: "artist" | "album" | "track"
   ): string {
-    return `**${ucFirst(entity)}**: ${displayNumber(combo[entity].plays)}${
+    return `${ucFirst(entity).strong()}: ${displayNumber(combo[entity].plays)}${
       combo[entity].plays >= 1000
         ? ` ${Emoji.gowonLitDance}`
         : combo[entity].plays >= 100

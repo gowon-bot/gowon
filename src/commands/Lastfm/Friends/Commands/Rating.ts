@@ -5,6 +5,7 @@ import { RatingResponse } from "../../Mirrorball/RateYourMusic/connectors";
 import { displayNumber, displayRating } from "../../../../lib/views/displays";
 import { LogicError } from "../../../../errors";
 import { mean } from "mathjs";
+import { asyncMap } from "../../../../helpers";
 
 const args = {
   inputs: {
@@ -60,23 +61,21 @@ export class Rating extends FriendsChildCommand<typeof args> {
       this.author.id,
     ];
 
-    const ratings = (await Promise.all(
-      friendIDs.map(async (friendID) => {
-        const response = await this.mirrorballService.query(this.ctx, query, {
-          user: { discordID: friendID },
-          album: { name: album, artist: { name: artist } },
-        });
+    const ratings = (await asyncMap(friendIDs, async (friendID) => {
+      const response = await this.mirrorballService.query(this.ctx, query, {
+        user: { discordID: friendID },
+        album: { name: album, artist: { name: artist } },
+      });
 
-        const friend = friends.find((f) => f.friend?.discordID === friendID);
+      const friend = friends.find((f) => f.friend?.discordID === friendID);
 
-        return [
-          friendID === this.author.id
-            ? senderUsername
-            : friend?.friend?.lastFMUsername!,
-          response,
-        ];
-      })
-    )) as [string, RatingResponse][];
+      return [
+        friendID === this.author.id
+          ? senderUsername
+          : friend?.friend?.lastFMUsername!,
+        response,
+      ];
+    })) as [string, RatingResponse][];
 
     const filteredRatings = ratings.filter((r) => r[1].ratings.ratings.length);
 
