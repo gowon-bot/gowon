@@ -14,7 +14,7 @@ export default class Usercount extends AdminBaseCommand {
 
     await this.send(
       this.newEmbed()
-        .setAuthor(...this.generateEmbedAuthor("User count"))
+        .setAuthor(this.generateEmbedAuthor("User count"))
         .setDescription(
           `There are ${displayNumber(
             usercount,

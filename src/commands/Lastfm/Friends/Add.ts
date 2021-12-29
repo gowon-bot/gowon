@@ -101,7 +101,7 @@ export class Add extends FriendsChildCommand<typeof args> {
     );
 
     const embed = this.newEmbed()
-      .setAuthor(...this.generateEmbedAuthor("Add friends"))
+      .setAuthor(this.generateEmbedAuthor("Add friends"))
       .setDescription(lineConsolidator.consolidate());
 
     await this.send(embed);

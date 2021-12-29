@@ -75,7 +75,7 @@ export default class Index extends MirrorballBaseCommand<
     );
 
     const embed = this.newEmbed()
-      .setAuthor(...this.generateEmbedAuthor("Indexing"))
+      .setAuthor(this.generateEmbedAuthor("Indexing"))
       .setDescription(
         "Indexing will delete all your data, and re-download it. Are you sure you want to full index?"
       )

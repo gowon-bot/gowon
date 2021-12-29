@@ -67,7 +67,7 @@ export default class LastScrobbledAlbum extends MirrorballBaseCommand<
 
     const embed = this.newEmbed()
       .setAuthor(
-        ...this.generateEmbedAuthor(
+        this.generateEmbedAuthor(
           (this.variationWasUsed("first") ? "First" : "Last") + " scrobbled"
         )
       )

@@ -153,7 +153,7 @@ export class Info extends CrownsChildCommand<typeof args> {
     );
 
     const embed = this.newEmbed()
-      .setAuthor(...this.generateEmbedAuthor("Crown info"))
+      .setAuthor(this.generateEmbedAuthor("Crown info"))
       .setTitle(`Who has ${artistName.strong()}?`)
       .setDescription(lineConsolidator.consolidate());
 

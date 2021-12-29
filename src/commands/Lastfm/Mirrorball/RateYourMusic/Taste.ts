@@ -92,7 +92,7 @@ export class Taste extends RateYourMusicIndexingChildCommand<
     }% match) found.`;
 
     const embed = this.newEmbed()
-      .setAuthor(...this.generateEmbedAuthor("Ratings taste comparison"))
+      .setAuthor(this.generateEmbedAuthor("Ratings taste comparison"))
       .setTitle(
         `Taste comparison for ${this.author.tag} and ${discordUser?.tag}`
       );

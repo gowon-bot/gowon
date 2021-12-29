@@ -82,7 +82,7 @@ ${filteredOut.map((f) => `- ${f}`).join("\n")}\`\`\``
       : "";
 
     const embed = this.newEmbed()
-      .setAuthor(...this.generateEmbedAuthor("Config set"))
+      .setAuthor(this.generateEmbedAuthor("Config set"))
       .setDescription(
         `${presetConfig ? `Using preset ${newConfig[0].code()}` : ""}
         ${filteredDisplay}

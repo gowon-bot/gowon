@@ -38,7 +38,7 @@ export class Kill extends CrownsChildCommand<typeof args> {
     }
 
     const embed = this.newEmbed()
-      .setAuthor(...this.generateEmbedAuthor("Kill crown"))
+      .setAuthor(this.generateEmbedAuthor("Kill crown"))
       .setDescription(
         `Are you sure you want to kill the crown for ${crown?.artistName.strong()}?`
       );
@@ -55,10 +55,7 @@ export class Kill extends CrownsChildCommand<typeof args> {
 
       await this.send(
         this.newEmbed()
-          .setAuthor(
-            this.message.member?.nickname || this.author.username,
-            this.author.avatarURL() || undefined
-          )
+          .setAuthor(this.generateEmbedAuthor("Kill crown"))
           .setDescription(
             `Successfully killed the crown for ${artist.strong()}`
           )

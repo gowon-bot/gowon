@@ -15,7 +15,7 @@ export class Help extends OverviewChildCommand<typeof args> {
 
   async run() {
     const embed = this.newEmbed().setAuthor(
-      ...this.generateEmbedAuthor("Overview help")
+      this.generateEmbedAuthor("Overview help")
     );
 
     embed.setDescription(

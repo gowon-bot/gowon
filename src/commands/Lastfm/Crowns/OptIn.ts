@@ -10,7 +10,7 @@ export class OptIn extends CrownsChildCommand {
 
   async run(message: Message) {
     const embed = this.newEmbed()
-      .setAuthor(...this.generateEmbedAuthor("Crowns opt-in"))
+      .setAuthor(this.generateEmbedAuthor("Crowns opt-in"))
       .setDescription(
         "Are you sure you want to opt back into the crowns game?"
       );

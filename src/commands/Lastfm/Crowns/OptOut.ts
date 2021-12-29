@@ -16,7 +16,7 @@ export class OptOut extends CrownsChildCommand {
 
   async run(message: Message) {
     const embed = this.newEmbed()
-      .setAuthor(...this.generateEmbedAuthor("Crown opt-out"))
+      .setAuthor(this.generateEmbedAuthor("Crown opt-out"))
       .setDescription(
         `Are you sure you want to opt out? This will delete all your crowns!`
       );

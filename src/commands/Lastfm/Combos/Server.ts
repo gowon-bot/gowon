@@ -55,7 +55,7 @@ export class ServerCombos extends ComboChildCommand<typeof args> {
     }
 
     const embed = this.newEmbed().setAuthor(
-      ...this.generateEmbedAuthor(
+      this.generateEmbedAuthor(
         `${this.guild.name}'s top ${artistName ? `${artistName} ` : ""}combos`
       )
     );

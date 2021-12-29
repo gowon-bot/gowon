@@ -43,10 +43,10 @@ export function errorEmbed(
 ): MessageEmbed {
   return from
     .setColor(errorColour)
-    .setAuthor(
-      `Error | ${author.username}#${author.discriminator}`,
-      author.avatarURL() ?? undefined
-    )
+    .setAuthor({
+      name: `Error | ${author.username}#${author.discriminator}`,
+      url: author.avatarURL() ?? undefined,
+    })
     .setDescription(ucFirst(message))
     .setFooter(footer);
 }

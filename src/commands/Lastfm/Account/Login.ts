@@ -41,7 +41,7 @@ export default class Login extends MirrorballBaseCommand<
 
     await this.send(
       this.newEmbed()
-        .setAuthor(...this.generateEmbedAuthor("Login"))
+        .setAuthor(this.generateEmbedAuthor("Login"))
         .setDescription("Please check your DMs for a login link")
     );
 

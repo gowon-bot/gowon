@@ -9,7 +9,7 @@ export default class Vote extends BaseCommand {
   aliases = ["topgg"];
 
   async run() {
-    const embed = this.newEmbed().setAuthor(...this.generateEmbedAuthor("Vote"))
+    const embed = this.newEmbed().setAuthor(this.generateEmbedAuthor("Vote"))
       .setDescription(`You can vote for Gowon at https://top.gg/bot/720135602669879386/vote
       
 Thanks! ${Emoji.gowonheart}`);

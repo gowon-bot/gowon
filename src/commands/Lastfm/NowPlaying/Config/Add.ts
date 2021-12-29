@@ -51,7 +51,7 @@ export class Add extends NowPlayingConfigChildCommand<typeof args> {
     await this.configService.saveConfigForUser(this.ctx, senderUser!, config);
 
     const embed = this.newEmbed().setAuthor(
-      ...this.generateEmbedAuthor("Config add")
+      this.generateEmbedAuthor("Config add")
     );
 
     const consolidator = new LineConsolidator();

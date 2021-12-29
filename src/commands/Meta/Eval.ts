@@ -35,7 +35,7 @@ export default class Eval extends BaseCommand<typeof args> {
     const result = eval(this.parsedArguments.script!);
 
     const embed = this.newEmbed()
-      .setAuthor(...this.generateEmbedAuthor("Eval"))
+      .setAuthor(this.generateEmbedAuthor("Eval"))
       .setDescription(`\`\`\`\n${result}\n\`\`\``);
 
     await this.send(embed);

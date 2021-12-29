@@ -80,7 +80,7 @@ export default class Update extends MirrorballBaseCommand<
     });
 
     const embed = this.newEmbed()
-      .setAuthor(...this.generateEmbedAuthor("Update"))
+      .setAuthor(this.generateEmbedAuthor("Update"))
       .setDescription(`Updating user ${senderUsername.code()}`);
 
     const sentMessage = await this.send(embed);

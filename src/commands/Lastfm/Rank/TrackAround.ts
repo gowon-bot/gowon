@@ -71,7 +71,7 @@ export default class TrackAround extends LastFMBaseCommand<typeof args> {
         : rank + 6;
 
     const embed = this.newEmbed()
-      .setAuthor(...this.generateEmbedAuthor("Track around"))
+      .setAuthor(this.generateEmbedAuthor("Track around"))
       .setTitle(
         `Tracks around ${topTracks.tracks[rank].name} in ${perspective.possessive} library`
       )

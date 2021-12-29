@@ -1,4 +1,5 @@
 import {
+  EmbedAuthorData,
   Guild,
   Message,
   MessageEmbed,
@@ -686,13 +687,13 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     return gowonEmbed(this.message.member ?? undefined, embed);
   }
 
-  protected generateEmbedAuthor(title?: string): [string, string | undefined] {
-    return [
-      title
+  protected generateEmbedAuthor(title?: string): EmbedAuthorData {
+    return {
+      name: title
         ? `${this.message.author.tag} | ${title}`
         : `${this.message.author.tag}`,
-      this.message.author.avatarURL() || undefined,
-    ];
+      iconURL: this.message.author.avatarURL() || undefined,
+    };
   }
 
   protected async serverUserIDs({

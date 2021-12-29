@@ -62,7 +62,7 @@ export default class GiveRole extends BaseCommand<typeof args> {
     );
 
     const embed = this.newEmbed()
-      .setAuthor(...this.generateEmbedAuthor("Role management"))
+      .setAuthor(this.generateEmbedAuthor("Role management"))
       .setDescription(
         `Succesfully ${
           this.variationWasUsed("remove") ? "removed" : "added"

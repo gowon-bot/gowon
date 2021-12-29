@@ -119,12 +119,12 @@ export class Current extends ComboChildCommand<typeof args> {
     );
 
     const embed = this.newEmbed()
-      .setAuthor(
+      .setAuthor({
         ...this.generateEmbedAuthor(
           `${perspective.upper.possessive.replace(/`/g, "")} ongoing streaks`
         ),
-        LinkGenerator.userPage(username)
-      )
+        url: LinkGenerator.userPage(username),
+      })
       .setDescription(
         combo.hasAnyConsecutivePlays()
           ? lineConsolidator.consolidate()

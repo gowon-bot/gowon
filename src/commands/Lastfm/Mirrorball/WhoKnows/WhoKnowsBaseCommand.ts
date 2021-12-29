@@ -21,6 +21,9 @@ export abstract class WhoKnowsBaseCommand<
   P,
   A
 > extends MirrorballBaseCommand<R, P, A> {
+  private readonly gowonIconURL =
+    "https://cdn.discordapp.com/avatars/720135602669879386/a65b2e976bac5821073cacf4a8f8305a.png?size=1024";
+
   nicknameService = ServiceRegistry.get(NicknameService);
   whoKnowsService = ServiceRegistry.get(WhoKnowsService);
 
@@ -48,12 +51,10 @@ export abstract class WhoKnowsBaseCommand<
   }
 
   protected whoKnowsEmbed(): MessageEmbed {
-    return this.newEmbed().setAuthor(
-      this.isGlobal() ? "Gowon" : this.guild.name,
-      this.isGlobal()
-        ? "https://gowon.ca/assets/gowonnies.png"
-        : this.guild.iconURL() || ""
-    );
+    return this.newEmbed().setAuthor({
+      name: this.isGlobal() ? "Gowon" : this.guild.name,
+      url: this.isGlobal() ? this.gowonIconURL : this.guild.iconURL() || "",
+    });
   }
 
   protected displayUser(user: MirrorballUser): string {

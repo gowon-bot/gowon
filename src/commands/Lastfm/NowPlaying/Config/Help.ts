@@ -19,7 +19,7 @@ export class Help extends NowPlayingConfigChildCommand<typeof args> {
 
   async run() {
     const embed = this.newEmbed().setAuthor(
-      ...this.generateEmbedAuthor("Config help")
+      this.generateEmbedAuthor("Config help")
     );
 
     embed

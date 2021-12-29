@@ -80,7 +80,7 @@ export class ArtistRatings extends RateYourMusicIndexingChildCommand<
     }
 
     const embed = this.newEmbed()
-      .setAuthor(...this.generateEmbedAuthor("Artist ratings"))
+      .setAuthor(this.generateEmbedAuthor("Artist ratings"))
       .setTitle(
         `${perspective.upper.possessive} top rated ${artistName} albums`
       )

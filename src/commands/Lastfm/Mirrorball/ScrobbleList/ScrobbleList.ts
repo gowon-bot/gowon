@@ -87,7 +87,7 @@ export default class ScrobbleList extends MirrorballBaseCommand<
     }
 
     const embed = this.newEmbed()
-      .setAuthor(...this.generateEmbedAuthor("Scrobble list"))
+      .setAuthor(this.generateEmbedAuthor("Scrobble list"))
       .setTitle(
         `${
           perspective.upper.possessive

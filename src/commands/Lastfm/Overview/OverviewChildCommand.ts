@@ -99,7 +99,7 @@ export abstract class OverviewChildCommand<
     const { badge, colour, image } = await this.getAuthorDetails();
 
     return this.newEmbed()
-      .setAuthor(this.username + badge, image)
+      .setAuthor({ name: this.username + badge, iconURL: image })
       .setColor(colour as HexColorString)
       .setFooter(useFooter ? this.getFooter() : "");
   }

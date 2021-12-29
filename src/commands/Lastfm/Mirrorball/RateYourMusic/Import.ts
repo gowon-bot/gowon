@@ -77,7 +77,7 @@ export class ImportRatings extends RateYourMusicIndexingChildCommand<
     }
 
     const embed = this.newEmbed()
-      .setAuthor(...this.generateEmbedAuthor("RateYourMusic import"))
+      .setAuthor(this.generateEmbedAuthor("RateYourMusic import"))
       .setDescription(`Ratings processed succesfully!`);
 
     await this.send(Emoji.gowonRated, embed);

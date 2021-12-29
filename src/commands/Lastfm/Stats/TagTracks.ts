@@ -64,7 +64,7 @@ export default class TagTracks extends LastFMBaseCommand<typeof args> {
     const overlap = this.calculateOverlap(userTopTracks, tagTrackNames);
 
     const embed = this.newEmbed()
-      .setAuthor(this.author.username, this.author.avatarURL() || "")
+      .setAuthor(this.generateEmbedAuthor)
       .setTitle(
         `${perspective.upper.possessive} top ${tagTopTracks.meta.tag} tracks`
       )

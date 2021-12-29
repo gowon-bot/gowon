@@ -71,7 +71,7 @@ export default class AlbumAround extends LastFMBaseCommand<typeof args> {
         : rank + 6;
 
     const embed = this.newEmbed()
-      .setAuthor(...this.generateEmbedAuthor("Album around"))
+      .setAuthor(this.generateEmbedAuthor("Album around"))
       .setTitle(
         `Albums around ${topAlbums.albums[rank].name} in ${perspective.possessive} library`
       )

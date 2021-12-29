@@ -144,11 +144,11 @@ export default class FakeNowPlaying extends NowPlayingBaseCommand<typeof args> {
 
     let nowPlayingEmbed = this.nowPlayingEmbed(nowPlaying, senderUsername)
       .setFooter(lineConsolidator.consolidate())
-      .setAuthor(
-        `Track for ${senderUsername}`,
-        this.author.avatarURL() || undefined,
-        LinkGenerator.userPage(senderUsername)
-      );
+      .setAuthor({
+        name: `Track for ${senderUsername}`,
+        url: this.author.avatarURL() || undefined,
+        iconURL: LinkGenerator.userPage(senderUsername),
+      });
 
     let sentMessage = await this.send(nowPlayingEmbed);
 

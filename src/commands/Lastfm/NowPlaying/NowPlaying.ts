@@ -107,12 +107,16 @@ export default class NowPlaying extends NowPlayingBaseCommand {
 
     embed.setFooter(footer.join("\n"));
 
-    const author = embed.author?.name!.replace(
-      /(?<=(Now playing|Last scrobbled) for ).*/i,
-      (match) => reverse(match)
-    );
+    const author = (embed.author = {
+      ...embed.author,
+      name:
+        embed.author?.name!.replace(
+          /(?<=(Now playing|Last scrobbled) for ).*/i,
+          (match) => reverse(match)
+        ) || "",
+    });
 
-    embed.setAuthor(author!, undefined, embed.author?.url!);
+    embed.setAuthor(author);
 
     return embed;
   }

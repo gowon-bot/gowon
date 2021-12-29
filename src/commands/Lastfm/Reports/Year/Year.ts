@@ -105,7 +105,7 @@ export default class Year extends MirrorballBaseCommand<
     tagConsolidator.addTags(month.top.tags);
 
     const embed = this.newEmbed()
-      .setAuthor(...this.generateEmbedAuthor())
+      .setAuthor(this.generateEmbedAuthor())
       .setTitle(`${perspective.upper.possessive} year`).setDescription(`
       _${displayDate(sub(new Date(), { years: 1 }))} - ${displayDate(
       new Date()

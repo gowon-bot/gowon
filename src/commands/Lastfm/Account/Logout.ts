@@ -10,7 +10,7 @@ export default class Logout extends LastFMBaseCommand {
 
   async run() {
     const embed = this.newEmbed()
-      .setAuthor(...this.generateEmbedAuthor("Log out"))
+      .setAuthor(this.generateEmbedAuthor("Log out"))
       .setDescription(
         "Are you sure you want to log out? This will delete **all** your indexed data!"
       );

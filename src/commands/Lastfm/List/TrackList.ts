@@ -21,7 +21,7 @@ export default class TrackList extends ListCommand {
     });
 
     const messageEmbed = this.newEmbed()
-      .setAuthor(...this.generateEmbedAuthor("Top tracks"))
+      .setAuthor(this.generateEmbedAuthor("Top tracks"))
       .setTitle(
         `Top tracks for \`${username}\` ${
           this.timeRange?.humanized || this.humanizedPeriod

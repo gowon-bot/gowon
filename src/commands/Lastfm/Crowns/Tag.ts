@@ -55,7 +55,7 @@ export class Tag extends CrownsChildCommand<typeof args> {
     );
 
     const embed = this.newEmbed().setAuthor(
-      ...this.generateEmbedAuthor("Crowns by genre")
+      this.generateEmbedAuthor("Crowns by genre")
     );
 
     const description =

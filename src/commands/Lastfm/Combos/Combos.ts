@@ -52,7 +52,7 @@ export class Combos extends ComboChildCommand<typeof args> {
     }
 
     const embed = this.newEmbed().setAuthor(
-      ...this.generateEmbedAuthor(
+      this.generateEmbedAuthor(
         `${perspective.upper.possessive.replace(/`/g, "")} top ${
           artistName ? `${artistName} ` : ""
         }combos`

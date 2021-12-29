@@ -44,10 +44,7 @@ export class Rank extends CrownsChildCommand<typeof args> {
       );
 
     let embed = this.newEmbed()
-      .setAuthor(
-        perspective.upper.possessive + " crowns rank",
-        perspective.discordUser?.displayAvatarURL()
-      )
+      .setAuthor(this.generateEmbedAuthor("Crowns rank"))
       .setDescription(
         `${perspective.upper.possessive} ${displayNumber(
           rank.count,

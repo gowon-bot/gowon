@@ -104,7 +104,7 @@ export default class Taste extends TasteCommand<typeof args> {
           }% match) found.`;
 
     const embed = this.newEmbed()
-      .setAuthor(...this.generateEmbedAuthor("Taste"))
+      .setAuthor(this.generateEmbedAuthor("Taste"))
       .setTitle(
         `Comparison for ${sanitizeForDiscord(
           userOneUsername

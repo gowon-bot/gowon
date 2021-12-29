@@ -1,5 +1,4 @@
 import { JumbleChildCommand } from "./JumbleChildCommand";
-import { Message } from "discord.js";
 import { LogicError } from "../../../errors";
 import { abbreviateNumber, shuffle } from "../../../helpers";
 import { JumbledArtist, jumbleRedisKey } from "./JumbleParentCommand";
@@ -7,7 +6,6 @@ import { Arguments } from "../../../lib/arguments/arguments";
 import { Variation } from "../../../lib/command/BaseCommand";
 import { LineConsolidator } from "../../../lib/LineConsolidator";
 import { TagConsolidator } from "../../../lib/tags/TagConsolidator";
-import { RunAs } from "../../../lib/command/RunAs";
 import { displayNumber } from "../../../lib/views/displays";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { WordBlacklistService } from "../../../services/WordBlacklistService";
@@ -42,13 +40,13 @@ export class Me extends JumbleChildCommand<typeof args> {
   tagConsolidator = new TagConsolidator();
   wordBlacklistService = ServiceRegistry.get(WordBlacklistService);
 
-  async run(message: Message, runAs: RunAs) {
+  async run() {
     let alreadyJumbled = await this.sessionGetJSON<JumbledArtist>(
       jumbleRedisKey
     );
 
     if (alreadyJumbled?.jumbled) {
-      this.handleAlreadyJumbled(message, alreadyJumbled);
+      this.handleAlreadyJumbled(alreadyJumbled);
       return;
     }
 
@@ -58,7 +56,7 @@ export class Me extends JumbleChildCommand<typeof args> {
       throw new LogicError("Please enter a number between 5 and 1000!");
 
     let artist = await this.jumbleCalculator.getArtist(poolAmount, {
-      nonAscii: runAs.variationWasUsed("nonascii"),
+      nonAscii: this.variationWasUsed("nonascii"),
     });
 
     if (!artist) {
@@ -110,10 +108,7 @@ export class Me extends JumbleChildCommand<typeof args> {
     );
 
     let embed = this.newEmbed()
-      .setAuthor(
-        `Jumble for ${message.member?.nickname || message.author.username}`,
-        message.author.avatarURL() ?? ""
-      )
+      .setAuthor(this.generateEmbedAuthor("Jumble"))
       .setDescription(
         `**Who is this artist?**
       
@@ -129,16 +124,13 @@ export class Me extends JumbleChildCommand<typeof args> {
     await this.send(embed);
   }
 
-  private async handleAlreadyJumbled(message: Message, jumble: JumbledArtist) {
+  private async handleAlreadyJumbled(jumble: JumbledArtist) {
     jumble.jumbled = this.jumble(jumble.unjumbled);
 
     this.sessionSetJSON(jumbleRedisKey, jumble);
 
     let embed = this.newEmbed()
-      .setAuthor(
-        `Rejumble for ${message.member?.nickname || message.author.username}`,
-        message.author.avatarURL() ?? ""
-      )
+      .setAuthor(this.generateEmbedAuthor("Jumble"))
       .setDescription(
         `I've reshuffled the letters, now who is this artist?\n\n${jumble.jumbled.code()}`
       )

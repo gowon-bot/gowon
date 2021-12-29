@@ -53,7 +53,7 @@ export class Preview extends NowPlayingConfigChildCommand<typeof args> {
       .setTitle(sanitizeForDiscord(nowPlaying.name))
       .setURL(LinkGenerator.trackPage(nowPlaying.artist, nowPlaying.name))
       .setThumbnail(nowPlaying.images.get("large") || "")
-      .setAuthor(...this.generateEmbedAuthor(`Previewing ${option}`));
+      .setAuthor(this.generateEmbedAuthor(`Previewing ${option}`));
 
     embed = await nowPlayingBuilder.asEmbed(mockRequirements, embed);
 

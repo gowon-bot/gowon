@@ -54,7 +54,7 @@ export class React extends NowPlayingConfigChildCommand<typeof args> {
       ) as string[];
 
       const embed = this.newEmbed()
-        .setAuthor(...this.generateEmbedAuthor("Reacts"))
+        .setAuthor(this.generateEmbedAuthor("Reacts"))
         .setDescription(
           `Choose which reactions Gowon should react with when you \`${this.prefix}fm\`.\nSet them with \`${this.prefix}reacts emoji1 emoji2 ...emoji5\` and use \`${this.prefix}reacts clear\` to clear them!` +
             (reactions.length
@@ -70,7 +70,7 @@ export class React extends NowPlayingConfigChildCommand<typeof args> {
 
   private async handleClear() {
     const embed = this.newEmbed()
-      .setAuthor(...this.generateEmbedAuthor("Reacts"))
+      .setAuthor(this.generateEmbedAuthor("Reacts"))
       .setDescription("Are you sure you want to clear your reacts?");
 
     const confirmationEmbed = new ConfirmationEmbed(
@@ -127,7 +127,7 @@ export class React extends NowPlayingConfigChildCommand<typeof args> {
     );
 
     const embed = this.newEmbed()
-      .setAuthor(...this.generateEmbedAuthor("Reacts"))
+      .setAuthor(this.generateEmbedAuthor("Reacts"))
       .setDescription(lineConsolidator.consolidate());
 
     if (invalid.length) {

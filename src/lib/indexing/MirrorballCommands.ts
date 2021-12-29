@@ -105,7 +105,7 @@ export abstract class MirrorballBaseCommand<
     } else {
       message = this.newEmbed()
         .setAuthor(
-          ...this.generateEmbedAuthor(type === "index" ? "Indexing" : "Update")
+          this.generateEmbedAuthor(type === "index" ? "Indexing" : "Update")
         )
         .setDescription(
           `${perspective.upper.plusToHave} been ${
@@ -138,7 +138,7 @@ export abstract class MirrorballBaseCommand<
         this.author,
         `This command requires ${perspective.name} to be indexed to execute!` +
           (isAuthor ? " Would you like to index now?" : "")
-      ).setAuthor(...this.generateEmbedAuthor("Error"));
+      ).setAuthor(this.generateEmbedAuthor("Error"));
 
       if (isAuthor) {
         const confirmationEmbed = new ConfirmationEmbed(

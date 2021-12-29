@@ -83,7 +83,7 @@ export default class Week extends LastFMBaseCommand<typeof args> {
     tagConsolidator.addTags(week.top.tags);
 
     let embed = this.newEmbed()
-      .setAuthor(...this.generateEmbedAuthor())
+      .setAuthor(this.generateEmbedAuthor())
       .setTitle(`${perspective.upper.possessive} week`).setDescription(`
       _${displayDate(sub(new Date(), { weeks: 1 }))} - ${displayDate(
       new Date()

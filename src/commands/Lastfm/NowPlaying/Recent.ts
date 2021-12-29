@@ -39,12 +39,12 @@ export default class Recent extends LastFMBaseCommand<typeof args> {
     });
 
     const embed = this.newEmbed()
-      .setAuthor(
+      .setAuthor({
         ...this.generateEmbedAuthor(
           `${perspective.upper.possessive.replace(/`/g, "")} recent tracks`
         ),
-        LinkGenerator.userPage(requestableAsUsername(requestable))
-      )
+        url: LinkGenerator.userPage(requestableAsUsername(requestable)),
+      })
       .setDescription(
         (recentTracks.isNowPlaying
           ? `\`${amount! > 9 ? " " : ""}•\`. ` +

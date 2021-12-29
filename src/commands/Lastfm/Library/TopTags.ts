@@ -67,7 +67,7 @@ export default class TopTags extends LastFMBaseCommand<typeof args> {
     }>(this.ctx, query, { artists });
 
     const embed = this.newEmbed()
-      .setAuthor(...this.generateEmbedAuthor("Top tags"))
+      .setAuthor(this.generateEmbedAuthor("Top tags"))
       .setTitle(
         `${perspective.possessive} top tags ${
           timeRange?.humanized || humanizePeriod(timePeriod)

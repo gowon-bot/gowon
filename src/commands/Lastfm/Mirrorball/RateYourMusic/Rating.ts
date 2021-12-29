@@ -62,7 +62,7 @@ export class Rating extends RateYourMusicIndexingChildCommand<
     });
 
     const embed = this.newEmbed()
-      .setAuthor(...this.generateEmbedAuthor("Rating"))
+      .setAuthor(this.generateEmbedAuthor("Rating"))
       .setTitle(
         `${rateYourMusicAlbum.artistName} - ${rateYourMusicAlbum.title}`
       )

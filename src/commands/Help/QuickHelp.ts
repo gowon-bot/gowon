@@ -19,7 +19,7 @@ export default class QuickHelp extends BaseCommand<typeof args> {
 
   async run() {
     const embed = this.newEmbed().setAuthor(
-      ...this.generateEmbedAuthor("Quick help")
+      this.generateEmbedAuthor("Quick help")
     ).setDescription(`Welcome to Gowon! ${Emoji.gowonPeek}
       
 Use \`${this.prefix}login\` to login

@@ -77,7 +77,7 @@ export default class Pace extends LastFMBaseCommand<typeof args> {
     });
 
     const embed = this.newEmbed()
-      .setAuthor(...this.generateEmbedAuthor("Pace"))
+      .setAuthor(this.generateEmbedAuthor("Pace"))
       .setDescription(
         `At a rate of **${displayNumber(
           pace.scrobbleRate.toFixed(2),

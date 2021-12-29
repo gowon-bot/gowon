@@ -1,5 +1,4 @@
 import { JumbleChildCommand } from "./JumbleChildCommand";
-import { Message } from "discord.js";
 import { jumbleRedisKey, JumbledArtist } from "./JumbleParentCommand";
 import { LogicError } from "../../../errors";
 import { shuffle } from "../../../helpers";
@@ -10,16 +9,16 @@ export class Hint extends JumbleChildCommand {
   description = "Gives you a hint on the current jumble";
   usage = "";
 
-  async run(message: Message) {
-    let jumbledArtist = await this.sessionGetJSON<JumbledArtist>(
+  async run() {
+    const jumbledArtist = await this.sessionGetJSON<JumbledArtist>(
       jumbleRedisKey
     );
 
     if (!jumbledArtist.jumbled)
       throw new LogicError("you haven't jumbled an artist yet!");
 
-    let hint = this.generateHint(jumbledArtist);
-    let noNewHint =
+    const hint = this.generateHint(jumbledArtist);
+    const noNewHint =
       hint.split("").filter((c) => c === this.hintChar).length ===
       jumbledArtist.currenthint.split("").filter((c) => c === this.hintChar)
         .length;
@@ -28,11 +27,8 @@ export class Hint extends JumbleChildCommand {
 
     this.sessionSetJSON(jumbleRedisKey, jumbledArtist);
 
-    let embed = this.newEmbed()
-      .setAuthor(
-        `Hint for ${message.member?.nickname || message.author.username}`,
-        message.author.avatarURL() ?? ""
-      )
+    const embed = this.newEmbed()
+      .setAuthor(this.generateEmbedAuthor("Jumble hint"))
       .setDescription(
         (noNewHint ? `_You've reached the maximum amount of hints!_\n\n` : "") +
           `${jumbledArtist.jumbled.code()}
@@ -55,7 +51,7 @@ export class Hint extends JumbleChildCommand {
     acceptablePositions = shuffle(acceptablePositions);
 
     let generatedHint = jumble.currenthint;
-    let unjumbledLength = jumble.unjumbled
+    const unjumbledLength = jumble.unjumbled
       .split("")
       .filter((c) => c !== " ").length;
 

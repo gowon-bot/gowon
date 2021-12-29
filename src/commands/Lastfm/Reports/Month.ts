@@ -81,7 +81,7 @@ export default class Month extends LastFMBaseCommand<typeof args> {
     tagConsolidator.addTags(month.top.tags);
 
     const embed = this.newEmbed()
-      .setAuthor(...this.generateEmbedAuthor())
+      .setAuthor(this.generateEmbedAuthor())
       .setTitle(`${perspective.upper.possessive} month`).setDescription(`
       _${displayDate(sub(new Date(), { months: 1 }))} - ${displayDate(
       new Date()

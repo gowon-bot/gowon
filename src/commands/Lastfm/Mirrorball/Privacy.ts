@@ -42,7 +42,7 @@ export default class Privacy extends BaseCommand<typeof args> {
     });
 
     const embed = this.newEmbed()
-      .setAuthor(...this.generateEmbedAuthor("Privacy"))
+      .setAuthor(this.generateEmbedAuthor("Privacy"))
       .setFooter(this.privacyHelp);
 
     if (privacy) {

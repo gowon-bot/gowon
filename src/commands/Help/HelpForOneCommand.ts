@@ -1,5 +1,4 @@
 import { BaseCommand } from "../../lib/command/BaseCommand";
-import { Message } from "discord.js";
 import { Arguments } from "../../lib/arguments/arguments";
 import { AdminService } from "../../services/dbservices/AdminService";
 import { CommandNotFoundError } from "../../errors";
@@ -28,18 +27,18 @@ export default class HelpForOneCommand extends BaseCommand<typeof args> {
     adminService: this.adminService,
   });
 
-  async run(message: Message) {
-    let command = this.parsedArguments.command!;
+  async run() {
+    const command = this.parsedArguments.command!;
 
-    let embed = await this.helpForOneCommand(message, command);
+    const embed = await this.helpForOneCommand(command);
 
     if (!embed) return;
 
     await this.send(embed);
   }
 
-  private async helpForOneCommand(message: Message, input: string) {
-    let { command } = await this.commandRegistry.find(input, this.guild.id);
+  private async helpForOneCommand(input: string) {
+    const { command } = await this.commandRegistry.find(input, this.guild.id);
 
     if (!command) throw new CommandNotFoundError();
 
@@ -53,7 +52,7 @@ export default class HelpForOneCommand extends BaseCommand<typeof args> {
     }
 
     if (command instanceof ParentCommand)
-      return this.showHelpForParentCommand(message, command);
+      return this.showHelpForParentCommand(command);
 
     const commandName = command.friendlyNameWithParent || command.friendlyName;
 
@@ -112,19 +111,13 @@ export default class HelpForOneCommand extends BaseCommand<typeof args> {
     );
 
     let embed = this.newEmbed()
-      .setAuthor(
-        `Help with ${commandName} for ${message.author.username}`,
-        message.author.avatarURL() || ""
-      )
+      .setAuthor(this.generateEmbedAuthor(`Help with ${commandName}`))
       .setDescription(lineConsolidator.consolidate());
 
     return embed;
   }
 
-  private async showHelpForParentCommand(
-    message: Message,
-    command: ParentCommand
-  ) {
+  private async showHelpForParentCommand(command: ParentCommand) {
     let commands = await this.adminService.can.viewList(
       this.ctx,
       command.children.commands
@@ -161,10 +154,7 @@ export default class HelpForOneCommand extends BaseCommand<typeof args> {
     );
 
     return this.newEmbed()
-      .setAuthor(
-        `Help with ${command.friendlyName} for ${message.author.username}`,
-        message.author.avatarURL() || ""
-      )
+      .setAuthor(this.generateEmbedAuthor(`Help with ${command.friendlyName}`))
       .setDescription(lineConsolidator.consolidate());
   }
 

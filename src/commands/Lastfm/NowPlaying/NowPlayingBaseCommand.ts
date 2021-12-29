@@ -112,13 +112,13 @@ export abstract class NowPlayingBaseCommand<
     const links = LinkGenerator.generateTrackLinksForEmbed(nowPlaying);
 
     return this.newEmbed()
-      .setAuthor(
-        `${
+      .setAuthor({
+        name: `${
           nowPlaying.isNowPlaying ? "Now playing" : "Last scrobbled"
         } for ${username}`,
-        this.author.avatarURL() || undefined,
-        LinkGenerator.userPage(username)
-      )
+        iconURL: this.author.avatarURL() || undefined,
+        url: LinkGenerator.userPage(username),
+      })
       .setDescription(
         `by ${links.artist.strong(false)}` +
           (nowPlaying.album ? ` from ${links.album.italic(false)}` : "")

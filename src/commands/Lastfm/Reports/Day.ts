@@ -82,7 +82,7 @@ export default class Day extends LastFMBaseCommand<typeof args> {
     tagConsolidator.addTags(day.top.tags);
 
     const embed = this.newEmbed()
-      .setAuthor(...this.generateEmbedAuthor())
+      .setAuthor(this.generateEmbedAuthor())
       .setTitle(`${perspective.upper.possessive} day`).setDescription(`
       _${displayDate(sub(new Date(), { days: 1 }))} - ${displayDate(
       new Date()
