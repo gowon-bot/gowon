@@ -54,6 +54,7 @@ import { AnalyticsCollector } from "../../analytics/AnalyticsCollector";
 import { RollbarService } from "../../services/Rollbar/RollbarService";
 import { NowPlayingEmbedParsingService } from "../../services/NowPlayingEmbedParsingService";
 import { CommandAccess } from "./access/access";
+import chalk from "chalk";
 
 export interface Variation {
   name: string;
@@ -538,6 +539,8 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     content: MessageEmbed | string,
     withEmbed?: MessageEmbed
   ): Promise<Message> {
+    this.ctx.logger.log("Discord", chalk`{grey Sending message}`);
+
     this.addResponse(content);
 
     if (withEmbed) {
@@ -570,6 +573,8 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
       noUppercase?: boolean;
     } = {}
   ): Promise<Message> {
+    this.ctx.logger.log("Discord", chalk`{grey Replying}`);
+
     const settingsWithDefaults = Object.assign({ ping: false }, settings);
 
     content =
@@ -621,13 +626,9 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
   async traditionalReply(message: string): Promise<Message> {
     this.addResponse(message);
 
-    const end = this.analyticsCollector.metrics.discordLatency.startTimer();
-
-    const response = await this.message.channel.send(
+    const response = await this.send(
       `<@!${this.author.id}>, ` + message.trimStart()
     );
-
-    end();
 
     return response;
   }
