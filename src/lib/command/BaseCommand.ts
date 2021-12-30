@@ -654,7 +654,7 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     return gowonEmbed(this.message.member ?? undefined, embed);
   }
 
-  protected generateEmbedAuthor(title?: string): EmbedAuthorData {
+  generateEmbedAuthor(title?: string): EmbedAuthorData {
     return {
       name: title
         ? `${this.message.author.tag} | ${title}`

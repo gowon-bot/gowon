@@ -56,7 +56,7 @@ export default class Like extends AuthenticatedSpotifyBaseCommand<typeof args> {
 
     const embed = this.newEmbed()
       .setAuthor(
-        ...this.generateEmbedAuthor(`Spotify ${unlike ? "un" : ""}like song`)
+        this.generateEmbedAuthor(`Spotify ${unlike ? "un" : ""}like song`)
       )
       .setDescription(
         `Succesfully ${unlike ? "un" : ""}liked:

@@ -37,7 +37,7 @@ export default class Queue extends AuthenticatedSpotifyBaseCommand<
     await this.spotifyService.queue(this.ctx, track.uri.asString);
 
     const embed = this.newEmbed()
-      .setAuthor(...this.generateEmbedAuthor("Spotify queue song"))
+      .setAuthor(this.generateEmbedAuthor("Spotify queue song"))
       .setDescription(
         `Succesfully queued:
 ${track.name.italic()} by ${track.artists.primary.name.strong()}!`

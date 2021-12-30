@@ -23,7 +23,7 @@ export default class Login extends SpotifyBaseCommand<typeof args> {
   async run() {
     await this.send(
       this.newEmbed()
-        .setAuthor(...this.generateEmbedAuthor("Spotify login"))
+        .setAuthor(this.generateEmbedAuthor("Spotify login"))
         .setDescription(`Please check your DMs for a login link`)
     );
 
@@ -31,7 +31,7 @@ export default class Login extends SpotifyBaseCommand<typeof args> {
     const url = this.spotifyAuthenticationService.generateAuthURL(state);
 
     const embed = this.newEmbed()
-      .setAuthor(...this.generateEmbedAuthor("Login with Spotify"))
+      .setAuthor(this.generateEmbedAuthor("Login with Spotify"))
       .setDescription(
         `Click ${displayLink("here", url)} to authenticate with Spotify!`
       );
