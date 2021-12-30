@@ -347,7 +347,7 @@ export class SpotifyService extends BaseSpotifyService {
     else return "";
   }
 
-  private async ensureAuthenticated(ctx: SpotifyServiceContext) {
+  private ensureAuthenticated(ctx: SpotifyServiceContext) {
     if (!ctx.spotifyToken) {
       throw new NotAuthenticatedWithSpotifyError(ctx.command.prefix);
     }

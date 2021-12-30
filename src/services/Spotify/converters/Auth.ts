@@ -15,13 +15,7 @@ export class SpotifyToken extends BaseSpotifyConverter {
   code?: string;
   fetchedAt: Date;
 
-  constructor(
-    token: RawSpotifyToken & {
-      fetched_at?: number;
-      code?: string;
-      refresh_token?: string;
-    }
-  ) {
+  constructor(token: RawSpotifyToken & { fetched_at?: number; code?: string }) {
     super();
 
     this.accessToken = token.access_token;
