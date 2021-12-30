@@ -111,8 +111,6 @@ export class SpotifyPlaylistTagService extends BaseService {
       userID: ctx.command.message.author.id,
     });
 
-    console.log(response);
-
     if (!response) return undefined;
 
     // If it's not typed as an object, typeorm will think it's an array
