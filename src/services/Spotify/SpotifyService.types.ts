@@ -14,8 +14,9 @@ export type RawSpotifyURI<T extends SpotifyEntityName> =
 
 export interface RawSpotifyToken {
   access_token: string;
-  token_type: "bearer";
+  token_type: string;
   expires_in: number;
+  refresh_token?: string;
 }
 
 export type RawSpotifyItemCollection<T> = {
