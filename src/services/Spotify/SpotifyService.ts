@@ -4,12 +4,9 @@ import config from "../../../config.json";
 import { URLSearchParams } from "url";
 import { stringify } from "querystring";
 import {
-  PersonalSpotifyToken,
   RawSearchResponse,
-  SpotifyCode,
   SpotifyEntityName,
   RawSpotifyTrack,
-  SpotifyToken,
   RawSpotifyURI,
   RawSpotifyArtist,
   RawSpotifyAlbum,
@@ -34,9 +31,10 @@ import { SpotifyID, SpotifyURI } from "./converters/BaseConverter";
 import { SpotifyTrack } from "./converters/Track";
 import { SpotifyItemCollection } from "./converters/ItemCollection";
 import { SpotifyPlaylist } from "./converters/Playlist";
+import { SpotifyToken } from "./converters/Auth";
 
 export type SpotifyServiceContext = BaseServiceContext & {
-  spotifyToken?: PersonalSpotifyToken;
+  spotifyToken?: SpotifyToken;
 };
 
 interface SpotifyRequestOptions {
@@ -60,8 +58,7 @@ export function isKeywords(
 }
 
 export class SpotifyService extends BaseSpotifyService {
-  private _token?: SpotifyToken;
-  private tokenFetchedAt = new Date();
+  private token?: SpotifyToken;
 
   generateURI<T extends SpotifyEntityName>(
     entity: T,
@@ -70,27 +67,37 @@ export class SpotifyService extends BaseSpotifyService {
     return new SpotifyURI(`spotify:${entity}:${id}`);
   }
 
-  private async token(ctx: BaseServiceContext): Promise<string> {
-    if (this._token && this.tokenIsValid(this._token, this.tokenFetchedAt)) {
-      return this._token.access_token;
+  private async tokenString(ctx: BaseServiceContext): Promise<string> {
+    if (this.token && !this.token.isExpired()) {
+      return this.token.accessToken;
     } else {
       const token = await this.fetchToken(ctx);
-      this._token = token;
-      return token.access_token;
+      this.token = token;
+      return token.accessToken;
     }
   }
 
   async fetchToken(
     ctx: BaseServiceContext,
-    code?: SpotifyCode
+    options: { code?: string; refreshToken?: string } = {}
   ): Promise<SpotifyToken> {
-    this.log(ctx, "fetching new token");
+    this.log(
+      ctx,
+      options.refreshToken
+        ? "refreshing user token"
+        : options.code
+        ? "fetching new user token"
+        : "fetching new token"
+    );
     const params = new URLSearchParams();
 
-    if (code) {
+    if (options.refreshToken) {
+      params.append("grant_type", "refresh_token");
+      params.append("refresh_token", options.refreshToken);
+    } else if (options.code) {
       params.append("grant_type", "authorization_code");
       params.append("redirect_uri", this.generateRedirectURI());
-      params.append("code", code.code);
+      params.append("code", options.code);
     } else {
       params.append("grant_type", "client_credentials");
     }
@@ -103,28 +110,30 @@ export class SpotifyService extends BaseSpotifyService {
           config.spotifyClientID,
           config.spotifyClientSecret
         ),
+        "Content-Type": "application/x-www-form-urlencoded",
       },
     });
 
     const jsonResponse = await response.json();
 
-    if (code) {
-      const token = jsonResponse as PersonalSpotifyToken;
-
-      token.fetchedAt = new Date().getTime();
-    }
+    const token = new SpotifyToken({
+      // Refresh token must come before ...jsonResponse otherwise
+      // undefined will overwrite the real token
+      refresh_token: options.refreshToken,
+      code: options.code,
+      ...jsonResponse,
+    });
 
     if (jsonResponse.error) {
       throw new SpotifyConnectionError(ctx.command.prefix);
     }
 
-    this.tokenFetchedAt = new Date();
-
-    return jsonResponse as SpotifyToken;
+    return token;
   }
 
   private async headers(ctx: SpotifyServiceContext) {
-    const token = ctx.spotifyToken?.access_token || (await this.token(ctx));
+    const token =
+      ctx.spotifyToken?.accessToken || (await this.tokenString(ctx));
 
     return {
       Authorization: this.bearerAuthorization(token),
@@ -173,8 +182,6 @@ export class SpotifyService extends BaseSpotifyService {
     }
 
     if (`${response.status}`.startsWith("4")) {
-      console.log(await response.json());
-
       throw new SpotifyConnectionError(ctx.command.prefix);
     }
 

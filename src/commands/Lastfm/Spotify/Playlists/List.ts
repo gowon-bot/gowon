@@ -60,12 +60,9 @@ export class List extends PlaylistChildCommand<typeof args> {
         return displayNumberedList(
           items.map(
             (p) =>
-              `${p.tag?.emoji || "◻️"} ${p.name.strong()} (${displayNumber(
-                p.tracksCount,
-                "track"
-              )})${
-                defaultPlaylist?.playlistID === p.id ? " — **default**" : ""
-              }`
+              `${p.tag?.emoji || "◻️"} ${
+                defaultPlaylist?.playlistID === p.id ? "**default** — " : ""
+              }${p.name.strong()} (${displayNumber(p.tracksCount, "track")})`
           ),
           offset
         );

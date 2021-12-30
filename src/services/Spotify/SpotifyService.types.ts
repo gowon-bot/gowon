@@ -12,14 +12,11 @@ export type SpotifyEntityName =
 export type RawSpotifyURI<T extends SpotifyEntityName> =
   `spotify:${T}:${string}`;
 
-export interface SpotifyToken {
+export interface RawSpotifyToken {
   access_token: string;
-  token_type: "bearer";
+  token_type: string;
   expires_in: number;
-}
-
-export interface PersonalSpotifyToken extends SpotifyToken {
-  fetchedAt: number;
+  refresh_token?: string;
 }
 
 export type RawSpotifyItemCollection<T> = {

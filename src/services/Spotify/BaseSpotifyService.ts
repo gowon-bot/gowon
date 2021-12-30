@@ -1,7 +1,5 @@
 import { BaseService } from "../BaseService";
 import config from "../../../config.json";
-import { add, isBefore } from "date-fns";
-import { SpotifyToken } from "./SpotifyService.types";
 
 export class BaseSpotifyService extends BaseService {
   readonly tokenURL = "https://accounts.spotify.com/api/token";
@@ -10,13 +8,5 @@ export class BaseSpotifyService extends BaseService {
 
   protected generateRedirectURI(): string {
     return config.gowonAPIURL + "/api/spotifyWebhook";
-  }
-
-  protected tokenIsValid(token: SpotifyToken, fetchedAt: Date): boolean {
-    const dateExpires = add(fetchedAt, {
-      seconds: token.expires_in - 5,
-    });
-
-    return isBefore(new Date(), dateExpires);
   }
 }
