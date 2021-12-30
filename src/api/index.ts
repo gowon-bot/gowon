@@ -9,16 +9,18 @@ import bodyParser from "body-parser";
 import { CommandRegistry } from "../lib/command/CommandRegistry";
 import { ServiceRegistry } from "../services/ServicesRegistry";
 import { AnalyticsCollector } from "../analytics/AnalyticsCollector";
-import config from "../../config.json";
+import gowonConfig from "../../config.json";
 import { SpotifyCodeResponse } from "../services/Spotify/SpotifyService.types";
 import { SpotifyWebhookService } from "./webhooks/SpotifyWebhookService";
 
-export const gowonAPIPort = config.gowonAPIPort;
+export const gowonAPIPort = gowonConfig.gowonAPIPort;
 
 export class GraphQLAPI {
   usersService = ServiceRegistry.get(UsersService);
   commandRegistry = CommandRegistry.getInstance();
   analyticsCollector = ServiceRegistry.get(AnalyticsCollector);
+
+  private readonly spotifyRedirectRoute = "/spotify-login-success";
 
   async init() {
     const app = express();
@@ -67,7 +69,7 @@ export class GraphQLAPI {
 
       if (body.state) {
         SpotifyWebhookService.getInstance().handleRequest(body);
-        res.status(200).send();
+        res.redirect(gowonConfig.gowonWebsiteURL + this.spotifyRedirectRoute);
       } else {
         res.status(400).send("Please send a code in the valid format");
       }

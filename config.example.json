@@ -29,5 +29,6 @@
   "rollbarToken": "Get this from rollbar.com (for error reporting)",
 
   "gowonAPIPort": 3000,
-  "gowonAPIURL": "http://localhost:3000 <-- This is where Gowon should send webhooks"
+  "gowonAPIURL": "http://localhost:3000 <-- This is where Gowon should send webhooks",
+  "gowonWebsiteURL": "http://localhost:3001 <-- This is where the Gowon API should redirect users"
 }
