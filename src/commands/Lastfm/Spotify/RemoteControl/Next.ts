@@ -18,7 +18,7 @@ export default class Next extends AuthenticatedSpotifyBaseCommand<typeof args> {
 
     await this.send(
       this.newEmbed()
-        .setAuthor(...this.generateEmbedAuthor("Spotify skip"))
+        .setAuthor(this.generateEmbedAuthor("Spotify skip"))
         .setDescription("Successfully skipped!")
     );
   }

@@ -69,7 +69,7 @@ export class Add extends PlaylistChildCommand<typeof args> {
     ]);
 
     const embed = this.newEmbed()
-      .setAuthor(...this.generateEmbedAuthor("Add to playlist"))
+      .setAuthor(this.generateEmbedAuthor("Add to playlist"))
       .setDescription(
         `Successfully added ${track.name.italic()} to ${playlistTag.playlistName.strong()}`
       )

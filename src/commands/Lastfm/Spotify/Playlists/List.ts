@@ -13,6 +13,11 @@ const args = {
       shortnames: ["p"],
       longnames: ["private"],
     },
+    tagged: {
+      description: "Shows only your tagged playlists",
+      shortnames: ["t"],
+      longnames: ["tagged"],
+    },
   },
 } as const;
 
@@ -39,7 +44,7 @@ export class List extends PlaylistChildCommand<typeof args> {
     );
 
     const embed = this.newEmbed()
-      .setAuthor(...this.generateEmbedAuthor("Spotify playlists"))
+      .setAuthor(this.generateEmbedAuthor("Spotify playlists"))
       .setTitle(
         `Your public${
           this.parsedArguments.private ? " and private" : ""
@@ -47,9 +52,9 @@ export class List extends PlaylistChildCommand<typeof args> {
       );
 
     const simpleScrollingEmbed = new SimpleScrollingEmbed(this.message, embed, {
-      items: playlists.items.filter(
-        (p) => this.parsedArguments.private || p.isPublic
-      ),
+      items: playlists.items
+        .filter((p) => this.parsedArguments.private || p.isPublic)
+        .filter((p) => !this.parsedArguments.tagged || p.tag),
       pageSize: 15,
       pageRenderer(items, { offset }) {
         return displayNumberedList(
@@ -58,7 +63,9 @@ export class List extends PlaylistChildCommand<typeof args> {
               `${p.tag?.emoji || "◻️"} ${p.name.strong()} (${displayNumber(
                 p.tracksCount,
                 "track"
-              )})${defaultPlaylist?.playlistID === p.id ? " **default**" : ""}`
+              )})${
+                defaultPlaylist?.playlistID === p.id ? " — **default**" : ""
+              }`
           ),
           offset
         );

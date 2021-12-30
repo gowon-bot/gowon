@@ -53,7 +53,7 @@ export class SetDefault extends PlaylistChildCommand<typeof args> {
     );
 
     const embed = this.newEmbed()
-      .setAuthor(...this.generateEmbedAuthor("Spotify default playlist"))
+      .setAuthor(this.generateEmbedAuthor("Spotify default playlist"))
       .setDescription(
         `Succesfully set ${foundPlaylist.name.strong()} as your default playlist!`
       );
