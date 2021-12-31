@@ -311,6 +311,21 @@ export class SpotifyService extends BaseSpotifyService {
     });
   }
 
+  async removeFromPlaylist(
+    ctx: SpotifyServiceContext,
+    playlistID: string,
+    uris: RawSpotifyURI<"track">[]
+  ): Promise<SpotifySnapshot> {
+    this.ensureAuthenticated(ctx);
+
+    return await this.request(ctx, {
+      path: `playlists/${playlistID}/tracks`,
+      method: "DELETE",
+      params: { uris },
+      useBody: true,
+    });
+  }
+
   // Librarys
   async saveTrackToLibrary(
     ctx: SpotifyServiceContext,

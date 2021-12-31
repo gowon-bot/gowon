@@ -4,6 +4,7 @@ import {
   EmojiParser,
   removeEmojisFromString,
 } from "../../../../lib/arguments/custom/EmojiParser";
+import { Variation } from "../../../../lib/command/BaseCommand";
 import { PlaylistChildCommand } from "./PlaylistChildCommand";
 
 const args = {
@@ -31,9 +32,18 @@ export class Add extends PlaylistChildCommand<typeof args> {
 
   description = "Adds a song to one of your Spotify playlists";
 
+  variations: Variation[] = [
+    {
+      name: "remove",
+      description: "Removes a song from one of your Spotify playlists",
+      variation: ["remove"],
+    },
+  ];
+
   arguments: Arguments = args;
 
   async run() {
+    const remove = this.variationWasUsed("remove");
     const [emoji] = this.parsedArguments.playlistTag!;
 
     const { senderRequestable, dbUser } = await this.getMentions({
@@ -61,17 +71,29 @@ export class Add extends PlaylistChildCommand<typeof args> {
     );
 
     if (!track) {
-      throw new LogicError("Couldn't find a track to add to a playlist!");
+      throw new LogicError(
+        `Couldn't find a track to ${
+          remove ? "remove from" : "add to"
+        } a playlist!`
+      );
     }
 
-    await this.spotifyService.addToPlaylist(this.ctx, playlistTag.playlistID, [
-      track.uri.asString,
-    ]);
+    await this.spotifyService[remove ? "removeFromPlaylist" : "addToPlaylist"](
+      this.ctx,
+      playlistTag.playlistID,
+      [track.uri.asString]
+    );
 
     const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Add to playlist"))
+      .setAuthor(
+        this.generateEmbedAuthor(
+          `${remove ? "Remove from" : "Add to"} playlist`
+        )
+      )
       .setDescription(
-        `Successfully added ${track.name.italic()} to ${playlistTag.playlistName.strong()}`
+        `Successfully ${remove ? "removed" : "added"} ${track.name.italic()} ${
+          remove ? "from" : "to"
+        } ${playlistTag.playlistName.strong()}`
       )
       .setThumbnail(track.album.images.largest.url);
 
