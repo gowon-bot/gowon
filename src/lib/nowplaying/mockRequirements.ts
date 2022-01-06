@@ -175,6 +175,7 @@ export const mockRequirements = (
             rateYourMusicID: "",
             title: nowPlaying.album,
             artistName: nowPlaying.artist,
+            releaseYear: 2014,
           },
         },
       ],
