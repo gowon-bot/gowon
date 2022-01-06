@@ -78,6 +78,7 @@ export interface MirrorballRateYourMusicAlbum {
   rateYourMusicID: string;
   title: string;
   artistName: string;
+  releaseYear: number;
 }
 
 export interface MirrorballPageInfo {

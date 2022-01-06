@@ -107,6 +107,7 @@ export class ArtistRatingsConnector extends BaseConnector<
           rateYourMusicAlbum {
             title
             artistName
+            releaseYear
           }
         }
       }

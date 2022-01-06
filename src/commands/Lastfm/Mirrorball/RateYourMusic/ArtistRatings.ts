@@ -19,6 +19,13 @@ const args = {
     artist: { index: { start: 0 } },
   },
   mentions: standardMentions,
+  flags: {
+    yearly: {
+      description: "Shows your ratings by year",
+      shortnames: ["y"],
+      longnames: ["year", "yearly"],
+    },
+  },
 } as const;
 
 export class ArtistRatings extends RateYourMusicIndexingChildCommand<
@@ -64,7 +71,7 @@ export class ArtistRatings extends RateYourMusicIndexingChildCommand<
 
     const errors = this.parseErrors(response);
 
-    let artistName =
+    const artistName =
       response.artist?.artistName ||
       this.getArtistName(response.ratings.ratings) ||
       artist;
@@ -97,11 +104,18 @@ export class ArtistRatings extends RateYourMusicIndexingChildCommand<
       "rating"
     )}`;
 
+    const ratings = this.parsedArguments.yearly
+      ? response.ratings.ratings.sort(
+          (a, b) =>
+            b.rateYourMusicAlbum.releaseYear - a.rateYourMusicAlbum.releaseYear
+        )
+      : response.ratings.ratings;
+
     const simpleScrollingEmbed = new SimpleScrollingEmbed(
       this.message,
       embed,
       {
-        items: response.ratings.ratings,
+        items: ratings,
         pageSize: 10,
         pageRenderer: (items) =>
           header + "\n\n" + this.generateTable(items, artistName!),
@@ -119,11 +133,17 @@ export class ArtistRatings extends RateYourMusicIndexingChildCommand<
     return ratings
       .map((r, idx) => {
         return (
+          (this.parsedArguments.yearly &&
+          r.rateYourMusicAlbum.releaseYear !==
+            ratings[idx - 1]?.rateYourMusicAlbum?.releaseYear
+            ? `**${r.rateYourMusicAlbum.releaseYear}**\n`
+            : "") +
           displayRating(ratings[idx].rating) +
           // this is a special space
           " " +
           sanitizeForDiscord(r.rateYourMusicAlbum.title) +
-          (r.rateYourMusicAlbum.artistName !== artistName
+          (r.rateYourMusicAlbum.artistName.toLowerCase() !==
+          artistName.toLowerCase()
             ? ` — ${sanitizeForDiscord(
                 r.rateYourMusicAlbum.artistName
               )}`.italic()
