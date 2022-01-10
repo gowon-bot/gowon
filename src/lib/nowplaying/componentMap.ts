@@ -13,7 +13,7 @@ import { ArtistPlaysAndCrownComponent } from "./compoundComponents/ArtistPlaysAn
 import { RatingComponent } from "./components/RatingComponent";
 import { LovedComponent } from "./components/LovedComponent";
 import { ListenersComponent } from "./components/ListenersComponent";
-import { ArtistComboComponent } from "./components/ArtistComboComponent";
+// import { ArtistComboComponent } from "./components/ArtistComboComponent";
 import { ArtistPlaysInARowComponent } from "./compoundComponents/ArtistPlaysInARowComponent";
 import { UNUSED_CONFIG } from "../../services/dbservices/NowPlayingService";
 import { GlobalArtistRankComponent } from "./components/GlobalArtistRankComponent";
@@ -36,7 +36,6 @@ const componentList = [
   ArtistPlaysComponent,
   AlbumPlaysComponent,
   TrackPlaysComponent,
-  ArtistComboComponent,
   ScrobblesComponent,
   ArtistCrownComponent,
   RatingComponent,
