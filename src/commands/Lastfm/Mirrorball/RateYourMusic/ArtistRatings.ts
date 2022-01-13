@@ -25,6 +25,11 @@ const args = {
       shortnames: ["y"],
       longnames: ["year", "yearly"],
     },
+    ids: {
+      description: "Show IDs instead of ratings (for moderation)",
+      shortnames: ["ids", "i"],
+      longnames: ["ids"],
+    },
   },
 } as const;
 
@@ -109,6 +114,10 @@ export class ArtistRatings extends RateYourMusicIndexingChildCommand<
           (a, b) =>
             b.rateYourMusicAlbum.releaseYear - a.rateYourMusicAlbum.releaseYear
         )
+      : this.parsedArguments.ids
+      ? response.ratings.ratings.sort((a, b) =>
+          a.rateYourMusicAlbum.title.localeCompare(b.rateYourMusicAlbum.title)
+        )
       : response.ratings.ratings;
 
     const simpleScrollingEmbed = new SimpleScrollingEmbed(
@@ -138,9 +147,11 @@ export class ArtistRatings extends RateYourMusicIndexingChildCommand<
             ratings[idx - 1]?.rateYourMusicAlbum?.releaseYear
             ? `**${r.rateYourMusicAlbum.releaseYear}**\n`
             : "") +
-          displayRating(ratings[idx].rating) +
-          // this is a special space
-          " " +
+          (this.parsedArguments.ids
+            ? `[Album${r.rateYourMusicAlbum.rateYourMusicID}]`.code() + " "
+            : displayRating(r.rating) +
+              // this is a special space
+              " ") +
           sanitizeForDiscord(r.rateYourMusicAlbum.title) +
           (r.rateYourMusicAlbum.artistName.toLowerCase() !==
           artistName.toLowerCase()

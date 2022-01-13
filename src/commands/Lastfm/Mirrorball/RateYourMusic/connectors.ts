@@ -108,6 +108,7 @@ export class ArtistRatingsConnector extends BaseConnector<
             title
             artistName
             releaseYear
+            rateYourMusicID
           }
         }
       }

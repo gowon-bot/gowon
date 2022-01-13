@@ -7,6 +7,7 @@ import { ParentCommand } from "../../lib/command/ParentCommand";
 import { LineConsolidator } from "../../lib/LineConsolidator";
 import { Command } from "../../lib/command/Command";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
+import { Emoji } from "../../lib/Emoji";
 
 const args = {
   inputs: {
@@ -70,7 +71,9 @@ export default class HelpForOneCommand extends BaseCommand<typeof args> {
     const lineConsolidator = new LineConsolidator();
 
     lineConsolidator.addLines(
-      commandName.strong() + ":",
+      (command.access?.role ? `${Emoji[command.access.role]} ` : "") +
+        commandName.strong() +
+        ":",
       command.description.italic(false),
       "",
       {
@@ -118,7 +121,7 @@ export default class HelpForOneCommand extends BaseCommand<typeof args> {
   }
 
   private async showHelpForParentCommand(command: ParentCommand) {
-    let commands = await this.adminService.can.viewList(
+    const commands = await this.adminService.can.viewList(
       this.ctx,
       command.children.commands
     );
@@ -130,7 +133,9 @@ export default class HelpForOneCommand extends BaseCommand<typeof args> {
     const lineConsolidator = new LineConsolidator();
 
     lineConsolidator.addLines(
-      command.friendlyName.strong() + ":",
+      (command.access?.role ? `${Emoji[command.access.role]} ` : "") +
+        command.friendlyName.strong() +
+        ":",
       command.description.italic(),
       "",
       {

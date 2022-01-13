@@ -1,6 +1,7 @@
 import { Message } from "discord.js";
 import { Arguments } from "../arguments/arguments";
 import { GowonClient } from "../GowonClient";
+import { CommandAccess } from "./access/access";
 import { Variation } from "./BaseCommand";
 import { CommandGroup } from "./CommandGroup";
 import { ParentCommand } from "./ParentCommand";
@@ -19,6 +20,7 @@ export interface Command {
   shouldBeIndexed: boolean;
   devCommand?: boolean;
   customHelp?: { new (): Command };
+  access?: CommandAccess;
 
   name: string;
   friendlyName: string;

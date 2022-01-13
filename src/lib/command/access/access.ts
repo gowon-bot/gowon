@@ -6,7 +6,7 @@ import { CommandAccessRole, CommandAccessRoleName, getRoles } from "./roles";
 
 export class CommandAccess {
   private permissions?: CommandPermission[];
-  private role?: CommandAccessRoleName;
+  public role?: CommandAccessRoleName;
 
   constructor(options: CommandPermission[] | CommandAccessRoleName) {
     if (options instanceof Array) {
@@ -58,5 +58,11 @@ export class BetaAccess extends CommandAccess {
 
   override throw() {
     throw new CommandInBetaError();
+  }
+}
+
+export class ContentModerator extends CommandAccess {
+  constructor() {
+    super("contentmoderator");
   }
 }

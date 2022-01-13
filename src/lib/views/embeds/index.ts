@@ -45,7 +45,7 @@ export function errorEmbed(
     .setColor(errorColour)
     .setAuthor({
       name: `Error | ${author.username}#${author.discriminator}`,
-      url: author.avatarURL() ?? undefined,
+      iconURL: author.avatarURL() ?? undefined,
     })
     .setDescription(ucFirst(message))
     .setFooter(footer);
