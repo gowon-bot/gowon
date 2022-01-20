@@ -9,4 +9,4 @@ jobs:
       - run:
           name: Deploy
           command: |
-            docker build -t jivison/gowon
+            ssh root@$GOWON_HOST_IP "/bin/bash ./deploy.sh"
