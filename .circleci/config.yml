@@ -9,4 +9,4 @@ jobs:
       - run:
           name: Deploy
           command: |
-            ssh -o StrictHostKeyChecking=no root@$GOWON_HOST_IP "cd ./gowon && /bin/bash gowon/deploy.sh"
+            ssh -o StrictHostKeyChecking=no root@$GOWON_HOST_IP "cd ./gowon && /bin/bash ./deploy.sh"
