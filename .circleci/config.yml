@@ -1,0 +1,12 @@
+version: 2
+
+jobs:
+  build:
+    docker:
+      - image: cimg/base:2020.01
+
+    steps:
+      - run:
+          name: Deploy
+          command: |
+            docker build -t jivison/gowon
