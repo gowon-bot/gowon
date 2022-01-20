@@ -49,7 +49,7 @@ export abstract class LinkGenerator {
   // https://www.last.fm/music/TWICE/+listeners/you-know
   static listenersYouKnow(artist: string): string {
     return (
-      this.baseURL + "/music/" + this.encode(artist) + "/+listeners/you-know"
+      this.baseURL + "music/" + this.encode(artist) + "/+listeners/you-know"
     );
   }
 
@@ -57,7 +57,7 @@ export abstract class LinkGenerator {
   static libraryArtistPage(username: string, artist: string): string {
     return (
       this.baseURL +
-      "/user/" +
+      "user/" +
       this.encode(username) +
       "/library/music/" +
       this.encode(artist)
@@ -68,7 +68,7 @@ export abstract class LinkGenerator {
   static libraryArtistTopAlbums(username: string, artist: string): string {
     return (
       this.baseURL +
-      "/user/" +
+      "user/" +
       this.encode(username) +
       "/library/music/" +
       this.encode(artist) +
@@ -80,7 +80,7 @@ export abstract class LinkGenerator {
   static libraryArtistTopTracks(username: string, artist: string): string {
     return (
       this.baseURL +
-      "/user/" +
+      "user/" +
       this.encode(username) +
       "/library/music/" +
       this.encode(artist) +
@@ -96,7 +96,7 @@ export abstract class LinkGenerator {
   ): string {
     return (
       this.baseURL +
-      "/user/" +
+      "user/" +
       this.encode(username) +
       "/library/music/" +
       this.encode(artist) +
@@ -113,7 +113,7 @@ export abstract class LinkGenerator {
   ): string {
     return (
       this.baseURL +
-      "/user/" +
+      "user/" +
       this.encode(username) +
       "/library/music/" +
       this.encode(artist) +
@@ -136,7 +136,7 @@ export abstract class LinkGenerator {
 
   // https://www.last.fm/api/auth?api_key=xxxxxxxxxxxxx&token=xxxxxxx
   static authURL(apiKey: string, token: string) {
-    return this.baseURL + "/api/auth?api_key=" + apiKey + "&token=" + token;
+    return this.baseURL + "api/auth?api_key=" + apiKey + "&token=" + token;
   }
 
   static generateTrackLinks(track: RecentTrack): TrackLinks {
