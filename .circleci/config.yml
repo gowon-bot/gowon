@@ -1,7 +1,6 @@
 version: 2
-
 jobs:
-  build:
+  deploy:
     docker:
       - image: cimg/base:2020.01
 
@@ -10,3 +9,14 @@ jobs:
           name: Deploy
           command: |
             ssh -o StrictHostKeyChecking=no root@$GOWON_HOST_IP "cd ./gowon && /bin/bash ./deploy.sh"
+
+workflows:
+  version: 2
+  deploy:
+    jobs:
+      - hold:
+          type: approval
+
+      - deploy:
+          reqiures:
+            - hold
