@@ -63,7 +63,7 @@ ${matrix
             : this.runAs.variationWasUsed("pin")
             ? ""
             : "g"
-        } 🏓 *(I'm containerized and plugged into CI now!')*`,
+        } 🏓`,
         {
           ping: false,
         }
