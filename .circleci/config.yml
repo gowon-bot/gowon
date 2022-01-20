@@ -18,5 +18,5 @@ workflows:
           type: approval
 
       - deploy:
-          reqiures:
+          requires:
             - hold
