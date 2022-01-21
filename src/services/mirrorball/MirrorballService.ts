@@ -7,13 +7,12 @@ import { BaseService, BaseServiceContext } from "../BaseService";
 import { UsersService } from "../dbservices/UsersService";
 import { ServiceRegistry } from "../ServicesRegistry";
 import { MirrorballPageInfo, MirrorballUserType } from "./MirrorballTypes";
+import config from "../../../config.json";
 
 export class MirrorballService extends BaseService {
   private get usersService() {
     return ServiceRegistry.get(UsersService);
   }
-
-  private readonly baseURL = "http://localhost:8080/graphql";
 
   private async makeRequest(
     ctx: BaseServiceContext,
@@ -24,7 +23,7 @@ export class MirrorballService extends BaseService {
 
     this.log(
       ctx,
-      `Sending request to ${this.baseURL} with variables ${
+      `Sending request to ${config.mirrorballURL} with variables ${
         stringifiedVariables.length > 500
           ? stringifiedVariables.slice(0, 1000) + "..."
           : stringifiedVariables

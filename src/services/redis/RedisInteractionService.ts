@@ -1,9 +1,12 @@
 import { BaseService, BaseServiceContext } from "../BaseService";
 import redis, { RedisError } from "redis";
 import { promisify } from "util";
+import config from "../../../config.json";
 
 export class RedisInteractionService extends BaseService {
-  client = redis.createClient();
+  client = redis.createClient({
+    host: (config as { redisHost?: string }).redisHost,
+  });
 
   private setAsync = promisify(this.client.setex).bind(this.client);
   private getAsync = promisify(this.client.get).bind(this.client);
