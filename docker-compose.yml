@@ -1,11 +1,10 @@
+# NOTE: Ports should be specified in docker-compose.override.yml
 version: "3.9"
 services:
   gowon:
     build: .
     extra_hosts:
       - "host.docker.internal:host-gateway"
-    ports:
-      - "3000:3000"
     depends_on:
       - mirrorball
 
@@ -13,8 +12,6 @@ services:
     image: mirrorball
     depends_on:
       - redis
-    ports:
-      - "8080:8080"
 
   redis:
     image: "redis:alpine"
