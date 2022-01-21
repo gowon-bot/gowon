@@ -1,8 +1,6 @@
 version: 2
 jobs:
   deploy:
-    context:
-      - gowon
     docker:
       - image: cimg/base:2020.01
     steps:
@@ -19,5 +17,7 @@ workflows:
           type: approval
 
       - deploy:
+          context:
+            - gowon
           requires:
             - approve
