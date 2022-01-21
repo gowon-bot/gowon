@@ -6,6 +6,15 @@ services:
       - "host.docker.internal:host-gateway"
     ports:
       - "3000:3000"
+    depends_on:
+      - mirrorball
+
+  mirrorball:
+    image: mirrorball
+    depends_on:
+      - redis
+    ports:
+      - "8080:8080"
 
   redis:
     image: "redis:alpine"
