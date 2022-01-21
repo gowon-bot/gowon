@@ -9,7 +9,6 @@ data/
 
 
 config.json
-docker.config.json
-
-docker.ormconfig.json
 ormconfig.json
+
+docker-compose.overrides.yml
