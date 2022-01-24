@@ -20,6 +20,15 @@ export default class PermissionsParentCommand extends AdminBaseParentCommand {
 
   prefixes = ["permissions", "perms"];
 
+  default = () => new Help();
+
+  noPrefixAliases = [
+    // Enable
+    "enable",
+    // Disable
+    "disable",
+  ];
+
   children: CommandGroup = new CommandGroup([
     Blacklist,
     Help,
