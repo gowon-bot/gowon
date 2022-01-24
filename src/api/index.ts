@@ -9,8 +9,9 @@ import bodyParser from "body-parser";
 import { CommandRegistry } from "../lib/command/CommandRegistry";
 import { ServiceRegistry } from "../services/ServicesRegistry";
 import { AnalyticsCollector } from "../analytics/AnalyticsCollector";
+import config from "../../config.json";
 
-export const gowonAPIPort = 3000;
+export const gowonAPIPort = config.gowonAPIPort;
 
 export class GraphQLAPI {
   usersService = ServiceRegistry.get(UsersService);
