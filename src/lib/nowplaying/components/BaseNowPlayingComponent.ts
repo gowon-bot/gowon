@@ -1,5 +1,6 @@
 import { BaseServiceContext } from "../../../services/BaseService";
 import { RecentTrack } from "../../../services/LastFM/converters/RecentTracks";
+import { BaseCommand } from "../../command/BaseCommand";
 import { Resources } from "../DatasourceService";
 import { RequirementMap } from "../RequirementMap";
 
@@ -19,12 +20,13 @@ export abstract class BaseNowPlayingComponent<
 
   protected ctx: BaseServiceContext = {
     logger: this.values.logger,
-    command: { guild: this.values.message.guild },
   } as any;
 
   constructor(
     protected values: Pick<RequirementMap, Requirements[number]> & Resources
-  ) {}
+  ) {
+    this.ctx.command = { guild: values.message?.guild } as any as BaseCommand;
+  }
 
   protected get nowPlaying(): RecentTrack {
     return this.values.recentTracks.first();
