@@ -41,11 +41,13 @@ export default class NowPlayingVerbose extends NowPlayingBaseCommand {
       discordUser
     );
 
+    await this.tagConsolidator.saveServerBannedTagsInContext(this.ctx);
+
     if (trackInfo.value) {
-      this.tagConsolidator.addTags(trackInfo.value?.tags || []);
+      this.tagConsolidator.addTags(this.ctx, trackInfo.value?.tags || []);
     }
     if (artistInfo.value) {
-      this.tagConsolidator.addTags(artistInfo.value?.tags || []);
+      this.tagConsolidator.addTags(this.ctx, artistInfo.value?.tags || []);
     }
 
     let artistPlays = this.artistPlays(artistInfo, nowPlaying, isCrownHolder);

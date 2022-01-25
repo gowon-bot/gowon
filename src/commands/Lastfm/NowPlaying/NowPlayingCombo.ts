@@ -44,8 +44,10 @@ export default class NowPlayingCombo extends NowPlayingBaseCommand {
       this.crownsService.getCrownDisplay(this.ctx, nowPlaying.artist),
     ]);
 
+    await this.tagConsolidator.saveServerBannedTagsInContext(this.ctx);
+
     if (artistInfo.value) {
-      this.tagConsolidator.addTags(artistInfo.value.tags);
+      this.tagConsolidator.addTags(this.ctx, artistInfo.value.tags);
     }
 
     let { crownString, isCrownHolder } = await this.crownDetails(

@@ -27,7 +27,7 @@ import gql from "graphql-tag";
 import { Logger } from "../../lib/Logger";
 import { Combo } from "./Combo";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
-import { SettingsService } from "../../lib/settings/SettingsManager";
+import { SettingsService } from "../../lib/settings/SettingsService";
 import { CommandAccessRoleName } from "../../lib/command/access/roles";
 import { MirrorballService } from "../../services/mirrorball/MirrorballService";
 import { BaseServiceContext } from "../../services/BaseService";

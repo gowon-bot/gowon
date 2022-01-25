@@ -13,7 +13,7 @@ import pm2 from "pm2";
 import { mirrorballClient } from "./lib/indexing/client";
 import gql from "graphql-tag";
 import { ServiceRegistry } from "./services/ServicesRegistry";
-import { SettingsService } from "./lib/settings/SettingsManager";
+import { SettingsService } from "./lib/settings/SettingsService";
 
 export const client = new GowonClient(
   new Client({

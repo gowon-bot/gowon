@@ -6,7 +6,7 @@ import { CrownBan } from "../database/entity/CrownBan";
 import { ChannelBlacklist } from "../database/entity/ChannelBlacklist";
 import { ArtistCrownBan } from "../database/entity/ArtistCrownBan";
 import { RunAs } from "../lib/command/RunAs";
-import { SettingsService } from "../lib/settings/SettingsManager";
+import { SettingsService } from "../lib/settings/SettingsService";
 import { ServiceRegistry } from "./ServicesRegistry";
 
 export class GowonService {

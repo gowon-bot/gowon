@@ -1,4 +1,5 @@
 import { sum } from "mathjs";
+import { BaseServiceContext } from "../../services/BaseService";
 import { RawTag } from "../../services/LastFM/LastFMService.types";
 import { MirrorballTag } from "../../services/mirrorball/MirrorballTypes";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
@@ -28,10 +29,17 @@ export class TagConsolidator {
     return !!this.tags.length;
   }
 
-  addTags(tags: RawTag[] | string[] | MirrorballTag[]): TagConsolidator {
+  async saveServerBannedTagsInContext(ctx: BaseServiceContext) {
+    await this.wordBlacklistService.saveServerBannedTagsInContext(ctx);
+  }
+
+  addTags(
+    ctx: BaseServiceContext,
+    tags: RawTag[] | string[] | MirrorballTag[]
+  ): TagConsolidator {
     const convertedTags = this.convertTags(tags);
 
-    this.tags.push(...this.filterTags(convertedTags));
+    this.tags.push(...this.filterTags(ctx, convertedTags));
     return this;
   }
 
@@ -109,8 +117,12 @@ export class TagConsolidator {
     return { reverser, fixer };
   }
 
-  private filterTags(tags: MirrorballTag[]): MirrorballTag[] {
+  private filterTags(
+    ctx: BaseServiceContext,
+    tags: MirrorballTag[]
+  ): MirrorballTag[] {
     return this.wordBlacklistService.filter(
+      ctx,
       tags,
       ["base", "tags"],
       this.customBlacklist

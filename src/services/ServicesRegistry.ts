@@ -29,7 +29,7 @@ import { RedisInteractionService } from "./redis/RedisInteractionService";
 import { RedisService } from "./redis/RedisService";
 import { SpotifyService } from "./Spotify/SpotifyService";
 import { TrackingService } from "./TrackingService";
-import { SettingsService } from "../lib/settings/SettingsManager";
+import { SettingsService } from "../lib/settings/SettingsService";
 import { AnalyticsCollector } from "../analytics/AnalyticsCollector";
 import { WordBlacklistService } from "./WordBlacklistService";
 import { RollbarService } from "./Rollbar/RollbarService";

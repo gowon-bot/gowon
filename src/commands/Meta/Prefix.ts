@@ -1,5 +1,5 @@
 import { BaseCommand } from "../../lib/command/BaseCommand";
-import { SettingsService } from "../../lib/settings/SettingsManager";
+import { SettingsService } from "../../lib/settings/SettingsService";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 
 export default class Prefix extends BaseCommand {

@@ -76,7 +76,8 @@ export default class TopTags extends LastFMBaseCommand<typeof args> {
 
     const tagConsolidator = new TagConsolidator();
 
-    tagConsolidator.addTags(response.tags.tags);
+    await tagConsolidator.saveServerBannedTagsInContext(this.ctx);
+    tagConsolidator.addTags(this.ctx, response.tags.tags);
 
     const scrollingEmbed = new SimpleScrollingEmbed(
       this.message,

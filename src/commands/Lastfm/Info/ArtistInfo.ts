@@ -59,8 +59,9 @@ export default class ArtistInfo extends InfoCommand<typeof args> {
       { name: artist },
     ]);
 
-    this.tagConsolidator.addTags(artistInfo.tags);
-    this.tagConsolidator.addTags(tags);
+    await this.tagConsolidator.saveServerBannedTagsInContext(this.ctx);
+    this.tagConsolidator.addTags(this.ctx, artistInfo.tags);
+    this.tagConsolidator.addTags(this.ctx, tags);
 
     const linkConsolidator = new LinkConsolidator([
       LinkConsolidator.spotify(spotifyArtist?.external_urls?.spotify),

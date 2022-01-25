@@ -20,7 +20,7 @@ import {
 import { displayNumber } from "../../../lib/views/displays";
 import { Requestable } from "../../../services/LastFM/LastFMAPIService";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
-import { SettingsService } from "../../../lib/settings/SettingsManager";
+import { SettingsService } from "../../../lib/settings/SettingsService";
 
 const args = {
   inputs: {

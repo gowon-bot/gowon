@@ -6,7 +6,7 @@ export default class Ping extends BaseCommand {
   idSeed = "blackpink lisa";
 
   subcategory = "developer";
-  description = "Ping! Pong!";
+  description = "Ping! Pong! Pang?";
   aliases = ["🏓", "pin", "pingu", "pung", "peng", "핑", "pingmatrix", "bing"];
   secretCommand = true;
 

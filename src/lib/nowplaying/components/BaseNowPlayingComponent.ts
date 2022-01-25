@@ -1,3 +1,4 @@
+import { BaseServiceContext } from "../../../services/BaseService";
 import { RecentTrack } from "../../../services/LastFM/converters/RecentTracks";
 import { Resources } from "../DatasourceService";
 import { RequirementMap } from "../RequirementMap";
@@ -16,9 +17,10 @@ export abstract class BaseNowPlayingComponent<
   static readonly componentName: string;
   abstract readonly requirements: Requirements;
 
-  protected ctx = {
+  protected ctx: BaseServiceContext = {
     logger: this.values.logger,
-  };
+    command: { guild: this.values.message.guild },
+  } as any;
 
   constructor(
     protected values: Pick<RequirementMap, Requirements[number]> & Resources

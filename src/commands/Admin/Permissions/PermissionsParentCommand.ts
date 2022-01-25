@@ -8,35 +8,39 @@ import { Enable } from "./Enable";
 import { Disable } from "./Disable";
 import { Disabled } from "./Disabled";
 import { ChannelBlacklist } from "./ChannelBlacklist";
+import { SetAdminRole } from "./SetAdminRole";
 
 export default class PermissionsParentCommand extends AdminBaseParentCommand {
   idSeed = "loona vivi";
 
+  adminCommand = true;
+
   description =
     "Manage permissions for Gowon in your guild\nSee permissions help for more info";
-  customHelp = Help;
-
   friendlyName = "permissions";
-
   prefixes = ["permissions", "perms"];
 
   default = () => new Help();
+  customHelp = Help;
 
   noPrefixAliases = [
     // Enable
     "enable",
     // Disable
     "disable",
+    // SetAdminRole,
+    "setadminrole",
   ];
 
   children: CommandGroup = new CommandGroup([
     Blacklist,
-    Help,
+    ChannelBlacklist,
     Delist,
-    View,
-    Enable,
     Disable,
     Disabled,
-    ChannelBlacklist,
+    Enable,
+    Help,
+    SetAdminRole,
+    View,
   ]);
 }

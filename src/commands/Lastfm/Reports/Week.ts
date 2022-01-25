@@ -80,7 +80,8 @@ export default class Week extends LastFMBaseCommand<typeof args> {
 
     const tagConsolidator = new TagConsolidator();
 
-    tagConsolidator.addTags(week.top.tags);
+    await tagConsolidator.saveServerBannedTagsInContext(this.ctx);
+    tagConsolidator.addTags(this.ctx, week.top.tags);
 
     let embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor())

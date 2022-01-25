@@ -41,10 +41,12 @@ export default class NowPlayingAlbum extends NowPlayingBaseCommand {
       discordUser
     );
 
+    await this.tagConsolidator.saveServerBannedTagsInContext(this.ctx);
+
     if (albumInfo.value)
-      this.tagConsolidator.addTags(albumInfo.value?.tags || []);
+      this.tagConsolidator.addTags(this.ctx, albumInfo.value?.tags || []);
     if (artistInfo.value)
-      this.tagConsolidator.addTags(artistInfo.value?.tags || []);
+      this.tagConsolidator.addTags(this.ctx, artistInfo.value?.tags || []);
 
     let artistPlays = this.artistPlays(artistInfo, nowPlaying, isCrownHolder);
     let noArtistData = this.noArtistData(nowPlaying);

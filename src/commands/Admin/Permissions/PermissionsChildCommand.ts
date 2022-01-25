@@ -33,6 +33,8 @@ export abstract class PermissionsChildCommand extends AdminBaseChildCommand<
   parentName = "permissions";
   subcategory = "permissions";
 
+  adminCommand = true;
+
   command!: Command;
   aliases!: string[];
   runAs!: RunAs;

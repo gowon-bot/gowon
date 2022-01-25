@@ -130,6 +130,7 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
   secretCommand: boolean = false;
   shouldBeIndexed: boolean = true;
   devCommand: boolean = false;
+  adminCommand: boolean = false;
   access?: CommandAccess;
   rollout: Rollout = {};
 

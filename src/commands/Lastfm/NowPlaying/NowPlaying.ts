@@ -48,7 +48,9 @@ export default class NowPlaying extends NowPlayingBaseCommand {
       discordUser
     );
 
-    this.tagConsolidator.addTags(artistInfo.value?.tags || []);
+    await this.tagConsolidator.saveServerBannedTagsInContext(this.ctx);
+
+    this.tagConsolidator.addTags(this.ctx, artistInfo.value?.tags || []);
 
     let lineConsolidator = new LineConsolidator();
 

@@ -81,10 +81,12 @@ export default class FakeNowPlaying extends NowPlayingBaseCommand<typeof args> {
       this.author
     );
 
+    await this.tagConsolidator.saveServerBannedTagsInContext(this.ctx);
+
     if (trackInfo.value)
-      this.tagConsolidator.addTags(trackInfo.value?.tags || []);
+      this.tagConsolidator.addTags(this.ctx, trackInfo.value?.tags || []);
     if (artistInfo.value)
-      this.tagConsolidator.addTags(artistInfo.value?.tags || []);
+      this.tagConsolidator.addTags(this.ctx, artistInfo.value?.tags || []);
 
     const nowPlaying = this.fakeNowPlaying(
       artistInfo.value?.name || "",

@@ -11,6 +11,7 @@ import { BaseService, BaseServiceContext } from "../../services/BaseService";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { GowonService } from "../../services/GowonService";
 import { asyncMap } from "../../helpers";
+import { SettingsService } from "../settings/SettingsService";
 
 export enum CheckFailReason {
   disabled = "disabled",
@@ -32,6 +33,7 @@ type MutableContext = {
   cachedPermissons?: {
     [commandID: string]: Permission[];
   };
+  adminRole?: string;
 };
 
 export class Can extends BaseService<CanContext, MutableContext> {
@@ -41,10 +43,23 @@ export class Can extends BaseService<CanContext, MutableContext> {
     return ServiceRegistry.get(GowonService);
   }
 
+  private get settingsService() {
+    return ServiceRegistry.get(SettingsService);
+  }
+
   private getCachedPermissions(ctx: CanContext & MutableContext) {
     if (!ctx.cachedPermissons) ctx.cachedPermissons = {};
 
     return ctx.cachedPermissons;
+  }
+
+  private getAdminRole(ctx: CanContext & MutableContext): string | undefined {
+    if (!this.ctx.hasOwnProperty("adminRole"))
+      ctx.adminRole = this.settingsService.get("adminRole", {
+        guildID: ctx.command.guild.id,
+      });
+
+    return ctx.adminRole;
   }
 
   private async getParentIDs(
@@ -122,7 +137,13 @@ export class Can extends BaseService<CanContext, MutableContext> {
       return { passed: false, reason: CheckFailReason.disabled };
     }
 
-    const isAdmin = message.member?.permissions?.has("ADMINISTRATOR");
+    const isAdmin = this.isAdmin(ctx);
+
+    if (command.adminCommand) {
+      return isAdmin
+        ? { passed: true }
+        : { passed: false, reason: CheckFailReason.forbidden };
+    }
 
     if (useChannel && !(await this.canRunInChannel(ctx, command.id))) {
       return { passed: false, reason: CheckFailReason.blacklistedFromChannel };
@@ -201,5 +222,15 @@ export class Can extends BaseService<CanContext, MutableContext> {
 
   private checkRollout(ctx: CanContext, command: Command) {
     return checkRollout(command.rollout, ctx.command.message);
+  }
+
+  private isAdmin(ctx: CanContext): boolean {
+    const adminRole = this.getAdminRole(ctx);
+
+    return (
+      ctx.command.message.member?.permissions?.has("ADMINISTRATOR") ||
+      (adminRole && ctx.command.message.member?.roles.cache.has(adminRole)) ||
+      false
+    );
   }
 }

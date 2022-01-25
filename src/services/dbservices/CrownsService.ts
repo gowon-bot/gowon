@@ -28,7 +28,7 @@ import { toInt } from "../../helpers/lastFM";
 import { ServiceRegistry } from "../ServicesRegistry";
 import { GowonService } from "../GowonService";
 import { CrownsHistoryService } from "./CrownsHistoryService";
-import { SettingsService } from "../../lib/settings/SettingsManager";
+import { SettingsService } from "../../lib/settings/SettingsService";
 import { sqlLikeEscape } from "../../helpers/database";
 import { asyncMap } from "../../helpers";
 

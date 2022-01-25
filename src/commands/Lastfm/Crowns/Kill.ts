@@ -17,6 +17,8 @@ export class Kill extends CrownsChildCommand<typeof args> {
   description = "Kills a crown";
   usage = ["artist (case sensitive!)"];
 
+  adminCommand = true;
+
   arguments: Arguments = args;
 
   validation: Validation = {

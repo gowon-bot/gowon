@@ -78,9 +78,11 @@ export class Me extends JumbleChildCommand<typeof args> {
 
     this.sessionSetJSON(jumbleRedisKey, jumbledArtist);
 
+    await this.tagConsolidator.saveServerBannedTagsInContext(this.ctx);
+
     let tags = this.tagConsolidator
       .blacklistTags(artist.name)
-      .addTags(artistInfo.tags)
+      .addTags(this.ctx, artistInfo.tags)
       .consolidateAsStrings();
 
     let lineConsolidator = new LineConsolidator();
@@ -160,7 +162,8 @@ export class Me extends JumbleChildCommand<typeof args> {
       return item;
     }
 
-    return jumbled === item || !this.wordBlacklistService.isAllowed(item)
+    return jumbled === item ||
+      !this.wordBlacklistService.isAllowed(this.ctx, item)
       ? this.jumbleItem(item)
       : jumbled;
   }

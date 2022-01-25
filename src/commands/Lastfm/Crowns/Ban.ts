@@ -14,6 +14,8 @@ export class Ban extends CrownsChildCommand<typeof args> {
   usage = "@user";
   arguments: Arguments = args;
 
+  adminCommand = true;
+
   ctx = this.generateContext({
     crownsService: this.crownsService,
   });

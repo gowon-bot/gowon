@@ -12,6 +12,8 @@ const args = {
 export class BanArtist extends CrownsChildCommand<typeof args> {
   idSeed = "loona olivia hye";
 
+  adminCommand = true;
+
   description = "Bans an artist from the crowns game";
   usage = "artist";
   arguments: Arguments = args;

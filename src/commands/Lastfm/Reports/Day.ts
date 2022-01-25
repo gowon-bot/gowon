@@ -79,7 +79,8 @@ export default class Day extends LastFMBaseCommand<typeof args> {
 
     const tagConsolidator = new TagConsolidator();
 
-    tagConsolidator.addTags(day.top.tags);
+    await tagConsolidator.saveServerBannedTagsInContext(this.ctx);
+    tagConsolidator.addTags(this.ctx, day.top.tags);
 
     const embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor())

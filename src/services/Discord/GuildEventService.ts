@@ -30,7 +30,6 @@ export class GuildEventService extends BaseService<GuildEventServiceContext> {
 
     ctx.command = { message: { guild } } as any;
 
-    await this.setupPermissions(ctx, guild);
     await this.pingDeveloper(ctx, guild);
     await this.registerUsers(ctx, guild);
   }
@@ -80,44 +79,6 @@ export class GuildEventService extends BaseService<GuildEventServiceContext> {
         ctx,
         `Failed to log out guildMember ${guildMember.user.id} in ${guildMember.guild.id} (${e})`
       );
-    }
-  }
-
-  private async setupPermissions(ctx: GuildEventServiceContext, guild: Guild) {
-    let commands = [
-      { command: "permissions", dev: false },
-      { command: "crowns kill", dev: false },
-      { command: "crowns ban", dev: false },
-      { command: "crowns banartist", dev: false },
-      { command: "crowns unban", dev: false },
-      { command: "crowns unbanartist", dev: false },
-      { command: "scraperlastscrobbled", dev: true },
-      { command: "scraperartisttoptracks", dev: true },
-      { command: "scraperartisttopalbums", dev: true },
-      { command: "scraperalbumtoptracks", dev: true },
-    ];
-
-    for (let commandName of commands) {
-      const { command, runAs } = await this.commandRegistry.find(
-        commandName.command,
-        guild.id
-      );
-
-      if (command) {
-        try {
-          await this.adminService.disableCommand(
-            ctx,
-            command.id,
-            runAs.toCommandFriendlyName(),
-            commandName.dev
-          );
-        } catch (e: any) {
-          this.log(
-            ctx,
-            `Error while setting up permissions for ${guild.name}:${e.message}`
-          );
-        }
-      }
     }
   }
 

@@ -6,7 +6,7 @@ import {
 } from "../../../../lib/arguments/custom/EmojiParser";
 import { extractEmojiName } from "../../../../lib/Emoji";
 import { LineConsolidator } from "../../../../lib/LineConsolidator";
-import { SettingsService } from "../../../../lib/settings/SettingsManager";
+import { SettingsService } from "../../../../lib/settings/SettingsService";
 import { ConfirmationEmbed } from "../../../../lib/views/embeds/ConfirmationEmbed";
 import { EmojiService } from "../../../../services/Discord/EmojiService";
 import { ServiceRegistry } from "../../../../services/ServicesRegistry";

@@ -42,8 +42,10 @@ export default class TrackInfo extends InfoCommand<typeof args> {
       this.spotifyService.searchTrack(this.ctx, artist, track),
     ]);
 
+    await this.tagConsolidator.saveServerBannedTagsInContext(this.ctx);
+
     this.tagConsolidator.blacklistTags(trackInfo.artist.name, trackInfo.name);
-    this.tagConsolidator.addTags(trackInfo.tags);
+    this.tagConsolidator.addTags(this.ctx, trackInfo.tags);
 
     const linkConsolidator = new LinkConsolidator([
       LinkConsolidator.spotify(spotifyTrack?.external_urls?.spotify),

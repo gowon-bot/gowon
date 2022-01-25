@@ -424,3 +424,28 @@ export class CommandInBetaError extends ClientError {
     );
   }
 }
+
+export class TagAlreadyBannedError extends ClientError {
+  name = "TagAlreadyBannedError";
+
+  constructor() {
+    super(
+      "That tag has already been banned in this server!",
+      "Note: bans are care insensitive, spaces are ignored"
+    );
+  }
+}
+export class TagNotBannedError extends ClientError {
+  name = "TagNotBannedError";
+
+  constructor() {
+    super("That tag hasn't been banned in this server!");
+  }
+}
+export class TagBannedByDefaultError extends ClientError {
+  name = "TagBannedByDefaultError";
+
+  constructor() {
+    super("That tag is banned by default bot-wide!");
+  }
+}

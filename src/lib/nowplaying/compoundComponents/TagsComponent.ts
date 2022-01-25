@@ -45,11 +45,11 @@ export class TagsComponent extends BaseCompoundComponent<typeof requirements> {
   static componentName = "tags";
   static replaces = new AnyIn(["artist-tags", "track-tags"]);
 
-  present() {
+  async present() {
     const tagConsolidator = new TagConsolidator();
 
     this.blacklistTags(tagConsolidator);
-    this.addTags(tagConsolidator);
+    await this.addTags(tagConsolidator);
 
     return {
       string: tagConsolidator
@@ -69,19 +69,21 @@ export class TagsComponent extends BaseCompoundComponent<typeof requirements> {
     }
   }
 
-  private addTags(consolidator: TagConsolidator) {
+  private async addTags(consolidator: TagConsolidator) {
+    await consolidator.saveServerBannedTagsInContext(this.ctx);
+
     if (
       this.values.artistInfo &&
       this.values.components.includes("artist-tags")
     ) {
-      consolidator.addTags(this.values.artistInfo.tags);
+      consolidator.addTags(this.ctx, this.values.artistInfo.tags);
     }
 
     if (
       this.values.trackInfo &&
       this.values.components.includes("track-tags")
     ) {
-      consolidator.addTags(this.values.trackInfo.tags);
+      consolidator.addTags(this.ctx, this.values.trackInfo.tags);
     }
   }
 }

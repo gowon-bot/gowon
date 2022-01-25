@@ -49,8 +49,9 @@ export default class AlbumInfo extends InfoCommand<typeof args> {
       this.spotifyService.searchAlbum(this.ctx, artist, album),
     ]);
 
+    await this.tagConsolidator.saveServerBannedTagsInContext(this.ctx);
     this.tagConsolidator.blacklistTags(albumInfo.artist, albumInfo.name);
-    this.tagConsolidator.addTags(albumInfo.tags);
+    this.tagConsolidator.addTags(this.ctx, albumInfo.tags);
 
     const linkConsolidator = new LinkConsolidator([
       LinkConsolidator.spotify(spotifyAlbum?.external_urls?.spotify),

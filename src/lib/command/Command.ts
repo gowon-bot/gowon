@@ -19,6 +19,7 @@ export interface Command {
   archived: boolean;
   shouldBeIndexed: boolean;
   devCommand?: boolean;
+  adminCommand?: boolean;
   customHelp?: { new (): Command };
   access?: CommandAccess;
 
