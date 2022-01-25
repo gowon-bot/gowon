@@ -8,7 +8,7 @@ export type NowPlayingRequirement = keyof RequirementMap;
 export interface PresentedComponent {
   string: string;
   size: number;
-  // someComponents should be placed after certain ones
+  // some components should be placed after certain ones
   placeAfter?: string[];
 }
 

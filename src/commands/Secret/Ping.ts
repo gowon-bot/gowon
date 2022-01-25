@@ -53,6 +53,11 @@ ${matrix
       await this.reply(
         this.runAs.variationWasUsed("핑") ? "팡! 🏌️" : "PANG! 🏌️"
       );
+    } else if (
+      this.runAs.variationWasUsed("ping") &&
+      Chance().bool({ likelihood: 1 })
+    ) {
+      await this.reply("PAPAOAONAGPNAGGGPNAGPANAGPANAGG");
     } else if (this.runAs.variationWasUsed("핑")) {
       await this.reply("퐁");
     } else {
