@@ -6,10 +6,11 @@ import {
   GuildMemberScope,
   GuildScope,
   BaseSetting,
+  BotScope,
 } from "./SettingTypes";
 
 type SettingName = keyof SettingsMap;
-type Scope = UserScope | GuildMemberScope | GuildScope;
+type Scope = UserScope | GuildMemberScope | GuildScope | BotScope;
 
 interface Cache {
   [setting: string]: {

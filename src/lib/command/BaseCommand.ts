@@ -456,26 +456,8 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
         }
       }, this.showLoadingAfter * 1000);
     }
-    if (Chance().bool({ likelihood: 33 })) {
-      this.usersService
-        .getUser(this.ctx, this.author.id)
-        .then(async (senderUser) => {
-          if (
-            senderUser &&
-            !["update", "index", "login", "logout"].includes(this.name)
-          ) {
-            await Promise.all([
-              this.mirrorballService.quietAddUserToGuild(
-                this.ctx,
-                this.author.id,
-                this.guild.id
-              ),
-              senderUser.mirrorballUpdate(this.ctx),
-            ]);
-          }
-        })
-        .catch(() => {});
-    }
+
+    this.autoUpdateUser();
   }
 
   async teardown() {
@@ -775,5 +757,29 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     );
 
     return member?.user;
+  }
+
+  private autoUpdateUser() {
+    if (
+      Chance().bool({ likelihood: 33 }) &&
+      !["update", "index", "login", "logout"].includes(this.name) &&
+      !this.gowonClient.isInIssueMode
+    ) {
+      this.usersService
+        .getUser(this.ctx, this.author.id)
+        .then(async (senderUser) => {
+          if (senderUser) {
+            await Promise.all([
+              this.mirrorballService.quietAddUserToGuild(
+                this.ctx,
+                this.author.id,
+                this.guild.id
+              ),
+              senderUser.mirrorballUpdate(this.ctx),
+            ]);
+          }
+        })
+        .catch(() => {});
+    }
   }
 }

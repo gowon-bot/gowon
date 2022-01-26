@@ -56,6 +56,8 @@ import {
   RawUserGetWeeklyArtistChart,
   RawUserGetWeeklyAlbumChart,
   RawUserGetWeeklyTrackChart,
+  RawLastFMErrorResponse,
+  isErrorResponse,
 } from "./LastFMService.types";
 import config from "../../../config.json";
 import {
@@ -430,11 +432,12 @@ export class LastFMAPIService extends BaseService {
     ctx: BaseServiceContext,
     method: string,
     params: Params,
-    fetchOptions?: RequestInit
+    fetchOptions?: RequestInit,
+    isRetry = false
   ): Promise<T> {
     this.log(
       ctx,
-      `made ${
+      `${isRetry ? "RETRY - " : ""}made ${
         (params as any).sk ? "authenticated " : ""
       }API request for ${method} with params ${JSON.stringify(
         this.cleanParametersForDisplay(params)
@@ -449,12 +452,26 @@ export class LastFMAPIService extends BaseService {
     const response = await fetch(this.url + "?" + qparams, fetchOptions);
     end({ category: method.split(".")[0], action: method.split(".")[1] });
 
-    if (`${response.status}`.startsWith("3"))
+    if (`${response.status}`.startsWith("3")) {
       throw new LastFMConnectionError(response);
+    }
 
-    const jsonResponse = await response.json();
+    const jsonResponse = (await response.json()) as T | RawLastFMErrorResponse;
 
-    if (jsonResponse.error) throw new LastFMError(jsonResponse);
+    if (isErrorResponse(jsonResponse)) {
+      // Retry
+      if (!isRetry && jsonResponse.error === 8 && !ctx.client.isInIssueMode) {
+        return await this.unauthedRequest(
+          ctx,
+          method,
+          params,
+          fetchOptions,
+          true
+        );
+      }
+
+      throw new LastFMError(jsonResponse, ctx.client.isInIssueMode);
+    }
 
     return jsonResponse as T;
   }

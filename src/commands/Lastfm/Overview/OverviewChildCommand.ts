@@ -101,7 +101,7 @@ export abstract class OverviewChildCommand<
     return this.newEmbed()
       .setAuthor({ name: this.username + badge, iconURL: image })
       .setColor(colour as HexColorString)
-      .setFooter(useFooter ? this.getFooter() : "");
+      .setFooter({ text: useFooter ? this.getFooter() : "" });
   }
 
   protected getFooter(): string {

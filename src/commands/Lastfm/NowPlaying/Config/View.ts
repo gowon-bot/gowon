@@ -25,9 +25,9 @@ export class View extends NowPlayingConfigChildCommand<typeof args> {
 
     const embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor("Config view"))
-      .setFooter(
-        `This config only applies to your ${this.prefix}fmx calls\nSee ${this.prefix}npc help for more info`
-      );
+      .setFooter({
+        text: `This config only applies to your ${this.prefix}fmx calls\nSee ${this.prefix}npc help for more info`,
+      });
 
     if (config.length) {
       embed.setDescription(config.map((c) => c.code()).join(", "));

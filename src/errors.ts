@@ -53,10 +53,13 @@ export class LastFMError extends ClientError {
   name = "LastFMError";
   response: RawLastFMErrorResponse;
 
-  constructor(error: RawLastFMErrorResponse) {
+  constructor(error: RawLastFMErrorResponse, isInIssueMode = false) {
     super(parseError(error));
     this.response = error;
     this.name = "LastFMError:" + error.error;
+    this.footer = isInIssueMode
+      ? "Last.fm is experiencing a high amount of errors at the moment"
+      : "";
   }
 }
 
@@ -431,7 +434,7 @@ export class TagAlreadyBannedError extends ClientError {
   constructor() {
     super(
       "That tag has already been banned in this server!",
-      "Note: bans are care insensitive, spaces are ignored"
+      "Note: bans are case insensitive and spaces are ignored"
     );
   }
 }
@@ -447,5 +450,25 @@ export class TagBannedByDefaultError extends ClientError {
 
   constructor() {
     super("That tag is banned by default bot-wide!");
+  }
+}
+
+export class UpdatingDisabledBecauseOfIssueModeError extends ClientError {
+  name = "UpdatingDisabledBecauseOfIssueModeError";
+
+  constructor() {
+    super(
+      "Because Last.fm is experiencing a high degree of errors right now, updating has been disabled to prevent data corruption.\n\nPlease try again later."
+    );
+  }
+}
+
+export class IndexingDisabledBecauseOfIssueModeError extends ClientError {
+  name = "IndexingDisabledBecauseOfIssueModeError";
+
+  constructor() {
+    super(
+      "Because Last.fm is experiencing a high degree of errors right now, indexing has been disabled to prevent data corruption.\n\nPlease try again later."
+    );
   }
 }

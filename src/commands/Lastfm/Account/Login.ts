@@ -70,7 +70,7 @@ export default class Login extends MirrorballBaseCommand<
         .setDescription(
           `Success! You've been logged in as ${user.lastFMUsername}\n\nWould you like to index your data?`
         )
-        .setFooter(this.indexingHelp);
+        .setFooter({ text: this.indexingHelp });
 
       const confirmationEmbed = new ConfirmationEmbed(
         sentMessage,
@@ -184,9 +184,9 @@ export default class Login extends MirrorballBaseCommand<
         } else if (!embed.footer?.text?.includes("didn't work")) {
           await sentMessage.edit({
             embeds: [
-              embed.setFooter(
-                "Hmm that didn't work, please ensure you've authenticated with the link and try again"
-              ),
+              embed.setFooter({
+                text: "Hmm that didn't work, please ensure you've authenticated with the link and try again",
+              }),
             ],
           });
         }
@@ -201,7 +201,9 @@ export default class Login extends MirrorballBaseCommand<
         if (reason === "time") {
           await sentMessage.edit({
             embeds: [
-              embed.setFooter("This login link has expired, please try again"),
+              embed.setFooter({
+                text: "This login link has expired, please try again",
+              }),
             ],
           });
           resolve(undefined);

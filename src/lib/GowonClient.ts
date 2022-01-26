@@ -4,6 +4,7 @@ import { flatDeep } from "../helpers";
 import { GowonService } from "../services/GowonService";
 import { ServiceRegistry } from "../services/ServicesRegistry";
 import { isUnicodeEmoji } from "./arguments/custom/EmojiParser";
+import { SettingsService } from "./settings/SettingsService";
 import specialUsers from "./specialUsers.json";
 
 export type BotName =
@@ -17,10 +18,18 @@ export type BotName =
 export class GowonClient {
   public hasPM2 = false;
 
+  private get settingsService() {
+    return ServiceRegistry.get(SettingsService);
+  }
+
   constructor(public client: Client, public environment: string) {}
 
   get specialUsers() {
     return specialUsers;
+  }
+
+  get isInIssueMode(): boolean {
+    return this.settingsService.get("issueMode", {}) === "true";
   }
 
   isDeveloper(userID?: string): boolean {

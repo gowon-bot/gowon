@@ -48,5 +48,5 @@ export function errorEmbed(
       iconURL: author.avatarURL() ?? undefined,
     })
     .setDescription(ucFirst(message))
-    .setFooter(footer);
+    .setFooter({ text: footer });
 }

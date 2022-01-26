@@ -130,11 +130,11 @@ export class Current extends ComboChildCommand<typeof args> {
           ? lineConsolidator.consolidate()
           : "No streaks found!"
       )
-      .setFooter(
-        comboSaved
+      .setFooter({
+        text: comboSaved
           ? `This combo has been saved! See ${this.prefix}combos to see all your combos`
-          : ""
-      );
+          : "",
+      });
 
     if (combo.hasAnyConsecutivePlays()) {
       const nowplaying = await this.lastFMService.nowPlaying(
@@ -144,9 +144,9 @@ export class Current extends ComboChildCommand<typeof args> {
 
       embed.setThumbnail(nowplaying.images.get("large")!);
     } else {
-      embed.setFooter(
-        "A streak is when you loop the same artist/album/track more than once"
-      );
+      embed.setFooter({
+        text: "A streak is when you loop the same artist/album/track more than once",
+      });
     }
 
     await this.send(embed);

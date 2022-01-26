@@ -1,4 +1,8 @@
-import { MirrorballError, LogicError } from "../../../../errors";
+import {
+  MirrorballError,
+  LogicError,
+  IndexingDisabledBecauseOfIssueModeError,
+} from "../../../../errors";
 import { ConfirmationEmbed } from "../../../../lib/views/embeds/ConfirmationEmbed";
 import { Arguments } from "../../../../lib/arguments/arguments";
 import {
@@ -54,6 +58,9 @@ export default class Index extends MirrorballBaseCommand<
         "You are already being updated or indexed, please wait until you are done!"
       );
     }
+
+    if (this.gowonClient.isInIssueMode)
+      throw new IndexingDisabledBecauseOfIssueModeError();
   }
 
   async run() {
@@ -79,7 +86,7 @@ export default class Index extends MirrorballBaseCommand<
       .setDescription(
         "Indexing will delete all your data, and re-download it. Are you sure you want to full index?"
       )
-      .setFooter(this.indexingHelp);
+      .setFooter({ text: this.indexingHelp });
 
     const confirmationEmbed = new ConfirmationEmbed(
       this.message,

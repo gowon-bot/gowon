@@ -119,9 +119,9 @@ export class Me extends JumbleChildCommand<typeof args> {
       **Hints**:
       _${lineConsolidator.consolidate()}_`
       )
-      .setFooter(
-        `Run "${this.prefix}j <your guess>" to make a guess or "${this.prefix}j quit" to quit`
-      );
+      .setFooter({
+        text: `Run "${this.prefix}j <your guess>" to make a guess or "${this.prefix}j quit" to quit`,
+      });
 
     await this.send(embed);
   }
@@ -136,7 +136,9 @@ export class Me extends JumbleChildCommand<typeof args> {
       .setDescription(
         `I've reshuffled the letters, now who is this artist?\n\n${jumble.jumbled.code()}`
       )
-      .setFooter(`Trying to skip? Run "${this.prefix}j quit" to give up`);
+      .setFooter({
+        text: `Trying to skip? Run "${this.prefix}j quit" to give up`,
+      });
 
     await this.send(embed);
   }

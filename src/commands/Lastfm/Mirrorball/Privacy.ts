@@ -43,7 +43,7 @@ export default class Privacy extends BaseCommand<typeof args> {
 
     const embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor("Privacy"))
-      .setFooter(this.privacyHelp);
+      .setFooter({ text: this.privacyHelp });
 
     if (privacy) {
       await this.mirrorballUsersService.updatePrivacy(this.ctx, privacy);
@@ -85,13 +85,14 @@ The options for privacy are:
 
 You can set your privacy with \`${this.prefix}privacy <option>\``
         )
-        .setFooter(
-          this.privacyHelp +
+        .setFooter({
+          text:
+            this.privacyHelp +
             (!mirrorballUser?.privacy ||
             mirrorballUser.privacy === MirrorballPrivacy.Unset
               ? "\nGowon will not reveal any information about you until you set your privacy"
-              : "")
-        );
+              : ""),
+        });
     }
 
     await this.send(embed);

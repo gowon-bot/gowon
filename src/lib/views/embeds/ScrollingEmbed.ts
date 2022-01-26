@@ -101,12 +101,12 @@ export class ScrollingEmbed {
   }
 
   private generateEmbed() {
-    this.embed.setFooter(
-      this.options.customFooter(
+    this.embed.setFooter({
+      text: this.options.customFooter(
         this.currentPage,
         this.options.totalPages
-      ) as string
-    );
+      ) as string,
+    });
 
     if (isEmbedFields(this.currentItems)) {
       this.embed.setDescription(this.options.embedDescription);

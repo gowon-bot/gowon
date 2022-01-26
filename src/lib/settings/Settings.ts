@@ -2,6 +2,7 @@ import {
   GuildScopedSetting,
   GuildMemberScopedSetting,
   UserScopedSetting,
+  BotScopedSetting,
 } from "./SettingTypes";
 
 export const Settings = {
@@ -11,6 +12,7 @@ export const Settings = {
   prefix: new GuildScopedSetting("prefix"),
   optedOut: new GuildMemberScopedSetting("opted_out"),
   reacts: new UserScopedSetting("reacts"),
+  issueMode: new BotScopedSetting("issue_mode"),
 } as const;
 
 export type SettingsMap = {

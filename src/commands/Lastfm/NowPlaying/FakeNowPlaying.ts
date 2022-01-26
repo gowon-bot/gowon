@@ -145,7 +145,7 @@ export default class FakeNowPlaying extends NowPlayingBaseCommand<typeof args> {
     );
 
     let nowPlayingEmbed = this.nowPlayingEmbed(nowPlaying, senderUsername)
-      .setFooter(lineConsolidator.consolidate())
+      .setFooter({ text: lineConsolidator.consolidate() })
       .setAuthor({
         name: `Track for ${senderUsername}`,
         url: this.author.avatarURL() || undefined,

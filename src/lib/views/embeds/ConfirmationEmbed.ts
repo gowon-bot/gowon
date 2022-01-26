@@ -62,12 +62,12 @@ export class ConfirmationEmbed {
         } else if (reason === "time") {
           await sentEmbed.edit({
             embeds: [
-              this.embed.setFooter(
-                (
+              this.embed.setFooter({
+                text: (
                   (this.embed.footer?.text || "") +
                   `\n\n🕒 This confirmation has timed out.`
-                ).trim()
-              ),
+                ).trim(),
+              }),
             ],
           });
           this.sentMessage!.reactions.resolve(this.reactionEmoji)!.users.remove(

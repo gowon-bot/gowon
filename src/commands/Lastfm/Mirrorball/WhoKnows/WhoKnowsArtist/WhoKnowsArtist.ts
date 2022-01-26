@@ -132,7 +132,7 @@ export default class WhoKnowsArtist extends WhoKnowsBaseCommand<
         }?`
       )
       .setDescription(lineConsolidator.consolidate())
-      .setFooter(this.footerHelp(senderUser, senderMirrorballUser));
+      .setFooter({ text: this.footerHelp(senderUser, senderMirrorballUser) });
 
     await this.send(embed);
   }

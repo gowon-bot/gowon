@@ -47,9 +47,9 @@ ${Object.keys(this.presets)
   .join(", ")}
 `
       )
-      .setFooter(
-        `Not sure what an option is? Try ${this.prefix}npc preview <option> to see what it might look like!`
-      );
+      .setFooter({
+        text: `Not sure what an option is? Try ${this.prefix}npc preview <option> to see what it might look like!`,
+      });
     await this.send(embed);
   }
 }

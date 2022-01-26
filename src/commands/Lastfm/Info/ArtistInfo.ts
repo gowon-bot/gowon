@@ -135,7 +135,7 @@ ${
       embed.setThumbnail(
         this.spotifyService.getImageFromSearchItem(spotifyArtist)
       );
-      embed.setFooter("Image source: Spotify");
+      embed.setFooter({ text: "Image source: Spotify" });
     }
 
     this.send(embed);

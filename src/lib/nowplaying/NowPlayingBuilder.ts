@@ -57,9 +57,11 @@ export class NowPlayingBuilder {
       presentedComponents.filter((s) => !!s.string && s.size !== undefined)
     );
 
-    return (embed || new MessageEmbed()).setFooter(
-      presented.map((row) => row.map((r) => r.string).join(" • ")).join("\n")
-    );
+    return (embed || new MessageEmbed()).setFooter({
+      text: presented
+        .map((row) => row.map((r) => r.string).join(" • "))
+        .join("\n"),
+    });
   }
 
   private organizeRows(

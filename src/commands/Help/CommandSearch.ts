@@ -58,15 +58,16 @@ export default class CommandSearch extends BaseCommand<typeof args> {
           .sort()
           .join("\n")
       )
-      .setFooter(
-        `Searched ${displayNumber(
-          commandList.length,
-          "command"
-        )}, found ${displayNumber(foundCommands.length, "result")}` +
+      .setFooter({
+        text:
+          `Searched ${displayNumber(
+            commandList.length,
+            "command"
+          )}, found ${displayNumber(foundCommands.length, "result")}` +
           (foundCommands.length > 12
             ? "\nTry narrowing down your search to see more results, or go to https://gowon.ca/commands"
-            : "")
-      );
+            : ""),
+      });
 
     await this.send(embed);
   }

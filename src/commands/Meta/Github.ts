@@ -29,12 +29,13 @@ export default class Github extends BaseCommand {
       
 The bot is written in Typescript with Discord.js, Mirrorball (the indexing server) is written in Go serving a GraphQL api, and Gowon.ca is built with Typescript and React`
       )
-      .setFooter(
-        `Made with <3 by ${author.tag}`,
-        (
-          await this.gowonClient.client.users.fetch("267794154459889664")
-        ).avatarURL({ dynamic: true }) ?? undefined
-      );
+      .setFooter({
+        text: `Made with <3 by ${author.tag}`,
+        iconURL:
+          (
+            await this.gowonClient.client.users.fetch("267794154459889664")
+          ).avatarURL({ dynamic: true }) ?? undefined,
+      });
 
     await this.send(embed);
   }

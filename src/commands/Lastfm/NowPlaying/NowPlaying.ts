@@ -81,7 +81,7 @@ export default class NowPlaying extends NowPlayingBaseCommand {
       }
     );
 
-    nowPlayingEmbed.setFooter(lineConsolidator.consolidate());
+    nowPlayingEmbed.setFooter({ text: lineConsolidator.consolidate() });
 
     if (this.runAs.variationWasUsed("mf")) {
       nowPlayingEmbed = this.reverseEmbed(nowPlayingEmbed);
@@ -107,7 +107,7 @@ export default class NowPlaying extends NowPlayingBaseCommand {
       reverse(match)
     );
 
-    embed.setFooter(footer.join("\n"));
+    embed.setFooter({ text: footer.join("\n") });
 
     const author = (embed.author = {
       ...embed.author,

@@ -144,14 +144,14 @@ export default class AlbumInfo extends InfoCommand<typeof args> {
         }`,
         }
       )
-      .setFooter(
-        albumInfo.images.get("large")
+      .setFooter({
+        text: albumInfo.images.get("large")
           ? "Image source: Last.fm"
           : spotifyAlbum &&
             this.spotifyService.getImageFromSearchItem(spotifyAlbum)
           ? "Image source: Spotify"
-          : ""
-      );
+          : "",
+      });
 
     this.send(embed);
   }

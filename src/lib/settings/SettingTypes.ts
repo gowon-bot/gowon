@@ -98,3 +98,11 @@ export class GuildMemberScopedSetting extends BaseSetting<GuildMemberScope> {
     };
   }
 }
+
+export interface BotScope {}
+
+export class BotScopedSetting extends BaseSetting<BotScope> {
+  transformScope(_: BotScope) {
+    return {};
+  }
+}

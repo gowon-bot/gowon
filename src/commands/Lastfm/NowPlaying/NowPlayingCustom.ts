@@ -55,9 +55,9 @@ export default class NowPlayingCustom extends NowPlayingBaseCommand {
     const embed = await builder.asEmbed(resolvedRequirements, baseEmbed);
 
     if (this.variationWasUsed("badTyping")) {
-      embed.setFooter(
-        embed.footer?.text?.replaceAll(/scrobbles/gi, "scrobblez") || ""
-      );
+      embed.setFooter({
+        text: embed.footer?.text?.replaceAll(/scrobbles/gi, "scrobblez") || "",
+      });
     }
 
     const sentMessage = await this.send(embed);

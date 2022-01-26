@@ -88,11 +88,11 @@ ${filteredOut.map((f) => `- ${f}`).join("\n")}\`\`\``
         ${filteredDisplay}
         ${filteredOutDisplay}`.trim()
       )
-      .setFooter(
-        filteredOut.length
+      .setFooter({
+        text: filteredOut.length
           ? `See ${this.prefix}npc help for a list of all available options`
-          : ""
-      );
+          : "",
+      });
 
     await this.send(embed);
   }

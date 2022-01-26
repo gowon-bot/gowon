@@ -97,10 +97,10 @@ Total commands: ${displayNumber(commandCount)}`,
           )}\nArtists scrobbled: ${displayNumber(artistCount)}`,
         }
       )
-      .setFooter(
-        `Made with <3 by ${author.username}#${author.discriminator}`,
-        author.avatarURL({ dynamic: true }) ?? undefined
-      );
+      .setFooter({
+        text: `Made with <3 by ${author.username}#${author.discriminator}`,
+        iconURL: author.avatarURL({ dynamic: true }) ?? undefined,
+      });
 
     await this.send(embed);
   }

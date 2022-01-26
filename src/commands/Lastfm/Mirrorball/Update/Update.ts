@@ -1,4 +1,8 @@
-import { MirrorballError, LogicError } from "../../../../errors";
+import {
+  MirrorballError,
+  LogicError,
+  UpdatingDisabledBecauseOfIssueModeError,
+} from "../../../../errors";
 import { Stopwatch } from "../../../../helpers";
 import {
   ConcurrencyService,
@@ -66,6 +70,9 @@ export default class Update extends MirrorballBaseCommand<
         "You are already being updated or indexed, please wait until you are done!"
       );
     }
+
+    if (this.gowonClient.isInIssueMode)
+      throw new UpdatingDisabledBecauseOfIssueModeError();
   }
 
   async run() {

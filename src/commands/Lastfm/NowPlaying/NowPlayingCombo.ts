@@ -105,9 +105,9 @@ export default class NowPlayingCombo extends NowPlayingBaseCommand {
       }
     );
 
-    let nowPlayingEmbed = this.nowPlayingEmbed(nowPlaying, username).setFooter(
-      lineConsolidator.consolidate()
-    );
+    let nowPlayingEmbed = this.nowPlayingEmbed(nowPlaying, username).setFooter({
+      text: lineConsolidator.consolidate(),
+    });
 
     let sentMessage = await this.send(nowPlayingEmbed);
 

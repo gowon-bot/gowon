@@ -131,9 +131,9 @@ export class React extends NowPlayingConfigChildCommand<typeof args> {
       .setDescription(lineConsolidator.consolidate());
 
     if (invalid.length) {
-      embed.setFooter(
-        "Gowon needs to share a server with an emoji to be able to react with it\nRecently-added emojis may take a little while for Gowon to be able to recognize"
-      );
+      embed.setFooter({
+        text: "Gowon needs to share a server with an emoji to be able to react with it\nRecently-added emojis may take a little while for Gowon to be able to recognize",
+      });
     }
 
     await this.send(embed);

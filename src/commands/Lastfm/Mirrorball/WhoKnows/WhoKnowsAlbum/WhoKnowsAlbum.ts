@@ -93,7 +93,7 @@ export default class WhoKnowsAlbum extends WhoKnowsBaseCommand<
               )
             )
       )
-      .setFooter(this.footerHelp(senderUser, senderMirrorballUser));
+      .setFooter({ text: this.footerHelp(senderUser, senderMirrorballUser) });
 
     await this.send(embed);
   }

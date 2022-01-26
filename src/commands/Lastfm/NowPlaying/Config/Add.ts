@@ -66,11 +66,11 @@ export class Add extends NowPlayingConfigChildCommand<typeof args> {
 
     embed
       .setDescription(consolidator.consolidate())
-      .setFooter(
-        ignored.length
+      .setFooter({
+        text: ignored.length
           ? `Nonexistant config was ignored. See ${this.prefix}npc help for a list of options`
-          : ""
-      );
+          : "",
+      });
 
     await this.send(embed);
   }

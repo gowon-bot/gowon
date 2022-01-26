@@ -202,6 +202,12 @@ export interface RawLastFMErrorResponse {
   message: string;
 }
 
+export function isErrorResponse(
+  response: any | RawLastFMErrorResponse
+): response is RawLastFMErrorResponse {
+  return !!(response as any).error;
+}
+
 export interface RawTopArtist {
   "@attr": { rank: string };
   mbid: string;
