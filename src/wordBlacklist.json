@@ -1,4 +1,6 @@
 {
+  "CONTENT WARNING": "This file contains a lot of nasty shit, including slurs",
+
   "base": {
     "strings": [
       "fuck",
@@ -13,10 +15,15 @@
     ],
     "regexes": [
       ".*\\banal\\b.*",
-      ".*\\fisting\\b.*",
+      ".*\\bfisting\\b.*",
       ".*sex.*",
       ".*rape.*",
-      ".*dildo.*"
+      ".*dildo.*",
+      ".*retard.*",
+      ".*shemale.*",
+      ".*tranny.*",
+      ".*dyke.*",
+      ".*\\bpedo.*"
     ],
     "explicit": [
       [19, 12, 21, 20],
@@ -42,6 +49,8 @@
       "played",
       "personal favourites",
       "personal favorites",
+      "favourite",
+      "favorite",
       "hino",
       "disgusting",
       "flop",
@@ -77,6 +86,10 @@
       "saw live",
       "banned",
       "dvn gejcina",
+      "boring",
+      "idiot",
+      "terrible",
+      "",
 
       "==== Offensive Tags ====",
       "osama is not dead",
