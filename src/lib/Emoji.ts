@@ -50,8 +50,10 @@ export const Emoji = {
 
   // Roles
   contentmoderator: "<:contentmoderator:913203995542175794>",
+  alphatester: "<:gowonheart:771235114277535764>",
   betatester: "<:betatester:913203995663798322>",
   developer: "<:developer:913203995470888990>",
+  "#swag": "<:swag:936102174394581032>",
 } as const;
 
 export const EmojiRaw = Object.entries(Emoji).reduce(

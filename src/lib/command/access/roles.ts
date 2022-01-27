@@ -19,9 +19,19 @@ export const roles = {
     name: "contentmoderator",
     permissions: [] as readonly CommandPermission[],
   },
+  alphatester: {
+    friendlyName: "Alpha tester",
+    name: "alphatester",
+    permissions: [] as readonly CommandPermission[],
+  },
   betatester: {
     friendlyName: "Beta tester",
     name: "betatester",
+    permissions: [] as readonly CommandPermission[],
+  },
+  "#swag": {
+    friendlyName: "#swag",
+    name: "#swag",
     permissions: [] as readonly CommandPermission[],
   },
 } as const;
