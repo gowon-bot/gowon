@@ -37,7 +37,7 @@ export class NowPlayingBuilder {
     );
   }
 
-  generateRequirements() {
+  generateRequirements(): string[] {
     const requirements = new Set(
       this.components.map((c) => new c({}).requirements).flat()
     );

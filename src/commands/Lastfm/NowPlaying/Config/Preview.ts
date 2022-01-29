@@ -8,12 +8,13 @@ import { mockRequirements } from "../../../../lib/nowplaying/mockRequirements";
 import { NowPlayingBuilder } from "../../../../lib/nowplaying/NowPlayingBuilder";
 import { Validation } from "../../../../lib/validation/ValidationChecker";
 import { validators } from "../../../../lib/validation/validators";
+import { displayNumber } from "../../../../lib/views/displays";
 import { RecentTrack } from "../../../../services/LastFM/converters/RecentTracks";
 import { NowPlayingConfigChildCommand } from "./NowPlayingConfigChildCommand";
 
 const args = {
   inputs: {
-    option: { index: 0 },
+    options: { index: { start: 0 }, join: false },
   },
 } as const;
 
@@ -21,27 +22,39 @@ export class Preview extends NowPlayingConfigChildCommand<typeof args> {
   idSeed = "weeekly monday";
 
   description = "Preview a config option";
-  usage = ["option"];
+  usage = ["option1, option2... optionN", "preset"];
 
   arguments: Arguments = args;
 
   validation: Validation = {
-    option: new validators.Required({}),
+    options: new validators.Required({
+      message: "Please enter some options to preview, or a preset!",
+    }),
   };
 
   async run() {
-    const option = this.parsedArguments.option!.toLowerCase();
+    let options = this.parseConfig(this.parsedArguments.options || []).map(
+      (c) => c.toLowerCase()
+    );
 
-    if (!Object.keys(componentMap).includes(option)) {
+    const presetConfig = (this.presets as any)[options[0]];
+
+    if (presetConfig) {
+      options = (this.presets as any)[options[0]];
+    }
+
+    if (options.some((option) => !Object.keys(componentMap).includes(option))) {
       throw new LogicError("Please enter a valid option!");
     }
 
-    const nowPlayingBuilder = new NowPlayingBuilder([option]);
+    const nowPlayingBuilder = new NowPlayingBuilder(options);
 
-    const requirements = new (componentMap[option] as any)({
-      logger: this.logger,
-    }).requirements;
-    const mockRequirements = this.resolveMockRequirements(requirements);
+    const requirements = nowPlayingBuilder.generateRequirements();
+
+    const mockRequirements = this.resolveMockRequirements(
+      requirements,
+      options
+    );
     const nowPlaying = mockRequirements.recentTracks.first() as RecentTrack;
     const links = LinkGenerator.generateTrackLinksForEmbed(nowPlaying);
 
@@ -53,7 +66,17 @@ export class Preview extends NowPlayingConfigChildCommand<typeof args> {
       .setTitle(sanitizeForDiscord(nowPlaying.name))
       .setURL(LinkGenerator.trackPage(nowPlaying.artist, nowPlaying.name))
       .setThumbnail(nowPlaying.images.get("large") || "")
-      .setAuthor(this.generateEmbedAuthor(`Previewing ${option}`));
+      .setAuthor(
+        this.generateEmbedAuthor(
+          `Previewing ${
+            presetConfig
+              ? this.parsedArguments.options![0]
+              : options.length === 1
+              ? options[0]
+              : displayNumber(options.length, "option")
+          }`
+        )
+      );
 
     embed = await nowPlayingBuilder.asEmbed(mockRequirements, embed);
 
@@ -61,7 +84,8 @@ export class Preview extends NowPlayingConfigChildCommand<typeof args> {
   }
 
   private resolveMockRequirements(
-    requirements: string[]
+    requirements: string[],
+    options: string[]
   ): ResolvedRequirements {
     const object = {} as ResolvedRequirements;
 
@@ -77,6 +101,8 @@ export class Preview extends NowPlayingConfigChildCommand<typeof args> {
     ]) {
       object[requirement] = (mr as ResolvedRequirements)[requirement];
     }
+
+    object.components = options;
 
     return object;
   }

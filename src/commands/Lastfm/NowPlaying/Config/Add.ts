@@ -64,13 +64,11 @@ export class Add extends NowPlayingConfigChildCommand<typeof args> {
       `Your new config: ${config.map((c) => c.code()).join(", ")}`
     );
 
-    embed
-      .setDescription(consolidator.consolidate())
-      .setFooter({
-        text: ignored.length
-          ? `Nonexistant config was ignored. See ${this.prefix}npc help for a list of options`
-          : "",
-      });
+    embed.setDescription(consolidator.consolidate()).setFooter({
+      text: ignored.length
+        ? `Nonexistant config was ignored. See ${this.prefix}npc help for a list of options`
+        : "",
+    });
 
     await this.send(embed);
   }

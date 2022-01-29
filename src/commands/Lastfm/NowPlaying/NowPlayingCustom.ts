@@ -2,6 +2,7 @@ import { User } from "../../../database/entity/User";
 import { Variation } from "../../../lib/command/BaseCommand";
 import { DatasourceService } from "../../../lib/nowplaying/DatasourceService";
 import { NowPlayingBuilder } from "../../../lib/nowplaying/NowPlayingBuilder";
+import { RequirementMap } from "../../../lib/nowplaying/RequirementMap";
 import { ConfigService } from "../../../services/dbservices/NowPlayingService";
 import { Requestable } from "../../../services/LastFM/LastFMAPIService";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
@@ -40,15 +41,19 @@ export default class NowPlayingCustom extends NowPlayingBaseCommand {
     const requirements = builder.generateRequirements();
 
     const resolvedRequirements =
-      await this.datasourceService.resolveRequirements(this.ctx, requirements, {
-        recentTracks,
-        requestable,
-        username,
-        dbUser,
-        message: this.message,
-        components: config,
-        prefix: this.prefix,
-      });
+      await this.datasourceService.resolveRequirements(
+        this.ctx,
+        requirements as (keyof RequirementMap)[],
+        {
+          recentTracks,
+          requestable,
+          username,
+          dbUser,
+          message: this.message,
+          components: config,
+          prefix: this.prefix,
+        }
+      );
 
     const baseEmbed = this.nowPlayingEmbed(nowPlaying, username);
 

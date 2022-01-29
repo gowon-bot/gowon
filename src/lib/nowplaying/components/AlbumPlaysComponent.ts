@@ -13,10 +13,10 @@ export class AlbumPlaysComponent extends BaseNowPlayingComponent<
     const albumPlays = this.values.albumPlays[0];
 
     return {
-      string: `${displayNumber(
+      string: displayNumber(
         albumPlays ? albumPlays.playcount : 0,
-        "scrobble"
-      )} of this album`,
+        "album scrobble"
+      ),
       size: 1,
     };
   }

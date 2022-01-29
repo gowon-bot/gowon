@@ -12,10 +12,10 @@ export class TrackPlaysComponent extends BaseNowPlayingComponent<
   present() {
     if (this.values.trackInfo) {
       return {
-        string: `${displayNumber(
+        string: displayNumber(
           this.values.trackInfo.userPlaycount,
-          "scrobble"
-        )} of this song`,
+          "track scrobble"
+        ),
         size: 1,
       };
     } else {
