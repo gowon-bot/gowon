@@ -1,16 +1,16 @@
 import { Arguments } from "../../../lib/arguments/arguments";
 import { TasteCalculator } from "../../../lib/calculators/TasteCalculator";
-import { sanitizeForDiscord } from "../../../helpers/discord";
 import { Variation } from "../../../lib/command/BaseCommand";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { LogicError } from "../../../errors";
 import { TasteCommand, tasteMentions } from "./TasteCommand";
 import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingEmbed";
-import { displayNumber } from "../../../lib/views/displays";
+import { displayLink, displayNumber } from "../../../lib/views/displays";
 import { TimePeriodParser } from "../../../lib/arguments/custom/TimePeriodParser";
 import { humanizePeriod } from "../../../lib/timeAndDate/helpers";
 import { TimeRangeParser } from "../../../lib/arguments/custom/TimeRangeParser";
+import { LinkGenerator } from "../../../helpers/lastFM";
 
 const args = {
   inputs: {
@@ -93,7 +93,7 @@ export default class Taste extends TasteCommand<typeof args> {
       );
     }
 
-    const embedDescription =
+    const percentageMatch =
       userOneUsername === userTwoUsername
         ? "It's 100%, what are you expecting :neutral_face:"
         : `Comparing top ${displayNumber(
@@ -103,15 +103,16 @@ export default class Taste extends TasteCommand<typeof args> {
             taste.percent
           }% match) found.`;
 
+    const embedDescription = `**Comparison for ${displayLink(
+      userOneUsername,
+      LinkGenerator.userPage(userOneUsername)
+    )} and ${displayLink(
+      userTwoUsername,
+      LinkGenerator.userPage(userTwoUsername)
+    )} ${this.timeRange?.humanized || humanizedPeriod}**\n\n${percentageMatch}`;
+
     const embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor("Taste"))
-      .setTitle(
-        `Comparison for ${sanitizeForDiscord(
-          userOneUsername
-        )} and ${sanitizeForDiscord(userTwoUsername)} ${
-          this.timeRange?.humanized || humanizedPeriod
-        }`
-      )
       .setDescription(embedDescription);
 
     if (this.variationWasUsed("embed")) {
