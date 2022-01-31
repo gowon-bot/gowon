@@ -90,7 +90,9 @@ export class WhoFirstArtist extends FriendsChildCommand<typeof args> {
     }
 
     const embed = this.newEmbed()
-      .setTitle(`When your friends first scrobbled ${artist.strong()}`)
+      .setTitle(
+        `When your friends first scrobbled ${whoFirst.whoFirstArtist.artist.name.strong()}`
+      )
       .setDescription(
         displayNumberedList(
           whoFirst.whoFirstArtist.rows.map(
