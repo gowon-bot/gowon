@@ -10,6 +10,7 @@ import { Scrobbles } from "./Commands/Scrobbles";
 import { RemoveAll } from "./RemoveAll";
 import { Joined } from "./Commands/Joined";
 import { Rating } from "./Commands/Rating";
+import { WhoFirstArtist } from "./Commands/WhoFirstArtist";
 
 export default class FriendsParentCommand extends LastFMBaseParentCommand {
   idSeed = "nature lu";
@@ -44,5 +45,6 @@ export default class FriendsParentCommand extends LastFMBaseParentCommand {
     Scrobbles,
     Joined,
     Rating,
+    WhoFirstArtist,
   ]);
 }

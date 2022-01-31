@@ -37,6 +37,7 @@ export interface TrackInput {
 export interface WhoKnowsSettings {
   guildID?: string;
   limit?: number;
+  userIDs?: string[];
 }
 
 export interface TaskStartResponse {
