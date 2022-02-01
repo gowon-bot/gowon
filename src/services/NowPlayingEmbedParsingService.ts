@@ -89,8 +89,8 @@ export class NowPlayingEmbedParsingService extends BaseService {
     return (
       ctx.client.isBot(message.author.id, ["who knows"]) &&
       message.embeds.length &&
-      (message.embeds[0].author?.name?.startsWith("Now playing -") ||
-        message.embeds[0].author?.name?.startsWith("Last scrobbled -"))
+      (message.embeds[0].author?.name?.startsWith("Now Playing") ||
+        message.embeds[0].author?.name?.startsWith("Last Scrobbled"))
     );
   }
 
