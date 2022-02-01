@@ -109,6 +109,12 @@ export class LastFMArguments extends BaseService<BaseServiceContext> {
         parsedNowplaying =
           this.nowPlayingEmbedParsingService.parseChuuEmbed(embed);
 
+      if (
+        this.nowPlayingEmbedParsingService.hasParsableWhoKnowsEmbed(ctx, reply)
+      )
+        parsedNowplaying =
+          this.nowPlayingEmbedParsingService.parseWhoKnowsEmbed(embed);
+
       if (parsedNowplaying) {
         ctx.parsedNowplaying = parsedNowplaying;
         return parsedNowplaying;

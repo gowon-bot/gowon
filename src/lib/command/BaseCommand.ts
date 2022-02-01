@@ -281,6 +281,7 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
             "fmbot",
             "fmbot develop",
             "chuu",
+            "who knows",
           ])
         ) {
           user = (Array.from(this.message.mentions.users)[1] || [])[1];
