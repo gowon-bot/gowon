@@ -47,12 +47,14 @@ export default class SearchTrack extends SearchCommand {
       );
     }
 
-    const embed = this.newEmbed().setTitle(
-      `Search results in ${perspective.possessive} top ${displayNumber(
-        topTracks.tracks.length,
-        "track"
-      )}`
-    );
+    const embed = this.newEmbed()
+      .setAuthor(this.generateEmbedAuthor("Track search"))
+      .setTitle(
+        `Search results in ${perspective.possessive} top ${displayNumber(
+          topTracks.tracks.length,
+          "track"
+        )}`
+      );
 
     if (!filtered.length) {
       embed.setDescription(`No results found for ${keywords.code()}!`);
@@ -68,9 +70,15 @@ export default class SearchTrack extends SearchCommand {
         pageSize: 15,
         pageRenderer(items) {
           return `Tracks matching ${keywords.code()}
-\`\`\`\n${items
-            .map((t) => `${t.rank}. ${t.artist.name} - ${t.name}`)
-            .join("\n")}\`\`\``;
+\n${items
+            .map(
+              (t) =>
+                `\`${t.rank}\`. ${t.artist.name.italic()} - ${t.name.replaceAll(
+                  new RegExp(`${keywords}`, "gi"),
+                  (match) => match.strong()
+                )} (${displayNumber(t.userPlaycount, "play")})`
+            )
+            .join("\n")}`;
         },
       },
       {

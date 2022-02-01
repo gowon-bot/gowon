@@ -22,7 +22,7 @@ export default class SearchArtist extends SearchCommand {
   ];
 
   async run() {
-    let keywords = this.parsedArguments.keywords!;
+    const keywords = this.parsedArguments.keywords!;
 
     const { requestable, perspective } = await this.parseMentions();
 
@@ -50,12 +50,14 @@ export default class SearchArtist extends SearchCommand {
       );
     }
 
-    const embed = this.newEmbed().setTitle(
-      `Search results in ${perspective.possessive} top ${displayNumber(
-        topArtists.artists.length,
-        "artist"
-      )}`
-    );
+    const embed = this.newEmbed()
+      .setAuthor(this.generateEmbedAuthor("Artist search"))
+      .setTitle(
+        `Search results in ${perspective.possessive} top ${displayNumber(
+          topArtists.artists.length,
+          "artist"
+        )}`
+      );
 
     if (!filtered.length) {
       embed.setDescription(`No results found for ${keywords.code()}!`);
@@ -71,7 +73,16 @@ export default class SearchArtist extends SearchCommand {
         pageSize: 15,
         pageRenderer(items) {
           return `Artists matching ${keywords.code()}
-\`\`\`\n${items.map((a) => `${a.rank}.` + a.name).join("\n")}\`\`\``;
+\n${items
+            .map(
+              (a) =>
+                `${a.rank}. ` +
+                a.name.replaceAll(new RegExp(`${keywords}`, "gi"), (match) =>
+                  match.strong()
+                ) +
+                ` (${displayNumber(a.userPlaycount, "play")})`
+            )
+            .join("\n")}`;
         },
       },
       {

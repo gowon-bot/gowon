@@ -12,11 +12,15 @@ export class NowPlayingEmbedParsingService extends BaseService {
   private readonly emojiRegex = /<a?:\w+:\d+>/g;
   private readonly chuuDescriptionRegex = /\*\*(.*)\*\* \| (\[(.*)\]\(|(.*))/;
 
+  private readonly linkRegex = /\[(.*)\]\(https.*\)/;
+  private readonly boldOrItalicRegex = /\*?\*(.*)\*?\*/;
+
   hasParsableEmbed(ctx: BaseServiceContext, message: Message) {
     return (
       this.hasParsableGowonEmbed(ctx, message) ||
       this.hasParsableFmbotEmbed(ctx, message) ||
-      this.hasParsableChuuEmbed(ctx, message)
+      this.hasParsableChuuEmbed(ctx, message) ||
+      this.hasParsableWhoKnowsEmbed(ctx, message)
     );
   }
 
@@ -81,6 +85,26 @@ export class NowPlayingEmbedParsingService extends BaseService {
     );
   }
 
+  hasParsableWhoKnowsEmbed(ctx: BaseServiceContext, message: Message) {
+    return (
+      ctx.client.isBot(message.author.id, ["who knows"]) &&
+      message.embeds.length &&
+      (message.embeds[0].author?.name?.startsWith("Now playing -") ||
+        message.embeds[0].author?.name?.startsWith("Last scrobbled -"))
+    );
+  }
+
+  parseWhoKnowsEmbed(embed: MessageEmbed) {
+    const track = embed.title!;
+
+    const [artistText, albumText] = embed.description!.split(" | ");
+
+    const artist = this.getTextFromWhoKnowsDescriptionPart(artistText);
+    const album = this.getTextFromWhoKnowsDescriptionPart(albumText);
+
+    return this.generateTrack(artist, track, album, embed.thumbnail?.url);
+  }
+
   private generateTrack(
     artist: string,
     track: string,
@@ -93,5 +117,17 @@ export class NowPlayingEmbedParsingService extends BaseService {
       name: track.trim(),
       image: image ? [{ size: "large", "#text": image }] : [],
     } as any);
+  }
+
+  private getTextFromWhoKnowsDescriptionPart(part: string): string {
+    const [_, linkText] = part.match(this.linkRegex) || [];
+
+    if (linkText) {
+      return linkText;
+    }
+
+    const [__, text] = part.match(this.boldOrItalicRegex) || [];
+
+    return text!;
   }
 }

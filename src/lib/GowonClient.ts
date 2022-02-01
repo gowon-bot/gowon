@@ -13,7 +13,8 @@ export type BotName =
   | "gowon development"
   | "chuu"
   | "fmbot"
-  | "fmbot develop";
+  | "fmbot develop"
+  | "who knows";
 
 export class GowonClient {
   public hasPM2 = false;
@@ -50,7 +51,10 @@ export class GowonClient {
   }
 
   isDeveloperOf(
-    bot: Exclude<BotName, "gowon" | "gowon development" | "fmbot develop">,
+    bot: Exclude<
+      BotName,
+      "gowon" | "gowon development" | "fmbot develop" | "who knows"
+    >,
     userID?: string
   ) {
     return this.specialUsers.otherBotDevelopers[bot].some(

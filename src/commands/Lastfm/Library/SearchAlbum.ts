@@ -47,12 +47,14 @@ export default class SearchAlbum extends SearchCommand {
       );
     }
 
-    const embed = this.newEmbed().setTitle(
-      `Search results in ${perspective.possessive} top ${displayNumber(
-        topAlbums.albums.length,
-        "album"
-      )}`
-    );
+    const embed = this.newEmbed()
+      .setAuthor(this.generateEmbedAuthor("Album search"))
+      .setTitle(
+        `Search results in ${perspective.possessive} top ${displayNumber(
+          topAlbums.albums.length,
+          "album"
+        )}`
+      );
 
     if (!filtered.length) {
       embed.setDescription(`No results found for ${keywords.code()}!`);
@@ -68,9 +70,15 @@ export default class SearchAlbum extends SearchCommand {
         pageSize: 15,
         pageRenderer(items) {
           return `Albums matching ${keywords.code()}
-\`\`\`\n${items
-            .map((l) => `${l.rank}. ${l.artist.name} - ${l.name}`)
-            .join("\n")}\`\`\``;
+\n${items
+            .map(
+              (l) =>
+                `${l.rank}. ${l.artist.name.italic()} - ${l.name.replaceAll(
+                  new RegExp(`${keywords}`, "gi"),
+                  (match) => match.strong()
+                )} (${displayNumber(l.userPlaycount, "play")})`
+            )
+            .join("\n")}`;
         },
       },
       {
