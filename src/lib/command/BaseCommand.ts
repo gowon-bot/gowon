@@ -56,6 +56,7 @@ import { AnalyticsCollector } from "../../analytics/AnalyticsCollector";
 import { RollbarService } from "../../services/Rollbar/RollbarService";
 import { NowPlayingEmbedParsingService } from "../../services/NowPlayingEmbedParsingService";
 import { CommandAccess } from "./access/access";
+import { CustomContext, GowonContext } from "../context/Context";
 
 export interface Variation {
   name: string;
@@ -187,14 +188,14 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     NowPlayingEmbedParsingService
   );
 
-  generateContext(customContext: SimpleMap): any {
-    return Object.assign(
-      {
-        logger: this.logger,
-        command: this,
-      },
-      customContext
-    );
+  generateContext<T extends CustomContext<any, any>>(
+    customContext: T
+  ): GowonContext<T> {
+    return new GowonContext({ command: this, custom: customContext });
+  }
+
+  mutableContext<T>(): GowonContext<{ mutable: T }> {
+    return this.ctx as GowonContext<{ mutable: T }>;
   }
 
   async getChild(_: string, __: string): Promise<Command | undefined> {
@@ -211,7 +212,6 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
 
   public setClient(client: GowonClient) {
     this.gowonClient = client;
-    this.ctx.client = client;
   }
 
   abstract run(message: Message, runAs: RunAs): Promise<void>;

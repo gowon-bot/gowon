@@ -1,18 +1,14 @@
 import { Guild, GuildMember } from "discord.js";
 import gql from "graphql-tag";
 import { CommandRegistry } from "../../lib/command/CommandRegistry";
-import { GowonClient } from "../../lib/GowonClient";
+import { GowonContext } from "../../lib/context/Context";
 import { displayNumber } from "../../lib/views/displays";
-import { BaseService, BaseServiceContext } from "../BaseService";
+import { BaseService } from "../BaseService";
 import { AdminService } from "../dbservices/AdminService";
 import { MirrorballService } from "../mirrorball/MirrorballService";
 import { ServiceRegistry } from "../ServicesRegistry";
 
-type GuildEventServiceContext = BaseServiceContext & {
-  client: GowonClient;
-};
-
-export class GuildEventService extends BaseService<GuildEventServiceContext> {
+export class GuildEventService extends BaseService {
   get adminService() {
     return ServiceRegistry.get(AdminService);
   }
@@ -25,27 +21,24 @@ export class GuildEventService extends BaseService<GuildEventServiceContext> {
     await this.commandRegistry.init();
   }
 
-  public async handleNewGuild(ctx: GuildEventServiceContext, guild: Guild) {
+  public async handleNewGuild(ctx: GowonContext, guild: Guild) {
     this.log(ctx, `setting up Gowon for ${guild.name}`);
 
-    ctx.command = { message: { guild } } as any;
+    ctx.dangerousSetCommand({ message: { guild } });
 
     await this.pingDeveloper(ctx, guild);
     await this.registerUsers(ctx, guild);
   }
 
-  public async handleGuildLeave(ctx: GuildEventServiceContext, guild: Guild) {
+  public async handleGuildLeave(ctx: GowonContext, guild: Guild) {
     this.log(ctx, `tearing down Gowon for ${guild.name}`);
 
-    ctx.command = { message: { guild } } as any;
+    ctx.dangerousSetCommand({ message: { guild } });
 
     await this.pingDeveloper(ctx, guild, true);
   }
 
-  public async handleNewUser(
-    ctx: GuildEventServiceContext,
-    guildMember: GuildMember
-  ) {
+  public async handleNewUser(ctx: GowonContext, guildMember: GuildMember) {
     this.log(ctx, "Handling new user");
 
     try {
@@ -62,10 +55,7 @@ export class GuildEventService extends BaseService<GuildEventServiceContext> {
     }
   }
 
-  public async handleUserLeave(
-    ctx: GuildEventServiceContext,
-    guildMember: GuildMember
-  ) {
+  public async handleUserLeave(ctx: GowonContext, guildMember: GuildMember) {
     this.log(ctx, "Handling user leave");
 
     try {
@@ -82,11 +72,7 @@ export class GuildEventService extends BaseService<GuildEventServiceContext> {
     }
   }
 
-  private async pingDeveloper(
-    ctx: GuildEventServiceContext,
-    guild: Guild,
-    leave = false
-  ) {
+  private async pingDeveloper(ctx: GowonContext, guild: Guild, leave = false) {
     const developerID = ctx.client.specialUsers.developers[0].id;
 
     await ctx.client.client.users
@@ -99,7 +85,7 @@ export class GuildEventService extends BaseService<GuildEventServiceContext> {
       );
   }
 
-  private async registerUsers(ctx: GuildEventServiceContext, guild: Guild) {
+  private async registerUsers(ctx: GowonContext, guild: Guild) {
     const members = await guild.members.fetch();
 
     const mutation = gql`

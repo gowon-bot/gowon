@@ -1,4 +1,5 @@
-import { BaseService, BaseServiceContext } from "./BaseService";
+import { GowonContext } from "../lib/context/Context";
+import { BaseService } from "./BaseService";
 
 export enum ConcurrentAction {
   Indexing = "Indexing",
@@ -22,18 +23,14 @@ export class ConcurrencyService extends BaseService {
     }
   }
 
-  registerUser(
-    ctx: BaseServiceContext,
-    action: ConcurrentAction,
-    discordID: string
-  ) {
+  registerUser(ctx: GowonContext, action: ConcurrentAction, discordID: string) {
     this.log(ctx, `Registering user ${discordID} as doing ${action}`);
     this.cache[action].add(discordID);
     this.makeEphemeral(action, discordID);
   }
 
   unregisterUser(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     action: ConcurrentAction,
     discordID: string
   ) {

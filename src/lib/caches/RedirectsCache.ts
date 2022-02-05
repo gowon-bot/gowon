@@ -1,6 +1,6 @@
-import { BaseServiceContext } from "../../services/BaseService";
 import { RedirectsService } from "../../services/dbservices/RedirectsService";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
+import { GowonContext } from "../context/Context";
 
 interface RedirectsCacheObject {
   [from: string]: string | undefined;
@@ -12,7 +12,7 @@ export class RedirectsCache {
 
   constructor(private ctx: any) {}
 
-  async initialCache(ctx: BaseServiceContext, artistNames: string[]) {
+  async initialCache(ctx: GowonContext, artistNames: string[]) {
     this.cache = await this.redirectsService.getRedirectsForArtistsMap(
       ctx,
       artistNames

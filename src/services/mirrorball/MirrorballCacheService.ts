@@ -1,6 +1,7 @@
 import gql from "graphql-tag";
+import { GowonContext } from "../../lib/context/Context";
 import { displayNumber } from "../../lib/views/displays";
-import { BaseService, BaseServiceContext } from "../BaseService";
+import { BaseService } from "../BaseService";
 import { RawArtistInfo, RawTagTopArtists } from "../LastFM/LastFMService.types";
 import { ServiceRegistry } from "../ServicesRegistry";
 import { MirrorballService } from "./MirrorballService";
@@ -10,7 +11,7 @@ export class MirrorballCacheService extends BaseService {
     return ServiceRegistry.get(MirrorballService);
   }
 
-  async cacheArtistInfo(ctx: BaseServiceContext, artistInfo: RawArtistInfo) {
+  async cacheArtistInfo(ctx: GowonContext, artistInfo: RawArtistInfo) {
     this.log(ctx, `Caching artist info for ${artistInfo.name} to Mirrorball`);
 
     try {
@@ -33,10 +34,7 @@ export class MirrorballCacheService extends BaseService {
     } catch {}
   }
 
-  async cacheTagTopArtists(
-    ctx: BaseServiceContext,
-    tagTopArtists: RawTagTopArtists
-  ) {
+  async cacheTagTopArtists(ctx: GowonContext, tagTopArtists: RawTagTopArtists) {
     this.log(
       ctx,
       `Caching ${displayNumber(tagTopArtists.artist.length, "artists")} as ${

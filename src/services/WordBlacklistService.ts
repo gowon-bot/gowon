@@ -1,4 +1,4 @@
-import { BaseService, BaseServiceContext } from "./BaseService";
+import { BaseService } from "./BaseService";
 import blacklist from "../wordBlacklist.json";
 import { TagBan } from "../database/entity/TagBan";
 import {
@@ -6,6 +6,7 @@ import {
   TagBannedByDefaultError,
   TagNotBannedError,
 } from "../errors";
+import { GowonContext } from "../lib/context/Context";
 
 type WordBlacklistScope = "base" | "tags";
 
@@ -29,13 +30,11 @@ export type RawWordBlacklist = {
   [K in WordBlacklistScope]: RawWordBlacklistGroup;
 };
 
-type WordBlacklistServiceMutableContext = {
-  serverBannedTags?: TagBan[];
-};
+type WordBlacklistServiceContext = GowonContext<{
+  mutable?: { serverBannedTags?: TagBan[] };
+}>;
 
-export class WordBlacklistService extends BaseService<
-  BaseServiceContext & WordBlacklistServiceMutableContext
-> {
+export class WordBlacklistService extends BaseService<WordBlacklistServiceContext> {
   private blacklist: WordBlacklist;
 
   constructor() {
@@ -44,7 +43,7 @@ export class WordBlacklistService extends BaseService<
   }
 
   filter<T extends string | { name: string }>(
-    ctx: BaseServiceContext & WordBlacklistServiceMutableContext,
+    ctx: WordBlacklistServiceContext,
     items: T[],
     scopes: WordBlacklistScope[] = ["base"],
     customBlacklist: string[] = []
@@ -55,7 +54,7 @@ export class WordBlacklistService extends BaseService<
   }
 
   isAllowed(
-    ctx: BaseServiceContext & WordBlacklistServiceMutableContext,
+    ctx: WordBlacklistServiceContext,
     item: string | { name: string },
     scopes: WordBlacklistScope[] = ["base"],
     customBlacklist: string[] = []
@@ -70,13 +69,16 @@ export class WordBlacklistService extends BaseService<
       !blacklistGroup.regexes.some((regex) =>
         regex.test(this.getItemName(item))
       ) &&
-      !ctx.serverBannedTags?.some(
+      !ctx.mutable.serverBannedTags?.some(
         (bt) => this.normalizeItem(bt.tag) === this.normalizeItem(item)
       )
     );
   }
 
-  async serverBanTag(ctx: BaseServiceContext, tag: string): Promise<TagBan> {
+  async serverBanTag(
+    ctx: WordBlacklistServiceContext,
+    tag: string
+  ): Promise<TagBan> {
     this.log(ctx, `Banning tag ${tag} in ${ctx.command.guild.id}`);
 
     if (!this.isAllowed(ctx, tag, ["base", "tags"]))
@@ -97,7 +99,10 @@ export class WordBlacklistService extends BaseService<
     return await newBan.save();
   }
 
-  async serverUnbanTag(ctx: BaseServiceContext, tag: string): Promise<void> {
+  async serverUnbanTag(
+    ctx: WordBlacklistServiceContext,
+    tag: string
+  ): Promise<void> {
     this.log(ctx, `Unbanning tag ${tag} in ${ctx.command.guild.id}`);
 
     if (!this.isAllowed(ctx, tag)) throw new TagBannedByDefaultError();
@@ -112,15 +117,15 @@ export class WordBlacklistService extends BaseService<
     await existingBan.remove();
   }
 
-  async getServerBannedTags(ctx: BaseServiceContext): Promise<TagBan[]> {
+  async getServerBannedTags(
+    ctx: WordBlacklistServiceContext
+  ): Promise<TagBan[]> {
     this.log(ctx, `Getting banned tags for ${ctx.command.guild.id}`);
     return await TagBan.find({ serverID: ctx.command.guild.id });
   }
 
-  async saveServerBannedTagsInContext(
-    ctx: BaseServiceContext & WordBlacklistServiceMutableContext
-  ) {
-    ctx.serverBannedTags = await this.getServerBannedTags(ctx);
+  async saveServerBannedTagsInContext(ctx: WordBlacklistServiceContext) {
+    ctx.mutable.serverBannedTags = await this.getServerBannedTags(ctx);
   }
 
   private parseRawBlacklist(rawBlacklist: RawWordBlacklist): WordBlacklist {

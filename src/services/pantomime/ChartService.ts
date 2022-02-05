@@ -1,11 +1,12 @@
 import fetch, { Response } from "node-fetch";
-import { BaseService, BaseServiceContext } from "../BaseService";
+import { GowonContext } from "../../lib/context/Context";
+import { BaseService } from "../BaseService";
 
 export class ChartService extends BaseService {
   private readonly baseURL = "http://localhost:3002/api";
 
   private async makeRequest(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     path: string,
     variables?: object
   ): Promise<Response> {
@@ -34,7 +35,7 @@ export class ChartService extends BaseService {
   }
 
   public async createChart(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     images: { url: string }[],
     size: { width: 1000; height: 1000 }
   ): Promise<Buffer> {

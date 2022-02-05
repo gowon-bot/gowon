@@ -15,11 +15,15 @@ import { gowonAPIPort } from "./api";
 import { AnalyticsCollector } from "./analytics/AnalyticsCollector";
 import { UsersService } from "./services/dbservices/UsersService";
 import { Logger } from "./lib/Logger";
+import { GowonContext } from "./lib/context/Context";
 
 async function start() {
   await setup();
 
-  const ctx = { client, logger: new Logger() } as any;
+  const ctx = new GowonContext({
+    command: { gowonClient: client, logger: new Logger() } as any,
+    custom: {},
+  }) as any;
 
   const analyticsCollector = ServiceRegistry.get(AnalyticsCollector);
   const usersService = ServiceRegistry.get(UsersService);

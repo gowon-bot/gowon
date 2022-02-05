@@ -4,14 +4,14 @@ import { Permission } from "../../database/entity/Permission";
 import { Command } from "../command/Command";
 import { ChildCommand } from "../command/ParentCommand";
 import { In } from "typeorm";
-import { GowonClient } from "../GowonClient";
 import { checkRollout } from "../../helpers/permissions";
 import { CommandRegistry } from "../command/CommandRegistry";
-import { BaseService, BaseServiceContext } from "../../services/BaseService";
+import { BaseService } from "../../services/BaseService";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { GowonService } from "../../services/GowonService";
 import { asyncMap } from "../../helpers";
 import { SettingsService } from "../settings/SettingsService";
+import { GowonContext } from "../context/Context";
 
 export enum CheckFailReason {
   disabled = "disabled",
@@ -24,19 +24,19 @@ export interface CanCheck {
   reason?: CheckFailReason;
 }
 
-type CanContext = BaseServiceContext & {
-  adminService: AdminService;
-  client: GowonClient;
-};
-
-type MutableContext = {
-  cachedPermissons?: {
-    [commandID: string]: Permission[];
+type CanContext = GowonContext<{
+  constants: {
+    adminService: AdminService;
   };
-  adminRole?: string;
-};
+  mutable?: {
+    cachedPermissons?: {
+      [commandID: string]: Permission[];
+    };
+    adminRole?: string;
+  };
+}>;
 
-export class Can extends BaseService<CanContext, MutableContext> {
+export class Can extends BaseService<CanContext> {
   private commandRegistry = CommandRegistry.getInstance();
 
   private get gowonService() {
@@ -47,19 +47,19 @@ export class Can extends BaseService<CanContext, MutableContext> {
     return ServiceRegistry.get(SettingsService);
   }
 
-  private getCachedPermissions(ctx: CanContext & MutableContext) {
-    if (!ctx.cachedPermissons) ctx.cachedPermissons = {};
+  private getCachedPermissions(ctx: CanContext) {
+    if (!ctx.mutable.cachedPermissons) ctx.mutable.cachedPermissons = {};
 
-    return ctx.cachedPermissons;
+    return ctx.mutable.cachedPermissons;
   }
 
-  private getAdminRole(ctx: CanContext & MutableContext): string | undefined {
+  private getAdminRole(ctx: CanContext): string | undefined {
     if (!this.ctx.hasOwnProperty("adminRole"))
-      ctx.adminRole = this.settingsService.get("adminRole", {
+      ctx.mutable.adminRole = this.settingsService.get("adminRole", {
         guildID: ctx.command.guild.id,
       });
 
-    return ctx.adminRole;
+    return ctx.mutable.adminRole;
   }
 
   private async getParentIDs(
@@ -68,7 +68,7 @@ export class Can extends BaseService<CanContext, MutableContext> {
   ): Promise<string[]> {
     const runAs = await this.commandRegistry.find(
       child.parentName,
-      this.guild(ctx).id
+      ctx.guild.id
     );
 
     return runAs.runAs.toCommandArray().map((c) => c.id);
@@ -107,7 +107,7 @@ export class Can extends BaseService<CanContext, MutableContext> {
     ctx: CanContext,
     commandID: string
   ): Promise<boolean> {
-    const serverID = this.guild(ctx).id;
+    const serverID = ctx.guild.id;
     const channelID = ctx.command.message.channel.id;
 
     let channelBlacklists = await this.gowonService.getChannelBlacklists(
@@ -172,7 +172,7 @@ export class Can extends BaseService<CanContext, MutableContext> {
         command instanceof ChildCommand
           ? [command.id, ...(await this.getParentIDs(ctx, command))]
           : [command.id],
-        (id) => ctx.adminService.isCommandDisabled(ctx, id)
+        (id) => ctx.constants.adminService.isCommandDisabled(ctx, id)
       )
     ).reduce((acc, c) => {
       if (acc) return true;

@@ -1,5 +1,6 @@
 import { gql } from "@apollo/client/core";
-import { BaseService, BaseServiceContext } from "../../BaseService";
+import { GowonContext } from "../../../lib/context/Context";
+import { BaseService } from "../../BaseService";
 import { ServiceRegistry } from "../../ServicesRegistry";
 import { MirrorballService } from "../MirrorballService";
 import {
@@ -16,7 +17,7 @@ export class MirrorballUsersService extends BaseService {
   }
 
   async getMirrorballUser(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     inputs: UserInput[]
   ): Promise<MirrorballUser[] | undefined> {
     const query = gql`
@@ -42,8 +43,8 @@ export class MirrorballUsersService extends BaseService {
     return undefined;
   }
 
-  async updatePrivacy(ctx: BaseServiceContext, privacy: MirrorballPrivacy) {
-    const discordID = this.author(ctx).id;
+  async updatePrivacy(ctx: GowonContext, privacy: MirrorballPrivacy) {
+    const discordID = ctx.author.id;
 
     const mutation = gql`
       mutation updatePrivacy($discordID: String!, $privacy: Privacy!) {

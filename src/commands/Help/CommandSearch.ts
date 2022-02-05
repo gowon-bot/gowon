@@ -32,7 +32,7 @@ export default class CommandSearch extends BaseCommand<typeof args> {
   adminService = ServiceRegistry.get(AdminService);
 
   ctx = this.generateContext({
-    adminService: this.adminService,
+    constants: { adminService: this.adminService },
   });
 
   async run() {

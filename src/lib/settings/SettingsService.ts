@@ -1,5 +1,6 @@
 import { Setting } from "../../database/entity/Setting";
-import { BaseService, BaseServiceContext } from "../../services/BaseService";
+import { BaseService } from "../../services/BaseService";
+import { GowonContext } from "../context/Context";
 import { Settings, SettingsMap } from "./Settings";
 import {
   UserScope,
@@ -51,7 +52,7 @@ export class SettingsService extends BaseService {
   }
 
   async set(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     settingName: SettingName,
     scope: Scope,
     value?: string

@@ -16,10 +16,6 @@ export class Ban extends CrownsChildCommand<typeof args> {
 
   adminCommand = true;
 
-  ctx = this.generateContext({
-    crownsService: this.crownsService,
-  });
-
   async run() {
     let { mentionedDBUser, senderUser, discordUser } = await this.parseMentions(
       {

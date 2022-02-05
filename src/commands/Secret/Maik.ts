@@ -22,4 +22,5 @@ const quotes: string[] = [
   "https://media.discordapp.net/attachments/769118965560770581/877664595446202418/E9Ffy5AXoAooXZw.png",
   "I got a pic of my cat next to the penis vinyl somewhere",
   "Wanna know my credit card number",
+  "You havent lived if you have never pondered the anaconda lyrics on a starry night by sea",
 ];

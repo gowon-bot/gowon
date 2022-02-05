@@ -1,7 +1,8 @@
-import { BaseService, BaseServiceContext } from "../BaseService";
+import { BaseService } from "../BaseService";
 import redis, { RedisError } from "redis";
 import { promisify } from "util";
 import config from "../../../config.json";
+import { GowonContext } from "../../lib/context/Context";
 
 export class RedisInteractionService extends BaseService {
   client = redis.createClient({
@@ -28,12 +29,7 @@ export class RedisInteractionService extends BaseService {
     this.client.on("error", this.handleRedisError);
   }
 
-  async set(
-    ctx: BaseServiceContext,
-    key: string,
-    value: any,
-    expiresAfter: number
-  ) {
+  async set(ctx: GowonContext, key: string, value: any, expiresAfter: number) {
     if (!key.includes("-nickname") && !key.includes("-username")) {
       this.log(
         ctx,
@@ -44,13 +40,13 @@ export class RedisInteractionService extends BaseService {
     await this.setAsync(this.genKey(key), expiresAfter, value ?? "");
   }
 
-  async get(ctx: BaseServiceContext, key: string): Promise<string | undefined> {
+  async get(ctx: GowonContext, key: string): Promise<string | undefined> {
     this.log(ctx, `Getting ${key}`);
 
     return (await this.getAsync(this.genKey(key))) ?? undefined;
   }
 
-  delete(ctx: BaseServiceContext, key: string) {
+  delete(ctx: GowonContext, key: string) {
     this.log(ctx, `Deleting ${key}`);
 
     this.client.del(this.genKey(key));

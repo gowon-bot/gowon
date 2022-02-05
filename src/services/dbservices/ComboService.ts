@@ -1,14 +1,15 @@
 import { Combo } from "../../lib/calculators/ComboCalculator";
 import { Combo as DBCombo } from "../../database/entity/Combo";
-import { BaseService, BaseServiceContext } from "../BaseService";
+import { BaseService } from "../BaseService";
 import { User } from "../../database/entity/User";
 import { ILike, In } from "typeorm";
 import { displayNumber } from "../../lib/views/displays";
 import { sqlLikeEscape } from "../../helpers/database";
+import { GowonContext } from "../../lib/context/Context";
 
 export class ComboService extends BaseService {
   async saveCombo(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     combo: Combo,
     user: User
   ): Promise<DBCombo> {
@@ -35,7 +36,7 @@ export class ComboService extends BaseService {
   }
 
   async getCombo(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     combo: Combo,
     user: User
   ): Promise<DBCombo | undefined> {
@@ -50,7 +51,7 @@ export class ComboService extends BaseService {
   }
 
   async createCombo(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     combo: Combo,
     user: User
   ): Promise<DBCombo> {
@@ -78,7 +79,7 @@ export class ComboService extends BaseService {
   }
 
   async listCombos(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     user: User,
     artist?: string
   ): Promise<DBCombo[]> {
@@ -92,7 +93,7 @@ export class ComboService extends BaseService {
   }
 
   async listCombosForUsers(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     userIDs: string[],
     artist?: string
   ): Promise<DBCombo[]> {

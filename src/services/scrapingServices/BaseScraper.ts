@@ -1,8 +1,9 @@
-import { BaseService, BaseServiceContext } from "../BaseService";
+import { BaseService } from "../BaseService";
 import axios from "axios";
 import cheerio from "cheerio";
 import chalk from "chalk";
 import { ClientError } from "../../errors";
+import { GowonContext } from "../../lib/context/Context";
 
 export class ScrapingError extends ClientError {
   name = "ScrapingError";
@@ -12,7 +13,7 @@ export class ScrapingError extends ClientError {
   }
 }
 
-type BaseScraperContext = BaseServiceContext & { url: string };
+type BaseScraperContext = GowonContext<{ constants: { url: string } }>;
 
 export class BaseScraper extends BaseService<BaseScraperContext> {
   axios = axios.create();
@@ -21,8 +22,11 @@ export class BaseScraper extends BaseService<BaseScraperContext> {
     ctx: BaseScraperContext,
     path: string
   ): Promise<cheerio.Root> {
-    this.log(ctx, chalk`Made scraping request for {cyan '${ctx.url + path}'}`);
-    let response = await this.axios.get(ctx.url + path);
+    this.log(
+      ctx,
+      chalk`Made scraping request for {cyan '${ctx.constants.url + path}'}`
+    );
+    let response = await this.axios.get(ctx.constants.url + path);
     return cheerio.load(response.data);
   }
 }

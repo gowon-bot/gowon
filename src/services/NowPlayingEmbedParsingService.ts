@@ -1,5 +1,6 @@
 import { Message, MessageEmbed } from "discord.js";
-import { BaseService, BaseServiceContext } from "./BaseService";
+import { GowonContext } from "../lib/context/Context";
+import { BaseService } from "./BaseService";
 import { RecentTrack } from "./LastFM/converters/RecentTracks";
 
 export class NowPlayingEmbedParsingService extends BaseService {
@@ -15,7 +16,7 @@ export class NowPlayingEmbedParsingService extends BaseService {
   private readonly linkRegex = /\[(.*)\]\(https.*\)/;
   private readonly boldOrItalicRegex = /\*?\*(.*)\*?\*/;
 
-  hasParsableEmbed(ctx: BaseServiceContext, message: Message) {
+  hasParsableEmbed(ctx: GowonContext, message: Message) {
     return (
       this.hasParsableGowonEmbed(ctx, message) ||
       this.hasParsableFmbotEmbed(ctx, message) ||
@@ -24,7 +25,7 @@ export class NowPlayingEmbedParsingService extends BaseService {
     );
   }
 
-  hasParsableGowonEmbed(ctx: BaseServiceContext, message: Message) {
+  hasParsableGowonEmbed(ctx: GowonContext, message: Message) {
     return (
       ctx.client.isBot(message.author.id, ["gowon", "gowon development"]) &&
       message.embeds.length &&
@@ -42,7 +43,7 @@ export class NowPlayingEmbedParsingService extends BaseService {
     return this.generateTrack(artist, track, album, embed.thumbnail?.url);
   }
 
-  hasParsableFmbotEmbed(ctx: BaseServiceContext, message: Message) {
+  hasParsableFmbotEmbed(ctx: GowonContext, message: Message) {
     return (
       ctx.client.isBot(message.author.id, ["fmbot", "fmbot develop"]) &&
       message.embeds.length &&
@@ -58,7 +59,7 @@ export class NowPlayingEmbedParsingService extends BaseService {
     return this.generateTrack(artist!, track!, album, embed.thumbnail?.url);
   }
 
-  hasParsableChuuEmbed(ctx: BaseServiceContext, message: Message) {
+  hasParsableChuuEmbed(ctx: GowonContext, message: Message) {
     return (
       ctx.client.isBot(message.author.id, ["chuu"]) &&
       message.embeds.length &&
@@ -85,7 +86,7 @@ export class NowPlayingEmbedParsingService extends BaseService {
     );
   }
 
-  hasParsableWhoKnowsEmbed(ctx: BaseServiceContext, message: Message) {
+  hasParsableWhoKnowsEmbed(ctx: GowonContext, message: Message) {
     return (
       ctx.client.isBot(message.author.id, ["who knows"]) &&
       message.embeds.length &&

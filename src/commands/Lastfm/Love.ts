@@ -1,6 +1,6 @@
 import { Arguments } from "../../lib/arguments/arguments";
 import { Variation } from "../../lib/command/BaseCommand";
-import { RecentTrack } from "../../services/LastFM/converters/RecentTracks";
+import { LastFMArgumentsMutableContext } from "../../services/LastFM/LastFMArguments";
 import { LastFMBaseCommand } from "./LastFMBaseCommand";
 
 const args = {
@@ -32,8 +32,10 @@ export default class Love extends LastFMBaseCommand<typeof args> {
       senderRequestable
     );
 
-    const np = this.ctx.nowplaying as RecentTrack | undefined;
-    const parsedNp = this.ctx.parsedNowplaying as RecentTrack | undefined;
+    const mutableContext = this.mutableContext<LastFMArgumentsMutableContext>();
+
+    const np = mutableContext.mutable.nowplaying;
+    const parsedNp = mutableContext.mutable.parsedNowplaying;
 
     const isNowPlaying =
       (np && np.artist === artist && np.name == track) ||

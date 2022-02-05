@@ -1,7 +1,8 @@
 import { ArtistRedirect } from "../../database/entity/ArtistRedirect";
 import { RecordNotFoundError } from "../../errors";
+import { GowonContext } from "../../lib/context/Context";
 import { displayNumber } from "../../lib/views/displays";
-import { BaseService, BaseServiceContext } from "../BaseService";
+import { BaseService } from "../BaseService";
 import { LastFMService } from "../LastFM/LastFMService";
 import { ServiceRegistry } from "../ServicesRegistry";
 
@@ -11,7 +12,7 @@ export class RedirectsService extends BaseService {
   }
 
   async setRedirect(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     from: string,
     to?: string
   ): Promise<ArtistRedirect> {
@@ -28,7 +29,7 @@ export class RedirectsService extends BaseService {
   }
 
   async removeRedirect(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     from: string
   ): Promise<ArtistRedirect> {
     this.log(ctx, `Removing redirect from ${from}`);
@@ -42,7 +43,7 @@ export class RedirectsService extends BaseService {
   }
 
   async getRedirect(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     artistName: string
   ): Promise<ArtistRedirect | undefined> {
     this.log(ctx, `Fetching redirect for ${artistName}`);
@@ -54,17 +55,14 @@ export class RedirectsService extends BaseService {
     } else return redirect;
   }
 
-  async checkRedirect(
-    ctx: BaseServiceContext,
-    artistName: string
-  ): Promise<string> {
+  async checkRedirect(ctx: GowonContext, artistName: string): Promise<string> {
     let redirect = await this.getRedirect(ctx, artistName);
 
     return redirect?.to || redirect?.from!;
   }
 
   async listRedirects(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     artistName: string
   ): Promise<ArtistRedirect[]> {
     this.log(ctx, `Listing redirects for ${artistName}`);
@@ -72,14 +70,14 @@ export class RedirectsService extends BaseService {
     return await ArtistRedirect.find({ to: artistName });
   }
 
-  async countAllRedirects(ctx: BaseServiceContext): Promise<number> {
+  async countAllRedirects(ctx: GowonContext): Promise<number> {
     this.log(ctx, `Counting all redirects`);
 
     return await ArtistRedirect.count();
   }
 
   async getRedirectsForArtistsMap(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     artists: string[]
   ): Promise<{ [artistName: string]: string | undefined }> {
     this.log(
@@ -111,7 +109,7 @@ export class RedirectsService extends BaseService {
   }
 
   private async createRedirect(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     artistName: string
   ): Promise<ArtistRedirect | undefined> {
     try {

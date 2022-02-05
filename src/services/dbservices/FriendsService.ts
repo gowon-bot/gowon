@@ -5,12 +5,13 @@ import {
   LastFMUserDoesntExistError,
   TooManyFriendsError,
 } from "../../errors";
-import { BaseService, BaseServiceContext } from "../BaseService";
+import { BaseService } from "../BaseService";
 import { User } from "../../database/entity/User";
 import { LastFMService } from "../LastFM/LastFMService";
 import { ILike } from "typeorm";
 import { ServiceRegistry } from "../ServicesRegistry";
 import { sqlLikeEscape } from "../../helpers/database";
+import { GowonContext } from "../../lib/context/Context";
 
 export class FriendsService extends BaseService {
   private get lastFMService() {
@@ -20,7 +21,7 @@ export class FriendsService extends BaseService {
   private patronFriendsLimit = 15;
 
   async addFriend(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     user: User,
     friendToAdd: string | User
   ): Promise<Friend> {
@@ -71,7 +72,7 @@ export class FriendsService extends BaseService {
   }
 
   async removeFriend(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     user: User,
     friendToRemove: string | User
   ): Promise<void> {
@@ -112,7 +113,7 @@ export class FriendsService extends BaseService {
     await friend.remove();
   }
 
-  async clearFriends(ctx: BaseServiceContext, user: User): Promise<number> {
+  async clearFriends(ctx: GowonContext, user: User): Promise<number> {
     this.log(
       ctx,
       `Removing friend all friends for user ${user.lastFMUsername}`
@@ -125,14 +126,14 @@ export class FriendsService extends BaseService {
     return friendsDeleted.affected ?? 0;
   }
 
-  async listFriends(ctx: BaseServiceContext, user: User): Promise<Friend[]> {
+  async listFriends(ctx: GowonContext, user: User): Promise<Friend[]> {
     this.log(ctx, `Listing friends for user ${user?.lastFMUsername}`);
 
     return await Friend.find({ user });
   }
 
   async isAlreadyFriends(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     user: User,
     friend: string | User
   ): Promise<boolean> {
@@ -150,7 +151,7 @@ export class FriendsService extends BaseService {
     );
   }
 
-  async getUsernames(ctx: BaseServiceContext, user: User): Promise<string[]> {
+  async getUsernames(ctx: GowonContext, user: User): Promise<string[]> {
     return (await this.listFriends(ctx, user)).map(
       (f) =>
         (f.friend?.lastFMUsername?.toLowerCase() ||
@@ -158,7 +159,7 @@ export class FriendsService extends BaseService {
     );
   }
 
-  async friendsCount(ctx: BaseServiceContext, user: User): Promise<number> {
+  async friendsCount(ctx: GowonContext, user: User): Promise<number> {
     this.log(ctx, `Counting friends for user ${user.lastFMUsername}`);
 
     return (await this.listFriends(ctx, user)).length;

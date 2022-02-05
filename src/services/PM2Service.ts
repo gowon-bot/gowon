@@ -1,19 +1,20 @@
-import { BaseService, BaseServiceContext } from "./BaseService";
+import { BaseService } from "./BaseService";
 import config from "../../config.json";
 import pm2, { ProcessDescription } from "pm2";
 import { PM2ConnectionError } from "../errors";
+import { GowonContext } from "../lib/context/Context";
 
 export class PM2Service extends BaseService {
   appName = config.pm2AppName;
 
-  restart(ctx: BaseServiceContext) {
+  restart(ctx: GowonContext) {
     this.log(ctx, `Restarting ${this.appName}`);
     this.connectAndRun(() => {
       pm2.restart(this.appName, () => {});
     });
   }
 
-  async describe(ctx: BaseServiceContext): Promise<ProcessDescription> {
+  async describe(ctx: GowonContext): Promise<ProcessDescription> {
     return new Promise((resolve, reject) => {
       this.log(ctx, `Describing ${this.appName}`);
 

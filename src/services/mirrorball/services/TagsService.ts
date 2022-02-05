@@ -1,6 +1,7 @@
 import gql from "graphql-tag";
+import { GowonContext } from "../../../lib/context/Context";
 import { displayNumber } from "../../../lib/views/displays";
-import { BaseService, BaseServiceContext } from "../../BaseService";
+import { BaseService } from "../../BaseService";
 import { ServiceRegistry } from "../../ServicesRegistry";
 import { MirrorballService } from "../MirrorballService";
 import { ArtistInput, MirrorballTag } from "../MirrorballTypes";
@@ -11,7 +12,7 @@ export class TagsService extends BaseService {
   }
 
   async getTagsForArtists(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     artists: ArtistInput[]
   ): Promise<MirrorballTag[]> {
     this.log(
@@ -38,7 +39,7 @@ export class TagsService extends BaseService {
   }
 
   async getTagsForArtistsMap(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     artists: string[],
     requireTags = false
   ): Promise<{
@@ -73,7 +74,7 @@ export class TagsService extends BaseService {
   }
 
   async filterArtists<T extends { name: string }>(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     artists: T[],
     allowedTags: string[]
   ): Promise<T[]> {

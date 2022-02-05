@@ -65,12 +65,13 @@ import {
   LastFMError,
   BadLastFMResponseError,
 } from "../../errors";
-import { BaseService, BaseServiceContext } from "../BaseService";
+import { BaseService } from "../BaseService";
 import { toInt } from "../../helpers/lastFM";
 import { MirrorballCacheService } from "../mirrorball/MirrorballCacheService";
 import { SimpleMap } from "../../helpers/types";
 import { ServiceRegistry } from "../ServicesRegistry";
 import { AnalyticsCollector } from "../../analytics/AnalyticsCollector";
+import { GowonContext } from "../../lib/context/Context";
 
 export interface SessionKey {
   username: string;
@@ -115,7 +116,7 @@ export class LastFMAPIService extends BaseService {
   }
 
   async _recentTracks(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     params: RecentTracksParams
   ): Promise<RawRecentTracks> {
     return (
@@ -128,7 +129,7 @@ export class LastFMAPIService extends BaseService {
   }
 
   async _recentTracksExtended(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     params: RecentTracksParams
   ): Promise<RawRecentTracksExtended> {
     return await this.request<RawRecentTracksExtended>(
@@ -142,7 +143,7 @@ export class LastFMAPIService extends BaseService {
   }
 
   async _trackInfo(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     params: TrackInfoParams
   ): Promise<RawTrackInfo> {
     let response = (
@@ -159,7 +160,7 @@ export class LastFMAPIService extends BaseService {
   }
 
   async _artistInfo(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     params: ArtistInfoParams
   ): Promise<RawArtistInfo> {
     let response = (
@@ -181,7 +182,7 @@ export class LastFMAPIService extends BaseService {
   }
 
   async _albumInfo(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     params: AlbumInfoParams
   ): Promise<RawAlbumInfo> {
     let response = (
@@ -198,7 +199,7 @@ export class LastFMAPIService extends BaseService {
   }
 
   async _userInfo(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     params: UserInfoParams
   ): Promise<RawUserInfo> {
     return (
@@ -207,7 +208,7 @@ export class LastFMAPIService extends BaseService {
   }
 
   async _tagInfo(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     params: TagInfoParams
   ): Promise<RawTagInfo> {
     return (await this.request<RawTagInfoResponse>(ctx, "tag.getInfo", params))
@@ -215,7 +216,7 @@ export class LastFMAPIService extends BaseService {
   }
 
   async _topArtists(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     params: TopArtistsParams
   ): Promise<RawTopArtists> {
     return (
@@ -229,7 +230,7 @@ export class LastFMAPIService extends BaseService {
   }
 
   async _topAlbums(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     params: TopAlbumsParams
   ): Promise<RawTopAlbums> {
     return (
@@ -243,7 +244,7 @@ export class LastFMAPIService extends BaseService {
   }
 
   async _topTracks(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     params: TopTracksParams
   ): Promise<RawTopTracks> {
     return (
@@ -257,7 +258,7 @@ export class LastFMAPIService extends BaseService {
   }
 
   async _artistPopularTracks(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     params: ArtistPopularTracksParams
   ): Promise<RawArtistPopularTracks> {
     let response = await this.request<RawArtistPopularTracksResponse>(
@@ -270,7 +271,7 @@ export class LastFMAPIService extends BaseService {
   }
 
   async _tagTopArtists(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     params: TagTopArtistsParams
   ): Promise<RawTagTopArtists> {
     let response = await this.request<RawTagTopArtistsResponse>(
@@ -285,7 +286,7 @@ export class LastFMAPIService extends BaseService {
   }
 
   async _trackSearch(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     params: TrackSearchParams
   ): Promise<RawTrackSearchResponse> {
     let response = await this.request<RawTrackSearchResponse>(
@@ -298,7 +299,7 @@ export class LastFMAPIService extends BaseService {
   }
 
   async _getArtistCorrection(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     params: GetArtistCorrectionParams
   ): Promise<RawArtistCorrection> {
     let response = await this.request<RawGetArtistCorrectionResponse>(
@@ -315,7 +316,7 @@ export class LastFMAPIService extends BaseService {
   }
 
   async _userGetFriends(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     params: UserGetFriendsParams
   ): Promise<RawFriends> {
     try {
@@ -343,7 +344,7 @@ export class LastFMAPIService extends BaseService {
   }
 
   async _tagTopTracks(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     params: TagTopTracksParams
   ): Promise<RawTagTopTracks> {
     return (
@@ -356,39 +357,36 @@ export class LastFMAPIService extends BaseService {
   }
 
   async _userGetWeeklyArtistChart(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     params: UserGetWeeklyChartParams
   ): Promise<RawUserGetWeeklyArtistChart> {
     return await this.request(ctx, "user.getWeeklyArtistChart", params);
   }
 
   async _userGetWeeklyAlbumChart(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     params: UserGetWeeklyChartParams
   ): Promise<RawUserGetWeeklyAlbumChart> {
     return await this.request(ctx, "user.getWeeklyAlbumChart", params);
   }
 
   async _userGetWeeklyTrackChart(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     params: UserGetWeeklyChartParams
   ): Promise<RawUserGetWeeklyTrackChart> {
     return await this.request(ctx, "user.getWeeklyTrackChart", params);
   }
 
-  async love(ctx: BaseServiceContext, params: TrackLoveParams): Promise<void> {
+  async love(ctx: GowonContext, params: TrackLoveParams): Promise<void> {
     return await this.request(ctx, "track.love", params, { post: true });
   }
 
-  async unlove(
-    ctx: BaseServiceContext,
-    params: TrackLoveParams
-  ): Promise<void> {
+  async unlove(ctx: GowonContext, params: TrackLoveParams): Promise<void> {
     return await this.request(ctx, "track.unlove", params, { post: true });
   }
 
   private async request<T>(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     method: string,
     params: Params,
     options: { post?: boolean; forceSignature?: boolean } = {
@@ -429,7 +427,7 @@ export class LastFMAPIService extends BaseService {
   }
 
   private async unauthedRequest<T>(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     method: string,
     params: Params,
     fetchOptions?: RequestInit,
@@ -476,7 +474,7 @@ export class LastFMAPIService extends BaseService {
     return jsonResponse as T;
   }
 
-  async getToken(ctx: BaseServiceContext): Promise<{ token: string }> {
+  async getToken(ctx: GowonContext): Promise<{ token: string }> {
     return await this.request(
       ctx,
       "auth.getToken",
@@ -486,7 +484,7 @@ export class LastFMAPIService extends BaseService {
   }
 
   async _getSession(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     params: GetSessionParams
   ): Promise<RawLastFMSession> {
     return await this.request(ctx, "auth.getSession", params, {
@@ -494,11 +492,7 @@ export class LastFMAPIService extends BaseService {
     });
   }
 
-  async scrobbleTrack(
-    ctx: BaseServiceContext,
-    params: ScrobbleParams,
-    sk?: string
-  ) {
+  async scrobbleTrack(ctx: GowonContext, params: ScrobbleParams, sk?: string) {
     return await this.request(
       ctx,
       "track.scrobble",

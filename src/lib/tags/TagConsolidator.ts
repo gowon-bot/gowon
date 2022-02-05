@@ -1,9 +1,9 @@
 import { sum } from "mathjs";
-import { BaseServiceContext } from "../../services/BaseService";
 import { RawTag } from "../../services/LastFM/LastFMService.types";
 import { MirrorballTag } from "../../services/mirrorball/MirrorballTypes";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { WordBlacklistService } from "../../services/WordBlacklistService";
+import { GowonContext } from "../context/Context";
 
 function isMirrorballTag(tag: any | MirrorballTag): tag is MirrorballTag {
   return !!tag.name && !!tag.occurrences;
@@ -29,12 +29,12 @@ export class TagConsolidator {
     return !!this.tags.length;
   }
 
-  async saveServerBannedTagsInContext(ctx: BaseServiceContext) {
+  async saveServerBannedTagsInContext(ctx: GowonContext) {
     await this.wordBlacklistService.saveServerBannedTagsInContext(ctx);
   }
 
   addTags(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     tags: RawTag[] | string[] | MirrorballTag[]
   ): TagConsolidator {
     const convertedTags = this.convertTags(tags);
@@ -118,7 +118,7 @@ export class TagConsolidator {
   }
 
   private filterTags(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     tags: MirrorballTag[]
   ): MirrorballTag[] {
     return this.wordBlacklistService.filter(

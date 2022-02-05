@@ -1,6 +1,5 @@
-import { BaseServiceContext } from "../../../services/BaseService";
 import { RecentTrack } from "../../../services/LastFM/converters/RecentTracks";
-import { BaseCommand } from "../../command/BaseCommand";
+import { GowonContext } from "../../context/Context";
 import { Resources } from "../DatasourceService";
 import { RequirementMap } from "../RequirementMap";
 
@@ -18,14 +17,17 @@ export abstract class BaseNowPlayingComponent<
   static readonly componentName: string;
   abstract readonly requirements: Requirements;
 
-  protected ctx: BaseServiceContext = {
-    logger: this.values.logger,
-  } as any;
+  protected ctx = new GowonContext({
+    command: { logger: this.values.logger! } as any,
+    custom: {},
+  });
 
   constructor(
     protected values: Pick<RequirementMap, Requirements[number]> & Resources
   ) {
-    this.ctx.command = { guild: values.message?.guild } as any as BaseCommand;
+    this.ctx.dangerousSetCommand({
+      guild: values.message?.guild,
+    });
   }
 
   protected get nowPlaying(): RecentTrack {

@@ -10,10 +10,6 @@ export class OptOut extends CrownsChildCommand {
     "Opts you out of the crowns game, deleting all your crowns, and preventing you from getting new ones";
   usage = "";
 
-  ctx = this.generateContext({
-    crownsService: this.crownsService,
-  });
-
   async run(message: Message) {
     const embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor("Crown opt-out"))

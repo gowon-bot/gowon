@@ -1,9 +1,9 @@
 import { gql } from "@apollo/client/core";
 import { DocumentNode } from "graphql";
 import { SimpleMap } from "../../helpers/types";
-import { BaseServiceContext } from "../../services/BaseService";
 import { MirrorballService } from "../../services/mirrorball/MirrorballService";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
+import { GowonContext } from "../context/Context";
 
 export interface Connector<ResponseT, ParamsT> {
   request(
@@ -22,7 +22,7 @@ export abstract class BaseConnector<ResponseT, ParamsT>
 
   private mirrorballService = ServiceRegistry.get(MirrorballService);
 
-  async request(ctx: BaseServiceContext, variables?: ParamsT) {
+  async request(ctx: GowonContext, variables?: ParamsT) {
     return await this.mirrorballService.query(ctx, this.query, variables || {});
   }
 

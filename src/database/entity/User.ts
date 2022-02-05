@@ -30,7 +30,7 @@ import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { SettingsService } from "../../lib/settings/SettingsService";
 import { CommandAccessRoleName } from "../../lib/command/access/roles";
 import { MirrorballService } from "../../services/mirrorball/MirrorballService";
-import { BaseServiceContext } from "../../services/BaseService";
+import { GowonContext } from "../../lib/context/Context";
 
 @Entity({ name: "users" })
 export class User extends BaseEntity {
@@ -168,7 +168,7 @@ export class User extends BaseEntity {
     );
   }
 
-  async mirrorballUpdate(ctx: BaseServiceContext): Promise<void> {
+  async mirrorballUpdate(ctx: GowonContext): Promise<void> {
     const mirrorballService = ServiceRegistry.get(MirrorballService);
 
     Logger.log("User", `updating ${this.discordID}`);

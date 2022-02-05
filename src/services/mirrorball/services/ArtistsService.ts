@@ -1,6 +1,7 @@
 import gql from "graphql-tag";
+import { GowonContext } from "../../../lib/context/Context";
 import { displayNumber } from "../../../lib/views/displays";
-import { BaseService, BaseServiceContext } from "../../BaseService";
+import { BaseService } from "../../BaseService";
 import { ServiceRegistry } from "../../ServicesRegistry";
 import { MirrorballService } from "../MirrorballService";
 import { MirrorballArtist } from "../MirrorballTypes";
@@ -11,7 +12,7 @@ export class ArtistsService extends BaseService {
   }
 
   async correctArtistNames(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     artistNames: string[]
   ): Promise<string[]> {
     this.log(

@@ -3,11 +3,12 @@ import { DocumentNode } from "graphql";
 import { IndexingWebhookService } from "../../api/indexing/IndexingWebhookService";
 import { SimpleMap } from "../../helpers/types";
 import { mirrorballClient } from "../../lib/indexing/client";
-import { BaseService, BaseServiceContext } from "../BaseService";
+import { BaseService } from "../BaseService";
 import { UsersService } from "../dbservices/UsersService";
 import { ServiceRegistry } from "../ServicesRegistry";
 import { MirrorballPageInfo, MirrorballUserType } from "./MirrorballTypes";
 import config from "../../../config.json";
+import { GowonContext } from "../../lib/context/Context";
 
 export class MirrorballService extends BaseService {
   private get usersService() {
@@ -15,7 +16,7 @@ export class MirrorballService extends BaseService {
   }
 
   private async makeRequest(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     { query, mutation }: { query?: DocumentNode; mutation?: DocumentNode },
     variables?: object
   ): Promise<any> {
@@ -39,7 +40,7 @@ export class MirrorballService extends BaseService {
             context: {
               headers: {
                 // These *should* be temporary
-                "Doughnut-Discord-Id": ctx.command.author.id,
+                "Doughnut-Discord-Id": ctx.author.id,
                 "Is-Gowon": "true",
               },
             },
@@ -52,7 +53,7 @@ export class MirrorballService extends BaseService {
             context: {
               headers: {
                 // These *should* be temporary
-                "Doughnut-Discord-Id": ctx.command.author.id,
+                "Doughnut-Discord-Id": ctx.author.id,
                 "Is-Gowon": "true",
               },
             },
@@ -76,7 +77,7 @@ export class MirrorballService extends BaseService {
   public webhook = IndexingWebhookService.getInstance();
 
   async query<T = any>(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     query: DocumentNode,
     variables?: SimpleMap
   ): Promise<T> {
@@ -90,7 +91,7 @@ export class MirrorballService extends BaseService {
   }
 
   async mutate<T = any>(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     mutation: DocumentNode,
     variables?: SimpleMap
   ): Promise<T> {
@@ -103,7 +104,7 @@ export class MirrorballService extends BaseService {
     return response.data;
   }
 
-  public async ping(ctx: BaseServiceContext): Promise<{ ping: string }> {
+  public async ping(ctx: GowonContext): Promise<{ ping: string }> {
     return await this.query(
       ctx,
       gql`
@@ -116,12 +117,12 @@ export class MirrorballService extends BaseService {
   }
 
   public async login(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     username: string,
     userType: MirrorballUserType,
     session: string | undefined
   ) {
-    const discordID = this.author(ctx).id;
+    const discordID = ctx.author.id;
 
     return await this.query(
       ctx,
@@ -146,8 +147,8 @@ export class MirrorballService extends BaseService {
     );
   }
 
-  public async logout(ctx: BaseServiceContext) {
-    const discordID = this.author(ctx).id;
+  public async logout(ctx: GowonContext) {
+    const discordID = ctx.author.id;
 
     return await this.query(
       ctx,
@@ -161,7 +162,7 @@ export class MirrorballService extends BaseService {
   }
 
   public async quietAddUserToGuild(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     discordID: string,
     guildID: string
   ): Promise<Error | undefined> {
@@ -190,7 +191,7 @@ export class MirrorballService extends BaseService {
   }
 
   public async quietRemoveUserFromGuild(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     discordID: string,
     guildID: string
   ): Promise<Error | undefined> {
@@ -213,8 +214,8 @@ export class MirrorballService extends BaseService {
     return;
   }
 
-  public async fullIndex(ctx: BaseServiceContext) {
-    const discordID = this.author(ctx).id;
+  public async fullIndex(ctx: GowonContext) {
+    const discordID = ctx.author.id;
 
     await this.usersService.setAsIndexed(ctx, discordID);
 
@@ -236,7 +237,7 @@ export class MirrorballService extends BaseService {
   }
 
   public async getCachedPlaycount(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     discordID: string
   ): Promise<number> {
     const query = gql`
@@ -260,7 +261,7 @@ export class MirrorballService extends BaseService {
   }
 
   public async updateAndWait(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     discordID: string,
     timeout = 2000
   ): Promise<void> {

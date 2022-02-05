@@ -1,5 +1,6 @@
 import { EmojiMention } from "../../lib/arguments/custom/EmojiParser";
-import { BaseService, BaseServiceContext } from "../BaseService";
+import { GowonContext } from "../../lib/context/Context";
+import { BaseService } from "../BaseService";
 
 interface EmojiValidation {
   valid: EmojiMention[];
@@ -7,10 +8,7 @@ interface EmojiValidation {
 }
 
 export class EmojiService extends BaseService {
-  validateEmojis(
-    ctx: BaseServiceContext,
-    emojis: EmojiMention[]
-  ): EmojiValidation {
+  validateEmojis(ctx: GowonContext, emojis: EmojiMention[]): EmojiValidation {
     const uniquified = this.uniquifyEmojis(emojis);
 
     const valid: EmojiMention[] = [];
@@ -27,7 +25,7 @@ export class EmojiService extends BaseService {
     return { valid, invalid };
   }
 
-  validateEmoji(ctx: BaseServiceContext, emoji: EmojiMention): boolean {
+  validateEmoji(ctx: GowonContext, emoji: EmojiMention): boolean {
     return ctx.client.client.emojis.cache.has(emoji.resolvable);
   }
 

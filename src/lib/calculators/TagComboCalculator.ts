@@ -6,7 +6,7 @@ import {
 import { TagsCache } from "../caches/TagsCache";
 import { Paginator } from "../paginators/Paginator";
 import { TagConsolidator } from "../tags/TagConsolidator";
-import { BaseServiceContext } from "../../services/BaseService";
+import { GowonContext } from "../context/Context";
 
 export interface TagComboDetails {
   plays: number;
@@ -19,10 +19,7 @@ export class TagComboCalculator {
   private combo = new TagCombo(this.ctx, new TagsCache(this.tagsService));
   public totalTracks = 0;
 
-  constructor(
-    private ctx: BaseServiceContext,
-    private tagsService: TagsService
-  ) {}
+  constructor(private ctx: GowonContext, private tagsService: TagsService) {}
 
   async calculate(paginator: Paginator<any, RecentTracks>): Promise<TagCombo> {
     for await (let page of paginator.iterator()) {
@@ -84,7 +81,7 @@ export class TagComboCalculator {
 export class TagCombo {
   comboCollection: { [tag: string]: TagComboDetails } = {};
 
-  constructor(private ctx: BaseServiceContext, public tagsCache: TagsCache) {}
+  constructor(private ctx: GowonContext, public tagsCache: TagsCache) {}
 
   hasAnyConsecutivePlays(): boolean {
     return !!Object.values(this.comboCollection).filter((i) => i.plays > 1)

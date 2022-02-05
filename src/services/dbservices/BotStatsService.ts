@@ -1,5 +1,6 @@
 import { CommandRun } from "../../database/entity/meta/CommandRun";
-import { BaseService, BaseServiceContext } from "../BaseService";
+import { GowonContext } from "../../lib/context/Context";
+import { BaseService } from "../BaseService";
 
 type UserTopCommands = {
   commandID: string;
@@ -8,7 +9,7 @@ type UserTopCommands = {
 
 export class BotStatsService extends BaseService {
   async countUserCommandRuns(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     discordID: string
   ): Promise<number> {
     this.log(ctx, `Counting command runs for user ${discordID}`);
@@ -16,7 +17,7 @@ export class BotStatsService extends BaseService {
   }
 
   async userTopCommands(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     discordID: string
   ): Promise<UserTopCommands> {
     this.log(ctx, `Fetching top commands for user ${discordID}`);

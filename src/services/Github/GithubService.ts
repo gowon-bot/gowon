@@ -1,4 +1,4 @@
-import { BaseService, BaseServiceContext } from "../BaseService";
+import { BaseService } from "../BaseService";
 import {
   Params,
   CreateIssueParams,
@@ -7,11 +7,12 @@ import {
 } from "./GithubService.types";
 import config from "../../../config.json";
 import Axios, { AxiosInstance } from "axios";
+import { GowonContext } from "../../lib/context/Context";
 
 export class GithubService extends BaseService {
   private baseURL = "https://api.github.com";
 
-  public readonly owner = "jivison";
+  public readonly owner = "gowon-bot";
   public readonly repo = "gowon";
 
   get axios(): AxiosInstance {
@@ -32,7 +33,7 @@ export class GithubService extends BaseService {
   }
 
   async request<T>(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     path: string,
     options: { params?: Params; verb?: "POST" | "GET" } = {}
   ): Promise<T> {
@@ -55,7 +56,7 @@ export class GithubService extends BaseService {
   }
 
   async createIssue(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     params: CreateIssueParams
   ): Promise<CreateIssueResponse> {
     return await this.request<CreateIssueResponse>(
@@ -69,7 +70,7 @@ export class GithubService extends BaseService {
   }
 
   async getBranch(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     branch = "master"
   ): Promise<GetBranchResponse> {
     return await this.request<GetBranchResponse>(

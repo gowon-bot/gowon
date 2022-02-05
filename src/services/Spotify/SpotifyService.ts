@@ -1,5 +1,5 @@
 import fetch from "node-fetch";
-import { BaseService, BaseServiceContext } from "../BaseService";
+import { BaseService } from "../BaseService";
 import config from "../../../config.json";
 import { URLSearchParams } from "url";
 import { add, isBefore } from "date-fns";
@@ -13,6 +13,7 @@ import {
 import { SimpleMap } from "../../helpers/types";
 import { SpotifyConnectionError } from "../../errors";
 import { Logger } from "../../lib/Logger";
+import { GowonContext } from "../../lib/context/Context";
 
 export class SpotifyService extends BaseService {
   url = "https://api.spotify.com/v1/";
@@ -29,7 +30,7 @@ export class SpotifyService extends BaseService {
     return isBefore(new Date(), dateExpires);
   }
 
-  private async token(ctx: BaseServiceContext): Promise<string> {
+  private async token(ctx: GowonContext): Promise<string> {
     if (this._token && this.tokenIsValid(this._token)) {
       return this._token.access_token;
     } else {
@@ -39,7 +40,7 @@ export class SpotifyService extends BaseService {
     }
   }
 
-  private async fetchToken(ctx: BaseServiceContext): Promise<SpotifyToken> {
+  private async fetchToken(ctx: GowonContext): Promise<SpotifyToken> {
     this.log(ctx, "fetching new token");
     const params = new URLSearchParams();
     params.append("grant_type", "client_credentials");
@@ -62,14 +63,14 @@ export class SpotifyService extends BaseService {
     return jsonResponse as SpotifyToken;
   }
 
-  private async headers(ctx: BaseServiceContext) {
+  private async headers(ctx: GowonContext) {
     return {
       Authorization: this.bearerAuthorization(await this.token(ctx)),
     };
   }
 
   async request<T>(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     path: string,
     params: SimpleMap
   ): Promise<T> {
@@ -90,7 +91,7 @@ export class SpotifyService extends BaseService {
   }
 
   async search(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     querystring: string,
     entityType: SpotifyEntity[] = []
   ): Promise<SearchResponse> {
@@ -101,7 +102,7 @@ export class SpotifyService extends BaseService {
   }
 
   async searchArtist(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     artist: string
   ): Promise<SearchItem | undefined> {
     const search = await this.search(ctx, artist, ["artist"]);
@@ -113,7 +114,7 @@ export class SpotifyService extends BaseService {
   }
 
   async searchAlbum(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     artist: string,
     album: string
   ): Promise<SearchItem | undefined> {
@@ -123,7 +124,7 @@ export class SpotifyService extends BaseService {
   }
 
   async searchTrack(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     artist: string,
     track: string
   ): Promise<SearchItem | undefined> {
@@ -131,7 +132,7 @@ export class SpotifyService extends BaseService {
   }
 
   async searchTrackRaw(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     keywords: string
   ): Promise<SearchItem | undefined> {
     const search = await this.search(ctx, keywords, ["track"]);
@@ -140,7 +141,7 @@ export class SpotifyService extends BaseService {
   }
 
   async searchAlbumRaw(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     keywords: string
   ): Promise<SearchItem | undefined> {
     const search = await this.search(ctx, keywords, ["album"]);

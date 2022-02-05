@@ -1,27 +1,19 @@
 import { Logger } from "../lib/Logger";
 import chalk from "chalk";
-import { SimpleMap } from "../helpers/types";
-import { Guild } from "discord.js";
-import { BaseCommand } from "../lib/command/BaseCommand";
-import { GowonClient } from "../lib/GowonClient";
+import { GowonContext, UnwrapContext } from "../lib/context/Context";
 
-export type BaseServiceContext = {
-  logger?: Logger;
-  command: BaseCommand;
-  client: GowonClient;
-};
+export class BaseService<ContextT extends GowonContext = GowonContext<{}>> {
+  customContext?: UnwrapContext<ContextT>;
 
-export class BaseService<
-  Context extends BaseServiceContext = BaseServiceContext,
-  MutableContext extends SimpleMap = {}
-> {
-  customContext: SimpleMap = {};
+  ctx(ctx: GowonContext<{ constants?: unknown; mutable?: unknown }>): ContextT {
+    if (this.customContext) {
+      ctx.addContext(this.customContext);
+    }
 
-  ctx(ctx: any): any & MutableContext {
-    return Object.assign(ctx, this.customContext);
+    return ctx as ContextT;
   }
 
-  protected log(ctx: Context, msg: string): void {
+  protected log(ctx: ContextT, msg: string): void {
     Logger.log(this.constructor.name, chalk`{grey ${msg}}`, ctx.logger);
   }
 
@@ -33,13 +25,5 @@ export class BaseService<
 
   protected bearerAuthorization(token: string) {
     return `Bearer ${token}`;
-  }
-
-  protected guild(ctx: SimpleMap): Guild {
-    return ctx.command.guild;
-  }
-
-  protected author(ctx: SimpleMap): Guild {
-    return ctx.command.author;
   }
 }

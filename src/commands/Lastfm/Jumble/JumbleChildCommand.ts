@@ -17,7 +17,8 @@ export abstract class JumbleChildCommand<
   jumbleCalculator!: JumbleCalculator;
 
   ctx = this.generateContext({
-    prefix: "jumble",
+    constants: { redisOptions: { prefix: "jumble" } },
+    mutable: {},
   });
 
   async sessionSetJSON(key: string, value: Object | Array<unknown>) {

@@ -1,7 +1,8 @@
 import Rollbar from "rollbar";
-import { BaseService, BaseServiceContext } from "../BaseService";
+import { BaseService } from "../BaseService";
 import config from "../../../config.json";
 import { SimpleMap } from "../../helpers/types";
+import { GowonContext } from "../../lib/context/Context";
 
 export class RollbarService extends BaseService {
   private rollbar = new Rollbar({
@@ -10,7 +11,7 @@ export class RollbarService extends BaseService {
     captureUnhandledRejections: true,
   });
 
-  public logError(ctx: BaseServiceContext, error: any) {
+  public logError(ctx: GowonContext, error: any) {
     if (config.environment === "production") {
       this.rollbar.error(error, {
         ...this.generatePayloadFromContext(ctx),
@@ -19,11 +20,11 @@ export class RollbarService extends BaseService {
     }
   }
 
-  private generatePayloadFromContext(ctx: BaseServiceContext): SimpleMap {
+  private generatePayloadFromContext(ctx: GowonContext): SimpleMap {
     return {
       environment: config.environment,
       person: {
-        id: ctx?.command?.author?.id,
+        id: ctx?.author?.id,
         username: (ctx?.command?.parsedArguments as any)?.username,
       },
       context: ctx?.command?.friendlyNameWithParent,

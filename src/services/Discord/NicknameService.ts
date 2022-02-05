@@ -1,34 +1,38 @@
 import { asyncMap } from "../../helpers";
 import { SimpleMap } from "../../helpers/types";
+import { GowonContext } from "../../lib/context/Context";
 import { displayNumber } from "../../lib/views/displays";
-import { BaseService, BaseServiceContext } from "../BaseService";
-import { RedisService } from "../redis/RedisService";
+import { BaseService } from "../BaseService";
+import {
+  RedisService,
+  RedisServiceContextOptions,
+} from "../redis/RedisService";
 import { ServiceRegistry } from "../ServicesRegistry";
 
 export const UnknownUserDisplay = "<Unknown user>";
 
-type NicknameServiceMutableContext = {
-  nicknameCache?: { [discordID: string]: string };
-  usernameCache?: { [discordID: string]: string };
-};
+type NicknameServiceContext = GowonContext<{
+  constants?: { redisOptions?: RedisServiceContextOptions };
+  mutable?: {
+    nicknameCache?: { [discordID: string]: string };
+    usernameCache?: { [discordID: string]: string };
+  };
+}>;
 
-export class NicknameService extends BaseService<
-  BaseServiceContext,
-  NicknameServiceMutableContext
-> {
+export class NicknameService extends BaseService<NicknameServiceContext> {
   get redisService() {
     return ServiceRegistry.get(RedisService);
   }
 
   customContext = {
-    defaultExpirySeconds: 30 * 24 * 60 * 60,
+    constants: { redisOptions: { defaultExpirySeconds: 30 * 24 * 60 * 60 } },
   };
 
   async cacheNicknames(
-    ctx: BaseServiceContext & NicknameServiceMutableContext,
+    ctx: NicknameServiceContext,
     users: Array<{ discordID: string } | string>
   ) {
-    const guildID = this.guild(ctx).id;
+    const guildID = ctx.guild.id;
 
     this.log(
       this.ctx(ctx),
@@ -55,7 +59,7 @@ export class NicknameService extends BaseService<
   }
 
   async cacheUsernames(
-    ctx: BaseServiceContext & NicknameServiceMutableContext,
+    ctx: NicknameServiceContext,
     users: Array<{ discordID: string } | string>
   ) {
     this.log(
@@ -76,26 +80,20 @@ export class NicknameService extends BaseService<
     });
   }
 
-  cacheGetNickname(
-    ctx: BaseServiceContext & NicknameServiceMutableContext,
-    discordID: string
-  ): string {
+  cacheGetNickname(ctx: NicknameServiceContext, discordID: string): string {
     return this.nicknameCache(ctx)[discordID];
   }
 
-  cacheGetUsername(
-    ctx: BaseServiceContext & NicknameServiceMutableContext,
-    discordID: string
-  ): string {
+  cacheGetUsername(ctx: NicknameServiceContext, discordID: string): string {
     return this.usernameCache(ctx)[discordID];
   }
 
   async recordNickname(
-    ctx: BaseServiceContext,
+    ctx: NicknameServiceContext,
     discordID: string,
     nickname: string
   ) {
-    const guildID = this.guild(ctx)?.id;
+    const guildID = ctx.guild?.id;
 
     if (!guildID) return;
 
@@ -107,7 +105,7 @@ export class NicknameService extends BaseService<
   }
 
   async recordUsername(
-    ctx: BaseServiceContext,
+    ctx: NicknameServiceContext,
     discordID: string,
     username: string
   ) {
@@ -119,10 +117,10 @@ export class NicknameService extends BaseService<
   }
 
   async getNickname(
-    ctx: BaseServiceContext,
+    ctx: NicknameServiceContext,
     discordID: string
   ): Promise<{ nickname?: string; username?: string }> {
-    const guildID = this.guild(ctx).id;
+    const guildID = ctx.guild.id;
 
     let nickname = await this.redisService.get(
       this.ctx(ctx),
@@ -149,7 +147,7 @@ export class NicknameService extends BaseService<
   }
 
   async getUsername(
-    ctx: BaseServiceContext,
+    ctx: NicknameServiceContext,
     discordID: string
   ): Promise<string> {
     let username =
@@ -184,19 +182,15 @@ export class NicknameService extends BaseService<
     return `${discordID}-${guildID}-nickname`;
   }
 
-  private nicknameCache(
-    ctx: BaseServiceContext & NicknameServiceMutableContext
-  ): SimpleMap<string> {
-    if (!ctx.nicknameCache) ctx.nicknameCache = {};
+  private nicknameCache(ctx: NicknameServiceContext): SimpleMap<string> {
+    if (!ctx.mutable.nicknameCache) ctx.mutable.nicknameCache = {};
 
-    return ctx.nicknameCache;
+    return ctx.mutable.nicknameCache;
   }
 
-  private usernameCache(
-    ctx: BaseServiceContext & NicknameServiceMutableContext
-  ): SimpleMap<string> {
-    if (!ctx.usernameCache) ctx.usernameCache = {};
+  private usernameCache(ctx: NicknameServiceContext): SimpleMap<string> {
+    if (!ctx.mutable.usernameCache) ctx.mutable.usernameCache = {};
 
-    return ctx.usernameCache;
+    return ctx.mutable.usernameCache;
   }
 }

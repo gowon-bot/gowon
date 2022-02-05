@@ -1,14 +1,19 @@
 import { fromUnixTime } from "date-fns";
-import { BaseService, BaseServiceContext } from "../BaseService";
+import { GowonContext } from "../../lib/context/Context";
+import { BaseService } from "../BaseService";
 import { ServiceRegistry } from "../ServicesRegistry";
 import { RedisInteractionService } from "./RedisInteractionService";
 
-type RedisServiceContext = BaseServiceContext & {
-  options: {
-    defaultExpirySeconds?: number;
-    prefix?: string;
-  };
+export type RedisServiceContextOptions = {
+  defaultExpirySeconds?: number;
+  prefix?: string;
 };
+
+type RedisServiceContext = GowonContext<{
+  constants?: {
+    redisOptions?: RedisServiceContextOptions;
+  };
+}>;
 
 export class RedisService extends BaseService {
   private get redis() {
@@ -77,17 +82,17 @@ export class RedisService extends BaseService {
   }
 
   private sessionKey(ctx: RedisServiceContext, key: string): string {
-    const discordID = this.author(ctx).id;
-    const guildID = this.guild(ctx).id;
+    const discordID = ctx.author.id;
+    const guildID = ctx.guild.id;
 
     return this.prefixedKey(ctx, `${discordID}:${guildID}-${key}`);
   }
 
   private getDefaultExpiry(ctx: RedisServiceContext): number {
-    return ctx.options?.defaultExpirySeconds || 600;
+    return ctx.constants.redisOptions?.defaultExpirySeconds || 600;
   }
 
   private getPrefix(ctx: RedisServiceContext): string {
-    return ctx.options?.prefix || "";
+    return ctx.constants.redisOptions?.prefix || "";
   }
 }

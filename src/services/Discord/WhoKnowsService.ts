@@ -1,10 +1,18 @@
 import { toInt } from "../../helpers/lastFM";
-import { BaseService, BaseServiceContext } from "../BaseService";
+import { GowonContext } from "../../lib/context/Context";
+import { BaseService } from "../BaseService";
 import { MirrorballService } from "../mirrorball/MirrorballService";
-import { RedisService } from "../redis/RedisService";
+import {
+  RedisService,
+  RedisServiceContextOptions,
+} from "../redis/RedisService";
 import { ServiceRegistry } from "../ServicesRegistry";
 
-export class WhoKnowsService extends BaseService {
+type WhoKnowsServiceContext = GowonContext<{
+  constants?: { redisOptions?: RedisServiceContextOptions };
+}>;
+
+export class WhoKnowsService extends BaseService<WhoKnowsServiceContext> {
   get redis() {
     return ServiceRegistry.get(RedisService);
   }
@@ -13,11 +21,11 @@ export class WhoKnowsService extends BaseService {
   }
 
   customContext = {
-    prefix: "whoknows",
+    constants: { redisOptions: { prefix: "whoknows" } },
   };
 
-  async recordUnknownMember(ctx: BaseServiceContext, userID: string) {
-    const guildID = this.guild(ctx).id;
+  async recordUnknownMember(ctx: WhoKnowsServiceContext, userID: string) {
+    const guildID = ctx.guild.id;
 
     this.log(ctx, `Handling unknown use ${userID} in ${guildID}`);
 

@@ -5,6 +5,7 @@ import { standardMentions } from "../../lib/arguments/mentions/mentions";
 import { displayLink } from "../../lib/views/displays";
 import { AlbumInfo } from "../../services/LastFM/converters/InfoTypes";
 import { RecentTrack } from "../../services/LastFM/converters/RecentTracks";
+import { LastFMArgumentsMutableContext } from "../../services/LastFM/LastFMArguments";
 import { LastFMBaseCommand } from "./LastFMBaseCommand";
 
 const args = {
@@ -38,7 +39,8 @@ export default class Cover extends LastFMBaseCommand<typeof args> {
       requestable
     );
 
-    const nowPlaying = this.ctx.nowplaying as RecentTrack;
+    const nowPlaying =
+      this.mutableContext<LastFMArgumentsMutableContext>().mutable.nowplaying;
 
     if (
       artist.toLowerCase() === "f(x)" &&

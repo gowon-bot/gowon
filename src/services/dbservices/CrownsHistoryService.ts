@@ -1,10 +1,11 @@
 import { Crown } from "../../database/entity/Crown";
 import { CrownEvent, SimpleCrown } from "../../database/entity/meta/CrownEvent";
 import { User } from "../../database/entity/User";
-import { BaseService, BaseServiceContext } from "../BaseService";
+import { BaseService } from "../BaseService";
 import { CrownCheck, CrownsService, CrownState } from "./CrownsService";
 import { GuildMember, Message, User as DiscordUser } from "discord.js";
 import { FindConditions, In } from "typeorm";
+import { GowonContext } from "../../lib/context/Context";
 
 export enum CrownEventString {
   created = "created",
@@ -24,9 +25,9 @@ export enum SnatchedEventString {
   userLeft = "user.left",
 }
 
-type CrownsHistoryServiceContext = BaseServiceContext & {
-  crownsService: CrownsService;
-};
+type CrownsHistoryServiceContext = GowonContext<{
+  constants: { crownsService: CrownsService };
+}>;
 
 export class CrownsHistoryService extends BaseService<CrownsHistoryServiceContext> {
   private async logEvent(
@@ -119,7 +120,7 @@ export class CrownsHistoryService extends BaseService<CrownsHistoryServiceContex
     banner: DiscordUser,
     banTarget: DiscordUser
   ) {
-    let crowns = await ctx.crownsService.listTopCrowns(
+    let crowns = await ctx.constants.crownsService.listTopCrowns(
       ctx,
       user.discordID,
       undefined
@@ -136,7 +137,7 @@ export class CrownsHistoryService extends BaseService<CrownsHistoryServiceContex
     unbanner: DiscordUser,
     unbanTarget: DiscordUser
   ) {
-    let crowns = await ctx.crownsService.listTopCrowns(
+    let crowns = await ctx.constants.crownsService.listTopCrowns(
       ctx,
       user.discordID,
       undefined
@@ -148,7 +149,7 @@ export class CrownsHistoryService extends BaseService<CrownsHistoryServiceContex
   }
 
   async optOut(ctx: CrownsHistoryServiceContext, discordUser: GuildMember) {
-    let crowns = await ctx.crownsService.listTopCrowns(
+    let crowns = await ctx.constants.crownsService.listTopCrowns(
       ctx,
       discordUser.user.id,
       -1

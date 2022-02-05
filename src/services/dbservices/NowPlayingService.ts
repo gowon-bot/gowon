@@ -1,32 +1,26 @@
 import { NowPlayingConfig } from "../../database/entity/NowPlayingConfig";
 import { User } from "../../database/entity/User";
+import { GowonContext } from "../../lib/context/Context";
 import { sortConfigOptions } from "../../lib/nowplaying/componentMap";
-import { BaseService, BaseServiceContext } from "../BaseService";
+import { BaseService } from "../BaseService";
 
 export const UNUSED_CONFIG = "unused";
 
 export class ConfigService extends BaseService {
-  async getConfigForUser(
-    ctx: BaseServiceContext,
-    user: User
-  ): Promise<string[]> {
+  async getConfigForUser(ctx: GowonContext, user: User): Promise<string[]> {
     this.log(ctx, `Fetching config for user ${user.discordID}`);
 
     const config = await this.getOrCreateConfig(ctx, user);
     return sortConfigOptions(config.config);
   }
 
-  async getConfigNoUnused(ctx: BaseServiceContext, user: User) {
+  async getConfigNoUnused(ctx: GowonContext, user: User) {
     return (await this.getConfigForUser(ctx, user)).filter(
       (c) => c !== UNUSED_CONFIG
     );
   }
 
-  async saveConfigForUser(
-    ctx: BaseServiceContext,
-    user: User,
-    config: string[]
-  ) {
+  async saveConfigForUser(ctx: GowonContext, user: User, config: string[]) {
     this.log(
       ctx,
       `Saving config for user ${user.discordID} (${config.join(", ")})`
@@ -40,7 +34,7 @@ export class ConfigService extends BaseService {
   }
 
   private async getOrCreateConfig(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     user: User
   ): Promise<NowPlayingConfig> {
     this.log(ctx, `Fetching or creating config for user ${user.discordID}`);
