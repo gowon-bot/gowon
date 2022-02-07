@@ -2,6 +2,7 @@ import { Guild, GuildMember } from "discord.js";
 import gql from "graphql-tag";
 import { CommandRegistry } from "../../lib/command/CommandRegistry";
 import { GowonContext } from "../../lib/context/Context";
+import { Logger } from "../../lib/Logger";
 import { displayNumber } from "../../lib/views/displays";
 import { BaseService } from "../BaseService";
 import { AdminService } from "../dbservices/AdminService";
@@ -22,7 +23,7 @@ export class GuildEventService extends BaseService {
   }
 
   public async handleNewGuild(ctx: GowonContext, guild: Guild) {
-    this.log(ctx, `setting up Gowon for ${guild.name}`);
+    Logger.log("GuildEventService", `setting up Gowon for ${guild.name}`);
 
     ctx.dangerousSetCommand({ message: { guild } });
 
@@ -31,7 +32,7 @@ export class GuildEventService extends BaseService {
   }
 
   public async handleGuildLeave(ctx: GowonContext, guild: Guild) {
-    this.log(ctx, `tearing down Gowon for ${guild.name}`);
+    Logger.log("GuildEventService", `tearing down Gowon for ${guild.name}`);
 
     ctx.dangerousSetCommand({ message: { guild } });
 
@@ -39,7 +40,7 @@ export class GuildEventService extends BaseService {
   }
 
   public async handleNewUser(ctx: GowonContext, guildMember: GuildMember) {
-    this.log(ctx, "Handling new user");
+    Logger.log("GuildEventService", "Handling new user");
 
     try {
       await this.mirrorballService.quietAddUserToGuild(
@@ -48,15 +49,15 @@ export class GuildEventService extends BaseService {
         guildMember.guild.id
       );
     } catch (e) {
-      this.log(
-        ctx,
+      Logger.log(
+        "GuildEventService",
         `Failed to log in guildMember ${guildMember.user.id} in ${guildMember.guild.id} (${e})`
       );
     }
   }
 
   public async handleUserLeave(ctx: GowonContext, guildMember: GuildMember) {
-    this.log(ctx, "Handling user leave");
+    Logger.log("GuildEventService", "Handling user leave");
 
     try {
       await this.mirrorballService.quietRemoveUserFromGuild(
@@ -65,8 +66,8 @@ export class GuildEventService extends BaseService {
         guildMember.guild.id
       );
     } catch (e) {
-      this.log(
-        ctx,
+      Logger.log(
+        "GuildEventService",
         `Failed to log out guildMember ${guildMember.user.id} in ${guildMember.guild.id} (${e})`
       );
     }

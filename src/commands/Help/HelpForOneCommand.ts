@@ -24,9 +24,9 @@ export default class HelpForOneCommand extends BaseCommand<typeof args> {
 
   adminService = ServiceRegistry.get(AdminService);
 
-  ctx = this.generateContext({
+  customContext = {
     constants: { adminService: this.adminService },
-  });
+  };
 
   async run() {
     const command = this.parsedArguments.command!;
@@ -165,9 +165,8 @@ export default class HelpForOneCommand extends BaseCommand<typeof args> {
 
   private async runCustomHelp(commandClass: Command) {
     let command = new commandClass.customHelp!();
-    command.setClient(this.gowonClient);
     command.delegatedFrom = this;
-    await command.execute(this.message, this.runAs);
+    await command.execute(this.message, this.runAs, this.gowonClient);
     return;
   }
 }

@@ -37,7 +37,7 @@ export abstract class PermissionsChildCommand extends AdminBaseChildCommand<
 
   command!: Command;
   aliases!: string[];
-  runAs!: RunAs;
+  commandRunAs!: RunAs;
 
   roles: Role[] = [];
   users: DiscordUser[] = [];
@@ -59,7 +59,7 @@ export abstract class PermissionsChildCommand extends AdminBaseChildCommand<
     }
 
     if (command.command) this.command = command.command;
-    this.runAs = command.runAs;
+    this.commandRunAs = command.runAs;
     let userIDs = this.parsedArguments.userIDs || [];
     let roleIDs = this.parsedArguments.roleIDs || [];
 

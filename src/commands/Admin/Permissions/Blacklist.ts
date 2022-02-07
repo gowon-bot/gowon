@@ -37,7 +37,7 @@ export class Blacklist extends PermissionsChildCommand {
           this.command.id,
           true,
           !this.variationWasUsed("whitelist"),
-          this.runAs.toCommandFriendlyName()
+          this.commandRunAs.toCommandFriendlyName()
         );
 
         createdRolePermissions.push(role);
@@ -57,7 +57,7 @@ export class Blacklist extends PermissionsChildCommand {
           this.command.id,
           false,
           !this.variationWasUsed("whitelist"),
-          this.runAs.toCommandFriendlyName()
+          this.commandRunAs.toCommandFriendlyName()
         );
 
         createdUserPermissions.push(user);
@@ -74,7 +74,7 @@ export class Blacklist extends PermissionsChildCommand {
       .setDescription(
         `${
           this.variationWasUsed("whitelist") ? "Whitelisted" : "Blacklisted"
-        } ${this.runAs.toCommandFriendlyName().code()} for:\n` +
+        } ${this.commandRunAs.toCommandFriendlyName().code()} for:\n` +
           (createdRolePermissions.length
             ? `Roles: ${createdRolePermissions
                 .map((rp) => rp.name)

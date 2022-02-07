@@ -1,5 +1,6 @@
-import { Guild, User } from "discord.js";
+import { Guild, GuildMember, Message, User } from "discord.js";
 import { BaseCommand } from "../command/BaseCommand";
+import { RunAs } from "../command/RunAs";
 import { GowonClient } from "../GowonClient";
 import { Logger } from "../Logger";
 
@@ -11,6 +12,9 @@ export interface CustomContext<C, M> {
 export interface ContextParamaters<CustomContextT> {
   command: BaseCommand;
   custom: CustomContextT;
+  message: Message;
+  runAs: RunAs;
+  gowonClient: GowonClient;
 }
 
 export class GowonContext<
@@ -18,6 +22,9 @@ export class GowonContext<
 > {
   private _command: BaseCommand;
   private custom: T;
+  private _message: Message;
+  private _runAs: RunAs;
+  private gowonClient: GowonClient;
 
   get mutable(): NonNullable<T["mutable"]> {
     if (!this.custom.mutable) this.custom.mutable = {};
@@ -33,23 +40,38 @@ export class GowonContext<
 
   constructor(params: ContextParamaters<T>) {
     this._command = params.command;
+    this._message = params.message;
     this.custom = params.custom;
+    this._runAs = params.runAs;
+    this.gowonClient = params.gowonClient;
   }
 
   public addContext(context: T) {
     this.custom = Object.assign(this.custom, context);
   }
 
+  get message(): Message {
+    return this._message;
+  }
+
+  get runAs(): RunAs {
+    return this._runAs;
+  }
+
   get guild(): Guild {
-    return this._command.guild;
+    return this.message.guild!;
   }
 
   get author(): User {
-    return this._command.author;
+    return this.message.author;
+  }
+
+  get authorMember(): GuildMember {
+    return this.message.member!;
   }
 
   get client(): GowonClient {
-    return this._command.gowonClient;
+    return this.gowonClient;
   }
 
   get logger(): Logger {

@@ -36,9 +36,9 @@ export class View extends PermissionsChildCommand {
 
       embed = this.newEmbed()
         .setTitle(
-          `Permissions for ${this.runAs.toCommandFriendlyName().code()} in ${
-            message.guild?.name
-          }`
+          `Permissions for ${this.commandRunAs
+            .toCommandFriendlyName()
+            .code()} in ${message.guild?.name}`
         )
         .setDescription(
           permissions.length
@@ -50,7 +50,7 @@ export class View extends PermissionsChildCommand {
                 permissions
                   .map((p) => p.name + (p.isRoleBased ? " (role)" : ""))
                   .join(", ")
-            : `This server doesn't have any permissions set for ${this.runAs
+            : `This server doesn't have any permissions set for ${this.commandRunAs
                 .toCommandFriendlyName()
                 .code()}!`
         );

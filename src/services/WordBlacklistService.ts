@@ -79,20 +79,20 @@ export class WordBlacklistService extends BaseService<WordBlacklistServiceContex
     ctx: WordBlacklistServiceContext,
     tag: string
   ): Promise<TagBan> {
-    this.log(ctx, `Banning tag ${tag} in ${ctx.command.guild.id}`);
+    this.log(ctx, `Banning tag ${tag} in ${ctx.guild.id}`);
 
     if (!this.isAllowed(ctx, tag, ["base", "tags"]))
       throw new TagBannedByDefaultError();
 
     const existingBan = await TagBan.findOne({
-      serverID: ctx.command.guild.id,
+      serverID: ctx.guild.id,
       tag: this.normalizeItem(tag),
     });
 
     if (existingBan) throw new TagAlreadyBannedError();
 
     const newBan = TagBan.create({
-      serverID: ctx.command.guild.id,
+      serverID: ctx.guild.id,
       tag: this.normalizeItem(tag),
     });
 
@@ -103,12 +103,12 @@ export class WordBlacklistService extends BaseService<WordBlacklistServiceContex
     ctx: WordBlacklistServiceContext,
     tag: string
   ): Promise<void> {
-    this.log(ctx, `Unbanning tag ${tag} in ${ctx.command.guild.id}`);
+    this.log(ctx, `Unbanning tag ${tag} in ${ctx.guild.id}`);
 
     if (!this.isAllowed(ctx, tag)) throw new TagBannedByDefaultError();
 
     const existingBan = await TagBan.findOne({
-      serverID: ctx.command.guild.id,
+      serverID: ctx.guild.id,
       tag: this.normalizeItem(tag),
     });
 
@@ -120,8 +120,8 @@ export class WordBlacklistService extends BaseService<WordBlacklistServiceContex
   async getServerBannedTags(
     ctx: WordBlacklistServiceContext
   ): Promise<TagBan[]> {
-    this.log(ctx, `Getting banned tags for ${ctx.command.guild.id}`);
-    return await TagBan.find({ serverID: ctx.command.guild.id });
+    this.log(ctx, `Getting banned tags for ${ctx.guild.id}`);
+    return await TagBan.find({ serverID: ctx.guild.id });
   }
 
   async saveServerBannedTagsInContext(ctx: WordBlacklistServiceContext) {

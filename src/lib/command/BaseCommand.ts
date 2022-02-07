@@ -1,6 +1,5 @@
 import {
   EmbedAuthorData,
-  Guild,
   Message,
   MessageEmbed,
   MessageResolvable,
@@ -56,7 +55,7 @@ import { AnalyticsCollector } from "../../analytics/AnalyticsCollector";
 import { RollbarService } from "../../services/Rollbar/RollbarService";
 import { NowPlayingEmbedParsingService } from "../../services/NowPlayingEmbedParsingService";
 import { CommandAccess } from "./access/access";
-import { CustomContext, GowonContext } from "../context/Context";
+import { GowonContext } from "../context/Context";
 
 export interface Variation {
   name: string;
@@ -153,13 +152,28 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
 
   logger = new Logger();
 
-  message!: Message;
-  runAs!: RunAs;
-  guild!: Guild;
-  author!: DiscordUser;
-  gowonClient!: GowonClient;
+  get message() {
+    return this.ctx.message;
+  }
 
-  ctx = this.generateContext({});
+  get runAs() {
+    return this.ctx.runAs;
+  }
+
+  get guild() {
+    return this.ctx.guild;
+  }
+
+  get author() {
+    return this.ctx.author;
+  }
+
+  get gowonClient() {
+    return this.ctx.client;
+  }
+
+  customContext = {};
+  ctx!: GowonContext<typeof this["customContext"]>;
 
   /**
    * Misc metadata
@@ -188,12 +202,6 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     NowPlayingEmbedParsingService
   );
 
-  generateContext<T extends CustomContext<any, any>>(
-    customContext: T
-  ): GowonContext<T> {
-    return new GowonContext({ command: this, custom: customContext });
-  }
-
   mutableContext<T>(): GowonContext<{ mutable: T }> {
     return this.ctx as GowonContext<{ mutable: T }>;
   }
@@ -208,10 +216,6 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
 
   get prefix(): string {
     return this.gowonService.prefix(this.guild.id);
-  }
-
-  public setClient(client: GowonClient) {
-    this.gowonClient = client;
   }
 
   abstract run(message: Message, runAs: RunAs): Promise<void>;
@@ -476,11 +480,14 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     }
   }
 
-  async execute(message: Message, runAs: RunAs) {
-    this.message = message;
-    this.runAs = runAs;
-    this.guild = message.guild!;
-    this.author = message.author;
+  async execute(message: Message, runAs: RunAs, gowonClient: GowonClient) {
+    this.ctx = new GowonContext({
+      custom: this.customContext,
+      command: this,
+      message,
+      runAs,
+      gowonClient,
+    });
 
     if (!this.checkRollout()) {
       return;
@@ -498,9 +505,8 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
       for (const delegate of this.delegates) {
         if (delegate.when(this.parsedArguments)) {
           const command = new delegate.delegateTo();
-          command.setClient(this.gowonClient);
           command.delegatedFrom = this;
-          await command.execute(message, runAs);
+          await command.execute(message, runAs, gowonClient);
           return;
         }
       }

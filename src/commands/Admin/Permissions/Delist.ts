@@ -29,7 +29,7 @@ export class Delist extends PermissionsChildCommand {
       }
     }
 
-    const commandName = this.runAs.toCommandFriendlyName();
+    const commandName = this.commandRunAs.toCommandFriendlyName();
 
     const description =
       `Delisted ${commandName.code()} for ${delisted

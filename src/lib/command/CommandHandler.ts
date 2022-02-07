@@ -143,9 +143,8 @@ export class CommandHandler {
         message.content.split(/\s+/)[2] || undefined;
 
       const prefixCommand = new Prefix().setPrefix(prefix);
-      prefixCommand.setClient(this.client);
 
-      await prefixCommand.execute(message, new RunAs());
+      await prefixCommand.execute(message, new RunAs(), this.client);
     }
   }
 
@@ -156,11 +155,10 @@ export class CommandHandler {
       !message.author.bot
     ) {
       const helpCommand = new Help();
-      helpCommand.setClient(this.client);
 
       message.content = "";
 
-      await helpCommand.execute(message, new RunAs());
+      await helpCommand.execute(message, new RunAs(), this.client);
     }
   }
 
@@ -190,10 +188,8 @@ export class CommandHandler {
   private async runCommand(command: Command, message: Message, runAs: RunAs) {
     const newCommand = command.copy();
 
-    newCommand.setClient(this.client);
-
     try {
-      await newCommand.execute.bind(newCommand)(message, runAs);
+      await newCommand.execute.bind(newCommand)(message, runAs, this.client);
     } catch {}
   }
 }

@@ -23,7 +23,7 @@ export class Disable extends PermissionsChildCommand {
     let disabledCommand = await this.adminService.disableCommand(
       this.ctx,
       this.command.id,
-      this.runAs.toCommandFriendlyName()
+      this.commandRunAs.toCommandFriendlyName()
     );
 
     await this.send(

@@ -56,7 +56,7 @@ export class Can extends BaseService<CanContext> {
   private getAdminRole(ctx: CanContext): string | undefined {
     if (!this.ctx.hasOwnProperty("adminRole"))
       ctx.mutable.adminRole = this.settingsService.get("adminRole", {
-        guildID: ctx.command.guild.id,
+        guildID: ctx.guild.id,
       });
 
     return ctx.mutable.adminRole;
@@ -108,7 +108,7 @@ export class Can extends BaseService<CanContext> {
     commandID: string
   ): Promise<boolean> {
     const serverID = ctx.guild.id;
-    const channelID = ctx.command.message.channel.id;
+    const channelID = ctx.message.channel.id;
 
     let channelBlacklists = await this.gowonService.getChannelBlacklists(
       serverID
@@ -125,7 +125,7 @@ export class Can extends BaseService<CanContext> {
     { useChannel }: { useChannel?: boolean } = { useChannel: false }
   ): Promise<CanCheck> {
     const client = ctx.client;
-    const message = ctx.command.message as Message;
+    const message = ctx.message as Message;
 
     if (client.isDeveloper(message.author.id)) return { passed: true };
 
@@ -196,7 +196,7 @@ export class Can extends BaseService<CanContext> {
   }
 
   async viewList(ctx: CanContext, commands: Command[]): Promise<Command[]> {
-    const message = ctx.command.message;
+    const message = ctx.message;
 
     const allPermissions = await Permission.find({
       where: { serverID: message.guild?.id! },
@@ -221,15 +221,15 @@ export class Can extends BaseService<CanContext> {
   }
 
   private checkRollout(ctx: CanContext, command: Command) {
-    return checkRollout(command.rollout, ctx.command.message);
+    return checkRollout(command.rollout, ctx.message);
   }
 
   private isAdmin(ctx: CanContext): boolean {
     const adminRole = this.getAdminRole(ctx);
 
     return (
-      ctx.command.message.member?.permissions?.has("ADMINISTRATOR") ||
-      (adminRole && ctx.command.message.member?.roles.cache.has(adminRole)) ||
+      ctx.authorMember?.permissions?.has("ADMINISTRATOR") ||
+      (adminRole && ctx.authorMember?.roles.cache.has(adminRole)) ||
       false
     );
   }

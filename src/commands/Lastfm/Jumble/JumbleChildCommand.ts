@@ -16,10 +16,10 @@ export abstract class JumbleChildCommand<
 
   jumbleCalculator!: JumbleCalculator;
 
-  ctx = this.generateContext({
+  customContext = {
     constants: { redisOptions: { prefix: "jumble" } },
     mutable: {},
-  });
+  };
 
   async sessionSetJSON(key: string, value: Object | Array<unknown>) {
     return this.redisService.sessionSet(this.ctx, key, JSON.stringify(value));

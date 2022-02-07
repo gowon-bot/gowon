@@ -23,7 +23,7 @@ async function start() {
   const ctx = new GowonContext({
     command: { gowonClient: client, logger: new Logger() } as any,
     custom: {},
-  }) as any;
+  } as any);
 
   const analyticsCollector = ServiceRegistry.get(AnalyticsCollector);
   const usersService = ServiceRegistry.get(UsersService);

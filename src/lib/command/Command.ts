@@ -8,7 +8,7 @@ import { ParentCommand } from "./ParentCommand";
 import { RunAs } from "./RunAs";
 
 export interface Command {
-  execute(message: Message, runAs: RunAs): Promise<void>;
+  execute(message: Message, runAs: RunAs, client: GowonClient): Promise<void>;
   id: string;
   idSeed: string;
 
@@ -43,7 +43,6 @@ export interface Command {
   rollout: Rollout;
 
   copy(): Command;
-  setClient(client: GowonClient): void;
 }
 
 export interface Rollout {

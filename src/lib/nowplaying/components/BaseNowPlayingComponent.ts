@@ -1,4 +1,5 @@
 import { RecentTrack } from "../../../services/LastFM/converters/RecentTracks";
+import { RunAs } from "../../command/RunAs";
 import { GowonContext } from "../../context/Context";
 import { Resources } from "../DatasourceService";
 import { RequirementMap } from "../RequirementMap";
@@ -20,6 +21,9 @@ export abstract class BaseNowPlayingComponent<
   protected ctx = new GowonContext({
     command: { logger: this.values.logger! } as any,
     custom: {},
+    message: this.values.message,
+    runAs: new RunAs(),
+    gowonClient: {} as any,
   });
 
   constructor(

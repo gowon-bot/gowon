@@ -40,9 +40,9 @@ export default class Help extends BaseCommand<typeof args> {
 
   adminService = ServiceRegistry.get(AdminService);
 
-  ctx = this.generateContext({
+  customContext = {
     constants: { adminService: this.adminService },
-  });
+  };
 
   async run() {
     await this.helpForAllCommands();
