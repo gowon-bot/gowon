@@ -7,12 +7,16 @@ import { ParentCommand } from "./ParentCommand";
 import { MetaService } from "../../services/dbservices/MetaService";
 import { GowonClient } from "../GowonClient";
 import { RunAs } from "./RunAs";
-import { NicknameService } from "../../services/Discord/NicknameService";
+import {
+  NicknameService,
+  NicknameServiceContext,
+} from "../../services/Discord/NicknameService";
 import { CommandRegistry } from "./CommandRegistry";
 import { Command } from "./Command";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 import Prefix from "../../commands/Meta/Prefix";
 import Help from "../../commands/Help/Help";
+import { GowonContext } from "../context/Context";
 
 export class CommandHandler {
   commandRegistry = CommandRegistry.getInstance();
@@ -28,27 +32,28 @@ export class CommandHandler {
     this.client = client;
   }
 
-  context(message: Message): any {
-    return {
-      logger: this.logger,
-      client: this.client,
+  context(message: Message) {
+    return new GowonContext({
+      gowonClient: this.client,
+      message,
+      runAs: new RunAs(),
       command: {
-        message,
+        logger: this.logger,
         guild: message.guild!,
         author: message.author,
-      },
-      adminService: this.adminService,
-    };
+      } as any,
+      custom: { constants: { adminService: this.adminService }, mutable: {} },
+    });
   }
 
   async handle(message: Message): Promise<void> {
     this.nicknameService.recordNickname(
-      this.context(message),
+      this.context(message) as NicknameServiceContext,
       message.author.id,
       message.member?.nickname || message.author.username
     );
     this.nicknameService.recordUsername(
-      this.context(message),
+      this.context(message) as NicknameServiceContext,
       message.author.id,
       message.author.username + "#" + message.author.discriminator
     );

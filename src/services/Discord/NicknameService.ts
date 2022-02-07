@@ -11,7 +11,7 @@ import { ServiceRegistry } from "../ServicesRegistry";
 
 export const UnknownUserDisplay = "<Unknown user>";
 
-type NicknameServiceContext = GowonContext<{
+export type NicknameServiceContext = GowonContext<{
   constants?: { redisOptions?: RedisServiceContextOptions };
   mutable?: {
     nicknameCache?: { [discordID: string]: string };
