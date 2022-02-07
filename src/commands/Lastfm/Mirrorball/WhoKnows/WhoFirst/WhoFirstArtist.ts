@@ -155,10 +155,8 @@ export default class WhoFirstArtist extends WhoKnowsBaseCommand<
   }
 
   private displayScrobbleDate(date: Date) {
-    const isPreDatedScrobbles =
-      date.getFullYear() === 2005 &&
-      date.getMonth() === 2 &&
-      date.getDate() === 13;
+    // Before February 13th, 2005
+    const isPreDatedScrobbles = date.getTime() / 1000 < 1108368000;
 
     return displayDate(date) + (isPreDatedScrobbles ? " (or earlier)" : "");
   }
