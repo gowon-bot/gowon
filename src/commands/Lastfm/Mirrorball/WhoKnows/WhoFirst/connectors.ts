@@ -16,6 +16,10 @@ export interface WhoFirstArtistResponse {
       user: MirrorballUser;
       scrobbledAt: number;
     }[];
+
+    undated: {
+      user: { discordID: string };
+    }[];
   };
 }
 
@@ -47,6 +51,12 @@ export class WhoFirstArtistConnector extends BaseConnector<
             privacy
           }
           scrobbledAt
+        }
+
+        undated {
+          user {
+            discordID
+          }
         }
       }
     }

@@ -1,11 +1,15 @@
 import { MirrorballError } from "../../../../../errors";
+import { LinkGenerator } from "../../../../../helpers/lastFM";
 import { convertMirrorballDate } from "../../../../../helpers/mirrorball";
 import { Arguments } from "../../../../../lib/arguments/arguments";
 import { FLAGS } from "../../../../../lib/arguments/flags";
 import { Variation } from "../../../../../lib/command/BaseCommand";
 import { VARIATIONS } from "../../../../../lib/command/variations";
+import { LineConsolidator } from "../../../../../lib/LineConsolidator";
 import {
   displayDate,
+  displayLink,
+  displayNumber,
   displayNumberedList,
 } from "../../../../../lib/views/displays";
 import { WhoKnowsBaseCommand } from "../WhoKnowsBaseCommand";
@@ -53,11 +57,15 @@ export default class WhoFirstArtist extends WhoKnowsBaseCommand<
   async run() {
     const whoLast = this.variationWasUsed("wholast");
 
-    let { senderRequestable, senderUser, senderMirrorballUser } =
-      await this.parseMentions({
-        senderRequired: !this.parsedArguments.artist,
-        fetchMirrorballUser: true,
-      });
+    const {
+      senderRequestable,
+      senderUser,
+      senderMirrorballUser,
+      senderUsername,
+    } = await this.parseMentions({
+      senderRequired: !this.parsedArguments.artist,
+      fetchMirrorballUser: true,
+    });
 
     const artistName = await this.lastFMArguments.getArtist(
       this.ctx,
@@ -83,6 +91,42 @@ export default class WhoFirstArtist extends WhoKnowsBaseCommand<
     await this.cacheUserInfo(response.whoFirstArtist.rows.map((u) => u.user));
 
     const { rows, artist } = response.whoFirstArtist;
+    const { undated, senderUndated } = this.getUndated(response);
+
+    const lineConsolidator = new LineConsolidator();
+
+    lineConsolidator.addLines(
+      {
+        shouldDisplay: !!undated.length,
+        string:
+          `${displayNumber(
+            undated.length,
+            "user"
+          )} with undated scrobbles`.italic() + "\n",
+      },
+      {
+        shouldDisplay: senderUndated,
+        string: `\`${rows.length > 9 ? " " : ""}•\`. ${displayLink(
+          this.ctx.authorMember.nickname || this.author.username,
+          LinkGenerator.userPage(senderUsername)
+        ).strong()} - \`(undated)\``,
+      },
+      {
+        shouldDisplay: artist && !!rows.length,
+        string: displayNumberedList(
+          rows.map(
+            (wk) =>
+              `${this.displayUser(wk.user)} - ${displayDate(
+                convertMirrorballDate(wk.scrobbledAt)
+              )}`
+          )
+        ),
+      },
+      {
+        shouldDisplay: !artist || rows.length === 0,
+        string: "No one has scrobbled this artist",
+      }
+    );
 
     const embed = this.whoKnowsEmbed()
       .setTitle(
@@ -90,20 +134,23 @@ export default class WhoFirstArtist extends WhoKnowsBaseCommand<
           this.isGlobal() ? " globally" : ""
         }?`
       )
-      .setDescription(
-        !artist || rows.length === 0
-          ? `No one has scrobbled this artist`
-          : displayNumberedList(
-              rows.map(
-                (wk) =>
-                  `${this.displayUser(wk.user)} - ${displayDate(
-                    convertMirrorballDate(wk.scrobbledAt)
-                  )}`
-              )
-            )
-      )
+      .setDescription(lineConsolidator.consolidate())
       .setFooter({ text: this.footerHelp(senderUser, senderMirrorballUser) });
 
     await this.send(embed);
+  }
+
+  private getUndated(response: WhoFirstArtistResponse): {
+    senderUndated: boolean;
+    undated: string[];
+  } {
+    const filtered = response.whoFirstArtist.undated.filter(
+      (u) => u.user.discordID !== this.author.id
+    );
+
+    return {
+      undated: filtered.map((u) => u.user.discordID),
+      senderUndated: filtered.length !== response.whoFirstArtist.undated.length,
+    };
   }
 }
