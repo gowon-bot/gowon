@@ -116,7 +116,7 @@ export default class WhoFirstArtist extends WhoKnowsBaseCommand<
         string: displayNumberedList(
           rows.map(
             (wk) =>
-              `${this.displayUser(wk.user)} - ${displayDate(
+              `${this.displayUser(wk.user)} - ${this.displayScrobbleDate(
                 convertMirrorballDate(wk.scrobbledAt)
               )}`
           )
@@ -152,5 +152,14 @@ export default class WhoFirstArtist extends WhoKnowsBaseCommand<
       undated: filtered.map((u) => u.user.discordID),
       senderUndated: filtered.length !== response.whoFirstArtist.undated.length,
     };
+  }
+
+  private displayScrobbleDate(date: Date) {
+    const isPreDatedScrobbles =
+      date.getFullYear() === 2005 &&
+      date.getMonth() === 2 &&
+      date.getDate() === 13;
+
+    return displayDate(date) + (isPreDatedScrobbles ? " (or earlier)" : "");
   }
 }

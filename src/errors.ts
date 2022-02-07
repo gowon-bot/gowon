@@ -340,7 +340,7 @@ export class SenderUserNotAuthenticatedError extends ClientError {
 
   constructor(prefix?: string) {
     super(
-      `This command requires you to be authenticated, please login in again! (\`${prefix}login\`)`
+      `This command requires you to be authenticated, please login again! (\`${prefix}login\`)`
     );
   }
 }
