@@ -9,6 +9,7 @@ import { ServiceRegistry } from "../ServicesRegistry";
 import { MirrorballPageInfo, MirrorballUserType } from "./MirrorballTypes";
 import config from "../../../config.json";
 import { GowonContext } from "../../lib/context/Context";
+import { MirrorballError } from "../../errors";
 
 export class MirrorballService extends BaseService {
   private get usersService() {
@@ -60,6 +61,11 @@ export class MirrorballService extends BaseService {
           })
         : undefined;
     } catch (e: any) {
+      if (e.networkError) {
+        throw new MirrorballError(
+          "The indexing service is not responding, please try again later."
+        );
+      }
       if (e.message) {
         const operationName = (
           (query?.definitions[0] || mutation?.definitions[0]) as any

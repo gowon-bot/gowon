@@ -1,7 +1,7 @@
 import { BaseCommand } from "../command/BaseCommand";
 import { Connector } from "./BaseConnector";
 import { Arguments } from "../arguments/arguments";
-import { MirrorballError, LogicError, UserNotIndexedError } from "../../errors";
+import { LogicError, UserNotIndexedError } from "../../errors";
 import { LastFMService } from "../../services/LastFM/LastFMService";
 import { Perspective } from "../Perspective";
 import { Message, MessageEmbed } from "discord.js";
@@ -59,11 +59,6 @@ export abstract class MirrorballBaseCommand<
       } catch (e: any) {
         if (e.graphQLErrors?.length) {
           (response as any).errors = e.graphQLErrors;
-        } else if (e.networkError) {
-          this.logger.logError(e);
-          throw new MirrorballError(
-            "The indexing service is not responding, please try again later."
-          );
         }
       }
 
