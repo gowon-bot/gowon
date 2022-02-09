@@ -116,7 +116,12 @@ export default class WhoFirstArtist extends WhoKnowsBaseCommand<
         string: displayNumberedList(
           rows.map(
             (wk) =>
-              `${this.displayUser(wk.user)} - ${this.displayScrobbleDate(
+              `${this.displayUser(wk.user, {
+                customProfileLink: LinkGenerator.libraryArtistPage(
+                  wk.user.username,
+                  artist.name
+                ),
+              })} - ${this.displayScrobbleDate(
                 convertMirrorballDate(wk.scrobbledAt)
               )}`
           )

@@ -16,6 +16,10 @@ import {
 import { PrivateUserDisplay } from "../../../../services/mirrorball/services/MirrorballUsersService";
 import { ServiceRegistry } from "../../../../services/ServicesRegistry";
 
+export interface DisplayUserOptions {
+  customProfileLink: string;
+}
+
 export abstract class WhoKnowsBaseCommand<
   R,
   P,
@@ -57,11 +61,17 @@ export abstract class WhoKnowsBaseCommand<
     });
   }
 
-  protected displayUser(user: MirrorballUser): string {
+  protected displayUser(
+    user: MirrorballUser,
+    options?: Partial<DisplayUserOptions>
+  ): string {
     let nickname = this.nicknameService.cacheGetNickname(
       this.ctx,
       user.discordID
     );
+
+    const profileLink =
+      options?.customProfileLink || LinkGenerator.userPage(user.username);
 
     if (nickname) {
       if (nickname === UnknownUserDisplay) {
@@ -70,10 +80,7 @@ export abstract class WhoKnowsBaseCommand<
         return nickname;
       }
 
-      const display = displayLink(
-        nickname,
-        LinkGenerator.userPage(user.username)
-      );
+      const display = displayLink(nickname, profileLink);
 
       return user.discordID === this.author.id ? display.strong() : display;
     }
@@ -86,16 +93,12 @@ export abstract class WhoKnowsBaseCommand<
         );
 
       case MirrorballPrivacy.FMUsername:
-        return (
-          Emoji.lastfm +
-          " " +
-          displayLink(user.username, LinkGenerator.userPage(user.username))
-        );
+        return Emoji.lastfm + " " + displayLink(user.username, profileLink);
       case MirrorballPrivacy.Both:
         return displayLink(
           this.nicknameService.cacheGetUsername(this.ctx, user.discordID) ||
             UnknownUserDisplay,
-          LinkGenerator.userPage(user.username)
+          profileLink
         );
 
       case MirrorballPrivacy.Private:
