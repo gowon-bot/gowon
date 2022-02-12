@@ -31,7 +31,7 @@ export class List extends FriendsChildCommand {
       )
       .setDescription(
         Object.keys(nowPlayings)
-          .sort()
+          .sort((a, b) => b.localeCompare(a))
           .reverse()
           .map((username) => {
             let np = nowPlayings[username];
