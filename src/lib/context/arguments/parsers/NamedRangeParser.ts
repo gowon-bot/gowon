@@ -19,7 +19,7 @@ export class NamedRangeParser {
   ];
 
   // Matches everything > 2000
-  private yearRegex = "200[^0]|2\\d[^0]\\d";
+  private yearRegex = "200[1-9]|2\\d[^0]\\d";
 
   private rangeRegex(lhs: string) {
     return `${lhs}\\s*(\\-)?\\s*(${lhs})?`;

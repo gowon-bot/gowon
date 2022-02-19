@@ -306,10 +306,9 @@ export class LastFMService extends LastFMAPIService {
 
     if (milestone > response.meta.total) {
       throw new LogicError(
-        `${requestableAsUsername(username)} hasn't scrobbled ${displayNumber(
-          milestone,
-          "track"
-        )} yet!`
+        `${requestableAsUsername(
+          username
+        ).code()} hasn't scrobbled ${displayNumber(milestone, "track")} yet!`
       );
     }
 
