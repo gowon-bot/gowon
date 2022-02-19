@@ -8,8 +8,15 @@ import {
 import { EmojiRaw } from "../../Emoji";
 import { GowonClient } from "../../GowonClient";
 import { ReactionCollectorFilter } from "../../../helpers/discord";
+import { ServiceRegistry } from "../../../services/ServicesRegistry";
+import { DiscordService } from "../../../services/Discord/DiscordService";
+import { GowonContext } from "../../context/Context";
 
 export class ConfirmationEmbed {
+  private get discordService() {
+    return ServiceRegistry.get(DiscordService);
+  }
+
   private readonly reactionEmoji = EmojiRaw.checkmark;
   public sentMessage: Message | undefined;
 
@@ -29,10 +36,13 @@ export class ConfirmationEmbed {
     };
   }
 
-  public async awaitConfirmation(timeout = 30000): Promise<boolean> {
+  public async awaitConfirmation(
+    ctx: GowonContext,
+    timeout = 30000
+  ): Promise<boolean> {
     return new Promise(async (resolve) => {
-      const sentEmbed = await this.originalMessage.channel.send({
-        embeds: [this.embed],
+      const sentEmbed = await this.discordService.send(ctx, this.embed, {
+        inChannel: this.originalMessage.channel,
       });
 
       this.sentMessage = sentEmbed;

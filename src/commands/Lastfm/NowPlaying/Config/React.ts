@@ -69,7 +69,7 @@ export class React extends NowPlayingConfigChildCommand<typeof args> {
       this.gowonClient
     );
 
-    if (await confirmationEmbed.awaitConfirmation()) {
+    if (await confirmationEmbed.awaitConfirmation(this.ctx)) {
       await this.settingsService.set(this.ctx, "reacts", {
         userID: this.author.id,
       });

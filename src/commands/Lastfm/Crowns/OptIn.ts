@@ -21,7 +21,7 @@ export class OptIn extends CrownsChildCommand {
       this.gowonClient
     );
 
-    if (await confirmationEmbed.awaitConfirmation()) {
+    if (await confirmationEmbed.awaitConfirmation(this.ctx)) {
       await this.crownsService.optIn(this.ctx, message.author.id);
 
       await confirmationEmbed.sentMessage?.edit({

@@ -12,8 +12,10 @@ export default class Lightmode extends BaseCommand {
 
   async run() {
     if (this.author.id === "196249128286552064")
-      await this.sendWithFiles("*sigh*", [
-        "https://media.discordapp.net/attachments/743258490553761913/752764405049065552/unknown.png",
-      ]);
+      await this.send("*sigh*", {
+        files: [
+          "https://media.discordapp.net/attachments/743258490553761913/752764405049065552/unknown.png",
+        ],
+      });
   }
 }

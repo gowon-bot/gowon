@@ -2,7 +2,6 @@ import {
   EmbedAuthorData,
   Message,
   MessageEmbed,
-  MessageResolvable,
   User as DiscordUser,
 } from "discord.js";
 import md5 from "js-md5";
@@ -15,7 +14,6 @@ import {
   UnknownError,
   UsernameNotRegisteredError,
   SenderUserNotAuthenticatedError,
-  DMsAreOffError,
 } from "../../errors";
 import { GowonService } from "../../services/GowonService";
 import { CommandGroup } from "./CommandGroup";
@@ -28,7 +26,6 @@ import { GowonClient } from "../GowonClient";
 import { Validation, ValidationChecker } from "../validation/ValidationChecker";
 import { Emoji, EmojiRaw } from "../Emoji";
 import { RunAs } from "./RunAs";
-import { ucFirst } from "../../helpers";
 import { checkRollout } from "../../helpers/permissions";
 import { errorEmbed, gowonEmbed } from "../views/embeds";
 import {
@@ -60,6 +57,11 @@ import {
   ArgumentsMap,
   ParsedArguments,
 } from "../context/arguments/types";
+import {
+  DiscordService,
+  ReplyOptions,
+  SendOptions,
+} from "../../services/Discord/DiscordService";
 
 export interface Variation {
   name: string;
@@ -165,14 +167,12 @@ export abstract class BaseCommand<ArgumentsType extends ArgumentsMap = {}>
     return this.ctx.client;
   }
 
-  customContext = {};
   ctx!: GowonContext<typeof this["customContext"]>;
+  customContext = {};
 
   /**
    * Misc metadata
    */
-  responses: Array<MessageEmbed | string> = [];
-
   showLoadingAfter?: number;
   isCompleted = false;
 
@@ -187,6 +187,7 @@ export abstract class BaseCommand<ArgumentsType extends ArgumentsMap = {}>
   track = ServiceRegistry.get(TrackingService);
   usersService = ServiceRegistry.get(UsersService);
   gowonService = ServiceRegistry.get(GowonService);
+  discordService = ServiceRegistry.get(DiscordService);
   rollbarService = ServiceRegistry.get(RollbarService);
   mirrorballService = ServiceRegistry.get(MirrorballService);
   analyticsCollector = ServiceRegistry.get(AnalyticsCollector);
@@ -476,7 +477,9 @@ export abstract class BaseCommand<ArgumentsType extends ArgumentsMap = {}>
 
   async execute(message: Message, runAs: RunAs, gowonClient: GowonClient) {
     this.ctx = new GowonContext({
-      custom: this.customContext,
+      custom: Object.assign(this.customContext, {
+        analyticsCollector: this.analyticsCollector,
+      }) as any,
       command: this,
       payload: message,
       runAs,
@@ -531,119 +534,32 @@ export abstract class BaseCommand<ArgumentsType extends ArgumentsMap = {}>
     return this.argumentParsingService.parseContext(this.ctx, this.arguments);
   }
 
-  addResponse(res: MessageEmbed | string) {
-    this.responses.push(res);
-  }
-
-  async sendWithFiles(content: MessageEmbed | string, files: [string]) {
-    this.addResponse(content);
-
-    const end = this.analyticsCollector.metrics.discordLatency.startTimer();
-
-    if (typeof content === "string") {
-      await this.message.channel.send({ content, files });
-    } else {
-      await this.message.channel.send({ embeds: [content], files });
-    }
-    end();
-  }
-
   async send(
     content: MessageEmbed | string,
-    withEmbed?: MessageEmbed
+    options?: Partial<SendOptions>
   ): Promise<Message> {
-    this.addResponse(content);
-
-    if (withEmbed) {
-      return await this.message.channel.send({
-        content: content as string,
-        embeds: [withEmbed],
-      });
-    }
-
-    const end = this.analyticsCollector.metrics.discordLatency.startTimer();
-
-    let response: Message;
-
-    if (typeof content === "string") {
-      response = await this.message.channel.send({ content });
-    } else {
-      response = await this.message.channel.send({ embeds: [content] });
-    }
-
-    end();
-
-    return response;
+    return await this.discordService.send(this.ctx, content, options);
   }
 
   async reply(
     content: string,
-    settings: {
-      to?: MessageResolvable;
-      ping?: boolean;
-      noUppercase?: boolean;
-    } = {}
+    options?: Partial<ReplyOptions>
   ): Promise<Message> {
-    const settingsWithDefaults = Object.assign({ ping: false }, settings);
-
-    content =
-      typeof content === "string" && !settings.noUppercase
-        ? ucFirst(content)
-        : content;
-
-    this.addResponse(content);
-
-    const end = this.analyticsCollector.metrics.discordLatency.startTimer();
-
-    const response = await this.message.channel.send({
-      content,
-      reply: {
-        messageReference: settingsWithDefaults.to || this.message,
-      },
-      allowedMentions: { repliedUser: settingsWithDefaults.ping },
+    return await this.discordService.send(this.ctx, content, {
+      reply: options || true,
     });
-
-    end();
-
-    return response;
   }
 
   async dmAuthor(content: string | MessageEmbed): Promise<Message> {
-    const end = this.analyticsCollector.metrics.discordLatency.startTimer();
-
-    let response: Message;
-
-    try {
-      if (typeof content === "string") {
-        response = await this.author.send({ content });
-      } else {
-        response = await this.author.send({ embeds: [content] });
-      }
-    } catch (e: any) {
-      throw e.message
-        ?.toLowerCase()
-        ?.includes("cannot send messages to this user")
-        ? new DMsAreOffError()
-        : e;
-    }
-
-    end();
-
-    return response;
+    return await this.discordService.send(this.ctx, content, {
+      inChannel: await this.ctx.author.createDM(),
+    });
   }
 
   async traditionalReply(message: string): Promise<Message> {
-    this.addResponse(message);
+    const content = `<@!${this.author.id}>, ` + message.trimStart();
 
-    const end = this.analyticsCollector.metrics.discordLatency.startTimer();
-
-    const response = await this.message.channel.send(
-      `<@!${this.author.id}>, ` + message.trimStart()
-    );
-
-    end();
-
-    return response;
+    return await this.discordService.send(this.ctx, content);
   }
 
   checkRollout(): boolean {
@@ -736,12 +652,7 @@ export abstract class BaseCommand<ArgumentsType extends ArgumentsMap = {}>
   }
 
   protected startTyping() {
-    // Sometimes Discord throws 500 errors on this call
-    // To reduce the amount of errors when discord is crashing
-    // this is try / caught
-    try {
-      this.message.channel.sendTyping();
-    } catch {}
+    this.discordService.startTyping(this.ctx);
   }
 
   protected async getDiscordUserFromUsername(

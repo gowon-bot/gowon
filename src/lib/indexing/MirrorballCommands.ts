@@ -1,11 +1,9 @@
 import { BaseCommand } from "../command/BaseCommand";
 import { Connector } from "./BaseConnector";
 import { ArgumentsMap } from "../context/arguments/types";
-import { LogicError, UserNotIndexedError } from "../../errors";
 import { LastFMService } from "../../services/LastFM/LastFMService";
 import { Perspective } from "../Perspective";
 import { Message, MessageEmbed } from "discord.js";
-import { User as DBUser } from "../../database/entity/User";
 import { ConfirmationEmbed } from "../views/embeds/ConfirmationEmbed";
 import {
   ConcurrencyService,
@@ -14,6 +12,7 @@ import {
 import { errorEmbed } from "../views/embeds";
 import { LastFMArguments } from "../../services/LastFM/LastFMArguments";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
+import { Emoji } from "../Emoji";
 
 export interface ErrorResponse {
   errors: { message: string }[];
@@ -109,54 +108,13 @@ export abstract class MirrorballBaseCommand<
         );
     }
 
-    (replyTo || this.message).channel.send({
-      content: `<@!${this.message.author.id}>`,
-      embeds: [message],
+    this.send(Emoji.gowonScrobbled, {
+      withEmbed: message,
+      reply: {
+        to: replyTo,
+        ping: true,
+      },
     });
-  }
-
-  protected async throwIfNotIndexed(
-    user: DBUser | undefined,
-    perspective: Perspective
-  ) {
-    if (!user) {
-      throw new LogicError(
-        "The user you have specified is not signed into the bot!"
-      );
-    }
-
-    if (!user.isIndexed) {
-      const isAuthor = perspective.name === "you";
-
-      const embed = errorEmbed(
-        this.newEmbed(),
-        this.author,
-        `This command requires ${perspective.name} to be indexed to execute!` +
-          (isAuthor ? " Would you like to index now?" : "")
-      ).setAuthor(this.generateEmbedAuthor("Error"));
-
-      if (isAuthor) {
-        const confirmationEmbed = new ConfirmationEmbed(
-          this.message,
-          embed,
-          this.gowonClient
-        );
-
-        if (await confirmationEmbed.awaitConfirmation()) {
-          this.impromptuIndex(
-            embed,
-            confirmationEmbed,
-            user.lastFMUsername,
-            user.discordID
-          );
-        }
-
-        const error = new UserNotIndexedError();
-        error.silent = true;
-
-        throw error;
-      }
-    }
   }
 
   protected async impromptuIndex(

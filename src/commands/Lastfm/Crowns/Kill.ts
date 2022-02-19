@@ -49,7 +49,7 @@ export class Kill extends CrownsChildCommand<typeof args> {
       this.gowonClient
     );
 
-    if (await confirmationEmbed.awaitConfirmation()) {
+    if (await confirmationEmbed.awaitConfirmation(this.ctx)) {
       await this.crownsService.killCrown(this.ctx, artist);
       this.crownsService.scribe.kill(this.ctx, crown, this.author);
 

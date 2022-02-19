@@ -23,7 +23,8 @@
       ".*shemale.*",
       ".*tranny.*",
       ".*dyke.*",
-      ".*\\bpedo.*"
+      ".*\\bpedo.*",
+      ".*tard"
     ],
     "explicit": [
       [19, 12, 21, 20],
@@ -89,7 +90,7 @@
       "boring",
       "idiot",
       "terrible",
-      "",
+      ".*akiko.*",
 
       "==== Offensive Tags ====",
       "osama is not dead",

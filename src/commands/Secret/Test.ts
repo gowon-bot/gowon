@@ -1,9 +1,6 @@
 import { BaseCommand } from "../../lib/command/BaseCommand";
-import { StringArgument } from "../../lib/context/arguments/argumentTypes/StringArgument";
 
-const args = {
-  e: new StringArgument(),
-} as const;
+const args = {} as const;
 
 export default class Test extends BaseCommand<typeof args> {
   idSeed = "clc seunghee";
@@ -13,8 +10,6 @@ export default class Test extends BaseCommand<typeof args> {
   subcategory = "developer";
 
   async run() {
-    this.parsedArguments.e;
-
-    await this.send("Hello, world!");
+    // await this.send("Hello, world!");
   }
 }

@@ -74,15 +74,13 @@ export default class Cover extends LastFMBaseCommand<typeof args> {
   private async sendCoverImage(artist: string, album: string, image?: string) {
     this.checkIfAlbumHasCover(artist, album, image);
     try {
-      await this.sendWithFiles(
-        `Cover for ${album.strong()} by ${artist.strong()}`,
-        [this.enlargeImage(image!)]
-      );
+      await this.send(`Cover for ${album.strong()} by ${artist.strong()}`, {
+        files: [this.enlargeImage(image!)],
+      });
     } catch (e) {
-      await this.sendWithFiles(
-        `Cover for ${album.strong()} by ${artist.strong()}`,
-        [image!]
-      );
+      await this.send(`Cover for ${album.strong()} by ${artist.strong()}`, {
+        files: [image!],
+      });
     }
   }
 
@@ -102,9 +100,9 @@ export default class Cover extends LastFMBaseCommand<typeof args> {
   }
 
   private async blueTape() {
-    await this.sendWithFiles(
+    await this.send(
       `Cover for ${"Blue Tape".strong()} by ${"f(x)".strong()}. *(Thanks to jopping and ember for the image)*`,
-      ["http://gowon.ca/images/blueTape.png"]
+      { files: ["http://gowon.ca/images/blueTape.png"] }
     );
   }
 }

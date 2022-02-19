@@ -23,7 +23,7 @@ export class OptOut extends CrownsChildCommand {
       this.gowonClient
     );
 
-    if (await confirmationEmbed.awaitConfirmation()) {
+    if (await confirmationEmbed.awaitConfirmation(this.ctx)) {
       await this.crownsService.scribe.optOut(this.ctx, message.member!);
 
       const numberOfCrowns = await this.crownsService.optOut(

@@ -37,6 +37,7 @@ import { NowPlayingEmbedParsingService } from "./NowPlayingEmbedParsingService";
 import { ChartService } from "./pantomime/ChartService";
 import { EmojiService } from "./Discord/EmojiService";
 import { ArgumentParsingService } from "./arguments/ArgumentsParsingService";
+import { DiscordService } from "./Discord/DiscordService";
 
 type Service<T = any> = { new (): T };
 
@@ -56,6 +57,7 @@ const services: Service[] = [
   ConcurrencyService,
   ConfigService,
   DatasourceService,
+  DiscordService,
   EmojiService,
   FriendsService,
   GowonService,

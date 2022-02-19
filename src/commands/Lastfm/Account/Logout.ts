@@ -12,7 +12,7 @@ export default class Logout extends LastFMBaseCommand {
     const embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor("Log out"))
       .setDescription(
-        "Are you sure you want to log out? This will delete **all** your indexed data!"
+        "Are you sure you want to log out? This will delete **all** your data!"
       );
 
     const confirmationEmbed = new ConfirmationEmbed(
@@ -21,7 +21,7 @@ export default class Logout extends LastFMBaseCommand {
       this.gowonClient
     );
 
-    const confirmation = await confirmationEmbed.awaitConfirmation();
+    const confirmation = await confirmationEmbed.awaitConfirmation(this.ctx);
 
     if (confirmation) {
       await this.usersService.clearUsername(this.ctx, this.author.id);

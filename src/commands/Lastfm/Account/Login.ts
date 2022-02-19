@@ -70,7 +70,7 @@ export default class Login extends MirrorballBaseCommand<never, never> {
         this.author.id
       );
 
-      if (await confirmationEmbed.awaitConfirmation()) {
+      if (await confirmationEmbed.awaitConfirmation(this.ctx)) {
         this.impromptuIndex(
           successEmbed,
           confirmationEmbed,

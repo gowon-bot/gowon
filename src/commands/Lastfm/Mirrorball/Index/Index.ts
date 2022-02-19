@@ -76,7 +76,7 @@ export default class Index extends MirrorballBaseCommand<
     const embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor("Indexing"))
       .setDescription(
-        "Indexing will delete all your data, and re-download it. Are you sure you want to full index?"
+        "Indexing will download all your scrobbles from Last.fm. Are you sure you want to full index?"
       )
       .setFooter({ text: this.indexingHelp });
 
@@ -86,7 +86,7 @@ export default class Index extends MirrorballBaseCommand<
       this.gowonClient
     );
 
-    if (!(await confirmationEmbed.awaitConfirmation())) {
+    if (!(await confirmationEmbed.awaitConfirmation(this.ctx))) {
       return;
     } else {
       confirmationEmbed.sentMessage?.edit({
