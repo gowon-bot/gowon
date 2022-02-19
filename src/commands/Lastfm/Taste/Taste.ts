@@ -30,7 +30,7 @@ export default class Taste extends TasteCommand<typeof args> {
     "",
     "@user or lfm:username",
     "time period @user",
-    "username amount time period",
+    "username time period amount ",
   ];
 
   variations: Variation[] = [

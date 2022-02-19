@@ -30,12 +30,7 @@ export default class TagTaste extends TasteCommand<typeof args> {
   idSeed = "iz*one yuri";
   aliases = ["tat", "ttaste", "ttb"];
   description = "Shows your taste overlap within a genre with another user";
-  usage = [
-    "",
-    "@user or lfm:username",
-    "time period @user",
-    "username amount time period",
-  ];
+  usage = ["tag @user or lfm:username", "tag | username amount"];
 
   variations: Variation[] = [
     {
