@@ -10,7 +10,7 @@ import {
 } from "./BaseArgument";
 
 export interface StringArgumentOptions extends SliceableArgumentOptions {
-  splitOn: string;
+  splitOn: string | RegExp;
   match: string[];
   regex: RegExp;
 }
@@ -24,7 +24,7 @@ export class StringArgument extends BaseArgument<
   }
 
   constructor(options: Partial<StringArgumentOptions> = {}) {
-    super(defaultIndexableOptions, { splitOn: " ", match: [] }, options);
+    super(defaultIndexableOptions, { splitOn: /\s+/, match: [] }, options);
   }
 
   parseFromMessage(_: Message, content: string, context: GowonContext): string {

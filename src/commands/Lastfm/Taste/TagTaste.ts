@@ -79,6 +79,7 @@ export default class TagTaste extends TasteCommand<typeof args> {
       senderArtists.artists,
       [tag]
     );
+
     const mentionedArtistsFiltered = await this.tagService.filterArtists(
       this.ctx,
       mentionedArtists.artists,
@@ -95,7 +96,7 @@ export default class TagTaste extends TasteCommand<typeof args> {
 
     if (taste.artists.length === 0)
       throw new LogicError(
-        `${userOneUsername} and ${userTwoUsername} share no common ${tag} artists!`
+        `${userOneUsername.code()} and ${userTwoUsername.code()} share no common ${tag.strong()} artists!`
       );
 
     const embedDescription = `Comparing top ${displayNumber(

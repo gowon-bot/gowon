@@ -15,12 +15,12 @@ import { TimeRange } from "../../../lib/timeAndDate/helpers";
 import { NamedRangeParser } from "../../../lib/context/arguments/parsers/NamedRangeParser";
 import { LastFMMention } from "../../../lib/context/arguments/mentionTypes/LastFMMention";
 import { DiscordIDMention } from "../../../lib/context/arguments/mentionTypes/DiscordIDMention";
-import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { UserStringArgument } from "../../../lib/context/arguments/argumentTypes/UserStringArgument";
+import { DiscordUserArgument } from "../../../lib/context/arguments/argumentTypes/discord/DiscordUserArgument";
 
 export const tasteArgs = {
-  user: new StringArgument({ index: 0 }),
-  user2: new StringArgument({ index: 1 }),
+  user: new DiscordUserArgument({ index: 0 }),
+  user2: new DiscordUserArgument({ index: 1 }),
   lfmUser: new UserStringArgument({
     index: 0,
     mention: new LastFMMention(),

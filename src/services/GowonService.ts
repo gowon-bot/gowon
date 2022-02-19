@@ -46,13 +46,15 @@ export class GowonService {
   }
 
   removeCommandName(string: string, runAs: RunAs, serverID: string): string {
-    return string.replace(
-      new RegExp(
-        `${this.regexSafePrefix(serverID)}${runAs.toRegexString()}`,
-        "i"
-      ),
-      ""
-    );
+    return string
+      .replace(
+        new RegExp(
+          `${this.regexSafePrefix(serverID)}${runAs.toRegexString()}`,
+          "i"
+        ),
+        ""
+      )
+      .trim();
   }
 
   async getInactiveRole(guild: Guild): Promise<string | undefined> {
