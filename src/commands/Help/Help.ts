@@ -1,23 +1,21 @@
 import { BaseCommand, Delegate } from "../../lib/command/BaseCommand";
 import { Command } from "../../lib/command/Command";
 import { EmbedField } from "discord.js";
-import { Arguments } from "../../lib/arguments/arguments";
 import { AdminService } from "../../services/dbservices/AdminService";
 import HelpForOneCommand from "./HelpForOneCommand";
 import { ucFirst } from "../../helpers";
 import { SimpleScrollingEmbed } from "../../lib/views/embeds/SimpleScrollingEmbed";
 import QuickHelp from "./QuickHelp";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
+import { StringArgument } from "../../lib/context/arguments/argumentTypes/StringArgument";
 
 interface GroupedCommands {
   [category: string]: Command[];
 }
 
 const args = {
-  inputs: {
-    all: { regex: /\b(all|commands|)\b/, index: 0 },
-    command: { index: { start: 0 } },
-  },
+  all: new StringArgument({ match: ["all", "commands"] }),
+  command: new StringArgument({ index: { start: 0 } }),
 } as const;
 
 export default class Help extends BaseCommand<typeof args> {
@@ -28,7 +26,7 @@ export default class Help extends BaseCommand<typeof args> {
   description = "Displays the help menu, or help about a given command";
   usage = ["", "all", "<command>"];
 
-  arguments: Arguments = args;
+  arguments = args;
 
   delegates: Delegate<typeof args>[] = [
     {

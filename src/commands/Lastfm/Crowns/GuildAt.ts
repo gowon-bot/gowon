@@ -1,16 +1,14 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
-import { Arguments } from "../../../lib/arguments/arguments";
 import { LogicError } from "../../../errors";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { toInt } from "../../../helpers/lastFM";
 import { displayNumber } from "../../../lib/views/displays";
 import { asyncMap } from "../../../helpers";
+import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
 
 const args = {
-  inputs: {
-    rank: { index: 0, number: true },
-  },
+  rank: new NumberArgument(),
 } as const;
 
 export class GuildAt extends CrownsChildCommand<typeof args> {
@@ -20,7 +18,7 @@ export class GuildAt extends CrownsChildCommand<typeof args> {
     "Shows the user at a given rank on the crowns leaderboard, and the surrounding users";
   usage = "rank";
 
-  arguments: Arguments = args;
+  arguments = args;
 
   validation: Validation = {
     rank: new validators.Required({}),

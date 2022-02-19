@@ -140,6 +140,8 @@ export class ScrollingEmbed {
   }
 
   private async react() {
+    await this.sentMessage.react(EmojiRaw.arrowFirst);
+
     return new Promise(async (resolve, reject) => {
       if (this.options.totalPages < 2) return;
 
@@ -198,15 +200,15 @@ export class ScrollingEmbed {
         resolve(undefined);
       });
 
-      if (this.options.totalPages > -1 && this.options.totalPages > 2)
-        await this.sentMessage.react(this.firstArrow);
-      if (this.options.totalPages > 1)
-        await this.sentMessage.react(this.leftArrow);
+      // if (this.options.totalPages > -1 && this.options.totalPages > 2)
+      //   await this.sentMessage.react(this.firstArrow);
+      // if (this.options.totalPages > 1)
+      //   await this.sentMessage.react(this.leftArrow);
 
-      if (this.options.totalPages > 1)
-        await this.sentMessage.react(this.rightArrow);
-      if (this.options.totalPages > -1 && this.options.totalPages > 2)
-        await this.sentMessage.react(this.lastArrow);
+      // if (this.options.totalPages > 1)
+      //   await this.sentMessage.react(this.rightArrow);
+      // if (this.options.totalPages > -1 && this.options.totalPages > 2)
+      //   await this.sentMessage.react(this.lastArrow);
     });
   }
 

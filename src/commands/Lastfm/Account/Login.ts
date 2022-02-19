@@ -3,7 +3,6 @@ import { User } from "../../../database/entity/User";
 import { sleep } from "../../../helpers";
 import { ReactionCollectorFilter } from "../../../helpers/discord";
 import { LinkGenerator } from "../../../helpers/lastFM";
-import { Arguments } from "../../../lib/arguments/arguments";
 import { EmojiRaw } from "../../../lib/Emoji";
 import { EmptyConnector } from "../../../lib/indexing/BaseConnector";
 import { MirrorballBaseCommand } from "../../../lib/indexing/MirrorballCommands";
@@ -13,13 +12,7 @@ import { ConfirmationEmbed } from "../../../lib/views/embeds/ConfirmationEmbed";
 import { MirrorballUserType } from "../../../services/mirrorball/MirrorballTypes";
 import { LastFMSession } from "../../../services/LastFM/converters/Misc";
 
-const args = {} as const;
-
-export default class Login extends MirrorballBaseCommand<
-  never,
-  never,
-  typeof args
-> {
+export default class Login extends MirrorballBaseCommand<never, never> {
   idSeed = "loona jinsoul";
 
   connector = new EmptyConnector();
@@ -29,8 +22,6 @@ export default class Login extends MirrorballBaseCommand<
   description = "Sets your Last.fm username in Gowon";
   subcategory = "accounts";
   usage = "";
-
-  arguments: Arguments = args;
 
   validation: Validation = {};
 

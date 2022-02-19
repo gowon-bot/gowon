@@ -2,20 +2,19 @@ import { CrownsService } from "../../../services/dbservices/CrownsService";
 import { LineConsolidator } from "../../../lib/LineConsolidator";
 import { NowPlayingBaseCommand } from "./NowPlayingBaseCommand";
 import { promiseAllSettled } from "../../../helpers";
-import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { RecentTrack } from "../../../services/LastFM/converters/RecentTracks";
 import { LogicError } from "../../../errors";
 import { LinkGenerator } from "../../../helpers/lastFM";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
+import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
+import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 
 const args = {
-  inputs: {
-    otherWords: { index: { start: 0 } },
-    querystring: { index: { start: 0 } },
-    artist: { index: 0, splitOn: "|" },
-    track: { index: 1, splitOn: "|" },
-  },
-  mentions: standardMentions,
+  ...standardMentions,
+  ...prefabArguments.track,
+  otherWords: new StringArgument({ index: { start: 0 } }),
+  querystring: new StringArgument({ index: { start: 0 } }),
 } as const;
 
 export default class FakeNowPlaying extends NowPlayingBaseCommand<typeof args> {

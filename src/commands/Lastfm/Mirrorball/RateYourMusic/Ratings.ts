@@ -1,7 +1,5 @@
-import { Arguments } from "../../../../lib/arguments/arguments";
 import { RatingsParams, RatingsResponse, RatingsConnector } from "./connectors";
 import { RateYourMusicIndexingChildCommand } from "./RateYourMusicChildCommand";
-import { standardMentions } from "../../../../lib/arguments/mentions/mentions";
 import { PaginatedCache } from "../../../../lib/paginators/PaginatedCache";
 import { NoRatingsError, UnknownMirrorballError } from "../../../../errors";
 import { MirrorballRating } from "../../../../services/mirrorball/MirrorballTypes";
@@ -9,12 +7,12 @@ import { displayRating } from "../../../../lib/views/displays";
 import { ScrollingEmbed } from "../../../../lib/views/embeds/ScrollingEmbed";
 import { Validation } from "../../../../lib/validation/ValidationChecker";
 import { validators } from "../../../../lib/validation/validators";
+import { standardMentions } from "../../../../lib/context/arguments/mentionTypes/mentions";
+import { StringArgument } from "../../../../lib/context/arguments/argumentTypes/StringArgument";
 
 const args = {
-  inputs: {
-    rating: { index: 0 },
-  },
-  mentions: standardMentions,
+  ...standardMentions,
+  rating: new StringArgument({ index: 0 }),
 } as const;
 
 export class Ratings extends RateYourMusicIndexingChildCommand<
@@ -38,7 +36,7 @@ export class Ratings extends RateYourMusicIndexingChildCommand<
     }),
   };
 
-  arguments: Arguments = args;
+  arguments = args;
 
   async run() {
     let rating: number | undefined;

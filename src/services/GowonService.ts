@@ -26,7 +26,7 @@ export class GowonService {
       "yyyy/MM/dd",
       "yy.MM.dd",
       "yyyy.MM.dd",
-    ],
+    ] as string[],
     unknownUserDisplay: "???",
     defaultLoadingTime: 5,
   } as const;

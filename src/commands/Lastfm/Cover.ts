@@ -1,7 +1,7 @@
 import { LogicError } from "../../errors";
 import { LinkGenerator } from "../../helpers/lastFM";
-import { Arguments } from "../../lib/arguments/arguments";
-import { standardMentions } from "../../lib/arguments/mentions/mentions";
+import { standardMentions } from "../../lib/context/arguments/mentionTypes/mentions";
+import { prefabArguments } from "../../lib/context/arguments/prefabArguments";
 import { displayLink } from "../../lib/views/displays";
 import { AlbumInfo } from "../../services/LastFM/converters/InfoTypes";
 import { RecentTrack } from "../../services/LastFM/converters/RecentTracks";
@@ -9,11 +9,8 @@ import { LastFMArgumentsMutableContext } from "../../services/LastFM/LastFMArgum
 import { LastFMBaseCommand } from "./LastFMBaseCommand";
 
 const args = {
-  inputs: {
-    artist: { index: 0, splitOn: "|" },
-    album: { index: 1, splitOn: "|" },
-  },
-  mentions: standardMentions,
+  ...standardMentions,
+  ...prefabArguments.album,
 } as const;
 
 export default class Cover extends LastFMBaseCommand<typeof args> {
@@ -23,7 +20,7 @@ export default class Cover extends LastFMBaseCommand<typeof args> {
   description = "Shows the cover for a given album";
   usage = ["", "artist | album @user"];
 
-  arguments: Arguments = args;
+  arguments = args;
 
   private readonly defaultImageURL =
     "https://lastfm.freetls.fastly.net/i/u/174s/2a96cbd8b46e442fc41c2b86b821562f.png";

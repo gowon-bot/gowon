@@ -1,4 +1,3 @@
-import { Arguments } from "../../../lib/arguments/arguments";
 import { ComboChildCommand } from "./ComboChildCommand";
 import { LogicError } from "../../../errors";
 import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingEmbed";
@@ -7,11 +6,10 @@ import { Combo } from "../../../database/entity/Combo";
 import { NicknameService } from "../../../services/Discord/NicknameService";
 import { ArtistsService } from "../../../services/mirrorball/services/ArtistsService";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
+import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 
 const args = {
-  inputs: {
-    artistName: { index: { start: 0 } },
-  },
+  ...prefabArguments.artist,
 } as const;
 
 export class ServerCombos extends ComboChildCommand<typeof args> {
@@ -22,13 +20,13 @@ export class ServerCombos extends ComboChildCommand<typeof args> {
   subcategory = "library stats";
   usage = [""];
 
-  arguments: Arguments = args;
+  arguments = args;
 
   nicknameService = ServiceRegistry.get(NicknameService);
   artistsService = ServiceRegistry.get(ArtistsService);
 
   async run() {
-    let artistName = this.parsedArguments.artistName;
+    let artistName = this.parsedArguments.artist;
 
     if (artistName) {
       [artistName] = await this.artistsService.correctArtistNames(this.ctx, [

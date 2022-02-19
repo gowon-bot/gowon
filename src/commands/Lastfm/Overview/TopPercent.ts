@@ -1,21 +1,15 @@
-import { OverviewChildCommand, overviewInputs } from "./OverviewChildCommand";
-import { Arguments } from "../../../lib/arguments/arguments";
+import { OverviewChildCommand } from "./OverviewChildCommand";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
-import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { displayNumber } from "../../../lib/views/displays";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
+import { TimePeriodArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/TimePeriodArgument";
+import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
 
 const args = {
-  mentions: standardMentions,
-  inputs: {
-    percent: {
-      regex: /[0-9]{1,3}(?!\w)(?! [mw])/g,
-      index: 0,
-      default: 50,
-      number: true,
-    },
-    ...overviewInputs,
-  },
+  ...standardMentions,
+  timePeriod: new TimePeriodArgument(),
+  percent: new NumberArgument({ default: 50 }),
 } as const;
 
 export class TopPercent extends OverviewChildCommand<typeof args> {
@@ -25,7 +19,7 @@ export class TopPercent extends OverviewChildCommand<typeof args> {
   description = "Shows how many artists make up at least 50% of your scrobbles";
   usage = ["", "time_period percent", "time_period percent @user"];
 
-  arguments: Arguments = args;
+  arguments = args;
 
   validation: Validation = {
     percent: new validators.Range({ min: 5, max: 100 }),

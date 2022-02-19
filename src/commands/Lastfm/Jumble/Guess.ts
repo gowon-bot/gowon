@@ -1,11 +1,11 @@
 import { JumbleChildCommand } from "./JumbleChildCommand";
 import { jumbleRedisKey, JumbledArtist } from "./JumbleParentCommand";
 import { LogicError } from "../../../errors";
-import { Arguments } from "../../../lib/arguments/arguments";
 import { shuffle } from "../../../helpers";
+import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 
 const args = {
-  inputs: { guess: { index: { start: 0 } } },
+  guess: new StringArgument({ index: { start: 0 } }),
 } as const;
 
 export class Guess extends JumbleChildCommand<typeof args> {
@@ -14,7 +14,7 @@ export class Guess extends JumbleChildCommand<typeof args> {
   description = "Picks an artist from your library to jumble";
   usage = ["artist_guess"];
 
-  arguments: Arguments = args;
+  arguments = args;
 
   async run() {
     let guess = this.parsedArguments.guess;

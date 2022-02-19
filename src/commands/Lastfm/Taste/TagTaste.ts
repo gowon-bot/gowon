@@ -1,4 +1,3 @@
-import { Arguments } from "../../../lib/arguments/arguments";
 import { TasteCalculator } from "../../../lib/calculators/TasteCalculator";
 import { sanitizeForDiscord } from "../../../helpers/discord";
 import { Variation } from "../../../lib/command/BaseCommand";
@@ -6,30 +5,25 @@ import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { LogicError } from "../../../errors";
 import { TagsService } from "../../../services/mirrorball/services/TagsService";
-import { TasteCommand, tasteMentions } from "./TasteCommand";
+import { TasteCommand, tasteArgs } from "./TasteCommand";
 import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingEmbed";
 import { displayNumber } from "../../../lib/views/displays";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
+import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
+import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
 
 const args = {
-  inputs: {
-    tag: { index: 0, splitOn: "|" },
-    artistAmount: {
-      index: 0,
-      regex: /(?<=.\|.*)\b[0-9]+\b/g,
-      default: 1000,
-      number: true,
-    },
-    username: {
-      regex: /(?<=.\|.*)[\w\-\!]+/gi,
-      index: 0,
-    },
-    username2: {
-      regex: /(?<=.\|.*)[\w\-\!]+/gi,
-      index: 1,
-    },
-  },
-  mentions: tasteMentions,
+  ...tasteArgs,
+  tag: new StringArgument({ index: 0, splitOn: "|" }),
+  artistAmount: new NumberArgument({ default: 1000 }),
+  username: new StringArgument({
+    regex: /(?<=.\|.*)[\w\-\!]+/gi,
+    index: 0,
+  }),
+  username2: new StringArgument({
+    regex: /(?<=.\|.*)[\w\-\!]+/gi,
+    index: 1,
+  }),
 } as const;
 
 export default class TagTaste extends TasteCommand<typeof args> {
@@ -52,7 +46,7 @@ export default class TagTaste extends TasteCommand<typeof args> {
     },
   ];
 
-  arguments: Arguments = args;
+  arguments = args;
 
   validation: Validation = {
     tag: new validators.Required({}),

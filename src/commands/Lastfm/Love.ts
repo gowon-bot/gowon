@@ -1,13 +1,10 @@
-import { Arguments } from "../../lib/arguments/arguments";
 import { Variation } from "../../lib/command/BaseCommand";
+import { prefabArguments } from "../../lib/context/arguments/prefabArguments";
 import { LastFMArgumentsMutableContext } from "../../services/LastFM/LastFMArguments";
 import { LastFMBaseCommand } from "./LastFMBaseCommand";
 
 const args = {
-  inputs: {
-    artist: { index: 0, splitOn: "|" },
-    track: { index: 1, splitOn: "|" },
-  },
+  ...prefabArguments.track,
 } as const;
 
 export default class Love extends LastFMBaseCommand<typeof args> {
@@ -20,7 +17,7 @@ export default class Love extends LastFMBaseCommand<typeof args> {
 
   variations: Variation[] = [{ name: "unlove", variation: ["unlove", "hate"] }];
 
-  arguments: Arguments = args;
+  arguments = args;
 
   async run() {
     const { senderRequestable } = await this.parseMentions({

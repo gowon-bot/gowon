@@ -35,7 +35,7 @@ export class CommandHandler {
   context(message: Message) {
     return new GowonContext({
       gowonClient: this.client,
-      message,
+      payload: message,
       runAs: new RunAs(),
       command: {
         logger: this.logger,

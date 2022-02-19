@@ -1,28 +1,23 @@
-import { Arguments } from "../../../lib/arguments/arguments";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { PaceCalculator } from "../../../lib/calculators/PaceCalculator";
 import { LogicError } from "../../../errors";
 import { isBefore, isValid } from "date-fns";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
-import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { displayDate, displayNumber } from "../../../lib/views/displays";
 import { ago } from "../../../helpers";
-import { TimeRangeParser } from "../../../lib/arguments/custom/TimeRangeParser";
 import { humanizeTimeRange } from "../../../lib/timeAndDate/helpers";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
+import { TimeRangeArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/TimeRangeArgument";
+import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
 
 const args = {
-  inputs: {
-    timeRange: {
-      custom: new TimeRangeParser({ fallback: { weeks: 1 }, useOverall: true }),
-    },
-    milestone: {
-      index: 0,
-      regex: /[0-9]+(?![\w.])(?! [a-z])/g,
-      number: true,
-    },
-  },
-  mentions: standardMentions,
+  ...standardMentions,
+  milestone: new NumberArgument(),
+  timeRange: new TimeRangeArgument({
+    fallback: { weeks: 1 },
+    useOverall: true,
+  }),
 } as const;
 
 export default class Pace extends LastFMBaseCommand<typeof args> {
@@ -33,7 +28,7 @@ export default class Pace extends LastFMBaseCommand<typeof args> {
   subcategory = "library stats";
   usage = ["", "milestone", "time period milestone @user"];
 
-  arguments: Arguments = args;
+  arguments = args;
 
   validation: Validation = {
     milestone: [

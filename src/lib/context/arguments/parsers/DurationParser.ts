@@ -1,5 +1,6 @@
 import { Duration } from "date-fns";
-import { SimpleMap } from "../../helpers/types";
+import { SimpleMap } from "../../../../helpers/types";
+import { durations } from "../../../timeAndDate/durations";
 
 export interface Shorthand {
   friendlyName: string;
@@ -8,15 +9,7 @@ export interface Shorthand {
 }
 
 export class DurationParser {
-  durations = {
-    years: ["year", "years", "y"],
-    months: ["month", "months", "mo", "m"],
-    weeks: ["week", "weeks", "w"],
-    days: ["day", "days", "d"],
-    hours: ["hour", "hours", "h", "ho", "hr"],
-    minutes: ["minute", "minutes", "mi"],
-    seconds: ["second", "seconds", "s"],
-  };
+  durations = durations;
 
   shorthands: Shorthand[] = [
     {

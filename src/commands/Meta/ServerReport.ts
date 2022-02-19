@@ -1,17 +1,12 @@
 import { MetaChildCommand } from "./MetaChildCommand";
-import { Arguments } from "../../lib/arguments/arguments";
 import { SimpleScrollingEmbed } from "../../lib/views/embeds/SimpleScrollingEmbed";
 import { displayNumber } from "../../lib/views/displays";
 
-const args = {} as const;
-
-export class ServerReport extends MetaChildCommand<typeof args> {
+export class ServerReport extends MetaChildCommand {
   idSeed = "redsquare chaea";
 
   description = "Shows a list of the guilds with the most users in it";
   devCommand = true;
-
-  arguments: Arguments = args;
 
   async run() {
     let servers = Array.from(this.gowonClient.client.guilds.cache.values());

@@ -10,8 +10,8 @@ import {
   isValid,
   sub,
 } from "date-fns";
-import { DurationParser } from "./DurationParser";
-import { overallRegex } from "../arguments/custom/TimePeriodParser";
+import { DurationParser } from "../context/arguments/parsers/DurationParser";
+import { overallRegex } from "../context/arguments/parsers/TimePeriodParser";
 
 export class NamedRange {
   constructor(public from: string, public to?: string) {}

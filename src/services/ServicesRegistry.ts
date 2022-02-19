@@ -36,6 +36,7 @@ import { RollbarService } from "./Rollbar/RollbarService";
 import { NowPlayingEmbedParsingService } from "./NowPlayingEmbedParsingService";
 import { ChartService } from "./pantomime/ChartService";
 import { EmojiService } from "./Discord/EmojiService";
+import { ArgumentParsingService } from "./arguments/ArgumentsParsingService";
 
 type Service<T = any> = { new (): T };
 
@@ -44,6 +45,7 @@ export type Context = SimpleMap<any>;
 const services: Service[] = [
   AdminService,
   AnalyticsCollector,
+  ArgumentParsingService,
   ArtistsService,
   BotStatsService,
   Can,

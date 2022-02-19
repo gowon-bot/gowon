@@ -1,17 +1,15 @@
-import { Arguments } from "../../../lib/arguments/arguments";
-import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { ComboChildCommand } from "./ComboChildCommand";
 import { LogicError } from "../../../errors";
 import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingEmbed";
 import { displayNumberedList } from "../../../lib/views/displays";
 import { ArtistsService } from "../../../services/mirrorball/services/ArtistsService";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
+import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 
 const args = {
-  inputs: {
-    artistName: { index: { start: 0 } },
-  },
-  mentions: standardMentions,
+  ...standardMentions,
+  ...prefabArguments.artist,
 } as const;
 
 export class Combos extends ComboChildCommand<typeof args> {
@@ -22,12 +20,12 @@ export class Combos extends ComboChildCommand<typeof args> {
   subcategory = "library stats";
   usage = ["", "artist name"];
 
-  arguments: Arguments = args;
+  arguments = args;
 
   artistsService = ServiceRegistry.get(ArtistsService);
 
   async run() {
-    let artistName = this.parsedArguments.artistName;
+    let artistName = this.parsedArguments.artist;
 
     if (artistName) {
       [artistName] = await this.artistsService.correctArtistNames(this.ctx, [

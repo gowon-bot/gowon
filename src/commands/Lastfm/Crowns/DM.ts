@@ -1,11 +1,10 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
 import { chunkArray } from "../../../helpers";
-import { Arguments } from "../../../lib/arguments/arguments";
-import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { displayNumber } from "../../../lib/views/displays";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 
 const args = {
-  mentions: standardMentions,
+  ...standardMentions,
 } as const;
 
 export class DM extends CrownsChildCommand<typeof args> {
@@ -15,7 +14,7 @@ export class DM extends CrownsChildCommand<typeof args> {
   aliases = ["me"];
   usage = ["", "@user"];
 
-  arguments: Arguments = args;
+  arguments = args;
 
   async run() {
     const crownsPerMessage = 40;

@@ -1,34 +1,31 @@
 import { AdminBaseChildCommand } from "../AdminBaseCommand";
-import { Arguments } from "../../../lib/arguments/arguments";
 import { Command } from "../../../lib/command/Command";
 import { CommandNotFoundError } from "../../../errors";
 import { Permission } from "../../../database/entity/Permission";
 import { User as DiscordUser, Role } from "discord.js";
 import { User } from "../../../database/entity/User";
-import { CustomMention } from "../../../lib/arguments/mentions/CustomMention";
+import { CustomMention } from "../../../lib/context/arguments/mentionTypes/CustomMention";
 import { RunAs } from "../../../lib/command/RunAs";
 import { asyncMap } from "../../../helpers";
+import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
+import { UserStringArgument } from "../../../lib/context/arguments/argumentTypes/UserStringArgument";
 
-const args = {
-  inputs: {
-    command: { index: { start: 0 } },
-  },
-  mentions: {
-    userIDs: {
-      index: { start: 0 },
-      mention: new CustomMention("user:", "[0-9]{17,18}", true),
-      join: false,
-    },
-    roleIDs: {
-      index: { start: 0 },
-      mention: new CustomMention("role:", "[0-9]{17,18}", true),
-      join: false,
-    },
-  },
+export const permissionsArgs = {
+  command: new StringArgument({ index: { start: 0 } }),
+
+  // User
+  userID: new UserStringArgument({
+    mention: new CustomMention("user:", "[0-9]{17,18}"),
+  }),
+
+  // Role
+  roleID: new UserStringArgument({
+    mention: new CustomMention("role:", "[0-9]{17,18}"),
+  }),
 } as const;
 
 export abstract class PermissionsChildCommand extends AdminBaseChildCommand<
-  typeof args
+  typeof permissionsArgs
 > {
   parentName = "permissions";
   subcategory = "permissions";
@@ -44,10 +41,10 @@ export abstract class PermissionsChildCommand extends AdminBaseChildCommand<
 
   throwOnNoCommand = true;
 
-  arguments: Arguments = args;
+  arguments = permissionsArgs;
 
   async prerun() {
-    this.aliases = this.parsedArguments.command!.split(/\s*\//);
+    this.aliases = this.parsedArguments.command.split(/\s*\//);
 
     const command = await this.commandRegistry.find(
       this.aliases.join(" "),
@@ -60,8 +57,11 @@ export abstract class PermissionsChildCommand extends AdminBaseChildCommand<
 
     if (command.command) this.command = command.command;
     this.commandRunAs = command.runAs;
-    let userIDs = this.parsedArguments.userIDs || [];
-    let roleIDs = this.parsedArguments.roleIDs || [];
+
+    // -- Temporary, this will change with permissions rewrite
+    const userIDs = [this.parsedArguments.userID];
+    const roleIDs = [this.parsedArguments.roleID];
+    // --
 
     const { users: userMentions, roles: roleMentions } = this.message.mentions;
 

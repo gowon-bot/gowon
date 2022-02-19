@@ -1,6 +1,6 @@
 import { BaseMention } from "./BaseMention";
 
-export class UsernameMention extends BaseMention {
+export class DiscordUsernameMention extends BaseMention {
   prefix = ["u:", "username:"];
   mentionRegex = ".*";
 }

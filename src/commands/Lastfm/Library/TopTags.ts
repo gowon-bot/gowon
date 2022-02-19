@@ -1,8 +1,5 @@
 import gql from "graphql-tag";
 import { humanizePeriod } from "../../../lib/timeAndDate/helpers";
-import { Arguments } from "../../../lib/arguments/arguments";
-import { TimePeriodParser } from "../../../lib/arguments/custom/TimePeriodParser";
-import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { TagConsolidator } from "../../../lib/tags/TagConsolidator";
 import {
   displayNumber,
@@ -14,14 +11,14 @@ import {
   MirrorballTag,
 } from "../../../services/mirrorball/MirrorballTypes";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
-import { TimeRangeParser } from "../../../lib/arguments/custom/TimeRangeParser";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
+import { TimePeriodArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/TimePeriodArgument";
+import { TimeRangeArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/TimeRangeArgument";
 
 const args = {
-  inputs: {
-    timePeriod: { custom: new TimePeriodParser({ fallback: "7day" }) },
-    timeRange: { custom: new TimeRangeParser() },
-  },
-  mentions: standardMentions,
+  ...standardMentions,
+  timePeriod: new TimePeriodArgument({ fallback: "7day" }),
+  timeRange: new TimeRangeArgument(),
 } as const;
 
 export default class TopTags extends LastFMBaseCommand<typeof args> {
@@ -31,7 +28,7 @@ export default class TopTags extends LastFMBaseCommand<typeof args> {
   description = "Displays your top tags";
   aliases = ["tags", "tta"];
 
-  arguments: Arguments = args;
+  arguments = args;
 
   async run() {
     const timePeriod = this.parsedArguments.timePeriod!,

@@ -1,15 +1,13 @@
 import { FriendsChildCommand } from "./FriendsChildCommand";
-import { Arguments } from "../../../lib/arguments/arguments";
 import { LogicError } from "../../../errors";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
-import { standardMentions } from "../../../lib/arguments/mentions/mentions";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
+import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 
 const args = {
-  inputs: {
-    friendUsername: { index: 0 },
-  },
-  mentions: standardMentions,
+  ...standardMentions,
+  friendUsername: new StringArgument(),
 };
 
 export class Remove extends FriendsChildCommand<typeof args> {
@@ -19,7 +17,7 @@ export class Remove extends FriendsChildCommand<typeof args> {
   description = "Removes a friend";
   usage = ["lfm_username", "@user"];
 
-  arguments: Arguments = args;
+  arguments = args;
 
   validation: Validation = {
     user: {

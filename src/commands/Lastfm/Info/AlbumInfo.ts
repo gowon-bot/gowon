@@ -1,17 +1,14 @@
-import { Arguments } from "../../../lib/arguments/arguments";
 import { InfoCommand } from "./InfoCommand";
 import { calculatePercent } from "../../../helpers/stats";
 import { LinkConsolidator } from "../../../helpers/lastFM";
 import { LineConsolidator } from "../../../lib/LineConsolidator";
-import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { displayNumber } from "../../../lib/views/displays";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
+import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 
 const args = {
-  inputs: {
-    artist: { index: 0, splitOn: "|" },
-    album: { index: 1, splitOn: "|" },
-  },
-  mentions: standardMentions,
+  ...standardMentions,
+  ...prefabArguments.album,
 } as const;
 
 export default class AlbumInfo extends InfoCommand<typeof args> {
@@ -23,7 +20,7 @@ export default class AlbumInfo extends InfoCommand<typeof args> {
   description = "Displays some information about an album";
   usage = ["", "artist | album"];
 
-  arguments: Arguments = args;
+  arguments = args;
 
   lineConsolidator = new LineConsolidator();
 

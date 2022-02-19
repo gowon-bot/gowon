@@ -1,7 +1,7 @@
 import gql from "graphql-tag";
 import { calculatePercent } from "../../../helpers/stats";
-import { Arguments } from "../../../lib/arguments/arguments";
-import { standardMentions } from "../../../lib/arguments/mentions/mentions";
+import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { Paginator } from "../../../lib/paginators/Paginator";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
@@ -19,12 +19,8 @@ interface Overlap {
 }
 
 const args = {
-  inputs: {
-    tag: {
-      index: { start: 0 },
-    },
-  },
-  mentions: standardMentions,
+  ...standardMentions,
+  tag: new StringArgument({ index: { start: 0 } }),
 } as const;
 
 export default class Tag extends LastFMBaseCommand<typeof args> {
@@ -35,7 +31,7 @@ export default class Tag extends LastFMBaseCommand<typeof args> {
   subcategory = "tags";
   usage = ["tag"];
 
-  arguments: Arguments = args;
+  arguments = args;
 
   validation: Validation = {
     tag: new validators.Required({}),

@@ -1,4 +1,4 @@
-import { Arguments } from "../../../lib/arguments/arguments";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { ComboService } from "../../../services/dbservices/ComboService";
 import { LastFMBaseChildCommand } from "../LastFMBaseCommand";
 import { Combo } from "../../../database/entity/Combo";
@@ -13,7 +13,7 @@ import { LinkGenerator } from "../../../helpers/lastFM";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 
 export abstract class ComboChildCommand<
-  T extends Arguments = Arguments
+  T extends ArgumentsMap = {}
 > extends LastFMBaseChildCommand<T> {
   parentName = "combo";
   subcategory = "stats";

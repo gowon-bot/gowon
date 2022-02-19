@@ -1,14 +1,12 @@
-import { Arguments } from "../../lib/arguments/arguments";
 import { BaseCommand } from "../../lib/command/BaseCommand";
+import { StringArgument } from "../../lib/context/arguments/argumentTypes/StringArgument";
 import { Validation } from "../../lib/validation/ValidationChecker";
 import { validators } from "../../lib/validation/validators";
 import { LastFMService } from "../../services/LastFM/LastFMService";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 
 const args = {
-  inputs: {
-    script: { index: { start: 0 } },
-  },
+  script: new StringArgument({ index: { start: 0 } }),
 } as const;
 
 export default class Eval extends BaseCommand<typeof args> {
@@ -18,7 +16,7 @@ export default class Eval extends BaseCommand<typeof args> {
   description = "Not for you to run >:(";
   devCommand = true;
 
-  arguments: Arguments = args;
+  arguments = args;
 
   validation: Validation = {
     script: new validators.Required({}),

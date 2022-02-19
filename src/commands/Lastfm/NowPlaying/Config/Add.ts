@@ -1,4 +1,4 @@
-import { Arguments } from "../../../../lib/arguments/arguments";
+import { StringArrayArgument } from "../../../../lib/context/arguments/argumentTypes/StringArrayArgument";
 import { LineConsolidator } from "../../../../lib/LineConsolidator";
 import { componentMap } from "../../../../lib/nowplaying/componentMap";
 import { Validation } from "../../../../lib/validation/ValidationChecker";
@@ -6,9 +6,7 @@ import { validators } from "../../../../lib/validation/validators";
 import { NowPlayingConfigChildCommand } from "./NowPlayingConfigChildCommand";
 
 const args = {
-  inputs: {
-    options: { index: { start: 0 }, join: false },
-  },
+  options: new StringArrayArgument({ index: { start: 0 } }),
 } as const;
 
 export class Add extends NowPlayingConfigChildCommand<typeof args> {
@@ -17,7 +15,7 @@ export class Add extends NowPlayingConfigChildCommand<typeof args> {
   description = "Add options to your current config";
   usage = ["option", "option1 option2 ...optionN"];
 
-  arguments: Arguments = args;
+  arguments = args;
   validation: Validation = {
     options: {
       validator: new validators.LengthRange({ min: 1 }),

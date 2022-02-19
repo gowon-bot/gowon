@@ -93,7 +93,7 @@ export class CrownsService extends BaseService {
     crownOptions: CrownOptions
   ): Promise<CrownCheck> {
     const { artistName, plays } = crownOptions;
-    const message = ctx.message;
+    const message = ctx.payload;
     const author = ctx.author;
     const guild = ctx.guild;
 

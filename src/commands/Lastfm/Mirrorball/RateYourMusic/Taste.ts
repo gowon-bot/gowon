@@ -1,11 +1,9 @@
-import { Arguments } from "../../../../lib/arguments/arguments";
 import {
   RatingsTasteResponse,
   RatingsTasteParams,
   RatingsTasteConnector,
 } from "./connectors";
 import { RateYourMusicIndexingChildCommand } from "./RateYourMusicChildCommand";
-import { standardMentions } from "../../../../lib/arguments/mentions/mentions";
 import { LogicError, NoRatingsError } from "../../../../errors";
 import {
   RatingsTasteCalculator,
@@ -14,22 +12,23 @@ import {
 import { displayNumber, displayRating } from "../../../../lib/views/displays";
 import { SimpleScrollingEmbed } from "../../../../lib/views/embeds/SimpleScrollingEmbed";
 import { sanitizeForDiscord } from "../../../../helpers/discord";
+import { standardMentions } from "../../../../lib/context/arguments/mentionTypes/mentions";
+import { Flag } from "../../../../lib/context/arguments/argumentTypes/Flag";
 
 const args = {
-  mentions: standardMentions,
-  flags: {
-    lenient: {
-      description:
-        "Show ratings that are 1 star apart, instead of the default 0.5",
-      longnames: ["lenient"],
-      shortnames: ["l"],
-    },
-    strict: {
-      description: "Only show ratings that are exactly the same",
-      longnames: ["strict", "exact"],
-      shortnames: ["s", "e"],
-    },
-  },
+  ...standardMentions,
+
+  lenient: new Flag({
+    description:
+      "Show ratings that are 1 star apart, instead of the default 0.5",
+    longnames: ["lenient"],
+    shortnames: ["l"],
+  }),
+  strict: new Flag({
+    description: "Only show ratings that are exactly the same",
+    longnames: ["strict", "exact"],
+    shortnames: ["s", "e"],
+  }),
 } as const;
 
 export class Taste extends RateYourMusicIndexingChildCommand<
@@ -44,7 +43,7 @@ export class Taste extends RateYourMusicIndexingChildCommand<
   description = "Shows the overlap between your ratings and another user's";
   usage = ["@user"];
 
-  arguments: Arguments = args;
+  arguments = args;
 
   async run() {
     const { discordUser } = await this.parseMentions({

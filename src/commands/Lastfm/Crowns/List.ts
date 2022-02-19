@@ -1,17 +1,16 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
 import { getOrdinal } from "../../../helpers";
-import { Arguments } from "../../../lib/arguments/arguments";
 import { LogicError } from "../../../errors";
-import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { toInt } from "../../../helpers/lastFM";
 import {
   displayNumber,
   displayNumberedList,
 } from "../../../lib/views/displays";
 import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingEmbed";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 
 const args = {
-  mentions: standardMentions,
+  ...standardMentions,
 } as const;
 
 export class List extends CrownsChildCommand<typeof args> {
@@ -20,7 +19,7 @@ export class List extends CrownsChildCommand<typeof args> {
   description = "Lists a user's top crowns";
   usage = ["", "@user"];
 
-  arguments: Arguments = args;
+  arguments = args;
 
   async run() {
     const { dbUser, discordUser } = await this.parseMentions({

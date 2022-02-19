@@ -1,16 +1,10 @@
 import { FriendsChildCommand } from "../FriendsChildCommand";
 import { MultiRequester } from "../../../../lib/MultiRequester";
-import { Arguments } from "../../../../lib/arguments/arguments";
-
 import { displayNumber } from "../../../../lib/views/displays";
-import { TimeRangeParser } from "../../../../lib/arguments/custom/TimeRangeParser";
+import { TimeRangeArgument } from "../../../../lib/context/arguments/argumentTypes/timeAndDate/TimeRangeArgument";
 
 const args = {
-  inputs: {
-    timeRange: {
-      custom: new TimeRangeParser({ useOverall: true, fallback: "overall" }),
-    },
-  },
+  timeRange: new TimeRangeArgument({ useOverall: true, fallback: "overall" }),
 } as const;
 
 export class Scrobbles extends FriendsChildCommand<typeof args> {
@@ -20,7 +14,7 @@ export class Scrobbles extends FriendsChildCommand<typeof args> {
   aliases = ["s"];
   usage = ["", "time period"];
 
-  arguments: Arguments = args;
+  arguments = args;
 
   throwIfNoFriends = true;
 

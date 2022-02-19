@@ -1,5 +1,5 @@
-import { Arguments } from "../../../lib/arguments/arguments";
 import { Variation } from "../../../lib/command/BaseCommand";
+import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
@@ -7,9 +7,7 @@ import { WordBlacklistService } from "../../../services/WordBlacklistService";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 const args = {
-  inputs: {
-    tag: { index: { start: 0 } },
-  },
+  tag: new StringArgument({ index: { start: 0 } }),
 } as const;
 
 export default class BanTag extends LastFMBaseCommand<typeof args> {
@@ -21,7 +19,7 @@ export default class BanTag extends LastFMBaseCommand<typeof args> {
 
   adminCommand = true;
 
-  arguments: Arguments = args;
+  arguments = args;
 
   variations: Variation[] = [
     {

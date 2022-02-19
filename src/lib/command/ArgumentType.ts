@@ -1,6 +1,6 @@
 import { User } from "discord.js";
-import { CustomArgumentParser } from "../arguments/custom/custom";
-import { Mention as CustomMention } from "../arguments/mentions/BaseMention";
+import { CustomArgumentParser } from "../context/arguments/parsers/custom";
+import { Mention as CustomMention } from "../context/arguments/mentionTypes/BaseMention";
 
 type StringArrayConfig = {
   index: { start: number };

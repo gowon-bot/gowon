@@ -2,23 +2,16 @@ import { JumbleChildCommand } from "./JumbleChildCommand";
 import { LogicError } from "../../../errors";
 import { abbreviateNumber, shuffle } from "../../../helpers";
 import { JumbledArtist, jumbleRedisKey } from "./JumbleParentCommand";
-import { Arguments } from "../../../lib/arguments/arguments";
 import { Variation } from "../../../lib/command/BaseCommand";
 import { LineConsolidator } from "../../../lib/LineConsolidator";
 import { TagConsolidator } from "../../../lib/tags/TagConsolidator";
 import { displayNumber } from "../../../lib/views/displays";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { WordBlacklistService } from "../../../services/WordBlacklistService";
+import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
 
 const args = {
-  inputs: {
-    poolAmount: {
-      index: 0,
-      regex: /[0-9]{1,4}/g,
-      default: 500,
-      number: true,
-    },
-  },
+  poolAmount: new NumberArgument({ default: 500 }),
 } as const;
 
 export class Me extends JumbleChildCommand<typeof args> {
@@ -35,7 +28,7 @@ export class Me extends JumbleChildCommand<typeof args> {
     },
   ];
 
-  arguments: Arguments = args;
+  arguments = args;
 
   tagConsolidator = new TagConsolidator();
   wordBlacklistService = ServiceRegistry.get(WordBlacklistService);

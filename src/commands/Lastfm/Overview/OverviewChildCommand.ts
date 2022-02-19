@@ -1,29 +1,26 @@
 import { LastFMBaseChildCommand } from "../LastFMBaseCommand";
 import { OverviewStatsCalculator } from "../../../lib/calculators/OverviewStatsCalculator";
 import { HexColorString, MessageEmbed } from "discord.js";
-import { Arguments } from "../../../lib/arguments/arguments";
 import { ucFirst } from "../../../helpers";
-import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { Requestable } from "../../../services/LastFM/LastFMAPIService";
 import { LastFMPeriod } from "../../../services/LastFM/LastFMService.types";
-import { TimePeriodParser } from "../../../lib/arguments/custom/TimePeriodParser";
 import { humanizePeriod } from "../../../lib/timeAndDate/helpers";
+import { TimePeriodArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/TimePeriodArgument";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 
-export const overviewInputs = {
-  timePeriod: { custom: new TimePeriodParser() },
+const args = {
+  ...standardMentions,
+  timePeriod: new TimePeriodArgument(),
 } as const;
 
 export abstract class OverviewChildCommand<
-  T extends Arguments = Arguments
+  T extends typeof args = typeof args
 > extends LastFMBaseChildCommand<T> {
   parentName = "overview";
   subcategory = "overview";
   usage = ["", "time_period @user or lfm:username"];
 
-  arguments: Arguments = {
-    inputs: overviewInputs,
-    mentions: standardMentions,
-  };
+  arguments = args as T;
 
   calculator!: OverviewStatsCalculator;
   requestable!: Requestable;

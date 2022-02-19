@@ -1,14 +1,11 @@
 import { Message } from "discord.js";
 import { MetaChildCommand } from "./MetaChildCommand";
-import { Arguments } from "../../lib/arguments/arguments";
 import { displayNumber } from "../../lib/views/displays";
-import { TimeRangeParser } from "../../lib/arguments/custom/TimeRangeParser";
 import { humanizeTimeRange } from "../../lib/timeAndDate/helpers";
+import { TimeRangeArgument } from "../../lib/context/arguments/argumentTypes/timeAndDate/TimeRangeArgument";
 
 const args = {
-  inputs: {
-    timeRange: { custom: new TimeRangeParser({ useOverall: false }) },
-  },
+  timeRange: new TimeRangeArgument({ useOverall: false }),
 } as const;
 
 export class TopCommands extends MetaChildCommand<typeof args> {
@@ -17,7 +14,7 @@ export class TopCommands extends MetaChildCommand<typeof args> {
   description = "Shows the most used commands over a given time period";
   usage = ["", "time period"];
 
-  arguments: Arguments = args;
+  arguments = args;
 
   async run(message: Message) {
     const timeRange = this.parsedArguments.timeRange!;

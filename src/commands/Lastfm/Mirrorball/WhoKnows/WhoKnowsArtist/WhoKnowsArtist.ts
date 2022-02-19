@@ -1,9 +1,11 @@
 import { MirrorballError } from "../../../../../errors";
 import { LinkGenerator } from "../../../../../helpers/lastFM";
-import { Arguments } from "../../../../../lib/arguments/arguments";
-import { FLAGS } from "../../../../../lib/arguments/flags";
 import { Variation } from "../../../../../lib/command/BaseCommand";
 import { VARIATIONS } from "../../../../../lib/command/variations";
+import {
+  prefabArguments,
+  prefabFlags,
+} from "../../../../../lib/context/arguments/prefabArguments";
 import { LineConsolidator } from "../../../../../lib/LineConsolidator";
 import {
   displayLink,
@@ -20,12 +22,8 @@ import {
 } from "./WhoKnowsArtist.connector";
 
 const args = {
-  inputs: {
-    artist: { index: { start: 0 } },
-  },
-  flags: {
-    noRedirect: FLAGS.noRedirect,
-  },
+  ...prefabArguments.artist,
+  noRedirect: prefabFlags.noRedirect,
 } as const;
 
 export default class WhoKnowsArtist extends WhoKnowsBaseCommand<
@@ -36,16 +34,13 @@ export default class WhoKnowsArtist extends WhoKnowsBaseCommand<
   connector = new WhoKnowsArtistConnector();
 
   idSeed = "bvndit songhee";
-
+  description = "See who knows an artist";
+  subcategory = "whoknows";
   aliases = ["wk", "fmwk"];
 
   variations: Variation[] = [VARIATIONS.update("wk"), VARIATIONS.global("wk")];
 
-  description = "See who knows an artist";
-
-  subcategory = "whoknows";
-
-  arguments: Arguments = args;
+  arguments = args;
 
   crownsService = ServiceRegistry.get(CrownsService);
 

@@ -1,17 +1,13 @@
-import { Arguments } from "../../../lib/arguments/arguments";
 import { OverviewChildCommand } from "./OverviewChildCommand";
 
-const args = {
-  inputs: {},
-} as const;
-
-export class Help extends OverviewChildCommand<typeof args> {
+export class Help extends OverviewChildCommand {
   idSeed = "shasha a ryeom";
 
   description = "View help about overview";
   usage = [""];
 
-  arguments: Arguments = args;
+  // Overriding the type constraint from OverviewChildCommand
+  arguments = {} as any;
 
   async run() {
     const embed = this.newEmbed().setAuthor(

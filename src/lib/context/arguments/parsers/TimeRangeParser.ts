@@ -1,6 +1,6 @@
 import { Duration } from "date-fns";
-import { parseTimeRange, TimeRange } from "../../timeAndDate/helpers";
-import { NamedRangeParser } from "../../timeAndDate/NamedRangeParser";
+import { parseTimeRange, TimeRange } from "../../../timeAndDate/helpers";
+import { NamedRangeParser } from "./NamedRangeParser";
 import { BaseCustomParser } from "./custom";
 
 export class TimeRangeParser extends BaseCustomParser<TimeRange | undefined> {

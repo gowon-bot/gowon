@@ -1,12 +1,10 @@
-import { Arguments } from "../../../../lib/arguments/arguments";
-import { standardMentions } from "../../../../lib/arguments/mentions/mentions";
+import { StringArgument } from "../../../../lib/context/arguments/argumentTypes/StringArgument";
+import { standardMentions } from "../../../../lib/context/arguments/mentionTypes/mentions";
 import { RateYourMusicChildCommand } from "./RateYourMusicChildCommand";
 
 const args = {
-  inputs: {
-    keywords: { index: { start: 0 } },
-  },
-  mentions: standardMentions,
+  ...standardMentions,
+  keywords: new StringArgument({ index: { start: 0 } }),
 } as const;
 
 export class Link extends RateYourMusicChildCommand<typeof args> {
@@ -14,7 +12,7 @@ export class Link extends RateYourMusicChildCommand<typeof args> {
 
   description = "Search Rateyourmusic for an album (or anything!)";
 
-  arguments: Arguments = args;
+  arguments = args;
 
   async run() {
     let keywords = this.parsedArguments.keywords;

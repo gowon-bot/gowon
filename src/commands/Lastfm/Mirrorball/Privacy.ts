@@ -1,5 +1,6 @@
 import { LinkGenerator } from "../../../helpers/lastFM";
 import { BaseCommand } from "../../../lib/command/BaseCommand";
+import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { Emoji } from "../../../lib/Emoji";
 import { validators } from "../../../lib/validation/validators";
 import { displayLink } from "../../../lib/views/displays";
@@ -7,9 +8,7 @@ import { MirrorballPrivacy } from "../../../services/mirrorball/MirrorballTypes"
 import { PrivateUserDisplay } from "../../../services/mirrorball/services/MirrorballUsersService";
 
 const args = {
-  inputs: {
-    privacy: { index: 0 },
-  },
+  privacy: new StringArgument({ index: 0 }),
 } as const;
 
 export default class Privacy extends BaseCommand<typeof args> {

@@ -1,25 +1,16 @@
-import { Arguments } from "../../../lib/arguments/arguments";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
-import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import {
   displayNumber,
   displayNumberedList,
 } from "../../../lib/views/displays";
 import { LogicError } from "../../../errors";
 import { sanitizeForDiscord } from "../../../helpers/discord";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
+import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 
 const args = {
-  inputs: {
-    artist: {
-      index: 0,
-      splitOn: "|",
-    },
-    track: {
-      index: 1,
-      splitOn: "|",
-    },
-  },
-  mentions: standardMentions,
+  ...standardMentions,
+  ...prefabArguments.track,
 } as const;
 
 export default class TrackAround extends LastFMBaseCommand<typeof args> {
@@ -30,7 +21,7 @@ export default class TrackAround extends LastFMBaseCommand<typeof args> {
   subcategory = "ranks";
   usage = ["", "artist | track @user"];
 
-  arguments: Arguments = args;
+  arguments = args;
 
   async run() {
     const { requestable, senderRequestable, perspective } =

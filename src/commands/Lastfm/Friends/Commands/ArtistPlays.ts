@@ -1,18 +1,12 @@
 import { FriendsChildCommand } from "../FriendsChildCommand";
 import { MultiRequester } from "../../../../lib/MultiRequester";
-import { Arguments } from "../../../../lib/arguments/arguments";
 import { LinkGenerator } from "../../../../helpers/lastFM";
 import { LastFMEntityNotFoundError } from "../../../../errors";
 import { displayNumber } from "../../../../lib/views/displays";
+import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";
 
 const args = {
-  inputs: {
-    artist: {
-      index: {
-        start: 0,
-      },
-    },
-  },
+  ...prefabArguments.artist,
 } as const;
 
 export class ArtistPlays extends FriendsChildCommand<typeof args> {
@@ -22,7 +16,7 @@ export class ArtistPlays extends FriendsChildCommand<typeof args> {
   aliases = ["ap", "p"];
   usage = ["", "artist"];
 
-  arguments: Arguments = args;
+  arguments = args;
 
   throwIfNoFriends = true;
 

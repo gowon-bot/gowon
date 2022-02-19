@@ -1,15 +1,13 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
-import { Arguments } from "../../../lib/arguments/arguments";
 import { CrownEventString } from "../../../services/dbservices/CrownsHistoryService";
 import { LogicError } from "../../../errors";
 import { CrownEvent } from "../../../database/entity/meta/CrownEvent";
 import { displayDate } from "../../../lib/views/displays";
 import { asyncMap } from "../../../helpers";
+import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 
 const args = {
-  inputs: {
-    artist: { index: { start: 0 } },
-  },
+  ...prefabArguments.artist,
 } as const;
 
 export class History extends CrownsChildCommand<typeof args> {
@@ -19,7 +17,7 @@ export class History extends CrownsChildCommand<typeof args> {
   description = "Shows a crown's history";
   usage = ["", "artist"];
 
-  arguments: Arguments = args;
+  arguments = args;
 
   async run() {
     let artist = this.parsedArguments.artist;

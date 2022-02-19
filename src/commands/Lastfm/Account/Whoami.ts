@@ -1,10 +1,9 @@
 import { Message } from "discord.js";
-import { Arguments } from "../../../lib/arguments/arguments";
-import { standardMentions } from "../../../lib/arguments/mentions/mentions";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 const args = {
-  mentions: standardMentions,
+  ...standardMentions,
 };
 
 export default class Whoami extends LastFMBaseCommand<typeof args> {
@@ -16,7 +15,7 @@ export default class Whoami extends LastFMBaseCommand<typeof args> {
   subcategory = "accounts";
   usage = ["", "@user"];
 
-  arguments: Arguments = args;
+  arguments = args;
 
   async run(message: Message) {
     let { username, discordUser: user } = await this.parseMentions({

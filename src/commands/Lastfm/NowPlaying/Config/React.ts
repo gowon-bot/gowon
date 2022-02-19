@@ -1,9 +1,7 @@
 import { LogicError } from "../../../../errors";
-import { Arguments } from "../../../../lib/arguments/arguments";
-import {
-  EmojiMention,
-  EmojiParser,
-} from "../../../../lib/arguments/custom/EmojiParser";
+import { EmojiMention } from "../../../../lib/context/arguments/parsers/EmojiParser";
+import { EmojisArgument } from "../../../../lib/context/arguments/argumentTypes/discord/EmojisArgument";
+import { StringArgument } from "../../../../lib/context/arguments/argumentTypes/StringArgument";
 import { extractEmojiName } from "../../../../lib/Emoji";
 import { LineConsolidator } from "../../../../lib/LineConsolidator";
 import { SettingsService } from "../../../../lib/settings/SettingsService";
@@ -13,16 +11,8 @@ import { ServiceRegistry } from "../../../../services/ServicesRegistry";
 import { NowPlayingConfigChildCommand } from "./NowPlayingConfigChildCommand";
 
 const args = {
-  inputs: {
-    clear: { index: { start: 0 } },
-    emojis: {
-      index: { start: 0 },
-      custom(messageString: string) {
-        return new EmojiParser(messageString).parseAll();
-      },
-      default: [],
-    },
-  },
+  clear: new StringArgument({ match: ["clear"] }),
+  emojis: new EmojisArgument({ index: { start: 0 } }),
 } as const;
 
 export class React extends NowPlayingConfigChildCommand<typeof args> {
@@ -33,7 +23,7 @@ export class React extends NowPlayingConfigChildCommand<typeof args> {
     "Set what emojis Gowon should react with when you `!fm`\nUse `react clear` to clear your reacts";
   usage = ["", "emoji1 emoji2 ...emoji5", "clear"];
 
-  arguments: Arguments = args;
+  arguments = args;
 
   settingsService = ServiceRegistry.get(SettingsService);
   emojiService = ServiceRegistry.get(EmojiService);

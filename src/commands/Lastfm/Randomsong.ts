@@ -1,12 +1,11 @@
 import { buildRequestable } from "../../helpers/parseMentions";
-import { Arguments } from "../../lib/arguments/arguments";
-import { standardMentions } from "../../lib/arguments/mentions/mentions";
 import { Delegate } from "../../lib/command/BaseCommand";
+import { standardMentions } from "../../lib/context/arguments/mentionTypes/mentions";
 import { LastFMBaseCommand } from "./LastFMBaseCommand";
 import RandomsongInUsersLibrary from "./RandomSongInUsersLibrary";
 
 const args = {
-  mentions: standardMentions,
+  ...standardMentions,
 } as const;
 
 export default class Randomsong extends LastFMBaseCommand<typeof args> {
@@ -18,7 +17,7 @@ export default class Randomsong extends LastFMBaseCommand<typeof args> {
     "@user (will pick a random song in their top tracks) poolAmount",
   ];
 
-  arguments: Arguments = args;
+  arguments = args;
 
   delegates: Delegate<typeof args>[] = [
     {

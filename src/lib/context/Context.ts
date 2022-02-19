@@ -12,7 +12,7 @@ export interface CustomContext<C, M> {
 export interface ContextParamaters<CustomContextT> {
   command: BaseCommand;
   custom: CustomContextT;
-  message: Message;
+  payload: Message;
   runAs: RunAs;
   gowonClient: GowonClient;
 }
@@ -22,7 +22,7 @@ export class GowonContext<
 > {
   private _command: BaseCommand;
   private custom: T;
-  private _message: Message;
+  private _payload: Message;
   private _runAs: RunAs;
   private gowonClient: GowonClient;
 
@@ -40,7 +40,7 @@ export class GowonContext<
 
   constructor(params: ContextParamaters<T>) {
     this._command = params.command;
-    this._message = params.message;
+    this._payload = params.payload;
     this.custom = params.custom;
     this._runAs = params.runAs;
     this.gowonClient = params.gowonClient;
@@ -50,8 +50,8 @@ export class GowonContext<
     this.custom = Object.assign(this.custom, context);
   }
 
-  get message(): Message {
-    return this._message;
+  get payload(): Message {
+    return this._payload;
   }
 
   get runAs(): RunAs {
@@ -59,15 +59,15 @@ export class GowonContext<
   }
 
   get guild(): Guild {
-    return this.message.guild!;
+    return this.payload.guild!;
   }
 
   get author(): User {
-    return this.message.author;
+    return this.payload.author;
   }
 
   get authorMember(): GuildMember {
-    return this.message.member!;
+    return this.payload.member!;
   }
 
   get client(): GowonClient {

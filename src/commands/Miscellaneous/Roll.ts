@@ -1,14 +1,13 @@
 import { Chance } from "chance";
 import { BaseCommand } from "../../lib/command/BaseCommand";
+import { NumberArgument } from "../../lib/context/arguments/argumentTypes/NumberArgument";
 import { Validation } from "../../lib/validation/ValidationChecker";
 import { validators } from "../../lib/validation/validators";
 import { displayNumber } from "../../lib/views/displays";
 
 const args = {
-  inputs: {
-    min: { index: 0, number: true },
-    max: { index: 1, number: true },
-  },
+  min: new NumberArgument({ index: 0 }),
+  max: new NumberArgument({ index: 1 }),
 } as const;
 
 export default class Roll extends BaseCommand<typeof args> {

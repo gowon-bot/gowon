@@ -1,19 +1,14 @@
 import { BaseCommand } from "../../lib/command/BaseCommand";
-import { Arguments } from "../../lib/arguments/arguments";
 import { AdminService } from "../../services/dbservices/AdminService";
 import { Emoji } from "../../lib/Emoji";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 
-const args = {} as const;
-
-export default class QuickHelp extends BaseCommand<typeof args> {
+export default class QuickHelp extends BaseCommand {
   idSeed = "hot issue mayna";
 
   subcategory = "about";
   description = "Displays a quick help menu";
   usage = [""];
-
-  arguments: Arguments = args;
 
   adminService = ServiceRegistry.get(AdminService);
 

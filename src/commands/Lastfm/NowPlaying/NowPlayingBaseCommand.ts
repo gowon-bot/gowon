@@ -1,6 +1,4 @@
 import { LinkGenerator } from "../../../helpers/lastFM";
-import { Arguments } from "../../../lib/arguments/arguments";
-import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import config from "../../../../config.json";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { Message, MessageEmbed, User } from "discord.js";
@@ -21,12 +19,12 @@ import { displayNumber } from "../../../lib/views/displays";
 import { Requestable } from "../../../services/LastFM/LastFMAPIService";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { SettingsService } from "../../../lib/settings/SettingsService";
+import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 
 const args = {
-  inputs: {
-    otherWords: { index: { start: 0 } },
-  },
-  mentions: standardMentions,
+  ...standardMentions,
+  otherWords: new StringArgument({ index: { start: 0 } }),
 } as const;
 
 export abstract class NowPlayingBaseCommand<
@@ -39,7 +37,7 @@ export abstract class NowPlayingBaseCommand<
     "@user hey check out this song (will show your now playing)",
   ];
 
-  arguments: Arguments = args;
+  arguments = args as T;
 
   settingsService = ServiceRegistry.get(SettingsService);
   tagConsolidator = new TagConsolidator();

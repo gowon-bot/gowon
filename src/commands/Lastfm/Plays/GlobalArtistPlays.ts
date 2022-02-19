@@ -1,15 +1,13 @@
-import { Arguments } from "../../../lib/arguments/arguments";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
-import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { calculatePercent } from "../../../helpers/stats";
 import { toInt } from "../../../helpers/lastFM";
 import { displayNumber } from "../../../lib/views/displays";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
+import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 
 const args = {
-  inputs: {
-    artist: { index: { start: 0 } },
-  },
-  mentions: standardMentions,
+  ...standardMentions,
+  ...prefabArguments.artist,
 } as const;
 
 export default class GlobalArtistPlays extends LastFMBaseCommand<typeof args> {
@@ -21,7 +19,7 @@ export default class GlobalArtistPlays extends LastFMBaseCommand<typeof args> {
   subcategory = "plays";
   usage = ["", "artist"];
 
-  arguments: Arguments = args;
+  arguments = args;
 
   async run() {
     const { requestable, senderRequestable, perspective } =

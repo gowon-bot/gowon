@@ -1,22 +1,14 @@
 import { BaseCommand } from "../../lib/command/BaseCommand";
-import { Arguments } from "../../lib/arguments/arguments";
 import { Stopwatch } from "../../helpers";
 import { Message, MessageEmbed } from "discord.js";
 import { LogicError } from "../../errors";
 
-const args = {
-  inputs: {},
-  mentions: {},
-} as const;
-
-export default class Status extends BaseCommand<typeof args> {
+export default class Status extends BaseCommand {
   idSeed = "Fill in a unique idSeed here";
 
   description = "See the status of Gowon's services";
   category = "meta";
   usage = "";
-
-  arguments: Arguments = args;
 
   async run() {
     const embed = this.newEmbed()

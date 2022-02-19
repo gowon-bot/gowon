@@ -1,27 +1,14 @@
 import { Message } from "discord.js";
-import { Arguments } from "../../../lib/arguments/arguments";
-import { parseDate } from "../../../lib/timeAndDate/helpers";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
-import { standardMentions } from "../../../lib/arguments/mentions/mentions";
-import { GowonService } from "../../../services/GowonService";
 import { displayDate, displayNumber } from "../../../lib/views/displays";
-import { ServiceRegistry } from "../../../services/ServicesRegistry";
-import { TimeRangeParser } from "../../../lib/arguments/custom/TimeRangeParser";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
+import { TimeRangeArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/TimeRangeArgument";
+import { DateArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/DateArgument";
 
 const args = {
-  inputs: {
-    timeRange: {
-      custom: new TimeRangeParser({ useOverall: true, fallback: "overall" }),
-    },
-    date: {
-      custom: (string: string) =>
-        parseDate(
-          string.trim(),
-          ...ServiceRegistry.get(GowonService).constants.dateParsers
-        ),
-    },
-  },
-  mentions: standardMentions,
+  ...standardMentions,
+  date: new DateArgument(),
+  timeRange: new TimeRangeArgument({ useOverall: true, fallback: "overall" }),
 } as const;
 
 export default class Scrobbles extends LastFMBaseCommand<typeof args> {
@@ -33,7 +20,7 @@ export default class Scrobbles extends LastFMBaseCommand<typeof args> {
   subcategory = "library stats";
   usage = ["time period @user"];
 
-  arguments: Arguments = args;
+  arguments = args;
 
   async run(message: Message) {
     if (message.content.trim() === `${this.prefix}s n s d`) {

@@ -1,22 +1,18 @@
 import { CommandNotFoundError } from "../../errors";
-import { Arguments } from "../../lib/arguments/arguments";
+import { StringArgument } from "../../lib/context/arguments/argumentTypes/StringArgument";
 import { Validation } from "../../lib/validation/ValidationChecker";
 import { validators } from "../../lib/validation/validators";
 import { displayNumber } from "../../lib/views/displays";
 import { MetaBaseCommand } from "./MetaBaseCommand";
 
 const args = {
-  inputs: {
-    searchString: {
-      index: { start: 0 },
-    },
-  },
+  searchString: new StringArgument({ index: { start: 0 } }),
 } as const;
 
 export default class CommandInfo extends MetaBaseCommand<typeof args> {
   idSeed = "iz*one hyewon";
 
-  arguments: Arguments = args;
+  arguments = args;
 
   validation: Validation = {
     searchString: {

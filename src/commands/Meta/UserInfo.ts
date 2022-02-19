@@ -1,16 +1,14 @@
 import { BaseCommand } from "../../lib/command/BaseCommand";
-import { Arguments } from "../../lib/arguments/arguments";
 import { BotStatsService } from "../../services/dbservices/BotStatsService";
-import { standardMentions } from "../../lib/arguments/mentions/mentions";
 import { LineConsolidator } from "../../lib/LineConsolidator";
 import { displayNumber } from "../../lib/views/displays";
 import { Emoji } from "../../lib/Emoji";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { roles } from "../../lib/command/access/roles";
+import { standardMentions } from "../../lib/context/arguments/mentionTypes/mentions";
 
 const args = {
-  inputs: {},
-  mentions: standardMentions,
+  ...standardMentions,
 } as const;
 
 export default class UserInfo extends BaseCommand<typeof args> {
@@ -21,7 +19,7 @@ export default class UserInfo extends BaseCommand<typeof args> {
   aliases = ["ui"];
   usage = ["", "<discord id>"];
 
-  arguments: Arguments = args;
+  arguments = args;
 
   botStatsService = ServiceRegistry.get(BotStatsService);
 

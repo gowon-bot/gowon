@@ -1,17 +1,14 @@
 import { FriendsChildCommand } from "../FriendsChildCommand";
-import { Arguments } from "../../../../lib/arguments/arguments";
 import gql from "graphql-tag";
 import { RatingResponse } from "../../Mirrorball/RateYourMusic/connectors";
 import { displayNumber, displayRating } from "../../../../lib/views/displays";
 import { LogicError } from "../../../../errors";
 import { mean } from "mathjs";
 import { asyncMap } from "../../../../helpers";
+import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";
 
 const args = {
-  inputs: {
-    artist: { index: 0, splitOn: "|" },
-    album: { index: 1, splitOn: "|" },
-  },
+  ...prefabArguments.album,
 } as const;
 
 export class Rating extends FriendsChildCommand<typeof args> {
@@ -21,7 +18,7 @@ export class Rating extends FriendsChildCommand<typeof args> {
   aliases = ["ratings", "ra"];
   usage = ["", "artist | album"];
 
-  arguments: Arguments = args;
+  arguments = args;
 
   throwIfNoFriends = true;
 

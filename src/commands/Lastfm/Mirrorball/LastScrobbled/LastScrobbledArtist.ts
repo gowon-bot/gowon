@@ -1,6 +1,4 @@
 import { MirrorballError } from "../../../../errors";
-import { Arguments } from "../../../../lib/arguments/arguments";
-import { standardMentions } from "../../../../lib/arguments/mentions/mentions";
 import { MirrorballBaseCommand } from "../../../../lib/indexing/MirrorballCommands";
 import {
   LastScrobbledConnector,
@@ -10,16 +8,16 @@ import {
 import { displayDate } from "../../../../lib/views/displays";
 import { Variation } from "../../../../lib/command/BaseCommand";
 import { convertMirrorballDate } from "../../../../helpers/mirrorball";
-import { FLAGS } from "../../../../lib/arguments/flags";
+import { standardMentions } from "../../../../lib/context/arguments/mentionTypes/mentions";
+import {
+  prefabArguments,
+  prefabFlags,
+} from "../../../../lib/context/arguments/prefabArguments";
 
 const args = {
-  inputs: {
-    artist: { index: { start: 0 } },
-  },
-  flags: {
-    noRedirect: FLAGS.noRedirect,
-  },
-  mentions: standardMentions,
+  ...standardMentions,
+  ...prefabArguments.artist,
+  noRedirect: prefabFlags.noRedirect,
 } as const;
 
 export default class LastScrobbledArtist extends MirrorballBaseCommand<
@@ -31,7 +29,7 @@ export default class LastScrobbledArtist extends MirrorballBaseCommand<
 
   idSeed = "shasha wanlim";
 
-  aliases = ["last", "lasta", "la"];
+  aliases = ["last", "lasta", "la", "lastartist"];
 
   variations: Variation[] = [
     { name: "first", variation: ["first", "firsta", "fa"] },
@@ -40,7 +38,7 @@ export default class LastScrobbledArtist extends MirrorballBaseCommand<
   subcategory = "library";
   description = "Shows the last time you scrobbled an artist";
 
-  arguments: Arguments = args;
+  arguments = args;
 
   async run() {
     const { senderRequestable, dbUser, perspective } = await this.parseMentions(

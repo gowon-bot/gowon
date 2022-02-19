@@ -1,5 +1,4 @@
 import { MessageEmbed } from "discord.js";
-import { Arguments } from "../../../lib/arguments/arguments";
 import {
   Taste as TasteType,
   TasteArtist,
@@ -8,45 +7,47 @@ import { isNumeric, StringPadder } from "../../../helpers";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { LastFMPeriod } from "../../../services/LastFM/LastFMService.types";
 import { Paginator } from "../../../lib/paginators/Paginator";
-import { LastFMMention } from "../../../lib/arguments/mentions/LastFMMention";
-import { DiscordIDMention } from "../../../lib/arguments/mentions/DiscordIDMention";
 import { LogicError } from "../../../errors";
-import { DurationParser } from "../../../lib/timeAndDate/DurationParser";
+import { DurationParser } from "../../../lib/context/arguments/parsers/DurationParser";
 import { toInt } from "../../../helpers/lastFM";
 import { displayNumber } from "../../../lib/views/displays";
 import { TimeRange } from "../../../lib/timeAndDate/helpers";
-import { NamedRangeParser } from "../../../lib/timeAndDate/NamedRangeParser";
+import { NamedRangeParser } from "../../../lib/context/arguments/parsers/NamedRangeParser";
+import { LastFMMention } from "../../../lib/context/arguments/mentionTypes/LastFMMention";
+import { DiscordIDMention } from "../../../lib/context/arguments/mentionTypes/DiscordIDMention";
+import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
+import { UserStringArgument } from "../../../lib/context/arguments/argumentTypes/UserStringArgument";
 
-export const tasteMentions = {
-  user: { index: 0 },
-  user2: { index: 1 },
-  lfmUser: {
+export const tasteArgs = {
+  user: new StringArgument({ index: 0 }),
+  user2: new StringArgument({ index: 1 }),
+  lfmUser: new UserStringArgument({
     index: 0,
-    mention: new LastFMMention(true),
-  },
-  lfmUser2: {
+    mention: new LastFMMention(),
+  }),
+  lfmUser2: new UserStringArgument({
     index: 1,
-    mention: new LastFMMention(true),
-  },
-  userID: {
+    mention: new LastFMMention(),
+  }),
+  userID: new UserStringArgument({
     index: 0,
-    mention: new DiscordIDMention(true),
-  },
-  userID2: {
+    mention: new DiscordIDMention(),
+  }),
+  userID2: new UserStringArgument({
     index: 1,
-    mention: new DiscordIDMention(true),
-  },
+    mention: new DiscordIDMention(),
+  }),
 } as const;
 
 export abstract class TasteCommand<
-  T extends Arguments = { mentions: typeof tasteMentions }
+  T extends typeof tasteArgs = typeof tasteArgs
 > extends LastFMBaseCommand<T> {
   subcategory = "taste";
 
   durationParser = new DurationParser();
   namedRangeParser = new NamedRangeParser();
 
-  arguments: Arguments = { mentions: tasteMentions };
+  arguments = tasteArgs as T;
 
   timeRange?: TimeRange;
 

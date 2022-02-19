@@ -1,35 +1,32 @@
 import { FriendsChildCommand } from "./FriendsChildCommand";
-import { Arguments } from "../../../lib/arguments/arguments";
 import { LogicError } from "../../../errors";
-import { DiscordIDMention } from "../../../lib/arguments/mentions/DiscordIDMention";
-import { LastFMMention } from "../../../lib/arguments/mentions/LastFMMention";
-import { UsernameMention } from "../../../lib/arguments/mentions/UsernameMention";
 import { asyncFilter, asyncMap } from "../../../helpers";
 import { SimpleMap } from "../../../helpers/types";
 import { User as DiscordUser } from "discord.js";
 import { User as DBUser } from "../../../database/entity/User";
 import { LineConsolidator } from "../../../lib/LineConsolidator";
+import { StringArrayArgument } from "../../../lib/context/arguments/argumentTypes/StringArrayArgument";
+import { DiscordUserArrayArgument } from "../../../lib/context/arguments/argumentTypes/discord/DiscordUserArrayArgument";
+import { UserStringArrayArgument } from "../../../lib/context/arguments/argumentTypes/UserStringArrayArgument";
+import { DiscordIDMention } from "../../../lib/context/arguments/mentionTypes/DiscordIDMention";
+import { LastFMMention } from "../../../lib/context/arguments/mentionTypes/LastFMMention";
+import { DiscordUsernameMention } from "../../../lib/context/arguments/mentionTypes/UsernameMention";
 
 const args = {
-  inputs: { friendUsernames: { index: { start: 0 }, join: false } },
-  mentions: {
-    users: { index: { start: 0 }, join: false },
-    userIDs: {
-      mention: new DiscordIDMention(true),
-      index: { start: 0 },
-      join: false,
-    },
-    lfmUsers: {
-      mention: new LastFMMention(true),
-      index: { start: 0 },
-      join: false,
-    },
-    discordUsernames: {
-      mention: new UsernameMention(true),
-      index: { start: 0 },
-      join: false,
-    },
-  },
+  friendUsernames: new StringArrayArgument({ index: { start: 0 } }),
+  users: new DiscordUserArrayArgument({ index: { start: 0 } }),
+  userIDs: new UserStringArrayArgument({
+    mention: new DiscordIDMention(),
+    index: { start: 0 },
+  }),
+  lfmUsers: new UserStringArrayArgument({
+    mention: new LastFMMention(),
+    index: { start: 0 },
+  }),
+  discordUsernames: new UserStringArrayArgument({
+    mention: new DiscordUsernameMention(),
+    index: { start: 0 },
+  }),
 } as const;
 
 type FriendToAdd = string | DBUser;
@@ -42,7 +39,7 @@ export class Add extends FriendsChildCommand<typeof args> {
   description = "Adds friends to your friends list";
   usage = ["lfm_username, username2, ...username3", "@user"];
 
-  arguments: Arguments = args;
+  arguments = args;
 
   async prerun() {}
 

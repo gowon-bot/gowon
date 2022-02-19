@@ -1,6 +1,6 @@
 import { LinkGenerator } from "../../../helpers/lastFM";
-import { Arguments } from "../../../lib/arguments/arguments";
-import { standardMentions } from "../../../lib/arguments/mentions/mentions";
+import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { requestableAsUsername } from "../../../lib/MultiRequester";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
@@ -9,10 +9,8 @@ import { RecentTrack } from "../../../services/LastFM/converters/RecentTracks";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 const args = {
-  inputs: {
-    amount: { index: 0, regex: /-?[0-9]+/g, default: 5, number: true },
-  },
-  mentions: standardMentions,
+  ...standardMentions,
+  amount: new NumberArgument({ default: 5 }),
 } as const;
 
 export default class Recent extends LastFMBaseCommand<typeof args> {
@@ -22,7 +20,7 @@ export default class Recent extends LastFMBaseCommand<typeof args> {
   subcategory = "nowplaying";
   usage = ["", "amount"];
 
-  arguments: Arguments = args;
+  arguments = args;
 
   validation: Validation = {
     amount: new validators.Range({ min: 1, max: 15 }),

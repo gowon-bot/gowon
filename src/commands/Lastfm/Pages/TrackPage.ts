@@ -1,14 +1,11 @@
 import { cleanURL } from "../../../helpers/discord";
-import { Arguments } from "../../../lib/arguments/arguments";
-import { standardMentions } from "../../../lib/arguments/mentions/mentions";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
+import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 const args = {
-  inputs: {
-    artist: { index: 0, splitOn: "|" },
-    track: { index: 1, splitOn: "|" },
-  },
-  mentions: standardMentions,
+  ...standardMentions,
+  ...prefabArguments.track,
 } as const;
 
 export default class TrackPage extends LastFMBaseCommand<typeof args> {
@@ -19,7 +16,7 @@ export default class TrackPage extends LastFMBaseCommand<typeof args> {
   subcategory = "pages";
   usage = ["artist | track"];
 
-  arguments: Arguments = args;
+  arguments = args;
 
   async run() {
     const { requestable } = await this.parseMentions();

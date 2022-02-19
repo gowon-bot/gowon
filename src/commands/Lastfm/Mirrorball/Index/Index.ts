@@ -4,7 +4,6 @@ import {
   IndexingDisabledBecauseOfIssueModeError,
 } from "../../../../errors";
 import { ConfirmationEmbed } from "../../../../lib/views/embeds/ConfirmationEmbed";
-import { Arguments } from "../../../../lib/arguments/arguments";
 import {
   ConcurrencyService,
   ConcurrentAction,
@@ -19,14 +18,9 @@ import {
 } from "./Index.connector";
 import { ServiceRegistry } from "../../../../services/ServicesRegistry";
 
-const args = {
-  inputs: {},
-} as const;
-
 export default class Index extends MirrorballBaseCommand<
   IndexUserResponse,
-  IndexUserParams,
-  typeof args
+  IndexUserParams
 > {
   connector = new IndexUserConnector();
 
@@ -37,8 +31,6 @@ export default class Index extends MirrorballBaseCommand<
 
   description =
     "Fully index a user, deleting any previous data and replacing it";
-
-  arguments: Arguments = args;
 
   validation: Validation = {
     username: new validators.Required({}),

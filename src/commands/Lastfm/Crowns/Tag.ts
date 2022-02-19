@@ -1,6 +1,4 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
-import { Arguments } from "../../../lib/arguments/arguments";
-import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { TagsService } from "../../../services/mirrorball/services/TagsService";
 import { Validation } from "../../../lib/validation/ValidationChecker";
@@ -10,16 +8,15 @@ import {
   displayNumber,
   displayNumberedList,
 } from "../../../lib/views/displays";
+import { StringArrayArgument } from "../../../lib/context/arguments/argumentTypes/StringArrayArgument";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 
 const args = {
-  inputs: {
-    genres: {
-      index: { start: 0 },
-      splitOn: "|",
-      join: false,
-    },
-  },
-  mentions: standardMentions,
+  ...standardMentions,
+  genres: new StringArrayArgument({
+    index: { start: 0 },
+    splitOn: "|",
+  }),
 } as const;
 
 export class Tag extends CrownsChildCommand<typeof args> {
@@ -29,7 +26,7 @@ export class Tag extends CrownsChildCommand<typeof args> {
   description = "Lists a user's top crowns by tag";
   usage = ["genre1 | genre2 | genreN", "genre @user"];
 
-  arguments: Arguments = args;
+  arguments = args;
 
   tagsService = ServiceRegistry.get(TagsService);
 

@@ -1,13 +1,11 @@
 import { LogicError } from "../../../errors";
-import { Arguments } from "../../../lib/arguments/arguments";
-import { standardMentions } from "../../../lib/arguments/mentions/mentions";
+import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { SpotifyBaseCommand } from "./SpotifyBaseCommand";
 
 const args = {
-  inputs: {
-    keywords: { index: { start: 0 } },
-  },
-  mentions: standardMentions,
+  ...standardMentions,
+  keywords: new StringArgument({ index: { start: 0 } }),
 } as const;
 
 export default class SpotifyTrack extends SpotifyBaseCommand<typeof args> {
@@ -16,7 +14,7 @@ export default class SpotifyTrack extends SpotifyBaseCommand<typeof args> {
   description = "Links the spotify page for a track";
   aliases = ["fms", "spt"];
 
-  arguments: Arguments = args;
+  arguments = args;
 
   async run() {
     let keywords = this.parsedArguments.keywords;

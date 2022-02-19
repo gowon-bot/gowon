@@ -1,12 +1,10 @@
-import { Arguments } from "../../../lib/arguments/arguments";
+import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { CrownsChildCommand } from "./CrownsChildCommand";
 
 const args = {
-  inputs: {
-    artist: { index: { start: 0 } },
-  },
+  ...prefabArguments.artist,
 } as const;
 
 export class UnbanArtist extends CrownsChildCommand<typeof args> {
@@ -14,7 +12,7 @@ export class UnbanArtist extends CrownsChildCommand<typeof args> {
 
   description = "Unbans an artist from the crowns game";
   usage = "artist";
-  arguments: Arguments = args;
+  arguments = args;
 
   adminCommand = true;
 

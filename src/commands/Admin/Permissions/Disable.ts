@@ -1,6 +1,10 @@
 import { CommandNotFoundError, LogicError } from "../../../errors";
+import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { PermissionsChildCommand } from "./PermissionsChildCommand";
-import { Arguments } from "../../../lib/arguments/arguments";
+
+const args = {
+  command: new StringArgument({ index: { start: 0 } }),
+} as const;
 
 export class Disable extends PermissionsChildCommand {
   idSeed = "red velvet yeri";
@@ -9,9 +13,8 @@ export class Disable extends PermissionsChildCommand {
 
   usage = "command";
 
-  arguments: Arguments = {
-    inputs: this.arguments.inputs,
-  };
+  // Remove mentions inherited from child command
+  arguments = args as any;
 
   async run() {
     if (!this.command) throw new CommandNotFoundError();

@@ -1,17 +1,14 @@
 import { BaseCommand } from "../../lib/command/BaseCommand";
-import { Arguments } from "../../lib/arguments/arguments";
 import { Validation } from "../../lib/validation/ValidationChecker";
 import { validators } from "../../lib/validation/validators";
 import { Command } from "../../lib/command/Command";
 import { AdminService } from "../../services/dbservices/AdminService";
 import { displayNumber } from "../../lib/views/displays";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
+import { StringArgument } from "../../lib/context/arguments/argumentTypes/StringArgument";
 
 const args = {
-  inputs: {
-    keywords: { index: 0 },
-  },
-  mentions: {},
+  keywords: new StringArgument(),
 } as const;
 
 export default class CommandSearch extends BaseCommand<typeof args> {
@@ -23,7 +20,7 @@ export default class CommandSearch extends BaseCommand<typeof args> {
 
   usage = "keywords";
 
-  arguments: Arguments = args;
+  arguments = args;
 
   validation: Validation = {
     keywords: new validators.Required({}),

@@ -7,7 +7,9 @@ export class Help extends PermissionsChildCommand {
   description = "Shows help about permissions";
   usage = "";
 
-  arguments = {};
+  // Overwrite child command
+  override arguments = {} as any;
+
   async prerun() {}
 
   async run(message: Message) {

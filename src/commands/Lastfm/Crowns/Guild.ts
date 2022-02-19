@@ -1,16 +1,15 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
-import { Arguments } from "../../../lib/arguments/arguments";
 import { Delegate } from "../../../lib/command/BaseCommand";
 import { GuildAround } from "./GuildAround";
 import { GuildAt } from "./GuildAt";
 import { displayNumber } from "../../../lib/views/displays";
 import { asyncMap } from "../../../helpers";
+import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
+import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
 
 const args = {
-  inputs: {
-    me: { regex: /me/gi, index: 0 },
-    rank: { regex: /[0-9]+/, index: 0 },
-  },
+  me: new StringArgument({ match: ["me"] }),
+  rank: new NumberArgument(),
 } as const;
 
 export class Guild extends CrownsChildCommand<typeof args> {
@@ -20,7 +19,7 @@ export class Guild extends CrownsChildCommand<typeof args> {
   aliases = ["leaderboard", "ldb", "lb"];
   usage = "";
 
-  arguments: Arguments = args;
+  arguments = args;
 
   delegates: Delegate<typeof args>[] = [
     {
@@ -28,7 +27,7 @@ export class Guild extends CrownsChildCommand<typeof args> {
       delegateTo: GuildAround,
     },
     {
-      when: (args) => !!args.rank,
+      when: (args) => !!args.rank && !isNaN(args.rank),
       delegateTo: GuildAt,
     },
   ];

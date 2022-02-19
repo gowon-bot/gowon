@@ -1,8 +1,7 @@
 import { sub } from "date-fns";
 import { LogicError } from "../../../errors";
-import { Arguments } from "../../../lib/arguments/arguments";
-import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { ReportCalculator } from "../../../lib/calculators/ReportCalculator";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { Paginator } from "../../../lib/paginators/Paginator";
 import { TagConsolidator } from "../../../lib/tags/TagConsolidator";
 import { displayDate, displayNumber } from "../../../lib/views/displays";
@@ -11,7 +10,7 @@ import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 const args = {
-  mentions: standardMentions,
+  ...standardMentions,
 } as const;
 
 export default class Month extends LastFMBaseCommand<typeof args> {
@@ -22,7 +21,7 @@ export default class Month extends LastFMBaseCommand<typeof args> {
   subcategory = "reports";
   usage = ["", "@user"];
 
-  arguments: Arguments = args;
+  arguments = args;
 
   redirectsService = ServiceRegistry.get(RedirectsService);
 

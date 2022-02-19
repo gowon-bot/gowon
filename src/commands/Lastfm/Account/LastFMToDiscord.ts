@@ -1,13 +1,11 @@
-import { Arguments } from "../../../lib/arguments/arguments";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { LogicError } from "../../../errors";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
+import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 
 const args = {
-  inputs: {
-    username: { index: 0 },
-  },
+  username: new StringArgument({ index: 0 }),
 } as const;
 
 export default class LastFmToDiscord extends LastFMBaseCommand<typeof args> {
@@ -18,7 +16,7 @@ export default class LastFmToDiscord extends LastFMBaseCommand<typeof args> {
   subcategory = "accounts";
   usage = "lastfm_username";
 
-  arguments: Arguments = args;
+  arguments = args;
 
   validation: Validation = {
     username: new validators.Required({}),

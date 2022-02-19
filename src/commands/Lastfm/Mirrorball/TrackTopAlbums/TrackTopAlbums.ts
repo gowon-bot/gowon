@@ -1,8 +1,6 @@
 import { MirrorballError, LogicError } from "../../../../errors";
 import { SimpleScrollingEmbed } from "../../../../lib/views/embeds/SimpleScrollingEmbed";
 import { LinkGenerator } from "../../../../helpers/lastFM";
-import { Arguments } from "../../../../lib/arguments/arguments";
-import { standardMentions } from "../../../../lib/arguments/mentions/mentions";
 import { MirrorballBaseCommand } from "../../../../lib/indexing/MirrorballCommands";
 import {
   TrackTopAlbumsConnector,
@@ -10,13 +8,12 @@ import {
   TrackTopAlbumsResponse,
 } from "./TrackTopAlbums.connector";
 import { displayNumber } from "../../../../lib/views/displays";
+import { standardMentions } from "../../../../lib/context/arguments/mentionTypes/mentions";
+import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";
 
 const args = {
-  inputs: {
-    artist: { index: 0, splitOn: "|" },
-    track: { index: 1, splitOn: "|" },
-  },
-  mentions: standardMentions,
+  ...standardMentions,
+  ...prefabArguments.track,
 } as const;
 
 export default class TrackTopAlbums extends MirrorballBaseCommand<
@@ -32,7 +29,7 @@ export default class TrackTopAlbums extends MirrorballBaseCommand<
   subcategory = "library";
   description = "Displays your top scrobbled albums from a track";
 
-  arguments: Arguments = args;
+  arguments = args;
 
   async run() {
     const { username, dbUser, senderRequestable, perspective } =

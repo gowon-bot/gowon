@@ -21,7 +21,7 @@ export abstract class BaseNowPlayingComponent<
   protected ctx = new GowonContext({
     command: { logger: this.values.logger! } as any,
     custom: {},
-    message: this.values.message,
+    payload: this.values.message,
     runAs: new RunAs(),
     gowonClient: {} as any,
   });

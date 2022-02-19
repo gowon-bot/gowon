@@ -1,23 +1,16 @@
-import { Arguments } from "../../../lib/arguments/arguments";
 import { getOrdinal } from "../../../helpers";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { BadLastFMResponseError } from "../../../errors";
 import { trackEmbed } from "../../../lib/views/embeds";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
-import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { displayDateTime } from "../../../lib/views/displays";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
+import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
 
 const args = {
-  inputs: {
-    milestone: {
-      regex: /-?[0-9]+/,
-      index: 0,
-      default: 1,
-      number: true,
-    },
-  },
-  mentions: standardMentions,
+  ...standardMentions,
+  milestone: new NumberArgument({ default: 1 }),
 } as const;
 
 export default class Milestone extends LastFMBaseCommand<typeof args> {
@@ -28,7 +21,7 @@ export default class Milestone extends LastFMBaseCommand<typeof args> {
   subcategory = "library stats";
   usage = ["", "milestone @user"];
 
-  arguments: Arguments = args;
+  arguments = args;
 
   validation: Validation = {
     milestone: [

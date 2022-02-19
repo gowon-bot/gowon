@@ -1,15 +1,13 @@
 import { convert as romanizeHangeul } from "hangul-romanization";
-import { Arguments } from "../../../lib/arguments/arguments";
-import { standardMentions } from "../../../lib/arguments/mentions/mentions";
+import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 const args = {
-  inputs: {
-    keywords: { index: { start: 0 } },
-  },
-  mentions: standardMentions,
+  ...standardMentions,
+  keywords: new StringArgument({ index: { start: 0 } }),
 } as const;
 
 export abstract class SearchCommand extends LastFMBaseCommand<typeof args> {
@@ -18,7 +16,7 @@ export abstract class SearchCommand extends LastFMBaseCommand<typeof args> {
   shouldBeIndexed = false;
   subcategory = "library";
 
-  arguments: Arguments = args;
+  arguments = args;
 
   validation: Validation = {
     keywords: [

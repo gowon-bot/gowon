@@ -1,12 +1,13 @@
 import { LogicError } from "../../errors";
-import { DiscordIDMention } from "../../lib/arguments/mentions/DiscordIDMention";
 import { BaseCommand, Variation } from "../../lib/command/BaseCommand";
+import { DiscordUserArgument } from "../../lib/context/arguments/argumentTypes/discord/DiscordUserArgument";
+import { UserStringArgument } from "../../lib/context/arguments/argumentTypes/UserStringArgument";
+import { DiscordIDMention } from "../../lib/context/arguments/mentionTypes/DiscordIDMention";
 import { validators } from "../../lib/validation/validators";
 
 const args = {
-  mentions: {
-    userID: { mention: new DiscordIDMention(true), index: 0 },
-  },
+  userID: new UserStringArgument({ mention: new DiscordIDMention() }),
+  user: new DiscordUserArgument(),
 } as const;
 
 export default class SetPatron extends BaseCommand<typeof args> {
@@ -28,11 +29,15 @@ export default class SetPatron extends BaseCommand<typeof args> {
   arguments = args;
 
   validation = {
-    userID: { validator: new validators.Required({}), friendlyName: "user id" },
+    userID: {
+      validator: new validators.RequiredOr({}),
+      dependsOn: ["user"],
+      friendlyName: "user id",
+    },
   };
 
   async run() {
-    const id = this.parsedArguments.userID;
+    const id = this.parsedArguments.user?.id || this.parsedArguments.userID;
 
     try {
       await this.usersService.setPatron(

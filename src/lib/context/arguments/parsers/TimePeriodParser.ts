@@ -1,4 +1,4 @@
-import { LastFMPeriod } from "../../../services/LastFM/LastFMService.types";
+import { LastFMPeriod } from "../../../../services/LastFM/LastFMService.types";
 import { BaseCustomParser } from "./custom";
 
 export const overallRegex = /(\s+|\b)(a(lltime)?|o(verall)?)(\s|\b)/gi;

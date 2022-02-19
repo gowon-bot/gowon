@@ -1,16 +1,13 @@
-import { Arguments } from "../../../lib/arguments/arguments";
 import { InfoCommand } from "./InfoCommand";
 import { LinkConsolidator, toInt } from "../../../helpers/lastFM";
 import { LineConsolidator } from "../../../lib/LineConsolidator";
-import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { displayNumber } from "../../../lib/views/displays";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
+import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 
 const args = {
-  inputs: {
-    artist: { index: 0, splitOn: "|" },
-    track: { index: 1, splitOn: "|" },
-  },
-  mentions: standardMentions,
+  ...standardMentions,
+  ...prefabArguments.track,
 } as const;
 
 export default class TrackInfo extends InfoCommand<typeof args> {
@@ -22,7 +19,7 @@ export default class TrackInfo extends InfoCommand<typeof args> {
   description = "Displays some information about a track";
   usage = ["", "artist | track"];
 
-  arguments: Arguments = args;
+  arguments = args;
 
   lineConsolidator = new LineConsolidator();
 

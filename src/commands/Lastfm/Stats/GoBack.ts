@@ -1,29 +1,18 @@
-import { Arguments } from "../../../lib/arguments/arguments";
-import { parseDate } from "../../../lib/timeAndDate/helpers";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { LogicError } from "../../../errors";
 import { trackEmbed } from "../../../lib/views/embeds";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
-import { standardMentions } from "../../../lib/arguments/mentions/mentions";
-import { GowonService } from "../../../services/GowonService";
 import { displayDate } from "../../../lib/views/displays";
 import { ago } from "../../../helpers";
-import { ServiceRegistry } from "../../../services/ServicesRegistry";
-import { TimeRangeParser } from "../../../lib/arguments/custom/TimeRangeParser";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
+import { TimeRangeArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/TimeRangeArgument";
+import { DateArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/DateArgument";
 
 const args = {
-  inputs: {
-    timeRange: { custom: new TimeRangeParser() },
-    date: {
-      custom: (string: string) =>
-        parseDate(
-          string.trim(),
-          ...ServiceRegistry.get(GowonService).constants.dateParsers
-        ),
-    },
-  },
-  mentions: standardMentions,
+  ...standardMentions,
+  timeRange: new TimeRangeArgument(),
+  date: new DateArgument(),
 } as const;
 
 export default class GoBack extends LastFMBaseCommand<typeof args> {
@@ -34,7 +23,7 @@ export default class GoBack extends LastFMBaseCommand<typeof args> {
   subcategory = "library stats";
   usage = ["time period @user"];
 
-  arguments: Arguments = args;
+  arguments = args;
 
   validation: Validation = {
     timeRange: {

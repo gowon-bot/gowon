@@ -7,7 +7,6 @@ import {
 } from "discord.js";
 import md5 from "js-md5";
 import { UsersService } from "../../services/dbservices/UsersService";
-import { Arguments, ArgumentParser } from "../arguments/arguments";
 import {
   LogicError,
   MentionedUserNotIndexedError,
@@ -28,7 +27,6 @@ import { Perspective } from "../Perspective";
 import { GowonClient } from "../GowonClient";
 import { Validation, ValidationChecker } from "../validation/ValidationChecker";
 import { Emoji, EmojiRaw } from "../Emoji";
-import { Argument, Mention } from "./ArgumentType";
 import { RunAs } from "./RunAs";
 import { ucFirst } from "../../helpers";
 import { checkRollout } from "../../helpers/permissions";
@@ -56,6 +54,12 @@ import { RollbarService } from "../../services/Rollbar/RollbarService";
 import { NowPlayingEmbedParsingService } from "../../services/NowPlayingEmbedParsingService";
 import { CommandAccess } from "./access/access";
 import { GowonContext } from "../context/Context";
+import { ArgumentParsingService } from "../../services/arguments/ArgumentsParsingService";
+import {
+  ArgumentName,
+  ArgumentsMap,
+  ParsedArguments,
+} from "../context/arguments/types";
 
 export interface Variation {
   name: string;
@@ -63,24 +67,12 @@ export interface Variation {
   description?: string;
 }
 
-export interface Delegate<T> {
+export interface Delegate<T extends ArgumentsMap> {
   delegateTo: { new (): Command };
   when(args: ParsedArguments<T>): boolean;
 }
 
-type ArgumentName<T extends Arguments> =
-  | keyof T["inputs"]
-  | keyof T["mentions"];
-
-export type ParsedArguments<T extends Arguments> = {
-  [K in keyof T["inputs"]]?: Argument<T["inputs"][K]>;
-} & {
-  [K in keyof T["mentions"]]?: Mention<T["mentions"][K]>;
-} & {
-  [K in keyof T["flags"]]: boolean;
-};
-
-export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
+export abstract class BaseCommand<ArgumentsType extends ArgumentsMap = {}>
   implements Command
 {
   /**
@@ -138,7 +130,7 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
    * Argument metadata
    * (properties related to what arguments a command takes)
    */
-  arguments: Arguments = {};
+  arguments: ArgumentsType = {} as any;
   validation: Validation = {};
 
   /**
@@ -148,12 +140,13 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
   // Has to be any typed because the parsed flags aren't optionally typed
   // because they always will be either true or false
   // this is set by the FlagParser when this.parseArguments() is called
-  parsedArguments: ParsedArguments<ArgumentsType> = {} as any;
+  parsedArguments: ParsedArguments<ArgumentsType> =
+    {} as ParsedArguments<ArgumentsType>;
 
   logger = new Logger();
 
   get message() {
-    return this.ctx.message;
+    return this.ctx.payload;
   }
 
   get runAs() {
@@ -198,6 +191,7 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
   mirrorballService = ServiceRegistry.get(MirrorballService);
   analyticsCollector = ServiceRegistry.get(AnalyticsCollector);
   mirrorballUsersService = ServiceRegistry.get(MirrorballUsersService);
+  argumentParsingService = ServiceRegistry.get(ArgumentParsingService);
   nowPlayingEmbedParsingService = ServiceRegistry.get(
     NowPlayingEmbedParsingService
   );
@@ -484,7 +478,7 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     this.ctx = new GowonContext({
       custom: this.customContext,
       command: this,
-      message,
+      payload: message,
       runAs,
       gowonClient,
     });
@@ -496,7 +490,7 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     await this.setup();
 
     try {
-      this.parsedArguments = this.parseArguments(runAs) as any;
+      this.parsedArguments = this.parseArguments();
 
       if ((this.parsedArguments as any).debug) {
         this.debug = true;
@@ -533,10 +527,8 @@ export abstract class BaseCommand<ArgumentsType extends Arguments = Arguments>
     await this.teardown();
   }
 
-  parseArguments(runAs: RunAs): ParsedArguments<ArgumentsType> {
-    let parser = new ArgumentParser(this.arguments);
-
-    return parser.parse(this.message, runAs) as ParsedArguments<ArgumentsType>;
+  parseArguments(): ParsedArguments<ArgumentsType> {
+    return this.argumentParsingService.parseContext(this.ctx, this.arguments);
   }
 
   addResponse(res: MessageEmbed | string) {

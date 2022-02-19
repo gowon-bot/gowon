@@ -1,14 +1,9 @@
-import { Arguments } from "../../../../lib/arguments/arguments";
 import { RateYourMusicChildCommand } from "./RateYourMusicChildCommand";
 
-const args = {} as const;
-
-export class Help extends RateYourMusicChildCommand<typeof args> {
+export class Help extends RateYourMusicChildCommand {
   idSeed = "shasha subin";
 
   description = "Help on how to import your rateyourmusic ratings";
-
-  arguments: Arguments = args;
 
   async run() {
     const embed = this.newEmbed()

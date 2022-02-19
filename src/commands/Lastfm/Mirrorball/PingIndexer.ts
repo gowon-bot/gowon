@@ -1,5 +1,4 @@
 import { gql } from "@apollo/client/core";
-import { Arguments } from "../../../lib/arguments/arguments";
 import { BaseConnector } from "../../../lib/indexing/BaseConnector";
 import { MirrorballBaseCommand } from "../../../lib/indexing/MirrorballCommands";
 
@@ -14,15 +13,9 @@ const pingConnector = new (class extends BaseConnector<Response, Params> {
   `;
 })();
 
-const args = {
-  inputs: {},
-  mentions: {},
-} as const;
-
 export default class PingMirrorball extends MirrorballBaseCommand<
   Response,
-  Params,
-  typeof args
+  Params
 > {
   idSeed = "exid jeonghwa";
   aliases = ["pingindexer"];
@@ -32,8 +25,6 @@ export default class PingMirrorball extends MirrorballBaseCommand<
   secretCommand = true;
 
   connector = pingConnector;
-
-  arguments: Arguments = args;
 
   async run() {
     const response = await this.query({});

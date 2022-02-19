@@ -1,5 +1,4 @@
 import { LogicError, UnknownMirrorballError } from "../../../../errors";
-import { Arguments } from "../../../../lib/arguments/arguments";
 import {
   ArtistRatingsConnector,
   ArtistRatingsParams,
@@ -11,26 +10,24 @@ import { mean } from "mathjs";
 import { mostCommonOccurrence } from "../../../../helpers/stats";
 import { SimpleScrollingEmbed } from "../../../../lib/views/embeds/SimpleScrollingEmbed";
 import { displayNumber, displayRating } from "../../../../lib/views/displays";
-import { standardMentions } from "../../../../lib/arguments/mentions/mentions";
 import { sanitizeForDiscord } from "../../../../helpers/discord";
+import { standardMentions } from "../../../../lib/context/arguments/mentionTypes/mentions";
+import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";
+import { Flag } from "../../../../lib/context/arguments/argumentTypes/Flag";
 
 const args = {
-  inputs: {
-    artist: { index: { start: 0 } },
-  },
-  mentions: standardMentions,
-  flags: {
-    yearly: {
-      description: "Shows your ratings by year",
-      shortnames: ["y"],
-      longnames: ["year", "yearly"],
-    },
-    ids: {
-      description: "Show IDs instead of ratings (for moderation)",
-      shortnames: ["ids", "i"],
-      longnames: ["ids"],
-    },
-  },
+  ...standardMentions,
+  ...prefabArguments.artist,
+  yearly: new Flag({
+    description: "Shows your ratings by year",
+    shortnames: ["y"],
+    longnames: ["year", "yearly"],
+  }),
+  ids: new Flag({
+    description: "Show IDs instead of ratings (for moderation)",
+    shortnames: ["ids", "i"],
+    longnames: ["ids"],
+  }),
 } as const;
 
 export class ArtistRatings extends RateYourMusicIndexingChildCommand<
@@ -44,7 +41,7 @@ export class ArtistRatings extends RateYourMusicIndexingChildCommand<
   idSeed = "sonamoo sumin";
   description = "Shows your top rated albums from an artist";
 
-  arguments: Arguments = args;
+  arguments = args;
 
   async run() {
     const { senderRequestable, dbUser, discordUser } = await this.parseMentions(

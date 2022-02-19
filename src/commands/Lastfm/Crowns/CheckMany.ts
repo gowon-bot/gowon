@@ -1,19 +1,20 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
-import { Arguments } from "../../../lib/arguments/arguments";
 import { Message } from "discord.js";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { toInt } from "../../../helpers/lastFM";
 import { asyncMap } from "../../../helpers";
+import { StringArrayArgument } from "../../../lib/context/arguments/argumentTypes/StringArrayArgument";
 
 interface CheckedCrownsDisplay {
   [state: string]: Array<string>;
 }
 
 const args = {
-  inputs: {
-    artists: { index: { start: 0 }, splitOn: "|", join: false },
-  },
+  artists: new StringArrayArgument({
+    index: { start: 0 },
+    splitOn: "|",
+  }),
 } as const;
 
 export class CheckMany extends CrownsChildCommand<typeof args> {
@@ -23,7 +24,7 @@ export class CheckMany extends CrownsChildCommand<typeof args> {
   description = "Checks multiple crowns at once (max 10)";
   usage = ["", "artist1 | artist2 | artist3 ...artist10"];
 
-  arguments: Arguments = args;
+  arguments = args;
 
   validation: Validation = {
     artists: new validators.LengthRange({ min: 1, max: 10 }),

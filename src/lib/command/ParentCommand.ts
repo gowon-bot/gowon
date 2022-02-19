@@ -1,4 +1,4 @@
-import { Arguments } from "../arguments/arguments";
+import { ArgumentsMap } from "../context/arguments/types";
 import { BaseCommand } from "./BaseCommand";
 import { Command } from "./Command";
 import { CommandGroup } from "./CommandGroup";
@@ -37,7 +37,7 @@ export abstract class ParentCommand extends BaseCommand {
 }
 
 export abstract class ChildCommand<
-  T extends Arguments = Arguments
+  T extends ArgumentsMap = {}
 > extends BaseCommand<T> {
   shouldBeIndexed = false;
   abstract parentName: string;

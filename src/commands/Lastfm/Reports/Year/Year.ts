@@ -1,9 +1,8 @@
 import { sub } from "date-fns";
 import { LogicError } from "../../../../errors";
 import { SimpleMap } from "../../../../helpers/types";
-import { Arguments } from "../../../../lib/arguments/arguments";
-import { standardMentions } from "../../../../lib/arguments/mentions/mentions";
 import { ReportCalculator } from "../../../../lib/calculators/ReportCalculator";
+import { standardMentions } from "../../../../lib/context/arguments/mentionTypes/mentions";
 import { MirrorballBaseCommand } from "../../../../lib/indexing/MirrorballCommands";
 import { MirrorballPaginator } from "../../../../lib/paginators/MirrorballPaginator";
 import { TagConsolidator } from "../../../../lib/tags/TagConsolidator";
@@ -14,7 +13,7 @@ import { ServiceRegistry } from "../../../../services/ServicesRegistry";
 import { YearConnector, YearParams, YearResponse } from "./Year.connector";
 
 const args = {
-  mentions: standardMentions,
+  ...standardMentions,
 } as const;
 
 export default class Year extends MirrorballBaseCommand<
@@ -31,7 +30,7 @@ export default class Year extends MirrorballBaseCommand<
 
   devCommand = true;
 
-  arguments: Arguments = args;
+  arguments = args;
 
   connector = new YearConnector();
   redirectsService = ServiceRegistry.get(RedirectsService);

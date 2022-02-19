@@ -1,12 +1,7 @@
 import { SimpleMap } from "../../helpers/types";
-import { ParsedArguments } from "../arguments/arguments";
 
 export interface Validator {
-  validate(
-    arg: any | undefined,
-    argName: string,
-    dependsOn?: ParsedArguments
-  ): void;
+  validate(arg: any | undefined, argName: string, dependsOn?: SimpleMap): void;
 }
 
 type ValidatorOptions =
@@ -20,7 +15,7 @@ function isValidator(validator: ValidatorOptions): validator is Validator {
 }
 
 export class ValidationChecker {
-  constructor(private args: ParsedArguments, private validation: Validation) {}
+  constructor(private args: SimpleMap, private validation: Validation) {}
 
   runValidator(
     validator: ValidatorOptions,
@@ -34,7 +29,7 @@ export class ValidationChecker {
         acc[arg] = this.args[arg];
 
         return acc;
-      }, {} as ParsedArguments);
+      }, {} as SimpleMap);
 
       validator.validator.validate(
         argumentValue,

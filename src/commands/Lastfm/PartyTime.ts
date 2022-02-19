@@ -1,12 +1,10 @@
-import { Arguments } from "../../lib/arguments/arguments";
 import { LastFMBaseCommand } from "./LastFMBaseCommand";
 import { Validation } from "../../lib/validation/ValidationChecker";
 import { validators } from "../../lib/validation/validators";
+import { NumberArgument } from "../../lib/context/arguments/argumentTypes/NumberArgument";
 
 const args = {
-  inputs: {
-    time: { index: 0, regex: /[0-9]+/, number: true, default: 5 },
-  },
+  time: new NumberArgument({ default: 5 }),
 } as const;
 
 export default class PartyTime extends LastFMBaseCommand<typeof args> {
@@ -17,7 +15,7 @@ export default class PartyTime extends LastFMBaseCommand<typeof args> {
   description = "Counts down from a given number";
   usage = ["", "partytime"];
 
-  arguments: Arguments = args;
+  arguments = args;
 
   validation: Validation = {
     time: new validators.Range({

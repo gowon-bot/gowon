@@ -1,9 +1,8 @@
 import { BaseCommand } from "../../lib/command/BaseCommand";
-import { Arguments } from "../../lib/arguments/arguments";
-import { standardMentions } from "../../lib/arguments/mentions/mentions";
+import { standardMentions } from "../../lib/context/arguments/mentionTypes/mentions";
 
 const args = {
-  mentions: standardMentions,
+  ...standardMentions,
 } as const;
 
 export default class ID extends BaseCommand<typeof args> {
@@ -13,7 +12,7 @@ export default class ID extends BaseCommand<typeof args> {
   description = "Show your, or another person's discord ID";
   usage = ["", "discord username"];
 
-  arguments: Arguments = args;
+  arguments = args;
 
   async run() {
     let { discordUser } = await this.parseMentions({

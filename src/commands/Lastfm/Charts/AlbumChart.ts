@@ -1,15 +1,14 @@
 import { MessageAttachment } from "discord.js";
-import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { BetaAccess } from "../../../lib/command/access/access";
+import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { ChartService } from "../../../services/pantomime/ChartService";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 const args = {
-  inputs: {
-    size: { index: 0, number: true },
-  },
-  mentions: standardMentions,
+  ...standardMentions,
+  size: new NumberArgument(),
 } as const;
 
 export default class AlbumChart extends LastFMBaseCommand<typeof args> {

@@ -3,7 +3,7 @@ import { User } from "../database/entity/User";
 import { flatDeep } from "../helpers";
 import { GowonService } from "../services/GowonService";
 import { ServiceRegistry } from "../services/ServicesRegistry";
-import { isUnicodeEmoji } from "./arguments/custom/EmojiParser";
+import { isUnicodeEmoji } from "./context/arguments/parsers/EmojiParser";
 import { SettingsService } from "./settings/SettingsService";
 import specialUsers from "./specialUsers.json";
 

@@ -1,12 +1,12 @@
 import { flatDeep } from "../../../../helpers";
-import { Arguments } from "../../../../lib/arguments/arguments";
+import { ArgumentsMap } from "../../../../lib/context/arguments/types";
 import { componentMap } from "../../../../lib/nowplaying/componentMap";
 import { ConfigService } from "../../../../services/dbservices/NowPlayingService";
 import { ServiceRegistry } from "../../../../services/ServicesRegistry";
 import { LastFMBaseChildCommand } from "../../LastFMBaseCommand";
 
 export abstract class NowPlayingConfigChildCommand<
-  T extends Arguments = Arguments
+  T extends ArgumentsMap = {}
 > extends LastFMBaseChildCommand<T> {
   parentName = "nowplayingconfig";
   subcategory = "nowplaying";

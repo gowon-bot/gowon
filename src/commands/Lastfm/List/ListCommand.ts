@@ -1,25 +1,18 @@
-import { Arguments } from "../../../lib/arguments/arguments";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { LastFMPeriod } from "../../../services/LastFM/LastFMService.types";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
-import { standardMentions } from "../../../lib/arguments/mentions/mentions";
-import { TimePeriodParser } from "../../../lib/arguments/custom/TimePeriodParser";
 import { humanizePeriod, TimeRange } from "../../../lib/timeAndDate/helpers";
-import { TimeRangeParser } from "../../../lib/arguments/custom/TimeRangeParser";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
+import { TimePeriodArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/TimePeriodArgument";
+import { TimeRangeArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/TimeRangeArgument";
+import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
 
 const args = {
-  inputs: {
-    timePeriod: { custom: new TimePeriodParser({ fallback: "7day" }) },
-    timeRange: { custom: new TimeRangeParser() },
-    listAmount: {
-      index: 0,
-      regex: /\b[0-9]{1,2}(?!\w)(?! [mw])/g,
-      default: 10,
-      number: true,
-    },
-  },
-  mentions: standardMentions,
+  ...standardMentions,
+  timePeriod: new TimePeriodArgument({ fallback: "7day" }),
+  timeRange: new TimeRangeArgument(),
+  listAmount: new NumberArgument({ default: 10 }),
 } as const;
 
 export abstract class ListCommand extends LastFMBaseCommand<typeof args> {
@@ -28,7 +21,7 @@ export abstract class ListCommand extends LastFMBaseCommand<typeof args> {
   subcategory = "lists";
   usage = ["", "list_amount time period @user"];
 
-  arguments: Arguments = args;
+  arguments = args;
 
   validation: Validation = {
     listAmount: {

@@ -1,7 +1,7 @@
 import { MirrorballError } from "../../../../../errors";
-import { Arguments } from "../../../../../lib/arguments/arguments";
 import { Variation } from "../../../../../lib/command/BaseCommand";
 import { VARIATIONS } from "../../../../../lib/command/variations";
+import { prefabArguments } from "../../../../../lib/context/arguments/prefabArguments";
 import {
   displayNumber,
   displayNumberedList,
@@ -14,10 +14,7 @@ import {
 } from "./WhoKnowsTrack.connector";
 
 const args = {
-  inputs: {
-    artist: { index: 0, splitOn: "|" },
-    track: { index: 1, splitOn: "|" },
-  },
+  ...prefabArguments.track,
 } as const;
 
 export default class WhoKnowsTrack extends WhoKnowsBaseCommand<
@@ -39,7 +36,7 @@ export default class WhoKnowsTrack extends WhoKnowsBaseCommand<
 
   description = "See who knows a track";
 
-  arguments: Arguments = args;
+  arguments = args;
 
   async run() {
     const { senderRequestable, senderMirrorballUser, senderUser } =

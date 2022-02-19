@@ -1,4 +1,4 @@
-import { ParsedArguments } from "../../arguments/arguments";
+import { SimpleMap } from "../../../helpers/types";
 import { BaseValidator, ValidatorOptions } from "./BaseValidator";
 
 const vowels = "aeoi";
@@ -13,7 +13,7 @@ enum RequiredValidatorType {
 export class Required extends BaseValidator<RequiredValidatorOptions> {
   type: RequiredValidatorType = RequiredValidatorType.or;
 
-  validate(arg: any, argName: string, dependsOn?: ParsedArguments) {
+  validate(arg: any, argName: string, dependsOn?: SimpleMap) {
     if (dependsOn) {
       let valid = [...Object.values(dependsOn), arg].reduce((acc, argValue) => {
         if (this.type === RequiredValidatorType.or && argValue) {

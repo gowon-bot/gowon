@@ -1,17 +1,10 @@
-import { Arguments } from "../../../../lib/arguments/arguments";
 import { NowPlayingConfigChildCommand } from "./NowPlayingConfigChildCommand";
 
-const args = {
-  inputs: {},
-} as const;
-
-export class View extends NowPlayingConfigChildCommand<typeof args> {
+export class View extends NowPlayingConfigChildCommand {
   idSeed = "weeekly jaehee";
 
   description = "View your current config";
   usage = [""];
-
-  arguments: Arguments = args;
 
   async run() {
     const { senderUser } = await this.parseMentions({

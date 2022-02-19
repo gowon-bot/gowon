@@ -1,6 +1,5 @@
 import { MirrorballError } from "../../../../errors";
 import { convertMirrorballDate } from "../../../../helpers/mirrorball";
-import { Arguments } from "../../../../lib/arguments/arguments";
 import { Variation } from "../../../../lib/command/BaseCommand";
 import { MirrorballBaseCommand } from "../../../../lib/indexing/MirrorballCommands";
 import { displayDate } from "../../../../lib/views/displays";
@@ -9,12 +8,10 @@ import {
   LastScrobbledParams,
   LastScrobbledResponse,
 } from "./connector";
+import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";
 
 const args = {
-  inputs: {
-    artist: { index: 0, splitOn: "|" },
-    track: { index: 1, splitOn: "|" },
-  },
+  ...prefabArguments.track,
 } as const;
 
 export default class LastScrobbledTrack extends MirrorballBaseCommand<
@@ -26,13 +23,15 @@ export default class LastScrobbledTrack extends MirrorballBaseCommand<
 
   idSeed = "shasha hwi a";
 
-  aliases = ["lastt", "lt"];
-  variations: Variation[] = [{ name: "first", variation: ["firstt", "ft"] }];
+  aliases = ["lastt", "lasttrack", "lt"];
+  variations: Variation[] = [
+    { name: "first", variation: ["firstt", "ft", "firsttrack"] },
+  ];
 
   subcategory = "library";
   description = "Shows the last time you scrobbled a track";
 
-  arguments: Arguments = args;
+  arguments = args;
 
   async run() {
     const { senderRequestable, dbUser, perspective } = await this.parseMentions(

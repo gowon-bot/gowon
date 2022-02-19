@@ -1,11 +1,10 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
-import { Arguments } from "../../../lib/arguments/arguments";
-import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { LogicError } from "../../../errors";
 import { displayNumber } from "../../../lib/views/displays";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 
 const args = {
-  mentions: standardMentions,
+  ...standardMentions,
 } as const;
 
 export class CrownRanks extends CrownsChildCommand<typeof args> {
@@ -16,7 +15,7 @@ export class CrownRanks extends CrownsChildCommand<typeof args> {
   aliases = ["stan", "ranks"];
   usage = "";
 
-  arguments: Arguments = args;
+  arguments = args;
 
   async run() {
     const { discordUser } = await this.parseMentions({

@@ -1,5 +1,4 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
-import { Arguments } from "../../../lib/arguments/arguments";
 import { Message } from "discord.js";
 import { CrownState } from "../../../services/dbservices/CrownsService";
 import { CrownEmbeds } from "../../../lib/views/embeds/CrownEmbeds";
@@ -9,11 +8,10 @@ import {
   OptedOutError,
   PurgatoryError,
 } from "../../../errors";
+import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 
 const args = {
-  inputs: {
-    artist: { index: { start: 0 } },
-  },
+  ...prefabArguments.artist,
 } as const;
 
 export class Check extends CrownsChildCommand<typeof args> {
@@ -23,7 +21,7 @@ export class Check extends CrownsChildCommand<typeof args> {
   description = "Checks a crown. If you have more plays, you will take it.";
   usage = ["", "artist"];
 
-  arguments: Arguments = args;
+  arguments = args;
 
   async run(message: Message) {
     const { senderUser, senderRequestable } = await this.parseMentions();

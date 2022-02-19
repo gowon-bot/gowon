@@ -1,17 +1,12 @@
-import { Arguments } from "../../../lib/arguments/arguments";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
-import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { RunAs } from "../../../lib/command/RunAs";
 import { displayNumber } from "../../../lib/views/displays";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
+import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 
 const args = {
-  inputs: {
-    artist: {
-      index: 0,
-      splitOn: "|",
-    },
-  },
-  mentions: standardMentions,
+  ...standardMentions,
+  ...prefabArguments.artist,
 } as const;
 
 export default class ArtistPlays extends LastFMBaseCommand<typeof args> {
@@ -22,7 +17,7 @@ export default class ArtistPlays extends LastFMBaseCommand<typeof args> {
   subcategory = "plays";
   usage = ["", "artist @user"];
 
-  arguments: Arguments = args;
+  arguments = args;
 
   async run(_: any, runAs: RunAs) {
     const { perspective, senderRequestable, requestable } =

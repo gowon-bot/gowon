@@ -1,5 +1,5 @@
 import emojiRegexFunction from "emoji-regex";
-import { extractEmojiID } from "../../Emoji";
+import { extractEmojiID } from "../../../Emoji";
 
 export interface EmojiMention {
   raw: string;
@@ -16,16 +16,14 @@ export function isUnicodeEmoji(value: string): boolean {
 }
 
 export class EmojiParser {
-  constructor(private rawString: string) {}
-
-  parseAll(): EmojiMention[] {
-    return this.parseAnimatedEmotes()
-      .concat(this.parseCustomEmotes())
-      .concat(this.parseDefaultEmotes());
+  parseAll(rawString: string): EmojiMention[] {
+    return this.parseAnimatedEmotes(rawString)
+      .concat(this.parseCustomEmotes(rawString))
+      .concat(this.parseDefaultEmotes(rawString));
   }
 
-  parseAnimatedEmotes(): EmojiMention[] {
-    const matches = this.rawString.matchAll(animatedRegex);
+  parseAnimatedEmotes(rawString: string): EmojiMention[] {
+    const matches = rawString.matchAll(animatedRegex);
     const mentions = [] as EmojiMention[];
 
     for (const match of matches) {
@@ -43,8 +41,8 @@ export class EmojiParser {
     return mentions;
   }
 
-  parseCustomEmotes(): EmojiMention[] {
-    const matches = this.rawString.matchAll(customRegex);
+  parseCustomEmotes(rawString: string): EmojiMention[] {
+    const matches = rawString.matchAll(customRegex);
     const mentions = [] as EmojiMention[];
 
     for (const match of matches) {
@@ -62,8 +60,8 @@ export class EmojiParser {
     return mentions;
   }
 
-  parseDefaultEmotes(): EmojiMention[] {
-    const matches = this.rawString.matchAll(emojiRegex);
+  parseDefaultEmotes(rawString: string): EmojiMention[] {
+    const matches = rawString.matchAll(emojiRegex);
     const mentions = [] as EmojiMention[];
 
     for (const match of matches) {

@@ -1,21 +1,14 @@
-import { Arguments } from "../../../../lib/arguments/arguments";
 import {
   componentMap,
   sortConfigOptions,
 } from "../../../../lib/nowplaying/componentMap";
 import { NowPlayingConfigChildCommand } from "./NowPlayingConfigChildCommand";
 
-const args = {
-  inputs: {},
-} as const;
-
-export class Help extends NowPlayingConfigChildCommand<typeof args> {
+export class Help extends NowPlayingConfigChildCommand {
   idSeed = "weeekly zoa";
 
   description = "View help about nowplaying config";
   usage = [""];
-
-  arguments: Arguments = args;
 
   async run() {
     const embed = this.newEmbed().setAuthor(

@@ -1,5 +1,4 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
-import { Arguments } from "../../../lib/arguments/arguments";
 import { Message } from "discord.js";
 import { ago } from "../../../helpers";
 import { RedirectsService } from "../../../services/dbservices/RedirectsService";
@@ -9,11 +8,10 @@ import { displayNumber } from "../../../lib/views/displays";
 import { LineConsolidator } from "../../../lib/LineConsolidator";
 import { User } from "../../../database/entity/User";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
+import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 
 const args = {
-  inputs: {
-    artist: { index: { start: 0 } },
-  },
+  ...prefabArguments.artist,
 } as const;
 
 export class Info extends CrownsChildCommand<typeof args> {
@@ -23,7 +21,7 @@ export class Info extends CrownsChildCommand<typeof args> {
   description = "Shows who has the crown for a given user";
   usage = ["", "artist"];
 
-  arguments: Arguments = args;
+  arguments = args;
 
   redirectsService = ServiceRegistry.get(RedirectsService);
 

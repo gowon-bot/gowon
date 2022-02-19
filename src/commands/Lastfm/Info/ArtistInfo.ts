@@ -1,19 +1,17 @@
-import { Arguments } from "../../../lib/arguments/arguments";
 import { InfoCommand } from "./InfoCommand";
 import { calculatePercent } from "../../../helpers/stats";
 import { CrownsService } from "../../../services/dbservices/CrownsService";
 import { LinkConsolidator } from "../../../helpers/lastFM";
 import { LineConsolidator } from "../../../lib/LineConsolidator";
-import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { displayNumber } from "../../../lib/views/displays";
 import { TagsService } from "../../../services/mirrorball/services/TagsService";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
+import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 
 const args = {
-  inputs: {
-    artist: { index: { start: 0 } },
-  },
-  mentions: standardMentions,
+  ...standardMentions,
+  ...prefabArguments.artist,
 } as const;
 
 export default class ArtistInfo extends InfoCommand<typeof args> {
@@ -24,7 +22,7 @@ export default class ArtistInfo extends InfoCommand<typeof args> {
   description = "Displays some information about an artist";
   usage = ["", "artist"];
 
-  arguments: Arguments = args;
+  arguments = args;
 
   tagsService = ServiceRegistry.get(TagsService);
   crownsService = ServiceRegistry.get(CrownsService);

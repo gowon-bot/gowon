@@ -1,11 +1,11 @@
-import { Arguments } from "../../../../lib/arguments/arguments";
 import { ChildCommand } from "../../../../lib/command/ParentCommand";
+import { ArgumentsMap } from "../../../../lib/context/arguments/types";
 import { MirrorballChildCommand } from "../../../../lib/indexing/MirrorballCommands";
 import { LastFMService } from "../../../../services/LastFM/LastFMService";
 import { ServiceRegistry } from "../../../../services/ServicesRegistry";
 
 export abstract class RateYourMusicChildCommand<
-  T extends Arguments = Arguments
+  T extends ArgumentsMap = {}
 > extends ChildCommand<T> {
   lastFMService = ServiceRegistry.get(LastFMService);
 
@@ -17,7 +17,7 @@ export abstract class RateYourMusicChildCommand<
 export abstract class RateYourMusicIndexingChildCommand<
   ResponseT,
   ParamsT,
-  T extends Arguments = Arguments
+  T extends ArgumentsMap = {}
 > extends MirrorballChildCommand<ResponseT, ParamsT, T> {
   lastFMService = ServiceRegistry.get(LastFMService);
 

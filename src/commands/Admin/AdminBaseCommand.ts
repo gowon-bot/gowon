@@ -1,4 +1,4 @@
-import { Arguments } from "../../lib/arguments/arguments";
+import { ArgumentsMap } from "../../lib/context/arguments/types";
 import { BaseCommand } from "../../lib/command/BaseCommand";
 import { ParentCommand, ChildCommand } from "../../lib/command/ParentCommand";
 import { AdminService } from "../../services/dbservices/AdminService";
@@ -15,7 +15,7 @@ export abstract class AdminBaseParentCommand extends ParentCommand {
 }
 
 export abstract class AdminBaseChildCommand<
-  T extends Arguments = Arguments
+  T extends ArgumentsMap
 > extends ChildCommand<T> {
   category = "admin";
 

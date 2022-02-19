@@ -1,20 +1,16 @@
-import { Arguments } from "../../../lib/arguments/arguments";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
-import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { RedirectsCache } from "../../../lib/caches/RedirectsCache";
 import { RedirectsService } from "../../../services/dbservices/RedirectsService";
 import { displayNumber } from "../../../lib/views/displays";
 import { LogicError } from "../../../errors";
 import { toInt } from "../../../helpers/lastFM";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
+import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 
 const args = {
-  inputs: {
-    artist: {
-      index: { start: 0 },
-    },
-  },
-  mentions: standardMentions,
+  ...standardMentions,
+  ...prefabArguments.artist,
 } as const;
 
 export default class ArtistRank extends LastFMBaseCommand<typeof args> {
@@ -25,7 +21,7 @@ export default class ArtistRank extends LastFMBaseCommand<typeof args> {
   subcategory = "ranks";
   usage = ["artist @user"];
 
-  arguments: Arguments = args;
+  arguments = args;
 
   redirectsService = ServiceRegistry.get(RedirectsService);
   redirectsCache = new RedirectsCache(this.redirectsService);

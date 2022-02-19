@@ -1,37 +1,25 @@
-import { Arguments } from "../../../lib/arguments/arguments";
 import { TasteCalculator } from "../../../lib/calculators/TasteCalculator";
 import { Variation } from "../../../lib/command/BaseCommand";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { LogicError } from "../../../errors";
-import { TasteCommand, tasteMentions } from "./TasteCommand";
+import { TasteCommand, tasteArgs } from "./TasteCommand";
 import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingEmbed";
 import { displayLink, displayNumber } from "../../../lib/views/displays";
-import { TimePeriodParser } from "../../../lib/arguments/custom/TimePeriodParser";
 import { humanizePeriod } from "../../../lib/timeAndDate/helpers";
-import { TimeRangeParser } from "../../../lib/arguments/custom/TimeRangeParser";
 import { LinkGenerator } from "../../../helpers/lastFM";
+import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
+import { TimePeriodArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/TimePeriodArgument";
+import { TimeRangeArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/TimeRangeArgument";
+import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 
 const args = {
-  inputs: {
-    artistAmount: {
-      index: 0,
-      regex: /\b(([13-9]\d*)|(2\d{1,2})|(2\d{4,})|(2000))\b/g,
-      default: 1000,
-      number: true,
-    },
-    timePeriod: { custom: new TimePeriodParser() },
-    timeRange: { custom: new TimeRangeParser() },
-    username: {
-      regex: /[\w\-\!]+/gi,
-      index: 0,
-    },
-    username2: {
-      regex: /[\w\-\!]+/gi,
-      index: 1,
-    },
-  },
-  mentions: tasteMentions,
+  ...tasteArgs,
+  artistAmount: new NumberArgument({ default: 1000 }),
+  timePeriod: new TimePeriodArgument(),
+  timeRange: new TimeRangeArgument(),
+  username: new StringArgument({ index: 0 }),
+  username2: new StringArgument({ index: 1 }),
 } as const;
 
 export default class Taste extends TasteCommand<typeof args> {
@@ -54,7 +42,7 @@ export default class Taste extends TasteCommand<typeof args> {
     },
   ];
 
-  arguments: Arguments = args;
+  arguments = args;
 
   validation: Validation = {
     artistAmount: {

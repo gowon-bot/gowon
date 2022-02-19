@@ -1,4 +1,4 @@
-import { EmojiMention } from "../../lib/arguments/custom/EmojiParser";
+import { EmojiMention } from "../../lib/context/arguments/parsers/EmojiParser";
 import { GowonContext } from "../../lib/context/Context";
 import { BaseService } from "../BaseService";
 

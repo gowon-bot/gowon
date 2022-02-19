@@ -23,17 +23,14 @@ import {
   UpdateUserResponse,
 } from "./Update.connector";
 import { ServiceRegistry } from "../../../../services/ServicesRegistry";
+import { Flag } from "../../../../lib/context/arguments/argumentTypes/Flag";
 
 const args = {
-  inputs: {},
-  mentions: {},
-  flags: {
-    full: {
-      shortnames: [],
-      longnames: ["full", "force"],
-      description: "Deletes all of your indexed data and replaces it",
-    },
-  },
+  full: new Flag({
+    shortnames: [],
+    longnames: ["full", "force"],
+    description: "Deletes all of your indexed data and replaces it",
+  }),
 } as const;
 
 export default class Update extends MirrorballBaseCommand<

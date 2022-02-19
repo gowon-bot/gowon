@@ -1,10 +1,9 @@
 import { LogicError } from "../../../errors";
-import { Arguments } from "../../../lib/arguments/arguments";
-import { standardMentions } from "../../../lib/arguments/mentions/mentions";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { CrownsChildCommand } from "./CrownsChildCommand";
 
 const args = {
-  mentions: standardMentions,
+  ...standardMentions,
 };
 
 export class Unban extends CrownsChildCommand<typeof args> {
@@ -12,7 +11,7 @@ export class Unban extends CrownsChildCommand<typeof args> {
 
   description = "Unbans a user from the crowns game";
   usage = "@user";
-  arguments: Arguments = args;
+  arguments = args;
 
   adminCommand = true;
 

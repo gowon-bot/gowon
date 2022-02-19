@@ -1,6 +1,7 @@
 import { MessageEmbed } from "discord.js";
 import { User } from "../../../../database/entity/User";
 import { LinkGenerator } from "../../../../helpers/lastFM";
+import { ArgumentsMap } from "../../../../lib/context/arguments/types";
 import { Emoji } from "../../../../lib/Emoji";
 import { MirrorballBaseCommand } from "../../../../lib/indexing/MirrorballCommands";
 import { displayLink } from "../../../../lib/views/displays";
@@ -23,7 +24,7 @@ export interface DisplayUserOptions {
 export abstract class WhoKnowsBaseCommand<
   R,
   P,
-  A
+  A extends ArgumentsMap = {}
 > extends MirrorballBaseCommand<R, P, A> {
   private readonly gowonIconURL =
     "https://cdn.discordapp.com/avatars/720135602669879386/a65b2e976bac5821073cacf4a8f8305a.png?size=1024";

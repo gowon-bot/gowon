@@ -1,16 +1,14 @@
-import { Arguments } from "../../../lib/arguments/arguments";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { LogicError } from "../../../errors";
 import { validators } from "../../../lib/validation/validators";
 import { Validation } from "../../../lib/validation/ValidationChecker";
-import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { displayNumber } from "../../../lib/views/displays";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
+import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
 
 const args = {
-  inputs: {
-    rank: { index: 0, default: 1, number: true },
-  },
-  mentions: standardMentions,
+  ...standardMentions,
+  rank: new NumberArgument({ default: 1 }),
 } as const;
 
 export default class ArtistAt extends LastFMBaseCommand<typeof args> {
@@ -21,7 +19,7 @@ export default class ArtistAt extends LastFMBaseCommand<typeof args> {
   subcategory = "ranks";
   usage = ["", "rank @user"];
 
-  arguments: Arguments = args;
+  arguments = args;
 
   validation: Validation = {
     rank: new validators.Number({ whole: true }),

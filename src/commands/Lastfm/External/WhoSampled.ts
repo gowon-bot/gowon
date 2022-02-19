@@ -1,12 +1,10 @@
-import { Arguments } from "../../../lib/arguments/arguments";
-import { standardMentions } from "../../../lib/arguments/mentions/mentions";
+import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 const args = {
-  inputs: {
-    keywords: { index: { start: 0 } },
-  },
-  mentions: standardMentions,
+  ...standardMentions,
+  keywords: new StringArgument({ index: { start: 0 } }),
 } as const;
 
 export default class WhoSampled extends LastFMBaseCommand<typeof args> {
@@ -16,7 +14,7 @@ export default class WhoSampled extends LastFMBaseCommand<typeof args> {
   description = "Search WhoSampled for a song (or anything!)";
   subcategory = "external";
 
-  arguments: Arguments = args;
+  arguments = args;
 
   async run() {
     let keywords = this.parsedArguments.keywords;
@@ -37,7 +35,7 @@ export default class WhoSampled extends LastFMBaseCommand<typeof args> {
     let encodedKeywords = encodeURIComponent(keywords);
 
     let embed = this.newEmbed()
-      .setAuthor(`WhoSampled search for "${keywords}"`)
+      .setAuthor({ name: `WhoSampled search for "${keywords}"` })
       .setTitle("Click here to view the results")
       .setURL(`https://www.whosampled.com/search/?q=${encodedKeywords}`)
       .setThumbnail(

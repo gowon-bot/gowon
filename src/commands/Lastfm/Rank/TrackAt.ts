@@ -1,14 +1,14 @@
-import { Arguments } from "../../../lib/arguments/arguments";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { LogicError } from "../../../errors";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { displayNumber } from "../../../lib/views/displays";
+import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 
 const args = {
-  inputs: {
-    rank: { index: 0, default: 1, number: true },
-  },
+  ...standardMentions,
+  rank: new NumberArgument({ default: 1 }),
 } as const;
 
 export default class TrackAt extends LastFMBaseCommand<typeof args> {
@@ -19,7 +19,7 @@ export default class TrackAt extends LastFMBaseCommand<typeof args> {
   subcategory = "ranks";
   usage = ["", "rank @user"];
 
-  arguments: Arguments = args;
+  arguments = args;
 
   validation: Validation = {
     rank: new validators.Number({ whole: true }),

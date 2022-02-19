@@ -1,14 +1,12 @@
-import { Arguments } from "../../../lib/arguments/arguments";
 import { LinkGenerator } from "../../../helpers/lastFM";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { RecordNotFoundError } from "../../../errors";
-import { standardMentions } from "../../../lib/arguments/mentions/mentions";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
+import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 
 const args = {
-  inputs: {
-    username: { index: 0 },
-  },
-  mentions: standardMentions,
+  ...standardMentions,
+  username: new StringArgument({ index: 0 }),
 } as const;
 
 export default class LastFMAccount extends LastFMBaseCommand<typeof args> {
@@ -19,7 +17,7 @@ export default class LastFMAccount extends LastFMBaseCommand<typeof args> {
   subcategory = "accounts";
   usage = ["", "@user"];
 
-  arguments: Arguments = args;
+  arguments = args;
 
   async run() {
     let { username, perspective } = await this.parseMentions({

@@ -1,16 +1,16 @@
 import { LogicError } from "../../errors";
-import { DiscordIDMention } from "../../lib/arguments/mentions/DiscordIDMention";
 import { CommandAccessRoleName, roles } from "../../lib/command/access/roles";
 import { BaseCommand, Variation } from "../../lib/command/BaseCommand";
+import { DiscordUserArgument } from "../../lib/context/arguments/argumentTypes/discord/DiscordUserArgument";
+import { StringArgument } from "../../lib/context/arguments/argumentTypes/StringArgument";
+import { UserStringArgument } from "../../lib/context/arguments/argumentTypes/UserStringArgument";
+import { DiscordIDMention } from "../../lib/context/arguments/mentionTypes/DiscordIDMention";
 import { validators } from "../../lib/validation/validators";
 
 const args = {
-  inputs: {
-    role: { index: 0 },
-  },
-  mentions: {
-    userID: { mention: new DiscordIDMention(true), index: 0 },
-  },
+  role: new StringArgument({ index: 0 }),
+  userID: new UserStringArgument({ mention: new DiscordIDMention() }),
+  user: new DiscordUserArgument(),
 } as const;
 
 export default class GiveRole extends BaseCommand<typeof args> {

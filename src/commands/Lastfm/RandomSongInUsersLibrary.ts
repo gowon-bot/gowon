@@ -1,20 +1,14 @@
 import { getOrdinal } from "../../helpers";
-import { Arguments } from "../../lib/arguments/arguments";
-import { standardMentions } from "../../lib/arguments/mentions/mentions";
+import { NumberArgument } from "../../lib/context/arguments/argumentTypes/NumberArgument";
+import { standardMentions } from "../../lib/context/arguments/mentionTypes/mentions";
 import { Validation } from "../../lib/validation/ValidationChecker";
 import { validators } from "../../lib/validation/validators";
 import { TrackInfo } from "../../services/LastFM/converters/InfoTypes";
 import { LastFMBaseCommand } from "./LastFMBaseCommand";
 
 const args = {
-  inputs: {
-    poolAmount: {
-      regex: /[0-9]+/,
-      index: 0,
-      number: true,
-    },
-  },
-  mentions: standardMentions,
+  ...standardMentions,
+  poolAmount: new NumberArgument(),
 } as const;
 
 export default class RandomsongInUsersLibrary extends LastFMBaseCommand<
@@ -24,7 +18,7 @@ export default class RandomsongInUsersLibrary extends LastFMBaseCommand<
 
   shouldBeIndexed = false;
 
-  arguments: Arguments = args;
+  arguments = args;
 
   validation: Validation = {
     poolAmount: {

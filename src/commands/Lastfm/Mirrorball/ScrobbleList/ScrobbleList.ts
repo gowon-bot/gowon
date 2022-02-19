@@ -1,8 +1,8 @@
 import { MirrorballError } from "../../../../errors";
 import { toInt } from "../../../../helpers/lastFM";
 import { convertMirrorballDate } from "../../../../helpers/mirrorball";
-import { Arguments } from "../../../../lib/arguments/arguments";
-import { standardMentions } from "../../../../lib/arguments/mentions/mentions";
+import { standardMentions } from "../../../../lib/context/arguments/mentionTypes/mentions";
+import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";
 import { MirrorballBaseCommand } from "../../../../lib/indexing/MirrorballCommands";
 import { PaginatedCache } from "../../../../lib/paginators/PaginatedCache";
 import {
@@ -21,11 +21,8 @@ import {
 } from "./ScrobbleList.connector";
 
 const args = {
-  inputs: {
-    artist: { index: 0, splitOn: "|" },
-    track: { index: 1, splitOn: "|" },
-  },
-  mentions: standardMentions,
+  ...standardMentions,
+  ...prefabArguments.track,
 } as const;
 
 export default class ScrobbleList extends MirrorballBaseCommand<
@@ -42,7 +39,7 @@ export default class ScrobbleList extends MirrorballBaseCommand<
   subcategory = "library";
   description = "Shows all the times you scrobbled a track";
 
-  arguments: Arguments = args;
+  arguments = args;
 
   pageSize = 15;
 

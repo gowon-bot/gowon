@@ -3,12 +3,12 @@ import { FriendsService } from "../../../services/dbservices/FriendsService";
 import { Message } from "discord.js";
 import { User } from "../../../database/entity/User";
 import { LogicError } from "../../../errors";
-import { Arguments } from "../../../lib/arguments/arguments";
 import { Requestable } from "../../../services/LastFM/LastFMAPIService";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 
 export abstract class FriendsChildCommand<
-  T extends Arguments = Arguments
+  T extends ArgumentsMap = {}
 > extends LastFMBaseChildCommand<T> {
   parentName = "friends";
 

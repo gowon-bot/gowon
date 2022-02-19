@@ -1,5 +1,4 @@
 import { AlreadyImportingRatingsError, LogicError } from "../../../../errors";
-import { Arguments } from "../../../../lib/arguments/arguments";
 import {
   ImportRatingsConnector,
   ImportRatingsParams,
@@ -10,11 +9,10 @@ import { Emoji } from "../../../../lib/Emoji";
 import { RateYourMusicIndexingChildCommand } from "./RateYourMusicChildCommand";
 import fetch from "node-fetch";
 import { ConcurrentAction } from "../../../../services/ConcurrencyService";
+import { StringArgument } from "../../../../lib/context/arguments/argumentTypes/StringArgument";
 
 const args = {
-  inputs: {
-    input: { index: { start: 0 } },
-  },
+  input: new StringArgument({ index: { start: 0 } }),
 } as const;
 
 export class ImportRatings extends RateYourMusicIndexingChildCommand<
@@ -28,7 +26,7 @@ export class ImportRatings extends RateYourMusicIndexingChildCommand<
   aliases = ["rymimport", "rymsimport"];
   description = "Import your rateyourmusic ratings";
 
-  arguments: Arguments = args;
+  arguments = args;
 
   async prerun() {
     if (

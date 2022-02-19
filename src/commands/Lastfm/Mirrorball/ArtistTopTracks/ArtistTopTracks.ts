@@ -1,8 +1,6 @@
 import { MirrorballError, LogicError } from "../../../../errors";
 import { SimpleScrollingEmbed } from "../../../../lib/views/embeds/SimpleScrollingEmbed";
 import { LinkGenerator } from "../../../../helpers/lastFM";
-import { Arguments } from "../../../../lib/arguments/arguments";
-import { standardMentions } from "../../../../lib/arguments/mentions/mentions";
 import { MirrorballBaseCommand } from "../../../../lib/indexing/MirrorballCommands";
 import {
   ArtistTopTracksConnector,
@@ -10,16 +8,16 @@ import {
   ArtistTopTracksResponse,
 } from "./ArtistTopTracks.connector";
 import { displayNumber } from "../../../../lib/views/displays";
-import { FLAGS } from "../../../../lib/arguments/flags";
+import { standardMentions } from "../../../../lib/context/arguments/mentionTypes/mentions";
+import {
+  prefabArguments,
+  prefabFlags,
+} from "../../../../lib/context/arguments/prefabArguments";
 
 const args = {
-  inputs: {
-    artist: { index: { start: 0 } },
-  },
-  flags: {
-    noRedirect: FLAGS.noRedirect,
-  },
-  mentions: standardMentions,
+  ...standardMentions,
+  ...prefabArguments.artist,
+  noRedirect: prefabFlags.noRedirect,
 } as const;
 
 export default class ArtistTopTracks extends MirrorballBaseCommand<
@@ -35,7 +33,7 @@ export default class ArtistTopTracks extends MirrorballBaseCommand<
   subcategory = "library";
   description = "Displays your top scrobbled tracks from an artist";
 
-  arguments: Arguments = args;
+  arguments = args;
 
   async run() {
     const { username, senderRequestable, perspective, dbUser } =

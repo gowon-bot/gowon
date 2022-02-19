@@ -1,15 +1,13 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
 import { Message } from "discord.js";
 import { getOrdinal } from "../../../helpers";
-import { Arguments } from "../../../lib/arguments/arguments";
 import { LogicError } from "../../../errors";
 import { toInt } from "../../../helpers/lastFM";
 import { displayNumber } from "../../../lib/views/displays";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 
 const args = {
-  mentions: {
-    user: { index: 0 },
-  },
+  ...standardMentions,
 } as const;
 
 export class Rank extends CrownsChildCommand<typeof args> {
@@ -20,21 +18,14 @@ export class Rank extends CrownsChildCommand<typeof args> {
     "Ranks a user on the crowns leaderboard based on their crown count";
   usage = ["", "@user"];
 
-  arguments: Arguments = args;
+  arguments = args;
 
   async run(message: Message) {
-    let user = this.parsedArguments.user;
-
-    let discordID = user?.id || message.author.id;
-
-    let perspective = this.usersService.discordPerspective(
-      message.author,
-      user
-    );
+    const { perspective, discordUser, dbUser } = await this.parseMentions({});
 
     let rank = await this.crownsService.getRank(
       this.ctx,
-      discordID,
+      discordUser?.id || dbUser.discordID || this.author.id,
       await this.serverUserIDs({ filterCrownBannedUsers: true })
     );
 

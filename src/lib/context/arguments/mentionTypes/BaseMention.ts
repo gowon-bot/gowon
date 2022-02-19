@@ -6,11 +6,11 @@ export interface Mention {
   ndmpOnly: boolean;
 }
 
-export abstract class BaseMention implements Mention {
+export abstract class BaseMention {
   abstract prefix: string | string[];
   abstract mentionRegex: string;
 
-  constructor(public ndmpOnly: boolean = false) {}
+  constructor() {}
 
   parse(string: string): string[] {
     return Array.from(string.match(this.buildParseRegex()) || []).map((m) =>

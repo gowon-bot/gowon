@@ -1,6 +1,4 @@
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
-import { Arguments } from "../../../lib/arguments/arguments";
-import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { Paginator } from "../../../lib/paginators/Paginator";
 import {
   TagComboCalculator,
@@ -9,9 +7,10 @@ import {
 import { TagsService } from "../../../services/mirrorball/services/TagsService";
 import { displayNumber } from "../../../lib/views/displays";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 
 const args = {
-  mentions: standardMentions,
+  ...standardMentions,
 } as const;
 
 export default class TagCombo extends LastFMBaseCommand<typeof args> {
@@ -24,7 +23,7 @@ export default class TagCombo extends LastFMBaseCommand<typeof args> {
   subcategory = "library stats";
   usage = [""];
 
-  arguments: Arguments = args;
+  arguments = args;
 
   tagsService = ServiceRegistry.get(TagsService);
 

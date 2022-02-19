@@ -1,12 +1,11 @@
 import { BaseCommand } from "../../lib/command/BaseCommand";
+import { StringArgument } from "../../lib/context/arguments/argumentTypes/StringArgument";
 import { Validation } from "../../lib/validation/ValidationChecker";
 import { validators } from "../../lib/validation/validators";
 import { ScriptsRegistry } from "../../services/ScriptsRegistry";
 
 const args = {
-  inputs: {
-    script: { index: 0 },
-  },
+  script: new StringArgument({ index: 0 }),
 } as const;
 
 export default class RunScript extends BaseCommand<typeof args> {

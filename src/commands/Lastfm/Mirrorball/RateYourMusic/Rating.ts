@@ -1,14 +1,11 @@
 import { LogicError, UnknownMirrorballError } from "../../../../errors";
-import { Arguments } from "../../../../lib/arguments/arguments";
+import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";
 import { displayRating } from "../../../../lib/views/displays";
 import { RatingConnector, RatingParams, RatingResponse } from "./connectors";
 import { RateYourMusicIndexingChildCommand } from "./RateYourMusicChildCommand";
 
 const args = {
-  inputs: {
-    artist: { index: 0, splitOn: "|" },
-    album: { index: 1, splitOn: "|" },
-  },
+  ...prefabArguments.album,
 } as const;
 
 export class Rating extends RateYourMusicIndexingChildCommand<
@@ -21,7 +18,7 @@ export class Rating extends RateYourMusicIndexingChildCommand<
   idSeed = "sonamoo newsun";
   description = "Shows what you've rated an album";
 
-  arguments: Arguments = args;
+  arguments = args;
 
   async run() {
     const { senderRequestable, dbUser } = await this.parseMentions({

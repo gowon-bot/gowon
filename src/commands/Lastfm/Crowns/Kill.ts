@@ -1,14 +1,12 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
-import { Arguments } from "../../../lib/arguments/arguments";
 import { LogicError } from "../../../errors";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { ConfirmationEmbed } from "../../../lib/views/embeds/ConfirmationEmbed";
+import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 
 const args = {
-  inputs: {
-    artist: { index: { start: 0 } },
-  },
+  ...prefabArguments.artist,
 } as const;
 
 export class Kill extends CrownsChildCommand<typeof args> {
@@ -19,7 +17,7 @@ export class Kill extends CrownsChildCommand<typeof args> {
 
   adminCommand = true;
 
-  arguments: Arguments = args;
+  arguments = args;
 
   validation: Validation = {
     artist: new validators.Required({}),

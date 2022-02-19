@@ -1,20 +1,14 @@
-import { OverviewChildCommand, overviewInputs } from "./OverviewChildCommand";
-import { Arguments } from "../../../lib/arguments/arguments";
 import { LogicError } from "../../../errors";
-import { standardMentions } from "../../../lib/arguments/mentions/mentions";
+import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
+import { TimePeriodArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/TimePeriodArgument";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { displayNumber } from "../../../lib/views/displays";
+import { OverviewChildCommand } from "./OverviewChildCommand";
 
 const args = {
-  mentions: standardMentions,
-  inputs: {
-    top: {
-      index: 0,
-      regex: /[0-9]{1,10}(?!\w)(?! [mw])/g,
-      default: 10,
-      number: true,
-    },
-    ...overviewInputs,
-  },
+  ...standardMentions,
+  timePeriod: new TimePeriodArgument(),
+  top: new NumberArgument({ default: 10 }),
 } as const;
 
 export class SumTop extends OverviewChildCommand<typeof args> {
@@ -25,7 +19,7 @@ export class SumTop extends OverviewChildCommand<typeof args> {
     "Shows what percent of your scrobbles are made up by your top artists";
   usage = ["", "time_period top", "time_period top @user"];
 
-  arguments: Arguments = args;
+  arguments = args;
 
   async run() {
     let top = this.parsedArguments.top!;

@@ -1,5 +1,5 @@
-import { Arguments } from "../../../../lib/arguments/arguments";
 import { Delegate } from "../../../../lib/command/BaseCommand";
+import { StringArrayArgument } from "../../../../lib/context/arguments/argumentTypes/StringArrayArgument";
 import {
   componentMap,
   sortConfigOptions,
@@ -10,9 +10,7 @@ import { Help } from "./Help";
 import { NowPlayingConfigChildCommand } from "./NowPlayingConfigChildCommand";
 
 const args = {
-  inputs: {
-    config: { index: { start: 0 }, join: false },
-  },
+  config: new StringArrayArgument({ index: { start: 0 } }),
 } as const;
 
 export class Set extends NowPlayingConfigChildCommand<typeof args> {
@@ -21,7 +19,7 @@ export class Set extends NowPlayingConfigChildCommand<typeof args> {
   description = "Set your nowplaying config";
   usage = ["option1 option2 optionN"];
 
-  arguments: Arguments = args;
+  arguments = args;
 
   delegates: Delegate<typeof args>[] = [
     {

@@ -1,10 +1,12 @@
 import { MirrorballError } from "../../../../../errors";
 import { LinkGenerator } from "../../../../../helpers/lastFM";
 import { convertMirrorballDate } from "../../../../../helpers/mirrorball";
-import { Arguments } from "../../../../../lib/arguments/arguments";
-import { FLAGS } from "../../../../../lib/arguments/flags";
 import { Variation } from "../../../../../lib/command/BaseCommand";
 import { VARIATIONS } from "../../../../../lib/command/variations";
+import {
+  prefabArguments,
+  prefabFlags,
+} from "../../../../../lib/context/arguments/prefabArguments";
 import { LineConsolidator } from "../../../../../lib/LineConsolidator";
 import {
   displayDate,
@@ -20,12 +22,8 @@ import {
 } from "./connectors";
 
 const args = {
-  inputs: {
-    artist: { index: { start: 0 } },
-  },
-  flags: {
-    noRedirect: FLAGS.noRedirect,
-  },
+  ...prefabArguments.artist,
+  noRedirect: prefabFlags.noRedirect,
 } as const;
 
 export default class WhoFirstArtist extends WhoKnowsBaseCommand<
@@ -52,7 +50,7 @@ export default class WhoFirstArtist extends WhoKnowsBaseCommand<
 
   subcategory = "whofirst";
 
-  arguments: Arguments = args;
+  arguments = args;
 
   async run() {
     const whoLast = this.variationWasUsed("wholast");

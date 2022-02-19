@@ -1,17 +1,12 @@
-import { Arguments } from "../../../lib/arguments/arguments";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
-import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { displayNumber } from "../../../lib/views/displays";
-import { TimePeriodParser } from "../../../lib/arguments/custom/TimePeriodParser";
 import { humanizePeriod } from "../../../lib/timeAndDate/helpers";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
+import { TimePeriodArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/TimePeriodArgument";
 
 const args = {
-  inputs: {
-    timePeriod: {
-      custom: new TimePeriodParser(),
-    },
-  },
-  mentions: standardMentions,
+  ...standardMentions,
+  timePeriod: new TimePeriodArgument(),
 } as const;
 
 export default class AlbumCount extends LastFMBaseCommand<typeof args> {
@@ -21,7 +16,7 @@ export default class AlbumCount extends LastFMBaseCommand<typeof args> {
   subcategory = "library stats";
   usage = ["", "time period @user"];
 
-  arguments: Arguments = args;
+  arguments = args;
 
   async run() {
     const timePeriod = this.parsedArguments.timePeriod!;

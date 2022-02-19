@@ -1,13 +1,11 @@
 import { LogicError } from "../../../errors";
-import { Arguments } from "../../../lib/arguments/arguments";
+import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { ListCommand } from "./ListCommand";
 
 const args = {
-  inputs: {
-    type: { index: 0 },
-    period: { index: 1 },
-    amount: { index: 2 },
-  },
+  type: new StringArgument({ index: 0 }),
+  period: new StringArgument({ index: 1 }),
+  amount: new StringArgument({ index: 2 }),
 } as const;
 
 export default class List extends ListCommand {
@@ -17,7 +15,8 @@ export default class List extends ListCommand {
   description = "This is a temporary command <3";
   secretCommand = true;
 
-  arguments: Arguments = args;
+  // Overwrite the ListCommand default arguments
+  arguments = args as any;
 
   async run() {
     const type = (this.parsedArguments as any).type as string,

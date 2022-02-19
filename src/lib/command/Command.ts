@@ -1,5 +1,5 @@
 import { Message } from "discord.js";
-import { Arguments } from "../arguments/arguments";
+import { ArgumentsMap } from "../context/arguments/types";
 import { GowonClient } from "../GowonClient";
 import { CommandAccess } from "./access/access";
 import { Variation } from "./BaseCommand";
@@ -14,7 +14,7 @@ export interface Command {
 
   variations: Variation[];
   aliases: Array<string>;
-  arguments: Arguments;
+  arguments: ArgumentsMap;
   secretCommand: boolean;
   archived: boolean;
   shouldBeIndexed: boolean;

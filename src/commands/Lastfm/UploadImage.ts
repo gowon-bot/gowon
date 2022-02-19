@@ -1,13 +1,10 @@
 import { LogicError } from "../../errors";
 import { LinkGenerator } from "../../helpers/lastFM";
-import { Arguments } from "../../lib/arguments/arguments";
+import { prefabArguments } from "../../lib/context/arguments/prefabArguments";
 import { LastFMBaseCommand } from "./LastFMBaseCommand";
 
 const args = {
-  inputs: {
-    artist: { index: 0, splitOn: "|" },
-    album: { index: 1, splitOn: "|" },
-  },
+  ...prefabArguments.album,
 } as const;
 
 export default class ImageUpload extends LastFMBaseCommand<typeof args> {
@@ -18,7 +15,7 @@ export default class ImageUpload extends LastFMBaseCommand<typeof args> {
     "Links you directly to the upload page for your currently playing album";
   usage = [""];
 
-  arguments: Arguments = args;
+  arguments = args;
 
   async run() {
     const { senderRequestable } = await this.parseMentions();

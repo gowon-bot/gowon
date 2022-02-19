@@ -1,5 +1,4 @@
 import { FriendsChildCommand } from "../FriendsChildCommand";
-import { Arguments } from "../../../../lib/arguments/arguments";
 import gql from "graphql-tag";
 import {
   displayDate,
@@ -8,11 +7,10 @@ import {
 import { LogicError } from "../../../../errors";
 import { MirrorballUser } from "../../../../services/mirrorball/MirrorballTypes";
 import { convertMirrorballDate } from "../../../../helpers/mirrorball";
+import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";
 
 const args = {
-  inputs: {
-    artist: { index: { start: 0 } },
-  },
+  ...prefabArguments.artist,
 } as const;
 
 export class WhoFirstArtist extends FriendsChildCommand<typeof args> {
@@ -22,7 +20,7 @@ export class WhoFirstArtist extends FriendsChildCommand<typeof args> {
   aliases = ["wf", "wfa"];
   usage = ["", "artist | album"];
 
-  arguments: Arguments = args;
+  arguments = args;
 
   throwIfNoFriends = true;
 

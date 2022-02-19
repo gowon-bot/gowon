@@ -1,24 +1,30 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
-import { Message } from "discord.js";
+import { DiscordRoleArgument } from "../../../lib/context/arguments/argumentTypes/discord/DiscordRoleArgument";
 
-export class SetInactiveRole extends CrownsChildCommand {
+const args = {
+  inactiveRole: new DiscordRoleArgument(),
+} as const;
+
+export class SetInactiveRole extends CrownsChildCommand<typeof args> {
   idSeed = "wjsn luda";
 
   description = "Sets the crowns inactive role for the server";
   usage = "@inactive_role";
 
-  async run(message: Message) {
-    let [inactiveRole] = message.mentions.roles.values();
+  arguments = args;
 
-    inactiveRole = inactiveRole ?? {};
+  async run() {
+    const inactiveRole = this.parsedArguments.inactiveRole;
 
-    await this.crownsService.setInactiveRole(this.ctx, inactiveRole.id);
+    await this.crownsService.setInactiveRole(this.ctx, inactiveRole?.id);
 
-    const embed = this.newEmbed().setDescription(
-      inactiveRole.name
-        ? `Set the inactive role for crowns to ${inactiveRole.name}`
-        : `Cleared the inactive role`
-    );
+    const embed = this.newEmbed()
+      .setAuthor(this.generateEmbedAuthor("Inactive role"))
+      .setDescription(
+        inactiveRole?.name
+          ? `Set the inactive role for crowns to ${inactiveRole.name.trim()}`
+          : `Cleared the inactive role`
+      );
 
     await this.send(embed);
   }

@@ -1,13 +1,11 @@
-import { Arguments } from "../../../lib/arguments/arguments";
 import { InfoCommand } from "./InfoCommand";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { displayNumber } from "../../../lib/views/displays";
+import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 
 const args = {
-  inputs: {
-    tag: { index: { start: 0 } },
-  },
+  tag: new StringArgument({ index: { start: 0 } }),
 } as const;
 
 export default class TagInfo extends InfoCommand<typeof args> {
@@ -18,7 +16,7 @@ export default class TagInfo extends InfoCommand<typeof args> {
   description = "Displays some information about a tag";
   usage = ["tag"];
 
-  arguments: Arguments = args;
+  arguments = args;
 
   validation: Validation = {
     tag: new validators.Required({}),

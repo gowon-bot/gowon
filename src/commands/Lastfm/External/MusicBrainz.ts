@@ -1,19 +1,16 @@
-import { Arguments } from "../../../lib/arguments/arguments";
-import { standardMentions } from "../../../lib/arguments/mentions/mentions";
+import { Flag } from "../../../lib/context/arguments/argumentTypes/Flag";
+import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 const args = {
-  inputs: {
-    keywords: { index: { start: 0 } },
-  },
-  mentions: standardMentions,
-  flags: {
-    searchArtists: {
-      description: "Search artists",
-      longnames: ["artist"],
-      shortnames: ["a"],
-    },
-  },
+  ...standardMentions,
+  keywords: new StringArgument({ index: { start: 0 } }),
+  searchArtists: new Flag({
+    description: "Search artists",
+    longnames: ["artist"],
+    shortnames: ["a"],
+  }),
 } as const;
 
 export default class MusicBrainz extends LastFMBaseCommand<typeof args> {
@@ -23,7 +20,7 @@ export default class MusicBrainz extends LastFMBaseCommand<typeof args> {
   description = "Search musicbrainz for a release (or artist with -a!)";
   subcategory = "external";
 
-  arguments: Arguments = args;
+  arguments = args;
 
   async run() {
     let keywords = this.parsedArguments.keywords;
@@ -44,7 +41,7 @@ export default class MusicBrainz extends LastFMBaseCommand<typeof args> {
     let encodedKeywords = encodeURIComponent(keywords);
 
     let embed = this.newEmbed()
-      .setAuthor(`MusicBrainz search for "${keywords}"`)
+      .setAuthor({ name: `MusicBrainz search for "${keywords}"` })
       .setTitle("Click here to view the results")
       .setURL(
         `https://musicbrainz.org/search?query=${encodedKeywords}&type=${

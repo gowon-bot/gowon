@@ -1,6 +1,6 @@
 import { format } from "date-fns";
-import { Arguments } from "../../lib/arguments/arguments";
 import { BaseCommand, Variation } from "../../lib/command/BaseCommand";
+import { StringArgument } from "../../lib/context/arguments/argumentTypes/StringArgument";
 import { Validation } from "../../lib/validation/ValidationChecker";
 import { validators } from "../../lib/validation/validators";
 import { displayLink } from "../../lib/views/displays";
@@ -8,10 +8,8 @@ import { GithubService } from "../../services/Github/GithubService";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 
 const args = {
-  inputs: {
-    title: { index: 0, splitOn: "|" },
-    body: { index: { start: 1 }, splitOn: "|" },
-  },
+  title: new StringArgument({ splitOn: "|" }),
+  body: new StringArgument({ index: { start: 1 }, splitOn: "|" }),
 } as const;
 
 export default class Issue extends BaseCommand<typeof args> {
@@ -46,7 +44,7 @@ export default class Issue extends BaseCommand<typeof args> {
     },
   ];
 
-  arguments: Arguments = args;
+  arguments = args;
 
   validation: Validation = {
     title: new validators.Required({}),

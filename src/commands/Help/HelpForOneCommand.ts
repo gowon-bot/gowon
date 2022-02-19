@@ -1,5 +1,4 @@
 import { BaseCommand } from "../../lib/command/BaseCommand";
-import { Arguments } from "../../lib/arguments/arguments";
 import { AdminService } from "../../services/dbservices/AdminService";
 import { CommandNotFoundError } from "../../errors";
 import { flatDeep } from "../../helpers";
@@ -8,11 +7,12 @@ import { LineConsolidator } from "../../lib/LineConsolidator";
 import { Command } from "../../lib/command/Command";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { Emoji } from "../../lib/Emoji";
+import { StringArgument } from "../../lib/context/arguments/argumentTypes/StringArgument";
+import { Flag, isFlag } from "../../lib/context/arguments/argumentTypes/Flag";
+import { BaseArgument } from "../../lib/context/arguments/argumentTypes/BaseArgument";
 
 const args = {
-  inputs: {
-    command: { index: { start: 0 } },
-  },
+  command: new StringArgument({ index: { start: 0 } }),
 } as const;
 
 export default class HelpForOneCommand extends BaseCommand<typeof args> {
@@ -20,7 +20,7 @@ export default class HelpForOneCommand extends BaseCommand<typeof args> {
 
   shouldBeIndexed = false;
 
-  arguments: Arguments = args;
+  arguments = args;
 
   adminService = ServiceRegistry.get(AdminService);
 
@@ -99,15 +99,19 @@ export default class HelpForOneCommand extends BaseCommand<typeof args> {
         shouldDisplay: !!command.arguments.flags,
         string:
           "**Flags**:\n" +
-          Object.values(command.arguments?.flags || {})
+          (
+            Object.values(command.arguments || {}).filter((a) =>
+              isFlag(a as BaseArgument<any, any>)
+            ) as Flag[]
+          )
             .map(
               (f) =>
                 `${[
-                  ...f.longnames.map((n) => `--${n}`),
-                  ...f.shortnames.map((n) => `-${n}`),
+                  ...f.options.longnames.map((n) => `--${n}`),
+                  ...f.options.shortnames.map((n) => `-${n}`),
                 ]
                   .map((flag) => flag.code())
-                  .join(", ")} - ${f.description}`
+                  .join(", ")} - ${f.options.description}`
             )
             .join("\n"),
       }

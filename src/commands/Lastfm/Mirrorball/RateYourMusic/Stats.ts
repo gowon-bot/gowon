@@ -1,15 +1,14 @@
 import { mean } from "mathjs";
 import { LogicError, UnknownMirrorballError } from "../../../../errors";
 import { toInt } from "../../../../helpers/lastFM";
-import { Arguments } from "../../../../lib/arguments/arguments";
-import { standardMentions } from "../../../../lib/arguments/mentions/mentions";
+import { standardMentions } from "../../../../lib/context/arguments/mentionTypes/mentions";
 import { displayNumber, displayRating } from "../../../../lib/views/displays";
 import { MirrorballRateYourMusicAlbum } from "../../../../services/mirrorball/MirrorballTypes";
 import { StatsConnector, StatsParams, StatsResponse } from "./connectors";
 import { RateYourMusicIndexingChildCommand } from "./RateYourMusicChildCommand";
 
 const args = {
-  mentions: standardMentions,
+  ...standardMentions,
 } as const;
 
 interface Curve {
@@ -26,7 +25,7 @@ export class Stats extends RateYourMusicIndexingChildCommand<
   idSeed = "shasha hakyung";
   description = "Shows what you've rated an artists albums";
 
-  arguments: Arguments = args;
+  arguments = args;
 
   async run() {
     const { dbUser, discordUser } = await this.parseMentions({

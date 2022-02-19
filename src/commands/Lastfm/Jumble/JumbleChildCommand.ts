@@ -1,11 +1,11 @@
 import { LastFMBaseChildCommand } from "../LastFMBaseCommand";
 import { JumbleCalculator } from "../../../lib/calculators/JumbleCalculator";
-import { Arguments } from "../../../lib/arguments/arguments";
 import { RedisService } from "../../../services/redis/RedisService";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 
 export abstract class JumbleChildCommand<
-  T extends Arguments = Arguments
+  T extends ArgumentsMap = {}
 > extends LastFMBaseChildCommand<T> {
   redisService = ServiceRegistry.get(RedisService);
 

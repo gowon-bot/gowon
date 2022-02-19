@@ -1,7 +1,7 @@
 import { LogicError } from "../../../../errors";
 import { sanitizeForDiscord } from "../../../../helpers/discord";
 import { LinkGenerator } from "../../../../helpers/lastFM";
-import { Arguments } from "../../../../lib/arguments/arguments";
+import { StringArrayArgument } from "../../../../lib/context/arguments/argumentTypes/StringArrayArgument";
 import { componentMap } from "../../../../lib/nowplaying/componentMap";
 import { ResolvedRequirements } from "../../../../lib/nowplaying/DatasourceService";
 import { mockRequirements } from "../../../../lib/nowplaying/mockRequirements";
@@ -13,9 +13,7 @@ import { RecentTrack } from "../../../../services/LastFM/converters/RecentTracks
 import { NowPlayingConfigChildCommand } from "./NowPlayingConfigChildCommand";
 
 const args = {
-  inputs: {
-    options: { index: { start: 0 }, join: false },
-  },
+  options: new StringArrayArgument({ index: { start: 0 } }),
 } as const;
 
 export class Preview extends NowPlayingConfigChildCommand<typeof args> {
@@ -24,7 +22,7 @@ export class Preview extends NowPlayingConfigChildCommand<typeof args> {
   description = "Preview a config option";
   usage = ["option1, option2... optionN", "preset"];
 
-  arguments: Arguments = args;
+  arguments = args;
 
   validation: Validation = {
     options: new validators.Required({

@@ -1,4 +1,4 @@
-import { Arguments } from "../../../../lib/arguments/arguments";
+import { StringArrayArgument } from "../../../../lib/context/arguments/argumentTypes/StringArrayArgument";
 import { LineConsolidator } from "../../../../lib/LineConsolidator";
 import { componentMap } from "../../../../lib/nowplaying/componentMap";
 import { Validation } from "../../../../lib/validation/ValidationChecker";
@@ -6,9 +6,7 @@ import { validators } from "../../../../lib/validation/validators";
 import { NowPlayingConfigChildCommand } from "./NowPlayingConfigChildCommand";
 
 const args = {
-  inputs: {
-    options: { index: { start: 0 }, join: false },
-  },
+  options: new StringArrayArgument({ index: { start: 0 } }),
 } as const;
 
 export class Remove extends NowPlayingConfigChildCommand<typeof args> {
@@ -17,7 +15,7 @@ export class Remove extends NowPlayingConfigChildCommand<typeof args> {
   description = "Remove options from your current config";
   usage = ["option", "option1 option2 ...optionN"];
 
-  arguments: Arguments = args;
+  arguments = args;
   validation: Validation = {
     options: {
       validator: new validators.LengthRange({ min: 1 }),
@@ -70,13 +68,11 @@ export class Remove extends NowPlayingConfigChildCommand<typeof args> {
       }
     );
 
-    embed
-      .setDescription(consolidator.consolidate())
-      .setFooter({
-        text: ignored.length
-          ? `Nonexistant config was ignored. See ${this.prefix}npc help for a list of options`
-          : "",
-      });
+    embed.setDescription(consolidator.consolidate()).setFooter({
+      text: ignored.length
+        ? `Nonexistant config was ignored. See ${this.prefix}npc help for a list of options`
+        : "",
+    });
 
     await this.send(embed);
   }

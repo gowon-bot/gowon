@@ -1,13 +1,11 @@
-import { Arguments } from "../../../lib/arguments/arguments";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
-import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { displayNumber } from "../../../lib/views/displays";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
+import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
 
 const args = {
-  inputs: {
-    plays: { index: 0, default: 100, number: true },
-  },
-  mentions: standardMentions,
+  ...standardMentions,
+  plays: new NumberArgument({ default: 100 }),
 } as const;
 
 export default class ArtistPlaysequal extends LastFMBaseCommand<typeof args> {
@@ -19,7 +17,7 @@ export default class ArtistPlaysequal extends LastFMBaseCommand<typeof args> {
   subcategory = "playsover";
   usage = ["", "number"];
 
-  arguments: Arguments = args;
+  arguments = args;
 
   async run() {
     let plays = this.parsedArguments.plays!;

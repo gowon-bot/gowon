@@ -1,6 +1,6 @@
 import { BaseCommand } from "../command/BaseCommand";
 import { Connector } from "./BaseConnector";
-import { Arguments } from "../arguments/arguments";
+import { ArgumentsMap } from "../context/arguments/types";
 import { LogicError, UserNotIndexedError } from "../../errors";
 import { LastFMService } from "../../services/LastFM/LastFMService";
 import { Perspective } from "../Perspective";
@@ -30,7 +30,7 @@ function hasErrors(response: any): response is ErrorResponse {
 export abstract class MirrorballBaseCommand<
   ResponseT,
   ParamsT,
-  ArgumentsT extends Arguments = Arguments
+  ArgumentsT extends ArgumentsMap = {}
 > extends BaseCommand<ArgumentsT> {
   abstract connector: Connector<ResponseT, ParamsT>;
   lastFMService = ServiceRegistry.get(LastFMService);
@@ -194,7 +194,7 @@ export abstract class MirrorballBaseCommand<
 export abstract class MirrorballChildCommand<
   ResponseT,
   ParamsT,
-  T extends Arguments
+  T extends ArgumentsMap = {}
 > extends MirrorballBaseCommand<ResponseT, ParamsT, T> {
   shouldBeIndexed = false;
   abstract parentName: string;

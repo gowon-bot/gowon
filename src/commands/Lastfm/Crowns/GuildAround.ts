@@ -1,12 +1,11 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
-import { Arguments } from "../../../lib/arguments/arguments";
 import { LogicError } from "../../../errors";
-import { standardMentions } from "../../../lib/arguments/mentions/mentions";
 import { displayNumber } from "../../../lib/views/displays";
 import { asyncMap } from "../../../helpers";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 
 const args = {
-  mentions: standardMentions,
+  ...standardMentions,
 } as const;
 
 export class GuildAround extends CrownsChildCommand {
@@ -17,7 +16,7 @@ export class GuildAround extends CrownsChildCommand {
     "Ranks a user based on their crown count, and shows the surrounding users";
   usage = ["", "@user"];
 
-  arguments: Arguments = args;
+  arguments = args;
 
   async run() {
     let { discordUser } = await this.parseMentions({

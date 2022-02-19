@@ -108,7 +108,7 @@ export class Can extends BaseService<CanContext> {
     commandID: string
   ): Promise<boolean> {
     const serverID = ctx.guild.id;
-    const channelID = ctx.message.channel.id;
+    const channelID = ctx.payload.channel.id;
 
     let channelBlacklists = await this.gowonService.getChannelBlacklists(
       serverID
@@ -125,7 +125,7 @@ export class Can extends BaseService<CanContext> {
     { useChannel }: { useChannel?: boolean } = { useChannel: false }
   ): Promise<CanCheck> {
     const client = ctx.client;
-    const message = ctx.message as Message;
+    const message = ctx.payload as Message;
 
     if (client.isDeveloper(message.author.id)) return { passed: true };
 
@@ -196,7 +196,7 @@ export class Can extends BaseService<CanContext> {
   }
 
   async viewList(ctx: CanContext, commands: Command[]): Promise<Command[]> {
-    const message = ctx.message;
+    const message = ctx.payload;
 
     const allPermissions = await Permission.find({
       where: { serverID: message.guild?.id! },
@@ -221,7 +221,7 @@ export class Can extends BaseService<CanContext> {
   }
 
   private checkRollout(ctx: CanContext, command: Command) {
-    return checkRollout(command.rollout, ctx.message);
+    return checkRollout(command.rollout, ctx.payload);
   }
 
   private isAdmin(ctx: CanContext): boolean {
