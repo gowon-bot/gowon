@@ -98,9 +98,8 @@ export class DiscordService extends BaseService {
       typeof options?.reply === "object" ? options.reply : {}
     );
 
-    const messageContent = !replyOptions.noUppercase
-      ? ucFirst(content)
-      : content;
+    const messageContent =
+      shouldReply && !replyOptions.noUppercase ? ucFirst(content) : content;
 
     const channel = this.getChannel(ctx, options);
 
