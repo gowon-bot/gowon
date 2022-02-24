@@ -32,7 +32,7 @@ export default class ScrobbleList extends MirrorballBaseCommand<
 > {
   connector = new ScrobbleListConnector();
 
-  idSeed = "shasha hwi a";
+  idSeed = "pink fantasy heesu";
 
   aliases = ["sli"];
 

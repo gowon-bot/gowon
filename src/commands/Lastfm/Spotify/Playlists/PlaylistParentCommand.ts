@@ -1,3 +1,4 @@
+import { BetaAccess } from "../../../../lib/command/access/access";
 import { CommandGroup } from "../../../../lib/command/CommandGroup";
 import { SpotifyBaseParentCommand } from "../SpotifyBaseCommands";
 import { Add } from "./Add";
@@ -11,6 +12,8 @@ export default class PlaylistParentCommand extends SpotifyBaseParentCommand {
   subcategory = "playlists";
   description = "Allows you to view, tag, and manage your Spotify playlists";
   friendlyName = "playlists";
+
+  access = new BetaAccess();
 
   noPrefixAliases = [];
 

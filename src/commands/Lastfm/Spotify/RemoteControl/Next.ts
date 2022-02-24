@@ -1,18 +1,15 @@
-import { Arguments } from "../../../../lib/arguments/arguments";
 import { AuthenticatedSpotifyBaseCommand } from "../SpotifyBaseCommands";
 
-const args = {} as const;
-
-export default class Next extends AuthenticatedSpotifyBaseCommand<typeof args> {
-  idSeed = "dreamnote habin";
+export default class Next extends AuthenticatedSpotifyBaseCommand {
+  idSeed = "billlie haruna";
 
   description = "Skips a song in Spotify";
   aliases = ["skip"];
 
-  arguments: Arguments = args;
-
   async run() {
-    await this.getMentions({ fetchSpotifyToken: true });
+    const { dbUser } = await this.getMentions({ fetchSpotifyToken: true });
+
+    this.access.checkAndThrow(dbUser);
 
     await this.spotifyService.next(this.ctx);
 

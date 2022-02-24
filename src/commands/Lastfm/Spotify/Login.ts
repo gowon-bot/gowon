@@ -1,19 +1,18 @@
 import { SpotifyWebhookService } from "../../../api/webhooks/SpotifyWebhookService";
-import { Arguments } from "../../../lib/arguments/arguments";
+import { BetaAccess } from "../../../lib/command/access/access";
 import { displayLink } from "../../../lib/views/displays";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { SpotifyAuthenticationService } from "../../../services/Spotify/SpotifyAuthenticationService";
 import { SpotifyBaseCommand } from "./SpotifyBaseCommands";
 
-const args = {} as const;
-
-export default class Login extends SpotifyBaseCommand<typeof args> {
-  idSeed = "dreamnote boni";
+export default class Login extends SpotifyBaseCommand {
+  idSeed = "pink fantasy miku";
 
   description = "Connect your Spotify account to Gowon";
   aliases = ["spotifylogin", "slogin"];
 
-  arguments: Arguments = args;
+  access = new BetaAccess();
+  customContext = { mutable: {} };
 
   spotifyAuthenticationService = ServiceRegistry.get(
     SpotifyAuthenticationService
@@ -21,6 +20,10 @@ export default class Login extends SpotifyBaseCommand<typeof args> {
   spotifyWebhookService = SpotifyWebhookService.getInstance();
 
   async run() {
+    const { dbUser } = await this.getMentions();
+
+    this.access.checkAndThrow(dbUser);
+
     await this.send(
       this.newEmbed()
         .setAuthor(this.generateEmbedAuthor("Spotify login"))

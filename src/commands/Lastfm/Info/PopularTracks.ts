@@ -38,25 +38,21 @@ export default class PopularTracks extends InfoCommand<typeof args> {
       `Top tracks for ${topTracks.tracks[0]?.artist?.name || artist}`
     );
 
-    const scrollingEmbed = new SimpleScrollingEmbed(
-      this.message,
-      embed,
-      {
-        items: topTracks.tracks,
-        pageSize: 10,
+    const scrollingEmbed = new SimpleScrollingEmbed(this.message, embed, {
+      items: topTracks.tracks,
+      pageSize: 10,
 
-        pageRenderer(items, { offset }) {
-          return displayNumberedList(
-            items.map(
-              (t) =>
-                `${t.name.strong()} (${displayNumber(t.listeners, "listener")})`
-            ),
-            offset
-          );
-        },
+      pageRenderer(items, { offset }) {
+        return displayNumberedList(
+          items.map(
+            (t) =>
+              `${t.name.strong()} (${displayNumber(t.listeners, "listener")})`
+          ),
+          offset
+        );
       },
-      { itemName: "track" }
-    );
+      overrides: { itemName: "track" },
+    });
 
     scrollingEmbed.send();
   }

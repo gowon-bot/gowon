@@ -22,6 +22,8 @@ export default class AlbumInfo extends InfoCommand<typeof args> {
 
   arguments = args;
 
+  customContext = { mutable: {} };
+
   lineConsolidator = new LineConsolidator();
 
   async run() {

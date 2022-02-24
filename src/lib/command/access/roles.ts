@@ -23,6 +23,7 @@ export const roles = {
     friendlyName: "Alpha tester",
     name: "alphatester",
     permissions: [] as readonly CommandPermission[],
+    extends: ["betatester"],
   },
   betatester: {
     friendlyName: "Beta tester",

@@ -1,13 +1,11 @@
 import { LogicError } from "../../../../errors";
-import { Arguments } from "../../../../lib/arguments/arguments";
+import { StringArgument } from "../../../../lib/context/arguments/argumentTypes/StringArgument";
 import { Validation } from "../../../../lib/validation/ValidationChecker";
 import { validators } from "../../../../lib/validation/validators";
 import { PlaylistChildCommand } from "./PlaylistChildCommand";
 
 const args = {
-  inputs: {
-    playlistName: { index: { start: 0 } },
-  },
+  playlistName: new StringArgument({ index: { start: 0 } }),
 } as const;
 
 export class SetDefault extends PlaylistChildCommand<typeof args> {
@@ -17,7 +15,7 @@ export class SetDefault extends PlaylistChildCommand<typeof args> {
 
   description = "Sets one of your playlists as the default";
 
-  arguments: Arguments = args;
+  arguments = args;
 
   validation: Validation = {
     emoji: new validators.LengthRange({
@@ -31,7 +29,9 @@ export class SetDefault extends PlaylistChildCommand<typeof args> {
   };
 
   async run() {
-    await this.getMentions({ fetchSpotifyToken: true });
+    const { dbUser } = await this.getMentions({ fetchSpotifyToken: true });
+
+    this.access.checkAndThrow(dbUser);
 
     const playlistName = this.parsedArguments.playlistName!;
 

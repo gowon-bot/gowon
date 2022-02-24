@@ -1,17 +1,24 @@
 import { stringify } from "querystring";
-import { BaseServiceContext } from "../BaseService";
 import { UsersService } from "../dbservices/UsersService";
 import { ServiceRegistry } from "../ServicesRegistry";
-import { SpotifyService } from "./SpotifyService";
+import { SpotifyService, SpotifyServiceContext } from "./SpotifyService";
 import { SpotifyAuthUser, SpotifyCode } from "./SpotifyService.types";
 import config from "../../../config.json";
 import { Chance } from "chance";
-import { RedisService } from "../redis/RedisService";
+import {
+  RedisService,
+  RedisServiceContextOptions,
+} from "../redis/RedisService";
 import { BaseSpotifyService } from "./BaseSpotifyService";
 import { NotAuthenticatedWithSpotifyError } from "../../errors";
 import { SpotifyToken } from "./converters/Auth";
+import { GowonContext } from "../../lib/context/Context";
 
-export class SpotifyAuthenticationService extends BaseSpotifyService {
+type SpotifyAuthenticationServiceContext = GowonContext<{
+  constants?: { redisOptions?: RedisServiceContextOptions };
+}>;
+
+export class SpotifyAuthenticationService extends BaseSpotifyService<SpotifyAuthenticationServiceContext> {
   private readonly scope = [
     "playlist-modify-public",
     "user-library-modify",
@@ -22,7 +29,7 @@ export class SpotifyAuthenticationService extends BaseSpotifyService {
   ].join(" ");
 
   customContext = {
-    prefix: "spotify-token",
+    constants: { redisOptions: { prefix: "spotify-token" } },
   };
 
   get spotifyService() {
@@ -54,7 +61,7 @@ export class SpotifyAuthenticationService extends BaseSpotifyService {
   }
 
   async handleSpotifyCodeResponse(
-    ctx: BaseServiceContext,
+    ctx: SpotifyServiceContext,
     user: SpotifyAuthUser,
     code: SpotifyCode
   ) {
@@ -63,7 +70,7 @@ export class SpotifyAuthenticationService extends BaseSpotifyService {
   }
 
   async getTokenForUser(
-    ctx: BaseServiceContext,
+    ctx: SpotifyServiceContext,
     discordID: string
   ): Promise<SpotifyToken> {
     const tokenString = await this.redisService.get(this.ctx(ctx), discordID);
@@ -90,7 +97,7 @@ export class SpotifyAuthenticationService extends BaseSpotifyService {
   }
 
   private async saveTokenToRedis(
-    ctx: BaseServiceContext,
+    ctx: SpotifyServiceContext,
     discordID: string,
     token: SpotifyToken
   ) {

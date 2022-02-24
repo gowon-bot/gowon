@@ -1,13 +1,10 @@
 import { LogicError } from "../../../errors";
-import { Arguments } from "../../../lib/arguments/arguments";
 import { Variation } from "../../../lib/command/BaseCommand";
+import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 import { AuthenticatedSpotifyBaseCommand } from "./SpotifyBaseCommands";
 
 const args = {
-  inputs: {
-    artist: { index: 0, splitOn: "|" },
-    track: { index: 1, splitOn: "|" },
-  },
+  ...prefabArguments.track,
 } as const;
 
 export default class Like extends AuthenticatedSpotifyBaseCommand<typeof args> {
@@ -24,14 +21,16 @@ export default class Like extends AuthenticatedSpotifyBaseCommand<typeof args> {
     },
   ];
 
-  arguments: Arguments = args;
+  arguments = args;
 
   async run() {
     const unlike = this.variationWasUsed("unlike");
 
-    const { senderRequestable } = await this.getMentions({
+    const { senderRequestable, dbUser } = await this.getMentions({
       fetchSpotifyToken: true,
     });
+
+    this.access.checkAndThrow(dbUser);
 
     const track = await this.spotifyArguments.getTrack(
       this.ctx,

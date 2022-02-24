@@ -55,7 +55,9 @@ export class EmojisArgument extends BaseArgument<
         break;
     }
 
-    return this.getElementFromIndex(emojis, this.options.index);
+    const element = this.getElementFromIndex(emojis, this.options.index);
+
+    return element instanceof Array ? element : [element];
   }
 
   parseFromInteraction() {

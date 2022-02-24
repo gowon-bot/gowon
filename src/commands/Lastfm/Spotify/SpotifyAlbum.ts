@@ -1,8 +1,8 @@
 import { LogicError } from "../../../errors";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
-import { SpotifyBaseCommand } from "./SpotifyBaseCommand";
 import { SpotifySearchParams } from "../../../services/Spotify/SpotifyService";
+import { SpotifyBaseCommand } from "./SpotifyBaseCommands";
 
 const args = {
   ...standardMentions,

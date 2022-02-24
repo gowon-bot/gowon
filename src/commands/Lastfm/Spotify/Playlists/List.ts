@@ -1,4 +1,3 @@
-import { Arguments } from "../../../../lib/arguments/arguments";
 import {
   displayNumber,
   displayNumberedList,
@@ -6,30 +5,15 @@ import {
 import { SimpleScrollingEmbed } from "../../../../lib/views/embeds/SimpleScrollingEmbed";
 import { PlaylistChildCommand } from "./PlaylistChildCommand";
 
-const args = {
-  flags: {
-    private: {
-      description: "Shows your private playlists",
-      shortnames: ["p"],
-      longnames: ["private"],
-    },
-    tagged: {
-      description: "Shows only your tagged playlists",
-      shortnames: ["t"],
-      longnames: ["tagged"],
-    },
-  },
-} as const;
-
-export class List extends PlaylistChildCommand<typeof args> {
+export class List extends PlaylistChildCommand {
   idSeed = "pink fantasy yechan";
 
   description = "Lists your Spotify playlists";
 
-  arguments: Arguments = args;
-
   async run() {
     const { dbUser } = await this.getMentions({ fetchSpotifyToken: true });
+
+    this.access.checkAndThrow(dbUser);
 
     const playlists = await this.spotifyService.getPlaylists(this.ctx);
 
@@ -45,24 +29,19 @@ export class List extends PlaylistChildCommand<typeof args> {
 
     const embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor("Spotify playlists"))
-      .setTitle(
-        `Your public${
-          this.parsedArguments.private ? " and private" : ""
-        } Spotify playlists`
-      );
+      .setTitle(`Your Spotify playlists`);
 
     const simpleScrollingEmbed = new SimpleScrollingEmbed(this.message, embed, {
-      items: playlists.items
-        .filter((p) => this.parsedArguments.private || p.isPublic)
-        .filter((p) => !this.parsedArguments.tagged || p.tag),
+      items: playlists.items,
       pageSize: 15,
       pageRenderer(items, { offset }) {
         return displayNumberedList(
           items.map(
             (p) =>
-              `${p.tag?.emoji || "◻️"} ${
-                defaultPlaylist?.playlistID === p.id ? "**default** — " : ""
-              }${p.name.strong()} (${displayNumber(p.tracksCount, "track")})`
+              `${p.tag?.emoji || "◻️"} ${p.name.strong()} (${displayNumber(
+                p.tracksCount,
+                "track"
+              )}) ${defaultPlaylist?.playlistID === p.id ? "— *default*" : ""}`
           ),
           offset
         );

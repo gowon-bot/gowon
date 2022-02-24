@@ -57,7 +57,7 @@ export function isKeywords(
   return !!(params as Keywords).keywords;
 }
 
-export class SpotifyService extends BaseSpotifyService {
+export class SpotifyService extends BaseSpotifyService<SpotifyServiceContext> {
   private token?: SpotifyToken;
 
   generateURI<T extends SpotifyEntityName>(
@@ -277,32 +277,6 @@ export class SpotifyService extends BaseSpotifyService {
     });
   }
 
-  getImageFromSearchItem(si: SearchItem): string {
-    return (
-      si.images.sort((a, b) => b.height * b.width - a.height * a.width)[0]
-        ?.url || ""
-    );
-  }
-
-  private compare(string1: string, string2: string) {
-    return (
-      this.cleanBadTags(string1).toLowerCase().trim() ===
-      this.cleanBadTags(string2).toLowerCase().trim()
-    );
-  }
-
-  private cleanBadTags(string: string): string {
-    return (
-      string
-        // To do: replace this with a service that contains all the bad tags (that is easy to add to)
-        .replaceAll(
-          /(- Remastered .*| - Deluxe| - Single Version| - Album Version)/g,
-          ""
-        )
-        .replaceAll(/'"`‘’:/g, "")
-    );
-  }
-
   private ensureAuthenticated(ctx: SpotifyServiceContext) {
     if (!ctx.mutable.spotifyToken) {
       throw new NotAuthenticatedWithSpotifyError(ctx.command.prefix);
@@ -338,6 +312,21 @@ export class SpotifyService extends BaseSpotifyService {
     return await this.request(ctx, {
       path: `playlists/${playlistID}/tracks`,
       method: "POST",
+      params: { uris },
+      useBody: true,
+    });
+  }
+
+  async removeFromPlaylist(
+    ctx: SpotifyServiceContext,
+    playlistID: string,
+    uris: RawSpotifyURI<"track">[]
+  ): Promise<SpotifySnapshot> {
+    this.ensureAuthenticated(ctx);
+
+    return await this.request(ctx, {
+      path: `playlists/${playlistID}/tracks`,
+      method: "DELETE",
       params: { uris },
       useBody: true,
     });

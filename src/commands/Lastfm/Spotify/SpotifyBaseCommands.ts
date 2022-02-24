@@ -2,9 +2,13 @@ import {
   GetMentionsOptions,
   GetMentionsReturn,
 } from "../../../helpers/getMentions";
-import { Arguments } from "../../../lib/arguments/arguments";
-import { ArgumentName } from "../../../lib/command/ArgumentType";
+import { BetaAccess } from "../../../lib/command/access/access";
+import {
+  ArgumentName,
+  ArgumentsMap,
+} from "../../../lib/context/arguments/types";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
+import { SpotifyToken } from "../../../services/Spotify/converters/Auth";
 import { SpotifyArguments } from "../../../services/Spotify/SpotifyArguments";
 import { SpotifyAuthenticationService } from "../../../services/Spotify/SpotifyAuthenticationService";
 import {
@@ -17,7 +21,7 @@ import {
 } from "../LastFMBaseCommand";
 
 export abstract class SpotifyBaseCommand<
-  T extends Arguments = Arguments
+  T extends ArgumentsMap = {}
 > extends LastFMBaseCommand<T> {
   subcategory = "spotify";
   spotifyService = ServiceRegistry.get(SpotifyService);
@@ -29,19 +33,24 @@ export abstract class SpotifyBaseCommand<
 }
 
 export abstract class AuthenticatedSpotifyBaseCommand<
-  T extends Arguments = Arguments
+  T extends ArgumentsMap = {}
 > extends SpotifyBaseCommand<T> {
   spotifyAuthenticationService = ServiceRegistry.get(
     SpotifyAuthenticationService
   );
+
+  access = new BetaAccess();
+
+  customContext = { mutable: {} };
 
   private async fetchToken(discordID?: string) {
     const token = await this.spotifyAuthenticationService.getTokenForUser(
       this.ctx,
       discordID || this.author.id
     );
-
-    this.ctx.spotifyToken = token;
+    this.mutableContext<{
+      spotifyToken?: SpotifyToken;
+    }>().mutable.spotifyToken = token;
   }
 
   async getMentions(
@@ -60,7 +69,7 @@ export abstract class SpotifyBaseParentCommand extends LastFMBaseParentCommand {
 }
 
 export abstract class SpotifyBaseChildCommand<
-  T extends Arguments = Arguments
+  T extends ArgumentsMap = {}
 > extends AuthenticatedSpotifyBaseCommand<T> {
   shouldBeIndexed = false;
   abstract parentName: string;

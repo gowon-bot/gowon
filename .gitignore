@@ -12,3 +12,4 @@ config.json
 ormconfig.json
 
 docker-compose.*.yml
+Dockerfile.dev

@@ -1,11 +1,13 @@
+import { GowonContext } from "../../lib/context/Context";
 import { ConfirmationEmbed } from "../../lib/views/embeds/ConfirmationEmbed";
-import { BaseService, BaseServiceContext } from "../BaseService";
+import { BaseService } from "../BaseService";
 import { Requestable } from "../LastFM/LastFMAPIService";
 import {
   LastFMArguments,
   LastFMArgumentsMutableContext,
 } from "../LastFM/LastFMArguments";
 import { ServiceRegistry } from "../ServicesRegistry";
+import { SpotifyToken } from "./converters/Auth";
 import { SpotifyURI } from "./converters/BaseConverter";
 import { SpotifyTrack } from "./converters/Track";
 import { SpotifyService } from "./SpotifyService";
@@ -14,11 +16,11 @@ interface GetTrackOptions {
   confirm: boolean;
 }
 
-type SpotifyArgumentsMutableContext = LastFMArgumentsMutableContext;
+type SpotifyArgumentsContext = GowonContext<{
+  mutable: LastFMArgumentsMutableContext & { spotifyToken?: SpotifyToken };
+}>;
 
-export class SpotifyArguments extends BaseService<
-  BaseServiceContext & SpotifyArgumentsMutableContext
-> {
+export class SpotifyArguments extends BaseService<SpotifyArgumentsContext> {
   private readonly spotifyLinkRegex =
     /https:\/\/open\.spotify\.com\/track\/([\w]+)\/?/i;
 
@@ -31,7 +33,7 @@ export class SpotifyArguments extends BaseService<
   }
 
   async getTrack(
-    ctx: BaseServiceContext & SpotifyArgumentsMutableContext,
+    ctx: SpotifyArgumentsContext,
     requestable: Requestable,
     options: Partial<GetTrackOptions> = {}
   ): Promise<SpotifyTrack | undefined> {
@@ -43,7 +45,7 @@ export class SpotifyArguments extends BaseService<
   }
 
   private async getTrackFromReplied(
-    ctx: BaseServiceContext
+    ctx: SpotifyArgumentsContext
   ): Promise<SpotifyTrack | undefined> {
     const replied = await ctx.command.getRepliedMessage();
 
@@ -57,7 +59,7 @@ export class SpotifyArguments extends BaseService<
   }
 
   private async getTrackFromMessageInput(
-    ctx: BaseServiceContext & SpotifyArgumentsMutableContext,
+    ctx: SpotifyArgumentsContext,
     requestable: Requestable,
     options: Partial<GetTrackOptions>
   ) {
@@ -98,7 +100,7 @@ export class SpotifyArguments extends BaseService<
   }
 
   private async confirmTrack(
-    ctx: BaseServiceContext,
+    ctx: SpotifyArgumentsContext,
     track: SpotifyTrack
   ): Promise<boolean> {
     const embed = ctx.command
@@ -115,6 +117,6 @@ export class SpotifyArguments extends BaseService<
       embed
     ).withRejectionReact();
 
-    return await confirmationEmbed.awaitConfirmation();
+    return await confirmationEmbed.awaitConfirmation(ctx);
   }
 }

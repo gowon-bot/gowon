@@ -1,26 +1,14 @@
 import { LogicError } from "../../../../errors";
-import { Arguments } from "../../../../lib/arguments/arguments";
-import {
-  EmojiParser,
-  removeEmojisFromString,
-} from "../../../../lib/arguments/custom/EmojiParser";
+import { EmojisArgument } from "../../../../lib/context/arguments/argumentTypes/discord/EmojisArgument";
+import { StringArgument } from "../../../../lib/context/arguments/argumentTypes/StringArgument";
+import { removeEmojisFromString } from "../../../../lib/context/arguments/parsers/EmojiParser";
 import { Validation } from "../../../../lib/validation/ValidationChecker";
 import { validators } from "../../../../lib/validation/validators";
 import { PlaylistChildCommand } from "./PlaylistChildCommand";
 
 const args = {
-  inputs: {
-    emoji: {
-      index: 0,
-      custom(messageString: string) {
-        return new EmojiParser(messageString).parseAll();
-      },
-    },
-    playlistName: {
-      index: { start: 0 },
-      preprocessor: removeEmojisFromString,
-    },
-  },
+  emoji: new EmojisArgument(),
+  playlistName: new StringArgument({ preprocessor: removeEmojisFromString }),
 } as const;
 
 export class Tag extends PlaylistChildCommand<typeof args> {
@@ -28,7 +16,7 @@ export class Tag extends PlaylistChildCommand<typeof args> {
 
   description = "Tags one of your playlists with an emoji";
 
-  arguments: Arguments = args;
+  arguments = args;
 
   validation: Validation = {
     emoji: new validators.LengthRange({
@@ -43,6 +31,8 @@ export class Tag extends PlaylistChildCommand<typeof args> {
 
   async run() {
     const { dbUser } = await this.getMentions({ fetchSpotifyToken: true });
+
+    this.access.checkAndThrow(dbUser);
 
     const playlistName = this.parsedArguments.playlistName!,
       [emoji] = this.parsedArguments.emoji!;

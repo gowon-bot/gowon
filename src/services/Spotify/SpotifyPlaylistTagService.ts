@@ -1,10 +1,11 @@
 import { In } from "typeorm";
 import { SpotifyPlaylistTag } from "../../database/entity/SpotifyPlaylistTag";
 import { User } from "../../database/entity/User";
-import { EmojiMention } from "../../lib/arguments/custom/EmojiParser";
-import { SettingsService } from "../../lib/settings/SettingsManager";
+import { EmojiMention } from "../../lib/context/arguments/parsers/EmojiParser";
+import { GowonContext } from "../../lib/context/Context";
+import { SettingsService } from "../../lib/settings/SettingsService";
 import { displayNumber } from "../../lib/views/displays";
-import { BaseService, BaseServiceContext } from "../BaseService";
+import { BaseService } from "../BaseService";
 import { ServiceRegistry } from "../ServicesRegistry";
 import { SpotifyPlaylist } from "./converters/Playlist";
 
@@ -14,7 +15,7 @@ export class SpotifyPlaylistTagService extends BaseService {
   }
 
   async tagPlaylist(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     user: User,
     creationOptions: { playlistID: string; playlistName: string; emoji: string }
   ): Promise<SpotifyPlaylistTag> {
@@ -43,7 +44,7 @@ export class SpotifyPlaylistTagService extends BaseService {
   }
 
   async getPlaylistFromTag(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     user: User,
     tag?: EmojiMention
   ): Promise<SpotifyPlaylistTag | undefined> {
@@ -58,7 +59,7 @@ export class SpotifyPlaylistTagService extends BaseService {
   }
 
   async getTagsForPlaylists(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     user: User,
     playlists: SpotifyPlaylist[]
   ) {
@@ -82,7 +83,7 @@ export class SpotifyPlaylistTagService extends BaseService {
   }
 
   async setPlaylistAsDefault(
-    ctx: BaseServiceContext,
+    ctx: GowonContext,
     playlist: SpotifyPlaylist
   ): Promise<void> {
     const stringifiedPlaylist = JSON.stringify({
@@ -101,7 +102,7 @@ export class SpotifyPlaylistTagService extends BaseService {
     );
   }
 
-  getDefaultPlaylist(ctx: BaseServiceContext): SpotifyPlaylistTag | undefined {
+  getDefaultPlaylist(ctx: GowonContext): SpotifyPlaylistTag | undefined {
     this.log(
       ctx,
       `Fetching default Spotify playlist for user ${ctx.command.message.author.id}`

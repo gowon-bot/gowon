@@ -1,30 +1,29 @@
 import { LogicError } from "../../../../errors";
-import { Arguments } from "../../../../lib/arguments/arguments";
-import {
-  EmojiParser,
-  removeEmojisFromString,
-} from "../../../../lib/arguments/custom/EmojiParser";
 import { Variation } from "../../../../lib/command/BaseCommand";
+import { EmojisArgument } from "../../../../lib/context/arguments/argumentTypes/discord/EmojisArgument";
+import { Flag } from "../../../../lib/context/arguments/argumentTypes/Flag";
+import { StringArgument } from "../../../../lib/context/arguments/argumentTypes/StringArgument";
+import { removeEmojisFromString } from "../../../../lib/context/arguments/parsers/EmojiParser";
 import { PlaylistChildCommand } from "./PlaylistChildCommand";
 
 const args = {
-  inputs: {
-    playlistTag: {
-      index: 0,
-      custom(messageString: string) {
-        return new EmojiParser(messageString).parseAll();
-      },
-    },
-    artist: { index: 0, splitOn: "|", preprocessor: removeEmojisFromString },
-    track: { index: 1, splitOn: "|", preprocessor: removeEmojisFromString },
-  },
-  flags: {
-    private: {
-      description: "Shows your private playlists",
-      shortnames: ["p"],
-      longnames: ["private"],
-    },
-  },
+  playlistTag: new EmojisArgument(),
+  artist: new StringArgument({
+    index: 0,
+    splitOn: "|",
+    preprocessor: removeEmojisFromString,
+  }),
+  track: new StringArgument({
+    index: 1,
+    splitOn: "|",
+    preprocessor: removeEmojisFromString,
+  }),
+
+  private: new Flag({
+    description: "Shows your private playlists",
+    shortnames: ["p"],
+    longnames: ["private"],
+  }),
 } as const;
 
 export class Add extends PlaylistChildCommand<typeof args> {
@@ -40,7 +39,7 @@ export class Add extends PlaylistChildCommand<typeof args> {
     },
   ];
 
-  arguments: Arguments = args;
+  arguments = args;
 
   async run() {
     const remove = this.variationWasUsed("remove");
@@ -49,6 +48,8 @@ export class Add extends PlaylistChildCommand<typeof args> {
     const { senderRequestable, dbUser } = await this.getMentions({
       fetchSpotifyToken: true,
     });
+
+    this.access.checkAndThrow(dbUser);
 
     const playlistTag = await this.spotifyPlaylistTagService.getPlaylistFromTag(
       this.ctx,
