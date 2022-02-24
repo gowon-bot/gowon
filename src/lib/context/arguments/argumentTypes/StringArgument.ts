@@ -1,7 +1,5 @@
 import { Message } from "discord.js";
 import escapeStringRegexp from "escape-string-regexp";
-import { GowonService } from "../../../../services/GowonService";
-import { ServiceRegistry } from "../../../../services/ServicesRegistry";
 import { GowonContext } from "../../Context";
 import {
   BaseArgument,
@@ -23,10 +21,6 @@ export class StringArgument extends BaseArgument<
   string,
   StringArgumentOptions
 > {
-  get gowonService() {
-    return ServiceRegistry.get(GowonService);
-  }
-
   constructor(options: Partial<StringArgumentOptions> = {}) {
     super(
       defaultIndexableOptions,
@@ -36,12 +30,8 @@ export class StringArgument extends BaseArgument<
     );
   }
 
-  parseFromMessage(_: Message, content: string, context: GowonContext): string {
-    const cleanContent = this.gowonService.removeCommandName(
-      content,
-      context.runAs,
-      context.guild.id
-    );
+  parseFromMessage(_: Message, content: string, ctx: GowonContext): string {
+    const cleanContent = this.cleanContent(ctx, content);
 
     if (this.options.match.length) {
       const regex = new RegExp(

@@ -20,12 +20,8 @@ export class DateArgument extends BaseArgument<Date, DateArgumentOptions> {
     });
   }
 
-  parseFromMessage(_: Message, content: string, context: GowonContext): Date {
-    const cleanContent = this.gowonService.removeCommandName(
-      content,
-      context.runAs,
-      context.guild.id
-    );
+  parseFromMessage(_: Message, content: string, ctx: GowonContext): Date {
+    const cleanContent = this.cleanContent(ctx, content);
 
     return parseDate(cleanContent, ...this.options.parsers)!;
   }

@@ -25,16 +25,8 @@ export class TimeRangeArgument extends BaseArgument<
     super(options);
   }
 
-  parseFromMessage(
-    _: Message,
-    content: string,
-    context: GowonContext
-  ): TimeRange {
-    const cleanContent = this.gowonService.removeCommandName(
-      content,
-      context.runAs,
-      context.guild.id
-    );
+  parseFromMessage(_: Message, content: string, ctx: GowonContext): TimeRange {
+    const cleanContent = this.cleanContent(ctx, content);
 
     return this.timeRangeParser.parse(cleanContent)!;
   }

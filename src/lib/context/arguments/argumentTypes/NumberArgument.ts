@@ -26,12 +26,8 @@ export class NumberArgument extends BaseArgument<
     super(defaultIndexableOptions, options);
   }
 
-  parseFromMessage(_: Message, content: string, context: GowonContext): number {
-    const cleanContent = this.gowonService.removeCommandName(
-      content,
-      context.runAs,
-      context.guild.id
-    );
+  parseFromMessage(_: Message, content: string, ctx: GowonContext): number {
+    const cleanContent = this.cleanContent(ctx, content);
 
     const split = this.filterTimeRanges(cleanContent.split(/\s+/));
 

@@ -27,13 +27,9 @@ export class TimePeriodArgument extends BaseArgument<
   parseFromMessage(
     _: Message,
     content: string,
-    context: GowonContext
+    ctx: GowonContext
   ): LastFMPeriod {
-    const cleanContent = this.gowonService.removeCommandName(
-      content,
-      context.runAs,
-      context.guild.id
-    );
+    const cleanContent = this.cleanContent(ctx, content);
 
     return this.timePeriodParser.parse(cleanContent)!;
   }

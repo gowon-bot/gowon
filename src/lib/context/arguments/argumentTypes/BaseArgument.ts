@@ -2,6 +2,8 @@ import { Interaction, Message } from "discord.js";
 import { toInt } from "../../../../helpers/lastFM";
 import { Slice } from "../types";
 import { GowonContext } from "../../Context";
+import { ServiceRegistry } from "../../../../services/ServicesRegistry";
+import { GowonService } from "../../../../services/GowonService";
 
 type GetElementFromIndexOptions = {
   join?: boolean;
@@ -18,6 +20,10 @@ export abstract class BaseArgument<ReturnT, OptionsT = {}> {
   public mention = false;
   public options: OptionsT;
 
+  get gowonService() {
+    return ServiceRegistry.get(GowonService);
+  }
+
   constructor(...options: Partial<OptionsT>[]) {
     this.options = {} as any;
 
@@ -31,10 +37,21 @@ export abstract class BaseArgument<ReturnT, OptionsT = {}> {
     content: string,
     context: GowonContext
   ): ReturnT;
+
   abstract parseFromInteraction(
     interaction: Interaction,
     context: GowonContext
   ): ReturnT;
+
+  protected cleanContent(ctx: GowonContext, content: string) {
+    const cleanContent = this.gowonService.removeCommandName(
+      content,
+      ctx.runAs,
+      ctx.guild.id
+    );
+
+    return cleanContent.replace(/<(@|#)(!|&)?[0-9]+>/g, "");
+  }
 
   protected getElementFromIndex(
     array: Array<any>,

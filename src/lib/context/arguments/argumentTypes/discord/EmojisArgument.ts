@@ -30,13 +30,9 @@ export class EmojisArgument extends BaseArgument<
   parseFromMessage(
     _: Message,
     content: string,
-    context: GowonContext
+    ctx: GowonContext
   ): EmojiMention[] {
-    const cleanContent = this.gowonService.removeCommandName(
-      content,
-      context.runAs,
-      context.guild.id
-    );
+    const cleanContent = this.cleanContent(ctx, content);
 
     let emojis: EmojiMention[] = [];
 
