@@ -1,49 +1,106 @@
-import fetch from "node-fetch";
-import { BaseService } from "../BaseService";
+import fetch, { Response } from "node-fetch";
 import config from "../../../config.json";
 import { URLSearchParams } from "url";
-import { add, isBefore } from "date-fns";
 import { stringify } from "querystring";
 import {
-  SearchItem,
-  SearchResponse,
-  SpotifyEntity,
-  SpotifyToken,
+  RawSearchResponse,
+  SpotifyEntityName,
+  RawSpotifyTrack,
+  RawSpotifyURI,
+  RawSpotifyArtist,
+  RawSpotifyAlbum,
+  RawBaseSpotifyEntity,
+  RawSpotifyItemCollection,
+  RawSpotifyPlaylist,
+  SpotifySnapshot,
 } from "./SpotifyService.types";
 import { SimpleMap } from "../../helpers/types";
-import { SpotifyConnectionError } from "../../errors";
+import {
+  NotAuthenticatedWithSpotifyError,
+  SpotifyConnectionError,
+} from "../../errors";
 import { Logger } from "../../lib/Logger";
 import { GowonContext } from "../../lib/context/Context";
+import { BaseSpotifyService } from "./BaseSpotifyService";
+import {
+  SpotifyAlbumSearch,
+  SpotifyArtistSearch,
+  SpotifyTrackSearch,
+} from "./converters/Search";
+import { SpotifyID, SpotifyURI } from "./converters/BaseConverter";
+import { SpotifyTrack } from "./converters/Track";
+import { SpotifyItemCollection } from "./converters/ItemCollection";
+import { SpotifyPlaylist } from "./converters/Playlist";
+import { SpotifyToken } from "./converters/Auth";
 
-export class SpotifyService extends BaseService {
-  url = "https://api.spotify.com/v1/";
-  tokenURL = "https://accounts.spotify.com/api/token";
+export type SpotifyServiceContext = GowonContext<{
+  mutable: { spotifyToken?: SpotifyToken };
+}>;
 
-  private _token?: SpotifyToken;
-  private tokenFetchedAt = new Date();
+interface SpotifyRequestOptions {
+  path: string;
+  params?: SimpleMap;
+  method?: "POST" | "GET" | "PUT" | "DELETE";
+  useBody?: boolean;
+  expectNoContent?: boolean;
+}
 
-  private tokenIsValid(token: SpotifyToken): boolean {
-    const dateExpires = add(this.tokenFetchedAt, {
-      seconds: token.expires_in - 5,
-    });
+interface Keywords {
+  keywords: string;
+}
 
-    return isBefore(new Date(), dateExpires);
+export type SpotifySearchParams<T extends object> = Keywords | T;
+
+export function isKeywords(
+  params: SpotifySearchParams<any>
+): params is Keywords {
+  return !!(params as Keywords).keywords;
+}
+
+export class SpotifyService extends BaseSpotifyService<SpotifyServiceContext> {
+  private token?: SpotifyToken;
+
+  generateURI<T extends SpotifyEntityName>(
+    entity: T,
+    id: string
+  ): SpotifyURI<T> {
+    return new SpotifyURI(`spotify:${entity}:${id}`);
   }
 
-  private async token(ctx: GowonContext): Promise<string> {
-    if (this._token && this.tokenIsValid(this._token)) {
-      return this._token.access_token;
+  private async tokenString(ctx: SpotifyServiceContext): Promise<string> {
+    if (this.token && !this.token.isExpired()) {
+      return this.token.accessToken;
     } else {
       const token = await this.fetchToken(ctx);
-      this._token = token;
-      return token.access_token;
+      this.token = token;
+      return token.accessToken;
     }
   }
 
-  private async fetchToken(ctx: GowonContext): Promise<SpotifyToken> {
-    this.log(ctx, "fetching new token");
+  async fetchToken(
+    ctx: SpotifyServiceContext,
+    options: { code?: string; refreshToken?: string } = {}
+  ): Promise<SpotifyToken> {
+    this.log(
+      ctx,
+      options.refreshToken
+        ? "refreshing user token"
+        : options.code
+        ? "fetching new user token"
+        : "fetching new token"
+    );
     const params = new URLSearchParams();
-    params.append("grant_type", "client_credentials");
+
+    if (options.refreshToken) {
+      params.append("grant_type", "refresh_token");
+      params.append("refresh_token", options.refreshToken);
+    } else if (options.code) {
+      params.append("grant_type", "authorization_code");
+      params.append("redirect_uri", this.generateRedirectURI());
+      params.append("code", options.code);
+    } else {
+      params.append("grant_type", "client_credentials");
+    }
 
     const response = await fetch(this.tokenURL, {
       method: "POST",
@@ -53,113 +110,261 @@ export class SpotifyService extends BaseService {
           config.spotifyClientID,
           config.spotifyClientSecret
         ),
+        "Content-Type": "application/x-www-form-urlencoded",
       },
     });
 
     const jsonResponse = await response.json();
 
-    this.tokenFetchedAt = new Date();
+    const token = new SpotifyToken({
+      // Refresh token must come before ...jsonResponse otherwise
+      // undefined will overwrite the real token
+      refresh_token: options.refreshToken,
+      code: options.code,
+      ...jsonResponse,
+    });
 
-    return jsonResponse as SpotifyToken;
+    if (jsonResponse.error) {
+      throw new SpotifyConnectionError(ctx.command.prefix);
+    }
+
+    return token;
   }
 
-  private async headers(ctx: GowonContext) {
+  private async headers(ctx: SpotifyServiceContext) {
+    const token =
+      ctx.mutable.spotifyToken?.accessToken || (await this.tokenString(ctx));
+
     return {
-      Authorization: this.bearerAuthorization(await this.token(ctx)),
+      Authorization: this.bearerAuthorization(token),
     };
   }
 
   async request<T>(
-    ctx: GowonContext,
-    path: string,
-    params: SimpleMap
-  ): Promise<T> {
+    ctx: SpotifyServiceContext,
+    options: SpotifyRequestOptions & { expectNoContent: true }
+  ): Promise<undefined>;
+  async request<T>(
+    ctx: SpotifyServiceContext,
+    options: SpotifyRequestOptions
+  ): Promise<T>;
+  async request<T>(
+    ctx: SpotifyServiceContext,
+    options: SpotifyRequestOptions
+  ): Promise<T | undefined> {
+    options = Object.assign({ method: "GET", params: {} }, options);
+
     this.log(
       ctx,
-      `made API request to ${path} with params ${Logger.formatObject(params)}`
+      `made API request to ${options.method} ${
+        options.path
+      } with params ${Logger.formatObject(options.params)}`
     );
 
-    const response = await fetch(this.url + path + "?" + stringify(params), {
-      headers: await this.headers(ctx),
-    });
+    const headers = await this.headers(ctx);
+
+    let response: Response;
+
+    if (options.useBody) {
+      response = await fetch(this.apiURL + options.path, {
+        headers: { ...headers, "Content-Type": "application/json" },
+        body: JSON.stringify(options.params),
+        method: options.method,
+      });
+    } else {
+      response = await fetch(
+        this.apiURL + options.path + "?" + stringify(options.params),
+        {
+          headers,
+          method: options.method,
+        }
+      );
+    }
 
     if (`${response.status}`.startsWith("4")) {
       throw new SpotifyConnectionError(ctx.command.prefix);
     }
 
-    return (await response.json()) as T;
+    return response.status !== 204 && !options.expectNoContent
+      ? ((await response.json()) as T)
+      : undefined;
   }
 
-  async search(
-    ctx: GowonContext,
+  // Search
+  async search<T extends RawBaseSpotifyEntity<any>>(
+    ctx: SpotifyServiceContext,
     querystring: string,
-    entityType: SpotifyEntity[] = []
-  ): Promise<SearchResponse> {
-    return await this.request(ctx, "search", {
-      q: querystring,
-      type: entityType.join(","),
+    entityType: [SpotifyEntityName] | [] = []
+  ): Promise<RawSearchResponse<T>> {
+    return await this.request(ctx, {
+      path: "search",
+      params: {
+        q: querystring,
+        type: entityType.join(","),
+      },
     });
   }
 
   async searchArtist(
-    ctx: GowonContext,
+    ctx: SpotifyServiceContext,
     artist: string
-  ): Promise<SearchItem | undefined> {
-    const search = await this.search(ctx, artist, ["artist"]);
+  ): Promise<SpotifyArtistSearch> {
+    const search = await this.search<RawSpotifyArtist>(ctx, artist, ["artist"]);
 
-    return (
-      search.artists.items.find((a) => this.compare(a.name, artist)) ||
-      search.artists.items[0]
-    );
+    return new SpotifyArtistSearch(search.artists, artist);
   }
 
   async searchAlbum(
-    ctx: GowonContext,
-    artist: string,
-    album: string
-  ): Promise<SearchItem | undefined> {
-    const search = await this.search(ctx, artist + " " + album, ["album"]);
+    ctx: SpotifyServiceContext,
+    params: SpotifySearchParams<{ artist: string; album: string }>
+  ): Promise<SpotifyAlbumSearch> {
+    const keywords = isKeywords(params)
+      ? params.keywords
+      : `${params.artist} ${params.album}`;
 
-    return search.albums.items[0];
+    const search = await this.search<RawSpotifyAlbum>(ctx, keywords, ["album"]);
+
+    return new SpotifyAlbumSearch(search.albums, params);
   }
 
   async searchTrack(
-    ctx: GowonContext,
-    artist: string,
-    track: string
-  ): Promise<SearchItem | undefined> {
-    return await this.searchTrackRaw(ctx, artist + " " + track);
+    ctx: SpotifyServiceContext,
+    params: SpotifySearchParams<{ artist: string; track: string }>
+  ): Promise<SpotifyTrackSearch> {
+    const keywords = isKeywords(params)
+      ? params.keywords
+      : `${params.artist} ${params.track}`;
+
+    const search = await this.search<RawSpotifyTrack>(ctx, keywords, ["track"]);
+
+    return new SpotifyTrackSearch(search.tracks, params);
   }
 
-  async searchTrackRaw(
-    ctx: GowonContext,
-    keywords: string
-  ): Promise<SearchItem | undefined> {
-    const search = await this.search(ctx, keywords, ["track"]);
+  // Tracks
+  async getTrack(
+    ctx: SpotifyServiceContext,
+    id: SpotifyID
+  ): Promise<SpotifyTrack> {
+    const raw = await this.request<RawSpotifyTrack>(ctx, {
+      path: `tracks/${id}`,
+    });
 
-    return search.tracks.items[0];
+    return new SpotifyTrack(raw);
   }
 
-  async searchAlbumRaw(
-    ctx: GowonContext,
-    keywords: string
-  ): Promise<SearchItem | undefined> {
-    const search = await this.search(ctx, keywords, ["album"]);
+  // Player
+  async queue(
+    ctx: SpotifyServiceContext,
+    uri: RawSpotifyURI<"track">
+  ): Promise<void> {
+    this.ensureAuthenticated(ctx);
 
-    return search.albums.items[0];
+    await this.request(ctx, {
+      path: "me/player/queue",
+      params: { uri },
+      method: "POST",
+      expectNoContent: true,
+    });
   }
 
-  getImageFromSearchItem(si: SearchItem): string {
-    return (
-      si.images.sort((a, b) => b.height * b.width - a.height * a.width)[0]
-        ?.url || ""
+  async next(ctx: SpotifyServiceContext): Promise<void> {
+    this.ensureAuthenticated(ctx);
+
+    await this.request(ctx, {
+      path: "me/player/next",
+      method: "POST",
+      expectNoContent: true,
+    });
+  }
+
+  private ensureAuthenticated(ctx: SpotifyServiceContext) {
+    if (!ctx.mutable.spotifyToken) {
+      throw new NotAuthenticatedWithSpotifyError(ctx.command.prefix);
+    }
+  }
+
+  // Playlists
+  async getPlaylists(
+    ctx: SpotifyServiceContext
+  ): Promise<SpotifyItemCollection<"playlist", SpotifyPlaylist>> {
+    this.ensureAuthenticated(ctx);
+
+    const response = await this.request<
+      RawSpotifyItemCollection<RawSpotifyPlaylist>
+    >(ctx, {
+      path: "me/playlists",
+      params: { limit: 50 },
+    });
+
+    return new SpotifyItemCollection<"playlist", SpotifyPlaylist>(
+      response,
+      SpotifyPlaylist
     );
   }
 
-  private compare(string1: string, string2: string) {
-    return (
-      string1.toLowerCase().replace(/'"`‘’:/, "") ===
-      string2.toLowerCase().replace(/'"`‘’:/, "")
-    );
+  async addToPlaylist(
+    ctx: SpotifyServiceContext,
+    playlistID: string,
+    uris: RawSpotifyURI<"track">[]
+  ): Promise<SpotifySnapshot> {
+    this.ensureAuthenticated(ctx);
+
+    return await this.request(ctx, {
+      path: `playlists/${playlistID}/tracks`,
+      method: "POST",
+      params: { uris },
+      useBody: true,
+    });
+  }
+
+  async removeFromPlaylist(
+    ctx: SpotifyServiceContext,
+    playlistID: string,
+    uris: RawSpotifyURI<"track">[]
+  ): Promise<SpotifySnapshot> {
+    this.ensureAuthenticated(ctx);
+
+    return await this.request(ctx, {
+      path: `playlists/${playlistID}/tracks`,
+      method: "DELETE",
+      params: { uris },
+      useBody: true,
+    });
+  }
+
+  // Library
+  async saveTrackToLibrary(
+    ctx: SpotifyServiceContext,
+    id: SpotifyID
+  ): Promise<void> {
+    this.ensureAuthenticated(ctx);
+
+    await this.request(ctx, {
+      path: "me/tracks",
+      method: "PUT",
+      params: { ids: [id] },
+      expectNoContent: true,
+    });
+  }
+
+  async removeTrackFromLibrary(
+    ctx: SpotifyServiceContext,
+    id: SpotifyID
+  ): Promise<void> {
+    this.ensureAuthenticated(ctx);
+
+    await this.request(ctx, {
+      path: "me/tracks",
+      method: "DELETE",
+      params: { ids: [id] },
+      expectNoContent: true,
+    });
+  }
+
+  getKeywords(params: SpotifySearchParams<any>): string {
+    if (isKeywords(params)) return params.keywords;
+    else if (params.artist)
+      return `${params.artist} ${params.album || params.track || ""}`.trim();
+    else return "";
   }
 }

@@ -38,6 +38,9 @@ import { ChartService } from "./pantomime/ChartService";
 import { EmojiService } from "./Discord/EmojiService";
 import { ArgumentParsingService } from "./arguments/ArgumentsParsingService";
 import { DiscordService } from "./Discord/DiscordService";
+import { SpotifyAuthenticationService } from "./Spotify/SpotifyAuthenticationService";
+import { SpotifyArguments } from "./Spotify/SpotifyArguments";
+import { SpotifyPlaylistTagService } from "./Spotify/SpotifyPlaylistTagService";
 
 type Service<T = any> = { new (): T };
 
@@ -78,6 +81,9 @@ const services: Service[] = [
   RollbarService,
   SettingsService,
   SpotifyService,
+  SpotifyArguments,
+  SpotifyAuthenticationService,
+  SpotifyPlaylistTagService,
   TagsService,
   TrackingService,
   UsersService,

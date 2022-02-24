@@ -19,7 +19,7 @@ export class GuildAround extends CrownsChildCommand {
   arguments = args;
 
   async run() {
-    let { discordUser } = await this.parseMentions({
+    let { discordUser } = await this.getMentions({
       fetchDiscordUser: true,
       reverseLookup: { required: true },
     });

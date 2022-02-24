@@ -26,7 +26,7 @@ export default class Cover extends LastFMBaseCommand<typeof args> {
     "https://lastfm.freetls.fastly.net/i/u/174s/2a96cbd8b46e442fc41c2b86b821562f.png";
 
   async run() {
-    const { requestable } = await this.parseMentions({
+    const { requestable } = await this.getMentions({
       usernameRequired:
         !this.parsedArguments.artist || !this.parsedArguments.album,
     });

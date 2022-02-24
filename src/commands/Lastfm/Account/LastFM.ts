@@ -20,7 +20,7 @@ export default class LastFMAccount extends LastFMBaseCommand<typeof args> {
   arguments = args;
 
   async run() {
-    let { username, perspective } = await this.parseMentions({
+    let { username, perspective } = await this.getMentions({
       inputArgumentName: "username",
     });
 

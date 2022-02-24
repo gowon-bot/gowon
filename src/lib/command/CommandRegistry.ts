@@ -62,9 +62,9 @@ export class CommandRegistry {
     serverID: string,
     commands?: Command[]
   ): Promise<{ command?: Command; runAs: RunAs }> {
-    let checker = new AliasChecker(messageString);
+    const checker = new AliasChecker(messageString);
 
-    for (let command of commands || this.list(true)) {
+    for (const command of commands || this.list(true)) {
       if (await checker.check(command, serverID)) {
         const runAs = await checker.getRunAs(command, serverID);
 
@@ -108,7 +108,7 @@ export class CommandRegistry {
   }
 
   deepList(showSecret = false, showArchived = false): Command[] {
-    let shallowCommands = this.list();
+    const shallowCommands = this.list();
 
     return flatDeep<Command>(
       shallowCommands.map((sc) =>
@@ -126,20 +126,8 @@ export class CommandRegistry {
       );
     }
 
-    let filteredCommands = commands
-      .filter(
-        (command) =>
-          (command.friendlyNameWithParent || command.name)
-            .toLowerCase()
-            .includes(keywords.toLowerCase()) ||
-          !!command.aliases.find((a) =>
-            a.toLowerCase().includes(keywords.toLowerCase())
-          ) ||
-          !!flatDeep(command.variations.map((v) => [v.variation, v.name])).find(
-            (v) => v.toLowerCase().includes(keywords.toLowerCase())
-          ) ||
-          checkPrefixes(command, keywords)
-      )
+    const filteredCommands = commands
+      .filter((command) => this.compareCommandAndKeywords(command, keywords))
       .sort((a, b) => a.friendlyName.localeCompare(b.friendlyName));
 
     const exactMatch = filteredCommands.filter(
@@ -161,6 +149,24 @@ export class CommandRegistry {
 
     return filteredCommands;
   }
+
+  private compareCommandAndKeywords(command: Command, keywords: string) {
+    keywords = keywords.toLowerCase();
+
+    const inName = (command.friendlyNameWithParent || command.name)
+      .toLowerCase()
+      .includes(keywords);
+    const inAliases = command.aliases.find((a) => a.includes(keywords));
+    const inVariations = flatDeep(
+      command.variations.map((v) => [v.variation, v.name])
+    ).find((v) => v.includes(keywords));
+    const inPrefixes = checkPrefixes(command, keywords);
+    const inMetadata =
+      command.category?.includes(keywords) ||
+      command.subcategory?.includes(keywords);
+
+    return inName || inAliases || inVariations || inPrefixes || inMetadata;
+  }
 }
 
 async function generateCommands(): Promise<Commands> {
@@ -172,9 +178,9 @@ async function generateCommands(): Promise<Commands> {
     const command = require(file).default;
 
     if (command?.constructor) {
-      let commandNameSplit = file.split("/");
+      const commandNameSplit = file.split("/");
 
-      let commandName = commandNameSplit[commandNameSplit.length - 1]
+      const commandName = commandNameSplit[commandNameSplit.length - 1]
         .slice(0, -3)
         .toLowerCase();
 

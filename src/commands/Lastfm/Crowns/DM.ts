@@ -19,7 +19,7 @@ export class DM extends CrownsChildCommand<typeof args> {
   async run() {
     const crownsPerMessage = 40;
 
-    const { discordUser: user } = await this.parseMentions({
+    const { discordUser: user } = await this.getMentions({
       fetchDiscordUser: true,
       reverseLookup: { required: true },
     });

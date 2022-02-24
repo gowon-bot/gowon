@@ -28,7 +28,7 @@ export class TopPercent extends OverviewChildCommand<typeof args> {
   async run() {
     let percent = this.parsedArguments.percent!;
 
-    let { perspective } = await this.parseMentions();
+    let { perspective } = await this.getMentions();
 
     let toppct = await this.calculator.topPercent(percent);
 

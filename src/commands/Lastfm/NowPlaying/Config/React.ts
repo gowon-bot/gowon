@@ -63,11 +63,7 @@ export class React extends NowPlayingConfigChildCommand<typeof args> {
       .setAuthor(this.generateEmbedAuthor("Reacts"))
       .setDescription("Are you sure you want to clear your reacts?");
 
-    const confirmationEmbed = new ConfirmationEmbed(
-      this.message,
-      embed,
-      this.gowonClient
-    );
+    const confirmationEmbed = new ConfirmationEmbed(this.ctx, embed);
 
     if (await confirmationEmbed.awaitConfirmation(this.ctx)) {
       await this.settingsService.set(this.ctx, "reacts", {

@@ -23,7 +23,7 @@ export default class GlobalAlbumPlays extends LastFMBaseCommand<typeof args> {
 
   async run() {
     const { senderRequestable, requestable, perspective } =
-      await this.parseMentions({
+      await this.getMentions({
         senderRequired:
           !this.parsedArguments.artist || !this.parsedArguments.album,
       });

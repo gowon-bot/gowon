@@ -22,7 +22,7 @@ export default class AlbumCount extends LastFMBaseCommand<typeof args> {
     const timePeriod = this.parsedArguments.timePeriod!;
     const humanizedPeriod = humanizePeriod(timePeriod);
 
-    const { requestable, perspective } = await this.parseMentions();
+    const { requestable, perspective } = await this.getMentions();
 
     const albumCount = await this.lastFMService.albumCount(
       this.ctx,

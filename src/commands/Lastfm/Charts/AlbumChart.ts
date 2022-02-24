@@ -24,7 +24,7 @@ export default class AlbumChart extends LastFMBaseCommand<typeof args> {
   chartService = ServiceRegistry.get(ChartService);
 
   async run() {
-    const { requestable, senderUser } = await this.parseMentions();
+    const { requestable, senderUser } = await this.getMentions();
 
     this.access.checkAndThrow(senderUser);
 

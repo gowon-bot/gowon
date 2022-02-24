@@ -33,7 +33,7 @@ export default class TrackTopAlbums extends MirrorballBaseCommand<
 
   async run() {
     const { username, dbUser, senderRequestable, perspective } =
-      await this.parseMentions({
+      await this.getMentions({
         senderRequired:
           !this.parsedArguments.artist || !this.parsedArguments.track,
         reverseLookup: { required: true },
@@ -77,25 +77,22 @@ export default class TrackTopAlbums extends MirrorballBaseCommand<
         LinkGenerator.libraryTrackPage(username, track.artist, track.name)
       );
 
-    const simpleScrollingEmbed = new SimpleScrollingEmbed(
-      this.message,
-      embed,
-      {
-        pageSize: 15,
-        items: topAlbums,
+    const simpleScrollingEmbed = new SimpleScrollingEmbed(this.message, embed, {
+      pageSize: 15,
+      items: topAlbums,
 
-        pageRenderer(albums) {
-          return albums
-            .map(
-              (album) =>
-                `${displayNumber(album.playcount, "play")} - ${(
-                  album.track.album?.name || "(no album)"
-                ).strong()}`
-            )
-            .join("\n");
-        },
+      pageRenderer(albums) {
+        return albums
+          .map(
+            (album) =>
+              `${displayNumber(album.playcount, "play")} - ${(
+                album.track.album?.name || "(no album)"
+              ).strong()}`
+          )
+          .join("\n");
       },
-      {
+
+      overrides: {
         itemName: "album",
         embedDescription:
           `${displayNumber(totalScrobbles, "total scrobble")}, ${displayNumber(
@@ -105,8 +102,8 @@ export default class TrackTopAlbums extends MirrorballBaseCommand<
             average.toFixed(2),
             "average scrobble"
           )} per album`.italic() + "\n",
-      }
-    );
+      },
+    });
 
     simpleScrollingEmbed.send();
   }

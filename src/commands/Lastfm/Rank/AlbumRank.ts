@@ -22,7 +22,7 @@ export default class AlbumRank extends LastFMBaseCommand<typeof args> {
 
   async run() {
     const { requestable, senderRequestable, perspective } =
-      await this.parseMentions({
+      await this.getMentions({
         senderRequired:
           !this.parsedArguments.album || !this.parsedArguments.artist,
       });

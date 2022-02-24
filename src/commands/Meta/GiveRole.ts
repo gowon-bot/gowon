@@ -43,7 +43,7 @@ export default class GiveRole extends BaseCommand<typeof args> {
 
   async run() {
     const role = this.parsedArguments.role!;
-    const { mentionedDBUser } = await this.parseMentions();
+    const { mentionedDBUser } = await this.getMentions();
 
     if (!mentionedDBUser) {
       throw new LogicError(

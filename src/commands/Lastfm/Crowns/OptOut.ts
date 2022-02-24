@@ -17,11 +17,7 @@ export class OptOut extends CrownsChildCommand {
         `Are you sure you want to opt out? This will delete all your crowns!`
       );
 
-    const confirmationEmbed = new ConfirmationEmbed(
-      this.message,
-      embed,
-      this.gowonClient
-    );
+    const confirmationEmbed = new ConfirmationEmbed(this.ctx, embed);
 
     if (await confirmationEmbed.awaitConfirmation(this.ctx)) {
       await this.crownsService.scribe.optOut(this.ctx, message.member!);

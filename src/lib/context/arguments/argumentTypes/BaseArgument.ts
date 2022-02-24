@@ -10,6 +10,9 @@ type GetElementFromIndexOptions = {
 };
 
 export const defaultIndexableOptions: IndexableArgumentOptions = { index: 0 };
+export const defaultContentBasedOptions: ContentBasedArgumentOptions = {
+  preprocessor: (content: string) => content,
+};
 
 export abstract class BaseArgument<ReturnT, OptionsT = {}> {
   public mention = false;
@@ -114,6 +117,10 @@ export interface IndexableArgumentOptions {
 
 export interface SliceableArgumentOptions {
   index: number | Slice;
+}
+
+export interface ContentBasedArgumentOptions {
+  preprocessor: (content: string) => string;
 }
 
 export type StringCleaningArgument = {

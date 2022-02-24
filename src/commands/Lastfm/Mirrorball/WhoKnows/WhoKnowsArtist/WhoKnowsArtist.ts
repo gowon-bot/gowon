@@ -46,7 +46,7 @@ export default class WhoKnowsArtist extends WhoKnowsBaseCommand<
 
   async run() {
     const { senderRequestable, senderUser, senderMirrorballUser } =
-      await this.parseMentions({
+      await this.getMentions({
         senderRequired: !this.parsedArguments.artist,
         fetchMirrorballUser: true,
       });

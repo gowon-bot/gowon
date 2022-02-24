@@ -1,5 +1,9 @@
 import { User } from "../database/entity/User";
+import { User as DiscordUser } from "discord.js";
+import { Perspective } from "../lib/Perspective";
 import { Requestable } from "../services/LastFM/LastFMAPIService";
+import { MirrorballUser } from "../services/mirrorball/MirrorballTypes";
+import { SimpleMap } from "./types";
 
 interface Requestables {
   senderUsername: string;
@@ -68,4 +72,39 @@ export function buildRequestable(
   } else {
     return { requestable: username, username };
   }
+}
+
+export interface GetMentionsOptions<ArgumentNameType> {
+  senderRequired?: boolean;
+  usernameRequired?: boolean;
+  userArgumentName?: ArgumentNameType | string;
+  inputArgumentName?: ArgumentNameType | string;
+  lfmMentionArgumentName?: ArgumentNameType | string;
+  idMentionArgumentName?: ArgumentNameType | string;
+  asCode?: boolean;
+  fetchDiscordUser?: boolean;
+  fetchMirrorballUser?: boolean;
+  reverseLookup?: { required?: boolean };
+  authentificationRequired?: boolean;
+  requireIndexed?: boolean;
+  fromArguments?: SimpleMap<any>;
+}
+
+export interface GetMentionsReturn {
+  senderUsername: string;
+  senderRequestable: Requestable;
+
+  username: string;
+  requestable: Requestable;
+
+  mentionedUsername?: string;
+  perspective: Perspective;
+
+  mentionedDBUser?: User;
+  senderUser?: User;
+  dbUser: User;
+  discordUser?: DiscordUser;
+
+  senderMirrorballUser?: MirrorballUser;
+  mirrorballUser?: MirrorballUser;
 }

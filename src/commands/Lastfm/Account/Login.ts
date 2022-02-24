@@ -64,10 +64,9 @@ export default class Login extends MirrorballBaseCommand<never, never> {
         .setFooter({ text: this.indexingHelp });
 
       const confirmationEmbed = new ConfirmationEmbed(
-        sentMessage,
+        this.ctx,
         successEmbed,
-        this.gowonClient,
-        this.author.id
+        sentMessage
       );
 
       if (await confirmationEmbed.awaitConfirmation(this.ctx)) {

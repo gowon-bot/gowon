@@ -25,7 +25,7 @@ export class WhoFirstArtist extends FriendsChildCommand<typeof args> {
   throwIfNoFriends = true;
 
   async run() {
-    const { senderUser } = await this.parseMentions({
+    const { senderUser } = await this.getMentions({
       senderRequired: true,
     });
 

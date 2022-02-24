@@ -24,7 +24,7 @@ export class SumTop extends OverviewChildCommand<typeof args> {
   async run() {
     let top = this.parsedArguments.top!;
 
-    let { perspective } = await this.parseMentions();
+    let { perspective } = await this.getMentions();
 
     if (top > 1000 || top < 2)
       throw new LogicError("Please enter a valid number (between 2 and 1000)");

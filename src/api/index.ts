@@ -4,19 +4,23 @@ import { UsersService } from "../services/dbservices/UsersService";
 import { typeDefs } from "./graphql/schema.gql";
 import userResolvers from "./resolvers/userResolvers";
 import commandResolversFunc from "./resolvers/commandResolvers";
-import { IndexingWebhookService } from "./indexing/IndexingWebhookService";
+import { IndexingWebhookService } from "./webhooks/IndexingWebhookService";
 import bodyParser from "body-parser";
 import { CommandRegistry } from "../lib/command/CommandRegistry";
 import { ServiceRegistry } from "../services/ServicesRegistry";
 import { AnalyticsCollector } from "../analytics/AnalyticsCollector";
-import config from "../../config.json";
+import gowonConfig from "../../config.json";
+import { SpotifyCodeResponse } from "../services/Spotify/SpotifyService.types";
+import { SpotifyWebhookService } from "./webhooks/SpotifyWebhookService";
 
-export const gowonAPIPort = config.gowonAPIPort;
+export const gowonAPIPort = gowonConfig.gowonAPIPort;
 
 export class GraphQLAPI {
   usersService = ServiceRegistry.get(UsersService);
   commandRegistry = CommandRegistry.getInstance();
   analyticsCollector = ServiceRegistry.get(AnalyticsCollector);
+
+  private readonly spotifyRedirectRoute = "/spotify-login-success";
 
   async init() {
     const app = express();
@@ -57,6 +61,17 @@ export class GraphQLAPI {
         res.status(200).send();
       } else {
         res.status(400).send("Please send a token in valid json format");
+      }
+    });
+
+    app.get("/api/spotifyWebhook", (req, res) => {
+      const body = req.query as any as SpotifyCodeResponse;
+
+      if (body.state) {
+        SpotifyWebhookService.getInstance().handleRequest(body);
+        res.redirect(gowonConfig.gowonWebsiteURL + this.spotifyRedirectRoute);
+      } else {
+        res.status(400).send("Please send a code in the valid format");
       }
     });
 

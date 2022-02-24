@@ -7,7 +7,7 @@ export class View extends NowPlayingConfigChildCommand {
   usage = [""];
 
   async run() {
-    const { senderUser } = await this.parseMentions({
+    const { senderUser } = await this.getMentions({
       senderRequired: true,
     });
 

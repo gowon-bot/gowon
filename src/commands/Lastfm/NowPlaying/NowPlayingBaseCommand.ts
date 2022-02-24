@@ -59,7 +59,7 @@ export abstract class NowPlayingBaseCommand<
       discordUser,
       requestable,
       senderRequestable,
-    } = await this.parseMentions(
+    } = await this.getMentions(
       noDiscordUser
         ? {}
         : {

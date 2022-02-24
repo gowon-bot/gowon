@@ -1,7 +1,7 @@
 import { LogicError } from "../../../errors";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
-import { SpotifyBaseCommand } from "./SpotifyBaseCommand";
+import { SpotifyBaseCommand } from "./SpotifyBaseCommands";
 
 const args = {
   ...standardMentions,
@@ -16,32 +16,37 @@ export default class SpotifyArtist extends SpotifyBaseCommand<typeof args> {
 
   arguments = args;
 
+  customContext = {
+    mutable: {},
+  };
+
   async run() {
     let keywords = this.parsedArguments.keywords;
 
-    let { requestable } = await this.parseMentions({
+    const { requestable } = await this.getMentions({
       usernameRequired: !keywords,
     });
 
     if (!keywords) {
-      let nowplaying = await this.lastFMService.nowPlaying(
+      const artist = await this.lastFMArguments.getArtist(
         this.ctx,
         requestable
       );
 
-      keywords = nowplaying.artist;
+      keywords = artist;
     }
 
-    const spotifyArtist = await this.spotifyService.searchArtist(
+    const spotifyArtistSearch = await this.spotifyService.searchArtist(
       this.ctx,
       keywords
     );
 
-    if (!spotifyArtist)
+    if (!spotifyArtistSearch.hasAnyResults) {
       throw new LogicError(
-        `that artist wasn't found on spotify! Searched with \`${keywords}\``
+        `that artist wasn't found on Spotify! Searched with \`${keywords}\``
       );
+    }
 
-    await this.send(spotifyArtist.external_urls.spotify);
+    await this.send(spotifyArtistSearch.bestResult.externalURLs.spotify);
   }
 }

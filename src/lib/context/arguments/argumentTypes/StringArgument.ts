@@ -5,11 +5,15 @@ import { ServiceRegistry } from "../../../../services/ServicesRegistry";
 import { GowonContext } from "../../Context";
 import {
   BaseArgument,
+  ContentBasedArgumentOptions,
+  defaultContentBasedOptions,
   defaultIndexableOptions,
   SliceableArgumentOptions,
 } from "./BaseArgument";
 
-export interface StringArgumentOptions extends SliceableArgumentOptions {
+export interface StringArgumentOptions
+  extends SliceableArgumentOptions,
+    ContentBasedArgumentOptions {
   splitOn: string | RegExp;
   match: string[];
   regex: RegExp;
@@ -24,7 +28,12 @@ export class StringArgument extends BaseArgument<
   }
 
   constructor(options: Partial<StringArgumentOptions> = {}) {
-    super(defaultIndexableOptions, { splitOn: /\s+/, match: [] }, options);
+    super(
+      defaultIndexableOptions,
+      defaultContentBasedOptions,
+      { splitOn: /\s+/, match: [] },
+      options
+    );
   }
 
   parseFromMessage(_: Message, content: string, context: GowonContext): string {

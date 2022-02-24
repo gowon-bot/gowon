@@ -24,7 +24,7 @@ export default class SearchTrack extends SearchCommand {
   async run() {
     const keywords = this.parsedArguments.keywords!;
 
-    const { requestable, perspective } = await this.parseMentions();
+    const { requestable, perspective } = await this.getMentions();
 
     const paginator = new Paginator(
       this.lastFMService.topTracks.bind(this.lastFMService),
@@ -62,29 +62,24 @@ export default class SearchTrack extends SearchCommand {
       return;
     }
 
-    const scrollingEmbed = new SimpleScrollingEmbed(
-      this.message,
-      embed,
-      {
-        items: filtered,
-        pageSize: 15,
-        pageRenderer(items) {
-          return `Tracks matching ${keywords.code()}
+    const scrollingEmbed = new SimpleScrollingEmbed(this.message, embed, {
+      items: filtered,
+      pageSize: 15,
+      pageRenderer(items) {
+        return `Tracks matching ${keywords.code()}
 \n${items
-            .map(
-              (t) =>
-                `\`${t.rank}\`. ${t.artist.name.italic()} - ${t.name.replaceAll(
-                  new RegExp(`${keywords}`, "gi"),
-                  (match) => match.strong()
-                )} (${displayNumber(t.userPlaycount, "play")})`
-            )
-            .join("\n")}`;
-        },
+          .map(
+            (t) =>
+              `\`${t.rank}\`. ${t.artist.name.italic()} - ${t.name.replaceAll(
+                new RegExp(`${keywords}`, "gi"),
+                (match) => match.strong()
+              )} (${displayNumber(t.userPlaycount, "play")})`
+          )
+          .join("\n")}`;
       },
-      {
-        itemName: "result",
-      }
-    );
+
+      overrides: { itemName: "result" },
+    });
 
     scrollingEmbed.send();
   }

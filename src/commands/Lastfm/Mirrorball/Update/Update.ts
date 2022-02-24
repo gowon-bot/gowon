@@ -79,7 +79,7 @@ export default class Update extends MirrorballBaseCommand<
       this.guild.id
     );
 
-    const { senderUsername, perspective } = await this.parseMentions({
+    const { senderUsername, perspective } = await this.getMentions({
       authentificationRequired: true,
     });
 

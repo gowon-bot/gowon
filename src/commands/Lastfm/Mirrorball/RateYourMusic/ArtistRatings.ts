@@ -44,13 +44,11 @@ export class ArtistRatings extends RateYourMusicIndexingChildCommand<
   arguments = args;
 
   async run() {
-    const { senderRequestable, dbUser, discordUser } = await this.parseMentions(
-      {
-        senderRequired: !this.parsedArguments.artist,
-        fetchDiscordUser: true,
-        requireIndexed: true,
-      }
-    );
+    const { senderRequestable, dbUser, discordUser } = await this.getMentions({
+      senderRequired: !this.parsedArguments.artist,
+      fetchDiscordUser: true,
+      requireIndexed: true,
+    });
 
     const artist = await this.lastFMArguments.getArtist(
       this.ctx,
@@ -117,17 +115,13 @@ export class ArtistRatings extends RateYourMusicIndexingChildCommand<
         )
       : response.ratings.ratings;
 
-    const simpleScrollingEmbed = new SimpleScrollingEmbed(
-      this.message,
-      embed,
-      {
-        items: ratings,
-        pageSize: 10,
-        pageRenderer: (items) =>
-          header + "\n\n" + this.generateTable(items, artistName!),
-      },
-      { itemName: "rating" }
-    );
+    const simpleScrollingEmbed = new SimpleScrollingEmbed(this.message, embed, {
+      items: ratings,
+      pageSize: 10,
+      pageRenderer: (items) =>
+        header + "\n\n" + this.generateTable(items, artistName!),
+      overrides: { itemName: "rating" },
+    });
 
     simpleScrollingEmbed.send();
   }

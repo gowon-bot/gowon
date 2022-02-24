@@ -10,6 +10,6 @@ export default class Test extends BaseCommand<typeof args> {
   subcategory = "developer";
 
   async run() {
-    // await this.send("Hello, world!");
+    await this.send("Hello, world!");
   }
 }

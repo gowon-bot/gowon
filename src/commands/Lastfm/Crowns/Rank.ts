@@ -21,7 +21,7 @@ export class Rank extends CrownsChildCommand<typeof args> {
   arguments = args;
 
   async run(message: Message) {
-    const { perspective, discordUser, dbUser } = await this.parseMentions({});
+    const { perspective, discordUser, dbUser } = await this.getMentions();
 
     let rank = await this.crownsService.getRank(
       this.ctx,

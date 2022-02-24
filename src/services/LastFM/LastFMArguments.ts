@@ -12,7 +12,7 @@ export type LastFMArgumentsMutableContext = {
   parsedNowplaying?: RecentTrack;
 };
 
-type LastFMArgumentsContext = GowonContext<{
+export type LastFMArgumentsContext = GowonContext<{
   mutable?: LastFMArgumentsMutableContext;
 }>;
 

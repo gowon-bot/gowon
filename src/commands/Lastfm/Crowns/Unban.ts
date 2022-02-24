@@ -16,12 +16,10 @@ export class Unban extends CrownsChildCommand<typeof args> {
   adminCommand = true;
 
   async run() {
-    let { mentionedDBUser, senderUser, discordUser } = await this.parseMentions(
-      {
-        reverseLookup: { required: true },
-        fetchDiscordUser: true,
-      }
-    );
+    let { mentionedDBUser, senderUser, discordUser } = await this.getMentions({
+      reverseLookup: { required: true },
+      fetchDiscordUser: true,
+    });
 
     if (
       !mentionedDBUser ||

@@ -28,7 +28,7 @@ export class Stats extends RateYourMusicIndexingChildCommand<
   arguments = args;
 
   async run() {
-    const { dbUser, discordUser } = await this.parseMentions({
+    const { dbUser, discordUser } = await this.getMentions({
       fetchDiscordUser: true,
       reverseLookup: { required: true },
       requireIndexed: true,

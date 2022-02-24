@@ -24,7 +24,8 @@ export class ImportRatings extends RateYourMusicIndexingChildCommand<
 
   idSeed = "sonamoo high d";
   aliases = ["rymimport", "rymsimport"];
-  description = "Import your rateyourmusic ratings";
+  description =
+    "Import your rateyourmusic ratings. See ryms help for more info on how to import";
 
   arguments = args;
 
@@ -40,7 +41,7 @@ export class ImportRatings extends RateYourMusicIndexingChildCommand<
   }
 
   async run() {
-    await this.parseMentions({
+    await this.getMentions({
       senderRequired: true,
       requireIndexed: true,
     });

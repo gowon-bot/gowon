@@ -34,7 +34,7 @@ export default class TopTags extends LastFMBaseCommand<typeof args> {
     const timePeriod = this.parsedArguments.timePeriod!,
       timeRange = this.parsedArguments.timeRange;
 
-    const { requestable, perspective } = await this.parseMentions();
+    const { requestable, perspective } = await this.getMentions();
 
     const topArtists = await this.lastFMService.topArtists(this.ctx, {
       username: requestable,
@@ -76,27 +76,20 @@ export default class TopTags extends LastFMBaseCommand<typeof args> {
     await tagConsolidator.saveServerBannedTagsInContext(this.ctx);
     tagConsolidator.addTags(this.ctx, response.tags.tags);
 
-    const scrollingEmbed = new SimpleScrollingEmbed(
-      this.message,
-      embed,
-      {
-        items: tagConsolidator.consolidate(),
-        pageSize: 15,
-        pageRenderer(tags, { offset }) {
-          return displayNumberedList(
-            tags.map(
-              (t) =>
-                `${t.name.strong()} - (${displayNumber(
-                  t.occurrences,
-                  "artist"
-                )})`
-            ),
-            offset
-          );
-        },
+    const scrollingEmbed = new SimpleScrollingEmbed(this.message, embed, {
+      items: tagConsolidator.consolidate(),
+      pageSize: 15,
+      pageRenderer(tags, { offset }) {
+        return displayNumberedList(
+          tags.map(
+            (t) =>
+              `${t.name.strong()} - (${displayNumber(t.occurrences, "artist")})`
+          ),
+          offset
+        );
       },
-      { itemName: "tag" }
-    );
+      overrides: { itemName: "tag" },
+    });
 
     await scrollingEmbed.send();
   }
