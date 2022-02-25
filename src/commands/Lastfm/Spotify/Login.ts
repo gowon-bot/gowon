@@ -5,7 +5,7 @@ import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { SpotifyAuthenticationService } from "../../../services/Spotify/SpotifyAuthenticationService";
 import { SpotifyBaseCommand } from "./SpotifyBaseCommands";
 
-export default class Login extends SpotifyBaseCommand {
+export default class SpotifyLogin extends SpotifyBaseCommand {
   idSeed = "pink fantasy miku";
 
   description = "Connect your Spotify account to Gowon";
