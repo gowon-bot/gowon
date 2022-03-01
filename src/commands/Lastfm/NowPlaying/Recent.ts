@@ -9,8 +9,11 @@ import { RecentTrack } from "../../../services/LastFM/converters/RecentTracks";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 const args = {
+  amount: new NumberArgument({
+    default: 5,
+    description: "The amount of recent tracks to show",
+  }),
   ...standardMentions,
-  amount: new NumberArgument({ default: 5 }),
 } as const;
 
 export default class Recent extends LastFMBaseCommand<typeof args> {
@@ -19,6 +22,8 @@ export default class Recent extends LastFMBaseCommand<typeof args> {
   description = "Shows a few of your recent tracks";
   subcategory = "nowplaying";
   usage = ["", "amount"];
+
+  slashCommand = true;
 
   arguments = args;
 

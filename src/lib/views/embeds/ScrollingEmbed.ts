@@ -9,6 +9,9 @@ import {
 } from "discord.js";
 import { EmojiRaw } from "../../Emoji";
 import { ReactionCollectorFilter } from "../../../helpers/discord";
+import { ServiceRegistry } from "../../../services/ServicesRegistry";
+import { DiscordService } from "../../../services/Discord/DiscordService";
+import { GowonContext } from "../../context/Context";
 
 export interface ScrollingEmbedOptions {
   initialItems: string | EmbedField[];
@@ -34,6 +37,10 @@ type OnPageChangeCallback = (
 ) => string | Promise<string> | EmbedField[] | Promise<EmbedField[]>;
 
 export class ScrollingEmbed {
+  private get discordService() {
+    return ServiceRegistry.get(DiscordService);
+  }
+
   private sentMessage!: Message;
   private currentPage = 1;
   private currentItems: string | EmbedField[];
@@ -46,7 +53,7 @@ export class ScrollingEmbed {
   private readonly firstArrow = EmojiRaw.arrowFirst;
 
   constructor(
-    private message: Message,
+    private ctx: GowonContext,
     private embed: MessageEmbed,
     options: Partial<ScrollingEmbedOptions>
   ) {
@@ -71,9 +78,7 @@ export class ScrollingEmbed {
   public async send() {
     this.generateEmbed();
 
-    this.sentMessage = await this.message.channel.send({
-      embeds: [this.embed],
-    });
+    this.sentMessage = await this.discordService.send(this.ctx, this.embed);
 
     await this.react();
   }
@@ -96,7 +101,7 @@ export class ScrollingEmbed {
 
   private get filter(): ReactionCollectorFilter {
     return (_, user) => {
-      return user.id === this.message.author.id;
+      return user.id === this.ctx.author.id;
     };
   }
 
@@ -211,7 +216,7 @@ export class ScrollingEmbed {
   }
 
   private async removeReaction(emoji: Emoji, userId: string) {
-    if (this.message.guild?.me?.permissions?.has("MANAGE_MESSAGES")) {
+    if (this.ctx.guild?.me?.permissions?.has("MANAGE_MESSAGES")) {
       await this.sentMessage!.reactions.resolve(
         (emoji.id ?? emoji.name)!
       )!.users.remove(userId);

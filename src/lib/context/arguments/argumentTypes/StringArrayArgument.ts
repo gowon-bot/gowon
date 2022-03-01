@@ -2,22 +2,38 @@ import { Message } from "discord.js";
 import { GowonService } from "../../../../services/GowonService";
 import { ServiceRegistry } from "../../../../services/ServicesRegistry";
 import { GowonContext } from "../../Context";
-import { BaseArgument, defaultIndexableOptions } from "./BaseArgument";
-import { StringArgumentOptions } from "./StringArgument";
+import {
+  ArgumentReturnType,
+  BaseArgument,
+  BaseArgumentOptions,
+  ContentBasedArgumentOptions,
+  defaultIndexableOptions,
+  SliceableArgumentOptions,
+} from "./BaseArgument";
 
-export class StringArrayArgument extends BaseArgument<
-  string[],
-  StringArgumentOptions
-> {
+interface StringArrayArgumentOptions
+  extends BaseArgumentOptions<string[]>,
+    SliceableArgumentOptions,
+    ContentBasedArgumentOptions {
+  splitOn: string | RegExp;
+}
+
+export class StringArrayArgument<
+  OptionsT extends Partial<StringArrayArgumentOptions> = {}
+> extends BaseArgument<string[], StringArrayArgumentOptions, OptionsT> {
   get gowonService() {
     return ServiceRegistry.get(GowonService);
   }
 
-  constructor(options: Partial<StringArgumentOptions> = {}) {
+  constructor(options: OptionsT | {} = {}) {
     super(defaultIndexableOptions, { splitOn: " " }, options);
   }
 
-  parseFromMessage(_: Message, content: string, ctx: GowonContext): string[] {
+  parseFromMessage(
+    _: Message,
+    content: string,
+    ctx: GowonContext
+  ): ArgumentReturnType<string[], OptionsT> {
     const cleanContent = this.cleanContent(ctx, content);
 
     const splitContent = cleanContent.split(this.options.splitOn);
@@ -28,7 +44,7 @@ export class StringArrayArgument extends BaseArgument<
     return element;
   }
 
-  parseFromInteraction() {
+  parseFromInteraction(): ArgumentReturnType<string[], OptionsT> {
     return [];
   }
 }

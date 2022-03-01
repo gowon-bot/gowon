@@ -16,6 +16,7 @@ const args = {
   genres: new StringArrayArgument({
     index: { start: 0 },
     splitOn: "|",
+    default: [],
   }),
 } as const;
 
@@ -28,6 +29,8 @@ export class Tag extends CrownsChildCommand<typeof args> {
 
   arguments = args;
 
+  slashCommand = true;
+
   tagsService = ServiceRegistry.get(TagsService);
 
   validation: Validation = {
@@ -35,7 +38,7 @@ export class Tag extends CrownsChildCommand<typeof args> {
   };
 
   async run() {
-    const genres = this.parsedArguments.genres!;
+    const genres = this.parsedArguments.genres;
 
     const { perspective, dbUser } = await this.getMentions();
 
@@ -61,7 +64,7 @@ export class Tag extends CrownsChildCommand<typeof args> {
       } top crowns for the following genres: ${genres.join(", ")}`.italic() +
       "\n\n";
 
-    const scrollingEmbed = new SimpleScrollingEmbed(this.message, embed, {
+    const scrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
       items: filteredCrowns,
       pageSize: 15,
       pageRenderer(crowns, { offset }) {

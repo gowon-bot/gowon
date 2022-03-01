@@ -5,8 +5,12 @@ import { SpotifySearchParams } from "../../../services/Spotify/SpotifyService";
 import { SpotifyBaseCommand } from "./SpotifyBaseCommands";
 
 const args = {
+  keywords: new StringArgument({
+    index: { start: 0 },
+    description:
+      "The keywords to search Spotify with (defaults to your currently playing track)",
+  }),
   ...standardMentions,
-  keywords: new StringArgument({ index: { start: 0 } }),
 } as const;
 
 export default class SpotifyTrack extends SpotifyBaseCommand<typeof args> {
@@ -17,9 +21,7 @@ export default class SpotifyTrack extends SpotifyBaseCommand<typeof args> {
 
   arguments = args;
 
-  customContext = {
-    mutable: {},
-  };
+  slashCommand = true;
 
   async run() {
     const { requestable } = await this.getMentions({

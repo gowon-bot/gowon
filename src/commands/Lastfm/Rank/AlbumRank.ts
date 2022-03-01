@@ -1,30 +1,36 @@
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
-import { displayNumber } from "../../../lib/views/displays";
+import {
+  displayNumber,
+  displayNumberedList,
+} from "../../../lib/views/displays";
 import { LogicError } from "../../../errors";
-import { toInt } from "../../../helpers/lastFM";
+import { sanitizeForDiscord } from "../../../helpers/discord";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 
 const args = {
-  ...standardMentions,
   ...prefabArguments.album,
+  ...standardMentions,
 } as const;
 
 export default class AlbumRank extends LastFMBaseCommand<typeof args> {
-  idSeed = "cignature chaesol";
+  idSeed = "wonder girls sunmi";
 
-  aliases = ["alra", "lra", "lr"];
-  description = "Shows what rank a given album is in your top 1000 albums";
+  aliases = ["lr", "alr", "albumaround", "laround", "alaround"];
+  description =
+    "Shows the other albums around an album in your top 1000 albums";
   subcategory = "ranks";
   usage = ["", "artist | album @user"];
 
   arguments = args;
 
+  slashCommand = true;
+
   async run() {
     const { requestable, senderRequestable, perspective } =
       await this.getMentions({
         senderRequired:
-          !this.parsedArguments.album || !this.parsedArguments.artist,
+          !this.parsedArguments.artist || !this.parsedArguments.album,
       });
 
     const { artist, album } = await this.lastFMArguments.getAlbum(
@@ -45,25 +51,37 @@ export default class AlbumRank extends LastFMBaseCommand<typeof args> {
     );
 
     if (rank === -1) {
-      const isNumber = !isNaN(toInt(this.parsedArguments.artist));
-
       throw new LogicError(
         `That album wasn't found in ${
           perspective.possessive
-        } top ${displayNumber(topAlbums.albums.length, "album")}`,
-        isNumber
-          ? `Looking to find the album at rank ${this.parsedArguments.artist}? Run ${this.prefix}ala ${this.parsedArguments.artist}`
-          : ""
-      );
-    } else {
-      await this.traditionalReply(
-        `${topAlbums.albums[rank].name.strong()} by ${
-          topAlbums.albums[rank].artist.name
-        } is ranked #${displayNumber(rank + 1).strong()} with ${displayNumber(
-          topAlbums.albums[rank].userPlaycount,
-          "play"
-        ).strong()}`
+        } top ${displayNumber(topAlbums.albums.length, "album")}`
       );
     }
+
+    const start = rank < 5 ? 0 : rank - 5;
+    const stop =
+      rank > topAlbums.albums.length - 6
+        ? topAlbums.albums.length - 1
+        : rank + 6;
+
+    const embed = this.newEmbed()
+      .setAuthor(this.generateEmbedAuthor("Album around"))
+      .setTitle(
+        `Albums around ${topAlbums.albums[rank].name} in ${perspective.possessive} library`
+      )
+      .setDescription(
+        displayNumberedList(
+          topAlbums.albums.slice(start, stop).map((val, idx) => {
+            const display = `${val.name.italic()} by ${sanitizeForDiscord(
+              val.artist.name
+            )} - ${displayNumber(val.userPlaycount, "play")}`;
+
+            return start + idx === rank ? display.strong(false) : display;
+          }),
+          start
+        )
+      );
+
+    await this.send(embed);
   }
 }

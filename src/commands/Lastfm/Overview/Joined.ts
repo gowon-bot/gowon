@@ -6,6 +6,8 @@ export class Joined extends OverviewChildCommand {
   aliases = ["j", "join"];
   description = "Shows when a user joined Last.fm";
 
+  slashCommand = true;
+
   async run() {
     const joined = await this.calculator.joined();
 

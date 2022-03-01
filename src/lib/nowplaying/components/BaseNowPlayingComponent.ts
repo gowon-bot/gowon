@@ -16,12 +16,13 @@ export abstract class BaseNowPlayingComponent<
   Requirements extends readonly NowPlayingRequirement[]
 > {
   static readonly componentName: string;
+  static readonly friendlyName: string;
   abstract readonly requirements: Requirements;
 
   protected ctx = new GowonContext({
     command: { logger: this.values.logger! } as any,
     custom: {},
-    payload: this.values.message,
+    payload: this.values.payload,
     runAs: new RunAs(),
     gowonClient: {} as any,
   });
@@ -30,7 +31,7 @@ export abstract class BaseNowPlayingComponent<
     protected values: Pick<RequirementMap, Requirements[number]> & Resources
   ) {
     this.ctx.dangerousSetCommand({
-      guild: values.message?.guild,
+      guild: values.payload?.guild,
     });
   }
 

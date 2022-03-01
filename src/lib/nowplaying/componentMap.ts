@@ -18,6 +18,7 @@ import { ArtistPlaysInARowComponent } from "./compoundComponents/ArtistPlaysInAR
 import { UNUSED_CONFIG } from "../../services/dbservices/NowPlayingService";
 import { GlobalArtistRankComponent } from "./components/GlobalArtistRankComponent";
 import { ServerArtistRankComponent } from "./components/ServerRankComponent";
+import { Choice } from "../context/arguments/argumentTypes/StringArgument";
 
 // Types
 export type NowPlayingComponent = {
@@ -98,4 +99,11 @@ export function sortConfigOptions(config: string[]): string[] {
   }
 
   return options;
+}
+
+export function getComponentsAsChoices(): Choice[] {
+  return componentList.map((c) => ({
+    name: c.friendlyName,
+    value: c.componentName,
+  }));
 }

@@ -1,5 +1,4 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
-import { Message } from "discord.js";
 import { getOrdinal } from "../../../helpers";
 import { LogicError } from "../../../errors";
 import { toInt } from "../../../helpers/lastFM";
@@ -10,17 +9,17 @@ const args = {
   ...standardMentions,
 } as const;
 
-export class Rank extends CrownsChildCommand<typeof args> {
+export class GuildUserRank extends CrownsChildCommand<typeof args> {
   idSeed = "wjsn exy";
 
-  aliases = ["r"];
+  aliases = ["rank", "guildrank", "serverrank", "r"];
   description =
     "Ranks a user on the crowns leaderboard based on their crown count";
   usage = ["", "@user"];
 
   arguments = args;
 
-  async run(message: Message) {
+  async run() {
     const { perspective, discordUser, dbUser } = await this.getMentions();
 
     let rank = await this.crownsService.getRank(
@@ -43,7 +42,7 @@ export class Rank extends CrownsChildCommand<typeof args> {
         ).strong()} ${toInt(rank.count) === 1 ? "ranks" : "rank"} ${
           perspective.objectPronoun
         } ${getOrdinal(toInt(rank.rank)).strong()} in ${
-          message.guild?.name
+          this.guild?.name
         } out of ${displayNumber(rank.totalUsers, "total user")}`
       );
 

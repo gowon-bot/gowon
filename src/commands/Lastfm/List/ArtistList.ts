@@ -7,6 +7,7 @@ import { ListCommand } from "./ListCommand";
 export default class ArtistList extends ListCommand {
   idSeed = "stayc seeun";
 
+  slashCommandName = "topartists";
   description = "Shows your top artists over a given time period";
   aliases = ["alist", "topartists", "topartist", "artists", "al"];
 

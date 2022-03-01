@@ -16,11 +16,14 @@ const args = {
 
 export default class Week extends LastFMBaseCommand<typeof args> {
   idSeed = "cignature belle";
+
   description =
     "Shows an overview of your week, including your top artists, albums, and tracks";
   aliases = ["weekly"];
   subcategory = "reports";
   usage = ["", "@user"];
+
+  slashCommand = true;
 
   arguments = args;
 

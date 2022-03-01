@@ -4,8 +4,8 @@ import { standardMentions } from "../../../lib/context/arguments/mentionTypes/me
 import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
 
 const args = {
-  ...standardMentions,
   plays: new NumberArgument({ default: 100 }),
+  ...standardMentions,
 } as const;
 
 export default class ArtistPlaysequal extends LastFMBaseCommand<typeof args> {
@@ -20,7 +20,7 @@ export default class ArtistPlaysequal extends LastFMBaseCommand<typeof args> {
   arguments = args;
 
   async run() {
-    let plays = this.parsedArguments.plays!;
+    let plays = this.parsedArguments.plays;
 
     let { requestable, perspective } = await this.getMentions();
 

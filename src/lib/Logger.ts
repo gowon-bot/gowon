@@ -1,9 +1,10 @@
 import { BaseCommand } from "./command/BaseCommand";
-import { Message, User } from "discord.js";
+import { User } from "discord.js";
 import chalk from "chalk";
 import { format } from "date-fns";
 import { RunAs } from "./command/RunAs";
 import { SimpleMap } from "../helpers/types";
+import { Payload } from "./context/Payload";
 
 export class Logger {
   static output = true;
@@ -70,30 +71,34 @@ export class Logger {
       );
   }
 
-  logCommand(command: BaseCommand, message: Message, ...runAs: string[]): void {
-    let delegatedFrom = command.delegatedFrom;
+  logCommand(command: BaseCommand, payload: Payload, ...runAs: string[]): void {
+    let redirectedFrom = command.redirectedFrom;
 
     this.header +=
       "\n" +
       chalk`
 {cyan ID}: ${command.id}
 ${
-  delegatedFrom
-    ? chalk`{cyan Delegated from}: ${
-        (delegatedFrom.parentName ? delegatedFrom.parentName + ":" : "") +
-        delegatedFrom.name
+  redirectedFrom
+    ? chalk`{cyan Redirected from}: ${
+        (redirectedFrom.parentName ? redirectedFrom.parentName + ":" : "") +
+        redirectedFrom.name
       }\n`
     : ""
-}{cyan Ran at}: ${message.createdAt} {cyan by} ${
-        message.author.username
-      } {cyan in} ${message.guild?.name || "{red DMs}"}
+}{cyan Ran at}: ${payload.source.createdAt} {cyan by} ${
+        payload.author.username
+      } {cyan in} ${payload.guild?.name || "{red DMs}"}
 {cyan with arguments}: ${Logger.formatObject(
         this.sanitizeParamsForDisplay(command.parsedArguments)
       )}
-{cyan as}: ${runAs.join(" ")}
+{cyan as}: ${
+        payload.isInteraction()
+          ? `/${payload.source.commandName}`
+          : runAs.join(" ")
+      }
 
 {cyan Raw message content}:
-{bgGrey ${message.content}}
+${payload.isMessage() ? `{bgGrey ${payload.source.content}}` : ""}
 {cyan Activity:}`;
     Logger.log("Command", chalk.grey("started"), this);
   }

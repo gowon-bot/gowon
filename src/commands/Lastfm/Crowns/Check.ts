@@ -1,5 +1,4 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
-import { Message } from "discord.js";
 import { CrownState } from "../../../services/dbservices/CrownsService";
 import { CrownEmbeds } from "../../../lib/views/embeds/CrownEmbeds";
 import {
@@ -21,15 +20,17 @@ export class Check extends CrownsChildCommand<typeof args> {
   description = "Checks a crown. If you have more plays, you will take it.";
   usage = ["", "artist"];
 
+  slashCommand = true;
+
   arguments = args;
 
-  async run(message: Message) {
+  async run() {
     const { senderUser, senderRequestable } = await this.getMentions();
 
-    if (await senderUser?.inPurgatory(message)) throw new PurgatoryError();
-    if (await senderUser?.inactive(message)) throw new InactiveError();
-    if (await senderUser?.isCrownBanned(message)) throw new CrownBannedError();
-    if (await senderUser?.isOptedOut(message)) throw new OptedOutError();
+    if (await senderUser?.inPurgatory(this.ctx)) throw new PurgatoryError();
+    if (await senderUser?.inactive(this.ctx)) throw new InactiveError();
+    if (await senderUser?.isCrownBanned(this.ctx)) throw new CrownBannedError();
+    if (await senderUser?.isOptedOut(this.ctx)) throw new OptedOutError();
 
     const artist = await this.lastFMArguments.getArtist(
       this.ctx,
@@ -47,12 +48,12 @@ export class Check extends CrownsChildCommand<typeof args> {
     });
 
     const embeds = new CrownEmbeds(
+      this.ctx,
       crownCheck,
-      this.message.author,
+      this.payload.author,
       this.gowonClient,
       artistInfo.userPlaycount,
-      this.message,
-      this.message.member ?? undefined
+      this.payload.member ?? undefined
     );
 
     if (
@@ -62,7 +63,7 @@ export class Check extends CrownsChildCommand<typeof args> {
         crownCheck.crown.plays === crownCheck.oldCrown?.plays
       )
     ) {
-      this.crownsService.scribe.handleCheck(this.ctx, crownCheck, message);
+      this.crownsService.scribe.handleCheck(this.ctx, crownCheck);
     }
 
     const embed =

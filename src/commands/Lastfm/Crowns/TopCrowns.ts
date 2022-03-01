@@ -9,6 +9,9 @@ export class TopCrowns extends CrownsChildCommand {
   aliases = ["top", "stans"];
   usage = "";
 
+  slashCommand = true;
+  slashCommandName = "top";
+
   async run() {
     let serverUsers = await this.serverUserIDs({
       filterCrownBannedUsers: true,

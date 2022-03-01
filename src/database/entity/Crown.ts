@@ -11,13 +11,13 @@ import {
 import { User } from "./User";
 import { CrownEvent } from "./meta/CrownEvent";
 import { Logger } from "../../lib/Logger";
-import { Message } from "discord.js";
 import { CrownState } from "../../services/dbservices/CrownsService";
 import { GowonService } from "../../services/GowonService";
 import { CrownsQueries } from "../queries";
 import { toInt } from "../../helpers/lastFM";
 import { LastFMService } from "../../services/LastFM/LastFMService";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
+import { GowonContext } from "../../lib/context/Context";
 
 export interface CrownRankResponse {
   count: string;
@@ -186,25 +186,25 @@ export class Crown extends BaseEntity {
     ])) as CrownRank[];
   }
 
-  async invalid(message: Message): Promise<{
+  async invalid(ctx: GowonContext): Promise<{
     failed: boolean;
     reason?: InvalidCrownState;
   }> {
     if (!this.user.lastFMUsername)
       return { failed: true, reason: CrownState.loggedOut };
 
-    if (!(await this.userStillInServer(message)))
+    if (!(await this.userStillInServer(ctx)))
       return { failed: true, reason: CrownState.left };
 
-    if (await this.user.inactive(message))
+    if (await this.user.inactive(ctx))
       return { failed: true, reason: CrownState.inactivity };
 
-    if (await this.user.inPurgatory(message))
+    if (await this.user.inPurgatory(ctx))
       return { failed: true, reason: CrownState.purgatory };
 
     if (
       await ServiceRegistry.get(GowonService).isUserCrownBanned(
-        message.guild!,
+        ctx.guild!,
         this.user.discordID
       )
     )
@@ -213,8 +213,8 @@ export class Crown extends BaseEntity {
     return { failed: false };
   }
 
-  async userStillInServer(message: Message): Promise<boolean> {
-    return await User.stillInServer(message, this.user.discordID);
+  async userStillInServer(ctx: GowonContext): Promise<boolean> {
+    return await User.stillInServer(ctx, this.user.discordID);
   }
 
   redirectDisplay(): string {

@@ -6,7 +6,7 @@ import { ConfirmationEmbed } from "../../../lib/views/embeds/ConfirmationEmbed";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 
 const args = {
-  ...prefabArguments.artist,
+  ...prefabArguments.requiredArtist,
 } as const;
 
 export class Kill extends CrownsChildCommand<typeof args> {
@@ -24,7 +24,7 @@ export class Kill extends CrownsChildCommand<typeof args> {
   };
 
   async run() {
-    const artist = this.parsedArguments.artist!;
+    const artist = this.parsedArguments.artist;
 
     const crown = await this.crownsService.getCrown(this.ctx, artist, {
       noRedirect: true,

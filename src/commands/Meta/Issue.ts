@@ -8,7 +8,7 @@ import { GithubService } from "../../services/Github/GithubService";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 
 const args = {
-  title: new StringArgument({ splitOn: "|" }),
+  title: new StringArgument({ splitOn: "|", required: true }),
   body: new StringArgument({ index: { start: 1 }, splitOn: "|" }),
 } as const;
 
@@ -53,7 +53,7 @@ export default class Issue extends BaseCommand<typeof args> {
   githubService = ServiceRegistry.get(GithubService);
 
   async run() {
-    let title = this.parsedArguments.title!,
+    let title = this.parsedArguments.title,
       body = this.parsedArguments.body;
 
     let metadata = `
@@ -61,15 +61,19 @@ export default class Issue extends BaseCommand<typeof args> {
 
 ## Notes from Gowon:
 
-${displayLink("Jump to message", this.message.url)}
+${
+  this.payload.isMessage()
+    ? displayLink("Jump to message", this.payload.source.url)
+    : ""
+}
 
 **Author**: ${this.author.username} (${
-      this.message.member?.nickname || "*No Nickname*"
+      this.payload.member?.nickname || "*No Nickname*"
     })
 **Ran at**: ${format(new Date(), "h:mma 'on' MMMM do, yyyy")}
 **Channel:** \\#${
-      this.message.guild?.channels.cache.find(
-        (c) => c.id === this.message.channel.id
+      this.payload.guild?.channels.cache.find(
+        (c) => c.id === this.payload.channel.id
       )?.name
     }
 **Guild**: ${this.guild.name}`;

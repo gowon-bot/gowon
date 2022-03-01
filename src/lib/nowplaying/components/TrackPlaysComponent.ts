@@ -7,6 +7,7 @@ export class TrackPlaysComponent extends BaseNowPlayingComponent<
   typeof trackPlaysRequirements
 > {
   static componentName = "track-plays";
+  static friendlyName = "Track plays";
   readonly requirements = trackPlaysRequirements;
 
   present() {

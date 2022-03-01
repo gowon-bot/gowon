@@ -18,6 +18,8 @@ export default class TrackPercent extends LastFMBaseCommand<typeof args> {
   subcategory = "percents";
   usage = ["artist | track"];
 
+  slashCommand = true;
+
   arguments = args;
 
   async run() {

@@ -5,8 +5,9 @@ import {
   BaseEntity,
   Unique,
 } from "typeorm";
-import { User as DiscordUser, Message, Role, Guild } from "discord.js";
+import { User as DiscordUser, Role, Guild } from "discord.js";
 import { User } from "./User";
+import { GowonContext } from "../../lib/context/Context";
 
 @Entity({ name: "permissions" })
 @Unique(["serverID", "entityID", "commandID"])
@@ -36,15 +37,15 @@ export class Permission extends BaseEntity {
   @Column({ default: false })
   devPermission!: boolean;
 
-  static async toDiscordRole(message: Message, roleID: string): Promise<Role> {
-    return (await message.guild?.roles.fetch(roleID))!;
+  static async toDiscordRole(ctx: GowonContext, roleID: string): Promise<Role> {
+    return (await ctx.guild?.roles.fetch(roleID))!;
   }
 
   async toDiscordUser(guild: Guild): Promise<DiscordUser> {
     return (await User.toDiscordUser(guild, this.entityID))!;
   }
 
-  async toDiscordRole(message: Message): Promise<Role> {
-    return (await Permission.toDiscordRole(message, this.entityID))!;
+  async toDiscordRole(ctx: GowonContext): Promise<Role> {
+    return (await Permission.toDiscordRole(ctx, this.entityID))!;
   }
 }

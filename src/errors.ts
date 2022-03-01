@@ -490,3 +490,11 @@ export class NotASpotifyLinkError extends ClientError {
     super(`The message you replied to doesn't contain a Spotify link!`);
   }
 }
+
+export class CannotBeUsedAsASlashCommand extends ClientError {
+  name = "CantBeUsedAsASlashCommand";
+
+  constructor() {
+    super("This command cannot be used as a slash command yet!");
+  }
+}

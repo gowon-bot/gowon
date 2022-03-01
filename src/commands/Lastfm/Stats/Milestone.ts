@@ -9,8 +9,11 @@ import { standardMentions } from "../../../lib/context/arguments/mentionTypes/me
 import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
 
 const args = {
+  milestone: new NumberArgument({
+    required: true,
+    description: "The milestone to check",
+  }),
   ...standardMentions,
-  milestone: new NumberArgument({ default: 1 }),
 } as const;
 
 export default class Milestone extends LastFMBaseCommand<typeof args> {
@@ -22,6 +25,8 @@ export default class Milestone extends LastFMBaseCommand<typeof args> {
   usage = ["", "milestone @user"];
 
   arguments = args;
+
+  slashCommand = true;
 
   validation: Validation = {
     milestone: [
@@ -35,7 +40,7 @@ export default class Milestone extends LastFMBaseCommand<typeof args> {
   };
 
   async run() {
-    let milestone = this.parsedArguments.milestone!;
+    let milestone = this.parsedArguments.milestone;
 
     let { requestable, perspective } = await this.getMentions({
       asCode: false,

@@ -7,8 +7,11 @@ import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/Num
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 
 const args = {
+  rank: new NumberArgument({
+    description: "The rank to lookup",
+    required: true,
+  }),
   ...standardMentions,
-  rank: new NumberArgument({ default: 1 }),
 } as const;
 
 export default class TrackAt extends LastFMBaseCommand<typeof args> {
@@ -20,6 +23,8 @@ export default class TrackAt extends LastFMBaseCommand<typeof args> {
   usage = ["", "rank @user"];
 
   arguments = args;
+
+  slashCommand = true;
 
   validation: Validation = {
     rank: new validators.Number({ whole: true }),

@@ -16,6 +16,8 @@ export default class PopularTracks extends InfoCommand<typeof args> {
   shouldBeIndexed = true;
   usage = ["", "artist", "artist | start | stop"];
 
+  slashCommand = true;
+
   aliases = ["pop"];
   description = "Displays the most popular tracks for an artist on Last.fm";
 
@@ -38,7 +40,7 @@ export default class PopularTracks extends InfoCommand<typeof args> {
       `Top tracks for ${topTracks.tracks[0]?.artist?.name || artist}`
     );
 
-    const scrollingEmbed = new SimpleScrollingEmbed(this.message, embed, {
+    const scrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
       items: topTracks.tracks,
       pageSize: 10,
 

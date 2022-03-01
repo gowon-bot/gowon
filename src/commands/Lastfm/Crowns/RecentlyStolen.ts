@@ -8,6 +8,8 @@ export class RecentlyStolen extends CrownsChildCommand {
   aliases = ["recent", "stolen", "rs"];
   usage = "";
 
+  slashCommand = true;
+
   async run() {
     let crowns = await this.crownsService.listRecentlyStolen(
       this.ctx,

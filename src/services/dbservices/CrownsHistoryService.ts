@@ -3,9 +3,10 @@ import { CrownEvent, SimpleCrown } from "../../database/entity/meta/CrownEvent";
 import { User } from "../../database/entity/User";
 import { BaseService } from "../BaseService";
 import { CrownCheck, CrownsService, CrownState } from "./CrownsService";
-import { GuildMember, Message, User as DiscordUser } from "discord.js";
+import { GuildMember, User as DiscordUser } from "discord.js";
 import { FindConditions, In } from "typeorm";
 import { GowonContext } from "../../lib/context/Context";
+import { ServiceRegistry } from "../ServicesRegistry";
 
 export enum CrownEventString {
   created = "created",
@@ -25,11 +26,13 @@ export enum SnatchedEventString {
   userLeft = "user.left",
 }
 
-type CrownsHistoryServiceContext = GowonContext<{
-  constants: { crownsService: CrownsService };
-}>;
+type CrownsHistoryServiceContext = GowonContext;
 
 export class CrownsHistoryService extends BaseService<CrownsHistoryServiceContext> {
+  private get crownsService() {
+    return ServiceRegistry.get(CrownsService);
+  }
+
   private async logEvent(
     ctx: CrownsHistoryServiceContext,
     crown: Crown | Crown[],
@@ -120,7 +123,7 @@ export class CrownsHistoryService extends BaseService<CrownsHistoryServiceContex
     banner: DiscordUser,
     banTarget: DiscordUser
   ) {
-    let crowns = await ctx.constants.crownsService.listTopCrowns(
+    let crowns = await this.crownsService.listTopCrowns(
       ctx,
       user.discordID,
       undefined
@@ -137,7 +140,7 @@ export class CrownsHistoryService extends BaseService<CrownsHistoryServiceContex
     unbanner: DiscordUser,
     unbanTarget: DiscordUser
   ) {
-    let crowns = await ctx.constants.crownsService.listTopCrowns(
+    let crowns = await this.crownsService.listTopCrowns(
       ctx,
       user.discordID,
       undefined
@@ -149,7 +152,7 @@ export class CrownsHistoryService extends BaseService<CrownsHistoryServiceContex
   }
 
   async optOut(ctx: CrownsHistoryServiceContext, discordUser: GuildMember) {
-    let crowns = await ctx.constants.crownsService.listTopCrowns(
+    let crowns = await this.crownsService.listTopCrowns(
       ctx,
       discordUser.user.id,
       -1
@@ -158,24 +161,20 @@ export class CrownsHistoryService extends BaseService<CrownsHistoryServiceContex
     this.logEvent(ctx, crowns, CrownEventString.userOptedOut, discordUser.user);
   }
 
-  async handleCheck(
-    ctx: CrownsHistoryServiceContext,
-    crownCheck: CrownCheck,
-    message: Message
-  ) {
+  async handleCheck(ctx: CrownsHistoryServiceContext, crownCheck: CrownCheck) {
     let { state, crown, oldCrown } = crownCheck;
     let owner = await User.toDiscordUser(
-      message.guild!,
+      ctx.guild!,
       crownCheck.oldCrown!.user.discordID
     );
 
     switch (state) {
       case CrownState.updated:
-        this.update(ctx, crown!, message.author, oldCrown!);
+        this.update(ctx, crown!, ctx.author, oldCrown!);
         break;
 
       case CrownState.newCrown:
-        this.create(ctx, crown!, message.author);
+        this.create(ctx, crown!, ctx.author);
         break;
 
       case CrownState.snatched:
@@ -184,7 +183,7 @@ export class CrownsHistoryService extends BaseService<CrownsHistoryServiceContex
           crown!,
           oldCrown!,
           SnatchedEventString.morePlays,
-          message.author,
+          ctx.author,
           owner
         );
         break;
@@ -195,7 +194,7 @@ export class CrownsHistoryService extends BaseService<CrownsHistoryServiceContex
           crown!,
           oldCrown!,
           SnatchedEventString.userBanned,
-          message.author,
+          ctx.author,
           owner
         );
         break;
@@ -206,7 +205,7 @@ export class CrownsHistoryService extends BaseService<CrownsHistoryServiceContex
           crown!,
           oldCrown!,
           SnatchedEventString.userInactive,
-          message.author,
+          ctx.author,
           owner
         );
         break;
@@ -217,7 +216,7 @@ export class CrownsHistoryService extends BaseService<CrownsHistoryServiceContex
           crown!,
           oldCrown!,
           SnatchedEventString.userInPurgatory,
-          message.author,
+          ctx.author,
           owner
         );
         break;
@@ -228,7 +227,7 @@ export class CrownsHistoryService extends BaseService<CrownsHistoryServiceContex
           crown!,
           oldCrown!,
           SnatchedEventString.userLeft,
-          message.author
+          ctx.author
         );
         break;
 

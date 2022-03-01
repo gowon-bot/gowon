@@ -1,10 +1,10 @@
-import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { CrownsChildCommand } from "./CrownsChildCommand";
+import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 
 const args = {
-  ...prefabArguments.artist,
+  ...prefabArguments.requiredArtist,
 } as const;
 
 export class BanArtist extends CrownsChildCommand<typeof args> {
@@ -21,7 +21,7 @@ export class BanArtist extends CrownsChildCommand<typeof args> {
   };
 
   async run() {
-    let artist = this.parsedArguments.artist!;
+    let artist = this.parsedArguments.artist;
 
     let artistCrownBan = await this.crownsService.artistCrownBan(
       this.ctx,

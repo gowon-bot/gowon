@@ -9,10 +9,23 @@ import { ConfirmationEmbed } from "../../../../lib/views/embeds/ConfirmationEmbe
 import { EmojiService } from "../../../../services/Discord/EmojiService";
 import { ServiceRegistry } from "../../../../services/ServicesRegistry";
 import { NowPlayingConfigChildCommand } from "./NowPlayingConfigChildCommand";
+import { Flag } from "../../../../lib/context/arguments/argumentTypes/Flag";
 
 const args = {
-  clear: new StringArgument({ match: ["clear"] }),
-  emojis: new EmojisArgument({ index: { start: 0 } }),
+  clearInput: new StringArgument({
+    match: ["clear"],
+    slashCommandOption: false,
+  }),
+  clear: new Flag({
+    shortnames: ["c"],
+    longnames: ["clear"],
+    description: "Clear your reacts",
+  }),
+  emojis: new EmojisArgument({
+    index: { start: 0 },
+    default: [],
+    description: "The emojis Gowon will react to your fms with",
+  }),
 } as const;
 
 export class React extends NowPlayingConfigChildCommand<typeof args> {
@@ -25,14 +38,16 @@ export class React extends NowPlayingConfigChildCommand<typeof args> {
 
   arguments = args;
 
+  slashCommand = true;
+
   settingsService = ServiceRegistry.get(SettingsService);
   emojiService = ServiceRegistry.get(EmojiService);
 
   async run() {
-    const emojis = this.parsedArguments.emojis!;
-    const clear = this.parsedArguments.clear;
+    const emojis = this.parsedArguments.emojis;
+    const clear = this.parsedArguments.clearInput;
 
-    if (clear?.toLowerCase() === "clear") {
+    if (clear?.toLowerCase() === "clear" || this.parsedArguments.clear) {
       return this.handleClear();
     } else if (emojis.length) {
       await this.saveReacts(emojis);

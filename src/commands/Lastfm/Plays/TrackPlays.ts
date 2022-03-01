@@ -2,19 +2,33 @@ import { displayNumber } from "../../../lib/views/displays";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
+import { Flag } from "../../../lib/context/arguments/argumentTypes/Flag";
+import { CommandRedirect } from "../../../lib/command/BaseCommand";
+import GlobalTrackPlays from "./GlobalTrackPlays";
 
 const args = {
-  ...standardMentions,
   ...prefabArguments.track,
+  global: new Flag({
+    longnames: ["global"],
+    shortnames: ["g"],
+    description: "Compares your plays against the global stats",
+  }),
+  ...standardMentions,
 } as const;
 
 export default class TrackPlays extends LastFMBaseCommand<typeof args> {
   idSeed = "gugudan hana";
 
   aliases = ["tp"];
-  description = "Shows you how many plays you have of a given track";
+  description = "Shows how many plays a user has of a given track";
   subcategory = "plays";
   usage = ["artist | track @user"];
+
+  slashCommand = true;
+
+  redirects: CommandRedirect<typeof args>[] = [
+    { when: (args) => args.global, redirectTo: GlobalTrackPlays },
+  ];
 
   arguments = args;
 

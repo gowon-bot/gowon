@@ -28,6 +28,17 @@ export class TimeRange {
     return parseTimeRange(period);
   }
 
+  static fromDuration(duration: Duration): TimeRange {
+    return timeRangeFromDuration(duration);
+  }
+
+  static overall(): TimeRange {
+    return new TimeRange({
+      to: new Date(),
+      isOverall: true,
+    });
+  }
+
   constructor(
     private options: {
       from?: Date;
@@ -177,13 +188,7 @@ export function parseTimeRange(
   const parsedDuration = durationParser.parse(string);
 
   if (Object.keys(parsedDuration || {}).length) {
-    const fromDate = sub(new Date(), parsedDuration);
-
-    return new TimeRange({
-      from: fromDate,
-      to: new Date(),
-      duration: parsedDuration,
-    });
+    return timeRangeFromDuration(parsedDuration);
   }
 
   if (
@@ -205,4 +210,14 @@ export function parseTimeRange(
   }
 
   return undefined;
+}
+
+function timeRangeFromDuration(duration: Duration) {
+  const fromDate = sub(new Date(), duration);
+
+  return new TimeRange({
+    from: fromDate,
+    to: new Date(),
+    duration: duration,
+  });
 }

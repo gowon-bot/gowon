@@ -15,27 +15,34 @@ interface Overlap {
 }
 
 const args = {
+  tag: new StringArgument({
+    index: { start: 0 },
+    required: true,
+    description: "The tag to filter your track with",
+  }),
   ...standardMentions,
-  tag: new StringArgument({ index: { start: 0 } }),
 } as const;
 
 export default class TagTracks extends LastFMBaseCommand<typeof args> {
   idSeed = "iz*one nako";
 
   description =
-    "Shows the overlap between your top tracks, and a given tag's top tracks. This command works best for smaller/memey tags, as a lot of larger tags are mistagged";
+    "Shows the overlap between your top tracks, and a given tag's top tracks.";
+  // "This command works best for smaller/memey tags, as a lot of larger tags are mistagged";
   subcategory = "tags";
   aliases = ["tagt", "tagtr", "tagtrack"];
   usage = ["tag"];
 
   arguments = args;
 
+  slashCommand = true;
+
   validation: Validation = {
     tag: new validators.Required({}),
   };
 
   async run() {
-    const tag = this.parsedArguments.tag!;
+    const tag = this.parsedArguments.tag;
 
     const { requestable, perspective } = await this.getMentions({
       asCode: false,

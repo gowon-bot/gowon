@@ -20,7 +20,7 @@ export default class TrackPlaysequal extends LastFMBaseCommand<typeof args> {
   arguments = args;
 
   async run() {
-    let plays = this.parsedArguments.plays!;
+    let plays = this.parsedArguments.plays;
 
     let { requestable, perspective } = await this.getMentions();
 

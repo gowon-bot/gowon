@@ -15,9 +15,9 @@ import {
 } from "../../../../lib/context/arguments/prefabArguments";
 
 const args = {
-  ...standardMentions,
   ...prefabArguments.artist,
   noRedirect: prefabFlags.noRedirect,
+  ...standardMentions,
 } as const;
 
 export default class ArtistTopTracks extends MirrorballBaseCommand<
@@ -32,6 +32,8 @@ export default class ArtistTopTracks extends MirrorballBaseCommand<
   aliases = ["att", "at", "iatt", "favs"];
   subcategory = "library";
   description = "Displays your top scrobbled tracks from an artist";
+
+  slashCommand = true;
 
   arguments = args;
 
@@ -76,7 +78,7 @@ export default class ArtistTopTracks extends MirrorballBaseCommand<
     const totalScrobbles = topTracks.reduce((sum, t) => sum + t.playcount, 0);
     const average = totalScrobbles / topTracks.length;
 
-    const simpleScrollingEmbed = new SimpleScrollingEmbed(this.message, embed, {
+    const simpleScrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
       pageSize: 15,
       items: topTracks,
 

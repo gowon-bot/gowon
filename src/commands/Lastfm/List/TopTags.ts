@@ -16,22 +16,30 @@ import { TimePeriodArgument } from "../../../lib/context/arguments/argumentTypes
 import { TimeRangeArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/TimeRangeArgument";
 
 const args = {
+  timePeriod: new TimePeriodArgument({
+    default: "7day",
+    description: "The time period to use (defaults to week)",
+  }),
+  timeRange: new TimeRangeArgument({
+    description: "The time range to use",
+  }),
   ...standardMentions,
-  timePeriod: new TimePeriodArgument({ fallback: "7day" }),
-  timeRange: new TimeRangeArgument(),
 } as const;
 
-export default class TopTags extends LastFMBaseCommand<typeof args> {
+export default class TagList extends LastFMBaseCommand<typeof args> {
   idSeed = "gwsn soso";
 
   subcategory = "tags";
   description = "Displays your top tags";
   aliases = ["tags", "tta"];
 
+  slashCommand = true;
+  slashCommandName = "toptags";
+
   arguments = args;
 
   async run() {
-    const timePeriod = this.parsedArguments.timePeriod!,
+    const timePeriod = this.parsedArguments.timePeriod,
       timeRange = this.parsedArguments.timeRange;
 
     const { requestable, perspective } = await this.getMentions();
@@ -76,7 +84,7 @@ export default class TopTags extends LastFMBaseCommand<typeof args> {
     await tagConsolidator.saveServerBannedTagsInContext(this.ctx);
     tagConsolidator.addTags(this.ctx, response.tags.tags);
 
-    const scrollingEmbed = new SimpleScrollingEmbed(this.message, embed, {
+    const scrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
       items: tagConsolidator.consolidate(),
       pageSize: 15,
       pageRenderer(tags, { offset }) {
@@ -91,6 +99,6 @@ export default class TopTags extends LastFMBaseCommand<typeof args> {
       overrides: { itemName: "tag" },
     });
 
-    await scrollingEmbed.send();
+    scrollingEmbed.send();
   }
 }

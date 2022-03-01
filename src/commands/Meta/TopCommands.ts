@@ -1,11 +1,13 @@
-import { Message } from "discord.js";
 import { MetaChildCommand } from "./MetaChildCommand";
 import { displayNumber } from "../../lib/views/displays";
-import { humanizeTimeRange } from "../../lib/timeAndDate/helpers";
+import { humanizeTimeRange, TimeRange } from "../../lib/timeAndDate/helpers";
 import { TimeRangeArgument } from "../../lib/context/arguments/argumentTypes/timeAndDate/TimeRangeArgument";
 
 const args = {
-  timeRange: new TimeRangeArgument({ useOverall: false }),
+  timeRange: new TimeRangeArgument({
+    useOverall: false,
+    default: TimeRange.fromDuration({ weeks: 1 }),
+  }),
 } as const;
 
 export class TopCommands extends MetaChildCommand<typeof args> {
@@ -16,8 +18,8 @@ export class TopCommands extends MetaChildCommand<typeof args> {
 
   arguments = args;
 
-  async run(message: Message) {
-    const timeRange = this.parsedArguments.timeRange!;
+  async run() {
+    const timeRange = this.parsedArguments.timeRange;
     const humanizedTimeRange = humanizeTimeRange(timeRange, {
       useOverall: false,
     });
@@ -27,7 +29,7 @@ export class TopCommands extends MetaChildCommand<typeof args> {
     ).slice(0, 10);
 
     const embed = this.newEmbed()
-      .setTitle(`Top commands in ${message.guild?.name!} ${humanizedTimeRange}`)
+      .setTitle(`Top commands in ${this.guild?.name!} ${humanizedTimeRange}`)
       .setDescription(
         topCommands
           .map(

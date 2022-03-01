@@ -3,17 +3,22 @@ import { standardMentions } from "../../../lib/context/arguments/mentionTypes/me
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 const args = {
+  keywords: new StringArgument({
+    index: { start: 0 },
+    description:
+      "The keywords to search Wikipedia for (defaults to your currently playing track)",
+  }),
   ...standardMentions,
-  keywords: new StringArgument({ index: { start: 0 } }),
 } as const;
 
 export default class Wikipedia extends LastFMBaseCommand<typeof args> {
   idSeed = "elris yukyung";
 
   aliases = ["wiki"];
-  description = "Search wikipedia for a song (or anything!)";
+  description = "Search Wikipedia for a song (or anything!)";
   subcategory = "external";
 
+  slashCommand = true;
   arguments = args;
 
   async run() {

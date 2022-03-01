@@ -15,11 +15,14 @@ const args = {
 
 export default class Day extends LastFMBaseCommand<typeof args> {
   idSeed = "bvndit seungeun";
+
   description =
     "Shows an overview of your day, including your top artists, albums, and tracks";
   aliases = ["daily"];
   subcategory = "reports";
   usage = ["", "@user"];
+
+  slashCommand = true;
 
   arguments = args;
 

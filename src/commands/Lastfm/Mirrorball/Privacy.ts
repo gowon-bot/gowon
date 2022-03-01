@@ -2,31 +2,35 @@ import { LinkGenerator } from "../../../helpers/lastFM";
 import { BaseCommand } from "../../../lib/command/BaseCommand";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { Emoji } from "../../../lib/Emoji";
-import { validators } from "../../../lib/validation/validators";
 import { displayLink } from "../../../lib/views/displays";
 import { MirrorballPrivacy } from "../../../services/mirrorball/MirrorballTypes";
 import { PrivateUserDisplay } from "../../../services/mirrorball/services/MirrorballUsersService";
 
 const args = {
-  privacy: new StringArgument({ index: 0 }),
+  privacy: new StringArgument({
+    index: 0,
+    choices: [
+      { value: "Private", name: "Nothing" },
+      { value: "FMUsername", name: "Last.fm username" },
+      { value: "Discord", name: "Discord tag" },
+      { value: "Both", name: "Last.fm username and Discord tag" },
+    ],
+    description: "What other users can see about you on global leaderboards",
+  }),
 } as const;
 
 export default class Privacy extends BaseCommand<typeof args> {
   idSeed = "hello venus seoyoung";
 
   subcategory = "accounts";
-  description = "Set your privacy";
+  description =
+    "Control what other users can see about you on global leaderboards";
   aliases = ["priv"];
   usage = ["", "<privacy>"];
 
   arguments = args;
 
-  validation = {
-    privacy: new validators.Choices({
-      ignoreCase: true,
-      choices: ["Discord", "FMUsername", "Private", "Both"],
-    }),
-  };
+  slashCommand = true;
 
   private privacyHelp =
     "Your privacy determines what users in other servers can see about you on global leaderboards";

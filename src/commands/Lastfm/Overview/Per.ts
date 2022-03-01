@@ -4,8 +4,10 @@ export class Per extends OverviewChildCommand {
   idSeed = "snsd yoona";
 
   aliases = ["lpa", "tpa", "tpl", "alpa", "tpal"];
-  description =
-    "Shows averages about your library. Average...\n- albums per artist\n- tracks per artist\n- tracks per album";
+  description = "Shows averages about your library.";
+  // " Average...\n- albums per artist\n- tracks per artist\n- tracks per album";
+
+  slashCommand = true;
 
   async run() {
     let { perspective } = await this.getMentions();

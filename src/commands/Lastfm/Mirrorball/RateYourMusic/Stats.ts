@@ -27,6 +27,8 @@ export class Stats extends RateYourMusicIndexingChildCommand<
 
   arguments = args;
 
+  slashCommand = true;
+
   async run() {
     const { dbUser, discordUser } = await this.getMentions({
       fetchDiscordUser: true,

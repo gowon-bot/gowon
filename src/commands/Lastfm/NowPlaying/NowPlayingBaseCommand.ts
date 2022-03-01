@@ -22,13 +22,16 @@ import { SettingsService } from "../../../lib/settings/SettingsService";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 
-const args = {
+export const nowPlayingArgs = {
   ...standardMentions,
-  otherWords: new StringArgument({ index: { start: 0 } }),
+  otherWords: new StringArgument({
+    index: { start: 0 },
+    slashCommandOption: false,
+  }),
 } as const;
 
 export abstract class NowPlayingBaseCommand<
-  T extends typeof args = typeof args
+  T extends typeof nowPlayingArgs = typeof nowPlayingArgs
 > extends LastFMBaseCommand<T> {
   subcategory = "nowplaying";
   usage = [
@@ -37,7 +40,7 @@ export abstract class NowPlayingBaseCommand<
     "@user hey check out this song (will show your now playing)",
   ];
 
-  arguments = args as T;
+  arguments = nowPlayingArgs as T;
 
   settingsService = ServiceRegistry.get(SettingsService);
   tagConsolidator = new TagConsolidator();
@@ -70,7 +73,7 @@ export abstract class NowPlayingBaseCommand<
     if (
       otherWords &&
       !this.parsedArguments.userID &&
-      !this.parsedArguments.lfmUser
+      !this.parsedArguments.lastfmUsername
     ) {
       requestable = senderRequestable;
       username = senderUsername;
@@ -179,7 +182,7 @@ export abstract class NowPlayingBaseCommand<
       if (crown.value.user.id === discordUser?.id) {
         isCrownHolder = true;
       } else {
-        if (await DBUser.stillInServer(this.message, crown.value.user.id)) {
+        if (await DBUser.stillInServer(this.ctx, crown.value.user.id)) {
           crownString = `👑 ${displayNumber(crown.value.crown.plays)} (${
             crown.value.user.username
           })`;

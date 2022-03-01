@@ -7,8 +7,8 @@ import { standardMentions } from "../../../lib/context/arguments/mentionTypes/me
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 
 const args = {
-  ...standardMentions,
   ...prefabArguments.album,
+  ...standardMentions,
 } as const;
 
 export default class AlbumInfo extends InfoCommand<typeof args> {
@@ -21,8 +21,7 @@ export default class AlbumInfo extends InfoCommand<typeof args> {
   usage = ["", "artist | album"];
 
   arguments = args;
-
-  customContext = { mutable: {} };
+  slashCommand = true;
 
   lineConsolidator = new LineConsolidator();
 

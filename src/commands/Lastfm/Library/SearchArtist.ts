@@ -13,6 +13,8 @@ export default class SearchArtist extends SearchCommand {
   aliases = ["sa", "sartist"];
   usage = ["keywords", "keywords @user"];
 
+  slashCommand = true;
+
   variations: Variation[] = [
     {
       name: "deep",
@@ -22,19 +24,19 @@ export default class SearchArtist extends SearchCommand {
   ];
 
   async run() {
-    const keywords = this.parsedArguments.keywords!;
+    const keywords = this.parsedArguments.keywords;
 
     const { requestable, perspective } = await this.getMentions();
 
     const paginator = new Paginator(
       this.lastFMService.topArtists.bind(this.lastFMService),
-      this.variationWasUsed("deep") ? 4 : 2,
+      this.isDeep() ? 4 : 2,
       { username: requestable, limit: 1000 },
       this.ctx
     );
 
     const topArtists = await paginator.getAllToConcatonable({
-      concurrent: this.variationWasUsed("deep"),
+      concurrent: this.isDeep(),
     });
 
     const filtered = topArtists.artists.filter((a) =>
@@ -65,7 +67,7 @@ export default class SearchArtist extends SearchCommand {
       return;
     }
 
-    const scrollingEmbed = new SimpleScrollingEmbed(this.message, embed, {
+    const scrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
       items: filtered,
       pageSize: 15,
       pageRenderer(items) {

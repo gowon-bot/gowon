@@ -7,8 +7,11 @@ import { validators } from "../../../../lib/validation/validators";
 import { PlaylistChildCommand } from "./PlaylistChildCommand";
 
 const args = {
-  emoji: new EmojisArgument(),
-  playlistName: new StringArgument({ preprocessor: removeEmojisFromString }),
+  emoji: new EmojisArgument({ default: [] }),
+  playlistName: new StringArgument({
+    preprocessor: removeEmojisFromString,
+    required: true,
+  }),
 } as const;
 
 export class Tag extends PlaylistChildCommand<typeof args> {
@@ -34,8 +37,8 @@ export class Tag extends PlaylistChildCommand<typeof args> {
 
     this.access.checkAndThrow(dbUser);
 
-    const playlistName = this.parsedArguments.playlistName!,
-      [emoji] = this.parsedArguments.emoji!;
+    const playlistName = this.parsedArguments.playlistName,
+      [emoji] = this.parsedArguments.emoji;
 
     const playlists = await this.spotifyService.getPlaylists(this.ctx);
 

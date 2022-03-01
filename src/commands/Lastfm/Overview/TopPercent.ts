@@ -7,9 +7,14 @@ import { TimePeriodArgument } from "../../../lib/context/arguments/argumentTypes
 import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
 
 const args = {
+  timePeriod: new TimePeriodArgument({
+    description: "The time period to display stats for",
+  }),
+  percent: new NumberArgument({
+    default: 50,
+    description: "The percent of artists to total to (defaults to 50)",
+  }),
   ...standardMentions,
-  timePeriod: new TimePeriodArgument(),
-  percent: new NumberArgument({ default: 50 }),
 } as const;
 
 export class TopPercent extends OverviewChildCommand<typeof args> {
@@ -21,12 +26,14 @@ export class TopPercent extends OverviewChildCommand<typeof args> {
 
   arguments = args;
 
+  slashCommand = true;
+
   validation: Validation = {
     percent: new validators.Range({ min: 5, max: 100 }),
   };
 
   async run() {
-    let percent = this.parsedArguments.percent!;
+    let percent = this.parsedArguments.percent;
 
     let { perspective } = await this.getMentions();
 

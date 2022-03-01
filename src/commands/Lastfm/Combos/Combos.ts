@@ -5,11 +5,13 @@ import { displayNumberedList } from "../../../lib/views/displays";
 import { ArtistsService } from "../../../services/mirrorball/services/ArtistsService";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
-import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
+import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 
 const args = {
+  artist: new StringArgument({
+    description: "The artist to filter your combos with",
+  }),
   ...standardMentions,
-  ...prefabArguments.artist,
 } as const;
 
 export class Combos extends ComboChildCommand<typeof args> {
@@ -21,6 +23,9 @@ export class Combos extends ComboChildCommand<typeof args> {
   usage = ["", "artist name"];
 
   arguments = args;
+
+  slashCommand = true;
+  slashCommandName = "list";
 
   artistsService = ServiceRegistry.get(ArtistsService);
 
@@ -59,7 +64,7 @@ export class Combos extends ComboChildCommand<typeof args> {
 
     const displayCombo = this.displayCombo.bind(this);
 
-    const scrollingEmbed = new SimpleScrollingEmbed(this.message, embed, {
+    const scrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
       items: combos,
       pageSize: 5,
       pageRenderer(combos, { offset }) {

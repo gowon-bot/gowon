@@ -15,9 +15,9 @@ import {
 } from "../../../../lib/context/arguments/prefabArguments";
 
 const args = {
-  ...standardMentions,
   ...prefabArguments.artist,
   noRedirect: prefabFlags.noRedirect,
+  ...standardMentions,
 } as const;
 
 export default class ArtistTopAlbums extends MirrorballBaseCommand<
@@ -26,13 +26,13 @@ export default class ArtistTopAlbums extends MirrorballBaseCommand<
   typeof args
 > {
   connector = new ArtistTopAlbumsConnector();
-
-  subcategory = "library";
   idSeed = "redsquare bomin";
 
+  subcategory = "library";
+  description = "Displays your top scrobbled albums from an artist";
   aliases = ["atl", "iatl"];
 
-  description = "Displays your top scrobbled albums from an artist";
+  slashCommand = true;
 
   arguments = args;
 
@@ -78,7 +78,7 @@ export default class ArtistTopAlbums extends MirrorballBaseCommand<
       .setTitle(`Top ${artist.name} albums for ${username}`)
       .setURL(LinkGenerator.libraryArtistTopAlbums(username, artist.name));
 
-    const simpleScrollingEmbed = new SimpleScrollingEmbed(this.message, embed, {
+    const simpleScrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
       items: topAlbums,
       pageSize: 15,
       pageRenderer(albums) {

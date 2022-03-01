@@ -1,4 +1,3 @@
-import { Message } from "discord.js";
 import { PermissionsChildCommand } from "../Permissions/PermissionsChildCommand";
 
 export class Disabled extends PermissionsChildCommand {
@@ -10,11 +9,11 @@ export class Disabled extends PermissionsChildCommand {
 
   async prerun() {}
 
-  async run(message: Message) {
+  async run() {
     let disabledCommands = await this.adminService.listDisabled(this.ctx);
 
     let embed = this.newEmbed()
-      .setTitle(`Disabled commands in ${message.guild?.name}`)
+      .setTitle(`Disabled commands in ${this.guild?.name}`)
       .setDescription(
         disabledCommands.length
           ? disabledCommands

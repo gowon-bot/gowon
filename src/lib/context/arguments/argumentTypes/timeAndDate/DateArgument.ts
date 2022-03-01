@@ -1,32 +1,60 @@
-import { Message } from "discord.js";
+import { CommandInteraction, Message } from "discord.js";
 import { GowonService } from "../../../../../services/GowonService";
 import { ServiceRegistry } from "../../../../../services/ServicesRegistry";
 import { GowonContext } from "../../../Context";
-import { BaseArgument } from "../BaseArgument";
+import {
+  ArgumentReturnType,
+  BaseArgument,
+  BaseArgumentOptions,
+} from "../BaseArgument";
 import { parseDate } from "../../../../timeAndDate/helpers";
+import { SlashCommandBuilder } from "@discordjs/builders";
 
-export interface DateArgumentOptions {
+export interface DateArgumentOptions extends BaseArgumentOptions<Date> {
   parsers: string[];
 }
 
-export class DateArgument extends BaseArgument<Date, DateArgumentOptions> {
+export class DateArgument<
+  OptionsT extends Partial<DateArgumentOptions> = {}
+> extends BaseArgument<Date, DateArgumentOptions, OptionsT> {
   get gowonService() {
     return ServiceRegistry.get(GowonService);
   }
 
-  constructor(options: Partial<DateArgumentOptions> = {}) {
+  constructor(options: OptionsT | {} = {}) {
     super(options, {
       parsers: ServiceRegistry.get(GowonService).constants.dateParsers,
     });
   }
 
-  parseFromMessage(_: Message, content: string, ctx: GowonContext): Date {
+  parseFromMessage(
+    _: Message,
+    content: string,
+    ctx: GowonContext
+  ): ArgumentReturnType<Date, OptionsT> {
     const cleanContent = this.cleanContent(ctx, content);
+    const date = parseDate(cleanContent, ...this.options.parsers);
 
-    return parseDate(cleanContent, ...this.options.parsers)!;
+    return (date || this.options.default)!;
   }
 
-  parseFromInteraction(): Date {
-    return new Date();
+  parseFromInteraction(
+    interaction: CommandInteraction,
+    _: GowonContext,
+    argumentName: string
+  ): ArgumentReturnType<Date, OptionsT> {
+    const dateString = interaction.options.getString(argumentName);
+
+    const date = dateString
+      ? parseDate(dateString, ...this.options.parsers)
+      : undefined;
+
+    return (date || this.options.default)!;
+  }
+
+  addAsOption(slashCommand: SlashCommandBuilder, argumentName: string) {
+    return slashCommand.addStringOption((option) =>
+      this.baseOption(option, argumentName)
+    );
   }
 }

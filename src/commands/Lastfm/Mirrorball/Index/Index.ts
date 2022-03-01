@@ -27,10 +27,11 @@ export default class Index extends MirrorballBaseCommand<
   subcategory = "library";
   aliases = ["fullindex"];
 
+  slashCommand = true;
+
   idSeed = "iz*one yujin";
 
-  description =
-    "Fully index a user, deleting any previous data and replacing it";
+  description = "Fully index a user, downloading all your Last.fm data";
 
   validation: Validation = {
     username: new validators.Required({}),

@@ -1,4 +1,3 @@
-import { Message } from "discord.js";
 import { PermissionsChildCommand } from "./PermissionsChildCommand";
 
 export class Help extends PermissionsChildCommand {
@@ -12,12 +11,12 @@ export class Help extends PermissionsChildCommand {
 
   async prerun() {}
 
-  async run(message: Message) {
+  async run() {
     let prefix = this.prefix;
 
     await this.send(
       this.newEmbed()
-        .setTitle(`Permissions help for ${message.author.username}`)
+        .setTitle(`Permissions help for ${this.author.username}`)
         .addField(
           "Disabling commands",
           `You can disable a command by running \`${prefix}disable <commandName>\`.\

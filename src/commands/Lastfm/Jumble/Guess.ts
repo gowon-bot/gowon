@@ -5,7 +5,11 @@ import { shuffle } from "../../../helpers";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 
 const args = {
-  guess: new StringArgument({ index: { start: 0 } }),
+  guess: new StringArgument({
+    index: { start: 0 },
+    required: true,
+    description: "Your guess for what the artist is",
+  }),
 } as const;
 
 export class Guess extends JumbleChildCommand<typeof args> {
@@ -15,6 +19,8 @@ export class Guess extends JumbleChildCommand<typeof args> {
   usage = ["artist_guess"];
 
   arguments = args;
+
+  slashCommand = true;
 
   async run() {
     let guess = this.parsedArguments.guess;
@@ -36,12 +42,18 @@ export class Guess extends JumbleChildCommand<typeof args> {
       this.redisService.sessionDelete(this.ctx, jumbleRedisKey);
 
       await this.reply(
-        `you are correct! The artist was ${jumbledArtist.unjumbled.strong()}`
+        `You are correct! The artist was ${jumbledArtist.unjumbled.strong()}`
       );
     } else {
-      await this.message.react(
-        shuffle(["😔", "😖", "😠", "😕", "😣", "😐", "😪"])[0]
-      );
+      if (this.payload.isMessage()) {
+        await this.payload.source.react(
+          shuffle(["😔", "😖", "😠", "😕", "😣", "😐", "😪"])[0]
+        );
+      } else if (this.payload.isInteraction()) {
+        this.send(shuffle(["😔", "😖", "😠", "😕", "😣", "😐", "😪"])[0], {
+          ephemeral: true,
+        });
+      }
     }
   }
 }

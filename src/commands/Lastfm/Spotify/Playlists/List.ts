@@ -31,7 +31,7 @@ export class List extends PlaylistChildCommand {
       .setAuthor(this.generateEmbedAuthor("Spotify playlists"))
       .setTitle(`Your Spotify playlists`);
 
-    const simpleScrollingEmbed = new SimpleScrollingEmbed(this.message, embed, {
+    const simpleScrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
       items: playlists.items,
       pageSize: 15,
       pageRenderer(items, { offset }) {

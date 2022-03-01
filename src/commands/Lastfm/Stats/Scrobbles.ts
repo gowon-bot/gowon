@@ -1,14 +1,17 @@
-import { Message } from "discord.js";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { displayDate, displayNumber } from "../../../lib/views/displays";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { TimeRangeArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/TimeRangeArgument";
 import { DateArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/DateArgument";
+import { TimeRange } from "../../../lib/timeAndDate/helpers";
 
 const args = {
   ...standardMentions,
   date: new DateArgument(),
-  timeRange: new TimeRangeArgument({ useOverall: true, fallback: "overall" }),
+  timeRange: new TimeRangeArgument({
+    useOverall: true,
+    default: TimeRange.overall(),
+  }),
 } as const;
 
 export default class Scrobbles extends LastFMBaseCommand<typeof args> {
@@ -22,13 +25,16 @@ export default class Scrobbles extends LastFMBaseCommand<typeof args> {
 
   arguments = args;
 
-  async run(message: Message) {
-    if (message.content.trim() === `${this.prefix}s n s d`) {
+  async run() {
+    if (
+      this.payload.isMessage() &&
+      this.payload.source.content.trim() === `${this.prefix}s n s d`
+    ) {
       await this.send("Gee gee gee gee baby baby baby");
       return;
     }
 
-    const timeRange = this.parsedArguments.timeRange!,
+    const timeRange = this.parsedArguments.timeRange,
       date = this.parsedArguments.date;
 
     const { requestable, perspective } = await this.getMentions();

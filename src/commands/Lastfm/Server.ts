@@ -10,6 +10,8 @@ export default class Server extends LastFMBaseCommand {
   aliases = ["sfm"];
   usage = [""];
 
+  slashCommand = true;
+
   async run() {
     let serverUsers = await this.serverUserIDs();
 

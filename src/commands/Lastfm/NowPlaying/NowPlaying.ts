@@ -1,22 +1,72 @@
 import { CrownsService } from "../../../services/dbservices/CrownsService";
 import { LineConsolidator } from "../../../lib/LineConsolidator";
-import { NowPlayingBaseCommand } from "./NowPlayingBaseCommand";
+import { NowPlayingBaseCommand, nowPlayingArgs } from "./NowPlayingBaseCommand";
 import { promiseAllSettled } from "../../../helpers";
 import { MessageEmbed } from "discord.js";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
+import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
+import { CommandRedirect } from "../../../lib/command/BaseCommand";
+import NowPlayingVerbose from "./NowPlayingVerbose";
+import NowPlayingCompact from "./NowPlayingCompact";
+import NowPlayingAlbum from "./NowPlayingAlbum";
+import NowPlayingCombo from "./NowPlayingCombo";
+import NowPlayingCustom from "./NowPlayingCustom";
 
 const reverse = (s: string) =>
   s.split("").reverse().join("").replace("(", ")").replace(")", "(");
 const reverseLinks = (s: string) =>
   s.replace(/(?<=\[)[^\]]*(?=\])/g, (match) => reverse(match));
 
-export default class NowPlaying extends NowPlayingBaseCommand {
+const args = {
+  type: new StringArgument({
+    description: "Controls what type of embed Gowon uses",
+    choices: [
+      { name: "verbose" },
+      { name: "compact" },
+      { name: "track", value: "verbose" },
+      { name: "album" },
+      { name: "combo" },
+      { name: "custom" },
+    ],
+  }),
+  ...nowPlayingArgs,
+} as const;
+
+export default class NowPlaying extends NowPlayingBaseCommand<typeof args> {
   idSeed = "stayc isa";
 
   aliases = ["np", "fm", "mf"];
-  description = "Displays the now playing or last played track from Last.fm";
+  slashCommandName = "fm";
+  description =
+    "Now playing | Displays the now playing or last played track from Last.fm";
 
+  slashCommand = true;
   crownsService = ServiceRegistry.get(CrownsService);
+
+  arguments = args;
+
+  redirects: CommandRedirect<typeof args>[] = [
+    {
+      when: (args) => args.type === "verbose",
+      redirectTo: NowPlayingVerbose,
+    },
+    {
+      when: (args) => args.type === "compact",
+      redirectTo: NowPlayingCompact,
+    },
+    {
+      when: (args) => args.type === "album",
+      redirectTo: NowPlayingAlbum,
+    },
+    {
+      when: (args) => args.type === "combo",
+      redirectTo: NowPlayingCombo,
+    },
+    {
+      when: (args) => args.type === "custom",
+      redirectTo: NowPlayingCustom,
+    },
+  ];
 
   async run() {
     let { username, requestable, discordUser } =

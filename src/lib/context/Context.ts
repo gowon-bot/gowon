@@ -1,8 +1,9 @@
-import { Guild, GuildMember, Message, User } from "discord.js";
+import { Guild, GuildMember, User } from "discord.js";
 import { BaseCommand } from "../command/BaseCommand";
 import { RunAs } from "../command/RunAs";
 import { GowonClient } from "../GowonClient";
 import { Logger } from "../Logger";
+import { Payload } from "./Payload";
 
 export interface CustomContext<C, M> {
   constants?: C;
@@ -12,7 +13,7 @@ export interface CustomContext<C, M> {
 export interface ContextParamaters<CustomContextT> {
   command: BaseCommand;
   custom: CustomContextT;
-  payload: Message;
+  payload: Payload;
   runAs: RunAs;
   gowonClient: GowonClient;
 }
@@ -22,7 +23,7 @@ export class GowonContext<
 > {
   private _command: BaseCommand;
   private custom: T;
-  private _payload: Message;
+  private _payload: Payload;
   private _runAs: RunAs;
   private gowonClient: GowonClient;
 
@@ -50,7 +51,7 @@ export class GowonContext<
     this.custom = Object.assign(this.custom, context);
   }
 
-  get payload(): Message {
+  get payload(): Payload {
     return this._payload;
   }
 

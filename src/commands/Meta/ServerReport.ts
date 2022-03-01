@@ -15,7 +15,7 @@ export class ServerReport extends MetaChildCommand {
 
     const embed = this.newEmbed().setTitle("Gowon guild report");
 
-    const scrollingEmbed = new SimpleScrollingEmbed(this.message, embed, {
+    const scrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
       pageSize: 20,
       items: servers,
       pageRenderer: (guilds) => {

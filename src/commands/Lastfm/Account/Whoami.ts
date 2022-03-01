@@ -1,4 +1,3 @@
-import { Message } from "discord.js";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
@@ -17,15 +16,12 @@ export default class Whoami extends LastFMBaseCommand<typeof args> {
 
   arguments = args;
 
-  async run(message: Message) {
+  async run() {
     let { username, discordUser: user } = await this.getMentions({
       fetchDiscordUser: true,
     });
 
-    let perspective = this.usersService.discordPerspective(
-      message.author,
-      user
-    );
+    let perspective = this.usersService.discordPerspective(this.author, user);
 
     this.traditionalReply(
       `${perspective.plusToBe} logged in as ${username.code()}.`

@@ -9,6 +9,8 @@ export class Quit extends JumbleChildCommand {
   aliases = ["giveup", "cancel"];
   usage = "";
 
+  slashCommand = true;
+
   async run() {
     let jumbledArtist = await this.sessionGetJSON<JumbledArtist>(
       jumbleRedisKey

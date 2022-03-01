@@ -6,9 +6,11 @@ export class ContentiousCrowns extends CrownsChildCommand {
   idSeed = "weki meki yoojung";
 
   description =
-    "Lists the most contentious crowns in the server (ones that have been stolen the most number of times)";
+    "Lists the crowns that have been stolen the most number of times";
   aliases = ["cont", "contentious", "con"];
   usage = "";
+
+  slashCommand = true;
 
   async run() {
     const serverUsers = await this.serverUserIDs({

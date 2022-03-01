@@ -4,21 +4,27 @@ import { standardMentions } from "../../../lib/context/arguments/mentionTypes/me
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 const args = {
-  ...standardMentions,
-  keywords: new StringArgument({ index: { start: 0 } }),
+  keywords: new StringArgument({
+    index: { start: 0 },
+    description:
+      "The keywords to search MusicBrainz for (defaults to your currently playing track/artist)",
+  }),
   searchArtists: new Flag({
-    description: "Search artists",
+    description: "Search artists instead of releases",
     longnames: ["artist"],
     shortnames: ["a"],
   }),
+  ...standardMentions,
 } as const;
 
 export default class MusicBrainz extends LastFMBaseCommand<typeof args> {
   idSeed = "dreamnote youi";
 
   aliases = ["mb", "mbz"];
-  description = "Search musicbrainz for a release (or artist with -a!)";
+  description = "Search musicbrainz for a release";
   subcategory = "external";
+
+  slashCommand = true;
 
   arguments = args;
 
@@ -35,7 +41,9 @@ export default class MusicBrainz extends LastFMBaseCommand<typeof args> {
         requestable
       );
 
-      keywords = `${nowplaying.artist} - ${nowplaying.album}`;
+      keywords = this.parsedArguments.searchArtists
+        ? nowplaying.artist
+        : `${nowplaying.artist} - ${nowplaying.album}`;
     }
 
     let encodedKeywords = encodeURIComponent(keywords);

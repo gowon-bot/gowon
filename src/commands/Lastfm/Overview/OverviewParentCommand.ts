@@ -24,6 +24,8 @@ export default class OverviewParentCommand extends LastFMBaseParentCommand {
   friendlyName = "overview";
   customHelp = Help;
 
+  slashCommand = true;
+
   prefixes = ["o", "overview"];
   default = () => new All();
 

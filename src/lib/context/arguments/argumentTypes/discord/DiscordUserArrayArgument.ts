@@ -1,12 +1,14 @@
 import { Message, User } from "discord.js";
 import {
   BaseArgument,
+  BaseArgumentOptions,
   defaultIndexableOptions,
   SliceableArgumentOptions,
 } from "../BaseArgument";
 
 export interface DiscordUserArrayArgumentOptions
-  extends SliceableArgumentOptions {}
+  extends BaseArgumentOptions,
+    SliceableArgumentOptions {}
 
 export class DiscordUserArrayArgument extends BaseArgument<
   User[],

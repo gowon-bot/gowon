@@ -4,8 +4,8 @@ import { prefabArguments } from "../../../lib/context/arguments/prefabArguments"
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 const args = {
-  ...standardMentions,
   ...prefabArguments.track,
+  ...standardMentions,
 } as const;
 
 export default class TrackPage extends LastFMBaseCommand<typeof args> {
@@ -17,6 +17,8 @@ export default class TrackPage extends LastFMBaseCommand<typeof args> {
   usage = ["artist | track"];
 
   arguments = args;
+
+  slashCommand = true;
 
   async run() {
     const { requestable } = await this.getMentions();

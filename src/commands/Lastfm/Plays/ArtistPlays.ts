@@ -1,25 +1,37 @@
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
-import { RunAs } from "../../../lib/command/RunAs";
 import { displayNumber } from "../../../lib/views/displays";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
+import { Flag } from "../../../lib/context/arguments/argumentTypes/Flag";
+import { CommandRedirect } from "../../../lib/command/BaseCommand";
+import GlobalArtistPlays from "./GlobalArtistPlays";
 
 const args = {
-  ...standardMentions,
   ...prefabArguments.artist,
+  global: new Flag({
+    longnames: ["global"],
+    shortnames: ["g"],
+    description: "Compares your plays against the global stats",
+  }),
+  ...standardMentions,
 } as const;
 
 export default class ArtistPlays extends LastFMBaseCommand<typeof args> {
   idSeed = "itzy ryujin";
 
   aliases = ["ap", "p", "plays"];
-  description = "Shows you how many plays you have of a given artist";
+  description = "Shows how many plays a user has of a given artist";
   subcategory = "plays";
   usage = ["", "artist @user"];
 
   arguments = args;
+  slashCommand = true;
 
-  async run(_: any, runAs: RunAs) {
+  redirects: CommandRedirect<typeof args>[] = [
+    { when: (args) => args.global, redirectTo: GlobalArtistPlays },
+  ];
+
+  async run() {
     const { perspective, senderRequestable, requestable } =
       await this.getMentions({
         senderRequired: !this.parsedArguments.artist,
@@ -46,7 +58,7 @@ export default class ArtistPlays extends LastFMBaseCommand<typeof args> {
               "**scrobble"
             )} of`) +
         ` ${artistDetails.name.strong()}` +
-        (runAs.variationWasUsed("ap")
+        (this.runAs.variationWasUsed("ap")
           ? `\n_looking for album plays? That command has moved to \`${prefix}lp\` or \`${prefix}albumplays\`_`
           : "")
     );

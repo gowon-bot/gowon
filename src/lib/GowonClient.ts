@@ -1,9 +1,10 @@
-import { Client, Message, User as DiscordUser } from "discord.js";
+import { Client, User as DiscordUser } from "discord.js";
 import { User } from "../database/entity/User";
 import { flatDeep } from "../helpers";
 import { GowonService } from "../services/GowonService";
 import { ServiceRegistry } from "../services/ServicesRegistry";
 import { isUnicodeEmoji } from "./context/arguments/parsers/EmojiParser";
+import { GowonContext } from "./context/Context";
 import { SettingsService } from "./settings/SettingsService";
 import specialUsers from "./specialUsers.json";
 
@@ -70,22 +71,19 @@ export class GowonClient {
     );
   }
 
-  async userDisplay(message: Message, user?: string): Promise<string>;
-  async userDisplay(message: Message, user?: DiscordUser): Promise<string>;
+  async userDisplay(ctx: GowonContext, user?: string): Promise<string>;
+  async userDisplay(ctx: GowonContext, user?: DiscordUser): Promise<string>;
   async userDisplay(
-    message: Message,
+    ctx: GowonContext,
     user?: DiscordUser | string
   ): Promise<string> {
     if (
       user &&
-      (await User.stillInServer(
-        message,
-        typeof user === "string" ? user : user.id
-      ))
+      (await User.stillInServer(ctx, typeof user === "string" ? user : user.id))
     ) {
       if (typeof user === "string") {
         try {
-          let fetchedUser = (await message.guild!.members.fetch(user))?.user;
+          let fetchedUser = (await ctx.guild!.members.fetch(user))?.user;
           return fetchedUser.username;
         } catch {}
       } else {

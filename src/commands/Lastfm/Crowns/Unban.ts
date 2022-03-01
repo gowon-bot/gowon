@@ -32,7 +32,7 @@ export class Unban extends CrownsChildCommand<typeof args> {
     this.crownsService.scribe.unban(
       this.ctx,
       mentionedDBUser,
-      this.message.author,
+      this.payload.author,
       discordUser!
     );
 

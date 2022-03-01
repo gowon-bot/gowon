@@ -1,12 +1,13 @@
 import { Channel, Interaction, Message } from "discord.js";
 import {
   BaseArgument,
+  BaseArgumentOptions,
   defaultIndexableOptions,
   IndexableArgumentOptions,
   SliceableArgumentOptions,
 } from "../BaseArgument";
 
-export interface ChannelArgumentOptions {}
+export interface ChannelArgumentOptions extends BaseArgumentOptions {}
 
 export class ChannelArgument extends BaseArgument<
   Channel,

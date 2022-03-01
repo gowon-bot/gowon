@@ -5,7 +5,7 @@ import { validators } from "../../lib/validation/validators";
 import { ScriptsRegistry } from "../../services/ScriptsRegistry";
 
 const args = {
-  script: new StringArgument({ index: 0 }),
+  script: new StringArgument({ index: 0, required: true }),
 } as const;
 
 export default class RunScript extends BaseCommand<typeof args> {
@@ -26,7 +26,7 @@ export default class RunScript extends BaseCommand<typeof args> {
   async run() {
     await this.scriptsRegistry.init();
 
-    const script = this.parsedArguments.script!;
+    const script = this.parsedArguments.script;
 
     this.scriptsRegistry.runScript(script, this);
 

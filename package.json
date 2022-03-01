@@ -6,6 +6,7 @@
   "license": "MIT",
   "dependencies": {
     "@apollo/client": "^3.3.16",
+    "@discordjs/rest": "^0.3.0",
     "@types/bluebird": "^3.5.32",
     "@types/chance": "^1.1.2",
     "@types/cheerio": "^0.22.22",
@@ -31,6 +32,7 @@
     "cross-fetch": "^3.1.4",
     "date-fns": "^2.16.1",
     "debug": "^4.1.1",
+    "discord-api-types": "^0.27.3",
     "discord.js": "^13",
     "emoji-regex": "^9.2.2",
     "escape-string-regexp": "^4.0.0",

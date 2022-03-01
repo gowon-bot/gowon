@@ -20,7 +20,10 @@ export default class FuckOff extends BaseCommand {
       );
     } else {
       await sleep(200);
-      await this.message.react(Emoji.fuckyou);
+
+      if (this.payload.isMessage()) {
+        await this.payload.source.react(Emoji.fuckyou);
+      }
     }
   }
 }

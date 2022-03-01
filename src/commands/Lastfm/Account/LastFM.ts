@@ -5,8 +5,8 @@ import { standardMentions } from "../../../lib/context/arguments/mentionTypes/me
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 
 const args = {
+  username: new StringArgument({ index: 0, slashCommandOption: false }),
   ...standardMentions,
-  username: new StringArgument({ index: 0 }),
 } as const;
 
 export default class LastFMAccount extends LastFMBaseCommand<typeof args> {
@@ -16,6 +16,8 @@ export default class LastFMAccount extends LastFMBaseCommand<typeof args> {
   description = "Links the last.fm profile page for a user";
   subcategory = "accounts";
   usage = ["", "@user"];
+
+  slashCommand = true;
 
   arguments = args;
 

@@ -19,6 +19,8 @@ export default class NowPlayingConfigParentCommand extends LastFMBaseParentComma
   prefixes = ["npc", "nowplayingconfig"];
   default = () => new View();
 
+  slashCommand = true;
+
   noPrefixAliases = ["react", "reacts", "reactions"];
 
   children: CommandGroup = new CommandGroup([

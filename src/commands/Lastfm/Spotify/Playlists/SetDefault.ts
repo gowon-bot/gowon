@@ -5,7 +5,7 @@ import { validators } from "../../../../lib/validation/validators";
 import { PlaylistChildCommand } from "./PlaylistChildCommand";
 
 const args = {
-  playlistName: new StringArgument({ index: { start: 0 } }),
+  playlistName: new StringArgument({ index: { start: 0 }, required: true }),
 } as const;
 
 export class SetDefault extends PlaylistChildCommand<typeof args> {
@@ -18,10 +18,6 @@ export class SetDefault extends PlaylistChildCommand<typeof args> {
   arguments = args;
 
   validation: Validation = {
-    emoji: new validators.LengthRange({
-      min: 1,
-      message: "Please specify an emoji!",
-    }),
     playlistName: {
       validator: new validators.Required({}),
       friendlyName: "playlist name",
@@ -33,7 +29,7 @@ export class SetDefault extends PlaylistChildCommand<typeof args> {
 
     this.access.checkAndThrow(dbUser);
 
-    const playlistName = this.parsedArguments.playlistName!;
+    const playlistName = this.parsedArguments.playlistName;
 
     const playlists = await this.spotifyService.getPlaylists(this.ctx);
 

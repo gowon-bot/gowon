@@ -9,7 +9,13 @@ ServiceRegistry.setServices();
 
 import { GuildMember } from "discord.js";
 import config from "../config.json";
-import { client, handler, guildEventService, setup } from "./setup";
+import {
+  client,
+  handler,
+  guildEventService,
+  setup,
+  interactionHandler,
+} from "./setup";
 import chalk from "chalk";
 import { gowonAPIPort } from "./api";
 import { AnalyticsCollector } from "./analytics/AnalyticsCollector";
@@ -38,6 +44,7 @@ async function start() {
     console.log(chalk`\n{white Setup complete!}\n`);
 
     handler.setClient(client);
+    interactionHandler.setClient(client);
   });
 
   client.client.on("messageCreate", (msg) => {
@@ -62,6 +69,10 @@ async function start() {
     guildEventService.handleUserLeave(ctx, guildMember as GuildMember);
   });
 
+  client.client.on("interactionCreate", (interaction) => {
+    interactionHandler.handle(interaction);
+  });
+
   client.client.login(config.discordToken);
 
   const guildCount = client.client.guilds.cache.size;
@@ -72,3 +83,40 @@ async function start() {
 }
 
 start();
+
+// const { REST } = require("@discordjs/rest");
+// const { Routes } = require("discord-api-types/v9");
+// const { SlashCommandBuilder } = require("@discordjs/builders");
+// import config from "../config.json";
+
+// const commands = [
+//   new SlashCommandBuilder()
+//     .setName("roll")
+//     .setDescription("Rolls a random number between a min and a max")
+//     .addIntegerOption((option: any) =>
+//       option.setName("min").setDescription("The lower bound").setRequired(false)
+//     )
+//     .addIntegerOption((option: any) =>
+//       option.setName("max").setDescription("The upper bound").setRequired(true)
+//     ),
+// ];
+
+// // Place your client and guild ids here
+// const clientId = "772733819089846323";
+// const guildId = "768596255697272862";
+
+// const rest = new REST({ version: "9" }).setToken(config.discordToken);
+
+// (async () => {
+//   try {
+//     console.log("Started refreshing application (/) commands.");
+
+//     await rest.put(Routes.applicationGuildCommands(clientId, guildId), {
+//       body: commands,
+//     });
+
+//     console.log("Successfully reloaded application (/) commands.");
+//   } catch (error) {
+//     console.error(error);
+//   }
+// })();

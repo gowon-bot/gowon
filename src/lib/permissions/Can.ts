@@ -1,5 +1,5 @@
 import { AdminService } from "../../services/dbservices/AdminService";
-import { GuildMember, Message } from "discord.js";
+import { GuildMember } from "discord.js";
 import { Permission } from "../../database/entity/Permission";
 import { Command } from "../command/Command";
 import { ChildCommand } from "../command/ParentCommand";
@@ -125,9 +125,8 @@ export class Can extends BaseService<CanContext> {
     { useChannel }: { useChannel?: boolean } = { useChannel: false }
   ): Promise<CanCheck> {
     const client = ctx.client;
-    const message = ctx.payload as Message;
 
-    if (client.isDeveloper(message.author.id)) return { passed: true };
+    if (client.isDeveloper(ctx.author.id)) return { passed: true };
 
     if (command.devCommand) {
       return { passed: false, reason: CheckFailReason.forbidden };
@@ -155,7 +154,7 @@ export class Can extends BaseService<CanContext> {
       this.getCachedPermissions(ctx)[command.id] ||
       (await Permission.find({
         where: {
-          serverID: message.guild?.id,
+          serverID: ctx.guild?.id,
           commandID:
             command instanceof ChildCommand
               ? In([command.id, ...(await this.getParentIDs(ctx, command))])
@@ -182,7 +181,10 @@ export class Can extends BaseService<CanContext> {
       return false;
     }, false);
 
-    const hasPermission = this.userHasPermissions(message.member!, permissions);
+    const hasPermission = this.userHasPermissions(
+      ctx.payload.member!,
+      permissions
+    );
 
     return {
       passed: !disabled && hasPermission,

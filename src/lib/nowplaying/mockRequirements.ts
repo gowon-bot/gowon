@@ -1,5 +1,5 @@
 import { User as DBUser } from "../../database/entity/User";
-import { Message, User } from "discord.js";
+import { User } from "discord.js";
 import { Resources } from "./DatasourceService";
 import { RequirementMap } from "./RequirementMap";
 import { Crown } from "../../database/entity/Crown";
@@ -10,6 +10,7 @@ import {
 } from "../../services/LastFM/converters/InfoTypes";
 import { RecentTracks } from "../../services/LastFM/converters/RecentTracks";
 import { RawTag } from "../../services/LastFM/LastFMService.types";
+import { Payload } from "../context/Payload";
 
 function createTags(tags: string[]): RawTag[] {
   return tags.map((t) => ({
@@ -19,7 +20,7 @@ function createTags(tags: string[]): RawTag[] {
 }
 
 export const mockRequirements = (
-  message: Message
+  payload: Payload
 ): RequirementMap & Resources => {
   const nowPlaying: ParsedTrack = {
     artist: "Red Velvet",
@@ -38,7 +39,7 @@ export const mockRequirements = (
 
   return {
     // Resources
-    message,
+    payload,
     username: "gowon_",
     requestable: "gowon_",
     dbUser,
@@ -148,7 +149,7 @@ export const mockRequirements = (
       user: { id: "720135602669879386", username: "Gowon" } as User,
       crown: Crown.create({
         id: 1,
-        serverID: message.guild!.id,
+        serverID: payload.guild!.id,
         user: dbUser,
         plays: 6360,
       }),

@@ -10,6 +10,7 @@ import {
 const areqs = ["artistInfo"] as const;
 export class ArtistTagsComponent extends BaseNowPlayingComponent<typeof areqs> {
   static componentName = "artist-tags";
+  static friendlyName = "Artist tags";
   readonly requirements = areqs;
 
   present() {
@@ -30,6 +31,7 @@ export class ArtistTagsComponent extends BaseNowPlayingComponent<typeof areqs> {
 const treqs = ["trackInfo"] as const;
 export class TrackTagsComponent extends BaseNowPlayingComponent<typeof treqs> {
   static componentName = "track-tags";
+  static friendlyName = "Track tags";
   readonly requirements = treqs;
 
   present() {

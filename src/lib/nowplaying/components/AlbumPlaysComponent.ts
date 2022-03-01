@@ -7,6 +7,7 @@ export class AlbumPlaysComponent extends BaseNowPlayingComponent<
   typeof albumPlaysRequirements
 > {
   static componentName = "album-plays";
+  static friendlyName = "Album plays";
   readonly requirements = albumPlaysRequirements;
 
   present() {

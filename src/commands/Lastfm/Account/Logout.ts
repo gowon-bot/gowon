@@ -4,15 +4,17 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 export default class Logout extends LastFMBaseCommand {
   idSeed = "loona gowon";
 
-  description = "Unsets your Last.fm username in Gowon";
+  description = "Disconnect your Last.fm account from Gowon";
   subcategory = "accounts";
   usage = "";
+
+  slashCommand = true;
 
   async run() {
     const embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor("Log out"))
       .setDescription(
-        "Are you sure you want to log out? This will delete **all** your data!"
+        "Are you sure you want to log out? This will delete **all** your downloaded data!"
       );
 
     const confirmationEmbed = new ConfirmationEmbed(this.ctx, embed);
@@ -23,9 +25,13 @@ export default class Logout extends LastFMBaseCommand {
       await this.usersService.clearUsername(this.ctx, this.author.id);
       await this.mirrorballService.logout(this.ctx);
 
-      await confirmationEmbed.sentMessage?.edit({
-        embeds: [embed.setDescription("Logged out successfully.")],
-      });
+      if (confirmationEmbed.sentMessage) {
+        await this.discordService.edit(
+          this.ctx,
+          confirmationEmbed.sentMessage,
+          embed.setDescription("Logged out successfully.")
+        );
+      }
     }
   }
 }

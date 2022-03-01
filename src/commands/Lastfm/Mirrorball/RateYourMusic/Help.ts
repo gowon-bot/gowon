@@ -5,6 +5,8 @@ export class Help extends RateYourMusicChildCommand {
 
   description = "Help on how to import your rateyourmusic ratings";
 
+  slashCommand = true;
+
   async run() {
     const embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor("Rateyourmusic import help"))
@@ -13,9 +15,9 @@ export class Help extends RateYourMusicChildCommand {
         
 To import your ratings, you can do one of two things:
 
-- Copy the entire page, then paste it into Discord with \`${this.prefix}rymimport \`, Discord will convert it to a file for you (if not Gowon will still handle it). Or,
+- Copy paste the ratings, then visit https://gowon.ca/import-ratings to import them (works on mobile!)
 
-- Download the export as a file, and then attatch it in Discord with \`${this.prefix}rymimport\``
+- Copy the entire page, then paste it into Discord with \`${this.prefix}rymimport \`, sDiscord will convert it to a file for you (if not Gowon will still handle it)`
       );
 
     await this.send(embed);

@@ -5,8 +5,12 @@ import { SpotifySearchParams } from "../../../services/Spotify/SpotifyService";
 import { SpotifyBaseCommand } from "./SpotifyBaseCommands";
 
 const args = {
+  keywords: new StringArgument({
+    index: { start: 0 },
+    description:
+      "The keywords to search Spotify with (defaults to your currently playing album)",
+  }),
   ...standardMentions,
-  keywords: new StringArgument({ index: { start: 0 } }),
 } as const;
 
 export default class SpotifyAlbum extends SpotifyBaseCommand<typeof args> {
@@ -15,11 +19,9 @@ export default class SpotifyAlbum extends SpotifyBaseCommand<typeof args> {
   description = "Links the spotify page for an album";
   aliases = ["fmsl", "spl"];
 
-  arguments = args;
+  slashCommand = true;
 
-  customContext = {
-    mutable: {},
-  };
+  arguments = args;
 
   async run() {
     let params: SpotifySearchParams<{ artist: string; album: string }>;

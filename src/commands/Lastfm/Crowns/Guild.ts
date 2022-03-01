@@ -1,15 +1,26 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
-import { Delegate } from "../../../lib/command/BaseCommand";
+import { CommandRedirect } from "../../../lib/command/BaseCommand";
 import { GuildAround } from "./GuildAround";
 import { GuildAt } from "./GuildAt";
 import { displayNumber } from "../../../lib/views/displays";
 import { asyncMap } from "../../../helpers";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
+import { Flag } from "../../../lib/context/arguments/argumentTypes/Flag";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
+import { GuildUserRank } from "./GuildRank";
 
 const args = {
-  me: new StringArgument({ match: ["me"] }),
-  rank: new NumberArgument(),
+  meInput: new StringArgument({ match: ["me"], slashCommandOption: false }),
+  me: new Flag({
+    shortnames: ["m"],
+    longnames: ["me"],
+    description: "Check your position on the leaderboard",
+  }),
+  rank: new NumberArgument({
+    description: "The rank to check on the leaderboard",
+  }),
+  ...standardMentions,
 } as const;
 
 export class Guild extends CrownsChildCommand<typeof args> {
@@ -19,16 +30,27 @@ export class Guild extends CrownsChildCommand<typeof args> {
   aliases = ["leaderboard", "ldb", "lb"];
   usage = "";
 
+  slashCommand = true;
+  slashCommandName = "leaderboard";
+
   arguments = args;
 
-  delegates: Delegate<typeof args>[] = [
+  redirects: CommandRedirect<typeof args>[] = [
     {
       when: (args) => !!args.me,
-      delegateTo: GuildAround,
+      redirectTo: GuildAround,
     },
     {
       when: (args) => !!args.rank && !isNaN(args.rank),
-      delegateTo: GuildAt,
+      redirectTo: GuildAt,
+    },
+    {
+      when: (args) =>
+        !!args.discordUsername ||
+        !!args.lastfmUsername ||
+        !!args.user ||
+        !!args.userID,
+      redirectTo: GuildUserRank,
     },
   ];
 
@@ -54,7 +76,7 @@ export class Guild extends CrownsChildCommand<typeof args> {
               holders,
               async (h, idx) =>
                 `${idx + 1}. ${await this.gowonClient.userDisplay(
-                  this.message,
+                  this.ctx,
                   h.user
                 )} with ${displayNumber(h.numberOfCrowns, "crown").strong()}`
             )

@@ -13,6 +13,8 @@ export default class Like extends AuthenticatedSpotifyBaseCommand<typeof args> {
   description = "Adds a song to your Spotify liked songs";
   aliases = ["q"];
 
+  slashCommand = true;
+
   variations: Variation[] = [
     {
       name: "unlike",

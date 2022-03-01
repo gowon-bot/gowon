@@ -1,5 +1,5 @@
 import { PermissionsChildCommand } from "./PermissionsChildCommand";
-import { Message, MessageEmbed, Role } from "discord.js";
+import { MessageEmbed, Role } from "discord.js";
 import {
   addNamesToPermissions,
   NamedPermission,
@@ -21,13 +21,13 @@ export class View extends PermissionsChildCommand {
   throwOnNoCommand = false;
   aliases = ["list"];
 
-  async run(message: Message) {
+  async run() {
     let permissions: NamedPermission[] = [];
     let embed: MessageEmbed;
 
     if (this.command) {
       permissions = await addNamesToPermissions(
-        message,
+        this.ctx,
         await this.adminService.listPermissionsForCommand(
           this.ctx,
           this.command.id
@@ -38,7 +38,7 @@ export class View extends PermissionsChildCommand {
         .setTitle(
           `Permissions for ${this.commandRunAs
             .toCommandFriendlyName()
-            .code()} in ${message.guild?.name}`
+            .code()} in ${this.guild?.name}`
         )
         .setDescription(
           permissions.length
@@ -59,7 +59,7 @@ export class View extends PermissionsChildCommand {
       let entityName = entity instanceof Role ? entity.name : entity.username;
 
       permissions = await addNamesToPermissions(
-        message,
+        this.ctx,
         await this.adminService.listPermissionsForEntity(this.ctx, entity.id)
       );
 
@@ -67,9 +67,7 @@ export class View extends PermissionsChildCommand {
       let whitelisted = permissions.filter((p) => !p.isBlacklist);
 
       embed = this.newEmbed()
-        .setTitle(
-          `Permissions for ${entityName.code()} in ${message.guild?.name}`
-        )
+        .setTitle(`Permissions for ${entityName.code()} in ${this.guild?.name}`)
         .setDescription(
           permissions.length
             ? (blacklisted.length
@@ -89,7 +87,7 @@ export class View extends PermissionsChildCommand {
         );
     } else {
       permissions = await addNamesToPermissions(
-        message,
+        this.ctx,
         await this.adminService.listPermissions(this.ctx)
       );
 
@@ -101,7 +99,7 @@ export class View extends PermissionsChildCommand {
       }, {} as GroupedPermissions);
 
       embed = this.newEmbed()
-        .setTitle(`Permissions for ${message.guild?.name}`)
+        .setTitle(`Permissions for ${this.guild?.name}`)
         .setDescription(
           permissions.length
             ? Object.keys(groupedPermissions)

@@ -11,10 +11,16 @@ import { StringArgument } from "../../../lib/context/arguments/argumentTypes/Str
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 
 const args = {
-  ...standardMentions,
   ...prefabArguments.track,
-  otherWords: new StringArgument({ index: { start: 0 } }),
-  querystring: new StringArgument({ index: { start: 0 } }),
+  otherWords: new StringArgument({
+    index: { start: 0 },
+    slashCommandOption: false,
+  }),
+  query: new StringArgument({
+    index: { start: 0 },
+    description: "The search string to find your track",
+  }),
+  ...standardMentions,
 } as const;
 
 export default class FakeNowPlaying extends NowPlayingBaseCommand<typeof args> {
@@ -27,12 +33,14 @@ export default class FakeNowPlaying extends NowPlayingBaseCommand<typeof args> {
     "Displays any given track as if it were your currently playing song";
   usage = ["search term", "artist | track"];
 
+  slashCommand = true;
+
   crownsService = ServiceRegistry.get(CrownsService);
 
   async run() {
     let trackName = this.parsedArguments.track,
       artistName = this.parsedArguments.artist,
-      querystring = this.parsedArguments.querystring || "";
+      querystring = this.parsedArguments.query || "";
 
     let { senderUsername, senderRequestable } = await this.getMentions();
 

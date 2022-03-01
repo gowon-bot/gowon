@@ -1,4 +1,5 @@
 import { TextChannel } from "discord.js";
+import { CannotBeUsedAsASlashCommand } from "../../../errors";
 import { Variation } from "../../../lib/command/BaseCommand";
 import { validators } from "../../../lib/validation/validators";
 import { PermissionsChildCommand } from "./PermissionsChildCommand";
@@ -21,58 +22,62 @@ export class ChannelBlacklist extends PermissionsChildCommand {
   };
 
   async run() {
-    const mentionedChannels = Array.from(
-      this.message.mentions.channels.values()
-    );
+    if (this.payload.isInteraction()) {
+      throw new CannotBeUsedAsASlashCommand();
+    } else if (this.payload.isMessage()) {
+      const mentionedChannels = Array.from(
+        this.payload.source.mentions.channels.values()
+      );
 
-    const blacklistedChannels = {
-      success: [] as string[],
-      failed: [] as { channel: string; reason: string }[],
-    };
+      const blacklistedChannels = {
+        success: [] as string[],
+        failed: [] as { channel: string; reason: string }[],
+      };
 
-    for (const channel of mentionedChannels as TextChannel[]) {
-      if (channel.type !== "GUILD_TEXT") continue;
+      for (const channel of mentionedChannels as TextChannel[]) {
+        if (channel.type !== "GUILD_TEXT") continue;
 
-      try {
-        !this.variationWasUsed("i")
-          ? await this.adminService.blacklistCommandFromChannel(
-              this.ctx,
-              this.command.id,
-              channel.id
-            )
-          : await this.adminService.unblacklistCommandFromChannel(
-              this.ctx,
-              this.command.id,
-              channel.id
-            );
+        try {
+          !this.variationWasUsed("i")
+            ? await this.adminService.blacklistCommandFromChannel(
+                this.ctx,
+                this.command.id,
+                channel.id
+              )
+            : await this.adminService.unblacklistCommandFromChannel(
+                this.ctx,
+                this.command.id,
+                channel.id
+              );
 
-        blacklistedChannels.success.push(channel.name);
-      } catch (e: any) {
-        blacklistedChannels.failed.push({
-          channel: channel.name,
-          reason: e.message,
-        });
+          blacklistedChannels.success.push(channel.name);
+        } catch (e: any) {
+          blacklistedChannels.failed.push({
+            channel: channel.name,
+            reason: e.message,
+          });
+        }
       }
+
+      let embed = this.newEmbed().setDescription(
+        `${
+          blacklistedChannels.success.length
+            ? "**Success**: " +
+              blacklistedChannels.success.map((c) => `#${c}`).join(", ")
+            : ""
+        }
+        ${
+          blacklistedChannels.failed.length
+            ? "**Failed**: ```\n" +
+              blacklistedChannels.failed
+                .map((c) => `#${c.channel}: ${c.reason}`)
+                .join("\n") +
+              "```"
+            : ""
+        }`
+      );
+
+      await this.send(embed);
     }
-
-    let embed = this.newEmbed().setDescription(
-      `${
-        blacklistedChannels.success.length
-          ? "**Success**: " +
-            blacklistedChannels.success.map((c) => `#${c}`).join(", ")
-          : ""
-      }
-      ${
-        blacklistedChannels.failed.length
-          ? "**Failed**: ```\n" +
-            blacklistedChannels.failed
-              .map((c) => `#${c.channel}: ${c.reason}`)
-              .join("\n") +
-            "```"
-          : ""
-      }`
-    );
-
-    await this.send(embed);
   }
 }

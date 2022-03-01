@@ -1,8 +1,7 @@
-import { Message } from "discord.js";
+import { CommandInteraction, Message } from "discord.js";
 import { SimpleMap } from "../../helpers/types";
 import { ArgumentsMap } from "../../lib/context/arguments/types";
 import { GowonContext } from "../../lib/context/Context";
-import { isMessage } from "../../lib/context/Payload";
 import { BaseService } from "../BaseService";
 import { isStringCleaning } from "../../lib/context/arguments/argumentTypes/BaseArgument";
 import { isFlag } from "../../lib/context/arguments/argumentTypes/Flag";
@@ -10,9 +9,31 @@ import { debugFlag } from "../../lib/context/arguments/prefabArguments";
 
 export class ArgumentParsingService extends BaseService {
   parseContext(context: GowonContext, args: ArgumentsMap): any {
-    if (isMessage(context.payload)) {
-      return this.parseMessage(context.payload, context, args);
+    if (context.payload.isMessage()) {
+      return this.parseMessage(context.payload.source, context, args);
+    } else if (context.payload.isInteraction()) {
+      return this.parseInteraction(context.payload.source, context, args);
     }
+  }
+
+  private parseInteraction(
+    interaction: CommandInteraction,
+    context: GowonContext,
+    args: ArgumentsMap
+  ) {
+    return Object.entries(args).reduce((acc, [name, value]) => {
+      const parsedValue = value.parseFromInteraction(
+        interaction,
+        context,
+        name.toLowerCase()
+      );
+
+      if (parsedValue !== null && parsedValue !== undefined) {
+        acc[name] = parsedValue;
+      }
+
+      return acc;
+    }, {} as SimpleMap<any>);
   }
 
   private parseMessage(

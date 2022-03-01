@@ -3,21 +3,34 @@ import { toInt } from "../../../helpers/lastFM";
 import { displayNumber } from "../../../lib/views/displays";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
+import { Flag } from "../../../lib/context/arguments/argumentTypes/Flag";
+import { CommandRedirect } from "../../../lib/command/BaseCommand";
+import GlobalAlbumPlays from "./GlobalAlbumPlays";
 
 const args = {
-  ...standardMentions,
   ...prefabArguments.album,
+  global: new Flag({
+    longnames: ["global"],
+    shortnames: ["g"],
+    description: "Compares your plays against the global stats",
+  }),
+  ...standardMentions,
 } as const;
 
 export default class AlbumPlays extends LastFMBaseCommand<typeof args> {
   idSeed = "itzy lia";
 
   aliases = ["alp", "lp"];
-  description = "Shows you how many plays you have of a given album";
+  description = "Shows how many plays a user has of a given album";
   subcategory = "plays";
   usage = ["", "artist | album @user"];
 
+  redirects: CommandRedirect<typeof args>[] = [
+    { when: (args) => args.global, redirectTo: GlobalAlbumPlays },
+  ];
+
   arguments = args;
+  slashCommand = true;
 
   async run() {
     const { senderRequestable, requestable, perspective } =

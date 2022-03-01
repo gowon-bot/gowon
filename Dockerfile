@@ -11,7 +11,7 @@ RUN yarn
 COPY . .
 
 
-RUN yarn build
+RUN yarn rebuild
 
 EXPOSE 3000
 CMD ["node", "dist/src/index.js"]

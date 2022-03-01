@@ -2,9 +2,13 @@ import { FriendsChildCommand } from "../FriendsChildCommand";
 import { MultiRequester } from "../../../../lib/MultiRequester";
 import { displayNumber } from "../../../../lib/views/displays";
 import { TimeRangeArgument } from "../../../../lib/context/arguments/argumentTypes/timeAndDate/TimeRangeArgument";
+import { TimeRange } from "../../../../lib/timeAndDate/helpers";
 
 const args = {
-  timeRange: new TimeRangeArgument({ useOverall: true, fallback: "overall" }),
+  timeRange: new TimeRangeArgument({
+    useOverall: true,
+    default: TimeRange.overall(),
+  }),
 } as const;
 
 export class Scrobbles extends FriendsChildCommand<typeof args> {
@@ -19,7 +23,7 @@ export class Scrobbles extends FriendsChildCommand<typeof args> {
   throwIfNoFriends = true;
 
   async run() {
-    const timeRange = this.parsedArguments.timeRange!;
+    const timeRange = this.parsedArguments.timeRange;
 
     const scrobbles = await new MultiRequester(this.ctx, [
       ...this.friendUsernames,

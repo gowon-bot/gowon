@@ -10,8 +10,8 @@ import { standardMentions } from "../../../lib/context/arguments/mentionTypes/me
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 
 const args = {
-  ...standardMentions,
   ...prefabArguments.artist,
+  ...standardMentions,
 } as const;
 
 export default class ArtistInfo extends InfoCommand<typeof args> {
@@ -22,8 +22,9 @@ export default class ArtistInfo extends InfoCommand<typeof args> {
   description = "Displays some information about an artist";
   usage = ["", "artist"];
 
+  slashCommand = true;
+
   arguments = args;
-  customContext = { mutable: {} };
 
   tagsService = ServiceRegistry.get(TagsService);
   crownsService = ServiceRegistry.get(CrownsService);

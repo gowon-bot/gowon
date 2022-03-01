@@ -5,8 +5,10 @@ export default class AmIScrobbling extends LastFMBaseCommand {
 
   aliases = ["amis"];
   subcategory = "nowplaying";
-  description = "Am I scrobbling?";
+  description = "idk are you?";
   usage = [""];
+
+  slashCommand = true;
 
   async run() {
     let { senderRequestable } = await this.getMentions();

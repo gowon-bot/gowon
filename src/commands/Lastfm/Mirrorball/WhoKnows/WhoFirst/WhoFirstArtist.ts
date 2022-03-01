@@ -34,8 +34,10 @@ export default class WhoFirstArtist extends WhoKnowsBaseCommand<
   connector = new WhoFirstArtistConnector();
 
   idSeed = "shasha garam";
-
   aliases = ["wf"];
+
+  subcategory = "whofirst";
+  description = "See who first scrobbled an artist";
 
   variations: Variation[] = [
     {
@@ -46,9 +48,7 @@ export default class WhoFirstArtist extends WhoKnowsBaseCommand<
     VARIATIONS.global("wf", "wl"),
   ];
 
-  description = "See who first scrobbled an artist";
-
-  subcategory = "whofirst";
+  slashCommand = true;
 
   arguments = args;
 

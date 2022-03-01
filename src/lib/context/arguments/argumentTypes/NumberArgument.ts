@@ -1,32 +1,40 @@
-import { Message } from "discord.js";
+import { CommandInteraction, Message } from "discord.js";
 import { toInt } from "../../../../helpers/lastFM";
 import { GowonService } from "../../../../services/GowonService";
 import { ServiceRegistry } from "../../../../services/ServicesRegistry";
 import { isDuration } from "../../../timeAndDate/durations";
 import { GowonContext } from "../../Context";
 import {
+  ArgumentReturnType,
   BaseArgument,
+  BaseArgumentOptions,
   defaultIndexableOptions,
   IndexableArgumentOptions,
 } from "./BaseArgument";
+import { SlashCommandBuilder } from "@discordjs/builders";
 
-export interface NumberArgumentOptions extends IndexableArgumentOptions {
+export interface NumberArgumentOptions
+  extends BaseArgumentOptions,
+    IndexableArgumentOptions {
   default?: number;
 }
 
-export class NumberArgument extends BaseArgument<
-  number,
-  NumberArgumentOptions
-> {
+export class NumberArgument<
+  OptionsT extends Partial<NumberArgumentOptions> = {}
+> extends BaseArgument<number, NumberArgumentOptions, OptionsT> {
   get gowonService() {
     return ServiceRegistry.get(GowonService);
   }
 
-  constructor(options: Partial<NumberArgumentOptions> = {}) {
-    super(defaultIndexableOptions, options);
+  constructor(options: OptionsT | {} = {}) {
+    super(defaultIndexableOptions as OptionsT, options);
   }
 
-  parseFromMessage(_: Message, content: string, ctx: GowonContext): number {
+  parseFromMessage(
+    _: Message,
+    content: string,
+    ctx: GowonContext
+  ): ArgumentReturnType<number, OptionsT> {
     const cleanContent = this.cleanContent(ctx, content);
 
     const split = this.filterTimeRanges(cleanContent.split(/\s+/));
@@ -39,8 +47,19 @@ export class NumberArgument extends BaseArgument<
     );
   }
 
-  parseFromInteraction(): number {
-    return NaN;
+  parseFromInteraction(
+    interaction: CommandInteraction,
+    _: GowonContext,
+    argumentName: string
+  ): ArgumentReturnType<number, OptionsT> {
+    return (interaction.options.getInteger(argumentName) ||
+      this.options.default)!;
+  }
+
+  addAsOption(slashCommand: SlashCommandBuilder, argumentName: string) {
+    return slashCommand.addIntegerOption((option) =>
+      this.baseOption(option, argumentName)
+    );
   }
 
   private getNumbersFromSplit(split: string[]): number[] {

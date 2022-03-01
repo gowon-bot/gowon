@@ -12,9 +12,12 @@ export default class NowPlayingCustom extends NowPlayingBaseCommand {
   idSeed = "weeekly jiyoon";
 
   description =
-    "Displays the now playing or last played track from Last.fm. See `npc help` for details on how to customize your embeds.";
+    "Now playing custom | Displays the now playing or last played track from Last.fm";
+  // . See `npc help` for details on how to customize your embeds.";
+  slashCommandName = "fmx";
   aliases = ["fmx", "npx"];
   variations: Variation[] = [{ name: "badTyping", variation: "fmz" }];
+  slashCommand = true;
 
   datasourceService = ServiceRegistry.get(DatasourceService);
   configService = ServiceRegistry.get(ConfigService);
@@ -49,7 +52,7 @@ export default class NowPlayingCustom extends NowPlayingBaseCommand {
           requestable,
           username,
           dbUser,
-          message: this.message,
+          payload: this.payload,
           components: config,
           prefix: this.prefix,
         }

@@ -14,15 +14,25 @@ import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/Num
 
 const args = {
   ...tasteArgs,
-  tag: new StringArgument({ index: 0, splitOn: "|" }),
-  artistAmount: new NumberArgument({ default: 1000 }),
+  tag: new StringArgument({
+    index: 0,
+    splitOn: "|",
+    required: true,
+    description: "The tag to filter artists with",
+  }),
+  artistAmount: new NumberArgument({
+    default: 1000,
+    description: "The amount of artists to compare",
+  }),
   username: new StringArgument({
     regex: /(?<=.\|.*)[\w\-\!]+/gi,
     index: 0,
+    description: "The Last.fm username to compare with",
   }),
   username2: new StringArgument({
     regex: /(?<=.\|.*)[\w\-\!]+/gi,
     index: 1,
+    description: "The other Last.fm username to compare (defaults to you)",
   }),
 } as const;
 
@@ -43,6 +53,8 @@ export default class TagTaste extends TasteCommand<typeof args> {
 
   arguments = args;
 
+  slashCommand = true;
+
   validation: Validation = {
     tag: new validators.Required({}),
     artistAmount: {
@@ -54,8 +66,8 @@ export default class TagTaste extends TasteCommand<typeof args> {
   tagService = ServiceRegistry.get(TagsService);
 
   async run() {
-    const artistAmount = this.parsedArguments.artistAmount!,
-      tag = this.parsedArguments.tag!;
+    const artistAmount = this.parsedArguments.artistAmount,
+      tag = this.parsedArguments.tag;
 
     const [userOneUsername, userTwoUsername] = await this.getUsernames();
 
@@ -113,7 +125,7 @@ export default class TagTaste extends TasteCommand<typeof args> {
       this.generateEmbed(taste, embed);
       await this.send(embed);
     } else {
-      const scrollingEmbed = new SimpleScrollingEmbed(this.message, embed, {
+      const scrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
         items: taste.artists,
         pageSize: 20,
         pageRenderer: (items) => {

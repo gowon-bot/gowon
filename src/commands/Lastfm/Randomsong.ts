@@ -1,5 +1,5 @@
 import { buildRequestable } from "../../helpers/getMentions";
-import { Delegate } from "../../lib/command/BaseCommand";
+import { CommandRedirect } from "../../lib/command/BaseCommand";
 import { standardMentions } from "../../lib/context/arguments/mentionTypes/mentions";
 import { LastFMBaseCommand } from "./LastFMBaseCommand";
 import RandomsongInUsersLibrary from "./RandomSongInUsersLibrary";
@@ -17,12 +17,14 @@ export default class Randomsong extends LastFMBaseCommand<typeof args> {
     "@user (will pick a random song in their top tracks) poolAmount",
   ];
 
+  slashCommand = true;
+
   arguments = args;
 
-  delegates: Delegate<typeof args>[] = [
+  redirects: CommandRedirect<typeof args>[] = [
     {
-      when: (args) => !!args.user || !!args.userID || !!args.lfmUser,
-      delegateTo: RandomsongInUsersLibrary,
+      when: (args) => !!args.user || !!args.userID || !!args.lastfmUsername,
+      redirectTo: RandomsongInUsersLibrary,
     },
   ];
 

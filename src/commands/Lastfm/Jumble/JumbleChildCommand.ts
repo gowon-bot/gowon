@@ -18,7 +18,6 @@ export abstract class JumbleChildCommand<
 
   customContext = {
     constants: { redisOptions: { prefix: "jumble" } },
-    mutable: {},
   };
 
   async sessionSetJSON(key: string, value: Object | Array<unknown>) {
@@ -34,7 +33,7 @@ export abstract class JumbleChildCommand<
   async prerun() {
     let senderUsername = await this.usersService.getUsername(
       this.ctx,
-      this.message.author.id
+      this.payload.author.id
     );
 
     this.jumbleCalculator = new JumbleCalculator(this.ctx, senderUsername);

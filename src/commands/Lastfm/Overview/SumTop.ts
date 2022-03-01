@@ -6,9 +6,14 @@ import { displayNumber } from "../../../lib/views/displays";
 import { OverviewChildCommand } from "./OverviewChildCommand";
 
 const args = {
+  timePeriod: new TimePeriodArgument({
+    description: "The time period to display stats for",
+  }),
+  top: new NumberArgument({
+    default: 10,
+    description: "The number of artists to total",
+  }),
   ...standardMentions,
-  timePeriod: new TimePeriodArgument(),
-  top: new NumberArgument({ default: 10 }),
 } as const;
 
 export class SumTop extends OverviewChildCommand<typeof args> {
@@ -21,8 +26,10 @@ export class SumTop extends OverviewChildCommand<typeof args> {
 
   arguments = args;
 
+  slashCommand = true;
+
   async run() {
-    let top = this.parsedArguments.top!;
+    let top = this.parsedArguments.top;
 
     let { perspective } = await this.getMentions();
 

@@ -21,6 +21,8 @@ export default class About extends BaseCommand {
   aliases = ["stats", "info"];
   description = "Shows information about the bot";
 
+  slashCommand = true;
+
   startDate = new Date(2020, 6, 9);
 
   lastFMService = ServiceRegistry.get(LastFMService);

@@ -6,6 +6,8 @@ export class View extends NowPlayingConfigChildCommand {
   description = "View your current config";
   usage = [""];
 
+  slashCommand = true;
+
   async run() {
     const { senderUser } = await this.getMentions({
       senderRequired: true,

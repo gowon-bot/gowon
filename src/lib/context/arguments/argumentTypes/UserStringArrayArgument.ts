@@ -2,13 +2,15 @@ import { Message } from "discord.js";
 import { BaseMention } from "../mentionTypes/BaseMention";
 import {
   BaseArgument,
+  BaseArgumentOptions,
   defaultIndexableOptions,
   SliceableArgumentOptions,
   StringCleaningArgument,
 } from "./BaseArgument";
 
 export interface UserStringArrayArgumentOptions
-  extends SliceableArgumentOptions {
+  extends BaseArgumentOptions,
+    SliceableArgumentOptions {
   mention: BaseMention;
 }
 

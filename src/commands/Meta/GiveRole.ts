@@ -8,7 +8,14 @@ import { DiscordIDMention } from "../../lib/context/arguments/mentionTypes/Disco
 import { validators } from "../../lib/validation/validators";
 
 const args = {
-  role: new StringArgument({ index: 0 }),
+  role: new StringArgument({
+    index: 0,
+    required: true,
+    choices: Object.entries(roles).map(([key, role]) => ({
+      name: role.friendlyName,
+      value: key,
+    })),
+  }),
   userID: new UserStringArgument({ mention: new DiscordIDMention() }),
   user: new DiscordUserArgument(),
 } as const;
@@ -42,7 +49,7 @@ export default class GiveRole extends BaseCommand<typeof args> {
   };
 
   async run() {
-    const role = this.parsedArguments.role!;
+    const role = this.parsedArguments.role;
     const { mentionedDBUser } = await this.getMentions();
 
     if (!mentionedDBUser) {

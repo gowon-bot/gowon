@@ -9,8 +9,8 @@ import { LastFMArgumentsMutableContext } from "../../services/LastFM/LastFMArgum
 import { LastFMBaseCommand } from "./LastFMBaseCommand";
 
 const args = {
-  ...standardMentions,
   ...prefabArguments.album,
+  ...standardMentions,
 } as const;
 
 export default class Cover extends LastFMBaseCommand<typeof args> {
@@ -19,6 +19,8 @@ export default class Cover extends LastFMBaseCommand<typeof args> {
   aliases = ["co"];
   description = "Shows the cover for a given album";
   usage = ["", "artist | album @user"];
+
+  slashCommand = true;
 
   arguments = args;
 

@@ -4,22 +4,22 @@ import {
   MessageEmbed,
   GuildMember,
   Client,
-  Message,
 } from "discord.js";
 import { gowonEmbed } from ".";
 import { Emoji } from "../../Emoji";
 import { GowonClient } from "../../GowonClient";
 import { displayNumber } from "../displays";
+import { GowonContext } from "../../context/Context";
 
 export class CrownEmbeds {
   client: Client;
 
   constructor(
+    private ctx: GowonContext,
     private crownCheck: CrownCheck,
     private user: DiscordUser,
     private gowonClient: GowonClient,
     private plays: number,
-    private message: Message,
     private member?: GuildMember
   ) {
     this.client = gowonClient.client;
@@ -31,7 +31,7 @@ export class CrownEmbeds {
 
   private async holderUsername(): Promise<string> {
     return await this.gowonClient.userDisplay(
-      this.message,
+      this.ctx,
       this.crownCheck.oldCrown!.user.discordID
     );
   }

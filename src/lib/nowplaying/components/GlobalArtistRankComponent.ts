@@ -8,6 +8,7 @@ export class GlobalArtistRankComponent extends BaseNowPlayingComponent<
   typeof artistRankRequirements
 > {
   static componentName = "global-artist-rank";
+  static friendlyName = "Global artist rank";
   readonly requirements = artistRankRequirements;
 
   present() {

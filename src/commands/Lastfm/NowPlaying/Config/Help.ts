@@ -10,6 +10,8 @@ export class Help extends NowPlayingConfigChildCommand {
   description = "View help about nowplaying config";
   usage = [""];
 
+  slashCommand = true;
+
   async run() {
     const embed = this.newEmbed().setAuthor(
       this.generateEmbedAuthor("Config help")

@@ -12,7 +12,7 @@ import { Flag, isFlag } from "../../lib/context/arguments/argumentTypes/Flag";
 import { BaseArgument } from "../../lib/context/arguments/argumentTypes/BaseArgument";
 
 const args = {
-  command: new StringArgument({ index: { start: 0 } }),
+  command: new StringArgument({ index: { start: 0 }, required: true }),
 } as const;
 
 export default class HelpForOneCommand extends BaseCommand<typeof args> {
@@ -29,7 +29,7 @@ export default class HelpForOneCommand extends BaseCommand<typeof args> {
   };
 
   async run() {
-    const command = this.parsedArguments.command!;
+    const command = this.parsedArguments.command;
 
     const embed = await this.helpForOneCommand(command);
 
@@ -73,7 +73,9 @@ export default class HelpForOneCommand extends BaseCommand<typeof args> {
     lineConsolidator.addLines(
       (command.access?.role ? `${Emoji[command.access.role]} ` : "") +
         commandName.strong() +
+        (command.slashCommand ? " (slash command)" : "") +
         ":",
+
       command.description.italic(false),
       "",
       {
@@ -169,8 +171,8 @@ export default class HelpForOneCommand extends BaseCommand<typeof args> {
 
   private async runCustomHelp(commandClass: Command) {
     let command = new commandClass.customHelp!();
-    command.delegatedFrom = this;
-    await command.execute(this.message, this.runAs, this.gowonClient);
+    command.redirectedFrom = this;
+    await command.execute(this.payload, this.runAs, this.gowonClient);
     return;
   }
 }

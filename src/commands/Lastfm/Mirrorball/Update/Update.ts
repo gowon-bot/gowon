@@ -8,7 +8,7 @@ import {
   ConcurrencyService,
   ConcurrentAction,
 } from "../../../../services/ConcurrencyService";
-import { Delegate } from "../../../../lib/command/BaseCommand";
+import { CommandRedirect } from "../../../../lib/command/BaseCommand";
 import { MirrorballBaseCommand } from "../../../../lib/indexing/MirrorballCommands";
 import { errorEmbed } from "../../../../lib/views/embeds";
 import {
@@ -29,7 +29,7 @@ const args = {
   full: new Flag({
     shortnames: [],
     longnames: ["full", "force"],
-    description: "Deletes all of your indexed data and replaces it",
+    description: "Do a full index (download all your data)",
   }),
 } as const;
 
@@ -45,8 +45,10 @@ export default class Update extends MirrorballBaseCommand<
   subcategory = "library";
   description = "Updates a user's cached data based on their lastest scrobbles";
 
-  delegates: Delegate<typeof args>[] = [
-    { when: (args) => args.full, delegateTo: Index },
+  slashCommand = true;
+
+  redirects: CommandRedirect<typeof args>[] = [
+    { when: (args) => args.full, redirectTo: Index },
   ];
 
   arguments = args;

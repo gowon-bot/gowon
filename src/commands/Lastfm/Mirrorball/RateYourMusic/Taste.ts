@@ -17,7 +17,6 @@ import { Flag } from "../../../../lib/context/arguments/argumentTypes/Flag";
 
 const args = {
   ...standardMentions,
-
   lenient: new Flag({
     description:
       "Show ratings that are 1 star apart, instead of the default 0.5",
@@ -44,6 +43,8 @@ export class Taste extends RateYourMusicIndexingChildCommand<
   usage = ["@user"];
 
   arguments = args;
+
+  slashCommand = true;
 
   async run() {
     const { discordUser } = await this.getMentions({
@@ -96,7 +97,7 @@ export class Taste extends RateYourMusicIndexingChildCommand<
         `Taste comparison for ${this.author.tag} and ${discordUser?.tag}`
       );
 
-    const scrollingEmbed = new SimpleScrollingEmbed(this.message, embed, {
+    const scrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
       items: taste.ratings,
       pageSize: 10,
       pageRenderer: (ratings) => {

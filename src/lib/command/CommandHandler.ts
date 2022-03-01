@@ -17,6 +17,7 @@ import { ServiceRegistry } from "../../services/ServicesRegistry";
 import Prefix from "../../commands/Meta/Prefix";
 import Help from "../../commands/Help/Help";
 import { GowonContext } from "../context/Context";
+import { Payload } from "../context/Payload";
 
 export class CommandHandler {
   commandRegistry = CommandRegistry.getInstance();
@@ -35,14 +36,14 @@ export class CommandHandler {
   context(message: Message) {
     return new GowonContext({
       gowonClient: this.client,
-      payload: message,
+      payload: new Payload(message),
       runAs: new RunAs(),
       command: {
         logger: this.logger,
         guild: message.guild!,
         author: message.author,
       } as any,
-      custom: { constants: { adminService: this.adminService }, mutable: {} },
+      custom: { constants: { adminService: this.adminService } },
     });
   }
 
@@ -105,7 +106,7 @@ export class CommandHandler {
         return;
       }
 
-      let canCheck = await this.adminService.can.run(
+      const canCheck = await this.adminService.can.run(
         this.context(message),
         command,
         {
@@ -149,7 +150,11 @@ export class CommandHandler {
 
       const prefixCommand = new Prefix().setPrefix(prefix);
 
-      await prefixCommand.execute(message, new RunAs(), this.client);
+      await prefixCommand.execute(
+        new Payload(message),
+        new RunAs(),
+        this.client
+      );
     }
   }
 
@@ -163,7 +168,7 @@ export class CommandHandler {
 
       message.content = "";
 
-      await helpCommand.execute(message, new RunAs(), this.client);
+      await helpCommand.execute(new Payload(message), new RunAs(), this.client);
     }
   }
 
@@ -194,7 +199,11 @@ export class CommandHandler {
     const newCommand = command.copy();
 
     try {
-      await newCommand.execute.bind(newCommand)(message, runAs, this.client);
+      await newCommand.execute.bind(newCommand)(
+        new Payload(message),
+        runAs,
+        this.client
+      );
     } catch {}
   }
 }

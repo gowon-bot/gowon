@@ -5,8 +5,15 @@ import { displayNumber } from "../../../lib/views/displays";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 
 const args = {
-  tag: new StringArgument({ index: { start: 0 } }),
+  tag: new StringArgument({
+    index: { start: 0 },
+    required: true,
+    description: "The name of the tag to lookup",
+  }),
 } as const;
+
+// type ProvidedOptions = UnwrapProvidedOptions<typeof args["tag"]>;
+// type ReturnType = ArgumentReturnType<string, ProvidedOptions>;
 
 export default class TagInfo extends InfoCommand<typeof args> {
   idSeed = "csvc park moonchi";
@@ -16,6 +23,8 @@ export default class TagInfo extends InfoCommand<typeof args> {
   description = "Displays some information about a tag";
   usage = ["tag"];
 
+  slashCommand = true;
+
   arguments = args;
 
   validation: Validation = {
@@ -23,7 +32,7 @@ export default class TagInfo extends InfoCommand<typeof args> {
   };
 
   async run() {
-    let tag = this.parsedArguments.tag!;
+    let tag = this.parsedArguments.tag;
 
     let tagInfo = await this.lastFMService.tagInfo(this.ctx, { tag });
 

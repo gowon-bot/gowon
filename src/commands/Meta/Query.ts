@@ -6,7 +6,7 @@ import { Validation } from "../../lib/validation/ValidationChecker";
 import { validators } from "../../lib/validation/validators";
 
 const args = {
-  query: new StringArgument({ index: { start: 0 } }),
+  query: new StringArgument({ index: { start: 0 }, required: true }),
 } as const;
 
 export default class Query extends BaseCommand<typeof args> {
@@ -30,7 +30,7 @@ export default class Query extends BaseCommand<typeof args> {
 
     let connection = getConnection();
 
-    let result = await connection.query(this.parsedArguments.query!);
+    let result = await connection.query(this.parsedArguments.query);
 
     await this.send("```" + Logger.formatObject(result) + "```");
   }

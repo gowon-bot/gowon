@@ -1,4 +1,4 @@
-import { Delegate } from "../../../../lib/command/BaseCommand";
+import { CommandRedirect } from "../../../../lib/command/BaseCommand";
 import { StringArrayArgument } from "../../../../lib/context/arguments/argumentTypes/StringArrayArgument";
 import {
   componentMap,
@@ -11,6 +11,7 @@ import { NowPlayingConfigChildCommand } from "./NowPlayingConfigChildCommand";
 
 const args = {
   config: new StringArrayArgument({ index: { start: 0 } }),
+  //
 } as const;
 
 export class Set extends NowPlayingConfigChildCommand<typeof args> {
@@ -21,10 +22,10 @@ export class Set extends NowPlayingConfigChildCommand<typeof args> {
 
   arguments = args;
 
-  delegates: Delegate<typeof args>[] = [
+  redirects: CommandRedirect<typeof args>[] = [
     {
       when: (args) => !args.config?.length,
-      delegateTo: Help,
+      redirectTo: Help,
     },
   ];
 

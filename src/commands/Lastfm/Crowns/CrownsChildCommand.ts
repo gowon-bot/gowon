@@ -8,11 +8,6 @@ export abstract class CrownsChildCommand<
 > extends LastFMBaseChildCommand<T> {
   crownsService = ServiceRegistry.get(CrownsService);
 
-  customContext = {
-    constants: { crownsService: this.crownsService },
-    mutable: {},
-  };
-
   parentName = "crowns";
   subcategory = "crowns";
 }

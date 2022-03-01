@@ -15,6 +15,8 @@ export default class ImageUpload extends LastFMBaseCommand<typeof args> {
     "Links you directly to the upload page for your currently playing album";
   usage = [""];
 
+  slashCommand = true;
+
   arguments = args;
 
   async run() {

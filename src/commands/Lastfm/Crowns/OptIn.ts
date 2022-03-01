@@ -1,5 +1,4 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
-import { Message } from "discord.js";
 import { ConfirmationEmbed } from "../../../lib/views/embeds/ConfirmationEmbed";
 
 export class OptIn extends CrownsChildCommand {
@@ -8,7 +7,9 @@ export class OptIn extends CrownsChildCommand {
   description = "Opts you back into the crowns game";
   usage = "";
 
-  async run(message: Message) {
+  slashCommand = true;
+
+  async run() {
     const embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor("Crowns opt-in"))
       .setDescription(
@@ -18,7 +19,7 @@ export class OptIn extends CrownsChildCommand {
     const confirmationEmbed = new ConfirmationEmbed(this.ctx, embed);
 
     if (await confirmationEmbed.awaitConfirmation(this.ctx)) {
-      await this.crownsService.optIn(this.ctx, message.author.id);
+      await this.crownsService.optIn(this.ctx, this.author.id);
 
       await confirmationEmbed.sentMessage?.edit({
         embeds: [embed.setDescription("Opted you back in!")],

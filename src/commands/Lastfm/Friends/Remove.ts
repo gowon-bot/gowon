@@ -24,7 +24,7 @@ export class Remove extends FriendsChildCommand<typeof args> {
       validator: new validators.Required({
         message: "please specify a friend to remove!",
       }),
-      dependsOn: ["friendUsername", "userID", "lfmUser"],
+      dependsOn: ["friendUsername", "userID", "lastfmUsername"],
     },
   };
 

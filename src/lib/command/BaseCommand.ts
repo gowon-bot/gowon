@@ -1,4 +1,5 @@
 import {
+  CommandInteraction,
   EmbedAuthorData,
   Message,
   MessageEmbed,
@@ -59,6 +60,7 @@ import {
   ReplyOptions,
   SendOptions,
 } from "../../services/Discord/DiscordService";
+import { Payload } from "../context/Payload";
 
 export interface Variation {
   name: string;
@@ -66,8 +68,8 @@ export interface Variation {
   description?: string;
 }
 
-export interface Delegate<T extends ArgumentsMap> {
-  delegateTo: { new (): Command };
+export interface CommandRedirect<T extends ArgumentsMap> {
+  redirectTo: { new (): Command };
   when(args: ParsedArguments<T>): boolean;
 }
 
@@ -90,8 +92,16 @@ export abstract class BaseCommand<ArgumentsType extends ArgumentsMap = {}>
   friendlyName: string = this.constructor.name.toLowerCase();
   aliases: Array<string> = [];
   variations: Variation[] = [];
-  delegates: Delegate<ArgumentsType>[] = [];
-  delegatedFrom?: Command;
+  redirects: CommandRedirect<ArgumentsType>[] = [];
+  redirectedFrom?: Command;
+
+  /**
+   * Slash command meta data
+   * (properties related to how slash commands are registered/handled)
+   */
+  // Controls whether to register a command as a slash command
+  slashCommand?: boolean;
+  slashCommandName?: string;
 
   /**
    * Parent-child metadata
@@ -144,7 +154,7 @@ export abstract class BaseCommand<ArgumentsType extends ArgumentsMap = {}>
 
   logger = new Logger();
 
-  get message() {
+  get payload() {
     return this.ctx.payload;
   }
 
@@ -207,17 +217,19 @@ export abstract class BaseCommand<ArgumentsType extends ArgumentsMap = {}>
   }
 
   get prefix(): string {
-    return this.gowonService.prefix(this.guild.id);
+    return this.payload.isInteraction()
+      ? "/"
+      : this.gowonService.prefix(this.guild.id);
   }
 
-  abstract run(message: Message, runAs: RunAs): Promise<void>;
+  abstract run(): Promise<void>;
 
   async getMentions({
     senderRequired = false,
     usernameRequired = true,
     userArgumentName = "user" as ArgumentName<ArgumentsType>,
     inputArgumentName = "username" as ArgumentName<ArgumentsType>,
-    lfmMentionArgumentName = "lfmUser" as ArgumentName<ArgumentsType>,
+    lfmMentionArgumentName = "lastfmUsername" as ArgumentName<ArgumentsType>,
     idMentionArgumentName = "userID" as ArgumentName<ArgumentsType>,
     asCode = true,
     fetchDiscordUser = false,
@@ -236,8 +248,8 @@ export abstract class BaseCommand<ArgumentsType extends ArgumentsMap = {}>
       lfmUsername = argumentsToUse[lfmMentionArgumentName] as string,
       discordUsername = argumentsToUse["discordUsername"] as string;
 
-    if (user && this.message.reference) {
-      const reply = await this.message.fetchReference();
+    if (user && this.payload.isMessage() && this.payload.source.reference) {
+      const reply = await this.payload.source.fetchReference();
 
       if (this.nowPlayingEmbedParsingService.hasParsableEmbed(this.ctx, reply))
         if (
@@ -250,7 +262,7 @@ export abstract class BaseCommand<ArgumentsType extends ArgumentsMap = {}>
             "who knows",
           ])
         ) {
-          user = (Array.from(this.message.mentions.users)[1] || [])[1];
+          user = (Array.from(this.payload.source.mentions.users)[1] || [])[1];
         }
     }
 
@@ -270,7 +282,7 @@ export abstract class BaseCommand<ArgumentsType extends ArgumentsMap = {}>
     try {
       senderDBUser = await this.usersService.getUser(
         this.ctx,
-        this.message.author.id
+        this.payload.author.id
       );
     } catch {}
 
@@ -418,8 +430,8 @@ export abstract class BaseCommand<ArgumentsType extends ArgumentsMap = {}>
 
     if (this.showLoadingAfter) {
       setTimeout(() => {
-        if (!this.isCompleted) {
-          this.message.react(Emoji.loading);
+        if (!this.isCompleted && this.payload.isMessage()) {
+          this.payload.source.react(Emoji.loading);
         }
       }, this.showLoadingAfter * 1000);
     }
@@ -435,20 +447,20 @@ export abstract class BaseCommand<ArgumentsType extends ArgumentsMap = {}>
     this.logger.closeCommandHeader(this);
     this.isCompleted = true;
 
-    if (this.showLoadingAfter) {
-      this.message.reactions
+    if (this.showLoadingAfter && this.payload.isMessage()) {
+      this.payload.source.reactions
         .resolve(EmojiRaw.loading)
         ?.users.remove(this.gowonClient.client.user!);
     }
   }
 
-  async execute(message: Message, runAs: RunAs, gowonClient: GowonClient) {
+  async execute(payload: Payload, runAs: RunAs, gowonClient: GowonClient) {
     this.ctx = new GowonContext({
       custom: Object.assign(this.customContext, {
         analyticsCollector: this.analyticsCollector,
       }) as any,
       command: this,
-      payload: message,
+      payload,
       runAs,
       gowonClient,
     });
@@ -466,22 +478,31 @@ export abstract class BaseCommand<ArgumentsType extends ArgumentsMap = {}>
         this.debug = true;
       }
 
-      for (const delegate of this.delegates) {
-        if (delegate.when(this.parsedArguments)) {
-          const command = new delegate.delegateTo();
-          command.delegatedFrom = this;
-          await command.execute(message, runAs, gowonClient);
+      for (const redirect of this.redirects) {
+        if (redirect.when(this.parsedArguments)) {
+          const command = new redirect.redirectTo();
+          command.redirectedFrom = this;
+          await command.execute(payload, runAs, gowonClient);
           return;
         }
       }
 
-      this.logger.logCommand(this, message, runAs.toArray().join(" "));
+      this.logger.logCommand(this, payload, runAs.toArray().join(" "));
       this.analyticsCollector.metrics.commandRuns.inc();
 
       new ValidationChecker(this.parsedArguments, this.validation).validate();
 
+      if (this.payload.isInteraction()) {
+        this.mutableContext<{
+          deferredResponseTimeout?: NodeJS.Timeout;
+        }>().mutable.deferredResponseTimeout = setTimeout(() => {
+          (this.payload.source as CommandInteraction).deferReply();
+          this.mutableContext<{ deferred: boolean }>().mutable.deferred = true;
+        }, 2000);
+      }
+
       await this.prerun();
-      await this.run(message, runAs);
+      await this.run();
     } catch (e: any) {
       this.logger.logError(e);
       this.analyticsCollector.metrics.commandErrors.inc();
@@ -519,7 +540,7 @@ export abstract class BaseCommand<ArgumentsType extends ArgumentsMap = {}>
 
   async dmAuthor(content: string | MessageEmbed): Promise<Message> {
     return await this.discordService.send(this.ctx, content, {
-      inChannel: await this.ctx.author.createDM(),
+      inChannel: await this.ctx.author.createDM(true),
     });
   }
 
@@ -532,7 +553,7 @@ export abstract class BaseCommand<ArgumentsType extends ArgumentsMap = {}>
   checkRollout(): boolean {
     if (this.gowonClient.isDeveloper(this.author.id)) return true;
 
-    return checkRollout(this.rollout, this.message);
+    return checkRollout(this.rollout, this.payload);
   }
 
   public copy(): Command {
@@ -540,23 +561,23 @@ export abstract class BaseCommand<ArgumentsType extends ArgumentsMap = {}>
   }
 
   async getRepliedMessage(): Promise<Message | undefined> {
-    if (this.message.reference) {
-      return await this.message.fetchReference();
+    if (this.payload.isMessage() && this.payload.source.reference) {
+      return await this.payload.source.fetchReference();
     }
 
     return undefined;
   }
 
   newEmbed(embed?: MessageEmbed): MessageEmbed {
-    return gowonEmbed(this.message.member ?? undefined, embed);
+    return gowonEmbed(this.payload.member ?? undefined, embed);
   }
 
   generateEmbedAuthor(title?: string): EmbedAuthorData {
     return {
       name: title
-        ? `${this.message.author.tag} | ${title}`
-        : `${this.message.author.tag}`,
-      iconURL: this.message.author.avatarURL() || undefined,
+        ? `${this.payload.author.tag} | ${title}`
+        : `${this.payload.author.tag}`,
+      iconURL: this.payload.author.avatarURL() || undefined,
     };
   }
 
@@ -669,6 +690,6 @@ export abstract class BaseCommand<ArgumentsType extends ArgumentsMap = {}>
   }
 
   protected messageIsReply(): boolean {
-    return !!this.message.reference;
+    return this.payload.isMessage() && !!this.payload.source.reference;
   }
 }

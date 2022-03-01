@@ -19,8 +19,12 @@ interface Overlap {
 }
 
 const args = {
+  tag: new StringArgument({
+    index: { start: 0 },
+    required: true,
+    description: "The tag to filter your artists with",
+  }),
   ...standardMentions,
-  tag: new StringArgument({ index: { start: 0 } }),
 } as const;
 
 export default class Tag extends LastFMBaseCommand<typeof args> {
@@ -33,12 +37,14 @@ export default class Tag extends LastFMBaseCommand<typeof args> {
 
   arguments = args;
 
+  slashCommand = true;
+
   validation: Validation = {
     tag: new validators.Required({}),
   };
 
   async run() {
-    const tag = this.parsedArguments.tag!;
+    const tag = this.parsedArguments.tag;
 
     const { requestable, perspective } = await this.getMentions({
       asCode: false,
@@ -91,7 +97,7 @@ export default class Tag extends LastFMBaseCommand<typeof args> {
         `${perspective.upper.possessive} top ${tagTopArtists.meta.tag} artists`
       );
 
-    const scrollingEmbed = new SimpleScrollingEmbed(this.message, embed, {
+    const scrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
       items: overlap,
       pageSize: 20,
       pageRenderer(overlap, { offset }) {

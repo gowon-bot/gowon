@@ -4,8 +4,12 @@ import { standardMentions } from "../../../lib/context/arguments/mentionTypes/me
 import { SpotifyBaseCommand } from "./SpotifyBaseCommands";
 
 const args = {
+  keywords: new StringArgument({
+    index: { start: 0 },
+    description:
+      "The keywords to search Spotify with (defaults to your currently playing artist)",
+  }),
   ...standardMentions,
-  keywords: new StringArgument({ index: { start: 0 } }),
 } as const;
 
 export default class SpotifyArtist extends SpotifyBaseCommand<typeof args> {
@@ -16,9 +20,7 @@ export default class SpotifyArtist extends SpotifyBaseCommand<typeof args> {
 
   arguments = args;
 
-  customContext = {
-    mutable: {},
-  };
+  slashCommand = true;
 
   async run() {
     let keywords = this.parsedArguments.keywords;

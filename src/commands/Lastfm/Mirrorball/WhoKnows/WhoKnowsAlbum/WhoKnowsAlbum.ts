@@ -26,6 +26,8 @@ export default class WhoKnowsAlbum extends WhoKnowsBaseCommand<
 
   idSeed = "redsquare green";
 
+  subcategory = "whoknows";
+  description = "See who knows an album";
   aliases = ["wkl", "wka", "fmwka"];
 
   variations: Variation[] = [
@@ -33,8 +35,7 @@ export default class WhoKnowsAlbum extends WhoKnowsBaseCommand<
     VARIATIONS.global("wkl", "wka"),
   ];
 
-  subcategory = "whoknows";
-  description = "See who knows an album";
+  slashCommand = true;
 
   arguments = args;
 

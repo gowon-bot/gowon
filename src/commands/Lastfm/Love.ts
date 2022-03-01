@@ -17,6 +17,8 @@ export default class Love extends LastFMBaseCommand<typeof args> {
 
   variations: Variation[] = [{ name: "unlove", variation: ["unlove", "hate"] }];
 
+  slashCommand = true;
+
   arguments = args;
 
   async run() {

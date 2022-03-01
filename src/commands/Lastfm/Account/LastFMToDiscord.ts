@@ -5,25 +5,30 @@ import { validators } from "../../../lib/validation/validators";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 
 const args = {
-  username: new StringArgument({ index: 0 }),
+  username: new StringArgument({
+    index: 0,
+    description: "The username of the user to lookup",
+    required: true,
+  }),
 } as const;
 
 export default class LastFmToDiscord extends LastFMBaseCommand<typeof args> {
   idSeed = "loona choerry";
 
   aliases = ["lfm2d", "last2todiscord", "l2d"];
-  description = "Displays who is logged in as a given Last.fm user";
+  description = "Shows who is logged in as a given Last.fm user";
   subcategory = "accounts";
   usage = "lastfm_username";
 
   arguments = args;
+  slashCommand = true;
 
   validation: Validation = {
     username: new validators.Required({}),
   };
 
   async run() {
-    let username = this.parsedArguments.username!;
+    let username = this.parsedArguments.username;
 
     let user = await this.usersService.getUserFromLastFMUsername(
       this.ctx,

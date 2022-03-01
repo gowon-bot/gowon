@@ -3,17 +3,22 @@ import { BaseCustomParser } from "./custom";
 
 export const overallRegex = /(\s+|\b)(a(lltime)?|o(verall)?)(\s|\b)/gi;
 
-export class TimePeriodParser extends BaseCustomParser<LastFMPeriod> {
+export class TimePeriodParser extends BaseCustomParser<
+  LastFMPeriod | undefined
+> {
   constructor(private options: { fallback?: LastFMPeriod } = {}) {
     super();
   }
 
   parse(string: string) {
-    return parsePeriod(string, this.options.fallback || "overall");
+    return parsePeriod(string, this.options.fallback);
   }
 }
 
-function parsePeriod(string: string, fallback: LastFMPeriod): LastFMPeriod {
+function parsePeriod(
+  string: string,
+  fallback?: LastFMPeriod
+): LastFMPeriod | undefined {
   const periodRegexes: { [period: string]: RegExp } = {
     "7day": /(\s+|\b)(w(eek)?)(\s|\b)/gi,
     "3month": /(\s+|\b)(q(uarter)?)(\s|\b)/gi,

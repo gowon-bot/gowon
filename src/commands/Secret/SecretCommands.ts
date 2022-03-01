@@ -1,5 +1,4 @@
 import { BaseCommand } from "../../lib/command/BaseCommand";
-import { Message } from "discord.js";
 
 export default class SecretCommands extends BaseCommand {
   idSeed = "2ne1 minzy";
@@ -9,13 +8,13 @@ export default class SecretCommands extends BaseCommand {
   secretCommand = true;
   devCommand = true;
 
-  async run(message: Message) {
-    let commands = this.commandRegistry
+  async run() {
+    const commands = this.commandRegistry
       .list(true)
       .filter((c) => c.secretCommand);
 
-    let embed = this.newEmbed()
-      .setAuthor("Secret commands for " + message.author.username)
+    const embed = this.newEmbed()
+      .setAuthor(this.generateEmbedAuthor("Secret commands"))
       .setDescription(commands.map((c) => c.name).join(", "));
 
     await this.send(embed);

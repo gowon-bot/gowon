@@ -7,6 +7,7 @@ export class ScrobblesComponent extends BaseNowPlayingComponent<
   typeof scrobblesRequirements
 > {
   static componentName = "scrobbles";
+  static friendlyName = "Scrobbles";
   readonly requirements = scrobblesRequirements;
 
   present() {

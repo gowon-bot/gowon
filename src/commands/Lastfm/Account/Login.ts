@@ -11,6 +11,7 @@ import { displayLink } from "../../../lib/views/displays";
 import { ConfirmationEmbed } from "../../../lib/views/embeds/ConfirmationEmbed";
 import { MirrorballUserType } from "../../../services/mirrorball/MirrorballTypes";
 import { LastFMSession } from "../../../services/LastFM/converters/Misc";
+import { Payload } from "../../../lib/context/Payload";
 
 export default class Login extends MirrorballBaseCommand<never, never> {
   idSeed = "loona jinsoul";
@@ -19,9 +20,11 @@ export default class Login extends MirrorballBaseCommand<never, never> {
 
   aliases = ["fmlogin", "set", "fmset"];
 
-  description = "Sets your Last.fm username in Gowon";
+  description = "Connect your Last.fm account to Gowon";
   subcategory = "accounts";
   usage = "";
+
+  slashCommand = true;
 
   validation: Validation = {};
 
@@ -66,7 +69,7 @@ export default class Login extends MirrorballBaseCommand<never, never> {
       const confirmationEmbed = new ConfirmationEmbed(
         this.ctx,
         successEmbed,
-        sentMessage
+        new Payload(sentMessage)
       );
 
       if (await confirmationEmbed.awaitConfirmation(this.ctx)) {
@@ -172,13 +175,13 @@ export default class Login extends MirrorballBaseCommand<never, never> {
           reactionCollector.stop();
           resolve(user!);
         } else if (!embed.footer?.text?.includes("didn't work")) {
-          await sentMessage.edit({
-            embeds: [
-              embed.setFooter({
-                text: "Hmm that didn't work, please ensure you've authenticated with the link and try again",
-              }),
-            ],
-          });
+          this.discordService.edit(
+            this.ctx,
+            sentMessage,
+            embed.setFooter({
+              text: "Hmm that didn't work, please ensure you've authenticated with the link and try again",
+            })
+          );
         }
       });
 
@@ -189,13 +192,14 @@ export default class Login extends MirrorballBaseCommand<never, never> {
 
       reactionCollector.on("end", async (_: any, reason) => {
         if (reason === "time") {
-          await sentMessage.edit({
-            embeds: [
-              embed.setFooter({
-                text: "This login link has expired, please try again",
-              }),
-            ],
-          });
+          this.discordService.edit(
+            this.ctx,
+            sentMessage,
+            embed.setFooter({
+              text: "This login link has expired, please try again",
+            })
+          );
+
           resolve(undefined);
         }
       });

@@ -6,8 +6,8 @@ import { standardMentions } from "../../../lib/context/arguments/mentionTypes/me
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 
 const args = {
-  ...standardMentions,
   ...prefabArguments.track,
+  ...standardMentions,
 } as const;
 
 export default class TrackInfo extends InfoCommand<typeof args> {
@@ -19,11 +19,11 @@ export default class TrackInfo extends InfoCommand<typeof args> {
   description = "Displays some information about a track";
   usage = ["", "artist | track"];
 
+  slashCommand = true;
+
   arguments = args;
 
   lineConsolidator = new LineConsolidator();
-
-  customContext = { mutable: {} };
 
   async run() {
     const { senderRequestable } = await this.getMentions({

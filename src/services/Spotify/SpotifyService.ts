@@ -34,7 +34,7 @@ import { SpotifyPlaylist } from "./converters/Playlist";
 import { SpotifyToken } from "./converters/Auth";
 
 export type SpotifyServiceContext = GowonContext<{
-  mutable: { spotifyToken?: SpotifyToken };
+  mutable?: { spotifyToken?: SpotifyToken };
 }>;
 
 interface SpotifyRequestOptions {

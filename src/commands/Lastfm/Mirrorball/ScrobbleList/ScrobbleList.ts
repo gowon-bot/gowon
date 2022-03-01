@@ -89,7 +89,7 @@ export default class ScrobbleList extends MirrorballBaseCommand<
         } scrobbles of ${trackName.italic()} by ${artistName.strong()}`
       );
 
-    const scrollingEmbed = new ScrollingEmbed(this.message, embed, {
+    const scrollingEmbed = new ScrollingEmbed(this.ctx, embed, {
       initialItems: this.generateTable(
         await paginatedCache.getPage(1),
         firstPages.plays.pageInfo,

@@ -5,14 +5,16 @@ import { NoRatingsError, UnknownMirrorballError } from "../../../../errors";
 import { MirrorballRating } from "../../../../services/mirrorball/MirrorballTypes";
 import { displayRating } from "../../../../lib/views/displays";
 import { ScrollingEmbed } from "../../../../lib/views/embeds/ScrollingEmbed";
-import { Validation } from "../../../../lib/validation/ValidationChecker";
-import { validators } from "../../../../lib/validation/validators";
 import { standardMentions } from "../../../../lib/context/arguments/mentionTypes/mentions";
 import { StringArgument } from "../../../../lib/context/arguments/argumentTypes/StringArgument";
 
 const args = {
+  rating: new StringArgument({
+    index: 0,
+    choices: ["0.5", "1", "1.5", "2", "2.5", "3", "3.5", "4", "4.5", "5"],
+    description: "Filter your ratings by a specific rating",
+  }),
   ...standardMentions,
-  rating: new StringArgument({ index: 0 }),
 } as const;
 
 export class Ratings extends RateYourMusicIndexingChildCommand<
@@ -30,13 +32,9 @@ export class Ratings extends RateYourMusicIndexingChildCommand<
     "Shows your top rated albums, or albums you've given a specific rating";
   usage = ["", "rating"];
 
-  validation: Validation = {
-    rating: new validators.Choices({
-      choices: ["0.5", "1", "1.5", "2", "2.5", "3", "3.5", "4", "4.5", "5"],
-    }),
-  };
-
   arguments = args;
+
+  slashCommand = true;
 
   async run() {
     let rating: number | undefined;
@@ -98,7 +96,7 @@ export class Ratings extends RateYourMusicIndexingChildCommand<
           : `${perspective.upper.possessive} top rated albums`
       );
 
-    const scrollingEmbed = new ScrollingEmbed(this.message, embed, {
+    const scrollingEmbed = new ScrollingEmbed(this.ctx, embed, {
       initialItems: this.generateTable(await paginatedCache.getPage(1)),
       totalPages: Math.ceil(
         initialPages.ratings.pageInfo.recordCount / this.pageSize

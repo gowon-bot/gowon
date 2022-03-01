@@ -42,10 +42,10 @@ export class ArtistPlaysInARowComponent extends BaseCompoundComponent<
       crown &&
       crown.user
     ) {
-      if (crown.user.id === this.values.message.author.id) {
+      if (crown.user.id === this.ctx.author.id) {
         isCrownHolder = true;
       } else {
-        if (await User.stillInServer(this.values.message, crown.user.id)) {
+        if (await User.stillInServer(this.ctx, crown.user.id)) {
           crownString = `👑 ${displayNumber(crown.crown.plays)} (${
             crown.user.username
           })`;

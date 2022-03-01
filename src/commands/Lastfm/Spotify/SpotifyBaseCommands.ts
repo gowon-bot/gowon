@@ -41,13 +41,12 @@ export abstract class AuthenticatedSpotifyBaseCommand<
 
   access = new BetaAccess();
 
-  customContext = { mutable: {} };
-
   private async fetchToken(discordID?: string) {
     const token = await this.spotifyAuthenticationService.getTokenForUser(
       this.ctx,
       discordID || this.author.id
     );
+
     this.mutableContext<{
       spotifyToken?: SpotifyToken;
     }>().mutable.spotifyToken = token;

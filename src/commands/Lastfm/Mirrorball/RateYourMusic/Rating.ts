@@ -20,6 +20,8 @@ export class Rating extends RateYourMusicIndexingChildCommand<
 
   arguments = args;
 
+  slashCommand = true;
+
   async run() {
     const { senderRequestable, dbUser } = await this.getMentions({
       senderRequired:

@@ -21,6 +21,8 @@ export class List extends CrownsChildCommand<typeof args> {
 
   arguments = args;
 
+  slashCommand = true;
+
   async run() {
     const { dbUser, discordUser } = await this.getMentions({
       fetchDiscordUser: true,
@@ -50,7 +52,7 @@ export class List extends CrownsChildCommand<typeof args> {
       .setAuthor(this.generateEmbedAuthor("Crowns"))
       .setTitle(`${perspective.upper.possessive} crowns in ${this.guild.name}`);
 
-    const scrollingEmbed = new SimpleScrollingEmbed(this.message, embed, {
+    const scrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
       pageSize: 15,
       items: crowns,
       pageRenderer(crownsPage, { offset }) {

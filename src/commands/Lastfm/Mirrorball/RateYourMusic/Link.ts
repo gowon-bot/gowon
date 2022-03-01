@@ -3,8 +3,12 @@ import { standardMentions } from "../../../../lib/context/arguments/mentionTypes
 import { RateYourMusicChildCommand } from "./RateYourMusicChildCommand";
 
 const args = {
+  keywords: new StringArgument({
+    index: { start: 0 },
+    description:
+      "The keywords to search Rateyourmusic with (defaults to your currently playing album)",
+  }),
   ...standardMentions,
-  keywords: new StringArgument({ index: { start: 0 } }),
 } as const;
 
 export class Link extends RateYourMusicChildCommand<typeof args> {
@@ -13,6 +17,8 @@ export class Link extends RateYourMusicChildCommand<typeof args> {
   description = "Search Rateyourmusic for an album (or anything!)";
 
   arguments = args;
+
+  slashCommand = true;
 
   async run() {
     let keywords = this.parsedArguments.keywords;

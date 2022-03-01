@@ -1,4 +1,4 @@
-import { BaseCommand, Delegate } from "../../lib/command/BaseCommand";
+import { BaseCommand, CommandRedirect } from "../../lib/command/BaseCommand";
 import { Command } from "../../lib/command/Command";
 import { EmbedField } from "discord.js";
 import { AdminService } from "../../services/dbservices/AdminService";
@@ -8,14 +8,26 @@ import { SimpleScrollingEmbed } from "../../lib/views/embeds/SimpleScrollingEmbe
 import QuickHelp from "./QuickHelp";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { StringArgument } from "../../lib/context/arguments/argumentTypes/StringArgument";
+import { Flag } from "../../lib/context/arguments/argumentTypes/Flag";
 
 interface GroupedCommands {
   [category: string]: Command[];
 }
 
 const args = {
-  all: new StringArgument({ match: ["all", "commands"] }),
-  command: new StringArgument({ index: { start: 0 } }),
+  inputAll: new StringArgument({
+    match: ["all", "commands"],
+    slashCommandOption: false,
+  }),
+  all: new Flag({
+    longnames: ["all", "commands"],
+    shortnames: ["a"],
+    description: "Show a list of all the commands",
+  }),
+  command: new StringArgument({
+    index: { start: 0 },
+    description: "A command to view help for",
+  }),
 } as const;
 
 export default class Help extends BaseCommand<typeof args> {
@@ -27,13 +39,17 @@ export default class Help extends BaseCommand<typeof args> {
   usage = ["", "all", "<command>"];
 
   arguments = args;
+  slashCommand = true;
 
-  delegates: Delegate<typeof args>[] = [
+  redirects: CommandRedirect<typeof args>[] = [
     {
-      when: (args) => !!args.command && !args.all,
-      delegateTo: HelpForOneCommand,
+      when: (args) => !!args.command && !args.inputAll && !args.all,
+      redirectTo: HelpForOneCommand,
     },
-    { when: (args) => !args.all && !args.command, delegateTo: QuickHelp },
+    {
+      when: (args) => !args.inputAll && !args.command && !args.all,
+      redirectTo: QuickHelp,
+    },
   ];
 
   adminService = ServiceRegistry.get(AdminService);
@@ -77,7 +93,7 @@ export default class Help extends BaseCommand<typeof args> {
       });
     }
 
-    const simpleScrollingEmbed = new SimpleScrollingEmbed(this.message, embed, {
+    const simpleScrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
       items: fields,
       pageSize: 9,
       overrides: { customFooter: footer, embedDescription: description },

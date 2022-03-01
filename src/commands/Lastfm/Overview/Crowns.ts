@@ -10,6 +10,8 @@ export class Crowns extends OverviewChildCommand {
   aliases = ["cw", "cws"];
   description = "Shows some stats about crowns";
 
+  slashCommand = true;
+
   async run() {
     const { perspective } = await this.getMentions();
 

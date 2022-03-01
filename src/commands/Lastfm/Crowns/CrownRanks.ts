@@ -15,6 +15,9 @@ export class CrownRanks extends CrownsChildCommand<typeof args> {
   aliases = ["stan", "ranks"];
   usage = "";
 
+  slashCommand = true;
+  slashCommandName = "ranks";
+
   arguments = args;
 
   async run() {

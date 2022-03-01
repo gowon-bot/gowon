@@ -12,8 +12,8 @@ import { standardMentions } from "../../../../lib/context/arguments/mentionTypes
 import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";
 
 const args = {
-  ...standardMentions,
   ...prefabArguments.track,
+  ...standardMentions,
 } as const;
 
 export default class TrackTopAlbums extends MirrorballBaseCommand<
@@ -28,6 +28,8 @@ export default class TrackTopAlbums extends MirrorballBaseCommand<
   aliases = ["tal"];
   subcategory = "library";
   description = "Displays your top scrobbled albums from a track";
+
+  slashCommand = true;
 
   arguments = args;
 
@@ -77,7 +79,7 @@ export default class TrackTopAlbums extends MirrorballBaseCommand<
         LinkGenerator.libraryTrackPage(username, track.artist, track.name)
       );
 
-    const simpleScrollingEmbed = new SimpleScrollingEmbed(this.message, embed, {
+    const simpleScrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
       pageSize: 15,
       items: topAlbums,
 

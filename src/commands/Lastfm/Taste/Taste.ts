@@ -15,11 +15,25 @@ import { StringArgument } from "../../../lib/context/arguments/argumentTypes/Str
 
 const args = {
   ...tasteArgs,
-  artistAmount: new NumberArgument({ default: 1000 }),
-  timePeriod: new TimePeriodArgument(),
-  timeRange: new TimeRangeArgument(),
-  username: new StringArgument({ index: 0 }),
-  username2: new StringArgument({ index: 1 }),
+  timePeriod: new TimePeriodArgument({
+    default: "overall",
+    description: "The time period to compare",
+  }),
+  timeRange: new TimeRangeArgument({
+    description: "The time range to compare",
+  }),
+  artistAmount: new NumberArgument({
+    default: 1000,
+    description: "The amount of artists to compare",
+  }),
+  username: new StringArgument({
+    index: 0,
+    description: "The Last.fm username to compare to",
+  }),
+  username2: new StringArgument({
+    index: 1,
+    description: "The other Last.fm username to compare (defaults to you)",
+  }),
 } as const;
 
 export default class Taste extends TasteCommand<typeof args> {
@@ -44,6 +58,8 @@ export default class Taste extends TasteCommand<typeof args> {
 
   arguments = args;
 
+  slashCommand = true;
+
   validation: Validation = {
     artistAmount: {
       validator: new validators.Range({ min: 100, max: 2000 }),
@@ -52,8 +68,8 @@ export default class Taste extends TasteCommand<typeof args> {
   };
 
   async run() {
-    const artistAmount = this.parsedArguments.artistAmount!;
-    const humanizedPeriod = humanizePeriod(this.parsedArguments.timePeriod!);
+    const artistAmount = this.parsedArguments.artistAmount;
+    const humanizedPeriod = humanizePeriod(this.parsedArguments.timePeriod);
 
     const [userOneUsername, userTwoUsername] = await this.getUsernames();
 
@@ -107,7 +123,7 @@ export default class Taste extends TasteCommand<typeof args> {
       this.generateEmbed(taste, embed);
       await this.send(embed);
     } else {
-      const scrollingEmbed = new SimpleScrollingEmbed(this.message, embed, {
+      const scrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
         items: taste.artists,
         pageSize: 20,
         pageRenderer: (items) => {

@@ -8,7 +8,7 @@ import { asyncMap } from "../../../helpers";
 import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
 
 const args = {
-  rank: new NumberArgument(),
+  rank: new NumberArgument({ required: true }),
 } as const;
 
 export class GuildAt extends CrownsChildCommand<typeof args> {
@@ -25,7 +25,7 @@ export class GuildAt extends CrownsChildCommand<typeof args> {
   };
 
   async run() {
-    let rank = this.parsedArguments.rank!;
+    let rank = this.parsedArguments.rank;
 
     let guildAt = await this.crownsService.guildAt(
       this.ctx,

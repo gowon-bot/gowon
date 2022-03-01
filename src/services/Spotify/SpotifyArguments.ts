@@ -17,7 +17,7 @@ interface GetTrackOptions {
 }
 
 type SpotifyArgumentsContext = GowonContext<{
-  mutable: LastFMArgumentsMutableContext & { spotifyToken?: SpotifyToken };
+  mutable?: LastFMArgumentsMutableContext & { spotifyToken?: SpotifyToken };
 }>;
 
 export class SpotifyArguments extends BaseService<SpotifyArgumentsContext> {

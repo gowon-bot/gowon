@@ -15,11 +15,14 @@ const args = {
 
 export default class Month extends LastFMBaseCommand<typeof args> {
   idSeed = "exid hani";
+
   description =
     "Shows an overview of your month, including your top artists, albums, and tracks";
   aliases = ["monthly"];
   subcategory = "reports";
   usage = ["", "@user"];
+
+  slashCommand = true;
 
   arguments = args;
 

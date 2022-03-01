@@ -1,4 +1,8 @@
-import { AlreadyImportingRatingsError, LogicError } from "../../../../errors";
+import {
+  AlreadyImportingRatingsError,
+  CannotBeUsedAsASlashCommand,
+  LogicError,
+} from "../../../../errors";
 import {
   ImportRatingsConnector,
   ImportRatingsParams,
@@ -12,7 +16,7 @@ import { ConcurrentAction } from "../../../../services/ConcurrencyService";
 import { StringArgument } from "../../../../lib/context/arguments/argumentTypes/StringArgument";
 
 const args = {
-  input: new StringArgument({ index: { start: 0 } }),
+  input: new StringArgument({ index: { start: 0 }, slashCommandOption: false }),
 } as const;
 
 export class ImportRatings extends RateYourMusicIndexingChildCommand<
@@ -29,6 +33,8 @@ export class ImportRatings extends RateYourMusicIndexingChildCommand<
 
   arguments = args;
 
+  slashCommand = true;
+
   async prerun() {
     if (
       await this.concurrencyService.isUserDoingAction(
@@ -41,6 +47,18 @@ export class ImportRatings extends RateYourMusicIndexingChildCommand<
   }
 
   async run() {
+    if (this.payload.isInteraction()) {
+      await this.send(
+        this.newEmbed()
+          .setAuthor(this.generateEmbedAuthor("Rateyourmusic import"))
+          .setDescription(
+            "As of right now, you cannot import with slash commands.\n\nPlease go to https://gowon.ca/import-ratings to import, or use message commands"
+          )
+      );
+
+      return;
+    }
+
     await this.getMentions({
       senderRequired: true,
       requireIndexed: true,
@@ -48,7 +66,9 @@ export class ImportRatings extends RateYourMusicIndexingChildCommand<
 
     const ratings = await this.getRatings();
 
-    this.message.react(Emoji.loading);
+    if (this.payload.isMessage()) {
+      this.payload.source.react(Emoji.loading);
+    }
 
     this.concurrencyService.registerUser(
       this.ctx,
@@ -101,37 +121,49 @@ export class ImportRatings extends RateYourMusicIndexingChildCommand<
   }
 
   private async getRatingsFromAttached(): Promise<string> {
-    const attachments = this.message.attachments;
+    if (this.payload.isInteraction()) {
+      throw new CannotBeUsedAsASlashCommand();
+    } else if (this.payload.isMessage()) {
+      const attachments = this.payload.source.attachments;
 
-    if (attachments.size > 1) {
-      throw new LogicError(
-        "Too many attachments! Please attach only one file with your ratings"
-      );
+      if (attachments.size > 1) {
+        throw new LogicError(
+          "Too many attachments! Please attach only one file with your ratings"
+        );
+      }
+
+      const attachment = attachments.first();
+
+      if (!attachment) {
+        throw new LogicError(
+          `Please attach your ratings! (See \`${this.prefix}rym help\` for more info)`
+        );
+      }
+
+      const file = await fetch(attachment.url);
+
+      const fileContent = await streamToString(file.body);
+
+      return fileContent;
     }
 
-    const attachment = attachments.first();
-
-    if (!attachment) {
-      throw new LogicError(
-        `Please attach your ratings! (See \`${this.prefix}rym help\` for more info)`
-      );
-    }
-
-    const file = await fetch(attachment.url);
-
-    const fileContent = await streamToString(file.body);
-
-    return fileContent;
+    return "";
   }
 
   private getRatingsFromContent(): string {
-    const rawMessageContent = this.gowonService.removeCommandName(
-      this.message.content,
-      this.runAs,
-      this.guild.id
-    );
+    if (this.payload.isInteraction()) {
+      throw new CannotBeUsedAsASlashCommand();
+    } else if (this.payload.isMessage()) {
+      const rawMessageContent = this.gowonService.removeCommandName(
+        this.payload.source.content,
+        this.runAs,
+        this.guild.id
+      );
 
-    return rawMessageContent;
+      return rawMessageContent;
+    }
+
+    return "";
   }
 
   private unregisterConcurrency() {

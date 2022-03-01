@@ -12,7 +12,6 @@ export default class SpotifyLogin extends SpotifyBaseCommand {
   aliases = ["spotifylogin", "slogin"];
 
   access = new BetaAccess();
-  customContext = { mutable: {} };
 
   spotifyAuthenticationService = ServiceRegistry.get(
     SpotifyAuthenticationService

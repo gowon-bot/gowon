@@ -1,8 +1,14 @@
-import { Message } from "discord.js";
+import { SlashCommandBuilder } from "@discordjs/builders";
+import { CommandInteraction, Message } from "discord.js";
+import { GowonContext } from "../../Context";
 import { FlagOptions, FlagParser } from "../parsers/FlagParser";
-import { BaseArgument, StringCleaningArgument } from "./BaseArgument";
+import {
+  BaseArgument,
+  BaseArgumentOptions,
+  StringCleaningArgument,
+} from "./BaseArgument";
 
-export interface FlagArgumentOptions extends FlagOptions {}
+export interface FlagArgumentOptions extends BaseArgumentOptions, FlagOptions {}
 
 export class Flag
   extends BaseArgument<boolean, FlagArgumentOptions>
@@ -18,8 +24,18 @@ export class Flag
     return this.flagParser.parse(this.options, content);
   }
 
-  parseFromInteraction(): boolean {
-    return false;
+  parseFromInteraction(
+    interaction: CommandInteraction,
+    _: GowonContext,
+    argumentName: string
+  ): boolean {
+    return interaction.options.getBoolean(argumentName)!;
+  }
+
+  addAsOption(slashCommand: SlashCommandBuilder, argumentName: string) {
+    return slashCommand.addBooleanOption((option) =>
+      this.baseOption(option, argumentName)
+    );
   }
 
   public clean(string: string): string {

@@ -5,8 +5,8 @@ import { standardMentions } from "../../../lib/context/arguments/mentionTypes/me
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 
 const args = {
-  ...standardMentions,
   ...prefabArguments.artist,
+  ...standardMentions,
 } as const;
 
 export default class ArtistPercent extends LastFMBaseCommand<typeof args> {
@@ -17,6 +17,8 @@ export default class ArtistPercent extends LastFMBaseCommand<typeof args> {
     "Shows you what percentage of your total scrobbles are made up by a certain artist";
   subcategory = "percents";
   usage = ["", "artist"];
+
+  slashCommand = true;
 
   arguments = args;
 

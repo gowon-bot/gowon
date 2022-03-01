@@ -6,6 +6,8 @@ export class AvgPerDay extends OverviewChildCommand {
   aliases = ["avg", "average", "daily", "spd"];
   description = "Shows your average scrobble count per day";
 
+  slashCommand = true;
+
   async run() {
     let { perspective } = await this.getMentions();
 

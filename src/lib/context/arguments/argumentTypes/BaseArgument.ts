@@ -4,6 +4,13 @@ import { Slice } from "../types";
 import { GowonContext } from "../../Context";
 import { ServiceRegistry } from "../../../../services/ServicesRegistry";
 import { GowonService } from "../../../../services/GowonService";
+import {
+  SlashCommandBuilder,
+  SlashCommandBuilderReturn,
+  SlashCommandOption,
+} from "./SlashCommandTypes";
+import { ValidationError } from "../../../validation/validators/BaseValidator";
+import chalk from "chalk";
 
 type GetElementFromIndexOptions = {
   join?: boolean;
@@ -11,12 +18,38 @@ type GetElementFromIndexOptions = {
   number?: boolean;
 };
 
+export interface BaseArgumentOptions<ReturnT = any> {
+  required: boolean;
+  description: string;
+  slashCommandOption: boolean;
+  default?: ReturnT;
+}
+
+const defaultDescription = "This argument doesn't have a description yet";
+
+export const defaultBaseOptions: BaseArgumentOptions = {
+  required: false,
+  description: defaultDescription,
+  slashCommandOption: true,
+};
 export const defaultIndexableOptions: IndexableArgumentOptions = { index: 0 };
 export const defaultContentBasedOptions: ContentBasedArgumentOptions = {
   preprocessor: (content: string) => content,
 };
 
-export abstract class BaseArgument<ReturnT, OptionsT = {}> {
+export type ArgumentReturnType<T, OptionsT> = OptionsT extends {
+  required: true;
+}
+  ? T
+  : OptionsT extends { default: T }
+  ? T
+  : T | undefined;
+
+export abstract class BaseArgument<
+  ReturnT,
+  OptionsT extends BaseArgumentOptions<ReturnT> = BaseArgumentOptions<ReturnT>,
+  ProvidedOptionsT extends Partial<OptionsT> = {}
+> {
   public mention = false;
   public options: OptionsT;
 
@@ -24,10 +57,10 @@ export abstract class BaseArgument<ReturnT, OptionsT = {}> {
     return ServiceRegistry.get(GowonService);
   }
 
-  constructor(...options: Partial<OptionsT>[]) {
+  constructor(...options: (ProvidedOptionsT | {})[]) {
     this.options = {} as any;
 
-    for (const option of options) {
+    for (const option of [defaultBaseOptions, ...options]) {
       this.options = Object.assign(this.options, option);
     }
   }
@@ -36,12 +69,41 @@ export abstract class BaseArgument<ReturnT, OptionsT = {}> {
     message: Message,
     content: string,
     context: GowonContext
-  ): ReturnT;
+  ): ArgumentReturnType<ReturnT, ProvidedOptionsT>;
 
   abstract parseFromInteraction(
     interaction: Interaction,
-    context: GowonContext
-  ): ReturnT;
+    context: GowonContext,
+    argumentName: string
+  ): ArgumentReturnType<ReturnT, ProvidedOptionsT>;
+
+  addAsOption(
+    slashCommand: SlashCommandBuilder,
+    _: string
+  ): SlashCommandBuilderReturn {
+    return slashCommand;
+  }
+
+  protected validate(value: ReturnT | undefined) {
+    if (this.options.required && (value === null || value === undefined)) {
+      throw new ValidationError("argument is required");
+    }
+  }
+
+  protected baseOption<
+    OptionType extends SlashCommandOption = SlashCommandOption
+  >(option: OptionType, argumentName: string): OptionType {
+    if (this.options.description === defaultDescription) {
+      console.log(
+        chalk`{yellow WARNING: Description for option ${argumentName} not provided}`
+      );
+    }
+
+    return option
+      .setName(argumentName)
+      .setDescription(this.options.description.slice(0, 99))
+      .setRequired(this.options.required) as OptionType;
+  }
 
   protected cleanContent(ctx: GowonContext, content: string) {
     const cleanContent = this.gowonService.removeCommandName(

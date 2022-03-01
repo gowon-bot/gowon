@@ -45,7 +45,7 @@ export default class AlbumChart extends LastFMBaseCommand<typeof args> {
       height: 1000,
     });
 
-    await this.message.channel.send({
+    await this.payload.channel.send({
       files: [new MessageAttachment(await image, "file.png")],
     });
   }

@@ -7,6 +7,7 @@ export class ListenersComponent extends BaseNowPlayingComponent<
   typeof listenersRequirements
 > {
   static componentName = "listeners";
+  static friendlyName = "Last.fm listeners";
   readonly requirements = listenersRequirements;
 
   present() {

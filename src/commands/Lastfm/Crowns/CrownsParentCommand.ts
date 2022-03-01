@@ -11,7 +11,7 @@ import { Guild } from "./Guild";
 import { SetInactiveRole } from "./SetInactiveRole";
 import { OptOut } from "./OptOut";
 import { OptIn } from "./OptIn";
-import { Rank } from "./Rank";
+import { GuildUserRank } from "./GuildRank";
 import { Kill } from "./Kill";
 import { RecentlyStolen } from "./RecentlyStolen";
 import { SetPurgatoryRole } from "./SetPurgatoryRole";
@@ -47,6 +47,8 @@ export default class CrownsParentCommand extends LastFMBaseParentCommand {
     "ch",
   ];
 
+  slashCommand = true;
+
   children: CommandGroup = new CommandGroup([
     Ban,
     BanArtist,
@@ -64,7 +66,7 @@ export default class CrownsParentCommand extends LastFMBaseParentCommand {
     Kill,
     OptIn,
     OptOut,
-    Rank,
+    GuildUserRank,
     RecentlyStolen,
     SetInactiveRole,
     SetPurgatoryRole,

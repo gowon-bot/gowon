@@ -36,6 +36,8 @@ export default class WhoKnowsTrack extends WhoKnowsBaseCommand<
 
   description = "See who knows a track";
 
+  slashCommand = true;
+
   arguments = args;
 
   async run() {

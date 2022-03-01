@@ -19,11 +19,13 @@ import { standardMentions } from "../../../lib/context/arguments/mentionTypes/me
 import { StringArrayArgument } from "../../../lib/context/arguments/argumentTypes/StringArrayArgument";
 
 const args = {
-  ...standardMentions,
   artists: new StringArrayArgument({
     index: { start: 0 },
     splitOn: "|",
+    default: [],
+    description: "The artists to count as part of your combo",
   }),
+  ...standardMentions,
 } as const;
 
 export class Current extends ComboChildCommand<typeof args> {
@@ -38,6 +40,8 @@ export class Current extends ComboChildCommand<typeof args> {
     "artist1 | artist2 | artistn... (artists to count when checking for consecutive plays)",
   ];
 
+  slashCommand = true;
+
   arguments = args;
 
   validation: Validation = {
@@ -48,7 +52,7 @@ export class Current extends ComboChildCommand<typeof args> {
   artistsService = ServiceRegistry.get(ArtistsService);
 
   async run() {
-    let artists = this.parsedArguments.artists!;
+    let artists = this.parsedArguments.artists;
 
     if (artists.length) {
       artists = await this.artistsService.correctArtistNames(this.ctx, artists);

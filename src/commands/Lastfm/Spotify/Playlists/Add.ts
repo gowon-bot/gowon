@@ -7,7 +7,7 @@ import { removeEmojisFromString } from "../../../../lib/context/arguments/parser
 import { PlaylistChildCommand } from "./PlaylistChildCommand";
 
 const args = {
-  playlistTag: new EmojisArgument(),
+  playlistTag: new EmojisArgument({ default: [] }),
   artist: new StringArgument({
     index: 0,
     splitOn: "|",
@@ -43,7 +43,7 @@ export class Add extends PlaylistChildCommand<typeof args> {
 
   async run() {
     const remove = this.variationWasUsed("remove");
-    const [emoji] = this.parsedArguments.playlistTag!;
+    const [emoji] = this.parsedArguments.playlistTag;
 
     const { senderRequestable, dbUser } = await this.getMentions({
       fetchSpotifyToken: true,

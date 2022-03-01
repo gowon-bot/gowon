@@ -8,17 +8,21 @@ import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { StringArgument } from "../../lib/context/arguments/argumentTypes/StringArgument";
 
 const args = {
-  keywords: new StringArgument(),
+  keywords: new StringArgument({
+    required: true,
+    description: "The keywords to search with",
+  }),
 } as const;
 
-export default class CommandSearch extends BaseCommand<typeof args> {
+export default class SearchCommands extends BaseCommand<typeof args> {
   idSeed = "exid solji";
 
-  aliases = ["command", "searchcommands", "searchcommand", "sc"];
+  aliases = ["command", "commandsearch", "searchcommand", "sc"];
   subcategory = "about";
-  description = "Search the list of commands for a keyword";
+  description = "Search the list of commands";
 
   usage = "keywords";
+  slashCommand = true;
 
   arguments = args;
 

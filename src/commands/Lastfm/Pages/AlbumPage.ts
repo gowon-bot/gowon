@@ -4,8 +4,8 @@ import { prefabArguments } from "../../../lib/context/arguments/prefabArguments"
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 const args = {
-  ...standardMentions,
   ...prefabArguments.album,
+  ...standardMentions,
 } as const;
 
 export default class AlbumPage extends LastFMBaseCommand<typeof args> {
@@ -15,6 +15,8 @@ export default class AlbumPage extends LastFMBaseCommand<typeof args> {
   description = "Links you to an album's page on Last.fm";
   subcategory = "pages";
   usage = ["", "artist | album"];
+
+  slashCommand = true;
 
   arguments = args;
 

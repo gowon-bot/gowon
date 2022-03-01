@@ -40,6 +40,8 @@ export default class WhoKnowsArtist extends WhoKnowsBaseCommand<
 
   variations: Variation[] = [VARIATIONS.update("wk"), VARIATIONS.global("wk")];
 
+  slashCommand = true;
+
   arguments = args;
 
   crownsService = ServiceRegistry.get(CrownsService);
@@ -112,7 +114,7 @@ export default class WhoKnowsArtist extends WhoKnowsBaseCommand<
         string:
           `\n\`${rank}.\` ` +
           displayLink(
-            this.message.member?.nickname || this.message.author.username,
+            this.payload.member?.nickname || this.payload.author.username,
             LinkGenerator.userPage(senderUser?.lastFMUsername!)
           ).strong() +
           `- **${displayNumber(playcount, "**play")}` +

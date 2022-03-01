@@ -1,4 +1,3 @@
-import { Message } from "discord.js";
 import { User } from "../../database/entity/User";
 import { BaseService } from "../../services/BaseService";
 import {
@@ -22,6 +21,7 @@ import { NowPlayingRequirement } from "./components/BaseNowPlayingComponent";
 import { Logger } from "../Logger";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { GowonContext } from "../context/Context";
+import { Payload } from "../context/Payload";
 
 export interface ResolvedRequirements {
   [requirement: string]: any;
@@ -29,7 +29,7 @@ export interface ResolvedRequirements {
 
 export interface InputResources {
   recentTracks: RecentTracks;
-  message: Message;
+  payload: Payload;
   requestable: Requestable;
   username: string;
   dbUser: User;
@@ -213,7 +213,7 @@ export class DatasourceService extends BaseService<DatasourceServiceContext> {
       variables: {
         user,
         arArtist,
-        serverID: ctx.constants.resources!.message.guild?.id,
+        serverID: ctx.constants.resources!.payload.guild?.id,
       },
     };
   }

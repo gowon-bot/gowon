@@ -1,11 +1,14 @@
 import { Message, Role } from "discord.js";
 import {
   BaseArgument,
+  BaseArgumentOptions,
   defaultIndexableOptions,
   IndexableArgumentOptions,
 } from "../BaseArgument";
 
-export interface DiscordRoleArgumentOptions extends IndexableArgumentOptions {}
+export interface DiscordRoleArgumentOptions
+  extends BaseArgumentOptions,
+    IndexableArgumentOptions {}
 
 export class DiscordRoleArgument extends BaseArgument<
   Role,

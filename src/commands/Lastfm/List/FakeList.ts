@@ -16,6 +16,7 @@ export default class List extends ListCommand {
   secretCommand = true;
 
   // Overwrite the ListCommand default arguments
+  slashCommand = false;
   arguments = args as any;
 
   async run() {

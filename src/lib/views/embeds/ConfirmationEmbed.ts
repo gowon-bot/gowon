@@ -10,6 +10,7 @@ import { ReactionCollectorFilter } from "../../../helpers/discord";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { DiscordService } from "../../../services/Discord/DiscordService";
 import { GowonContext } from "../../context/Context";
+import { Payload } from "../../context/Payload";
 
 export class ConfirmationEmbed {
   private get discordService() {
@@ -20,16 +21,16 @@ export class ConfirmationEmbed {
   private readonly rejectionEmoji = "❌";
 
   public sentMessage: Message | undefined;
-  private originalMessage: Message;
+  private originalMessage: Payload;
 
   private allowRejection = false;
 
   constructor(
     private ctx: GowonContext,
     private embed: MessageEmbed,
-    originalMessage?: Message
+    originalMessage?: Payload
   ) {
-    this.originalMessage = originalMessage || ctx.command.message;
+    this.originalMessage = originalMessage || ctx.command.payload;
   }
 
   public withRejectionReact(): ConfirmationEmbed {

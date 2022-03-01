@@ -6,7 +6,7 @@ import { LastFMService } from "../../services/LastFM/LastFMService";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 
 const args = {
-  script: new StringArgument({ index: { start: 0 } }),
+  script: new StringArgument({ index: { start: 0 }, required: true }),
 } as const;
 
 export default class Eval extends BaseCommand<typeof args> {
@@ -30,7 +30,7 @@ export default class Eval extends BaseCommand<typeof args> {
       return;
     }
 
-    const result = eval(this.parsedArguments.script!);
+    const result = eval(this.parsedArguments.script);
 
     const embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor("Eval"))

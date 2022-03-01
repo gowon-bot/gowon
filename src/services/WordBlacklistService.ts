@@ -31,7 +31,9 @@ export type RawWordBlacklist = {
 };
 
 type WordBlacklistServiceContext = GowonContext<{
-  mutable?: { serverBannedTags?: TagBan[] };
+  mutable?: {
+    serverBannedTags?: TagBan[];
+  };
 }>;
 
 export class WordBlacklistService extends BaseService<WordBlacklistServiceContext> {

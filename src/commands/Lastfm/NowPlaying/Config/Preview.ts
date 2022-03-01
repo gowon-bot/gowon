@@ -1,8 +1,12 @@
 import { LogicError } from "../../../../errors";
 import { sanitizeForDiscord } from "../../../../helpers/discord";
 import { LinkGenerator } from "../../../../helpers/lastFM";
+import { StringArgument } from "../../../../lib/context/arguments/argumentTypes/StringArgument";
 import { StringArrayArgument } from "../../../../lib/context/arguments/argumentTypes/StringArrayArgument";
-import { componentMap } from "../../../../lib/nowplaying/componentMap";
+import {
+  componentMap,
+  getComponentsAsChoices,
+} from "../../../../lib/nowplaying/componentMap";
 import { ResolvedRequirements } from "../../../../lib/nowplaying/DatasourceService";
 import { mockRequirements } from "../../../../lib/nowplaying/mockRequirements";
 import { NowPlayingBuilder } from "../../../../lib/nowplaying/NowPlayingBuilder";
@@ -13,7 +17,12 @@ import { RecentTrack } from "../../../../services/LastFM/converters/RecentTracks
 import { NowPlayingConfigChildCommand } from "./NowPlayingConfigChildCommand";
 
 const args = {
-  options: new StringArrayArgument({ index: { start: 0 } }),
+  options: new StringArrayArgument({ index: { start: 0 }, default: [] }),
+  option: new StringArgument({
+    description: "The option to preview",
+    required: true,
+    choices: getComponentsAsChoices(),
+  }),
 } as const;
 
 export class Preview extends NowPlayingConfigChildCommand<typeof args> {
@@ -24,6 +33,8 @@ export class Preview extends NowPlayingConfigChildCommand<typeof args> {
 
   arguments = args;
 
+  slashCommand = true;
+
   validation: Validation = {
     options: new validators.Required({
       message: "Please enter some options to preview, or a preset!",
@@ -31,27 +42,35 @@ export class Preview extends NowPlayingConfigChildCommand<typeof args> {
   };
 
   async run() {
-    let options = this.parseConfig(this.parsedArguments.options || []).map(
-      (c) => c.toLowerCase()
+    const options = this.parsedArguments.options.length
+      ? this.parsedArguments.options
+      : [this.parsedArguments.option];
+
+    let parsedOptions = this.parseConfig(options || []).map((c) =>
+      c.toLowerCase()
     );
 
-    const presetConfig = (this.presets as any)[options[0]];
+    const presetConfig = (this.presets as any)[parsedOptions[0]];
 
     if (presetConfig) {
-      options = (this.presets as any)[options[0]];
+      parsedOptions = (this.presets as any)[parsedOptions[0]];
     }
 
-    if (options.some((option) => !Object.keys(componentMap).includes(option))) {
+    if (
+      parsedOptions.some(
+        (option) => !Object.keys(componentMap).includes(option)
+      )
+    ) {
       throw new LogicError("Please enter a valid option!");
     }
 
-    const nowPlayingBuilder = new NowPlayingBuilder(options);
+    const nowPlayingBuilder = new NowPlayingBuilder(parsedOptions);
 
     const requirements = nowPlayingBuilder.generateRequirements();
 
     const mockRequirements = this.resolveMockRequirements(
       requirements,
-      options
+      parsedOptions
     );
     const nowPlaying = mockRequirements.recentTracks.first() as RecentTrack;
     const links = LinkGenerator.generateTrackLinksForEmbed(nowPlaying);
@@ -68,10 +87,10 @@ export class Preview extends NowPlayingConfigChildCommand<typeof args> {
         this.generateEmbedAuthor(
           `Previewing ${
             presetConfig
-              ? this.parsedArguments.options![0]
-              : options.length === 1
-              ? options[0]
-              : displayNumber(options.length, "option")
+              ? this.parsedArguments.options[0]
+              : parsedOptions.length === 1
+              ? parsedOptions[0]
+              : displayNumber(parsedOptions.length, "option")
           }`
         )
       );
@@ -87,7 +106,7 @@ export class Preview extends NowPlayingConfigChildCommand<typeof args> {
   ): ResolvedRequirements {
     const object = {} as ResolvedRequirements;
 
-    const mr = mockRequirements(this.message);
+    const mr = mockRequirements(this.payload);
 
     for (const requirement of [
       ...requirements,

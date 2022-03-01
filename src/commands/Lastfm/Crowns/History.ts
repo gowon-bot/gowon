@@ -19,6 +19,8 @@ export class History extends CrownsChildCommand<typeof args> {
 
   arguments = args;
 
+  slashCommand = true;
+
   async run() {
     let artist = this.parsedArguments.artist;
 

@@ -1,12 +1,19 @@
+import { StringArgument } from "../../../../lib/context/arguments/argumentTypes/StringArgument";
 import { StringArrayArgument } from "../../../../lib/context/arguments/argumentTypes/StringArrayArgument";
 import { LineConsolidator } from "../../../../lib/LineConsolidator";
-import { componentMap } from "../../../../lib/nowplaying/componentMap";
-import { Validation } from "../../../../lib/validation/ValidationChecker";
-import { validators } from "../../../../lib/validation/validators";
+import {
+  componentMap,
+  getComponentsAsChoices,
+} from "../../../../lib/nowplaying/componentMap";
 import { NowPlayingConfigChildCommand } from "./NowPlayingConfigChildCommand";
 
 const args = {
-  options: new StringArrayArgument({ index: { start: 0 } }),
+  options: new StringArrayArgument({ index: { start: 0 }, default: [] }),
+  option: new StringArgument({
+    description: "The option to remove from your config",
+    required: true,
+    choices: getComponentsAsChoices(),
+  }),
 } as const;
 
 export class Remove extends NowPlayingConfigChildCommand<typeof args> {
@@ -15,18 +22,23 @@ export class Remove extends NowPlayingConfigChildCommand<typeof args> {
   description = "Remove options from your current config";
   usage = ["option", "option1 option2 ...optionN"];
 
+  slashCommand = true;
+
   arguments = args;
-  validation: Validation = {
-    options: {
-      validator: new validators.LengthRange({ min: 1 }),
-      friendlyName: "option",
-    },
-  };
+
+  // validation: Validation = {
+  //   options: {
+  //     validator: new validators.LengthRange({ min: 1 }),
+  //     friendlyName: "option",
+  //   },
+  // };
 
   async run() {
-    const newOptions = this.parseConfig(this.parsedArguments.options || []).map(
-      (c) => c.toLowerCase()
-    );
+    const options = this.parsedArguments.options.length
+      ? this.parsedArguments.options
+      : [this.parsedArguments.option];
+
+    const newOptions = this.parseConfig(options).map((c) => c.toLowerCase());
 
     const { senderUser } = await this.getMentions({
       senderRequired: true,

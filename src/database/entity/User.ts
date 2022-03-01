@@ -17,7 +17,6 @@ import {
   DiscordAPIError,
   Guild,
   GuildMember,
-  Message,
   User as DiscordUser,
 } from "discord.js";
 import { Friend } from "./Friend";
@@ -82,7 +81,7 @@ export class User extends BaseEntity {
   }
 
   static async stillInServer(
-    message: Message,
+    ctx: GowonContext,
     discordID?: string
   ): Promise<boolean> {
     if (!discordID) {
@@ -90,7 +89,7 @@ export class User extends BaseEntity {
     }
 
     try {
-      return !!(await message.guild?.members.fetch(discordID));
+      return !!(await ctx.guild?.members.fetch(discordID));
     } catch {
       return false;
     }
@@ -121,53 +120,53 @@ export class User extends BaseEntity {
     }
   }
 
-  async asGuildMember(message: Message): Promise<GuildMember | undefined> {
+  async asGuildMember(ctx: GowonContext): Promise<GuildMember | undefined> {
     try {
-      return await message.guild?.members.fetch(this.discordID);
+      return await ctx.guild?.members.fetch(this.discordID);
     } catch (e) {
       if (!(e instanceof DiscordAPIError)) throw e;
       return;
     }
   }
 
-  async inPurgatory(message: Message): Promise<boolean> {
+  async inPurgatory(ctx: GowonContext): Promise<boolean> {
     return userHasRole(
-      await this.asGuildMember(message),
-      await ServiceRegistry.get(GowonService).getPurgatoryRole(message.guild!)
+      await this.asGuildMember(ctx),
+      await ServiceRegistry.get(GowonService).getPurgatoryRole(ctx.guild!)
     );
   }
 
-  async inactive(message: Message): Promise<boolean> {
+  async inactive(ctx: GowonContext): Promise<boolean> {
     return userHasRole(
-      await this.asGuildMember(message),
-      await ServiceRegistry.get(GowonService).getInactiveRole(message.guild!)
+      await this.asGuildMember(ctx),
+      await ServiceRegistry.get(GowonService).getInactiveRole(ctx.guild!)
     );
   }
 
-  async isCrownBanned(message: Message): Promise<boolean> {
+  async isCrownBanned(ctx: GowonContext): Promise<boolean> {
     return ServiceRegistry.get(GowonService).isUserCrownBanned(
-      message.guild!,
+      ctx.guild!,
       this.discordID
     );
   }
 
-  async isOptedOut(message: Message): Promise<boolean> {
+  async isOptedOut(ctx: GowonContext): Promise<boolean> {
     const settingsService = ServiceRegistry.get(SettingsService);
 
     const setting = settingsService.get("optedOut", {
-      guildID: message.guild!.id,
+      guildID: ctx.guild!.id,
       userID: this.discordID,
     });
 
     return !!setting;
   }
 
-  async canClaimCrowns(message: Message): Promise<boolean> {
+  async canClaimCrowns(ctx: GowonContext): Promise<boolean> {
     return (
-      !(await this.inPurgatory(message)) &&
-      !(await this.inactive(message)) &&
-      !(await this.isCrownBanned(message)) &&
-      !(await this.isOptedOut(message))
+      !(await this.inPurgatory(ctx)) &&
+      !(await this.inactive(ctx)) &&
+      !(await this.isCrownBanned(ctx)) &&
+      !(await this.isOptedOut(ctx))
     );
   }
 

@@ -12,6 +12,8 @@ export default class ComboParentCommand extends LastFMBaseParentCommand {
   friendlyName = "combo";
   // customHelp = Help;
 
+  slashCommand = true;
+
   noPrefixAliases = [
     // Combos
     "combos",

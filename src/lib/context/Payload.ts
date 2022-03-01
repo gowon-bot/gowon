@@ -1,31 +1,42 @@
-import { Interaction, Message } from "discord.js";
+import {
+  CommandInteraction,
+  Guild,
+  GuildMember,
+  Message,
+  TextBasedChannel,
+  User,
+} from "discord.js";
 
-export type OriginalPayload = Message | Interaction;
+export type OriginalPayload = Message | CommandInteraction;
 
-export function isMessage(payload: OriginalPayload): payload is Message {
-  return payload instanceof Message;
+export class Payload<T extends OriginalPayload = OriginalPayload> {
+  constructor(public source: T) {}
+
+  get guild(): Guild {
+    return this.source.guild!;
+  }
+
+  get author(): User {
+    if (this.isMessage()) return this.source.author;
+    else if (this.isInteraction()) return this.source.user;
+    // Typescript doesn't realize that it's an interaction if it's not a message
+    else return {} as User;
+  }
+
+  get member(): GuildMember {
+    if (this.isMessage()) return this.source.member!;
+    else return this.source.member as GuildMember;
+  }
+
+  get channel(): TextBasedChannel {
+    return this.source.channel!;
+  }
+
+  isInteraction(): this is Payload<CommandInteraction> {
+    return this.source instanceof CommandInteraction;
+  }
+
+  isMessage(): this is Payload<Message> {
+    return this.source instanceof Message;
+  }
 }
-
-// export class Payload<T extends OriginalPayload = OriginalPayload> {
-//   constructor(public source: T) {}
-
-//   get guild(): Guild {
-//     return this.source.guild!;
-//   }
-
-//   get author(): User {
-//     if (isMessage(this.source)) return this.source.author;
-//     return this.source.user;
-//   }
-
-//   get member(): GuildMember {
-//     if (isMessage(this.source)) return this.source.member!;
-//     else return this.source.member as GuildMember;
-//   }
-
-//   get mentions() {
-//     if (!isMessage(this.source)) {
-//       this.source.
-//     }
-//   }
-// }

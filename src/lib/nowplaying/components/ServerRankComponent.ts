@@ -8,6 +8,7 @@ export class ServerArtistRankComponent extends BaseNowPlayingComponent<
   typeof artistRankRequirements
 > {
   static componentName = "server-artist-rank";
+  static friendlyName = "Server artist rank";
   readonly requirements = artistRankRequirements;
 
   present() {

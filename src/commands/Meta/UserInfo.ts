@@ -19,6 +19,8 @@ export default class UserInfo extends BaseCommand<typeof args> {
   aliases = ["ui"];
   usage = ["", "<discord id>"];
 
+  slashCommand = true;
+
   arguments = args;
 
   botStatsService = ServiceRegistry.get(BotStatsService);

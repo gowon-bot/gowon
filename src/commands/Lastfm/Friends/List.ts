@@ -1,5 +1,4 @@
 import { FriendsChildCommand } from "./FriendsChildCommand";
-import { Message } from "discord.js";
 import { MultiRequester } from "../../../lib/MultiRequester";
 import { displayNumber } from "../../../lib/views/displays";
 
@@ -12,7 +11,7 @@ export class List extends FriendsChildCommand {
 
   throwIfNoFriends = true;
 
-  async run(message: Message) {
+  async run() {
     let nowPlayings = await new MultiRequester(
       this.ctx,
       this.friendUsernames
@@ -26,7 +25,7 @@ export class List extends FriendsChildCommand {
     let embed = this.newEmbed()
       .setTitle(
         `${displayNumber(numberOfFriends, "friend")} for ${
-          message.author.username
+          this.author.username
         }`
       )
       .setDescription(

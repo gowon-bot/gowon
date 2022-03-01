@@ -18,9 +18,12 @@ export default class JumbleParentCommand extends LastFMBaseParentCommand {
 
   friendlyName = "jumble";
   description =
-    "Jumbles an artist from your library for you to guess. See jumble me to generate an artist.\n" +
-    "To make a guess run `jumble <your guess here>` (or if your guess conflicts with a jumble command, `jumble guess <your guess here>`)";
+    "Jumbles an artist from your library for you to guess. See jumble me to generate an artist.\n";
+  // +
+  // "To make a guess run `jumble <your guess here>` (or if your guess conflicts with a jumble command, `jumble guess <your guess here>`)";
   subcategory = "games";
+
+  slashCommand = true;
 
   prefixes = ["jumble", "j"];
   default = () => new Guess();

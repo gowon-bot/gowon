@@ -5,8 +5,11 @@ import { standardMentions } from "../../../lib/context/arguments/mentionTypes/me
 import { TimePeriodArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/TimePeriodArgument";
 
 const args = {
+  timePeriod: new TimePeriodArgument({
+    default: "overall",
+    description: "The time period to count your albums over",
+  }),
   ...standardMentions,
-  timePeriod: new TimePeriodArgument(),
 } as const;
 
 export default class TrackCount extends LastFMBaseCommand<typeof args> {
@@ -17,10 +20,12 @@ export default class TrackCount extends LastFMBaseCommand<typeof args> {
   subcategory = "library stats";
   usage = ["", "time period @user"];
 
+  slashCommand = true;
+
   arguments = args;
 
   async run() {
-    const timePeriod = this.parsedArguments.timePeriod!;
+    const timePeriod = this.parsedArguments.timePeriod;
 
     const { requestable, perspective } = await this.getMentions();
 

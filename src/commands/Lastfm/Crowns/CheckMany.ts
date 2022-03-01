@@ -1,5 +1,4 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
-import { Message } from "discord.js";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { toInt } from "../../../helpers/lastFM";
@@ -30,7 +29,7 @@ export class CheckMany extends CrownsChildCommand<typeof args> {
     artists: new validators.LengthRange({ min: 1, max: 10 }),
   };
 
-  async run(message: Message) {
+  async run() {
     let artists = this.parsedArguments.artists;
 
     const { requestable } = await this.getMentions();
@@ -56,7 +55,7 @@ export class CheckMany extends CrownsChildCommand<typeof args> {
     );
 
     checkedCrowns.forEach((cc) =>
-      this.crownsService.scribe.handleCheck(this.ctx, cc, message)
+      this.crownsService.scribe.handleCheck(this.ctx, cc)
     );
 
     const display = checkedCrowns.reduce((acc, cc, idx) => {

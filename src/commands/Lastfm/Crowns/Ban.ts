@@ -30,7 +30,7 @@ export class Ban extends CrownsChildCommand<typeof args> {
     this.crownsService.scribe.ban(
       this.ctx,
       mentionedDBUser,
-      this.message.author,
+      this.payload.author,
       discordUser!
     );
 

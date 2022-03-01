@@ -1,11 +1,16 @@
-import { Message, User } from "discord.js";
+import { CommandInteraction, Message, User } from "discord.js";
+import { GowonContext } from "../../../Context";
 import {
   BaseArgument,
+  BaseArgumentOptions,
   defaultIndexableOptions,
   IndexableArgumentOptions,
 } from "../BaseArgument";
+import { SlashCommandBuilder } from "../SlashCommandTypes";
 
-export interface DiscordUserArgumentOptions extends IndexableArgumentOptions {}
+export interface DiscordUserArgumentOptions
+  extends BaseArgumentOptions,
+    IndexableArgumentOptions {}
 
 export class DiscordUserArgument extends BaseArgument<
   User,
@@ -23,7 +28,17 @@ export class DiscordUserArgument extends BaseArgument<
     return this.getElementFromIndex(mentions, this.options.index);
   }
 
-  parseFromInteraction(): User {
-    return {} as User;
+  addAsOption(slashCommand: SlashCommandBuilder, argumentName: string) {
+    return slashCommand.addUserOption((option) =>
+      this.baseOption(option, argumentName)
+    );
+  }
+
+  parseFromInteraction(
+    interaction: CommandInteraction,
+    _: GowonContext,
+    argumentName: string
+  ): User {
+    return interaction.options.getUser(argumentName)!;
   }
 }

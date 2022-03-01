@@ -94,10 +94,10 @@ export class LastFMArguments extends BaseService<LastFMArgumentsContext> {
     ctx: LastFMArgumentsContext,
     requestable: Requestable
   ): Promise<RecentTrack> {
-    const originalMessage = ctx.command.message;
+    const originalPayload = ctx.command.payload;
 
-    if (originalMessage.reference) {
-      const reply = await originalMessage.fetchReference();
+    if (originalPayload.isMessage() && originalPayload.source.reference) {
+      const reply = await originalPayload.source.fetchReference();
       const embed = reply.embeds[0];
 
       let parsedNowplaying: RecentTrack | undefined = undefined;

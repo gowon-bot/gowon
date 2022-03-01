@@ -9,14 +9,14 @@ export class JumbleCalculator {
 
   async getArtist(
     poolAmount: number,
-    options: { nonAscii?: boolean } = {}
+    options: { includeNonAlphanumeric?: boolean } = {}
   ): Promise<TopArtist | undefined> {
     let topArtists = await this.lastFMService.topArtists(this.ctx, {
       username: this.username,
       limit: poolAmount,
     });
     let filter = topArtists.artists.filter((a) =>
-      this.artistFilter(a.name, options.nonAscii || false)
+      this.artistFilter(a.name, options.includeNonAlphanumeric || false)
     );
 
     return filter[Math.floor(Math.random() * filter.length)];

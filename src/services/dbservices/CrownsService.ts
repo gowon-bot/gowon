@@ -93,7 +93,6 @@ export class CrownsService extends BaseService {
     crownOptions: CrownOptions
   ): Promise<CrownCheck> {
     const { artistName, plays } = crownOptions;
-    const message = ctx.payload;
     const author = ctx.author;
     const guild = ctx.guild;
 
@@ -135,7 +134,7 @@ export class CrownsService extends BaseService {
     let crownState: CrownState;
 
     if (crown && !crown.deletedAt) {
-      const invalidCheck = await crown.invalid(message);
+      const invalidCheck = await crown.invalid(ctx);
 
       if (invalidCheck.failed) {
         return {

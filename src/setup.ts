@@ -14,6 +14,7 @@ import { mirrorballClient } from "./lib/indexing/client";
 import gql from "graphql-tag";
 import { ServiceRegistry } from "./services/ServicesRegistry";
 import { SettingsService } from "./lib/settings/SettingsService";
+import { InteractionHandler } from "./lib/command/interactions/InteractionHandler";
 
 export const client = new GowonClient(
   new Client({
@@ -43,6 +44,7 @@ export const client = new GowonClient(
 );
 
 export const handler = new CommandHandler();
+export const interactionHandler = new InteractionHandler();
 const db = new DB();
 const api = new GraphQLAPI();
 const settingsService = ServiceRegistry.get(SettingsService);
@@ -63,6 +65,7 @@ export async function setup() {
     connectToMirrorball(),
     intializeAPI(),
     initializeGuildEventService(),
+    initializeInteractions(),
   ]);
 
   // SettingsManager needs the database to be connected to cache settings
@@ -92,6 +95,13 @@ function initializeSettingsManager() {
   return logStartup(
     () => settingsService.init(),
     "Initialized settings manager"
+  );
+}
+
+function initializeInteractions() {
+  return logStartup(
+    () => interactionHandler.init(),
+    "Initialized interactions"
   );
 }
 

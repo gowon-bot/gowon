@@ -8,6 +8,8 @@ export class Playsover extends OverviewChildCommand {
   description =
     "Shows how many artists you have over some common scrobble tiers";
 
+  slashCommand = true;
+
   async run() {
     let { perspective } = await this.getMentions();
 

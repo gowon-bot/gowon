@@ -9,10 +9,16 @@ import { TimeRangeArgument } from "../../../lib/context/arguments/argumentTypes/
 import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
 
 const args = {
+  timePeriod: new TimePeriodArgument({
+    default: "7day",
+    description: "The time period to use",
+  }),
+  timeRange: new TimeRangeArgument({ description: "The time range to use" }),
+  listAmount: new NumberArgument({
+    default: 10,
+    description: "The number of entries to show",
+  }),
   ...standardMentions,
-  timePeriod: new TimePeriodArgument({ fallback: "7day" }),
-  timeRange: new TimeRangeArgument(),
-  listAmount: new NumberArgument({ default: 10 }),
 } as const;
 
 export abstract class ListCommand extends LastFMBaseCommand<typeof args> {
@@ -22,6 +28,8 @@ export abstract class ListCommand extends LastFMBaseCommand<typeof args> {
   usage = ["", "list_amount time period @user"];
 
   arguments = args;
+
+  slashCommand = true;
 
   validation: Validation = {
     listAmount: {
@@ -37,8 +45,8 @@ export abstract class ListCommand extends LastFMBaseCommand<typeof args> {
 
   async prerun(): Promise<void> {
     this.timeRange = this.parsedArguments.timeRange;
-    this.timePeriod = this.parsedArguments.timePeriod!;
-    this.listAmount = this.parsedArguments.listAmount!;
+    this.timePeriod = this.parsedArguments.timePeriod;
+    this.listAmount = this.parsedArguments.listAmount;
     this.humanizedPeriod = humanizePeriod(this.timePeriod);
   }
 }

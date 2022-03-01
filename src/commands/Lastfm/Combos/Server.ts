@@ -22,6 +22,9 @@ export class ServerCombos extends ComboChildCommand<typeof args> {
 
   arguments = args;
 
+  slashCommand = true;
+  slashCommandName = "server";
+
   nicknameService = ServiceRegistry.get(NicknameService);
   artistsService = ServiceRegistry.get(ArtistsService);
 
@@ -67,7 +70,7 @@ export class ServerCombos extends ComboChildCommand<typeof args> {
       return nickname.strong() + ": " + this.displayCombo(combo);
     }).bind(this);
 
-    const scrollingEmbed = new SimpleScrollingEmbed(this.message, embed, {
+    const scrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
       items: combos,
       pageSize: 5,
       pageRenderer(combos, { offset }) {

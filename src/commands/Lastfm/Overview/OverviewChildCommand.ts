@@ -9,8 +9,10 @@ import { TimePeriodArgument } from "../../../lib/context/arguments/argumentTypes
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 
 const args = {
+  timePeriod: new TimePeriodArgument({
+    description: "The time period to display stats for",
+  }),
   ...standardMentions,
-  timePeriod: new TimePeriodArgument(),
 } as const;
 
 export abstract class OverviewChildCommand<

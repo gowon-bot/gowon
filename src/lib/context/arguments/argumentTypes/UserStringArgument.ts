@@ -1,13 +1,18 @@
-import { Message } from "discord.js";
+import { CommandInteraction, Message } from "discord.js";
+import { GowonContext } from "../../Context";
 import { BaseMention } from "../mentionTypes/BaseMention";
 import {
   BaseArgument,
+  BaseArgumentOptions,
   defaultIndexableOptions,
   IndexableArgumentOptions,
   StringCleaningArgument,
 } from "./BaseArgument";
+import { SlashCommandBuilder } from "./SlashCommandTypes";
 
-export interface UserStringArgumentOptions extends IndexableArgumentOptions {
+export interface UserStringArgumentOptions
+  extends BaseArgumentOptions<string>,
+    IndexableArgumentOptions {
   mention: BaseMention;
 }
 
@@ -27,8 +32,18 @@ export class UserStringArgument
     return this.getElementFromIndex(mentions, this.options.index);
   }
 
-  parseFromInteraction() {
-    return "";
+  parseFromInteraction(
+    interaction: CommandInteraction,
+    _: GowonContext,
+    argumentName: string
+  ): string {
+    return interaction.options.getString(argumentName)!;
+  }
+
+  addAsOption(slashCommand: SlashCommandBuilder, argumentName: string) {
+    return slashCommand.addStringOption((option) =>
+      this.baseOption(option, argumentName)
+    );
   }
 
   public clean(string: string) {

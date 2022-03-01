@@ -1,6 +1,5 @@
 import { LastFMBaseChildCommand } from "../LastFMBaseCommand";
 import { FriendsService } from "../../../services/dbservices/FriendsService";
-import { Message } from "discord.js";
 import { User } from "../../../database/entity/User";
 import { LogicError } from "../../../errors";
 import { Requestable } from "../../../services/LastFM/LastFMAPIService";
@@ -22,7 +21,7 @@ export abstract class FriendsChildCommand<
 
   async prerun() {
     let [, senderRequestable] = await Promise.all([
-      this.setFriendUsernames(this.message),
+      this.setFriendUsernames(),
       this.usersService.getRequestable(this.ctx, this.author.id),
     ]);
     this.senderRequestable = senderRequestable;
@@ -31,8 +30,8 @@ export abstract class FriendsChildCommand<
       throw new LogicError("you don't have any friends :(");
   }
 
-  async setFriendUsernames(message: Message) {
-    let user = await this.usersService.getUser(this.ctx, message.author.id);
+  async setFriendUsernames() {
+    let user = await this.usersService.getUser(this.ctx, this.author.id);
 
     this.user = user;
 

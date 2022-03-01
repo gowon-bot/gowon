@@ -8,6 +8,7 @@ export class All extends OverviewChildCommand {
   idSeed = "fx victoria";
 
   description = "Shows information about you and your library";
+  slashCommand = true;
 
   showLoadingAfter = 5;
 

@@ -16,7 +16,6 @@ import { prefabArguments } from "../../../../lib/context/arguments/prefabArgumen
 import { Flag } from "../../../../lib/context/arguments/argumentTypes/Flag";
 
 const args = {
-  ...standardMentions,
   ...prefabArguments.artist,
   yearly: new Flag({
     description: "Shows your ratings by year",
@@ -24,10 +23,11 @@ const args = {
     longnames: ["year", "yearly"],
   }),
   ids: new Flag({
-    description: "Show IDs instead of ratings (for moderation)",
+    description: "Show IDs instead of ratings",
     shortnames: ["ids", "i"],
     longnames: ["ids"],
   }),
+  ...standardMentions,
 } as const;
 
 export class ArtistRatings extends RateYourMusicIndexingChildCommand<
@@ -42,6 +42,8 @@ export class ArtistRatings extends RateYourMusicIndexingChildCommand<
   description = "Shows your top rated albums from an artist";
 
   arguments = args;
+
+  slashCommand = true;
 
   async run() {
     const { senderRequestable, dbUser, discordUser } = await this.getMentions({
@@ -115,7 +117,7 @@ export class ArtistRatings extends RateYourMusicIndexingChildCommand<
         )
       : response.ratings.ratings;
 
-    const simpleScrollingEmbed = new SimpleScrollingEmbed(this.message, embed, {
+    const simpleScrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
       items: ratings,
       pageSize: 10,
       pageRenderer: (items) =>

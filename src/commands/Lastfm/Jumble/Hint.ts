@@ -9,6 +9,8 @@ export class Hint extends JumbleChildCommand {
   description = "Gives you a hint on the current jumble";
   usage = "";
 
+  slashCommand = true;
+
   async run() {
     const jumbledArtist = await this.sessionGetJSON<JumbledArtist>(
       jumbleRedisKey

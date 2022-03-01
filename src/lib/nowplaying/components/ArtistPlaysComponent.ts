@@ -8,6 +8,7 @@ export class ArtistPlaysComponent extends BaseNowPlayingComponent<
   typeof artistPlaysRequirements
 > {
   static componentName = "artist-plays";
+  static friendlyName = "Artist plays";
   readonly requirements = artistPlaysRequirements;
 
   present() {

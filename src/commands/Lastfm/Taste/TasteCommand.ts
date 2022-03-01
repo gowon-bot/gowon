@@ -18,24 +18,39 @@ import { DiscordIDMention } from "../../../lib/context/arguments/mentionTypes/Di
 import { UserStringArgument } from "../../../lib/context/arguments/argumentTypes/UserStringArgument";
 import { DiscordUserArgument } from "../../../lib/context/arguments/argumentTypes/discord/DiscordUserArgument";
 
+// "The Last.fm username to compare with",
+// "The other Last.fm username to compare (defaults to you)",
+
 export const tasteArgs = {
-  user: new DiscordUserArgument({ index: 0 }),
-  user2: new DiscordUserArgument({ index: 1 }),
-  lfmUser: new UserStringArgument({
+  user: new DiscordUserArgument({
+    index: 0,
+    description: "The user to compare with",
+  }),
+  user2: new DiscordUserArgument({
+    index: 1,
+    description: "The other user to compare (defaults to you)",
+  }),
+  lastfmUsername: new UserStringArgument({
     index: 0,
     mention: new LastFMMention(),
+    description: "The Last.fm username to compare with",
+    slashCommandOption: false,
   }),
-  lfmUser2: new UserStringArgument({
+  lastfmUsername2: new UserStringArgument({
     index: 1,
     mention: new LastFMMention(),
+    description: "The other Last.fm username to compare (defaults to you)",
+    slashCommandOption: false,
   }),
   userID: new UserStringArgument({
     index: 0,
     mention: new DiscordIDMention(),
+    description: "The user id to compare with",
   }),
   userID2: new UserStringArgument({
     index: 1,
     mention: new DiscordIDMention(),
+    description: "The other user id to compare (defaults to you)",
   }),
 } as const;
 
@@ -64,8 +79,8 @@ export abstract class TasteCommand<
       "user2",
       "userID",
       "userID2",
-      "lfmUser",
-      "lfmUser2",
+      "lastfmUsername",
+      "lastfmUsername2",
       "username",
       "username2",
     ]) {
@@ -94,7 +109,10 @@ export abstract class TasteCommand<
           ) {
             username = usernameArgument;
           }
-        } else if (argName === "lfmUser" || argName === "lfmUser2") {
+        } else if (
+          argName === "lastfmUsername" ||
+          argName === "lastfmUsername2"
+        ) {
           username = parsedArguments[argName] as string;
         } else {
           throw new LogicError("please enter a user to compare your taste to!");

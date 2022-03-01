@@ -1,5 +1,5 @@
-import { Message } from "discord.js";
 import { ArgumentsMap } from "../context/arguments/types";
+import { Payload } from "../context/Payload";
 import { GowonClient } from "../GowonClient";
 import { CommandAccess } from "./access/access";
 import { Variation } from "./BaseCommand";
@@ -8,9 +8,12 @@ import { ParentCommand } from "./ParentCommand";
 import { RunAs } from "./RunAs";
 
 export interface Command {
-  execute(message: Message, runAs: RunAs, client: GowonClient): Promise<void>;
+  execute(payload: Payload, runAs: RunAs, client: GowonClient): Promise<void>;
   id: string;
   idSeed: string;
+
+  slashCommand?: boolean;
+  slashCommandName?: string;
 
   variations: Variation[];
   aliases: Array<string>;
@@ -31,7 +34,7 @@ export interface Command {
   subcategory: string | undefined;
   usage: string | string[];
 
-  delegatedFrom?: Command;
+  redirectedFrom?: Command;
 
   hasChildren: boolean;
   children?: CommandGroup;

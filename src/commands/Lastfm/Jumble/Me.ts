@@ -9,9 +9,20 @@ import { displayNumber } from "../../../lib/views/displays";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { WordBlacklistService } from "../../../services/WordBlacklistService";
 import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
+import { GowonContext } from "../../../lib/context/Context";
+import { Flag } from "../../../lib/context/arguments/argumentTypes/Flag";
 
 const args = {
-  poolAmount: new NumberArgument({ default: 500 }),
+  poolAmount: new NumberArgument({
+    default: 500,
+    description:
+      "The amount of top artists to pick a jumble from (defaults to 500)",
+  }),
+  nonAlphanumeric: new Flag({
+    shortnames: ["nam"],
+    longnames: ["nonalphanumeric", "nonalphanum"],
+    description: "Include artists with non-alphanumeric names",
+  }),
 } as const;
 
 export class Me extends JumbleChildCommand<typeof args> {
@@ -22,13 +33,15 @@ export class Me extends JumbleChildCommand<typeof args> {
   usage = ["", "poolAmount"];
   variations: Variation[] = [
     {
-      name: "nonascii",
-      variation: "nonascii",
-      description: "Allow artists with non-ascii characters to appear",
+      name: "nonalphanumeric",
+      variation: "nonalphanumeric",
+      description: "Include artists with non-alphanumeric names",
     },
   ];
 
   arguments = args;
+
+  slashCommand = true;
 
   tagConsolidator = new TagConsolidator();
   wordBlacklistService = ServiceRegistry.get(WordBlacklistService);
@@ -43,13 +56,15 @@ export class Me extends JumbleChildCommand<typeof args> {
       return;
     }
 
-    let poolAmount = this.parsedArguments.poolAmount!;
+    const poolAmount = this.parsedArguments.poolAmount;
 
     if (poolAmount < 5 || poolAmount > 1000)
       throw new LogicError("Please enter a number between 5 and 1000!");
 
     let artist = await this.jumbleCalculator.getArtist(poolAmount, {
-      nonAscii: this.variationWasUsed("nonascii"),
+      includeNonAlphanumeric:
+        this.parsedArguments.nonAlphanumeric ||
+        this.variationWasUsed("nonalphanumeric"),
     });
 
     if (!artist) {
@@ -158,7 +173,7 @@ export class Me extends JumbleChildCommand<typeof args> {
     }
 
     return jumbled === item ||
-      !this.wordBlacklistService.isAllowed(this.ctx, item)
+      !this.wordBlacklistService.isAllowed(this.ctx as GowonContext, item)
       ? this.jumbleItem(item)
       : jumbled;
   }

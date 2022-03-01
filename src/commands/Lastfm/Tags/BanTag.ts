@@ -7,7 +7,7 @@ import { WordBlacklistService } from "../../../services/WordBlacklistService";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 const args = {
-  tag: new StringArgument({ index: { start: 0 } }),
+  tag: new StringArgument({ index: { start: 0 }, required: true }),
 } as const;
 
 export default class BanTag extends LastFMBaseCommand<typeof args> {
@@ -36,7 +36,7 @@ export default class BanTag extends LastFMBaseCommand<typeof args> {
   wordBlacklistService = ServiceRegistry.get(WordBlacklistService);
 
   async run() {
-    const tag = this.parsedArguments.tag!;
+    const tag = this.parsedArguments.tag;
     const unban = this.variationWasUsed("unban");
 
     await this.wordBlacklistService[unban ? "serverUnbanTag" : "serverBanTag"](

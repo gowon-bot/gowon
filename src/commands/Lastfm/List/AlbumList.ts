@@ -7,6 +7,7 @@ import { ListCommand } from "./ListCommand";
 export default class AlbumList extends ListCommand {
   idSeed = "stayc sumin";
 
+  slashCommandName = "topalbums";
   description = "Shows your top albums over a given time period";
   aliases = ["llist", "allist", "topalbums", "topalbum", "albums", "ll"];
 

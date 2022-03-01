@@ -6,7 +6,7 @@ import { displayNumber } from "../../lib/views/displays";
 import { MetaBaseCommand } from "./MetaBaseCommand";
 
 const args = {
-  searchString: new StringArgument({ index: { start: 0 } }),
+  searchString: new StringArgument({ index: { start: 0 }, required: true }),
 } as const;
 
 export default class CommandInfo extends MetaBaseCommand<typeof args> {
@@ -25,7 +25,7 @@ export default class CommandInfo extends MetaBaseCommand<typeof args> {
   description = "Displays some info about a command";
 
   async run() {
-    const searchString = this.parsedArguments.searchString!;
+    const searchString = this.parsedArguments.searchString;
 
     const { command, runAs } = await this.commandRegistry.find(
       searchString,

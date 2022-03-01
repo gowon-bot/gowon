@@ -1,22 +1,27 @@
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
-import { displayNumber } from "../../../lib/views/displays";
+import {
+  displayNumber,
+  displayNumberedList,
+} from "../../../lib/views/displays";
 import { LogicError } from "../../../errors";
-import { toInt } from "../../../helpers/lastFM";
+import { sanitizeForDiscord } from "../../../helpers/discord";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 
 const args = {
-  ...standardMentions,
   ...prefabArguments.track,
+  ...standardMentions,
 } as const;
 
 export default class TrackRank extends LastFMBaseCommand<typeof args> {
-  idSeed = "cignature seline";
+  idSeed = "hello venus alice";
 
-  aliases = ["tra", "tr"];
-  description = "Shows what rank a track is at in your top 1000 tracks";
+  aliases = ["tra", "tr", "trackaround", "taround", "traround"];
+  description = "Shows the other tracks around a track in your top 1000 tracks";
   subcategory = "ranks";
   usage = ["", "artist | track @user"];
+
+  slashCommand = true;
 
   arguments = args;
 
@@ -24,7 +29,7 @@ export default class TrackRank extends LastFMBaseCommand<typeof args> {
     const { requestable, senderRequestable, perspective } =
       await this.getMentions({
         senderRequired:
-          !this.parsedArguments.track || !this.parsedArguments.artist,
+          !this.parsedArguments.artist || !this.parsedArguments.track,
       });
 
     const { artist, track } = await this.lastFMArguments.getTrack(
@@ -33,37 +38,49 @@ export default class TrackRank extends LastFMBaseCommand<typeof args> {
       true
     );
 
-    let topTracks = await this.lastFMService.topTracks(this.ctx, {
+    const topTracks = await this.lastFMService.topTracks(this.ctx, {
       username: requestable,
       limit: 1000,
     });
 
-    let rank = topTracks.tracks.findIndex(
-      (a) =>
-        a.name.toLowerCase() === track!.toLowerCase() &&
-        a.artist.name.toLowerCase() === artist!.toLowerCase()
+    const rank = topTracks.tracks.findIndex(
+      (t) =>
+        t.name.toLowerCase() === track!.toLowerCase() &&
+        t.artist.name.toLowerCase() === artist!.toLowerCase()
     );
 
     if (rank === -1) {
-      const isNumber = !isNaN(toInt(this.parsedArguments.artist));
-
       throw new LogicError(
         `That track wasn't found in ${
           perspective.possessive
-        } top ${displayNumber(topTracks.tracks.length, "track")}`,
-        isNumber
-          ? `Looking to find the artist at rank ${this.parsedArguments.artist}? Run ${this.prefix}aa ${this.parsedArguments.artist}`
-          : ""
-      );
-    } else {
-      await this.traditionalReply(
-        `${topTracks.tracks[rank].name.strong()} by ${
-          topTracks.tracks[rank].artist.name
-        } is ranked #${displayNumber(rank + 1).strong()} with ${displayNumber(
-          topTracks.tracks[rank].userPlaycount,
-          "play"
-        ).strong()}`
+        } top ${displayNumber(topTracks.tracks.length, "track")}`
       );
     }
+
+    const start = rank < 5 ? 0 : rank - 5;
+    const stop =
+      rank > topTracks.tracks.length - 6
+        ? topTracks.tracks.length - 1
+        : rank + 6;
+
+    const embed = this.newEmbed()
+      .setAuthor(this.generateEmbedAuthor("Track around"))
+      .setTitle(
+        `Tracks around ${topTracks.tracks[rank].name} in ${perspective.possessive} library`
+      )
+      .setDescription(
+        displayNumberedList(
+          topTracks.tracks.slice(start, stop).map((val, idx) => {
+            const display = `${val.name.italic()} by ${sanitizeForDiscord(
+              val.artist.name
+            )} - ${displayNumber(val.userPlaycount, "play")}`;
+
+            return start + idx === rank ? display.strong(false) : display;
+          }),
+          start
+        )
+      );
+
+    await this.send(embed);
   }
 }

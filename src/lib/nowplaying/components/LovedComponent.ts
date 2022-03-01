@@ -6,6 +6,7 @@ export class LovedComponent extends BaseNowPlayingComponent<
   typeof lovedRequirements
 > {
   static componentName = "loved";
+  static friendlyName = "Loved";
   readonly requirements = lovedRequirements;
 
   present() {

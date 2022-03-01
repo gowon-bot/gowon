@@ -1,13 +1,21 @@
 import { Chance } from "chance";
 import { BaseCommand } from "../../lib/command/BaseCommand";
 import { NumberArgument } from "../../lib/context/arguments/argumentTypes/NumberArgument";
-import { Validation } from "../../lib/validation/ValidationChecker";
-import { validators } from "../../lib/validation/validators";
+// import { Validation } from "../../lib/validation/ValidationChecker";
+// import { validators } from "../../lib/validation/validators";
 import { displayNumber } from "../../lib/views/displays";
 
 const args = {
-  min: new NumberArgument({ index: 0 }),
-  max: new NumberArgument({ index: 1 }),
+  min: new NumberArgument({
+    index: 0,
+    default: 0,
+    description: "The minimum number to roll from",
+  }),
+  max: new NumberArgument({
+    index: 1,
+    required: true,
+    description: "The maximum number to roll to",
+  }),
 } as const;
 
 export default class Roll extends BaseCommand<typeof args> {
@@ -19,15 +27,17 @@ export default class Roll extends BaseCommand<typeof args> {
 
   arguments = args;
 
-  validation: Validation = {
-    min: [
-      new validators.Required({ message: "Please enter a maximum number!" }),
-      new validators.Range({
-        min: 1,
-        message: "Please enter a number greater than 1",
-      }),
-    ],
-  };
+  slashCommand = true;
+
+  // validation: Validation = {
+  //   min: [
+  //     new validators.Required({ message: "Please enter a maximum number!" }),
+  //     new validators.Range({
+  //       min: 1,
+  //       message: "Please enter a number greater than 1",
+  //     }),
+  //   ],
+  // };
 
   async run() {
     const min = this.parsedArguments.min,
@@ -35,7 +45,7 @@ export default class Roll extends BaseCommand<typeof args> {
 
     const bounds = [];
 
-    if (max && min) {
+    if (max !== undefined && min !== undefined) {
       if (max < min) {
         bounds.push(max, min);
       } else {

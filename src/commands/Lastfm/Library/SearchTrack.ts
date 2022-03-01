@@ -13,6 +13,8 @@ export default class SearchTrack extends SearchCommand {
   aliases = ["st", "str", "strack"];
   usage = ["keywords", "keywords @user"];
 
+  slashCommand = true;
+
   variations: Variation[] = [
     {
       name: "deep",
@@ -22,19 +24,19 @@ export default class SearchTrack extends SearchCommand {
   ];
 
   async run() {
-    const keywords = this.parsedArguments.keywords!;
+    const keywords = this.parsedArguments.keywords;
 
     const { requestable, perspective } = await this.getMentions();
 
     const paginator = new Paginator(
       this.lastFMService.topTracks.bind(this.lastFMService),
-      this.variationWasUsed("deep") ? 6 : 3,
+      this.isDeep() ? 6 : 3,
       { username: requestable, limit: 1000 },
       this.ctx
     );
 
     const topTracks = await paginator.getAllToConcatonable({
-      concurrent: this.variationWasUsed("deep"),
+      concurrent: this.isDeep(),
     });
 
     const filtered = topTracks.tracks.filter((t) =>
@@ -62,7 +64,7 @@ export default class SearchTrack extends SearchCommand {
       return;
     }
 
-    const scrollingEmbed = new SimpleScrollingEmbed(this.message, embed, {
+    const scrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
       items: filtered,
       pageSize: 15,
       pageRenderer(items) {

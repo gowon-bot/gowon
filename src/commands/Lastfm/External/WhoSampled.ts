@@ -3,8 +3,12 @@ import { standardMentions } from "../../../lib/context/arguments/mentionTypes/me
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 const args = {
+  keywords: new StringArgument({
+    index: { start: 0 },
+    description:
+      "The keywords to search WhoSampled for (defaults to your currently playing track)",
+  }),
   ...standardMentions,
-  keywords: new StringArgument({ index: { start: 0 } }),
 } as const;
 
 export default class WhoSampled extends LastFMBaseCommand<typeof args> {
@@ -14,6 +18,7 @@ export default class WhoSampled extends LastFMBaseCommand<typeof args> {
   description = "Search WhoSampled for a song (or anything!)";
   subcategory = "external";
 
+  slashCommand = true;
   arguments = args;
 
   async run() {

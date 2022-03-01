@@ -4,7 +4,7 @@ import { validators } from "../../../lib/validation/validators";
 import { CrownsChildCommand } from "./CrownsChildCommand";
 
 const args = {
-  ...prefabArguments.artist,
+  ...prefabArguments.requiredArtist,
 } as const;
 
 export class UnbanArtist extends CrownsChildCommand<typeof args> {
@@ -21,7 +21,7 @@ export class UnbanArtist extends CrownsChildCommand<typeof args> {
   };
 
   async run() {
-    let artist = this.parsedArguments.artist!;
+    let artist = this.parsedArguments.artist;
 
     let artistCrownBan = await this.crownsService.artistCrownUnban(
       this.ctx,

@@ -3,16 +3,22 @@ import { standardMentions } from "../../../lib/context/arguments/mentionTypes/me
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 const args = {
+  keywords: new StringArgument({
+    index: { start: 0 },
+    description:
+      "The keywords to search Colorcodedlyrics for (defaults to your currently playing track)",
+  }),
   ...standardMentions,
-  keywords: new StringArgument({ index: { start: 0 } }),
 } as const;
 
 export default class ColorCodedLyrics extends LastFMBaseCommand<typeof args> {
   idSeed = "iz*one minju";
 
   aliases = ["ccl"];
-  description = "Search colorcodedlyrics for an song";
+  description = "Search colorcodedlyrics.com for an song";
   subcategory = "external";
+
+  slashCommand = true;
 
   arguments = args;
 

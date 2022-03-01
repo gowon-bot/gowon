@@ -7,6 +7,7 @@ export class RatingComponent extends BaseNowPlayingComponent<
   typeof ratingRequirements
 > {
   static componentName = "album-rating";
+  static friendlyName = "Album rating";
   readonly requirements = ratingRequirements;
 
   present() {

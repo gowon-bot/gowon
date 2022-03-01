@@ -6,18 +6,21 @@ import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { displayDate, displayNumber } from "../../../lib/views/displays";
 import { ago } from "../../../helpers";
-import { humanizeTimeRange } from "../../../lib/timeAndDate/helpers";
+import { humanizeTimeRange, TimeRange } from "../../../lib/timeAndDate/helpers";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { TimeRangeArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/TimeRangeArgument";
 import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
 
 const args = {
-  ...standardMentions,
-  milestone: new NumberArgument(),
-  timeRange: new TimeRangeArgument({
-    fallback: { weeks: 1 },
-    useOverall: true,
+  milestone: new NumberArgument({
+    description: "The milestone you want to hit (defaults to your next 25k)",
   }),
+  timeRange: new TimeRangeArgument({
+    default: TimeRange.fromDuration({ weeks: 1 }),
+    useOverall: true,
+    description: "The time range to calculate your scrobble rate over",
+  }),
+  ...standardMentions,
 } as const;
 
 export default class Pace extends LastFMBaseCommand<typeof args> {
@@ -30,6 +33,8 @@ export default class Pace extends LastFMBaseCommand<typeof args> {
 
   arguments = args;
 
+  slashCommand = true;
+
   validation: Validation = {
     milestone: [
       new validators.Range({ min: 1 }),
@@ -41,7 +46,7 @@ export default class Pace extends LastFMBaseCommand<typeof args> {
   };
 
   async run() {
-    const timeRange = this.parsedArguments.timeRange!,
+    const timeRange = this.parsedArguments.timeRange,
       milestone = this.parsedArguments.milestone;
 
     const { requestable, perspective } = await this.getMentions();

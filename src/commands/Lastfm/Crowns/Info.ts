@@ -1,5 +1,4 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
-import { Message } from "discord.js";
 import { ago } from "../../../helpers";
 import { RedirectsService } from "../../../services/dbservices/RedirectsService";
 import { createInvalidBadge } from "../../../helpers/crowns";
@@ -17,15 +16,18 @@ const args = {
 export class Info extends CrownsChildCommand<typeof args> {
   idSeed = "wjsn dayoung";
 
-  aliases = ["wh"];
+  aliases = ["wh", "whohas"];
   description = "Shows who has the crown for a given user";
   usage = ["", "artist"];
 
   arguments = args;
 
+  slashCommand = true;
+  slashCommandName = "whohas";
+
   redirectsService = ServiceRegistry.get(RedirectsService);
 
-  async run(message: Message) {
+  async run() {
     let { senderUser, senderRequestable } = await this.getMentions({
       usernameRequired: !this.parsedArguments.artist,
     });
@@ -80,7 +82,7 @@ export class Info extends CrownsChildCommand<typeof args> {
       return;
     }
 
-    let invalidCheck = await crown?.invalid(message);
+    let invalidCheck = await crown?.invalid(this.ctx);
 
     let invalidBadge = createInvalidBadge(invalidCheck.reason);
 
@@ -128,7 +130,7 @@ export class Info extends CrownsChildCommand<typeof args> {
     const lineConsolidator = new LineConsolidator();
 
     const userCanClaimCrowns =
-      (await senderUser?.canClaimCrowns(this.message)) || false;
+      (await senderUser?.canClaimCrowns(this.ctx)) || false;
 
     lineConsolidator.addLines(
       `No one has the crown for ${artistName.strong()}` +
