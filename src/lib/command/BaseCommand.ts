@@ -116,6 +116,8 @@ export abstract class BaseCommand<ArgumentsType extends ArgumentsMap = {}>
    * (properties related to decribing commands for end users)
    */
   description: string = "No description for this command";
+  // Extra description that doesn't fit in slash command descriptions
+  extraDescription: string = "";
   category: string | undefined = undefined;
   subcategory: string | undefined = undefined;
   usage: string | string[] = "";

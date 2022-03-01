@@ -76,7 +76,7 @@ export default class HelpForOneCommand extends BaseCommand<typeof args> {
         (command.slashCommand ? " (slash command)" : "") +
         ":",
 
-      command.description.italic(false),
+      (command.description + command.extraDescription).italic(false),
       "",
       {
         shouldDisplay: !!command.usage,

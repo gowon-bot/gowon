@@ -5,7 +5,8 @@ export class Per extends OverviewChildCommand {
 
   aliases = ["lpa", "tpa", "tpl", "alpa", "tpal"];
   description = "Shows averages about your library.";
-  // " Average...\n- albums per artist\n- tracks per artist\n- tracks per album";
+  extraDescription =
+    " Average...\n- albums per artist\n- tracks per artist\n- tracks per album";
 
   slashCommand = true;
 

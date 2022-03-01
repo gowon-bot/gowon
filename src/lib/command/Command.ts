@@ -30,6 +30,7 @@ export interface Command {
   friendlyName: string;
   friendlyNameWithParent?: string;
   description: string;
+  extraDescription: string;
   category: string | undefined;
   subcategory: string | undefined;
   usage: string | string[];

@@ -12,9 +12,6 @@ const args = {
   }),
 } as const;
 
-// type ProvidedOptions = UnwrapProvidedOptions<typeof args["tag"]>;
-// type ReturnType = ArgumentReturnType<string, ProvidedOptions>;
-
 export default class TagInfo extends InfoCommand<typeof args> {
   idSeed = "csvc park moonchi";
   shouldBeIndexed = true;

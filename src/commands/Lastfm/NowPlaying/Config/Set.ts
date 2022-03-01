@@ -11,7 +11,6 @@ import { NowPlayingConfigChildCommand } from "./NowPlayingConfigChildCommand";
 
 const args = {
   config: new StringArrayArgument({ index: { start: 0 } }),
-  //
 } as const;
 
 export class Set extends NowPlayingConfigChildCommand<typeof args> {

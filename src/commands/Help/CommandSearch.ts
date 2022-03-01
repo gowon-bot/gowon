@@ -9,7 +9,7 @@ import { StringArgument } from "../../lib/context/arguments/argumentTypes/String
 
 const args = {
   keywords: new StringArgument({
-    required: true,
+    required: { customMessage: "Please enter some keywords!" },
     description: "The keywords to search with",
   }),
 } as const;

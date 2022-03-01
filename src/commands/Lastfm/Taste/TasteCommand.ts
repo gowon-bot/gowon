@@ -18,9 +18,6 @@ import { DiscordIDMention } from "../../../lib/context/arguments/mentionTypes/Di
 import { UserStringArgument } from "../../../lib/context/arguments/argumentTypes/UserStringArgument";
 import { DiscordUserArgument } from "../../../lib/context/arguments/argumentTypes/discord/DiscordUserArgument";
 
-// "The Last.fm username to compare with",
-// "The other Last.fm username to compare (defaults to you)",
-
 export const tasteArgs = {
   user: new DiscordUserArgument({
     index: 0,

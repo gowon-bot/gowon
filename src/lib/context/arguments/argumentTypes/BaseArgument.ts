@@ -19,7 +19,11 @@ type GetElementFromIndexOptions = {
 };
 
 export interface BaseArgumentOptions<ReturnT = any> {
-  required: boolean;
+  required:
+    | boolean
+    | {
+        customMessage: string;
+      };
   description: string;
   slashCommandOption: boolean;
   default?: ReturnT;
@@ -84,9 +88,15 @@ export abstract class BaseArgument<
     return slashCommand;
   }
 
-  protected validate(value: ReturnT | undefined) {
+  validate(value: ReturnT | undefined, argumentName: string) {
     if (this.options.required && (value === null || value === undefined)) {
-      throw new ValidationError("argument is required");
+      throw new ValidationError(
+        isCustomMessage(this.options.required)
+          ? this.options.required.customMessage
+          : `Please enter a${
+              startsWithVowel(argumentName) ? "n" : ""
+            } ${argumentName}!`
+      );
     }
   }
 
@@ -102,7 +112,7 @@ export abstract class BaseArgument<
     return option
       .setName(argumentName)
       .setDescription(this.options.description.slice(0, 99))
-      .setRequired(this.options.required) as OptionType;
+      .setRequired(!!this.options.required) as OptionType;
   }
 
   protected cleanContent(ctx: GowonContext, content: string) {
@@ -210,4 +220,14 @@ export function isStringCleaning(
   argument: any
 ): argument is StringCleaningArgument {
   return argument.clean instanceof Function;
+}
+
+export function isCustomMessage(
+  value: any | { customMessage: string } | undefined
+): value is { customMessage: string } {
+  return !!value && !!(value as any).customMessage;
+}
+
+export function startsWithVowel(string: string): boolean {
+  return ["a", "e", "i", "u", "o"].some((vowel) => string.startsWith(vowel));
 }

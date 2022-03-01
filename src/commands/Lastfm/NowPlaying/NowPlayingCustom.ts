@@ -13,7 +13,8 @@ export default class NowPlayingCustom extends NowPlayingBaseCommand {
 
   description =
     "Now playing custom | Displays the now playing or last played track from Last.fm";
-  // . See `npc help` for details on how to customize your embeds.";
+  extraDescription =
+    ". See `npc help` for details on how to customize your embeds.";
   slashCommandName = "fmx";
   aliases = ["fmx", "npx"];
   variations: Variation[] = [{ name: "badTyping", variation: "fmz" }];

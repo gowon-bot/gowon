@@ -8,6 +8,7 @@ import {
   ContentBasedArgumentOptions,
   defaultContentBasedOptions,
   defaultIndexableOptions,
+  isCustomMessage,
   SliceableArgumentOptions,
 } from "./BaseArgument";
 import {
@@ -28,7 +29,10 @@ export interface StringArgumentOptions
   splitOn: string | RegExp;
   regex: RegExp;
   match: string[];
-  choices: Choice[] | string[];
+  choices:
+    | Choice[]
+    | string[]
+    | { list: Choice[] | string[]; customMessage: string };
 }
 
 export class StringArgument<
@@ -79,8 +83,6 @@ export class StringArgument<
       );
     }
 
-    this.validate(parsedArgument);
-
     return parsedArgument!;
   }
 
@@ -96,7 +98,7 @@ export class StringArgument<
     return slashCommand.addStringOption((option) => {
       let newOption = this.baseOption(option, argumentName);
 
-      if (this.options.choices.length) {
+      if (this.getChoices(this.options).length) {
         newOption = newOption.addChoices(
           this.getChoices(this.options)
         ) as SlashCommandStringOption;
@@ -116,26 +118,34 @@ export class StringArgument<
     } else return "";
   }
 
-  protected validate(value: string | undefined) {
-    super.validate(value);
+  validate(value: string | undefined, argumentName: string) {
+    super.validate(value, argumentName);
+
+    const choices = this.getChoices(this.options);
 
     if (
       value &&
-      this.options.choices.length &&
-      !this.options.choices.some((c) =>
-        typeof c === "string"
-          ? c.toLowerCase() === value.toLowerCase()
-          : value?.toLowerCase() === (c.value || c.name).toLowerCase()
-      )
+      choices.length &&
+      !choices.some((c) => c[1].toLowerCase() === value.toLowerCase())
     ) {
-      throw new ValidationError("Not a choice");
+      throw new ValidationError(
+        isCustomMessage(this.options.choices)
+          ? this.options.choices.customMessage
+          : `${argumentName} must be one of ${this.getChoices(this.options)
+              .map((c) => c[1])
+              .join(", ")}`
+      );
     }
   }
 
   private getChoices(options: StringArgumentOptions): [string, string][] {
     const choices = [] as [string, string][];
 
-    for (const choice of options.choices) {
+    const choicesOptions = isCustomMessage(options.choices)
+      ? options.choices.list
+      : options.choices;
+
+    for (const choice of choicesOptions) {
       if (typeof choice === "string") choices.push([choice, choice]);
       else choices.push([choice.name, choice.value || choice.name]);
     }

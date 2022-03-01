@@ -10,7 +10,6 @@ export default class ComboParentCommand extends LastFMBaseParentCommand {
   subcategory = "stats";
   description = "Allows you to view and manage your combos";
   friendlyName = "combo";
-  // customHelp = Help;
 
   slashCommand = true;
 

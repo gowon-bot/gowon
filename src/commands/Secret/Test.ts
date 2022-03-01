@@ -8,7 +8,7 @@ export default class Test extends BaseCommand<typeof args> {
   description = "Testing testing 123...4???";
   subcategory = "developer";
 
-  // secretCommand = true;
+  secretCommand = true;
   arguments = args;
   slashCommand = true;
 

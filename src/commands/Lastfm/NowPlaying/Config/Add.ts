@@ -30,13 +30,6 @@ export class Add extends NowPlayingConfigChildCommand<typeof args> {
 
   arguments = args;
 
-  // validation: Validation = {
-  //   options: {
-  //     validator: new validators.LengthRange({ min: 1 }),
-  //     friendlyName: "option",
-  //   },
-  // };
-
   async run() {
     const options = this.parsedArguments.options.length
       ? this.parsedArguments.options

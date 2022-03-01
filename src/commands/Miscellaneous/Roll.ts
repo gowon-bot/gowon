@@ -1,8 +1,8 @@
 import { Chance } from "chance";
 import { BaseCommand } from "../../lib/command/BaseCommand";
 import { NumberArgument } from "../../lib/context/arguments/argumentTypes/NumberArgument";
-// import { Validation } from "../../lib/validation/ValidationChecker";
-// import { validators } from "../../lib/validation/validators";
+import { Validation } from "../../lib/validation/ValidationChecker";
+import { validators } from "../../lib/validation/validators";
 import { displayNumber } from "../../lib/views/displays";
 
 const args = {
@@ -29,15 +29,14 @@ export default class Roll extends BaseCommand<typeof args> {
 
   slashCommand = true;
 
-  // validation: Validation = {
-  //   min: [
-  //     new validators.Required({ message: "Please enter a maximum number!" }),
-  //     new validators.Range({
-  //       min: 1,
-  //       message: "Please enter a number greater than 1",
-  //     }),
-  //   ],
-  // };
+  validation: Validation = {
+    min: [
+      new validators.Range({
+        min: 1,
+        message: "Please enter a number greater than 1",
+      }),
+    ],
+  };
 
   async run() {
     const min = this.parsedArguments.min,
