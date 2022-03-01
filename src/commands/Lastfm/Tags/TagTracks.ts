@@ -2,8 +2,6 @@ import { calculatePercent } from "../../../helpers/stats";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { Paginator } from "../../../lib/paginators/Paginator";
-import { Validation } from "../../../lib/validation/ValidationChecker";
-import { validators } from "../../../lib/validation/validators";
 import { displayNumber } from "../../../lib/views/displays";
 import { TopTracks } from "../../../services/LastFM/converters/TopTypes";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";

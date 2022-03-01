@@ -47,6 +47,8 @@ export type ArgumentReturnType<T, OptionsT> = OptionsT extends {
   ? T
   : OptionsT extends { default: T }
   ? T
+  : OptionsT extends { required: { customMessage: string } }
+  ? T
   : T | undefined;
 
 export abstract class BaseArgument<

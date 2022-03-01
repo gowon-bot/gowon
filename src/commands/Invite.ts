@@ -12,7 +12,7 @@ export default class Invite extends BaseCommand {
 
   async run() {
     await this.send(
-      `${Emoji.gowonswag2} You can invite Gowon to your server with the following link: <https://discord.com/oauth2/authorize?client_id=${config.discordClientID}&scope=bot&permissions=377957435456>`
+      `${Emoji.gowonswag2} You can invite Gowon to your server with the following link: <https://discord.com/api/oauth2/authorize?client_id=${config.discordClientID}&permissions=51264&scope=applications.commands%20bot>`
     );
   }
 }
