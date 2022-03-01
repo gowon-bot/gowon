@@ -9,8 +9,6 @@ import {
   ConcurrentAction,
 } from "../../../../services/ConcurrencyService";
 import { MirrorballBaseCommand as MirrorballBaseCommand } from "../../../../lib/indexing/MirrorballCommands";
-import { Validation } from "../../../../lib/validation/ValidationChecker";
-import { validators } from "../../../../lib/validation/validators";
 import {
   IndexUserParams,
   IndexUserResponse,
@@ -32,10 +30,6 @@ export default class Index extends MirrorballBaseCommand<
   idSeed = "iz*one yujin";
 
   description = "Fully index a user, downloading all your Last.fm data";
-
-  validation: Validation = {
-    username: new validators.Required({}),
-  };
 
   concurrencyService = ServiceRegistry.get(ConcurrencyService);
 

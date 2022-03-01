@@ -229,5 +229,9 @@ export function isCustomMessage(
 }
 
 export function startsWithVowel(string: string): boolean {
+  const blacklist = ["username"];
+
+  if (blacklist.includes(string)) return false;
+
   return ["a", "e", "i", "u", "o"].some((vowel) => string.startsWith(vowel));
 }

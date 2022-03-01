@@ -10,7 +10,7 @@ const args = {
   keywords: new StringArgument({
     index: { start: 0 },
     description: "The keywords to search your library with",
-    required: true,
+    required: { customMessage: "Please enter some keywords!" },
   }),
   deep: new Flag({
     longnames: ["deep"],
@@ -30,9 +30,6 @@ export abstract class SearchCommand extends LastFMBaseCommand<typeof args> {
 
   validation: Validation = {
     keywords: [
-      new validators.Required({
-        message: "please enter some keywords!",
-      }),
       new validators.LengthRange({
         min: 1,
         message: "please enter a longer search string!",

@@ -1,7 +1,5 @@
 import { LogicError } from "../../../../errors";
 import { StringArgument } from "../../../../lib/context/arguments/argumentTypes/StringArgument";
-import { Validation } from "../../../../lib/validation/ValidationChecker";
-import { validators } from "../../../../lib/validation/validators";
 import { PlaylistChildCommand } from "./PlaylistChildCommand";
 
 const args = {
@@ -16,13 +14,6 @@ export class SetDefault extends PlaylistChildCommand<typeof args> {
   description = "Sets one of your playlists as the default";
 
   arguments = args;
-
-  validation: Validation = {
-    playlistName: {
-      validator: new validators.Required({}),
-      friendlyName: "playlist name",
-    },
-  };
 
   async run() {
     const { dbUser } = await this.getMentions({ fetchSpotifyToken: true });

@@ -1,6 +1,4 @@
 import { InfoCommand } from "./InfoCommand";
-import { Validation } from "../../../lib/validation/ValidationChecker";
-import { validators } from "../../../lib/validation/validators";
 import { displayNumber } from "../../../lib/views/displays";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 
@@ -23,10 +21,6 @@ export default class TagInfo extends InfoCommand<typeof args> {
   slashCommand = true;
 
   arguments = args;
-
-  validation: Validation = {
-    tag: new validators.Required({}),
-  };
 
   async run() {
     let tag = this.parsedArguments.tag;

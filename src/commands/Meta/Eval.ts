@@ -18,10 +18,6 @@ export default class Eval extends BaseCommand<typeof args> {
 
   arguments = args;
 
-  validation: Validation = {
-    script: new validators.Required({}),
-  };
-
   lastFMService = ServiceRegistry.get(LastFMService);
 
   async run() {

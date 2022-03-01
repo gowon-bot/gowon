@@ -1,6 +1,4 @@
 import { BaseCommand } from "../../lib/command/BaseCommand";
-import { Validation } from "../../lib/validation/ValidationChecker";
-import { validators } from "../../lib/validation/validators";
 import { Command } from "../../lib/command/Command";
 import { AdminService } from "../../services/dbservices/AdminService";
 import { displayNumber } from "../../lib/views/displays";
@@ -25,10 +23,6 @@ export default class SearchCommands extends BaseCommand<typeof args> {
   slashCommand = true;
 
   arguments = args;
-
-  validation: Validation = {
-    keywords: new validators.Required({}),
-  };
 
   adminService = ServiceRegistry.get(AdminService);
 

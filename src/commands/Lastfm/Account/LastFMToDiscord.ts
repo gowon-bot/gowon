@@ -1,7 +1,5 @@
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { LogicError } from "../../../errors";
-import { Validation } from "../../../lib/validation/ValidationChecker";
-import { validators } from "../../../lib/validation/validators";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 
 const args = {
@@ -22,10 +20,6 @@ export default class LastFmToDiscord extends LastFMBaseCommand<typeof args> {
 
   arguments = args;
   slashCommand = true;
-
-  validation: Validation = {
-    username: new validators.Required({}),
-  };
 
   async run() {
     let username = this.parsedArguments.username;

@@ -39,10 +39,6 @@ export default class Tag extends LastFMBaseCommand<typeof args> {
 
   slashCommand = true;
 
-  validation: Validation = {
-    tag: new validators.Required({}),
-  };
-
   async run() {
     const tag = this.parsedArguments.tag;
 

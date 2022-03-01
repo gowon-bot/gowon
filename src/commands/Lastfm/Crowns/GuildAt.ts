@@ -1,7 +1,5 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
 import { LogicError } from "../../../errors";
-import { Validation } from "../../../lib/validation/ValidationChecker";
-import { validators } from "../../../lib/validation/validators";
 import { toInt } from "../../../helpers/lastFM";
 import { displayNumber } from "../../../lib/views/displays";
 import { asyncMap } from "../../../helpers";
@@ -19,10 +17,6 @@ export class GuildAt extends CrownsChildCommand<typeof args> {
   usage = "rank";
 
   arguments = args;
-
-  validation: Validation = {
-    rank: new validators.Required({}),
-  };
 
   async run() {
     let rank = this.parsedArguments.rank;
