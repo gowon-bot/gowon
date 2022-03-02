@@ -46,7 +46,7 @@ export class User extends BaseEntity {
   discordAuthCode?: string;
 
   @Column({ nullable: true })
-  spotifyCode?: string;
+  spotifyRefreshToken?: string;
 
   @Column({ default: false })
   isIndexed!: boolean;

@@ -48,17 +48,6 @@ export class CommandHandler {
   }
 
   async handle(message: Message): Promise<void> {
-    this.nicknameService.recordNickname(
-      this.context(message) as NicknameServiceContext,
-      message.author.id,
-      message.member?.nickname || message.author.username
-    );
-    this.nicknameService.recordUsername(
-      this.context(message) as NicknameServiceContext,
-      message.author.id,
-      message.author.username + "#" + message.author.discriminator
-    );
-
     if (
       !(message.content.toLowerCase() === "not good bot") &&
       (message.content.toLowerCase() === "good bot" ||
@@ -97,6 +86,17 @@ export class CommandHandler {
       );
 
       if (!command) return;
+
+      this.nicknameService.recordNickname(
+        this.context(message) as NicknameServiceContext,
+        message.author.id,
+        message.member?.nickname || message.author.username
+      );
+      this.nicknameService.recordUsername(
+        this.context(message) as NicknameServiceContext,
+        message.author.id,
+        message.author.username + "#" + message.author.discriminator
+      );
 
       if (command instanceof ParentCommand) {
         command = (command.default && command.default()) || command;

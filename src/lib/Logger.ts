@@ -98,7 +98,7 @@ ${
       }
 
 {cyan Raw message content}:
-${payload.isMessage() ? `{bgGrey ${payload.source.content}}` : ""}
+${payload.isMessage() ? chalk`{bgGrey ${payload.source.content}}` : ""}
 {cyan Activity:}`;
     Logger.log("Command", chalk.grey("started"), this);
   }

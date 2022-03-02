@@ -3,7 +3,6 @@ import gql from "graphql-tag";
 import { CommandRegistry } from "../../lib/command/CommandRegistry";
 import { GowonContext } from "../../lib/context/Context";
 import { Logger } from "../../lib/Logger";
-import { displayNumber } from "../../lib/views/displays";
 import { BaseService } from "../BaseService";
 import { AdminService } from "../dbservices/AdminService";
 import { MirrorballService } from "../mirrorball/MirrorballService";
@@ -27,7 +26,6 @@ export class GuildEventService extends BaseService {
 
     ctx.dangerousSetCommand({ message: { guild } });
 
-    await this.pingDeveloper(ctx, guild);
     await this.registerUsers(ctx, guild);
   }
 
@@ -35,8 +33,6 @@ export class GuildEventService extends BaseService {
     Logger.log("GuildEventService", `tearing down Gowon for ${guild.name}`);
 
     ctx.dangerousSetCommand({ message: { guild } });
-
-    await this.pingDeveloper(ctx, guild, true);
   }
 
   public async handleNewUser(ctx: GowonContext, guildMember: GuildMember) {
@@ -71,19 +67,6 @@ export class GuildEventService extends BaseService {
         `Failed to log out guildMember ${guildMember.user.id} in ${guildMember.guild.id} (${e})`
       );
     }
-  }
-
-  private async pingDeveloper(ctx: GowonContext, guild: Guild, leave = false) {
-    const developerID = ctx.client.specialUsers.developers[0].id;
-
-    await ctx.client.client.users
-      .resolve(developerID)
-      ?.send(
-        `Gowon just ${leave ? "left" : "joined"} ${guild.name} (${displayNumber(
-          guild.memberCount,
-          "member"
-        )})`
-      );
   }
 
   private async registerUsers(ctx: GowonContext, guild: Guild) {

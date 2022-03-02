@@ -65,8 +65,22 @@ export class SpotifyAuthenticationService extends BaseSpotifyService<SpotifyAuth
     user: SpotifyAuthUser,
     code: SpotifyCode
   ) {
-    await this.usersService.setSpotifyCode(ctx, user.discordID, code);
-    await this.redisService.set(this.ctx(ctx), user.discordID, "");
+    const token = await this.spotifyService.fetchToken(ctx, {
+      code: code.code,
+    });
+
+    await this.usersService.setSpotifyRefreshToken(
+      ctx,
+      user.discordID,
+      token.refreshToken!
+    );
+
+    await this.redisService.set(
+      this.ctx(ctx),
+      user.discordID,
+      token.asJSON(),
+      token.expiresInSeconds
+    );
   }
 
   async getTokenForUser(
@@ -80,17 +94,26 @@ export class SpotifyAuthenticationService extends BaseSpotifyService<SpotifyAuth
       return token;
     }
 
-    const code = await this.usersService.getSpotifyCode(ctx, discordID);
+    const refreshToken = await this.usersService.getSpotifyRefreshToken(
+      ctx,
+      discordID
+    );
 
-    if (!code && !token) {
+    if (!refreshToken && !token) {
       throw new NotAuthenticatedWithSpotifyError(ctx.command.prefix);
     }
 
     const newToken = await this.spotifyService.fetchToken(ctx, {
-      refreshToken: token?.refreshToken,
-      code: code?.code,
+      refreshToken: token?.refreshToken || refreshToken,
     });
 
+    if (newToken.refreshToken) {
+      this.usersService.setSpotifyRefreshToken(
+        ctx,
+        discordID,
+        newToken.refreshToken
+      );
+    }
     this.saveTokenToRedis(ctx, discordID, newToken);
 
     return newToken;

@@ -128,6 +128,9 @@ export class SpotifyService extends BaseSpotifyService<SpotifyServiceContext> {
       throw new SpotifyConnectionError(ctx.command.prefix);
     }
 
+    if (token.refreshToken) {
+    }
+
     return token;
   }
 
