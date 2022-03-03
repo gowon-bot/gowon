@@ -5,8 +5,11 @@ _어떤 꿈조차도 전부 이뤄질 듯한 느낌_
 Gowon is a Last.FM discord bot in active development.
 
 Check out the indexing server over at [gowon-bot/mirrorball](https://github.com/gowon-bot/mirrorball)
+
 Check out the website over at [gowon-bot/gowon.ca](https://github.com/gowon-bot/gowon.ca)
+
 Check out the api gateway over at [gowon-bot/doughnut](https://github.com/gowon-bot/doughnut)
+
 Check out the image generation server over at [gowon-bot/pantomime](https://github.com/gowon-bot/pantomime)
 
 ## Running yourself
