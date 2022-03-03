@@ -11,7 +11,8 @@
       "white power",
       "jihad",
       "jap",
-      "suicide"
+      "suicide",
+      "woman beater"
     ],
     "regexes": [
       ".*\\banal\\b.*",
@@ -24,7 +25,8 @@
       ".*tranny.*",
       ".*dyke.*",
       ".*\\bpedo.*",
-      ".*tard"
+      ".*tard",
+      ".*lynch.*"
     ],
     "explicit": [
       [19, 12, 21, 20],
