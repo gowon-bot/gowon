@@ -1,9 +1,12 @@
+import { TagNotAllowedError } from "../../../errors";
 import { calculatePercent } from "../../../helpers/stats";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { Paginator } from "../../../lib/paginators/Paginator";
 import { displayNumber } from "../../../lib/views/displays";
 import { TopTracks } from "../../../services/LastFM/converters/TopTypes";
+import { ServiceRegistry } from "../../../services/ServicesRegistry";
+import { WordBlacklistService } from "../../../services/WordBlacklistService";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 interface Overlap {
@@ -36,8 +39,19 @@ export default class TagTracks extends LastFMBaseCommand<typeof args> {
 
   slashCommand = true;
 
+  wordBlacklistService = ServiceRegistry.get(WordBlacklistService);
+
   async run() {
     const tag = this.parsedArguments.tag;
+
+    await this.wordBlacklistService.saveServerBannedTagsInContext(this.ctx);
+
+    if (
+      this.settingsService.get("strictTagBans", { guildID: this.guild.id }) &&
+      !this.wordBlacklistService.isAllowed(this.ctx, tag, ["tags"])
+    ) {
+      throw new TagNotAllowedError();
+    }
 
     const { requestable, perspective } = await this.getMentions({
       asCode: false,

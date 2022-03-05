@@ -498,3 +498,11 @@ export class CannotBeUsedAsASlashCommand extends ClientError {
     super("This command cannot be used as a slash command yet!");
   }
 }
+
+export class TagNotAllowedError extends ClientError {
+  name = "TagNotAllowedError";
+
+  constructor() {
+    super("That tag has been banned from being used!");
+  }
+}

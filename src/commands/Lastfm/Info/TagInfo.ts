@@ -1,6 +1,9 @@
 import { InfoCommand } from "./InfoCommand";
 import { displayNumber } from "../../../lib/views/displays";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
+import { WordBlacklistService } from "../../../services/WordBlacklistService";
+import { TagNotAllowedError } from "../../../errors";
+import { ServiceRegistry } from "../../../services/ServicesRegistry";
 
 const args = {
   tag: new StringArgument({
@@ -22,8 +25,19 @@ export default class TagInfo extends InfoCommand<typeof args> {
 
   arguments = args;
 
+  wordBlacklistService = ServiceRegistry.get(WordBlacklistService);
+
   async run() {
     let tag = this.parsedArguments.tag;
+
+    await this.wordBlacklistService.saveServerBannedTagsInContext(this.ctx);
+
+    if (
+      this.settingsService.get("strictTagBans", { guildID: this.guild.id }) &&
+      !this.wordBlacklistService.isAllowed(this.ctx, tag, ["tags"])
+    ) {
+      throw new TagNotAllowedError();
+    }
 
     let tagInfo = await this.lastFMService.tagInfo(this.ctx, { tag });
 

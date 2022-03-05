@@ -1,4 +1,5 @@
 import gql from "graphql-tag";
+import { TagNotAllowedError } from "../../../errors";
 import { calculatePercent } from "../../../helpers/stats";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
@@ -9,6 +10,8 @@ import {
 } from "../../../lib/views/displays";
 import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingEmbed";
 import { TopArtists } from "../../../services/LastFM/converters/TopTypes";
+import { ServiceRegistry } from "../../../services/ServicesRegistry";
+import { WordBlacklistService } from "../../../services/WordBlacklistService";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 interface Overlap {
@@ -37,8 +40,19 @@ export default class Tag extends LastFMBaseCommand<typeof args> {
 
   slashCommand = true;
 
+  wordBlacklistService = ServiceRegistry.get(WordBlacklistService);
+
   async run() {
     const tag = this.parsedArguments.tag;
+
+    await this.wordBlacklistService.saveServerBannedTagsInContext(this.ctx);
+
+    if (
+      this.settingsService.get("strictTagBans", { guildID: this.guild.id }) &&
+      !this.wordBlacklistService.isAllowed(this.ctx, tag, ["tags"])
+    ) {
+      throw new TagNotAllowedError();
+    }
 
     const { requestable, perspective } = await this.getMentions({
       asCode: false,

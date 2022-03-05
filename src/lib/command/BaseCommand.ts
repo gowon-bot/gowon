@@ -61,6 +61,7 @@ import {
   SendOptions,
 } from "../../services/Discord/DiscordService";
 import { Payload } from "../context/Payload";
+import { SettingsService } from "../settings/SettingsService";
 
 export interface Variation {
   name: string;
@@ -198,6 +199,7 @@ export abstract class BaseCommand<ArgumentsType extends ArgumentsMap = {}>
   gowonService = ServiceRegistry.get(GowonService);
   discordService = ServiceRegistry.get(DiscordService);
   rollbarService = ServiceRegistry.get(RollbarService);
+  settingsService = ServiceRegistry.get(SettingsService);
   mirrorballService = ServiceRegistry.get(MirrorballService);
   analyticsCollector = ServiceRegistry.get(AnalyticsCollector);
   mirrorballUsersService = ServiceRegistry.get(MirrorballUsersService);
