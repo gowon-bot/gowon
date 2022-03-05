@@ -51,6 +51,13 @@ export class SettingsService extends BaseService {
     return this.cache[setting.name][stringScope];
   }
 
+  getByName(settingName: string, scope: Scope): string | undefined {
+    const settingKey = convertSettingNameToKey(settingName);
+
+    if (settingKey) return this.get(settingKey, scope);
+    return undefined;
+  }
+
   async set(
     ctx: GowonContext,
     settingName: SettingName,
@@ -89,4 +96,12 @@ export class SettingsService extends BaseService {
       this.cache[settingName][scope] = setting.value;
     }
   }
+}
+
+export function convertSettingNameToKey(
+  settingName: string
+): keyof SettingsMap | undefined {
+  return Object.keys(Settings).find(
+    (s) => Settings[s as keyof SettingsMap].name === settingName
+  ) as keyof SettingsMap | undefined;
 }

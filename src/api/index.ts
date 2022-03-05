@@ -1,44 +1,57 @@
 import express from "express";
 import { ApolloServer, Config } from "apollo-server-express";
-import { UsersService } from "../services/dbservices/UsersService";
 import { typeDefs } from "./graphql/schema.gql";
-import userResolvers from "./resolvers/userResolvers";
-import commandResolversFunc from "./resolvers/commandResolvers";
 import { IndexingWebhookService } from "./webhooks/IndexingWebhookService";
 import bodyParser from "body-parser";
-import { CommandRegistry } from "../lib/command/CommandRegistry";
 import { ServiceRegistry } from "../services/ServicesRegistry";
 import { AnalyticsCollector } from "../analytics/AnalyticsCollector";
 import gowonConfig from "../../config.json";
 import { SpotifyCodeResponse } from "../services/Spotify/SpotifyService.types";
 import { SpotifyWebhookService } from "./webhooks/SpotifyWebhookService";
 
+import userResolvers from "./resolvers/userResolvers";
+import commandResolvers from "./resolvers/commandResolvers";
+import settingsResolvers from "./resolvers/settingResolvers";
+import { GowonClient } from "../lib/GowonClient";
+import discordResolvers from "./resolvers/discordResolvers";
+import { GowonContext } from "../lib/context/Context";
+import { HeaderlessLogger } from "../lib/Logger";
+
 export const gowonAPIPort = gowonConfig.gowonAPIPort;
 
 export class GraphQLAPI {
-  usersService = ServiceRegistry.get(UsersService);
-  commandRegistry = CommandRegistry.getInstance();
   analyticsCollector = ServiceRegistry.get(AnalyticsCollector);
 
   private readonly spotifyRedirectRoute = "/spotify-login-success";
 
+  constructor(private gowonClient: GowonClient) {}
+
   async init() {
     const app = express();
 
-    const commandResolvers = commandResolversFunc(this.commandRegistry);
+    const ctx = new GowonContext({} as any);
+    ctx.dangerousSetCommand({ logger: new HeaderlessLogger() });
 
     const config: Config = {
       typeDefs,
       resolvers: {
         Query: {
           ...commandResolvers.queries,
+          ...settingsResolvers(this.gowonClient, ctx).queries,
+          ...discordResolvers(this.gowonClient).queries,
         },
         Mutation: {
           ...userResolvers.mutations,
+          ...settingsResolvers(this.gowonClient, ctx).mutations,
         },
       },
       introspection: true,
       playground: true,
+      context: ({ req }) => {
+        const doughnutID = req.headers["doughnut-discord-id"];
+
+        return { doughnutID };
+      },
     };
 
     const server = new ApolloServer(config);

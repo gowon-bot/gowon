@@ -1,9 +1,24 @@
 import { Setting } from "../../database/entity/Setting";
 
+type StringSettingType = "text" | "textshort" | "textlong";
+type SettingType = "toggle" | "role" | StringSettingType;
+
+interface SettingOptions {
+  friendlyName: string;
+  description: string;
+  category: string;
+
+  omitFromDashboard: boolean;
+  type: SettingType;
+}
+
 export abstract class BaseSetting<ScopeT = {}> {
   settingDB = Setting;
 
-  constructor(public name: string) {}
+  constructor(
+    public name: string,
+    public options: Partial<SettingOptions> = {}
+  ) {}
 
   async get(scope: ScopeT): Promise<Setting | undefined> {
     let whereClause = { name: this.name };

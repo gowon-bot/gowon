@@ -125,3 +125,9 @@ ${payload.isMessage() ? chalk`{bgGrey ${payload.source.content}}` : ""}
     }, {} as SimpleMap);
   }
 }
+
+export class HeaderlessLogger extends Logger {
+  log(context: string, msg?: any): void {
+    Logger.log(context, msg);
+  }
+}

@@ -1,4 +1,4 @@
-import { Client, User as DiscordUser } from "discord.js";
+import { Client, Guild, User as DiscordUser } from "discord.js";
 import { User } from "../database/entity/User";
 import { flatDeep } from "../helpers";
 import { GowonService } from "../services/GowonService";
@@ -98,5 +98,21 @@ export class GowonClient {
     return isUnicodeEmoji(resolvable)
       ? resolvable
       : this.client.emojis.resolve(resolvable)?.toString()!;
+  }
+
+  async canUserAdminGuild(guild: Guild, userID: string): Promise<boolean> {
+    try {
+      const guildMember = await guild.members.fetch(userID);
+
+      if (guildMember.permissions.has("ADMINISTRATOR")) return true;
+
+      const adminRole = this.settingsService.get("adminRole", {
+        guildID: guild.id,
+      });
+
+      return (adminRole && guildMember.roles.cache.has(adminRole)) || false;
+    } catch {
+      return false;
+    }
   }
 }

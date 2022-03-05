@@ -1,7 +1,9 @@
 import { Command } from "../../lib/command/Command";
 import { CommandRegistry } from "../../lib/command/CommandRegistry";
 
-export default (registry: CommandRegistry) => ({
+const registry = CommandRegistry.getInstance();
+
+export default {
   queries: {
     commands(_: any, { keywords }: { keywords: string }) {
       const commands = registry.deepList();
@@ -11,7 +13,7 @@ export default (registry: CommandRegistry) => ({
       return results.map(commandToData);
     },
   },
-});
+};
 
 export interface CommandResponse {
   id: string;

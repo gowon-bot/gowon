@@ -63,3 +63,11 @@ export type ReactionCollectorFilter = (
   reaction: MessageReaction,
   user: User
 ) => boolean;
+
+export function serverIconURL(guildID: string, icon: string) {
+  if (icon.startsWith("a_")) {
+    return `https://cdn.discordapp.com/icons/${guildID}/${icon}.gif?size=64`;
+  } else {
+    return `https://cdn.discordapp.com/icons/${guildID}/${icon}.webp?size=64`;
+  }
+}
