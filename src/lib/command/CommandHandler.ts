@@ -48,23 +48,6 @@ export class CommandHandler {
   }
 
   async handle(message: Message): Promise<void> {
-    if (
-      !(message.content.toLowerCase() === "not good bot") &&
-      (message.content.toLowerCase() === "good bot" ||
-        message.content.toLowerCase() === "thank you bot" ||
-        message.content.toLowerCase() === "thanks bot" ||
-        message.content.toLowerCase() === "not bad bot")
-    ) {
-      message.react("🥰");
-    } else if (
-      message.content.toLowerCase() === "bad bot" ||
-      message.content.toLowerCase() === "stupid bot" ||
-      message.content.toLowerCase() === "fuck you bot" ||
-      message.content.toLowerCase() === "not good bot"
-    ) {
-      message.react("😔");
-    }
-
     await this.runHelpCommandIfMentioned(message);
     await this.runPrefixCommandIfMentioned(message, this.client);
     await this.gers(message);

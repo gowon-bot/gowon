@@ -33,6 +33,14 @@ export class GuildEventService extends BaseService {
     Logger.log("GuildEventService", `tearing down Gowon for ${guild.name}`);
 
     ctx.dangerousSetCommand({ message: { guild } });
+
+    const mutation = gql`
+      mutation guildLeave($guildID: String!) {
+        deleteGuild(guildID: $guildID)
+      }
+    `;
+
+    this.mirrorballService.mutate(ctx, mutation, { guildID: guild.id });
   }
 
   public async handleNewUser(ctx: GowonContext, guildMember: GuildMember) {

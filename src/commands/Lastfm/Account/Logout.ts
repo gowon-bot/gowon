@@ -14,7 +14,7 @@ export default class Logout extends LastFMBaseCommand {
     const embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor("Log out"))
       .setDescription(
-        "Are you sure you want to log out? This will delete **all** your downloaded data!"
+        "Are you sure you want to log out? This will delete all your stored data!"
       );
 
     const confirmationEmbed = new ConfirmationEmbed(this.ctx, embed);
