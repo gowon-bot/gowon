@@ -2,7 +2,7 @@ import { FriendsChildCommand } from "../FriendsChildCommand";
 import gql from "graphql-tag";
 import { RatingResponse } from "../../Mirrorball/RateYourMusic/connectors";
 import { displayNumber, displayRating } from "../../../../lib/views/displays";
-import { LogicError } from "../../../../errors";
+import { LogicError } from "../../../../errors/errors";
 import { mean } from "mathjs";
 import { asyncMap } from "../../../../helpers";
 import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";

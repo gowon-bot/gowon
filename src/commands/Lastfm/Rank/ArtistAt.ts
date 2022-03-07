@@ -1,5 +1,5 @@
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
-import { LogicError } from "../../../errors";
+import { LogicError } from "../../../errors/errors";
 import { validators } from "../../../lib/validation/validators";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { displayNumber } from "../../../lib/views/displays";

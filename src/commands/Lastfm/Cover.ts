@@ -1,4 +1,4 @@
-import { LogicError } from "../../errors";
+import { LogicError } from "../../errors/errors";
 import { LinkGenerator } from "../../helpers/lastFM";
 import { standardMentions } from "../../lib/context/arguments/mentionTypes/mentions";
 import { prefabArguments } from "../../lib/context/arguments/prefabArguments";

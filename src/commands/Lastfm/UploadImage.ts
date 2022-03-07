@@ -1,4 +1,4 @@
-import { LogicError } from "../../errors";
+import { LogicError } from "../../errors/errors";
 import { LinkGenerator } from "../../helpers/lastFM";
 import { prefabArguments } from "../../lib/context/arguments/prefabArguments";
 import { LastFMBaseCommand } from "./LastFMBaseCommand";

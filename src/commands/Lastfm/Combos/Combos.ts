@@ -1,5 +1,5 @@
 import { ComboChildCommand } from "./ComboChildCommand";
-import { LogicError } from "../../../errors";
+import { LogicError } from "../../../errors/errors";
 import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingEmbed";
 import { displayNumberedList } from "../../../lib/views/displays";
 import { ArtistsService } from "../../../services/mirrorball/services/ArtistsService";

@@ -1,5 +1,5 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
-import { LogicError } from "../../../errors";
+import { LogicError } from "../../../errors/errors";
 import { displayNumber } from "../../../lib/views/displays";
 
 export class ContentiousCrowns extends CrownsChildCommand {

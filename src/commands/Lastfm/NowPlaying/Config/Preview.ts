@@ -1,4 +1,4 @@
-import { LogicError } from "../../../../errors";
+import { LogicError } from "../../../../errors/errors";
 import { sanitizeForDiscord } from "../../../../helpers/discord";
 import { LinkGenerator } from "../../../../helpers/lastFM";
 import { StringArgument } from "../../../../lib/context/arguments/argumentTypes/StringArgument";

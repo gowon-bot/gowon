@@ -18,7 +18,7 @@ import { SimpleMap } from "../../helpers/types";
 import {
   NotAuthenticatedWithSpotifyError,
   SpotifyConnectionError,
-} from "../../errors";
+} from "../../errors/spotify";
 import { Logger } from "../../lib/Logger";
 import { GowonContext } from "../../lib/context/Context";
 import { BaseSpotifyService } from "./BaseSpotifyService";
@@ -32,6 +32,7 @@ import { SpotifyTrack } from "./converters/Track";
 import { SpotifyItemCollection } from "./converters/ItemCollection";
 import { SpotifyPlaylist } from "./converters/Playlist";
 import { SpotifyToken } from "./converters/Auth";
+import { parseError } from "./parseError";
 
 export type SpotifyServiceContext = GowonContext<{
   mutable?: { spotifyToken?: SpotifyToken };
@@ -185,12 +186,16 @@ export class SpotifyService extends BaseSpotifyService<SpotifyServiceContext> {
     }
 
     if (`${response.status}`.startsWith("4")) {
-      throw new SpotifyConnectionError(ctx.command.prefix);
+      throw await parseError(ctx, response);
     }
 
-    return response.status !== 204 && !options.expectNoContent
-      ? ((await response.json()) as T)
-      : undefined;
+    if (response.status === 204 || options.expectNoContent) {
+      return undefined;
+    }
+
+    const json = (await response.json()) as T;
+
+    return json;
   }
 
   // Search
@@ -362,6 +367,20 @@ export class SpotifyService extends BaseSpotifyService<SpotifyServiceContext> {
       params: { ids: [id] },
       expectNoContent: true,
     });
+  }
+
+  async checkIfSongIsInLibrary(
+    ctx: SpotifyServiceContext,
+    id: SpotifyID
+  ): Promise<boolean> {
+    this.ensureAuthenticated(ctx);
+
+    const response = (await this.request(ctx, {
+      path: "me/tracks/contains",
+      params: { ids: [id] },
+    })) as [boolean];
+
+    return response[0];
   }
 
   getKeywords(params: SpotifySearchParams<any>): string {

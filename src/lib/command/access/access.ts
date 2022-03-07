@@ -1,5 +1,5 @@
 import { User } from "../../../database/entity/User";
-import { AccessDeniedError, CommandInBetaError } from "../../../errors";
+import { AccessDeniedError, CommandInBetaError } from "../../../errors/errors";
 import { flatDeep } from "../../../helpers";
 import { CommandPermission, getPermissions } from "./permissions";
 import { CommandAccessRole, CommandAccessRoleName, getRoles } from "./roles";

@@ -4,7 +4,7 @@ import {
   displayDate,
   displayNumberedList,
 } from "../../../../lib/views/displays";
-import { LogicError } from "../../../../errors";
+import { LogicError } from "../../../../errors/errors";
 import { MirrorballUser } from "../../../../services/mirrorball/MirrorballTypes";
 import { convertMirrorballDate } from "../../../../helpers/mirrorball";
 import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";

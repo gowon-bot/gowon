@@ -1,6 +1,6 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
 import { CrownEventString } from "../../../services/dbservices/CrownsHistoryService";
-import { LogicError } from "../../../errors";
+import { LogicError } from "../../../errors/errors";
 import { CrownEvent } from "../../../database/entity/meta/CrownEvent";
 import { displayDate } from "../../../lib/views/displays";
 import { asyncMap } from "../../../helpers";

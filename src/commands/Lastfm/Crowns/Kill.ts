@@ -1,5 +1,5 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
-import { LogicError } from "../../../errors";
+import { LogicError } from "../../../errors/errors";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { ConfirmationEmbed } from "../../../lib/views/embeds/ConfirmationEmbed";

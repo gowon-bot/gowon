@@ -7,7 +7,7 @@ import {
   RecordNotFoundError,
   DuplicateRecordError,
   LogicError,
-} from "../../errors";
+} from "../../errors/errors";
 import { Permission } from "../../database/entity/Permission";
 import { Can } from "../../lib/permissions/Can";
 import { QueryFailedError } from "typeorm";

@@ -1,5 +1,5 @@
 import { ArtistRedirect } from "../../database/entity/ArtistRedirect";
-import { RecordNotFoundError } from "../../errors";
+import { RecordNotFoundError } from "../../errors/errors";
 import { GowonContext } from "../../lib/context/Context";
 import { displayNumber } from "../../lib/views/displays";
 import { BaseService } from "../BaseService";

@@ -1,4 +1,4 @@
-import { LogicError } from "../../../errors";
+import { LogicError } from "../../../errors/errors";
 import { Variation } from "../../../lib/command/BaseCommand";
 import { Paginator } from "../../../lib/paginators/Paginator";
 import { displayNumber } from "../../../lib/views/displays";

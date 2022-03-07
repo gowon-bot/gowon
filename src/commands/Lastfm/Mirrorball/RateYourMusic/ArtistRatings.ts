@@ -1,4 +1,4 @@
-import { LogicError, UnknownMirrorballError } from "../../../../errors";
+import { LogicError, UnknownMirrorballError } from "../../../../errors/errors";
 import {
   ArtistRatingsConnector,
   ArtistRatingsParams,

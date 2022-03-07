@@ -1,7 +1,10 @@
 import { RatingsParams, RatingsResponse, RatingsConnector } from "./connectors";
 import { RateYourMusicIndexingChildCommand } from "./RateYourMusicChildCommand";
 import { PaginatedCache } from "../../../../lib/paginators/PaginatedCache";
-import { NoRatingsError, UnknownMirrorballError } from "../../../../errors";
+import {
+  NoRatingsError,
+  UnknownMirrorballError,
+} from "../../../../errors/errors";
 import { MirrorballRating } from "../../../../services/mirrorball/MirrorballTypes";
 import { displayRating } from "../../../../lib/views/displays";
 import { ScrollingEmbed } from "../../../../lib/views/embeds/ScrollingEmbed";

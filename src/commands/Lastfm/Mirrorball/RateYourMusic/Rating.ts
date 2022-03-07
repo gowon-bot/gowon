@@ -1,4 +1,4 @@
-import { LogicError, UnknownMirrorballError } from "../../../../errors";
+import { LogicError, UnknownMirrorballError } from "../../../../errors/errors";
 import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";
 import { displayRating } from "../../../../lib/views/displays";
 import { RatingConnector, RatingParams, RatingResponse } from "./connectors";

@@ -1,4 +1,4 @@
-import { LogicError } from "../../errors";
+import { LogicError } from "../../errors/errors";
 import { BaseCommand, Variation } from "../../lib/command/BaseCommand";
 import { DiscordUserArgument } from "../../lib/context/arguments/argumentTypes/discord/DiscordUserArgument";
 import { UserStringArgument } from "../../lib/context/arguments/argumentTypes/UserStringArgument";

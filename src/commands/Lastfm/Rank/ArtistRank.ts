@@ -5,7 +5,7 @@ import {
   displayNumber,
   displayNumberedList,
 } from "../../../lib/views/displays";
-import { LogicError } from "../../../errors";
+import { LogicError } from "../../../errors/errors";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { asyncMap } from "../../../helpers";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";

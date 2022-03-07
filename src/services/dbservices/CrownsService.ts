@@ -13,7 +13,7 @@ import {
   ArtistNotCrownBannedError,
   NotBannedError,
   RecordNotFoundError,
-} from "../../errors";
+} from "../../errors/errors";
 import { User as DiscordUser } from "discord.js";
 import { BaseService } from "../BaseService";
 import { FindManyOptions, ILike, In } from "typeorm";

@@ -1,6 +1,6 @@
 import { promisify } from "util";
 import _glob from "glob";
-import { LogicError } from "../errors";
+import { LogicError } from "../errors/errors";
 import { BaseCommand } from "../lib/command/BaseCommand";
 import { SimpleMap } from "../helpers/types";
 const glob = promisify(_glob);

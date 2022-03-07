@@ -1,5 +1,5 @@
 import { Guild } from "discord.js";
-import { LogicError } from "../../errors";
+import { LogicError } from "../../errors/errors";
 import { GowonContext } from "../../lib/context/Context";
 import { GowonClient } from "../../lib/GowonClient";
 import { Settings } from "../../lib/settings/Settings";

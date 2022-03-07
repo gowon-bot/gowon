@@ -64,7 +64,7 @@ import {
   LastFMConnectionError,
   LastFMError,
   BadLastFMResponseError,
-} from "../../errors";
+} from "../../errors/errors";
 import { BaseService } from "../BaseService";
 import { toInt } from "../../helpers/lastFM";
 import { MirrorballCacheService } from "../mirrorball/MirrorballCacheService";

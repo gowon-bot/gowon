@@ -10,8 +10,6 @@ export class BaseSpotifyService<
   readonly apiURL = "https://api.spotify.com/v1/";
 
   protected generateRedirectURI(): string {
-    console.log(config.spotifyRedirectHost);
-
     return (
       (config.spotifyRedirectHost || config.gowonAPIURL) + "/api/spotifyWebhook"
     );

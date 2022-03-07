@@ -1,7 +1,7 @@
 import { BaseCommand } from "../../lib/command/BaseCommand";
 import { Stopwatch } from "../../helpers";
 import { Message, MessageEmbed } from "discord.js";
-import { LogicError } from "../../errors";
+import { LogicError } from "../../errors/errors";
 
 export default class Status extends BaseCommand {
   idSeed = "Fill in a unique idSeed here";

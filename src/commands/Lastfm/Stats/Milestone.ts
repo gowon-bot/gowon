@@ -1,6 +1,6 @@
 import { getOrdinal } from "../../../helpers";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
-import { BadLastFMResponseError } from "../../../errors";
+import { BadLastFMResponseError } from "../../../errors/errors";
 import { trackEmbed } from "../../../lib/views/embeds";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";

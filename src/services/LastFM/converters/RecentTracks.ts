@@ -1,5 +1,5 @@
 import { fromUnixTime } from "date-fns";
-import { BadLastFMResponseError } from "../../../errors";
+import { BadLastFMResponseError } from "../../../errors/errors";
 import {
   MirrorballPageInfo,
   MirrorballPlay,

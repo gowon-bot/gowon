@@ -1,5 +1,5 @@
 import { formatDistance, fromUnixTime } from "date-fns";
-import { PM2ConnectionError } from "../../errors";
+import { PM2ConnectionError } from "../../errors/errors";
 import { BaseCommand } from "../../lib/command/BaseCommand";
 import { PM2Service } from "../../services/PM2Service";
 import { ServiceRegistry } from "../../services/ServicesRegistry";

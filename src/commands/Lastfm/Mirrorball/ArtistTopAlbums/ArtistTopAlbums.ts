@@ -1,4 +1,4 @@
-import { MirrorballError, LogicError } from "../../../../errors";
+import { MirrorballError, LogicError } from "../../../../errors/errors";
 import { SimpleScrollingEmbed } from "../../../../lib/views/embeds/SimpleScrollingEmbed";
 import { LinkGenerator } from "../../../../helpers/lastFM";
 import { MirrorballBaseCommand } from "../../../../lib/indexing/MirrorballCommands";

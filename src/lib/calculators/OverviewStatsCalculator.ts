@@ -2,7 +2,7 @@ import { CrownsService } from "../../services/dbservices/CrownsService";
 import { calculatePercent } from "../../helpers/stats";
 import { CrownRankResponse } from "../../database/entity/Crown";
 import { log } from "mathjs";
-import { LogicError } from "../../errors";
+import { LogicError } from "../../errors/errors";
 import { differenceInDays } from "date-fns";
 import { toInt } from "../../helpers/lastFM";
 import { LastFMService } from "../../services/LastFM/LastFMService";

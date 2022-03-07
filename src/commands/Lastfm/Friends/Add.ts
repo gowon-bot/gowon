@@ -1,5 +1,5 @@
 import { FriendsChildCommand } from "./FriendsChildCommand";
-import { LogicError } from "../../../errors";
+import { LogicError } from "../../../errors/errors";
 import { asyncFilter, asyncMap } from "../../../helpers";
 import { SimpleMap } from "../../../helpers/types";
 import { User as DiscordUser } from "discord.js";

@@ -5,7 +5,7 @@ import {
   TagAlreadyBannedError,
   TagBannedByDefaultError,
   TagNotBannedError,
-} from "../errors";
+} from "../errors/errors";
 import { GowonContext } from "../lib/context/Context";
 
 type WordBlacklistScope = "base" | "tags";

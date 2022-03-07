@@ -1,7 +1,7 @@
 import { FriendsChildCommand } from "../FriendsChildCommand";
 import { MultiRequester } from "../../../../lib/MultiRequester";
 import { LinkGenerator } from "../../../../helpers/lastFM";
-import { LastFMEntityNotFoundError } from "../../../../errors";
+import { LastFMEntityNotFoundError } from "../../../../errors/errors";
 import { displayNumber } from "../../../../lib/views/displays";
 import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";
 

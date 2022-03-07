@@ -1,5 +1,5 @@
 import { add } from "date-fns";
-import { BadLastFMResponseError, LogicError } from "../../errors";
+import { BadLastFMResponseError, LogicError } from "../../errors/errors";
 import { LastFMAPIService, Requestable } from "./LastFMAPIService";
 import {
   AlbumInfoParams,

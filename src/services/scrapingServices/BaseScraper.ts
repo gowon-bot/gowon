@@ -2,7 +2,7 @@ import { BaseService } from "../BaseService";
 import axios from "axios";
 import cheerio from "cheerio";
 import chalk from "chalk";
-import { ClientError } from "../../errors";
+import { ClientError } from "../../errors/errors";
 import { GowonContext } from "../../lib/context/Context";
 
 export class ScrapingError extends ClientError {

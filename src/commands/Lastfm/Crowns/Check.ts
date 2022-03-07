@@ -6,7 +6,7 @@ import {
   InactiveError,
   OptedOutError,
   PurgatoryError,
-} from "../../../errors";
+} from "../../../errors/errors";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 
 const args = {

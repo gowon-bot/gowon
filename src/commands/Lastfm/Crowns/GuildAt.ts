@@ -1,5 +1,5 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
-import { LogicError } from "../../../errors";
+import { LogicError } from "../../../errors/errors";
 import { toInt } from "../../../helpers/lastFM";
 import { displayNumber } from "../../../lib/views/displays";
 import { asyncMap } from "../../../helpers";

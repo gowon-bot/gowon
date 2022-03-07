@@ -1,7 +1,7 @@
 import { BaseService } from "./BaseService";
 import config from "../../config.json";
 import pm2, { ProcessDescription } from "pm2";
-import { PM2ConnectionError } from "../errors";
+import { PM2ConnectionError } from "../errors/errors";
 import { GowonContext } from "../lib/context/Context";
 
 export class PM2Service extends BaseService {

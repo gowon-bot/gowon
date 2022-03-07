@@ -4,7 +4,7 @@ import {
   RatingsTasteConnector,
 } from "./connectors";
 import { RateYourMusicIndexingChildCommand } from "./RateYourMusicChildCommand";
-import { LogicError, NoRatingsError } from "../../../../errors";
+import { LogicError, NoRatingsError } from "../../../../errors/errors";
 import {
   RatingsTasteCalculator,
   TasteRating,

@@ -1,5 +1,5 @@
 import { JumbleChildCommand } from "./JumbleChildCommand";
-import { LogicError } from "../../../errors";
+import { LogicError } from "../../../errors/errors";
 import { abbreviateNumber, shuffle } from "../../../helpers";
 import { JumbledArtist, jumbleRedisKey } from "./JumbleParentCommand";
 import { Variation } from "../../../lib/command/BaseCommand";

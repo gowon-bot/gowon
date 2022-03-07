@@ -1,4 +1,4 @@
-import { MirrorballError } from "../../../../errors";
+import { MirrorballError } from "../../../../errors/errors";
 import { toInt } from "../../../../helpers/lastFM";
 import { convertMirrorballDate } from "../../../../helpers/mirrorball";
 import { standardMentions } from "../../../../lib/context/arguments/mentionTypes/mentions";

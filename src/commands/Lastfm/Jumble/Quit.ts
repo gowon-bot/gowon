@@ -1,6 +1,6 @@
 import { JumbleChildCommand } from "./JumbleChildCommand";
 import { jumbleRedisKey, JumbledArtist } from "./JumbleParentCommand";
-import { LogicError } from "../../../errors";
+import { LogicError } from "../../../errors/errors";
 
 export class Quit extends JumbleChildCommand {
   idSeed = "clc sorn";

@@ -2,7 +2,7 @@ import {
   MirrorballError,
   LogicError,
   UpdatingDisabledBecauseOfIssueModeError,
-} from "../../../../errors";
+} from "../../../../errors/errors";
 import { Stopwatch } from "../../../../helpers";
 import {
   ConcurrencyService,

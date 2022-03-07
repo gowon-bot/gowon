@@ -1,4 +1,4 @@
-import { LogicError } from "../../errors";
+import { LogicError } from "../../errors/errors";
 import { CommandAccessRoleName, roles } from "../../lib/command/access/roles";
 import { BaseCommand, Variation } from "../../lib/command/BaseCommand";
 import { DiscordUserArgument } from "../../lib/context/arguments/argumentTypes/discord/DiscordUserArgument";

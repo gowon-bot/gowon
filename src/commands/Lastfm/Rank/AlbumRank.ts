@@ -3,7 +3,7 @@ import {
   displayNumber,
   displayNumberedList,
 } from "../../../lib/views/displays";
-import { LogicError } from "../../../errors";
+import { LogicError } from "../../../errors/errors";
 import { sanitizeForDiscord } from "../../../helpers/discord";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";

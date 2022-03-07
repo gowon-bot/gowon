@@ -10,9 +10,9 @@ import {
   RedisServiceContextOptions,
 } from "../redis/RedisService";
 import { BaseSpotifyService } from "./BaseSpotifyService";
-import { NotAuthenticatedWithSpotifyError } from "../../errors";
 import { SpotifyToken } from "./converters/Auth";
 import { GowonContext } from "../../lib/context/Context";
+import { NotAuthenticatedWithSpotifyError } from "../../errors/spotify";
 
 type SpotifyAuthenticationServiceContext = GowonContext<{
   constants?: { redisOptions?: RedisServiceContextOptions };
@@ -22,6 +22,7 @@ export class SpotifyAuthenticationService extends BaseSpotifyService<SpotifyAuth
   private readonly scope = [
     "playlist-modify-public",
     "user-library-modify",
+    "user-library-read",
     "user-modify-playback-state",
     "playlist-read-private",
     "playlist-modify-public",

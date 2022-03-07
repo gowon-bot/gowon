@@ -1,5 +1,5 @@
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
-import { LogicError } from "../../../errors";
+import { LogicError } from "../../../errors/errors";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 
 const args = {

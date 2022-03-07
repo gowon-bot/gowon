@@ -35,7 +35,10 @@ export default class SpotifyLogin extends SpotifyBaseCommand {
     const embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor("Login with Spotify"))
       .setDescription(
-        `Click ${displayLink("here", url)} to authenticate with Spotify!`
+        `To login, ${displayLink(
+          "click the link",
+          url
+        )} and authenticate with Spotify!`
       );
 
     const sentMessage = await this.dmAuthor(embed);

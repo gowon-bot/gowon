@@ -1,4 +1,4 @@
-import { LogicError } from "../../../errors";
+import { LogicError } from "../../../errors/errors";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { CrownsChildCommand } from "./CrownsChildCommand";
 

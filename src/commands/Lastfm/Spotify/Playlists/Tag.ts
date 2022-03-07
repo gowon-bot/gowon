@@ -1,4 +1,4 @@
-import { LogicError } from "../../../../errors";
+import { LogicError } from "../../../../errors/errors";
 import { EmojisArgument } from "../../../../lib/context/arguments/argumentTypes/discord/EmojisArgument";
 import { StringArgument } from "../../../../lib/context/arguments/argumentTypes/StringArgument";
 import { removeEmojisFromString } from "../../../../lib/context/arguments/parsers/EmojiParser";
@@ -47,8 +47,6 @@ export class Tag extends PlaylistChildCommand<typeof args> {
         p.name.toLowerCase().replaceAll(/\s+/g, " ") ===
         playlistName.toLowerCase().replaceAll(/\s+/g, " ")
     );
-
-    console.log(foundPlaylist);
 
     if (!foundPlaylist) {
       throw new LogicError(`Couldn't find a playlist with that name!`);

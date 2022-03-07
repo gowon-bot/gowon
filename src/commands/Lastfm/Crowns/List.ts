@@ -1,6 +1,6 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
 import { getOrdinal } from "../../../helpers";
-import { LogicError } from "../../../errors";
+import { LogicError } from "../../../errors/errors";
 import { toInt } from "../../../helpers/lastFM";
 import {
   displayNumber,

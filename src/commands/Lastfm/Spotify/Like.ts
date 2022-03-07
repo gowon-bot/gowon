@@ -1,6 +1,7 @@
-import { LogicError } from "../../../errors";
+import { LogicError } from "../../../errors/errors";
 import { Variation } from "../../../lib/command/BaseCommand";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
+import { LineConsolidator } from "../../../lib/LineConsolidator";
 import { AuthenticatedSpotifyBaseCommand } from "./SpotifyBaseCommands";
 
 const args = {
@@ -46,6 +47,11 @@ export default class Like extends AuthenticatedSpotifyBaseCommand<typeof args> {
       );
     }
 
+    const trackInLibrary = await this.spotifyService.checkIfSongIsInLibrary(
+      this.ctx,
+      track.uri.asID
+    );
+
     if (unlike) {
       await this.spotifyService.removeTrackFromLibrary(
         this.ctx,
@@ -55,14 +61,35 @@ export default class Like extends AuthenticatedSpotifyBaseCommand<typeof args> {
       await this.spotifyService.saveTrackToLibrary(this.ctx, track.uri.asID);
     }
 
+    const lineConsolidator = new LineConsolidator();
+
+    const artistName = track.artists.primary.name.strong();
+    const trackName = track.name.italic();
+
+    lineConsolidator.addLines(
+      {
+        shouldDisplay: unlike && trackInLibrary,
+        string: `💔 Succesfully unliked:\n${trackName} by ${artistName}!`,
+      },
+      {
+        shouldDisplay: unlike && !trackInLibrary,
+        string: `❤️‍🩹 Already not in your library:\n${trackName} by ${artistName}`,
+      },
+      {
+        shouldDisplay: !unlike && !trackInLibrary,
+        string: `❤️ Succesfully liked:\n${trackName} by ${artistName}!`,
+      },
+      {
+        shouldDisplay: !unlike && trackInLibrary,
+        string: `💞 Already in your library:\n${trackName} by ${artistName}`,
+      }
+    );
+
     const embed = this.newEmbed()
       .setAuthor(
         this.generateEmbedAuthor(`Spotify ${unlike ? "un" : ""}like song`)
       )
-      .setDescription(
-        `Succesfully ${unlike ? "un" : ""}liked:
-${track.name.italic()} by ${track.artists.primary.name.strong()}!`
-      )
+      .setDescription(lineConsolidator.consolidate())
       .setThumbnail(track.album.images.largest.url);
 
     await this.send(embed);

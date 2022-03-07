@@ -1,4 +1,4 @@
-import { LogicError } from "../../../../errors";
+import { LogicError } from "../../../../errors/errors";
 import { EmojiMention } from "../../../../lib/context/arguments/parsers/EmojiParser";
 import { EmojisArgument } from "../../../../lib/context/arguments/argumentTypes/discord/EmojisArgument";
 import { StringArgument } from "../../../../lib/context/arguments/argumentTypes/StringArgument";

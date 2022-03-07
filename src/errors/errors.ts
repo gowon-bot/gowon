@@ -1,9 +1,9 @@
-import { RawLastFMErrorResponse } from "./services/LastFM/LastFMService.types";
-import { parseError, parseErrorSix } from "./helpers/error";
+import { RawLastFMErrorResponse } from "../services/LastFM/LastFMService.types";
+import { parseError, parseErrorSix } from "../helpers/error";
 import { Response } from "node-fetch";
-import { displayNumber } from "./lib/views/displays";
-import { Emoji } from "./lib/Emoji";
-import { Perspective } from "./lib/Perspective";
+import { displayNumber } from "../lib/views/displays";
+import { Emoji } from "../lib/Emoji";
+import { Perspective } from "../lib/Perspective";
 
 export abstract class ClientError extends Error {
   name = "ClientError";
@@ -367,17 +367,6 @@ export class LastFMReverseLookupError extends ClientError {
   }
 }
 
-export class SpotifyConnectionError extends ClientError {
-  name = "SpotifyConnectionError";
-
-  constructor(prefix: string) {
-    super(
-      "There was an issue connecting to Spotify, please try again in a few moments",
-      `If the issue persists, please let us know in the support server (${prefix}help)`
-    );
-  }
-}
-
 export class AlreadyImportingRatingsError extends ClientError {
   name = "AlreadyImportingRatingsError";
 
@@ -470,24 +459,6 @@ export class IndexingDisabledBecauseOfIssueModeError extends ClientError {
     super(
       "Because Last.fm is experiencing a high degree of errors right now, indexing has been disabled to prevent data corruption.\n\nPlease try again later."
     );
-  }
-}
-
-export class NotAuthenticatedWithSpotifyError extends ClientError {
-  name = "NotAuthenticatedWithSpotifyError";
-
-  constructor(prefix: string) {
-    super(
-      `You need to be authenticated with Spotify in order to run this command! Please login with \`${prefix}slogin\``
-    );
-  }
-}
-
-export class NotASpotifyLinkError extends ClientError {
-  name = "NotASpotifyLinkError";
-
-  constructor() {
-    super(`The message you replied to doesn't contain a Spotify link!`);
   }
 }
 

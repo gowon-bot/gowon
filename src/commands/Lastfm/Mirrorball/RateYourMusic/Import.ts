@@ -2,7 +2,7 @@ import {
   AlreadyImportingRatingsError,
   CannotBeUsedAsASlashCommand,
   LogicError,
-} from "../../../../errors";
+} from "../../../../errors/errors";
 import {
   ImportRatingsConnector,
   ImportRatingsParams,

@@ -3,7 +3,7 @@ import { Command } from "../../../lib/command/Command";
 import {
   CommandNotFoundError,
   CannotBeUsedAsASlashCommand,
-} from "../../../errors";
+} from "../../../errors/errors";
 import { Permission } from "../../../database/entity/Permission";
 import { User as DiscordUser, Role } from "discord.js";
 import { User } from "../../../database/entity/User";

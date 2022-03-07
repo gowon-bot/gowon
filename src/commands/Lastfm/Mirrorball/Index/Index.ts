@@ -2,7 +2,7 @@ import {
   MirrorballError,
   LogicError,
   IndexingDisabledBecauseOfIssueModeError,
-} from "../../../../errors";
+} from "../../../../errors/errors";
 import { ConfirmationEmbed } from "../../../../lib/views/embeds/ConfirmationEmbed";
 import {
   ConcurrencyService,

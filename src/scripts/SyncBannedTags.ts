@@ -1,7 +1,7 @@
 import { Message } from "discord.js";
 import fetch from "node-fetch";
 import streamToString from "stream-to-string";
-import { LogicError } from "../errors";
+import { LogicError } from "../errors/errors";
 import { GowonContext } from "../lib/context/Context";
 import { ServiceRegistry } from "../services/ServicesRegistry";
 import { WordBlacklistService } from "../services/WordBlacklistService";

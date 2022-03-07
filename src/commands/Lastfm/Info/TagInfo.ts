@@ -2,7 +2,7 @@ import { InfoCommand } from "./InfoCommand";
 import { displayNumber } from "../../../lib/views/displays";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { WordBlacklistService } from "../../../services/WordBlacklistService";
-import { TagNotAllowedError } from "../../../errors";
+import { TagNotAllowedError } from "../../../errors/errors";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 
 const args = {

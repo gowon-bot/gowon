@@ -1,5 +1,5 @@
 import { sub } from "date-fns";
-import { LogicError } from "../../../errors";
+import { LogicError } from "../../../errors/errors";
 import { ReportCalculator } from "../../../lib/calculators/ReportCalculator";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { Paginator } from "../../../lib/paginators/Paginator";

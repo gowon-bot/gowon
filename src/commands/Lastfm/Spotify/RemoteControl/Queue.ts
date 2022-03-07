@@ -1,4 +1,4 @@
-import { LogicError } from "../../../../errors";
+import { LogicError } from "../../../../errors/errors";
 import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";
 import { AuthenticatedSpotifyBaseCommand } from "../SpotifyBaseCommands";
 

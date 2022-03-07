@@ -1,7 +1,7 @@
 import { LastFMBaseChildCommand } from "../LastFMBaseCommand";
 import { FriendsService } from "../../../services/dbservices/FriendsService";
 import { User } from "../../../database/entity/User";
-import { LogicError } from "../../../errors";
+import { LogicError } from "../../../errors/errors";
 import { Requestable } from "../../../services/LastFM/LastFMAPIService";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";

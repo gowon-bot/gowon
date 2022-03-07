@@ -4,7 +4,7 @@ import {
   UsernameNotRegisteredError,
   AlreadyLoggedOutError,
   RecordNotFoundError,
-} from "../../errors";
+} from "../../errors/errors";
 import { BaseService } from "../BaseService";
 import { Perspective } from "../../lib/Perspective";
 import { ILike } from "typeorm";

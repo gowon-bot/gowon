@@ -1,4 +1,4 @@
-import { MirrorballError } from "../../../../../errors";
+import { MirrorballError } from "../../../../../errors/errors";
 import { Variation } from "../../../../../lib/command/BaseCommand";
 import { VARIATIONS } from "../../../../../lib/command/variations";
 import { prefabArguments } from "../../../../../lib/context/arguments/prefabArguments";

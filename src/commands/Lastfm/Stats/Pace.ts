@@ -1,6 +1,6 @@
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { PaceCalculator } from "../../../lib/calculators/PaceCalculator";
-import { LogicError } from "../../../errors";
+import { LogicError } from "../../../errors/errors";
 import { isBefore, isValid } from "date-fns";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";

@@ -1,4 +1,4 @@
-import { CommandNotFoundError, LogicError } from "../../../errors";
+import { CommandNotFoundError, LogicError } from "../../../errors/errors";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { PermissionsChildCommand } from "./PermissionsChildCommand";
 

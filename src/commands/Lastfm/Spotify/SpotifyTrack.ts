@@ -1,4 +1,4 @@
-import { LogicError } from "../../../errors";
+import { LogicError } from "../../../errors/errors";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { SpotifySearchParams } from "../../../services/Spotify/SpotifyService";

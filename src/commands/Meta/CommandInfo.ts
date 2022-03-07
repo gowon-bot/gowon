@@ -1,4 +1,4 @@
-import { CommandNotFoundError } from "../../errors";
+import { CommandNotFoundError } from "../../errors/errors";
 import { StringArgument } from "../../lib/context/arguments/argumentTypes/StringArgument";
 import { Validation } from "../../lib/validation/ValidationChecker";
 import { validators } from "../../lib/validation/validators";

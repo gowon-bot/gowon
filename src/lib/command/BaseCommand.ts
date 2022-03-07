@@ -15,7 +15,7 @@ import {
   UnknownError,
   UsernameNotRegisteredError,
   SenderUserNotAuthenticatedError,
-} from "../../errors";
+} from "../../errors/errors";
 import { GowonService } from "../../services/GowonService";
 import { CommandGroup } from "./CommandGroup";
 import { Logger } from "../Logger";

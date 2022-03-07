@@ -1,6 +1,6 @@
 import { LinkGenerator } from "../../../helpers/lastFM";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
-import { RecordNotFoundError } from "../../../errors";
+import { RecordNotFoundError } from "../../../errors/errors";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 

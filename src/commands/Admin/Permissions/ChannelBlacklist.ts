@@ -1,5 +1,5 @@
 import { TextChannel } from "discord.js";
-import { CannotBeUsedAsASlashCommand } from "../../../errors";
+import { CannotBeUsedAsASlashCommand } from "../../../errors/errors";
 import { Variation } from "../../../lib/command/BaseCommand";
 import { validators } from "../../../lib/validation/validators";
 import { PermissionsChildCommand } from "./PermissionsChildCommand";

@@ -2,7 +2,7 @@ import { CrownsChildCommand } from "./CrownsChildCommand";
 import { ago } from "../../../helpers";
 import { RedirectsService } from "../../../services/dbservices/RedirectsService";
 import { createInvalidBadge } from "../../../helpers/crowns";
-import { ArtistCrownBannedError } from "../../../errors";
+import { ArtistCrownBannedError } from "../../../errors/errors";
 import { displayNumber } from "../../../lib/views/displays";
 import { LineConsolidator } from "../../../lib/LineConsolidator";
 import { User } from "../../../database/entity/User";

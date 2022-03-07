@@ -1,5 +1,5 @@
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
-import { LogicError } from "../../../errors";
+import { LogicError } from "../../../errors/errors";
 import { trackEmbed } from "../../../lib/views/embeds";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";

@@ -4,7 +4,7 @@ import {
   NotFriendsError,
   LastFMUserDoesntExistError,
   TooManyFriendsError,
-} from "../../errors";
+} from "../../errors/errors";
 import { BaseService } from "../BaseService";
 import { User } from "../../database/entity/User";
 import { LastFMService } from "../LastFM/LastFMService";

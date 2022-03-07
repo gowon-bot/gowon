@@ -1,4 +1,4 @@
-import { MirrorballError } from "../../../../../errors";
+import { MirrorballError } from "../../../../../errors/errors";
 import { LinkGenerator } from "../../../../../helpers/lastFM";
 import { Variation } from "../../../../../lib/command/BaseCommand";
 import { VARIATIONS } from "../../../../../lib/command/variations";

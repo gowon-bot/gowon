@@ -1,5 +1,5 @@
 import { mean } from "mathjs";
-import { LogicError, UnknownMirrorballError } from "../../../../errors";
+import { LogicError, UnknownMirrorballError } from "../../../../errors/errors";
 import { toInt } from "../../../../helpers/lastFM";
 import { standardMentions } from "../../../../lib/context/arguments/mentionTypes/mentions";
 import { displayNumber, displayRating } from "../../../../lib/views/displays";

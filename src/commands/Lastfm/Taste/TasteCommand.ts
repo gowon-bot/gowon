@@ -7,7 +7,7 @@ import { isNumeric, StringPadder } from "../../../helpers";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { LastFMPeriod } from "../../../services/LastFM/LastFMService.types";
 import { Paginator } from "../../../lib/paginators/Paginator";
-import { LogicError } from "../../../errors";
+import { LogicError } from "../../../errors/errors";
 import { DurationParser } from "../../../lib/context/arguments/parsers/DurationParser";
 import { toInt } from "../../../helpers/lastFM";
 import { displayNumber } from "../../../lib/views/displays";

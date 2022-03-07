@@ -12,7 +12,7 @@ import {
   ThreadChannel,
 } from "discord.js";
 import { AnalyticsCollector } from "../../analytics/AnalyticsCollector";
-import { DMsAreOffError } from "../../errors";
+import { DMsAreOffError } from "../../errors/errors";
 import { ucFirst } from "../../helpers";
 import { GowonContext } from "../../lib/context/Context";
 import { Payload } from "../../lib/context/Payload";

@@ -3,7 +3,7 @@ import { LineConsolidator } from "../../../lib/LineConsolidator";
 import { NowPlayingBaseCommand } from "./NowPlayingBaseCommand";
 import { promiseAllSettled } from "../../../helpers";
 import { RecentTrack } from "../../../services/LastFM/converters/RecentTracks";
-import { LogicError } from "../../../errors";
+import { LogicError } from "../../../errors/errors";
 import { LinkGenerator } from "../../../helpers/lastFM";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";

@@ -9,7 +9,7 @@ import { ServiceRegistry } from "../ServicesRegistry";
 import { MirrorballPageInfo, MirrorballUserType } from "./MirrorballTypes";
 import config from "../../../config.json";
 import { GowonContext } from "../../lib/context/Context";
-import { MirrorballError } from "../../errors";
+import { MirrorballError } from "../../errors/errors";
 
 export class MirrorballService extends BaseService {
   private get usersService() {

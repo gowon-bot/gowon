@@ -3,7 +3,7 @@ import { sanitizeForDiscord } from "../../../helpers/discord";
 import { Variation } from "../../../lib/command/BaseCommand";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
-import { LogicError } from "../../../errors";
+import { LogicError } from "../../../errors/errors";
 import { TagsService } from "../../../services/mirrorball/services/TagsService";
 import { TasteCommand, tasteArgs } from "./TasteCommand";
 import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingEmbed";

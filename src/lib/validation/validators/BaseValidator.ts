@@ -1,4 +1,4 @@
-import { ClientError } from "../../../errors";
+import { ClientError } from "../../../errors/errors";
 import { Validator } from "../ValidationChecker";
 
 export interface ValidatorOptions {

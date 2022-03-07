@@ -1,4 +1,4 @@
-import { MirrorballError } from "../../../../errors";
+import { MirrorballError } from "../../../../errors/errors";
 import { MirrorballBaseCommand } from "../../../../lib/indexing/MirrorballCommands";
 import {
   LastScrobbledConnector,

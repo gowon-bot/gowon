@@ -1,6 +1,6 @@
 import { BaseCommand } from "../../lib/command/BaseCommand";
 import { AdminService } from "../../services/dbservices/AdminService";
-import { CommandNotFoundError } from "../../errors";
+import { CommandNotFoundError } from "../../errors/errors";
 import { flatDeep } from "../../helpers";
 import { ParentCommand } from "../../lib/command/ParentCommand";
 import { LineConsolidator } from "../../lib/LineConsolidator";
