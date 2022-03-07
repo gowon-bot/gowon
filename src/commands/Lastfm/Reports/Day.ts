@@ -1,5 +1,6 @@
 import { sub } from "date-fns";
 import { LogicError } from "../../../errors/errors";
+import { bullet, extraWideSpace } from "../../../helpers/specialCharacters";
 import { ReportCalculator } from "../../../lib/calculators/ReportCalculator";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { Paginator } from "../../../lib/paginators/Paginator";
@@ -103,25 +104,22 @@ ${
     : ""
 }
 **Top Tracks**:
- • ${topTracks
+${extraWideSpace}${bullet} ${topTracks
       .slice(0, 3)
       .map((t) => `${t} (${displayNumber(day.top.tracks[t], "play")})`)
-      // These are special spaces
-      .join("\n​ • ")}
+      .join(`\n​${extraWideSpace}${bullet} `)}
 
 **Top Albums**:
- • ${topAlbums
+${extraWideSpace}${bullet} ${topAlbums
       .slice(0, 3)
       .map((t) => `${t} (${displayNumber(day.top.albums[t], "play")})`)
-      // These are special spaces
-      .join("\n​ • ")}
+      .join(`\n​${extraWideSpace}${bullet} `)}
 
 **Top Artists**:
- • ${topArtists
+${extraWideSpace}${bullet} ${topArtists
       .slice(0, 3)
       .map((t) => `${t} (${displayNumber(day.top.artists[t], "play")})`)
-      // These are special spaces
-      .join("\n​ • ")}
+      .join(`\n​${extraWideSpace}${bullet} `)}
     `);
 
     await this.send(embed);

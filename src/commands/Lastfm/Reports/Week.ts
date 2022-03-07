@@ -1,6 +1,7 @@
 import { sub } from "date-fns";
 import { LogicError } from "../../../errors/errors";
 import { toInt } from "../../../helpers/lastFM";
+import { bullet, extraWideSpace } from "../../../helpers/specialCharacters";
 import { ReportCalculator } from "../../../lib/calculators/ReportCalculator";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { Paginator } from "../../../lib/paginators/Paginator";
@@ -102,25 +103,22 @@ export default class Week extends LastFMBaseCommand<typeof args> {
 ${tagConsolidator.consolidateAsStrings(10).join(", ").italic()}
   
 **Top Tracks**:
- • ${topTracks
+${extraWideSpace}${bullet} ${topTracks
       .slice(0, 3)
       .map((t) => `${t} (${displayNumber(week.top.tracks[t], "play")})`)
-      // These are special spaces
-      .join("\n​ • ")}
+      .join(`\n​${extraWideSpace}${bullet} `)}
 
 **Top Albums**:
- • ${topAlbums
+${extraWideSpace}${bullet} ${topAlbums
       .slice(0, 3)
       .map((t) => `${t} (${displayNumber(week.top.albums[t], "play")})`)
-      // These are special spaces
-      .join("\n​ • ")}
+      .join(`\n​${extraWideSpace}${bullet} `)}
 
 **Top Artists**:
- • ${topArtists
+${extraWideSpace}${bullet} ${topArtists
       .slice(0, 3)
       .map((t) => `${t} (${displayNumber(week.top.artists[t], "play")})`)
-      // These are special spaces
-      .join("\n​ • ")}
+      .join(`\n​${extraWideSpace}${bullet} `)}
     `);
 
     await this.send(embed);

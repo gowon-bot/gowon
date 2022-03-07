@@ -2,7 +2,7 @@ import { Guild } from "discord.js";
 import { LogicError } from "../../errors/errors";
 import { GowonContext } from "../../lib/context/Context";
 import { GowonClient } from "../../lib/GowonClient";
-import { Settings } from "../../lib/settings/Settings";
+import { Settings, toggleValues } from "../../lib/settings/Settings";
 import {
   convertSettingNameToKey,
   SettingsService,
@@ -158,7 +158,7 @@ async function convertValue(
       return { string: value };
 
     case "toggle":
-      return { boolean: value === "true" || value === "on" };
+      return { boolean: value === "true" || value === toggleValues.ON };
 
     default:
       break;

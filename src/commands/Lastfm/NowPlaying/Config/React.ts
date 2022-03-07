@@ -10,6 +10,7 @@ import { EmojiService } from "../../../../services/Discord/EmojiService";
 import { ServiceRegistry } from "../../../../services/ServicesRegistry";
 import { NowPlayingConfigChildCommand } from "./NowPlayingConfigChildCommand";
 import { Flag } from "../../../../lib/context/arguments/argumentTypes/Flag";
+import { extraWideSpace } from "../../../../helpers/specialCharacters";
 
 const args = {
   clearInput: new StringArgument({
@@ -65,7 +66,7 @@ export class React extends NowPlayingConfigChildCommand<typeof args> {
             (reactions.length
               ? `\n\n**You have the following reactions set**:\n${reactions
                   .map((r) => this.gowonClient.displayEmoji(r))
-                  .join(" ")}`
+                  .join(extraWideSpace)}`
               : "")
         );
 
@@ -113,7 +114,7 @@ export class React extends NowPlayingConfigChildCommand<typeof args> {
         shouldDisplay: !!valid.length,
         string: `**Gowon will react with the following emojis**:\n${valid
           .map((e) => e.raw)
-          .join(" ")}`,
+          .join(extraWideSpace)}`,
       },
       {
         shouldDisplay: !!valid.length && !!invalid.length,
@@ -123,7 +124,7 @@ export class React extends NowPlayingConfigChildCommand<typeof args> {
         shouldDisplay: !!invalid.length,
         string: `**Ignored the following emojis**:\n${invalid
           .map((e) => extractEmojiName(e.raw))
-          .join(" ")}`,
+          .join(extraWideSpace)}`,
       }
     );
 

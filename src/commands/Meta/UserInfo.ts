@@ -6,6 +6,7 @@ import { Emoji } from "../../lib/Emoji";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { roles } from "../../lib/command/access/roles";
 import { standardMentions } from "../../lib/context/arguments/mentionTypes/mentions";
+import { extraWideSpace } from "../../helpers/specialCharacters";
 
 const args = {
   ...standardMentions,
@@ -78,7 +79,7 @@ export default class UserInfo extends BaseCommand<typeof args> {
             });
 
             // This is a special space
-            return ` ${
+            return `${extraWideSpace}${
               command?.secretCommand
                 ? "<secret command>"
                 : command?.friendlyNameWithParent ||

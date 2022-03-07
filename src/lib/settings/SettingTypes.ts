@@ -7,6 +7,7 @@ interface SettingOptions {
   friendlyName: string;
   description: string;
   category: string;
+  default: string;
 
   omitFromDashboard: boolean;
   type: SettingType;

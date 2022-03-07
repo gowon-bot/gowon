@@ -14,6 +14,7 @@ import { sanitizeForDiscord } from "../../../../helpers/discord";
 import { standardMentions } from "../../../../lib/context/arguments/mentionTypes/mentions";
 import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";
 import { Flag } from "../../../../lib/context/arguments/argumentTypes/Flag";
+import { emDash, extraWideSpace } from "../../../../helpers/specialCharacters";
 
 const args = {
   ...prefabArguments.artist,
@@ -142,13 +143,11 @@ export class ArtistRatings extends RateYourMusicIndexingChildCommand<
             : "") +
           (this.parsedArguments.ids
             ? `[Album${r.rateYourMusicAlbum.rateYourMusicID}]`.code() + " "
-            : displayRating(r.rating) +
-              // this is a special space
-              " ") +
+            : displayRating(r.rating) + extraWideSpace) +
           sanitizeForDiscord(r.rateYourMusicAlbum.title) +
           (r.rateYourMusicAlbum.artistName.toLowerCase() !==
           artistName.toLowerCase()
-            ? ` — ${sanitizeForDiscord(
+            ? ` ${emDash} ${sanitizeForDiscord(
                 r.rateYourMusicAlbum.artistName
               )}`.italic()
             : "")

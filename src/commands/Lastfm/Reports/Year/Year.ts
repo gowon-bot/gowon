@@ -1,5 +1,6 @@
 import { sub } from "date-fns";
 import { LogicError } from "../../../../errors/errors";
+import { bullet, extraWideSpace } from "../../../../helpers/specialCharacters";
 import { SimpleMap } from "../../../../helpers/types";
 import { ReportCalculator } from "../../../../lib/calculators/ReportCalculator";
 import { standardMentions } from "../../../../lib/context/arguments/mentionTypes/mentions";
@@ -122,25 +123,22 @@ export default class Year extends MirrorballBaseCommand<
 ${tagConsolidator.consolidateAsStrings(10).join(", ").italic()}
   
 **Top Tracks**:
- • ${topTracks
+${extraWideSpace}${bullet} ${topTracks
       .slice(0, 3)
       .map((t) => `${t} (${displayNumber(month.top.tracks[t], "play")})`)
-      // These are special spaces
-      .join("\n​ • ")}
+      .join(`\n​${extraWideSpace}${bullet} `)}
 
 **Top Albums**:
- • ${topAlbums
+${extraWideSpace}${bullet} ${topAlbums
       .slice(0, 3)
       .map((t) => `${t} (${displayNumber(month.top.albums[t], "play")})`)
-      // These are special spaces
-      .join("\n​ • ")}
+      .join(`\n​${extraWideSpace}${bullet} `)}
 
 **Top Artists**:
- • ${topArtists
+${extraWideSpace}${bullet} ${topArtists
       .slice(0, 3)
       .map((t) => `${t} (${displayNumber(month.top.artists[t], "play")})`)
-      // These are special spaces
-      .join("\n​ • ")}
+      .join(`\n​${extraWideSpace}${bullet} `)}
     `);
 
     await this.send(embed);

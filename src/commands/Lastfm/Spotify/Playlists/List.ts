@@ -1,3 +1,4 @@
+import { emDash } from "../../../../helpers/specialCharacters";
 import {
   displayNumber,
   displayNumberedList,
@@ -41,7 +42,11 @@ export class List extends PlaylistChildCommand {
               `${p.tag?.emoji || "◻️"} ${p.name.strong()} (${displayNumber(
                 p.tracksCount,
                 "track"
-              )}) ${defaultPlaylist?.playlistID === p.id ? "— *default*" : ""}`
+              )}) ${
+                defaultPlaylist?.playlistID === p.id
+                  ? `${emDash} *default*`
+                  : ""
+              }`
           ),
           offset
         );

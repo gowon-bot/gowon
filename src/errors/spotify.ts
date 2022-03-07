@@ -58,3 +58,13 @@ export class InvalidSpotifyScopeError extends ClientError {
     );
   }
 }
+
+export class PrivateModeOnWarning extends ClientError {
+  name = "PrivateModeOnWarning";
+
+  constructor(prefix: string) {
+    super(
+      `Spotify private mode is on! This prevents Gowon from showing information that may reveal your Spotify profile.\n\nTo disable it see \`${prefix}sprivacy\``
+    );
+  }
+}

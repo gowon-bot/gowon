@@ -14,6 +14,7 @@ import { SimpleScrollingEmbed } from "../../../../lib/views/embeds/SimpleScrolli
 import { sanitizeForDiscord } from "../../../../helpers/discord";
 import { standardMentions } from "../../../../lib/context/arguments/mentionTypes/mentions";
 import { Flag } from "../../../../lib/context/arguments/argumentTypes/Flag";
+import { emDash } from "../../../../helpers/specialCharacters";
 
 const args = {
   ...standardMentions,
@@ -115,7 +116,7 @@ export class Taste extends RateYourMusicIndexingChildCommand<
         (r) =>
           `${displayRating(r.userOneRating.rating)} • ${displayRating(
             r.userTwoRating.rating
-          )} — ${r.userOneRating.rateYourMusicAlbum.title.strong()} (${sanitizeForDiscord(
+          )} ${emDash} ${r.userOneRating.rateYourMusicAlbum.title.strong()} (${sanitizeForDiscord(
             r.userOneRating.rateYourMusicAlbum.artistName
           )})`
       )

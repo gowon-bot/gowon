@@ -6,6 +6,11 @@ import {
 } from "./SettingTypes";
 import { defaultPrefix } from "../../../config.json";
 
+export const toggleValues = {
+  ON: "on",
+  OFF: "off",
+};
+
 export const Settings = {
   // Guild scoped
   adminRole: new GuildScopedSetting("admin_role", {
@@ -49,6 +54,13 @@ export const Settings = {
   }),
   defaultSpotifyPlaylist: new UserScopedSetting("default_spotify_playlist", {
     omitFromDashboard: true,
+    category: "Spotify",
+  }),
+  spotifyPrivateMode: new UserScopedSetting("spotify_private_mode", {
+    friendlyName: "Private mode",
+    category: "spotify",
+    description: "Doesn't show info that could reveal your Spotify account",
+    default: toggleValues.ON,
   }),
 
   // Bot scoped

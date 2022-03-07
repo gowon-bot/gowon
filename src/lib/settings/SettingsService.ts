@@ -48,7 +48,7 @@ export class SettingsService extends BaseService {
     const setting = Settings[settingName];
     const stringScope = JSON.stringify(setting.transformScope(scope as any));
 
-    return this.cache[setting.name][stringScope];
+    return this.cache[setting.name][stringScope] || setting.options.default;
   }
 
   getByName(settingName: string, scope: Scope): string | undefined {
