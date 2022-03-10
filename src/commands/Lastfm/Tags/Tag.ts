@@ -100,7 +100,7 @@ export default class Tag extends LastFMBaseCommand<typeof args> {
         : "Couldn't find any matching artists!");
 
     const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor())
+      .setAuthor(this.generateEmbedAuthor("Tags"))
       .setTitle(
         `${perspective.upper.possessive} top ${tagTopArtists.meta.tag} artists`
       );
