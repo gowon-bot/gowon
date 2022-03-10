@@ -11,6 +11,7 @@ import { standardMentions } from "../../../lib/context/arguments/mentionTypes/me
 const args = {
   timePeriod: new TimePeriodArgument({
     description: "The time period to display stats for",
+    default: "overall",
   }),
   ...standardMentions,
 } as const;
