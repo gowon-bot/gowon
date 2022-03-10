@@ -23,7 +23,7 @@ export class TopCrowns extends CrownsChildCommand {
     ]);
 
     let embed = this.newEmbed()
-      .setTitle(`Top crowns in ${this.guild.name}`)
+      .setTitle(`Top crowns in ${this.requiredGuild.name}`)
       .setDescription(
         (
           await asyncMap(
@@ -35,7 +35,7 @@ export class TopCrowns extends CrownsChildCommand {
           )
         ).join("\n") +
           `\n\nThere are **${displayNumber(crownsCount, "** crown")} in ${
-            this.guild.name
+            this.requiredGuild.name
           }`
       );
 

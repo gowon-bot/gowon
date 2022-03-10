@@ -78,7 +78,7 @@ export default class Update extends MirrorballBaseCommand<
     this.mirrorballService.quietAddUserToGuild(
       this.ctx,
       this.author.id,
-      this.guild.id
+      this.requiredGuild.id
     );
 
     const { senderUsername, perspective } = await this.getMentions({

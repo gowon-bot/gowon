@@ -29,7 +29,7 @@ export class MetaService extends BaseService {
     ctx: GowonContext,
     timeRange?: TimeRange
   ): Promise<MostUsedCommandsResponse[]> {
-    const serverID = ctx.guild.id;
+    const serverID = ctx.requiredGuild.id;
 
     this.log(ctx, `Counting most used commands in ${serverID}`);
 

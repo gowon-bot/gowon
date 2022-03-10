@@ -75,7 +75,7 @@ export default class WhoFirstArtist extends WhoKnowsBaseCommand<
       whoLast,
       artist: { name: artistName },
       settings: {
-        guildID: this.isGlobal() ? undefined : this.guild.id,
+        guildID: this.isGlobal() ? undefined : this.requiredGuild.id,
         limit: 20,
       },
     });

@@ -29,7 +29,7 @@ export default class Randomsong extends LastFMBaseCommand<typeof args> {
   ];
 
   async run() {
-    const serverUsers = (await this.guild.members.fetch()).map(
+    const serverUsers = (await this.requiredGuild.members.fetch()).map(
       (u) => `${u.id}`
     );
 

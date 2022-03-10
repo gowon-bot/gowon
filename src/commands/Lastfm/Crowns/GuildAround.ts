@@ -33,7 +33,7 @@ export class GuildAround extends CrownsChildCommand {
 
     let guildAround = await this.crownsService.guildAround(
       this.ctx,
-      this.guild.id,
+      this.requiredGuild.id,
       discordID,
       await this.serverUserIDs({ filterCrownBannedUsers: true })
     );
@@ -45,11 +45,11 @@ export class GuildAround extends CrownsChildCommand {
       );
 
     let embed = this.newEmbed()
-      .setAuthor(
-        `${this.guild.name}'s crown leaderboard (${guildAround.start + 1} - ${
-          guildAround.end
-        })`
-      )
+      .setAuthor({
+        name: `${this.requiredGuild.name}'s crown leaderboard (${
+          guildAround.start + 1
+        } - ${guildAround.end})`,
+      })
       .setDescription(
         `${(
           await asyncMap(

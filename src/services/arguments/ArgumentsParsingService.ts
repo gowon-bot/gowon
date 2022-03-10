@@ -13,7 +13,7 @@ export class ArgumentParsingService extends BaseService {
       return this.parseMessage(context.payload.source, context, args);
     } else if (context.payload.isInteraction()) {
       return this.parseInteraction(context.payload.source, context, args);
-    }
+    } else return {};
   }
 
   private parseInteraction(

@@ -11,7 +11,7 @@ export default class SyncServer extends AdminBaseCommand {
   adminCommand = true;
 
   async run() {
-    const members = await this.guild.members.fetch();
+    const members = await this.requiredGuild.members.fetch();
 
     const mutation = gql`
       mutation syncGuild($guildID: String!, $discordIDs: [String!]!) {
@@ -20,7 +20,7 @@ export default class SyncServer extends AdminBaseCommand {
     `;
 
     const discordIDs = members.map((m) => m.id);
-    const guildID = this.guild.id;
+    const guildID = this.requiredGuild.id;
 
     await this.mirrorballService.mutate(this.ctx, mutation, {
       discordIDs,

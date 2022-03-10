@@ -18,7 +18,7 @@ export class RecentlyStolen extends CrownsChildCommand {
     );
 
     let embed = this.newEmbed()
-      .setTitle(`Recently stolen crowns in ${this.guild.name}`)
+      .setTitle(`Recently stolen crowns in ${this.requiredGuild.name}`)
       .setDescription(
         crowns
           .map((c) => `${c.artistName.strong()} ― yoinked ${ago(c.lastStolen)}`)

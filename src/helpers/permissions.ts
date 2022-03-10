@@ -9,7 +9,7 @@ export function checkRollout(rollout: Rollout, payload: Payload): boolean {
       return true;
     }
   } else if (rollout.guilds) {
-    return rollout.guilds.includes(payload.guild!.id);
+    return payload.guild ? rollout.guilds.includes(payload.guild.id) : false;
   }
 
   return false;

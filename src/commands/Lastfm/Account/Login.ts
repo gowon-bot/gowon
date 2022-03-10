@@ -119,7 +119,7 @@ export default class Login extends MirrorballBaseCommand<never, never> {
       await this.mirrorballService.quietAddUserToGuild(
         this.ctx,
         this.author.id,
-        this.guild.id
+        this.requiredGuild.id
       );
     } catch (e) {}
   }

@@ -43,7 +43,7 @@ export class DM extends CrownsChildCommand<typeof args> {
       `${perspective.upper.plusToHave} ${displayNumber(
         crownsCount,
         "crown"
-      )} in ${this.guild.name}`
+      )} in ${this.requiredGuild.name}`
     );
 
     chunks

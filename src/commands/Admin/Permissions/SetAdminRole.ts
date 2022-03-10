@@ -24,7 +24,7 @@ export class SetAdminRole extends PermissionsChildCommand {
       this.settingsService.set(
         this.ctx,
         "adminRole",
-        { guildID: this.guild.id },
+        { guildID: this.requiredGuild.id },
         adminRole.id
       );
 
@@ -38,7 +38,7 @@ export class SetAdminRole extends PermissionsChildCommand {
       await this.send(embed);
     } else {
       const adminRole = this.settingsService.get("adminRole", {
-        guildID: this.guild.id,
+        guildID: this.requiredGuild.id,
       });
 
       const embed = this.newEmbed()

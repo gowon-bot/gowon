@@ -32,7 +32,7 @@ export class NicknameService extends BaseService<NicknameServiceContext> {
     ctx: NicknameServiceContext,
     users: Array<{ discordID: string } | string>
   ) {
-    const guildID = ctx.guild.id;
+    const guildID = ctx.requiredGuild.id;
 
     this.log(
       this.ctx(ctx),
@@ -120,7 +120,7 @@ export class NicknameService extends BaseService<NicknameServiceContext> {
     ctx: NicknameServiceContext,
     discordID: string
   ): Promise<{ nickname?: string; username?: string }> {
-    const guildID = ctx.guild.id;
+    const guildID = ctx.requiredGuild.id;
 
     let nickname = await this.redisService.get(
       this.ctx(ctx),

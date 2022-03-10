@@ -157,7 +157,7 @@ export class ImportRatings extends RateYourMusicIndexingChildCommand<
       const rawMessageContent = this.gowonService.removeCommandName(
         this.payload.source.content,
         this.runAs,
-        this.guild.id
+        this.requiredGuild.id
       );
 
       return rawMessageContent;

@@ -56,7 +56,7 @@ export class CrownRanks extends CrownsChildCommand<typeof args> {
           `\n\n${perspective.upper.plusToHave} ${displayNumber(
             crownsCount,
             "crown"
-          )} in ${this.guild.name}`
+          )} in ${this.requiredGuild.name}`
       );
 
     await this.send(embed);

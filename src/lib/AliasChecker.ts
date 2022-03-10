@@ -1,9 +1,9 @@
-import { Command } from "./command/Command";
 import { GowonService } from "../services/GowonService";
 import { ParentCommand } from "./command/ParentCommand";
 import { RunAs } from "./command/RunAs";
 import { CommandRegistry } from "./command/CommandRegistry";
 import { ServiceRegistry } from "../services/ServicesRegistry";
+import { BaseCommand } from "./command/BaseCommand";
 
 export class AliasChecker {
   private gowonService = ServiceRegistry.get(GowonService);
@@ -15,7 +15,7 @@ export class AliasChecker {
     command: ParentCommand,
     childAlias: string,
     serverID: string
-  ): Promise<Command | undefined> {
+  ): Promise<BaseCommand | undefined> {
     const child = await this.commandRegistry.find(
       childAlias,
       serverID,
@@ -35,7 +35,7 @@ export class AliasChecker {
       : command.prefixes.map((p) => p.toLowerCase().trim()).includes(alias);
   }
 
-  commandHasAlias(command: Command, alias: string): boolean {
+  commandHasAlias(command: BaseCommand, alias: string): boolean {
     if (command instanceof ParentCommand) {
       return this.parentCommandHasAlias(command, alias);
     } else
@@ -47,7 +47,7 @@ export class AliasChecker {
       );
   }
 
-  commandHasVariation(command: Command, variation: string): boolean {
+  commandHasVariation(command: BaseCommand, variation: string): boolean {
     for (let v of command.variations) {
       const variations =
         v.variation instanceof Array ? v.variation : [v.variation];
@@ -61,7 +61,7 @@ export class AliasChecker {
     return false;
   }
 
-  async getRunAs(command: Command, serverID: string): Promise<RunAs> {
+  async getRunAs(command: BaseCommand, serverID: string): Promise<RunAs> {
     let checks = this.aliasesString
       .toLowerCase()
       .replace(
@@ -134,7 +134,7 @@ export class AliasChecker {
     return runAs;
   }
 
-  async check(command: Command, serverID: string): Promise<boolean> {
+  async check(command: BaseCommand, serverID: string): Promise<boolean> {
     return !(await this.getRunAs(command, serverID)).empty();
   }
 }

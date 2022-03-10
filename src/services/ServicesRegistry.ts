@@ -41,6 +41,8 @@ import { DiscordService } from "./Discord/DiscordService";
 import { SpotifyAuthenticationService } from "./Spotify/SpotifyAuthenticationService";
 import { SpotifyArguments } from "./Spotify/SpotifyArguments";
 import { SpotifyPlaylistTagService } from "./Spotify/SpotifyPlaylistTagService";
+import { TwitterService } from "./Twitter/TwitterService";
+import { Responder } from "./Responder";
 
 type Service<T = any> = { new (): T };
 
@@ -78,6 +80,7 @@ const services: Service[] = [
   RedirectsService,
   RedisService,
   RedisInteractionService,
+  Responder,
   RollbarService,
   SettingsService,
   SpotifyService,
@@ -86,6 +89,7 @@ const services: Service[] = [
   SpotifyPlaylistTagService,
   TagsService,
   TrackingService,
+  TwitterService,
   UsersService,
   WhoKnowsService,
   WordBlacklistService,
@@ -95,6 +99,8 @@ export class ServiceRegistry {
   static services: { constructor: Function }[];
 
   static setServices() {
+    console.log("Setting services...");
+
     this.services = services
       .map((s) => {
         if (!s) return undefined;
@@ -102,6 +108,8 @@ export class ServiceRegistry {
         return new s();
       })
       .filter((s) => !!s);
+
+    console.log("Set services!");
   }
 
   static get<T>(service: Service<T>): T {

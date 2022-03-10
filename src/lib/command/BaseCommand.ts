@@ -1,6 +1,7 @@
 import {
   CommandInteraction,
   EmbedAuthorData,
+  Guild,
   Message,
   MessageEmbed,
   User as DiscordUser,
@@ -19,7 +20,7 @@ import {
 import { GowonService } from "../../services/GowonService";
 import { CommandGroup } from "./CommandGroup";
 import { Logger } from "../Logger";
-import { Command, Rollout } from "./Command";
+import { Rollout } from "./Command";
 import { TrackingService } from "../../services/TrackingService";
 import { User } from "../../database/entity/User";
 import { GowonClient } from "../GowonClient";
@@ -62,6 +63,8 @@ import {
 } from "../../services/Discord/DiscordService";
 import { Payload } from "../context/Payload";
 import { SettingsService } from "../settings/SettingsService";
+import config from "../../../config.json";
+import { Responder } from "../../services/Responder";
 
 export interface Variation {
   name: string;
@@ -70,13 +73,11 @@ export interface Variation {
 }
 
 export interface CommandRedirect<T extends ArgumentsMap> {
-  redirectTo: { new (): Command };
+  redirectTo: { new (): BaseCommand };
   when(args: ParsedArguments<T>): boolean;
 }
 
-export abstract class BaseCommand<ArgumentsType extends ArgumentsMap = {}>
-  implements Command
-{
+export abstract class BaseCommand<ArgumentsType extends ArgumentsMap = {}> {
   /**
    * idSeed is the seed for the generated command id
    * **Must be unique among all commands!**
@@ -94,7 +95,7 @@ export abstract class BaseCommand<ArgumentsType extends ArgumentsMap = {}>
   aliases: Array<string> = [];
   variations: Variation[] = [];
   redirects: CommandRedirect<ArgumentsType>[] = [];
-  redirectedFrom?: Command;
+  redirectedFrom?: BaseCommand;
 
   /**
    * Slash command meta data
@@ -103,6 +104,13 @@ export abstract class BaseCommand<ArgumentsType extends ArgumentsMap = {}>
   // Controls whether to register a command as a slash command
   slashCommand?: boolean;
   slashCommandName?: string;
+
+  /**
+   * Twitter command meta data
+   * (properties related to how twitter commands are registered/handled)
+   */
+  // Controls whether to register a command as a twitter command
+  twitterCommand?: boolean;
 
   /**
    * Parent-child metadata
@@ -122,7 +130,8 @@ export abstract class BaseCommand<ArgumentsType extends ArgumentsMap = {}>
   category: string | undefined = undefined;
   subcategory: string | undefined = undefined;
   usage: string | string[] = "";
-  customHelp?: { new (): Command } | undefined;
+  customHelp?: { new (): BaseCommand } | undefined;
+  guildRequired?: boolean;
 
   /**
    * Authentication metadata
@@ -165,8 +174,12 @@ export abstract class BaseCommand<ArgumentsType extends ArgumentsMap = {}>
     return this.ctx.runAs;
   }
 
-  get guild() {
+  get guild(): Guild | undefined {
     return this.ctx.guild;
+  }
+
+  get requiredGuild(): Guild {
+    return this.ctx.requiredGuild;
   }
 
   get author() {
@@ -195,6 +208,7 @@ export abstract class BaseCommand<ArgumentsType extends ArgumentsMap = {}>
   commandRegistry = CommandRegistry.getInstance();
 
   track = ServiceRegistry.get(TrackingService);
+  responder = ServiceRegistry.get(Responder);
   usersService = ServiceRegistry.get(UsersService);
   gowonService = ServiceRegistry.get(GowonService);
   discordService = ServiceRegistry.get(DiscordService);
@@ -212,7 +226,7 @@ export abstract class BaseCommand<ArgumentsType extends ArgumentsMap = {}>
     return this.ctx as GowonContext<{ mutable: T }>;
   }
 
-  async getChild(_: string, __: string): Promise<Command | undefined> {
+  async getChild(_: string, __: string): Promise<BaseCommand | undefined> {
     return undefined;
   }
 
@@ -223,7 +237,9 @@ export abstract class BaseCommand<ArgumentsType extends ArgumentsMap = {}>
   get prefix(): string {
     return this.payload.isInteraction()
       ? "/"
-      : this.gowonService.prefix(this.guild.id);
+      : this.guild
+      ? this.gowonService.prefix(this.guild.id)
+      : config.defaultPrefix;
   }
 
   abstract run(): Promise<void>;
@@ -512,6 +528,8 @@ export abstract class BaseCommand<ArgumentsType extends ArgumentsMap = {}>
       this.analyticsCollector.metrics.commandErrors.inc();
       this.rollbarService.logError(this.ctx, e);
 
+      console.log(e);
+
       if (e.isClientFacing && !e.silent) {
         await this.sendError(e.message, e.footer);
       } else if (!e.isClientFacing) {
@@ -555,12 +573,13 @@ export abstract class BaseCommand<ArgumentsType extends ArgumentsMap = {}>
   }
 
   checkRollout(): boolean {
-    if (this.gowonClient.isDeveloper(this.author.id)) return true;
-
-    return checkRollout(this.rollout, this.payload);
+    return (
+      checkRollout(this.rollout, this.payload) ||
+      this.gowonClient.isDeveloper(this.author.id)
+    );
   }
 
-  public copy(): Command {
+  public copy(): BaseCommand {
     return CommandRegistry.getInstance().make(this.id);
   }
 
@@ -587,7 +606,7 @@ export abstract class BaseCommand<ArgumentsType extends ArgumentsMap = {}>
 
   protected async fetchUsername(id: string): Promise<string> {
     try {
-      let member = await this.guild.members.fetch(id);
+      let member = await this.requiredGuild.members.fetch(id);
       return member.user.username;
     } catch {
       return this.gowonService.constants.unknownUserDisplay;
@@ -601,13 +620,15 @@ export abstract class BaseCommand<ArgumentsType extends ArgumentsMap = {}>
 
     if (filterCrownBannedUsers) {
       let crownBannedUsers = await this.gowonService.getCrownBannedUsers(
-        this.guild
+        this.requiredGuild
       );
 
-      let purgatoryRole = await this.gowonService.getPurgatoryRole(this.guild);
+      let purgatoryRole = await this.gowonService.getPurgatoryRole(
+        this.requiredGuild
+      );
 
       let usersInPurgatory = purgatoryRole
-        ? (await this.guild.members.fetch())
+        ? (await this.requiredGuild.members.fetch())
             .filter((m) => m.roles.cache.has(purgatoryRole!))
             .map((m) => m.user.id)
         : [];
@@ -617,7 +638,7 @@ export abstract class BaseCommand<ArgumentsType extends ArgumentsMap = {}>
       };
     }
 
-    return (await this.guild.members.fetch())
+    return (await this.requiredGuild.members.fetch())
       .map((u) => u.user.id)
       .filter(filter);
   }
@@ -644,7 +665,7 @@ export abstract class BaseCommand<ArgumentsType extends ArgumentsMap = {}>
   }
 
   protected get scopes() {
-    const guild = { guildID: this.guild.id };
+    const guild = { guildID: this.requiredGuild.id };
     const user = { userID: this.author.id };
     const guildMember = Object.assign(guild, user);
 
@@ -658,7 +679,7 @@ export abstract class BaseCommand<ArgumentsType extends ArgumentsMap = {}>
   protected async getDiscordUserFromUsername(
     username: string
   ): Promise<DiscordUser | undefined> {
-    const members = await this.guild.members.fetch();
+    const members = await this.requiredGuild.members.fetch();
 
     const member = members.find(
       (m) =>
@@ -671,6 +692,7 @@ export abstract class BaseCommand<ArgumentsType extends ArgumentsMap = {}>
 
   private autoUpdateUser() {
     if (
+      this.author.id &&
       Chance().bool({ likelihood: 33 }) &&
       !["update", "index", "login", "logout"].includes(this.name) &&
       !this.gowonClient.isInIssueMode
@@ -683,7 +705,7 @@ export abstract class BaseCommand<ArgumentsType extends ArgumentsMap = {}>
               this.mirrorballService.quietAddUserToGuild(
                 this.ctx,
                 this.author.id,
-                this.guild.id
+                this.requiredGuild.id
               ),
               senderUser.mirrorballUpdate(this.ctx),
             ]);

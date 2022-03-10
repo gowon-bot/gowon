@@ -11,7 +11,7 @@ export class BaseSpotifyService<
 
   protected generateRedirectURI(): string {
     return (
-      (config.spotifyRedirectHost || config.gowonAPIURL) + "/api/spotifyWebhook"
+      (config.spotifyRedirectHost || config.gowonAPIURL) + "/webhooks/spotify"
     );
   }
 }

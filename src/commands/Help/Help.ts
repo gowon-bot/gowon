@@ -1,5 +1,4 @@
 import { BaseCommand, CommandRedirect } from "../../lib/command/BaseCommand";
-import { Command } from "../../lib/command/Command";
 import { EmbedField } from "discord.js";
 import { AdminService } from "../../services/dbservices/AdminService";
 import HelpForOneCommand from "./HelpForOneCommand";
@@ -11,7 +10,7 @@ import { StringArgument } from "../../lib/context/arguments/argumentTypes/String
 import { Flag } from "../../lib/context/arguments/argumentTypes/Flag";
 
 interface GroupedCommands {
-  [category: string]: Command[];
+  [category: string]: BaseCommand[];
 }
 
 const args = {

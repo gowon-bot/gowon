@@ -41,6 +41,8 @@ export default class NowPlaying extends NowPlayingBaseCommand<typeof args> {
     "Now playing | Displays the now playing or last played track from Last.fm";
 
   slashCommand = true;
+  twitterCommand = true;
+
   crownsService = ServiceRegistry.get(CrownsService);
 
   arguments = args;
@@ -73,13 +75,25 @@ export default class NowPlaying extends NowPlayingBaseCommand<typeof args> {
       await this.nowPlayingMentions();
 
     let nowPlayingResponse = await this.lastFMService.recentTracks(this.ctx, {
-      username: requestable,
+      username: requestable || "flushed_emoji",
       limit: 1,
     });
 
     let nowPlaying = nowPlayingResponse.first();
 
     if (nowPlaying.isNowPlaying) this.scrobble(nowPlaying);
+
+    if (this.payload.isTweet()) {
+      this.responder.twitter(
+        this.ctx,
+        `🎶${
+          nowPlaying.isNowPlaying ? "Now playing" : "Last scrobbled"
+        } for ${username}\n\n${nowPlaying.name} by ${nowPlaying.artist}\nfrom ${
+          nowPlaying.album
+        }`
+      );
+      return;
+    }
 
     this.tagConsolidator.blacklistTags(nowPlaying.artist, nowPlaying.name);
 

@@ -58,7 +58,7 @@ export default class WhoKnowsTrack extends WhoKnowsBaseCommand<
     const response = await this.query({
       track: { name: trackName, artist: { name: artistName } },
       settings: {
-        guildID: this.isGlobal() ? undefined : this.guild.id,
+        guildID: this.isGlobal() ? undefined : this.requiredGuild.id,
         limit: 20,
       },
     });

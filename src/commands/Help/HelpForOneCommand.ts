@@ -4,7 +4,6 @@ import { CommandNotFoundError } from "../../errors/errors";
 import { flatDeep } from "../../helpers";
 import { ParentCommand } from "../../lib/command/ParentCommand";
 import { LineConsolidator } from "../../lib/LineConsolidator";
-import { Command } from "../../lib/command/Command";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { Emoji } from "../../lib/Emoji";
 import { StringArgument } from "../../lib/context/arguments/argumentTypes/StringArgument";
@@ -39,7 +38,10 @@ export default class HelpForOneCommand extends BaseCommand<typeof args> {
   }
 
   private async helpForOneCommand(input: string) {
-    const { command } = await this.commandRegistry.find(input, this.guild.id);
+    const { command } = await this.commandRegistry.find(
+      input,
+      this.requiredGuild.id
+    );
 
     if (!command) throw new CommandNotFoundError();
 
@@ -169,7 +171,7 @@ export default class HelpForOneCommand extends BaseCommand<typeof args> {
       .setDescription(lineConsolidator.consolidate());
   }
 
-  private async runCustomHelp(commandClass: Command) {
+  private async runCustomHelp(commandClass: BaseCommand) {
     let command = new commandClass.customHelp!();
     command.redirectedFrom = this;
     await command.execute(this.payload, this.runAs, this.gowonClient);

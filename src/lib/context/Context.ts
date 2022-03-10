@@ -1,4 +1,5 @@
 import { Guild, GuildMember, User } from "discord.js";
+import { LogicError } from "../../errors/errors";
 import { BaseCommand } from "../command/BaseCommand";
 import { RunAs } from "../command/RunAs";
 import { GowonClient } from "../GowonClient";
@@ -59,7 +60,15 @@ export class GowonContext<
     return this._runAs;
   }
 
-  get guild(): Guild {
+  get guild(): Guild | undefined {
+    return this.payload.guild;
+  }
+
+  get requiredGuild(): Guild {
+    if (!this.payload.guild) {
+      throw new LogicError("This command must be run in a server!");
+    }
+
     return this.payload.guild!;
   }
 
