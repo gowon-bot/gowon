@@ -26,10 +26,19 @@ export class TwitterService extends BaseService {
     },
   };
 
-  private client = new TwitterApi({
+  // This will be replaced with a client that is authed with the bot's access token
+  private botClient = new TwitterApi({
     clientId: config.twitterClientID,
     clientSecret: config.twitterClientSecret,
   });
+
+  // This client can be used to login users
+  private loginClient = new TwitterApi({
+    clientId: config.twitterClientID,
+    clientSecret: config.twitterClientSecret,
+  });
+
+  // This client can be used to access the stream
   private streamClient = new TwitterApi(config.twitterBearerToken);
 
   private token?: TwitterToken;
@@ -81,7 +90,7 @@ export class TwitterService extends BaseService {
 
     await this.ensureLoggedIn(ctx);
 
-    return this.client.v2.tweet(
+    return this.botClient.v2.tweet(
       text,
       options?.replyTo
         ? { reply: { in_reply_to_tweet_id: options.replyTo } }
@@ -90,13 +99,13 @@ export class TwitterService extends BaseService {
   }
 
   setTwitterClient(client: TwitterApi) {
-    this.client = client;
+    this.botClient = client;
   }
 
   generateURL({
     userScope,
   }: Partial<{ userScope: boolean }> = {}): TwitterAuthURL {
-    const url = this.client.generateOAuth2AuthLink(this.redirectURI, {
+    const url = this.loginClient.generateOAuth2AuthLink(this.redirectURI, {
       scope: userScope ? this.userLoginScope : this.botLoginScope,
     });
 
@@ -109,7 +118,7 @@ export class TwitterService extends BaseService {
   ): Promise<TwitterToken> {
     const response = await this.twitterWebhookService.waitForResponse(url);
 
-    const loggedIn = await this.client.loginWithOAuth2({
+    const loggedIn = await this.loginClient.loginWithOAuth2({
       code: response.code,
       codeVerifier: url.codeVerifier,
       redirectUri: this.redirectURI,
@@ -134,7 +143,7 @@ export class TwitterService extends BaseService {
       120_000 // 2 minutes
     );
 
-    const loggedIn = await this.client.loginWithOAuth2({
+    const loggedIn = await this.loginClient.loginWithOAuth2({
       code: response.code,
       codeVerifier: url.codeVerifier,
       redirectUri: this.redirectURI,
@@ -174,7 +183,7 @@ export class TwitterService extends BaseService {
   private async refreshToken(ctx: GowonContext) {
     this.log(ctx, "Refreshing Twitter token");
 
-    const refreshed = await this.client.refreshOAuth2Token(
+    const refreshed = await this.botClient.refreshOAuth2Token(
       this.token!.refreshToken
     );
 
