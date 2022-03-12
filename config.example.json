@@ -30,5 +30,12 @@
 
   "gowonAPIPort": 3000,
   "gowonAPIURL": "http://localhost:3000 <-- This is where Gowon should send webhooks",
-  "gowonWebsiteURL": "http://localhost:3001 <-- This is where the Gowon API should redirect users"
+  "gowonWebsiteURL": "http://localhost:3001 <-- This is where the Gowon API should redirect users",
+
+  "redisHost": "localhost:6379",
+
+  "twitterClientID": "Get this from https://developer.twitter.com/",
+  "twitterClientSecret": "^",
+  "twitterBearerToken": "^",
+  "twitterUsername": "<Twitter bot username here>"
 }
