@@ -99,8 +99,6 @@ export class ServiceRegistry {
   static services: { constructor: Function }[];
 
   static setServices() {
-    console.log("Setting services...");
-
     this.services = services
       .map((s) => {
         if (!s) return undefined;
@@ -108,8 +106,6 @@ export class ServiceRegistry {
         return new s();
       })
       .filter((s) => !!s);
-
-    console.log("Set services!");
   }
 
   static get<T>(service: Service<T>): T {
