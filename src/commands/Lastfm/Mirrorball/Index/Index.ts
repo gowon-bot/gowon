@@ -58,7 +58,7 @@ export default class Index extends MirrorballBaseCommand<
     this.mirrorballService.quietAddUserToGuild(
       this.ctx,
       this.author.id,
-      this.guild.id
+      this.requiredGuild.id
     );
 
     const indexingUsername = senderUsername;
@@ -87,7 +87,7 @@ export default class Index extends MirrorballBaseCommand<
 
     let response = await this.query({
       user: { lastFMUsername: indexingUsername, discordID: this.author.id },
-      guildID: this.guild.id,
+      guildID: this.requiredGuild.id,
       discordID: this.author.id,
     });
 

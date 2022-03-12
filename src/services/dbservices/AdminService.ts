@@ -36,7 +36,7 @@ export class AdminService extends BaseService {
     commandFriendlyName: string,
     dev = false
   ): Promise<DisabledCommand> {
-    const serverID = ctx.guild.id;
+    const serverID = ctx.requiredGuild.id;
 
     const disabledCommand = await DisabledCommand.findOne({
       where: { commandID, serverID },
@@ -66,7 +66,7 @@ export class AdminService extends BaseService {
     commandID: string
   ): Promise<DisabledCommand> {
     const enablerID = ctx.author.id;
-    const serverID = ctx.guild.id;
+    const serverID = ctx.requiredGuild.id;
 
     const disabledCommand = await DisabledCommand.findOne({
       where: { commandID, serverID },
@@ -91,7 +91,7 @@ export class AdminService extends BaseService {
     ctx: GowonContext,
     commandID: string
   ): Promise<{ isDisabled: boolean; dev: boolean }> {
-    const serverID = ctx.guild.id;
+    const serverID = ctx.requiredGuild.id;
 
     this.log(ctx, "checking if " + commandID + " is disabled in " + serverID);
 
@@ -105,7 +105,7 @@ export class AdminService extends BaseService {
   }
 
   async listDisabled(ctx: GowonContext): Promise<DisabledCommand[]> {
-    return await DisabledCommand.find({ serverID: ctx.guild.id });
+    return await DisabledCommand.find({ serverID: ctx.requiredGuild.id });
   }
 
   private async setPermissions(
@@ -116,7 +116,7 @@ export class AdminService extends BaseService {
     isRoleBased: boolean,
     commandFriendlyName: string
   ): Promise<Permission> {
-    const serverID = ctx.guild.id;
+    const serverID = ctx.requiredGuild.id;
 
     const permissions = await Permission.find({
       where: { serverID, commandID },
@@ -215,7 +215,7 @@ export class AdminService extends BaseService {
     entityID: string,
     commandID: string
   ): Promise<Permission> {
-    const serverID = ctx.guild.id;
+    const serverID = ctx.requiredGuild.id;
 
     const permission = await Permission.findOne({
       where: { entityID, serverID, commandID },
@@ -234,7 +234,7 @@ export class AdminService extends BaseService {
   }
 
   async listPermissions(ctx: GowonContext): Promise<Permission[]> {
-    const serverID = ctx.guild.id;
+    const serverID = ctx.requiredGuild.id;
 
     this.log(ctx, `Listing permissions in ${serverID}`);
     return await Permission.find({ where: { serverID } });
@@ -244,7 +244,7 @@ export class AdminService extends BaseService {
     ctx: GowonContext,
     commandID: string
   ): Promise<Permission[]> {
-    const serverID = ctx.guild.id;
+    const serverID = ctx.requiredGuild.id;
 
     this.log(
       ctx,
@@ -257,7 +257,7 @@ export class AdminService extends BaseService {
     ctx: GowonContext,
     entityID: string
   ): Promise<Permission[]> {
-    const serverID = ctx.guild.id;
+    const serverID = ctx.requiredGuild.id;
 
     this.log(ctx, `Listing permissions in ${serverID} for entity ${entityID}`);
     return await Permission.find({ where: { serverID, entityID } });
@@ -268,7 +268,7 @@ export class AdminService extends BaseService {
     commandID: string,
     channelID: string
   ): Promise<ChannelBlacklist> {
-    const serverID = ctx.guild.id;
+    const serverID = ctx.requiredGuild.id;
 
     this.log(
       ctx,
@@ -310,7 +310,7 @@ export class AdminService extends BaseService {
     commandID: string,
     channelID: string
   ): Promise<ChannelBlacklist> {
-    const serverID = ctx.guild.id;
+    const serverID = ctx.requiredGuild.id;
 
     this.log(
       ctx,

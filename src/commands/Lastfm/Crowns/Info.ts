@@ -63,7 +63,7 @@ export class Info extends CrownsChildCommand<typeof args> {
     if (!crown) {
       if (
         await this.gowonService.isArtistCrownBanned(
-          this.guild,
+          this.requiredGuild,
           redirectArtistName
         )
       ) {

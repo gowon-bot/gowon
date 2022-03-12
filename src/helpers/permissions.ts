@@ -1,4 +1,4 @@
-import { Rollout } from "../lib/command/Command";
+import { Rollout } from "../lib/command/Rollout";
 import { Payload } from "../lib/context/Payload";
 
 export function checkRollout(rollout: Rollout, payload: Payload): boolean {
@@ -9,7 +9,7 @@ export function checkRollout(rollout: Rollout, payload: Payload): boolean {
       return true;
     }
   } else if (rollout.guilds) {
-    return rollout.guilds.includes(payload.guild!.id);
+    return payload.guild ? rollout.guilds.includes(payload.guild.id) : false;
   }
 
   return false;

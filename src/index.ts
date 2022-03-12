@@ -15,24 +15,29 @@ import {
   guildEventService,
   setup,
   interactionHandler,
+  twitterService,
 } from "./setup";
 import chalk from "chalk";
 import { gowonAPIPort } from "./api";
 import { AnalyticsCollector } from "./analytics/AnalyticsCollector";
 import { UsersService } from "./services/dbservices/UsersService";
-import { Logger } from "./lib/Logger";
+import { HeaderlessLogger } from "./lib/Logger";
 import { GowonContext } from "./lib/context/Context";
+import { TweetHandler } from "./services/Twitter/TweetHandler";
 
 async function start() {
   await setup();
 
   const ctx = new GowonContext({
-    command: { gowonClient: client, logger: new Logger() } as any,
+    command: { client, logger: new HeaderlessLogger() } as any,
     custom: {},
   } as any);
 
   const analyticsCollector = ServiceRegistry.get(AnalyticsCollector);
   const usersService = ServiceRegistry.get(UsersService);
+  const tweetHandler = new TweetHandler();
+
+  await tweetHandler.init();
 
   client.client.on("ready", () => {
     console.log(
@@ -80,6 +85,31 @@ async function start() {
 
   analyticsCollector.metrics.guildCount.set(guildCount);
   analyticsCollector.metrics.userCount.set(userCount);
+
+  twitterService.mentions.subscribe(async (tweet) => {
+    try {
+      await tweetHandler.handle(tweet, client);
+    } catch (e) {
+      console.log(e);
+    }
+  });
+
+  twitterService.mentions.connect();
 }
 
 start();
+
+function unsubscribe() {
+  if (twitterService.mentions) {
+    twitterService.mentions.unsubscribe();
+  }
+
+  process.exit();
+}
+
+//catches ctrl+c event
+process.on("SIGINT", unsubscribe);
+
+// // catches "kill pid" (for example: nodemon restart)
+process.on("SIGUSR1", unsubscribe);
+process.on("SIGUSR2", unsubscribe);

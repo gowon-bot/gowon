@@ -81,20 +81,20 @@ export class WordBlacklistService extends BaseService<WordBlacklistServiceContex
     ctx: WordBlacklistServiceContext,
     tag: string
   ): Promise<TagBan> {
-    this.log(ctx, `Banning tag ${tag} in ${ctx.guild.id}`);
+    this.log(ctx, `Banning tag ${tag} in ${ctx.requiredGuild.id}`);
 
     if (!this.isAllowed(ctx, tag, ["base", "tags"]))
       throw new TagBannedByDefaultError();
 
     const existingBan = await TagBan.findOne({
-      serverID: ctx.guild.id,
+      serverID: ctx.requiredGuild.id,
       tag: this.normalizeItem(tag),
     });
 
     if (existingBan) throw new TagAlreadyBannedError();
 
     const newBan = TagBan.create({
-      serverID: ctx.guild.id,
+      serverID: ctx.requiredGuild.id,
       tag: this.normalizeItem(tag),
     });
 
@@ -105,12 +105,12 @@ export class WordBlacklistService extends BaseService<WordBlacklistServiceContex
     ctx: WordBlacklistServiceContext,
     tag: string
   ): Promise<void> {
-    this.log(ctx, `Unbanning tag ${tag} in ${ctx.guild.id}`);
+    this.log(ctx, `Unbanning tag ${tag} in ${ctx.requiredGuild.id}`);
 
     if (!this.isAllowed(ctx, tag)) throw new TagBannedByDefaultError();
 
     const existingBan = await TagBan.findOne({
-      serverID: ctx.guild.id,
+      serverID: ctx.requiredGuild.id,
       tag: this.normalizeItem(tag),
     });
 
@@ -122,12 +122,14 @@ export class WordBlacklistService extends BaseService<WordBlacklistServiceContex
   async getServerBannedTags(
     ctx: WordBlacklistServiceContext
   ): Promise<TagBan[]> {
-    this.log(ctx, `Getting banned tags for ${ctx.guild.id}`);
-    return await TagBan.find({ serverID: ctx.guild.id });
+    this.log(ctx, `Getting banned tags for ${ctx.requiredGuild.id}`);
+    return await TagBan.find({ serverID: ctx.requiredGuild.id });
   }
 
   async saveServerBannedTagsInContext(ctx: WordBlacklistServiceContext) {
-    ctx.mutable.serverBannedTags = await this.getServerBannedTags(ctx);
+    if (ctx.guild) {
+      ctx.mutable.serverBannedTags = await this.getServerBannedTags(ctx);
+    }
   }
 
   private parseRawBlacklist(rawBlacklist: RawWordBlacklist): WordBlacklist {

@@ -1,10 +1,10 @@
 import escapeStringRegexp from "escape-string-regexp";
-import { Command } from "./Command";
+import { BaseCommand } from "./BaseCommand";
 
 class Stack {
   next?: Stack;
 
-  constructor(public string: string, public command: Command) {}
+  constructor(public string: string, public command: BaseCommand) {}
 }
 
 export class RunAs {
@@ -35,8 +35,8 @@ export class RunAs {
     return this.last()?.string || "";
   }
 
-  toCommandArray(): Array<Command> {
-    let array: Array<Command> = [];
+  toCommandArray(): Array<BaseCommand> {
+    let array: Array<BaseCommand> = [];
 
     let s = this.stack;
 
@@ -73,7 +73,7 @@ export class RunAs {
       .join("\\s+");
   }
 
-  add(stack: { string: string; command: Command }): RunAs {
+  add(stack: { string: string; command: BaseCommand }): RunAs {
     let s = this.stack;
 
     while (s) {

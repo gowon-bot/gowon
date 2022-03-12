@@ -12,12 +12,12 @@ import {
   NicknameServiceContext,
 } from "../../services/Discord/NicknameService";
 import { CommandRegistry } from "./CommandRegistry";
-import { Command } from "./Command";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 import Prefix from "../../commands/Meta/Prefix";
 import Help from "../../commands/Help/Help";
 import { GowonContext } from "../context/Context";
 import { Payload } from "../context/Payload";
+import { BaseCommand } from "./BaseCommand";
 
 export class CommandHandler {
   commandRegistry = CommandRegistry.getInstance();
@@ -178,7 +178,11 @@ export class CommandHandler {
     }
   }
 
-  private async runCommand(command: Command, message: Message, runAs: RunAs) {
+  private async runCommand(
+    command: BaseCommand,
+    message: Message,
+    runAs: RunAs
+  ) {
     const newCommand = command.copy();
 
     try {

@@ -1,4 +1,3 @@
-import { Logger } from "../lib/Logger";
 import chalk from "chalk";
 import { GowonContext, UnwrapContext } from "../lib/context/Context";
 
@@ -14,7 +13,7 @@ export class BaseService<ContextT extends GowonContext = GowonContext<{}>> {
   }
 
   protected log(ctx: ContextT, msg: string): void {
-    Logger.log(this.constructor.name, chalk`{grey ${msg}}`, ctx.logger);
+    ctx.logger.log(this.constructor.name, chalk`{grey ${msg}}`);
   }
 
   protected basicAuthorization(left: string, right: string) {

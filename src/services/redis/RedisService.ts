@@ -83,7 +83,7 @@ export class RedisService extends BaseService {
 
   private sessionKey(ctx: RedisServiceContext, key: string): string {
     const discordID = ctx.author.id;
-    const guildID = ctx.guild.id;
+    const guildID = ctx.requiredGuild.id;
 
     return this.prefixedKey(ctx, `${discordID}:${guildID}-${key}`);
   }

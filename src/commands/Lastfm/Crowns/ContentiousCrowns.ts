@@ -32,10 +32,10 @@ export class ContentiousCrowns extends CrownsChildCommand {
       throw new LogicError("no crowns have been stolen yet!");
 
     const embed = this.newEmbed()
-      .setTitle(`Most contentious crowns in ${this.guild.name}`)
+      .setTitle(`Most contentious crowns in ${this.requiredGuild.name}`)
       .setDescription(
         `There are **${displayNumber(crownsCount, "** crown")} in ${
-          this.guild.name
+          this.requiredGuild.name
         }\n\n` +
           filteredCrowns
             .map(

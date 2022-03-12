@@ -30,7 +30,7 @@ export default class LastFmToDiscord extends LastFMBaseCommand<typeof args> {
     );
 
     let member = user
-      ? await this.guild.members.fetch(user.discordID)
+      ? await this.requiredGuild.members.fetch(user.discordID)
       : undefined;
 
     if (!user || !member)

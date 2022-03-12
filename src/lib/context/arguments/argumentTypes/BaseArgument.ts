@@ -121,7 +121,7 @@ export abstract class BaseArgument<
     const cleanContent = this.gowonService.removeCommandName(
       content,
       ctx.runAs,
-      ctx.guild.id
+      ctx.requiredGuild.id
     );
 
     return cleanContent.replace(/<(@|#)(!|&)?[0-9]+>/g, "");

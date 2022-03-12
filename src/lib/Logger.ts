@@ -86,8 +86,16 @@ ${
       }\n`
     : ""
 }{cyan Ran at}: ${payload.source.createdAt} {cyan by} ${
-        payload.author.username
-      } {cyan in} ${payload.guild?.name || "{red DMs}"}
+        payload.isDiscord()
+          ? payload.author.username
+          : payload.isTweet()
+          ? payload.source.authorID
+          : "an unknown author"
+      } ${
+        payload.isDiscord()
+          ? chalk`{cyan in} ${payload.guild?.name || chalk`{red DMs}`}`
+          : "on Twitter"
+      }
 {cyan with arguments}: ${Logger.formatObject(
         this.sanitizeParamsForDisplay(command.parsedArguments)
       )}
@@ -98,7 +106,11 @@ ${
       }
 
 {cyan Raw message content}:
-${payload.isMessage() ? chalk`{bgGrey ${payload.source.content}}` : ""}
+${
+  payload.isMessage() || payload.isTweet()
+    ? chalk`{bgGrey ${payload.source.content}}`
+    : ""
+}
 {cyan Activity:}`;
     Logger.log("Command", chalk.grey("started"), this);
   }
@@ -127,7 +139,7 @@ ${payload.isMessage() ? chalk`{bgGrey ${payload.source.content}}` : ""}
 }
 
 export class HeaderlessLogger extends Logger {
-  log(context: string, msg?: any): void {
+  override log(context: string, msg?: any): void {
     Logger.log(context, msg);
   }
 }

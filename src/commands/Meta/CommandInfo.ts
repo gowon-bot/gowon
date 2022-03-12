@@ -30,7 +30,7 @@ export default class CommandInfo extends MetaBaseCommand<typeof args> {
 
     const { command, runAs } = await this.commandRegistry.find(
       searchString,
-      this.guild.id
+      this.requiredGuild.id
     );
 
     if (!command) throw new CommandNotFoundError();

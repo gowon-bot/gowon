@@ -34,11 +34,11 @@ export class GuildAt extends CrownsChildCommand<typeof args> {
       );
 
     let embed = this.newEmbed()
-      .setAuthor(
-        `${this.guild.name}'s crown leaderboard (${guildAt.start + 1} - ${
-          guildAt.end
-        })`
-      )
+      .setAuthor({
+        name: `${this.requiredGuild.name}'s crown leaderboard (${
+          guildAt.start + 1
+        } - ${guildAt.end})`,
+      })
       .setDescription(
         `${(
           await asyncMap(

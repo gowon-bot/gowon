@@ -1,5 +1,4 @@
 import { AdminBaseChildCommand } from "../AdminBaseCommand";
-import { Command } from "../../../lib/command/Command";
 import {
   CommandNotFoundError,
   CannotBeUsedAsASlashCommand,
@@ -12,6 +11,7 @@ import { RunAs } from "../../../lib/command/RunAs";
 import { asyncMap } from "../../../helpers";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { UserStringArgument } from "../../../lib/context/arguments/argumentTypes/UserStringArgument";
+import { BaseCommand } from "../../../lib/command/BaseCommand";
 
 export const permissionsArgs = {
   command: new StringArgument({ index: { start: 0 } }),
@@ -35,7 +35,7 @@ export abstract class PermissionsChildCommand extends AdminBaseChildCommand<
 
   adminCommand = true;
 
-  command!: Command;
+  command!: BaseCommand;
   aliases!: string[];
   commandRunAs!: RunAs;
 
@@ -54,7 +54,7 @@ export abstract class PermissionsChildCommand extends AdminBaseChildCommand<
 
       const command = await this.commandRegistry.find(
         this.aliases.join(" "),
-        this.guild.id
+        this.requiredGuild.id
       );
 
       if (!command.command && this.throwOnNoCommand) {
@@ -87,7 +87,7 @@ export abstract class PermissionsChildCommand extends AdminBaseChildCommand<
 
       for (const user of await asyncMap(
         userIDs,
-        (id) => User.toDiscordUser(this.guild, id)!
+        (id) => User.toDiscordUser(this.requiredGuild, id)!
       )) {
         users.push(user!);
       }

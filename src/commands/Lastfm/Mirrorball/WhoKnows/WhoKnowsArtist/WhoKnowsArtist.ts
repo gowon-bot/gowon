@@ -37,6 +37,7 @@ export default class WhoKnowsArtist extends WhoKnowsBaseCommand<
   description = "See who knows an artist";
   subcategory = "whoknows";
   aliases = ["wk", "fmwk"];
+  guildRequired = true;
 
   variations: Variation[] = [VARIATIONS.update("wk"), VARIATIONS.global("wk")];
 
@@ -67,7 +68,7 @@ export default class WhoKnowsArtist extends WhoKnowsBaseCommand<
       await this.updateAndWait(this.author.id);
     }
 
-    const guildID = this.isGlobal() ? undefined : this.guild.id;
+    const guildID = this.isGlobal() ? undefined : this.requiredGuild.id;
 
     const response = await this.query({
       artist: { name: artistName },

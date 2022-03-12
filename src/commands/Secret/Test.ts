@@ -1,4 +1,6 @@
 import { BaseCommand } from "../../lib/command/BaseCommand";
+import { ServiceRegistry } from "../../services/ServicesRegistry";
+import { TwitterService } from "../../services/Twitter/TwitterService";
 
 const args = {} as const;
 
@@ -11,8 +13,11 @@ export default class Test extends BaseCommand<typeof args> {
   secretCommand = true;
   arguments = args;
   slashCommand = true;
+  twitterCommand = true;
+
+  twitterService = ServiceRegistry.get(TwitterService);
 
   async run() {
-    await this.send("Hello, world!");
+    await this.responder.all(this.ctx, "Hello, world!");
   }
 }

@@ -57,7 +57,7 @@ export default class WhoKnowsAlbum extends WhoKnowsBaseCommand<
     const response = await this.query({
       album: { name: albumName, artist: { name: artistName } },
       settings: {
-        guildID: this.isGlobal() ? undefined : this.guild.id,
+        guildID: this.isGlobal() ? undefined : this.requiredGuild.id,
         limit: 20,
       },
     });

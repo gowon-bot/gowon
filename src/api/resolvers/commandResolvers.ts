@@ -1,4 +1,4 @@
-import { Command } from "../../lib/command/Command";
+import { BaseCommand } from "../../lib/command/BaseCommand";
 import { CommandRegistry } from "../../lib/command/CommandRegistry";
 
 const registry = CommandRegistry.getInstance();
@@ -40,7 +40,7 @@ export interface VariationResponse {
   description?: string;
 }
 
-function commandToData(command: Command): CommandResponse {
+function commandToData(command: BaseCommand): CommandResponse {
   return {
     id: command.id,
     idSeed: command.idSeed,

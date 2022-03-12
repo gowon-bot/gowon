@@ -1,7 +1,6 @@
 import { AdminService } from "../../services/dbservices/AdminService";
 import { GuildMember } from "discord.js";
 import { Permission } from "../../database/entity/Permission";
-import { Command } from "../command/Command";
 import { ChildCommand } from "../command/ParentCommand";
 import { In } from "typeorm";
 import { checkRollout } from "../../helpers/permissions";
@@ -12,6 +11,7 @@ import { GowonService } from "../../services/GowonService";
 import { asyncMap } from "../../helpers";
 import { SettingsService } from "../settings/SettingsService";
 import { GowonContext } from "../context/Context";
+import { BaseCommand } from "../command/BaseCommand";
 
 export enum CheckFailReason {
   disabled = "disabled",
@@ -56,7 +56,7 @@ export class Can extends BaseService<CanContext> {
   private getAdminRole(ctx: CanContext): string | undefined {
     if (!this.ctx.hasOwnProperty("adminRole"))
       ctx.mutable.adminRole = this.settingsService.get("adminRole", {
-        guildID: ctx.guild.id,
+        guildID: ctx.requiredGuild.id,
       });
 
     return ctx.mutable.adminRole;
@@ -68,7 +68,7 @@ export class Can extends BaseService<CanContext> {
   ): Promise<string[]> {
     const runAs = await this.commandRegistry.find(
       child.parentName,
-      ctx.guild.id
+      ctx.requiredGuild.id
     );
 
     return runAs.runAs.toCommandArray().map((c) => c.id);
@@ -107,7 +107,7 @@ export class Can extends BaseService<CanContext> {
     ctx: CanContext,
     commandID: string
   ): Promise<boolean> {
-    const serverID = ctx.guild.id;
+    const serverID = ctx.requiredGuild.id;
     const channelID = ctx.payload.channel.id;
 
     let channelBlacklists = await this.gowonService.getChannelBlacklists(
@@ -121,7 +121,7 @@ export class Can extends BaseService<CanContext> {
 
   async run(
     ctx: CanContext,
-    command: Command,
+    command: BaseCommand,
     { useChannel }: { useChannel?: boolean } = { useChannel: false }
   ): Promise<CanCheck> {
     const client = ctx.client;
@@ -197,7 +197,10 @@ export class Can extends BaseService<CanContext> {
     };
   }
 
-  async viewList(ctx: CanContext, commands: Command[]): Promise<Command[]> {
+  async viewList(
+    ctx: CanContext,
+    commands: BaseCommand[]
+  ): Promise<BaseCommand[]> {
     const message = ctx.payload;
 
     const allPermissions = await Permission.find({
@@ -211,7 +214,7 @@ export class Can extends BaseService<CanContext> {
       this.getCachedPermissions(ctx)[c.id].push(c);
     });
 
-    const passed = [] as Command[];
+    const passed = [] as BaseCommand[];
 
     for (const command of commands) {
       const check = await this.run(ctx, command);
@@ -222,7 +225,7 @@ export class Can extends BaseService<CanContext> {
     return passed;
   }
 
-  private checkRollout(ctx: CanContext, command: Command) {
+  private checkRollout(ctx: CanContext, command: BaseCommand) {
     return checkRollout(command.rollout, ctx.payload);
   }
 

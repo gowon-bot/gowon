@@ -50,7 +50,9 @@ export class List extends CrownsChildCommand<typeof args> {
 
     const embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor("Crowns"))
-      .setTitle(`${perspective.upper.possessive} crowns in ${this.guild.name}`);
+      .setTitle(
+        `${perspective.upper.possessive} crowns in ${this.requiredGuild.name}`
+      );
 
     const scrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
       pageSize: 15,

@@ -2,16 +2,16 @@ import { Commands } from "./CommandGroup";
 
 import { promisify } from "util";
 import _glob from "glob";
-import { Command } from "./Command";
 import { AliasChecker } from "../AliasChecker";
 import { RunAs } from "./RunAs";
 import { flatDeep } from "../../helpers";
 import { ParentCommand } from "./ParentCommand";
 import { SimpleMap } from "../../helpers/types";
+import { BaseCommand } from "./BaseCommand";
 const glob = promisify(_glob);
 
-type Registry = Array<Command>;
-type CommandFactory = SimpleMap<{ new (): Command }>;
+type Registry = Array<BaseCommand>;
+type CommandFactory = SimpleMap<{ new (): BaseCommand }>;
 
 export class CommandRegistry {
   private constructor() {}
@@ -60,8 +60,8 @@ export class CommandRegistry {
   async find(
     messageString: string,
     serverID: string,
-    commands?: Command[]
-  ): Promise<{ command?: Command; runAs: RunAs }> {
+    commands?: BaseCommand[]
+  ): Promise<{ command?: BaseCommand<any>; runAs: RunAs }> {
     const checker = new AliasChecker(messageString);
 
     for (const command of commands || this.list(true)) {
@@ -80,7 +80,7 @@ export class CommandRegistry {
   async findAndCopy(
     messageString: string,
     serverID: string
-  ): Promise<{ command?: Command; runAs: RunAs }> {
+  ): Promise<{ command?: BaseCommand; runAs: RunAs }> {
     const { command, runAs } = await this.find(messageString, serverID);
 
     return { runAs, command: command?.copy() };
@@ -92,13 +92,13 @@ export class CommandRegistry {
       includeSecret,
       includeArchived,
     }: { includeSecret?: boolean; includeArchived?: boolean } = {}
-  ): Command | undefined {
+  ): BaseCommand | undefined {
     return this.deepList(includeSecret, includeArchived).find(
       (c) => c.id === id
     );
   }
 
-  list(showSecret: boolean = false, showArchived = false): Command[] {
+  list(showSecret: boolean = false, showArchived = false): BaseCommand[] {
     return this.pool.filter(
       (c) =>
         (c.parentName ? true : c.shouldBeIndexed) &&
@@ -107,10 +107,10 @@ export class CommandRegistry {
     );
   }
 
-  deepList(showSecret = false, showArchived = false): Command[] {
+  deepList(showSecret = false, showArchived = false): BaseCommand[] {
     const shallowCommands = this.list();
 
-    return flatDeep<Command>(
+    return flatDeep<BaseCommand>(
       shallowCommands.map((sc) =>
         sc.hasChildren ? [sc, ...(sc.children?.asDeepList() || [])] : sc
       )
@@ -119,7 +119,7 @@ export class CommandRegistry {
     );
   }
 
-  search(commands: Command[], keywords?: string): Command[] {
+  search(commands: BaseCommand[], keywords?: string): BaseCommand[] {
     if (!keywords) {
       return commands.sort((a, b) =>
         a.friendlyName.localeCompare(b.friendlyName)
@@ -150,7 +150,7 @@ export class CommandRegistry {
     return filteredCommands;
   }
 
-  private compareCommandAndKeywords(command: Command, keywords: string) {
+  private compareCommandAndKeywords(command: BaseCommand, keywords: string) {
     keywords = keywords.toLowerCase();
 
     const inName = (command.friendlyNameWithParent || command.name)
@@ -192,7 +192,7 @@ async function generateCommands(): Promise<Commands> {
 }
 
 function checkPrefixes(
-  command: Command,
+  command: BaseCommand,
   keywords: string,
   exact = false
 ): boolean {

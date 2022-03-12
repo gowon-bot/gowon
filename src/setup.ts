@@ -15,6 +15,7 @@ import gql from "graphql-tag";
 import { ServiceRegistry } from "./services/ServicesRegistry";
 import { SettingsService } from "./lib/settings/SettingsService";
 import { InteractionHandler } from "./lib/command/interactions/InteractionHandler";
+import { TwitterService } from "./services/Twitter/TwitterService";
 
 export const client = new GowonClient(
   new Client({
@@ -50,6 +51,7 @@ const api = new GraphQLAPI(client);
 const settingsService = ServiceRegistry.get(SettingsService);
 const redisService = ServiceRegistry.get(RedisInteractionService);
 export const guildEventService = ServiceRegistry.get(GuildEventService);
+export const twitterService = ServiceRegistry.get(TwitterService);
 
 export async function setup() {
   console.log(
@@ -59,6 +61,7 @@ export async function setup() {
   );
 
   await Promise.all([
+    buildTwitterStream(),
     connectToDB(),
     connectToRedis(),
     connectToPM2(),
@@ -78,6 +81,13 @@ function connectToDB() {
 
 function connectToRedis() {
   return logStartup(() => redisService.init(), "Connected to Redis");
+}
+
+function buildTwitterStream() {
+  return logStartup(
+    () => twitterService.buildStream(),
+    "Created Twitter stream"
+  );
 }
 
 function intializeAPI() {

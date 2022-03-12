@@ -76,7 +76,7 @@ ${
         (c) => c.id === this.payload.channel.id
       )?.name
     }
-**Guild**: ${this.guild.name}`;
+**Guild**: ${this.requiredGuild.name}`;
 
     const labels = ["user feedback"];
 

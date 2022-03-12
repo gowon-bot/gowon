@@ -65,12 +65,12 @@ export class Guild extends CrownsChildCommand<typeof args> {
     ]);
 
     const embed = this.newEmbed()
-      .setTitle(`${this.guild.name}'s crown leaderboard`)
+      .setTitle(`${this.requiredGuild.name}'s crown leaderboard`)
       .setDescription(
         `There ${crownsCount === 1 ? "is" : "are"} **${displayNumber(
           crownsCount,
           "** crown"
-        )} in ${this.guild.name}\n\n` +
+        )} in ${this.requiredGuild.name}\n\n` +
           (
             await asyncMap(
               holders,

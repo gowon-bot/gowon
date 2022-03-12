@@ -25,7 +25,7 @@ export class WhoKnowsService extends BaseService<WhoKnowsServiceContext> {
   };
 
   async recordUnknownMember(ctx: WhoKnowsServiceContext, userID: string) {
-    const guildID = ctx.guild.id;
+    const guildID = ctx.requiredGuild.id;
 
     this.log(ctx, `Handling unknown use ${userID} in ${guildID}`);
 
