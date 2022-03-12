@@ -2,22 +2,22 @@ import { BaseCommand } from "../../lib/command/BaseCommand";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { TwitterService } from "../../services/Twitter/TwitterService";
 
-const args = {} as const;
+export default class ConnectTwitterBot extends BaseCommand {
+  idSeed = "ive gaeul";
 
-export default class Test extends BaseCommand<typeof args> {
-  idSeed = "clc seunghee";
-
-  description = "Testing testing 123...4???";
+  description = "Connect the Twitter bot to the Discord one";
   subcategory = "developer";
 
   secretCommand = true;
-  arguments = args;
-  slashCommand = true;
-  twitterCommand = true;
+  devCommand = true;
 
   twitterService = ServiceRegistry.get(TwitterService);
 
   async run() {
-    await this.responder.all(this.ctx, "Hello, world!");
+    const url = this.twitterService.generateURL();
+
+    this.dmAuthor(url.url);
+
+    await this.twitterService.botLogin(this.ctx, url);
   }
 }

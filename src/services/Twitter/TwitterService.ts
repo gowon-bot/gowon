@@ -35,8 +35,14 @@ export class TwitterService extends BaseService {
   private token?: TwitterToken;
   public mentions!: TweetStream;
 
-  private redirectURI = "http://localhost:3000/webhooks/twitter";
-  private scope = ["tweet.read", "tweet.write", "users.read", "offline.access"];
+  private redirectURI = `${config.gowonAPIURL}/webhooks/twitter`;
+  private botLoginScope = [
+    "tweet.read",
+    "tweet.write",
+    "users.read",
+    "offline.access",
+  ];
+  private userLoginScope = ["users.read"];
 
   private twitterWebhookService = TwitterWebhookService.getInstance();
 
@@ -87,9 +93,11 @@ export class TwitterService extends BaseService {
     this.client = client;
   }
 
-  generateURL(): TwitterAuthURL {
+  generateURL({
+    userScope,
+  }: Partial<{ userScope: boolean }> = {}): TwitterAuthURL {
     const url = this.client.generateOAuth2AuthLink(this.redirectURI, {
-      scope: this.scope,
+      scope: userScope ? this.userLoginScope : this.botLoginScope,
     });
 
     return new TwitterAuthURL(url);
@@ -120,10 +128,27 @@ export class TwitterService extends BaseService {
     return token;
   }
 
+  async loginAndGetUserID(url: TwitterAuthURL): Promise<string> {
+    const response = await this.twitterWebhookService.waitForResponse(
+      url,
+      120_000 // 2 minutes
+    );
+
+    const loggedIn = await this.client.loginWithOAuth2({
+      code: response.code,
+      codeVerifier: url.codeVerifier,
+      redirectUri: this.redirectURI,
+    });
+
+    const user = await loggedIn.client.currentUserV2();
+
+    return user.data.id;
+  }
+
   private async ensureLoggedIn(ctx: GowonContext): Promise<void> {
     if (this.token) {
       if (this.token.isExpired()) {
-        this.refreshToken(ctx);
+        await this.refreshToken(ctx);
       }
     } else {
       const fromRedis = await this.fetchSavedToken(ctx);
@@ -131,9 +156,14 @@ export class TwitterService extends BaseService {
       if (fromRedis) {
         this.token = fromRedis;
 
-        const newClient = new TwitterApi(fromRedis.accessToken);
+        if (fromRedis.isExpired()) {
+          await this.refreshToken(ctx);
+        } else {
+          const newClient = new TwitterApi(fromRedis.accessToken);
 
-        this.setTwitterClient(newClient);
+          this.setTwitterClient(newClient);
+        }
+
         return;
       }
 

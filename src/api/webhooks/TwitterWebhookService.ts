@@ -1,6 +1,6 @@
 import { TwitterAuthURL } from "../../services/Twitter/converters/Auth";
 
-type TwitterAuthResponse = { state: string; code: string };
+export type TwitterAuthResponse = { state: string; code: string };
 type TwitterCallback = (
   data: TwitterAuthResponse,
   codeVerifier: string

@@ -661,7 +661,8 @@ export abstract class BaseCommand<ArgumentsType extends ArgumentsMap = {}> {
   protected async sendError(message: string, footer = "") {
     const embed = errorEmbed(this.newEmbed(), this.author, message, footer);
 
-    await this.send(embed);
+    await this.responder.discord(this.ctx, embed);
+    await this.responder.twitter(this.ctx, message);
   }
 
   protected get scopes() {

@@ -35,33 +35,14 @@ export class TweetHandler {
     if (command) {
       const newCommand = command.copy();
 
+      const payload = new Payload(tweet);
+      await payload.normalize(gowonClient);
+
       await newCommand.execute.bind(newCommand)(
-        new Payload(tweet),
+        payload,
         new RunAs(),
         gowonClient
       );
     }
-
-    // if (command === "ping") {
-    //   console.log("Pinging...");
-    //   await this.twitterService.tweet(this.ctx, "Pong!", tweet.id);
-    // } else if (command === "fm") {
-    //   console.log("Sending nowplaying");
-
-    //   const nowPlaying = await this.lastFMService.nowPlaying(
-    //     this.ctx,
-    //     "flushed_emoji"
-    //   );
-
-    //   await this.twitterService.tweet(
-    //     this.ctx,
-    //     `🎶 ${
-    //       nowPlaying.isNowPlaying ? "Now playing" : "Last scrobbled"
-    //     } for flushed_emoji:\n\n${nowPlaying.name} by ${
-    //       nowPlaying.artist
-    //     }\nfrom ${nowPlaying.album}`,
-    //     tweet.id
-    //   );
-    // }
   }
 }

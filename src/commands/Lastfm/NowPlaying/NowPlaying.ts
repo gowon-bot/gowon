@@ -86,7 +86,7 @@ export default class NowPlaying extends NowPlayingBaseCommand<typeof args> {
     if (this.payload.isTweet()) {
       this.responder.twitter(
         this.ctx,
-        `🎶${
+        `🎶 ${
           nowPlaying.isNowPlaying ? "Now playing" : "Last scrobbled"
         } for ${username}\n\n${nowPlaying.name} by ${nowPlaying.artist}\nfrom ${
           nowPlaying.album
