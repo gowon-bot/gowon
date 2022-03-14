@@ -602,7 +602,10 @@ export abstract class BaseCommand<ArgumentsType extends ArgumentsMap = {}> {
       name: title
         ? `${this.payload.author.tag} | ${title}`
         : `${this.payload.author.tag}`,
-      iconURL: this.payload.author.avatarURL() || undefined,
+      iconURL:
+        this.payload.member.avatarURL() ||
+        this.payload.author.avatarURL() ||
+        undefined,
     };
   }
 
