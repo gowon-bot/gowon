@@ -7,6 +7,7 @@
 
   "discordToken": "Get this from the discord developer portal",
   "discordClientID": "",
+  "slashCommandTestGuildID": "If environment = development, it will register slash commands to this guild instead of globally",
 
   "defaultPrefix": ".",
 

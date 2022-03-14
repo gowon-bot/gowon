@@ -1,6 +1,6 @@
-import { BaseCommand } from "../../lib/command/BaseCommand";
-import { ServiceRegistry } from "../../services/ServicesRegistry";
-import { TwitterService } from "../../services/Twitter/TwitterService";
+import { BaseCommand } from "../../../lib/command/BaseCommand";
+import { ServiceRegistry } from "../../../services/ServicesRegistry";
+import { TwitterService } from "../../../services/Twitter/TwitterService";
 
 export default class ConnectTwitterBot extends BaseCommand {
   idSeed = "ive gaeul";

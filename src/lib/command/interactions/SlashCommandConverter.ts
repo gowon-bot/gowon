@@ -1,37 +1,61 @@
-import { BaseCommand } from "../BaseCommand";
+import { BaseCommand, Variation } from "../BaseCommand";
 import {
   SlashCommandBuilder,
   SlashCommandSubcommandBuilder,
 } from "@discordjs/builders";
 import { ArgumentsMap } from "../../context/arguments/types";
-import { BaseChildCommand, ParentCommand } from "../ParentCommand";
+import { ParentCommand } from "../ParentCommand";
+import { ChildCommand } from "../Command";
 
 export class SlashCommandConverter {
-  convert(command: BaseCommand): SlashCommandBuilder {
+  convert(
+    command: BaseCommand,
+    asVariation?: Variation
+  ): SlashCommandBuilder[] {
     if (command instanceof ParentCommand) {
-      return this.convertParentCommand(command);
+      return [this.convertParentCommand(command)];
     }
 
     let slashCommand = new SlashCommandBuilder()
-      .setName((command.slashCommandName || command.name).toLowerCase())
-      .setDescription(command.description);
+      .setName(
+        (
+          asVariation?.name ||
+          command.slashCommandName ||
+          command.name
+        ).toLowerCase()
+      )
+      .setDescription(asVariation?.description || command.description);
 
     if (Object.keys(command.arguments).length) {
       slashCommand = this.convertArguments(slashCommand, command.arguments);
     }
 
-    return slashCommand as SlashCommandBuilder;
+    const variations = this.getSeparateVariations(command);
+
+    // Break the variation recursion
+    if (variations.length && !asVariation) {
+      return [slashCommand, ...this.convertVariations(command, variations)];
+    }
+
+    return [slashCommand];
   }
 
   // The typing here is a disaster
   // just ignore the `as any`s
   private convertSubcommand(
-    command: BaseChildCommand,
-    subcommand: SlashCommandSubcommandBuilder
+    command: ChildCommand,
+    subcommand: SlashCommandSubcommandBuilder,
+    asVariation?: Variation
   ): SlashCommandSubcommandBuilder {
     subcommand = subcommand
-      .setName((command.slashCommandName || command.name).toLowerCase())
-      .setDescription(command.description);
+      .setName(
+        (
+          asVariation?.name ||
+          command.slashCommandName ||
+          command.name
+        ).toLowerCase()
+      )
+      .setDescription(asVariation?.description || command.description);
 
     if (Object.keys(command.arguments).length) {
       subcommand = this.convertArguments(
@@ -71,14 +95,37 @@ export class SlashCommandConverter {
       .setName(command.friendlyName)
       .setDescription(command.description);
 
-    for (const childCommand of command.children.asDeepList()) {
+    for (const childCommand of command.children.asDeepList() as ChildCommand[]) {
       if (childCommand.slashCommand) {
         parentCommand = parentCommand.addSubcommand((subcommand) =>
-          this.convertSubcommand(childCommand as BaseChildCommand, subcommand)
+          this.convertSubcommand(childCommand, subcommand)
         ) as any;
+
+        for (const variation of this.getSeparateVariations(childCommand)) {
+          parentCommand = parentCommand.addSubcommand((subcommand) =>
+            this.convertSubcommand(childCommand, subcommand, variation)
+          ) as any;
+        }
       }
     }
 
     return parentCommand;
+  }
+
+  private getSeparateVariations(command: BaseCommand): Variation[] {
+    return (command.variations || []).filter((v) => !!v.separateSlashCommand);
+  }
+
+  private convertVariations(
+    command: BaseCommand,
+    variations: Variation[]
+  ): SlashCommandBuilder[] {
+    const slashCommands: SlashCommandBuilder[] = [];
+
+    for (const variation of variations) {
+      slashCommands.push(...this.convert(command, variation));
+    }
+
+    return slashCommands;
   }
 }

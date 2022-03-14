@@ -11,6 +11,8 @@ export abstract class PlaylistChildCommand<
   parentName = "playlists";
   subcategory = "spotify";
 
+  slashCommand = true;
+
   spotifyPlaylistTagService = ServiceRegistry.get(SpotifyPlaylistTagService);
 
   async prerun() {

@@ -61,7 +61,6 @@ export async function setup() {
   );
 
   await Promise.all([
-    buildTwitterStream(),
     connectToDB(),
     connectToRedis(),
     connectToPM2(),
@@ -73,6 +72,8 @@ export async function setup() {
 
   // SettingsManager needs the database to be connected to cache settings
   await initializeSettingsManager();
+  // The twitter stream needs the settings to be available
+  await buildTwitterStream();
 }
 
 function connectToDB() {

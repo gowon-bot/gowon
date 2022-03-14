@@ -13,12 +13,15 @@ export default class SpotifyParentCommand extends SpotifyBaseParentCommand {
   description = "Allows you to interact with Spotify in various ways!";
   friendlyName = "spotify";
 
+  slashCommand = true;
+
   noPrefixAliases = [
     // Login
     "slogin",
     "spotifylogin",
     // Next
     "next",
+    "skip",
     "snext",
     "sskip",
     // Queue

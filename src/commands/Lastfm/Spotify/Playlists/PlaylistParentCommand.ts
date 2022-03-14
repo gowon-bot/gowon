@@ -14,6 +14,8 @@ export default class PlaylistParentCommand extends SpotifyBaseParentCommand {
 
   noPrefixAliases = [];
 
+  slashCommand = true;
+
   prefixes = ["playlists", "pl", "plist"];
   default = () => new List();
 

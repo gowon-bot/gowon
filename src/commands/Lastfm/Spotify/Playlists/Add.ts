@@ -1,28 +1,26 @@
 import { LogicError } from "../../../../errors/errors";
 import { Variation } from "../../../../lib/command/BaseCommand";
 import { EmojisArgument } from "../../../../lib/context/arguments/argumentTypes/discord/EmojisArgument";
-import { Flag } from "../../../../lib/context/arguments/argumentTypes/Flag";
 import { StringArgument } from "../../../../lib/context/arguments/argumentTypes/StringArgument";
 import { removeEmojisFromString } from "../../../../lib/context/arguments/parsers/EmojiParser";
 import { PlaylistChildCommand } from "./PlaylistChildCommand";
 
 const args = {
-  playlistTag: new EmojisArgument({ default: [] }),
+  playlist: new EmojisArgument({
+    default: [],
+    description: "The tag of the playlist to add the song to",
+  }),
   artist: new StringArgument({
     index: 0,
     splitOn: "|",
     preprocessor: removeEmojisFromString,
+    description: "That artist of the track you want to add",
   }),
   track: new StringArgument({
     index: 1,
     splitOn: "|",
     preprocessor: removeEmojisFromString,
-  }),
-
-  private: new Flag({
-    description: "Shows your private playlists",
-    shortnames: ["p"],
-    longnames: ["private"],
+    description: "That track of the track you want to add",
   }),
 } as const;
 
@@ -37,6 +35,7 @@ export class Add extends PlaylistChildCommand<typeof args> {
       name: "remove",
       description: "Removes a song from one of your Spotify playlists",
       variation: ["remove"],
+      separateSlashCommand: true,
     },
   ];
 
@@ -44,7 +43,7 @@ export class Add extends PlaylistChildCommand<typeof args> {
 
   async run() {
     const remove = this.variationWasUsed("remove");
-    const [emoji] = this.parsedArguments.playlistTag;
+    const [emoji] = this.parsedArguments.playlist;
 
     const { senderRequestable, dbUser } = await this.getMentions({
       fetchSpotifyToken: true,

@@ -4,7 +4,7 @@ import { SpotifyChildCommand } from "./SpotifyChildCommand";
 export class Help extends SpotifyChildCommand {
   idSeed = "viviz eunha";
 
-  description = "Control what Spotify information Gowon shows";
+  description = "See help about Gowon's Spotify integration";
   aliases = ["help", "spotifyhelp", "shelp"];
   usage = ["public", "private"];
 

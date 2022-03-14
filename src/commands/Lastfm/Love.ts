@@ -15,7 +15,13 @@ export default class Love extends LastFMBaseCommand<typeof args> {
 
   aliases = ["luv"];
 
-  variations: Variation[] = [{ name: "unlove", variation: ["unlove", "hate"] }];
+  variations: Variation[] = [
+    {
+      name: "unlove",
+      variation: ["unlove", "hate"],
+      separateSlashCommand: true,
+    },
+  ];
 
   slashCommand = true;
 

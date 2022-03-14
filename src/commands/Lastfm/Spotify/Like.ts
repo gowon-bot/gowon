@@ -22,6 +22,7 @@ export class Like extends SpotifyChildCommand<typeof args> {
       name: "unlike",
       description: "Removes a song from your Spotify liked songs",
       variation: ["unlike"],
+      separateSlashCommand: true,
     },
   ];
 

@@ -70,6 +70,7 @@ export interface Variation {
   name: string;
   variation: string[] | string;
   description?: string;
+  separateSlashCommand?: boolean;
 }
 
 export interface CommandRedirect<T extends ArgumentsMap> {

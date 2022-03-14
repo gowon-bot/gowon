@@ -8,6 +8,8 @@ import { ServiceRegistry } from "../ServicesRegistry";
 import { RedisService } from "../redis/RedisService";
 import { GowonContext } from "../../lib/context/Context";
 import { TweetStream } from "./converters/TweetStream";
+import { SettingsService } from "../../lib/settings/SettingsService";
+import { toggleValues } from "../../lib/settings/Settings";
 
 export interface TweetOptions {
   replyTo?: string;
@@ -17,6 +19,12 @@ export class TwitterService extends BaseService {
   private get redisService() {
     return ServiceRegistry.get(RedisService);
   }
+
+  private get settingsService() {
+    return ServiceRegistry.get(SettingsService);
+  }
+
+  private twitterWebhookService = TwitterWebhookService.getInstance();
 
   customContext = {
     constants: {
@@ -44,9 +52,15 @@ export class TwitterService extends BaseService {
   ];
   private userLoginScope = ["users.read"];
 
-  private twitterWebhookService = TwitterWebhookService.getInstance();
+  async buildStream(): Promise<boolean> {
+    const noTwitter = this.settingsService.get("noTwitter", {});
 
-  async buildStream() {
+    if (noTwitter === toggleValues.ON) {
+      // To prevent any incedental method calls from crashing the bot
+      this.streamClient = {} as any;
+      return false;
+    }
+
     const stream = this.streamClient.v2.searchStream({
       expansions: ["author_id"],
       "tweet.fields": ["created_at"],
@@ -70,6 +84,8 @@ export class TwitterService extends BaseService {
     this.mentions = new TweetStream(stream);
 
     await this.mentions.init();
+
+    return true;
   }
 
   async tweet(

@@ -58,6 +58,7 @@ export class AliasChecker {
 
       if (found) return found;
     }
+
     return false;
   }
 

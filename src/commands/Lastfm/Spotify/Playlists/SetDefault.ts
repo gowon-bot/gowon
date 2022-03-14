@@ -3,7 +3,11 @@ import { StringArgument } from "../../../../lib/context/arguments/argumentTypes/
 import { PlaylistChildCommand } from "./PlaylistChildCommand";
 
 const args = {
-  playlistName: new StringArgument({ index: { start: 0 }, required: true }),
+  playlist: new StringArgument({
+    index: { start: 0 },
+    required: true,
+    description: "The name of the playlist to set as the default",
+  }),
 } as const;
 
 export class SetDefault extends PlaylistChildCommand<typeof args> {
@@ -19,7 +23,7 @@ export class SetDefault extends PlaylistChildCommand<typeof args> {
   async run() {
     await this.getMentions({ fetchSpotifyToken: true });
 
-    const playlistName = this.parsedArguments.playlistName;
+    const playlistName = this.parsedArguments.playlist;
 
     const playlists = await this.spotifyService.getPlaylists(this.ctx);
 

@@ -20,17 +20,26 @@ export class InteractionRegister {
 
     for (const command of commands) {
       try {
-        convertedCommands.push(this.converter.convert(command));
+        convertedCommands.push(...this.converter.convert(command));
       } catch (e) {
         console.log(e);
       }
     }
 
+    await this.registerWithDiscord(convertedCommands);
+  }
+
+  private async registerWithDiscord(commands: SlashCommandBuilder[]) {
     try {
       await this.discord.put(
-        Routes.applicationCommands(config.discordClientID),
+        config.environment === "development"
+          ? Routes.applicationGuildCommands(
+              config.discordClientID,
+              config.slashCommandTestGuildID
+            )
+          : Routes.applicationCommands(config.discordClientID),
         {
-          body: convertedCommands.map((c) => c.toJSON()),
+          body: commands.map((c) => c.toJSON()),
         }
       );
     } catch (e) {

@@ -67,6 +67,9 @@ export const Settings = {
   issueMode: new BotScopedSetting("issue_mode", {
     omitFromDashboard: true,
   }),
+  noTwitter: new BotScopedSetting("no_twitter", {
+    omitFromDashboard: true,
+  }),
 } as const;
 
 export type SettingsMap = {

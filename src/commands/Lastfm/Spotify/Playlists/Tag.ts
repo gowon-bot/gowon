@@ -7,10 +7,15 @@ import { validators } from "../../../../lib/validation/validators";
 import { PlaylistChildCommand } from "./PlaylistChildCommand";
 
 const args = {
-  emoji: new EmojisArgument({ default: [] }),
-  playlistName: new StringArgument({
+  emoji: new EmojisArgument({
+    default: [],
+    description: "The emoji to tag the playlist with",
+    required: true,
+  }),
+  playlist: new StringArgument({
     preprocessor: removeEmojisFromString,
     required: true,
+    description: "The name of the playlist to tag",
   }),
 } as const;
 
@@ -36,7 +41,7 @@ export class Tag extends PlaylistChildCommand<typeof args> {
   async run() {
     const { dbUser } = await this.getMentions({ fetchSpotifyToken: true });
 
-    const playlistName = this.parsedArguments.playlistName,
+    const playlistName = this.parsedArguments.playlist,
       [emoji] = this.parsedArguments.emoji;
 
     const playlists = await this.spotifyService.getPlaylists(this.ctx);
