@@ -34,7 +34,7 @@ There are now too many commands to list in the README, see `!help all` or visit 
 
   - Luca
   - Kat
-  - Mex ([Go checkout REM](https://github.com/yayuyokitano/REM))
+  - Mex ([Go checkout REM](https://github.com/yayuyokitano/rem-next))
   - DunsterJR
   - Manu
   - Ten
