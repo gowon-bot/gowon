@@ -5,6 +5,7 @@ import { Privacy } from "./Privacy";
 import { Next } from "./RemoteControl/Next";
 import { Queue } from "./RemoteControl/Queue";
 import { SpotifyBaseParentCommand } from "./SpotifyBaseCommands";
+import { Login } from "./Login";
 
 export default class SpotifyParentCommand extends SpotifyBaseParentCommand {
   idSeed = "viviz sinb";
@@ -13,6 +14,9 @@ export default class SpotifyParentCommand extends SpotifyBaseParentCommand {
   friendlyName = "spotify";
 
   noPrefixAliases = [
+    // Login
+    "slogin",
+    "spotifylogin",
     // Next
     "next",
     "snext",
@@ -28,6 +32,8 @@ export default class SpotifyParentCommand extends SpotifyBaseParentCommand {
     // Like
     "slike",
     "like",
+    "unlike",
+    "sunlike",
     // Help
     "spotifyhelp",
     "shelp",
@@ -37,5 +43,5 @@ export default class SpotifyParentCommand extends SpotifyBaseParentCommand {
   default = () => new Help();
   customHelp = Help;
 
-  children = new CommandGroup([Help, Like, Next, Privacy, Queue]);
+  children = new CommandGroup([Help, Like, Login, Next, Privacy, Queue]);
 }

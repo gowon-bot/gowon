@@ -12,7 +12,7 @@ export class Like extends SpotifyChildCommand<typeof args> {
   idSeed = "pink fantasy daewang";
 
   description = "Adds a song to your Spotify liked songs";
-  aliases = ["slike"];
+  aliases = ["slike", "like"];
 
   slashCommand = true;
 

@@ -17,6 +17,7 @@ You can see a list of all Spotify commands at ${displayLink(
       "https://gowon.ca/commands/spotify"
     )}.
 
+To connect your Spotify account, run \`${this.prefix}slogin\`
 To change your Spotify privacy, see \`${this.prefix}sprivacy\`
 To see help for managing Spotify playlists, see \`${this.prefix}help pl\`
 `);
