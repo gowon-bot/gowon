@@ -30,6 +30,7 @@ export class Add extends PlaylistChildCommand<typeof args> {
   idSeed = "pink fantasy harin";
 
   description = "Adds a song to one of your Spotify playlists";
+  usage = ["artist | song", "artist | song :playlistTagEmoji:"];
 
   variations: Variation[] = [
     {

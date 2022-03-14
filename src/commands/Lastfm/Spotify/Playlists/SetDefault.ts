@@ -10,6 +10,7 @@ export class SetDefault extends PlaylistChildCommand<typeof args> {
   idSeed = "pink fantasy arang";
 
   aliases = ["default"];
+  usage = ["playlistName"];
 
   description = "Sets one of your playlists as the default";
 

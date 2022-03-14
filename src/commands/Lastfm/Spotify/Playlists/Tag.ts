@@ -18,6 +18,7 @@ export class Tag extends PlaylistChildCommand<typeof args> {
   idSeed = "pink fantasy momoka";
 
   description = "Tags one of your playlists with an emoji";
+  usage = ["playlistName :emoji:"];
 
   arguments = args;
 

@@ -11,6 +11,7 @@ export class Queue extends SpotifyChildCommand<typeof args> {
 
   description = "Queues a song in Spotify";
   aliases = ["q", "sq", "squeue"];
+  usage = ["", "artist | song", "(in reply to a Spotify song link)"];
 
   arguments = args;
 
