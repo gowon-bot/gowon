@@ -1,27 +1,23 @@
 import { LogicError } from "../../../../errors/errors";
 import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";
-import { AuthenticatedSpotifyBaseCommand } from "../SpotifyBaseCommands";
+import { SpotifyChildCommand } from "../SpotifyChildCommand";
 
 const args = {
   ...prefabArguments.track,
 } as const;
 
-export default class Queue extends AuthenticatedSpotifyBaseCommand<
-  typeof args
-> {
+export class Queue extends SpotifyChildCommand<typeof args> {
   idSeed = "billlie siyoon";
 
   description = "Queues a song in Spotify";
-  aliases = ["q"];
+  aliases = ["q", "sq", "squeue"];
 
   arguments = args;
 
   async run() {
-    const { senderRequestable, dbUser } = await this.getMentions({
+    const { senderRequestable } = await this.getMentions({
       fetchSpotifyToken: true,
     });
-
-    this.access.checkAndThrow(dbUser);
 
     const track = await this.spotifyArguments.getTrack(
       this.ctx,

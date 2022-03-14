@@ -119,6 +119,7 @@ export abstract class BaseCommand<ArgumentsType extends ArgumentsMap = {}> {
   hasChildren = false;
   children?: CommandGroup;
   parentName?: string;
+  isChild?: boolean;
 
   /**
    * Descriptive metadata

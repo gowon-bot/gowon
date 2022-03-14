@@ -1,5 +1,4 @@
 import { PrivateModeOnWarning } from "../../../../errors/spotify";
-import { BetaAccess } from "../../../../lib/command/access/access";
 import { ArgumentsMap } from "../../../../lib/context/arguments/types";
 import { toggleValues } from "../../../../lib/settings/Settings";
 import { ServiceRegistry } from "../../../../services/ServicesRegistry";
@@ -11,8 +10,6 @@ export abstract class PlaylistChildCommand<
 > extends SpotifyBaseChildCommand<T> {
   parentName = "playlists";
   subcategory = "spotify";
-
-  access = new BetaAccess();
 
   spotifyPlaylistTagService = ServiceRegistry.get(SpotifyPlaylistTagService);
 

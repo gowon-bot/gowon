@@ -4,7 +4,7 @@ import {
   SlashCommandSubcommandBuilder,
 } from "@discordjs/builders";
 import { ArgumentsMap } from "../../context/arguments/types";
-import { ChildCommand, ParentCommand } from "../ParentCommand";
+import { BaseChildCommand, ParentCommand } from "../ParentCommand";
 
 export class SlashCommandConverter {
   convert(command: BaseCommand): SlashCommandBuilder {
@@ -26,7 +26,7 @@ export class SlashCommandConverter {
   // The typing here is a disaster
   // just ignore the `as any`s
   private convertSubcommand(
-    command: ChildCommand,
+    command: BaseChildCommand,
     subcommand: SlashCommandSubcommandBuilder
   ): SlashCommandSubcommandBuilder {
     subcommand = subcommand
@@ -74,7 +74,7 @@ export class SlashCommandConverter {
     for (const childCommand of command.children.asDeepList()) {
       if (childCommand.slashCommand) {
         parentCommand = parentCommand.addSubcommand((subcommand) =>
-          this.convertSubcommand(childCommand as ChildCommand, subcommand)
+          this.convertSubcommand(childCommand as BaseChildCommand, subcommand)
         ) as any;
       }
     }

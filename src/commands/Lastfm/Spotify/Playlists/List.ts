@@ -14,8 +14,6 @@ export class List extends PlaylistChildCommand {
   async run() {
     const { dbUser } = await this.getMentions({ fetchSpotifyToken: true });
 
-    this.access.checkAndThrow(dbUser);
-
     const playlists = await this.spotifyService.getPlaylists(this.ctx);
 
     await this.spotifyPlaylistTagService.getTagsForPlaylists(

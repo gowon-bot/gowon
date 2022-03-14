@@ -1,5 +1,4 @@
 import { SpotifyWebhookService } from "../../../api/webhooks/SpotifyWebhookService";
-import { BetaAccess } from "../../../lib/command/access/access";
 import { displayLink } from "../../../lib/views/displays";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { SpotifyAuthenticationService } from "../../../services/Spotify/SpotifyAuthenticationService";
@@ -11,18 +10,12 @@ export default class SpotifyLogin extends SpotifyBaseCommand {
   description = "Connect your Spotify account to Gowon";
   aliases = ["spotifylogin", "slogin"];
 
-  access = new BetaAccess();
-
   spotifyAuthenticationService = ServiceRegistry.get(
     SpotifyAuthenticationService
   );
   spotifyWebhookService = SpotifyWebhookService.getInstance();
 
   async run() {
-    const { dbUser } = await this.getMentions();
-
-    this.access.checkAndThrow(dbUser);
-
     await this.send(
       this.newEmbed()
         .setAuthor(this.generateEmbedAuthor("Spotify login"))

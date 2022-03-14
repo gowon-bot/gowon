@@ -1,5 +1,6 @@
 import { ArgumentsMap } from "../context/arguments/types";
 import { BaseCommand } from "./BaseCommand";
+import { ChildCommand } from "./Command";
 import { CommandGroup } from "./CommandGroup";
 
 export abstract class ParentCommand extends BaseCommand {
@@ -8,10 +9,11 @@ export abstract class ParentCommand extends BaseCommand {
   default?: () => BaseCommand;
   prefixes: string | Array<string> = "";
 
-  // A list of aliases that can "bypass" the parent prefix
-  // eg, if you had crownsparentcommand, and put `c` in this array,
-  // both `!c` and `!crowns c` would work.
-  // Formerly `canSkipPrefixFor`
+  /* A list of aliases that can "bypass" the parent prefix
+   eg, if you had crownsparentcommand, and put `c` in this array,
+   both `!c` and `!crowns c` would work.
+   Formerly `canSkipPrefixFor`
+  */
   noPrefixAliases: Array<string> = [];
 
   async getChild(
@@ -35,9 +37,11 @@ export abstract class ParentCommand extends BaseCommand {
   async run() {}
 }
 
-export abstract class ChildCommand<
-  T extends ArgumentsMap = {}
-> extends BaseCommand<T> {
+export abstract class BaseChildCommand<T extends ArgumentsMap = {}>
+  extends BaseCommand<T>
+  implements ChildCommand<T>
+{
   shouldBeIndexed = false;
   abstract parentName: string;
+  isChild = true;
 }

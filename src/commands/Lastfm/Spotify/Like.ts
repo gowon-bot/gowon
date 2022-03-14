@@ -2,17 +2,17 @@ import { LogicError } from "../../../errors/errors";
 import { Variation } from "../../../lib/command/BaseCommand";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 import { LineConsolidator } from "../../../lib/LineConsolidator";
-import { AuthenticatedSpotifyBaseCommand } from "./SpotifyBaseCommands";
+import { SpotifyChildCommand } from "./SpotifyChildCommand";
 
 const args = {
   ...prefabArguments.track,
 } as const;
 
-export default class Like extends AuthenticatedSpotifyBaseCommand<typeof args> {
+export class Like extends SpotifyChildCommand<typeof args> {
   idSeed = "pink fantasy daewang";
 
   description = "Adds a song to your Spotify liked songs";
-  aliases = ["q"];
+  aliases = ["slike"];
 
   slashCommand = true;
 
@@ -29,11 +29,9 @@ export default class Like extends AuthenticatedSpotifyBaseCommand<typeof args> {
   async run() {
     const unlike = this.variationWasUsed("unlike");
 
-    const { senderRequestable, dbUser } = await this.getMentions({
+    const { senderRequestable } = await this.getMentions({
       fetchSpotifyToken: true,
     });
-
-    this.access.checkAndThrow(dbUser);
 
     const track = await this.spotifyArguments.getTrack(
       this.ctx,

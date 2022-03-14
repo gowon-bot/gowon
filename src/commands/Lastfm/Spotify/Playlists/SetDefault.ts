@@ -16,9 +16,7 @@ export class SetDefault extends PlaylistChildCommand<typeof args> {
   arguments = args;
 
   async run() {
-    const { dbUser } = await this.getMentions({ fetchSpotifyToken: true });
-
-    this.access.checkAndThrow(dbUser);
+    await this.getMentions({ fetchSpotifyToken: true });
 
     const playlistName = this.parsedArguments.playlistName;
 

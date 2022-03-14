@@ -1,4 +1,4 @@
-import { ChildCommand } from "../../../../lib/command/ParentCommand";
+import { BaseChildCommand } from "../../../../lib/command/ParentCommand";
 import { ArgumentsMap } from "../../../../lib/context/arguments/types";
 import { MirrorballChildCommand } from "../../../../lib/indexing/MirrorballCommands";
 import { LastFMService } from "../../../../services/LastFM/LastFMService";
@@ -6,7 +6,7 @@ import { ServiceRegistry } from "../../../../services/ServicesRegistry";
 
 export abstract class RateYourMusicChildCommand<
   T extends ArgumentsMap = {}
-> extends ChildCommand<T> {
+> extends BaseChildCommand<T> {
   lastFMService = ServiceRegistry.get(LastFMService);
 
   category = "lastfm";

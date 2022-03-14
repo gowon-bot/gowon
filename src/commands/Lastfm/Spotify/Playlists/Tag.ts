@@ -35,8 +35,6 @@ export class Tag extends PlaylistChildCommand<typeof args> {
   async run() {
     const { dbUser } = await this.getMentions({ fetchSpotifyToken: true });
 
-    this.access.checkAndThrow(dbUser);
-
     const playlistName = this.parsedArguments.playlistName,
       [emoji] = this.parsedArguments.emoji;
 

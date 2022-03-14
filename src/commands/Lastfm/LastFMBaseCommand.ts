@@ -1,5 +1,8 @@
 import { BaseCommand } from "../../lib/command/BaseCommand";
-import { ParentCommand, ChildCommand } from "../../lib/command/ParentCommand";
+import {
+  ParentCommand,
+  BaseChildCommand,
+} from "../../lib/command/ParentCommand";
 import { SpotifyService } from "../../services/Spotify/SpotifyService";
 import { LastFMService } from "../../services/LastFM/LastFMService";
 import { LastFMArguments } from "../../services/LastFM/LastFMArguments";
@@ -22,7 +25,7 @@ export abstract class LastFMBaseParentCommand extends ParentCommand {
 
 export abstract class LastFMBaseChildCommand<
   T extends ArgumentsMap = {}
-> extends ChildCommand<T> {
+> extends BaseChildCommand<T> {
   lastFMService = ServiceRegistry.get(LastFMService);
   spotifyService = ServiceRegistry.get(SpotifyService);
   lastFMArguments = ServiceRegistry.get(LastFMArguments);

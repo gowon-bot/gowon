@@ -1,7 +1,7 @@
 import { AdminService } from "../../services/dbservices/AdminService";
 import { GuildMember } from "discord.js";
 import { Permission } from "../../database/entity/Permission";
-import { ChildCommand } from "../command/ParentCommand";
+import { ChildCommand, isChildCommand } from "../command/Command";
 import { In } from "typeorm";
 import { checkRollout } from "../../helpers/permissions";
 import { CommandRegistry } from "../command/CommandRegistry";
@@ -155,10 +155,9 @@ export class Can extends BaseService<CanContext> {
       (await Permission.find({
         where: {
           serverID: ctx.guild?.id,
-          commandID:
-            command instanceof ChildCommand
-              ? In([command.id, ...(await this.getParentIDs(ctx, command))])
-              : command.id,
+          commandID: isChildCommand(command)
+            ? In([command.id, ...(await this.getParentIDs(ctx, command))])
+            : command.id,
         },
       }));
 
@@ -168,7 +167,7 @@ export class Can extends BaseService<CanContext> {
 
     const disabled = (
       await asyncMap(
-        command instanceof ChildCommand
+        isChildCommand(command)
           ? [command.id, ...(await this.getParentIDs(ctx, command))]
           : [command.id],
         (id) => ctx.constants.adminService.isCommandDisabled(ctx, id)

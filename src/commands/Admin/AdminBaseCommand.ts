@@ -1,6 +1,9 @@
 import { ArgumentsMap } from "../../lib/context/arguments/types";
 import { BaseCommand } from "../../lib/command/BaseCommand";
-import { ParentCommand, ChildCommand } from "../../lib/command/ParentCommand";
+import {
+  ParentCommand,
+  BaseChildCommand,
+} from "../../lib/command/ParentCommand";
 import { AdminService } from "../../services/dbservices/AdminService";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 
@@ -16,7 +19,7 @@ export abstract class AdminBaseParentCommand extends ParentCommand {
 
 export abstract class AdminBaseChildCommand<
   T extends ArgumentsMap
-> extends ChildCommand<T> {
+> extends BaseChildCommand<T> {
   category = "admin";
 
   adminService = ServiceRegistry.get(AdminService);

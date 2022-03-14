@@ -49,8 +49,6 @@ export class Add extends PlaylistChildCommand<typeof args> {
       fetchSpotifyToken: true,
     });
 
-    this.access.checkAndThrow(dbUser);
-
     const playlistTag = await this.spotifyPlaylistTagService.getPlaylistFromTag(
       this.ctx,
       dbUser,

@@ -1,15 +1,13 @@
-import { AuthenticatedSpotifyBaseCommand } from "../SpotifyBaseCommands";
+import { SpotifyChildCommand } from "../SpotifyChildCommand";
 
-export default class Next extends AuthenticatedSpotifyBaseCommand {
+export class Next extends SpotifyChildCommand {
   idSeed = "billlie haruna";
 
   description = "Skips a song in Spotify";
-  aliases = ["skip"];
+  aliases = ["skip", "snext", "sskip"];
 
   async run() {
-    const { dbUser } = await this.getMentions({ fetchSpotifyToken: true });
-
-    this.access.checkAndThrow(dbUser);
+    await this.getMentions({ fetchSpotifyToken: true });
 
     await this.spotifyService.next(this.ctx);
 

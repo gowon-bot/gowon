@@ -1,7 +1,7 @@
 import { bullet, extraWideSpace } from "../../../helpers/specialCharacters";
-import { BaseCommand } from "../../../lib/command/BaseCommand";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { toggleValues } from "../../../lib/settings/Settings";
+import { SpotifyChildCommand } from "./SpotifyChildCommand";
 
 const args = {
   privacy: new StringArgument({
@@ -11,10 +11,9 @@ const args = {
   }),
 } as const;
 
-export default class SpotifyPrivacy extends BaseCommand<typeof args> {
+export class Privacy extends SpotifyChildCommand<typeof args> {
   idSeed = "billlie sheon";
 
-  subcategory = "spotify";
   description = "Control what Spotify information Gowon shows";
   aliases = ["sprivacy", "spriv"];
   usage = ["public", "private"];

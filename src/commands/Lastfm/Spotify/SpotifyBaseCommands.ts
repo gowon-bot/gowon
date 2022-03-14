@@ -2,7 +2,7 @@ import {
   GetMentionsOptions,
   GetMentionsReturn,
 } from "../../../helpers/getMentions";
-import { BetaAccess } from "../../../lib/command/access/access";
+import { ChildCommand } from "../../../lib/command/Command";
 import {
   ArgumentName,
   ArgumentsMap,
@@ -39,8 +39,6 @@ export abstract class AuthenticatedSpotifyBaseCommand<
     SpotifyAuthenticationService
   );
 
-  access = new BetaAccess();
-
   private async fetchToken(discordID?: string) {
     const token = await this.spotifyAuthenticationService.getTokenForUser(
       this.ctx,
@@ -67,9 +65,11 @@ export abstract class SpotifyBaseParentCommand extends LastFMBaseParentCommand {
   category = "spotify";
 }
 
-export abstract class SpotifyBaseChildCommand<
-  T extends ArgumentsMap = {}
-> extends AuthenticatedSpotifyBaseCommand<T> {
-  shouldBeIndexed = false;
+export abstract class SpotifyBaseChildCommand<T extends ArgumentsMap = {}>
+  extends AuthenticatedSpotifyBaseCommand<T>
+  implements ChildCommand<T>
+{
+  isChild = true;
   abstract parentName: string;
+  shouldBeIndexed = false;
 }
