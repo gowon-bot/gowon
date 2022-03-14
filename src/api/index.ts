@@ -6,7 +6,10 @@ import bodyParser from "body-parser";
 import { ServiceRegistry } from "../services/ServicesRegistry";
 import { AnalyticsCollector } from "../analytics/AnalyticsCollector";
 import gowonConfig from "../../config.json";
-import { SpotifyCodeResponse } from "../services/Spotify/SpotifyService.types";
+import {
+  InvalidStateError,
+  SpotifyCodeResponse,
+} from "../services/Spotify/SpotifyService.types";
 import { SpotifyWebhookService } from "./webhooks/SpotifyWebhookService";
 
 import userResolvers from "./resolvers/userResolvers";
@@ -83,8 +86,18 @@ export class GraphQLAPI {
       const body = req.query as any as SpotifyCodeResponse;
 
       if (body.state) {
-        SpotifyWebhookService.getInstance().handleRequest(body);
-        res.redirect(gowonConfig.gowonWebsiteURL + this.spotifyRedirectRoute);
+        try {
+          SpotifyWebhookService.getInstance().handleRequest(body);
+          res.redirect(gowonConfig.gowonWebsiteURL + this.spotifyRedirectRoute);
+        } catch (e) {
+          if (e instanceof InvalidStateError) {
+            res.send(
+              "<p>Whoops, something is wrong with the link you clicked to get here! Try running <pre>!spotifylogin<pre> again to generate a new one.</p>"
+            );
+          } else {
+            res.send("<p>Whoops, something went wrong...</p");
+          }
+        }
       } else {
         res.status(400).send("Please send a code in the valid format");
       }
