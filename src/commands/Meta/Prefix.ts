@@ -1,3 +1,4 @@
+import { LogicError } from "../../errors/errors";
 import { BaseCommand } from "../../lib/command/BaseCommand";
 import { SettingsService } from "../../lib/settings/SettingsService";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
@@ -20,6 +21,11 @@ export default class Prefix extends BaseCommand {
 
   async run() {
     if (this.newPrefix) {
+      if (this.newPrefix.startsWith("<") && this.newPrefix.endsWith(">"))
+        throw new LogicError(
+          "Please omit the triangular brackets!\neg. `@Gowon prefix <!>` should be `@Gowon prefix !`"
+        );
+
       await this.settingsService.set(
         this.ctx,
         "prefix",
