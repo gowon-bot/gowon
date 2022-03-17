@@ -3,7 +3,6 @@ import { GuildMember } from "discord.js";
 import { Permission } from "../../database/entity/Permission";
 import { ChildCommand, isChildCommand } from "../command/Command";
 import { In } from "typeorm";
-import { checkRollout } from "../../helpers/permissions";
 import { CommandRegistry } from "../command/CommandRegistry";
 import { BaseService } from "../../services/BaseService";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
@@ -132,10 +131,6 @@ export class Can extends BaseService<CanContext> {
       return { passed: false, reason: CheckFailReason.forbidden };
     }
 
-    if (!this.checkRollout(ctx, command)) {
-      return { passed: false, reason: CheckFailReason.disabled };
-    }
-
     const isAdmin = this.isAdmin(ctx);
 
     if (command.adminCommand) {
@@ -222,10 +217,6 @@ export class Can extends BaseService<CanContext> {
     }
 
     return passed;
-  }
-
-  private checkRollout(ctx: CanContext, command: BaseCommand) {
-    return checkRollout(command.rollout, ctx.payload);
   }
 
   private isAdmin(ctx: CanContext): boolean {

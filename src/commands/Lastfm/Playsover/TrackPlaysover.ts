@@ -51,7 +51,7 @@ export default class TrackPlaysover extends LastFMBaseCommand<typeof args> {
       else break;
     }
 
-    await this.traditionalReply(
+    await this.oldReply(
       `${displayNumber(playsover).strong()} of ${
         perspective.possessive
       } top 1,000 tracks have at least ${displayNumber(plays, "play").strong()}`

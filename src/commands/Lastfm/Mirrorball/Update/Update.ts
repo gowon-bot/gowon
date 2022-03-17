@@ -75,7 +75,7 @@ export default class Update extends MirrorballBaseCommand<
   }
 
   async run() {
-    this.mirrorballService.quietAddUserToGuild(
+    this.mirrorballUsersService.quietAddUserToGuild(
       this.ctx,
       this.author.id,
       this.requiredGuild.id
@@ -125,7 +125,7 @@ export default class Update extends MirrorballBaseCommand<
       this.author.id
     );
 
-    this.mirrorballService.webhook.onResponse(
+    this.mirrorballUsersService.webhook.onResponse(
       response.update.token,
       (error) => {
         this.concurrencyService.unregisterUser(

@@ -1,4 +1,5 @@
 import { Interaction } from "discord.js";
+import { GowonContext } from "../../context/Context";
 import { Payload } from "../../context/Payload";
 import { GowonClient } from "../../GowonClient";
 import { CommandRegistry } from "../CommandRegistry";
@@ -32,12 +33,14 @@ export class InteractionHandler {
       if (command && runAs) {
         const newCommand = command.copy();
 
+        const ctx = new GowonContext({
+          runAs,
+          payload: new Payload(interaction),
+          gowonClient: this.client,
+        });
+
         try {
-          await newCommand.execute.bind(newCommand)(
-            new Payload(interaction),
-            runAs,
-            this.client
-          );
+          await newCommand.execute.bind(newCommand)(ctx);
         } catch {}
       }
     }

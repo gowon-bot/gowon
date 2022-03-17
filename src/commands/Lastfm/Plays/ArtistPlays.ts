@@ -49,7 +49,7 @@ export default class ArtistPlays extends LastFMBaseCommand<typeof args> {
 
     const prefix = this.prefix;
 
-    await this.traditionalReply(
+    await this.oldReply(
       `${perspective.plusToHave}` +
         (artistDetails.userPlaycount === 0
           ? "n't scrobbled"

@@ -30,7 +30,7 @@ export class BanArtist extends CrownsChildCommand<typeof args> {
 
     await this.crownsService.killCrown(this.ctx, artistCrownBan.artistName);
 
-    await this.traditionalReply(
+    await this.oldReply(
       `succesfully banned ${artistCrownBan.artistName.strong()} from the crowns game.`
     );
   }

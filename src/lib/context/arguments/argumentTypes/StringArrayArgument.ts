@@ -3,7 +3,6 @@ import { GowonService } from "../../../../services/GowonService";
 import { ServiceRegistry } from "../../../../services/ServicesRegistry";
 import { GowonContext } from "../../Context";
 import {
-  ArgumentReturnType,
   BaseArgument,
   BaseArgumentOptions,
   ContentBasedArgumentOptions,
@@ -33,7 +32,7 @@ export class StringArrayArgument<
     _: Message,
     content: string,
     ctx: GowonContext
-  ): ArgumentReturnType<string[], OptionsT> {
+  ): string[] | undefined {
     const cleanContent = this.cleanContent(ctx, content);
 
     const splitContent = cleanContent.split(this.options.splitOn);
@@ -44,7 +43,7 @@ export class StringArrayArgument<
     return element;
   }
 
-  parseFromInteraction(): ArgumentReturnType<string[], OptionsT> {
+  parseFromInteraction(): string[] | undefined {
     return [];
   }
 }

@@ -50,7 +50,7 @@ export default class AlbumPlays extends LastFMBaseCommand<typeof args> {
       username: requestable,
     });
 
-    await this.traditionalReply(
+    await this.oldReply(
       `${perspective.plusToHave}` +
         (toInt(albumDetails.userPlaycount) === 0
           ? "n't scrobbled"

@@ -10,8 +10,8 @@ import {
   BotScope,
 } from "./SettingTypes";
 
-type SettingName = keyof SettingsMap;
-type Scope = UserScope | GuildMemberScope | GuildScope | BotScope;
+export type SettingName = keyof SettingsMap;
+export type SettingScope = UserScope | GuildMemberScope | GuildScope | BotScope;
 
 interface Cache {
   [setting: string]: {
@@ -20,7 +20,7 @@ interface Cache {
 }
 
 export class SettingsService extends BaseService {
-  public cache: Cache;
+  private cache: Cache;
 
   constructor() {
     super();
@@ -44,14 +44,14 @@ export class SettingsService extends BaseService {
     }
   }
 
-  get(settingName: keyof SettingsMap, scope: Scope): string | undefined {
+  get(settingName: SettingName, scope: SettingScope): string | undefined {
     const setting = Settings[settingName];
     const stringScope = JSON.stringify(setting.transformScope(scope as any));
 
     return this.cache[setting.name][stringScope] || setting.options.default;
   }
 
-  getByName(settingName: string, scope: Scope): string | undefined {
+  getByName(settingName: string, scope: SettingScope): string | undefined {
     const settingKey = convertSettingNameToKey(settingName);
 
     if (settingKey) return this.get(settingKey, scope);
@@ -61,7 +61,7 @@ export class SettingsService extends BaseService {
   async set(
     ctx: GowonContext,
     settingName: SettingName,
-    scope: Scope,
+    scope: SettingScope,
     value?: string
   ): Promise<Setting | undefined> {
     this.log(ctx, `Setting ${settingName} for ${JSON.stringify(scope)}`);
@@ -100,8 +100,8 @@ export class SettingsService extends BaseService {
 
 export function convertSettingNameToKey(
   settingName: string
-): keyof SettingsMap | undefined {
+): SettingName | undefined {
   return Object.keys(Settings).find(
-    (s) => Settings[s as keyof SettingsMap].name === settingName
-  ) as keyof SettingsMap | undefined;
+    (s) => Settings[s as SettingName].name === settingName
+  ) as SettingName | undefined;
 }

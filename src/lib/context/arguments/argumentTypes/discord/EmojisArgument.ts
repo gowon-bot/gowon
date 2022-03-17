@@ -4,7 +4,6 @@ import { ServiceRegistry } from "../../../../../services/ServicesRegistry";
 import { EmojiMention, EmojiParser } from "../../parsers/EmojiParser";
 import { GowonContext } from "../../../Context";
 import {
-  ArgumentReturnType,
   BaseArgument,
   BaseArgumentOptions,
   defaultIndexableOptions,
@@ -35,7 +34,7 @@ export class EmojisArgument<
     _: Message,
     content: string,
     ctx: GowonContext
-  ): ArgumentReturnType<EmojiMention[], OptionsT> {
+  ): EmojiMention[] | undefined {
     const cleanContent = this.cleanContent(ctx, content);
 
     return this.parseFromString(cleanContent);
@@ -45,7 +44,7 @@ export class EmojisArgument<
     interaction: CommandInteraction,
     _: GowonContext,
     argumentName: string
-  ): ArgumentReturnType<EmojiMention[], OptionsT> {
+  ): EmojiMention[] | undefined {
     const string = interaction.options.getString(argumentName)!;
 
     return string ? this.parseFromString(string) : [];

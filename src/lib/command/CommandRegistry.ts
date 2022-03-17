@@ -5,7 +5,6 @@ import _glob from "glob";
 import { AliasChecker } from "../AliasChecker";
 import { RunAs } from "./RunAs";
 import { flatDeep } from "../../helpers";
-import { ParentCommand } from "./ParentCommand";
 import { SimpleMap } from "../../helpers/types";
 import { BaseCommand } from "./BaseCommand";
 const glob = promisify(_glob);
@@ -83,7 +82,7 @@ export class CommandRegistry {
   ): Promise<{ command?: BaseCommand; runAs: RunAs }> {
     const { command, runAs } = await this.find(messageString, serverID);
 
-    return { runAs, command: command?.copy() };
+    return { runAs, command: command ? this.make(command?.id) : undefined };
   }
 
   findByID(
@@ -192,11 +191,11 @@ async function generateCommands(): Promise<Commands> {
 }
 
 function checkPrefixes(
-  command: BaseCommand,
+  command: BaseCommand & { prefixes?: string | string[] },
   keywords: string,
   exact = false
 ): boolean {
-  if (command instanceof ParentCommand && command.prefixes) {
+  if (command.hasChildren && command.prefixes) {
     const prefixes =
       command.prefixes instanceof Array ? command.prefixes : [command.prefixes];
 

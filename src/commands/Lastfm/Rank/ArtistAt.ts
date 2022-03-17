@@ -48,7 +48,7 @@ export default class ArtistAt extends LastFMBaseCommand<typeof args> {
         `${perspective.upper.name} haven't scrobbled an artist at that position!`
       );
 
-    await this.traditionalReply(
+    await this.oldReply(
       `${artist.name.strong()} is ranked at #**${artist.rank}** in ${
         perspective.possessive
       } top artists with ${displayNumber(

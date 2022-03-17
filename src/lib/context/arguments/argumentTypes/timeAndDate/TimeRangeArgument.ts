@@ -5,11 +5,7 @@ import { ServiceRegistry } from "../../../../../services/ServicesRegistry";
 import { TimeRange } from "../../../../timeAndDate/helpers";
 import { GowonContext } from "../../../Context";
 import { TimeRangeParser } from "../../parsers/TimeRangeParser";
-import {
-  ArgumentReturnType,
-  BaseArgument,
-  BaseArgumentOptions,
-} from "../BaseArgument";
+import { BaseArgument, BaseArgumentOptions } from "../BaseArgument";
 
 export interface TimeRangeArgumentOptions
   extends BaseArgumentOptions<TimeRange> {
@@ -33,21 +29,21 @@ export class TimeRangeArgument<
     _: Message,
     content: string,
     ctx: GowonContext
-  ): ArgumentReturnType<TimeRange, OptionsT> {
+  ): TimeRange | undefined {
     const cleanContent = this.cleanContent(ctx, content);
 
-    return (this.timeRangeParser.parse(cleanContent) || this.options.default)!;
+    return this.timeRangeParser.parse(cleanContent) || this.options.default;
   }
 
   parseFromInteraction(
     interaction: CommandInteraction,
     _: GowonContext,
     argumentName: string
-  ): ArgumentReturnType<TimeRange, OptionsT> {
+  ): TimeRange | undefined {
     const range = interaction.options.getString(argumentName);
     const timeRange = range ? this.timeRangeParser.parse(range) : undefined;
 
-    return (timeRange || this.options.default)!;
+    return timeRange || this.options.default;
   }
 
   addAsOption(slashCommand: SlashCommandBuilder, argumentName: string) {

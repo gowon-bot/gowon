@@ -55,7 +55,7 @@ export default class Index extends MirrorballBaseCommand<
       authentificationRequired: true,
     });
 
-    this.mirrorballService.quietAddUserToGuild(
+    this.mirrorballUsersService.quietAddUserToGuild(
       this.ctx,
       this.author.id,
       this.requiredGuild.id
@@ -103,14 +103,17 @@ export default class Index extends MirrorballBaseCommand<
       this.author.id
     );
 
-    this.mirrorballService.webhook.onResponse(response.fullIndex.token, () => {
-      this.concurrencyService.unregisterUser(
-        this.ctx,
-        ConcurrentAction.Indexing,
-        this.author.id
-      );
-      this.usersService.setAsIndexed(this.ctx, this.author.id);
-      this.notifyUser(perspective, "index");
-    });
+    this.mirrorballUsersService.webhook.onResponse(
+      response.fullIndex.token,
+      () => {
+        this.concurrencyService.unregisterUser(
+          this.ctx,
+          ConcurrentAction.Indexing,
+          this.author.id
+        );
+        this.usersService.setAsIndexed(this.ctx, this.author.id);
+        this.notifyUser(perspective, "index");
+      }
+    );
   }
 }

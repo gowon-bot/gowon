@@ -35,7 +35,7 @@ export default class AlbumCount extends LastFMBaseCommand<typeof args> {
       timePeriod
     );
 
-    await this.traditionalReply(
+    await this.oldReply(
       `${perspective.plusToHave} scrobbled ${displayNumber(
         albumCount,
         "album"

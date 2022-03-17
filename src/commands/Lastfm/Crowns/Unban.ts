@@ -36,7 +36,7 @@ export class Unban extends CrownsChildCommand<typeof args> {
       discordUser!
     );
 
-    await this.traditionalReply(
+    await this.oldReply(
       `successfully unbanned ${
         (await mentionedDBUser.toDiscordUser(this.requiredGuild))!.username
       }`

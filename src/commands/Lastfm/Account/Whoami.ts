@@ -23,8 +23,6 @@ export default class Whoami extends LastFMBaseCommand<typeof args> {
 
     let perspective = this.usersService.discordPerspective(this.author, user);
 
-    this.traditionalReply(
-      `${perspective.plusToBe} logged in as ${username.code()}.`
-    );
+    this.oldReply(`${perspective.plusToBe} logged in as ${username.code()}.`);
   }
 }

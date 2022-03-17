@@ -46,7 +46,7 @@ export default class AlbumPercent extends LastFMBaseCommand<typeof args> {
       }),
     ]);
 
-    await this.traditionalReply(
+    await this.oldReply(
       `${perspective.possessive} ${displayNumber(
         albumInfo.userPlaycount,
         "play"

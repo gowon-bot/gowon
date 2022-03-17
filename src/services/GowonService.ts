@@ -9,27 +9,25 @@ import { RunAs } from "../lib/command/RunAs";
 import { SettingsService } from "../lib/settings/SettingsService";
 import { ServiceRegistry } from "./ServicesRegistry";
 
-export class GowonService {
-  customPrefixes = {
-    lastfm: "lfm:",
-  };
+export const gowonServiceConstants = {
+  hardPageLimit: 10,
+  crownThreshold: 30,
+  dateParsers: [
+    "yy-MM-dd",
+    "yyyy-MM-dd",
+    "yy/MM/dd",
+    "yyyy/MM/dd",
+    "yy.MM.dd",
+    "yyyy.MM.dd",
+  ] as string[],
+  unknownUserDisplay: "???",
+  defaultLoadingTime: 5,
+} as const;
 
+export class GowonService {
   shallowCache = new ShallowCache();
 
-  constants = {
-    hardPageLimit: 10,
-    crownThreshold: 30,
-    dateParsers: [
-      "yy-MM-dd",
-      "yyyy-MM-dd",
-      "yy/MM/dd",
-      "yyyy/MM/dd",
-      "yy.MM.dd",
-      "yyyy.MM.dd",
-    ] as string[],
-    unknownUserDisplay: "???",
-    defaultLoadingTime: 5,
-  } as const;
+  constants = gowonServiceConstants;
 
   private get settingsService() {
     return ServiceRegistry.get(SettingsService);

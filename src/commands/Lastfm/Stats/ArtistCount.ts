@@ -36,7 +36,7 @@ export default class ArtistCount extends LastFMBaseCommand<typeof args> {
       timePeriod
     );
 
-    await this.traditionalReply(
+    await this.oldReply(
       `${perspective.plusToHave} scrobbled ${displayNumber(
         artistCount,
         "artist"

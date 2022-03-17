@@ -5,8 +5,8 @@ import {
   RecentTrack,
   RecentTracks,
 } from "../../../services/LastFM/converters/RecentTracks";
-import { MirrorballService } from "../../../services/mirrorball/MirrorballService";
 import { PlaysParams } from "../../../services/mirrorball/MirrorballTypes";
+import { MirrorballUsersService } from "../../../services/mirrorball/services/MirrorballUsersService";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { Combo, ComboCalculator } from "../../calculators/ComboCalculator";
 import { mirrorballClient } from "../../indexing/client";
@@ -20,10 +20,14 @@ export async function getCombo(
   queryFunc: MirrorballQueryFunction<any, any>,
   values: any
 ): Promise<Combo> {
-  const mirrorballService = ServiceRegistry.get(MirrorballService);
+  const mirrorballUsersService = ServiceRegistry.get(MirrorballUsersService);
   const redirectsService = ServiceRegistry.get(RedirectsService);
 
-  await mirrorballService.updateAndWait(values, values.dbUser.discordID, 5000);
+  await mirrorballUsersService.updateAndWait(
+    values,
+    values.dbUser.discordID,
+    5000
+  );
 
   const paginator = new MirrorballPaginator(
     queryFunc,

@@ -41,7 +41,7 @@ export default class ArtistPercent extends LastFMBaseCommand<typeof args> {
       this.lastFMService.userInfo(this.ctx, { username: requestable }),
     ]);
 
-    await this.traditionalReply(
+    await this.oldReply(
       `${perspective.possessive} ${displayNumber(
         artistInfo.userPlaycount,
         "play"

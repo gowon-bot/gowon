@@ -109,14 +109,14 @@ export default class Login extends MirrorballBaseCommand<never, never> {
     username: string,
     session: string | undefined
   ) {
-    await this.mirrorballService.login(
+    await this.mirrorballUsersService.login(
       this.ctx,
       username,
       MirrorballUserType.Lastfm,
       session
     );
     try {
-      await this.mirrorballService.quietAddUserToGuild(
+      await this.mirrorballUsersService.quietAddUserToGuild(
         this.ctx,
         this.author.id,
         this.requiredGuild.id

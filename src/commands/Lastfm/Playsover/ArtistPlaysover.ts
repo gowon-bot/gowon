@@ -51,7 +51,7 @@ export default class ArtistPlaysover extends LastFMBaseCommand<typeof args> {
       else break;
     }
 
-    await this.traditionalReply(
+    await this.oldReply(
       `${displayNumber(playsover).strong()} of ${
         perspective.possessive
       } top 1,000 artists have at least ${displayNumber(

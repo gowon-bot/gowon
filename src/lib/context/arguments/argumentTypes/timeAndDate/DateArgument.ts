@@ -2,11 +2,7 @@ import { CommandInteraction, Message } from "discord.js";
 import { GowonService } from "../../../../../services/GowonService";
 import { ServiceRegistry } from "../../../../../services/ServicesRegistry";
 import { GowonContext } from "../../../Context";
-import {
-  ArgumentReturnType,
-  BaseArgument,
-  BaseArgumentOptions,
-} from "../BaseArgument";
+import { BaseArgument, BaseArgumentOptions } from "../BaseArgument";
 import { parseDate } from "../../../../timeAndDate/helpers";
 import { SlashCommandBuilder } from "@discordjs/builders";
 
@@ -31,7 +27,7 @@ export class DateArgument<
     _: Message,
     content: string,
     ctx: GowonContext
-  ): ArgumentReturnType<Date, OptionsT> {
+  ): Date | undefined {
     const cleanContent = this.cleanContent(ctx, content);
     const date = parseDate(cleanContent, ...this.options.parsers);
 
@@ -42,7 +38,7 @@ export class DateArgument<
     interaction: CommandInteraction,
     _: GowonContext,
     argumentName: string
-  ): ArgumentReturnType<Date, OptionsT> {
+  ): Date | undefined {
     const dateString = interaction.options.getString(argumentName);
 
     const date = dateString

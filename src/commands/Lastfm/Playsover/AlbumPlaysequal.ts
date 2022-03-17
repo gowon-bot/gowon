@@ -36,7 +36,7 @@ export default class AlbumPlaysequal extends LastFMBaseCommand<typeof args> {
       if (album.userPlaycount < plays) break;
     }
 
-    await this.traditionalReply(
+    await this.oldReply(
       `${displayNumber(playsequal).strong()} of ${
         perspective.possessive
       } top 1,000 albums have exactly ${displayNumber(plays, "play").strong()}`

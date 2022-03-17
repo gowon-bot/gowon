@@ -46,7 +46,7 @@ export default class TrackPercent extends LastFMBaseCommand<typeof args> {
       }),
     ]);
 
-    await this.traditionalReply(
+    await this.oldReply(
       `${perspective.possessive} ${displayNumber(
         trackInfo.userPlaycount,
         "play"

@@ -1,9 +1,15 @@
 import { GowonService } from "../services/GowonService";
-import { ParentCommand } from "./command/ParentCommand";
 import { RunAs } from "./command/RunAs";
 import { CommandRegistry } from "./command/CommandRegistry";
 import { ServiceRegistry } from "../services/ServicesRegistry";
 import { BaseCommand } from "./command/BaseCommand";
+import { CommandGroup } from "./command/CommandGroup";
+
+type ParentCommand = BaseCommand & {
+  children: CommandGroup;
+  noPrefixAliases: string[];
+  prefixes: string[] | string;
+};
 
 export class AliasChecker {
   private gowonService = ServiceRegistry.get(GowonService);
@@ -36,8 +42,8 @@ export class AliasChecker {
   }
 
   commandHasAlias(command: BaseCommand, alias: string): boolean {
-    if (command instanceof ParentCommand) {
-      return this.parentCommandHasAlias(command, alias);
+    if (command.hasChildren) {
+      return this.parentCommandHasAlias(command as ParentCommand, alias);
     } else
       return (
         command.name.toLowerCase() === alias.toLowerCase() ||
@@ -74,13 +80,13 @@ export class AliasChecker {
 
     let runAs = new RunAs();
 
-    let parent: { command?: ParentCommand; atIndex?: number } = {};
+    let parent: { command?: BaseCommand; atIndex?: number } = {};
 
     for (let check_i = 0; check_i < checks.length; check_i++) {
       const check = checks[check_i];
 
-      if (command instanceof ParentCommand) {
-        if (this.parentCommandHasAlias(command, check)) {
+      if (command.hasChildren) {
+        if (this.parentCommandHasAlias(command as ParentCommand, check)) {
           parent = {
             command,
             atIndex: check_i,
@@ -103,7 +109,7 @@ export class AliasChecker {
           serverID
         );
         let childNoPrefix = await this.parentCommandGetChildNoPrefix(
-          command,
+          command as ParentCommand,
           check,
           serverID
         );
@@ -111,7 +117,10 @@ export class AliasChecker {
         if (childNoPrefix)
           return runAs.add({ string: check, command: childNoPrefix });
 
-        if (child && this.parentCommandHasAlias(command, check)) {
+        if (
+          child &&
+          this.parentCommandHasAlias(command as ParentCommand, check)
+        ) {
           runAs.add({ command, string: check });
           command = child;
         } else break;

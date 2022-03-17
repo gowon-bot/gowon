@@ -35,7 +35,7 @@ export default class TrackCount extends LastFMBaseCommand<typeof args> {
       timePeriod
     );
 
-    await this.traditionalReply(
+    await this.oldReply(
       `${perspective.plusToHave} scrobbled ${displayNumber(
         trackCount,
         "track"

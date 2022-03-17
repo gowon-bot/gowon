@@ -9,8 +9,3 @@ export interface ChildCommand<T extends ArgumentsMap = {}>
 export function isChildCommand(command: BaseCommand): command is ChildCommand {
   return command.isChild ?? false;
 }
-
-export interface Rollout {
-  users?: string[];
-  guilds?: string[];
-}
