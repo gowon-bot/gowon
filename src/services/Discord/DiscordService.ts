@@ -34,11 +34,11 @@ export class DiscordService extends BaseService<DiscordServiceContext> {
 
   public async startTyping(ctx: GowonContext) {
     if (ctx.payload.isMessage()) {
-      // Sometimes Discord throws 500 errors on this call
+      // Sometimes Discord throws 403 errors on this call
       // To reduce the amount of errors when discord is crashing
       // this is try / caught
       try {
-        ctx.payload.channel!.sendTyping();
+        await ctx.payload.channel!.sendTyping();
       } catch {}
     }
   }
