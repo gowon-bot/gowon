@@ -2,6 +2,7 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { displayNumber } from "../../../lib/views/displays";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
+import { bold } from "../../../helpers/discord";
 
 const args = {
   plays: new NumberArgument({ default: 100 }),
@@ -37,9 +38,9 @@ export default class AlbumPlaysequal extends LastFMBaseCommand<typeof args> {
     }
 
     await this.oldReply(
-      `${displayNumber(playsequal).strong()} of ${
+      `${bold(displayNumber(playsequal))} of ${
         perspective.possessive
-      } top 1,000 albums have exactly ${displayNumber(plays, "play").strong()}`
+      } top 1,000 albums have exactly ${bold(displayNumber(plays, "play"))}`
     );
   }
 }

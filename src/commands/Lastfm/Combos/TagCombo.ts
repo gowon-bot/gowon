@@ -8,6 +8,7 @@ import { TagsService } from "../../../services/mirrorball/services/TagsService";
 import { displayNumber } from "../../../lib/views/displays";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
+import { bold } from "../../../helpers/discord";
 
 const args = {
   ...standardMentions,
@@ -68,9 +69,7 @@ export default class TagCombo extends LastFMBaseCommand<typeof args> {
   }
 
   private displayCombo(combo: TagComboType, tag: string): string {
-    return `${tag.strong()}: ${displayNumber(
-      combo.comboCollection[tag].plays
-    )}${
+    return `${bold(tag)}: ${displayNumber(combo.comboCollection[tag].plays)}${
       combo.comboCollection[tag].hitMax
         ? "+"
         : combo.comboCollection[tag].nowplaying

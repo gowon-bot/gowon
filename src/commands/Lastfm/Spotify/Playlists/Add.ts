@@ -1,4 +1,5 @@
 import { LogicError } from "../../../../errors/errors";
+import { bold, italic } from "../../../../helpers/discord";
 import { Variation } from "../../../../lib/command/BaseCommand";
 import { EmojisArgument } from "../../../../lib/context/arguments/argumentTypes/discord/EmojisArgument";
 import { StringArgument } from "../../../../lib/context/arguments/argumentTypes/StringArgument";
@@ -90,9 +91,9 @@ export class Add extends PlaylistChildCommand<typeof args> {
         )
       )
       .setDescription(
-        `Successfully ${remove ? "removed" : "added"} ${track.name.italic()} ${
+        `Successfully ${remove ? "removed" : "added"} ${italic(track.name)} ${
           remove ? "from" : "to"
-        } ${playlistTag.playlistName.strong()}`
+        } ${bold(playlistTag.playlistName)}`
       )
       .setThumbnail(track.album.images.largest.url);
 

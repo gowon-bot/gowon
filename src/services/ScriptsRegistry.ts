@@ -3,6 +3,7 @@ import _glob from "glob";
 import { LogicError } from "../errors/errors";
 import { BaseCommand } from "../lib/command/BaseCommand";
 import { SimpleMap } from "../helpers/types";
+import { code } from "../helpers/discord";
 const glob = promisify(_glob);
 
 type Script = (command: BaseCommand) => void;
@@ -46,7 +47,7 @@ export class ScriptsRegistry {
     if (script) {
       script(asCommand);
     } else {
-      throw new LogicError(`Script ${scriptName.code()} not found!`);
+      throw new LogicError(`Script ${code(scriptName)} not found!`);
     }
   }
 }

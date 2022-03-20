@@ -1,3 +1,4 @@
+import { bold } from "../../../helpers/discord";
 import { displayNumber } from "../../../lib/views/displays";
 import { OverviewChildCommand } from "./OverviewChildCommand";
 
@@ -17,9 +18,9 @@ export class Breadth extends OverviewChildCommand {
     let breadth = await this.calculator.breadth();
 
     let embed = (await this.overviewEmbed()).setDescription(
-      `${perspective.upper.possessive} breadth rating is ${displayNumber(
-        breadth.rating.toFixed(1)
-      ).strong()} _(${breadth.ratingString})_`
+      `${perspective.upper.possessive} breadth rating is ${bold(
+        displayNumber(breadth.rating.toFixed(1))
+      )} _(${breadth.ratingString})_`
     );
 
     await this.send(embed);

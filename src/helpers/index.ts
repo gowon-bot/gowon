@@ -235,3 +235,15 @@ export async function asyncFilter<T>(
     )
   ).filter((i) => i !== fail) as T[];
 }
+
+export function insertAtIndex<T>(
+  array: Array<T>,
+  index: number,
+  element: T
+): T[] {
+  let arrayCopy = [...array];
+
+  arrayCopy.splice(index || 0, 0, element);
+
+  return arrayCopy;
+}

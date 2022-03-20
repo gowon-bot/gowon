@@ -3,6 +3,7 @@ import { Role, User } from "discord.js";
 import { Variation } from "../../../lib/command/BaseCommand";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
+import { code } from "../../../helpers/discord";
 
 export class Blacklist extends PermissionsChildCommand {
   idSeed = "red velvet irene";
@@ -74,7 +75,7 @@ export class Blacklist extends PermissionsChildCommand {
       .setDescription(
         `${
           this.variationWasUsed("whitelist") ? "Whitelisted" : "Blacklisted"
-        } ${this.commandRunAs.toCommandFriendlyName().code()} for:\n` +
+        } ${code(this.commandRunAs.toCommandFriendlyName())} for:\n` +
           (createdRolePermissions.length
             ? `Roles: ${createdRolePermissions
                 .map((rp) => rp.name)

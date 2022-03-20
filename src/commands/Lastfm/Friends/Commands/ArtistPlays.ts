@@ -4,6 +4,7 @@ import { LinkGenerator } from "../../../../helpers/lastFM";
 import { LastFMEntityNotFoundError } from "../../../../errors/errors";
 import { displayNumber } from "../../../../lib/views/displays";
 import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";
+import { code } from "../../../../helpers/discord";
 
 const args = {
   ...prefabArguments.artist,
@@ -55,7 +56,7 @@ export class ArtistPlays extends FriendsChildCommand<typeof args> {
               return this.displayMissingFriend(username);
             }
 
-            return `${username.code()} - **${displayNumber(
+            return `${code(username)} - **${displayNumber(
               ad.userPlaycount,
               "**scrobble"
             )}`;

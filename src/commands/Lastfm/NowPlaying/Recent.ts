@@ -1,3 +1,4 @@
+import { bold, italic } from "../../../helpers/discord";
 import { LinkGenerator } from "../../../helpers/lastFM";
 import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
@@ -64,8 +65,8 @@ export default class Recent extends LastFMBaseCommand<typeof args> {
   }
 
   private displayTrack(t: RecentTrack) {
-    return `${displayLink(t.name, t.url)} by ${t.artist.strong()} ${
-      t.album ? `\nfrom ${t.album.italic()}\n` : "\n"
+    return `${displayLink(t.name, t.url)} by ${bold(t.artist)} ${
+      t.album ? `\nfrom ${italic(t.album)}\n` : "\n"
     }`;
   }
 }

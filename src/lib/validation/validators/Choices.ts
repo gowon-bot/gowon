@@ -1,3 +1,4 @@
+import { code } from "../../../helpers/discord";
 import { BaseValidator, ValidatorOptions } from "./BaseValidator";
 
 export interface ChoicesValidatorOptions<T> extends ValidatorOptions {
@@ -12,7 +13,7 @@ export class Choices<T> extends BaseValidator<ChoicesValidatorOptions<T>> {
     if (!this.includesChoice(arg)) {
       this.throw(
         `${argName} must be one of the following: ${this.options.choices
-          .map((c) => (typeof c === "string" ? c.code() : c))
+          .map((c) => (typeof c === "string" ? code(c) : c))
           .join(", ")}`
       );
     }

@@ -1,6 +1,7 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
 import { LogicError } from "../../../errors/errors";
 import { displayNumber } from "../../../lib/views/displays";
+import { bold } from "../../../helpers/discord";
 
 export class ContentiousCrowns extends CrownsChildCommand {
   idSeed = "weki meki yoojung";
@@ -40,10 +41,9 @@ export class ContentiousCrowns extends CrownsChildCommand {
           filteredCrowns
             .map(
               (c) =>
-                `${c.artistName} ― stolen ${displayNumber(
-                  c.version,
-                  "time"
-                ).strong()}`
+                `${c.artistName} ― stolen ${bold(
+                  displayNumber(c.version, "time")
+                )}`
             )
             .join("\n")
       );

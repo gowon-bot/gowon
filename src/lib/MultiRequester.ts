@@ -1,4 +1,4 @@
-import { promiseAllSettled } from "../helpers";
+import { insertAtIndex, promiseAllSettled } from "../helpers";
 import { Requestable } from "../services/LastFM/LastFMAPIService";
 
 export interface FetchedResponses<T> {
@@ -28,7 +28,7 @@ export class MultiRequester {
         this.requestables.map((u) =>
           method(
             this.ctx,
-            ...params.insertAtIndex(options?.usernameInPosition || 0, u)
+            ...insertAtIndex(params, options?.usernameInPosition || 0, u)
           )
         )
       );

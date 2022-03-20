@@ -1,4 +1,5 @@
 import { LogicError } from "../../errors/errors";
+import { bold } from "../../helpers/discord";
 import { LinkGenerator } from "../../helpers/lastFM";
 import { standardMentions } from "../../lib/context/arguments/mentionTypes/mentions";
 import { prefabArguments } from "../../lib/context/arguments/prefabArguments";
@@ -76,11 +77,11 @@ export default class Cover extends LastFMBaseCommand<typeof args> {
   private async sendCoverImage(artist: string, album: string, image?: string) {
     this.checkIfAlbumHasCover(artist, album, image);
     try {
-      await this.send(`Cover for ${album.strong()} by ${artist.strong()}`, {
+      await this.send(`Cover for ${bold(album)} by ${bold(artist)}`, {
         files: [this.enlargeImage(image!)],
       });
     } catch (e) {
-      await this.send(`Cover for ${album.strong()} by ${artist.strong()}`, {
+      await this.send(`Cover for ${bold(album)} by ${bold(artist)}`, {
         files: [image!],
       });
     }
@@ -103,7 +104,9 @@ export default class Cover extends LastFMBaseCommand<typeof args> {
 
   private async blueTape() {
     await this.send(
-      `Cover for ${"Blue Tape".strong()} by ${"f(x)".strong()}. *(Thanks to jopping and ember for the image)*`,
+      `Cover for ${bold("Blue Tape")} by ${bold(
+        "f(x)"
+      )}. *(Thanks to jopping and ember for the image)*`,
       { files: ["http://gowon.ca/images/blueTape.png"] }
     );
   }

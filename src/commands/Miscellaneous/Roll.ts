@@ -1,4 +1,5 @@
 import { Chance } from "chance";
+import { bold } from "../../helpers/discord";
 import { BaseCommand } from "../../lib/command/BaseCommand";
 import { NumberArgument } from "../../lib/context/arguments/argumentTypes/NumberArgument";
 import { Validation } from "../../lib/validation/ValidationChecker";
@@ -56,6 +57,6 @@ export default class Roll extends BaseCommand<typeof args> {
 
     const number = Chance().natural({ min: bounds[0], max: bounds[1] });
 
-    await this.reply(`You rolled a ${displayNumber(number).strong()}`);
+    await this.reply(`You rolled a ${bold(displayNumber(number))}`);
   }
 }

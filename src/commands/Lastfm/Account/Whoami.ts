@@ -1,3 +1,4 @@
+import { code } from "../../../helpers/discord";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
@@ -23,6 +24,6 @@ export default class Whoami extends LastFMBaseCommand<typeof args> {
 
     let perspective = this.usersService.discordPerspective(this.author, user);
 
-    this.oldReply(`${perspective.plusToBe} logged in as ${username.code()}.`);
+    this.oldReply(`${perspective.plusToBe} logged in as ${code(username)}.`);
   }
 }

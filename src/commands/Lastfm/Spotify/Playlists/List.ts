@@ -1,3 +1,4 @@
+import { bold } from "../../../../helpers/discord";
 import { emDash } from "../../../../helpers/specialCharacters";
 import {
   displayNumber,
@@ -37,7 +38,7 @@ export class List extends PlaylistChildCommand {
         return displayNumberedList(
           items.map(
             (p) =>
-              `${p.tag?.emoji || "◻️"} ${p.name.strong()} (${displayNumber(
+              `${p.tag?.emoji || "◻️"} ${bold(p.name)} (${displayNumber(
                 p.tracksCount,
                 "track"
               )}) ${

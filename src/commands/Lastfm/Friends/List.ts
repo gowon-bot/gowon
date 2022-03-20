@@ -1,6 +1,7 @@
 import { FriendsChildCommand } from "./FriendsChildCommand";
 import { MultiRequester } from "../../../lib/MultiRequester";
 import { displayNumber } from "../../../lib/views/displays";
+import { bold, code, italic } from "../../../helpers/discord";
 
 export class List extends FriendsChildCommand {
   idSeed = "nature chaebin";
@@ -38,8 +39,8 @@ export class List extends FriendsChildCommand {
             if (!np || !np?.name)
               return this.displayMissingFriend(username, "current track");
 
-            return `${username.code()} - ${np.name} by ${np.artist.strong()} ${
-              np.album ? `from ${np.album.italic()}` : ""
+            return `${code(username)} - ${np.name} by ${bold(np.artist)} ${
+              np.album ? `from ${italic(np.album)}` : ""
             }`;
           })
           .join("\n")

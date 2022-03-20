@@ -1,3 +1,4 @@
+import { code } from "../../../helpers/discord";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { PermissionsChildCommand } from "../Permissions/PermissionsChildCommand";
 
@@ -21,9 +22,11 @@ export class Enable extends PermissionsChildCommand {
     );
 
     await this.send(
-      `Successfully re-enabled ${this.commandRegistry
-        .findByID(disabledCommand.commandID, { includeSecret: true })
-        ?.name.code()}`
+      `Successfully re-enabled ${code(
+        this.commandRegistry.findByID(disabledCommand.commandID, {
+          includeSecret: true,
+        })?.name!
+      )}`
     );
   }
 }

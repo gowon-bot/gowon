@@ -1,6 +1,7 @@
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { LogicError } from "../../../errors/errors";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
+import { bold, code } from "../../../helpers/discord";
 
 const args = {
   username: new StringArgument({
@@ -35,17 +36,17 @@ export default class LastFmToDiscord extends LastFMBaseCommand<typeof args> {
 
     if (!user || !member)
       throw new LogicError(
-        `couldn't find anyone logged in as ${username.code()} in this server.`
+        `couldn't find anyone logged in as ${code(username)} in this server.`
       );
 
     const embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor("Account lookup"))
       .setDescription(
-        `${(member.nickname || member.user.username).strong()} (${
+        `${bold(member.nickname || member.user.username)} (${
           member.user.username
-        }#${member.user.discriminator}) is logged in as ${username
-          .toLowerCase()
-          .code()}.`
+        }#${member.user.discriminator}) is logged in as ${code(
+          username.toLowerCase()
+        )}.`
       );
 
     await this.send(embed);

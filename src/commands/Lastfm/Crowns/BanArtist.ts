@@ -2,6 +2,7 @@ import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { CrownsChildCommand } from "./CrownsChildCommand";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
+import { bold } from "../../../helpers/discord";
 
 const args = {
   ...prefabArguments.requiredArtist,
@@ -31,7 +32,9 @@ export class BanArtist extends CrownsChildCommand<typeof args> {
     await this.crownsService.killCrown(this.ctx, artistCrownBan.artistName);
 
     await this.oldReply(
-      `succesfully banned ${artistCrownBan.artistName.strong()} from the crowns game.`
+      `succesfully banned ${bold(
+        artistCrownBan.artistName
+      )} from the crowns game.`
     );
   }
 }

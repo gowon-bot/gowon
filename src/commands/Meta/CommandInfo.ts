@@ -1,4 +1,5 @@
 import { CommandNotFoundError } from "../../errors/errors";
+import { italic } from "../../helpers/discord";
 import { emDash } from "../../helpers/specialCharacters";
 import { StringArgument } from "../../lib/context/arguments/argumentTypes/StringArgument";
 import { Validation } from "../../lib/validation/ValidationChecker";
@@ -43,7 +44,7 @@ export default class CommandInfo extends MetaBaseCommand<typeof args> {
       **Name**: ${command.name}${
       command.parentName ? `\n**Parent**: ${command.parentName}` : ""
     }
-      **ID**: ${command.idSeed} ${emDash} ${command.id.italic()}${
+      **ID**: ${command.idSeed} ${emDash} ${italic(command.id)}${
       command.hasChildren
         ? `\n**Number of children**: ${command.children?.commands?.length || 0}`
         : ""

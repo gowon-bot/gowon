@@ -3,6 +3,7 @@ import { AdminService } from "../../services/dbservices/AdminService";
 import { displayNumber } from "../../lib/views/displays";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { StringArgument } from "../../lib/context/arguments/argumentTypes/StringArgument";
+import { bold, code } from "../../helpers/discord";
 
 const args = {
   keywords: new StringArgument({
@@ -44,7 +45,7 @@ export default class SearchCommands extends BaseCommand<typeof args> {
     const foundCommands = this.commandRegistry.search(commands, keywords);
 
     const embed = this.newEmbed()
-      .setTitle(`Command search results for ${keywords.code()}`)
+      .setTitle(`Command search results for ${code(keywords)}`)
       .setDescription(
         foundCommands
           .map((c) => this.displayCommand(c, keywords))
@@ -67,9 +68,7 @@ export default class SearchCommands extends BaseCommand<typeof args> {
   }
 
   private displayCommand(command: BaseCommand, keywords: string) {
-    const name = command.friendlyName.replace(keywords, (match) =>
-      match.strong()
-    );
+    const name = command.friendlyName.replace(keywords, (match) => bold(match));
 
     return (command.parentName ? command.parentName + " " : "") + name;
   }

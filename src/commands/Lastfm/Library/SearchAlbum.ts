@@ -1,4 +1,5 @@
 import { LogicError } from "../../../errors/errors";
+import { bold, code, italic } from "../../../helpers/discord";
 import { Variation } from "../../../lib/command/BaseCommand";
 import { Paginator } from "../../../lib/paginators/Paginator";
 import { displayNumber } from "../../../lib/views/displays";
@@ -59,7 +60,7 @@ export default class SearchAlbum extends SearchCommand {
       );
 
     if (!filtered.length) {
-      embed.setDescription(`No results found for ${keywords.code()}!`);
+      embed.setDescription(`No results found for ${code(keywords)}!`);
       await this.send(embed);
       return;
     }
@@ -68,13 +69,13 @@ export default class SearchAlbum extends SearchCommand {
       items: filtered,
       pageSize: 15,
       pageRenderer(items) {
-        return `Albums matching ${keywords.code()}
+        return `Albums matching ${code(keywords)}
 \n${items
           .map(
             (l) =>
-              `${l.rank}. ${l.artist.name.italic()} - ${l.name.replaceAll(
+              `${l.rank}. ${italic(l.artist.name)} - ${l.name.replaceAll(
                 new RegExp(`${keywords}`, "gi"),
-                (match) => match.strong()
+                (match) => bold(match)
               )} (${displayNumber(l.userPlaycount, "play")})`
           )
           .join("\n")}`;

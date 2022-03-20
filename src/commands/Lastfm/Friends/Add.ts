@@ -11,6 +11,7 @@ import { UserStringArrayArgument } from "../../../lib/context/arguments/argument
 import { DiscordIDMention } from "../../../lib/context/arguments/mentionTypes/DiscordIDMention";
 import { LastFMMention } from "../../../lib/context/arguments/mentionTypes/LastFMMention";
 import { DiscordUsernameMention } from "../../../lib/context/arguments/mentionTypes/UsernameMention";
+import { code } from "../../../helpers/discord";
 
 const args = {
   friendUsernames: new StringArrayArgument({ index: { start: 0 } }),
@@ -82,18 +83,18 @@ export class Add extends FriendsChildCommand<typeof args> {
       {
         shouldDisplay: !!addedFriends.length,
         string: `**Successfully added**: ${addedFriends
-          .map((f) => (f!.friendUsername || f!.friend?.lastFMUsername!).code())
+          .map((f) => code(f!.friendUsername || f!.friend?.lastFMUsername!))
           .join(", ")}`,
       },
       {
         shouldDisplay: !!alreadyFriends.length,
         string: `**Already friends**: ${alreadyFriends.map((f) =>
-          (typeof f === "string" ? f : f.lastFMUsername).code()
+          code(typeof f === "string" ? f : f.lastFMUsername)
         )}`,
       },
       {
         shouldDisplay: !!notFound.length,
-        string: `**Not found**: ${notFound.map((f) => `${f}`.code())}`,
+        string: `**Not found**: ${notFound.map((f) => code(`${f}`))}`,
       }
     );
 

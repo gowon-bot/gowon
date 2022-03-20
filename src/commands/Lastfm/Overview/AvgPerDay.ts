@@ -1,3 +1,4 @@
+import { bold } from "../../../helpers/discord";
 import { OverviewChildCommand } from "./OverviewChildCommand";
 
 export class AvgPerDay extends OverviewChildCommand {
@@ -14,9 +15,9 @@ export class AvgPerDay extends OverviewChildCommand {
     let avg = await this.calculator.avgPerDay();
 
     let embed = (await this.overviewEmbed()).setDescription(
-      `${
-        perspective.upper.plusToHave
-      } an average ${avg.asString.strong()} scrobbles per day!`
+      `${perspective.upper.plusToHave} an average ${bold(
+        avg.asString
+      )} scrobbles per day!`
     );
 
     await this.send(embed);

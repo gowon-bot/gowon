@@ -5,7 +5,7 @@ details
 specialUsers.json
 yarn.lock
 data/
-.DS_Store
+**/.DS_Store
 
 
 config.json

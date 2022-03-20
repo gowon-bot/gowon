@@ -10,6 +10,7 @@ import { Emoji } from "../../Emoji";
 import { GowonClient } from "../../GowonClient";
 import { displayNumber } from "../displays";
 import { GowonContext } from "../../context/Context";
+import { bold, code } from "../../../helpers/discord";
 
 export class CrownEmbeds {
   client: Client;
@@ -44,24 +45,25 @@ export class CrownEmbeds {
 
   newCrown(): MessageEmbed {
     return this.embed.setDescription(
-      `:crown: → ${this.user.username.code()} - ${displayNumber(
+      `:crown: → ${code(this.user.username)} - ${displayNumber(
         this.crownCheck.crown!.plays,
         "play"
       )}
       
-      You've created a crown for ${this.crownCheck.artistName.strong()} with ${displayNumber(
-        this.crownCheck.crown!.plays,
-        "play"
-      ).strong()}`
+      You've created a crown for ${bold(
+        this.crownCheck.artistName
+      )} with ${bold(displayNumber(this.crownCheck.crown!.plays, "play"))}`
     );
   }
 
   updatedCrown(): MessageEmbed {
     return this.embed.setDescription(
-      `You already have the crown for ${this.crownCheck.artistName.strong()}, but it's been updated from ${displayNumber(
+      `You already have the crown for ${bold(
+        this.crownCheck.artistName
+      )}, but it's been updated from ${displayNumber(
         this.crownCheck.oldCrown!.plays,
         "play"
-      )} to ${displayNumber(this.crownCheck.crown!.plays, "play").strong()}`
+      )} to ${bold(displayNumber(this.crownCheck.crown!.plays, "play"))}`
     );
   }
 
@@ -70,20 +72,21 @@ export class CrownEmbeds {
 
     return this.embed.setDescription(
       `
-:crown: → ${this.user.username.code()} - ${displayNumber(
+:crown: → ${code(this.user.username)} - ${displayNumber(
         this.crownCheck.crown!.plays,
         "play"
       )}
 
-:pensive: → ${holderUsername?.code()} - ${displayNumber(
+:pensive: → ${code(holderUsername)} - ${displayNumber(
         this.crownCheck.oldCrown?.plays!,
         "play"
       )}
 
-        Yoink! The crown for ${this.crownCheck.artistName.strong()} was stolen from ${holderUsername} and is now at ${displayNumber(
-        this.crownCheck.crown!.plays,
-        "play"
-      ).strong()}!`
+        Yoink! The crown for ${bold(
+          this.crownCheck.artistName
+        )} was stolen from ${holderUsername} and is now at ${bold(
+        displayNumber(this.crownCheck.crown!.plays, "play")
+      )}!`
     );
   }
 
@@ -94,14 +97,14 @@ export class CrownEmbeds {
 
     return this.embed.setDescription(
       `
-:crown: → ${holderUsername?.code()} - ${displayNumber(
+:crown: → ${code(holderUsername)} - ${displayNumber(
         this.crownCheck.oldCrown?.plays!,
         "play"
       )}
 
-${
-  difference >= 5000 ? Emoji.wail : ":pensive:"
-} → ${this.user.username.code()} - ${displayNumber(this.plays, "play")}
+${difference >= 5000 ? Emoji.wail : ":pensive:"} → ${code(
+        this.user.username
+      )} - ${displayNumber(this.plays, "play")}
 
 ${holderUsername} will keep the crown for ${
         this.crownCheck.artistName
@@ -112,15 +115,14 @@ ${holderUsername} will keep the crown for ${
 
   async tooLow(threshold: number) {
     return this.embed.setDescription(
-      `:pensive: → ${this.user.username.code()} - ${displayNumber(
+      `:pensive: → ${code(this.user.username)} - ${displayNumber(
         this.plays,
         "play"
       )}
 
-You must have at least ${displayNumber(
-        threshold,
-        "play"
-      ).strong()} to create a crown.
+You must have at least ${bold(
+        displayNumber(threshold, "play")
+      )} to create a crown.
       `
     );
   }
@@ -130,12 +132,12 @@ You must have at least ${displayNumber(
 
     return this.embed.setDescription(
       `
-:crown: → ${holderUsername?.code()} - ${displayNumber(
+:crown: → ${code(holderUsername)} - ${displayNumber(
         this.crownCheck.oldCrown?.plays!,
         "play"
       )}
 
-:eyes: → ${this.user.username.code()} - ${displayNumber(this.plays, "play")}
+:eyes: → ${code(this.user.username)} - ${displayNumber(this.plays, "play")}
 
 It's a tie! ${holderUsername} will keep the crown for ${
         this.crownCheck.artistName
@@ -149,17 +151,19 @@ It's a tie! ${holderUsername} will keep the crown for ${
 
     return this.embed.setDescription(
       `
-:crown: → ${this.user.username.code()} - ${displayNumber(
+:crown: → ${code(this.user.username)} - ${displayNumber(
         this.crownCheck.crown!.plays,
         "play"
       )}
 
-:pensive: → ${holderUsername?.code()} - ${displayNumber(
+:pensive: → ${code(holderUsername)} - ${displayNumber(
         this.crownCheck.oldCrown?.plays!,
         "play"
       )}
 
-        Yoink! The crown for ${this.crownCheck.artistName.strong()} was stolen from ${holderUsername} due to inactivity!`
+        Yoink! The crown for ${bold(
+          this.crownCheck.artistName
+        )} was stolen from ${holderUsername} due to inactivity!`
     );
   }
 
@@ -168,31 +172,35 @@ It's a tie! ${holderUsername} will keep the crown for ${
 
     return this.embed.setDescription(
       `
-:crown: → ${this.user.username.code()} - ${displayNumber(
+:crown: → ${code(this.user.username)} - ${displayNumber(
         this.crownCheck.crown!.plays,
         "play"
       )}
 
-:pensive: → ${holderUsername?.code()} - ${displayNumber(
+:pensive: → ${code(holderUsername)} - ${displayNumber(
         this.crownCheck.oldCrown?.plays!,
         "play"
       )}
 
-        Yoink! The crown for ${this.crownCheck.artistName.strong()} was stolen from ${holderUsername} due to cheating!`
+        Yoink! The crown for ${bold(
+          this.crownCheck.artistName
+        )} was stolen from ${holderUsername} due to cheating!`
     );
   }
 
   left(): MessageEmbed {
     return this.embed.setDescription(
       `
-:crown: → ${this.user.username.code()} - ${displayNumber(
+:crown: → ${code(this.user.username)} - ${displayNumber(
         this.crownCheck.crown!.plays,
         "play"
       )}
 
 :wave: → ??? - ${displayNumber(this.crownCheck.oldCrown?.plays!, "play")}
 
-        Yoink! The crown for ${this.crownCheck.artistName.strong()} was stolen from someone who left!`
+        Yoink! The crown for ${bold(
+          this.crownCheck.artistName
+        )} was stolen from someone who left!`
     );
   }
 
@@ -201,17 +209,19 @@ It's a tie! ${holderUsername} will keep the crown for ${
 
     return this.embed.setDescription(
       `
-:crown: → ${this.user.username.code()} - ${displayNumber(
+:crown: → ${code(this.user.username)} - ${displayNumber(
         this.crownCheck.crown!.plays,
         "play"
       )}
 
-:pensive: → ${holderUsername?.code()} - ${displayNumber(
+:pensive: → ${code(holderUsername)} - ${displayNumber(
         this.crownCheck.oldCrown?.plays!,
         "play"
       )}
 
-        Yoink! The crown for ${this.crownCheck.artistName.strong()} was stolen from ${holderUsername} because they were crown banned!`
+        Yoink! The crown for ${bold(
+          this.crownCheck.artistName
+        )} was stolen from ${holderUsername} because they were crown banned!`
     );
   }
 
@@ -220,17 +230,19 @@ It's a tie! ${holderUsername} will keep the crown for ${
 
     return this.embed.setDescription(
       `
-:crown: → ${this.user.username.code()} - ${displayNumber(
+:crown: → ${code(this.user.username)} - ${displayNumber(
         this.crownCheck.crown!.plays,
         "play"
       )}
 
-:pensive: → ${holderUsername?.code()} - ~~${displayNumber(
+:pensive: → ${code(holderUsername)} - ~~${displayNumber(
         this.crownCheck.oldCrown?.plays!,
         "play"
       )}~~
 
-        Yoink! The crown for ${this.crownCheck.artistName.strong()} was stolen from ${holderUsername} because they were logged out!`
+        Yoink! The crown for ${bold(
+          this.crownCheck.artistName
+        )} was stolen from ${holderUsername} because they were logged out!`
     );
   }
 }

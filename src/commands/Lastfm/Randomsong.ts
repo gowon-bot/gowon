@@ -1,3 +1,4 @@
+import { bold, italic } from "../../helpers/discord";
 import { buildRequestable } from "../../helpers/getMentions";
 import { CommandRedirect } from "../../lib/command/BaseCommand";
 import { standardMentions } from "../../lib/context/arguments/mentionTypes/mentions";
@@ -47,11 +48,11 @@ export default class Randomsong extends LastFMBaseCommand<typeof args> {
       randomSongs.tracks[~~(randomSongs.tracks.length * Math.random())];
 
     const embed = this.newEmbed()
-      .setAuthor(`Scrobbled by ${randomUser.lastFMUsername}`)
+      .setAuthor({ name: `Scrobbled by ${randomUser.lastFMUsername}` })
       .setTitle(randomSong.name)
       .setDescription(
-        `by ${randomSong.artist.strong()}` +
-          (randomSong.album ? ` from ${randomSong.album.italic()}` : "")
+        `by ${bold(randomSong.artist)}` +
+          (randomSong.album ? ` from ${italic(randomSong.album)}` : "")
       )
       .setThumbnail(randomSong.images.get("large") || "");
 

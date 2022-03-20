@@ -2,6 +2,7 @@ import { PermissionsChildCommand } from "./PermissionsChildCommand";
 import { MessageEmbed, Role } from "discord.js";
 import {
   addNamesToPermissions,
+  code,
   NamedPermission,
 } from "../../../helpers/discord";
 import { displayNumber } from "../../../lib/views/displays";
@@ -36,9 +37,9 @@ export class View extends PermissionsChildCommand {
 
       embed = this.newEmbed()
         .setTitle(
-          `Permissions for ${this.commandRunAs
-            .toCommandFriendlyName()
-            .code()} in ${this.guild?.name}`
+          `Permissions for ${code(
+            this.commandRunAs.toCommandFriendlyName()
+          )} in ${this.guild?.name}`
         )
         .setDescription(
           permissions.length
@@ -50,9 +51,9 @@ export class View extends PermissionsChildCommand {
                 permissions
                   .map((p) => p.name + (p.isRoleBased ? " (role)" : ""))
                   .join(", ")
-            : `This server doesn't have any permissions set for ${this.commandRunAs
-                .toCommandFriendlyName()
-                .code()}!`
+            : `This server doesn't have any permissions set for ${code(
+                this.commandRunAs.toCommandFriendlyName()
+              )}!`
         );
     } else if (this.users.length || this.roles.length) {
       let entity = this.users[0] ?? this.roles[0];
@@ -67,23 +68,25 @@ export class View extends PermissionsChildCommand {
       let whitelisted = permissions.filter((p) => !p.isBlacklist);
 
       embed = this.newEmbed()
-        .setTitle(`Permissions for ${entityName.code()} in ${this.guild?.name}`)
+        .setTitle(`Permissions for ${code(entityName)} in ${this.guild?.name}`)
         .setDescription(
           permissions.length
             ? (blacklisted.length
                 ? `Blacklisted for ` +
                   blacklisted
-                    .map((p) => p.commandFriendlyName.code())
+                    .map((p) => code(p.commandFriendlyName))
                     .join(", ") +
                   "\n"
                 : "") +
                 (whitelisted.length
                   ? `Whitelisted for ` +
                     whitelisted
-                      .map((p) => p.commandFriendlyName.code())
+                      .map((p) => code(p.commandFriendlyName))
                       .join(", ")
                   : "")
-            : `This server doesn't have any permissions set for ${entityName.code()}!`
+            : `This server doesn't have any permissions set for ${code(
+                entityName
+              )}!`
         );
     } else {
       permissions = await addNamesToPermissions(
@@ -105,7 +108,7 @@ export class View extends PermissionsChildCommand {
             ? Object.keys(groupedPermissions)
                 .map(
                   (p) =>
-                    `${p.code()} - ${displayNumber(
+                    `${code(p)} - ${displayNumber(
                       groupedPermissions[p],
                       "permission"
                     )}`

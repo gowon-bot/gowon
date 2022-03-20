@@ -10,6 +10,7 @@ import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { asyncMap } from "../../../helpers";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
+import { bold } from "../../../helpers/discord";
 
 const args = {
   ...prefabArguments.artist,
@@ -86,7 +87,7 @@ export default class ArtistRank extends LastFMBaseCommand<typeof args> {
               "play"
             )}`;
 
-            return start + idx === rank ? display.strong() : display;
+            return start + idx === rank ? bold(display) : display;
           }),
           start
         )

@@ -5,6 +5,7 @@ import { displayNumber } from "../../../lib/views/displays";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { TimePeriodArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/TimePeriodArgument";
 import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
+import { bold } from "../../../helpers/discord";
 
 const args = {
   timePeriod: new TimePeriodArgument({
@@ -40,7 +41,7 @@ export class TopPercent extends OverviewChildCommand<typeof args> {
     let toppct = await this.calculator.topPercent(percent);
 
     let embed = (await this.overviewEmbed()).setDescription(
-      `${toppct.count.asString.strong()} artists (a total of ${displayNumber(
+      `${bold(toppct.count.asString)} artists (a total of ${displayNumber(
         toppct.total.asNumber,
         "scrobble"
       )}) make up ${percent}% of ${perspective.possessive} scrobbles!`

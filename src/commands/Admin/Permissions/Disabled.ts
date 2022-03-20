@@ -1,3 +1,4 @@
+import { code } from "../../../helpers/discord";
 import { PermissionsChildCommand } from "../Permissions/PermissionsChildCommand";
 
 export class Disabled extends PermissionsChildCommand {
@@ -17,7 +18,7 @@ export class Disabled extends PermissionsChildCommand {
       .setDescription(
         disabledCommands.length
           ? disabledCommands
-              .map((dc) => dc.commandFriendlyName.code())
+              .map((dc) => code(dc.commandFriendlyName))
               .join(", ")
           : "This server does not have any disabled commands!"
       );

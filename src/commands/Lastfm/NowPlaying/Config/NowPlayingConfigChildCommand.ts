@@ -1,4 +1,5 @@
 import { flatDeep } from "../../../../helpers";
+import { code } from "../../../../helpers/discord";
 import { ArgumentsMap } from "../../../../lib/context/arguments/types";
 import { componentMap } from "../../../../lib/nowplaying/componentMap";
 import { ConfigService } from "../../../../services/dbservices/NowPlayingService";
@@ -28,7 +29,7 @@ export abstract class NowPlayingConfigChildCommand<
   };
 
   protected notAnOptionError(option: string): string {
-    return `${option.code()} isn't a valid option. See \`${
+    return `${code(option)} isn't a valid option. See \`${
       this.prefix
     }npc help\` for a list of available options`;
   }

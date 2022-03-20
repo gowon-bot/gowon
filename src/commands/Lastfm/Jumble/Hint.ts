@@ -2,6 +2,7 @@ import { JumbleChildCommand } from "./JumbleChildCommand";
 import { jumbleRedisKey, JumbledArtist } from "./JumbleParentCommand";
 import { LogicError } from "../../../errors/errors";
 import { shuffle } from "../../../helpers";
+import { code } from "../../../helpers/discord";
 
 export class Hint extends JumbleChildCommand {
   idSeed = "clc elkie";
@@ -33,8 +34,8 @@ export class Hint extends JumbleChildCommand {
       .setAuthor(this.generateEmbedAuthor("Jumble hint"))
       .setDescription(
         (noNewHint ? `_You've reached the maximum amount of hints!_\n\n` : "") +
-          `${jumbledArtist.jumbled.code()}
-      ${jumbledArtist.currenthint.code()}`
+          `${code(jumbledArtist.jumbled)}
+      ${code(jumbledArtist.currenthint)}`
       );
 
     await this.send(embed);

@@ -8,6 +8,7 @@ import {
 } from "../lib/context/Context";
 import { Payload } from "../lib/context/Payload";
 import { Logger } from "../lib/Logger";
+import { BaseLastFMConverter } from "../services/LastFM/converters/BaseConverter";
 import { MockMessage } from "./discord";
 
 interface MockContextParameters<T> extends ContextParamaters<T> {
@@ -15,7 +16,9 @@ interface MockContextParameters<T> extends ContextParamaters<T> {
 }
 
 interface MockedContext {
-  parsedArguments: SimpleMap;
+  arguments: SimpleMap;
+  // Maps from method to converter
+  lastFM: SimpleMap<BaseLastFMConverter>;
 }
 
 export class MockContext<

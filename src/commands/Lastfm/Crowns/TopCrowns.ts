@@ -1,4 +1,5 @@
 import { asyncMap } from "../../../helpers";
+import { bold } from "../../../helpers/discord";
 import { displayNumber } from "../../../lib/views/displays";
 import { CrownsChildCommand } from "./CrownsChildCommand";
 
@@ -29,9 +30,9 @@ export class TopCrowns extends CrownsChildCommand {
           await asyncMap(
             crowns,
             async (c, idx) =>
-              `${idx + 1}. ${c.artistName} (${displayNumber(
-                c.plays
-              ).strong()}, ${await this.fetchUsername(c.user.discordID)})`
+              `${idx + 1}. ${c.artistName} (${bold(
+                displayNumber(c.plays)
+              )}, ${await this.fetchUsername(c.user.discordID)})`
           )
         ).join("\n") +
           `\n\nThere are **${displayNumber(crownsCount, "** crown")} in ${

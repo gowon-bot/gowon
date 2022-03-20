@@ -1,4 +1,5 @@
 import { MirrorballError } from "../../../../../errors/errors";
+import { bold, italic } from "../../../../../helpers/discord";
 import { LinkGenerator } from "../../../../../helpers/lastFM";
 import { convertMirrorballDate } from "../../../../../helpers/mirrorball";
 import { Variation } from "../../../../../lib/command/BaseCommand";
@@ -97,17 +98,18 @@ export default class WhoFirstArtist extends WhoKnowsBaseCommand<
       {
         shouldDisplay: !!undated.length,
         string:
-          `${displayNumber(
-            undated.length,
-            "user"
-          )} with undated scrobbles`.italic() + "\n",
+          italic(
+            `${displayNumber(undated.length, "user")} with undated scrobbles`
+          ) + "\n",
       },
       {
         shouldDisplay: senderUndated,
-        string: `\`${rows.length > 9 ? " " : ""}•\`. ${displayLink(
-          this.ctx.authorMember.nickname || this.author.username,
-          LinkGenerator.libraryArtistPage(senderUsername, artist.name)
-        ).strong()} - \`(undated)\``,
+        string: `\`${rows.length > 9 ? " " : ""}•\`. ${bold(
+          displayLink(
+            this.ctx.authorMember.nickname || this.author.username,
+            LinkGenerator.libraryArtistPage(senderUsername, artist.name)
+          )
+        )} - \`(undated)\``,
       },
       {
         shouldDisplay: artist && !!rows.length,
@@ -133,7 +135,7 @@ export default class WhoFirstArtist extends WhoKnowsBaseCommand<
 
     const embed = this.whoKnowsEmbed()
       .setTitle(
-        `Who ${whoLast ? "last" : "first"} scrobbled ${artist.name.strong()}${
+        `Who ${whoLast ? "last" : "first"} scrobbled ${bold(artist.name)}${
           this.isGlobal() ? " globally" : ""
         }?`
       )

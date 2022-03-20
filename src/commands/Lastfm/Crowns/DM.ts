@@ -2,6 +2,7 @@ import { CrownsChildCommand } from "./CrownsChildCommand";
 import { chunkArray } from "../../../helpers";
 import { displayNumber } from "../../../lib/views/displays";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
+import { bold } from "../../../helpers/discord";
 
 const args = {
   ...standardMentions,
@@ -60,7 +61,7 @@ export class DM extends CrownsChildCommand<typeof args> {
                 (c, i) =>
                   `${chunkIdx * crownsPerMessage + 1 + i}) ${
                     c.artistName
-                  } ― ${displayNumber(c.plays, "play").strong()}`
+                  } ― ${bold(displayNumber(c.plays, "play"))}`
               )
               .join("\n")
           )

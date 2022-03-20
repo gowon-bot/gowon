@@ -1,4 +1,5 @@
 import { LogicError } from "../../errors/errors";
+import { code } from "../../helpers/discord";
 import { CommandAccessRoleName, roles } from "../../lib/command/access/roles";
 import { BaseCommand, Variation } from "../../lib/command/BaseCommand";
 import { DiscordUserArgument } from "../../lib/context/arguments/argumentTypes/discord/DiscordUserArgument";
@@ -73,7 +74,7 @@ export default class GiveRole extends BaseCommand<typeof args> {
       .setDescription(
         `Succesfully ${
           this.variationWasUsed("remove") ? "removed" : "added"
-        } the role ${role.code()}`
+        } the role ${code(role)}`
       );
 
     await this.send(embed);

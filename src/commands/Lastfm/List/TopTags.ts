@@ -14,6 +14,7 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { TimePeriodArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/TimePeriodArgument";
 import { TimeRangeArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/TimeRangeArgument";
+import { bold } from "../../../helpers/discord";
 
 const args = {
   timePeriod: new TimePeriodArgument({
@@ -91,7 +92,7 @@ export default class TagList extends LastFMBaseCommand<typeof args> {
         return displayNumberedList(
           tags.map(
             (t) =>
-              `${t.name.strong()} - (${displayNumber(t.occurrences, "artist")})`
+              `${bold(t.name)} - (${displayNumber(t.occurrences, "artist")})`
           ),
           offset
         );

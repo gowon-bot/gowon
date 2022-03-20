@@ -10,7 +10,7 @@ import { mean } from "mathjs";
 import { mostCommonOccurrence } from "../../../../helpers/stats";
 import { SimpleScrollingEmbed } from "../../../../lib/views/embeds/SimpleScrollingEmbed";
 import { displayNumber, displayRating } from "../../../../lib/views/displays";
-import { sanitizeForDiscord } from "../../../../helpers/discord";
+import { code, sanitizeForDiscord } from "../../../../helpers/discord";
 import { standardMentions } from "../../../../lib/context/arguments/mentionTypes/mentions";
 import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";
 import { Flag } from "../../../../lib/context/arguments/argumentTypes/Flag";
@@ -142,14 +142,16 @@ export class ArtistRatings extends RateYourMusicIndexingChildCommand<
             ? `**${r.rateYourMusicAlbum.releaseYear}**\n`
             : "") +
           (this.parsedArguments.ids
-            ? `[Album${r.rateYourMusicAlbum.rateYourMusicID}]`.code() + " "
+            ? code(`[Album${r.rateYourMusicAlbum.rateYourMusicID}]`) + " "
             : displayRating(r.rating) + extraWideSpace) +
           sanitizeForDiscord(r.rateYourMusicAlbum.title) +
           (r.rateYourMusicAlbum.artistName.toLowerCase() !==
           artistName.toLowerCase()
-            ? ` ${emDash} ${sanitizeForDiscord(
-                r.rateYourMusicAlbum.artistName
-              )}`.italic()
+            ? code(
+                ` ${emDash} ${sanitizeForDiscord(
+                  r.rateYourMusicAlbum.artistName
+                )}`
+              )
             : "")
         );
       })

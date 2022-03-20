@@ -13,6 +13,7 @@ import {
   prefabArguments,
   prefabFlags,
 } from "../../../../lib/context/arguments/prefabArguments";
+import { bold, italic } from "../../../../helpers/discord";
 
 const args = {
   ...prefabArguments.artist,
@@ -65,9 +66,9 @@ export default class ArtistTopAlbums extends MirrorballBaseCommand<
 
     if (topAlbums.length < 1) {
       throw new LogicError(
-        `${
-          perspective.plusToHave
-        } no scrobbles of any albums from ${artist.name.strong()}!`
+        `${perspective.plusToHave} no scrobbles of any albums from ${bold(
+          artist.name
+        )}!`
       );
     }
 
@@ -85,10 +86,9 @@ export default class ArtistTopAlbums extends MirrorballBaseCommand<
         return albums
           .map(
             (album) =>
-              `${displayNumber(
-                album.playcount,
-                "play"
-              )} - ${album.album.name.strong()}`
+              `${displayNumber(album.playcount, "play")} - ${bold(
+                album.album.name
+              )}`
           )
           .join("\n");
       },
@@ -96,13 +96,18 @@ export default class ArtistTopAlbums extends MirrorballBaseCommand<
       overrides: {
         itemName: "album",
         embedDescription:
-          `${displayNumber(totalScrobbles, "total scrobble")}, ${displayNumber(
-            topAlbums.length,
-            "total album"
-          )}, ${displayNumber(
-            average.toFixed(2),
-            "average scrobble"
-          )} per album`.italic() + "\n",
+          italic(
+            `${displayNumber(
+              totalScrobbles,
+              "total scrobble"
+            )}, ${displayNumber(
+              topAlbums.length,
+              "total album"
+            )}, ${displayNumber(
+              average.toFixed(2),
+              "average scrobble"
+            )} per album`
+          ) + "\n",
       },
     });
 

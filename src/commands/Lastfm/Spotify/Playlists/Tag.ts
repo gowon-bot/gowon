@@ -1,4 +1,5 @@
 import { LogicError } from "../../../../errors/errors";
+import { bold } from "../../../../helpers/discord";
 import { EmojisArgument } from "../../../../lib/context/arguments/argumentTypes/discord/EmojisArgument";
 import { StringArgument } from "../../../../lib/context/arguments/argumentTypes/StringArgument";
 import { removeEmojisFromString } from "../../../../lib/context/arguments/parsers/EmojiParser";
@@ -65,7 +66,7 @@ export class Tag extends PlaylistChildCommand<typeof args> {
     const embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor("Spotify playlist tag"))
       .setDescription(
-        `Succesfully tagged ${foundPlaylist.name.strong()} as ${emoji.raw}`
+        `Succesfully tagged ${bold(foundPlaylist.name)} as ${emoji.raw}`
       );
 
     await this.send(embed);

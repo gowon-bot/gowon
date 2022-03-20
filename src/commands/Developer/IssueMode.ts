@@ -1,3 +1,4 @@
+import { bold } from "../../helpers/discord";
 import { BaseCommand } from "../../lib/command/BaseCommand";
 import { toggleValues } from "../../lib/settings/Settings";
 import { SettingsService } from "../../lib/settings/SettingsService";
@@ -26,10 +27,9 @@ export default class IssueMode extends BaseCommand {
     const embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor("Issue mode"))
       .setDescription(
-        `Issue mode is now ${(issueMode === "true"
-          ? toggleValues.OFF
-          : toggleValues.ON
-        ).strong()}`
+        `Issue mode is now ${bold(
+          issueMode === "true" ? toggleValues.OFF : toggleValues.ON
+        )}`
       );
 
     await this.send(embed);

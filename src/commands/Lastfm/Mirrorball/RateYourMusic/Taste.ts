@@ -11,7 +11,7 @@ import {
 } from "../../../../lib/calculators/RatingsTasteCalculator";
 import { displayNumber, displayRating } from "../../../../lib/views/displays";
 import { SimpleScrollingEmbed } from "../../../../lib/views/embeds/SimpleScrollingEmbed";
-import { sanitizeForDiscord } from "../../../../helpers/discord";
+import { bold, italic, sanitizeForDiscord } from "../../../../helpers/discord";
 import { standardMentions } from "../../../../lib/context/arguments/mentionTypes/mentions";
 import { Flag } from "../../../../lib/context/arguments/argumentTypes/Flag";
 import { emDash } from "../../../../helpers/specialCharacters";
@@ -102,7 +102,7 @@ export class Taste extends RateYourMusicIndexingChildCommand<
       items: taste.ratings,
       pageSize: 10,
       pageRenderer: (ratings) => {
-        return embedDescription.italic() + "\n\n" + this.generateTable(ratings);
+        return italic(embedDescription) + "\n\n" + this.generateTable(ratings);
       },
       overrides: { itemName: "rating" },
     });
@@ -116,7 +116,9 @@ export class Taste extends RateYourMusicIndexingChildCommand<
         (r) =>
           `${displayRating(r.userOneRating.rating)} • ${displayRating(
             r.userTwoRating.rating
-          )} ${emDash} ${r.userOneRating.rateYourMusicAlbum.title.strong()} (${sanitizeForDiscord(
+          )} ${emDash} ${bold(
+            r.userOneRating.rateYourMusicAlbum.title
+          )} (${sanitizeForDiscord(
             r.userOneRating.rateYourMusicAlbum.artistName
           )})`
       )

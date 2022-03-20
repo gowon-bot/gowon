@@ -1,6 +1,7 @@
 import { JumbleChildCommand } from "./JumbleChildCommand";
 import { jumbleRedisKey, JumbledArtist } from "./JumbleParentCommand";
 import { LogicError } from "../../../errors/errors";
+import { bold } from "../../../helpers/discord";
 
 export class Quit extends JumbleChildCommand {
   idSeed = "clc sorn";
@@ -21,6 +22,6 @@ export class Quit extends JumbleChildCommand {
 
     this.redisService.sessionDelete(this.ctx, jumbleRedisKey);
 
-    await this.oldReply(`The artist was ${jumbledArtist.unjumbled.strong()}!`);
+    await this.oldReply(`The artist was ${bold(jumbledArtist.unjumbled)}!`);
   }
 }

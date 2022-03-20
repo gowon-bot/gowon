@@ -12,6 +12,7 @@ import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/Num
 import { TimePeriodArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/TimePeriodArgument";
 import { TimeRangeArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/TimeRangeArgument";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
+import { code } from "../../../helpers/discord";
 
 const args = {
   ...tasteArgs,
@@ -93,7 +94,9 @@ export default class Taste extends TasteCommand<typeof args> {
 
     if (taste.artists.length === 0) {
       throw new LogicError(
-        `${userOneUsername.code()} and ${userTwoUsername.code()} share no common artists!`
+        `${code(userOneUsername)} and ${code(
+          userTwoUsername
+        )} share no common artists!`
       );
     }
 

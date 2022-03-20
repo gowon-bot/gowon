@@ -8,6 +8,7 @@ import QuickHelp from "./QuickHelp";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { StringArgument } from "../../lib/context/arguments/argumentTypes/StringArgument";
 import { Flag } from "../../lib/context/arguments/argumentTypes/Flag";
+import { code } from "../../helpers/discord";
 
 interface GroupedCommands {
   [category: string]: BaseCommand[];
@@ -87,7 +88,7 @@ export default class Help extends BaseCommand<typeof args> {
     for (const [subcategory, commands] of Object.entries(groupedCommands)) {
       fields.push({
         name: ucFirst(subcategory),
-        value: commands.map((c) => c.friendlyName.code()).join(", "),
+        value: commands.map((c) => code(c.friendlyName)).join(", "),
         inline: true,
       });
     }

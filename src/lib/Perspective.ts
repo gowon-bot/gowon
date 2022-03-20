@@ -1,5 +1,6 @@
 import { User as DiscordUser } from "discord.js";
 import { ucFirst } from "../helpers";
+import { code } from "../helpers/discord";
 
 export class Perspective {
   discordUser?: DiscordUser;
@@ -30,7 +31,7 @@ export class Perspective {
       return Perspective.buildPerspective("you", false);
     } else {
       return Perspective.buildPerspective(
-        asCode ? username!.code() : username!,
+        asCode ? code(username) : username,
         true
       );
     }

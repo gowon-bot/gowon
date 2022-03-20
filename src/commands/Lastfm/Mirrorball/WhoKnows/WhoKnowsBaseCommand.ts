@@ -1,5 +1,6 @@
 import { MessageEmbed } from "discord.js";
 import { User } from "../../../../database/entity/User";
+import { bold } from "../../../../helpers/discord";
 import { LinkGenerator } from "../../../../helpers/lastFM";
 import { ArgumentsMap } from "../../../../lib/context/arguments/types";
 import { Emoji } from "../../../../lib/Emoji";
@@ -85,7 +86,7 @@ export abstract class WhoKnowsBaseCommand<
 
       const display = displayLink(nickname, profileLink);
 
-      return user.discordID === this.author.id ? display.strong() : display;
+      return user.discordID === this.author.id ? bold(display) : display;
     }
 
     switch (user.privacy) {

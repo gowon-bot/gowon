@@ -24,6 +24,7 @@ import {
 } from "./Update.connector";
 import { ServiceRegistry } from "../../../../services/ServicesRegistry";
 import { Flag } from "../../../../lib/context/arguments/argumentTypes/Flag";
+import { code } from "../../../../helpers/discord";
 
 const args = {
   full: new Flag({
@@ -87,7 +88,7 @@ export default class Update extends MirrorballBaseCommand<
 
     const embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor("Update"))
-      .setDescription(`Updating user ${senderUsername.code()}`);
+      .setDescription(`Updating user ${code(senderUsername)}`);
 
     const sentMessage = await this.send(embed);
 
@@ -156,7 +157,7 @@ export default class Update extends MirrorballBaseCommand<
           } else {
             sentMessage.edit({
               embeds: [
-                embed.setDescription(`Updated user ${senderUsername.code()}!`),
+                embed.setDescription(`Updated user ${code(senderUsername)}!`),
               ],
             });
           }

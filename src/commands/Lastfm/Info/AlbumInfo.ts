@@ -5,6 +5,7 @@ import { LineConsolidator } from "../../../lib/LineConsolidator";
 import { displayNumber } from "../../../lib/views/displays";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
+import { bold, italic } from "../../../helpers/discord";
 
 const args = {
   ...prefabArguments.album,
@@ -113,7 +114,7 @@ export default class AlbumInfo extends InfoCommand<typeof args> {
     );
 
     const embed = this.newEmbed()
-      .setTitle(albumInfo.name.italic() + " by " + albumInfo.artist.strong())
+      .setTitle(italic(albumInfo.name) + " by " + bold(albumInfo.artist))
       .setDescription(this.lineConsolidator.consolidate())
       .setURL(albumInfo.url)
       .setImage(albumInfo.images.get("large") || spotifyAlbumArt?.url || "")
@@ -133,16 +134,14 @@ export default class AlbumInfo extends InfoCommand<typeof args> {
           value: `
         \`${displayNumber(albumInfo.userPlaycount, "` play", true)} by ${
             perspective.objectPronoun
-          } (${calculatePercent(
-            albumInfo.userPlaycount,
-            userInfo.scrobbleCount,
-            4
-          ).strong()}% of ${perspective.possessivePronoun} total scrobbles)
+          } (${bold(
+            calculatePercent(albumInfo.userPlaycount, userInfo.scrobbleCount, 4)
+          )}% of ${perspective.possessivePronoun} total scrobbles)
         ${
           parseFloat(percentage) > 0
-            ? `${perspective.upper.regularVerb(
-                "account"
-              )} for ${percentage.strong()}% of all scrobbles of this album!`
+            ? `${perspective.upper.regularVerb("account")} for ${bold(
+                percentage
+              )}% of all scrobbles of this album!`
             : ""
         }`,
         }

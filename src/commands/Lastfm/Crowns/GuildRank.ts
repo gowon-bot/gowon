@@ -4,6 +4,7 @@ import { LogicError } from "../../../errors/errors";
 import { toInt } from "../../../helpers/lastFM";
 import { displayNumber } from "../../../lib/views/displays";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
+import { bold } from "../../../helpers/discord";
 
 const args = {
   ...standardMentions,
@@ -36,12 +37,11 @@ export class GuildUserRank extends CrownsChildCommand<typeof args> {
     let embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor("Crowns rank"))
       .setDescription(
-        `${perspective.upper.possessive} ${displayNumber(
-          rank.count,
-          "crown"
-        ).strong()} ${toInt(rank.count) === 1 ? "ranks" : "rank"} ${
+        `${perspective.upper.possessive} ${bold(
+          displayNumber(rank.count, "crown")
+        )} ${toInt(rank.count) === 1 ? "ranks" : "rank"} ${
           perspective.objectPronoun
-        } ${getOrdinal(toInt(rank.rank)).strong()} in ${
+        } ${bold(getOrdinal(toInt(rank.rank)))} in ${
           this.guild?.name
         } out of ${displayNumber(rank.totalUsers, "total user")}`
       );

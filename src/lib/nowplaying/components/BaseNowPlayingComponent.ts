@@ -1,3 +1,4 @@
+import { insertAtIndex } from "../../../helpers";
 import { RecentTrack } from "../../../services/LastFM/converters/RecentTracks";
 import { RunAs } from "../../command/RunAs";
 import { GowonContext } from "../../context/Context";
@@ -80,7 +81,8 @@ export abstract class BaseCompoundComponent<
 
     if (shouldReplace) {
       if (firstIndex !== undefined) {
-        withoutReplaces = withoutReplaces.insertAtIndex(
+        withoutReplaces = insertAtIndex(
+          withoutReplaces,
           firstIndex,
           compoundName
         );

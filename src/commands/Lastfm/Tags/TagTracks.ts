@@ -1,4 +1,5 @@
 import { TagNotAllowedError } from "../../../errors/errors";
+import { bold, italic } from "../../../helpers/discord";
 import { calculatePercent } from "../../../helpers/stats";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
@@ -103,12 +104,9 @@ _Comparing ${perspective.possessive} top ${displayNumber(
                 .slice(0, 20)
                 .map(
                   (o, idx) =>
-                    `${
-                      idx + 1
-                    }. ${o.track.strong()} by ${o.artist.italic()} - ${displayNumber(
-                      o.plays,
-                      "play"
-                    )}`
+                    `${idx + 1}. ${bold(o.track)} by ${italic(
+                      o.artist
+                    )} - ${displayNumber(o.plays, "play")}`
                 )
                 .join("\n")}
 `

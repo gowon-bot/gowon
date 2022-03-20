@@ -1,4 +1,4 @@
-import { cleanURL } from "../../../helpers/discord";
+import { bold, cleanURL, italic } from "../../../helpers/discord";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
@@ -35,9 +35,9 @@ export default class TrackPage extends LastFMBaseCommand<typeof args> {
     });
 
     this.send(
-      `${trackDetails.name.italic()} by ${trackDetails.artist.name.strong()} on last.fm: ${cleanURL(
-        trackDetails.url
-      )}`
+      `${italic(trackDetails.name)} by ${bold(
+        trackDetails.artist.name
+      )} on last.fm: ${cleanURL(trackDetails.url)}`
     );
   }
 }

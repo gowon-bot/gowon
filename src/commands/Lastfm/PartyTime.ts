@@ -2,6 +2,7 @@ import { LastFMBaseCommand } from "./LastFMBaseCommand";
 import { Validation } from "../../lib/validation/ValidationChecker";
 import { validators } from "../../lib/validation/validators";
 import { NumberArgument } from "../../lib/context/arguments/argumentTypes/NumberArgument";
+import { bold } from "../../helpers/discord";
 
 const args = {
   time: new NumberArgument({
@@ -35,12 +36,12 @@ export default class PartyTime extends LastFMBaseCommand<typeof args> {
 
     let time = this.parsedArguments.time;
 
-    await this.send("The party begins in...".strong());
+    await this.send(bold("The party begins in..."));
 
     for (let currentTime = time; currentTime >= 0; currentTime--) {
       setTimeout(() => {
         this.send(
-          currentTime === 0 ? "🎉 NOW 🎊".strong() : `${currentTime}`.strong(),
+          currentTime === 0 ? bold("🎉 NOW 🎊") : bold(`${currentTime}`),
           { forceNoInteractionReply: true }
         );
       }, (time - currentTime) * 1800);

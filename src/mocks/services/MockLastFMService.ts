@@ -1,13 +1,40 @@
-import { add } from "date-fns";
-import { BadLastFMResponseError, LogicError } from "../../errors/errors";
-import { LastFMAPIService, Requestable } from "./LastFMAPIService";
+import { LogicError } from "../../errors/errors";
+import { code } from "../../helpers/discord";
+import { GowonContext } from "../../lib/context/Context";
+import { requestableAsUsername } from "../../lib/MultiRequester";
+import { displayNumber } from "../../lib/views/displays";
+import {
+  AlbumInfo,
+  ArtistInfo,
+  TagInfo,
+  TrackInfo,
+  UserInfo,
+} from "../../services/LastFM/converters/InfoTypes";
+import {
+  ArtistCorrection,
+  ArtistPopularTracks,
+  Friends,
+  LastFMSession,
+  TagTopArtists,
+  TagTopTracks,
+  TrackSearch,
+} from "../../services/LastFM/converters/Misc";
+import {
+  RecentTrack,
+  RecentTracks,
+} from "../../services/LastFM/converters/RecentTracks";
+import {
+  TopAlbums,
+  TopArtists,
+  TopTracks,
+} from "../../services/LastFM/converters/TopTypes";
+import { Requestable } from "../../services/LastFM/LastFMAPIService";
 import {
   AlbumInfoParams,
   ArtistInfoParams,
   ArtistPopularTracksParams,
   GetArtistCorrectionParams,
   GetSessionParams,
-  isTimeframeParams,
   LastFMPeriod,
   RecentTracksParams,
   TagInfoParams,
@@ -21,31 +48,10 @@ import {
   UserGetFriendsParams,
   UserGetWeeklyChartParams,
   UserInfoParams,
-} from "./LastFMService.types";
-import {
-  AlbumInfo,
-  ArtistInfo,
-  TagInfo,
-  TrackInfo,
-  UserInfo,
-} from "./converters/InfoTypes";
-import {
-  ArtistCorrection,
-  ArtistPopularTracks,
-  Friends,
-  LastFMSession,
-  TagTopArtists,
-  TagTopTracks,
-  TrackSearch,
-} from "./converters/Misc";
-import { RecentTrack, RecentTracks } from "./converters/RecentTracks";
-import { TopAlbums, TopArtists, TopTracks } from "./converters/TopTypes";
-import { displayNumber } from "../../lib/views/displays";
-import { requestableAsUsername } from "../../lib/MultiRequester";
-import { GowonContext } from "../../lib/context/Context";
-import { code } from "../../helpers/discord";
+} from "../../services/LastFM/LastFMService.types";
+import { MockLastFMAPIService } from "./MockLastFMAPIService";
 
-export class LastFMService extends LastFMAPIService {
+export class MockLastFMService extends MockLastFMAPIService {
   async artistInfo(
     ctx: GowonContext,
     params: ArtistInfoParams
@@ -83,12 +89,6 @@ export class LastFMService extends LastFMAPIService {
     ctx: GowonContext,
     params: TopArtistsParams | UserGetWeeklyChartParams
   ): Promise<TopArtists> {
-    if (isTimeframeParams(params)) {
-      return TopArtists.fromWeeklyChart(
-        await this._userGetWeeklyArtistChart(ctx, params)
-      );
-    }
-
     return new TopArtists(await this._topArtists(ctx, params));
   }
 
@@ -96,12 +96,6 @@ export class LastFMService extends LastFMAPIService {
     ctx: GowonContext,
     params: TopAlbumsParams | UserGetWeeklyChartParams
   ): Promise<TopAlbums> {
-    if (isTimeframeParams(params)) {
-      return TopAlbums.fromWeeklyChart(
-        await this._userGetWeeklyAlbumChart(ctx, params)
-      );
-    }
-
     return new TopAlbums(await this._topAlbums(ctx, params));
   }
 
@@ -109,12 +103,6 @@ export class LastFMService extends LastFMAPIService {
     ctx: GowonContext,
     params: TopTracksParams | UserGetWeeklyChartParams
   ): Promise<TopTracks> {
-    if (isTimeframeParams(params)) {
-      return TopTracks.fromWeeklyChart(
-        await this._userGetWeeklyTrackChart(ctx, params)
-      );
-    }
-
     return new TopTracks(await this._topTracks(ctx, params));
   }
 
@@ -191,8 +179,6 @@ export class LastFMService extends LastFMAPIService {
   ): Promise<number> {
     let playcount = (await this.artistInfo(ctx, { artist, username }))
       ?.userPlaycount;
-
-    if (isNaN(playcount)) throw new BadLastFMResponseError();
 
     return playcount;
   }
@@ -334,19 +320,10 @@ export class LastFMService extends LastFMAPIService {
 
   async goBack(
     ctx: GowonContext,
-    username: Requestable,
-    when: Date
+    _username: Requestable,
+    _when: Date
   ): Promise<RecentTrack> {
-    let to = add(when, { hours: 6 });
-
-    let params = {
-      username,
-      limit: 1,
-      from: ~~(when.getTime() / 1000),
-      to: ~~(to.getTime() / 1000),
-    };
-
-    let recentTracks = await this.recentTracks(ctx, params);
+    let recentTracks = await this.recentTracks(ctx, {});
 
     return recentTracks.tracks[1] ?? recentTracks.first();
   }

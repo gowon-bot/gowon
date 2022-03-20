@@ -1,4 +1,5 @@
 import { LogicError } from "../../../../errors/errors";
+import { bold, italic } from "../../../../helpers/discord";
 import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";
 import { SpotifyChildCommand } from "../SpotifyChildCommand";
 
@@ -36,7 +37,7 @@ export class Queue extends SpotifyChildCommand<typeof args> {
       .setAuthor(this.generateEmbedAuthor("Spotify queue song"))
       .setDescription(
         `Succesfully queued:
-${track.name.italic()} by ${track.artists.primary.name.strong()}!`
+${italic(track.name)} by ${bold(track.artists.primary.name)}!`
       )
       .setThumbnail(track.album.images.largest.url);
 

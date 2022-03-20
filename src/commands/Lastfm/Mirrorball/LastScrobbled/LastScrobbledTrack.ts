@@ -9,6 +9,7 @@ import {
   LastScrobbledResponse,
 } from "./connector";
 import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";
+import { bold, italic } from "../../../../helpers/discord";
 
 const args = {
   ...prefabArguments.track,
@@ -69,9 +70,9 @@ export default class LastScrobbledTrack extends MirrorballBaseCommand<
       .setDescription(
         `${perspective.upper.name} ${
           this.variationWasUsed("first") ? "first" : "last"
-        } scrobbled ${play.track.name.italic()} by ${play.track.artist.name.strong()} on ${displayDate(
-          convertMirrorballDate(play.scrobbledAt)
-        )}`
+        } scrobbled ${italic(play.track.name)} by ${bold(
+          play.track.artist.name
+        )} on ${displayDate(convertMirrorballDate(play.scrobbledAt))}`
       );
 
     await this.send(embed);

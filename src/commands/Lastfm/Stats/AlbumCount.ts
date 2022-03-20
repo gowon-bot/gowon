@@ -3,6 +3,7 @@ import { displayNumber } from "../../../lib/views/displays";
 import { humanizePeriod } from "../../../lib/timeAndDate/helpers";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { TimePeriodArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/TimePeriodArgument";
+import { bold } from "../../../helpers/discord";
 
 const args = {
   timePeriod: new TimePeriodArgument({
@@ -36,10 +37,9 @@ export default class AlbumCount extends LastFMBaseCommand<typeof args> {
     );
 
     await this.oldReply(
-      `${perspective.plusToHave} scrobbled ${displayNumber(
-        albumCount,
-        "album"
-      ).strong()} ${humanizedPeriod}`
+      `${perspective.plusToHave} scrobbled ${bold(
+        displayNumber(albumCount, "album")
+      )} ${humanizedPeriod}`
     );
   }
 }

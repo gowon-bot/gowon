@@ -3,6 +3,7 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { displayNumber } from "../../../lib/views/displays";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
+import { bold } from "../../../helpers/discord";
 
 const args = {
   ...standardMentions,
@@ -50,12 +51,11 @@ export default class TrackPercent extends LastFMBaseCommand<typeof args> {
       `${perspective.possessive} ${displayNumber(
         trackInfo.userPlaycount,
         "play"
-      )} of ${trackInfo.name.strong()} represent ${calculatePercent(
-        trackInfo.userPlaycount,
-        artistInfo.userPlaycount
-      ).strong()}% of ${
-        perspective.possessivePronoun
-      } ${artistInfo.name.strong()} scrobbles`
+      )} of ${bold(trackInfo.name)} represent ${bold(
+        calculatePercent(trackInfo.userPlaycount, artistInfo.userPlaycount)
+      )}% of ${perspective.possessivePronoun} ${bold(
+        artistInfo.name
+      )} scrobbles`
     );
   }
 }

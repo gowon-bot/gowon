@@ -1,3 +1,4 @@
+import { code } from "../../helpers/discord";
 import { BaseCommand } from "../../lib/command/BaseCommand";
 
 export default class GowonGreen extends BaseCommand {
@@ -9,6 +10,6 @@ export default class GowonGreen extends BaseCommand {
   secretCommand = true;
 
   async run() {
-    await this.send("#02BCA1".code());
+    await this.send(code("#02BCA1"));
   }
 }

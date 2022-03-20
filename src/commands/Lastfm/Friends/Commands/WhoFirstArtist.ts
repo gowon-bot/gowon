@@ -8,6 +8,7 @@ import { LogicError } from "../../../../errors/errors";
 import { MirrorballUser } from "../../../../services/mirrorball/MirrorballTypes";
 import { convertMirrorballDate } from "../../../../helpers/mirrorball";
 import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";
+import { bold, code } from "../../../../helpers/discord";
 
 const args = {
   ...prefabArguments.artist,
@@ -89,13 +90,15 @@ export class WhoFirstArtist extends FriendsChildCommand<typeof args> {
 
     const embed = this.newEmbed()
       .setTitle(
-        `When your friends first scrobbled ${whoFirst.whoFirstArtist.artist.name.strong()}`
+        `When your friends first scrobbled ${bold(
+          whoFirst.whoFirstArtist.artist.name
+        )}`
       )
       .setDescription(
         displayNumberedList(
           whoFirst.whoFirstArtist.rows.map(
             (wk) =>
-              `${wk.user.username.code()} - ${displayDate(
+              `${code(wk.user.username)} - ${displayDate(
                 convertMirrorballDate(wk.scrobbledAt)
               )}`
           )

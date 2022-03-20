@@ -8,6 +8,7 @@ import { LineConsolidator } from "../../../lib/LineConsolidator";
 import { User } from "../../../database/entity/User";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
+import { bold } from "../../../helpers/discord";
 
 const args = {
   ...prefabArguments.artist,
@@ -98,13 +99,12 @@ export class Info extends CrownsChildCommand<typeof args> {
 
       let embed = this.newEmbed()
         .setTitle(
-          `Who has ${crown.artistName.strong()}?` + crown.redirectDisplay()
+          `Who has ${bold(crown.artistName)}?` + crown.redirectDisplay()
         )
         .setDescription(
-          `${holderUsername}${invalidBadge} has the crown for ${crown.artistName.strong()} with ${displayNumber(
-            crown.plays,
-            "play"
-          )}
+          `${holderUsername}${invalidBadge} has the crown for ${bold(
+            crown.artistName
+          )} with ${displayNumber(crown.plays, "play")}
 
           Created ${ago(crown.createdAt)}${
             crown.version > 1 ? ". Last stolen " + ago(crown.lastStolen) : ""
@@ -133,7 +133,7 @@ export class Info extends CrownsChildCommand<typeof args> {
       (await senderUser?.canClaimCrowns(this.ctx)) || false;
 
     lineConsolidator.addLines(
-      `No one has the crown for ${artistName.strong()}` +
+      `No one has the crown for ${bold(artistName)}` +
         (redirectedFrom ? ` _(redirected from ${redirectedFrom})_` : ""),
       {
         shouldDisplay:
@@ -154,7 +154,7 @@ export class Info extends CrownsChildCommand<typeof args> {
 
     const embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor("Crown info"))
-      .setTitle(`Who has ${artistName.strong()}?`)
+      .setTitle(`Who has ${bold(artistName)}?`)
       .setDescription(lineConsolidator.consolidate());
 
     await this.send(embed);

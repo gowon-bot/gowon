@@ -10,6 +10,7 @@ import { humanizeTimeRange, TimeRange } from "../../../lib/timeAndDate/helpers";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { TimeRangeArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/TimeRangeArgument";
 import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
+import { bold } from "../../../helpers/discord";
 
 const args = {
   milestone: new NumberArgument({
@@ -84,12 +85,9 @@ export default class Pace extends LastFMBaseCommand<typeof args> {
           "scrobble"
         )}/hour** ${humanizedTimeRange}, ${
           perspective.name
-        } will hit **${displayNumber(
-          pace.milestone,
-          "**scrobble"
-        )} on ${displayDate(pace.prediction).strong()} (${ago(
-          pace.prediction
-        )})`
+        } will hit **${displayNumber(pace.milestone, "**scrobble")} on ${bold(
+          displayDate(pace.prediction)
+        )} (${ago(pace.prediction)})`
       );
 
     await this.send(embed);

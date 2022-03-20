@@ -7,6 +7,7 @@ import { NicknameService } from "../../../services/Discord/NicknameService";
 import { ArtistsService } from "../../../services/mirrorball/services/ArtistsService";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
+import { bold } from "../../../helpers/discord";
 
 const args = {
   ...prefabArguments.artist,
@@ -69,7 +70,7 @@ export class ServerCombos extends ComboChildCommand<typeof args> {
         combo.user.discordID
       );
 
-      return nickname.strong() + ": " + this.displayCombo(combo);
+      return bold(nickname) + ": " + this.displayCombo(combo);
     }).bind(this);
 
     const scrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {

@@ -2,6 +2,7 @@ import { CrownsChildCommand } from "./CrownsChildCommand";
 import { LogicError } from "../../../errors/errors";
 import { displayNumber } from "../../../lib/views/displays";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
+import { bold } from "../../../helpers/discord";
 
 const args = {
   ...standardMentions,
@@ -47,10 +48,9 @@ export class CrownRanks extends CrownsChildCommand<typeof args> {
         crownRanks
           .map(
             (cr) =>
-              `${displayNumber(cr.rank)}. ${cr.artistName} - ${displayNumber(
-                cr.plays,
-                "play"
-              ).strong()}`
+              `${displayNumber(cr.rank)}. ${cr.artistName} - ${bold(
+                displayNumber(cr.plays, "play")
+              )}`
           )
           .join("\n") +
           `\n\n${perspective.upper.plusToHave} ${displayNumber(

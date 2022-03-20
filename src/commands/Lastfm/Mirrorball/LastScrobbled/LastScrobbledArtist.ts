@@ -13,6 +13,7 @@ import {
   prefabArguments,
   prefabFlags,
 } from "../../../../lib/context/arguments/prefabArguments";
+import { bold } from "../../../../helpers/discord";
 
 const args = {
   ...standardMentions,
@@ -78,7 +79,7 @@ export default class LastScrobbledArtist extends MirrorballBaseCommand<
       .setDescription(
         `${perspective.upper.name} ${
           this.variationWasUsed("first") ? "first" : "last"
-        } scrobbled ${play.track.artist.name.strong()} on ${displayDate(
+        } scrobbled ${bold(play.track.artist.name)} on ${displayDate(
           convertMirrorballDate(play.scrobbledAt)
         )}`
       );

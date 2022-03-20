@@ -1,4 +1,5 @@
 import { LogicError } from "../../errors/errors";
+import { code } from "../../helpers/discord";
 import { BaseCommand } from "../../lib/command/BaseCommand";
 import { SettingsService } from "../../lib/settings/SettingsService";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
@@ -32,9 +33,9 @@ export default class Prefix extends BaseCommand {
         this.scopes.guild,
         this.newPrefix
       );
-      await this.oldReply(`the new prefix is ${this.prefix.code()}`);
+      await this.oldReply(`the new prefix is ${code(this.prefix)}`);
     } else {
-      await this.oldReply(`the prefix is ${this.prefix.code()}`);
+      await this.oldReply(`the prefix is ${code(this.prefix)}`);
     }
   }
 }

@@ -5,6 +5,7 @@ import { prefabArguments } from "../../../lib/context/arguments/prefabArguments"
 import { Flag } from "../../../lib/context/arguments/argumentTypes/Flag";
 import { CommandRedirect } from "../../../lib/command/BaseCommand";
 import GlobalArtistPlays from "./GlobalArtistPlays";
+import { bold } from "../../../helpers/discord";
 
 const args = {
   ...prefabArguments.artist,
@@ -57,7 +58,7 @@ export default class ArtistPlays extends LastFMBaseCommand<typeof args> {
               artistDetails.userPlaycount,
               "**scrobble"
             )} of`) +
-        ` ${artistDetails.name.strong()}` +
+        ` ${bold(artistDetails.name)}` +
         (this.runAs.variationWasUsed("ap")
           ? `\n_looking for album plays? That command has moved to \`${prefix}lp\` or \`${prefix}albumplays\`_`
           : "")

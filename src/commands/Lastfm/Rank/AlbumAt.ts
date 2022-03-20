@@ -5,6 +5,7 @@ import { validators } from "../../../lib/validation/validators";
 import { displayNumber } from "../../../lib/views/displays";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
+import { bold, italic } from "../../../helpers/discord";
 
 const args = {
   rank: new NumberArgument({
@@ -48,12 +49,11 @@ export default class AlbumAt extends LastFMBaseCommand<typeof args> {
       );
 
     await this.oldReply(
-      `${album.name.strong()} by ${album.artist.name.italic()} is ranked at #**${
+      `${bold(album.name)} by ${italic(album.artist.name)} is ranked at #**${
         album.rank
-      }** in ${perspective.possessive} top albums with ${displayNumber(
-        album.userPlaycount,
-        "play"
-      ).strong()}`
+      }** in ${perspective.possessive} top albums with ${bold(
+        displayNumber(album.userPlaycount, "play")
+      )}`
     );
   }
 }

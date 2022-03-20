@@ -1,6 +1,7 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
 import { displayNumber } from "../../../lib/views/displays";
 import { ConfirmationEmbed } from "../../../lib/views/embeds/ConfirmationEmbed";
+import { bold } from "../../../helpers/discord";
 
 export class OptOut extends CrownsChildCommand {
   idSeed = "wjsn seola";
@@ -34,10 +35,9 @@ export class OptOut extends CrownsChildCommand {
       await confirmationEmbed.sentMessage?.edit({
         embeds: [
           embed.setDescription(
-            `Opted you out, deleting ${displayNumber(
-              numberOfCrowns,
-              "crown"
-            ).strong()}!`
+            `Opted you out, deleting ${bold(
+              displayNumber(numberOfCrowns, "crown")
+            )}!`
           ),
         ],
       });

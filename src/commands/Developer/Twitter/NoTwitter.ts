@@ -1,3 +1,4 @@
+import { bold } from "../../../helpers/discord";
 import { BaseCommand } from "../../../lib/command/BaseCommand";
 import { toggleValues } from "../../../lib/settings/Settings";
 import { SettingsService } from "../../../lib/settings/SettingsService";
@@ -26,10 +27,9 @@ export default class NoTwitter extends BaseCommand {
     const embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor("No twitter"))
       .setDescription(
-        `Gowon's Twitter integration is now ${(noTwitter === toggleValues.ON
-          ? toggleValues.ON
-          : toggleValues.OFF
-        ).strong()}`
+        `Gowon's Twitter integration is now ${bold(
+          noTwitter === toggleValues.ON ? toggleValues.ON : toggleValues.OFF
+        )}`
       );
 
     await this.send(embed);

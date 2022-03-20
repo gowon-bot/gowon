@@ -1,3 +1,4 @@
+import { bold } from "../../helpers/discord";
 import { displayNumber } from "../../lib/views/displays";
 import { AdminBaseCommand } from "./AdminBaseCommand";
 
@@ -16,10 +17,9 @@ export default class Usercount extends AdminBaseCommand {
       this.newEmbed()
         .setAuthor(this.generateEmbedAuthor("User count"))
         .setDescription(
-          `There are ${displayNumber(
-            usercount,
-            "registered user"
-          ).strong()} logged into Gowon`
+          `There are ${bold(
+            displayNumber(usercount, "registered user")
+          )} logged into Gowon`
         )
     );
   }

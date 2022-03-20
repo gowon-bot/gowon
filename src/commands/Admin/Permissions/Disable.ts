@@ -1,4 +1,5 @@
 import { CommandNotFoundError, LogicError } from "../../../errors/errors";
+import { code } from "../../../helpers/discord";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { PermissionsChildCommand } from "./PermissionsChildCommand";
 
@@ -20,7 +21,7 @@ export class Disable extends PermissionsChildCommand {
     if (!this.command) throw new CommandNotFoundError();
     if (["enable", "disable"].includes(this.command.name))
       throw new LogicError(
-        `You can't disable the ${this.command.name.code()} command!`
+        `You can't disable the ${code(this.command.name)} command!`
       );
 
     let disabledCommand = await this.adminService.disableCommand(
@@ -30,9 +31,11 @@ export class Disable extends PermissionsChildCommand {
     );
 
     await this.send(
-      `Successfully disabled ${this.commandRegistry
-        .findByID(disabledCommand.commandID, { includeSecret: true })
-        ?.name?.code()}`
+      `Successfully disabled ${code(
+        this.commandRegistry.findByID(disabledCommand.commandID, {
+          includeSecret: true,
+        })?.name!
+      )}`
     );
   }
 }

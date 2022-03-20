@@ -10,6 +10,7 @@ import {
 import { displayNumber } from "../../../../lib/views/displays";
 import { standardMentions } from "../../../../lib/context/arguments/mentionTypes/mentions";
 import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";
+import { bold, italic } from "../../../../helpers/discord";
 
 const args = {
   ...prefabArguments.album,
@@ -60,9 +61,9 @@ export default class AlbumTopTracks extends MirrorballBaseCommand<
 
     if (topTracks.length < 1) {
       throw new LogicError(
-        `${
-          perspective.plusToHave
-        } no scrobbles of any songs from ${album.name.italic()} by ${album.artist.name.strong()}!`
+        `${perspective.plusToHave} no scrobbles of any songs from ${italic(
+          album.name
+        )} by ${bold(album.artist.name)}!`
       );
     }
 
@@ -71,7 +72,9 @@ export default class AlbumTopTracks extends MirrorballBaseCommand<
 
     const embed = this.newEmbed()
       .setTitle(
-        `Top tracks on ${album.name.italic()} by ${album.artist.name.strong()} for ${username}`
+        `Top tracks on ${italic(album.name)} by ${bold(
+          album.artist.name
+        )} for ${username}`
       )
       .setURL(
         LinkGenerator.libraryAlbumPage(username, album.artist.name, album.name)
@@ -85,10 +88,7 @@ export default class AlbumTopTracks extends MirrorballBaseCommand<
         return tracks
           .map(
             (track) =>
-              `${displayNumber(
-                track.playcount,
-                "play"
-              )} - ${track.name.strong()}`
+              `${displayNumber(track.playcount, "play")} - ${bold(track.name)}`
           )
           .join("\n");
       },
@@ -96,13 +96,18 @@ export default class AlbumTopTracks extends MirrorballBaseCommand<
       overrides: {
         itemName: "track",
         embedDescription:
-          `${displayNumber(totalScrobbles, "total scrobble")}, ${displayNumber(
-            topTracks.length,
-            "total track"
-          )}, ${displayNumber(
-            average.toFixed(2),
-            "average scrobble"
-          )} per track`.italic() + "\n",
+          italic(
+            `${displayNumber(
+              totalScrobbles,
+              "total scrobble"
+            )}, ${displayNumber(
+              topTracks.length,
+              "total track"
+            )}, ${displayNumber(
+              average.toFixed(2),
+              "average scrobble"
+            )} per track`
+          ) + "\n",
       },
     });
 

@@ -1,3 +1,4 @@
+import { bold } from "../../../helpers/discord";
 import { OverviewChildCommand } from "./OverviewChildCommand";
 
 export class ScrobblesPerTrack extends OverviewChildCommand {
@@ -12,9 +13,9 @@ export class ScrobblesPerTrack extends OverviewChildCommand {
     let spt = await this.calculator.avgScrobblesPerTrack();
 
     let embed = (await this.overviewEmbed()).setDescription(
-      `${perspective.upper.regularVerb(
-        "average"
-      )} ${spt.asString.strong()} scrobbles per track!`
+      `${perspective.upper.regularVerb("average")} ${bold(
+        spt.asString
+      )} scrobbles per track!`
     );
 
     await this.send(embed);

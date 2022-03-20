@@ -10,6 +10,7 @@ import {
 import { displayNumber } from "../../../../lib/views/displays";
 import { standardMentions } from "../../../../lib/context/arguments/mentionTypes/mentions";
 import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";
+import { bold, italic } from "../../../../helpers/discord";
 
 const args = {
   ...prefabArguments.track,
@@ -60,9 +61,9 @@ export default class TrackTopAlbums extends MirrorballBaseCommand<
 
     if (topAlbums.length < 1) {
       throw new LogicError(
-        `${
-          perspective.plusToHave
-        } no scrobbles for ${track.name.italic()} by ${track.artist.strong()}!`
+        `${perspective.plusToHave} no scrobbles for ${italic(
+          track.name
+        )} by ${bold(track.artist)}!`
       );
     }
 
@@ -71,7 +72,7 @@ export default class TrackTopAlbums extends MirrorballBaseCommand<
 
     const embed = this.newEmbed()
       .setTitle(
-        `Top albums for ${track.name.italic()} by ${track.artist.strong()} in ${
+        `Top albums for ${italic(track.name)} by ${bold(track.artist)} in ${
           perspective.possessive
         } library`
       )
@@ -87,9 +88,9 @@ export default class TrackTopAlbums extends MirrorballBaseCommand<
         return albums
           .map(
             (album) =>
-              `${displayNumber(album.playcount, "play")} - ${(
+              `${displayNumber(album.playcount, "play")} - ${bold(
                 album.track.album?.name || "(no album)"
-              ).strong()}`
+              )}`
           )
           .join("\n");
       },
@@ -97,13 +98,18 @@ export default class TrackTopAlbums extends MirrorballBaseCommand<
       overrides: {
         itemName: "album",
         embedDescription:
-          `${displayNumber(totalScrobbles, "total scrobble")}, ${displayNumber(
-            topAlbums.length,
-            "total album"
-          )}, ${displayNumber(
-            average.toFixed(2),
-            "average scrobble"
-          )} per album`.italic() + "\n",
+          italic(
+            `${displayNumber(
+              totalScrobbles,
+              "total scrobble"
+            )}, ${displayNumber(
+              topAlbums.length,
+              "total album"
+            )}, ${displayNumber(
+              average.toFixed(2),
+              "average scrobble"
+            )} per album`
+          ) + "\n",
       },
     });
 

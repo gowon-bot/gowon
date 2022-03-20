@@ -5,6 +5,7 @@ import {
 } from "../../../lib/views/displays";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingEmbed";
+import { bold } from "../../../helpers/discord";
 
 const args = {
   ...prefabArguments.artist,
@@ -47,8 +48,7 @@ export default class PopularTracks extends InfoCommand<typeof args> {
       pageRenderer(items, { offset }) {
         return displayNumberedList(
           items.map(
-            (t) =>
-              `${t.name.strong()} (${displayNumber(t.listeners, "listener")})`
+            (t) => `${bold(t.name)} (${displayNumber(t.listeners, "listener")})`
           ),
           offset
         );
