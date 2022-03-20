@@ -4,6 +4,7 @@ import { Response } from "node-fetch";
 import { displayNumber } from "../lib/views/displays";
 import { Emoji } from "../lib/Emoji";
 import { Perspective } from "../lib/Perspective";
+import { bold } from "../helpers/discord";
 
 export abstract class ClientError extends Error {
   name = "ClientError";
@@ -283,7 +284,7 @@ export class ArtistCrownBannedError extends ClientError {
   name = "ArtistCrownBannedError";
 
   constructor(artist: string) {
-    super(`it is not possible to get the crown for ${artist.strong()}!`);
+    super(`it is not possible to get the crown for ${bold(artist)}!`);
   }
 }
 

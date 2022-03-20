@@ -1,3 +1,4 @@
+import { code } from "../../../../helpers/discord";
 import { CommandRedirect } from "../../../../lib/command/BaseCommand";
 import { StringArrayArgument } from "../../../../lib/context/arguments/argumentTypes/StringArrayArgument";
 import {
@@ -82,7 +83,7 @@ ${filteredOut.map((f) => `- ${f}`).join("\n")}\`\`\``
     const embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor("Config set"))
       .setDescription(
-        `${presetConfig ? `Using preset ${newConfig[0].code()}` : ""}
+        `${presetConfig ? `Using preset ${code(newConfig[0])}` : ""}
         ${filteredDisplay}
         ${filteredOutDisplay}`.trim()
       )

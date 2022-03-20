@@ -5,6 +5,7 @@ import { standardMentions } from "../../../lib/context/arguments/mentionTypes/me
 import { prefabFlags } from "../../../lib/context/arguments/prefabArguments";
 import { CommandRedirect } from "../../../lib/command/BaseCommand";
 import AlbumPlaysequal from "./AlbumPlaysequal";
+import { bold } from "../../../helpers/discord";
 
 const args = {
   plays: new NumberArgument({
@@ -51,10 +52,10 @@ export default class AlbumPlaysover extends LastFMBaseCommand<typeof args> {
       else break;
     }
 
-    await this.traditionalReply(
-      `${displayNumber(playsover).strong()} of ${
+    await this.oldReply(
+      `${bold(displayNumber(playsover))} of ${
         perspective.possessive
-      } top 1,000 albums have at least ${displayNumber(plays, "play").strong()}`
+      } top 1,000 albums have at least ${bold(displayNumber(plays, "play"))}`
     );
   }
 }

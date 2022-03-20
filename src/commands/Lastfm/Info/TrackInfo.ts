@@ -4,6 +4,7 @@ import { LineConsolidator } from "../../../lib/LineConsolidator";
 import { displayNumber } from "../../../lib/views/displays";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
+import { bold, italic } from "../../../helpers/discord";
 
 const args = {
   ...prefabArguments.track,
@@ -63,7 +64,7 @@ export default class TrackInfo extends InfoCommand<typeof args> {
         : "") +
         (duration && trackInfo.album ? " - " : "") +
         (trackInfo.album
-          ? `from the album ${trackInfo.album?.name.italic()}`
+          ? `from the album ${italic(trackInfo.album?.name)}`
           : ""),
       {
         shouldDisplay: !!(duration || trackInfo.album),
@@ -87,9 +88,7 @@ export default class TrackInfo extends InfoCommand<typeof args> {
     );
 
     const embed = this.newEmbed()
-      .setTitle(
-        trackInfo.name.italic() + " by " + trackInfo.artist.name.strong()
-      )
+      .setTitle(italic(trackInfo.name) + " by " + bold(trackInfo.artist.name))
       .setDescription(this.lineConsolidator.consolidate())
       .setThumbnail(trackInfo.album?.images?.get("large") || "")
       .addFields(

@@ -2,11 +2,7 @@ import { CommandInteraction, Message } from "discord.js";
 import { GowonService } from "../../../../../services/GowonService";
 import { ServiceRegistry } from "../../../../../services/ServicesRegistry";
 import { GowonContext } from "../../../Context";
-import {
-  ArgumentReturnType,
-  BaseArgument,
-  BaseArgumentOptions,
-} from "../BaseArgument";
+import { BaseArgument, BaseArgumentOptions } from "../BaseArgument";
 import { LastFMPeriod } from "../../../../../services/LastFM/LastFMService.types";
 import { TimePeriodParser } from "../../parsers/TimePeriodParser";
 import { SlashCommandBuilder } from "../SlashCommandTypes";
@@ -40,17 +36,17 @@ export class TimePeriodArgument<
     _: Message,
     content: string,
     ctx: GowonContext
-  ): ArgumentReturnType<LastFMPeriod, OptionsT> {
+  ): LastFMPeriod | undefined {
     const cleanContent = this.cleanContent(ctx, content);
 
-    return this.timePeriodParser.parse(cleanContent)!;
+    return this.timePeriodParser.parse(cleanContent);
   }
 
   parseFromInteraction(
     interaction: CommandInteraction,
     _: GowonContext,
     argumentName: string
-  ): ArgumentReturnType<LastFMPeriod, OptionsT> {
+  ): LastFMPeriod | undefined {
     return (interaction.options.getString(argumentName) ||
       this.options.default) as LastFMPeriod;
   }

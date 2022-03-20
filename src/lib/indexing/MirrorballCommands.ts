@@ -75,7 +75,7 @@ export abstract class MirrorballBaseCommand<
     discordID: string,
     timeout = 2000
   ): Promise<void> {
-    return await this.mirrorballService.updateAndWait(
+    return await this.mirrorballUsersService.updateAndWait(
       this.ctx,
       discordID,
       timeout
@@ -135,7 +135,7 @@ export abstract class MirrorballBaseCommand<
       ConcurrentAction.Indexing,
       discordID
     );
-    await this.mirrorballService.fullIndex(this.ctx);
+    await this.mirrorballUsersService.fullIndex(this.ctx);
     this.concurrencyService.registerUser(
       this.ctx,
       ConcurrentAction.Indexing,

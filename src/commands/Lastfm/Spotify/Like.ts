@@ -1,4 +1,5 @@
 import { LogicError } from "../../../errors/errors";
+import { bold, italic } from "../../../helpers/discord";
 import { Variation } from "../../../lib/command/BaseCommand";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 import { LineConsolidator } from "../../../lib/LineConsolidator";
@@ -63,8 +64,8 @@ export class Like extends SpotifyChildCommand<typeof args> {
 
     const lineConsolidator = new LineConsolidator();
 
-    const artistName = track.artists.primary.name.strong();
-    const trackName = track.name.italic();
+    const artistName = bold(track.artists.primary.name);
+    const trackName = italic(track.name);
 
     lineConsolidator.addLines(
       {

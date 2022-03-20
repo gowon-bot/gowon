@@ -1,3 +1,4 @@
+import { code } from "../../../../helpers/discord";
 import { NowPlayingConfigChildCommand } from "./NowPlayingConfigChildCommand";
 
 export class View extends NowPlayingConfigChildCommand {
@@ -25,7 +26,7 @@ export class View extends NowPlayingConfigChildCommand {
       });
 
     if (config.length) {
-      embed.setDescription(config.map((c) => c.code()).join(", "));
+      embed.setDescription(config.map((c) => code(c)).join(", "));
     } else {
       embed.setDescription("Empty config (your footer will be blank)");
     }

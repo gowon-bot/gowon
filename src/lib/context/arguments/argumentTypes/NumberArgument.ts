@@ -5,7 +5,6 @@ import { ServiceRegistry } from "../../../../services/ServicesRegistry";
 import { isDuration } from "../../../timeAndDate/durations";
 import { GowonContext } from "../../Context";
 import {
-  ArgumentReturnType,
   BaseArgument,
   BaseArgumentOptions,
   defaultIndexableOptions,
@@ -34,7 +33,7 @@ export class NumberArgument<
     _: Message,
     content: string,
     ctx: GowonContext
-  ): ArgumentReturnType<number, OptionsT> {
+  ): number | undefined {
     const cleanContent = this.cleanContent(ctx, content);
 
     const split = this.filterTimeRanges(cleanContent.split(/\s+/));
@@ -51,9 +50,8 @@ export class NumberArgument<
     interaction: CommandInteraction,
     _: GowonContext,
     argumentName: string
-  ): ArgumentReturnType<number, OptionsT> {
-    return (interaction.options.getInteger(argumentName) ||
-      this.options.default)!;
+  ): number | undefined {
+    return interaction.options.getInteger(argumentName) || this.options.default;
   }
 
   addAsOption(slashCommand: SlashCommandBuilder, argumentName: string) {

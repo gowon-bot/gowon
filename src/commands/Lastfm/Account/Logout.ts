@@ -23,7 +23,7 @@ export default class Logout extends LastFMBaseCommand {
 
     if (confirmation) {
       await this.usersService.clearUsername(this.ctx, this.author.id);
-      await this.mirrorballService.logout(this.ctx);
+      await this.mirrorballUsersService.logout(this.ctx);
 
       if (confirmationEmbed.sentMessage) {
         await this.discordService.edit(

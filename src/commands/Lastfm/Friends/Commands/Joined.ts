@@ -4,6 +4,7 @@ import {
   MultiRequester,
 } from "../../../../lib/MultiRequester";
 import { displayDate } from "../../../../lib/views/displays";
+import { code } from "../../../../helpers/discord";
 
 export class Joined extends FriendsChildCommand {
   idSeed = "elris chaejeong";
@@ -45,7 +46,7 @@ export class Joined extends FriendsChildCommand {
             if (!s || s?.getTime() === 0)
               return this.displayMissingFriend(username, "join date");
 
-            return `${username.code()} - ${displayDate(s)}`;
+            return `${code(username)} - ${displayDate(s)}`;
           })
           .join("\n")
       );

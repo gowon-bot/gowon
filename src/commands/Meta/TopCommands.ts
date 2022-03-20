@@ -2,6 +2,7 @@ import { MetaChildCommand } from "./MetaChildCommand";
 import { displayNumber } from "../../lib/views/displays";
 import { humanizeTimeRange, TimeRange } from "../../lib/timeAndDate/helpers";
 import { TimeRangeArgument } from "../../lib/context/arguments/argumentTypes/timeAndDate/TimeRangeArgument";
+import { bold } from "../../helpers/discord";
 
 const args = {
   timeRange: new TimeRangeArgument({
@@ -34,10 +35,10 @@ export class TopCommands extends MetaChildCommand<typeof args> {
         topCommands
           .map(
             (tc) =>
-              `${displayNumber(tc.count, "run")} - ${(
+              `${displayNumber(tc.count, "run")} - ${bold(
                 this.commandRegistry.findByID(tc.commandID)
                   ?.friendlyNameWithParent ?? "[unknown command]"
-              ).strong()}`
+              )}`
           )
           .join("\n")
       );

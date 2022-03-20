@@ -17,6 +17,7 @@ import { formatDistance } from "date-fns";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { StringArrayArgument } from "../../../lib/context/arguments/argumentTypes/StringArrayArgument";
+import { bold, italic } from "../../../helpers/discord";
 
 const args = {
   artists: new StringArrayArgument({
@@ -98,10 +99,12 @@ export class Current extends ComboChildCommand<typeof args> {
       {
         string:
           this.displayCurrentCombo(combo, "album") +
-          ` (${displayLink(
-            combo.album.name,
-            LinkGenerator.albumPage(combo.artistName, combo.albumName)
-          ).italic()})`,
+          ` (${italic(
+            displayLink(
+              combo.album.name,
+              LinkGenerator.albumPage(combo.artistName, combo.albumName)
+            )
+          )})`,
         shouldDisplay: combo.album.plays > 1,
       },
       {
@@ -157,7 +160,7 @@ export class Current extends ComboChildCommand<typeof args> {
     combo: ComboType,
     entity: "artist" | "album" | "track"
   ): string {
-    return `${ucFirst(entity).strong()}: ${displayNumber(combo[entity].plays)}${
+    return `${bold(ucFirst(entity))}: ${displayNumber(combo[entity].plays)}${
       combo[entity].plays >= 1000
         ? ` ${Emoji.gowonLitDance}`
         : combo[entity].plays >= 100

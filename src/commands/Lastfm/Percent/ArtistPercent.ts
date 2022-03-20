@@ -3,6 +3,7 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { displayNumber } from "../../../lib/views/displays";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
+import { bold } from "../../../helpers/discord";
 
 const args = {
   ...prefabArguments.artist,
@@ -41,14 +42,13 @@ export default class ArtistPercent extends LastFMBaseCommand<typeof args> {
       this.lastFMService.userInfo(this.ctx, { username: requestable }),
     ]);
 
-    await this.traditionalReply(
+    await this.oldReply(
       `${perspective.possessive} ${displayNumber(
         artistInfo.userPlaycount,
         "play"
-      )} of ${artistInfo.name.strong()} represent ${calculatePercent(
-        artistInfo.userPlaycount,
-        userInfo.scrobbleCount
-      ).strong()}% of ${perspective.possessivePronoun} total scrobbles`
+      )} of ${bold(artistInfo.name)} represent ${bold(
+        calculatePercent(artistInfo.userPlaycount, userInfo.scrobbleCount)
+      )}% of ${perspective.possessivePronoun} total scrobbles`
     );
   }
 }

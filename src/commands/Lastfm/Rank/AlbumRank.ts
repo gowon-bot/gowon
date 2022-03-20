@@ -4,7 +4,7 @@ import {
   displayNumberedList,
 } from "../../../lib/views/displays";
 import { LogicError } from "../../../errors/errors";
-import { sanitizeForDiscord } from "../../../helpers/discord";
+import { bold, italic, sanitizeForDiscord } from "../../../helpers/discord";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 
@@ -72,11 +72,11 @@ export default class AlbumRank extends LastFMBaseCommand<typeof args> {
       .setDescription(
         displayNumberedList(
           topAlbums.albums.slice(start, stop).map((val, idx) => {
-            const display = `${val.name.italic()} by ${sanitizeForDiscord(
+            const display = `${italic(val.name)} by ${sanitizeForDiscord(
               val.artist.name
             )} - ${displayNumber(val.userPlaycount, "play")}`;
 
-            return start + idx === rank ? display.strong(false) : display;
+            return start + idx === rank ? bold(display, false) : display;
           }),
           start
         )

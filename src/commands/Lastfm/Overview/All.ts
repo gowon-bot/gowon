@@ -3,6 +3,7 @@ import { getOrdinal } from "../../../helpers";
 import { Emoji } from "../../../lib/Emoji";
 import { toInt } from "../../../helpers/lastFM";
 import { displayNumber } from "../../../lib/views/displays";
+import { bold, italic } from "../../../helpers/discord";
 
 export class All extends OverviewChildCommand {
   idSeed = "fx victoria";
@@ -70,11 +71,9 @@ _Following ${displayNumber(friends.meta.total, "user")}_
           (await this.calculator.topPercent(50)).count
         }
 **Total scrobbles for top 10 artists**: ${await this.calculator.sumTop(10)}
-${perspective.upper.possessive} top 10 artists account for: ${(
-          await this.calculator.sumTopPercent(10)
-        ).asString.strong()}% of ${
-          perspective.possessivePronoun
-        } total scrobbles
+${perspective.upper.possessive} top 10 artists account for: ${bold(
+          (await this.calculator.sumTopPercent(10)).asString
+        )}% of ${perspective.possessivePronoun} total scrobbles
 
 Among ${perspective.possessivePronoun} top ${displayNumber(
           (await this.calculator.totalArtists()).asNumber > 1000
@@ -94,17 +93,21 @@ Among ${perspective.possessivePronoun} top ${displayNumber(
           .join("\n")}` +
           ((await this.calculator.hasCrownStats()) &&
           this.humanizedPeriod === "overall"
-            ? `\n\n**Total crowns**: ${rank!.count} (ranked ${getOrdinal(
-                toInt(rank!.rank)
-              ).italic()})
-For every ${displayNumber(
-                (await this.calculator.artistsPerCrown())!.asString,
-                "eligible artist"
-              ).strong()}, ${perspective.plusToHave} a crown
-For every ${displayNumber(
-                (await this.calculator.scrobblesPerCrown())!.asString,
-                "scrobble"
-              ).strong()}, ${perspective.plusToHave} a crown`
+            ? `\n\n**Total crowns**: ${rank!.count} (ranked ${italic(
+                getOrdinal(toInt(rank!.rank))
+              )})
+For every ${bold(
+                displayNumber(
+                  (await this.calculator.artistsPerCrown())!.asString,
+                  "eligible artist"
+                )
+              )}, ${perspective.plusToHave} a crown
+For every ${bold(
+                displayNumber(
+                  (await this.calculator.scrobblesPerCrown())!.asString,
+                  "scrobble"
+                )
+              )}, ${perspective.plusToHave} a crown`
             : "") +
           `
 

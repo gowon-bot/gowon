@@ -43,6 +43,7 @@ import { TopAlbums, TopArtists, TopTracks } from "./converters/TopTypes";
 import { displayNumber } from "../../lib/views/displays";
 import { requestableAsUsername } from "../../lib/MultiRequester";
 import { GowonContext } from "../../lib/context/Context";
+import { code } from "../../helpers/discord";
 
 export class LastFMService extends LastFMAPIService {
   async artistInfo(
@@ -306,9 +307,9 @@ export class LastFMService extends LastFMAPIService {
 
     if (milestone > response.meta.total) {
       throw new LogicError(
-        `${requestableAsUsername(
-          username
-        ).code()} hasn't scrobbled ${displayNumber(milestone, "track")} yet!`
+        `${code(
+          requestableAsUsername(username)
+        )} hasn't scrobbled ${displayNumber(milestone, "track")} yet!`
       );
     }
 

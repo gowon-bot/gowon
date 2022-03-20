@@ -34,7 +34,7 @@ export class Ban extends CrownsChildCommand<typeof args> {
       discordUser!
     );
 
-    await this.traditionalReply(
+    await this.oldReply(
       `successfully banned ${
         (await mentionedDBUser.toDiscordUser(this.requiredGuild))!.username
       }`

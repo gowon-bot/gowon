@@ -4,6 +4,7 @@ import { toInt } from "../../../helpers/lastFM";
 import { displayNumber } from "../../../lib/views/displays";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
+import { italic } from "../../../helpers/discord";
 
 const args = {
   ...standardMentions,
@@ -45,7 +46,7 @@ export default class GlobalAlbumPlays extends LastFMBaseCommand<typeof args> {
     );
 
     await this.send(
-      `Last.fm has scrobbled ${albumDetails.name.italic()} by ${
+      `Last.fm has scrobbled ${italic(albumDetails.name)} by ${
         albumDetails.artist
       } ${displayNumber(albumDetails.globalPlaycount, "time")}${
         toInt(albumDetails.userPlaycount) > 0

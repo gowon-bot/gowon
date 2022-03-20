@@ -3,6 +3,7 @@ import { jumbleRedisKey, JumbledArtist } from "./JumbleParentCommand";
 import { LogicError } from "../../../errors/errors";
 import { shuffle } from "../../../helpers";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
+import { bold } from "../../../helpers/discord";
 
 const args = {
   guess: new StringArgument({
@@ -42,7 +43,7 @@ export class Guess extends JumbleChildCommand<typeof args> {
       this.redisService.sessionDelete(this.ctx, jumbleRedisKey);
 
       await this.reply(
-        `You are correct! The artist was ${jumbledArtist.unjumbled.strong()}`
+        `You are correct! The artist was ${bold(jumbledArtist.unjumbled)}`
       );
     } else {
       if (this.payload.isMessage()) {

@@ -2,7 +2,6 @@ import { CommandInteraction, Message } from "discord.js";
 import escapeStringRegexp from "escape-string-regexp";
 import { GowonContext } from "../../Context";
 import {
-  ArgumentReturnType,
   BaseArgument,
   BaseArgumentOptions,
   ContentBasedArgumentOptions,
@@ -37,11 +36,7 @@ export interface StringArgumentOptions
 
 export class StringArgument<
   OptionsT extends Partial<StringArgumentOptions> = {}
-> extends BaseArgument<
-  ArgumentReturnType<string, OptionsT>,
-  StringArgumentOptions,
-  OptionsT
-> {
+> extends BaseArgument<string, StringArgumentOptions, OptionsT> {
   constructor(options: OptionsT | {} = {}) {
     super(
       defaultIndexableOptions as OptionsT,
@@ -55,7 +50,7 @@ export class StringArgument<
     _: Message,
     content: string,
     ctx: GowonContext
-  ): ArgumentReturnType<string, OptionsT> {
+  ): string | undefined {
     const cleanContent = this.cleanContent(ctx, content);
 
     let parsedArgument: string | undefined;
@@ -83,15 +78,15 @@ export class StringArgument<
       );
     }
 
-    return parsedArgument!;
+    return parsedArgument;
   }
 
   parseFromInteraction(
     interaction: CommandInteraction,
     _: GowonContext,
     argumentName: string
-  ): string {
-    return interaction.options.getString(argumentName)!;
+  ): string | undefined {
+    return interaction.options.getString(argumentName) ?? undefined;
   }
 
   addAsOption(slashCommand: SlashCommandBuilder, argumentName: string) {

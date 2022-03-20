@@ -1,5 +1,6 @@
 import { sub } from "date-fns";
 import { LogicError } from "../../../../errors/errors";
+import { italic } from "../../../../helpers/discord";
 import { bullet, extraWideSpace } from "../../../../helpers/specialCharacters";
 import { SimpleMap } from "../../../../helpers/types";
 import { ReportCalculator } from "../../../../lib/calculators/ReportCalculator";
@@ -120,7 +121,7 @@ export default class Year extends MirrorballBaseCommand<
       "track"
     )}_
 
-${tagConsolidator.consolidateAsStrings(10).join(", ").italic()}
+${italic(tagConsolidator.consolidateAsStrings(10).join(", "))}
   
 **Top Tracks**:
 ${extraWideSpace}${bullet} ${topTracks

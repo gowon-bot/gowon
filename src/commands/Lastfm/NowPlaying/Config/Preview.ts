@@ -1,5 +1,5 @@
 import { LogicError } from "../../../../errors/errors";
-import { sanitizeForDiscord } from "../../../../helpers/discord";
+import { bold, italic, sanitizeForDiscord } from "../../../../helpers/discord";
 import { LinkGenerator } from "../../../../helpers/lastFM";
 import { StringArgument } from "../../../../lib/context/arguments/argumentTypes/StringArgument";
 import { StringArrayArgument } from "../../../../lib/context/arguments/argumentTypes/StringArrayArgument";
@@ -77,8 +77,8 @@ export class Preview extends NowPlayingConfigChildCommand<typeof args> {
 
     let embed = this.newEmbed()
       .setDescription(
-        `by ${links.artist.strong(false)}` +
-          (nowPlaying.album ? ` from ${links.album.italic(false)}` : "")
+        `by ${bold(links.artist, false)}` +
+          (nowPlaying.album ? ` from ${italic(links.album, false)}` : "")
       )
       .setTitle(sanitizeForDiscord(nowPlaying.name))
       .setURL(LinkGenerator.trackPage(nowPlaying.artist, nowPlaying.name))

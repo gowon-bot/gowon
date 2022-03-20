@@ -1,5 +1,6 @@
 import { sub } from "date-fns";
 import { LogicError } from "../../../errors/errors";
+import { italic } from "../../../helpers/discord";
 import { bullet, extraWideSpace } from "../../../helpers/specialCharacters";
 import { ReportCalculator } from "../../../lib/calculators/ReportCalculator";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
@@ -100,7 +101,7 @@ export default class Day extends LastFMBaseCommand<typeof args> {
     )}_
 ${
   tagConsolidator.hasAnyTags()
-    ? `\n${tagConsolidator.consolidateAsStrings(10).join(", ").italic()}\n`
+    ? `\n${italic(tagConsolidator.consolidateAsStrings(10).join(", "))}\n`
     : ""
 }
 **Top Tracks**:

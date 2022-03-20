@@ -35,7 +35,7 @@ export default class UserInfo extends BaseCommand<typeof args> {
     const [commandRunCount, topCommands, cachedPlaycount] = await Promise.all([
       this.botStatsService.countUserCommandRuns(this.ctx, dbUser.discordID),
       this.botStatsService.userTopCommands(this.ctx, dbUser.discordID),
-      this.mirrorballService.getCachedPlaycount(
+      this.mirrorballUsersService.getCachedPlaycount(
         this.ctx,
         discordUser?.id || dbUser.discordID
       ),

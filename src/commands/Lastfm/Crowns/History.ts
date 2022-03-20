@@ -5,6 +5,7 @@ import { CrownEvent } from "../../../database/entity/meta/CrownEvent";
 import { displayDate } from "../../../lib/views/displays";
 import { asyncMap } from "../../../helpers";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
+import { bold } from "../../../helpers/discord";
 
 const args = {
   ...prefabArguments.artist,
@@ -45,7 +46,7 @@ export class History extends CrownsChildCommand<typeof args> {
 
     if (!crown) {
       throw new LogicError(
-        `There is no history for the ${artistDetails.name.strong()} crown yet!`
+        `There is no history for the ${bold(artistDetails.name)} crown yet!`
       );
     }
 

@@ -5,7 +5,7 @@ import { Message, MessageEmbed, User } from "discord.js";
 import { CrownDisplay } from "../../../services/dbservices/CrownsService";
 import { User as DBUser } from "../../../database/entity/User";
 import { TagConsolidator } from "../../../lib/tags/TagConsolidator";
-import { sanitizeForDiscord } from "../../../helpers/discord";
+import { bold, italic, sanitizeForDiscord } from "../../../helpers/discord";
 import {
   AlbumInfo,
   ArtistInfo,
@@ -121,8 +121,8 @@ export abstract class NowPlayingBaseCommand<
         url: LinkGenerator.userPage(username),
       })
       .setDescription(
-        `by ${links.artist.strong(false)}` +
-          (nowPlaying.album ? ` from ${links.album.italic(false)}` : "")
+        `by ${bold(links.artist, false)}` +
+          (nowPlaying.album ? ` from ${italic(links.album, false)}` : "")
       )
       .setTitle(sanitizeForDiscord(nowPlaying.name))
       .setURL(LinkGenerator.trackPage(nowPlaying.artist, nowPlaying.name))

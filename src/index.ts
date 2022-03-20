@@ -1,9 +1,6 @@
 // Shim required for typeorm
 import "reflect-metadata";
 
-import "./extensions/string.extensions";
-import "./extensions/array.extensions";
-
 import { ServiceRegistry } from "./services/ServicesRegistry";
 ServiceRegistry.setServices();
 

@@ -1,4 +1,5 @@
 import { getOrdinal } from "../../helpers";
+import { bold, italic } from "../../helpers/discord";
 import { NumberArgument } from "../../lib/context/arguments/argumentTypes/NumberArgument";
 import { standardMentions } from "../../lib/context/arguments/mentionTypes/mentions";
 import { Validation } from "../../lib/validation/ValidationChecker";
@@ -62,11 +63,13 @@ export default class RandomsongInUsersLibrary extends LastFMBaseCommand<
     } catch {}
 
     const embed = this.newEmbed()
-      .setAuthor(`${username}'s ${getOrdinal(randomIndex - 1)} top track`)
+      .setAuthor({
+        name: `${username}'s ${getOrdinal(randomIndex - 1)} top track`,
+      })
       .setTitle(randomSong.name)
       .setDescription(
-        `by ${randomSong.artist.name.strong()}` +
-          (trackInfo?.album ? ` from ${trackInfo.album.name.italic()}` : "")
+        `by ${bold(randomSong.artist.name)}` +
+          (trackInfo?.album ? ` from ${italic(trackInfo.album.name)}` : "")
       )
       .setThumbnail(trackInfo?.album?.images.get("large") || "");
 

@@ -133,11 +133,13 @@ export class CommandHandler {
 
       const prefixCommand = new Prefix().setPrefix(prefix);
 
-      await prefixCommand.execute(
-        new Payload(message),
-        new RunAs(),
-        this.client
-      );
+      const ctx = new GowonContext({
+        payload: new Payload(message),
+        runAs: new RunAs(),
+        gowonClient: this.client,
+      });
+
+      await prefixCommand.execute(ctx);
     }
   }
 
@@ -151,7 +153,13 @@ export class CommandHandler {
 
       message.content = "";
 
-      await helpCommand.execute(new Payload(message), new RunAs(), this.client);
+      const ctx = new GowonContext({
+        payload: new Payload(message),
+        runAs: new RunAs(),
+        gowonClient: this.client,
+      });
+
+      await helpCommand.execute(ctx);
     }
   }
 
@@ -185,12 +193,14 @@ export class CommandHandler {
   ) {
     const newCommand = command.copy();
 
+    const ctx = new GowonContext({
+      payload: new Payload(message),
+      gowonClient: this.client,
+      runAs,
+    });
+
     try {
-      await newCommand.execute.bind(newCommand)(
-        new Payload(message),
-        runAs,
-        this.client
-      );
+      await newCommand.execute.bind(newCommand)(ctx);
     } catch {}
   }
 }

@@ -12,8 +12,9 @@ export interface CustomContext<C, M> {
 }
 
 export interface ContextParamaters<CustomContextT> {
-  command: BaseCommand;
-  custom: CustomContextT;
+  command?: BaseCommand;
+  custom?: CustomContextT;
+  logger?: Logger;
   payload: Payload;
   runAs: RunAs;
   gowonClient: GowonClient;
@@ -22,10 +23,11 @@ export interface ContextParamaters<CustomContextT> {
 export class GowonContext<
   T extends CustomContext<any, any> = CustomContext<{}, {}>
 > {
-  private _command: BaseCommand;
+  private _command: BaseCommand | undefined;
   private custom: T;
   private _payload: Payload;
   private _runAs: RunAs;
+  private _logger: Logger;
   private gowonClient: GowonClient;
 
   get mutable(): NonNullable<T["mutable"]> {
@@ -43,9 +45,10 @@ export class GowonContext<
   constructor(params: ContextParamaters<T>) {
     this._command = params.command;
     this._payload = params.payload;
-    this.custom = params.custom;
+    this.custom = (params.custom || {}) as T;
     this._runAs = params.runAs;
     this.gowonClient = params.gowonClient;
+    this._logger = params.logger || new Logger();
   }
 
   public addContext(context: T) {
@@ -85,11 +88,15 @@ export class GowonContext<
   }
 
   get logger(): Logger {
-    return this._command.logger;
+    return this._logger;
   }
 
   get command(): BaseCommand {
-    return this._command;
+    return this._command!;
+  }
+
+  public setCommand(command: BaseCommand) {
+    this._command = command;
   }
 
   // Used to set commands from non-command places

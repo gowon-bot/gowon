@@ -1,4 +1,5 @@
 import { LogicError } from "../../../errors/errors";
+import { code } from "../../../helpers/discord";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { ListCommand } from "./ListCommand";
 
@@ -40,7 +41,9 @@ export default class List extends ListCommand {
     commandstring += amount;
 
     await this.send(
-      `The syntax for the list command has changed! The new syntax for your request is: ${commandstring.code()}`
+      `The syntax for the list command has changed! The new syntax for your request is: ${code(
+        commandstring
+      )}`
     );
   }
 }

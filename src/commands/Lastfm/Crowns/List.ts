@@ -8,6 +8,7 @@ import {
 } from "../../../lib/views/displays";
 import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingEmbed";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
+import { bold } from "../../../helpers/discord";
 
 const args = {
   ...standardMentions,
@@ -60,8 +61,7 @@ export class List extends CrownsChildCommand<typeof args> {
       pageRenderer(crownsPage, { offset }) {
         return displayNumberedList(
           crownsPage.map(
-            (c) =>
-              `${c.artistName} - ${displayNumber(c.plays, "play").strong()}`
+            (c) => `${c.artistName} - ${bold(displayNumber(c.plays, "play"))}`
           ),
           offset
         );

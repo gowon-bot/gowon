@@ -1,4 +1,5 @@
 import { LogicError } from "../../../errors/errors";
+import { bold } from "../../../helpers/discord";
 import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
 import { TimePeriodArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/TimePeriodArgument";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
@@ -48,15 +49,11 @@ export class SumTop extends OverviewChildCommand<typeof args> {
     ]);
 
     let embed = (await this.overviewEmbed()).setDescription(
-      `${perspective.upper.possessive} top ${displayNumber(
-        top,
-        "artist"
-      ).strong()} make up ${displayNumber(
-        sumtop.asNumber,
-        "scrobble"
-      ).strong()} (${sumtoppct.asString.strong()}% of ${
-        perspective.possessivePronoun
-      } total scrobbles!)`
+      `${perspective.upper.possessive} top ${bold(
+        displayNumber(top, "artist")
+      )} make up ${bold(displayNumber(sumtop.asNumber, "scrobble"))} (${bold(
+        sumtoppct.asString
+      )}% of ${perspective.possessivePronoun} total scrobbles!)`
     );
 
     await this.send(embed);

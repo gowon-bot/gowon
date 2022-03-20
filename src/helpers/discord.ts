@@ -71,3 +71,15 @@ export function serverIconURL(guildID: string, icon: string) {
     return `https://cdn.discordapp.com/icons/${guildID}/${icon}.webp?size=64`;
   }
 }
+
+export function bold(string: string, sanitize = true) {
+  return "**" + (sanitize ? sanitizeForDiscord(string) : string) + "**";
+}
+
+export function italic(string: string, sanitize = true) {
+  return "_" + (sanitize ? sanitizeForDiscord(string) : string) + "_";
+}
+
+export function code(string: string) {
+  return "`" + string + "`";
+}

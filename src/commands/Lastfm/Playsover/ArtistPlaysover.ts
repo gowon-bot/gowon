@@ -5,6 +5,7 @@ import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/Num
 import { CommandRedirect } from "../../../lib/command/BaseCommand";
 import ArtistPlaysequal from "./ArtistPlaysequal";
 import { prefabFlags } from "../../../lib/context/arguments/prefabArguments";
+import { bold } from "../../../helpers/discord";
 
 const args = {
   ...standardMentions,
@@ -51,13 +52,10 @@ export default class ArtistPlaysover extends LastFMBaseCommand<typeof args> {
       else break;
     }
 
-    await this.traditionalReply(
-      `${displayNumber(playsover).strong()} of ${
+    await this.oldReply(
+      `${bold(displayNumber(playsover))} of ${
         perspective.possessive
-      } top 1,000 artists have at least ${displayNumber(
-        plays,
-        "play"
-      ).strong()}`
+      } top 1,000 artists have at least ${bold(displayNumber(plays, "play"))}`
     );
   }
 }

@@ -1,3 +1,4 @@
+import { bold, italic } from "../../../helpers/discord";
 import {
   displayNumber,
   displayNumberedList,
@@ -32,13 +33,15 @@ export default class AlbumList extends ListCommand {
         displayNumberedList(
           topAlbums.albums.map(
             (a) =>
-              `${a.name.strong()} by ${a.artist.name.italic()} - ${displayNumber(
+              `${bold(a.name)} by ${italic(a.artist.name)} - ${displayNumber(
                 a.userPlaycount,
                 "play"
               )}`
           )
         ) ||
-          `${perspective.upper.plusToHave} no scrobbled albums over that time period`.italic()
+          italic(
+            `${perspective.upper.plusToHave} no scrobbled albums over that time period`
+          )
       );
 
     await this.send(messageEmbed);

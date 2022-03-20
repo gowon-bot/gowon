@@ -8,6 +8,7 @@ import { TagsService } from "../../../services/mirrorball/services/TagsService";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
+import { bold } from "../../../helpers/discord";
 
 const args = {
   ...prefabArguments.artist,
@@ -121,15 +122,14 @@ export default class ArtistInfo extends InfoCommand<typeof args> {
         `${perspective.upper.possessive} stats`,
         `\`${displayNumber(artistInfo.userPlaycount, "` play", true)} by ${
           perspective.objectPronoun
-        } (${calculatePercent(
-          artistInfo.userPlaycount,
-          userInfo.scrobbleCount
-        ).strong()}% of ${perspective.possessivePronoun} total scrobbles)
+        } (${bold(
+          calculatePercent(artistInfo.userPlaycount, userInfo.scrobbleCount)
+        )}% of ${perspective.possessivePronoun} total scrobbles)
 ${
   parseFloat(percentage) > 0
-    ? `${perspective.upper.regularVerb(
-        "account"
-      )} for ${percentage.strong()}% of all ${artistInfo.name} scrobbles!`
+    ? `${perspective.upper.regularVerb("account")} for ${bold(
+        percentage
+      )}% of all ${artistInfo.name} scrobbles!`
     : ""
 }\n`
       );

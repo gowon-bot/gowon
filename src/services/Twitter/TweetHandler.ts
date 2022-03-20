@@ -7,6 +7,7 @@ import { TwitterCommandRegistry } from "./TwitterCommandRegistry";
 import { CommandRegistry } from "../../lib/command/CommandRegistry";
 import { RunAs } from "../../lib/command/RunAs";
 import { GowonClient } from "../../lib/GowonClient";
+import { GowonContext } from "../../lib/context/Context";
 
 export class TweetHandler {
   commandRegistry!: TwitterCommandRegistry;
@@ -38,11 +39,13 @@ export class TweetHandler {
       const payload = new Payload(tweet);
       await payload.normalize(gowonClient);
 
-      await newCommand.execute.bind(newCommand)(
+      const ctx = new GowonContext({
         payload,
-        new RunAs(),
-        gowonClient
-      );
+        gowonClient,
+        runAs: new RunAs(),
+      });
+
+      await newCommand.execute.bind(newCommand)(ctx);
     }
   }
 }

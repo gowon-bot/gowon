@@ -1,3 +1,4 @@
+import { code } from "../../../../helpers/discord";
 import { StringArgument } from "../../../../lib/context/arguments/argumentTypes/StringArgument";
 import { StringArrayArgument } from "../../../../lib/context/arguments/argumentTypes/StringArrayArgument";
 import { LineConsolidator } from "../../../../lib/LineConsolidator";
@@ -60,11 +61,11 @@ export class Remove extends NowPlayingConfigChildCommand<typeof args> {
 
     consolidator.addLines(
       {
-        string: `**Ignored**: ${ignored.map((c) => c.code()).join(", ")}`,
+        string: `**Ignored**: ${ignored.map((c) => code(c)).join(", ")}`,
         shouldDisplay: !!ignored.length,
       },
       {
-        string: `Your new config: ${config.map((c) => c.code()).join(", ")}`,
+        string: `Your new config: ${config.map((c) => code(c)).join(", ")}`,
         shouldDisplay: !!config.length,
       },
       {

@@ -1,5 +1,5 @@
 import { TasteCalculator } from "../../../lib/calculators/TasteCalculator";
-import { sanitizeForDiscord } from "../../../helpers/discord";
+import { bold, code, sanitizeForDiscord } from "../../../helpers/discord";
 import { Variation } from "../../../lib/command/BaseCommand";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
@@ -102,7 +102,9 @@ export default class TagTaste extends TasteCommand<typeof args> {
 
     if (taste.artists.length === 0)
       throw new LogicError(
-        `${userOneUsername.code()} and ${userTwoUsername.code()} share no common ${tag.strong()} artists!`
+        `${code(userOneUsername)} and ${code(
+          userTwoUsername
+        )} share no common ${bold(tag)} artists!`
       );
 
     const embedDescription = `Comparing top ${displayNumber(

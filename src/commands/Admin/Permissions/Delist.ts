@@ -2,6 +2,7 @@ import { PermissionsChildCommand } from "./PermissionsChildCommand";
 import { User, Role } from "discord.js";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
+import { code } from "../../../helpers/discord";
 
 export class Delist extends PermissionsChildCommand {
   idSeed = "red velvet joy";
@@ -32,7 +33,7 @@ export class Delist extends PermissionsChildCommand {
     const commandName = this.commandRunAs.toCommandFriendlyName();
 
     const description =
-      `Delisted ${commandName.code()} for ${delisted
+      `Delisted ${code(commandName)} for ${delisted
         .map((d) => (d instanceof Role ? d.name + " (role)" : d.username))
         .join(", ")}` +
       (failed.length

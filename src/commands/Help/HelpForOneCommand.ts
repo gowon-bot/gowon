@@ -9,6 +9,7 @@ import { Emoji } from "../../lib/Emoji";
 import { StringArgument } from "../../lib/context/arguments/argumentTypes/StringArgument";
 import { Flag, isFlag } from "../../lib/context/arguments/argumentTypes/Flag";
 import { BaseArgument } from "../../lib/context/arguments/argumentTypes/BaseArgument";
+import { bold, code, italic } from "../../helpers/discord";
 
 const args = {
   command: new StringArgument({ index: { start: 0 }, required: true }),
@@ -63,8 +64,8 @@ export default class HelpForOneCommand extends BaseCommand<typeof args> {
       .map((v) => {
         const display =
           v.variation instanceof Array
-            ? v.variation.map((v) => v.code()).join(", ")
-            : v.variation.code();
+            ? v.variation.map((v) => code(v)).join(", ")
+            : code(v.variation);
 
         return `${display} ${v.description ? "- " + v.description : ""}`;
       })
@@ -74,23 +75,23 @@ export default class HelpForOneCommand extends BaseCommand<typeof args> {
 
     lineConsolidator.addLines(
       (command.access?.role ? `${Emoji[command.access.role]} ` : "") +
-        commandName.strong() +
+        bold(commandName) +
         (command.slashCommand ? " (slash command)" : "") +
         ":",
 
-      (command.description + command.extraDescription).italic(false),
+      italic(command.description + command.extraDescription, false),
       "",
       {
         shouldDisplay: !!command.usage,
         string: flatDeep([command.usage])
-          .map((u) => `${this.prefix}${commandName} ${u}`.trim().code())
+          .map((u) => code(`${this.prefix}${commandName} ${u}`.trim()))
           .join("\n"),
       },
       {
         shouldDisplay: !!command.aliases.length,
         string:
           (command.usage ? "\n" : "") +
-          `**Aliases**: ${command.aliases.map((a) => a.code())}\n`,
+          `**Aliases**: ${command.aliases.map((a) => code(a))}\n`,
       },
       {
         shouldDisplay: !!command.variations.length,
@@ -114,7 +115,7 @@ export default class HelpForOneCommand extends BaseCommand<typeof args> {
                   ...f.options.longnames.map((n) => `--${n}`),
                   ...f.options.shortnames.map((n) => `-${n}`),
                 ]
-                  .map((flag) => flag.code())
+                  .map((flag) => code(flag))
                   .join(", ")} - ${f.options.description}`
             )
             .join("\n"),
@@ -142,16 +143,16 @@ export default class HelpForOneCommand extends BaseCommand<typeof args> {
 
     lineConsolidator.addLines(
       (command.access?.role ? `${Emoji[command.access.role]} ` : "") +
-        command.friendlyName.strong() +
+        bold(command.friendlyName) +
         ":",
-      command.description.italic(),
+      italic(command.description),
       "",
       {
         shouldDisplay: !!command.prefixes,
         string:
           "**Prefixes**:\n" +
           flatDeep([command.prefixes])
-            .map((p) => p.trim().code())
+            .map((p) => code(p.trim()))
             .join(", ") +
           "\n",
       },
@@ -160,7 +161,7 @@ export default class HelpForOneCommand extends BaseCommand<typeof args> {
       commands
         .map(
           (c) =>
-            `${shortestPrefix} ${c.friendlyName}`.code() +
+            code(`${shortestPrefix} ${c.friendlyName}`) +
             ` - ${c.description.split("\n")[0]}`
         )
         .join("\n")
@@ -174,7 +175,7 @@ export default class HelpForOneCommand extends BaseCommand<typeof args> {
   private async runCustomHelp(commandClass: BaseCommand) {
     let command = new commandClass.customHelp!();
     command.redirectedFrom = this;
-    await command.execute(this.payload, this.runAs, this.gowonClient);
+    await command.execute(this.ctx);
     return;
   }
 }

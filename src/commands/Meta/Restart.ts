@@ -15,7 +15,7 @@ export default class Restart extends BaseCommand {
   async run() {
     if (!this.gowonClient.hasPM2) throw new PM2ConnectionError();
 
-    await this.traditionalReply("restarting...");
+    await this.oldReply("restarting...");
     this.pm2Service.restart(this.ctx);
   }
 }

@@ -1,3 +1,4 @@
+import { bold } from "../../../helpers/discord";
 import { OverviewChildCommand } from "./OverviewChildCommand";
 
 export class HIndex extends OverviewChildCommand {
@@ -18,7 +19,7 @@ export class HIndex extends OverviewChildCommand {
     let hindex = await this.calculator.hIndex();
 
     let embed = (await this.overviewEmbed()).setDescription(
-      `${perspective.upper.possessive} H-index is ${hindex.asString.strong()}!`
+      `${perspective.upper.possessive} H-index is ${bold(hindex.asString)}!`
     );
 
     await this.send(embed);

@@ -1,3 +1,4 @@
+import { bold } from "../../../helpers/discord";
 import { Variation } from "../../../lib/command/BaseCommand";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { Validation } from "../../../lib/validation/ValidationChecker";
@@ -47,7 +48,7 @@ export default class BanTag extends LastFMBaseCommand<typeof args> {
     const embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor(`${unban ? "Unb" : "B"}an tag`))
       .setDescription(
-        `Successfully ${unban ? "un" : ""}banned the tag: ${tag.strong()}`
+        `Successfully ${unban ? "un" : ""}banned the tag: ${bold(tag)}`
       )
       .setFooter({
         text: `It will ${

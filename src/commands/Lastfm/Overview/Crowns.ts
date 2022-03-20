@@ -3,6 +3,7 @@ import { getOrdinal } from "../../../helpers";
 import { LogicError } from "../../../errors/errors";
 import { toInt } from "../../../helpers/lastFM";
 import { displayNumber } from "../../../lib/views/displays";
+import { bold, italic } from "../../../helpers/discord";
 
 export class Crowns extends OverviewChildCommand {
   idSeed = "snsd tiffany";
@@ -27,16 +28,13 @@ export class Crowns extends OverviewChildCommand {
       );
 
     if (await this.calculator.hasCrownStats()) {
-      let embed = (await this.overviewEmbed())
-        .setDescription(`You have ${displayNumber(
-        crownRank!.count,
-        "crown"
-      ).strong()} (ranked ${getOrdinal(toInt(crownRank!.rank)).italic()})
-        For every ${displayNumber(
-          apc!.asNumber,
-          "eligible artist"
-        ).strong()}, ${perspective.plusToHave} a crown
-  For every ${displayNumber(spc!.asNumber, "scrobble").strong()}, ${
+      let embed = (await this.overviewEmbed()).setDescription(`You have ${bold(
+        displayNumber(crownRank!.count, "crown")
+      )} (ranked ${italic(getOrdinal(toInt(crownRank!.rank)))})
+        For every ${bold(displayNumber(apc!.asNumber, "eligible artist"))}, ${
+        perspective.plusToHave
+      } a crown
+  For every ${bold(displayNumber(spc!.asNumber, "scrobble"))}, ${
         perspective.plusToHave
       } a crown
         `);

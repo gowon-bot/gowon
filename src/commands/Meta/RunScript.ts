@@ -1,3 +1,4 @@
+import { code } from "../../helpers/discord";
 import { BaseCommand } from "../../lib/command/BaseCommand";
 import { StringArgument } from "../../lib/context/arguments/argumentTypes/StringArgument";
 import { Validation } from "../../lib/validation/ValidationChecker";
@@ -30,6 +31,6 @@ export default class RunScript extends BaseCommand<typeof args> {
 
     this.scriptsRegistry.runScript(script, this);
 
-    await this.reply(`Running script ${script.code()}`);
+    await this.reply(`Running script ${code(script)}`);
   }
 }

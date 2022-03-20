@@ -3,6 +3,7 @@ import { MultiRequester } from "../../../../lib/MultiRequester";
 import { LastFMEntityNotFoundError } from "../../../../errors/errors";
 import { displayNumber } from "../../../../lib/views/displays";
 import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";
+import { code } from "../../../../helpers/discord";
 
 const args = {
   ...prefabArguments.track,
@@ -55,7 +56,7 @@ export class TrackPlays extends FriendsChildCommand<typeof args> {
               return this.displayMissingFriend(username);
             }
 
-            return `${username.code()} - **${displayNumber(
+            return `${code(username)} - **${displayNumber(
               td.userPlaycount,
               "**scrobble"
             )}`;

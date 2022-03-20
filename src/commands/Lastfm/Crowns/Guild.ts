@@ -9,6 +9,7 @@ import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/Num
 import { Flag } from "../../../lib/context/arguments/argumentTypes/Flag";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { GuildUserRank } from "./GuildRank";
+import { bold } from "../../../helpers/discord";
 
 const args = {
   meInput: new StringArgument({ match: ["me"], slashCommandOption: false }),
@@ -78,7 +79,7 @@ export class Guild extends CrownsChildCommand<typeof args> {
                 `${idx + 1}. ${await this.gowonClient.userDisplay(
                   this.ctx,
                   h.user
-                )} with ${displayNumber(h.numberOfCrowns, "crown").strong()}`
+                )} with ${bold(displayNumber(h.numberOfCrowns, "crown"))}`
             )
           ).join("\n")
       );

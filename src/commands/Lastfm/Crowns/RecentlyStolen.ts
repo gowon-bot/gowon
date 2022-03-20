@@ -1,5 +1,6 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
 import { ago } from "../../../helpers";
+import { bold } from "../../../helpers/discord";
 
 export class RecentlyStolen extends CrownsChildCommand {
   idSeed = "wjsn soobin";
@@ -21,7 +22,7 @@ export class RecentlyStolen extends CrownsChildCommand {
       .setTitle(`Recently stolen crowns in ${this.requiredGuild.name}`)
       .setDescription(
         crowns
-          .map((c) => `${c.artistName.strong()} ― yoinked ${ago(c.lastStolen)}`)
+          .map((c) => `${bold(c.artistName)} ― yoinked ${ago(c.lastStolen)}`)
           .join("\n")
       );
 

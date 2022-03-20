@@ -4,6 +4,7 @@ import { validators } from "../../../lib/validation/validators";
 import { toInt } from "../../../helpers/lastFM";
 import { asyncMap } from "../../../helpers";
 import { StringArrayArgument } from "../../../lib/context/arguments/argumentTypes/StringArrayArgument";
+import { code } from "../../../helpers/discord";
 
 interface CheckedCrownsDisplay {
   [state: string]: Array<string>;
@@ -72,7 +73,7 @@ export class CheckMany extends CrownsChildCommand<typeof args> {
         Object.keys(display)
           .map(
             (state) =>
-              `${state}: ${display[state].map((a) => a.code()).join(", ")}`
+              `${state}: ${display[state].map((a) => code(a)).join(", ")}`
           )
           .join("\n")
       );

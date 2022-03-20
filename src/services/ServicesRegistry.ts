@@ -1,4 +1,3 @@
-import { SimpleMap } from "../helpers/types";
 import { ConcurrencyService } from "./ConcurrencyService";
 import { DatasourceService } from "../lib/nowplaying/DatasourceService";
 import { Can } from "../lib/permissions/Can";
@@ -32,7 +31,6 @@ import { TrackingService } from "./TrackingService";
 import { SettingsService } from "../lib/settings/SettingsService";
 import { AnalyticsCollector } from "../analytics/AnalyticsCollector";
 import { WordBlacklistService } from "./WordBlacklistService";
-import { RollbarService } from "./Rollbar/RollbarService";
 import { NowPlayingEmbedParsingService } from "./NowPlayingEmbedParsingService";
 import { ChartService } from "./pantomime/ChartService";
 import { EmojiService } from "./Discord/EmojiService";
@@ -44,9 +42,7 @@ import { SpotifyPlaylistTagService } from "./Spotify/SpotifyPlaylistTagService";
 import { TwitterService } from "./Twitter/TwitterService";
 import { Responder } from "./Responder";
 
-type Service<T = any> = { new (): T };
-
-export type Context = SimpleMap<any>;
+export type Service<T = any> = { new (): T };
 
 const services: Service[] = [
   AdminService,
@@ -81,7 +77,6 @@ const services: Service[] = [
   RedisService,
   RedisInteractionService,
   Responder,
-  RollbarService,
   SettingsService,
   SpotifyService,
   SpotifyArguments,
@@ -96,10 +91,10 @@ const services: Service[] = [
 ];
 
 export class ServiceRegistry {
-  static services: { constructor: Function }[];
+  static services: { constructor: Function; mocks?: string }[];
 
-  static setServices() {
-    this.services = services
+  static setServices(servicePool = services) {
+    this.services = servicePool
       .map((s) => {
         if (!s) return undefined;
 
@@ -110,7 +105,7 @@ export class ServiceRegistry {
 
   static get<T>(service: Service<T>): T {
     const foundService = this.services.find(
-      (s) => s.constructor.name === service.name
+      (s) => (s.mocks || s.constructor.name) === service.name
     );
 
     if (!foundService) {

@@ -1,4 +1,5 @@
 import { MirrorballError } from "../../../../../errors/errors";
+import { bold } from "../../../../../helpers/discord";
 import { LinkGenerator } from "../../../../../helpers/lastFM";
 import { Variation } from "../../../../../lib/command/BaseCommand";
 import { VARIATIONS } from "../../../../../lib/command/variations";
@@ -114,10 +115,12 @@ export default class WhoKnowsArtist extends WhoKnowsBaseCommand<
         shouldDisplay: rank > 15 && !!senderUser,
         string:
           `\n\`${rank}.\` ` +
-          displayLink(
-            this.payload.member?.nickname || this.payload.author.username,
-            LinkGenerator.userPage(senderUser?.lastFMUsername!)
-          ).strong() +
+          bold(
+            displayLink(
+              this.payload.member?.nickname || this.payload.author.username,
+              LinkGenerator.userPage(senderUser?.lastFMUsername!)
+            )
+          ) +
           `- **${displayNumber(playcount, "**play")}` +
           (crown?.user?.discordID === this.author.id ? " 👑" : ""),
       }
@@ -125,9 +128,7 @@ export default class WhoKnowsArtist extends WhoKnowsBaseCommand<
 
     const embed = this.whoKnowsEmbed()
       .setTitle(
-        `Who knows ${artist.name.strong()}${
-          this.isGlobal() ? " globally" : ""
-        }?`
+        `Who knows ${bold(artist.name)}${this.isGlobal() ? " globally" : ""}?`
       )
       .setDescription(lineConsolidator.consolidate())
       .setFooter({ text: this.footerHelp(senderUser, senderMirrorballUser) });

@@ -19,15 +19,10 @@ import {
 } from "../../errors/errors";
 import { GowonService } from "../../services/GowonService";
 import { CommandGroup } from "./CommandGroup";
-import { Logger } from "../Logger";
-import { Rollout } from "./Rollout";
 import { TrackingService } from "../../services/TrackingService";
 import { User } from "../../database/entity/User";
-import { GowonClient } from "../GowonClient";
 import { Validation, ValidationChecker } from "../validation/ValidationChecker";
 import { Emoji, EmojiRaw } from "../Emoji";
-import { RunAs } from "./RunAs";
-import { checkRollout } from "../../helpers/permissions";
 import { errorEmbed, gowonEmbed } from "../views/embeds";
 import { isSessionKey } from "../../services/LastFM/LastFMAPIService";
 import {
@@ -46,7 +41,6 @@ import { MirrorballUsersService } from "../../services/mirrorball/services/Mirro
 import { CommandRegistry } from "./CommandRegistry";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { AnalyticsCollector } from "../../analytics/AnalyticsCollector";
-import { RollbarService } from "../../services/Rollbar/RollbarService";
 import { NowPlayingEmbedParsingService } from "../../services/NowPlayingEmbedParsingService";
 import { CommandAccess } from "./access/access";
 import { GowonContext } from "../context/Context";
@@ -61,7 +55,6 @@ import {
   ReplyOptions,
   SendOptions,
 } from "../../services/Discord/DiscordService";
-import { Payload } from "../context/Payload";
 import { SettingsService } from "../settings/SettingsService";
 import config from "../../../config.json";
 import { Responder } from "../../services/Responder";
@@ -147,7 +140,6 @@ export abstract class BaseCommand<ArgumentsType extends ArgumentsMap = {}> {
   devCommand: boolean = false;
   adminCommand: boolean = false;
   access?: CommandAccess;
-  rollout: Rollout = {};
 
   /**
    * Argument metadata
@@ -166,7 +158,9 @@ export abstract class BaseCommand<ArgumentsType extends ArgumentsMap = {}> {
   parsedArguments: ParsedArguments<ArgumentsType> =
     {} as ParsedArguments<ArgumentsType>;
 
-  logger = new Logger();
+  get logger() {
+    return this.ctx.logger;
+  }
 
   get payload() {
     return this.ctx.payload;
@@ -192,6 +186,14 @@ export abstract class BaseCommand<ArgumentsType extends ArgumentsMap = {}> {
     return this.ctx.client;
   }
 
+  get prefix(): string {
+    return this.payload.isInteraction()
+      ? "/"
+      : this.guild
+      ? this.gowonService.prefix(this.guild.id)
+      : config.defaultPrefix;
+  }
+
   ctx!: GowonContext<typeof this["customContext"]>;
   customContext = {};
 
@@ -207,14 +209,11 @@ export abstract class BaseCommand<ArgumentsType extends ArgumentsMap = {}> {
     );
   }
 
-  commandRegistry = CommandRegistry.getInstance();
-
   track = ServiceRegistry.get(TrackingService);
   responder = ServiceRegistry.get(Responder);
   usersService = ServiceRegistry.get(UsersService);
   gowonService = ServiceRegistry.get(GowonService);
   discordService = ServiceRegistry.get(DiscordService);
-  rollbarService = ServiceRegistry.get(RollbarService);
   settingsService = ServiceRegistry.get(SettingsService);
   mirrorballService = ServiceRegistry.get(MirrorballService);
   analyticsCollector = ServiceRegistry.get(AnalyticsCollector);
@@ -224,10 +223,17 @@ export abstract class BaseCommand<ArgumentsType extends ArgumentsMap = {}> {
     NowPlayingEmbedParsingService
   );
 
+  commandRegistry = CommandRegistry.getInstance();
+
+  /**
+   * Helper getters
+   */
+
   mutableContext<T>(): GowonContext<{ mutable: T }> {
     return this.ctx as GowonContext<{ mutable: T }>;
   }
 
+  // Implemented in ParentCommand
   async getChild(_: string, __: string): Promise<BaseCommand | undefined> {
     return undefined;
   }
@@ -236,16 +242,144 @@ export abstract class BaseCommand<ArgumentsType extends ArgumentsMap = {}> {
     return md5(this.idSeed);
   }
 
-  get prefix(): string {
-    return this.payload.isInteraction()
-      ? "/"
-      : this.guild
-      ? this.gowonService.prefix(this.guild.id)
-      : config.defaultPrefix;
+  // Returns a fresh instance of this command from the registry
+  public copy(): BaseCommand {
+    return CommandRegistry.getInstance().make(this.id);
   }
 
+  /**
+   * Execution
+   * (These methods are called when a command is actually run)
+   */
+
+  // Must be implemented
   abstract run(): Promise<void>;
 
+  // This method may be implemented by some base or child commands
+  // which allow them to run code before the run method is called
+  async prerun(): Promise<void> {}
+
+  // This method is the one actually called by whichever handler is running a command
+  // async execute(payload: Payload, runAs: RunAs, gowonClient: GowonClient) {
+  async execute(ctx: GowonContext) {
+    ctx.setCommand(this);
+    ctx.addContext(this.customContext);
+    this.ctx = ctx;
+
+    await this.setup();
+
+    try {
+      this.parsedArguments = this.parseArguments();
+
+      if (await this.redirectIfRequired(ctx)) return;
+
+      this.logger.logCommand(ctx);
+      this.analyticsCollector.metrics.commandRuns.inc();
+
+      this.deferResponseIfInteraction();
+
+      await this.prerun();
+      await this.run();
+    } catch (e: any) {
+      await this.handleRunError(e);
+    }
+
+    await this.teardown();
+  }
+
+  /**
+   * Execution helpers
+   * (These methods are called by execute)
+   */
+
+  async setup() {
+    this.startTyping();
+    this.logger.openCommandHeader(this);
+
+    if (this.showLoadingAfter) {
+      setTimeout(() => {
+        if (!this.isCompleted && this.payload.isMessage()) {
+          this.payload.source.react(Emoji.loading);
+        }
+      }, this.showLoadingAfter * 1000);
+    }
+
+    this.autoUpdateUser();
+  }
+
+  async teardown() {
+    if (this.debug) {
+      console.log(this.constructor.name + "", this);
+    }
+
+    this.logger.closeCommandHeader(this);
+    this.isCompleted = true;
+
+    if (this.showLoadingAfter && this.payload.isMessage()) {
+      this.payload.source.reactions
+        .resolve(EmojiRaw.loading)
+        ?.users.remove(this.gowonClient.client.user!);
+    }
+  }
+
+  parseArguments(): ParsedArguments<ArgumentsType> {
+    const parsedArguments = this.argumentParsingService.parseContext(
+      this.ctx,
+      this.arguments
+    );
+
+    this.debug = !!(this.parsedArguments as any).debug;
+
+    new ValidationChecker(parsedArguments, this.validation).validate();
+
+    return parsedArguments;
+  }
+
+  private async redirectIfRequired(ctx: GowonContext): Promise<boolean> {
+    for (const redirect of this.redirects) {
+      if (redirect.when(this.parsedArguments)) {
+        const command = new redirect.redirectTo();
+        command.redirectedFrom = this;
+        await command.execute(ctx);
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  private async deferResponseIfInteraction() {
+    if (this.payload.isInteraction()) {
+      this.mutableContext<{
+        deferredResponseTimeout?: NodeJS.Timeout;
+      }>().mutable.deferredResponseTimeout = setTimeout(() => {
+        (this.payload.source as CommandInteraction).deferReply();
+        this.mutableContext<{ deferred: boolean }>().mutable.deferred = true;
+      }, 2000);
+    }
+  }
+
+  private async handleRunError(e: any) {
+    this.logger.logError(e);
+    this.analyticsCollector.metrics.commandErrors.inc();
+
+    console.log(e);
+
+    if (e.isClientFacing && !e.silent) {
+      await this.sendError(e.message, e.footer);
+    } else if (!e.isClientFacing) {
+      await this.sendError(new UnknownError().message);
+    }
+  }
+
+  /**
+   * Helpers
+   * (These methods are called when by a command when needed)
+   */
+
+  // This function will get its own service lol
+  // For now.... just... don't touch it....
+  // (try not to look either)
   async getMentions({
     senderRequired = false,
     usernameRequired = true,
@@ -444,107 +578,10 @@ export abstract class BaseCommand<ArgumentsType extends ArgumentsMap = {}> {
     };
   }
 
-  async prerun(): Promise<void> {}
-
-  async setup() {
-    this.startTyping();
-    this.logger.openCommandHeader(this);
-
-    if (this.showLoadingAfter) {
-      setTimeout(() => {
-        if (!this.isCompleted && this.payload.isMessage()) {
-          this.payload.source.react(Emoji.loading);
-        }
-      }, this.showLoadingAfter * 1000);
-    }
-
-    this.autoUpdateUser();
-  }
-
-  async teardown() {
-    if (this.debug) {
-      console.log(this.constructor.name + "", this);
-    }
-
-    this.logger.closeCommandHeader(this);
-    this.isCompleted = true;
-
-    if (this.showLoadingAfter && this.payload.isMessage()) {
-      this.payload.source.reactions
-        .resolve(EmojiRaw.loading)
-        ?.users.remove(this.gowonClient.client.user!);
-    }
-  }
-
-  async execute(payload: Payload, runAs: RunAs, gowonClient: GowonClient) {
-    this.ctx = new GowonContext({
-      custom: Object.assign(this.customContext, {
-        analyticsCollector: this.analyticsCollector,
-      }) as any,
-      command: this,
-      payload,
-      runAs,
-      gowonClient,
-    });
-
-    if (!this.checkRollout()) {
-      return;
-    }
-
-    await this.setup();
-
-    try {
-      this.parsedArguments = this.parseArguments();
-
-      if ((this.parsedArguments as any).debug) {
-        this.debug = true;
-      }
-
-      for (const redirect of this.redirects) {
-        if (redirect.when(this.parsedArguments)) {
-          const command = new redirect.redirectTo();
-          command.redirectedFrom = this;
-          await command.execute(payload, runAs, gowonClient);
-          return;
-        }
-      }
-
-      this.logger.logCommand(this, payload, runAs.toArray().join(" "));
-      this.analyticsCollector.metrics.commandRuns.inc();
-
-      new ValidationChecker(this.parsedArguments, this.validation).validate();
-
-      if (this.payload.isInteraction()) {
-        this.mutableContext<{
-          deferredResponseTimeout?: NodeJS.Timeout;
-        }>().mutable.deferredResponseTimeout = setTimeout(() => {
-          (this.payload.source as CommandInteraction).deferReply();
-          this.mutableContext<{ deferred: boolean }>().mutable.deferred = true;
-        }, 2000);
-      }
-
-      await this.prerun();
-      await this.run();
-    } catch (e: any) {
-      this.logger.logError(e);
-      this.analyticsCollector.metrics.commandErrors.inc();
-      this.rollbarService.logError(this.ctx, e);
-
-      console.log(e);
-
-      if (e.isClientFacing && !e.silent) {
-        await this.sendError(e.message, e.footer);
-      } else if (!e.isClientFacing) {
-        await this.sendError(new UnknownError().message);
-      }
-    }
-
-    await this.teardown();
-  }
-
-  parseArguments(): ParsedArguments<ArgumentsType> {
-    return this.argumentParsingService.parseContext(this.ctx, this.arguments);
-  }
+  /**
+   * Discord helpers
+   * (These methods help interact with Discord)
+   */
 
   async send(
     content: MessageEmbed | string,
@@ -568,21 +605,11 @@ export abstract class BaseCommand<ArgumentsType extends ArgumentsMap = {}> {
     });
   }
 
-  async traditionalReply(message: string): Promise<Message> {
+  // Mimics the old Discord.js reply method
+  async oldReply(message: string): Promise<Message> {
     const content = `<@!${this.author.id}>, ` + message.trimStart();
 
     return await this.discordService.send(this.ctx, content);
-  }
-
-  checkRollout(): boolean {
-    return (
-      checkRollout(this.rollout, this.payload) ||
-      this.gowonClient.isDeveloper(this.author.id)
-    );
-  }
-
-  public copy(): BaseCommand {
-    return CommandRegistry.getInstance().make(this.id);
   }
 
   async getRepliedMessage(): Promise<Message | undefined> {
@@ -648,34 +675,11 @@ export abstract class BaseCommand<ArgumentsType extends ArgumentsMap = {}> {
       .filter(filter);
   }
 
-  protected variationWasUsed(...names: string[]): boolean {
-    for (let variation of this.variations.filter((v) =>
-      names.includes(v.name)
-    )) {
-      const variations =
-        variation.variation instanceof Array
-          ? variation.variation
-          : [variation.variation];
-
-      if (variations.find((v) => this.runAs.variationWasUsed(v))) return true;
-    }
-
-    return false;
-  }
-
   protected async sendError(message: string, footer = "") {
     const embed = errorEmbed(this.newEmbed(), this.author, message, footer);
 
     await this.responder.discord(this.ctx, embed);
     await this.responder.twitter(this.ctx, message);
-  }
-
-  protected get scopes() {
-    const guild = { guildID: this.requiredGuild.id };
-    const user = { userID: this.author.id };
-    const guildMember = Object.assign(guild, user);
-
-    return { guild, user, guildMember };
   }
 
   protected startTyping() {
@@ -696,6 +700,42 @@ export abstract class BaseCommand<ArgumentsType extends ArgumentsMap = {}> {
     return member?.user;
   }
 
+  protected messageIsReply(): boolean {
+    return this.payload.isMessage() && !!this.payload.source.reference;
+  }
+
+  /**
+   * Command helpers
+   * (These methods help interact with command metadata)
+   */
+
+  protected variationWasUsed(...names: string[]): boolean {
+    for (let variation of this.variations.filter((v) =>
+      names.includes(v.name)
+    )) {
+      const variations =
+        variation.variation instanceof Array
+          ? variation.variation
+          : [variation.variation];
+
+      if (variations.find((v) => this.runAs.variationWasUsed(v))) return true;
+    }
+
+    return false;
+  }
+
+  /**
+   * Misc helpers
+   */
+
+  protected get scopes() {
+    const guild = { guildID: this.requiredGuild.id };
+    const user = { userID: this.author.id };
+    const guildMember = Object.assign(guild, user);
+
+    return { guild, user, guildMember };
+  }
+
   private autoUpdateUser() {
     if (
       this.author.id &&
@@ -708,7 +748,7 @@ export abstract class BaseCommand<ArgumentsType extends ArgumentsMap = {}> {
         .then(async (senderUser) => {
           if (senderUser) {
             await Promise.all([
-              this.mirrorballService.quietAddUserToGuild(
+              this.mirrorballUsersService.quietAddUserToGuild(
                 this.ctx,
                 this.author.id,
                 this.requiredGuild.id
@@ -719,9 +759,5 @@ export abstract class BaseCommand<ArgumentsType extends ArgumentsMap = {}> {
         })
         .catch(() => {});
     }
-  }
-
-  protected messageIsReply(): boolean {
-    return this.payload.isMessage() && !!this.payload.source.reference;
   }
 }

@@ -38,7 +38,7 @@ export type SpotifyServiceContext = GowonContext<{
   mutable?: { spotifyToken?: SpotifyToken };
 }>;
 
-interface SpotifyRequestOptions {
+export interface SpotifyRequestOptions {
   path: string;
   params?: SimpleMap;
   method?: "POST" | "GET" | "PUT" | "DELETE";
@@ -127,9 +127,6 @@ export class SpotifyService extends BaseSpotifyService<SpotifyServiceContext> {
 
     if (jsonResponse.error) {
       throw new SpotifyConnectionError(ctx.command.prefix);
-    }
-
-    if (token.refreshToken) {
     }
 
     return token;

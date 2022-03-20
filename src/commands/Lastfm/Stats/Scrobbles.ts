@@ -4,6 +4,7 @@ import { standardMentions } from "../../../lib/context/arguments/mentionTypes/me
 import { TimeRangeArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/TimeRangeArgument";
 import { DateArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/DateArgument";
 import { TimeRange } from "../../../lib/timeAndDate/helpers";
+import { bold } from "../../../helpers/discord";
 
 const args = {
   ...standardMentions,
@@ -46,11 +47,13 @@ export default class Scrobbles extends LastFMBaseCommand<typeof args> {
       date ? new Date() : timeRange.to
     );
 
-    const sentMessage = await this.traditionalReply(
-      `${perspective.plusToHave} ${displayNumber(
-        scrobbles,
-        `scr${this.runAs.variationWasUsed("scrabbles") ? "a" : "o"}bble`
-      ).strong()} ${date ? `since ${displayDate(date)}` : timeRange.humanized}`
+    const sentMessage = await this.oldReply(
+      `${perspective.plusToHave} ${bold(
+        displayNumber(
+          scrobbles,
+          `scr${this.runAs.variationWasUsed("scrabbles") ? "a" : "o"}bble`
+        )
+      )} ${date ? `since ${displayDate(date)}` : timeRange.humanized}`
     );
 
     if (timeRange.isOverall && scrobbles % 25000 === 0 && scrobbles > 0) {

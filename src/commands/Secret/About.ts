@@ -3,6 +3,7 @@ import { Crown } from "../../database/entity/Crown";
 import { Friend } from "../../database/entity/Friend";
 import { CommandRun } from "../../database/entity/meta/CommandRun";
 import { CrownEvent } from "../../database/entity/meta/CrownEvent";
+import { bold } from "../../helpers/discord";
 import { BaseCommand } from "../../lib/command/BaseCommand";
 import {
   displayDate,
@@ -51,17 +52,16 @@ export default class About extends BaseCommand {
     );
 
     let embed = this.newEmbed()
-      .setAuthor(`About ${this.gowonClient.client.user?.username || "Gowon"}`)
+      .setAuthor({
+        name: `About ${this.gowonClient.client.user?.username || "Gowon"}`,
+      })
       .setThumbnail(
         "https://raw.githubusercontent.com/jivison/gowon/master/assets/gowonswag2.png"
       )
       .setDescription(
-        `${
-          this.gowonClient.client.user?.username || "Gowon"
-        } is ${displayNumber(
-          differenceInDays(new Date(), this.startDate),
-          "day"
-        ).strong()} old!
+        `${this.gowonClient.client.user?.username || "Gowon"} is ${bold(
+          displayNumber(differenceInDays(new Date(), this.startDate), "day")
+        )} old!
 Profile pictures by ${displayLink("reis", "https://twitter.com/restlessrice")}
 ${displayLink("Github", "https://github.com/jivison/gowon")}, ${displayLink(
           "Last.fm",

@@ -1,7 +1,7 @@
 import { toInt } from "../../helpers/lastFM";
 import { GowonContext } from "../../lib/context/Context";
 import { BaseService } from "../BaseService";
-import { MirrorballService } from "../mirrorball/MirrorballService";
+import { MirrorballUsersService } from "../mirrorball/services/MirrorballUsersService";
 import {
   RedisService,
   RedisServiceContextOptions,
@@ -16,8 +16,8 @@ export class WhoKnowsService extends BaseService<WhoKnowsServiceContext> {
   get redis() {
     return ServiceRegistry.get(RedisService);
   }
-  get mirrorballService() {
-    return ServiceRegistry.get(MirrorballService);
+  get mirrorballUsersService() {
+    return ServiceRegistry.get(MirrorballUsersService);
   }
 
   customContext = {
@@ -35,7 +35,11 @@ export class WhoKnowsService extends BaseService<WhoKnowsServiceContext> {
     );
 
     if (existingTries && toInt(existingTries) === 2) {
-      this.mirrorballService.quietRemoveUserFromGuild(ctx, userID, guildID);
+      this.mirrorballUsersService.quietRemoveUserFromGuild(
+        ctx,
+        userID,
+        guildID
+      );
       this.redis.sessionDelete(this.ctx(ctx), this.retryKey());
     } else {
       const newTries = existingTries ? toInt(existingTries) + 1 : 1;

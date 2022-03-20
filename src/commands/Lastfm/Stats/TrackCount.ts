@@ -3,6 +3,7 @@ import { displayNumber } from "../../../lib/views/displays";
 import { humanizePeriod } from "../../../lib/timeAndDate/helpers";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { TimePeriodArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/TimePeriodArgument";
+import { bold } from "../../../helpers/discord";
 
 const args = {
   timePeriod: new TimePeriodArgument({
@@ -35,11 +36,10 @@ export default class TrackCount extends LastFMBaseCommand<typeof args> {
       timePeriod
     );
 
-    await this.traditionalReply(
-      `${perspective.plusToHave} scrobbled ${displayNumber(
-        trackCount,
-        "track"
-      ).strong()} ${humanizePeriod(timePeriod)}`
+    await this.oldReply(
+      `${perspective.plusToHave} scrobbled ${bold(
+        displayNumber(trackCount, "track")
+      )} ${humanizePeriod(timePeriod)}`
     );
   }
 }

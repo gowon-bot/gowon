@@ -6,6 +6,7 @@ import { prefabArguments } from "../../../lib/context/arguments/prefabArguments"
 import { Flag } from "../../../lib/context/arguments/argumentTypes/Flag";
 import { CommandRedirect } from "../../../lib/command/BaseCommand";
 import GlobalAlbumPlays from "./GlobalAlbumPlays";
+import { bold, italic } from "../../../helpers/discord";
 
 const args = {
   ...prefabArguments.album,
@@ -50,7 +51,7 @@ export default class AlbumPlays extends LastFMBaseCommand<typeof args> {
       username: requestable,
     });
 
-    await this.traditionalReply(
+    await this.oldReply(
       `${perspective.plusToHave}` +
         (toInt(albumDetails.userPlaycount) === 0
           ? "n't scrobbled"
@@ -58,7 +59,7 @@ export default class AlbumPlays extends LastFMBaseCommand<typeof args> {
               albumDetails.userPlaycount,
               "**scrobble"
             )} of`) +
-        ` ${albumDetails.name.italic()} by ${albumDetails.artist.strong()}`
+        ` ${italic(albumDetails.name)} by ${bold(albumDetails.artist)}`
     );
   }
 }

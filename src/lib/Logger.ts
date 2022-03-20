@@ -4,7 +4,7 @@ import chalk from "chalk";
 import { format } from "date-fns";
 import { RunAs } from "./command/RunAs";
 import { SimpleMap } from "../helpers/types";
-import { Payload } from "./context/Payload";
+import { GowonContext } from "./context/Context";
 
 export class Logger {
   static output = true;
@@ -71,7 +71,11 @@ export class Logger {
       );
   }
 
-  logCommand(command: BaseCommand, payload: Payload, ...runAs: string[]): void {
+  logCommand(ctx: GowonContext): void {
+    const command = ctx.command;
+    const payload = ctx.payload;
+    const runAs = ctx.runAs.toArray();
+
     let redirectedFrom = command.redirectedFrom;
 
     this.header +=

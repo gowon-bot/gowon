@@ -1,4 +1,5 @@
 import { MirrorballError } from "../../../../errors/errors";
+import { bold, italic } from "../../../../helpers/discord";
 import { convertMirrorballDate } from "../../../../helpers/mirrorball";
 import { Variation } from "../../../../lib/command/BaseCommand";
 import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";
@@ -69,9 +70,9 @@ export default class LastScrobbledAlbum extends MirrorballBaseCommand<
       .setDescription(
         `${perspective.upper.name} ${
           this.variationWasUsed("first") ? "first" : "last"
-        } scrobbled ${play.track.album.name.italic()} by ${play.track.artist.name.strong()} on ${displayDate(
-          convertMirrorballDate(play.scrobbledAt)
-        )}`
+        } scrobbled ${italic(play.track.album.name)} by ${bold(
+          play.track.artist.name
+        )} on ${displayDate(convertMirrorballDate(play.scrobbledAt))}`
       );
 
     await this.send(embed);

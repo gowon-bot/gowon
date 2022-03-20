@@ -1,5 +1,6 @@
 import gql from "graphql-tag";
 import { TagNotAllowedError } from "../../../errors/errors";
+import { bold } from "../../../helpers/discord";
 import { calculatePercent } from "../../../helpers/stats";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
@@ -115,7 +116,7 @@ export default class Tag extends LastFMBaseCommand<typeof args> {
           description +
           displayNumberedList(
             overlap.map(
-              (o) => `${o.artist.strong()} - ${displayNumber(o.plays, "play")}`
+              (o) => `${bold(o.artist)} - ${displayNumber(o.plays, "play")}`
             ),
             offset
           )

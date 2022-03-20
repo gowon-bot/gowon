@@ -1,3 +1,4 @@
+import { bold, italic } from "../../helpers/discord";
 import { Variation } from "../../lib/command/BaseCommand";
 import { prefabArguments } from "../../lib/context/arguments/prefabArguments";
 import { LastFMArgumentsMutableContext } from "../../services/LastFM/LastFMArguments";
@@ -83,8 +84,8 @@ export default class Love extends LastFMBaseCommand<typeof args> {
       .setAuthor(this.generateEmbedAuthor(title))
       .setTitle(trackInfo.name)
       .setDescription(
-        `by ${trackInfo.artist.name.strong()}${
-          album ? ` from ${album.italic()}` : ""
+        `by ${bold(trackInfo.artist.name)}${
+          album ? ` from ${italic(album)}` : ""
         }`
       );
 

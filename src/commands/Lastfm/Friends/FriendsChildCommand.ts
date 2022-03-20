@@ -5,6 +5,7 @@ import { LogicError } from "../../../errors/errors";
 import { Requestable } from "../../../services/LastFM/LastFMAPIService";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { code } from "../../../helpers/discord";
 
 export abstract class FriendsChildCommand<
   T extends ArgumentsMap = {}
@@ -42,6 +43,6 @@ export abstract class FriendsChildCommand<
   }
 
   protected displayMissingFriend(username: string, entity = "playcount") {
-    return `${username.code()} - _Error fetching ${entity}_`;
+    return `${code(username)} - _Error fetching ${entity}_`;
   }
 }

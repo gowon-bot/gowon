@@ -4,6 +4,7 @@ import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
+import { code } from "../../../helpers/discord";
 
 const args = {
   ...standardMentions,
@@ -49,7 +50,7 @@ export class Remove extends FriendsChildCommand<typeof args> {
 
     await this.send(
       this.newEmbed().setDescription(
-        `Successfully removed ${username.code()} as a friend!`
+        `Successfully removed ${code(username)} as a friend!`
       )
     );
   }

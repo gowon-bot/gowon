@@ -1,4 +1,5 @@
 import { LogicError } from "../../../../errors/errors";
+import { bold } from "../../../../helpers/discord";
 import { StringArgument } from "../../../../lib/context/arguments/argumentTypes/StringArgument";
 import { PlaylistChildCommand } from "./PlaylistChildCommand";
 
@@ -45,7 +46,7 @@ export class SetDefault extends PlaylistChildCommand<typeof args> {
     const embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor("Spotify default playlist"))
       .setDescription(
-        `Succesfully set ${foundPlaylist.name.strong()} as your default playlist!`
+        `Succesfully set ${bold(foundPlaylist.name)} as your default playlist!`
       );
 
     await this.send(embed);

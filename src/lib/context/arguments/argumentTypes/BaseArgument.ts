@@ -75,13 +75,13 @@ export abstract class BaseArgument<
     message: Message,
     content: string,
     context: GowonContext
-  ): ArgumentReturnType<ReturnT, ProvidedOptionsT>;
+  ): ReturnT | undefined;
 
   abstract parseFromInteraction(
     interaction: Interaction,
     context: GowonContext,
     argumentName: string
-  ): ArgumentReturnType<ReturnT, ProvidedOptionsT>;
+  ): ReturnT | undefined;
 
   addAsOption(
     slashCommand: SlashCommandBuilder,

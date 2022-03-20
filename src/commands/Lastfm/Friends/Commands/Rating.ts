@@ -6,6 +6,7 @@ import { LogicError } from "../../../../errors/errors";
 import { mean } from "mathjs";
 import { asyncMap } from "../../../../helpers";
 import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";
+import { code } from "../../../../helpers/discord";
 
 const args = {
   ...prefabArguments.album,
@@ -109,7 +110,7 @@ export class Rating extends FriendsChildCommand<typeof args> {
             )
             .map(
               ([username, rating]) =>
-                `${username.code()} - ${displayRating(
+                `${code(username)} - ${displayRating(
                   rating.ratings.ratings[0].rating
                 )}`
             )

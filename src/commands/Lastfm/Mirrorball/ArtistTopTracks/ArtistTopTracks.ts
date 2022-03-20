@@ -13,6 +13,7 @@ import {
   prefabArguments,
   prefabFlags,
 } from "../../../../lib/context/arguments/prefabArguments";
+import { bold, italic } from "../../../../helpers/discord";
 
 const args = {
   ...prefabArguments.artist,
@@ -66,13 +67,13 @@ export default class ArtistTopTracks extends MirrorballBaseCommand<
 
     if (topTracks.length < 1) {
       throw new LogicError(
-        `${
-          perspective.plusToHave
-        } no scrobbles of any songs from ${artist.name.strong()}!`
+        `${perspective.plusToHave} no scrobbles of any songs from ${bold(
+          artist.name
+        )}!`
       );
     }
     const embed = this.newEmbed()
-      .setTitle(`Top ${artist.name.strong()} tracks for ${username}`)
+      .setTitle(`Top ${bold(artist.name)} tracks for ${username}`)
       .setURL(LinkGenerator.libraryArtistTopTracks(username, artist.name));
 
     const totalScrobbles = topTracks.reduce((sum, t) => sum + t.playcount, 0);
@@ -86,10 +87,7 @@ export default class ArtistTopTracks extends MirrorballBaseCommand<
         return tracks
           .map(
             (track) =>
-              `${displayNumber(
-                track.playcount,
-                "play"
-              )} - ${track.name.strong()}`
+              `${displayNumber(track.playcount, "play")} - ${bold(track.name)}`
           )
           .join("\n");
       },
@@ -97,13 +95,18 @@ export default class ArtistTopTracks extends MirrorballBaseCommand<
       overrides: {
         itemName: "track",
         embedDescription:
-          `${displayNumber(totalScrobbles, "total scrobble")}, ${displayNumber(
-            topTracks.length,
-            "total track"
-          )}, ${displayNumber(
-            average.toFixed(2),
-            "average scrobble"
-          )} per track`.italic() + "\n",
+          italic(
+            `${displayNumber(
+              totalScrobbles,
+              "total scrobble"
+            )}, ${displayNumber(
+              topTracks.length,
+              "total track"
+            )}, ${displayNumber(
+              average.toFixed(2),
+              "average scrobble"
+            )} per track`
+          ) + "\n",
       },
     });
 

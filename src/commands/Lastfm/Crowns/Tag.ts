@@ -10,6 +10,7 @@ import {
 } from "../../../lib/views/displays";
 import { StringArrayArgument } from "../../../lib/context/arguments/argumentTypes/StringArrayArgument";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
+import { italic } from "../../../helpers/discord";
 
 const args = {
   ...standardMentions,
@@ -59,10 +60,11 @@ export class Tag extends CrownsChildCommand<typeof args> {
     );
 
     const description =
-      `${
-        perspective.upper.possessive
-      } top crowns for the following genres: ${genres.join(", ")}`.italic() +
-      "\n\n";
+      italic(
+        `${
+          perspective.upper.possessive
+        } top crowns for the following genres: ${genres.join(", ")}`
+      ) + "\n\n";
 
     const scrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
       items: filteredCrowns,

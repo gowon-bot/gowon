@@ -1,3 +1,4 @@
+import { bold } from "../../../helpers/discord";
 import { OverviewChildCommand } from "./OverviewChildCommand";
 
 export class ScrobblesPerArtist extends OverviewChildCommand {
@@ -12,9 +13,9 @@ export class ScrobblesPerArtist extends OverviewChildCommand {
     let spa = await this.calculator.avgScrobblesPerArtist();
 
     let embed = (await this.overviewEmbed()).setDescription(
-      `${perspective.upper.regularVerb(
-        "average"
-      )} ${spa.asString.strong()} scrobbles per artist!`
+      `${perspective.upper.regularVerb("average")} ${bold(
+        spa.asString
+      )} scrobbles per artist!`
     );
 
     await this.send(embed);

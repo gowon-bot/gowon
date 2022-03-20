@@ -1,3 +1,4 @@
+import { bold, code, italic } from "../../helpers/discord";
 import { buildRequestable } from "../../helpers/getMentions";
 import { MultiRequester } from "../../lib/MultiRequester";
 import { LastFMBaseCommand } from "./LastFMBaseCommand";
@@ -34,8 +35,8 @@ export default class Server extends LastFMBaseCommand {
           .map((username) => {
             let np = nowPlayings[username]!;
 
-            return `${username.code()} - ${np.name} by ${np.artist.strong()} ${
-              np.album ? `from ${np.album.italic()}` : ""
+            return `${code(username)} - ${np.name} by ${bold(np.artist)} ${
+              np.album ? `from ${italic(np.album)}` : ""
             } ${np.isNowPlaying ? "_(listening now)_" : ""}`;
           })
           .join("\n")

@@ -1,4 +1,5 @@
 import { MirrorballError } from "../../../../../errors/errors";
+import { bold, italic } from "../../../../../helpers/discord";
 import { Variation } from "../../../../../lib/command/BaseCommand";
 import { VARIATIONS } from "../../../../../lib/command/variations";
 import { prefabArguments } from "../../../../../lib/context/arguments/prefabArguments";
@@ -74,7 +75,7 @@ export default class WhoKnowsAlbum extends WhoKnowsBaseCommand<
 
     const embed = this.whoKnowsEmbed()
       .setTitle(
-        `Who knows ${album.name.italic()} by ${album.artist.name.strong()}${
+        `Who knows ${italic(album.name)} by ${bold(album.artist.name)}${
           this.isGlobal() ? " globally" : ""
         }?`
       )

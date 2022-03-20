@@ -3,6 +3,7 @@ import { MultiRequester } from "../../../../lib/MultiRequester";
 import { displayNumber } from "../../../../lib/views/displays";
 import { TimeRangeArgument } from "../../../../lib/context/arguments/argumentTypes/timeAndDate/TimeRangeArgument";
 import { TimeRange } from "../../../../lib/timeAndDate/helpers";
+import { code } from "../../../../helpers/discord";
 
 const args = {
   timeRange: new TimeRangeArgument({
@@ -46,7 +47,7 @@ export class Scrobbles extends FriendsChildCommand<typeof args> {
             if (!s)
               return this.displayMissingFriend(username, "scrobble count");
 
-            return `${username.code()} - **${displayNumber(s, "**scrobble")}`;
+            return `${code(username)} - **${displayNumber(s, "**scrobble")}`;
           })
           .join("\n")
       );

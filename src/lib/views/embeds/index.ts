@@ -1,5 +1,6 @@
 import { GuildMember, HexColorString, MessageEmbed, User } from "discord.js";
 import { ucFirst } from "../../../helpers";
+import { bold, italic } from "../../../helpers/discord";
 import { ImageCollection } from "../../../services/LastFM/converters/BaseConverter";
 
 export const errorColour = "#ED008E";
@@ -30,7 +31,7 @@ export function trackEmbed(
   return new MessageEmbed()
     .setTitle(track.name)
     .setDescription(
-      `by ${artist.strong()}` + (album ? ` from ${album.italic()}` : "")
+      `by ${bold(artist)}` + (album ? ` from ${italic(album)}` : "")
     )
     .setThumbnail(track.images.get(imageSize) || "");
 }

@@ -1,3 +1,4 @@
+import { bold } from "../../../helpers/discord";
 import { OverviewChildCommand } from "./OverviewChildCommand";
 
 export class Per extends OverviewChildCommand {
@@ -30,9 +31,9 @@ export class Per extends OverviewChildCommand {
       .setDescription(`${perspective.upper.regularVerb(
       "listen"
     )} to an average of...
-      ${lpa.asString.strong()} albums per artist!
-      ${tpa.asString.strong()} tracks per artist!
-      ${tpl.asString.strong()} tracks per album!`);
+      ${bold(lpa.asString)} albums per artist!
+      ${bold(tpa.asString)} tracks per artist!
+      ${bold(tpl.asString)} tracks per album!`);
 
     await this.send(embed);
   }

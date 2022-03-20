@@ -6,6 +6,7 @@ import { Logger } from "../../lib/Logger";
 import { BaseService } from "../BaseService";
 import { AdminService } from "../dbservices/AdminService";
 import { MirrorballService } from "../mirrorball/MirrorballService";
+import { MirrorballUsersService } from "../mirrorball/services/MirrorballUsersService";
 import { ServiceRegistry } from "../ServicesRegistry";
 
 export class GuildEventService extends BaseService {
@@ -14,6 +15,9 @@ export class GuildEventService extends BaseService {
   }
   get mirrorballService() {
     return ServiceRegistry.get(MirrorballService);
+  }
+  get mirrorballUsersService() {
+    return ServiceRegistry.get(MirrorballUsersService);
   }
   commandRegistry = CommandRegistry.getInstance();
 
@@ -47,7 +51,7 @@ export class GuildEventService extends BaseService {
     Logger.log("GuildEventService", "Handling new user");
 
     try {
-      await this.mirrorballService.quietAddUserToGuild(
+      await this.mirrorballUsersService.quietAddUserToGuild(
         ctx,
         guildMember.user.id,
         guildMember.guild.id
@@ -64,7 +68,7 @@ export class GuildEventService extends BaseService {
     Logger.log("GuildEventService", "Handling user leave");
 
     try {
-      await this.mirrorballService.quietRemoveUserFromGuild(
+      await this.mirrorballUsersService.quietRemoveUserFromGuild(
         ctx,
         guildMember.user.id,
         guildMember.guild.id

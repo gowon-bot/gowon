@@ -1,4 +1,5 @@
 import { MirrorballError } from "../../../../errors/errors";
+import { bold, italic } from "../../../../helpers/discord";
 import { toInt } from "../../../../helpers/lastFM";
 import { convertMirrorballDate } from "../../../../helpers/mirrorball";
 import { standardMentions } from "../../../../lib/context/arguments/mentionTypes/mentions";
@@ -84,9 +85,9 @@ export default class ScrobbleList extends MirrorballBaseCommand<
     const embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor("Scrobble list"))
       .setTitle(
-        `${
-          perspective.upper.possessive
-        } scrobbles of ${trackName.italic()} by ${artistName.strong()}`
+        `${perspective.upper.possessive} scrobbles of ${italic(
+          trackName
+        )} by ${bold(artistName)}`
       );
 
     const scrollingEmbed = new ScrollingEmbed(this.ctx, embed, {

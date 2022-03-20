@@ -1,3 +1,4 @@
+import { bold, italic } from "../../helpers/discord";
 import { GowonContext } from "../../lib/context/Context";
 import { ConfirmationEmbed } from "../../lib/views/embeds/ConfirmationEmbed";
 import { BaseService } from "../BaseService";
@@ -108,7 +109,7 @@ export class SpotifyArguments extends BaseService<SpotifyArgumentsContext> {
       .setAuthor(ctx.command.generateEmbedAuthor("Confirm track"))
       .setTitle("Couldn't find that exact track, did you mean:")
       .setDescription(
-        `${track.name.italic()} by ${track.artists.primary.name.strong()}?`
+        `${italic(track.name)} by ${bold(track.artists.primary.name)}?`
       )
       .setThumbnail(track.album.images.largest.url);
 

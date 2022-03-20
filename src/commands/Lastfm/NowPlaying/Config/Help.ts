@@ -1,3 +1,4 @@
+import { code } from "../../../../helpers/discord";
 import {
   componentMap,
   sortConfigOptions,
@@ -32,13 +33,13 @@ You can also use \`${this.prefix}reacts\` to control nowplaying reactions
 
 **Options**
 ${sortConfigOptions(Object.keys(componentMap))
-  .map((o) => o.code())
+  .map((o) => code(o))
   .join(", ")}
 
 **Presets**
 In \`npc set\` you can use some presets, they are:
 ${Object.keys(this.presets)
-  .map((d) => d.code())
+  .map((d) => code(d))
   .join(", ")}
 `
       )

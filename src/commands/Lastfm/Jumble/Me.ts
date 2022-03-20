@@ -11,6 +11,7 @@ import { WordBlacklistService } from "../../../services/WordBlacklistService";
 import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
 import { GowonContext } from "../../../lib/context/Context";
 import { Flag } from "../../../lib/context/arguments/argumentTypes/Flag";
+import { bold, code } from "../../../helpers/discord";
 
 const args = {
   poolAmount: new NumberArgument({
@@ -111,7 +112,7 @@ export class Me extends JumbleChildCommand<typeof args> {
       {
         shouldDisplay: !!artistInfo.similarArtists.length,
         string: `Last.fm considers ${artistInfo.similarArtists
-          .map((a) => a.name.strong())
+          .map((a) => bold(a.name))
           .slice(0, 2)
           .join(" and ")} to be similar`,
       }
@@ -122,7 +123,7 @@ export class Me extends JumbleChildCommand<typeof args> {
       .setDescription(
         `**Who is this artist?**
       
-      ${jumbledArtist.jumbled.code()}
+      ${code(jumbledArtist.jumbled)}
       
       **Hints**:
       _${lineConsolidator.consolidate()}_`
@@ -142,7 +143,9 @@ export class Me extends JumbleChildCommand<typeof args> {
     let embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor("Jumble"))
       .setDescription(
-        `I've reshuffled the letters, now who is this artist?\n\n${jumble.jumbled.code()}`
+        `I've reshuffled the letters, now who is this artist?\n\n${code(
+          jumble.jumbled
+        )}`
       )
       .setFooter({
         text: `Trying to skip? Run "${this.prefix}j quit" to give up`,
