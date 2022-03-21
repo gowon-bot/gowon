@@ -28,6 +28,7 @@ const args = {
       { name: "combo" },
       { name: "custom" },
     ],
+    unstrictChoices: true,
   }),
   ...nowPlayingArgs,
 } as const;
