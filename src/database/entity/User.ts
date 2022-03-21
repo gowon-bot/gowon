@@ -30,7 +30,7 @@ import { SettingsService } from "../../lib/settings/SettingsService";
 import { CommandAccessRoleName } from "../../lib/command/access/roles";
 import { MirrorballService } from "../../services/mirrorball/MirrorballService";
 import { GowonContext } from "../../lib/context/Context";
-import { AlbumCard } from "./AlbumCard";
+import { AlbumCard } from "./cards/AlbumCard";
 
 @Entity({ name: "users" })
 export class User extends BaseEntity {

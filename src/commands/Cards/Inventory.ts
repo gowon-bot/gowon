@@ -1,4 +1,4 @@
-import { AlbumCard } from "../../database/entity/AlbumCard";
+import { AlbumCard } from "../../database/entity/cards/AlbumCard";
 import { bold, italic } from "../../helpers/discord";
 import { displayNumberedList } from "../../lib/views/displays";
 import { SimpleScrollingEmbed } from "../../lib/views/embeds/SimpleScrollingEmbed";

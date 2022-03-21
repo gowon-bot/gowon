@@ -19,3 +19,19 @@ export class CardNotMintedYetError extends ClientError {
     );
   }
 }
+
+export class NoMoneyError extends ClientError {
+  name = "NoMoneyError";
+
+  constructor() {
+    super(`You don't have enough 🪙 to do that!`);
+  }
+}
+
+export class CantWorkYetError extends ClientError {
+  name = "CantWorkYetError";
+
+  constructor(wait: string) {
+    super(`You can't work yet! You'll be able to ${wait}.`);
+  }
+}

@@ -5,7 +5,7 @@ import { CardsChildCommand } from "./CardsChildCommant";
 export class Mint extends CardsChildCommand {
   idSeed = "ive liz";
 
-  description = "Mints a new album card from your top albums";
+  description = "Mints a new album card from your top albums (costs 🪙25)";
   aliases = ["roll", "open"];
   usage = [""];
 
@@ -24,6 +24,12 @@ export class Mint extends CardsChildCommand {
       throw new NoAlbumsToMintError();
     }
 
+    const bankAccount = await this.cardsService.changeBankAccount(
+      this.ctx,
+      dbUser,
+      -25
+    );
+
     const album = this.cardsService.generateAlbumToMint(mintableCards);
     const card = await this.cardsService.mint(this.ctx, album, dbUser);
 
@@ -32,7 +38,9 @@ export class Mint extends CardsChildCommand {
       .setTitle("Rolled card...")
       .setDescription(
         `${bold(card.album)}
-by ${italic(card.artist)}`
+by ${italic(card.artist)}
+
+You now have 🪙${bankAccount.amount}.`
       )
       .setThumbnail(album.images.get("large") || "");
 

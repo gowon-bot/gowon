@@ -23,7 +23,7 @@ import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { GowonContext } from "../context/Context";
 import { Payload } from "../context/Payload";
 import { CardsService } from "../../services/dbservices/CardsService";
-import { AlbumCard } from "../../database/entity/AlbumCard";
+import { AlbumCard } from "../../database/entity/cards/AlbumCard";
 
 export interface ResolvedRequirements {
   [requirement: string]: any;

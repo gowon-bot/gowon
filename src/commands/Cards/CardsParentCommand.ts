@@ -1,8 +1,10 @@
 import { CommandGroup } from "../../lib/command/CommandGroup";
 import { ParentCommand } from "../../lib/command/ParentCommand";
+import { Bank } from "./Bank";
 import { Inventory } from "./Inventory";
 import { Mint } from "./Mint";
 import { View } from "./View";
+import { Work } from "./Work";
 
 export default class CardsParentCommand extends ParentCommand {
   idSeed = "ive wonyoung";
@@ -19,7 +21,11 @@ export default class CardsParentCommand extends ParentCommand {
     "card",
     // Mint
     "mint",
+    // Bank
+    "bank",
+    // Work
+    "work",
   ];
 
-  children = new CommandGroup([Inventory, Mint, View]);
+  children = new CommandGroup([Bank, Inventory, Mint, View, Work]);
 }

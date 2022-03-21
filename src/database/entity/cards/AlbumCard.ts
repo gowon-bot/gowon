@@ -6,7 +6,7 @@ import {
   ManyToOne,
   Column,
 } from "typeorm";
-import { User } from "./User";
+import { User } from "../User";
 
 @Entity({ name: "album_cards" })
 export class AlbumCard extends BaseEntity {

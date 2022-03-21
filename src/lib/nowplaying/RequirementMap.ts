@@ -8,7 +8,7 @@ import {
   ArtistInfo,
   TrackInfo,
 } from "../../services/LastFM/converters/InfoTypes";
-import { AlbumCard } from "../../database/entity/AlbumCard";
+import { AlbumCard } from "../../database/entity/cards/AlbumCard";
 
 type ArtistRank = {
   rank: number;

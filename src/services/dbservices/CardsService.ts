@@ -1,7 +1,9 @@
 import { Chance } from "chance";
 import { ILike } from "typeorm";
-import { AlbumCard } from "../../database/entity/AlbumCard";
+import { AlbumCard } from "../../database/entity/cards/AlbumCard";
+import { UserBankAccount } from "../../database/entity/cards/UserBankAccount";
 import { User } from "../../database/entity/User";
+import { NoMoneyError } from "../../errors/cards";
 import { asyncFind } from "../../helpers";
 import { RedirectsCache } from "../../lib/caches/RedirectsCache";
 import { GowonContext } from "../../lib/context/Context";
@@ -12,6 +14,8 @@ import { LastFMService } from "../LastFM/LastFMService";
 import { ServiceRegistry } from "../ServicesRegistry";
 
 export class CardsService extends BaseService {
+  private readonly startingMoney = 100;
+
   private get lastFMService() {
     return ServiceRegistry.get(LastFMService);
   }
@@ -90,6 +94,42 @@ export class CardsService extends BaseService {
 
   async inventory(user: User): Promise<AlbumCard[]> {
     return await AlbumCard.find({ owner: user });
+  }
+
+  async getBankAccount(
+    ctx: GowonContext,
+    user: User
+  ): Promise<UserBankAccount> {
+    this.log(ctx, `Fetching bank account for ${user.id}`);
+
+    let bankAccount = await UserBankAccount.findOne({ where: { user } });
+
+    if (!bankAccount) {
+      bankAccount = UserBankAccount.create({
+        user,
+        amount: this.startingMoney,
+      });
+
+      await bankAccount.save();
+    }
+
+    return bankAccount;
+  }
+
+  async changeBankAccount(
+    ctx: GowonContext,
+    user: User,
+    increase: number
+  ): Promise<UserBankAccount> {
+    const bankAccount = await this.getBankAccount(ctx, user);
+
+    if (bankAccount.amount + increase < 0) throw new NoMoneyError();
+
+    bankAccount.amount = bankAccount.amount + increase;
+
+    await bankAccount.save();
+
+    return bankAccount;
   }
 
   private async filterAlbumCards(
