@@ -51,7 +51,9 @@ export class StringArgument<
     content: string,
     ctx: GowonContext
   ): string | undefined {
-    const cleanContent = this.cleanContent(ctx, content);
+    const cleanContent = this.options.preprocessor(
+      this.cleanContent(ctx, content)
+    );
 
     let parsedArgument: string | undefined;
 

@@ -17,6 +17,25 @@ function isValidator(validator: ValidatorOptions): validator is Validator {
 export class ValidationChecker {
   constructor(private args: SimpleMap, private validation: Validation) {}
 
+  validate() {
+    let argumentEntries = Object.entries(this.args);
+
+    for (let [argumentName, argumentValue] of argumentEntries) {
+      let argumentValidators = this.validation[argumentName];
+
+      if (!argumentValidators) continue;
+
+      let validators =
+        argumentValidators instanceof Array
+          ? argumentValidators
+          : [argumentValidators];
+
+      for (let validator of validators) {
+        this.runValidator(validator, argumentName, argumentValue);
+      }
+    }
+  }
+
   runValidator(
     validator: ValidatorOptions,
     argumentName: string,
@@ -36,25 +55,6 @@ export class ValidationChecker {
         validator.friendlyName || argumentName,
         dependsOn
       );
-    }
-  }
-
-  validate() {
-    let argumentEntries = Object.entries(this.args);
-
-    for (let [argumentName, argumentValue] of argumentEntries) {
-      let argumentValidators = this.validation[argumentName];
-
-      if (!argumentValidators) continue;
-
-      let validators =
-        argumentValidators instanceof Array
-          ? argumentValidators
-          : [argumentValidators];
-
-      for (let validator of validators) {
-        this.runValidator(validator, argumentName, argumentValue);
-      }
     }
   }
 }

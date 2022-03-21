@@ -64,13 +64,15 @@ export class Add extends PlaylistChildCommand<typeof args> {
       );
     }
 
-    const track = await this.spotifyArguments.getTrack(
+    const { track, askedConfirmation } = await this.spotifyArguments.getTrack(
       this.ctx,
       senderRequestable,
       { confirm: true }
     );
 
     if (!track) {
+      if (askedConfirmation) return;
+
       throw new LogicError(
         `Couldn't find a track to ${
           remove ? "remove from" : "add to"

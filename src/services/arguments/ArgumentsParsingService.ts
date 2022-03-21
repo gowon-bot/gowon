@@ -9,11 +9,19 @@ import { debugFlag } from "../../lib/context/arguments/prefabArguments";
 
 export class ArgumentParsingService extends BaseService {
   parseContext(context: GowonContext, args: ArgumentsMap): any {
+    let parsedArgs: SimpleMap = {};
+
     if (context.payload.isMessage()) {
-      return this.parseMessage(context.payload.source, context, args);
+      parsedArgs = this.parseMessage(context.payload.source, context, args);
     } else if (context.payload.isInteraction()) {
-      return this.parseInteraction(context.payload.source, context, args);
-    } else return {};
+      parsedArgs = this.parseInteraction(context.payload.source, context, args);
+    }
+
+    for (const [argName, arg] of Object.entries(args)) {
+      arg.validate(parsedArgs[argName], argName);
+    }
+
+    return parsedArgs;
   }
 
   private parseInteraction(

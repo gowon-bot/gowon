@@ -17,6 +17,7 @@ const args = {
     preprocessor: removeEmojisFromString,
     required: true,
     description: "The name of the playlist to tag",
+    index: { start: 0 },
   }),
 } as const;
 

@@ -37,10 +37,10 @@ export class SpotifyArguments extends BaseService<SpotifyArgumentsContext> {
     ctx: SpotifyArgumentsContext,
     requestable: Requestable,
     options: Partial<GetTrackOptions> = {}
-  ): Promise<SpotifyTrack | undefined> {
+  ): Promise<{ track?: SpotifyTrack; askedConfirmation?: boolean }> {
     const fromReplied = await this.getTrackFromReplied(ctx);
 
-    if (fromReplied) return fromReplied;
+    if (fromReplied) return { track: fromReplied };
 
     return this.getTrackFromMessageInput(ctx, requestable, options);
   }
@@ -63,7 +63,7 @@ export class SpotifyArguments extends BaseService<SpotifyArgumentsContext> {
     ctx: SpotifyArgumentsContext,
     requestable: Requestable,
     options: Partial<GetTrackOptions>
-  ) {
+  ): Promise<{ track?: SpotifyTrack; askedConfirmation?: boolean }> {
     const { artist, track } = await this.lastFMArguments.getTrack(
       ctx,
       requestable
@@ -76,17 +76,17 @@ export class SpotifyArguments extends BaseService<SpotifyArgumentsContext> {
 
     const bestResult = spotifyTrackSearch.bestResult;
 
-    if (!spotifyTrackSearch.hasAnyResults) return undefined;
+    if (!spotifyTrackSearch.hasAnyResults) return {};
 
     if (
       options.confirm &&
       !spotifyTrackSearch.bestResult.isExactMatch &&
       !(await this.confirmTrack(ctx, bestResult))
     ) {
-      return undefined;
+      return { askedConfirmation: true };
     }
 
-    return spotifyTrackSearch.bestResult;
+    return { track: spotifyTrackSearch.bestResult };
   }
 
   protected getSpotifyTrackURI(string: string): SpotifyURI<"track"> {

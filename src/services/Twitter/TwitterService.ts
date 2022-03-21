@@ -58,6 +58,11 @@ export class TwitterService extends BaseService {
     if (noTwitter === toggleValues.ON) {
       // To prevent any incedental method calls from crashing the bot
       this.streamClient = {} as any;
+      this.mentions = {
+        subscribe() {},
+        connect() {},
+        unsubscribe() {},
+      } as any;
       return false;
     }
 

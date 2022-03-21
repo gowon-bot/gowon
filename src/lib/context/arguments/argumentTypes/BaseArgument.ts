@@ -91,7 +91,10 @@ export abstract class BaseArgument<
   }
 
   validate(value: ReturnT | undefined, argumentName: string) {
-    if (this.options.required && (value === null || value === undefined)) {
+    if (
+      this.options.required &&
+      (value === null || value === undefined || (value as any) === "")
+    ) {
       throw new ValidationError(
         isCustomMessage(this.options.required)
           ? this.options.required.customMessage
@@ -117,8 +120,8 @@ export abstract class BaseArgument<
       .setRequired(!!this.options.required) as OptionType;
   }
 
-  protected cleanContent(ctx: GowonContext, content: string) {
-    const cleanContent = this.gowonService.removeCommandName(
+  protected cleanContent(ctx: GowonContext, content: string): string {
+    let cleanContent = this.gowonService.removeCommandName(
       content,
       ctx.runAs,
       ctx.requiredGuild.id

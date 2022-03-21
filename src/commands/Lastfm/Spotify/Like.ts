@@ -36,13 +36,15 @@ export class Like extends SpotifyChildCommand<typeof args> {
       fetchSpotifyToken: true,
     });
 
-    const track = await this.spotifyArguments.getTrack(
+    const { track, askedConfirmation } = await this.spotifyArguments.getTrack(
       this.ctx,
       senderRequestable,
       { confirm: true }
     );
 
     if (!track) {
+      if (askedConfirmation) return;
+
       throw new LogicError(
         `Couldn't find a track to ${unlike ? "un" : ""}like!`
       );

@@ -37,7 +37,7 @@ export class EmojisArgument<
   ): EmojiMention[] | undefined {
     const cleanContent = this.cleanContent(ctx, content);
 
-    return this.parseFromString(cleanContent);
+    return this.parseFromString(cleanContent) || this.options.default;
   }
 
   parseFromInteraction(
@@ -47,7 +47,9 @@ export class EmojisArgument<
   ): EmojiMention[] | undefined {
     const string = interaction.options.getString(argumentName)!;
 
-    return string ? this.parseFromString(string) : [];
+    const parsed = string ? this.parseFromString(string) : undefined;
+
+    return parsed || this.options.default;
   }
 
   addAsOption(slashCommand: SlashCommandBuilder, argumentName: string) {
@@ -76,6 +78,8 @@ export class EmojisArgument<
 
     const element = this.getElementFromIndex(emojis, this.options.index);
 
-    return element instanceof Array ? element : [element];
+    return element instanceof Array || element === undefined
+      ? element
+      : [element];
   }
 }
