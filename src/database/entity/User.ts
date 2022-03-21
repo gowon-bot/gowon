@@ -30,6 +30,7 @@ import { SettingsService } from "../../lib/settings/SettingsService";
 import { CommandAccessRoleName } from "../../lib/command/access/roles";
 import { MirrorballService } from "../../services/mirrorball/MirrorballService";
 import { GowonContext } from "../../lib/context/Context";
+import { AlbumCard } from "./AlbumCard";
 
 @Entity({ name: "users" })
 export class User extends BaseEntity {
@@ -68,6 +69,9 @@ export class User extends BaseEntity {
 
   @OneToMany((_) => Combo, (combo) => combo.user)
   combos!: Combo[];
+
+  @OneToMany((_) => AlbumCard, (albumCard) => albumCard.owner)
+  albumCards!: AlbumCard[];
 
   @Column("simple-array", { nullable: true })
   roles?: CommandAccessRoleName[];

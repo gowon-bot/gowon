@@ -29,9 +29,9 @@ export default class ArtistRank extends LastFMBaseCommand<typeof args> {
   arguments = args;
 
   redirectsService = ServiceRegistry.get(RedirectsService);
-  redirectsCache = new RedirectsCache(this.redirectsService);
-
   async run() {
+    const redirectsCache = new RedirectsCache(this.ctx);
+
     const { requestable, senderRequestable, perspective } =
       await this.getMentions({
         senderRequired: !this.parsedArguments.artist,
@@ -48,7 +48,7 @@ export default class ArtistRank extends LastFMBaseCommand<typeof args> {
       limit: 1000,
     });
 
-    await this.redirectsCache.initialCache(
+    await redirectsCache.initialCache(
       this.ctx,
       topArtists.artists.map((a) => a.name)
     );
@@ -56,7 +56,7 @@ export default class ArtistRank extends LastFMBaseCommand<typeof args> {
     const rank = (
       await asyncMap(
         topArtists.artists,
-        async (a) => await this.redirectsCache.getRedirect(a.name)
+        async (a) => await redirectsCache.getRedirect(a.name)
       )
     ).findIndex((a) => a.toLowerCase() === artistName.toLowerCase());
 

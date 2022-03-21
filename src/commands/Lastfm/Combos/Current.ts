@@ -1,6 +1,5 @@
 import { ucFirst } from "../../../helpers";
 import { Paginator } from "../../../lib/paginators/Paginator";
-import { RedirectsService } from "../../../services/dbservices/RedirectsService";
 import {
   ComboCalculator,
   Combo as ComboType,
@@ -49,7 +48,6 @@ export class Current extends ComboChildCommand<typeof args> {
     artists: new validators.LengthRange({ max: 10 }),
   };
 
-  redirectsService = ServiceRegistry.get(RedirectsService);
   artistsService = ServiceRegistry.get(ArtistsService);
 
   async run() {
@@ -69,7 +67,7 @@ export class Current extends ComboChildCommand<typeof args> {
       this.ctx
     );
 
-    const comboCalculator = new ComboCalculator(this.redirectsService, artists);
+    const comboCalculator = new ComboCalculator(this.ctx, artists);
 
     const combo = await comboCalculator.calculate(paginator);
 

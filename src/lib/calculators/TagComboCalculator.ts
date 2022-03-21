@@ -1,4 +1,3 @@
-import { TagsService } from "../../services/mirrorball/services/TagsService";
 import {
   RecentTrack,
   RecentTracks,
@@ -16,10 +15,10 @@ export interface TagComboDetails {
 }
 
 export class TagComboCalculator {
-  private combo = new TagCombo(this.ctx, new TagsCache(this.tagsService));
+  private combo = new TagCombo(this.ctx, new TagsCache(this.ctx));
   public totalTracks = 0;
 
-  constructor(private ctx: GowonContext, private tagsService: TagsService) {}
+  constructor(private ctx: GowonContext) {}
 
   async calculate(paginator: Paginator<any, RecentTracks>): Promise<TagCombo> {
     for await (let page of paginator.iterator()) {

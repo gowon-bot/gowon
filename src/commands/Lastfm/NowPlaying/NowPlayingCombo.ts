@@ -26,7 +26,7 @@ export default class NowPlayingCombo extends NowPlayingBaseCommand {
       limit: 1000,
     });
 
-    const comboCalculator = new ComboCalculator(this.redirectsService, []);
+    const comboCalculator = new ComboCalculator(this.ctx, []);
 
     const combo = await comboCalculator.calculate(recentTracks);
 

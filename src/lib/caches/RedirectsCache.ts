@@ -10,7 +10,7 @@ export class RedirectsCache {
   private cache: RedirectsCacheObject = {};
   private redirectsService = ServiceRegistry.get(RedirectsService);
 
-  constructor(private ctx: any) {}
+  constructor(private ctx: GowonContext) {}
 
   async initialCache(ctx: GowonContext, artistNames: string[]) {
     this.cache = await this.redirectsService.getRedirectsForArtistsMap(

@@ -1,11 +1,12 @@
 import { LastFMService } from "../../services/LastFM/LastFMService";
 import { TopArtist } from "../../services/LastFM/converters/TopTypes";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
+import { GowonContext } from "../context/Context";
 
 export class JumbleCalculator {
   private lastFMService = ServiceRegistry.get(LastFMService);
 
-  constructor(private ctx: any, private username: string) {}
+  constructor(private ctx: GowonContext, private username: string) {}
 
   async getArtist(
     poolAmount: number,

@@ -21,6 +21,7 @@ import { MirrorballService } from "../../services/mirrorball/MirrorballService";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { ago } from "../../helpers";
 import { TimeRange } from "../timeAndDate/helpers";
+import { GowonContext } from "../context/Context";
 
 export class Stat {
   public asString: string;
@@ -51,7 +52,7 @@ export class OverviewStatsCalculator {
   private mirrorballService = ServiceRegistry.get(MirrorballService);
 
   constructor(
-    private ctx: any,
+    private ctx: GowonContext,
     private requestable: Requestable,
     private userID: string | undefined,
     private timePeriod: LastFMPeriod

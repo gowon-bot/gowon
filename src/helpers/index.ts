@@ -236,6 +236,16 @@ export async function asyncFilter<T>(
   ).filter((i) => i !== fail) as T[];
 }
 
+export async function asyncFind<T>(
+  array: T[],
+  proc: (item: T) => Promise<boolean> | boolean
+): Promise<T | undefined> {
+  const promises = array.map(proc);
+  const results = await Promise.all(promises);
+  const index = results.findIndex((result) => result);
+  return array[index];
+}
+
 export function insertAtIndex<T>(
   array: Array<T>,
   index: number,

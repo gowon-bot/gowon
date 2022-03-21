@@ -18,6 +18,7 @@ export abstract class BaseNowPlayingComponent<
 > {
   static readonly componentName: string;
   static readonly friendlyName: string;
+  static readonly secret: boolean = false;
   abstract readonly requirements: Requirements;
 
   protected ctx = new GowonContext({

@@ -1,5 +1,6 @@
 import { TagsService } from "../../services/mirrorball/services/TagsService";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
+import { GowonContext } from "../context/Context";
 
 interface TagsCacheObject {
   [artist: string]: string[];
@@ -9,7 +10,7 @@ export class TagsCache {
   private cache: TagsCacheObject = {};
   private tagsService = ServiceRegistry.get(TagsService);
 
-  constructor(private ctx: any) {}
+  constructor(private ctx: GowonContext) {}
 
   async initialCache(artistNames: string[], requireTags?: boolean) {
     const artistMap = await this.tagsService.getTagsForArtistsMap(

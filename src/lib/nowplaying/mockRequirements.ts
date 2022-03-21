@@ -154,6 +154,7 @@ export const mockRequirements = (
         plays: 6360,
       }),
     },
+    albumCard: undefined,
 
     // Mirrorball types
     albumPlays: [

@@ -1,10 +1,10 @@
 import gql from "graphql-tag";
-import { RedirectsService } from "../../services/dbservices/RedirectsService";
 import { RecentTracks } from "../../services/LastFM/converters/RecentTracks";
 import { MirrorballService } from "../../services/mirrorball/MirrorballService";
 import { MirrorballTag } from "../../services/mirrorball/MirrorballTypes";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { RedirectsCache } from "../caches/RedirectsCache";
+import { GowonContext } from "../context/Context";
 
 interface Count {
   [name: string]: number;
@@ -37,12 +37,11 @@ export class ReportCalculator {
     tags: [],
   };
 
-  private redirectsService = ServiceRegistry.get(RedirectsService);
   private mirrorballService = ServiceRegistry.get(MirrorballService);
 
-  constructor(private ctx: any, private tracks: RecentTracks) {}
+  constructor(private ctx: GowonContext, private tracks: RecentTracks) {}
 
-  redirectsCache = new RedirectsCache(this.redirectsService);
+  redirectsCache = new RedirectsCache(this.ctx);
 
   async calculate(): Promise<Report> {
     await this.redirectsCache.initialCache(

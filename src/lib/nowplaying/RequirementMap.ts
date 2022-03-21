@@ -8,6 +8,7 @@ import {
   ArtistInfo,
   TrackInfo,
 } from "../../services/LastFM/converters/InfoTypes";
+import { AlbumCard } from "../../database/entity/AlbumCard";
 
 type ArtistRank = {
   rank: number;
@@ -21,6 +22,7 @@ export type RequirementMap = {
 
   // Gowon data
   artistCrown: CrownDisplay | undefined;
+  albumCard: AlbumCard | undefined;
 
   // Mirrorball data
   albumPlays: [{ album: MirrorballAlbum; playcount: number }];

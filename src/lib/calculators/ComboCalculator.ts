@@ -1,9 +1,9 @@
-import { RedirectsService } from "../../services/dbservices/RedirectsService";
 import {
   RecentTrack,
   RecentTracks,
 } from "../../services/LastFM/converters/RecentTracks";
 import { RedirectsCache } from "../caches/RedirectsCache";
+import { GowonContext } from "../context/Context";
 import { isPaginator, Paginator } from "../paginators/Paginator";
 
 export interface ComboDetails {
@@ -15,13 +15,10 @@ export interface ComboDetails {
 }
 
 export class ComboCalculator {
-  private combo = new Combo(this.redirectsService, this.additionalArtists);
+  private combo = new Combo(this.ctx, this.additionalArtists);
   public totalTracks = 0;
 
-  constructor(
-    private redirectsService: RedirectsService,
-    private additionalArtists: string[]
-  ) {}
+  constructor(private ctx: GowonContext, private additionalArtists: string[]) {}
 
   async calculate(
     recentTracks: Paginator<any, RecentTracks> | RecentTracks
@@ -103,12 +100,11 @@ export class Combo {
   lastScrobble!: RecentTrack;
   firstScrobble!: RecentTrack;
 
-  private redirectsCache = new RedirectsCache(this.redirectsService);
+  private redirectsCache: RedirectsCache;
 
-  constructor(
-    private redirectsService: RedirectsService,
-    private artists: string[]
-  ) {}
+  constructor(ctx: GowonContext, private artists: string[]) {
+    this.redirectsCache = new RedirectsCache(ctx);
+  }
 
   hasAnyConsecutivePlays(): boolean {
     return (
