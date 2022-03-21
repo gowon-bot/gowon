@@ -21,12 +21,15 @@ import { UsersService } from "./services/dbservices/UsersService";
 import { HeaderlessLogger } from "./lib/Logger";
 import { GowonContext } from "./lib/context/Context";
 import { TweetHandler } from "./services/Twitter/TweetHandler";
+import { Payload } from "./lib/context/Payload";
+import { MockMessage } from "./mocks/discord";
 
 async function start() {
   await setup();
 
   const ctx = new GowonContext({
     command: { client, logger: new HeaderlessLogger() } as any,
+    payload: new Payload(new MockMessage()),
     custom: {},
   } as any);
 

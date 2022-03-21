@@ -24,6 +24,7 @@ export abstract class SpotifyBaseCommand<
   T extends ArgumentsMap = {}
 > extends LastFMBaseCommand<T> {
   subcategory = "spotify";
+
   spotifyService = ServiceRegistry.get(SpotifyService);
   spotifyArguments = ServiceRegistry.get(SpotifyArguments);
 
