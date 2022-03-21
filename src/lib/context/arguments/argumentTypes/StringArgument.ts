@@ -32,6 +32,7 @@ export interface StringArgumentOptions
     | Choice[]
     | string[]
     | { list: Choice[] | string[]; customMessage: string };
+  unstrictChoices: boolean;
 }
 
 export class StringArgument<
@@ -123,6 +124,7 @@ export class StringArgument<
     if (
       value &&
       choices.length &&
+      !this.options.unstrictChoices &&
       !choices.some((c) => c[1].toLowerCase() === value.toLowerCase())
     ) {
       throw new ValidationError(
