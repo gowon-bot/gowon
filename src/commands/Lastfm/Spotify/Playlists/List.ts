@@ -27,9 +27,16 @@ export class List extends PlaylistChildCommand {
       this.ctx
     );
 
+    this.spotifyPlaylistTagService.updatePlaylistNames(playlists.items);
+    this.spotifyPlaylistTagService.updateDefaultPlaylistName(
+      this.ctx,
+      defaultPlaylist,
+      playlists.items
+    );
+
     const embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor("Spotify playlists"))
-      .setTitle(`Your Spotify playlists`);
+      .setTitle("Your Spotify playlists");
 
     const simpleScrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
       items: playlists.items,

@@ -52,7 +52,7 @@ export default class Pace extends LastFMBaseCommand<typeof args> {
 
     const { requestable, perspective } = await this.getMentions();
 
-    const paceCalculator = new PaceCalculator(this.lastFMService, requestable);
+    const paceCalculator = new PaceCalculator(this.ctx, requestable);
 
     const pace = await paceCalculator.calculate(timeRange, milestone);
 

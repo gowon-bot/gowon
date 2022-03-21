@@ -3,6 +3,7 @@ import { TimeRange } from "../timeAndDate/helpers";
 import { Requestable } from "../../services/LastFM/LastFMAPIService";
 import { LastFMService } from "../../services/LastFM/LastFMService";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
+import { GowonContext } from "../context/Context";
 
 export interface PacePrediction {
   scrobbleRate: number;
@@ -13,7 +14,7 @@ export interface PacePrediction {
 export class PaceCalculator {
   private lastFMService = ServiceRegistry.get(LastFMService);
 
-  constructor(private ctx: any, private requestable: Requestable) {}
+  constructor(private ctx: GowonContext, private requestable: Requestable) {}
 
   private calculateScrobblesPerHour(
     scrobbles: number,

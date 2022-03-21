@@ -117,4 +117,37 @@ export class SpotifyPlaylistTagService extends BaseService {
     // If it's not typed as an object, typeorm will think it's an array
     return SpotifyPlaylistTag.create(JSON.parse(response) as {});
   }
+
+  async updatePlaylistNames(playlists: SpotifyPlaylist[]): Promise<void> {
+    const playlistTags = await SpotifyPlaylistTag.find({
+      playlistID: In(playlists.map((p) => p.id)),
+    });
+
+    for (const tag of playlistTags) {
+      const playlist = playlists.find((p) => p.id === tag.playlistID);
+
+      if (playlist && playlist.name !== tag.playlistName) {
+        tag.playlistName = playlist.name;
+        await tag.save();
+      }
+    }
+  }
+
+  async updateDefaultPlaylistName(
+    ctx: GowonContext,
+    defaultPlaylist: SpotifyPlaylistTag | undefined,
+    playlists: SpotifyPlaylist[]
+  ): Promise<void> {
+    const defaultSpotifyPlaylist = playlists.find(
+      (p) => p.id === defaultPlaylist?.playlistID
+    );
+
+    if (
+      defaultPlaylist &&
+      defaultSpotifyPlaylist &&
+      defaultSpotifyPlaylist.name !== defaultPlaylist.playlistName
+    ) {
+      await this.setPlaylistAsDefault(ctx, defaultSpotifyPlaylist);
+    }
+  }
 }
