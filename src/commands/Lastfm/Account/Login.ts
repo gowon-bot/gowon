@@ -73,12 +73,14 @@ export default class Login extends MirrorballBaseCommand<never, never> {
       );
 
       if (await confirmationEmbed.awaitConfirmation(this.ctx)) {
-        this.impromptuIndex(
-          successEmbed,
-          confirmationEmbed,
-          user.lastFMUsername,
-          this.author.id
-        );
+        try {
+          this.impromptuIndex(
+            successEmbed,
+            confirmationEmbed,
+            user.lastFMUsername,
+            this.author.id
+          );
+        } catch {}
       }
     }
   }
