@@ -113,3 +113,9 @@ process.on("SIGINT", unsubscribe);
 // // catches "kill pid" (for example: nodemon restart)
 process.on("SIGUSR1", unsubscribe);
 process.on("SIGUSR2", unsubscribe);
+
+process.on("unhandledRejection", (e) => {
+  console.error("UNHANDLED REJECTION:");
+
+  console.error(e);
+});
