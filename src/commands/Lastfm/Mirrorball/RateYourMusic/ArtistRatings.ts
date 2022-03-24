@@ -10,7 +10,7 @@ import { mean } from "mathjs";
 import { mostCommonOccurrence } from "../../../../helpers/stats";
 import { SimpleScrollingEmbed } from "../../../../lib/views/embeds/SimpleScrollingEmbed";
 import { displayNumber, displayRating } from "../../../../lib/views/displays";
-import { code, sanitizeForDiscord } from "../../../../helpers/discord";
+import { code, italic, sanitizeForDiscord } from "../../../../helpers/discord";
 import { standardMentions } from "../../../../lib/context/arguments/mentionTypes/mentions";
 import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";
 import { Flag } from "../../../../lib/context/arguments/argumentTypes/Flag";
@@ -147,7 +147,7 @@ export class ArtistRatings extends RateYourMusicIndexingChildCommand<
           sanitizeForDiscord(r.rateYourMusicAlbum.title) +
           (r.rateYourMusicAlbum.artistName.toLowerCase() !==
           artistName.toLowerCase()
-            ? code(
+            ? italic(
                 ` ${emDash} ${sanitizeForDiscord(
                   r.rateYourMusicAlbum.artistName
                 )}`
