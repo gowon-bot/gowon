@@ -1,5 +1,5 @@
 import { bold } from "../../../helpers/discord";
-import { Variation } from "../../../lib/command/BaseCommand";
+import { Variation } from "../../../lib/command/Command";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";

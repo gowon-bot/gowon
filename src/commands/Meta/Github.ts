@@ -1,7 +1,7 @@
-import { BaseCommand } from "../../lib/command/BaseCommand";
+import { Command } from "../../lib/command/Command";
 import { displayLink } from "../../lib/views/displays";
 
-export default class Github extends BaseCommand {
+export default class Github extends Command {
   idSeed = "apink chorom";
 
   subcategory = "about";

@@ -1,4 +1,4 @@
-import { BaseCommand } from "../../lib/command/BaseCommand";
+import { Command } from "../../lib/command/Command";
 import { AdminService } from "../../services/dbservices/AdminService";
 import { CommandNotFoundError } from "../../errors/errors";
 import { flatDeep } from "../../helpers";
@@ -15,7 +15,7 @@ const args = {
   command: new StringArgument({ index: { start: 0 }, required: true }),
 } as const;
 
-export default class HelpForOneCommand extends BaseCommand<typeof args> {
+export default class HelpForOneCommand extends Command<typeof args> {
   idSeed = "clc seungyeon";
 
   shouldBeIndexed = false;
@@ -172,7 +172,7 @@ export default class HelpForOneCommand extends BaseCommand<typeof args> {
       .setDescription(lineConsolidator.consolidate());
   }
 
-  private async runCustomHelp(commandClass: BaseCommand) {
+  private async runCustomHelp(commandClass: Command) {
     let command = new commandClass.customHelp!();
     command.redirectedFrom = this;
     await command.execute(this.ctx);

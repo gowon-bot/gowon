@@ -1,7 +1,7 @@
-import { BaseCommand } from "../../lib/command/BaseCommand";
+import { Command } from "../../lib/command/Command";
 import { Emoji } from "../../lib/Emoji";
 
-export default class Jopping extends BaseCommand {
+export default class Jopping extends Command {
   idSeed = "blackpink jisoo";
 
   subcategory = "fun";

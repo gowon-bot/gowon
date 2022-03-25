@@ -1,10 +1,10 @@
-import { BaseCommand } from "../../lib/command/BaseCommand";
+import { Command } from "../../lib/command/Command";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { TwitterService } from "../../services/Twitter/TwitterService";
 
 const args = {} as const;
 
-export default class Test extends BaseCommand<typeof args> {
+export default class Test extends Command<typeof args> {
   idSeed = "clc seunghee";
 
   description = "Testing testing 123...4???";

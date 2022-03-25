@@ -1,6 +1,6 @@
-import { BaseCommand } from "../../lib/command/BaseCommand";
+import { Command } from "../../lib/command/Command";
 
-export default class WJSN extends BaseCommand {
+export default class WJSN extends Command {
   idSeed = "clc yujin";
 
   subcategory = "fun";

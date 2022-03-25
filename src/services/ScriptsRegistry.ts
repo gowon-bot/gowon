@@ -1,12 +1,12 @@
 import { promisify } from "util";
 import _glob from "glob";
 import { LogicError } from "../errors/errors";
-import { BaseCommand } from "../lib/command/BaseCommand";
+import { Command } from "../lib/command/Command";
 import { SimpleMap } from "../helpers/types";
 import { code } from "../helpers/discord";
 const glob = promisify(_glob);
 
-type Script = (command: BaseCommand) => void;
+type Script = (command: Command) => void;
 type Scripts = SimpleMap<Script>;
 
 async function generateScripts(): Promise<Scripts> {
@@ -41,7 +41,7 @@ export class ScriptsRegistry {
     this.isInitialized = true;
   }
 
-  public runScript(scriptName: string, asCommand: BaseCommand) {
+  public runScript(scriptName: string, asCommand: Command) {
     const script = this.scripts[scriptName.toLowerCase()] as Script | undefined;
 
     if (script) {

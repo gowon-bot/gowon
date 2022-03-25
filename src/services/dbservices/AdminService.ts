@@ -9,7 +9,7 @@ import {
   LogicError,
 } from "../../errors/errors";
 import { Permission } from "../../database/entity/Permission";
-import { Can } from "../../lib/permissions/Can";
+import { Can } from "../../lib/permissions/old/Can";
 import { QueryFailedError } from "typeorm";
 import { ChannelBlacklist } from "../../database/entity/ChannelBlacklist";
 import { CacheScopedKey } from "../../database/cache/ShallowCache";

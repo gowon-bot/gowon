@@ -1,7 +1,7 @@
 import { code } from "../../helpers/discord";
-import { BaseCommand } from "../../lib/command/BaseCommand";
+import { Command } from "../../lib/command/Command";
 
-export default class GowonGreen extends BaseCommand {
+export default class GowonGreen extends Command {
   idSeed = "sonamoo nahyun";
 
   subcategory = "fun";

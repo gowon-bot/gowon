@@ -1,5 +1,5 @@
 import { code } from "../../../../helpers/discord";
-import { CommandRedirect } from "../../../../lib/command/BaseCommand";
+import { CommandRedirect } from "../../../../lib/command/Command";
 import { StringArrayArgument } from "../../../../lib/context/arguments/argumentTypes/StringArrayArgument";
 import {
   componentMap,

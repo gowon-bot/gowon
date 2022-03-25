@@ -6,7 +6,7 @@ import {
   LastScrobbledResponse,
 } from "./connector";
 import { displayDate } from "../../../../lib/views/displays";
-import { Variation } from "../../../../lib/command/BaseCommand";
+import { Variation } from "../../../../lib/command/Command";
 import { convertMirrorballDate } from "../../../../helpers/mirrorball";
 import { standardMentions } from "../../../../lib/context/arguments/mentionTypes/mentions";
 import {

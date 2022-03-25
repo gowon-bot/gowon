@@ -1,6 +1,6 @@
 import { PermissionsChildCommand } from "./PermissionsChildCommand";
 import { Role, User } from "discord.js";
-import { Variation } from "../../../lib/command/BaseCommand";
+import { Variation } from "../../../lib/command/Command";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { code } from "../../../helpers/discord";

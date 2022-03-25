@@ -11,7 +11,7 @@ import { RunAs } from "../../../lib/command/RunAs";
 import { asyncMap } from "../../../helpers";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { UserStringArgument } from "../../../lib/context/arguments/argumentTypes/UserStringArgument";
-import { BaseCommand } from "../../../lib/command/BaseCommand";
+import { Command } from "../../../lib/command/Command";
 
 export const permissionsArgs = {
   command: new StringArgument({ index: { start: 0 } }),
@@ -35,7 +35,7 @@ export abstract class PermissionsChildCommand extends AdminBaseChildCommand<
 
   adminCommand = true;
 
-  command!: BaseCommand;
+  command!: Command;
   aliases!: string[];
   commandRunAs!: RunAs;
 

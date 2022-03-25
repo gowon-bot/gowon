@@ -1,6 +1,6 @@
-import { BaseCommand } from "../../lib/command/BaseCommand";
+import { Command } from "../../lib/command/Command";
 
-export default class Issues extends BaseCommand {
+export default class Issues extends Command {
   idSeed = "apink eunji";
 
   secretCommand = true;

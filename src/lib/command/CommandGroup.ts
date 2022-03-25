@@ -1,12 +1,12 @@
 import { SimpleMap } from "../../helpers/types";
 import { flatDeep } from "../../helpers";
-import { BaseCommand } from "./BaseCommand";
+import { Command } from "./Command";
 
-type CommandImpl = { new (): BaseCommand };
+type CommandImpl = { new (): Command };
 export type Commands = SimpleMap<CommandImpl>;
 
 export class CommandGroup {
-  public commands: BaseCommand[];
+  public commands: Command[];
   public commandClasses: CommandImpl[];
 
   constructor(commands: CommandImpl[]) {
@@ -14,7 +14,7 @@ export class CommandGroup {
     this.commandClasses = commands;
   }
 
-  asDeepList(): Array<BaseCommand> {
+  asDeepList(): Array<Command> {
     return flatDeep(
       this.commands.map((c) =>
         c.hasChildren ? [c, ...c.children!.asDeepList()] : c

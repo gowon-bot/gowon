@@ -1,11 +1,11 @@
-import { BaseCommand } from "../../lib/command/BaseCommand";
+import { Command } from "../../lib/command/Command";
 import { standardMentions } from "../../lib/context/arguments/mentionTypes/mentions";
 
 const args = {
   ...standardMentions,
 } as const;
 
-export default class ID extends BaseCommand<typeof args> {
+export default class ID extends Command<typeof args> {
   idSeed = "exid hyerin";
 
   subcategory = "developer";

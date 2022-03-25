@@ -1,4 +1,4 @@
-import { BaseCommand } from "../../lib/command/BaseCommand";
+import { Command } from "../../lib/command/Command";
 import {
   ParentCommand,
   BaseChildCommand,
@@ -9,7 +9,7 @@ import { ServiceRegistry } from "../../services/ServicesRegistry";
 
 export abstract class MetaBaseCommand<
   T extends ArgumentsMap = {}
-> extends BaseCommand<T> {
+> extends Command<T> {
   category = "meta";
 
   metaService = ServiceRegistry.get(MetaService);

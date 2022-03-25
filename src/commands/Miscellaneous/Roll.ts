@@ -1,6 +1,6 @@
 import { Chance } from "chance";
 import { bold } from "../../helpers/discord";
-import { BaseCommand } from "../../lib/command/BaseCommand";
+import { Command } from "../../lib/command/Command";
 import { NumberArgument } from "../../lib/context/arguments/argumentTypes/NumberArgument";
 import { Validation } from "../../lib/validation/ValidationChecker";
 import { validators } from "../../lib/validation/validators";
@@ -19,7 +19,7 @@ const args = {
   }),
 } as const;
 
-export default class Roll extends BaseCommand<typeof args> {
+export default class Roll extends Command<typeof args> {
   idSeed = "dreamnote eunjo";
 
   description = "Roll a random number";

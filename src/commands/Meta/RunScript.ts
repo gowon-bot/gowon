@@ -1,5 +1,5 @@
 import { code } from "../../helpers/discord";
-import { BaseCommand } from "../../lib/command/BaseCommand";
+import { Command } from "../../lib/command/Command";
 import { StringArgument } from "../../lib/context/arguments/argumentTypes/StringArgument";
 import { Validation } from "../../lib/validation/ValidationChecker";
 import { validators } from "../../lib/validation/validators";
@@ -9,7 +9,7 @@ const args = {
   script: new StringArgument({ index: 0, required: true }),
 } as const;
 
-export default class RunScript extends BaseCommand<typeof args> {
+export default class RunScript extends Command<typeof args> {
   idSeed = "hot issue hyeongshin";
   description = "Run a script";
   subcategory = "developer";

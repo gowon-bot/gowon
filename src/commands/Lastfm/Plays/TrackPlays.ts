@@ -3,7 +3,7 @@ import { standardMentions } from "../../../lib/context/arguments/mentionTypes/me
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 import { Flag } from "../../../lib/context/arguments/argumentTypes/Flag";
-import { CommandRedirect } from "../../../lib/command/BaseCommand";
+import { CommandRedirect } from "../../../lib/command/Command";
 import GlobalTrackPlays from "./GlobalTrackPlays";
 
 const args = {

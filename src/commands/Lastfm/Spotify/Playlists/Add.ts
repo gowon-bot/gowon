@@ -1,6 +1,6 @@
 import { LogicError } from "../../../../errors/errors";
 import { bold, italic } from "../../../../helpers/discord";
-import { Variation } from "../../../../lib/command/BaseCommand";
+import { Variation } from "../../../../lib/command/Command";
 import { EmojisArgument } from "../../../../lib/context/arguments/argumentTypes/discord/EmojisArgument";
 import { StringArgument } from "../../../../lib/context/arguments/argumentTypes/StringArgument";
 import { removeEmojisFromString } from "../../../../lib/context/arguments/parsers/EmojiParser";

@@ -1,5 +1,5 @@
 import { User } from "../../../database/entity/User";
-import { Variation } from "../../../lib/command/BaseCommand";
+import { Variation } from "../../../lib/command/Command";
 import { DatasourceService } from "../../../lib/nowplaying/DatasourceService";
 import { NowPlayingBuilder } from "../../../lib/nowplaying/NowPlayingBuilder";
 import { RequirementMap } from "../../../lib/nowplaying/RequirementMap";

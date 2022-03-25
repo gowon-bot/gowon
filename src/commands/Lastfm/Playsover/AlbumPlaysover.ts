@@ -3,7 +3,7 @@ import { displayNumber } from "../../../lib/views/displays";
 import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { prefabFlags } from "../../../lib/context/arguments/prefabArguments";
-import { CommandRedirect } from "../../../lib/command/BaseCommand";
+import { CommandRedirect } from "../../../lib/command/Command";
 import AlbumPlaysequal from "./AlbumPlaysequal";
 import { bold } from "../../../helpers/discord";
 

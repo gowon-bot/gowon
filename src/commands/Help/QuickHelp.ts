@@ -1,9 +1,9 @@
-import { BaseCommand } from "../../lib/command/BaseCommand";
+import { Command } from "../../lib/command/Command";
 import { AdminService } from "../../services/dbservices/AdminService";
 import { Emoji } from "../../lib/Emoji";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 
-export default class QuickHelp extends BaseCommand {
+export default class QuickHelp extends Command {
   idSeed = "hot issue mayna";
 
   subcategory = "about";

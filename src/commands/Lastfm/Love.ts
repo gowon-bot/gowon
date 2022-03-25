@@ -1,5 +1,5 @@
 import { bold, italic } from "../../helpers/discord";
-import { Variation } from "../../lib/command/BaseCommand";
+import { Variation } from "../../lib/command/Command";
 import { prefabArguments } from "../../lib/context/arguments/prefabArguments";
 import { LastFMArgumentsMutableContext } from "../../services/LastFM/LastFMArguments";
 import { LastFMBaseCommand } from "./LastFMBaseCommand";

@@ -1,16 +1,16 @@
-import { AdminService } from "../../services/dbservices/AdminService";
+import { AdminService } from "../../../services/dbservices/AdminService";
 import { GuildMember } from "discord.js";
-import { Permission } from "../../database/entity/Permission";
-import { ChildCommand, isChildCommand } from "../command/Command";
+import { Permission } from "../../../database/entity/Permission";
+import { ChildCommand, isChildCommand } from "../../command/ChildCommand";
 import { In } from "typeorm";
-import { CommandRegistry } from "../command/CommandRegistry";
-import { BaseService } from "../../services/BaseService";
-import { ServiceRegistry } from "../../services/ServicesRegistry";
-import { GowonService } from "../../services/GowonService";
-import { asyncMap } from "../../helpers";
-import { SettingsService } from "../settings/SettingsService";
-import { GowonContext } from "../context/Context";
-import { BaseCommand } from "../command/BaseCommand";
+import { CommandRegistry } from "../../command/CommandRegistry";
+import { BaseService } from "../../../services/BaseService";
+import { ServiceRegistry } from "../../../services/ServicesRegistry";
+import { GowonService } from "../../../services/GowonService";
+import { asyncMap } from "../../../helpers";
+import { SettingsService } from "../../settings/SettingsService";
+import { GowonContext } from "../../context/Context";
+import { Command } from "../../command/Command";
 
 export enum CheckFailReason {
   disabled = "disabled",
@@ -120,7 +120,7 @@ export class Can extends BaseService<CanContext> {
 
   async run(
     ctx: CanContext,
-    command: BaseCommand,
+    command: Command,
     { useChannel }: { useChannel?: boolean } = { useChannel: false }
   ): Promise<CanCheck> {
     const client = ctx.client;
@@ -191,10 +191,7 @@ export class Can extends BaseService<CanContext> {
     };
   }
 
-  async viewList(
-    ctx: CanContext,
-    commands: BaseCommand[]
-  ): Promise<BaseCommand[]> {
+  async viewList(ctx: CanContext, commands: Command[]): Promise<Command[]> {
     const message = ctx.payload;
 
     const allPermissions = await Permission.find({
@@ -208,7 +205,7 @@ export class Can extends BaseService<CanContext> {
       this.getCachedPermissions(ctx)[c.id].push(c);
     });
 
-    const passed = [] as BaseCommand[];
+    const passed = [] as Command[];
 
     for (const command of commands) {
       const check = await this.run(ctx, command);

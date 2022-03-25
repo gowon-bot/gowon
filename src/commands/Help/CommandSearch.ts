@@ -1,4 +1,4 @@
-import { BaseCommand } from "../../lib/command/BaseCommand";
+import { Command } from "../../lib/command/Command";
 import { AdminService } from "../../services/dbservices/AdminService";
 import { displayNumber } from "../../lib/views/displays";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
@@ -12,7 +12,7 @@ const args = {
   }),
 } as const;
 
-export default class SearchCommands extends BaseCommand<typeof args> {
+export default class SearchCommands extends Command<typeof args> {
   idSeed = "exid solji";
 
   aliases = ["command", "commandsearch", "searchcommand", "sc"];
@@ -67,7 +67,7 @@ export default class SearchCommands extends BaseCommand<typeof args> {
     await this.send(embed);
   }
 
-  private displayCommand(command: BaseCommand, keywords: string) {
+  private displayCommand(command: Command, keywords: string) {
     const name = command.friendlyName.replace(keywords, (match) => bold(match));
 
     return (command.parentName ? command.parentName + " " : "") + name;

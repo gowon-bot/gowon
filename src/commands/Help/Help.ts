@@ -1,4 +1,4 @@
-import { BaseCommand, CommandRedirect } from "../../lib/command/BaseCommand";
+import { Command, CommandRedirect } from "../../lib/command/Command";
 import { EmbedField } from "discord.js";
 import { AdminService } from "../../services/dbservices/AdminService";
 import HelpForOneCommand from "./HelpForOneCommand";
@@ -11,7 +11,7 @@ import { Flag } from "../../lib/context/arguments/argumentTypes/Flag";
 import { code } from "../../helpers/discord";
 
 interface GroupedCommands {
-  [category: string]: BaseCommand[];
+  [category: string]: Command[];
 }
 
 const args = {
@@ -30,7 +30,7 @@ const args = {
   }),
 } as const;
 
-export default class Help extends BaseCommand<typeof args> {
+export default class Help extends Command<typeof args> {
   idSeed = "clc seungyeon";
 
   aliases = ["h"];

@@ -1,6 +1,6 @@
-import { BaseCommand } from "../../lib/command/BaseCommand";
+import { Command } from "../../lib/command/Command";
 
-export default class NCT extends BaseCommand {
+export default class NCT extends Command {
   idSeed = "iz*one hitomi";
 
   subcategory = "fun";

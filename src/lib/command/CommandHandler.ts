@@ -2,7 +2,7 @@ import { Message } from "discord.js";
 import { GowonService } from "../../services/GowonService";
 import { AdminService } from "../../services/dbservices/AdminService";
 import { Logger } from "../Logger";
-import { CheckFailReason } from "../permissions/Can";
+import { CheckFailReason } from "../permissions/old/Can";
 import { ParentCommand } from "./ParentCommand";
 import { MetaService } from "../../services/dbservices/MetaService";
 import { GowonClient } from "../GowonClient";
@@ -17,7 +17,7 @@ import Prefix from "../../commands/Meta/Prefix";
 import Help from "../../commands/Help/Help";
 import { GowonContext } from "../context/Context";
 import { Payload } from "../context/Payload";
-import { BaseCommand } from "./BaseCommand";
+import { Command } from "./Command";
 
 export class CommandHandler {
   commandRegistry = CommandRegistry.getInstance();
@@ -184,11 +184,7 @@ export class CommandHandler {
     }
   }
 
-  private async runCommand(
-    command: BaseCommand,
-    message: Message,
-    runAs: RunAs
-  ) {
+  private async runCommand(command: Command, message: Message, runAs: RunAs) {
     const newCommand = command.copy();
 
     const ctx = new GowonContext({

@@ -1,6 +1,6 @@
 import { ConcurrencyService } from "./ConcurrencyService";
 import { DatasourceService } from "../lib/nowplaying/DatasourceService";
-import { Can } from "../lib/permissions/Can";
+import { Can } from "../lib/permissions/old/Can";
 import { AdminService } from "./dbservices/AdminService";
 import { BotStatsService } from "./dbservices/BotStatsService";
 import { ComboService } from "./dbservices/ComboService";
