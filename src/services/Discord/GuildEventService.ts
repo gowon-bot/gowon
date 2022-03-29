@@ -4,15 +4,11 @@ import { CommandRegistry } from "../../lib/command/CommandRegistry";
 import { GowonContext } from "../../lib/context/Context";
 import { Logger } from "../../lib/Logger";
 import { BaseService } from "../BaseService";
-import { AdminService } from "../dbservices/AdminService";
 import { MirrorballService } from "../mirrorball/MirrorballService";
 import { MirrorballUsersService } from "../mirrorball/services/MirrorballUsersService";
 import { ServiceRegistry } from "../ServicesRegistry";
 
 export class GuildEventService extends BaseService {
-  get adminService() {
-    return ServiceRegistry.get(AdminService);
-  }
   get mirrorballService() {
     return ServiceRegistry.get(MirrorballService);
   }

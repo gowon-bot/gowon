@@ -23,19 +23,19 @@ const args = {
   }),
 };
 
-export class DisableInChannel extends PermissionsChildCommand<typeof args> {
+export class ChannelDisable extends PermissionsChildCommand<typeof args> {
   idSeed = "red velvet wendy";
 
   description = "Disable a command in a channel";
-  usage = ["command #channel", "command #channel"];
+  usage = ["command #channel"];
   aliases = ["channelblacklist", "channeldisable"];
 
   slashCommand = true;
 
   variations: Variation[] = [
     {
-      name: "enableinchannel",
-      variation: ["enableinchannel", "channelunblacklist", "channelenable"],
+      name: "channelenable",
+      variation: ["channelenable", "channelunblacklist"],
       description: "Re-enable a command in a channel",
       separateSlashCommand: true,
     },

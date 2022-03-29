@@ -3,13 +3,14 @@ import {
   Permission,
   PermissionType,
 } from "../../../database/entity/Permission";
-import { CommandNotFoundError, LogicError } from "../../../errors/errors";
+import { CommandNotFoundError } from "../../../errors/errors";
+import { CannotDisableCommandError } from "../../../errors/permissions";
 import { code } from "../../../helpers/discord";
 import { CommandRedirect, Variation } from "../../../lib/command/Command";
 import { ChannelArgument } from "../../../lib/context/arguments/argumentTypes/discord/ChannelArgument";
 import { DiscordUserArgument } from "../../../lib/context/arguments/argumentTypes/discord/DiscordUserArgument";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
-import { DisableInChannel } from "./DisableInChannel";
+import { ChannelDisable } from "./ChannelDisable";
 import { PermissionsChildCommand } from "./PermissionsChildCommand";
 import { UserDisable } from "./UserDisable";
 
@@ -49,13 +50,12 @@ export class Disable extends PermissionsChildCommand<typeof args> {
     },
     {
       when: (args) => !!args.channel,
-      redirectTo: DisableInChannel,
+      redirectTo: ChannelDisable,
     },
   ];
 
   slashCommand = true;
 
-  // Remove mentions inherited from child command
   arguments = args;
 
   async run() {
@@ -68,10 +68,9 @@ export class Disable extends PermissionsChildCommand<typeof args> {
 
     if (!command) throw new CommandNotFoundError();
 
-    if (["enable", "disable"].includes(command.name))
-      throw new LogicError(
-        `You can't disable the ${code(command.name)} command!`
-      );
+    if (["enable", "disable"].includes(command.name)) {
+      throw new CannotDisableCommandError(command.name);
+    }
 
     const permission = Permission.create({
       type: PermissionType.guild,

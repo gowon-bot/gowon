@@ -1,7 +1,5 @@
 import { ConcurrencyService } from "./ConcurrencyService";
 import { DatasourceService } from "../lib/nowplaying/DatasourceService";
-import { Can } from "../lib/permissions/old/Can";
-import { AdminService } from "./dbservices/AdminService";
 import { BotStatsService } from "./dbservices/BotStatsService";
 import { ComboService } from "./dbservices/ComboService";
 import { CrownsHistoryService } from "./dbservices/CrownsHistoryService";
@@ -48,12 +46,10 @@ import { PermissionsCacheService } from "../lib/permissions/PermissionsCacheServ
 export type Service<T = any> = { new (): T };
 
 const services: Service[] = [
-  AdminService,
   AnalyticsCollector,
   ArgumentParsingService,
   ArtistsService,
   BotStatsService,
-  Can,
   CardsService,
   ChartService,
   CrownsService,

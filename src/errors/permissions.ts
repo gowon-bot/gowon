@@ -1,4 +1,5 @@
 import { Permission, PermissionType } from "../database/entity/Permission";
+import { code } from "../helpers/discord";
 import { ClientError } from "./errors";
 
 export class CannotChangePrefixError extends ClientError {
@@ -68,5 +69,13 @@ export class PermissionDoesNotExistError extends ClientError {
 
   constructor(permission: Permission) {
     super(getPermissionDoesNotExistMessage(permission));
+  }
+}
+
+export class CannotDisableCommandError extends ClientError {
+  name = "CannotDisableCommandError";
+
+  constructor(commandName: string) {
+    super(`You can't disable the ${code(commandName)} command!`);
   }
 }

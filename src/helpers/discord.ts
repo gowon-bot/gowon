@@ -1,7 +1,5 @@
-import { Role, GuildMember, MessageReaction, User } from "discord.js";
+import { GuildMember, MessageReaction, User } from "discord.js";
 import escapeStringRegexp from "escape-string-regexp";
-import { OldPermission } from "../database/entity/OldPermission";
-import { GowonContext } from "../lib/context/Context";
 
 export function sanitizeForDiscord(string: string): string {
   const characters = ["||", "*", "_", "`"];
@@ -14,30 +12,6 @@ export function sanitizeForDiscord(string: string): string {
   }
 
   return string.replace(/\n/g, " ");
-}
-
-export interface NamedPermission extends OldPermission {
-  name: string;
-}
-export async function addNamesToPermissions(
-  ctx: GowonContext,
-  _permissions: OldPermission[]
-): Promise<NamedPermission[]> {
-  let namedPermissions = [] as NamedPermission[];
-
-  let permissions = <NamedPermission[]>_permissions;
-
-  for (let permission of permissions) {
-    let entity = await (permission.isRoleBased
-      ? permission.toDiscordRole(ctx)
-      : permission.toDiscordUser(ctx.guild!));
-
-    permission.name = entity instanceof Role ? entity.name : entity.username;
-
-    namedPermissions.push(permission);
-  }
-
-  return namedPermissions;
 }
 
 export function userHasRole(

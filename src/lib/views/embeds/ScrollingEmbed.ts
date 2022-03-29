@@ -14,7 +14,7 @@ import { DiscordService } from "../../../services/Discord/DiscordService";
 import { GowonContext } from "../../context/Context";
 
 export interface ScrollingEmbedOptions {
-  initialItems: string | EmbedField[] | Promise<string | EmbedField[]>;
+  initialItems: string | EmbedField[];
   totalPages: number;
   totalItems: number;
   startingPage: number;
@@ -43,7 +43,7 @@ export class ScrollingEmbed {
 
   private sentMessage!: Message;
   private currentPage = 1;
-  private currentItems: string | EmbedField[] | Promise<string | EmbedField[]>;
+  private currentItems: string | EmbedField[];
   private options: ScrollingEmbedOptions;
   private onPageChangeCallback: OnPageChangeCallback = () => "";
 
@@ -76,7 +76,7 @@ export class ScrollingEmbed {
   }
 
   public async send() {
-    await this.generateEmbed();
+    this.generateEmbed();
 
     this.sentMessage = await this.discordService.send(this.ctx, this.embed);
 
@@ -88,7 +88,7 @@ export class ScrollingEmbed {
       | ((embed: MessageEmbed) => Message)
       | ((embed: MessageEmbed) => Promise<Message>)
   ) {
-    await this.generateEmbed();
+    this.generateEmbed();
 
     this.sentMessage = await Promise.resolve(sendCallback(this.embed));
 
@@ -105,11 +105,7 @@ export class ScrollingEmbed {
     };
   }
 
-  private async generateEmbed() {
-    if (this.currentItems instanceof Promise) {
-      this.currentItems = await Promise.resolve(this.currentItems);
-    }
-
+  private generateEmbed() {
     this.embed.setFooter({
       text: this.options.customFooter(
         this.currentPage,
@@ -188,12 +184,12 @@ export class ScrollingEmbed {
 
         Promise.resolve(
           this.onPageChangeCallback(this.currentPage, this.options.totalPages)
-        ).then(async (items) => {
+        ).then((items) => {
           this.removeReaction(emoji, user.id);
 
           this.currentItems = items;
 
-          await this.generateEmbed();
+          this.generateEmbed();
 
           this.sentMessage.edit({ embeds: [this.embed] });
         });

@@ -4,7 +4,7 @@ import { UserDisable } from "./UserDisable";
 import { Help } from "./Help";
 import { View } from "./View";
 import { Disable } from "./Disable";
-import { DisableInChannel } from "./DisableInChannel";
+import { ChannelDisable } from "./ChannelDisable";
 import { SetAdminRole } from "./SetAdminRole";
 
 export default class PermissionsParentCommand extends AdminBaseParentCommand {
@@ -25,11 +25,9 @@ export default class PermissionsParentCommand extends AdminBaseParentCommand {
     // Disable
     "disable",
     "enable",
-    // DisableInChannel
-    "disableinchannel",
+    // ChannelDisable
     "channelblacklist",
     "channeldisable",
-    "enableinchannel",
     "channelunblacklist",
     "channelenable",
     // DisableInChannel
@@ -42,7 +40,7 @@ export default class PermissionsParentCommand extends AdminBaseParentCommand {
   ];
 
   children: CommandGroup = new CommandGroup(
-    [DisableInChannel, Disable, Help, SetAdminRole, UserDisable, View],
+    [ChannelDisable, Disable, Help, SetAdminRole, UserDisable, View],
     this.id
   );
 }

@@ -10,7 +10,6 @@ import {
   Permission,
   PermissionType,
 } from "../../../database/entity/Permission";
-import { asyncMap } from "../../../helpers";
 import { channelMention, userMention } from "@discordjs/builders";
 import { emDash } from "../../../helpers/specialCharacters";
 
@@ -54,11 +53,8 @@ export class View extends PermissionsChildCommand<typeof args> {
     const scrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
       items: disabledCommands,
       pageSize: 15,
-      pageRenderer: async (items, { offset }) => {
-        const renderedItems = await asyncMap(
-          items,
-          async (p) => await this.displayPermission(p)
-        );
+      pageRenderer: (items, { offset }) => {
+        const renderedItems = items.map((p) => this.displayPermission(p));
 
         return displayNumberedList(renderedItems, offset);
       },
@@ -109,7 +105,7 @@ export class View extends PermissionsChildCommand<typeof args> {
     return queries;
   }
 
-  private async displayPermission(permission: Permission): Promise<string> {
+  private displayPermission(permission: Permission): string {
     const commandName = this.commandRegistry.findByID(
       permission.commandID
     )!.friendlyName;

@@ -10,7 +10,6 @@ export abstract class ClientError extends Error {
   name = "ClientError";
   isClientFacing = true;
   silent = false;
-  ephemeral = false;
 
   constructor(public message: string, public footer = "") {
     super(message);
@@ -107,51 +106,11 @@ export class BadAmountError extends ClientError {
   }
 }
 
-export class CommandAlreadyDisabledError extends ClientError {
-  name = "CommandAlreadyDisabled";
-
-  constructor() {
-    super("that command is already disabled");
-  }
-}
-
 export class CommandNotFoundError extends ClientError {
   name = "CommandNotFoundError";
 
   constructor() {
     super("that command was not found!");
-  }
-}
-
-export class CommandNotDisabledError extends ClientError {
-  name = "CommandNotDisabledError";
-
-  constructor() {
-    super("that command is already enabled!");
-  }
-}
-
-export class MismatchedPermissionsError extends ClientError {
-  name = "MismatchedPermissionsError";
-
-  constructor(isBlacklist: boolean) {
-    super(
-      `permissions for that command are **${
-        isBlacklist ? "blacklist" : "whitelist"
-      }-based**. You cannot mix white and blacklists.`
-    );
-  }
-}
-
-export class PermissionsAlreadySetError extends ClientError {
-  name = "PermissionsAlreadySetError";
-
-  constructor(isBlacklist: boolean) {
-    super(
-      "that command has already been " + isBlacklist
-        ? "blacklisted"
-        : "whitelisted" + "for that user/role"
-    );
   }
 }
 

@@ -1,9 +1,9 @@
 import { Command } from "../../lib/command/Command";
-import { AdminService } from "../../services/dbservices/AdminService";
 import { displayNumber } from "../../lib/views/displays";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { StringArgument } from "../../lib/context/arguments/argumentTypes/StringArgument";
 import { bold, code } from "../../helpers/discord";
+import { PermissionsService } from "../../lib/permissions/PermissionsService";
 
 const args = {
   keywords: new StringArgument({
@@ -24,11 +24,7 @@ export default class SearchCommands extends Command<typeof args> {
 
   arguments = args;
 
-  adminService = ServiceRegistry.get(AdminService);
-
-  customContext = {
-    constants: { adminService: this.adminService },
-  };
+  permissionsService = ServiceRegistry.get(PermissionsService);
 
   async run() {
     const keywords = this.parsedArguments
@@ -37,10 +33,12 @@ export default class SearchCommands extends Command<typeof args> {
 
     const commandList = this.commandRegistry.deepList();
 
-    const commands = await this.adminService.can.viewList(
+    const canChecks = await this.permissionsService.canListInContext(
       this.ctx,
       commandList
     );
+
+    const commands = canChecks.filter((c) => c.allowed).map((cc) => cc.command);
 
     const foundCommands = this.commandRegistry.search(commands, keywords);
 

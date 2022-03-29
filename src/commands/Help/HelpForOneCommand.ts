@@ -1,5 +1,4 @@
 import { Command } from "../../lib/command/Command";
-import { AdminService } from "../../services/dbservices/AdminService";
 import { CommandNotFoundError } from "../../errors/errors";
 import { flatDeep } from "../../helpers";
 import { ParentCommand } from "../../lib/command/ParentCommand";
@@ -10,6 +9,7 @@ import { StringArgument } from "../../lib/context/arguments/argumentTypes/String
 import { Flag, isFlag } from "../../lib/context/arguments/argumentTypes/Flag";
 import { BaseArgument } from "../../lib/context/arguments/argumentTypes/BaseArgument";
 import { bold, code, italic } from "../../helpers/discord";
+import { PermissionsService } from "../../lib/permissions/PermissionsService";
 
 const args = {
   command: new StringArgument({ index: { start: 0 }, required: true }),
@@ -22,11 +22,7 @@ export default class HelpForOneCommand extends Command<typeof args> {
 
   arguments = args;
 
-  adminService = ServiceRegistry.get(AdminService);
-
-  customContext = {
-    constants: { adminService: this.adminService },
-  };
+  permissionsService = ServiceRegistry.get(PermissionsService);
 
   async run() {
     const command = this.parsedArguments.command;
@@ -51,7 +47,12 @@ export default class HelpForOneCommand extends Command<typeof args> {
       return;
     }
 
-    if (!(await this.adminService.can.run(this.ctx, command)).passed) {
+    const canCheck = await this.permissionsService.canRunInContext(
+      this.ctx,
+      command
+    );
+
+    if (!canCheck.allowed) {
       throw new CommandNotFoundError();
     }
 
@@ -130,10 +131,14 @@ export default class HelpForOneCommand extends Command<typeof args> {
   }
 
   private async showHelpForParentCommand(command: ParentCommand) {
-    const commands = await this.adminService.can.viewList(
+    const rawCommands = command.children.commands;
+
+    const canChecks = await this.permissionsService.canListInContext(
       this.ctx,
-      command.children.commands
+      rawCommands
     );
+
+    const commands = canChecks.filter((c) => c.allowed).map((cc) => cc.command);
 
     const shortestPrefix =
       [command.prefixes].flat().sort((a, b) => a.length - b.length)[0] ||
