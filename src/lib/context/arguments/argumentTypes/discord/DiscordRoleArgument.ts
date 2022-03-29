@@ -1,4 +1,6 @@
-import { Message, Role } from "discord.js";
+import { SlashCommandBuilder } from "@discordjs/builders";
+import { CommandInteraction, Message, Role } from "discord.js";
+import { GowonContext } from "../../../Context";
 import {
   BaseArgument,
   BaseArgumentOptions,
@@ -10,13 +12,12 @@ export interface DiscordRoleArgumentOptions
   extends BaseArgumentOptions,
     IndexableArgumentOptions {}
 
-export class DiscordRoleArgument extends BaseArgument<
-  Role,
-  DiscordRoleArgumentOptions
-> {
+export class DiscordRoleArgument<
+  OptionsT extends Partial<DiscordRoleArgumentOptions> = {}
+> extends BaseArgument<Role, DiscordRoleArgumentOptions, OptionsT> {
   mention = true;
 
-  constructor(options: Partial<DiscordRoleArgumentOptions> = {}) {
+  constructor(options: Partial<DiscordRoleArgumentOptions> | {} = {}) {
     super(defaultIndexableOptions, options);
   }
 
@@ -26,7 +27,17 @@ export class DiscordRoleArgument extends BaseArgument<
     return this.getElementFromIndex(mentions, this.options.index);
   }
 
-  parseFromInteraction(): Role {
-    return {} as Role;
+  parseFromInteraction(
+    interaction: CommandInteraction,
+    _: GowonContext,
+    argumentName: string
+  ): Role | undefined {
+    return (interaction.options.getRole(argumentName) as Role) ?? undefined;
+  }
+
+  addAsOption(slashCommand: SlashCommandBuilder, argumentName: string) {
+    return slashCommand.addRoleOption((option) =>
+      this.baseOption(option, argumentName)
+    );
   }
 }

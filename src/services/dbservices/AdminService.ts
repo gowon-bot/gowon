@@ -8,7 +8,7 @@ import {
   DuplicateRecordError,
   LogicError,
 } from "../../errors/errors";
-import { Permission } from "../../database/entity/Permission";
+import { OldPermission } from "../../database/entity/OldPermission";
 import { Can } from "../../lib/permissions/old/Can";
 import { QueryFailedError } from "typeorm";
 import { ChannelBlacklist } from "../../database/entity/ChannelBlacklist";
@@ -115,10 +115,10 @@ export class AdminService extends BaseService {
     isBlacklist: boolean,
     isRoleBased: boolean,
     commandFriendlyName: string
-  ): Promise<Permission> {
+  ): Promise<OldPermission> {
     const serverID = ctx.requiredGuild.id;
 
-    const permissions = await Permission.find({
+    const permissions = await OldPermission.find({
       where: { serverID, commandID },
       take: 1,
     });
@@ -129,7 +129,7 @@ export class AdminService extends BaseService {
     if (permissionsMismatched)
       throw new MismatchedPermissionsError(permissions[0].isBlacklist);
 
-    let newPermissions: Permission;
+    let newPermissions: OldPermission;
 
     try {
       this.log(
@@ -137,7 +137,7 @@ export class AdminService extends BaseService {
         `Creating new permission for entity ${entityID} and command ${commandID} in ${serverID}`
       );
 
-      newPermissions = Permission.create({
+      newPermissions = OldPermission.create({
         entityID,
         serverID,
         commandID,
@@ -164,7 +164,7 @@ export class AdminService extends BaseService {
     commandID: string,
     isRoleBased: boolean,
     commandFriendlyName: string
-  ): Promise<Permission> {
+  ): Promise<OldPermission> {
     return await this.setPermissions(
       ctx,
       entityID,
@@ -181,7 +181,7 @@ export class AdminService extends BaseService {
     commandID: string,
     isRoleBased: boolean,
     commandFriendlyName: string
-  ): Promise<Permission> {
+  ): Promise<OldPermission> {
     return await this.setPermissions(
       ctx,
       entityID,
@@ -199,7 +199,7 @@ export class AdminService extends BaseService {
     isRoleBased: boolean,
     isBlacklist: boolean,
     commandFriendlyName: string
-  ): Promise<Permission> {
+  ): Promise<OldPermission> {
     return await this.setPermissions(
       ctx,
       entityID,
@@ -214,10 +214,10 @@ export class AdminService extends BaseService {
     ctx: GowonContext,
     entityID: string,
     commandID: string
-  ): Promise<Permission> {
+  ): Promise<OldPermission> {
     const serverID = ctx.requiredGuild.id;
 
-    const permission = await Permission.findOne({
+    const permission = await OldPermission.findOne({
       where: { entityID, serverID, commandID },
     });
 
@@ -233,34 +233,34 @@ export class AdminService extends BaseService {
     return permission;
   }
 
-  async listPermissions(ctx: GowonContext): Promise<Permission[]> {
+  async listPermissions(ctx: GowonContext): Promise<OldPermission[]> {
     const serverID = ctx.requiredGuild.id;
 
     this.log(ctx, `Listing permissions in ${serverID}`);
-    return await Permission.find({ where: { serverID } });
+    return await OldPermission.find({ where: { serverID } });
   }
 
   async listPermissionsForCommand(
     ctx: GowonContext,
     commandID: string
-  ): Promise<Permission[]> {
+  ): Promise<OldPermission[]> {
     const serverID = ctx.requiredGuild.id;
 
     this.log(
       ctx,
       `Listing permissions in ${serverID} for command ${commandID}`
     );
-    return await Permission.find({ where: { serverID, commandID } });
+    return await OldPermission.find({ where: { serverID, commandID } });
   }
 
   async listPermissionsForEntity(
     ctx: GowonContext,
     entityID: string
-  ): Promise<Permission[]> {
+  ): Promise<OldPermission[]> {
     const serverID = ctx.requiredGuild.id;
 
     this.log(ctx, `Listing permissions in ${serverID} for entity ${entityID}`);
-    return await Permission.find({ where: { serverID, entityID } });
+    return await OldPermission.find({ where: { serverID, entityID } });
   }
 
   async blacklistCommandFromChannel(

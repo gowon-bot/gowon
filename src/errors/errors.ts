@@ -10,6 +10,7 @@ export abstract class ClientError extends Error {
   name = "ClientError";
   isClientFacing = true;
   silent = false;
+  ephemeral = false;
 
   constructor(public message: string, public footer = "") {
     super(message);

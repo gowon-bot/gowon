@@ -29,6 +29,7 @@ export abstract class ParentCommand extends Command {
     if (childCommand.command) {
       return childCommand.command;
     }
+
     return;
   }
 
@@ -43,5 +44,6 @@ export abstract class BaseChildCommand<T extends ArgumentsMap = {}>
 {
   shouldBeIndexed = false;
   abstract parentName: string;
+  parentID!: string;
   isChild = true;
 }

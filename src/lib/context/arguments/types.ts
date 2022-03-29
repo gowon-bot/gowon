@@ -1,5 +1,7 @@
 import { SimpleMap } from "../../../helpers/types";
 import { ArgumentReturnType, BaseArgument } from "./argumentTypes/BaseArgument";
+import { ChannelArgument } from "./argumentTypes/discord/ChannelArgument";
+import { DiscordRoleArgument } from "./argumentTypes/discord/DiscordRoleArgument";
 import { EmojisArgument } from "./argumentTypes/discord/EmojisArgument";
 import { Flag } from "./argumentTypes/Flag";
 import { NumberArgument } from "./argumentTypes/NumberArgument";
@@ -23,7 +25,9 @@ export type ImplementedOptions<T> =
   | TimeRangeArgument<T>
   | TimePeriodArgument<T>
   | EmojisArgument<T>
-  | DateArgument<T>;
+  | DateArgument<T>
+  | ChannelArgument<T>
+  | DiscordRoleArgument<T>;
 
 export type UnwrapProvidedOptions<T extends BaseArgument<any>> =
   T extends ImplementedOptions<infer U> ? U : {};

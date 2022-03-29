@@ -11,5 +11,8 @@ export default class MetaParentCommamnd extends MetaBaseParentCommand {
   prefixes = ["meta"];
   devCommand = true;
 
-  children: CommandGroup = new CommandGroup([TopCommands, Issue, ServerReport]);
+  children: CommandGroup = new CommandGroup(
+    [TopCommands, Issue, ServerReport],
+    this.id
+  );
 }

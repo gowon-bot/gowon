@@ -28,5 +28,5 @@ export default class JumbleParentCommand extends LastFMBaseParentCommand {
   prefixes = ["jumble", "j"];
   default = () => new Guess();
 
-  children: CommandGroup = new CommandGroup([Me, Hint, Guess, Quit]);
+  children: CommandGroup = new CommandGroup([Me, Hint, Guess, Quit], this.id);
 }

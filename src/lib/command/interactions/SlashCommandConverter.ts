@@ -14,6 +14,7 @@ export class SlashCommandConverter {
     }
 
     let slashCommand = new SlashCommandBuilder()
+      .setDefaultPermission(!(command.devCommand || command.adminCommand))
       .setName(
         (
           asVariation?.name ||

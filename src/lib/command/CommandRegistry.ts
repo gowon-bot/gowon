@@ -10,7 +10,10 @@ import { Command } from "./Command";
 const glob = promisify(_glob);
 
 type Registry = Array<Command>;
-type CommandFactory = SimpleMap<{ new (): Command }>;
+type CommandFactory = SimpleMap<{
+  command: { new (): Command };
+  parentID?: string;
+}>;
 
 export class CommandRegistry {
   private constructor() {}
@@ -40,20 +43,26 @@ export class CommandRegistry {
 
       if (instance.hasChildren) {
         instance.children!.commandClasses.forEach((c) => {
-          const childInstance = new c();
+          const childInstance = new c.command();
 
           if (!childInstance.archived) this.factory[childInstance.id] = c;
         });
       }
 
-      this.factory[instance.id] = command;
+      this.factory[instance.id] = { command };
 
       this.pool.push(instance);
     }
   }
 
   public make(commandID: string) {
-    return new this.factory[commandID]();
+    const commandFactory = this.factory[commandID];
+
+    const command = new commandFactory.command();
+
+    command.parentID = commandFactory.parentID;
+
+    return command;
   }
 
   async find(

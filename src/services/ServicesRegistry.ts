@@ -42,6 +42,8 @@ import { SpotifyPlaylistTagService } from "./Spotify/SpotifyPlaylistTagService";
 import { TwitterService } from "./Twitter/TwitterService";
 import { Responder } from "./Responder";
 import { CardsService } from "./dbservices/CardsService";
+import { PermissionsService } from "../lib/permissions/PermissionsService";
+import { PermissionsCacheService } from "../lib/permissions/PermissionsCacheService";
 
 export type Service<T = any> = { new (): T };
 
@@ -74,6 +76,8 @@ const services: Service[] = [
   MirrorballUsersService,
   NicknameService,
   NowPlayingEmbedParsingService,
+  PermissionsService,
+  PermissionsCacheService,
   PM2Service,
   RedirectsService,
   RedisService,

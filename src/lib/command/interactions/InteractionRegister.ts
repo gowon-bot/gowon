@@ -31,6 +31,10 @@ export class InteractionRegister {
 
   private async registerWithDiscord(commands: SlashCommandBuilder[]) {
     try {
+      if (config.environment === "development") {
+        await this.clearApplicationCommands();
+      }
+
       await this.discord.put(
         config.environment === "development"
           ? Routes.applicationGuildCommands(
@@ -44,6 +48,20 @@ export class InteractionRegister {
       );
     } catch (e) {
       console.log(e);
+    }
+  }
+
+  private async clearApplicationCommands() {
+    const commands = (await this.discord.get(
+      Routes.applicationCommands(config.discordClientID)
+    )) as [{ id: string }];
+
+    for (const command of commands) {
+      const deleteUrl = `${Routes.applicationCommands(
+        config.discordClientID
+      )}/${command.id}`;
+
+      await this.discord.delete(deleteUrl as `/${string}`);
     }
   }
 }

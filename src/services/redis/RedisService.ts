@@ -1,4 +1,5 @@
 import { fromUnixTime } from "date-fns";
+import { SimpleMap } from "../../helpers/types";
 import { GowonContext } from "../../lib/context/Context";
 import { BaseService } from "../BaseService";
 import { ServiceRegistry } from "../ServicesRegistry";
@@ -21,12 +22,34 @@ export class RedisService extends BaseService {
   }
 
   // Get
-  async get(ctx: RedisServiceContext, key: string) {
+  async get(
+    ctx: RedisServiceContext,
+    key: string
+  ): Promise<string | undefined> {
     return this.redis.get(ctx, this.prefixedKey(ctx, key));
   }
 
-  async sessionGet(ctx: RedisServiceContext, key: string) {
+  async sessionGet(
+    ctx: RedisServiceContext,
+    key: string
+  ): Promise<string | undefined> {
     return this.redis.get(ctx, this.sessionKey(ctx, key));
+  }
+
+  async getMany(ctx: RedisServiceContext, key: string): Promise<SimpleMap> {
+    const keys = await this.redis.keys(this.prefixedKey(ctx, key));
+
+    const response = await this.redis.getMany(ctx, keys);
+
+    const map = {} as SimpleMap;
+
+    response.forEach((val, idx) => {
+      if (val !== null) {
+        map[keys[idx]] = val;
+      }
+    });
+
+    return map;
   }
 
   // Set
@@ -59,8 +82,8 @@ export class RedisService extends BaseService {
   }
 
   // Delete
-  delete(ctx: RedisServiceContext, key: string) {
-    return this.redis.delete(ctx, this.prefixedKey(ctx, key));
+  async delete(ctx: RedisServiceContext, key: string): Promise<void> {
+    await this.redis.delete(ctx, this.prefixedKey(ctx, key));
   }
 
   sessionDelete(ctx: RedisServiceContext, key: string) {

@@ -15,7 +15,7 @@ export interface SimpleOptions<T> {
   pageRenderer?: (
     items: T[],
     pageInfo: { page: number; offset: number }
-  ) => string;
+  ) => string | Promise<string>;
 
   overrides?: Partial<ScrollingEmbedOptions>;
 }
@@ -41,8 +41,8 @@ export class SimpleScrollingEmbed<T> {
       )
     );
 
-    this.scrollingEmbed.onPageChange((page) => {
-      return this.renderItemsFromPage(page);
+    this.scrollingEmbed.onPageChange(async (page) => {
+      return await this.renderItemsFromPage(page);
     });
   }
 
@@ -54,7 +54,9 @@ export class SimpleScrollingEmbed<T> {
     return Math.ceil(this.options.items.length / this.options.pageSize);
   }
 
-  private renderItemsFromPage(page: number): string | EmbedField[] {
+  private async renderItemsFromPage(
+    page: number
+  ): Promise<string | EmbedField[]> {
     const offset = (page - 1) * this.options.pageSize;
 
     const items = this.options.items.slice(
@@ -63,7 +65,9 @@ export class SimpleScrollingEmbed<T> {
     );
 
     return this.options.pageRenderer
-      ? this.options.pageRenderer(items, { page, offset })
+      ? await Promise.resolve(
+          this.options.pageRenderer(items, { page, offset })
+        )
       : !isEmbedFields(items)
       ? items.join("\n")
       : items;

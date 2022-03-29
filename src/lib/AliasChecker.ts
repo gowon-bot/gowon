@@ -69,34 +69,31 @@ export class AliasChecker {
   }
 
   async getRunAs(command: Command, serverID: string): Promise<RunAs> {
-    let checks = this.aliasesString
+    const checks = this.aliasesString
       .toLowerCase()
-      .replace(
-        new RegExp(await this.gowonService.regexSafePrefix(serverID), "i"),
-        ""
-      )
+      .replace(new RegExp(this.gowonService.regexSafePrefix(serverID), "i"), "")
       .trim()
       .split(/\s+/);
 
-    let runAs = new RunAs();
+    const runAs = new RunAs();
 
     let parent: { command?: Command; atIndex?: number } = {};
 
-    for (let check_i = 0; check_i < checks.length; check_i++) {
-      const check = checks[check_i];
+    for (let checkIndex = 0; checkIndex < checks.length; checkIndex++) {
+      const check = checks[checkIndex];
 
       if (command.hasChildren) {
         if (this.parentCommandHasAlias(command as ParentCommand, check)) {
           parent = {
             command,
-            atIndex: check_i,
+            atIndex: checkIndex,
           };
         }
 
         if (
           parent.command &&
           parent.atIndex &&
-          parent.atIndex + 1 === check_i
+          parent.atIndex + 1 === checkIndex
         ) {
           return runAs.add({
             string: checks[parent.atIndex],
@@ -105,9 +102,10 @@ export class AliasChecker {
         }
 
         let child = await command.getChild(
-          checks.slice(check_i + 1).join(" ") || "",
+          checks.slice(checkIndex + 1).join(" ") || "",
           serverID
         );
+
         let childNoPrefix = await this.parentCommandGetChildNoPrefix(
           command as ParentCommand,
           check,

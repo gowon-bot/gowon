@@ -113,6 +113,7 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
   hasChildren = false;
   children?: CommandGroup;
   parentName?: string;
+  parentID?: string;
   isChild?: boolean;
 
   /**

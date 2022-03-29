@@ -1,6 +1,6 @@
 import { AdminService } from "../../../services/dbservices/AdminService";
 import { GuildMember } from "discord.js";
-import { Permission } from "../../../database/entity/Permission";
+import { OldPermission } from "../../../database/entity/OldPermission";
 import { ChildCommand, isChildCommand } from "../../command/ChildCommand";
 import { In } from "typeorm";
 import { CommandRegistry } from "../../command/CommandRegistry";
@@ -29,7 +29,7 @@ type CanContext = GowonContext<{
   };
   mutable?: {
     cachedPermissons?: {
-      [commandID: string]: Permission[];
+      [commandID: string]: OldPermission[];
     };
     adminRole?: string;
   };
@@ -73,7 +73,7 @@ export class Can extends BaseService<CanContext> {
     return runAs.runAs.toCommandArray().map((c) => c.id);
   }
 
-  private hasPermission(user: GuildMember, permission: Permission): boolean {
+  private hasPermission(user: GuildMember, permission: OldPermission): boolean {
     return permission.isRoleBased
       ? permission.isBlacklist
         ? !user.roles.cache.has(permission.entityID)
@@ -85,7 +85,7 @@ export class Can extends BaseService<CanContext> {
 
   private userHasPermissions(
     user: GuildMember,
-    permissions: Permission[]
+    permissions: OldPermission[]
   ): boolean {
     if (!permissions.length) return true;
 
@@ -143,11 +143,11 @@ export class Can extends BaseService<CanContext> {
       return { passed: false, reason: CheckFailReason.blacklistedFromChannel };
     }
 
-    let permissions: Permission[];
+    let permissions: OldPermission[];
 
     permissions =
       this.getCachedPermissions(ctx)[command.id] ||
-      (await Permission.find({
+      (await OldPermission.find({
         where: {
           serverID: ctx.guild?.id,
           commandID: isChildCommand(command)
@@ -194,7 +194,7 @@ export class Can extends BaseService<CanContext> {
   async viewList(ctx: CanContext, commands: Command[]): Promise<Command[]> {
     const message = ctx.payload;
 
-    const allPermissions = await Permission.find({
+    const allPermissions = await OldPermission.find({
       where: { serverID: message.guild?.id! },
     });
 

@@ -1,8 +1,6 @@
 import { Message } from "discord.js";
 import { GowonService } from "../../services/GowonService";
-import { AdminService } from "../../services/dbservices/AdminService";
-import { Logger } from "../Logger";
-import { CheckFailReason } from "../permissions/old/Can";
+import { HeaderlessLogger, Logger } from "../Logger";
 import { ParentCommand } from "./ParentCommand";
 import { MetaService } from "../../services/dbservices/MetaService";
 import { GowonClient } from "../GowonClient";
@@ -18,16 +16,17 @@ import Help from "../../commands/Help/Help";
 import { GowonContext } from "../context/Context";
 import { Payload } from "../context/Payload";
 import { Command } from "./Command";
+import { PermissionsService } from "../permissions/PermissionsService";
 
 export class CommandHandler {
   commandRegistry = CommandRegistry.getInstance();
   client!: GowonClient;
 
-  adminService = ServiceRegistry.get(AdminService);
+  permissionsService = ServiceRegistry.get(PermissionsService);
   metaService = ServiceRegistry.get(MetaService);
   gowonService = ServiceRegistry.get(GowonService);
   private nicknameService = ServiceRegistry.get(NicknameService);
-  private logger = new Logger();
+  private logger = new HeaderlessLogger();
 
   setClient(client: GowonClient) {
     this.client = client;
@@ -43,7 +42,6 @@ export class CommandHandler {
         guild: message.guild!,
         author: message.author,
       } as any,
-      custom: { constants: { adminService: this.adminService } },
     });
   }
 
@@ -82,29 +80,20 @@ export class CommandHandler {
       );
 
       if (command instanceof ParentCommand) {
-        command = (command.default && command.default()) || command;
-      }
+        const defaultID = command.default?.()?.id;
 
-      if (command.devCommand && !this.client.isDeveloper(message.author.id)) {
-        return;
-      }
-
-      const canCheck = await this.adminService.can.run(
-        this.context(message),
-        command,
-        {
-          useChannel: true,
+        if (defaultID) {
+          command = this.commandRegistry.findByID(defaultID) || command;
         }
+      }
+
+      const canCheck = await this.permissionsService.canRunInContext(
+        this.context(message),
+        command
       );
 
-      if (!canCheck.passed) {
-        Logger.log(
-          "CommandHandler",
-          canCheck.reason === CheckFailReason.disabled
-            ? `Attempt to run disabled command ${command.name}`
-            : `User ${message.author.username} did not have permissions to run command ${command.name} (${command.id})`
-        );
-
+      if (!canCheck.allowed) {
+        this.handleFailedCanCheck(command);
         return;
       }
 
@@ -196,5 +185,12 @@ export class CommandHandler {
     try {
       await newCommand.execute.bind(newCommand)(ctx);
     } catch {}
+  }
+
+  private handleFailedCanCheck(command: Command) {
+    Logger.log(
+      "CommandHandler",
+      `Attempt to run disabled command ${command.name}`
+    );
   }
 }

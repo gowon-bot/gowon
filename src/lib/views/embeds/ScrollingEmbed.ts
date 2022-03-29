@@ -14,7 +14,7 @@ import { DiscordService } from "../../../services/Discord/DiscordService";
 import { GowonContext } from "../../context/Context";
 
 export interface ScrollingEmbedOptions {
-  initialItems: string | EmbedField[];
+  initialItems: string | EmbedField[] | Promise<string | EmbedField[]>;
   totalPages: number;
   totalItems: number;
   startingPage: number;
@@ -34,7 +34,7 @@ export function isEmbedFields(
 type OnPageChangeCallback = (
   page: number,
   totalPages: number
-) => string | Promise<string> | EmbedField[] | Promise<EmbedField[]>;
+) => string | Promise<string | EmbedField[]> | EmbedField[];
 
 export class ScrollingEmbed {
   private get discordService() {
@@ -43,7 +43,7 @@ export class ScrollingEmbed {
 
   private sentMessage!: Message;
   private currentPage = 1;
-  private currentItems: string | EmbedField[];
+  private currentItems: string | EmbedField[] | Promise<string | EmbedField[]>;
   private options: ScrollingEmbedOptions;
   private onPageChangeCallback: OnPageChangeCallback = () => "";
 
@@ -76,7 +76,7 @@ export class ScrollingEmbed {
   }
 
   public async send() {
-    this.generateEmbed();
+    await this.generateEmbed();
 
     this.sentMessage = await this.discordService.send(this.ctx, this.embed);
 
@@ -88,7 +88,7 @@ export class ScrollingEmbed {
       | ((embed: MessageEmbed) => Message)
       | ((embed: MessageEmbed) => Promise<Message>)
   ) {
-    this.generateEmbed();
+    await this.generateEmbed();
 
     this.sentMessage = await Promise.resolve(sendCallback(this.embed));
 
@@ -105,7 +105,11 @@ export class ScrollingEmbed {
     };
   }
 
-  private generateEmbed() {
+  private async generateEmbed() {
+    if (this.currentItems instanceof Promise) {
+      this.currentItems = await Promise.resolve(this.currentItems);
+    }
+
     this.embed.setFooter({
       text: this.options.customFooter(
         this.currentPage,
@@ -184,12 +188,12 @@ export class ScrollingEmbed {
 
         Promise.resolve(
           this.onPageChangeCallback(this.currentPage, this.options.totalPages)
-        ).then((items) => {
+        ).then(async (items) => {
           this.removeReaction(emoji, user.id);
 
           this.currentItems = items;
 
-          this.generateEmbed();
+          await this.generateEmbed();
 
           this.sentMessage.edit({ embeds: [this.embed] });
         });

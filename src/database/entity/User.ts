@@ -2,7 +2,7 @@
 import "./DisabledCommand";
 import "./meta/CommandRun";
 import "./meta/Error";
-import "./Permission";
+import "./OldPermission";
 import "./Setting";
 
 import {

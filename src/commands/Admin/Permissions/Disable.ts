@@ -1,41 +1,108 @@
+import { MessageEmbed } from "discord.js";
+import {
+  Permission,
+  PermissionType,
+} from "../../../database/entity/Permission";
 import { CommandNotFoundError, LogicError } from "../../../errors/errors";
 import { code } from "../../../helpers/discord";
+import { CommandRedirect, Variation } from "../../../lib/command/Command";
+import { ChannelArgument } from "../../../lib/context/arguments/argumentTypes/discord/ChannelArgument";
+import { DiscordUserArgument } from "../../../lib/context/arguments/argumentTypes/discord/DiscordUserArgument";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
+import { DisableInChannel } from "./DisableInChannel";
 import { PermissionsChildCommand } from "./PermissionsChildCommand";
+import { UserDisable } from "./UserDisable";
 
 const args = {
-  command: new StringArgument({ index: { start: 0 } }),
+  command: new StringArgument({
+    index: { start: 0 },
+    description: "The command to disable",
+    required: true,
+  }),
+  channel: new ChannelArgument({
+    description: "The channel to disable the command in",
+  }),
+  user: new DiscordUserArgument({
+    description: "The user to disable the command for",
+  }),
 } as const;
 
-export class Disable extends PermissionsChildCommand {
+export class Disable extends PermissionsChildCommand<typeof args> {
   idSeed = "red velvet yeri";
 
   description = "Disable a command";
-
   usage = "command";
 
+  variations: Variation[] = [
+    {
+      name: "enable",
+      variation: "enable",
+      description: "Re-enable a command",
+      separateSlashCommand: true,
+    },
+  ];
+
+  redirects: CommandRedirect<typeof args>[] = [
+    {
+      when: (args) => !!args.user,
+      redirectTo: UserDisable,
+    },
+    {
+      when: (args) => !!args.channel,
+      redirectTo: DisableInChannel,
+    },
+  ];
+
+  slashCommand = true;
+
   // Remove mentions inherited from child command
-  arguments = args as any;
+  arguments = args;
 
   async run() {
-    if (!this.command) throw new CommandNotFoundError();
-    if (["enable", "disable"].includes(this.command.name))
+    const commandName = this.parsedArguments.command;
+
+    const { command } = await this.commandRegistry.find(
+      commandName,
+      this.requiredGuild.id
+    );
+
+    if (!command) throw new CommandNotFoundError();
+
+    if (["enable", "disable"].includes(command.name))
       throw new LogicError(
-        `You can't disable the ${code(this.command.name)} command!`
+        `You can't disable the ${code(command.name)} command!`
       );
 
-    let disabledCommand = await this.adminService.disableCommand(
-      this.ctx,
-      this.command.id,
-      this.commandRunAs.toCommandFriendlyName()
-    );
+    const permission = Permission.create({
+      type: PermissionType.guild,
+      commandID: command.id,
+      entityID: this.requiredGuild.id,
+    });
 
-    await this.send(
-      `Successfully disabled ${code(
-        this.commandRegistry.findByID(disabledCommand.commandID, {
-          includeSecret: true,
-        })?.name!
-      )}`
-    );
+    let embed: MessageEmbed;
+
+    if (!this.variationWasUsed("enable")) {
+      await this.permissionsService.createPermission(
+        this.ctx,
+        command,
+        permission
+      );
+
+      embed = this.newEmbed()
+        .setAuthor(this.generateEmbedAuthor("Permissions disable"))
+        .setDescription(`Successfully disabled ${code(command.name)}`);
+    } else {
+      await this.permissionsService.destroyPermission(
+        this.ctx,
+        command,
+        permission
+      );
+
+      embed = this.newEmbed()
+        .setAuthor(this.generateEmbedAuthor("Permissions enable"))
+        .setDescription(`Successfully enabled ${code(command.name)}`);
+    }
+
+    await this.send(embed);
   }
 }

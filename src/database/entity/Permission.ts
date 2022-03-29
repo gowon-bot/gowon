@@ -5,47 +5,62 @@ import {
   BaseEntity,
   Unique,
 } from "typeorm";
-import { User as DiscordUser, Role, Guild } from "discord.js";
-import { User } from "./User";
-import { GowonContext } from "../../lib/context/Context";
+import { SimpleMap } from "../../helpers/types";
+import {
+  generateCacheKey,
+  PermissionCacheKey,
+} from "../../lib/permissions/PermissionsCache";
+import { PermissionQuery } from "../../lib/permissions/PermissionsCacheService";
 
-@Entity({ name: "permissions" })
-@Unique(["serverID", "entityID", "commandID"])
+export enum PermissionType {
+  user = "user",
+  guildMember = "guildmember",
+  role = "role",
+  guild = "guild",
+  channel = "channel",
+  bot = "bot",
+}
+
+@Entity({ name: "new_permissions" })
+@Unique(["type", "entityID", "commandID"])
 export class Permission extends BaseEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column()
-  entityID!: string;
+  @Column({ type: "enum", enum: PermissionType })
+  type!: PermissionType;
 
-  @Column()
-  serverID!: string;
-
-  @Column()
-  isRoleBased!: boolean;
-
-  @Column()
-  isBlacklist!: boolean;
+  // If type = user or type = guildMember, then this is the user ID
+  // If type = role, then this is the role ID
+  // If type = guild, then this is the guild ID
+  // If type = channel, then this is the channel ID
+  // if type = bot, then this is null
+  @Column({ nullable: true })
+  entityID?: string;
 
   @Column()
   commandID!: string;
 
-  @Column()
-  commandFriendlyName!: string;
-
-  // devPermissions can only be modified by developers
-  @Column({ default: false })
-  devPermission!: boolean;
-
-  static async toDiscordRole(ctx: GowonContext, roleID: string): Promise<Role> {
-    return (await ctx.guild?.roles.fetch(roleID))!;
+  public asCacheKey(): PermissionCacheKey {
+    return generateCacheKey(this.type, this.commandID, this.entityID);
   }
 
-  async toDiscordUser(guild: Guild): Promise<DiscordUser> {
-    return (await User.toDiscordUser(guild, this.entityID))!;
-  }
+  // Static methods
+  static async getFromQueries(
+    queries: PermissionQuery[]
+  ): Promise<Permission[]> {
+    const queryBuilder = Permission.createQueryBuilder();
 
-  async toDiscordRole(ctx: GowonContext): Promise<Role> {
-    return (await Permission.toDiscordRole(ctx, this.entityID))!;
+    for (const query of queries) {
+      const where = {} as SimpleMap;
+
+      if (query.entityID) where.entityID = query.entityID;
+      if (query.type) where.type = query.type;
+      if (query.commandID) where.commandID = query.commandID;
+
+      queryBuilder.orWhere(where);
+    }
+
+    return await queryBuilder.getMany();
   }
 }

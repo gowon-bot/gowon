@@ -1,123 +1,131 @@
 import { PermissionsChildCommand } from "./PermissionsChildCommand";
-import { MessageEmbed, Role } from "discord.js";
+import { code } from "../../../helpers/discord";
+import { displayNumberedList } from "../../../lib/views/displays";
+import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingEmbed";
+import { PermissionQuery } from "../../../lib/permissions/PermissionsCacheService";
+import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
+import { ChannelArgument } from "../../../lib/context/arguments/argumentTypes/discord/ChannelArgument";
+import { DiscordUserArgument } from "../../../lib/context/arguments/argumentTypes/discord/DiscordUserArgument";
 import {
-  addNamesToPermissions,
-  code,
-  NamedPermission,
-} from "../../../helpers/discord";
-import { displayNumber } from "../../../lib/views/displays";
+  Permission,
+  PermissionType,
+} from "../../../database/entity/Permission";
+import { asyncMap } from "../../../helpers";
+import { channelMention, userMention } from "@discordjs/builders";
+import { emDash } from "../../../helpers/specialCharacters";
 
-interface GroupedPermissions {
-  [permission: string]: number;
-}
+const args = {
+  command: new StringArgument({
+    index: { start: 0 },
+    description: "The command to disable",
+  }),
+  channel: new ChannelArgument({
+    description: "The channel to disable the command in",
+  }),
+  user: new DiscordUserArgument({
+    description: "The user to disable the command for",
+  }),
+} as const;
 
-export class View extends PermissionsChildCommand {
+export class View extends PermissionsChildCommand<typeof args> {
   idSeed = "loona haseul";
 
-  description =
-    "View the permissions in the server, for a specific command, or for a specific user/role";
+  description = "View the permissions in this server";
 
   usage = ["", "command", "role:roleid or @role", "user:userid or @user"];
-
-  throwOnNoCommand = false;
   aliases = ["list"];
 
+  slashCommand = true;
+
+  arguments = args;
+
   async run() {
-    let permissions: NamedPermission[] = [];
-    let embed: MessageEmbed;
+    const query = await this.getQueries();
 
-    if (this.command) {
-      permissions = await addNamesToPermissions(
-        this.ctx,
-        await this.adminService.listPermissionsForCommand(
-          this.ctx,
-          this.command.id
-        )
-      );
+    const disabledCommands = await this.permissionsService.listPermissions(
+      this.ctx,
+      query
+    );
 
-      embed = this.newEmbed()
-        .setTitle(
-          `Permissions for ${code(
-            this.commandRunAs.toCommandFriendlyName()
-          )} in ${this.guild?.name}`
-        )
-        .setDescription(
-          permissions.length
-            ? "This command is " +
-                (permissions[0].isBlacklist
-                  ? "blacklisted for"
-                  : "whitelisted for") +
-                "\n" +
-                permissions
-                  .map((p) => p.name + (p.isRoleBased ? " (role)" : ""))
-                  .join(", ")
-            : `This server doesn't have any permissions set for ${code(
-                this.commandRunAs.toCommandFriendlyName()
-              )}!`
+    const embed = this.newEmbed()
+      .setAuthor(this.generateEmbedAuthor("Disabled commands"))
+      .setTitle(`Disabled commands in ${this.guild?.name}`);
+
+    const scrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
+      items: disabledCommands,
+      pageSize: 15,
+      pageRenderer: async (items, { offset }) => {
+        const renderedItems = await asyncMap(
+          items,
+          async (p) => await this.displayPermission(p)
         );
-    } else if (this.users.length || this.roles.length) {
-      let entity = this.users[0] ?? this.roles[0];
-      let entityName = entity instanceof Role ? entity.name : entity.username;
 
-      permissions = await addNamesToPermissions(
-        this.ctx,
-        await this.adminService.listPermissionsForEntity(this.ctx, entity.id)
-      );
+        return displayNumberedList(renderedItems, offset);
+      },
+      overrides: {
+        itemName: "disabled command",
+      },
+    });
 
-      let blacklisted = permissions.filter((p) => p.isBlacklist);
-      let whitelisted = permissions.filter((p) => !p.isBlacklist);
+    scrollingEmbed.send();
+  }
 
-      embed = this.newEmbed()
-        .setTitle(`Permissions for ${code(entityName)} in ${this.guild?.name}`)
-        .setDescription(
-          permissions.length
-            ? (blacklisted.length
-                ? `Blacklisted for ` +
-                  blacklisted
-                    .map((p) => code(p.commandFriendlyName))
-                    .join(", ") +
-                  "\n"
-                : "") +
-                (whitelisted.length
-                  ? `Whitelisted for ` +
-                    whitelisted
-                      .map((p) => code(p.commandFriendlyName))
-                      .join(", ")
-                  : "")
-            : `This server doesn't have any permissions set for ${code(
-                entityName
-              )}!`
-        );
-    } else {
-      permissions = await addNamesToPermissions(
-        this.ctx,
-        await this.adminService.listPermissions(this.ctx)
-      );
+  private async getQueries(): Promise<PermissionQuery[]> {
+    const { command } = await this.commandRegistry.find(
+      this.parsedArguments.command || "",
+      this.requiredGuild.id
+    );
 
-      let groupedPermissions = permissions.reduce((acc, p) => {
-        if (!acc[p.commandFriendlyName]) acc[p.commandFriendlyName] = 1;
-        else acc[p.commandFriendlyName] += 1;
+    const commandID = command?.id;
 
-        return acc;
-      }, {} as GroupedPermissions);
+    const queries = [] as PermissionQuery[];
 
-      embed = this.newEmbed()
-        .setTitle(`Permissions for ${this.guild?.name}`)
-        .setDescription(
-          permissions.length
-            ? Object.keys(groupedPermissions)
-                .map(
-                  (p) =>
-                    `${code(p)} - ${displayNumber(
-                      groupedPermissions[p],
-                      "permission"
-                    )}`
-                )
-                .join("\n")
-            : "This server doesn't have any permissions set yet!"
-        );
+    if (commandID || this.parsedArguments.channel) {
+      queries.push({
+        commandID,
+        type: PermissionType.channel,
+        entityID: this.parsedArguments.channel?.id,
+      });
     }
 
-    await this.send(embed);
+    if (commandID || this.parsedArguments.user) {
+      queries.push({
+        commandID,
+        type: PermissionType.guildMember,
+        entityID: this.parsedArguments.user
+          ? `${this.requiredGuild.id}:${this.parsedArguments.user.id}`
+          : undefined,
+      });
+    }
+
+    if (!this.parsedArguments.user && !this.parsedArguments.channel) {
+      queries.push({
+        commandID,
+        type: PermissionType.guild,
+        entityID: this.requiredGuild.id,
+      });
+    }
+
+    return queries;
+  }
+
+  private async displayPermission(permission: Permission): Promise<string> {
+    const commandName = this.commandRegistry.findByID(
+      permission.commandID
+    )!.friendlyName;
+
+    let extra = "";
+
+    switch (permission.type) {
+      case PermissionType.guildMember:
+        const [_, userID] = permission.entityID!.split(":");
+        extra = ` ${emDash} ${userMention(userID)}`;
+        break;
+      case PermissionType.channel:
+        extra = ` ${emDash} ${channelMention(permission.entityID!)}`;
+        break;
+    }
+
+    return `${code(commandName)}${extra}`;
   }
 }
