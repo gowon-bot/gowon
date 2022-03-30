@@ -3,17 +3,16 @@ import {
   Permission,
   PermissionType,
 } from "../../../database/entity/Permission";
-import { NotTextChannelError } from "../../../errors/discord";
 import { CommandNotFoundError } from "../../../errors/errors";
-import { mentionChannel, code } from "../../../helpers/discord";
+import { code, mentionRole } from "../../../helpers/discord";
 import { Variation } from "../../../lib/command/Command";
-import { ChannelArgument } from "../../../lib/context/arguments/argumentTypes/discord/ChannelArgument";
+import { DiscordRoleArgument } from "../../../lib/context/arguments/argumentTypes/discord/DiscordRoleArgument";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { PermissionsChildCommand } from "./PermissionsChildCommand";
 
 const args = {
-  channel: new ChannelArgument({
-    description: "The channel to disable the command in",
+  role: new DiscordRoleArgument({
+    description: "The role to disable the command for",
     required: true,
   }),
   command: new StringArgument({
@@ -23,20 +22,19 @@ const args = {
   }),
 };
 
-export class ChannelDisable extends PermissionsChildCommand<typeof args> {
-  idSeed = "red velvet wendy";
+export class RoleDisable extends PermissionsChildCommand<typeof args> {
+  idSeed = "kep1er hikaru";
 
-  description = "Disable a command in a channel";
-  usage = ["command #channel"];
-  aliases = ["channelblacklist", "channeldisable"];
+  description = "Disable a command for a role";
+  usage = ["command @role"];
 
   slashCommand = true;
 
   variations: Variation[] = [
     {
-      name: "channelenable",
-      variation: ["channelenable", "channelunblacklist"],
-      description: "Re-enable a command in a channel",
+      name: "roleenable",
+      variation: ["roleenable"],
+      description: "Re-enable a command for a role",
       separateSlashCommand: true,
     },
   ];
@@ -44,10 +42,8 @@ export class ChannelDisable extends PermissionsChildCommand<typeof args> {
   arguments = args;
 
   async run() {
-    const channel = this.parsedArguments.channel!;
+    const role = this.parsedArguments.role!;
     const commandName = this.parsedArguments.command;
-
-    if (channel.type !== "GUILD_TEXT") throw new NotTextChannelError();
 
     const { command } = await this.commandRegistry.find(
       commandName,
@@ -57,15 +53,15 @@ export class ChannelDisable extends PermissionsChildCommand<typeof args> {
     if (!command) throw new CommandNotFoundError();
 
     const permission = Permission.create({
-      type: PermissionType.channel,
+      type: PermissionType.role,
       commandID: command.id,
-      entityID: channel.id,
+      entityID: role.id,
     });
 
     let embed: MessageEmbed;
 
     if (
-      !this.variationWasUsed("channelenable") &&
+      !this.variationWasUsed("roleenable") &&
       !this.runAs.variationWasUsed("enable")
     ) {
       await this.permissionsService.createPermission(
@@ -75,10 +71,10 @@ export class ChannelDisable extends PermissionsChildCommand<typeof args> {
       );
 
       embed = this.newEmbed()
-        .setAuthor(this.generateEmbedAuthor("Permissions channel disable"))
+        .setAuthor(this.generateEmbedAuthor("Permissions role disable"))
         .setDescription(
-          `Successfully disabled ${code(command.name)} in ${mentionChannel(
-            channel.id
+          `Successfully disabled ${code(command.name)} for ${mentionRole(
+            role.id
           )}`
         );
     } else {
@@ -89,10 +85,10 @@ export class ChannelDisable extends PermissionsChildCommand<typeof args> {
       );
 
       embed = this.newEmbed()
-        .setAuthor(this.generateEmbedAuthor("Permissions channel enable"))
+        .setAuthor(this.generateEmbedAuthor("Permissions role enable"))
         .setDescription(
-          `Successfully enabled ${code(command.name)} in ${mentionChannel(
-            channel.id
+          `Successfully enabled ${code(command.name)} for ${mentionRole(
+            role.id
           )}`
         );
     }

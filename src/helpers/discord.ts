@@ -65,3 +65,7 @@ export function mentionChannel(channelID: string): string {
 export function mentionGuildMember(userID: string): string {
   return `<@!${userID}>`;
 }
+
+export function mentionRole(roleID: string): string {
+  return `<@&${roleID}>`;
+}

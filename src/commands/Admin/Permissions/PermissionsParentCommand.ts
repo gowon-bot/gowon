@@ -6,6 +6,9 @@ import { View } from "./View";
 import { Disable } from "./Disable";
 import { ChannelDisable } from "./ChannelDisable";
 import { SetAdminRole } from "./SetAdminRole";
+import { RoleDisable } from "./RoleDisable";
+import { BotDisable } from "./BotDisable";
+import { BotwideUserDisable } from "./BotwideUserDisable";
 
 export default class PermissionsParentCommand extends AdminBaseParentCommand {
   idSeed = "loona vivi";
@@ -37,10 +40,27 @@ export default class PermissionsParentCommand extends AdminBaseParentCommand {
     "whitelist",
     // SetAdminRole,
     "setadminrole",
+    // RoleDisable
+    "roledisable",
+    "roleenable",
+    // BotDisable
+    "botdisable",
+    "botenable",
   ];
 
   children: CommandGroup = new CommandGroup(
-    [ChannelDisable, Disable, Help, SetAdminRole, UserDisable, View],
+    [
+      Help,
+      SetAdminRole,
+      View,
+      // Disables
+      Disable,
+      BotDisable,
+      BotwideUserDisable,
+      ChannelDisable,
+      RoleDisable,
+      UserDisable,
+    ],
     this.id
   );
 }

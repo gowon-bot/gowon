@@ -20,8 +20,12 @@ export class Help extends PermissionsChildCommand {
           This will disable for all non-admin users. To enable it again, run \`${prefix}enable <commandName>\`.`
         )
         .addField(
-          "Disabling commands for users/roles",
-          `You can also set permissions on commands for certain users and roles. Run \`${prefix}userdisable <commandName> @user/role\` to ban a user/role from running a a command. Use \`${prefix}userenable\` to re-enable it.`
+          "Disabling commands for users",
+          `You can also set permissions on commands for certain users. Run \`${prefix}userdisable <commandName> @user\` to ban a user from running a command. Use \`${prefix}userenable\` to re-enable it.`
+        )
+        .addField(
+          "Disabling commands for roles",
+          `It also works for roles. Run \`${prefix}roledisable <commandName> @role\` to ban a role from running a command. Use \`${prefix}roleenable\` to re-enable it.`
         )
         .addField(
           "Disabling commands in channels",

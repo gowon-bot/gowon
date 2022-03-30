@@ -10,19 +10,23 @@ import {
   Permission,
   PermissionType,
 } from "../../../database/entity/Permission";
-import { channelMention, userMention } from "@discordjs/builders";
+import { channelMention, roleMention, userMention } from "@discordjs/builders";
 import { emDash } from "../../../helpers/specialCharacters";
+import { DiscordRoleArgument } from "../../../lib/context/arguments/argumentTypes/discord/DiscordRoleArgument";
 
 const args = {
   command: new StringArgument({
     index: { start: 0 },
-    description: "The command to disable",
+    description: "The command to view permissions for",
   }),
   channel: new ChannelArgument({
-    description: "The channel to disable the command in",
+    description: "The channel to view permissions for",
   }),
   user: new DiscordUserArgument({
-    description: "The user to disable the command for",
+    description: "The user to view permissions for",
+  }),
+  role: new DiscordRoleArgument({
+    description: "The role to view permissions for",
   }),
 } as const;
 
@@ -94,7 +98,19 @@ export class View extends PermissionsChildCommand<typeof args> {
       });
     }
 
-    if (!this.parsedArguments.user && !this.parsedArguments.channel) {
+    if (commandID || this.parsedArguments.role) {
+      queries.push({
+        commandID,
+        type: PermissionType.role,
+        entityID: this.parsedArguments.role?.id,
+      });
+    }
+
+    if (
+      !this.parsedArguments.user &&
+      !this.parsedArguments.channel &&
+      !this.parsedArguments.role
+    ) {
       queries.push({
         commandID,
         type: PermissionType.guild,
@@ -119,6 +135,9 @@ export class View extends PermissionsChildCommand<typeof args> {
         break;
       case PermissionType.channel:
         extra = ` ${emDash} ${channelMention(permission.entityID!)}`;
+        break;
+      case PermissionType.role:
+        extra = ` ${emDash} ${roleMention(permission.entityID!)}`;
         break;
     }
 

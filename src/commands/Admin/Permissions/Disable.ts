@@ -8,10 +8,12 @@ import { CannotDisableCommandError } from "../../../errors/permissions";
 import { code } from "../../../helpers/discord";
 import { CommandRedirect, Variation } from "../../../lib/command/Command";
 import { ChannelArgument } from "../../../lib/context/arguments/argumentTypes/discord/ChannelArgument";
+import { DiscordRoleArgument } from "../../../lib/context/arguments/argumentTypes/discord/DiscordRoleArgument";
 import { DiscordUserArgument } from "../../../lib/context/arguments/argumentTypes/discord/DiscordUserArgument";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { ChannelDisable } from "./ChannelDisable";
 import { PermissionsChildCommand } from "./PermissionsChildCommand";
+import { RoleDisable } from "./RoleDisable";
 import { UserDisable } from "./UserDisable";
 
 const args = {
@@ -25,6 +27,9 @@ const args = {
   }),
   user: new DiscordUserArgument({
     description: "The user to disable the command for",
+  }),
+  role: new DiscordRoleArgument({
+    description: "The role to disable the command for",
   }),
 } as const;
 
@@ -47,6 +52,10 @@ export class Disable extends PermissionsChildCommand<typeof args> {
     {
       when: (args) => !!args.user,
       redirectTo: UserDisable,
+    },
+    {
+      when: (args) => !!args.role,
+      redirectTo: RoleDisable,
     },
     {
       when: (args) => !!args.channel,
