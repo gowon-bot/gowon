@@ -76,7 +76,7 @@ export class CardsService extends BaseService {
         limit: 250,
         username: requestable,
       }),
-      await this.inventory(user),
+      await AlbumCard.find(),
     ]);
 
     const filtered = await this.filterAlbumCards(
@@ -160,8 +160,12 @@ export class CardsService extends BaseService {
         return true;
       });
 
+      console.log(albumCard);
+
       if (!albumCard) filtered.push(album);
     }
+
+    console.log(filtered.length);
 
     return filtered;
   }
