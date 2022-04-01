@@ -1,7 +1,7 @@
 import { NoAlbumsToMintError } from "../../errors/cards";
 import { bold, italic } from "../../helpers/discord";
 import { Emoji } from "../../lib/Emoji";
-import { CardsChildCommand } from "./CardsChildCommant";
+import { CardsChildCommand } from "./CardsChildCommand";
 
 export class Mint extends CardsChildCommand {
   idSeed = "ive liz";

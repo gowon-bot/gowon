@@ -8,7 +8,7 @@ import { Emoji } from "../../lib/Emoji";
 import { displayNumber } from "../../lib/views/displays";
 import { RedisService } from "../../services/redis/RedisService";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
-import { CardsChildCommand } from "./CardsChildCommant";
+import { CardsChildCommand } from "./CardsChildCommand";
 
 export class Work extends CardsChildCommand {
   idSeed = "kep1er xiaoting";

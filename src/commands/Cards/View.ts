@@ -9,7 +9,7 @@ import { WhoKnowsService } from "../../services/Discord/WhoKnowsService";
 import { LastFMArguments } from "../../services/LastFM/LastFMArguments";
 import { LastFMService } from "../../services/LastFM/LastFMService";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
-import { CardsChildCommand } from "./CardsChildCommant";
+import { CardsChildCommand } from "./CardsChildCommand";
 
 const args = {
   ...prefabArguments.album,

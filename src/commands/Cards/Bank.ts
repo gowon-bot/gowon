@@ -1,6 +1,6 @@
 import { Emoji } from "../../lib/Emoji";
 import { displayNumber } from "../../lib/views/displays";
-import { CardsChildCommand } from "./CardsChildCommant";
+import { CardsChildCommand } from "./CardsChildCommand";
 
 export class Bank extends CardsChildCommand {
   idSeed = "kep1er mashiro";
