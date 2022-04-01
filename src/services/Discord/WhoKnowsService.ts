@@ -1,12 +1,27 @@
-import { toInt } from "../../helpers/lastFM";
+import { bold } from "../../helpers/discord";
+import { LinkGenerator, toInt } from "../../helpers/lastFM";
 import { GowonContext } from "../../lib/context/Context";
+import { Emoji } from "../../lib/Emoji";
+import { displayLink } from "../../lib/views/displays";
 import { BaseService } from "../BaseService";
-import { MirrorballUsersService } from "../mirrorball/services/MirrorballUsersService";
+import {
+  MirrorballPrivacy,
+  MirrorballUser,
+} from "../mirrorball/MirrorballTypes";
+import {
+  MirrorballUsersService,
+  PrivateUserDisplay,
+} from "../mirrorball/services/MirrorballUsersService";
 import {
   RedisService,
   RedisServiceContextOptions,
 } from "../redis/RedisService";
 import { ServiceRegistry } from "../ServicesRegistry";
+import { NicknameService, UnknownUserDisplay } from "./NicknameService";
+
+export interface DisplayUserOptions {
+  customProfileLink: string;
+}
 
 type WhoKnowsServiceContext = GowonContext<{
   constants?: { redisOptions?: RedisServiceContextOptions };
@@ -18,6 +33,9 @@ export class WhoKnowsService extends BaseService<WhoKnowsServiceContext> {
   }
   get mirrorballUsersService() {
     return ServiceRegistry.get(MirrorballUsersService);
+  }
+  private get nicknameService() {
+    return ServiceRegistry.get(NicknameService);
   }
 
   customContext = {
@@ -45,6 +63,50 @@ export class WhoKnowsService extends BaseService<WhoKnowsServiceContext> {
       const newTries = existingTries ? toInt(existingTries) + 1 : 1;
 
       await this.redis.sessionSet(this.ctx(ctx), this.retryKey(), newTries);
+    }
+  }
+
+  displayUser(
+    ctx: GowonContext,
+    user: MirrorballUser,
+    options?: Partial<DisplayUserOptions>
+  ): string {
+    let nickname = this.nicknameService.cacheGetNickname(ctx, user.discordID);
+
+    const profileLink =
+      options?.customProfileLink || LinkGenerator.userPage(user.username);
+
+    if (nickname) {
+      if (nickname === UnknownUserDisplay) {
+        this.recordUnknownMember(ctx, user.discordID);
+
+        return nickname;
+      }
+
+      const display = displayLink(nickname, profileLink);
+
+      return user.discordID === ctx.author.id ? bold(display) : display;
+    }
+
+    switch (user.privacy) {
+      case MirrorballPrivacy.Discord:
+        return (
+          this.nicknameService.cacheGetUsername(ctx, user.discordID) ||
+          UnknownUserDisplay
+        );
+
+      case MirrorballPrivacy.FMUsername:
+        return Emoji.lastfm + " " + displayLink(user.username, profileLink);
+      case MirrorballPrivacy.Both:
+        return displayLink(
+          this.nicknameService.cacheGetUsername(ctx, user.discordID) ||
+            UnknownUserDisplay,
+          profileLink
+        );
+
+      case MirrorballPrivacy.Private:
+      case MirrorballPrivacy.Unset:
+        return PrivateUserDisplay;
     }
   }
 

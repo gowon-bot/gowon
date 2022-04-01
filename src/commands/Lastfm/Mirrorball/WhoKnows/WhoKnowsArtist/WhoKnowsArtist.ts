@@ -104,10 +104,12 @@ export default class WhoKnowsArtist extends WhoKnowsBaseCommand<
         string: displayNumberedList(
           rows.map(
             (wk) =>
-              `${this.displayUser(wk.user)} - **${displayNumber(
-                wk.playcount,
-                "**play"
-              )}${crown?.user?.discordID === wk.user.discordID ? " 👑" : ""}`
+              `${this.whoKnowsService.displayUser(
+                this.ctx,
+                wk.user
+              )} - **${displayNumber(wk.playcount, "**play")}${
+                crown?.user?.discordID === wk.user.discordID ? " 👑" : ""
+              }`
           )
         ),
       },

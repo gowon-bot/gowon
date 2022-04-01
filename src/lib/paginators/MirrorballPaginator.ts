@@ -1,15 +1,16 @@
 import { SimpleMap } from "../../helpers/types";
+import { GowonContext } from "../context/Context";
 import { Paginator } from "./Paginator";
 
 export type MirrorballQueryFunction<P, R> = (
-  ctx: SimpleMap,
+  ctx: GowonContext,
   params: P
 ) => Promise<R>;
 
 function onPage<P extends SimpleMap, R>(
   callback: MirrorballQueryFunction<P, R>,
   pageSize: number,
-  ctx: SimpleMap
+  ctx: GowonContext
 ): (ctx: SimpleMap, params: P & { page?: number }) => Promise<R> {
   return (_, params) => {
     const newParams = Object.assign(params, {
@@ -31,7 +32,7 @@ export class MirrorballPaginator<P, R> extends Paginator<P, R> {
     pageSize: number,
     maxPages: number,
     params: P,
-    ctx: SimpleMap
+    ctx: GowonContext
   ) {
     super(onPage(callback, pageSize, ctx), maxPages, params, ctx);
   }

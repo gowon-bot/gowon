@@ -18,10 +18,13 @@ import { UNUSED_CONFIG } from "../../services/dbservices/NowPlayingService";
 import { GlobalArtistRankComponent } from "./components/GlobalArtistRankComponent";
 import { ServerArtistRankComponent } from "./components/ServerRankComponent";
 import { Choice } from "../context/arguments/argumentTypes/StringArgument";
+import { CardOwnershipComponent } from "./components/CardOwnershipComponent";
+import { LovedAndOwnedComponent } from "./compoundComponents/LovedAndOwnedComponent";
 
 // Types
 export type NowPlayingComponent = {
   new (values: any): BaseNowPlayingComponent<any>;
+  componentName: string;
 };
 
 type ComponentMap = {
@@ -32,6 +35,7 @@ type ComponentMap = {
 // Note: This list is used to determine order. The components will appear in this order in lists
 // and when the embed is generated, it sorts using order before checking size
 const componentList = [
+  CardOwnershipComponent,
   LovedComponent,
   ArtistPlaysComponent,
   AlbumPlaysComponent,
@@ -49,6 +53,7 @@ const componentList = [
 ] as const;
 
 export const compoundComponentList = [
+  LovedAndOwnedComponent,
   ArtistPlaysInARowComponent,
   ArtistPlaysAndCrownComponent,
 
@@ -58,10 +63,6 @@ export const compoundComponentList = [
 
 // Maps
 export const componentMap = componentList.reduce((acc, val) => {
-  if (val instanceof String) {
-    return acc;
-  }
-
   const name = val.componentName;
 
   acc[name] = val;
@@ -78,6 +79,12 @@ export const compoundComponentMap = compoundComponentList.reduce((acc, val) => {
 }, {} as ComponentMap);
 
 // Functions
+export function getComponents(showSecret = false): NowPlayingComponent[] {
+  return componentList.filter((c) => {
+    return showSecret || !c.secret;
+  });
+}
+
 export function getComponentByName(
   name: string
 ): NowPlayingComponent | undefined {

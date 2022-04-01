@@ -1,25 +1,26 @@
 import { insertAtIndex, promiseAllSettled } from "../helpers";
 import { Requestable } from "../services/LastFM/LastFMAPIService";
+import { GowonContext } from "./context/Context";
 
 export interface FetchedResponses<T> {
   [username: string]: T | undefined;
 }
 
 export class MultiRequester {
-  constructor(private ctx: any, public requestables: Requestable[]) {}
+  constructor(private ctx: GowonContext, public requestables: Requestable[]) {}
 
   async fetch<T, ParamsT>(
-    method: (ctx: any, params: ParamsT) => Promise<T>,
+    method: (ctx: GowonContext, params: ParamsT) => Promise<T>,
     params: ParamsT,
     options?: {}
   ): Promise<FetchedResponses<T>>;
   async fetch<T>(
-    method: (ctx: any, ...params: any[]) => Promise<T>,
+    method: (ctx: GowonContext, ...params: any[]) => Promise<T>,
     params: any[],
     options?: { usernameInPosition?: number }
   ): Promise<FetchedResponses<T>>;
   async fetch<T, ParamsT>(
-    method: (ctx: any, ...params: any[]) => Promise<T>,
+    method: (ctx: GowonContext, ...params: any[]) => Promise<T>,
     params: any,
     options?: any
   ): Promise<FetchedResponses<T>> {

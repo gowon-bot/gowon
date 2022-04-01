@@ -102,7 +102,7 @@ export class Me extends JumbleChildCommand<typeof args> {
       } on Last.fm and you have scrobbled them **${displayNumber(
         artist.userPlaycount,
         "**time"
-      )} (ranked #${displayNumber(artist.rank)}).`,
+      )}.`,
       {
         shouldDisplay: this.tagConsolidator.hasAnyTags(),
         string: `This artist is tagged as ${tags

@@ -1,26 +1,17 @@
 import { MessageEmbed } from "discord.js";
 import { User } from "../../../../database/entity/User";
-import { bold } from "../../../../helpers/discord";
-import { LinkGenerator } from "../../../../helpers/lastFM";
 import { ArgumentsMap } from "../../../../lib/context/arguments/types";
-import { Emoji } from "../../../../lib/Emoji";
 import { MirrorballBaseCommand } from "../../../../lib/indexing/MirrorballCommands";
-import { displayLink } from "../../../../lib/views/displays";
+import { NicknameService } from "../../../../services/Discord/NicknameService";
 import {
-  NicknameService,
-  UnknownUserDisplay,
-} from "../../../../services/Discord/NicknameService";
-import { WhoKnowsService } from "../../../../services/Discord/WhoKnowsService";
+  DisplayUserOptions,
+  WhoKnowsService,
+} from "../../../../services/Discord/WhoKnowsService";
 import {
   MirrorballPrivacy,
   MirrorballUser,
 } from "../../../../services/mirrorball/MirrorballTypes";
-import { PrivateUserDisplay } from "../../../../services/mirrorball/services/MirrorballUsersService";
 import { ServiceRegistry } from "../../../../services/ServicesRegistry";
-
-export interface DisplayUserOptions {
-  customProfileLink: string;
-}
 
 export abstract class WhoKnowsBaseCommand<
   R,
@@ -69,46 +60,7 @@ export abstract class WhoKnowsBaseCommand<
     user: MirrorballUser,
     options?: Partial<DisplayUserOptions>
   ): string {
-    let nickname = this.nicknameService.cacheGetNickname(
-      this.ctx,
-      user.discordID
-    );
-
-    const profileLink =
-      options?.customProfileLink || LinkGenerator.userPage(user.username);
-
-    if (nickname) {
-      if (nickname === UnknownUserDisplay) {
-        this.whoKnowsService.recordUnknownMember(this.ctx, user.discordID);
-
-        return nickname;
-      }
-
-      const display = displayLink(nickname, profileLink);
-
-      return user.discordID === this.author.id ? bold(display) : display;
-    }
-
-    switch (user.privacy) {
-      case MirrorballPrivacy.Discord:
-        return (
-          this.nicknameService.cacheGetUsername(this.ctx, user.discordID) ||
-          UnknownUserDisplay
-        );
-
-      case MirrorballPrivacy.FMUsername:
-        return Emoji.lastfm + " " + displayLink(user.username, profileLink);
-      case MirrorballPrivacy.Both:
-        return displayLink(
-          this.nicknameService.cacheGetUsername(this.ctx, user.discordID) ||
-            UnknownUserDisplay,
-          profileLink
-        );
-
-      case MirrorballPrivacy.Private:
-      case MirrorballPrivacy.Unset:
-        return PrivateUserDisplay;
-    }
+    return this.whoKnowsService.displayUser(this.ctx, user, options);
   }
 
   protected async cacheUserInfo(users: MirrorballUser[]) {

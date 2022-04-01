@@ -4,6 +4,11 @@ import { LogicError } from "../../../errors/errors";
 import { shuffle } from "../../../helpers";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { bold } from "../../../helpers/discord";
+import { ServiceRegistry } from "../../../services/ServicesRegistry";
+import { CardsService } from "../../../services/dbservices/CardsService";
+import { Chance } from "chance";
+import { displayNumber } from "../../../lib/views/displays";
+import { Emoji } from "../../../lib/Emoji";
 
 const args = {
   guess: new StringArgument({
@@ -23,7 +28,11 @@ export class Guess extends JumbleChildCommand<typeof args> {
 
   slashCommand = true;
 
+  cardsService = ServiceRegistry.get(CardsService);
+
   async run() {
+    const { dbUser } = await this.getMentions({ senderRequired: true });
+
     let guess = this.parsedArguments.guess;
 
     let jumbledArtist = await this.sessionGetJSON<JumbledArtist>(
@@ -40,11 +49,25 @@ export class Guess extends JumbleChildCommand<typeof args> {
       guess.toLowerCase().replace(/\s+/g, " ") ===
       jumbledArtist.unjumbled.toLowerCase().replace(/\s+/g, " ")
     ) {
+      const earned = Chance().natural({ min: 3, max: 5 });
+      const bankAccount = await this.cardsService.changeBankAccount(
+        this.ctx,
+        dbUser,
+        earned
+      );
+
       this.redisService.sessionDelete(this.ctx, jumbleRedisKey);
 
-      await this.reply(
-        `You are correct! The artist was ${bold(jumbledArtist.unjumbled)}`
-      );
+      const embed = this.newEmbed()
+        .setAuthor(this.generateEmbedAuthor("Jumble guess"))
+        .setDescription(
+          `You are correct! The artist was ${bold(jumbledArtist.unjumbled)}
+Earned ${Emoji.fip}${displayNumber(earned)}! You now have ${Emoji.fip}${
+            bankAccount.amount
+          }`
+        );
+
+      await this.send(embed);
     } else {
       if (this.payload.isMessage()) {
         await this.payload.source.react(

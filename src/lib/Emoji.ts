@@ -38,6 +38,7 @@ export const Emoji = {
   gowonPatreon: "<:gowonpatreon:883948448301334589>",
   404: "<:404:869383534429737031>",
   gowonScrobbled: "<:gowonScrobbled:944727673022849154>",
+  fip: "<:fip:959302552443314227>",
 
   fullStar: "<:fullStar:843763033858899968>",
   halfStar: "<:halfStar:843763307994284032>",

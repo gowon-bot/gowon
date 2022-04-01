@@ -41,6 +41,7 @@ import { SpotifyArguments } from "./Spotify/SpotifyArguments";
 import { SpotifyPlaylistTagService } from "./Spotify/SpotifyPlaylistTagService";
 import { TwitterService } from "./Twitter/TwitterService";
 import { Responder } from "./Responder";
+import { CardsService } from "./dbservices/CardsService";
 
 export type Service<T = any> = { new (): T };
 
@@ -51,6 +52,7 @@ const services: Service[] = [
   ArtistsService,
   BotStatsService,
   Can,
+  CardsService,
   ChartService,
   CrownsService,
   CrownsHistoryService,

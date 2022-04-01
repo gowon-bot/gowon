@@ -40,7 +40,7 @@ export default class TagCombo extends LastFMBaseCommand<typeof args> {
       this.ctx
     );
 
-    const comboCalculator = new TagComboCalculator(this.ctx, this.tagsService);
+    const comboCalculator = new TagComboCalculator(this.ctx);
 
     const combo = await comboCalculator.calculate(paginator);
 

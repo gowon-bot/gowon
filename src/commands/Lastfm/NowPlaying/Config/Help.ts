@@ -1,6 +1,6 @@
 import { code } from "../../../../helpers/discord";
 import {
-  componentMap,
+  getComponents,
   sortConfigOptions,
 } from "../../../../lib/nowplaying/componentMap";
 import { NowPlayingConfigChildCommand } from "./NowPlayingConfigChildCommand";
@@ -32,7 +32,7 @@ nowplaying config allows you to customize which elements appear in the footer of
 You can also use \`${this.prefix}reacts\` to control nowplaying reactions
 
 **Options**
-${sortConfigOptions(Object.keys(componentMap))
+${sortConfigOptions(getComponents().map((o) => o.componentName))
   .map((o) => code(o))
   .join(", ")}
 

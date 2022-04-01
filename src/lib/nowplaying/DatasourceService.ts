@@ -22,6 +22,8 @@ import { Logger } from "../Logger";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { GowonContext } from "../context/Context";
 import { Payload } from "../context/Payload";
+import { CardsService } from "../../services/dbservices/CardsService";
+import { AlbumCard } from "../../database/entity/cards/AlbumCard";
 
 export interface ResolvedRequirements {
   [requirement: string]: any;
@@ -55,6 +57,9 @@ export class DatasourceService extends BaseService<DatasourceServiceContext> {
   }
   get crownsService() {
     return ServiceRegistry.get(CrownsService);
+  }
+  get cardsService() {
+    return ServiceRegistry.get(CardsService);
   }
 
   private nowPlaying(ctx: DatasourceServiceContext): RecentTrack {
@@ -154,6 +159,14 @@ export class DatasourceService extends BaseService<DatasourceServiceContext> {
     } catch {
       return undefined;
     }
+  }
+
+  async albumCard(
+    ctx: DatasourceServiceContext
+  ): Promise<AlbumCard | undefined> {
+    const np = this.nowPlaying(ctx);
+
+    return await this.cardsService.getCard(ctx, np.artist, np.album);
   }
 
   albumPlays(ctx: DatasourceServiceContext): QueryPart {

@@ -1,5 +1,6 @@
 import { sleep } from "../../helpers";
 import { Params } from "../../services/LastFM/LastFMService.types";
+import { GowonContext } from "../context/Context";
 
 export function isPaginator<T = any>(
   value: Paginator<T> | any
@@ -11,10 +12,13 @@ export class Paginator<ParamsT extends Params = Params, ResponseT = any> {
   currentPage: number = 0;
 
   constructor(
-    private readonly method: (ctx: any, params: ParamsT) => Promise<ResponseT>,
+    private readonly method: (
+      ctx: GowonContext,
+      params: ParamsT
+    ) => Promise<ResponseT>,
     public maxPages: number,
     private params: ParamsT,
-    private ctx: any
+    private ctx: GowonContext
   ) {}
 
   async getNext(): Promise<ResponseT | undefined> {
@@ -39,7 +43,7 @@ export class Paginator<ParamsT extends Params = Params, ResponseT = any> {
   }
 
   async *pagesIterator(
-    method: (ctx: any, params: ParamsT) => Promise<ResponseT>
+    method: (ctx: GowonContext, params: ParamsT) => Promise<ResponseT>
   ) {
     for (let page = this.currentPage + 1; page <= this.maxPages; page++) {
       yield await method(this.ctx, {
@@ -50,7 +54,7 @@ export class Paginator<ParamsT extends Params = Params, ResponseT = any> {
   }
 
   private generatePages(
-    method: (ctx: any, params: ParamsT) => Promise<ResponseT>
+    method: (ctx: GowonContext, params: ParamsT) => Promise<ResponseT>
   ): Promise<ResponseT>[] {
     let pages = [];
 

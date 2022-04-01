@@ -1,6 +1,4 @@
 import gql from "graphql-tag";
-import { SimpleMap } from "../../../helpers/types";
-import { RedirectsService } from "../../../services/dbservices/RedirectsService";
 import {
   RecentTrack,
   RecentTracks,
@@ -9,6 +7,7 @@ import { PlaysParams } from "../../../services/mirrorball/MirrorballTypes";
 import { MirrorballUsersService } from "../../../services/mirrorball/services/MirrorballUsersService";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { Combo, ComboCalculator } from "../../calculators/ComboCalculator";
+import { GowonContext } from "../../context/Context";
 import { mirrorballClient } from "../../indexing/client";
 import {
   MirrorballQueryFunction,
@@ -16,12 +15,11 @@ import {
 } from "../../paginators/MirrorballPaginator";
 
 export async function getCombo(
-  ctx: SimpleMap,
+  ctx: GowonContext,
   queryFunc: MirrorballQueryFunction<any, any>,
   values: any
 ): Promise<Combo> {
   const mirrorballUsersService = ServiceRegistry.get(MirrorballUsersService);
-  const redirectsService = ServiceRegistry.get(RedirectsService);
 
   await mirrorballUsersService.updateAndWait(
     values,
@@ -42,15 +40,15 @@ export async function getCombo(
     ctx
   );
 
-  const comboCalculator = new ComboCalculator(redirectsService, []);
+  const comboCalculator = new ComboCalculator(ctx, []);
 
   return await comboCalculator.calculate(paginator);
 }
 
 export function playsQuery(
   nowPlaying: RecentTrack
-): (variables: PlaysParams) => Promise<RecentTracks> {
-  return async (variables: PlaysParams) => {
+): MirrorballQueryFunction<PlaysParams, RecentTracks> {
+  return async (_ctx: GowonContext, variables: PlaysParams) => {
     const query = gql`
       query plays($playsInput: PlaysInput!, $pageInput: PageInput) {
         plays(playsInput: $playsInput, pageInput: $pageInput) {
