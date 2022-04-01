@@ -26,7 +26,7 @@ export type PermissionsCacheMutableContext = {
 
 export type PermissionsCacheContext = GowonContext<{
   mutable?: PermissionsCacheMutableContext;
-  constants?: { redisOptions?: RedisServiceContextOptions };
+  constants?: { redisOptions?: RedisServiceContextOptions; isAdmin?: boolean };
 }>;
 
 export class PermissionsCacheService extends BaseService<PermissionsCacheContext> {
@@ -94,18 +94,23 @@ export class PermissionsCacheService extends BaseService<PermissionsCacheContext
         commandID: command?.id,
       },
       {
-        type: PermissionType.channel,
-        entityID: ctx.payload.channel.id,
-        commandID: command?.id,
-      },
-      {
         type: PermissionType.user,
         entityID: ctx.author.id,
         commandID: command?.id,
       },
     ];
 
+    if (ctx.payload.channel) {
+      queries.push({
+        type: PermissionType.channel,
+        entityID: ctx.payload.channel.id,
+        commandID: command?.id,
+      });
+    }
+
     if (ctx.guild) {
+      const roles = ctx.authorMember?.roles;
+
       queries.push(
         {
           type: PermissionType.guild,
@@ -117,7 +122,7 @@ export class PermissionsCacheService extends BaseService<PermissionsCacheContext
           entityID: `${ctx.guild!.id}:${ctx.author.id}`,
           commandID: command?.id,
         },
-        ...ctx.authorMember.roles.cache.map((r) => ({
+        ...roles?.cache?.map((r) => ({
           type: PermissionType.role,
           entityID: r.id,
           commandID: command?.id,

@@ -227,7 +227,7 @@ export class PermissionsService extends BaseService {
     ctx: GowonContext,
     command: Command
   ): CanCheck | undefined {
-    if (ctx.payload.guild) {
+    if (ctx.payload.guild && ctx.authorMember) {
       for (const role of ctx.authorMember.roles.cache.values()) {
         const permission = this.permissionsCacheService.get(ctx, {
           type: PermissionType.role,
@@ -258,16 +258,23 @@ export class PermissionsService extends BaseService {
   }
 
   private checkAdmin(
-    ctx: GowonContext,
+    ctx: PermissionsCacheContext,
     command: Command
   ): CanCheck | undefined {
-    const adminRole = this.settingsService.get("adminRole", {
-      guildID: ctx.guild?.id,
-    });
+    const adminRole =
+      ctx.constants.isAdmin === undefined
+        ? this.settingsService.get("adminRole", {
+            guildID: ctx.guild?.id,
+          })
+        : undefined;
 
     const isAdmin =
-      (adminRole && ctx.authorMember.roles.cache.has(adminRole)) ||
-      ctx.authorMember.permissions.has("ADMINISTRATOR");
+      ctx.constants.isAdmin !== undefined
+        ? ctx.constants.isAdmin
+        : (adminRole && ctx.authorMember.roles.cache.has(adminRole)) ||
+          ctx.authorMember.permissions.has("ADMINISTRATOR");
+
+    console.log("isAdmin", isAdmin);
 
     if (isAdmin) return { allowed: true };
 

@@ -17,10 +17,6 @@ export class GuildEventService extends BaseService {
   }
   commandRegistry = CommandRegistry.getInstance();
 
-  async init() {
-    await this.commandRegistry.init();
-  }
-
   public async handleNewGuild(ctx: GowonContext, guild: Guild) {
     Logger.log("GuildEventService", `setting up Gowon for ${guild.name}`);
 

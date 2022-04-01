@@ -5,6 +5,7 @@ import {
   CommandInteraction,
   Guild,
   GuildMember,
+  GuildMemberRoleManager,
   Message,
   TextChannel,
   User,
@@ -20,13 +21,24 @@ export class MockClient extends Client {
 
 export const mockClient = new MockClient();
 
+interface MockMessageOptions {
+  authorID?: string;
+}
+
 export class MockMessage extends Message<true> {
-  constructor(public content = "hello world") {
+  private options: MockMessageOptions;
+
+  constructor(
+    public content = "hello world",
+    options: MockMessageOptions = {}
+  ) {
     super(mockClient, {
       id: "831397226604396574",
       channel_id: "768596255697272865",
       guild_id: "768596255697272862",
     });
+
+    this.options = options;
   }
 
   get guild() {
@@ -34,7 +46,11 @@ export class MockMessage extends Message<true> {
   }
 
   get author() {
-    return new MockUser();
+    return new MockUser(this.options?.authorID);
+  }
+
+  get member() {
+    return new MockGuildMember({ user: this.author });
   }
 }
 
@@ -65,9 +81,9 @@ export class MockChannel extends TextChannel {
 }
 
 export class MockUser extends User {
-  constructor() {
+  constructor(id?: string) {
     super(mockClient, {
-      id: "267794154459889664",
+      id: id || "267794154459889664",
     });
   }
 
@@ -82,13 +98,25 @@ export class MockUser extends User {
   }
 }
 
-export class MockGuildMember extends GuildMember {
-  user = new MockUser();
+interface MockGuildMemberOptions {
+  user: User;
+}
 
+export class MockGuildMember extends GuildMember {
   nickname = "Test User";
 
-  constructor() {
-    super();
+  constructor(private options: MockGuildMemberOptions = {}) {
+    super({
+      guilds: [MockGuild],
+    });
+  }
+
+  get user() {
+    return this.options.user || new MockUser();
+  }
+
+  get roles() {
+    return new MockGuildMemberRoleManager(this);
   }
 }
 
@@ -98,5 +126,15 @@ export class MockCommandInteraction extends CommandInteraction {
       data: {},
       user: {},
     });
+  }
+}
+
+export class MockGuildMemberRoleManager extends GuildMemberRoleManager {
+  constructor(member?: GuildMember) {
+    super(member || new MockGuildMember());
+  }
+
+  get cache() {
+    return [];
   }
 }

@@ -103,6 +103,13 @@ export class GowonContext<
   public dangerousSetCommand(command: any) {
     this._command = Object.assign(this._command || {}, command);
   }
+
+  // Used to set authors from places without a real discord author
+  public dangerousSetAuthor(userID: string) {
+    this._payload.source = Object.assign(this._payload.source, {
+      author: { id: userID },
+    });
+  }
 }
 
 export type UnwrapContext<T extends GowonContext<CustomContext<any, any>>> =

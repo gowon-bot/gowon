@@ -31,7 +31,6 @@ export class InteractionHandler {
   }
 
   async init() {
-    await this.commandRegistry.init();
     this.interactionRegistry = new InteractionRegistry(this.commandRegistry);
 
     await this.interactionRegistry.init();
