@@ -4,6 +4,7 @@ import { CantWorkYetError } from "../../errors/cards";
 import { ago } from "../../helpers";
 
 import { toInt } from "../../helpers/lastFM";
+import { Emoji } from "../../lib/Emoji";
 import { displayNumber } from "../../lib/views/displays";
 import { RedisService } from "../../services/redis/RedisService";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
@@ -56,9 +57,9 @@ export class Work extends CardsChildCommand {
     const embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor("Work"))
       .setDescription(
-        `You earned 🪙${displayNumber(earned)}, you now have 🪙${displayNumber(
-          bankAccount.amount
-        )}!`
+        `You earned ${Emoji.fip}${displayNumber(earned)}, you now have ${
+          Emoji.fip
+        }${displayNumber(bankAccount.amount)}!`
       );
 
     await this.send(embed);

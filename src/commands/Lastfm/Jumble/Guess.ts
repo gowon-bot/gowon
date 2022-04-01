@@ -8,6 +8,7 @@ import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { CardsService } from "../../../services/dbservices/CardsService";
 import { Chance } from "chance";
 import { displayNumber } from "../../../lib/views/displays";
+import { Emoji } from "../../../lib/Emoji";
 
 const args = {
   guess: new StringArgument({
@@ -61,7 +62,9 @@ export class Guess extends JumbleChildCommand<typeof args> {
         .setAuthor(this.generateEmbedAuthor("Jumble guess"))
         .setDescription(
           `You are correct! The artist was ${bold(jumbledArtist.unjumbled)}
-Earned 🪙${displayNumber(earned)}! You now have 🪙${bankAccount.amount}`
+Earned ${Emoji.fip}${displayNumber(earned)}! You now have ${Emoji.fip}${
+            bankAccount.amount
+          }`
         );
 
       await this.send(embed);

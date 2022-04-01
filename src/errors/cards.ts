@@ -1,3 +1,4 @@
+import { Emoji } from "../lib/Emoji";
 import { ClientError } from "./errors";
 
 export class NoAlbumsToMintError extends ClientError {
@@ -23,8 +24,12 @@ export class CardNotMintedYetError extends ClientError {
 export class NoMoneyError extends ClientError {
   name = "NoMoneyError";
 
-  constructor() {
-    super(`You don't have enough 🪙 to do that!`);
+  constructor(amount: number, increase: number) {
+    super(
+      `You don't have enough ${Emoji.fip} to do that! (You have ${
+        Emoji.fip
+      }${amount}, you need at least ${Emoji.fip}${Math.abs(increase)})`
+    );
   }
 }
 

@@ -1,3 +1,4 @@
+import { Emoji } from "../../lib/Emoji";
 import { displayNumber } from "../../lib/views/displays";
 import { CardsChildCommand } from "./CardsChildCommant";
 
@@ -17,7 +18,9 @@ export class Bank extends CardsChildCommand {
 
     const embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor("Bank account"))
-      .setDescription(`You have 🪙${displayNumber(bankAccount.amount)}.`);
+      .setDescription(
+        `You have ${Emoji.fip}${displayNumber(bankAccount.amount)}.`
+      );
 
     await this.send(embed);
   }

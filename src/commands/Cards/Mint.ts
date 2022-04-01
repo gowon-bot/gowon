@@ -1,11 +1,12 @@
 import { NoAlbumsToMintError } from "../../errors/cards";
 import { bold, italic } from "../../helpers/discord";
+import { Emoji } from "../../lib/Emoji";
 import { CardsChildCommand } from "./CardsChildCommant";
 
 export class Mint extends CardsChildCommand {
   idSeed = "ive liz";
 
-  description = "Mints a new album card from your top albums (costs 🪙25)";
+  description = `Mints a new album card from your top albums`;
   aliases = ["roll", "open"];
   usage = [""];
 
@@ -40,7 +41,7 @@ export class Mint extends CardsChildCommand {
         `${bold(card.album)}
 by ${italic(card.artist)}
 
-You now have 🪙${bankAccount.amount}.`
+You now have ${Emoji.fip}${bankAccount.amount}.`
       )
       .setThumbnail(album.images.get("large") || "");
 

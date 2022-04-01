@@ -123,7 +123,8 @@ export class CardsService extends BaseService {
   ): Promise<UserBankAccount> {
     const bankAccount = await this.getBankAccount(ctx, user);
 
-    if (bankAccount.amount + increase < 0) throw new NoMoneyError();
+    if (bankAccount.amount + increase < 0)
+      throw new NoMoneyError(bankAccount.amount, increase);
 
     bankAccount.amount = bankAccount.amount + increase;
 
