@@ -36,7 +36,7 @@ export class Work extends CardsChildCommand {
       ? fromUnixTime(toInt(lastWorkedString) / 1000)
       : undefined;
 
-    if (lastWorked && add(lastWorked, { hours: 2 }) > new Date()) {
+    if (lastWorked && add(lastWorked, { hours: 1 }) > new Date()) {
       throw new CantWorkYetError(ago(add(lastWorked, { hours: 1 })));
     }
 
