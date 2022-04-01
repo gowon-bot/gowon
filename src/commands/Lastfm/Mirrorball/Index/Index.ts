@@ -46,8 +46,9 @@ export default class Index extends MirrorballBaseCommand<
       );
     }
 
-    if (this.gowonClient.isInIssueMode)
+    if (this.gowonClient.isInIssueMode) {
       throw new IndexingDisabledBecauseOfIssueModeError();
+    }
   }
 
   async run() {

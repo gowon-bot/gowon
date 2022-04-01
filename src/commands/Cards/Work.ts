@@ -51,7 +51,9 @@ export class Work extends CardsChildCommand {
     await this.redisService.set(
       this.ctx,
       this.author.id,
-      `${new Date().getTime()}`
+      `${new Date().getTime()}`,
+      // 1 hour
+      60 * 60 * 60
     );
 
     const embed = this.newEmbed()

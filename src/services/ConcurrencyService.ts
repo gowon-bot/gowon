@@ -5,6 +5,7 @@ export enum ConcurrentAction {
   Indexing = "Indexing",
   Updating = "Updating",
   RYMImport = "RYMImport",
+  Minting = "Minting",
 }
 
 interface ConcurrencyCache {
