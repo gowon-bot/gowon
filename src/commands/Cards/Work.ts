@@ -37,7 +37,7 @@ export class Work extends CardsChildCommand {
       : undefined;
 
     if (lastWorked && add(lastWorked, { hours: 2 }) > new Date()) {
-      throw new CantWorkYetError(ago(add(lastWorked, { hours: 2 })));
+      throw new CantWorkYetError(ago(add(lastWorked, { hours: 1 })));
     }
 
     const earned = Chance().natural({ min: 10, max: 50 });
