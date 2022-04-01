@@ -28,7 +28,7 @@ export class Mint extends CardsChildCommand {
     const bankAccount = await this.cardsService.changeBankAccount(
       this.ctx,
       dbUser,
-      -0
+      -25
     );
 
     const album = this.cardsService.generateAlbumToMint(mintableCards);
