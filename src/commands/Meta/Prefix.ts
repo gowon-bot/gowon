@@ -1,4 +1,5 @@
 import { LogicError } from "../../errors/errors";
+import { CannotChangePrefixError } from "../../errors/permissions";
 import { code } from "../../helpers/discord";
 import { BaseCommand } from "../../lib/command/BaseCommand";
 import { SettingsService } from "../../lib/settings/SettingsService";
@@ -22,6 +23,13 @@ export default class Prefix extends BaseCommand {
 
   async run() {
     if (this.newPrefix) {
+      if (
+        !this.ctx.authorMember.permissions.has("ADMINISTRATOR") &&
+        !this.gowonClient.isDeveloper(this.author.id)
+      ) {
+        throw new CannotChangePrefixError();
+      }
+
       if (this.newPrefix.startsWith("<") && this.newPrefix.endsWith(">"))
         throw new LogicError(
           "Please omit the triangular brackets!\neg. `@Gowon prefix <!>` should be `@Gowon prefix !`"
