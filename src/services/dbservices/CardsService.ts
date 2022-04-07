@@ -5,12 +5,14 @@ import { UserBankAccount } from "../../database/entity/cards/UserBankAccount";
 import { User } from "../../database/entity/User";
 import { NoMoneyError } from "../../errors/cards";
 import { asyncFind } from "../../helpers";
+import { toInt } from "../../helpers/lastFM";
 import { RedirectsCache } from "../../lib/caches/RedirectsCache";
 import { GowonContext } from "../../lib/context/Context";
 import { BaseService } from "../BaseService";
 import { TopAlbum } from "../LastFM/converters/TopTypes";
 import { Requestable } from "../LastFM/LastFMAPIService";
 import { LastFMService } from "../LastFM/LastFMService";
+import { RedisService } from "../redis/RedisService";
 import { ServiceRegistry } from "../ServicesRegistry";
 
 export class CardsService extends BaseService {
@@ -18,6 +20,10 @@ export class CardsService extends BaseService {
 
   private get lastFMService() {
     return ServiceRegistry.get(LastFMService);
+  }
+
+  private get redisService() {
+    return ServiceRegistry.get(RedisService);
   }
 
   generateAlbumToMint(mintableAlbums: TopAlbum[]): TopAlbum {
@@ -68,15 +74,33 @@ export class CardsService extends BaseService {
     ctx: GowonContext,
     user: User,
     requestable: Requestable,
-    page = 1
+    page = 1,
+    existingAlbumCards?: AlbumCard[]
   ): Promise<TopAlbum[]> {
+    if (page === 1) {
+      const existingPage = await this.redisService.get(
+        ctx,
+        `mint-page-${ctx.author.id}`
+      );
+
+      if (existingPage && existingPage !== "1") {
+        return await this.getMintableCards(
+          ctx,
+          user,
+          requestable,
+          toInt(existingPage),
+          existingAlbumCards
+        );
+      }
+    }
+
     const [albums, albumCards] = await Promise.all([
       this.lastFMService.topAlbums(ctx, {
         page,
-        limit: 250,
+        limit: 100,
         username: requestable,
       }),
-      await AlbumCard.find(),
+      existingAlbumCards || (await AlbumCard.find()),
     ]);
 
     const filtered = await this.filterAlbumCards(
@@ -86,14 +110,33 @@ export class CardsService extends BaseService {
     );
 
     if (!filtered.length && albums.meta.page <= albums.meta.totalPages) {
-      return this.getMintableCards(ctx, user, requestable, page + 1);
+      return this.getMintableCards(
+        ctx,
+        user,
+        requestable,
+        page + 1,
+        albumCards
+      );
     }
+
+    await this.redisService.set(
+      ctx,
+      `mint-page-${ctx.author.id}`,
+      `${page}`,
+      60 * 60
+    );
 
     return filtered;
   }
 
-  async inventory(user: User): Promise<AlbumCard[]> {
-    return await AlbumCard.find({ owner: user });
+  async inventory(user: User, artist?: string): Promise<AlbumCard[]> {
+    return await AlbumCard.find({
+      where: artist ? { owner: user, artist: ILike(artist) } : { owner: user },
+      order: {
+        artist: "ASC",
+        album: "ASC",
+      },
+    });
   }
 
   async getBankAccount(
@@ -160,12 +203,8 @@ export class CardsService extends BaseService {
         return true;
       });
 
-      console.log(albumCard);
-
       if (!albumCard) filtered.push(album);
     }
-
-    console.log(filtered.length);
 
     return filtered;
   }
