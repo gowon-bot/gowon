@@ -9,6 +9,7 @@ import { SetAdminRole } from "./SetAdminRole";
 import { RoleDisable } from "./RoleDisable";
 import { BotDisable } from "./BotDisable";
 import { BotwideUserDisable } from "./BotwideUserDisable";
+import { SyncGuildPermissions } from "./SyncGuildPermissions";
 
 export default class PermissionsParentCommand extends AdminBaseParentCommand {
   idSeed = "loona vivi";
@@ -46,6 +47,8 @@ export default class PermissionsParentCommand extends AdminBaseParentCommand {
     // BotDisable
     "botdisable",
     "botenable",
+    // SyncGuildPermissions
+    "syncguildpermissions",
   ];
 
   children: CommandGroup = new CommandGroup(
@@ -59,6 +62,7 @@ export default class PermissionsParentCommand extends AdminBaseParentCommand {
       BotwideUserDisable,
       ChannelDisable,
       RoleDisable,
+      SyncGuildPermissions,
       UserDisable,
     ],
     this.id

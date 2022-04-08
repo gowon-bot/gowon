@@ -41,6 +41,10 @@ export class Permission extends BaseEntity {
   @Column()
   commandID!: string;
 
+  // If allow is true, this permissions *allows* instead of blocks
+  @Column({ default: false })
+  allow!: boolean;
+
   public asCacheKey(): PermissionCacheKey {
     return generateCacheKey(this.type, this.commandID, this.entityID);
   }

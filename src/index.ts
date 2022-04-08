@@ -25,21 +25,24 @@ import { Payload } from "./lib/context/Payload";
 import { MockMessage } from "./mocks/discord";
 import { PermissionsCacheService } from "./lib/permissions/PermissionsCacheService";
 
-async function start() {
-  await setup();
-
-  const ctx = new GowonContext({
+function context() {
+  return new GowonContext({
+    gowonClient: client,
     command: { client, logger: new HeaderlessLogger() } as any,
     payload: new Payload(new MockMessage()),
     custom: {},
   } as any);
+}
+
+async function start() {
+  await setup();
 
   const analyticsCollector = ServiceRegistry.get(AnalyticsCollector);
   const usersService = ServiceRegistry.get(UsersService);
   const tweetHandler = new TweetHandler();
 
   await tweetHandler.init();
-  await ServiceRegistry.get(PermissionsCacheService).init(ctx);
+  await ServiceRegistry.get(PermissionsCacheService).init(context());
 
   client.client.on("ready", () => {
     console.log(
@@ -48,6 +51,7 @@ async function start() {
       }}\n` +
         chalk`{white API running at} {magenta http://localhost:${gowonAPIPort}}`
     );
+
     console.log(chalk`\n{white Setup complete!}\n`);
 
     handler.setClient(client);
@@ -59,20 +63,28 @@ async function start() {
   });
 
   client.client.on("guildCreate", (guild) => {
+    const ctx = context();
+
     analyticsCollector.metrics.guildCount.set(client.client.guilds.cache.size);
     guildEventService.handleNewGuild(ctx, guild);
   });
 
   client.client.on("guildDelete", (guild) => {
+    const ctx = context();
+
     analyticsCollector.metrics.guildCount.set(client.client.guilds.cache.size);
     guildEventService.handleGuildLeave(ctx, guild);
   });
 
   client.client.on("guildMemberAdd", (guildMember) => {
+    const ctx = context();
+
     guildEventService.handleNewUser(ctx, guildMember);
   });
 
   client.client.on("guildMemberRemove", (guildMember) => {
+    const ctx = context();
+
     guildEventService.handleUserLeave(ctx, guildMember as GuildMember);
   });
 
@@ -80,10 +92,23 @@ async function start() {
     interactionHandler.handle(interaction);
   });
 
+  // For setting permissions on commands
+  client.client.on("roleCreate", (role) => {
+    const ctx = context();
+
+    guildEventService.handleRoleCreate(ctx, role);
+  });
+
+  client.client.on("roleUpdate", (oldRole, newRole) => {
+    const ctx = context();
+
+    guildEventService.handleRoleUpdate(ctx, oldRole, newRole);
+  });
+
   client.client.login(config.discordToken);
 
   const guildCount = client.client.guilds.cache.size;
-  const userCount = await usersService.countUsers(ctx);
+  const userCount = await usersService.countUsers(context());
 
   analyticsCollector.metrics.guildCount.set(guildCount);
   analyticsCollector.metrics.userCount.set(userCount);

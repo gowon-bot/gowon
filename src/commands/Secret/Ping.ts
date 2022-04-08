@@ -8,6 +8,7 @@ export default class Ping extends Command {
   subcategory = "developer";
   description = "Ping! Pong! Pang?";
   aliases = ["🏓", "pin", "pingu", "pung", "peng", "핑", "pingmatrix", "bing"];
+
   secretCommand = true;
   slashCommand = true;
   twitterCommand = true;

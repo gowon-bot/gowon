@@ -23,6 +23,13 @@ export class PermissionsRegister {
             applicationCommand,
             permission
           );
+
+        case PermissionType.role:
+          return await this.registerRolePermission(
+            ctx,
+            applicationCommand,
+            permission
+          );
       }
     }
   }
@@ -42,12 +49,46 @@ export class PermissionsRegister {
           return await this.unregisterBotPermission();
 
         case PermissionType.user:
-          return await this.unregisterUserPermission(
+          return await this.unregisterGuildMemberPermission(
+            ctx,
+            applicationCommand,
+            permission
+          );
+        case PermissionType.role:
+          return await this.unregisterRolePermission(
             ctx,
             applicationCommand,
             permission
           );
       }
+    }
+  }
+
+  async registerMany(
+    ctx: GowonContext,
+    command: Command,
+    permissions: Permission[]
+  ) {
+    const filteredPermissions = permissions.filter((p) =>
+      [PermissionType.role, PermissionType.user].includes(p.type)
+    );
+
+    if (!filteredPermissions.length) return;
+
+    const applicationCommand =
+      (await this.getApplicationCommand(ctx, command)) ||
+      (await this.getGuildApplicationCommand(ctx, command));
+
+    if (applicationCommand) {
+      // @ts-ignore
+      await applicationCommand.permissions.set({
+        guild: ctx.requiredGuild, // Typescript seems to a bit flaky with this line
+        permissions: filteredPermissions.map((permission) => ({
+          id: permission.entityID!,
+          type: permission.type === PermissionType.role ? "ROLE" : "USER",
+          permission: permission.allow || false,
+        })),
+      });
     }
   }
 
@@ -62,7 +103,7 @@ export class PermissionsRegister {
     const commands = await ctx.client.client.application!.commands.fetch();
 
     const applicationCommand = commands.find(
-      (c) => c.name === (command.slashCommandName || command.name)
+      (c) => c.name === (command.slashCommandName || command.friendlyName)
     );
 
     return applicationCommand;
@@ -79,7 +120,7 @@ export class PermissionsRegister {
     const commands = await ctx.requiredGuild.commands.fetch();
 
     const applicationCommand = commands.find(
-      (c) => c.name === (command.slashCommandName || command.name)
+      (c) => c.name === (command.slashCommandName || command.friendlyName)
     );
 
     return applicationCommand;
@@ -101,7 +142,24 @@ export class PermissionsRegister {
         {
           id: userID,
           type: "USER",
-          permission: false,
+          permission: permission.allow || false,
+        },
+      ],
+    });
+  }
+
+  private async registerRolePermission(
+    ctx: GowonContext,
+    applicationCommand: ApplicationCommand<{ guild: GuildResolvable }>,
+    permission: Permission
+  ) {
+    await applicationCommand.permissions.add({
+      guild: ctx.requiredGuild.id,
+      permissions: [
+        {
+          id: permission.entityID!,
+          type: "ROLE",
+          permission: permission.allow || false,
         },
       ],
     });
@@ -111,7 +169,7 @@ export class PermissionsRegister {
     throw "owned";
   }
 
-  private async unregisterUserPermission(
+  private async unregisterGuildMemberPermission(
     ctx: GowonContext,
     applicationCommand: ApplicationCommand<{ guild: GuildResolvable }>,
     permission: Permission
@@ -119,6 +177,17 @@ export class PermissionsRegister {
     await applicationCommand.permissions.remove({
       guild: ctx.requiredGuild,
       users: [permission.entityID!],
+    });
+  }
+
+  private async unregisterRolePermission(
+    ctx: GowonContext,
+    applicationCommand: ApplicationCommand<{ guild: GuildResolvable }>,
+    permission: Permission
+  ) {
+    await applicationCommand.permissions.remove({
+      guild: ctx.requiredGuild,
+      roles: [permission.entityID!],
     });
   }
 }

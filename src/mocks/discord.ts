@@ -23,10 +23,13 @@ export const mockClient = new MockClient();
 
 interface MockMessageOptions {
   authorID?: string;
+  guild?: Guild;
 }
 
 export class MockMessage extends Message<true> {
   private options: MockMessageOptions;
+
+  private providedGuild?: Guild;
 
   constructor(
     public content = "hello world",
@@ -35,14 +38,15 @@ export class MockMessage extends Message<true> {
     super(mockClient, {
       id: "831397226604396574",
       channel_id: "768596255697272865",
-      guild_id: "768596255697272862",
+      guild_id: options.guild?.id || "768596255697272862",
     });
 
     this.options = options;
+    this.providedGuild = options.guild;
   }
 
   get guild() {
-    return new MockGuild();
+    return this.providedGuild || new MockGuild();
   }
 
   get author() {

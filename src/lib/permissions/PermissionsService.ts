@@ -1,4 +1,4 @@
-import { Message } from "discord.js";
+import { Message, Role } from "discord.js";
 import { QueryFailedError } from "typeorm";
 import { Permission, PermissionType } from "../../database/entity/Permission";
 import {
@@ -115,6 +115,35 @@ export class PermissionsService extends BaseService {
     }));
   }
 
+  async syncGuildPermissions(ctx: GowonContext, forRoles?: Role[]) {
+    const permissionsRegister = new PermissionsRegister();
+
+    const adminRoleID = this.settingsService.get("adminRole", {
+      guildID: ctx.requiredGuild.id,
+    });
+
+    const roles =
+      forRoles || Array.from(ctx.requiredGuild.roles.cache.values());
+
+    const adminCommands = this.commandRegistry
+      .list(true)
+      .filter((c) => c.adminCommand);
+
+    for (const adminCommand of adminCommands) {
+      await permissionsRegister.registerMany(
+        ctx,
+        adminCommand,
+        roles.map((r) =>
+          Permission.create({
+            type: PermissionType.role,
+            entityID: r.id,
+            allow: r.permissions.has("ADMINISTRATOR") || r.id === adminRoleID,
+          })
+        )
+      );
+    }
+  }
+
   private async canRunCommand(
     ctx: PermissionsCacheContext,
     command: Command
@@ -127,10 +156,7 @@ export class PermissionsService extends BaseService {
       this.canRunBotWide(ctx, command) ||
       this.checkAdmin(ctx, command) ||
       this.userCanRun(ctx, command) ||
-      this.canRunInGuild(ctx, command) ||
-      this.rolesCanRun(ctx, command) ||
-      this.guildMemberCanRun(ctx, command) ||
-      this.canRunInChannel(ctx, command) || { allowed: true }
+      this.checkGuildBasedPermissions(ctx, command) || { allowed: true }
     );
   }
 
@@ -197,7 +223,7 @@ export class PermissionsService extends BaseService {
       });
 
       if (permission) {
-        return { allowed: false, permission };
+        return { allowed: permission.allow, permission };
       }
     }
 
@@ -216,7 +242,7 @@ export class PermissionsService extends BaseService {
       });
 
       if (permission) {
-        return { allowed: false, permission };
+        return { allowed: permission.allow, permission };
       }
     }
 
@@ -296,5 +322,31 @@ export class PermissionsService extends BaseService {
     if (!parentCommand) return undefined;
 
     return await this.canRunInContext(ctx, parentCommand);
+  }
+
+  private checkGuildBasedPermissions(
+    ctx: GowonContext,
+    command: Command
+  ): CanCheck | undefined {
+    // If a command is disabled in a channel, no one should be able to run it
+    const canRunInChannel = this.canRunInChannel(ctx, command);
+    if (canRunInChannel && !canRunInChannel.allowed) {
+      return canRunInChannel;
+    }
+
+    const guildMemberCanRun = this.guildMemberCanRun(ctx, command);
+    const rolesCanRun = this.rolesCanRun(ctx, command);
+
+    // If a role is "allowed",
+    // it should bypass the guild disable,
+    // but only if the guild member is not explicitly banned
+    if (rolesCanRun?.allowed && guildMemberCanRun?.allowed !== false) {
+      return rolesCanRun;
+    }
+
+    // If a specific user is allowed
+    if (guildMemberCanRun?.allowed) return guildMemberCanRun;
+
+    return this.canRunInGuild(ctx, command);
   }
 }

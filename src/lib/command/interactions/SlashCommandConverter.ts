@@ -90,6 +90,7 @@ export class SlashCommandConverter {
 
   private convertParentCommand(command: ParentCommand): SlashCommandBuilder {
     let parentCommand = new SlashCommandBuilder()
+      .setDefaultPermission(!(command.devCommand || command.adminCommand))
       .setName(command.friendlyName)
       .setDescription(command.description);
 

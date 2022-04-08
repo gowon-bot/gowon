@@ -8,7 +8,11 @@ import { WordBlacklistService } from "../../../services/WordBlacklistService";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 const args = {
-  tag: new StringArgument({ index: { start: 0 }, required: true }),
+  tag: new StringArgument({
+    index: { start: 0 },
+    required: true,
+    description: "The tag to ban",
+  }),
 } as const;
 
 export default class BanTag extends LastFMBaseCommand<typeof args> {
@@ -19,6 +23,7 @@ export default class BanTag extends LastFMBaseCommand<typeof args> {
   aliases = ["bt"];
 
   adminCommand = true;
+  slashCommand = true;
 
   arguments = args;
 
