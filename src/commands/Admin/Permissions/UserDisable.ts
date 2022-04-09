@@ -1,5 +1,5 @@
 import { PermissionsChildCommand } from "./PermissionsChildCommand";
-import { Variation } from "../../../lib/command/Command";
+import { Command, Variation } from "../../../lib/command/Command";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { DiscordUserArgument } from "../../../lib/context/arguments/argumentTypes/discord/DiscordUserArgument";
 import { CommandNotFoundError } from "../../../errors/errors";
@@ -7,8 +7,12 @@ import {
   Permission,
   PermissionType,
 } from "../../../database/entity/Permission";
-import { MessageEmbed } from "discord.js";
+import { MessageEmbed, User } from "discord.js";
 import { bold, code } from "../../../helpers/discord";
+import {
+  PermissionAlreadyExistsError,
+  PermissionDoesNotExistError,
+} from "../../../errors/permissions";
 
 const args = {
   user: new DiscordUserArgument({
@@ -65,35 +69,84 @@ export class UserDisable extends PermissionsChildCommand<typeof args> {
       !this.variationWasUsed("userenable") &&
       !this.runAs.variationWasUsed("enable")
     ) {
+      embed = await this.handleDisable(command, permission, user);
+    } else {
+      embed = await this.handleEnable(command, permission, user);
+    }
+
+    await this.send(embed);
+  }
+
+  private async handleDisable(
+    command: Command,
+    permission: Permission,
+    user: User
+  ): Promise<MessageEmbed> {
+    let deletedAllow = false;
+
+    try {
       await this.permissionsService.createPermission(
         this.ctx,
         command,
         permission
       );
+    } catch (e) {
+      if (e instanceof PermissionAlreadyExistsError) {
+        permission.allow = true;
 
-      embed = this.newEmbed()
-        .setAuthor(this.generateEmbedAuthor("Permissions user disable"))
-        .setDescription(
-          `Successfully disabled ${code(command.name)} for ${bold(user.tag)} (${
-            user.id
-          })`
+        await this.permissionsService.destroyPermission(
+          this.ctx,
+          command,
+          permission
         );
-    } else {
+
+        deletedAllow = true;
+      }
+    }
+
+    return this.newEmbed()
+      .setAuthor(this.generateEmbedAuthor("Permissions user disable"))
+      .setDescription(
+        `Successfully ${deletedAllow ? "un-allowed" : "disabled"} ${code(
+          command.name
+        )} for ${bold(user.tag)} (${user.id})`
+      );
+  }
+
+  private async handleEnable(
+    command: Command,
+    permission: Permission,
+    user: User
+  ): Promise<MessageEmbed> {
+    let allowed = false;
+
+    try {
       await this.permissionsService.destroyPermission(
         this.ctx,
         command,
         permission
       );
+    } catch (e) {
+      // Create allow permission
+      if (e instanceof PermissionDoesNotExistError) {
+        permission.allow = true;
 
-      embed = this.newEmbed()
-        .setAuthor(this.generateEmbedAuthor("Permissions enable"))
-        .setDescription(
-          `Successfully re-enabled ${code(command.name)} for ${bold(
-            user.tag
-          )} (${user.id})`
+        await this.permissionsService.createPermission(
+          this.ctx,
+          command,
+          permission
         );
+
+        allowed = true;
+      }
     }
 
-    await this.send(embed);
+    return this.newEmbed()
+      .setAuthor(this.generateEmbedAuthor("Permissions enable"))
+      .setDescription(
+        `Successfully ${allowed ? "allowed" : "re-enabled"} ${code(
+          command.name
+        )} for ${bold(user.tag)} (${user.id})`
+      );
   }
 }

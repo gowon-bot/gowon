@@ -80,15 +80,16 @@ export class PermissionsRegister {
       (await this.getGuildApplicationCommand(ctx, command));
 
     if (applicationCommand) {
-      // @ts-ignore
+      // Typescript seems to a bit flaky with this function call,
+      // complaining that "guild" shouldn't be there
       await applicationCommand.permissions.set({
-        guild: ctx.requiredGuild, // Typescript seems to a bit flaky with this line
+        guild: ctx.requiredGuild,
         permissions: filteredPermissions.map((permission) => ({
           id: permission.entityID!,
           type: permission.type === PermissionType.role ? "ROLE" : "USER",
           permission: permission.allow || false,
         })),
-      });
+      } as any);
     }
   }
 

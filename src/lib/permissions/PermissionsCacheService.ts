@@ -73,7 +73,7 @@ export class PermissionsCacheService extends BaseService<PermissionsCacheContext
     await this.redisService.set(
       ctx,
       permission.asCacheKey(),
-      permission.commandID
+      permission.allow ? "true" : "false"
     );
   }
 
@@ -144,8 +144,8 @@ export class PermissionsCacheService extends BaseService<PermissionsCacheContext
   private async getPermissionsFromQueries(
     ctx: PermissionsCacheContext,
     queries: PermissionQuery[]
-  ): Promise<SimpleMap> {
-    const allPermissions = {} as SimpleMap;
+  ): Promise<SimpleMap<string>> {
+    const allPermissions = {} as SimpleMap<string>;
 
     const queryPromises = queries.map((q) =>
       this.redisService.getMany(

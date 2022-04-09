@@ -16,29 +16,27 @@ export class PermissionsCache {
   private cache: { [key: PermissionCacheKey]: string } = {};
 
   get(key: PermissionCacheKey): Permission | undefined {
-    const commandID = this.cache[key];
+    const allow = this.cache[key];
 
-    if (commandID) {
-      return this.buildPermission(key, commandID);
+    if (allow) {
+      return this.buildPermission(key, allow);
     }
 
     return undefined;
   }
 
-  set(key: PermissionCacheKey, commandID: string) {
-    this.cache[key] = commandID;
+  set(key: PermissionCacheKey, allow: string) {
+    this.cache[key] = allow;
   }
 
-  private buildPermission(
-    key: PermissionCacheKey,
-    commandID: string
-  ): Permission {
-    const [_, type, entityID] = key.split("-");
+  private buildPermission(key: PermissionCacheKey, value: string): Permission {
+    const [_, type, commandID, entityID] = key.split("-");
 
     return Permission.create({
       commandID: commandID,
       entityID: entityID,
       type: type as PermissionType,
+      allow: value === "true",
     });
   }
 }

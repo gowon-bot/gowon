@@ -36,7 +36,10 @@ export class RedisService extends BaseService {
     return this.redis.get(ctx, this.sessionKey(ctx, key));
   }
 
-  async getMany(ctx: RedisServiceContext, key: string): Promise<SimpleMap> {
+  async getMany(
+    ctx: RedisServiceContext,
+    key: string
+  ): Promise<SimpleMap<string>> {
     const keys = await this.redis.keys(this.prefixedKey(ctx, key));
 
     const response = await this.redis.getMany(ctx, keys);

@@ -300,8 +300,6 @@ export class PermissionsService extends BaseService {
         : (adminRole && ctx.authorMember.roles.cache.has(adminRole)) ||
           ctx.authorMember.permissions.has("ADMINISTRATOR");
 
-    console.log("isAdmin", isAdmin);
-
     if (isAdmin) return { allowed: true };
 
     if (command.adminCommand) {
