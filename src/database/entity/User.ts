@@ -1,10 +1,3 @@
-// Shims (required for tests)
-import "./DisabledCommand";
-import "./meta/CommandRun";
-import "./meta/Error";
-import "./Permission";
-import "./Setting";
-
 import {
   Entity,
   Column,
