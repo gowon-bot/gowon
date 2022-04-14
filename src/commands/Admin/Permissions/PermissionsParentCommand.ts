@@ -1,19 +1,21 @@
 import { CommandGroup } from "../../../lib/command/CommandGroup";
 import { AdminBaseParentCommand } from "../AdminBaseCommand";
-import { Blacklist } from "./Blacklist";
+import { UserDisable } from "./UserDisable";
 import { Help } from "./Help";
-import { Delist } from "./Delist";
 import { View } from "./View";
-import { Enable } from "./Enable";
 import { Disable } from "./Disable";
-import { Disabled } from "./Disabled";
-import { ChannelBlacklist } from "./ChannelBlacklist";
+import { ChannelDisable } from "./ChannelDisable";
 import { SetAdminRole } from "./SetAdminRole";
+import { RoleDisable } from "./RoleDisable";
+import { BotDisable } from "./BotDisable";
+import { BotwideUserDisable } from "./BotwideUserDisable";
+import { SyncGuildPermissions } from "./SyncGuildPermissions";
 
 export default class PermissionsParentCommand extends AdminBaseParentCommand {
   idSeed = "loona vivi";
 
   adminCommand = true;
+  slashCommand = true;
 
   description =
     "Manage permissions for Gowon in your guild\nSee permissions help for more info";
@@ -24,23 +26,45 @@ export default class PermissionsParentCommand extends AdminBaseParentCommand {
   customHelp = Help;
 
   noPrefixAliases = [
-    // Enable
-    "enable",
     // Disable
     "disable",
+    "enable",
+    // ChannelDisable
+    "channelblacklist",
+    "channeldisable",
+    "channelunblacklist",
+    "channelenable",
+    // DisableInChannel
+    "userdisable",
+    "blacklist",
+    "userenable",
+    "whitelist",
     // SetAdminRole,
     "setadminrole",
+    // RoleDisable
+    "roledisable",
+    "roleenable",
+    // BotDisable
+    "botdisable",
+    "botenable",
+    // SyncGuildPermissions
+    "syncguildpermissions",
   ];
 
-  children: CommandGroup = new CommandGroup([
-    Blacklist,
-    ChannelBlacklist,
-    Delist,
-    Disable,
-    Disabled,
-    Enable,
-    Help,
-    SetAdminRole,
-    View,
-  ]);
+  children: CommandGroup = new CommandGroup(
+    [
+      Help,
+      SetAdminRole,
+      View,
+      // Disables
+      Disable,
+      BotDisable,
+      BotwideUserDisable,
+      ChannelDisable,
+      RoleDisable,
+      SyncGuildPermissions,
+      UserDisable,
+    ],
+    this.id
+  );
 }

@@ -1,6 +1,6 @@
-import { BaseCommand } from "../../lib/command/BaseCommand";
+import { Command } from "../../lib/command/Command";
 
-export default class AirFry extends BaseCommand {
+export default class AirFry extends Command {
   idSeed = "ive rei";
 
   subcategory = "fun";

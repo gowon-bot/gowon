@@ -46,5 +46,8 @@ export default class SpotifyParentCommand extends SpotifyBaseParentCommand {
   default = () => new Help();
   customHelp = Help;
 
-  children = new CommandGroup([Help, Like, Login, Next, Privacy, Queue]);
+  children = new CommandGroup(
+    [Help, Like, Login, Next, Privacy, Queue],
+    this.id
+  );
 }

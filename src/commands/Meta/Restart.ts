@@ -1,9 +1,9 @@
 import { PM2ConnectionError } from "../../errors/errors";
-import { BaseCommand } from "../../lib/command/BaseCommand";
+import { Command } from "../../lib/command/Command";
 import { PM2Service } from "../../services/PM2Service";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 
-export default class Restart extends BaseCommand {
+export default class Restart extends Command {
   idSeed = "gfriend yerin";
   description = "Restart the bot";
   subcategory = "developer";

@@ -1,6 +1,6 @@
-import { BaseCommand } from "../../lib/command/BaseCommand";
+import { Command } from "../../lib/command/Command";
 
-export default class Pleading extends BaseCommand {
+export default class Pleading extends Command {
   idSeed = "2ne1 CL";
 
   subcategory = "fun";

@@ -1,7 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn, BaseEntity } from "typeorm";
 
 @Entity({ name: "channel_blacklists" })
-export class ChannelBlacklist extends BaseEntity {
+export class __DeprecatedChannelBlacklist extends BaseEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 

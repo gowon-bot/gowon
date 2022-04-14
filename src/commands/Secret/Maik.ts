@@ -1,7 +1,7 @@
 import { shuffle } from "../../helpers";
-import { BaseCommand } from "../../lib/command/BaseCommand";
+import { Command } from "../../lib/command/Command";
 
-export default class Maik extends BaseCommand {
+export default class Maik extends Command {
   idSeed = "billlie tsuki";
 
   subcategory = "fun";

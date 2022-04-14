@@ -39,14 +39,8 @@ export default class RateYourMusicParentCommand extends ParentCommand {
   prefixes = ["rateyourmusic", "rym", "ryms"];
   default = () => new Link();
 
-  children = new CommandGroup([
-    ArtistRatings,
-    Help,
-    ImportRatings,
-    Link,
-    Rating,
-    Ratings,
-    Stats,
-    Taste,
-  ]);
+  children = new CommandGroup(
+    [ArtistRatings, Help, ImportRatings, Link, Rating, Ratings, Stats, Taste],
+    this.id
+  );
 }

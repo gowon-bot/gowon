@@ -1,7 +1,7 @@
-import { BaseCommand } from "../../lib/command/BaseCommand";
+import { Command } from "../../lib/command/Command";
 import { Emoji } from "../../lib/Emoji";
 
-export default class Patreon extends BaseCommand {
+export default class Patreon extends Command {
   idSeed = "hello venus yeoreum";
 
   subcategory = "about";

@@ -1,6 +1,6 @@
 import { bold, italic } from "../../helpers/discord";
 import { buildRequestable } from "../../helpers/getMentions";
-import { CommandRedirect } from "../../lib/command/BaseCommand";
+import { CommandRedirect } from "../../lib/command/Command";
 import { standardMentions } from "../../lib/context/arguments/mentionTypes/mentions";
 import { LastFMBaseCommand } from "./LastFMBaseCommand";
 import RandomsongInUsersLibrary from "./RandomSongInUsersLibrary";

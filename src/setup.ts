@@ -16,6 +16,7 @@ import { ServiceRegistry } from "./services/ServicesRegistry";
 import { SettingsService } from "./lib/settings/SettingsService";
 import { InteractionHandler } from "./lib/command/interactions/InteractionHandler";
 import { TwitterService } from "./services/Twitter/TwitterService";
+import { CommandRegistry } from "./lib/command/CommandRegistry";
 
 export const client = new GowonClient(
   new Client({
@@ -66,14 +67,22 @@ export async function setup() {
     connectToPM2(),
     connectToMirrorball(),
     intializeAPI(),
-    initializeGuildEventService(),
+    initializeCommandRegistry(),
+  ]);
+
+  // These depend on other initilzations above
+  await Promise.all([
+    // SettingsManager needs the database to be connected to cache settings
+    initializeSettingsManager(),
+    // The interaction handler depends on the command registry
     initializeInteractions(),
   ]);
 
-  // SettingsManager needs the database to be connected to cache settings
-  await initializeSettingsManager();
-  // The twitter stream needs the settings to be available
-  await buildTwitterStream();
+  // These depend on other initializations above
+  await Promise.all([
+    // The twitter stream needs the settings to be available
+    buildTwitterStream(),
+  ]);
 }
 
 function connectToDB() {
@@ -93,13 +102,6 @@ function buildTwitterStream() {
 
 function intializeAPI() {
   return logStartup(() => api.init(), "Initialized API");
-}
-
-function initializeGuildEventService() {
-  return logStartup(
-    () => guildEventService.init(),
-    "Initialized guild event service"
-  );
 }
 
 function initializeSettingsManager() {
@@ -141,6 +143,13 @@ function connectToMirrorball() {
       `,
     });
   }, "Connected to Mirrorball");
+}
+
+function initializeCommandRegistry() {
+  return logStartup(
+    () => CommandRegistry.getInstance().init(),
+    "Initialized command registry"
+  );
 }
 
 async function logStartup(func: () => any, logItem: string): Promise<void> {

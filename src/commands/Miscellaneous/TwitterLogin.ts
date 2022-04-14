@@ -1,11 +1,11 @@
 import { TwitterWebhookService } from "../../api/webhooks/TwitterWebhookService";
 import { BetaAccess } from "../../lib/command/access/access";
-import { BaseCommand } from "../../lib/command/BaseCommand";
+import { Command } from "../../lib/command/Command";
 import { displayLink } from "../../lib/views/displays";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { TwitterService } from "../../services/Twitter/TwitterService";
 
-export default class TwitterLogin extends BaseCommand {
+export default class TwitterLogin extends Command {
   idSeed = "ive yujin";
 
   description = "Connect your Twitter account to Gowon";

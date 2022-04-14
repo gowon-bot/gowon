@@ -1,6 +1,6 @@
-import { BaseCommand } from "../../lib/command/BaseCommand";
+import { Command } from "../../lib/command/Command";
 
-export default class Ha extends BaseCommand {
+export default class Ha extends Command {
   idSeed = "gfriend umji";
 
   subcategory = "fun";

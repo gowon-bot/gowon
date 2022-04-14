@@ -29,20 +29,23 @@ export default class OverviewParentCommand extends LastFMBaseParentCommand {
   prefixes = ["o", "overview"];
   default = () => new All();
 
-  children: CommandGroup = new CommandGroup([
-    All,
-    Joined,
-    AvgPerDay,
-    ScrobblesPerArtist,
-    ScrobblesPerAlbum,
-    ScrobblesPerTrack,
-    Per,
-    HIndex,
-    Help,
-    TopPercent,
-    SumTop,
-    Crowns,
-    Breadth,
-    Playsover,
-  ]);
+  children: CommandGroup = new CommandGroup(
+    [
+      All,
+      Joined,
+      AvgPerDay,
+      ScrobblesPerArtist,
+      ScrobblesPerAlbum,
+      ScrobblesPerTrack,
+      Per,
+      HIndex,
+      Help,
+      TopPercent,
+      SumTop,
+      Crowns,
+      Breadth,
+      Playsover,
+    ],
+    this.id
+  );
 }

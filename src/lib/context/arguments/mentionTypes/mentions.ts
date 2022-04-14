@@ -15,6 +15,8 @@ export const standardMentions = {
   userID: new UserStringArgument({
     mention: new DiscordIDMention(),
     description: "The id of the discord user to use",
+    // The user argument can take an id, so this is not needed
+    slashCommandOption: false,
   }),
   discordUsername: new UserStringArgument({
     mention: new DiscordUsernameMention(),

@@ -34,7 +34,7 @@ export function isEmbedFields(
 type OnPageChangeCallback = (
   page: number,
   totalPages: number
-) => string | Promise<string> | EmbedField[] | Promise<EmbedField[]>;
+) => string | Promise<string | EmbedField[]> | EmbedField[];
 
 export class ScrollingEmbed {
   private get discordService() {

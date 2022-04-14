@@ -1,11 +1,11 @@
 import { LogicError } from "../../errors/errors";
 import { CannotChangePrefixError } from "../../errors/permissions";
 import { code } from "../../helpers/discord";
-import { BaseCommand } from "../../lib/command/BaseCommand";
+import { Command } from "../../lib/command/Command";
 import { SettingsService } from "../../lib/settings/SettingsService";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 
-export default class Prefix extends BaseCommand {
+export default class Prefix extends Command {
   idSeed = "apink hayoung";
 
   description = "Set or view the prefix";

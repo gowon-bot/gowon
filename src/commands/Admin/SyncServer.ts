@@ -8,7 +8,9 @@ export default class SyncServer extends AdminBaseCommand {
   description = "Syncs the list of server members with Gowon";
   aliases = ["sync", "serversync"];
   usage = "";
+
   adminCommand = true;
+  slashCommand = true;
 
   async run() {
     const members = await this.requiredGuild.members.fetch();

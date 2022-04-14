@@ -1,4 +1,4 @@
-import { BaseCommand } from "../../lib/command/BaseCommand";
+import { Command } from "../../lib/command/Command";
 import { BotStatsService } from "../../services/dbservices/BotStatsService";
 import { LineConsolidator } from "../../lib/LineConsolidator";
 import { displayNumber } from "../../lib/views/displays";
@@ -12,7 +12,7 @@ const args = {
   ...standardMentions,
 } as const;
 
-export default class UserInfo extends BaseCommand<typeof args> {
+export default class UserInfo extends Command<typeof args> {
   idSeed = "exid le";
 
   subcategory = "developer";

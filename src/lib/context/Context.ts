@@ -1,6 +1,6 @@
 import { Guild, GuildMember, User } from "discord.js";
 import { LogicError } from "../../errors/errors";
-import { BaseCommand } from "../command/BaseCommand";
+import { Command } from "../command/Command";
 import { RunAs } from "../command/RunAs";
 import { GowonClient } from "../GowonClient";
 import { Logger } from "../Logger";
@@ -12,7 +12,7 @@ export interface CustomContext<C, M> {
 }
 
 export interface ContextParamaters<CustomContextT> {
-  command?: BaseCommand;
+  command?: Command;
   custom?: CustomContextT;
   logger?: Logger;
   payload: Payload;
@@ -23,7 +23,7 @@ export interface ContextParamaters<CustomContextT> {
 export class GowonContext<
   T extends CustomContext<any, any> = CustomContext<{}, {}>
 > {
-  private _command: BaseCommand | undefined;
+  private _command: Command | undefined;
   private custom: T;
   private _payload: Payload;
   private _runAs: RunAs;
@@ -91,17 +91,24 @@ export class GowonContext<
     return this._logger;
   }
 
-  get command(): BaseCommand {
+  get command(): Command {
     return this._command!;
   }
 
-  public setCommand(command: BaseCommand) {
+  public setCommand(command: Command) {
     this._command = command;
   }
 
   // Used to set commands from non-command places
   public dangerousSetCommand(command: any) {
     this._command = Object.assign(this._command || {}, command);
+  }
+
+  // Used to set authors from places without a real discord author
+  public dangerousSetAuthor(userID: string) {
+    this._payload.source = Object.assign(this._payload.source, {
+      author: { id: userID },
+    });
   }
 }
 

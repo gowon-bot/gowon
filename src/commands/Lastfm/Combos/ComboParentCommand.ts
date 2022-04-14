@@ -25,5 +25,5 @@ export default class ComboParentCommand extends LastFMBaseParentCommand {
   prefixes = ["combo", "streak", "cb"];
   default = () => new Current();
 
-  children = new CommandGroup([Current, Combos, ServerCombos]);
+  children = new CommandGroup([Current, Combos, ServerCombos], this.id);
 }

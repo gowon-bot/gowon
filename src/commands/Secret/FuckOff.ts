@@ -1,8 +1,8 @@
 import { sleep } from "../../helpers";
-import { BaseCommand } from "../../lib/command/BaseCommand";
+import { Command } from "../../lib/command/Command";
 import { Emoji } from "../../lib/Emoji";
 
-export default class FuckOff extends BaseCommand {
+export default class FuckOff extends Command {
   idSeed = "hot issue nahyun";
 
   subcategory = "fun";

@@ -26,7 +26,8 @@
       ".*dyke.*",
       ".*\\bpedo.*",
       ".*tard",
-      ".*lynch.*"
+      ".*lynch.*",
+      ".*concentration camp.*"
     ],
     "explicit": [
       [19, 12, 21, 20],

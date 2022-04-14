@@ -3,7 +3,6 @@ import { Guild } from "discord.js";
 import config from "../../config.json";
 import { CacheScopedKey, ShallowCache } from "../database/cache/ShallowCache";
 import { CrownBan } from "../database/entity/CrownBan";
-import { ChannelBlacklist } from "../database/entity/ChannelBlacklist";
 import { ArtistCrownBan } from "../database/entity/ArtistCrownBan";
 import { RunAs } from "../lib/command/RunAs";
 import { SettingsService } from "../lib/settings/SettingsService";
@@ -81,14 +80,6 @@ export class GowonService {
 
   async isUserCrownBanned(guild: Guild, discordID: string): Promise<boolean> {
     return (await this.getCrownBannedUsers(guild)).includes(discordID);
-  }
-
-  async getChannelBlacklists(serverID: string): Promise<ChannelBlacklist[]> {
-    return await this.shallowCache.findOrRemember(
-      CacheScopedKey.ChannelBlacklists,
-      async () => await ChannelBlacklist.find({ serverID }),
-      serverID
-    );
   }
 
   async getCrownBannedArtists(guild: Guild): Promise<string[]> {

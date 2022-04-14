@@ -1,7 +1,7 @@
 import { LogicError } from "../../errors/errors";
 import { code } from "../../helpers/discord";
 import { CommandAccessRoleName, roles } from "../../lib/command/access/roles";
-import { BaseCommand, Variation } from "../../lib/command/BaseCommand";
+import { Command, Variation } from "../../lib/command/Command";
 import { DiscordUserArgument } from "../../lib/context/arguments/argumentTypes/discord/DiscordUserArgument";
 import { StringArgument } from "../../lib/context/arguments/argumentTypes/StringArgument";
 import { UserStringArgument } from "../../lib/context/arguments/argumentTypes/UserStringArgument";
@@ -21,7 +21,7 @@ const args = {
   user: new DiscordUserArgument(),
 } as const;
 
-export default class GiveRole extends BaseCommand<typeof args> {
+export default class GiveRole extends Command<typeof args> {
   idSeed = "dreamnote hanbyeol";
 
   subcategory = "developer";

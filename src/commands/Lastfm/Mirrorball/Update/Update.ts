@@ -8,7 +8,7 @@ import {
   ConcurrencyService,
   ConcurrentAction,
 } from "../../../../services/ConcurrencyService";
-import { CommandRedirect } from "../../../../lib/command/BaseCommand";
+import { CommandRedirect } from "../../../../lib/command/Command";
 import { MirrorballBaseCommand } from "../../../../lib/indexing/MirrorballCommands";
 import { errorEmbed } from "../../../../lib/views/embeds";
 import {

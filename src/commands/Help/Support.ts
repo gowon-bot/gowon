@@ -1,6 +1,6 @@
-import { BaseCommand } from "../../lib/command/BaseCommand";
+import { Command } from "../../lib/command/Command";
 
-export default class Support extends BaseCommand {
+export default class Support extends Command {
   idSeed = "dreamnote sumin";
 
   subcategory = "about";

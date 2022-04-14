@@ -1,5 +1,5 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
-import { CommandRedirect } from "../../../lib/command/BaseCommand";
+import { CommandRedirect } from "../../../lib/command/Command";
 import { GuildAround } from "./GuildAround";
 import { GuildAt } from "./GuildAt";
 import { displayNumber } from "../../../lib/views/displays";

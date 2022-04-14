@@ -4,7 +4,7 @@ import { Friend } from "../../database/entity/Friend";
 import { CommandRun } from "../../database/entity/meta/CommandRun";
 import { CrownEvent } from "../../database/entity/meta/CrownEvent";
 import { bold } from "../../helpers/discord";
-import { BaseCommand } from "../../lib/command/BaseCommand";
+import { Command } from "../../lib/command/Command";
 import {
   displayDate,
   displayLink,
@@ -15,7 +15,7 @@ import { RedirectsService } from "../../services/dbservices/RedirectsService";
 import { LastFMService } from "../../services/LastFM/LastFMService";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 
-export default class About extends BaseCommand {
+export default class About extends Command {
   idSeed = "gfriend sinb";
 
   subcategory = "about";

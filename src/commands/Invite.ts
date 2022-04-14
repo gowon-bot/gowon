@@ -1,8 +1,8 @@
-import { BaseCommand } from "../lib/command/BaseCommand";
+import { Command } from "../lib/command/Command";
 import config from "../../config.json";
 import { Emoji } from "../lib/Emoji";
 
-export default class Invite extends BaseCommand {
+export default class Invite extends Command {
   idSeed = "iz*one sakura";
 
   subcategory = "about";

@@ -1,16 +1,12 @@
-import { BaseCommand } from "../../lib/command/BaseCommand";
-import { AdminService } from "../../services/dbservices/AdminService";
+import { Command } from "../../lib/command/Command";
 import { Emoji } from "../../lib/Emoji";
-import { ServiceRegistry } from "../../services/ServicesRegistry";
 
-export default class QuickHelp extends BaseCommand {
+export default class QuickHelp extends Command {
   idSeed = "hot issue mayna";
 
   subcategory = "about";
   description = "Displays a quick help menu";
   usage = [""];
-
-  adminService = ServiceRegistry.get(AdminService);
 
   async run() {
     const embed = this.newEmbed()

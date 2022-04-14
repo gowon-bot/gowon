@@ -4,7 +4,7 @@ import { displayNumber } from "../../../lib/views/displays";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 import { Flag } from "../../../lib/context/arguments/argumentTypes/Flag";
-import { CommandRedirect } from "../../../lib/command/BaseCommand";
+import { CommandRedirect } from "../../../lib/command/Command";
 import GlobalAlbumPlays from "./GlobalAlbumPlays";
 import { bold, italic } from "../../../helpers/discord";
 

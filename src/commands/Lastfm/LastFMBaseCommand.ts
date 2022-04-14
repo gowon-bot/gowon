@@ -1,4 +1,4 @@
-import { BaseCommand } from "../../lib/command/BaseCommand";
+import { Command } from "../../lib/command/Command";
 import {
   ParentCommand,
   BaseChildCommand,
@@ -11,7 +11,7 @@ import { ArgumentsMap } from "../../lib/context/arguments/types";
 
 export abstract class LastFMBaseCommand<
   T extends ArgumentsMap = {}
-> extends BaseCommand<T> {
+> extends Command<T> {
   lastFMService = ServiceRegistry.get(LastFMService);
   spotifyService = ServiceRegistry.get(SpotifyService);
   lastFMArguments = ServiceRegistry.get(LastFMArguments);

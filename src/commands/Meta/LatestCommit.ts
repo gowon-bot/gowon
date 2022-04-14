@@ -1,10 +1,10 @@
 import { parseJSON } from "date-fns";
 import { ago } from "../../helpers";
-import { BaseCommand } from "../../lib/command/BaseCommand";
+import { Command } from "../../lib/command/Command";
 import { GithubService } from "../../services/Github/GithubService";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 
-export default class LatestCommit extends BaseCommand {
+export default class LatestCommit extends Command {
   idSeed = "apink naeun";
 
   aliases = ["whatsnew"];

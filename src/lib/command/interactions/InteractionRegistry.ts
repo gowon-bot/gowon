@@ -1,4 +1,4 @@
-import { BaseCommand } from "../BaseCommand";
+import { Command } from "../Command";
 import { CommandRegistry } from "../CommandRegistry";
 import { RunAs } from "../RunAs";
 import { InteractionRegister } from "./InteractionRegister";
@@ -14,7 +14,7 @@ export class InteractionRegistry {
   }
 
   find(options: Partial<{ byName: string; withSubcommand: string }>): {
-    command?: BaseCommand;
+    command?: Command;
     runAs?: RunAs;
   } {
     if (options.byName) {
@@ -52,13 +52,13 @@ export class InteractionRegistry {
     return {};
   }
 
-  private getCommands(): BaseCommand[] {
+  private getCommands(): Command[] {
     return this.commandRegistry
       .list(true)
-      .filter((c) => !!c.slashCommand) as BaseCommand[];
+      .filter((c) => !!c.slashCommand) as Command[];
   }
 
-  private matchesVariations(command: BaseCommand, name: string): boolean {
+  private matchesVariations(command: Command, name: string): boolean {
     for (let v of command.variations) {
       const variations =
         v.variation instanceof Array ? v.variation : [v.variation];
