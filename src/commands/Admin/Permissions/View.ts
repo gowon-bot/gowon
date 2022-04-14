@@ -41,12 +41,14 @@ export class View extends PermissionsChildCommand<typeof args> {
 
   description = "View the permissions in this server";
 
-  usage = ["", "command", "role:roleid or @role", "user:userid or @user"];
+  usage = ["", "command", "@role", "@user", "#channel", "--all"];
   aliases = ["list"];
 
   slashCommand = true;
 
   arguments = args;
+
+  private readonly allHelp = "To see all permissions, run with the --all flag";
 
   async run() {
     const query = await this.getQueries();
@@ -62,7 +64,7 @@ export class View extends PermissionsChildCommand<typeof args> {
 
     if (!permissions.length) {
       embed.setDescription(
-        `No guild permissions found! To see all commands, run \`${this.prefix}permissions view --all\``
+        `No permissions found! ${!this.parsedArguments.all ? this.allHelp : ""}`
       );
       await this.send(embed);
       return;
@@ -83,7 +85,7 @@ export class View extends PermissionsChildCommand<typeof args> {
           !this.parsedArguments.user &&
           !this.parsedArguments.channel &&
           !this.parsedArguments.role
-            ? italic(`To see all permissions, run with the --all flag`) + "\n"
+            ? italic(this.allHelp) + "\n"
             : "",
       },
     });

@@ -29,7 +29,7 @@ const args = {
 export class UserDisable extends PermissionsChildCommand<typeof args> {
   idSeed = "red velvet irene";
 
-  description = "Ban a user from using a command.";
+  description = "Disable or un-allow a command for a user";
   usage = ["command @user/user ID"];
   aliases = ["blacklist"];
 
@@ -39,7 +39,7 @@ export class UserDisable extends PermissionsChildCommand<typeof args> {
     {
       name: "userenable",
       variation: ["userenable", "whitelist"],
-      description: "Unban a user from using a command",
+      description: "Enable or allow a command for a user",
       separateSlashCommand: true,
     },
   ];

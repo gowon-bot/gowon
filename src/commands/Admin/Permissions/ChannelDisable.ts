@@ -30,7 +30,7 @@ const args = {
 export class ChannelDisable extends PermissionsChildCommand<typeof args> {
   idSeed = "red velvet wendy";
 
-  description = "Disable a command in a channel";
+  description = "Disable or un-allow a command in a channel";
   usage = ["command #channel"];
   aliases = ["channelblacklist", "channeldisable"];
 
@@ -40,7 +40,7 @@ export class ChannelDisable extends PermissionsChildCommand<typeof args> {
     {
       name: "channelenable",
       variation: ["channelenable", "channelunblacklist"],
-      description: "Re-enable a command in a channel",
+      description: "Re-enable or allow a command in a channel",
       separateSlashCommand: true,
     },
   ];

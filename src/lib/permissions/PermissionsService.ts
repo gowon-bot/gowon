@@ -265,7 +265,7 @@ export class PermissionsService extends BaseService {
         });
 
         if (permission) {
-          return { allowed: false, permission };
+          return { allowed: permission.allow, permission };
         }
       }
     }

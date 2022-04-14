@@ -36,14 +36,14 @@ const args = {
 export class Disable extends PermissionsChildCommand<typeof args> {
   idSeed = "red velvet yeri";
 
-  description = "Disable a command";
+  description = "Disable or un-allow a command";
   usage = "command";
 
   variations: Variation[] = [
     {
       name: "enable",
       variation: "enable",
-      description: "Re-enable a command",
+      description: "Re-enable or allow a command",
       separateSlashCommand: true,
     },
   ];
