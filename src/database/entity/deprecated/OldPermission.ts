@@ -6,12 +6,12 @@ import {
   Unique,
 } from "typeorm";
 import { User as DiscordUser, Role, Guild } from "discord.js";
-import { User } from "./User";
-import { GowonContext } from "../../lib/context/Context";
+import { User } from "../User";
+import { GowonContext } from "../../../lib/context/Context";
 
 @Entity({ name: "permissions" })
 @Unique(["serverID", "entityID", "commandID"])
-export class OldPermission extends BaseEntity {
+export class __DeprecatedPermission extends BaseEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
@@ -46,6 +46,6 @@ export class OldPermission extends BaseEntity {
   }
 
   async toDiscordRole(ctx: GowonContext): Promise<Role> {
-    return (await OldPermission.toDiscordRole(ctx, this.entityID))!;
+    return (await __DeprecatedPermission.toDiscordRole(ctx, this.entityID))!;
   }
 }

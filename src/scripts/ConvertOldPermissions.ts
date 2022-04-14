@@ -1,6 +1,6 @@
-import { ChannelBlacklist } from "../database/entity/ChannelBlacklist";
-import { DisabledCommand } from "../database/entity/DisabledCommand";
-import { OldPermission } from "../database/entity/OldPermission";
+import { __DeprecatedChannelBlacklist } from "../database/entity/ChannelBlacklist";
+import { __DeprecatedDisabledCommand } from "../database/entity/DisabledCommand";
+import { __DeprecatedPermission } from "../database/entity/OldPermission";
 import { Permission, PermissionType } from "../database/entity/Permission";
 import { CommandRegistry } from "../lib/command/CommandRegistry";
 import { GowonContext } from "../lib/context/Context";
@@ -12,7 +12,7 @@ export default async function convertOldPermissions(ctx: GowonContext) {
   const permissionsService = ServiceRegistry.get(PermissionsService);
 
   // User and role permissions
-  const permissions = await OldPermission.find();
+  const permissions = await __DeprecatedPermission.find();
   for (const permission of permissions) {
     // We don't care about dev permissions
     if (permission.devPermission) continue;
@@ -37,7 +37,7 @@ export default async function convertOldPermissions(ctx: GowonContext) {
   }
 
   // Channel permissions
-  const channelBlacklists = await ChannelBlacklist.find();
+  const channelBlacklists = await __DeprecatedChannelBlacklist.find();
   for (const channelBlacklist of channelBlacklists) {
     const command = commandRegistry.findByID(channelBlacklist.commandID);
     if (!command) continue;
@@ -52,7 +52,7 @@ export default async function convertOldPermissions(ctx: GowonContext) {
   }
 
   // Guild permissions
-  const disabledCommands = await DisabledCommand.find();
+  const disabledCommands = await __DeprecatedDisabledCommand.find();
   for (const disabledCommand of disabledCommands) {
     const command = commandRegistry.findByID(disabledCommand.commandID);
     if (!command || command.adminCommand) continue;

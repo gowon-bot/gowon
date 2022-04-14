@@ -1,6 +1,5 @@
 import { Guild } from "discord.js";
 import { ShallowCache } from "../../database/cache/ShallowCache";
-import { ChannelBlacklist } from "../../database/entity/ChannelBlacklist";
 import { RunAs } from "../../lib/command/RunAs";
 import { gowonServiceConstants } from "../../services/GowonService";
 import { BaseMockService } from "./BaseMockService";
@@ -44,10 +43,6 @@ export class MockGowonService extends BaseMockService {
 
   async isUserCrownBanned(_guild: Guild, _discordID: string): Promise<boolean> {
     return false;
-  }
-
-  async getChannelBlacklists(_serverID: string): Promise<ChannelBlacklist[]> {
-    return [];
   }
 
   async getCrownBannedArtists(_guild: Guild): Promise<string[]> {
