@@ -24,6 +24,7 @@ export default async function convertOldPermissions(ctx: GowonContext) {
       commandID: permission.commandID,
       entityID: permission.entityID,
       allow: !permission.isBlacklist,
+      guildID: permission.serverID,
     });
 
     if (permission.isRoleBased) {
@@ -46,6 +47,7 @@ export default async function convertOldPermissions(ctx: GowonContext) {
       entityID: channelBlacklist.channelID,
       commandID: channelBlacklist.commandID,
       type: PermissionType.channel,
+      guildID: channelBlacklist.serverID,
     });
 
     await permissionsService.createPermission(ctx, command, permission);
@@ -61,6 +63,7 @@ export default async function convertOldPermissions(ctx: GowonContext) {
       entityID: disabledCommand.serverID,
       commandID: disabledCommand.commandID,
       type: PermissionType.guild,
+      guildID: disabledCommand.serverID,
     });
 
     await permissionsService.createPermission(ctx, command, permission);

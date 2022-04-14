@@ -64,6 +64,7 @@ export class ChannelDisable extends PermissionsChildCommand<typeof args> {
       type: PermissionType.channel,
       commandID: command.id,
       entityID: channel.id,
+      guildID: this.requiredGuild.id,
     });
 
     let embed: MessageEmbed;

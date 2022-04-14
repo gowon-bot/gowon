@@ -80,7 +80,10 @@ export class PermissionsService extends BaseService {
   async listPermissions(ctx: GowonContext, queries: PermissionQuery[]) {
     this.log(ctx, `Fetching permissions from ${queries.length} queries`);
 
-    const permissions = await Permission.getFromQueries(queries);
+    const permissions = await Permission.getFromQueries(
+      queries,
+      ctx.requiredGuild.id
+    );
 
     return permissions;
   }

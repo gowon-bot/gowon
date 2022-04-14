@@ -61,6 +61,7 @@ export class UserDisable extends PermissionsChildCommand<typeof args> {
       type: PermissionType.guildMember,
       commandID: command.id,
       entityID: `${this.requiredGuild.id}:${user.id}`,
+      guildID: this.requiredGuild.id,
     });
 
     let embed: MessageEmbed;

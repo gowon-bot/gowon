@@ -85,6 +85,7 @@ export class Disable extends PermissionsChildCommand<typeof args> {
       type: PermissionType.guild,
       commandID: command.id,
       entityID: this.requiredGuild.id,
+      guildID: this.requiredGuild.id,
     });
 
     let embed: MessageEmbed;

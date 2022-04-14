@@ -60,6 +60,7 @@ export class RoleDisable extends PermissionsChildCommand<typeof args> {
       type: PermissionType.role,
       commandID: command.id,
       entityID: role.id,
+      guildID: this.requiredGuild.id,
     });
 
     let embed: MessageEmbed;

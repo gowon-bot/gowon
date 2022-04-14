@@ -41,6 +41,10 @@ export class Permission extends BaseEntity {
   @Column()
   commandID!: string;
 
+  // Used for viewing permissions
+  @Column({ nullable: true })
+  guildID?: string;
+
   // If allow is true, this permissions *allows* instead of blocks
   @Column({ default: false })
   allow!: boolean;
@@ -51,12 +55,13 @@ export class Permission extends BaseEntity {
 
   // Static methods
   static async getFromQueries(
-    queries: PermissionQuery[]
+    queries: PermissionQuery[],
+    guildID: string
   ): Promise<Permission[]> {
     const queryBuilder = Permission.createQueryBuilder();
 
     for (const query of queries) {
-      const where = {} as SimpleMap;
+      const where = { guildID } as SimpleMap;
 
       if (query.entityID) where.entityID = query.entityID;
       if (query.type) where.type = query.type;
