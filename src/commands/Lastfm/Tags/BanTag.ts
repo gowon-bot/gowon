@@ -1,5 +1,5 @@
 import { bold } from "../../../helpers/discord";
-import { Variation } from "../../../lib/command/BaseCommand";
+import { Variation } from "../../../lib/command/Command";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
@@ -8,7 +8,11 @@ import { WordBlacklistService } from "../../../services/WordBlacklistService";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 const args = {
-  tag: new StringArgument({ index: { start: 0 }, required: true }),
+  tag: new StringArgument({
+    index: { start: 0 },
+    required: true,
+    description: "The tag to ban",
+  }),
 } as const;
 
 export default class BanTag extends LastFMBaseCommand<typeof args> {
@@ -19,6 +23,7 @@ export default class BanTag extends LastFMBaseCommand<typeof args> {
   aliases = ["bt"];
 
   adminCommand = true;
+  slashCommand = true;
 
   arguments = args;
 

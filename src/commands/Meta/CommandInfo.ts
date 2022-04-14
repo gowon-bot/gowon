@@ -1,6 +1,9 @@
 import { CommandNotFoundError } from "../../errors/errors";
 import { italic } from "../../helpers/discord";
 import { emDash } from "../../helpers/specialCharacters";
+import { Command } from "../../lib/command/Command";
+import { RunAs } from "../../lib/command/RunAs";
+import { Flag } from "../../lib/context/arguments/argumentTypes/Flag";
 import { StringArgument } from "../../lib/context/arguments/argumentTypes/StringArgument";
 import { Validation } from "../../lib/validation/ValidationChecker";
 import { validators } from "../../lib/validation/validators";
@@ -9,6 +12,10 @@ import { MetaBaseCommand } from "./MetaBaseCommand";
 
 const args = {
   searchString: new StringArgument({ index: { start: 0 }, required: true }),
+  byID: new Flag({
+    description: "Use searchString as an ID",
+    longnames: ["byID"],
+  }),
 } as const;
 
 export default class CommandInfo extends MetaBaseCommand<typeof args> {
@@ -29,17 +36,31 @@ export default class CommandInfo extends MetaBaseCommand<typeof args> {
   async run() {
     const searchString = this.parsedArguments.searchString;
 
-    const { command, runAs } = await this.commandRegistry.find(
-      searchString,
-      this.requiredGuild.id
-    );
+    let command: Command | undefined;
+    let runAs: RunAs | undefined;
+
+    if (this.parsedArguments.byID) {
+      command = this.commandRegistry.findByID(
+        this.parsedArguments.searchString
+      );
+    } else {
+      const response = await this.commandRegistry.find(
+        searchString,
+        this.requiredGuild.id
+      );
+
+      command = response.command;
+      runAs = response.runAs;
+    }
 
     if (!command) throw new CommandNotFoundError();
 
     const count = await this.metaService.countCommandRuns(this.ctx, command.id);
 
     const embed = this.newEmbed().setTitle(
-      `Info about ${runAs.toCommandFriendlyName()}`
+      `Info about ${
+        runAs?.toCommandFriendlyName() || command.friendlyNameWithParent
+      }`
     ).setDescription(`
       **Name**: ${command.name}${
       command.parentName ? `\n**Parent**: ${command.parentName}` : ""

@@ -2,7 +2,7 @@ import {
   GetMentionsOptions,
   GetMentionsReturn,
 } from "../../../helpers/getMentions";
-import { ChildCommand } from "../../../lib/command/Command";
+import { ChildCommand } from "../../../lib/command/ChildCommand";
 import {
   ArgumentName,
   ArgumentsMap,

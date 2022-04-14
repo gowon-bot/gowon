@@ -23,13 +23,8 @@ export default class NowPlayingConfigParentCommand extends LastFMBaseParentComma
 
   noPrefixAliases = ["react", "reacts", "reactions"];
 
-  children: CommandGroup = new CommandGroup([
-    View,
-    SetCommand,
-    Help,
-    Preview,
-    Add,
-    Remove,
-    React,
-  ]);
+  children: CommandGroup = new CommandGroup(
+    [View, SetCommand, Help, Preview, Add, Remove, React],
+    this.id
+  );
 }

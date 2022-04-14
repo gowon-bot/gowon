@@ -1,6 +1,6 @@
 import { MirrorballError } from "../../../../../errors/errors";
 import { bold, italic } from "../../../../../helpers/discord";
-import { Variation } from "../../../../../lib/command/BaseCommand";
+import { Variation } from "../../../../../lib/command/Command";
 import { VARIATIONS } from "../../../../../lib/command/variations";
 import { prefabArguments } from "../../../../../lib/context/arguments/prefabArguments";
 import {

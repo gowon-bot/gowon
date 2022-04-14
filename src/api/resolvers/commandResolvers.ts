@@ -1,19 +1,37 @@
-import { BaseCommand } from "../../lib/command/BaseCommand";
+import { Command } from "../../lib/command/Command";
 import { CommandRegistry } from "../../lib/command/CommandRegistry";
+import { PermissionsCacheContext } from "../../lib/permissions/PermissionsCacheService";
+import { PermissionsService } from "../../lib/permissions/PermissionsService";
+import { MockMessage } from "../../mocks/discord";
+import { ServiceRegistry } from "../../services/ServicesRegistry";
 
 const registry = CommandRegistry.getInstance();
+const permissionsService = ServiceRegistry.get(PermissionsService);
 
-export default {
+export default (ctx: PermissionsCacheContext) => ({
   queries: {
-    commands(_: any, { keywords }: { keywords: string }) {
-      const commands = registry.deepList();
+    async commands(
+      _: any,
+      { keywords, isAdmin }: { keywords: string; isAdmin?: boolean },
+      { doughnutID }: { doughnutID: string }
+    ) {
+      ctx.payload.source = new MockMessage("", { authorID: doughnutID });
+      ctx.constants.isAdmin = isAdmin ?? true;
 
-      const results = registry.search(commands, keywords);
+      const allCommands = registry.deepList();
 
-      return results.map(commandToData);
+      const results = registry.search(allCommands, keywords);
+
+      const canChecks = await permissionsService.canListInContext(ctx, results);
+
+      const commands = canChecks
+        .filter((c) => c.allowed)
+        .map((cc) => cc.command);
+
+      return commands.map(commandToData);
     },
   },
-};
+});
 
 export interface CommandResponse {
   id: string;
@@ -40,7 +58,7 @@ export interface VariationResponse {
   description?: string;
 }
 
-function commandToData(command: BaseCommand): CommandResponse {
+function commandToData(command: Command): CommandResponse {
   return {
     id: command.id,
     idSeed: command.idSeed,

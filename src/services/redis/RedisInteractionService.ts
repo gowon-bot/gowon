@@ -1,32 +1,42 @@
 import { BaseService } from "../BaseService";
-import redis, { RedisError } from "redis";
-import { promisify } from "util";
 import config from "../../../config.json";
 import { GowonContext } from "../../lib/context/Context";
+import { createClient } from "redis";
 
 export class RedisInteractionService extends BaseService {
-  client = redis.createClient({
-    host: (config as { redisHost?: string }).redisHost,
+  client = createClient({
+    socket: {
+      host: config.redisHost,
+    },
   });
-
-  private setAsync = promisify(this.client.setex).bind(this.client);
-  private getAsync = promisify(this.client.get).bind(this.client);
 
   private genKey(key: string): string {
     return "gowon:" + key;
   }
 
-  private handleRedisError(error: RedisError): void {
+  private handleRedisError(error: Error): void {
     this.client.quit();
-    this.client = redis.createClient();
+    this.client = createClient({ url: config.redisHost });
     this.init();
     throw error;
   }
 
-  async init() {
-    await promisify(this.client.on).bind(this.client)("ready");
+  async init(): Promise<void> {
+    const promise = new Promise<void>((resolve) => {
+      this.client.on("ready", () => {
+        resolve();
+      });
 
-    this.client.on("error", this.handleRedisError);
+      this.client.on("error", (e) => {
+        throw e;
+      });
+    });
+
+    await this.client.connect();
+
+    this.client.on("error", this.handleRedisError.bind(this));
+
+    return promise;
   }
 
   async set(ctx: GowonContext, key: string, value: any, expiresAfter: number) {
@@ -37,18 +47,33 @@ export class RedisInteractionService extends BaseService {
       );
     }
 
-    await this.setAsync(this.genKey(key), expiresAfter, value ?? "");
+    await this.client.set(this.genKey(key), value ?? "", { EX: expiresAfter });
   }
 
   async get(ctx: GowonContext, key: string): Promise<string | undefined> {
     this.log(ctx, `Getting ${key}`);
 
-    return (await this.getAsync(this.genKey(key))) ?? undefined;
+    return (await this.client.get(this.genKey(key))) ?? undefined;
   }
 
-  delete(ctx: GowonContext, key: string) {
+  async keys(pattern: string): Promise<string[]> {
+    return (await this.client.keys(this.genKey(pattern))) ?? undefined;
+  }
+
+  async getMany(
+    ctx: GowonContext,
+    keys: string[]
+  ): Promise<Array<string | null>> {
+    this.log(ctx, `Getting many with ${keys.length} keys`);
+
+    if (!keys.length) return [];
+
+    return await this.client.mGet(keys);
+  }
+
+  async delete(ctx: GowonContext, key: string): Promise<void> {
     this.log(ctx, `Deleting ${key}`);
 
-    this.client.del(this.genKey(key));
+    await this.client.del(this.genKey(key));
   }
 }

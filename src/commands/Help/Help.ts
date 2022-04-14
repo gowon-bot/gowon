@@ -1,6 +1,5 @@
-import { BaseCommand, CommandRedirect } from "../../lib/command/BaseCommand";
+import { Command, CommandRedirect } from "../../lib/command/Command";
 import { EmbedField } from "discord.js";
-import { AdminService } from "../../services/dbservices/AdminService";
 import HelpForOneCommand from "./HelpForOneCommand";
 import { ucFirst } from "../../helpers";
 import { SimpleScrollingEmbed } from "../../lib/views/embeds/SimpleScrollingEmbed";
@@ -9,9 +8,11 @@ import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { StringArgument } from "../../lib/context/arguments/argumentTypes/StringArgument";
 import { Flag } from "../../lib/context/arguments/argumentTypes/Flag";
 import { code } from "../../helpers/discord";
+import { PermissionsService } from "../../lib/permissions/PermissionsService";
+import { bullet } from "../../helpers/specialCharacters";
 
 interface GroupedCommands {
-  [category: string]: BaseCommand[];
+  [category: string]: Command[];
 }
 
 const args = {
@@ -30,7 +31,7 @@ const args = {
   }),
 } as const;
 
-export default class Help extends BaseCommand<typeof args> {
+export default class Help extends Command<typeof args> {
   idSeed = "clc seungyeon";
 
   aliases = ["h"];
@@ -52,24 +53,24 @@ export default class Help extends BaseCommand<typeof args> {
     },
   ];
 
-  adminService = ServiceRegistry.get(AdminService);
-
-  customContext = {
-    constants: { adminService: this.adminService },
-  };
+  permissionsService = ServiceRegistry.get(PermissionsService);
 
   async run() {
     await this.helpForAllCommands();
   }
 
   private async helpForAllCommands() {
-    let commands = await this.adminService.can.viewList(
+    const rawCommands = this.commandRegistry.list();
+
+    const canChecks = await this.permissionsService.canListInContext(
       this.ctx,
-      this.commandRegistry.list()
+      rawCommands
     );
 
+    const commands = canChecks.filter((c) => c.allowed).map((cc) => cc.command);
+
     const footer = (page: number, totalPages: number) =>
-      `Page ${page} of ${totalPages} • Can't find a command? Try ${this.prefix}searchcommand <keywords> to search commands`;
+      `Page ${page} of ${totalPages} ${bullet} Can't find a command? Try ${this.prefix}searchcommand <keywords> to search commands`;
     const description = `Run \`${this.prefix}help <command>\` to learn more about specific commands\nTo change prefix, mention Gowon (\`@Gowon prefix ?)\``;
     const embed = this.newEmbed().setAuthor(this.generateEmbedAuthor("Help"));
 

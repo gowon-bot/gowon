@@ -20,6 +20,7 @@ import discordResolvers from "./resolvers/discordResolvers";
 import { GowonContext } from "../lib/context/Context";
 import { HeaderlessLogger } from "../lib/Logger";
 import { TwitterWebhookService } from "./webhooks/TwitterWebhookService";
+import { Payload } from "../lib/context/Payload";
 
 export const gowonAPIPort = gowonConfig.gowonAPIPort;
 
@@ -31,23 +32,31 @@ export class GraphQLAPI {
 
   constructor(private gowonClient: GowonClient) {}
 
+  get ctx(): GowonContext {
+    const ctx = new GowonContext({
+      gowonClient: this.gowonClient,
+      payload: new Payload({} as any),
+    } as any);
+
+    ctx.dangerousSetCommand({ logger: new HeaderlessLogger() });
+
+    return ctx;
+  }
+
   async init() {
     const app = express();
-
-    const ctx = new GowonContext({} as any);
-    ctx.dangerousSetCommand({ logger: new HeaderlessLogger() });
 
     const config: Config = {
       typeDefs,
       resolvers: {
         Query: {
-          ...commandResolvers.queries,
-          ...settingsResolvers(this.gowonClient, ctx).queries,
-          ...discordResolvers(this.gowonClient).queries,
+          ...commandResolvers(this.ctx).queries,
+          ...settingsResolvers(this.ctx).queries,
+          ...discordResolvers(this.ctx).queries,
         },
         Mutation: {
           ...userResolvers.mutations,
-          ...settingsResolvers(this.gowonClient, ctx).mutations,
+          ...settingsResolvers(this.ctx).mutations,
         },
       },
       introspection: true,

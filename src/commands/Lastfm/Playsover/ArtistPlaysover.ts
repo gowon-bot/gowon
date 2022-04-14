@@ -2,7 +2,7 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { displayNumber } from "../../../lib/views/displays";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
-import { CommandRedirect } from "../../../lib/command/BaseCommand";
+import { CommandRedirect } from "../../../lib/command/Command";
 import ArtistPlaysequal from "./ArtistPlaysequal";
 import { prefabFlags } from "../../../lib/context/arguments/prefabArguments";
 import { bold } from "../../../helpers/discord";

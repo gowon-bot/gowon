@@ -1,19 +1,19 @@
 import { serverIconURL } from "../../helpers/discord";
-import { GowonClient } from "../../lib/GowonClient";
+import { GowonContext } from "../../lib/context/Context";
 
-export default (client: GowonClient) => ({
+export default (ctx: GowonContext) => ({
   queries: {
     async guild(
       _: any,
       { guildID }: { guildID: string },
       { doughnutID }: { doughnutID: string }
     ): Promise<APIGuild> {
-      const guild = await client.client.guilds.fetch(guildID);
+      const guild = await ctx.client.client.guilds.fetch(guildID);
 
       let canAdmin: boolean;
 
       try {
-        canAdmin = await client.canUserAdminGuild(guild, doughnutID);
+        canAdmin = await ctx.client.canUserAdminGuild(guild, doughnutID);
       } catch (e) {
         console.log(e);
       }
@@ -27,7 +27,7 @@ export default (client: GowonClient) => ({
     },
 
     async roles(_: any, { guildID }: { guildID: string }): Promise<APIRole[]> {
-      const guild = await client.client.guilds.fetch(guildID);
+      const guild = await ctx.client.client.guilds.fetch(guildID);
 
       return guild.roles.cache
         .map((r) => ({

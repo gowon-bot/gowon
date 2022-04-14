@@ -1,28 +1,13 @@
-import { code } from "../../../helpers/discord";
-import { PermissionsChildCommand } from "../Permissions/PermissionsChildCommand";
+import { PermissionsChildCommand } from "./PermissionsChildCommand";
 
 export class Disabled extends PermissionsChildCommand {
   idSeed = "red velvet seulgi";
 
   description = "List all disabled commands";
-  usage = "";
   aliases = ["listdisabled", "disabledcommands"];
+  usage = "";
 
-  async prerun() {}
+  archived = true;
 
-  async run() {
-    let disabledCommands = await this.adminService.listDisabled(this.ctx);
-
-    let embed = this.newEmbed()
-      .setTitle(`Disabled commands in ${this.guild?.name}`)
-      .setDescription(
-        disabledCommands.length
-          ? disabledCommands
-              .map((dc) => code(dc.commandFriendlyName))
-              .join(", ")
-          : "This server does not have any disabled commands!"
-      );
-
-    await this.send(embed);
-  }
+  async run() {}
 }

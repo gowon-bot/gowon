@@ -16,5 +16,5 @@ export default class SettingsParentCommamnd extends ParentCommand {
     "serversettings",
   ];
 
-  children: CommandGroup = new CommandGroup([Guild]);
+  children: CommandGroup = new CommandGroup([Guild], this.id);
 }

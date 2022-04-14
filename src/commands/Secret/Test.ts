@@ -1,10 +1,8 @@
-import { BaseCommand } from "../../lib/command/BaseCommand";
-import { ServiceRegistry } from "../../services/ServicesRegistry";
-import { TwitterService } from "../../services/Twitter/TwitterService";
+import { Command } from "../../lib/command/Command";
 
 const args = {} as const;
 
-export default class Test extends BaseCommand<typeof args> {
+export default class Test extends Command<typeof args> {
   idSeed = "clc seunghee";
 
   description = "Testing testing 123...4???";
@@ -15,9 +13,7 @@ export default class Test extends BaseCommand<typeof args> {
   slashCommand = true;
   twitterCommand = true;
 
-  twitterService = ServiceRegistry.get(TwitterService);
-
   async run() {
-    await this.responder.all(this.ctx, "Hello, world!");
+    await this.send("Hello, world!");
   }
 }

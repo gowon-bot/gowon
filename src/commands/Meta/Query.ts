@@ -1,5 +1,5 @@
 import { getConnection } from "typeorm";
-import { BaseCommand } from "../../lib/command/BaseCommand";
+import { Command } from "../../lib/command/Command";
 import { StringArgument } from "../../lib/context/arguments/argumentTypes/StringArgument";
 import { Logger } from "../../lib/Logger";
 import { Validation } from "../../lib/validation/ValidationChecker";
@@ -9,7 +9,7 @@ const args = {
   query: new StringArgument({ index: { start: 0 }, required: true }),
 } as const;
 
-export default class Query extends BaseCommand<typeof args> {
+export default class Query extends Command<typeof args> {
   idSeed = "gfriend sowon";
 
   description = "Query the database";

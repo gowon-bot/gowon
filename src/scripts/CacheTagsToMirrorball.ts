@@ -1,37 +1,37 @@
-import gql from "graphql-tag";
-import { ArtistTagCache } from "../database/entity/ArtistTagCache";
-import { mirrorballClient } from "../lib/indexing/client";
+// import gql from "graphql-tag";
+// import { ArtistTagCache } from "../database/entity/ArtistTagCache";
+// import { mirrorballClient } from "../lib/indexing/client";
 
-export default async function () {
-  const tags = await ArtistTagCache.find();
+// export default async function () {
+//   const tags = await ArtistTagCache.find();
 
-  const mutation = gql`
-    mutation tagArtists($name: String!, $tags: [TagInput!]!) {
-      tagArtists(artists: [{ name: $name }], tags: $tags)
-    }
-  `;
+//   const mutation = gql`
+//     mutation tagArtists($name: String!, $tags: [TagInput!]!) {
+//       tagArtists(artists: [{ name: $name }], tags: $tags)
+//     }
+//   `;
 
-  for (const tag of tags) {
-    const tagsVariable = tag.tags.map((t) => ({ name: t }));
-    const artist = tag.artistName;
+//   for (const tag of tags) {
+//     const tagsVariable = tag.tags.map((t) => ({ name: t }));
+//     const artist = tag.artistName;
 
-    console.log(
-      `Processing ${artist} with tags "${tagsVariable
-        .map((t) => t.name)
-        .join(", ")}"`
-    );
+//     console.log(
+//       `Processing ${artist} with tags "${tagsVariable
+//         .map((t) => t.name)
+//         .join(", ")}"`
+//     );
 
-    console.log({
-      name: artist,
-      tags: tagsVariable,
-    });
+//     console.log({
+//       name: artist,
+//       tags: tagsVariable,
+//     });
 
-    await mirrorballClient.mutate({
-      mutation,
-      variables: {
-        name: artist,
-        tags: tagsVariable,
-      },
-    });
-  }
-}
+//     await mirrorballClient.mutate({
+//       mutation,
+//       variables: {
+//         name: artist,
+//         tags: tagsVariable,
+//       },
+//     });
+//   }
+// }

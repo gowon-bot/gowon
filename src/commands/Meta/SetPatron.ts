@@ -1,5 +1,5 @@
 import { LogicError } from "../../errors/errors";
-import { BaseCommand, Variation } from "../../lib/command/BaseCommand";
+import { Command, Variation } from "../../lib/command/Command";
 import { DiscordUserArgument } from "../../lib/context/arguments/argumentTypes/discord/DiscordUserArgument";
 import { UserStringArgument } from "../../lib/context/arguments/argumentTypes/UserStringArgument";
 import { DiscordIDMention } from "../../lib/context/arguments/mentionTypes/DiscordIDMention";
@@ -10,7 +10,7 @@ const args = {
   user: new DiscordUserArgument(),
 } as const;
 
-export default class SetPatron extends BaseCommand<typeof args> {
+export default class SetPatron extends Command<typeof args> {
   idSeed = "hello venus yooyoung";
 
   subcategory = "developer";

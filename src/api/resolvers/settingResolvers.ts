@@ -1,7 +1,6 @@
 import { Guild } from "discord.js";
 import { LogicError } from "../../errors/errors";
 import { GowonContext } from "../../lib/context/Context";
-import { GowonClient } from "../../lib/GowonClient";
 import { Settings, toggleValues } from "../../lib/settings/Settings";
 import {
   convertSettingNameToKey,
@@ -17,7 +16,7 @@ import { ServiceRegistry } from "../../services/ServicesRegistry";
 
 const settingsService = ServiceRegistry.get(SettingsService);
 
-export default (client: GowonClient, ctx: GowonContext) => ({
+export default (ctx: GowonContext) => ({
   queries: {
     allSettings(_: any, {}: {}) {
       return Object.values(Settings)
@@ -30,10 +29,10 @@ export default (client: GowonClient, ctx: GowonContext) => ({
       { guildID }: { guildID: string; userID: string },
       { doughnutID }: { doughnutID: string }
     ) {
-      const guild = await client.client.guilds.fetch(guildID);
+      const guild = await ctx.client.client.guilds.fetch(guildID);
 
       const canAdmin = doughnutID
-        ? await client.canUserAdminGuild(guild, doughnutID)
+        ? await ctx.client.canUserAdminGuild(guild, doughnutID)
         : false;
 
       if (!canAdmin) {
@@ -72,10 +71,10 @@ export default (client: GowonClient, ctx: GowonContext) => ({
       },
       { doughnutID }: { doughnutID: string }
     ) {
-      const guild = await client.client.guilds.fetch(guildID);
+      const guild = await ctx.client.client.guilds.fetch(guildID);
 
       const canAdmin = doughnutID
-        ? await client.canUserAdminGuild(guild, doughnutID)
+        ? await ctx.client.canUserAdminGuild(guild, doughnutID)
         : false;
 
       if (!canAdmin) {

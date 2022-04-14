@@ -1,4 +1,4 @@
-import { BaseCommand } from "../command/BaseCommand";
+import { Command } from "../command/Command";
 import { Connector } from "./BaseConnector";
 import { ArgumentsMap } from "../context/arguments/types";
 import { LastFMService } from "../../services/LastFM/LastFMService";
@@ -30,7 +30,7 @@ export abstract class MirrorballBaseCommand<
   ResponseT,
   ParamsT,
   ArgumentsT extends ArgumentsMap = {}
-> extends BaseCommand<ArgumentsT> {
+> extends Command<ArgumentsT> {
   abstract connector: Connector<ResponseT, ParamsT>;
   lastFMService = ServiceRegistry.get(LastFMService);
   lastFMArguments = ServiceRegistry.get(LastFMArguments);

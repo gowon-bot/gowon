@@ -19,5 +19,5 @@ export default class PlaylistParentCommand extends SpotifyBaseParentCommand {
   prefixes = ["playlists", "pl", "plist"];
   default = () => new List();
 
-  children = new CommandGroup([Add, List, SetDefault, Tag]);
+  children = new CommandGroup([Add, List, SetDefault, Tag], this.id);
 }

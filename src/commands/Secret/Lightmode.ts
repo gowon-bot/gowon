@@ -1,6 +1,6 @@
-import { BaseCommand } from "../../lib/command/BaseCommand";
+import { Command } from "../../lib/command/Command";
 
-export default class Lightmode extends BaseCommand {
+export default class Lightmode extends Command {
   idSeed = "blackpink jennie";
 
   subcategory = "fun";

@@ -1,7 +1,7 @@
 import { MirrorballError } from "../../../../../errors/errors";
 import { bold } from "../../../../../helpers/discord";
 import { LinkGenerator } from "../../../../../helpers/lastFM";
-import { Variation } from "../../../../../lib/command/BaseCommand";
+import { Variation } from "../../../../../lib/command/Command";
 import { VARIATIONS } from "../../../../../lib/command/variations";
 import {
   prefabArguments,

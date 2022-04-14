@@ -2,7 +2,7 @@ import { JumbleChildCommand } from "./JumbleChildCommand";
 import { LogicError } from "../../../errors/errors";
 import { abbreviateNumber, shuffle } from "../../../helpers";
 import { JumbledArtist, jumbleRedisKey } from "./JumbleParentCommand";
-import { Variation } from "../../../lib/command/BaseCommand";
+import { Variation } from "../../../lib/command/Command";
 import { LineConsolidator } from "../../../lib/LineConsolidator";
 import { TagConsolidator } from "../../../lib/tags/TagConsolidator";
 import { displayNumber } from "../../../lib/views/displays";

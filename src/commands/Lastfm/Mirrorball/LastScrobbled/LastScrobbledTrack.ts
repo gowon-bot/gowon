@@ -1,6 +1,6 @@
 import { MirrorballError } from "../../../../errors/errors";
 import { convertMirrorballDate } from "../../../../helpers/mirrorball";
-import { Variation } from "../../../../lib/command/BaseCommand";
+import { Variation } from "../../../../lib/command/Command";
 import { MirrorballBaseCommand } from "../../../../lib/indexing/MirrorballCommands";
 import { displayDate } from "../../../../lib/views/displays";
 import {

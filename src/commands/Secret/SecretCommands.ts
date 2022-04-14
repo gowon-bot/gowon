@@ -1,6 +1,6 @@
-import { BaseCommand } from "../../lib/command/BaseCommand";
+import { Command } from "../../lib/command/Command";
 
-export default class SecretCommands extends BaseCommand {
+export default class SecretCommands extends Command {
   idSeed = "2ne1 minzy";
 
   description = "Shows the secret commands";

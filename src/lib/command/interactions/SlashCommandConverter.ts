@@ -1,22 +1,20 @@
-import { BaseCommand, Variation } from "../BaseCommand";
+import { Command, Variation } from "../Command";
 import {
   SlashCommandBuilder,
   SlashCommandSubcommandBuilder,
 } from "@discordjs/builders";
 import { ArgumentsMap } from "../../context/arguments/types";
 import { ParentCommand } from "../ParentCommand";
-import { ChildCommand } from "../Command";
+import { ChildCommand } from "../ChildCommand";
 
 export class SlashCommandConverter {
-  convert(
-    command: BaseCommand,
-    asVariation?: Variation
-  ): SlashCommandBuilder[] {
+  convert(command: Command, asVariation?: Variation): SlashCommandBuilder[] {
     if (command instanceof ParentCommand) {
       return [this.convertParentCommand(command)];
     }
 
     let slashCommand = new SlashCommandBuilder()
+      .setDefaultPermission(!(command.devCommand || command.adminCommand))
       .setName(
         (
           asVariation?.name ||
@@ -92,6 +90,7 @@ export class SlashCommandConverter {
 
   private convertParentCommand(command: ParentCommand): SlashCommandBuilder {
     let parentCommand = new SlashCommandBuilder()
+      .setDefaultPermission(!(command.devCommand || command.adminCommand))
       .setName(command.friendlyName)
       .setDescription(command.description);
 
@@ -112,12 +111,12 @@ export class SlashCommandConverter {
     return parentCommand;
   }
 
-  private getSeparateVariations(command: BaseCommand): Variation[] {
+  private getSeparateVariations(command: Command): Variation[] {
     return (command.variations || []).filter((v) => !!v.separateSlashCommand);
   }
 
   private convertVariations(
-    command: BaseCommand,
+    command: Command,
     variations: Variation[]
   ): SlashCommandBuilder[] {
     const slashCommands: SlashCommandBuilder[] = [];

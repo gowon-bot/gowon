@@ -1,6 +1,6 @@
-import { BaseCommand } from "../../lib/command/BaseCommand";
+import { Command } from "../../lib/command/Command";
 
-export default class Ooga extends BaseCommand {
+export default class Ooga extends Command {
   idSeed = "blackpink rose";
 
   subcategory = "fun";

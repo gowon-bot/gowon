@@ -1,12 +1,12 @@
 import { ArgumentsMap } from "../context/arguments/types";
-import { BaseCommand } from "./BaseCommand";
-import { ChildCommand } from "./Command";
+import { Command } from "./Command";
+import { ChildCommand } from "./ChildCommand";
 import { CommandGroup } from "./CommandGroup";
 
-export abstract class ParentCommand extends BaseCommand {
+export abstract class ParentCommand extends Command {
   abstract children: CommandGroup;
   hasChildren = true;
-  default?: () => BaseCommand;
+  default?: () => Command;
   prefixes: string | Array<string> = "";
 
   /* A list of aliases that can "bypass" the parent prefix
@@ -19,7 +19,7 @@ export abstract class ParentCommand extends BaseCommand {
   async getChild(
     child: string,
     serverID: string
-  ): Promise<BaseCommand | undefined> {
+  ): Promise<Command | undefined> {
     let childCommand = await this.commandRegistry.find(
       child,
       serverID,
@@ -29,6 +29,7 @@ export abstract class ParentCommand extends BaseCommand {
     if (childCommand.command) {
       return childCommand.command;
     }
+
     return;
   }
 
@@ -38,10 +39,11 @@ export abstract class ParentCommand extends BaseCommand {
 }
 
 export abstract class BaseChildCommand<T extends ArgumentsMap = {}>
-  extends BaseCommand<T>
+  extends Command<T>
   implements ChildCommand<T>
 {
   shouldBeIndexed = false;
   abstract parentName: string;
+  parentID!: string;
   isChild = true;
 }

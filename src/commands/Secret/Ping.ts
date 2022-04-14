@@ -1,13 +1,14 @@
 import { Chance } from "chance";
 import { shuffle } from "../../helpers";
-import { BaseCommand } from "../../lib/command/BaseCommand";
+import { Command } from "../../lib/command/Command";
 
-export default class Ping extends BaseCommand {
+export default class Ping extends Command {
   idSeed = "blackpink lisa";
 
   subcategory = "developer";
   description = "Ping! Pong! Pang?";
   aliases = ["🏓", "pin", "pingu", "pung", "peng", "핑", "pingmatrix", "bing"];
+
   secretCommand = true;
   slashCommand = true;
   twitterCommand = true;

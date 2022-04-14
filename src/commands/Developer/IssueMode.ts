@@ -1,10 +1,10 @@
 import { bold } from "../../helpers/discord";
-import { BaseCommand } from "../../lib/command/BaseCommand";
+import { Command } from "../../lib/command/Command";
 import { toggleValues } from "../../lib/settings/Settings";
 import { SettingsService } from "../../lib/settings/SettingsService";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 
-export default class IssueMode extends BaseCommand {
+export default class IssueMode extends Command {
   idSeed = "billlie suhyeon";
 
   description = "Toggles issue mode";

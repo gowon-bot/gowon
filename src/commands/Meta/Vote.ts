@@ -1,7 +1,7 @@
-import { BaseCommand } from "../../lib/command/BaseCommand";
+import { Command } from "../../lib/command/Command";
 import { Emoji } from "../../lib/Emoji";
 
-export default class Vote extends BaseCommand {
+export default class Vote extends Command {
   idSeed = "hot issue yebin";
 
   subcategory = "about";

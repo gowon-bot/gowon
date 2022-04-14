@@ -1,6 +1,6 @@
 import { TasteCalculator } from "../../../lib/calculators/TasteCalculator";
 import { bold, code, sanitizeForDiscord } from "../../../helpers/discord";
-import { Variation } from "../../../lib/command/BaseCommand";
+import { Variation } from "../../../lib/command/Command";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { LogicError } from "../../../errors/errors";

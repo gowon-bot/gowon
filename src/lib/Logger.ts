@@ -1,4 +1,4 @@
-import { BaseCommand } from "./command/BaseCommand";
+import { Command } from "./command/Command";
 import { User } from "discord.js";
 import chalk from "chalk";
 import { format } from "date-fns";
@@ -54,13 +54,13 @@ export class Logger {
     );
   }
 
-  openCommandHeader(command: BaseCommand): void {
+  openCommandHeader(command: Command): void {
     this.header = chalk`\n\n==============={yellow ${
       (command.parentName ? command.parentName + ":" : "") + command.name
     }}====================`;
   }
 
-  closeCommandHeader(command: BaseCommand): void {
+  closeCommandHeader(command: Command): void {
     Logger.log("Command", chalk.grey("finished"), this);
     Logger.output &&
       console.log(

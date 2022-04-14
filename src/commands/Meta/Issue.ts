@@ -1,5 +1,5 @@
 import { format } from "date-fns";
-import { BaseCommand, Variation } from "../../lib/command/BaseCommand";
+import { Command, Variation } from "../../lib/command/Command";
 import { StringArgument } from "../../lib/context/arguments/argumentTypes/StringArgument";
 import { Validation } from "../../lib/validation/ValidationChecker";
 import { validators } from "../../lib/validation/validators";
@@ -12,7 +12,7 @@ const args = {
   body: new StringArgument({ index: { start: 1 }, splitOn: "|" }),
 } as const;
 
-export default class Issue extends BaseCommand<typeof args> {
+export default class Issue extends Command<typeof args> {
   idSeed = "apink bomi";
 
   description = "Create a github issue on the gowon repository";

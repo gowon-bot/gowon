@@ -1,7 +1,7 @@
-import { BaseCommand } from "../../lib/command/BaseCommand";
+import { Command } from "../../lib/command/Command";
 import { Emoji } from "../../lib/Emoji";
 
-export default class Pong extends BaseCommand {
+export default class Pong extends Command {
   idSeed = "2ne1 dara";
 
   aliases = ["nop"];

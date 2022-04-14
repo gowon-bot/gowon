@@ -1,9 +1,9 @@
-import { BaseCommand } from "../../lib/command/BaseCommand";
+import { Command } from "../../lib/command/Command";
 import { Stopwatch } from "../../helpers";
 import { Message, MessageEmbed } from "discord.js";
 import { LogicError } from "../../errors/errors";
 
-export default class Status extends BaseCommand {
+export default class Status extends Command {
   idSeed = "Fill in a unique idSeed here";
 
   description = "See the status of Gowon's services";

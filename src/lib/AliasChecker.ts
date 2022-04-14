@@ -2,10 +2,10 @@ import { GowonService } from "../services/GowonService";
 import { RunAs } from "./command/RunAs";
 import { CommandRegistry } from "./command/CommandRegistry";
 import { ServiceRegistry } from "../services/ServicesRegistry";
-import { BaseCommand } from "./command/BaseCommand";
+import { Command } from "./command/Command";
 import { CommandGroup } from "./command/CommandGroup";
 
-type ParentCommand = BaseCommand & {
+type ParentCommand = Command & {
   children: CommandGroup;
   noPrefixAliases: string[];
   prefixes: string[] | string;
@@ -21,7 +21,7 @@ export class AliasChecker {
     command: ParentCommand,
     childAlias: string,
     serverID: string
-  ): Promise<BaseCommand | undefined> {
+  ): Promise<Command | undefined> {
     const child = await this.commandRegistry.find(
       childAlias,
       serverID,
@@ -41,7 +41,7 @@ export class AliasChecker {
       : command.prefixes.map((p) => p.toLowerCase().trim()).includes(alias);
   }
 
-  commandHasAlias(command: BaseCommand, alias: string): boolean {
+  commandHasAlias(command: Command, alias: string): boolean {
     if (command.hasChildren) {
       return this.parentCommandHasAlias(command as ParentCommand, alias);
     } else
@@ -53,7 +53,7 @@ export class AliasChecker {
       );
   }
 
-  commandHasVariation(command: BaseCommand, variation: string): boolean {
+  commandHasVariation(command: Command, variation: string): boolean {
     for (let v of command.variations) {
       const variations =
         v.variation instanceof Array ? v.variation : [v.variation];
@@ -68,35 +68,32 @@ export class AliasChecker {
     return false;
   }
 
-  async getRunAs(command: BaseCommand, serverID: string): Promise<RunAs> {
-    let checks = this.aliasesString
+  async getRunAs(command: Command, serverID: string): Promise<RunAs> {
+    const checks = this.aliasesString
       .toLowerCase()
-      .replace(
-        new RegExp(await this.gowonService.regexSafePrefix(serverID), "i"),
-        ""
-      )
+      .replace(new RegExp(this.gowonService.regexSafePrefix(serverID), "i"), "")
       .trim()
       .split(/\s+/);
 
-    let runAs = new RunAs();
+    const runAs = new RunAs();
 
-    let parent: { command?: BaseCommand; atIndex?: number } = {};
+    let parent: { command?: Command; atIndex?: number } = {};
 
-    for (let check_i = 0; check_i < checks.length; check_i++) {
-      const check = checks[check_i];
+    for (let checkIndex = 0; checkIndex < checks.length; checkIndex++) {
+      const check = checks[checkIndex];
 
       if (command.hasChildren) {
         if (this.parentCommandHasAlias(command as ParentCommand, check)) {
           parent = {
             command,
-            atIndex: check_i,
+            atIndex: checkIndex,
           };
         }
 
         if (
           parent.command &&
           parent.atIndex &&
-          parent.atIndex + 1 === check_i
+          parent.atIndex + 1 === checkIndex
         ) {
           return runAs.add({
             string: checks[parent.atIndex],
@@ -105,9 +102,10 @@ export class AliasChecker {
         }
 
         let child = await command.getChild(
-          checks.slice(check_i + 1).join(" ") || "",
+          checks.slice(checkIndex + 1).join(" ") || "",
           serverID
         );
+
         let childNoPrefix = await this.parentCommandGetChildNoPrefix(
           command as ParentCommand,
           check,
@@ -144,7 +142,7 @@ export class AliasChecker {
     return runAs;
   }
 
-  async check(command: BaseCommand, serverID: string): Promise<boolean> {
+  async check(command: Command, serverID: string): Promise<boolean> {
     return !(await this.getRunAs(command, serverID)).empty();
   }
 }

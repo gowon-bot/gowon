@@ -1,7 +1,7 @@
 import { MirrorballError } from "../../../../errors/errors";
 import { bold, italic } from "../../../../helpers/discord";
 import { convertMirrorballDate } from "../../../../helpers/mirrorball";
-import { Variation } from "../../../../lib/command/BaseCommand";
+import { Variation } from "../../../../lib/command/Command";
 import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";
 import { MirrorballBaseCommand } from "../../../../lib/indexing/MirrorballCommands";
 import { displayDate } from "../../../../lib/views/displays";

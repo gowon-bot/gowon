@@ -1,10 +1,10 @@
 import { bold } from "../../../helpers/discord";
-import { BaseCommand } from "../../../lib/command/BaseCommand";
+import { Command } from "../../../lib/command/Command";
 import { toggleValues } from "../../../lib/settings/Settings";
 import { SettingsService } from "../../../lib/settings/SettingsService";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 
-export default class NoTwitter extends BaseCommand {
+export default class NoTwitter extends Command {
   idSeed = "viviz umji";
 
   description = "Ratio this";

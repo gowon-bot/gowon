@@ -1,25 +1,40 @@
+import { DiscordRoleArgument } from "../../../lib/context/arguments/argumentTypes/discord/DiscordRoleArgument";
 import { SettingsService } from "../../../lib/settings/SettingsService";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
-import { PermissionsChildCommand } from "../Permissions/PermissionsChildCommand";
+import { PermissionsChildCommand } from "./PermissionsChildCommand";
 
-export class SetAdminRole extends PermissionsChildCommand {
+const args = {
+  adminRole: new DiscordRoleArgument({
+    description: "The role to make the admin role",
+  }),
+};
+
+export class SetAdminRole extends PermissionsChildCommand<typeof args> {
   idSeed = "dreamnote lara";
 
   description =
-    "Sets the administrator role, any user with this role will be treated like an administrator when running Gowon commands\nNote that any user with the discord 'Administrator' permission automatically has access to all admin commands ";
+    "Any user with this role will be treated like an administrator when running Gowon commands";
+  extraDescription =
+    ".\nNote that any user with the discord 'Administrator' permission automatically has access to all admin commands";
+
+  aliases = ["adminrole"];
+
   usage = "command";
   shouldBeIndexed = false;
 
-  settingsService = ServiceRegistry.get(SettingsService);
+  slashCommand = true;
+  slashCommandName = "adminrole";
 
-  throwOnNoCommand = false;
+  arguments = args;
+
+  settingsService = ServiceRegistry.get(SettingsService);
 
   private readonly adminRoleHelp =
     "Any user with the admin role can use Gowon's admin-only commands";
 
   async run() {
-    if (this.roles.length) {
-      const adminRole = this.roles[0];
+    if (this.parsedArguments.adminRole) {
+      const adminRole = this.parsedArguments.adminRole;
 
       this.settingsService.set(
         this.ctx,

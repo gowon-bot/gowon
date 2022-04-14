@@ -32,19 +32,22 @@ export default class FriendsParentCommand extends LastFMBaseParentCommand {
     "removefriends",
   ];
 
-  children: CommandGroup = new CommandGroup([
-    Add,
-    List,
-    Remove,
-    RemoveAll,
+  children: CommandGroup = new CommandGroup(
+    [
+      Add,
+      List,
+      Remove,
+      RemoveAll,
 
-    // Commands/
-    ArtistPlays,
-    AlbumPlays,
-    TrackPlays,
-    Scrobbles,
-    Joined,
-    Rating,
-    WhoFirstArtist,
-  ]);
+      // Commands/
+      ArtistPlays,
+      AlbumPlays,
+      TrackPlays,
+      Scrobbles,
+      Joined,
+      Rating,
+      WhoFirstArtist,
+    ],
+    this.id
+  );
 }

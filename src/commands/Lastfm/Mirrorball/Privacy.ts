@@ -1,5 +1,5 @@
 import { LinkGenerator } from "../../../helpers/lastFM";
-import { BaseCommand } from "../../../lib/command/BaseCommand";
+import { Command } from "../../../lib/command/Command";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { Emoji } from "../../../lib/Emoji";
 import { displayLink } from "../../../lib/views/displays";
@@ -19,7 +19,7 @@ const args = {
   }),
 } as const;
 
-export default class Privacy extends BaseCommand<typeof args> {
+export default class Privacy extends Command<typeof args> {
   idSeed = "hello venus seoyoung";
 
   subcategory = "accounts";

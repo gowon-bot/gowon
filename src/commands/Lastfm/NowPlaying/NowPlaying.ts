@@ -5,7 +5,7 @@ import { promiseAllSettled } from "../../../helpers";
 import { MessageEmbed } from "discord.js";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
-import { CommandRedirect } from "../../../lib/command/BaseCommand";
+import { CommandRedirect } from "../../../lib/command/Command";
 import NowPlayingVerbose from "./NowPlayingVerbose";
 import NowPlayingCompact from "./NowPlayingCompact";
 import NowPlayingAlbum from "./NowPlayingAlbum";

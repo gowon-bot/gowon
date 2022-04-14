@@ -1,9 +1,9 @@
-import { BaseCommand } from "../../lib/command/BaseCommand";
-import { AdminService } from "../../services/dbservices/AdminService";
+import { Command } from "../../lib/command/Command";
 import { displayNumber } from "../../lib/views/displays";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { StringArgument } from "../../lib/context/arguments/argumentTypes/StringArgument";
 import { bold, code } from "../../helpers/discord";
+import { PermissionsService } from "../../lib/permissions/PermissionsService";
 
 const args = {
   keywords: new StringArgument({
@@ -12,7 +12,7 @@ const args = {
   }),
 } as const;
 
-export default class SearchCommands extends BaseCommand<typeof args> {
+export default class SearchCommands extends Command<typeof args> {
   idSeed = "exid solji";
 
   aliases = ["command", "commandsearch", "searchcommand", "sc"];
@@ -24,11 +24,7 @@ export default class SearchCommands extends BaseCommand<typeof args> {
 
   arguments = args;
 
-  adminService = ServiceRegistry.get(AdminService);
-
-  customContext = {
-    constants: { adminService: this.adminService },
-  };
+  permissionsService = ServiceRegistry.get(PermissionsService);
 
   async run() {
     const keywords = this.parsedArguments
@@ -37,10 +33,12 @@ export default class SearchCommands extends BaseCommand<typeof args> {
 
     const commandList = this.commandRegistry.deepList();
 
-    const commands = await this.adminService.can.viewList(
+    const canChecks = await this.permissionsService.canListInContext(
       this.ctx,
       commandList
     );
+
+    const commands = canChecks.filter((c) => c.allowed).map((cc) => cc.command);
 
     const foundCommands = this.commandRegistry.search(commands, keywords);
 
@@ -67,7 +65,7 @@ export default class SearchCommands extends BaseCommand<typeof args> {
     await this.send(embed);
   }
 
-  private displayCommand(command: BaseCommand, keywords: string) {
+  private displayCommand(command: Command, keywords: string) {
     const name = command.friendlyName.replace(keywords, (match) => bold(match));
 
     return (command.parentName ? command.parentName + " " : "") + name;
