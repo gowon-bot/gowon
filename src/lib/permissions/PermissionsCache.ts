@@ -18,7 +18,7 @@ export class PermissionsCache {
   get(key: PermissionCacheKey): Permission | undefined {
     const allow = this.cache[key];
 
-    if (allow) {
+    if (allow !== undefined) {
       return this.buildPermission(key, allow);
     }
 

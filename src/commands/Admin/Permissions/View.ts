@@ -1,5 +1,5 @@
 import { PermissionsChildCommand } from "./PermissionsChildCommand";
-import { code } from "../../../helpers/discord";
+import { code, italic } from "../../../helpers/discord";
 import { displayNumberedList } from "../../../lib/views/displays";
 import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingEmbed";
 import { PermissionQuery } from "../../../lib/permissions/PermissionsCacheService";
@@ -13,6 +13,7 @@ import {
 import { channelMention, roleMention, userMention } from "@discordjs/builders";
 import { emDash } from "../../../helpers/specialCharacters";
 import { DiscordRoleArgument } from "../../../lib/context/arguments/argumentTypes/discord/DiscordRoleArgument";
+import { Flag } from "../../../lib/context/arguments/argumentTypes/Flag";
 
 const args = {
   command: new StringArgument({
@@ -27,6 +28,11 @@ const args = {
   }),
   role: new DiscordRoleArgument({
     description: "The role to view permissions for",
+  }),
+  all: new Flag({
+    description: "Show all permissions",
+    longnames: ["all"],
+    shortnames: ["a"],
   }),
 } as const;
 
@@ -45,17 +51,25 @@ export class View extends PermissionsChildCommand<typeof args> {
   async run() {
     const query = await this.getQueries();
 
-    const disabledCommands = await this.permissionsService.listPermissions(
+    const permissions = await this.permissionsService.listPermissions(
       this.ctx,
       query
     );
 
     const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Disabled commands"))
-      .setTitle(`Disabled commands in ${this.guild?.name}`);
+      .setAuthor(this.generateEmbedAuthor("Permissions"))
+      .setTitle(`Permissions in ${this.guild?.name}`);
+
+    if (!permissions.length) {
+      embed.setDescription(
+        `No guild permissions found! To see all commands, run \`${this.prefix}permissions view --all\``
+      );
+      await this.send(embed);
+      return;
+    }
 
     const scrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
-      items: disabledCommands,
+      items: permissions,
       pageSize: 15,
       pageRenderer: (items, { offset }) => {
         const renderedItems = items.map((p) => this.displayPermission(p));
@@ -63,7 +77,14 @@ export class View extends PermissionsChildCommand<typeof args> {
         return displayNumberedList(renderedItems, offset);
       },
       overrides: {
-        itemName: "disabled command",
+        itemName: "permissions",
+        embedDescription:
+          !this.parsedArguments.all &&
+          !this.parsedArguments.user &&
+          !this.parsedArguments.channel &&
+          !this.parsedArguments.role
+            ? italic(`To see all permissions, run with the --all flag`) + "\n"
+            : "",
       },
     });
 
@@ -71,6 +92,7 @@ export class View extends PermissionsChildCommand<typeof args> {
   }
 
   private async getQueries(): Promise<PermissionQuery[]> {
+    const all = this.parsedArguments.all;
     const { command } = await this.commandRegistry.find(
       this.parsedArguments.command || "",
       this.requiredGuild.id
@@ -80,7 +102,7 @@ export class View extends PermissionsChildCommand<typeof args> {
 
     const queries = [] as PermissionQuery[];
 
-    if (commandID || this.parsedArguments.channel) {
+    if (all || commandID || this.parsedArguments.channel) {
       queries.push({
         commandID,
         type: PermissionType.channel,
@@ -88,7 +110,7 @@ export class View extends PermissionsChildCommand<typeof args> {
       });
     }
 
-    if (commandID || this.parsedArguments.user) {
+    if (all || commandID || this.parsedArguments.user) {
       queries.push({
         commandID,
         type: PermissionType.guildMember,
@@ -98,7 +120,7 @@ export class View extends PermissionsChildCommand<typeof args> {
       });
     }
 
-    if (commandID || this.parsedArguments.role) {
+    if (all || commandID || this.parsedArguments.role) {
       queries.push({
         commandID,
         type: PermissionType.role,
@@ -107,9 +129,10 @@ export class View extends PermissionsChildCommand<typeof args> {
     }
 
     if (
-      !this.parsedArguments.user &&
-      !this.parsedArguments.channel &&
-      !this.parsedArguments.role
+      all ||
+      (!this.parsedArguments.user &&
+        !this.parsedArguments.channel &&
+        !this.parsedArguments.role)
     ) {
       queries.push({
         commandID,
@@ -141,6 +164,8 @@ export class View extends PermissionsChildCommand<typeof args> {
         break;
     }
 
-    return `${code(commandName)}${extra}`;
+    return `${code(commandName)}${extra}${
+      permission.allow ? italic(" (allow)") : ""
+    }`;
   }
 }

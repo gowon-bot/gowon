@@ -150,8 +150,11 @@ export class PermissionsService extends BaseService {
   ): Promise<CanCheck> {
     // This order is important:
     // developers can run any command (even bot-wide disabled ones), admins cannot
+
+    const parentCheck = await this.checkParentCommand(ctx, command.parentID);
+
     return (
-      (await this.checkParentCommand(ctx, command.parentID)) ||
+      (parentCheck?.permission === undefined ? undefined : parentCheck) ||
       this.checkDeveloper(ctx, command) ||
       this.canRunBotWide(ctx, command) ||
       this.checkAdmin(ctx, command) ||
@@ -205,7 +208,7 @@ export class PermissionsService extends BaseService {
     });
 
     if (permission) {
-      return { allowed: false, permission };
+      return { allowed: permission.allow, permission };
     }
 
     return undefined;
@@ -274,7 +277,8 @@ export class PermissionsService extends BaseService {
     ctx: GowonContext,
     command: Command
   ): CanCheck | undefined {
-    if (ctx.client.isDeveloper(ctx.author.id)) return { allowed: true };
+    if (ctx.client.isDeveloper(ctx.author.id))
+      return { allowed: true, permission: "developer" };
 
     if (command.devCommand) {
       return { allowed: false, permission: "developer" };
@@ -300,7 +304,7 @@ export class PermissionsService extends BaseService {
         : (adminRole && ctx.authorMember.roles.cache.has(adminRole)) ||
           ctx.authorMember.permissions.has("ADMINISTRATOR");
 
-    if (isAdmin) return { allowed: true };
+    if (isAdmin) return { allowed: true, permission: "admin" };
 
     if (command.adminCommand) {
       return { allowed: false, permission: "admin" };
@@ -335,16 +339,24 @@ export class PermissionsService extends BaseService {
     const guildMemberCanRun = this.guildMemberCanRun(ctx, command);
     const rolesCanRun = this.rolesCanRun(ctx, command);
 
-    // If a role is "allowed",
+    // If a role or channel is "allowed",
     // it should bypass the guild disable,
     // but only if the guild member is not explicitly banned
-    if (rolesCanRun?.allowed && guildMemberCanRun?.allowed !== false) {
-      return rolesCanRun;
+    if (
+      (rolesCanRun?.allowed || canRunInChannel?.allowed) &&
+      guildMemberCanRun?.allowed !== false
+    ) {
+      return rolesCanRun || canRunInChannel;
     }
 
     // If a specific user is allowed
     if (guildMemberCanRun?.allowed) return guildMemberCanRun;
 
-    return this.canRunInGuild(ctx, command);
+    return (
+      canRunInChannel ||
+      guildMemberCanRun ||
+      rolesCanRun ||
+      this.canRunInGuild(ctx, command)
+    );
   }
 }

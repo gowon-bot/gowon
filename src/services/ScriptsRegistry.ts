@@ -1,12 +1,12 @@
 import { promisify } from "util";
 import _glob from "glob";
 import { LogicError } from "../errors/errors";
-import { Command } from "../lib/command/Command";
 import { SimpleMap } from "../helpers/types";
 import { code } from "../helpers/discord";
+import { GowonContext } from "../lib/context/Context";
 const glob = promisify(_glob);
 
-type Script = (command: Command) => void;
+type Script = (ctx: GowonContext) => void;
 type Scripts = SimpleMap<Script>;
 
 async function generateScripts(): Promise<Scripts> {
@@ -41,11 +41,11 @@ export class ScriptsRegistry {
     this.isInitialized = true;
   }
 
-  public runScript(scriptName: string, asCommand: Command) {
+  public runScript(scriptName: string, ctx: GowonContext) {
     const script = this.scripts[scriptName.toLowerCase()] as Script | undefined;
 
     if (script) {
-      script(asCommand);
+      script(ctx);
     } else {
       throw new LogicError(`Script ${code(scriptName)} not found!`);
     }

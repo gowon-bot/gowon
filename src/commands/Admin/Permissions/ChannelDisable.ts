@@ -1,12 +1,16 @@
-import { MessageEmbed } from "discord.js";
+import { Channel, MessageEmbed } from "discord.js";
 import {
   Permission,
   PermissionType,
 } from "../../../database/entity/Permission";
 import { NotTextChannelError } from "../../../errors/discord";
 import { CommandNotFoundError } from "../../../errors/errors";
+import {
+  PermissionAlreadyExistsError,
+  PermissionDoesNotExistError,
+} from "../../../errors/permissions";
 import { mentionChannel, code } from "../../../helpers/discord";
-import { Variation } from "../../../lib/command/Command";
+import { Command, Variation } from "../../../lib/command/Command";
 import { ChannelArgument } from "../../../lib/context/arguments/argumentTypes/discord/ChannelArgument";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { PermissionsChildCommand } from "./PermissionsChildCommand";
@@ -68,35 +72,84 @@ export class ChannelDisable extends PermissionsChildCommand<typeof args> {
       !this.variationWasUsed("channelenable") &&
       !this.runAs.variationWasUsed("enable")
     ) {
+      embed = await this.handleDisable(command, permission, channel);
+    } else {
+      embed = await this.handleEnable(command, permission, channel);
+    }
+
+    await this.send(embed);
+  }
+
+  private async handleDisable(
+    command: Command,
+    permission: Permission,
+    channel: Channel
+  ): Promise<MessageEmbed> {
+    let deletedAllow = false;
+
+    try {
       await this.permissionsService.createPermission(
         this.ctx,
         command,
         permission
       );
+    } catch (e) {
+      if (e instanceof PermissionAlreadyExistsError) {
+        permission.allow = true;
 
-      embed = this.newEmbed()
-        .setAuthor(this.generateEmbedAuthor("Permissions channel disable"))
-        .setDescription(
-          `Successfully disabled ${code(command.name)} in ${mentionChannel(
-            channel.id
-          )}`
+        await this.permissionsService.destroyPermission(
+          this.ctx,
+          command,
+          permission
         );
-    } else {
+
+        deletedAllow = true;
+      }
+    }
+
+    return this.newEmbed()
+      .setAuthor(this.generateEmbedAuthor("Permissions channel disable"))
+      .setDescription(
+        `Successfully ${deletedAllow ? "un-allowed" : "disabled"} ${code(
+          command.name
+        )} in ${mentionChannel(channel.id)}`
+      );
+  }
+
+  private async handleEnable(
+    command: Command,
+    permission: Permission,
+    channel: Channel
+  ): Promise<MessageEmbed> {
+    let allowed = false;
+
+    try {
       await this.permissionsService.destroyPermission(
         this.ctx,
         command,
         permission
       );
+    } catch (e) {
+      // Create allow permission
+      if (e instanceof PermissionDoesNotExistError) {
+        permission.allow = true;
 
-      embed = this.newEmbed()
-        .setAuthor(this.generateEmbedAuthor("Permissions channel enable"))
-        .setDescription(
-          `Successfully enabled ${code(command.name)} in ${mentionChannel(
-            channel.id
-          )}`
+        await this.permissionsService.createPermission(
+          this.ctx,
+          command,
+          permission
         );
+
+        allowed = true;
+      }
     }
 
-    await this.send(embed);
+    return this.newEmbed()
+      .setAuthor(this.generateEmbedAuthor("Permissions channel enable"))
+      .setDescription(
+        `Successfully ${allowed ? "allowed" : "enabled"} ${code(
+          command.name
+        )} in ${mentionChannel(channel.id)}`
+      );
   }
 }
