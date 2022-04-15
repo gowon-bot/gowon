@@ -151,11 +151,10 @@ export class PermissionsService extends BaseService {
     ctx: PermissionsCacheContext,
     command: Command
   ): Promise<CanCheck> {
-    // This order is important:
-    // developers can run any command (even bot-wide disabled ones), admins cannot
-
     const parentCheck = await this.checkParentCommand(ctx, command.parentID);
 
+    // This order is important:
+    // developers can run any command (even bot-wide disabled ones), admins cannot
     return (
       (parentCheck?.permission === undefined ? undefined : parentCheck) ||
       this.checkDeveloper(ctx, command) ||
@@ -280,8 +279,9 @@ export class PermissionsService extends BaseService {
     ctx: GowonContext,
     command: Command
   ): CanCheck | undefined {
-    if (ctx.client.isDeveloper(ctx.author.id))
+    if (ctx.client.isDeveloper(ctx.author.id)) {
       return { allowed: true, permission: "developer" };
+    }
 
     if (command.devCommand) {
       return { allowed: false, permission: "developer" };

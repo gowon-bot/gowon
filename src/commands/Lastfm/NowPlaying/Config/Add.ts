@@ -6,18 +6,23 @@ import {
   componentMap,
   getComponentsAsChoices,
 } from "../../../../lib/nowplaying/componentMap";
-import { NowPlayingConfigChildCommand } from "./NowPlayingConfigChildCommand";
+import {
+  NowPlayingConfigChildCommand,
+  preprocessConfig,
+} from "./NowPlayingConfigChildCommand";
 
 const args = {
   options: new StringArrayArgument({
     index: { start: 0 },
     description: "The options to add to your config",
     default: [],
+    preprocessor: preprocessConfig,
   }),
   option: new StringArgument({
     description: "The option to add to your config",
     required: true,
     choices: getComponentsAsChoices(),
+    preprocessor: preprocessConfig,
   }),
 } as const;
 

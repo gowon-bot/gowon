@@ -35,6 +35,8 @@ export class GowonClient {
   }
 
   isDeveloper(userID?: string): boolean {
+    if (!userID) return false;
+
     return this.specialUsers.developers.some((dev) => dev.id === userID);
   }
 

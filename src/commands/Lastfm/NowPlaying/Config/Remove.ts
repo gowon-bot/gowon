@@ -6,14 +6,22 @@ import {
   componentMap,
   getComponentsAsChoices,
 } from "../../../../lib/nowplaying/componentMap";
-import { NowPlayingConfigChildCommand } from "./NowPlayingConfigChildCommand";
+import {
+  NowPlayingConfigChildCommand,
+  preprocessConfig,
+} from "./NowPlayingConfigChildCommand";
 
 const args = {
-  options: new StringArrayArgument({ index: { start: 0 }, default: [] }),
+  options: new StringArrayArgument({
+    index: { start: 0 },
+    default: [],
+    preprocessor: preprocessConfig,
+  }),
   option: new StringArgument({
     description: "The option to remove from your config",
     required: true,
     choices: getComponentsAsChoices(),
+    preprocessor: preprocessConfig,
   }),
 } as const;
 

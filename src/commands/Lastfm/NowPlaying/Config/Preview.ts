@@ -14,14 +14,22 @@ import { Validation } from "../../../../lib/validation/ValidationChecker";
 import { validators } from "../../../../lib/validation/validators";
 import { displayNumber } from "../../../../lib/views/displays";
 import { RecentTrack } from "../../../../services/LastFM/converters/RecentTracks";
-import { NowPlayingConfigChildCommand } from "./NowPlayingConfigChildCommand";
+import {
+  NowPlayingConfigChildCommand,
+  preprocessConfig,
+} from "./NowPlayingConfigChildCommand";
 
 const args = {
-  options: new StringArrayArgument({ index: { start: 0 }, default: [] }),
+  options: new StringArrayArgument({
+    index: { start: 0 },
+    default: [],
+    preprocessor: preprocessConfig,
+  }),
   option: new StringArgument({
     description: "The option to preview",
     required: true,
     choices: getComponentsAsChoices(),
+    preprocessor: preprocessConfig,
   }),
 } as const;
 

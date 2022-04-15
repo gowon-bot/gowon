@@ -38,3 +38,7 @@ export abstract class NowPlayingConfigChildCommand<
     return flatDeep([...config.map((c) => c.split(/,\s*/))]).filter((c) => !!c);
   }
 }
+
+export function preprocessConfig(string: string): string {
+  return string.replaceAll(",", "");
+}

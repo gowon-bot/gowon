@@ -8,10 +8,16 @@ import {
 import { Validation } from "../../../../lib/validation/ValidationChecker";
 import { validators } from "../../../../lib/validation/validators";
 import { Help } from "./Help";
-import { NowPlayingConfigChildCommand } from "./NowPlayingConfigChildCommand";
+import {
+  NowPlayingConfigChildCommand,
+  preprocessConfig,
+} from "./NowPlayingConfigChildCommand";
 
 const args = {
-  config: new StringArrayArgument({ index: { start: 0 } }),
+  config: new StringArrayArgument({
+    index: { start: 0 },
+    preprocessor: preprocessConfig,
+  }),
 } as const;
 
 export class Set extends NowPlayingConfigChildCommand<typeof args> {
