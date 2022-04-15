@@ -3,6 +3,7 @@ import { BadLastFMResponseError, LogicError } from "../../errors/errors";
 import { LastFMAPIService, Requestable } from "./LastFMAPIService";
 import {
   AlbumInfoParams,
+  AlbumSearchParams,
   ArtistInfoParams,
   ArtistPopularTracksParams,
   GetArtistCorrectionParams,
@@ -36,7 +37,6 @@ import {
   LastFMSession,
   TagTopArtists,
   TagTopTracks,
-  TrackSearch,
 } from "./converters/Misc";
 import { RecentTrack, RecentTracks } from "./converters/RecentTracks";
 import { TopAlbums, TopArtists, TopTracks } from "./converters/TopTypes";
@@ -44,6 +44,7 @@ import { displayNumber } from "../../lib/views/displays";
 import { requestableAsUsername } from "../../lib/MultiRequester";
 import { GowonContext } from "../../lib/context/Context";
 import { code } from "../../helpers/discord";
+import { AlbumSearch, TrackSearch } from "./converters/Search";
 
 export class LastFMService extends LastFMAPIService {
   async artistInfo(
@@ -146,6 +147,13 @@ export class LastFMService extends LastFMAPIService {
     params: TrackSearchParams
   ): Promise<TrackSearch> {
     return new TrackSearch(await this._trackSearch(ctx, params));
+  }
+
+  async albumSearch(
+    ctx: GowonContext,
+    params: AlbumSearchParams
+  ): Promise<AlbumSearch> {
+    return new AlbumSearch(await this._albumSearch(ctx, params));
   }
 
   async getArtistCorrection(

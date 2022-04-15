@@ -1,3 +1,7 @@
+import {
+  NoAlbumsFoundInSearchError,
+  NoTracksFoundInSearchError,
+} from "../../errors/lastfm";
 import { GowonContext } from "../../lib/context/Context";
 import { BaseService } from "../BaseService";
 import { RedirectsService } from "../dbservices/RedirectsService";
@@ -52,6 +56,21 @@ export class LastFMArguments extends BaseService<LastFMArgumentsContext> {
     let artist = this.parsedArguments(ctx).artist as string,
       album = this.parsedArguments(ctx).album as string;
 
+    // This means that the user has not included a `|` in their message
+    if (artist && album === undefined) {
+      const albumSearch = await this.lastFMService.albumSearch(ctx, {
+        album: artist,
+      });
+      const albumSearchResult = albumSearch.albums[0];
+
+      if (!albumSearchResult) throw new NoAlbumsFoundInSearchError(artist);
+
+      return {
+        artist: albumSearchResult.artist,
+        album: albumSearchResult.name,
+      };
+    }
+
     if (!artist || !album) {
       const nowPlaying = await this.getNowPlaying(ctx, requestable);
 
@@ -72,6 +91,20 @@ export class LastFMArguments extends BaseService<LastFMArgumentsContext> {
   ): Promise<{ artist: string; track: string }> {
     let artist = this.parsedArguments(ctx).artist as string,
       track = this.parsedArguments(ctx).track as string;
+
+    if (artist && track === undefined) {
+      const trackSearch = await this.lastFMService.trackSearch(ctx, {
+        track: artist,
+      });
+      const trackSearchResult = trackSearch.tracks[0];
+
+      if (!trackSearchResult) throw new NoTracksFoundInSearchError(artist);
+
+      return {
+        artist: trackSearchResult.artist,
+        track: trackSearchResult.name,
+      };
+    }
 
     if (!artist || !track) {
       const nowPlaying = await this.getNowPlaying(ctx, requestable);

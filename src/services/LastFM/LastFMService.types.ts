@@ -358,20 +358,38 @@ export interface RawSearchedTrack {
   mbid: string;
 }
 
+export interface RawSearchedAlbum {
+  name: string;
+  artist: string;
+  url: string;
+  streamable: string;
+  image: RawImage[];
+  mbid: string;
+}
+
+interface OpensearchQueryProperties {
+  "#text": string;
+  role: "request";
+  startPage: string;
+}
+
+interface OpensearchProperties {
+  "opensearch:Query": OpensearchQueryProperties;
+  "opensearch:totalResults": string;
+  "opensearch:startIndex": string;
+  "opensearch:itemsPerPage": string;
+  "@attr": {};
+}
+
 export interface RawTrackSearchResponse {
-  results: {
-    "opensearch:Query": {
-      "#text": string;
-      role: "request";
-      startPage: string;
-    };
-    "opensearch:totalResults": string;
-    "opensearch:startIndex": string;
-    "opensearch:itemsPerPage": string;
-    trackmatches: {
-      track: RawSearchedTrack[];
-    };
-    "@attr": {};
+  results: OpensearchProperties & {
+    trackmatches: { track: RawSearchedTrack[] };
+  };
+}
+
+export interface RawAlbumSearchResponse {
+  results: OpensearchProperties & {
+    albummatches: { album: RawSearchedTrack[] };
   };
 }
 
@@ -609,6 +627,11 @@ export interface TagTopArtistsParams extends PagedParams {
 
 export interface TrackSearchParams extends PagedParams {
   track: string;
+  artist?: string;
+}
+
+export interface AlbumSearchParams extends PagedParams {
+  album: string;
   artist?: string;
 }
 

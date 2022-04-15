@@ -172,7 +172,7 @@ export abstract class BaseArgument<
     return (
       (typeof array[index] === "string"
         ? array[index]?.trim()
-        : array[index]) || options.default
+        : array[index]) ?? options.default
     );
   }
 
@@ -201,7 +201,7 @@ export abstract class BaseArgument<
       }
     }
 
-    return trimmedArray.filter((e) => !!e);
+    return trimmedArray.filter((e) => (e ?? undefined) !== undefined);
   }
 }
 

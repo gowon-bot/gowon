@@ -17,12 +17,12 @@ import {
   LastFMSession,
   TagTopArtists,
   TagTopTracks,
-  TrackSearch,
 } from "../../services/LastFM/converters/Misc";
 import {
   RecentTrack,
   RecentTracks,
 } from "../../services/LastFM/converters/RecentTracks";
+import { TrackSearch } from "../../services/LastFM/converters/Search";
 import {
   TopAlbums,
   TopArtists,

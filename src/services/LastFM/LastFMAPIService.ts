@@ -58,6 +58,8 @@ import {
   RawUserGetWeeklyTrackChart,
   RawLastFMErrorResponse,
   isErrorResponse,
+  AlbumSearchParams,
+  RawAlbumSearchResponse,
 } from "./LastFMService.types";
 import config from "../../../config.json";
 import {
@@ -289,13 +291,22 @@ export class LastFMAPIService extends BaseService {
     ctx: GowonContext,
     params: TrackSearchParams
   ): Promise<RawTrackSearchResponse> {
-    let response = await this.request<RawTrackSearchResponse>(
+    return await this.request<RawTrackSearchResponse>(
       ctx,
       "track.search",
       this.cleanSearchParams<TrackSearchParams>(params)
     );
+  }
 
-    return response;
+  async _albumSearch(
+    ctx: GowonContext,
+    params: AlbumSearchParams
+  ): Promise<RawAlbumSearchResponse> {
+    return await this.request<RawAlbumSearchResponse>(
+      ctx,
+      "album.search",
+      this.cleanSearchParams<AlbumSearchParams>(params)
+    );
   }
 
   async _getArtistCorrection(
