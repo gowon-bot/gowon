@@ -201,7 +201,9 @@ export abstract class BaseArgument<
       }
     }
 
-    return trimmedArray.filter((e) => (e ?? undefined) !== undefined);
+    return trimmedArray.length === 1
+      ? trimmedArray.filter((e) => !!e)
+      : trimmedArray.filter((e) => (e ?? undefined) !== undefined);
   }
 }
 
