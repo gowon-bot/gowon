@@ -92,6 +92,8 @@ export class CommandHandler {
         command
       );
 
+      console.log(canCheck);
+
       if (!canCheck.allowed) {
         this.handleFailedCanCheck(command);
         return;
