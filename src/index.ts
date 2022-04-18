@@ -23,7 +23,6 @@ import { GowonContext } from "./lib/context/Context";
 import { TweetHandler } from "./services/Twitter/TweetHandler";
 import { Payload } from "./lib/context/Payload";
 import { MockMessage } from "./mocks/discord";
-import { PermissionsCacheService } from "./lib/permissions/PermissionsCacheService";
 
 function context() {
   return new GowonContext({
@@ -42,7 +41,6 @@ async function start() {
   const tweetHandler = new TweetHandler();
 
   await tweetHandler.init();
-  await ServiceRegistry.get(PermissionsCacheService).init(context());
 
   client.client.on("ready", () => {
     console.log(

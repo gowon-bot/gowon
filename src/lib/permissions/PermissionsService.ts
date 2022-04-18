@@ -54,7 +54,6 @@ export class PermissionsService extends BaseService {
     }
 
     await this.permissionsRegister.register(ctx, command, permission);
-    await this.permissionsCacheService.savePermissionToRedis(ctx, permission);
   }
 
   async destroyPermission(
@@ -71,10 +70,6 @@ export class PermissionsService extends BaseService {
     await dbPermission.remove();
 
     await this.permissionsRegister.unregister(ctx, command, permission);
-    await this.permissionsCacheService.deletePermissionFromRedis(
-      ctx,
-      permission
-    );
   }
 
   async listPermissions(ctx: GowonContext, queries: PermissionQuery[]) {

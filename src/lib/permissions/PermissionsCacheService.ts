@@ -1,11 +1,6 @@
 import { Permission, PermissionType } from "../../database/entity/Permission";
 import { SimpleMap } from "../../helpers/types";
 import { BaseService } from "../../services/BaseService";
-import {
-  RedisService,
-  RedisServiceContextOptions,
-} from "../../services/redis/RedisService";
-import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { Command } from "../command/Command";
 import { GowonContext } from "../context/Context";
 import {
@@ -26,18 +21,10 @@ export type PermissionsCacheMutableContext = {
 
 export type PermissionsCacheContext = GowonContext<{
   mutable?: PermissionsCacheMutableContext;
-  constants?: { redisOptions?: RedisServiceContextOptions; isAdmin?: boolean };
+  constants?: { isAdmin?: boolean };
 }>;
 
 export class PermissionsCacheService extends BaseService<PermissionsCacheContext> {
-  private get redisService() {
-    return ServiceRegistry.get(RedisService);
-  }
-
-  async init(ctx: PermissionsCacheContext) {
-    await this.savePermissionsToRedis(ctx);
-  }
-
   get(ctx: PermissionsCacheContext, query: Required<PermissionQuery>) {
     return this.cache(ctx).get(
       generateCacheKey(query.type, query.commandID, query.entityID)
@@ -56,32 +43,6 @@ export class PermissionsCacheService extends BaseService<PermissionsCacheContext
         value
       );
     }
-  }
-
-  async savePermissionsToRedis(ctx: PermissionsCacheContext) {
-    const permissions = await Permission.find();
-
-    for (const permission of permissions) {
-      await this.savePermissionToRedis(ctx, permission);
-    }
-  }
-
-  async savePermissionToRedis(
-    ctx: PermissionsCacheContext,
-    permission: Permission
-  ): Promise<void> {
-    await this.redisService.set(
-      ctx,
-      permission.asCacheKey(),
-      permission.allow ? "true" : "false"
-    );
-  }
-
-  async deletePermissionFromRedis(
-    ctx: PermissionsCacheContext,
-    permission: Permission
-  ): Promise<void> {
-    await this.redisService.delete(ctx, permission.asCacheKey());
   }
 
   getAllPermissionQueries(
@@ -144,28 +105,13 @@ export class PermissionsCacheService extends BaseService<PermissionsCacheContext
   private async getPermissionsFromQueries(
     ctx: PermissionsCacheContext,
     queries: PermissionQuery[]
-  ): Promise<SimpleMap<string>> {
-    const allPermissions = {} as SimpleMap<string>;
+  ): Promise<SimpleMap<boolean>> {
+    return (
+      await Permission.getFromQueries(queries, ctx.requiredGuild.id)
+    ).reduce((acc, val) => {
+      acc[val.asCacheKey()] = val.allow;
 
-    const queryPromises = queries.map((q) =>
-      this.redisService.getMany(
-        ctx,
-        generateCacheKey(
-          q.type || ("*" as any),
-          q.commandID || "*",
-          q.entityID || "*"
-        )
-      )
-    );
-
-    const exectuedQueries = await Promise.all(queryPromises);
-
-    for (const map of exectuedQueries) {
-      for (const [key, value] of Object.entries(map)) {
-        allPermissions[key] = value;
-      }
-    }
-
-    return allPermissions;
+      return acc;
+    }, {} as SimpleMap<boolean>);
   }
 }
