@@ -9,7 +9,6 @@ import { MirrorballBaseCommand } from "../../../lib/indexing/MirrorballCommands"
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { displayLink } from "../../../lib/views/displays";
 import { ConfirmationEmbed } from "../../../lib/views/embeds/ConfirmationEmbed";
-import { MirrorballUserType } from "../../../services/mirrorball/MirrorballTypes";
 import { LastFMSession } from "../../../services/LastFM/converters/Misc";
 import { Payload } from "../../../lib/context/Payload";
 
@@ -111,12 +110,7 @@ export default class Login extends MirrorballBaseCommand<never, never> {
     username: string,
     session: string | undefined
   ) {
-    await this.mirrorballUsersService.login(
-      this.ctx,
-      username,
-      MirrorballUserType.Lastfm,
-      session
-    );
+    await this.mirrorballUsersService.login(this.ctx, username, session);
     try {
       await this.mirrorballUsersService.quietAddUserToGuild(
         this.ctx,

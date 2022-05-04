@@ -1,10 +1,5 @@
 export type MirrorballDate = string;
 
-export enum MirrorballUserType {
-  Lastfm = "Lastfm",
-  Wavy = "Wavy",
-}
-
 export enum MirrorballPrivacy {
   Private = "PRIVATE",
   Discord = "DISCORD",
@@ -51,7 +46,6 @@ export interface MirrorballUser {
   username: string;
   discordID: string;
 
-  userType: MirrorballUserType;
   privacy: MirrorballPrivacy;
 }
 
