@@ -2,7 +2,6 @@ import { GowonContext } from "../../lib/context/Context";
 import {
   MirrorballPrivacy,
   MirrorballUser,
-  MirrorballUserType,
   UserInput,
 } from "../../services/mirrorball/MirrorballTypes";
 import { BaseMockService } from "./BaseMockService";
@@ -20,7 +19,6 @@ export class MockMirrorballUsersService extends BaseMockService {
   public async login(
     _ctx: GowonContext,
     _username: string,
-    _userType: MirrorballUserType,
     _session: string | undefined
   ) {}
 

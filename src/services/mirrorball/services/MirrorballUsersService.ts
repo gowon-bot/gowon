@@ -9,7 +9,6 @@ import {
   MirrorballPageInfo,
   MirrorballPrivacy,
   MirrorballUser,
-  MirrorballUserType,
   UserInput,
 } from "../MirrorballTypes";
 
@@ -36,7 +35,6 @@ export class MirrorballUsersService extends BaseService {
           username
           discordID
 
-          userType
           privacy
         }
       }
@@ -70,7 +68,6 @@ export class MirrorballUsersService extends BaseService {
   public async login(
     ctx: GowonContext,
     username: string,
-    userType: MirrorballUserType,
     session: string | undefined
   ) {
     const discordID = ctx.author.id;
@@ -81,20 +78,14 @@ export class MirrorballUsersService extends BaseService {
         mutation login(
           $username: String!
           $discordID: String!
-          $userType: UserType!
           $session: String
         ) {
-          login(
-            username: $username
-            discordID: $discordID
-            userType: $userType
-            session: $session
-          ) {
+          login(username: $username, discordID: $discordID, session: $session) {
             id
           }
         }
       `,
-      { username, discordID, userType, session }
+      { username, discordID, session }
     );
   }
 
