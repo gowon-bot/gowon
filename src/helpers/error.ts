@@ -19,11 +19,16 @@ export function parseError(error: RawLastFMErrorResponse): string {
     case 6:
       return parseErrorSix(error.message);
 
+    case 4:
     case 8:
+    case 16:
       return (
         Emoji[404] +
         " Last.fm is having issues at the moment, please try again in a few moments..."
       );
+
+    case 9:
+      return "Something went wrong authenticating with Last.fm, please login again";
 
     case 17:
       return "that user's recent tracks are probably set to private. To turn off hidden recent tracks, visit your privacy settings in last.fm";

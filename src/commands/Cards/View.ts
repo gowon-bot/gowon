@@ -47,7 +47,7 @@ export class View extends CardsChildCommand {
     ]);
 
     if (!card) {
-      throw new CardNotMintedYetError(this.prefix);
+      throw new CardNotMintedYetError();
     }
 
     const [owner] =

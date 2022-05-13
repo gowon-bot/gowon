@@ -35,6 +35,7 @@ export default class CrownsParentCommand extends LastFMBaseParentCommand {
 
   prefixes = ["crowns", "cw"];
   default = () => new List();
+
   noPrefixAliases = [
     // Check
     "c",

@@ -14,7 +14,9 @@ export default class CardsParentCommand extends ParentCommand {
 
   prefixes = ["cards"];
   default = () => new Inventory();
-  // customHelp = Help
+
+  category = "lastfm";
+  subcategory = "games";
 
   noPrefixAliases = [
     // View
@@ -25,7 +27,9 @@ export default class CardsParentCommand extends ParentCommand {
     "bank",
     // Work
     "work",
+    // Inventory
+    "inventory",
   ];
 
-  children = new CommandGroup([Bank, Inventory, Mint, View, Work]);
+  children = new CommandGroup([Bank, Inventory, Mint, View, Work], this.id);
 }

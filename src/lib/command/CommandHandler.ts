@@ -83,7 +83,10 @@ export class CommandHandler {
         const defaultID = command.default?.()?.id;
 
         if (defaultID) {
-          command = this.commandRegistry.findByID(defaultID) || command;
+          command =
+            this.commandRegistry.findByID(defaultID, {
+              includeSecret: true,
+            }) || command;
         }
       }
 

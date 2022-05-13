@@ -3,9 +3,9 @@ import { ClientError } from "./errors";
 export class CardNotMintedYetError extends ClientError {
   name = "CardNotMintedYetError";
 
-  constructor(prefix: string) {
+  constructor() {
     super(
-      `That card hasn't been minted yet! You can mint cards with \`${prefix}mint\``
+      `That card wasn't minted during the cards event! Cards can no longer be minted.`
     );
   }
 }
