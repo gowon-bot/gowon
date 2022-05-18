@@ -98,7 +98,7 @@ export class StringArgument<
 
       if (this.getChoices(this.options).length) {
         newOption = newOption.addChoices(
-          this.getChoices(this.options)
+          ...this.getChoices(this.options)
         ) as SlashCommandStringOption;
       }
 
@@ -125,13 +125,13 @@ export class StringArgument<
       value &&
       choices.length &&
       !this.options.unstrictChoices &&
-      !choices.some((c) => c[1].toLowerCase() === value.toLowerCase())
+      !choices.some((c) => c.value.toLowerCase() === value.toLowerCase())
     ) {
       throw new ValidationError(
         isCustomMessage(this.options.choices)
           ? this.options.choices.customMessage
           : `${argumentName} must be one of ${this.getChoices(this.options)
-              .map((c) => c[1])
+              .map((c) => c.value)
               .join(", ")}`
       );
     }
@@ -139,16 +139,18 @@ export class StringArgument<
 
   private getChoices(
     options: StringArgumentOptions
-  ): [name: string, value: string][] {
-    const choices = [] as [string, string][];
+  ): { name: string; value: string }[] {
+    const choices = [] as { name: string; value: string }[];
 
     const choicesOptions = isCustomMessage(options.choices)
       ? options.choices.list
       : options.choices;
 
     for (const choice of choicesOptions) {
-      if (typeof choice === "string") choices.push([choice, choice]);
-      else choices.push([choice.name, choice.value || choice.name]);
+      if (typeof choice === "string")
+        choices.push({ name: choice, value: choice });
+      else
+        choices.push({ name: choice.name, value: choice.value || choice.name });
     }
 
     return choices;
