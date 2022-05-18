@@ -80,3 +80,28 @@ export function displayRating(rating: number): string {
     Emoji.emptyStar.repeat(Math.floor((10 - rating) / 2))
   );
 }
+
+export function displayProgressBar(
+  progress: number,
+  total: number,
+  displayOptions: Partial<{
+    width: number;
+    progressEmoji: string;
+    remainingEmoji: string;
+  }>
+): string {
+  const options = Object.assign(
+    {
+      width: 10,
+      progressEmoji: "🟩",
+      remainingEmoji: "⬜",
+    },
+    displayOptions
+  );
+
+  const relativeProgress = Math.floor((options.width * progress) / total);
+
+  return `${options.progressEmoji.repeat(
+    relativeProgress
+  )}${options.remainingEmoji.repeat(options.width - relativeProgress)}`;
+}

@@ -42,7 +42,7 @@ import { CommandRegistry } from "./CommandRegistry";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { AnalyticsCollector } from "../../analytics/AnalyticsCollector";
 import { NowPlayingEmbedParsingService } from "../../services/NowPlayingEmbedParsingService";
-import { CommandAccess } from "./access/access";
+import { BetaAccess, CommandAccess } from "./access/access";
 import { GowonContext } from "../context/Context";
 import { ArgumentParsingService } from "../../services/arguments/ArgumentsParsingService";
 import {
@@ -737,17 +737,24 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
     return { guild, user, guildMember };
   }
 
-  private autoUpdateUser() {
+  private async autoUpdateUser() {
     if (
       this.author.id &&
       Chance().bool({ likelihood: 33 }) &&
       !["update", "index", "login", "logout"].includes(this.name) &&
       !this.gowonClient.isInIssueMode
     ) {
-      this.usersService
-        .getUser(this.ctx, this.author.id)
-        .then(async (senderUser) => {
-          if (senderUser) {
+      const senderUser = await this.usersService.getUser(
+        this.ctx,
+        this.author.id
+      );
+
+      if (senderUser) {
+        const access = new BetaAccess();
+
+        // Don't auto update lilac users... yet
+        if (!access.check(senderUser)) {
+          try {
             await Promise.all([
               this.mirrorballUsersService.quietAddUserToGuild(
                 this.ctx,
@@ -756,9 +763,9 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
               ),
               senderUser.mirrorballUpdate(this.ctx),
             ]);
-          }
-        })
-        .catch(() => {});
+          } catch (e) {}
+        }
+      }
     }
   }
 }
