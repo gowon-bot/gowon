@@ -54,7 +54,9 @@ export class TimePeriodArgument<
   addAsOption(slashCommand: SlashCommandBuilder, argumentName: string) {
     return slashCommand.addStringOption((option) =>
       this.baseOption(option, argumentName).addChoices(
-        periodChoices.map((c) => [c.name, c.value])
+        periodChoices.map(
+          (c) => [c.name, c.value] as [name: string, value: string]
+        )
       )
     );
   }

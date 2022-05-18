@@ -137,7 +137,9 @@ export class StringArgument<
     }
   }
 
-  private getChoices(options: StringArgumentOptions): [string, string][] {
+  private getChoices(
+    options: StringArgumentOptions
+  ): [name: string, value: string][] {
     const choices = [] as [string, string][];
 
     const choicesOptions = isCustomMessage(options.choices)
