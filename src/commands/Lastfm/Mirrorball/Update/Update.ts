@@ -25,6 +25,9 @@ import {
 import { ServiceRegistry } from "../../../../services/ServicesRegistry";
 import { Flag } from "../../../../lib/context/arguments/argumentTypes/Flag";
 import { code } from "../../../../helpers/discord";
+import { BetaAccess } from "../../../../lib/command/access/access";
+import { LilacUsersService } from "../../../../services/lilac/LilacUsersService";
+import { displayProgressBar } from "../../../../lib/views/displays";
 
 const args = {
   full: new Flag({
@@ -57,6 +60,7 @@ export default class Update extends MirrorballBaseCommand<
   stopwatch = new Stopwatch();
 
   concurrencyService = ServiceRegistry.get(ConcurrencyService);
+  lilacUsersService = ServiceRegistry.get(LilacUsersService);
 
   async prerun() {
     if (
@@ -82,9 +86,17 @@ export default class Update extends MirrorballBaseCommand<
       this.requiredGuild.id
     );
 
-    const { senderUsername, perspective } = await this.getMentions({
+    const { senderUsername, perspective, senderUser } = await this.getMentions({
       authentificationRequired: true,
     });
+
+    const access = new BetaAccess();
+
+    if (access.check(senderUser)) {
+      await this.lilacUpdate();
+
+      return;
+    }
 
     const embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor("Update"))
@@ -164,5 +176,44 @@ export default class Update extends MirrorballBaseCommand<
         }
       }
     );
+  }
+
+  private async lilacUpdate() {
+    const embed = this.newEmbed()
+      .setAuthor(this.generateEmbedAuthor("Lilac updating"))
+      .setDescription("Started your updating!");
+
+    const sentMessage = await this.send(embed);
+
+    const stopwatch = new Stopwatch().start();
+
+    const observable = this.lilacUsersService.indexingProgress({
+      discordID: this.author.id,
+    });
+
+    const subscription = observable.subscribe(async (progress) => {
+      if (progress.page === progress.totalPages) {
+        await this.discordService.edit(
+          this.ctx,
+          sentMessage,
+          embed.setDescription("Done!")
+        );
+        subscription.unsubscribe();
+      } else if (stopwatch.elapsedInMilliseconds >= 3000) {
+        await this.discordService.edit(
+          this.ctx,
+          sentMessage,
+          embed.setDescription(
+            `Updating...
+${displayProgressBar(progress.page, progress.totalPages, { width: 15 })}
+*Page ${progress.page}/${progress.totalPages}*`
+          )
+        );
+
+        stopwatch.zero().start();
+      }
+    });
+
+    await this.lilacUsersService.update({ discordID: this.author.id });
   }
 }

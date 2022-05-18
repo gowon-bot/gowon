@@ -15,6 +15,10 @@ import {
   IndexUserConnector,
 } from "./Index.connector";
 import { ServiceRegistry } from "../../../../services/ServicesRegistry";
+import { LilacUsersService } from "../../../../services/lilac/LilacUsersService";
+import { displayProgressBar } from "../../../../lib/views/displays";
+import { Stopwatch } from "../../../../helpers";
+import { BetaAccess } from "../../../../lib/command/access/access";
 
 export default class Index extends MirrorballBaseCommand<
   IndexUserResponse,
@@ -32,6 +36,7 @@ export default class Index extends MirrorballBaseCommand<
   description = "Fully index a user, downloading all your Last.fm data";
 
   concurrencyService = ServiceRegistry.get(ConcurrencyService);
+  lilacUsersService = ServiceRegistry.get(LilacUsersService);
 
   async prerun() {
     if (
@@ -52,7 +57,7 @@ export default class Index extends MirrorballBaseCommand<
   }
 
   async run() {
-    const { senderUsername } = await this.getMentions({
+    const { senderUsername, senderUser } = await this.getMentions({
       authentificationRequired: true,
     });
 
@@ -61,6 +66,14 @@ export default class Index extends MirrorballBaseCommand<
       this.author.id,
       this.requiredGuild.id
     );
+
+    const access = new BetaAccess();
+
+    if (access.check(senderUser)) {
+      await this.lilacIndex();
+
+      return;
+    }
 
     const indexingUsername = senderUsername;
 
@@ -116,5 +129,44 @@ export default class Index extends MirrorballBaseCommand<
         this.notifyUser(perspective, "index");
       }
     );
+  }
+
+  private async lilacIndex() {
+    const embed = this.newEmbed()
+      .setAuthor(this.generateEmbedAuthor("Lilac indexing"))
+      .setDescription("Started your indexing!");
+
+    const sentMessage = await this.send(embed);
+
+    const stopwatch = new Stopwatch().start();
+
+    const observable = this.lilacUsersService.indexingProgress({
+      discordID: this.author.id,
+    });
+
+    const subscription = observable.subscribe(async (progress) => {
+      if (progress.page === progress.totalPages) {
+        await this.discordService.edit(
+          this.ctx,
+          sentMessage,
+          embed.setDescription("Done!")
+        );
+        subscription.unsubscribe();
+      } else if (stopwatch.elapsedInMilliseconds >= 3000) {
+        await this.discordService.edit(
+          this.ctx,
+          sentMessage,
+          embed.setDescription(
+            `Indexing...
+${displayProgressBar(progress.page, progress.totalPages, { width: 15 })}
+*Page ${progress.page}/${progress.totalPages}*`
+          )
+        );
+
+        stopwatch.zero().start();
+      }
+    });
+
+    await this.lilacUsersService.index({ discordID: this.author.id });
   }
 }
