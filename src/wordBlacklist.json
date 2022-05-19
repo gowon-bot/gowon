@@ -93,7 +93,7 @@
       "boring",
       "idiot",
       "terrible",
-      ".*akiko.*",
+      "generic",
 
       "==== Offensive Tags ====",
       "osama is not dead",
@@ -103,6 +103,8 @@
     ],
     "regexes": [
       "better than .*",
+      "worse than .*",
+      ".*akiko.*",
       "best of \\d{4}",
       ".* ?step on me ?.*",
       "hi \\w+",
