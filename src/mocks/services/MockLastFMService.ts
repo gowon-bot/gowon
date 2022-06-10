@@ -39,7 +39,7 @@ import {
   RecentTracksParams,
   TagInfoParams,
   TagTopArtistsParams,
-  TagTopTracksParams,
+  TagTopEntitiesParams,
   TopAlbumsParams,
   TopArtistsParams,
   TopTracksParams,
@@ -152,7 +152,7 @@ export class MockLastFMService extends MockLastFMAPIService {
 
   async tagTopTracks(
     ctx: GowonContext,
-    params: TagTopTracksParams
+    params: TagTopEntitiesParams
   ): Promise<TagTopTracks> {
     return new TagTopTracks(await this._tagTopTracks(ctx, params));
   }

@@ -47,7 +47,7 @@ import {
   UserGetFriendsParams,
   RawFriends,
   RawUserGetFriendsResponse,
-  TagTopTracksParams,
+  TagTopEntitiesParams,
   RawTagTopTracks,
   RawTagTopTracksResponse,
   RawLastFMSession,
@@ -60,6 +60,8 @@ import {
   isErrorResponse,
   AlbumSearchParams,
   RawAlbumSearchResponse,
+  RawTagTopAlbums,
+  RawTagTopAlbumsResponse,
 } from "./LastFMService.types";
 import config from "../../../config.json";
 import {
@@ -356,7 +358,7 @@ export class LastFMAPIService extends BaseService {
 
   async _tagTopTracks(
     ctx: GowonContext,
-    params: TagTopTracksParams
+    params: TagTopEntitiesParams
   ): Promise<RawTagTopTracks> {
     return (
       await this.request<RawTagTopTracksResponse>(
@@ -365,6 +367,19 @@ export class LastFMAPIService extends BaseService {
         params
       )
     ).tracks;
+  }
+
+  async _tagTopAlbums(
+    ctx: GowonContext,
+    params: TagTopEntitiesParams
+  ): Promise<RawTagTopAlbums> {
+    return (
+      await this.request<RawTagTopAlbumsResponse>(
+        ctx,
+        "tag.getTopAlbums",
+        params
+      )
+    ).albums;
   }
 
   async _userGetWeeklyArtistChart(

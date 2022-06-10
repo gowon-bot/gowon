@@ -13,7 +13,7 @@ import {
   RecentTracksParams,
   TagInfoParams,
   TagTopArtistsParams,
-  TagTopTracksParams,
+  TagTopEntitiesParams,
   TopAlbumsParams,
   TopArtistsParams,
   TopTracksParams,
@@ -35,6 +35,7 @@ import {
   ArtistPopularTracks,
   Friends,
   LastFMSession,
+  TagTopAlbums,
   TagTopArtists,
   TagTopTracks,
 } from "./converters/Misc";
@@ -172,9 +173,16 @@ export class LastFMService extends LastFMAPIService {
 
   async tagTopTracks(
     ctx: GowonContext,
-    params: TagTopTracksParams
+    params: TagTopEntitiesParams
   ): Promise<TagTopTracks> {
     return new TagTopTracks(await this._tagTopTracks(ctx, params));
+  }
+
+  async tagTopAlbums(
+    ctx: GowonContext,
+    params: TagTopEntitiesParams
+  ): Promise<TagTopAlbums> {
+    return new TagTopAlbums(await this._tagTopAlbums(ctx, params));
   }
 
   async getSession(

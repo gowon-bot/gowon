@@ -29,6 +29,15 @@ export default class OverviewParentCommand extends LastFMBaseParentCommand {
   prefixes = ["o", "overview"];
   default = () => new All();
 
+  noPrefixAliases = [
+    // Breadth
+    "breadth",
+    "div",
+    // H-Index
+    "hindex",
+    "hidx",
+  ];
+
   children: CommandGroup = new CommandGroup(
     [
       All,

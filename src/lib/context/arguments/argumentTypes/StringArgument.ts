@@ -77,6 +77,7 @@ export class StringArgument<
         this.options.index,
         {
           join: true,
+          trim: true,
         }
       );
     }

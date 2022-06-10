@@ -4,6 +4,8 @@ import {
   RawArtistPopularTracks,
   RawFriends,
   RawLastFMSession,
+  RawTagTopAlbum,
+  RawTagTopAlbums,
   RawTagTopArtist,
   RawTagTopArtists,
   RawTagTopTrack,
@@ -199,6 +201,57 @@ export class TagTopTracks extends BaseLastFMConverter {
     const attr = tagTopTracks["@attr"];
 
     this.tracks = tagTopTracks.track.map((t) => new TagTopTrack(t));
+
+    this.meta = {
+      tag: attr.tag,
+      page: this.number(attr.page),
+      perPage: this.number(attr.perPage),
+      total: this.number(attr.total),
+      totalPages: this.number(attr.totalPages),
+    };
+  }
+}
+
+export class TagTopAlbum extends BaseLastFMConverter {
+  name: string;
+  mbid: string;
+  url: string;
+  artist: {
+    name: string;
+    mbid: string;
+    url: string;
+  };
+  images: ImageCollection;
+  rank: number;
+
+  constructor(tagTopAlbum: RawTagTopAlbum) {
+    super();
+
+    this.name = tagTopAlbum.name;
+    this.url = tagTopAlbum.url;
+    this.mbid = tagTopAlbum.mbid;
+    this.artist = tagTopAlbum.artist;
+    this.images = new ImageCollection(tagTopAlbum.image);
+    this.rank = this.number(tagTopAlbum["@attr"].rank);
+  }
+}
+
+export class TagTopAlbums extends BaseLastFMConverter {
+  albums: TagTopAlbum[];
+  meta: {
+    tag: string;
+    page: number;
+    perPage: number;
+    totalPages: number;
+    total: number;
+  };
+
+  constructor(tagTopAlbums: RawTagTopAlbums) {
+    super();
+
+    const attr = tagTopAlbums["@attr"];
+
+    this.albums = tagTopAlbums.album.map((l) => new TagTopAlbum(l));
 
     this.meta = {
       tag: attr.tag,

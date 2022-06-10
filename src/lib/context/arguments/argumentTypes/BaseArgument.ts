@@ -16,6 +16,7 @@ type GetElementFromIndexOptions = {
   join?: boolean;
   default?: any | any[];
   number?: boolean;
+  trim?: boolean;
 };
 
 export interface BaseArgumentOptions<ReturnT = any> {
@@ -151,10 +152,12 @@ export abstract class BaseArgument<
     }
 
     if (options.number) {
-      if (typeof argument === "string")
-        return isNaN(toInt(argument)) ? options.default : toInt(argument);
-      else return parseInt(argument) ?? options.default;
-    } else return argument ?? options.default;
+      return isNaN(toInt(argument)) ? options.default : toInt(argument);
+    } else if (typeof argument === "string" && options.trim) {
+      return argument.trim();
+    } else {
+      return argument ?? options.default;
+    }
   }
 
   private shouldReturnDefault(array: any[], index: number | Slice): boolean {

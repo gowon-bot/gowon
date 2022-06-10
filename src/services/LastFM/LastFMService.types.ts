@@ -470,6 +470,34 @@ export interface RawTagTopTracksResponse {
   tracks: RawTagTopTracks;
 }
 
+export interface RawTagTopAlbum {
+  name: string;
+  mbid: string;
+  url: string;
+  artist: {
+    name: string;
+    mbid: string;
+    url: string;
+  };
+  image: RawImage[];
+  "@attr": { rank: string };
+}
+
+export interface RawTagTopAlbums {
+  album: RawTagTopAlbum[];
+  "@attr": {
+    tag: string;
+    page: string;
+    perPage: string;
+    totalPages: string;
+    total: string;
+  };
+}
+
+export interface RawTagTopAlbumsResponse {
+  albums: RawTagTopAlbums;
+}
+
 export interface RawLastFMSession {
   session: {
     subscriber: number;
@@ -660,7 +688,7 @@ export interface GetArtistCorrectionParams {
 
 export interface UserGetFriendsParams extends PagedParams, UsernameParams {}
 
-export interface TagTopTracksParams extends PagedParams {
+export interface TagTopEntitiesParams extends PagedParams {
   tag: string;
 }
 
