@@ -30,7 +30,7 @@ import {
   ScrobbleParams,
   TagInfoParams,
   TagTopArtistsParams,
-  TagTopTracksParams,
+  TagTopEntitiesParams,
   TopAlbumsParams,
   TopArtistsParams,
   TopTracksParams,
@@ -163,7 +163,7 @@ export class MockLastFMAPIService extends BaseMockService {
 
   async _tagTopTracks(
     _ctx: GowonContext,
-    _params: TagTopTracksParams
+    _params: TagTopEntitiesParams
   ): Promise<RawTagTopTracks> {
     return {} as any;
   }

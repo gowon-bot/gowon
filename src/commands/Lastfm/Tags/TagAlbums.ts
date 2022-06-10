@@ -5,13 +5,13 @@ import { StringArgument } from "../../../lib/context/arguments/argumentTypes/Str
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { Paginator } from "../../../lib/paginators/Paginator";
 import { displayNumber } from "../../../lib/views/displays";
-import { TopTracks } from "../../../services/LastFM/converters/TopTypes";
+import { TopAlbums } from "../../../services/LastFM/converters/TopTypes";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { WordBlacklistService } from "../../../services/WordBlacklistService";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 interface Overlap {
-  track: string;
+  album: string;
   artist: string;
   plays: number;
 }
@@ -20,20 +20,20 @@ const args = {
   tag: new StringArgument({
     index: { start: 0 },
     required: true,
-    description: "The tag to filter your tracks with",
+    description: "The tag to filter your albums with",
   }),
   ...standardMentions,
 } as const;
 
-export default class TagTracks extends LastFMBaseCommand<typeof args> {
-  idSeed = "iz*one nako";
+export default class TagAlbums extends LastFMBaseCommand<typeof args> {
+  idSeed = "brave girls minyoung";
 
   description =
-    "Shows the overlap between your top tracks, and a given tag's top tracks.";
+    "Shows the overlap between your top albums, and a given tag's top albums.";
   extraDescription =
     " This command works best for smaller/joke tags, as a lot of larger tags are mistagged";
   subcategory = "tags";
-  aliases = ["tagt", "tagtr", "tagtrack"];
+  aliases = ["tagl", "tagal", "tagalbum"];
   usage = ["tag"];
 
   arguments = args;
@@ -61,41 +61,41 @@ export default class TagTracks extends LastFMBaseCommand<typeof args> {
     });
 
     const paginator = new Paginator(
-      this.lastFMService.topTracks.bind(this.lastFMService),
-      3,
+      this.lastFMService.topAlbums.bind(this.lastFMService),
+      2,
       { username: requestable, limit: 1000 },
       this.ctx
     );
 
-    const [tagTopTracks, userTopTracks] = await Promise.all([
-      this.lastFMService.tagTopTracks(this.ctx, { tag, limit: 1000 }),
+    const [tagTopAlbums, userTopAlbums] = await Promise.all([
+      this.lastFMService.tagTopAlbums(this.ctx, { tag, limit: 1000 }),
       paginator.getAllToConcatonable({ concurrent: false }),
     ]);
 
-    const tagTrackNames = tagTopTracks!.tracks.map((t) =>
-      this.generateTrackName(t.artist.name, t.name)
+    const tagAlbumNames = tagTopAlbums!.albums.map((a) =>
+      this.generateAlbumName(a.artist.name, a.name)
     );
 
-    const overlap = this.calculateOverlap(userTopTracks, tagTrackNames);
+    const overlap = this.calculateOverlap(userTopAlbums, tagAlbumNames);
 
     const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Tag tracks"))
+      .setAuthor(this.generateEmbedAuthor("Tag albums"))
       .setTitle(
-        `${perspective.upper.possessive} top ${tagTopTracks.meta.tag} tracks`
+        `${perspective.upper.possessive} top ${tagTopAlbums.meta.tag} albums`
       )
       .setDescription(
         `
 _Comparing ${perspective.possessive} top ${displayNumber(
-          userTopTracks.tracks.length,
-          "track"
+          userTopAlbums.albums.length,
+          "album"
         )} and the top ${displayNumber(
-          tagTrackNames.length,
-          "track"
+          tagAlbumNames.length,
+          "album"
         )} of the tag_\n` +
           (overlap.length
-            ? `${displayNumber(overlap.length, "track")} (${calculatePercent(
+            ? `${displayNumber(overlap.length, "album")} (${calculatePercent(
                 overlap.length,
-                tagTrackNames.length
+                tagAlbumNames.length
               )}% match) (${displayNumber(
                 overlap.reduce((sum, o) => sum + o.plays, 0),
                 "scrobble"
@@ -104,35 +104,35 @@ _Comparing ${perspective.possessive} top ${displayNumber(
                 .slice(0, 20)
                 .map(
                   (o, idx) =>
-                    `${idx + 1}. ${bold(o.track)} by ${italic(
+                    `${idx + 1}. ${bold(o.album)} by ${italic(
                       o.artist
                     )} - ${displayNumber(o.plays, "play")}`
                 )
                 .join("\n")}
 `
-            : "Couldn't find any matching tracks!")
+            : "Couldn't find any matching albums!")
       );
 
     await this.send(embed);
   }
 
   private calculateOverlap(
-    userTopTracks: TopTracks,
-    tagTrackNames: string[]
+    userTopAlbums: TopAlbums,
+    tagAlbumNames: string[]
   ): Overlap[] {
-    return userTopTracks.tracks.reduce((acc, t) => {
-      if (tagTrackNames.includes(this.generateTrackName(t.artist.name, t.name)))
+    return userTopAlbums.albums.reduce((acc, a) => {
+      if (tagAlbumNames.includes(this.generateAlbumName(a.artist.name, a.name)))
         acc.push({
-          track: t.name,
-          artist: t.artist.name,
-          plays: t.userPlaycount,
+          album: a.name,
+          artist: a.artist.name,
+          plays: a.userPlaycount,
         });
 
       return acc;
     }, [] as Overlap[]);
   }
 
-  private generateTrackName(artist: string, name: string) {
+  private generateAlbumName(artist: string, name: string) {
     return `${artist} | ${name}`;
   }
 }
