@@ -198,7 +198,7 @@ export class DiscordService extends BaseService<DiscordServiceContext> {
     } as MessagePayload | InteractionReplyOptions;
 
     const response = ctx.mutable.deferred
-      ? await payload.source.editReply(sendOptions)
+      ? this.editDeferred(ctx, sendOptions)
       : ctx.mutable.replied
       ? await payload.source.followUp(sendOptions)
       : await payload.source.reply(sendOptions);
@@ -211,6 +211,23 @@ export class DiscordService extends BaseService<DiscordServiceContext> {
     }
 
     return response as Message;
+  }
+
+  private async editDeferred(
+    ctx: GowonContext,
+    sendOptions: MessagePayload | InteractionReplyOptions
+  ) {
+    return new Promise((resolve) => {
+      const payload = ctx.payload;
+
+      if (payload.isInteraction()) {
+        setTimeout(() => {
+          resolve(payload.source.editReply(sendOptions));
+        }, 100);
+      } else {
+        resolve(undefined);
+      }
+    });
   }
 }
 
