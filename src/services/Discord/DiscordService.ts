@@ -13,7 +13,7 @@ import {
 } from "discord.js";
 import { AnalyticsCollector } from "../../analytics/AnalyticsCollector";
 import { DMsAreOffError } from "../../errors/errors";
-import { ucFirst } from "../../helpers";
+import { sleep, ucFirst } from "../../helpers";
 import { GowonContext } from "../../lib/context/Context";
 import { Payload } from "../../lib/context/Payload";
 import { BaseService } from "../BaseService";
@@ -197,8 +197,12 @@ export class DiscordService extends BaseService<DiscordServiceContext> {
       ephemeral: options?.ephemeral,
     } as MessagePayload | InteractionReplyOptions;
 
+    if (ctx.mutable.deferred) {
+      await sleep(100);
+    }
+
     const response = ctx.mutable.deferred
-      ? this.editDeferred(ctx, sendOptions)
+      ? payload.source.editReply(sendOptions)
       : ctx.mutable.replied
       ? await payload.source.followUp(sendOptions)
       : await payload.source.reply(sendOptions);
@@ -211,23 +215,6 @@ export class DiscordService extends BaseService<DiscordServiceContext> {
     }
 
     return response as Message;
-  }
-
-  private async editDeferred(
-    ctx: GowonContext,
-    sendOptions: MessagePayload | InteractionReplyOptions
-  ) {
-    return new Promise((resolve) => {
-      const payload = ctx.payload;
-
-      if (payload.isInteraction()) {
-        setTimeout(() => {
-          resolve(payload.source.editReply(sendOptions));
-        }, 100);
-      } else {
-        resolve(undefined);
-      }
-    });
   }
 }
 
