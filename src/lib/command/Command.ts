@@ -355,7 +355,8 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
         deferredResponseTimeout?: NodeJS.Timeout;
       }>().mutable.deferredResponseTimeout = setTimeout(() => {
         (this.payload.source as CommandInteraction).deferReply();
-        this.mutableContext<{ deferred: boolean }>().mutable.deferred = true;
+        this.mutableContext<{ deferredAt: Date }>().mutable.deferredAt =
+          new Date();
       }, 2000);
     }
   }
