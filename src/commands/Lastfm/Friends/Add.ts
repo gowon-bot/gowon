@@ -42,7 +42,7 @@ export class Add extends FriendsChildCommand<typeof args> {
 
   arguments = args;
 
-  async prerun() {}
+  async beforeRun() {}
 
   async run() {
     const { senderUser } = await this.getMentions({ senderRequired: true });

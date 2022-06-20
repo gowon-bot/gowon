@@ -67,7 +67,7 @@ export abstract class OverviewChildCommand<
     return { colour, badge, image };
   }
 
-  async prerun() {
+  async beforeRun() {
     const {
       senderRequestable,
       senderUsername,

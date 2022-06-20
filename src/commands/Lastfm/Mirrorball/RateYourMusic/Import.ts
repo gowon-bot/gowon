@@ -35,7 +35,7 @@ export class ImportRatings extends RateYourMusicIndexingChildCommand<
 
   slashCommand = true;
 
-  async prerun() {
+  async beforeRun() {
     if (
       await this.concurrencyService.isUserDoingAction(
         this.author.id,

@@ -30,7 +30,7 @@ export abstract class JumbleChildCommand<
     ) as T;
   }
 
-  async prerun() {
+  async beforeRun() {
     let senderUsername = await this.usersService.getUsername(
       this.ctx,
       this.payload.author.id

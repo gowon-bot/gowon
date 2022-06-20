@@ -1,6 +1,6 @@
 import { Chance } from "chance";
 import { bold } from "../../helpers/discord";
-import { Command } from "../../lib/command/Command";
+import { Command, Variation } from "../../lib/command/Command";
 import { NumberArgument } from "../../lib/context/arguments/argumentTypes/NumberArgument";
 import { Validation } from "../../lib/validation/ValidationChecker";
 import { validators } from "../../lib/validation/validators";
@@ -14,7 +14,6 @@ const args = {
   }),
   max: new NumberArgument({
     index: 1,
-    required: true,
     description: "The maximum number to roll to",
   }),
 } as const;
@@ -25,6 +24,21 @@ export default class Roll extends Command<typeof args> {
   description = "Roll a random number";
   subcategory = "fun";
   usage = ["max", "min max"];
+
+  variations: Variation[] = [
+    {
+      name: "yesno",
+      variation: "yesno",
+      description: "Ask and Gowon will respond with yes or no!",
+      separateSlashCommand: true,
+      overrideArgs: {},
+    },
+    {
+      name: "coinflip",
+      variation: ["coinflip", "flipacoin", "flipp!ngacoin"],
+      description: "Flips a coin",
+    },
+  ];
 
   arguments = args;
 
@@ -39,6 +53,14 @@ export default class Roll extends Command<typeof args> {
     ],
   };
 
+  parseArguments() {
+    if (this.variationWasUsed("yesno", "coinflip")) {
+      return { min: 1, max: 2 };
+    } else {
+      return super.parseArguments();
+    }
+  }
+
   async run() {
     const min = this.parsedArguments.min,
       max = this.parsedArguments.max;
@@ -52,11 +74,17 @@ export default class Roll extends Command<typeof args> {
         bounds.push(min, max);
       }
     } else {
-      bounds.push(1, min);
+      bounds.push(1, min || max);
     }
 
     const number = Chance().natural({ min: bounds[0], max: bounds[1] });
 
-    await this.reply(`You rolled a ${bold(displayNumber(number))}`);
+    if (this.variationWasUsed("yesno")) {
+      await this.reply(number === 1 ? "Yes" : "No");
+    } else if (this.variationWasUsed("coinflip")) {
+      await this.reply(number === 1 ? "Heads" : "Tails");
+    } else {
+      await this.reply(`You rolled a ${bold(displayNumber(number))}`);
+    }
   }
 }

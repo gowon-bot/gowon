@@ -43,7 +43,7 @@ export abstract class ListCommand extends LastFMBaseCommand<typeof args> {
   humanizedPeriod!: string;
   listAmount!: number;
 
-  async prerun(): Promise<void> {
+  async beforeRun(): Promise<void> {
     this.timeRange = this.parsedArguments.timeRange;
     this.timePeriod = this.parsedArguments.timePeriod;
     this.listAmount = this.parsedArguments.listAmount;

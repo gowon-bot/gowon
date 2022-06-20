@@ -25,7 +25,10 @@ export class SlashCommandConverter {
       .setDescription(asVariation?.description || command.description);
 
     if (Object.keys(command.arguments).length) {
-      slashCommand = this.convertArguments(slashCommand, command.arguments);
+      slashCommand = this.convertArguments(
+        slashCommand,
+        asVariation?.overrideArgs || command.arguments
+      );
     }
 
     const variations = this.getSeparateVariations(command);

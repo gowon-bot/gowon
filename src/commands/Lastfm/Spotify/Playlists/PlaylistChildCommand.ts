@@ -15,7 +15,7 @@ export abstract class PlaylistChildCommand<
 
   spotifyPlaylistTagService = ServiceRegistry.get(SpotifyPlaylistTagService);
 
-  async prerun() {
+  async beforeRun() {
     this.warnIfPrivate();
   }
 

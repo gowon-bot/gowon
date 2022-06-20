@@ -20,7 +20,7 @@ export abstract class FriendsChildCommand<
 
   throwIfNoFriends = false;
 
-  async prerun() {
+  async beforeRun() {
     let [, senderRequestable] = await Promise.all([
       this.setFriendUsernames(),
       this.usersService.getRequestable(this.ctx, this.author.id),

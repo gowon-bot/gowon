@@ -58,12 +58,14 @@ import {
 import { SettingsService } from "../settings/SettingsService";
 import config from "../../../config.json";
 import { Responder } from "../../services/Responder";
+import { SimpleMap } from "../../helpers/types";
 
 export interface Variation {
   name: string;
   variation: string[] | string;
   description?: string;
   separateSlashCommand?: boolean;
+  overrideArgs?: SimpleMap;
 }
 
 export interface CommandRedirect<T extends ArgumentsMap> {
@@ -258,7 +260,7 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
 
   // This method may be implemented by some base or child commands
   // which allow them to run code before the run method is called
-  async prerun(): Promise<void> {}
+  async beforeRun(): Promise<void> {}
 
   // This method is the one actually called by whichever handler is running a command
   // async execute(payload: Payload, runAs: RunAs, gowonClient: GowonClient) {
@@ -279,7 +281,7 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
 
       this.deferResponseIfInteraction();
 
-      await this.prerun();
+      await this.beforeRun();
       await this.run();
     } catch (e: any) {
       await this.handleRunError(e);
