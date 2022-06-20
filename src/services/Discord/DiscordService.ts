@@ -13,7 +13,7 @@ import {
 } from "discord.js";
 import { AnalyticsCollector } from "../../analytics/AnalyticsCollector";
 import { DMsAreOffError } from "../../errors/errors";
-import { ucFirst } from "../../helpers";
+import { sleep, ucFirst } from "../../helpers";
 import { GowonContext } from "../../lib/context/Context";
 import { Payload } from "../../lib/context/Payload";
 import { BaseService } from "../BaseService";
@@ -22,7 +22,7 @@ import { ServiceRegistry } from "../ServicesRegistry";
 type DiscordServiceContext = GowonContext<{
   mutable?: {
     replied?: boolean;
-    deferred?: boolean;
+    deferredAt?: Date;
     deferredResponseTimeout?: NodeJS.Timeout;
   };
 }>;
@@ -197,14 +197,24 @@ export class DiscordService extends BaseService<DiscordServiceContext> {
       ephemeral: options?.ephemeral,
     } as MessagePayload | InteractionReplyOptions;
 
-    const response = ctx.mutable.deferred
-      ? await payload.source.editReply(sendOptions)
+    // Discord doesn't like if you defer a message and then try and
+    // edit it too quickly, so wait a little
+    const difference = ctx.mutable.deferredAt
+      ? ctx.mutable.deferredAt.getTime() - new Date().getTime()
+      : Infinity;
+
+    if (difference < 100) {
+      await sleep(100 - difference);
+    }
+
+    const response = ctx.mutable.deferredAt
+      ? payload.source.editReply(sendOptions)
       : ctx.mutable.replied
       ? await payload.source.followUp(sendOptions)
       : await payload.source.reply(sendOptions);
 
     ctx.mutable.replied = true;
-    ctx.mutable.deferred = false;
+    ctx.mutable.deferredAt = undefined;
 
     if (ctx.mutable.deferredResponseTimeout) {
       clearTimeout(ctx.mutable.deferredResponseTimeout);

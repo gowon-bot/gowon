@@ -1,5 +1,6 @@
-import { Observable } from "@apollo/client";
+import { gql, Observable } from "@apollo/client";
 import { DocumentNode } from "graphql";
+import { GowonContext } from "../../lib/context/Context";
 import { lilacClient } from "../../lib/Lilac/client";
 import { BaseService } from "../BaseService";
 
@@ -26,5 +27,15 @@ export class LilacAPIService extends BaseService {
     });
 
     return observable.map((response) => response.data as R);
+  }
+
+  public async ping(_ctx: GowonContext): Promise<{ ping: string }> {
+    return await this.query(
+      gql`
+        query {
+          ping
+        }
+      `
+    );
   }
 }

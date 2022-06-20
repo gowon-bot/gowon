@@ -43,6 +43,7 @@ import { CardsService } from "./dbservices/CardsService";
 import { PermissionsService } from "../lib/permissions/PermissionsService";
 import { PermissionsCacheService } from "../lib/permissions/PermissionsCacheService";
 import { LilacUsersService } from "./lilac/LilacUsersService";
+import { LilacAPIService } from "./lilac/LilacAPIService";
 
 export type Service<T = any> = { new (): T };
 
@@ -67,7 +68,11 @@ const services: Service[] = [
   GuildEventService,
   LastFMService,
   LastFMArguments,
+
+  // Lilac services
   LilacUsersService,
+  LilacAPIService,
+
   MetaService,
   MirrorballService,
   MirrorballCacheService,
