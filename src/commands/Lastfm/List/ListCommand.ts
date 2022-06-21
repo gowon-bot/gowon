@@ -25,7 +25,7 @@ export abstract class ListCommand extends LastFMBaseCommand<typeof args> {
   idSeed = "stayc j";
 
   subcategory = "lists";
-  usage = ["", "list_amount time period @user"];
+  usage = ["", "time period list_amount @user"];
 
   arguments = args;
 
