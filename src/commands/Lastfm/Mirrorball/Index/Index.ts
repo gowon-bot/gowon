@@ -132,6 +132,12 @@ export default class Index extends MirrorballBaseCommand<
   }
 
   private async lilacIndex() {
+    await this.lilacUsersService.index({ discordID: this.author.id });
+
+    const observable = this.lilacUsersService.indexingProgress({
+      discordID: this.author.id,
+    });
+
     const embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor("Lilac indexing"))
       .setDescription("Started your indexing!");
@@ -139,10 +145,6 @@ export default class Index extends MirrorballBaseCommand<
     const sentMessage = await this.send(embed);
 
     const stopwatch = new Stopwatch().start();
-
-    const observable = this.lilacUsersService.indexingProgress({
-      discordID: this.author.id,
-    });
 
     const subscription = observable.subscribe(async (progress) => {
       if (progress.page === progress.totalPages) {
@@ -166,7 +168,5 @@ ${displayProgressBar(progress.page, progress.totalPages, { width: 15 })}
         stopwatch.zero().start();
       }
     });
-
-    await this.lilacUsersService.index({ discordID: this.author.id });
   }
 }
