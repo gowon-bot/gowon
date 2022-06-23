@@ -524,7 +524,7 @@ export class LastFMAPIService extends BaseService {
       "track.scrobble",
       {
         ...params,
-        sk: sk || config.lastFMVerificationSessionKey,
+        sk: sk,
       },
       { post: true }
     );

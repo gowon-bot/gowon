@@ -18,8 +18,6 @@ export type BotName =
   | "who knows";
 
 export class GowonClient {
-  public hasPM2 = false;
-
   private get settingsService() {
     return ServiceRegistry.get(SettingsService);
   }

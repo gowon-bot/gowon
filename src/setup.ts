@@ -9,7 +9,6 @@ import { CommandHandler } from "./lib/command/CommandHandler";
 import { GowonClient } from "./lib/GowonClient";
 import { GuildEventService } from "./services/Discord/GuildEventService";
 import { RedisInteractionService } from "./services/redis/RedisInteractionService";
-import pm2 from "pm2";
 import { mirrorballClient } from "./lib/indexing/client";
 import gql from "graphql-tag";
 import { ServiceRegistry } from "./services/ServicesRegistry";
@@ -64,7 +63,6 @@ export async function setup() {
   await Promise.all([
     connectToDB(),
     connectToRedis(),
-    connectToPM2(),
     connectToMirrorball(),
     intializeAPI(),
     initializeCommandRegistry(),
@@ -116,21 +114,6 @@ function initializeInteractions() {
     () => interactionHandler.init(),
     "Initialized interactions"
   );
-}
-
-function connectToPM2() {
-  const connection = new Promise<void>((resolve, reject) => {
-    pm2.connect((err) => {
-      if (err) {
-        reject();
-      } else {
-        client.hasPM2 = true;
-        resolve();
-      }
-    });
-  });
-
-  return logStartup(() => connection, "Connected to pm2");
 }
 
 function connectToMirrorball() {

@@ -248,16 +248,6 @@ export class ArtistCrownBannedError extends ClientError {
   }
 }
 
-export class PM2ConnectionError extends ClientError {
-  name = "PM2ConnectionError";
-
-  constructor() {
-    super(
-      "Couldn't connect to PM2! Check that you have pm2 installed and running!"
-    );
-  }
-}
-
 export class LastFMEntityNotFoundError extends ClientError {
   name = "LastFMEntityNotFoundError";
 

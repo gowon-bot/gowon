@@ -21,7 +21,6 @@ import { MirrorballService } from "./mirrorball/MirrorballService";
 import { ArtistsService } from "./mirrorball/services/ArtistsService";
 import { MirrorballUsersService } from "./mirrorball/services/MirrorballUsersService";
 import { TagsService } from "./mirrorball/services/TagsService";
-import { PM2Service } from "./PM2Service";
 import { RedisInteractionService } from "./redis/RedisInteractionService";
 import { RedisService } from "./redis/RedisService";
 import { SpotifyService } from "./Spotify/SpotifyService";
@@ -81,7 +80,6 @@ const services: Service[] = [
   NowPlayingEmbedParsingService,
   PermissionsService,
   PermissionsCacheService,
-  PM2Service,
   RedirectsService,
   RedisService,
   RedisInteractionService,
