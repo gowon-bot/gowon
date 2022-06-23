@@ -9,6 +9,7 @@ import { createAbsintheSocketLink } from "@absinthe/socket-apollo-link";
 import WebSocket from "ws";
 import { DocumentNode } from "graphql";
 import { Socket as PhoenixSocket } from "phoenix";
+import config from "../../../config.json";
 
 const absintheSocket = createAbsintheSocket(
   new PhoenixSocket("ws://host.docker.internal:4000/socket", {
@@ -19,6 +20,9 @@ const absintheSocket = createAbsintheSocket(
 const websocketLink = createAbsintheSocketLink(absintheSocket);
 const httpLink = createHttpLink({
   uri: "http://host.docker.internal:4000/graphql",
+  headers: {
+    Authorization: config.lilacPassword,
+  },
 });
 
 const link = split(

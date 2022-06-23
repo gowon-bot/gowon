@@ -1,35 +1,36 @@
 {
   "environment": "development",
-  "pm2AppName": "gowon",
 
   "lastFMAPIKey": "Get this from https://last.fm/api",
   "lastFMSecret": "Get this from https://last.fm/api",
-
-  "discordToken": "Get this from the discord developer portal",
-  "discordClientID": "",
-  "slashCommandTestGuildID": "If environment = development, it will register slash commands to this guild instead of globally",
-
-  "defaultPrefix": ".",
-
-  "githubUsername": "Use this if you want Gowon to create issues for you (you will need to change the repo in GithubService.ts)",
-  "githubAuthToken": "^ See https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/creating-a-personal-access-token for creating personal access tokens.",
-
-  "lastFMVerificationUsername": "leave me blank",
-  "lastFMVerificationPassword": "leave me blank",
-  "lastFMVerificationSessionKey": "leave me blank",
 
   "lastFMBotUsername": "use this if you want the bot to scrobble tracks (you will need to configure who it will scrobble yourself. By default, it's alpha testers in specialUsers.json)",
   "lastFMBotPassword": "use this if you want the bot to scrobble tracks",
   "lastFMBotSessionKey": "use this if you want the bot to scrobble tracks",
 
+  "discordToken": "Get this from the discord developer portal",
+  "discordClientID": "Get this from the discord developer portal",
+  "slashCommandTestGuildID": "If environment = development, it will register slash commands to this guild instead of globally",
+
+  "defaultPrefix": "!",
+
+  "githubUsername": "Use this if you want Gowon to create issues for you (you will need to change the repo in GithubService.ts)",
+  "githubAuthToken": "^ See https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/creating-a-personal-access-token for creating personal access tokens.",
+
   "spotifyClientID": "Get this from the spotify application dashboard",
   "spotifyClientSecret": "Get this from the spotify application dashboard",
 
+  "mirrorballURL": "http://localhost:8080/graphql",
   "mirrorballPassword": "this needs to match the MIRRORBALL_PASSWORD .env variable in Mirrorball",
 
   "gowonAPIPort": 3000,
   "gowonAPIURL": "http://localhost:3000 <-- This is where Gowon should send webhooks",
   "gowonWebsiteURL": "http://localhost:3001 <-- This is where the Gowon API should redirect users",
+  "spotifyRedirectHost": "http://localhost:3000 <-- This should be the public Gowon API URL",
+
+  "lilacURL": "http://localhost:4000/graphql",
+  "lilacWebsocket": "ws://localhost:4000/socket/websocket",
+  "lilacPassword": "this needs to match the 'password' config in Lilac",
 
   "redisHost": "localhost:6379",
 
