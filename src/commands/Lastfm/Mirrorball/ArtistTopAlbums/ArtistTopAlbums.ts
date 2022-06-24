@@ -87,7 +87,7 @@ export default class ArtistTopAlbums extends MirrorballBaseCommand<
           .map(
             (album) =>
               `${displayNumber(album.playcount, "play")} - ${bold(
-                album.album.name
+                album.album.name || "(no album)"
               )}`
           )
           .join("\n");

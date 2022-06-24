@@ -18,7 +18,10 @@ export class ComboCalculator {
   private combo = new Combo(this.ctx, this.additionalArtists);
   public totalTracks = 0;
 
-  constructor(private ctx: GowonContext, private additionalArtists: string[]) {}
+  constructor(
+    private ctx: GowonContext,
+    private additionalArtists: string[] = []
+  ) {}
 
   async calculate(
     recentTracks: Paginator<any, RecentTracks> | RecentTracks
@@ -55,6 +58,8 @@ export class ComboCalculator {
       if (!(await this.shouldContinue(track))) {
         this.combo.firstScrobble = tracks[trackIndex - 1];
         return false;
+      } else if (trackIndex === tracks.length - 1) {
+        this.combo.firstScrobble = tracks[trackIndex];
       }
 
       await this.incrementCombo(
@@ -71,9 +76,8 @@ export class ComboCalculator {
 
     if (!tracks.length) return [];
 
-    if (pageNumber === 1) this.combo.imprint(page.first());
-
     if (pageNumber === 1) {
+      this.combo.imprint(page.first());
       return tracks;
     } else {
       return tracks.filter((t) => !t.isNowPlaying);

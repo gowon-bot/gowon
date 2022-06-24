@@ -44,6 +44,7 @@ export class ComboService extends BaseService {
       ctx,
       `Getting combo of ${combo.artist.plays} for user ${user.discordID}`
     );
+
     return await DBCombo.findOne({
       user,
       firstScrobble: combo.firstScrobble.scrobbledAt,

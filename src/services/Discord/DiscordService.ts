@@ -203,8 +203,8 @@ export class DiscordService extends BaseService<DiscordServiceContext> {
       ? ctx.mutable.deferredAt.getTime() - new Date().getTime()
       : Infinity;
 
-    if (difference < 200) {
-      await sleep(200 - difference);
+    if (difference < 300) {
+      await sleep(300 - difference);
     }
 
     const response = ctx.mutable.deferredAt

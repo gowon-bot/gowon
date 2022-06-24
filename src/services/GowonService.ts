@@ -9,7 +9,7 @@ import { SettingsService } from "../lib/settings/SettingsService";
 import { ServiceRegistry } from "./ServicesRegistry";
 
 export const gowonServiceConstants = {
-  hardPageLimit: 10,
+  hardPageLimit: 100,
   crownThreshold: 30,
   dateParsers: [
     "yy-MM-dd",
