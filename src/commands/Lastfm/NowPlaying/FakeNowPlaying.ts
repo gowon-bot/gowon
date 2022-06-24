@@ -90,12 +90,14 @@ export default class FakeNowPlaying extends NowPlayingBaseCommand<typeof args> {
     const baseEmbed = this.nowPlayingEmbed(
       recentTracks.first(),
       username
-    ).setAuthor(
-      this.generateEmbedAuthor(
-        `Track for ${username}`,
-        LinkGenerator.userPage(username)
-      )
-    );
+    ).setAuthor({
+      name: `Track for ${username}`,
+      iconURL:
+        this.payload.member.avatarURL() ||
+        this.payload.author.avatarURL() ||
+        undefined,
+      url: LinkGenerator.userPage(username),
+    });
 
     const embed = await builder.asEmbed(resolvedRequirements, baseEmbed);
 

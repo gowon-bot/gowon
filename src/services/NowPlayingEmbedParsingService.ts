@@ -30,7 +30,8 @@ export class NowPlayingEmbedParsingService extends BaseService {
       ctx.client.isBot(message.author.id, ["gowon", "gowon development"]) &&
       message.embeds.length &&
       (message.embeds[0].author?.name?.startsWith("Now playing for") ||
-        message.embeds[0].author?.name?.startsWith("Last scrobbled for"))
+        message.embeds[0].author?.name?.startsWith("Last scrobbled for") ||
+        message.embeds[0].author?.name?.startsWith("Track for"))
     );
   }
 
