@@ -33,7 +33,7 @@ export default class TrackPlays extends LastFMBaseCommand<typeof args> {
   arguments = args;
 
   async run() {
-    let { requestable, senderRequestable, perspective } =
+    const { requestable, senderRequestable, perspective } =
       await this.getMentions({
         senderRequired:
           !this.parsedArguments.artist || !this.parsedArguments.track,

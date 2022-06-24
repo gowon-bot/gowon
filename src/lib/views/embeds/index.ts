@@ -39,6 +39,7 @@ export function trackEmbed(
 export function errorEmbed(
   from: MessageEmbed,
   author: User,
+  member: GuildMember,
   message: string,
   footer: string = ""
 ): MessageEmbed {
@@ -46,7 +47,7 @@ export function errorEmbed(
     .setColor(errorColour)
     .setAuthor({
       name: `Error | ${author.username}#${author.discriminator}`,
-      iconURL: author.avatarURL() ?? undefined,
+      iconURL: member.avatarURL() || author.avatarURL() || undefined,
     })
     .setDescription(ucFirst(message))
     .setFooter({ text: footer });

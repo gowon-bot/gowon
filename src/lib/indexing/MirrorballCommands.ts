@@ -94,6 +94,7 @@ export abstract class MirrorballBaseCommand<
       message = errorEmbed(
         this.newEmbed(),
         this.author,
+        this.ctx.authorMember,
         this.indexingErrorMessage
       );
     } else {

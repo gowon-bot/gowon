@@ -36,6 +36,7 @@ export default class NowPlayingCustom extends NowPlayingBaseCommand {
       username: requestable,
       limit: 1,
     });
+
     const nowPlaying = recentTracks.first();
 
     if (nowPlaying.isNowPlaying) this.scrobble(nowPlaying);
@@ -65,7 +66,10 @@ export default class NowPlayingCustom extends NowPlayingBaseCommand {
 
     if (this.variationWasUsed("badTyping")) {
       embed.setFooter({
-        text: embed.footer?.text?.replaceAll(/scrobbles/gi, "scrobblez") || "",
+        text:
+          embed.footer?.text?.replaceAll(/s/gi, (match) =>
+            match === "S" ? "Z" : "z"
+          ) || "",
       });
     }
 

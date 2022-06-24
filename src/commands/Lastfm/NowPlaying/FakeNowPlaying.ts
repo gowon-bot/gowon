@@ -1,32 +1,25 @@
-import { CrownsService } from "../../../services/dbservices/CrownsService";
-import { LineConsolidator } from "../../../lib/LineConsolidator";
-import { NowPlayingBaseCommand } from "./NowPlayingBaseCommand";
-import { promiseAllSettled } from "../../../helpers";
-import { RecentTrack } from "../../../services/LastFM/converters/RecentTracks";
-import { LogicError } from "../../../errors/errors";
-import { LinkGenerator } from "../../../helpers/lastFM";
+import { NowPlayingBaseCommand, nowPlayingArgs } from "./NowPlayingBaseCommand";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
-import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
-import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
+import { TrackInfo } from "../../../services/LastFM/converters/InfoTypes";
+import { RecentTrack } from "../../../services/LastFM/converters/RecentTracks";
+import { LastFMArgumentsMutableContext } from "../../../services/LastFM/LastFMArguments";
+import { DatasourceService } from "../../../lib/nowplaying/DatasourceService";
+import { ConfigService } from "../../../services/dbservices/NowPlayingService";
+import { NowPlayingBuilder } from "../../../lib/nowplaying/NowPlayingBuilder";
+import { RequirementMap } from "../../../lib/nowplaying/RequirementMap";
+import { LinkGenerator } from "../../../helpers/lastFM";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 
 const args = {
   ...prefabArguments.track,
-  otherWords: new StringArgument({
-    index: { start: 0 },
-    slashCommandOption: false,
-  }),
-  query: new StringArgument({
-    index: { start: 0 },
-    description: "The search string to find your track",
-  }),
-  ...standardMentions,
-} as const;
+  ...nowPlayingArgs,
+};
 
 export default class FakeNowPlaying extends NowPlayingBaseCommand<typeof args> {
   idSeed = "april jinsol";
 
   aliases = ["track"];
+
   arguments = args;
 
   description =
@@ -35,155 +28,95 @@ export default class FakeNowPlaying extends NowPlayingBaseCommand<typeof args> {
 
   slashCommand = true;
 
-  crownsService = ServiceRegistry.get(CrownsService);
+  datasourceService = ServiceRegistry.get(DatasourceService);
+  configService = ServiceRegistry.get(ConfigService);
 
   async run() {
-    let trackName = this.parsedArguments.track,
-      artistName = this.parsedArguments.artist,
-      querystring = this.parsedArguments.query || "";
-
-    let { senderUsername, senderRequestable } = await this.getMentions();
-
-    if (querystring.includes("|") || !querystring.trim()) {
-      if (!artistName || !trackName) {
-        let nowPlaying = await this.lastFMService.nowPlaying(
-          this.ctx,
-          senderRequestable
-        );
-
-        if (!artistName) artistName = nowPlaying.artist;
-        if (!trackName) trackName = nowPlaying.name;
-      }
-    } else {
-      let results = await this.lastFMService.trackSearch(this.ctx, {
-        track: querystring,
-        limit: 1,
+    const { dbUser, senderRequestable, requestable, username } =
+      await this.getMentions({
+        senderRequired: true,
       });
 
-      let track = results.tracks[0];
+    const { artist, track } = await this.lastFMArguments.getTrack(
+      this.ctx,
+      senderRequestable
+    );
 
-      if (!track) throw new LogicError("that track could not be found!");
+    let recentTrack: RecentTrack;
 
-      trackName = track.name;
-      artistName = track.artist;
+    const mutableContext =
+      this.mutableContext<LastFMArgumentsMutableContext>().mutable;
+
+    if (mutableContext.nowplaying || mutableContext.parsedNowplaying) {
+      recentTrack = (mutableContext.nowplaying ||
+        mutableContext.parsedNowplaying)!;
+    } else {
+      const trackInfo = await this.lastFMService.trackInfo(this.ctx, {
+        artist,
+        track,
+      });
+
+      recentTrack = this.recentTrackFromTrackInfo(trackInfo);
     }
 
-    this.tagConsolidator.blacklistTags(artistName, trackName);
+    const recentTracks = await this.lastFMService.recentTracks(this.ctx, {
+      username: senderRequestable,
+      limit: 1,
+    });
 
-    let [artistInfo, trackInfo, crown] = await promiseAllSettled([
-      this.lastFMService.artistInfo(this.ctx, {
-        artist: artistName,
-        username: senderRequestable,
-      }),
-      this.lastFMService.trackInfo(this.ctx, {
-        artist: artistName,
-        track: trackName,
-        username: senderRequestable,
-      }),
-      this.crownsService.getCrownDisplay(this.ctx, artistName),
-    ]);
+    recentTracks.tracks[0] = recentTrack;
 
-    let { crownString, isCrownHolder } = await this.crownDetails(
-      crown,
-      this.author
+    const config = await this.configService.getConfigForUser(this.ctx, dbUser!);
+
+    const builder = new NowPlayingBuilder(config);
+
+    const requirements = builder.generateRequirements();
+
+    const resolvedRequirements =
+      await this.datasourceService.resolveRequirements(
+        this.ctx,
+        requirements as (keyof RequirementMap)[],
+        {
+          recentTracks,
+          requestable,
+          username,
+          dbUser,
+          payload: this.payload,
+          components: config,
+          prefix: this.prefix,
+        }
+      );
+
+    const baseEmbed = this.nowPlayingEmbed(
+      recentTracks.first(),
+      username
+    ).setAuthor(
+      this.generateEmbedAuthor(
+        `Track for ${username}`,
+        LinkGenerator.userPage(username)
+      )
     );
 
-    await this.tagConsolidator.saveServerBannedTagsInContext(this.ctx);
+    const embed = await builder.asEmbed(resolvedRequirements, baseEmbed);
 
-    if (trackInfo.value)
-      this.tagConsolidator.addTags(this.ctx, trackInfo.value?.tags || []);
-    if (artistInfo.value)
-      this.tagConsolidator.addTags(this.ctx, artistInfo.value?.tags || []);
+    const sentMessage = await this.send(embed);
 
-    const nowPlaying = this.fakeNowPlaying(
-      artistInfo.value?.name || "",
-      trackInfo.value?.name || "",
-      trackInfo.value?.album?.name || "",
-      trackInfo.value?.album?.images.get("large") || ""
-    );
-
-    let artistPlays = this.artistPlays(artistInfo, nowPlaying, isCrownHolder);
-    let noArtistData = this.noArtistData(nowPlaying);
-    let trackPlays = this.trackPlays(trackInfo);
-    let tags = this.tagConsolidator
-      .consolidateAsStrings(Infinity, false)
-      .join(" ‧ ");
-
-    let lineConsolidator = new LineConsolidator();
-    lineConsolidator.addLines(
-      // Top line
-      {
-        shouldDisplay: !!artistPlays && !!trackPlays && !!crownString,
-        string: `${artistPlays} • ${trackPlays} • ${crownString}`,
-      },
-      {
-        shouldDisplay: !!artistPlays && !!trackPlays && !crownString,
-        string: `${artistPlays} • ${trackPlays}`,
-      },
-      {
-        shouldDisplay: !!artistPlays && !trackPlays && !!crownString,
-        string: `${artistPlays} • ${crownString}`,
-      },
-      {
-        shouldDisplay: !artistPlays && !!trackPlays && !!crownString,
-        string: `${noArtistData} • ${trackPlays} • ${crownString}`,
-      },
-      {
-        shouldDisplay: !artistPlays && !trackPlays && !!crownString,
-        string: `${noArtistData} • ${crownString}`,
-      },
-      {
-        shouldDisplay: !artistPlays && !!trackPlays && !crownString,
-        string: `${noArtistData} • ${trackPlays}`,
-      },
-      {
-        shouldDisplay: !!artistPlays && !trackPlays && !crownString,
-        string: `${artistPlays}`,
-      },
-      {
-        shouldDisplay: !artistPlays && !trackPlays && !crownString,
-        string: `${noArtistData}`,
-      },
-      // Second line
-      {
-        shouldDisplay: this.tagConsolidator.hasAnyTags(),
-        string: tags,
-      }
-    );
-
-    let nowPlayingEmbed = this.nowPlayingEmbed(nowPlaying, senderUsername)
-      .setFooter({ text: lineConsolidator.consolidate() })
-      .setAuthor({
-        name: `Track for ${senderUsername}`,
-        url: this.author.avatarURL() || undefined,
-        iconURL: LinkGenerator.userPage(senderUsername),
-      });
-
-    let sentMessage = await this.send(nowPlayingEmbed);
-
-    await this.easterEggs(sentMessage, nowPlaying);
+    await this.customReactions(sentMessage);
+    await this.easterEggs(sentMessage, recentTracks.first());
   }
 
-  private fakeNowPlaying(
-    artistName: string,
-    trackName: string,
-    albumName: string,
-    image: string
-  ): RecentTrack {
+  private recentTrackFromTrackInfo(track: TrackInfo): RecentTrack {
     return new RecentTrack({
-      artist: { "#text": artistName, mbid: "" },
-      "@attr": { nowplaying: "0" },
+      artist: { mbid: "", "#text": track.artist.name },
+      "@attr": { nowplaying: "1" },
       mbid: "",
-      album: { mbid: "", "#text": albumName },
-      image: [
-        {
-          size: "large",
-          "#text": image,
-        },
-      ],
-      streamable: "0",
+      album: { mbid: "", "#text": track.album?.name || "" },
+      image: track.album
+        ? [{ size: "large", "#text": track.album?.images.get("large")! }]
+        : [],
+      streamable: "1",
       url: "",
-      name: trackName,
+      name: track.name,
       date: {
         uts: `${new Date().getTime()}`,
         "#text": "",

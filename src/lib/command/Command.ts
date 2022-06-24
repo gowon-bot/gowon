@@ -628,7 +628,7 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
     return gowonEmbed(this.payload.member ?? undefined, embed);
   }
 
-  generateEmbedAuthor(title?: string): EmbedAuthorData {
+  generateEmbedAuthor(title?: string, url?: string): EmbedAuthorData {
     return {
       name: title
         ? `${this.payload.author.tag} | ${title}`
@@ -637,6 +637,7 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
         this.payload.member.avatarURL() ||
         this.payload.author.avatarURL() ||
         undefined,
+      url: url,
     };
   }
 
@@ -680,7 +681,13 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
   }
 
   protected async sendError(message: string, footer = "") {
-    const embed = errorEmbed(this.newEmbed(), this.author, message, footer);
+    const embed = errorEmbed(
+      this.newEmbed(),
+      this.author,
+      this.ctx.authorMember,
+      message,
+      footer
+    );
 
     await this.responder.discord(this.ctx, embed);
     await this.responder.twitter(this.ctx, message);

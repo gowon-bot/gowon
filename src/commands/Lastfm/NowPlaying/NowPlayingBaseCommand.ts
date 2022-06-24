@@ -117,7 +117,10 @@ export abstract class NowPlayingBaseCommand<
         name: `${
           nowPlaying.isNowPlaying ? "Now playing" : "Last scrobbled"
         } for ${username}`,
-        iconURL: this.author.avatarURL() || undefined,
+        iconURL:
+          this.payload.member.avatarURL() ||
+          this.payload.author.avatarURL() ||
+          undefined,
         url: LinkGenerator.userPage(username),
       })
       .setDescription(

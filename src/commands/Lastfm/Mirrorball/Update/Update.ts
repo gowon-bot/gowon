@@ -162,6 +162,7 @@ export default class Update extends MirrorballBaseCommand<
                 errorEmbed(
                   embed,
                   this.author,
+                  this.ctx.authorMember,
                   embed.description + "\n\n" + this.indexingErrorMessage
                 ),
               ],

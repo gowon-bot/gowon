@@ -98,7 +98,12 @@ export class InteractionHandler {
       `Attempt to run disabled command ${command.name}`
     );
 
-    const embed = errorEmbed(new MessageEmbed(), ctx.author, message);
+    const embed = errorEmbed(
+      new MessageEmbed(),
+      ctx.author,
+      ctx.authorMember,
+      message
+    );
 
     await this.discordService.send(ctx, embed, {
       reply: true,
