@@ -7,6 +7,7 @@ services:
       - "host.docker.internal:host-gateway"
     depends_on:
       - mirrorball
+      - lilac
 
   mirrorball:
     image: mirrorball
@@ -17,3 +18,8 @@ services:
 
   redis:
     image: "redis:alpine"
+
+  lilac:
+    image: lilac
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

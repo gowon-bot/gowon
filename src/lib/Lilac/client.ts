@@ -12,14 +12,14 @@ import { Socket as PhoenixSocket } from "phoenix";
 import config from "../../../config.json";
 
 const absintheSocket = createAbsintheSocket(
-  new PhoenixSocket("ws://host.docker.internal:4000/socket", {
+  new PhoenixSocket(config.lilacWebsocket, {
     transport: WebSocket,
   })
 );
 
 const websocketLink = createAbsintheSocketLink(absintheSocket);
 const httpLink = createHttpLink({
-  uri: "http://host.docker.internal:4000/graphql",
+  uri: config.lilacURL,
   headers: {
     Authorization: config.lilacPassword,
   },
