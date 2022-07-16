@@ -132,17 +132,36 @@ export default class Index extends MirrorballBaseCommand<
   }
 
   private async lilacIndex() {
+    const embed = this.newEmbed()
+      .setAuthor(this.generateEmbedAuthor("Lilac indexing"))
+      .setDescription(
+        "Indexing will download all your scrobbles from Last.fm. Are you sure you want to full index?"
+      )
+      .setFooter({ text: this.indexingHelp });
+
+    const confirmationEmbed = new ConfirmationEmbed(this.ctx, embed);
+
+    if (!(await confirmationEmbed.awaitConfirmation(this.ctx))) {
+      return;
+    } else {
+      confirmationEmbed.sentMessage?.edit({
+        embeds: [
+          embed.setDescription(
+            `Indexing...\n${displayProgressBar(0, 1, {
+              width: this.progressBarWidth,
+            })}\n*Loading...*`
+          ),
+        ],
+      });
+    }
+
     await this.lilacUsersService.index({ discordID: this.author.id });
 
     const observable = this.lilacUsersService.indexingProgress({
       discordID: this.author.id,
     });
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Lilac indexing"))
-      .setDescription("Started your indexing!");
-
-    const sentMessage = await this.send(embed);
+    const sentMessage = confirmationEmbed.sentMessage!;
 
     const stopwatch = new Stopwatch().start();
 
@@ -160,7 +179,9 @@ export default class Index extends MirrorballBaseCommand<
           sentMessage,
           embed.setDescription(
             `Indexing...
-${displayProgressBar(progress.page, progress.totalPages, { width: 15 })}
+${displayProgressBar(progress.page, progress.totalPages, {
+  width: this.progressBarWidth,
+})}
 *Page ${progress.page}/${progress.totalPages}*`
           )
         );

@@ -188,7 +188,7 @@ export default class Update extends MirrorballBaseCommand<
 
     const embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor("Lilac updating"))
-      .setDescription("Started your updating!");
+      .setDescription("Updating...");
 
     const sentMessage = await this.send(embed);
 
@@ -208,7 +208,9 @@ export default class Update extends MirrorballBaseCommand<
           sentMessage,
           embed.setDescription(
             `Updating...
-${displayProgressBar(progress.page, progress.totalPages, { width: 15 })}
+${displayProgressBar(progress.page, progress.totalPages, {
+  width: this.progressBarWidth,
+})}
 *Page ${progress.page}/${progress.totalPages}*`
           )
         );

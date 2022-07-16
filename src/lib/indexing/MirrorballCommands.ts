@@ -36,6 +36,8 @@ export abstract class MirrorballBaseCommand<
   lastFMArguments = ServiceRegistry.get(LastFMArguments);
   concurrencyService = ServiceRegistry.get(ConcurrencyService);
 
+  protected readonly progressBarWidth = 15;
+
   readonly indexingHelp =
     '"Indexing" means downloading all your last.fm data. This is required for many commands to function, and is recommended.';
   readonly indexingInProgressHelp =
