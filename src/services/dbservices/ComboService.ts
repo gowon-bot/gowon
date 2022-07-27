@@ -2,12 +2,22 @@ import { Combo } from "../../lib/calculators/ComboCalculator";
 import { Combo as DBCombo } from "../../database/entity/Combo";
 import { BaseService } from "../BaseService";
 import { User } from "../../database/entity/User";
-import { ILike, In } from "typeorm";
+import { ILike, In, MoreThanOrEqual } from "typeorm";
 import { displayNumber } from "../../lib/views/displays";
 import { sqlLikeEscape } from "../../helpers/database";
 import { GowonContext } from "../../lib/context/Context";
 
 export class ComboService extends BaseService {
+  public readonly threshold = 20;
+
+  public shouldSaveCombo(combo: Combo): boolean {
+    return (
+      combo.artist.plays >= this.threshold ||
+      combo.album.plays >= this.threshold ||
+      combo.track.plays >= this.threshold
+    );
+  }
+
   async saveCombo(
     ctx: GowonContext,
     combo: Combo,
@@ -85,10 +95,17 @@ export class ComboService extends BaseService {
     artist?: string
   ): Promise<DBCombo[]> {
     this.log(ctx, `Listing combos for user ${user.discordID}`);
+
+    const whereClause = artist
+      ? { user, artistName: ILike(sqlLikeEscape(artist)) }
+      : { user };
+
     return await DBCombo.find({
-      where: artist
-        ? { user, artistName: ILike(sqlLikeEscape(artist)) }
-        : { user },
+      where: [
+        { ...whereClause, artistPlays: MoreThanOrEqual(this.threshold) },
+        { ...whereClause, albumPlays: MoreThanOrEqual(this.threshold) },
+        { ...whereClause, trackPlays: MoreThanOrEqual(this.threshold) },
+      ],
       order: { artistPlays: "DESC", albumPlays: "DESC", trackPlays: "DESC" },
     });
   }

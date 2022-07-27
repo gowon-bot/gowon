@@ -72,6 +72,7 @@ export class Current extends ComboChildCommand<typeof args> {
     const combo = await comboCalculator.calculate(paginator);
 
     let comboSaved = false;
+    let thresholdNotMet = false;
 
     if (
       !artists.length &&
@@ -79,8 +80,12 @@ export class Current extends ComboChildCommand<typeof args> {
       !perspective.different &&
       senderUser
     ) {
-      await this.comboService.saveCombo(this.ctx, combo, senderUser);
-      comboSaved = true;
+      if (this.comboService.shouldSaveCombo(combo)) {
+        await this.comboService.saveCombo(this.ctx, combo, senderUser);
+        comboSaved = true;
+      } else {
+        thresholdNotMet = true;
+      }
     }
 
     const lineConsolidator = new LineConsolidator();
@@ -135,6 +140,11 @@ export class Current extends ComboChildCommand<typeof args> {
       .setFooter({
         text: comboSaved
           ? `This combo has been saved! See ${this.prefix}combos to see all your combos`
+          : thresholdNotMet
+          ? `Only combos with more than ${displayNumber(
+              this.comboService.threshold,
+              "play"
+            )} are saved.`
           : "",
       });
 
