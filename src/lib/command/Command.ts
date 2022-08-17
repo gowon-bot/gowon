@@ -42,7 +42,7 @@ import { CommandRegistry } from "./CommandRegistry";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { AnalyticsCollector } from "../../analytics/AnalyticsCollector";
 import { NowPlayingEmbedParsingService } from "../../services/NowPlayingEmbedParsingService";
-import { BetaAccess, CommandAccess } from "./access/access";
+import { CommandAccess } from "./access/access";
 import { GowonContext } from "../context/Context";
 import { ArgumentParsingService } from "../../services/arguments/ArgumentsParsingService";
 import {
@@ -59,6 +59,7 @@ import { SettingsService } from "../settings/SettingsService";
 import config from "../../../config.json";
 import { Responder } from "../../services/Responder";
 import { SimpleMap } from "../../helpers/types";
+import { LilacUsersService } from "../../services/lilac/LilacUsersService";
 
 export interface Variation {
   name: string;
@@ -219,7 +220,9 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
   discordService = ServiceRegistry.get(DiscordService);
   settingsService = ServiceRegistry.get(SettingsService);
   mirrorballService = ServiceRegistry.get(MirrorballService);
+  lilacUsersService = ServiceRegistry.get(LilacUsersService);
   analyticsCollector = ServiceRegistry.get(AnalyticsCollector);
+  // Soon to be deprecated...
   mirrorballUsersService = ServiceRegistry.get(MirrorballUsersService);
   argumentParsingService = ServiceRegistry.get(ArgumentParsingService);
   nowPlayingEmbedParsingService = ServiceRegistry.get(
@@ -760,21 +763,15 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
       );
 
       if (senderUser) {
-        const access = new BetaAccess();
+        this.lilacUsersService.update(this.ctx, senderUser);
 
-        // Don't auto update lilac users... yet
-        if (!access.check(senderUser)) {
-          try {
-            await Promise.all([
-              this.mirrorballUsersService.quietAddUserToGuild(
-                this.ctx,
-                this.author.id,
-                this.requiredGuild.id
-              ),
-              senderUser.mirrorballUpdate(this.ctx),
-            ]);
-          } catch (e) {}
-        }
+        try {
+          await this.mirrorballUsersService.quietAddUserToGuild(
+            this.ctx,
+            this.author.id,
+            this.requiredGuild.id
+          );
+        } catch (e) {}
       }
     }
   }

@@ -30,10 +30,7 @@ export default class WhoKnowsTrack extends WhoKnowsBaseCommand<
   aliases = ["wkt", "fmwkt"];
   subcategory = "whoknows";
 
-  variations: Variation[] = [
-    VARIATIONS.update("wkt"),
-    VARIATIONS.global("wkt"),
-  ];
+  variations: Variation[] = [VARIATIONS.global("wkt")];
 
   description = "See who knows a track";
 
@@ -51,10 +48,6 @@ export default class WhoKnowsTrack extends WhoKnowsBaseCommand<
 
     const { artist: artistName, track: trackName } =
       await this.lastFMArguments.getTrack(this.ctx, senderRequestable);
-
-    if (this.variationWasUsed("update")) {
-      await this.updateAndWait(this.author.id);
-    }
 
     const response = await this.query({
       track: { name: trackName, artist: { name: artistName } },

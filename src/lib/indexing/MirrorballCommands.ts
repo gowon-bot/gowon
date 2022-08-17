@@ -73,17 +73,6 @@ export abstract class MirrorballBaseCommand<
     } else return;
   }
 
-  protected async updateAndWait(
-    discordID: string,
-    timeout = 2000
-  ): Promise<void> {
-    return await this.mirrorballUsersService.updateAndWait(
-      this.ctx,
-      discordID,
-      timeout
-    );
-  }
-
   protected async notifyUser(
     perspective: Perspective,
     type: "update" | "index",

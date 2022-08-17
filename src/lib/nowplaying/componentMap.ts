@@ -13,7 +13,6 @@ import { ArtistPlaysAndCrownComponent } from "./compoundComponents/ArtistPlaysAn
 import { RatingComponent } from "./components/RatingComponent";
 import { LovedComponent } from "./components/LovedComponent";
 import { ListenersComponent } from "./components/ListenersComponent";
-import { ArtistPlaysInARowComponent } from "./compoundComponents/ArtistPlaysInARowComponent";
 import { UNUSED_CONFIG } from "../../services/dbservices/NowPlayingService";
 import { GlobalArtistRankComponent } from "./components/GlobalArtistRankComponent";
 import { ServerArtistRankComponent } from "./components/ServerRankComponent";
@@ -54,7 +53,6 @@ const componentList = [
 
 export const compoundComponentList = [
   LovedAndOwnedComponent,
-  ArtistPlaysInARowComponent,
   ArtistPlaysAndCrownComponent,
 
   // TagsComponent should always be last because it takes up the most space

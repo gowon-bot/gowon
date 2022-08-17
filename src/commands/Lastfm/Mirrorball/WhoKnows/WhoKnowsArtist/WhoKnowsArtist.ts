@@ -40,7 +40,7 @@ export default class WhoKnowsArtist extends WhoKnowsBaseCommand<
   aliases = ["wk", "fmwk"];
   guildRequired = true;
 
-  variations: Variation[] = [VARIATIONS.update("wk"), VARIATIONS.global("wk")];
+  variations: Variation[] = [VARIATIONS.global("wk")];
 
   slashCommand = true;
 
@@ -64,10 +64,6 @@ export default class WhoKnowsArtist extends WhoKnowsBaseCommand<
     const crown = this.isGlobal()
       ? undefined
       : await this.crownsService.getCrown(this.ctx, artistName);
-
-    if (this.variationWasUsed("update")) {
-      await this.updateAndWait(this.author.id);
-    }
 
     const guildID = this.isGlobal() ? undefined : this.requiredGuild.id;
 

@@ -31,10 +31,7 @@ export default class WhoKnowsAlbum extends WhoKnowsBaseCommand<
   description = "See who knows an album";
   aliases = ["wkl", "wka", "fmwka"];
 
-  variations: Variation[] = [
-    VARIATIONS.update("wkl", "wka"),
-    VARIATIONS.global("wkl", "wka"),
-  ];
+  variations: Variation[] = [VARIATIONS.global("wkl", "wka")];
 
   slashCommand = true;
 
@@ -50,10 +47,6 @@ export default class WhoKnowsAlbum extends WhoKnowsBaseCommand<
 
     const { artist: artistName, album: albumName } =
       await this.lastFMArguments.getAlbum(this.ctx, senderRequestable, true);
-
-    if (this.variationWasUsed("update")) {
-      await this.updateAndWait(this.author.id);
-    }
 
     const response = await this.query({
       album: { name: albumName, artist: { name: artistName } },
