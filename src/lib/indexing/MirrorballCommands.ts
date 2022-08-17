@@ -2,17 +2,9 @@ import { Command } from "../command/Command";
 import { Connector } from "./BaseConnector";
 import { ArgumentsMap } from "../context/arguments/types";
 import { LastFMService } from "../../services/LastFM/LastFMService";
-import { Perspective } from "../Perspective";
-import { Message, MessageEmbed } from "discord.js";
-import { ConfirmationEmbed } from "../views/embeds/ConfirmationEmbed";
-import {
-  ConcurrencyService,
-  ConcurrentAction,
-} from "../../services/ConcurrencyService";
-import { errorEmbed } from "../views/embeds";
+import { ConcurrencyService } from "../../services/ConcurrencyService";
 import { LastFMArguments } from "../../services/LastFM/LastFMArguments";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
-import { Emoji } from "../Emoji";
 
 export interface ErrorResponse {
   errors: { message: string }[];
@@ -37,13 +29,6 @@ export abstract class MirrorballBaseCommand<
   concurrencyService = ServiceRegistry.get(ConcurrencyService);
 
   protected readonly progressBarWidth = 15;
-
-  readonly indexingHelp =
-    '"Indexing" means downloading all your last.fm data. This is required for many commands to function, and is recommended.';
-  readonly indexingInProgressHelp =
-    "\n\nIndexing... (this may take a while - I'll ping you when I'm done!)";
-  readonly indexingErrorMessage =
-    "An unexpected error ocurred, please try again!";
 
   protected get query(): (variables: ParamsT) => Promise<ResponseT> {
     return async (variables) => {
@@ -71,73 +56,6 @@ export abstract class MirrorballBaseCommand<
     if (hasErrors(response)) {
       return response;
     } else return;
-  }
-
-  protected async notifyUser(
-    perspective: Perspective,
-    type: "update" | "index",
-    replyTo?: Message,
-    error?: string
-  ) {
-    let message: MessageEmbed;
-
-    if (error) {
-      message = errorEmbed(
-        this.newEmbed(),
-        this.author,
-        this.ctx.authorMember,
-        this.indexingErrorMessage
-      );
-    } else {
-      message = this.newEmbed()
-        .setAuthor(
-          this.generateEmbedAuthor(type === "index" ? "Indexing" : "Update")
-        )
-        .setDescription(
-          `${perspective.upper.plusToHave} been ${
-            type === "index" ? "fully indexed" : "updated"
-          } successfully!`
-        );
-    }
-
-    this.send(Emoji.gowonScrobbled, {
-      withEmbed: message,
-      reply: {
-        to: replyTo,
-        ping: true,
-      },
-    });
-  }
-
-  protected async impromptuIndex(
-    embed: MessageEmbed,
-    confirmationEmbed: ConfirmationEmbed,
-    username: string,
-    discordID: string
-  ) {
-    await confirmationEmbed.sentMessage!.edit({
-      embeds: [
-        embed.setDescription(
-          embed.description + "\n" + this.indexingInProgressHelp
-        ),
-      ],
-    });
-    this.concurrencyService.registerUser(
-      this.ctx,
-      ConcurrentAction.Indexing,
-      discordID
-    );
-    await this.mirrorballUsersService.fullIndex(this.ctx);
-    this.concurrencyService.registerUser(
-      this.ctx,
-      ConcurrentAction.Indexing,
-      discordID
-    );
-    this.notifyUser(
-      Perspective.buildPerspective(username, false),
-      "index",
-      confirmationEmbed.sentMessage
-    );
   }
 }
 

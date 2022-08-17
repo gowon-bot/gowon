@@ -7,8 +7,8 @@ export interface EmojiMention {
   type: "animated" | "custom" | "unicode";
 }
 
-const animatedRegex = /<a:[\w-]+:\d{18}>/g;
-const customRegex = /<:[\w-]+:\d{18}>/g;
+const animatedRegex = /<a:[\w-]+:\d{18,}>/g;
+const customRegex = /<:[\w-]+:\d{18,}>/g;
 const emojiRegex = emojiRegexFunction();
 
 export function isUnicodeEmoji(value: string): boolean {

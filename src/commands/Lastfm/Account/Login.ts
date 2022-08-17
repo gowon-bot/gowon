@@ -1,18 +1,18 @@
 import { Message, MessageEmbed } from "discord.js";
 import { User } from "../../../database/entity/User";
-import { sleep } from "../../../helpers";
+import { sleep, Stopwatch } from "../../../helpers";
 import { ReactionCollectorFilter } from "../../../helpers/discord";
 import { LinkGenerator } from "../../../helpers/lastFM";
 import { EmojiRaw } from "../../../lib/Emoji";
 import { EmptyConnector } from "../../../lib/indexing/BaseConnector";
-import { MirrorballBaseCommand } from "../../../lib/indexing/MirrorballCommands";
 import { Validation } from "../../../lib/validation/ValidationChecker";
-import { displayLink } from "../../../lib/views/displays";
+import { displayLink, displayProgressBar } from "../../../lib/views/displays";
 import { ConfirmationEmbed } from "../../../lib/views/embeds/ConfirmationEmbed";
 import { LastFMSession } from "../../../services/LastFM/converters/Misc";
 import { Payload } from "../../../lib/context/Payload";
+import { LilacBaseCommand } from "../../../lib/Lilac/LilacBaseCommand";
 
-export default class Login extends MirrorballBaseCommand<never, never> {
+export default class Login extends LilacBaseCommand {
   idSeed = "loona jinsoul";
 
   connector = new EmptyConnector();
@@ -72,16 +72,59 @@ export default class Login extends MirrorballBaseCommand<never, never> {
       );
 
       if (await confirmationEmbed.awaitConfirmation(this.ctx)) {
-        try {
-          this.impromptuIndex(
-            successEmbed,
-            confirmationEmbed,
-            user.lastFMUsername,
-            this.author.id
-          );
-        } catch {}
+        this.aimpromptuIndex(confirmationEmbed, successEmbed);
       }
     }
+  }
+
+  private async aimpromptuIndex(
+    confirmationEmbed: ConfirmationEmbed,
+    embed: MessageEmbed
+  ) {
+    await this.lilacUsersService.index(this.ctx, { discordID: this.author.id });
+
+    confirmationEmbed.sentMessage?.edit({
+      embeds: [
+        embed.setDescription(
+          `Indexing...\n${displayProgressBar(0, 1, {
+            width: this.progressBarWidth,
+          })}\n*Loading...*`
+        ),
+      ],
+    });
+
+    const observable = this.lilacUsersService.indexingProgress(this.ctx, {
+      discordID: this.author.id,
+    });
+
+    const sentMessage = confirmationEmbed.sentMessage!;
+
+    const stopwatch = new Stopwatch().start();
+
+    const subscription = observable.subscribe(async (progress) => {
+      if (progress.page === progress.totalPages) {
+        await this.discordService.edit(
+          this.ctx,
+          sentMessage,
+          embed.setDescription("Done!")
+        );
+        subscription.unsubscribe();
+      } else if (stopwatch.elapsedInMilliseconds >= 3000) {
+        await this.discordService.edit(
+          this.ctx,
+          sentMessage,
+          embed.setDescription(
+            `Indexing...
+${displayProgressBar(progress.page, progress.totalPages, {
+  width: this.progressBarWidth,
+})}
+*Page ${progress.page}/${progress.totalPages}*`
+          )
+        );
+
+        stopwatch.zero().start();
+      }
+    });
   }
 
   private async handleCreateSession(
