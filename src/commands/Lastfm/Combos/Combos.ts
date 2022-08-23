@@ -9,6 +9,7 @@ import { StringArgument } from "../../../lib/context/arguments/argumentTypes/Str
 
 const args = {
   artist: new StringArgument({
+    index: { start: 0 },
     description: "The artist to filter your combos with",
   }),
   ...standardMentions,

@@ -4,6 +4,7 @@ import { Message, MessageEmbed } from "discord.js";
 import { LogicError } from "../../errors/errors";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { LilacAPIService } from "../../services/lilac/LilacAPIService";
+import { LastFMService } from "../../services/LastFM/LastFMService";
 
 export default class Status extends Command {
   idSeed = "Fill in a unique idSeed here";
@@ -13,17 +14,19 @@ export default class Status extends Command {
   usage = "";
 
   lilacAPIService = ServiceRegistry.get(LilacAPIService);
+  lastFMService = ServiceRegistry.get(LastFMService);
 
   async run() {
     const embed = this.newEmbed()
       .setTitle("Gowon status:")
       .setDescription(
-        "**Latency**: ```\nMirrorball.....pinging\nDiscord.....pinging\nLilac.....pinging\n```"
+        "**Latency**: ```\nMirrorball.....pinging\nDiscord........pinging\nLilac..........pinging\nLast.fm........pinging\n```"
       );
 
     const mirrorballLatency = await this.mirrorballLatency();
     const lilacLatency = await this.lilacLatency();
     const [sentMessage, discordLatency] = await this.discordLatency(embed);
+    const lastfmLatency = await this.lastFMLatency();
 
     await sentMessage.edit({
       embeds: [
@@ -31,7 +34,8 @@ export default class Status extends Command {
           "**Latency**:\n```\n" +
             `Mirrorball.....${this.displayLatency(mirrorballLatency)}
 Discord........${this.displayLatency(discordLatency)}
-Lilac..........${this.displayLatency(lilacLatency)}` +
+Lilac..........${this.displayLatency(lilacLatency)}
+Last.fm........${this.displayLatency(lastfmLatency)}` +
             "\n```"
         ),
       ],
@@ -85,6 +89,16 @@ Lilac..........${this.displayLatency(lilacLatency)}` +
     stopwatch.stop();
 
     return [sentMessage, stopwatch];
+  }
+
+  private async lastFMLatency() {
+    const stopwatch = new Stopwatch();
+    stopwatch.start();
+
+    await this.lastFMService.nowPlaying(this.ctx, "gowon_");
+
+    stopwatch.stop();
+    return stopwatch;
   }
 
   private displayLatency(latency: Stopwatch): string {

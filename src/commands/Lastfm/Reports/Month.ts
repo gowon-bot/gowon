@@ -53,11 +53,6 @@ export default class Month extends LastFMBaseCommand<typeof args> {
       );
     }
 
-    if (senderUser && !senderUser?.isPatron && firstPage.meta.totalPages > 6) {
-      throw new LogicError(
-        `${perspective.plusToHave} too many scrobbles this month to see an overview!\n\nYou can become a Patron to remove the limit. See \`${this.prefix}patreon\` for more information.`
-      );
-    }
     paginator.maxPages = firstPage.meta.totalPages;
 
     const restPages = await paginator.getAllToConcatonable();
