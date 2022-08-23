@@ -7,6 +7,7 @@ import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { roles } from "../../lib/command/access/roles";
 import { standardMentions } from "../../lib/context/arguments/mentionTypes/mentions";
 import { extraWideSpace } from "../../helpers/specialCharacters";
+import { ago } from "../../helpers";
 
 const args = {
   ...standardMentions,
@@ -32,14 +33,18 @@ export default class UserInfo extends Command<typeof args> {
       reverseLookup: { required: true },
     });
 
-    const [commandRunCount, topCommands, cachedPlaycount] = await Promise.all([
-      this.botStatsService.countUserCommandRuns(this.ctx, dbUser.discordID),
-      this.botStatsService.userTopCommands(this.ctx, dbUser.discordID),
-      this.mirrorballUsersService.getCachedPlaycount(
-        this.ctx,
-        discordUser?.id || dbUser.discordID
-      ),
-    ]);
+    const [commandRunCount, topCommands, cachedPlaycount, lilacUserInfo] =
+      await Promise.all([
+        this.botStatsService.countUserCommandRuns(this.ctx, dbUser.discordID),
+        this.botStatsService.userTopCommands(this.ctx, dbUser.discordID),
+        this.mirrorballUsersService.getCachedPlaycount(
+          this.ctx,
+          discordUser?.id || dbUser.discordID
+        ),
+        this.lilacUsersService.fetchUser(this.ctx, {
+          discordID: dbUser.discordID,
+        }),
+      ]);
 
     const lineConsolidator = new LineConsolidator();
 
@@ -68,6 +73,9 @@ export default class UserInfo extends Command<typeof args> {
       },
       `**Cached scrobbles**: ${displayNumber(cachedPlaycount)}`,
       `**Commands run**: ${displayNumber(commandRunCount)}`,
+      `**Last updated**: ${
+        lilacUserInfo?.lastUpdated ? ago(lilacUserInfo.lastUpdated) : "(never)"
+      }`,
       {
         shouldDisplay: topCommands.length > 0,
         string: `**Top commands**: \n${topCommands

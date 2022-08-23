@@ -9,12 +9,17 @@ export class LilacAPIService extends BaseService {
   async query<R, V>(
     ctx: GowonContext,
     query: DocumentNode,
-    variables?: V
+    variables?: V,
+    cache = true
   ): Promise<R> {
     this.logRequest(ctx, variables, "query");
 
     try {
-      const response = await lilacClient.query({ query, variables: variables });
+      const response = await lilacClient.query({
+        query,
+        variables: variables,
+        ...(cache ? {} : { fetchPolicy: "no-cache" }),
+      });
 
       return response.data;
     } catch (e) {
