@@ -43,7 +43,9 @@ export default class LastScrobbledAlbum extends MirrorballBaseCommand<
     });
 
     const { artist: artistName, album: albumName } =
-      await this.lastFMArguments.getAlbum(this.ctx, senderRequestable, true);
+      await this.lastFMArguments.getAlbum(this.ctx, senderRequestable, {
+        redirect: true,
+      });
 
     const response = await this.query({
       track: { album: { name: albumName, artist: { name: artistName } } },

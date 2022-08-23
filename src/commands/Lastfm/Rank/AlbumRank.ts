@@ -36,7 +36,7 @@ export default class AlbumRank extends LastFMBaseCommand<typeof args> {
     const { artist, album } = await this.lastFMArguments.getAlbum(
       this.ctx,
       senderRequestable,
-      true
+      { redirect: true }
     );
 
     const topAlbums = await this.lastFMService.topAlbums(this.ctx, {

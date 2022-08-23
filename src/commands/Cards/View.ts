@@ -38,7 +38,7 @@ export class View extends CardsChildCommand {
     const { artist, album } = await this.lastFMArguments.getAlbum(
       this.ctx,
       requestable,
-      true
+      { redirect: true }
     );
 
     const [card, albumInfo] = await Promise.all([

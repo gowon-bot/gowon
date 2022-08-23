@@ -13,35 +13,38 @@ const args = {
 
 export class Link extends RateYourMusicChildCommand<typeof args> {
   idSeed = "elris bella";
-
   description = "Search Rateyourmusic for an album (or anything!)";
+  slashCommand = true;
 
   arguments = args;
-
-  slashCommand = true;
 
   async run() {
     let keywords = this.parsedArguments.keywords;
 
-    let { requestable } = await this.getMentions({
+    const { requestable } = await this.getMentions({
       usernameRequired: !keywords,
     });
 
     if (!keywords) {
-      let nowplaying = await this.lastFMService.nowPlaying(
+      const { artist, album } = await this.lastFMArguments.getAlbum(
         this.ctx,
-        requestable
+        requestable,
+        { noSearch: true }
       );
 
-      keywords = `${nowplaying.artist} - ${this.cleanAlbumName(
-        nowplaying.album
-      )}`;
+      if (artist && album) {
+        keywords = `${artist} - ${this.cleanAlbumName(album)}`;
+      } else {
+        keywords = `${artist}`;
+      }
     }
 
-    let encodedKeywords = encodeURIComponent(keywords);
+    const encodedKeywords = encodeURIComponent(keywords);
 
-    let embed = this.newEmbed()
-      .setAuthor(`Rateyourmusic search for "${keywords}"`)
+    const embed = this.newEmbed()
+      .setAuthor(
+        this.generateEmbedAuthor(`Rateyourmusic search for "${keywords}"`)
+      )
       .setTitle("Click here to view the results")
       .setURL(
         `https://www.google.com/search?q=${encodedKeywords}+site%3Arateyourmusic.com`

@@ -44,7 +44,9 @@ export default class TrackTopAlbums extends MirrorballBaseCommand<
       });
 
     const { artist: artistName, track: trackName } =
-      await this.lastFMArguments.getTrack(this.ctx, senderRequestable, true);
+      await this.lastFMArguments.getTrack(this.ctx, senderRequestable, {
+        redirect: true,
+      });
 
     const response = await this.query({
       track: { name: trackName, artist: { name: artistName } },

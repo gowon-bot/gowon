@@ -53,7 +53,9 @@ export default class ScrobbleList extends MirrorballBaseCommand<
     });
 
     const { artist: artistName, track: trackName } =
-      await this.lastFMArguments.getTrack(this.ctx, senderRequestable, true);
+      await this.lastFMArguments.getTrack(this.ctx, senderRequestable, {
+        redirect: true,
+      });
 
     const params = {
       track: { name: trackName, artist: { name: artistName } },

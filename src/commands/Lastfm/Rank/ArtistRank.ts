@@ -40,7 +40,7 @@ export default class ArtistRank extends LastFMBaseCommand<typeof args> {
     const artistName = await this.lastFMArguments.getArtist(
       this.ctx,
       senderRequestable,
-      true
+      { redirect: true }
     );
 
     const topArtists = await this.lastFMService.topArtists(this.ctx, {

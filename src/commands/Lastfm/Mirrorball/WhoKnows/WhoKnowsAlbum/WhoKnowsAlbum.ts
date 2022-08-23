@@ -46,7 +46,9 @@ export default class WhoKnowsAlbum extends WhoKnowsBaseCommand<
       });
 
     const { artist: artistName, album: albumName } =
-      await this.lastFMArguments.getAlbum(this.ctx, senderRequestable, true);
+      await this.lastFMArguments.getAlbum(this.ctx, senderRequestable, {
+        redirect: true,
+      });
 
     const response = await this.query({
       album: { name: albumName, artist: { name: artistName } },
