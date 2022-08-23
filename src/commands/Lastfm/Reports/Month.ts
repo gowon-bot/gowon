@@ -31,7 +31,7 @@ export default class Month extends LastFMBaseCommand<typeof args> {
   redirectsService = ServiceRegistry.get(RedirectsService);
 
   async run() {
-    const { requestable, perspective, senderUser } = await this.getMentions();
+    const { requestable, perspective } = await this.getMentions();
 
     const paginator = new Paginator(
       this.lastFMService.recentTracks.bind(this.lastFMService),
