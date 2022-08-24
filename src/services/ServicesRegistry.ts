@@ -43,6 +43,7 @@ import { PermissionsService } from "../lib/permissions/PermissionsService";
 import { PermissionsCacheService } from "../lib/permissions/PermissionsCacheService";
 import { LilacUsersService } from "./lilac/LilacUsersService";
 import { LilacAPIService } from "./lilac/LilacAPIService";
+import { LilacWhoKnowsService } from "./lilac/LilacWhoKnowsService";
 
 export type Service<T = any> = { new (): T };
 
@@ -71,6 +72,7 @@ const services: Service[] = [
   // Lilac services
   LilacUsersService,
   LilacAPIService,
+  LilacWhoKnowsService,
 
   MetaService,
   MirrorballService,

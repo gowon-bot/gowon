@@ -50,7 +50,7 @@ export abstract class WhoKnowsBaseCommand<
   protected whoKnowsEmbed(): MessageEmbed {
     return this.newEmbed().setAuthor({
       name: this.isGlobal() ? "Gowon" : this.requiredGuild.name,
-      url: this.isGlobal()
+      iconURL: this.isGlobal()
         ? this.gowonIconURL
         : this.requiredGuild.iconURL() || "",
     });

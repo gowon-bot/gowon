@@ -1,5 +1,7 @@
 // Types
 
+import { LilacUser } from "./converters/user";
+
 export type LilacDate = number;
 
 export type LilacProgressAction = "indexing" | "updating";
@@ -14,11 +16,21 @@ export enum LilacPrivacy {
 
 // Inputs
 
-export type LilacUserInput = Partial<{
-  id: number;
-  discordID: string;
-  username: string;
-}>;
+export interface LilacUserInput {
+  id?: number;
+  discordID?: string;
+  username?: string;
+}
+
+export interface LilacArtistInput {
+  name?: string;
+}
+
+export interface LilacWhoKnowsInput {
+  guildID?: string;
+  limit?: number;
+  userIDs?: string[];
+}
 
 // Responses
 export interface IndexingProgress<
@@ -35,4 +47,15 @@ export interface RawLilacUser {
   discordId: string;
   privacy: LilacPrivacy;
   lastIndexed?: LilacDate;
+}
+
+// Objects
+export interface LilacArtist {
+  id: number;
+  name: string;
+}
+
+export interface LilacWhoKnowsRow {
+  user: LilacUser;
+  playcount: number;
 }

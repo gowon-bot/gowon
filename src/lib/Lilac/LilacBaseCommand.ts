@@ -1,3 +1,4 @@
+import { LastFMArguments } from "../../services/LastFM/LastFMArguments";
 import { LastFMService } from "../../services/LastFM/LastFMService";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { Command } from "../command/Command";
@@ -9,6 +10,7 @@ export abstract class LilacBaseCommand<
   protected readonly progressBarWidth = 15;
 
   lastFMService = ServiceRegistry.get(LastFMService);
+  lastFMArguments = ServiceRegistry.get(LastFMArguments);
 
   readonly indexingHelp =
     '"Indexing" means downloading all your last.fm data. This is required for many commands to function.';
