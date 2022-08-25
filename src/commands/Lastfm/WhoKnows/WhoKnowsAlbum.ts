@@ -1,84 +1,73 @@
-import { bold } from "../../../helpers/discord";
+import { bold, italic } from "../../../helpers/discord";
 import { LinkGenerator } from "../../../helpers/lastFM";
 import { Variation } from "../../../lib/command/Command";
 import { VARIATIONS } from "../../../lib/command/variations";
-import {
-  prefabArguments,
-  prefabFlags,
-} from "../../../lib/context/arguments/prefabArguments";
+import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 import { LineConsolidator } from "../../../lib/LineConsolidator";
 import {
   displayLink,
   displayNumber,
   displayNumberedList,
 } from "../../../lib/views/displays";
-import { CrownsService } from "../../../services/dbservices/CrownsService";
-import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { WhoKnowsBaseCommand } from "./LilacWhoKnowsBaseCommand";
 
 const args = {
-  ...prefabArguments.artist,
-  noRedirect: prefabFlags.noRedirect,
+  ...prefabArguments.album,
 } as const;
 
-export default class WhoKnowsArtist extends WhoKnowsBaseCommand<typeof args> {
-  idSeed = "bvndit songhee";
-  description = "See who knows an artist";
-  subcategory = "whoknows";
-  aliases = ["wk", "fmwk"];
-  guildRequired = true;
+export default class WhoKnowsAlbum extends WhoKnowsBaseCommand<typeof args> {
+  idSeed = "redsquare green";
 
-  variations: Variation[] = [VARIATIONS.global("wk")];
+  subcategory = "whoknows";
+  description = "See who knows an album";
+  aliases = ["wkl", "wka", "fmwka"];
+
+  variations: Variation[] = [VARIATIONS.global("wkl", "wka")];
 
   slashCommand = true;
 
   arguments = args;
 
-  crownsService = ServiceRegistry.get(CrownsService);
-
   async run() {
     const { senderRequestable, senderUser } = await this.getMentions({
-      senderRequired: !this.parsedArguments.artist,
+      senderRequired:
+        !this.parsedArguments.artist || !this.parsedArguments.album,
     });
 
     const senderLilacUser = await this.lilacUsersService.fetchUser(this.ctx, {
       discordID: this.author.id,
     });
 
-    const artistName = await this.lastFMArguments.getArtist(
-      this.ctx,
-      senderRequestable,
-      { redirect: !this.parsedArguments.noRedirect }
-    );
-
-    const crown = this.isGlobal()
-      ? undefined
-      : await this.crownsService.getCrown(this.ctx, artistName);
+    const { artist: artistName, album: albumName } =
+      await this.lastFMArguments.getAlbum(this.ctx, senderRequestable, {
+        redirect: true,
+      });
 
     const guildID = this.isGlobal() ? undefined : this.requiredGuild.id;
 
-    const { whoKnowsArtist: whoKnows, whoKnowsArtistRank: whoKnowsRank } =
-      await this.lilacWhoKnowsService.whoKnowsArtist(
+    const { whoKnowsAlbum: whoKnows, whoKnowsAlbumRank: whoKnowsRank } =
+      await this.lilacWhoKnowsService.whoKnowsAlbum(
         this.ctx,
         artistName,
+        albumName,
         this.author.id,
         guildID
       );
 
     await this.cacheUserInfo(whoKnows.rows.map((u) => u.user));
 
-    const { rows, artist } = whoKnows;
+    const { rows, album } = whoKnows;
     const { rank, playcount } = whoKnowsRank;
 
     const lineConsolidator = new LineConsolidator();
 
     lineConsolidator.addLines(
       {
-        shouldDisplay: !artist || rows.length === 0,
-        string: "No one knows this artist",
+        shouldDisplay: !album || rows.length === 0,
+        string: "No one knows this album",
       },
       {
-        shouldDisplay: artist && rows.length !== 0,
+        shouldDisplay: album && rows.length !== 0,
         string: displayNumberedList(
           rows
             .slice(0, 15)
@@ -87,9 +76,7 @@ export default class WhoKnowsArtist extends WhoKnowsBaseCommand<typeof args> {
                 `${this.whoKnowsService.displayUser(
                   this.ctx,
                   wk.user
-                )} - **${displayNumber(wk.playcount, "**play")}${
-                  crown?.user?.discordID === wk.user.discordID ? " 👑" : ""
-                }`
+                )} - **${displayNumber(wk.playcount, "**play")}`
             )
         ),
       },
@@ -103,15 +90,14 @@ export default class WhoKnowsArtist extends WhoKnowsBaseCommand<typeof args> {
               LinkGenerator.userPage(senderUser?.lastFMUsername!)
             )
           ) +
-          `- **${displayNumber(playcount, "**play")}` +
-          (crown?.user?.discordID === this.author.id ? " 👑" : ""),
+          `- **${displayNumber(playcount, "**play")}`,
       }
     );
 
     const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Who knows artist"))
+      .setAuthor(this.generateEmbedAuthor("Who knows album"))
       .setTitle(
-        `Who knows ${bold(artist.name)} ${
+        `Who knows ${italic(album.name)} by ${bold(album.artist.name)} ${
           this.isGlobal() ? "globally" : `in ${this.requiredGuild.name}`
         }?`
       )

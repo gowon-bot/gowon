@@ -26,6 +26,11 @@ export interface LilacArtistInput {
   name?: string;
 }
 
+export interface LilacAlbumInput {
+  name?: string;
+  artist?: LilacArtistInput;
+}
+
 export interface LilacWhoKnowsInput {
   guildID?: string;
   limit?: number;
@@ -49,13 +54,45 @@ export interface RawLilacUser {
   lastIndexed?: LilacDate;
 }
 
+export interface LilacWhoKnowsArtistRank {
+  artist: LilacArtist;
+  playcount: number;
+  rank: number;
+  totalListeners: number;
+
+  above: LilacArtistCount;
+  below: LilacArtistCount;
+}
+
+export interface LilacWhoKnowsAlbumRank {
+  album: LilacAlbum;
+  playcount: number;
+  rank: number;
+  totalListeners: number;
+
+  above: LilacArtistCount;
+  below: LilacArtistCount;
+}
+
 // Objects
 export interface LilacArtist {
   id: number;
   name: string;
 }
 
+export interface LilacAlbum {
+  id: number;
+  name: string;
+  artist: LilacAlbum;
+}
+
 export interface LilacWhoKnowsRow {
   user: LilacUser;
   playcount: number;
+}
+
+export interface LilacArtistCount {
+  user: LilacUser;
+  playcount: number;
+  artist: LilacArtist;
 }
