@@ -47,10 +47,10 @@ export class InteractionRegistry {
               command: subcommand,
             });
           }
-
-          return extract;
         }
       }
+
+      return extract;
     }
 
     return undefined;
