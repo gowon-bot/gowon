@@ -52,7 +52,6 @@ export class ArgumentParsingService extends BaseService {
     const { flags, content: withoutFlags } = this.parseAndRemoveFlags(
       message,
       context,
-
       Object.assign(args, { debug: debugFlag })
     );
 

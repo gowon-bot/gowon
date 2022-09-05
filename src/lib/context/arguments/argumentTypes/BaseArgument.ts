@@ -60,7 +60,7 @@ export abstract class BaseArgument<
   public mention = false;
   public options: OptionsT;
 
-  get gowonService() {
+  protected get gowonService() {
     return ServiceRegistry.get(GowonService);
   }
 
@@ -122,11 +122,7 @@ export abstract class BaseArgument<
   }
 
   protected cleanContent(ctx: GowonContext, content: string): string {
-    let cleanContent = this.gowonService.removeCommandName(
-      content,
-      ctx.runAs,
-      ctx.requiredGuild.id
-    );
+    const cleanContent = this.gowonService.removeCommandName(ctx, content);
 
     return cleanContent.replace(/<(@|#)(!|&)?[0-9]+>/g, "");
   }

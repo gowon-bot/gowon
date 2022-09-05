@@ -4,9 +4,10 @@ import config from "../../config.json";
 import { CacheScopedKey, ShallowCache } from "../database/cache/ShallowCache";
 import { CrownBan } from "../database/entity/CrownBan";
 import { ArtistCrownBan } from "../database/entity/ArtistCrownBan";
-import { RunAs } from "../lib/command/RunAs";
 import { SettingsService } from "../lib/settings/SettingsService";
 import { ServiceRegistry } from "./ServicesRegistry";
+import { userMentionAtStartRegex } from "../helpers/discord";
+import { GowonContext } from "../lib/context/Context";
 
 export const gowonServiceConstants = {
   hardPageLimit: 100,
@@ -32,21 +33,45 @@ export class GowonService {
     return ServiceRegistry.get(SettingsService);
   }
 
-  prefix(guildID: string): string {
+  public prefix(guildID: string): string {
     return (
       this.settingsService.get("prefix", { guildID }) || config.defaultPrefix
     );
   }
 
-  regexSafePrefix(serverID: string): string {
+  public regexSafePrefix(serverID: string): string {
     return regexEscape(this.prefix(serverID));
   }
 
-  removeCommandName(string: string, runAs: RunAs, serverID: string): string {
+  public prefixAtStartOfMessageRegex(guildID: string): RegExp {
+    return new RegExp(`^${this.regexSafePrefix(guildID)}[^\\s]+`, "i");
+  }
+
+  public removeCommandName(ctx: GowonContext, string: string): string {
+    console.log(
+      new RegExp(
+        `${
+          userMentionAtStartRegex(ctx.client.client.user!.id).source
+        }\\s+${ctx.extract.asRemovalRegexString()}`,
+        "i"
+      )
+    );
+
     return string
       .replace(
         new RegExp(
-          `${this.regexSafePrefix(serverID)}${runAs.toRegexString()}`,
+          `${this.regexSafePrefix(
+            ctx.requiredGuild.id
+          )}${ctx.extract.asRemovalRegexString()}`,
+          "i"
+        ),
+        ""
+      )
+      .replace(
+        new RegExp(
+          `${
+            userMentionAtStartRegex(ctx.client.client.user!.id).source
+          }\\s+${ctx.extract.asRemovalRegexString()}`,
           "i"
         ),
         ""

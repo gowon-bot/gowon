@@ -13,7 +13,7 @@ import {
 import { errorEmbed } from "../../views/embeds";
 import { Command } from "../Command";
 import { CommandRegistry } from "../CommandRegistry";
-import { RunAs } from "../RunAs";
+import { ExtractedCommand } from "../extractor/ExtractedCommand";
 import { InteractionRegistry } from "./InteractionRegistry";
 
 export class InteractionHandler {
@@ -38,30 +38,30 @@ export class InteractionHandler {
 
   async handle(interaction: Interaction) {
     if (interaction.isCommand()) {
-      const { command, runAs } = this.interactionRegistry.find({
+      const extract = this.interactionRegistry.find({
         byName: interaction.commandName,
         withSubcommand: interaction.options.getSubcommand(false) ?? undefined,
       });
 
-      if (command && runAs) {
+      if (extract) {
         const canCheck = await this.permissionsService.canRunInContext(
           this.context(interaction),
-          command
+          extract.command
         );
 
         if (!canCheck.allowed) {
           this.handleFailedCanCheck(
             this.context(interaction),
             canCheck,
-            command
+            extract.command
           );
           return;
         }
 
-        const newCommand = command.copy();
+        const newCommand = extract.command.copy();
 
         const ctx = new GowonContext({
-          runAs,
+          extract,
           payload: new Payload(interaction),
           gowonClient: this.client,
         });
@@ -77,7 +77,7 @@ export class InteractionHandler {
     return new GowonContext({
       gowonClient: this.client,
       payload: new Payload(interaction),
-      runAs: new RunAs(),
+      extract: new ExtractedCommand([]),
       command: {
         logger: this.logger,
         guild: interaction.guild!,

@@ -1,6 +1,6 @@
 import { MessageEmbed } from "discord.js";
 import { SimpleMap } from "../helpers/types";
-import { RunAs } from "../lib/command/RunAs";
+import { ExtractedCommand } from "../lib/command/extractor/ExtractedCommand";
 import {
   ContextParamaters,
   CustomContext,
@@ -52,19 +52,15 @@ export function mockContext<T = CustomContext<{}, {}>>(
 ): MockContext<T> {
   return new MockContext<T>({
     payload: new Payload(new MockMessage()),
-    runAs: mockRunAs(),
+    extract: mockExtractedCommand(),
     gowonClient: {} as any,
     logger: new MockLogger(),
     ...overrides,
   });
 }
 
-export function mockRunAs(...strings: string[]): RunAs {
-  const runAs = new RunAs();
-
-  for (const string of strings) {
-    runAs.add({ string: string, command: {} as any });
-  }
-
-  return runAs;
+export function mockExtractedCommand(...strings: string[]): ExtractedCommand {
+  return new ExtractedCommand(
+    strings.map((s) => ({ matched: s, command: {} as any }))
+  );
 }

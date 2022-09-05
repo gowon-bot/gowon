@@ -5,9 +5,9 @@ import { TwitterService } from "./TwitterService";
 import { Payload } from "../../lib/context/Payload";
 import { TwitterCommandRegistry } from "./TwitterCommandRegistry";
 import { CommandRegistry } from "../../lib/command/CommandRegistry";
-import { RunAs } from "../../lib/command/RunAs";
 import { GowonClient } from "../../lib/GowonClient";
 import { GowonContext } from "../../lib/context/Context";
+import { ExtractedCommand } from "../../lib/command/extractor/ExtractedCommand";
 
 export class TweetHandler {
   commandRegistry!: TwitterCommandRegistry;
@@ -42,7 +42,7 @@ export class TweetHandler {
       const ctx = new GowonContext({
         payload,
         gowonClient,
-        runAs: new RunAs(),
+        extract: new ExtractedCommand([]),
       });
 
       await newCommand.execute.bind(newCommand)(ctx);

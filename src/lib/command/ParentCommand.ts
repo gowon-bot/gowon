@@ -17,24 +17,19 @@ export abstract class ParentCommand extends Command {
   noPrefixAliases: Array<string> = [];
 
   async getChild(
-    child: string,
-    serverID: string
+    string: string,
+    guildID: string
   ): Promise<Command | undefined> {
-    let childCommand = await this.commandRegistry.find(
-      child,
-      serverID,
+    const childCommand = await this.commandRegistry.find(
+      string,
+      guildID,
       this.children.commands
     );
 
-    if (childCommand.command) {
-      return childCommand.command;
-    }
-
-    return;
+    return childCommand?.command;
   }
 
   async execute() {}
-
   async run() {}
 }
 

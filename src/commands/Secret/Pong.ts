@@ -12,7 +12,7 @@ export default class Pong extends Command {
 
   async run() {
     await this.reply(
-      `${Emoji.gnop} ${!this.runAs.variationWasUsed("nop") ? "g" : ""}niP`,
+      `${Emoji.gnop} ${!this.extract.didMatch("nop") ? "g" : ""}niP`,
       {
         ping: true,
       }

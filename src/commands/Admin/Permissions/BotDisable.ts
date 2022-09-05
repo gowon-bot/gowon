@@ -38,10 +38,9 @@ export class BotDisable extends PermissionsChildCommand<typeof args> {
   async run() {
     const commandName = this.parsedArguments.command;
 
-    const { command } = await this.commandRegistry.find(
-      commandName,
-      this.requiredGuild.id
-    );
+    const command = (
+      await this.commandRegistry.find(commandName, this.requiredGuild.id)
+    )?.command;
 
     if (!command) throw new CommandNotFoundError();
 

@@ -44,10 +44,9 @@ export class BotwideUserDisable extends PermissionsChildCommand<typeof args> {
     const user = this.parsedArguments.user!;
     const commandName = this.parsedArguments.command;
 
-    const { command } = await this.commandRegistry.find(
-      commandName,
-      this.requiredGuild.id
-    );
+    const command = (
+      await this.commandRegistry.find(commandName, this.requiredGuild.id)
+    )?.command;
 
     if (!command) throw new CommandNotFoundError();
 

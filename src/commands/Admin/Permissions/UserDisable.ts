@@ -50,10 +50,12 @@ export class UserDisable extends PermissionsChildCommand<typeof args> {
     const user = this.parsedArguments.user!;
     const commandName = this.parsedArguments.command;
 
-    const { command } = await this.commandRegistry.find(
+    const extract = await this.commandRegistry.find(
       commandName,
       this.requiredGuild.id
     );
+
+    const command = extract?.command;
 
     if (!command) throw new CommandNotFoundError();
 
@@ -68,7 +70,7 @@ export class UserDisable extends PermissionsChildCommand<typeof args> {
 
     if (
       !this.variationWasUsed("userenable") &&
-      !this.runAs.variationWasUsed("enable")
+      !this.extract.didMatch("enable")
     ) {
       embed = await this.handleDisable(command, permission, user);
     } else {

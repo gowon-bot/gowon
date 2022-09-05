@@ -1,6 +1,6 @@
 import { insertAtIndex } from "../../../helpers";
 import { RecentTrack } from "../../../services/LastFM/converters/RecentTracks";
-import { RunAs } from "../../command/RunAs";
+import { ExtractedCommand } from "../../command/extractor/ExtractedCommand";
 import { GowonContext } from "../../context/Context";
 import { Resources } from "../DatasourceService";
 import { RequirementMap } from "../RequirementMap";
@@ -25,7 +25,7 @@ export abstract class BaseNowPlayingComponent<
     command: { logger: this.values.logger! } as any,
     custom: {},
     payload: this.values.payload,
-    runAs: new RunAs(),
+    extract: new ExtractedCommand([]),
     gowonClient: {} as any,
   });
 

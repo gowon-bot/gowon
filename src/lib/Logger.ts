@@ -2,9 +2,9 @@ import { Command } from "./command/Command";
 import { User } from "discord.js";
 import chalk from "chalk";
 import { format } from "date-fns";
-import { RunAs } from "./command/RunAs";
 import { SimpleMap } from "../helpers/types";
 import { GowonContext } from "./context/Context";
+import { ExtractedCommand } from "./command/extractor/ExtractedCommand";
 
 export class Logger {
   static output = true;
@@ -44,12 +44,11 @@ export class Logger {
     );
   }
 
-  logCommandHandle(runAs: RunAs): void {
+  logCommandHandle(extract: ExtractedCommand): void {
     Logger.log(
       `CommandHandler`,
-      chalk`{grey found ${runAs
-        .toCommandArray()
-        .map((c) => c.name)
+      chalk`{grey found ${extract.commandStack
+        .map(({ command }) => command.name)
         .join(":")}}`
     );
   }
@@ -74,7 +73,7 @@ export class Logger {
   logCommand(ctx: GowonContext): void {
     const command = ctx.command;
     const payload = ctx.payload;
-    const runAs = ctx.runAs.toArray();
+    const commandStack = ctx.extract.commandStack;
 
     let redirectedFrom = command.redirectedFrom;
 
@@ -106,7 +105,7 @@ ${
 {cyan as}: ${
         payload.isInteraction()
           ? `/${payload.source.commandName}`
-          : runAs.join(" ")
+          : commandStack.map((c) => c.command.name).join(" ")
       }
 
 {cyan Raw message content}:

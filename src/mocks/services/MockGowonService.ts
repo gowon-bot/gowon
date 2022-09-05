@@ -1,6 +1,6 @@
 import { Guild } from "discord.js";
 import { ShallowCache } from "../../database/cache/ShallowCache";
-import { RunAs } from "../../lib/command/RunAs";
+import { ExtractedCommand } from "../../lib/command/extractor/ExtractedCommand";
 import { gowonServiceConstants } from "../../services/GowonService";
 import { BaseMockService } from "./BaseMockService";
 
@@ -17,11 +17,15 @@ export class MockGowonService extends BaseMockService {
     return "!";
   }
 
-  removeCommandName(string: string, runAs: RunAs, serverID: string): string {
+  removeCommandName(
+    string: string,
+    extract: ExtractedCommand,
+    serverID: string
+  ): string {
     return string
       .replace(
         new RegExp(
-          `${this.regexSafePrefix(serverID)}${runAs.toRegexString()}`,
+          `${this.regexSafePrefix(serverID)}${extract.asRemovalRegexString()}`,
           "i"
         ),
         ""

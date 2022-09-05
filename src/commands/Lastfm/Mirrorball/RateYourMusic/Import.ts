@@ -155,9 +155,8 @@ export class ImportRatings extends RateYourMusicIndexingChildCommand<
       throw new CannotBeUsedAsASlashCommand();
     } else if (this.payload.isMessage()) {
       const rawMessageContent = this.gowonService.removeCommandName(
-        this.payload.source.content,
-        this.runAs,
-        this.requiredGuild.id
+        this.ctx,
+        this.payload.source.content
       );
 
       return rawMessageContent;

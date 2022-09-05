@@ -95,12 +95,12 @@ export class View extends PermissionsChildCommand<typeof args> {
 
   private async getQueries(): Promise<PermissionQuery[]> {
     const all = this.parsedArguments.all;
-    const { command } = await this.commandRegistry.find(
+    const extract = await this.commandRegistry.find(
       this.parsedArguments.command || "",
       this.requiredGuild.id
     );
 
-    const commandID = command?.id;
+    const commandID = extract?.command?.id;
 
     const queries = [] as PermissionQuery[];
 

@@ -23,7 +23,12 @@ export class DiscordUserArgument extends BaseArgument<
   }
 
   parseFromMessage(message: Message): User {
-    const mentions = Array.from(message.mentions.users.values());
+    let mentions = Array.from(message.mentions.users.values());
+
+    // Run with mention prefix
+    if (message.content.startsWith("<")) {
+      mentions = mentions.slice(1);
+    }
 
     return this.getElementFromIndex(mentions, this.options.index);
   }

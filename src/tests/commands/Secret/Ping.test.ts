@@ -1,5 +1,5 @@
 import Ping from "../../../commands/Secret/Ping";
-import { mockContext, mockRunAs } from "../../../mocks/MockContext";
+import { mockContext, mockExtractedCommand } from "../../../mocks/MockContext";
 import { setMockServices } from "../../../mocks/services/mockServices";
 
 describe("Ping command", () => {
@@ -18,7 +18,7 @@ describe("Ping command", () => {
 
   test("should pon", async () => {
     const ping = new Ping();
-    const ctx = mockContext({ runAs: mockRunAs("pin") });
+    const ctx = mockContext({ extract: mockExtractedCommand("pin") });
 
     await ping.execute(ctx);
 

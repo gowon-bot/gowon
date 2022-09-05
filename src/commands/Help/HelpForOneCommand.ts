@@ -6,7 +6,11 @@ import { LineConsolidator } from "../../lib/LineConsolidator";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { Emoji } from "../../lib/Emoji";
 import { StringArgument } from "../../lib/context/arguments/argumentTypes/StringArgument";
-import { Flag, isFlag } from "../../lib/context/arguments/argumentTypes/Flag";
+import {
+  argumentsHasFlags,
+  Flag,
+  isFlag,
+} from "../../lib/context/arguments/argumentTypes/Flag";
 import { BaseArgument } from "../../lib/context/arguments/argumentTypes/BaseArgument";
 import { bold, code, italic } from "../../helpers/discord";
 import { PermissionsService } from "../../lib/permissions/PermissionsService";
@@ -35,10 +39,12 @@ export default class HelpForOneCommand extends Command<typeof args> {
   }
 
   private async helpForOneCommand(input: string) {
-    const { command } = await this.commandRegistry.find(
+    const extract = await this.commandRegistry.find(
       input,
       this.requiredGuild.id
     );
+
+    const command = extract?.command;
 
     if (!command) throw new CommandNotFoundError();
 
@@ -99,10 +105,10 @@ export default class HelpForOneCommand extends Command<typeof args> {
         string:
           "**Variations**:\n" +
           variations +
-          (command.arguments.flags ? "\n" : ""),
+          (argumentsHasFlags(command.arguments) ? "\n" : ""),
       },
       {
-        shouldDisplay: !!command.arguments.flags,
+        shouldDisplay: argumentsHasFlags(command.arguments),
         string:
           "**Flags**:\n" +
           (

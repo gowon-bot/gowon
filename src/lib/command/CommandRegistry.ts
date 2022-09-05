@@ -1,12 +1,12 @@
 import { Commands } from "./CommandGroup";
+import { CommandExtractor } from "./extractor/CommandExtractor";
 
 import { promisify } from "util";
 import _glob from "glob";
-import { AliasChecker } from "../AliasChecker";
-import { RunAs } from "./RunAs";
 import { flatDeep } from "../../helpers";
 import { SimpleMap } from "../../helpers/types";
 import { Command } from "./Command";
+import { ExtractedCommand } from "./extractor/ExtractedCommand";
 const glob = promisify(_glob);
 
 type Registry = Array<Command>;
@@ -67,31 +67,16 @@ export class CommandRegistry {
 
   async find(
     messageString: string,
-    serverID: string,
+    guildID: string,
     commands?: Command[]
-  ): Promise<{ command?: Command<any>; runAs: RunAs }> {
-    const checker = new AliasChecker(messageString);
+  ): Promise<ExtractedCommand | undefined> {
+    const extractor = new CommandExtractor();
 
-    for (const command of commands || this.list(true)) {
-      if (await checker.check(command, serverID)) {
-        const runAs = await checker.getRunAs(command, serverID);
-
-        return {
-          command: runAs.last()?.command!,
-          runAs,
-        };
-      }
-    }
-    return { runAs: new RunAs() };
-  }
-
-  async findAndCopy(
-    messageString: string,
-    serverID: string
-  ): Promise<{ command?: Command; runAs: RunAs }> {
-    const { command, runAs } = await this.find(messageString, serverID);
-
-    return { runAs, command: command ? this.make(command?.id) : undefined };
+    return await extractor.extract(
+      messageString,
+      guildID,
+      commands || this.list(true)
+    );
   }
 
   findByID(

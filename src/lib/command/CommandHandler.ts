@@ -4,7 +4,6 @@ import { HeaderlessLogger, Logger } from "../Logger";
 import { ParentCommand } from "./ParentCommand";
 import { MetaService } from "../../services/dbservices/MetaService";
 import { GowonClient } from "../GowonClient";
-import { RunAs } from "./RunAs";
 import {
   NicknameService,
   NicknameServiceContext,
@@ -12,11 +11,12 @@ import {
 import { CommandRegistry } from "./CommandRegistry";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 import Prefix from "../../commands/Meta/Prefix";
-import Help from "../../commands/Help/Help";
 import { GowonContext } from "../context/Context";
 import { Payload } from "../context/Payload";
 import { Command } from "./Command";
 import { PermissionsService } from "../permissions/PermissionsService";
+import { userMentionAtStartRegex } from "../../helpers/discord";
+import { ExtractedCommand } from "./extractor/ExtractedCommand";
 
 export class CommandHandler {
   commandRegistry = CommandRegistry.getInstance();
@@ -36,7 +36,7 @@ export class CommandHandler {
     return new GowonContext({
       gowonClient: this.client,
       payload: new Payload(message),
-      runAs: new RunAs(),
+      extract: new ExtractedCommand([]),
       command: {
         logger: this.logger,
         guild: message.guild!,
@@ -46,77 +46,130 @@ export class CommandHandler {
   }
 
   async handle(message: Message): Promise<void> {
-    await this.runHelpCommandIfMentioned(message);
     await this.runPrefixCommandIfMentioned(message);
     await this.gers(message);
     await this.yesMaam(message);
 
-    if (
-      !message.author.bot &&
-      message.guild &&
-      message.content.match(
-        new RegExp(
-          `^${this.gowonService.regexSafePrefix(message.guild!.id)}[^\\s]+`,
-          "i"
-        )
-      )
-    ) {
-      let { command, runAs } = await this.commandRegistry.find(
-        message.content,
-        message.guild.id
-      );
+    if (this.shouldSearchForCommand(message)) {
+      const extract = await this.findCommand(message);
 
-      if (!command) return;
+      if (extract) {
+        const command = extract.command;
 
-      this.nicknameService.recordNickname(
-        this.context(message) as NicknameServiceContext,
-        message.author.id,
-        message.member?.nickname || message.author.username
-      );
-      this.nicknameService.recordUsername(
-        this.context(message) as NicknameServiceContext,
-        message.author.id,
-        message.author.username + "#" + message.author.discriminator
-      );
+        this.recordUsernameAndNickname(message);
 
-      if (command instanceof ParentCommand) {
-        const defaultID = command.default?.()?.id;
+        if (!(await this.canRunCommand(message, command))) return;
 
-        if (defaultID) {
-          command =
-            this.commandRegistry.findByID(defaultID, {
-              includeSecret: true,
-            }) || command;
-        }
+        this.logger.logCommandHandle(extract);
+
+        this.metaService.recordCommandRun(
+          this.context(message),
+          command.id,
+          message
+        );
+
+        this.runCommand(command, message, extract);
       }
-
-      const canCheck = await this.permissionsService.canRunInContext(
-        this.context(message),
-        command
-      );
-
-      console.log(canCheck);
-
-      if (!canCheck.allowed) {
-        this.handleFailedCanCheck(command);
-        return;
-      }
-
-      this.logger.logCommandHandle(runAs);
-
-      this.metaService.recordCommandRun(
-        this.context(message),
-        command.id,
-        message
-      );
-
-      this.runCommand(command, message, runAs);
     }
   }
 
-  async runPrefixCommandIfMentioned(message: Message) {
+  private shouldSearchForCommand(message: Message): boolean {
+    const prefixRegex = this.gowonService.prefixAtStartOfMessageRegex(
+      message.guild!.id
+    );
+
+    return !!(
+      !message.author.bot &&
+      message.guild &&
+      (message.content.match(prefixRegex) || this.isMentionedAtStart(message))
+    );
+  }
+
+  private recordUsernameAndNickname(message: Message) {
+    const ctx = this.context(message) as NicknameServiceContext;
+
+    this.nicknameService.recordNickname(
+      ctx,
+      message.author.id,
+      message.member?.nickname || message.author.username
+    );
+
+    this.nicknameService.recordUsername(
+      ctx,
+      message.author.id,
+      message.author.username + "#" + message.author.discriminator
+    );
+  }
+
+  private async findCommand(
+    message: Message
+  ): Promise<ExtractedCommand | undefined> {
+    const extract = await this.commandRegistry.find(
+      message.content,
+      message.guild!.id
+    );
+
+    console.log(extract);
+
+    if (extract?.command instanceof ParentCommand) {
+      const defaultID = extract.command?.default?.()?.id;
+
+      if (defaultID) {
+        const defaultCommand = this.commandRegistry.findByID(defaultID, {
+          includeSecret: true,
+        });
+
+        if (defaultCommand) {
+          extract.add({ command: defaultCommand, matched: "" });
+        }
+      }
+    }
+
+    return extract;
+  }
+
+  private async canRunCommand(message: Message, command: Command) {
+    const canCheck = await this.permissionsService.canRunInContext(
+      this.context(message),
+      command
+    );
+
+    if (!canCheck.allowed) {
+      this.handleFailedCanCheck(command);
+      return false;
+    }
+
+    return true;
+  }
+
+  private handleFailedCanCheck(command: Command) {
+    Logger.log(
+      "CommandHandler",
+      `Attempt to run disabled command ${command.name}`
+    );
+  }
+
+  private async runCommand(
+    command: Command,
+    message: Message,
+    extract: ExtractedCommand
+  ) {
+    const newCommand = command.copy();
+
+    const ctx = new GowonContext({
+      payload: new Payload(message),
+      gowonClient: this.client,
+      extract,
+    });
+
+    try {
+      await newCommand.execute.bind(newCommand)(ctx);
+    } catch {}
+  }
+
+  private async runPrefixCommandIfMentioned(message: Message) {
     if (
-      message.mentions.users.has(this.client.client.user!.id) &&
+      this.isMentionedAtStart(message) &&
       message.content.split(/\s+/)[1]?.toLowerCase() === "prefix" &&
       !message.author.bot
     ) {
@@ -127,7 +180,7 @@ export class CommandHandler {
 
       const ctx = new GowonContext({
         payload: new Payload(message),
-        runAs: new RunAs(),
+        extract: new ExtractedCommand([]),
         gowonClient: this.client,
       });
 
@@ -135,29 +188,9 @@ export class CommandHandler {
     }
   }
 
-  async runHelpCommandIfMentioned(message: Message) {
+  private async gers(message: Message) {
     if (
-      message.mentions.users.has(this.client.client.user!.id) &&
-      message.content.split(/\s+/)[1]?.toLowerCase() === "help" &&
-      !message.author.bot
-    ) {
-      const helpCommand = new Help();
-
-      message.content = "";
-
-      const ctx = new GowonContext({
-        payload: new Payload(message),
-        runAs: new RunAs(),
-        gowonClient: this.client,
-      });
-
-      await helpCommand.execute(ctx);
-    }
-  }
-
-  async gers(message: Message) {
-    if (
-      message.mentions.users.has(this.client.client.user!.id) &&
+      this.isMentionedAtStart(message) &&
       message.content.split(/\s+/)[1]?.toLowerCase() === "pog" &&
       !message.author.bot
     ) {
@@ -165,7 +198,7 @@ export class CommandHandler {
     }
   }
 
-  async yesMaam(message: Message) {
+  private async yesMaam(message: Message) {
     const id = this.client.client.user!.id;
 
     if (
@@ -178,24 +211,9 @@ export class CommandHandler {
     }
   }
 
-  private async runCommand(command: Command, message: Message, runAs: RunAs) {
-    const newCommand = command.copy();
+  private isMentionedAtStart(message: Message): boolean {
+    const mentionedRegex = userMentionAtStartRegex(this.client.client.user!.id);
 
-    const ctx = new GowonContext({
-      payload: new Payload(message),
-      gowonClient: this.client,
-      runAs,
-    });
-
-    try {
-      await newCommand.execute.bind(newCommand)(ctx);
-    } catch {}
-  }
-
-  private handleFailedCanCheck(command: Command) {
-    Logger.log(
-      "CommandHandler",
-      `Attempt to run disabled command ${command.name}`
-    );
+    return mentionedRegex.test(message.content);
   }
 }

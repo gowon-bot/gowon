@@ -70,10 +70,12 @@ export class Disable extends PermissionsChildCommand<typeof args> {
   async run() {
     const commandName = this.parsedArguments.command;
 
-    const { command } = await this.commandRegistry.find(
+    const extract = await this.commandRegistry.find(
       commandName,
       this.requiredGuild.id
     );
+
+    const command = extract?.command;
 
     if (!command) throw new CommandNotFoundError();
 

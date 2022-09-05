@@ -148,7 +148,7 @@ export default class NowPlaying extends NowPlayingBaseCommand<typeof args> {
 
     nowPlayingEmbed.setFooter({ text: lineConsolidator.consolidate() });
 
-    if (this.runAs.variationWasUsed("mf")) {
+    if (this.extract.didMatch("mf")) {
       nowPlayingEmbed = this.reverseEmbed(nowPlayingEmbed);
     }
 

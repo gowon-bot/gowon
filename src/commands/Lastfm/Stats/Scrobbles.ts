@@ -51,7 +51,7 @@ export default class Scrobbles extends LastFMBaseCommand<typeof args> {
       `${perspective.plusToHave} ${bold(
         displayNumber(
           scrobbles,
-          `scr${this.runAs.variationWasUsed("scrabbles") ? "a" : "o"}bble`
+          `scr${this.extract.didMatch("scrabbles") ? "a" : "o"}bble`
         )
       )} ${date ? `since ${displayDate(date)}` : timeRange.humanized}`
     );

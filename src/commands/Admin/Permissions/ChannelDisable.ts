@@ -53,10 +53,12 @@ export class ChannelDisable extends PermissionsChildCommand<typeof args> {
 
     if (channel.type !== "GUILD_TEXT") throw new NotTextChannelError();
 
-    const { command } = await this.commandRegistry.find(
+    const extract = await this.commandRegistry.find(
       commandName,
       this.requiredGuild.id
     );
+
+    const command = extract?.command;
 
     if (!command) throw new CommandNotFoundError();
 
@@ -71,7 +73,7 @@ export class ChannelDisable extends PermissionsChildCommand<typeof args> {
 
     if (
       !this.variationWasUsed("channelenable") &&
-      !this.runAs.variationWasUsed("enable")
+      !this.extract.didMatch("enable")
     ) {
       embed = await this.handleDisable(command, permission, channel);
     } else {

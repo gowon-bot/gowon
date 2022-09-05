@@ -49,10 +49,12 @@ export class RoleDisable extends PermissionsChildCommand<typeof args> {
     const role = this.parsedArguments.role!;
     const commandName = this.parsedArguments.command;
 
-    const { command } = await this.commandRegistry.find(
+    const extract = await this.commandRegistry.find(
       commandName,
       this.requiredGuild.id
     );
+
+    const command = extract?.command;
 
     if (!command) throw new CommandNotFoundError();
 
@@ -67,7 +69,7 @@ export class RoleDisable extends PermissionsChildCommand<typeof args> {
 
     if (
       !this.variationWasUsed("roleenable") &&
-      !this.runAs.variationWasUsed("enable")
+      !this.extract.didMatch("enable")
     ) {
       embed = await this.handleDisable(command, permission, role);
     } else {

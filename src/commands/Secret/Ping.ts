@@ -19,7 +19,7 @@ export default class Ping extends Command {
       return;
     }
 
-    if (this.runAs.variationWasUsed("pingmatrix")) {
+    if (this.extract.didMatch("pingmatrix")) {
       const matrix = [] as number[][];
 
       const rows = shuffle(["p", "n", "g", "o", "!"]);
@@ -44,36 +44,34 @@ ${matrix
   .join("\n")}
   \\ ${" ".repeat(columns.join(" ").length)} /
 \`\`\``);
-    } else if (this.runAs.variationWasUsed("bing")) {
+    } else if (this.extract.didMatch("bing")) {
       await this.reply("Bong 🔔");
-    } else if (this.runAs.variationWasUsed("pung")) {
+    } else if (this.extract.didMatch("pung")) {
       // PUNG! by Yukika
       await this.reply(
         "https://open.spotify.com/track/2YnPNuWGG3zlwyUyG0hBOd",
         { noUppercase: true }
       );
-    } else if (this.runAs.variationWasUsed("peng")) {
+    } else if (this.extract.didMatch("peng")) {
       await this.reply("ting", { noUppercase: true });
     } else if (
-      this.runAs.variationWasUsed("ping", "핑") &&
+      this.extract.didMatch("ping", "핑") &&
       Chance().bool({ likelihood: 20 })
     ) {
-      await this.reply(
-        this.runAs.variationWasUsed("핑") ? "팡! 🏌️" : "PANG! 🏌️"
-      );
+      await this.reply(this.extract.didMatch("핑") ? "팡! 🏌️" : "PANG! 🏌️");
     } else if (
-      this.runAs.variationWasUsed("ping") &&
+      this.extract.didMatch("ping") &&
       Chance().bool({ likelihood: 1 })
     ) {
       await this.reply("PAPAOAONAGPNAGGGPNAGPANAGPANAGG");
-    } else if (this.runAs.variationWasUsed("핑")) {
+    } else if (this.extract.didMatch("핑")) {
       await this.reply("퐁");
     } else {
       await this.reply(
         `Pon${
-          this.runAs.variationWasUsed("pingu")
+          this.extract.didMatch("pingu")
             ? "gu"
-            : this.runAs.variationWasUsed("pin")
+            : this.extract.didMatch("pin")
             ? ""
             : "g"
         } 🏓`,

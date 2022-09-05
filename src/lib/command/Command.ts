@@ -170,8 +170,8 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
     return this.ctx.payload;
   }
 
-  get runAs() {
-    return this.ctx.runAs;
+  get extract() {
+    return this.ctx.extract;
   }
 
   get guild(): Guild | undefined {
@@ -265,8 +265,6 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
   // which allow them to run code before the run method is called
   async beforeRun(): Promise<void> {}
 
-  // This method is the one actually called by whichever handler is running a command
-  // async execute(payload: Payload, runAs: RunAs, gowonClient: GowonClient) {
   async execute(ctx: GowonContext) {
     ctx.setCommand(this);
     ctx.addContext(this.customContext);
@@ -732,7 +730,7 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
           ? variation.variation
           : [variation.variation];
 
-      if (variations.find((v) => this.runAs.variationWasUsed(v))) return true;
+      if (this.extract.didMatch(...variations)) return true;
     }
 
     return false;

@@ -69,3 +69,7 @@ export function mentionGuildMember(userID: string): string {
 export function mentionRole(roleID: string): string {
   return `<@&${roleID}>`;
 }
+
+export function userMentionAtStartRegex(userID: string): RegExp {
+  return new RegExp(`^\\s*<@!?${userID}>`);
+}

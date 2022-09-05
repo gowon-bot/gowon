@@ -48,8 +48,6 @@ export default class ArtistPlays extends LastFMBaseCommand<typeof args> {
       username: requestable,
     });
 
-    const prefix = this.prefix;
-
     await this.oldReply(
       `${perspective.plusToHave}` +
         (artistDetails.userPlaycount === 0
@@ -58,10 +56,7 @@ export default class ArtistPlays extends LastFMBaseCommand<typeof args> {
               artistDetails.userPlaycount,
               "**scrobble"
             )} of`) +
-        ` ${bold(artistDetails.name)}` +
-        (this.runAs.variationWasUsed("ap")
-          ? `\n_looking for album plays? That command has moved to \`${prefix}lp\` or \`${prefix}albumplays\`_`
-          : "")
+        ` ${bold(artistDetails.name)}`
     );
   }
 }

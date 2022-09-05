@@ -2,6 +2,7 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, Message } from "discord.js";
 import { GowonContext } from "../../Context";
 import { FlagOptions, FlagParser } from "../parsers/FlagParser";
+import { ArgumentsMap } from "../types";
 import {
   BaseArgument,
   BaseArgumentOptions,
@@ -45,4 +46,8 @@ export class Flag
 
 export function isFlag(argument: BaseArgument<any>): argument is Flag {
   return argument instanceof Flag;
+}
+
+export function argumentsHasFlags(args: ArgumentsMap): boolean {
+  return Object.values(args).some((a) => isFlag(a));
 }

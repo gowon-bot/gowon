@@ -1,6 +1,6 @@
 import { Command } from "../Command";
 import { CommandRegistry } from "../CommandRegistry";
-import { RunAs } from "../RunAs";
+import { ExtractedCommand } from "../extractor/ExtractedCommand";
 import { InteractionRegister } from "./InteractionRegister";
 
 export class InteractionRegistry {
@@ -13,10 +13,9 @@ export class InteractionRegistry {
     this.register.register(this.getCommands());
   }
 
-  find(options: Partial<{ byName: string; withSubcommand: string }>): {
-    command?: Command;
-    runAs?: RunAs;
-  } {
+  find(
+    options: Partial<{ byName: string; withSubcommand: string }>
+  ): ExtractedCommand | undefined {
     if (options.byName) {
       const command = this.getCommands().find(
         (c) =>
@@ -26,11 +25,13 @@ export class InteractionRegistry {
           this.matchesVariations(c, options.byName!)
       );
 
-      const runAs = new RunAs();
+      if (!command) return undefined;
 
-      if (command) runAs.add({ command: command, string: options.byName });
+      const extract = new ExtractedCommand([
+        { command: command, matched: options.byName },
+      ]);
 
-      if (options.withSubcommand && command) {
+      if (options.withSubcommand) {
         if (command.hasChildren) {
           const subcommand = command.children?.commands?.find(
             (c) =>
@@ -41,15 +42,18 @@ export class InteractionRegistry {
           );
 
           if (subcommand) {
-            runAs.add({ string: options.withSubcommand, command: subcommand });
+            extract.add({
+              matched: options.withSubcommand,
+              command: subcommand,
+            });
           }
 
-          return { command: subcommand, runAs };
+          return extract;
         }
-      } else return { command, runAs };
+      }
     }
 
-    return {};
+    return undefined;
   }
 
   private getCommands(): Command[] {

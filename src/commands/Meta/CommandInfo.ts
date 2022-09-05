@@ -2,7 +2,6 @@ import { CommandNotFoundError } from "../../errors/errors";
 import { italic } from "../../helpers/discord";
 import { emDash } from "../../helpers/specialCharacters";
 import { Command } from "../../lib/command/Command";
-import { RunAs } from "../../lib/command/RunAs";
 import { Flag } from "../../lib/context/arguments/argumentTypes/Flag";
 import { StringArgument } from "../../lib/context/arguments/argumentTypes/StringArgument";
 import { Validation } from "../../lib/validation/ValidationChecker";
@@ -37,20 +36,18 @@ export default class CommandInfo extends MetaBaseCommand<typeof args> {
     const searchString = this.parsedArguments.searchString;
 
     let command: Command | undefined;
-    let runAs: RunAs | undefined;
 
     if (this.parsedArguments.byID) {
       command = this.commandRegistry.findByID(
         this.parsedArguments.searchString
       );
     } else {
-      const response = await this.commandRegistry.find(
+      const foundCommand = await this.commandRegistry.find(
         searchString,
         this.requiredGuild.id
       );
 
-      command = response.command;
-      runAs = response.runAs;
+      command = foundCommand?.command;
     }
 
     if (!command) throw new CommandNotFoundError();
@@ -58,9 +55,7 @@ export default class CommandInfo extends MetaBaseCommand<typeof args> {
     const count = await this.metaService.countCommandRuns(this.ctx, command.id);
 
     const embed = this.newEmbed().setTitle(
-      `Info about ${
-        runAs?.toCommandFriendlyName() || command.friendlyNameWithParent
-      }`
+      `Info about ${command.friendlyNameWithParent}`
     ).setDescription(`
       **Name**: ${command.name}${
       command.parentName ? `\n**Parent**: ${command.parentName}` : ""

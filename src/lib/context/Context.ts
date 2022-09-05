@@ -1,7 +1,7 @@
 import { Guild, GuildMember, User } from "discord.js";
 import { LogicError } from "../../errors/errors";
 import { Command } from "../command/Command";
-import { RunAs } from "../command/RunAs";
+import { ExtractedCommand } from "../command/extractor/ExtractedCommand";
 import { GowonClient } from "../GowonClient";
 import { Logger } from "../Logger";
 import { Payload } from "./Payload";
@@ -16,7 +16,7 @@ export interface ContextParamaters<CustomContextT> {
   custom?: CustomContextT;
   logger?: Logger;
   payload: Payload;
-  runAs: RunAs;
+  extract: ExtractedCommand;
   gowonClient: GowonClient;
 }
 
@@ -26,7 +26,7 @@ export class GowonContext<
   private _command: Command | undefined;
   private custom: T;
   private _payload: Payload;
-  private _runAs: RunAs;
+  private _extract: ExtractedCommand;
   private _logger: Logger;
   private gowonClient: GowonClient;
 
@@ -46,7 +46,7 @@ export class GowonContext<
     this._command = params.command;
     this._payload = params.payload;
     this.custom = (params.custom || {}) as T;
-    this._runAs = params.runAs;
+    this._extract = params.extract;
     this.gowonClient = params.gowonClient;
     this._logger = params.logger || new Logger();
   }
@@ -59,8 +59,8 @@ export class GowonContext<
     return this._payload;
   }
 
-  get runAs(): RunAs {
-    return this._runAs;
+  get extract(): ExtractedCommand {
+    return this._extract;
   }
 
   get guild(): Guild | undefined {
