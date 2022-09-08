@@ -6,7 +6,7 @@ import { lilacClient } from "../../lib/Lilac/client";
 import { BaseService } from "../BaseService";
 
 export class LilacAPIService extends BaseService {
-  async query<R, V>(
+  protected async query<R, V>(
     ctx: GowonContext,
     query: DocumentNode,
     variables?: V,
@@ -27,7 +27,7 @@ export class LilacAPIService extends BaseService {
     }
   }
 
-  async mutate<R, V>(
+  protected async mutate<R, V>(
     ctx: GowonContext,
     mutation: DocumentNode,
     variables?: V
@@ -46,7 +46,7 @@ export class LilacAPIService extends BaseService {
     }
   }
 
-  subscribe<R, V>(
+  protected subscribe<R, V>(
     ctx: GowonContext,
     subscription: DocumentNode,
     variables?: V

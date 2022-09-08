@@ -12,6 +12,7 @@ import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/Num
 import { GowonContext } from "../../../lib/context/Context";
 import { Flag } from "../../../lib/context/arguments/argumentTypes/Flag";
 import { bold, code } from "../../../helpers/discord";
+import { MessageCollector } from "discord.js";
 
 const args = {
   poolAmount: new NumberArgument({
@@ -43,6 +44,7 @@ export class Me extends JumbleChildCommand<typeof args> {
   arguments = args;
 
   slashCommand = true;
+  slashCommandName = "start";
 
   tagConsolidator = new TagConsolidator();
   wordBlacklistService = ServiceRegistry.get(WordBlacklistService);
@@ -129,10 +131,12 @@ export class Me extends JumbleChildCommand<typeof args> {
       _${lineConsolidator.consolidate()}_`
       )
       .setFooter({
-        text: `Run "${this.prefix}j <your guess>" to make a guess or "${this.prefix}j quit" to quit`,
+        text: `Simply send a message to make a guess or type "quit" to quit`,
       });
 
     await this.send(embed);
+
+    this.watchForAnswers(jumbledArtist);
   }
 
   private async handleAlreadyJumbled(jumble: JumbledArtist) {
@@ -179,5 +183,42 @@ export class Me extends JumbleChildCommand<typeof args> {
       !this.wordBlacklistService.isAllowed(this.ctx as GowonContext, item)
       ? this.jumbleItem(item)
       : jumbled;
+  }
+
+  private watchForAnswers(jumble: JumbledArtist) {
+    const messageCollector = new MessageCollector(this.ctx.payload.channel, {
+      time: 60 * 2 * 1000,
+      filter: (message) => message.author.id === this.author.id,
+    });
+
+    messageCollector.on("collect", async (message) => {
+      if (
+        ["stop", "quit", "cancel"].includes(
+          message.content.toLowerCase().trim()
+        )
+      ) {
+        this.stopJumble(jumble.unjumbled, jumbleRedisKey);
+        messageCollector.stop();
+      } else if (this.isGuessCorrect(message.content, jumble.unjumbled)) {
+        await this.handleCorrectGuess(jumble.unjumbled, jumbleRedisKey);
+        messageCollector.stop();
+      } else {
+        message.react(shuffle(this.wrongAnswerEmojis)[0]);
+      }
+    });
+
+    messageCollector.on("end", async (_message, reason) => {
+      if (reason === "time") {
+        this.redisService.sessionDelete(this.ctx, jumbleRedisKey);
+
+        const embed = this.newEmbed()
+          .setAuthor(this.generateEmbedAuthor("Jumble"))
+          .setDescription(
+            `You ran out of time! The answer was ${bold(jumble.unjumbled)}`
+          );
+
+        await this.send(embed);
+      }
+    });
   }
 }

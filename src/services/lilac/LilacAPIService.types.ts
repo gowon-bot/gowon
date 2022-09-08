@@ -31,10 +31,29 @@ export interface LilacAlbumInput {
   artist?: LilacArtistInput;
 }
 
+export interface LilacTrackInput {
+  name?: string;
+  artist?: LilacArtistInput;
+  album?: LilacArtistInput;
+}
+
 export interface LilacWhoKnowsInput {
   guildID?: string;
   limit?: number;
   userIDs?: string[];
+}
+
+export interface LilacPaginationInput {
+  page: number;
+  perPage: number;
+}
+
+export interface LilacScrobbleFilters {
+  artist?: LilacArtistInput;
+  album?: LilacAlbumInput;
+  track?: LilacTrackInput;
+  user?: LilacUserInput;
+  pagination?: LilacPaginationInput;
 }
 
 // Responses
@@ -43,6 +62,13 @@ export interface IndexingProgress<
 > {
   action: Action;
   page: number;
+  totalPages: number;
+}
+
+export interface LilacPagination {
+  currentPage: number;
+  perPage: number;
+  totalItems: number;
   totalPages: number;
 }
 
@@ -86,6 +112,22 @@ export interface LilacAlbum {
   artist: LilacAlbum;
 }
 
+export interface LilacTrack {
+  id: number;
+  name: string;
+  artist: LilacArtist;
+  album?: LilacAlbum;
+}
+
+export interface LilacScrobble {
+  artist: LilacArtist;
+  album: LilacAlbum;
+  track: LilacTrack;
+
+  scrobbledAt: LilacDate;
+  user: RawLilacUser;
+}
+
 export interface LilacWhoKnowsRow {
   user: LilacUser;
   playcount: number;
@@ -95,4 +137,9 @@ export interface LilacArtistCount {
   user: LilacUser;
   playcount: number;
   artist: LilacArtist;
+}
+
+export interface LilacScrobblesPage {
+  pagination: LilacPagination;
+  scrobbles: LilacScrobble[];
 }

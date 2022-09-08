@@ -10,6 +10,7 @@ import {
 } from "./connector";
 import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";
 import { bold, italic } from "../../../../helpers/discord";
+import { Emoji } from "../../../../lib/Emoji";
 
 const args = {
   ...prefabArguments.track,
@@ -70,7 +71,7 @@ export default class LastScrobbledTrack extends MirrorballBaseCommand<
         )
       )
       .setDescription(
-        `${perspective.upper.name} ${
+        `${Emoji.usesIndexedDataDescription} ${perspective.upper.name} ${
           this.variationWasUsed("first") ? "first" : "last"
         } scrobbled ${italic(play.track.name)} by ${bold(
           play.track.artist.name

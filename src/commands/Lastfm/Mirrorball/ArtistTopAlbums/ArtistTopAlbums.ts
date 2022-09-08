@@ -14,6 +14,7 @@ import {
   prefabFlags,
 } from "../../../../lib/context/arguments/prefabArguments";
 import { bold, italic } from "../../../../helpers/discord";
+import { Emoji } from "../../../../lib/Emoji";
 
 const args = {
   ...prefabArguments.artist,
@@ -76,7 +77,10 @@ export default class ArtistTopAlbums extends MirrorballBaseCommand<
     const average = totalScrobbles / topAlbums.length;
 
     const embed = this.newEmbed()
-      .setTitle(`Top ${artist.name} albums for ${username}`)
+      .setAuthor(this.generateEmbedAuthor("Artist top albums"))
+      .setTitle(
+        `${Emoji.usesIndexedDataLink} Top ${artist.name} albums for ${username}`
+      )
       .setURL(LinkGenerator.libraryArtistTopAlbums(username, artist.name));
 
     const simpleScrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {

@@ -3,6 +3,7 @@ import { bold, italic } from "../../../../../helpers/discord";
 import { Variation } from "../../../../../lib/command/Command";
 import { VARIATIONS } from "../../../../../lib/command/variations";
 import { prefabArguments } from "../../../../../lib/context/arguments/prefabArguments";
+import { Emoji } from "../../../../../lib/Emoji";
 import {
   displayNumber,
   displayNumberedList,
@@ -82,9 +83,9 @@ export default class WhoKnowsTrack extends WhoKnowsBaseCommand<
 
     const embed = this.whoKnowsEmbed()
       .setTitle(
-        `Who knows ${italic(trackDisplay)} by ${bold(artistDisplay)}${
-          this.isGlobal() ? " globally" : ""
-        }?`
+        `${Emoji.usesIndexedData} Who knows ${italic(trackDisplay)} by ${bold(
+          artistDisplay
+        )}${this.isGlobal() ? " globally" : ""}?`
       )
       .setDescription(
         !track || rows.length === 0

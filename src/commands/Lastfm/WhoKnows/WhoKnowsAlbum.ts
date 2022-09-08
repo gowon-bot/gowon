@@ -3,6 +3,7 @@ import { LinkGenerator } from "../../../helpers/lastFM";
 import { Variation } from "../../../lib/command/Command";
 import { VARIATIONS } from "../../../lib/command/variations";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
+import { Emoji } from "../../../lib/Emoji";
 import { LineConsolidator } from "../../../lib/LineConsolidator";
 import {
   displayLink,
@@ -97,9 +98,9 @@ export default class WhoKnowsAlbum extends WhoKnowsBaseCommand<typeof args> {
     const embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor("Who knows album"))
       .setTitle(
-        `Who knows ${italic(album.name)} by ${bold(album.artist.name)} ${
-          this.isGlobal() ? "globally" : `in ${this.requiredGuild.name}`
-        }?`
+        `${Emoji.usesIndexedData} Who knows ${italic(album.name)} by ${bold(
+          album.artist.name
+        )} ${this.isGlobal() ? "globally" : `in ${this.requiredGuild.name}`}?`
       )
       .setDescription(lineConsolidator.consolidate())
       .setFooter({

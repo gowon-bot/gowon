@@ -44,6 +44,7 @@ import { PermissionsCacheService } from "../lib/permissions/PermissionsCacheServ
 import { LilacUsersService } from "./lilac/LilacUsersService";
 import { LilacAPIService } from "./lilac/LilacAPIService";
 import { LilacWhoKnowsService } from "./lilac/LilacWhoKnowsService";
+import { LilacLibraryService } from "./lilac/LilacLibraryService";
 
 export type Service<T = any> = { new (): T };
 
@@ -70,8 +71,9 @@ const services: Service[] = [
   LastFMArguments,
 
   // Lilac services
-  LilacUsersService,
   LilacAPIService,
+  LilacLibraryService,
+  LilacUsersService,
   LilacWhoKnowsService,
 
   MetaService,

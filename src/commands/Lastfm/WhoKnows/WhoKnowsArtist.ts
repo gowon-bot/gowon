@@ -6,6 +6,7 @@ import {
   prefabArguments,
   prefabFlags,
 } from "../../../lib/context/arguments/prefabArguments";
+import { Emoji } from "../../../lib/Emoji";
 import { LineConsolidator } from "../../../lib/LineConsolidator";
 import {
   displayLink,
@@ -111,7 +112,7 @@ export default class WhoKnowsArtist extends WhoKnowsBaseCommand<typeof args> {
     const embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor("Who knows artist"))
       .setTitle(
-        `Who knows ${bold(artist.name)} ${
+        `${Emoji.usesIndexedData} Who knows ${bold(artist.name)} ${
           this.isGlobal() ? "globally" : `in ${this.requiredGuild.name}`
         }?`
       )

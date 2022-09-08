@@ -1,4 +1,4 @@
-import { LastFMBaseCommand } from "../LastFMBaseCommand";
+import { LastFMBaseCommand } from "../Lastfm/LastFMBaseCommand";
 
 // Here for archival purposes
 export default class ScraperAlbumTopTracks extends LastFMBaseCommand {

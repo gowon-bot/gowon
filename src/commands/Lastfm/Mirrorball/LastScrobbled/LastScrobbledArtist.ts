@@ -14,6 +14,7 @@ import {
   prefabFlags,
 } from "../../../../lib/context/arguments/prefabArguments";
 import { bold } from "../../../../helpers/discord";
+import { Emoji } from "../../../../lib/Emoji";
 
 const args = {
   ...standardMentions,
@@ -77,7 +78,7 @@ export default class LastScrobbledArtist extends MirrorballBaseCommand<
         )
       )
       .setDescription(
-        `${perspective.upper.name} ${
+        `${Emoji.usesIndexedDataDescription} ${perspective.upper.name} ${
           this.variationWasUsed("first") ? "first" : "last"
         } scrobbled ${bold(play.track.artist.name)} on ${displayDate(
           convertMirrorballDate(play.scrobbledAt)

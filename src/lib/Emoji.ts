@@ -39,6 +39,9 @@ export const Emoji = {
   404: "<:404:869383534429737031>",
   gowonScrobbled: "<:gowonScrobbled:944727673022849154>",
   fip: "<:fip:959302552443314227>",
+  usesIndexedData: "<:uses_indexed_data:1017231359800004639>",
+  usesIndexedDataLink: "<:uses_indexed_data2:1017232486935298168>",
+  usesIndexedDataDescription: "<:uses_indexed_data3:1017233726373122078>",
 
   fullStar: "<:fullStar:843763033858899968>",
   halfStar: "<:halfStar:843763307994284032>",

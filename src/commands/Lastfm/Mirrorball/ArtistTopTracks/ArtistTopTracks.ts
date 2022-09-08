@@ -14,6 +14,7 @@ import {
   prefabFlags,
 } from "../../../../lib/context/arguments/prefabArguments";
 import { bold, italic } from "../../../../helpers/discord";
+import { Emoji } from "../../../../lib/Emoji";
 
 const args = {
   ...prefabArguments.artist,
@@ -73,7 +74,12 @@ export default class ArtistTopTracks extends MirrorballBaseCommand<
       );
     }
     const embed = this.newEmbed()
-      .setTitle(`Top ${bold(artist.name)} tracks for ${username}`)
+      .setAuthor(this.generateEmbedAuthor("Artist top tracks"))
+      .setTitle(
+        `${Emoji.usesIndexedDataLink} Top ${bold(
+          artist.name
+        )} tracks for ${username}`
+      )
       .setURL(LinkGenerator.libraryArtistTopTracks(username, artist.name));
 
     const totalScrobbles = topTracks.reduce((sum, t) => sum + t.playcount, 0);

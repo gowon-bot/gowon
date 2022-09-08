@@ -1,4 +1,4 @@
-import { LastFMBaseCommand } from "../LastFMBaseCommand";
+import { LastFMBaseCommand } from "../Lastfm/LastFMBaseCommand";
 
 export default class ScraperArtistTopAlbums extends LastFMBaseCommand {
   idSeed = "nature gaga";

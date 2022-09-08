@@ -11,6 +11,7 @@ import { displayNumber } from "../../../../lib/views/displays";
 import { standardMentions } from "../../../../lib/context/arguments/mentionTypes/mentions";
 import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";
 import { bold, italic } from "../../../../helpers/discord";
+import { Emoji } from "../../../../lib/Emoji";
 
 const args = {
   ...prefabArguments.track,
@@ -73,10 +74,11 @@ export default class TrackTopAlbums extends MirrorballBaseCommand<
     const average = totalScrobbles / topAlbums.length;
 
     const embed = this.newEmbed()
+      .setAuthor(this.generateEmbedAuthor("Track top albums"))
       .setTitle(
-        `Top albums for ${italic(track.name)} by ${bold(track.artist)} in ${
-          perspective.possessive
-        } library`
+        `${Emoji.usesIndexedDataLink} Top albums for ${italic(
+          track.name
+        )} by ${bold(track.artist)} in ${perspective.possessive} library`
       )
       .setURL(
         LinkGenerator.libraryTrackPage(username, track.artist, track.name)

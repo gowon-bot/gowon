@@ -3,7 +3,6 @@ import { jumbleRedisKey, JumbledArtist } from "./JumbleParentCommand";
 import { LogicError } from "../../../errors/errors";
 import { shuffle } from "../../../helpers";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
-import { bold } from "../../../helpers/discord";
 
 const args = {
   guess: new StringArgument({
@@ -36,26 +35,13 @@ export class Guess extends JumbleChildCommand<typeof args> {
       );
     if (!guess) throw new LogicError("please make a guess");
 
-    if (
-      guess.toLowerCase().replace(/\s+/g, " ") ===
-      jumbledArtist.unjumbled.toLowerCase().replace(/\s+/g, " ")
-    ) {
-      this.redisService.sessionDelete(this.ctx, jumbleRedisKey);
-
-      const embed = this.newEmbed()
-        .setAuthor(this.generateEmbedAuthor("Jumble guess"))
-        .setDescription(
-          `You are correct! The artist was ${bold(jumbledArtist.unjumbled)}`
-        );
-
-      await this.send(embed);
+    if (this.isGuessCorrect(guess, jumbledArtist.unjumbled)) {
+      await this.handleCorrectGuess(jumbledArtist.unjumbled, jumbleRedisKey);
     } else {
       if (this.payload.isMessage()) {
-        await this.payload.source.react(
-          shuffle(["😔", "😖", "😠", "😕", "😣", "😐", "😪"])[0]
-        );
+        await this.payload.source.react(shuffle(this.wrongAnswerEmojis)[0]);
       } else if (this.payload.isInteraction()) {
-        this.send(shuffle(["😔", "😖", "😠", "😕", "😣", "😐", "😪"])[0], {
+        this.send(shuffle(this.wrongAnswerEmojis)[0], {
           ephemeral: true,
         });
       }

@@ -8,6 +8,7 @@ import {
   prefabArguments,
   prefabFlags,
 } from "../../../../../lib/context/arguments/prefabArguments";
+import { Emoji } from "../../../../../lib/Emoji";
 import { LineConsolidator } from "../../../../../lib/LineConsolidator";
 import {
   displayDate,
@@ -135,9 +136,9 @@ export default class WhoFirstArtist extends WhoKnowsBaseCommand<
 
     const embed = this.whoKnowsEmbed()
       .setTitle(
-        `Who ${whoLast ? "last" : "first"} scrobbled ${bold(artist.name)}${
-          this.isGlobal() ? " globally" : ""
-        }?`
+        `${Emoji.usesIndexedData} Who ${
+          whoLast ? "last" : "first"
+        } scrobbled ${bold(artist.name)}${this.isGlobal() ? " globally" : ""}?`
       )
       .setDescription(lineConsolidator.consolidate())
       .setFooter({ text: this.footerHelp(senderUser, senderMirrorballUser) });
