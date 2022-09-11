@@ -32,7 +32,7 @@ export class TimeRangeArgument<
   ): TimeRange | undefined {
     const cleanContent = this.cleanContent(ctx, content);
 
-    return this.timeRangeParser.parse(cleanContent) || this.options.default;
+    return this.timeRangeParser.parse(cleanContent) || this.getDefault();
   }
 
   parseFromInteraction(
@@ -43,7 +43,7 @@ export class TimeRangeArgument<
     const range = interaction.options.getString(argumentName);
     const timeRange = range ? this.timeRangeParser.parse(range) : undefined;
 
-    return timeRange || this.options.default;
+    return timeRange || this.getDefault();
   }
 
   addAsOption(slashCommand: SlashCommandBuilder, argumentName: string) {

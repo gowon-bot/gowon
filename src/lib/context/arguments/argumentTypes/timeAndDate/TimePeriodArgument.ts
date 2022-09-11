@@ -26,7 +26,7 @@ export class TimePeriodArgument<
     return ServiceRegistry.get(GowonService);
   }
 
-  timePeriodParser = new TimePeriodParser({ fallback: this.options.default });
+  timePeriodParser = new TimePeriodParser({ fallback: this.getDefault() });
 
   constructor(options: OptionsT | {} = {}) {
     super(options);

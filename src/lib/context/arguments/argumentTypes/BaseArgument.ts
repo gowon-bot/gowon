@@ -27,7 +27,7 @@ export interface BaseArgumentOptions<ReturnT = any> {
       };
   description: string;
   slashCommandOption: boolean;
-  default?: ReturnT;
+  default?: ReturnT | (() => ReturnT);
 }
 
 const defaultDescription = "This argument doesn't have a description yet";
@@ -46,7 +46,7 @@ export type ArgumentReturnType<T, OptionsT> = OptionsT extends {
   required: true;
 }
   ? T
-  : OptionsT extends { default: T }
+  : OptionsT extends { default: T } | { default: () => T }
   ? T
   : OptionsT extends { required: { customMessage: string } }
   ? T
@@ -154,6 +154,12 @@ export abstract class BaseArgument<
     } else {
       return argument ?? options.default;
     }
+  }
+
+  protected getDefault(): ReturnT | undefined {
+    if (this.options.default instanceof Function) {
+      return this.options.default();
+    } else return this.options.default;
   }
 
   private shouldReturnDefault(array: any[], index: number | Slice): boolean {

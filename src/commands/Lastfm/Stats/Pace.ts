@@ -17,7 +17,7 @@ const args = {
     description: "The milestone you want to hit (defaults to your next 25k)",
   }),
   timeRange: new TimeRangeArgument({
-    default: TimeRange.fromDuration({ weeks: 1 }),
+    default: () => TimeRange.fromDuration({ weeks: 1 }),
     useOverall: true,
     description: "The time range to calculate your scrobble rate over",
   }),

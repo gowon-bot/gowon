@@ -31,7 +31,7 @@ export class DateArgument<
     const cleanContent = this.cleanContent(ctx, content);
     const date = parseDate(cleanContent, ...this.options.parsers);
 
-    return (date || this.options.default)!;
+    return (date || this.getDefault())!;
   }
 
   parseFromInteraction(
@@ -45,7 +45,7 @@ export class DateArgument<
       ? parseDate(dateString, ...this.options.parsers)
       : undefined;
 
-    return (date || this.options.default)!;
+    return (date || this.getDefault())!;
   }
 
   addAsOption(slashCommand: SlashCommandBuilder, argumentName: string) {

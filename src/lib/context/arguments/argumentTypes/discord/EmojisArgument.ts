@@ -49,7 +49,7 @@ export class EmojisArgument<
 
     const parsed = string ? this.parseFromString(string) : undefined;
 
-    return parsed || this.options.default;
+    return parsed || this.getDefault();
   }
 
   addAsOption(slashCommand: SlashCommandBuilder, argumentName: string) {

@@ -8,7 +8,7 @@ import { code } from "../../../../helpers/discord";
 const args = {
   timeRange: new TimeRangeArgument({
     useOverall: true,
-    default: TimeRange.overall(),
+    default: () => TimeRange.overall(),
   }),
 } as const;
 

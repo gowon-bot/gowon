@@ -11,7 +11,7 @@ const args = {
   date: new DateArgument(),
   timeRange: new TimeRangeArgument({
     useOverall: true,
-    default: TimeRange.overall(),
+    default: () => TimeRange.overall(),
   }),
 } as const;
 
@@ -44,7 +44,7 @@ export default class Scrobbles extends LastFMBaseCommand<typeof args> {
       this.ctx,
       requestable,
       date || timeRange.from,
-      date ? new Date() : timeRange.to
+      date ? undefined : timeRange.to
     );
 
     const sentMessage = await this.oldReply(

@@ -7,7 +7,7 @@ import { bold } from "../../helpers/discord";
 const args = {
   timeRange: new TimeRangeArgument({
     useOverall: false,
-    default: TimeRange.fromDuration({ weeks: 1 }),
+    default: () => TimeRange.fromDuration({ weeks: 1 }),
   }),
 } as const;
 

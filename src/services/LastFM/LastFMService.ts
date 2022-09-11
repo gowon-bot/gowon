@@ -343,7 +343,7 @@ export class LastFMService extends LastFMAPIService {
     if (from) params.from = ~~(from.getTime() / 1000);
     if (to) params.to = ~~(to.getTime() / 1000);
 
-    let recentTracks = await this.recentTracks(ctx, params);
+    const recentTracks = await this.recentTracks(ctx, params);
 
     return recentTracks.meta.total || 0;
   }
