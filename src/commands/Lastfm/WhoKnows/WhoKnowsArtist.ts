@@ -24,7 +24,7 @@ const args = {
 
 export default class WhoKnowsArtist extends WhoKnowsBaseCommand<typeof args> {
   idSeed = "bvndit songhee";
-  description = "See who knows an artist";
+  description = "Shows who has scrobbled an artist in a server";
   subcategory = "whoknows";
   aliases = ["wk", "fmwk"];
   guildRequired = true;

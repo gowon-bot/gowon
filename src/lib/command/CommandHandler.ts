@@ -109,8 +109,6 @@ export class CommandHandler {
       message.guild!.id
     );
 
-    console.log(extract);
-
     if (extract?.command instanceof ParentCommand) {
       const defaultID = extract.command?.default?.()?.id;
 

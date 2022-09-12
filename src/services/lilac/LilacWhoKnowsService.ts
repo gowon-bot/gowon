@@ -4,13 +4,16 @@ import { LilacAPIService } from "./LilacAPIService";
 import {
   LilacAlbum,
   LilacAlbumInput,
+  LilacAmbiguousTrack,
   LilacArtist,
   LilacArtistInput,
+  LilacTrackInput,
   LilacUserInput,
   LilacWhoKnowsAlbumRank,
   LilacWhoKnowsArtistRank,
   LilacWhoKnowsInput,
   LilacWhoKnowsRow,
+  LilacWhoKnowsTrackRank,
 } from "./LilacAPIService.types";
 
 export class LilacWhoKnowsService extends LilacAPIService {
@@ -128,6 +131,66 @@ export class LilacWhoKnowsService extends LilacAPIService {
       `,
       {
         album: { name: album, artist: { name: artist } },
+        settings: { guildID, limit },
+        user: { discordID },
+      }
+    );
+  }
+
+  public async whoKnowsTrack(
+    ctx: GowonContext,
+    artist: string,
+    track: string,
+    discordID: string,
+    guildID?: string,
+    limit?: 15
+  ) {
+    return await this.query<
+      {
+        whoKnowsTrack: { track: LilacAmbiguousTrack; rows: LilacWhoKnowsRow[] };
+        whoKnowsTrackRank: LilacWhoKnowsTrackRank;
+      },
+      {
+        track: LilacTrackInput;
+        settings: LilacWhoKnowsInput;
+        user: LilacUserInput;
+      }
+    >(
+      ctx,
+      gql`
+        query whoKnowsTrack(
+          $track: TrackInput!
+          $settings: WhoKnowsInput!
+          $user: UserInput!
+        ) {
+          whoKnowsTrack(track: $track, settings: $settings) {
+            track {
+              name
+              artist {
+                name
+              }
+            }
+
+            rows {
+              playcount
+              user {
+                username
+                discordID
+                privacy
+                lastIndexed
+              }
+            }
+          }
+
+          whoKnowsTrackRank(track: $track, settings: $settings, user: $user) {
+            rank
+            playcount
+            totalListeners
+          }
+        }
+      `,
+      {
+        track: { name: track, artist: { name: artist } },
         settings: { guildID, limit },
         user: { discordID },
       }

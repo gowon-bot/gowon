@@ -48,15 +48,6 @@ export class GowonService {
   }
 
   public removeCommandName(ctx: GowonContext, string: string): string {
-    console.log(
-      new RegExp(
-        `${
-          userMentionAtStartRegex(ctx.client.client.user!.id).source
-        }\\s+${ctx.extract.asRemovalRegexString()}`,
-        "i"
-      )
-    );
-
     return string
       .replace(
         new RegExp(

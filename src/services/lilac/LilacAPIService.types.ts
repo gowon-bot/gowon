@@ -96,8 +96,18 @@ export interface LilacWhoKnowsAlbumRank {
   rank: number;
   totalListeners: number;
 
-  above: LilacArtistCount;
-  below: LilacArtistCount;
+  above: LilacAlbumCount;
+  below: LilacAlbumCount;
+}
+
+export interface LilacWhoKnowsTrackRank {
+  track: LilacAmbiguousTrack;
+  playcount: number;
+  rank: number;
+  totalListeners: number;
+
+  above: LilacAmbiguousTrackCount;
+  below: LilacAmbiguousTrackCount;
 }
 
 // Objects
@@ -119,6 +129,11 @@ export interface LilacTrack {
   album?: LilacAlbum;
 }
 
+export interface LilacAmbiguousTrack {
+  name: string;
+  artist: LilacArtist;
+}
+
 export interface LilacScrobble {
   artist: LilacArtist;
   album: LilacAlbum;
@@ -137,6 +152,18 @@ export interface LilacArtistCount {
   user: LilacUser;
   playcount: number;
   artist: LilacArtist;
+}
+
+export interface LilacAlbumCount {
+  user: LilacUser;
+  playcount: number;
+  album: LilacAlbum;
+}
+
+export interface LilacAmbiguousTrackCount {
+  user: LilacUser;
+  playcount: number;
+  album: LilacAlbum;
 }
 
 export interface LilacScrobblesPage {

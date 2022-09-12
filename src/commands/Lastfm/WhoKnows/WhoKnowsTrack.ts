@@ -13,17 +13,18 @@ import {
 import { WhoKnowsBaseCommand } from "./LilacWhoKnowsBaseCommand";
 
 const args = {
-  ...prefabArguments.album,
+  ...prefabArguments.track,
 } as const;
 
-export default class WhoKnowsAlbum extends WhoKnowsBaseCommand<typeof args> {
-  idSeed = "redsquare green";
+export default class WhoKnowsTrack extends WhoKnowsBaseCommand<typeof args> {
+  idSeed = "redsquare lina";
 
+  aliases = ["wkt"];
   subcategory = "whoknows";
-  description = "Shows who has scrobbled an album in a server";
-  aliases = ["wkl", "wka", "fmwka"];
 
-  variations: Variation[] = [VARIATIONS.global("wkl", "wka")];
+  variations: Variation[] = [VARIATIONS.global("wkt")];
+
+  description = "Shows who has scrobbled a track in a server";
 
   slashCommand = true;
 
@@ -32,43 +33,41 @@ export default class WhoKnowsAlbum extends WhoKnowsBaseCommand<typeof args> {
   async run() {
     const { senderRequestable, senderUser } = await this.getMentions({
       senderRequired:
-        !this.parsedArguments.artist || !this.parsedArguments.album,
+        !this.parsedArguments.artist || !this.parsedArguments.track,
     });
 
     const senderLilacUser = await this.lilacUsersService.fetchUser(this.ctx, {
       discordID: this.author.id,
     });
 
-    const { artist: artistName, album: albumName } =
-      await this.lastFMArguments.getAlbum(this.ctx, senderRequestable, {
-        redirect: true,
-      });
+    const { artist: artistName, track: trackName } =
+      await this.lastFMArguments.getTrack(this.ctx, senderRequestable);
 
     const guildID = this.isGlobal() ? undefined : this.requiredGuild.id;
 
-    const { whoKnowsAlbum: whoKnows, whoKnowsAlbumRank: whoKnowsRank } =
-      await this.lilacWhoKnowsService.whoKnowsAlbum(
+    const { whoKnowsTrack: whoKnows, whoKnowsTrackRank: whoKnowsRank } =
+      await this.lilacWhoKnowsService.whoKnowsTrack(
         this.ctx,
         artistName,
-        albumName,
+        trackName,
         this.author.id,
         guildID
       );
 
     await this.cacheUserInfo(whoKnows.rows.map((u) => u.user));
 
-    const { rows, album } = whoKnows;
+    const { rows, track } = whoKnows;
     const { rank, playcount } = whoKnowsRank;
 
     const lineConsolidator = new LineConsolidator();
 
     lineConsolidator.addLines(
       {
-        shouldDisplay: !album || rows.length === 0,
-        string: "No one knows this album",
+        shouldDisplay: !track || rows.length === 0,
+        string: "No one knows this track",
       },
       {
-        shouldDisplay: album && rows.length !== 0,
+        shouldDisplay: track && rows.length !== 0,
         string: displayNumberedList(
           rows
             .slice(0, 15)
@@ -96,10 +95,10 @@ export default class WhoKnowsAlbum extends WhoKnowsBaseCommand<typeof args> {
     );
 
     const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Who knows album"))
+      .setAuthor(this.generateEmbedAuthor("Who knows track"))
       .setTitle(
-        `${Emoji.usesIndexedData} Who knows ${italic(album.name)} by ${bold(
-          album.artist.name
+        `${Emoji.usesIndexedData} Who knows ${italic(track.name)} by ${bold(
+          track.artist.name
         )} ${this.isGlobal() ? "globally" : `in ${this.requiredGuild.name}`}?`
       )
       .setDescription(lineConsolidator.consolidate())
