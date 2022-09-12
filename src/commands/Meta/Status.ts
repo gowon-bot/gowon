@@ -20,7 +20,7 @@ export default class Status extends Command {
     const embed = this.newEmbed()
       .setTitle("Gowon status:")
       .setDescription(
-        "**Latency**: ```\nMirrorball.....pinging\nDiscord........pinging\nLilac..........pinging\nLast.fm........pinging\n```"
+        "**Latency**: External:\b```\nDiscord........pinging\nLast.fm........pinging\n```\nGowon:\n```\nMirrorball.....pinging\nLilac..........pinging\n```"
       );
 
     const mirrorballLatency = await this.mirrorballLatency();
@@ -31,12 +31,18 @@ export default class Status extends Command {
     await sentMessage.edit({
       embeds: [
         embed.setDescription(
-          "**Latency**:\n```\n" +
-            `Mirrorball.....${this.displayLatency(mirrorballLatency)}
+          `**Latency**:
+External:
+\`\`\`
 Discord........${this.displayLatency(discordLatency)}
+Last.fm........${this.displayLatency(lastfmLatency)}
+\`\`\`
+Gowon:
+\`\`\`
+Mirrorball.....${this.displayLatency(mirrorballLatency)}
 Lilac..........${this.displayLatency(lilacLatency)}
-Last.fm........${this.displayLatency(lastfmLatency)}` +
-            "\n```"
+\`\`\`
+`
         ),
       ],
     });
