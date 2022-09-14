@@ -83,7 +83,7 @@ export class LilacWhoKnowsService extends LilacAPIService {
     album: string,
     discordID: string,
     guildID?: string,
-    limit?: 15
+    limit = 15
   ) {
     return await this.query<
       {
@@ -143,7 +143,7 @@ export class LilacWhoKnowsService extends LilacAPIService {
     track: string,
     discordID: string,
     guildID?: string,
-    limit?: 15
+    limit = 15
   ) {
     return await this.query<
       {
