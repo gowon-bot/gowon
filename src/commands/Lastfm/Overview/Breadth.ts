@@ -13,11 +13,11 @@ export class Breadth extends OverviewChildCommand {
   slashCommand = true;
 
   async run() {
-    let { perspective } = await this.getMentions();
+    const { perspective } = await this.getMentions();
 
-    let breadth = await this.calculator.breadth();
+    const breadth = await this.calculator.breadth();
 
-    let embed = (await this.overviewEmbed()).setDescription(
+    const embed = (await this.overviewEmbed()).setDescription(
       `${perspective.upper.possessive} breadth rating is ${bold(
         displayNumber(breadth.rating.toFixed(1))
       )} _(${breadth.ratingString})_`

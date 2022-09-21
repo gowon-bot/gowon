@@ -10,11 +10,11 @@ export class AvgPerDay extends OverviewChildCommand {
   slashCommand = true;
 
   async run() {
-    let { perspective } = await this.getMentions();
+    const { perspective } = await this.getMentions();
 
-    let avg = await this.calculator.avgPerDay();
+    const avg = await this.calculator.avgPerDay();
 
-    let embed = (await this.overviewEmbed()).setDescription(
+    const embed = (await this.overviewEmbed()).setDescription(
       `${perspective.upper.plusToHave} an average ${bold(
         avg.asString
       )} scrobbles per day!`

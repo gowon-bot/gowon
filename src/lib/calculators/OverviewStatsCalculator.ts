@@ -55,7 +55,7 @@ export class OverviewStatsCalculator {
     private ctx: GowonContext,
     private requestable: Requestable,
     private userID: string | undefined,
-    private timePeriod: LastFMPeriod
+    private timePeriod: LastFMPeriod | undefined
   ) {}
 
   async hasCrownStats(): Promise<boolean> {
@@ -74,7 +74,9 @@ export class OverviewStatsCalculator {
 
   async scrobbleCount(): Promise<number> {
     if (!this.cache.scrobbleCount) {
-      const timeRange = TimeRange.fromPeriod(this.timePeriod);
+      const timeRange = TimeRange.fromPeriod(this.timePeriod, {
+        fallback: "overall",
+      });
 
       this.cache.scrobbleCount = await this.lastFMService.getNumberScrobbles(
         this.ctx,
@@ -171,7 +173,9 @@ export class OverviewStatsCalculator {
     ]);
 
     const beginDate =
-      TimeRange.fromPeriod(this.timePeriod)?.from || userInfo.registeredAt;
+      TimeRange.fromPeriod(this.timePeriod, {
+        fallback: "overall",
+      })?.from || userInfo.registeredAt;
 
     const diff = Math.abs(differenceInDays(beginDate, new Date()));
 

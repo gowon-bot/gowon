@@ -422,7 +422,7 @@ export class LastFMAPIService extends BaseService {
   ): Promise<T> {
     let builtParams = this.parseUsername({
       ...this.defaultParams,
-      ...params,
+      ...this.filterParams(params),
       method,
     });
 
@@ -557,5 +557,15 @@ export class LastFMAPIService extends BaseService {
 
         return acc;
       }, {} as any);
+  }
+
+  private filterParams(params: SimpleMap): SimpleMap {
+    return Object.entries(params).reduce((acc, [key, value]) => {
+      if (value !== undefined) {
+        acc[key] = value;
+      }
+
+      return acc;
+    }, {} as SimpleMap);
   }
 }

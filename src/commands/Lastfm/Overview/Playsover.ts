@@ -11,14 +11,14 @@ export class Playsover extends OverviewChildCommand {
   slashCommand = true;
 
   async run() {
-    let { perspective } = await this.getMentions();
+    const { perspective } = await this.getMentions();
 
     // Cache the top artists response
     await this.calculator.topArtists();
 
-    let artistCount = await this.calculator.totalArtists();
+    const artistCount = await this.calculator.totalArtists();
 
-    let embed = (await this.overviewEmbed()).setDescription(`Among ${
+    const embed = (await this.overviewEmbed()).setDescription(`Among ${
       perspective.possessivePronoun
     } top ${displayNumber(
       artistCount.asNumber > 1000 ? 1000 : artistCount.asNumber,

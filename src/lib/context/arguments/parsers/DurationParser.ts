@@ -57,7 +57,9 @@ export class DurationParser {
     return duration as Duration;
   }
 
-  isDuration(string: string): boolean {
+  isDuration(string: string | undefined): boolean {
+    if (!string) return false;
+
     const duration = this.parse(string);
 
     return Object.keys(duration).length > 0;

@@ -12,7 +12,7 @@ export class Per extends OverviewChildCommand {
   slashCommand = true;
 
   async run() {
-    let { perspective } = await this.getMentions();
+    const { perspective } = await this.getMentions();
 
     // Cache the top entities responses
     await Promise.all([
@@ -27,7 +27,7 @@ export class Per extends OverviewChildCommand {
       this.calculator.tracksPerAlbum(),
     ]);
 
-    let embed = (await this.overviewEmbed())
+    const embed = (await this.overviewEmbed())
       .setDescription(`${perspective.upper.regularVerb(
       "listen"
     )} to an average of...

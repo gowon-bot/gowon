@@ -30,9 +30,9 @@ export class SumTop extends OverviewChildCommand<typeof args> {
   slashCommand = true;
 
   async run() {
-    let top = this.parsedArguments.top;
+    const top = this.parsedArguments.top;
 
-    let { perspective } = await this.getMentions();
+    const { perspective } = await this.getMentions();
 
     if (top > 1000 || top < 2)
       throw new LogicError("Please enter a valid number (between 2 and 1000)");
@@ -48,7 +48,7 @@ export class SumTop extends OverviewChildCommand<typeof args> {
       this.calculator.sumTopPercent(top),
     ]);
 
-    let embed = (await this.overviewEmbed()).setDescription(
+    const embed = (await this.overviewEmbed()).setDescription(
       `${perspective.upper.possessive} top ${bold(
         displayNumber(top, "artist")
       )} make up ${bold(displayNumber(sumtop.asNumber, "scrobble"))} (${bold(

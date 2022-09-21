@@ -34,13 +34,13 @@ export class TopPercent extends OverviewChildCommand<typeof args> {
   };
 
   async run() {
-    let percent = this.parsedArguments.percent;
+    const percent = this.parsedArguments.percent;
 
-    let { perspective } = await this.getMentions();
+    const { perspective } = await this.getMentions();
 
-    let toppct = await this.calculator.topPercent(percent);
+    const toppct = await this.calculator.topPercent(percent);
 
-    let embed = (await this.overviewEmbed()).setDescription(
+    const embed = (await this.overviewEmbed()).setDescription(
       `${bold(toppct.count.asString)} artists (a total of ${displayNumber(
         toppct.total.asNumber,
         "scrobble"
