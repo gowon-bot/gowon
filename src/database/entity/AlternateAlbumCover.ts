@@ -4,7 +4,7 @@ import {
   BaseEntity,
   Column,
   JoinColumn,
-  OneToOne,
+  ManyToOne,
 } from "typeorm";
 import { User } from "./User";
 
@@ -22,7 +22,7 @@ export class AlternateAlbumCover extends BaseEntity {
   @Column()
   url!: string;
 
-  @OneToOne((_) => User, { eager: true })
+  @ManyToOne((_) => User, { eager: true })
   @JoinColumn({})
   user?: User;
 
