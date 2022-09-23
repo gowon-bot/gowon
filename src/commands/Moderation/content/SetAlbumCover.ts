@@ -84,7 +84,7 @@ This will set the image ${bold(
       .setImage(
         this.parsedArguments.url !== "clear" ? this.parsedArguments.url : ""
       )
-      .setThumbnail(existingCover || "");
+      .setThumbnail(existingCover?.url || "");
 
     const confirmationEmbed = new ConfirmationEmbed(
       this.ctx,
