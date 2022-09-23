@@ -62,6 +62,19 @@ export default class RandomsongInUsersLibrary extends LastFMBaseCommand<
       });
     } catch {}
 
+    const albumCover = await this.albumCoverService.get(
+      this.ctx,
+      trackInfo?.album?.images.get("large"),
+      trackInfo?.album
+        ? {
+            metadata: {
+              artist: trackInfo.artist.name,
+              album: trackInfo.album.name,
+            },
+          }
+        : {}
+    );
+
     const embed = this.newEmbed()
       .setAuthor({
         name: `${username}'s ${getOrdinal(randomIndex - 1)} top track`,
@@ -71,7 +84,7 @@ export default class RandomsongInUsersLibrary extends LastFMBaseCommand<
         `by ${bold(randomSong.artist.name)}` +
           (trackInfo?.album ? ` from ${italic(trackInfo.album.name)}` : "")
       )
-      .setThumbnail(trackInfo?.album?.images.get("large") || "");
+      .setThumbnail(albumCover || "");
 
     await this.send(embed);
   }

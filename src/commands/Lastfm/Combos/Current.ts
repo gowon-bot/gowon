@@ -14,6 +14,7 @@ import { Emoji } from "../../../lib/Emoji";
 import { ComboChildCommand } from "./ComboChildCommand";
 import { formatDistance } from "date-fns";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
+import { AlbumCoverService } from "../../../services/moderation/AlbumCoverService";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { StringArrayArgument } from "../../../lib/context/arguments/argumentTypes/StringArrayArgument";
 import { bold, italic } from "../../../helpers/discord";
@@ -49,6 +50,7 @@ export class Current extends ComboChildCommand<typeof args> {
   };
 
   artistsService = ServiceRegistry.get(ArtistsService);
+  albumCoverService = ServiceRegistry.get(AlbumCoverService);
 
   async run() {
     let artists = this.parsedArguments.artists;
@@ -154,7 +156,15 @@ export class Current extends ComboChildCommand<typeof args> {
         requestable
       );
 
-      embed.setThumbnail(nowplaying.images.get("large")!);
+      const albumCover = await this.albumCoverService.get(
+        this.ctx,
+        nowplaying.images.get("large"),
+        {
+          metadata: { artist: nowplaying.artist, album: nowplaying.album },
+        }
+      );
+
+      embed.setThumbnail(albumCover || "");
     } else {
       embed.setFooter({
         text: "A streak is when you loop the same artist/album/track more than once",

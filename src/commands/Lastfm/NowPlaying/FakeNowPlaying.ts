@@ -87,9 +87,8 @@ export default class FakeNowPlaying extends NowPlayingBaseCommand<typeof args> {
         }
       );
 
-    const baseEmbed = this.nowPlayingEmbed(
-      recentTracks.first(),
-      username
+    const baseEmbed = (
+      await this.nowPlayingEmbed(recentTracks.first(), username)
     ).setAuthor({
       name: `Track for ${username}`,
       iconURL:

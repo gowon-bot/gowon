@@ -76,6 +76,18 @@ export default class Love extends LastFMBaseCommand<typeof args> {
         ? np?.images.get("large") || parsedNp?.images.get("large")
         : trackInfo.album?.images?.get("large")) ?? undefined;
 
+    const albumName = np?.album || trackInfo.album?.name;
+
+    const albumCover = await this.albumCoverService.get(
+      this.ctx,
+      image,
+      albumName
+        ? {
+            metadata: { artist, album: albumName },
+          }
+        : {}
+    );
+
     const album = isNowPlaying
       ? np?.album || parsedNp?.album
       : trackInfo.album?.name;
@@ -89,7 +101,7 @@ export default class Love extends LastFMBaseCommand<typeof args> {
         }`
       );
 
-    if (image) embed.setThumbnail(image);
+    if (image) embed.setThumbnail(albumCover || "");
 
     await this.send(embed);
   }

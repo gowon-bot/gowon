@@ -1,17 +1,23 @@
-import { LogicError } from "../../errors/errors";
+import { AlbumHasNoCoverError } from "../../errors/lastfm";
 import { bold } from "../../helpers/discord";
-import { LinkGenerator } from "../../helpers/lastFM";
+import { Flag } from "../../lib/context/arguments/argumentTypes/Flag";
 import { standardMentions } from "../../lib/context/arguments/mentionTypes/mentions";
 import { prefabArguments } from "../../lib/context/arguments/prefabArguments";
-import { displayLink } from "../../lib/views/displays";
 import { AlbumInfo } from "../../services/LastFM/converters/InfoTypes";
 import { RecentTrack } from "../../services/LastFM/converters/RecentTracks";
 import { LastFMArgumentsMutableContext } from "../../services/LastFM/LastFMArguments";
+import { AlbumCoverService } from "../../services/moderation/AlbumCoverService";
+import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { LastFMBaseCommand } from "./LastFMBaseCommand";
 
 const args = {
   ...prefabArguments.album,
   ...standardMentions,
+  noAlternate: new Flag({
+    description: "Do not fetch custom alternate album covers",
+    shortnames: ["na", "noalt"],
+    longnames: ["noalternate", "no-alternate", "noalt"],
+  }),
 } as const;
 
 export default class Cover extends LastFMBaseCommand<typeof args> {
@@ -25,8 +31,7 @@ export default class Cover extends LastFMBaseCommand<typeof args> {
 
   arguments = args;
 
-  private readonly defaultImageURL =
-    "https://lastfm.freetls.fastly.net/i/u/174s/2a96cbd8b46e442fc41c2b86b821562f.png";
+  albumCoverService = ServiceRegistry.get(AlbumCoverService);
 
   async run() {
     const { requestable } = await this.getMentions({
@@ -75,31 +80,30 @@ export default class Cover extends LastFMBaseCommand<typeof args> {
   }
 
   private async sendCoverImage(artist: string, album: string, image?: string) {
-    this.checkIfAlbumHasCover(artist, album, image);
-    try {
-      await this.send(`Cover for ${bold(album)} by ${bold(artist)}`, {
-        files: [this.enlargeImage(image!)],
-      });
-    } catch (e) {
-      await this.send(`Cover for ${bold(album)} by ${bold(artist)}`, {
-        files: [image!],
-      });
-    }
-  }
+    const albumCover = await this.albumCoverService.getWithDetails(
+      this.ctx,
+      image,
+      {
+        metadata: { artist, album },
+        enlarge: true,
+        moderation: this.parsedArguments.noAlternate ? true : undefined,
+      }
+    );
 
-  private enlargeImage(url: string): string {
-    return url.replace(/\d+x\d+/, "2048x2048");
-  }
+    if (!albumCover.url) throw new AlbumHasNoCoverError(artist, album);
 
-  private checkIfAlbumHasCover(artist: string, album: string, image?: string) {
-    if (!image || image === this.defaultImageURL) {
-      throw new LogicError(
-        `that album doesn't have a cover yet! You can add one ${displayLink(
-          "here",
-          LinkGenerator.imageUploadLink(artist, album)
-        )}.`
-      );
-    }
+    await this.send(
+      `Cover for ${bold(album)} by ${bold(artist)}${
+        albumCover.source === "moderation"
+          ? "\n*This image has been set by Gowon moderators*"
+          : albumCover.source === "custom"
+          ? "\n*This image has been custom set by the user*"
+          : ""
+      }`,
+      {
+        files: [albumCover.url],
+      }
+    );
   }
 
   private async blueTape() {

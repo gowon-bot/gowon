@@ -79,3 +79,11 @@ export class CannotDisableCommandError extends ClientError {
     super(`You can't disable the ${code(commandName)} command!`);
   }
 }
+
+export class MustBeAPatronError extends ClientError {
+  name = "MustBeAPatronError";
+
+  constructor() {
+    super(`You must be a patron to access this command!`);
+  }
+}

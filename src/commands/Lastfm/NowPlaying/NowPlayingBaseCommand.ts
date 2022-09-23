@@ -21,6 +21,7 @@ import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { SettingsService } from "../../../lib/settings/SettingsService";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
+import { AlbumCoverService } from "../../../services/moderation/AlbumCoverService";
 
 export const nowPlayingArgs = {
   ...standardMentions,
@@ -43,6 +44,8 @@ export abstract class NowPlayingBaseCommand<
   arguments = nowPlayingArgs as T;
 
   settingsService = ServiceRegistry.get(SettingsService);
+  albumCoverService = ServiceRegistry.get(AlbumCoverService);
+
   tagConsolidator = new TagConsolidator();
 
   protected async nowPlayingMentions(
@@ -106,11 +109,22 @@ export abstract class NowPlayingBaseCommand<
     }
   }
 
-  protected nowPlayingEmbed(
+  protected async nowPlayingEmbed(
     nowPlaying: RecentTrack,
     username: string
-  ): MessageEmbed {
+  ): Promise<MessageEmbed> {
     const links = LinkGenerator.generateTrackLinksForEmbed(nowPlaying);
+
+    const albumCover = await this.albumCoverService.get(
+      this.ctx,
+      nowPlaying.images.get("large"),
+      {
+        metadata: {
+          artist: nowPlaying.artist,
+          album: nowPlaying.album,
+        },
+      }
+    );
 
     return this.newEmbed()
       .setAuthor({
@@ -129,7 +143,7 @@ export abstract class NowPlayingBaseCommand<
       )
       .setTitle(sanitizeForDiscord(nowPlaying.name))
       .setURL(LinkGenerator.trackPage(nowPlaying.artist, nowPlaying.name))
-      .setThumbnail(nowPlaying.images.get("large") || "");
+      .setThumbnail(albumCover || "");
   }
 
   protected artistPlays(

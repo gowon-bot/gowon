@@ -7,6 +7,8 @@ import { mean } from "mathjs";
 import { asyncMap } from "../../../../helpers";
 import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";
 import { code } from "../../../../helpers/discord";
+import { ServiceRegistry } from "../../../../services/ServicesRegistry";
+import { AlbumCoverService } from "../../../../services/moderation/AlbumCoverService";
 
 const args = {
   ...prefabArguments.album,
@@ -22,6 +24,8 @@ export class Rating extends FriendsChildCommand<typeof args> {
   arguments = args;
 
   throwIfNoFriends = true;
+
+  albumCoverService = ServiceRegistry.get(AlbumCoverService);
 
   async run() {
     const { senderUser, senderUsername } = await this.getMentions({
@@ -90,6 +94,14 @@ export class Rating extends FriendsChildCommand<typeof args> {
       album,
     });
 
+    const albumCover = await this.albumCoverService.get(
+      this.ctx,
+      albumInfo.images.get("large"),
+      {
+        metadata: { artist, album },
+      }
+    );
+
     const embed = this.newEmbed()
       .setTitle(
         `Your friends ratings of ${rateYourMusicAlbum.title} by ${rateYourMusicAlbum.artistName}`
@@ -116,7 +128,7 @@ export class Rating extends FriendsChildCommand<typeof args> {
             )
             .join("\n")
       )
-      .setThumbnail(albumInfo.images.get("large")!);
+      .setThumbnail(albumCover || "");
 
     await this.send(embed);
   }

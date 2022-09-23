@@ -113,11 +113,19 @@ export default class AlbumInfo extends InfoCommand<typeof args> {
       albumInfo.globalPlaycount
     );
 
+    const albumCover = await this.albumCoverService.getWithDetails(
+      this.ctx,
+      albumInfo.images.get("large") || spotifyAlbumArt?.url,
+      {
+        metadata: { artist, album },
+      }
+    );
+
     const embed = this.newEmbed()
       .setTitle(italic(albumInfo.name) + " by " + bold(albumInfo.artist))
       .setDescription(this.lineConsolidator.consolidate())
       .setURL(albumInfo.url)
-      .setImage(albumInfo.images.get("large") || spotifyAlbumArt?.url || "")
+      .setImage(albumCover.url || "")
       .addFields(
         {
           name: "Listeners",
@@ -147,11 +155,14 @@ export default class AlbumInfo extends InfoCommand<typeof args> {
         }
       )
       .setFooter({
-        text: albumInfo.images.get("large")
-          ? "Image source: Last.fm"
-          : spotifyAlbumArt && spotifyAlbumArt.url
-          ? "Image source: Spotify"
-          : "",
+        text:
+          albumCover.source === "custom" || albumCover.source === "moderation"
+            ? ""
+            : albumInfo.images.get("large")
+            ? "Image source: Last.fm"
+            : spotifyAlbumArt && spotifyAlbumArt.url
+            ? "Image source: Spotify"
+            : "",
       });
 
     this.send(embed);

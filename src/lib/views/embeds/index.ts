@@ -2,6 +2,9 @@ import { GuildMember, HexColorString, MessageEmbed, User } from "discord.js";
 import { ucFirst } from "../../../helpers";
 import { bold, italic } from "../../../helpers/discord";
 import { ImageCollection } from "../../../services/LastFM/converters/BaseConverter";
+import { AlbumCoverService } from "../../../services/moderation/AlbumCoverService";
+import { ServiceRegistry } from "../../../services/ServicesRegistry";
+import { GowonContext } from "../../context/Context";
 
 export const errorColour = "#ED008E";
 
@@ -20,20 +23,30 @@ interface SimpleTrack {
   images: ImageCollection;
 }
 
-export function trackEmbed(
+export async function trackEmbed(
+  ctx: GowonContext,
   track: SimpleTrack,
   imageSize = "large"
-): MessageEmbed {
-  let artist =
+): Promise<MessageEmbed> {
+  const artist =
     typeof track.artist === "string" ? track.artist : track.artist.name;
-  let album = typeof track.album === "string" ? track.album : track.album.name;
+  const album =
+    typeof track.album === "string" ? track.album : track.album.name;
+
+  const albumCover = await ServiceRegistry.get(AlbumCoverService).get(
+    ctx,
+    track.images.get(imageSize),
+    {
+      metadata: { artist, album },
+    }
+  );
 
   return new MessageEmbed()
     .setTitle(track.name)
     .setDescription(
       `by ${bold(artist)}` + (album ? ` from ${italic(album)}` : "")
     )
-    .setThumbnail(track.images.get(imageSize) || "");
+    .setThumbnail(albumCover || "");
 }
 
 export function errorEmbed(

@@ -8,6 +8,7 @@ import {
 import { WhoKnowsService } from "../../services/Discord/WhoKnowsService";
 import { LastFMArguments } from "../../services/LastFM/LastFMArguments";
 import { LastFMService } from "../../services/LastFM/LastFMService";
+import { AlbumCoverService } from "../../services/moderation/AlbumCoverService";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { CardsChildCommand } from "./CardsChildCommand";
 
@@ -25,10 +26,11 @@ export class View extends CardsChildCommand {
 
   arguments = args;
 
-  lastFMArguments = ServiceRegistry.get(LastFMArguments);
   lastFMService = ServiceRegistry.get(LastFMService);
+  lastFMArguments = ServiceRegistry.get(LastFMArguments);
   whoKnowsService = ServiceRegistry.get(WhoKnowsService);
   nicknameService = ServiceRegistry.get(NicknameService);
+  albumCoverService = ServiceRegistry.get(AlbumCoverService);
 
   async run() {
     const { requestable } = await this.getMentions({
@@ -61,6 +63,14 @@ export class View extends CardsChildCommand {
       ? UnknownUserDisplay
       : this.whoKnowsService.displayUser(this.ctx, owner);
 
+    const albumCover = await this.albumCoverService.get(
+      this.ctx,
+      albumInfo.images.get("large"),
+      {
+        metadata: { artist, album },
+      }
+    );
+
     const embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor("View card"))
       .setDescription(
@@ -68,7 +78,7 @@ export class View extends CardsChildCommand {
 by ${italic(card.artist)}
 _Owned by ${ownerDisplay}_ `
       )
-      .setThumbnail(albumInfo.images.get("large") || "");
+      .setThumbnail(albumCover || "");
 
     await this.send(embed);
   }

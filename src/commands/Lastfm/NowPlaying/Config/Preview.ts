@@ -14,6 +14,8 @@ import { Validation } from "../../../../lib/validation/ValidationChecker";
 import { validators } from "../../../../lib/validation/validators";
 import { displayNumber } from "../../../../lib/views/displays";
 import { RecentTrack } from "../../../../services/LastFM/converters/RecentTracks";
+import { AlbumCoverService } from "../../../../services/moderation/AlbumCoverService";
+import { ServiceRegistry } from "../../../../services/ServicesRegistry";
 import {
   NowPlayingConfigChildCommand,
   preprocessConfig,
@@ -49,6 +51,8 @@ export class Preview extends NowPlayingConfigChildCommand<typeof args> {
     }),
   };
 
+  albumCoverService = ServiceRegistry.get(AlbumCoverService);
+
   async run() {
     const options = this.parsedArguments.options.length
       ? this.parsedArguments.options
@@ -83,6 +87,14 @@ export class Preview extends NowPlayingConfigChildCommand<typeof args> {
     const nowPlaying = mockRequirements.recentTracks.first() as RecentTrack;
     const links = LinkGenerator.generateTrackLinksForEmbed(nowPlaying);
 
+    const albumCover = await this.albumCoverService.get(
+      this.ctx,
+      nowPlaying.images.get("large"),
+      {
+        metadata: { artist: nowPlaying.artist, album: nowPlaying.album },
+      }
+    );
+
     let embed = this.newEmbed()
       .setDescription(
         `by ${bold(links.artist, false)}` +
@@ -90,7 +102,7 @@ export class Preview extends NowPlayingConfigChildCommand<typeof args> {
       )
       .setTitle(sanitizeForDiscord(nowPlaying.name))
       .setURL(LinkGenerator.trackPage(nowPlaying.artist, nowPlaying.name))
-      .setThumbnail(nowPlaying.images.get("large") || "")
+      .setThumbnail(albumCover || "")
       .setAuthor(
         this.generateEmbedAuthor(
           `Previewing ${

@@ -47,6 +47,14 @@ export default class Randomsong extends LastFMBaseCommand<typeof args> {
     const randomSong =
       randomSongs.tracks[~~(randomSongs.tracks.length * Math.random())];
 
+    const albumCover = await this.albumCoverService.get(
+      this.ctx,
+      randomSong.images.get("large"),
+      {
+        metadata: { artist: randomSong.artist, album: randomSong.album },
+      }
+    );
+
     const embed = this.newEmbed()
       .setAuthor({ name: `Scrobbled by ${randomUser.lastFMUsername}` })
       .setTitle(randomSong.name)
@@ -54,7 +62,7 @@ export default class Randomsong extends LastFMBaseCommand<typeof args> {
         `by ${bold(randomSong.artist)}` +
           (randomSong.album ? ` from ${italic(randomSong.album)}` : "")
       )
-      .setThumbnail(randomSong.images.get("large") || "");
+      .setThumbnail(albumCover || "");
 
     await this.send(embed);
   }

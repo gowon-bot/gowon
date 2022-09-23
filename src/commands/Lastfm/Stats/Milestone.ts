@@ -54,7 +54,7 @@ export default class Milestone extends LastFMBaseCommand<typeof args> {
 
     if (!track) throw new BadLastFMResponseError();
 
-    let embed = this.newEmbed(trackEmbed(track));
+    let embed = this.newEmbed(await trackEmbed(this.ctx, track));
 
     embed = embed
       .setAuthor({

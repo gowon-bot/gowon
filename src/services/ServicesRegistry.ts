@@ -45,10 +45,12 @@ import { LilacUsersService } from "./lilac/LilacUsersService";
 import { LilacAPIService } from "./lilac/LilacAPIService";
 import { LilacWhoKnowsService } from "./lilac/LilacWhoKnowsService";
 import { LilacLibraryService } from "./lilac/LilacLibraryService";
+import { AlbumCoverService } from "./moderation/AlbumCoverService";
 
 export type Service<T = any> = { new (): T };
 
 const services: Service[] = [
+  AlbumCoverService,
   AnalyticsCollector,
   ArgumentParsingService,
   ArtistsService,

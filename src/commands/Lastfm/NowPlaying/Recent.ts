@@ -42,6 +42,17 @@ export default class Recent extends LastFMBaseCommand<typeof args> {
       limit: amount,
     });
 
+    const albumCover = await this.albumCoverService.get(
+      this.ctx,
+      recentTracks.first().images.get("large"),
+      {
+        metadata: {
+          artist: recentTracks.first().artist,
+          album: recentTracks.first().album,
+        },
+      }
+    );
+
     const embed = this.newEmbed()
       .setAuthor({
         ...this.generateEmbedAuthor(
@@ -59,7 +70,7 @@ export default class Recent extends LastFMBaseCommand<typeof args> {
             recentTracks.withoutNowPlaying.map(this.displayTrack)
           )
       )
-      .setThumbnail(recentTracks.first().images.get("large") || "");
+      .setThumbnail(albumCover || "");
 
     await this.send(embed);
   }

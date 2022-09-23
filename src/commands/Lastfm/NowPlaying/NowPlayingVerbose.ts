@@ -99,7 +99,9 @@ export default class NowPlayingVerbose extends NowPlayingBaseCommand {
       }
     );
 
-    let nowPlayingEmbed = this.nowPlayingEmbed(nowPlaying, username).setFooter({
+    let nowPlayingEmbed = (
+      await this.nowPlayingEmbed(nowPlaying, username)
+    ).setFooter({
       text: lineConsolidator.consolidate(),
     });
 

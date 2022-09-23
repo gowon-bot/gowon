@@ -13,7 +13,7 @@ export default class NowPlayingCompact extends NowPlayingBaseCommand {
 
     let nowPlaying = await this.lastFMService.nowPlaying(this.ctx, requestable);
 
-    let nowPlayingEmbed = this.nowPlayingEmbed(nowPlaying, username);
+    let nowPlayingEmbed = await this.nowPlayingEmbed(nowPlaying, username);
 
     let sentMessage = await this.send(nowPlayingEmbed);
 

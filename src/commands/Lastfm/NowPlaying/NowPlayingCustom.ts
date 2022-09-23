@@ -60,7 +60,7 @@ export default class NowPlayingCustom extends NowPlayingBaseCommand {
         }
       );
 
-    const baseEmbed = this.nowPlayingEmbed(nowPlaying, username);
+    const baseEmbed = await this.nowPlayingEmbed(nowPlaying, username);
 
     const embed = await builder.asEmbed(resolvedRequirements, baseEmbed);
 

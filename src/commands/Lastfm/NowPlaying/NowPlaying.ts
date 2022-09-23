@@ -98,7 +98,7 @@ export default class NowPlaying extends NowPlayingBaseCommand<typeof args> {
 
     this.tagConsolidator.blacklistTags(nowPlaying.artist, nowPlaying.name);
 
-    let nowPlayingEmbed = this.nowPlayingEmbed(nowPlaying, username);
+    let nowPlayingEmbed = await this.nowPlayingEmbed(nowPlaying, username);
 
     let [artistInfo, crown] = await promiseAllSettled([
       this.lastFMService.artistInfo(this.ctx, {

@@ -1,6 +1,8 @@
 import { LogicError, UnknownMirrorballError } from "../../../../errors/errors";
 import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";
 import { displayRating } from "../../../../lib/views/displays";
+import { AlbumCoverService } from "../../../../services/moderation/AlbumCoverService";
+import { ServiceRegistry } from "../../../../services/ServicesRegistry";
 import { RatingConnector, RatingParams, RatingResponse } from "./connectors";
 import { RateYourMusicIndexingChildCommand } from "./RateYourMusicChildCommand";
 
@@ -21,6 +23,8 @@ export class Rating extends RateYourMusicIndexingChildCommand<
   arguments = args;
 
   slashCommand = true;
+
+  albumCoverService = ServiceRegistry.get(AlbumCoverService);
 
   async run() {
     const { senderRequestable, dbUser } = await this.getMentions({
@@ -60,13 +64,21 @@ export class Rating extends RateYourMusicIndexingChildCommand<
       album,
     });
 
+    const albumCover = await this.albumCoverService.get(
+      this.ctx,
+      albumInfo.images.get("large"),
+      {
+        metadata: { artist, album },
+      }
+    );
+
     const embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor("Rating"))
       .setTitle(
         `${rateYourMusicAlbum.artistName} - ${rateYourMusicAlbum.title}`
       )
       .setDescription(`${displayRating(rating)}`)
-      .setThumbnail(albumInfo.images.get("large")!);
+      .setThumbnail(albumCover || "");
 
     await this.send(embed);
   }
