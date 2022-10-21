@@ -39,6 +39,7 @@ export class SetFMMode extends NowPlayingConfigChildCommand<typeof args> {
       });
 
       const embed = this.newEmbed()
+        .setAuthor(this.generateEmbedAuthor())
         .setTitle(`${this.prefix}fm mode`)
         .setDescription(
           `Your current ${this.prefix}fm mode is: ${code(
@@ -56,6 +57,7 @@ export class SetFMMode extends NowPlayingConfigChildCommand<typeof args> {
       );
 
       const embed = this.newEmbed()
+        .setAuthor(this.generateEmbedAuthor())
         .setTitle(`${this.prefix}fm mode`)
         .setDescription(`Your new ${this.prefix}fm mode is: \`${mode}\``);
 
