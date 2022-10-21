@@ -11,6 +11,8 @@ import NowPlayingCompact from "./NowPlayingCompact";
 import NowPlayingAlbum from "./NowPlayingAlbum";
 import NowPlayingCombo from "./NowPlayingCombo";
 import NowPlayingCustom from "./NowPlayingCustom";
+import { SettingsService } from "../../../lib/settings/SettingsService";
+import { FMMode } from "../../../lib/settings/SettingValues";
 
 const reverse = (s: string) =>
   s.split("").reverse().join("").replace("(", ")").replace(")", "(");
@@ -21,12 +23,13 @@ const args = {
   type: new StringArgument({
     description: "Controls what type of embed Gowon uses",
     choices: [
-      { name: "verbose" },
-      { name: "compact" },
-      { name: "track", value: "verbose" },
-      { name: "album" },
-      { name: "combo" },
-      { name: "custom" },
+      { name: FMMode.DEFAULT },
+      { name: FMMode.VERBOSE },
+      { name: FMMode.COMPACT },
+      { name: "track", value: FMMode.VERBOSE },
+      { name: FMMode.ALBUM },
+      { name: FMMode.COMBO },
+      { name: FMMode.CUSTOM },
     ],
     unstrictChoices: true,
   }),
@@ -45,28 +48,29 @@ export default class NowPlaying extends NowPlayingBaseCommand<typeof args> {
   twitterCommand = true;
 
   crownsService = ServiceRegistry.get(CrownsService);
+  settingsService = ServiceRegistry.get(SettingsService);
 
   arguments = args;
 
   redirects: CommandRedirect<typeof args>[] = [
     {
-      when: (args) => args.type === "verbose",
+      when: (args) => this.fmModeWasUsed(FMMode.VERBOSE, args.type),
       redirectTo: NowPlayingVerbose,
     },
     {
-      when: (args) => args.type === "compact",
+      when: (args) => this.fmModeWasUsed(FMMode.COMPACT, args.type),
       redirectTo: NowPlayingCompact,
     },
     {
-      when: (args) => args.type === "album",
+      when: (args) => this.fmModeWasUsed(FMMode.ALBUM, args.type),
       redirectTo: NowPlayingAlbum,
     },
     {
-      when: (args) => args.type === "combo",
+      when: (args) => this.fmModeWasUsed(FMMode.COMBO, args.type),
       redirectTo: NowPlayingCombo,
     },
     {
-      when: (args) => args.type === "custom",
+      when: (args) => this.fmModeWasUsed(FMMode.CUSTOM, args.type),
       redirectTo: NowPlayingCustom,
     },
   ];
@@ -186,5 +190,15 @@ export default class NowPlaying extends NowPlayingBaseCommand<typeof args> {
     embed.setAuthor(author);
 
     return embed;
+  }
+
+  private fmModeWasUsed(mode: FMMode, input: string | undefined) {
+    return (
+      input?.toLowerCase() === mode ||
+      (this.settingsService.get("defaultFMMode", {
+        userID: this.author.id,
+      }) === mode &&
+        input?.toLowerCase() !== FMMode.DEFAULT)
+    );
   }
 }

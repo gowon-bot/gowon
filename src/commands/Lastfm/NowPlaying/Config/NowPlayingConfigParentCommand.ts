@@ -6,6 +6,7 @@ import { Preview } from "./Preview";
 import { React } from "./React";
 import { Remove } from "./Remove";
 import { Set as SetCommand } from "./Set";
+import { SetFMMode } from "./SetDefaultFMMode";
 import { View } from "./View";
 
 export default class NowPlayingConfigParentCommand extends LastFMBaseParentCommand {
@@ -21,10 +22,10 @@ export default class NowPlayingConfigParentCommand extends LastFMBaseParentComma
 
   slashCommand = true;
 
-  noPrefixAliases = ["react", "reacts", "reactions"];
+  noPrefixAliases = ["react", "reacts", "reactions", "fmmode", "setfmmode"];
 
   children: CommandGroup = new CommandGroup(
-    [View, SetCommand, Help, Preview, Add, Remove, React],
+    [View, SetCommand, Help, Preview, Add, Remove, React, SetFMMode],
     this.id
   );
 }

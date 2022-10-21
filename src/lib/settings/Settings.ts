@@ -5,11 +5,7 @@ import {
   BotScopedSetting,
 } from "./SettingTypes";
 import { defaultPrefix } from "../../../config.json";
-
-export const toggleValues = {
-  ON: "on",
-  OFF: "off",
-};
+import { toggleValues } from "./SettingValues";
 
 export const Settings = {
   // Guild scoped
@@ -54,13 +50,18 @@ export const Settings = {
   }),
   defaultSpotifyPlaylist: new UserScopedSetting("default_spotify_playlist", {
     omitFromDashboard: true,
-    category: "Spotify",
+    category: "spotify",
   }),
   spotifyPrivateMode: new UserScopedSetting("spotify_private_mode", {
     friendlyName: "Private mode",
     category: "spotify",
     description: "Doesn't show info that could reveal your Spotify account",
     default: toggleValues.ON,
+  }),
+  defaultFMMode: new UserScopedSetting("default_fm_mode", {
+    friendlyName: "Default !fm mode",
+    category: "customization",
+    description: "Control which type of embed Gowon uses when you !fm",
   }),
 
   // Bot scoped

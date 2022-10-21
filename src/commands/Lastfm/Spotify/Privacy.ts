@@ -1,6 +1,6 @@
 import { bullet, extraWideSpace } from "../../../helpers/specialCharacters";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
-import { toggleValues } from "../../../lib/settings/Settings";
+import { toggleValues } from "../../../lib/settings/SettingValues";
 import { SpotifyChildCommand } from "./SpotifyChildCommand";
 
 const args = {

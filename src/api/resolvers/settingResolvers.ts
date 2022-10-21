@@ -1,7 +1,7 @@
 import { Guild } from "discord.js";
 import { LogicError } from "../../errors/errors";
 import { GowonContext } from "../../lib/context/Context";
-import { Settings, toggleValues } from "../../lib/settings/Settings";
+import { Settings } from "../../lib/settings/Settings";
 import {
   convertSettingNameToKey,
   SettingsService,
@@ -12,6 +12,7 @@ import {
   GuildScopedSetting,
   UserScopedSetting,
 } from "../../lib/settings/SettingTypes";
+import { toggleValues } from "../../lib/settings/SettingValues";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 
 const settingsService = ServiceRegistry.get(SettingsService);

@@ -1,4 +1,5 @@
 import { Setting } from "../../database/entity/Setting";
+import { InvalidChoiceError } from "../../errors/settings";
 
 type StringSettingType = "text" | "textshort" | "textlong";
 type SettingType = "toggle" | "role" | StringSettingType;
@@ -11,6 +12,7 @@ interface SettingOptions {
 
   omitFromDashboard: boolean;
   type: SettingType;
+  choices: string[];
 }
 
 export abstract class BaseSetting<ScopeT = {}> {
@@ -33,6 +35,12 @@ export abstract class BaseSetting<ScopeT = {}> {
     scope: ScopeT,
     value?: string
   ): Promise<Setting | undefined> {
+    if (value !== undefined) {
+      if (this.options.choices && !this.options.choices.includes(value)) {
+        throw new InvalidChoiceError(this.options.choices);
+      }
+    }
+
     let whereClause = { name: this.name };
 
     whereClause = this.setScopeOnWhere(scope, whereClause);

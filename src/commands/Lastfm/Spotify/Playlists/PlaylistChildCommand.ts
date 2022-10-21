@@ -1,6 +1,6 @@
 import { PrivateModeOnWarning } from "../../../../errors/spotify";
 import { ArgumentsMap } from "../../../../lib/context/arguments/types";
-import { toggleValues } from "../../../../lib/settings/Settings";
+import { toggleValues } from "../../../../lib/settings/SettingValues";
 import { ServiceRegistry } from "../../../../services/ServicesRegistry";
 import { SpotifyPlaylistTagService } from "../../../../services/Spotify/SpotifyPlaylistTagService";
 import { SpotifyBaseChildCommand } from "../SpotifyBaseCommands";

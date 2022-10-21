@@ -9,7 +9,7 @@ import { RedisService } from "../redis/RedisService";
 import { GowonContext } from "../../lib/context/Context";
 import { TweetStream } from "./converters/TweetStream";
 import { SettingsService } from "../../lib/settings/SettingsService";
-import { toggleValues } from "../../lib/settings/Settings";
+import { toggleValues } from "../../lib/settings/SettingValues";
 
 export interface TweetOptions {
   replyTo?: string;

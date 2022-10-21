@@ -1,6 +1,6 @@
 import { bold } from "../../../helpers/discord";
 import { Command } from "../../../lib/command/Command";
-import { toggleValues } from "../../../lib/settings/Settings";
+import { toggleValues } from "../../../lib/settings/SettingValues";
 import { SettingsService } from "../../../lib/settings/SettingsService";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 
