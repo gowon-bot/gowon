@@ -41,8 +41,8 @@ export default class GiveRole extends Command<typeof args> {
 
   validation = {
     role: [
-      new validators.Required({}),
-      new validators.Choices({
+      new validators.RequiredValidator({}),
+      new validators.ChoicesValidator({
         choices: Object.keys(roles),
         ignoreCase: false,
       }),

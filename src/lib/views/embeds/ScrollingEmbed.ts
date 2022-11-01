@@ -22,8 +22,10 @@ export interface ScrollingEmbedOptions {
   itemName: string;
   itemNamePlural: string;
 
-  customFooter: OnPageChangeCallback;
+  customFooter: OnPageChangeCallback | string;
 }
+
+type FooterReturn = string | Promise<string | EmbedField[]> | EmbedField[];
 
 export function isEmbedFields(
   value: string | EmbedField[] | any
@@ -31,10 +33,7 @@ export function isEmbedFields(
   return !!((value[0] as EmbedField)?.name && (value[0] as EmbedField)?.value);
 }
 
-type OnPageChangeCallback = (
-  page: number,
-  totalPages: number
-) => string | Promise<string | EmbedField[]> | EmbedField[];
+type OnPageChangeCallback = (page: number, totalPages: number) => FooterReturn;
 
 export class ScrollingEmbed {
   private get discordService() {
@@ -66,7 +65,7 @@ export class ScrollingEmbed {
         totalPages: -1,
         totalItems: -1,
         startingPage: 1,
-        customFooter: this.generateFooter.bind(this),
+        customFooter: "",
       },
       options
     );
@@ -107,10 +106,7 @@ export class ScrollingEmbed {
 
   private generateEmbed() {
     this.embed.setFooter({
-      text: this.options.customFooter(
-        this.currentPage,
-        this.options.totalPages
-      ) as string,
+      text: this.generateFooter() as string,
     });
 
     if (isEmbedFields(this.currentItems)) {
@@ -124,7 +120,14 @@ export class ScrollingEmbed {
     }
   }
 
-  private generateFooter(): string {
+  private generateFooter(): FooterReturn {
+    if (this.options.customFooter instanceof Function) {
+      return this.options.customFooter(
+        this.currentPage,
+        this.options.totalPages
+      );
+    }
+
     let footer = "";
 
     if (this.options.totalPages >= 0) {
@@ -141,7 +144,10 @@ export class ScrollingEmbed {
       }`;
     }
 
-    return footer;
+    return (
+      footer +
+      (this.options.customFooter ? "\n" + this.options.customFooter : "")
+    );
   }
 
   private async react() {

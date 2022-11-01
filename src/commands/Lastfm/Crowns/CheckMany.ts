@@ -27,7 +27,7 @@ export class CheckMany extends CrownsChildCommand<typeof args> {
   arguments = args;
 
   validation: Validation = {
-    artists: new validators.LengthRange({ min: 1, max: 10 }),
+    artists: new validators.LengthRangeValidator({ min: 1, max: 10 }),
   };
 
   async run() {

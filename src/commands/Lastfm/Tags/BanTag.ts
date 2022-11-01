@@ -36,7 +36,7 @@ export default class BanTag extends LastFMBaseCommand<typeof args> {
   ];
 
   validation: Validation = {
-    tag: new validators.Required({}),
+    tag: new validators.RequiredValidator({}),
   };
 
   wordBlacklistService = ServiceRegistry.get(WordBlacklistService);

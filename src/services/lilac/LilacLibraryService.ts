@@ -40,7 +40,7 @@ export class LilacLibraryService extends LilacAPIService {
     const response = await this.query<
       { scrobbles: LilacScrobblesPage },
       { filters: LilacScrobbleFilters }
-    >(ctx, query, { filters });
+    >(ctx, query, { filters }, false);
 
     return response.scrobbles;
   }

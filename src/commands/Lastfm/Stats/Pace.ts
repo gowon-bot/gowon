@@ -6,11 +6,12 @@ import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { displayDate, displayNumber } from "../../../lib/views/displays";
 import { ago } from "../../../helpers";
-import { humanizeTimeRange, TimeRange } from "../../../lib/timeAndDate/helpers";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { TimeRangeArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/TimeRangeArgument";
 import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
 import { bold } from "../../../helpers/discord";
+import { TimeRange } from "../../../lib/timeAndDate/TimeRange";
+import { humanizeTimeRange } from "../../../lib/timeAndDate/helpers/humanize";
 
 const args = {
   milestone: new NumberArgument({
@@ -38,8 +39,8 @@ export default class Pace extends LastFMBaseCommand<typeof args> {
 
   validation: Validation = {
     milestone: [
-      new validators.Range({ min: 1 }),
-      new validators.Range({
+      new validators.RangeValidator({ min: 1 }),
+      new validators.RangeValidator({
         max: 10000000,
         message: "you probably won't be alive to witness that milestone...",
       }),

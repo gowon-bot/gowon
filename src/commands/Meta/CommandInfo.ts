@@ -24,7 +24,7 @@ export default class CommandInfo extends MetaBaseCommand<typeof args> {
 
   validation: Validation = {
     searchString: {
-      validator: new validators.Required({}),
+      validator: new validators.RequiredValidator({}),
       friendlyName: "search string",
     },
   };

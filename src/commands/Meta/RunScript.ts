@@ -19,7 +19,7 @@ export default class RunScript extends Command<typeof args> {
   arguments = args;
 
   validation: Validation = {
-    script: new validators.Required({}),
+    script: new validators.RequiredValidator({}),
   };
 
   scriptsRegistry = new ScriptsRegistry();

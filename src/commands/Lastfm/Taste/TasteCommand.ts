@@ -11,7 +11,7 @@ import { LogicError } from "../../../errors/errors";
 import { DurationParser } from "../../../lib/context/arguments/parsers/DurationParser";
 import { toInt } from "../../../helpers/lastFM";
 import { displayNumber } from "../../../lib/views/displays";
-import { TimeRange } from "../../../lib/timeAndDate/helpers";
+import { TimeRange } from "../../../lib/timeAndDate/TimeRange";
 import { NamedRangeParser } from "../../../lib/context/arguments/parsers/NamedRangeParser";
 import { LastFMMention } from "../../../lib/context/arguments/mentionTypes/LastFMMention";
 import { DiscordIDMention } from "../../../lib/context/arguments/mentionTypes/DiscordIDMention";

@@ -46,7 +46,7 @@ export class Preview extends NowPlayingConfigChildCommand<typeof args> {
   slashCommand = true;
 
   validation: Validation = {
-    options: new validators.Required({
+    options: new validators.RequiredValidator({
       message: "Please enter some options to preview, or a preset!",
     }),
   };

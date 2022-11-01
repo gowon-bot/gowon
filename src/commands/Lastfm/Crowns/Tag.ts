@@ -35,7 +35,7 @@ export class Tag extends CrownsChildCommand<typeof args> {
   tagsService = ServiceRegistry.get(TagsService);
 
   validation: Validation = {
-    genres: new validators.LengthRange({ min: 1, max: 10 }),
+    genres: new validators.LengthRangeValidator({ min: 1, max: 10 }),
   };
 
   async run() {

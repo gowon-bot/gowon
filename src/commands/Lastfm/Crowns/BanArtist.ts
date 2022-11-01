@@ -18,7 +18,7 @@ export class BanArtist extends CrownsChildCommand<typeof args> {
   arguments = args;
 
   validation: Validation = {
-    artist: new validators.Required({}),
+    artist: new validators.RequiredValidator({}),
   };
 
   async run() {

@@ -3,7 +3,7 @@ import { GowonService } from "../../../../../services/GowonService";
 import { ServiceRegistry } from "../../../../../services/ServicesRegistry";
 import { GowonContext } from "../../../Context";
 import { BaseArgument, BaseArgumentOptions } from "../BaseArgument";
-import { parseDate } from "../../../../timeAndDate/helpers";
+import { parseDate } from "../../../../timeAndDate/helpers/parse";
 import { SlashCommandBuilder } from "@discordjs/builders";
 
 export interface DateArgumentOptions extends BaseArgumentOptions<Date> {

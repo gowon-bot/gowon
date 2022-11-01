@@ -2,7 +2,7 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, Message } from "discord.js";
 import { GowonService } from "../../../../../services/GowonService";
 import { ServiceRegistry } from "../../../../../services/ServicesRegistry";
-import { TimeRange } from "../../../../timeAndDate/helpers";
+import { TimeRange } from "../../../../timeAndDate/TimeRange";
 import { GowonContext } from "../../../Context";
 import { TimeRangeParser } from "../../parsers/TimeRangeParser";
 import { BaseArgument, BaseArgumentOptions } from "../BaseArgument";

@@ -6,7 +6,9 @@ export interface ChoicesValidatorOptions<T> extends ValidatorOptions {
   ignoreCase?: boolean;
 }
 
-export class Choices<T> extends BaseValidator<ChoicesValidatorOptions<T>> {
+export class ChoicesValidator<T> extends BaseValidator<
+  ChoicesValidatorOptions<T>
+> {
   validate(arg: any | undefined, argName: string) {
     if (arg === undefined) return;
 

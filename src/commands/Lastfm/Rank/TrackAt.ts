@@ -28,7 +28,7 @@ export default class TrackAt extends LastFMBaseCommand<typeof args> {
   slashCommand = true;
 
   validation: Validation = {
-    rank: new validators.Number({ whole: true }),
+    rank: new validators.NumberValidator({ whole: true }),
   };
 
   async run() {

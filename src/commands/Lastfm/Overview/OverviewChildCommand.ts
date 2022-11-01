@@ -4,7 +4,7 @@ import { HexColorString, MessageEmbed } from "discord.js";
 import { ucFirst } from "../../../helpers";
 import { Requestable } from "../../../services/LastFM/LastFMAPIService";
 import { LastFMPeriod } from "../../../services/LastFM/LastFMService.types";
-import { humanizePeriod } from "../../../lib/timeAndDate/helpers";
+import { humanizePeriod } from "../../../lib/timeAndDate/helpers/humanize";
 import { TimePeriodArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/TimePeriodArgument";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 

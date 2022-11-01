@@ -47,7 +47,7 @@ export default class Issue extends Command<typeof args> {
   arguments = args;
 
   validation: Validation = {
-    title: new validators.Required({}),
+    title: new validators.RequiredValidator({}),
   };
 
   githubService = ServiceRegistry.get(GithubService);

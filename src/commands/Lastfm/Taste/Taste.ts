@@ -6,7 +6,7 @@ import { LogicError } from "../../../errors/errors";
 import { TasteCommand, tasteArgs } from "./TasteCommand";
 import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingEmbed";
 import { displayLink, displayNumber } from "../../../lib/views/displays";
-import { humanizePeriod } from "../../../lib/timeAndDate/helpers";
+import { humanizePeriod } from "../../../lib/timeAndDate/helpers/humanize";
 import { LinkGenerator } from "../../../helpers/lastFM";
 import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
 import { TimePeriodArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/TimePeriodArgument";
@@ -63,7 +63,7 @@ export default class Taste extends TasteCommand<typeof args> {
 
   validation: Validation = {
     artistAmount: {
-      validator: new validators.Range({ min: 100, max: 2000 }),
+      validator: new validators.RangeValidator({ min: 100, max: 2000 }),
       friendlyName: "amount",
     },
   };

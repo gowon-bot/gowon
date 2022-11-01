@@ -30,7 +30,7 @@ export abstract class SearchCommand extends LastFMBaseCommand<typeof args> {
 
   validation: Validation = {
     keywords: [
-      new validators.LengthRange({
+      new validators.LengthRangeValidator({
         min: 1,
         message: "please enter a longer search string!",
       }),

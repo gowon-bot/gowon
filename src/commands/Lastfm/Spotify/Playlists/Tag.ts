@@ -30,12 +30,12 @@ export class Tag extends PlaylistChildCommand<typeof args> {
   arguments = args;
 
   validation: Validation = {
-    emoji: new validators.LengthRange({
+    emoji: new validators.LengthRangeValidator({
       min: 1,
       message: "Please specify an emoji!",
     }),
     playlistName: {
-      validator: new validators.Required({}),
+      validator: new validators.RequiredValidator({}),
       friendlyName: "playlist name",
     },
   };

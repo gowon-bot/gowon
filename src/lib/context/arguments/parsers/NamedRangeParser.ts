@@ -1,6 +1,7 @@
 import { flatDeep, ucFirst } from "../../../../helpers";
 import { toInt } from "../../../../helpers/lastFM";
-import { NamedRange, TimeRange } from "../../../timeAndDate/helpers";
+import { NamedRange } from "../../../timeAndDate/NamedRange";
+import { TimeRange } from "../../../timeAndDate/TimeRange";
 
 export class NamedRangeParser {
   private months = [

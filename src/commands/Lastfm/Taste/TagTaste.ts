@@ -57,7 +57,7 @@ export default class TagTaste extends TasteCommand<typeof args> {
 
   validation: Validation = {
     artistAmount: {
-      validator: new validators.Range({ min: 100, max: 2000 }),
+      validator: new validators.RangeValidator({ min: 100, max: 2000 }),
       friendlyName: "artist amount",
     },
   };

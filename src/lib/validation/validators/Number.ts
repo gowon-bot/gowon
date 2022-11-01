@@ -4,7 +4,7 @@ interface NumberValidatorOptions extends ValidatorOptions {
   whole?: boolean;
 }
 
-export class Number extends BaseValidator<NumberValidatorOptions> {
+export class NumberValidator extends BaseValidator<NumberValidatorOptions> {
   validate(arg: number | undefined, argName: string) {
     if (!arg) return;
 

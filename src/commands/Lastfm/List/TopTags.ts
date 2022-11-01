@@ -1,5 +1,5 @@
 import gql from "graphql-tag";
-import { humanizePeriod } from "../../../lib/timeAndDate/helpers";
+import { humanizePeriod } from "../../../lib/timeAndDate/helpers/humanize";
 import { TagConsolidator } from "../../../lib/tags/TagConsolidator";
 import {
   displayNumber,

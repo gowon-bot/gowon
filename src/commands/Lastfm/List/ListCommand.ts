@@ -2,11 +2,12 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { LastFMPeriod } from "../../../services/LastFM/LastFMService.types";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
-import { humanizePeriod, TimeRange } from "../../../lib/timeAndDate/helpers";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { TimePeriodArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/TimePeriodArgument";
 import { TimeRangeArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/TimeRangeArgument";
 import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
+import { TimeRange } from "../../../lib/timeAndDate/TimeRange";
+import { humanizePeriod } from "../../../lib/timeAndDate/helpers/humanize";
 
 const args = {
   timePeriod: new TimePeriodArgument({
@@ -33,7 +34,7 @@ export abstract class ListCommand extends LastFMBaseCommand<typeof args> {
 
   validation: Validation = {
     listAmount: {
-      validator: new validators.Range({ min: 1, max: 25 }),
+      validator: new validators.RangeValidator({ min: 1, max: 25 }),
       friendlyName: "amount",
     },
   };

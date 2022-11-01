@@ -30,8 +30,8 @@ export default class Milestone extends LastFMBaseCommand<typeof args> {
 
   validation: Validation = {
     milestone: [
-      new validators.Number({}),
-      new validators.Range({
+      new validators.NumberValidator({}),
+      new validators.RangeValidator({
         min: 1,
         max: 2000000,
         message: "please enter a valid milestone!",
@@ -40,13 +40,13 @@ export default class Milestone extends LastFMBaseCommand<typeof args> {
   };
 
   async run() {
-    let milestone = this.parsedArguments.milestone;
+    const milestone = this.parsedArguments.milestone;
 
-    let { requestable, perspective } = await this.getMentions({
+    const { requestable, perspective } = await this.getMentions({
       asCode: false,
     });
 
-    let track = await this.lastFMService.getMilestone(
+    const track = await this.lastFMService.getMilestone(
       this.ctx,
       requestable,
       milestone

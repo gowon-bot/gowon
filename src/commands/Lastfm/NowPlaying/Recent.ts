@@ -29,7 +29,7 @@ export default class Recent extends LastFMBaseCommand<typeof args> {
   arguments = args;
 
   validation: Validation = {
-    amount: new validators.Range({ min: 1, max: 15 }),
+    amount: new validators.RangeValidator({ min: 1, max: 15 }),
   };
 
   async run() {

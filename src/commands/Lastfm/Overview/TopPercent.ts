@@ -30,7 +30,7 @@ export class TopPercent extends OverviewChildCommand<typeof args> {
   slashCommand = true;
 
   validation: Validation = {
-    percent: new validators.Range({ min: 5, max: 100 }),
+    percent: new validators.RangeValidator({ min: 5, max: 100 }),
   };
 
   async run() {

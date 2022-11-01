@@ -1,8 +1,9 @@
 import { MetaChildCommand } from "./MetaChildCommand";
 import { displayNumber } from "../../lib/views/displays";
-import { humanizeTimeRange, TimeRange } from "../../lib/timeAndDate/helpers";
 import { TimeRangeArgument } from "../../lib/context/arguments/argumentTypes/timeAndDate/TimeRangeArgument";
 import { bold } from "../../helpers/discord";
+import { humanizeTimeRange } from "../../lib/timeAndDate/helpers/humanize";
+import { TimeRange } from "../../lib/timeAndDate/TimeRange";
 
 const args = {
   timeRange: new TimeRangeArgument({

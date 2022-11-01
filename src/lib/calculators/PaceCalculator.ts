@@ -1,5 +1,5 @@
 import { add, differenceInSeconds } from "date-fns";
-import { TimeRange } from "../timeAndDate/helpers";
+import { TimeRange } from "../timeAndDate/TimeRange";
 import { Requestable } from "../../services/LastFM/LastFMAPIService";
 import { LastFMService } from "../../services/LastFM/LastFMService";
 import { ServiceRegistry } from "../../services/ServicesRegistry";

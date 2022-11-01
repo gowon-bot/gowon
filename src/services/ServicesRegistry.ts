@@ -46,6 +46,7 @@ import { LilacAPIService } from "./lilac/LilacAPIService";
 import { LilacWhoKnowsService } from "./lilac/LilacWhoKnowsService";
 import { LilacLibraryService } from "./lilac/LilacLibraryService";
 import { AlbumCoverService } from "./moderation/AlbumCoverService";
+import { TimeAndDateService } from "./TimeAndDateService";
 
 export type Service<T = any> = { new (): T };
 
@@ -96,6 +97,7 @@ const services: Service[] = [
   SpotifyAuthenticationService,
   SpotifyPlaylistTagService,
   TagsService,
+  TimeAndDateService,
   TrackingService,
   TwitterService,
   UsersService,

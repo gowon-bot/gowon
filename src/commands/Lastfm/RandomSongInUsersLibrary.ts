@@ -23,7 +23,7 @@ export default class RandomsongInUsersLibrary extends LastFMBaseCommand<
 
   validation: Validation = {
     poolAmount: {
-      validator: new validators.Range({ min: 10 }),
+      validator: new validators.RangeValidator({ min: 10 }),
       friendlyName: "pool amount",
     },
   };

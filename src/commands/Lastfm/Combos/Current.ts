@@ -46,7 +46,7 @@ export class Current extends ComboChildCommand<typeof args> {
   arguments = args;
 
   validation: Validation = {
-    artists: new validators.LengthRange({ max: 10 }),
+    artists: new validators.LengthRangeValidator({ max: 10 }),
   };
 
   artistsService = ServiceRegistry.get(ArtistsService);

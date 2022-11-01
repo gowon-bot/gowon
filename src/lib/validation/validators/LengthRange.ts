@@ -6,7 +6,7 @@ export interface LengthRangeValidatorOptions extends ValidatorOptions {
   max?: number;
 }
 
-export class LengthRange extends BaseValidator<LengthRangeValidatorOptions> {
+export class LengthRangeValidator extends BaseValidator<LengthRangeValidatorOptions> {
   validate(arg: { length: number } | undefined, argName: string) {
     if (arg === undefined) return;
 

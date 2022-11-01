@@ -6,3 +6,6 @@ export function userToUserInput(user: LilacUserInput | User): LilacUserInput {
     return { discordID: user.discordID };
   } else return user;
 }
+
+export const recommendUserToSetTimezone = (prefix: string) =>
+  `Dates and times may not be accurate. See "${prefix}help tz" for more info on setting your timezone.`;

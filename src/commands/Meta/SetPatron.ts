@@ -30,7 +30,7 @@ export default class SetPatron extends Command<typeof args> {
 
   validation = {
     userID: {
-      validator: new validators.RequiredOr({}),
+      validator: new validators.RequiredOrValidator({}),
       dependsOn: ["user"],
       friendlyName: "user id",
     },

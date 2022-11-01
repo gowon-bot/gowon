@@ -4,8 +4,8 @@ import {
   CommandRun,
   MostUsedCommandsResponse,
 } from "../../database/entity/meta/CommandRun";
-import { TimeRange } from "../../lib/timeAndDate/helpers";
 import { GowonContext } from "../../lib/context/Context";
+import { TimeRange } from "../../lib/timeAndDate/TimeRange";
 
 export class MetaService extends BaseService {
   async recordCommandRun(

@@ -24,7 +24,7 @@ export default class PartyTime extends LastFMBaseCommand<typeof args> {
   arguments = args;
 
   validation: Validation = {
-    time: new validators.Range({
+    time: new validators.RangeValidator({
       min: 3,
       max: 15,
       message: "Please enter a reasonable time. 😐",

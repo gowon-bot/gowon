@@ -1,6 +1,6 @@
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { displayNumber } from "../../../lib/views/displays";
-import { humanizePeriod } from "../../../lib/timeAndDate/helpers";
+import { humanizePeriod } from "../../../lib/timeAndDate/helpers/humanize";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { TimePeriodArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/TimePeriodArgument";
 import { bold } from "../../../helpers/discord";

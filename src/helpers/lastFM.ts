@@ -1,3 +1,4 @@
+import { format } from "date-fns";
 import { displayLink } from "../lib/views/displays";
 import { RecentTrack } from "../services/LastFM/converters/RecentTracks";
 import { cleanURL } from "./discord";
@@ -137,6 +138,25 @@ export abstract class LinkGenerator {
   // https://www.last.fm/api/auth?api_key=xxxxxxxxxxxxx&token=xxxxxxx
   static authURL(apiKey: string, token: string) {
     return this.baseURL + "api/auth?api_key=" + apiKey + "&token=" + token;
+  }
+
+  // https://www.last.fm/user/flushed_emoji/library?from=2022-10-06&rangetype=1day
+  static libraryWithDateRange(
+    username: string,
+    from: Date,
+    to: Date | "1day" | "year" | "1month"
+  ) {
+    const dateFormat = (date: Date) => format(date, "y-MM-dd");
+
+    const baseURL = `https://www.last.fm/user/${username}/library?from=${dateFormat(
+      from
+    )}`;
+
+    if (to instanceof Date) {
+      return `${baseURL}&to=${dateFormat(to)}}`;
+    } else {
+      return `${baseURL}&rangetype=${to}`;
+    }
   }
 
   static generateTrackLinks(track: RecentTrack): TrackLinks {

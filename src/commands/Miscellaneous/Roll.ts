@@ -46,7 +46,7 @@ export default class Roll extends Command<typeof args> {
 
   validation: Validation = {
     min: [
-      new validators.Range({
+      new validators.RangeValidator({
         min: 1,
         message: "Please enter a number greater than 1",
       }),

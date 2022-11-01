@@ -6,7 +6,7 @@ export interface RangeValidatorOptions extends ValidatorOptions {
   max?: number;
 }
 
-export class Range extends BaseValidator<RangeValidatorOptions> {
+export class RangeValidator extends BaseValidator<RangeValidatorOptions> {
   validate(arg: number | undefined, argName: string) {
     if (arg === undefined) return;
 

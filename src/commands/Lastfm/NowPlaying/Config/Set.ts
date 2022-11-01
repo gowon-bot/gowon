@@ -37,7 +37,7 @@ export class Set extends NowPlayingConfigChildCommand<typeof args> {
 
   validation: Validation = {
     config: {
-      validator: new validators.LengthRange({ max: 20 }),
+      validator: new validators.LengthRangeValidator({ max: 20 }),
       friendlyName: "config options",
     },
   };

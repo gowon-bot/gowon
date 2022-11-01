@@ -1,17 +1,21 @@
-import { LengthRange } from "./LengthRange";
-import { Number } from "./Number";
-import { Range } from "./Range";
-import { Required, RequiredAnd, RequiredOr } from "./Required";
-import { TimeRange } from "./TimeRange";
-import { Choices } from "./Choices";
+import { TimeRangeValidator } from "./TimeRange";
+import { ChoicesValidator } from "./Choices";
+import { LengthRangeValidator } from "./LengthRange";
+import { NumberValidator } from "./Number";
+import { RangeValidator } from "./Range";
+import {
+  RequiredAndValidator,
+  RequiredOrValidator,
+  RequiredValidator,
+} from "./Required";
 
 export const validators = {
-  LengthRange,
-  Number,
-  Range,
-  Required,
-  RequiredAnd,
-  RequiredOr,
-  TimeRange,
-  Choices,
+  LengthRangeValidator,
+  NumberValidator,
+  RangeValidator,
+  RequiredValidator,
+  RequiredAndValidator,
+  RequiredOrValidator,
+  TimeRangeValidator,
+  ChoicesValidator,
 };

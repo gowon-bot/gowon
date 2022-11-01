@@ -33,7 +33,7 @@ export default class GoBack extends LastFMBaseCommand<typeof args> {
 
   validation: Validation = {
     timeRange: {
-      validator: new validators.TimeRange({
+      validator: new validators.TimeRangeValidator({
         requireFrom: true,
         treatOnlyToAsEmpty: true,
       }),

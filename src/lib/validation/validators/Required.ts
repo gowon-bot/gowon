@@ -10,7 +10,7 @@ enum RequiredValidatorType {
   and = "and",
 }
 
-export class Required extends BaseValidator<RequiredValidatorOptions> {
+export class RequiredValidator extends BaseValidator<RequiredValidatorOptions> {
   type: RequiredValidatorType = RequiredValidatorType.or;
 
   validate(arg: any, argName: string, dependsOn?: SimpleMap) {
@@ -42,10 +42,10 @@ export class Required extends BaseValidator<RequiredValidatorOptions> {
   }
 }
 
-export class RequiredOr extends Required {
+export class RequiredOrValidator extends RequiredValidator {
   type = RequiredValidatorType.or;
 }
 
-export class RequiredAnd extends Required {
+export class RequiredAndValidator extends RequiredValidator {
   type = RequiredValidatorType.and;
 }

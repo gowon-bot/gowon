@@ -1,5 +1,5 @@
-import { TimeRange as TimeRangeType } from "../../timeAndDate/helpers";
 import { ValidatorOptions, BaseValidator } from "./BaseValidator";
+import { TimeRange } from "../../../lib/timeAndDate/TimeRange";
 
 interface TimeRangeValidatorOptions extends ValidatorOptions {
   requireFrom?: boolean;
@@ -7,8 +7,8 @@ interface TimeRangeValidatorOptions extends ValidatorOptions {
   treatOnlyToAsEmpty?: boolean;
 }
 
-export class TimeRange extends BaseValidator<TimeRangeValidatorOptions> {
-  validate(arg: TimeRangeType | undefined, argName: string) {
+export class TimeRangeValidator extends BaseValidator<TimeRangeValidatorOptions> {
+  validate(arg: TimeRange | undefined, argName: string) {
     if (!arg || (this.options.treatOnlyToAsEmpty && !arg.from)) return;
 
     if (

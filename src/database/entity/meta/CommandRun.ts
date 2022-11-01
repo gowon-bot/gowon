@@ -5,7 +5,7 @@ import {
   BaseEntity,
   CreateDateColumn,
 } from "typeorm";
-import { TimeRange } from "../../../lib/timeAndDate/helpers";
+import { TimeRange } from "../../../lib/timeAndDate/TimeRange";
 
 export interface MostUsedCommandsResponse {
   commandID: string;

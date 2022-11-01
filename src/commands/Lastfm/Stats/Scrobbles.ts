@@ -3,7 +3,7 @@ import { displayDate, displayNumber } from "../../../lib/views/displays";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { TimeRangeArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/TimeRangeArgument";
 import { DateArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/DateArgument";
-import { TimeRange } from "../../../lib/timeAndDate/helpers";
+import { TimeRange } from "../../../lib/timeAndDate/TimeRange";
 import { bold } from "../../../helpers/discord";
 
 const args = {

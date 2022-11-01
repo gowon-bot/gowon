@@ -18,7 +18,7 @@ export class UnbanArtist extends CrownsChildCommand<typeof args> {
   adminCommand = true;
 
   validation: Validation = {
-    artist: new validators.Required({}),
+    artist: new validators.RequiredValidator({}),
   };
 
   async run() {

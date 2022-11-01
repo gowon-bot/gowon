@@ -2,7 +2,7 @@ import { FriendsChildCommand } from "../FriendsChildCommand";
 import { MultiRequester } from "../../../../lib/MultiRequester";
 import { displayNumber } from "../../../../lib/views/displays";
 import { TimeRangeArgument } from "../../../../lib/context/arguments/argumentTypes/timeAndDate/TimeRangeArgument";
-import { TimeRange } from "../../../../lib/timeAndDate/helpers";
+import { TimeRange } from "../../../../lib/timeAndDate/TimeRange";
 import { code } from "../../../../helpers/discord";
 
 const args = {

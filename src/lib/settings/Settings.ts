@@ -63,6 +63,12 @@ export const Settings = {
     category: "customization",
     description: "Control which type of embed Gowon uses when you !fm",
   }),
+  timezone: new UserScopedSetting("timezone", {
+    friendlyName: "Timezone",
+    description: "Control what timezone Gowon uses",
+    omitFromDashboard: true,
+    category: "configuration",
+  }),
 
   // Bot scoped
   issueMode: new BotScopedSetting("issue_mode", {

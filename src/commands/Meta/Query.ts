@@ -19,7 +19,7 @@ export default class Query extends Command<typeof args> {
   arguments = args;
 
   validation: Validation = {
-    query: new validators.Required({}),
+    query: new validators.RequiredValidator({}),
   };
 
   async run() {
