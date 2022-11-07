@@ -1,6 +1,7 @@
 import {
   CommandInteraction,
   DMChannel,
+  FileOptions,
   InteractionReplyOptions,
   Message,
   MessageEmbed,
@@ -241,7 +242,7 @@ export interface SendOptions {
   inChannel: RespondableChannel;
   withEmbed: MessageEmbed;
   reply: boolean | ReplyOptions;
-  files: string[];
+  files: string[] | FileOptions[];
   forceNoInteractionReply?: boolean;
   ephemeral?: boolean;
 }
