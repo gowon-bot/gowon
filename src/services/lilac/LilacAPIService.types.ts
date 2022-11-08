@@ -37,6 +37,10 @@ export interface LilacTrackInput {
   album?: LilacArtistInput;
 }
 
+export interface LilacTagInput {
+  name?: string;
+}
+
 export interface LilacWhoKnowsInput {
   guildID?: string;
   limit?: number;
@@ -54,6 +58,14 @@ export interface LilacScrobbleFilters {
   track?: LilacTrackInput;
   user?: LilacUserInput;
   pagination?: LilacPaginationInput;
+}
+
+export interface LilacArtistFilters {
+  fetchTagsForMissing?: boolean;
+  inputs?: LilacArtistInput[];
+  matchTagsExactly?: boolean;
+  pagination?: LilacPaginationInput;
+  tags?: LilacTagInput[];
 }
 
 // Responses
@@ -169,4 +181,9 @@ export interface LilacAmbiguousTrackCount {
 export interface LilacScrobblesPage {
   pagination: LilacPagination;
   scrobbles: LilacScrobble[];
+}
+
+export interface LilacArtistsPage {
+  pagination: LilacPagination;
+  artists: LilacArtist[];
 }

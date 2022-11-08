@@ -1,4 +1,3 @@
-import gql from "graphql-tag";
 import { TagNotAllowedError } from "../../../errors/errors";
 import { bold } from "../../../helpers/discord";
 import { calculatePercent } from "../../../helpers/stats";
@@ -11,6 +10,7 @@ import {
 } from "../../../lib/views/displays";
 import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingEmbed";
 import { TopArtists } from "../../../services/LastFM/converters/TopTypes";
+import { LilacArtistsService } from "../../../services/lilac/LilacArtistsService";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { WordBlacklistService } from "../../../services/WordBlacklistService";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
@@ -41,6 +41,7 @@ export default class Tag extends LastFMBaseCommand<typeof args> {
 
   slashCommand = true;
 
+  lilacArtistsService = ServiceRegistry.get(LilacArtistsService);
   wordBlacklistService = ServiceRegistry.get(WordBlacklistService);
 
   async run() {
@@ -74,7 +75,7 @@ export default class Tag extends LastFMBaseCommand<typeof args> {
         paginator.getAllToConcatonable({
           concurrent: false,
         }),
-        this.mirrorballArtists(tag),
+        this.fetchArtistsFromLilac(tag),
       ]);
 
     const tagArtistNames = new Set([
@@ -144,20 +145,14 @@ export default class Tag extends LastFMBaseCommand<typeof args> {
     }, [] as Overlap[]);
   }
 
-  private async mirrorballArtists(tag: string): Promise<{ name: string }[]> {
-    const query = gql`
-      query artists($tag: String!) {
-        artists(tag: { name: $tag }) {
-          name
-        }
-      }
-    `;
+  private async fetchArtistsFromLilac(
+    tag: string
+  ): Promise<{ name: string }[]> {
+    const artists = await this.lilacArtistsService.list(this.ctx, {
+      tags: [{ name: tag }],
+    });
 
-    const response = await this.mirrorballService.query<{
-      artists: { name: string }[];
-    }>(this.ctx, query, { tag });
-
-    return response.artists;
+    return artists.artists;
   }
 
   private artistNameTransform(a: { name: string }) {

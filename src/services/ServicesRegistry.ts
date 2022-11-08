@@ -47,6 +47,8 @@ import { LilacWhoKnowsService } from "./lilac/LilacWhoKnowsService";
 import { LilacLibraryService } from "./lilac/LilacLibraryService";
 import { AlbumCoverService } from "./moderation/AlbumCoverService";
 import { TimeAndDateService } from "./TimeAndDateService";
+import { LilacTagsService } from "./lilac/LilacTagsService";
+import { LilacArtistsService } from "./lilac/LilacArtistsService";
 
 export type Service<T = any> = { new (): T };
 
@@ -75,7 +77,9 @@ const services: Service[] = [
 
   // Lilac services
   LilacAPIService,
+  LilacArtistsService,
   LilacLibraryService,
+  LilacTagsService,
   LilacUsersService,
   LilacWhoKnowsService,
 
