@@ -35,12 +35,6 @@ export interface WhoKnowsSettings {
   userIDs?: string[];
 }
 
-export interface TaskStartResponse {
-  taskName: string;
-  token: string;
-  success: boolean;
-}
-
 export interface MirrorballUser {
   id: number;
   username: string;
@@ -83,11 +77,6 @@ export interface MirrorballPageInfo {
 export interface MirrorballRating {
   rating: number;
   rateYourMusicAlbum: MirrorballRateYourMusicAlbum;
-}
-
-export interface MirrorballTag {
-  name: string;
-  occurrences: number;
 }
 
 export interface MirrorballTimerange {

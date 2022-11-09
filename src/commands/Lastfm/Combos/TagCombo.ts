@@ -4,9 +4,7 @@ import {
   TagComboCalculator,
   TagCombo as TagComboType,
 } from "../../../lib/calculators/TagComboCalculator";
-import { TagsService } from "../../../services/mirrorball/services/TagsService";
 import { displayNumber } from "../../../lib/views/displays";
-import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { bold } from "../../../helpers/discord";
 
@@ -25,8 +23,6 @@ export default class TagCombo extends LastFMBaseCommand<typeof args> {
   usage = [""];
 
   arguments = args;
-
-  tagsService = ServiceRegistry.get(TagsService);
 
   showLoadingAfter = this.gowonService.constants.defaultLoadingTime;
 

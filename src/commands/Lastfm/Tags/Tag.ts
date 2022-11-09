@@ -1,4 +1,3 @@
-import gql from "graphql-tag";
 import { TagNotAllowedError } from "../../../errors/errors";
 import { bold } from "../../../helpers/discord";
 import { calculatePercent } from "../../../helpers/stats";
@@ -11,6 +10,7 @@ import {
 } from "../../../lib/views/displays";
 import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingEmbed";
 import { TopArtists } from "../../../services/LastFM/converters/TopTypes";
+import { LilacArtistsService } from "../../../services/lilac/LilacArtistsService";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { WordBlacklistService } from "../../../services/WordBlacklistService";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
@@ -41,6 +41,7 @@ export default class Tag extends LastFMBaseCommand<typeof args> {
 
   slashCommand = true;
 
+  lilacArtistsService = ServiceRegistry.get(LilacArtistsService);
   wordBlacklistService = ServiceRegistry.get(WordBlacklistService);
 
   async run() {
@@ -68,23 +69,35 @@ export default class Tag extends LastFMBaseCommand<typeof args> {
       this.ctx
     );
 
-    const [tagTopArtists, userTopArtists, mirrorballArtists] =
-      await Promise.all([
-        this.lastFMService.tagTopArtists(this.ctx, { tag, limit: 1000 }),
-        paginator.getAllToConcatonable({
-          concurrent: false,
-        }),
-        this.mirrorballArtists(tag),
-      ]);
+    const [tagTopArtists, userTopArtists, lilacArtists] = await Promise.all([
+      this.lastFMService.tagTopArtists(this.ctx, { tag, limit: 1000 }),
+      paginator.getAllToConcatonable({
+        concurrent: false,
+      }),
+      this.lilacArtistsService.listWithTags(this.ctx, {
+        tags: [{ name: tag }],
+      }),
+    ]);
 
     const tagArtistNames = new Set([
       ...tagTopArtists!.artists.map(this.artistNameTransform),
-      ...mirrorballArtists.map(this.artistNameTransform),
+      ...lilacArtists.artists.artists.map(this.artistNameTransform),
     ]);
 
     const overlap = this.calculateOverlap(userTopArtists, tagArtistNames);
 
+    const similarTags = lilacArtists.tags.tags
+      .filter((t) => t.name.toLowerCase() !== tag.toLowerCase())
+      .map((t) => t.name.toLowerCase());
+
     const description =
+      (similarTags.length > 3
+        ? `_Including ${displayNumber(similarTags.length, "similar tag")}_\n`
+        : similarTags.length == 2
+        ? `_Including ${similarTags[0]} & ${similarTags[1]}_\n`
+        : similarTags.length > 0
+        ? `_Including ${similarTags.join(", ")}_\n`
+        : "") +
       `_Comparing ${perspective.possessive} top ${displayNumber(
         userTopArtists.artists.length,
         "artist"
@@ -142,22 +155,6 @@ export default class Tag extends LastFMBaseCommand<typeof args> {
 
       return acc;
     }, [] as Overlap[]);
-  }
-
-  private async mirrorballArtists(tag: string): Promise<{ name: string }[]> {
-    const query = gql`
-      query artists($tag: String!) {
-        artists(tag: { name: $tag }) {
-          name
-        }
-      }
-    `;
-
-    const response = await this.mirrorballService.query<{
-      artists: { name: string }[];
-    }>(this.ctx, query, { tag });
-
-    return response.artists;
   }
 
   private artistNameTransform(a: { name: string }) {

@@ -1,7 +1,6 @@
-import gql from "graphql-tag";
 import { RecentTracks } from "../../services/LastFM/converters/RecentTracks";
-import { MirrorballService } from "../../services/mirrorball/MirrorballService";
-import { MirrorballTag } from "../../services/mirrorball/MirrorballTypes";
+import { LilacTag } from "../../services/lilac/LilacAPIService.types";
+import { LilacTagsService } from "../../services/lilac/LilacTagsService";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { RedirectsCache } from "../caches/RedirectsCache";
 import { GowonContext } from "../context/Context";
@@ -14,7 +13,7 @@ interface Top {
   artists: Count;
   albums: Count;
   tracks: Count;
-  tags: MirrorballTag[];
+  tags: LilacTag[];
 }
 
 interface TotalCounts {
@@ -37,7 +36,7 @@ export class ReportCalculator {
     tags: [],
   };
 
-  private mirrorballService = ServiceRegistry.get(MirrorballService);
+  private lilacTagsService = ServiceRegistry.get(LilacTagsService);
 
   constructor(private ctx: GowonContext, private tracks: RecentTracks) {}
 
@@ -106,23 +105,10 @@ export class ReportCalculator {
   }
 
   private async countTags(): Promise<void> {
-    const query = gql`
-      query tags($artists: [ArtistInput!]!) {
-        tags(settings: { artists: $artists }, requireTagsForMissing: true) {
-          tags {
-            name
-            occurrences
-          }
-        }
-      }
-    `;
-
     const artists = Object.keys(this.top.artists).map((name) => ({ name }));
 
-    const response = await this.mirrorballService.query<{
-      tags: { tags: MirrorballTag[] };
-    }>(this.ctx, query, { artists });
+    const response = await this.lilacTagsService.list(this.ctx, { artists });
 
-    this.top.tags = response.tags.tags;
+    this.top.tags = response.tags;
   }
 }

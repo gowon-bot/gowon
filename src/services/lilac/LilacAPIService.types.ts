@@ -1,5 +1,6 @@
 // Types
 
+import { ArtistInput } from "../mirrorball/MirrorballTypes";
 import { LilacUser } from "./converters/user";
 
 export type LilacDate = number;
@@ -37,6 +38,10 @@ export interface LilacTrackInput {
   album?: LilacArtistInput;
 }
 
+export interface LilacTagInput {
+  name?: string;
+}
+
 export interface LilacWhoKnowsInput {
   guildID?: string;
   limit?: number;
@@ -54,6 +59,21 @@ export interface LilacScrobbleFilters {
   track?: LilacTrackInput;
   user?: LilacUserInput;
   pagination?: LilacPaginationInput;
+}
+
+export interface LilacArtistFilters {
+  fetchTagsForMissing?: boolean;
+  inputs?: LilacArtistInput[];
+  matchTagsExactly?: boolean;
+  pagination?: LilacPaginationInput;
+  tags?: LilacTagInput[];
+}
+
+export interface LilacTagsFilters {
+  inputs?: LilacTagInput[];
+  artists?: ArtistInput[];
+  pagination?: LilacPaginationInput;
+  fetchTagsForMissing?: boolean;
 }
 
 // Responses
@@ -114,6 +134,8 @@ export interface LilacWhoKnowsTrackRank {
 export interface LilacArtist {
   id: number;
   name: string;
+
+  tags: LilacTag[];
 }
 
 export interface LilacAlbum {
@@ -127,6 +149,11 @@ export interface LilacTrack {
   name: string;
   artist: LilacArtist;
   album?: LilacAlbum;
+}
+
+export interface LilacTag {
+  name: string;
+  occurrences?: number;
 }
 
 export interface LilacAmbiguousTrack {
@@ -169,4 +196,14 @@ export interface LilacAmbiguousTrackCount {
 export interface LilacScrobblesPage {
   pagination: LilacPagination;
   scrobbles: LilacScrobble[];
+}
+
+export interface LilacArtistsPage {
+  pagination: LilacPagination;
+  artists: LilacArtist[];
+}
+
+export interface LilacTagsPage {
+  pagination: LilacPagination;
+  tags: LilacTag[];
 }

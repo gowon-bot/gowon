@@ -4,11 +4,11 @@ import { CrownsService } from "../../../services/dbservices/CrownsService";
 import { LinkConsolidator } from "../../../helpers/lastFM";
 import { LineConsolidator } from "../../../lib/LineConsolidator";
 import { displayNumber } from "../../../lib/views/displays";
-import { TagsService } from "../../../services/mirrorball/services/TagsService";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 import { bold } from "../../../helpers/discord";
+import { LilacTagsService } from "../../../services/lilac/LilacTagsService";
 
 const args = {
   ...prefabArguments.artist,
@@ -27,8 +27,8 @@ export default class ArtistInfo extends InfoCommand<typeof args> {
 
   arguments = args;
 
-  tagsService = ServiceRegistry.get(TagsService);
   crownsService = ServiceRegistry.get(CrownsService);
+  lilacTagsService = ServiceRegistry.get(LilacTagsService);
   lineConsolidator = new LineConsolidator();
 
   async run() {
@@ -56,7 +56,7 @@ export default class ArtistInfo extends InfoCommand<typeof args> {
       artistInfo.name
     );
 
-    const tags = await this.tagsService.getTagsForArtists(this.ctx, [
+    const tags = await this.lilacTagsService.getTagsForArtists(this.ctx, [
       { name: artist },
     ]);
 
