@@ -1,11 +1,11 @@
 import { sum } from "mathjs";
 import { RawTag } from "../../services/LastFM/LastFMService.types";
-import { MirrorballTag } from "../../services/mirrorball/MirrorballTypes";
+import { LilacTag } from "../../services/lilac/LilacAPIService.types";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { WordBlacklistService } from "../../services/WordBlacklistService";
 import { GowonContext } from "../context/Context";
 
-function isMirrorballTag(tag: any | MirrorballTag): tag is MirrorballTag {
+function isLilacTag(tag: any | LilacTag): tag is LilacTag {
   return !!tag.name && !!tag.occurrences;
 }
 
@@ -17,7 +17,7 @@ export class TagConsolidator {
   static readonly tagJoin = " ‧ ";
 
   customBlacklist = [] as string[];
-  tags: MirrorballTag[] = [];
+  tags: LilacTag[] = [];
   characterLimit = 30;
 
   blacklistTags(...nonTags: string[]): TagConsolidator {
@@ -35,7 +35,7 @@ export class TagConsolidator {
 
   addTags(
     ctx: GowonContext,
-    tags: RawTag[] | string[] | MirrorballTag[]
+    tags: RawTag[] | string[] | LilacTag[]
   ): TagConsolidator {
     const convertedTags = this.convertTags(tags);
 
@@ -43,10 +43,7 @@ export class TagConsolidator {
     return this;
   }
 
-  consolidate(
-    max: number = Infinity,
-    useCharacterLimit = true
-  ): MirrorballTag[] {
+  consolidate(max: number = Infinity, useCharacterLimit = true): LilacTag[] {
     let { fixer, reverser } = TagConsolidator.tagFixer();
 
     let tagCounts = this.tags.reduce((acc, tag) => {
@@ -54,7 +51,7 @@ export class TagConsolidator {
 
       if (!acc[fixedTagName]) acc[fixedTagName] = 0;
 
-      acc[fixedTagName] += tag.occurrences;
+      acc[fixedTagName] += tag.occurrences || 1;
 
       return acc;
     }, {} as { [tagName: string]: number });
@@ -82,24 +79,24 @@ export class TagConsolidator {
   }
 
   static tagFixer(): {
-    fixer: (tag: MirrorballTag) => string;
-    reverser: (tag: string) => MirrorballTag;
+    fixer: (tag: LilacTag) => string;
+    reverser: (tag: string) => LilacTag;
   } {
     const tagMap: { [fixedTag: string]: { [tag: string]: number } } = {};
 
-    function fixer(tag: MirrorballTag): string {
+    function fixer(tag: LilacTag): string {
       const tagName = tag.name;
       const fixedTag = tag.name.replace(/ |-|_|'/g, "").toLowerCase();
 
       if (!tagMap[fixedTag]) tagMap[fixedTag] = {};
       if (!tagMap[fixedTag][tagName]) tagMap[fixedTag][tagName] = 0;
 
-      tagMap[fixedTag][tagName] += tag.occurrences;
+      tagMap[fixedTag][tagName] += tag.occurrences || 1;
 
       return fixedTag;
     }
 
-    function reverser(fixedTag: string): MirrorballTag {
+    function reverser(fixedTag: string): LilacTag {
       const foundTag = Object.keys(tagMap[fixedTag]).sort(
         (a, b) => tagMap[fixedTag][b] - tagMap[fixedTag][a]
       )[0];
@@ -117,10 +114,7 @@ export class TagConsolidator {
     return { reverser, fixer };
   }
 
-  private filterTags(
-    ctx: GowonContext,
-    tags: MirrorballTag[]
-  ): MirrorballTag[] {
+  private filterTags(ctx: GowonContext, tags: LilacTag[]): LilacTag[] {
     return this.wordBlacklistService.filter(
       ctx,
       tags,
@@ -129,13 +123,11 @@ export class TagConsolidator {
     );
   }
 
-  private convertTags(
-    tags: (string | RawTag | MirrorballTag)[]
-  ): MirrorballTag[] {
-    const convertedTags = [] as MirrorballTag[];
+  private convertTags(tags: (string | RawTag | LilacTag)[]): LilacTag[] {
+    const convertedTags = [] as LilacTag[];
 
     for (const tag of tags) {
-      if (isMirrorballTag(tag)) {
+      if (isLilacTag(tag)) {
         convertedTags.push({
           name: tag.name.toLowerCase(),
           occurrences: tag.occurrences,

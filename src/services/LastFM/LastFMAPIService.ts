@@ -71,11 +71,11 @@ import {
 } from "../../errors/errors";
 import { BaseService } from "../BaseService";
 import { toInt } from "../../helpers/lastFM";
-import { MirrorballCacheService } from "../mirrorball/MirrorballCacheService";
 import { SimpleMap } from "../../helpers/types";
 import { ServiceRegistry } from "../ServicesRegistry";
 import { AnalyticsCollector } from "../../analytics/AnalyticsCollector";
 import { GowonContext } from "../../lib/context/Context";
+import { LilacTagsService } from "../lilac/LilacTagsService";
 
 export interface SessionKey {
   username: string;
@@ -91,8 +91,8 @@ export function isSessionKey(
 }
 
 export class LastFMAPIService extends BaseService {
-  private get mirrorballCacheService() {
-    return ServiceRegistry.get(MirrorballCacheService);
+  private get lilacTagsService() {
+    return ServiceRegistry.get(LilacTagsService);
   }
 
   private get analyticsCollector() {
@@ -167,13 +167,13 @@ export class LastFMAPIService extends BaseService {
     ctx: GowonContext,
     params: ArtistInfoParams
   ): Promise<RawArtistInfo> {
-    let response = (
+    const response = (
       await this.request<RawArtistInfoResponse>(ctx, "artist.getInfo", params, {
         post: true,
       })
     ).artist;
 
-    this.mirrorballCacheService.cacheArtistInfo(ctx, response);
+    this.lilacTagsService.cacheArtistInfo(ctx, response);
 
     if (
       params.username &&
@@ -284,7 +284,7 @@ export class LastFMAPIService extends BaseService {
       params
     );
 
-    this.mirrorballCacheService.cacheTagTopArtists(ctx, response.topartists);
+    this.lilacTagsService.cacheTagTopArtists(ctx, response.topartists);
 
     return response.topartists;
   }

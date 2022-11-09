@@ -1,4 +1,4 @@
-import { TagsService } from "../../services/mirrorball/services/TagsService";
+import { LilacArtistsService } from "../../services/lilac/LilacArtistsService";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { GowonContext } from "../context/Context";
 
@@ -8,12 +8,12 @@ interface TagsCacheObject {
 
 export class TagsCache {
   private cache: TagsCacheObject = {};
-  private tagsService = ServiceRegistry.get(TagsService);
+  private lilacArtistsService = ServiceRegistry.get(LilacArtistsService);
 
   constructor(private ctx: GowonContext) {}
 
   async initialCache(artistNames: string[], requireTags?: boolean) {
-    const artistMap = await this.tagsService.getTagsForArtistsMap(
+    const artistMap = await this.lilacArtistsService.getTagsForArtistsMap(
       this.ctx,
       artistNames,
       requireTags
@@ -25,7 +25,7 @@ export class TagsCache {
   }
 
   async getTags(artist: string): Promise<string[]> {
-    let artistName = artist.toLowerCase();
+    const artistName = artist.toLowerCase();
 
     return this.cache[artistName] || [];
   }

@@ -1,4 +1,3 @@
-import gql from "graphql-tag";
 import { humanizePeriod } from "../../../lib/timeAndDate/helpers/humanize";
 import { TagConsolidator } from "../../../lib/tags/TagConsolidator";
 import {
@@ -6,15 +5,13 @@ import {
   displayNumberedList,
 } from "../../../lib/views/displays";
 import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingEmbed";
-import {
-  MirrorballPageInfo,
-  MirrorballTag,
-} from "../../../services/mirrorball/MirrorballTypes";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { TimePeriodArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/TimePeriodArgument";
 import { TimeRangeArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/TimeRangeArgument";
 import { bold } from "../../../helpers/discord";
+import { ServiceRegistry } from "../../../services/ServicesRegistry";
+import { LilacTagsService } from "../../../services/lilac/LilacTagsService";
 
 const args = {
   timePeriod: new TimePeriodArgument({
@@ -39,6 +36,8 @@ export default class TagList extends LastFMBaseCommand<typeof args> {
 
   arguments = args;
 
+  lilacTagsService = ServiceRegistry.get(LilacTagsService);
+
   async run() {
     const timePeriod = this.parsedArguments.timePeriod,
       timeRange = this.parsedArguments.timeRange;
@@ -52,25 +51,8 @@ export default class TagList extends LastFMBaseCommand<typeof args> {
       ...timeRange?.asTimeframeParams,
     });
 
-    const query = gql`
-      query tags($artists: [ArtistInput!]!) {
-        tags(settings: { artists: $artists }) {
-          tags {
-            name
-            occurrences
-          }
-          pageInfo {
-            recordCount
-          }
-        }
-      }
-    `;
-
     const artists = topArtists.artists.map((a) => ({ name: a.name }));
-
-    const response = await this.mirrorballService.query<{
-      tags: { tags: MirrorballTag[]; pageInfo: MirrorballPageInfo };
-    }>(this.ctx, query, { artists });
+    const response = await this.lilacTagsService.list(this.ctx, { artists });
 
     const embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor("Top tags"))
@@ -83,7 +65,7 @@ export default class TagList extends LastFMBaseCommand<typeof args> {
     const tagConsolidator = new TagConsolidator();
 
     await tagConsolidator.saveServerBannedTagsInContext(this.ctx);
-    tagConsolidator.addTags(this.ctx, response.tags.tags);
+    tagConsolidator.addTags(this.ctx, response.tags);
 
     const scrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
       items: tagConsolidator.consolidate(),

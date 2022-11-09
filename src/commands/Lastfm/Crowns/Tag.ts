@@ -1,6 +1,5 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
-import { TagsService } from "../../../services/mirrorball/services/TagsService";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingEmbed";
@@ -11,6 +10,7 @@ import {
 import { StringArrayArgument } from "../../../lib/context/arguments/argumentTypes/StringArrayArgument";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { italic } from "../../../helpers/discord";
+import { LilacArtistsService } from "../../../services/lilac/LilacArtistsService";
 
 const args = {
   ...standardMentions,
@@ -32,7 +32,7 @@ export class Tag extends CrownsChildCommand<typeof args> {
 
   slashCommand = true;
 
-  tagsService = ServiceRegistry.get(TagsService);
+  lilacArtistsService = ServiceRegistry.get(LilacArtistsService);
 
   validation: Validation = {
     genres: new validators.LengthRangeValidator({ min: 1, max: 10 }),
@@ -49,7 +49,7 @@ export class Tag extends CrownsChildCommand<typeof args> {
       -1
     );
 
-    const filteredCrowns = await this.tagsService.filterArtists(
+    const filteredCrowns = await this.lilacArtistsService.filterByTag(
       this.ctx,
       crowns.map((c) => ({ ...c, name: c.artistName })),
       genres

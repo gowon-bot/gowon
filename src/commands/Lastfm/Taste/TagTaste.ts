@@ -4,13 +4,13 @@ import { Variation } from "../../../lib/command/Command";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { LogicError } from "../../../errors/errors";
-import { TagsService } from "../../../services/mirrorball/services/TagsService";
 import { TasteCommand, tasteArgs } from "./TasteCommand";
 import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingEmbed";
 import { displayNumber } from "../../../lib/views/displays";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
+import { LilacArtistsService } from "../../../services/lilac/LilacArtistsService";
 
 const args = {
   ...tasteArgs,
@@ -62,7 +62,7 @@ export default class TagTaste extends TasteCommand<typeof args> {
     },
   };
 
-  tagService = ServiceRegistry.get(TagsService);
+  lilacArtistsService = ServiceRegistry.get(LilacArtistsService);
 
   async run() {
     const artistAmount = this.parsedArguments.artistAmount,
@@ -80,13 +80,13 @@ export default class TagTaste extends TasteCommand<typeof args> {
       mentionedPaginator.getAllToConcatonable(),
     ]);
 
-    const senderArtistsFiltered = await this.tagService.filterArtists(
+    const senderArtistsFiltered = await this.lilacArtistsService.filterByTag(
       this.ctx,
       senderArtists.artists,
       [tag]
     );
 
-    const mentionedArtistsFiltered = await this.tagService.filterArtists(
+    const mentionedArtistsFiltered = await this.lilacArtistsService.filterByTag(
       this.ctx,
       mentionedArtists.artists,
       [tag]

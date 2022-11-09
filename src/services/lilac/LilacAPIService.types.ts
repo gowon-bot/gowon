@@ -1,5 +1,6 @@
 // Types
 
+import { ArtistInput } from "../mirrorball/MirrorballTypes";
 import { LilacUser } from "./converters/user";
 
 export type LilacDate = number;
@@ -68,6 +69,13 @@ export interface LilacArtistFilters {
   tags?: LilacTagInput[];
 }
 
+export interface LilacTagsFilters {
+  inputs?: LilacTagInput[];
+  artists?: ArtistInput[];
+  pagination?: LilacPaginationInput;
+  fetchTagsForMissing?: boolean;
+}
+
 // Responses
 export interface IndexingProgress<
   Action extends LilacProgressAction = LilacProgressAction
@@ -126,6 +134,8 @@ export interface LilacWhoKnowsTrackRank {
 export interface LilacArtist {
   id: number;
   name: string;
+
+  tags: LilacTag[];
 }
 
 export interface LilacAlbum {
@@ -139,6 +149,11 @@ export interface LilacTrack {
   name: string;
   artist: LilacArtist;
   album?: LilacAlbum;
+}
+
+export interface LilacTag {
+  name: string;
+  occurrences?: number;
 }
 
 export interface LilacAmbiguousTrack {
@@ -186,4 +201,9 @@ export interface LilacScrobblesPage {
 export interface LilacArtistsPage {
   pagination: LilacPagination;
   artists: LilacArtist[];
+}
+
+export interface LilacTagsPage {
+  pagination: LilacPagination;
+  tags: LilacTag[];
 }
