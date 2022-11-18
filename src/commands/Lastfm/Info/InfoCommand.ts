@@ -11,12 +11,12 @@ export abstract class InfoCommand<
   tagConsolidator = new TagConsolidator();
 
   getLinkFromBio(bio: string): string | undefined {
-    let matches = bio.match(/(?<=<a href=")(.*)(?=">)/) || [];
+    const matches = bio.match(/(?<=<a href=")(.*)(?=">)/) || [];
 
     return matches[0];
   }
 
   scrubReadMore(bio?: string): string | undefined {
-    return bio?.replace(/<a href=".*/, "");
+    return bio?.replace(/<a href=".*/, "").trim();
   }
 }

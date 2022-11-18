@@ -2,6 +2,8 @@ import { gql } from "apollo-server-express";
 import { GowonContext } from "../../lib/context/Context";
 import { LilacAPIService } from "./LilacAPIService";
 import {
+  LilacArtistCountFilters,
+  LilacArtistCountsPage,
   LilacArtistFilters,
   LilacArtistsPage,
   LilacTagInput,
@@ -78,6 +80,39 @@ export class LilacArtistsService extends LilacAPIService {
     >(ctx, query, { filters, tags: filters.tags }, false);
 
     return response;
+  }
+
+  async listCounts(
+    ctx: GowonContext,
+    filters: LilacArtistCountFilters
+  ): Promise<LilacArtistCountsPage> {
+    const query = gql`
+      query list($filters: ArtistCountsFilters!) {
+        artistCounts(filters: $filters) {
+          artistCounts {
+            artist {
+              id
+              name
+            }
+            playcount
+          }
+
+          pagination {
+            totalItems
+            currentPage
+            totalPages
+            perPage
+          }
+        }
+      }
+    `;
+
+    const response = await this.query<
+      { artistCounts: LilacArtistCountsPage },
+      { filters: LilacArtistCountFilters }
+    >(ctx, query, { filters }, false);
+
+    return response.artistCounts;
   }
 
   async getTagsForArtistsMap(

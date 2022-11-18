@@ -64,7 +64,14 @@ export interface LilacScrobbleFilters {
 export interface LilacArtistFilters {
   fetchTagsForMissing?: boolean;
   inputs?: LilacArtistInput[];
-  matchTagsExactly?: boolean;
+  pagination?: LilacPaginationInput;
+  tags?: LilacTagInput[];
+}
+
+export interface LilacArtistCountFilters {
+  fetchTagsForMissing?: boolean;
+  artists?: LilacArtistInput[];
+  users?: LilacUserInput[];
   pagination?: LilacPaginationInput;
   tags?: LilacTagInput[];
 }
@@ -201,6 +208,11 @@ export interface LilacScrobblesPage {
 export interface LilacArtistsPage {
   pagination: LilacPagination;
   artists: LilacArtist[];
+}
+
+export interface LilacArtistCountsPage {
+  pagination: LilacPagination;
+  artistCounts: LilacArtistCount[];
 }
 
 export interface LilacTagsPage {
