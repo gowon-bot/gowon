@@ -46,7 +46,8 @@ export function discordTimestamp(
 export function displayNumberedList(
   list: any[],
   startAt = 0,
-  step = 1
+  step = 1,
+  padding = ""
 ): string {
   return list
     .map((val, idx) => {
@@ -54,7 +55,9 @@ export function displayNumberedList(
 
       const spaces = `${startAt + list.length}`.length - `${displayIdx}`.length;
 
-      return `\`${" ".repeat(spaces)}${displayNumber(displayIdx)}\`. ${val}`;
+      return `${padding}\`${" ".repeat(spaces)}${displayNumber(
+        displayIdx
+      )}\`. ${val}`;
     })
     .join("\n");
 }

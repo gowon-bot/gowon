@@ -29,7 +29,7 @@ export default class TagList extends LastFMBaseCommand<typeof args> {
 
   subcategory = "tags";
   description = "Displays your top tags";
-  aliases = ["tags", "tta"];
+  aliases = ["tta", "toptags"];
 
   slashCommand = true;
   slashCommandName = "toptags";
