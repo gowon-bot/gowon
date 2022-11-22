@@ -1,6 +1,7 @@
 import { TagNotAllowedError } from "../../../errors/errors";
 import { bold } from "../../../helpers/discord";
 import { calculatePercent } from "../../../helpers/stats";
+import { CommandRedirect } from "../../../lib/command/Command";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { Paginator } from "../../../lib/paginators/Paginator";
@@ -14,6 +15,7 @@ import { LilacArtistsService } from "../../../services/lilac/LilacArtistsService
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { WordBlacklistService } from "../../../services/WordBlacklistService";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
+import ArtistTags from "./ArtistTags";
 
 interface Overlap {
   artist: string;
@@ -23,7 +25,6 @@ interface Overlap {
 const args = {
   tag: new StringArgument({
     index: { start: 0 },
-    required: true,
     description: "The tag to filter your artists with",
   }),
   ...standardMentions,
@@ -41,11 +42,18 @@ export default class Tag extends LastFMBaseCommand<typeof args> {
 
   slashCommand = true;
 
+  redirects: CommandRedirect<typeof args>[] = [
+    {
+      when: (args) => !args.tag,
+      redirectTo: ArtistTags,
+    },
+  ];
+
   lilacArtistsService = ServiceRegistry.get(LilacArtistsService);
   wordBlacklistService = ServiceRegistry.get(WordBlacklistService);
 
   async run() {
-    const tag = this.parsedArguments.tag;
+    const tag = this.parsedArguments.tag!;
 
     await this.wordBlacklistService.saveServerBannedTagsInContext(this.ctx);
 

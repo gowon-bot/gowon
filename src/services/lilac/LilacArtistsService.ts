@@ -8,6 +8,7 @@ import {
   LilacArtistsPage,
   LilacTagInput,
   LilacTagsPage,
+  LilacUserInput,
 } from "./LilacAPIService.types";
 
 export class LilacArtistsService extends LilacAPIService {
@@ -152,5 +153,25 @@ export class LilacArtistsService extends LilacAPIService {
     });
 
     return filteredArtists;
+  }
+
+  async getArtistCountsForTags(
+    ctx: GowonContext,
+    user: LilacUserInput,
+    tags: string[]
+  ): Promise<LilacArtistCountsPage[]> {
+    const responses = [] as LilacArtistCountsPage[];
+
+    for (const tag of tags) {
+      responses.push(
+        await this.listCounts(ctx, {
+          tags: [{ name: tag }],
+          users: [user],
+          pagination: { perPage: 3, page: 1 },
+        })
+      );
+    }
+
+    return responses;
   }
 }
