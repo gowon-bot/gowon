@@ -15,12 +15,13 @@ import {
 } from "../../../../lib/context/arguments/prefabArguments";
 import { bold } from "../../../../helpers/discord";
 import { Emoji } from "../../../../lib/Emoji";
+import { ArgumentsMap } from "../../../../lib/context/arguments/types";
 
 const args = {
   ...standardMentions,
   ...prefabArguments.artist,
   noRedirect: prefabFlags.noRedirect,
-} as const;
+} satisfies ArgumentsMap;
 
 export default class LastScrobbledArtist extends MirrorballBaseCommand<
   LastScrobbledResponse,
@@ -78,8 +79,7 @@ export default class LastScrobbledArtist extends MirrorballBaseCommand<
         )
       )
       .setDescription(
-        `${Emoji.usesIndexedDataDescription} ${perspective.upper.name} ${
-          this.variationWasUsed("first") ? "first" : "last"
+        `${Emoji.usesIndexedDataDescription} ${perspective.upper.name} ${this.variationWasUsed("first") ? "first" : "last"
         } scrobbled ${bold(play.track.artist.name)} on ${displayDate(
           convertMirrorballDate(play.scrobbledAt)
         )}`

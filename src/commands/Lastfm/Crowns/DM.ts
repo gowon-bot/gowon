@@ -3,10 +3,11 @@ import { chunkArray } from "../../../helpers";
 import { displayNumber } from "../../../lib/views/displays";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { bold } from "../../../helpers/discord";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 
 const args = {
   ...standardMentions,
-} as const;
+} satisfies ArgumentsMap;
 
 export class DM extends CrownsChildCommand<typeof args> {
   idSeed = "weki meki lucy";
@@ -49,18 +50,16 @@ export class DM extends CrownsChildCommand<typeof args> {
       .map((chunk, chunkIdx) =>
         this.newEmbed()
           .setTitle(
-            `Crowns ${chunkIdx * crownsPerMessage + 1} - ${
-              (chunkIdx + 1) * crownsPerMessage < crowns.length
-                ? (chunkIdx + 1) * crownsPerMessage
-                : crowns.length
+            `Crowns ${chunkIdx * crownsPerMessage + 1} - ${(chunkIdx + 1) * crownsPerMessage < crowns.length
+              ? (chunkIdx + 1) * crownsPerMessage
+              : crowns.length
             }`
           )
           .setDescription(
             chunk
               .map(
                 (c, i) =>
-                  `${chunkIdx * crownsPerMessage + 1 + i}) ${
-                    c.artistName
+                  `${chunkIdx * crownsPerMessage + 1 + i}) ${c.artistName
                   } ― ${bold(displayNumber(c.plays, "play"))}`
               )
               .join("\n")

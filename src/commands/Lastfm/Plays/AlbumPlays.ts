@@ -7,6 +7,7 @@ import { Flag } from "../../../lib/context/arguments/argumentTypes/Flag";
 import { CommandRedirect } from "../../../lib/command/Command";
 import GlobalAlbumPlays from "./GlobalAlbumPlays";
 import { bold, italic } from "../../../helpers/discord";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 
 const args = {
   ...prefabArguments.album,
@@ -16,7 +17,7 @@ const args = {
     description: "Compares your plays against the global stats",
   }),
   ...standardMentions,
-} as const;
+} satisfies ArgumentsMap;
 
 export default class AlbumPlays extends LastFMBaseCommand<typeof args> {
   idSeed = "itzy lia";
@@ -53,13 +54,13 @@ export default class AlbumPlays extends LastFMBaseCommand<typeof args> {
 
     await this.oldReply(
       `${perspective.plusToHave}` +
-        (toInt(albumDetails.userPlaycount) === 0
-          ? "n't scrobbled"
-          : ` **${displayNumber(
-              albumDetails.userPlaycount,
-              "**scrobble"
-            )} of`) +
-        ` ${italic(albumDetails.name)} by ${bold(albumDetails.artist)}`
+      (toInt(albumDetails.userPlaycount) === 0
+        ? "n't scrobbled"
+        : ` **${displayNumber(
+          albumDetails.userPlaycount,
+          "**scrobble"
+        )} of`) +
+      ` ${italic(albumDetails.name)} by ${bold(albumDetails.artist)}`
     );
   }
 }

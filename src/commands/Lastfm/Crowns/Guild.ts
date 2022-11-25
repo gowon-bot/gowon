@@ -10,6 +10,7 @@ import { Flag } from "../../../lib/context/arguments/argumentTypes/Flag";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { GuildUserRank } from "./GuildRank";
 import { bold } from "../../../helpers/discord";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 
 const args = {
   meInput: new StringArgument({ match: ["me"], slashCommandOption: false }),
@@ -22,7 +23,7 @@ const args = {
     description: "The rank to check on the leaderboard",
   }),
   ...standardMentions,
-} as const;
+} satisfies ArgumentsMap;
 
 export class Guild extends CrownsChildCommand<typeof args> {
   idSeed = "weki meki rina";
@@ -72,16 +73,16 @@ export class Guild extends CrownsChildCommand<typeof args> {
           crownsCount,
           "** crown"
         )} in ${this.requiredGuild.name}\n\n` +
-          (
-            await asyncMap(
-              holders,
-              async (h, idx) =>
-                `${idx + 1}. ${await this.gowonClient.userDisplay(
-                  this.ctx,
-                  h.user
-                )} with ${bold(displayNumber(h.numberOfCrowns, "crown"))}`
-            )
-          ).join("\n")
+        (
+          await asyncMap(
+            holders,
+            async (h, idx) =>
+              `${idx + 1}. ${await this.gowonClient.userDisplay(
+                this.ctx,
+                h.user
+              )} with ${bold(displayNumber(h.numberOfCrowns, "crown"))}`
+          )
+        ).join("\n")
       );
 
     await this.send(embed);

@@ -3,10 +3,11 @@ import { validators } from "../../../lib/validation/validators";
 import { CrownsChildCommand } from "./CrownsChildCommand";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 import { bold } from "../../../helpers/discord";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 
 const args = {
   ...prefabArguments.requiredArtist,
-} as const;
+} satisfies ArgumentsMap;
 
 export class BanArtist extends CrownsChildCommand<typeof args> {
   idSeed = "loona olivia hye";

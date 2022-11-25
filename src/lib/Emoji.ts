@@ -59,7 +59,7 @@ export const Emoji = {
   betatester: "<:betatester:913203995663798322>",
   developer: "<:developer:913203995470888990>",
   "#swag": "<:swag:936102174394581032>",
-} as const;
+} satisfies Record<string, string>;
 
 export const EmojiRaw = Object.entries(Emoji).reduce(
   (acc, [shortName, code]) => {

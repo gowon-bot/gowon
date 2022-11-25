@@ -9,10 +9,11 @@ import { User } from "../../../database/entity/User";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 import { bold } from "../../../helpers/discord";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 
 const args = {
   ...prefabArguments.artist,
-} as const;
+} satisfies ArgumentsMap;
 
 export class Info extends CrownsChildCommand<typeof args> {
   idSeed = "wjsn dayoung";
@@ -42,9 +43,9 @@ export class Info extends CrownsChildCommand<typeof args> {
       this.ctx,
       senderRequestable
         ? {
-            artist,
-            username: senderRequestable,
-          }
+          artist,
+          username: senderRequestable,
+        }
         : { artist }
     );
 
@@ -106,14 +107,12 @@ export class Info extends CrownsChildCommand<typeof args> {
             crown.artistName
           )} with ${displayNumber(crown.plays, "play")}
 
-          Created ${ago(crown.createdAt)}${
-            crown.version > 1 ? ". Last stolen " + ago(crown.lastStolen) : ""
+          Created ${ago(crown.createdAt)}${crown.version > 1 ? ". Last stolen " + ago(crown.lastStolen) : ""
           }
 
-          _It ${
-            crown.version === 0
-              ? "has never been stolen"
-              : "has been stolen " + displayNumber(crown.version, "time")
+          _It ${crown.version === 0
+            ? "has never been stolen"
+            : "has been stolen " + displayNumber(crown.version, "time")
           }_`
         );
 
@@ -134,7 +133,7 @@ export class Info extends CrownsChildCommand<typeof args> {
 
     lineConsolidator.addLines(
       `No one has the crown for ${bold(artistName)}` +
-        (redirectedFrom ? ` _(redirected from ${redirectedFrom})_` : ""),
+      (redirectedFrom ? ` _(redirected from ${redirectedFrom})_` : ""),
       {
         shouldDisplay:
           !!playcount &&
@@ -145,9 +144,9 @@ export class Info extends CrownsChildCommand<typeof args> {
 
         else: userCanClaimCrowns
           ? `\nYou need ${displayNumber(
-              this.crownsService.threshold,
-              "play"
-            )} to claim it`
+            this.crownsService.threshold,
+            "play"
+          )} to claim it`
           : `\nYou can't claim this crown`,
       }
     );

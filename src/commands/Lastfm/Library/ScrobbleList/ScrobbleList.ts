@@ -2,6 +2,7 @@ import { bold, italic } from "../../../../helpers/discord";
 import { convertLilacDate } from "../../../../helpers/lilac";
 import { standardMentions } from "../../../../lib/context/arguments/mentionTypes/mentions";
 import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";
+import { ArgumentsMap } from "../../../../lib/context/arguments/types";
 import { Emoji } from "../../../../lib/Emoji";
 import { LilacBaseCommand } from "../../../../lib/Lilac/LilacBaseCommand";
 import { PaginatedLilacScrobbleCache } from "../../../../lib/paginators/PaginatedScrobbleCache";
@@ -13,7 +14,7 @@ import { ServiceRegistry } from "../../../../services/ServicesRegistry";
 const args = {
   ...standardMentions,
   ...prefabArguments.track,
-} as const;
+} satisfies ArgumentsMap;
 
 export default class ScrobbleList extends LilacBaseCommand<typeof args> {
   idSeed = "pink fantasy heesu";
@@ -54,8 +55,7 @@ export default class ScrobbleList extends LilacBaseCommand<typeof args> {
     const embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor("Scrobble list"))
       .setTitle(
-        `${Emoji.usesIndexedData} ${
-          perspective.upper.possessive
+        `${Emoji.usesIndexedData} ${perspective.upper.possessive
         } scrobbles of ${italic(trackName)} by ${bold(artistName)}`
       );
 

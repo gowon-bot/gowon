@@ -7,13 +7,14 @@ import { code } from "../../../helpers/discord";
 import { SettingsChildCommand } from "./SettingsChildCommand";
 import { InvalidTimeZoneError } from "../../../errors/timesAndDates";
 import { format } from "date-fns";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 
 const args = {
   timeZone: new StringArgument({
     index: { start: 0 },
     description: "What timezone you want to set",
   }),
-} as const;
+} satisfies ArgumentsMap;
 
 export default class TimeZone extends SettingsChildCommand<typeof args> {
   idSeed = "le sserafim chaewon";
@@ -73,10 +74,9 @@ export default class TimeZone extends SettingsChildCommand<typeof args> {
         `
 **Your current timezone**: \`${(
           userTimeZone?.asString() || "unset"
-        ).toLowerCase()}\` ${
-          userTimeZone
-            ? `\n*Local time: ${this.displayLocalTime(userTimeZone)}*`
-            : ""
+        ).toLowerCase()}\` ${userTimeZone
+          ? `\n*Local time: ${this.displayLocalTime(userTimeZone)}*`
+          : ""
         }
       
 A list of all accepted timezones can be ${displayLink(

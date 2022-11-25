@@ -6,6 +6,7 @@ import { Flag } from "../../../lib/context/arguments/argumentTypes/Flag";
 import { CommandRedirect } from "../../../lib/command/Command";
 import GlobalArtistPlays from "./GlobalArtistPlays";
 import { bold } from "../../../helpers/discord";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 
 const args = {
   ...prefabArguments.artist,
@@ -15,7 +16,7 @@ const args = {
     description: "Compares your plays against the global stats",
   }),
   ...standardMentions,
-} as const;
+} satisfies ArgumentsMap;
 
 export default class ArtistPlays extends LastFMBaseCommand<typeof args> {
   idSeed = "itzy ryujin";
@@ -50,13 +51,13 @@ export default class ArtistPlays extends LastFMBaseCommand<typeof args> {
 
     await this.oldReply(
       `${perspective.plusToHave}` +
-        (artistDetails.userPlaycount === 0
-          ? "n't scrobbled"
-          : ` **${displayNumber(
-              artistDetails.userPlaycount,
-              "**scrobble"
-            )} of`) +
-        ` ${bold(artistDetails.name)}`
+      (artistDetails.userPlaycount === 0
+        ? "n't scrobbled"
+        : ` **${displayNumber(
+          artistDetails.userPlaycount,
+          "**scrobble"
+        )} of`) +
+      ` ${bold(artistDetails.name)}`
     );
   }
 }

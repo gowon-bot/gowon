@@ -3,10 +3,11 @@ import { LogicError } from "../../../errors/errors";
 import { displayNumber } from "../../../lib/views/displays";
 import { asyncMap } from "../../../helpers";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 
 const args = {
   ...standardMentions,
-} as const;
+} satisfies ArgumentsMap;
 
 export class GuildAround extends CrownsChildCommand {
   idSeed = "weki meki doyeon";
@@ -46,25 +47,21 @@ export class GuildAround extends CrownsChildCommand {
 
     let embed = this.newEmbed()
       .setAuthor({
-        name: `${this.requiredGuild.name}'s crown leaderboard (${
-          guildAround.start + 1
-        } - ${guildAround.end})`,
+        name: `${this.requiredGuild.name}'s crown leaderboard (${guildAround.start + 1
+          } - ${guildAround.end})`,
       })
       .setDescription(
         `${(
           await asyncMap(
             guildAround.users,
             async (u) =>
-              `${u.rank}. ${
-                u.discordID === author?.discordID ? "**" : ""
-              }${await this.fetchUsername(u.discordID)}${
-                u.discordID === author?.discordID ? "**" : ""
+              `${u.rank}. ${u.discordID === author?.discordID ? "**" : ""
+              }${await this.fetchUsername(u.discordID)}${u.discordID === author?.discordID ? "**" : ""
               } with ${displayNumber(u.count, "crown")}`
           )
         ).join("\n")}
         
-        ${perspective.upper.possessive} position is #${
-          author!.rank
+        ${perspective.upper.possessive} position is #${author!.rank
         } with ${displayNumber(author!.count, "crown")}`
       );
 

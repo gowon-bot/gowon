@@ -5,6 +5,7 @@ import { toInt } from "../../../helpers/lastFM";
 import { asyncMap } from "../../../helpers";
 import { StringArrayArgument } from "../../../lib/context/arguments/argumentTypes/StringArrayArgument";
 import { code } from "../../../helpers/discord";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 
 interface CheckedCrownsDisplay {
   [state: string]: Array<string>;
@@ -15,7 +16,7 @@ const args = {
     index: { start: 0 },
     splitOn: "|",
   }),
-} as const;
+} satisfies ArgumentsMap;
 
 export class CheckMany extends CrownsChildCommand<typeof args> {
   idSeed = "weki meki suyeon";

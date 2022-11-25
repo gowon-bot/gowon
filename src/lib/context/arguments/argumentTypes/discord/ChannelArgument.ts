@@ -9,15 +9,15 @@ import {
 } from "../BaseArgument";
 import { SlashCommandBuilder } from "../SlashCommandTypes";
 
-export interface ChannelArgumentOptions<T>
-  extends BaseArgumentOptions<T>,
-    IndexableArgumentOptions {}
+export interface ChannelArgumentOptions
+  extends BaseArgumentOptions<Channel>,
+  IndexableArgumentOptions { }
 
 export class ChannelArgument<
-  OptionsT extends Partial<ChannelArgumentOptions<Channel>> = {}
-> extends BaseArgument<Channel, ChannelArgumentOptions<Channel>, OptionsT> {
-  constructor(options: Partial<ChannelArgumentOptions<Channel>> | {} = {}) {
-    super(defaultIndexableOptions, options);
+  OptionsT extends Partial<ChannelArgumentOptions>
+> extends BaseArgument<Channel, ChannelArgumentOptions, OptionsT> {
+  constructor(options?: OptionsT) {
+    super({ ...defaultIndexableOptions, ...(options ?? {}) } as OptionsT);
   }
 
   parseFromMessage(message: Message, _: string): Channel | undefined {
@@ -44,12 +44,20 @@ export class ChannelArgument<
   }
 }
 
-export class ChannelArrayArgument extends BaseArgument<
+export interface ChannelArrayArgumentOptions
+  extends BaseArgumentOptions<Channel[]>,
+  SliceableArgumentOptions { }
+
+
+export class ChannelArrayArgument<
+  OptionsT extends Partial<ChannelArrayArgumentOptions>
+> extends BaseArgument<
   Channel[],
-  SliceableArgumentOptions & ChannelArgumentOptions<Channel[]>
+  ChannelArrayArgumentOptions,
+  OptionsT
 > {
-  constructor(options: Partial<ChannelArgumentOptions<Channel[]>> | {} = {}) {
-    super(defaultIndexableOptions, options);
+  constructor(options?: OptionsT) {
+    super({ ...defaultIndexableOptions, ...(options ?? {}) } as OptionsT);
   }
 
   parseFromMessage(message: Message, _: string): Channel[] {

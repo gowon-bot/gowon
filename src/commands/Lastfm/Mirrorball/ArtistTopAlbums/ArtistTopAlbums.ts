@@ -15,12 +15,13 @@ import {
 } from "../../../../lib/context/arguments/prefabArguments";
 import { bold, italic } from "../../../../helpers/discord";
 import { Emoji } from "../../../../lib/Emoji";
+import { ArgumentsMap } from "../../../../lib/context/arguments/types";
 
 const args = {
   ...prefabArguments.artist,
   noRedirect: prefabFlags.noRedirect,
   ...standardMentions,
-} as const;
+} satisfies ArgumentsMap;
 
 export default class ArtistTopAlbums extends MirrorballBaseCommand<
   ArtistTopAlbumsResponse,

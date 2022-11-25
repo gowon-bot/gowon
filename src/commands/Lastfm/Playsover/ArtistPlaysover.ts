@@ -6,6 +6,7 @@ import { CommandRedirect } from "../../../lib/command/Command";
 import ArtistPlaysequal from "./ArtistPlaysequal";
 import { prefabFlags } from "../../../lib/context/arguments/prefabArguments";
 import { bold } from "../../../helpers/discord";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 
 const args = {
   ...standardMentions,
@@ -14,7 +15,7 @@ const args = {
     default: 100,
     description: "The number of plays to check for",
   }),
-} as const;
+} satisfies ArgumentsMap
 
 export default class ArtistPlaysover extends LastFMBaseCommand<typeof args> {
   idSeed = "gugudan sally";
@@ -53,8 +54,7 @@ export default class ArtistPlaysover extends LastFMBaseCommand<typeof args> {
     }
 
     await this.oldReply(
-      `${bold(displayNumber(playsover))} of ${
-        perspective.possessive
+      `${bold(displayNumber(playsover))} of ${perspective.possessive
       } top 1,000 artists have at least ${bold(displayNumber(plays, "play"))}`
     );
   }

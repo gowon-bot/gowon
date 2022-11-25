@@ -7,6 +7,7 @@ import { validators } from "../../../lib/validation/validators";
 import { displayDateTime } from "../../../lib/views/displays";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 
 const args = {
   milestone: new NumberArgument({
@@ -14,7 +15,7 @@ const args = {
     description: "The milestone to check",
   }),
   ...standardMentions,
-} as const;
+} satisfies ArgumentsMap
 
 export default class Milestone extends LastFMBaseCommand<typeof args> {
   idSeed = "wooah lucy";
@@ -64,7 +65,7 @@ export default class Milestone extends LastFMBaseCommand<typeof args> {
       })
       .setDescription(
         embed.description +
-          `\n\nScrobbled at ${displayDateTime(track.scrobbledAt)}`
+        `\n\nScrobbled at ${displayDateTime(track.scrobbledAt)}`
       );
 
     await this.send(embed);

@@ -11,14 +11,14 @@ import { DateArgument } from "./argumentTypes/timeAndDate/DateArgument";
 import { TimePeriodArgument } from "./argumentTypes/timeAndDate/TimePeriodArgument";
 import { TimeRangeArgument } from "./argumentTypes/timeAndDate/TimeRangeArgument";
 
-export type ArgumentsMap = SimpleMap<BaseArgument<any>>;
+export type ArgumentsMap = SimpleMap<BaseArgument<unknown>>;
 
 export interface Slice {
   start: number;
   stop?: number;
 }
 
-export type ImplementedOptions<T> =
+export type ImplementedOptions<T extends Record<string, unknown>> =
   | StringArgument<T>
   | NumberArgument<T>
   | StringArrayArgument<T>
@@ -29,15 +29,15 @@ export type ImplementedOptions<T> =
   | ChannelArgument<T>
   | DiscordRoleArgument<T>;
 
-export type UnwrapProvidedOptions<T extends BaseArgument<any>> =
+export type UnwrapProvidedOptions<T extends BaseArgument<unknown>> =
   T extends ImplementedOptions<infer U> ? U : {};
 
-type UnwrapArgument<T extends BaseArgument<any, any, any>> =
+type UnwrapArgument<T extends BaseArgument<unknown, any, any>> =
   T extends BaseArgument<infer U, any, any>
-    ? T extends Flag
-      ? boolean
-      : ArgumentReturnType<U, UnwrapProvidedOptions<T>>
-    : never;
+  ? T extends Flag<any>
+  ? boolean
+  : ArgumentReturnType<U, UnwrapProvidedOptions<T>>
+  : never;
 
 export type ParsedArguments<T extends ArgumentsMap> = {
   [K in keyof T]: UnwrapArgument<T[K]>;

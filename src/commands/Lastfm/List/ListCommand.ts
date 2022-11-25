@@ -8,6 +8,7 @@ import { TimeRangeArgument } from "../../../lib/context/arguments/argumentTypes/
 import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
 import { TimeRange } from "../../../lib/timeAndDate/TimeRange";
 import { humanizePeriod } from "../../../lib/timeAndDate/helpers/humanize";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 
 const args = {
   timePeriod: new TimePeriodArgument({
@@ -20,7 +21,7 @@ const args = {
     description: "The number of entries to show",
   }),
   ...standardMentions,
-} as const;
+} satisfies ArgumentsMap;
 
 export abstract class ListCommand extends LastFMBaseCommand<typeof args> {
   idSeed = "stayc j";

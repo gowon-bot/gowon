@@ -5,11 +5,12 @@ import { displayNumber } from "../../../lib/views/displays";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 import { italic } from "../../../helpers/discord";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 
 const args = {
   ...standardMentions,
   ...prefabArguments.album,
-} as const;
+} satisfies ArgumentsMap;
 
 export default class GlobalAlbumPlays extends LastFMBaseCommand<typeof args> {
   idSeed = "itzy chaeryeong";
@@ -46,15 +47,13 @@ export default class GlobalAlbumPlays extends LastFMBaseCommand<typeof args> {
     );
 
     await this.send(
-      `Last.fm has scrobbled ${italic(albumDetails.name)} by ${
-        albumDetails.artist
-      } ${displayNumber(albumDetails.globalPlaycount, "time")}${
-        toInt(albumDetails.userPlaycount) > 0
-          ? `. ${perspective.upper.plusToHave} ${displayNumber(
-              albumDetails.userPlaycount,
-              "scrobble"
-            )} ${parseFloat(percentage) > 0 ? `(${percentage}%)` : ""}`
-          : ""
+      `Last.fm has scrobbled ${italic(albumDetails.name)} by ${albumDetails.artist
+      } ${displayNumber(albumDetails.globalPlaycount, "time")}${toInt(albumDetails.userPlaycount) > 0
+        ? `. ${perspective.upper.plusToHave} ${displayNumber(
+          albumDetails.userPlaycount,
+          "scrobble"
+        )} ${parseFloat(percentage) > 0 ? `(${percentage}%)` : ""}`
+        : ""
       }`
     );
   }

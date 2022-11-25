@@ -4,6 +4,7 @@ import { italic } from "../../../helpers/discord";
 import { bullet, extraWideSpace } from "../../../helpers/specialCharacters";
 import { ReportCalculator } from "../../../lib/calculators/ReportCalculator";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { Paginator } from "../../../lib/paginators/Paginator";
 import { TagConsolidator } from "../../../lib/tags/TagConsolidator";
 import { displayDate, displayNumber } from "../../../lib/views/displays";
@@ -13,7 +14,7 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 const args = {
   ...standardMentions,
-} as const;
+} satisfies ArgumentsMap
 
 export default class Month extends LastFMBaseCommand<typeof args> {
   idSeed = "exid hani";
@@ -84,35 +85,35 @@ export default class Month extends LastFMBaseCommand<typeof args> {
       .setAuthor(this.generateEmbedAuthor())
       .setTitle(`${perspective.upper.possessive} month`).setDescription(`
       _${displayDate(sub(new Date(), { months: 1 }))} - ${displayDate(
-      new Date()
-    )}_
+        new Date()
+      )}_
     _${displayNumber(firstPage.tracks.length, "scrobble")}, ${displayNumber(
-      month.total.artists,
-      "artist"
-    )}, ${displayNumber(month.total.albums, "album")}, ${displayNumber(
-      month.total.tracks,
-      "track"
-    )}_
+        month.total.artists,
+        "artist"
+      )}, ${displayNumber(month.total.albums, "album")}, ${displayNumber(
+        month.total.tracks,
+        "track"
+      )}_
 
 ${italic(tagConsolidator.consolidateAsStrings(10).join(", "))}
   
 **Top Tracks**:
 ${extraWideSpace}${bullet} ${topTracks
-      .slice(0, 3)
-      .map((t) => `${t} (${displayNumber(month.top.tracks[t], "play")})`)
-      .join(`\n​${extraWideSpace}${bullet} `)}
+          .slice(0, 3)
+          .map((t) => `${t} (${displayNumber(month.top.tracks[t], "play")})`)
+          .join(`\n​${extraWideSpace}${bullet} `)}
 
 **Top Albums**:
 ${extraWideSpace}${bullet} ${topAlbums
-      .slice(0, 3)
-      .map((t) => `${t} (${displayNumber(month.top.albums[t], "play")})`)
-      .join(`\n​${extraWideSpace}${bullet} `)}
+          .slice(0, 3)
+          .map((t) => `${t} (${displayNumber(month.top.albums[t], "play")})`)
+          .join(`\n​${extraWideSpace}${bullet} `)}
 
 **Top Artists**:
 ${extraWideSpace}${bullet} ${topArtists
-      .slice(0, 3)
-      .map((t) => `${t} (${displayNumber(month.top.artists[t], "play")})`)
-      .join(`\n​${extraWideSpace}${bullet} `)}
+          .slice(0, 3)
+          .map((t) => `${t} (${displayNumber(month.top.artists[t], "play")})`)
+          .join(`\n​${extraWideSpace}${bullet} `)}
     `);
 
     await this.send(embed);

@@ -14,10 +14,11 @@ import {
 import { BaseArgument } from "../../lib/context/arguments/argumentTypes/BaseArgument";
 import { bold, code, italic } from "../../helpers/discord";
 import { PermissionsService } from "../../lib/permissions/PermissionsService";
+import { ArgumentsMap } from "../../lib/context/arguments/types";
 
 const args = {
   command: new StringArgument({ index: { start: 0 }, required: true }),
-} as const;
+} satisfies ArgumentsMap;
 
 export default class HelpForOneCommand extends Command<typeof args> {
   idSeed = "clc seungyeon";
@@ -82,9 +83,9 @@ export default class HelpForOneCommand extends Command<typeof args> {
 
     lineConsolidator.addLines(
       (command.access?.role ? `${Emoji[command.access.role]} ` : "") +
-        bold(commandName) +
-        (command.slashCommand ? " (slash command)" : "") +
-        ":",
+      bold(commandName) +
+      (command.slashCommand ? " (slash command)" : "") +
+      ":",
 
       italic(command.description + command.extraDescription, false),
       "",
@@ -114,7 +115,7 @@ export default class HelpForOneCommand extends Command<typeof args> {
           (
             Object.values(command.arguments || {}).filter((a) =>
               isFlag(a as BaseArgument<any, any>)
-            ) as Flag[]
+            ) as Flag<any>[]
           )
             .map(
               (f) =>
@@ -154,8 +155,8 @@ export default class HelpForOneCommand extends Command<typeof args> {
 
     lineConsolidator.addLines(
       (command.access?.role ? `${Emoji[command.access.role]} ` : "") +
-        bold(command.friendlyName) +
-        ":",
+      bold(command.friendlyName) +
+      ":",
       italic(command.description),
       "",
       {

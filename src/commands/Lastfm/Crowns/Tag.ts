@@ -11,6 +11,7 @@ import { StringArrayArgument } from "../../../lib/context/arguments/argumentType
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { italic } from "../../../helpers/discord";
 import { LilacArtistsService } from "../../../services/lilac/LilacArtistsService";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 
 const args = {
   ...standardMentions,
@@ -19,7 +20,7 @@ const args = {
     splitOn: "|",
     default: [],
   }),
-} as const;
+} satisfies ArgumentsMap;
 
 export class Tag extends CrownsChildCommand<typeof args> {
   idSeed = "dreamnote miso";
@@ -61,8 +62,7 @@ export class Tag extends CrownsChildCommand<typeof args> {
 
     const description =
       italic(
-        `${
-          perspective.upper.possessive
+        `${perspective.upper.possessive
         } top crowns for the following genres: ${genres.join(", ")}`
       ) + "\n\n";
 

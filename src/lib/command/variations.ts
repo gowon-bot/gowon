@@ -4,4 +4,4 @@ export const VARIATIONS = {
     variation: prefixes.map((p) => "g" + p),
     description: "Queries everyone logged into Gowon",
   }),
-} as const;
+};

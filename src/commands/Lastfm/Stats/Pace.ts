@@ -12,6 +12,7 @@ import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/Num
 import { bold } from "../../../helpers/discord";
 import { TimeRange } from "../../../lib/timeAndDate/TimeRange";
 import { humanizeTimeRange } from "../../../lib/timeAndDate/helpers/humanize";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 
 const args = {
   milestone: new NumberArgument({
@@ -23,7 +24,7 @@ const args = {
     description: "The time range to calculate your scrobble rate over",
   }),
   ...standardMentions,
-} as const;
+} satisfies ArgumentsMap
 
 export default class Pace extends LastFMBaseCommand<typeof args> {
   idSeed = "wooah minseo";
@@ -84,8 +85,7 @@ export default class Pace extends LastFMBaseCommand<typeof args> {
         `At a rate of **${displayNumber(
           pace.scrobbleRate.toFixed(2),
           "scrobble"
-        )}/hour** ${humanizedTimeRange}, ${
-          perspective.name
+        )}/hour** ${humanizedTimeRange}, ${perspective.name
         } will hit **${displayNumber(pace.milestone, "**scrobble")} on ${bold(
           displayDate(pace.prediction)
         )} (${ago(pace.prediction)})`

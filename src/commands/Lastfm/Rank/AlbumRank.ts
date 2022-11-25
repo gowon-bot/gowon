@@ -7,11 +7,12 @@ import { LogicError } from "../../../errors/errors";
 import { bold, italic, sanitizeForDiscord } from "../../../helpers/discord";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 
 const args = {
   ...prefabArguments.album,
   ...standardMentions,
-} as const;
+} satisfies ArgumentsMap
 
 export default class AlbumRank extends LastFMBaseCommand<typeof args> {
   idSeed = "wonder girls sunmi";
@@ -52,8 +53,7 @@ export default class AlbumRank extends LastFMBaseCommand<typeof args> {
 
     if (rank === -1) {
       throw new LogicError(
-        `That album wasn't found in ${
-          perspective.possessive
+        `That album wasn't found in ${perspective.possessive
         } top ${displayNumber(topAlbums.albums.length, "album")}`
       );
     }

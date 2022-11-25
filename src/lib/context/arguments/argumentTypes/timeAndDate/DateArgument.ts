@@ -17,10 +17,11 @@ export class DateArgument<
     return ServiceRegistry.get(GowonService);
   }
 
-  constructor(options: OptionsT | {} = {}) {
-    super(options, {
+  constructor(options?: OptionsT) {
+    super({
       parsers: ServiceRegistry.get(GowonService).constants.dateParsers,
-    });
+      ...(options ?? {})
+    } as OptionsT);
   }
 
   parseFromMessage(

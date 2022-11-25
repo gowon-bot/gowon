@@ -11,6 +11,7 @@ import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
 import { LilacArtistsService } from "../../../services/lilac/LilacArtistsService";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 
 const args = {
   ...tasteArgs,
@@ -34,7 +35,7 @@ const args = {
     index: 1,
     description: "The other Last.fm username to compare (defaults to you)",
   }),
-} as const;
+} satisfies ArgumentsMap
 
 export default class TagTaste extends TasteCommand<typeof args> {
   idSeed = "iz*one yuri";
@@ -110,9 +111,8 @@ export default class TagTaste extends TasteCommand<typeof args> {
     const embedDescription = `Comparing top ${displayNumber(
       senderArtists.artists.slice(0, artistAmount).length,
       "artist"
-    )}, ${displayNumber(taste.artists.length, `overlapping ${tag} artist`)} (${
-      taste.percent
-    }% match) found.`;
+    )}, ${displayNumber(taste.artists.length, `overlapping ${tag} artist`)} (${taste.percent
+      }% match) found.`;
 
     const embed = this.newEmbed()
       .setTitle(

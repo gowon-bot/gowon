@@ -9,10 +9,11 @@ import { prefabArguments } from "../../../../lib/context/arguments/prefabArgumen
 import { code } from "../../../../helpers/discord";
 import { ServiceRegistry } from "../../../../services/ServicesRegistry";
 import { AlbumCoverService } from "../../../../services/moderation/AlbumCoverService";
+import { ArgumentsMap } from "../../../../lib/context/arguments/types";
 
 const args = {
   ...prefabArguments.album,
-} as const;
+} satisfies ArgumentsMap;
 
 export class Rating extends FriendsChildCommand<typeof args> {
   idSeed = "hot issue dana";
@@ -115,18 +116,18 @@ export class Rating extends FriendsChildCommand<typeof args> {
           filteredRatings.length,
           "rating"
         )}_\n\n` +
-          filteredRatings
-            .sort(
-              (a, b) =>
-                b[1].ratings.ratings[0].rating - a[1].ratings.ratings[0].rating
-            )
-            .map(
-              ([username, rating]) =>
-                `${code(username)} - ${displayRating(
-                  rating.ratings.ratings[0].rating
-                )}`
-            )
-            .join("\n")
+        filteredRatings
+          .sort(
+            (a, b) =>
+              b[1].ratings.ratings[0].rating - a[1].ratings.ratings[0].rating
+          )
+          .map(
+            ([username, rating]) =>
+              `${code(username)} - ${displayRating(
+                rating.ratings.ratings[0].rating
+              )}`
+          )
+          .join("\n")
       )
       .setThumbnail(albumCover || "");
 

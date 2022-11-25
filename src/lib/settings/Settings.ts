@@ -3,6 +3,7 @@ import {
   GuildMemberScopedSetting,
   UserScopedSetting,
   BotScopedSetting,
+  BaseSetting
 } from "./SettingTypes";
 import { defaultPrefix } from "../../../config.json";
 import { toggleValues } from "./SettingValues";
@@ -77,7 +78,7 @@ export const Settings = {
   noTwitter: new BotScopedSetting("no_twitter", {
     omitFromDashboard: true,
   }),
-} as const;
+} satisfies Record<string, BaseSetting<any>>;
 
 export type SettingsMap = {
   [K in keyof typeof Settings]: typeof Settings[K];

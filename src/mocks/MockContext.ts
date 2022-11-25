@@ -22,7 +22,7 @@ interface MockedContext {
 }
 
 export class MockContext<
-  T extends CustomContext<any, any> = CustomContext<{}, {}>
+  T extends CustomContext = CustomContext
 > extends GowonContext<T> {
   private responses: Array<string | MessageEmbed> = [];
 
@@ -44,10 +44,10 @@ export class MockContext<
 }
 
 export class MockLogger extends Logger {
-  closeCommandHeader() {}
+  closeCommandHeader() { }
 }
 
-export function mockContext<T = CustomContext<{}, {}>>(
+export function mockContext<T extends CustomContext = CustomContext>(
   overrides: Partial<MockContextParameters<T>> = {}
 ): MockContext<T> {
   return new MockContext<T>({

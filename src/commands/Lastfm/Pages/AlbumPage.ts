@@ -1,12 +1,13 @@
 import { bold, cleanURL, italic } from "../../../helpers/discord";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 const args = {
   ...prefabArguments.album,
   ...standardMentions,
-} as const;
+} satisfies ArgumentsMap;
 
 export default class AlbumPage extends LastFMBaseCommand<typeof args> {
   idSeed = "twice jihyo";

@@ -70,7 +70,7 @@ export interface Variation {
 }
 
 export interface CommandRedirect<T extends ArgumentsMap> {
-  redirectTo: { new (): Command };
+  redirectTo: { new(): Command };
   when(args: ParsedArguments<T>): boolean;
 }
 
@@ -129,7 +129,7 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
   category: string | undefined = undefined;
   subcategory: string | undefined = undefined;
   usage: string | string[] = "";
-  customHelp?: { new (): Command } | undefined;
+  customHelp?: { new(): Command } | undefined;
   guildRequired?: boolean;
 
   /**
@@ -194,8 +194,8 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
     return this.payload.isInteraction()
       ? "/"
       : this.guild
-      ? this.gowonService.prefix(this.guild.id)
-      : config.defaultPrefix;
+        ? this.gowonService.prefix(this.guild.id)
+        : config.defaultPrefix;
   }
 
   ctx!: GowonContext<typeof this["customContext"]>;
@@ -235,7 +235,7 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
    * Helper getters
    */
 
-  mutableContext<T>(): GowonContext<{ mutable: T }> {
+  mutableContext<T extends Record<string, unknown>>(): GowonContext<{ mutable: T }> {
     return this.ctx as GowonContext<{ mutable: T }>;
   }
 
@@ -263,7 +263,7 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
 
   // This method may be implemented by some base or child commands
   // which allow them to run code before the run method is called
-  async beforeRun(): Promise<void> {}
+  async beforeRun(): Promise<void> { }
 
   async execute(ctx: GowonContext) {
     ctx.setCommand(this);
@@ -445,7 +445,7 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
         this.ctx,
         this.payload.author.id
       );
-    } catch {}
+    } catch { }
 
     if (lfmUsername) {
       mentionedUsername = lfmUsername;
@@ -499,7 +499,7 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
         fetchedUser = await this.gowonClient.client.users.fetch(
           mentionedDBUser?.discordID || userID || this.author.id
         );
-      } catch {}
+      } catch { }
 
       if (
         fetchedUser &&
@@ -566,7 +566,7 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
 
     const mirrorballUser =
       (mentionedMirrorballUser?.username?.toLowerCase() ===
-      mentionedUsername?.toLowerCase()
+        mentionedUsername?.toLowerCase()
         ? mentionedMirrorballUser
         : undefined) || (!mentionedUsername ? senderMirrorballUser : undefined);
 
@@ -667,8 +667,8 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
 
       let usersInPurgatory = purgatoryRole
         ? (await this.requiredGuild.members.fetch())
-            .filter((m) => m.roles.cache.has(purgatoryRole!))
-            .map((m) => m.user.id)
+          .filter((m) => m.roles.cache.has(purgatoryRole!))
+          .map((m) => m.user.id)
         : [];
 
       filter = (id: string) => {
@@ -769,7 +769,7 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
             this.author.id,
             this.requiredGuild.id
           );
-        } catch (e) {}
+        } catch (e) { }
       }
     }
   }

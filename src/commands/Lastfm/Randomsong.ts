@@ -2,12 +2,13 @@ import { bold, italic } from "../../helpers/discord";
 import { buildRequestable } from "../../helpers/getMentions";
 import { CommandRedirect } from "../../lib/command/Command";
 import { standardMentions } from "../../lib/context/arguments/mentionTypes/mentions";
+import { ArgumentsMap } from "../../lib/context/arguments/types";
 import { LastFMBaseCommand } from "./LastFMBaseCommand";
 import RandomsongInUsersLibrary from "./RandomSongInUsersLibrary";
 
 const args = {
   ...standardMentions,
-} as const;
+} satisfies ArgumentsMap;
 
 export default class Randomsong extends LastFMBaseCommand<typeof args> {
   idSeed = "april naeun";
@@ -60,7 +61,7 @@ export default class Randomsong extends LastFMBaseCommand<typeof args> {
       .setTitle(randomSong.name)
       .setDescription(
         `by ${bold(randomSong.artist)}` +
-          (randomSong.album ? ` from ${italic(randomSong.album)}` : "")
+        (randomSong.album ? ` from ${italic(randomSong.album)}` : "")
       )
       .setThumbnail(albumCover || "");
 

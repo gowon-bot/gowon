@@ -2,6 +2,7 @@ import { getOrdinal } from "../../helpers";
 import { bold, italic } from "../../helpers/discord";
 import { NumberArgument } from "../../lib/context/arguments/argumentTypes/NumberArgument";
 import { standardMentions } from "../../lib/context/arguments/mentionTypes/mentions";
+import { ArgumentsMap } from "../../lib/context/arguments/types";
 import { Validation } from "../../lib/validation/ValidationChecker";
 import { validators } from "../../lib/validation/validators";
 import { TrackInfo } from "../../services/LastFM/converters/InfoTypes";
@@ -10,7 +11,7 @@ import { LastFMBaseCommand } from "./LastFMBaseCommand";
 const args = {
   ...standardMentions,
   poolAmount: new NumberArgument(),
-} as const;
+} satisfies ArgumentsMap;
 
 export default class RandomsongInUsersLibrary extends LastFMBaseCommand<
   typeof args
@@ -60,18 +61,18 @@ export default class RandomsongInUsersLibrary extends LastFMBaseCommand<
         track: randomSong.name,
         artist: randomSong.artist.name,
       });
-    } catch {}
+    } catch { }
 
     const albumCover = await this.albumCoverService.get(
       this.ctx,
       trackInfo?.album?.images.get("large"),
       trackInfo?.album
         ? {
-            metadata: {
-              artist: trackInfo.artist.name,
-              album: trackInfo.album.name,
-            },
-          }
+          metadata: {
+            artist: trackInfo.artist.name,
+            album: trackInfo.album.name,
+          },
+        }
         : {}
     );
 
@@ -82,7 +83,7 @@ export default class RandomsongInUsersLibrary extends LastFMBaseCommand<
       .setTitle(randomSong.name)
       .setDescription(
         `by ${bold(randomSong.artist.name)}` +
-          (trackInfo?.album ? ` from ${italic(trackInfo.album.name)}` : "")
+        (trackInfo?.album ? ` from ${italic(trackInfo.album.name)}` : "")
       )
       .setThumbnail(albumCover || "");
 

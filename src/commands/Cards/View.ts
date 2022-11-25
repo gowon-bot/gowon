@@ -1,6 +1,7 @@
 import { CardNotMintedYetError } from "../../errors/cards";
 import { bold, italic } from "../../helpers/discord";
 import { prefabArguments } from "../../lib/context/arguments/prefabArguments";
+import { ArgumentsMap } from "../../lib/context/arguments/types";
 import {
   NicknameService,
   UnknownUserDisplay,
@@ -14,7 +15,7 @@ import { CardsChildCommand } from "./CardsChildCommand";
 
 const args = {
   ...prefabArguments.album,
-} as const;
+} satisfies ArgumentsMap;
 
 export class View extends CardsChildCommand {
   idSeed = "kep1er yujin";

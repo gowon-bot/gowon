@@ -4,11 +4,12 @@ import { displayNumber } from "../../../lib/views/displays";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 import { bold } from "../../../helpers/discord";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 
 const args = {
   ...standardMentions,
   ...prefabArguments.track,
-} as const;
+} satisfies ArgumentsMap;
 
 export default class TrackPercent extends LastFMBaseCommand<typeof args> {
   idSeed = "itzy yeji";

@@ -4,6 +4,7 @@ import { calculatePercent } from "../../../helpers/stats";
 import { CommandRedirect } from "../../../lib/command/Command";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { Paginator } from "../../../lib/paginators/Paginator";
 import {
   displayNumber,
@@ -28,7 +29,7 @@ const args = {
     description: "The tag to filter your artists with",
   }),
   ...standardMentions,
-} as const;
+} satisfies ArgumentsMap
 
 export default class Tag extends LastFMBaseCommand<typeof args> {
   idSeed = "secret number lea";
@@ -102,10 +103,10 @@ export default class Tag extends LastFMBaseCommand<typeof args> {
       (similarTags.length > 3
         ? `_Including ${displayNumber(similarTags.length, "similar tag")}_\n`
         : similarTags.length == 2
-        ? `_Including ${similarTags[0]} & ${similarTags[1]}_\n`
-        : similarTags.length > 0
-        ? `_Including ${similarTags.join(", ")}_\n`
-        : "") +
+          ? `_Including ${similarTags[0]} & ${similarTags[1]}_\n`
+          : similarTags.length > 0
+            ? `_Including ${similarTags.join(", ")}_\n`
+            : "") +
       `_Comparing ${perspective.possessive} top ${displayNumber(
         userTopArtists.artists.length,
         "artist"
@@ -115,12 +116,12 @@ export default class Tag extends LastFMBaseCommand<typeof args> {
       )} of the tag_\n` +
       (overlap.length
         ? `${displayNumber(overlap.length, "artist")} (${calculatePercent(
-            overlap.length,
-            tagArtistNames.size
-          )}% match) (${displayNumber(
-            overlap.reduce((sum, o) => sum + o.plays, 0),
-            "scrobble"
-          )})\n\n`
+          overlap.length,
+          tagArtistNames.size
+        )}% match) (${displayNumber(
+          overlap.reduce((sum, o) => sum + o.plays, 0),
+          "scrobble"
+        )})\n\n`
         : "Couldn't find any matching artists!");
 
     const embed = this.newEmbed()

@@ -1,12 +1,13 @@
 import { bold } from "../../../helpers/discord";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { CrownsChildCommand } from "./CrownsChildCommand";
 
 const args = {
   ...prefabArguments.requiredArtist,
-} as const;
+} satisfies ArgumentsMap;
 
 export class UnbanArtist extends CrownsChildCommand<typeof args> {
   idSeed = "elris sohee";

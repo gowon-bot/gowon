@@ -1,5 +1,6 @@
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 const args = {
@@ -9,7 +10,7 @@ const args = {
       "The keywords to search Melon for (defaults to your currently playing artist)",
   }),
   ...standardMentions,
-} as const;
+} satisfies ArgumentsMap;
 
 export default class Melon extends LastFMBaseCommand<typeof args> {
   idSeed = "bvndit simyeong";

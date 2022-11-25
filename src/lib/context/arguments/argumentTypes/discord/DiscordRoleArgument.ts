@@ -10,15 +10,15 @@ import {
 
 export interface DiscordRoleArgumentOptions
   extends BaseArgumentOptions,
-    IndexableArgumentOptions {}
+  IndexableArgumentOptions { }
 
 export class DiscordRoleArgument<
   OptionsT extends Partial<DiscordRoleArgumentOptions> = {}
 > extends BaseArgument<Role, DiscordRoleArgumentOptions, OptionsT> {
   mention = true;
 
-  constructor(options: Partial<DiscordRoleArgumentOptions> | {} = {}) {
-    super(defaultIndexableOptions, options);
+  constructor(options?: OptionsT) {
+    super({ ...defaultIndexableOptions, ...(options ?? {}) } as OptionsT);
   }
 
   parseFromMessage(message: Message): Role {

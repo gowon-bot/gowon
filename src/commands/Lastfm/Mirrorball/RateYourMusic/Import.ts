@@ -14,10 +14,11 @@ import { RateYourMusicIndexingChildCommand } from "./RateYourMusicChildCommand";
 import fetch from "node-fetch";
 import { ConcurrentAction } from "../../../../services/ConcurrencyService";
 import { StringArgument } from "../../../../lib/context/arguments/argumentTypes/StringArgument";
+import { ArgumentsMap } from "../../../../lib/context/arguments/types";
 
 const args = {
   input: new StringArgument({ index: { start: 0 }, slashCommandOption: false }),
-} as const;
+} satisfies ArgumentsMap;
 
 export class ImportRatings extends RateYourMusicIndexingChildCommand<
   ImportRatingsResponse,

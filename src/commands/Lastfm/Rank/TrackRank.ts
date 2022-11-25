@@ -7,11 +7,12 @@ import { LogicError } from "../../../errors/errors";
 import { bold, italic, sanitizeForDiscord } from "../../../helpers/discord";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 
 const args = {
   ...prefabArguments.track,
   ...standardMentions,
-} as const;
+} satisfies ArgumentsMap;
 
 export default class TrackRank extends LastFMBaseCommand<typeof args> {
   idSeed = "hello venus alice";
@@ -51,8 +52,7 @@ export default class TrackRank extends LastFMBaseCommand<typeof args> {
 
     if (rank === -1) {
       throw new LogicError(
-        `That track wasn't found in ${
-          perspective.possessive
+        `That track wasn't found in ${perspective.possessive
         } top ${displayNumber(topTracks.tracks.length, "track")}`
       );
     }

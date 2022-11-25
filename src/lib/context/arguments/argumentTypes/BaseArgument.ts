@@ -21,10 +21,10 @@ type GetElementFromIndexOptions = {
 
 export interface BaseArgumentOptions<ReturnT = any> {
   required:
-    | boolean
-    | {
-        customMessage: string;
-      };
+  | boolean
+  | {
+    customMessage: string;
+  };
   description: string;
   slashCommandOption: boolean;
   default?: ReturnT | (() => ReturnT);
@@ -64,12 +64,11 @@ export abstract class BaseArgument<
     return ServiceRegistry.get(GowonService);
   }
 
-  constructor(...options: (ProvidedOptionsT | {})[]) {
-    this.options = {} as any;
-
-    for (const option of [defaultBaseOptions, ...options]) {
-      this.options = Object.assign(this.options, option);
-    }
+  constructor(options: ProvidedOptionsT) {
+    this.options = {
+      ...defaultBaseOptions,
+      ...options,
+    } as any as OptionsT;
   }
 
   abstract parseFromMessage(
@@ -99,9 +98,8 @@ export abstract class BaseArgument<
       throw new ValidationError(
         isCustomMessage(this.options.required)
           ? this.options.required.customMessage
-          : `Please enter a${
-              startsWithVowel(argumentName) ? "n" : ""
-            } ${argumentName}!`
+          : `Please enter a${startsWithVowel(argumentName) ? "n" : ""
+          } ${argumentName}!`
       );
     }
   }

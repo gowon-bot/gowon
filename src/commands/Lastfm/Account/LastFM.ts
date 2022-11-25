@@ -3,11 +3,12 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { RecordNotFoundError } from "../../../errors/errors";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 
 const args = {
   username: new StringArgument({ index: 0, slashCommandOption: false }),
   ...standardMentions,
-} as const;
+} satisfies ArgumentsMap;
 
 export default class LastFMAccount extends LastFMBaseCommand<typeof args> {
   idSeed = "loona kim lip";

@@ -3,6 +3,7 @@ import { bold } from "../../helpers/discord";
 import { Flag } from "../../lib/context/arguments/argumentTypes/Flag";
 import { standardMentions } from "../../lib/context/arguments/mentionTypes/mentions";
 import { prefabArguments } from "../../lib/context/arguments/prefabArguments";
+import { ArgumentsMap } from "../../lib/context/arguments/types";
 import { AlbumInfo } from "../../services/LastFM/converters/InfoTypes";
 import { RecentTrack } from "../../services/LastFM/converters/RecentTracks";
 import { LastFMArgumentsMutableContext } from "../../services/LastFM/LastFMArguments";
@@ -18,7 +19,7 @@ const args = {
     shortnames: ["na", "noalt"],
     longnames: ["noalternate", "no-alternate", "noalt"],
   }),
-} as const;
+} satisfies ArgumentsMap;
 
 export default class Cover extends LastFMBaseCommand<typeof args> {
   idSeed = "april chaekyung";
@@ -95,10 +96,9 @@ export default class Cover extends LastFMBaseCommand<typeof args> {
     const fileEndingSplit = albumCover.url.split(".");
 
     await this.send(
-      `Cover for ${bold(album)} by ${bold(artist)}${
-        albumCover.source === "moderation"
-          ? "\n*This image has been set by Gowon moderators*"
-          : albumCover.source === "custom"
+      `Cover for ${bold(album)} by ${bold(artist)}${albumCover.source === "moderation"
+        ? "\n*This image has been set by Gowon moderators*"
+        : albumCover.source === "custom"
           ? "\n*This image has been custom set by the user*"
           : ""
       }`,
@@ -106,9 +106,8 @@ export default class Cover extends LastFMBaseCommand<typeof args> {
         files: [
           {
             attachment: albumCover.url,
-            name: `${artist} - ${album}.${
-              fileEndingSplit[fileEndingSplit.length - 1]
-            }`,
+            name: `${artist} - ${album}.${fileEndingSplit[fileEndingSplit.length - 1]
+              }`,
             description: `The album cover for ${album} by ${artist}`,
           },
         ],

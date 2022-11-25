@@ -8,16 +8,19 @@ import {
 
 export interface DiscordUserArrayArgumentOptions
   extends BaseArgumentOptions,
-    SliceableArgumentOptions {}
+  SliceableArgumentOptions { }
 
-export class DiscordUserArrayArgument extends BaseArgument<
+export class DiscordUserArrayArgument<
+  OptionsT extends Partial<DiscordUserArrayArgumentOptions>
+> extends BaseArgument<
   User[],
-  DiscordUserArrayArgumentOptions
+  DiscordUserArrayArgumentOptions,
+  OptionsT
 > {
   mention = true;
 
-  constructor(options: Partial<DiscordUserArrayArgumentOptions> = {}) {
-    super(defaultIndexableOptions, options);
+  constructor(options?: OptionsT) {
+    super({ ...defaultIndexableOptions, ...(options ?? {}) } as OptionsT);
   }
 
   parseFromMessage(message: Message): User[] {

@@ -3,6 +3,7 @@ import { bold } from "../../../../helpers/discord";
 import { EmojisArgument } from "../../../../lib/context/arguments/argumentTypes/discord/EmojisArgument";
 import { StringArgument } from "../../../../lib/context/arguments/argumentTypes/StringArgument";
 import { removeEmojisFromString } from "../../../../lib/context/arguments/parsers/EmojiParser";
+import { ArgumentsMap } from "../../../../lib/context/arguments/types";
 import { Validation } from "../../../../lib/validation/ValidationChecker";
 import { validators } from "../../../../lib/validation/validators";
 import { PlaylistChildCommand } from "./PlaylistChildCommand";
@@ -19,7 +20,7 @@ const args = {
     description: "The name of the playlist to tag",
     index: { start: 0 },
   }),
-} as const;
+} satisfies ArgumentsMap
 
 export class Tag extends PlaylistChildCommand<typeof args> {
   idSeed = "pink fantasy momoka";
