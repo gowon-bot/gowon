@@ -115,7 +115,7 @@ export default class HelpForOneCommand extends Command<typeof args> {
           (
             Object.values(command.arguments || {}).filter((a) =>
               isFlag(a as BaseArgument<any, any>)
-            ) as Flag[]
+            ) as Flag<any>[]
           )
             .map(
               (f) =>

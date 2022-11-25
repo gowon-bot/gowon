@@ -26,7 +26,7 @@ function onPage<P extends SimpleMap, R>(
   };
 }
 
-export class MirrorballPaginator<P, R> extends Paginator<P, R> {
+export class MirrorballPaginator<P extends Record<string, unknown>, R> extends Paginator<P, R> {
   constructor(
     callback: MirrorballQueryFunction<P, R>,
     pageSize: number,

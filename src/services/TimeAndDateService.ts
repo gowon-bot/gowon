@@ -20,7 +20,7 @@ export class TimeAndDateService extends BaseService<TimeAndDateServiceContext> {
   }
 
   async setUserTimeZone(
-    ctx: GowonContext,
+    ctx: TimeAndDateServiceContext,
     discordID: string,
     timeZone: TimeZone
   ) {
@@ -38,7 +38,7 @@ export class TimeAndDateService extends BaseService<TimeAndDateServiceContext> {
   }
 
   async getUserTimeZone(
-    ctx: GowonContext,
+    ctx: TimeAndDateServiceContext,
     discordID: string
   ): Promise<TimeZone | undefined> {
     this.log(ctx, `fetching timezone for user ${discordID}`);
@@ -50,7 +50,7 @@ export class TimeAndDateService extends BaseService<TimeAndDateServiceContext> {
     return TimeZone.fromString(timeZone);
   }
 
-  public async saveUserTimeZoneInContext(ctx: GowonContext, discordID: string) {
+  public async saveUserTimeZoneInContext(ctx: TimeAndDateServiceContext, discordID: string) {
     this.ctx(ctx).mutable.userTimeZone = await this.getUserTimeZone(
       ctx,
       discordID

@@ -12,18 +12,19 @@ import { SlashCommandBuilder } from "./SlashCommandTypes";
 
 export interface UserStringArgumentOptions
   extends BaseArgumentOptions<string>,
-    IndexableArgumentOptions {
+  IndexableArgumentOptions {
   mention: BaseMention;
 }
 
-export class UserStringArgument
-  extends BaseArgument<string, UserStringArgumentOptions>
-  implements StringCleaningArgument
-{
+export class UserStringArgument<
+  OptionsT extends Partial<UserStringArgumentOptions>
+>
+  extends BaseArgument<string, UserStringArgumentOptions, OptionsT>
+  implements StringCleaningArgument {
   mention = true;
 
-  constructor(options: Partial<UserStringArgumentOptions> = {}) {
-    super(defaultIndexableOptions, options);
+  constructor(options?: OptionsT) {
+    super({ ...defaultIndexableOptions, ...(options ?? {}) } as OptionsT);
   }
 
   parseFromMessage(_: Message, content: string): string {

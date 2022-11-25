@@ -8,7 +8,7 @@ import { TimePeriodParser } from "../../parsers/TimePeriodParser";
 import { SlashCommandBuilder } from "../SlashCommandTypes";
 
 export interface TimePeriodArgumentOptions
-  extends BaseArgumentOptions<LastFMPeriod> {}
+  extends BaseArgumentOptions<LastFMPeriod> { }
 
 const periodChoices: { name: string; value: LastFMPeriod }[] = [
   { name: "Alltime", value: "overall" },
@@ -28,8 +28,8 @@ export class TimePeriodArgument<
 
   timePeriodParser = new TimePeriodParser({ fallback: this.getDefault() });
 
-  constructor(options: OptionsT | {} = {}) {
-    super(options);
+  constructor(options?: OptionsT) {
+    super((options ?? {}) as OptionsT);
   }
 
   parseFromMessage(

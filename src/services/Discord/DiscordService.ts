@@ -40,7 +40,7 @@ export class DiscordService extends BaseService<DiscordServiceContext> {
       // this is try / caught
       try {
         await ctx.payload.channel!.sendTyping();
-      } catch {}
+      } catch { }
     }
   }
 
@@ -53,12 +53,10 @@ export class DiscordService extends BaseService<DiscordServiceContext> {
 
     this.log(
       ctx,
-      `Sending ${typeof content === "string" ? "string" : "embed"} ${
-        this.shouldReply(options) ? "reply" : "message"
-      } in ${
-        channel instanceof DMChannel || isPartialDMChannel(channel)
-          ? channel.recipient.tag
-          : `#${channel.name}`
+      `Sending ${typeof content === "string" ? "string" : "embed"} ${this.shouldReply(options) ? "reply" : "message"
+      } in ${channel instanceof DMChannel || isPartialDMChannel(channel)
+        ? channel.recipient.tag
+        : `#${channel.name}`
       }`
     );
 
@@ -143,8 +141,8 @@ export class DiscordService extends BaseService<DiscordServiceContext> {
         reply:
           shouldReply && ctx.payload.isMessage()
             ? {
-                messageReference: replyOptions.to || ctx.payload.source,
-              }
+              messageReference: replyOptions.to || ctx.payload.source,
+            }
             : undefined,
         allowedMentions: shouldReply
           ? { repliedUser: replyOptions.ping }
@@ -211,8 +209,8 @@ export class DiscordService extends BaseService<DiscordServiceContext> {
     const response = ctx.mutable.deferredAt
       ? payload.source.editReply(sendOptions)
       : ctx.mutable.replied
-      ? await payload.source.followUp(sendOptions)
-      : await payload.source.reply(sendOptions);
+        ? await payload.source.followUp(sendOptions)
+        : await payload.source.reply(sendOptions);
 
     ctx.mutable.replied = true;
     ctx.mutable.deferredAt = undefined;

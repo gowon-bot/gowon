@@ -1,10 +1,10 @@
 import chalk from "chalk";
-import { GowonContext, UnwrapContext } from "../lib/context/Context";
+import { CustomContext, GowonContext, UnwrapContext } from "../lib/context/Context";
 
 export class BaseService<ContextT extends GowonContext = GowonContext<{}>> {
   customContext?: UnwrapContext<ContextT>;
 
-  ctx(ctx: GowonContext<{ constants?: unknown; mutable?: unknown }>): ContextT {
+  ctx(ctx: GowonContext<CustomContext>): ContextT {
     if (this.customContext) {
       ctx.addContext(this.customContext);
     }

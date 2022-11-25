@@ -140,7 +140,7 @@ export class ArgumentParsingService extends BaseService {
     return Object.entries(args)
       .filter(([_, value]) => isFlag(value))
       .reduce((acc, [name, value]) => {
-        acc[name] = value.parseFromMessage(message, message.content, context);
+        acc[name] = value.parseFromMessage(message, message.content, context) as boolean;
 
         return acc;
       }, {} as SimpleMap<boolean>);

@@ -12,20 +12,20 @@ import {
 
 interface StringArrayArgumentOptions
   extends BaseArgumentOptions<string[]>,
-    SliceableArgumentOptions,
-    ContentBasedArgumentOptions {
+  SliceableArgumentOptions,
+  ContentBasedArgumentOptions {
   splitOn: string | RegExp;
 }
 
 export class StringArrayArgument<
-  OptionsT extends Partial<StringArrayArgumentOptions> = {}
+  OptionsT extends Partial<StringArrayArgumentOptions>
 > extends BaseArgument<string[], StringArrayArgumentOptions, OptionsT> {
   get gowonService() {
     return ServiceRegistry.get(GowonService);
   }
 
-  constructor(options: OptionsT | {} = {}) {
-    super(defaultIndexableOptions, { splitOn: " " }, options);
+  constructor(options?: OptionsT) {
+    super({ ...defaultIndexableOptions, splitOn: " ", ...(options ?? {}) } as OptionsT);
   }
 
   parseFromMessage(

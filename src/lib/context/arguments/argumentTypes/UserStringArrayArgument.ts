@@ -10,18 +10,19 @@ import {
 
 export interface UserStringArrayArgumentOptions
   extends BaseArgumentOptions,
-    SliceableArgumentOptions {
+  SliceableArgumentOptions {
   mention: BaseMention;
 }
 
-export class UserStringArrayArgument
-  extends BaseArgument<string[], UserStringArrayArgumentOptions>
-  implements StringCleaningArgument
-{
+export class UserStringArrayArgument<
+  OptionsT extends Partial<UserStringArrayArgumentOptions>
+>
+  extends BaseArgument<string[], UserStringArrayArgumentOptions, OptionsT>
+  implements StringCleaningArgument {
   mention = true;
 
-  constructor(options: Partial<UserStringArrayArgumentOptions> = {}) {
-    super(defaultIndexableOptions, options);
+  constructor(options?: OptionsT) {
+    super({ ...defaultIndexableOptions, ...(options ?? {}) } as OptionsT);
   }
 
   parseFromMessage(_: Message, content: string): string[] {
