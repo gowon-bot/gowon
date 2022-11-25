@@ -2,12 +2,13 @@ import { LogicError } from "../../../errors/errors";
 import { bold, italic } from "../../../helpers/discord";
 import { Variation } from "../../../lib/command/Command";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { LineConsolidator } from "../../../lib/LineConsolidator";
 import { SpotifyChildCommand } from "./SpotifyChildCommand";
 
 const args = {
   ...prefabArguments.track,
-} as const;
+} satisfies ArgumentsMap
 
 export class Like extends SpotifyChildCommand<typeof args> {
   idSeed = "pink fantasy daewang";

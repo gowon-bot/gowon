@@ -10,16 +10,19 @@ import { SlashCommandBuilder } from "../SlashCommandTypes";
 
 export interface DiscordUserArgumentOptions
   extends BaseArgumentOptions,
-    IndexableArgumentOptions {}
+  IndexableArgumentOptions { }
 
-export class DiscordUserArgument extends BaseArgument<
+export class DiscordUserArgument<
+  OptionsT extends Partial<DiscordUserArgumentOptions>
+> extends BaseArgument<
   User,
-  DiscordUserArgumentOptions
+  DiscordUserArgumentOptions,
+  OptionsT
 > {
   mention = true;
 
-  constructor(options: Partial<DiscordUserArgumentOptions> = {}) {
-    super(defaultIndexableOptions, options);
+  constructor(options?: OptionsT) {
+    super({ ...defaultIndexableOptions, ...(options ?? {}) } as OptionsT);
   }
 
   parseFromMessage(message: Message): User {

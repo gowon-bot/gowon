@@ -21,8 +21,8 @@ export class TimeRangeArgument<
 
   timeRangeParser = new TimeRangeParser(this.options);
 
-  constructor(options: OptionsT | {} = {}) {
-    super(options);
+  constructor(options?: OptionsT) {
+    super((options ?? {}) as OptionsT);
   }
 
   parseFromMessage(

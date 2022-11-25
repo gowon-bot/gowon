@@ -23,28 +23,30 @@ export interface Choice {
 
 export interface StringArgumentOptions
   extends BaseArgumentOptions<string>,
-    SliceableArgumentOptions,
-    ContentBasedArgumentOptions {
+  SliceableArgumentOptions,
+  ContentBasedArgumentOptions {
   splitOn: string | RegExp;
   regex: RegExp;
   match: string[];
   choices:
-    | Choice[]
-    | string[]
-    | { list: Choice[] | string[]; customMessage: string };
+  | Choice[]
+  | string[]
+  | { list: Choice[] | string[]; customMessage: string };
   unstrictChoices: boolean;
 }
 
 export class StringArgument<
-  OptionsT extends Partial<StringArgumentOptions> = {}
+  OptionsT extends Partial<StringArgumentOptions>
 > extends BaseArgument<string, StringArgumentOptions, OptionsT> {
-  constructor(options: OptionsT | {} = {}) {
-    super(
-      defaultIndexableOptions as OptionsT,
-      defaultContentBasedOptions as OptionsT,
-      { splitOn: /\s+/, match: [], choices: [] } as any,
-      options
-    );
+  constructor(options?: OptionsT) {
+    super({
+      ...defaultIndexableOptions,
+      ...defaultContentBasedOptions,
+      splitOn: /\s+/,
+      match: [],
+      choices: [],
+      ...(options ?? {})
+    } as OptionsT);
   }
 
   parseFromMessage(
@@ -132,8 +134,8 @@ export class StringArgument<
         isCustomMessage(this.options.choices)
           ? this.options.choices.customMessage
           : `${argumentName} must be one of ${this.getChoices(this.options)
-              .map((c) => c.value)
-              .join(", ")}`
+            .map((c) => c.value)
+            .join(", ")}`
       );
     }
   }

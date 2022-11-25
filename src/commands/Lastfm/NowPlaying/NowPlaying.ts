@@ -13,6 +13,7 @@ import NowPlayingCombo from "./NowPlayingCombo";
 import NowPlayingCustom from "./NowPlayingCustom";
 import { SettingsService } from "../../../lib/settings/SettingsService";
 import { FMMode } from "../../../lib/settings/SettingValues";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 
 const reverse = (s: string) =>
   s.split("").reverse().join("").replace("(", ")").replace(")", "(");
@@ -34,7 +35,7 @@ const args = {
     unstrictChoices: true,
   }),
   ...nowPlayingArgs,
-} as const;
+} satisfies ArgumentsMap;
 
 export default class NowPlaying extends NowPlayingBaseCommand<typeof args> {
   idSeed = "stayc isa";
@@ -91,10 +92,8 @@ export default class NowPlaying extends NowPlayingBaseCommand<typeof args> {
     if (this.payload.isTweet()) {
       this.responder.twitter(
         this.ctx,
-        `🎶 ${
-          nowPlaying.isNowPlaying ? "Now playing" : "Last scrobbled"
-        } for ${username}\n\n${nowPlaying.name} by ${nowPlaying.artist}\nfrom ${
-          nowPlaying.album
+        `🎶 ${nowPlaying.isNowPlaying ? "Now playing" : "Last scrobbled"
+        } for ${username}\n\n${nowPlaying.name} by ${nowPlaying.artist}\nfrom ${nowPlaying.album
         }`
       );
       return;

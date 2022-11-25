@@ -3,6 +3,7 @@ import { bold, italic } from "../../../helpers/discord";
 import { Flag } from "../../../lib/context/arguments/argumentTypes/Flag";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { ConfirmationEmbed } from "../../../lib/views/embeds/ConfirmationEmbed";
 import { LastFMArguments } from "../../../services/LastFM/LastFMArguments";
 import { AlbumCoverService } from "../../../services/moderation/AlbumCoverService";
@@ -22,7 +23,7 @@ const args = {
     shortnames: ["m", "mod"],
     longnames: ["moderation"],
   }),
-} as const;
+} satisfies ArgumentsMap;
 
 export default class SetAlbumCover extends ContentModerationCommand<
   typeof args
@@ -71,10 +72,8 @@ export default class SetAlbumCover extends ContentModerationCommand<
     const embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor("Set album cover"))
       .setDescription(
-        `${
-          existingCover ? "This album already has an alternate cover. " : ""
-        }Are you sure you want to ${
-          this.parsedArguments.url === "clear" ? "clear" : "set this as"
+        `${existingCover ? "This album already has an alternate cover. " : ""
+        }Are you sure you want to ${this.parsedArguments.url === "clear" ? "clear" : "set this as"
         } the image for ${bold(artist)} | ${italic(album)}?
         
 This will set the image ${bold(
@@ -110,10 +109,8 @@ This will set the image ${bold(
       this.ctx,
       confirmationEmbed.sentMessage!,
       embed.setDescription(
-        `${
-          this.parsedArguments.url === "clear" ? "Cleared" : "Set this as"
-        } the image for ${bold(artist)} | ${italic(album)}${
-          this.parsedArguments.moderation ? " bot-wide" : ""
+        `${this.parsedArguments.url === "clear" ? "Cleared" : "Set this as"
+        } the image for ${bold(artist)} | ${italic(album)}${this.parsedArguments.moderation ? " bot-wide" : ""
         }!`
       )
     );

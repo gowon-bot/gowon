@@ -17,6 +17,7 @@ import { LastFMMention } from "../../../lib/context/arguments/mentionTypes/LastF
 import { DiscordIDMention } from "../../../lib/context/arguments/mentionTypes/DiscordIDMention";
 import { UserStringArgument } from "../../../lib/context/arguments/argumentTypes/UserStringArgument";
 import { DiscordUserArgument } from "../../../lib/context/arguments/argumentTypes/discord/DiscordUserArgument";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 
 export const tasteArgs = {
   user: new DiscordUserArgument({
@@ -49,7 +50,7 @@ export const tasteArgs = {
     mention: new DiscordIDMention(),
     description: "The other user id to compare (defaults to you)",
   }),
-} as const;
+} satisfies ArgumentsMap
 
 export abstract class TasteCommand<
   T extends typeof tasteArgs = typeof tasteArgs
@@ -168,7 +169,7 @@ export abstract class TasteCommand<
       this.ctx
     );
 
-    return [senderPaginator, mentionedPaginator] as const;
+    return [senderPaginator, mentionedPaginator];
   }
 
   protected generateTable(
@@ -207,12 +208,11 @@ export abstract class TasteCommand<
       .slice(0, maxArtists)
       .map(
         (a, idx) =>
-          `${paddedPlays1[idx + 1]} ${
-            toInt(paddedPlays1[idx + 1].trim()) ===
+          `${paddedPlays1[idx + 1]} ${toInt(paddedPlays1[idx + 1].trim()) ===
             toInt(paddedPlays2[idx + 1].trim())
-              ? "•"
-              : toInt(paddedPlays1[idx + 1].trim()) >
-                toInt(paddedPlays2[idx + 1].trim())
+            ? "•"
+            : toInt(paddedPlays1[idx + 1].trim()) >
+              toInt(paddedPlays2[idx + 1].trim())
               ? ">"
               : "<"
           } ${paddedPlays2[idx + 1]}   ${a.name}`

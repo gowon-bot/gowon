@@ -3,6 +3,7 @@ import { bold, italic, sanitizeForDiscord } from "../../../../helpers/discord";
 import { LinkGenerator } from "../../../../helpers/lastFM";
 import { StringArgument } from "../../../../lib/context/arguments/argumentTypes/StringArgument";
 import { StringArrayArgument } from "../../../../lib/context/arguments/argumentTypes/StringArrayArgument";
+import { ArgumentsMap } from "../../../../lib/context/arguments/types";
 import {
   componentMap,
   getComponentsAsChoices,
@@ -33,7 +34,7 @@ const args = {
     choices: getComponentsAsChoices(),
     preprocessor: preprocessConfig,
   }),
-} as const;
+} satisfies ArgumentsMap;
 
 export class Preview extends NowPlayingConfigChildCommand<typeof args> {
   idSeed = "weeekly monday";
@@ -98,17 +99,16 @@ export class Preview extends NowPlayingConfigChildCommand<typeof args> {
     let embed = this.newEmbed()
       .setDescription(
         `by ${bold(links.artist, false)}` +
-          (nowPlaying.album ? ` from ${italic(links.album, false)}` : "")
+        (nowPlaying.album ? ` from ${italic(links.album, false)}` : "")
       )
       .setTitle(sanitizeForDiscord(nowPlaying.name))
       .setURL(LinkGenerator.trackPage(nowPlaying.artist, nowPlaying.name))
       .setThumbnail(albumCover || "")
       .setAuthor(
         this.generateEmbedAuthor(
-          `Previewing ${
-            presetConfig
-              ? this.parsedArguments.options[0]
-              : parsedOptions.length === 1
+          `Previewing ${presetConfig
+            ? this.parsedArguments.options[0]
+            : parsedOptions.length === 1
               ? parsedOptions[0]
               : displayNumber(parsedOptions.length, "option")
           }`

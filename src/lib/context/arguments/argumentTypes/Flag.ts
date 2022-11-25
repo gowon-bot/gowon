@@ -9,16 +9,17 @@ import {
   StringCleaningArgument,
 } from "./BaseArgument";
 
-export interface FlagArgumentOptions extends BaseArgumentOptions, FlagOptions {}
+export interface FlagArgumentOptions extends BaseArgumentOptions, FlagOptions { }
 
-export class Flag
-  extends BaseArgument<boolean, FlagArgumentOptions>
-  implements StringCleaningArgument
-{
+export class Flag<
+  OptionsT extends Partial<FlagArgumentOptions>
+>
+  extends BaseArgument<boolean, FlagArgumentOptions, OptionsT>
+  implements StringCleaningArgument {
   private flagParser = new FlagParser();
 
-  constructor(options: Partial<FlagArgumentOptions> = {}) {
-    super({ shortnames: [], longnames: [], description: "" }, options);
+  constructor(options?: OptionsT) {
+    super({ shortnames: [], longnames: [], description: "", ...(options ?? {}) } as OptionsT);
   }
 
   parseFromMessage(_: Message, content: string): boolean {
@@ -44,7 +45,7 @@ export class Flag
   }
 }
 
-export function isFlag(argument: BaseArgument<any>): argument is Flag {
+export function isFlag(argument: BaseArgument<any>): argument is Flag<any> {
   return argument instanceof Flag;
 }
 

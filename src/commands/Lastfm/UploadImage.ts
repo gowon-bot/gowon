@@ -1,11 +1,12 @@
 import { LogicError } from "../../errors/errors";
 import { LinkGenerator } from "../../helpers/lastFM";
 import { prefabArguments } from "../../lib/context/arguments/prefabArguments";
+import { ArgumentsMap } from "../../lib/context/arguments/types";
 import { LastFMBaseCommand } from "./LastFMBaseCommand";
 
 const args = {
   ...prefabArguments.album,
-} as const;
+} satisfies ArgumentsMap;
 
 export default class ImageUpload extends LastFMBaseCommand<typeof args> {
   idSeed = "shasha gowoon";

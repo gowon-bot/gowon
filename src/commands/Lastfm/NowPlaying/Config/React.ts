@@ -11,6 +11,7 @@ import { ServiceRegistry } from "../../../../services/ServicesRegistry";
 import { NowPlayingConfigChildCommand } from "./NowPlayingConfigChildCommand";
 import { Flag } from "../../../../lib/context/arguments/argumentTypes/Flag";
 import { extraWideSpace } from "../../../../helpers/specialCharacters";
+import { ArgumentsMap } from "../../../../lib/context/arguments/types";
 
 const args = {
   clearInput: new StringArgument({
@@ -27,7 +28,7 @@ const args = {
     default: [],
     description: "The emojis Gowon will react to your fms with",
   }),
-} as const;
+} satisfies ArgumentsMap;
 
 export class React extends NowPlayingConfigChildCommand<typeof args> {
   idSeed = "shasha seoyeon";
@@ -63,11 +64,11 @@ export class React extends NowPlayingConfigChildCommand<typeof args> {
         .setAuthor(this.generateEmbedAuthor("Reacts"))
         .setDescription(
           `Choose which reactions Gowon should react with when you \`${this.prefix}fm\`.\nSet them with \`${this.prefix}reacts emoji1 emoji2 ...emoji5\` and use \`${this.prefix}reacts clear\` to clear them!` +
-            (reactions.length
-              ? `\n\n**You have the following reactions set**:\n${reactions
-                  .map((r) => this.gowonClient.displayEmoji(r))
-                  .join(extraWideSpace)}`
-              : "")
+          (reactions.length
+            ? `\n\n**You have the following reactions set**:\n${reactions
+              .map((r) => this.gowonClient.displayEmoji(r))
+              .join(extraWideSpace)}`
+            : "")
         );
 
       await this.send(embed);

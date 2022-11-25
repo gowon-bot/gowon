@@ -16,6 +16,7 @@ import { LinkGenerator } from "../../../helpers/lastFM";
 import { LilacArtistsService } from "../../../services/lilac/LilacArtistsService";
 import { Emoji } from "../../../lib/Emoji";
 import { EmbedField } from "discord.js";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 
 const args = {
   tag: new StringArgument({
@@ -23,7 +24,7 @@ const args = {
     required: true,
     description: "The name of the tag to lookup",
   }),
-} as const;
+} satisfies ArgumentsMap;
 
 export default class TagInfo extends InfoCommand<typeof args> {
   idSeed = "csvc park moonchi";
@@ -113,11 +114,10 @@ export default class TagInfo extends InfoCommand<typeof args> {
         },
         {
           title: "Tagged artists",
-          value: `${
-            taggedArtistCount >= 1000
+          value: `${taggedArtistCount >= 1000
               ? `${displayNumber(taggedArtistCount)}+`
               : displayNumber(taggedArtistCount)
-          }`,
+            }`,
         },
         {
           shouldDisplay: similarTags.length > 0,
@@ -149,8 +149,7 @@ export default class TagInfo extends InfoCommand<typeof args> {
               userTopArtists.artistCounts
                 .map(
                   (ac) =>
-                    `${extraWideSpace}${bullet} ${
-                      ac.artist.name
+                    `${extraWideSpace}${bullet} ${ac.artist.name
                     } ${emDash} _${displayNumber(ac.playcount, "play")}_`
                 )
                 .join("\n"),

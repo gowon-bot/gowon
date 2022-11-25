@@ -8,6 +8,7 @@ import {
   prefabArguments,
   prefabFlags,
 } from "../../../../../lib/context/arguments/prefabArguments";
+import { ArgumentsMap } from "../../../../../lib/context/arguments/types";
 import { Emoji } from "../../../../../lib/Emoji";
 import { LineConsolidator } from "../../../../../lib/LineConsolidator";
 import {
@@ -26,7 +27,7 @@ import {
 const args = {
   ...prefabArguments.artist,
   noRedirect: prefabFlags.noRedirect,
-} as const;
+} satisfies ArgumentsMap;
 
 export default class WhoFirstArtist extends WhoKnowsBaseCommand<
   WhoFirstArtistResponse,
@@ -136,8 +137,7 @@ export default class WhoFirstArtist extends WhoKnowsBaseCommand<
 
     const embed = this.whoKnowsEmbed()
       .setTitle(
-        `${Emoji.usesIndexedData} Who ${
-          whoLast ? "last" : "first"
+        `${Emoji.usesIndexedData} Who ${whoLast ? "last" : "first"
         } scrobbled ${bold(artist.name)}${this.isGlobal() ? " globally" : ""}?`
       )
       .setDescription(lineConsolidator.consolidate())

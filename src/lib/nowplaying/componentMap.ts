@@ -22,7 +22,7 @@ import { LovedAndOwnedComponent } from "./compoundComponents/LovedAndOwnedCompon
 
 // Types
 export type NowPlayingComponent = {
-  new (values: any): BaseNowPlayingComponent<any>;
+  new(values: any): BaseNowPlayingComponent<any>;
   componentName: string;
 };
 

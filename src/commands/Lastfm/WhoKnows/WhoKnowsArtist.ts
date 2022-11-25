@@ -6,6 +6,7 @@ import {
   prefabArguments,
   prefabFlags,
 } from "../../../lib/context/arguments/prefabArguments";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { Emoji } from "../../../lib/Emoji";
 import { LineConsolidator } from "../../../lib/LineConsolidator";
 import {
@@ -20,7 +21,7 @@ import { WhoKnowsBaseCommand } from "./LilacWhoKnowsBaseCommand";
 const args = {
   ...prefabArguments.artist,
   noRedirect: prefabFlags.noRedirect,
-} as const;
+} satisfies ArgumentsMap;
 
 export default class WhoKnowsArtist extends WhoKnowsBaseCommand<typeof args> {
   idSeed = "bvndit songhee";
@@ -88,8 +89,7 @@ export default class WhoKnowsArtist extends WhoKnowsBaseCommand<typeof args> {
                 `${this.whoKnowsService.displayUser(
                   this.ctx,
                   wk.user
-                )} - **${displayNumber(wk.playcount, "**play")}${
-                  crown?.user?.discordID === wk.user.discordID ? " 👑" : ""
+                )} - **${displayNumber(wk.playcount, "**play")}${crown?.user?.discordID === wk.user.discordID ? " 👑" : ""
                 }`
             )
         ),
@@ -112,8 +112,7 @@ export default class WhoKnowsArtist extends WhoKnowsBaseCommand<typeof args> {
     const embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor("Who knows artist"))
       .setTitle(
-        `${Emoji.usesIndexedData} Who knows ${bold(artist.name)} ${
-          this.isGlobal() ? "globally" : `in ${this.requiredGuild.name}`
+        `${Emoji.usesIndexedData} Who knows ${bold(artist.name)} ${this.isGlobal() ? "globally" : `in ${this.requiredGuild.name}`
         }?`
       )
       .setDescription(lineConsolidator.consolidate())

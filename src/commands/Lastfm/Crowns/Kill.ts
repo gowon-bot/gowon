@@ -5,10 +5,11 @@ import { validators } from "../../../lib/validation/validators";
 import { ConfirmationEmbed } from "../../../lib/views/embeds/ConfirmationEmbed";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 import { bold } from "../../../helpers/discord";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 
 const args = {
   ...prefabArguments.requiredArtist,
-} as const;
+} satisfies ArgumentsMap;
 
 export class Kill extends CrownsChildCommand<typeof args> {
   idSeed = "wjsn xuanyi";

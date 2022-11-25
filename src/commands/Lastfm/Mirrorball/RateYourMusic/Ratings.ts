@@ -10,6 +10,7 @@ import { displayRating } from "../../../../lib/views/displays";
 import { ScrollingEmbed } from "../../../../lib/views/embeds/ScrollingEmbed";
 import { standardMentions } from "../../../../lib/context/arguments/mentionTypes/mentions";
 import { StringArgument } from "../../../../lib/context/arguments/argumentTypes/StringArgument";
+import { ArgumentsMap } from "../../../../lib/context/arguments/types";
 
 const args = {
   rating: new StringArgument({
@@ -18,7 +19,7 @@ const args = {
     description: "Filter your ratings by a specific rating",
   }),
   ...standardMentions,
-} as const;
+} satisfies ArgumentsMap;
 
 export class Ratings extends RateYourMusicIndexingChildCommand<
   RatingsResponse,

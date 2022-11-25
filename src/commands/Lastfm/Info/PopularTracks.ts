@@ -6,10 +6,11 @@ import {
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingEmbed";
 import { bold } from "../../../helpers/discord";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 
 const args = {
   ...prefabArguments.artist,
-} as const;
+} satisfies ArgumentsMap;
 
 export default class PopularTracks extends InfoCommand<typeof args> {
   idSeed = "csvc dalchong";

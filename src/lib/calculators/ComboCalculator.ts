@@ -2,6 +2,7 @@ import {
   RecentTrack,
   RecentTracks,
 } from "../../services/LastFM/converters/RecentTracks";
+import { RecentTracksParams } from "../../services/LastFM/LastFMService.types";
 import { RedirectsCache } from "../caches/RedirectsCache";
 import { GowonContext } from "../context/Context";
 import { isPaginator, Paginator } from "../paginators/Paginator";
@@ -21,12 +22,12 @@ export class ComboCalculator {
   constructor(
     private ctx: GowonContext,
     private additionalArtists: string[] = []
-  ) {}
+  ) { }
 
   async calculate(
-    recentTracks: Paginator<any, RecentTracks> | RecentTracks
+    recentTracks: Paginator<RecentTracksParams, RecentTracks> | RecentTracks
   ): Promise<Combo> {
-    if (isPaginator(recentTracks)) {
+    if (isPaginator<RecentTracksParams, RecentTracks>(recentTracks)) {
       for await (const page of recentTracks.iterator()) {
         const shouldContinue = await this.handlePage(
           page,

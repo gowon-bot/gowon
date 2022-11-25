@@ -3,10 +3,11 @@ import { LogicError } from "../../../errors/errors";
 import { displayNumber } from "../../../lib/views/displays";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { bold } from "../../../helpers/discord";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 
 const args = {
   ...standardMentions,
-} as const;
+} satisfies ArgumentsMap;
 
 export class CrownRanks extends CrownsChildCommand<typeof args> {
   idSeed = "weki meki elly";
@@ -53,10 +54,10 @@ export class CrownRanks extends CrownsChildCommand<typeof args> {
               )}`
           )
           .join("\n") +
-          `\n\n${perspective.upper.plusToHave} ${displayNumber(
-            crownsCount,
-            "crown"
-          )} in ${this.requiredGuild.name}`
+        `\n\n${perspective.upper.plusToHave} ${displayNumber(
+          crownsCount,
+          "crown"
+        )} in ${this.requiredGuild.name}`
       );
 
     await this.send(embed);

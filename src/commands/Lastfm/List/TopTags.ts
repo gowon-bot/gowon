@@ -12,6 +12,7 @@ import { TimeRangeArgument } from "../../../lib/context/arguments/argumentTypes/
 import { bold } from "../../../helpers/discord";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { LilacTagsService } from "../../../services/lilac/LilacTagsService";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 
 const args = {
   timePeriod: new TimePeriodArgument({
@@ -22,7 +23,7 @@ const args = {
     description: "The time range to use",
   }),
   ...standardMentions,
-} as const;
+} satisfies ArgumentsMap;
 
 export default class TagList extends LastFMBaseCommand<typeof args> {
   idSeed = "gwsn soso";
@@ -57,8 +58,7 @@ export default class TagList extends LastFMBaseCommand<typeof args> {
     const embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor("Top tags"))
       .setTitle(
-        `${perspective.possessive} top tags ${
-          timeRange?.humanized || humanizePeriod(timePeriod)
+        `${perspective.possessive} top tags ${timeRange?.humanized || humanizePeriod(timePeriod)
         }`
       );
 

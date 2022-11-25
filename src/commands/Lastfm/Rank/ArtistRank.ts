@@ -11,11 +11,12 @@ import { asyncMap } from "../../../helpers";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 import { bold } from "../../../helpers/discord";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 
 const args = {
   ...prefabArguments.artist,
   ...standardMentions,
-} as const;
+} satisfies ArgumentsMap
 
 export default class ArtistRank extends LastFMBaseCommand<typeof args> {
   idSeed = "hot issue dain";
@@ -62,8 +63,7 @@ export default class ArtistRank extends LastFMBaseCommand<typeof args> {
 
     if (rank === -1) {
       throw new LogicError(
-        `That artist wasn't found in ${
-          perspective.possessive
+        `That artist wasn't found in ${perspective.possessive
         } top ${displayNumber(topArtists.artists.length, "artist")}`
       );
     }

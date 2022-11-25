@@ -13,7 +13,7 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 
 export interface EmojisArgumentOptions
   extends BaseArgumentOptions<EmojiMention[]>,
-    SliceableArgumentOptions {
+  SliceableArgumentOptions {
   parse: "all" | "default" | "custom" | "animated";
 }
 
@@ -26,8 +26,8 @@ export class EmojisArgument<
     return ServiceRegistry.get(GowonService);
   }
 
-  constructor(options: OptionsT | {} = {}) {
-    super(defaultIndexableOptions, { parse: "all" }, options);
+  constructor(options?: OptionsT) {
+    super({ ...defaultIndexableOptions, parse: "all", ...(options ?? {}) } as OptionsT);
   }
 
   parseFromMessage(

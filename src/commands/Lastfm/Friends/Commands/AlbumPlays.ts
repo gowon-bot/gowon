@@ -4,10 +4,11 @@ import { LastFMEntityNotFoundError } from "../../../../errors/errors";
 import { displayNumber } from "../../../../lib/views/displays";
 import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";
 import { code } from "../../../../helpers/discord";
+import { ArgumentsMap } from "../../../../lib/context/arguments/types";
 
 const args = {
   ...prefabArguments.album,
-} as const;
+} satisfies ArgumentsMap;
 
 export class AlbumPlays extends FriendsChildCommand<typeof args> {
   idSeed = "elris karin";

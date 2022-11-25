@@ -8,10 +8,11 @@ import { roles } from "../../lib/command/access/roles";
 import { standardMentions } from "../../lib/context/arguments/mentionTypes/mentions";
 import { extraWideSpace } from "../../helpers/specialCharacters";
 import { ago } from "../../helpers";
+import { ArgumentsMap } from "../../lib/context/arguments/types";
 
 const args = {
   ...standardMentions,
-} as const;
+} satisfies ArgumentsMap;
 
 export default class UserInfo extends Command<typeof args> {
   idSeed = "exid le";
@@ -73,8 +74,7 @@ export default class UserInfo extends Command<typeof args> {
       },
       `**Cached scrobbles**: ${displayNumber(cachedPlaycount)}`,
       `**Commands run**: ${displayNumber(commandRunCount)}`,
-      `**Last updated**: ${
-        lilacUserInfo?.lastUpdated ? ago(lilacUserInfo.lastUpdated) : "(never)"
+      `**Last updated**: ${lilacUserInfo?.lastUpdated ? ago(lilacUserInfo.lastUpdated) : "(never)"
       }`,
       {
         shouldDisplay: topCommands.length > 0,
@@ -87,15 +87,14 @@ export default class UserInfo extends Command<typeof args> {
             });
 
             // This is a special space
-            return `${extraWideSpace}${
-              command?.secretCommand
+            return `${extraWideSpace}${command?.secretCommand
                 ? "<secret command>"
                 : command?.friendlyNameWithParent ||
-                  command?.friendlyName ||
-                  "<unknown command>"
-            }${command?.archived ? " [archived]" : ""} - ${displayNumber(
-              c.uses
-            )}`;
+                command?.friendlyName ||
+                "<unknown command>"
+              }${command?.archived ? " [archived]" : ""} - ${displayNumber(
+                c.uses
+              )}`;
           })
           .join("\n")}`,
       }

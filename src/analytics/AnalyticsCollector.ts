@@ -39,7 +39,7 @@ export class AnalyticsCollector extends BaseService {
       name: "user_count",
       help: "Number of registered users",
     }),
-  } as const;
+  };
 
   constructor() {
     super();

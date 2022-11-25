@@ -11,6 +11,7 @@ import { ChannelArgument } from "../../../lib/context/arguments/argumentTypes/di
 import { DiscordRoleArgument } from "../../../lib/context/arguments/argumentTypes/discord/DiscordRoleArgument";
 import { DiscordUserArgument } from "../../../lib/context/arguments/argumentTypes/discord/DiscordUserArgument";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { ChannelDisable } from "./ChannelDisable";
 import { PermissionsChildCommand } from "./PermissionsChildCommand";
 import { RoleDisable } from "./RoleDisable";
@@ -31,7 +32,7 @@ const args = {
   role: new DiscordRoleArgument({
     description: "The role to disable the command for",
   }),
-} as const;
+} satisfies ArgumentsMap;
 
 export class Disable extends PermissionsChildCommand<typeof args> {
   idSeed = "red velvet yeri";

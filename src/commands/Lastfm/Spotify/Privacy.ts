@@ -1,5 +1,6 @@
 import { bullet, extraWideSpace } from "../../../helpers/specialCharacters";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { toggleValues } from "../../../lib/settings/SettingValues";
 import { SpotifyChildCommand } from "./SpotifyChildCommand";
 
@@ -9,7 +10,7 @@ const args = {
     choices: ["private", "public"],
     description: "Controls whether Gowon will show identifying info",
   }),
-} as const;
+} satisfies ArgumentsMap
 
 export class Privacy extends SpotifyChildCommand<typeof args> {
   idSeed = "billlie sheon";
@@ -35,8 +36,7 @@ ${extraWideSpace}${bullet} \`public\` means Gowon will show this information.`;
       const embed = this.newEmbed()
         .setTitle("Spotify privacy")
         .setDescription(
-          `Your current spotify privacy is: \`${
-            currentPrivacy === toggleValues.ON ? "private" : "public"
+          `Your current spotify privacy is: \`${currentPrivacy === toggleValues.ON ? "private" : "public"
           }\`\n\n${this.privacyHelp}`
         );
 

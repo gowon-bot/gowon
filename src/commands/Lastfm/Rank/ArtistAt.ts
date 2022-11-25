@@ -6,6 +6,7 @@ import { displayNumber } from "../../../lib/views/displays";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
 import { bold } from "../../../helpers/discord";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 
 const args = {
   rank: new NumberArgument({
@@ -13,7 +14,7 @@ const args = {
     required: true,
   }),
   ...standardMentions,
-} as const;
+} satisfies ArgumentsMap
 
 export default class ArtistAt extends LastFMBaseCommand<typeof args> {
   idSeed = "cignature jeewon";
@@ -50,8 +51,7 @@ export default class ArtistAt extends LastFMBaseCommand<typeof args> {
       );
 
     await this.oldReply(
-      `${bold(artist.name)} is ranked at #**${artist.rank}** in ${
-        perspective.possessive
+      `${bold(artist.name)} is ranked at #**${artist.rank}** in ${perspective.possessive
       } top artists with ${bold(displayNumber(artist.userPlaycount, "play"))}`
     );
   }

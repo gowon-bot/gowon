@@ -7,10 +7,11 @@ import {
 import { displayNumber } from "../../../lib/views/displays";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { bold } from "../../../helpers/discord";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 
 const args = {
   ...standardMentions,
-} as const;
+} satisfies ArgumentsMap;
 
 export default class TagCombo extends LastFMBaseCommand<typeof args> {
   idSeed = "secret number dita";
@@ -65,12 +66,11 @@ export default class TagCombo extends LastFMBaseCommand<typeof args> {
   }
 
   private displayCombo(combo: TagComboType, tag: string): string {
-    return `${bold(tag)}: ${displayNumber(combo.comboCollection[tag].plays)}${
-      combo.comboCollection[tag].hitMax
+    return `${bold(tag)}: ${displayNumber(combo.comboCollection[tag].plays)}${combo.comboCollection[tag].hitMax
         ? "+"
         : combo.comboCollection[tag].nowplaying
-        ? "➚"
-        : ""
-    } in a row`;
+          ? "➚"
+          : ""
+      } in a row`;
   }
 }

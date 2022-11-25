@@ -1,12 +1,13 @@
 import { bold, italic } from "../../helpers/discord";
 import { Variation } from "../../lib/command/Command";
 import { prefabArguments } from "../../lib/context/arguments/prefabArguments";
+import { ArgumentsMap } from "../../lib/context/arguments/types";
 import { LastFMArgumentsMutableContext } from "../../services/LastFM/LastFMArguments";
 import { LastFMBaseCommand } from "./LastFMBaseCommand";
 
 const args = {
   ...prefabArguments.track,
-} as const;
+} satisfies ArgumentsMap;
 
 export default class Love extends LastFMBaseCommand<typeof args> {
   idSeed = "shasha i an";
@@ -58,8 +59,8 @@ export default class Love extends LastFMBaseCommand<typeof args> {
         ? "Track already not loved! ❤️‍🩹"
         : "Unloved! 💔"
       : !trackInfo.loved
-      ? "Loved! ❤️"
-      : "Track already loved! 💞";
+        ? "Loved! ❤️"
+        : "Track already loved! 💞";
 
     const action = this.variationWasUsed("unlove") ? "unlove" : "love";
 
@@ -83,8 +84,8 @@ export default class Love extends LastFMBaseCommand<typeof args> {
       image,
       albumName
         ? {
-            metadata: { artist, album: albumName },
-          }
+          metadata: { artist, album: albumName },
+        }
         : {}
     );
 
@@ -96,8 +97,7 @@ export default class Love extends LastFMBaseCommand<typeof args> {
       .setAuthor(this.generateEmbedAuthor(title))
       .setTitle(trackInfo.name)
       .setDescription(
-        `by ${bold(trackInfo.artist.name)}${
-          album ? ` from ${italic(album)}` : ""
+        `by ${bold(trackInfo.artist.name)}${album ? ` from ${italic(album)}` : ""
         }`
       );
 

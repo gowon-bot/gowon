@@ -5,10 +5,11 @@ import { toInt } from "../../../helpers/lastFM";
 import { displayNumber } from "../../../lib/views/displays";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { bold } from "../../../helpers/discord";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 
 const args = {
   ...standardMentions,
-} as const;
+} satisfies ArgumentsMap;
 
 export class GuildUserRank extends CrownsChildCommand<typeof args> {
   idSeed = "wjsn exy";
@@ -39,10 +40,8 @@ export class GuildUserRank extends CrownsChildCommand<typeof args> {
       .setDescription(
         `${perspective.upper.possessive} ${bold(
           displayNumber(rank.count, "crown")
-        )} ${toInt(rank.count) === 1 ? "ranks" : "rank"} ${
-          perspective.objectPronoun
-        } ${bold(getOrdinal(toInt(rank.rank)))} in ${
-          this.guild?.name
+        )} ${toInt(rank.count) === 1 ? "ranks" : "rank"} ${perspective.objectPronoun
+        } ${bold(getOrdinal(toInt(rank.rank)))} in ${this.guild?.name
         } out of ${displayNumber(rank.totalUsers, "total user")}`
       );
 

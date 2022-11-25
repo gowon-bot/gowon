@@ -6,7 +6,7 @@ import { GowonClient } from "../GowonClient";
 import { Logger } from "../Logger";
 import { Payload } from "./Payload";
 
-export interface CustomContext<C, M> {
+export interface CustomContext<C extends Record<string, unknown> = {}, M extends Record<string, unknown> = {}> {
   constants?: C;
   mutable?: M;
 }
@@ -21,7 +21,7 @@ export interface ContextParamaters<CustomContextT> {
 }
 
 export class GowonContext<
-  T extends CustomContext<any, any> = CustomContext<{}, {}>
+  T extends CustomContext = CustomContext
 > {
   private _command: Command | undefined;
   private custom: T;

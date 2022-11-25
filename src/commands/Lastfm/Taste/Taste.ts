@@ -13,6 +13,7 @@ import { TimePeriodArgument } from "../../../lib/context/arguments/argumentTypes
 import { TimeRangeArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/TimeRangeArgument";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { code } from "../../../helpers/discord";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 
 const args = {
   ...tasteArgs,
@@ -35,7 +36,7 @@ const args = {
     index: 1,
     description: "The other Last.fm username to compare (defaults to you)",
   }),
-} as const;
+} satisfies ArgumentsMap
 
 export default class Taste extends TasteCommand<typeof args> {
   idSeed = "secret number jinny";
@@ -104,11 +105,10 @@ export default class Taste extends TasteCommand<typeof args> {
       userOneUsername === userTwoUsername
         ? "It's 100%, what are you expecting :neutral_face:"
         : `Comparing top ${displayNumber(
-            senderArtists.artists.slice(0, artistAmount).length,
-            "artist"
-          )}, ${displayNumber(taste.artists.length, "overlapping artist")} (${
-            taste.percent
-          }% match) found.`;
+          senderArtists.artists.slice(0, artistAmount).length,
+          "artist"
+        )}, ${displayNumber(taste.artists.length, "overlapping artist")} (${taste.percent
+        }% match) found.`;
 
     const embedDescription = `**Comparison for ${displayLink(
       userOneUsername,

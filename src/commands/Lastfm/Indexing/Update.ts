@@ -4,6 +4,7 @@ import Index from "./Index";
 import { Flag } from "../../../lib/context/arguments/argumentTypes/Flag";
 import { displayProgressBar } from "../../../lib/views/displays";
 import { LilacBaseCommand } from "../../../lib/Lilac/LilacBaseCommand";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 
 const args = {
   full: new Flag({
@@ -11,7 +12,7 @@ const args = {
     longnames: ["full", "force"],
     description: "Do a full index (download all your data)",
   }),
-} as const;
+} satisfies ArgumentsMap;
 
 export default class Update extends LilacBaseCommand<typeof args> {
   idSeed = "bvndit yiyeon";
@@ -64,8 +65,8 @@ export default class Update extends LilacBaseCommand<typeof args> {
           embed.setDescription(
             `Updating...
 ${displayProgressBar(progress.page, progress.totalPages, {
-  width: this.progressBarWidth,
-})}
+              width: this.progressBarWidth,
+            })}
 *Page ${progress.page}/${progress.totalPages}*`
           )
         );

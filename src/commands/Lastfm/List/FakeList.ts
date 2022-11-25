@@ -1,13 +1,14 @@
 import { LogicError } from "../../../errors/errors";
 import { code } from "../../../helpers/discord";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { ListCommand } from "./ListCommand";
 
 const args = {
   type: new StringArgument({ index: 0 }),
   period: new StringArgument({ index: 1 }),
   amount: new StringArgument({ index: 2 }),
-} as const;
+} satisfies ArgumentsMap;
 
 export default class List extends ListCommand {
   idSeed = "stayc sieun";

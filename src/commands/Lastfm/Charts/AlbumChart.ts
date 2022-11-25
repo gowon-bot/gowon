@@ -2,6 +2,7 @@ import { MessageAttachment } from "discord.js";
 import { BetaAccess } from "../../../lib/command/access/access";
 import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { ChartService } from "../../../services/pantomime/ChartService";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
@@ -9,7 +10,7 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 const args = {
   ...standardMentions,
   size: new NumberArgument(),
-} as const;
+} satisfies ArgumentsMap;
 
 export default class AlbumChart extends LastFMBaseCommand<typeof args> {
   idSeed = "dreamnote habin";

@@ -1,5 +1,6 @@
 import { LogicError, UnknownMirrorballError } from "../../../../errors/errors";
 import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";
+import { ArgumentsMap } from "../../../../lib/context/arguments/types";
 import { displayRating } from "../../../../lib/views/displays";
 import { AlbumCoverService } from "../../../../services/moderation/AlbumCoverService";
 import { ServiceRegistry } from "../../../../services/ServicesRegistry";
@@ -8,7 +9,7 @@ import { RateYourMusicIndexingChildCommand } from "./RateYourMusicChildCommand";
 
 const args = {
   ...prefabArguments.album,
-} as const;
+} satisfies ArgumentsMap;
 
 export class Rating extends RateYourMusicIndexingChildCommand<
   RatingResponse,

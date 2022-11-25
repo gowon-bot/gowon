@@ -15,6 +15,7 @@ import { bold, italic, sanitizeForDiscord } from "../../../../helpers/discord";
 import { standardMentions } from "../../../../lib/context/arguments/mentionTypes/mentions";
 import { Flag } from "../../../../lib/context/arguments/argumentTypes/Flag";
 import { emDash } from "../../../../helpers/specialCharacters";
+import { ArgumentsMap } from "../../../../lib/context/arguments/types";
 
 const args = {
   ...standardMentions,
@@ -29,7 +30,7 @@ const args = {
     longnames: ["strict", "exact"],
     shortnames: ["s", "e"],
   }),
-} as const;
+} satisfies ArgumentsMap;
 
 export class Taste extends RateYourMusicIndexingChildCommand<
   RatingsTasteResponse,
@@ -88,9 +89,8 @@ export class Taste extends RateYourMusicIndexingChildCommand<
     )} and ${displayNumber(
       ratings.mentioned.pageInfo.recordCount,
       "rating"
-    )}, ${displayNumber(taste.ratings.length, "similar rating")} (${
-      taste.percent
-    }% match) found.`;
+    )}, ${displayNumber(taste.ratings.length, "similar rating")} (${taste.percent
+      }% match) found.`;
 
     const embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor("Ratings taste comparison"))

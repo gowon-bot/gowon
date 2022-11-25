@@ -5,11 +5,12 @@ import { displayNumber } from "../../../lib/views/displays";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 import { bold, italic } from "../../../helpers/discord";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 
 const args = {
   ...prefabArguments.track,
   ...standardMentions,
-} as const;
+} satisfies ArgumentsMap;
 
 export default class TrackInfo extends InfoCommand<typeof args> {
   idSeed = "iz*one eunbi";
@@ -62,10 +63,10 @@ export default class TrackInfo extends InfoCommand<typeof args> {
       (duration
         ? `_${displayNumber(Math.round(duration / 60000), "minute")}_`
         : "") +
-        (duration && trackInfo.album ? " - " : "") +
-        (trackInfo.album
-          ? `from the album ${italic(trackInfo.album?.name)}`
-          : ""),
+      (duration && trackInfo.album ? " - " : "") +
+      (trackInfo.album
+        ? `from the album ${italic(trackInfo.album?.name)}`
+        : ""),
       {
         shouldDisplay: !!(duration || trackInfo.album),
         string: "",

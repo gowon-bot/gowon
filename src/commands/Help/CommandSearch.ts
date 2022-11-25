@@ -4,13 +4,14 @@ import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { StringArgument } from "../../lib/context/arguments/argumentTypes/StringArgument";
 import { bold, code } from "../../helpers/discord";
 import { PermissionsService } from "../../lib/permissions/PermissionsService";
+import { ArgumentsMap } from "../../lib/context/arguments/types";
 
 const args = {
   keywords: new StringArgument({
     required: { customMessage: "Please enter some keywords!" },
     description: "The keywords to search with",
   }),
-} as const;
+} satisfies ArgumentsMap;
 
 export default class SearchCommands extends Command<typeof args> {
   idSeed = "exid solji";

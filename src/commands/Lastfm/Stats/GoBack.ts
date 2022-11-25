@@ -8,6 +8,7 @@ import { ago } from "../../../helpers";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { TimeRangeArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/TimeRangeArgument";
 import { DateArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/DateArgument";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 
 const args = {
   timeRange: new TimeRangeArgument({
@@ -17,7 +18,7 @@ const args = {
     description: "The date to go back to (yyyy/mm/dd)",
   }),
   ...standardMentions,
-} as const;
+} satisfies ArgumentsMap
 
 export default class GoBack extends LastFMBaseCommand<typeof args> {
   idSeed = "wooah sora";
@@ -68,9 +69,9 @@ export default class GoBack extends LastFMBaseCommand<typeof args> {
 
     embed.setDescription(
       embed.description +
-        (date
-          ? `\n\nScrobbled on ${displayDate(date)}`
-          : `\n\nScrobbled ${ago(timeRange?.from!)}`)
+      (date
+        ? `\n\nScrobbled on ${displayDate(date)}`
+        : `\n\nScrobbled ${ago(timeRange?.from!)}`)
     );
 
     await this.send(embed);

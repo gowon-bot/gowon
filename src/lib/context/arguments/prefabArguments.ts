@@ -1,5 +1,6 @@
 import { Flag } from "./argumentTypes/Flag";
 import { StringArgument } from "./argumentTypes/StringArgument";
+import { ArgumentsMap } from "./types";
 
 export const prefabArguments = {
   artist: {
@@ -33,8 +34,7 @@ export const prefabArguments = {
   track: {
     artist: new StringArgument({
       splitOn: "|",
-      description:
-        "The artist to use (defaults to your currently playing artist)",
+      description: "The artist to use (defaults to your currently playing artist)",
     }),
     track: new StringArgument({
       splitOn: "|",
@@ -43,7 +43,7 @@ export const prefabArguments = {
         "The track to use (defaults to your currently playing track)",
     }),
   },
-} as const;
+} satisfies Record<string, ArgumentsMap>;
 
 export const debugFlag = new Flag({
   description: "Developer only",
@@ -62,4 +62,4 @@ export const prefabFlags = {
     longnames: ["equal"],
     description: "Check plays equal instead of plays over",
   }),
-} as const;
+} satisfies ArgumentsMap;

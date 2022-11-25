@@ -4,6 +4,7 @@ import { humanizePeriod } from "../../../lib/timeAndDate/helpers/humanize";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { TimePeriodArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/TimePeriodArgument";
 import { bold } from "../../../helpers/discord";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 
 const args = {
   timePeriod: new TimePeriodArgument({
@@ -11,7 +12,7 @@ const args = {
     description: "The time period to count your albums over",
   }),
   ...standardMentions,
-} as const;
+} satisfies ArgumentsMap
 
 export default class TrackCount extends LastFMBaseCommand<typeof args> {
   idSeed = "secret number soodam";

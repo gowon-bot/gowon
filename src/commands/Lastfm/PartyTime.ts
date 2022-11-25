@@ -3,13 +3,14 @@ import { Validation } from "../../lib/validation/ValidationChecker";
 import { validators } from "../../lib/validation/validators";
 import { NumberArgument } from "../../lib/context/arguments/argumentTypes/NumberArgument";
 import { bold } from "../../helpers/discord";
+import { ArgumentsMap } from "../../lib/context/arguments/types";
 
 const args = {
   time: new NumberArgument({
     default: 5,
     description: "The amount of seconds to count down - defaults to 5",
   }),
-} as const;
+} satisfies ArgumentsMap;
 
 export default class PartyTime extends LastFMBaseCommand<typeof args> {
   idSeed = "april chaewon";

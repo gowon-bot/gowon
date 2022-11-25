@@ -4,13 +4,14 @@ import { TimeRangeArgument } from "../../lib/context/arguments/argumentTypes/tim
 import { bold } from "../../helpers/discord";
 import { humanizeTimeRange } from "../../lib/timeAndDate/helpers/humanize";
 import { TimeRange } from "../../lib/timeAndDate/TimeRange";
+import { ArgumentsMap } from "../../lib/context/arguments/types";
 
 const args = {
   timeRange: new TimeRangeArgument({
     useOverall: false,
     default: () => TimeRange.fromDuration({ weeks: 1 }),
   }),
-} as const;
+} satisfies ArgumentsMap;
 
 export class TopCommands extends MetaChildCommand<typeof args> {
   idSeed = "eunha";

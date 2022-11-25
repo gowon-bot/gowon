@@ -4,11 +4,12 @@ import { toInt } from "../../../helpers/lastFM";
 import { displayNumber } from "../../../lib/views/displays";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 
 const args = {
   ...standardMentions,
   ...prefabArguments.artist,
-} as const;
+} satisfies ArgumentsMap;
 
 export default class GlobalArtistPlays extends LastFMBaseCommand<typeof args> {
   idSeed = "itzy yuna";
@@ -46,13 +47,12 @@ export default class GlobalArtistPlays extends LastFMBaseCommand<typeof args> {
       `Last.fm has scrobbled ${artistDetails.name} ${displayNumber(
         artistDetails.globalPlaycount,
         "time"
-      )}${
-        toInt(artistDetails.userPlaycount) > 0
-          ? `. ${perspective.upper.plusToHave} ${displayNumber(
-              artistDetails.userPlaycount,
-              "scrobble"
-            )} ${parseFloat(percentage) > 0 ? `(${percentage}%)` : ""}`
-          : ""
+      )}${toInt(artistDetails.userPlaycount) > 0
+        ? `. ${perspective.upper.plusToHave} ${displayNumber(
+          artistDetails.userPlaycount,
+          "scrobble"
+        )} ${parseFloat(percentage) > 0 ? `(${percentage}%)` : ""}`
+        : ""
       }`
     );
   }

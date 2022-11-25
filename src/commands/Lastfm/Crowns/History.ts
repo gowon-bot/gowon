@@ -6,10 +6,11 @@ import { displayDate } from "../../../lib/views/displays";
 import { asyncMap } from "../../../helpers";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 import { bold } from "../../../helpers/discord";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 
 const args = {
   ...prefabArguments.artist,
-} as const;
+} satisfies ArgumentsMap;
 
 export class History extends CrownsChildCommand<typeof args> {
   idSeed = "wjsn cheng xiao";

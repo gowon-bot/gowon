@@ -10,6 +10,7 @@ import { Flag } from "../../lib/context/arguments/argumentTypes/Flag";
 import { code } from "../../helpers/discord";
 import { PermissionsService } from "../../lib/permissions/PermissionsService";
 import { bullet } from "../../helpers/specialCharacters";
+import { ArgumentsMap } from "../../lib/context/arguments/types";
 
 interface GroupedCommands {
   [category: string]: Command[];
@@ -29,7 +30,7 @@ const args = {
     index: { start: 0 },
     description: "A command to view help for",
   }),
-} as const;
+} satisfies ArgumentsMap;
 
 export default class Help extends Command<typeof args> {
   idSeed = "clc seungyeon";

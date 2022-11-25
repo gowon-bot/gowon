@@ -4,10 +4,11 @@ import { LastFMEntityNotFoundError } from "../../../../errors/errors";
 import { displayNumber } from "../../../../lib/views/displays";
 import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";
 import { code } from "../../../../helpers/discord";
+import { ArgumentsMap } from "../../../../lib/context/arguments/types";
 
 const args = {
   ...prefabArguments.track,
-} as const;
+} satisfies ArgumentsMap;
 
 export class TrackPlays extends FriendsChildCommand<typeof args> {
   idSeed = "nature saebom";

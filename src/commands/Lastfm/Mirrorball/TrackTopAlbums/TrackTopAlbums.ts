@@ -12,11 +12,12 @@ import { standardMentions } from "../../../../lib/context/arguments/mentionTypes
 import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";
 import { bold, italic } from "../../../../helpers/discord";
 import { Emoji } from "../../../../lib/Emoji";
+import { ArgumentsMap } from "../../../../lib/context/arguments/types";
 
 const args = {
   ...prefabArguments.track,
   ...standardMentions,
-} as const;
+} satisfies ArgumentsMap;
 
 export default class TrackTopAlbums extends MirrorballBaseCommand<
   TrackTopAlbumsResponse,
