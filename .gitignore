@@ -1,12 +1,10 @@
 node_modules/
 dist/
 details
-.vscode/
 specialUsers.json
 yarn.lock
 data/
 **/.DS_Store
-
 
 config.json
 ormconfig.json
