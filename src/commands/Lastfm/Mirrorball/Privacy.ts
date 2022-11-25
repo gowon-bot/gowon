@@ -1,6 +1,7 @@
 import { LinkGenerator } from "../../../helpers/lastFM";
 import { Command } from "../../../lib/command/Command";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { Emoji } from "../../../lib/Emoji";
 import { displayLink } from "../../../lib/views/displays";
 import { MirrorballPrivacy } from "../../../services/mirrorball/MirrorballTypes";
@@ -17,7 +18,7 @@ const args = {
     ],
     description: "What other users can see about you on global leaderboards",
   }),
-} as const;
+} satisfies ArgumentsMap;
 
 export default class Privacy extends Command<typeof args> {
   idSeed = "hello venus seoyoung";
@@ -52,20 +53,19 @@ export default class Privacy extends Command<typeof args> {
       await this.mirrorballUsersService.updatePrivacy(this.ctx, privacy);
 
       embed.setDescription(
-        `Your new privacy is: \`${privacy.toLowerCase()}\` (${
-          privacy === "DISCORD"
-            ? this.author.tag
-            : privacy === "FMUSERNAME"
+        `Your new privacy is: \`${privacy.toLowerCase()}\` (${privacy === "DISCORD"
+          ? this.author.tag
+          : privacy === "FMUSERNAME"
             ? displayLink(
-                senderUsername,
-                LinkGenerator.userPage(senderUsername)
-              )
+              senderUsername,
+              LinkGenerator.userPage(senderUsername)
+            )
             : privacy === "BOTH"
-            ? displayLink(
+              ? displayLink(
                 this.author.tag,
                 LinkGenerator.userPage(senderUsername)
               )
-            : PrivateUserDisplay
+              : PrivateUserDisplay
         })`
       );
     } else {
@@ -92,7 +92,7 @@ You can set your privacy with \`${this.prefix}privacy <option>\``
           text:
             this.privacyHelp +
             (!mirrorballUser?.privacy ||
-            mirrorballUser.privacy === MirrorballPrivacy.Unset
+              mirrorballUser.privacy === MirrorballPrivacy.Unset
               ? "\nGowon will not reveal any information about you until you set your privacy"
               : ""),
         });

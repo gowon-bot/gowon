@@ -1,6 +1,7 @@
 import { code } from "../../../../helpers/discord";
 import { CommandRedirect } from "../../../../lib/command/Command";
 import { StringArrayArgument } from "../../../../lib/context/arguments/argumentTypes/StringArrayArgument";
+import { ArgumentsMap } from "../../../../lib/context/arguments/types";
 import {
   componentMap,
   sortConfigOptions,
@@ -18,7 +19,7 @@ const args = {
     index: { start: 0 },
     preprocessor: preprocessConfig,
   }),
-} as const;
+} satisfies ArgumentsMap;
 
 export class Set extends NowPlayingConfigChildCommand<typeof args> {
   idSeed = "weeekly jihan";

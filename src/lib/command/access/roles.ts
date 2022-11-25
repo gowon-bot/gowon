@@ -35,7 +35,7 @@ export const roles = {
     name: "#swag",
     permissions: [] as readonly CommandPermission[],
   },
-} as const;
+};
 
 export type CommandAccessRoleName = keyof typeof roles;
 

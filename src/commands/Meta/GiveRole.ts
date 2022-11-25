@@ -6,6 +6,7 @@ import { DiscordUserArgument } from "../../lib/context/arguments/argumentTypes/d
 import { StringArgument } from "../../lib/context/arguments/argumentTypes/StringArgument";
 import { UserStringArgument } from "../../lib/context/arguments/argumentTypes/UserStringArgument";
 import { DiscordIDMention } from "../../lib/context/arguments/mentionTypes/DiscordIDMention";
+import { ArgumentsMap } from "../../lib/context/arguments/types";
 import { validators } from "../../lib/validation/validators";
 
 const args = {
@@ -19,7 +20,7 @@ const args = {
   }),
   userID: new UserStringArgument({ mention: new DiscordIDMention() }),
   user: new DiscordUserArgument(),
-} as const;
+} satisfies ArgumentsMap;
 
 export default class GiveRole extends Command<typeof args> {
   idSeed = "dreamnote hanbyeol";
@@ -72,8 +73,7 @@ export default class GiveRole extends Command<typeof args> {
     const embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor("Role management"))
       .setDescription(
-        `Succesfully ${
-          this.variationWasUsed("remove") ? "removed" : "added"
+        `Succesfully ${this.variationWasUsed("remove") ? "removed" : "added"
         } the role ${code(role)}`
       );
 

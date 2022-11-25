@@ -2,7 +2,7 @@ import { ServerResponse } from "http";
 import { BaseMockService } from "./BaseMockService";
 
 const mockMetric = {
-  inc: () => {},
+  inc: () => { },
 } as any;
 
 export class MockAnalyticsCollector extends BaseMockService {
@@ -13,7 +13,7 @@ export class MockAnalyticsCollector extends BaseMockService {
     commandErrors: mockMetric,
     guildCount: mockMetric,
     userCount: mockMetric,
-  } as const;
+  };
 
-  async handler(_: any, _res: ServerResponse) {}
+  async handler(_: any, _res: ServerResponse) { }
 }

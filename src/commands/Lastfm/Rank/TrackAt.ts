@@ -6,6 +6,7 @@ import { displayNumber } from "../../../lib/views/displays";
 import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { bold, italic } from "../../../helpers/discord";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 
 const args = {
   rank: new NumberArgument({
@@ -13,7 +14,7 @@ const args = {
     required: true,
   }),
   ...standardMentions,
-} as const;
+} satisfies ArgumentsMap
 
 export default class TrackAt extends LastFMBaseCommand<typeof args> {
   idSeed = "cignature sunn";
@@ -50,8 +51,7 @@ export default class TrackAt extends LastFMBaseCommand<typeof args> {
       );
 
     await this.oldReply(
-      `${bold(track.name)} by ${italic(track.artist.name)} is ranked at **${
-        track.rank
+      `${bold(track.name)} by ${italic(track.artist.name)} is ranked at **${track.rank
       }** in ${perspective.possessive} top tracks with ${bold(
         displayNumber(track.userPlaycount, "play")
       )}`

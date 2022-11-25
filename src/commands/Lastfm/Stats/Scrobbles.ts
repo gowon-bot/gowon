@@ -5,6 +5,7 @@ import { TimeRangeArgument } from "../../../lib/context/arguments/argumentTypes/
 import { DateArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/DateArgument";
 import { TimeRange } from "../../../lib/timeAndDate/TimeRange";
 import { bold } from "../../../helpers/discord";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 
 const args = {
   ...standardMentions,
@@ -13,7 +14,7 @@ const args = {
     useOverall: true,
     default: () => TimeRange.overall(),
   }),
-} as const;
+} satisfies ArgumentsMap
 
 export default class Scrobbles extends LastFMBaseCommand<typeof args> {
   idSeed = "wooah songyee";

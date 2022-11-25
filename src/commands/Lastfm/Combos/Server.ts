@@ -8,10 +8,11 @@ import { ArtistsService } from "../../../services/mirrorball/services/ArtistsSer
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 import { bold } from "../../../helpers/discord";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 
 const args = {
   ...prefabArguments.artist,
-} as const;
+} satisfies ArgumentsMap;
 
 export class ServerCombos extends ComboChildCommand<typeof args> {
   idSeed = "wonder girls hyelim";
@@ -50,16 +51,14 @@ export class ServerCombos extends ComboChildCommand<typeof args> {
 
     if (!combos.length) {
       throw new LogicError(
-        `This server doesn't have any ${
-          artistName ? `${artistName} ` : ""
+        `This server doesn't have any ${artistName ? `${artistName} ` : ""
         }combos saved yet! \`${this.prefix}combo\` saves your combo`
       );
     }
 
     const embed = this.newEmbed().setAuthor(
       this.generateEmbedAuthor(
-        `${this.requiredGuild.name}'s top ${
-          artistName ? `${artistName} ` : ""
+        `${this.requiredGuild.name}'s top ${artistName ? `${artistName} ` : ""
         }combos`
       )
     );

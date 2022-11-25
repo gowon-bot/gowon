@@ -1,6 +1,7 @@
 import { code } from "../../../../helpers/discord";
 import { StringArgument } from "../../../../lib/context/arguments/argumentTypes/StringArgument";
 import { StringArrayArgument } from "../../../../lib/context/arguments/argumentTypes/StringArrayArgument";
+import { ArgumentsMap } from "../../../../lib/context/arguments/types";
 import { LineConsolidator } from "../../../../lib/LineConsolidator";
 import {
   componentMap,
@@ -24,7 +25,7 @@ const args = {
     choices: getComponentsAsChoices(),
     preprocessor: preprocessConfig,
   }),
-} as const;
+} satisfies ArgumentsMap;
 
 export class Add extends NowPlayingConfigChildCommand<typeof args> {
   idSeed = "sonamoo minjae";

@@ -1,6 +1,7 @@
 import { format } from "date-fns";
 import { Command, Variation } from "../../lib/command/Command";
 import { StringArgument } from "../../lib/context/arguments/argumentTypes/StringArgument";
+import { ArgumentsMap } from "../../lib/context/arguments/types";
 import { Validation } from "../../lib/validation/ValidationChecker";
 import { validators } from "../../lib/validation/validators";
 import { displayLink } from "../../lib/views/displays";
@@ -10,7 +11,7 @@ import { ServiceRegistry } from "../../services/ServicesRegistry";
 const args = {
   title: new StringArgument({ splitOn: "|", required: true }),
   body: new StringArgument({ index: { start: 1 }, splitOn: "|" }),
-} as const;
+} satisfies ArgumentsMap;
 
 export default class Issue extends Command<typeof args> {
   idSeed = "apink bomi";
@@ -61,21 +62,18 @@ export default class Issue extends Command<typeof args> {
 
 ## Notes from Gowon:
 
-${
-  this.payload.isMessage()
-    ? displayLink("Jump to message", this.payload.source.url)
-    : ""
-}
+${this.payload.isMessage()
+        ? displayLink("Jump to message", this.payload.source.url)
+        : ""
+      }
 
-**Author**: ${this.author.username} (${
-      this.payload.member?.nickname || "*No Nickname*"
-    })
+**Author**: ${this.author.username} (${this.payload.member?.nickname || "*No Nickname*"
+      })
 **Ran at**: ${format(new Date(), "h:mma 'on' MMMM do, yyyy")}
-**Channel:** \\#${
-      this.payload.guild?.channels.cache.find(
+**Channel:** \\#${this.payload.guild?.channels.cache.find(
         (c) => c.id === this.payload.channel.id
       )?.name
-    }
+      }
 **Guild**: ${this.requiredGuild.name}`;
 
     const labels = ["user feedback"];

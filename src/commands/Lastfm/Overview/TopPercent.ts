@@ -6,6 +6,7 @@ import { standardMentions } from "../../../lib/context/arguments/mentionTypes/me
 import { TimePeriodArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/TimePeriodArgument";
 import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
 import { bold } from "../../../helpers/discord";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 
 const args = {
   timePeriod: new TimePeriodArgument({
@@ -16,7 +17,7 @@ const args = {
     description: "The percent of artists to total to (defaults to 50)",
   }),
   ...standardMentions,
-} as const;
+} satisfies ArgumentsMap;
 
 export class TopPercent extends OverviewChildCommand<typeof args> {
   idSeed = "twice sana";

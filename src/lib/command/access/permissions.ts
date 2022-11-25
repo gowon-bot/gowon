@@ -4,7 +4,7 @@ import { CommandAccessRoleName, getRoles } from "./roles";
 type PermissionNamespace = "";
 type PermissionPowerLevel = "manage" | "view";
 
-export const permissions = {} as const;
+export const permissions = {};
 
 export type CommandPermission =
   `${PermissionNamespace}:${PermissionPowerLevel}:${string}`;

@@ -13,6 +13,7 @@ import { GowonContext } from "../../../lib/context/Context";
 import { Flag } from "../../../lib/context/arguments/argumentTypes/Flag";
 import { bold, code } from "../../../helpers/discord";
 import { MessageCollector } from "discord.js";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 
 const args = {
   poolAmount: new NumberArgument({
@@ -25,7 +26,7 @@ const args = {
     longnames: ["nonalphanumeric", "nonalphanum"],
     description: "Include artists with non-alphanumeric names",
   }),
-} as const;
+} satisfies ArgumentsMap;
 
 export class Me extends JumbleChildCommand<typeof args> {
   idSeed = "csvc stella jang";
@@ -99,8 +100,7 @@ export class Me extends JumbleChildCommand<typeof args> {
     let lineConsolidator = new LineConsolidator();
 
     lineConsolidator.addLines(
-      `This artist has **${abbreviateNumber(artistInfo.listeners)}** listener${
-        artistInfo.listeners === 1 ? "" : "s"
+      `This artist has **${abbreviateNumber(artistInfo.listeners)}** listener${artistInfo.listeners === 1 ? "" : "s"
       } on Last.fm and you have scrobbled them **${displayNumber(
         artist.userPlaycount,
         "**time"

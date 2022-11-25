@@ -18,6 +18,7 @@ import { AlbumCoverService } from "../../../services/moderation/AlbumCoverServic
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { StringArrayArgument } from "../../../lib/context/arguments/argumentTypes/StringArrayArgument";
 import { bold, italic } from "../../../helpers/discord";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 
 const args = {
   artists: new StringArrayArgument({
@@ -27,7 +28,7 @@ const args = {
     description: "The artists to count as part of your combo",
   }),
   ...standardMentions,
-} as const;
+} satisfies ArgumentsMap;
 
 export class Current extends ComboChildCommand<typeof args> {
   idSeed = "wooah wooyeon";
@@ -143,11 +144,11 @@ export class Current extends ComboChildCommand<typeof args> {
         text: comboSaved
           ? `This combo has been saved! See ${this.prefix}combos to see all your combos`
           : thresholdNotMet
-          ? `Only combos with more than ${displayNumber(
+            ? `Only combos with more than ${displayNumber(
               this.comboService.threshold,
               "play"
             )} are saved.`
-          : "",
+            : "",
       });
 
     if (combo.hasAnyConsecutivePlays()) {
@@ -178,19 +179,18 @@ export class Current extends ComboChildCommand<typeof args> {
     combo: ComboType,
     entity: "artist" | "album" | "track"
   ): string {
-    return `${bold(ucFirst(entity))}: ${displayNumber(combo[entity].plays)}${
-      combo[entity].plays >= 1000
+    return `${bold(ucFirst(entity))}: ${displayNumber(combo[entity].plays)}${combo[entity].plays >= 1000
         ? ` ${Emoji.gowonLitDance}`
         : combo[entity].plays >= 100
-        ? this.isMex(this.author.id)
-          ? "💹"
-          : "🔥"
-        : combo[entity].hitMax
-        ? "+"
-        : combo[entity].nowplaying
-        ? "➚"
-        : ""
-    } in a row`;
+          ? this.isMex(this.author.id)
+            ? "💹"
+            : "🔥"
+          : combo[entity].hitMax
+            ? "+"
+            : combo[entity].nowplaying
+              ? "➚"
+              : ""
+      } in a row`;
   }
 
   private isMex(discordID: string) {

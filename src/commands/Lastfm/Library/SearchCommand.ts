@@ -2,6 +2,7 @@ import { convert as romanizeHangeul } from "hangul-romanization";
 import { Flag } from "../../../lib/context/arguments/argumentTypes/Flag";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
@@ -18,7 +19,7 @@ const args = {
     description: "Look twice as deep into your library",
   }),
   ...standardMentions,
-} as const;
+} satisfies ArgumentsMap;
 
 export abstract class SearchCommand extends LastFMBaseCommand<typeof args> {
   idSeed = "gwsn seokyung";

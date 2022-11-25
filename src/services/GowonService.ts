@@ -60,8 +60,7 @@ export class GowonService {
       )
       .replace(
         new RegExp(
-          `${
-            userMentionAtStartRegex(ctx.client.client.user!.id).source
+          `${userMentionAtStartRegex(ctx.client.client.user!.id).source
           }\\s+${ctx.extract.asRemovalRegexString()}`,
           "i"
         ),

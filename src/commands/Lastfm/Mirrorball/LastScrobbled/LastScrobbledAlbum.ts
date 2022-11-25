@@ -3,6 +3,7 @@ import { bold, italic } from "../../../../helpers/discord";
 import { convertMirrorballDate } from "../../../../helpers/mirrorball";
 import { Variation } from "../../../../lib/command/Command";
 import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";
+import { ArgumentsMap } from "../../../../lib/context/arguments/types";
 import { Emoji } from "../../../../lib/Emoji";
 import { MirrorballBaseCommand } from "../../../../lib/indexing/MirrorballCommands";
 import { displayDate } from "../../../../lib/views/displays";
@@ -14,7 +15,7 @@ import {
 
 const args = {
   ...prefabArguments.album,
-} as const;
+} satisfies ArgumentsMap;
 
 export default class LastScrobbledAlbum extends MirrorballBaseCommand<
   LastScrobbledResponse,
@@ -71,8 +72,7 @@ export default class LastScrobbledAlbum extends MirrorballBaseCommand<
         )
       )
       .setDescription(
-        `${Emoji.usesIndexedDataDescription} ${perspective.upper.name} ${
-          this.variationWasUsed("first") ? "first" : "last"
+        `${Emoji.usesIndexedDataDescription} ${perspective.upper.name} ${this.variationWasUsed("first") ? "first" : "last"
         } scrobbled ${italic(play.track.album.name)} by ${bold(
           play.track.artist.name
         )} on ${displayDate(convertMirrorballDate(play.scrobbledAt))}`

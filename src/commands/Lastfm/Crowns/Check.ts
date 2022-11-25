@@ -8,10 +8,11 @@ import {
   PurgatoryError,
 } from "../../../errors/errors";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 
 const args = {
   ...prefabArguments.artist,
-} as const;
+} satisfies ArgumentsMap;
 
 export class Check extends CrownsChildCommand<typeof args> {
   idSeed = "weki meki sei";
@@ -70,26 +71,26 @@ export class Check extends CrownsChildCommand<typeof args> {
       crownCheck.state === CrownState.newCrown
         ? embeds.newCrown()
         : crownCheck.state === CrownState.updated
-        ? embeds.updatedCrown()
-        : crownCheck.state === CrownState.snatched
-        ? embeds.snatchedCrown()
-        : crownCheck.state === CrownState.fail
-        ? embeds.fail()
-        : crownCheck.state === CrownState.tie
-        ? embeds.tie()
-        : crownCheck.state === CrownState.tooLow
-        ? embeds.tooLow(this.crownsService.threshold)
-        : crownCheck.state === CrownState.inactivity
-        ? embeds.inactivity()
-        : crownCheck.state === CrownState.purgatory
-        ? embeds.purgatory()
-        : crownCheck.state === CrownState.left
-        ? embeds.left()
-        : crownCheck.state === CrownState.banned
-        ? embeds.banned()
-        : crownCheck.state === CrownState.loggedOut
-        ? embeds.loggedOut()
-        : this.newEmbed();
+          ? embeds.updatedCrown()
+          : crownCheck.state === CrownState.snatched
+            ? embeds.snatchedCrown()
+            : crownCheck.state === CrownState.fail
+              ? embeds.fail()
+              : crownCheck.state === CrownState.tie
+                ? embeds.tie()
+                : crownCheck.state === CrownState.tooLow
+                  ? embeds.tooLow(this.crownsService.threshold)
+                  : crownCheck.state === CrownState.inactivity
+                    ? embeds.inactivity()
+                    : crownCheck.state === CrownState.purgatory
+                      ? embeds.purgatory()
+                      : crownCheck.state === CrownState.left
+                        ? embeds.left()
+                        : crownCheck.state === CrownState.banned
+                          ? embeds.banned()
+                          : crownCheck.state === CrownState.loggedOut
+                            ? embeds.loggedOut()
+                            : this.newEmbed();
 
     await this.send(await embed);
   }

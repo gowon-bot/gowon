@@ -1,11 +1,12 @@
 import { Command } from "../../lib/command/Command";
 import { StringArgument } from "../../lib/context/arguments/argumentTypes/StringArgument";
+import { ArgumentsMap } from "../../lib/context/arguments/types";
 import { LastFMService } from "../../services/LastFM/LastFMService";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 
 const args = {
   script: new StringArgument({ index: { start: 0 }, required: true }),
-} as const;
+} satisfies ArgumentsMap;
 
 export default class Eval extends Command<typeof args> {
   idSeed = "redsquare ari";

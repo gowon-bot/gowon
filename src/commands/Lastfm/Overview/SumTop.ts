@@ -3,6 +3,7 @@ import { bold } from "../../../helpers/discord";
 import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
 import { TimePeriodArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/TimePeriodArgument";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { displayNumber } from "../../../lib/views/displays";
 import { OverviewChildCommand } from "./OverviewChildCommand";
 
@@ -15,7 +16,7 @@ const args = {
     description: "The number of artists to total",
   }),
   ...standardMentions,
-} as const;
+} satisfies ArgumentsMap;
 
 export class SumTop extends OverviewChildCommand<typeof args> {
   idSeed = "twice momo";

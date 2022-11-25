@@ -1,9 +1,10 @@
 import { Command } from "../../lib/command/Command";
 import { standardMentions } from "../../lib/context/arguments/mentionTypes/mentions";
+import { ArgumentsMap } from "../../lib/context/arguments/types";
 
 const args = {
   ...standardMentions,
-} as const;
+} satisfies ArgumentsMap;
 
 export default class ID extends Command<typeof args> {
   idSeed = "exid hyerin";

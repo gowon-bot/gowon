@@ -4,6 +4,7 @@ import { italic } from "../../../helpers/discord";
 import { bullet, extraWideSpace } from "../../../helpers/specialCharacters";
 import { ReportCalculator } from "../../../lib/calculators/ReportCalculator";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { Paginator } from "../../../lib/paginators/Paginator";
 import { TagConsolidator } from "../../../lib/tags/TagConsolidator";
 import { displayDate, displayNumber } from "../../../lib/views/displays";
@@ -13,7 +14,7 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 const args = {
   ...standardMentions,
-} as const;
+} satisfies ArgumentsMap
 
 export default class Day extends LastFMBaseCommand<typeof args> {
   idSeed = "bvndit seungeun";
@@ -90,37 +91,36 @@ export default class Day extends LastFMBaseCommand<typeof args> {
       .setAuthor(this.generateEmbedAuthor())
       .setTitle(`${perspective.upper.possessive} day`).setDescription(`
       _${displayDate(sub(new Date(), { days: 1 }))} - ${displayDate(
-      new Date()
-    )}_
+        new Date()
+      )}_
     _${displayNumber(firstPage.tracks.length, "scrobble")}, ${displayNumber(
-      day.total.artists,
-      "artist"
-    )}, ${displayNumber(day.total.albums, "album")}, ${displayNumber(
-      day.total.tracks,
-      "track"
-    )}_
-${
-  tagConsolidator.hasAnyTags()
-    ? `\n${italic(tagConsolidator.consolidateAsStrings(10).join(", "))}\n`
-    : ""
-}
+        day.total.artists,
+        "artist"
+      )}, ${displayNumber(day.total.albums, "album")}, ${displayNumber(
+        day.total.tracks,
+        "track"
+      )}_
+${tagConsolidator.hasAnyTags()
+          ? `\n${italic(tagConsolidator.consolidateAsStrings(10).join(", "))}\n`
+          : ""
+        }
 **Top Tracks**:
 ${extraWideSpace}${bullet} ${topTracks
-      .slice(0, 3)
-      .map((t) => `${t} (${displayNumber(day.top.tracks[t], "play")})`)
-      .join(`\n​${extraWideSpace}${bullet} `)}
+          .slice(0, 3)
+          .map((t) => `${t} (${displayNumber(day.top.tracks[t], "play")})`)
+          .join(`\n​${extraWideSpace}${bullet} `)}
 
 **Top Albums**:
 ${extraWideSpace}${bullet} ${topAlbums
-      .slice(0, 3)
-      .map((t) => `${t} (${displayNumber(day.top.albums[t], "play")})`)
-      .join(`\n​${extraWideSpace}${bullet} `)}
+          .slice(0, 3)
+          .map((t) => `${t} (${displayNumber(day.top.albums[t], "play")})`)
+          .join(`\n​${extraWideSpace}${bullet} `)}
 
 **Top Artists**:
 ${extraWideSpace}${bullet} ${topArtists
-      .slice(0, 3)
-      .map((t) => `${t} (${displayNumber(day.top.artists[t], "play")})`)
-      .join(`\n​${extraWideSpace}${bullet} `)}
+          .slice(0, 3)
+          .map((t) => `${t} (${displayNumber(day.top.artists[t], "play")})`)
+          .join(`\n​${extraWideSpace}${bullet} `)}
     `);
 
     await this.send(embed);

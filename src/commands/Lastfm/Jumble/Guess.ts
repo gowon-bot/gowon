@@ -3,6 +3,7 @@ import { jumbleRedisKey, JumbledArtist } from "./JumbleParentCommand";
 import { LogicError } from "../../../errors/errors";
 import { shuffle } from "../../../helpers";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 
 const args = {
   guess: new StringArgument({
@@ -10,7 +11,7 @@ const args = {
     required: true,
     description: "Your guess for what the artist is",
   }),
-} as const;
+} satisfies ArgumentsMap;
 
 export class Guess extends JumbleChildCommand<typeof args> {
   idSeed = "clc yeeun";

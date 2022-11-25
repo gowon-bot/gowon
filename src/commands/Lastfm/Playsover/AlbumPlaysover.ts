@@ -6,6 +6,7 @@ import { prefabFlags } from "../../../lib/context/arguments/prefabArguments";
 import { CommandRedirect } from "../../../lib/command/Command";
 import AlbumPlaysequal from "./AlbumPlaysequal";
 import { bold } from "../../../helpers/discord";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 
 const args = {
   plays: new NumberArgument({
@@ -14,7 +15,7 @@ const args = {
   }),
   equal: prefabFlags.equal,
   ...standardMentions,
-} as const;
+} satisfies ArgumentsMap;
 
 export default class AlbumPlaysover extends LastFMBaseCommand<typeof args> {
   idSeed = "gugudan nayoung";
@@ -53,8 +54,7 @@ export default class AlbumPlaysover extends LastFMBaseCommand<typeof args> {
     }
 
     await this.oldReply(
-      `${bold(displayNumber(playsover))} of ${
-        perspective.possessive
+      `${bold(displayNumber(playsover))} of ${perspective.possessive
       } top 1,000 albums have at least ${bold(displayNumber(plays, "play"))}`
     );
   }

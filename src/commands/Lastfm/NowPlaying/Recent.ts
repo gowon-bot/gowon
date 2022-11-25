@@ -2,6 +2,7 @@ import { bold, italic } from "../../../helpers/discord";
 import { LinkGenerator } from "../../../helpers/lastFM";
 import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { requestableAsUsername } from "../../../lib/MultiRequester";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
@@ -15,7 +16,7 @@ const args = {
     description: "The amount of recent tracks to show",
   }),
   ...standardMentions,
-} as const;
+} satisfies ArgumentsMap;
 
 export default class Recent extends LastFMBaseCommand<typeof args> {
   idSeed = "fx krystal";
@@ -63,12 +64,12 @@ export default class Recent extends LastFMBaseCommand<typeof args> {
       .setDescription(
         (recentTracks.isNowPlaying
           ? `\`${amount! > 9 ? " " : ""}•\`. ` +
-            this.displayTrack(recentTracks.nowPlaying!) +
-            "\n"
+          this.displayTrack(recentTracks.nowPlaying!) +
+          "\n"
           : "") +
-          displayNumberedList(
-            recentTracks.withoutNowPlaying.map(this.displayTrack)
-          )
+        displayNumberedList(
+          recentTracks.withoutNowPlaying.map(this.displayTrack)
+        )
       )
       .setThumbnail(albumCover || "");
 
@@ -76,8 +77,7 @@ export default class Recent extends LastFMBaseCommand<typeof args> {
   }
 
   private displayTrack(t: RecentTrack) {
-    return `${displayLink(t.name, t.url)} by ${bold(t.artist)} ${
-      t.album ? `\nfrom ${italic(t.album)}\n` : "\n"
-    }`;
+    return `${displayLink(t.name, t.url)} by ${bold(t.artist)} ${t.album ? `\nfrom ${italic(t.album)}\n` : "\n"
+      }`;
   }
 }

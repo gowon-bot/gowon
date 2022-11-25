@@ -12,6 +12,7 @@ import { DiscordIDMention } from "../../../lib/context/arguments/mentionTypes/Di
 import { LastFMMention } from "../../../lib/context/arguments/mentionTypes/LastFMMention";
 import { DiscordUsernameMention } from "../../../lib/context/arguments/mentionTypes/UsernameMention";
 import { code } from "../../../helpers/discord";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 
 const args = {
   friendUsernames: new StringArrayArgument({ index: { start: 0 } }),
@@ -28,7 +29,7 @@ const args = {
     mention: new DiscordUsernameMention(),
     index: { start: 0 },
   }),
-} as const;
+} satisfies ArgumentsMap;
 
 type FriendToAdd = string | DBUser;
 
@@ -42,7 +43,7 @@ export class Add extends FriendsChildCommand<typeof args> {
 
   arguments = args;
 
-  async beforeRun() {}
+  async beforeRun() { }
 
   async run() {
     const { senderUser } = await this.getMentions({ senderRequired: true });

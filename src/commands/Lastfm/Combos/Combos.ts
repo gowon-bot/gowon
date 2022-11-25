@@ -6,6 +6,7 @@ import { ArtistsService } from "../../../services/mirrorball/services/ArtistsSer
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 
 const args = {
   artist: new StringArgument({
@@ -13,7 +14,7 @@ const args = {
     description: "The artist to filter your combos with",
   }),
   ...standardMentions,
-} as const;
+} satisfies ArgumentsMap;
 
 export class Combos extends ComboChildCommand<typeof args> {
   idSeed = "wonder girls yeeun";
@@ -49,16 +50,14 @@ export class Combos extends ComboChildCommand<typeof args> {
 
     if (!combos.length) {
       throw new LogicError(
-        `${perspective.plusToHave} no ${
-          artistName ? `${artistName} ` : ""
+        `${perspective.plusToHave} no ${artistName ? `${artistName} ` : ""
         }combos saved yet! \`${this.prefix}combo\` saves your combo`
       );
     }
 
     const embed = this.newEmbed().setAuthor(
       this.generateEmbedAuthor(
-        `${perspective.upper.possessive.replace(/`/g, "")} top ${
-          artistName ? `${artistName} ` : ""
+        `${perspective.upper.possessive.replace(/`/g, "")} top ${artistName ? `${artistName} ` : ""
         }combos`
       )
     );

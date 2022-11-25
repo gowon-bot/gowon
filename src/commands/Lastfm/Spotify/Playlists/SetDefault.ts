@@ -1,6 +1,7 @@
 import { LogicError } from "../../../../errors/errors";
 import { bold } from "../../../../helpers/discord";
 import { StringArgument } from "../../../../lib/context/arguments/argumentTypes/StringArgument";
+import { ArgumentsMap } from "../../../../lib/context/arguments/types";
 import { PlaylistChildCommand } from "./PlaylistChildCommand";
 
 const args = {
@@ -9,7 +10,7 @@ const args = {
     required: true,
     description: "The name of the playlist to set as the default",
   }),
-} as const;
+} satisfies ArgumentsMap
 
 export class SetDefault extends PlaylistChildCommand<typeof args> {
   idSeed = "pink fantasy arang";

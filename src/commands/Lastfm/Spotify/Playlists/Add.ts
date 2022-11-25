@@ -4,6 +4,7 @@ import { Variation } from "../../../../lib/command/Command";
 import { EmojisArgument } from "../../../../lib/context/arguments/argumentTypes/discord/EmojisArgument";
 import { StringArgument } from "../../../../lib/context/arguments/argumentTypes/StringArgument";
 import { removeEmojisFromString } from "../../../../lib/context/arguments/parsers/EmojiParser";
+import { ArgumentsMap } from "../../../../lib/context/arguments/types";
 import { PlaylistChildCommand } from "./PlaylistChildCommand";
 
 const args = {
@@ -23,7 +24,7 @@ const args = {
     preprocessor: removeEmojisFromString,
     description: "That track of the track you want to add",
   }),
-} as const;
+} satisfies ArgumentsMap
 
 export class Add extends PlaylistChildCommand<typeof args> {
   idSeed = "pink fantasy harin";
@@ -74,8 +75,7 @@ export class Add extends PlaylistChildCommand<typeof args> {
       if (askedConfirmation) return;
 
       throw new LogicError(
-        `Couldn't find a track to ${
-          remove ? "remove from" : "add to"
+        `Couldn't find a track to ${remove ? "remove from" : "add to"
         } a playlist!`
       );
     }
@@ -93,8 +93,7 @@ export class Add extends PlaylistChildCommand<typeof args> {
         )
       )
       .setDescription(
-        `Successfully ${remove ? "removed" : "added"} ${italic(track.name)} ${
-          remove ? "from" : "to"
+        `Successfully ${remove ? "removed" : "added"} ${italic(track.name)} ${remove ? "from" : "to"
         } ${bold(playlistTag.playlistName)}`
       )
       .setThumbnail(track.album.images.largest.url);

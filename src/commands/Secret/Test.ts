@@ -1,6 +1,7 @@
 import { Command } from "../../lib/command/Command";
+import { ArgumentsMap } from "../../lib/context/arguments/types";
 
-const args = {} as const;
+const args = {} satisfies ArgumentsMap;
 
 export default class Test extends Command<typeof args> {
   idSeed = "clc seunghee";

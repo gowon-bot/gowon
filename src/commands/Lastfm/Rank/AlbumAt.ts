@@ -6,6 +6,7 @@ import { displayNumber } from "../../../lib/views/displays";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
 import { bold, italic } from "../../../helpers/discord";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 
 const args = {
   rank: new NumberArgument({
@@ -13,7 +14,7 @@ const args = {
     required: true,
   }),
   ...standardMentions,
-} as const;
+} satisfies ArgumentsMap
 
 export default class AlbumAt extends LastFMBaseCommand<typeof args> {
   idSeed = "gugudan hyeyeon";
@@ -49,8 +50,7 @@ export default class AlbumAt extends LastFMBaseCommand<typeof args> {
       );
 
     await this.oldReply(
-      `${bold(album.name)} by ${italic(album.artist.name)} is ranked at #**${
-        album.rank
+      `${bold(album.name)} by ${italic(album.artist.name)} is ranked at #**${album.rank
       }** in ${perspective.possessive} top albums with ${bold(
         displayNumber(album.userPlaycount, "play")
       )}`

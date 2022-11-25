@@ -2,6 +2,7 @@ import { italic } from "../../../helpers/discord";
 import { extraWideSpace } from "../../../helpers/specialCharacters";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { Emoji } from "../../../lib/Emoji";
 import { LineConsolidator } from "../../../lib/LineConsolidator";
 import {
@@ -19,7 +20,7 @@ const args = {
     description: "The artist to see tags for",
   }),
   ...standardMentions,
-} as const;
+} satisfies ArgumentsMap
 
 export default class ArtistTags extends LastFMBaseCommand<typeof args> {
   idSeed = "le sserafim sakura";

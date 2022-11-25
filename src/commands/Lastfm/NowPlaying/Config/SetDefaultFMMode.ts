@@ -1,5 +1,6 @@
 import { code } from "../../../../helpers/discord";
 import { StringArgument } from "../../../../lib/context/arguments/argumentTypes/StringArgument";
+import { ArgumentsMap } from "../../../../lib/context/arguments/types";
 import { FMMode } from "../../../../lib/settings/SettingValues";
 import { NowPlayingConfigChildCommand } from "./NowPlayingConfigChildCommand";
 
@@ -16,7 +17,7 @@ const args = {
     ],
     preprocessor: (s) => s.toLowerCase(),
   }),
-} as const;
+} satisfies ArgumentsMap;
 
 export class SetFMMode extends NowPlayingConfigChildCommand<typeof args> {
   idSeed = "brave girls eunji";

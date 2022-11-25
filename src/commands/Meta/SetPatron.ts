@@ -3,12 +3,13 @@ import { Command, Variation } from "../../lib/command/Command";
 import { DiscordUserArgument } from "../../lib/context/arguments/argumentTypes/discord/DiscordUserArgument";
 import { UserStringArgument } from "../../lib/context/arguments/argumentTypes/UserStringArgument";
 import { DiscordIDMention } from "../../lib/context/arguments/mentionTypes/DiscordIDMention";
+import { ArgumentsMap } from "../../lib/context/arguments/types";
 import { validators } from "../../lib/validation/validators";
 
 const args = {
   userID: new UserStringArgument({ mention: new DiscordIDMention() }),
   user: new DiscordUserArgument(),
-} as const;
+} satisfies ArgumentsMap;
 
 export default class SetPatron extends Command<typeof args> {
   idSeed = "hello venus yooyoung";
@@ -52,8 +53,7 @@ export default class SetPatron extends Command<typeof args> {
     }
 
     const embed = this.newEmbed().setDescription(
-      `Successfully ${
-        this.variationWasUsed("unset") ? "un" : ""
+      `Successfully ${this.variationWasUsed("unset") ? "un" : ""
       }set ${id} as a patron!`
     );
 

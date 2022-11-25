@@ -3,6 +3,7 @@ import { LinkGenerator } from "../../../../helpers/lastFM";
 import { convertLilacDate } from "../../../../helpers/lilac";
 import { standardMentions } from "../../../../lib/context/arguments/mentionTypes/mentions";
 import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";
+import { ArgumentsMap } from "../../../../lib/context/arguments/types";
 import { Emoji } from "../../../../lib/Emoji";
 import { LilacBaseCommand } from "../../../../lib/Lilac/LilacBaseCommand";
 import { PaginatedLilacScrobbleCache } from "../../../../lib/paginators/PaginatedScrobbleCache";
@@ -19,7 +20,7 @@ import { TimeAndDateService } from "../../../../services/TimeAndDateService";
 const args = {
   ...standardMentions,
   ...prefabArguments.artist,
-} as const;
+} satisfies ArgumentsMap;
 
 export default class NoAlbums extends LilacBaseCommand<typeof args> {
   idSeed = "brave girls yuna";
@@ -69,8 +70,7 @@ export default class NoAlbums extends LilacBaseCommand<typeof args> {
     if (firstPage.pagination.totalItems === 0) {
       await this.send(
         embed.setDescription(
-          `You have no scrobbles without an album${
-            artistName ? ` from ${bold(artistName)}` : ""
+          `You have no scrobbles without an album${artistName ? ` from ${bold(artistName)}` : ""
           }!`
         )
       );

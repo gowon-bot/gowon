@@ -14,6 +14,7 @@ import { channelMention, roleMention, userMention } from "@discordjs/builders";
 import { emDash } from "../../../helpers/specialCharacters";
 import { DiscordRoleArgument } from "../../../lib/context/arguments/argumentTypes/discord/DiscordRoleArgument";
 import { Flag } from "../../../lib/context/arguments/argumentTypes/Flag";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 
 const args = {
   command: new StringArgument({
@@ -34,7 +35,7 @@ const args = {
     longnames: ["all"],
     shortnames: ["a"],
   }),
-} as const;
+} satisfies ArgumentsMap;
 
 export class View extends PermissionsChildCommand<typeof args> {
   idSeed = "loona haseul";
@@ -82,9 +83,9 @@ export class View extends PermissionsChildCommand<typeof args> {
         itemName: "permissions",
         embedDescription:
           !this.parsedArguments.all &&
-          !this.parsedArguments.user &&
-          !this.parsedArguments.channel &&
-          !this.parsedArguments.role
+            !this.parsedArguments.user &&
+            !this.parsedArguments.channel &&
+            !this.parsedArguments.role
             ? italic(this.allHelp) + "\n"
             : "",
       },
@@ -166,8 +167,7 @@ export class View extends PermissionsChildCommand<typeof args> {
         break;
     }
 
-    return `${code(commandName)}${extra}${
-      permission.allow ? italic(" (allow)") : ""
-    }`;
+    return `${code(commandName)}${extra}${permission.allow ? italic(" (allow)") : ""
+      }`;
   }
 }

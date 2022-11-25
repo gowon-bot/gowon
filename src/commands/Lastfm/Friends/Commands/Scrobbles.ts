@@ -4,13 +4,14 @@ import { displayNumber } from "../../../../lib/views/displays";
 import { TimeRangeArgument } from "../../../../lib/context/arguments/argumentTypes/timeAndDate/TimeRangeArgument";
 import { TimeRange } from "../../../../lib/timeAndDate/TimeRange";
 import { code } from "../../../../helpers/discord";
+import { ArgumentsMap } from "../../../../lib/context/arguments/types";
 
 const args = {
   timeRange: new TimeRangeArgument({
     useOverall: true,
     default: () => TimeRange.overall(),
   }),
-} as const;
+} satisfies ArgumentsMap;
 
 export class Scrobbles extends FriendsChildCommand<typeof args> {
   idSeed = "nature sohee";

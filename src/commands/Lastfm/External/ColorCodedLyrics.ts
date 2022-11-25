@@ -1,5 +1,6 @@
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 const args = {
@@ -9,7 +10,7 @@ const args = {
       "The keywords to search Colorcodedlyrics for (defaults to your currently playing track)",
   }),
   ...standardMentions,
-} as const;
+} satisfies ArgumentsMap;
 
 export default class ColorCodedLyrics extends LastFMBaseCommand<typeof args> {
   idSeed = "iz*one minju";

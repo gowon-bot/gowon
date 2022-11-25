@@ -1,9 +1,10 @@
 import { CrownsChildCommand } from "./CrownsChildCommand";
 import { DiscordRoleArgument } from "../../../lib/context/arguments/argumentTypes/discord/DiscordRoleArgument";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 
 const args = {
   inactiveRole: new DiscordRoleArgument(),
-} as const;
+} satisfies ArgumentsMap;
 
 export class SetInactiveRole extends CrownsChildCommand<typeof args> {
   idSeed = "wjsn luda";

@@ -3,6 +3,7 @@ import { bold, italic } from "../../../helpers/discord";
 import { calculatePercent } from "../../../helpers/stats";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { Paginator } from "../../../lib/paginators/Paginator";
 import { displayNumber } from "../../../lib/views/displays";
 import { TopTracks } from "../../../services/LastFM/converters/TopTypes";
@@ -23,7 +24,7 @@ const args = {
     description: "The tag to filter your tracks with",
   }),
   ...standardMentions,
-} as const;
+} satisfies ArgumentsMap
 
 export default class TagTracks extends LastFMBaseCommand<typeof args> {
   idSeed = "iz*one nako";
@@ -92,25 +93,25 @@ _Comparing ${perspective.possessive} top ${displayNumber(
           tagTrackNames.length,
           "track"
         )} of the tag_\n` +
-          (overlap.length
-            ? `${displayNumber(overlap.length, "track")} (${calculatePercent(
-                overlap.length,
-                tagTrackNames.length
-              )}% match) (${displayNumber(
-                overlap.reduce((sum, o) => sum + o.plays, 0),
-                "scrobble"
-              )})\n\n` +
-              `${overlap
-                .slice(0, 20)
-                .map(
-                  (o, idx) =>
-                    `${idx + 1}. ${bold(o.track)} by ${italic(
-                      o.artist
-                    )} - ${displayNumber(o.plays, "play")}`
-                )
-                .join("\n")}
+        (overlap.length
+          ? `${displayNumber(overlap.length, "track")} (${calculatePercent(
+            overlap.length,
+            tagTrackNames.length
+          )}% match) (${displayNumber(
+            overlap.reduce((sum, o) => sum + o.plays, 0),
+            "scrobble"
+          )})\n\n` +
+          `${overlap
+            .slice(0, 20)
+            .map(
+              (o, idx) =>
+                `${idx + 1}. ${bold(o.track)} by ${italic(
+                  o.artist
+                )} - ${displayNumber(o.plays, "play")}`
+            )
+            .join("\n")}
 `
-            : "Couldn't find any matching tracks!")
+          : "Couldn't find any matching tracks!")
       );
 
     await this.send(embed);

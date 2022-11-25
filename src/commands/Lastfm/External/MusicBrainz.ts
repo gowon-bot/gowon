@@ -1,6 +1,7 @@
 import { Flag } from "../../../lib/context/arguments/argumentTypes/Flag";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 const args = {
@@ -15,7 +16,7 @@ const args = {
     shortnames: ["a"],
   }),
   ...standardMentions,
-} as const;
+} satisfies ArgumentsMap;
 
 export default class MusicBrainz extends LastFMBaseCommand<typeof args> {
   idSeed = "dreamnote youi";
@@ -52,8 +53,7 @@ export default class MusicBrainz extends LastFMBaseCommand<typeof args> {
       .setAuthor({ name: `MusicBrainz search for "${keywords}"` })
       .setTitle("Click here to view the results")
       .setURL(
-        `https://musicbrainz.org/search?query=${encodedKeywords}&type=${
-          this.parsedArguments.searchArtists ? "artist" : "release"
+        `https://musicbrainz.org/search?query=${encodedKeywords}&type=${this.parsedArguments.searchArtists ? "artist" : "release"
         }&method=indexed`
       )
       .setThumbnail(

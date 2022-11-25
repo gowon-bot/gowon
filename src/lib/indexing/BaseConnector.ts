@@ -34,7 +34,7 @@ export abstract class BaseConnector<ResponseT, ParamsT>
         success
       }
     `,
-  } as const;
+  } satisfies Record<string, DocumentNode>;
 }
 
 export class EmptyConnector extends BaseConnector<never, any> {

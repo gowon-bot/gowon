@@ -9,11 +9,12 @@ import { standardMentions } from "../../../lib/context/arguments/mentionTypes/me
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 import { bold } from "../../../helpers/discord";
 import { LilacTagsService } from "../../../services/lilac/LilacTagsService";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 
 const args = {
   ...prefabArguments.artist,
   ...standardMentions,
-} as const;
+} satisfies ArgumentsMap;
 
 export default class ArtistInfo extends InfoCommand<typeof args> {
   idSeed = "csvc lovey";
@@ -120,18 +121,16 @@ export default class ArtistInfo extends InfoCommand<typeof args> {
       .setDescription(this.lineConsolidator.consolidate())
       .addField(
         `${perspective.upper.possessive} stats`,
-        `\`${displayNumber(artistInfo.userPlaycount, "` play", true)} by ${
-          perspective.objectPronoun
+        `\`${displayNumber(artistInfo.userPlaycount, "` play", true)} by ${perspective.objectPronoun
         } (${bold(
           calculatePercent(artistInfo.userPlaycount, userInfo.scrobbleCount)
         )}% of ${perspective.possessivePronoun} total scrobbles)
-${
-  parseFloat(percentage) > 0
-    ? `${perspective.upper.regularVerb("account")} for ${bold(
-        percentage
-      )}% of all ${artistInfo.name} scrobbles!`
-    : ""
-}\n`
+${parseFloat(percentage) > 0
+          ? `${perspective.upper.regularVerb("account")} for ${bold(
+            percentage
+          )}% of all ${artistInfo.name} scrobbles!`
+          : ""
+        }\n`
       );
 
     if (spotifyArtistSearch.hasAnyResults) {

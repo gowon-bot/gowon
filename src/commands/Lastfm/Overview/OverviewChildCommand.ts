@@ -7,6 +7,7 @@ import { LastFMPeriod } from "../../../services/LastFM/LastFMService.types";
 import { humanizePeriod } from "../../../lib/timeAndDate/helpers/humanize";
 import { TimePeriodArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/TimePeriodArgument";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 
 const args = {
   timePeriod: new TimePeriodArgument({
@@ -14,7 +15,7 @@ const args = {
     default: "overall",
   }),
   ...standardMentions,
-} as const;
+} satisfies ArgumentsMap;
 
 export abstract class OverviewChildCommand<
   T extends typeof args = typeof args
@@ -57,12 +58,12 @@ export abstract class OverviewChildCommand<
       userType === "alum"
         ? "#9804fe"
         : userType === "mod"
-        ? "#fb9904"
-        : userType === "staff"
-        ? "#b90100"
-        : userType === "subscriber"
-        ? "black"
-        : "#ffffff";
+          ? "#fb9904"
+          : userType === "staff"
+            ? "#b90100"
+            : userType === "subscriber"
+              ? "black"
+              : "#ffffff";
 
     return { colour, badge, image };
   }

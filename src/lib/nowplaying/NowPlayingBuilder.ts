@@ -11,7 +11,7 @@ import { PresentedComponent } from "./components/BaseNowPlayingComponent";
 import { UnusedComponent } from "./components/UnusedComponent";
 import { ResolvedRequirements } from "./DatasourceService";
 
-export const rowSize = 3 as const;
+export const rowSize = 3;
 
 export class NowPlayingBuilder {
   components: NowPlayingComponent[];

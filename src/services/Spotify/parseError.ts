@@ -46,4 +46,4 @@ const spotifyErrorReasons = {
 
 const spotifyErrorMessages = {
   badScope: "Insufficient client scope",
-};
+} as const;

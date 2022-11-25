@@ -3,6 +3,7 @@ import { LinkGenerator } from "../../../helpers/lastFM";
 import { Variation } from "../../../lib/command/Command";
 import { VARIATIONS } from "../../../lib/command/variations";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { Emoji } from "../../../lib/Emoji";
 import { LineConsolidator } from "../../../lib/LineConsolidator";
 import {
@@ -14,7 +15,7 @@ import { WhoKnowsBaseCommand } from "./LilacWhoKnowsBaseCommand";
 
 const args = {
   ...prefabArguments.album,
-} as const;
+} satisfies ArgumentsMap;
 
 export default class WhoKnowsAlbum extends WhoKnowsBaseCommand<typeof args> {
   idSeed = "redsquare green";

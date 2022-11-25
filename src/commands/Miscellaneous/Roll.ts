@@ -2,6 +2,7 @@ import { Chance } from "chance";
 import { bold } from "../../helpers/discord";
 import { Command, Variation } from "../../lib/command/Command";
 import { NumberArgument } from "../../lib/context/arguments/argumentTypes/NumberArgument";
+import { ArgumentsMap } from "../../lib/context/arguments/types";
 import { Validation } from "../../lib/validation/ValidationChecker";
 import { validators } from "../../lib/validation/validators";
 import { displayNumber } from "../../lib/views/displays";
@@ -16,7 +17,7 @@ const args = {
     index: 1,
     description: "The maximum number to roll to",
   }),
-} as const;
+} satisfies ArgumentsMap;
 
 export default class Roll extends Command<typeof args> {
   idSeed = "dreamnote eunjo";

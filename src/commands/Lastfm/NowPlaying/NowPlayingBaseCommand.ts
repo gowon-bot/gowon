@@ -22,6 +22,7 @@ import { SettingsService } from "../../../lib/settings/SettingsService";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { AlbumCoverService } from "../../../services/moderation/AlbumCoverService";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 
 export const nowPlayingArgs = {
   ...standardMentions,
@@ -29,7 +30,7 @@ export const nowPlayingArgs = {
     index: { start: 0 },
     slashCommandOption: false,
   }),
-} as const;
+} satisfies ArgumentsMap;
 
 export abstract class NowPlayingBaseCommand<
   T extends typeof nowPlayingArgs = typeof nowPlayingArgs
@@ -69,8 +70,8 @@ export abstract class NowPlayingBaseCommand<
       noDiscordUser
         ? {}
         : {
-            fetchDiscordUser: true,
-          }
+          fetchDiscordUser: true,
+        }
     );
 
     if (
@@ -128,9 +129,8 @@ export abstract class NowPlayingBaseCommand<
 
     return this.newEmbed()
       .setAuthor({
-        name: `${
-          nowPlaying.isNowPlaying ? "Now playing" : "Last scrobbled"
-        } for ${username}`,
+        name: `${nowPlaying.isNowPlaying ? "Now playing" : "Last scrobbled"
+          } for ${username}`,
         iconURL:
           this.payload.member.avatarURL() ||
           this.payload.author.avatarURL() ||
@@ -139,7 +139,7 @@ export abstract class NowPlayingBaseCommand<
       })
       .setDescription(
         `by ${bold(links.artist, false)}` +
-          (nowPlaying.album ? ` from ${italic(links.album, false)}` : "")
+        (nowPlaying.album ? ` from ${italic(links.album, false)}` : "")
       )
       .setTitle(sanitizeForDiscord(nowPlaying.name))
       .setURL(LinkGenerator.trackPage(nowPlaying.artist, nowPlaying.name))
@@ -153,13 +153,13 @@ export abstract class NowPlayingBaseCommand<
   ): string {
     return artistInfo.value
       ? (isCrownHolder ? "👑 " : "") +
-          (track.artist.length < 150
-            ? displayNumber(
-                artistInfo.value.userPlaycount,
-                `${track.artist} scrobble`
-              )
-            : displayNumber(artistInfo.value.userPlaycount, `scrobble`) +
-              " of that artist")
+      (track.artist.length < 150
+        ? displayNumber(
+          artistInfo.value.userPlaycount,
+          `${track.artist} scrobble`
+        )
+        : displayNumber(artistInfo.value.userPlaycount, `scrobble`) +
+        " of that artist")
       : "";
   }
 
@@ -173,14 +173,14 @@ export abstract class NowPlayingBaseCommand<
   protected trackPlays(trackInfo: { value?: TrackInfo }): string {
     return trackInfo.value
       ? displayNumber(trackInfo.value.userPlaycount, "scrobble") +
-          " of this song"
+      " of this song"
       : "";
   }
 
   protected albumPlays(albumInfo: { value?: AlbumInfo }): string {
     return albumInfo.value
       ? displayNumber(albumInfo.value?.userPlaycount, "scrobble") +
-          " of this album"
+      " of this album"
       : "";
   }
 
@@ -200,9 +200,8 @@ export abstract class NowPlayingBaseCommand<
         isCrownHolder = true;
       } else {
         if (await DBUser.stillInServer(this.ctx, crown.value.user.id)) {
-          crownString = `👑 ${displayNumber(crown.value.crown.plays)} (${
-            crown.value.user.username
-          })`;
+          crownString = `👑 ${displayNumber(crown.value.crown.plays)} (${crown.value.user.username
+            })`;
         }
       }
     }

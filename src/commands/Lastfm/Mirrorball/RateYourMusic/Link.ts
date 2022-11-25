@@ -1,5 +1,6 @@
 import { StringArgument } from "../../../../lib/context/arguments/argumentTypes/StringArgument";
 import { standardMentions } from "../../../../lib/context/arguments/mentionTypes/mentions";
+import { ArgumentsMap } from "../../../../lib/context/arguments/types";
 import { RateYourMusicChildCommand } from "./RateYourMusicChildCommand";
 
 const args = {
@@ -9,7 +10,7 @@ const args = {
       "The keywords to search Rateyourmusic with (defaults to your currently playing album)",
   }),
   ...standardMentions,
-} as const;
+} satisfies ArgumentsMap;
 
 export class Link extends RateYourMusicChildCommand<typeof args> {
   idSeed = "elris bella";

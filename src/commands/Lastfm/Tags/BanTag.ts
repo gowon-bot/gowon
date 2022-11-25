@@ -1,6 +1,7 @@
 import { bold } from "../../../helpers/discord";
 import { Variation } from "../../../lib/command/Command";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
@@ -13,7 +14,7 @@ const args = {
     required: true,
     description: "The tag to ban",
   }),
-} as const;
+} satisfies ArgumentsMap
 
 export default class BanTag extends LastFMBaseCommand<typeof args> {
   idSeed = "dreamnote boni";
@@ -56,9 +57,8 @@ export default class BanTag extends LastFMBaseCommand<typeof args> {
         `Successfully ${unban ? "un" : ""}banned the tag: ${bold(tag)}`
       )
       .setFooter({
-        text: `It will ${
-          unban ? "now" : "no longer"
-        } appear in places where tags are listed`,
+        text: `It will ${unban ? "now" : "no longer"
+          } appear in places where tags are listed`,
       });
 
     await this.send(embed);

@@ -1,10 +1,11 @@
 import { LogicError } from "../../../errors/errors";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { CrownsChildCommand } from "./CrownsChildCommand";
 
 const args = {
   ...standardMentions,
-} as const;
+} satisfies ArgumentsMap;
 
 export class Ban extends CrownsChildCommand<typeof args> {
   idSeed = "loona chuu";
@@ -35,8 +36,7 @@ export class Ban extends CrownsChildCommand<typeof args> {
     );
 
     await this.oldReply(
-      `successfully banned ${
-        (await mentionedDBUser.toDiscordUser(this.requiredGuild))!.username
+      `successfully banned ${(await mentionedDBUser.toDiscordUser(this.requiredGuild))!.username
       }`
     );
   }

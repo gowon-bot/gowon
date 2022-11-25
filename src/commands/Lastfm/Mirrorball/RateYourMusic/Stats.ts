@@ -3,6 +3,7 @@ import { LogicError, UnknownMirrorballError } from "../../../../errors/errors";
 import { toInt } from "../../../../helpers/lastFM";
 import { extraWideSpace } from "../../../../helpers/specialCharacters";
 import { standardMentions } from "../../../../lib/context/arguments/mentionTypes/mentions";
+import { ArgumentsMap } from "../../../../lib/context/arguments/types";
 import { displayNumber, displayRating } from "../../../../lib/views/displays";
 import { MirrorballRateYourMusicAlbum } from "../../../../services/mirrorball/MirrorballTypes";
 import { StatsConnector, StatsParams, StatsResponse } from "./connectors";
@@ -10,7 +11,7 @@ import { RateYourMusicIndexingChildCommand } from "./RateYourMusicChildCommand";
 
 const args = {
   ...standardMentions,
-} as const;
+} satisfies ArgumentsMap;
 
 interface Curve {
   [rating: number]: number;
@@ -72,12 +73,12 @@ export class Stats extends RateYourMusicIndexingChildCommand<
         )}_
         
 ${Object.entries(ratingsCounts)
-  .sort((a, b) => toInt(b) - toInt(a))
-  .map(
-    ([rating, count]) =>
-      `${displayRating(toInt(rating))}${extraWideSpace}${displayNumber(count)}`
-  )
-  .join("\n")}`
+          .sort((a, b) => toInt(b) - toInt(a))
+          .map(
+            ([rating, count]) =>
+              `${displayRating(toInt(rating))}${extraWideSpace}${displayNumber(count)}`
+          )
+          .join("\n")}`
       );
 
     await this.send(embed);

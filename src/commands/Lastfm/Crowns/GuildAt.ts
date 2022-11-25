@@ -4,10 +4,11 @@ import { toInt } from "../../../helpers/lastFM";
 import { displayNumber } from "../../../lib/views/displays";
 import { asyncMap } from "../../../helpers";
 import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 
 const args = {
   rank: new NumberArgument({ required: true }),
-} as const;
+} satisfies ArgumentsMap;
 
 export class GuildAt extends CrownsChildCommand<typeof args> {
   idSeed = "wjsn bona";
@@ -35,19 +36,16 @@ export class GuildAt extends CrownsChildCommand<typeof args> {
 
     let embed = this.newEmbed()
       .setAuthor({
-        name: `${this.requiredGuild.name}'s crown leaderboard (${
-          guildAt.start + 1
-        } - ${guildAt.end})`,
+        name: `${this.requiredGuild.name}'s crown leaderboard (${guildAt.start + 1
+          } - ${guildAt.end})`,
       })
       .setDescription(
         `${(
           await asyncMap(
             guildAt.users,
             async (u) =>
-              `${u.rank}. ${
-                u.discordID === highlighted?.discordID ? "**" : ""
-              }${await this.fetchUsername(u.discordID)}${
-                u.discordID === highlighted?.discordID ? "**" : ""
+              `${u.rank}. ${u.discordID === highlighted?.discordID ? "**" : ""
+              }${await this.fetchUsername(u.discordID)}${u.discordID === highlighted?.discordID ? "**" : ""
               } with ${displayNumber(u.count, "crown")}`
           )
         ).join("\n")}`

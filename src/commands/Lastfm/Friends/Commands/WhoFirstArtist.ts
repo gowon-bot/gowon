@@ -9,10 +9,11 @@ import { MirrorballUser } from "../../../../services/mirrorball/MirrorballTypes"
 import { convertMirrorballDate } from "../../../../helpers/mirrorball";
 import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";
 import { bold, code } from "../../../../helpers/discord";
+import { ArgumentsMap } from "../../../../lib/context/arguments/types";
 
 const args = {
   ...prefabArguments.artist,
-} as const;
+} satisfies ArgumentsMap;
 
 export class WhoFirstArtist extends FriendsChildCommand<typeof args> {
   idSeed = "billlie haram";
