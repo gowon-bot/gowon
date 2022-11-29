@@ -34,10 +34,10 @@ export type UnwrapProvidedOptions<T extends BaseArgument<unknown>> =
 
 type UnwrapArgument<T extends BaseArgument<unknown, any, any>> =
   T extends BaseArgument<infer U, any, any>
-  ? T extends Flag<any>
-  ? boolean
-  : ArgumentReturnType<U, UnwrapProvidedOptions<T>>
-  : never;
+    ? T extends Flag<any>
+      ? boolean
+      : ArgumentReturnType<U, UnwrapProvidedOptions<T>>
+    : never;
 
 export type ParsedArguments<T extends ArgumentsMap> = {
   [K in keyof T]: UnwrapArgument<T[K]>;

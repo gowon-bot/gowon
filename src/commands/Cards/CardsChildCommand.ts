@@ -4,7 +4,7 @@ import { CardsService } from "../../services/dbservices/CardsService";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 
 export abstract class CardsChildCommand<
-  T extends ArgumentsMap = {}
+  T extends ArgumentsMap = ArgumentsMap
 > extends BaseChildCommand<T> {
   parentName = "cards";
   category = "cards";

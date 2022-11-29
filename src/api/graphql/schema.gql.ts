@@ -6,7 +6,9 @@ export const typeDefs = gql`
   type Query {
     commands(keywords: String, isAdmin: Boolean): [Command!]!
     allSettings: [Setting!]!
-    guildSettings(guildID: String!): [GuildSetting!]!
+
+    guildSettings(guildID: String!): [SettingAndValue!]!
+    userSettings(userID: String!): [SettingAndValue!]!
 
     guild(guildID: String!): Guild
     roles(guildID: String!): [Role!]!
@@ -15,7 +17,14 @@ export const typeDefs = gql`
   type Mutation {
     login(code: String!, discordID: String!): User!
 
-    saveGuildSettings(guildID: String!, settings: [GuildSettingInput!]!): String
+    saveGuildSettings(
+      guildID: String!
+      settings: [SettingAndValueInput!]!
+    ): String
+    saveUserSettings(
+      userID: String!
+      settings: [SettingAndValueInput!]!
+    ): String
   }
 
   type User {
@@ -51,11 +60,13 @@ export const typeDefs = gql`
   }
 
   enum SettingType {
+    text
+    textshort
+    textlong
     toggle
     role
-    textshort
-    text
-    textlong
+    choice
+    number
   }
 
   enum SettingScope {
@@ -72,6 +83,7 @@ export const typeDefs = gql`
     description: String!
     type: SettingType!
     scope: SettingScope!
+    choices: [String]
   }
 
   type Role {
@@ -84,9 +96,10 @@ export const typeDefs = gql`
     role: Role
     string: String
     boolean: Boolean
+    number: Int
   }
 
-  type GuildSetting {
+  type SettingAndValue {
     setting: Setting!
     value: SettingValue
   }
@@ -99,7 +112,7 @@ export const typeDefs = gql`
   }
 
   # Inputs
-  input GuildSettingInput {
+  input SettingAndValueInput {
     setting: SettingInput!
     value: SettingValueInput
   }
@@ -116,6 +129,7 @@ export const typeDefs = gql`
     role: RoleInput
     string: String
     boolean: Boolean
+    number: Int
   }
 
   input RoleInput {

@@ -1,13 +1,14 @@
-import regexEscape from "escape-string-regexp";
 import { Guild } from "discord.js";
+import regexEscape from "escape-string-regexp";
 import config from "../../config.json";
 import { CacheScopedKey, ShallowCache } from "../database/cache/ShallowCache";
-import { CrownBan } from "../database/entity/CrownBan";
 import { ArtistCrownBan } from "../database/entity/ArtistCrownBan";
-import { SettingsService } from "../lib/settings/SettingsService";
-import { ServiceRegistry } from "./ServicesRegistry";
+import { CrownBan } from "../database/entity/CrownBan";
 import { userMentionAtStartRegex } from "../helpers/discord";
 import { GowonContext } from "../lib/context/Context";
+import { SettingsService } from "../lib/settings/SettingsService";
+import { ComboService } from "./dbservices/ComboService";
+import { ServiceRegistry } from "./ServicesRegistry";
 
 export const gowonServiceConstants = {
   hardPageLimit: 100,
@@ -22,6 +23,7 @@ export const gowonServiceConstants = {
   ] as string[],
   unknownUserDisplay: "???",
   defaultLoadingTime: 5,
+  defaultComboThreshold: ComboService.defaultComboThreshold,
 } as const;
 
 export class GowonService {
@@ -60,7 +62,8 @@ export class GowonService {
       )
       .replace(
         new RegExp(
-          `${userMentionAtStartRegex(ctx.client.client.user!.id).source
+          `${
+            userMentionAtStartRegex(ctx.botUser.id).source
           }\\s+${ctx.extract.asRemovalRegexString()}`,
           "i"
         ),
@@ -81,7 +84,7 @@ export class GowonService {
     return await this.shallowCache.findOrRemember<string[]>(
       CacheScopedKey.CrownBannedUsers,
       async () => {
-        let bans = (
+        const bans = (
           await CrownBan.find({
             where: { serverID: guild.id },
           })
@@ -101,7 +104,7 @@ export class GowonService {
     return await this.shallowCache.findOrRemember<string[]>(
       CacheScopedKey.CrownBannedArtists,
       async () => {
-        let bans = (
+        const bans = (
           await ArtistCrownBan.find({
             where: { serverID: guild.id },
           })

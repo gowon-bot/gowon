@@ -1,26 +1,26 @@
-import express from "express";
 import { ApolloServer, Config } from "apollo-server-express";
-import { typeDefs } from "./graphql/schema.gql";
-import { IndexingWebhookService } from "./webhooks/IndexingWebhookService";
 import bodyParser from "body-parser";
-import { ServiceRegistry } from "../services/ServicesRegistry";
-import { AnalyticsCollector } from "../analytics/AnalyticsCollector";
+import express from "express";
 import gowonConfig from "../../config.json";
+import { AnalyticsCollector } from "../analytics/AnalyticsCollector";
+import { ServiceRegistry } from "../services/ServicesRegistry";
 import {
   InvalidStateError,
   SpotifyCodeResponse,
 } from "../services/Spotify/SpotifyService.types";
+import { typeDefs } from "./graphql/schema.gql";
+import { IndexingWebhookService } from "./webhooks/IndexingWebhookService";
 import { SpotifyWebhookService } from "./webhooks/SpotifyWebhookService";
 
-import userResolvers from "./resolvers/userResolvers";
-import commandResolvers from "./resolvers/commandResolvers";
-import settingsResolvers from "./resolvers/settingResolvers";
-import { GowonClient } from "../lib/GowonClient";
-import discordResolvers from "./resolvers/discordResolvers";
 import { GowonContext } from "../lib/context/Context";
-import { HeaderlessLogger } from "../lib/Logger";
-import { TwitterWebhookService } from "./webhooks/TwitterWebhookService";
 import { Payload } from "../lib/context/Payload";
+import { GowonClient } from "../lib/GowonClient";
+import { HeaderlessLogger } from "../lib/Logger";
+import commandResolvers from "./resolvers/commandResolvers";
+import discordResolvers from "./resolvers/discordResolvers";
+import settingsResolvers from "./resolvers/settings/settingResolvers";
+import userResolvers from "./resolvers/userResolvers";
+import { TwitterWebhookService } from "./webhooks/TwitterWebhookService";
 
 export const gowonAPIPort = gowonConfig.gowonAPIPort;
 

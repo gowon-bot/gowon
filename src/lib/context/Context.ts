@@ -1,12 +1,15 @@
 import { Guild, GuildMember, User } from "discord.js";
-import { LogicError } from "../../errors/errors";
+import { GuildRequiredError, UnexpectedGowonError } from "../../errors/gowon";
 import { Command } from "../command/Command";
 import { ExtractedCommand } from "../command/extractor/ExtractedCommand";
 import { GowonClient } from "../GowonClient";
 import { Logger } from "../Logger";
 import { Payload } from "./Payload";
 
-export interface CustomContext<C extends Record<string, unknown> = {}, M extends Record<string, unknown> = {}> {
+export interface CustomContext<
+  C extends Record<string, unknown> = Record<string, unknown>,
+  M extends Record<string, unknown> = Record<string, unknown>
+> {
   constants?: C;
   mutable?: M;
 }
@@ -20,9 +23,7 @@ export interface ContextParamaters<CustomContextT> {
   gowonClient: GowonClient;
 }
 
-export class GowonContext<
-  T extends CustomContext = CustomContext
-> {
+export class GowonContext<T extends CustomContext = CustomContext> {
   private _command: Command | undefined;
   private custom: T;
   private _payload: Payload;
@@ -33,13 +34,13 @@ export class GowonContext<
   get mutable(): NonNullable<T["mutable"]> {
     if (!this.custom.mutable) this.custom.mutable = {};
 
-    return this.custom.mutable!;
+    return this.custom.mutable;
   }
 
   get constants(): NonNullable<T["constants"]> {
     if (!this.custom.constants) this.custom.constants = {};
 
-    return this.custom.constants!;
+    return this.custom.constants;
   }
 
   constructor(params: ContextParamaters<T>) {
@@ -69,10 +70,10 @@ export class GowonContext<
 
   get requiredGuild(): Guild {
     if (!this.payload.guild) {
-      throw new LogicError("This command must be run in a server!");
+      throw new GuildRequiredError();
     }
 
-    return this.payload.guild!;
+    return this.payload.guild;
   }
 
   get author(): User {
@@ -80,11 +81,27 @@ export class GowonContext<
   }
 
   get authorMember(): GuildMember {
-    return this.payload.member!;
+    if (!this.payload.member) {
+      throw new UnexpectedGowonError(
+        "Author member not found for that payload"
+      );
+    }
+
+    return this.payload.member;
   }
 
   get client(): GowonClient {
     return this.gowonClient;
+  }
+
+  get botUser(): User {
+    if (!this.client.client.user) {
+      throw new UnexpectedGowonError(
+        "A bot user could not be found in context"
+      );
+    }
+
+    return this.client.client.user;
   }
 
   get logger(): Logger {
@@ -92,14 +109,19 @@ export class GowonContext<
   }
 
   get command(): Command {
-    return this._command!;
+    if (!this._command) {
+      throw new UnexpectedGowonError("Command not found in context");
+    }
+
+    return this._command;
   }
 
   public setCommand(command: Command) {
     this._command = command;
   }
 
-  // Used to set commands from non-command places
+  /* Used to set commands from non-command places, eg. GuildEventService */
+  /* eslint @typescript-eslint/no-explicit-any: 0 */
   public dangerousSetCommand(command: any) {
     this._command = Object.assign(this._command || {}, command);
   }
