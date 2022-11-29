@@ -148,8 +148,6 @@ export default (ctx: GowonContext) => ({
         throw new CannotEditUserError();
       }
 
-      console.log(settings);
-
       for (const setting of settings) {
         const settingKey = convertSettingNameToKey(setting.setting.name);
 

@@ -2,6 +2,7 @@ import { ILike, In, MoreThanOrEqual } from "typeorm";
 import { Combo as DBCombo } from "../../database/entity/Combo";
 import { User } from "../../database/entity/User";
 import { sqlLikeEscape } from "../../helpers/database";
+import { toInt } from "../../helpers/lastFM";
 import { Combo } from "../../lib/calculators/ComboCalculator";
 import { GowonContext } from "../../lib/context/Context";
 import { SettingsService } from "../../lib/settings/SettingsService";
@@ -28,7 +29,7 @@ export class ComboService extends BaseService {
 
     if (!thresholdString) {
       return this.gowonService.constants.defaultComboThreshold;
-    } else return parseInt(thresholdString);
+    } else return toInt(thresholdString);
   }
 
   public shouldSaveCombo(ctx: GowonContext, combo: Combo): boolean {

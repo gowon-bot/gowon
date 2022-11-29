@@ -11,23 +11,23 @@ export enum SettingType {
   Number = "number",
 }
 
-interface SettingOptions<T = string> {
+interface SettingOptions {
   friendlyName: string;
   description: string;
   category: string;
-  default: T;
+  default: string;
 
   omitFromDashboard: boolean;
   type: SettingType;
   choices: string[];
 }
 
-export abstract class BaseSetting<ScopeT = unknown, SettingT = unknown> {
+export abstract class BaseSetting<ScopeT = unknown> {
   settingDB = Setting;
 
   constructor(
     public name: string,
-    public options: Partial<SettingOptions<SettingT>> = {}
+    public options: Partial<SettingOptions> = {}
   ) {}
 
   async get(scope: ScopeT): Promise<Setting | undefined> {

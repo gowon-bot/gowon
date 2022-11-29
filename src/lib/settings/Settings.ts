@@ -89,7 +89,7 @@ export const Settings = {
     description: "Control when Gowon saves your combos",
     category: "Configuration",
     type: SettingType.Number,
-    default: ComboService.defaultComboThreshold,
+    default: `${ComboService.defaultComboThreshold}`,
   }),
 
   // Bot scoped
