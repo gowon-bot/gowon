@@ -1,8 +1,15 @@
 import { Setting } from "../../database/entity/Setting";
 import { InvalidChoiceError } from "../../errors/settings";
 
-type StringSettingType = "text" | "textshort" | "textlong";
-type SettingType = "toggle" | "role" | StringSettingType;
+export enum SettingType {
+  Text = "text",
+  TextShort = "textshort",
+  TextLong = "textlong",
+  Toggle = "toggle",
+  Role = "role",
+  Choice = "choice",
+  Number = "number",
+}
 
 interface SettingOptions {
   friendlyName: string;
@@ -15,7 +22,7 @@ interface SettingOptions {
   choices: string[];
 }
 
-export abstract class BaseSetting<ScopeT = {}> {
+export abstract class BaseSetting<ScopeT = unknown> {
   settingDB = Setting;
 
   constructor(
@@ -45,7 +52,7 @@ export abstract class BaseSetting<ScopeT = {}> {
 
     whereClause = this.setScopeOnWhere(scope, whereClause);
 
-    let existingSetting = await this.settingDB.findOne({
+    const existingSetting = await this.settingDB.findOne({
       where: whereClause,
     });
 
@@ -61,7 +68,7 @@ export abstract class BaseSetting<ScopeT = {}> {
       }
     } else if (value !== undefined) {
       const transformedScope = this.transformScope(scope);
-      let setting = this.settingDB.create({
+      const setting = this.settingDB.create({
         ...transformedScope,
         name: this.name,
         value: value,
@@ -123,10 +130,10 @@ export class GuildMemberScopedSetting extends BaseSetting<GuildMemberScope> {
   }
 }
 
-export interface BotScope {}
+export type BotScope = Record<string, never>;
 
 export class BotScopedSetting extends BaseSetting<BotScope> {
-  transformScope(_: BotScope) {
+  transformScope(_scope: BotScope) {
     return {};
   }
 }

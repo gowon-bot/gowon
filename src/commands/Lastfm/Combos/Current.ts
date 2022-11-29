@@ -1,24 +1,24 @@
+import { formatDistance } from "date-fns";
 import { ucFirst } from "../../../helpers";
-import { Paginator } from "../../../lib/paginators/Paginator";
+import { bold, italic } from "../../../helpers/discord";
+import { LinkGenerator } from "../../../helpers/lastFM";
 import {
-  ComboCalculator,
   Combo as ComboType,
+  ComboCalculator,
 } from "../../../lib/calculators/ComboCalculator";
+import { StringArrayArgument } from "../../../lib/context/arguments/argumentTypes/StringArrayArgument";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { Emoji } from "../../../lib/Emoji";
 import { LineConsolidator } from "../../../lib/LineConsolidator";
+import { Paginator } from "../../../lib/paginators/Paginator";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
-import { LinkGenerator } from "../../../helpers/lastFM";
 import { displayLink, displayNumber } from "../../../lib/views/displays";
 import { ArtistsService } from "../../../services/mirrorball/services/ArtistsService";
-import { Emoji } from "../../../lib/Emoji";
-import { ComboChildCommand } from "./ComboChildCommand";
-import { formatDistance } from "date-fns";
-import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { AlbumCoverService } from "../../../services/moderation/AlbumCoverService";
-import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
-import { StringArrayArgument } from "../../../lib/context/arguments/argumentTypes/StringArrayArgument";
-import { bold, italic } from "../../../helpers/discord";
-import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { ServiceRegistry } from "../../../services/ServicesRegistry";
+import { ComboChildCommand } from "./ComboChildCommand";
 
 const args = {
   artists: new StringArrayArgument({
@@ -83,7 +83,7 @@ export class Current extends ComboChildCommand<typeof args> {
       !perspective.different &&
       senderUser
     ) {
-      if (this.comboService.shouldSaveCombo(combo)) {
+      if (this.comboService.shouldSaveCombo(this.ctx, combo)) {
         await this.comboService.saveCombo(this.ctx, combo, senderUser);
         comboSaved = true;
       } else {
@@ -144,11 +144,11 @@ export class Current extends ComboChildCommand<typeof args> {
         text: comboSaved
           ? `This combo has been saved! See ${this.prefix}combos to see all your combos`
           : thresholdNotMet
-            ? `Only combos with more than ${displayNumber(
-              this.comboService.threshold,
+          ? `Only combos with more than ${displayNumber(
+              this.comboService.getThreshold(this.ctx),
               "play"
             )} are saved.`
-            : "",
+          : "",
       });
 
     if (combo.hasAnyConsecutivePlays()) {
@@ -179,18 +179,19 @@ export class Current extends ComboChildCommand<typeof args> {
     combo: ComboType,
     entity: "artist" | "album" | "track"
   ): string {
-    return `${bold(ucFirst(entity))}: ${displayNumber(combo[entity].plays)}${combo[entity].plays >= 1000
+    return `${bold(ucFirst(entity))}: ${displayNumber(combo[entity].plays)}${
+      combo[entity].plays >= 1000
         ? ` ${Emoji.gowonLitDance}`
         : combo[entity].plays >= 100
-          ? this.isMex(this.author.id)
-            ? "💹"
-            : "🔥"
-          : combo[entity].hitMax
-            ? "+"
-            : combo[entity].nowplaying
-              ? "➚"
-              : ""
-      } in a row`;
+        ? this.isMex(this.author.id)
+          ? "💹"
+          : "🔥"
+        : combo[entity].hitMax
+        ? "+"
+        : combo[entity].nowplaying
+        ? "➚"
+        : ""
+    } in a row`;
   }
 
   private isMex(discordID: string) {

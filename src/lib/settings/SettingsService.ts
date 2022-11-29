@@ -3,15 +3,18 @@ import { BaseService } from "../../services/BaseService";
 import { GowonContext } from "../context/Context";
 import { Settings, SettingsMap } from "./Settings";
 import {
-  UserScope,
-  GuildMemberScope,
-  GuildScope,
   BaseSetting,
   BotScope,
+  GuildMemberScope,
+  GuildScope,
+  UserScope,
 } from "./SettingTypes";
 
 export type SettingName = keyof SettingsMap;
 export type SettingScope = UserScope | GuildMemberScope | GuildScope | BotScope;
+
+type UnwrapSettingScope<T extends SettingName> =
+  SettingsMap[T] extends BaseSetting<infer U> ? U : never;
 
 interface Cache {
   [setting: string]: {
@@ -25,7 +28,7 @@ export class SettingsService extends BaseService {
   constructor() {
     super();
     this.cache = Object.keys(Settings).reduce((acc, val) => {
-      const setting: BaseSetting = (Settings as any)[val];
+      const setting: BaseSetting<unknown> = (Settings as any)[val];
       acc[setting.name] = {};
 
       return acc;
@@ -44,24 +47,30 @@ export class SettingsService extends BaseService {
     }
   }
 
-  get(settingName: SettingName, scope: SettingScope): string | undefined {
+  get<T extends SettingName>(
+    settingName: T,
+    scope: UnwrapSettingScope<T>
+  ): string | undefined {
     const setting = Settings[settingName];
     const stringScope = JSON.stringify(setting.transformScope(scope as any));
 
     return this.cache[setting.name][stringScope] || setting.options.default;
   }
 
-  getByName(settingName: string, scope: SettingScope): string | undefined {
+  getByName<T extends SettingScope = SettingScope>(
+    settingName: string,
+    scope: T
+  ): string | undefined {
     const settingKey = convertSettingNameToKey(settingName);
 
     if (settingKey) return this.get(settingKey, scope);
     return undefined;
   }
 
-  async set(
+  async set<T extends SettingName>(
     ctx: GowonContext,
-    settingName: SettingName,
-    scope: SettingScope,
+    settingName: T,
+    scope: UnwrapSettingScope<T>,
     value?: string
   ): Promise<Setting | undefined> {
     this.log(ctx, `Setting ${settingName} for ${JSON.stringify(scope)}`);

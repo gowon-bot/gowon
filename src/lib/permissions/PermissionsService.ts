@@ -292,7 +292,7 @@ export class PermissionsService extends BaseService {
     const adminRole =
       ctx.constants.isAdmin === undefined
         ? this.settingsService.get("adminRole", {
-            guildID: ctx.guild?.id,
+            guildID: ctx.requiredGuild.id,
           })
         : undefined;
 

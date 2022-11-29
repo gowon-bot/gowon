@@ -1,20 +1,44 @@
-import { Combo } from "../../lib/calculators/ComboCalculator";
-import { Combo as DBCombo } from "../../database/entity/Combo";
-import { BaseService } from "../BaseService";
-import { User } from "../../database/entity/User";
 import { ILike, In, MoreThanOrEqual } from "typeorm";
-import { displayNumber } from "../../lib/views/displays";
+import { Combo as DBCombo } from "../../database/entity/Combo";
+import { User } from "../../database/entity/User";
 import { sqlLikeEscape } from "../../helpers/database";
+import { toInt } from "../../helpers/lastFM";
+import { Combo } from "../../lib/calculators/ComboCalculator";
 import { GowonContext } from "../../lib/context/Context";
+import { SettingsService } from "../../lib/settings/SettingsService";
+import { displayNumber } from "../../lib/views/displays";
+import { BaseService } from "../BaseService";
+import { GowonService } from "../GowonService";
+import { ServiceRegistry } from "../ServicesRegistry";
 
 export class ComboService extends BaseService {
-  public readonly threshold = 20;
+  public static readonly defaultComboThreshold = 20;
 
-  public shouldSaveCombo(combo: Combo): boolean {
+  private get settingsService() {
+    return ServiceRegistry.get(SettingsService);
+  }
+
+  private get gowonService() {
+    return ServiceRegistry.get(GowonService);
+  }
+
+  public getThreshold(ctx: GowonContext): number {
+    const thresholdString = this.settingsService.get("comboSaveThreshold", {
+      userID: ctx.author.id,
+    });
+
+    if (!thresholdString) {
+      return this.gowonService.constants.defaultComboThreshold;
+    } else return toInt(thresholdString);
+  }
+
+  public shouldSaveCombo(ctx: GowonContext, combo: Combo): boolean {
+    const threshold = this.getThreshold(ctx);
+
     return (
-      combo.artist.plays >= this.threshold ||
-      combo.album.plays >= this.threshold ||
-      combo.track.plays >= this.threshold
+      combo.artist.plays >= threshold ||
+      combo.album.plays >= threshold ||
+      combo.track.plays >= threshold
     );
   }
 
@@ -27,11 +51,9 @@ export class ComboService extends BaseService {
       ctx,
       `Saving combo of ${combo.artist.plays} for user ${user.discordID}`
     );
-    let dbCombo = await this.getCombo(ctx, combo, user);
-
-    if (!dbCombo) {
-      dbCombo = await this.createCombo(ctx, combo, user);
-    }
+    const dbCombo =
+      (await this.getCombo(ctx, combo, user)) ||
+      (await this.createCombo(ctx, combo, user));
 
     dbCombo.artistPlays = combo.artist.plays || undefined;
     dbCombo.albumPlays = combo.album.plays || undefined;
@@ -96,15 +118,17 @@ export class ComboService extends BaseService {
   ): Promise<DBCombo[]> {
     this.log(ctx, `Listing combos for user ${user.discordID}`);
 
+    const threshold = this.getThreshold(ctx);
+
     const whereClause = artist
       ? { user, artistName: ILike(sqlLikeEscape(artist)) }
       : { user };
 
     return await DBCombo.find({
       where: [
-        { ...whereClause, artistPlays: MoreThanOrEqual(this.threshold) },
-        { ...whereClause, albumPlays: MoreThanOrEqual(this.threshold) },
-        { ...whereClause, trackPlays: MoreThanOrEqual(this.threshold) },
+        { ...whereClause, artistPlays: MoreThanOrEqual(threshold) },
+        { ...whereClause, albumPlays: MoreThanOrEqual(threshold) },
+        { ...whereClause, trackPlays: MoreThanOrEqual(threshold) },
       ],
       order: { artistPlays: "DESC", albumPlays: "DESC", trackPlays: "DESC" },
     });
