@@ -1,12 +1,17 @@
 import { bold, italic } from "../../../helpers/discord";
 import { LinkGenerator } from "../../../helpers/lastFM";
+import { bullet } from "../../../helpers/specialCharacters";
 import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { requestableAsUsername } from "../../../lib/MultiRequester";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
-import { displayLink, displayNumberedList } from "../../../lib/views/displays";
+import {
+  displayLink,
+  displayNumberedList,
+  displayTime,
+} from "../../../lib/views/displays";
 import { RecentTrack } from "../../../services/LastFM/converters/RecentTracks";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
@@ -64,12 +69,12 @@ export default class Recent extends LastFMBaseCommand<typeof args> {
       .setDescription(
         (recentTracks.isNowPlaying
           ? `\`${amount! > 9 ? " " : ""}•\`. ` +
-          this.displayTrack(recentTracks.nowPlaying!) +
-          "\n"
+            this.displayTrack(recentTracks.nowPlaying!) +
+            "\n"
           : "") +
-        displayNumberedList(
-          recentTracks.withoutNowPlaying.map(this.displayTrack)
-        )
+          displayNumberedList(
+            recentTracks.withoutNowPlaying.map(this.displayTrack)
+          )
       )
       .setThumbnail(albumCover || "");
 
@@ -77,7 +82,11 @@ export default class Recent extends LastFMBaseCommand<typeof args> {
   }
 
   private displayTrack(t: RecentTrack) {
-    return `${displayLink(t.name, t.url)} by ${bold(t.artist)} ${t.album ? `\nfrom ${italic(t.album)}\n` : "\n"
-      }`;
+    return `${displayLink(t.name, t.url)} by ${bold(t.artist)} ${
+      t.album
+        ? `
+${displayTime(t.scrobbledAt)} ${bullet} from ${italic(t.album)}\n`
+        : "\n"
+    }`;
   }
 }
