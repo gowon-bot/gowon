@@ -1,8 +1,9 @@
 import { LogicError } from "../../../errors/errors";
 import { bold, code, italic } from "../../../helpers/discord";
+import { LinkGenerator } from "../../../helpers/lastFM";
 import { Variation } from "../../../lib/command/Command";
 import { Paginator } from "../../../lib/paginators/Paginator";
-import { displayNumber } from "../../../lib/views/displays";
+import { displayLink, displayNumber } from "../../../lib/views/displays";
 import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingEmbed";
 import { SearchCommand } from "./SearchCommand";
 
@@ -27,7 +28,7 @@ export default class SearchAlbum extends SearchCommand {
   async run() {
     const keywords = this.parsedArguments.keywords;
 
-    const { requestable, perspective } = await this.getMentions();
+    const { requestable, perspective, username } = await this.getMentions();
 
     const paginator = new Paginator(
       this.lastFMService.topAlbums.bind(this.lastFMService),
@@ -73,9 +74,12 @@ export default class SearchAlbum extends SearchCommand {
 \n${items
           .map(
             (l) =>
-              `${l.rank}. ${italic(l.artist.name)} - ${l.name.replaceAll(
-                new RegExp(`${keywords}`, "gi"),
-                (match) => bold(match)
+              `${l.rank}. ${italic(l.artist.name)} - ${displayLink(
+                l.name.replaceAll(new RegExp(`${keywords}`, "gi"), (match) =>
+                  bold(match)
+                ),
+                LinkGenerator.libraryAlbumPage(username, l.artist.name, l.name),
+                false
               )} (${displayNumber(l.userPlaycount, "play")})`
           )
           .join("\n")}`;
