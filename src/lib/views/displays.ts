@@ -40,6 +40,11 @@ export function displayDateTime(date: Date | undefined): string {
   return discordTimestamp(date, "f");
 }
 
+export function displayTime(date: Date | undefined): string {
+  if (!date) return "";
+  return discordTimestamp(date, "t");
+}
+
 export function discordTimestamp(
   date: Date,
   flag: "t" | "T" | "d" | "D" | "f" | "F" | "R" = "f"
