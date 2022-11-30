@@ -1,8 +1,9 @@
 import { LogicError } from "../../../errors/errors";
 import { bold, code } from "../../../helpers/discord";
+import { LinkGenerator } from "../../../helpers/lastFM";
 import { Variation } from "../../../lib/command/Command";
 import { Paginator } from "../../../lib/paginators/Paginator";
-import { displayNumber } from "../../../lib/views/displays";
+import { displayLink, displayNumber } from "../../../lib/views/displays";
 import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingEmbed";
 import { SearchCommand } from "./SearchCommand";
 
@@ -27,7 +28,7 @@ export default class SearchArtist extends SearchCommand {
   async run() {
     const keywords = this.parsedArguments.keywords;
 
-    const { requestable, perspective } = await this.getMentions();
+    const { requestable, perspective, username } = await this.getMentions();
 
     const paginator = new Paginator(
       this.lastFMService.topArtists.bind(this.lastFMService),
@@ -77,8 +78,12 @@ export default class SearchArtist extends SearchCommand {
           .map(
             (a) =>
               `${a.rank}. ` +
-              a.name.replaceAll(new RegExp(`${keywords}`, "gi"), (match) =>
-                bold(match)
+              displayLink(
+                a.name.replaceAll(new RegExp(`${keywords}`, "gi"), (match) =>
+                  bold(match)
+                ),
+                LinkGenerator.libraryArtistPage(username, a.name),
+                false
               ) +
               ` (${displayNumber(a.userPlaycount, "play")})`
           )

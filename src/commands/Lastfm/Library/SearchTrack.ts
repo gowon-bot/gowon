@@ -1,8 +1,9 @@
 import { LogicError } from "../../../errors/errors";
 import { bold, code, italic } from "../../../helpers/discord";
+import { LinkGenerator } from "../../../helpers/lastFM";
 import { Variation } from "../../../lib/command/Command";
 import { Paginator } from "../../../lib/paginators/Paginator";
-import { displayNumber } from "../../../lib/views/displays";
+import { displayLink, displayNumber } from "../../../lib/views/displays";
 import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingEmbed";
 import { SearchCommand } from "./SearchCommand";
 
@@ -27,7 +28,7 @@ export default class SearchTrack extends SearchCommand {
   async run() {
     const keywords = this.parsedArguments.keywords;
 
-    const { requestable, perspective } = await this.getMentions();
+    const { requestable, perspective, username } = await this.getMentions();
 
     const paginator = new Paginator(
       this.lastFMService.topTracks.bind(this.lastFMService),
@@ -73,9 +74,12 @@ export default class SearchTrack extends SearchCommand {
 \n${items
           .map(
             (t) =>
-              `\`${t.rank}\`. ${italic(t.artist.name)} - ${t.name.replaceAll(
-                new RegExp(`${keywords}`, "gi"),
-                (match) => bold(match)
+              `\`${t.rank}\`. ${italic(t.artist.name)} - ${displayLink(
+                t.name.replaceAll(new RegExp(`${keywords}`, "gi"), (match) =>
+                  bold(match)
+                ),
+                LinkGenerator.libraryTrackPage(username, t.artist.name, t.name),
+                false
               )} (${displayNumber(t.userPlaycount, "play")})`
           )
           .join("\n")}`;

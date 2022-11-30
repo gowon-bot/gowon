@@ -23,8 +23,12 @@ export function displayNumber(
   );
 }
 
-export function displayLink(text: string, link: string): string {
-  return `[${sanitizeForDiscord(text)}](${cleanURL(link)})`;
+export function displayLink(
+  text: string,
+  link: string,
+  sanitize = true
+): string {
+  return `[${sanitize ? sanitizeForDiscord(text) : text}](${cleanURL(link)})`;
 }
 
 export function displayDate(date: Date): string {
