@@ -1,15 +1,15 @@
-import { InfoCommand } from "./InfoCommand";
-import { calculatePercent } from "../../../helpers/stats";
-import { CrownsService } from "../../../services/dbservices/CrownsService";
+import { bold } from "../../../helpers/discord";
 import { LinkConsolidator } from "../../../helpers/lastFM";
-import { LineConsolidator } from "../../../lib/LineConsolidator";
-import { displayNumber } from "../../../lib/views/displays";
-import { ServiceRegistry } from "../../../services/ServicesRegistry";
+import { calculatePercent } from "../../../helpers/stats";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
-import { bold } from "../../../helpers/discord";
-import { LilacTagsService } from "../../../services/lilac/LilacTagsService";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { LineConsolidator } from "../../../lib/LineConsolidator";
+import { displayNumber } from "../../../lib/views/displays";
+import { CrownsService } from "../../../services/dbservices/CrownsService";
+import { LilacTagsService } from "../../../services/lilac/LilacTagsService";
+import { ServiceRegistry } from "../../../services/ServicesRegistry";
+import { InfoCommand } from "./InfoCommand";
 
 const args = {
   ...prefabArguments.artist,
@@ -121,16 +121,18 @@ export default class ArtistInfo extends InfoCommand<typeof args> {
       .setDescription(this.lineConsolidator.consolidate())
       .addField(
         `${perspective.upper.possessive} stats`,
-        `\`${displayNumber(artistInfo.userPlaycount, "` play", true)} by ${perspective.objectPronoun
+        `\`${displayNumber(artistInfo.userPlaycount, "` play", true)} by ${
+          perspective.objectPronoun
         } (${bold(
           calculatePercent(artistInfo.userPlaycount, userInfo.scrobbleCount)
         )}% of ${perspective.possessivePronoun} total scrobbles)
-${parseFloat(percentage) > 0
-          ? `${perspective.upper.regularVerb("account")} for ${bold(
-            percentage
-          )}% of all ${artistInfo.name} scrobbles!`
-          : ""
-        }\n`
+${
+  parseFloat(percentage) > 0
+    ? `${perspective.upper.regularVerb("account")} for ${bold(
+        percentage
+      )}% of all ${artistInfo.name} scrobbles!`
+    : ""
+}\n`
       );
 
     if (spotifyArtistSearch.hasAnyResults) {

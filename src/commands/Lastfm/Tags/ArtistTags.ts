@@ -5,6 +5,7 @@ import { standardMentions } from "../../../lib/context/arguments/mentionTypes/me
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { Emoji } from "../../../lib/Emoji";
 import { LineConsolidator } from "../../../lib/LineConsolidator";
+import { TagConsolidator } from "../../../lib/tags/TagConsolidator";
 import {
   displayNumber,
   displayNumberedList,
@@ -20,7 +21,7 @@ const args = {
     description: "The artist to see tags for",
   }),
   ...standardMentions,
-} satisfies ArgumentsMap
+} satisfies ArgumentsMap;
 
 export default class ArtistTags extends LastFMBaseCommand<typeof args> {
   idSeed = "le sserafim sakura";
@@ -46,7 +47,14 @@ export default class ArtistTags extends LastFMBaseCommand<typeof args> {
       artist,
     });
 
-    if (artistInfo.tags.length == 0) {
+    const tagConsolidator = new TagConsolidator();
+    await tagConsolidator.saveServerBannedTagsInContext(this.ctx);
+
+    tagConsolidator.addTags(this.ctx, artistInfo.tags);
+
+    const artistTags = tagConsolidator.consolidate();
+
+    if (artistTags.length == 0) {
       const embed = this.newEmbed()
         .setAuthor(this.generateEmbedAuthor("Artist tags"))
         .setDescription(`Couldn't find any tags for ${artistInfo.name}`);
@@ -61,7 +69,7 @@ export default class ArtistTags extends LastFMBaseCommand<typeof args> {
         {
           discordID: dbUser.discordID,
         },
-        artistInfo.tags
+        artistTags.map((t) => t.name)
       );
 
     const lineConsolidator = new LineConsolidator().addLines(
@@ -70,7 +78,7 @@ export default class ArtistTags extends LastFMBaseCommand<typeof args> {
         .map((page, idx) => ({
           shouldDisplay: true,
           string: {
-            title: artistInfo.tags[idx].toLowerCase(),
+            title: artistTags[idx].name.toLowerCase(),
             value:
               "\n" +
               (page.pagination.totalItems > 0

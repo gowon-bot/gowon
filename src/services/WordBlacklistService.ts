@@ -1,5 +1,3 @@
-import { BaseService } from "./BaseService";
-import blacklist from "../wordBlacklist.json";
 import { TagBan } from "../database/entity/TagBan";
 import {
   TagAlreadyBannedError,
@@ -7,6 +5,8 @@ import {
   TagNotBannedError,
 } from "../errors/errors";
 import { GowonContext } from "../lib/context/Context";
+import blacklist from "../wordBlacklist.json";
+import { BaseService } from "./BaseService";
 
 type WordBlacklistScope = "base" | "tags";
 
