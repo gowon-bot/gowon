@@ -1,5 +1,11 @@
 import { DocumentNode } from "apollo-link";
-import { cleanURL, sanitizeForDiscord } from "../../helpers/discord";
+import {
+  bold,
+  cleanURL,
+  italic,
+  sanitizeForDiscord,
+} from "../../helpers/discord";
+import { LinkGenerator } from "../../helpers/lastFM";
 import { Emoji } from "../Emoji";
 
 export function displayNumber(
@@ -116,4 +122,33 @@ export function displayProgressBar(
   return `${options.progressEmoji.repeat(
     relativeProgress
   )}${options.remainingEmoji.repeat(options.width - relativeProgress)}`;
+}
+
+export function displayArtistLink(
+  artist: string,
+  stylize: boolean = false
+): string {
+  const link = displayLink(artist, LinkGenerator.artistPage(artist));
+
+  return stylize ? bold(link, false) : link;
+}
+
+export function displayAlbumLink(
+  artist: string,
+  album: string,
+  stylize: boolean = false
+): string {
+  const link = displayLink(album, LinkGenerator.albumPage(artist, album));
+
+  return stylize ? italic(link, false) : link;
+}
+
+export function displayTrackLink(
+  artist: string,
+  track: string,
+  stylize: boolean = false
+): string {
+  const link = displayLink(track, LinkGenerator.trackPage(artist, track));
+
+  return stylize ? italic(link, false) : link;
 }

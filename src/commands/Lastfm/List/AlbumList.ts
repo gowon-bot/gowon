@@ -1,5 +1,6 @@
-import { bold, italic } from "../../../helpers/discord";
+import { italic } from "../../../helpers/discord";
 import {
+  displayAlbumLink,
   displayNumber,
   displayNumberedList,
 } from "../../../lib/views/displays";
@@ -33,10 +34,9 @@ export default class AlbumList extends ListCommand {
         displayNumberedList(
           topAlbums.albums.map(
             (a) =>
-              `${bold(a.name)} by ${italic(a.artist.name)} - ${displayNumber(
-                a.userPlaycount,
-                "play"
-              )}`
+              `${displayAlbumLink(a.artist.name, a.name, true)} by ${
+                a.artist.name
+              } - ${displayNumber(a.userPlaycount, "play")}`
           )
         ) ||
           italic(

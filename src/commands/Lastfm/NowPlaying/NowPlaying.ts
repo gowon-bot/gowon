@@ -1,19 +1,19 @@
-import { CrownsService } from "../../../services/dbservices/CrownsService";
-import { LineConsolidator } from "../../../lib/LineConsolidator";
-import { NowPlayingBaseCommand, nowPlayingArgs } from "./NowPlayingBaseCommand";
-import { promiseAllSettled } from "../../../helpers";
 import { MessageEmbed } from "discord.js";
-import { ServiceRegistry } from "../../../services/ServicesRegistry";
-import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
+import { promiseAllSettled } from "../../../helpers";
 import { CommandRedirect } from "../../../lib/command/Command";
-import NowPlayingVerbose from "./NowPlayingVerbose";
-import NowPlayingCompact from "./NowPlayingCompact";
-import NowPlayingAlbum from "./NowPlayingAlbum";
-import NowPlayingCombo from "./NowPlayingCombo";
-import NowPlayingCustom from "./NowPlayingCustom";
+import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { LineConsolidator } from "../../../lib/LineConsolidator";
 import { SettingsService } from "../../../lib/settings/SettingsService";
 import { FMMode } from "../../../lib/settings/SettingValues";
-import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { CrownsService } from "../../../services/dbservices/CrownsService";
+import { ServiceRegistry } from "../../../services/ServicesRegistry";
+import NowPlayingAlbum from "./NowPlayingAlbum";
+import { nowPlayingArgs, NowPlayingBaseCommand } from "./NowPlayingBaseCommand";
+import NowPlayingCombo from "./NowPlayingCombo";
+import NowPlayingCompact from "./NowPlayingCompact";
+import NowPlayingCustom from "./NowPlayingCustom";
+import NowPlayingVerbose from "./NowPlayingVerbose";
 
 const reverse = (s: string) =>
   s.split("").reverse().join("").replace("(", ")").replace(")", "(");
@@ -92,8 +92,10 @@ export default class NowPlaying extends NowPlayingBaseCommand<typeof args> {
     if (this.payload.isTweet()) {
       this.responder.twitter(
         this.ctx,
-        `🎶 ${nowPlaying.isNowPlaying ? "Now playing" : "Last scrobbled"
-        } for ${username}\n\n${nowPlaying.name} by ${nowPlaying.artist}\nfrom ${nowPlaying.album
+        `🎶 ${
+          nowPlaying.isNowPlaying ? "Now playing" : "Last scrobbled"
+        } for ${username}\n\n${nowPlaying.name} by ${nowPlaying.artist}\nfrom ${
+          nowPlaying.album
         }`
       );
       return;

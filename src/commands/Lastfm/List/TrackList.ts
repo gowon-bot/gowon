@@ -1,7 +1,8 @@
-import { bold, italic } from "../../../helpers/discord";
+import { italic } from "../../../helpers/discord";
 import {
   displayNumber,
   displayNumberedList,
+  displayTrackLink,
 } from "../../../lib/views/displays";
 import { ListCommand } from "./ListCommand";
 
@@ -33,10 +34,9 @@ export default class TrackList extends ListCommand {
         displayNumberedList(
           topTracks.tracks.map(
             (t) =>
-              `${bold(t.name)} by ${italic(t.artist.name)} - ${displayNumber(
-                t.userPlaycount,
-                "play"
-              )}`
+              `${displayTrackLink(t.artist.name, t.name, true)} by ${
+                t.artist.name
+              } - ${displayNumber(t.userPlaycount, "play")}`
           )
         ) ||
           italic(

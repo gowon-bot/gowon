@@ -1,16 +1,17 @@
-import { ArgumentsMap } from "../../../lib/context/arguments/types";
-import { ComboService } from "../../../services/dbservices/ComboService";
-import { LastFMBaseChildCommand } from "../LastFMBaseCommand";
-import { Combo } from "../../../database/entity/Combo";
-import { LineConsolidator } from "../../../lib/LineConsolidator";
 import { formatDistance } from "date-fns";
+import { Combo } from "../../../database/entity/Combo";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { LineConsolidator } from "../../../lib/LineConsolidator";
 import {
+  displayAlbumLink,
+  displayArtistLink,
   displayDate,
-  displayLink,
   displayNumber,
+  displayTrackLink,
 } from "../../../lib/views/displays";
-import { LinkGenerator } from "../../../helpers/lastFM";
+import { ComboService } from "../../../services/dbservices/ComboService";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
+import { LastFMBaseChildCommand } from "../LastFMBaseCommand";
 
 export abstract class ComboChildCommand<
   T extends ArgumentsMap = {}
@@ -30,23 +31,22 @@ export abstract class ComboChildCommand<
       )})`,
       {
         shouldDisplay: (combo.artistPlays || 0) > 1,
-        string: `Artist: ${displayNumber(combo.artistPlays!)} (${displayLink(
-          combo.artistName!,
-          LinkGenerator.artistPage(combo.artistName!)
-        )})`,
+        string: `Artist: ${displayNumber(
+          combo.artistPlays!
+        )} (${displayArtistLink(combo.artistName!)})`,
       },
       {
         shouldDisplay: (combo.albumPlays || 0) > 1,
-        string: `Album: ${displayNumber(combo.albumPlays!)} (${displayLink(
-          combo.albumName!,
-          LinkGenerator.albumPage(combo.artistName!, combo.albumName!)
+        string: `Album: ${displayNumber(combo.albumPlays!)} (${displayAlbumLink(
+          combo.artistName!,
+          combo.albumName!
         )})`,
       },
       {
         shouldDisplay: (combo.trackPlays || 0) > 1,
-        string: `Track: ${displayNumber(combo.trackPlays!)} (${displayLink(
-          combo.trackName!,
-          LinkGenerator.trackPage(combo.artistName!, combo.trackName!)
+        string: `Track: ${displayNumber(combo.trackPlays!)} (${displayTrackLink(
+          combo.artistName!,
+          combo.trackName!
         )})`,
       },
       ""

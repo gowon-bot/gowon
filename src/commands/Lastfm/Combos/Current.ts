@@ -1,6 +1,6 @@
 import { formatDistance } from "date-fns";
 import { ucFirst } from "../../../helpers";
-import { bold, italic } from "../../../helpers/discord";
+import { bold } from "../../../helpers/discord";
 import { LinkGenerator } from "../../../helpers/lastFM";
 import {
   Combo as ComboType,
@@ -14,7 +14,12 @@ import { LineConsolidator } from "../../../lib/LineConsolidator";
 import { Paginator } from "../../../lib/paginators/Paginator";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
-import { displayLink, displayNumber } from "../../../lib/views/displays";
+import {
+  displayAlbumLink,
+  displayArtistLink,
+  displayNumber,
+  displayTrackLink,
+} from "../../../lib/views/displays";
 import { ArtistsService } from "../../../services/mirrorball/services/ArtistsService";
 import { AlbumCoverService } from "../../../services/moderation/AlbumCoverService";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
@@ -97,29 +102,19 @@ export class Current extends ComboChildCommand<typeof args> {
       {
         string:
           this.displayCurrentCombo(combo, "artist") +
-          ` (${combo.artistNames
-            .map((a) => displayLink(a, LinkGenerator.artistPage(a)))
-            .join(", ")})`,
+          ` (${combo.artistNames.map((a) => displayArtistLink(a)).join(", ")})`,
         shouldDisplay: combo.artist.plays > 1,
       },
       {
         string:
           this.displayCurrentCombo(combo, "album") +
-          ` (${italic(
-            displayLink(
-              combo.album.name,
-              LinkGenerator.albumPage(combo.artistName, combo.albumName)
-            )
-          )})`,
+          ` (${displayAlbumLink(combo.artistName, combo.albumName, true)})`,
         shouldDisplay: combo.album.plays > 1,
       },
       {
         string:
           this.displayCurrentCombo(combo, "track") +
-          ` (${displayLink(
-            combo.track.name,
-            LinkGenerator.trackPage(combo.artistName, combo.trackName)
-          )})`,
+          ` (${displayTrackLink(combo.artistName, combo.trackName)})`,
         shouldDisplay: combo.track.plays > 1,
       },
       `\n_Comboing for ${formatDistance(

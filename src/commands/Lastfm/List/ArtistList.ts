@@ -1,5 +1,6 @@
-import { bold, italic } from "../../../helpers/discord";
+import { italic } from "../../../helpers/discord";
 import {
+  displayArtistLink,
   displayNumber,
   displayNumberedList,
 } from "../../../lib/views/displays";
@@ -32,7 +33,11 @@ export default class ArtistList extends ListCommand {
       .setDescription(
         displayNumberedList(
           topArtists.artists.map(
-            (a) => `${bold(a.name)} - ${displayNumber(a.userPlaycount, "play")}`
+            (a) =>
+              `${displayArtistLink(a.name, true)} - ${displayNumber(
+                a.userPlaycount,
+                "play"
+              )}`
           )
         ) ||
           italic(
