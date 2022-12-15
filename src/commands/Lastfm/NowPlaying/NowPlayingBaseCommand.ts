@@ -236,7 +236,7 @@ export abstract class NowPlayingBaseCommand<
         .find((t) => t.includes("christmas")) ||
       track.name.includes("christmas")
     ) {
-      await sentMessage.react(shuffle(["❄️", "☃️", "⛄️", "🎄", "🎅"])[0]);
+      await sentMessage.react(shuffle(["❄️", "⛄️", "🎄", "🎅"])[0]);
     }
   }
 
