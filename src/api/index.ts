@@ -1,25 +1,24 @@
-import { ApolloServer, Config } from "apollo-server-express";
+import { ApolloServer, Config, CorsOptions } from "apollo-server-express";
 import bodyParser from "body-parser";
 import express from "express";
 import gowonConfig from "../../config.json";
 import { AnalyticsCollector } from "../analytics/AnalyticsCollector";
+import { GowonContext } from "../lib/context/Context";
+import { Payload } from "../lib/context/Payload";
+import { GowonClient } from "../lib/GowonClient";
+import { HeaderlessLogger } from "../lib/Logger";
 import { ServiceRegistry } from "../services/ServicesRegistry";
 import {
   InvalidStateError,
   SpotifyCodeResponse,
 } from "../services/Spotify/SpotifyService.types";
 import { typeDefs } from "./graphql/schema.gql";
-import { IndexingWebhookService } from "./webhooks/IndexingWebhookService";
-import { SpotifyWebhookService } from "./webhooks/SpotifyWebhookService";
-
-import { GowonContext } from "../lib/context/Context";
-import { Payload } from "../lib/context/Payload";
-import { GowonClient } from "../lib/GowonClient";
-import { HeaderlessLogger } from "../lib/Logger";
 import commandResolvers from "./resolvers/commandResolvers";
 import discordResolvers from "./resolvers/discordResolvers";
 import settingsResolvers from "./resolvers/settings/settingResolvers";
 import userResolvers from "./resolvers/userResolvers";
+import { IndexingWebhookService } from "./webhooks/IndexingWebhookService";
+import { SpotifyWebhookService } from "./webhooks/SpotifyWebhookService";
 import { TwitterWebhookService } from "./webhooks/TwitterWebhookService";
 
 export const gowonAPIPort = gowonConfig.gowonAPIPort;
@@ -45,6 +44,10 @@ export class GraphQLAPI {
 
   async init() {
     const app = express();
+
+    const corsOptions: CorsOptions = {
+      origin: gowonConfig.gowonWebsiteURL,
+    };
 
     const config: Config = {
       typeDefs,
@@ -74,6 +77,8 @@ export class GraphQLAPI {
       app,
       path: "/graphql",
     });
+
+    server.applyMiddleware({ app, cors: corsOptions });
 
     app.use("/api", bodyParser.json());
 
