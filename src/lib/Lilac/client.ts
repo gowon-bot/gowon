@@ -1,14 +1,15 @@
+import { create as createAbsintheSocket } from "@absinthe/socket";
+import { createAbsintheSocketLink } from "@absinthe/socket-apollo-link";
 import {
   ApolloClient,
   createHttpLink,
   InMemoryCache,
   split,
 } from "@apollo/client";
-import { create as createAbsintheSocket } from "@absinthe/socket";
-import { createAbsintheSocketLink } from "@absinthe/socket-apollo-link";
-import WebSocket from "ws";
+import fetch from "cross-fetch";
 import { DocumentNode } from "graphql";
 import { Socket as PhoenixSocket } from "phoenix";
+import WebSocket from "ws";
 import config from "../../../config.json";
 
 const absintheSocket = createAbsintheSocket(
@@ -23,6 +24,7 @@ const httpLink = createHttpLink({
   headers: {
     Authorization: config.lilacPassword,
   },
+  fetch: fetch,
 });
 
 const link = split(

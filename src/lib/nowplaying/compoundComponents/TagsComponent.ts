@@ -1,10 +1,10 @@
 import { TagConsolidator } from "../../tags/TagConsolidator";
-import { rowSize } from "../NowPlayingBuilder";
 import {
   AnyIn,
   BaseCompoundComponent,
   BaseNowPlayingComponent,
 } from "../components/BaseNowPlayingComponent";
+import { rowSize } from "../NowPlayingBuilder";
 
 // The following classes are placeholders because they will be replaced with the compound tags component
 const areqs = ["artistInfo"] as const;
@@ -17,16 +17,6 @@ export class ArtistTagsComponent extends BaseNowPlayingComponent<typeof areqs> {
     return { string: "", size: 0 };
   }
 }
-
-// const lreqs = ["albumInfo"] as const;
-// export class AlbumTagsComponent extends BaseNowPlayingComponent<typeof lreqs> {
-//   static name = "album-tags";
-//   readonly requirements = lreqs;
-
-//   present() {
-//      return { string: "", size: 0 };
-//   }
-// }
 
 const treqs = ["trackInfo"] as const;
 export class TrackTagsComponent extends BaseNowPlayingComponent<typeof treqs> {

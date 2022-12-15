@@ -1,11 +1,11 @@
+import { AlbumCard } from "../../database/entity/cards/AlbumCard";
 import { User } from "../../database/entity/User";
 import { BaseService } from "../../services/BaseService";
+import { CardsService } from "../../services/dbservices/CardsService";
 import {
   CrownDisplay,
   CrownsService,
 } from "../../services/dbservices/CrownsService";
-import { MirrorballService } from "../../services/mirrorball/MirrorballService";
-import { UserInput } from "../../services/mirrorball/MirrorballTypes";
 import {
   ArtistInfo,
   TrackInfo,
@@ -16,14 +16,15 @@ import {
 } from "../../services/LastFM/converters/RecentTracks";
 import { Requestable } from "../../services/LastFM/LastFMAPIService";
 import { LastFMService } from "../../services/LastFM/LastFMService";
-import { buildQuery, isQueryPart, QueryPart } from "./buildQuery";
-import { NowPlayingRequirement } from "./components/BaseNowPlayingComponent";
-import { Logger } from "../Logger";
+import { MirrorballService } from "../../services/mirrorball/MirrorballService";
+import { UserInput } from "../../services/mirrorball/MirrorballTypes";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { GowonContext } from "../context/Context";
 import { Payload } from "../context/Payload";
-import { CardsService } from "../../services/dbservices/CardsService";
-import { AlbumCard } from "../../database/entity/cards/AlbumCard";
+import { Logger } from "../Logger";
+import { TagConsolidator } from "../tags/TagConsolidator";
+import { buildQuery, isQueryPart, QueryPart } from "./buildQuery";
+import { NowPlayingRequirement } from "./components/BaseNowPlayingComponent";
 
 export interface ResolvedRequirements {
   [requirement: string]: any;
@@ -44,8 +45,9 @@ export type Resources = InputResources & {
   requirements: NowPlayingRequirement[];
 };
 
-type DatasourceServiceContext = GowonContext<{
+export type DatasourceServiceContext = GowonContext<{
   constants?: { resources?: Resources };
+  mutable?: { tagConsolidator?: TagConsolidator };
 }>;
 
 export class DatasourceService extends BaseService<DatasourceServiceContext> {
@@ -125,10 +127,14 @@ export class DatasourceService extends BaseService<DatasourceServiceContext> {
     try {
       const nowPlaying = this.nowPlaying;
 
-      return await this.lastFMService.artistInfo(ctx, {
+      const artistInfo = await this.lastFMService.artistInfo(ctx, {
         artist: nowPlaying(ctx).artist,
         username: ctx.constants.resources!.requestable,
       });
+
+      await this.addTagsToConsolidator(ctx, artistInfo.tags);
+
+      return artistInfo;
     } catch {
       return undefined;
     }
@@ -138,11 +144,15 @@ export class DatasourceService extends BaseService<DatasourceServiceContext> {
     ctx: DatasourceServiceContext
   ): Promise<TrackInfo | undefined> {
     try {
-      return await this.lastFMService.trackInfo(ctx, {
+      const trackInfo = await this.lastFMService.trackInfo(ctx, {
         artist: this.nowPlaying(ctx).artist,
         track: this.nowPlaying(ctx).name,
         username: ctx.constants.resources!.requestable,
       });
+
+      await this.addTagsToConsolidator(ctx, trackInfo.tags);
+
+      return trackInfo;
     } catch {
       return undefined;
     }
@@ -229,6 +239,18 @@ export class DatasourceService extends BaseService<DatasourceServiceContext> {
         serverID: ctx.constants.resources!.payload.guild?.id,
       },
     };
+  }
+
+  private async addTagsToConsolidator(
+    ctx: DatasourceServiceContext,
+    tags: string[]
+  ) {
+    if (!ctx.mutable.tagConsolidator) {
+      ctx.mutable.tagConsolidator = new TagConsolidator();
+      await ctx.mutable.tagConsolidator.saveServerBannedTagsInContext(ctx);
+    }
+
+    ctx.mutable.tagConsolidator.addTags(ctx, tags);
   }
 }
 

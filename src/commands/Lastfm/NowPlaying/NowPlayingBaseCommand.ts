@@ -212,7 +212,13 @@ export abstract class NowPlayingBaseCommand<
     return { isCrownHolder, crownString };
   }
 
-  protected async easterEggs(sentMessage: Message, track: RecentTrack) {
+  protected async easterEggs(
+    sentMessage: Message,
+    track: RecentTrack,
+    tagConsolidator?: TagConsolidator
+  ) {
+    const consolidator = tagConsolidator || this.tagConsolidator;
+
     if (
       track.artist.toLowerCase() === "twice" &&
       track.name.toLowerCase() === "jaljayo good night"
@@ -220,14 +226,12 @@ export abstract class NowPlayingBaseCommand<
       await sentMessage.react("😴");
     }
 
-    if (
-      this.tagConsolidator.hasTag("rare sad boy", "rsb", "rsg", "rare sad girl")
-    ) {
+    if (consolidator.hasTag("rare sad boy", "rsb", "rsg", "rare sad girl")) {
       await sentMessage.react("😭");
     }
 
     if (
-      this.tagConsolidator
+      consolidator
         .consolidateAsStrings()
         .find((t) => t.includes("christmas")) ||
       track.name.includes("christmas")

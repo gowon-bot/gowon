@@ -1,6 +1,9 @@
 import { User } from "../../../database/entity/User";
 import { Variation } from "../../../lib/command/Command";
-import { DatasourceService } from "../../../lib/nowplaying/DatasourceService";
+import {
+  DatasourceService,
+  DatasourceServiceContext,
+} from "../../../lib/nowplaying/DatasourceService";
 import { NowPlayingBuilder } from "../../../lib/nowplaying/NowPlayingBuilder";
 import { RequirementMap } from "../../../lib/nowplaying/RequirementMap";
 import { ConfigService } from "../../../services/dbservices/NowPlayingService";
@@ -76,7 +79,12 @@ export default class NowPlayingCustom extends NowPlayingBaseCommand {
     const sentMessage = await this.send(embed);
 
     await this.customReactions(sentMessage);
-    await this.easterEggs(sentMessage, nowPlaying);
+    await this.easterEggs(
+      sentMessage,
+      nowPlaying,
+      this.mutableContext<DatasourceServiceContext["mutable"]>().mutable
+        .tagConsolidator
+    );
   }
 
   private async customMentions(): Promise<{
