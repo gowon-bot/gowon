@@ -62,6 +62,8 @@ export default class SetAlbumCover extends ContentModerationCommand<
       { redirect: true }
     );
 
+    const shouldClear = this.parsedArguments.url === "clear";
+
     const existingCover = await this.albumCoverService.getAlternateCover(
       this.ctx,
       artist,
@@ -72,17 +74,21 @@ export default class SetAlbumCover extends ContentModerationCommand<
     const embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor("Set album cover"))
       .setDescription(
-        `${existingCover ? "This album already has an alternate cover. " : ""
-        }Are you sure you want to ${this.parsedArguments.url === "clear" ? "clear" : "set this as"
+        `${
+          existingCover
+            ? `This album ${
+                shouldClear ? "" : "already "
+              }has an alternate cover. `
+            : ""
+        }Are you sure you want to ${
+          shouldClear ? "clear" : "set this as"
         } the image for ${bold(artist)} | ${italic(album)}?
         
-This will set the image ${bold(
+This will ${shouldClear ? "clear" : "set"} the image ${bold(
           this.parsedArguments.moderation ? "bot-wide" : "for you only"
         )}.`
       )
-      .setImage(
-        this.parsedArguments.url !== "clear" ? this.parsedArguments.url : ""
-      )
+      .setImage(!shouldClear ? this.parsedArguments.url : "")
       .setThumbnail(existingCover?.url || "");
 
     const confirmationEmbed = new ConfirmationEmbed(
@@ -95,22 +101,33 @@ This will set the image ${bold(
       return;
     }
 
-    await this.albumCoverService.setAlternate(
-      this.ctx,
-      artist,
-      album,
-      this.parsedArguments.url === "clear"
-        ? undefined
-        : this.parsedArguments.url,
-      this.parsedArguments.moderation ? undefined : dbUser
-    );
+    const user = this.parsedArguments.moderation ? undefined : dbUser;
+
+    if (shouldClear) {
+      await this.albumCoverService.clearAlternate(
+        this.ctx,
+        artist,
+        album,
+        user
+      );
+    } else {
+      await this.albumCoverService.setAlternate(
+        this.ctx,
+        artist,
+        album,
+        this.parsedArguments.url,
+        user
+      );
+    }
 
     await this.discordService.edit(
       this.ctx,
       confirmationEmbed.sentMessage!,
       embed.setDescription(
-        `${this.parsedArguments.url === "clear" ? "Cleared" : "Set this as"
-        } the image for ${bold(artist)} | ${italic(album)}${this.parsedArguments.moderation ? " bot-wide" : ""
+        `${shouldClear ? "Cleared" : "Set this as"} the image for ${bold(
+          artist
+        )} | ${italic(album)}${
+          this.parsedArguments.moderation ? " bot-wide" : ""
         }!`
       )
     );

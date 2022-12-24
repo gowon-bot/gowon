@@ -1,8 +1,8 @@
 import { isKeywords, SpotifySearchParams } from "../SpotifyService";
 import {
-  RawSpotifyItemCollection,
   RawSpotifyAlbum,
   RawSpotifyArtist,
+  RawSpotifyItemCollection,
   RawSpotifyTrack,
   SpotifyEntityName,
 } from "../SpotifyService.types";
