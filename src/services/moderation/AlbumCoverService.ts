@@ -1,7 +1,10 @@
 import { ILike, IsNull } from "typeorm";
 import { AlternateAlbumCover } from "../../database/entity/AlternateAlbumCover";
 import { User } from "../../database/entity/User";
-import { URLCannotBeBlankError } from "../../errors/contentModeration";
+import {
+  AlternateCoverAlreadyDoesNotExist,
+  AlternateCoverURLCannotBeBlankError,
+} from "../../errors/contentModeration";
 import { GowonContext } from "../../lib/context/Context";
 import { BaseService } from "../BaseService";
 
@@ -66,7 +69,7 @@ export class AlbumCoverService extends BaseService {
     ctx: GowonContext,
     artist: string,
     album: string,
-    url: string | undefined,
+    url: string,
     user?: User
   ): Promise<AlternateAlbumCover> {
     this.log(
@@ -85,15 +88,10 @@ export class AlbumCoverService extends BaseService {
     });
 
     if (existing) {
-      if (!url) {
-        await existing.remove();
-        return existing;
-      }
-
       existing.url = url;
       return await existing.save();
     } else if (!url) {
-      throw new URLCannotBeBlankError();
+      throw new AlternateCoverURLCannotBeBlankError();
     }
 
     const albumCover = AlternateAlbumCover.create({
@@ -104,6 +102,34 @@ export class AlbumCoverService extends BaseService {
     });
 
     return await albumCover.save();
+  }
+
+  public async clearAlternate(
+    ctx: GowonContext,
+    artist: string,
+    album: string,
+    user?: User
+  ) {
+    this.log(
+      ctx,
+      `Clearing the alternate album cover for ${artist} | ${album} (${
+        user ? user.discordID : "moderation"
+      })`
+    );
+
+    const existing = await AlternateAlbumCover.findOne({
+      where: {
+        artistName: ILike(artist),
+        albumName: ILike(album),
+        user: !user ? IsNull() : user,
+      },
+    });
+
+    if (!existing) {
+      throw new AlternateCoverAlreadyDoesNotExist();
+    }
+
+    return await existing.remove();
   }
 
   public enlargeLastFMImage(url: string, size = "2048") {
