@@ -39,14 +39,18 @@ export const Emoji = {
   404: "<:404:869383534429737031>",
   gowonScrobbled: "<:gowonScrobbled:944727673022849154>",
   fip: "<:fip:959302552443314227>",
-  usesIndexedData: "<:uses_indexed_data:1017231359800004639>",
-  usesIndexedDataLink: "<:uses_indexed_data2:1017232486935298168>",
-  usesIndexedDataDescription: "<:uses_indexed_data3:1017233726373122078>",
 
+  // Uses indexed data
+  usesIndexedDataDescription: "<:uses_indexed_data:1056207690474467359> ",
+  usesIndexedDataLink: "<:uses_indexed_data2:1056204845683581048> ",
+  usesIndexedDataTitle: "<:uses_indexed_data3:1056207688696086581>",
+
+  // RYM Stars
   fullStar: "<:fullStar:843763033858899968>",
   halfStar: "<:halfStar:843763307994284032>",
   emptyStar: "<:emptyStar:843763307428315148>",
 
+  // Utlity reactions
   arrowLeft: "<:arrowleft:825600908594905107>",
   arrowRight: "<:arrowRight:825626338534490162>",
   arrowFirst: "<:arrowFirst:825626330648412180>",

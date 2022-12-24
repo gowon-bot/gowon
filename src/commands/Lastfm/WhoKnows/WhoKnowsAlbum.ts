@@ -99,9 +99,11 @@ export default class WhoKnowsAlbum extends WhoKnowsBaseCommand<typeof args> {
     const embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor("Who knows album"))
       .setTitle(
-        `${Emoji.usesIndexedData} Who knows ${italic(album.name)} by ${bold(
-          album.artist.name
-        )} ${this.isGlobal() ? "globally" : `in ${this.requiredGuild.name}`}?`
+        `${Emoji.usesIndexedDataTitle} Who knows ${italic(
+          album.name
+        )} by ${bold(album.artist.name)} ${
+          this.isGlobal() ? "globally" : `in ${this.requiredGuild.name}`
+        }?`
       )
       .setDescription(lineConsolidator.consolidate())
       .setFooter({

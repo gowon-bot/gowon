@@ -55,7 +55,8 @@ export default class ScrobbleList extends LilacBaseCommand<typeof args> {
     const embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor("Scrobble list"))
       .setTitle(
-        `${Emoji.usesIndexedData} ${perspective.upper.possessive
+        `${Emoji.usesIndexedDataTitle} ${
+          perspective.upper.possessive
         } scrobbles of ${italic(trackName)} by ${bold(artistName)}`
       );
 

@@ -64,13 +64,14 @@ export default class NoAlbums extends LilacBaseCommand<typeof args> {
     const embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor("No albums"))
       .setTitle(
-        `${Emoji.usesIndexedData} ${perspective.upper.possessive} scrobbles with no albums`
+        `${Emoji.usesIndexedDataTitle} ${perspective.upper.possessive} scrobbles with no albums`
       );
 
     if (firstPage.pagination.totalItems === 0) {
       await this.send(
         embed.setDescription(
-          `You have no scrobbles without an album${artistName ? ` from ${bold(artistName)}` : ""
+          `You have no scrobbles without an album${
+            artistName ? ` from ${bold(artistName)}` : ""
           }!`
         )
       );

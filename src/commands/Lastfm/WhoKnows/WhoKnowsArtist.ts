@@ -89,7 +89,8 @@ export default class WhoKnowsArtist extends WhoKnowsBaseCommand<typeof args> {
                 `${this.whoKnowsService.displayUser(
                   this.ctx,
                   wk.user
-                )} - **${displayNumber(wk.playcount, "**play")}${crown?.user?.discordID === wk.user.discordID ? " 👑" : ""
+                )} - **${displayNumber(wk.playcount, "**play")}${
+                  crown?.user?.discordID === wk.user.discordID ? " 👑" : ""
                 }`
             )
         ),
@@ -112,7 +113,8 @@ export default class WhoKnowsArtist extends WhoKnowsBaseCommand<typeof args> {
     const embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor("Who knows artist"))
       .setTitle(
-        `${Emoji.usesIndexedData} Who knows ${bold(artist.name)} ${this.isGlobal() ? "globally" : `in ${this.requiredGuild.name}`
+        `${Emoji.usesIndexedDataTitle} Who knows ${bold(artist.name)} ${
+          this.isGlobal() ? "globally" : `in ${this.requiredGuild.name}`
         }?`
       )
       .setDescription(lineConsolidator.consolidate())

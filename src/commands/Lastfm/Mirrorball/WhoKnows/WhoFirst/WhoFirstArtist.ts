@@ -137,7 +137,8 @@ export default class WhoFirstArtist extends WhoKnowsBaseCommand<
 
     const embed = this.whoKnowsEmbed()
       .setTitle(
-        `${Emoji.usesIndexedData} Who ${whoLast ? "last" : "first"
+        `${Emoji.usesIndexedDataTitle} Who ${
+          whoLast ? "last" : "first"
         } scrobbled ${bold(artist.name)}${this.isGlobal() ? " globally" : ""}?`
       )
       .setDescription(lineConsolidator.consolidate())
