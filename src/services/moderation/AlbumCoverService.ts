@@ -7,14 +7,28 @@ import {
 } from "../../errors/contentModeration";
 import { GowonContext } from "../../lib/context/Context";
 import { BaseService } from "../BaseService";
+import { ServiceRegistry } from "../ServicesRegistry";
+import { SpotifyService } from "../Spotify/SpotifyService";
+import { SpotifyImage } from "../Spotify/SpotifyService.types";
 
 interface AlbumCoverGetOptions {
   metadata?: { artist: string; album: string };
   enlarge?: boolean;
+  dontFetchSpotifyFallback?: boolean;
   moderation?: boolean;
 }
 
+export interface AlbumCoverWithDetails {
+  url: string | undefined;
+  source: "lastfm" | "moderation" | "custom" | "spotify";
+  fileExtension: string;
+}
+
 export class AlbumCoverService extends BaseService {
+  private get spotifyService() {
+    return ServiceRegistry.get(SpotifyService);
+  }
+
   public readonly noCover = "";
   private readonly defaultCoverFilename =
     "2a96cbd8b46e442fc41c2b86b821562f.png";
@@ -32,10 +46,7 @@ export class AlbumCoverService extends BaseService {
     ctx: GowonContext,
     url: string | undefined,
     options: AlbumCoverGetOptions = {}
-  ): Promise<{
-    url: string | undefined;
-    source: "lastfm" | "moderation" | "custom";
-  }> {
+  ): Promise<AlbumCoverWithDetails> {
     this.log(ctx, `Fetching album cover for ${url}`);
 
     if (options.metadata) {
@@ -50,6 +61,23 @@ export class AlbumCoverService extends BaseService {
         enlarge: options.enlarge,
       });
 
+      if (!alternateURL && !options.dontFetchSpotifyFallback) {
+        const spotifyAlbumCover = await this.getSpotifyAlbumCover(
+          ctx,
+          options.metadata.artist,
+          options.metadata.album,
+          options.enlarge
+        );
+
+        if (spotifyAlbumCover) {
+          return {
+            url: spotifyAlbumCover.url,
+            source: "spotify",
+            fileExtension: "jpeg",
+          };
+        }
+      }
+
       return {
         url: alternateURL,
         source: alternate?.setByModerator
@@ -57,12 +85,14 @@ export class AlbumCoverService extends BaseService {
           : alternate
           ? "custom"
           : "lastfm",
+        fileExtension: this.extractFileExtension(alternateURL),
       };
     }
 
     return {
       url: this.processURL(url, { enlarge: options.enlarge }),
       source: "lastfm",
+      fileExtension: "jpg",
     };
   }
 
@@ -165,6 +195,29 @@ export class AlbumCoverService extends BaseService {
       : albumCover[0];
   }
 
+  public async getSpotifyAlbumCover(
+    ctx: GowonContext,
+    artist: string,
+    album: string,
+    getLargest?: boolean
+  ): Promise<SpotifyImage | undefined> {
+    const spotifyAlbumSearch = await this.spotifyService.searchAlbum(ctx, {
+      artist,
+      album,
+    });
+
+    if (
+      spotifyAlbumSearch.hasAnyResults &&
+      spotifyAlbumSearch.bestResult.isExactMatch
+    ) {
+      return getLargest
+        ? spotifyAlbumSearch.bestResult.images.getLargest(1)
+        : spotifyAlbumSearch.bestResult.images.getLargest(2);
+    }
+
+    return undefined;
+  }
+
   private processURL(
     url: string | undefined,
     options: { enlarge?: boolean } = {}
@@ -185,5 +238,13 @@ export class AlbumCoverService extends BaseService {
 
   private isDefault(url: string): boolean {
     return url.endsWith("2a96cbd8b46e442fc41c2b86b821562f.png");
+  }
+
+  private extractFileExtension(url?: string): string {
+    if (!url) return "";
+
+    const fileEndingSplit = url.split(".");
+
+    return fileEndingSplit[fileEndingSplit.length - 1];
   }
 }

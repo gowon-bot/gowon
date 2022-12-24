@@ -97,8 +97,6 @@ export default class Cover extends LastFMBaseCommand<typeof args> {
     if (!album) throw new NoAlbumForCoverError();
     if (!albumCover.url) throw new AlbumHasNoCoverError(artist, album);
 
-    const fileEndingSplit = albumCover.url.split(".");
-
     await this.send(
       `Cover for ${bold(album)} by ${bold(artist)}${
         albumCover.source === "moderation"
@@ -111,9 +109,7 @@ export default class Cover extends LastFMBaseCommand<typeof args> {
         files: [
           {
             attachment: albumCover.url,
-            name: `${artist} - ${album}.${
-              fileEndingSplit[fileEndingSplit.length - 1]
-            }`,
+            name: `${artist} - ${album}.${albumCover.fileExtension}`,
             description: `The album cover for ${album} by ${artist}`,
           },
         ],
