@@ -41,3 +41,11 @@ export class AlbumHasNoCoverError extends ClientError {
     );
   }
 }
+
+export class NoAlbumForCoverError extends ClientError {
+  name = "NoAlbumForCoverError";
+
+  constructor() {
+    super("There is no album to show a cover for");
+  }
+}

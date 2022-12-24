@@ -1,4 +1,7 @@
-import { AlbumHasNoCoverError } from "../../errors/lastfm";
+import {
+  AlbumHasNoCoverError,
+  NoAlbumForCoverError,
+} from "../../errors/lastfm";
 import { bold } from "../../helpers/discord";
 import { Flag } from "../../lib/context/arguments/argumentTypes/Flag";
 import { standardMentions } from "../../lib/context/arguments/mentionTypes/mentions";
@@ -91,14 +94,14 @@ export default class Cover extends LastFMBaseCommand<typeof args> {
       }
     );
 
+    if (!album) throw new NoAlbumForCoverError();
     if (!albumCover.url) throw new AlbumHasNoCoverError(artist, album);
 
-    const fileEndingSplit = albumCover.url.split(".");
-
     await this.send(
-      `Cover for ${bold(album)} by ${bold(artist)}${albumCover.source === "moderation"
-        ? "\n*This image has been set by Gowon moderators*"
-        : albumCover.source === "custom"
+      `Cover for ${bold(album)} by ${bold(artist)}${
+        albumCover.source === "moderation"
+          ? "\n*This image has been set by Gowon moderators*"
+          : albumCover.source === "custom"
           ? "\n*This image has been custom set by the user*"
           : ""
       }`,
@@ -106,8 +109,7 @@ export default class Cover extends LastFMBaseCommand<typeof args> {
         files: [
           {
             attachment: albumCover.url,
-            name: `${artist} - ${album}.${fileEndingSplit[fileEndingSplit.length - 1]
-              }`,
+            name: `${artist} - ${album}.${albumCover.fileExtension}`,
             description: `The album cover for ${album} by ${artist}`,
           },
         ],

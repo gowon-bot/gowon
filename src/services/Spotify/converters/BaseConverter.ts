@@ -36,9 +36,17 @@ export class SpotifyImageCollection {
   constructor(public images: SpotifyImage[] = []) {}
 
   get largest() {
-    return this.images.sort(
+    return this.getLargest(1);
+  }
+
+  getLargest(atRank: number) {
+    const sortedImages = this.images.sort(
       (a, b) => b.height * b.width - a.height * a.width
-    )[0];
+    );
+
+    if (sortedImages[atRank - 1]) return sortedImages[atRank - 1];
+
+    return sortedImages[0];
   }
 }
 
