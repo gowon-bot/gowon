@@ -16,8 +16,9 @@ interface AlbumCoverGetOptions {
 
 export class AlbumCoverService extends BaseService {
   public readonly noCover = "";
-  public readonly defaultCover =
-    "https://lastfm.freetls.fastly.net/i/u/174s/2a96cbd8b46e442fc41c2b86b821562f.png";
+  private readonly defaultCoverFilename =
+    "2a96cbd8b46e442fc41c2b86b821562f.png";
+  public readonly defaultCover = `https://lastfm.freetls.fastly.net/i/u/174s/${this.defaultCoverFilename}`;
 
   public async get(
     ctx: GowonContext,
@@ -168,7 +169,7 @@ export class AlbumCoverService extends BaseService {
     url: string | undefined,
     options: { enlarge?: boolean } = {}
   ): string | undefined {
-    if (!url || url === this.defaultCover) {
+    if (!url || this.isDefault(url)) {
       return undefined;
     }
 
@@ -180,5 +181,9 @@ export class AlbumCoverService extends BaseService {
     }
 
     return url;
+  }
+
+  private isDefault(url: string): boolean {
+    return url.endsWith("2a96cbd8b46e442fc41c2b86b821562f.png");
   }
 }

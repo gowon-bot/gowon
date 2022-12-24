@@ -145,7 +145,7 @@ export abstract class NowPlayingBaseCommand<
       )
       .setTitle(sanitizeForDiscord(nowPlaying.name))
       .setURL(LinkGenerator.trackPage(nowPlaying.artist, nowPlaying.name))
-      .setThumbnail(albumCover || "");
+      .setThumbnail(albumCover || this.albumCoverService.defaultCover);
   }
 
   protected artistPlays(
