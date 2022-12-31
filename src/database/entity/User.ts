@@ -1,29 +1,29 @@
 import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  BaseEntity,
-  OneToMany,
-} from "typeorm";
-import { Crown } from "./Crown";
-import {
   DiscordAPIError,
   Guild,
   GuildMember,
   User as DiscordUser,
 } from "discord.js";
-import { Friend } from "./Friend";
-import { userHasRole } from "../../helpers/discord";
-import { GowonService } from "../../services/GowonService";
 import gql from "graphql-tag";
-import { Logger } from "../../lib/Logger";
-import { Combo } from "./Combo";
-import { ServiceRegistry } from "../../services/ServicesRegistry";
-import { SettingsService } from "../../lib/settings/SettingsService";
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from "typeorm";
+import { userHasRole } from "../../helpers/discord";
 import { CommandAccessRoleName } from "../../lib/command/access/roles";
-import { MirrorballService } from "../../services/mirrorball/MirrorballService";
 import { GowonContext } from "../../lib/context/Context";
+import { Logger } from "../../lib/Logger";
+import { SettingsService } from "../../lib/settings/SettingsService";
+import { GowonService } from "../../services/GowonService";
+import { MirrorballService } from "../../services/mirrorball/MirrorballService";
+import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { AlbumCard } from "./cards/AlbumCard";
+import { Combo } from "./Combo";
+import { Crown } from "./Crown";
+import { Friend } from "./Friend";
 
 @Entity({ name: "users" })
 export class User extends BaseEntity {

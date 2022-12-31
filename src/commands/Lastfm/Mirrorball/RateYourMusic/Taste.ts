@@ -1,21 +1,22 @@
-import {
-  RatingsTasteResponse,
-  RatingsTasteParams,
-  RatingsTasteConnector,
-} from "./connectors";
-import { RateYourMusicIndexingChildCommand } from "./RateYourMusicChildCommand";
-import { LogicError, NoRatingsError } from "../../../../errors/errors";
+import { LogicError } from "../../../../errors/errors";
+import { NoRatingsError } from "../../../../errors/rateYourMusic";
+import { bold, italic, sanitizeForDiscord } from "../../../../helpers/discord";
+import { emDash } from "../../../../helpers/specialCharacters";
 import {
   RatingsTasteCalculator,
   TasteRating,
 } from "../../../../lib/calculators/RatingsTasteCalculator";
+import { Flag } from "../../../../lib/context/arguments/argumentTypes/Flag";
+import { standardMentions } from "../../../../lib/context/arguments/mentionTypes/mentions";
+import { ArgumentsMap } from "../../../../lib/context/arguments/types";
 import { displayNumber, displayRating } from "../../../../lib/views/displays";
 import { SimpleScrollingEmbed } from "../../../../lib/views/embeds/SimpleScrollingEmbed";
-import { bold, italic, sanitizeForDiscord } from "../../../../helpers/discord";
-import { standardMentions } from "../../../../lib/context/arguments/mentionTypes/mentions";
-import { Flag } from "../../../../lib/context/arguments/argumentTypes/Flag";
-import { emDash } from "../../../../helpers/specialCharacters";
-import { ArgumentsMap } from "../../../../lib/context/arguments/types";
+import {
+  RatingsTasteConnector,
+  RatingsTasteParams,
+  RatingsTasteResponse,
+} from "./connectors";
+import { RateYourMusicIndexingChildCommand } from "./RateYourMusicChildCommand";
 
 const args = {
   ...standardMentions,
@@ -89,8 +90,9 @@ export class Taste extends RateYourMusicIndexingChildCommand<
     )} and ${displayNumber(
       ratings.mentioned.pageInfo.recordCount,
       "rating"
-    )}, ${displayNumber(taste.ratings.length, "similar rating")} (${taste.percent
-      }% match) found.`;
+    )}, ${displayNumber(taste.ratings.length, "similar rating")} (${
+      taste.percent
+    }% match) found.`;
 
     const embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor("Ratings taste comparison"))

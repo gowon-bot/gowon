@@ -1,20 +1,20 @@
+import fetch from "node-fetch";
+import streamToString from "stream-to-string";
 import {
-  AlreadyImportingRatingsError,
   CannotBeUsedAsASlashCommand,
   LogicError,
 } from "../../../../errors/errors";
+import { AlreadyImportingRatingsError } from "../../../../errors/rateYourMusic";
+import { StringArgument } from "../../../../lib/context/arguments/argumentTypes/StringArgument";
+import { ArgumentsMap } from "../../../../lib/context/arguments/types";
+import { Emoji } from "../../../../lib/Emoji";
+import { ConcurrentAction } from "../../../../services/ConcurrencyService";
 import {
   ImportRatingsConnector,
   ImportRatingsParams,
   ImportRatingsResponse,
 } from "./connectors";
-import streamToString from "stream-to-string";
-import { Emoji } from "../../../../lib/Emoji";
 import { RateYourMusicIndexingChildCommand } from "./RateYourMusicChildCommand";
-import fetch from "node-fetch";
-import { ConcurrentAction } from "../../../../services/ConcurrencyService";
-import { StringArgument } from "../../../../lib/context/arguments/argumentTypes/StringArgument";
-import { ArgumentsMap } from "../../../../lib/context/arguments/types";
 
 const args = {
   input: new StringArgument({ index: { start: 0 }, slashCommandOption: false }),

@@ -2,7 +2,6 @@ import { gql } from "@apollo/client/core";
 import { IndexingWebhookService } from "../../../api/webhooks/IndexingWebhookService";
 import { GowonContext } from "../../../lib/context/Context";
 import { BaseService } from "../../BaseService";
-import { UsersService } from "../../dbservices/UsersService";
 import { ServiceRegistry } from "../../ServicesRegistry";
 import { MirrorballService } from "../MirrorballService";
 import {
@@ -17,9 +16,6 @@ export const PrivateUserDisplay = "Private user";
 export class MirrorballUsersService extends BaseService {
   private get mirrorballService() {
     return ServiceRegistry.get(MirrorballService);
-  }
-  private get usersService() {
-    return ServiceRegistry.get(UsersService);
   }
 
   public webhook = IndexingWebhookService.getInstance();
@@ -154,28 +150,6 @@ export class MirrorballUsersService extends BaseService {
     }
 
     return;
-  }
-
-  public async fullIndex(ctx: GowonContext) {
-    const discordID = ctx.author.id;
-
-    await this.usersService.setAsIndexed(ctx, discordID);
-
-    const response = await this.mirrorballService.query<{
-      fullIndex: { token: string };
-    }>(
-      ctx,
-      gql`
-        mutation fullIndex($discordID: String!) {
-          fullIndex(user: { discordID: $discordID }, forceUserCreate: true) {
-            token
-          }
-        }
-      `,
-      { discordID }
-    );
-
-    await this.webhook.waitForResponse(response.fullIndex.token);
   }
 
   public async getCachedPlaycount(

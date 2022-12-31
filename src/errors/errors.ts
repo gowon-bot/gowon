@@ -2,7 +2,6 @@ import { Response } from "node-fetch";
 import { bold } from "../helpers/discord";
 import { parseError, parseErrorSix } from "../helpers/error";
 import { Emoji } from "../lib/Emoji";
-import { Perspective } from "../lib/Perspective";
 import { displayNumber } from "../lib/views/displays";
 import { RawLastFMErrorResponse } from "../services/LastFM/LastFMService.types";
 
@@ -268,84 +267,12 @@ export class UnknownMirrorballError extends ClientError {
   }
 }
 
-export class UserNotIndexedError extends ClientError {
-  name = "UserNotIndexedError";
-
-  constructor() {
-    super("That user hasn't been indexed yet!");
-  }
-}
-
-export class SenderUserNotIndexedError extends ClientError {
-  name = "SenderUserNotIndexedError";
-
-  constructor(prefix?: string) {
-    super(
-      `You need to be indexed to run this command, run \`${prefix}index\` to index yourself`
-    );
-  }
-}
-
-export class SenderUserNotAuthenticatedError extends ClientError {
-  name = "SenderUserNotAuthenticatedError";
-
-  constructor(prefix?: string) {
-    super(
-      `This command requires you to be authenticated, please login again! (\`${prefix}login\`)`
-    );
-  }
-}
-
-export class MentionedUserNotIndexedError extends ClientError {
-  name = "SenderUserNotIndexedError";
-
-  constructor(prefix?: string) {
-    super(
-      `The user you mentioned hasn't been indexed yet, or isn't signed into the bot.\n*Run \`${prefix}index\` to index yourself*`
-    );
-  }
-}
-
-export class LastFMReverseLookupError extends ClientError {
-  name = "LastFMReverseLookupError";
-
-  constructor(username: string, requireIndexed = false, prefix?: string) {
-    super(
-      requireIndexed
-        ? `The user you mentioned hasn't been indexed yet, or isn't signed into the bot.\n*Run \`${prefix}index\` to index yourself*`
-        : `This command requires that \`${username}\` be signed into Gowon!`
-    );
-  }
-}
-
-export class AlreadyImportingRatingsError extends ClientError {
-  name = "AlreadyImportingRatingsError";
-
-  constructor() {
-    super(
-      "Your ratings are already being processed, please wait until Gowon is finished until trying again!"
-    );
-  }
-}
-
 export class DMsAreOffError extends ClientError {
   name = "DMsAreOffError";
 
   constructor() {
     super(
       "You have your DMs turned off! Please re-enable them to allow Gowon to DM you."
-    );
-  }
-}
-
-export class NoRatingsError extends ClientError {
-  name = "NoRatingsError";
-
-  constructor(prefix: string, rating?: number, perspective?: Perspective) {
-    super(
-      rating
-        ? `Couldn't find any albums rated ${perspective?.plusToHave} rated ${rating}`
-        : `Couldn't find any ratings! See \`${prefix}ryms help\` for help on how to import`
     );
   }
 }

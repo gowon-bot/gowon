@@ -1,7 +1,7 @@
-import { ConfirmationEmbed } from "../../../lib/views/embeds/ConfirmationEmbed";
-import { displayProgressBar } from "../../../lib/views/displays";
 import { Stopwatch } from "../../../helpers";
 import { LilacBaseCommand } from "../../../lib/Lilac/LilacBaseCommand";
+import { displayProgressBar } from "../../../lib/views/displays";
+import { ConfirmationEmbed } from "../../../lib/views/embeds/ConfirmationEmbed";
 
 export default class Index extends LilacBaseCommand {
   idSeed = "iz*one yujin";
@@ -53,6 +53,7 @@ export default class Index extends LilacBaseCommand {
 
     const subscription = observable.subscribe(async (progress) => {
       if (progress.page === progress.totalPages) {
+        await this.usersService.setAsIndexed(this.ctx, this.author.id);
         await this.discordService.edit(
           this.ctx,
           sentMessage,

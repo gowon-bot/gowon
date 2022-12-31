@@ -1,3 +1,4 @@
+import { Chance } from "chance";
 import {
   CommandInteraction,
   EmbedAuthorData,
@@ -7,59 +8,60 @@ import {
   User as DiscordUser,
 } from "discord.js";
 import md5 from "js-md5";
-import { UsersService } from "../../services/dbservices/UsersService";
+import config from "../../../config.json";
+import { AnalyticsCollector } from "../../analytics/AnalyticsCollector";
+import { User } from "../../database/entity/User";
 import {
   LogicError,
-  MentionedUserNotIndexedError,
-  LastFMReverseLookupError,
-  SenderUserNotIndexedError,
   UnknownError,
   UsernameNotRegisteredError,
-  SenderUserNotAuthenticatedError,
 } from "../../errors/errors";
-import { GowonService } from "../../services/GowonService";
-import { CommandGroup } from "./CommandGroup";
-import { TrackingService } from "../../services/TrackingService";
-import { User } from "../../database/entity/User";
-import { Validation, ValidationChecker } from "../validation/ValidationChecker";
-import { Emoji, EmojiRaw } from "../Emoji";
-import { errorEmbed, gowonEmbed } from "../views/embeds";
-import { isSessionKey } from "../../services/LastFM/LastFMAPIService";
+import {
+  LastFMReverseLookupError,
+  MentionedUserNotIndexedError,
+  SenderUserNotAuthenticatedError,
+  SenderUserNotIndexedError,
+} from "../../errors/user";
 import {
   buildRequestables,
   compareUsernames,
   GetMentionsOptions,
   GetMentionsReturn,
 } from "../../helpers/getMentions";
-import { MirrorballService } from "../../services/mirrorball/MirrorballService";
-import { Chance } from "chance";
-import {
-  MirrorballUser,
-  UserInput,
-} from "../../services/mirrorball/MirrorballTypes";
-import { MirrorballUsersService } from "../../services/mirrorball/services/MirrorballUsersService";
-import { CommandRegistry } from "./CommandRegistry";
-import { ServiceRegistry } from "../../services/ServicesRegistry";
-import { AnalyticsCollector } from "../../analytics/AnalyticsCollector";
-import { NowPlayingEmbedParsingService } from "../../services/NowPlayingEmbedParsingService";
-import { CommandAccess } from "./access/access";
-import { GowonContext } from "../context/Context";
+import { SimpleMap } from "../../helpers/types";
 import { ArgumentParsingService } from "../../services/arguments/ArgumentsParsingService";
-import {
-  ArgumentName,
-  ArgumentsMap,
-  ParsedArguments,
-} from "../context/arguments/types";
+import { UsersService } from "../../services/dbservices/UsersService";
 import {
   DiscordService,
   ReplyOptions,
   SendOptions,
 } from "../../services/Discord/DiscordService";
-import { SettingsService } from "../settings/SettingsService";
-import config from "../../../config.json";
-import { Responder } from "../../services/Responder";
-import { SimpleMap } from "../../helpers/types";
+import { GowonService } from "../../services/GowonService";
+import { isSessionKey } from "../../services/LastFM/LastFMAPIService";
 import { LilacUsersService } from "../../services/lilac/LilacUsersService";
+import { MirrorballService } from "../../services/mirrorball/MirrorballService";
+import {
+  MirrorballUser,
+  UserInput,
+} from "../../services/mirrorball/MirrorballTypes";
+import { MirrorballUsersService } from "../../services/mirrorball/services/MirrorballUsersService";
+import { NowPlayingEmbedParsingService } from "../../services/NowPlayingEmbedParsingService";
+import { Responder } from "../../services/Responder";
+import { ServiceRegistry } from "../../services/ServicesRegistry";
+import { TrackingService } from "../../services/TrackingService";
+import {
+  ArgumentName,
+  ArgumentsMap,
+  ParsedArguments,
+} from "../context/arguments/types";
+import { GowonContext } from "../context/Context";
+import { Emoji, EmojiRaw } from "../Emoji";
+import { SettingsService } from "../settings/SettingsService";
+import { Validation, ValidationChecker } from "../validation/ValidationChecker";
+import { errorEmbed, gowonEmbed } from "../views/embeds";
+import { CommandAccess } from "./access/access";
+import { CommandGroup } from "./CommandGroup";
+import { CommandRegistry } from "./CommandRegistry";
 
 export interface Variation {
   name: string;
@@ -70,7 +72,7 @@ export interface Variation {
 }
 
 export interface CommandRedirect<T extends ArgumentsMap> {
-  redirectTo: { new(): Command };
+  redirectTo: { new (): Command };
   when(args: ParsedArguments<T>): boolean;
 }
 
@@ -129,7 +131,7 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
   category: string | undefined = undefined;
   subcategory: string | undefined = undefined;
   usage: string | string[] = "";
-  customHelp?: { new(): Command } | undefined;
+  customHelp?: { new (): Command } | undefined;
   guildRequired?: boolean;
 
   /**
@@ -194,8 +196,8 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
     return this.payload.isInteraction()
       ? "/"
       : this.guild
-        ? this.gowonService.prefix(this.guild.id)
-        : config.defaultPrefix;
+      ? this.gowonService.prefix(this.guild.id)
+      : config.defaultPrefix;
   }
 
   ctx!: GowonContext<typeof this["customContext"]>;
@@ -219,7 +221,7 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
   gowonService = ServiceRegistry.get(GowonService);
   discordService = ServiceRegistry.get(DiscordService);
   settingsService = ServiceRegistry.get(SettingsService);
-  mirrorballService = ServiceRegistry.get(MirrorballService);
+  mirrorballService = ServiceRegistry.get(MirrorbalwlService);
   lilacUsersService = ServiceRegistry.get(LilacUsersService);
   analyticsCollector = ServiceRegistry.get(AnalyticsCollector);
   // Soon to be deprecated...
@@ -235,7 +237,9 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
    * Helper getters
    */
 
-  mutableContext<T extends Record<string, unknown>>(): GowonContext<{ mutable: T }> {
+  mutableContext<T extends Record<string, unknown>>(): GowonContext<{
+    mutable: T;
+  }> {
     return this.ctx as GowonContext<{ mutable: T }>;
   }
 
@@ -263,7 +267,7 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
 
   // This method may be implemented by some base or child commands
   // which allow them to run code before the run method is called
-  async beforeRun(): Promise<void> { }
+  async beforeRun(): Promise<void> {}
 
   async execute(ctx: GowonContext) {
     ctx.setCommand(this);
@@ -445,7 +449,7 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
         this.ctx,
         this.payload.author.id
       );
-    } catch { }
+    } catch {}
 
     if (lfmUsername) {
       mentionedUsername = lfmUsername;
@@ -499,7 +503,7 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
         fetchedUser = await this.gowonClient.client.users.fetch(
           mentionedDBUser?.discordID || userID || this.author.id
         );
-      } catch { }
+      } catch {}
 
       if (
         fetchedUser &&
@@ -566,7 +570,7 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
 
     const mirrorballUser =
       (mentionedMirrorballUser?.username?.toLowerCase() ===
-        mentionedUsername?.toLowerCase()
+      mentionedUsername?.toLowerCase()
         ? mentionedMirrorballUser
         : undefined) || (!mentionedUsername ? senderMirrorballUser : undefined);
 
@@ -667,8 +671,8 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
 
       let usersInPurgatory = purgatoryRole
         ? (await this.requiredGuild.members.fetch())
-          .filter((m) => m.roles.cache.has(purgatoryRole!))
-          .map((m) => m.user.id)
+            .filter((m) => m.roles.cache.has(purgatoryRole!))
+            .map((m) => m.user.id)
         : [];
 
       filter = (id: string) => {
@@ -769,7 +773,7 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
             this.author.id,
             this.requiredGuild.id
           );
-        } catch (e) { }
+        } catch (e) {}
       }
     }
   }
