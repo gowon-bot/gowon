@@ -1,27 +1,27 @@
-import { CrownsService } from "../../services/dbservices/CrownsService";
-import { calculatePercent } from "../../helpers/stats";
-import { CrownRankResponse } from "../../database/entity/Crown";
-import { log } from "mathjs";
-import { LogicError } from "../../errors/errors";
 import { differenceInDays } from "date-fns";
+import gql from "graphql-tag";
+import { log } from "mathjs";
+import { CrownRankResponse } from "../../database/entity/Crown";
+import { LogicError } from "../../errors/errors";
+import { ago } from "../../helpers";
 import { toInt } from "../../helpers/lastFM";
-import { LastFMService } from "../../services/LastFM/LastFMService";
+import { calculatePercent } from "../../helpers/stats";
+import { CrownsService } from "../../services/dbservices/CrownsService";
 import { UserInfo } from "../../services/LastFM/converters/InfoTypes";
 import {
   TopAlbums,
   TopArtists,
   TopTracks,
 } from "../../services/LastFM/converters/TopTypes";
-import { displayDate, displayNumber } from "../views/displays";
 import { Requestable } from "../../services/LastFM/LastFMAPIService";
+import { LastFMService } from "../../services/LastFM/LastFMService";
 import { LastFMPeriod } from "../../services/LastFM/LastFMService.types";
-import gql from "graphql-tag";
-import { MirrorballPageInfo } from "../../services/mirrorball/MirrorballTypes";
 import { MirrorballService } from "../../services/mirrorball/MirrorballService";
+import { MirrorballPageInfo } from "../../services/mirrorball/MirrorballTypes";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
-import { ago } from "../../helpers";
-import { TimeRange } from "../timeAndDate/TimeRange";
 import { GowonContext } from "../context/Context";
+import { TimeRange } from "../timeAndDate/TimeRange";
+import { displayDate, displayNumber } from "../views/displays";
 
 export class Stat {
   public asString: string;
@@ -369,7 +369,21 @@ export class OverviewStatsCalculator {
       });
     }
 
-    return tierCounts.filter((t) => t.count > 0).slice(0, take);
+    const sortedTiers = tierCounts.filter((t) => t.count > 0);
+
+    return sortedTiers
+      .reduce((acc, val) => {
+        if (acc.length && acc[acc.length - 1]) {
+          if (val.count === acc[acc.length - 1].count) {
+            return acc;
+          }
+        }
+
+        acc.push(val);
+
+        return acc;
+      }, [] as { count: number; tier: number }[])
+      .slice(0, take);
   }
 
   async playsOver(number: number): Promise<Stat> {
