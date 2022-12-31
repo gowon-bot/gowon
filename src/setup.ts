@@ -2,20 +2,20 @@ import config from "../config.json";
 
 import chalk from "chalk";
 import { Client } from "discord.js";
+import gql from "graphql-tag";
 import { GraphQLAPI } from "./api";
 import { DB } from "./database";
 import { Stopwatch, ucFirst } from "./helpers";
 import { CommandHandler } from "./lib/command/CommandHandler";
+import { CommandRegistry } from "./lib/command/CommandRegistry";
+import { InteractionHandler } from "./lib/command/interactions/InteractionHandler";
 import { GowonClient } from "./lib/GowonClient";
+import { mirrorballClient } from "./lib/indexing/client";
+import { SettingsService } from "./lib/settings/SettingsService";
 import { GuildEventService } from "./services/Discord/GuildEventService";
 import { RedisInteractionService } from "./services/redis/RedisInteractionService";
-import { mirrorballClient } from "./lib/indexing/client";
-import gql from "graphql-tag";
 import { ServiceRegistry } from "./services/ServicesRegistry";
-import { SettingsService } from "./lib/settings/SettingsService";
-import { InteractionHandler } from "./lib/command/interactions/InteractionHandler";
 import { TwitterService } from "./services/Twitter/TwitterService";
-import { CommandRegistry } from "./lib/command/CommandRegistry";
 
 export const client = new GowonClient(
   new Client({
@@ -40,6 +40,7 @@ export const client = new GowonClient(
         },
       ],
     },
+    allowedMentions: { parse: ["users", "roles"] },
   }),
   config.environment
 );
