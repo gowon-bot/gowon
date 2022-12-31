@@ -5,7 +5,7 @@ export default class Lightmode extends Command {
 
   subcategory = "fun";
   aliases = [
-    "mexhastoexplainhowlightmodeisanaccessibilityissueforthehundredthtimeinarowbecauseredditlikestohateonrandomthingsthatpeopleenjoyfornoreason",
+    "enyahastoexplainhowlightmodeisanaccessibilityissueforthehundredthtimeinarowbecauseredditlikestohateonrandomthingsthatpeopleenjoyfornoreason",
   ];
   description = "-_-";
   secretCommand = true;
