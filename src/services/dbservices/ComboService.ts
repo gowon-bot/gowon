@@ -8,7 +8,6 @@ import { GowonContext } from "../../lib/context/Context";
 import { SettingsService } from "../../lib/settings/SettingsService";
 import { displayNumber } from "../../lib/views/displays";
 import { BaseService } from "../BaseService";
-import { GowonService } from "../GowonService";
 import { ServiceRegistry } from "../ServicesRegistry";
 
 export class ComboService extends BaseService {
@@ -18,17 +17,13 @@ export class ComboService extends BaseService {
     return ServiceRegistry.get(SettingsService);
   }
 
-  private get gowonService() {
-    return ServiceRegistry.get(GowonService);
-  }
-
   public getThreshold(ctx: GowonContext): number {
     const thresholdString = this.settingsService.get("comboSaveThreshold", {
       userID: ctx.author.id,
     });
 
     if (!thresholdString) {
-      return this.gowonService.constants.defaultComboThreshold;
+      return ComboService.defaultComboThreshold;
     } else return toInt(thresholdString);
   }
 

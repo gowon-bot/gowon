@@ -7,7 +7,6 @@ import { CrownBan } from "../database/entity/CrownBan";
 import { userMentionAtStartRegex } from "../helpers/discord";
 import { GowonContext } from "../lib/context/Context";
 import { SettingsService } from "../lib/settings/SettingsService";
-import { ComboService } from "./dbservices/ComboService";
 import { ServiceRegistry } from "./ServicesRegistry";
 
 export const gowonServiceConstants = {
@@ -23,7 +22,6 @@ export const gowonServiceConstants = {
   ] as string[],
   unknownUserDisplay: "???",
   defaultLoadingTime: 5,
-  defaultComboThreshold: ComboService.defaultComboThreshold,
 } as const;
 
 export class GowonService {
