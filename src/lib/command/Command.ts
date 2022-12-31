@@ -221,7 +221,7 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
   gowonService = ServiceRegistry.get(GowonService);
   discordService = ServiceRegistry.get(DiscordService);
   settingsService = ServiceRegistry.get(SettingsService);
-  mirrorballService = ServiceRegistry.get(MirrorbalwlService);
+  mirrorballService = ServiceRegistry.get(MirrorballService);
   lilacUsersService = ServiceRegistry.get(LilacUsersService);
   analyticsCollector = ServiceRegistry.get(AnalyticsCollector);
   // Soon to be deprecated...

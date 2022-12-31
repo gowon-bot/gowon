@@ -1,21 +1,23 @@
-import { MirrorballError, LogicError } from "../../../../errors/errors";
-import { SimpleScrollingEmbed } from "../../../../lib/views/embeds/SimpleScrollingEmbed";
+import { LogicError, MirrorballError } from "../../../../errors/errors";
+import { bold, italic } from "../../../../helpers/discord";
 import { LinkGenerator } from "../../../../helpers/lastFM";
-import { MirrorballBaseCommand } from "../../../../lib/indexing/MirrorballCommands";
-import {
-  ArtistTopTracksConnector,
-  ArtistTopTracksParams,
-  ArtistTopTracksResponse,
-} from "./ArtistTopTracks.connector";
-import { displayNumber } from "../../../../lib/views/displays";
 import { standardMentions } from "../../../../lib/context/arguments/mentionTypes/mentions";
 import {
   prefabArguments,
   prefabFlags,
 } from "../../../../lib/context/arguments/prefabArguments";
-import { bold, italic } from "../../../../helpers/discord";
-import { Emoji } from "../../../../lib/Emoji";
 import { ArgumentsMap } from "../../../../lib/context/arguments/types";
+import { Emoji } from "../../../../lib/Emoji";
+import { MirrorballBaseCommand } from "../../../../lib/indexing/MirrorballCommands";
+import { displayNumber } from "../../../../lib/views/displays";
+import { SimpleScrollingEmbed } from "../../../../lib/views/embeds/SimpleScrollingEmbed";
+import { RedirectsService } from "../../../../services/dbservices/RedirectsService";
+import { ServiceRegistry } from "../../../../services/ServicesRegistry";
+import {
+  ArtistTopTracksConnector,
+  ArtistTopTracksParams,
+  ArtistTopTracksResponse,
+} from "./ArtistTopTracks.connector";
 
 const args = {
   ...prefabArguments.artist,
@@ -39,6 +41,8 @@ export default class ArtistTopTracks extends MirrorballBaseCommand<
   slashCommand = true;
 
   arguments = args;
+
+  redirectsService = ServiceRegistry.get(RedirectsService);
 
   async run() {
     const { username, senderRequestable, perspective, dbUser } =
@@ -71,7 +75,7 @@ export default class ArtistTopTracks extends MirrorballBaseCommand<
       throw new LogicError(
         `${perspective.plusToHave} no scrobbles of any songs from ${bold(
           artist.name
-        )}!`
+        )}!${await this.redirectHelp(this.parsedArguments.artist)}`
       );
     }
     const embed = this.newEmbed()
@@ -118,5 +122,22 @@ export default class ArtistTopTracks extends MirrorballBaseCommand<
     });
 
     simpleScrollingEmbed.send();
+  }
+
+  private async redirectHelp(artistName?: string): Promise<string> {
+    if (artistName) {
+      const redirect = await this.redirectsService.getRedirect(
+        this.ctx,
+        artistName
+      );
+
+      if (redirect?.to) {
+        return `\n\nLooking for ${bold(redirect.from)}? Try \`${
+          this.prefix
+        }at ${artistName} -nr\``;
+      }
+    }
+
+    return "";
   }
 }
