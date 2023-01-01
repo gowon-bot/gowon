@@ -1,3 +1,6 @@
+import { GowonContext } from "../lib/context/Context";
+import { LilacUsersService } from "../services/lilac/LilacUsersService";
+import { ServiceRegistry } from "../services/ServicesRegistry";
 import { ClientError } from "./errors";
 
 export class UserNotIndexedError extends ClientError {
@@ -8,12 +11,36 @@ export class UserNotIndexedError extends ClientError {
   }
 }
 
-export class SenderUserNotIndexedError extends ClientError {
+export async function throwSenderUserNotIndexed(
+  ctx: GowonContext
+): Promise<never> {
+  if (
+    await ServiceRegistry.get(LilacUsersService).isUserBeingIndexed(ctx, {
+      discordID: ctx.author.id,
+    })
+  ) {
+    throw new SenderUserStillBeingIndexedError();
+  } else {
+    throw new SenderUserNotIndexedError(ctx.command.prefix);
+  }
+}
+
+class SenderUserNotIndexedError extends ClientError {
   name = "SenderUserNotIndexedError";
 
   constructor(prefix?: string) {
     super(
       `You need to be indexed to run this command, run \`${prefix}index\` to index yourself`
+    );
+  }
+}
+
+class SenderUserStillBeingIndexedError extends ClientError {
+  name = "SenderUserNotIndexedError";
+
+  constructor() {
+    super(
+      `You need to be fully indexed to run this command, please wait until you are done!`
     );
   }
 }
