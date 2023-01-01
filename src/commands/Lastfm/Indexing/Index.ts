@@ -51,9 +51,11 @@ export default class Index extends LilacBaseCommand {
 
     const stopwatch = new Stopwatch().start();
 
+    await this.usersService.setIndexed(this.ctx, this.author.id, false);
+
     const subscription = observable.subscribe(async (progress) => {
       if (progress.page === progress.totalPages) {
-        await this.usersService.setAsIndexed(this.ctx, this.author.id);
+        await this.usersService.setIndexed(this.ctx, this.author.id);
         await this.discordService.edit(
           this.ctx,
           sentMessage,

@@ -1,21 +1,21 @@
-import { User } from "../../database/entity/User";
 import { User as DiscordUser } from "discord.js";
+import { ILike } from "typeorm";
+import { AnalyticsCollector } from "../../analytics/AnalyticsCollector";
+import { User } from "../../database/entity/User";
 import {
-  UsernameNotRegisteredError,
   AlreadyLoggedOutError,
   RecordNotFoundError,
+  UsernameNotRegisteredError,
 } from "../../errors/errors";
-import { BaseService } from "../BaseService";
-import { Perspective } from "../../lib/Perspective";
-import { ILike } from "typeorm";
-import { LastFMSession } from "../LastFM/converters/Misc";
-import { Requestable } from "../LastFM/LastFMAPIService";
-import { buildRequestable } from "../../helpers/getMentions";
 import { sqlLikeEscape } from "../../helpers/database";
-import { ServiceRegistry } from "../ServicesRegistry";
-import { AnalyticsCollector } from "../../analytics/AnalyticsCollector";
+import { buildRequestable } from "../../helpers/getMentions";
 import { CommandAccessRoleName } from "../../lib/command/access/roles";
 import { GowonContext } from "../../lib/context/Context";
+import { Perspective } from "../../lib/Perspective";
+import { BaseService } from "../BaseService";
+import { LastFMSession } from "../LastFM/converters/Misc";
+import { Requestable } from "../LastFM/LastFMAPIService";
+import { ServiceRegistry } from "../ServicesRegistry";
 
 export class UsersService extends BaseService {
   get analyticsCollector() {
@@ -184,12 +184,15 @@ export class UsersService extends BaseService {
     }
   }
 
-  async setAsIndexed(ctx: GowonContext, discordID: string) {
-    this.log(ctx, `Setting user with id ${discordID} as indexed`);
+  async setIndexed(ctx: GowonContext, discordID: string, value = true) {
+    this.log(
+      ctx,
+      `Setting user with id ${discordID} as ${!value ? "un" : ""}indexed`
+    );
 
     const user = await this.getUser(ctx, discordID);
 
-    user.isIndexed = true;
+    user.isIndexed = value;
 
     await user.save();
   }
