@@ -1,5 +1,6 @@
 import { gql, Observable } from "@apollo/client";
 import { GowonContext } from "../../lib/context/Context";
+import { LilacUser } from "./converters/user";
 import { userToUserInput } from "./helpers";
 import { LilacAPIService } from "./LilacAPIService";
 import {
@@ -7,7 +8,6 @@ import {
   LilacUserInput,
   RawLilacUser,
 } from "./LilacAPIService.types";
-import { LilacUser } from "./converters/user";
 
 export class LilacUsersService extends LilacAPIService {
   public async index(ctx: GowonContext, user: LilacUserInput): Promise<void> {
@@ -88,5 +88,28 @@ export class LilacUsersService extends LilacAPIService {
     filters: LilacUserInput
   ): Promise<LilacUser | undefined> {
     return (await this.fetchUsers(ctx, filters))[0];
+  }
+
+  public async isUserBeingIndexed(
+    ctx: GowonContext,
+    filters: LilacUserInput
+  ): Promise<boolean> {
+    const users = await this.query<
+      { users: RawLilacUser[] },
+      { filters?: LilacUserInput }
+    >(
+      ctx,
+      gql`
+        query fetchUsers($filters: UserInput) {
+          users(filters: $filters) {
+            isIndexing
+          }
+        }
+      `,
+      { filters },
+      false
+    );
+
+    return users.users[0]?.isIndexing ?? false;
   }
 }

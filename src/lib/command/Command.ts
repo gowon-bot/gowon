@@ -20,7 +20,7 @@ import {
   LastFMReverseLookupError,
   MentionedUserNotIndexedError,
   SenderUserNotAuthenticatedError,
-  SenderUserNotIndexedError,
+  throwSenderUserNotIndexed,
 } from "../../errors/user";
 import {
   buildRequestables,
@@ -564,7 +564,8 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
         if (!senderDBUser.lastFMSession) {
           throw new SenderUserNotAuthenticatedError(this.prefix);
         }
-        throw new SenderUserNotIndexedError(this.prefix);
+
+        await throwSenderUserNotIndexed(this.ctx);
       }
     }
 

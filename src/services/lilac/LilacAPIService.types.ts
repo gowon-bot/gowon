@@ -105,6 +105,7 @@ export interface RawLilacUser {
   discordId: string;
   privacy: LilacPrivacy;
   lastIndexed?: LilacDate;
+  isIndexing?: boolean;
 }
 
 export interface LilacWhoKnowsArtistRank {
