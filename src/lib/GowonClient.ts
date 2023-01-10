@@ -15,7 +15,8 @@ export type BotName =
   | "chuu"
   | "fmbot"
   | "fmbot develop"
-  | "who knows";
+  | "who knows"
+  | "miso";
 
 export class GowonClient {
   private get settingsService() {
@@ -54,7 +55,7 @@ export class GowonClient {
   isDeveloperOf(
     bot: Exclude<
       BotName,
-      "gowon" | "gowon development" | "fmbot develop" | "who knows"
+      "gowon" | "gowon development" | "fmbot develop" | "who knows" | "miso"
     >,
     userID?: string
   ) {

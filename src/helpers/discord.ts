@@ -73,3 +73,14 @@ export function mentionRole(roleID: string): string {
 export function userMentionAtStartRegex(userID: string): RegExp {
   return new RegExp(`^\\s*<@!?${userID}>`);
 }
+
+export function fishyRegex(botID: string): RegExp {
+  return new RegExp(
+    `^.{1,2}(fishy|fish|fihy|fisy|foshy|fisyh|fsihy|fin|fush)\\s+<@!?${botID}>.*`,
+    "i"
+  );
+}
+
+export function caughtFishiesRegex(): RegExp {
+  return /(\*\*)?\d+(\*\*)? fish(y|ies)(\*\*)?/;
+}

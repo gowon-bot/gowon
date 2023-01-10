@@ -63,6 +63,10 @@ export const Emoji = {
   betatester: "<:betatester:913203995663798322>",
   developer: "<:developer:913203995470888990>",
   "#swag": "<:swag:936102174394581032>",
+
+  // Fish
+  robofish: "<:robofish:1062224397588512902>",
+  flushedFish: "<:flushed_fish:1062224790317973724>",
 } satisfies Record<string, string>;
 
 export const EmojiRaw = Object.entries(Emoji).reduce(

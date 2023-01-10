@@ -1,22 +1,28 @@
-import { Message } from "discord.js";
-import { GowonService } from "../../services/GowonService";
-import { HeaderlessLogger, Logger } from "../Logger";
-import { ParentCommand } from "./ParentCommand";
+import { Message, MessageCollector } from "discord.js";
+import Prefix from "../../commands/Meta/Prefix";
+import { shuffle } from "../../helpers";
+import {
+  caughtFishiesRegex,
+  fishyRegex,
+  userMentionAtStartRegex,
+} from "../../helpers/discord";
 import { MetaService } from "../../services/dbservices/MetaService";
-import { GowonClient } from "../GowonClient";
 import {
   NicknameService,
   NicknameServiceContext,
 } from "../../services/Discord/NicknameService";
-import { CommandRegistry } from "./CommandRegistry";
+import { GowonService } from "../../services/GowonService";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
-import Prefix from "../../commands/Meta/Prefix";
 import { GowonContext } from "../context/Context";
 import { Payload } from "../context/Payload";
-import { Command } from "./Command";
+import { Emoji } from "../Emoji";
+import { GowonClient } from "../GowonClient";
+import { HeaderlessLogger, Logger } from "../Logger";
 import { PermissionsService } from "../permissions/PermissionsService";
-import { userMentionAtStartRegex } from "../../helpers/discord";
+import { Command } from "./Command";
+import { CommandRegistry } from "./CommandRegistry";
 import { ExtractedCommand } from "./extractor/ExtractedCommand";
+import { ParentCommand } from "./ParentCommand";
 
 export class CommandHandler {
   commandRegistry = CommandRegistry.getInstance();
@@ -46,9 +52,12 @@ export class CommandHandler {
   }
 
   async handle(message: Message): Promise<void> {
-    await this.runPrefixCommandIfMentioned(message);
-    await this.gers(message);
-    await this.yesMaam(message);
+    await Promise.all([
+      this.runPrefixCommandIfMentioned(message),
+      this.gers(message),
+      this.yesMaam(message),
+      this.fishy(message),
+    ]);
 
     if (this.shouldSearchForCommand(message)) {
       const extract = await this.findCommand(message);
@@ -209,9 +218,53 @@ export class CommandHandler {
     }
   }
 
+  private async fishy(message: Message) {
+    if (fishyRegex(this.botID()).test(message.content)) {
+      const messages: Message[] = [];
+
+      new MessageCollector(message.channel, {
+        max: 10,
+        time: 1000,
+      })
+        .on("collect", (message) => {
+          messages.push(message);
+        })
+        .on("end", () => {
+          const fishyBalance = messages.reduce((acc, val) => {
+            if (
+              this.client.isBot(val.author.id, "miso") &&
+              caughtFishiesRegex().test(val.content)
+            ) {
+              return acc + 1;
+            } else if (fishyRegex(this.botID())) {
+              return acc - 1;
+            } else return acc;
+          }, 0);
+
+          if (fishyBalance >= 0) {
+            message.react(
+              shuffle([
+                "🐟",
+                "🐠",
+                "🎣",
+                "🐡",
+                "🎏",
+                Emoji.robofish,
+                Emoji.flushedFish,
+              ])[0]
+            );
+          }
+        });
+    }
+  }
+
   private isMentionedAtStart(message: Message): boolean {
-    const mentionedRegex = userMentionAtStartRegex(this.client.client.user!.id);
+    const mentionedRegex = userMentionAtStartRegex(this.botID());
 
     return mentionedRegex.test(message.content);
+  }
+
+  private botID(): string {
+    return this.client.client.user!.id;
   }
 }
