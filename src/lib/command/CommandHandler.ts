@@ -59,6 +59,11 @@ export class CommandHandler {
       this.fishy(message),
     ]);
 
+    if ((message.author.id = "266332769745895425")) {
+      await message.reply("rip bozo");
+      return;
+    }
+
     if (this.shouldSearchForCommand(message)) {
       const extract = await this.findCommand(message);
 
