@@ -36,11 +36,3 @@ export abstract class BaseConnector<ResponseT, ParamsT>
     `,
   } satisfies Record<string, DocumentNode>;
 }
-
-export class EmptyConnector extends BaseConnector<never, any> {
-  query = gql`
-    query {
-      ping
-    }
-  `;
-}

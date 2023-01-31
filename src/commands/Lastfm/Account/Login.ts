@@ -3,19 +3,16 @@ import { User } from "../../../database/entity/User";
 import { sleep, Stopwatch } from "../../../helpers";
 import { ReactionCollectorFilter } from "../../../helpers/discord";
 import { LinkGenerator } from "../../../helpers/lastFM";
+import { Payload } from "../../../lib/context/Payload";
 import { EmojiRaw } from "../../../lib/Emoji";
-import { EmptyConnector } from "../../../lib/indexing/BaseConnector";
+import { LilacBaseCommand } from "../../../lib/Lilac/LilacBaseCommand";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { displayLink, displayProgressBar } from "../../../lib/views/displays";
 import { ConfirmationEmbed } from "../../../lib/views/embeds/ConfirmationEmbed";
 import { LastFMSession } from "../../../services/LastFM/converters/Misc";
-import { Payload } from "../../../lib/context/Payload";
-import { LilacBaseCommand } from "../../../lib/Lilac/LilacBaseCommand";
 
 export default class Login extends LilacBaseCommand {
   idSeed = "loona jinsoul";
-
-  connector = new EmptyConnector();
 
   aliases = ["fmlogin", "set", "fmset"];
 
