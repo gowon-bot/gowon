@@ -9,6 +9,10 @@ export abstract class LilacBaseCommand<
 > extends Command<T> {
   protected readonly progressBarWidth = 15;
 
+  // The old Mirrorball commands had a connector field
+  // that shouldn't be present on the new Lilac commands
+  protected connector?: never;
+
   lastFMService = ServiceRegistry.get(LastFMService);
   lastFMArguments = ServiceRegistry.get(LastFMArguments);
 

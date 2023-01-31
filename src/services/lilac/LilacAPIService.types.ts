@@ -76,6 +76,12 @@ export interface LilacArtistCountFilters {
   tags?: LilacTagInput[];
 }
 
+export interface LilacAlbumCountFilters {
+  album?: LilacAlbumInput;
+  users?: LilacUserInput[];
+  pagination?: LilacPaginationInput;
+}
+
 export interface LilacTagsFilters {
   inputs?: LilacTagInput[];
   artists?: ArtistInput[];
@@ -214,6 +220,11 @@ export interface LilacArtistsPage {
 export interface LilacArtistCountsPage {
   pagination: LilacPagination;
   artistCounts: LilacArtistCount[];
+}
+
+export interface LilacAlbumCountsPage {
+  pagination: LilacPagination;
+  albumCounts: LilacAlbumCount[];
 }
 
 export interface LilacTagsPage {

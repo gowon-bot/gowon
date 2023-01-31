@@ -1,21 +1,18 @@
-import { MirrorballError, LogicError } from "../../../../errors/errors";
-import { SimpleScrollingEmbed } from "../../../../lib/views/embeds/SimpleScrollingEmbed";
-import { LinkGenerator } from "../../../../helpers/lastFM";
-import { MirrorballBaseCommand } from "../../../../lib/indexing/MirrorballCommands";
-import {
-  ArtistTopAlbumsConnector,
-  ArtistTopAlbumsParams,
-  ArtistTopAlbumsResponse,
-} from "./ArtistTopAlbums.connector";
-import { displayNumber } from "../../../../lib/views/displays";
-import { standardMentions } from "../../../../lib/context/arguments/mentionTypes/mentions";
+import { LogicError } from "../../../errors/errors";
+import { bold, italic } from "../../../helpers/discord";
+import { LinkGenerator } from "../../../helpers/lastFM";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import {
   prefabArguments,
   prefabFlags,
-} from "../../../../lib/context/arguments/prefabArguments";
-import { bold, italic } from "../../../../helpers/discord";
-import { Emoji } from "../../../../lib/Emoji";
-import { ArgumentsMap } from "../../../../lib/context/arguments/types";
+} from "../../../lib/context/arguments/prefabArguments";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { Emoji } from "../../../lib/Emoji";
+import { LilacBaseCommand } from "../../../lib/Lilac/LilacBaseCommand";
+import { displayNumber } from "../../../lib/views/displays";
+import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingEmbed";
+import { LilacLibraryService } from "../../../services/lilac/LilacLibraryService";
+import { ServiceRegistry } from "../../../services/ServicesRegistry";
 
 const args = {
   ...prefabArguments.artist,
@@ -23,21 +20,18 @@ const args = {
   ...standardMentions,
 } satisfies ArgumentsMap;
 
-export default class ArtistTopAlbums extends MirrorballBaseCommand<
-  ArtistTopAlbumsResponse,
-  ArtistTopAlbumsParams,
-  typeof args
-> {
-  connector = new ArtistTopAlbumsConnector();
+export default class ArtistTopAlbums extends LilacBaseCommand<typeof args> {
   idSeed = "redsquare bomin";
 
   subcategory = "library";
   description = "Displays your top scrobbled albums from an artist";
-  aliases = ["atl", "iatl"];
+  aliases = ["atl", "aab"];
 
   slashCommand = true;
 
   arguments = args;
+
+  lilacLibraryService = ServiceRegistry.get(LilacLibraryService);
 
   async run() {
     const { username, dbUser, senderRequestable, perspective } =
@@ -53,18 +47,20 @@ export default class ArtistTopAlbums extends MirrorballBaseCommand<
       { redirect: !this.parsedArguments.noRedirect }
     );
 
-    const response = await this.query({
-      artist: { name: artistName },
-      user: { discordID: dbUser.discordID },
-    });
+    const response = await this.lilacLibraryService.artistTopAlbums(
+      this.ctx,
+      {
+        album: { artist: { name: artistName } },
+        users: [{ discordID: dbUser.discordID }],
+      },
+      {
+        inputs: [{ name: artistName }],
+        pagination: { perPage: 1, page: 1 },
+      }
+    );
 
-    const errors = this.parseErrors(response);
-
-    if (errors) {
-      throw new MirrorballError(errors.errors[0].message);
-    }
-
-    const { topAlbums, artist } = response.artistTopAlbums;
+    const artist = response.artists.artists[0];
+    const topAlbums = response.albumCounts.albumCounts;
 
     if (topAlbums.length < 1) {
       throw new LogicError(
