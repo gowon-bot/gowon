@@ -2,15 +2,14 @@ import { LogicError } from "../../../../errors/errors";
 import { NoRatingsError } from "../../../../errors/rateYourMusic";
 import { bold, italic, sanitizeForDiscord } from "../../../../helpers/discord";
 import { emDash } from "../../../../helpers/specialCharacters";
-import {
-  RatingsTasteCalculator,
-  TasteRating,
-} from "../../../../lib/calculators/RatingsTasteCalculator";
 import { Flag } from "../../../../lib/context/arguments/argumentTypes/Flag";
 import { standardMentions } from "../../../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../../../lib/context/arguments/types";
 import { displayNumber, displayRating } from "../../../../lib/views/displays";
 import { SimpleScrollingEmbed } from "../../../../lib/views/embeds/SimpleScrollingEmbed";
+import { ServiceRegistry } from "../../../../services/ServicesRegistry";
+import { TasteService } from "../../../../services/taste/TasteService";
+import { RatingPair } from "../../../../services/taste/TasteService.types";
 import {
   RatingsTasteConnector,
   RatingsTasteParams,
@@ -49,6 +48,8 @@ export class Taste extends RateYourMusicIndexingChildCommand<
 
   slashCommand = true;
 
+  tasteService = ServiceRegistry.get(TasteService);
+
   async run() {
     const { discordUser } = await this.getMentions({
       fetchDiscordUser: true,
@@ -71,15 +72,13 @@ export class Taste extends RateYourMusicIndexingChildCommand<
       throw new LogicError("The user you mentioned doesn't have any ratings!");
     }
 
-    const tasteCalculator = new RatingsTasteCalculator(
+    const tasteMatch = this.tasteService.ratingsTaste(
       ratings.sender.ratings,
       ratings.mentioned.ratings,
       this.parsedArguments.strict ? 0 : this.parsedArguments.lenient ? 2 : 1
     );
 
-    const taste = tasteCalculator.calculate();
-
-    if (!taste.ratings.length) {
+    if (!tasteMatch.ratings.length) {
       throw new LogicError(
         `You and ${discordUser?.tag} share no common ratings! (try using the --lenient flag to allow for larger differences)`
       );
@@ -90,9 +89,9 @@ export class Taste extends RateYourMusicIndexingChildCommand<
     )} and ${displayNumber(
       ratings.mentioned.pageInfo.recordCount,
       "rating"
-    )}, ${displayNumber(taste.ratings.length, "similar rating")} (${
-      taste.percent
-    }% match) found.`;
+    )}, ${displayNumber(tasteMatch.ratings.length, "similar rating")}\n_${
+      tasteMatch.percent
+    }% match found (${this.tasteService.compatibility(tasteMatch.percent)})_`;
 
     const embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor("Ratings taste comparison"))
@@ -101,7 +100,7 @@ export class Taste extends RateYourMusicIndexingChildCommand<
       );
 
     const scrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
-      items: taste.ratings,
+      items: tasteMatch.ratings,
       pageSize: 10,
       pageRenderer: (ratings) => {
         return italic(embedDescription) + "\n\n" + this.generateTable(ratings);
@@ -112,7 +111,7 @@ export class Taste extends RateYourMusicIndexingChildCommand<
     scrollingEmbed.send();
   }
 
-  private generateTable(ratings: TasteRating[]): string {
+  private generateTable(ratings: RatingPair[]): string {
     return ratings
       .map(
         (r) =>

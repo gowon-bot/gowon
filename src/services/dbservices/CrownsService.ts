@@ -1,3 +1,8 @@
+import { User as DiscordUser } from "discord.js";
+import { FindManyOptions, ILike, In, MoreThan } from "typeorm";
+import { CacheScopedKey } from "../../database/cache/ShallowCache";
+import { ArtistCrownBan } from "../../database/entity/ArtistCrownBan";
+import { ArtistRedirect } from "../../database/entity/ArtistRedirect";
 import {
   Crown,
   CrownRank,
@@ -5,6 +10,8 @@ import {
   GuildAtResponse,
   InvalidCrownState,
 } from "../../database/entity/Crown";
+import { CrownBan } from "../../database/entity/CrownBan";
+import { Setting } from "../../database/entity/Setting";
 import { User } from "../../database/entity/User";
 import {
   AlreadyBannedError,
@@ -14,24 +21,17 @@ import {
   NotBannedError,
   RecordNotFoundError,
 } from "../../errors/errors";
-import { User as DiscordUser } from "discord.js";
-import { BaseService } from "../BaseService";
-import { FindManyOptions, ILike, In } from "typeorm";
-import { Setting } from "../../database/entity/Setting";
-import { MoreThan } from "typeorm";
-import { CrownBan } from "../../database/entity/CrownBan";
-import { CacheScopedKey } from "../../database/cache/ShallowCache";
-import { RedirectsService } from "./RedirectsService";
-import { ArtistRedirect } from "../../database/entity/ArtistRedirect";
-import { ArtistCrownBan } from "../../database/entity/ArtistCrownBan";
-import { toInt } from "../../helpers/lastFM";
-import { ServiceRegistry } from "../ServicesRegistry";
-import { GowonService } from "../GowonService";
-import { CrownsHistoryService } from "./CrownsHistoryService";
-import { SettingsService } from "../../lib/settings/SettingsService";
-import { sqlLikeEscape } from "../../helpers/database";
 import { asyncMap } from "../../helpers";
+import { sqlLikeEscape } from "../../helpers/database";
+import { toInt } from "../../helpers/lastFM";
+import { constants } from "../../lib/constants";
 import { GowonContext } from "../../lib/context/Context";
+import { SettingsService } from "../../lib/settings/SettingsService";
+import { BaseService } from "../BaseService";
+import { GowonService } from "../GowonService";
+import { ServiceRegistry } from "../ServicesRegistry";
+import { CrownsHistoryService } from "./CrownsHistoryService";
+import { RedirectsService } from "./RedirectsService";
 
 export enum CrownState {
   tie = "Tie",
@@ -85,7 +85,7 @@ export class CrownsService extends BaseService {
   }
 
   get threshold() {
-    return this.gowonService.constants.crownThreshold;
+    return constants.crownThreshold;
   }
 
   async checkCrown(

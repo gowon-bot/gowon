@@ -1,23 +1,23 @@
 import { MessageEmbed } from "discord.js";
-import {
-  Taste as TasteType,
-  TasteArtist,
-} from "../../../lib/calculators/TasteCalculator";
-import { isNumeric, StringPadder } from "../../../helpers";
-import { LastFMBaseCommand } from "../LastFMBaseCommand";
-import { LastFMPeriod } from "../../../services/LastFM/LastFMService.types";
-import { Paginator } from "../../../lib/paginators/Paginator";
 import { LogicError } from "../../../errors/errors";
-import { DurationParser } from "../../../lib/context/arguments/parsers/DurationParser";
+import { isNumeric, StringPadder } from "../../../helpers";
 import { toInt } from "../../../helpers/lastFM";
-import { displayNumber } from "../../../lib/views/displays";
-import { TimeRange } from "../../../lib/timeAndDate/TimeRange";
-import { NamedRangeParser } from "../../../lib/context/arguments/parsers/NamedRangeParser";
-import { LastFMMention } from "../../../lib/context/arguments/mentionTypes/LastFMMention";
-import { DiscordIDMention } from "../../../lib/context/arguments/mentionTypes/DiscordIDMention";
-import { UserStringArgument } from "../../../lib/context/arguments/argumentTypes/UserStringArgument";
 import { DiscordUserArgument } from "../../../lib/context/arguments/argumentTypes/discord/DiscordUserArgument";
+import { UserStringArgument } from "../../../lib/context/arguments/argumentTypes/UserStringArgument";
+import { DiscordIDMention } from "../../../lib/context/arguments/mentionTypes/DiscordIDMention";
+import { LastFMMention } from "../../../lib/context/arguments/mentionTypes/LastFMMention";
+import { DurationParser } from "../../../lib/context/arguments/parsers/DurationParser";
+import { NamedRangeParser } from "../../../lib/context/arguments/parsers/NamedRangeParser";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { Paginator } from "../../../lib/paginators/Paginator";
+import { TimeRange } from "../../../lib/timeAndDate/TimeRange";
+import { displayNumber } from "../../../lib/views/displays";
+import { LastFMPeriod } from "../../../services/LastFM/LastFMService.types";
+import {
+  ArtistPlaysPair,
+  ArtistTaste,
+} from "../../../services/taste/TasteService.types";
+import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 export const tasteArgs = {
   user: new DiscordUserArgument({
@@ -50,7 +50,7 @@ export const tasteArgs = {
     mention: new DiscordIDMention(),
     description: "The other user id to compare (defaults to you)",
   }),
-} satisfies ArgumentsMap
+} satisfies ArgumentsMap;
 
 export abstract class TasteCommand<
   T extends typeof tasteArgs = typeof tasteArgs
@@ -175,7 +175,7 @@ export abstract class TasteCommand<
   protected generateTable(
     userOneUsername: string,
     userTwoUsername: string,
-    artists: TasteArtist[]
+    artists: ArtistPlaysPair[]
   ): string {
     const padder = new StringPadder((val) => `${val}`);
     const maxArtists = 20;
@@ -183,14 +183,14 @@ export abstract class TasteCommand<
     const paddedPlays1 = padder.generatedPaddedList(
       [
         userOneUsername,
-        ...artists.slice(0, maxArtists).map((a) => a.user1plays),
+        ...artists.slice(0, maxArtists).map((a) => a.user1Plays),
       ],
       true
     );
 
     const paddedPlays2 = padder.generatedPaddedList([
       userTwoUsername,
-      ...artists.slice(0, maxArtists).map((a) => a.user2plays),
+      ...artists.slice(0, maxArtists).map((a) => a.user2Plays),
     ]);
 
     const longestArtist = padder.maxLength(
@@ -208,11 +208,12 @@ export abstract class TasteCommand<
       .slice(0, maxArtists)
       .map(
         (a, idx) =>
-          `${paddedPlays1[idx + 1]} ${toInt(paddedPlays1[idx + 1].trim()) ===
+          `${paddedPlays1[idx + 1]} ${
+            toInt(paddedPlays1[idx + 1].trim()) ===
             toInt(paddedPlays2[idx + 1].trim())
-            ? "•"
-            : toInt(paddedPlays1[idx + 1].trim()) >
-              toInt(paddedPlays2[idx + 1].trim())
+              ? "•"
+              : toInt(paddedPlays1[idx + 1].trim()) >
+                toInt(paddedPlays2[idx + 1].trim())
               ? ">"
               : "<"
           } ${paddedPlays2[idx + 1]}   ${a.name}`
@@ -221,12 +222,12 @@ export abstract class TasteCommand<
     return `\`\`\`\n${[...headers, ...table].join("\n")}\n\`\`\``;
   }
 
-  protected generateEmbed(taste: TasteType, embed: MessageEmbed) {
+  protected generateEmbed(taste: ArtistTaste, embed: MessageEmbed) {
     embed = embed.addFields(
       taste.artists.slice(0, 12).map((ta) => ({
         name: ta.name,
-        value: `${displayNumber(ta.user1plays, "play")} - ${displayNumber(
-          ta.user2plays,
+        value: `${displayNumber(ta.user1Plays, "play")} - ${displayNumber(
+          ta.user2Plays,
           "play"
         )}`,
         inline: true,

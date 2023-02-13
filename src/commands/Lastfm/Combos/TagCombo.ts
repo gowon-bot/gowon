@@ -1,13 +1,14 @@
-import { LastFMBaseCommand } from "../LastFMBaseCommand";
-import { Paginator } from "../../../lib/paginators/Paginator";
-import {
-  TagComboCalculator,
-  TagCombo as TagComboType,
-} from "../../../lib/calculators/TagComboCalculator";
-import { displayNumber } from "../../../lib/views/displays";
-import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { bold } from "../../../helpers/discord";
+import {
+  TagCombo as TagComboType,
+  TagComboCalculator,
+} from "../../../lib/calculators/TagComboCalculator";
+import { constants } from "../../../lib/constants";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { Paginator } from "../../../lib/paginators/Paginator";
+import { displayNumber } from "../../../lib/views/displays";
+import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 const args = {
   ...standardMentions,
@@ -18,21 +19,21 @@ export default class TagCombo extends LastFMBaseCommand<typeof args> {
 
   aliases = ["tagstreak", "tac", "tagscombo", "combotags"];
   description = `Shows your current streak\n Max combo: ${displayNumber(
-    this.gowonService.constants.hardPageLimit * 1000
+    constants.hardPageLimit * 1000
   )}`;
   subcategory = "library stats";
   usage = [""];
 
   arguments = args;
 
-  showLoadingAfter = this.gowonService.constants.defaultLoadingTime;
+  showLoadingAfter = constants.defaultLoadingTime;
 
   async run() {
     const { requestable, username } = await this.getMentions();
 
     const paginator = new Paginator(
       this.lastFMService.recentTracks.bind(this.lastFMService),
-      this.gowonService.constants.hardPageLimit,
+      constants.hardPageLimit,
       { username: requestable, limit: 1000 },
       this.ctx
     );
@@ -66,11 +67,12 @@ export default class TagCombo extends LastFMBaseCommand<typeof args> {
   }
 
   private displayCombo(combo: TagComboType, tag: string): string {
-    return `${bold(tag)}: ${displayNumber(combo.comboCollection[tag].plays)}${combo.comboCollection[tag].hitMax
+    return `${bold(tag)}: ${displayNumber(combo.comboCollection[tag].plays)}${
+      combo.comboCollection[tag].hitMax
         ? "+"
         : combo.comboCollection[tag].nowplaying
-          ? "➚"
-          : ""
-      } in a row`;
+        ? "➚"
+        : ""
+    } in a row`;
   }
 }

@@ -1,8 +1,8 @@
 import { Client, Guild, User as DiscordUser } from "discord.js";
 import { User } from "../database/entity/User";
 import { flatDeep } from "../helpers";
-import { GowonService } from "../services/GowonService";
 import { ServiceRegistry } from "../services/ServicesRegistry";
+import { constants } from "./constants";
 import { isUnicodeEmoji } from "./context/arguments/parsers/EmojiParser";
 import { GowonContext } from "./context/Context";
 import { SettingsService } from "./settings/SettingsService";
@@ -92,7 +92,7 @@ export class GowonClient {
       }
     }
 
-    return ServiceRegistry.get(GowonService).constants.unknownUserDisplay;
+    return constants.unknownUserDisplay;
   }
 
   displayEmoji(resolvable: string): string {

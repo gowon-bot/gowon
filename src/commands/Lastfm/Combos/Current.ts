@@ -6,6 +6,7 @@ import {
   Combo as ComboType,
   ComboCalculator,
 } from "../../../lib/calculators/ComboCalculator";
+import { constants } from "../../../lib/constants";
 import { StringArrayArgument } from "../../../lib/context/arguments/argumentTypes/StringArrayArgument";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
@@ -39,7 +40,7 @@ export class Current extends ComboChildCommand<typeof args> {
   idSeed = "wooah wooyeon";
 
   description = `Shows your current streak\n Max combo: ${displayNumber(
-    this.gowonService.constants.hardPageLimit * 1000
+    constants.hardPageLimit * 1000
   )}`;
   subcategory = "library stats";
   usage = [
@@ -70,7 +71,7 @@ export class Current extends ComboChildCommand<typeof args> {
 
     const paginator = new Paginator(
       this.lastFMService.recentTracks.bind(this.lastFMService),
-      this.gowonService.constants.hardPageLimit,
+      constants.hardPageLimit,
       { username: requestable, limit: 1000 },
       this.ctx
     );

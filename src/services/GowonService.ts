@@ -7,24 +7,12 @@ import { CrownBan } from "../database/entity/CrownBan";
 import { userMentionAtStartRegex } from "../helpers/discord";
 import { GowonContext } from "../lib/context/Context";
 import { SettingsService } from "../lib/settings/SettingsService";
+import { BaseService } from "./BaseService";
 import { ServiceRegistry } from "./ServicesRegistry";
 
-export const gowonServiceConstants = {
-  hardPageLimit: 100,
-  crownThreshold: 30,
-  dateParsers: [
-    "yy-MM-dd",
-    "yyyy-MM-dd",
-    "yy/MM/dd",
-    "yyyy/MM/dd",
-    "yy.MM.dd",
-    "yyyy.MM.dd",
-  ] as string[],
-  unknownUserDisplay: "???",
-  defaultLoadingTime: 5,
-} as const;
+export const gowonServiceConstants = {} as const;
 
-export class GowonService {
+export class GowonService extends BaseService {
   shallowCache = new ShallowCache();
 
   constants = gowonServiceConstants;

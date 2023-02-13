@@ -49,6 +49,7 @@ import { NowPlayingEmbedParsingService } from "../../services/NowPlayingEmbedPar
 import { Responder } from "../../services/Responder";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { TrackingService } from "../../services/TrackingService";
+import { constants } from "../constants";
 import {
   ArgumentName,
   ArgumentsMap,
@@ -652,7 +653,7 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
       let member = await this.requiredGuild.members.fetch(id);
       return member.user.username;
     } catch {
-      return this.gowonService.constants.unknownUserDisplay;
+      return constants.unknownUserDisplay;
     }
   }
 

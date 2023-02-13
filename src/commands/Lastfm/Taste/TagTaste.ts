@@ -1,17 +1,17 @@
-import { TasteCalculator } from "../../../lib/calculators/TasteCalculator";
+import { LogicError } from "../../../errors/errors";
 import { bold, code, sanitizeForDiscord } from "../../../helpers/discord";
 import { Variation } from "../../../lib/command/Command";
+import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
+import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
-import { LogicError } from "../../../errors/errors";
-import { TasteCommand, tasteArgs } from "./TasteCommand";
-import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingEmbed";
 import { displayNumber } from "../../../lib/views/displays";
-import { ServiceRegistry } from "../../../services/ServicesRegistry";
-import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
-import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
+import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingEmbed";
 import { LilacArtistsService } from "../../../services/lilac/LilacArtistsService";
-import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { ServiceRegistry } from "../../../services/ServicesRegistry";
+import { TasteService } from "../../../services/taste/TasteService";
+import { tasteArgs, TasteCommand } from "./TasteCommand";
 
 const args = {
   ...tasteArgs,
@@ -35,7 +35,7 @@ const args = {
     index: 1,
     description: "The other Last.fm username to compare (defaults to you)",
   }),
-} satisfies ArgumentsMap
+} satisfies ArgumentsMap;
 
 export default class TagTaste extends TasteCommand<typeof args> {
   idSeed = "iz*one yuri";
@@ -64,6 +64,7 @@ export default class TagTaste extends TasteCommand<typeof args> {
   };
 
   lilacArtistsService = ServiceRegistry.get(LilacArtistsService);
+  tasteService = ServiceRegistry.get(TasteService);
 
   async run() {
     const artistAmount = this.parsedArguments.artistAmount,
@@ -93,15 +94,13 @@ export default class TagTaste extends TasteCommand<typeof args> {
       [tag]
     );
 
-    const tasteCalculator = new TasteCalculator(
+    const tasteMatch = this.tasteService.artistTaste(
       senderArtistsFiltered,
       mentionedArtistsFiltered,
       artistAmount
     );
 
-    const taste = tasteCalculator.calculate();
-
-    if (taste.artists.length === 0)
+    if (tasteMatch.artists.length === 0)
       throw new LogicError(
         `${code(userOneUsername)} and ${code(
           userTwoUsername
@@ -111,8 +110,12 @@ export default class TagTaste extends TasteCommand<typeof args> {
     const embedDescription = `Comparing top ${displayNumber(
       senderArtists.artists.slice(0, artistAmount).length,
       "artist"
-    )}, ${displayNumber(taste.artists.length, `overlapping ${tag} artist`)} (${taste.percent
-      }% match) found.`;
+    )}\n_${displayNumber(
+      tasteMatch.artists.length,
+      `overlapping ${tag} artist`
+    )} ${tasteMatch.percent}% match found (${this.tasteService.compatibility(
+      tasteMatch.percent
+    )})_`;
 
     const embed = this.newEmbed()
       .setTitle(
@@ -123,11 +126,11 @@ export default class TagTaste extends TasteCommand<typeof args> {
       .setDescription(embedDescription);
 
     if (this.variationWasUsed("embed")) {
-      this.generateEmbed(taste, embed);
+      this.generateEmbed(tasteMatch, embed);
       await this.send(embed);
     } else {
       const scrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
-        items: taste.artists,
+        items: tasteMatch.artists,
         pageSize: 20,
         pageRenderer: (items) => {
           return (

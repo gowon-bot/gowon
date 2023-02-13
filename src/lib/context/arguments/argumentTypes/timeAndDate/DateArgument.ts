@@ -1,10 +1,11 @@
+import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, Message } from "discord.js";
 import { GowonService } from "../../../../../services/GowonService";
 import { ServiceRegistry } from "../../../../../services/ServicesRegistry";
+import { constants } from "../../../../constants";
+import { parseDate } from "../../../../timeAndDate/helpers/parse";
 import { GowonContext } from "../../../Context";
 import { BaseArgument, BaseArgumentOptions } from "../BaseArgument";
-import { parseDate } from "../../../../timeAndDate/helpers/parse";
-import { SlashCommandBuilder } from "@discordjs/builders";
 
 export interface DateArgumentOptions extends BaseArgumentOptions<Date> {
   parsers: string[];
@@ -19,8 +20,8 @@ export class DateArgument<
 
   constructor(options?: OptionsT) {
     super({
-      parsers: ServiceRegistry.get(GowonService).constants.dateParsers,
-      ...(options ?? {})
+      parsers: constants.dateParsers,
+      ...(options ?? {}),
     } as OptionsT);
   }
 
