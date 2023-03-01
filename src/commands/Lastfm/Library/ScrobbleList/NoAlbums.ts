@@ -1,5 +1,5 @@
 import { bold, italic } from "../../../../helpers/discord";
-import { LinkGenerator } from "../../../../helpers/lastFM";
+import { LastfmLinks } from "../../../../helpers/lastfm/LastfmLinks";
 import { convertLilacDate } from "../../../../helpers/lilac";
 import { standardMentions } from "../../../../lib/context/arguments/mentionTypes/mentions";
 import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";
@@ -96,7 +96,7 @@ export default class NoAlbums extends LilacBaseCommand<typeof args> {
 
       return `${displayLink(
         displayDateTime(scrobbledAt),
-        LinkGenerator.libraryWithDateRange(
+        LastfmLinks.libraryWithDateRange(
           username,
           this.timeAndDateService.applyUserTimeZoneFromContext(
             this.ctx,

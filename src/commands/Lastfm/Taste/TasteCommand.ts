@@ -1,7 +1,7 @@
 import { MessageEmbed } from "discord.js";
 import { LogicError } from "../../../errors/errors";
 import { isNumeric, StringPadder } from "../../../helpers";
-import { toInt } from "../../../helpers/lastFM";
+import { toInt } from "../../../helpers/lastfm/";
 import { DiscordUserArgument } from "../../../lib/context/arguments/argumentTypes/discord/DiscordUserArgument";
 import { UserStringArgument } from "../../../lib/context/arguments/argumentTypes/UserStringArgument";
 import { DiscordIDMention } from "../../../lib/context/arguments/mentionTypes/DiscordIDMention";

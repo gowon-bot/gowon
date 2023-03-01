@@ -1,13 +1,14 @@
-import { LastFMBaseCommand } from "../LastFMBaseCommand";
+import { LogicError } from "../../../errors/errors";
+import { bold, italic, sanitizeForDiscord } from "../../../helpers/discord";
+import { LastfmLinks } from "../../../helpers/lastfm/LastfmLinks";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
+import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import {
   displayNumber,
   displayNumberedList,
 } from "../../../lib/views/displays";
-import { LogicError } from "../../../errors/errors";
-import { bold, italic, sanitizeForDiscord } from "../../../helpers/discord";
-import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
-import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
-import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 const args = {
   ...prefabArguments.track,
@@ -27,7 +28,7 @@ export default class TrackRank extends LastFMBaseCommand<typeof args> {
   arguments = args;
 
   async run() {
-    const { requestable, senderRequestable, perspective } =
+    const { requestable, senderRequestable, perspective, username } =
       await this.getMentions({
         senderRequired:
           !this.parsedArguments.artist || !this.parsedArguments.track,
@@ -52,7 +53,8 @@ export default class TrackRank extends LastFMBaseCommand<typeof args> {
 
     if (rank === -1) {
       throw new LogicError(
-        `That track wasn't found in ${perspective.possessive
+        `That track wasn't found in ${
+          perspective.possessive
         } top ${displayNumber(topTracks.tracks.length, "track")}`
       );
     }
@@ -68,6 +70,7 @@ export default class TrackRank extends LastFMBaseCommand<typeof args> {
       .setTitle(
         `Tracks around ${topTracks.tracks[rank].name} in ${perspective.possessive} library`
       )
+      .setURL(LastfmLinks.libraryAroundTrack(username, rank))
       .setDescription(
         displayNumberedList(
           topTracks.tracks.slice(start, stop).map((val, idx) => {

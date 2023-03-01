@@ -1,6 +1,6 @@
 import { LogicError } from "../../../../errors/errors";
 import { bold, italic, sanitizeForDiscord } from "../../../../helpers/discord";
-import { LinkGenerator } from "../../../../helpers/lastFM";
+import { LastfmLinks } from "../../../../helpers/lastfm/LastfmLinks";
 import { StringArgument } from "../../../../lib/context/arguments/argumentTypes/StringArgument";
 import { StringArrayArgument } from "../../../../lib/context/arguments/argumentTypes/StringArrayArgument";
 import { ArgumentsMap } from "../../../../lib/context/arguments/types";
@@ -86,7 +86,7 @@ export class Preview extends NowPlayingConfigChildCommand<typeof args> {
       parsedOptions
     );
     const nowPlaying = mockRequirements.recentTracks.first() as RecentTrack;
-    const links = LinkGenerator.generateTrackLinksForEmbed(nowPlaying);
+    const links = LastfmLinks.generateTrackLinksForEmbed(nowPlaying);
 
     const albumCover = await this.albumCoverService.get(
       this.ctx,
@@ -99,16 +99,17 @@ export class Preview extends NowPlayingConfigChildCommand<typeof args> {
     let embed = this.newEmbed()
       .setDescription(
         `by ${bold(links.artist, false)}` +
-        (nowPlaying.album ? ` from ${italic(links.album, false)}` : "")
+          (nowPlaying.album ? ` from ${italic(links.album, false)}` : "")
       )
       .setTitle(sanitizeForDiscord(nowPlaying.name))
-      .setURL(LinkGenerator.trackPage(nowPlaying.artist, nowPlaying.name))
+      .setURL(LastfmLinks.trackPage(nowPlaying.artist, nowPlaying.name))
       .setThumbnail(albumCover || "")
       .setAuthor(
         this.generateEmbedAuthor(
-          `Previewing ${presetConfig
-            ? this.parsedArguments.options[0]
-            : parsedOptions.length === 1
+          `Previewing ${
+            presetConfig
+              ? this.parsedArguments.options[0]
+              : parsedOptions.length === 1
               ? parsedOptions[0]
               : displayNumber(parsedOptions.length, "option")
           }`

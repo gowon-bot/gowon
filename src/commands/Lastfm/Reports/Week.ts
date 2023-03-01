@@ -1,7 +1,7 @@
 import { sub } from "date-fns";
 import { LogicError } from "../../../errors/errors";
 import { italic } from "../../../helpers/discord";
-import { toInt } from "../../../helpers/lastFM";
+import { toInt } from "../../../helpers/lastfm/";
 import { bullet, extraWideSpace } from "../../../helpers/specialCharacters";
 import { ReportCalculator } from "../../../lib/calculators/ReportCalculator";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
@@ -15,7 +15,7 @@ import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 const args = {
   ...standardMentions,
-} satisfies ArgumentsMap
+} satisfies ArgumentsMap;
 
 export default class Week extends LastFMBaseCommand<typeof args> {
   idSeed = "cignature belle";
@@ -92,35 +92,35 @@ export default class Week extends LastFMBaseCommand<typeof args> {
       .setAuthor(this.generateEmbedAuthor())
       .setTitle(`${perspective.upper.possessive} week`).setDescription(`
       _${displayDate(sub(new Date(), { weeks: 1 }))} - ${displayDate(
-        new Date()
-      )}_
+      new Date()
+    )}_
     _${displayNumber(firstPage.tracks.length, "scrobble")}, ${displayNumber(
-        week.total.artists,
-        "artist"
-      )}, ${displayNumber(week.total.albums, "album")}, ${displayNumber(
-        week.total.tracks,
-        "track"
-      )}_
+      week.total.artists,
+      "artist"
+    )}, ${displayNumber(week.total.albums, "album")}, ${displayNumber(
+      week.total.tracks,
+      "track"
+    )}_
 
 ${italic(tagConsolidator.consolidateAsStrings(10).join(", "))}
   
 **Top Tracks**:
 ${extraWideSpace}${bullet} ${topTracks
-          .slice(0, 3)
-          .map((t) => `${t} (${displayNumber(week.top.tracks[t], "play")})`)
-          .join(`\n​${extraWideSpace}${bullet} `)}
+      .slice(0, 3)
+      .map((t) => `${t} (${displayNumber(week.top.tracks[t], "play")})`)
+      .join(`\n​${extraWideSpace}${bullet} `)}
 
 **Top Albums**:
 ${extraWideSpace}${bullet} ${topAlbums
-          .slice(0, 3)
-          .map((t) => `${t} (${displayNumber(week.top.albums[t], "play")})`)
-          .join(`\n​${extraWideSpace}${bullet} `)}
+      .slice(0, 3)
+      .map((t) => `${t} (${displayNumber(week.top.albums[t], "play")})`)
+      .join(`\n​${extraWideSpace}${bullet} `)}
 
 **Top Artists**:
 ${extraWideSpace}${bullet} ${topArtists
-          .slice(0, 3)
-          .map((t) => `${t} (${displayNumber(week.top.artists[t], "play")})`)
-          .join(`\n​${extraWideSpace}${bullet} `)}
+      .slice(0, 3)
+      .map((t) => `${t} (${displayNumber(week.top.artists[t], "play")})`)
+      .join(`\n​${extraWideSpace}${bullet} `)}
     `);
 
     await this.send(embed);

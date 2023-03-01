@@ -1,22 +1,23 @@
-import { LastFMBaseCommand } from "../LastFMBaseCommand";
+import { LogicError } from "../../../errors/errors";
+import { asyncMap } from "../../../helpers";
+import { bold } from "../../../helpers/discord";
+import { LastfmLinks } from "../../../helpers/lastfm/LastfmLinks";
 import { RedirectsCache } from "../../../lib/caches/RedirectsCache";
-import { RedirectsService } from "../../../services/dbservices/RedirectsService";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
+import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import {
   displayNumber,
   displayNumberedList,
 } from "../../../lib/views/displays";
-import { LogicError } from "../../../errors/errors";
+import { RedirectsService } from "../../../services/dbservices/RedirectsService";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
-import { asyncMap } from "../../../helpers";
-import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
-import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
-import { bold } from "../../../helpers/discord";
-import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 const args = {
   ...prefabArguments.artist,
   ...standardMentions,
-} satisfies ArgumentsMap
+} satisfies ArgumentsMap;
 
 export default class ArtistRank extends LastFMBaseCommand<typeof args> {
   idSeed = "hot issue dain";
@@ -33,7 +34,7 @@ export default class ArtistRank extends LastFMBaseCommand<typeof args> {
   async run() {
     const redirectsCache = new RedirectsCache(this.ctx);
 
-    const { requestable, senderRequestable, perspective } =
+    const { requestable, senderRequestable, perspective, username } =
       await this.getMentions({
         senderRequired: !this.parsedArguments.artist,
       });
@@ -63,7 +64,8 @@ export default class ArtistRank extends LastFMBaseCommand<typeof args> {
 
     if (rank === -1) {
       throw new LogicError(
-        `That artist wasn't found in ${perspective.possessive
+        `That artist wasn't found in ${
+          perspective.possessive
         } top ${displayNumber(topArtists.artists.length, "artist")}`
       );
     }
@@ -79,6 +81,7 @@ export default class ArtistRank extends LastFMBaseCommand<typeof args> {
       .setTitle(
         `Artists around ${topArtists.artists[rank].name} in ${perspective.possessive} library`
       )
+      .setURL(LastfmLinks.libraryAroundArtist(username, rank))
       .setDescription(
         displayNumberedList(
           topArtists.artists.slice(start, stop).map((val, idx) => {

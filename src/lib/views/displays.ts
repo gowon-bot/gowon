@@ -5,7 +5,7 @@ import {
   italic,
   sanitizeForDiscord,
 } from "../../helpers/discord";
-import { LinkGenerator } from "../../helpers/lastFM";
+import { LastfmLinks } from "../../helpers/lastfm/LastfmLinks";
 import { Emoji } from "../Emoji";
 
 export function displayNumber(
@@ -128,7 +128,7 @@ export function displayArtistLink(
   artist: string,
   stylize: boolean = false
 ): string {
-  const link = displayLink(artist, LinkGenerator.artistPage(artist));
+  const link = displayLink(artist, LastfmLinks.artistPage(artist));
 
   return stylize ? bold(link, false) : link;
 }
@@ -138,7 +138,7 @@ export function displayAlbumLink(
   album: string,
   stylize: boolean = false
 ): string {
-  const link = displayLink(album, LinkGenerator.albumPage(artist, album));
+  const link = displayLink(album, LastfmLinks.albumPage(artist, album));
 
   return stylize ? italic(link, false) : link;
 }
@@ -148,7 +148,7 @@ export function displayTrackLink(
   track: string,
   stylize: boolean = false
 ): string {
-  const link = displayLink(track, LinkGenerator.trackPage(artist, track));
+  const link = displayLink(track, LastfmLinks.trackPage(artist, track));
 
   return stylize ? italic(link, false) : link;
 }

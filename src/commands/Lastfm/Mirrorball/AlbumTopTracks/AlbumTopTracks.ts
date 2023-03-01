@@ -1,18 +1,18 @@
-import { MirrorballError, LogicError } from "../../../../errors/errors";
-import { SimpleScrollingEmbed } from "../../../../lib/views/embeds/SimpleScrollingEmbed";
-import { LinkGenerator } from "../../../../helpers/lastFM";
+import { LogicError, MirrorballError } from "../../../../errors/errors";
+import { bold, italic } from "../../../../helpers/discord";
+import { LastfmLinks } from "../../../../helpers/lastfm/LastfmLinks";
+import { standardMentions } from "../../../../lib/context/arguments/mentionTypes/mentions";
+import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";
+import { ArgumentsMap } from "../../../../lib/context/arguments/types";
+import { Emoji } from "../../../../lib/Emoji";
 import { MirrorballBaseCommand } from "../../../../lib/indexing/MirrorballCommands";
+import { displayNumber } from "../../../../lib/views/displays";
+import { SimpleScrollingEmbed } from "../../../../lib/views/embeds/SimpleScrollingEmbed";
 import {
   AlbumTopTracksConnector,
   AlbumTopTracksParams,
   AlbumTopTracksResponse,
 } from "./AlbumTopTracks.connector";
-import { displayNumber } from "../../../../lib/views/displays";
-import { standardMentions } from "../../../../lib/context/arguments/mentionTypes/mentions";
-import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";
-import { bold, italic } from "../../../../helpers/discord";
-import { Emoji } from "../../../../lib/Emoji";
-import { ArgumentsMap } from "../../../../lib/context/arguments/types";
 
 const args = {
   ...prefabArguments.album,
@@ -82,7 +82,7 @@ export default class AlbumTopTracks extends MirrorballBaseCommand<
         )} by ${bold(album.artist.name)} for ${username}`
       )
       .setURL(
-        LinkGenerator.libraryAlbumPage(username, album.artist.name, album.name)
+        LastfmLinks.libraryAlbumPage(username, album.artist.name, album.name)
       );
 
     const simpleScrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {

@@ -1,6 +1,6 @@
 import { MirrorballError } from "../../../../../errors/errors";
 import { bold, italic } from "../../../../../helpers/discord";
-import { LinkGenerator } from "../../../../../helpers/lastFM";
+import { LastfmLinks } from "../../../../../helpers/lastfm/LastfmLinks";
 import { convertMirrorballDate } from "../../../../../helpers/mirrorball";
 import { Variation } from "../../../../../lib/command/Command";
 import { VARIATIONS } from "../../../../../lib/command/variations";
@@ -109,7 +109,7 @@ export default class WhoFirstArtist extends WhoKnowsBaseCommand<
         string: `\`${rows.length > 9 ? " " : ""}•\`. ${bold(
           displayLink(
             this.ctx.authorMember.nickname || this.author.username,
-            LinkGenerator.libraryArtistPage(senderUsername, artist.name)
+            LastfmLinks.libraryArtistPage(senderUsername, artist.name)
           )
         )} - \`(undated)\``,
       },
@@ -119,7 +119,7 @@ export default class WhoFirstArtist extends WhoKnowsBaseCommand<
           rows.map(
             (wk) =>
               `${this.displayUser(wk.user, {
-                customProfileLink: LinkGenerator.libraryArtistPage(
+                customProfileLink: LastfmLinks.libraryArtistPage(
                   wk.user.username,
                   artist.name
                 ),

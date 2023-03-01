@@ -1,7 +1,7 @@
 import { format } from "date-fns";
-import { displayLink } from "../lib/views/displays";
-import { RecentTrack } from "../services/LastFM/converters/RecentTracks";
-import { cleanURL } from "./discord";
+import { displayLink } from "../../lib/views/displays";
+import { RecentTrack } from "../../services/LastFM/converters/RecentTracks";
+import { cleanURL } from "../discord";
 
 export interface TrackLinks {
   artist: string;
@@ -9,10 +9,10 @@ export interface TrackLinks {
   track: string;
 }
 
-export abstract class LinkGenerator {
-  static baseURL = "https://www.last.fm/";
+export abstract class LastfmLinks {
+  private static baseURL = "https://www.last.fm/";
 
-  static encode(string: string): string {
+  private static encode(string: string): string {
     return cleanURL(
       encodeURIComponent(string).replace(/%2B/g, "%252B").replace(/%20/g, "+")
     );
@@ -159,6 +159,31 @@ export abstract class LinkGenerator {
     }
   }
 
+  // https://www.last.fm/user/flushed_emoji/library/artists?date_preset=ALL&page=4
+  static libraryAroundArtist(username: string, position: number): string {
+    return this.libraryAround(username, position, "artist");
+  }
+
+  // https://www.last.fm/user/flushed_emoji/library/albums?date_preset=ALL&page=4
+  static libraryAroundAlbum(username: string, position: number): string {
+    return this.libraryAround(username, position, "album");
+  }
+
+  // https://www.last.fm/user/flushed_emoji/library/tracks?date_preset=ALL&page=4
+  static libraryAroundTrack(username: string, position: number): string {
+    return this.libraryAround(username, position, "track");
+  }
+
+  private static libraryAround(
+    username: string,
+    position: number,
+    entity: "artist" | "album" | "track"
+  ): string {
+    const page = Math.ceil(position / 50);
+
+    return `https://www.last.fm/user/${username}/library/${entity}s?date_preset=ALL&page=${page}`;
+  }
+
   static generateTrackLinks(track: RecentTrack): TrackLinks {
     return {
       artist: this.artistPage(track.artist),
@@ -176,48 +201,4 @@ export abstract class LinkGenerator {
       track: displayLink(track.name, links.track),
     };
   }
-}
-
-export interface ParsedTrack {
-  artist: string;
-  album: string;
-  name: string;
-  nowPlaying: boolean;
-}
-
-export class LinkConsolidator {
-  constructor(private links: { link?: string; text: string }[]) {}
-
-  hasLinks(): boolean {
-    return !!this.links.filter((l) => !!l).length;
-  }
-
-  consolidate(): string {
-    return this.links
-      .filter((l) => !!l.link)
-      .map((l) => displayLink(l.text, l.link!))
-      .join(" ‧ ");
-  }
-
-  static spotify(url?: string) {
-    return {
-      link: url,
-      text: "Spotify",
-    };
-  }
-
-  static lastfm(url?: string) {
-    return {
-      link: url,
-      text: "Last.fm",
-    };
-  }
-}
-
-export function toInt(number: any): number {
-  if (typeof number === "number") {
-    return number;
-  }
-
-  return parseInt(number, 10);
 }

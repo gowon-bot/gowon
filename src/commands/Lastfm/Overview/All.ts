@@ -1,9 +1,9 @@
-import { OverviewChildCommand } from "./OverviewChildCommand";
 import { getOrdinal } from "../../../helpers";
-import { Emoji } from "../../../lib/Emoji";
-import { toInt } from "../../../helpers/lastFM";
-import { displayNumber } from "../../../lib/views/displays";
 import { bold, italic } from "../../../helpers/discord";
+import { toInt } from "../../../helpers/lastfm/";
+import { Emoji } from "../../../lib/Emoji";
+import { displayNumber } from "../../../lib/views/displays";
+import { OverviewChildCommand } from "./OverviewChildCommand";
 
 export class All extends OverviewChildCommand {
   idSeed = "fx victoria";

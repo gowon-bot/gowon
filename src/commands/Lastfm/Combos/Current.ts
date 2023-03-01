@@ -1,7 +1,7 @@
 import { formatDistance } from "date-fns";
 import { ucFirst } from "../../../helpers";
 import { bold } from "../../../helpers/discord";
-import { LinkGenerator } from "../../../helpers/lastFM";
+import { LastfmLinks } from "../../../helpers/lastfm/LastfmLinks";
 import {
   Combo as ComboType,
   ComboCalculator,
@@ -129,7 +129,7 @@ export class Current extends ComboChildCommand<typeof args> {
         ...this.generateEmbedAuthor(
           `${perspective.upper.possessive.replace(/`/g, "")} ongoing streaks`
         ),
-        url: LinkGenerator.userPage(username),
+        url: LastfmLinks.userPage(username),
       })
       .setDescription(
         combo.hasAnyConsecutivePlays()

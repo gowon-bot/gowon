@@ -1,18 +1,19 @@
-import { LastFMBaseCommand } from "../LastFMBaseCommand";
+import { LogicError } from "../../../errors/errors";
+import { bold, italic, sanitizeForDiscord } from "../../../helpers/discord";
+import { LastfmLinks } from "../../../helpers/lastfm/LastfmLinks";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
+import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import {
   displayNumber,
   displayNumberedList,
 } from "../../../lib/views/displays";
-import { LogicError } from "../../../errors/errors";
-import { bold, italic, sanitizeForDiscord } from "../../../helpers/discord";
-import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
-import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
-import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 const args = {
   ...prefabArguments.album,
   ...standardMentions,
-} satisfies ArgumentsMap
+} satisfies ArgumentsMap;
 
 export default class AlbumRank extends LastFMBaseCommand<typeof args> {
   idSeed = "wonder girls sunmi";
@@ -28,7 +29,7 @@ export default class AlbumRank extends LastFMBaseCommand<typeof args> {
   slashCommand = true;
 
   async run() {
-    const { requestable, senderRequestable, perspective } =
+    const { requestable, senderRequestable, perspective, username } =
       await this.getMentions({
         senderRequired:
           !this.parsedArguments.artist || !this.parsedArguments.album,
@@ -53,7 +54,8 @@ export default class AlbumRank extends LastFMBaseCommand<typeof args> {
 
     if (rank === -1) {
       throw new LogicError(
-        `That album wasn't found in ${perspective.possessive
+        `That album wasn't found in ${
+          perspective.possessive
         } top ${displayNumber(topAlbums.albums.length, "album")}`
       );
     }
@@ -69,6 +71,7 @@ export default class AlbumRank extends LastFMBaseCommand<typeof args> {
       .setTitle(
         `Albums around ${topAlbums.albums[rank].name} in ${perspective.possessive} library`
       )
+      .setURL(LastfmLinks.libraryAroundAlbum(username, rank))
       .setDescription(
         displayNumberedList(
           topAlbums.albums.slice(start, stop).map((val, idx) => {

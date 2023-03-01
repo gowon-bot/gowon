@@ -1,5 +1,6 @@
 import { bold } from "../../helpers/discord";
-import { LinkGenerator, toInt } from "../../helpers/lastFM";
+import { toInt } from "../../helpers/lastfm/";
+import { LastfmLinks } from "../../helpers/lastfm/LastfmLinks";
 import { GowonContext } from "../../lib/context/Context";
 import { Emoji } from "../../lib/Emoji";
 import { displayLink } from "../../lib/views/displays";
@@ -76,7 +77,7 @@ export class WhoKnowsService extends BaseService<WhoKnowsServiceContext> {
     let nickname = this.nicknameService.cacheGetNickname(ctx, user.discordID);
 
     const profileLink =
-      options?.customProfileLink || LinkGenerator.userPage(user.username);
+      options?.customProfileLink || LastfmLinks.userPage(user.username);
 
     if (nickname) {
       if (nickname === UnknownUserDisplay) {

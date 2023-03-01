@@ -1,9 +1,7 @@
-import { User as DBUser } from "../../database/entity/User";
 import { User } from "discord.js";
-import { Resources } from "./DatasourceService";
-import { RequirementMap } from "./RequirementMap";
 import { Crown } from "../../database/entity/Crown";
-import { ParsedTrack } from "../../helpers/lastFM";
+import { User as DBUser } from "../../database/entity/User";
+import { ParsedTrack } from "../../helpers/lastfm/";
 import {
   ArtistInfo,
   TrackInfo,
@@ -11,6 +9,8 @@ import {
 import { RecentTracks } from "../../services/LastFM/converters/RecentTracks";
 import { RawTag } from "../../services/LastFM/LastFMService.types";
 import { Payload } from "../context/Payload";
+import { Resources } from "./DatasourceService";
+import { RequirementMap } from "./RequirementMap";
 
 function createTags(tags: string[]): RawTag[] {
   return tags.map((t) => ({

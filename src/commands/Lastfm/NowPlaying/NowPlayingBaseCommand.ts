@@ -3,7 +3,7 @@ import config from "../../../../config.json";
 import { User as DBUser } from "../../../database/entity/User";
 import { shuffle } from "../../../helpers";
 import { bold, italic, sanitizeForDiscord } from "../../../helpers/discord";
-import { LinkGenerator } from "../../../helpers/lastFM";
+import { LastfmLinks } from "../../../helpers/lastfm/LastfmLinks";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
@@ -115,7 +115,7 @@ export abstract class NowPlayingBaseCommand<
     nowPlaying: RecentTrack,
     username: string
   ): Promise<MessageEmbed> {
-    const links = LinkGenerator.generateTrackLinksForEmbed(nowPlaying);
+    const links = LastfmLinks.generateTrackLinksForEmbed(nowPlaying);
 
     const albumCover = await this.albumCoverService.get(
       this.ctx,
@@ -137,14 +137,14 @@ export abstract class NowPlayingBaseCommand<
           this.payload.member.avatarURL() ||
           this.payload.author.avatarURL() ||
           undefined,
-        url: LinkGenerator.userPage(username),
+        url: LastfmLinks.userPage(username),
       })
       .setDescription(
         `by ${bold(links.artist, false)}` +
           (nowPlaying.album ? ` from ${italic(links.album, false)}` : "")
       )
       .setTitle(sanitizeForDiscord(nowPlaying.name))
-      .setURL(LinkGenerator.trackPage(nowPlaying.artist, nowPlaying.name))
+      .setURL(LastfmLinks.trackPage(nowPlaying.artist, nowPlaying.name))
       .setThumbnail(albumCover || this.albumCoverService.defaultCover);
   }
 

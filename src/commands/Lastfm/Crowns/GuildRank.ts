@@ -1,11 +1,11 @@
-import { CrownsChildCommand } from "./CrownsChildCommand";
-import { getOrdinal } from "../../../helpers";
 import { LogicError } from "../../../errors/errors";
-import { toInt } from "../../../helpers/lastFM";
-import { displayNumber } from "../../../lib/views/displays";
-import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
+import { getOrdinal } from "../../../helpers";
 import { bold } from "../../../helpers/discord";
+import { toInt } from "../../../helpers/lastfm/";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { displayNumber } from "../../../lib/views/displays";
+import { CrownsChildCommand } from "./CrownsChildCommand";
 
 const args = {
   ...standardMentions,
@@ -40,8 +40,10 @@ export class GuildUserRank extends CrownsChildCommand<typeof args> {
       .setDescription(
         `${perspective.upper.possessive} ${bold(
           displayNumber(rank.count, "crown")
-        )} ${toInt(rank.count) === 1 ? "ranks" : "rank"} ${perspective.objectPronoun
-        } ${bold(getOrdinal(toInt(rank.rank)))} in ${this.guild?.name
+        )} ${toInt(rank.count) === 1 ? "ranks" : "rank"} ${
+          perspective.objectPronoun
+        } ${bold(getOrdinal(toInt(rank.rank)))} in ${
+          this.guild?.name
         } out of ${displayNumber(rank.totalUsers, "total user")}`
       );
 

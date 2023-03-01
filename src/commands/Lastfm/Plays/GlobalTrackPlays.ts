@@ -1,10 +1,10 @@
-import { LastFMBaseCommand } from "../LastFMBaseCommand";
+import { toInt } from "../../../helpers/lastfm/";
 import { calculatePercent } from "../../../helpers/stats";
-import { toInt } from "../../../helpers/lastFM";
-import { displayNumber } from "../../../lib/views/displays";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { displayNumber } from "../../../lib/views/displays";
+import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 const args = {
   ...standardMentions,
@@ -46,13 +46,15 @@ export default class GlobalTrackPlays extends LastFMBaseCommand<typeof args> {
     );
 
     await this.send(
-      `Last.fm has scrobbled **${trackDetails.name}** by ${trackDetails.artist.name
-      } ${displayNumber(trackDetails.globalPlaycount, "time")}${toInt(trackDetails.userPlaycount) > 0
-        ? `. ${perspective.upper.plusToHave} ${displayNumber(
-          trackDetails.userPlaycount,
-          "scrobble"
-        )}${parseFloat(percentage) > 0 ? ` (${percentage}%)` : ""}`
-        : ""
+      `Last.fm has scrobbled **${trackDetails.name}** by ${
+        trackDetails.artist.name
+      } ${displayNumber(trackDetails.globalPlaycount, "time")}${
+        toInt(trackDetails.userPlaycount) > 0
+          ? `. ${perspective.upper.plusToHave} ${displayNumber(
+              trackDetails.userPlaycount,
+              "scrobble"
+            )}${parseFloat(percentage) > 0 ? ` (${percentage}%)` : ""}`
+          : ""
       }`
     );
   }

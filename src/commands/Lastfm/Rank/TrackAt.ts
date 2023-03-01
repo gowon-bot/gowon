@@ -1,12 +1,12 @@
-import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { LogicError } from "../../../errors/errors";
+import { bold, italic } from "../../../helpers/discord";
+import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { displayNumber } from "../../../lib/views/displays";
-import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
-import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
-import { bold, italic } from "../../../helpers/discord";
-import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 const args = {
   rank: new NumberArgument({
@@ -14,7 +14,7 @@ const args = {
     required: true,
   }),
   ...standardMentions,
-} satisfies ArgumentsMap
+} satisfies ArgumentsMap;
 
 export default class TrackAt extends LastFMBaseCommand<typeof args> {
   idSeed = "cignature sunn";
@@ -33,17 +33,17 @@ export default class TrackAt extends LastFMBaseCommand<typeof args> {
   };
 
   async run() {
-    let rank = this.parsedArguments.rank;
+    const rank = this.parsedArguments.rank;
 
-    let { requestable, perspective } = await this.getMentions();
+    const { requestable, perspective } = await this.getMentions();
 
-    let topTracks = await this.lastFMService.topTracks(this.ctx, {
+    const topTracks = await this.lastFMService.topTracks(this.ctx, {
       username: requestable,
       limit: 1,
       page: rank,
     });
 
-    let track = topTracks.tracks[0];
+    const track = topTracks.tracks[0];
 
     if (!track)
       throw new LogicError(
@@ -51,7 +51,8 @@ export default class TrackAt extends LastFMBaseCommand<typeof args> {
       );
 
     await this.oldReply(
-      `${bold(track.name)} by ${italic(track.artist.name)} is ranked at **${track.rank
+      `${bold(track.name)} by ${italic(track.artist.name)} is ranked at **${
+        track.rank
       }** in ${perspective.possessive} top tracks with ${bold(
         displayNumber(track.userPlaycount, "play")
       )}`

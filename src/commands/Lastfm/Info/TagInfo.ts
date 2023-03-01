@@ -1,22 +1,22 @@
-import { InfoCommand } from "./InfoCommand";
-import { displayLink, displayNumber } from "../../../lib/views/displays";
-import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
-import { WordBlacklistService } from "../../../services/WordBlacklistService";
+import { EmbedField } from "discord.js";
 import { TagNotAllowedError } from "../../../errors/errors";
-import { ServiceRegistry } from "../../../services/ServicesRegistry";
-import { LilacTagsService } from "../../../services/lilac/LilacTagsService";
-import { LineConsolidator } from "../../../lib/LineConsolidator";
 import { bold } from "../../../helpers/discord";
+import { LastfmLinks } from "../../../helpers/lastfm/LastfmLinks";
 import {
   bullet,
   emDash,
   extraWideSpace,
 } from "../../../helpers/specialCharacters";
-import { LinkGenerator } from "../../../helpers/lastFM";
-import { LilacArtistsService } from "../../../services/lilac/LilacArtistsService";
-import { Emoji } from "../../../lib/Emoji";
-import { EmbedField } from "discord.js";
+import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { Emoji } from "../../../lib/Emoji";
+import { LineConsolidator } from "../../../lib/LineConsolidator";
+import { displayLink, displayNumber } from "../../../lib/views/displays";
+import { LilacArtistsService } from "../../../services/lilac/LilacArtistsService";
+import { LilacTagsService } from "../../../services/lilac/LilacTagsService";
+import { ServiceRegistry } from "../../../services/ServicesRegistry";
+import { WordBlacklistService } from "../../../services/WordBlacklistService";
+import { InfoCommand } from "./InfoCommand";
 
 const args = {
   tag: new StringArgument({
@@ -82,7 +82,7 @@ export default class TagInfo extends InfoCommand<typeof args> {
               (t) =>
                 `${extraWideSpace}- ${displayLink(
                   t.name.toLowerCase(),
-                  LinkGenerator.tagPage(t.name)
+                  LastfmLinks.tagPage(t.name)
                 )}`
             )
             .join("\n")}`,
@@ -114,10 +114,11 @@ export default class TagInfo extends InfoCommand<typeof args> {
         },
         {
           title: "Tagged artists",
-          value: `${taggedArtistCount >= 1000
+          value: `${
+            taggedArtistCount >= 1000
               ? `${displayNumber(taggedArtistCount)}+`
               : displayNumber(taggedArtistCount)
-            }`,
+          }`,
         },
         {
           shouldDisplay: similarTags.length > 0,
@@ -125,7 +126,7 @@ export default class TagInfo extends InfoCommand<typeof args> {
             title: "Similar tags",
             value: similarTags
               .map((t) =>
-                displayLink(t.name.toLowerCase(), LinkGenerator.tagPage(t.name))
+                displayLink(t.name.toLowerCase(), LastfmLinks.tagPage(t.name))
               )
               .join(", "),
           },
@@ -149,7 +150,8 @@ export default class TagInfo extends InfoCommand<typeof args> {
               userTopArtists.artistCounts
                 .map(
                   (ac) =>
-                    `${extraWideSpace}${bullet} ${ac.artist.name
+                    `${extraWideSpace}${bullet} ${
+                      ac.artist.name
                     } ${emDash} _${displayNumber(ac.playcount, "play")}_`
                 )
                 .join("\n"),

@@ -1,6 +1,6 @@
 import { LogicError } from "../../../errors/errors";
 import { bold, code } from "../../../helpers/discord";
-import { LinkGenerator } from "../../../helpers/lastFM";
+import { LastfmLinks } from "../../../helpers/lastfm/LastfmLinks";
 import { Variation } from "../../../lib/command/Command";
 import { Paginator } from "../../../lib/paginators/Paginator";
 import { displayLink, displayNumber } from "../../../lib/views/displays";
@@ -82,7 +82,7 @@ export default class SearchArtist extends SearchCommand {
                 a.name.replaceAll(new RegExp(`${keywords}`, "gi"), (match) =>
                   bold(match)
                 ),
-                LinkGenerator.libraryArtistPage(username, a.name),
+                LastfmLinks.libraryArtistPage(username, a.name),
                 false
               ) +
               ` (${displayNumber(a.userPlaycount, "play")})`

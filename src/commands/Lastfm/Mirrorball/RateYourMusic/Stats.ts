@@ -1,6 +1,6 @@
 import { mean } from "mathjs";
 import { LogicError, UnknownMirrorballError } from "../../../../errors/errors";
-import { toInt } from "../../../../helpers/lastFM";
+import { toInt } from "../../../../helpers/lastfm/";
 import { extraWideSpace } from "../../../../helpers/specialCharacters";
 import { standardMentions } from "../../../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../../../lib/context/arguments/types";
@@ -73,12 +73,12 @@ export class Stats extends RateYourMusicIndexingChildCommand<
         )}_
         
 ${Object.entries(ratingsCounts)
-          .sort((a, b) => toInt(b) - toInt(a))
-          .map(
-            ([rating, count]) =>
-              `${displayRating(toInt(rating))}${extraWideSpace}${displayNumber(count)}`
-          )
-          .join("\n")}`
+  .sort((a, b) => toInt(b) - toInt(a))
+  .map(
+    ([rating, count]) =>
+      `${displayRating(toInt(rating))}${extraWideSpace}${displayNumber(count)}`
+  )
+  .join("\n")}`
       );
 
     await this.send(embed);

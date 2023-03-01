@@ -1,6 +1,6 @@
 import { fromUnixTime } from "date-fns";
 import { TweetV2SingleStreamResult } from "twitter-api-v2";
-import { toInt } from "../../../helpers/lastFM";
+import { toInt } from "../../../helpers/lastfm/";
 import { BaseSpotifyConverter } from "../../Spotify/converters/BaseConverter";
 
 export class StreamedTweet extends BaseSpotifyConverter {

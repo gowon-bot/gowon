@@ -2,7 +2,7 @@ import { Message, MessageEmbed } from "discord.js";
 import { User } from "../../../database/entity/User";
 import { sleep, Stopwatch } from "../../../helpers";
 import { ReactionCollectorFilter } from "../../../helpers/discord";
-import { LinkGenerator } from "../../../helpers/lastFM";
+import { LastfmLinks } from "../../../helpers/lastfm/LastfmLinks";
 import { Payload } from "../../../lib/context/Payload";
 import { EmojiRaw } from "../../../lib/Emoji";
 import { LilacBaseCommand } from "../../../lib/Lilac/LilacBaseCommand";
@@ -27,7 +27,7 @@ export default class Login extends LilacBaseCommand {
   async run() {
     const { token } = await this.lastFMService.getToken(this.ctx);
 
-    const url = LinkGenerator.authURL(this.lastFMService.apikey, token);
+    const url = LastfmLinks.authURL(this.lastFMService.apikey, token);
 
     await this.send(
       this.newEmbed()

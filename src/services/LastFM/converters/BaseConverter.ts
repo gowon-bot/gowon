@@ -1,7 +1,6 @@
 import { fromUnixTime } from "date-fns";
-import { toInt } from "../../../helpers/lastFM";
-import { RawTag } from "../LastFMService.types";
-import { RawImage } from "../LastFMService.types";
+import { toInt } from "../../../helpers/lastfm/";
+import { RawImage, RawTag } from "../LastFMService.types";
 
 export class ImageCollection {
   constructor(private images: RawImage[]) {}

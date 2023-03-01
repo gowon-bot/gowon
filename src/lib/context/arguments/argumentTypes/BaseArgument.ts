@@ -1,16 +1,16 @@
+import chalk from "chalk";
 import { Interaction, Message } from "discord.js";
-import { toInt } from "../../../../helpers/lastFM";
-import { Slice } from "../types";
-import { GowonContext } from "../../Context";
-import { ServiceRegistry } from "../../../../services/ServicesRegistry";
+import { toInt } from "../../../../helpers/lastfm/";
 import { GowonService } from "../../../../services/GowonService";
+import { ServiceRegistry } from "../../../../services/ServicesRegistry";
+import { ValidationError } from "../../../validation/validators/BaseValidator";
+import { GowonContext } from "../../Context";
+import { Slice } from "../types";
 import {
   SlashCommandBuilder,
   SlashCommandBuilderReturn,
   SlashCommandOption,
 } from "./SlashCommandTypes";
-import { ValidationError } from "../../../validation/validators/BaseValidator";
-import chalk from "chalk";
 
 type GetElementFromIndexOptions = {
   join?: boolean;
@@ -21,10 +21,10 @@ type GetElementFromIndexOptions = {
 
 export interface BaseArgumentOptions<ReturnT = any> {
   required:
-  | boolean
-  | {
-    customMessage: string;
-  };
+    | boolean
+    | {
+        customMessage: string;
+      };
   description: string;
   slashCommandOption: boolean;
   default?: ReturnT | (() => ReturnT);
@@ -98,8 +98,9 @@ export abstract class BaseArgument<
       throw new ValidationError(
         isCustomMessage(this.options.required)
           ? this.options.required.customMessage
-          : `Please enter a${startsWithVowel(argumentName) ? "n" : ""
-          } ${argumentName}!`
+          : `Please enter a${
+              startsWithVowel(argumentName) ? "n" : ""
+            } ${argumentName}!`
       );
     }
   }
