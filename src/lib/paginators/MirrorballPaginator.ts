@@ -1,4 +1,5 @@
 import { SimpleMap } from "../../helpers/types";
+import { Params } from "../../services/LastFM/LastFMService.types";
 import { GowonContext } from "../context/Context";
 import { Paginator } from "./Paginator";
 
@@ -26,7 +27,7 @@ function onPage<P extends SimpleMap, R>(
   };
 }
 
-export class MirrorballPaginator<P, R> extends Paginator<P, R> {
+export class MirrorballPaginator<P extends Params, R> extends Paginator<P, R> {
   constructor(
     callback: MirrorballQueryFunction<P, R>,
     pageSize: number,

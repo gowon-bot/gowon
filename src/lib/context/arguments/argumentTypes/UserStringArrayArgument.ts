@@ -14,13 +14,15 @@ export interface UserStringArrayArgumentOptions
   mention: BaseMention;
 }
 
-export class UserStringArrayArgument
-  extends BaseArgument<string[], UserStringArrayArgumentOptions>
+export class UserStringArrayArgument<
+    OptionsT extends Partial<UserStringArrayArgumentOptions>
+  >
+  extends BaseArgument<string[], UserStringArrayArgumentOptions, OptionsT>
   implements StringCleaningArgument
 {
   mention = true;
 
-  constructor(options: Partial<UserStringArrayArgumentOptions> = {}) {
+  constructor(options?: OptionsT) {
     super(defaultIndexableOptions, options);
   }
 

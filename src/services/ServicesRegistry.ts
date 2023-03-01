@@ -1,6 +1,12 @@
-import { ConcurrencyService } from "./ConcurrencyService";
+import { AnalyticsCollector } from "../analytics/AnalyticsCollector";
 import { DatasourceService } from "../lib/nowplaying/DatasourceService";
+import { PermissionsCacheService } from "../lib/permissions/PermissionsCacheService";
+import { PermissionsService } from "../lib/permissions/PermissionsService";
+import { SettingsService } from "../lib/settings/SettingsService";
+import { ArgumentParsingService } from "./arguments/ArgumentsParsingService";
+import { ConcurrencyService } from "./ConcurrencyService";
 import { BotStatsService } from "./dbservices/BotStatsService";
+import { CardsService } from "./dbservices/CardsService";
 import { ComboService } from "./dbservices/ComboService";
 import { CrownsHistoryService } from "./dbservices/CrownsHistoryService";
 import { CrownsService } from "./dbservices/CrownsService";
@@ -9,44 +15,37 @@ import { MetaService } from "./dbservices/MetaService";
 import { ConfigService } from "./dbservices/NowPlayingService";
 import { RedirectsService } from "./dbservices/RedirectsService";
 import { UsersService } from "./dbservices/UsersService";
-import { GithubService } from "./Github/GithubService";
-import { GowonService } from "./GowonService";
+import { DiscordService } from "./Discord/DiscordService";
+import { EmojiService } from "./Discord/EmojiService";
 import { GuildEventService } from "./Discord/GuildEventService";
 import { NicknameService } from "./Discord/NicknameService";
 import { WhoKnowsService } from "./Discord/WhoKnowsService";
+import { GithubService } from "./Github/GithubService";
+import { GowonService } from "./GowonService";
 import { LastFMArguments } from "./LastFM/LastFMArguments";
 import { LastFMService } from "./LastFM/LastFMService";
+import { LilacAPIService } from "./lilac/LilacAPIService";
+import { LilacArtistsService } from "./lilac/LilacArtistsService";
+import { LilacLibraryService } from "./lilac/LilacLibraryService";
+import { LilacTagsService } from "./lilac/LilacTagsService";
+import { LilacUsersService } from "./lilac/LilacUsersService";
+import { LilacWhoKnowsService } from "./lilac/LilacWhoKnowsService";
 import { MirrorballService } from "./mirrorball/MirrorballService";
 import { ArtistsService } from "./mirrorball/services/ArtistsService";
 import { MirrorballUsersService } from "./mirrorball/services/MirrorballUsersService";
-import { RedisInteractionService } from "./redis/RedisInteractionService";
-import { RedisService } from "./redis/RedisService";
-import { SpotifyService } from "./Spotify/SpotifyService";
-import { TrackingService } from "./TrackingService";
-import { SettingsService } from "../lib/settings/SettingsService";
-import { AnalyticsCollector } from "../analytics/AnalyticsCollector";
-import { WordBlacklistService } from "./WordBlacklistService";
+import { AlbumCoverService } from "./moderation/AlbumCoverService";
 import { NowPlayingEmbedParsingService } from "./NowPlayingEmbedParsingService";
 import { ChartService } from "./pantomime/ChartService";
-import { EmojiService } from "./Discord/EmojiService";
-import { ArgumentParsingService } from "./arguments/ArgumentsParsingService";
-import { DiscordService } from "./Discord/DiscordService";
-import { SpotifyAuthenticationService } from "./Spotify/SpotifyAuthenticationService";
-import { SpotifyArguments } from "./Spotify/SpotifyArguments";
-import { SpotifyPlaylistTagService } from "./Spotify/SpotifyPlaylistTagService";
-import { TwitterService } from "./Twitter/TwitterService";
+import { RedisInteractionService } from "./redis/RedisInteractionService";
+import { RedisService } from "./redis/RedisService";
 import { Responder } from "./Responder";
-import { CardsService } from "./dbservices/CardsService";
-import { PermissionsService } from "../lib/permissions/PermissionsService";
-import { PermissionsCacheService } from "../lib/permissions/PermissionsCacheService";
-import { LilacUsersService } from "./lilac/LilacUsersService";
-import { LilacAPIService } from "./lilac/LilacAPIService";
-import { LilacWhoKnowsService } from "./lilac/LilacWhoKnowsService";
-import { LilacLibraryService } from "./lilac/LilacLibraryService";
-import { AlbumCoverService } from "./moderation/AlbumCoverService";
+import { SpotifyArguments } from "./Spotify/SpotifyArguments";
+import { SpotifyAuthenticationService } from "./Spotify/SpotifyAuthenticationService";
+import { SpotifyPlaylistTagService } from "./Spotify/SpotifyPlaylistTagService";
+import { SpotifyService } from "./Spotify/SpotifyService";
 import { TimeAndDateService } from "./TimeAndDateService";
-import { LilacTagsService } from "./lilac/LilacTagsService";
-import { LilacArtistsService } from "./lilac/LilacArtistsService";
+import { TrackingService } from "./TrackingService";
+import { WordBlacklistService } from "./WordBlacklistService";
 
 export type Service<T = any> = { new (): T };
 
@@ -99,7 +98,6 @@ const services: Service[] = [
   SpotifyPlaylistTagService,
   TimeAndDateService,
   TrackingService,
-  TwitterService,
   UsersService,
   WhoKnowsService,
   WordBlacklistService,

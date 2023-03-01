@@ -1,3 +1,4 @@
+import { Chance } from "chance";
 import {
   CommandInteraction,
   EmbedAuthorData,
@@ -7,59 +8,58 @@ import {
   User as DiscordUser,
 } from "discord.js";
 import md5 from "js-md5";
-import { UsersService } from "../../services/dbservices/UsersService";
+import config from "../../../config.json";
+import { AnalyticsCollector } from "../../analytics/AnalyticsCollector";
+import { User } from "../../database/entity/User";
 import {
+  LastFMReverseLookupError,
   LogicError,
   MentionedUserNotIndexedError,
-  LastFMReverseLookupError,
+  SenderUserNotAuthenticatedError,
   SenderUserNotIndexedError,
   UnknownError,
   UsernameNotRegisteredError,
-  SenderUserNotAuthenticatedError,
 } from "../../errors/errors";
-import { GowonService } from "../../services/GowonService";
-import { CommandGroup } from "./CommandGroup";
-import { TrackingService } from "../../services/TrackingService";
-import { User } from "../../database/entity/User";
-import { Validation, ValidationChecker } from "../validation/ValidationChecker";
-import { Emoji, EmojiRaw } from "../Emoji";
-import { errorEmbed, gowonEmbed } from "../views/embeds";
-import { isSessionKey } from "../../services/LastFM/LastFMAPIService";
 import {
   buildRequestables,
   compareUsernames,
   GetMentionsOptions,
   GetMentionsReturn,
 } from "../../helpers/getMentions";
-import { MirrorballService } from "../../services/mirrorball/MirrorballService";
-import { Chance } from "chance";
-import {
-  MirrorballUser,
-  UserInput,
-} from "../../services/mirrorball/MirrorballTypes";
-import { MirrorballUsersService } from "../../services/mirrorball/services/MirrorballUsersService";
-import { CommandRegistry } from "./CommandRegistry";
-import { ServiceRegistry } from "../../services/ServicesRegistry";
-import { AnalyticsCollector } from "../../analytics/AnalyticsCollector";
-import { NowPlayingEmbedParsingService } from "../../services/NowPlayingEmbedParsingService";
-import { CommandAccess } from "./access/access";
-import { GowonContext } from "../context/Context";
+import { SimpleMap } from "../../helpers/types";
 import { ArgumentParsingService } from "../../services/arguments/ArgumentsParsingService";
-import {
-  ArgumentName,
-  ArgumentsMap,
-  ParsedArguments,
-} from "../context/arguments/types";
+import { UsersService } from "../../services/dbservices/UsersService";
 import {
   DiscordService,
   ReplyOptions,
   SendOptions,
 } from "../../services/Discord/DiscordService";
-import { SettingsService } from "../settings/SettingsService";
-import config from "../../../config.json";
-import { Responder } from "../../services/Responder";
-import { SimpleMap } from "../../helpers/types";
+import { GowonService } from "../../services/GowonService";
+import { isSessionKey } from "../../services/LastFM/LastFMAPIService";
 import { LilacUsersService } from "../../services/lilac/LilacUsersService";
+import { MirrorballService } from "../../services/mirrorball/MirrorballService";
+import {
+  MirrorballUser,
+  UserInput,
+} from "../../services/mirrorball/MirrorballTypes";
+import { MirrorballUsersService } from "../../services/mirrorball/services/MirrorballUsersService";
+import { NowPlayingEmbedParsingService } from "../../services/NowPlayingEmbedParsingService";
+import { Responder } from "../../services/Responder";
+import { ServiceRegistry } from "../../services/ServicesRegistry";
+import { TrackingService } from "../../services/TrackingService";
+import {
+  ArgumentName,
+  ArgumentsMap,
+  ParsedArguments,
+} from "../context/arguments/types";
+import { GowonContext } from "../context/Context";
+import { Emoji, EmojiRaw } from "../Emoji";
+import { SettingsService } from "../settings/SettingsService";
+import { Validation, ValidationChecker } from "../validation/ValidationChecker";
+import { errorEmbed, gowonEmbed } from "../views/embeds";
+import { CommandAccess } from "./access/access";
+import { CommandGroup } from "./CommandGroup";
+import { CommandRegistry } from "./CommandRegistry";
 
 export interface Variation {
   name: string;
@@ -101,13 +101,6 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
   // Controls whether to register a command as a slash command
   slashCommand?: boolean;
   slashCommandName?: string;
-
-  /**
-   * Twitter command meta data
-   * (properties related to how twitter commands are registered/handled)
-   */
-  // Controls whether to register a command as a twitter command
-  twitterCommand?: boolean;
 
   /**
    * Parent-child metadata
@@ -198,7 +191,7 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
       : config.defaultPrefix;
   }
 
-  ctx!: GowonContext<typeof this["customContext"]>;
+  ctx!: GowonContext<(typeof this)["customContext"]>;
   customContext = {};
 
   /**
@@ -691,7 +684,6 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
     );
 
     await this.responder.discord(this.ctx, embed);
-    await this.responder.twitter(this.ctx, message);
   }
 
   protected startTyping() {

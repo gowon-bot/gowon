@@ -47,9 +47,9 @@ export class MockLogger extends Logger {
   closeCommandHeader() {}
 }
 
-export function mockContext<T = CustomContext<{}, {}>>(
-  overrides: Partial<MockContextParameters<T>> = {}
-): MockContext<T> {
+export function mockContext<
+  T extends CustomContext<unknown, unknown> = CustomContext<{}, {}>
+>(overrides: Partial<MockContextParameters<T>> = {}): MockContext<T> {
   return new MockContext<T>({
     payload: new Payload(new MockMessage()),
     extract: mockExtractedCommand(),

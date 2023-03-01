@@ -11,13 +11,13 @@ import {
 
 export interface FlagArgumentOptions extends BaseArgumentOptions, FlagOptions {}
 
-export class Flag
+export class Flag<OptionsT extends Partial<FlagArgumentOptions>>
   extends BaseArgument<boolean, FlagArgumentOptions>
   implements StringCleaningArgument
 {
   private flagParser = new FlagParser();
 
-  constructor(options: Partial<FlagArgumentOptions> = {}) {
+  constructor(options?: OptionsT) {
     super({ shortnames: [], longnames: [], description: "" }, options);
   }
 
@@ -44,7 +44,7 @@ export class Flag
   }
 }
 
-export function isFlag(argument: BaseArgument<any>): argument is Flag {
+export function isFlag(argument: BaseArgument<any>): argument is Flag<any> {
   return argument instanceof Flag;
 }
 

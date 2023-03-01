@@ -1,10 +1,10 @@
 import { CommandInteraction, Message } from "discord.js";
 import { GowonService } from "../../../../../services/GowonService";
+import { LastFMPeriod } from "../../../../../services/LastFM/LastFMService.types";
 import { ServiceRegistry } from "../../../../../services/ServicesRegistry";
 import { GowonContext } from "../../../Context";
-import { BaseArgument, BaseArgumentOptions } from "../BaseArgument";
-import { LastFMPeriod } from "../../../../../services/LastFM/LastFMService.types";
 import { TimePeriodParser } from "../../parsers/TimePeriodParser";
+import { BaseArgument, BaseArgumentOptions } from "../BaseArgument";
 import { SlashCommandBuilder } from "../SlashCommandTypes";
 
 export interface TimePeriodArgumentOptions
@@ -20,7 +20,7 @@ const periodChoices: { name: string; value: LastFMPeriod }[] = [
 ];
 
 export class TimePeriodArgument<
-  OptionsT extends Partial<TimePeriodArgumentOptions> = {}
+  OptionsT extends Partial<TimePeriodArgumentOptions>
 > extends BaseArgument<LastFMPeriod, TimePeriodArgumentOptions, OptionsT> {
   get gowonService() {
     return ServiceRegistry.get(GowonService);
@@ -28,7 +28,7 @@ export class TimePeriodArgument<
 
   timePeriodParser = new TimePeriodParser({ fallback: this.getDefault() });
 
-  constructor(options: OptionsT | {} = {}) {
+  constructor(options?: OptionsT) {
     super(options);
   }
 

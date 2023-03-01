@@ -2,7 +2,7 @@ import { sleep } from "../../helpers";
 import { Params } from "../../services/LastFM/LastFMService.types";
 import { GowonContext } from "../context/Context";
 
-export function isPaginator<T = any>(
+export function isPaginator<T extends Params = any>(
   value: Paginator<T> | any
 ): value is Paginator<T> {
   return value instanceof Paginator;

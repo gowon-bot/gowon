@@ -18,13 +18,13 @@ interface StringArrayArgumentOptions
 }
 
 export class StringArrayArgument<
-  OptionsT extends Partial<StringArrayArgumentOptions> = {}
+  OptionsT extends Partial<StringArrayArgumentOptions>
 > extends BaseArgument<string[], StringArrayArgumentOptions, OptionsT> {
   get gowonService() {
     return ServiceRegistry.get(GowonService);
   }
 
-  constructor(options: OptionsT | {} = {}) {
+  constructor(options?: OptionsT) {
     super(defaultIndexableOptions, { splitOn: " " }, options);
   }
 

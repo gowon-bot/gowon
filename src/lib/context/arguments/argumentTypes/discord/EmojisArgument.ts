@@ -1,15 +1,15 @@
+import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, Message } from "discord.js";
 import { GowonService } from "../../../../../services/GowonService";
 import { ServiceRegistry } from "../../../../../services/ServicesRegistry";
-import { EmojiMention, EmojiParser } from "../../parsers/EmojiParser";
 import { GowonContext } from "../../../Context";
+import { EmojiMention, EmojiParser } from "../../parsers/EmojiParser";
 import {
   BaseArgument,
   BaseArgumentOptions,
   defaultIndexableOptions,
   SliceableArgumentOptions,
 } from "../BaseArgument";
-import { SlashCommandBuilder } from "@discordjs/builders";
 
 export interface EmojisArgumentOptions
   extends BaseArgumentOptions<EmojiMention[]>,
@@ -18,7 +18,7 @@ export interface EmojisArgumentOptions
 }
 
 export class EmojisArgument<
-  OptionsT extends Partial<EmojisArgumentOptions> = {}
+  OptionsT extends Partial<EmojisArgumentOptions>
 > extends BaseArgument<EmojiMention[], EmojisArgumentOptions, OptionsT> {
   private emojiParser = new EmojiParser();
 
@@ -26,7 +26,7 @@ export class EmojisArgument<
     return ServiceRegistry.get(GowonService);
   }
 
-  constructor(options: OptionsT | {} = {}) {
+  constructor(options?: OptionsT) {
     super(defaultIndexableOptions, { parse: "all" }, options);
   }
 

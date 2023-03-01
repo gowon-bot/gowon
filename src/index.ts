@@ -4,26 +4,23 @@ import "reflect-metadata";
 import { ServiceRegistry } from "./services/ServicesRegistry";
 ServiceRegistry.setServices();
 
+import chalk from "chalk";
 import { GuildMember } from "discord.js";
 import config from "../config.json";
+import { AnalyticsCollector } from "./analytics/AnalyticsCollector";
+import { gowonAPIPort } from "./api";
+import { GowonContext } from "./lib/context/Context";
+import { Payload } from "./lib/context/Payload";
+import { HeaderlessLogger } from "./lib/Logger";
+import { MockMessage } from "./mocks/discord";
+import { UsersService } from "./services/dbservices/UsersService";
 import {
   client,
-  handler,
   guildEventService,
-  setup,
+  handler,
   interactionHandler,
-  twitterService,
+  setup,
 } from "./setup";
-import chalk from "chalk";
-import { gowonAPIPort } from "./api";
-import { AnalyticsCollector } from "./analytics/AnalyticsCollector";
-import { UsersService } from "./services/dbservices/UsersService";
-import { HeaderlessLogger } from "./lib/Logger";
-import { GowonContext } from "./lib/context/Context";
-import { TweetHandler } from "./services/Twitter/TweetHandler";
-import { Payload } from "./lib/context/Payload";
-import { MockMessage } from "./mocks/discord";
-
 function context() {
   return new GowonContext({
     gowonClient: client,
@@ -38,9 +35,6 @@ async function start() {
 
   const analyticsCollector = ServiceRegistry.get(AnalyticsCollector);
   const usersService = ServiceRegistry.get(UsersService);
-  const tweetHandler = new TweetHandler();
-
-  await tweetHandler.init();
 
   client.client.on("ready", () => {
     console.log(
@@ -110,34 +104,9 @@ async function start() {
 
   analyticsCollector.metrics.guildCount.set(guildCount);
   analyticsCollector.metrics.userCount.set(userCount);
-
-  twitterService.mentions.subscribe(async (tweet) => {
-    try {
-      await tweetHandler.handle(tweet, client);
-    } catch (e) {
-      console.log(e);
-    }
-  });
-
-  twitterService.mentions.connect();
 }
 
 start();
-
-function unsubscribe() {
-  if (twitterService.mentions) {
-    twitterService.mentions.unsubscribe();
-  }
-
-  process.exit();
-}
-
-//catches ctrl+c event
-process.on("SIGINT", unsubscribe);
-
-// // catches "kill pid" (for example: nodemon restart)
-process.on("SIGUSR1", unsubscribe);
-process.on("SIGUSR2", unsubscribe);
 
 process.on("unhandledRejection", (e) => {
   console.error("UNHANDLED REJECTION:");

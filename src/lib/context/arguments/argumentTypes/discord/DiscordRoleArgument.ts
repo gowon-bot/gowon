@@ -13,11 +13,11 @@ export interface DiscordRoleArgumentOptions
     IndexableArgumentOptions {}
 
 export class DiscordRoleArgument<
-  OptionsT extends Partial<DiscordRoleArgumentOptions> = {}
+  OptionsT extends Partial<DiscordRoleArgumentOptions>
 > extends BaseArgument<Role, DiscordRoleArgumentOptions, OptionsT> {
   mention = true;
 
-  constructor(options: Partial<DiscordRoleArgumentOptions> | {} = {}) {
+  constructor(options?: OptionsT) {
     super(defaultIndexableOptions, options);
   }
 

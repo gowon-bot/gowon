@@ -1,5 +1,10 @@
+import {
+  SlashCommandBuilder,
+  SlashCommandStringOption,
+} from "@discordjs/builders";
 import { CommandInteraction, Message } from "discord.js";
 import escapeStringRegexp from "escape-string-regexp";
+import { ValidationError } from "../../../validation/validators/BaseValidator";
 import { GowonContext } from "../../Context";
 import {
   BaseArgument,
@@ -10,11 +15,6 @@ import {
   isCustomMessage,
   SliceableArgumentOptions,
 } from "./BaseArgument";
-import {
-  SlashCommandBuilder,
-  SlashCommandStringOption,
-} from "@discordjs/builders";
-import { ValidationError } from "../../../validation/validators/BaseValidator";
 
 export interface Choice {
   name: string;
@@ -36,12 +36,12 @@ export interface StringArgumentOptions
 }
 
 export class StringArgument<
-  OptionsT extends Partial<StringArgumentOptions> = {}
+  OptionsT extends Partial<StringArgumentOptions>
 > extends BaseArgument<string, StringArgumentOptions, OptionsT> {
-  constructor(options: OptionsT | {} = {}) {
+  constructor(options?: OptionsT) {
     super(
-      defaultIndexableOptions as OptionsT,
-      defaultContentBasedOptions as OptionsT,
+      defaultIndexableOptions,
+      defaultContentBasedOptions,
       { splitOn: /\s+/, match: [], choices: [] } as any,
       options
     );

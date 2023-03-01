@@ -1,18 +1,18 @@
-import { CrownsService } from "../../../services/dbservices/CrownsService";
-import { LineConsolidator } from "../../../lib/LineConsolidator";
-import { NowPlayingBaseCommand, nowPlayingArgs } from "./NowPlayingBaseCommand";
-import { promiseAllSettled } from "../../../helpers";
 import { MessageEmbed } from "discord.js";
-import { ServiceRegistry } from "../../../services/ServicesRegistry";
-import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
+import { promiseAllSettled } from "../../../helpers";
 import { CommandRedirect } from "../../../lib/command/Command";
-import NowPlayingVerbose from "./NowPlayingVerbose";
-import NowPlayingCompact from "./NowPlayingCompact";
-import NowPlayingAlbum from "./NowPlayingAlbum";
-import NowPlayingCombo from "./NowPlayingCombo";
-import NowPlayingCustom from "./NowPlayingCustom";
+import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
+import { LineConsolidator } from "../../../lib/LineConsolidator";
 import { SettingsService } from "../../../lib/settings/SettingsService";
 import { FMMode } from "../../../lib/settings/SettingValues";
+import { CrownsService } from "../../../services/dbservices/CrownsService";
+import { ServiceRegistry } from "../../../services/ServicesRegistry";
+import NowPlayingAlbum from "./NowPlayingAlbum";
+import { nowPlayingArgs, NowPlayingBaseCommand } from "./NowPlayingBaseCommand";
+import NowPlayingCombo from "./NowPlayingCombo";
+import NowPlayingCompact from "./NowPlayingCompact";
+import NowPlayingCustom from "./NowPlayingCustom";
+import NowPlayingVerbose from "./NowPlayingVerbose";
 
 const reverse = (s: string) =>
   s.split("").reverse().join("").replace("(", ")").replace(")", "(");
@@ -45,7 +45,6 @@ export default class NowPlaying extends NowPlayingBaseCommand<typeof args> {
     "Now playing | Displays the now playing or last played track from Last.fm";
 
   slashCommand = true;
-  twitterCommand = true;
 
   crownsService = ServiceRegistry.get(CrownsService);
   settingsService = ServiceRegistry.get(SettingsService);
@@ -76,35 +75,23 @@ export default class NowPlaying extends NowPlayingBaseCommand<typeof args> {
   ];
 
   async run() {
-    let { username, requestable, discordUser } =
+    const { username, requestable, discordUser } =
       await this.nowPlayingMentions();
 
-    let nowPlayingResponse = await this.lastFMService.recentTracks(this.ctx, {
+    const nowPlayingResponse = await this.lastFMService.recentTracks(this.ctx, {
       username: requestable || "flushed_emoji",
       limit: 1,
     });
 
-    let nowPlaying = nowPlayingResponse.first();
+    const nowPlaying = nowPlayingResponse.first();
 
     if (nowPlaying.isNowPlaying) this.scrobble(nowPlaying);
-
-    if (this.payload.isTweet()) {
-      this.responder.twitter(
-        this.ctx,
-        `🎶 ${
-          nowPlaying.isNowPlaying ? "Now playing" : "Last scrobbled"
-        } for ${username}\n\n${nowPlaying.name} by ${nowPlaying.artist}\nfrom ${
-          nowPlaying.album
-        }`
-      );
-      return;
-    }
 
     this.tagConsolidator.blacklistTags(nowPlaying.artist, nowPlaying.name);
 
     let nowPlayingEmbed = await this.nowPlayingEmbed(nowPlaying, username);
 
-    let [artistInfo, crown] = await promiseAllSettled([
+    const [artistInfo, crown] = await promiseAllSettled([
       this.lastFMService.artistInfo(this.ctx, {
         artist: nowPlaying.artist,
         username: requestable,
@@ -112,7 +99,7 @@ export default class NowPlaying extends NowPlayingBaseCommand<typeof args> {
       this.crownsService.getCrownDisplay(this.ctx, nowPlaying.artist),
     ]);
 
-    let { crownString, isCrownHolder } = await this.crownDetails(
+    const { crownString, isCrownHolder } = await this.crownDetails(
       crown,
       discordUser
     );
@@ -121,11 +108,11 @@ export default class NowPlaying extends NowPlayingBaseCommand<typeof args> {
 
     this.tagConsolidator.addTags(this.ctx, artistInfo.value?.tags || []);
 
-    let lineConsolidator = new LineConsolidator();
+    const lineConsolidator = new LineConsolidator();
 
-    let artistPlays = this.artistPlays(artistInfo, nowPlaying, isCrownHolder);
-    let noArtistData = this.noArtistData(nowPlaying);
-    let scrobbleCount = this.scrobbleCount(nowPlayingResponse);
+    const artistPlays = this.artistPlays(artistInfo, nowPlaying, isCrownHolder);
+    const noArtistData = this.noArtistData(nowPlaying);
+    const scrobbleCount = this.scrobbleCount(nowPlayingResponse);
 
     lineConsolidator.addLines(
       {

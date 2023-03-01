@@ -10,13 +10,12 @@ export interface DiscordUserArrayArgumentOptions
   extends BaseArgumentOptions,
     SliceableArgumentOptions {}
 
-export class DiscordUserArrayArgument extends BaseArgument<
-  User[],
-  DiscordUserArrayArgumentOptions
-> {
+export class DiscordUserArrayArgument<
+  OptionsT extends Partial<DiscordUserArrayArgumentOptions>
+> extends BaseArgument<User[], DiscordUserArrayArgumentOptions, OptionsT> {
   mention = true;
 
-  constructor(options: Partial<DiscordUserArrayArgumentOptions> = {}) {
+  constructor(options?: OptionsT) {
     super(defaultIndexableOptions, options);
   }
 

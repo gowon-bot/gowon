@@ -11,7 +11,6 @@ export default class Test extends Command<typeof args> {
   secretCommand = true;
   arguments = args;
   slashCommand = true;
-  twitterCommand = true;
 
   async run() {
     await this.send("Hello, world!");

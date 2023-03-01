@@ -18,7 +18,7 @@ export interface Slice {
   stop?: number;
 }
 
-export type ImplementedOptions<T> =
+export type ImplementedOptions<T extends Record<string, any>> =
   | StringArgument<T>
   | NumberArgument<T>
   | StringArrayArgument<T>
@@ -34,7 +34,7 @@ export type UnwrapProvidedOptions<T extends BaseArgument<any>> =
 
 type UnwrapArgument<T extends BaseArgument<any, any, any>> =
   T extends BaseArgument<infer U, any, any>
-    ? T extends Flag
+    ? T extends Flag<any>
       ? boolean
       : ArgumentReturnType<U, UnwrapProvidedOptions<T>>
     : never;

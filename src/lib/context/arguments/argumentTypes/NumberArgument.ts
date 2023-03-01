@@ -1,3 +1,4 @@
+import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, Message } from "discord.js";
 import { toInt } from "../../../../helpers/lastFM";
 import { GowonService } from "../../../../services/GowonService";
@@ -10,7 +11,6 @@ import {
   defaultIndexableOptions,
   IndexableArgumentOptions,
 } from "./BaseArgument";
-import { SlashCommandBuilder } from "@discordjs/builders";
 
 export interface NumberArgumentOptions
   extends BaseArgumentOptions,
@@ -19,14 +19,14 @@ export interface NumberArgumentOptions
 }
 
 export class NumberArgument<
-  OptionsT extends Partial<NumberArgumentOptions> = {}
+  OptionsT extends Partial<NumberArgumentOptions>
 > extends BaseArgument<number, NumberArgumentOptions, OptionsT> {
   get gowonService() {
     return ServiceRegistry.get(GowonService);
   }
 
-  constructor(options: OptionsT | {} = {}) {
-    super(defaultIndexableOptions as OptionsT, options);
+  constructor(options?: OptionsT) {
+    super(defaultIndexableOptions, options);
   }
 
   parseFromMessage(

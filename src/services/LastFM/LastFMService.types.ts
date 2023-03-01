@@ -568,7 +568,7 @@ export interface RawUserGetWeeklyTrackChart {
 //  Inputs
 /// ==================
 
-export interface Params {}
+export type Params = Record<string, any>;
 
 export interface UsernameParams {
   username?: Requestable;

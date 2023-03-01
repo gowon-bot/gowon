@@ -1,19 +1,19 @@
-import { Command } from "../../lib/command/Command";
 import { CommandNotFoundError } from "../../errors/errors";
 import { flatDeep } from "../../helpers";
+import { bold, code, italic } from "../../helpers/discord";
+import { Command } from "../../lib/command/Command";
 import { ParentCommand } from "../../lib/command/ParentCommand";
-import { LineConsolidator } from "../../lib/LineConsolidator";
-import { ServiceRegistry } from "../../services/ServicesRegistry";
-import { Emoji } from "../../lib/Emoji";
-import { StringArgument } from "../../lib/context/arguments/argumentTypes/StringArgument";
+import { BaseArgument } from "../../lib/context/arguments/argumentTypes/BaseArgument";
 import {
   argumentsHasFlags,
   Flag,
   isFlag,
 } from "../../lib/context/arguments/argumentTypes/Flag";
-import { BaseArgument } from "../../lib/context/arguments/argumentTypes/BaseArgument";
-import { bold, code, italic } from "../../helpers/discord";
+import { StringArgument } from "../../lib/context/arguments/argumentTypes/StringArgument";
+import { Emoji } from "../../lib/Emoji";
+import { LineConsolidator } from "../../lib/LineConsolidator";
 import { PermissionsService } from "../../lib/permissions/PermissionsService";
+import { ServiceRegistry } from "../../services/ServicesRegistry";
 
 const args = {
   command: new StringArgument({ index: { start: 0 }, required: true }),
@@ -114,7 +114,7 @@ export default class HelpForOneCommand extends Command<typeof args> {
           (
             Object.values(command.arguments || {}).filter((a) =>
               isFlag(a as BaseArgument<any, any>)
-            ) as Flag[]
+            ) as Flag<any>[]
           )
             .map(
               (f) =>

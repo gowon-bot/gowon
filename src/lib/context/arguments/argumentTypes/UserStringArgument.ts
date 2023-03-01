@@ -16,13 +16,15 @@ export interface UserStringArgumentOptions
   mention: BaseMention;
 }
 
-export class UserStringArgument
-  extends BaseArgument<string, UserStringArgumentOptions>
+export class UserStringArgument<
+    OptionsT extends Partial<UserStringArgumentOptions>
+  >
+  extends BaseArgument<string, UserStringArgumentOptions, OptionsT>
   implements StringCleaningArgument
 {
   mention = true;
 
-  constructor(options: Partial<UserStringArgumentOptions> = {}) {
+  constructor(options?: OptionsT) {
     super(defaultIndexableOptions, options);
   }
 

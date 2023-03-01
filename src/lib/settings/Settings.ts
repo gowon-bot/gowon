@@ -1,10 +1,10 @@
-import {
-  GuildScopedSetting,
-  GuildMemberScopedSetting,
-  UserScopedSetting,
-  BotScopedSetting,
-} from "./SettingTypes";
 import { defaultPrefix } from "../../../config.json";
+import {
+  BotScopedSetting,
+  GuildMemberScopedSetting,
+  GuildScopedSetting,
+  UserScopedSetting,
+} from "./SettingTypes";
 import { toggleValues } from "./SettingValues";
 
 export const Settings = {
@@ -74,11 +74,8 @@ export const Settings = {
   issueMode: new BotScopedSetting("issue_mode", {
     omitFromDashboard: true,
   }),
-  noTwitter: new BotScopedSetting("no_twitter", {
-    omitFromDashboard: true,
-  }),
 } as const;
 
 export type SettingsMap = {
-  [K in keyof typeof Settings]: typeof Settings[K];
+  [K in keyof typeof Settings]: (typeof Settings)[K];
 };

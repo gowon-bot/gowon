@@ -1,16 +1,16 @@
+import chalk from "chalk";
 import { Interaction, Message } from "discord.js";
 import { toInt } from "../../../../helpers/lastFM";
-import { Slice } from "../types";
-import { GowonContext } from "../../Context";
-import { ServiceRegistry } from "../../../../services/ServicesRegistry";
 import { GowonService } from "../../../../services/GowonService";
+import { ServiceRegistry } from "../../../../services/ServicesRegistry";
+import { ValidationError } from "../../../validation/validators/BaseValidator";
+import { GowonContext } from "../../Context";
+import { Slice } from "../types";
 import {
   SlashCommandBuilder,
   SlashCommandBuilderReturn,
   SlashCommandOption,
 } from "./SlashCommandTypes";
-import { ValidationError } from "../../../validation/validators/BaseValidator";
-import chalk from "chalk";
 
 type GetElementFromIndexOptions = {
   join?: boolean;
@@ -64,10 +64,12 @@ export abstract class BaseArgument<
     return ServiceRegistry.get(GowonService);
   }
 
-  constructor(...options: (ProvidedOptionsT | {})[]) {
+  constructor(...options: (ProvidedOptionsT | {} | undefined)[]) {
     this.options = {} as any;
 
-    for (const option of [defaultBaseOptions, ...options]) {
+    const filteredOptions = options.filter((o) => !!o);
+
+    for (const option of [defaultBaseOptions, ...filteredOptions]) {
       this.options = Object.assign(this.options, option);
     }
   }

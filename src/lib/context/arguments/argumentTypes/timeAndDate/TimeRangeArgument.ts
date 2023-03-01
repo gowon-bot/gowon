@@ -13,7 +13,7 @@ export interface TimeRangeArgumentOptions
 }
 
 export class TimeRangeArgument<
-  OptionsT extends Partial<TimeRangeArgumentOptions> = {}
+  OptionsT extends Partial<TimeRangeArgumentOptions>
 > extends BaseArgument<TimeRange, TimeRangeArgumentOptions, OptionsT> {
   get gowonService() {
     return ServiceRegistry.get(GowonService);
@@ -21,7 +21,7 @@ export class TimeRangeArgument<
 
   timeRangeParser = new TimeRangeParser(this.options);
 
-  constructor(options: OptionsT | {} = {}) {
+  constructor(options?: OptionsT) {
     super(options);
   }
 

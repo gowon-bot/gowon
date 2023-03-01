@@ -9,14 +9,14 @@ import {
 } from "../BaseArgument";
 import { SlashCommandBuilder } from "../SlashCommandTypes";
 
-export interface ChannelArgumentOptions<T>
-  extends BaseArgumentOptions<T>,
+export interface ChannelArgumentOptions
+  extends BaseArgumentOptions<Channel>,
     IndexableArgumentOptions {}
 
 export class ChannelArgument<
-  OptionsT extends Partial<ChannelArgumentOptions<Channel>> = {}
-> extends BaseArgument<Channel, ChannelArgumentOptions<Channel>, OptionsT> {
-  constructor(options: Partial<ChannelArgumentOptions<Channel>> | {} = {}) {
+  OptionsT extends Partial<ChannelArgumentOptions>
+> extends BaseArgument<Channel, ChannelArgumentOptions, OptionsT> {
+  constructor(options?: OptionsT) {
     super(defaultIndexableOptions, options);
   }
 
@@ -44,15 +44,18 @@ export class ChannelArgument<
   }
 }
 
-export class ChannelArrayArgument extends BaseArgument<
-  Channel[],
-  SliceableArgumentOptions & ChannelArgumentOptions<Channel[]>
-> {
-  constructor(options: Partial<ChannelArgumentOptions<Channel[]>> | {} = {}) {
+export interface ChannelArrayArgumentOptions
+  extends BaseArgumentOptions<Channel[]>,
+    SliceableArgumentOptions {}
+
+export class ChannelArrayArgument<
+  OptionsT extends Partial<ChannelArrayArgumentOptions>
+> extends BaseArgument<Channel[], ChannelArrayArgumentOptions, OptionsT> {
+  constructor(options?: OptionsT) {
     super(defaultIndexableOptions, options);
   }
 
-  parseFromMessage(message: Message, _: string): Channel[] {
+  parseFromMessage(message: Message): Channel[] {
     const channels = Array.from(message.mentions.channels.values());
 
     const element = this.getElementFromIndex(channels, this.options.index);
