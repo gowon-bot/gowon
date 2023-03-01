@@ -1,18 +1,18 @@
-import { MirrorballError, LogicError } from "../../../../errors/errors";
-import { SimpleScrollingEmbed } from "../../../../lib/views/embeds/SimpleScrollingEmbed";
-import { LinkGenerator } from "../../../../helpers/lastFM";
+import { LogicError, MirrorballError } from "../../../../errors/errors";
+import { bold, italic } from "../../../../helpers/discord";
+import { LastfmLinks } from "../../../../helpers/lastfm/LastfmLinks";
+import { standardMentions } from "../../../../lib/context/arguments/mentionTypes/mentions";
+import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";
+import { ArgumentsMap } from "../../../../lib/context/arguments/types";
+import { Emoji } from "../../../../lib/Emoji";
 import { MirrorballBaseCommand } from "../../../../lib/indexing/MirrorballCommands";
+import { displayNumber } from "../../../../lib/views/displays";
+import { SimpleScrollingEmbed } from "../../../../lib/views/embeds/SimpleScrollingEmbed";
 import {
   TrackTopAlbumsConnector,
   TrackTopAlbumsParams,
   TrackTopAlbumsResponse,
 } from "./TrackTopAlbums.connector";
-import { displayNumber } from "../../../../lib/views/displays";
-import { standardMentions } from "../../../../lib/context/arguments/mentionTypes/mentions";
-import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";
-import { bold, italic } from "../../../../helpers/discord";
-import { Emoji } from "../../../../lib/Emoji";
-import { ArgumentsMap } from "../../../../lib/context/arguments/types";
 
 const args = {
   ...prefabArguments.track,
@@ -81,9 +81,7 @@ export default class TrackTopAlbums extends MirrorballBaseCommand<
           track.name
         )} by ${bold(track.artist)} in ${perspective.possessive} library`
       )
-      .setURL(
-        LinkGenerator.libraryTrackPage(username, track.artist, track.name)
-      );
+      .setURL(LastfmLinks.libraryTrackPage(username, track.artist, track.name));
 
     const simpleScrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
       pageSize: 15,

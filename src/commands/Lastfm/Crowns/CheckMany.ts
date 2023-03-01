@@ -1,11 +1,11 @@
-import { CrownsChildCommand } from "./CrownsChildCommand";
+import { asyncMap } from "../../../helpers";
+import { code } from "../../../helpers/discord";
+import { toInt } from "../../../helpers/lastfm/";
+import { StringArrayArgument } from "../../../lib/context/arguments/argumentTypes/StringArrayArgument";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
-import { toInt } from "../../../helpers/lastFM";
-import { asyncMap } from "../../../helpers";
-import { StringArrayArgument } from "../../../lib/context/arguments/argumentTypes/StringArrayArgument";
-import { code } from "../../../helpers/discord";
-import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { CrownsChildCommand } from "./CrownsChildCommand";
 
 interface CheckedCrownsDisplay {
   [state: string]: Array<string>;

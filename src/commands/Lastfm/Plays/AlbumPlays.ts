@@ -1,13 +1,13 @@
-import { LastFMBaseCommand } from "../LastFMBaseCommand";
-import { toInt } from "../../../helpers/lastFM";
-import { displayNumber } from "../../../lib/views/displays";
+import { bold, italic } from "../../../helpers/discord";
+import { toInt } from "../../../helpers/lastfm/";
+import { CommandRedirect } from "../../../lib/command/Command";
+import { Flag } from "../../../lib/context/arguments/argumentTypes/Flag";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
-import { Flag } from "../../../lib/context/arguments/argumentTypes/Flag";
-import { CommandRedirect } from "../../../lib/command/Command";
-import GlobalAlbumPlays from "./GlobalAlbumPlays";
-import { bold, italic } from "../../../helpers/discord";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { displayNumber } from "../../../lib/views/displays";
+import { LastFMBaseCommand } from "../LastFMBaseCommand";
+import GlobalAlbumPlays from "./GlobalAlbumPlays";
 
 const args = {
   ...prefabArguments.album,
@@ -54,13 +54,13 @@ export default class AlbumPlays extends LastFMBaseCommand<typeof args> {
 
     await this.oldReply(
       `${perspective.plusToHave}` +
-      (toInt(albumDetails.userPlaycount) === 0
-        ? "n't scrobbled"
-        : ` **${displayNumber(
-          albumDetails.userPlaycount,
-          "**scrobble"
-        )} of`) +
-      ` ${italic(albumDetails.name)} by ${bold(albumDetails.artist)}`
+        (toInt(albumDetails.userPlaycount) === 0
+          ? "n't scrobbled"
+          : ` **${displayNumber(
+              albumDetails.userPlaycount,
+              "**scrobble"
+            )} of`) +
+        ` ${italic(albumDetails.name)} by ${bold(albumDetails.artist)}`
     );
   }
 }

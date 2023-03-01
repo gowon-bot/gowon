@@ -1,5 +1,6 @@
+import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, Message } from "discord.js";
-import { toInt } from "../../../../helpers/lastFM";
+import { toInt } from "../../../../helpers/lastfm/";
 import { GowonService } from "../../../../services/GowonService";
 import { ServiceRegistry } from "../../../../services/ServicesRegistry";
 import { isDuration } from "../../../timeAndDate/durations";
@@ -10,11 +11,10 @@ import {
   defaultIndexableOptions,
   IndexableArgumentOptions,
 } from "./BaseArgument";
-import { SlashCommandBuilder } from "@discordjs/builders";
 
 export interface NumberArgumentOptions
   extends BaseArgumentOptions,
-  IndexableArgumentOptions {
+    IndexableArgumentOptions {
   default?: number;
 }
 
@@ -26,7 +26,7 @@ export class NumberArgument<
   }
 
   constructor(options?: OptionsT) {
-    super({ ...defaultIndexableOptions, ...(options ?? {}) } as OptionsT,);
+    super({ ...defaultIndexableOptions, ...(options ?? {}) } as OptionsT);
   }
 
   parseFromMessage(

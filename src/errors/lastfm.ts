@@ -1,5 +1,5 @@
 import { code } from "../helpers/discord";
-import { LinkGenerator } from "../helpers/lastFM";
+import { LastfmLinks } from "../helpers/lastfm/LastfmLinks";
 import { displayLink } from "../lib/views/displays";
 import { ClientError } from "./errors";
 
@@ -36,7 +36,7 @@ export class AlbumHasNoCoverError extends ClientError {
     super(
       `That album doesn't have a cover yet! You can add one ${displayLink(
         "here",
-        LinkGenerator.imageUploadLink(artist, album)
+        LastfmLinks.imageUploadLink(artist, album)
       )}.`
     );
   }

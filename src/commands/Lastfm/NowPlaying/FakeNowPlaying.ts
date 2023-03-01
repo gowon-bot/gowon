@@ -1,14 +1,14 @@
-import { NowPlayingBaseCommand, nowPlayingArgs } from "./NowPlayingBaseCommand";
-import { ServiceRegistry } from "../../../services/ServicesRegistry";
+import { LastfmLinks } from "../../../helpers/lastfm/LastfmLinks";
+import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
+import { DatasourceService } from "../../../lib/nowplaying/DatasourceService";
+import { NowPlayingBuilder } from "../../../lib/nowplaying/NowPlayingBuilder";
+import { RequirementMap } from "../../../lib/nowplaying/RequirementMap";
+import { ConfigService } from "../../../services/dbservices/NowPlayingService";
 import { TrackInfo } from "../../../services/LastFM/converters/InfoTypes";
 import { RecentTrack } from "../../../services/LastFM/converters/RecentTracks";
 import { LastFMArgumentsMutableContext } from "../../../services/LastFM/LastFMArguments";
-import { DatasourceService } from "../../../lib/nowplaying/DatasourceService";
-import { ConfigService } from "../../../services/dbservices/NowPlayingService";
-import { NowPlayingBuilder } from "../../../lib/nowplaying/NowPlayingBuilder";
-import { RequirementMap } from "../../../lib/nowplaying/RequirementMap";
-import { LinkGenerator } from "../../../helpers/lastFM";
-import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
+import { ServiceRegistry } from "../../../services/ServicesRegistry";
+import { nowPlayingArgs, NowPlayingBaseCommand } from "./NowPlayingBaseCommand";
 
 const args = {
   ...prefabArguments.track,
@@ -95,7 +95,7 @@ export default class FakeNowPlaying extends NowPlayingBaseCommand<typeof args> {
         this.payload.member.avatarURL() ||
         this.payload.author.avatarURL() ||
         undefined,
-      url: LinkGenerator.userPage(username),
+      url: LastfmLinks.userPage(username),
     });
 
     const embed = await builder.asEmbed(resolvedRequirements, baseEmbed);

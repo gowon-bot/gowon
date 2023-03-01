@@ -1,6 +1,6 @@
 import { LogicError } from "../../../errors/errors";
 import { code } from "../../../helpers/discord";
-import { LinkGenerator } from "../../../helpers/lastFM";
+import { LastfmLinks } from "../../../helpers/lastfm/LastfmLinks";
 import { Variation } from "../../../lib/command/Command";
 import { constants } from "../../../lib/constants";
 import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
@@ -120,10 +120,10 @@ export default class Taste extends TasteCommand<typeof args> {
 
     const embedDescription = `**Comparison for ${displayLink(
       userOneUsername,
-      LinkGenerator.userPage(userOneUsername)
+      LastfmLinks.userPage(userOneUsername)
     )} and ${displayLink(
       userTwoUsername,
-      LinkGenerator.userPage(userTwoUsername)
+      LastfmLinks.userPage(userTwoUsername)
     )} ${this.timeRange?.humanized || humanizedPeriod}**\n\n${percentageMatch}`;
 
     const embed = this.newEmbed()

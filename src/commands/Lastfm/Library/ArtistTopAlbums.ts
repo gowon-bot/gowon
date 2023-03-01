@@ -1,6 +1,6 @@
 import { LogicError } from "../../../errors/errors";
 import { bold, italic } from "../../../helpers/discord";
-import { LinkGenerator } from "../../../helpers/lastFM";
+import { LastfmLinks } from "../../../helpers/lastfm/LastfmLinks";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import {
   prefabArguments,
@@ -78,7 +78,7 @@ export default class ArtistTopAlbums extends LilacBaseCommand<typeof args> {
       .setTitle(
         `${Emoji.usesIndexedDataLink} Top ${artist.name} albums for ${username}`
       )
-      .setURL(LinkGenerator.libraryArtistTopAlbums(username, artist.name));
+      .setURL(LastfmLinks.libraryArtistTopAlbums(username, artist.name));
 
     const simpleScrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
       items: topAlbums,

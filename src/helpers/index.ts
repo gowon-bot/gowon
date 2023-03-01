@@ -1,6 +1,5 @@
-import { displayNumber } from "../lib/views/displays";
-import { toInt } from "./lastFM";
-import { discordTimestamp } from "../lib/views/displays";
+import { discordTimestamp, displayNumber } from "../lib/views/displays";
+import { toInt } from "./lastfm/";
 
 export function addS(string: string, number: number) {
   return number === 1 ? string : string + "s";

@@ -1,6 +1,6 @@
 import { LogicError } from "../../../errors/errors";
 import { bold, code, italic } from "../../../helpers/discord";
-import { LinkGenerator } from "../../../helpers/lastFM";
+import { LastfmLinks } from "../../../helpers/lastfm/LastfmLinks";
 import { Variation } from "../../../lib/command/Command";
 import { Paginator } from "../../../lib/paginators/Paginator";
 import { displayLink, displayNumber } from "../../../lib/views/displays";
@@ -78,7 +78,7 @@ export default class SearchTrack extends SearchCommand {
                 t.name.replaceAll(new RegExp(`${keywords}`, "gi"), (match) =>
                   bold(match)
                 ),
-                LinkGenerator.libraryTrackPage(username, t.artist.name, t.name),
+                LastfmLinks.libraryTrackPage(username, t.artist.name, t.name),
                 false
               )} (${displayNumber(t.userPlaycount, "play")})`
           )

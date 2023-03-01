@@ -1,9 +1,9 @@
-import { LinkGenerator } from "../../../helpers/lastFM";
-import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { RecordNotFoundError } from "../../../errors/errors";
-import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
+import { LastfmLinks } from "../../../helpers/lastfm/LastfmLinks";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 const args = {
   username: new StringArgument({ index: 0, slashCommandOption: false }),
@@ -30,7 +30,7 @@ export default class LastFMAccount extends LastFMBaseCommand<typeof args> {
     if (!(await this.lastFMService.userExists(this.ctx, username)))
       throw new RecordNotFoundError("user");
 
-    let link = LinkGenerator.userPage(username);
+    let link = LastfmLinks.userPage(username);
 
     await this.send(`${perspective.upper.possessive} profile: ${link}`);
   }

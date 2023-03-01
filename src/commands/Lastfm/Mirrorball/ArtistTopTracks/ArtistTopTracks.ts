@@ -1,6 +1,6 @@
 import { LogicError, MirrorballError } from "../../../../errors/errors";
 import { bold, italic } from "../../../../helpers/discord";
-import { LinkGenerator } from "../../../../helpers/lastFM";
+import { LastfmLinks } from "../../../../helpers/lastfm/LastfmLinks";
 import { standardMentions } from "../../../../lib/context/arguments/mentionTypes/mentions";
 import {
   prefabArguments,
@@ -85,7 +85,7 @@ export default class ArtistTopTracks extends MirrorballBaseCommand<
           artist.name
         )} tracks for ${username}`
       )
-      .setURL(LinkGenerator.libraryArtistTopTracks(username, artist.name));
+      .setURL(LastfmLinks.libraryArtistTopTracks(username, artist.name));
 
     const totalScrobbles = topTracks.reduce((sum, t) => sum + t.playcount, 0);
     const average = totalScrobbles / topTracks.length;

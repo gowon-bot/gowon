@@ -4,7 +4,7 @@ import { log } from "mathjs";
 import { CrownRankResponse } from "../../database/entity/Crown";
 import { LogicError } from "../../errors/errors";
 import { ago } from "../../helpers";
-import { toInt } from "../../helpers/lastFM";
+import { toInt } from "../../helpers/lastfm/";
 import { calculatePercent } from "../../helpers/stats";
 import { CrownsService } from "../../services/dbservices/CrownsService";
 import { UserInfo } from "../../services/LastFM/converters/InfoTypes";

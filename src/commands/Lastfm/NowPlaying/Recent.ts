@@ -1,5 +1,5 @@
 import { bold, italic } from "../../../helpers/discord";
-import { LinkGenerator } from "../../../helpers/lastFM";
+import { LastfmLinks } from "../../../helpers/lastfm/LastfmLinks";
 import { bullet } from "../../../helpers/specialCharacters";
 import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
@@ -64,7 +64,7 @@ export default class Recent extends LastFMBaseCommand<typeof args> {
         ...this.generateEmbedAuthor(
           `${perspective.upper.possessive.replace(/`/g, "")} recent tracks`
         ),
-        url: LinkGenerator.userPage(requestableAsUsername(requestable)),
+        url: LastfmLinks.userPage(requestableAsUsername(requestable)),
       })
       .setDescription(
         (recentTracks.isNowPlaying

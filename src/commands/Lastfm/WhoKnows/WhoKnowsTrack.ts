@@ -1,5 +1,5 @@
 import { bold, italic } from "../../../helpers/discord";
-import { LinkGenerator } from "../../../helpers/lastFM";
+import { LastfmLinks } from "../../../helpers/lastfm/LastfmLinks";
 import { Variation } from "../../../lib/command/Command";
 import { VARIATIONS } from "../../../lib/command/variations";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
@@ -88,7 +88,7 @@ export default class WhoKnowsTrack extends WhoKnowsBaseCommand<typeof args> {
           bold(
             displayLink(
               this.payload.member?.nickname || this.payload.author.username,
-              LinkGenerator.userPage(senderUser?.lastFMUsername!)
+              LastfmLinks.userPage(senderUser?.lastFMUsername!)
             )
           ) +
           `- **${displayNumber(playcount, "**play")}`,

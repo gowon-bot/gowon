@@ -1,11 +1,11 @@
-import { FriendsChildCommand } from "../FriendsChildCommand";
-import { MultiRequester } from "../../../../lib/MultiRequester";
-import { LinkGenerator } from "../../../../helpers/lastFM";
 import { LastFMEntityNotFoundError } from "../../../../errors/errors";
-import { displayNumber } from "../../../../lib/views/displays";
-import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";
 import { code } from "../../../../helpers/discord";
+import { LastfmLinks } from "../../../../helpers/lastfm/LastfmLinks";
+import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";
 import { ArgumentsMap } from "../../../../lib/context/arguments/types";
+import { MultiRequester } from "../../../../lib/MultiRequester";
+import { displayNumber } from "../../../../lib/views/displays";
+import { FriendsChildCommand } from "../FriendsChildCommand";
 
 const args = {
   ...prefabArguments.artist,
@@ -42,7 +42,7 @@ export class ArtistPlays extends FriendsChildCommand<typeof args> {
 
     const embed = this.newEmbed()
       .setTitle(`Your friends plays of ${artistName}`)
-      .setURL(LinkGenerator.listenersYouKnow(artistName))
+      .setURL(LastfmLinks.listenersYouKnow(artistName))
       .setDescription(
         Object.keys(artistDetails)
           .sort(

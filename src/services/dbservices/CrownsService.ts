@@ -23,7 +23,7 @@ import {
 } from "../../errors/errors";
 import { asyncMap } from "../../helpers";
 import { sqlLikeEscape } from "../../helpers/database";
-import { toInt } from "../../helpers/lastFM";
+import { toInt } from "../../helpers/lastfm/";
 import { constants } from "../../lib/constants";
 import { GowonContext } from "../../lib/context/Context";
 import { SettingsService } from "../../lib/settings/SettingsService";

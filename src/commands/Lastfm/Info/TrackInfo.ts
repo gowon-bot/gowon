@@ -1,11 +1,11 @@
-import { InfoCommand } from "./InfoCommand";
-import { LinkConsolidator, toInt } from "../../../helpers/lastFM";
-import { LineConsolidator } from "../../../lib/LineConsolidator";
-import { displayNumber } from "../../../lib/views/displays";
+import { bold, italic } from "../../../helpers/discord";
+import { LinkConsolidator, toInt } from "../../../helpers/lastfm/";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
-import { bold, italic } from "../../../helpers/discord";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { LineConsolidator } from "../../../lib/LineConsolidator";
+import { displayNumber } from "../../../lib/views/displays";
+import { InfoCommand } from "./InfoCommand";
 
 const args = {
   ...prefabArguments.track,
@@ -63,10 +63,10 @@ export default class TrackInfo extends InfoCommand<typeof args> {
       (duration
         ? `_${displayNumber(Math.round(duration / 60000), "minute")}_`
         : "") +
-      (duration && trackInfo.album ? " - " : "") +
-      (trackInfo.album
-        ? `from the album ${italic(trackInfo.album?.name)}`
-        : ""),
+        (duration && trackInfo.album ? " - " : "") +
+        (trackInfo.album
+          ? `from the album ${italic(trackInfo.album?.name)}`
+          : ""),
       {
         shouldDisplay: !!(duration || trackInfo.album),
         string: "",

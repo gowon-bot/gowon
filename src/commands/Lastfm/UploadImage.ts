@@ -1,5 +1,5 @@
 import { LogicError } from "../../errors/errors";
-import { LinkGenerator } from "../../helpers/lastFM";
+import { LastfmLinks } from "../../helpers/lastfm/LastfmLinks";
 import { prefabArguments } from "../../lib/context/arguments/prefabArguments";
 import { ArgumentsMap } from "../../lib/context/arguments/types";
 import { LastFMBaseCommand } from "./LastFMBaseCommand";
@@ -34,6 +34,6 @@ export default class ImageUpload extends LastFMBaseCommand<typeof args> {
       );
     }
 
-    await this.send("<" + LinkGenerator.imageUploadLink(artist, album) + ">");
+    await this.send("<" + LastfmLinks.imageUploadLink(artist, album) + ">");
   }
 }

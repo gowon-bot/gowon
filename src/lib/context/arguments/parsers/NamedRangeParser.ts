@@ -1,5 +1,5 @@
 import { flatDeep, ucFirst } from "../../../../helpers";
-import { toInt } from "../../../../helpers/lastFM";
+import { toInt } from "../../../../helpers/lastfm/";
 import { NamedRange } from "../../../timeAndDate/NamedRange";
 import { TimeRange } from "../../../timeAndDate/TimeRange";
 

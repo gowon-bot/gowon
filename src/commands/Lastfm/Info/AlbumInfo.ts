@@ -1,12 +1,12 @@
-import { InfoCommand } from "./InfoCommand";
+import { bold, italic } from "../../../helpers/discord";
+import { LinkConsolidator } from "../../../helpers/lastfm/";
 import { calculatePercent } from "../../../helpers/stats";
-import { LinkConsolidator } from "../../../helpers/lastFM";
-import { LineConsolidator } from "../../../lib/LineConsolidator";
-import { displayNumber } from "../../../lib/views/displays";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
-import { bold, italic } from "../../../helpers/discord";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { LineConsolidator } from "../../../lib/LineConsolidator";
+import { displayNumber } from "../../../lib/views/displays";
+import { InfoCommand } from "./InfoCommand";
 
 const args = {
   ...prefabArguments.album,
@@ -69,7 +69,7 @@ export default class AlbumInfo extends InfoCommand<typeof args> {
 
     const spotifyAlbumArt =
       spotifyAlbumSearch.hasAnyResults &&
-        spotifyAlbumSearch.bestResult.isExactMatch
+      spotifyAlbumSearch.bestResult.isExactMatch
         ? spotifyAlbumSearch.bestResult.images.largest
         : undefined;
 
@@ -141,16 +141,18 @@ export default class AlbumInfo extends InfoCommand<typeof args> {
         {
           name: `${perspective.upper.possessive} stats`,
           value: `
-        \`${displayNumber(albumInfo.userPlaycount, "` play", true)} by ${perspective.objectPronoun
-            } (${bold(
-              calculatePercent(albumInfo.userPlaycount, userInfo.scrobbleCount, 4)
-            )}% of ${perspective.possessivePronoun} total scrobbles)
-        ${parseFloat(percentage) > 0
-              ? `${perspective.upper.regularVerb("account")} for ${bold(
+        \`${displayNumber(albumInfo.userPlaycount, "` play", true)} by ${
+            perspective.objectPronoun
+          } (${bold(
+            calculatePercent(albumInfo.userPlaycount, userInfo.scrobbleCount, 4)
+          )}% of ${perspective.possessivePronoun} total scrobbles)
+        ${
+          parseFloat(percentage) > 0
+            ? `${perspective.upper.regularVerb("account")} for ${bold(
                 percentage
               )}% of all scrobbles of this album!`
-              : ""
-            }`,
+            : ""
+        }`,
         }
       )
       .setFooter({
@@ -158,10 +160,10 @@ export default class AlbumInfo extends InfoCommand<typeof args> {
           albumCover.source === "custom" || albumCover.source === "moderation"
             ? ""
             : albumInfo.images.get("large")
-              ? "Image source: Last.fm"
-              : spotifyAlbumArt && spotifyAlbumArt.url
-                ? "Image source: Spotify"
-                : "",
+            ? "Image source: Last.fm"
+            : spotifyAlbumArt && spotifyAlbumArt.url
+            ? "Image source: Spotify"
+            : "",
       });
 
     this.send(embed);

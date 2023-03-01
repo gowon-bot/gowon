@@ -1,4 +1,4 @@
-import { LinkGenerator } from "../../../helpers/lastFM";
+import { LastfmLinks } from "../../../helpers/lastfm/LastfmLinks";
 import { Command } from "../../../lib/command/Command";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
@@ -53,19 +53,14 @@ export default class Privacy extends Command<typeof args> {
       await this.mirrorballUsersService.updatePrivacy(this.ctx, privacy);
 
       embed.setDescription(
-        `Your new privacy is: \`${privacy.toLowerCase()}\` (${privacy === "DISCORD"
-          ? this.author.tag
-          : privacy === "FMUSERNAME"
-            ? displayLink(
-              senderUsername,
-              LinkGenerator.userPage(senderUsername)
-            )
+        `Your new privacy is: \`${privacy.toLowerCase()}\` (${
+          privacy === "DISCORD"
+            ? this.author.tag
+            : privacy === "FMUSERNAME"
+            ? displayLink(senderUsername, LastfmLinks.userPage(senderUsername))
             : privacy === "BOTH"
-              ? displayLink(
-                this.author.tag,
-                LinkGenerator.userPage(senderUsername)
-              )
-              : PrivateUserDisplay
+            ? displayLink(this.author.tag, LastfmLinks.userPage(senderUsername))
+            : PrivateUserDisplay
         })`
       );
     } else {
@@ -77,12 +72,12 @@ Your current privacy: \`${(mirrorballUser?.privacy || "unset").toLowerCase()}\`
 The options for privacy are:
 - \`fmusername\`: Last.fm username is shown (${Emoji.lastfm} ${displayLink(
             senderUsername,
-            LinkGenerator.userPage(senderUsername)
+            LastfmLinks.userPage(senderUsername)
           )})
 - \`discord\`: Discord username and discriminator are shown (${this.author.tag})
 - \`both\`: Discord username and discriminator are shown, and last.fm linked (${displayLink(
             this.author.tag,
-            LinkGenerator.userPage(senderUsername)
+            LastfmLinks.userPage(senderUsername)
           )})
 - \`private\`: Your identity will be hidden (${PrivateUserDisplay})
 
@@ -92,7 +87,7 @@ You can set your privacy with \`${this.prefix}privacy <option>\``
           text:
             this.privacyHelp +
             (!mirrorballUser?.privacy ||
-              mirrorballUser.privacy === MirrorballPrivacy.Unset
+            mirrorballUser.privacy === MirrorballPrivacy.Unset
               ? "\nGowon will not reveal any information about you until you set your privacy"
               : ""),
         });
