@@ -15,7 +15,6 @@ import { SettingsService } from "./lib/settings/SettingsService";
 import { GuildEventService } from "./services/Discord/GuildEventService";
 import { RedisInteractionService } from "./services/redis/RedisInteractionService";
 import { ServiceRegistry } from "./services/ServicesRegistry";
-import { TwitterService } from "./services/Twitter/TwitterService";
 
 export const client = new GowonClient(
   new Client({
@@ -52,7 +51,6 @@ const api = new GraphQLAPI(client);
 const settingsService = ServiceRegistry.get(SettingsService);
 const redisService = ServiceRegistry.get(RedisInteractionService);
 export const guildEventService = ServiceRegistry.get(GuildEventService);
-export const twitterService = ServiceRegistry.get(TwitterService);
 
 export async function setup() {
   console.log(
@@ -76,12 +74,6 @@ export async function setup() {
     // The interaction handler depends on the command registry
     initializeInteractions(),
   ]);
-
-  // These depend on other initializations above
-  await Promise.all([
-    // The twitter stream needs the settings to be available
-    buildTwitterStream(),
-  ]);
 }
 
 function connectToDB() {
@@ -90,13 +82,6 @@ function connectToDB() {
 
 function connectToRedis() {
   return logStartup(() => redisService.init(), "Connected to Redis");
-}
-
-function buildTwitterStream() {
-  return logStartup(
-    () => twitterService.buildStream(),
-    "Created Twitter stream"
-  );
 }
 
 function intializeAPI() {

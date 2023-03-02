@@ -11,14 +11,8 @@ export default class Ping extends Command {
 
   secretCommand = true;
   slashCommand = true;
-  twitterCommand = true;
 
   async run() {
-    if (this.payload.isTweet()) {
-      this.responder.twitter(this.ctx, "Pong!");
-      return;
-    }
-
     if (this.extract.didMatch("pingmatrix")) {
       const matrix = [] as number[][];
 

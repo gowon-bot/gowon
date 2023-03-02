@@ -96,11 +96,8 @@ export const Settings = {
   issueMode: new BotScopedSetting("issue_mode", {
     omitFromDashboard: true,
   }),
-  noTwitter: new BotScopedSetting("no_twitter", {
-    omitFromDashboard: true,
-  }),
 } satisfies Record<string, BaseSetting<unknown>>;
 
 export type SettingsMap = {
-  [K in keyof typeof Settings]: typeof Settings[K];
+  [K in keyof typeof Settings]: (typeof Settings)[K];
 };

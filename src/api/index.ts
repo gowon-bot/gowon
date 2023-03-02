@@ -19,7 +19,6 @@ import settingsResolvers from "./resolvers/settings/settingResolvers";
 import userResolvers from "./resolvers/userResolvers";
 import { IndexingWebhookService } from "./webhooks/IndexingWebhookService";
 import { SpotifyWebhookService } from "./webhooks/SpotifyWebhookService";
-import { TwitterWebhookService } from "./webhooks/TwitterWebhookService";
 
 export const gowonAPIPort = gowonConfig.gowonAPIPort;
 
@@ -27,7 +26,6 @@ export class GraphQLAPI {
   analyticsCollector = ServiceRegistry.get(AnalyticsCollector);
 
   private readonly spotifyRedirectRoute = "/spotify-login-success";
-  private readonly twitterRedirectRoute = "/twitter-login-success";
 
   constructor(private gowonClient: GowonClient) {}
 
@@ -112,20 +110,6 @@ export class GraphQLAPI {
             res.send("<p>Whoops, something went wrong...</p");
           }
         }
-      } else {
-        res.status(400).send("Please send a code in the valid format");
-      }
-    });
-
-    app.get("/webhooks/twitter", (req, res) => {
-      const response = {
-        code: req.query.code as string,
-        state: req.query.state as string,
-      };
-
-      if (response.state && response.code) {
-        TwitterWebhookService.getInstance().handleRequest(response);
-        res.redirect(gowonConfig.gowonWebsiteURL + this.twitterRedirectRoute);
       } else {
         res.status(400).send("Please send a code in the valid format");
       }

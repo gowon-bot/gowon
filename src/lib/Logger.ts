@@ -1,10 +1,10 @@
-import { Command } from "./command/Command";
-import { User } from "discord.js";
 import chalk from "chalk";
 import { format } from "date-fns";
+import { User } from "discord.js";
 import { SimpleMap } from "../helpers/types";
-import { GowonContext } from "./context/Context";
+import { Command } from "./command/Command";
 import { ExtractedCommand } from "./command/extractor/ExtractedCommand";
+import { GowonContext } from "./context/Context";
 
 export class Logger {
   static output = true;
@@ -89,16 +89,8 @@ ${
       }\n`
     : ""
 }{cyan Ran at}: ${payload.source.createdAt} {cyan by} ${
-        payload.isDiscord()
-          ? payload.author.username
-          : payload.isTweet()
-          ? payload.source.authorID
-          : "an unknown author"
-      } ${
-        payload.isDiscord()
-          ? chalk`{cyan in} ${payload.guild?.name || chalk`{red DMs}`}`
-          : "on Twitter"
-      }
+        payload.author.username
+      } ${chalk`{cyan in} ${payload.guild?.name || chalk`{red DMs}`}`}
 {cyan with arguments}: ${Logger.formatObject(
         this.sanitizeParamsForDisplay(command.parsedArguments)
       )}
@@ -109,11 +101,7 @@ ${
       }
 
 {cyan Raw message content}:
-${
-  payload.isMessage() || payload.isTweet()
-    ? chalk`{bgGrey ${payload.source.content}}`
-    : ""
-}
+${payload.isMessage() ? chalk`{bgGrey ${payload.source.content}}` : ""}
 {cyan Activity:}`;
     Logger.log("Command", chalk.grey("started"), this);
   }

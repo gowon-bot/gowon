@@ -241,20 +241,4 @@ export class UsersService extends BaseService {
 
     return user.spotifyRefreshToken;
   }
-
-  async setTwitterID(ctx: GowonContext, discordID: string, twitterID: string) {
-    const user = await this.getUser(ctx, discordID);
-
-    user.twitterID = twitterID;
-
-    await user.save();
-  }
-
-  async getUserByTwitterID(twitterID: string): Promise<User> {
-    const user = await User.findOne({ where: { twitterID } });
-
-    if (!user) throw new RecordNotFoundError("user");
-
-    return user;
-  }
 }
