@@ -1,15 +1,15 @@
-import { User } from "../../database/entity/User";
+import { Chance } from "chance";
+import { User as DiscordUser } from "discord.js";
 import { AnalyticsCollector } from "../../analytics/AnalyticsCollector";
+import { User } from "../../database/entity/User";
+import { CommandAccessRoleName } from "../../lib/command/access/roles";
 import { GowonContext } from "../../lib/context/Context";
+import { Perspective } from "../../lib/Perspective";
+import { LastFMSession } from "../../services/LastFM/converters/Misc";
+import { Requestable } from "../../services/LastFM/LastFMAPIService";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { mockEntities } from "../gowon";
 import { BaseMockService } from "./BaseMockService";
-import { Requestable } from "../../services/LastFM/LastFMAPIService";
-import { LastFMSession } from "../../services/LastFM/converters/Misc";
-import { Perspective } from "../../lib/Perspective";
-import { User as DiscordUser } from "discord.js";
-import { Chance } from "chance";
-import { CommandAccessRoleName } from "../../lib/command/access/roles";
 
 export class MockUsersService extends BaseMockService {
   get analyticsCollector() {
@@ -124,15 +124,5 @@ export class MockUsersService extends BaseMockService {
     _discordID: string
   ): Promise<string | undefined> {
     return undefined;
-  }
-
-  async setTwitterID(
-    _ctx: GowonContext,
-    _discordID: string,
-    _twitterID: string
-  ) {}
-
-  async getUserByTwitterID(twitterID: string): Promise<User> {
-    return mockEntities.user({ twitterID });
   }
 }

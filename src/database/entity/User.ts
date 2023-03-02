@@ -33,9 +33,6 @@ export class User extends BaseEntity {
   @Column()
   discordID!: string;
 
-  @Column({ nullable: true })
-  twitterID!: string;
-
   @Column()
   lastFMUsername!: string;
 

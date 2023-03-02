@@ -106,13 +106,6 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
   slashCommandName?: string;
 
   /**
-   * Twitter command meta data
-   * (properties related to how twitter commands are registered/handled)
-   */
-  // Controls whether to register a command as a twitter command
-  twitterCommand?: boolean;
-
-  /**
    * Parent-child metadata
    * (properties related to a commands parents or children)
    */
@@ -201,7 +194,7 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
       : config.defaultPrefix;
   }
 
-  ctx!: GowonContext<typeof this["customContext"]>;
+  ctx!: GowonContext<(typeof this)["customContext"]>;
   customContext = {};
 
   /**
@@ -697,7 +690,6 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
     );
 
     await this.responder.discord(this.ctx, embed);
-    await this.responder.twitter(this.ctx, message);
   }
 
   protected startTyping() {

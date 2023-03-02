@@ -47,7 +47,6 @@ import { SpotifyService } from "./Spotify/SpotifyService";
 import { TasteService } from "./taste/TasteService";
 import { TimeAndDateService } from "./TimeAndDateService";
 import { TrackingService } from "./TrackingService";
-import { TwitterService } from "./Twitter/TwitterService";
 import { WordBlacklistService } from "./WordBlacklistService";
 
 export type Service<T extends BaseService = any> = { new (): T };
@@ -102,7 +101,6 @@ const services: Service[] = [
   TasteService,
   TimeAndDateService,
   TrackingService,
-  TwitterService,
   UsersService,
   WhoKnowsService,
   WordBlacklistService,

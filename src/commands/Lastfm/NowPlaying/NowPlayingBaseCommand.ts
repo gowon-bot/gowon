@@ -1,7 +1,6 @@
 import { Message, MessageEmbed, User } from "discord.js";
 import config from "../../../../config.json";
 import { User as DBUser } from "../../../database/entity/User";
-import { shuffle } from "../../../helpers";
 import { bold, italic, sanitizeForDiscord } from "../../../helpers/discord";
 import { LastfmLinks } from "../../../helpers/lastfm/LastfmLinks";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
@@ -228,15 +227,6 @@ export abstract class NowPlayingBaseCommand<
 
     if (consolidator.hasTag("rare sad boy", "rsb", "rsg", "rare sad girl")) {
       await sentMessage.react("😭");
-    }
-
-    if (
-      consolidator
-        .consolidateAsStrings()
-        .find((t) => t.includes("christmas")) ||
-      track.name.includes("christmas")
-    ) {
-      await sentMessage.react(shuffle(["❄️", "⛄️", "🎄", "🎅"])[0]);
     }
   }
 

@@ -6,12 +6,9 @@ import {
   TextBasedChannel,
   User,
 } from "discord.js";
-import { UsersService } from "../../services/dbservices/UsersService";
-import { ServiceRegistry } from "../../services/ServicesRegistry";
-import { StreamedTweet } from "../../services/Twitter/converters/StreamedTweet";
 import { GowonClient } from "../GowonClient";
 
-export type OriginalPayload = Message | CommandInteraction | StreamedTweet;
+export type OriginalPayload = Message | CommandInteraction;
 
 export class Payload<T extends OriginalPayload = OriginalPayload> {
   constructor(public source: T) {}
@@ -20,17 +17,7 @@ export class Payload<T extends OriginalPayload = OriginalPayload> {
 
   // Converts non-discord payload sources to discord ones
   // By fetching author, guild, etc.
-  async normalize(client: GowonClient) {
-    if (this.isTweet()) {
-      const user = await ServiceRegistry.get(UsersService).getUserByTwitterID(
-        this.source.authorID
-      );
-
-      const discordUser = await client.client.users.fetch(user.discordID);
-
-      this.normalizedProperties.author = discordUser;
-    }
-  }
+  async normalize(_client: GowonClient) {}
 
   get guild(): Guild | undefined {
     if (this.isInteraction() || this.isMessage()) {
@@ -63,13 +50,5 @@ export class Payload<T extends OriginalPayload = OriginalPayload> {
 
   isMessage(): this is Payload<Message> {
     return this.source instanceof Message;
-  }
-
-  isDiscord(): this is Payload<Message | CommandInteraction> {
-    return this.isMessage() || this.isInteraction();
-  }
-
-  isTweet(): this is Payload<StreamedTweet> {
-    return this.source instanceof StreamedTweet;
   }
 }
