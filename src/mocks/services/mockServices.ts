@@ -7,6 +7,7 @@ import { MockDiscordService } from "./MockDiscordService";
 import { MockGowonService } from "./MockGowonService";
 import { MockLastFMArguments } from "./MockLastFMArguments";
 import { MockLastFMService } from "./MockLastFMService";
+import { MockLilacUsersService } from "./MockLilacUsersService";
 import { MockMirrorballService } from "./MockMirrorballService";
 import { MockMirrorballUsersService } from "./MockMirrorballUsersService";
 import { MockNowPlayingEmbedParsingService } from "./MockNowPlayingEmbedParsingService";
@@ -21,6 +22,7 @@ export const mockServices: Service[] = [
   MockGowonService,
   MockLastFMArguments,
   MockLastFMService,
+  MockLilacUsersService,
   MockMirrorballService,
   MockMirrorballUsersService,
   MockNowPlayingEmbedParsingService,
