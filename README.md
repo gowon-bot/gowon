@@ -45,6 +45,7 @@ There are now too many commands to list in the README, see `!help all` or visit 
 - DunsterJR for making the (old) profile picture, and for the friends plays idea
 - mypetrobot for building the `Who Knows?` bot, the backbone and inspiration for this bot
 - Frikandel (.fmbot developer) and Ish (Chuu developer) for being great bot developers to share a space with!
+- Egg and Mags for contributing the Yoink! emojis
 - Last.fm, for existing
 
 ## Any questions?

@@ -1,16 +1,17 @@
-import { CrownCheck } from "../../../services/dbservices/CrownsService";
+import { Chance } from "chance";
 import {
-  User as DiscordUser,
-  MessageEmbed,
-  GuildMember,
   Client,
+  User as DiscordUser,
+  GuildMember,
+  MessageEmbed,
 } from "discord.js";
 import { gowonEmbed } from ".";
+import { bold, code } from "../../../helpers/discord";
+import { CrownCheck } from "../../../services/dbservices/CrownsService";
 import { Emoji } from "../../Emoji";
 import { GowonClient } from "../../GowonClient";
-import { displayNumber } from "../displays";
 import { GowonContext } from "../../context/Context";
-import { bold, code } from "../../../helpers/discord";
+import { displayNumber } from "../displays";
 
 export class CrownEmbeds {
   client: Client;
@@ -68,11 +69,12 @@ export class CrownEmbeds {
   }
 
   async snatchedCrown(): Promise<MessageEmbed> {
-    let holderUsername = await this.holderUsername();
+    const holderUsername = await this.holderUsername();
+    const yoinkEmoji = Chance().weighted([Emoji.yoink, Emoji.yoimk], [100, 1]);
 
     return this.embed.setDescription(
       `
-:crown: → ${code(this.user.username)} - ${displayNumber(
+${yoinkEmoji} → ${code(this.user.username)} - ${displayNumber(
         this.crownCheck.crown!.plays,
         "play"
       )}

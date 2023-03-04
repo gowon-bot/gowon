@@ -1,8 +1,8 @@
 import {
   DiscordAPIError,
+  User as DiscordUser,
   Guild,
   GuildMember,
-  User as DiscordUser,
 } from "discord.js";
 import gql from "graphql-tag";
 import {
@@ -13,17 +13,17 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { userHasRole } from "../../helpers/discord";
+import { Logger } from "../../lib/Logger";
 import { CommandAccessRoleName } from "../../lib/command/access/roles";
 import { GowonContext } from "../../lib/context/Context";
-import { Logger } from "../../lib/Logger";
 import { SettingsService } from "../../lib/settings/SettingsService";
 import { GowonService } from "../../services/GowonService";
-import { MirrorballService } from "../../services/mirrorball/MirrorballService";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
-import { AlbumCard } from "./cards/AlbumCard";
+import { MirrorballService } from "../../services/mirrorball/MirrorballService";
 import { Combo } from "./Combo";
 import { Crown } from "./Crown";
 import { Friend } from "./Friend";
+import { AlbumCard } from "./cards/AlbumCard";
 
 @Entity({ name: "users" })
 export class User extends BaseEntity {
