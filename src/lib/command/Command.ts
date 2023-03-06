@@ -753,7 +753,8 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
       this.author.id &&
       Chance().bool({ likelihood: 33 }) &&
       !["update", "index", "login", "logout"].includes(this.name) &&
-      !this.gowonClient.isInIssueMode
+      !this.gowonClient.isInIssueMode &&
+      !this.gowonClient.isTesting
     ) {
       const senderUser = await this.usersService.getUser(
         this.ctx,

@@ -1,10 +1,10 @@
-import { Client, Guild, User as DiscordUser } from "discord.js";
+import { Client, User as DiscordUser, Guild } from "discord.js";
 import { User } from "../database/entity/User";
 import { flatDeep } from "../helpers";
 import { ServiceRegistry } from "../services/ServicesRegistry";
 import { constants } from "./constants";
-import { isUnicodeEmoji } from "./context/arguments/parsers/EmojiParser";
 import { GowonContext } from "./context/Context";
+import { isUnicodeEmoji } from "./context/arguments/parsers/EmojiParser";
 import { SettingsService } from "./settings/SettingsService";
 import specialUsers from "./specialUsers.json";
 
@@ -31,6 +31,10 @@ export class GowonClient {
 
   get isInIssueMode(): boolean {
     return this.settingsService.get("issueMode", {}) === "true";
+  }
+
+  get isTesting(): boolean {
+    return this.environment === "test";
   }
 
   isDeveloper(userID?: string): boolean {
