@@ -2,6 +2,7 @@
 
 import {
   Client,
+  ClientUser,
   CommandInteraction,
   Guild,
   GuildMember,
@@ -16,6 +17,14 @@ export class MockClient extends Client {
     super({
       intents: [],
     });
+  }
+
+  get user(): ClientUser {
+    return new MockClientUser();
+  }
+
+  set user(user: ClientUser) {
+    return;
   }
 }
 
@@ -72,7 +81,7 @@ export class MockGuild extends Guild {
   id = "768596255697272862";
 
   constructor() {
-    super(mockClient, {});
+    super(mockClient, { id: "768596255697272862" });
   }
 }
 
@@ -88,6 +97,7 @@ export class MockUser extends User {
   constructor(id?: string) {
     super(mockClient, {
       id: id || "267794154459889664",
+      bot: false,
     });
   }
 
@@ -99,6 +109,24 @@ export class MockUser extends User {
   }
   get tag() {
     return "testuser#0001";
+  }
+}
+
+export class MockClientUser extends ClientUser {
+  constructor() {
+    super(mockClient, {
+      id: "772733819089846323",
+    });
+  }
+
+  get username() {
+    return "gowon";
+  }
+  get discriminator() {
+    return "0001";
+  }
+  get tag() {
+    return "gowon#0001";
   }
 }
 

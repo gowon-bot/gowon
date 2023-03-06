@@ -37,13 +37,6 @@ export class Logger {
     Logger.log(context, msg, this);
   }
 
-  logCommandHandlerSearch(commandName: string): void {
-    Logger.log(
-      "CommandHandler",
-      chalk`{grey looking for command} {bgGrey ${commandName}}`
-    );
-  }
-
   logCommandHandle(extract: ExtractedCommand): void {
     Logger.log(
       `CommandHandler`,
@@ -133,4 +126,10 @@ export class HeaderlessLogger extends Logger {
   override log(context: string, msg?: any): void {
     Logger.log(context, msg);
   }
+}
+
+export class SilentLogger extends Logger {
+  override log(_context: string, _msg?: any): void {}
+  override closeCommandHeader(_command: Command): void {}
+  override logCommandHandle(_extract: ExtractedCommand): void {}
 }

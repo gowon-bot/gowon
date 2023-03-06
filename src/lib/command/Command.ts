@@ -364,7 +364,7 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
     }
   }
 
-  private async handleRunError(e: any) {
+  protected async handleRunError(e: any) {
     this.logger.logError(e);
     this.analyticsCollector.metrics.commandErrors.inc();
 

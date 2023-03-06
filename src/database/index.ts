@@ -1,4 +1,4 @@
-import { createConnection, Connection } from "typeorm";
+import { Connection, createConnection } from "typeorm";
 
 export class DB {
   connection!: Connection;

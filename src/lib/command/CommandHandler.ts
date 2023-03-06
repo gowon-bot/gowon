@@ -6,23 +6,24 @@ import {
   fishyRegex,
   userMentionAtStartRegex,
 } from "../../helpers/discord";
-import { MetaService } from "../../services/dbservices/MetaService";
+import { DiscordService } from "../../services/Discord/DiscordService";
 import {
   NicknameService,
   NicknameServiceContext,
 } from "../../services/Discord/NicknameService";
 import { GowonService } from "../../services/GowonService";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
-import { GowonContext } from "../context/Context";
-import { Payload } from "../context/Payload";
+import { MetaService } from "../../services/dbservices/MetaService";
 import { Emoji } from "../Emoji";
 import { GowonClient } from "../GowonClient";
 import { HeaderlessLogger, Logger } from "../Logger";
+import { GowonContext } from "../context/Context";
+import { Payload } from "../context/Payload";
 import { PermissionsService } from "../permissions/PermissionsService";
 import { Command } from "./Command";
 import { CommandRegistry } from "./CommandRegistry";
-import { ExtractedCommand } from "./extractor/ExtractedCommand";
 import { ParentCommand } from "./ParentCommand";
+import { ExtractedCommand } from "./extractor/ExtractedCommand";
 
 export class CommandHandler {
   commandRegistry = CommandRegistry.getInstance();
@@ -31,6 +32,7 @@ export class CommandHandler {
   permissionsService = ServiceRegistry.get(PermissionsService);
   metaService = ServiceRegistry.get(MetaService);
   gowonService = ServiceRegistry.get(GowonService);
+  discordService = ServiceRegistry.get(DiscordService);
   private nicknameService = ServiceRegistry.get(NicknameService);
   private logger = new HeaderlessLogger();
 
@@ -51,7 +53,7 @@ export class CommandHandler {
     });
   }
 
-  async handle(message: Message): Promise<void> {
+  async handle(message: Message): Promise<boolean> {
     await Promise.all([
       this.runPrefixCommandIfMentioned(message),
       this.gers(message),
@@ -67,7 +69,7 @@ export class CommandHandler {
 
         this.recordUsernameAndNickname(message);
 
-        if (!(await this.canRunCommand(message, command))) return;
+        if (!(await this.canRunCommand(message, command))) return false;
 
         this.logger.logCommandHandle(extract);
 
@@ -77,9 +79,12 @@ export class CommandHandler {
           message
         );
 
-        this.runCommand(command, message, extract);
+        await this.runCommand(command, message, extract);
+        return true;
       }
     }
+
+    return false;
   }
 
   private shouldSearchForCommand(message: Message): boolean {
