@@ -17,6 +17,10 @@ export class MockGowonService extends BaseMockService {
     return "!";
   }
 
+  prefixAtStartOfMessageRegex(_guildID: string): RegExp {
+    return new RegExp(`![^\\s]+`, "i");
+  }
+
   removeCommandName(
     string: string,
     extract: ExtractedCommand,

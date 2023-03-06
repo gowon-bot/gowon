@@ -6,15 +6,18 @@ import gql from "graphql-tag";
 import { GraphQLAPI } from "./api";
 import { DB } from "./database";
 import { Stopwatch, ucFirst } from "./helpers";
-import { CommandHandler } from "./lib/command/CommandHandler";
-import { CommandRegistry } from "./lib/command/CommandRegistry";
-import { InteractionHandler } from "./lib/command/interactions/InteractionHandler";
 import { GowonClient } from "./lib/GowonClient";
+import { CommandHandler } from "./lib/command/CommandHandler";
+import {
+  CommandRegistry,
+  generateCommands,
+} from "./lib/command/CommandRegistry";
+import { InteractionHandler } from "./lib/command/interactions/InteractionHandler";
 import { mirrorballClient } from "./lib/indexing/client";
 import { SettingsService } from "./lib/settings/SettingsService";
 import { GuildEventService } from "./services/Discord/GuildEventService";
-import { RedisInteractionService } from "./services/redis/RedisInteractionService";
 import { ServiceRegistry } from "./services/ServicesRegistry";
+import { RedisInteractionService } from "./services/redis/RedisInteractionService";
 
 export const client = new GowonClient(
   new Client({
@@ -116,7 +119,7 @@ function connectToMirrorball() {
 
 function initializeCommandRegistry() {
   return logStartup(
-    () => CommandRegistry.getInstance().init(),
+    async () => CommandRegistry.getInstance().init(await generateCommands()),
     "Initialized command registry"
   );
 }

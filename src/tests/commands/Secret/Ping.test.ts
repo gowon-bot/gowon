@@ -1,13 +1,17 @@
+import "../../shims";
+
 import Ping from "../../../commands/Secret/Ping";
-import { mockContext, mockExtractedCommand } from "../../../mocks/MockContext";
+import {
+  mockContextForCommand,
+  mockExtractedCommand,
+} from "../../../mocks/MockContext";
 import { setMockServices } from "../../../mocks/services/mockServices";
 
 describe("Ping command", () => {
   beforeAll(setMockServices);
 
   test("should pong", async () => {
-    const ping = new Ping();
-    const ctx = mockContext();
+    const { command: ping, ctx } = mockContextForCommand(Ping);
 
     await ping.execute(ctx);
 
@@ -17,8 +21,9 @@ describe("Ping command", () => {
   });
 
   test("should pon", async () => {
-    const ping = new Ping();
-    const ctx = mockContext({ extract: mockExtractedCommand("pin") });
+    const { command: ping, ctx } = mockContextForCommand(Ping, {
+      extract: mockExtractedCommand("pin"),
+    });
 
     await ping.execute(ctx);
 

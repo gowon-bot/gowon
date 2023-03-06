@@ -1,8 +1,8 @@
 import { Commands } from "./CommandGroup";
 import { CommandExtractor } from "./extractor/CommandExtractor";
 
-import { promisify } from "util";
 import _glob from "glob";
+import { promisify } from "util";
 import { flatDeep } from "../../helpers";
 import { SimpleMap } from "../../helpers/types";
 import { Command } from "./Command";
@@ -29,9 +29,7 @@ export class CommandRegistry {
   private pool: Registry = [];
   private factory: CommandFactory = {};
 
-  public async init() {
-    const commands = await generateCommands();
-
+  public init(commands: Commands) {
     this.pool = [];
 
     for (const command of Object.values(commands)) {
@@ -162,7 +160,7 @@ export class CommandRegistry {
   }
 }
 
-async function generateCommands(): Promise<Commands> {
+export async function generateCommands(): Promise<Commands> {
   const files = await glob(
     require("path").dirname(require.main?.filename) + "/commands/**/*.js"
   );

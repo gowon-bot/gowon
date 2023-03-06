@@ -1,5 +1,6 @@
 {
   "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended"],
+  "ignorePatterns": ["jest.config.js"],
   "root": true,
   "parser": "@typescript-eslint/parser",
   "parserOptions": {

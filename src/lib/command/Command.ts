@@ -1,11 +1,11 @@
 import { Chance } from "chance";
 import {
   CommandInteraction,
+  User as DiscordUser,
   EmbedAuthorData,
   Guild,
   Message,
   MessageEmbed,
-  User as DiscordUser,
 } from "discord.js";
 import md5 from "js-md5";
 import config from "../../../config.json";
@@ -23,14 +23,12 @@ import {
   throwSenderUserNotIndexed,
 } from "../../errors/user";
 import {
-  buildRequestables,
-  compareUsernames,
   GetMentionsOptions,
   GetMentionsReturn,
+  buildRequestables,
+  compareUsernames,
 } from "../../helpers/getMentions";
 import { SimpleMap } from "../../helpers/types";
-import { ArgumentParsingService } from "../../services/arguments/ArgumentsParsingService";
-import { UsersService } from "../../services/dbservices/UsersService";
 import {
   DiscordService,
   ReplyOptions,
@@ -38,6 +36,12 @@ import {
 } from "../../services/Discord/DiscordService";
 import { GowonService } from "../../services/GowonService";
 import { isSessionKey } from "../../services/LastFM/LastFMAPIService";
+import { NowPlayingEmbedParsingService } from "../../services/NowPlayingEmbedParsingService";
+import { Responder } from "../../services/Responder";
+import { ServiceRegistry } from "../../services/ServicesRegistry";
+import { TrackingService } from "../../services/TrackingService";
+import { ArgumentParsingService } from "../../services/arguments/ArgumentsParsingService";
+import { UsersService } from "../../services/dbservices/UsersService";
 import { LilacUsersService } from "../../services/lilac/LilacUsersService";
 import { MirrorballService } from "../../services/mirrorball/MirrorballService";
 import {
@@ -45,24 +49,20 @@ import {
   UserInput,
 } from "../../services/mirrorball/MirrorballTypes";
 import { MirrorballUsersService } from "../../services/mirrorball/services/MirrorballUsersService";
-import { NowPlayingEmbedParsingService } from "../../services/NowPlayingEmbedParsingService";
-import { Responder } from "../../services/Responder";
-import { ServiceRegistry } from "../../services/ServicesRegistry";
-import { TrackingService } from "../../services/TrackingService";
+import { Emoji, EmojiRaw } from "../Emoji";
 import { constants } from "../constants";
+import { GowonContext } from "../context/Context";
 import {
   ArgumentName,
   ArgumentsMap,
   ParsedArguments,
 } from "../context/arguments/types";
-import { GowonContext } from "../context/Context";
-import { Emoji, EmojiRaw } from "../Emoji";
 import { SettingsService } from "../settings/SettingsService";
 import { Validation, ValidationChecker } from "../validation/ValidationChecker";
 import { errorEmbed, gowonEmbed } from "../views/embeds";
-import { CommandAccess } from "./access/access";
 import { CommandGroup } from "./CommandGroup";
 import { CommandRegistry } from "./CommandRegistry";
+import { CommandAccess } from "./access/access";
 
 export interface Variation {
   name: string;
@@ -225,7 +225,9 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
     NowPlayingEmbedParsingService
   );
 
-  commandRegistry = CommandRegistry.getInstance();
+  get commandRegistry() {
+    return CommandRegistry.getInstance();
+  }
 
   /**
    * Helper getters
@@ -362,7 +364,7 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
     }
   }
 
-  private async handleRunError(e: any) {
+  protected async handleRunError(e: any) {
     this.logger.logError(e);
     this.analyticsCollector.metrics.commandErrors.inc();
 
@@ -751,7 +753,8 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
       this.author.id &&
       Chance().bool({ likelihood: 33 }) &&
       !["update", "index", "login", "logout"].includes(this.name) &&
-      !this.gowonClient.isInIssueMode
+      !this.gowonClient.isInIssueMode &&
+      !this.gowonClient.isTesting
     ) {
       const senderUser = await this.usersService.getUser(
         this.ctx,

@@ -1,4 +1,4 @@
-import { createConnection, Connection } from "typeorm";
+import { Connection, createConnection } from "typeorm";
 
 export class DB {
   connection!: Connection;
@@ -9,23 +9,5 @@ export class DB {
 
   async close() {
     await this.connection.close(); // bug in typeorm, closing a connection doesn't fully close it, causing it to error when trying to reconnect
-  }
-
-  async connectTest() {
-    if (this.connection) this.connection.connect();
-    else {
-      this.connection = await createConnection({
-        name: "default",
-        type: "postgres",
-        host: "localhost",
-        port: 5432,
-        username: "john",
-        password: "password",
-        database: "gowon_test",
-        synchronize: true,
-        logging: false,
-        entities: [__dirname + "/entity/**/*.ts"],
-      });
-    }
   }
 }
