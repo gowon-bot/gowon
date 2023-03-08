@@ -1,14 +1,14 @@
-import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { LogicError } from "../../../errors/errors";
-import { trackEmbed } from "../../../lib/views/embeds";
+import { ago } from "../../../helpers";
+import { DateArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/DateArgument";
+import { TimeRangeArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/TimeRangeArgument";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { displayDate } from "../../../lib/views/displays";
-import { ago } from "../../../helpers";
-import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
-import { TimeRangeArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/TimeRangeArgument";
-import { DateArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/DateArgument";
-import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { trackEmbed } from "../../../lib/views/embeds";
+import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 const args = {
   timeRange: new TimeRangeArgument({
@@ -18,7 +18,7 @@ const args = {
     description: "The date to go back to (yyyy/mm/dd)",
   }),
   ...standardMentions,
-} satisfies ArgumentsMap
+} satisfies ArgumentsMap;
 
 export default class GoBack extends LastFMBaseCommand<typeof args> {
   idSeed = "wooah sora";
@@ -51,7 +51,7 @@ export default class GoBack extends LastFMBaseCommand<typeof args> {
     }
 
     const { requestable, perspective } = await this.getMentions({
-      asCode: false,
+      perspectiveAsCode: false,
     });
 
     const track = await this.lastFMService.goBack(
@@ -69,9 +69,9 @@ export default class GoBack extends LastFMBaseCommand<typeof args> {
 
     embed.setDescription(
       embed.description +
-      (date
-        ? `\n\nScrobbled on ${displayDate(date)}`
-        : `\n\nScrobbled ${ago(timeRange?.from!)}`)
+        (date
+          ? `\n\nScrobbled on ${displayDate(date)}`
+          : `\n\nScrobbled ${ago(timeRange?.from!)}`)
     );
 
     await this.send(embed);

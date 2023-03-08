@@ -1,17 +1,17 @@
+import { ILike } from "typeorm";
 import { Friend } from "../../database/entity/Friend";
+import { User } from "../../database/entity/User";
 import {
   AlreadyFriendsError,
-  NotFriendsError,
   LastFMUserDoesntExistError,
+  NotFriendsError,
   TooManyFriendsError,
 } from "../../errors/errors";
-import { BaseService } from "../BaseService";
-import { User } from "../../database/entity/User";
-import { LastFMService } from "../LastFM/LastFMService";
-import { ILike } from "typeorm";
-import { ServiceRegistry } from "../ServicesRegistry";
 import { sqlLikeEscape } from "../../helpers/database";
 import { GowonContext } from "../../lib/context/Context";
+import { BaseService } from "../BaseService";
+import { LastFMService } from "../LastFM/LastFMService";
+import { ServiceRegistry } from "../ServicesRegistry";
 
 export class FriendsService extends BaseService {
   private get lastFMService() {
@@ -50,7 +50,7 @@ export class FriendsService extends BaseService {
     if (friendToAdd instanceof User) {
       friend = await Friend.findOne({ user, friend: friendToAdd });
     } else {
-      if (!(await this.lastFMService.userExists(ctx, friendToAdd))) {
+      if (!(await this.lastFMService.doesUserExist(ctx, friendToAdd))) {
         throw new LastFMUserDoesntExistError();
       }
 

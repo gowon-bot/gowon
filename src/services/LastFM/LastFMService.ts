@@ -1,5 +1,9 @@
 import { add } from "date-fns";
 import { BadLastFMResponseError, LogicError } from "../../errors/errors";
+import { code } from "../../helpers/discord";
+import { requestableAsUsername } from "../../lib/MultiRequester";
+import { GowonContext } from "../../lib/context/Context";
+import { displayNumber } from "../../lib/views/displays";
 import { LastFMAPIService, Requestable } from "./LastFMAPIService";
 import {
   AlbumInfoParams,
@@ -8,7 +12,6 @@ import {
   ArtistPopularTracksParams,
   GetArtistCorrectionParams,
   GetSessionParams,
-  isTimeframeParams,
   LastFMPeriod,
   RecentTracksParams,
   TagInfoParams,
@@ -22,6 +25,7 @@ import {
   UserGetFriendsParams,
   UserGetWeeklyChartParams,
   UserInfoParams,
+  isTimeframeParams,
 } from "./LastFMService.types";
 import {
   AlbumInfo,
@@ -40,12 +44,8 @@ import {
   TagTopTracks,
 } from "./converters/Misc";
 import { RecentTrack, RecentTracks } from "./converters/RecentTracks";
-import { TopAlbums, TopArtists, TopTracks } from "./converters/TopTypes";
-import { displayNumber } from "../../lib/views/displays";
-import { requestableAsUsername } from "../../lib/MultiRequester";
-import { GowonContext } from "../../lib/context/Context";
-import { code } from "../../helpers/discord";
 import { AlbumSearch, TrackSearch } from "./converters/Search";
+import { TopAlbums, TopArtists, TopTracks } from "./converters/TopTypes";
 
 export class LastFMService extends LastFMAPIService {
   async artistInfo(
@@ -213,9 +213,12 @@ export class LastFMService extends LastFMAPIService {
     return playcount;
   }
 
-  async userExists(ctx: GowonContext, username: Requestable): Promise<boolean> {
+  async doesUserExist(
+    ctx: GowonContext,
+    username: Requestable
+  ): Promise<boolean> {
     try {
-      let user = await this.userInfo(ctx, { username });
+      const user = await this.userInfo(ctx, { username });
 
       return !!user.name;
     } catch (e: any) {

@@ -1,6 +1,10 @@
 import { MirrorballError } from "../../../../errors/errors";
+import { bold, italic } from "../../../../helpers/discord";
 import { convertMirrorballDate } from "../../../../helpers/mirrorball";
+import { Emoji } from "../../../../lib/Emoji";
 import { Variation } from "../../../../lib/command/Command";
+import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";
+import { ArgumentsMap } from "../../../../lib/context/arguments/types";
 import { MirrorballBaseCommand } from "../../../../lib/indexing/MirrorballCommands";
 import { displayDate } from "../../../../lib/views/displays";
 import {
@@ -8,10 +12,6 @@ import {
   LastScrobbledParams,
   LastScrobbledResponse,
 } from "./connector";
-import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";
-import { bold, italic } from "../../../../helpers/discord";
-import { Emoji } from "../../../../lib/Emoji";
-import { ArgumentsMap } from "../../../../lib/context/arguments/types";
 
 const args = {
   ...prefabArguments.track,
@@ -41,7 +41,7 @@ export default class LastScrobbledTrack extends MirrorballBaseCommand<
       senderRequired:
         !this.parsedArguments.artist || !this.parsedArguments.track,
       reverseLookup: { required: true },
-      requireIndexed: true,
+      indexedRequired: true,
     });
 
     const { artist: artistName, track: trackName } =
@@ -72,7 +72,8 @@ export default class LastScrobbledTrack extends MirrorballBaseCommand<
         )
       )
       .setDescription(
-        `${Emoji.usesIndexedDataDescription} ${perspective.upper.name} ${this.variationWasUsed("first") ? "first" : "last"
+        `${Emoji.usesIndexedDataDescription} ${perspective.upper.name} ${
+          this.variationWasUsed("first") ? "first" : "last"
         } scrobbled ${italic(play.track.name)} by ${bold(
           play.track.artist.name
         )} on ${displayDate(convertMirrorballDate(play.scrobbledAt))}`

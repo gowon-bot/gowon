@@ -4,6 +4,7 @@ import { PermissionsCacheService } from "../lib/permissions/PermissionsCacheServ
 import { PermissionsService } from "../lib/permissions/PermissionsService";
 import { SettingsService } from "../lib/settings/SettingsService";
 import { ArgumentParsingService } from "./arguments/ArgumentsParsingService";
+import { MentionsService } from "./arguments/mentions/MentionsService";
 import { BaseService } from "./BaseService";
 import { ConcurrencyService } from "./ConcurrencyService";
 import { BotStatsService } from "./dbservices/BotStatsService";
@@ -83,6 +84,7 @@ const services: Service[] = [
   LilacWhoKnowsService,
 
   MetaService,
+  MentionsService,
   MirrorballService,
   MirrorballUsersService,
   NicknameService,

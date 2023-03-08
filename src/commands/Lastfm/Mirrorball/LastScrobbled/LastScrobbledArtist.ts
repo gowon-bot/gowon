@@ -1,21 +1,21 @@
 import { MirrorballError } from "../../../../errors/errors";
-import { MirrorballBaseCommand } from "../../../../lib/indexing/MirrorballCommands";
-import {
-  LastScrobbledConnector,
-  LastScrobbledParams,
-  LastScrobbledResponse,
-} from "./connector";
-import { displayDate } from "../../../../lib/views/displays";
-import { Variation } from "../../../../lib/command/Command";
+import { bold } from "../../../../helpers/discord";
 import { convertMirrorballDate } from "../../../../helpers/mirrorball";
+import { Emoji } from "../../../../lib/Emoji";
+import { Variation } from "../../../../lib/command/Command";
 import { standardMentions } from "../../../../lib/context/arguments/mentionTypes/mentions";
 import {
   prefabArguments,
   prefabFlags,
 } from "../../../../lib/context/arguments/prefabArguments";
-import { bold } from "../../../../helpers/discord";
-import { Emoji } from "../../../../lib/Emoji";
 import { ArgumentsMap } from "../../../../lib/context/arguments/types";
+import { MirrorballBaseCommand } from "../../../../lib/indexing/MirrorballCommands";
+import { displayDate } from "../../../../lib/views/displays";
+import {
+  LastScrobbledConnector,
+  LastScrobbledParams,
+  LastScrobbledResponse,
+} from "./connector";
 
 const args = {
   ...standardMentions,
@@ -47,7 +47,7 @@ export default class LastScrobbledArtist extends MirrorballBaseCommand<
     const { senderRequestable, dbUser, perspective } = await this.getMentions({
       senderRequired: !this.parsedArguments.artist,
       reverseLookup: { required: true },
-      requireIndexed: true,
+      indexedRequired: true,
     });
 
     const artistName = await this.lastFMArguments.getArtist(
@@ -79,7 +79,8 @@ export default class LastScrobbledArtist extends MirrorballBaseCommand<
         )
       )
       .setDescription(
-        `${Emoji.usesIndexedDataDescription} ${perspective.upper.name} ${this.variationWasUsed("first") ? "first" : "last"
+        `${Emoji.usesIndexedDataDescription} ${perspective.upper.name} ${
+          this.variationWasUsed("first") ? "first" : "last"
         } scrobbled ${bold(play.track.artist.name)} on ${displayDate(
           convertMirrorballDate(play.scrobbledAt)
         )}`

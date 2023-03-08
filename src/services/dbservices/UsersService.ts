@@ -8,14 +8,14 @@ import {
   UsernameNotRegisteredError,
 } from "../../errors/errors";
 import { sqlLikeEscape } from "../../helpers/database";
-import { buildRequestable } from "../../helpers/getMentions";
+import { Perspective } from "../../lib/Perspective";
 import { CommandAccessRoleName } from "../../lib/command/access/roles";
 import { GowonContext } from "../../lib/context/Context";
-import { Perspective } from "../../lib/Perspective";
 import { BaseService } from "../BaseService";
-import { LastFMSession } from "../LastFM/converters/Misc";
 import { Requestable } from "../LastFM/LastFMAPIService";
+import { LastFMSession } from "../LastFM/converters/Misc";
 import { ServiceRegistry } from "../ServicesRegistry";
+import { buildRequestable } from "../arguments/mentions/MentionsBuilder";
 
 export class UsersService extends BaseService {
   get analyticsCollector() {
@@ -117,14 +117,6 @@ export class UsersService extends BaseService {
       user.lastFMSession = "";
       await user.save();
     } else throw new AlreadyLoggedOutError();
-  }
-
-  perspective(
-    authorUsername: string,
-    username?: string,
-    asCode = true
-  ): Perspective {
-    return Perspective.perspective(authorUsername, username, asCode);
   }
 
   discordPerspective(

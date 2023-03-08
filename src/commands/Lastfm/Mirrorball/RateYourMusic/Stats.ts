@@ -6,8 +6,8 @@ import { standardMentions } from "../../../../lib/context/arguments/mentionTypes
 import { ArgumentsMap } from "../../../../lib/context/arguments/types";
 import { displayNumber, displayRating } from "../../../../lib/views/displays";
 import { MirrorballRateYourMusicAlbum } from "../../../../services/mirrorball/MirrorballTypes";
-import { StatsConnector, StatsParams, StatsResponse } from "./connectors";
 import { RateYourMusicIndexingChildCommand } from "./RateYourMusicChildCommand";
+import { StatsConnector, StatsParams, StatsResponse } from "./connectors";
 
 const args = {
   ...standardMentions,
@@ -35,7 +35,7 @@ export class Stats extends RateYourMusicIndexingChildCommand<
     const { dbUser, discordUser } = await this.getMentions({
       fetchDiscordUser: true,
       reverseLookup: { required: true },
-      requireIndexed: true,
+      indexedRequired: true,
     });
 
     const perspective = this.usersService.discordPerspective(

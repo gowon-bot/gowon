@@ -5,16 +5,16 @@ import {
   LogicError,
 } from "../../../../errors/errors";
 import { AlreadyImportingRatingsError } from "../../../../errors/rateYourMusic";
+import { Emoji } from "../../../../lib/Emoji";
 import { StringArgument } from "../../../../lib/context/arguments/argumentTypes/StringArgument";
 import { ArgumentsMap } from "../../../../lib/context/arguments/types";
-import { Emoji } from "../../../../lib/Emoji";
 import { ConcurrentAction } from "../../../../services/ConcurrencyService";
+import { RateYourMusicIndexingChildCommand } from "./RateYourMusicChildCommand";
 import {
   ImportRatingsConnector,
   ImportRatingsParams,
   ImportRatingsResponse,
 } from "./connectors";
-import { RateYourMusicIndexingChildCommand } from "./RateYourMusicChildCommand";
 
 const args = {
   input: new StringArgument({ index: { start: 0 }, slashCommandOption: false }),
@@ -62,7 +62,7 @@ export class ImportRatings extends RateYourMusicIndexingChildCommand<
 
     await this.getMentions({
       senderRequired: true,
-      requireIndexed: true,
+      indexedRequired: true,
     });
 
     const ratings = await this.getRatings();

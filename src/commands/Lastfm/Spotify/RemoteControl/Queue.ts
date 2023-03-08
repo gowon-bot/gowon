@@ -6,7 +6,7 @@ import { SpotifyChildCommand } from "../SpotifyChildCommand";
 
 const args = {
   ...prefabArguments.track,
-} satisfies ArgumentsMap
+} satisfies ArgumentsMap;
 
 export class Queue extends SpotifyChildCommand<typeof args> {
   idSeed = "billlie siyoon";

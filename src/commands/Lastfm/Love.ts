@@ -31,7 +31,7 @@ export default class Love extends LastFMBaseCommand<typeof args> {
 
   async run() {
     const { senderRequestable } = await this.getMentions({
-      authentificationRequired: true,
+      lfmAuthentificationRequired: true,
     });
 
     const { artist, track } = await this.lastFMArguments.getTrack(
@@ -59,8 +59,8 @@ export default class Love extends LastFMBaseCommand<typeof args> {
         ? "Track already not loved! ❤️‍🩹"
         : "Unloved! 💔"
       : !trackInfo.loved
-        ? "Loved! ❤️"
-        : "Track already loved! 💞";
+      ? "Loved! ❤️"
+      : "Track already loved! 💞";
 
     const action = this.variationWasUsed("unlove") ? "unlove" : "love";
 
@@ -84,8 +84,8 @@ export default class Love extends LastFMBaseCommand<typeof args> {
       image,
       albumName
         ? {
-          metadata: { artist, album: albumName },
-        }
+            metadata: { artist, album: albumName },
+          }
         : {}
     );
 
@@ -97,7 +97,8 @@ export default class Love extends LastFMBaseCommand<typeof args> {
       .setAuthor(this.generateEmbedAuthor(title))
       .setTitle(trackInfo.name)
       .setDescription(
-        `by ${bold(trackInfo.artist.name)}${album ? ` from ${italic(album)}` : ""
+        `by ${bold(trackInfo.artist.name)}${
+          album ? ` from ${italic(album)}` : ""
         }`
       );
 

@@ -3,7 +3,6 @@ import { ucFirst } from "../helpers";
 import { code } from "../helpers/discord";
 
 export class Perspective {
-  discordUser?: DiscordUser;
   private titlecase = false;
 
   // Static methods
@@ -42,17 +41,14 @@ export class Perspective {
     mentioned?: DiscordUser
   ): Perspective {
     if (mentioned === undefined || author.id === mentioned.id) {
-      return Perspective.buildPerspective("you", false).addDiscordUser(author);
+      return Perspective.buildPerspective("you", false);
     } else {
-      return Perspective.buildPerspective(
-        mentioned?.username,
-        true
-      ).addDiscordUser(mentioned);
+      return Perspective.buildPerspective(mentioned?.username, true);
     }
   }
 
   // Instance methods
-  constructor(
+  protected constructor(
     public different: boolean,
     private _name: string,
     private _possessive: string,
@@ -113,16 +109,7 @@ export class Perspective {
     return this.titleCaseIfRequired(this._pronounPlusToHave);
   }
 
-  addDiscordUser(user: DiscordUser): Perspective {
-    this.discordUser = user;
-    return this;
-  }
-
   regularVerb(verb: string) {
     return this.name + " " + (!this.different ? verb : verb + "s");
   }
-}
-
-export class DiscordPersective extends Perspective {
-  user!: DiscordUser;
 }

@@ -55,6 +55,16 @@ export class SenderUserNotAuthenticatedError extends ClientError {
   }
 }
 
+export class MentionedUserNotAuthenticatedError extends ClientError {
+  name = "MentionedUserNotAuthenticatedError";
+
+  constructor(prefix?: string) {
+    super(
+      `This command requires that user to be authenticated, they must login again! (\`${prefix}login\`)`
+    );
+  }
+}
+
 export class MentionedUserNotIndexedError extends ClientError {
   name = "SenderUserNotIndexedError";
 
@@ -65,14 +75,21 @@ export class MentionedUserNotIndexedError extends ClientError {
   }
 }
 
-export class LastFMReverseLookupError extends ClientError {
-  name = "LastFMReverseLookupError";
+export class MentionedSignInRequiredError extends ClientError {
+  name = "MentionedSignInRequiredError";
 
-  constructor(username: string, requireIndexed = false, prefix?: string) {
+  constructor(username: string) {
+    super(`This command requires that \`${username}\` be signed into Gowon!`);
+  }
+}
+
+export class SenderSignInRequiredError extends ClientError {
+  name = "SenderSignInRequiredError";
+
+  constructor(prefix: string) {
     super(
-      requireIndexed
-        ? `The user you mentioned hasn't been indexed yet, or isn't signed into the bot.\n*Run \`${prefix}index\` to index yourself*`
-        : `This command requires that \`${username}\` be signed into Gowon!`
+      `Please sign in with a last.fm account! (\`${prefix}login\`)`,
+      `Don't have one? You can create one at https://last.fm/join`
     );
   }
 }

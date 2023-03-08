@@ -1,13 +1,13 @@
-import { getOrdinal } from "../../../helpers";
-import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { BadLastFMResponseError } from "../../../errors/errors";
-import { trackEmbed } from "../../../lib/views/embeds";
+import { getOrdinal } from "../../../helpers";
+import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { displayDateTime } from "../../../lib/views/displays";
-import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
-import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
-import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { trackEmbed } from "../../../lib/views/embeds";
+import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 const args = {
   milestone: new NumberArgument({
@@ -15,7 +15,7 @@ const args = {
     description: "The milestone to check",
   }),
   ...standardMentions,
-} satisfies ArgumentsMap
+} satisfies ArgumentsMap;
 
 export default class Milestone extends LastFMBaseCommand<typeof args> {
   idSeed = "wooah lucy";
@@ -44,7 +44,7 @@ export default class Milestone extends LastFMBaseCommand<typeof args> {
     const milestone = this.parsedArguments.milestone;
 
     const { requestable, perspective } = await this.getMentions({
-      asCode: false,
+      perspectiveAsCode: false,
     });
 
     const track = await this.lastFMService.getMilestone(
@@ -65,7 +65,7 @@ export default class Milestone extends LastFMBaseCommand<typeof args> {
       })
       .setDescription(
         embed.description +
-        `\n\nScrobbled at ${displayDateTime(track.scrobbledAt)}`
+          `\n\nScrobbled at ${displayDateTime(track.scrobbledAt)}`
       );
 
     await this.send(embed);

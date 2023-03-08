@@ -1,21 +1,21 @@
+import { mean } from "mathjs";
 import { LogicError, UnknownMirrorballError } from "../../../../errors/errors";
+import { code, italic, sanitizeForDiscord } from "../../../../helpers/discord";
+import { emDash, extraWideSpace } from "../../../../helpers/specialCharacters";
+import { mostCommonOccurrence } from "../../../../helpers/stats";
+import { Flag } from "../../../../lib/context/arguments/argumentTypes/Flag";
+import { standardMentions } from "../../../../lib/context/arguments/mentionTypes/mentions";
+import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";
+import { ArgumentsMap } from "../../../../lib/context/arguments/types";
+import { displayNumber, displayRating } from "../../../../lib/views/displays";
+import { SimpleScrollingEmbed } from "../../../../lib/views/embeds/SimpleScrollingEmbed";
+import { MirrorballRating } from "../../../../services/mirrorball/MirrorballTypes";
+import { RateYourMusicIndexingChildCommand } from "./RateYourMusicChildCommand";
 import {
   ArtistRatingsConnector,
   ArtistRatingsParams,
   ArtistRatingsResponse,
 } from "./connectors";
-import { RateYourMusicIndexingChildCommand } from "./RateYourMusicChildCommand";
-import { MirrorballRating } from "../../../../services/mirrorball/MirrorballTypes";
-import { mean } from "mathjs";
-import { mostCommonOccurrence } from "../../../../helpers/stats";
-import { SimpleScrollingEmbed } from "../../../../lib/views/embeds/SimpleScrollingEmbed";
-import { displayNumber, displayRating } from "../../../../lib/views/displays";
-import { code, italic, sanitizeForDiscord } from "../../../../helpers/discord";
-import { standardMentions } from "../../../../lib/context/arguments/mentionTypes/mentions";
-import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";
-import { Flag } from "../../../../lib/context/arguments/argumentTypes/Flag";
-import { emDash, extraWideSpace } from "../../../../helpers/specialCharacters";
-import { ArgumentsMap } from "../../../../lib/context/arguments/types";
 
 const args = {
   ...prefabArguments.artist,
@@ -51,7 +51,7 @@ export class ArtistRatings extends RateYourMusicIndexingChildCommand<
     const { senderRequestable, dbUser, discordUser } = await this.getMentions({
       senderRequired: !this.parsedArguments.artist,
       fetchDiscordUser: true,
-      requireIndexed: true,
+      indexedRequired: true,
     });
 
     const artist = await this.lastFMArguments.getArtist(
@@ -110,14 +110,14 @@ export class ArtistRatings extends RateYourMusicIndexingChildCommand<
 
     const ratings = this.parsedArguments.yearly
       ? response.ratings.ratings.sort(
-        (a, b) =>
-          b.rateYourMusicAlbum.releaseYear - a.rateYourMusicAlbum.releaseYear
-      )
+          (a, b) =>
+            b.rateYourMusicAlbum.releaseYear - a.rateYourMusicAlbum.releaseYear
+        )
       : this.parsedArguments.ids
-        ? response.ratings.ratings.sort((a, b) =>
+      ? response.ratings.ratings.sort((a, b) =>
           a.rateYourMusicAlbum.title.localeCompare(b.rateYourMusicAlbum.title)
         )
-        : response.ratings.ratings;
+      : response.ratings.ratings;
 
     const simpleScrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
       items: ratings,
@@ -138,7 +138,7 @@ export class ArtistRatings extends RateYourMusicIndexingChildCommand<
       .map((r, idx) => {
         return (
           (this.parsedArguments.yearly &&
-            r.rateYourMusicAlbum.releaseYear !==
+          r.rateYourMusicAlbum.releaseYear !==
             ratings[idx - 1]?.rateYourMusicAlbum?.releaseYear
             ? `**${r.rateYourMusicAlbum.releaseYear}**\n`
             : "") +
@@ -147,12 +147,12 @@ export class ArtistRatings extends RateYourMusicIndexingChildCommand<
             : displayRating(r.rating) + extraWideSpace) +
           sanitizeForDiscord(r.rateYourMusicAlbum.title) +
           (r.rateYourMusicAlbum.artistName.toLowerCase() !==
-            artistName.toLowerCase()
+          artistName.toLowerCase()
             ? italic(
-              ` ${emDash} ${sanitizeForDiscord(
-                r.rateYourMusicAlbum.artistName
-              )}`
-            )
+                ` ${emDash} ${sanitizeForDiscord(
+                  r.rateYourMusicAlbum.artistName
+                )}`
+              )
             : "")
         );
       })

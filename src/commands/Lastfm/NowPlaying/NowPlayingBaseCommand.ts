@@ -9,7 +9,7 @@ import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { SettingsService } from "../../../lib/settings/SettingsService";
 import { TagConsolidator } from "../../../lib/tags/TagConsolidator";
 import { displayNumber } from "../../../lib/views/displays";
-import { CrownDisplay } from "../../../services/dbservices/CrownsService";
+import { Requestable } from "../../../services/LastFM/LastFMAPIService";
 import {
   AlbumInfo,
   ArtistInfo,
@@ -19,9 +19,9 @@ import {
   RecentTrack,
   RecentTracks,
 } from "../../../services/LastFM/converters/RecentTracks";
-import { Requestable } from "../../../services/LastFM/LastFMAPIService";
-import { AlbumCoverService } from "../../../services/moderation/AlbumCoverService";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
+import { CrownDisplay } from "../../../services/dbservices/CrownsService";
+import { AlbumCoverService } from "../../../services/moderation/AlbumCoverService";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 export const nowPlayingArgs = {

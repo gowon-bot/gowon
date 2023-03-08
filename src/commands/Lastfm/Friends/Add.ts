@@ -1,18 +1,18 @@
-import { FriendsChildCommand } from "./FriendsChildCommand";
-import { LogicError } from "../../../errors/errors";
-import { asyncFilter, asyncMap } from "../../../helpers";
-import { SimpleMap } from "../../../helpers/types";
 import { User as DiscordUser } from "discord.js";
 import { User as DBUser } from "../../../database/entity/User";
+import { LogicError } from "../../../errors/errors";
+import { asyncFilter, asyncMap } from "../../../helpers";
+import { code } from "../../../helpers/discord";
+import { SimpleMap } from "../../../helpers/types";
 import { LineConsolidator } from "../../../lib/LineConsolidator";
 import { StringArrayArgument } from "../../../lib/context/arguments/argumentTypes/StringArrayArgument";
-import { DiscordUserArrayArgument } from "../../../lib/context/arguments/argumentTypes/discord/DiscordUserArrayArgument";
 import { UserStringArrayArgument } from "../../../lib/context/arguments/argumentTypes/UserStringArrayArgument";
+import { DiscordUserArrayArgument } from "../../../lib/context/arguments/argumentTypes/discord/DiscordUserArrayArgument";
 import { DiscordIDMention } from "../../../lib/context/arguments/mentionTypes/DiscordIDMention";
 import { LastFMMention } from "../../../lib/context/arguments/mentionTypes/LastFMMention";
 import { DiscordUsernameMention } from "../../../lib/context/arguments/mentionTypes/UsernameMention";
-import { code } from "../../../helpers/discord";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { FriendsChildCommand } from "./FriendsChildCommand";
 
 const args = {
   friendUsernames: new StringArrayArgument({ index: { start: 0 } }),
@@ -43,7 +43,7 @@ export class Add extends FriendsChildCommand<typeof args> {
 
   arguments = args;
 
-  async beforeRun() { }
+  async beforeRun() {}
 
   async run() {
     const { senderUser } = await this.getMentions({ senderRequired: true });
@@ -118,7 +118,10 @@ export class Add extends FriendsChildCommand<typeof args> {
     const mentionedUsers = this.parsedArguments.users || [];
 
     const discordUsers = await asyncMap(discordUsernames, async (u) => {
-      const user = await this.getDiscordUserFromUsername(u);
+      const user = await this.mentionsService.getDiscordUserFromUsername(
+        this.ctx,
+        u
+      );
 
       if (user) return user;
       else {
