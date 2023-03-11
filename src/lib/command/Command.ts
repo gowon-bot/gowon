@@ -5,7 +5,6 @@ import {
   Guild,
   Message,
   MessageEmbed,
-  ReplyOptions,
 } from "discord.js";
 import md5 from "js-md5";
 import config from "../../../config.json";
@@ -13,10 +12,12 @@ import { AnalyticsCollector } from "../../analytics/AnalyticsCollector";
 import { UnknownError } from "../../errors/errors";
 import { SimpleMap } from "../../helpers/types";
 import { DiscordService } from "../../services/Discord/DiscordService";
-import { SendOptions } from "../../services/Discord/DiscordService.types";
+import {
+  ReplyOptions,
+  SendOptions,
+} from "../../services/Discord/DiscordService.types";
 import { GowonService } from "../../services/GowonService";
 import { NowPlayingEmbedParsingService } from "../../services/NowPlayingEmbedParsingService";
-import { Responder } from "../../services/Responder";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { TrackingService } from "../../services/TrackingService";
 import { ArgumentParsingService } from "../../services/arguments/ArgumentsParsingService";
@@ -186,7 +187,6 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
   }
 
   track = ServiceRegistry.get(TrackingService);
-  responder = ServiceRegistry.get(Responder);
   usersService = ServiceRegistry.get(UsersService);
   gowonService = ServiceRegistry.get(GowonService);
   discordService = ServiceRegistry.get(DiscordService);
@@ -469,7 +469,7 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
       footer
     );
 
-    await this.responder.discord(this.ctx, embed);
+    await this.send(embed);
   }
 
   protected startTyping() {

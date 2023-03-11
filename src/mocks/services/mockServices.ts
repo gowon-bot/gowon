@@ -1,4 +1,3 @@
-import { Responder } from "../../services/Responder";
 import { Service, ServiceRegistry } from "../../services/ServicesRegistry";
 import { MockSpotifyService } from "./BaseSpotifyService";
 import { MockAnalyticsCollector } from "./MockAnalyticsCollector";
@@ -36,9 +35,6 @@ export const mockServices: Service[] = [
   MockSpotifyService,
   MockTrackingService,
   MockUsersService,
-  // Since the following services just interact with other services,
-  // we only need to mock their dependencies
-  Responder,
 ];
 
 export function setMockServices() {

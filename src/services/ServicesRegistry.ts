@@ -40,7 +40,6 @@ import { NowPlayingEmbedParsingService } from "./NowPlayingEmbedParsingService";
 import { ChartService } from "./pantomime/ChartService";
 import { RedisInteractionService } from "./redis/RedisInteractionService";
 import { RedisService } from "./redis/RedisService";
-import { Responder } from "./Responder";
 import { SpotifyArguments } from "./Spotify/SpotifyArguments";
 import { SpotifyAuthenticationService } from "./Spotify/SpotifyAuthenticationService";
 import { SpotifyPlaylistTagService } from "./Spotify/SpotifyPlaylistTagService";
@@ -94,7 +93,6 @@ const services: Service[] = [
   RedirectsService,
   RedisService,
   RedisInteractionService,
-  Responder,
   SettingsService,
   SpotifyService,
   SpotifyArguments,

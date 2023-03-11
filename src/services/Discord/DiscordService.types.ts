@@ -16,11 +16,11 @@ export type RespondableChannel =
   | ThreadChannel
   | NewsChannel;
 
-export interface ReplyOptions {
-  to?: MessageResolvable;
-  ping?: boolean;
-  noUppercase?: boolean;
-}
+export type ReplyOptions = Partial<{
+  to: MessageResolvable;
+  ping: boolean;
+  noUppercase: boolean;
+}>;
 
 export interface SendOptions {
   inChannel: RespondableChannel;
