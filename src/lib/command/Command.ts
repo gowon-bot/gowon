@@ -5,17 +5,15 @@ import {
   Guild,
   Message,
   MessageEmbed,
+  ReplyOptions,
 } from "discord.js";
 import md5 from "js-md5";
 import config from "../../../config.json";
 import { AnalyticsCollector } from "../../analytics/AnalyticsCollector";
 import { UnknownError } from "../../errors/errors";
 import { SimpleMap } from "../../helpers/types";
-import {
-  DiscordService,
-  ReplyOptions,
-  SendOptions,
-} from "../../services/Discord/DiscordService";
+import { DiscordService } from "../../services/Discord/DiscordService";
+import { SendOptions } from "../../services/Discord/DiscordService.types";
 import { GowonService } from "../../services/GowonService";
 import { NowPlayingEmbedParsingService } from "../../services/NowPlayingEmbedParsingService";
 import { Responder } from "../../services/Responder";

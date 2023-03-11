@@ -118,7 +118,7 @@ export class Add extends FriendsChildCommand<typeof args> {
     const mentionedUsers = this.parsedArguments.users || [];
 
     const discordUsers = await asyncMap(discordUsernames, async (u) => {
-      const user = await this.mentionsService.getDiscordUserFromUsername(
+      const user = await this.discordService.getDiscordUserFromUsername(
         this.ctx,
         u
       );

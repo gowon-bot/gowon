@@ -1,9 +1,9 @@
 import { Guild, GuildMember, User } from "discord.js";
 import { GuildRequiredError, UnexpectedGowonError } from "../../errors/gowon";
-import { Command } from "../command/Command";
-import { ExtractedCommand } from "../command/extractor/ExtractedCommand";
 import { GowonClient } from "../GowonClient";
 import { Logger } from "../Logger";
+import { Command } from "../command/Command";
+import { ExtractedCommand } from "../command/extractor/ExtractedCommand";
 import { Payload } from "./Payload";
 
 export interface CustomContext<

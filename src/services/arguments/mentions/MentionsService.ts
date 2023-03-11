@@ -9,6 +9,7 @@ import {
 } from "../../../errors/user";
 import { GowonContext } from "../../../lib/context/Context";
 import { BaseService } from "../../BaseService";
+import { DiscordService } from "../../Discord/DiscordService";
 import { isSessionKey } from "../../LastFM/LastFMAPIService";
 import { NowPlayingEmbedParsingService } from "../../NowPlayingEmbedParsingService";
 import { ServiceRegistry } from "../../ServicesRegistry";
@@ -31,6 +32,9 @@ export class MentionsService extends BaseService {
   }
   private get mirrorballUsersService() {
     return ServiceRegistry.get(MirrorballUsersService);
+  }
+  private get discordService() {
+    return ServiceRegistry.get(DiscordService);
   }
 
   async getMentions(
@@ -67,52 +71,29 @@ export class MentionsService extends BaseService {
     if (discordUsername && !mentionsBuilder.getDiscordUser("mentioned")) {
       mentionsBuilder.addDiscordUser(
         "mentioned",
-        await this.getDiscordUserFromUsername(ctx, discordUsername)
+        await this.discordService.getDiscordUserFromUsername(
+          ctx,
+          discordUsername
+        )
       );
     }
 
-    try {
-      const senderDBUser = await this.usersService.getUser(
-        ctx,
-        ctx.payload.author.id
-      );
-      mentionsBuilder.addDBUser("sender", senderDBUser);
-    } catch {}
-
+    await this.fetchSenderDBUser(ctx, mentionsBuilder);
     await this.addLastfmUsername(ctx, mentionsBuilder, options);
     await this.reverseLookupDBUser(ctx, mentionsBuilder, options);
     await this.fetchDiscordUser(ctx, mentionsBuilder, options);
     await this.fetchMirrorballUser(ctx, mentionsBuilder, options);
 
-    const requestables = mentionsBuilder.buildRequestables();
+    const requestables = mentionsBuilder.buildRequestables()!;
 
-    if (options.usernameRequired) this.ensureUsername(ctx, mentionsBuilder);
-    if (options.senderRequired) this.ensureSender(ctx, mentionsBuilder);
-    if (options.indexedRequired) await this.ensureIndexed(ctx, mentionsBuilder);
-    if (options.lfmAuthentificationRequired) {
-      this.ensureUserAuthenticated(ctx, requestables, mentionsBuilder);
-    }
-
-    const mentions = mentionsBuilder.build(options, requestables!);
-
-    console.log(mentions);
-
-    return mentions;
-  }
-
-  public async getDiscordUserFromUsername(
-    ctx: GowonContext,
-    username: string
-  ): Promise<DiscordUser | undefined> {
-    const members = await ctx.requiredGuild.members.fetch();
-
-    const member = members.find(
-      (m) =>
-        m.user.username.toLowerCase() === username.toLowerCase() ||
-        m.nickname?.toLowerCase() === username.toLowerCase()
+    await this.ensureRequiredProperties(
+      ctx,
+      mentionsBuilder,
+      options,
+      requestables
     );
 
-    return member?.user;
+    return mentionsBuilder.build(options, requestables);
   }
 
   private defaultOptions(): GetMentionsOptions {
@@ -125,6 +106,20 @@ export class MentionsService extends BaseService {
       fetchMirrorballUser: false,
       reverseLookup: { required: false },
     };
+  }
+
+  private async ensureRequiredProperties(
+    ctx: GowonContext,
+    mentionsBuilder: MentionsBuilder,
+    options: GetMentionsOptions,
+    requestables: Requestables
+  ): Promise<void> {
+    if (options.usernameRequired) this.ensureUsername(ctx, mentionsBuilder);
+    if (options.senderRequired) this.ensureSender(ctx, mentionsBuilder);
+    if (options.indexedRequired) await this.ensureIndexed(ctx, mentionsBuilder);
+    if (options.lfmAuthentificationRequired) {
+      this.ensureUserAuthenticated(ctx, requestables, mentionsBuilder);
+    }
   }
 
   private async maybeHandleReply(
@@ -192,6 +187,19 @@ export class MentionsService extends BaseService {
           );
       }
     }
+  }
+
+  private async fetchSenderDBUser(
+    ctx: GowonContext,
+    mentionsBuilder: MentionsBuilder
+  ): Promise<void> {
+    try {
+      const senderDBUser = await this.usersService.getUser(
+        ctx,
+        ctx.payload.author.id
+      );
+      mentionsBuilder.addDBUser("sender", senderDBUser);
+    } catch {}
   }
 
   private async reverseLookupDBUser(

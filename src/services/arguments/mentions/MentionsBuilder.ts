@@ -65,8 +65,6 @@ export class MentionsBuilder {
   }
 
   build(options: GetMentionsOptions, requestables: Requestables): Mentions {
-    console.log(this.mentions);
-
     const perspective = Perspective.perspective(
       this.getLfmUsername("sender") || "<no user>",
       this.getLfmUsername("mentioned"),
