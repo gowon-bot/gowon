@@ -21,7 +21,7 @@ import {
 } from "../../../mocks/services/mockServices";
 
 describe("CommandHandler", () => {
-  beforeAll(setMockServices);
+  beforeEach(setMockServices);
 
   const createCommandHandler = () => {
     const commandHandler = new CommandHandler();

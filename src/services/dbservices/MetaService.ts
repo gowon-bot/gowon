@@ -1,4 +1,3 @@
-import { BaseService } from "../BaseService";
 import { Message } from "discord.js";
 import {
   CommandRun,
@@ -6,6 +5,7 @@ import {
 } from "../../database/entity/meta/CommandRun";
 import { GowonContext } from "../../lib/context/Context";
 import { TimeRange } from "../../lib/timeAndDate/TimeRange";
+import { BaseService } from "../BaseService";
 
 export class MetaService extends BaseService {
   async recordCommandRun(
@@ -39,7 +39,7 @@ export class MetaService extends BaseService {
   async countCommandRuns(ctx: GowonContext, commandID: string) {
     this.log(ctx, `Counting command runs for command ${commandID}`);
 
-    return await CommandRun.count({ commandID });
+    return await CommandRun.countBy({ commandID });
   }
 
   async hasRunCommand(

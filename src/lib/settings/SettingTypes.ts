@@ -35,7 +35,7 @@ export abstract class BaseSetting<ScopeT = unknown> {
 
     whereClause = this.setScopeOnWhere(scope, whereClause);
 
-    return await this.settingDB.findOne({ where: whereClause });
+    return (await this.settingDB.findOneBy(whereClause)) ?? undefined;
   }
 
   async createUpdateOrDelete(
@@ -58,7 +58,7 @@ export abstract class BaseSetting<ScopeT = unknown> {
 
     if (existingSetting) {
       if (value === undefined) {
-        await this.settingDB.delete(existingSetting);
+        await this.settingDB.delete(existingSetting.id);
 
         return undefined;
       } else {

@@ -5,7 +5,7 @@ import { mockContextForCommand } from "../../../mocks/MockContext";
 import { setMockServices } from "../../../mocks/services/mockServices";
 
 describe("Roll command", () => {
-  beforeAll(setMockServices);
+  beforeEach(setMockServices);
 
   test("should roll a number", async () => {
     const { command: roll, ctx } = mockContextForCommand(Roll, {

@@ -72,10 +72,12 @@ export class ComboService extends BaseService {
       `Getting combo of ${combo.artist.plays} for user ${user.discordID}`
     );
 
-    return await DBCombo.findOne({
-      user,
-      firstScrobble: combo.firstScrobble.scrobbledAt,
-    });
+    return (
+      (await DBCombo.findOneBy({
+        user: { id: user.id },
+        firstScrobble: combo.firstScrobble.scrobbledAt,
+      })) ?? undefined
+    );
   }
 
   async createCombo(
@@ -116,8 +118,8 @@ export class ComboService extends BaseService {
     const threshold = this.getThreshold(ctx);
 
     const whereClause = artist
-      ? { user, artistName: ILike(sqlLikeEscape(artist)) }
-      : { user };
+      ? { user: { id: user.id }, artistName: ILike(sqlLikeEscape(artist)) }
+      : { user: { id: user.id } };
 
     return await DBCombo.find({
       where: [
@@ -138,7 +140,7 @@ export class ComboService extends BaseService {
       ctx,
       `Listing combos for ${displayNumber(userIDs.length, "user")}`
     );
-    const users = await User.find({ discordID: In(userIDs) });
+    const users = await User.findBy({ discordID: In(userIDs) });
 
     const user = In(users.map((u) => u.id));
 

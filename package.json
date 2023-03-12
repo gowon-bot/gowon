@@ -47,7 +47,7 @@
     "redis": "^4.0.4",
     "reflect-metadata": "^0.1.13",
     "stream-to-string": "^1.2.0",
-    "typeorm": "^0.2.25"
+    "typeorm": "^0.3.12"
   },
   "scripts": {
     "start": "yarn build && node dist/src/index.js",

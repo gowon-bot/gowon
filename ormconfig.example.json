@@ -8,7 +8,6 @@
     "password": "",
     "database": "gowon",
     "logging": false,
-    "entities": ["dist/src/database/entity/**/*.js"],
     "migrations": ["dist/src/database/migration/**/*.js"]
   },
   {
@@ -20,7 +19,6 @@
     "password": "",
     "database": "gowon_test",
     "logging": false,
-    "entities": ["dist/src/database/entity/**/*.js"],
     "migrations": ["dist/src/database/migration/**/*.js"]
   }
 ]

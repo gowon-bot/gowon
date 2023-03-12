@@ -110,12 +110,10 @@ export class AlbumCoverService extends BaseService {
       })`
     );
 
-    const existing = await AlternateAlbumCover.findOne({
-      where: {
-        artistName: ILike(artist),
-        albumName: ILike(album),
-        user: !user ? IsNull() : user,
-      },
+    const existing = await AlternateAlbumCover.findOneBy({
+      artistName: ILike(artist),
+      albumName: ILike(album),
+      user: !user ? IsNull() : { id: user.id },
     });
 
     if (existing) {
@@ -148,12 +146,10 @@ export class AlbumCoverService extends BaseService {
       })`
     );
 
-    const existing = await AlternateAlbumCover.findOne({
-      where: {
-        artistName: ILike(artist),
-        albumName: ILike(album),
-        user: !user ? IsNull() : user,
-      },
+    const existing = await AlternateAlbumCover.findOneBy({
+      artistName: ILike(artist),
+      albumName: ILike(album),
+      user: !user ? IsNull() : { id: user.id },
     });
 
     if (!existing) {
@@ -175,9 +171,9 @@ export class AlbumCoverService extends BaseService {
   ): Promise<AlternateAlbumCover | undefined> {
     const where = { artistName: ILike(artist), albumName: ILike(album) };
 
-    const user = User.findOne({ where: { discordID: ctx.author.id } });
+    const user = await User.findOneBy({ discordID: ctx.author.id });
 
-    const whereUser = { ...where, user };
+    const whereUser = { ...where, user: { id: user?.id } };
     const whereMod = { ...where, user: IsNull() };
 
     const albumCover = await AlternateAlbumCover.find({
@@ -186,7 +182,7 @@ export class AlbumCoverService extends BaseService {
           ? whereUser
           : moderation === true
           ? whereMod
-          : [whereUser, whereMod],
+          : [whereMod, whereUser],
     });
 
     // Return the album cover set by moderators over the album cover set by a user

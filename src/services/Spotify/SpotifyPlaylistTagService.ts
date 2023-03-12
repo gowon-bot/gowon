@@ -1,8 +1,8 @@
 import { In } from "typeorm";
 import { SpotifyPlaylistTag } from "../../database/entity/SpotifyPlaylistTag";
 import { User } from "../../database/entity/User";
-import { EmojiMention } from "../../lib/context/arguments/parsers/EmojiParser";
 import { GowonContext } from "../../lib/context/Context";
+import { EmojiMention } from "../../lib/context/arguments/parsers/EmojiParser";
 import { SettingsService } from "../../lib/settings/SettingsService";
 import { displayNumber } from "../../lib/views/displays";
 import { BaseService } from "../BaseService";
@@ -24,8 +24,9 @@ export class SpotifyPlaylistTagService extends BaseService {
       `Tagging ${creationOptions.playlistID} as ${creationOptions.emoji} for user ${user.discordID}`
     );
 
-    const existingTag = await SpotifyPlaylistTag.findOne({
-      where: { user, playlistID: creationOptions.playlistID },
+    const existingTag = await SpotifyPlaylistTag.findOneBy({
+      user: { id: user.id },
+      playlistID: creationOptions.playlistID,
     });
 
     if (existingTag) {
@@ -55,7 +56,12 @@ export class SpotifyPlaylistTagService extends BaseService {
       `Fetching playlist tagged as ${tag.raw} for user ${user.discordID}`
     );
 
-    return await SpotifyPlaylistTag.findOne({ user, emoji: tag.raw });
+    const foundTag = await SpotifyPlaylistTag.findOneBy({
+      user: { id: user.id },
+      emoji: tag.raw,
+    });
+
+    return foundTag ?? undefined;
   }
 
   async getTagsForPlaylists(
@@ -73,7 +79,10 @@ export class SpotifyPlaylistTagService extends BaseService {
 
     const ids = playlists.map((p) => p.id);
 
-    const tags = await SpotifyPlaylistTag.find({ playlistID: In(ids), user });
+    const tags = await SpotifyPlaylistTag.findBy({
+      playlistID: In(ids),
+      user: { id: user.id },
+    });
 
     for (const tag of tags) {
       const playlist = playlists.find((p) => p.id === tag.playlistID)!;
@@ -115,11 +124,13 @@ export class SpotifyPlaylistTagService extends BaseService {
     if (!response) return undefined;
 
     // If it's not typed as an object, typeorm will think it's an array
-    return SpotifyPlaylistTag.create(JSON.parse(response) as {});
+    return SpotifyPlaylistTag.create(
+      JSON.parse(response) as SpotifyPlaylistTag
+    );
   }
 
   async updatePlaylistNames(playlists: SpotifyPlaylist[]): Promise<void> {
-    const playlistTags = await SpotifyPlaylistTag.find({
+    const playlistTags = await SpotifyPlaylistTag.findBy({
       playlistID: In(playlists.map((p) => p.id)),
     });
 

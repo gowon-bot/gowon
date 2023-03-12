@@ -8,7 +8,7 @@ export default {
       _: any,
       args: { code: string; discordID: string }
     ): Promise<User> {
-      let user = await User.findOne({
+      let user = await User.findOneBy({
         discordID: args.discordID,
       });
 

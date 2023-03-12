@@ -1,8 +1,13 @@
+import "../../shims";
+
 import { Payload } from "../../../lib/context/Payload";
 import { MockGuild, MockGuildlessMessage } from "../../../mocks/discord";
 import { mockContext } from "../../../mocks/MockContext";
+import { setMockServices } from "../../../mocks/services/mockServices";
 
 describe("Context", () => {
+  beforeEach(setMockServices);
+
   test("should be created with options", () => {
     const context = mockContext();
 

@@ -9,15 +9,15 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { toInt } from "../../helpers/lastfm/";
-import { GowonContext } from "../../lib/context/Context";
 import { Logger } from "../../lib/Logger";
-import { CrownState } from "../../services/dbservices/CrownsService";
+import { GowonContext } from "../../lib/context/Context";
 import { GowonService } from "../../services/GowonService";
 import { LastFMService } from "../../services/LastFM/LastFMService";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
+import { CrownState } from "../../services/dbservices/CrownsService";
 import { CrownsQueries } from "../queries";
-import { CrownEvent } from "./meta/CrownEvent";
 import { User } from "./User";
+import { CrownEvent } from "./meta/CrownEvent";
 
 export interface CrownRankResponse {
   count: string;
@@ -114,7 +114,7 @@ export class Crown extends BaseEntity {
     serverID: string,
     artistName: string
   ): Promise<Crown | undefined> {
-    return await Crown.findOne({ where: { serverID, artistName } });
+    return (await Crown.findOneBy({ serverID, artistName })) ?? undefined;
   }
 
   static async rank(
@@ -122,7 +122,7 @@ export class Crown extends BaseEntity {
     discordID: string,
     userIDs?: string[]
   ): Promise<CrownRankResponse> {
-    let user = await User.findOne({ where: { discordID } });
+    const user = await User.findOneBy({ discordID });
 
     return (
       (

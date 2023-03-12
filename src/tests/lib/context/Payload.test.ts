@@ -1,7 +1,12 @@
+import "../../shims";
+
 import { Payload } from "../../../lib/context/Payload";
 import { MockCommandInteraction, MockMessage } from "../../../mocks/discord";
+import { setMockServices } from "../../../mocks/services/mockServices";
 
 describe("Payload", () => {
+  beforeEach(setMockServices);
+
   test("should be created with a source", () => {
     const mockPayload = new Payload(new MockMessage());
 

@@ -48,13 +48,21 @@ export class FriendsService extends BaseService {
     let friend: Friend | undefined;
 
     if (friendToAdd instanceof User) {
-      friend = await Friend.findOne({ user, friend: friendToAdd });
+      friend =
+        (await Friend.findOneBy({
+          user: { id: user.id },
+          friend: { id: friendToAdd.id },
+        })) ?? undefined;
     } else {
       if (!(await this.lastFMService.doesUserExist(ctx, friendToAdd))) {
         throw new LastFMUserDoesntExistError();
       }
 
-      friend = await Friend.findOne({ user, friendUsername: friendToAdd });
+      friend =
+        (await Friend.findOneBy({
+          user: { id: user.id },
+          friendUsername: friendToAdd,
+        })) ?? undefined;
     }
 
     if (friend) throw new AlreadyFriendsError();
@@ -119,8 +127,8 @@ export class FriendsService extends BaseService {
       `Removing friend all friends for user ${user.lastFMUsername}`
     );
 
-    let friendsDeleted = await Friend.delete({
-      user,
+    const friendsDeleted = await Friend.delete({
+      user: { id: user.id },
     });
 
     return friendsDeleted.affected ?? 0;
@@ -129,7 +137,7 @@ export class FriendsService extends BaseService {
   async listFriends(ctx: GowonContext, user: User): Promise<Friend[]> {
     this.log(ctx, `Listing friends for user ${user?.lastFMUsername}`);
 
-    return await Friend.find({ user });
+    return await Friend.findBy({ user: { id: user.id } });
   }
 
   async isAlreadyFriends(
@@ -142,7 +150,7 @@ export class FriendsService extends BaseService {
       `Checking if ${user.discordID} is already friends with ${friend}`
     );
 
-    const friends = await Friend.find({ user });
+    const friends = await Friend.findBy({ user: { id: user.id } });
 
     return friends.some((f) =>
       typeof friend === "string"

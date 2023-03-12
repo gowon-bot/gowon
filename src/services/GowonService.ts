@@ -70,11 +70,9 @@ export class GowonService extends BaseService {
     return await this.shallowCache.findOrRemember<string[]>(
       CacheScopedKey.CrownBannedUsers,
       async () => {
-        const bans = (
-          await CrownBan.find({
-            where: { serverID: guild.id },
-          })
-        ).map((u) => u.user.discordID);
+        const bans = (await CrownBan.findBy({ serverID: guild.id })).map(
+          (u) => u.user.discordID
+        );
 
         return bans;
       },
@@ -90,11 +88,9 @@ export class GowonService extends BaseService {
     return await this.shallowCache.findOrRemember<string[]>(
       CacheScopedKey.CrownBannedArtists,
       async () => {
-        const bans = (
-          await ArtistCrownBan.find({
-            where: { serverID: guild.id },
-          })
-        ).map((u) => u.artistName);
+        const bans = (await ArtistCrownBan.findBy({ serverID: guild.id })).map(
+          (u) => u.artistName
+        );
 
         return bans;
       },
