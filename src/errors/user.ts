@@ -70,7 +70,7 @@ export class MentionedUserNotIndexedError extends ClientError {
 
   constructor(prefix?: string) {
     super(
-      `The user you mentioned hasn't been indexed yet, or isn't signed into the bot.\n*Run \`${prefix}index\` to index yourself*`
+      `The user you mentioned hasn't been indexed yet, or isn't signed into the bot.\n*See \`${prefix}help index\` for help with indexing *`
     );
   }
 }

@@ -178,13 +178,14 @@ export class MentionsService extends BaseService {
             mentionedUser?.lastFMUsername
           );
         }
-      } catch {
-        if (options.usernameRequired)
+      } catch (e) {
+        if (options.usernameRequired) {
           throw new MentionedSignInRequiredError(
             mentionsBuilder.getDiscordUser("mentioned")?.username ||
               mentionsBuilder.getDiscordID("mentioned") ||
               "<unknown user>"
           );
+        }
       }
     }
   }
@@ -316,7 +317,7 @@ export class MentionsService extends BaseService {
       }
     } else if (!senderDbUser) {
       throw new SenderSignInRequiredError(ctx.command.prefix);
-    } else if (!mentionedDbUser) {
+    } else if (mentionsBuilder.hasAnyMentioned() && !mentionedDbUser) {
       throw new MentionedSignInRequiredError(
         mentionsBuilder.getLfmUsername("mentioned") ||
           mentionsBuilder.getDiscordUser("mentioned")?.username ||
