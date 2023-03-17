@@ -48,7 +48,7 @@ export default class ArtistTopTracks extends MirrorballBaseCommand<
     const { username, senderRequestable, perspective, dbUser } =
       await this.getMentions({
         senderRequired: !this.parsedArguments.artist,
-        reverseLookup: { required: true },
+        dbUserRequired: true,
         indexedRequired: true,
       });
 

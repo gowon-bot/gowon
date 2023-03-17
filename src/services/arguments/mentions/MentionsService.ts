@@ -166,9 +166,7 @@ export class MentionsService extends BaseService {
 
         if (!mentionedUser?.lastFMUsername && options.usernameRequired) {
           throw new MentionedSignInRequiredError(
-            mentionsBuilder.getDiscordUser("mentioned")?.username ||
-              mentionsBuilder.getDiscordID("mentioned") ||
-              "<unknown user>"
+            mentionsBuilder.getUserDisplay()
           );
         }
 
@@ -178,13 +176,12 @@ export class MentionsService extends BaseService {
             mentionedUser?.lastFMUsername
           );
         }
-      } catch {
-        if (options.usernameRequired)
+      } catch (e) {
+        if (options.usernameRequired) {
           throw new MentionedSignInRequiredError(
-            mentionsBuilder.getDiscordUser("mentioned")?.username ||
-              mentionsBuilder.getDiscordID("mentioned") ||
-              "<unknown user>"
+            mentionsBuilder.getUserDisplay()
           );
+        }
       }
     }
   }
@@ -316,13 +313,8 @@ export class MentionsService extends BaseService {
       }
     } else if (!senderDbUser) {
       throw new SenderSignInRequiredError(ctx.command.prefix);
-    } else if (!mentionedDbUser) {
-      throw new MentionedSignInRequiredError(
-        mentionsBuilder.getLfmUsername("mentioned") ||
-          mentionsBuilder.getDiscordUser("mentioned")?.username ||
-          mentionsBuilder.getDiscordID("mentioned") ||
-          "<unknown user>"
-      );
+    } else if (mentionsBuilder.hasAnyMentioned() && !mentionedDbUser) {
+      throw new MentionedSignInRequiredError(mentionsBuilder.getUserDisplay());
     }
   }
 
