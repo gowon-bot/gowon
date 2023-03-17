@@ -64,6 +64,15 @@ export class MentionsBuilder {
     return this.get(from, "mirrorballUser") as MirrorballUser | undefined;
   }
 
+  getUserDisplay(): string {
+    return (
+      this.getLfmUsername("mentioned") ||
+      this.getDiscordUser("mentioned")?.username ||
+      this.getDiscordID("mentioned") ||
+      "<unknown user>"
+    );
+  }
+
   build(options: GetMentionsOptions, requestables: Requestables): Mentions {
     const perspective = Perspective.perspective(
       this.getLfmUsername("sender") || "<no user>",
