@@ -15,6 +15,7 @@ import { SpotifyPlaylistTag } from "./entity/SpotifyPlaylistTag";
 import { TagBan } from "./entity/TagBan";
 import { User } from "./entity/User";
 import { AlbumCard } from "./entity/cards/AlbumCard";
+import { FishyCatch } from "./entity/fishy/FishyCatch";
 import { CommandRun } from "./entity/meta/CommandRun";
 import { CrownEvent } from "./entity/meta/CrownEvent";
 
@@ -28,8 +29,9 @@ export class DB {
       ...config,
       type: "postgres",
       entities: [
-        // cards
+        // misc games
         AlbumCard,
+        FishyCatch,
         // meta
         CommandRun,
         CrownEvent,

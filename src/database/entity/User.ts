@@ -24,6 +24,7 @@ import { Combo } from "./Combo";
 import { Crown } from "./Crown";
 import { Friend } from "./Friend";
 import { AlbumCard } from "./cards/AlbumCard";
+import { FishyCatch } from "./fishy/FishyCatch";
 
 @Entity({ name: "users" })
 export class User extends BaseEntity {
@@ -62,6 +63,9 @@ export class User extends BaseEntity {
 
   @OneToMany((_) => AlbumCard, (albumCard) => albumCard.owner)
   albumCards!: AlbumCard[];
+
+  @OneToMany((_) => FishyCatch, (fishyCatch) => fishyCatch.fisher)
+  fishies!: FishyCatch[];
 
   @Column("simple-array", { nullable: true })
   roles?: CommandAccessRoleName[];
