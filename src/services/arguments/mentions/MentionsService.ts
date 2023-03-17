@@ -282,7 +282,7 @@ export class MentionsService extends BaseService {
     ctx: GowonContext,
     mentionsBuilder: MentionsBuilder
   ): void | never {
-    if (!mentionsBuilder.getLfmUsername()) {
+    if (!mentionsBuilder.getLfmUsername("sender")) {
       throw new SenderSignInRequiredError(ctx.command.prefix);
     }
   }

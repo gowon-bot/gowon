@@ -132,8 +132,16 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
   // Has to be any typed because the parsed flags aren't optionally typed
   // because they always will be either true or false
   // this is set by the FlagParser when this.parseArguments() is called
-  parsedArguments: ParsedArguments<ArgumentsType> =
+  private _parsedArguments: ParsedArguments<ArgumentsType> =
     {} as ParsedArguments<ArgumentsType>;
+
+  get parsedArguments(): ParsedArguments<ArgumentsType> {
+    return this._parsedArguments;
+  }
+
+  private set parsedArguments(args: ParsedArguments<ArgumentsType>) {
+    this._parsedArguments = args;
+  }
 
   get logger() {
     return this.ctx.logger;

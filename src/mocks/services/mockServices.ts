@@ -44,7 +44,9 @@ export function setMockServices() {
 }
 
 export function replaceMockService(name: string, replacementService: Service) {
-  ServiceRegistry.setServices(
-    mockServices.map((s) => (s.name === name ? replacementService : s))
-  );
+  ServiceRegistry.services = ServiceRegistry.services.map((s) => {
+    if (s.constructor.name === name || s.mocks === name) {
+      return new replacementService();
+    } else return s;
+  });
 }

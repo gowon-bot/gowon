@@ -2,12 +2,14 @@ import { Chance } from "chance";
 import { User as DiscordUser } from "discord.js";
 import { AnalyticsCollector } from "../../analytics/AnalyticsCollector";
 import { User } from "../../database/entity/User";
+import { RecordNotFoundError } from "../../errors/errors";
 import { Perspective } from "../../lib/Perspective";
 import { CommandAccessRoleName } from "../../lib/command/access/roles";
 import { GowonContext } from "../../lib/context/Context";
 import { Requestable } from "../../services/LastFM/LastFMAPIService";
 import { LastFMSession } from "../../services/LastFM/converters/Misc";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
+import { UsersService } from "../../services/dbservices/UsersService";
 import { mockEntities } from "../gowon";
 import { BaseMockService } from "./BaseMockService";
 
@@ -16,19 +18,22 @@ export class MockUsersService extends BaseMockService {
     return ServiceRegistry.get(AnalyticsCollector);
   }
 
-  async getUsername(_ctx: GowonContext, _discordID: string): Promise<string> {
-    return "flushed_emoji";
+  async getUsername(ctx: GowonContext, discordID: string): Promise<string> {
+    return (await this.getUser(ctx, discordID))?.lastFMUsername;
   }
 
   async getUser(_ctx: GowonContext, discordID: string): Promise<User> {
-    return mockEntities.user({ discordID: discordID });
+    return mockEntities.user({
+      discordID: discordID,
+      lastFMUsername: "flushed_emoji",
+    });
   }
 
   async getRequestable(
-    _ctx: GowonContext,
-    _discordID: string
+    ctx: GowonContext,
+    discordID: string
   ): Promise<Requestable> {
-    return "flushed_emoji";
+    return await this.getUsername(ctx, discordID);
   }
 
   async setUsername(
@@ -125,4 +130,27 @@ export class MockUsersService extends BaseMockService {
   ): Promise<string | undefined> {
     return undefined;
   }
+}
+
+export function mockUsersServiceWithUsers(users: User[]) {
+  return class MockUsersServiceWithUsers extends MockUsersService {
+    mocks = UsersService.name;
+
+    async getUser(_ctx: GowonContext, discordID: string): Promise<User> {
+      const user = users.find((u) => u.discordID === discordID);
+
+      if (!user) throw new RecordNotFoundError("user");
+
+      return user;
+    }
+
+    async getUserFromLastFMUsername(
+      _ctx: GowonContext,
+      username: string
+    ): Promise<User | undefined> {
+      const user = users.find((u) => u.lastFMUsername === username);
+
+      return user;
+    }
+  };
 }

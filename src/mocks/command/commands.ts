@@ -1,22 +1,4 @@
-import { Logger, SilentLogger } from "../../lib/Logger";
-import { Command } from "../../lib/command/Command";
-
-abstract class MockCommand extends Command {
-  idSeed = this.name;
-
-  override get logger(): Logger {
-    return new SilentLogger();
-  }
-
-  static nameWithPrefix() {
-    return "!" + this.name.toLowerCase();
-  }
-
-  protected async handleRunError(e: any) {
-    console.log("throwing: e");
-    throw e;
-  }
-}
+import { MockCommand } from "./MockCommand";
 
 export class CommandThatShouldntRun extends MockCommand {
   async run() {
