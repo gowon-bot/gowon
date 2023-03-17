@@ -10,14 +10,14 @@ import { MirrorballBaseCommand } from "../../../../lib/indexing/MirrorballComman
 import { MirrorballPaginator } from "../../../../lib/paginators/MirrorballPaginator";
 import { TagConsolidator } from "../../../../lib/tags/TagConsolidator";
 import { displayDate, displayNumber } from "../../../../lib/views/displays";
-import { RedirectsService } from "../../../../services/dbservices/RedirectsService";
 import { RecentTracks } from "../../../../services/LastFM/converters/RecentTracks";
 import { ServiceRegistry } from "../../../../services/ServicesRegistry";
+import { RedirectsService } from "../../../../services/dbservices/RedirectsService";
 import { YearConnector, YearParams, YearResponse } from "./Year.connector";
 
 const args = {
   ...standardMentions,
-} satisfies ArgumentsMap
+} satisfies ArgumentsMap;
 
 export default class Year extends MirrorballBaseCommand<
   YearResponse,
@@ -44,7 +44,7 @@ export default class Year extends MirrorballBaseCommand<
     const { dbUser, discordUser } = await this.getMentions({
       fetchDiscordUser: true,
       reverseLookup: { required: true },
-      requireIndexed: true,
+      indexedRequired: true,
     });
 
     const perspective = this.usersService.discordPerspective(
@@ -112,35 +112,35 @@ export default class Year extends MirrorballBaseCommand<
       .setAuthor(this.generateEmbedAuthor())
       .setTitle(`${perspective.upper.possessive} year`).setDescription(`
       _${displayDate(sub(new Date(), { years: 1 }))} - ${displayDate(
-        new Date()
-      )}_
+      new Date()
+    )}_
     _${displayNumber(firstPage.tracks.length, "scrobble")}, ${displayNumber(
-        month.total.artists,
-        "artist"
-      )}, ${displayNumber(month.total.albums, "album")}, ${displayNumber(
-        month.total.tracks,
-        "track"
-      )}_
+      month.total.artists,
+      "artist"
+    )}, ${displayNumber(month.total.albums, "album")}, ${displayNumber(
+      month.total.tracks,
+      "track"
+    )}_
 
 ${italic(tagConsolidator.consolidateAsStrings(10).join(", "))}
   
 **Top Tracks**:
 ${extraWideSpace}${bullet} ${topTracks
-          .slice(0, 3)
-          .map((t) => `${t} (${displayNumber(month.top.tracks[t], "play")})`)
-          .join(`\n​${extraWideSpace}${bullet} `)}
+      .slice(0, 3)
+      .map((t) => `${t} (${displayNumber(month.top.tracks[t], "play")})`)
+      .join(`\n​${extraWideSpace}${bullet} `)}
 
 **Top Albums**:
 ${extraWideSpace}${bullet} ${topAlbums
-          .slice(0, 3)
-          .map((t) => `${t} (${displayNumber(month.top.albums[t], "play")})`)
-          .join(`\n​${extraWideSpace}${bullet} `)}
+      .slice(0, 3)
+      .map((t) => `${t} (${displayNumber(month.top.albums[t], "play")})`)
+      .join(`\n​${extraWideSpace}${bullet} `)}
 
 **Top Artists**:
 ${extraWideSpace}${bullet} ${topArtists
-          .slice(0, 3)
-          .map((t) => `${t} (${displayNumber(month.top.artists[t], "play")})`)
-          .join(`\n​${extraWideSpace}${bullet} `)}
+      .slice(0, 3)
+      .map((t) => `${t} (${displayNumber(month.top.artists[t], "play")})`)
+      .join(`\n​${extraWideSpace}${bullet} `)}
     `);
 
     await this.send(embed);

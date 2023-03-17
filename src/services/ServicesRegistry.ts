@@ -4,6 +4,7 @@ import { PermissionsCacheService } from "../lib/permissions/PermissionsCacheServ
 import { PermissionsService } from "../lib/permissions/PermissionsService";
 import { SettingsService } from "../lib/settings/SettingsService";
 import { ArgumentParsingService } from "./arguments/ArgumentsParsingService";
+import { MentionsService } from "./arguments/mentions/MentionsService";
 import { BaseService } from "./BaseService";
 import { ConcurrencyService } from "./ConcurrencyService";
 import { BotStatsService } from "./dbservices/BotStatsService";
@@ -39,7 +40,6 @@ import { NowPlayingEmbedParsingService } from "./NowPlayingEmbedParsingService";
 import { ChartService } from "./pantomime/ChartService";
 import { RedisInteractionService } from "./redis/RedisInteractionService";
 import { RedisService } from "./redis/RedisService";
-import { Responder } from "./Responder";
 import { SpotifyArguments } from "./Spotify/SpotifyArguments";
 import { SpotifyAuthenticationService } from "./Spotify/SpotifyAuthenticationService";
 import { SpotifyPlaylistTagService } from "./Spotify/SpotifyPlaylistTagService";
@@ -83,6 +83,7 @@ const services: Service[] = [
   LilacWhoKnowsService,
 
   MetaService,
+  MentionsService,
   MirrorballService,
   MirrorballUsersService,
   NicknameService,
@@ -92,7 +93,6 @@ const services: Service[] = [
   RedirectsService,
   RedisService,
   RedisInteractionService,
-  Responder,
   SettingsService,
   SpotifyService,
   SpotifyArguments,

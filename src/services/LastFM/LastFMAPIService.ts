@@ -12,8 +12,8 @@ import { toInt } from "../../helpers/lastfm/";
 import { SimpleMap } from "../../helpers/types";
 import { GowonContext } from "../../lib/context/Context";
 import { BaseService } from "../BaseService";
-import { LilacTagsService } from "../lilac/LilacTagsService";
 import { ServiceRegistry } from "../ServicesRegistry";
+import { LilacTagsService } from "../lilac/LilacTagsService";
 import {
   AlbumInfoParams,
   AlbumSearchParams,
@@ -21,7 +21,6 @@ import {
   ArtistPopularTracksParams,
   GetArtistCorrectionParams,
   GetSessionParams,
-  isErrorResponse,
   Params,
   RawAlbumInfo,
   RawAlbumInfoResponse,
@@ -75,6 +74,7 @@ import {
   UserGetFriendsParams,
   UserGetWeeklyChartParams,
   UserInfoParams,
+  isErrorResponse,
 } from "./LastFMService.types";
 
 export interface SessionKey {

@@ -47,8 +47,8 @@ export class Ratings extends RateYourMusicIndexingChildCommand<
 
     const { dbUser, discordUser } = await this.getMentions({
       fetchDiscordUser: true,
-      reverseLookup: { required: true },
-      requireIndexed: true,
+      dbUserRequired: true,
+      indexedRequired: true,
     });
 
     const perspective = this.usersService.discordPerspective(

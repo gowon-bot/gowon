@@ -1,7 +1,6 @@
 import { Chance } from "chance";
 import {
   CommandInteraction,
-  User as DiscordUser,
   EmbedAuthorData,
   Guild,
   Message,
@@ -10,53 +9,31 @@ import {
 import md5 from "js-md5";
 import config from "../../../config.json";
 import { AnalyticsCollector } from "../../analytics/AnalyticsCollector";
-import { User } from "../../database/entity/User";
-import {
-  LogicError,
-  UnknownError,
-  UsernameNotRegisteredError,
-} from "../../errors/errors";
-import {
-  LastFMReverseLookupError,
-  MentionedUserNotIndexedError,
-  SenderUserNotAuthenticatedError,
-  throwSenderUserNotIndexed,
-} from "../../errors/user";
-import {
-  GetMentionsOptions,
-  GetMentionsReturn,
-  buildRequestables,
-  compareUsernames,
-} from "../../helpers/getMentions";
+import { UnknownError } from "../../errors/errors";
 import { SimpleMap } from "../../helpers/types";
+import { DiscordService } from "../../services/Discord/DiscordService";
 import {
-  DiscordService,
   ReplyOptions,
   SendOptions,
-} from "../../services/Discord/DiscordService";
+} from "../../services/Discord/DiscordService.types";
 import { GowonService } from "../../services/GowonService";
-import { isSessionKey } from "../../services/LastFM/LastFMAPIService";
 import { NowPlayingEmbedParsingService } from "../../services/NowPlayingEmbedParsingService";
-import { Responder } from "../../services/Responder";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { TrackingService } from "../../services/TrackingService";
 import { ArgumentParsingService } from "../../services/arguments/ArgumentsParsingService";
+import { MentionsService } from "../../services/arguments/mentions/MentionsService";
+import {
+  GetMentionsOptions,
+  Mentions,
+} from "../../services/arguments/mentions/MentionsService.types";
 import { UsersService } from "../../services/dbservices/UsersService";
 import { LilacUsersService } from "../../services/lilac/LilacUsersService";
 import { MirrorballService } from "../../services/mirrorball/MirrorballService";
-import {
-  MirrorballUser,
-  UserInput,
-} from "../../services/mirrorball/MirrorballTypes";
 import { MirrorballUsersService } from "../../services/mirrorball/services/MirrorballUsersService";
 import { Emoji, EmojiRaw } from "../Emoji";
 import { constants } from "../constants";
 import { GowonContext } from "../context/Context";
-import {
-  ArgumentName,
-  ArgumentsMap,
-  ParsedArguments,
-} from "../context/arguments/types";
+import { ArgumentsMap, ParsedArguments } from "../context/arguments/types";
 import { SettingsService } from "../settings/SettingsService";
 import { Validation, ValidationChecker } from "../validation/ValidationChecker";
 import { errorEmbed, gowonEmbed } from "../views/embeds";
@@ -155,8 +132,16 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
   // Has to be any typed because the parsed flags aren't optionally typed
   // because they always will be either true or false
   // this is set by the FlagParser when this.parseArguments() is called
-  parsedArguments: ParsedArguments<ArgumentsType> =
+  private _parsedArguments: ParsedArguments<ArgumentsType> =
     {} as ParsedArguments<ArgumentsType>;
+
+  get parsedArguments(): ParsedArguments<ArgumentsType> {
+    return this._parsedArguments;
+  }
+
+  private set parsedArguments(args: ParsedArguments<ArgumentsType>) {
+    this._parsedArguments = args;
+  }
 
   get logger() {
     return this.ctx.logger;
@@ -210,11 +195,11 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
   }
 
   track = ServiceRegistry.get(TrackingService);
-  responder = ServiceRegistry.get(Responder);
   usersService = ServiceRegistry.get(UsersService);
   gowonService = ServiceRegistry.get(GowonService);
   discordService = ServiceRegistry.get(DiscordService);
   settingsService = ServiceRegistry.get(SettingsService);
+  mentionsService = ServiceRegistry.get(MentionsService);
   mirrorballService = ServiceRegistry.get(MirrorballService);
   lilacUsersService = ServiceRegistry.get(LilacUsersService);
   analyticsCollector = ServiceRegistry.get(AnalyticsCollector);
@@ -381,207 +366,8 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
    * Helpers
    * (These methods are called when by a command when needed)
    */
-
-  // This function will get its own service lol
-  // For now.... just... don't touch it....
-  // (try not to look either)
-  async getMentions({
-    senderRequired = false,
-    usernameRequired = true,
-    userArgumentName = "user" as ArgumentName<ArgumentsType>,
-    inputArgumentName = "username" as ArgumentName<ArgumentsType>,
-    lfmMentionArgumentName = "lastfmUsername" as ArgumentName<ArgumentsType>,
-    idMentionArgumentName = "userID" as ArgumentName<ArgumentsType>,
-    asCode = true,
-    fetchDiscordUser = false,
-    fetchMirrorballUser = false,
-    reverseLookup = { required: false },
-    authentificationRequired,
-    requireIndexed,
-    fromArguments,
-  }: GetMentionsOptions<
-    ArgumentName<ArgumentsType>
-  > = {}): Promise<GetMentionsReturn> {
-    const argumentsToUse = fromArguments || (this.parsedArguments as any);
-
-    let user = argumentsToUse[userArgumentName] as DiscordUser,
-      userID = argumentsToUse[idMentionArgumentName] as string,
-      lfmUsername = argumentsToUse[lfmMentionArgumentName] as string,
-      discordUsername = argumentsToUse["discordUsername"] as string;
-
-    if (user && this.payload.isMessage() && this.payload.source.reference) {
-      const reply = await this.payload.source.fetchReference();
-
-      if (this.nowPlayingEmbedParsingService.hasParsableEmbed(this.ctx, reply))
-        if (
-          this.gowonClient.isBot(user.id, [
-            "gowon",
-            "gowon development",
-            "fmbot",
-            "fmbot develop",
-            "chuu",
-            "who knows",
-          ])
-        ) {
-          user = (Array.from(this.payload.source.mentions.users)[1] || [])[1];
-        }
-    }
-
-    let mentionedUsername: string | undefined;
-    let discordUser: DiscordUser | undefined;
-
-    let senderDBUser: User | undefined;
-    let mentionedDBUser: User | undefined;
-
-    let senderMirrorballUser: MirrorballUser | undefined;
-    let mentionedMirrorballUser: MirrorballUser | undefined;
-
-    if (discordUsername) {
-      discordUser = await this.getDiscordUserFromUsername(discordUsername);
-    }
-
-    try {
-      senderDBUser = await this.usersService.getUser(
-        this.ctx,
-        this.payload.author.id
-      );
-    } catch {}
-
-    if (lfmUsername) {
-      mentionedUsername = lfmUsername;
-    } else if (user?.id || userID || discordUser) {
-      try {
-        const mentionedUser = await this.usersService.getUser(
-          this.ctx,
-          discordUser?.id || userID || `${user?.id}`
-        );
-
-        mentionedDBUser = mentionedUser;
-
-        if (!mentionedUser?.lastFMUsername && usernameRequired) {
-          throw new UsernameNotRegisteredError();
-        }
-
-        mentionedUsername = mentionedUser?.lastFMUsername;
-      } catch {
-        if (usernameRequired) throw new UsernameNotRegisteredError();
-      }
-    } else if (inputArgumentName && argumentsToUse[inputArgumentName]) {
-      mentionedUsername = argumentsToUse[inputArgumentName] as string;
-    }
-
-    const perspective = this.usersService.perspective(
-      senderDBUser?.lastFMUsername || "<no user>",
-      mentionedUsername,
-      asCode
-    );
-
-    if (!mentionedDBUser && mentionedUsername) {
-      mentionedDBUser = await this.usersService.getUserFromLastFMUsername(
-        this.ctx,
-        mentionedUsername
-      );
-
-      if (reverseLookup.required && !mentionedDBUser)
-        throw new LastFMReverseLookupError(
-          mentionedUsername,
-          requireIndexed,
-          this.prefix
-        );
-    }
-
-    const username = mentionedUsername || senderDBUser?.lastFMUsername;
-
-    if (fetchDiscordUser) {
-      let fetchedUser: DiscordUser | undefined;
-
-      try {
-        fetchedUser = await this.gowonClient.client.users.fetch(
-          mentionedDBUser?.discordID || userID || this.author.id
-        );
-      } catch {}
-
-      if (
-        fetchedUser &&
-        (compareUsernames(username, senderDBUser?.lastFMUsername) ||
-          (compareUsernames(username, mentionedDBUser?.lastFMUsername) &&
-            mentionedDBUser?.discordID === fetchedUser.id) ||
-          userID === fetchedUser.id)
-      ) {
-        discordUser = fetchedUser;
-
-        perspective.addDiscordUser(discordUser);
-      } else discordUser = undefined;
-    }
-
-    if (fetchMirrorballUser) {
-      const inputs: UserInput[] = [{ discordID: this.author.id }];
-
-      const mentionedID =
-        mentionedDBUser?.discordID || discordUser?.id || userID;
-
-      if (mentionedID) {
-        inputs.push({ discordID: mentionedID });
-      }
-
-      [senderMirrorballUser, mentionedMirrorballUser] =
-        (await this.mirrorballUsersService.getMirrorballUser(
-          this.ctx,
-          inputs
-        )) || [];
-    }
-
-    if (
-      usernameRequired &&
-      (!username || (senderRequired && !senderDBUser?.lastFMUsername))
-    ) {
-      throw new LogicError(
-        `please sign in with a last.fm account! (\`${this.prefix}login\`)`,
-        `Don't have one? You can create one at https://last.fm/join`
-      );
-    }
-
-    const requestables = buildRequestables({
-      senderUser: senderDBUser,
-      mentionedUsername,
-      mentionedUser: mentionedDBUser,
-    });
-
-    if (authentificationRequired && !isSessionKey(requestables?.requestable)) {
-      throw new SenderUserNotAuthenticatedError(this.prefix);
-    }
-
-    const dbUser = mentionedDBUser || senderDBUser;
-
-    if (requireIndexed && dbUser && !dbUser.isIndexed) {
-      if (dbUser.id === mentionedDBUser?.id) {
-        throw new MentionedUserNotIndexedError(this.prefix);
-      } else if (dbUser.id === senderDBUser?.id) {
-        if (!senderDBUser.lastFMSession) {
-          throw new SenderUserNotAuthenticatedError(this.prefix);
-        }
-
-        await throwSenderUserNotIndexed(this.ctx);
-      }
-    }
-
-    const mirrorballUser =
-      (mentionedMirrorballUser?.username?.toLowerCase() ===
-      mentionedUsername?.toLowerCase()
-        ? mentionedMirrorballUser
-        : undefined) || (!mentionedUsername ? senderMirrorballUser : undefined);
-
-    return {
-      mentionedUsername,
-      perspective,
-      mentionedDBUser,
-      senderUser: senderDBUser,
-      discordUser,
-      dbUser: dbUser!,
-      senderMirrorballUser,
-      mirrorballUser,
-      ...requestables!,
-    };
+  async getMentions(options?: Partial<GetMentionsOptions>): Promise<Mentions> {
+    return this.mentionsService.getMentions(this.ctx, options || {});
   }
 
   /**
@@ -691,25 +477,11 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
       footer
     );
 
-    await this.responder.discord(this.ctx, embed);
+    await this.send(embed);
   }
 
   protected startTyping() {
     this.discordService.startTyping(this.ctx);
-  }
-
-  protected async getDiscordUserFromUsername(
-    username: string
-  ): Promise<DiscordUser | undefined> {
-    const members = await this.requiredGuild.members.fetch();
-
-    const member = members.find(
-      (m) =>
-        m.user.username.toLowerCase() === username ||
-        m.nickname?.toLowerCase() === username
-    );
-
-    return member?.user;
   }
 
   protected messageIsReply(): boolean {

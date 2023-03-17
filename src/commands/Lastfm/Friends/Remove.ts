@@ -1,10 +1,10 @@
-import { FriendsChildCommand } from "./FriendsChildCommand";
 import { LogicError } from "../../../errors/errors";
+import { code } from "../../../helpers/discord";
+import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
-import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
-import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
-import { code } from "../../../helpers/discord";
+import { FriendsChildCommand } from "./FriendsChildCommand";
 
 const args = {
   ...standardMentions,
@@ -34,7 +34,7 @@ export class Remove extends FriendsChildCommand<typeof args> {
   async run() {
     const { username, senderUsername, senderUser, mentionedDBUser } =
       await this.getMentions({
-        inputArgumentName: "friendUsername",
+        usernameArgumentKey: "friendUsername",
         senderRequired: true,
       });
 

@@ -9,9 +9,9 @@ import { GuildMember } from "discord.js";
 import config from "../config.json";
 import { AnalyticsCollector } from "./analytics/AnalyticsCollector";
 import { gowonAPIPort } from "./api";
+import { HeaderlessLogger } from "./lib/Logger";
 import { GowonContext } from "./lib/context/Context";
 import { Payload } from "./lib/context/Payload";
-import { HeaderlessLogger } from "./lib/Logger";
 import { MockMessage } from "./mocks/discord";
 import { UsersService } from "./services/dbservices/UsersService";
 import {

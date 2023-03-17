@@ -96,7 +96,7 @@ export class MockChannel extends TextChannel {
 export class MockUser extends User {
   constructor(id?: string) {
     super(mockClient, {
-      id: id || "267794154459889664",
+      id: id || "537353774205894676",
       bot: false,
     });
   }

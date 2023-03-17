@@ -119,7 +119,7 @@ export class CrownsService extends BaseService {
         showDeleted: true,
         noRedirect: true,
       }),
-      User.findOne({ where: { discordID: author.id } }),
+      User.findOneBy({ discordID: author.id }),
     ]);
 
     if (redirect.to && crown) {
@@ -241,14 +241,14 @@ export class CrownsService extends BaseService {
           onlyIfOwnerIs: options.requester?.id,
           logger: ctx.logger,
         })
-      : crown;
+      : crown ?? undefined;
   }
 
   async killCrown(ctx: GowonContext, artistName: string) {
     const serverID = ctx.requiredGuild.id;
 
     this.log(ctx, `Killing crown for ${artistName} in ${serverID}`);
-    let crown = await Crown.findOne({ where: { artistName, serverID } });
+    let crown = await Crown.findOneBy({ artistName, serverID });
 
     if (crown) await Crown.softRemove(crown);
   }
@@ -280,11 +280,11 @@ export class CrownsService extends BaseService {
       ctx,
       "Listing crowns for user " + discordID + " in server " + serverID
     );
-    let user = await User.findOne({ where: { discordID } });
+    const user = await User.findOneBy({ discordID });
 
     if (!user) throw new RecordNotFoundError("user");
 
-    let options: FindManyOptions = {
+    const options: FindManyOptions = {
       where: { user, serverID },
       order: { plays: "DESC" },
     };
@@ -322,13 +322,11 @@ export class CrownsService extends BaseService {
       ctx,
       "Counting crowns for user " + discordID + " in server " + serverID
     );
-    let user = await User.findOne({
-      where: { discordID },
-    });
+    const user = await User.findOneBy({ discordID });
 
     if (!user) throw new RecordNotFoundError("user");
 
-    return await Crown.count({ where: { user, serverID } });
+    return await Crown.countBy({ user: { id: user.id }, serverID });
   }
 
   async getRank(
@@ -339,7 +337,7 @@ export class CrownsService extends BaseService {
     const serverID = ctx.requiredGuild.id;
 
     this.log(ctx, "Ranking user " + discordID + " in server " + serverID);
-    let user = await User.findOne({ where: { discordID } });
+    const user = await User.findOneBy({ discordID });
 
     if (!user) throw new RecordNotFoundError("user");
 
@@ -460,12 +458,16 @@ export class CrownsService extends BaseService {
 
     this.log(ctx, `Wiping crowns for user ${userID} in ${serverID}`);
 
-    const user = await User.findOne({ where: { discordID: userID } });
+    const user = await User.findOneBy({ discordID: userID });
 
-    const crown = await Crown.find({ serverID, user });
-    const result = await Crown.softRemove(crown);
+    if (user) {
+      const crown = await Crown.findBy({ serverID, user: { id: user.id } });
+      const result = await Crown.softRemove(crown);
 
-    return result.length;
+      return result.length;
+    } else {
+      return 0;
+    }
   }
 
   async optOut(ctx: GowonContext, userID: string): Promise<number> {
@@ -515,7 +517,7 @@ export class CrownsService extends BaseService {
 
     this.log(ctx, `Crown banning user ${user.discordID} in ${serverID}`);
 
-    let existingCrownBan = await CrownBan.findOne({ user });
+    let existingCrownBan = await CrownBan.findOneBy({ user: { id: user.id } });
 
     if (existingCrownBan) throw new AlreadyBannedError();
 
@@ -544,13 +546,13 @@ export class CrownsService extends BaseService {
 
     this.log(ctx, `Crown unbanning user ${user.discordID} in ${serverID}`);
 
-    let crownBan = await CrownBan.findOne({ user });
+    const crownBan = await CrownBan.findOneBy({ user: { id: user.id } });
 
     if (!crownBan) throw new NotBannedError();
 
     await crownBan.remove();
 
-    let bans = (
+    const bans = (
       this.gowonService.shallowCache.find<string[]>(
         CacheScopedKey.CrownBannedUsers,
         serverID
@@ -569,9 +571,7 @@ export class CrownsService extends BaseService {
 
     this.log(ctx, `Fetching crown banned users for server ${serverID}`);
 
-    return await CrownBan.find({
-      where: { user: { serverID } },
-    });
+    return await CrownBan.findBy({ serverID });
   }
 
   async guildAround(
@@ -614,18 +614,18 @@ export class CrownsService extends BaseService {
 
     this.log(ctx, `Crown banning artist ${artistName} in ${serverID}`);
 
-    let existingCrownBan = await ArtistCrownBan.findOne({
+    const existingCrownBan = await ArtistCrownBan.findOneBy({
       artistName,
       serverID,
     });
 
     if (existingCrownBan) throw new ArtistAlreadyCrownBannedError();
 
-    let crownBan = ArtistCrownBan.create({ artistName, serverID });
+    const crownBan = ArtistCrownBan.create({ artistName, serverID });
 
     await crownBan.save();
 
-    let bans = [
+    const bans = [
       ...(this.gowonService.shallowCache.find(
         CacheScopedKey.CrownBannedArtists,
         serverID
@@ -650,7 +650,7 @@ export class CrownsService extends BaseService {
 
     this.log(ctx, `Crown unbanning artist ${artistName} in ${serverID}`);
 
-    let crownBan = await ArtistCrownBan.findOne({
+    const crownBan = await ArtistCrownBan.findOneBy({
       artistName,
       serverID,
     });
@@ -659,7 +659,7 @@ export class CrownsService extends BaseService {
 
     await crownBan.remove();
 
-    let bans = (
+    const bans = (
       this.gowonService.shallowCache.find<string[]>(
         CacheScopedKey.CrownBannedArtists,
         serverID
@@ -720,11 +720,11 @@ export class CrownsService extends BaseService {
   ): Promise<any> {
     if (!userIDs) return findOptions;
 
-    let dbUserIDs = (await User.find({ discordID: In(userIDs) })).map(
+    const dbUserIDs = (await User.findBy({ discordID: In(userIDs) })).map(
       (u) => u.id
     );
 
-    let filter = { user: In(dbUserIDs) };
+    const filter = { user: In(dbUserIDs) };
 
     if (findOptions.where) {
       findOptions.where = Object.assign(findOptions.where, filter);

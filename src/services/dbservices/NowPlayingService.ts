@@ -39,7 +39,9 @@ export class ConfigService extends BaseService {
   ): Promise<NowPlayingConfig> {
     this.log(ctx, `Fetching or creating config for user ${user.discordID}`);
 
-    const existing = await NowPlayingConfig.findOne({ where: { user } });
+    const existing = await NowPlayingConfig.findOneBy({
+      user: { id: user.id },
+    });
 
     if (existing) return existing;
 

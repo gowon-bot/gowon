@@ -10,6 +10,7 @@ import {
 } from "../lib/context/Context";
 import { Payload } from "../lib/context/Payload";
 import { BaseLastFMConverter } from "../services/LastFM/converters/BaseConverter";
+import { CommandThatShouldntRun } from "./command/commands";
 import { MockMessage } from "./discord";
 
 interface MockContextParameters<T> extends ContextParamaters<T> {
@@ -67,13 +68,19 @@ export function mockContextForCommand<
 export function mockContext<T extends CustomContext = CustomContext>(
   overrides: Partial<MockContextParameters<T>> = {}
 ) {
-  return new MockContext<T>({
+  const command = new CommandThatShouldntRun();
+  const ctx = new MockContext<T>({
     payload: new Payload(new MockMessage()),
     extract: mockExtractedCommand(),
     gowonClient: {} as any,
     logger: new MockLogger(),
+    command: command,
     ...overrides,
   });
+
+  command.ctx = ctx;
+
+  return ctx;
 }
 
 export function mockExtractedCommand(...strings: string[]): ExtractedCommand {

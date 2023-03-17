@@ -8,7 +8,7 @@ import {
 import { setMockServices } from "../../../mocks/services/mockServices";
 
 describe("Ping command", () => {
-  beforeAll(setMockServices);
+  beforeEach(setMockServices);
 
   test("should pong", async () => {
     const { command: ping, ctx } = mockContextForCommand(Ping);

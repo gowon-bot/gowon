@@ -23,14 +23,15 @@ export default class LastFMAccount extends LastFMBaseCommand<typeof args> {
   arguments = args;
 
   async run() {
-    let { username, perspective } = await this.getMentions({
-      inputArgumentName: "username",
+    const { username, perspective } = await this.getMentions({
+      usernameArgumentKey: "username",
     });
 
-    if (!(await this.lastFMService.userExists(this.ctx, username)))
+    if (!(await this.lastFMService.doesUserExist(this.ctx, username))) {
       throw new RecordNotFoundError("user");
+    }
 
-    let link = LastfmLinks.userPage(username);
+    const link = LastfmLinks.userPage(username);
 
     await this.send(`${perspective.upper.possessive} profile: ${link}`);
   }

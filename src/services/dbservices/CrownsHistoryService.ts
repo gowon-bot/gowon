@@ -1,12 +1,13 @@
+import { User as DiscordUser, GuildMember } from "discord.js";
+import { In } from "typeorm";
 import { Crown } from "../../database/entity/Crown";
-import { CrownEvent, SimpleCrown } from "../../database/entity/meta/CrownEvent";
 import { User } from "../../database/entity/User";
-import { BaseService } from "../BaseService";
-import { CrownCheck, CrownsService, CrownState } from "./CrownsService";
-import { GuildMember, User as DiscordUser } from "discord.js";
-import { FindConditions, In } from "typeorm";
+import { CrownEvent, SimpleCrown } from "../../database/entity/meta/CrownEvent";
+import { SimpleMap } from "../../helpers/types";
 import { GowonContext } from "../../lib/context/Context";
+import { BaseService } from "../BaseService";
 import { ServiceRegistry } from "../ServicesRegistry";
+import { CrownCheck, CrownState, CrownsService } from "./CrownsService";
 
 export enum CrownEventString {
   created = "created",
@@ -55,7 +56,7 @@ export class CrownsHistoryService extends BaseService<CrownsHistoryServiceContex
         `Logging crown event: ${event} for crown ${crown.artistName} in ${crown.serverID}`
       );
 
-      let history = CrownEvent.create({
+      const history = CrownEvent.create({
         crown,
         event,
         perpetuatorDiscordID: perpetuator.id,
@@ -245,7 +246,7 @@ export class CrownsHistoryService extends BaseService<CrownsHistoryServiceContex
       ctx,
       `Fetching history for ${crown.artistName} in ${crown.serverID}`
     );
-    let findOptions: FindConditions<CrownEvent> = { crown };
+    const findOptions: SimpleMap = { crown };
 
     if (eventTypes) findOptions.event = In(eventTypes);
 

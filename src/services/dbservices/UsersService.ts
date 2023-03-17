@@ -8,14 +8,14 @@ import {
   UsernameNotRegisteredError,
 } from "../../errors/errors";
 import { sqlLikeEscape } from "../../helpers/database";
-import { buildRequestable } from "../../helpers/getMentions";
+import { Perspective } from "../../lib/Perspective";
 import { CommandAccessRoleName } from "../../lib/command/access/roles";
 import { GowonContext } from "../../lib/context/Context";
-import { Perspective } from "../../lib/Perspective";
 import { BaseService } from "../BaseService";
-import { LastFMSession } from "../LastFM/converters/Misc";
 import { Requestable } from "../LastFM/LastFMAPIService";
+import { LastFMSession } from "../LastFM/converters/Misc";
 import { ServiceRegistry } from "../ServicesRegistry";
+import { buildRequestable } from "../arguments/mentions/MentionsBuilder";
 
 export class UsersService extends BaseService {
   get analyticsCollector() {
@@ -25,7 +25,7 @@ export class UsersService extends BaseService {
   async getUsername(ctx: GowonContext, discordID: string): Promise<string> {
     this.log(ctx, `fetching username with discordID ${discordID}`);
 
-    const user = await User.findOne({ where: { discordID } });
+    const user = await User.findOneBy({ discordID });
 
     if (user && user.lastFMUsername) {
       return user.lastFMUsername;
@@ -35,7 +35,7 @@ export class UsersService extends BaseService {
   async getUser(ctx: GowonContext, discordID: string): Promise<User> {
     this.log(ctx, `fetching user with discordID ${discordID}`);
 
-    const user = await User.findOne({ where: { discordID } });
+    const user = await User.findOneBy({ discordID });
 
     if (!user) throw new RecordNotFoundError("user");
 
@@ -48,7 +48,7 @@ export class UsersService extends BaseService {
   ): Promise<Requestable> {
     this.log(ctx, `fetching requestable with discordID ${discordID}`);
 
-    const user = await User.findOne({ where: { discordID } });
+    const user = await User.findOneBy({ discordID });
 
     if (user && user.lastFMUsername) {
       return buildRequestable(user.lastFMUsername, user).requestable;
@@ -62,7 +62,7 @@ export class UsersService extends BaseService {
   ): Promise<string> {
     this.log(ctx, `setting user ${discordID} with username ${lastFMUsername}`);
 
-    let user = await User.findOne({ where: { discordID } });
+    let user = await User.findOneBy({ discordID });
 
     if (user) {
       user.lastFMUsername = lastFMUsername;
@@ -89,7 +89,7 @@ export class UsersService extends BaseService {
       `setting user ${discordID} with session ${lastFMSession.username}`
     );
 
-    let user = await User.findOne({ where: { discordID } });
+    let user = await User.findOneBy({ discordID });
 
     if (user) {
       user.lastFMUsername = lastFMSession.username;
@@ -110,21 +110,13 @@ export class UsersService extends BaseService {
   async clearUsername(ctx: GowonContext, discordID: string): Promise<void> {
     this.log(ctx, `clearing username and session for ${discordID}`);
 
-    let user = await User.findOne({ where: { discordID } });
+    let user = await User.findOneBy({ discordID });
 
     if (user?.lastFMUsername || user?.lastFMSession) {
       user.lastFMUsername = "";
       user.lastFMSession = "";
       await user.save();
     } else throw new AlreadyLoggedOutError();
-  }
-
-  perspective(
-    authorUsername: string,
-    username?: string,
-    asCode = true
-  ): Perspective {
-    return Perspective.perspective(authorUsername, username, asCode);
   }
 
   discordPerspective(
@@ -146,9 +138,11 @@ export class UsersService extends BaseService {
   ): Promise<User | undefined> {
     this.log(ctx, `looking for user with username ${username}`);
 
-    return await User.findOne({
-      where: { lastFMUsername: ILike(sqlLikeEscape(username)) },
-    });
+    return (
+      (await User.findOneBy({
+        lastFMUsername: ILike(sqlLikeEscape(username)),
+      })) ?? undefined
+    );
   }
 
   async randomUser(ctx: GowonContext): Promise<User>;

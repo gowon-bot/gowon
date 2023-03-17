@@ -1,6 +1,6 @@
 import { Message, MessageEmbed } from "discord.js";
 import { GowonContext } from "../../lib/context/Context";
-import { SendOptions } from "../../services/Discord/DiscordService";
+import { SendOptions } from "../../services/Discord/DiscordService.types";
 import { MockContext } from "../MockContext";
 import { MockMessage } from "../discord";
 import { BaseMockService } from "./BaseMockService";

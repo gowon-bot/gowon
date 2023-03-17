@@ -32,7 +32,7 @@ export class Rating extends RateYourMusicIndexingChildCommand<
       senderRequired:
         !this.parsedArguments.artist || !this.parsedArguments.album,
       reverseLookup: { required: true },
-      requireIndexed: true,
+      indexedRequired: true,
     });
 
     const { artist, album } = await this.lastFMArguments.getAlbum(

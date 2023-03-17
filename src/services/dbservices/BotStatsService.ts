@@ -13,7 +13,7 @@ export class BotStatsService extends BaseService {
     discordID: string
   ): Promise<number> {
     this.log(ctx, `Counting command runs for user ${discordID}`);
-    return await CommandRun.count({ userID: discordID });
+    return await CommandRun.countBy({ userID: discordID });
   }
 
   async userTopCommands(

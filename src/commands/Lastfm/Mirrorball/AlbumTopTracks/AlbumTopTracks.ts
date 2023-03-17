@@ -42,7 +42,7 @@ export default class AlbumTopTracks extends MirrorballBaseCommand<
         senderRequired:
           !this.parsedArguments.artist || !this.parsedArguments.album,
         reverseLookup: { required: true },
-        requireIndexed: true,
+        indexedRequired: true,
       });
 
     const { artist: artistName, album: albumName } =

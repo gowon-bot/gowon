@@ -61,7 +61,7 @@ export class PermissionsService extends BaseService {
     command: Command,
     permission: Permission
   ) {
-    const dbPermission = await Permission.findOne(permission);
+    const dbPermission = await Permission.findOneBy({ ...permission });
 
     if (!dbPermission) {
       throw new PermissionDoesNotExistError(permission);

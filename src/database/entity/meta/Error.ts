@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, BaseEntity } from "typeorm";
+import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity({ name: "errors" })
 export class TrackedError extends BaseEntity {
@@ -12,16 +12,16 @@ export class TrackedError extends BaseEntity {
   occurrenceCount!: number;
 
   static async logError(error: Error) {
-    let existingError = await this.findOne({ where: { name: error.name } });
+    const existingError = await this.findOneBy({ name: error.name });
 
     if (existingError) {
       existingError.occurrenceCount++;
 
       await existingError.save();
     } else {
-      let newError = this.create({ name: error.name, occurrenceCount: 1 });
+      const newError = this.create({ name: error.name, occurrenceCount: 1 });
 
-      await newError.save()
+      await newError.save();
     }
   }
 }

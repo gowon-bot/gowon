@@ -41,7 +41,7 @@ export default class LastScrobbledAlbum extends MirrorballBaseCommand<
       senderRequired:
         !this.parsedArguments.artist || !this.parsedArguments.album,
       reverseLookup: { required: true },
-      requireIndexed: true,
+      indexedRequired: true,
     });
 
     const { artist: artistName, album: albumName } =
@@ -72,7 +72,8 @@ export default class LastScrobbledAlbum extends MirrorballBaseCommand<
         )
       )
       .setDescription(
-        `${Emoji.usesIndexedDataDescription} ${perspective.upper.name} ${this.variationWasUsed("first") ? "first" : "last"
+        `${Emoji.usesIndexedDataDescription} ${perspective.upper.name} ${
+          this.variationWasUsed("first") ? "first" : "last"
         } scrobbled ${italic(play.track.album.name)} by ${bold(
           play.track.artist.name
         )} on ${displayDate(convertMirrorballDate(play.scrobbledAt))}`

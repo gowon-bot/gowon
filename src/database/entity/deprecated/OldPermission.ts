@@ -1,13 +1,13 @@
+import { User as DiscordUser, Guild, Role } from "discord.js";
 import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
   BaseEntity,
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
   Unique,
 } from "typeorm";
-import { User as DiscordUser, Role, Guild } from "discord.js";
-import { User } from "../User";
 import { GowonContext } from "../../../lib/context/Context";
+import { User } from "../User";
 
 @Entity({ name: "permissions" })
 @Unique(["serverID", "entityID", "commandID"])

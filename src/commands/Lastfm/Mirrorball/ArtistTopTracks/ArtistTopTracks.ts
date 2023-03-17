@@ -49,7 +49,7 @@ export default class ArtistTopTracks extends MirrorballBaseCommand<
       await this.getMentions({
         senderRequired: !this.parsedArguments.artist,
         reverseLookup: { required: true },
-        requireIndexed: true,
+        indexedRequired: true,
       });
 
     const artistName = await this.lastFMArguments.getArtist(

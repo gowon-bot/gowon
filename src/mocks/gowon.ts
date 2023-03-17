@@ -6,10 +6,12 @@ import { mockClient } from "./discord";
 export const mockEntities = {
   gowonClient: new GowonClient(mockClient, "test"),
 
-  user(overrides: DeepPartial<User> = {}) {
-    return User.create({
-      lastFMUsername: "flushed_emoji",
+  user(overrides: DeepPartial<User> = {}): User {
+    return {
+      id: 13,
+      discordID: "537353774205894676",
+      lastFMUsername: "chuu-bot",
       ...overrides,
-    });
+    } as User;
   },
 };

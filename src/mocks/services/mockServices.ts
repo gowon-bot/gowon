@@ -1,4 +1,3 @@
-import { Responder } from "../../services/Responder";
 import { Service, ServiceRegistry } from "../../services/ServicesRegistry";
 import { MockSpotifyService } from "./BaseSpotifyService";
 import { MockAnalyticsCollector } from "./MockAnalyticsCollector";
@@ -8,6 +7,7 @@ import { MockGowonService } from "./MockGowonService";
 import { MockLastFMArguments } from "./MockLastFMArguments";
 import { MockLastFMService } from "./MockLastFMService";
 import { MockLilacUsersService } from "./MockLilacUsersService";
+import { MockMentionsService } from "./MockMentionsService";
 import { MockMetaService } from "./MockMetaService";
 import { MockMirrorballService } from "./MockMirrorballService";
 import { MockMirrorballUsersService } from "./MockMirrorballUsersService";
@@ -27,6 +27,7 @@ export const mockServices: Service[] = [
   MockLastFMService,
   MockLilacUsersService,
   MockMetaService,
+  MockMentionsService,
   MockMirrorballService,
   MockMirrorballUsersService,
   MockNicknameService,
@@ -36,9 +37,6 @@ export const mockServices: Service[] = [
   MockSpotifyService,
   MockTrackingService,
   MockUsersService,
-  // Since the following services just interact with other services,
-  // we only need to mock their dependencies
-  Responder,
 ];
 
 export function setMockServices() {
@@ -46,7 +44,9 @@ export function setMockServices() {
 }
 
 export function replaceMockService(name: string, replacementService: Service) {
-  ServiceRegistry.setServices(
-    mockServices.map((s) => (s.name === name ? replacementService : s))
-  );
+  ServiceRegistry.services = ServiceRegistry.services.map((s) => {
+    if (s.constructor.name === name || s.mocks === name) {
+      return new replacementService();
+    } else return s;
+  });
 }

@@ -1,12 +1,9 @@
+import { ChildCommand } from "../../../lib/command/ChildCommand";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import {
   GetMentionsOptions,
-  GetMentionsReturn,
-} from "../../../helpers/getMentions";
-import { ChildCommand } from "../../../lib/command/ChildCommand";
-import {
-  ArgumentName,
-  ArgumentsMap,
-} from "../../../lib/context/arguments/types";
+  Mentions,
+} from "../../../services/arguments/mentions/MentionsService.types";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { SpotifyToken } from "../../../services/Spotify/converters/Auth";
 import { SpotifyArguments } from "../../../services/Spotify/SpotifyArguments";
@@ -52,10 +49,10 @@ export abstract class AuthenticatedSpotifyBaseCommand<
   }
 
   async getMentions(
-    options: GetMentionsOptions<ArgumentName<T>> & {
+    options: Partial<GetMentionsOptions> & {
       fetchSpotifyToken?: boolean;
     }
-  ): Promise<GetMentionsReturn> {
+  ): Promise<Mentions> {
     if (options.fetchSpotifyToken) await this.fetchToken();
 
     return await super.getMentions(options);

@@ -102,7 +102,7 @@ export default class NowPlayingCustom extends NowPlayingBaseCommand {
       requestable,
       senderRequestable,
     } = await this.getMentions({
-      authentificationRequired: true,
+      lfmAuthentificationRequired: true,
       senderRequired: true,
     });
 

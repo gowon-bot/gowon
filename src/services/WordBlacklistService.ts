@@ -86,7 +86,7 @@ export class WordBlacklistService extends BaseService<WordBlacklistServiceContex
     if (!this.isAllowed(ctx, tag, ["base", "tags"]))
       throw new TagBannedByDefaultError();
 
-    const existingBan = await TagBan.findOne({
+    const existingBan = await TagBan.findOneBy({
       serverID: ctx.requiredGuild.id,
       tag: this.normalizeItem(tag),
     });
@@ -109,7 +109,7 @@ export class WordBlacklistService extends BaseService<WordBlacklistServiceContex
 
     if (!this.isAllowed(ctx, tag)) throw new TagBannedByDefaultError();
 
-    const existingBan = await TagBan.findOne({
+    const existingBan = await TagBan.findOneBy({
       serverID: ctx.requiredGuild.id,
       tag: this.normalizeItem(tag),
     });
@@ -123,7 +123,7 @@ export class WordBlacklistService extends BaseService<WordBlacklistServiceContex
     ctx: WordBlacklistServiceContext
   ): Promise<TagBan[]> {
     this.log(ctx, `Getting banned tags for ${ctx.requiredGuild.id}`);
-    return await TagBan.find({ serverID: ctx.requiredGuild.id });
+    return await TagBan.findBy({ serverID: ctx.requiredGuild.id });
   }
 
   async saveServerBannedTagsInContext(ctx: WordBlacklistServiceContext) {

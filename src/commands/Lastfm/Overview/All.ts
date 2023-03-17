@@ -2,6 +2,7 @@ import { getOrdinal } from "../../../helpers";
 import { bold, italic } from "../../../helpers/discord";
 import { toInt } from "../../../helpers/lastfm/";
 import { Emoji } from "../../../lib/Emoji";
+import { Perspective } from "../../../lib/Perspective";
 import { displayNumber } from "../../../lib/views/displays";
 import { OverviewChildCommand } from "./OverviewChildCommand";
 
@@ -14,7 +15,7 @@ export class All extends OverviewChildCommand {
   showLoadingAfter = 5;
 
   async run() {
-    const perspective = this.usersService.perspective(
+    const perspective = Perspective.perspective(
       this.senderUsername,
       this.username
     );

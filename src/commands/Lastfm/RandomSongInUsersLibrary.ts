@@ -61,18 +61,18 @@ export default class RandomsongInUsersLibrary extends LastFMBaseCommand<
         track: randomSong.name,
         artist: randomSong.artist.name,
       });
-    } catch { }
+    } catch {}
 
     const albumCover = await this.albumCoverService.get(
       this.ctx,
       trackInfo?.album?.images.get("large"),
       trackInfo?.album
         ? {
-          metadata: {
-            artist: trackInfo.artist.name,
-            album: trackInfo.album.name,
-          },
-        }
+            metadata: {
+              artist: trackInfo.artist.name,
+              album: trackInfo.album.name,
+            },
+          }
         : {}
     );
 
@@ -83,7 +83,7 @@ export default class RandomsongInUsersLibrary extends LastFMBaseCommand<
       .setTitle(randomSong.name)
       .setDescription(
         `by ${bold(randomSong.artist.name)}` +
-        (trackInfo?.album ? ` from ${italic(trackInfo.album.name)}` : "")
+          (trackInfo?.album ? ` from ${italic(trackInfo.album.name)}` : "")
       )
       .setThumbnail(albumCover || "");
 

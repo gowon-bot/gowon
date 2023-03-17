@@ -10,10 +10,10 @@ import {
   displayLink,
   displayNumber,
 } from "../../lib/views/displays";
-import { CrownEventString } from "../../services/dbservices/CrownsHistoryService";
-import { RedirectsService } from "../../services/dbservices/RedirectsService";
 import { LastFMService } from "../../services/LastFM/LastFMService";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
+import { CrownEventString } from "../../services/dbservices/CrownsHistoryService";
+import { RedirectsService } from "../../services/dbservices/RedirectsService";
 
 export default class About extends Command {
   idSeed = "gfriend sinb";
@@ -34,24 +34,27 @@ export default class About extends Command {
       this.gowonClient.specialUsers.developers[0].id
     );
 
-    let crowns = await Crown.count();
-    let yoinks = await CrownEvent.count({
-      where: { event: CrownEventString.snatched },
+    const crowns = await Crown.count();
+    const yoinks = await CrownEvent.countBy({
+      event: CrownEventString.snatched,
     });
-    let commandsRun = await CommandRun.count();
-    let friends = await Friend.count();
-    let commandCount = this.commandRegistry.deepList().length;
+    const commandsRun = await CommandRun.count();
+    const friends = await Friend.count();
+    const commandCount = this.commandRegistry.deepList().length;
 
-    let userInfo = await this.lastFMService.userInfo(this.ctx, {
+    const userInfo = await this.lastFMService.userInfo(this.ctx, {
       username: "gowon_",
     });
-    let artistCount = await this.lastFMService.artistCount(this.ctx, "gowon_");
+    const artistCount = await this.lastFMService.artistCount(
+      this.ctx,
+      "gowon_"
+    );
 
-    let cachedRedirects = await this.redirectsService.countAllRedirects(
+    const cachedRedirects = await this.redirectsService.countAllRedirects(
       this.ctx
     );
 
-    let embed = this.newEmbed()
+    const embed = this.newEmbed()
       .setAuthor({
         name: `About ${this.gowonClient.client.user?.username || "Gowon"}`,
       })

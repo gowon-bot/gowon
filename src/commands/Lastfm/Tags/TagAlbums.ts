@@ -24,7 +24,7 @@ const args = {
     description: "The tag to filter your albums with",
   }),
   ...standardMentions,
-} satisfies ArgumentsMap
+} satisfies ArgumentsMap;
 
 export default class TagAlbums extends LastFMBaseCommand<typeof args> {
   idSeed = "brave girls minyoung";
@@ -58,7 +58,7 @@ export default class TagAlbums extends LastFMBaseCommand<typeof args> {
     }
 
     const { requestable, perspective } = await this.getMentions({
-      asCode: false,
+      perspectiveAsCode: false,
     });
 
     const paginator = new Paginator(
@@ -93,25 +93,25 @@ _Comparing ${perspective.possessive} top ${displayNumber(
           tagAlbumNames.length,
           "album"
         )} of the tag_\n` +
-        (overlap.length
-          ? `${displayNumber(overlap.length, "album")} (${calculatePercent(
-            overlap.length,
-            tagAlbumNames.length
-          )}% match) (${displayNumber(
-            overlap.reduce((sum, o) => sum + o.plays, 0),
-            "scrobble"
-          )})\n\n` +
-          `${overlap
-            .slice(0, 20)
-            .map(
-              (o, idx) =>
-                `${idx + 1}. ${bold(o.album)} by ${italic(
-                  o.artist
-                )} - ${displayNumber(o.plays, "play")}`
-            )
-            .join("\n")}
+          (overlap.length
+            ? `${displayNumber(overlap.length, "album")} (${calculatePercent(
+                overlap.length,
+                tagAlbumNames.length
+              )}% match) (${displayNumber(
+                overlap.reduce((sum, o) => sum + o.plays, 0),
+                "scrobble"
+              )})\n\n` +
+              `${overlap
+                .slice(0, 20)
+                .map(
+                  (o, idx) =>
+                    `${idx + 1}. ${bold(o.album)} by ${italic(
+                      o.artist
+                    )} - ${displayNumber(o.plays, "play")}`
+                )
+                .join("\n")}
 `
-          : "Couldn't find any matching albums!")
+            : "Couldn't find any matching albums!")
       );
 
     await this.send(embed);
