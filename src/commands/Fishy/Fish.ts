@@ -1,3 +1,4 @@
+import { CantFishYetError } from "../../errors/fishy";
 import { bold, italic, mentionGuildMember } from "../../helpers/discord";
 import { emDash } from "../../helpers/specialCharacters";
 import { standardMentions } from "../../lib/context/arguments/mentionTypes/mentions";
@@ -22,13 +23,32 @@ export class Fish extends FishyChildCommand<typeof args> {
   fishyService = ServiceRegistry.get(FishyService);
 
   async run() {
-    const { dbUser, senderUser } = await this.getMentions({
-      dbUserRequired: true,
-    });
+    const { senderFishyProfile, mentionedFishyProfile } =
+      await this.getMentions({
+        dbUserRequired: true,
+        fetchFishyProfile: true,
+      });
+
+    if (!senderFishyProfile.canFish()) {
+      throw new CantFishYetError(senderFishyProfile);
+    }
 
     const fishyResult = this.fishyService.fish();
 
-    await this.fishyService.saveFishy(this.ctx, fishyResult, dbUser);
+    if (mentionedFishyProfile) {
+      await this.fishyService.saveFishy(
+        this.ctx,
+        fishyResult,
+        mentionedFishyProfile,
+        senderFishyProfile
+      );
+    } else {
+      await this.fishyService.saveFishy(
+        this.ctx,
+        fishyResult,
+        senderFishyProfile
+      );
+    }
 
     const { fishy, weight } = fishyResult;
 
@@ -36,10 +56,11 @@ export class Fish extends FishyChildCommand<typeof args> {
       ? ``
       : `\nIt weighs **${displayNumber(weight)}kg**`;
 
-    const giftDisplay =
-      dbUser.id === senderUser?.id
-        ? ""
-        : ` for ${mentionGuildMember(dbUser.discordID)}`;
+    await this.fishyService.updateCooldown(senderFishyProfile);
+
+    const giftDisplay = !mentionedFishyProfile
+      ? ""
+      : ` for ${mentionGuildMember(mentionedFishyProfile.user.discordID)}`;
 
     const embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor("Fishy fish"))

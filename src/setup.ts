@@ -4,7 +4,7 @@ import chalk from "chalk";
 import { Client } from "discord.js";
 import gql from "graphql-tag";
 import { GraphQLAPI } from "./api";
-import { DB } from "./database";
+import { DB } from "./database/DB";
 import { Stopwatch, ucFirst } from "./helpers";
 import { GowonClient } from "./lib/GowonClient";
 import { CommandHandler } from "./lib/command/CommandHandler";

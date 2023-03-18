@@ -16,6 +16,7 @@ import { TagBan } from "./entity/TagBan";
 import { User } from "./entity/User";
 import { AlbumCard } from "./entity/cards/AlbumCard";
 import { FishyCatch } from "./entity/fishy/FishyCatch";
+import { FishyProfile } from "./entity/fishy/FishyProfile";
 import { CommandRun } from "./entity/meta/CommandRun";
 import { CrownEvent } from "./entity/meta/CrownEvent";
 
@@ -32,6 +33,7 @@ export class DB {
         // misc games
         AlbumCard,
         FishyCatch,
+        FishyProfile,
         // meta
         CommandRun,
         CrownEvent,

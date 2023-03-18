@@ -16,7 +16,10 @@ export class FishyCatch extends BaseEntity {
   id!: number;
 
   @ManyToOne((_) => User, (user) => user.fishies, { eager: true })
-  fisher!: User;
+  owner!: User;
+
+  @ManyToOne((_) => User, (user) => user.fishyGifts, { eager: true })
+  gifter?: User;
 
   @Column()
   fishyId!: string;

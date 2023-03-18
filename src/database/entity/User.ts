@@ -10,6 +10,7 @@ import {
   Column,
   Entity,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { userHasRole } from "../../helpers/discord";
@@ -25,6 +26,7 @@ import { Crown } from "./Crown";
 import { Friend } from "./Friend";
 import { AlbumCard } from "./cards/AlbumCard";
 import { FishyCatch } from "./fishy/FishyCatch";
+import { FishyProfile } from "./fishy/FishyProfile";
 
 @Entity({ name: "users" })
 export class User extends BaseEntity {
@@ -64,8 +66,14 @@ export class User extends BaseEntity {
   @OneToMany((_) => AlbumCard, (albumCard) => albumCard.owner)
   albumCards!: AlbumCard[];
 
-  @OneToMany((_) => FishyCatch, (fishyCatch) => fishyCatch.fisher)
+  @OneToMany((_) => FishyCatch, (fishyCatch) => fishyCatch.owner)
   fishies!: FishyCatch[];
+
+  @OneToMany((_) => FishyCatch, (fishyCatch) => fishyCatch.gifter)
+  fishyGifts!: FishyCatch[];
+
+  @OneToOne((_) => FishyProfile, (fishyProfile) => fishyProfile.user)
+  fishyProfile!: FishyProfile;
 
   @Column("simple-array", { nullable: true })
   roles?: CommandAccessRoleName[];

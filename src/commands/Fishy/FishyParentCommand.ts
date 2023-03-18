@@ -1,5 +1,6 @@
 import { CommandGroup } from "../../lib/command/CommandGroup";
 import { ParentCommand } from "../../lib/command/ParentCommand";
+import { Cooldown } from "./Cooldown";
 import { Fish } from "./Fish";
 import { Wiki } from "./Wiki";
 
@@ -24,7 +25,11 @@ export default class FishyParentCommand extends ParentCommand {
     "gofish",
     // Wiki
     "fishypedia",
+    // Cooldown
+    "fishytimer",
+    "fst",
+    "fc",
   ];
 
-  children = new CommandGroup([Fish, Wiki], this.id);
+  children = new CommandGroup([Fish, Wiki, Cooldown], this.id);
 }
