@@ -1,9 +1,9 @@
-import { CrownsChildCommand } from "./CrownsChildCommand";
-import { LogicError } from "../../../errors/errors";
-import { displayNumber } from "../../../lib/views/displays";
-import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
+import { UserHasNoCrownsInServerError } from "../../../errors/crowns";
 import { bold } from "../../../helpers/discord";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { displayNumber } from "../../../lib/views/displays";
+import { CrownsChildCommand } from "./CrownsChildCommand";
 
 const args = {
   ...standardMentions,
@@ -15,7 +15,7 @@ export class CrownRanks extends CrownsChildCommand<typeof args> {
   description =
     "Lists your top crowns and their ranks relative to the server's top crowns";
   aliases = ["stan", "ranks"];
-  usage = "";
+  usage = ["", "@user"];
 
   slashCommand = true;
   slashCommandName = "ranks";
@@ -23,9 +23,9 @@ export class CrownRanks extends CrownsChildCommand<typeof args> {
   arguments = args;
 
   async run() {
-    const { discordUser } = await this.getMentions({
+    const { discordUser, dbUser } = await this.getMentions({
       fetchDiscordUser: true,
-      reverseLookup: { required: true },
+      dbUserRequired: true,
     });
 
     const perspective = this.usersService.discordPerspective(
@@ -34,30 +34,30 @@ export class CrownRanks extends CrownsChildCommand<typeof args> {
     );
 
     const [crownRanks, crownsCount] = await Promise.all([
-      this.crownsService.crownRanks(this.ctx, discordUser!.id),
-      this.crownsService.count(this.ctx, discordUser!.id),
+      this.crownsService.crownRanks(this.ctx, dbUser.id),
+      this.crownsService.count(this.ctx, dbUser.id),
     ]);
 
-    if (!crownsCount)
-      throw new LogicError(
-        `${perspective.name} doesn't have any crowns in this server!`
-      );
+    if (!crownsCount) {
+      throw new UserHasNoCrownsInServerError(perspective);
+    }
 
     const embed = this.newEmbed()
+      .setAuthor(this.generateEmbedAuthor("Crown ranks"))
       .setTitle(`The ranks of ${discordUser?.username}'s top crowns in Last.fm`)
       .setDescription(
         crownRanks
           .map(
             (cr) =>
-              `${displayNumber(cr.rank)}. ${cr.artistName} - ${bold(
+              `\`${displayNumber(cr.rank)}.\` ${cr.artistName} - ${bold(
                 displayNumber(cr.plays, "play")
               )}`
           )
           .join("\n") +
-        `\n\n${perspective.upper.plusToHave} ${displayNumber(
-          crownsCount,
-          "crown"
-        )} in ${this.requiredGuild.name}`
+          `\n\n${perspective.upper.plusToHave} ${displayNumber(
+            crownsCount,
+            "crown"
+          )} in ${this.requiredGuild.name}`
       );
 
     await this.send(embed);

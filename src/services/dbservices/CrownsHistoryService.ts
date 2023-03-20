@@ -124,9 +124,9 @@ export class CrownsHistoryService extends BaseService<CrownsHistoryServiceContex
     banner: DiscordUser,
     banTarget: DiscordUser
   ) {
-    let crowns = await this.crownsService.listTopCrowns(
+    const crowns = await this.crownsService.listTopCrowns(
       ctx,
-      user.discordID,
+      user.id,
       undefined
     );
 
@@ -141,9 +141,9 @@ export class CrownsHistoryService extends BaseService<CrownsHistoryServiceContex
     unbanner: DiscordUser,
     unbanTarget: DiscordUser
   ) {
-    let crowns = await this.crownsService.listTopCrowns(
+    const crowns = await this.crownsService.listTopCrowns(
       ctx,
-      user.discordID,
+      user.id,
       undefined
     );
 
@@ -152,12 +152,12 @@ export class CrownsHistoryService extends BaseService<CrownsHistoryServiceContex
     });
   }
 
-  async optOut(ctx: CrownsHistoryServiceContext, discordUser: GuildMember) {
-    let crowns = await this.crownsService.listTopCrowns(
-      ctx,
-      discordUser.user.id,
-      -1
-    );
+  async optOut(
+    ctx: CrownsHistoryServiceContext,
+    user: User,
+    discordUser: GuildMember
+  ) {
+    const crowns = await this.crownsService.listTopCrowns(ctx, user.id, -1);
 
     this.logEvent(ctx, crowns, CrownEventString.userOptedOut, discordUser.user);
   }
@@ -246,7 +246,7 @@ export class CrownsHistoryService extends BaseService<CrownsHistoryServiceContex
       ctx,
       `Fetching history for ${crown.artistName} in ${crown.serverID}`
     );
-    const findOptions: SimpleMap = { crown };
+    const findOptions: SimpleMap = { crown: { id: crown.id } };
 
     if (eventTypes) findOptions.event = In(eventTypes);
 

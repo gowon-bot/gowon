@@ -27,8 +27,8 @@ export interface CrownRankResponse {
 }
 
 export interface GuildAroundUser {
-  count: string;
-  rank: string;
+  count: number;
+  rank: number;
   discordID: string;
 }
 
@@ -153,13 +153,19 @@ export class Crown extends BaseEntity {
   }
 
   static async guildAt(serverID: string, rank: number, userIDs?: string[]) {
-    let start = rank < 10 ? 0 : rank - 5;
+    const start = rank < 10 ? 0 : rank - 5;
 
-    let users =
-      ((await this.query(
+    const rawUsers: Array<Record<string, string>> =
+      (await this.query(
         CrownsQueries.guildAt(userIDs),
         userIDs ? [serverID, start, userIDs] : [serverID, start]
-      )) as GuildAroundUser[]) || [];
+      )) || [];
+
+    const users: GuildAroundUser[] = rawUsers.map((u) => ({
+      discordID: u.discordID as string,
+      count: toInt(u.count),
+      rank: toInt(u.rank),
+    }));
 
     return {
       users,
@@ -180,23 +186,19 @@ export class Crown extends BaseEntity {
 
   static async guild(
     serverID: string,
-    limit: number,
     userIDs?: string[]
   ): Promise<RawCrownHolder[]> {
     return (await this.query(
       CrownsQueries.guild(userIDs),
-      userIDs ? [serverID, limit, userIDs] : [serverID, limit]
+      userIDs ? [serverID, userIDs] : [serverID]
     )) as RawCrownHolder[];
   }
 
   static async crownRanks(
     serverID: string,
-    discordID: string
+    userID: number
   ): Promise<CrownRank[]> {
-    return (await this.query(CrownsQueries.crownRanks(), [
-      serverID,
-      discordID,
-    ])) as CrownRank[];
+    return await this.query(CrownsQueries.crownRanks(), [serverID, userID]);
   }
 
   async invalid(ctx: GowonContext): Promise<{

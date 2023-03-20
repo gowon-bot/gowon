@@ -1,7 +1,7 @@
-import { CrownsChildCommand } from "./CrownsChildCommand";
-import { LogicError } from "../../../errors/errors";
-import { displayNumber } from "../../../lib/views/displays";
+import { NoContentiousCrownsError } from "../../../errors/crowns";
 import { bold } from "../../../helpers/discord";
+import { displayNumber } from "../../../lib/views/displays";
+import { CrownsChildCommand } from "./CrownsChildCommand";
 
 export class ContentiousCrowns extends CrownsChildCommand {
   idSeed = "weki meki yoojung";
@@ -18,7 +18,7 @@ export class ContentiousCrowns extends CrownsChildCommand {
       filterCrownBannedUsers: true,
     });
 
-    const [crowns, crownsCount] = await Promise.all([
+    const [contentiousCrowns, crownsCount] = await Promise.all([
       this.crownsService.listContentiousCrownsInServer(
         this.ctx,
         undefined,
@@ -27,18 +27,18 @@ export class ContentiousCrowns extends CrownsChildCommand {
       this.crownsService.countAllInServer(this.ctx, serverUsers),
     ]);
 
-    const filteredCrowns = crowns.filter((c) => c.version > 0);
-
-    if (!filteredCrowns.length)
-      throw new LogicError("no crowns have been stolen yet!");
+    if (!contentiousCrowns.length) {
+      throw new NoContentiousCrownsError();
+    }
 
     const embed = this.newEmbed()
+      .setAuthor(this.generateEmbedAuthor("Contentious crowns"))
       .setTitle(`Most contentious crowns in ${this.requiredGuild.name}`)
       .setDescription(
         `There are **${displayNumber(crownsCount, "** crown")} in ${
           this.requiredGuild.name
         }\n\n` +
-          filteredCrowns
+          contentiousCrowns
             .map(
               (c) =>
                 `${c.artistName} ― stolen ${bold(

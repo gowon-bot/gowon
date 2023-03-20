@@ -1,7 +1,8 @@
 import { Guild } from "discord.js";
 import regexEscape from "escape-string-regexp";
 import config from "../../config.json";
-import { CacheScopedKey, ShallowCache } from "../database/cache/ShallowCache";
+import { GowonCache } from "../database/cache/GowonCache";
+import { CacheScopedKey } from "../database/cache/ShallowCache";
 import { ArtistCrownBan } from "../database/entity/ArtistCrownBan";
 import { CrownBan } from "../database/entity/CrownBan";
 import { userMentionAtStartRegex } from "../helpers/discord";
@@ -13,7 +14,7 @@ import { ServiceRegistry } from "./ServicesRegistry";
 export const gowonServiceConstants = {} as const;
 
 export class GowonService extends BaseService {
-  shallowCache = new ShallowCache();
+  public cache = new GowonCache();
 
   constants = gowonServiceConstants;
 
@@ -67,7 +68,7 @@ export class GowonService extends BaseService {
   }
 
   async getCrownBannedUsers(guild: Guild): Promise<string[]> {
-    return await this.shallowCache.findOrRemember<string[]>(
+    return await this.cache.findOrRemember<string[]>(
       CacheScopedKey.CrownBannedUsers,
       async () => {
         const bans = (await CrownBan.findBy({ serverID: guild.id })).map(
@@ -85,7 +86,7 @@ export class GowonService extends BaseService {
   }
 
   async getCrownBannedArtists(guild: Guild): Promise<string[]> {
-    return await this.shallowCache.findOrRemember<string[]>(
+    return await this.cache.findOrRemember<string[]>(
       CacheScopedKey.CrownBannedArtists,
       async () => {
         const bans = (await ArtistCrownBan.findBy({ serverID: guild.id })).map(

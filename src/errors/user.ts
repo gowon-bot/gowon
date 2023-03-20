@@ -93,3 +93,11 @@ export class SenderSignInRequiredError extends ClientError {
     );
   }
 }
+
+export class MentionedUserRequiredError extends ClientError {
+  name = "MentionedUserRequiredError";
+
+  constructor() {
+    super(`Please mention a user who is signed into Gowon!`);
+  }
+}

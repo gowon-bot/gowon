@@ -1,6 +1,9 @@
 import { asyncMap } from "../../../helpers";
 import { bold } from "../../../helpers/discord";
-import { displayNumber } from "../../../lib/views/displays";
+import {
+  displayNumber,
+  displayNumberedList,
+} from "../../../lib/views/displays";
 import { CrownsChildCommand } from "./CrownsChildCommand";
 
 export class TopCrowns extends CrownsChildCommand {
@@ -14,27 +17,28 @@ export class TopCrowns extends CrownsChildCommand {
   slashCommandName = "top";
 
   async run() {
-    let serverUsers = await this.serverUserIDs({
+    const serverUsers = await this.serverUserIDs({
       filterCrownBannedUsers: true,
     });
 
-    let [crowns, crownsCount] = await Promise.all([
+    const [crowns, crownsCount] = await Promise.all([
       this.crownsService.listTopCrownsInServer(this.ctx, 10, serverUsers),
       this.crownsService.countAllInServer(this.ctx, serverUsers),
     ]);
 
-    let embed = this.newEmbed()
+    const embed = this.newEmbed()
+      .setAuthor(this.generateEmbedAuthor("Top crowns"))
       .setTitle(`Top crowns in ${this.requiredGuild.name}`)
       .setDescription(
-        (
+        displayNumberedList(
           await asyncMap(
             crowns,
             async (c, idx) =>
-              `${idx + 1}. ${c.artistName} (${bold(
+              `${c.artistName} (${bold(
                 displayNumber(c.plays)
               )}, ${await this.fetchUsername(c.user.discordID)})`
           )
-        ).join("\n") +
+        ) +
           `\n\nThere are **${displayNumber(crownsCount, "** crown")} in ${
             this.requiredGuild.name
           }`

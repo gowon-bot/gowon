@@ -1,9 +1,12 @@
-import { CrownsChildCommand } from "./CrownsChildCommand";
 import { chunkArray } from "../../../helpers";
-import { displayNumber } from "../../../lib/views/displays";
-import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { bold } from "../../../helpers/discord";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import {
+  displayNumber,
+  displayNumberedList,
+} from "../../../lib/views/displays";
+import { CrownsChildCommand } from "./CrownsChildCommand";
 
 const args = {
   ...standardMentions,
@@ -18,51 +21,53 @@ export class DM extends CrownsChildCommand<typeof args> {
 
   arguments = args;
 
-  async run() {
-    const crownsPerMessage = 40;
+  readonly crownsPerMessage = 40;
 
-    const { discordUser: user } = await this.getMentions({
+  async run() {
+    const { discordUser, dbUser } = await this.getMentions({
       fetchDiscordUser: true,
-      reverseLookup: { required: true },
+      dbUserRequired: true,
     });
 
-    const discordID = user?.id || this.author.id;
-
-    const perspective = this.usersService.discordPerspective(this.author, user);
+    const perspective = this.usersService.discordPerspective(
+      this.author,
+      discordUser
+    );
 
     const [crowns, crownsCount] = await Promise.all([
-      this.crownsService.listTopCrowns(this.ctx, discordID, -1),
-      this.crownsService.count(this.ctx, discordID),
+      this.crownsService.listTopCrowns(this.ctx, dbUser.id, -1),
+      this.crownsService.count(this.ctx, dbUser.id),
     ]);
 
-    this.oldReply(`sending you a list of ${perspective.possessive} crowns...`);
+    const embed = this.newEmbed()
+      .setAuthor(this.generateEmbedAuthor("Crowns DM"))
+      .setDescription(
+        `Sending you a list of ${perspective.possessive} crowns...`
+      );
 
-    const chunks = chunkArray(crowns, crownsPerMessage);
+    await this.send(embed);
 
-    this.dmAuthor(
-      `${perspective.upper.plusToHave} ${displayNumber(
-        crownsCount,
-        "crown"
-      )} in ${this.requiredGuild.name}`
-    );
+    const chunks = chunkArray(crowns, this.crownsPerMessage);
 
     chunks
       .map((chunk, chunkIdx) =>
         this.newEmbed()
+          .setAuthor(this.generateEmbedAuthor("Crowns DM"))
           .setTitle(
-            `Crowns ${chunkIdx * crownsPerMessage + 1} - ${(chunkIdx + 1) * crownsPerMessage < crowns.length
-              ? (chunkIdx + 1) * crownsPerMessage
-              : crowns.length
-            }`
+            `Crowns ${chunkIdx * this.crownsPerMessage + 1}-${
+              (chunkIdx + 1) * this.crownsPerMessage < crowns.length
+                ? (chunkIdx + 1) * this.crownsPerMessage
+                : crowns.length
+            } of ${crownsCount}`
           )
           .setDescription(
-            chunk
-              .map(
-                (c, i) =>
-                  `${chunkIdx * crownsPerMessage + 1 + i}) ${c.artistName
-                  } ― ${bold(displayNumber(c.plays, "play"))}`
-              )
-              .join("\n")
+            displayNumberedList(
+              chunk.map(
+                (c) =>
+                  `${c.artistName} ― ${bold(displayNumber(c.plays, "play"))}`
+              ),
+              chunkIdx * this.crownsPerMessage
+            )
           )
       )
       .forEach((e) => this.dmAuthor(e));

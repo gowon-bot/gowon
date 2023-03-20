@@ -1,6 +1,6 @@
-import { CrownsChildCommand } from "./CrownsChildCommand";
 import { ago } from "../../../helpers";
 import { bold } from "../../../helpers/discord";
+import { CrownsChildCommand } from "./CrownsChildCommand";
 
 export class RecentlyStolen extends CrownsChildCommand {
   idSeed = "wjsn soobin";
@@ -12,13 +12,14 @@ export class RecentlyStolen extends CrownsChildCommand {
   slashCommand = true;
 
   async run() {
-    let crowns = await this.crownsService.listRecentlyStolen(
+    const crowns = await this.crownsService.listRecentlyStolen(
       this.ctx,
       10,
       await this.serverUserIDs({ filterCrownBannedUsers: true })
     );
 
-    let embed = this.newEmbed()
+    const embed = this.newEmbed()
+      .setAuthor(this.generateEmbedAuthor("Crowns recently stolen"))
       .setTitle(`Recently stolen crowns in ${this.requiredGuild.name}`)
       .setDescription(
         crowns

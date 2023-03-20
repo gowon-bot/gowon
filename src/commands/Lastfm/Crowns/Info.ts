@@ -1,15 +1,15 @@
-import { CrownsChildCommand } from "./CrownsChildCommand";
-import { ago } from "../../../helpers";
-import { RedirectsService } from "../../../services/dbservices/RedirectsService";
-import { createInvalidBadge } from "../../../helpers/crowns";
-import { ArtistCrownBannedError } from "../../../errors/errors";
-import { displayNumber } from "../../../lib/views/displays";
-import { LineConsolidator } from "../../../lib/LineConsolidator";
 import { User } from "../../../database/entity/User";
-import { ServiceRegistry } from "../../../services/ServicesRegistry";
-import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
+import { ArtistCrownBannedError } from "../../../errors/errors";
+import { ago } from "../../../helpers";
+import { createInvalidBadge } from "../../../helpers/crowns";
 import { bold } from "../../../helpers/discord";
+import { LineConsolidator } from "../../../lib/LineConsolidator";
+import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { displayNumber } from "../../../lib/views/displays";
+import { ServiceRegistry } from "../../../services/ServicesRegistry";
+import { RedirectsService } from "../../../services/dbservices/RedirectsService";
+import { CrownsChildCommand } from "./CrownsChildCommand";
 
 const args = {
   ...prefabArguments.artist,
@@ -30,7 +30,7 @@ export class Info extends CrownsChildCommand<typeof args> {
   redirectsService = ServiceRegistry.get(RedirectsService);
 
   async run() {
-    let { senderUser, senderRequestable } = await this.getMentions({
+    const { senderUser, senderRequestable } = await this.getMentions({
       usernameRequired: !this.parsedArguments.artist,
     });
 
@@ -43,17 +43,17 @@ export class Info extends CrownsChildCommand<typeof args> {
       this.ctx,
       senderRequestable
         ? {
-          artist,
-          username: senderRequestable,
-        }
+            artist,
+            username: senderRequestable,
+          }
         : { artist }
     );
 
-    let redirectArtistName =
+    const redirectArtistName =
       (await this.redirectsService.getRedirect(this.ctx, artistDetails.name))
         ?.to || artistDetails.name;
 
-    let crown = await this.crownsService.getCrown(
+    const crown = await this.crownsService.getCrown(
       this.ctx,
       redirectArtistName,
       {
@@ -84,9 +84,9 @@ export class Info extends CrownsChildCommand<typeof args> {
       return;
     }
 
-    let invalidCheck = await crown?.invalid(this.ctx);
+    const invalidCheck = await crown?.invalid(this.ctx);
 
-    let invalidBadge = createInvalidBadge(invalidCheck.reason);
+    const invalidBadge = createInvalidBadge(invalidCheck.reason);
 
     if (crown.user.id === senderUser?.id && artistDetails.userPlaycount) {
       crown.plays = artistDetails.userPlaycount;
@@ -96,9 +96,10 @@ export class Info extends CrownsChildCommand<typeof args> {
     }
 
     if (crown.user.id) {
-      let holderUsername = await this.fetchUsername(crown.user.discordID);
+      const holderUsername = await this.fetchUsername(crown.user.discordID);
 
-      let embed = this.newEmbed()
+      const embed = this.newEmbed()
+        .setAuthor(this.generateEmbedAuthor("Crown info"))
         .setTitle(
           `Who has ${bold(crown.artistName)}?` + crown.redirectDisplay()
         )
@@ -107,12 +108,14 @@ export class Info extends CrownsChildCommand<typeof args> {
             crown.artistName
           )} with ${displayNumber(crown.plays, "play")}
 
-          Created ${ago(crown.createdAt)}${crown.version > 1 ? ". Last stolen " + ago(crown.lastStolen) : ""
+          Created ${ago(crown.createdAt)}${
+            crown.version > 1 ? ". Last stolen " + ago(crown.lastStolen) : ""
           }
 
-          _It ${crown.version === 0
-            ? "has never been stolen"
-            : "has been stolen " + displayNumber(crown.version, "time")
+          _It ${
+            crown.version === 0
+              ? "has never been stolen"
+              : "has been stolen " + displayNumber(crown.version, "time")
           }_`
         );
 
@@ -133,7 +136,7 @@ export class Info extends CrownsChildCommand<typeof args> {
 
     lineConsolidator.addLines(
       `No one has the crown for ${bold(artistName)}` +
-      (redirectedFrom ? ` _(redirected from ${redirectedFrom})_` : ""),
+        (redirectedFrom ? ` _(redirected from ${redirectedFrom})_` : ""),
       {
         shouldDisplay:
           !!playcount &&
@@ -144,9 +147,9 @@ export class Info extends CrownsChildCommand<typeof args> {
 
         else: userCanClaimCrowns
           ? `\nYou need ${displayNumber(
-            this.crownsService.threshold,
-            "play"
-          )} to claim it`
+              this.crownsService.threshold,
+              "play"
+            )} to claim it`
           : `\nYou can't claim this crown`,
       }
     );

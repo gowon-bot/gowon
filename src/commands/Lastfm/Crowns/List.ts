@@ -1,4 +1,4 @@
-import { LogicError } from "../../../errors/errors";
+import { UserHasNoCrownsInServerError } from "../../../errors/crowns";
 import { getOrdinal } from "../../../helpers";
 import { bold } from "../../../helpers/discord";
 import { toInt } from "../../../helpers/lastfm/";
@@ -31,26 +31,22 @@ export class List extends CrownsChildCommand<typeof args> {
       dbUserRequired: true,
     });
 
-    const discordID = dbUser.discordID;
-
     const perspective = this.usersService.discordPerspective(
       this.author,
       discordUser
     );
 
     const [crowns, rank] = await Promise.all([
-      this.crownsService.listTopCrowns(this.ctx, discordID, -1),
+      this.crownsService.listTopCrowns(this.ctx, dbUser.id, -1),
       this.crownsService.getRank(this.ctx, dbUser.id),
     ]);
 
     if (!crowns.length) {
-      throw new LogicError(
-        `${perspective.name} don't have any crowns in this server!`
-      );
+      throw new UserHasNoCrownsInServerError(perspective);
     }
 
     const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Crowns"))
+      .setAuthor(this.generateEmbedAuthor("Crowns list"))
       .setTitle(
         `${perspective.upper.possessive} crowns in ${this.requiredGuild.name}`
       );

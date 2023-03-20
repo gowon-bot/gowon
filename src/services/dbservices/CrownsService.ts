@@ -1,6 +1,5 @@
 import { User as DiscordUser } from "discord.js";
 import { FindManyOptions, ILike, In, MoreThan } from "typeorm";
-import { CacheScopedKey } from "../../database/cache/ShallowCache";
 import { ArtistCrownBan } from "../../database/entity/ArtistCrownBan";
 import { ArtistRedirect } from "../../database/entity/ArtistRedirect";
 import {
@@ -14,11 +13,13 @@ import { CrownBan } from "../../database/entity/CrownBan";
 import { Setting } from "../../database/entity/Setting";
 import { User } from "../../database/entity/User";
 import {
-  AlreadyBannedError,
+  AlreadyCrownBannedError,
   ArtistAlreadyCrownBannedError,
-  ArtistCrownBannedError,
   ArtistNotCrownBannedError,
-  NotBannedError,
+  NotCrownBannedError,
+} from "../../errors/crowns";
+import {
+  ArtistCrownBannedError,
   RecordNotFoundError,
 } from "../../errors/errors";
 import { asyncMap } from "../../helpers";
@@ -271,18 +272,18 @@ export class CrownsService extends BaseService {
 
   async listTopCrowns(
     ctx: GowonContext,
-    discordID: string,
+    userID: number,
     limit = 10
   ): Promise<Crown[]> {
     const serverID = ctx.requiredGuild.id;
 
     this.log(
       ctx,
-      "Listing crowns for user " + discordID + " in server " + serverID
+      "Listing crowns for user " + userID + " in server " + serverID
     );
 
     const options: FindManyOptions = {
-      where: { user: { discordID }, serverID },
+      where: { user: { id: userID }, serverID },
       order: { plays: "DESC" },
     };
 
@@ -305,25 +306,22 @@ export class CrownsService extends BaseService {
         {
           where: { serverID },
           order: { plays: "DESC" },
-          take: limit,
+          take: limit === -1 ? undefined : limit,
         },
         userIDs
       )
     );
   }
 
-  async count(ctx: GowonContext, discordID: string): Promise<number> {
+  async count(ctx: GowonContext, userID: number): Promise<number> {
     const serverID = ctx.requiredGuild.id;
 
     this.log(
       ctx,
-      "Counting crowns for user " + discordID + " in server " + serverID
+      "Counting crowns for user " + userID + " in server " + serverID
     );
-    const user = await User.findOneBy({ discordID });
 
-    if (!user) throw new RecordNotFoundError("user");
-
-    return await Crown.countBy({ user: { id: user.id }, serverID });
+    return await Crown.countBy({ user: { id: userID }, serverID });
   }
 
   async getRank(
@@ -363,16 +361,16 @@ export class CrownsService extends BaseService {
     const serverID = ctx.requiredGuild.id;
     this.log(ctx, "Listing contentious crowns in server " + serverID);
 
-    return await Crown.find(
-      await this.filterByDiscordID(
-        {
-          where: { serverID },
-          order: { version: "DESC" },
-          take: limit,
-        },
-        userIDs
-      )
+    const findOptions = await this.filterByDiscordID(
+      {
+        where: { serverID, version: MoreThan(0) },
+        order: { version: "DESC" },
+        take: limit,
+      },
+      userIDs
     );
+
+    return await Crown.find(findOptions);
   }
 
   async listRecentlyStolen(
@@ -397,14 +395,13 @@ export class CrownsService extends BaseService {
 
   async guildLeaderboard(
     ctx: GowonContext,
-    limit = 10,
     userIDs?: string[]
   ): Promise<CrownHolder[]> {
     const guild = ctx.requiredGuild;
 
     this.log(ctx, "Listing top crown holders in server " + guild.id);
 
-    let users = await Crown.guild(guild.id, limit, userIDs);
+    const users = await Crown.guild(guild.id, userIDs);
 
     return await asyncMap(users, async (rch) => ({
       user: (await User.toDiscordUser(guild, rch.discordID))!,
@@ -511,26 +508,16 @@ export class CrownsService extends BaseService {
 
     this.log(ctx, `Crown banning user ${user.discordID} in ${serverID}`);
 
-    let existingCrownBan = await CrownBan.findOneBy({ user: { id: user.id } });
+    const existingCrownBan = await CrownBan.findOneBy({
+      user: { id: user.id },
+    });
 
-    if (existingCrownBan) throw new AlreadyBannedError();
+    if (existingCrownBan) throw new AlreadyCrownBannedError();
 
-    let crownBan = CrownBan.create({ user, serverID });
+    const crownBan = CrownBan.create({ user, serverID });
     await crownBan.save();
 
-    let bans = [
-      ...(this.gowonService.shallowCache.find(
-        CacheScopedKey.CrownBannedUsers,
-        serverID
-      ) || []),
-      user.discordID,
-    ];
-
-    this.gowonService.shallowCache.remember(
-      CacheScopedKey.CrownBannedUsers,
-      bans,
-      serverID
-    );
+    this.gowonService.cache.addCrownBan(serverID, user.discordID);
 
     return crownBan;
   }
@@ -542,22 +529,11 @@ export class CrownsService extends BaseService {
 
     const crownBan = await CrownBan.findOneBy({ user: { id: user.id } });
 
-    if (!crownBan) throw new NotBannedError();
+    if (!crownBan) throw new NotCrownBannedError();
 
     await crownBan.remove();
 
-    const bans = (
-      this.gowonService.shallowCache.find<string[]>(
-        CacheScopedKey.CrownBannedUsers,
-        serverID
-      ) || []
-    ).filter((u) => u !== user.discordID);
-
-    this.gowonService.shallowCache.remember(
-      CacheScopedKey.CrownBannedUsers,
-      bans,
-      serverID
-    );
+    this.gowonService.cache.removeCrownBan(serverID, user.discordID);
   }
 
   async getCrownBannedUsers(ctx: GowonContext): Promise<CrownBan[]> {
@@ -594,10 +570,10 @@ export class CrownsService extends BaseService {
     return await Crown.guildAt(serverID, rank, userIDs);
   }
 
-  async crownRanks(ctx: GowonContext, discordID: string): Promise<CrownRank[]> {
+  async crownRanks(ctx: GowonContext, userID: number): Promise<CrownRank[]> {
     const serverID = ctx.requiredGuild.id;
 
-    return await Crown.crownRanks(serverID, discordID);
+    return await Crown.crownRanks(serverID, userID);
   }
 
   async artistCrownBan(
@@ -616,22 +592,9 @@ export class CrownsService extends BaseService {
     if (existingCrownBan) throw new ArtistAlreadyCrownBannedError();
 
     const crownBan = ArtistCrownBan.create({ artistName, serverID });
-
     await crownBan.save();
 
-    const bans = [
-      ...(this.gowonService.shallowCache.find(
-        CacheScopedKey.CrownBannedArtists,
-        serverID
-      ) || []),
-      crownBan.artistName,
-    ];
-
-    this.gowonService.shallowCache.remember(
-      CacheScopedKey.CrownBannedArtists,
-      bans,
-      serverID
-    );
+    this.gowonService.cache.addCrownArtistBan(serverID, crownBan.artistName);
 
     return crownBan;
   }
@@ -653,18 +616,7 @@ export class CrownsService extends BaseService {
 
     await crownBan.remove();
 
-    const bans = (
-      this.gowonService.shallowCache.find<string[]>(
-        CacheScopedKey.CrownBannedArtists,
-        serverID
-      ) || []
-    ).filter((a) => a !== artistName);
-
-    this.gowonService.shallowCache.remember(
-      CacheScopedKey.CrownBannedArtists,
-      bans,
-      serverID
-    );
+    this.gowonService.cache.removeCrownArtistBan(serverID, artistName);
 
     return crownBan;
   }
@@ -709,7 +661,7 @@ export class CrownsService extends BaseService {
   }
 
   private async filterByDiscordID(
-    findOptions: any,
+    findOptions: Record<string, any>,
     userIDs?: string[]
   ): Promise<any> {
     if (!userIDs) return findOptions;

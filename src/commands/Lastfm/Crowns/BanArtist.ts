@@ -1,9 +1,9 @@
-import { Validation } from "../../../lib/validation/ValidationChecker";
-import { validators } from "../../../lib/validation/validators";
-import { CrownsChildCommand } from "./CrownsChildCommand";
-import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
+import { MessageEmbed } from "discord.js";
 import { bold } from "../../../helpers/discord";
+import { Variation } from "../../../lib/command/Command";
+import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { CrownsChildCommand } from "./CrownsChildCommand";
 
 const args = {
   ...prefabArguments.requiredArtist,
@@ -11,31 +11,54 @@ const args = {
 
 export class BanArtist extends CrownsChildCommand<typeof args> {
   idSeed = "loona olivia hye";
+  description = "Bans an artist from the crowns game";
+  usage = "artist";
+
+  arguments = args;
 
   adminCommand = true;
 
-  description = "Bans an artist from the crowns game";
-  usage = "artist";
-  arguments = args;
-
-  validation: Validation = {
-    artist: new validators.RequiredValidator({}),
-  };
+  variations: Variation[] = [
+    {
+      name: "unban",
+      variation: "unbanartist",
+      description: "Unbans an artist from the crowns game",
+    },
+  ];
 
   async run() {
-    let artist = this.parsedArguments.artist;
+    const artist = this.parsedArguments.artist;
 
-    let artistCrownBan = await this.crownsService.artistCrownBan(
-      this.ctx,
-      artist
-    );
+    const unban = this.extract.didMatch("unban");
 
-    await this.crownsService.killCrown(this.ctx, artistCrownBan.artistName);
+    if (unban) {
+      const artistCrownBan = await this.crownsService.artistCrownUnban(
+        this.ctx,
+        artist
+      );
 
-    await this.oldReply(
-      `succesfully banned ${bold(
-        artistCrownBan.artistName
-      )} from the crowns game.`
-    );
+      await this.send(this.makeEmbed(artistCrownBan.artistName, unban));
+    } else {
+      const artistCrownBan = await this.crownsService.artistCrownBan(
+        this.ctx,
+        artist
+      );
+
+      await this.crownsService.killCrown(this.ctx, artistCrownBan.artistName);
+
+      await this.send(this.makeEmbed(artistCrownBan.artistName, unban));
+    }
+  }
+
+  private makeEmbed(artistName: string, unban: boolean): MessageEmbed {
+    const embed = this.newEmbed()
+      .setAuthor(this.generateEmbedAuthor("Crowns artist ban"))
+      .setDescription(
+        `Succesfully ${unban ? "un" : ""}banned ${bold(
+          artistName
+        )} from the crowns game.`
+      );
+
+    return embed;
   }
 }

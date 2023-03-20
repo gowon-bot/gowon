@@ -1,12 +1,14 @@
-import { CrownsChildCommand } from "./CrownsChildCommand";
-import { CrownEventString } from "../../../services/dbservices/CrownsHistoryService";
-import { LogicError } from "../../../errors/errors";
 import { CrownEvent } from "../../../database/entity/meta/CrownEvent";
-import { displayDate } from "../../../lib/views/displays";
+import {
+  CrownDoesntExistError,
+  NoCrownHistoryError,
+} from "../../../errors/crowns";
 import { asyncMap } from "../../../helpers";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
-import { bold } from "../../../helpers/discord";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { displayDate } from "../../../lib/views/displays";
+import { CrownEventString } from "../../../services/dbservices/CrownsHistoryService";
+import { CrownsChildCommand } from "./CrownsChildCommand";
 
 const args = {
   ...prefabArguments.artist,
@@ -24,49 +26,42 @@ export class History extends CrownsChildCommand<typeof args> {
   slashCommand = true;
 
   async run() {
-    let artist = this.parsedArguments.artist;
-
-    let { senderUsername } = await this.getMentions({
-      senderRequired: !artist,
+    const { requestable } = await this.getMentions({
+      senderRequired: !this.parsedArguments.artist,
     });
 
-    if (!artist) {
-      artist = (await this.lastFMService.nowPlaying(this.ctx, senderUsername))
-        .artist;
-    }
+    const artist = await this.lastFMArguments.getArtist(this.ctx, requestable);
 
-    let artistDetails = await this.lastFMService.artistInfo(this.ctx, {
+    const artistDetails = await this.lastFMService.artistInfo(this.ctx, {
       artist,
     });
 
-    let crown = await this.crownsService.getCrown(
+    const crown = await this.crownsService.getCrown(
       this.ctx,
       artistDetails.name,
       { refresh: false }
     );
 
-    if (!crown) {
-      throw new LogicError(
-        `There is no history for the ${bold(artistDetails.name)} crown yet!`
-      );
-    }
+    if (!crown) throw new CrownDoesntExistError(artistDetails.name);
 
-    let history = await this.crownsService.scribe.getHistory(this.ctx, crown, [
-      CrownEventString.snatched,
-      CrownEventString.created,
-    ]);
-
-    if (!history.length) throw new LogicError("that crown has no history yet!");
-
-    this.send(
-      this.newEmbed()
-        .setTitle(
-          `Crown history for ${crown.artistName}${crown.redirectDisplay()}`
-        )
-        .setDescription(
-          (await asyncMap(history, this.displayEvent.bind(this))).join("\n")
-        )
+    const history = await this.crownsService.scribe.getHistory(
+      this.ctx,
+      crown,
+      [CrownEventString.snatched, CrownEventString.created]
     );
+
+    if (!history.length) throw new NoCrownHistoryError(artistDetails.name);
+
+    const embed = this.newEmbed()
+      .setAuthor(this.generateEmbedAuthor("Crown history"))
+      .setTitle(
+        `Crown history for ${crown.artistName}${crown.redirectDisplay()}`
+      )
+      .setDescription(
+        (await asyncMap(history, this.displayEvent.bind(this))).join("\n")
+      );
+
+    this.send(embed);
   }
 
   private async displayEvent(event: CrownEvent): Promise<string> {

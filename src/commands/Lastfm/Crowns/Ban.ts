@@ -1,4 +1,5 @@
-import { LogicError } from "../../../errors/errors";
+import { MentionedUserRequiredError } from "../../../errors/user";
+import { Variation } from "../../../lib/command/Command";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { CrownsChildCommand } from "./CrownsChildCommand";
@@ -14,30 +15,54 @@ export class Ban extends CrownsChildCommand<typeof args> {
   usage = "@user";
   arguments = args;
 
+  variations: Variation[] = [
+    {
+      name: "unban",
+      variation: "unban",
+      description: "Unbans a user from the crowns game",
+      separateSlashCommand: true,
+    },
+  ];
+
   adminCommand = true;
 
   async run() {
-    let { mentionedDBUser, senderUser, discordUser } = await this.getMentions({
+    const { mentionedDBUser, discordUser } = await this.getMentions({
       fetchDiscordUser: true,
-      reverseLookup: { required: true },
     });
 
-    if (!mentionedDBUser) throw new LogicError("please mention a valid user");
+    const unban = this.extract.didMatch("unban");
 
-    if (mentionedDBUser.discordID === senderUser?.discordID)
-      throw new LogicError("you can't crown ban yourself?");
+    if (!mentionedDBUser) throw new MentionedUserRequiredError();
 
-    await this.crownsService.banUser(this.ctx, mentionedDBUser);
-    this.crownsService.scribe.ban(
-      this.ctx,
-      mentionedDBUser,
-      this.payload.author,
-      discordUser!
-    );
+    if (unban) {
+      await this.crownsService.unbanUser(this.ctx, mentionedDBUser);
 
-    await this.oldReply(
-      `successfully banned ${(await mentionedDBUser.toDiscordUser(this.requiredGuild))!.username
-      }`
-    );
+      this.crownsService.scribe.unban(
+        this.ctx,
+        mentionedDBUser,
+        this.payload.author,
+        discordUser!
+      );
+    } else {
+      await this.crownsService.banUser(this.ctx, mentionedDBUser);
+
+      this.crownsService.scribe.ban(
+        this.ctx,
+        mentionedDBUser,
+        this.payload.author,
+        discordUser!
+      );
+    }
+
+    const embed = this.newEmbed()
+      .setAuthor(this.generateEmbedAuthor(`Crowns ${unban ? "un" : ""}ban`))
+      .setDescription(
+        `Successfully ${unban ? "un" : ""}banned ${
+          discordUser?.username || "<unknown user>"
+        }`
+      );
+
+    await this.send(embed);
   }
 }
