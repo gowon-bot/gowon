@@ -42,3 +42,21 @@ export class CantFishYetError extends ClientError {
     super(Chance().pickone(cooldownMessages)(time));
   }
 }
+
+export class SenderUserHasNoFishyProfileError extends ClientError {
+  name = "SenderUserHasNoFishyProfileError";
+
+  constructor(prefix: string) {
+    super(
+      `You don't have a fishy profile yet! You can run \`${prefix}fishy\` to get started!`
+    );
+  }
+}
+
+export class MentionedUserHasNoFishyProfileError extends ClientError {
+  name = "MentionedUserHasNoFishyProfileError";
+
+  constructor() {
+    super(`That user doesn't have a fishy profile yet!`);
+  }
+}

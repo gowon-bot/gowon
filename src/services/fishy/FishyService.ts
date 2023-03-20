@@ -1,4 +1,5 @@
 import { Chance } from "chance";
+import { IsNull, Not } from "typeorm";
 import { User } from "../../database/entity/User";
 import { FishyCatch } from "../../database/entity/fishy/FishyCatch";
 import { FishyProfile } from "../../database/entity/fishy/FishyProfile";
@@ -60,7 +61,7 @@ export class FishyService extends BaseService {
   async getFishyProfile(user: User, autoCreate: true): Promise<FishyProfile>;
   async getFishyProfile(
     user: User,
-    autoCreate: false
+    autoCreate: false | boolean
   ): Promise<FishyProfile | undefined>;
   public async getFishyProfile(
     user: User,
@@ -84,6 +85,31 @@ export class FishyService extends BaseService {
   ): Promise<FishyProfile> {
     fishyProfile.lastFished = new Date();
     return await fishyProfile.save();
+  }
+
+  public async countGiftsGiven(userId: number): Promise<number> {
+    return await FishyCatch.countBy({ gifter: { id: userId } });
+  }
+
+  public async countGiftsRecieved(userId: number): Promise<number> {
+    return await FishyCatch.countBy({
+      owner: { id: userId },
+      gifter: Not(IsNull()),
+    });
+  }
+
+  public async getBiggestFishy(
+    userId: number
+  ): Promise<FishyCatch | undefined> {
+    const fishy = await FishyCatch.find({
+      where: { owner: { id: userId } },
+      order: {
+        weight: "DESC",
+      },
+      take: 1,
+    });
+
+    return fishy[0];
   }
 
   private pickRarity(): FishyRarityData {

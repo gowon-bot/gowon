@@ -2,6 +2,7 @@ import { add, differenceInMilliseconds, intervalToDuration } from "date-fns";
 import {
   BaseEntity,
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
   OneToOne,
@@ -28,6 +29,9 @@ export class FishyProfile extends BaseEntity {
   @OneToOne((_) => User, (user) => user.fishyProfile, { eager: true })
   @JoinColumn()
   user!: User;
+
+  @CreateDateColumn()
+  createdAt!: Date;
 
   public canFish(): boolean {
     return (
