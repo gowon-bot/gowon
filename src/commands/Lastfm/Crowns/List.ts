@@ -28,7 +28,7 @@ export class List extends CrownsChildCommand<typeof args> {
   async run() {
     const { dbUser, discordUser } = await this.getMentions({
       fetchDiscordUser: true,
-      reverseLookup: { required: true },
+      dbUserRequired: true,
     });
 
     const discordID = dbUser.discordID;
@@ -38,13 +38,12 @@ export class List extends CrownsChildCommand<typeof args> {
       discordUser
     );
 
-    const [crowns, crownsCount, rank] = await Promise.all([
+    const [crowns, rank] = await Promise.all([
       this.crownsService.listTopCrowns(this.ctx, discordID, -1),
-      this.crownsService.count(this.ctx, discordID),
-      this.crownsService.getRank(this.ctx, discordID),
+      this.crownsService.getRank(this.ctx, dbUser.id),
     ]);
 
-    if (!crownsCount) {
+    if (!crowns.length) {
       throw new LogicError(
         `${perspective.name} don't have any crowns in this server!`
       );

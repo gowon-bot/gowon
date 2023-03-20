@@ -1,7 +1,7 @@
+import { UserHasNoCrownsInServerError } from "../../../errors/crowns";
 import { LogicError } from "../../../errors/errors";
 import { getOrdinal } from "../../../helpers";
 import { bold, italic } from "../../../helpers/discord";
-import { toInt } from "../../../helpers/lastfm/";
 import { displayNumber } from "../../../lib/views/displays";
 import { OverviewChildCommand } from "./OverviewChildCommand";
 
@@ -22,15 +22,15 @@ export class Crowns extends OverviewChildCommand {
       this.calculator.scrobblesPerCrown(),
     ]);
 
-    if (!toInt(crownRank?.count))
-      throw new LogicError(
-        `${perspective.upper.plusToHave} no crowns in this server!`
-      );
+    if (!crownRank?.count) {
+      throw new UserHasNoCrownsInServerError(perspective);
+    }
 
     if (await this.calculator.hasCrownStats()) {
-      let embed = (await this.overviewEmbed()).setDescription(`You have ${bold(
+      const embed = (await this.overviewEmbed())
+        .setDescription(`You have ${bold(
         displayNumber(crownRank!.count, "crown")
-      )} (ranked ${italic(getOrdinal(toInt(crownRank!.rank)))})
+      )} (ranked ${italic(getOrdinal(crownRank!.rank))})
         For every ${bold(displayNumber(apc!.asNumber, "eligible artist"))}, ${
         perspective.plusToHave
       } a crown

@@ -280,12 +280,9 @@ export class CrownsService extends BaseService {
       ctx,
       "Listing crowns for user " + discordID + " in server " + serverID
     );
-    const user = await User.findOneBy({ discordID });
-
-    if (!user) throw new RecordNotFoundError("user");
 
     const options: FindManyOptions = {
-      where: { user, serverID },
+      where: { user: { discordID }, serverID },
       order: { plays: "DESC" },
     };
 
@@ -331,17 +328,14 @@ export class CrownsService extends BaseService {
 
   async getRank(
     ctx: GowonContext,
-    discordID: string,
+    userID: number,
     userIDs?: string[]
   ): Promise<CrownRankResponse> {
     const serverID = ctx.requiredGuild.id;
 
-    this.log(ctx, "Ranking user " + discordID + " in server " + serverID);
-    const user = await User.findOneBy({ discordID });
+    this.log(ctx, "Ranking user " + userID + " in server " + serverID);
 
-    if (!user) throw new RecordNotFoundError("user");
-
-    return await Crown.rank(serverID, discordID, userIDs);
+    return await Crown.rank(serverID, userID, userIDs);
   }
 
   async countAllInServer(
@@ -577,15 +571,15 @@ export class CrownsService extends BaseService {
   async guildAround(
     ctx: GowonContext,
     serverID: string,
-    discordID: string,
+    userID: number,
     userIDs?: string[]
   ): Promise<GuildAtResponse> {
     this.log(
       ctx,
-      `Fetching guild around user ${discordID} for server ${serverID}`
+      `Fetching guild around user ${userID} for server ${serverID}`
     );
 
-    return await Crown.guildAround(serverID, discordID, userIDs);
+    return await Crown.guildAround(serverID, userID, userIDs);
   }
 
   async guildAt(

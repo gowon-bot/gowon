@@ -1,9 +1,9 @@
-import { CrownsChildCommand } from "./CrownsChildCommand";
 import { LogicError } from "../../../errors/errors";
-import { displayNumber } from "../../../lib/views/displays";
 import { asyncMap } from "../../../helpers";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { displayNumber } from "../../../lib/views/displays";
+import { CrownsChildCommand } from "./CrownsChildCommand";
 
 const args = {
   ...standardMentions,
@@ -20,9 +20,9 @@ export class GuildAround extends CrownsChildCommand {
   arguments = args;
 
   async run() {
-    let { discordUser } = await this.getMentions({
+    const { discordUser, dbUser } = await this.getMentions({
       fetchDiscordUser: true,
-      reverseLookup: { required: true },
+      dbUserRequired: true,
     });
 
     const perspective = this.usersService.discordPerspective(
@@ -30,38 +30,43 @@ export class GuildAround extends CrownsChildCommand {
       discordUser
     );
 
-    let discordID = discordUser?.id || this.author.id;
+    const discordID = discordUser?.id || this.author.id;
 
-    let guildAround = await this.crownsService.guildAround(
+    const guildAround = await this.crownsService.guildAround(
       this.ctx,
       this.requiredGuild.id,
-      discordID,
+      dbUser.id,
       await this.serverUserIDs({ filterCrownBannedUsers: true })
     );
-    let author = guildAround.users.find((u) => u.discordID === discordID);
+
+    const author = guildAround.users.find((u) => u.discordID === discordID);
 
     if (!guildAround.users.length || !author)
       throw new LogicError(
         `hmmm... I couldn't find you on the crowns leaderboard!`
       );
 
-    let embed = this.newEmbed()
+    const embed = this.newEmbed()
       .setAuthor({
-        name: `${this.requiredGuild.name}'s crown leaderboard (${guildAround.start + 1
-          } - ${guildAround.end})`,
+        name: `${this.requiredGuild.name}'s crown leaderboard (${
+          guildAround.start + 1
+        } - ${guildAround.end})`,
       })
       .setDescription(
         `${(
           await asyncMap(
             guildAround.users,
             async (u) =>
-              `${u.rank}. ${u.discordID === author?.discordID ? "**" : ""
-              }${await this.fetchUsername(u.discordID)}${u.discordID === author?.discordID ? "**" : ""
+              `${u.rank}. ${
+                u.discordID === author?.discordID ? "**" : ""
+              }${await this.fetchUsername(u.discordID)}${
+                u.discordID === author?.discordID ? "**" : ""
               } with ${displayNumber(u.count, "crown")}`
           )
         ).join("\n")}
         
-        ${perspective.upper.possessive} position is #${author!.rank
+        ${perspective.upper.possessive} position is #${
+          author!.rank
         } with ${displayNumber(author!.count, "crown")}`
       );
 

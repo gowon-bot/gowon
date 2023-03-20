@@ -20,10 +20,10 @@ import { User } from "./User";
 import { CrownEvent } from "./meta/CrownEvent";
 
 export interface CrownRankResponse {
-  count: string;
-  rank: string;
-  totalCount: string;
-  totalUsers: string;
+  count: number;
+  rank: number;
+  totalCount: number;
+  totalUsers: number;
 }
 
 export interface GuildAroundUser {
@@ -119,24 +119,37 @@ export class Crown extends BaseEntity {
 
   static async rank(
     serverID: string,
-    discordID: string,
+    userID: number,
     userIDs?: string[]
   ): Promise<CrownRankResponse> {
-    const user = await User.findOneBy({ discordID });
+    const variables = userIDs
+      ? [serverID, userID, userIDs]
+      : [serverID, userID];
 
-    return (
-      (
-        (await this.query(
-          CrownsQueries.rank(userIDs),
-          userIDs ? [serverID, user?.id!, userIDs] : [serverID, user?.id!]
-        )) as CrownRankResponse[]
-      )[0] || {
-        count: "0",
-        rank: "0",
-        totalCount: "0",
-        totalUsers: "0",
-      }
+    const queryResponse = await this.query(
+      CrownsQueries.rank(userIDs),
+      variables
     );
+
+    if (queryResponse[0]) {
+      const ranking = queryResponse[0];
+
+      return {
+        count: toInt(ranking.count),
+        rank: toInt(ranking.rank),
+        totalCount: toInt(ranking.totalCount),
+        totalUsers: toInt(ranking.totalUsers),
+      };
+    }
+
+    const noRank = {
+      count: 0,
+      rank: 0,
+      totalCount: 0,
+      totalUsers: 0,
+    };
+
+    return noRank;
   }
 
   static async guildAt(serverID: string, rank: number, userIDs?: string[]) {
@@ -157,12 +170,12 @@ export class Crown extends BaseEntity {
 
   static async guildAround(
     serverID: string,
-    discordID: string,
+    userID: number,
     userIDs?: string[]
   ): Promise<GuildAtResponse> {
-    let rank = toInt((await this.rank(serverID, discordID, userIDs)).rank);
+    const rank = (await this.rank(serverID, userID, userIDs)).rank;
 
-    return await this.guildAt(serverID, rank, userIDs);
+    return await this.guildAt(serverID, toInt(rank), userIDs);
   }
 
   static async guild(

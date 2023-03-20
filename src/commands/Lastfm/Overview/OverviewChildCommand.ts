@@ -1,13 +1,13 @@
-import { LastFMBaseChildCommand } from "../LastFMBaseCommand";
-import { OverviewStatsCalculator } from "../../../lib/calculators/OverviewStatsCalculator";
 import { HexColorString, MessageEmbed } from "discord.js";
 import { ucFirst } from "../../../helpers";
-import { Requestable } from "../../../services/LastFM/LastFMAPIService";
-import { LastFMPeriod } from "../../../services/LastFM/LastFMService.types";
-import { humanizePeriod } from "../../../lib/timeAndDate/helpers/humanize";
+import { OverviewStatsCalculator } from "../../../lib/calculators/OverviewStatsCalculator";
 import { TimePeriodArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/TimePeriodArgument";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { humanizePeriod } from "../../../lib/timeAndDate/helpers/humanize";
+import { Requestable } from "../../../services/LastFM/LastFMAPIService";
+import { LastFMPeriod } from "../../../services/LastFM/LastFMService.types";
+import { LastFMBaseChildCommand } from "../LastFMBaseCommand";
 
 const args = {
   timePeriod: new TimePeriodArgument({
@@ -58,12 +58,12 @@ export abstract class OverviewChildCommand<
       userType === "alum"
         ? "#9804fe"
         : userType === "mod"
-          ? "#fb9904"
-          : userType === "staff"
-            ? "#b90100"
-            : userType === "subscriber"
-              ? "black"
-              : "#ffffff";
+        ? "#fb9904"
+        : userType === "staff"
+        ? "#b90100"
+        : userType === "subscriber"
+        ? "black"
+        : "#ffffff";
 
     return { colour, badge, image };
   }
@@ -75,6 +75,7 @@ export abstract class OverviewChildCommand<
       requestable,
       username,
       discordUser,
+      dbUser,
     } = await this.getMentions({
       fetchDiscordUser: true,
     });
@@ -92,6 +93,7 @@ export abstract class OverviewChildCommand<
       this.ctx,
       requestable,
       this.discordID,
+      dbUser.id,
       this.timePeriod
     );
   }

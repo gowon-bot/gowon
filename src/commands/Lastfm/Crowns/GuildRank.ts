@@ -1,7 +1,6 @@
-import { LogicError } from "../../../errors/errors";
+import { UserHasNoCrownsInServerError } from "../../../errors/crowns";
 import { getOrdinal } from "../../../helpers";
 import { bold } from "../../../helpers/discord";
-import { toInt } from "../../../helpers/lastfm/";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { displayNumber } from "../../../lib/views/displays";
@@ -22,27 +21,28 @@ export class GuildUserRank extends CrownsChildCommand<typeof args> {
   arguments = args;
 
   async run() {
-    const { perspective, discordUser, dbUser } = await this.getMentions();
+    const { perspective, dbUser } = await this.getMentions({
+      dbUserRequired: true,
+    });
 
-    let rank = await this.crownsService.getRank(
+    const rank = await this.crownsService.getRank(
       this.ctx,
-      discordUser?.id || dbUser.discordID || this.author.id,
+      dbUser.id,
       await this.serverUserIDs({ filterCrownBannedUsers: true })
     );
 
-    if (!toInt(rank?.count))
-      throw new LogicError(
-        `${perspective.plusToHave} no crowns in this server!`
-      );
+    if (!rank?.count) {
+      throw new UserHasNoCrownsInServerError(perspective);
+    }
 
-    let embed = this.newEmbed()
+    const embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor("Crowns rank"))
       .setDescription(
         `${perspective.upper.possessive} ${bold(
           displayNumber(rank.count, "crown")
-        )} ${toInt(rank.count) === 1 ? "ranks" : "rank"} ${
+        )} ${rank.count === 1 ? "ranks" : "rank"} ${
           perspective.objectPronoun
-        } ${bold(getOrdinal(toInt(rank.rank)))} in ${
+        } ${bold(getOrdinal(rank.rank))} in ${
           this.guild?.name
         } out of ${displayNumber(rank.totalUsers, "total user")}`
       );

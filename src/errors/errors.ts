@@ -116,6 +116,9 @@ export class CommandNotFoundError extends ClientError {
 export class LogicError extends ClientError {
   name = "LogicError";
 
+  /**
+   * @deprecated Use a custom created error class instead of LogicError
+   */
   constructor(msg: string, public footer = "") {
     super(msg);
   }
