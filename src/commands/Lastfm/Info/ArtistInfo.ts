@@ -6,7 +6,7 @@ import { prefabArguments } from "../../../lib/context/arguments/prefabArguments"
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { LineConsolidator } from "../../../lib/LineConsolidator";
 import { displayNumber } from "../../../lib/views/displays";
-import { CrownsService } from "../../../services/dbservices/CrownsService";
+import { CrownsService } from "../../../services/dbservices/crowns/CrownsService";
 import { LilacTagsService } from "../../../services/lilac/LilacTagsService";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { InfoCommand } from "./InfoCommand";

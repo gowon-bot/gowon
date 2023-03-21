@@ -74,3 +74,11 @@ export class CrownDoesntExistError extends ClientError {
     );
   }
 }
+
+export class ArtistIsCrownBannedError extends ClientError {
+  name = "ArtistIsCrownBannedError";
+
+  constructor(artist: string) {
+    super(`It is not possible to get the crown for ${bold(artist)}!`);
+  }
+}

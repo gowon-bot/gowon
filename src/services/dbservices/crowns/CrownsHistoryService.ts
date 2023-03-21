@@ -1,13 +1,18 @@
 import { User as DiscordUser, GuildMember } from "discord.js";
 import { In } from "typeorm";
-import { Crown } from "../../database/entity/Crown";
-import { User } from "../../database/entity/User";
-import { CrownEvent, SimpleCrown } from "../../database/entity/meta/CrownEvent";
-import { SimpleMap } from "../../helpers/types";
-import { GowonContext } from "../../lib/context/Context";
-import { BaseService } from "../BaseService";
-import { ServiceRegistry } from "../ServicesRegistry";
-import { CrownCheck, CrownState, CrownsService } from "./CrownsService";
+import { Crown } from "../../../database/entity/Crown";
+import { User } from "../../../database/entity/User";
+import {
+  CrownEvent,
+  SimpleCrown,
+} from "../../../database/entity/meta/CrownEvent";
+import { SimpleMap } from "../../../helpers/types";
+import { GowonContext } from "../../../lib/context/Context";
+import { BaseService } from "../../BaseService";
+import { ServiceRegistry } from "../../ServicesRegistry";
+import { CrownCheck, PreviousCrownData, Updated } from "./CrownCheck";
+import { CrownsService } from "./CrownsService";
+import { CrownState } from "./CrownsService.types";
 
 export enum CrownEventString {
   created = "created",
@@ -27,28 +32,29 @@ export enum SnatchedEventString {
   userLeft = "user.left",
 }
 
-type CrownsHistoryServiceContext = GowonContext;
+type LogEventOptions = {
+  reason?: SnatchedEventString;
+  secondaryUser?: DiscordUser;
+  previousCrown?: PreviousCrownData;
+  oldCrown?: Crown;
+  newCrown?: SimpleCrown;
+};
 
-export class CrownsHistoryService extends BaseService<CrownsHistoryServiceContext> {
+export class CrownsHistoryService extends BaseService {
   private get crownsService() {
     return ServiceRegistry.get(CrownsService);
   }
 
   private async logEvent(
-    ctx: CrownsHistoryServiceContext,
+    ctx: GowonContext,
     crown: Crown | Crown[],
     event: CrownEventString,
     perpetuator: DiscordUser,
-    options: {
-      reason?: SnatchedEventString;
-      secondaryUser?: DiscordUser;
-      oldCrown?: Crown;
-      newCrown?: SimpleCrown;
-    } = {}
+    options: LogEventOptions = {}
   ) {
     if (crown instanceof Array) {
-      for (let _crown of crown) {
-        this.logEvent(ctx, _crown, event, perpetuator, options);
+      for (const c of crown) {
+        this.logEvent(ctx, c, event, perpetuator, options);
       }
     } else {
       this.log(
@@ -67,11 +73,12 @@ export class CrownsHistoryService extends BaseService<CrownsHistoryServiceContex
         },
       });
 
-      if (options.oldCrown)
+      if (options.previousCrown || options.oldCrown) {
         history.oldCrown = {
-          artistName: options.oldCrown.artistName,
-          plays: options.oldCrown.plays,
+          artistName: options.oldCrown?.artistName || crown.artistName,
+          plays: (options.oldCrown?.plays || options.previousCrown?.plays)!,
         };
+      }
 
       if (options.secondaryUser) {
         history.secondaryUserDiscordID = options.secondaryUser.id;
@@ -84,14 +91,14 @@ export class CrownsHistoryService extends BaseService<CrownsHistoryServiceContex
     }
   }
 
-  create(ctx: CrownsHistoryServiceContext, crown: Crown, creator: DiscordUser) {
+  create(ctx: GowonContext, crown: Crown, creator: DiscordUser) {
     this.logEvent(ctx, crown, CrownEventString.created, creator);
   }
 
   snatch(
-    ctx: CrownsHistoryServiceContext,
+    ctx: GowonContext,
     crown: Crown,
-    oldCrown: Crown,
+    previousCrown: PreviousCrownData,
     reason: SnatchedEventString,
     snatcher: DiscordUser,
     snatchee?: DiscordUser
@@ -99,27 +106,27 @@ export class CrownsHistoryService extends BaseService<CrownsHistoryServiceContex
     this.logEvent(ctx, crown, CrownEventString.snatched, snatcher, {
       reason,
       secondaryUser: snatchee,
-      oldCrown,
+      previousCrown,
     });
   }
 
-  kill(ctx: CrownsHistoryServiceContext, crown: Crown, killer: DiscordUser) {
+  kill(ctx: GowonContext, crown: Crown, killer: DiscordUser) {
     this.logEvent(ctx, crown, CrownEventString.killed, killer);
   }
 
   update(
-    ctx: CrownsHistoryServiceContext,
+    ctx: GowonContext,
     crown: Crown,
     updater: DiscordUser,
-    oldCrown: Crown
+    previousCrown: PreviousCrownData
   ) {
     this.logEvent(ctx, crown, CrownEventString.updated, updater, {
-      oldCrown,
+      previousCrown,
     });
   }
 
   async ban(
-    ctx: CrownsHistoryServiceContext,
+    ctx: GowonContext,
     user: User,
     banner: DiscordUser,
     banTarget: DiscordUser
@@ -136,7 +143,7 @@ export class CrownsHistoryService extends BaseService<CrownsHistoryServiceContex
   }
 
   async unban(
-    ctx: CrownsHistoryServiceContext,
+    ctx: GowonContext,
     user: User,
     unbanner: DiscordUser,
     unbanTarget: DiscordUser
@@ -152,37 +159,34 @@ export class CrownsHistoryService extends BaseService<CrownsHistoryServiceContex
     });
   }
 
-  async optOut(
-    ctx: CrownsHistoryServiceContext,
-    user: User,
-    discordUser: GuildMember
-  ) {
+  async optOut(ctx: GowonContext, user: User, discordUser: GuildMember) {
     const crowns = await this.crownsService.listTopCrowns(ctx, user.id, -1);
 
     this.logEvent(ctx, crowns, CrownEventString.userOptedOut, discordUser.user);
   }
 
-  async handleCheck(ctx: CrownsHistoryServiceContext, crownCheck: CrownCheck) {
-    let { state, crown, oldCrown } = crownCheck;
-    let owner = await User.toDiscordUser(
-      ctx.guild!,
-      crownCheck.oldCrown!.user.discordID
+  async handleCheck(ctx: GowonContext, crownCheck: CrownCheck) {
+    const { crown, previousCrown } = crownCheck.getOptions();
+
+    const owner = await User.toDiscordUser(
+      ctx.requiredGuild,
+      previousCrown.ownerDiscordID
     );
 
-    switch (state) {
-      case CrownState.updated:
-        this.update(ctx, crown!, ctx.author, oldCrown!);
+    switch (crownCheck.state) {
+      case Updated.name:
+        this.update(ctx, crown, ctx.author, previousCrown);
         break;
 
       case CrownState.newCrown:
-        this.create(ctx, crown!, ctx.author);
+        this.create(ctx, crown, ctx.author);
         break;
 
       case CrownState.snatched:
         this.snatch(
           ctx,
           crown!,
-          oldCrown!,
+          previousCrown,
           SnatchedEventString.morePlays,
           ctx.author,
           owner
@@ -192,8 +196,8 @@ export class CrownsHistoryService extends BaseService<CrownsHistoryServiceContex
       case CrownState.banned:
         this.snatch(
           ctx,
-          crown!,
-          oldCrown!,
+          crown,
+          previousCrown,
           SnatchedEventString.userBanned,
           ctx.author,
           owner
@@ -203,8 +207,8 @@ export class CrownsHistoryService extends BaseService<CrownsHistoryServiceContex
       case CrownState.inactivity:
         this.snatch(
           ctx,
-          crown!,
-          oldCrown!,
+          crown,
+          previousCrown,
           SnatchedEventString.userInactive,
           ctx.author,
           owner
@@ -214,8 +218,8 @@ export class CrownsHistoryService extends BaseService<CrownsHistoryServiceContex
       case CrownState.purgatory:
         this.snatch(
           ctx,
-          crown!,
-          oldCrown!,
+          crown,
+          previousCrown,
           SnatchedEventString.userInPurgatory,
           ctx.author,
           owner
@@ -226,7 +230,7 @@ export class CrownsHistoryService extends BaseService<CrownsHistoryServiceContex
         this.snatch(
           ctx,
           crown!,
-          oldCrown!,
+          previousCrown,
           SnatchedEventString.userLeft,
           ctx.author
         );
@@ -238,7 +242,7 @@ export class CrownsHistoryService extends BaseService<CrownsHistoryServiceContex
   }
 
   async getHistory(
-    ctx: CrownsHistoryServiceContext,
+    ctx: GowonContext,
     crown: Crown,
     eventTypes?: CrownEventString[]
   ): Promise<CrownEvent[]> {

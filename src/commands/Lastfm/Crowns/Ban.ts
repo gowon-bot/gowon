@@ -1,4 +1,5 @@
 import { MentionedUserRequiredError } from "../../../errors/user";
+import { code } from "../../../helpers/discord";
 import { Variation } from "../../../lib/command/Command";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
@@ -58,9 +59,9 @@ export class Ban extends CrownsChildCommand<typeof args> {
     const embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor(`Crowns ${unban ? "un" : ""}ban`))
       .setDescription(
-        `Successfully ${unban ? "un" : ""}banned ${
+        `Successfully ${unban ? "un" : ""}banned ${code(
           discordUser?.username || "<unknown user>"
-        }`
+        )}`
       );
 
     await this.send(embed);

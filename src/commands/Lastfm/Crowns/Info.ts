@@ -1,5 +1,5 @@
 import { User } from "../../../database/entity/User";
-import { ArtistCrownBannedError } from "../../../errors/errors";
+import { ArtistIsCrownBannedError } from "../../../errors/crowns";
 import { ago } from "../../../helpers";
 import { createInvalidBadge } from "../../../helpers/crowns";
 import { bold } from "../../../helpers/discord";
@@ -69,7 +69,7 @@ export class Info extends CrownsChildCommand<typeof args> {
           redirectArtistName
         )
       ) {
-        throw new ArtistCrownBannedError(redirectArtistName);
+        throw new ArtistIsCrownBannedError(redirectArtistName);
       }
 
       await this.handleNoCrown(

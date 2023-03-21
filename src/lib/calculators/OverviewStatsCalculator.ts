@@ -16,7 +16,7 @@ import {
   TopTracks,
 } from "../../services/LastFM/converters/TopTypes";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
-import { CrownsService } from "../../services/dbservices/CrownsService";
+import { CrownsService } from "../../services/dbservices/crowns/CrownsService";
 import { MirrorballService } from "../../services/mirrorball/MirrorballService";
 import { MirrorballPageInfo } from "../../services/mirrorball/MirrorballTypes";
 import { GowonContext } from "../context/Context";

@@ -7,7 +7,7 @@ import { asyncMap } from "../../../helpers";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { displayDate } from "../../../lib/views/displays";
-import { CrownEventString } from "../../../services/dbservices/CrownsHistoryService";
+import { CrownEventString } from "../../../services/dbservices/crowns/CrownsHistoryService";
 import { CrownsChildCommand } from "./CrownsChildCommand";
 
 const args = {

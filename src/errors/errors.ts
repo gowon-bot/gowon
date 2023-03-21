@@ -1,5 +1,4 @@
 import { Response } from "node-fetch";
-import { bold } from "../helpers/discord";
 import { parseError, parseErrorSix } from "../helpers/error";
 import { Emoji } from "../lib/Emoji";
 import { displayNumber } from "../lib/views/displays";
@@ -207,14 +206,6 @@ export class FriendNotFoundError extends ClientError {
 
   constructor() {
     super("one of your friends doesn't exist!");
-  }
-}
-
-export class ArtistCrownBannedError extends ClientError {
-  name = "ArtistCrownBannedError";
-
-  constructor(artist: string) {
-    super(`it is not possible to get the crown for ${bold(artist)}!`);
   }
 }
 

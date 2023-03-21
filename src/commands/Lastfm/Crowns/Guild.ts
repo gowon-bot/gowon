@@ -10,7 +10,7 @@ import {
   displayNumberedList,
 } from "../../../lib/views/displays";
 import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingEmbed";
-import { CrownHolder } from "../../../services/dbservices/CrownsService";
+import { CrownHolder } from "../../../services/dbservices/crowns/CrownsService.types";
 import { GuildAt } from "../../Archived/crowns/GuildAt";
 import { GuildUserRank } from "../../Archived/crowns/GuildRank";
 import { CrownsChildCommand } from "./CrownsChildCommand";

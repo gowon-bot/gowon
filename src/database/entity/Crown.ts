@@ -9,13 +9,19 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { toInt } from "../../helpers/lastfm/";
+import { SimpleMap } from "../../helpers/types";
 import { Logger } from "../../lib/Logger";
 import { GowonContext } from "../../lib/context/Context";
 import { GowonService } from "../../services/GowonService";
 import { LastFMService } from "../../services/LastFM/LastFMService";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
-import { CrownState } from "../../services/dbservices/CrownsService";
+import { PreviousCrownData } from "../../services/dbservices/crowns/CrownCheck";
+import {
+  CrownOptions,
+  CrownState,
+} from "../../services/dbservices/crowns/CrownsService.types";
 import { CrownsQueries } from "../queries";
+import { ArtistRedirect } from "./ArtistRedirect";
 import { User } from "./User";
 import { CrownEvent } from "./meta/CrownEvent";
 
@@ -109,7 +115,41 @@ export class Crown extends BaseEntity {
     return this;
   }
 
+  public async undelete(options: CrownOptions): Promise<Crown> {
+    this.user = options.senderDBUser;
+    this.plays = options.plays;
+    this.lastStolen = new Date();
+    this.deletedAt = null;
+
+    return await this.save();
+  }
+
+  public asPreviousCrownData(): PreviousCrownData {
+    return {
+      plays: this.plays,
+      ownerDiscordID: this.user.discordID,
+    };
+  }
+
   // static methods
+  public static async createNew(
+    ctx: GowonContext,
+    options: CrownOptions,
+    redirect: ArtistRedirect
+  ): Promise<Crown> {
+    const newCrown = Crown.create({
+      artistName: options.artistName,
+      plays: options.plays,
+      user: options.senderDBUser,
+      serverID: ctx.requiredGuild.id,
+      version: 0,
+      lastStolen: new Date(),
+      redirectedFrom: redirect,
+    } as SimpleMap);
+
+    return await newCrown.save();
+  }
+
   static async getCrown(
     serverID: string,
     artistName: string

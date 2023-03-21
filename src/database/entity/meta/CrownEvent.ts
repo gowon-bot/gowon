@@ -1,15 +1,15 @@
 import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
   BaseEntity,
+  Column,
   CreateDateColumn,
+  Entity,
   ManyToOne,
+  PrimaryGeneratedColumn,
 } from "typeorm";
 import {
   CrownEventString,
   SnatchedEventString,
-} from "../../../services/dbservices/CrownsHistoryService";
+} from "../../../services/dbservices/crowns/CrownsHistoryService";
 import { Crown } from "../Crown";
 
 export interface SimpleCrown {

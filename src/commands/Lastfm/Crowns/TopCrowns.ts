@@ -33,7 +33,7 @@ export class TopCrowns extends CrownsChildCommand {
         displayNumberedList(
           await asyncMap(
             crowns,
-            async (c, idx) =>
+            async (c) =>
               `${c.artistName} (${bold(
                 displayNumber(c.plays)
               )}, ${await this.fetchUsername(c.user.discordID)})`

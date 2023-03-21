@@ -1,8 +1,8 @@
-import { CrownsService } from "../../../services/dbservices/CrownsService";
-import { LineConsolidator } from "../../../lib/LineConsolidator";
-import { NowPlayingBaseCommand } from "./NowPlayingBaseCommand";
 import { promiseAllSettled } from "../../../helpers";
+import { LineConsolidator } from "../../../lib/LineConsolidator";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
+import { CrownsService } from "../../../services/dbservices/crowns/CrownsService";
+import { NowPlayingBaseCommand } from "./NowPlayingBaseCommand";
 
 export default class NowPlayingAlbum extends NowPlayingBaseCommand {
   idSeed = "fx amber";
