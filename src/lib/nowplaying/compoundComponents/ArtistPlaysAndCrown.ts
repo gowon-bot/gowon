@@ -46,7 +46,7 @@ export class ArtistPlaysAndCrownComponent extends BaseCompoundComponent<
     return !artistExists
       ? { string: artistPlaysString, size: 1 }
       : isCrownHolder
-      ? { string: "👑" + artistPlaysString, size: 1 }
+      ? { string: "👑 " + artistPlaysString, size: 1 }
       : [
           { string: `${artistPlaysString}`, size: 1 },
           {
