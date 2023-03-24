@@ -57,8 +57,6 @@ export class Check extends CrownsChildCommand<typeof args> {
 
     await this.send(embed);
 
-    console.log(crownCheck.shouldRecordHistory());
-
     if (crownCheck.shouldRecordHistory()) {
       this.crownsService.scribe.handleCheck(this.ctx, crownCheck);
     }
