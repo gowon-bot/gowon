@@ -129,9 +129,14 @@ export class Fail extends CrownCheck {
   protected buildEmbed(ctx: GowonContext, embed: MessageEmbed): MessageEmbed {
     const difference = this.options.crown.plays - this.options.plays;
 
+    const crownEmoji =
+      this.options.plays > this.options.previousCrown.plays
+        ? Emoji.baited
+        : "👑";
+
     return embed.setDescription(
       `
-:crown: → ${mentionGuildMember(
+${crownEmoji} → ${mentionGuildMember(
         this.options.crown.user.discordID
       )} - ${displayNumber(this.options.crown.plays, "play")}
 
