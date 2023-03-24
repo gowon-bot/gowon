@@ -1,5 +1,5 @@
-import { CrownsChildCommand } from "./CrownsChildCommand";
 import { ConfirmationEmbed } from "../../../lib/views/embeds/ConfirmationEmbed";
+import { CrownsChildCommand } from "./CrownsChildCommand";
 
 export class OptIn extends CrownsChildCommand {
   idSeed = "wjsn yeoreum";

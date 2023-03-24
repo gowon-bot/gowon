@@ -1,17 +1,17 @@
-import { CrownsChildCommand } from "./CrownsChildCommand";
-import { ServiceRegistry } from "../../../services/ServicesRegistry";
+import { italic } from "../../../helpers/discord";
+import { StringArrayArgument } from "../../../lib/context/arguments/argumentTypes/StringArrayArgument";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
-import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingEmbed";
 import {
   displayNumber,
   displayNumberedList,
 } from "../../../lib/views/displays";
-import { StringArrayArgument } from "../../../lib/context/arguments/argumentTypes/StringArrayArgument";
-import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
-import { italic } from "../../../helpers/discord";
+import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingEmbed";
+import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { LilacArtistsService } from "../../../services/lilac/LilacArtistsService";
-import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { CrownsChildCommand } from "./CrownsChildCommand";
 
 const args = {
   ...standardMentions,
@@ -40,13 +40,15 @@ export class Tag extends CrownsChildCommand<typeof args> {
   };
 
   async run() {
-    const genres = this.parsedArguments.genres;
+    const { perspective, dbUser } = await this.getMentions({
+      dbUserRequired: true,
+    });
 
-    const { perspective, dbUser } = await this.getMentions();
+    const genres = this.parsedArguments.genres;
 
     const crowns = await this.crownsService.listTopCrowns(
       this.ctx,
-      dbUser.discordID,
+      dbUser.id,
       -1
     );
 
@@ -62,7 +64,8 @@ export class Tag extends CrownsChildCommand<typeof args> {
 
     const description =
       italic(
-        `${perspective.upper.possessive
+        `${
+          perspective.upper.possessive
         } top crowns for the following genres: ${genres.join(", ")}`
       ) + "\n\n";
 

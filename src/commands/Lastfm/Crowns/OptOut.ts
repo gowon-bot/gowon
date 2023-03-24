@@ -1,7 +1,7 @@
-import { CrownsChildCommand } from "./CrownsChildCommand";
+import { bold } from "../../../helpers/discord";
 import { displayNumber } from "../../../lib/views/displays";
 import { ConfirmationEmbed } from "../../../lib/views/embeds/ConfirmationEmbed";
-import { bold } from "../../../helpers/discord";
+import { CrownsChildCommand } from "./CrownsChildCommand";
 
 export class OptOut extends CrownsChildCommand {
   idSeed = "wjsn seola";
@@ -13,6 +13,8 @@ export class OptOut extends CrownsChildCommand {
   slashCommand = true;
 
   async run() {
+    const { dbUser } = await this.getMentions({ dbUserRequired: true });
+
     const embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor("Crown opt-out"))
       .setDescription(
@@ -24,6 +26,7 @@ export class OptOut extends CrownsChildCommand {
     if (await confirmationEmbed.awaitConfirmation(this.ctx)) {
       await this.crownsService.scribe.optOut(
         this.ctx,
+        dbUser,
         this.ctx.payload.member!
       );
 

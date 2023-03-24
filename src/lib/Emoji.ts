@@ -39,8 +39,11 @@ export const Emoji = {
   404: "<:404:869383534429737031>",
   gowonScrobbled: "<:gowonScrobbled:944727673022849154>",
   fip: "<:fip:959302552443314227>",
+
+  // Crowns
   yoink: "<:yoink:878053740941287434>",
   yoimk: "<:yoimk:1081458841960591430>",
+  baited: "<:baited:1088895477300334644>",
 
   // Uses indexed data
   usesIndexedDataDescription: "<:uses_indexed_data:1056207690474467359> ",

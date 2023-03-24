@@ -1,15 +1,13 @@
 import { asyncMap } from "../../../helpers";
 import { code } from "../../../helpers/discord";
-import { toInt } from "../../../helpers/lastfm/";
+import { SimpleMap } from "../../../helpers/types";
 import { StringArrayArgument } from "../../../lib/context/arguments/argumentTypes/StringArrayArgument";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { CrownsChildCommand } from "./CrownsChildCommand";
 
-interface CheckedCrownsDisplay {
-  [state: string]: Array<string>;
-}
+type CheckedCrownsDisplay = SimpleMap<string[]>;
 
 const args = {
   artists: new StringArrayArgument({
@@ -32,15 +30,13 @@ export class CheckMany extends CrownsChildCommand<typeof args> {
   };
 
   async run() {
-    let artists = this.parsedArguments.artists;
+    const { requestable, senderUser } = await this.getMentions({
+      dbUserRequired: true,
+    });
 
-    const { requestable } = await this.getMentions();
-
-    if (!artists) {
-      artists = [
-        (await this.lastFMService.nowPlaying(this.ctx, requestable)).artist,
-      ];
-    }
+    const artists = this.parsedArguments.artists || [
+      (await this.lastFMService.nowPlaying(this.ctx, requestable)).artist,
+    ];
 
     const artistDetailsList = await asyncMap(artists, (artist) =>
       this.lastFMService.artistInfo(this.ctx, {
@@ -50,20 +46,23 @@ export class CheckMany extends CrownsChildCommand<typeof args> {
     );
 
     const checkedCrowns = await asyncMap(artistDetailsList, (ad) =>
-      this.crownsService.checkCrown(this.ctx, {
+      this.crownsService.check(this.ctx, {
         artistName: ad.name,
-        plays: toInt(ad.userPlaycount),
+        plays: ad.userPlaycount,
+        senderDBUser: senderUser!,
       })
     );
 
-    checkedCrowns.forEach((cc) =>
-      this.crownsService.scribe.handleCheck(this.ctx, cc)
-    );
+    checkedCrowns.forEach((cc) => {
+      if (cc.shouldRecordHistory()) {
+        this.crownsService.scribe.handleCheck(this.ctx, cc);
+      }
+    });
 
     const display = checkedCrowns.reduce((acc, cc, idx) => {
-      acc[cc.state] = acc[cc.state] ?? [];
+      acc[cc.displayName] ??= [];
 
-      acc[cc.state].push(artistDetailsList[idx].name);
+      acc[cc.displayName].push(artistDetailsList[idx].name);
 
       return acc;
     }, {} as CheckedCrownsDisplay);

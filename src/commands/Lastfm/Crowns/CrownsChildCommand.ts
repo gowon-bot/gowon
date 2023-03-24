@@ -1,7 +1,7 @@
-import { LastFMBaseChildCommand } from "../LastFMBaseCommand";
-import { CrownsService } from "../../../services/dbservices/CrownsService";
-import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { ServiceRegistry } from "../../../services/ServicesRegistry";
+import { CrownsService } from "../../../services/dbservices/crowns/CrownsService";
+import { LastFMBaseChildCommand } from "../LastFMBaseCommand";
 
 export abstract class CrownsChildCommand<
   T extends ArgumentsMap = {}

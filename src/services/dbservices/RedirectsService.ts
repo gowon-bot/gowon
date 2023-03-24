@@ -45,7 +45,7 @@ export class RedirectsService extends BaseService {
   async getRedirect(
     ctx: GowonContext,
     artistName: string
-  ): Promise<ArtistRedirect | undefined> {
+  ): Promise<ArtistRedirect> {
     this.log(ctx, `Fetching redirect for ${artistName}`);
 
     const redirect = await ArtistRedirect.check(artistName);
@@ -79,13 +79,13 @@ export class RedirectsService extends BaseService {
   async getRedirectsForArtistsMap(
     ctx: GowonContext,
     artists: string[]
-  ): Promise<{ [artistName: string]: string | undefined }> {
+  ): Promise<{ [artistName: string]: string }> {
     this.log(
       ctx,
       `Getting redirects for ${displayNumber(artists.length, "artist")}`
     );
 
-    const map: { [artistName: string]: string | undefined } = {};
+    const map: { [artistName: string]: string } = {};
 
     const redirects = await ArtistRedirect.createQueryBuilder("artist_redirect")
       .where("LOWER(artist_redirect.from) IN (:...artists)", {
@@ -111,26 +111,29 @@ export class RedirectsService extends BaseService {
   private async createRedirect(
     ctx: GowonContext,
     artistName: string
-  ): Promise<ArtistRedirect | undefined> {
+  ): Promise<ArtistRedirect> {
     try {
       const lastFMRedirect = await this.lastFMService.getArtistCorrection(ctx, {
         artist: artistName,
       });
 
       if (lastFMRedirect.name.toLowerCase() === artistName.toLowerCase()) {
-        let newRedirect = await this.setRedirect(ctx, lastFMRedirect.name);
+        const newRedirect = await this.setRedirect(ctx, lastFMRedirect.name);
+
         return newRedirect;
       } else {
-        let newRedirect = await this.setRedirect(
+        const newRedirect = await this.setRedirect(
           ctx,
           artistName,
           lastFMRedirect.name
         );
+
         return newRedirect;
       }
     } catch (e: any) {
-      if (e.name === "LastFMError:6") return undefined;
-      else throw e;
+      if (e.name === "LastFMError:6") {
+        return ArtistRedirect.create({ from: artistName });
+      } else throw e;
     }
   }
 }

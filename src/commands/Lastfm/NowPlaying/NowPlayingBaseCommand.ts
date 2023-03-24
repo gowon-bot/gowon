@@ -20,7 +20,7 @@ import {
   RecentTracks,
 } from "../../../services/LastFM/converters/RecentTracks";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
-import { CrownDisplay } from "../../../services/dbservices/CrownsService";
+import { CrownDisplay } from "../../../services/dbservices/crowns/CrownsService.types";
 import { AlbumCoverService } from "../../../services/moderation/AlbumCoverService";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 

@@ -1,10 +1,10 @@
-import { Command } from "../../lib/command/Command";
-import { Stopwatch } from "../../helpers";
 import { Message, MessageEmbed } from "discord.js";
 import { LogicError } from "../../errors/errors";
+import { Stopwatch } from "../../helpers";
+import { Command } from "../../lib/command/Command";
+import { LastFMService } from "../../services/LastFM/LastFMService";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { LilacAPIService } from "../../services/lilac/LilacAPIService";
-import { LastFMService } from "../../services/LastFM/LastFMService";
 
 export default class Status extends Command {
   idSeed = "Fill in a unique idSeed here";

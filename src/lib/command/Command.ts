@@ -398,6 +398,7 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
   }
 
   // Mimics the old Discord.js reply method
+  /** @deprecated Use Command#reply + embed instead */
   async oldReply(message: string): Promise<Message> {
     const content = `<@!${this.author.id}>, ` + message.trimStart();
 

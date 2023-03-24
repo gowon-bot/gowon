@@ -9,26 +9,32 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { toInt } from "../../helpers/lastfm/";
+import { SimpleMap } from "../../helpers/types";
 import { Logger } from "../../lib/Logger";
 import { GowonContext } from "../../lib/context/Context";
 import { GowonService } from "../../services/GowonService";
 import { LastFMService } from "../../services/LastFM/LastFMService";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
-import { CrownState } from "../../services/dbservices/CrownsService";
+import { PreviousCrownData } from "../../services/dbservices/crowns/CrownCheck";
+import {
+  CrownOptions,
+  CrownState,
+} from "../../services/dbservices/crowns/CrownsService.types";
 import { CrownsQueries } from "../queries";
+import { ArtistRedirect } from "./ArtistRedirect";
 import { User } from "./User";
 import { CrownEvent } from "./meta/CrownEvent";
 
 export interface CrownRankResponse {
-  count: string;
-  rank: string;
-  totalCount: string;
-  totalUsers: string;
+  count: number;
+  rank: number;
+  totalCount: number;
+  totalUsers: number;
 }
 
 export interface GuildAroundUser {
-  count: string;
-  rank: string;
+  count: number;
+  rank: number;
   discordID: string;
 }
 
@@ -109,7 +115,41 @@ export class Crown extends BaseEntity {
     return this;
   }
 
+  public async undelete(options: CrownOptions): Promise<Crown> {
+    this.user = options.senderDBUser;
+    this.plays = options.plays;
+    this.lastStolen = new Date();
+    this.deletedAt = null;
+
+    return await this.save();
+  }
+
+  public asPreviousCrownData(): PreviousCrownData {
+    return {
+      plays: this.plays,
+      ownerDiscordID: this.user.discordID,
+    };
+  }
+
   // static methods
+  public static async createNew(
+    ctx: GowonContext,
+    options: CrownOptions,
+    redirect: ArtistRedirect
+  ): Promise<Crown> {
+    const newCrown = Crown.create({
+      artistName: options.artistName,
+      plays: options.plays,
+      user: options.senderDBUser,
+      serverID: ctx.requiredGuild.id,
+      version: 0,
+      lastStolen: new Date(),
+      redirectedFrom: redirect,
+    } as SimpleMap);
+
+    return await newCrown.save();
+  }
+
   static async getCrown(
     serverID: string,
     artistName: string
@@ -119,34 +159,53 @@ export class Crown extends BaseEntity {
 
   static async rank(
     serverID: string,
-    discordID: string,
+    userID: number,
     userIDs?: string[]
   ): Promise<CrownRankResponse> {
-    const user = await User.findOneBy({ discordID });
+    const variables = userIDs
+      ? [serverID, userID, userIDs]
+      : [serverID, userID];
 
-    return (
-      (
-        (await this.query(
-          CrownsQueries.rank(userIDs),
-          userIDs ? [serverID, user?.id!, userIDs] : [serverID, user?.id!]
-        )) as CrownRankResponse[]
-      )[0] || {
-        count: "0",
-        rank: "0",
-        totalCount: "0",
-        totalUsers: "0",
-      }
+    const queryResponse = await this.query(
+      CrownsQueries.rank(userIDs),
+      variables
     );
+
+    if (queryResponse[0]) {
+      const ranking = queryResponse[0];
+
+      return {
+        count: toInt(ranking.count),
+        rank: toInt(ranking.rank),
+        totalCount: toInt(ranking.totalCount),
+        totalUsers: toInt(ranking.totalUsers),
+      };
+    }
+
+    const noRank = {
+      count: 0,
+      rank: 0,
+      totalCount: 0,
+      totalUsers: 0,
+    };
+
+    return noRank;
   }
 
   static async guildAt(serverID: string, rank: number, userIDs?: string[]) {
-    let start = rank < 10 ? 0 : rank - 5;
+    const start = rank < 10 ? 0 : rank - 5;
 
-    let users =
-      ((await this.query(
+    const rawUsers: Array<Record<string, string>> =
+      (await this.query(
         CrownsQueries.guildAt(userIDs),
         userIDs ? [serverID, start, userIDs] : [serverID, start]
-      )) as GuildAroundUser[]) || [];
+      )) || [];
+
+    const users: GuildAroundUser[] = rawUsers.map((u) => ({
+      discordID: u.discordID as string,
+      count: toInt(u.count),
+      rank: toInt(u.rank),
+    }));
 
     return {
       users,
@@ -157,33 +216,29 @@ export class Crown extends BaseEntity {
 
   static async guildAround(
     serverID: string,
-    discordID: string,
+    userID: number,
     userIDs?: string[]
   ): Promise<GuildAtResponse> {
-    let rank = toInt((await this.rank(serverID, discordID, userIDs)).rank);
+    const rank = (await this.rank(serverID, userID, userIDs)).rank;
 
-    return await this.guildAt(serverID, rank, userIDs);
+    return await this.guildAt(serverID, toInt(rank), userIDs);
   }
 
   static async guild(
     serverID: string,
-    limit: number,
     userIDs?: string[]
   ): Promise<RawCrownHolder[]> {
     return (await this.query(
       CrownsQueries.guild(userIDs),
-      userIDs ? [serverID, limit, userIDs] : [serverID, limit]
+      userIDs ? [serverID, userIDs] : [serverID]
     )) as RawCrownHolder[];
   }
 
   static async crownRanks(
     serverID: string,
-    discordID: string
+    userID: number
   ): Promise<CrownRank[]> {
-    return (await this.query(CrownsQueries.crownRanks(), [
-      serverID,
-      discordID,
-    ])) as CrownRank[];
+    return await this.query(CrownsQueries.crownRanks(), [serverID, userID]);
   }
 
   async invalid(ctx: GowonContext): Promise<{

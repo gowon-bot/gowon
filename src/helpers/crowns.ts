@@ -1,4 +1,4 @@
-import { CrownState } from "../services/dbservices/CrownsService";
+import { CrownState } from "../services/dbservices/crowns/CrownsService.types";
 
 export function createInvalidBadge(state?: CrownState): string {
   return state === CrownState.inactivity

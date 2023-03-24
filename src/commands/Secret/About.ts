@@ -12,8 +12,8 @@ import {
 } from "../../lib/views/displays";
 import { LastFMService } from "../../services/LastFM/LastFMService";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
-import { CrownEventString } from "../../services/dbservices/CrownsHistoryService";
 import { RedirectsService } from "../../services/dbservices/RedirectsService";
+import { CrownEventString } from "../../services/dbservices/crowns/CrownsHistoryService";
 
 export default class About extends Command {
   idSeed = "gfriend sinb";

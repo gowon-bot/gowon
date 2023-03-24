@@ -58,6 +58,10 @@ export function code(string: string) {
   return "`" + string + "`";
 }
 
+export function strikethrough(string: string, sanitize = true) {
+  return "~~" + (sanitize ? sanitizeForDiscord(string) : string) + "~~";
+}
+
 export function mentionChannel(channelID: string): string {
   return `<#${channelID}>`;
 }

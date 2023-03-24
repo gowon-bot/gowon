@@ -1,11 +1,9 @@
-import { CrownsChildCommand } from "./CrownsChildCommand";
-import { LogicError } from "../../../errors/errors";
-import { Validation } from "../../../lib/validation/ValidationChecker";
-import { validators } from "../../../lib/validation/validators";
-import { ConfirmationEmbed } from "../../../lib/views/embeds/ConfirmationEmbed";
-import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
+import { CrownDoesntExistError } from "../../../errors/crowns";
 import { bold } from "../../../helpers/discord";
+import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { ConfirmationEmbed } from "../../../lib/views/embeds/ConfirmationEmbed";
+import { CrownsChildCommand } from "./CrownsChildCommand";
 
 const args = {
   ...prefabArguments.requiredArtist,
@@ -21,10 +19,6 @@ export class Kill extends CrownsChildCommand<typeof args> {
 
   arguments = args;
 
-  validation: Validation = {
-    artist: new validators.RequiredValidator({}),
-  };
-
   async run() {
     const artist = this.parsedArguments.artist;
 
@@ -34,11 +28,7 @@ export class Kill extends CrownsChildCommand<typeof args> {
     });
 
     if (!crown) {
-      throw new LogicError(
-        `A crown for ${bold(
-          artist
-        )} doesn't exist! *Make sure the artist exactly matches the artist name on the crown!*`
-      );
+      throw new CrownDoesntExistError(artist, true);
     }
 
     const embed = this.newEmbed()

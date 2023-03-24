@@ -1,11 +1,11 @@
-import { CrownsService } from "../../../services/dbservices/CrownsService";
-import { LineConsolidator } from "../../../lib/LineConsolidator";
-import { NowPlayingBaseCommand } from "./NowPlayingBaseCommand";
 import { promiseAllSettled } from "../../../helpers";
+import { LineConsolidator } from "../../../lib/LineConsolidator";
 import { ComboCalculator } from "../../../lib/calculators/ComboCalculator";
-import { RedirectsService } from "../../../services/dbservices/RedirectsService";
 import { displayNumber } from "../../../lib/views/displays";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
+import { RedirectsService } from "../../../services/dbservices/RedirectsService";
+import { CrownsService } from "../../../services/dbservices/crowns/CrownsService";
+import { NowPlayingBaseCommand } from "./NowPlayingBaseCommand";
 
 export default class NowPlayingCombo extends NowPlayingBaseCommand {
   idSeed = "iz*one wonyoung";

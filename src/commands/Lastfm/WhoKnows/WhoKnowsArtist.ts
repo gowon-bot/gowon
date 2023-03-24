@@ -14,7 +14,7 @@ import {
   displayNumber,
   displayNumberedList,
 } from "../../../lib/views/displays";
-import { CrownsService } from "../../../services/dbservices/CrownsService";
+import { CrownsService } from "../../../services/dbservices/crowns/CrownsService";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { WhoKnowsBaseCommand } from "./LilacWhoKnowsBaseCommand";
 

@@ -1,5 +1,4 @@
 import { Response } from "node-fetch";
-import { bold } from "../helpers/discord";
 import { parseError, parseErrorSix } from "../helpers/error";
 import { Emoji } from "../lib/Emoji";
 import { displayNumber } from "../lib/views/displays";
@@ -116,6 +115,9 @@ export class CommandNotFoundError extends ClientError {
 export class LogicError extends ClientError {
   name = "LogicError";
 
+  /**
+   * @deprecated Use a custom created error class instead of LogicError
+   */
   constructor(msg: string, public footer = "") {
     super(msg);
   }
@@ -189,22 +191,6 @@ export class BadLastFMResponseError extends ClientError {
   }
 }
 
-export class AlreadyBannedError extends ClientError {
-  name = "AlreadyBannedError";
-
-  constructor() {
-    super("that user is already banned!");
-  }
-}
-
-export class NotBannedError extends ClientError {
-  name = "NotBannedError";
-
-  constructor() {
-    super("that user isn't banned!");
-  }
-}
-
 export class CrownBannedError extends ClientError {
   name = "CrownBannedError";
 
@@ -220,30 +206,6 @@ export class FriendNotFoundError extends ClientError {
 
   constructor() {
     super("one of your friends doesn't exist!");
-  }
-}
-
-export class ArtistAlreadyCrownBannedError extends ClientError {
-  name = "ArtistAlreadyCrownBannedError";
-
-  constructor() {
-    super("that artist has already been crown banned!");
-  }
-}
-
-export class ArtistNotCrownBannedError extends ClientError {
-  name = "ArtistNotCrownBannedError";
-
-  constructor() {
-    super("that artist is already not crown banned!");
-  }
-}
-
-export class ArtistCrownBannedError extends ClientError {
-  name = "ArtistCrownBannedError";
-
-  constructor(artist: string) {
-    super(`it is not possible to get the crown for ${bold(artist)}!`);
   }
 }
 

@@ -1,16 +1,20 @@
-import { CrownsChildCommand } from "./CrownsChildCommand";
-import { CommandRedirect } from "../../../lib/command/Command";
-import { GuildAround } from "./GuildAround";
-import { GuildAt } from "./GuildAt";
-import { displayNumber } from "../../../lib/views/displays";
-import { asyncMap } from "../../../helpers";
-import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
-import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
-import { Flag } from "../../../lib/context/arguments/argumentTypes/Flag";
-import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
-import { GuildUserRank } from "./GuildRank";
 import { bold } from "../../../helpers/discord";
+import { CommandRedirect } from "../../../lib/command/Command";
+import { Flag } from "../../../lib/context/arguments/argumentTypes/Flag";
+import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
+import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import {
+  displayNumber,
+  displayNumberedList,
+} from "../../../lib/views/displays";
+import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingEmbed";
+import { CrownHolder } from "../../../services/dbservices/crowns/CrownsService.types";
+import { GuildAt } from "../../Archived/crowns/GuildAt";
+import { GuildUserRank } from "../../Archived/crowns/GuildRank";
+import { CrownsChildCommand } from "./CrownsChildCommand";
+import { GuildAround } from "./GuildAround";
 
 const args = {
   meInput: new StringArgument({ match: ["me"], slashCommandOption: false }),
@@ -62,29 +66,45 @@ export class Guild extends CrownsChildCommand<typeof args> {
     });
 
     const [holders, crownsCount] = await Promise.all([
-      this.crownsService.guildLeaderboard(this.ctx, 20, serverUsers),
+      this.crownsService.guildLeaderboard(this.ctx, serverUsers),
       this.crownsService.countAllInServer(this.ctx, serverUsers),
     ]);
 
     const embed = this.newEmbed()
-      .setTitle(`${this.requiredGuild.name}'s crown leaderboard`)
-      .setDescription(
+      .setAuthor(this.generateEmbedAuthor("Crowns guild"))
+      .setTitle(`${this.requiredGuild.name}'s crown leaderboard`);
+
+    const scrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
+      items: holders,
+      pageSize: 15,
+      pageRenderer: this.renderPage(crownsCount),
+    });
+
+    scrollingEmbed.send();
+  }
+
+  private renderPage(crownsCount: number) {
+    const func = (
+      items: CrownHolder[],
+      pageInfo: { page: number; offset: number }
+    ) => {
+      return (
         `There ${crownsCount === 1 ? "is" : "are"} **${displayNumber(
           crownsCount,
           "** crown"
         )} in ${this.requiredGuild.name}\n\n` +
-        (
-          await asyncMap(
-            holders,
-            async (h, idx) =>
-              `${idx + 1}. ${await this.gowonClient.userDisplay(
-                this.ctx,
-                h.user
-              )} with ${bold(displayNumber(h.numberOfCrowns, "crown"))}`
-          )
-        ).join("\n")
+        displayNumberedList(
+          items.map(
+            (ch) =>
+              `${ch.user.username} with ${bold(
+                displayNumber(ch.numberOfCrowns, "crown")
+              )}`
+          ),
+          pageInfo.offset
+        )
       );
+    };
 
-    await this.send(embed);
+    return func.bind(this);
   }
 }

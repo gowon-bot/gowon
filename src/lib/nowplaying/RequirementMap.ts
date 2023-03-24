@@ -1,14 +1,14 @@
-import { CrownDisplay } from "../../services/dbservices/CrownsService";
+import { AlbumCard } from "../../database/entity/cards/AlbumCard";
+import {
+  ArtistInfo,
+  TrackInfo,
+} from "../../services/LastFM/converters/InfoTypes";
+import { CrownDisplay } from "../../services/dbservices/crowns/CrownsService.types";
 import {
   MirrorballAlbum,
   MirrorballArtist,
   MirrorballRating,
 } from "../../services/mirrorball/MirrorballTypes";
-import {
-  ArtistInfo,
-  TrackInfo,
-} from "../../services/LastFM/converters/InfoTypes";
-import { AlbumCard } from "../../database/entity/cards/AlbumCard";
 
 type ArtistRank = {
   rank: number;

@@ -1,11 +1,11 @@
 import { Guild } from "discord.js";
-import { ShallowCache } from "../../database/cache/ShallowCache";
+import { GowonCache } from "../../database/cache/GowonCache";
 import { ExtractedCommand } from "../../lib/command/extractor/ExtractedCommand";
 import { gowonServiceConstants } from "../../services/GowonService";
 import { BaseMockService } from "./BaseMockService";
 
 export class MockGowonService extends BaseMockService {
-  shallowCache = new ShallowCache();
+  public cache = new GowonCache();
 
   constants = gowonServiceConstants;
 

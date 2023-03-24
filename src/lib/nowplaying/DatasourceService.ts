@@ -2,10 +2,8 @@ import { AlbumCard } from "../../database/entity/cards/AlbumCard";
 import { User } from "../../database/entity/User";
 import { BaseService } from "../../services/BaseService";
 import { CardsService } from "../../services/dbservices/CardsService";
-import {
-  CrownDisplay,
-  CrownsService,
-} from "../../services/dbservices/CrownsService";
+import { CrownsService } from "../../services/dbservices/crowns/CrownsService";
+import { CrownDisplay } from "../../services/dbservices/crowns/CrownsService.types";
 import {
   ArtistInfo,
   TrackInfo,

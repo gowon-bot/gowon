@@ -1,9 +1,11 @@
-import { CrownsChildCommand } from "./CrownsChildCommand";
 import { DiscordRoleArgument } from "../../../lib/context/arguments/argumentTypes/discord/DiscordRoleArgument";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { CrownsChildCommand } from "./CrownsChildCommand";
 
 const args = {
-  purgatoryRole: new DiscordRoleArgument(),
+  purgatoryRole: new DiscordRoleArgument({
+    description: "The role to set as in purgatory",
+  }),
 } satisfies ArgumentsMap;
 
 export class SetPurgatoryRole extends CrownsChildCommand<typeof args> {

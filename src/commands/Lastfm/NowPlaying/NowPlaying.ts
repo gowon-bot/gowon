@@ -6,7 +6,7 @@ import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { LineConsolidator } from "../../../lib/LineConsolidator";
 import { SettingsService } from "../../../lib/settings/SettingsService";
 import { FMMode } from "../../../lib/settings/SettingValues";
-import { CrownsService } from "../../../services/dbservices/CrownsService";
+import { CrownsService } from "../../../services/dbservices/crowns/CrownsService";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import NowPlayingAlbum from "./NowPlayingAlbum";
 import { nowPlayingArgs, NowPlayingBaseCommand } from "./NowPlayingBaseCommand";

@@ -6,19 +6,19 @@ import { LogicError } from "../../errors/errors";
 import { ago } from "../../helpers";
 import { toInt } from "../../helpers/lastfm/";
 import { calculatePercent } from "../../helpers/stats";
-import { CrownsService } from "../../services/dbservices/CrownsService";
+import { Requestable } from "../../services/LastFM/LastFMAPIService";
+import { LastFMService } from "../../services/LastFM/LastFMService";
+import { LastFMPeriod } from "../../services/LastFM/LastFMService.types";
 import { UserInfo } from "../../services/LastFM/converters/InfoTypes";
 import {
   TopAlbums,
   TopArtists,
   TopTracks,
 } from "../../services/LastFM/converters/TopTypes";
-import { Requestable } from "../../services/LastFM/LastFMAPIService";
-import { LastFMService } from "../../services/LastFM/LastFMService";
-import { LastFMPeriod } from "../../services/LastFM/LastFMService.types";
+import { ServiceRegistry } from "../../services/ServicesRegistry";
+import { CrownsService } from "../../services/dbservices/crowns/CrownsService";
 import { MirrorballService } from "../../services/mirrorball/MirrorballService";
 import { MirrorballPageInfo } from "../../services/mirrorball/MirrorballTypes";
-import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { GowonContext } from "../context/Context";
 import { TimeRange } from "../timeAndDate/TimeRange";
 import { displayDate, displayNumber } from "../views/displays";
@@ -54,12 +54,13 @@ export class OverviewStatsCalculator {
   constructor(
     private ctx: GowonContext,
     private requestable: Requestable,
-    private userID: string | undefined,
+    private discordID: string | undefined,
+    private userID: number,
     private timePeriod: LastFMPeriod | undefined
   ) {}
 
   async hasCrownStats(): Promise<boolean> {
-    return !!this.userID && !!(await this.crownsCount());
+    return !!this.userID && !!this.discordID && !!(await this.crownsCount());
   }
 
   async cacheAll(): Promise<void> {
@@ -132,7 +133,7 @@ export class OverviewStatsCalculator {
   }
 
   async crownsCount(): Promise<number | undefined> {
-    if (!this.userID) return undefined;
+    if (!this.discordID) return undefined;
     if (!this.cache.crownsCount)
       this.cache.crownsCount = toInt((await this.crownsRank())?.count);
 
@@ -140,7 +141,7 @@ export class OverviewStatsCalculator {
   }
 
   async crownsRank(): Promise<CrownRankResponse | undefined> {
-    if (!this.userID) return undefined;
+    if (!this.discordID) return undefined;
     if (!this.cache.crownsRank)
       this.cache.crownsRank = await this.crownsService.getRank(
         this.ctx,
@@ -395,7 +396,7 @@ export class OverviewStatsCalculator {
   }
 
   async artistsPerCrown(): Promise<Stat | undefined> {
-    if (!this.userID) return undefined;
+    if (!this.discordID) return undefined;
     const [crownsCount, playsOver] = await Promise.all([
       this.crownsCount(),
       this.playsOver(30),
@@ -408,7 +409,7 @@ export class OverviewStatsCalculator {
   }
 
   async scrobblesPerCrown(): Promise<Stat | undefined> {
-    if (!this.userID) return undefined;
+    if (!this.discordID) return undefined;
     const [crownsCount, scrobbleCount] = await Promise.all([
       this.crownsCount(),
       this.scrobbleCount(),

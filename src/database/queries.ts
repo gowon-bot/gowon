@@ -71,10 +71,9 @@ export const CrownsQueries = {
       ON u.id = "userId"
     WHERE c."serverID" = $1
       AND c."deletedAt" IS NULL
-      ${userIDs ? 'AND "discordID" = ANY ($3)' : ""}
+      ${userIDs ? 'AND "discordID" = ANY ($2)' : ""}
     GROUP BY "userId", "discordID"
     ORDER BY count DESC
-    LIMIT $2
     ` as const;
   },
 
@@ -93,7 +92,7 @@ export const CrownsQueries = {
       WHERE crowns."serverID" = $1
         AND crowns."deletedAt" IS NULL
     ) crowns
-    WHERE "userId" in (SELECT id FROM users WHERE "discordID" = $2) 
+    WHERE "userId" = $2
     ORDER BY rank ASC
     LIMIT 15
       ` as const;
