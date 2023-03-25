@@ -1,11 +1,11 @@
 import { CommandInteraction, Message } from "discord.js";
 import { SimpleMap } from "../../helpers/types";
-import { ArgumentsMap } from "../../lib/context/arguments/types";
 import { GowonContext } from "../../lib/context/Context";
-import { BaseService } from "../BaseService";
 import { isStringCleaning } from "../../lib/context/arguments/argumentTypes/BaseArgument";
 import { isFlag } from "../../lib/context/arguments/argumentTypes/Flag";
 import { debugFlag } from "../../lib/context/arguments/prefabArguments";
+import { ArgumentsMap } from "../../lib/context/arguments/types";
+import { BaseService } from "../BaseService";
 
 export class ArgumentParsingService extends BaseService {
   parseContext(context: GowonContext, args: ArgumentsMap): any {
@@ -140,7 +140,11 @@ export class ArgumentParsingService extends BaseService {
     return Object.entries(args)
       .filter(([_, value]) => isFlag(value))
       .reduce((acc, [name, value]) => {
-        acc[name] = value.parseFromMessage(message, message.content, context) as boolean;
+        acc[name] = value.parseFromMessage(
+          message,
+          message.content,
+          context
+        ) as boolean;
 
         return acc;
       }, {} as SimpleMap<boolean>);

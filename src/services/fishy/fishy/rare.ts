@@ -30,7 +30,7 @@ export const rareFishies = [
   }),
   new Fishy({
     id: "yellow-boxfish",
-    name: "Yellow Bofish",
+    name: "Yellow Boxfish",
     binomialName: "Ostracion cubicum",
     rarity: FishyRarities.Rare,
     description:

@@ -2,9 +2,9 @@ const extractionRegex = /<a?:\w+:([0-9]+)>/i;
 const nameExtractionRegex = /<a?(:\w+:)[0-9]+>/i;
 
 export function extractEmojiID(emoji: string): string {
-  const id = emoji.match(extractionRegex);
+  const id = extractionRegex.exec(emoji);
 
-  return (id as RegExpMatchArray)[1];
+  return (id as RegExpMatchArray)?.[1] ?? "";
 }
 
 export function extractEmojiName(emoji: string): string {

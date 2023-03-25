@@ -34,7 +34,6 @@ export class FishyProfile extends BaseEntity {
   createdAt!: Date;
 
   public canFish(): boolean {
-    return true;
     return (
       !this.lastFished ||
       new Date() > add(this.lastFished, constants.fishyCooldown)

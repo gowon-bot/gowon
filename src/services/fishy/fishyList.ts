@@ -1,3 +1,4 @@
+import { extractEmojiID } from "../../lib/emoji/Emoji";
 import { Fishy, FishyRarities, FishyRarityData } from "./Fishy";
 import { commonFishies } from "./fishy/common";
 import { rareFishies } from "./fishy/rare";
@@ -35,12 +36,23 @@ export function getFishyList(rarity: FishyRarityData): Fishy[] {
   }
 }
 
-export function findFishy(name: string | { byID: string }): Fishy | undefined {
+export function findFishy(
+  name: string | { byID: string } | { byEmoji: string }
+): Fishy | undefined {
   const equalize = (str: string) => str.toLowerCase().replace(/[\s-_]+/, "");
 
-  return fishyList.find((f) =>
-    typeof name === "string"
+  return fishyList.find((f) => {
+    return typeof name === "string"
       ? equalize(f.name) === equalize(name)
-      : f.id === name.byID
-  );
+      : isByEmoji(name)
+      ? extractEmojiID(f.emoji) === extractEmojiID(name.byEmoji) ||
+        extractEmojiID(f.emojiInWater) === extractEmojiID(name.byEmoji)
+      : f.id === name.byID;
+  });
+}
+
+function isByEmoji(
+  name: Record<string, string | string>
+): name is { byEmoji: string } {
+  return typeof (name as any)?.byEmoji === "string";
 }

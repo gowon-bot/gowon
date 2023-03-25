@@ -33,7 +33,7 @@ export const uncommonFishy = [
     name: "Blue Tang",
     binomialName: "Paracanthurus hepatus",
     rarity: FishyRarities.Uncommon,
-    emoji: FishyEmojiList.blueBetta,
+    emoji: FishyEmojiList.blueTang,
     description:
       "Blue tangs are capable of adjusting the intensity of their hue from light blue to deep purple.",
     weight: {

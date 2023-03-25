@@ -2,7 +2,9 @@ import { FishyNotFoundError } from "../../errors/fishy";
 import { bold, italic } from "../../helpers/discord";
 import { emDash, quote } from "../../helpers/specialCharacters";
 import { StringArgument } from "../../lib/context/arguments/argumentTypes/StringArgument";
+import { EmojisArgument } from "../../lib/context/arguments/argumentTypes/discord/EmojisArgument";
 import { ArgumentsMap } from "../../lib/context/arguments/types";
+import { validators } from "../../lib/validation/validators";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { FishyService } from "../../services/fishy/FishyService";
 import { findFishy } from "../../services/fishy/fishyList";
@@ -10,9 +12,12 @@ import { FishyChildCommand } from "./FishyChildCommand";
 
 const args = {
   fishy: new StringArgument({
-    index: { start: 0 },
+    index: 0,
     description: "The fishy name to learn about",
-    required: true,
+  }),
+  fishyEmoji: new EmojisArgument({
+    index: { start: 0 },
+    description: "The fishy emoji to learn about",
   }),
 } satisfies ArgumentsMap;
 
@@ -24,14 +29,25 @@ export class Wiki extends FishyChildCommand<typeof args> {
 
   arguments = args;
 
+  validation = {
+    fishy: {
+      validator: new validators.RequiredOrValidator({}),
+      dependsOn: ["fishyEmoji"],
+      friendlyName: "fishy name or emoji ",
+    },
+  };
+
   fishyService = ServiceRegistry.get(FishyService);
 
   async run() {
     const fishyName = this.parsedArguments.fishy;
+    const fishyEmoji = this.parsedArguments.fishyEmoji;
 
-    const fishy = findFishy(fishyName);
+    const fishy = fishyEmoji
+      ? findFishy({ byEmoji: fishyEmoji[0].raw })
+      : findFishy(fishyName!);
 
-    if (!fishy) throw new FishyNotFoundError(fishyName);
+    if (!fishy) throw new FishyNotFoundError(fishyEmoji?.[0] || fishyName);
 
     let embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor("Fishy wiki"))

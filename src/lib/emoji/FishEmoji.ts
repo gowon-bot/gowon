@@ -22,8 +22,8 @@ export const FishyEmojiList = {
     "<:TriplewartSeadevilWater:1089147475383816263>"
   ),
   yellowBoxfish: new FishyEmoji(
-    "<:YellowBoxfish:1089146037609975899>",
-    "<:YellowBoxfishWater:1089147450394161213>"
+    "<:YellowBoxfish:1089154904100188232>",
+    "<:YellowBoxfishWater:1089154907027820545>"
   ),
   clownfish: new FishyEmoji(
     "<:Clownfish:1089146029556895774>",

@@ -2,15 +2,18 @@ import { Chance } from "chance";
 import { FishyProfile } from "../database/entity/fishy/FishyProfile";
 import { bold, code } from "../helpers/discord";
 import { emDash, quote } from "../helpers/specialCharacters";
+import { EmojiMention } from "../lib/context/arguments/parsers/EmojiParser";
 import { ClientError } from "./errors";
 
 export class FishyNotFoundError extends ClientError {
   name = "FishyNotFoundError";
 
-  constructor(name?: string) {
+  constructor(name?: string | EmojiMention) {
     super(
       `Couldn't find a fishy with ${
-        name ? `the name ${code(name)}` : "that name"
+        typeof name === "string"
+          ? `the name ${code(name)}`
+          : `the emoji ${name?.raw}`
       }!`
     );
   }
