@@ -7,8 +7,8 @@ import {
   mentionGuildMember,
   strikethrough,
 } from "../../../helpers/discord";
-import { Emoji } from "../../../lib/Emoji";
 import { GowonContext } from "../../../lib/context/Context";
+import { Emoji } from "../../../lib/emoji/Emoji";
 import { displayNumber } from "../../../lib/views/displays";
 import { CrownOptions, CrownState } from "./CrownsService.types";
 

@@ -7,15 +7,15 @@ import {
   emDash,
   extraWideSpace,
 } from "../../../helpers/specialCharacters";
+import { LineConsolidator } from "../../../lib/LineConsolidator";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
-import { Emoji } from "../../../lib/Emoji";
-import { LineConsolidator } from "../../../lib/LineConsolidator";
+import { Emoji } from "../../../lib/emoji/Emoji";
 import { displayLink, displayNumber } from "../../../lib/views/displays";
-import { LilacArtistsService } from "../../../services/lilac/LilacArtistsService";
-import { LilacTagsService } from "../../../services/lilac/LilacTagsService";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { WordBlacklistService } from "../../../services/WordBlacklistService";
+import { LilacArtistsService } from "../../../services/lilac/LilacArtistsService";
+import { LilacTagsService } from "../../../services/lilac/LilacTagsService";
 import { InfoCommand } from "./InfoCommand";
 
 const args = {

@@ -1,5 +1,5 @@
 import emojiRegexFunction from "emoji-regex";
-import { extractEmojiID } from "../../../Emoji";
+import { extractEmojiID } from "../../../emoji/Emoji";
 
 export interface EmojiMention {
   raw: string;

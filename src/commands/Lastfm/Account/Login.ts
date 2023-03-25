@@ -1,11 +1,11 @@
 import { Message, MessageEmbed } from "discord.js";
 import { User } from "../../../database/entity/User";
-import { sleep, Stopwatch } from "../../../helpers";
+import { Stopwatch, sleep } from "../../../helpers";
 import { ReactionCollectorFilter } from "../../../helpers/discord";
 import { LastfmLinks } from "../../../helpers/lastfm/LastfmLinks";
-import { Payload } from "../../../lib/context/Payload";
-import { EmojiRaw } from "../../../lib/Emoji";
 import { LilacBaseCommand } from "../../../lib/Lilac/LilacBaseCommand";
+import { Payload } from "../../../lib/context/Payload";
+import { EmojiRaw } from "../../../lib/emoji/Emoji";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { displayLink, displayProgressBar } from "../../../lib/views/displays";
 import { ConfirmationEmbed } from "../../../lib/views/embeds/ConfirmationEmbed";

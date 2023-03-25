@@ -3,7 +3,7 @@ import { convertLilacDate } from "../../../../helpers/lilac";
 import { standardMentions } from "../../../../lib/context/arguments/mentionTypes/mentions";
 import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";
 import { ArgumentsMap } from "../../../../lib/context/arguments/types";
-import { Emoji } from "../../../../lib/Emoji";
+import { Emoji } from "../../../../lib/emoji/Emoji";
 import { LilacBaseCommand } from "../../../../lib/Lilac/LilacBaseCommand";
 import { PaginatedLilacScrobbleCache } from "../../../../lib/paginators/PaginatedScrobbleCache";
 import { displayDateTime } from "../../../../lib/views/displays";

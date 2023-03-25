@@ -1,7 +1,6 @@
 import { MirrorballError } from "../../../../errors/errors";
 import { bold } from "../../../../helpers/discord";
 import { convertMirrorballDate } from "../../../../helpers/mirrorball";
-import { Emoji } from "../../../../lib/Emoji";
 import { Variation } from "../../../../lib/command/Command";
 import { standardMentions } from "../../../../lib/context/arguments/mentionTypes/mentions";
 import {
@@ -9,6 +8,7 @@ import {
   prefabFlags,
 } from "../../../../lib/context/arguments/prefabArguments";
 import { ArgumentsMap } from "../../../../lib/context/arguments/types";
+import { Emoji } from "../../../../lib/emoji/Emoji";
 import { MirrorballBaseCommand } from "../../../../lib/indexing/MirrorballCommands";
 import { displayDate } from "../../../../lib/views/displays";
 import {

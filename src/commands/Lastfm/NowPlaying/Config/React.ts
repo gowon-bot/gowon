@@ -1,17 +1,17 @@
 import { LogicError } from "../../../../errors/errors";
-import { EmojiMention } from "../../../../lib/context/arguments/parsers/EmojiParser";
-import { EmojisArgument } from "../../../../lib/context/arguments/argumentTypes/discord/EmojisArgument";
-import { StringArgument } from "../../../../lib/context/arguments/argumentTypes/StringArgument";
-import { extractEmojiName } from "../../../../lib/Emoji";
+import { extraWideSpace } from "../../../../helpers/specialCharacters";
 import { LineConsolidator } from "../../../../lib/LineConsolidator";
+import { Flag } from "../../../../lib/context/arguments/argumentTypes/Flag";
+import { StringArgument } from "../../../../lib/context/arguments/argumentTypes/StringArgument";
+import { EmojisArgument } from "../../../../lib/context/arguments/argumentTypes/discord/EmojisArgument";
+import { EmojiMention } from "../../../../lib/context/arguments/parsers/EmojiParser";
+import { ArgumentsMap } from "../../../../lib/context/arguments/types";
+import { extractEmojiName } from "../../../../lib/emoji/Emoji";
 import { SettingsService } from "../../../../lib/settings/SettingsService";
 import { ConfirmationEmbed } from "../../../../lib/views/embeds/ConfirmationEmbed";
 import { EmojiService } from "../../../../services/Discord/EmojiService";
 import { ServiceRegistry } from "../../../../services/ServicesRegistry";
 import { NowPlayingConfigChildCommand } from "./NowPlayingConfigChildCommand";
-import { Flag } from "../../../../lib/context/arguments/argumentTypes/Flag";
-import { extraWideSpace } from "../../../../helpers/specialCharacters";
-import { ArgumentsMap } from "../../../../lib/context/arguments/types";
 
 const args = {
   clearInput: new StringArgument({
@@ -64,11 +64,11 @@ export class React extends NowPlayingConfigChildCommand<typeof args> {
         .setAuthor(this.generateEmbedAuthor("Reacts"))
         .setDescription(
           `Choose which reactions Gowon should react with when you \`${this.prefix}fm\`.\nSet them with \`${this.prefix}reacts emoji1 emoji2 ...emoji5\` and use \`${this.prefix}reacts clear\` to clear them!` +
-          (reactions.length
-            ? `\n\n**You have the following reactions set**:\n${reactions
-              .map((r) => this.gowonClient.displayEmoji(r))
-              .join(extraWideSpace)}`
-            : "")
+            (reactions.length
+              ? `\n\n**You have the following reactions set**:\n${reactions
+                  .map((r) => this.gowonClient.displayEmoji(r))
+                  .join(extraWideSpace)}`
+              : "")
         );
 
       await this.send(embed);

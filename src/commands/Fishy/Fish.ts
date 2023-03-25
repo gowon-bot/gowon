@@ -27,10 +27,11 @@ export class Fish extends FishyChildCommand<typeof args> {
       await this.getMentions({
         dbUserRequired: true,
         fetchFishyProfile: true,
+        autoCreateFishyProfile: true,
       });
 
-    if (!senderFishyProfile.canFish()) {
-      throw new CantFishYetError(senderFishyProfile);
+    if (!senderFishyProfile?.canFish()) {
+      throw new CantFishYetError(senderFishyProfile!);
     }
 
     const fishyResult = this.fishyService.fish();

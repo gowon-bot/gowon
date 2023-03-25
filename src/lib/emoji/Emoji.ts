@@ -72,7 +72,6 @@ export const Emoji = {
   // Fish
   robofish: "<:robofish:1062224397588512902>",
   flushedFish: "<:flushed_fish:1062224790317973724>",
-  blueBetta: "<:blueBetta:1086223470725173300>",
 } satisfies Record<string, string>;
 
 export const EmojiRaw = Object.entries(Emoji).reduce(

@@ -2,7 +2,7 @@ import { LastfmLinks } from "../../../helpers/lastfm/LastfmLinks";
 import { Command } from "../../../lib/command/Command";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
-import { Emoji } from "../../../lib/Emoji";
+import { Emoji } from "../../../lib/emoji/Emoji";
 import { displayLink } from "../../../lib/views/displays";
 import { MirrorballPrivacy } from "../../../services/mirrorball/MirrorballTypes";
 import { PrivateUserDisplay } from "../../../services/mirrorball/services/MirrorballUsersService";

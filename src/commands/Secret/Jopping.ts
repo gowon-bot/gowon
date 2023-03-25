@@ -1,5 +1,5 @@
 import { Command } from "../../lib/command/Command";
-import { Emoji } from "../../lib/Emoji";
+import { Emoji } from "../../lib/emoji/Emoji";
 
 export default class Jopping extends Command {
   idSeed = "blackpink jisoo";

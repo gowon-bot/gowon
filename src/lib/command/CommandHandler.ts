@@ -14,11 +14,11 @@ import {
 import { GowonService } from "../../services/GowonService";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { MetaService } from "../../services/dbservices/MetaService";
-import { Emoji } from "../Emoji";
 import { GowonClient } from "../GowonClient";
 import { HeaderlessLogger, Logger } from "../Logger";
 import { GowonContext } from "../context/Context";
 import { Payload } from "../context/Payload";
+import { Emoji } from "../emoji/Emoji";
 import { PermissionsService } from "../permissions/PermissionsService";
 import { Command } from "./Command";
 import { CommandRegistry } from "./CommandRegistry";

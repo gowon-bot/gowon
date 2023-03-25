@@ -1,5 +1,6 @@
 import { Chance } from "chance";
 import { HexColorString } from "discord.js";
+import { FishyEmoji } from "../../lib/emoji/FishEmoji";
 
 export class Fishy {
   constructor(private options: FishyOptions) {}
@@ -25,7 +26,11 @@ export class Fishy {
   }
 
   get emoji(): string {
-    return this.options.emoji || "🐟";
+    return this.options.emoji.raw;
+  }
+
+  get emojiInWater(): string {
+    return this.options.emoji.inWater;
   }
 
   get description(): string {
@@ -58,12 +63,12 @@ export const FishyRarities = {
   Trash: new FishyRarityData("Trash", 10, "#929394"),
   // Green
   Common: new FishyRarityData("Common", 44, "#8bc34a"),
-  // // Blue
-  // Uncommon: new FishyRarityData("Uncommon", 29, "#4a8bc3"),
+  // Blue
+  Uncommon: new FishyRarityData("Uncommon", 29, "#4a8bc3"),
   // Purple
   Rare: new FishyRarityData("Rare", 10, "#be4ac3"),
-  // // Pink
-  // SuperRare: new FishyRarityData("Super rare", 5.5, "#ffc0cb"),
+  // Pink
+  SuperRare: new FishyRarityData("Super rare", 5.5, "#ffc0cb"),
   // // Yellow
   // Legendary: new FishyRarityData("Legendary", 1.2, "#ffc107"),
   // // Red
@@ -79,5 +84,5 @@ interface FishyOptions {
   rarity: FishyRarity;
   description: string;
   weight: { min: number; max: number };
-  emoji?: string;
+  emoji: FishyEmoji;
 }

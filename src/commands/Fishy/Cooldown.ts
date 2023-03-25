@@ -18,18 +18,20 @@ export class Cooldown extends FishyChildCommand<typeof args> {
   fishyService = ServiceRegistry.get(FishyService);
 
   async run() {
-    const { senderFishyProfile } = await this.getMentions({
+    const { fishyProfile } = await this.getMentions({
       fetchFishyProfile: true,
+      autoCreateFishyProfile: true,
+      fishyProfileRequired: true,
     });
 
     const embed = this.newEmbed().setAuthor(
       this.generateEmbedAuthor("Fishy cooldown")
     );
 
-    if (!senderFishyProfile.canFish()) {
+    if (!fishyProfile.canFish()) {
       await this.send(
         embed.setDescription(
-          `You can fish again in ${bold(senderFishyProfile.getCooldownTime())}.`
+          `You can fish again in ${bold(fishyProfile.getCooldownTime())}.`
         )
       );
     } else {

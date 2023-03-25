@@ -5,9 +5,9 @@ import {
   LogicError,
 } from "../../../../errors/errors";
 import { AlreadyImportingRatingsError } from "../../../../errors/rateYourMusic";
-import { Emoji } from "../../../../lib/Emoji";
 import { StringArgument } from "../../../../lib/context/arguments/argumentTypes/StringArgument";
 import { ArgumentsMap } from "../../../../lib/context/arguments/types";
+import { Emoji } from "../../../../lib/emoji/Emoji";
 import { ConcurrentAction } from "../../../../services/ConcurrencyService";
 import { RateYourMusicIndexingChildCommand } from "./RateYourMusicChildCommand";
 import {

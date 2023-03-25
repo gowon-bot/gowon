@@ -1,7 +1,7 @@
 import { getOrdinal } from "../../../helpers";
 import { bold, italic } from "../../../helpers/discord";
 import { toInt } from "../../../helpers/lastfm/";
-import { Emoji } from "../../../lib/Emoji";
+import { Emoji } from "../../../lib/emoji/Emoji";
 import { Perspective } from "../../../lib/Perspective";
 import { displayNumber } from "../../../lib/views/displays";
 import { OverviewChildCommand } from "./OverviewChildCommand";
