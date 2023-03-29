@@ -1,9 +1,11 @@
 import { AlbumCard } from "../../database/entity/cards/AlbumCard";
+import { FishyProfile } from "../../database/entity/fishy/FishyProfile";
 import { User } from "../../database/entity/User";
 import { BaseService } from "../../services/BaseService";
 import { CardsService } from "../../services/dbservices/CardsService";
 import { CrownsService } from "../../services/dbservices/crowns/CrownsService";
 import { CrownDisplay } from "../../services/dbservices/crowns/CrownsService.types";
+import { FishyService } from "../../services/fishy/FishyService";
 import {
   ArtistInfo,
   TrackInfo,
@@ -60,6 +62,9 @@ export class DatasourceService extends BaseService<DatasourceServiceContext> {
   }
   get cardsService() {
     return ServiceRegistry.get(CardsService);
+  }
+  get fishyService() {
+    return ServiceRegistry.get(FishyService);
   }
 
   private nowPlaying(ctx: DatasourceServiceContext): RecentTrack {
@@ -175,6 +180,15 @@ export class DatasourceService extends BaseService<DatasourceServiceContext> {
     const np = this.nowPlaying(ctx);
 
     return await this.cardsService.getCard(ctx, np.artist, np.album);
+  }
+
+  async fishyProfile(
+    ctx: DatasourceServiceContext
+  ): Promise<FishyProfile | undefined> {
+    return await this.fishyService.getFishyProfile(
+      ctx.constants.resources!.dbUser,
+      false
+    );
   }
 
   albumPlays(ctx: DatasourceServiceContext): QueryPart {

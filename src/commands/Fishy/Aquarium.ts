@@ -30,6 +30,7 @@ export class Aquarium extends FishyChildCommand<typeof args> {
 
   async run() {
     const { fishyProfile } = await this.getMentions({
+      fetchFishyProfile: true,
       fishyProfileRequired: true,
     });
 

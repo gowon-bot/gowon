@@ -6,7 +6,7 @@ export default class Patreon extends Command {
 
   subcategory = "about";
   description = "Displays the link to sign up for Patreon";
-  aliases = ["pat"];
+  aliases = ["pat", "donate"];
 
   async run() {
     const embed = this.newEmbed().setDescription(

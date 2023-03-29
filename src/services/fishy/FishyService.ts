@@ -1,5 +1,5 @@
 import { Chance } from "chance";
-import { IsNull, Not } from "typeorm";
+import { In, IsNull, Not } from "typeorm";
 import { User } from "../../database/entity/User";
 import { FishyCatch } from "../../database/entity/fishy/FishyCatch";
 import { FishyProfile } from "../../database/entity/fishy/FishyProfile";
@@ -7,6 +7,7 @@ import { GowonContext } from "../../lib/context/Context";
 import { BaseService } from "../BaseService";
 import { Fishy, FishyRarities, FishyRarityData } from "./Fishy";
 import { Aquarium, FishyResult } from "./FishyService.types";
+import { trash } from "./fishy/trash";
 import { findFishy, getFishyList } from "./fishyList";
 
 type RarityPool = [FishyRarityData[], number[]];
@@ -136,6 +137,7 @@ export class FishyService extends BaseService {
     return await FishyCatch.createQueryBuilder()
       .where({
         owner: { id: profile.user.id },
+        fishyId: Not(In(trash.map((t) => t.id))),
       })
       .orderBy("RANDOM()")
       .limit(take)
@@ -145,14 +147,14 @@ export class FishyService extends BaseService {
   private async getMostAbundantFish(
     fishyProfile: FishyProfile
   ): Promise<Fishy> {
-    const mostAbundantFishId = await FishyCatch.createQueryBuilder()
-      .select("fishyId")
-      .groupBy("fishyId")
-      .orderBy("fishyId")
+    const result = await FishyCatch.createQueryBuilder()
+      .select('"fishyId"')
+      .groupBy('"fishyId"')
+      .orderBy('"fishyId"')
       .where({ owner: { id: fishyProfile.user.id } })
       .limit(1)
-      .getRawOne<string>();
+      .getRawOne<{ fishyId: string }>();
 
-    return findFishy({ byID: mostAbundantFishId! })!;
+    return findFishy({ byID: result?.fishyId! })!;
   }
 }

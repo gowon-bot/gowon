@@ -15,7 +15,7 @@ export const FishyEmojiList = {
   ),
   smoothHeadBlobfish: new FishyEmoji(
     "<:SmoothheadBlobfish:1089146027665264680>",
-    "<:SmoothheadBlobfishWater:1089145695816138853>"
+    "<:SmoothheadBlobfishWater:1089147444719259728>"
   ),
   tripleWartSeadevil: new FishyEmoji(
     "<:TriplewartSeadevil:1089146085752184853>",

@@ -2,12 +2,12 @@ import { User } from "discord.js";
 import { Crown } from "../../database/entity/Crown";
 import { User as DBUser } from "../../database/entity/User";
 import { ParsedTrack } from "../../helpers/lastfm/";
+import { RawTag } from "../../services/LastFM/LastFMService.types";
 import {
   ArtistInfo,
   TrackInfo,
 } from "../../services/LastFM/converters/InfoTypes";
 import { RecentTracks } from "../../services/LastFM/converters/RecentTracks";
-import { RawTag } from "../../services/LastFM/LastFMService.types";
 import { Payload } from "../context/Payload";
 import { Resources } from "./DatasourceService";
 import { RequirementMap } from "./RequirementMap";
@@ -155,6 +155,7 @@ export const mockRequirements = (
       }),
     },
     albumCard: undefined,
+    fishyProfile: undefined,
 
     // Mirrorball types
     albumPlays: [

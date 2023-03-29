@@ -1,4 +1,5 @@
 import { AlbumCard } from "../../database/entity/cards/AlbumCard";
+import { FishyProfile } from "../../database/entity/fishy/FishyProfile";
 import {
   ArtistInfo,
   TrackInfo,
@@ -23,6 +24,7 @@ export type RequirementMap = {
   // Gowon data
   artistCrown: CrownDisplay | undefined;
   albumCard: AlbumCard | undefined;
+  fishyProfile: FishyProfile | undefined;
 
   // Mirrorball data
   albumPlays: [{ album: MirrorballAlbum; playcount: number }];

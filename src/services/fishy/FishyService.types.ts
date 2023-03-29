@@ -41,7 +41,7 @@ export class AquariumDisplay {
 
     const filledAquarium = this.fillWithFishy(flattenedAquarium, fishy);
 
-    const aquarium = this.unflatten(filledAquarium, height);
+    const aquarium = this.unflatten(filledAquarium, width);
 
     const withWalls = this.addAquariumWalls(aquarium, width);
 
@@ -57,10 +57,8 @@ export class AquariumDisplay {
       bubbles.push(Chance().pickone(this.bubbles));
     }
 
-    const water = new Array<string>().fill(
-      Emoji.aquariumWater,
-      0,
-      width * height - bubblesCount
+    const water = new Array<string>(width * height - bubblesCount).fill(
+      Emoji.aquariumWater
     );
 
     return shuffle([...water, ...bubbles]);
@@ -69,22 +67,23 @@ export class AquariumDisplay {
   private fillWithFishy(flattenedAquarium: string[], fishy: Fishy[]): string[] {
     return shuffle(
       flattenedAquarium
-        .slice(0, fishy.length)
+        .slice(fishy.length, flattenedAquarium.length)
         .concat(fishy.map((f) => f.emojiInWater))
     );
   }
 
-  private unflatten(flattenedAquarium: string[], height: number): string[][] {
-    return chunkArray(flattenedAquarium, height);
+  private unflatten(flattenedAquarium: string[], width: number): string[][] {
+    return chunkArray(flattenedAquarium, width);
   }
 
   private addAquariumWalls(aquarium: string[][], width: number): string[][] {
     const top: string[] = [
       Emoji.aquariumTopLeft,
-      ...new Array<string>().fill(Emoji.aquariumTop, 0, width),
+      ...new Array<string>(width).fill(Emoji.aquariumTop),
+      Emoji.aquariumTopRight,
     ];
 
-    const bottom = this.generateAquariumBottom(width + 2);
+    const bottom = this.generateAquariumBottom(width);
 
     const middle = aquarium.map((aRow) => [
       Emoji.aquariumLeft,
@@ -105,11 +104,7 @@ export class AquariumDisplay {
 
     const floor = shuffle([
       ...decorations,
-      ...new Array<string>().fill(
-        Emoji.aquariumBottom,
-        0,
-        width - decorationCount
-      ),
+      ...new Array<string>(width - decorationCount).fill(Emoji.aquariumBottom),
     ]);
 
     return [Emoji.aquariumBottomLeft, ...floor, Emoji.aquariumBottomRight];
