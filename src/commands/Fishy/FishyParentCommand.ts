@@ -1,5 +1,6 @@
 import { CommandGroup } from "../../lib/command/CommandGroup";
 import { ParentCommand } from "../../lib/command/ParentCommand";
+import { Aquarium } from "./Aquarium";
 import { Cooldown } from "./Cooldown";
 import { Fish } from "./Fish";
 import { Stats } from "./Stats";
@@ -33,7 +34,10 @@ export default class FishyParentCommand extends ParentCommand {
     // Stats
     "fishystats",
     "fs",
+    //Aquarium
+    "aquarium",
+    "aq",
   ];
 
-  children = new CommandGroup([Cooldown, Fish, Stats, Wiki], this.id);
+  children = new CommandGroup([Aquarium, Cooldown, Fish, Stats, Wiki], this.id);
 }

@@ -5,9 +5,9 @@ import { FishyCatch } from "../../database/entity/fishy/FishyCatch";
 import { FishyProfile } from "../../database/entity/fishy/FishyProfile";
 import { GowonContext } from "../../lib/context/Context";
 import { BaseService } from "../BaseService";
-import { FishyRarities, FishyRarityData } from "./Fishy";
-import { FishyResult } from "./FishyService.types";
-import { getFishyList } from "./fishyList";
+import { Fishy, FishyRarities, FishyRarityData } from "./Fishy";
+import { Aquarium, FishyResult } from "./FishyService.types";
+import { findFishy, getFishyList } from "./fishyList";
 
 type RarityPool = [FishyRarityData[], number[]];
 
@@ -112,7 +112,47 @@ export class FishyService extends BaseService {
     return fishy[0];
   }
 
+  public async getAquarium(fishyProfile: FishyProfile): Promise<Aquarium> {
+    const fishyCount = Chance().integer({ min: 0, max: 10 });
+
+    const [fishies, size] = await this.getRandomFishiesAndCount(
+      fishyProfile,
+      fishyCount
+    );
+
+    const mostAbundantFish = await this.getMostAbundantFish(fishyProfile);
+
+    return { fishies, mostAbundantFish, size };
+  }
+
   private pickRarity(): FishyRarityData {
     return this.chance.weighted(...this.rarityPool);
+  }
+
+  private async getRandomFishiesAndCount(
+    profile: FishyProfile,
+    take: number
+  ): Promise<[FishyCatch[], number]> {
+    return await FishyCatch.createQueryBuilder()
+      .where({
+        owner: { id: profile.user.id },
+      })
+      .orderBy("RANDOM()")
+      .limit(take)
+      .getManyAndCount();
+  }
+
+  private async getMostAbundantFish(
+    fishyProfile: FishyProfile
+  ): Promise<Fishy> {
+    const mostAbundantFishId = await FishyCatch.createQueryBuilder()
+      .select("fishyId")
+      .groupBy("fishyId")
+      .orderBy("fishyId")
+      .where({ owner: { id: fishyProfile.user.id } })
+      .limit(1)
+      .getRawOne<string>();
+
+    return findFishy({ byID: mostAbundantFishId! })!;
   }
 }
