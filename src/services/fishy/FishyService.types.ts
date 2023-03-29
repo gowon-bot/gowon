@@ -28,6 +28,12 @@ export class AquariumDisplay {
     Emoji.aquariumRock,
   ];
 
+  private readonly bubbles: string[] = [
+    Emoji.bubbles1,
+    Emoji.bubbles2,
+    Emoji.bubbles3,
+  ];
+
   constructor() {}
 
   public render({ width, height }: AquariumDimensions, fishy: Fishy[]): string {
@@ -43,7 +49,21 @@ export class AquariumDisplay {
   }
 
   private createFlattenedAquarium(width: number, height: number): string[] {
-    return new Array<string>().fill(Emoji.aquariumWater, 0, width * height);
+    const bubblesCount = Chance().integer({ min: 0, max: 5 });
+
+    const bubbles = [];
+
+    for (let i = 0; i < bubblesCount; i++) {
+      bubbles.push(Chance().pickone(this.bubbles));
+    }
+
+    const water = new Array<string>().fill(
+      Emoji.aquariumWater,
+      0,
+      width * height - bubblesCount
+    );
+
+    return shuffle([...water, ...bubbles]);
   }
 
   private fillWithFishy(flattenedAquarium: string[], fishy: Fishy[]): string[] {
