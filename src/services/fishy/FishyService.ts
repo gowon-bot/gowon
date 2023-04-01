@@ -6,7 +6,11 @@ import { FishyProfile } from "../../database/entity/fishy/FishyProfile";
 import { GowonContext } from "../../lib/context/Context";
 import { BaseService } from "../BaseService";
 import { Fishy, FishyRarities, FishyRarityData } from "./Fishy";
-import { Aquarium, FishyResult } from "./FishyService.types";
+import {
+  Aquarium,
+  FishyRarityBreakdown,
+  FishyResult,
+} from "./FishyService.types";
 import { trash } from "./fishy/trash";
 import { findFishy, getFishyList } from "./fishyList";
 
@@ -148,6 +152,27 @@ export class FishyService extends BaseService {
       owner: { id: fishyProfile.user.id },
       fishyId: fishy.id,
     });
+  }
+
+  public async rarityBreakdown(
+    fishyProfile: FishyProfile
+  ): Promise<FishyRarityBreakdown> {
+    const results = await FishyCatch.createQueryBuilder()
+      .where({
+        owner: { id: fishyProfile.user.id },
+      })
+      .select('"fishyId"')
+      .addSelect("count(*)", "count")
+      .groupBy('"fishyId"')
+      .getRawMany<{ fishyId: string; count: number }>();
+
+    return results.reduce((acc, { fishyId, count }) => {
+      const fishy = findFishy({ byID: fishyId })!;
+
+      acc[fishy.rarity.key] = (acc[fishy.rarity.key] || 0) + count;
+
+      return acc;
+    }, {} as Record<string, number>) as FishyRarityBreakdown;
   }
 
   private pickRarity(): FishyRarityData {

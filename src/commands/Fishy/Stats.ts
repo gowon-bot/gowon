@@ -1,8 +1,10 @@
 import { ago } from "../../helpers";
 import { italic } from "../../helpers/discord";
+import { emDash } from "../../helpers/specialCharacters";
 import { standardMentions } from "../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../lib/context/arguments/types";
 import { displayDate, displayNumber } from "../../lib/views/displays";
+import { FishyRarities } from "../../services/fishy/Fishy";
 import { FishyChildCommand } from "./FishyChildCommand";
 
 const args = {
@@ -24,11 +26,13 @@ export class Stats extends FishyChildCommand<typeof args> {
       autoCreateFishyProfile: false,
     });
 
-    const [giftsGiven, giftsRecieved, biggestFishy] = await Promise.all([
-      this.fishyService.countGiftsGiven(fishyProfile.user.id),
-      this.fishyService.countGiftsRecieved(fishyProfile.user.id),
-      this.fishyService.getBiggestFishy(fishyProfile.user.id),
-    ]);
+    const [giftsGiven, giftsRecieved, biggestFishy, rarityBreakdown] =
+      await Promise.all([
+        this.fishyService.countGiftsGiven(fishyProfile.user.id),
+        this.fishyService.countGiftsRecieved(fishyProfile.user.id),
+        this.fishyService.getBiggestFishy(fishyProfile.user.id),
+        this.fishyService.rarityBreakdown(fishyProfile),
+      ]);
 
     const embed = this.newEmbed().setAuthor(
       this.generateEmbedAuthor("Fishy stats")
@@ -50,7 +54,28 @@ _Fishing since ${displayDate(fishyProfile.createdAt)} (${ago(
       fishyProfile.totalWeight / fishyProfile.timesFished,
       "kg",
       true
-    )}`);
+    )}
+
+**Rarity breakdown:**
+${FishyRarities.Trash.emoji} _Trash_ ${emDash} ${displayNumber(
+      rarityBreakdown.Trash
+    )} fishy
+${FishyRarities.Common.emoji} _Common_ ${emDash} ${displayNumber(
+      rarityBreakdown.Common
+    )} fishy
+${FishyRarities.Uncommon.emoji} _Uncommon_ ${emDash} ${displayNumber(
+      rarityBreakdown.Uncommon
+    )} fishy
+${FishyRarities.Rare.emoji} _Rare_ ${emDash} ${displayNumber(
+      rarityBreakdown.Rare
+    )} fishy
+${FishyRarities.SuperRare.emoji} _Super rare_ ${emDash} ${displayNumber(
+      rarityBreakdown.SuperRare
+    )} fishy
+${FishyRarities.Legendary.emoji} _Legendary_ ${emDash} ${displayNumber(
+      rarityBreakdown.Legendary
+    )} fishy
+`);
 
     await this.send(embed);
   }

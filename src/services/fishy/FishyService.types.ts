@@ -2,7 +2,7 @@ import { Chance } from "chance";
 import { FishyCatch } from "../../database/entity/fishy/FishyCatch";
 import { chunkArray, shuffle } from "../../helpers";
 import { Emoji } from "../../lib/emoji/Emoji";
-import { Fishy } from "./Fishy";
+import { Fishy, FishyRarities } from "./Fishy";
 
 export interface FishyResult {
   fishy: Fishy;
@@ -10,10 +10,15 @@ export interface FishyResult {
   isNew: boolean;
 }
 
+export type FishyRarityBreakdown = {
+  [k in keyof typeof FishyRarities]: number;
+};
+
 export interface AquariumDimensions {
   width: number;
   height: number;
 }
+
 export interface Aquarium {
   fishies: FishyCatch[];
   size: number;

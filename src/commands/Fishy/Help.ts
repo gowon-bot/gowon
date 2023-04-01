@@ -27,6 +27,8 @@ To get started, run \`${this.prefix}fishy\`.
 \`${this.prefix}fishy stats\` - See some fun stats about your fishing career
 \`${this.prefix}aquarium\` - Check in on your fishy
 
+If you're a patron, you can add a fishy reminder to your nowplaying config with \`${this.prefix}npc add fishy-reminder\`
+
 Happy fishing!
 `
       )

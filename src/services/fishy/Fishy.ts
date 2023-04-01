@@ -56,11 +56,16 @@ export class FishyRarityData {
     public name: string,
     public weight: number,
     public colour: HexColorString,
-    public emoji: string
+    public emoji: string,
+    private objectKey?: string
   ) {}
 
   public isTrash(): boolean {
     return this.name === FishyRarities.Trash.name;
+  }
+
+  public get key(): keyof typeof FishyRarities {
+    return (this.objectKey || this.name) as keyof typeof FishyRarities;
   }
 }
 
@@ -74,11 +79,17 @@ export const FishyRarities = {
   // Purple
   Rare: new FishyRarityData("Rare", 15, "#be4ac3", Emoji.rare),
   // Pink
-  SuperRare: new FishyRarityData("Super rare", 10, "#ffc0cb", Emoji.superRare),
+  SuperRare: new FishyRarityData(
+    "Super rare",
+    10,
+    "#ffc0cb",
+    Emoji.superRare,
+    "SuperRare"
+  ),
   // Yellow
   Legendary: new FishyRarityData("Legendary", 5.5, "#ffc107", Emoji.legendary),
   // // Red
-  // Mythic: new FishyRarityData("???", 1, "#e91e63", Emoji.mythic),
+  // Mythic: new FishyRarityData("???", 1, "#e91e63", Emoji.mythic, "Mythic"),
 } as const;
 
 export type FishyRarity = (typeof FishyRarities)[keyof typeof FishyRarities];
