@@ -1,11 +1,6 @@
-import { Message, MessageCollector } from "discord.js";
+import { Message } from "discord.js";
 import Prefix from "../../commands/Meta/Prefix";
-import { shuffle } from "../../helpers";
-import {
-  caughtFishiesRegex,
-  fishyRegex,
-  userMentionAtStartRegex,
-} from "../../helpers/discord";
+import { userMentionAtStartRegex } from "../../helpers/discord";
 import { DiscordService } from "../../services/Discord/DiscordService";
 import {
   NicknameService,
@@ -14,7 +9,6 @@ import {
 import { GowonService } from "../../services/GowonService";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { MetaService } from "../../services/dbservices/MetaService";
-import { Emoji } from "../Emoji";
 import { GowonClient } from "../GowonClient";
 import { HeaderlessLogger, Logger } from "../Logger";
 import { GowonContext } from "../context/Context";
@@ -58,7 +52,6 @@ export class CommandHandler {
       this.runPrefixCommandIfMentioned(message),
       this.gers(message),
       this.yesMaam(message),
-      this.fishy(message),
     ]);
 
     if (this.shouldSearchForCommand(message)) {
@@ -220,46 +213,6 @@ export class CommandHandler {
       this.client.isBot(message.author.id, "rem")
     ) {
       await message.reply("Yes ma'am!");
-    }
-  }
-
-  private async fishy(message: Message) {
-    if (fishyRegex(this.botID()).test(message.content)) {
-      const messages: Message[] = [];
-
-      new MessageCollector(message.channel, {
-        max: 10,
-        time: 1000,
-      })
-        .on("collect", (message) => {
-          messages.push(message);
-        })
-        .on("end", () => {
-          const fishyBalance = messages.reduce((acc, val) => {
-            if (
-              this.client.isBot(val.author.id, "miso") &&
-              caughtFishiesRegex().test(val.content)
-            ) {
-              return acc + 1;
-            } else if (fishyRegex(this.botID())) {
-              return acc - 1;
-            } else return acc;
-          }, 0);
-
-          if (fishyBalance >= 0) {
-            message.react(
-              shuffle([
-                "🐟",
-                "🐠",
-                "🎣",
-                "🐡",
-                "🎏",
-                Emoji.robofish,
-                Emoji.flushedFish,
-              ])[0]
-            );
-          }
-        });
     }
   }
 

@@ -7,11 +7,11 @@ import {
   ReactionCollector,
   User,
 } from "discord.js";
-import { EmojiRaw } from "../../Emoji";
 import { ReactionCollectorFilter } from "../../../helpers/discord";
-import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { DiscordService } from "../../../services/Discord/DiscordService";
+import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { GowonContext } from "../../context/Context";
+import { EmojiRaw } from "../../emoji/Emoji";
 
 export interface ScrollingEmbedOptions {
   initialItems: string | EmbedField[];

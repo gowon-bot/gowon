@@ -1,4 +1,4 @@
-import { Emoji } from "../lib/Emoji";
+import { Emoji } from "../lib/emoji/Emoji";
 import { RawLastFMErrorResponse } from "../services/LastFM/LastFMService.types";
 
 export function parseErrorSix(message: string): string {

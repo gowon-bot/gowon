@@ -2,9 +2,9 @@ const extractionRegex = /<a?:\w+:([0-9]+)>/i;
 const nameExtractionRegex = /<a?(:\w+:)[0-9]+>/i;
 
 export function extractEmojiID(emoji: string): string {
-  const id = emoji.match(extractionRegex);
+  const id = extractionRegex.exec(emoji);
 
-  return (id as RegExpMatchArray)[1];
+  return (id as RegExpMatchArray)?.[1] ?? "";
 }
 
 export function extractEmojiName(emoji: string): string {
@@ -69,9 +69,36 @@ export const Emoji = {
   developer: "<:developer:913203995470888990>",
   "#swag": "<:swag:936102174394581032>",
 
-  // Fish
-  robofish: "<:robofish:1062224397588512902>",
-  flushedFish: "<:flushed_fish:1062224790317973724>",
+  // Aquarium
+  aquariumLeft: "<:AquariumLeft:1089731232952234044>",
+  aquariumRight: "<:AquariumRight:1089731228581769356>",
+  aquariumTop: "<:AquariumTop:1089731231022841997>",
+  aquariumBottom: "<:AquariumBottom:1089731229793923093>",
+  aquariumBottomLeft: "<:AquariumBottomLeft:1089731223460532274>",
+  aquariumBottomRight: "<:AquariumBottomRight:1089731224844652576>",
+  aquariumTopLeft: "<:AquariumTopLeft:1089731222101573773>",
+  aquariumTopRight: "<:AquariumTopRight:1089731226568507413>",
+  aquariumCoral: "<:AquariumCoral:1089735372055003229>",
+  aquariumMoyai: "<:AquariumMoyai:1089735385694871602>",
+  aquariumCastle: "<:AquariumCastle:1089735373850165258>",
+  aquariumPlant: "<:AquariumPlant:1089735370599571546>",
+  aquariumRock: "<:AquariumRock:1089735386965749901>",
+  aquariumWater: "🟦",
+  bubbles1: "<:Bubbles1:1089735378870734949>",
+  bubbles2: "<:Bubbles2:1089735377239154688>",
+  bubbles3: "<:Bubbles3:1089735375112634448>",
+
+  // Fishy rarities
+  trash: "<:trash:1091475743483109417>",
+  common: "<:common:1091475742522622113>",
+  uncommon: "<:uncommon:1091475741117517834>",
+  rare: "<:rare:1091475739423031386>",
+  superRare: "<:superRare:1091475737913073745>",
+  legendary: "<:legendary:1091475736419901470>",
+  mythic: "<:mythic:1091475734905757807>",
+
+  // Fishy misc
+  newFishy: "<:newFishy:1091512966672830594>",
 } satisfies Record<string, string>;
 
 export const EmojiRaw = Object.entries(Emoji).reduce(

@@ -1,6 +1,6 @@
 import { Response } from "node-fetch";
 import { parseError, parseErrorSix } from "../helpers/error";
-import { Emoji } from "../lib/Emoji";
+import { Emoji } from "../lib/emoji/Emoji";
 import { displayNumber } from "../lib/views/displays";
 import { RawLastFMErrorResponse } from "../services/LastFM/LastFMService.types";
 

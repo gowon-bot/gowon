@@ -10,6 +10,7 @@ import { EmojiService } from "./Discord/EmojiService";
 import { GuildEventService } from "./Discord/GuildEventService";
 import { NicknameService } from "./Discord/NicknameService";
 import { WhoKnowsService } from "./Discord/WhoKnowsService";
+import { FishyService } from "./fishy/FishyService";
 import { GithubService } from "./Github/GithubService";
 import { GowonService } from "./GowonService";
 import { LastFMArguments } from "./LastFM/LastFMArguments";
@@ -67,6 +68,7 @@ const services: Service[] = [
   DatasourceService,
   DiscordService,
   EmojiService,
+  FishyService,
   FriendsService,
   GowonService,
   GithubService,

@@ -9,7 +9,7 @@ import {
   prefabFlags,
 } from "../../../../../lib/context/arguments/prefabArguments";
 import { ArgumentsMap } from "../../../../../lib/context/arguments/types";
-import { Emoji } from "../../../../../lib/Emoji";
+import { Emoji } from "../../../../../lib/emoji/Emoji";
 import { LineConsolidator } from "../../../../../lib/LineConsolidator";
 import {
   displayDate,

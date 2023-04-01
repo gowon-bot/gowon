@@ -6,7 +6,7 @@ import {
   sanitizeForDiscord,
 } from "../../helpers/discord";
 import { LastfmLinks } from "../../helpers/lastfm/LastfmLinks";
-import { Emoji } from "../Emoji";
+import { Emoji } from "../emoji/Emoji";
 
 export function displayNumber(
   number: number | string | undefined,

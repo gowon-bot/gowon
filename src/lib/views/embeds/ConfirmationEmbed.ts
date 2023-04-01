@@ -1,16 +1,16 @@
-import { User } from "discord.js";
 import {
   Message,
   MessageEmbed,
   MessageReaction,
   ReactionCollector,
+  User,
 } from "discord.js";
-import { EmojiRaw } from "../../Emoji";
 import { ReactionCollectorFilter } from "../../../helpers/discord";
-import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { DiscordService } from "../../../services/Discord/DiscordService";
+import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { GowonContext } from "../../context/Context";
 import { Payload } from "../../context/Payload";
+import { EmojiRaw } from "../../emoji/Emoji";
 
 export class ConfirmationEmbed {
   private get discordService() {

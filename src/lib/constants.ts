@@ -1,3 +1,5 @@
+import { Duration } from "date-fns";
+
 export const constants = {
   defaultTasteAmount: 1000,
   hardPageLimit: 100,
@@ -12,4 +14,5 @@ export const constants = {
   ] as string[],
   unknownUserDisplay: "???",
   defaultLoadingTime: 5,
+  fishyCooldown: { hours: 2 } as Duration,
 } as const;

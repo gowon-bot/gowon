@@ -2,16 +2,16 @@ import { formatDistance } from "date-fns";
 import { ucFirst } from "../../../helpers";
 import { bold } from "../../../helpers/discord";
 import { LastfmLinks } from "../../../helpers/lastfm/LastfmLinks";
+import { LineConsolidator } from "../../../lib/LineConsolidator";
 import {
-  Combo as ComboType,
   ComboCalculator,
+  Combo as ComboType,
 } from "../../../lib/calculators/ComboCalculator";
 import { constants } from "../../../lib/constants";
 import { StringArrayArgument } from "../../../lib/context/arguments/argumentTypes/StringArrayArgument";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
-import { Emoji } from "../../../lib/Emoji";
-import { LineConsolidator } from "../../../lib/LineConsolidator";
+import { Emoji } from "../../../lib/emoji/Emoji";
 import { Paginator } from "../../../lib/paginators/Paginator";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
@@ -21,9 +21,9 @@ import {
   displayNumber,
   displayTrackLink,
 } from "../../../lib/views/displays";
+import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { ArtistsService } from "../../../services/mirrorball/services/ArtistsService";
 import { AlbumCoverService } from "../../../services/moderation/AlbumCoverService";
-import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { ComboChildCommand } from "./ComboChildCommand";
 
 const args = {

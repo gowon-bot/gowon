@@ -1,29 +1,31 @@
+import { UNUSED_CONFIG } from "../../services/dbservices/NowPlayingService";
+import { Choice } from "../context/arguments/argumentTypes/StringArgument";
 import { AlbumPlaysComponent } from "./components/AlbumPlaysComponent";
+import { ArtistCrownComponent } from "./components/ArtistCrownComponent";
 import { ArtistPlaysComponent } from "./components/ArtistPlaysComponent";
 import { BaseNowPlayingComponent } from "./components/BaseNowPlayingComponent";
+import { CardOwnershipComponent } from "./components/CardOwnershipComponent";
+import { FishyReminderComponent } from "./components/FishyReminderComponent";
+import { GlobalArtistRankComponent } from "./components/GlobalArtistRankComponent";
+import { ListenersComponent } from "./components/ListenersComponent";
+import { LovedComponent } from "./components/LovedComponent";
+import { RatingComponent } from "./components/RatingComponent";
 import { ScrobblesComponent } from "./components/ScrobblesComponent";
+import { ServerArtistRankComponent } from "./components/ServerRankComponent";
+import { TrackPlaysComponent } from "./components/TrackPlaysComponent";
+import { ArtistPlaysAndCrownComponent } from "./compoundComponents/ArtistPlaysAndCrown";
+import { LovedAndOwnedComponent } from "./compoundComponents/LovedAndOwnedComponent";
 import {
   ArtistTagsComponent,
   TagsComponent,
   TrackTagsComponent,
 } from "./compoundComponents/TagsComponent";
-import { TrackPlaysComponent } from "./components/TrackPlaysComponent";
-import { ArtistCrownComponent } from "./components/ArtistCrownComponent";
-import { ArtistPlaysAndCrownComponent } from "./compoundComponents/ArtistPlaysAndCrown";
-import { RatingComponent } from "./components/RatingComponent";
-import { LovedComponent } from "./components/LovedComponent";
-import { ListenersComponent } from "./components/ListenersComponent";
-import { UNUSED_CONFIG } from "../../services/dbservices/NowPlayingService";
-import { GlobalArtistRankComponent } from "./components/GlobalArtistRankComponent";
-import { ServerArtistRankComponent } from "./components/ServerRankComponent";
-import { Choice } from "../context/arguments/argumentTypes/StringArgument";
-import { CardOwnershipComponent } from "./components/CardOwnershipComponent";
-import { LovedAndOwnedComponent } from "./compoundComponents/LovedAndOwnedComponent";
 
 // Types
 export type NowPlayingComponent = {
-  new(values: any): BaseNowPlayingComponent<any>;
+  new (values: any): BaseNowPlayingComponent<any>;
   componentName: string;
+  patronOnly: boolean;
 };
 
 type ComponentMap = {
@@ -36,6 +38,7 @@ type ComponentMap = {
 const componentList = [
   CardOwnershipComponent,
   LovedComponent,
+  FishyReminderComponent,
   ArtistPlaysComponent,
   AlbumPlaysComponent,
   TrackPlaysComponent,

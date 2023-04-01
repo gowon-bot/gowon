@@ -4,7 +4,7 @@ import { convertMirrorballDate } from "../../../../helpers/mirrorball";
 import { Variation } from "../../../../lib/command/Command";
 import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";
 import { ArgumentsMap } from "../../../../lib/context/arguments/types";
-import { Emoji } from "../../../../lib/Emoji";
+import { Emoji } from "../../../../lib/emoji/Emoji";
 import { MirrorballBaseCommand } from "../../../../lib/indexing/MirrorballCommands";
 import { displayDate } from "../../../../lib/views/displays";
 import {

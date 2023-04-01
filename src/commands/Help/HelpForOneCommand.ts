@@ -1,20 +1,20 @@
-import { Command } from "../../lib/command/Command";
 import { CommandNotFoundError } from "../../errors/errors";
 import { flatDeep } from "../../helpers";
+import { bold, code, italic } from "../../helpers/discord";
+import { Command } from "../../lib/command/Command";
 import { ParentCommand } from "../../lib/command/ParentCommand";
-import { LineConsolidator } from "../../lib/LineConsolidator";
-import { ServiceRegistry } from "../../services/ServicesRegistry";
-import { Emoji } from "../../lib/Emoji";
-import { StringArgument } from "../../lib/context/arguments/argumentTypes/StringArgument";
+import { BaseArgument } from "../../lib/context/arguments/argumentTypes/BaseArgument";
 import {
   argumentsHasFlags,
   Flag,
   isFlag,
 } from "../../lib/context/arguments/argumentTypes/Flag";
-import { BaseArgument } from "../../lib/context/arguments/argumentTypes/BaseArgument";
-import { bold, code, italic } from "../../helpers/discord";
-import { PermissionsService } from "../../lib/permissions/PermissionsService";
+import { StringArgument } from "../../lib/context/arguments/argumentTypes/StringArgument";
 import { ArgumentsMap } from "../../lib/context/arguments/types";
+import { Emoji } from "../../lib/emoji/Emoji";
+import { LineConsolidator } from "../../lib/LineConsolidator";
+import { PermissionsService } from "../../lib/permissions/PermissionsService";
+import { ServiceRegistry } from "../../services/ServicesRegistry";
 
 const args = {
   command: new StringArgument({ index: { start: 0 }, required: true }),
@@ -83,9 +83,9 @@ export default class HelpForOneCommand extends Command<typeof args> {
 
     lineConsolidator.addLines(
       (command.access?.role ? `${Emoji[command.access.role]} ` : "") +
-      bold(commandName) +
-      (command.slashCommand ? " (slash command)" : "") +
-      ":",
+        bold(commandName) +
+        (command.slashCommand ? " (slash command)" : "") +
+        ":",
 
       italic(command.description + command.extraDescription, false),
       "",
@@ -155,8 +155,8 @@ export default class HelpForOneCommand extends Command<typeof args> {
 
     lineConsolidator.addLines(
       (command.access?.role ? `${Emoji[command.access.role]} ` : "") +
-      bold(command.friendlyName) +
-      ":",
+        bold(command.friendlyName) +
+        ":",
       italic(command.description),
       "",
       {

@@ -1,14 +1,14 @@
-import { Command } from "../../lib/command/Command";
-import { BotStatsService } from "../../services/dbservices/BotStatsService";
+import { ago } from "../../helpers";
+import { extraWideSpace } from "../../helpers/specialCharacters";
 import { LineConsolidator } from "../../lib/LineConsolidator";
-import { displayNumber } from "../../lib/views/displays";
-import { Emoji } from "../../lib/Emoji";
-import { ServiceRegistry } from "../../services/ServicesRegistry";
+import { Command } from "../../lib/command/Command";
 import { roles } from "../../lib/command/access/roles";
 import { standardMentions } from "../../lib/context/arguments/mentionTypes/mentions";
-import { extraWideSpace } from "../../helpers/specialCharacters";
-import { ago } from "../../helpers";
 import { ArgumentsMap } from "../../lib/context/arguments/types";
+import { Emoji } from "../../lib/emoji/Emoji";
+import { displayNumber } from "../../lib/views/displays";
+import { ServiceRegistry } from "../../services/ServicesRegistry";
+import { BotStatsService } from "../../services/dbservices/BotStatsService";
 
 const args = {
   ...standardMentions,
@@ -74,7 +74,8 @@ export default class UserInfo extends Command<typeof args> {
       },
       `**Cached scrobbles**: ${displayNumber(cachedPlaycount)}`,
       `**Commands run**: ${displayNumber(commandRunCount)}`,
-      `**Last updated**: ${lilacUserInfo?.lastUpdated ? ago(lilacUserInfo.lastUpdated) : "(never)"
+      `**Last updated**: ${
+        lilacUserInfo?.lastUpdated ? ago(lilacUserInfo.lastUpdated) : "(never)"
       }`,
       {
         shouldDisplay: topCommands.length > 0,
@@ -87,14 +88,15 @@ export default class UserInfo extends Command<typeof args> {
             });
 
             // This is a special space
-            return `${extraWideSpace}${command?.secretCommand
+            return `${extraWideSpace}${
+              command?.secretCommand
                 ? "<secret command>"
                 : command?.friendlyNameWithParent ||
-                command?.friendlyName ||
-                "<unknown command>"
-              }${command?.archived ? " [archived]" : ""} - ${displayNumber(
-                c.uses
-              )}`;
+                  command?.friendlyName ||
+                  "<unknown command>"
+            }${command?.archived ? " [archived]" : ""} - ${displayNumber(
+              c.uses
+            )}`;
           })
           .join("\n")}`,
       }
