@@ -34,6 +34,7 @@ export class FishyProfile extends BaseEntity {
   createdAt!: Date;
 
   public canFish(): boolean {
+    return true;
     return (
       !this.lastFished ||
       new Date() > add(this.lastFished, constants.fishyCooldown)
@@ -48,7 +49,10 @@ export class FishyProfile extends BaseEntity {
 
     const duration = intervalToDuration({ start: 0, end: difference });
 
-    delete duration.seconds;
+    if (duration.seconds && (duration.hours || duration.minutes)) {
+      delete duration.seconds;
+    }
+
     const time = humanizeDuration(duration);
 
     return time;

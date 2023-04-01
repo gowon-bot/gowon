@@ -17,14 +17,7 @@ import { findFishy, getFishyList } from "./fishyList";
 type RarityPool = [FishyRarityData[], number[]];
 
 export class FishyService extends BaseService {
-  private rarityPool = Object.values(FishyRarities).reduce(
-    (acc, r) =>
-      [
-        [...acc[0], r],
-        [...acc[1], r.weight],
-      ] as RarityPool,
-    [[], []] as RarityPool
-  );
+  private rarityPool: RarityPool = this.generateRarityPool();
 
   private chance = Chance();
 
@@ -219,5 +212,11 @@ export class FishyService extends BaseService {
     });
 
     return fishyCount === 0;
+  }
+
+  private generateRarityPool(): RarityPool {
+    const rarities = Object.values(FishyRarities);
+
+    return [rarities, rarities.map((r) => r.weight)];
   }
 }
