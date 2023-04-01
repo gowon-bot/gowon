@@ -4,8 +4,8 @@ import { Aquarium } from "./Aquarium";
 import { Collection } from "./Collection";
 import { Cooldown } from "./Cooldown";
 import { Fish } from "./Fish";
+import { Fishypedia } from "./Fishypedia";
 import { Stats } from "./Stats";
-import { Fishypedia } from "./Wiki";
 
 export default class FishyParentCommand extends ParentCommand {
   idSeed = "le sserafim kazuha";
@@ -26,7 +26,7 @@ export default class FishyParentCommand extends ParentCommand {
     "fush",
     "fushy",
     "gofish",
-    // Wiki
+    // Fishypedia
     "fishypedia",
     // Cooldown
     "fishytimer",
@@ -41,7 +41,7 @@ export default class FishyParentCommand extends ParentCommand {
   ];
 
   children = new CommandGroup(
-    [Aquarium, Collection, Cooldown, Fish, Stats, Fishypedia],
+    [Aquarium, Collection, Cooldown, Fish, Fishypedia, Stats],
     this.id
   );
 }

@@ -140,6 +140,16 @@ export class FishyService extends BaseService {
     return collection.map((c) => c.fishyId);
   }
 
+  public async countFishy(
+    fishyProfile: FishyProfile,
+    fishy: Fishy
+  ): Promise<number> {
+    return await FishyCatch.countBy({
+      owner: { id: fishyProfile.user.id },
+      fishyId: fishy.id,
+    });
+  }
+
   private pickRarity(): FishyRarityData {
     return this.chance.weighted(...this.rarityPool);
   }

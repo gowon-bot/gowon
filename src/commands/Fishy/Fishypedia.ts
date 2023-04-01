@@ -3,8 +3,10 @@ import { bold, italic } from "../../helpers/discord";
 import { emDash, quote } from "../../helpers/specialCharacters";
 import { StringArgument } from "../../lib/context/arguments/argumentTypes/StringArgument";
 import { EmojisArgument } from "../../lib/context/arguments/argumentTypes/discord/EmojisArgument";
+import { standardMentions } from "../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../lib/context/arguments/types";
 import { validators } from "../../lib/validation/validators";
+import { displayNumber } from "../../lib/views/displays";
 import { findFishy } from "../../services/fishy/fishyList";
 import { FishyChildCommand } from "./FishyChildCommand";
 
@@ -17,6 +19,7 @@ const args = {
     index: { start: 0 },
     description: "The fishy emoji to learn about",
   }),
+  ...standardMentions,
 } satisfies ArgumentsMap;
 
 export class Fishypedia extends FishyChildCommand<typeof args> {
@@ -36,6 +39,16 @@ export class Fishypedia extends FishyChildCommand<typeof args> {
   };
 
   async run() {
+    const { fishyProfile, discordUser } = await this.getMentions({
+      fetchFishyProfile: true,
+      fetchDiscordUser: true,
+    });
+
+    const perspective = this.usersService.discordPerspective(
+      this.author,
+      discordUser
+    );
+
     const fishyName = this.parsedArguments.fishy;
     const fishyEmoji = this.parsedArguments.fishyEmoji;
 
@@ -44,6 +57,10 @@ export class Fishypedia extends FishyChildCommand<typeof args> {
       : findFishy(fishyName!);
 
     if (!fishy) throw new FishyNotFoundError(fishyEmoji?.[0] || fishyName);
+
+    const fishyCount = fishyProfile
+      ? await this.fishyService.countFishy(fishyProfile, fishy)
+      : 0;
 
     let embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor("Fishy wiki"))
@@ -57,13 +74,21 @@ ${fishy.emoji} ${bold(italic(fishy.binomialName), false)} ${emDash} ${
             : `${fishy.rarity.name} fishy`
         } 
 
-${italic(quote(fishy.description))}`
+${italic(quote(fishy.description))}
+
+${
+  fishyCount > 0
+    ? `${perspective.upper.plusToHave} caught this fish ${bold(
+        displayNumber(fishyCount, "time")
+      )}.`
+    : `${perspective.upper.plusToHave} never caught this fish.`
+}`
       );
 
     if (!fishy.rarity.isTrash()) {
       embed = embed.addField(
         "Weight",
-        `${fishy.minWeight}kg - ${fishy.maxWeight}kg`
+        `${fishy.minWeight}-${fishy.maxWeight}kg`
       );
     }
 
