@@ -1,4 +1,5 @@
 import { Chance } from "chance";
+import { bold } from "../../helpers/discord";
 import { ArgumentsMap } from "../../lib/context/arguments/types";
 import { displayNumber } from "../../lib/views/displays";
 import { Fishy } from "../../services/fishy/Fishy";
@@ -66,7 +67,7 @@ There **${displayNumber(aquarium.size)} total fishy** in your aquarium.
 ${
   aquarium.size === 0
     ? ``
-    : "The most abundant fish is ${bold(aquarium.mostAbundantFish.name)}."
+    : `The most abundant fish is ${bold(aquarium.mostAbundantFish.name)}.`
 }
 `;
   }
