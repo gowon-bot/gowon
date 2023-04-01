@@ -15,19 +15,7 @@ export const commonFishies = [
       max: 2.5,
     },
   }),
-  // new Fishy({
-  //   id: "channel-catfish",
-  //   name: "Channel Catfish",
-  //   binomialName: "Ictalurus punctatus",
-  //   rarity: FishyRarities.Common,
-  //   emoji
-  //   description:
-  //     'It is the official fish of Kansas, Missouri, Nebraska, and Tennessee, and is informally referred to as a "channel cat"',
-  //   weight: {
-  //     min: 1,
-  //     max: 4.5,
-  //   },
-  // }),
+
   new Fishy({
     id: "chum-salmon",
     name: "Chum Salmon",
@@ -41,16 +29,44 @@ export const commonFishies = [
       max: 10,
     },
   }),
+
   new Fishy({
     id: "walleye",
     name: "Walleye",
     binomialName: "Sander vitreus",
     rarity: FishyRarities.Common,
     emoji: FishyEmojiList.walleye,
-    description: "Walleyes have thousands of taste bugs in their lips!",
+    description: "Walleyes have thousands of taste buds in their lips!",
     weight: {
       min: 5,
       max: 9,
+    },
+  }),
+
+  new Fishy({
+    id: "black-crappie",
+    name: "Black Crappie",
+    binomialName: "Pomoxis nigromaculatus",
+    rarity: FishyRarities.Common,
+    emoji: FishyEmojiList.blackCrappie,
+    description:
+      "Black crappies are unusual among freshwater fish for their schooling behaviour.",
+    weight: {
+      min: 1,
+      max: 7,
+    },
+  }),
+
+  new Fishy({
+    id: "channel-catfish",
+    name: "Channel Catfish",
+    binomialName: "Ictalurus punctatus",
+    rarity: FishyRarities.Common,
+    emoji: FishyEmojiList.channelCatfish,
+    description: "This fish is legally an invasive species in many countries!",
+    weight: {
+      min: 3,
+      max: 8,
     },
   }),
 ] satisfies Fishy[];

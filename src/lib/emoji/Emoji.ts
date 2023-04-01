@@ -69,10 +69,6 @@ export const Emoji = {
   developer: "<:developer:913203995470888990>",
   "#swag": "<:swag:936102174394581032>",
 
-  // Fish
-  robofish: "<:robofish:1062224397588512902>",
-  flushedFish: "<:flushed_fish:1062224790317973724>",
-
   // Aquarium
   aquariumLeft: "<:AquariumLeft:1089731232952234044>",
   aquariumRight: "<:AquariumRight:1089731228581769356>",
@@ -91,6 +87,18 @@ export const Emoji = {
   bubbles1: "<:Bubbles1:1089735378870734949>",
   bubbles2: "<:Bubbles2:1089735377239154688>",
   bubbles3: "<:Bubbles3:1089735375112634448>",
+
+  // Fishy rarities
+  trash: "<:trash:1091475743483109417>",
+  common: "<:common:1091475742522622113>",
+  uncommon: "<:uncommon:1091475741117517834>",
+  rare: "<:rare:1091475739423031386>",
+  superRare: "<:superRare:1091475737913073745>",
+  legendary: "<:legendary:1091475736419901470>",
+  mythic: "<:mythic:1091475734905757807>",
+
+  // Fishy misc
+  newFishy: "<:newFishy:1091512966672830594>",
 } satisfies Record<string, string>;
 
 export const EmojiRaw = Object.entries(Emoji).reduce(

@@ -24,14 +24,15 @@ export class FishyService extends BaseService {
 
   private chance = Chance();
 
-  public fish(): FishyResult {
+  public async fish(fishyProfile: FishyProfile): Promise<FishyResult> {
     const rarity = this.pickRarity();
     const fishyList = getFishyList(rarity);
 
     const fishy = this.chance.pickone(fishyList);
     const weight = fishy.pickWeight();
+    const isNew = await this.isFishyNewForUser(fishyProfile, fishy);
 
-    return { fishy, weight };
+    return { fishy, weight, isNew };
   }
 
   public async saveFishy(
@@ -42,7 +43,7 @@ export class FishyService extends BaseService {
   ): Promise<FishyCatch> {
     this.log(
       ctx,
-      `Saving fishy ${fishyResult.fishy.name} (${fishyResult.weight}kg) for user with id ${profile.id}`
+      `Saving fishy ${fishyResult.fishy.name} (${fishyResult.weight}kg) for user with id ${profile.user.id}`
     );
 
     const fishyCatch = FishyCatch.create({
@@ -126,6 +127,19 @@ export class FishyService extends BaseService {
     return { fishies, mostAbundantFish, size };
   }
 
+  /**
+   *
+   * Returns a list of fishy ids that the user has caught
+   */
+  public async getCollection(fishyProfile: FishyProfile): Promise<string[]> {
+    const collection = await FishyCatch.createQueryBuilder()
+      .select('distinct "fishyId"')
+      .where({ owner: { id: fishyProfile.user.id } })
+      .getRawMany<{ fishyId: string }>();
+
+    return collection.map((c) => c.fishyId);
+  }
+
   private pickRarity(): FishyRarityData {
     return this.chance.weighted(...this.rarityPool);
   }
@@ -156,5 +170,17 @@ export class FishyService extends BaseService {
       .getRawOne<{ fishyId: string }>();
 
     return findFishy({ byID: result?.fishyId! })!;
+  }
+
+  private async isFishyNewForUser(
+    fishyProfile: FishyProfile,
+    fishy: Fishy
+  ): Promise<boolean> {
+    const fishyCount = await FishyCatch.countBy({
+      owner: { id: fishyProfile.user.id },
+      fishyId: fishy.id,
+    });
+
+    return fishyCount === 0;
   }
 }

@@ -3,9 +3,8 @@ import { bold, italic, mentionGuildMember } from "../../helpers/discord";
 import { emDash } from "../../helpers/specialCharacters";
 import { standardMentions } from "../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../lib/context/arguments/types";
+import { Emoji } from "../../lib/emoji/Emoji";
 import { displayNumber } from "../../lib/views/displays";
-import { ServiceRegistry } from "../../services/ServicesRegistry";
-import { FishyService } from "../../services/fishy/FishyService";
 import { FishyChildCommand } from "./FishyChildCommand";
 
 const args = {
@@ -20,21 +19,20 @@ export class Fish extends FishyChildCommand<typeof args> {
 
   arguments = args;
 
-  fishyService = ServiceRegistry.get(FishyService);
-
   async run() {
-    const { senderFishyProfile, mentionedFishyProfile } =
+    const { senderFishyProfile, mentionedFishyProfile, fishyProfile } =
       await this.getMentions({
         dbUserRequired: true,
         fetchFishyProfile: true,
         autoCreateFishyProfile: true,
+        fishyProfileRequired: true,
       });
 
     if (!senderFishyProfile?.canFish()) {
       throw new CantFishYetError(senderFishyProfile!);
     }
 
-    const fishyResult = this.fishyService.fish();
+    const fishyResult = await this.fishyService.fish(fishyProfile);
 
     if (mentionedFishyProfile) {
       await this.fishyService.saveFishy(
@@ -51,7 +49,7 @@ export class Fish extends FishyChildCommand<typeof args> {
       );
     }
 
-    const { fishy, weight } = fishyResult;
+    const { fishy, weight, isNew } = fishyResult;
 
     const weightDisplay = fishy.rarity.isTrash()
       ? ``
@@ -67,9 +65,9 @@ export class Fish extends FishyChildCommand<typeof args> {
       .setAuthor(this.generateEmbedAuthor("Fishy fish"))
       .setColor(fishy.rarity.colour)
       .setDescription(
-        `${fishy.emoji} Caught a ${bold(fishy.name)}${giftDisplay}!  ${italic(
-          emDash + " " + fishy.rarity.name
-        )}
+        `${fishy.emoji} Caught a ${bold(fishy.name)}${
+          isNew ? Emoji.newFishy : "!"
+        }${giftDisplay}  ${italic(emDash + " " + fishy.rarity.name)}
 ${weightDisplay}`
       );
 

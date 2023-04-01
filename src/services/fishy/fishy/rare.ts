@@ -15,6 +15,7 @@ export const rareFishies = [
       max: 0.2,
     },
   }),
+
   new Fishy({
     id: "orange-clownfish",
     name: "Orange Clownfish",
@@ -24,21 +25,50 @@ export const rareFishies = [
       "This fish hides from predators in sea anenome's stinging tentacles, which it is immune to",
     emoji: FishyEmojiList.clownfish,
     weight: {
-      min: 0.1,
-      max: 0.2,
+      min: 1,
+      max: 3,
     },
   }),
+
   new Fishy({
     id: "yellow-boxfish",
     name: "Yellow Boxfish",
     binomialName: "Ostracion cubicum",
     rarity: FishyRarities.Rare,
     description:
-      "Boxfish are also known for their armored and rigid body, which is adapted to its style of swimming",
+      "Boxfish are known for their armored and rigid body, which is adapted to its style of swimming",
     emoji: FishyEmojiList.yellowBoxfish,
     weight: {
       min: 1,
       max: 3,
+    },
+  }),
+
+  new Fishy({
+    id: "banded-rainbowfish",
+    name: "Banded Rainbowfish",
+    binomialName: "Melanotaenia trifasciata",
+    rarity: FishyRarities.Rare,
+    description:
+      "Males compete with one another for territory and female attention in contests where they compare body coloration and size",
+    emoji: FishyEmojiList.bandedRainbowfish,
+    weight: {
+      min: 0.5,
+      max: 2,
+    },
+  }),
+
+  new Fishy({
+    id: " yellow-tail-acei",
+    name: "Yellow-tail Acei",
+    binomialName: 'Pseudotropheus sp. "acei"',
+    rarity: FishyRarities.Rare,
+    description:
+      "This fish can only be found naturally in Lake Malawi, however it is a popular fish for fish-keepers",
+    emoji: FishyEmojiList.yellowtailAcei,
+    weight: {
+      min: 0.3,
+      max: 1.7,
     },
   }),
 ] satisfies Fishy[];

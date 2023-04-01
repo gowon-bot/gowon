@@ -7,6 +7,7 @@ import { Fishy } from "./Fishy";
 export interface FishyResult {
   fishy: Fishy;
   weight: number;
+  isNew: boolean;
 }
 
 export interface AquariumDimensions {

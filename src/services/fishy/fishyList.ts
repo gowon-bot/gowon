@@ -43,7 +43,7 @@ export function findFishy(
 
   return fishyList.find((f) => {
     return typeof name === "string"
-      ? equalize(f.name) === equalize(name)
+      ? equalize(f.name) === equalize(name) || equalize(f.id) === equalize(name)
       : isByEmoji(name)
       ? extractEmojiID(f.emoji) === extractEmojiID(name.byEmoji) ||
         extractEmojiID(f.emojiInWater) === extractEmojiID(name.byEmoji)

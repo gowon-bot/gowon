@@ -3,8 +3,6 @@ import { italic } from "../../helpers/discord";
 import { standardMentions } from "../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../lib/context/arguments/types";
 import { displayDate, displayNumber } from "../../lib/views/displays";
-import { ServiceRegistry } from "../../services/ServicesRegistry";
-import { FishyService } from "../../services/fishy/FishyService";
 import { FishyChildCommand } from "./FishyChildCommand";
 
 const args = {
@@ -18,8 +16,6 @@ export class Stats extends FishyChildCommand<typeof args> {
   description = "See stats about a user's fishing";
 
   arguments = args;
-
-  fishyService = ServiceRegistry.get(FishyService);
 
   async run() {
     const { fishyProfile } = await this.getMentions({

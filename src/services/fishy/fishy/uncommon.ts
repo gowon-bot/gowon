@@ -15,6 +15,7 @@ export const uncommonFishy = [
       max: 12,
     },
   }),
+
   new Fishy({
     id: "yellow-tang",
     name: "Yellow Tang",
@@ -28,6 +29,7 @@ export const uncommonFishy = [
       max: 7,
     },
   }),
+
   new Fishy({
     id: "blue-tang",
     name: "Blue Tang",
@@ -38,6 +40,33 @@ export const uncommonFishy = [
       "Blue tangs are capable of adjusting the intensity of their hue from light blue to deep purple.",
     weight: {
       min: 0.9,
+      max: 1.5,
+    },
+  }),
+
+  new Fishy({
+    id: "white-sturgeon",
+    name: "White Sturgeon",
+    binomialName: "Acipenser transmontanus",
+    rarity: FishyRarities.Uncommon,
+    emoji: FishyEmojiList.whiteSturgeon,
+    description: "White Sturgeon can live for over 100 years!",
+    weight: {
+      min: 7,
+      max: 1.5,
+    },
+  }),
+
+  new Fishy({
+    id: "northern-puffer",
+    name: "Northern Puffer",
+    binomialName: "Sphoeroides maculatus",
+    rarity: FishyRarities.Uncommon,
+    emoji: FishyEmojiList.northernPuffer,
+    description:
+      "Puffers puff up by inhaling air or water into a special chamber near the stomach",
+    weight: {
+      min: 7,
       max: 1.5,
     },
   }),

@@ -5,14 +5,12 @@ import { StringArgument } from "../../lib/context/arguments/argumentTypes/String
 import { EmojisArgument } from "../../lib/context/arguments/argumentTypes/discord/EmojisArgument";
 import { ArgumentsMap } from "../../lib/context/arguments/types";
 import { validators } from "../../lib/validation/validators";
-import { ServiceRegistry } from "../../services/ServicesRegistry";
-import { FishyService } from "../../services/fishy/FishyService";
 import { findFishy } from "../../services/fishy/fishyList";
 import { FishyChildCommand } from "./FishyChildCommand";
 
 const args = {
   fishy: new StringArgument({
-    index: 0,
+    index: { start: 0 },
     description: "The fishy name to learn about",
   }),
   fishyEmoji: new EmojisArgument({
@@ -21,9 +19,9 @@ const args = {
   }),
 } satisfies ArgumentsMap;
 
-export class Wiki extends FishyChildCommand<typeof args> {
+export class Fishypedia extends FishyChildCommand<typeof args> {
   idSeed = "le sserafim eunchae";
-  aliases = ["info", "fishypedia"];
+  aliases = ["info", "wiki"];
 
   description = "See information about a fish";
 
@@ -37,13 +35,11 @@ export class Wiki extends FishyChildCommand<typeof args> {
     },
   };
 
-  fishyService = ServiceRegistry.get(FishyService);
-
   async run() {
     const fishyName = this.parsedArguments.fishy;
     const fishyEmoji = this.parsedArguments.fishyEmoji;
 
-    const fishy = fishyEmoji
+    const fishy = fishyEmoji?.length
       ? findFishy({ byEmoji: fishyEmoji[0].raw })
       : findFishy(fishyName!);
 

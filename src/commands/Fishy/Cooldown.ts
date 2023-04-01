@@ -1,8 +1,6 @@
 import { Chance } from "chance";
 import { bold } from "../../helpers/discord";
 import { ArgumentsMap } from "../../lib/context/arguments/types";
-import { ServiceRegistry } from "../../services/ServicesRegistry";
-import { FishyService } from "../../services/fishy/FishyService";
 import { FishyChildCommand } from "./FishyChildCommand";
 
 const args = {} satisfies ArgumentsMap;
@@ -14,8 +12,6 @@ export class Cooldown extends FishyChildCommand<typeof args> {
   description = "See when you can fish next";
 
   arguments = args;
-
-  fishyService = ServiceRegistry.get(FishyService);
 
   async run() {
     const { fishyProfile } = await this.getMentions({

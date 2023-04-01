@@ -2,9 +2,7 @@ import { Chance } from "chance";
 import { bold } from "../../helpers/discord";
 import { ArgumentsMap } from "../../lib/context/arguments/types";
 import { displayNumber } from "../../lib/views/displays";
-import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { Fishy } from "../../services/fishy/Fishy";
-import { FishyService } from "../../services/fishy/FishyService";
 import {
   AquariumDimensions,
   AquariumDisplay,
@@ -22,8 +20,6 @@ export class Aquarium extends FishyChildCommand<typeof args> {
     "Take a look at your aquarium, and see the fishy swimming around!";
 
   arguments = args;
-
-  fishyService = ServiceRegistry.get(FishyService);
 
   private readonly aquariumWidth: number = 8;
   private readonly aquariumHeight: number = 5;
