@@ -113,4 +113,29 @@ export const FishyEmojiList = {
     "<:BlackspottedPufferWater:1091499876052893888>",
     "<:bpSilhouette:1091500209948852234>"
   ),
+  bullShark: new FishyEmoji(
+    "<:BullShark:1091641476162789426>",
+    "<:BullSharkWater:1091641509788528750>",
+    "<:bsSilhouette:1091642015420256257>"
+  ),
+  northPacificSwordfish: new FishyEmoji(
+    "<:NorthPacificSwordfish:1091641482827534386>",
+    "<:NorthPacificSwordfishWater:1091641512678391808>",
+    "<:npsSilhouette:1091642014761762898>"
+  ),
+  hoodwinkerSunfish: new FishyEmoji(
+    "<:HoodwinkerSunfish:1091641480877178890>",
+    "<:HoodwinkerSunfishWater:1091641510950359110>",
+    "<:hsSilhouette:1091642013537030236>"
+  ),
+  megamouthShark: new FishyEmoji(
+    "<:MegamouthShark:1091641479467896913>",
+    "<:MegamouthSharkWater:1091642006901633106>",
+    "<:ms2Silhouette:1091642011335004222>"
+  ),
+  danaOctopusSquid: new FishyEmoji(
+    "<:DanaOctopusSquid:1091641477421072444>",
+    "<:DanaOctopusSquidWater:1091642008961028106>",
+    "<:dosSilhouette:1091642010139635833>"
+  ),
 } satisfies Record<string, FishyEmoji>;

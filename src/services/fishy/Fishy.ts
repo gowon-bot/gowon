@@ -72,13 +72,13 @@ export const FishyRarities = {
   // Blue
   Uncommon: new FishyRarityData("Uncommon", 29, "#4a8bc3", Emoji.uncommon),
   // Purple
-  Rare: new FishyRarityData("Rare", 10, "#be4ac3", Emoji.rare),
+  Rare: new FishyRarityData("Rare", 15, "#be4ac3", Emoji.rare),
   // Pink
-  SuperRare: new FishyRarityData("Super rare", 5.5, "#ffc0cb", Emoji.superRare),
-  // // Yellow
-  // Legendary: new FishyRarityData("Legendary", 1.2, "#ffc107", Emoji.legendary),
+  SuperRare: new FishyRarityData("Super rare", 10, "#ffc0cb", Emoji.superRare),
+  // Yellow
+  Legendary: new FishyRarityData("Legendary", 5.5, "#ffc107", Emoji.legendary),
   // // Red
-  // Mythic: new FishyRarityData("???", 0.3, "#e91e63", Emoji.mythic),
+  // Mythic: new FishyRarityData("???", 1, "#e91e63", Emoji.mythic),
 } as const;
 
 export type FishyRarity = (typeof FishyRarities)[keyof typeof FishyRarities];

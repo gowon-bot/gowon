@@ -1,6 +1,6 @@
 import { standardMentions } from "../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../lib/context/arguments/types";
-import { displayNumberedList } from "../../lib/views/displays";
+import { displayNumber, displayNumberedList } from "../../lib/views/displays";
 import { SimpleScrollingEmbed } from "../../lib/views/embeds/SimpleScrollingEmbed";
 import { fishyList } from "../../services/fishy/fishyList";
 import { FishyChildCommand } from "./FishyChildCommand";
@@ -19,29 +19,41 @@ export class Collection extends FishyChildCommand<typeof args> {
   arguments = args;
 
   async run() {
-    const { fishyProfile } = await this.getMentions({
+    const { fishyProfile, discordUser } = await this.getMentions({
       fetchFishyProfile: true,
       fishyProfileRequired: true,
+      fetchDiscordUser: true,
     });
+
+    const perspective = this.usersService.discordPerspective(
+      this.author,
+      discordUser
+    );
 
     const collection = await this.fishyService.getCollection(fishyProfile);
 
-    const embed = this.newEmbed().setAuthor(
-      this.generateEmbedAuthor("Fishy collection")
-    );
+    const embed = this.newEmbed()
+      .setAuthor(this.generateEmbedAuthor("Fishy collection"))
+      .setTitle(`${perspective.upper.possessive} fishy collection`);
 
     const scrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
       items: fishyList,
       pageSize: 15,
       pageRenderer(items, { offset }) {
-        return displayNumberedList(
-          items.map((f) => {
-            const owned = collection.includes(f.id);
+        return (
+          `_${displayNumber(collection.length)} of ${
+            fishyList.length
+          } fishy collected_\n\n` +
+          displayNumberedList(
+            items.map((f) => {
+              const owned = collection.includes(f.id);
 
-            return `${f.rarity.emoji} ${owned ? f.emoji : f.emojiSilhouette} ${
-              owned ? f.name : "???"
-            }`;
-          }, offset)
+              return `${f.rarity.emoji} ${
+                owned ? f.emoji : f.emojiSilhouette
+              } ${owned ? f.name : "???"}`;
+            }),
+            offset
+          )
         );
       },
       overrides: { itemName: "fishy", itemNamePlural: "fishy" },

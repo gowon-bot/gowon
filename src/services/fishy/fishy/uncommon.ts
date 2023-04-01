@@ -52,8 +52,8 @@ export const uncommonFishy = [
     emoji: FishyEmojiList.whiteSturgeon,
     description: "White Sturgeon can live for over 100 years!",
     weight: {
-      min: 7,
-      max: 1.5,
+      min: 20,
+      max: 100,
     },
   }),
 
@@ -66,7 +66,7 @@ export const uncommonFishy = [
     description:
       "Puffers puff up by inhaling air or water into a special chamber near the stomach",
     weight: {
-      min: 7,
+      min: 0.7,
       max: 1.5,
     },
   }),

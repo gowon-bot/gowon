@@ -173,11 +173,13 @@ export class FishyService extends BaseService {
   ): Promise<Fishy> {
     const result = await FishyCatch.createQueryBuilder()
       .select('"fishyId"')
+      .addSelect("count(*)", "count")
       .groupBy('"fishyId"')
-      .orderBy('"fishyId"')
+      .orderBy("count(*)", "DESC")
       .where({ owner: { id: fishyProfile.user.id } })
       .limit(1)
       .getRawOne<{ fishyId: string }>();
+    console.log(result);
 
     return findFishy({ byID: result?.fishyId! })!;
   }

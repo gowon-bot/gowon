@@ -1,6 +1,7 @@
 import { extractEmojiID } from "../../lib/emoji/Emoji";
 import { Fishy, FishyRarities, FishyRarityData } from "./Fishy";
 import { commonFishies } from "./fishy/common";
+import { legendaryFishies } from "./fishy/legendary";
 import { rareFishies } from "./fishy/rare";
 import { superRareFishies } from "./fishy/superRare";
 import { trash } from "./fishy/trash";
@@ -12,6 +13,7 @@ export const fishyList = [
   ...uncommonFishy,
   ...rareFishies,
   ...superRareFishies,
+  ...legendaryFishies,
 ];
 
 export function getFishyList(rarity: FishyRarityData): Fishy[] {
@@ -30,6 +32,9 @@ export function getFishyList(rarity: FishyRarityData): Fishy[] {
 
     case FishyRarities.SuperRare.name:
       return superRareFishies;
+
+    case FishyRarities.Legendary.name:
+      return legendaryFishies;
 
     default:
       return fishyList;
