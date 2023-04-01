@@ -28,6 +28,8 @@ export class Fishypedia extends FishyChildCommand<typeof args> {
 
   description = "See information about a fish";
 
+  usage = ["fishyname", ":fishyemoji:"];
+
   arguments = args;
 
   validation = {

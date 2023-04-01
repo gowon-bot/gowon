@@ -16,9 +16,17 @@ export class RequiredValidator extends BaseValidator<RequiredValidatorOptions> {
   validate(arg: any, argName: string, dependsOn?: SimpleMap) {
     if (dependsOn) {
       let valid = [...Object.values(dependsOn), arg].reduce((acc, argValue) => {
-        if (this.type === RequiredValidatorType.or && argValue) {
+        if (
+          this.type === RequiredValidatorType.or &&
+          argValue &&
+          argValue.length
+        ) {
           acc = true;
-        } else if (this.type === RequiredValidatorType.and && !argValue) {
+        } else if (
+          this.type === RequiredValidatorType.and &&
+          !argValue &&
+          argValue.length !== 0
+        ) {
           acc = false;
         }
 

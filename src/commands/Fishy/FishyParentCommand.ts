@@ -5,6 +5,7 @@ import { Collection } from "./Collection";
 import { Cooldown } from "./Cooldown";
 import { Fish } from "./Fish";
 import { Fishypedia } from "./Fishypedia";
+import { Help } from "./Help";
 import { Stats } from "./Stats";
 
 export default class FishyParentCommand extends ParentCommand {
@@ -15,6 +16,7 @@ export default class FishyParentCommand extends ParentCommand {
 
   prefixes = ["fishy"];
   default = () => new Fish();
+  customHelp = Help;
 
   category = "fishy";
 
@@ -41,7 +43,7 @@ export default class FishyParentCommand extends ParentCommand {
   ];
 
   children = new CommandGroup(
-    [Aquarium, Collection, Cooldown, Fish, Fishypedia, Stats],
+    [Aquarium, Collection, Cooldown, Fish, Fishypedia, Help, Stats],
     this.id
   );
 }
