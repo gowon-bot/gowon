@@ -3,6 +3,7 @@ import { In, IsNull, Not } from "typeorm";
 import { User } from "../../database/entity/User";
 import { FishyCatch } from "../../database/entity/fishy/FishyCatch";
 import { FishyProfile } from "../../database/entity/fishy/FishyProfile";
+import { toInt } from "../../helpers/lastfm";
 import { GowonContext } from "../../lib/context/Context";
 import { BaseService } from "../BaseService";
 import { Fishy, FishyRarities, FishyRarityData } from "./Fishy";
@@ -157,12 +158,12 @@ export class FishyService extends BaseService {
       .select('"fishyId"')
       .addSelect("count(*)", "count")
       .groupBy('"fishyId"')
-      .getRawMany<{ fishyId: string; count: number }>();
+      .getRawMany<{ fishyId: string; count: string }>();
 
     return results.reduce((acc, { fishyId, count }) => {
       const fishy = findFishy({ byID: fishyId })!;
 
-      acc[fishy.rarity.key] = (acc[fishy.rarity.key] || 0) + count;
+      acc[fishy.rarity.key] = (acc[fishy.rarity.key] || 0) + toInt(count);
 
       return acc;
     }, {} as Record<string, number>) as FishyRarityBreakdown;
@@ -176,14 +177,16 @@ export class FishyService extends BaseService {
     profile: FishyProfile,
     take: number
   ): Promise<[FishyCatch[], number]> {
-    return await FishyCatch.createQueryBuilder()
+    const result = await FishyCatch.createQueryBuilder()
       .where({
         owner: { id: profile.user.id },
         fishyId: Not(In(trash.map((t) => t.id))),
       })
       .orderBy("RANDOM()")
-      .limit(take)
+      .limit(take || 1)
       .getManyAndCount();
+
+    return take === 0 ? [[], result[1]] : result;
   }
 
   private async getMostAbundantFish(
