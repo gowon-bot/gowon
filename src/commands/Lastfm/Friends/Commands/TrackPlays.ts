@@ -1,9 +1,11 @@
 import { LastFMEntityNotFoundError } from "../../../../errors/errors";
-import { code } from "../../../../helpers/discord";
 import { MultiRequester } from "../../../../lib/MultiRequester";
 import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";
 import { ArgumentsMap } from "../../../../lib/context/arguments/types";
-import { displayNumber } from "../../../../lib/views/displays";
+import {
+  displayNumber,
+  displayNumberedList,
+} from "../../../../lib/views/displays";
 import { FriendsChildCommand } from "../FriendsChildCommand";
 
 const args = {
@@ -22,48 +24,59 @@ export class TrackPlays extends FriendsChildCommand<typeof args> {
   throwIfNoFriends = true;
 
   async run() {
+    const { senderRequestable } = await this.getMentions();
+
     const { artist, track } = await this.lastFMArguments.getTrack(
       this.ctx,
-      this.senderRequestable
+      senderRequestable
     );
 
-    const trackDetails = await new MultiRequester(this.ctx, [
-      ...this.friendUsernames,
-      this.senderRequestable,
-    ]).fetch(this.lastFMService.trackInfo.bind(this.lastFMService), {
+    const trackDetails = await new MultiRequester(
+      this.ctx,
+      this.friends.usernames()
+    ).fetch(this.lastFMService.trackInfo.bind(this.lastFMService), {
       artist,
       track,
     });
 
     const trackInfo = Object.values(trackDetails).filter((v) => v?.name)[0]!;
 
-    if (!trackInfo) throw new LastFMEntityNotFoundError("track");
+    if (!trackInfo) {
+      throw new LastFMEntityNotFoundError("track");
+    }
+
+    const friendDisplays = this.friends
+      .sortBy((f) => trackDetails[f.getUsername()]?.userPlaycount ?? -Infinity)
+      .map((f) => {
+        const td = trackDetails[f.getUsername()];
+
+        if (!td || isNaN(td.userPlaycount)) {
+          return this.displayMissingFriend(f.getUsername());
+        }
+
+        return `${f.display()} - **${displayNumber(
+          td.userPlaycount,
+          "**scrobble"
+        )}`;
+      });
+
+    const totalPlays = Object.values(trackDetails).reduce(
+      (acc, td) => acc + (td?.userPlaycount ?? 0),
+      0
+    );
 
     const embed = this.newEmbed()
+      .setAuthor(this.generateEmbedAuthor("Friends track plays"))
       .setTitle(
         `Your friends plays of ${trackInfo.name} by ${trackInfo.artist.name}`
       )
-      .setDescription(
-        Object.keys(trackDetails)
-          .sort(
-            (a, b) =>
-              (trackDetails[b]?.userPlaycount ?? -Infinity) -
-              (trackDetails[a]?.userPlaycount ?? -Infinity)
-          )
-          .map((username) => {
-            const td = trackDetails[username];
-
-            if (!td || isNaN(td.userPlaycount)) {
-              return this.displayMissingFriend(username);
-            }
-
-            return `${code(username)} - **${displayNumber(
-              td.userPlaycount,
-              "**scrobble"
-            )}`;
-          })
-          .join("\n")
-      );
+      .setDescription(displayNumberedList(friendDisplays))
+      .setFooter({
+        text: `Your friends have a total of ${displayNumber(
+          totalPlays,
+          "scrobble"
+        )} of this track`,
+      });
 
     await this.send(embed);
   }

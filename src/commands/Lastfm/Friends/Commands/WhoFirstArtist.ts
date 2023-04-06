@@ -1,15 +1,15 @@
-import { FriendsChildCommand } from "../FriendsChildCommand";
 import gql from "graphql-tag";
+import { FriendsHaveNoScrobblesOfArtistError } from "../../../../errors/friends";
+import { bold } from "../../../../helpers/discord";
+import { convertMirrorballDate } from "../../../../helpers/mirrorball";
+import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";
+import { ArgumentsMap } from "../../../../lib/context/arguments/types";
 import {
   displayDate,
   displayNumberedList,
 } from "../../../../lib/views/displays";
-import { LogicError } from "../../../../errors/errors";
 import { MirrorballUser } from "../../../../services/mirrorball/MirrorballTypes";
-import { convertMirrorballDate } from "../../../../helpers/mirrorball";
-import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";
-import { bold, code } from "../../../../helpers/discord";
-import { ArgumentsMap } from "../../../../lib/context/arguments/types";
+import { FriendsChildCommand } from "../FriendsChildCommand";
 
 const args = {
   ...prefabArguments.artist,
@@ -27,13 +27,13 @@ export class WhoFirstArtist extends FriendsChildCommand<typeof args> {
   throwIfNoFriends = true;
 
   async run() {
-    const { senderUser } = await this.getMentions({
+    const { senderRequestable } = await this.getMentions({
       senderRequired: true,
     });
 
     const artist = await this.lastFMArguments.getArtist(
       this.ctx,
-      this.senderRequestable
+      senderRequestable
     );
 
     const query = gql`
@@ -58,19 +58,9 @@ export class WhoFirstArtist extends FriendsChildCommand<typeof args> {
       }
     `;
 
-    const friends = await this.friendsService.listFriends(
-      this.ctx,
-      senderUser!
-    );
-
-    const friendIDs = [
-      ...(friends.map((f) => f.friend?.discordID).filter((f) => !!f) || []),
-      this.author.id,
-    ];
-
     const whoFirst = (await this.mirrorballService.query(this.ctx, query, {
       artist: { name: artist },
-      settings: { userIDs: friendIDs },
+      settings: { userIDs: this.friends.discordIDs() },
     })) as {
       whoFirstArtist: {
         artist: {
@@ -84,12 +74,11 @@ export class WhoFirstArtist extends FriendsChildCommand<typeof args> {
     };
 
     if (!whoFirst.whoFirstArtist.rows.length) {
-      throw new LogicError(
-        `Neither you nor your friends have scrobbled this artist!`
-      );
+      throw new FriendsHaveNoScrobblesOfArtistError();
     }
 
     const embed = this.newEmbed()
+      .setAuthor(this.generateEmbedAuthor("Friends who first"))
       .setTitle(
         `When your friends first scrobbled ${bold(
           whoFirst.whoFirstArtist.artist.name
@@ -99,7 +88,9 @@ export class WhoFirstArtist extends FriendsChildCommand<typeof args> {
         displayNumberedList(
           whoFirst.whoFirstArtist.rows.map(
             (wk) =>
-              `${code(wk.user.username)} - ${displayDate(
+              `${this.friends
+                .getFriend(wk.user.discordID)
+                .display()} - ${displayDate(
                 convertMirrorballDate(wk.scrobbledAt)
               )}`
           )

@@ -1,7 +1,6 @@
 import { Response } from "node-fetch";
 import { parseError, parseErrorSix } from "../helpers/error";
 import { Emoji } from "../lib/emoji/Emoji";
-import { displayNumber } from "../lib/views/displays";
 import { RawLastFMErrorResponse } from "../services/LastFM/LastFMService.types";
 
 export abstract class ClientError extends Error {
@@ -70,27 +69,11 @@ export class AlreadyLoggedOutError extends ClientError {
   }
 }
 
-export class AlreadyFriendsError extends ClientError {
-  name = "AlreadyFriendsError";
-
-  constructor() {
-    super("you are already friends with that user");
-  }
-}
-
-export class NotFriendsError extends ClientError {
-  name = "NotFriendsError";
-
-  constructor() {
-    super("you were already not friends with that user");
-  }
-}
-
 export class LastFMUserDoesntExistError extends ClientError {
   name = "LastFMUserDoesntExistError";
 
   constructor() {
-    super("that user doesn't exist in Last.fm");
+    super("that user doesn't exist on Last.fm!");
   }
 }
 
@@ -164,19 +147,6 @@ export class OptedOutError extends ClientError {
 
   constructor() {
     super("you have opted out of the crowns game!");
-  }
-}
-
-export class TooManyFriendsError extends ClientError {
-  name = "TooManyFriendsError";
-
-  constructor(limit: number, prefix: string, showPatreon = false) {
-    super(
-      `you cannot have more than ${displayNumber(limit, "friend")}`,
-      showPatreon
-        ? `You can become a Patron to increase your limit to 15. See \`${prefix}patreon\` for more information.`
-        : ""
-    );
   }
 }
 

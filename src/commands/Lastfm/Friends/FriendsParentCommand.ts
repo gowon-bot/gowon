@@ -1,6 +1,7 @@
 import { CommandGroup } from "../../../lib/command/CommandGroup";
 import { LastFMBaseParentCommand } from "../LastFMBaseCommand";
 import { Add } from "./Add";
+import { Alias } from "./Alias";
 import { AlbumPlays } from "./Commands/AlbumPlays";
 import { ArtistPlays } from "./Commands/ArtistPlays";
 import { Joined } from "./Commands/Joined";
@@ -45,6 +46,7 @@ export default class FriendsParentCommand extends LastFMBaseParentCommand {
   children: CommandGroup = new CommandGroup(
     [
       Add,
+      Alias,
       List,
       Remove,
       RemoveAll,
