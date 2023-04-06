@@ -69,4 +69,18 @@ export const commonFishies = [
       max: 8,
     },
   }),
+
+  new Fishy({
+    id: "skipjack-tuna",
+    name: "Skipjack Tuna",
+    binomialName: "Katsuwonus pelamis",
+    rarity: FishyRarities.Common,
+    emoji: FishyEmojiList.skipjackTuna,
+    description:
+      "This species has the highest percentage of skeletal muscle devoted to locomotion of all animals, with 68% of the animal's total body mass",
+    weight: {
+      min: 8,
+      max: 10,
+    },
+  }),
 ] satisfies Fishy[];

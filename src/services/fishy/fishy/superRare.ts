@@ -69,4 +69,18 @@ export const superRareFishies = [
       max: 15,
     },
   }),
+
+  new Fishy({
+    id: "white-edged-lyretail",
+    name: "White-edged Lyretail",
+    binomialName: "Variola albimarginata",
+    rarity: FishyRarities.SuperRare,
+    description:
+      "This fish is found either as a solitary fish or in small groups on the seaward edge of reefs",
+    emoji: FishyEmojiList.whiteedgedLyretail,
+    weight: {
+      min: 4,
+      max: 8,
+    },
+  }),
 ] satisfies Fishy[];

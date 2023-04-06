@@ -59,7 +59,7 @@ export const rareFishies = [
   }),
 
   new Fishy({
-    id: " yellow-tail-acei",
+    id: "yellow-tail-acei",
     name: "Yellow-tail Acei",
     binomialName: 'Pseudotropheus sp. "acei"',
     rarity: FishyRarities.Rare,
@@ -69,6 +69,33 @@ export const rareFishies = [
     weight: {
       min: 0.3,
       max: 1.7,
+    },
+  }),
+
+  new Fishy({
+    id: "spanish-flag",
+    name: "Spanish Flag",
+    binomialName: "Gonioplectrus hispanus",
+    rarity: FishyRarities.Rare,
+    description: "Not to be confused with the Spanish flag",
+    emoji: FishyEmojiList.spanishFlag,
+    weight: {
+      min: 4,
+      max: 7,
+    },
+  }),
+
+  new Fishy({
+    id: "goldenstriped-soapfish",
+    name: "Goldenstriped Soapfish",
+    binomialName: "Grammistes sexlineatus",
+    rarity: FishyRarities.Rare,
+    description:
+      "The secretions from the skin of soapfish resemble lathered soap, and are the basis for the name.",
+    emoji: FishyEmojiList.goldenstripedSoapfish,
+    weight: {
+      min: 3,
+      max: 6,
     },
   }),
 ] satisfies Fishy[];

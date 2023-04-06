@@ -70,4 +70,32 @@ export const uncommonFishy = [
       max: 1.5,
     },
   }),
+
+  new Fishy({
+    id: "red-grouper",
+    name: "Red Grouper",
+    binomialName: "Epinephelus morio",
+    rarity: FishyRarities.Uncommon,
+    emoji: FishyEmojiList.redGrouper,
+    description:
+      "This fish actively excavates pits in the seafloor throughout their lifetime",
+    weight: {
+      min: 18,
+      max: 25,
+    },
+  }),
+
+  new Fishy({
+    id: "humpback-grouper",
+    name: "Humpback Grouper",
+    binomialName: "Cromileptes altivelis",
+    rarity: FishyRarities.Uncommon,
+    emoji: FishyEmojiList.humpbackGrouper,
+    description:
+      "All Humpback Grouper are born female, and have the ability to change into males as they grow old",
+    weight: {
+      min: 18,
+      max: 25,
+    },
+  }),
 ] satisfies Fishy[];

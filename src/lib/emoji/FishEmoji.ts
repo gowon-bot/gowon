@@ -86,7 +86,7 @@ export const FishyEmojiList = {
   walleye: new FishyEmoji(
     "<:Walleye:1091499731370385488>",
     "<:WalleyeWater:1091499885112594482>",
-    "<:wsSilhouette:1091500197605019718>"
+    "<:wSilhouette:1091500194534801408>"
   ),
   blackCrappie: new FishyEmoji(
     "<:BlackCrappie:1091499809342505072>",
@@ -137,5 +137,35 @@ export const FishyEmojiList = {
     "<:DanaOctopusSquid:1091641477421072444>",
     "<:DanaOctopusSquidWater:1091642008961028106>",
     "<:dosSilhouette:1091642010139635833>"
+  ),
+  skipjackTuna: new FishyEmoji(
+    "<:SkipjackTuna:1093404274047844352>",
+    "<:SkipjackTunaWater:1093404304775331902>",
+    "<:stSilhouette:1093404337830633584>"
+  ),
+  humpbackGrouper: new FishyEmoji(
+    "<:HumpbackGrouper:1093404271212507186> ",
+    "<:HumpbackGrouperWater:1093404301906415656>",
+    "<:hgSilhouette:1093404334949142559>"
+  ),
+  redGrouper: new FishyEmoji(
+    "<:RedGrouper:1093404272751824897> ",
+    "<:RedGrouperWater:1093404303668039700>",
+    "<:rgSilhouette:1093404336312291338>"
+  ),
+  goldenstripedSoapfish: new FishyEmoji(
+    "<:GoldenstripedSoapfish:1093404266363879455> ",
+    "<:GoldenstripedSoapfishWater:1093404297913454722>",
+    "<:gssSilhouette:1093404330830340236>"
+  ),
+  spanishFlag: new FishyEmoji(
+    "<:SpanishFlag:1093404269950013490> ",
+    "<:SpanishFlagWater:1093404300757180487>",
+    "<:sfSilhouette:1093404333829275648>"
+  ),
+  whiteedgedLyretail: new FishyEmoji(
+    "<:WhiteedgedLyretail:1093404267840294972> ",
+    "<:WhiteedgedLyretailWater:1093404299679252542>",
+    "<:welSilhouette:1093404332273172540>"
   ),
 } satisfies Record<string, FishyEmoji>;
