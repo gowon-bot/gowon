@@ -1,16 +1,16 @@
 import { CommandGroup } from "../../../lib/command/CommandGroup";
 import { LastFMBaseParentCommand } from "../LastFMBaseCommand";
 import { Add } from "./Add";
-import { List } from "./List";
-import { ArtistPlays } from "./Commands/ArtistPlays";
-import { Remove } from "./Remove";
 import { AlbumPlays } from "./Commands/AlbumPlays";
-import { TrackPlays } from "./Commands/TrackPlays";
-import { Scrobbles } from "./Commands/Scrobbles";
-import { RemoveAll } from "./RemoveAll";
+import { ArtistPlays } from "./Commands/ArtistPlays";
 import { Joined } from "./Commands/Joined";
 import { Rating } from "./Commands/Rating";
+import { Scrobbles } from "./Commands/Scrobbles";
+import { TrackPlays } from "./Commands/TrackPlays";
 import { WhoFirstArtist } from "./Commands/WhoFirstArtist";
+import { List } from "./List";
+import { Remove } from "./Remove";
+import { RemoveAll } from "./RemoveAll";
 
 export default class FriendsParentCommand extends LastFMBaseParentCommand {
   idSeed = "nature lu";
@@ -24,12 +24,22 @@ export default class FriendsParentCommand extends LastFMBaseParentCommand {
   default = () => new List();
 
   noPrefixAliases = [
-    // add
+    // Add
     "addfriend",
     "addfriends",
-    // remove
+    // Remove
     "removefriend",
     "removefriends",
+    // TrackPlays
+    "friendswhoknowstrack",
+    "fwkt",
+    // AlbumPlays
+    "friendswhoknowsalbum",
+    "fwkl",
+    // ArtistPlays
+    "friendswhoknows",
+    "friendswhoknowsartist",
+    "fwk",
   ];
 
   children: CommandGroup = new CommandGroup(

@@ -5,7 +5,11 @@ import { StringArgument } from "../../../lib/context/arguments/argumentTypes/Str
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { Paginator } from "../../../lib/paginators/Paginator";
-import { displayNumber } from "../../../lib/views/displays";
+import {
+  displayNumber,
+  displayNumberedList,
+} from "../../../lib/views/displays";
+import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingEmbed";
 import { TopTracks } from "../../../services/LastFM/converters/TopTypes";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { WordBlacklistService } from "../../../services/WordBlacklistService";
@@ -79,42 +83,52 @@ export default class TagTracks extends LastFMBaseCommand<typeof args> {
 
     const overlap = this.calculateOverlap(userTopTracks, tagTrackNames);
 
+    const description =
+      `_Comparing ${perspective.possessive} top ${displayNumber(
+        userTopTracks.tracks.length,
+        "track"
+      )} and the top ${displayNumber(
+        tagTrackNames.length,
+        "track"
+      )} of the tag_\n` +
+      (overlap.length
+        ? `${displayNumber(overlap.length, "track")} (${calculatePercent(
+            overlap.length,
+            tagTrackNames.length
+          )}% match) (${displayNumber(
+            overlap.reduce((sum, o) => sum + o.plays, 0),
+            "scrobble"
+          )})\n\n`
+        : "Couldn't find any matching tracks!");
+
     const embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor("Tag tracks"))
       .setTitle(
         `${perspective.upper.possessive} top ${tagTopTracks.meta.tag} tracks`
-      )
-      .setDescription(
-        `
-_Comparing ${perspective.possessive} top ${displayNumber(
-          userTopTracks.tracks.length,
-          "track"
-        )} and the top ${displayNumber(
-          tagTrackNames.length,
-          "track"
-        )} of the tag_\n` +
-          (overlap.length
-            ? `${displayNumber(overlap.length, "track")} (${calculatePercent(
-                overlap.length,
-                tagTrackNames.length
-              )}% match) (${displayNumber(
-                overlap.reduce((sum, o) => sum + o.plays, 0),
-                "scrobble"
-              )})\n\n` +
-              `${overlap
-                .slice(0, 20)
-                .map(
-                  (o, idx) =>
-                    `${idx + 1}. ${bold(o.track)} by ${italic(
-                      o.artist
-                    )} - ${displayNumber(o.plays, "play")}`
-                )
-                .join("\n")}
-`
-            : "Couldn't find any matching tracks!")
       );
 
-    await this.send(embed);
+    const scrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
+      items: overlap,
+      pageSize: 15,
+      pageRenderer(overlap, { offset }) {
+        return (
+          description +
+          displayNumberedList(
+            overlap.map(
+              (o) =>
+                `${bold(o.track)} by ${italic(o.artist)} - ${displayNumber(
+                  o.plays,
+                  "play"
+                )}`
+            ),
+            offset
+          )
+        );
+      },
+      overrides: { itemName: "track" },
+    });
+
+    scrollingEmbed.send();
   }
 
   private calculateOverlap(

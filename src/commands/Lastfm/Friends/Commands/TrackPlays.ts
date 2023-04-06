@@ -1,10 +1,10 @@
-import { FriendsChildCommand } from "../FriendsChildCommand";
-import { MultiRequester } from "../../../../lib/MultiRequester";
 import { LastFMEntityNotFoundError } from "../../../../errors/errors";
-import { displayNumber } from "../../../../lib/views/displays";
-import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";
 import { code } from "../../../../helpers/discord";
+import { MultiRequester } from "../../../../lib/MultiRequester";
+import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";
 import { ArgumentsMap } from "../../../../lib/context/arguments/types";
+import { displayNumber } from "../../../../lib/views/displays";
+import { FriendsChildCommand } from "../FriendsChildCommand";
 
 const args = {
   ...prefabArguments.track,
@@ -14,7 +14,7 @@ export class TrackPlays extends FriendsChildCommand<typeof args> {
   idSeed = "nature saebom";
 
   description = "Shows how many plays of a track your friends have";
-  aliases = ["tp"];
+  aliases = ["tp", "friendswhoknowstrack", "fwkt", "whoknowstrack", "wkt"];
   usage = ["", "artist | track"];
 
   arguments = args;

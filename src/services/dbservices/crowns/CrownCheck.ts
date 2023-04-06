@@ -160,7 +160,7 @@ export class Tie extends CrownCheck {
       `
 :crown: → ${mentionGuildMember(
         this.options.crown.user.discordID
-      )} - ${displayNumber(this.options.previousCrown.plays, "play")}
+      )} - ${displayNumber(this.options.crown.plays, "play")}
 
 :eyes: → ${mentionGuildMember(ctx.author.id)} - ${displayNumber(
         this.options.plays,

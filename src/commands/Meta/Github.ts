@@ -17,17 +17,17 @@ export default class Github extends Command {
       .setTitle("Gowon's source code </>")
       .setDescription(
         `You can find the bot repo at ${displayLink(
-          "jivison/gowon",
-          "https://github.com/jivison/gowon"
+          "gowon-bot/gowon",
+          "https://github.com/gowon-bot/gowon"
         )}, the indexing repo at ${displayLink(
-          "jivison/mirrorball",
-          "https://github.com/jivison/mirrorball"
+          "gowon-bot/lilac",
+          "https://github.com/gowon-bot/lilac"
         )}, and the website repo at ${displayLink(
           "jivison/gowon.ca",
-          "https://github.com/jivison/gowon.ca"
+          "https://github.com/gowon-bot/gowon.ca"
         )}
       
-The bot is written in Typescript with Discord.js, Mirrorball (the indexing server) is written in Go serving a GraphQL api, and Gowon.ca is built with Typescript and React`
+The bot is written in Typescript with Discord.js, Lilac is written in Elixir serving a GraphQL api, and Gowon.ca is built with Typescript and React.`
       )
       .setFooter({
         text: `Made with <3 by ${author.tag}`,

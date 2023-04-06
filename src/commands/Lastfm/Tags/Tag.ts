@@ -132,7 +132,7 @@ export default class Tag extends LastFMBaseCommand<typeof args> {
 
     const scrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
       items: overlap,
-      pageSize: 20,
+      pageSize: 15,
       pageRenderer(overlap, { offset }) {
         return (
           description +

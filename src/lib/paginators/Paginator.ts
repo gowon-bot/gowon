@@ -19,7 +19,7 @@ export class Paginator<ParamsT extends Params = Params, ResponseT = any> {
     public maxPages: number,
     private params: ParamsT,
     private ctx: GowonContext
-  ) { }
+  ) {}
 
   async getNext(): Promise<ResponseT | undefined> {
     this.currentPage++;
@@ -91,8 +91,8 @@ export class Paginator<ParamsT extends Params = Params, ResponseT = any> {
       concurrent?: boolean;
       waitInterval?: number;
     } = {
-        concurrent: true,
-      }
+      concurrent: true,
+    }
   ): Promise<V[] | ResponseT> {
     let results = [] as V[];
     let result: ResponseT | undefined;

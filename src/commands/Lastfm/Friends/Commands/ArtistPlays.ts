@@ -15,7 +15,15 @@ export class ArtistPlays extends FriendsChildCommand<typeof args> {
   idSeed = "elris EJ";
 
   description = "Shows how many plays of an artist your friends have";
-  aliases = ["ap", "p"];
+  aliases = [
+    "ap",
+    "p",
+    "friendswhoknows",
+    "friendswhoknowsartist",
+    "fwk",
+    "whoknowsartist",
+    "wka",
+  ];
   usage = ["", "artist"];
 
   arguments = args;

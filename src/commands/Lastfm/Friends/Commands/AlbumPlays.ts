@@ -1,10 +1,10 @@
-import { FriendsChildCommand } from "../FriendsChildCommand";
-import { MultiRequester } from "../../../../lib/MultiRequester";
 import { LastFMEntityNotFoundError } from "../../../../errors/errors";
-import { displayNumber } from "../../../../lib/views/displays";
-import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";
 import { code } from "../../../../helpers/discord";
+import { MultiRequester } from "../../../../lib/MultiRequester";
+import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";
 import { ArgumentsMap } from "../../../../lib/context/arguments/types";
+import { displayNumber } from "../../../../lib/views/displays";
+import { FriendsChildCommand } from "../FriendsChildCommand";
 
 const args = {
   ...prefabArguments.album,
@@ -14,7 +14,14 @@ export class AlbumPlays extends FriendsChildCommand<typeof args> {
   idSeed = "elris karin";
 
   description = "Shows how many plays of an album your friends have";
-  aliases = ["lp", "alp"];
+  aliases = [
+    "lp",
+    "alp",
+    "friendswhoknowsalbum",
+    "fwkl",
+    "whoknowsalbum",
+    "wkl",
+  ];
   usage = ["", "artist | album"];
 
   arguments = args;

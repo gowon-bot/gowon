@@ -8,7 +8,7 @@ import { SpotifyChildCommand } from "./SpotifyChildCommand";
 
 const args = {
   ...prefabArguments.track,
-} satisfies ArgumentsMap
+} satisfies ArgumentsMap;
 
 export class Like extends SpotifyChildCommand<typeof args> {
   idSeed = "pink fantasy daewang";

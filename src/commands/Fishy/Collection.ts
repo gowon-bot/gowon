@@ -56,7 +56,10 @@ export class Collection extends FishyChildCommand<typeof args> {
           )
         );
       },
-      overrides: { itemName: "fishy", itemNamePlural: "fishy" },
+      overrides: {
+        itemName: "fishy to collect",
+        itemNamePlural: "fishy to collect",
+      },
     });
 
     scrollingEmbed.send();
