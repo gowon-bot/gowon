@@ -1,5 +1,4 @@
-import { LogicError } from "../../../errors/errors";
-import { code } from "../../../helpers/discord";
+import { InvalidFriendUsernameError } from "../../../errors/friends";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { Validation } from "../../../lib/validation/ValidationChecker";
@@ -8,7 +7,10 @@ import { FriendsChildCommand } from "./FriendsChildCommand";
 
 const args = {
   ...standardMentions,
-  friendUsername: new StringArgument(),
+  friendUsername: new StringArgument({
+    index: 0,
+    description: "The username or alias of the friend to remove",
+  }),
 };
 
 export class Remove extends FriendsChildCommand<typeof args> {
@@ -16,7 +18,7 @@ export class Remove extends FriendsChildCommand<typeof args> {
 
   aliases = ["removefriend", "removefriends"];
   description = "Removes a friend";
-  usage = ["lfm_username", "@user"];
+  usage = ["lfm_username", "@user", "alias"];
 
   arguments = args;
 
@@ -39,18 +41,25 @@ export class Remove extends FriendsChildCommand<typeof args> {
       });
 
     if (username === senderUsername) {
-      throw new LogicError("you can't be friends with yourself!");
+      throw new InvalidFriendUsernameError();
     }
 
-    await this.friendsService.removeFriend(
-      this.ctx,
-      senderUser!,
-      mentionedDBUser || username
-    );
+    const friend =
+      (await this.friendsService.getFriend(
+        this.ctx,
+        senderUser!,
+        mentionedDBUser || username
+      )) ??
+      (await this.friendsService.getFriendByAlias(
+        senderUser!,
+        this.parsedArguments.friendUsername || ""
+      ));
+
+    await this.friendsService.removeFriend(this.ctx, friend);
 
     await this.send(
       this.newEmbed().setDescription(
-        `Successfully removed ${code(username)} as a friend!`
+        `Successfully removed ${friend?.display()} as a friend!`
       )
     );
   }

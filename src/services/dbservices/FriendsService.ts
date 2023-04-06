@@ -63,21 +63,8 @@ export class FriendsService extends BaseService {
     return newFriend;
   }
 
-  public async removeFriend(
-    ctx: GowonContext,
-    user: User,
-    friendToRemove: string | User
-  ): Promise<void> {
-    this.log(
-      ctx,
-      `Removing friend ${
-        typeof friendToRemove === "string"
-          ? friendToRemove
-          : friendToRemove.lastFMUsername
-      } for user ${user.lastFMUsername}`
-    );
-
-    const friend = await this.getFriend(ctx, user, friendToRemove);
+  public async removeFriend(ctx: GowonContext, friend?: Friend): Promise<void> {
+    this.log(ctx, `Removing friend ${friend?.id} for user ${friend?.user?.id}`);
 
     if (!friend) {
       throw new AlreadyNotFriendsError();
