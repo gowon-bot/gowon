@@ -1,6 +1,7 @@
 import { DiscordUserArgument } from "../argumentTypes/discord/DiscordUserArgument";
 import { UserStringArgument } from "../argumentTypes/UserStringArgument";
 import { DiscordIDMention } from "./DiscordIDMention";
+import { FriendAliasMention } from "./FriendMention";
 import { LastFMMention } from "./LastFMMention";
 import { DiscordUsernameMention } from "./UsernameMention";
 
@@ -24,5 +25,9 @@ export const standardMentions = {
     // User arguments don't ping with slash commands,
     // so users can just use the `user` argument
     slashCommandOption: false,
+  }),
+  friendMention: new UserStringArgument({
+    mention: new FriendAliasMention(),
+    description: "The alias of one of your friends to use",
   }),
 };

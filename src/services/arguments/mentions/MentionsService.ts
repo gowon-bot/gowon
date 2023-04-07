@@ -13,6 +13,7 @@ import { DiscordService } from "../../Discord/DiscordService";
 import { isSessionKey } from "../../LastFM/LastFMAPIService";
 import { NowPlayingEmbedParsingService } from "../../NowPlayingEmbedParsingService";
 import { ServiceRegistry } from "../../ServicesRegistry";
+import { FriendsService } from "../../dbservices/FriendsService";
 import { UsersService } from "../../dbservices/UsersService";
 import { UserInput } from "../../mirrorball/MirrorballTypes";
 import { MirrorballUsersService } from "../../mirrorball/services/MirrorballUsersService";
@@ -35,6 +36,9 @@ export class MentionsService extends BaseService {
   }
   private get discordService() {
     return ServiceRegistry.get(DiscordService);
+  }
+  private get friendsService() {
+    return ServiceRegistry.get(FriendsService);
   }
 
   async getMentions(
@@ -79,6 +83,18 @@ export class MentionsService extends BaseService {
     }
 
     await this.fetchSenderDBUser(ctx, mentionsBuilder);
+
+    if (args[argumentKeys.friendMention]) {
+      const friend = await this.friendsService.getFriendByAlias(
+        mentionsBuilder.getDBUser("sender")!,
+        args[argumentKeys.friendMention] as string
+      );
+
+      if (friend?.friend) {
+        mentionsBuilder.addDBUser("mentioned", friend.friend);
+      }
+    }
+
     await this.addLastfmUsername(ctx, mentionsBuilder, options);
     await this.reverseLookupDBUser(ctx, mentionsBuilder, options);
     await this.fetchDiscordUser(ctx, mentionsBuilder, options);

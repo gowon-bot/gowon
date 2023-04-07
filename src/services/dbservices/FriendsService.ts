@@ -1,12 +1,12 @@
 import { ILike } from "typeorm";
 import { Friend } from "../../database/entity/Friend";
 import { User } from "../../database/entity/User";
+import { LastFMUserDoesntExistError } from "../../errors/errors";
 import {
   AlreadyFriendsError,
-  LastFMUserDoesntExistError,
-  NotFriendsError,
+  AlreadyNotFriendsError,
   TooManyFriendsError,
-} from "../../errors/errors";
+} from "../../errors/friends";
 import { sqlLikeEscape } from "../../helpers/database";
 import { GowonContext } from "../../lib/context/Context";
 import { BaseService } from "../BaseService";
@@ -20,7 +20,7 @@ export class FriendsService extends BaseService {
   private friendsLimit = 10;
   private patronFriendsLimit = 15;
 
-  async addFriend(
+  public async addFriend(
     ctx: GowonContext,
     user: User,
     friendToAdd: string | User
@@ -45,83 +45,35 @@ export class FriendsService extends BaseService {
       );
     }
 
-    let friend: Friend | undefined;
+    const friend = await this.getFriend(ctx, user, friendToAdd);
 
-    if (friendToAdd instanceof User) {
-      friend =
-        (await Friend.findOneBy({
-          user: { id: user.id },
-          friend: { id: friendToAdd.id },
-        })) ?? undefined;
-    } else {
-      if (!(await this.lastFMService.doesUserExist(ctx, friendToAdd))) {
-        throw new LastFMUserDoesntExistError();
-      }
-
-      friend =
-        (await Friend.findOneBy({
-          user: { id: user.id },
-          friendUsername: friendToAdd,
-        })) ?? undefined;
+    if (friend) {
+      throw new AlreadyFriendsError();
     }
 
-    if (friend) throw new AlreadyFriendsError();
-
-    friend = Friend.create({ user });
+    const newFriend = Friend.create({ user });
 
     if (friendToAdd instanceof User) {
-      friend.friend = friendToAdd;
+      newFriend.friend = friendToAdd;
     } else {
-      friend.friendUsername = friendToAdd;
+      newFriend.friendUsername = friendToAdd;
     }
 
-    await friend.save();
-    return friend;
+    await newFriend.save();
+    return newFriend;
   }
 
-  async removeFriend(
-    ctx: GowonContext,
-    user: User,
-    friendToRemove: string | User
-  ): Promise<void> {
-    this.log(
-      ctx,
-      `Removing friend ${
-        typeof friendToRemove === "string"
-          ? friendToRemove
-          : friendToRemove.lastFMUsername
-      } for user ${user.lastFMUsername}`
-    );
+  public async removeFriend(ctx: GowonContext, friend?: Friend): Promise<void> {
+    this.log(ctx, `Removing friend ${friend?.id} for user ${friend?.user?.id}`);
 
-    let where: any;
-
-    if (friendToRemove instanceof User) {
-      where = [
-        {
-          user,
-          friend: friendToRemove,
-        },
-        {
-          user,
-          friendUsername: ILike(sqlLikeEscape(friendToRemove.lastFMUsername)),
-        },
-      ];
-    } else {
-      where = {
-        friendUsername: ILike(sqlLikeEscape(friendToRemove)),
-      };
+    if (!friend) {
+      throw new AlreadyNotFriendsError();
     }
-
-    const friend = await Friend.findOne({
-      where,
-    });
-
-    if (!friend) throw new NotFriendsError();
 
     await friend.remove();
   }
 
-  async clearFriends(ctx: GowonContext, user: User): Promise<number> {
+  public async clearFriends(ctx: GowonContext, user: User): Promise<number> {
     this.log(
       ctx,
       `Removing friend all friends for user ${user.lastFMUsername}`
@@ -134,13 +86,13 @@ export class FriendsService extends BaseService {
     return friendsDeleted.affected ?? 0;
   }
 
-  async listFriends(ctx: GowonContext, user: User): Promise<Friend[]> {
+  public async listFriends(ctx: GowonContext, user: User): Promise<Friend[]> {
     this.log(ctx, `Listing friends for user ${user?.lastFMUsername}`);
 
     return await Friend.findBy({ user: { id: user.id } });
   }
 
-  async isAlreadyFriends(
+  public async isAlreadyFriends(
     ctx: GowonContext,
     user: User,
     friend: string | User
@@ -150,16 +102,10 @@ export class FriendsService extends BaseService {
       `Checking if ${user.discordID} is already friends with ${friend}`
     );
 
-    const friends = await Friend.findBy({ user: { id: user.id } });
-
-    return friends.some((f) =>
-      typeof friend === "string"
-        ? f.friendUsername === friend
-        : f.friend?.id === friend.id
-    );
+    return !!(await this.getFriend(ctx, user, friend));
   }
 
-  async getUsernames(ctx: GowonContext, user: User): Promise<string[]> {
+  public async getUsernames(ctx: GowonContext, user: User): Promise<string[]> {
     return (await this.listFriends(ctx, user)).map(
       (f) =>
         (f.friend?.lastFMUsername?.toLowerCase() ||
@@ -167,9 +113,69 @@ export class FriendsService extends BaseService {
     );
   }
 
-  async friendsCount(ctx: GowonContext, user: User): Promise<number> {
-    this.log(ctx, `Counting friends for user ${user.lastFMUsername}`);
+  public async friendsCount(ctx: GowonContext, user: User): Promise<number> {
+    this.log(ctx, `Counting friends for user ${user.id}`);
 
     return (await this.listFriends(ctx, user)).length;
+  }
+
+  public async aliasFriend(
+    ctx: GowonContext,
+    friend: Friend,
+    alias: string
+  ): Promise<Friend> {
+    this.log(
+      ctx,
+      `Aliasing friend ${friend.friendUsername} as ${alias} for user ${friend.user.id}`
+    );
+
+    friend.alias = alias;
+    return await friend.save();
+  }
+
+  public async getFriend(
+    ctx: GowonContext,
+    user: User,
+    friendToFind: string | User
+  ): Promise<Friend | undefined> {
+    if (friendToFind instanceof User) {
+      const friend = await Friend.findOneBy({
+        user: { id: user.id },
+        friend: { id: friendToFind.id },
+      });
+
+      return friend ?? undefined;
+    } else {
+      if (!(await this.lastFMService.doesUserExist(ctx, friendToFind))) {
+        throw new LastFMUserDoesntExistError();
+      }
+
+      const friend = await Friend.findOne({
+        where: [
+          {
+            user: { id: user.id },
+            friendUsername: ILike(sqlLikeEscape(friendToFind)),
+          },
+          {
+            user: { id: user.id },
+            friend: { lastFMUsername: ILike(sqlLikeEscape(friendToFind)) },
+          },
+        ],
+      });
+
+      return friend ?? undefined;
+    }
+  }
+
+  public async getFriendByAlias(
+    user: User,
+    alias: string
+  ): Promise<Friend | undefined> {
+    const friend = await Friend.findOneBy({
+      user: { id: user.id },
+      alias: ILike(sqlLikeEscape(alias)),
+    });
+
+    return friend ?? undefined;
   }
 }

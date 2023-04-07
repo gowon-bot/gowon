@@ -8,7 +8,7 @@ export function calculatePercent(
   if (
     !number2 ||
     isNaN(typeof number2 === "string" ? toInt(number2) : number2) ||
-    number2 <= 0
+    toInt(number2) <= 0
   )
     return "0";
 
@@ -30,4 +30,10 @@ export function mostCommonOccurrence<T = any>(array: Array<T>): T | undefined {
         array.filter((v) => v === b).length
     )
     .pop();
+}
+
+export function average(list: number[]): number {
+  if (!list.length) return 0;
+
+  return list.reduce((acc, v) => acc + v, 0) / list.length;
 }

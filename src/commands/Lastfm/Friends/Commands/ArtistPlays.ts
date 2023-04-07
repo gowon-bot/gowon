@@ -1,10 +1,12 @@
 import { LastFMEntityNotFoundError } from "../../../../errors/errors";
-import { code } from "../../../../helpers/discord";
 import { LastfmLinks } from "../../../../helpers/lastfm/LastfmLinks";
 import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";
 import { ArgumentsMap } from "../../../../lib/context/arguments/types";
 import { MultiRequester } from "../../../../lib/MultiRequester";
-import { displayNumber } from "../../../../lib/views/displays";
+import {
+  displayNumber,
+  displayNumberedList,
+} from "../../../../lib/views/displays";
 import { FriendsChildCommand } from "../FriendsChildCommand";
 
 const args = {
@@ -28,50 +30,62 @@ export class ArtistPlays extends FriendsChildCommand<typeof args> {
 
   arguments = args;
 
-  throwIfNoFriends = true;
-
   async run() {
+    const { senderRequestable, friends } = await this.getMentions({
+      fetchFriendsList: true,
+      friendsRequired: true,
+    });
+
     const artist = await this.lastFMArguments.getArtist(
       this.ctx,
-      this.senderRequestable
+      senderRequestable
     );
 
-    const artistDetails = await new MultiRequester(this.ctx, [
-      ...this.friendUsernames,
-      this.senderRequestable,
-    ]).fetch(this.lastFMService.artistInfo.bind(this.lastFMService), {
+    const artistDetails = await new MultiRequester(
+      this.ctx,
+      friends.usernames()
+    ).fetch(this.lastFMService.artistInfo.bind(this.lastFMService), {
       artist,
     });
 
-    if (!artistDetails) throw new LastFMEntityNotFoundError("artist");
+    if (!artistDetails) {
+      throw new LastFMEntityNotFoundError("artist");
+    }
 
     const artistName = Object.values(artistDetails).filter((v) => v?.name)[0]!
       .name;
 
+    const friendDisplays = friends
+      .sortBy((f) => artistDetails[f.getUsername()]?.userPlaycount ?? -Infinity)
+      .map((f) => {
+        const ad = artistDetails[f.getUsername()];
+
+        if (!ad || isNaN(ad.userPlaycount)) {
+          return this.displayMissingFriend(f.getUsername());
+        }
+
+        return `${f.display()} - **${displayNumber(
+          ad.userPlaycount,
+          "**scrobble"
+        )}`;
+      });
+
+    const totalPlays = Object.values(artistDetails).reduce(
+      (acc, ad) => acc + (ad?.userPlaycount ?? 0),
+      0
+    );
+
     const embed = this.newEmbed()
+      .setAuthor(this.generateEmbedAuthor("Friends artist plays"))
       .setTitle(`Your friends plays of ${artistName}`)
       .setURL(LastfmLinks.listenersYouKnow(artistName))
-      .setDescription(
-        Object.keys(artistDetails)
-          .sort(
-            (a, b) =>
-              (artistDetails[b]?.userPlaycount ?? -Infinity) -
-              (artistDetails[a]?.userPlaycount ?? -Infinity)
-          )
-          .map((username) => {
-            const ad = artistDetails[username];
-
-            if (!ad || isNaN(ad.userPlaycount)) {
-              return this.displayMissingFriend(username);
-            }
-
-            return `${code(username)} - **${displayNumber(
-              ad.userPlaycount,
-              "**scrobble"
-            )}`;
-          })
-          .join("\n")
-      );
+      .setDescription(displayNumberedList(friendDisplays))
+      .setFooter({
+        text: `Your friends have a total of ${displayNumber(
+          totalPlays,
+          "scrobble"
+        )} of this artist`,
+      });
 
     await this.send(embed);
   }

@@ -1,15 +1,19 @@
-import { FriendsChildCommand } from "../FriendsChildCommand";
 import gql from "graphql-tag";
-import { RatingResponse } from "../../Mirrorball/RateYourMusic/connectors";
-import { displayNumber, displayRating } from "../../../../lib/views/displays";
-import { LogicError } from "../../../../errors/errors";
-import { mean } from "mathjs";
+import { FriendsHaveNoRatingsError } from "../../../../errors/friends";
 import { asyncMap } from "../../../../helpers";
+import { average } from "../../../../helpers/stats";
 import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";
-import { code } from "../../../../helpers/discord";
-import { ServiceRegistry } from "../../../../services/ServicesRegistry";
-import { AlbumCoverService } from "../../../../services/moderation/AlbumCoverService";
 import { ArgumentsMap } from "../../../../lib/context/arguments/types";
+import {
+  displayNumber,
+  displayNumberedList,
+  displayRating,
+} from "../../../../lib/views/displays";
+import { ServiceRegistry } from "../../../../services/ServicesRegistry";
+import { MirrorballRateYourMusicAlbum } from "../../../../services/mirrorball/MirrorballTypes";
+import { AlbumCoverService } from "../../../../services/moderation/AlbumCoverService";
+import { RatingResponse } from "../../Mirrorball/RateYourMusic/connectors";
+import { FriendsChildCommand } from "../FriendsChildCommand";
 
 const args = {
   ...prefabArguments.album,
@@ -24,18 +28,18 @@ export class Rating extends FriendsChildCommand<typeof args> {
 
   arguments = args;
 
-  throwIfNoFriends = true;
-
   albumCoverService = ServiceRegistry.get(AlbumCoverService);
 
   async run() {
-    const { senderUser, senderUsername } = await this.getMentions({
+    const { senderRequestable, friends } = await this.getMentions({
       senderRequired: true,
+      friendsRequired: true,
+      fetchFriendsList: true,
     });
 
     const { artist, album } = await this.lastFMArguments.getAlbum(
       this.ctx,
-      this.senderRequestable
+      senderRequestable
     );
 
     const query = gql`
@@ -54,41 +58,34 @@ export class Rating extends FriendsChildCommand<typeof args> {
       }
     `;
 
-    const friends = await this.friendsService.listFriends(
-      this.ctx,
-      senderUser!
-    );
+    const ratings: {
+      discordID: string;
+      rating: number | undefined;
+      album: MirrorballRateYourMusicAlbum | undefined;
+    }[] = await asyncMap(friends.discordIDs(), async (friendID) => {
+      const ratingResponse = (await this.mirrorballService.query(
+        this.ctx,
+        query,
+        {
+          user: { discordID: friendID },
+          album: { name: album, artist: { name: artist } },
+        }
+      )) as RatingResponse;
 
-    const friendIDs = [
-      ...(friends.map((f) => f.friend?.discordID).filter((f) => !!f) || []),
-      this.author.id,
-    ];
+      return {
+        discordID: friendID,
+        rating: ratingResponse.ratings.ratings[0]?.rating,
+        album: ratingResponse.ratings.ratings[0]?.rateYourMusicAlbum,
+      };
+    });
 
-    const ratings = (await asyncMap(friendIDs, async (friendID) => {
-      const response = await this.mirrorballService.query(this.ctx, query, {
-        user: { discordID: friendID },
-        album: { name: album, artist: { name: artist } },
-      });
-
-      const friend = friends.find((f) => f.friend?.discordID === friendID);
-
-      return [
-        friendID === this.author.id
-          ? senderUsername
-          : friend?.friend?.lastFMUsername!,
-        response,
-      ];
-    })) as [string, RatingResponse][];
-
-    const filteredRatings = ratings.filter((r) => r[1].ratings.ratings.length);
+    const filteredRatings = ratings.filter((r) => !!r.rating);
 
     if (!filteredRatings.length) {
-      throw new LogicError(
-        `Couldn't find that album in your or your friends' ratings!`
-      );
+      throw new FriendsHaveNoRatingsError();
     }
 
-    const { rateYourMusicAlbum } = filteredRatings[0][1].ratings.ratings[0];
+    const rateYourMusicAlbum = filteredRatings[0].album!;
 
     const albumInfo = await this.lastFMService.albumInfo(this.ctx, {
       artist,
@@ -103,31 +100,28 @@ export class Rating extends FriendsChildCommand<typeof args> {
       }
     );
 
+    const averageRating = average(filteredRatings.map((r) => r.rating!)) / 2;
+
+    const description = `_Average ${averageRating.toFixed(
+      2
+    )}/5 from ${displayNumber(filteredRatings.length, "rating")}_\n\n`;
+
     const embed = this.newEmbed()
+      .setAuthor(this.generateEmbedAuthor("Friends rating"))
       .setTitle(
         `Your friends ratings of ${rateYourMusicAlbum.title} by ${rateYourMusicAlbum.artistName}`
       )
       .setDescription(
-        `_Average ${(
-          (mean(
-            filteredRatings.map((r) => r[1].ratings.ratings[0].rating)
-          ) as number) / 2
-        ).toFixed(2)}/5 from ${displayNumber(
-          filteredRatings.length,
-          "rating"
-        )}_\n\n` +
-        filteredRatings
-          .sort(
-            (a, b) =>
-              b[1].ratings.ratings[0].rating - a[1].ratings.ratings[0].rating
+        description +
+          displayNumberedList(
+            filteredRatings
+              .sort((a, b) => b.rating! - a.rating!)
+              .map((r) => {
+                const friend = friends.getFriend(r.discordID);
+
+                return `${friend.display()} - ${displayRating(r.rating!)}`;
+              })
           )
-          .map(
-            ([username, rating]) =>
-              `${code(username)} - ${displayRating(
-                rating.ratings.ratings[0].rating
-              )}`
-          )
-          .join("\n")
       )
       .setThumbnail(albumCover || "");
 

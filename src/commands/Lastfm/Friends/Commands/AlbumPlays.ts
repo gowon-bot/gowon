@@ -1,9 +1,11 @@
 import { LastFMEntityNotFoundError } from "../../../../errors/errors";
-import { code } from "../../../../helpers/discord";
 import { MultiRequester } from "../../../../lib/MultiRequester";
 import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";
 import { ArgumentsMap } from "../../../../lib/context/arguments/types";
-import { displayNumber } from "../../../../lib/views/displays";
+import {
+  displayNumber,
+  displayNumberedList,
+} from "../../../../lib/views/displays";
 import { FriendsChildCommand } from "../FriendsChildCommand";
 
 const args = {
@@ -26,18 +28,21 @@ export class AlbumPlays extends FriendsChildCommand<typeof args> {
 
   arguments = args;
 
-  throwIfNoFriends = true;
-
   async run() {
+    const { senderRequestable, friends } = await this.getMentions({
+      fetchFriendsList: true,
+      friendsRequired: true,
+    });
+
     const { artist, album } = await this.lastFMArguments.getAlbum(
       this.ctx,
-      this.senderRequestable
+      senderRequestable
     );
 
-    const albumDetails = await new MultiRequester(this.ctx, [
-      ...this.friendUsernames,
-      this.senderRequestable,
-    ]).fetch(this.lastFMService.albumInfo.bind(this.lastFMService), {
+    const albumDetails = await new MultiRequester(
+      this.ctx,
+      friends.usernames()
+    ).fetch(this.lastFMService.albumInfo.bind(this.lastFMService), {
       artist,
       album,
     });
@@ -46,31 +51,38 @@ export class AlbumPlays extends FriendsChildCommand<typeof args> {
 
     if (!albumInfo) throw new LastFMEntityNotFoundError("album");
 
+    const friendDisplays = friends
+      .sortBy((f) => albumDetails[f.getUsername()]?.userPlaycount ?? -Infinity)
+      .map((f) => {
+        const ad = albumDetails[f.getUsername()];
+
+        if (!ad || isNaN(ad.userPlaycount)) {
+          return this.displayMissingFriend(f.getUsername());
+        }
+
+        return `${f.display()} - **${displayNumber(
+          ad.userPlaycount,
+          "**scrobble"
+        )}`;
+      });
+
+    const totalPlays = Object.values(albumDetails).reduce(
+      (acc, ld) => acc + (ld?.userPlaycount ?? 0),
+      0
+    );
+
     const embed = this.newEmbed()
+      .setAuthor(this.generateEmbedAuthor("Friends album plays"))
       .setTitle(
         `Your friends plays of ${albumInfo.name} by ${albumInfo.artist}`
       )
-      .setDescription(
-        Object.keys(albumDetails)
-          .sort(
-            (a, b) =>
-              (albumDetails[b]?.userPlaycount ?? -Infinity) -
-              (albumDetails[a]?.userPlaycount ?? -Infinity)
-          )
-          .map((username) => {
-            const ad = albumDetails[username];
-
-            if (!ad || isNaN(ad.userPlaycount)) {
-              return this.displayMissingFriend(username);
-            }
-
-            return `${code(username)} - **${displayNumber(
-              ad.userPlaycount,
-              "**scrobble"
-            )}`;
-          })
-          .join("\n")
-      );
+      .setDescription(displayNumberedList(friendDisplays))
+      .setFooter({
+        text: `Your friends have a total of ${displayNumber(
+          totalPlays,
+          "scrobble"
+        )} of this album`,
+      });
 
     await this.send(embed);
   }

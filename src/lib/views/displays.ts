@@ -77,6 +77,26 @@ export function displayNumberedList(
     .join("\n");
 }
 
+export function displayIconList<T = unknown>(
+  list: T[],
+  getIcon: (t: T) => string,
+  getLine: (t: T) => string
+): string {
+  const widestIcon =
+    list.map(getIcon).sort((a, b) => b.length - a.length)[0]?.length ?? 0;
+
+  return list
+    .map((val) => {
+      const icon = getIcon(val);
+      const line = getLine(val);
+
+      const spaces = widestIcon - icon.length;
+
+      return `\`${" ".repeat(spaces)}${icon}\`. ${line}`;
+    })
+    .join("\n");
+}
+
 export function displayQuery(query: DocumentNode): string | undefined {
   return query.loc?.source?.body;
 }

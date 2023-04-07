@@ -8,8 +8,6 @@ export class RemoveAll extends FriendsChildCommand {
   description = "Removes all your friends";
   usage = [""];
 
-  async beforeRun() {}
-
   async run() {
     const user = await this.usersService.getUser(this.ctx, this.author.id);
 

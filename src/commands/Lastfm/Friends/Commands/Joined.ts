@@ -1,10 +1,12 @@
-import { FriendsChildCommand } from "../FriendsChildCommand";
 import {
   FetchedResponses,
   MultiRequester,
 } from "../../../../lib/MultiRequester";
-import { displayDate } from "../../../../lib/views/displays";
-import { code } from "../../../../helpers/discord";
+import {
+  displayDate,
+  displayNumberedList,
+} from "../../../../lib/views/displays";
+import { FriendsChildCommand } from "../FriendsChildCommand";
 
 export class Joined extends FriendsChildCommand {
   idSeed = "elris chaejeong";
@@ -13,43 +15,39 @@ export class Joined extends FriendsChildCommand {
   aliases = ["j"];
   usage = ["", "time period"];
 
-  throwIfNoFriends = true;
-
   async run() {
-    let joineds = await new MultiRequester(this.ctx, [
-      ...this.friendUsernames,
-      this.senderRequestable,
-    ]).fetch(this.lastFMService.userInfo.bind(this.lastFMService), {});
+    const { friends } = await this.getMentions({
+      friendsRequired: true,
+      fetchFriendsList: true,
+    });
 
-    let joinDates = Object.keys(joineds).reduce((acc, username) => {
+    const joineds = await new MultiRequester(
+      this.ctx,
+      friends.usernames()
+    ).fetch(this.lastFMService.userInfo.bind(this.lastFMService), {});
+
+    const joinDates = Object.keys(joineds).reduce((acc, username) => {
       acc[username] = joineds[username]?.registeredAt;
 
       return acc;
     }, {} as FetchedResponses<Date>);
 
-    let embed = this.newEmbed()
+    const friendDisplays = friends
+      .sortBy((f) => joinDates[f.getUsername()]!.getTime() || Infinity)
+      .map((f) => {
+        const s = joinDates[f.getUsername()];
+
+        if (!s || s?.getTime() === 0) {
+          return this.displayMissingFriend(f.getUsername(), "join date");
+        }
+
+        return `${f.display()} - ${displayDate(s)}`;
+      });
+
+    const embed = this.newEmbed()
+      .setAuthor(this.generateEmbedAuthor("Friends joined"))
       .setTitle(`Your friends' join dates`)
-      .setDescription(
-        Object.keys(joinDates)
-          .sort(
-            (a, b) =>
-              (joinDates[a]?.getTime() === 0
-                ? Infinity
-                : joinDates[a]!.getTime()) -
-              (joinDates[b]?.getTime() === 0
-                ? Infinity
-                : joinDates[b]!.getTime())
-          )
-          .map((username) => {
-            let s = joinDates[username];
-
-            if (!s || s?.getTime() === 0)
-              return this.displayMissingFriend(username, "join date");
-
-            return `${code(username)} - ${displayDate(s)}`;
-          })
-          .join("\n")
-      );
+      .setDescription(displayNumberedList(friendDisplays));
 
     await this.send(embed);
   }

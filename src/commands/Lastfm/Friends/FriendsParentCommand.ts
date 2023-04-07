@@ -1,6 +1,7 @@
 import { CommandGroup } from "../../../lib/command/CommandGroup";
 import { LastFMBaseParentCommand } from "../LastFMBaseCommand";
 import { Add } from "./Add";
+import { Alias } from "./Alias";
 import { AlbumPlays } from "./Commands/AlbumPlays";
 import { ArtistPlays } from "./Commands/ArtistPlays";
 import { Joined } from "./Commands/Joined";
@@ -8,6 +9,7 @@ import { Rating } from "./Commands/Rating";
 import { Scrobbles } from "./Commands/Scrobbles";
 import { TrackPlays } from "./Commands/TrackPlays";
 import { WhoFirstArtist } from "./Commands/WhoFirstArtist";
+import { Help } from "./Help";
 import { List } from "./List";
 import { Remove } from "./Remove";
 import { RemoveAll } from "./RemoveAll";
@@ -19,8 +21,9 @@ export default class FriendsParentCommand extends LastFMBaseParentCommand {
 
   friendlyName = "friends";
   subcategory = "friends";
+  customHelp = Help;
 
-  prefixes = ["friends", "fr"];
+  prefixes = ["friends", "fr", "friend"];
   default = () => new List();
 
   noPrefixAliases = [
@@ -45,6 +48,8 @@ export default class FriendsParentCommand extends LastFMBaseParentCommand {
   children: CommandGroup = new CommandGroup(
     [
       Add,
+      Alias,
+      Help,
       List,
       Remove,
       RemoveAll,

@@ -10,6 +10,7 @@ export const argumentKeys = {
   lfmMention: "lastfmUsername",
   userID: "userID",
   discordUsername: "discordUsername",
+  friendMention: "friendMention",
 };
 
 export interface GetMentionsOptions {
