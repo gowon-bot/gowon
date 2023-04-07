@@ -1,5 +1,6 @@
 import { User as DiscordUser } from "discord.js";
 import { User as DBUser } from "../../../database/entity/User";
+import { LastFMUserDoesntExistError } from "../../../errors/errors";
 import { NoFriendsToAddError } from "../../../errors/friends";
 import { asyncFilter, asyncMap } from "../../../helpers";
 import { code } from "../../../helpers/discord";
@@ -114,6 +115,12 @@ export class Add extends FriendsChildCommand<typeof args> {
     const discordUsernames = this.parsedArguments.discordUsernames || [];
     const ids = this.parsedArguments.userIDs || [];
     const mentionedUsers = this.parsedArguments.users || [];
+
+    for (const username of lfmUsernames) {
+      if (!(await this.lastFMService.doesUserExist(this.ctx, username))) {
+        throw new LastFMUserDoesntExistError();
+      }
+    }
 
     const discordUsers = await asyncMap(discordUsernames, async (u) => {
       const user = await this.discordService.getDiscordUserFromUsername(

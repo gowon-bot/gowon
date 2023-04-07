@@ -1,7 +1,6 @@
 import { ILike } from "typeorm";
 import { Friend } from "../../database/entity/Friend";
 import { User } from "../../database/entity/User";
-import { LastFMUserDoesntExistError } from "../../errors/errors";
 import {
   AlreadyFriendsError,
   AlreadyNotFriendsError,
@@ -10,13 +9,8 @@ import {
 import { sqlLikeEscape } from "../../helpers/database";
 import { GowonContext } from "../../lib/context/Context";
 import { BaseService } from "../BaseService";
-import { LastFMService } from "../LastFM/LastFMService";
-import { ServiceRegistry } from "../ServicesRegistry";
 
 export class FriendsService extends BaseService {
-  private get lastFMService() {
-    return ServiceRegistry.get(LastFMService);
-  }
   private friendsLimit = 10;
   private patronFriendsLimit = 15;
 
@@ -138,6 +132,8 @@ export class FriendsService extends BaseService {
     user: User,
     friendToFind: string | User
   ): Promise<Friend | undefined> {
+    this.log(ctx, `Fetching friend ${friendToFind} for user ${user.id}`);
+
     if (friendToFind instanceof User) {
       const friend = await Friend.findOneBy({
         user: { id: user.id },
@@ -146,10 +142,6 @@ export class FriendsService extends BaseService {
 
       return friend ?? undefined;
     } else {
-      if (!(await this.lastFMService.doesUserExist(ctx, friendToFind))) {
-        throw new LastFMUserDoesntExistError();
-      }
-
       const friend = await Friend.findOne({
         where: [
           {
