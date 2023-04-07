@@ -1,75 +1,23 @@
-import { Friend } from "../../../database/entity/Friend";
 import { NoFriendsError } from "../../../errors/friends";
-import { bold, code } from "../../../helpers/discord";
+import { code } from "../../../helpers/discord";
+import { FriendsList } from "../../../helpers/friends";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
+import {
+  GetMentionsOptions,
+  Mentions,
+} from "../../../services/arguments/mentions/MentionsService.types";
 import { FriendsService } from "../../../services/dbservices/FriendsService";
 import { LastFMBaseChildCommand } from "../LastFMBaseCommand";
 
-export interface DisplayableFriend {
-  display(): string;
-  getUsername(): string;
-  getDiscordID(): string | undefined;
-  alias?: string;
-}
+export type FriendsMentions = Mentions & {
+  friends: FriendsList;
+};
 
-export class FriendsList {
-  constructor(
-    private friends: Friend[],
-    private senderUsername: string,
-    private senderID: string
-  ) {}
-
-  usernames(): string[] {
-    return [
-      ...this.friends
-        .filter((f) => !!f.getUsername())
-        .map((f) => f.getUsername()),
-      this.senderUsername,
-    ];
-  }
-
-  discordIDs(): string[] {
-    return [
-      ...this.friends
-        .filter((f) => !!f.getDiscordID())
-        .map((f) => f.getDiscordID()!),
-      this.senderID,
-    ];
-  }
-
-  sortedList(): DisplayableFriend[] {
-    return this.getDisplayables().sort((a, b) =>
-      (a.alias || a.getUsername()).localeCompare(b.alias || b.getUsername())
-    );
-  }
-
-  sortBy(pred: (f: DisplayableFriend) => number): DisplayableFriend[] {
-    return this.getDisplayables().sort((a, b) => pred(b) - pred(a));
-  }
-
-  length(): number {
-    return this.friends.length;
-  }
-
-  getFriend(discordID: string): DisplayableFriend {
-    return this.getDisplayables().find((f) => f.getDiscordID() === discordID)!;
-  }
-
-  private getDisplayables(): DisplayableFriend[] {
-    const senderUsername = this.senderUsername;
-    const senderID = this.senderID;
-
-    return [
-      ...this.friends,
-      {
-        getDiscordID: () => senderID,
-        getUsername: () => senderUsername,
-        display: () => bold("You"),
-      },
-    ];
-  }
-}
+type FriendsOptions = Partial<GetMentionsOptions> & {
+  fetchFriendsList?: boolean;
+  friendsRequired?: boolean;
+};
 
 export abstract class FriendsChildCommand<
   T extends ArgumentsMap = {}
@@ -78,32 +26,38 @@ export abstract class FriendsChildCommand<
 
   friendsService = ServiceRegistry.get(FriendsService);
 
-  protected friends!: FriendsList;
+  async getMentions(options: FriendsOptions): Promise<FriendsMentions> {
+    const mentions = (await super.getMentions(options)) as FriendsMentions;
 
-  throwIfNoFriends = false;
+    if (options.fetchFriendsList) {
+      const { senderUsername, senderUser } = mentions;
 
-  async beforeRun() {
-    const senderUsername = await this.usersService.getUsername(
-      this.ctx,
-      this.author.id
-    );
+      const friends = await this.friendsService.listFriends(
+        this.ctx,
+        senderUser!
+      );
 
-    await this.setFriends(senderUsername);
+      mentions.friends = new FriendsList(
+        friends,
+        senderUsername,
+        this.ctx.author.id
+      );
 
-    if (this.throwIfNoFriends && this.friends.length() < 1) {
-      throw new NoFriendsError();
+      if (options.friendsRequired) {
+        this.ensureFriends(mentions.friends);
+      }
     }
-  }
 
-  async setFriends(senderUsername: string) {
-    const user = await this.usersService.getUser(this.ctx, this.author.id);
-
-    const friends = await this.friendsService.listFriends(this.ctx, user);
-
-    this.friends = new FriendsList(friends, senderUsername, this.ctx.author.id);
+    return mentions as FriendsMentions;
   }
 
   protected displayMissingFriend(username: string, entity = "playcount") {
     return `${code(username)} - _Error fetching ${entity}_`;
+  }
+
+  private ensureFriends(friends: FriendsList) {
+    if (!friends.length()) {
+      throw new NoFriendsError();
+    }
   }
 }

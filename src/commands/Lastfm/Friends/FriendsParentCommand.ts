@@ -9,6 +9,7 @@ import { Rating } from "./Commands/Rating";
 import { Scrobbles } from "./Commands/Scrobbles";
 import { TrackPlays } from "./Commands/TrackPlays";
 import { WhoFirstArtist } from "./Commands/WhoFirstArtist";
+import { Help } from "./Help";
 import { List } from "./List";
 import { Remove } from "./Remove";
 import { RemoveAll } from "./RemoveAll";
@@ -20,8 +21,9 @@ export default class FriendsParentCommand extends LastFMBaseParentCommand {
 
   friendlyName = "friends";
   subcategory = "friends";
+  customHelp = Help;
 
-  prefixes = ["friends", "fr"];
+  prefixes = ["friends", "fr", "friend"];
   default = () => new List();
 
   noPrefixAliases = [
@@ -47,6 +49,7 @@ export default class FriendsParentCommand extends LastFMBaseParentCommand {
     [
       Add,
       Alias,
+      Help,
       List,
       Remove,
       RemoveAll,

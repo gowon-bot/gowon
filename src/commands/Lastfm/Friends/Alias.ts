@@ -23,12 +23,11 @@ const args = {
 export class Alias extends FriendsChildCommand<typeof args> {
   idSeed = "csr sua";
 
+  aliases = ["nickname", "setalias", "setnickname"];
   description = "Sets an alias for a friend";
   usage = ["lfm_username alias", "@user alias"];
 
   arguments = args;
-
-  async beforeRun() {}
 
   async run() {
     const { senderUser, mentionedDBUser } = await this.getMentions({

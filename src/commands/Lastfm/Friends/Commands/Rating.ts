@@ -28,13 +28,13 @@ export class Rating extends FriendsChildCommand<typeof args> {
 
   arguments = args;
 
-  throwIfNoFriends = true;
-
   albumCoverService = ServiceRegistry.get(AlbumCoverService);
 
   async run() {
-    const { senderRequestable } = await this.getMentions({
+    const { senderRequestable, friends } = await this.getMentions({
       senderRequired: true,
+      friendsRequired: true,
+      fetchFriendsList: true,
     });
 
     const { artist, album } = await this.lastFMArguments.getAlbum(
@@ -62,7 +62,7 @@ export class Rating extends FriendsChildCommand<typeof args> {
       discordID: string;
       rating: number | undefined;
       album: MirrorballRateYourMusicAlbum | undefined;
-    }[] = await asyncMap(this.friends.discordIDs(), async (friendID) => {
+    }[] = await asyncMap(friends.discordIDs(), async (friendID) => {
       const ratingResponse = (await this.mirrorballService.query(
         this.ctx,
         query,
@@ -117,7 +117,7 @@ export class Rating extends FriendsChildCommand<typeof args> {
             filteredRatings
               .sort((a, b) => b.rating! - a.rating!)
               .map((r) => {
-                const friend = this.friends.getFriend(r.discordID);
+                const friend = friends.getFriend(r.discordID);
 
                 return `${friend.display()} - ${displayRating(r.rating!)}`;
               })

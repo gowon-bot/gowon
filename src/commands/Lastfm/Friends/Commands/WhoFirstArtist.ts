@@ -24,11 +24,11 @@ export class WhoFirstArtist extends FriendsChildCommand<typeof args> {
 
   arguments = args;
 
-  throwIfNoFriends = true;
-
   async run() {
-    const { senderRequestable } = await this.getMentions({
+    const { senderRequestable, friends } = await this.getMentions({
       senderRequired: true,
+      friendsRequired: true,
+      fetchFriendsList: true,
     });
 
     const artist = await this.lastFMArguments.getArtist(
@@ -60,7 +60,7 @@ export class WhoFirstArtist extends FriendsChildCommand<typeof args> {
 
     const whoFirst = (await this.mirrorballService.query(this.ctx, query, {
       artist: { name: artist },
-      settings: { userIDs: this.friends.discordIDs() },
+      settings: { userIDs: friends.discordIDs() },
     })) as {
       whoFirstArtist: {
         artist: {
@@ -88,7 +88,7 @@ export class WhoFirstArtist extends FriendsChildCommand<typeof args> {
         displayNumberedList(
           whoFirst.whoFirstArtist.rows.map(
             (wk) =>
-              `${this.friends
+              `${friends
                 .getFriend(wk.user.discordID)
                 .display()} - ${displayDate(
                 convertMirrorballDate(wk.scrobbledAt)

@@ -30,10 +30,11 @@ export class ArtistPlays extends FriendsChildCommand<typeof args> {
 
   arguments = args;
 
-  throwIfNoFriends = true;
-
   async run() {
-    const { senderRequestable } = await this.getMentions();
+    const { senderRequestable, friends } = await this.getMentions({
+      fetchFriendsList: true,
+      friendsRequired: true,
+    });
 
     const artist = await this.lastFMArguments.getArtist(
       this.ctx,
@@ -42,7 +43,7 @@ export class ArtistPlays extends FriendsChildCommand<typeof args> {
 
     const artistDetails = await new MultiRequester(
       this.ctx,
-      this.friends.usernames()
+      friends.usernames()
     ).fetch(this.lastFMService.artistInfo.bind(this.lastFMService), {
       artist,
     });
@@ -54,7 +55,7 @@ export class ArtistPlays extends FriendsChildCommand<typeof args> {
     const artistName = Object.values(artistDetails).filter((v) => v?.name)[0]!
       .name;
 
-    const friendDisplays = this.friends
+    const friendDisplays = friends
       .sortBy((f) => artistDetails[f.getUsername()]?.userPlaycount ?? -Infinity)
       .map((f) => {
         const ad = artistDetails[f.getUsername()];

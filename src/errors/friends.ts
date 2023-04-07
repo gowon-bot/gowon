@@ -77,3 +77,11 @@ export class FriendsHaveNoRatingsError extends ClientError {
     super("Couldn't find that album in your or your friends' ratings!");
   }
 }
+
+export class NoFriendsToAddError extends ClientError {
+  name = "NoFriendsToAddError";
+
+  constructor() {
+    super("Please specify some friends to add!");
+  }
+}

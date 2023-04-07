@@ -24,20 +24,23 @@ export class Scrobbles extends FriendsChildCommand<typeof args> {
 
   arguments = args;
 
-  throwIfNoFriends = true;
-
   async run() {
+    const { friends } = await this.getMentions({
+      friendsRequired: true,
+      fetchFriendsList: true,
+    });
+
     const timeRange = this.parsedArguments.timeRange;
 
     const scrobbles = await new MultiRequester(
       this.ctx,
-      this.friends.usernames()
+      friends.usernames()
     ).fetch(this.lastFMService.getNumberScrobbles.bind(this.lastFMService), [
       timeRange.from,
       timeRange.to,
     ]);
 
-    const friendDisplays = this.friends
+    const friendDisplays = friends
       .sortBy((f) => scrobbles[f.getUsername()] ?? -Infinity)
       .map((f) => {
         const s = scrobbles[f.getUsername()];

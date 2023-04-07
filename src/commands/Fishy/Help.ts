@@ -10,7 +10,7 @@ export class Help extends FishyChildCommand {
 
   async run() {
     const embed = this.newEmbed().setAuthor(
-      this.generateEmbedAuthor("Config help")
+      this.generateEmbedAuthor("Fishy help")
     );
 
     embed

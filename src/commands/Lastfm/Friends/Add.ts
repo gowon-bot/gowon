@@ -1,6 +1,6 @@
 import { User as DiscordUser } from "discord.js";
 import { User as DBUser } from "../../../database/entity/User";
-import { LogicError } from "../../../errors/errors";
+import { NoFriendsToAddError } from "../../../errors/friends";
 import { asyncFilter, asyncMap } from "../../../helpers";
 import { code } from "../../../helpers/discord";
 import { SimpleMap } from "../../../helpers/types";
@@ -43,8 +43,6 @@ export class Add extends FriendsChildCommand<typeof args> {
 
   arguments = args;
 
-  async beforeRun() {}
-
   async run() {
     const { senderUser } = await this.getMentions({ senderRequired: true });
 
@@ -53,7 +51,7 @@ export class Add extends FriendsChildCommand<typeof args> {
     const alreadyFriends = [] as FriendToAdd[];
 
     if (!toAdd.length && !notFound.length) {
-      throw new LogicError("Please specify friends to add!");
+      throw new NoFriendsToAddError();
     }
 
     const toAddFiltered = await asyncFilter(toAdd, async (f) => {

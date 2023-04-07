@@ -14,14 +14,16 @@ export class List extends FriendsChildCommand {
   description = "Shows what your friends are listening to";
   usage = "";
 
-  throwIfNoFriends = true;
-
   async run() {
-    const { senderUser } = await this.getMentions({ senderRequired: true });
+    const { senderUser, friends } = await this.getMentions({
+      senderRequired: true,
+      friendsRequired: true,
+      fetchFriendsList: true,
+    });
 
     const nowPlayings = await new MultiRequester(
       this.ctx,
-      this.friends.usernames()
+      friends.usernames()
     ).fetch(this.lastFMService.nowPlaying.bind(this.lastFMService), []);
 
     const numberOfFriends = await this.friendsService.friendsCount(
@@ -38,7 +40,7 @@ export class List extends FriendsChildCommand {
       )
       .setDescription(
         displayIconList(
-          this.friends.sortedList(),
+          friends.sortedList(),
           (f) => {
             const np = nowPlayings[f.getUsername()];
 

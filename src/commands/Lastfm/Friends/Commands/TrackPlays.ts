@@ -21,10 +21,11 @@ export class TrackPlays extends FriendsChildCommand<typeof args> {
 
   arguments = args;
 
-  throwIfNoFriends = true;
-
   async run() {
-    const { senderRequestable } = await this.getMentions();
+    const { senderRequestable, friends } = await this.getMentions({
+      friendsRequired: true,
+      fetchFriendsList: true,
+    });
 
     const { artist, track } = await this.lastFMArguments.getTrack(
       this.ctx,
@@ -33,7 +34,7 @@ export class TrackPlays extends FriendsChildCommand<typeof args> {
 
     const trackDetails = await new MultiRequester(
       this.ctx,
-      this.friends.usernames()
+      friends.usernames()
     ).fetch(this.lastFMService.trackInfo.bind(this.lastFMService), {
       artist,
       track,
@@ -45,7 +46,7 @@ export class TrackPlays extends FriendsChildCommand<typeof args> {
       throw new LastFMEntityNotFoundError("track");
     }
 
-    const friendDisplays = this.friends
+    const friendDisplays = friends
       .sortBy((f) => trackDetails[f.getUsername()]?.userPlaycount ?? -Infinity)
       .map((f) => {
         const td = trackDetails[f.getUsername()];

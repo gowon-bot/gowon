@@ -15,12 +15,15 @@ export class Joined extends FriendsChildCommand {
   aliases = ["j"];
   usage = ["", "time period"];
 
-  throwIfNoFriends = true;
-
   async run() {
+    const { friends } = await this.getMentions({
+      friendsRequired: true,
+      fetchFriendsList: true,
+    });
+
     const joineds = await new MultiRequester(
       this.ctx,
-      this.friends.usernames()
+      friends.usernames()
     ).fetch(this.lastFMService.userInfo.bind(this.lastFMService), {});
 
     const joinDates = Object.keys(joineds).reduce((acc, username) => {
@@ -29,7 +32,7 @@ export class Joined extends FriendsChildCommand {
       return acc;
     }, {} as FetchedResponses<Date>);
 
-    const friendDisplays = this.friends
+    const friendDisplays = friends
       .sortBy((f) => joinDates[f.getUsername()]!.getTime() || Infinity)
       .map((f) => {
         const s = joinDates[f.getUsername()];
