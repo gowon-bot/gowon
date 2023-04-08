@@ -25,11 +25,11 @@ type SpotifyArgumentsContext = GowonContext<{
 }>;
 
 export class SpotifyArguments extends BaseService<SpotifyArgumentsContext> {
-  private readonly spotifyTrackLinkRegex =
+  private readonly trackLinkRegex =
     /https:\/\/open\.spotify\.com\/track\/([\w]+)\/?/i;
-  private readonly spotifyArtistLinkRegex =
+  private readonly artistLinkRegex =
     /https:\/\/open\.spotify\.com\/artist\/([\w]+)\/?/i;
-  private readonly spotifyAlbumLinkRegex =
+  private readonly albumLinkRegex =
     /https:\/\/open\.spotify\.com\/album\/([\w]+)\/?/i;
 
   private get lastFMArguments() {
@@ -58,7 +58,7 @@ export class SpotifyArguments extends BaseService<SpotifyArgumentsContext> {
   ): Promise<SpotifyTrack | undefined> {
     const replied = repliedMessage || (await ctx.getRepliedMessage());
 
-    if (replied && this.containsSpotifyTrackLink(replied.content)) {
+    if (replied && this.containsLink(replied.content, this.trackLinkRegex)) {
       const uri = this.getSpotifyTrackURI(replied.content);
 
       return await this.spotifyService.getTrack(ctx, uri.asID);
@@ -73,7 +73,7 @@ export class SpotifyArguments extends BaseService<SpotifyArgumentsContext> {
   ): Promise<SpotifyAlbum | undefined> {
     const replied = repliedMessage || (await ctx.getRepliedMessage());
 
-    if (replied && this.containsSpotifyAlbumLink(replied.content)) {
+    if (replied && this.containsLink(replied.content, this.albumLinkRegex)) {
       const uri = this.getSpotifyAlbumURI(replied.content);
 
       return await this.spotifyService.getAlbum(ctx, uri.asID);
@@ -88,7 +88,7 @@ export class SpotifyArguments extends BaseService<SpotifyArgumentsContext> {
   ): Promise<SpotifyArtist | undefined> {
     const replied = repliedMessage || (await ctx.getRepliedMessage());
 
-    if (replied && this.containsSpotifyArtistLink(replied.content)) {
+    if (replied && this.containsLink(replied.content, this.artistLinkRegex)) {
       const uri = this.getSpotifyArtistURI(replied.content);
 
       return await this.spotifyService.getArtist(ctx, uri.asID);
@@ -128,36 +128,26 @@ export class SpotifyArguments extends BaseService<SpotifyArgumentsContext> {
   }
 
   protected getSpotifyTrackURI(string: string): SpotifyURI<"track"> {
-    const id = (string.match(this.spotifyTrackLinkRegex) || [])[1];
+    const id = (string.match(this.trackLinkRegex) || [])[1];
 
     return this.spotifyService.generateURI("track", id);
   }
 
   protected getSpotifyArtistURI(string: string): SpotifyURI<"artist"> {
-    const id = (string.match(this.spotifyArtistLinkRegex) || [])[1];
+    const id = (string.match(this.artistLinkRegex) || [])[1];
 
     return this.spotifyService.generateURI("artist", id);
   }
 
   protected getSpotifyAlbumURI(string: string): SpotifyURI<"album"> {
-    const id = (string.match(this.spotifyAlbumLinkRegex) || [])[1];
+    const id = (string.match(this.albumLinkRegex) || [])[1];
 
     return this.spotifyService.generateURI("album", id);
   }
 
-  protected containsSpotifyTrackLink(string?: string): boolean {
+  protected containsLink(string: string | undefined, regex: RegExp): boolean {
     if (!string) return false;
-    return this.spotifyTrackLinkRegex.test(string);
-  }
-
-  protected containsSpotifyAlbumLink(string?: string): boolean {
-    if (!string) return false;
-    return this.spotifyAlbumLinkRegex.test(string);
-  }
-
-  protected containsSpotifyArtistLink(string?: string): boolean {
-    if (!string) return false;
-    return this.spotifyArtistLinkRegex.test(string);
+    return regex.test(string);
   }
 
   private async confirmTrack(
