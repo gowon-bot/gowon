@@ -6,12 +6,13 @@ import {
 import { GowonContext } from "../../lib/context/Context";
 import { Payload } from "../../lib/context/Payload";
 import { BaseService } from "../BaseService";
-import { RedirectsService } from "../dbservices/RedirectsService";
 import { NowPlayingEmbedParsingService } from "../NowPlayingEmbedParsingService";
 import { ServiceRegistry } from "../ServicesRegistry";
-import { RecentTrack } from "./converters/RecentTracks";
+import { SpotifyArguments } from "../Spotify/SpotifyArguments";
+import { RedirectsService } from "../dbservices/RedirectsService";
 import { Requestable } from "./LastFMAPIService";
 import { LastFMService } from "./LastFMService";
+import { RecentTrack } from "./converters/RecentTracks";
 
 export type LastFMArgumentsMutableContext = {
   nowplaying?: RecentTrack;
@@ -38,19 +39,26 @@ export class LastFMArguments extends BaseService<LastFMArgumentsContext> {
   private get nowPlayingEmbedParsingService() {
     return ServiceRegistry.get(NowPlayingEmbedParsingService);
   }
+  private get spotifyArguments() {
+    return ServiceRegistry.get(SpotifyArguments);
+  }
 
   async getArtist(
     ctx: LastFMArgumentsContext,
     requestable: Requestable,
     options: LastFMArgumentsOptions = {}
   ): Promise<string> {
-    let artist = this.parsedArguments(ctx).artist as string;
+    const artist = this.parsedArguments(ctx).artist as string;
 
     if (!artist) {
-      artist = (await this.getNowPlaying(ctx, requestable, options)).artist;
+      const spotifyArtist = await this.getSpotifyArtist(ctx);
+      if (spotifyArtist) return spotifyArtist;
+
+      return (await this.getNowPlaying(ctx, requestable, options)).artist;
     } else if (options.redirect) {
-      artist =
-        (await this.redirectsService.getRedirect(ctx, artist))?.to || artist;
+      return (
+        (await this.redirectsService.getRedirect(ctx, artist))?.to || artist
+      );
     }
 
     return artist;
@@ -63,6 +71,8 @@ export class LastFMArguments extends BaseService<LastFMArgumentsContext> {
   ): Promise<{ artist: string; album: string }> {
     let artist = this.parsedArguments(ctx).artist as string,
       album = this.parsedArguments(ctx).album as string;
+
+    console.log(artist, album);
 
     // This means that the user has not included a `|` in their message
     if (artist && album === undefined) {
@@ -79,6 +89,11 @@ export class LastFMArguments extends BaseService<LastFMArgumentsContext> {
         artist: albumSearchResult.artist,
         album: albumSearchResult.name,
       };
+    }
+
+    if (!artist && !album) {
+      const spotifyAlbum = await this.getSpotifyAlbum(ctx);
+      if (spotifyAlbum) return spotifyAlbum;
     }
 
     if (!artist || !album) {
@@ -116,6 +131,11 @@ export class LastFMArguments extends BaseService<LastFMArgumentsContext> {
         artist: trackSearchResult.artist,
         track: trackSearchResult.name,
       };
+    }
+
+    if (!artist && !track) {
+      const spotifyTrack = await this.getSpotifyTrack(ctx);
+      if (spotifyTrack) return spotifyTrack;
     }
 
     if (!artist || !track) {
@@ -168,24 +188,110 @@ export class LastFMArguments extends BaseService<LastFMArgumentsContext> {
 
     let parsedNowplaying: RecentTrack | undefined = undefined;
 
-    if (this.nowPlayingEmbedParsingService.hasParsableGowonEmbed(ctx, reply))
+    if (this.nowPlayingEmbedParsingService.hasParsableGowonEmbed(reply))
       parsedNowplaying =
         this.nowPlayingEmbedParsingService.parseGowonEmbed(embed);
 
-    if (this.nowPlayingEmbedParsingService.hasParsableFmbotEmbed(ctx, reply))
+    if (this.nowPlayingEmbedParsingService.hasParsableFmbotEmbed(reply))
       parsedNowplaying =
         this.nowPlayingEmbedParsingService.parseFmbotEmbed(embed);
 
-    if (this.nowPlayingEmbedParsingService.hasParsableChuuEmbed(ctx, reply))
+    if (this.nowPlayingEmbedParsingService.hasParsableChuuEmbed(reply))
       parsedNowplaying =
         this.nowPlayingEmbedParsingService.parseChuuEmbed(embed);
 
-    if (this.nowPlayingEmbedParsingService.hasParsableWhoKnowsEmbed(ctx, reply))
+    if (this.nowPlayingEmbedParsingService.hasParsableWhoKnowsEmbed(reply))
       parsedNowplaying =
         this.nowPlayingEmbedParsingService.parseWhoKnowsEmbed(embed);
 
     ctx.mutable.parsedNowplaying = parsedNowplaying;
 
     return parsedNowplaying;
+  }
+
+  private async getSpotifyArtist(
+    ctx: LastFMArgumentsContext
+  ): Promise<string | undefined> {
+    const repliedMessage = await ctx.getRepliedMessage();
+    if (!repliedMessage) return undefined;
+
+    const spotifyTrack = await this.spotifyArguments.getTrackFromReplied(
+      ctx,
+      repliedMessage
+    );
+
+    if (spotifyTrack) return spotifyTrack.artists.primary.name;
+
+    const spotifyAlbum = await this.spotifyArguments.getAlbumFromReplied(
+      ctx,
+      repliedMessage
+    );
+
+    if (spotifyAlbum) return spotifyAlbum.artists.primary.name;
+
+    const spotifyArtist = await this.spotifyArguments.getArtistFromReplied(
+      ctx,
+      repliedMessage
+    );
+
+    if (spotifyArtist) return spotifyArtist.name;
+
+    return undefined;
+  }
+
+  private async getSpotifyAlbum(
+    ctx: LastFMArgumentsContext
+  ): Promise<{ artist: string; album: string } | undefined> {
+    const repliedMessage = await ctx.getRepliedMessage();
+    if (!repliedMessage) return undefined;
+
+    const spotifyTrack = await this.spotifyArguments.getTrackFromReplied(
+      ctx,
+      repliedMessage
+    );
+
+    if (spotifyTrack) {
+      return {
+        artist: spotifyTrack.artists.primary.name,
+        album: spotifyTrack.album.name,
+      };
+    }
+
+    const spotifyAlbum = await this.spotifyArguments.getAlbumFromReplied(
+      ctx,
+      repliedMessage
+    );
+
+    console.log(spotifyAlbum);
+
+    if (spotifyAlbum) {
+      return {
+        artist: spotifyAlbum.artists.primary.name,
+        album: spotifyAlbum.name,
+      };
+    }
+
+    return undefined;
+  }
+
+  private async getSpotifyTrack(
+    ctx: LastFMArgumentsContext
+  ): Promise<{ artist: string; track: string } | undefined> {
+    const repliedMessage = await ctx.getRepliedMessage();
+    if (!repliedMessage) return undefined;
+
+    const spotifyTrack = await this.spotifyArguments.getTrackFromReplied(
+      ctx,
+      repliedMessage
+    );
+
+    if (spotifyTrack) {
+      return {
+        artist: spotifyTrack.artists.primary.name,
+        track: spotifyTrack.name,
+      };
+    }
+
+    return undefined;
   }
 }

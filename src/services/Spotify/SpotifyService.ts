@@ -1,37 +1,39 @@
 import fetch, { Response } from "node-fetch";
-import config from "../../../config.json";
-import { URLSearchParams } from "url";
 import { stringify } from "querystring";
-import {
-  RawSearchResponse,
-  SpotifyEntityName,
-  RawSpotifyTrack,
-  RawSpotifyURI,
-  RawSpotifyArtist,
-  RawSpotifyAlbum,
-  RawBaseSpotifyEntity,
-  RawSpotifyItemCollection,
-  RawSpotifyPlaylist,
-  SpotifySnapshot,
-} from "./SpotifyService.types";
-import { SimpleMap } from "../../helpers/types";
+import { URLSearchParams } from "url";
+import config from "../../../config.json";
 import {
   NotAuthenticatedWithSpotifyError,
   SpotifyConnectionError,
 } from "../../errors/spotify";
+import { SimpleMap } from "../../helpers/types";
 import { Logger } from "../../lib/Logger";
 import { GowonContext } from "../../lib/context/Context";
 import { BaseSpotifyService } from "./BaseSpotifyService";
+import {
+  RawBaseSpotifyEntity,
+  RawSearchResponse,
+  RawSpotifyAlbum,
+  RawSpotifyArtist,
+  RawSpotifyItemCollection,
+  RawSpotifyPlaylist,
+  RawSpotifyTrack,
+  RawSpotifyURI,
+  SpotifyEntityName,
+  SpotifySnapshot,
+} from "./SpotifyService.types";
+import { SpotifyAlbum } from "./converters/Album";
+import { SpotifyArtist } from "./converters/Artist";
+import { SpotifyToken } from "./converters/Auth";
+import { SpotifyID, SpotifyURI } from "./converters/BaseConverter";
+import { SpotifyItemCollection } from "./converters/ItemCollection";
+import { SpotifyPlaylist } from "./converters/Playlist";
 import {
   SpotifyAlbumSearch,
   SpotifyArtistSearch,
   SpotifyTrackSearch,
 } from "./converters/Search";
-import { SpotifyID, SpotifyURI } from "./converters/BaseConverter";
 import { SpotifyTrack } from "./converters/Track";
-import { SpotifyItemCollection } from "./converters/ItemCollection";
-import { SpotifyPlaylist } from "./converters/Playlist";
-import { SpotifyToken } from "./converters/Auth";
 import { parseError } from "./parseError";
 
 export type SpotifyServiceContext = GowonContext<{
@@ -255,6 +257,30 @@ export class SpotifyService extends BaseSpotifyService<SpotifyServiceContext> {
     });
 
     return new SpotifyTrack(raw);
+  }
+
+  // Albums
+  async getAlbum(
+    ctx: SpotifyServiceContext,
+    id: SpotifyID
+  ): Promise<SpotifyAlbum> {
+    const raw = await this.request<RawSpotifyAlbum>(ctx, {
+      path: `albums/${id}`,
+    });
+
+    return new SpotifyAlbum(raw);
+  }
+
+  // Artists
+  async getArtist(
+    ctx: SpotifyServiceContext,
+    id: SpotifyID
+  ): Promise<SpotifyArtist> {
+    const raw = await this.request<RawSpotifyArtist>(ctx, {
+      path: `artists/${id}`,
+    });
+
+    return new SpotifyArtist(raw);
   }
 
   // Player

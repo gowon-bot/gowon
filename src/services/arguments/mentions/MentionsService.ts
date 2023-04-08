@@ -7,6 +7,7 @@ import {
   SenderUserNotAuthenticatedError,
   throwSenderUserNotIndexed,
 } from "../../../errors/user";
+import { isBot } from "../../../helpers/bots";
 import { GowonContext } from "../../../lib/context/Context";
 import { BaseService } from "../../BaseService";
 import { DiscordService } from "../../Discord/DiscordService";
@@ -147,9 +148,9 @@ export class MentionsService extends BaseService {
     if (ctx.payload.isMessage() && ctx.payload.source.reference && user) {
       const reply = await ctx.payload.source.fetchReference();
 
-      if (this.nowPlayingEmbedParsingService.hasParsableEmbed(ctx, reply))
+      if (this.nowPlayingEmbedParsingService.hasParsableEmbed(reply)) {
         if (
-          ctx.client.isBot(user.id, [
+          isBot(user.id, [
             "gowon",
             "gowon development",
             "fmbot",
@@ -164,6 +165,7 @@ export class MentionsService extends BaseService {
 
           mentionsBuilder.addDiscordUser("mentioned", mentionedUser);
         }
+      }
     }
   }
 

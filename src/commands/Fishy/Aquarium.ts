@@ -63,7 +63,7 @@ _${aquariumMessage}_
 
 ${aquariumTank}
 
-There **${displayNumber(aquarium.size)} total fishy** in your aquarium.
+There be **${displayNumber(aquarium.size)} total fishy** in your aquarium.
 ${
   aquarium.size === 0
     ? ``

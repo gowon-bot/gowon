@@ -1,24 +1,21 @@
 import { CommandInteraction, Message, User } from "discord.js";
+import { isGowon } from "../../../../../helpers/bots";
 import { GowonContext } from "../../../Context";
 import {
   BaseArgument,
   BaseArgumentOptions,
-  defaultIndexableOptions,
   IndexableArgumentOptions,
+  defaultIndexableOptions,
 } from "../BaseArgument";
 import { SlashCommandBuilder } from "../SlashCommandTypes";
 
 export interface DiscordUserArgumentOptions
   extends BaseArgumentOptions,
-  IndexableArgumentOptions { }
+    IndexableArgumentOptions {}
 
 export class DiscordUserArgument<
   OptionsT extends Partial<DiscordUserArgumentOptions>
-> extends BaseArgument<
-  User,
-  DiscordUserArgumentOptions,
-  OptionsT
-> {
+> extends BaseArgument<User, DiscordUserArgumentOptions, OptionsT> {
   mention = true;
 
   constructor(options?: OptionsT) {
@@ -31,6 +28,12 @@ export class DiscordUserArgument<
     // Run with mention prefix
     if (message.content.startsWith("<")) {
       mentions = mentions.slice(1);
+    }
+
+    if (isGowon(message.mentions.repliedUser?.id ?? "")) {
+      mentions = mentions.filter(
+        (m) => m.id !== message.mentions.repliedUser!.id
+      );
     }
 
     return this.getElementFromIndex(mentions, this.options.index);

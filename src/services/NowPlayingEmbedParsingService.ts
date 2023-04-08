@@ -1,5 +1,5 @@
 import { Message, MessageEmbed } from "discord.js";
-import { GowonContext } from "../lib/context/Context";
+import { isBot } from "../helpers/bots";
 import { BaseService } from "./BaseService";
 import { RecentTrack } from "./LastFM/converters/RecentTracks";
 
@@ -16,18 +16,18 @@ export class NowPlayingEmbedParsingService extends BaseService {
   private readonly linkRegex = /\[(.*)\]\(https.*\)/;
   private readonly boldOrItalicRegex = /\*?\*(.*)\*?\*/;
 
-  hasParsableEmbed(ctx: GowonContext, message: Message) {
+  hasParsableEmbed(message: Message) {
     return (
-      this.hasParsableGowonEmbed(ctx, message) ||
-      this.hasParsableFmbotEmbed(ctx, message) ||
-      this.hasParsableChuuEmbed(ctx, message) ||
-      this.hasParsableWhoKnowsEmbed(ctx, message)
+      this.hasParsableGowonEmbed(message) ||
+      this.hasParsableFmbotEmbed(message) ||
+      this.hasParsableChuuEmbed(message) ||
+      this.hasParsableWhoKnowsEmbed(message)
     );
   }
 
-  hasParsableGowonEmbed(ctx: GowonContext, message: Message) {
+  hasParsableGowonEmbed(message: Message) {
     return (
-      ctx.client.isBot(message.author.id, ["gowon", "gowon development"]) &&
+      isBot(message.author.id, ["gowon", "gowon development"]) &&
       message.embeds.length &&
       (message.embeds[0].author?.name?.startsWith("Now playing for") ||
         message.embeds[0].author?.name?.startsWith("Last scrobbled for") ||
@@ -44,9 +44,9 @@ export class NowPlayingEmbedParsingService extends BaseService {
     return this.generateTrack(artist, track, album, embed.thumbnail?.url);
   }
 
-  hasParsableFmbotEmbed(ctx: GowonContext, message: Message) {
+  hasParsableFmbotEmbed(message: Message) {
     return (
-      ctx.client.isBot(message.author.id, ["fmbot", "fmbot develop"]) &&
+      isBot(message.author.id, ["fmbot", "fmbot develop"]) &&
       message.embeds.length &&
       (message.embeds[0].author?.name?.startsWith("Now playing ") ||
         message.embeds[0].author?.name?.startsWith("Last track for"))
@@ -60,9 +60,9 @@ export class NowPlayingEmbedParsingService extends BaseService {
     return this.generateTrack(artist!, track!, album, embed.thumbnail?.url);
   }
 
-  hasParsableChuuEmbed(ctx: GowonContext, message: Message) {
+  hasParsableChuuEmbed(message: Message) {
     return (
-      ctx.client.isBot(message.author.id, ["chuu"]) &&
+      isBot(message.author.id, ["chuu"]) &&
       message.embeds.length &&
       (message.embeds[0].author?.name?.includes("current song") ||
         message.embeds[0].author?.name?.includes("last song"))
@@ -87,9 +87,9 @@ export class NowPlayingEmbedParsingService extends BaseService {
     );
   }
 
-  hasParsableWhoKnowsEmbed(ctx: GowonContext, message: Message) {
+  hasParsableWhoKnowsEmbed(message: Message) {
     return (
-      ctx.client.isBot(message.author.id, ["who knows"]) &&
+      isBot(message.author.id, ["who knows"]) &&
       message.embeds.length &&
       (message.embeds[0].author?.name?.startsWith("Now Playing") ||
         message.embeds[0].author?.name?.startsWith("Last Scrobbled"))

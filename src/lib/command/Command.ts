@@ -405,14 +405,6 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
     return await this.discordService.send(this.ctx, content);
   }
 
-  async getRepliedMessage(): Promise<Message | undefined> {
-    if (this.payload.isMessage() && this.payload.source.reference) {
-      return await this.payload.source.fetchReference();
-    }
-
-    return undefined;
-  }
-
   newEmbed(embed?: MessageEmbed): MessageEmbed {
     return gowonEmbed(this.payload.member ?? undefined, embed);
   }
