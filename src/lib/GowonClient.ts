@@ -1,22 +1,12 @@
 import { Client, User as DiscordUser, Guild } from "discord.js";
 import { User } from "../database/entity/User";
-import { flatDeep } from "../helpers";
+import { BotName } from "../helpers/bots";
 import { ServiceRegistry } from "../services/ServicesRegistry";
 import { constants } from "./constants";
 import { GowonContext } from "./context/Context";
 import { isUnicodeEmoji } from "./context/arguments/parsers/EmojiParser";
 import { SettingsService } from "./settings/SettingsService";
 import specialUsers from "./specialUsers.json";
-
-export type BotName =
-  | "rem"
-  | "gowon"
-  | "gowon development"
-  | "chuu"
-  | "fmbot"
-  | "fmbot develop"
-  | "who knows"
-  | "miso";
 
 export class GowonClient {
   private get settingsService() {
@@ -50,12 +40,6 @@ export class GowonClient {
     );
   }
 
-  isGowon(userID?: string) {
-    return (
-      this.isBot(userID, "gowon") || this.isBot(userID, "gowon development")
-    );
-  }
-
   isDeveloperOf(
     bot: Exclude<
       BotName,
@@ -65,14 +49,6 @@ export class GowonClient {
   ) {
     return this.specialUsers.otherBotDevelopers[bot].some(
       (dev) => dev.id === userID
-    );
-  }
-
-  isBot(userID: string | undefined, botName: BotName | BotName[]) {
-    const botNames = flatDeep([botName]);
-
-    return this.specialUsers.bots.some(
-      (bot) => botNames.includes(bot.name) && bot.id === userID
     );
   }
 

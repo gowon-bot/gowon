@@ -1,4 +1,4 @@
-import { Guild, GuildMember, User } from "discord.js";
+import { Guild, GuildMember, Message, User } from "discord.js";
 import { GuildRequiredError, UnexpectedGowonError } from "../../errors/gowon";
 import { GowonClient } from "../GowonClient";
 import { Logger } from "../Logger";
@@ -118,6 +118,14 @@ export class GowonContext<T extends CustomContext = CustomContext> {
 
   public setCommand(command: Command) {
     this._command = command;
+  }
+
+  async getRepliedMessage(): Promise<Message | undefined> {
+    if (this.payload.isMessage() && this.payload.source.reference) {
+      return await this.payload.source.fetchReference();
+    }
+
+    return undefined;
   }
 
   /* Used to set commands from non-command places, eg. GuildEventService */

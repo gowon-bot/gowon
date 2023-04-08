@@ -1,5 +1,6 @@
 import { Message } from "discord.js";
 import Prefix from "../../commands/Meta/Prefix";
+import { isBot } from "../../helpers/bots";
 import { userMentionAtStartRegex } from "../../helpers/discord";
 import { DiscordService } from "../../services/Discord/DiscordService";
 import {
@@ -210,7 +211,7 @@ export class CommandHandler {
       (message.content.includes(`<@${id}>`) ||
         message.content.includes(`<@!${id}>`)) &&
       message.content.split(/\s+/)[1]?.toLowerCase() === "you" &&
-      this.client.isBot(message.author.id, "rem")
+      isBot(message.author.id, "rem")
     ) {
       await message.reply("Yes ma'am!");
     }

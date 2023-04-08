@@ -1,3 +1,4 @@
+import { Message } from "discord.js";
 import { bold, italic } from "../../helpers/discord";
 import { GowonContext } from "../../lib/context/Context";
 import { ConfirmationEmbed } from "../../lib/views/embeds/ConfirmationEmbed";
@@ -8,10 +9,12 @@ import {
   LastFMArgumentsMutableContext,
 } from "../LastFM/LastFMArguments";
 import { ServiceRegistry } from "../ServicesRegistry";
+import { SpotifyService } from "./SpotifyService";
+import { SpotifyAlbum } from "./converters/Album";
+import { SpotifyArtist } from "./converters/Artist";
 import { SpotifyToken } from "./converters/Auth";
 import { SpotifyURI } from "./converters/BaseConverter";
 import { SpotifyTrack } from "./converters/Track";
-import { SpotifyService } from "./SpotifyService";
 
 interface GetTrackOptions {
   confirm: boolean;
@@ -22,8 +25,12 @@ type SpotifyArgumentsContext = GowonContext<{
 }>;
 
 export class SpotifyArguments extends BaseService<SpotifyArgumentsContext> {
-  private readonly spotifyLinkRegex =
+  private readonly spotifyTrackLinkRegex =
     /https:\/\/open\.spotify\.com\/track\/([\w]+)\/?/i;
+  private readonly spotifyArtistLinkRegex =
+    /https:\/\/open\.spotify\.com\/artist\/([\w]+)\/?/i;
+  private readonly spotifyAlbumLinkRegex =
+    /https:\/\/open\.spotify\.com\/album\/([\w]+)\/?/i;
 
   private get lastFMArguments() {
     return ServiceRegistry.get(LastFMArguments);
@@ -45,15 +52,46 @@ export class SpotifyArguments extends BaseService<SpotifyArgumentsContext> {
     return this.getTrackFromMessageInput(ctx, requestable, options);
   }
 
-  private async getTrackFromReplied(
-    ctx: SpotifyArgumentsContext
+  public async getTrackFromReplied(
+    ctx: SpotifyArgumentsContext,
+    repliedMessage?: Message
   ): Promise<SpotifyTrack | undefined> {
-    const replied = await ctx.command.getRepliedMessage();
+    const replied = repliedMessage || (await ctx.getRepliedMessage());
 
-    if (replied && this.containsSpotifyLink(replied.content)) {
+    if (replied && this.containsSpotifyTrackLink(replied.content)) {
       const uri = this.getSpotifyTrackURI(replied.content);
 
       return await this.spotifyService.getTrack(ctx, uri.asID);
+    }
+
+    return undefined;
+  }
+
+  public async getAlbumFromReplied(
+    ctx: SpotifyArgumentsContext,
+    repliedMessage?: Message
+  ): Promise<SpotifyAlbum | undefined> {
+    const replied = repliedMessage || (await ctx.getRepliedMessage());
+
+    if (replied && this.containsSpotifyAlbumLink(replied.content)) {
+      const uri = this.getSpotifyAlbumURI(replied.content);
+
+      return await this.spotifyService.getAlbum(ctx, uri.asID);
+    }
+
+    return undefined;
+  }
+
+  public async getArtistFromReplied(
+    ctx: SpotifyArgumentsContext,
+    repliedMessage?: Message
+  ): Promise<SpotifyArtist | undefined> {
+    const replied = repliedMessage || (await ctx.getRepliedMessage());
+
+    if (replied && this.containsSpotifyArtistLink(replied.content)) {
+      const uri = this.getSpotifyArtistURI(replied.content);
+
+      return await this.spotifyService.getArtist(ctx, uri.asID);
     }
 
     return undefined;
@@ -90,14 +128,36 @@ export class SpotifyArguments extends BaseService<SpotifyArgumentsContext> {
   }
 
   protected getSpotifyTrackURI(string: string): SpotifyURI<"track"> {
-    const id = (string.match(this.spotifyLinkRegex) || [])[1];
+    const id = (string.match(this.spotifyTrackLinkRegex) || [])[1];
 
     return this.spotifyService.generateURI("track", id);
   }
 
-  protected containsSpotifyLink(string?: string): boolean {
+  protected getSpotifyArtistURI(string: string): SpotifyURI<"artist"> {
+    const id = (string.match(this.spotifyArtistLinkRegex) || [])[1];
+
+    return this.spotifyService.generateURI("artist", id);
+  }
+
+  protected getSpotifyAlbumURI(string: string): SpotifyURI<"album"> {
+    const id = (string.match(this.spotifyAlbumLinkRegex) || [])[1];
+
+    return this.spotifyService.generateURI("album", id);
+  }
+
+  protected containsSpotifyTrackLink(string?: string): boolean {
     if (!string) return false;
-    return this.spotifyLinkRegex.test(string);
+    return this.spotifyTrackLinkRegex.test(string);
+  }
+
+  protected containsSpotifyAlbumLink(string?: string): boolean {
+    if (!string) return false;
+    return this.spotifyAlbumLinkRegex.test(string);
+  }
+
+  protected containsSpotifyArtistLink(string?: string): boolean {
+    if (!string) return false;
+    return this.spotifyArtistLinkRegex.test(string);
   }
 
   private async confirmTrack(
