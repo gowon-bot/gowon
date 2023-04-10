@@ -91,7 +91,7 @@ export class FishyService extends BaseService {
     return await FishyCatch.countBy({ gifter: { id: userId } });
   }
 
-  public async countGiftsRecieved(userId: number): Promise<number> {
+  public async countGiftsReceived(userId: number): Promise<number> {
     return await FishyCatch.countBy({
       owner: { id: userId },
       gifter: Not(IsNull()),

@@ -26,10 +26,10 @@ export class Stats extends FishyChildCommand<typeof args> {
       autoCreateFishyProfile: false,
     });
 
-    const [giftsGiven, giftsRecieved, biggestFishy, rarityBreakdown] =
+    const [giftsGiven, giftsReceived, biggestFishy, rarityBreakdown] =
       await Promise.all([
         this.fishyService.countGiftsGiven(fishyProfile.user.id),
-        this.fishyService.countGiftsRecieved(fishyProfile.user.id),
+        this.fishyService.countGiftsReceived(fishyProfile.user.id),
         this.fishyService.getBiggestFishy(fishyProfile.user.id),
         this.fishyService.rarityBreakdown(fishyProfile),
       ]);
@@ -45,7 +45,7 @@ _Fishing since ${displayDate(fishyProfile.createdAt)} (${ago(
 **Times fished**: ${displayNumber(fishyProfile.timesFished)}
 
 **Gifts given**:    ${giftsGiven}
-**Gifts recieved**: ${giftsRecieved}
+**Gifts received**: ${giftsReceived}
 
 **Biggest fishy**: ${biggestFishy?.weight} (${italic(
       biggestFishy!.fishy.name
