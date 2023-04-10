@@ -30,6 +30,14 @@ export function parseTimeRange(
   string?: string,
   options: { fallback?: Duration | "overall"; useOverall?: boolean } = {}
 ): TimeRange | undefined {
+  const durationParser = new DurationParser();
+
+  const parsedDuration = durationParser.parse(string || "");
+
+  if (Object.keys(parsedDuration || {}).length) {
+    return timeRangeFromDuration(parsedDuration);
+  }
+
   if (
     (options.useOverall && overallRegex.test(string || "")) ||
     options.fallback === "overall"
@@ -46,14 +54,6 @@ export function parseTimeRange(
       to: new Date(),
       duration: options.fallback,
     });
-  }
-
-  const durationParser = new DurationParser();
-
-  const parsedDuration = durationParser.parse(string || "");
-
-  if (Object.keys(parsedDuration || {}).length) {
-    return timeRangeFromDuration(parsedDuration);
   }
 
   return undefined;
