@@ -3,16 +3,16 @@ import {
   Permission,
   PermissionType,
 } from "../../../database/entity/Permission";
-import { NotTextChannelError } from "../../../errors/discord";
 import { CommandNotFoundError } from "../../../errors/errors";
+import { NotTextChannelError } from "../../../errors/external/discord";
 import {
   PermissionAlreadyExistsError,
   PermissionDoesNotExistError,
 } from "../../../errors/permissions";
-import { mentionChannel, code } from "../../../helpers/discord";
+import { code, mentionChannel } from "../../../helpers/discord";
 import { Command, Variation } from "../../../lib/command/Command";
-import { ChannelArgument } from "../../../lib/context/arguments/argumentTypes/discord/ChannelArgument";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
+import { ChannelArgument } from "../../../lib/context/arguments/argumentTypes/discord/ChannelArgument";
 import { PermissionsChildCommand } from "./PermissionsChildCommand";
 
 const args = {

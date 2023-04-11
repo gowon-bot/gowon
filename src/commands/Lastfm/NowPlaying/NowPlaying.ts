@@ -76,15 +76,15 @@ export default class NowPlaying extends NowPlayingBaseCommand<typeof args> {
   ];
 
   async run() {
-    let { username, requestable, discordUser } =
+    const { username, requestable, discordUser } =
       await this.nowPlayingMentions();
 
-    let nowPlayingResponse = await this.lastFMService.recentTracks(this.ctx, {
+    const nowPlayingResponse = await this.lastFMService.recentTracks(this.ctx, {
       username: requestable || "flushed_emoji",
       limit: 1,
     });
 
-    let nowPlaying = nowPlayingResponse.first();
+    const nowPlaying = nowPlayingResponse.first();
 
     if (nowPlaying.isNowPlaying) this.scrobble(nowPlaying);
 
@@ -92,7 +92,7 @@ export default class NowPlaying extends NowPlayingBaseCommand<typeof args> {
 
     let nowPlayingEmbed = await this.nowPlayingEmbed(nowPlaying, username);
 
-    let [artistInfo, crown] = await promiseAllSettled([
+    const [artistInfo, crown] = await promiseAllSettled([
       this.lastFMService.artistInfo(this.ctx, {
         artist: nowPlaying.artist,
         username: requestable,
@@ -100,7 +100,7 @@ export default class NowPlaying extends NowPlayingBaseCommand<typeof args> {
       this.crownsService.getCrownDisplay(this.ctx, nowPlaying.artist),
     ]);
 
-    let { crownString, isCrownHolder } = await this.crownDetails(
+    const { crownString, isCrownHolder } = await this.crownDetails(
       crown,
       discordUser
     );
@@ -109,11 +109,11 @@ export default class NowPlaying extends NowPlayingBaseCommand<typeof args> {
 
     this.tagConsolidator.addTags(this.ctx, artistInfo.value?.tags || []);
 
-    let lineConsolidator = new LineConsolidator();
+    const lineConsolidator = new LineConsolidator();
 
-    let artistPlays = this.artistPlays(artistInfo, nowPlaying, isCrownHolder);
-    let noArtistData = this.noArtistData(nowPlaying);
-    let scrobbleCount = this.scrobbleCount(nowPlayingResponse);
+    const artistPlays = this.artistPlays(artistInfo, nowPlaying, isCrownHolder);
+    const noArtistData = this.noArtistData(nowPlaying);
+    const scrobbleCount = this.scrobbleCount(nowPlayingResponse);
 
     lineConsolidator.addLines(
       {
@@ -144,7 +144,7 @@ export default class NowPlaying extends NowPlayingBaseCommand<typeof args> {
       nowPlayingEmbed = this.reverseEmbed(nowPlayingEmbed);
     }
 
-    let sentMessage = await this.send(nowPlayingEmbed);
+    const sentMessage = await this.send(nowPlayingEmbed);
 
     await this.customReactions(sentMessage);
     await this.easterEggs(sentMessage, nowPlaying);
@@ -154,7 +154,7 @@ export default class NowPlaying extends NowPlayingBaseCommand<typeof args> {
     embed.setTitle(reverse(embed.title!));
     embed.setDescription(reverseLinks(embed.description!));
 
-    let footer = embed.footer?.text!.split("\n") as [string, string];
+    const footer = embed.footer?.text!.split("\n") as [string, string];
 
     footer[0] = footer[0]
       .split(" ‧ ")

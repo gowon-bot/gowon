@@ -2,7 +2,7 @@ import { Message } from "discord.js";
 import {
   NoAlbumsFoundInSearchError,
   NoTracksFoundInSearchError,
-} from "../../errors/lastfm";
+} from "../../errors/external/lastfm";
 import { GowonContext } from "../../lib/context/Context";
 import { Payload } from "../../lib/context/Payload";
 import { BaseService } from "../BaseService";

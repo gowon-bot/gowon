@@ -1,5 +1,4 @@
 import { EmbedField } from "discord.js";
-import { TagNotAllowedError } from "../../../errors/errors";
 import { bold } from "../../../helpers/discord";
 import { LastfmLinks } from "../../../helpers/lastfm/LastfmLinks";
 import {
@@ -46,15 +45,7 @@ export default class TagInfo extends InfoCommand<typeof args> {
     const tag = this.parsedArguments.tag;
 
     await this.wordBlacklistService.saveServerBannedTagsInContext(this.ctx);
-
-    if (
-      this.settingsService.get("strictTagBans", {
-        guildID: this.requiredGuild.id,
-      }) &&
-      !this.wordBlacklistService.isAllowed(this.ctx, tag, ["tags"])
-    ) {
-      throw new TagNotAllowedError();
-    }
+    this.wordBlacklistService.throwIfTagNotAllowedAsInput(this.ctx, tag);
 
     const [tagInfo, tagList, tagTopArtists, lilacArtists, userTopArtists] =
       await Promise.all([

@@ -1,7 +1,7 @@
 import {
   AlbumHasNoCoverError,
   NoAlbumForCoverError,
-} from "../../errors/lastfm";
+} from "../../errors/external/lastfm";
 import { bold } from "../../helpers/discord";
 import { Flag } from "../../lib/context/arguments/argumentTypes/Flag";
 import { standardMentions } from "../../lib/context/arguments/mentionTypes/mentions";

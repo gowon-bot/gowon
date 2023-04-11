@@ -1,4 +1,4 @@
-import { ClientError } from "./errors";
+import { ClientError } from "../errors";
 
 export class NotTextChannelError extends ClientError {
   name = "NotTextChannelError";

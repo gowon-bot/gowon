@@ -1,6 +1,9 @@
 import { SimpleMap } from "../../helpers/types";
 
-export enum CacheKey {}
+export enum CacheKey {
+  GlobalTagBans = "globalTagBans",
+  GlobalTagBanRegexs = "globalTagBanRegexs",
+}
 export enum CacheScopedKey {
   CrownBannedUsers = "crownBannedUsers",
   CrownBannedArtists = "crownBannedArtists",

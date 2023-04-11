@@ -1,5 +1,5 @@
-import { Perspective } from "../lib/Perspective";
-import { ClientError } from "./errors";
+import { Perspective } from "../../lib/Perspective";
+import { ClientError } from "../errors";
 
 export class AlreadyImportingRatingsError extends ClientError {
   name = "AlreadyImportingRatingsError";

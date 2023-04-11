@@ -1,5 +1,5 @@
 import { LogicError } from "../../../../errors/errors";
-import { NoRatingsError } from "../../../../errors/rateYourMusic";
+import { NoRatingsError } from "../../../../errors/external/rateYourMusic";
 import { bold, italic, sanitizeForDiscord } from "../../../../helpers/discord";
 import { emDash } from "../../../../helpers/specialCharacters";
 import { Flag } from "../../../../lib/context/arguments/argumentTypes/Flag";

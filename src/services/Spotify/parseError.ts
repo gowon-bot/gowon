@@ -4,7 +4,7 @@ import {
   NoActivePlayerError,
   SpotifyConnectionError,
   SpotifyPremiumRequiredError,
-} from "../../errors/spotify";
+} from "../../errors/external/spotify";
 import { GowonContext } from "../../lib/context/Context";
 
 interface SpotifyError {

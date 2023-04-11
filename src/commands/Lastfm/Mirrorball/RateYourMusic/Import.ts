@@ -4,7 +4,7 @@ import {
   CannotBeUsedAsASlashCommand,
   LogicError,
 } from "../../../../errors/errors";
-import { AlreadyImportingRatingsError } from "../../../../errors/rateYourMusic";
+import { AlreadyImportingRatingsError } from "../../../../errors/external/rateYourMusic";
 import { StringArgument } from "../../../../lib/context/arguments/argumentTypes/StringArgument";
 import { ArgumentsMap } from "../../../../lib/context/arguments/types";
 import { Emoji } from "../../../../lib/emoji/Emoji";

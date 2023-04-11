@@ -227,31 +227,6 @@ export class CommandInBetaError extends ClientError {
   }
 }
 
-export class TagAlreadyBannedError extends ClientError {
-  name = "TagAlreadyBannedError";
-
-  constructor() {
-    super(
-      "That tag has already been banned in this server!",
-      "Note: bans are case insensitive and spaces are ignored"
-    );
-  }
-}
-export class TagNotBannedError extends ClientError {
-  name = "TagNotBannedError";
-
-  constructor() {
-    super("That tag hasn't been banned in this server!");
-  }
-}
-export class TagBannedByDefaultError extends ClientError {
-  name = "TagBannedByDefaultError";
-
-  constructor() {
-    super("That tag is banned by default bot-wide!");
-  }
-}
-
 export class UpdatingDisabledBecauseOfIssueModeError extends ClientError {
   name = "UpdatingDisabledBecauseOfIssueModeError";
 
@@ -277,13 +252,5 @@ export class CannotBeUsedAsASlashCommand extends ClientError {
 
   constructor() {
     super("This command cannot be used as a slash command yet!");
-  }
-}
-
-export class TagNotAllowedError extends ClientError {
-  name = "TagNotAllowedError";
-
-  constructor() {
-    super("That tag has been banned from being used!");
   }
 }
