@@ -19,7 +19,7 @@ export default async function saveFileBannedTagsToDatabase(ctx: GowonContext) {
     try {
       await wordBlacklistService.banTag(
         ctx,
-        word.map((n) => letters[n]).join("")
+        word.map((n) => letters[n - 1]).join("")
       );
     } catch {}
   }
