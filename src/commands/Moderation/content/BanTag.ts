@@ -6,7 +6,7 @@ import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { WordBlacklistService } from "../../../services/WordBlacklistService";
-import { LastFMBaseCommand } from "../LastFMBaseCommand";
+import { ContentModerationCommand } from "./ContentModerationCommand";
 
 const args = {
   tag: new StringArgument({
@@ -14,9 +14,9 @@ const args = {
     required: true,
     description: "The tag to ban",
   }),
-} satisfies ArgumentsMap
+} satisfies ArgumentsMap;
 
-export default class BanTag extends LastFMBaseCommand<typeof args> {
+export default class BanTag extends ContentModerationCommand<typeof args> {
   idSeed = "dreamnote boni";
 
   description = "Bans a tag from appearing in the server";
@@ -31,8 +31,26 @@ export default class BanTag extends LastFMBaseCommand<typeof args> {
   variations: Variation[] = [
     {
       name: "unban",
-      variation: ["unban", "unbantag", "ubt"],
+      variation: [
+        "unban",
+        "unbantag",
+        "ubt",
+        "globalunban",
+        "globalunbantag",
+        "gubt",
+      ],
       description: "Unbans a tag",
+    },
+    {
+      name: "global",
+      variation: [
+        "globalunban",
+        "globalunbantag",
+        "gubt",
+        "gbt",
+        "globalbantag",
+      ],
+      description: "Performs the ban or unban bot-wide",
     },
   ];
 
@@ -43,24 +61,42 @@ export default class BanTag extends LastFMBaseCommand<typeof args> {
   wordBlacklistService = ServiceRegistry.get(WordBlacklistService);
 
   async run() {
-    const tag = this.parsedArguments.tag;
-    const unban = this.variationWasUsed("unban");
+    const { senderUser } = await this.getMentions();
 
-    await this.wordBlacklistService[unban ? "serverUnbanTag" : "serverBanTag"](
-      this.ctx,
-      tag
-    );
+    const tag = this.parsedArguments.tag;
+
+    const unban = this.variationWasUsed("unban");
+    const global = this.variationWasUsed("global");
+
+    if (global) {
+      this.access.checkAndThrow(senderUser);
+    }
+
+    await this.banOrUnban(tag, global);
 
     const embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor(`${unban ? "Unb" : "B"}an tag`))
       .setDescription(
-        `Successfully ${unban ? "un" : ""}banned the tag: ${bold(tag)}`
+        `Successfully ${unban ? "un" : ""}banned the tag: ${bold(tag)}${
+          global ? " bot-wide" : ""
+        }!`
       )
       .setFooter({
-        text: `It will ${unban ? "now" : "no longer"
-          } appear in places where tags are listed`,
+        text: `It will ${
+          unban ? "now" : "no longer"
+        } appear in places where tags are listed`,
       });
 
     await this.send(embed);
+  }
+
+  private async banOrUnban(tag: string, global: boolean) {
+    const guildID = global ? undefined : this.requiredGuild.id;
+
+    if (this.variationWasUsed("unban")) {
+      await this.wordBlacklistService.unbanTag(this.ctx, tag, guildID);
+    } else {
+      await this.wordBlacklistService.banTag(this.ctx, tag, guildID);
+    }
   }
 }

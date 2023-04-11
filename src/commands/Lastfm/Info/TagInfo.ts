@@ -1,5 +1,5 @@
 import { EmbedField } from "discord.js";
-import { TagNotAllowedError } from "../../../errors/errors";
+import { TagNotAllowedError } from "../../../errors/tags";
 import { bold } from "../../../helpers/discord";
 import { LastfmLinks } from "../../../helpers/lastfm/LastfmLinks";
 import {

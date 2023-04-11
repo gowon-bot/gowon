@@ -1,4 +1,4 @@
-import { TagNotAllowedError } from "../../../errors/errors";
+import { TagNotAllowedError } from "../../../errors/tags";
 import { bold } from "../../../helpers/discord";
 import { calculatePercent } from "../../../helpers/stats";
 import { CommandRedirect } from "../../../lib/command/Command";

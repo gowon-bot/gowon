@@ -1,4 +1,4 @@
-import { TagNotAllowedError } from "../../../errors/errors";
+import { TagNotAllowedError } from "../../../errors/tags";
 import { bold, italic } from "../../../helpers/discord";
 import { calculatePercent } from "../../../helpers/stats";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";

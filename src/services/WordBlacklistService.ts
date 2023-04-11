@@ -1,9 +1,10 @@
+import { IsNull } from "typeorm";
 import { TagBan } from "../database/entity/TagBan";
 import {
   TagAlreadyBannedError,
   TagBannedByDefaultError,
   TagNotBannedError,
-} from "../errors/errors";
+} from "../errors/tags";
 import { GowonContext } from "../lib/context/Context";
 import blacklist from "../wordBlacklist.json";
 import { BaseService } from "./BaseService";
@@ -77,44 +78,47 @@ export class WordBlacklistService extends BaseService<WordBlacklistServiceContex
     );
   }
 
-  async serverBanTag(
+  async banTag(
     ctx: WordBlacklistServiceContext,
-    tag: string
+    tag: string,
+    guildID?: string
   ): Promise<TagBan> {
-    this.log(ctx, `Banning tag ${tag} in ${ctx.requiredGuild.id}`);
+    this.log(ctx, `Banning tag ${tag} in ${guildID || "Gowon"}`);
 
-    if (!this.isAllowed(ctx, tag, ["base", "tags"]))
+    if (!this.isAllowed(ctx, tag, ["base", "tags"])) {
       throw new TagBannedByDefaultError();
+    }
 
     const existingBan = await TagBan.findOneBy({
-      serverID: ctx.requiredGuild.id,
+      serverID: guildID || IsNull(),
       tag: this.normalizeItem(tag),
     });
 
-    if (existingBan) throw new TagAlreadyBannedError();
+    if (existingBan) throw new TagAlreadyBannedError(guildID);
 
     const newBan = TagBan.create({
-      serverID: ctx.requiredGuild.id,
+      serverID: guildID,
       tag: this.normalizeItem(tag),
     });
 
     return await newBan.save();
   }
 
-  async serverUnbanTag(
+  async unbanTag(
     ctx: WordBlacklistServiceContext,
-    tag: string
+    tag: string,
+    guildID?: string
   ): Promise<void> {
-    this.log(ctx, `Unbanning tag ${tag} in ${ctx.requiredGuild.id}`);
+    this.log(ctx, `Unbanning tag ${tag} in ${guildID || "Gowon"}`);
 
     if (!this.isAllowed(ctx, tag)) throw new TagBannedByDefaultError();
 
     const existingBan = await TagBan.findOneBy({
-      serverID: ctx.requiredGuild.id,
+      serverID: guildID || IsNull(),
       tag: this.normalizeItem(tag),
     });
 
-    if (!existingBan) throw new TagNotBannedError();
+    if (!existingBan) throw new TagNotBannedError(guildID);
 
     await existingBan.remove();
   }
