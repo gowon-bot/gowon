@@ -1,5 +1,6 @@
 import { bold } from "../../../helpers/discord";
 import { Variation } from "../../../lib/command/Command";
+import { Flag } from "../../../lib/context/arguments/argumentTypes/Flag";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { Validation } from "../../../lib/validation/ValidationChecker";
@@ -13,6 +14,11 @@ const args = {
     index: { start: 0 },
     required: true,
     description: "The tag to ban",
+  }),
+  regex: new Flag({
+    default: false,
+    description: "Can only be used by content moderators",
+    longnames: ["regex"],
   }),
 } satisfies ArgumentsMap;
 
@@ -78,8 +84,8 @@ export default class BanTag extends ContentModerationCommand<typeof args> {
       .setAuthor(this.generateEmbedAuthor(`${unban ? "Unb" : "B"}an tag`))
       .setDescription(
         `Successfully ${unban ? "un" : ""}banned the tag: ${bold(tag)}${
-          global ? " bot-wide" : ""
-        }!`
+          this.parsedArguments.regex ? " (regex)" : ""
+        }${global ? " bot-wide" : ""}!`
       )
       .setFooter({
         text: `It will ${
@@ -94,9 +100,19 @@ export default class BanTag extends ContentModerationCommand<typeof args> {
     const guildID = global ? undefined : this.requiredGuild.id;
 
     if (this.variationWasUsed("unban")) {
-      await this.wordBlacklistService.unbanTag(this.ctx, tag, guildID);
+      await this.wordBlacklistService.unbanTag(
+        this.ctx,
+        tag,
+        guildID,
+        global && this.parsedArguments.regex
+      );
     } else {
-      await this.wordBlacklistService.banTag(this.ctx, tag, guildID);
+      await this.wordBlacklistService.banTag(
+        this.ctx,
+        tag,
+        guildID,
+        global && this.parsedArguments.regex
+      );
     }
   }
 }

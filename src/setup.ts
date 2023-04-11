@@ -16,6 +16,7 @@ import { InteractionHandler } from "./lib/command/interactions/InteractionHandle
 import { mirrorballClient } from "./lib/indexing/client";
 import { SettingsService } from "./lib/settings/SettingsService";
 import { GuildEventService } from "./services/Discord/GuildEventService";
+import { GowonService } from "./services/GowonService";
 import { ServiceRegistry } from "./services/ServicesRegistry";
 import { RedisInteractionService } from "./services/redis/RedisInteractionService";
 
@@ -76,6 +77,8 @@ export async function setup() {
     initializeSettingsManager(),
     // The interaction handler depends on the command registry
     initializeInteractions(),
+    // GowonCache needs to the database to be initialized
+    seedCache(),
   ]);
 }
 
@@ -122,6 +125,14 @@ function initializeCommandRegistry() {
     async () => CommandRegistry.getInstance().init(await generateCommands()),
     "Initialized command registry"
   );
+}
+
+function seedCache() {
+  return logStartup(async () => {
+    const gowonService = ServiceRegistry.get(GowonService);
+
+    await gowonService.cache.seedAll.bind(gowonService.cache)();
+  }, "Seeded cache");
 }
 
 async function logStartup(func: () => any, logItem: string): Promise<void> {

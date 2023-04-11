@@ -10,4 +10,11 @@ export class TagBan extends BaseEntity {
 
   @Column()
   tag!: string;
+
+  @Column({ default: false, nullable: true })
+  isRegex!: boolean;
+
+  asRegex(): RegExp {
+    return new RegExp(this.tag, "i");
+  }
 }

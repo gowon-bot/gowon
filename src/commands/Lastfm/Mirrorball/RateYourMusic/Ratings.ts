@@ -1,5 +1,5 @@
 import { UnknownMirrorballError } from "../../../../errors/errors";
-import { NoRatingsError } from "../../../../errors/rateYourMusic";
+import { NoRatingsError } from "../../../../errors/external/rateYourMusic";
 import { StringArgument } from "../../../../lib/context/arguments/argumentTypes/StringArgument";
 import { standardMentions } from "../../../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../../../lib/context/arguments/types";

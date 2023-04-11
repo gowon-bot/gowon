@@ -1,8 +1,8 @@
 import { sum } from "mathjs";
 import { RawTag } from "../../services/LastFM/LastFMService.types";
-import { LilacTag } from "../../services/lilac/LilacAPIService.types";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { WordBlacklistService } from "../../services/WordBlacklistService";
+import { LilacTag } from "../../services/lilac/LilacAPIService.types";
 import { GowonContext } from "../context/Context";
 
 function isLilacTag(tag: any | LilacTag): tag is LilacTag {
@@ -115,12 +115,7 @@ export class TagConsolidator {
   }
 
   private filterTags(ctx: GowonContext, tags: LilacTag[]): LilacTag[] {
-    return this.wordBlacklistService.filter(
-      ctx,
-      tags,
-      ["base", "tags"],
-      this.customBlacklist
-    );
+    return this.wordBlacklistService.filter(ctx, tags, this.customBlacklist);
   }
 
   private convertTags(tags: (string | RawTag | LilacTag)[]): LilacTag[] {

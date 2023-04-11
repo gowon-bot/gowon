@@ -5,7 +5,7 @@ import config from "../../../config.json";
 import {
   NotAuthenticatedWithSpotifyError,
   SpotifyConnectionError,
-} from "../../errors/spotify";
+} from "../../errors/external/spotify";
 import { SimpleMap } from "../../helpers/types";
 import { Logger } from "../../lib/Logger";
 import { GowonContext } from "../../lib/context/Context";

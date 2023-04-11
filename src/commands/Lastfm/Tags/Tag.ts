@@ -1,4 +1,3 @@
-import { TagNotAllowedError } from "../../../errors/tags";
 import { bold } from "../../../helpers/discord";
 import { calculatePercent } from "../../../helpers/stats";
 import { CommandRedirect } from "../../../lib/command/Command";
@@ -58,14 +57,7 @@ export default class Tag extends LastFMBaseCommand<typeof args> {
 
     await this.wordBlacklistService.saveServerBannedTagsInContext(this.ctx);
 
-    if (
-      this.settingsService.get("strictTagBans", {
-        guildID: this.requiredGuild.id,
-      }) &&
-      !this.wordBlacklistService.isAllowed(this.ctx, tag, ["tags"])
-    ) {
-      throw new TagNotAllowedError();
-    }
+    this.wordBlacklistService.throwIfTagNotAllowedAsInput(this.ctx, tag);
 
     const { requestable, perspective } = await this.getMentions({
       perspectiveAsCode: false,

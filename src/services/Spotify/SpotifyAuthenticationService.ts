@@ -1,18 +1,18 @@
-import { stringify } from "querystring";
-import { UsersService } from "../dbservices/UsersService";
-import { ServiceRegistry } from "../ServicesRegistry";
-import { SpotifyService, SpotifyServiceContext } from "./SpotifyService";
-import { SpotifyAuthUser, SpotifyCode } from "./SpotifyService.types";
-import config from "../../../config.json";
 import { Chance } from "chance";
+import { stringify } from "querystring";
+import config from "../../../config.json";
+import { NotAuthenticatedWithSpotifyError } from "../../errors/external/spotify";
+import { GowonContext } from "../../lib/context/Context";
+import { ServiceRegistry } from "../ServicesRegistry";
+import { UsersService } from "../dbservices/UsersService";
 import {
   RedisService,
   RedisServiceContextOptions,
 } from "../redis/RedisService";
 import { BaseSpotifyService } from "./BaseSpotifyService";
+import { SpotifyService, SpotifyServiceContext } from "./SpotifyService";
+import { SpotifyAuthUser, SpotifyCode } from "./SpotifyService.types";
 import { SpotifyToken } from "./converters/Auth";
-import { GowonContext } from "../../lib/context/Context";
-import { NotAuthenticatedWithSpotifyError } from "../../errors/spotify";
 
 type SpotifyAuthenticationServiceContext = GowonContext<{
   constants?: { redisOptions?: RedisServiceContextOptions };

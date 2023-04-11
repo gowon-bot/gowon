@@ -81,6 +81,7 @@ ${
         "There doesn't seem to be a fishy in sight!",
         "There are no fishy around right now...",
         "🐈 Naan has scared away all the fishy!",
+        "🌫️ the fog has come for your fishy.",
       ]);
     } else if (fishyCount === 1) {
       const fishyFriend = fishy[0];

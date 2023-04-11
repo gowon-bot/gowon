@@ -1,4 +1,4 @@
-import { PrivateModeOnWarning } from "../../../../errors/spotify";
+import { PrivateModeOnWarning } from "../../../../errors/external/spotify";
 import { ArgumentsMap } from "../../../../lib/context/arguments/types";
 import { toggleValues } from "../../../../lib/settings/SettingValues";
 import { ServiceRegistry } from "../../../../services/ServicesRegistry";

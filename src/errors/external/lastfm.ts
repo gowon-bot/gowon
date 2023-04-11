@@ -1,7 +1,7 @@
-import { code } from "../helpers/discord";
-import { LastfmLinks } from "../helpers/lastfm/LastfmLinks";
-import { displayLink } from "../lib/views/displays";
-import { ClientError } from "./errors";
+import { code } from "../../helpers/discord";
+import { LastfmLinks } from "../../helpers/lastfm/LastfmLinks";
+import { displayLink } from "../../lib/views/displays";
+import { ClientError } from "../errors";
 
 export class NoAlbumsFoundInSearchError extends ClientError {
   name = "NoAlbumsFoundInSearchError";
