@@ -1,6 +1,5 @@
 import { Message, MessageEmbed, User } from "discord.js";
 import config from "../../../../config.json";
-import { User as DBUser } from "../../../database/entity/User";
 import { bold, italic, sanitizeForDiscord } from "../../../helpers/discord";
 import { LastfmLinks } from "../../../helpers/lastfm/LastfmLinks";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
@@ -200,7 +199,9 @@ export abstract class NowPlayingBaseCommand<
       if (crown.value.user.id === discordUser?.id) {
         isCrownHolder = true;
       } else {
-        if (await DBUser.stillInServer(this.ctx, crown.value.user.id)) {
+        if (
+          await this.discordService.userInServer(this.ctx, crown.value.user.id)
+        ) {
           crownString = `👑 ${displayNumber(crown.value.crown.plays)} (${
             crown.value.user.username
           })`;

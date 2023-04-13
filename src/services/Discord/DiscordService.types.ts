@@ -36,3 +36,5 @@ export function isPartialDMChannel(
 ): channel is PartialDMChannel {
   return channel.partial;
 }
+
+export type DiscordID = string;

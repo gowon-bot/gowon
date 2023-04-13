@@ -1,6 +1,7 @@
-import { User } from "discord.js";
+import { DiscordAPIError, GuildMember, User } from "discord.js";
 import { GowonContext } from "../../lib/context/Context";
 import { DiscordResponseService } from "./DiscordResponseService";
+import { DiscordID } from "./DiscordService.types";
 
 export type DiscordServiceContext = GowonContext<{
   mutable?: {
@@ -24,5 +25,24 @@ export class DiscordService extends DiscordResponseService {
     );
 
     return member?.user;
+  }
+
+  public async fetchGuildMember(
+    ctx: GowonContext,
+    userID: DiscordID
+  ): Promise<GuildMember | undefined> {
+    try {
+      return await ctx.guild?.members.fetch(userID);
+    } catch (e) {
+      if (!(e instanceof DiscordAPIError)) throw e;
+      return undefined;
+    }
+  }
+
+  public async userInServer(
+    ctx: GowonContext,
+    userID: DiscordID
+  ): Promise<boolean> {
+    return !!(await this.fetchGuildMember(ctx, userID));
   }
 }

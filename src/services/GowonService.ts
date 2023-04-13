@@ -2,9 +2,6 @@ import { Guild } from "discord.js";
 import regexEscape from "escape-string-regexp";
 import config from "../../config.json";
 import { GowonCache } from "../database/cache/GowonCache";
-import { CacheScopedKey } from "../database/cache/ShallowCache";
-import { ArtistCrownBan } from "../database/entity/ArtistCrownBan";
-import { CrownBan } from "../database/entity/CrownBan";
 import { userMentionAtStartRegex } from "../helpers/discord";
 import { GowonContext } from "../lib/context/Context";
 import { SettingsService } from "../lib/settings/SettingsService";
@@ -65,46 +62,5 @@ export class GowonService extends BaseService {
 
   async getPurgatoryRole(guild: Guild): Promise<string | undefined> {
     return this.settingsService.get("purgatoryRole", { guildID: guild.id });
-  }
-
-  async getCrownBannedUsers(guild: Guild): Promise<string[]> {
-    return await this.cache.findOrRemember<string[]>(
-      CacheScopedKey.CrownBannedUsers,
-      async () => {
-        const bans = (await CrownBan.findBy({ serverID: guild.id })).map(
-          (u) => u.user.discordID
-        );
-
-        return bans;
-      },
-      guild.id
-    );
-  }
-
-  async isUserCrownBanned(guild: Guild, discordID: string): Promise<boolean> {
-    return (await this.getCrownBannedUsers(guild)).includes(discordID);
-  }
-
-  async getCrownBannedArtists(guild: Guild): Promise<string[]> {
-    return await this.cache.findOrRemember<string[]>(
-      CacheScopedKey.CrownBannedArtists,
-      async () => {
-        const bans = (await ArtistCrownBan.findBy({ serverID: guild.id })).map(
-          (u) => u.artistName
-        );
-
-        return bans;
-      },
-      guild.id
-    );
-  }
-
-  async isArtistCrownBanned(
-    guild: Guild,
-    artistName: string
-  ): Promise<boolean> {
-    return (await this.getCrownBannedArtists(guild))
-      .map((a) => a.toLowerCase())
-      .includes(artistName.toLowerCase());
   }
 }

@@ -200,7 +200,6 @@ export class FishyService extends BaseService {
       .where({ owner: { id: fishyProfile.user.id } })
       .limit(1)
       .getRawOne<{ fishyId: string }>();
-    console.log(result);
 
     return findFishy({ byID: result?.fishyId! })!;
   }

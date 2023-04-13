@@ -11,8 +11,6 @@ export class FishyReminderComponent extends BaseNowPlayingComponent<
   readonly requirements = fishyReminderRequirements;
 
   present() {
-    console.log(this.values.fishyProfile);
-
     if (this.values.fishyProfile?.canFish()) {
       return { size: 0, string: "🐟" };
     }

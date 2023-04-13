@@ -32,7 +32,10 @@ export class CheckMany extends CrownsChildCommand<typeof args> {
   async run() {
     const { requestable, senderUser } = await this.getMentions({
       dbUserRequired: true,
+      senderRequired: true,
     });
+
+    await this.ensureUserCanCheck(senderUser!);
 
     const artists = this.parsedArguments.artists || [
       (await this.lastFMService.nowPlaying(this.ctx, requestable)).artist,

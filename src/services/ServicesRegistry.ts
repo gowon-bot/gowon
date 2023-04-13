@@ -10,7 +10,6 @@ import { EmojiService } from "./Discord/EmojiService";
 import { GuildEventService } from "./Discord/GuildEventService";
 import { NicknameService } from "./Discord/NicknameService";
 import { WhoKnowsService } from "./Discord/WhoKnowsService";
-import { FishyService } from "./fishy/FishyService";
 import { GithubService } from "./Github/GithubService";
 import { GowonService } from "./GowonService";
 import { LastFMArguments } from "./LastFM/LastFMArguments";
@@ -35,6 +34,8 @@ import { RedirectsService } from "./dbservices/RedirectsService";
 import { UsersService } from "./dbservices/UsersService";
 import { CrownsHistoryService } from "./dbservices/crowns/CrownsHistoryService";
 import { CrownsService } from "./dbservices/crowns/CrownsService";
+import { CrownsUserService } from "./dbservices/crowns/CrownsUserService";
+import { FishyService } from "./fishy/FishyService";
 import { LilacAPIService } from "./lilac/LilacAPIService";
 import { LilacArtistsService } from "./lilac/LilacArtistsService";
 import { LilacLibraryService } from "./lilac/LilacLibraryService";
@@ -62,6 +63,7 @@ const services: Service[] = [
   ChartService,
   CrownsService,
   CrownsHistoryService,
+  CrownsUserService,
   ComboService,
   ConcurrencyService,
   ConfigService,

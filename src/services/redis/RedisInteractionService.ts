@@ -1,7 +1,7 @@
-import { BaseService } from "../BaseService";
+import { createClient } from "redis";
 import config from "../../../config.json";
 import { GowonContext } from "../../lib/context/Context";
-import { createClient } from "redis";
+import { BaseService } from "../BaseService";
 
 export class RedisInteractionService extends BaseService {
   client = createClient({
