@@ -72,8 +72,6 @@ export class LastFMArguments extends BaseService<LastFMArgumentsContext> {
     let artist = this.parsedArguments(ctx).artist as string,
       album = this.parsedArguments(ctx).album as string;
 
-    console.log(artist, album);
-
     // This means that the user has not included a `|` in their message
     if (artist && album === undefined) {
       if (options.noSearch) return { artist, album };
@@ -261,8 +259,6 @@ export class LastFMArguments extends BaseService<LastFMArgumentsContext> {
       ctx,
       repliedMessage
     );
-
-    console.log(spotifyAlbum);
 
     if (spotifyAlbum) {
       return {

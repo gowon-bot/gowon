@@ -105,7 +105,7 @@ export class WordBlacklistService extends BaseService<WordBlacklistServiceContex
     const savedNewBan = await newBan.save();
 
     if (!guildID) {
-      this.gowonService.cache.addGlobalBannedTag(savedNewBan);
+      this.gowonService.cache.fetchGlobalBannedTag(savedNewBan);
     }
 
     return savedNewBan;
@@ -130,7 +130,7 @@ export class WordBlacklistService extends BaseService<WordBlacklistServiceContex
     await existingBan.remove();
 
     if (!guildID) {
-      this.gowonService.cache.removeGlobalBannedTag(existingBan);
+      this.gowonService.cache.deleteGlobalBannedTag(existingBan);
     }
   }
 
@@ -148,7 +148,7 @@ export class WordBlacklistService extends BaseService<WordBlacklistServiceContex
   }
 
   private getBlacklists(customBlacklist: string[] = []): WordBlacklistGroup {
-    const { regexs, strings } = this.gowonService.cache.getGlobalBannedTags();
+    const { regexs, strings } = this.gowonService.cache.fetchGlobalBannedTags();
 
     return {
       strings: strings.concat(

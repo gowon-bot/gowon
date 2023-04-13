@@ -1,6 +1,6 @@
 import { IsNull } from "typeorm";
 import { TagBan } from "../entity/TagBan";
-import { CacheKey, ShallowCache } from "./ShallowCache";
+import { GlobalCacheKey, ShallowCache } from "./ShallowCache";
 
 export class GowonCache extends ShallowCache {
   async seedAll(): Promise<void> {
@@ -15,54 +15,54 @@ export class GowonCache extends ShallowCache {
     const regexs = tagBans.filter((tb) => tb.isRegex);
     const strings = tagBans.filter((tb) => !tb.isRegex);
 
-    this.remember(
-      CacheKey.GlobalTagBans,
+    this.store(
+      GlobalCacheKey.GlobalTagBans,
       strings.map(({ tag }) => tag)
     );
 
-    this.remember(
-      CacheKey.GlobalTagBanRegexs,
+    this.store(
+      GlobalCacheKey.GlobalTagBanRegexs,
       regexs.map((tb) => tb.asRegex())
     );
   }
 
-  public addGlobalBannedTag(tagBan: TagBan): void {
+  public fetchGlobalBannedTag(tagBan: TagBan): void {
     if (tagBan.isRegex) {
       const bans = [
-        ...(this.find<RegExp[]>(CacheKey.GlobalTagBanRegexs) || []),
+        ...(this.fetch<RegExp[]>(GlobalCacheKey.GlobalTagBanRegexs) || []),
         tagBan.asRegex(),
       ];
 
-      this.remember(CacheKey.GlobalTagBanRegexs, bans);
+      this.store(GlobalCacheKey.GlobalTagBanRegexs, bans);
     } else {
       const bans = [
-        ...(this.find<string[]>(CacheKey.GlobalTagBans) || []),
+        ...(this.fetch<string[]>(GlobalCacheKey.GlobalTagBans) || []),
         tagBan.tag,
       ];
 
-      this.remember(CacheKey.GlobalTagBans, bans);
+      this.store(GlobalCacheKey.GlobalTagBans, bans);
     }
   }
 
-  public removeGlobalBannedTag(tagBan: TagBan): void {
+  public deleteGlobalBannedTag(tagBan: TagBan): void {
     if (tagBan.isRegex) {
-      const bans = this.find<RegExp[]>(CacheKey.GlobalTagBanRegexs).filter(
-        (t) => t.toString() !== tagBan.asRegex().toString()
-      );
+      const bans = this.fetch<RegExp[]>(
+        GlobalCacheKey.GlobalTagBanRegexs
+      ).filter((t) => t.toString() !== tagBan.asRegex().toString());
 
-      this.remember(CacheKey.GlobalTagBanRegexs, bans);
+      this.store(GlobalCacheKey.GlobalTagBanRegexs, bans);
     } else {
-      const bans = this.find<string[]>(CacheKey.GlobalTagBans).filter(
+      const bans = this.fetch<string[]>(GlobalCacheKey.GlobalTagBans).filter(
         (t) => t !== tagBan.tag
       );
 
-      this.remember(CacheKey.GlobalTagBans, bans);
+      this.store(GlobalCacheKey.GlobalTagBans, bans);
     }
   }
 
-  public getGlobalBannedTags(): { strings: string[]; regexs: RegExp[] } {
-    const strings = this.find(CacheKey.GlobalTagBans) ?? [];
-    const regexs = this.find(CacheKey.GlobalTagBanRegexs) ?? [];
+  public fetchGlobalBannedTags(): { strings: string[]; regexs: RegExp[] } {
+    const strings = this.fetch(GlobalCacheKey.GlobalTagBans) ?? [];
+    const regexs = this.fetch(GlobalCacheKey.GlobalTagBanRegexs) ?? [];
 
     return { strings, regexs };
   }

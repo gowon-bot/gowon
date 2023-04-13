@@ -43,6 +43,6 @@ export class DiscordService extends DiscordResponseService {
     ctx: GowonContext,
     userID: DiscordID
   ): Promise<boolean> {
-    return !(await this.fetchGuildMember(ctx, userID));
+    return !!(await this.fetchGuildMember(ctx, userID));
   }
 }

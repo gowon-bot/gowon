@@ -1,24 +1,23 @@
 import { SimpleMap } from "../../helpers/types";
 
-export enum CacheKey {
+export enum GlobalCacheKey {
   GlobalTagBans = "globalTagBans",
   GlobalTagBanRegexs = "globalTagBanRegexs",
 }
-export enum CacheScopedKey {
-  ChannelBlacklists = "channelBlacklists",
-}
-export type ShallowCacheKey = CacheKey | CacheScopedKey;
+export enum ScopedCacheKey {}
 
-function isScoped(key: CacheKey | CacheScopedKey): key is CacheScopedKey {
-  return Object.values(CacheScopedKey).includes(key as any);
+export type ShallowCacheKey = GlobalCacheKey | ScopedCacheKey;
+
+function isScoped(key: GlobalCacheKey | ScopedCacheKey): key is ScopedCacheKey {
+  return Object.values(ScopedCacheKey).includes(key as any);
 }
 
 export class ShallowCache {
   private cache: SimpleMap = {};
 
-  remember<T = any>(key: CacheKey, value: any): T;
-  remember<T = any>(key: CacheScopedKey, value: any, scope: string): T;
-  remember<T = any>(key: ShallowCacheKey, value: any, scope?: string): T {
+  store<T = any>(key: GlobalCacheKey, value: any): T;
+  store<T = any>(key: ScopedCacheKey, value: any, scope: string): T;
+  store<T = any>(key: ShallowCacheKey, value: any, scope?: string): T {
     if (isScoped(key)) {
       if (!this.cache[key]) this.cache[key] = {};
       this.cache[key][scope!] = value;
@@ -29,64 +28,14 @@ export class ShallowCache {
     return value as T;
   }
 
-  find<T = any>(key: CacheKey): T;
-  find<T = any>(key: CacheScopedKey, scope: string): T;
-  find<T = any>(key: ShallowCacheKey, scope?: string): T {
+  fetch<T = any>(key: GlobalCacheKey): T;
+  fetch<T = any>(key: ScopedCacheKey, scope: string): T;
+  fetch<T = any>(key: ShallowCacheKey, scope?: string): T {
     if (isScoped(key)) {
       if (!this.cache[key]) this.cache[key] = {};
       return this.cache[key][scope!] as T;
     } else {
       return this.cache[key] as T;
     }
-  }
-
-  forget(key: CacheKey): void;
-  forget(key: CacheScopedKey, scope: string): void;
-  forget(key: ShallowCacheKey, scope?: string): void {
-    if (isScoped(key)) {
-      if (!this.cache[key]) this.cache[key] = {};
-      delete this.cache[key][scope!];
-    } else {
-      delete this.cache[key];
-    }
-  }
-
-  async findOrRemember<T = any>(
-    key: CacheKey,
-    refreshser: () => Promise<T>
-  ): Promise<T>;
-  async findOrRemember<T = any>(
-    key: CacheScopedKey,
-    refreshser: () => Promise<T>,
-    scope: string
-  ): Promise<T>;
-  async findOrRemember<T = any>(
-    key: ShallowCacheKey,
-    refreshser: () => Promise<T>,
-    scope?: string
-  ): Promise<T> {
-    let value = this.find(key as any, scope!);
-
-    if (!value) {
-      let newValue = await refreshser();
-
-      if (isScoped(key)) {
-        this.remember(key, newValue, scope!);
-      } else {
-        this.remember(key, newValue);
-      }
-
-      value = newValue;
-    }
-
-    if (!value) {
-      if (isScoped(key)) {
-        this.forget(key, scope!);
-      } else {
-        this.forget(key);
-      }
-    }
-
-    return value || undefined;
   }
 }
