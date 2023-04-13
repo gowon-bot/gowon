@@ -12,14 +12,10 @@ import { toInt } from "../../helpers/lastfm/";
 import { SimpleMap } from "../../helpers/types";
 import { Logger } from "../../lib/Logger";
 import { GowonContext } from "../../lib/context/Context";
-import { GowonService } from "../../services/GowonService";
 import { LastFMService } from "../../services/LastFM/LastFMService";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { PreviousCrownData } from "../../services/dbservices/crowns/CrownCheck";
-import {
-  CrownOptions,
-  CrownState,
-} from "../../services/dbservices/crowns/CrownsService.types";
+import { CrownOptions } from "../../services/dbservices/crowns/CrownsService.types";
 import { CrownsQueries } from "../queries";
 import { ArtistRedirect } from "./ArtistRedirect";
 import { User } from "./User";
@@ -55,13 +51,6 @@ export interface CrownRank {
   rank: string;
   plays: string;
 }
-
-export type InvalidCrownState =
-  | CrownState.inactivity
-  | CrownState.left
-  | CrownState.purgatory
-  | CrownState.banned
-  | CrownState.loggedOut;
 
 @Entity({ name: "crowns" })
 export class Crown extends BaseEntity {
@@ -239,37 +228,6 @@ export class Crown extends BaseEntity {
     userID: number
   ): Promise<CrownRank[]> {
     return await this.query(CrownsQueries.crownRanks(), [serverID, userID]);
-  }
-
-  async invalid(ctx: GowonContext): Promise<{
-    failed: boolean;
-    reason?: InvalidCrownState;
-  }> {
-    if (!this.user.lastFMUsername)
-      return { failed: true, reason: CrownState.loggedOut };
-
-    if (!(await this.userStillInServer(ctx)))
-      return { failed: true, reason: CrownState.left };
-
-    if (await this.user.inactive(ctx))
-      return { failed: true, reason: CrownState.inactivity };
-
-    if (await this.user.inPurgatory(ctx))
-      return { failed: true, reason: CrownState.purgatory };
-
-    if (
-      await ServiceRegistry.get(GowonService).isUserCrownBanned(
-        ctx.guild!,
-        this.user.discordID
-      )
-    )
-      return { failed: true, reason: CrownState.banned };
-
-    return { failed: false };
-  }
-
-  async userStillInServer(ctx: GowonContext): Promise<boolean> {
-    return await User.stillInServer(ctx, this.user.discordID);
   }
 
   redirectDisplay(): string {

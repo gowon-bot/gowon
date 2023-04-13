@@ -168,10 +168,12 @@ export class CrownsHistoryService extends BaseService {
   async handleCheck(ctx: GowonContext, crownCheck: CrownCheck) {
     const { crown, previousCrown } = crownCheck.getOptions();
 
-    const owner = await User.toDiscordUser(
-      ctx.requiredGuild,
-      previousCrown.ownerDiscordID
-    );
+    const owner = previousCrown
+      ? await User.toDiscordUser(
+          ctx.requiredGuild,
+          previousCrown.ownerDiscordID
+        )
+      : undefined;
 
     switch (crownCheck.state) {
       case Updated.name:

@@ -1,6 +1,6 @@
 import { User as DiscordUser } from "discord.js";
 import { ILike } from "typeorm";
-import { Crown, InvalidCrownState } from "../../../database/entity/Crown";
+import { Crown } from "../../../database/entity/Crown";
 import { ArtistIsCrownBannedError } from "../../../errors/crowns";
 import { sqlLikeEscape } from "../../../helpers/database";
 import { constants } from "../../../lib/constants";
@@ -20,7 +20,8 @@ import {
   Updated,
   Yoinked,
 } from "./CrownCheck";
-import { CrownOptions } from "./CrownsService.types";
+import { CrownsService } from "./CrownsService";
+import { CrownOptions, InvalidCrownState } from "./CrownsService.types";
 
 export class CrownsCheckService extends BaseService {
   protected get redirectsService() {
@@ -28,6 +29,9 @@ export class CrownsCheckService extends BaseService {
   }
   protected get gowonService() {
     return ServiceRegistry.get(GowonService);
+  }
+  protected get crownsService() {
+    return ServiceRegistry.get(CrownsService);
   }
 
   public getThreshold(): number {
@@ -50,10 +54,7 @@ export class CrownsCheckService extends BaseService {
     const redirectedArtistName = redirect.to || redirect.from;
 
     if (
-      await this.gowonService.isArtistCrownBanned(
-        ctx.requiredGuild,
-        redirectedArtistName
-      )
+      await this.crownsService.isArtistCrownBanned(ctx, redirectedArtistName)
     ) {
       throw new ArtistIsCrownBannedError(redirectedArtistName);
     }
@@ -160,7 +161,10 @@ export class CrownsCheckService extends BaseService {
     ctx: GowonContext,
     options: CrownCheckOptions & { crown: Crown }
   ): Promise<CrownCheck> {
-    const invalidCheck = await options.crown.invalid(ctx);
+    const invalidCheck = await this.crownsService.isCrownInvalid(
+      ctx,
+      options.crown
+    );
 
     if (invalidCheck.failed && invalidCheck.reason) {
       return await this.handleInvalidHolder(

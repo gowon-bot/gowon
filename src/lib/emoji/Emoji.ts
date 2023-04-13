@@ -46,8 +46,8 @@ export const Emoji = {
   baited: "<:baited:1088895477300334644>",
 
   // Uses indexed data
-  usesIndexedDataDescription: "<:uses_indexed_data:1056207690474467359> ",
-  usesIndexedDataLink: "<:uses_indexed_data2:1056204845683581048> ",
+  usesIndexedDataDescription: "<:uses_indexed_data:1056207690474467359>",
+  usesIndexedDataLink: "<:uses_indexed_data2:1056204845683581048>",
   usesIndexedDataTitle: "<:uses_indexed_data3:1056207688696086581>",
 
   // RYM Stars

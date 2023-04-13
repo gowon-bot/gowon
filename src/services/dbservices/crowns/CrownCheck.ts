@@ -1,7 +1,7 @@
 import { Chance } from "chance";
 import { MessageEmbed } from "discord.js";
 import { ArtistRedirect } from "../../../database/entity/ArtistRedirect";
-import { Crown, InvalidCrownState } from "../../../database/entity/Crown";
+import { Crown } from "../../../database/entity/Crown";
 import {
   bold,
   mentionGuildMember,
@@ -10,7 +10,11 @@ import {
 import { GowonContext } from "../../../lib/context/Context";
 import { Emoji } from "../../../lib/emoji/Emoji";
 import { displayNumber } from "../../../lib/views/displays";
-import { CrownOptions, CrownState } from "./CrownsService.types";
+import {
+  CrownOptions,
+  CrownState,
+  InvalidCrownState,
+} from "./CrownsService.types";
 
 export type CrownCheckOptions = CrownOptions & {
   redirect: ArtistRedirect;

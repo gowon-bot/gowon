@@ -1,9 +1,3 @@
-import {
-  CrownBannedError,
-  InactiveError,
-  OptedOutError,
-  PurgatoryError,
-} from "../../../errors/errors";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { CrownsChildCommand } from "./CrownsChildCommand";
@@ -26,12 +20,10 @@ export class Check extends CrownsChildCommand<typeof args> {
   async run() {
     const { senderUser, senderRequestable } = await this.getMentions({
       dbUserRequired: true,
+      senderRequired: true,
     });
 
-    if (await senderUser?.inPurgatory(this.ctx)) throw new PurgatoryError();
-    if (await senderUser?.inactive(this.ctx)) throw new InactiveError();
-    if (await senderUser?.isCrownBanned(this.ctx)) throw new CrownBannedError();
-    if (await senderUser?.isOptedOut(this.ctx)) throw new OptedOutError();
+    await this.ensureUserCanCheck(senderUser!);
 
     const artist = await this.lastFMArguments.getArtist(
       this.ctx,

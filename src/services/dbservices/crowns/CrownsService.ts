@@ -20,18 +20,30 @@ import { toInt } from "../../../helpers/lastfm";
 import { constants } from "../../../lib/constants";
 import { GowonContext } from "../../../lib/context/Context";
 import { SettingsService } from "../../../lib/settings/SettingsService";
+import { DiscordService } from "../../Discord/DiscordService";
 import { ServiceRegistry } from "../../ServicesRegistry";
 import { CrownsCheckService } from "./CrownsCheckService";
 import { CrownsHistoryService } from "./CrownsHistoryService";
-import { CrownDisplay, CrownHolder } from "./CrownsService.types";
+import {
+  CrownDisplay,
+  CrownHolder,
+  CrownInvalidCheck,
+  CrownState,
+} from "./CrownsService.types";
+import { CrownsUserService } from "./CrownsUserService";
 
 export class CrownsService extends CrownsCheckService {
   public get scribe() {
     return ServiceRegistry.get(CrownsHistoryService);
   }
-
   private get settingsService() {
     return ServiceRegistry.get(SettingsService);
+  }
+  private get crownsUserService() {
+    return ServiceRegistry.get(CrownsUserService);
+  }
+  private get discordService() {
+    return ServiceRegistry.get(DiscordService);
   }
 
   get threshold() {
@@ -310,8 +322,6 @@ export class CrownsService extends CrownsCheckService {
     const crownBan = CrownBan.create({ user, serverID });
     await crownBan.save();
 
-    this.gowonService.cache.addCrownBan(serverID, user.discordID);
-
     return crownBan;
   }
 
@@ -325,8 +335,6 @@ export class CrownsService extends CrownsCheckService {
     if (!crownBan) throw new NotCrownBannedError();
 
     await crownBan.remove();
-
-    this.gowonService.cache.removeCrownBan(serverID, user.discordID);
   }
 
   async getCrownBannedUsers(ctx: GowonContext): Promise<CrownBan[]> {
@@ -387,8 +395,6 @@ export class CrownsService extends CrownsCheckService {
     const crownBan = ArtistCrownBan.create({ artistName, serverID });
     await crownBan.save();
 
-    this.gowonService.cache.addCrownArtistBan(serverID, crownBan.artistName);
-
     return crownBan;
   }
 
@@ -409,9 +415,48 @@ export class CrownsService extends CrownsCheckService {
 
     await crownBan.remove();
 
-    this.gowonService.cache.removeCrownArtistBan(serverID, artistName);
-
     return crownBan;
+  }
+
+  async isArtistCrownBanned(
+    ctx: GowonContext,
+    artistName: string
+  ): Promise<boolean> {
+    const crownBan = await ArtistCrownBan.findOneBy({
+      artistName,
+      serverID: ctx.requiredGuild.id,
+    });
+
+    return !!crownBan;
+  }
+
+  async isCrownInvalid(
+    ctx: GowonContext,
+    crown: Crown
+  ): Promise<CrownInvalidCheck> {
+    const discordID = crown.user.discordID;
+
+    if (!crown.user.lastFMUsername) {
+      return { failed: true, reason: CrownState.loggedOut };
+    }
+
+    if (!(await this.discordService.userInServer(ctx, discordID))) {
+      return { failed: true, reason: CrownState.left };
+    }
+
+    if (await this.crownsUserService.isInactive(ctx, discordID)) {
+      return { failed: true, reason: CrownState.inactivity };
+    }
+
+    if (await this.crownsUserService.isInPurgatory(ctx, discordID)) {
+      return { failed: true, reason: CrownState.purgatory };
+    }
+
+    if (await this.crownsUserService.isCrownBanned(ctx, discordID)) {
+      return { failed: true, reason: CrownState.banned };
+    }
+
+    return { failed: false };
   }
 
   private async filterByDiscordID(

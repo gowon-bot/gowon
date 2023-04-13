@@ -27,6 +27,7 @@ import {
   Mentions,
 } from "../../services/arguments/mentions/MentionsService.types";
 import { UsersService } from "../../services/dbservices/UsersService";
+import { CrownsService } from "../../services/dbservices/crowns/CrownsService";
 import { LilacUsersService } from "../../services/lilac/LilacUsersService";
 import { MirrorballService } from "../../services/mirrorball/MirrorballService";
 import { MirrorballUsersService } from "../../services/mirrorball/services/MirrorballUsersService";
@@ -437,15 +438,15 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
     let filter = (_: string) => true;
 
     if (filterCrownBannedUsers) {
-      let crownBannedUsers = await this.gowonService.getCrownBannedUsers(
+      const crownBannedUsers = (
+        await ServiceRegistry.get(CrownsService).getCrownBannedUsers(this.ctx)
+      ).map((cb) => cb.serverID);
+
+      const purgatoryRole = await this.gowonService.getPurgatoryRole(
         this.requiredGuild
       );
 
-      let purgatoryRole = await this.gowonService.getPurgatoryRole(
-        this.requiredGuild
-      );
-
-      let usersInPurgatory = purgatoryRole
+      const usersInPurgatory = purgatoryRole
         ? (await this.requiredGuild.members.fetch())
             .filter((m) => m.roles.cache.has(purgatoryRole!))
             .map((m) => m.user.id)

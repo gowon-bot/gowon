@@ -40,3 +40,15 @@ export enum CrownState {
   banned = "Banned",
   loggedOut = "Logged out",
 }
+
+export interface CrownInvalidCheck {
+  failed: boolean;
+  reason?: InvalidCrownState;
+}
+
+export type InvalidCrownState =
+  | CrownState.inactivity
+  | CrownState.left
+  | CrownState.purgatory
+  | CrownState.banned
+  | CrownState.loggedOut;

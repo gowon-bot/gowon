@@ -64,8 +64,8 @@ export class Info extends CrownsChildCommand<typeof args> {
 
     if (!crown) {
       if (
-        await this.gowonService.isArtistCrownBanned(
-          this.requiredGuild,
+        await this.crownsService.isArtistCrownBanned(
+          this.ctx,
           redirectArtistName
         )
       ) {
@@ -84,7 +84,10 @@ export class Info extends CrownsChildCommand<typeof args> {
       return;
     }
 
-    const invalidCheck = await crown?.invalid(this.ctx);
+    const invalidCheck = await this.crownsService.isCrownInvalid(
+      this.ctx,
+      crown
+    );
 
     const invalidBadge = createInvalidBadge(invalidCheck.reason);
 
@@ -131,8 +134,12 @@ export class Info extends CrownsChildCommand<typeof args> {
   ) {
     const lineConsolidator = new LineConsolidator();
 
-    const userCanClaimCrowns =
-      (await senderUser?.canClaimCrowns(this.ctx)) || false;
+    const userCanClaimCrowns = !senderUser
+      ? false
+      : await this.crownsUserService.canUserClaimCrowns(
+          this.ctx,
+          senderUser.discordID
+        );
 
     lineConsolidator.addLines(
       `No one has the crown for ${bold(artistName)}` +
@@ -142,9 +149,7 @@ export class Info extends CrownsChildCommand<typeof args> {
           !!playcount &&
           playcount > this.crownsService.threshold &&
           userCanClaimCrowns,
-
         string: `\nYou can claim it with \`${this.prefix}c ${artistName}\``,
-
         else: userCanClaimCrowns
           ? `\nYou need ${displayNumber(
               this.crownsService.threshold,

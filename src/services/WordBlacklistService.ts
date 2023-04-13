@@ -69,7 +69,7 @@ export class WordBlacklistService extends BaseService<WordBlacklistServiceContex
       guildID: ctx.requiredGuild.id,
     });
 
-    if (!!strictTagBans && !this.isAllowed(ctx, tag, ["tags", "base"])) {
+    if (!!strictTagBans && !this.isAllowed(ctx, tag)) {
       throw new TagNotAllowedError();
     }
   }
@@ -82,13 +82,15 @@ export class WordBlacklistService extends BaseService<WordBlacklistServiceContex
   ): Promise<TagBan> {
     this.log(ctx, `Banning tag ${tag} in ${guildID || "Gowon"}`);
 
-    if (!this.isAllowed(ctx, tag, ["base", "tags"])) {
+    if (!this.isAllowed(ctx, tag)) {
       throw new TagBannedByDefaultError();
     }
 
+    const normalizedTag = !isRegex ? this.normalizeItem(tag) : tag;
+
     const existingBan = await TagBan.findOneBy({
       serverID: guildID || IsNull(),
-      tag: this.normalizeItem(tag),
+      tag: normalizedTag,
       isRegex,
     });
 
@@ -96,7 +98,7 @@ export class WordBlacklistService extends BaseService<WordBlacklistServiceContex
 
     const newBan = TagBan.create({
       serverID: guildID,
-      tag: this.normalizeItem(tag),
+      tag: normalizedTag,
       isRegex,
     });
 

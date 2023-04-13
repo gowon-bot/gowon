@@ -5,8 +5,6 @@ export enum CacheKey {
   GlobalTagBanRegexs = "globalTagBanRegexs",
 }
 export enum CacheScopedKey {
-  CrownBannedUsers = "crownBannedUsers",
-  CrownBannedArtists = "crownBannedArtists",
   ChannelBlacklists = "channelBlacklists",
 }
 export type ShallowCacheKey = CacheKey | CacheScopedKey;

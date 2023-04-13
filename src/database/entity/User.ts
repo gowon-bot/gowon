@@ -1,9 +1,4 @@
-import {
-  DiscordAPIError,
-  User as DiscordUser,
-  Guild,
-  GuildMember,
-} from "discord.js";
+import { DiscordAPIError, User as DiscordUser, Guild } from "discord.js";
 import gql from "graphql-tag";
 import {
   BaseEntity,
@@ -13,12 +8,9 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { userHasRole } from "../../helpers/discord";
 import { Logger } from "../../lib/Logger";
 import { CommandAccessRoleName } from "../../lib/command/access/roles";
 import { GowonContext } from "../../lib/context/Context";
-import { SettingsService } from "../../lib/settings/SettingsService";
-import { GowonService } from "../../services/GowonService";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { MirrorballService } from "../../services/mirrorball/MirrorballService";
 import { Combo } from "./Combo";
@@ -89,26 +81,11 @@ export class User extends BaseEntity {
     }
   }
 
-  static async stillInServer(
-    ctx: GowonContext,
-    discordID?: string
-  ): Promise<boolean> {
-    if (!discordID) {
-      return false;
-    }
-
-    try {
-      return !!(await ctx.guild?.members.fetch(discordID));
-    } catch {
-      return false;
-    }
-  }
-
   static async random(options: {
     limit: number;
     userIDs?: string[];
   }): Promise<User[]> {
-    let users = await this.query(
+    const users = await this.query(
       `SELECT * FROM users${
         options.userIDs?.length ? ` WHERE "discordID" = ANY ($2)` : ""
       } ORDER BY RANDOM() LIMIT $1`,
@@ -127,56 +104,6 @@ export class User extends BaseEntity {
       if (!(e instanceof DiscordAPIError)) throw e;
       return;
     }
-  }
-
-  async asGuildMember(ctx: GowonContext): Promise<GuildMember | undefined> {
-    try {
-      return await ctx.guild?.members.fetch(this.discordID);
-    } catch (e) {
-      if (!(e instanceof DiscordAPIError)) throw e;
-      return;
-    }
-  }
-
-  async inPurgatory(ctx: GowonContext): Promise<boolean> {
-    return userHasRole(
-      await this.asGuildMember(ctx),
-      await ServiceRegistry.get(GowonService).getPurgatoryRole(ctx.guild!)
-    );
-  }
-
-  async inactive(ctx: GowonContext): Promise<boolean> {
-    return userHasRole(
-      await this.asGuildMember(ctx),
-      await ServiceRegistry.get(GowonService).getInactiveRole(ctx.guild!)
-    );
-  }
-
-  async isCrownBanned(ctx: GowonContext): Promise<boolean> {
-    return ServiceRegistry.get(GowonService).isUserCrownBanned(
-      ctx.guild!,
-      this.discordID
-    );
-  }
-
-  async isOptedOut(ctx: GowonContext): Promise<boolean> {
-    const settingsService = ServiceRegistry.get(SettingsService);
-
-    const setting = settingsService.get("optedOut", {
-      guildID: ctx.guild!.id,
-      userID: this.discordID,
-    });
-
-    return !!setting;
-  }
-
-  async canClaimCrowns(ctx: GowonContext): Promise<boolean> {
-    return (
-      !(await this.inPurgatory(ctx)) &&
-      !(await this.inactive(ctx)) &&
-      !(await this.isCrownBanned(ctx)) &&
-      !(await this.isOptedOut(ctx))
-    );
   }
 
   async mirrorballUpdate(ctx: GowonContext): Promise<void> {

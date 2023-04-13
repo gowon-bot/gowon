@@ -1,4 +1,5 @@
-import { User } from "../../../database/entity/User";
+import { DiscordService } from "../../../services/Discord/DiscordService";
+import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { displayNumber } from "../../views/displays";
 import { BaseCompoundComponent } from "../components/BaseNowPlayingComponent";
 
@@ -22,7 +23,14 @@ export class ArtistPlaysAndCrownComponent extends BaseCompoundComponent<
       if (crown.user.id === this.ctx.author.id) {
         isCrownHolder = true;
       } else {
-        if (await User.stillInServer(this.ctx, crown.user.id)) {
+        const userInServer = !crown.user
+          ? false
+          : await ServiceRegistry.get(DiscordService).userInServer(
+              this.ctx,
+              crown.user?.id
+            );
+
+        if (userInServer) {
           crownString = `👑 ${displayNumber(crown.crown.plays)} (${
             crown.user.username
           })`;

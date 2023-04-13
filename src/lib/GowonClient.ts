@@ -1,6 +1,7 @@
 import { Client, User as DiscordUser, Guild } from "discord.js";
-import { User } from "../database/entity/User";
 import { BotName } from "../helpers/bots";
+import { DiscordService } from "../services/Discord/DiscordService";
+import { DiscordID } from "../services/Discord/DiscordService.types";
 import { ServiceRegistry } from "../services/ServicesRegistry";
 import { constants } from "./constants";
 import { GowonContext } from "./context/Context";
@@ -52,23 +53,28 @@ export class GowonClient {
     );
   }
 
-  async userDisplay(ctx: GowonContext, user?: string): Promise<string>;
+  async userDisplay(ctx: GowonContext, user?: DiscordID): Promise<string>;
   async userDisplay(ctx: GowonContext, user?: DiscordUser): Promise<string>;
   async userDisplay(
     ctx: GowonContext,
     user?: DiscordUser | string
   ): Promise<string> {
-    if (
-      user &&
-      (await User.stillInServer(ctx, typeof user === "string" ? user : user.id))
-    ) {
+    const userInServer = !user
+      ? false
+      : await ServiceRegistry.get(DiscordService).userInServer(
+          ctx,
+          typeof user === "string" ? user : user.id
+        );
+
+    if (userInServer) {
       if (typeof user === "string") {
         try {
-          let fetchedUser = (await ctx.guild!.members.fetch(user))?.user;
+          const fetchedUser = (await ctx.guild!.members.fetch(user))?.user;
+
           return fetchedUser.username;
         } catch {}
       } else {
-        return user.username;
+        return user!.username;
       }
     }
 
