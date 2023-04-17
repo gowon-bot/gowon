@@ -27,6 +27,7 @@ type LastFMArgumentsOptions = Partial<{
   redirect: boolean;
   noSearch: boolean;
   noParse: boolean;
+  fromRecentTrack: RecentTrack;
 }>;
 
 export class LastFMArguments extends BaseService<LastFMArgumentsContext> {
@@ -159,6 +160,8 @@ export class LastFMArguments extends BaseService<LastFMArgumentsContext> {
     options: LastFMArgumentsOptions
   ): Promise<RecentTrack> {
     const originalPayload = ctx.command.payload;
+
+    if (options.fromRecentTrack) return options.fromRecentTrack;
 
     if (
       !options.noParse &&

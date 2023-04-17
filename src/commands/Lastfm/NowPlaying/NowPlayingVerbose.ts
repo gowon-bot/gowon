@@ -14,16 +14,18 @@ export default class NowPlayingVerbose extends NowPlayingBaseCommand {
   crownsService = ServiceRegistry.get(CrownsService);
 
   async run() {
-    let { username, discordUser, requestable } =
-      await this.nowPlayingMentions();
+    const { username, discordUser, requestable } = await this.getMentions();
 
-    let nowPlaying = await this.lastFMService.nowPlaying(this.ctx, requestable);
+    const nowPlaying = await this.lastFMService.nowPlaying(
+      this.ctx,
+      requestable
+    );
 
     if (nowPlaying.isNowPlaying) this.scrobble(nowPlaying);
 
     this.tagConsolidator.blacklistTags(nowPlaying.artist, nowPlaying.name);
 
-    let [artistInfo, trackInfo, crown] = await promiseAllSettled([
+    const [artistInfo, trackInfo, crown] = await promiseAllSettled([
       this.lastFMService.artistInfo(this.ctx, {
         artist: nowPlaying.artist,
         username: requestable,
@@ -36,7 +38,7 @@ export default class NowPlayingVerbose extends NowPlayingBaseCommand {
       this.crownsService.getCrownDisplay(this.ctx, nowPlaying.artist),
     ]);
 
-    let { crownString, isCrownHolder } = await this.crownDetails(
+    const { crownString, isCrownHolder } = await this.crownDetails(
       crown,
       discordUser
     );
@@ -50,14 +52,14 @@ export default class NowPlayingVerbose extends NowPlayingBaseCommand {
       this.tagConsolidator.addTags(this.ctx, artistInfo.value?.tags || []);
     }
 
-    let artistPlays = this.artistPlays(artistInfo, nowPlaying, isCrownHolder);
-    let noArtistData = this.noArtistData(nowPlaying);
-    let trackPlays = this.trackPlays(trackInfo);
-    let tags = this.tagConsolidator
+    const artistPlays = this.artistPlays(artistInfo, nowPlaying, isCrownHolder);
+    const noArtistData = this.noArtistData(nowPlaying);
+    const trackPlays = this.trackPlays(trackInfo);
+    const tags = this.tagConsolidator
       .consolidateAsStrings(Infinity, false)
       .join(" ‧ ");
 
-    let lineConsolidator = new LineConsolidator();
+    const lineConsolidator = new LineConsolidator();
     lineConsolidator.addLines(
       // Top line
       {
@@ -99,13 +101,13 @@ export default class NowPlayingVerbose extends NowPlayingBaseCommand {
       }
     );
 
-    let nowPlayingEmbed = (
+    const nowPlayingEmbed = (
       await this.nowPlayingEmbed(nowPlaying, username)
     ).setFooter({
       text: lineConsolidator.consolidate(),
     });
 
-    let sentMessage = await this.send(nowPlayingEmbed);
+    const sentMessage = await this.send(nowPlayingEmbed);
 
     await this.customReactions(sentMessage);
     await this.easterEggs(sentMessage, nowPlaying);

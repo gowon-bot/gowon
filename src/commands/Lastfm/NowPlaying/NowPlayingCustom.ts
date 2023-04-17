@@ -1,4 +1,3 @@
-import { User } from "../../../database/entity/User";
 import { Variation } from "../../../lib/command/Command";
 import {
   DatasourceService,
@@ -7,7 +6,6 @@ import {
 import { NowPlayingBuilder } from "../../../lib/nowplaying/NowPlayingBuilder";
 import { RequirementMap } from "../../../lib/nowplaying/RequirementMap";
 import { ConfigService } from "../../../services/dbservices/NowPlayingService";
-import { Requestable } from "../../../services/LastFM/LastFMAPIService";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { NowPlayingBaseCommand } from "./NowPlayingBaseCommand";
 
@@ -27,12 +25,15 @@ export default class NowPlayingCustom extends NowPlayingBaseCommand {
   configService = ServiceRegistry.get(ConfigService);
 
   async run() {
-    let { username, senderUser, dbUser, requestable } =
-      await this.customMentions();
+    const { username, senderUser, dbUser, requestable } =
+      await this.getMentions({
+        lfmAuthentificationRequired: true,
+        senderRequired: true,
+      });
 
     const config = await this.configService.getConfigForUser(
       this.ctx,
-      senderUser
+      senderUser!
     );
 
     const recentTracks = await this.lastFMService.recentTracks(this.ctx, {
@@ -85,37 +86,5 @@ export default class NowPlayingCustom extends NowPlayingBaseCommand {
       this.mutableContext<DatasourceServiceContext["mutable"]>().mutable
         .tagConsolidator
     );
-  }
-
-  private async customMentions(): Promise<{
-    username: string;
-    senderUser: User;
-    dbUser: User;
-    requestable: Requestable;
-  }> {
-    const otherwords = this.parsedArguments.otherWords;
-    const {
-      senderUser,
-      username,
-      senderUsername,
-      mentionedDBUser,
-      requestable,
-      senderRequestable,
-    } = await this.getMentions({
-      lfmAuthentificationRequired: true,
-      senderRequired: true,
-    });
-
-    const usernameToUse = otherwords ? senderUsername : username;
-    const requestableToUse = otherwords ? senderRequestable : requestable;
-
-    return {
-      requestable: requestableToUse,
-      senderUser: senderUser!,
-      username: usernameToUse,
-      dbUser: (mentionedDBUser?.lastFMUsername === username
-        ? mentionedDBUser
-        : senderUser)!,
-    };
   }
 }

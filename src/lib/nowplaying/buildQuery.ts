@@ -7,7 +7,7 @@ const queryParts = [
   "globalArtistRank",
   "serverArtistRank",
 ] as const;
-export type QueryPartName = typeof queryParts[number];
+export type QueryPartName = (typeof queryParts)[number];
 
 export interface QueryPart {
   query: QueryPartName;

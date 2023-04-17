@@ -18,10 +18,9 @@ export default class NowPlayingCombo extends NowPlayingBaseCommand {
   redirectsService = ServiceRegistry.get(RedirectsService);
 
   async run() {
-    let { username, requestable, discordUser } =
-      await this.nowPlayingMentions();
+    const { username, requestable, discordUser } = await this.getMentions();
 
-    let recentTracks = await this.lastFMService.recentTracks(this.ctx, {
+    const recentTracks = await this.lastFMService.recentTracks(this.ctx, {
       username: requestable,
       limit: 1000,
     });
@@ -30,13 +29,13 @@ export default class NowPlayingCombo extends NowPlayingBaseCommand {
 
     const combo = await comboCalculator.calculate(recentTracks);
 
-    let nowPlaying = recentTracks.first();
+    const nowPlaying = recentTracks.first();
 
     this.tagConsolidator.blacklistTags(nowPlaying.artist, nowPlaying.name);
 
     if (nowPlaying.isNowPlaying) this.scrobble(nowPlaying);
 
-    let [artistInfo, crown] = await promiseAllSettled([
+    const [artistInfo, crown] = await promiseAllSettled([
       this.lastFMService.artistInfo(this.ctx, {
         artist: nowPlaying.artist,
         username: requestable,
@@ -50,7 +49,7 @@ export default class NowPlayingCombo extends NowPlayingBaseCommand {
       this.tagConsolidator.addTags(this.ctx, artistInfo.value.tags);
     }
 
-    let { crownString, isCrownHolder } = await this.crownDetails(
+    const { crownString, isCrownHolder } = await this.crownDetails(
       crown,
       discordUser
     );
@@ -63,7 +62,7 @@ export default class NowPlayingCombo extends NowPlayingBaseCommand {
     }`;
     const hasCombo = combo.artist.plays > 1;
 
-    let lineConsolidator = new LineConsolidator();
+    const lineConsolidator = new LineConsolidator();
     lineConsolidator.addLines(
       // Top line
       {
@@ -105,13 +104,13 @@ export default class NowPlayingCombo extends NowPlayingBaseCommand {
       }
     );
 
-    let nowPlayingEmbed = (
+    const nowPlayingEmbed = (
       await this.nowPlayingEmbed(nowPlaying, username)
     ).setFooter({
       text: lineConsolidator.consolidate(),
     });
 
-    let sentMessage = await this.send(nowPlayingEmbed);
+    const sentMessage = await this.send(nowPlayingEmbed);
 
     await this.customReactions(sentMessage);
     await this.easterEggs(sentMessage, nowPlaying);

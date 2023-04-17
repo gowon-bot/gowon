@@ -8,7 +8,6 @@ import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { SettingsService } from "../../../lib/settings/SettingsService";
 import { TagConsolidator } from "../../../lib/tags/TagConsolidator";
 import { displayNumber } from "../../../lib/views/displays";
-import { Requestable } from "../../../services/LastFM/LastFMAPIService";
 import {
   AlbumInfo,
   ArtistInfo,
@@ -19,6 +18,10 @@ import {
   RecentTracks,
 } from "../../../services/LastFM/converters/RecentTracks";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
+import {
+  GetMentionsOptions,
+  Mentions,
+} from "../../../services/arguments/mentions/MentionsService.types";
 import { CrownDisplay } from "../../../services/dbservices/crowns/CrownsService.types";
 import { AlbumCoverService } from "../../../services/moderation/AlbumCoverService";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
@@ -48,47 +51,23 @@ export abstract class NowPlayingBaseCommand<
 
   tagConsolidator = new TagConsolidator();
 
-  protected async nowPlayingMentions(
-    { noDiscordUser }: { noDiscordUser?: boolean } = { noDiscordUser: false }
-  ): Promise<{
-    requestable: Requestable;
-    senderRequestable: Requestable;
-    username: string;
-    senderUsername: string;
-    discordUser?: User;
-  }> {
+  async getMentions(options?: Partial<GetMentionsOptions>): Promise<Mentions> {
     const otherWords = this.parsedArguments.otherWords;
 
-    let {
-      username,
-      senderUsername,
-      discordUser,
-      requestable,
-      senderRequestable,
-    } = await this.getMentions(
-      noDiscordUser
-        ? {}
-        : {
-            fetchDiscordUser: true,
-          }
-    );
+    const mentions = await super.getMentions({
+      senderRequired: this.parsedArguments.otherWords ? false : true,
+      fetchDiscordUser: true,
+      ...(options || {}),
+    });
 
-    if (
-      otherWords &&
-      !this.parsedArguments.userID &&
-      !this.parsedArguments.lastfmUsername
-    ) {
-      requestable = senderRequestable;
-      username = senderUsername;
+    if (otherWords && this.parsedArguments.user) {
+      mentions.requestable = mentions.senderRequestable;
+      mentions.username = mentions.senderUsername;
+      mentions.dbUser = mentions.senderUser!;
+      mentions.mirrorballUser = mentions.senderMirrorballUser;
     }
 
-    return {
-      username,
-      senderUsername,
-      discordUser,
-      requestable,
-      senderRequestable,
-    };
+    return mentions;
   }
 
   protected scrobble(track: RecentTrack) {

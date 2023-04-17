@@ -5,7 +5,11 @@ import { NowPlayingBuilder } from "../../../lib/nowplaying/NowPlayingBuilder";
 import { RequirementMap } from "../../../lib/nowplaying/RequirementMap";
 import { ConfigService } from "../../../services/dbservices/NowPlayingService";
 import { TrackInfo } from "../../../services/LastFM/converters/InfoTypes";
-import { RecentTrack } from "../../../services/LastFM/converters/RecentTracks";
+import {
+  RecentTrack,
+  RecentTracks,
+} from "../../../services/LastFM/converters/RecentTracks";
+import { Requestable } from "../../../services/LastFM/LastFMAPIService";
 import { LastFMArgumentsMutableContext } from "../../../services/LastFM/LastFMArguments";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { nowPlayingArgs, NowPlayingBaseCommand } from "./NowPlayingBaseCommand";
@@ -32,60 +36,33 @@ export default class FakeNowPlaying extends NowPlayingBaseCommand<typeof args> {
   configService = ServiceRegistry.get(ConfigService);
 
   async run() {
-    const { dbUser, senderRequestable, requestable, username } =
+    const { dbUser, senderUser, senderRequestable, requestable, username } =
       await this.getMentions({
         senderRequired: true,
       });
 
-    const { artist, track } = await this.lastFMArguments.getTrack(
+    const recentTracks = await this.getRecentTracks(senderRequestable);
+
+    const config = await this.configService.getConfigForUser(
       this.ctx,
-      senderRequestable
+      senderUser!
     );
-
-    let recentTrack: RecentTrack;
-
-    const mutableContext =
-      this.mutableContext<LastFMArgumentsMutableContext>().mutable;
-
-    if (mutableContext.nowplaying || mutableContext.parsedNowplaying) {
-      recentTrack = (mutableContext.nowplaying ||
-        mutableContext.parsedNowplaying)!;
-    } else {
-      const trackInfo = await this.lastFMService.trackInfo(this.ctx, {
-        artist,
-        track,
-      });
-
-      recentTrack = this.recentTrackFromTrackInfo(trackInfo);
-    }
-
-    const recentTracks = await this.lastFMService.recentTracks(this.ctx, {
-      username: senderRequestable,
-      limit: 1,
-    });
-
-    recentTracks.tracks[0] = recentTrack;
-
-    const config = await this.configService.getConfigForUser(this.ctx, dbUser!);
 
     const builder = new NowPlayingBuilder(config);
 
-    const requirements = builder.generateRequirements();
+    const requirements =
+      builder.generateRequirements() as (keyof RequirementMap)[];
 
     const resolvedRequirements =
-      await this.datasourceService.resolveRequirements(
-        this.ctx,
-        requirements as (keyof RequirementMap)[],
-        {
-          recentTracks,
-          requestable,
-          username,
-          dbUser,
-          payload: this.payload,
-          components: config,
-          prefix: this.prefix,
-        }
-      );
+      await this.datasourceService.resolveRequirements(this.ctx, requirements, {
+        recentTracks,
+        requestable,
+        username,
+        dbUser,
+        payload: this.payload,
+        components: config,
+        prefix: this.prefix,
+      });
 
     const baseEmbed = (
       await this.nowPlayingEmbed(recentTracks.first(), username)
@@ -104,6 +81,38 @@ export default class FakeNowPlaying extends NowPlayingBaseCommand<typeof args> {
 
     await this.customReactions(sentMessage);
     await this.easterEggs(sentMessage, recentTracks.first());
+  }
+
+  private async getRecentTracks(
+    senderRequestable: Requestable
+  ): Promise<RecentTracks> {
+    const recentTracks = await this.lastFMService.recentTracks(this.ctx, {
+      username: senderRequestable,
+      limit: 1,
+    });
+
+    const { artist, track } = await this.lastFMArguments.getTrack(
+      this.ctx,
+      senderRequestable,
+      { fromRecentTrack: recentTracks.first() }
+    );
+
+    const mutableContext =
+      this.mutableContext<LastFMArgumentsMutableContext>().mutable;
+
+    // if lastFMArguments used the recent track
+    if (mutableContext.nowplaying || mutableContext.parsedNowplaying) {
+      return recentTracks;
+    } else {
+      const trackInfo = await this.lastFMService.trackInfo(this.ctx, {
+        artist,
+        track,
+      });
+
+      recentTracks.tracks[0] = this.recentTrackFromTrackInfo(trackInfo);
+
+      return recentTracks;
+    }
   }
 
   private recentTrackFromTrackInfo(track: TrackInfo): RecentTrack {

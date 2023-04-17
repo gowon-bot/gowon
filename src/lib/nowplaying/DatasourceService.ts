@@ -107,7 +107,7 @@ export class DatasourceService extends BaseService<DatasourceServiceContext> {
 
     const resolved = await Promise.all(resolvers);
 
-    let resolvedMap = resolved.reduce((acc, val, idx) => {
+    const resolvedMap = resolved.reduce((acc, val, idx) => {
       if (val?.graphQLData) {
         return Object.assign(acc, val.graphQLData);
       }
@@ -119,9 +119,7 @@ export class DatasourceService extends BaseService<DatasourceServiceContext> {
       return acc;
     }, {} as ResolvedRequirements);
 
-    resolvedMap = Object.assign(resolvedMap, resources);
-
-    return resolvedMap;
+    return Object.assign(resolvedMap, resources);
   }
 
   async artistInfo(
@@ -232,6 +230,7 @@ export class DatasourceService extends BaseService<DatasourceServiceContext> {
     const user: UserInput = {
       discordID: ctx.constants.resources!.dbUser.discordID,
     };
+
     const arArtist = { name: this.nowPlaying(ctx).artist };
 
     return { query: "globalArtistRank", variables: { user, arArtist } };

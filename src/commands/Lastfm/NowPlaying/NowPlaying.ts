@@ -76,8 +76,7 @@ export default class NowPlaying extends NowPlayingBaseCommand<typeof args> {
   ];
 
   async run() {
-    const { username, requestable, discordUser } =
-      await this.nowPlayingMentions();
+    const { username, requestable, discordUser } = await this.getMentions();
 
     const nowPlayingResponse = await this.lastFMService.recentTracks(this.ctx, {
       username: requestable || "flushed_emoji",
