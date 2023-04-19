@@ -62,7 +62,7 @@ export class NumberArgument<
 
   private getNumbersFromSplit(split: string[]): number[] {
     const numbers = [] as number[];
-    const numberRegex = /[\d,]+k?/gi;
+    const numberRegex = /[\d,]+k?(\s|\b|$)/gi;
 
     for (const numberString of split) {
       if (numberRegex.test(numberString)) {
