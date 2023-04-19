@@ -10,12 +10,15 @@ import { LilacPrivacy } from "../../../services/lilac/LilacAPIService.types";
 import { LilacWhoKnowsService } from "../../../services/lilac/LilacWhoKnowsService";
 import { MirrorballUser } from "../../../services/mirrorball/MirrorballTypes";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
+import { client } from "../../../setup";
 
 export abstract class WhoKnowsBaseCommand<
   A extends ArgumentsMap = {}
 > extends LilacBaseCommand<A> {
-  protected readonly gowonIconURL =
-    "https://cdn.discordapp.com/avatars/720135602669879386/a65b2e976bac5821073cacf4a8f8305a.png?size=1024";
+  protected readonly gowonIconURL = client.client.user?.displayAvatarURL({
+    size: 1024,
+    format: "png",
+  });
 
   nicknameService = ServiceRegistry.get(NicknameService);
   whoKnowsService = ServiceRegistry.get(WhoKnowsService);
