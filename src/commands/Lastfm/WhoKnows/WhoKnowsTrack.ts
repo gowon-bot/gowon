@@ -108,7 +108,7 @@ export default class WhoKnowsTrack extends WhoKnowsBaseCommand<typeof args> {
       .setFooter({
         text: (
           `${displayNumber(
-            rows.length,
+            whoKnowsRank.totalListeners,
             this.isGlobal() ? "global listener" : "server listener"
           )}\n` + this.footerHelp(senderLilacUser)
         ).trim(),
