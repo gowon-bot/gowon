@@ -19,7 +19,7 @@ export class Scrobbles extends FriendsChildCommand<typeof args> {
   idSeed = "nature sohee";
 
   description = "Shows how many scrobbles your friends have";
-  aliases = ["s"];
+  aliases = ["s", "scromples"];
   usage = ["", "time period"];
 
   arguments = args;
