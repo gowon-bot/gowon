@@ -111,6 +111,7 @@ ${
         `The fishy look happy! :)`,
         `Despite there only being ${fishyCount} fishy in the tank, they keep bumping into eachother`,
         `${fishyCount} fishy are engaged in a deep conversation... or sitting in silence, you don't speak fishy.`,
+        `The ${fishyCount} fishy are having a discussion... it seems a bit fishy`,
       ]);
     } else {
       return Chance().pickone([
