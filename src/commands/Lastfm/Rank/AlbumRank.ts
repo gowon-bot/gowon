@@ -1,21 +1,26 @@
 import { LogicError } from "../../../errors/errors";
 import { bold, italic, sanitizeForDiscord } from "../../../helpers/discord";
 import { LastfmLinks } from "../../../helpers/lastfm/LastfmLinks";
+import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { Validation } from "../../../lib/validation/ValidationChecker";
+import { validators } from "../../../lib/validation/validators";
 import {
   displayNumber,
   displayNumberedList,
 } from "../../../lib/views/displays";
-import { LastFMBaseCommand } from "../LastFMBaseCommand";
+import { TopArtist } from "../../../services/LastFM/converters/TopTypes";
+import { RankCommand } from "./RankCommand";
 
 const args = {
+  rank: new NumberArgument({ description: "The rank to look up" }),
   ...prefabArguments.album,
   ...standardMentions,
 } satisfies ArgumentsMap;
 
-export default class AlbumRank extends LastFMBaseCommand<typeof args> {
+export default class AlbumRank extends RankCommand<typeof args> {
   idSeed = "wonder girls sunmi";
 
   aliases = ["lr", "alr", "albumaround", "laround", "alaround"];
@@ -25,6 +30,10 @@ export default class AlbumRank extends LastFMBaseCommand<typeof args> {
   usage = ["", "artist | album @user"];
 
   arguments = args;
+
+  validation: Validation = {
+    rank: new validators.RangeValidator({ min: 1 }),
+  };
 
   slashCommand = true;
 
@@ -41,47 +50,66 @@ export default class AlbumRank extends LastFMBaseCommand<typeof args> {
       { redirect: true }
     );
 
-    const topAlbums = await this.lastFMService.topAlbums(this.ctx, {
+    const rank = this.parsedArguments.rank;
+    const shouldSearchByRank = typeof rank === "number";
+
+    const topArguments = this.getTopArgs(rank, shouldSearchByRank);
+    let { albums } = await this.lastFMService.topAlbums(this.ctx, {
       username: requestable,
-      limit: 1000,
+      limit: topArguments.limit,
+      page: topArguments.page,
     });
 
-    const rank = topAlbums.albums.findIndex(
+    const originalAlbumCount = albums.length;
+
+    if (albums.length === 0)
+      throw new LogicError("You haven't scrobbled that many albums!");
+
+    albums = this.getSlice({
+      entities: albums,
+      entityName: shouldSearchByRank ? undefined : album,
+      rank: rank,
+      ...topArguments,
+    });
+
+    const index = albums.findIndex(
       (a) =>
-        a.name.toLowerCase() === album!.toLowerCase() &&
-        a.artist.name.toLowerCase() === artist!.toLowerCase()
+        a.name.toLowerCase() === album.toLowerCase() &&
+        a.artist.name.toLowerCase() === artist.toLowerCase()
     );
 
-    if (rank === -1) {
+    if ((rank || index) === -1) {
       throw new LogicError(
         `That album wasn't found in ${
           perspective.possessive
-        } top ${displayNumber(topAlbums.albums.length, "album")}`
+        } top ${displayNumber(originalAlbumCount, "album")}`
       );
     }
-
-    const start = rank < 5 ? 0 : rank - 5;
-    const stop =
-      rank > topAlbums.albums.length - 6
-        ? topAlbums.albums.length - 1
-        : rank + 6;
 
     const embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor("Album around"))
       .setTitle(
-        `Albums around ${topAlbums.albums[rank].name} in ${perspective.possessive} library`
+        `Albums around ${
+          shouldSearchByRank
+            ? `rank ${displayNumber(rank)}`
+            : albums[index].name
+        } in ${perspective.possessive} library`
       )
-      .setURL(LastfmLinks.libraryAroundAlbum(username, rank))
+      .setURL(LastfmLinks.libraryAroundAlbum(username, albums[0].rank))
       .setDescription(
         displayNumberedList(
-          topAlbums.albums.slice(start, stop).map((val, idx) => {
+          albums.map((val) => {
             const display = `${italic(val.name)} by ${sanitizeForDiscord(
-              val.artist.name
+              val instanceof TopArtist ? val.name : val.artist.name
             )} - ${displayNumber(val.userPlaycount, "play")}`;
 
-            return start + idx === rank ? bold(display, false) : display;
+            return val.rank === (rank || index + 1) ||
+              (val.name.toLowerCase() === album.toLowerCase() &&
+                val.artist.name.toLowerCase() === artist.toLowerCase())
+              ? bold(display, false)
+              : display;
           }),
-          start
+          albums[0].rank - 1
         )
       );
 

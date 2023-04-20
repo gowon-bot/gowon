@@ -1,11 +1,8 @@
-import { LogicError } from "../../../errors/errors";
-import { bold, italic } from "../../../helpers/discord";
 import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
-import { displayNumber } from "../../../lib/views/displays";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 const args = {
@@ -31,30 +28,8 @@ export default class AlbumAt extends LastFMBaseCommand<typeof args> {
     rank: new validators.NumberValidator({ whole: true }),
   };
 
-  async run() {
-    const rank = this.parsedArguments.rank;
+  // merged with !albumrank
+  archived = true;
 
-    const { requestable, perspective } = await this.getMentions();
-
-    const topAlbums = await this.lastFMService.topAlbums(this.ctx, {
-      username: requestable,
-      limit: 1,
-      page: rank,
-    });
-
-    const album = topAlbums.albums[0];
-
-    if (!album)
-      throw new LogicError(
-        `${perspective.upper.name} haven't scrobbled an album at that position!`
-      );
-
-    await this.oldReply(
-      `${bold(album.name)} by ${italic(album.artist.name)} is ranked at #**${
-        album.rank
-      }** in ${perspective.possessive} top albums with ${bold(
-        displayNumber(album.userPlaycount, "play")
-      )}`
-    );
-  }
+  async run() {}
 }
