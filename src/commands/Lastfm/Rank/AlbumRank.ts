@@ -11,7 +11,6 @@ import {
   displayNumber,
   displayNumberedList,
 } from "../../../lib/views/displays";
-import { TopArtist } from "../../../services/LastFM/converters/TopTypes";
 import { RankCommand } from "./RankCommand";
 
 const args = {
@@ -99,7 +98,7 @@ export default class AlbumRank extends RankCommand<typeof args> {
         displayNumberedList(
           slicedAlbums.map((val) => {
             const display = `${italic(val.name)} by ${sanitizeForDiscord(
-              val instanceof TopArtist ? val.name : val.artist.name
+              val.artist.name
             )} - ${displayNumber(val.userPlaycount, "play")}`;
 
             return val.rank === (rank || index + 1) ||
