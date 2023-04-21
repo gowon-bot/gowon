@@ -1,7 +1,6 @@
 import { LogicError } from "../../../errors/errors";
 import { code } from "../../../helpers/discord";
 import { LastfmLinks } from "../../../helpers/lastfm/LastfmLinks";
-import { Variation } from "../../../lib/command/Command";
 import { constants } from "../../../lib/constants";
 import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
@@ -49,15 +48,6 @@ export default class Taste extends TasteCommand<typeof args> {
     "@user or lfm:username",
     "time period @user",
     "username time period amount ",
-  ];
-
-  variations: Variation[] = [
-    {
-      name: "embed",
-      variation: "te",
-      description:
-        "Uses an embed view instead of a table to display (more mobile friendly)",
-    },
   ];
 
   arguments = args;
@@ -130,23 +120,18 @@ export default class Taste extends TasteCommand<typeof args> {
       .setAuthor(this.generateEmbedAuthor("Taste"))
       .setDescription(embedDescription);
 
-    if (this.variationWasUsed("embed")) {
-      this.generateEmbed(tasteMatch, embed);
-      await this.send(embed);
-    } else {
-      const scrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
-        items: tasteMatch.artists,
-        pageSize: 20,
-        pageRenderer: (items) => {
-          return (
-            embedDescription +
-            "\n" +
-            this.generateTable(userOneUsername, userTwoUsername, items)
-          );
-        },
-      });
+    const scrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
+      items: tasteMatch.artists,
+      pageSize: 20,
+      pageRenderer: (items) => {
+        return (
+          embedDescription +
+          "\n" +
+          this.generateTable(userOneUsername, userTwoUsername, items)
+        );
+      },
+    });
 
-      scrollingEmbed.send();
-    }
+    scrollingEmbed.send();
   }
 }

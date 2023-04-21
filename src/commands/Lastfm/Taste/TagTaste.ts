@@ -1,6 +1,5 @@
 import { LogicError } from "../../../errors/errors";
 import { bold, code, sanitizeForDiscord } from "../../../helpers/discord";
-import { Variation } from "../../../lib/command/Command";
 import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
@@ -42,15 +41,6 @@ export default class TagTaste extends TasteCommand<typeof args> {
   aliases = ["tat", "ttaste", "ttb"];
   description = "Shows your taste overlap within a genre with another user";
   usage = ["tag @user or lfm:username", "tag | username amount"];
-
-  variations: Variation[] = [
-    {
-      name: "embed",
-      variation: "tte",
-      description:
-        "Uses an embed view instead of a table to display (more mobile friendly)",
-    },
-  ];
 
   arguments = args;
 
@@ -125,23 +115,18 @@ export default class TagTaste extends TasteCommand<typeof args> {
       )
       .setDescription(embedDescription);
 
-    if (this.variationWasUsed("embed")) {
-      this.generateEmbed(tasteMatch, embed);
-      await this.send(embed);
-    } else {
-      const scrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
-        items: tasteMatch.artists,
-        pageSize: 20,
-        pageRenderer: (items) => {
-          return (
-            embedDescription +
-            "\n" +
-            this.generateTable(userOneUsername, userTwoUsername, items)
-          );
-        },
-      });
+    const scrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
+      items: tasteMatch.artists,
+      pageSize: 20,
+      pageRenderer: (items) => {
+        return (
+          embedDescription +
+          "\n" +
+          this.generateTable(userOneUsername, userTwoUsername, items)
+        );
+      },
+    });
 
-      scrollingEmbed.send();
-    }
+    scrollingEmbed.send();
   }
 }

@@ -1,4 +1,3 @@
-import { MessageEmbed } from "discord.js";
 import { LogicError } from "../../../errors/errors";
 import { isNumeric, StringPadder } from "../../../helpers";
 import { toInt } from "../../../helpers/lastfm/";
@@ -11,12 +10,8 @@ import { NamedRangeParser } from "../../../lib/context/arguments/parsers/NamedRa
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { Paginator } from "../../../lib/paginators/Paginator";
 import { TimeRange } from "../../../lib/timeAndDate/TimeRange";
-import { displayNumber } from "../../../lib/views/displays";
 import { LastFMPeriod } from "../../../services/LastFM/LastFMService.types";
-import {
-  ArtistPlaysPair,
-  ArtistTaste,
-} from "../../../services/taste/TasteService.types";
+import { ArtistPlaysPair } from "../../../services/taste/TasteService.types";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 export const tasteArgs = {
@@ -220,18 +215,5 @@ export abstract class TasteCommand<
       );
 
     return `\`\`\`\n${[...headers, ...table].join("\n")}\n\`\`\``;
-  }
-
-  protected generateEmbed(taste: ArtistTaste, embed: MessageEmbed) {
-    embed = embed.addFields(
-      taste.artists.slice(0, 12).map((ta) => ({
-        name: ta.name,
-        value: `${displayNumber(ta.user1Plays, "play")} - ${displayNumber(
-          ta.user2Plays,
-          "play"
-        )}`,
-        inline: true,
-      }))
-    );
   }
 }

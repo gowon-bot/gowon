@@ -1,21 +1,25 @@
-import { LogicError } from "../../../errors/errors";
+import { NotFoundInTopError, RankTooHighError } from "../../../errors/errors";
 import { bold, italic, sanitizeForDiscord } from "../../../helpers/discord";
 import { LastfmLinks } from "../../../helpers/lastfm/LastfmLinks";
+import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { Validation } from "../../../lib/validation/ValidationChecker";
+import { validators } from "../../../lib/validation/validators";
 import {
   displayNumber,
   displayNumberedList,
 } from "../../../lib/views/displays";
-import { LastFMBaseCommand } from "../LastFMBaseCommand";
+import { RankCommand } from "./RankCommand";
 
 const args = {
+  rank: new NumberArgument({ description: "The rank to look up" }),
   ...prefabArguments.track,
   ...standardMentions,
 } satisfies ArgumentsMap;
 
-export default class TrackRank extends LastFMBaseCommand<typeof args> {
+export default class TrackRank extends RankCommand<typeof args> {
   idSeed = "hello venus alice";
 
   aliases = ["tra", "tr", "trackaround", "taround", "traround"];
@@ -26,6 +30,10 @@ export default class TrackRank extends LastFMBaseCommand<typeof args> {
   slashCommand = true;
 
   arguments = args;
+
+  validation: Validation = {
+    rank: new validators.RangeValidator({ min: 1 }),
+  };
 
   async run() {
     const { requestable, senderRequestable, perspective, username } =
@@ -40,47 +48,65 @@ export default class TrackRank extends LastFMBaseCommand<typeof args> {
       { redirect: true }
     );
 
-    const topTracks = await this.lastFMService.topTracks(this.ctx, {
+    const rank = this.parsedArguments.rank;
+    const shouldSearchByRank = rank !== undefined;
+
+    const topArguments = this.getTopArgs(rank, shouldSearchByRank);
+    let { tracks } = await this.lastFMService.topTracks(this.ctx, {
       username: requestable,
-      limit: 1000,
+      limit: topArguments.limit,
+      page: topArguments.page,
     });
 
-    const rank = topTracks.tracks.findIndex(
-      (t) =>
-        t.name.toLowerCase() === track!.toLowerCase() &&
-        t.artist.name.toLowerCase() === artist!.toLowerCase()
-    );
-
-    if (rank === -1) {
-      throw new LogicError(
-        `That track wasn't found in ${
-          perspective.possessive
-        } top ${displayNumber(topTracks.tracks.length, "track")}`
-      );
+    if (!tracks.length) {
+      throw new RankTooHighError("track");
     }
 
-    const start = rank < 5 ? 0 : rank - 5;
-    const stop =
-      rank > topTracks.tracks.length - 6
-        ? topTracks.tracks.length - 1
-        : rank + 6;
+    const slicedTracks = this.getSlice({
+      entities: tracks,
+      entityName: shouldSearchByRank ? undefined : track,
+      rank: rank,
+      ...topArguments,
+    });
+
+    const index = slicedTracks.findIndex(
+      (t) =>
+        t.name.toLowerCase() === track.toLowerCase() &&
+        t.artist.name.toLowerCase() === artist.toLowerCase()
+    );
+
+    if ((rank || index) === -1) {
+      throw new NotFoundInTopError(
+        "track",
+        perspective.possessive,
+        tracks.length
+      );
+    }
 
     const embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor("Track around"))
       .setTitle(
-        `Tracks around ${topTracks.tracks[rank].name} in ${perspective.possessive} library`
+        `Tracks around ${
+          shouldSearchByRank
+            ? `rank ${displayNumber(rank)}`
+            : slicedTracks[index].name
+        } in ${perspective.possessive} library`
       )
-      .setURL(LastfmLinks.libraryAroundTrack(username, rank))
+      .setURL(LastfmLinks.libraryAroundTrack(username, slicedTracks[0].rank))
       .setDescription(
         displayNumberedList(
-          topTracks.tracks.slice(start, stop).map((val, idx) => {
+          slicedTracks.map((val) => {
             const display = `${italic(val.name)} by ${sanitizeForDiscord(
               val.artist.name
             )} - ${displayNumber(val.userPlaycount, "play")}`;
 
-            return start + idx === rank ? bold(display, false) : display;
+            return val.rank === (rank || index + 1) ||
+              (val.name.toLowerCase() === track.toLowerCase() &&
+                val.artist.name.toLowerCase() === artist.toLowerCase())
+              ? bold(display, false)
+              : display;
           }),
-          start
+          slicedTracks[0].rank - 1
         )
       );
 

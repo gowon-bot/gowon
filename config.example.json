@@ -29,8 +29,8 @@
   "spotifyRedirectHost": "http://localhost:3000 <-- This should be the public Gowon API URL",
 
   "lilacURL": "http://localhost:4000/graphql",
-  "lilacWebsocket": "ws://localhost:4000/socket/websocket",
+  "lilacWebsocket": "ws://localhost:4000/socket",
   "lilacPassword": "this needs to match the 'password' config in Lilac",
 
-  "redisHost": "localhost:6379"
+  "redisHost": "localhost"
 }

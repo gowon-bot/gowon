@@ -15,12 +15,12 @@ export default class Love extends LastFMBaseCommand<typeof args> {
   description = "Loves a track on Last.fm";
   usage = ["", "artist | track"];
 
-  aliases = ["luv"];
+  aliases = ["luv", "unfuck"];
 
   variations: Variation[] = [
     {
       name: "unlove",
-      variation: ["unlove", "hate"],
+      variation: ["unlove", "hate", "fuck"],
       separateSlashCommand: true,
     },
   ];

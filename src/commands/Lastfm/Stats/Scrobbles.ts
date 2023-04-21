@@ -14,12 +14,12 @@ const args = {
     useOverall: true,
     default: () => TimeRange.overall(),
   }),
-} satisfies ArgumentsMap
+} satisfies ArgumentsMap;
 
 export default class Scrobbles extends LastFMBaseCommand<typeof args> {
   idSeed = "wooah songyee";
 
-  aliases = ["s", "scrabbles"];
+  aliases = ["s", "scrabbles", "scromples"];
   description =
     "Shows you how many scrobbles you have over a given time period";
   subcategory = "library stats";

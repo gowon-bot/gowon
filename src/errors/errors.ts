@@ -2,6 +2,7 @@ import { Response } from "node-fetch";
 import { parseError, parseErrorSix } from "../helpers/error";
 import { Emoji } from "../lib/emoji/Emoji";
 import { RawLastFMErrorResponse } from "../services/LastFM/LastFMService.types";
+import { displayNumber } from "../lib/views/displays";
 
 export abstract class ClientError extends Error {
   name = "ClientError";
@@ -252,5 +253,30 @@ export class CannotBeUsedAsASlashCommand extends ClientError {
 
   constructor() {
     super("This command cannot be used as a slash command yet!");
+  }
+}
+
+export class RankTooHighError extends ClientError {
+  name = "RankTooHighError";
+
+  constructor(entity: "track" | "artist" | "album") {
+    super(`You haven't scrobbled that many ${entity}s!`);
+  }
+}
+
+export class NotFoundInTopError extends ClientError {
+  name = "NotFoundInTopError";
+
+  constructor(
+    entity: "track" | "artist" | "album",
+    perspective: string,
+    count: number
+  ) {
+    super(
+      `That track wasn't found in ${perspective} top ${displayNumber(
+        count,
+        entity
+      )}`
+    );
   }
 }
