@@ -8,8 +8,8 @@ import { GowonContext } from "../../Context";
 import {
   BaseArgument,
   BaseArgumentOptions,
-  defaultIndexableOptions,
   IndexableArgumentOptions,
+  defaultIndexableOptions,
 } from "./BaseArgument";
 
 export interface NumberArgumentOptions

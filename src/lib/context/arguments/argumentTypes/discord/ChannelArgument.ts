@@ -3,15 +3,15 @@ import { GowonContext } from "../../../Context";
 import {
   BaseArgument,
   BaseArgumentOptions,
-  defaultIndexableOptions,
   IndexableArgumentOptions,
   SliceableArgumentOptions,
+  defaultIndexableOptions,
 } from "../BaseArgument";
 import { SlashCommandBuilder } from "../SlashCommandTypes";
 
 export interface ChannelArgumentOptions
   extends BaseArgumentOptions<Channel>,
-  IndexableArgumentOptions { }
+    IndexableArgumentOptions {}
 
 export class ChannelArgument<
   OptionsT extends Partial<ChannelArgumentOptions>
@@ -21,7 +21,9 @@ export class ChannelArgument<
   }
 
   parseFromMessage(message: Message, _: string): Channel | undefined {
-    const channels = Array.from(message.mentions.channels.values());
+    const channels = Array.from(
+      message.mentions.channels.values()
+    ) as Channel[];
 
     return this.getElementFromIndex(channels, this.options.index);
   }
@@ -46,16 +48,11 @@ export class ChannelArgument<
 
 export interface ChannelArrayArgumentOptions
   extends BaseArgumentOptions<Channel[]>,
-  SliceableArgumentOptions { }
-
+    SliceableArgumentOptions {}
 
 export class ChannelArrayArgument<
   OptionsT extends Partial<ChannelArrayArgumentOptions>
-> extends BaseArgument<
-  Channel[],
-  ChannelArrayArgumentOptions,
-  OptionsT
-> {
+> extends BaseArgument<Channel[], ChannelArrayArgumentOptions, OptionsT> {
   constructor(options?: OptionsT) {
     super({ ...defaultIndexableOptions, ...(options ?? {}) } as OptionsT);
   }
@@ -66,7 +63,8 @@ export class ChannelArrayArgument<
     const element = this.getElementFromIndex(channels, this.options.index);
 
     if (element instanceof Channel) return [element];
-    return element;
+
+    return (element ?? []) as Channel[];
   }
 
   parseFromInteraction(interaction: Interaction): Channel[] {

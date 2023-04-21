@@ -10,15 +10,16 @@ import {
 
 export interface UserStringArrayArgumentOptions
   extends BaseArgumentOptions,
-  SliceableArgumentOptions {
+    SliceableArgumentOptions {
   mention: BaseMention;
 }
 
 export class UserStringArrayArgument<
-  OptionsT extends Partial<UserStringArrayArgumentOptions>
->
+    OptionsT extends Partial<UserStringArrayArgumentOptions>
+  >
   extends BaseArgument<string[], UserStringArrayArgumentOptions, OptionsT>
-  implements StringCleaningArgument {
+  implements StringCleaningArgument
+{
   mention = true;
 
   constructor(options?: OptionsT) {
@@ -28,7 +29,9 @@ export class UserStringArrayArgument<
   parseFromMessage(_: Message, content: string): string[] {
     const mentions = this.options.mention.parse(content);
 
-    return this.getElementFromIndex(mentions, this.options.index);
+    const element = this.getElementFromIndex(mentions, this.options.index);
+
+    return typeof element === "string" ? [element] : element ? [element] : [];
   }
 
   parseFromInteraction() {

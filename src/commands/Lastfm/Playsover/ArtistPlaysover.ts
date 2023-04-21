@@ -1,21 +1,20 @@
-import { LastFMBaseCommand } from "../LastFMBaseCommand";
-import { displayNumber } from "../../../lib/views/displays";
-import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
-import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
-import { CommandRedirect } from "../../../lib/command/Command";
-import ArtistPlaysequal from "./ArtistPlaysequal";
-import { prefabFlags } from "../../../lib/context/arguments/prefabArguments";
 import { bold } from "../../../helpers/discord";
+import { Variation } from "../../../lib/command/Command";
+import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { Validation } from "../../../lib/validation/ValidationChecker";
+import { validators } from "../../../lib/validation/validators";
+import { displayNumber } from "../../../lib/views/displays";
+import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 const args = {
   ...standardMentions,
-  equal: prefabFlags.equal,
   plays: new NumberArgument({
     default: 100,
     description: "The number of plays to check for",
   }),
-} satisfies ArgumentsMap
+} satisfies ArgumentsMap;
 
 export default class ArtistPlaysover extends LastFMBaseCommand<typeof args> {
   idSeed = "gugudan sally";
@@ -24,38 +23,54 @@ export default class ArtistPlaysover extends LastFMBaseCommand<typeof args> {
   description = "Shows you how many artists you have over a certain playcount";
   subcategory = "playsover";
   usage = ["", "number"];
+  slashCommand = true;
 
-  redirects: CommandRedirect<typeof args>[] = [
+  variations: Variation[] = [
     {
-      when: (args) => args.equal,
-      redirectTo: ArtistPlaysequal,
+      name: "equal",
+      description: "Shows plays equal",
+      variation: ["artistplaysequal", "playsequal", "pe", "ape"],
     },
   ];
 
-  slashCommand = true;
-
   arguments = args;
 
+  validation: Validation = {
+    plays: validators.positiveNumberValidator,
+  };
+
   async run() {
-    let plays = this.parsedArguments.plays;
+    const { requestable, perspective } = await this.getMentions();
 
-    let { requestable, perspective } = await this.getMentions();
+    const plays = this.parsedArguments.plays;
+    const equal = this.variationWasUsed("equal");
 
-    let topArtists = await this.lastFMService.topArtists(this.ctx, {
+    const topArtists = await this.lastFMService.topArtists(this.ctx, {
       username: requestable,
       limit: 1000,
     });
 
-    let playsover = 0;
-
-    for (let artist of topArtists.artists) {
-      if (artist.userPlaycount >= plays) playsover++;
-      else break;
-    }
-
-    await this.oldReply(
-      `${bold(displayNumber(playsover))} of ${perspective.possessive
-      } top 1,000 artists have at least ${bold(displayNumber(plays, "play"))}`
+    const playsover = topArtists.artists.reduce(
+      (acc, a) =>
+        acc +
+        ((equal ? a.userPlaycount === plays : a.userPlaycount >= plays)
+          ? 1
+          : 0),
+      0
     );
+
+    const embed = this.newEmbed()
+      .setAuthor(
+        this.generateEmbedAuthor(`Artist plays${equal ? "equal" : "over"}`)
+      )
+      .setDescription(
+        `${bold(displayNumber(playsover))} of ${
+          perspective.possessive
+        } top ${displayNumber(topArtists.artists.length, "artist")} have ${
+          equal ? "" : "at least "
+        }${bold(displayNumber(plays, "play"))}`
+      );
+
+    await this.send(embed);
   }
 }

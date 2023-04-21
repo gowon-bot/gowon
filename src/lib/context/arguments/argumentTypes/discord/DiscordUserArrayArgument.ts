@@ -2,21 +2,17 @@ import { Message, User } from "discord.js";
 import {
   BaseArgument,
   BaseArgumentOptions,
-  defaultIndexableOptions,
   SliceableArgumentOptions,
+  defaultIndexableOptions,
 } from "../BaseArgument";
 
 export interface DiscordUserArrayArgumentOptions
   extends BaseArgumentOptions,
-  SliceableArgumentOptions { }
+    SliceableArgumentOptions {}
 
 export class DiscordUserArrayArgument<
   OptionsT extends Partial<DiscordUserArrayArgumentOptions>
-> extends BaseArgument<
-  User[],
-  DiscordUserArrayArgumentOptions,
-  OptionsT
-> {
+> extends BaseArgument<User[], DiscordUserArrayArgumentOptions, OptionsT> {
   mention = true;
 
   constructor(options?: OptionsT) {
@@ -26,7 +22,9 @@ export class DiscordUserArrayArgument<
   parseFromMessage(message: Message): User[] {
     const mentions = Array.from(message.mentions.users.values());
 
-    return this.getElementFromIndex(mentions, this.options.index);
+    const element = this.getElementFromIndex(mentions, this.options.index);
+
+    return element instanceof Array ? element : element ? [element] : [];
   }
 
   parseFromInteraction(): User[] {

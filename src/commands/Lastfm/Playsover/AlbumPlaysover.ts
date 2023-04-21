@@ -1,20 +1,19 @@
-import { LastFMBaseCommand } from "../LastFMBaseCommand";
-import { displayNumber } from "../../../lib/views/displays";
+import { bold } from "../../../helpers/discord";
+import { Variation } from "../../../lib/command/Command";
 import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
-import { prefabFlags } from "../../../lib/context/arguments/prefabArguments";
-import { CommandRedirect } from "../../../lib/command/Command";
-import AlbumPlaysequal from "./AlbumPlaysequal";
-import { bold } from "../../../helpers/discord";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { Validation } from "../../../lib/validation/ValidationChecker";
+import { validators } from "../../../lib/validation/validators";
+import { displayNumber } from "../../../lib/views/displays";
+import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 const args = {
+  ...standardMentions,
   plays: new NumberArgument({
     default: 100,
     description: "The number of plays to check for",
   }),
-  equal: prefabFlags.equal,
-  ...standardMentions,
 } satisfies ArgumentsMap;
 
 export default class AlbumPlaysover extends LastFMBaseCommand<typeof args> {
@@ -24,38 +23,54 @@ export default class AlbumPlaysover extends LastFMBaseCommand<typeof args> {
   description = "Shows you how many albums you have over a certain playcount";
   subcategory = "playsover";
   usage = ["", "number"];
+  slashCommand = true;
 
-  redirects: CommandRedirect<typeof args>[] = [
+  variations: Variation[] = [
     {
-      when: (args) => args.equal,
-      redirectTo: AlbumPlaysequal,
+      name: "equal",
+      description: "Shows plays equal",
+      variation: ["albumplaysequal", "lpe", "alpe"],
     },
   ];
 
-  slashCommand = true;
+  validation: Validation = {
+    plays: validators.positiveNumberValidator,
+  };
 
   arguments = args;
 
   async run() {
-    let plays = this.parsedArguments.plays;
+    const { requestable, perspective } = await this.getMentions();
 
-    let { requestable, perspective } = await this.getMentions();
+    const plays = this.parsedArguments.plays;
+    const equal = this.variationWasUsed("equal");
 
-    let topAlbums = await this.lastFMService.topAlbums(this.ctx, {
+    const topAlbums = await this.lastFMService.topAlbums(this.ctx, {
       username: requestable,
       limit: 1000,
     });
 
-    let playsover = 0;
-
-    for (let album of topAlbums.albums) {
-      if (album.userPlaycount >= plays) playsover++;
-      else break;
-    }
-
-    await this.oldReply(
-      `${bold(displayNumber(playsover))} of ${perspective.possessive
-      } top 1,000 albums have at least ${bold(displayNumber(plays, "play"))}`
+    const playsover = topAlbums.albums.reduce(
+      (acc, l) =>
+        acc +
+        ((equal ? l.userPlaycount === plays : l.userPlaycount >= plays)
+          ? 1
+          : 0),
+      0
     );
+
+    const embed = this.newEmbed()
+      .setAuthor(
+        this.generateEmbedAuthor(`Album plays${equal ? "equal" : "over"}`)
+      )
+      .setDescription(
+        `${bold(displayNumber(playsover))} of ${
+          perspective.possessive
+        } top ${displayNumber(topAlbums.albums.length, "album")} have ${
+          equal ? "" : "at least "
+        }${bold(displayNumber(plays, "play"))}`
+      );
+
+    await this.send(embed);
   }
 }

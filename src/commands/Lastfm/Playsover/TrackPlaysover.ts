@@ -1,21 +1,18 @@
-import { LastFMBaseCommand } from "../LastFMBaseCommand";
-import { displayNumber } from "../../../lib/views/displays";
-import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
-import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
-import { prefabFlags } from "../../../lib/context/arguments/prefabArguments";
-import { CommandRedirect } from "../../../lib/command/Command";
-import TrackPlaysequal from "./TrackPlaysequal";
 import { bold } from "../../../helpers/discord";
+import { Variation } from "../../../lib/command/Command";
+import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { displayNumber } from "../../../lib/views/displays";
+import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 const args = {
+  ...standardMentions,
   plays: new NumberArgument({
     default: 100,
     description: "The number of plays to check for",
   }),
-  equal: prefabFlags.equal,
-  ...standardMentions,
-} satisfies ArgumentsMap
+} satisfies ArgumentsMap;
 
 export default class TrackPlaysover extends LastFMBaseCommand<typeof args> {
   idSeed = "gugudan mina";
@@ -24,38 +21,50 @@ export default class TrackPlaysover extends LastFMBaseCommand<typeof args> {
   description = "Shows you how many tracks you have over a certain playcount";
   subcategory = "playsover";
   usage = ["", "number"];
+  slashCommand = true;
 
-  redirects: CommandRedirect<typeof args>[] = [
+  variations: Variation[] = [
     {
-      when: (args) => args.equal,
-      redirectTo: TrackPlaysequal,
+      name: "equal",
+      description: "Shows plays equal",
+      variation: ["trackplaysequal", "tpe", "trpe"],
     },
   ];
-
-  slashCommand = true;
 
   arguments = args;
 
   async run() {
-    let plays = this.parsedArguments.plays;
+    const { requestable, perspective } = await this.getMentions();
 
-    let { requestable, perspective } = await this.getMentions();
+    const plays = this.parsedArguments.plays;
+    const equal = this.variationWasUsed("equal");
 
-    let topTracks = await this.lastFMService.topTracks(this.ctx, {
+    const topTracks = await this.lastFMService.topTracks(this.ctx, {
       username: requestable,
       limit: 1000,
     });
 
-    let playsover = 0;
-
-    for (let track of topTracks.tracks) {
-      if (track.userPlaycount >= plays) playsover++;
-      else break;
-    }
-
-    await this.oldReply(
-      `${bold(displayNumber(playsover))} of ${perspective.possessive
-      } top 1,000 tracks have at least ${bold(displayNumber(plays, "play"))}`
+    const playsover = topTracks.tracks.reduce(
+      (acc, t) =>
+        acc +
+        ((equal ? t.userPlaycount === plays : t.userPlaycount >= plays)
+          ? 1
+          : 0),
+      0
     );
+
+    const embed = this.newEmbed()
+      .setAuthor(
+        this.generateEmbedAuthor(`Track plays${equal ? "equal" : "over"}`)
+      )
+      .setDescription(
+        `${bold(displayNumber(playsover))} of ${
+          perspective.possessive
+        } top ${displayNumber(topTracks.tracks.length, "track")} have ${
+          equal ? "" : "at least "
+        }${bold(displayNumber(plays, "play"))}`
+      );
+
+    await this.send(embed);
   }
 }
