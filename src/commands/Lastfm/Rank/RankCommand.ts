@@ -53,7 +53,6 @@ export abstract class RankCommand<
     tailWaste?: number;
     entities: (TopAlbum | TopArtist | TopTrack)[];
   }): T {
-    // if they're both undefined then it isnt a rank
     if (entityName) {
       const targetEntity = entities.find(
         (e) => e.name.toLowerCase() === entityName.toLowerCase()
@@ -65,26 +64,14 @@ export abstract class RankCommand<
       return entities as T;
     }
 
-    if (headWaste !== undefined) entities = entities.slice(headWaste);
-    if (tailWaste !== undefined)
+    if (headWaste !== undefined) {
+      entities = entities.slice(headWaste);
+    }
+
+    if (tailWaste !== undefined) {
       entities = entities.slice(0, rank && rank <= 5 ? 11 - tailWaste : 11);
+    }
 
     return entities as T;
-
-    /*let start: number, stop: number;
-    let targetEntity;
-
-    if (rank) {
-      targetEntity = entities.find((e) => e.rank === rank)!;
-    } else if (index) {
-      targetEntity = entities[index];
-    } else throw new LogicError("No rank or index specified!");
-
-    const centerIndex = entities.indexOf(targetEntity);
-
-    start = Math.max(0, centerIndex - 5);
-    stop = Math.min(centerIndex + 6, entities.length);
-
-    return entities.slice(start, stop) as T;*/
   }
 }
