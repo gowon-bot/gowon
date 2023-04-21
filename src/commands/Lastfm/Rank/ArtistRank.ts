@@ -1,4 +1,4 @@
-import { LogicError } from "../../../errors/errors";
+import { NotFoundInTopError, RankTooHighError } from "../../../errors/errors";
 import { asyncMap } from "../../../helpers";
 import { bold } from "../../../helpers/discord";
 import { LastfmLinks } from "../../../helpers/lastfm/LastfmLinks";
@@ -66,13 +66,11 @@ export default class ArtistRank extends RankCommand<typeof args> {
       page: topArguments.page,
     });
 
-    const originalArtistCount = artists.length;
-
-    if (artists.length === 0) {
-      throw new LogicError("You haven't scrobbled that many artists!");
+    if (!artists.length) {
+      throw new RankTooHighError("artist");
     }
 
-    artists = this.getSlice({
+    const slicedArtists = this.getSlice({
       entities: artists,
       entityName: shouldSearchByRank ? undefined : artistName,
       rank: rank!,
@@ -81,21 +79,21 @@ export default class ArtistRank extends RankCommand<typeof args> {
 
     await redirectsCache.initialCache(
       this.ctx,
-      artists.map((a) => a.name)
+      slicedArtists.map((a) => a.name)
     );
 
     const index = (
       await asyncMap(
-        artists,
+        slicedArtists,
         async (a) => await redirectsCache.getRedirect(a.name)
       )
     ).findIndex((a) => a.toLowerCase() === artistName.toLowerCase());
 
     if ((rank || index) === -1) {
-      throw new LogicError(
-        `That artist wasn't found in ${
-          perspective.possessive
-        } top ${displayNumber(originalArtistCount, "artist")}`
+      throw new NotFoundInTopError(
+        "artist",
+        perspective.possessive,
+        artists.length
       );
     }
 
@@ -105,13 +103,13 @@ export default class ArtistRank extends RankCommand<typeof args> {
         `Artists around ${
           shouldSearchByRank
             ? `rank ${displayNumber(rank)}`
-            : artists[index].name
+            : slicedArtists[index].name
         } in ${perspective.possessive} library`
       )
-      .setURL(LastfmLinks.libraryAroundArtist(username, artists[0].rank))
+      .setURL(LastfmLinks.libraryAroundArtist(username, slicedArtists[0].rank))
       .setDescription(
         displayNumberedList(
-          artists.map((val) => {
+          slicedArtists.map((val) => {
             const display = `${val.name} - ${displayNumber(
               val.userPlaycount,
               "play"
@@ -122,7 +120,7 @@ export default class ArtistRank extends RankCommand<typeof args> {
               ? bold(display)
               : display;
           }),
-          artists[0].rank - 1
+          slicedArtists[0].rank - 1
         )
       );
 

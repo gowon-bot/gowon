@@ -1,4 +1,4 @@
-import { LogicError } from "../../../errors/errors";
+import { NotFoundInTopError, RankTooHighError } from "../../../errors/errors";
 import { bold, italic, sanitizeForDiscord } from "../../../helpers/discord";
 import { LastfmLinks } from "../../../helpers/lastfm/LastfmLinks";
 import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
@@ -60,29 +60,28 @@ export default class AlbumRank extends RankCommand<typeof args> {
       page: topArguments.page,
     });
 
-    const originalAlbumCount = albums.length;
+    if (!albums.length) {
+      throw new RankTooHighError("album");
+    }
 
-    if (albums.length === 0)
-      throw new LogicError("You haven't scrobbled that many albums!");
-
-    albums = this.getSlice({
+    const slicedAlbums = this.getSlice({
       entities: albums,
       entityName: shouldSearchByRank ? undefined : album,
       rank: rank,
       ...topArguments,
     });
 
-    const index = albums.findIndex(
+    const index = slicedAlbums.findIndex(
       (a) =>
         a.name.toLowerCase() === album.toLowerCase() &&
         a.artist.name.toLowerCase() === artist.toLowerCase()
     );
 
     if ((rank || index) === -1) {
-      throw new LogicError(
-        `That album wasn't found in ${
-          perspective.possessive
-        } top ${displayNumber(originalAlbumCount, "album")}`
+      throw new NotFoundInTopError(
+        "album",
+        perspective.possessive,
+        albums.length
       );
     }
 
@@ -92,13 +91,13 @@ export default class AlbumRank extends RankCommand<typeof args> {
         `Albums around ${
           shouldSearchByRank
             ? `rank ${displayNumber(rank)}`
-            : albums[index].name
+            : slicedAlbums[index].name
         } in ${perspective.possessive} library`
       )
-      .setURL(LastfmLinks.libraryAroundAlbum(username, albums[0].rank))
+      .setURL(LastfmLinks.libraryAroundAlbum(username, slicedAlbums[0].rank))
       .setDescription(
         displayNumberedList(
-          albums.map((val) => {
+          slicedAlbums.map((val) => {
             const display = `${italic(val.name)} by ${sanitizeForDiscord(
               val instanceof TopArtist ? val.name : val.artist.name
             )} - ${displayNumber(val.userPlaycount, "play")}`;
@@ -109,7 +108,7 @@ export default class AlbumRank extends RankCommand<typeof args> {
               ? bold(display, false)
               : display;
           }),
-          albums[0].rank - 1
+          slicedAlbums[0].rank - 1
         )
       );
 

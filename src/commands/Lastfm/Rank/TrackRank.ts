@@ -1,4 +1,4 @@
-import { LogicError } from "../../../errors/errors";
+import { NotFoundInTopError, RankTooHighError } from "../../../errors/errors";
 import { bold, italic, sanitizeForDiscord } from "../../../helpers/discord";
 import { LastfmLinks } from "../../../helpers/lastfm/LastfmLinks";
 import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
@@ -58,29 +58,28 @@ export default class TrackRank extends RankCommand<typeof args> {
       page: topArguments.page,
     });
 
-    const originalTrackCount = tracks.length;
+    if (!tracks.length) {
+      throw new RankTooHighError("track");
+    }
 
-    if (tracks.length === 0)
-      throw new LogicError("You haven't scrobbled that many tracks!");
-
-    tracks = this.getSlice({
+    const slicedTracks = this.getSlice({
       entities: tracks,
       entityName: shouldSearchByRank ? undefined : track,
       rank: rank,
       ...topArguments,
     });
 
-    const index = tracks.findIndex(
+    const index = slicedTracks.findIndex(
       (t) =>
         t.name.toLowerCase() === track.toLowerCase() &&
         t.artist.name.toLowerCase() === artist.toLowerCase()
     );
 
     if ((rank || index) === -1) {
-      throw new LogicError(
-        `That track wasn't found in ${
-          perspective.possessive
-        } top ${displayNumber(originalTrackCount, "track")}`
+      throw new NotFoundInTopError(
+        "track",
+        perspective.possessive,
+        tracks.length
       );
     }
 
@@ -90,13 +89,13 @@ export default class TrackRank extends RankCommand<typeof args> {
         `Tracks around ${
           shouldSearchByRank
             ? `rank ${displayNumber(rank)}`
-            : tracks[index].name
+            : slicedTracks[index].name
         } in ${perspective.possessive} library`
       )
-      .setURL(LastfmLinks.libraryAroundTrack(username, tracks[0].rank))
+      .setURL(LastfmLinks.libraryAroundTrack(username, slicedTracks[0].rank))
       .setDescription(
         displayNumberedList(
-          tracks.map((val) => {
+          slicedTracks.map((val) => {
             const display = `${italic(val.name)} by ${sanitizeForDiscord(
               val.artist.name
             )} - ${displayNumber(val.userPlaycount, "play")}`;
@@ -107,7 +106,7 @@ export default class TrackRank extends RankCommand<typeof args> {
               ? bold(display, false)
               : display;
           }),
-          tracks[0].rank - 1
+          slicedTracks[0].rank - 1
         )
       );
 

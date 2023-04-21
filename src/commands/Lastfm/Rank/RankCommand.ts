@@ -51,7 +51,7 @@ export abstract class RankCommand<
     entityName?: string;
     headWaste?: number;
     tailWaste?: number;
-    entities: (TopAlbum | TopArtist | TopTrack)[];
+    entities: T;
   }): T {
     if (entityName) {
       const targetEntity = entities.find(
@@ -59,17 +59,20 @@ export abstract class RankCommand<
       );
 
       const index = entities.indexOf(targetEntity!);
-      entities = entities.slice(Math.max(index - 5, 0), index + 6);
+      entities = entities.slice(Math.max(index - 5, 0), index + 6) as T;
 
       return entities as T;
     }
 
     if (headWaste !== undefined) {
-      entities = entities.slice(headWaste);
+      entities = entities.slice(headWaste) as T;
     }
 
     if (tailWaste !== undefined) {
-      entities = entities.slice(0, rank && rank <= 5 ? 11 - tailWaste : 11);
+      entities = entities.slice(
+        0,
+        rank && rank <= 5 ? 11 - tailWaste : 11
+      ) as T;
     }
 
     return entities as T;
