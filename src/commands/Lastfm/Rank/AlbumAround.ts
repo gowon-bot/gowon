@@ -11,7 +11,7 @@ import {
   displayNumber,
   displayNumberedList,
 } from "../../../lib/views/displays";
-import { RankCommand } from "./RankCommand";
+import { AroundCommand } from "./AroundCommand";
 
 const args = {
   rank: new NumberArgument({ description: "The rank to look up" }),
@@ -19,10 +19,10 @@ const args = {
   ...standardMentions,
 } satisfies ArgumentsMap;
 
-export default class AlbumRank extends RankCommand<typeof args> {
+export default class AlbumAround extends AroundCommand<typeof args> {
   idSeed = "wonder girls sunmi";
 
-  aliases = ["lr", "alr", "albumaround", "laround", "alaround"];
+  aliases = ["lr", "alr", "albumrank", "laround", "alaround", "ala", "albumat"];
   description =
     "Shows the other albums around an album in your top 1000 albums";
   subcategory = "ranks";
@@ -53,7 +53,8 @@ export default class AlbumRank extends RankCommand<typeof args> {
     const shouldSearchByRank = typeof rank === "number";
 
     const topArguments = this.getTopArgs(rank, shouldSearchByRank);
-    let { albums } = await this.lastFMService.topAlbums(this.ctx, {
+
+    const { albums } = await this.lastFMService.topAlbums(this.ctx, {
       username: requestable,
       limit: topArguments.limit,
       page: topArguments.page,

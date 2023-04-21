@@ -6,10 +6,8 @@ import {
 } from "../../../services/LastFM/converters/TopTypes";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
-export const rankArgs = {} satisfies ArgumentsMap;
-
-export abstract class RankCommand<
-  T extends typeof rankArgs
+export abstract class AroundCommand<
+  T extends ArgumentsMap = {}
 > extends LastFMBaseCommand<T> {
   protected getTopArgs(
     rank?: number,

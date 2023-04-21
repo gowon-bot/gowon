@@ -1,6 +1,5 @@
 import { LastFMBaseCommand } from "../Lastfm/LastFMBaseCommand";
 
-// Here for archival purposes
 export default class ScraperAlbumTopTracks extends LastFMBaseCommand {
   idSeed = "nature sunshine";
 

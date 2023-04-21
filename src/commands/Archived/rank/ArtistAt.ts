@@ -1,4 +1,4 @@
-import { LastFMBaseCommand } from "../LastFMBaseCommand";
+import { LastFMBaseCommand } from "../../Lastfm/LastFMBaseCommand";
 
 export default class ArtistAt extends LastFMBaseCommand {
   idSeed = "cignature jeewon";

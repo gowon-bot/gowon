@@ -11,7 +11,7 @@ import {
   displayNumber,
   displayNumberedList,
 } from "../../../lib/views/displays";
-import { RankCommand } from "./RankCommand";
+import { AroundCommand } from "./AroundCommand";
 
 const args = {
   rank: new NumberArgument({ description: "The rank to look up" }),
@@ -19,10 +19,10 @@ const args = {
   ...standardMentions,
 } satisfies ArgumentsMap;
 
-export default class TrackRank extends RankCommand<typeof args> {
+export default class TrackAround extends AroundCommand<typeof args> {
   idSeed = "hello venus alice";
 
-  aliases = ["tra", "tr", "trackaround", "taround", "traround"];
+  aliases = ["tra", "tr", "trackrank", "taround", "traround", "ta", "trackat"];
   description = "Shows the other tracks around a track in your top 1000 tracks";
   subcategory = "ranks";
   usage = ["", "artist | track @user"];
@@ -52,7 +52,8 @@ export default class TrackRank extends RankCommand<typeof args> {
     const shouldSearchByRank = rank !== undefined;
 
     const topArguments = this.getTopArgs(rank, shouldSearchByRank);
-    let { tracks } = await this.lastFMService.topTracks(this.ctx, {
+
+    const { tracks } = await this.lastFMService.topTracks(this.ctx, {
       username: requestable,
       limit: topArguments.limit,
       page: topArguments.page,

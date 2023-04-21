@@ -15,7 +15,7 @@ import {
 } from "../../../lib/views/displays";
 import { RedirectsService } from "../../../services/dbservices/RedirectsService";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
-import { RankCommand } from "./RankCommand";
+import { AroundCommand } from "./AroundCommand";
 
 const args = {
   rank: new NumberArgument({ description: "The rank to look up" }),
@@ -23,10 +23,10 @@ const args = {
   ...standardMentions,
 } satisfies ArgumentsMap;
 
-export default class ArtistRank extends RankCommand<typeof args> {
+export default class ArtistAround extends AroundCommand<typeof args> {
   idSeed = "hot issue dain";
 
-  aliases = ["ar", "ra", "artistaround", "around", "aar"];
+  aliases = ["ar", "ra", "artistrank", "around", "aar", "artistat", "aa"];
   description =
     "Shows the other artists around an artist in your top 1000 artists";
   subcategory = "ranks";
@@ -60,7 +60,8 @@ export default class ArtistRank extends RankCommand<typeof args> {
       this.parsedArguments.rank,
       shouldSearchByRank
     );
-    let { artists } = await this.lastFMService.topArtists(this.ctx, {
+
+    const { artists } = await this.lastFMService.topArtists(this.ctx, {
       username: requestable,
       limit: topArguments.limit,
       page: topArguments.page,

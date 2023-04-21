@@ -1,12 +1,11 @@
-import { LastFMBaseCommand } from "../../LastFMBaseCommand";
+import { LastFMBaseCommand } from "../../Lastfm/LastFMBaseCommand";
 
-export default class OldTrackRank extends LastFMBaseCommand {
+export default class TrackRank extends LastFMBaseCommand {
   idSeed = "cignature seline";
 
   description = "Shows what rank a track is at in your top 1000 tracks";
   subcategory = "ranks";
 
-  // Merged with the old track around command
   archived = true;
 
   async run() {}
