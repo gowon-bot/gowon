@@ -26,7 +26,7 @@ export default class AlbumAround extends AroundCommand<typeof args> {
   description =
     "Shows the other albums around an album in your top 1000 albums";
   subcategory = "ranks";
-  usage = ["", "artist | album @user"];
+  usage = ["", "artist | album @user", "rank"];
 
   arguments = args;
 

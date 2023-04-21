@@ -25,7 +25,7 @@ export default class TrackAround extends AroundCommand<typeof args> {
   aliases = ["tra", "tr", "trackrank", "taround", "traround", "ta", "trackat"];
   description = "Shows the other tracks around a track in your top 1000 tracks";
   subcategory = "ranks";
-  usage = ["", "artist | track @user"];
+  usage = ["", "artist | track @user", "rank"];
 
   slashCommand = true;
 

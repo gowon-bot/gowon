@@ -30,7 +30,7 @@ export default class ArtistAround extends AroundCommand<typeof args> {
   description =
     "Shows the other artists around an artist in your top 1000 artists";
   subcategory = "ranks";
-  usage = ["artist @user"];
+  usage = ["artist @user", "rank"];
 
   arguments = args;
 
