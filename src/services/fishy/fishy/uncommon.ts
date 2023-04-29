@@ -98,4 +98,32 @@ export const uncommonFishy = [
       max: 25,
     },
   }),
+
+  new Fishy({
+    id: "striped-raphael-catfish",
+    name: "Striped Raphael Catfish",
+    binomialName: "Platydoras armatulus",
+    rarity: FishyRarities.Uncommon,
+    emoji: FishyEmojiList.stripedRaphaelCatfish,
+    description:
+      "This fish is a fine and sociable community fish that is peaceful to fellow catfishes and other fish species",
+    weight: {
+      min: 10,
+      max: 15,
+    },
+  }),
+
+  new Fishy({
+    id: "poor-cod",
+    name: "Poor Cod",
+    binomialName: "Trisopterus minutus",
+    rarity: FishyRarities.Uncommon,
+    emoji: FishyEmojiList.poorCod,
+    description:
+      "This fish is often seen as a menace for anglers, and have little commercial value",
+    weight: {
+      min: 8,
+      max: 12,
+    },
+  }),
 ] satisfies Fishy[];

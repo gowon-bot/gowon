@@ -168,4 +168,24 @@ export const FishyEmojiList = {
     "<:WhiteedgedLyretailWater:1093404299679252542>",
     "<:welSilhouette:1093404332273172540>"
   ),
+  seaGoldie: new FishyEmoji(
+    "<:SeaGoldie:1101967394844459038>",
+    "<:SeaGoldieWater:1101967409285435523>",
+    "<:sgSilhouette:1101967385591816232>"
+  ),
+  atlanticCod: new FishyEmoji(
+    "<:AtlanticCod:1101967391732277290>",
+    "<:AtlanticCodWater:1101967406424920145>",
+    "<:acSilhouette:1101967382970376284>"
+  ),
+  stripedRaphaelCatfish: new FishyEmoji(
+    "<:StripedCatfish:1101967401697935411>",
+    "<:StripedCatfishWater:1101967410799579186>",
+    "<:scSilhouette:1101967388628500561>"
+  ),
+  poorCod: new FishyEmoji(
+    "<:PoorCod:1101967390285250681>",
+    "<:PoorCodWater:1101967403207905400>",
+    "<:pcSilhouette:1101967381670133921>"
+  ),
 } satisfies Record<string, FishyEmoji>;

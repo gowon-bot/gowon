@@ -83,4 +83,32 @@ export const commonFishies = [
       max: 10,
     },
   }),
+
+  new Fishy({
+    id: "sea-goldie",
+    name: "Sea Goldie",
+    binomialName: "Pseudanthias squamipinnis",
+    rarity: FishyRarities.Common,
+    emoji: FishyEmojiList.seaGoldie,
+    description:
+      "Each male will have a group of females around them, generally ranging from five to ten",
+    weight: {
+      min: 2,
+      max: 3,
+    },
+  }),
+
+  new Fishy({
+    id: "atlantic-cod",
+    name: "Atlantic Cod",
+    binomialName: "Gadus morhua",
+    rarity: FishyRarities.Common,
+    emoji: FishyEmojiList.atlanticCod,
+    description:
+      "Atlantic cod have been recorded to swim at speeds of a maximum of 21 to 54 cm/s",
+    weight: {
+      min: 30,
+      max: 40,
+    },
+  }),
 ] satisfies Fishy[];
