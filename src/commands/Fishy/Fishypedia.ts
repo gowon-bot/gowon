@@ -5,7 +5,6 @@ import { StringArgument } from "../../lib/context/arguments/argumentTypes/String
 import { EmojisArgument } from "../../lib/context/arguments/argumentTypes/discord/EmojisArgument";
 import { standardMentions } from "../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../lib/context/arguments/types";
-import { validators } from "../../lib/validation/validators";
 import { displayNumber } from "../../lib/views/displays";
 import { findFishy } from "../../services/fishy/fishyList";
 import { FishyChildCommand } from "./FishyChildCommand";
@@ -32,14 +31,6 @@ export class Fishypedia extends FishyChildCommand<typeof args> {
 
   arguments = args;
 
-  validation = {
-    fishy: {
-      validator: new validators.RequiredOrValidator({}),
-      dependsOn: ["fishyEmoji"],
-      friendlyName: "fishy name or emoji ",
-    },
-  };
-
   async run() {
     const { fishyProfile, discordUser } = await this.getMentions({
       fetchFishyProfile: true,
@@ -56,7 +47,11 @@ export class Fishypedia extends FishyChildCommand<typeof args> {
 
     const fishy = fishyEmoji?.length
       ? findFishy({ byEmoji: fishyEmoji[0].raw })
-      : findFishy(fishyName!);
+      : fishyName
+      ? findFishy(fishyName)
+      : fishyProfile
+      ? (await this.fishyService.getLastCatch(fishyProfile))?.fishy
+      : undefined;
 
     if (!fishy) throw new FishyNotFoundError(fishyEmoji?.[0] || fishyName);
 
@@ -64,7 +59,7 @@ export class Fishypedia extends FishyChildCommand<typeof args> {
       ? await this.fishyService.countFishy(fishyProfile, fishy)
       : 0;
 
-    let embed = this.newEmbed()
+    const embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor("Fishy wiki"))
       .setColor(fishy.rarity.colour)
       .setTitle(fishy.name)
@@ -88,10 +83,7 @@ ${
       );
 
     if (!fishy.rarity.isTrash()) {
-      embed = embed.addField(
-        "Weight",
-        `${fishy.minWeight}-${fishy.maxWeight}kg`
-      );
+      embed.addField("Weight", `${fishy.minWeight}-${fishy.maxWeight}kg`);
     }
 
     await this.send(embed);

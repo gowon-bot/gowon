@@ -120,7 +120,7 @@ export const uncommonFishy = [
     rarity: FishyRarities.Uncommon,
     emoji: FishyEmojiList.poorCod,
     description:
-      "This fish is often seen as a menace for anglers, and have little commercial value",
+      "This fish is often seen as a menace for anglers, and has little commercial value",
     weight: {
       min: 8,
       max: 12,

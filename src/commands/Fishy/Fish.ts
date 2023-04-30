@@ -66,10 +66,21 @@ export class Fish extends FishyChildCommand<typeof args> {
       .setColor(fishy.rarity.colour)
       .setDescription(
         `${fishy.emoji} Caught a ${bold(fishy.name)}${
-          isNew ? Emoji.newFishy : "!"
-        }${giftDisplay}  ${italic(emDash + " " + fishy.rarity.name)}
-${weightDisplay}`
+          isNew ? Emoji.newFishy : ""
+        }${giftDisplay}${isNew && !giftDisplay ? "" : "!"}  ${italic(
+          emDash + " " + fishy.rarity.name
+        )}
+${weightDisplay}` +
+          (isNew && false
+            ? `\n\nSee \`${this.prefix}fishypedia\` to learn about this fish`
+            : "")
       );
+
+    if (isNew) {
+      embed.setFooter({
+        text: `See ${this.prefix}fishypedia to learn about this fish`,
+      });
+    }
 
     await this.send(embed);
   }

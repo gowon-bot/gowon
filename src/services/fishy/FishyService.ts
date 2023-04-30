@@ -138,6 +138,17 @@ export class FishyService extends BaseService {
     return collection.map((c) => c.fishyId);
   }
 
+  public async getLastCatch(
+    fishyProfile: FishyProfile
+  ): Promise<FishyCatch | undefined> {
+    return (
+      (await FishyCatch.findOne({
+        where: { owner: { id: fishyProfile.user.id } },
+        order: { fishedAt: "DESC" },
+      })) ?? undefined
+    );
+  }
+
   public async countFishy(
     fishyProfile: FishyProfile,
     fishy: Fishy
