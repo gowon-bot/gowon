@@ -1,16 +1,16 @@
-import { Command, CommandRedirect } from "../../lib/command/Command";
 import { EmbedField } from "discord.js";
-import HelpForOneCommand from "./HelpForOneCommand";
 import { ucFirst } from "../../helpers";
-import { SimpleScrollingEmbed } from "../../lib/views/embeds/SimpleScrollingEmbed";
-import QuickHelp from "./QuickHelp";
-import { ServiceRegistry } from "../../services/ServicesRegistry";
-import { StringArgument } from "../../lib/context/arguments/argumentTypes/StringArgument";
-import { Flag } from "../../lib/context/arguments/argumentTypes/Flag";
 import { code } from "../../helpers/discord";
-import { PermissionsService } from "../../lib/permissions/PermissionsService";
 import { bullet } from "../../helpers/specialCharacters";
+import { Command, CommandRedirect } from "../../lib/command/Command";
+import { Flag } from "../../lib/context/arguments/argumentTypes/Flag";
+import { StringArgument } from "../../lib/context/arguments/argumentTypes/StringArgument";
 import { ArgumentsMap } from "../../lib/context/arguments/types";
+import { PermissionsService } from "../../lib/permissions/PermissionsService";
+import { SimpleScrollingEmbed } from "../../lib/views/embeds/SimpleScrollingEmbed";
+import { ServiceRegistry } from "../../services/ServicesRegistry";
+import HelpForOneCommand from "./HelpForOneCommand";
+import QuickHelp from "./QuickHelp";
 
 interface GroupedCommands {
   [category: string]: Command[];

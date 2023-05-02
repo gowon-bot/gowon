@@ -11,7 +11,9 @@ import {
 import { Payload } from "../lib/context/Payload";
 import { BaseLastFMConverter } from "../services/LastFM/converters/BaseConverter";
 import { CommandThatShouldntRun } from "./command/commands";
-import { MockMessage } from "./discord";
+import { MockMessage, MockUser } from "./discord";
+
+export const mockBotId = "541298511430287395";
 
 interface MockContextParameters<T> extends ContextParamaters<T> {
   mock?: Partial<MockedContext>;
@@ -42,6 +44,10 @@ export class MockContext<
 
   addResponse(response: string | MessageEmbed) {
     this.responses.push(response);
+  }
+
+  get botUser() {
+    return new MockUser(mockBotId);
   }
 }
 

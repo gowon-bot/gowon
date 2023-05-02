@@ -3,6 +3,7 @@
   "version": "1.0.1",
   "main": "dist/src/index.js",
   "author": "John Ivison <john@ivison.org>",
+  "license": "AGPL-3.0-or-later",
   "dependencies": {
     "@absinthe/socket": "^0.2.1",
     "@absinthe/socket-apollo-link": "^0.2.1",
