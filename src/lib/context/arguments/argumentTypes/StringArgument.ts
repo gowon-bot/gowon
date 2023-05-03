@@ -114,7 +114,8 @@ export class StringArgument<
 
     const match = this.getElementFromIndex(
       matches.map((m) => m[0]),
-      this.options.index
+      this.options.index,
+      { join: true }
     );
 
     return match ?? "";

@@ -26,7 +26,10 @@ export class NumberArgument<
   }
 
   constructor(options?: OptionsT) {
-    super({ ...defaultIndexableOptions, ...(options ?? {}) } as OptionsT);
+    super({
+      ...defaultIndexableOptions,
+      ...(options ?? {}),
+    } as OptionsT);
   }
 
   parseFromMessage(
@@ -40,10 +43,7 @@ export class NumberArgument<
 
     const numbers = this.getNumbersFromSplit(split);
 
-    return (
-      this.getElementFromIndex(numbers, this.options.index) ||
-      this.options.default
-    );
+    return this.getElementFromIndex(numbers, this.options.index);
   }
 
   parseFromInteraction(
