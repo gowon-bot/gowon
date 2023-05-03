@@ -1,20 +1,20 @@
+import {
+  SlashCommandBuilder,
+  SlashCommandStringOption,
+} from "@discordjs/builders";
 import { CommandInteraction, Message } from "discord.js";
 import escapeStringRegexp from "escape-string-regexp";
+import { ArgumentValidationError } from "../../../validation/validators/BaseValidator";
 import { GowonContext } from "../../Context";
 import {
   BaseArgument,
   BaseArgumentOptions,
   ContentBasedArgumentOptions,
+  SliceableArgumentOptions,
   defaultContentBasedOptions,
   defaultIndexableOptions,
-  isCustomMessage,
-  SliceableArgumentOptions,
+  isCustomMessage as hasCustomMessage,
 } from "./BaseArgument";
-import {
-  SlashCommandBuilder,
-  SlashCommandStringOption,
-} from "@discordjs/builders";
-import { ValidationError } from "../../../validation/validators/BaseValidator";
 
 export interface Choice {
   name: string;
@@ -23,15 +23,15 @@ export interface Choice {
 
 export interface StringArgumentOptions
   extends BaseArgumentOptions<string>,
-  SliceableArgumentOptions,
-  ContentBasedArgumentOptions {
+    SliceableArgumentOptions,
+    ContentBasedArgumentOptions {
   splitOn: string | RegExp;
   regex: RegExp;
   match: string[];
   choices:
-  | Choice[]
-  | string[]
-  | { list: Choice[] | string[]; customMessage: string };
+    | Choice[]
+    | string[]
+    | { list: Choice[] | string[]; customMessage: string };
   unstrictChoices: boolean;
 }
 
@@ -45,7 +45,7 @@ export class StringArgument<
       splitOn: /\s+/,
       match: [],
       choices: [],
-      ...(options ?? {})
+      ...(options ?? {}),
     } as OptionsT);
   }
 
@@ -112,11 +112,13 @@ export class StringArgument<
   private parseFromRegex(content: string, regex: RegExp): string {
     const matches = Array.from(content.matchAll(regex) || []);
 
-    const match = this.getElementFromIndex(matches, this.options.index);
+    const match = this.getElementFromIndex(
+      matches.map((m) => m[0]),
+      this.options.index,
+      { join: true }
+    );
 
-    if (match && typeof match[0] === "string") {
-      return match[0];
-    } else return "";
+    return match ?? "";
   }
 
   validate(value: string | undefined, argumentName: string) {
@@ -130,12 +132,12 @@ export class StringArgument<
       !this.options.unstrictChoices &&
       !choices.some((c) => c.value.toLowerCase() === value.toLowerCase())
     ) {
-      throw new ValidationError(
-        isCustomMessage(this.options.choices)
+      throw new ArgumentValidationError(
+        hasCustomMessage(this.options.choices)
           ? this.options.choices.customMessage
           : `${argumentName} must be one of ${this.getChoices(this.options)
-            .map((c) => c.value)
-            .join(", ")}`
+              .map((c) => c.value)
+              .join(", ")}`
       );
     }
   }
@@ -145,15 +147,16 @@ export class StringArgument<
   ): { name: string; value: string }[] {
     const choices = [] as { name: string; value: string }[];
 
-    const choicesOptions = isCustomMessage(options.choices)
+    const choicesOptions = hasCustomMessage(options.choices)
       ? options.choices.list
       : options.choices;
 
     for (const choice of choicesOptions) {
-      if (typeof choice === "string")
+      if (typeof choice === "string") {
         choices.push({ name: choice, value: choice });
-      else
+      } else {
         choices.push({ name: choice.name, value: choice.value || choice.name });
+      }
     }
 
     return choices;

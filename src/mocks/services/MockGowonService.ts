@@ -1,8 +1,11 @@
 import { Guild } from "discord.js";
 import { GowonCache } from "../../database/cache/GowonCache";
-import { ExtractedCommand } from "../../lib/command/extractor/ExtractedCommand";
+import { userMentionAtStartRegex } from "../../helpers/discord";
+import { GowonContext } from "../../lib/context/Context";
 import { gowonServiceConstants } from "../../services/GowonService";
 import { BaseMockService } from "./BaseMockService";
+
+export const mockPrefix = "!";
 
 export class MockGowonService extends BaseMockService {
   public cache = new GowonCache();
@@ -10,26 +13,28 @@ export class MockGowonService extends BaseMockService {
   constants = gowonServiceConstants;
 
   prefix(_guildID: string): string {
-    return "!";
+    return mockPrefix;
   }
 
   regexSafePrefix(_serverID: string): string {
-    return "!";
+    return mockPrefix;
   }
 
   prefixAtStartOfMessageRegex(_guildID: string): RegExp {
-    return new RegExp(`![^\\s]+`, "i");
+    return new RegExp(`${mockPrefix}[^\\s]+`, "i");
   }
 
-  removeCommandName(
-    string: string,
-    extract: ExtractedCommand,
-    serverID: string
-  ): string {
+  public removeCommandName(ctx: GowonContext, string: string): string {
     return string
       .replace(
+        new RegExp(`${mockPrefix}${ctx.extract.asRemovalRegexString()}`, "i"),
+        ""
+      )
+      .replace(
         new RegExp(
-          `${this.regexSafePrefix(serverID)}${extract.asRemovalRegexString()}`,
+          `${
+            userMentionAtStartRegex(ctx.botUser.id).source
+          }\\s+${ctx.extract.asRemovalRegexString()}`,
           "i"
         ),
         ""

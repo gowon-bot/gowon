@@ -22,7 +22,7 @@ export class DiscordUserArgument<
     super({ ...defaultIndexableOptions, ...(options ?? {}) } as OptionsT);
   }
 
-  parseFromMessage(message: Message): User {
+  parseFromMessage(message: Message): User | undefined {
     let mentions = Array.from(message.mentions.users.values());
 
     // Run with mention prefix

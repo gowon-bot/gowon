@@ -4,13 +4,13 @@ import { GowonContext } from "../../../Context";
 import {
   BaseArgument,
   BaseArgumentOptions,
-  defaultIndexableOptions,
   IndexableArgumentOptions,
+  defaultIndexableOptions,
 } from "../BaseArgument";
 
 export interface DiscordRoleArgumentOptions
   extends BaseArgumentOptions,
-  IndexableArgumentOptions { }
+    IndexableArgumentOptions {}
 
 export class DiscordRoleArgument<
   OptionsT extends Partial<DiscordRoleArgumentOptions> = {}
@@ -21,7 +21,7 @@ export class DiscordRoleArgument<
     super({ ...defaultIndexableOptions, ...(options ?? {}) } as OptionsT);
   }
 
-  parseFromMessage(message: Message): Role {
+  parseFromMessage(message: Message): Role | undefined {
     const mentions = Array.from(message.mentions.roles.values());
 
     return this.getElementFromIndex(mentions, this.options.index);

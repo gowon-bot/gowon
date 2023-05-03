@@ -4,30 +4,31 @@ import { BaseMention } from "../mentionTypes/BaseMention";
 import {
   BaseArgument,
   BaseArgumentOptions,
-  defaultIndexableOptions,
   IndexableArgumentOptions,
   StringCleaningArgument,
+  defaultIndexableOptions,
 } from "./BaseArgument";
 import { SlashCommandBuilder } from "./SlashCommandTypes";
 
 export interface UserStringArgumentOptions
   extends BaseArgumentOptions<string>,
-  IndexableArgumentOptions {
+    IndexableArgumentOptions {
   mention: BaseMention;
 }
 
 export class UserStringArgument<
-  OptionsT extends Partial<UserStringArgumentOptions>
->
+    OptionsT extends Partial<UserStringArgumentOptions>
+  >
   extends BaseArgument<string, UserStringArgumentOptions, OptionsT>
-  implements StringCleaningArgument {
+  implements StringCleaningArgument
+{
   mention = true;
 
   constructor(options?: OptionsT) {
     super({ ...defaultIndexableOptions, ...(options ?? {}) } as OptionsT);
   }
 
-  parseFromMessage(_: Message, content: string): string {
+  parseFromMessage(_: Message, content: string): string | undefined {
     const mentions = this.options.mention.parse(content);
 
     return this.getElementFromIndex(mentions, this.options.index);

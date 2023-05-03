@@ -3,7 +3,7 @@ import { Interaction, Message } from "discord.js";
 import { toInt } from "../../../../helpers/lastfm/";
 import { GowonService } from "../../../../services/GowonService";
 import { ServiceRegistry } from "../../../../services/ServicesRegistry";
-import { ValidationError } from "../../../validation/validators/BaseValidator";
+import { ArgumentValidationError } from "../../../validation/validators/BaseValidator";
 import { GowonContext } from "../../Context";
 import { Slice } from "../types";
 import {
@@ -12,12 +12,20 @@ import {
   SlashCommandOption,
 } from "./SlashCommandTypes";
 
-type GetElementFromIndexOptions = {
+type GetElementFromIndexOptions<
+  T,
+  O extends GetElementFromIndexOptions<T, any>
+> = {
   join?: boolean;
-  default?: any | any[];
+  default?: UnWrapGetElementOptions<T, O>;
   number?: boolean;
   trim?: boolean;
 };
+
+type UnWrapGetElementOptions<
+  T,
+  O extends GetElementFromIndexOptions<T, any>
+> = O extends { number: true } ? number : T;
 
 export interface BaseArgumentOptions<ReturnT = any> {
   required:
@@ -95,7 +103,7 @@ export abstract class BaseArgument<
       this.options.required &&
       (value === null || value === undefined || (value as any) === "")
     ) {
-      throw new ValidationError(
+      throw new ArgumentValidationError(
         isCustomMessage(this.options.required)
           ? this.options.required.customMessage
           : `Please enter a${
@@ -126,13 +134,19 @@ export abstract class BaseArgument<
     return cleanContent.replace(/<(@|#)(!|&)?[0-9]+>/g, "");
   }
 
-  protected getElementFromIndex(
-    array: Array<any>,
+  protected getElementFromIndex<
+    T,
+    O extends Partial<GetElementFromIndexOptions<T, O>>
+  >(
+    array: Array<T>,
     index: number | Slice,
-    options: GetElementFromIndexOptions = {}
-  ): any {
+    options: O = {} as O
+  ): UnWrapGetElementOptions<T, O> | undefined {
     if (index === undefined) return undefined;
-    if (this.shouldReturnDefault(array, index)) return options.default;
+
+    if (this.shouldReturnDefault(array, index)) {
+      return this.getDefault() as UnWrapGetElementOptions<T, O>;
+    }
 
     options.join = options.join || false;
 
@@ -141,17 +155,19 @@ export abstract class BaseArgument<
     if (typeof index === "number") {
       argument = this.getIndexWithNumber(array, index, options);
     } else {
-      const elements = this.getIndexWithSlice(array, index, options);
+      const elements = this.getIndexWithSlice(array, index);
 
       argument = options.join ? elements.join(" ") : elements;
     }
 
     if (options.number) {
-      return isNaN(toInt(argument)) ? options.default : toInt(argument);
+      return (
+        isNaN(toInt(argument)) ? this.getDefault() : toInt(argument)
+      ) as UnWrapGetElementOptions<T, O>;
     } else if (typeof argument === "string" && options.trim) {
-      return argument.trim();
+      return argument.trim() as UnWrapGetElementOptions<T, O>;
     } else {
-      return argument ?? options.default;
+      return argument ?? this.getDefault();
     }
   }
 
@@ -168,38 +184,41 @@ export abstract class BaseArgument<
     );
   }
 
-  private getIndexWithNumber(
-    array: any[],
-    index: number,
-    options: GetElementFromIndexOptions
-  ): any {
-    return (
-      (typeof array[index] === "string"
-        ? array[index]?.trim()
-        : array[index]) ?? options.default
-    );
+  private getIndexWithNumber<
+    T,
+    O extends Partial<GetElementFromIndexOptions<T, O>>
+  >(array: T[], index: number, options: O): UnWrapGetElementOptions<T, O> {
+    return ((typeof array[index] === "string"
+      ? (array[index] as string).trim()
+      : array[index]) ?? options.default) as UnWrapGetElementOptions<T, O>;
   }
 
-  private getIndexWithSlice(
-    array: any[],
-    index: Slice,
-    options: GetElementFromIndexOptions
-  ): any {
+  private getIndexWithSlice<
+    T,
+    O extends Partial<GetElementFromIndexOptions<T, O>>
+  >(array: T[], index: Slice): UnWrapGetElementOptions<T, O>[] {
     const slicedArray = index.stop
       ? array.slice(index.start, index.stop + 1)
       : array.slice(index.start);
 
     const trimmedArray = slicedArray.map((e) =>
       typeof e === "string" ? e?.trim() : e
-    );
+    ) as UnWrapGetElementOptions<T, O>[];
+
+    const defaultReturn = this.getDefault();
 
     if (index.start && index.stop) {
       for (let i = 0; i < index.stop - index.start + 1; i++) {
-        if (!trimmedArray[i]) trimmedArray[i] = (options.default || [])[i];
+        if (!trimmedArray[i]) {
+          trimmedArray[i] =
+            defaultReturn instanceof Array
+              ? (defaultReturn || [])[i]
+              : defaultReturn;
+        }
       }
-    } else {
-      for (let i = 0; i < options.default?.length; i++) {
-        const def = options.default[i];
+    } else if (defaultReturn && defaultReturn instanceof Array) {
+      for (let i = 0; i < defaultReturn.length; i++) {
+        const def = defaultReturn[i];
 
         if (!trimmedArray[i]) trimmedArray[i] = def;
       }

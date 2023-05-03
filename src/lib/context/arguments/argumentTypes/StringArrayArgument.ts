@@ -12,8 +12,8 @@ import {
 
 interface StringArrayArgumentOptions
   extends BaseArgumentOptions<string[]>,
-  SliceableArgumentOptions,
-  ContentBasedArgumentOptions {
+    SliceableArgumentOptions,
+    ContentBasedArgumentOptions {
   splitOn: string | RegExp;
 }
 
@@ -25,7 +25,11 @@ export class StringArrayArgument<
   }
 
   constructor(options?: OptionsT) {
-    super({ ...defaultIndexableOptions, splitOn: " ", ...(options ?? {}) } as OptionsT);
+    super({
+      ...defaultIndexableOptions,
+      splitOn: " ",
+      ...(options ?? {}),
+    } as OptionsT);
   }
 
   parseFromMessage(
@@ -37,10 +41,16 @@ export class StringArrayArgument<
 
     const splitContent = cleanContent.split(this.options.splitOn);
 
-    const element = this.getElementFromIndex(splitContent, this.options.index);
+    const element = this.getElementFromIndex<string | string[], {}>(
+      splitContent,
+      this.options.index
+    );
 
-    if (typeof this.options.index == "number") return [element];
-    return element;
+    if (typeof element === "string") {
+      return [element];
+    }
+
+    return element instanceof Array ? element : element ? [element] : element;
   }
 
   parseFromInteraction(): string[] | undefined {

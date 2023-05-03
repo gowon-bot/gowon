@@ -1,4 +1,3 @@
-import { TimeRangeValidator } from "./TimeRange";
 import { ChoicesValidator } from "./Choices";
 import { LengthRangeValidator } from "./LengthRange";
 import { NumberValidator } from "./Number";
@@ -8,6 +7,7 @@ import {
   RequiredOrValidator,
   RequiredValidator,
 } from "./Required";
+import { TimeRangeValidator } from "./TimeRange";
 
 export const validators = {
   LengthRangeValidator,
@@ -18,4 +18,9 @@ export const validators = {
   RequiredOrValidator,
   TimeRangeValidator,
   ChoicesValidator,
+
+  positiveNumberValidator: new RangeValidator({
+    min: 1,
+    message: "Please enter a positive number!",
+  }),
 };
