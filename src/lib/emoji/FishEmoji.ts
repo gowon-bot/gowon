@@ -188,4 +188,9 @@ export const FishyEmojiList = {
     "<:PoorCodWater:1101967403207905400>",
     "<:pcSilhouette:1101967381670133921>"
   ),
+  blahaj: new FishyEmoji(
+    "<:Blahaj:1103414812635037767>",
+    "<:BlahajWater:1103414815432659014>",
+    "<:bhSilhouette:1103415399233630288>"
+  ),
 } satisfies Record<string, FishyEmoji>;

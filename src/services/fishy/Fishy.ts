@@ -57,7 +57,8 @@ export class FishyRarityData {
     public weight: number,
     public colour: HexColorString,
     public emoji: string,
-    private objectKey?: string
+    private objectKey?: string,
+    public special?: boolean
   ) {}
 
   public isTrash(): boolean {
@@ -98,7 +99,7 @@ interface FishyOptions {
   id: string;
   name: string;
   binomialName: string;
-  rarity: FishyRarity;
+  rarity: FishyRarity | FishyRarityData;
   description: string;
   weight: { min: number; max: number };
   emoji: FishyEmoji;

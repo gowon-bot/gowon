@@ -5,6 +5,7 @@ import { standardMentions } from "../../lib/context/arguments/mentionTypes/menti
 import { ArgumentsMap } from "../../lib/context/arguments/types";
 import { Emoji } from "../../lib/emoji/Emoji";
 import { displayNumber } from "../../lib/views/displays";
+import { displayRarity } from "../../lib/views/fishy";
 import { FishyChildCommand } from "./FishyChildCommand";
 
 const args = {
@@ -68,7 +69,7 @@ export class Fish extends FishyChildCommand<typeof args> {
         `${fishy.emoji} Caught a ${bold(fishy.name)}${
           isNew ? Emoji.newFishy : ""
         }${giftDisplay}${isNew && !giftDisplay ? "" : "!"}  ${italic(
-          emDash + " " + fishy.rarity.name
+          emDash + " " + displayRarity(fishy.rarity)
         )}
 ${weightDisplay}` +
           (isNew && false

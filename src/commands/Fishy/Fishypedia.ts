@@ -1,11 +1,12 @@
 import { FishyNotFoundError } from "../../errors/fishy";
 import { bold, italic } from "../../helpers/discord";
-import { emDash, quote } from "../../helpers/specialCharacters";
+import { quote } from "../../helpers/specialCharacters";
 import { StringArgument } from "../../lib/context/arguments/argumentTypes/StringArgument";
 import { EmojisArgument } from "../../lib/context/arguments/argumentTypes/discord/EmojisArgument";
 import { standardMentions } from "../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../lib/context/arguments/types";
 import { displayNumber } from "../../lib/views/displays";
+import { displayRarity } from "../../lib/views/fishy";
 import { findFishy } from "../../services/fishy/fishyList";
 import { FishyChildCommand } from "./FishyChildCommand";
 
@@ -65,11 +66,8 @@ export class Fishypedia extends FishyChildCommand<typeof args> {
       .setTitle(fishy.name)
       .setDescription(
         `
-${fishy.emoji} ${bold(italic(fishy.binomialName), false)} ${emDash} ${
-          fishy.rarity.isTrash()
-            ? fishy.rarity.name
-            : `${fishy.rarity.name} fishy`
-        } 
+${fishy.emoji} ${bold(italic(fishy.binomialName), false)}
+${displayRarity(fishy.rarity, true)} 
 
 ${italic(quote(fishy.description))}
 

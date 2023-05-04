@@ -3,6 +3,7 @@ import { Fishy, FishyRarities, FishyRarityData } from "./Fishy";
 import { commonFishies } from "./fishy/common";
 import { legendaryFishies } from "./fishy/legendary";
 import { rareFishies } from "./fishy/rare";
+import { specialFishies } from "./fishy/special";
 import { superRareFishies } from "./fishy/superRare";
 import { trash } from "./fishy/trash";
 import { uncommonFishy } from "./fishy/uncommon";
@@ -14,6 +15,7 @@ export const fishyList = [
   ...rareFishies,
   ...superRareFishies,
   ...legendaryFishies,
+  ...specialFishies,
 ];
 
 export function getFishyList(rarity: FishyRarityData): Fishy[] {
@@ -37,7 +39,7 @@ export function getFishyList(rarity: FishyRarityData): Fishy[] {
       return legendaryFishies;
 
     default:
-      return fishyList;
+      return specialFishies.filter((f) => f.rarity.name === rarity.name);
   }
 }
 

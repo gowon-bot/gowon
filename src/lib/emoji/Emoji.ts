@@ -96,6 +96,9 @@ export const Emoji = {
   superRare: "<:superRare:1091475737913073745>",
   legendary: "<:legendary:1091475736419901470>",
   mythic: "<:mythic:1091475734905757807>",
+  unknown: "<:unknown:1103419210350202922>",
+
+  blahajRarity: "<:blahajR:1103417169057947718>",
 
   // Fishy misc
   newFishy: "<:newFishy:1091512966672830594>",

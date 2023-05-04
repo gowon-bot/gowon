@@ -12,6 +12,7 @@ import {
   FishyRarityBreakdown,
   FishyResult,
 } from "./FishyService.types";
+import { specialFishies } from "./fishy/special";
 import { trash } from "./fishy/trash";
 import { findFishy, getFishyList } from "./fishyList";
 
@@ -228,7 +229,14 @@ export class FishyService extends BaseService {
   }
 
   private generateRarityPool(): RarityPool {
-    const rarities = Object.values(FishyRarities);
+    const specialRarities = Object.values(
+      specialFishies.reduce((acc, f) => {
+        acc[f.rarity.name] = f.rarity;
+        return acc;
+      }, {} as Record<string, FishyRarityData>)
+    );
+
+    const rarities = Object.values(FishyRarities).concat(specialRarities);
 
     return [rarities, rarities.map((r) => r.weight)];
   }

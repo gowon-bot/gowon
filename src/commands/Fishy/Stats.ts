@@ -3,6 +3,7 @@ import { italic } from "../../helpers/discord";
 import { emDash } from "../../helpers/specialCharacters";
 import { standardMentions } from "../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../lib/context/arguments/types";
+import { Emoji } from "../../lib/emoji/Emoji";
 import { displayDate, displayNumber } from "../../lib/views/displays";
 import { FishyRarities } from "../../services/fishy/Fishy";
 import { FishyChildCommand } from "./FishyChildCommand";
@@ -75,6 +76,13 @@ ${FishyRarities.SuperRare.emoji} _Super rare_ ${emDash} ${displayNumber(
 ${FishyRarities.Legendary.emoji} _Legendary_ ${emDash} ${displayNumber(
       rarityBreakdown.Legendary
     )} fishy
+${
+  "special" in rarityBreakdown
+    ? `${Emoji.unknown} _Special_ ${emDash} ${displayNumber(
+        rarityBreakdown.special as string
+      )} fishy`
+    : ""
+}
 `);
 
     await this.send(embed);
