@@ -1,5 +1,5 @@
 import { Setting } from "../../database/entity/Setting";
-import { InvalidChoiceError } from "../../errors/settings";
+import { InvalidChoiceError } from "../../errors/commands/settings";
 
 export enum SettingType {
   Text = "text",

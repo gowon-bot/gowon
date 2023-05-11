@@ -1,5 +1,5 @@
-import { displayNumber } from "../lib/views/displays";
-import { ClientError } from "./errors";
+import { displayNumber } from "../../lib/views/displays";
+import { ClientError } from "../errors";
 
 export class NoFriendsError extends ClientError {
   name = "NoFriendsError";

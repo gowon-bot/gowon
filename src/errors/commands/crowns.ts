@@ -1,6 +1,6 @@
-import { bold, italic } from "../helpers/discord";
-import { Perspective } from "../lib/Perspective";
-import { ClientError } from "./errors";
+import { bold, italic } from "../../helpers/discord";
+import { Perspective } from "../../lib/Perspective";
+import { ClientError } from "../errors";
 
 export class UserHasNoCrownsInServerError extends ClientError {
   name = "UserHasNoCrownsInServerError";

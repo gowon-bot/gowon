@@ -1,4 +1,4 @@
-import { UserHasNoCrownsInServerError } from "../../../errors/crowns";
+import { UserHasNoCrownsInServerError } from "../../../errors/commands/crowns";
 import { bold } from "../../../helpers/discord";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";

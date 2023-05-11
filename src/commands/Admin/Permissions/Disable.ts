@@ -3,14 +3,14 @@ import {
   Permission,
   PermissionType,
 } from "../../../database/entity/Permission";
+import { CannotDisableCommandError } from "../../../errors/commands/permissions";
 import { CommandNotFoundError } from "../../../errors/errors";
-import { CannotDisableCommandError } from "../../../errors/permissions";
 import { code } from "../../../helpers/discord";
 import { CommandRedirect, Variation } from "../../../lib/command/Command";
+import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { ChannelArgument } from "../../../lib/context/arguments/argumentTypes/discord/ChannelArgument";
 import { DiscordRoleArgument } from "../../../lib/context/arguments/argumentTypes/discord/DiscordRoleArgument";
 import { DiscordUserArgument } from "../../../lib/context/arguments/argumentTypes/discord/DiscordUserArgument";
-import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { ChannelDisable } from "./ChannelDisable";
 import { PermissionsChildCommand } from "./PermissionsChildCommand";

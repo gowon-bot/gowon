@@ -1,6 +1,6 @@
-import { Permission, PermissionType } from "../database/entity/Permission";
-import { code } from "../helpers/discord";
-import { ClientError } from "./errors";
+import { Permission, PermissionType } from "../../database/entity/Permission";
+import { code } from "../../helpers/discord";
+import { ClientError } from "../errors";
 
 export class CannotChangePrefixError extends ClientError {
   name = "CannotChangePrefixError";

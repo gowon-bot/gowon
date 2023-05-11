@@ -1,4 +1,4 @@
-import { CardNotMintedYetError } from "../../errors/cards";
+import { CardNotMintedYetError } from "../../errors/commands/cards";
 import { bold, italic } from "../../helpers/discord";
 import { prefabArguments } from "../../lib/context/arguments/prefabArguments";
 import { ArgumentsMap } from "../../lib/context/arguments/types";
@@ -53,12 +53,13 @@ export class View extends CardsChildCommand {
       throw new CardNotMintedYetError();
     }
 
-    const [owner] =
-      (await this.mirrorballUsersService.getMirrorballUser(this.ctx, [
-        { discordID: card.owner.discordID },
-      ])) || [];
+    const owner = await this.lilacUsersService.fetchUser(this.ctx, {
+      discordID: card.owner.discordID,
+    });
 
-    await this.nicknameService.cacheNicknames(this.ctx, [owner.discordID]);
+    if (owner) {
+      await this.nicknameService.cacheNicknames(this.ctx, [owner.discordID]);
+    }
 
     const ownerDisplay = !owner
       ? UnknownUserDisplay

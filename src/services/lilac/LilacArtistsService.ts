@@ -1,5 +1,6 @@
 import { gql } from "apollo-server-express";
 import { GowonContext } from "../../lib/context/Context";
+import { displayNumber } from "../../lib/views/displays";
 import { LilacAPIService } from "./LilacAPIService";
 import {
   LilacArtistCountFilters,
@@ -173,5 +174,27 @@ export class LilacArtistsService extends LilacAPIService {
     }
 
     return responses;
+  }
+
+  async correctArtistNames(
+    ctx: GowonContext,
+    artistNames: string[]
+  ): Promise<string[]> {
+    this.log(
+      ctx,
+      `Correcting artist names for ${displayNumber(
+        artistNames.length,
+        "artist"
+      )}`
+    );
+    const artists = artistNames.map((a) => ({ name: a }));
+
+    const response = await this.list(ctx, { inputs: artists });
+
+    return artistNames.map(
+      (a) =>
+        response.artists.find((ma) => a.toLowerCase() === ma.name.toLowerCase())
+          ?.name || a
+    );
   }
 }

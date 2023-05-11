@@ -1,4 +1,4 @@
-import { NoContentiousCrownsError } from "../../../errors/crowns";
+import { NoContentiousCrownsError } from "../../../errors/commands/crowns";
 import { bold } from "../../../helpers/discord";
 import { displayNumber } from "../../../lib/views/displays";
 import { CrownsChildCommand } from "./CrownsChildCommand";

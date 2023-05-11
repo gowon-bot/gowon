@@ -43,7 +43,6 @@ import { LilacTagsService } from "./lilac/LilacTagsService";
 import { LilacUsersService } from "./lilac/LilacUsersService";
 import { LilacWhoKnowsService } from "./lilac/LilacWhoKnowsService";
 import { MirrorballService } from "./mirrorball/MirrorballService";
-import { ArtistsService } from "./mirrorball/services/ArtistsService";
 import { MirrorballUsersService } from "./mirrorball/services/MirrorballUsersService";
 import { AlbumCoverService } from "./moderation/AlbumCoverService";
 import { ChartService } from "./pantomime/ChartService";
@@ -57,7 +56,6 @@ const services: Service[] = [
   AlbumCoverService,
   AnalyticsCollector,
   ArgumentParsingService,
-  ArtistsService,
   BotStatsService,
   CardsService,
   ChartService,

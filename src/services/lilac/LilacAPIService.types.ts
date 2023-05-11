@@ -8,11 +8,11 @@ export type LilacDate = number;
 export type LilacProgressAction = "indexing" | "updating";
 
 export enum LilacPrivacy {
-  Private = "private",
-  Discord = "discord",
-  FMUsername = "fmusername",
-  Both = "both",
-  Unset = "unset",
+  Private = "PRIVATE",
+  Discord = "DISCORD",
+  FMUsername = "FMUSERNAME",
+  Both = "BOTH",
+  Unset = "UNSET",
 }
 
 // Inputs
@@ -21,6 +21,13 @@ export interface LilacUserInput {
   id?: number;
   discordID?: string;
   username?: string;
+}
+
+export interface LilacUserModifications {
+  discordID?: string;
+  username?: string;
+  privacy?: LilacPrivacy;
+  lastFMSession?: string;
 }
 
 export interface LilacArtistInput {

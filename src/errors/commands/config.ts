@@ -1,5 +1,5 @@
-import { code } from "../helpers/discord";
-import { ClientError } from "./errors";
+import { code } from "../../helpers/discord";
+import { ClientError } from "../errors";
 
 export class PatronOptionsUsedWithoutBeingPatron extends ClientError {
   name = "PatronOptionsUsedWithoutBeingPatron";

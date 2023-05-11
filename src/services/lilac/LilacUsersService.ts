@@ -6,6 +6,7 @@ import { LilacAPIService } from "./LilacAPIService";
 import {
   IndexingProgress,
   LilacUserInput,
+  LilacUserModifications,
   RawLilacUser,
 } from "./LilacAPIService.types";
 
@@ -111,5 +112,37 @@ export class LilacUsersService extends LilacAPIService {
     );
 
     return users.users[0]?.isIndexing ?? false;
+  }
+
+  public async modifyUser(
+    ctx: GowonContext,
+    user: LilacUserInput,
+    modifications: LilacUserModifications
+  ): Promise<LilacUser> {
+    const response = await this.mutate<
+      RawLilacUser,
+      { user: LilacUserInput; modifications: LilacUserModifications }
+    >(
+      ctx,
+      gql`
+        mutation modifyUser(
+          $user: UserInput
+          $modifications: UserModifications
+        ) {
+          modifyUser(user: $user, modifications: $modifications) {
+            id
+            discordID
+            privacy
+            username
+          }
+        }
+      `,
+      {
+        user,
+        modifications,
+      }
+    );
+
+    return new LilacUser(response);
   }
 }

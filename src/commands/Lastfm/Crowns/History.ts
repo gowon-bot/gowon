@@ -2,7 +2,7 @@ import { CrownEvent } from "../../../database/entity/meta/CrownEvent";
 import {
   CrownDoesntExistError,
   NoCrownHistoryError,
-} from "../../../errors/crowns";
+} from "../../../errors/commands/crowns";
 import { asyncMap } from "../../../helpers";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";

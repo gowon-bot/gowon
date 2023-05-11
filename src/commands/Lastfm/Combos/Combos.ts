@@ -1,12 +1,12 @@
-import { ComboChildCommand } from "./ComboChildCommand";
-import { LogicError } from "../../../errors/errors";
-import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingEmbed";
-import { displayNumberedList } from "../../../lib/views/displays";
-import { ArtistsService } from "../../../services/mirrorball/services/ArtistsService";
-import { ServiceRegistry } from "../../../services/ServicesRegistry";
-import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
+import { NoUserCombosError } from "../../../errors/commands/combo";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { displayNumberedList } from "../../../lib/views/displays";
+import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingEmbed";
+import { ServiceRegistry } from "../../../services/ServicesRegistry";
+import { LilacArtistsService } from "../../../services/lilac/LilacArtistsService";
+import { ComboChildCommand } from "./ComboChildCommand";
 
 const args = {
   artist: new StringArgument({
@@ -29,15 +29,16 @@ export class Combos extends ComboChildCommand<typeof args> {
   slashCommand = true;
   slashCommandName = "list";
 
-  artistsService = ServiceRegistry.get(ArtistsService);
+  lilacArtistsService = ServiceRegistry.get(LilacArtistsService);
 
   async run() {
     let artistName = this.parsedArguments.artist;
 
     if (artistName) {
-      [artistName] = await this.artistsService.correctArtistNames(this.ctx, [
-        artistName,
-      ]);
+      [artistName] = await this.lilacArtistsService.correctArtistNames(
+        this.ctx,
+        [artistName]
+      );
     }
 
     const { perspective, dbUser } = await this.getMentions();
@@ -49,15 +50,13 @@ export class Combos extends ComboChildCommand<typeof args> {
     );
 
     if (!combos.length) {
-      throw new LogicError(
-        `${perspective.plusToHave} no ${artistName ? `${artistName} ` : ""
-        }combos saved yet! \`${this.prefix}combo\` saves your combo`
-      );
+      throw new NoUserCombosError(perspective, this.prefix, artistName);
     }
 
     const embed = this.newEmbed().setAuthor(
       this.generateEmbedAuthor(
-        `${perspective.upper.possessive.replace(/`/g, "")} top ${artistName ? `${artistName} ` : ""
+        `${perspective.upper.possessive.replace(/`/g, "")} top ${
+          artistName ? `${artistName} ` : ""
         }combos`
       )
     );

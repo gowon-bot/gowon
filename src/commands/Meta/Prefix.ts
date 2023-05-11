@@ -1,5 +1,5 @@
+import { CannotChangePrefixError } from "../../errors/commands/permissions";
 import { LogicError } from "../../errors/errors";
-import { CannotChangePrefixError } from "../../errors/permissions";
 import { code } from "../../helpers/discord";
 import { Command } from "../../lib/command/Command";
 import { SettingsService } from "../../lib/settings/SettingsService";

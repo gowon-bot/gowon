@@ -3,15 +3,15 @@ import {
   Permission,
   PermissionType,
 } from "../../../database/entity/Permission";
-import { CommandNotFoundError } from "../../../errors/errors";
 import {
   PermissionAlreadyExistsError,
   PermissionDoesNotExistError,
-} from "../../../errors/permissions";
+} from "../../../errors/commands/permissions";
+import { CommandNotFoundError } from "../../../errors/errors";
 import { code, mentionRole } from "../../../helpers/discord";
 import { Command, Variation } from "../../../lib/command/Command";
-import { DiscordRoleArgument } from "../../../lib/context/arguments/argumentTypes/discord/DiscordRoleArgument";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
+import { DiscordRoleArgument } from "../../../lib/context/arguments/argumentTypes/discord/DiscordRoleArgument";
 import { PermissionsChildCommand } from "./PermissionsChildCommand";
 
 const args = {

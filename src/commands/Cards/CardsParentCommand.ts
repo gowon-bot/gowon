@@ -1,10 +1,10 @@
 import { CommandGroup } from "../../lib/command/CommandGroup";
 import { ParentCommand } from "../../lib/command/ParentCommand";
-import { Bank } from "./Bank";
+import { Bank } from "../Archived/cards/Bank";
+import { Mint } from "../Archived/cards/Mint";
+import { Work } from "../Archived/cards/Work";
 import { Inventory } from "./Inventory";
-import { Mint } from "./Mint";
 import { View } from "./View";
-import { Work } from "./Work";
 
 export default class CardsParentCommand extends ParentCommand {
   idSeed = "ive wonyoung";

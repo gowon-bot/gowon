@@ -37,7 +37,7 @@ export default class WhoFirstArtist extends WhoKnowsBaseCommand<
   connector = new WhoFirstArtistConnector();
 
   idSeed = "shasha garam";
-  aliases = ["wf", "whofirst"];
+  aliases = ["wf", "whofirst", "wfa"];
 
   subcategory = "whofirst";
   description = "See who first scrobbled an artist";
@@ -45,10 +45,10 @@ export default class WhoFirstArtist extends WhoKnowsBaseCommand<
   variations: Variation[] = [
     {
       name: "wholast",
-      variation: ["wholastartist", "wl", "gwl", "wholast"],
+      variation: ["wholastartist", "wl", "gwl", "wholast", "wla"],
       description: "Shows who *last* scrobbled an artist",
     },
-    VARIATIONS.global("wf", "wl"),
+    VARIATIONS.global("wf", "wl", "wla"),
   ];
 
   slashCommand = true;
@@ -58,15 +58,11 @@ export default class WhoFirstArtist extends WhoKnowsBaseCommand<
   async run() {
     const whoLast = this.variationWasUsed("wholast");
 
-    const {
-      senderRequestable,
-      senderUser,
-      senderMirrorballUser,
-      senderUsername,
-    } = await this.getMentions({
-      senderRequired: !this.parsedArguments.artist,
-      fetchMirrorballUser: true,
-    });
+    const { senderRequestable, senderUser, senderLilacUser, senderUsername } =
+      await this.getMentions({
+        senderRequired: !this.parsedArguments.artist,
+        fetchLilacUser: true,
+      });
 
     const artistName = await this.lastFMArguments.getArtist(
       this.ctx,
@@ -142,7 +138,7 @@ export default class WhoFirstArtist extends WhoKnowsBaseCommand<
         } scrobbled ${bold(artist.name)}${this.isGlobal() ? " globally" : ""}?`
       )
       .setDescription(lineConsolidator.consolidate())
-      .setFooter({ text: this.footerHelp(senderUser, senderMirrorballUser) });
+      .setFooter({ text: this.footerHelp(senderUser, senderLilacUser) });
 
     await this.send(embed);
   }

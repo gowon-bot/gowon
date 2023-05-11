@@ -14,7 +14,7 @@ import {
   ArtistAlreadyCrownBannedError,
   ArtistNotCrownBannedError,
   NotCrownBannedError,
-} from "../../../errors/crowns";
+} from "../../../errors/commands/crowns";
 import { asyncMap } from "../../../helpers";
 import { toInt } from "../../../helpers/lastfm";
 import { constants } from "../../../lib/constants";

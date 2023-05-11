@@ -1,4 +1,4 @@
-import { PatronOptionsUsedWithoutBeingPatron } from "../../../../errors/config";
+import { PatronOptionsUsedWithoutBeingPatron } from "../../../../errors/commands/config";
 import { code } from "../../../../helpers/discord";
 import { StringArgument } from "../../../../lib/context/arguments/argumentTypes/StringArgument";
 import { StringArrayArgument } from "../../../../lib/context/arguments/argumentTypes/StringArrayArgument";

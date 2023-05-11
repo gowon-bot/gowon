@@ -5,7 +5,7 @@ import {
   AlreadyFriendsError,
   AlreadyNotFriendsError,
   TooManyFriendsError,
-} from "../../errors/friends";
+} from "../../errors/commands/friends";
 import { sqlLikeEscape } from "../../helpers/database";
 import { GowonContext } from "../../lib/context/Context";
 import { BaseService } from "../BaseService";

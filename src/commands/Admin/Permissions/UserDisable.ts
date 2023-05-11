@@ -1,18 +1,18 @@
-import { PermissionsChildCommand } from "./PermissionsChildCommand";
-import { Command, Variation } from "../../../lib/command/Command";
-import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
-import { DiscordUserArgument } from "../../../lib/context/arguments/argumentTypes/discord/DiscordUserArgument";
-import { CommandNotFoundError } from "../../../errors/errors";
+import { MessageEmbed, User } from "discord.js";
 import {
   Permission,
   PermissionType,
 } from "../../../database/entity/Permission";
-import { MessageEmbed, User } from "discord.js";
-import { bold, code } from "../../../helpers/discord";
 import {
   PermissionAlreadyExistsError,
   PermissionDoesNotExistError,
-} from "../../../errors/permissions";
+} from "../../../errors/commands/permissions";
+import { CommandNotFoundError } from "../../../errors/errors";
+import { bold, code } from "../../../helpers/discord";
+import { Command, Variation } from "../../../lib/command/Command";
+import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
+import { DiscordUserArgument } from "../../../lib/context/arguments/argumentTypes/discord/DiscordUserArgument";
+import { PermissionsChildCommand } from "./PermissionsChildCommand";
 
 const args = {
   user: new DiscordUserArgument({

@@ -7,11 +7,10 @@ import {
   DisplayUserOptions,
   WhoKnowsService,
 } from "../../../../services/Discord/WhoKnowsService";
-import {
-  MirrorballPrivacy,
-  MirrorballUser,
-} from "../../../../services/mirrorball/MirrorballTypes";
 import { ServiceRegistry } from "../../../../services/ServicesRegistry";
+import { LilacPrivacy } from "../../../../services/lilac/LilacAPIService.types";
+import { LilacUser } from "../../../../services/lilac/converters/user";
+import { MirrorballUser } from "../../../../services/mirrorball/MirrorballTypes";
 
 export abstract class WhoKnowsBaseCommand<
   R,
@@ -35,14 +34,10 @@ export abstract class WhoKnowsBaseCommand<
     return this.variationWasUsed("global");
   }
 
-  protected footerHelp(
-    senderUser?: User,
-    senderMirrorballUser?: MirrorballUser
-  ) {
+  protected footerHelp(senderUser?: User, senderLilacUser?: LilacUser) {
     return !senderUser?.isIndexed
       ? this.notIndexedHelp()
-      : this.isGlobal() &&
-        senderMirrorballUser?.privacy === MirrorballPrivacy.Unset
+      : this.isGlobal() && senderLilacUser?.privacy === LilacPrivacy.Unset
       ? this.unsetPrivacyHelp()
       : "";
   }

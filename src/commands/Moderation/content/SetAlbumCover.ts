@@ -1,4 +1,4 @@
-import { MustBeAPatronError } from "../../../errors/permissions";
+import { MustBeAPatronError } from "../../../errors/commands/permissions";
 import { bold, italic } from "../../../helpers/discord";
 import { Flag } from "../../../lib/context/arguments/argumentTypes/Flag";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";

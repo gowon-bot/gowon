@@ -16,8 +16,8 @@ import { NowPlayingEmbedParsingService } from "../../NowPlayingEmbedParsingServi
 import { ServiceRegistry } from "../../ServicesRegistry";
 import { FriendsService } from "../../dbservices/FriendsService";
 import { UsersService } from "../../dbservices/UsersService";
-import { UserInput } from "../../mirrorball/MirrorballTypes";
-import { MirrorballUsersService } from "../../mirrorball/services/MirrorballUsersService";
+import { LilacUsersService } from "../../lilac/LilacUsersService";
+import { LilacUser } from "../../lilac/converters/user";
 import { MentionsBuilder } from "./MentionsBuilder";
 import {
   GetMentionsOptions,
@@ -32,8 +32,8 @@ export class MentionsService extends BaseService {
   private get usersService() {
     return ServiceRegistry.get(UsersService);
   }
-  private get mirrorballUsersService() {
-    return ServiceRegistry.get(MirrorballUsersService);
+  private get lilacUsersService() {
+    return ServiceRegistry.get(LilacUsersService);
   }
   private get discordService() {
     return ServiceRegistry.get(DiscordService);
@@ -99,7 +99,7 @@ export class MentionsService extends BaseService {
     await this.addLastfmUsername(ctx, mentionsBuilder, options);
     await this.reverseLookupDBUser(ctx, mentionsBuilder, options);
     await this.fetchDiscordUser(ctx, mentionsBuilder, options);
-    await this.fetchMirrorballUser(ctx, mentionsBuilder, options);
+    await this.fetchLilacUser(ctx, mentionsBuilder, options);
 
     const requestables = mentionsBuilder.buildRequestables()!;
 
@@ -120,7 +120,7 @@ export class MentionsService extends BaseService {
       usernameArgumentKey: argumentKeys.username,
       perspectiveAsCode: true,
       fetchDiscordUser: false,
-      fetchMirrorballUser: false,
+      fetchLilacUser: false,
       reverseLookup: { required: false },
     };
   }
@@ -263,33 +263,29 @@ export class MentionsService extends BaseService {
     }
   }
 
-  private async fetchMirrorballUser(
+  private async fetchLilacUser(
     ctx: GowonContext,
     mentionsBuilder: MentionsBuilder,
     options: GetMentionsOptions
   ): Promise<void> {
-    if (options.fetchMirrorballUser) {
-      const inputs: UserInput[] = [{ discordID: ctx.author.id }];
+    if (options.fetchLilacUser) {
+      const userPromises: Promise<LilacUser | undefined>[] = [
+        this.lilacUsersService.fetchUser(ctx, { discordID: ctx.author.id }),
+      ];
 
       const discordID = mentionsBuilder.getDiscordID("mentioned");
 
       if (discordID) {
-        inputs.push({ discordID });
+        userPromises.push(this.lilacUsersService.fetchUser(ctx, { discordID }));
       }
 
-      const users =
-        (await this.mirrorballUsersService.getMirrorballUser(ctx, inputs)) ||
-        [];
+      const users = await Promise.all(userPromises);
 
-      const senderMirrorballUser = users.find(
-        (u) => u.discordID === ctx.author.id
-      );
-      const mentionedMirrorballUser = users.find(
-        (u) => u.discordID === discordID
-      );
+      const senderLilacUser = users.find((u) => u?.discordID === ctx.author.id);
+      const mentionedLilacUser = users.find((u) => u?.discordID === discordID);
 
-      mentionsBuilder.addMirrorballUser("sender", senderMirrorballUser);
-      mentionsBuilder.addMirrorballUser("mentioned", mentionedMirrorballUser);
+      mentionsBuilder.addLilacUser("sender", senderLilacUser);
+      mentionsBuilder.addLilacUser("mentioned", mentionedLilacUser);
     }
   }
 

@@ -3,10 +3,10 @@ import bodyParser from "body-parser";
 import express from "express";
 import gowonConfig from "../../config.json";
 import { AnalyticsCollector } from "../analytics/AnalyticsCollector";
-import { GowonContext } from "../lib/context/Context";
-import { Payload } from "../lib/context/Payload";
 import { GowonClient } from "../lib/GowonClient";
 import { HeaderlessLogger } from "../lib/Logger";
+import { GowonContext } from "../lib/context/Context";
+import { Payload } from "../lib/context/Payload";
 import { ServiceRegistry } from "../services/ServicesRegistry";
 import {
   InvalidStateError,
@@ -17,7 +17,6 @@ import commandResolvers from "./resolvers/commandResolvers";
 import discordResolvers from "./resolvers/discordResolvers";
 import settingsResolvers from "./resolvers/settings/settingResolvers";
 import userResolvers from "./resolvers/userResolvers";
-import { IndexingWebhookService } from "./webhooks/IndexingWebhookService";
 import { SpotifyWebhookService } from "./webhooks/SpotifyWebhookService";
 
 export const gowonAPIPort = gowonConfig.gowonAPIPort;
@@ -79,20 +78,6 @@ export class GraphQLAPI {
     server.applyMiddleware({ app, cors: corsOptions });
 
     app.use("/api", bodyParser.json());
-
-    app.post("/api/indexingWebhook", (req, res) => {
-      const body = req.body as { data?: { token?: string; error?: string } };
-
-      if (body?.data?.token) {
-        IndexingWebhookService.getInstance().handleRequest(
-          body.data.token,
-          body.data.error
-        );
-        res.status(200).send();
-      } else {
-        res.status(400).send("Please send a token in valid json format");
-      }
-    });
 
     app.get("/webhooks/spotify", (req, res) => {
       const body = req.query as any as SpotifyCodeResponse;

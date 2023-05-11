@@ -1,5 +1,5 @@
 import gql from "graphql-tag";
-import { FriendsHaveNoRatingsError } from "../../../../errors/friends";
+import { FriendsHaveNoRatingsError } from "../../../../errors/commands/friends";
 import { asyncMap } from "../../../../helpers";
 import { average } from "../../../../helpers/stats";
 import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";

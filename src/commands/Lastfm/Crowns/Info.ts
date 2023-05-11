@@ -1,5 +1,5 @@
 import { User } from "../../../database/entity/User";
-import { ArtistIsCrownBannedError } from "../../../errors/crowns";
+import { ArtistIsCrownBannedError } from "../../../errors/commands/crowns";
 import { ago } from "../../../helpers";
 import { createInvalidBadge } from "../../../helpers/crowns";
 import { bold } from "../../../helpers/discord";

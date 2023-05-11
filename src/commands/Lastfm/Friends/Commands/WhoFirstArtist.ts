@@ -1,5 +1,5 @@
 import gql from "graphql-tag";
-import { FriendsHaveNoScrobblesOfArtistError } from "../../../../errors/friends";
+import { FriendsHaveNoScrobblesOfArtistError } from "../../../../errors/commands/friends";
 import { bold } from "../../../../helpers/discord";
 import { convertMirrorballDate } from "../../../../helpers/mirrorball";
 import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";

@@ -1,4 +1,4 @@
-import { CrownDoesntExistError } from "../../../errors/crowns";
+import { CrownDoesntExistError } from "../../../errors/commands/crowns";
 import { bold } from "../../../helpers/discord";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";

@@ -2,7 +2,7 @@ import { User as DiscordUser } from "discord.js";
 import { User as DBUser } from "../../../database/entity/User";
 import { Perspective } from "../../../lib/Perspective";
 import { Requestable } from "../../LastFM/LastFMAPIService";
-import { MirrorballUser } from "../../mirrorball/MirrorballTypes";
+import { LilacUser } from "../../lilac/converters/user";
 
 export const argumentKeys = {
   username: "username",
@@ -34,8 +34,8 @@ export interface GetMentionsOptions {
 
   /** If set to true, fetches a Discord user from the returned user's Discord ID or the provided user id */
   fetchDiscordUser: boolean;
-  /** If set to true, fetches a user's profile from Mirrorball */
-  fetchMirrorballUser: boolean;
+  /** If set to true, fetches a user's profile from Lilac */
+  fetchLilacUser: boolean;
 
   // Argument keys
   /** The argument key to find the inputed username */
@@ -50,13 +50,13 @@ export interface Mentions {
   // Returned user's properties
   dbUser: DBUser;
   discordUser?: DiscordUser;
-  mirrorballUser?: MirrorballUser;
+  lilacUser?: LilacUser;
   perspective: Perspective;
   requestable: Requestable;
   username: string;
 
   // Sender's properties
-  senderMirrorballUser?: MirrorballUser;
+  senderLilacUser?: LilacUser;
   senderRequestable: Requestable;
   senderUsername: string;
   senderUser?: DBUser;
@@ -64,6 +64,7 @@ export interface Mentions {
   // Mentioned user's properties
   mentionedUsername?: string;
   mentionedDBUser?: DBUser;
+  mentionedLilacUser?: LilacUser;
 }
 
 export interface PartialMentions {
@@ -71,7 +72,7 @@ export interface PartialMentions {
   discordID: string;
   username: string;
   discordUser?: DiscordUser;
-  mirrorballUser?: MirrorballUser;
+  lilacUser?: LilacUser;
 }
 
 export type MentionsUser = "sender" | "mentioned";

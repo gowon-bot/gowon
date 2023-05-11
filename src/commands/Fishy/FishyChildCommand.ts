@@ -2,7 +2,7 @@ import { FishyProfile } from "../../database/entity/fishy/FishyProfile";
 import {
   MentionedUserHasNoFishyProfileError,
   SenderUserHasNoFishyProfileError,
-} from "../../errors/fishy";
+} from "../../errors/commands/fishy";
 import { BaseChildCommand } from "../../lib/command/ParentCommand";
 import { ArgumentsMap } from "../../lib/context/arguments/types";
 import {

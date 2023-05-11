@@ -1,4 +1,4 @@
-import { InvalidFriendUsernameError } from "../../../errors/friends";
+import { InvalidFriendUsernameError } from "../../../errors/commands/friends";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { Validation } from "../../../lib/validation/ValidationChecker";

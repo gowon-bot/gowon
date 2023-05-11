@@ -1,4 +1,4 @@
-import { UserHasNoCrownsInServerError } from "../../../errors/crowns";
+import { UserHasNoCrownsInServerError } from "../../../errors/commands/crowns";
 import { getOrdinal } from "../../../helpers";
 import { bold } from "../../../helpers/discord";
 import { toInt } from "../../../helpers/lastfm/";

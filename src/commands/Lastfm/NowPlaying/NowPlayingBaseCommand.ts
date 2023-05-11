@@ -64,7 +64,7 @@ export abstract class NowPlayingBaseCommand<
       mentions.requestable = mentions.senderRequestable;
       mentions.username = mentions.senderUsername;
       mentions.dbUser = mentions.senderUser!;
-      mentions.mirrorballUser = mentions.senderMirrorballUser;
+      mentions.lilacUser = mentions.senderLilacUser;
     }
 
     return mentions;

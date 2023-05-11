@@ -1,7 +1,7 @@
 import { User as DiscordUser } from "discord.js";
 import { ILike } from "typeorm";
 import { Crown } from "../../../database/entity/Crown";
-import { ArtistIsCrownBannedError } from "../../../errors/crowns";
+import { ArtistIsCrownBannedError } from "../../../errors/commands/crowns";
 import { sqlLikeEscape } from "../../../helpers/database";
 import { constants } from "../../../lib/constants";
 import { GowonContext } from "../../../lib/context/Context";

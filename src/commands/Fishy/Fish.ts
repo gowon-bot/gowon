@@ -1,4 +1,4 @@
-import { CantFishYetError } from "../../errors/fishy";
+import { CantFishYetError } from "../../errors/commands/fishy";
 import { bold, italic, mentionGuildMember } from "../../helpers/discord";
 import { emDash } from "../../helpers/specialCharacters";
 import { standardMentions } from "../../lib/context/arguments/mentionTypes/mentions";

@@ -168,8 +168,7 @@ export class DiscordResponseService extends BaseService<DiscordServiceContext> {
   ): boolean {
     return (
       ctx.payload.isInteraction() &&
-      (!options?.inChannel ||
-        options?.inChannel?.id === ctx.payload.channel.id) &&
+      !options?.inChannel &&
       !options?.forceNoInteractionReply
     );
   }

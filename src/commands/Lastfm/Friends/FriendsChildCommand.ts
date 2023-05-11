@@ -1,4 +1,4 @@
-import { NoFriendsError } from "../../../errors/friends";
+import { NoFriendsError } from "../../../errors/commands/friends";
 import { code } from "../../../helpers/discord";
 import { FriendsList } from "../../../helpers/friends";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";

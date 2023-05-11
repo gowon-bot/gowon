@@ -1,4 +1,4 @@
-import { FishyNotFoundError } from "../../errors/fishy";
+import { FishyNotFoundError } from "../../errors/commands/fishy";
 import { bold, italic } from "../../helpers/discord";
 import { quote } from "../../helpers/specialCharacters";
 import { StringArgument } from "../../lib/context/arguments/argumentTypes/StringArgument";

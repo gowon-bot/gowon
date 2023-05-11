@@ -1,64 +1,15 @@
 import { gql } from "@apollo/client/core";
-import { IndexingWebhookService } from "../../../api/webhooks/IndexingWebhookService";
 import { GowonContext } from "../../../lib/context/Context";
 import { BaseService } from "../../BaseService";
 import { ServiceRegistry } from "../../ServicesRegistry";
 import { MirrorballService } from "../MirrorballService";
-import {
-  MirrorballPageInfo,
-  MirrorballPrivacy,
-  MirrorballUser,
-  UserInput,
-} from "../MirrorballTypes";
+import { MirrorballPageInfo } from "../MirrorballTypes";
 
 export const PrivateUserDisplay = "Private user";
 
 export class MirrorballUsersService extends BaseService {
   private get mirrorballService() {
     return ServiceRegistry.get(MirrorballService);
-  }
-
-  public webhook = IndexingWebhookService.getInstance();
-
-  async getMirrorballUser(
-    ctx: GowonContext,
-    inputs: UserInput[]
-  ): Promise<MirrorballUser[] | undefined> {
-    const query = gql`
-      query getUser($inputs: [UserInput!]!) {
-        users(inputs: $inputs) {
-          id
-          username
-          discordID
-
-          privacy
-        }
-      }
-    `;
-
-    try {
-      const response = await this.mirrorballService.query<{
-        users: [MirrorballUser];
-      }>(ctx, query, { inputs });
-      return response.users;
-    } catch {}
-
-    return undefined;
-  }
-
-  async updatePrivacy(ctx: GowonContext, privacy: MirrorballPrivacy) {
-    const discordID = ctx.author.id;
-
-    const mutation = gql`
-      mutation updatePrivacy($discordID: String!, $privacy: Privacy!) {
-        updatePrivacy(user: { discordID: $discordID }, privacy: $privacy)
-      }
-    `;
-
-    await this.mirrorballService.mutate(ctx, mutation, {
-      discordID,
-      privacy: privacy.toUpperCase(),
-    });
   }
 
   public async login(
@@ -174,29 +125,5 @@ export class MirrorballUsersService extends BaseService {
     }>(ctx, query, { discordID });
 
     return response?.plays?.pageInfo?.recordCount || 0;
-  }
-
-  public async updateAndWait(
-    ctx: GowonContext,
-    discordID: string,
-    timeout = 2000
-  ): Promise<void> {
-    const query = gql`
-      mutation update($user: UserInput!) {
-        update(user: $user) {
-          token
-        }
-      }
-    `;
-
-    const response = await this.mirrorballService.query<{
-      update: { token: string };
-    }>(ctx, query, {
-      user: { discordID },
-    });
-
-    return await this.webhook
-      .waitForResponse(response.update.token, timeout)
-      .catch(() => {});
   }
 }

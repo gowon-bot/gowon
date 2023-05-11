@@ -4,7 +4,7 @@ import { StringArgument } from "../../../lib/context/arguments/argumentTypes/Str
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { Emoji } from "../../../lib/emoji/Emoji";
 import { displayLink } from "../../../lib/views/displays";
-import { MirrorballPrivacy } from "../../../services/mirrorball/MirrorballTypes";
+import { LilacPrivacy } from "../../../services/lilac/LilacAPIService.types";
 import { PrivateUserDisplay } from "../../../services/mirrorball/services/MirrorballUsersService";
 
 const args = {
@@ -37,12 +37,12 @@ export default class Privacy extends Command<typeof args> {
     "Your privacy determines what users in other servers can see about you on global leaderboards";
 
   async run() {
-    const privacy = this.parsedArguments.privacy?.toUpperCase() as
-      | MirrorballPrivacy
+    const privacy = this.parsedArguments.privacy?.toLowerCase() as
+      | LilacPrivacy
       | undefined;
 
-    const { mirrorballUser, senderUsername } = await this.getMentions({
-      fetchMirrorballUser: true,
+    const { lilacUser, senderUsername } = await this.getMentions({
+      fetchLilacUser: true,
     });
 
     const embed = this.newEmbed()
@@ -50,15 +50,19 @@ export default class Privacy extends Command<typeof args> {
       .setFooter({ text: this.privacyHelp });
 
     if (privacy) {
-      await this.mirrorballUsersService.updatePrivacy(this.ctx, privacy);
+      await this.lilacUsersService.modifyUser(
+        this.ctx,
+        { discordID: this.author.id },
+        { privacy: privacy.toUpperCase() as LilacPrivacy }
+      );
 
       embed.setDescription(
         `Your new privacy is: \`${privacy.toLowerCase()}\` (${
-          privacy === "DISCORD"
+          privacy === LilacPrivacy.Discord
             ? this.author.tag
-            : privacy === "FMUSERNAME"
+            : privacy === LilacPrivacy.FMUsername
             ? displayLink(senderUsername, LastfmLinks.userPage(senderUsername))
-            : privacy === "BOTH"
+            : privacy === LilacPrivacy.Both
             ? displayLink(this.author.tag, LastfmLinks.userPage(senderUsername))
             : PrivateUserDisplay
         })`
@@ -67,7 +71,7 @@ export default class Privacy extends Command<typeof args> {
       embed
         .setDescription(
           `
-Your current privacy: \`${(mirrorballUser?.privacy || "unset").toLowerCase()}\`
+Your current privacy: \`${lilacUser?.privacy?.toLowerCase() || "unset"}\`
       
 The options for privacy are:
 - \`fmusername\`: Last.fm username is shown (${Emoji.lastfm} ${displayLink(
@@ -86,8 +90,7 @@ You can set your privacy with \`${this.prefix}privacy <option>\``
         .setFooter({
           text:
             this.privacyHelp +
-            (!mirrorballUser?.privacy ||
-            mirrorballUser.privacy === MirrorballPrivacy.Unset
+            (!lilacUser?.privacy || lilacUser.privacy === LilacPrivacy.Unset
               ? "\nGowon will not reveal any information about you until you set your privacy"
               : ""),
         });

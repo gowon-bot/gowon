@@ -1,6 +1,6 @@
 import { GuildAtResponse } from "../../../database/entity/Crown";
 import { User } from "../../../database/entity/User";
-import { UserHasNoCrownsInServerError } from "../../../errors/crowns";
+import { UserHasNoCrownsInServerError } from "../../../errors/commands/crowns";
 import { UnknownError } from "../../../errors/errors";
 import { asyncMap } from "../../../helpers";
 import { bold } from "../../../helpers/discord";

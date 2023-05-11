@@ -4,7 +4,7 @@ import { Permission, PermissionType } from "../../database/entity/Permission";
 import {
   PermissionAlreadyExistsError,
   PermissionDoesNotExistError,
-} from "../../errors/permissions";
+} from "../../errors/commands/permissions";
 import { asyncMap } from "../../helpers";
 import { BaseService } from "../../services/BaseService";
 import { ServiceRegistry } from "../../services/ServicesRegistry";

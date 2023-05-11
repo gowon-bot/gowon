@@ -1,4 +1,4 @@
-import { CardsChildCommand } from "./CardsChildCommand";
+import { CardsChildCommand } from "../../Cards/CardsChildCommand";
 
 export class Work extends CardsChildCommand {
   idSeed = "kep1er xiaoting";

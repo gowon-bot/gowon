@@ -2,7 +2,7 @@ import {
   AliasRequiredError,
   InvalidFriendUsernameError,
   NotFriendsError,
-} from "../../../errors/friends";
+} from "../../../errors/commands/friends";
 import { code } from "../../../helpers/discord";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";

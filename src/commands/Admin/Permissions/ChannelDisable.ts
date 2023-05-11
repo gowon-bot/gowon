@@ -3,12 +3,12 @@ import {
   Permission,
   PermissionType,
 } from "../../../database/entity/Permission";
-import { CommandNotFoundError } from "../../../errors/errors";
-import { NotTextChannelError } from "../../../errors/external/discord";
 import {
   PermissionAlreadyExistsError,
   PermissionDoesNotExistError,
-} from "../../../errors/permissions";
+} from "../../../errors/commands/permissions";
+import { CommandNotFoundError } from "../../../errors/errors";
+import { NotTextChannelError } from "../../../errors/external/discord";
 import { code, mentionChannel } from "../../../helpers/discord";
 import { Command, Variation } from "../../../lib/command/Command";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";

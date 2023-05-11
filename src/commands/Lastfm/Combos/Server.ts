@@ -1,14 +1,14 @@
-import { ComboChildCommand } from "./ComboChildCommand";
-import { LogicError } from "../../../errors/errors";
-import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingEmbed";
-import { displayNumberedList } from "../../../lib/views/displays";
 import { Combo } from "../../../database/entity/Combo";
-import { NicknameService } from "../../../services/Discord/NicknameService";
-import { ArtistsService } from "../../../services/mirrorball/services/ArtistsService";
-import { ServiceRegistry } from "../../../services/ServicesRegistry";
-import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
+import { NoServerCombosError } from "../../../errors/commands/combo";
 import { bold } from "../../../helpers/discord";
+import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { displayNumberedList } from "../../../lib/views/displays";
+import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingEmbed";
+import { NicknameService } from "../../../services/Discord/NicknameService";
+import { ServiceRegistry } from "../../../services/ServicesRegistry";
+import { LilacArtistsService } from "../../../services/lilac/LilacArtistsService";
+import { ComboChildCommand } from "./ComboChildCommand";
 
 const args = {
   ...prefabArguments.artist,
@@ -28,15 +28,16 @@ export class ServerCombos extends ComboChildCommand<typeof args> {
   slashCommandName = "server";
 
   nicknameService = ServiceRegistry.get(NicknameService);
-  artistsService = ServiceRegistry.get(ArtistsService);
+  lilacArtistsService = ServiceRegistry.get(LilacArtistsService);
 
   async run() {
     let artistName = this.parsedArguments.artist;
 
     if (artistName) {
-      [artistName] = await this.artistsService.correctArtistNames(this.ctx, [
-        artistName,
-      ]);
+      [artistName] = await this.lilacArtistsService.correctArtistNames(
+        this.ctx,
+        [artistName]
+      );
     }
 
     const serverUsers = await this.serverUserIDs();
@@ -50,15 +51,13 @@ export class ServerCombos extends ComboChildCommand<typeof args> {
     );
 
     if (!combos.length) {
-      throw new LogicError(
-        `This server doesn't have any ${artistName ? `${artistName} ` : ""
-        }combos saved yet! \`${this.prefix}combo\` saves your combo`
-      );
+      throw new NoServerCombosError(this.prefix, artistName);
     }
 
     const embed = this.newEmbed().setAuthor(
       this.generateEmbedAuthor(
-        `${this.requiredGuild.name}'s top ${artistName ? `${artistName} ` : ""
+        `${this.requiredGuild.name}'s top ${
+          artistName ? `${artistName} ` : ""
         }combos`
       )
     );

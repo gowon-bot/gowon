@@ -22,7 +22,7 @@ import {
   displayTrackLink,
 } from "../../../lib/views/displays";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
-import { ArtistsService } from "../../../services/mirrorball/services/ArtistsService";
+import { LilacArtistsService } from "../../../services/lilac/LilacArtistsService";
 import { AlbumCoverService } from "../../../services/moderation/AlbumCoverService";
 import { ComboChildCommand } from "./ComboChildCommand";
 
@@ -56,14 +56,17 @@ export class Current extends ComboChildCommand<typeof args> {
     artists: new validators.LengthRangeValidator({ max: 10 }),
   };
 
-  artistsService = ServiceRegistry.get(ArtistsService);
   albumCoverService = ServiceRegistry.get(AlbumCoverService);
+  lilacArtistsService = ServiceRegistry.get(LilacArtistsService);
 
   async run() {
     let artists = this.parsedArguments.artists;
 
     if (artists.length) {
-      artists = await this.artistsService.correctArtistNames(this.ctx, artists);
+      artists = await this.lilacArtistsService.correctArtistNames(
+        this.ctx,
+        artists
+      );
     }
 
     const { requestable, username, perspective, senderUser } =

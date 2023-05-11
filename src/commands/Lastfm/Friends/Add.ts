@@ -1,7 +1,7 @@
 import { User as DiscordUser } from "discord.js";
 import { User as DBUser } from "../../../database/entity/User";
+import { NoFriendsToAddError } from "../../../errors/commands/friends";
 import { LastFMUserDoesntExistError } from "../../../errors/errors";
-import { NoFriendsToAddError } from "../../../errors/friends";
 import { asyncFilter, asyncMap } from "../../../helpers";
 import { code } from "../../../helpers/discord";
 import { SimpleMap } from "../../../helpers/types";

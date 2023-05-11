@@ -1,4 +1,4 @@
-import { CardsChildCommand } from "./CardsChildCommand";
+import { CardsChildCommand } from "../../Cards/CardsChildCommand";
 
 export class Bank extends CardsChildCommand {
   idSeed = "kep1er mashiro";

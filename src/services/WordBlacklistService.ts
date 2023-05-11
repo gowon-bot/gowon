@@ -5,7 +5,7 @@ import {
   TagBannedByDefaultError,
   TagNotAllowedError,
   TagNotBannedError,
-} from "../errors/tags";
+} from "../errors/commands/tags";
 import { GowonContext } from "../lib/context/Context";
 import { SettingsService } from "../lib/settings/SettingsService";
 import { BaseService } from "./BaseService";

@@ -2,7 +2,7 @@ import { User as DiscordUser } from "discord.js";
 import { User as DBUser } from "../../../database/entity/User";
 import { Perspective } from "../../../lib/Perspective";
 import { Requestable } from "../../LastFM/LastFMAPIService";
-import { MirrorballUser } from "../../mirrorball/MirrorballTypes";
+import { LilacUser } from "../../lilac/converters/user";
 import {
   GetMentionsOptions,
   Mentions,
@@ -33,8 +33,8 @@ export class MentionsBuilder {
     this.mentions[to].username = username;
   }
 
-  addMirrorballUser(to: MentionsUser, user: MirrorballUser | undefined): void {
-    this.mentions[to].mirrorballUser = user;
+  addLilacUser(to: MentionsUser, user: LilacUser | undefined): void {
+    this.mentions[to].lilacUser = user;
   }
 
   getDiscordUser(from?: MentionsUser): DiscordUser | undefined {
@@ -60,8 +60,8 @@ export class MentionsBuilder {
     );
   }
 
-  getMirrorballUser(from?: MentionsUser): MirrorballUser | undefined {
-    return this.get(from, "mirrorballUser") as MirrorballUser | undefined;
+  getLilacUser(from?: MentionsUser): LilacUser | undefined {
+    return this.get(from, "lilacUser") as LilacUser | undefined;
   }
 
   getUserDisplay(): string {
@@ -82,12 +82,13 @@ export class MentionsBuilder {
 
     const baseMentions = {
       senderUser: this.getDBUser("sender"),
-      senderMirrorballUser: this.getMirrorballUser("sender"),
+      senderLilacUser: this.getLilacUser("sender"),
       mentionedUsername: this.getLfmUsername("mentioned"),
       mentionedDBUser: this.getDBUser("mentioned"),
+      mentionedLilacUser: this.getLilacUser("mentioned"),
       perspective,
       ...requestables,
-    };
+    } satisfies Partial<Mentions>;
 
     if (this.hasAnyMentioned()) {
       return {
@@ -95,7 +96,7 @@ export class MentionsBuilder {
         dbUser: this.getDBUser("mentioned")!,
         username: this.getLfmUsername("mentioned")!,
         discordUser: this.getDiscordUser("mentioned"),
-        mirrorballUser: this.getMirrorballUser("mentioned"),
+        lilacUser: this.getLilacUser("mentioned"),
       };
     } else {
       return {
@@ -103,7 +104,7 @@ export class MentionsBuilder {
         dbUser: this.getDBUser("sender")!,
         username: this.getLfmUsername("sender")!,
         discordUser: this.getDiscordUser("sender"),
-        mirrorballUser: this.getMirrorballUser("sender"),
+        lilacUser: this.getLilacUser("sender"),
       };
     }
   }
@@ -113,7 +114,7 @@ export class MentionsBuilder {
       this.mentions.mentioned.dbUser ||
         this.mentions.mentioned.discordID ||
         this.mentions.mentioned.discordUser ||
-        this.mentions.mentioned.mirrorballUser ||
+        this.mentions.mentioned.lilacUser ||
         this.mentions.mentioned.username
     );
   }
