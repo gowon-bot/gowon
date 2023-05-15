@@ -75,6 +75,7 @@ export abstract class BaseCompoundComponent<
       components,
       replaceArray
     );
+
     const difference = components.length - withoutReplaces.length;
 
     const shouldReplace = isAnyIn(replaces)

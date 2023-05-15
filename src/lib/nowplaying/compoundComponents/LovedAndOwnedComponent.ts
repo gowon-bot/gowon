@@ -11,7 +11,7 @@ export class LovedAndOwnedComponent extends BaseCompoundComponent<
   requirements = lovedAndOwnedRequirements;
 
   static componentName = "loved-and-owned";
-  static replaces = [new AnyIn(["loved", "card-ownership"])];
+  static replaces = new AnyIn(["loved", "card-ownership"]);
 
   async present() {
     const loved = this.values.trackInfo && this.values.trackInfo.loved;

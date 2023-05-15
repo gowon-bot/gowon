@@ -9,7 +9,7 @@ export const specialFishies = [
     binomialName: "Carcharhinus blåhaj",
     rarity: new FishyRarityData(
       "Blåhaj",
-      0.6,
+      0.1,
       "#f5a8b9",
       Emoji.blahajRarity,
       "special",
