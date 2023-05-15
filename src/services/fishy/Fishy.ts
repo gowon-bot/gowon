@@ -49,6 +49,10 @@ export class Fishy {
   get maxWeight(): number {
     return this.options.weight.max;
   }
+
+  get hidden(): boolean {
+    return !!this.rarity.special;
+  }
 }
 
 export class FishyRarityData {
