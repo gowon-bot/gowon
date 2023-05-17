@@ -1,7 +1,7 @@
 import { Chance } from "chance";
 import { HexColorString } from "discord.js";
-import { Emoji } from "../../lib/emoji/Emoji";
-import { FishyEmoji } from "../../lib/emoji/FishEmoji";
+import { Emoji } from "../../../lib/emoji/Emoji";
+import { FishyEmoji } from "../../../lib/emoji/FishEmoji";
 
 export class Fishy {
   constructor(private options: FishyOptions) {}
@@ -97,7 +97,8 @@ export const FishyRarities = {
   // Mythic: new FishyRarityData("???", 1, "#e91e63", Emoji.mythic, "Mythic"),
 } as const;
 
-export type FishyRarity = (typeof FishyRarities)[keyof typeof FishyRarities];
+export type FishyRarityKey = keyof typeof FishyRarities;
+export type FishyRarity = (typeof FishyRarities)[FishyRarityKey];
 
 interface FishyOptions {
   id: string;

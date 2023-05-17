@@ -6,12 +6,12 @@ import { FishyProfile } from "../../database/entity/fishy/FishyProfile";
 import { toInt } from "../../helpers/lastfm";
 import { GowonContext } from "../../lib/context/Context";
 import { BaseService } from "../BaseService";
-import { Fishy, FishyRarities, FishyRarityData } from "./Fishy";
 import {
   Aquarium,
   FishyRarityBreakdown,
   FishyResult,
 } from "./FishyService.types";
+import { Fishy, FishyRarities, FishyRarityData } from "./classes/Fishy";
 import { specialFishies } from "./fishy/special";
 import { trash } from "./fishy/trash";
 import { findFishy, getFishyList } from "./fishyList";

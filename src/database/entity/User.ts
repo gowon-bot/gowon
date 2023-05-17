@@ -14,6 +14,7 @@ import { Friend } from "./Friend";
 import { AlbumCard } from "./cards/AlbumCard";
 import { FishyCatch } from "./fishy/FishyCatch";
 import { FishyProfile } from "./fishy/FishyProfile";
+import { FishyQuest } from "./fishy/FishyQuest";
 
 @Entity({ name: "users" })
 export class User extends BaseEntity {
@@ -58,6 +59,9 @@ export class User extends BaseEntity {
 
   @OneToMany((_) => FishyCatch, (fishyCatch) => fishyCatch.gifter)
   fishyGifts!: FishyCatch[];
+
+  @OneToMany((_) => FishyQuest, (fishyQuest) => fishyQuest.quester)
+  fishyQuests!: FishyQuest[];
 
   @OneToOne((_) => FishyProfile, (fishyProfile) => fishyProfile.user)
   fishyProfile!: FishyProfile;

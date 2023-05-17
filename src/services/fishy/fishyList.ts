@@ -1,5 +1,5 @@
 import { extractEmojiID } from "../../lib/emoji/Emoji";
-import { Fishy, FishyRarities, FishyRarityData } from "./Fishy";
+import { Fishy, FishyRarities, FishyRarityData } from "./classes/Fishy";
 import { commonFishies } from "./fishy/common";
 import { legendaryFishies } from "./fishy/legendary";
 import { rareFishies } from "./fishy/rare";

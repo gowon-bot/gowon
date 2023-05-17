@@ -35,6 +35,7 @@ import { UsersService } from "./dbservices/UsersService";
 import { CrownsHistoryService } from "./dbservices/crowns/CrownsHistoryService";
 import { CrownsService } from "./dbservices/crowns/CrownsService";
 import { CrownsUserService } from "./dbservices/crowns/CrownsUserService";
+import { FishyProgressionService } from "./fishy/FishyProgressionService";
 import { FishyService } from "./fishy/FishyService";
 import { LilacAPIService } from "./lilac/LilacAPIService";
 import { LilacArtistsService } from "./lilac/LilacArtistsService";
@@ -69,6 +70,7 @@ const services: Service[] = [
   DiscordService,
   EmojiService,
   FishyService,
+  FishyProgressionService,
   FriendsService,
   GowonService,
   GithubService,

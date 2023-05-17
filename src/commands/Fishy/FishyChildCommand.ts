@@ -9,6 +9,7 @@ import {
   GetMentionsOptions,
   Mentions,
 } from "../../services/arguments/mentions/MentionsService.types";
+import { FishyProgressionService } from "../../services/fishy/FishyProgressionService";
 import { FishyService } from "../../services/fishy/FishyService";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 
@@ -31,6 +32,7 @@ export abstract class FishyChildCommand<
   category = "fishy";
 
   fishyService = ServiceRegistry.get(FishyService);
+  fishyProgressionService = ServiceRegistry.get(FishyProgressionService);
 
   async getMentions(
     options: FishyOptions & { fishyProfileRequired: true }

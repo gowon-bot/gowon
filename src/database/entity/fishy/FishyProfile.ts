@@ -26,6 +26,9 @@ export class FishyProfile extends BaseEntity {
   @Column({ default: 0, type: "float" })
   totalWeight!: number;
 
+  @Column({ default: 0 })
+  questsCompleted!: number;
+
   @OneToOne((_) => User, (user) => user.fishyProfile, { eager: true })
   @JoinColumn()
   user!: User;

@@ -2,7 +2,7 @@ import { standardMentions } from "../../lib/context/arguments/mentionTypes/menti
 import { ArgumentsMap } from "../../lib/context/arguments/types";
 import { displayNumber, displayNumberedList } from "../../lib/views/displays";
 import { SimpleScrollingEmbed } from "../../lib/views/embeds/SimpleScrollingEmbed";
-import { Fishy } from "../../services/fishy/Fishy";
+import { Fishy } from "../../services/fishy/classes/Fishy";
 import { findFishy, fishyList } from "../../services/fishy/fishyList";
 import { FishyChildCommand } from "./FishyChildCommand";
 

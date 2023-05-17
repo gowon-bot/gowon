@@ -2,7 +2,7 @@ import { Chance } from "chance";
 import { FishyCatch } from "../../database/entity/fishy/FishyCatch";
 import { chunkArray, shuffle } from "../../helpers";
 import { Emoji } from "../../lib/emoji/Emoji";
-import { Fishy, FishyRarities } from "./Fishy";
+import { Fishy, FishyRarities } from "./classes/Fishy";
 
 export interface FishyResult {
   fishy: Fishy;

@@ -1,4 +1,4 @@
-import { FishyRarityData } from "../../services/fishy/Fishy";
+import { FishyRarityData } from "../../services/fishy/classes/Fishy";
 
 export function displayRarity(
   rarity: FishyRarityData,

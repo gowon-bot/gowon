@@ -1,5 +1,5 @@
 import { FishyEmojiList } from "../../../lib/emoji/FishEmoji";
-import { Fishy, FishyRarities } from "../Fishy";
+import { Fishy, FishyRarities } from "../classes/Fishy";
 
 export const superRareFishies = [
   new Fishy({
@@ -32,7 +32,7 @@ export const superRareFishies = [
   new Fishy({
     id: "peppermint-angelfish",
     name: "Peppermint Angelfish",
-    binomialName: "",
+    binomialName: "Centropyge boylei",
     rarity: FishyRarities.SuperRare,
     description: "A single peppermint angelfish once sold for 30,000 dollars!",
     emoji: FishyEmojiList.peppermintAngelfish,

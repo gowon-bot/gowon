@@ -1,6 +1,6 @@
 import { Emoji } from "../../../lib/emoji/Emoji";
 import { FishyEmojiList } from "../../../lib/emoji/FishEmoji";
-import { Fishy, FishyRarityData } from "../Fishy";
+import { Fishy, FishyRarityData } from "../classes/Fishy";
 
 export const specialFishies = [
   new Fishy({

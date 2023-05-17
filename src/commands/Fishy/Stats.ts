@@ -5,7 +5,7 @@ import { standardMentions } from "../../lib/context/arguments/mentionTypes/menti
 import { ArgumentsMap } from "../../lib/context/arguments/types";
 import { Emoji } from "../../lib/emoji/Emoji";
 import { displayDate, displayNumber } from "../../lib/views/displays";
-import { FishyRarities } from "../../services/fishy/Fishy";
+import { FishyRarities } from "../../services/fishy/classes/Fishy";
 import { FishyChildCommand } from "./FishyChildCommand";
 
 const args = {

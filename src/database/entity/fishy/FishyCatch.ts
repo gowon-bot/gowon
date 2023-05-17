@@ -6,7 +6,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { Fishy } from "../../../services/fishy/Fishy";
+import { Fishy } from "../../../services/fishy/classes/Fishy";
 import { findFishy } from "../../../services/fishy/fishyList";
 import { User } from "../User";
 

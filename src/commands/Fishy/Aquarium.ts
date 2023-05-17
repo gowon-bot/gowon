@@ -2,12 +2,12 @@ import { Chance } from "chance";
 import { bold } from "../../helpers/discord";
 import { ArgumentsMap } from "../../lib/context/arguments/types";
 import { displayNumber } from "../../lib/views/displays";
-import { Fishy } from "../../services/fishy/Fishy";
 import {
   AquariumDimensions,
   AquariumDisplay,
   Aquarium as AquariumType,
 } from "../../services/fishy/FishyService.types";
+import { Fishy } from "../../services/fishy/classes/Fishy";
 import { FishyChildCommand } from "./FishyChildCommand";
 
 const args = {} satisfies ArgumentsMap;

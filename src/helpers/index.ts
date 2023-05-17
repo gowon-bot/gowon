@@ -16,7 +16,7 @@ export function abbreviateNumber(number: number | string) {
     // Convert array index to "1000", "1000000", etc
     var size = Math.pow(10, (i + 1) * 3);
 
-    if (size <= number) {
+    if (size <= convertedNumber) {
       convertedNumber = Math.round(convertedNumber / size);
 
       // Handle special case where we round up to the next abbreviation

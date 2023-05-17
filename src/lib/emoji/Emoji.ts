@@ -98,6 +98,16 @@ export const Emoji = {
   mythic: "<:mythic:1091475734905757807>",
   unknown: "<:unknown:1103419210350202922>",
 
+  // Fishy quests
+  fishyQuestBook: "<:fishyQuestBook:1107854999293284402>",
+  fishyQuestComputer: "<:fishyQuestComputer:1107854997380669490>",
+  fishyQuestDocument: "<:fishyQuestDocument:1107854995921055755>",
+  fishyQuestEnvelope: "<:fishyQuestEnvelope:1107855000098574390>",
+  fishyQuestNewspaper: "<:fishyQuestNewspaper:1107854994851512340>",
+  fishyQuestPhone: "<:fishyQuestPhone:1107855001537216602>",
+  fishyQuestScroll: "<:fishyQuestScroll:1107854992112627752>",
+  fishyQuestTV: "<:fishyQuestTV:1107854993148608574>",
+
   blahajRarity: "<:blahajR:1103417169057947718>",
 
   // Fishy misc
