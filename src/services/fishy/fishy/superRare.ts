@@ -1,5 +1,8 @@
 import { FishyEmojiList } from "../../../lib/emoji/FishEmoji";
+import { BaseFishy } from "../classes/BaseFishy";
 import { Fishy, FishyRarities } from "../classes/Fishy";
+import { GlovesFishy } from "../classes/GlovesFishy";
+import { NetFishy } from "../classes/NetFishy";
 
 export const superRareFishies = [
   new Fishy({
@@ -83,4 +86,59 @@ export const superRareFishies = [
       max: 8,
     },
   }),
-] satisfies Fishy[];
+
+  new NetFishy({
+    id: "crystal-shrimp",
+    name: "Crystal Shrimp",
+    binomialName: "Caridina cantonensis",
+    rarity: FishyRarities.SuperRare,
+    emoji: FishyEmojiList.crystalShrimp,
+    description: "This shrimp is a red and white variant of the Bee Shrimp.",
+    weight: {
+      min: 0.1,
+      max: 1,
+    },
+  }),
+
+  new NetFishy({
+    id: "denises-pygmy-seahorse",
+    name: "Denise's Pygmy Seahorse",
+    binomialName: "Hippocampus denise",
+    rarity: FishyRarities.SuperRare,
+    emoji: FishyEmojiList.denisesPygmySeahorse,
+    description:
+      "This species was named after Denise Tackett, an underwater photographer!",
+    weight: {
+      min: 0.1,
+      max: 0.1,
+    },
+  }),
+
+  new GlovesFishy({
+    id: "masked-crab",
+    name: "Masked Crab",
+    binomialName: "Corystes cassivelaunus",
+    rarity: FishyRarities.SuperRare,
+    emoji: FishyEmojiList.maskedCrab,
+    description:
+      "The name 'Masked Crab' derives from the patterns on the carapace (shell) which resemble a human face",
+    weight: {
+      min: 0.1,
+      max: 0.1,
+    },
+  }),
+
+  new GlovesFishy({
+    id: "red-devil-vampire-crab",
+    name: "Red Devil Vampire Crab",
+    binomialName: "Geosesarma hagen",
+    rarity: FishyRarities.SuperRare,
+    emoji: FishyEmojiList.redDevilVampireCrab,
+    description:
+      "This species often creates shelters by digging up small amounts of dirt near bodies of water, and hides in them during the day",
+    weight: {
+      min: 0.1,
+      max: 0.1,
+    },
+  }),
+] satisfies BaseFishy[];

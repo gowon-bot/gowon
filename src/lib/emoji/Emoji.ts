@@ -69,6 +69,14 @@ export const Emoji = {
   developer: "<:developer:913203995470888990>",
   "#swag": "<:swag:936102174394581032>",
 
+  // Commmand icons
+  runsInDMs: "<:runs_in_DMs:1116262516520124436>",
+  doesNotRunInDMs: "<:does_not_run_in_DMs:1116262511428259881>",
+  requiresAdmin: "<:requires_admin:1116285314332364930>",
+  doesNotRequireAdmin: "<:does_not_require_admin:1116285311513800786>",
+  slashCommand: "<:slash_command:1116262522085965824>",
+  notASlashCommand: "<:not_a_slash_command:1116262520156590090>",
+
   // Aquarium
   aquariumLeft: "<:AquariumLeft:1089731232952234044>",
   aquariumRight: "<:AquariumRight:1089731228581769356>",
@@ -88,16 +96,6 @@ export const Emoji = {
   bubbles2: "<:Bubbles2:1089735377239154688>",
   bubbles3: "<:Bubbles3:1089735375112634448>",
 
-  // Fishy rarities
-  trash: "<:trash:1091475743483109417>",
-  common: "<:common:1091475742522622113>",
-  uncommon: "<:uncommon:1091475741117517834>",
-  rare: "<:rare:1091475739423031386>",
-  superRare: "<:superRare:1091475737913073745>",
-  legendary: "<:legendary:1091475736419901470>",
-  mythic: "<:mythic:1091475734905757807>",
-  unknown: "<:unknown:1103419210350202922>",
-
   // Fishy quests
   fishyQuestBook: "<:fishyQuestBook:1107854999293284402>",
   fishyQuestComputer: "<:fishyQuestComputer:1107854997380669490>",
@@ -107,19 +105,13 @@ export const Emoji = {
   fishyQuestPhone: "<:fishyQuestPhone:1107855001537216602>",
   fishyQuestScroll: "<:fishyQuestScroll:1107854992112627752>",
   fishyQuestTV: "<:fishyQuestTV:1107854993148608574>",
-
-  blahajRarity: "<:blahajR:1103417169057947718>",
+  fishyQuestSpoken: "<:fishyQuestSpoken:1109197521491865682>",
 
   // Fishy misc
   newFishy: "<:newFishy:1091512966672830594>",
-
-  // Commmand icons
-  runsInDMs: "<:runs_in_DMs:1116262516520124436>",
-  doesNotRunInDMs: "<:does_not_run_in_DMs:1116262511428259881>",
-  requiresAdmin: "<:requires_admin:1116285314332364930>",
-  doesNotRequireAdmin: "<:does_not_require_admin:1116285311513800786>",
-  slashCommand: "<:slash_command:1116262522085965824>",
-  notASlashCommand: "<:not_a_slash_command:1116262520156590090>",
+  level1Fishy: "<:Level1Fishy:1112268413377712208>",
+  level2Fishy: "<:Level2Fishy:1112268414833152050>",
+  level3Fishy: "<:Level3Fishy:1112268417068695623>",
 } satisfies Record<string, string>;
 
 export const EmojiRaw = Object.entries(Emoji).reduce(

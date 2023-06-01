@@ -1,5 +1,8 @@
 import { FishyEmojiList } from "../../../lib/emoji/FishEmoji";
+import { BaseFishy } from "../classes/BaseFishy";
 import { Fishy, FishyRarities } from "../classes/Fishy";
+import { GlovesFishy } from "../classes/GlovesFishy";
+import { NetFishy } from "../classes/NetFishy";
 
 export const rareFishies = [
   new Fishy({
@@ -98,4 +101,77 @@ export const rareFishies = [
       max: 6,
     },
   }),
-] satisfies Fishy[];
+
+  new NetFishy({
+    id: "blue-bolt-shrimp",
+    name: "Blue Bolt Shrimp",
+    binomialName: "Caridina cantonensis",
+    rarity: FishyRarities.Rare,
+    emoji: FishyEmojiList.blueBoltShrimp,
+    description:
+      "This shrimp is a blue variant of the Bee Shrimp, named after its brilliant blue colour.",
+    weight: {
+      min: 0.1,
+      max: 1,
+    },
+  }),
+
+  new NetFishy({
+    id: "cardinal-shrimp",
+    name: "Cardinal Shrimp",
+    binomialName: "Caridina dennerli",
+    rarity: FishyRarities.Rare,
+    emoji: FishyEmojiList.cardinalShrimp,
+    description:
+      "No Caridina dennerli have been recorded in the wild since 2013, and the species possibly is extinct in the wild. However, it is still kept and bred in captivity.",
+    weight: {
+      min: 0.1,
+      max: 1,
+    },
+  }),
+
+  new NetFishy({
+    id: "big-belly-seahorse",
+    name: "Big-belly Seahorse",
+    binomialName: "Hippocampus abdominalis",
+    rarity: FishyRarities.Rare,
+    emoji: FishyEmojiList.bigbellySeahorse,
+    description:
+      "Each this species' eyes can move independently, allowing it to more easily see predators",
+    weight: {
+      min: 0.1,
+      max: 1,
+    },
+  }),
+
+  new GlovesFishy({
+    id: "sleepy-crab",
+    name: "Sleepy Crab",
+    binomialName: "Dromia dormia",
+    rarity: FishyRarities.Rare,
+    emoji: FishyEmojiList.sleepyCrab,
+    description:
+      "This species of crab carries a sponge on its back, earning it the nickname of Sponge Crab",
+    weight: {
+      min: 0.1,
+      max: 1,
+    },
+  }),
+
+  new GlovesFishy({
+    id: "golden-king-crab",
+    name: "Golden King Crab",
+    binomialName: "Lithodes aequispinus",
+    rarity: FishyRarities.Rare,
+    emoji: FishyEmojiList.goldenKingCrab,
+    description: "This crab uses its strong sense of smell to seek out food",
+    weight: {
+      min: 0.1,
+      max: 1,
+    },
+  }),
+
+  // Achelous sebae
+  // Quadrella maculosa
+  // Favus granulatus
+] satisfies BaseFishy[];

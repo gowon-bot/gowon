@@ -7,6 +7,7 @@ import {
   FishyQuestType,
 } from "../../database/entity/fishy/FishyQuest";
 import { getNumberEnumValues } from "../../helpers/enum";
+import { fishyQuestLevelSize } from "../../helpers/fishy";
 import { average } from "../../helpers/stats";
 import { Emoji } from "../../lib/emoji/Emoji";
 import { BaseService } from "../BaseService";
@@ -39,12 +40,16 @@ export class FishyProgressionService extends BaseService {
 
   /** Returns true if the quest was completed */
   public async incrementQuestProgress(
-    fishyQuest: FishyQuest
+    fishyQuest: FishyQuest,
+    fishyProfile: FishyProfile
   ): Promise<boolean> {
-    fishyQuest!.progress++;
+    fishyQuest.progress++;
 
     if (fishyQuest.isCompleted) {
       fishyQuest.completedAt = new Date();
+      fishyProfile.questsCompleted++;
+
+      await fishyProfile.save();
     }
 
     this.saveQuest(fishyQuest);
@@ -53,16 +58,13 @@ export class FishyProgressionService extends BaseService {
   }
 
   public async getNextQuest(fishyProfile: FishyProfile): Promise<FishyQuest> {
+    // The final quest before hitting the next level should be a milestone quest
     if (
       fishyProfile.questsCompleted &&
-      fishyProfile.questsCompleted % 25 === 0
+      fishyProfile.questsCompleted % fishyQuestLevelSize ===
+        fishyQuestLevelSize - 1
     ) {
-      return FishyQuest.create({
-        quester: fishyProfile.user,
-        type: FishyQuestType.Milestone,
-        count: fishyProfile.questsCompleted * 2,
-        emoji: this.pickFishyQuestEmoji(),
-      });
+      return this.generateMilestoneFishyQuest(fishyProfile);
     } else {
       return await this.generateFishyQuest(fishyProfile);
     }
@@ -134,6 +136,16 @@ export class FishyProgressionService extends BaseService {
     });
   }
 
+  private generateMilestoneFishyQuest(fishyProfile: FishyProfile) {
+    return FishyQuest.create({
+      quester: fishyProfile.user,
+      type: FishyQuestType.Milestone,
+      count: 2 * fishyQuestLevelSize * (fishyProfile.level + 1),
+      progress: fishyProfile.timesFished,
+      emoji: this.pickFishyQuestEmoji(),
+    });
+  }
+
   private getRarityForTier(tier: number): FishyRarityData {
     return Chance().pickone(this.rarities.slice(0, tier));
   }
@@ -184,6 +196,7 @@ export class FishyProgressionService extends BaseService {
       Emoji.fishyQuestPhone,
       Emoji.fishyQuestScroll,
       Emoji.fishyQuestTV,
+      Emoji.fishyQuestSpoken,
     ]);
   }
 }

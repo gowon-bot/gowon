@@ -7,7 +7,7 @@ import {
   AquariumDisplay,
   Aquarium as AquariumType,
 } from "../../services/fishy/FishyService.types";
-import { Fishy } from "../../services/fishy/classes/Fishy";
+import { BaseFishy } from "../../services/fishy/classes/BaseFishy";
 import { FishyChildCommand } from "./FishyChildCommand";
 
 const args = {} satisfies ArgumentsMap;
@@ -72,7 +72,7 @@ ${
 `;
   }
 
-  private getAquariumMessage(fishy: Fishy[]): string {
+  private getAquariumMessage(fishy: BaseFishy[]): string {
     const fishyCount = fishy.length;
 
     if (fishyCount === 0) {

@@ -9,7 +9,7 @@ import { standardMentions } from "../../lib/context/arguments/mentionTypes/menti
 import { ArgumentsMap } from "../../lib/context/arguments/types";
 import { Emoji } from "../../lib/emoji/Emoji";
 import { displayNumber } from "../../lib/views/displays";
-import { displayRarity } from "../../lib/views/fishy";
+import { displayFishyLevelUp, displayRarity } from "../../lib/views/fishy";
 import { FishyChildCommand } from "./FishyChildCommand";
 
 const args = {
@@ -66,7 +66,8 @@ export class Fish extends FishyChildCommand<typeof args> {
     const { quest, isNewQuest } = await this.getQuest(senderFishyProfile);
     const { madeQuestProgress, questCompleted } = await this.checkQuestProgress(
       quest,
-      fishyCatch
+      fishyCatch,
+      senderFishyProfile
     );
 
     const giftDisplay = !mentionedFishyProfile
@@ -140,7 +141,8 @@ export class Fish extends FishyChildCommand<typeof args> {
 
   private async checkQuestProgress(
     quest: FishyQuest,
-    fishyCatch: FishyCatch
+    fishyCatch: FishyCatch,
+    fishyProfile: FishyProfile
   ): Promise<{
     madeQuestProgress: boolean;
     questCompleted: boolean;
@@ -151,7 +153,23 @@ export class Fish extends FishyChildCommand<typeof args> {
 
     if (madeQuestProgress) {
       questCompleted =
-        await this.fishyProgressionService.incrementQuestProgress(quest!);
+        await this.fishyProgressionService.incrementQuestProgress(
+          quest!,
+          fishyProfile
+        );
+    }
+
+    if (quest.isMilestone && quest.isCompleted) {
+      const milestoneCompletedEmbed = this.newEmbed()
+        .setAuthor(this.generateEmbedAuthor("Fishy level up"))
+        .setDescription(displayFishyLevelUp(fishyProfile.level + 1));
+
+      await this.fishyProgressionService.incrementQuestProgress(
+        quest,
+        fishyProfile
+      );
+
+      this.send(milestoneCompletedEmbed);
     }
 
     return { questCompleted, madeQuestProgress };

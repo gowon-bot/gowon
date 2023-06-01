@@ -2,10 +2,11 @@ import { Chance } from "chance";
 import { FishyCatch } from "../../database/entity/fishy/FishyCatch";
 import { chunkArray, shuffle } from "../../helpers";
 import { Emoji } from "../../lib/emoji/Emoji";
-import { Fishy, FishyRarities } from "./classes/Fishy";
+import { BaseFishy } from "./classes/BaseFishy";
+import { FishyRarities } from "./classes/Fishy";
 
 export interface FishyResult {
-  fishy: Fishy;
+  fishy: BaseFishy;
   weight: number;
   isNew: boolean;
 }
@@ -22,7 +23,7 @@ export interface AquariumDimensions {
 export interface Aquarium {
   fishies: FishyCatch[];
   size: number;
-  mostAbundantFish: Fishy;
+  mostAbundantFish: BaseFishy;
 }
 
 export class AquariumDisplay {
@@ -42,7 +43,10 @@ export class AquariumDisplay {
 
   constructor() {}
 
-  public render({ width, height }: AquariumDimensions, fishy: Fishy[]): string {
+  public render(
+    { width, height }: AquariumDimensions,
+    fishy: BaseFishy[]
+  ): string {
     const flattenedAquarium = this.createFlattenedAquarium(width, height);
 
     const filledAquarium = this.fillWithFishy(flattenedAquarium, fishy);
@@ -70,7 +74,10 @@ export class AquariumDisplay {
     return shuffle([...water, ...bubbles]);
   }
 
-  private fillWithFishy(flattenedAquarium: string[], fishy: Fishy[]): string[] {
+  private fillWithFishy(
+    flattenedAquarium: string[],
+    fishy: BaseFishy[]
+  ): string[] {
     return shuffle(
       flattenedAquarium
         .slice(fishy.length, flattenedAquarium.length)

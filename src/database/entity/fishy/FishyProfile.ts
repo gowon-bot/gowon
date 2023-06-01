@@ -8,6 +8,7 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
+import { getFishyLevel } from "../../../helpers/fishy";
 import { constants } from "../../../lib/constants";
 import { humanizeDuration } from "../../../lib/timeAndDate/helpers/humanize";
 import { User } from "../User";
@@ -36,7 +37,12 @@ export class FishyProfile extends BaseEntity {
   @CreateDateColumn()
   createdAt!: Date;
 
+  get level(): number {
+    return getFishyLevel(this.questsCompleted);
+  }
+
   public canFish(): boolean {
+    return true;
     return (
       !this.lastFished ||
       new Date() > add(this.lastFished, constants.fishyCooldown)

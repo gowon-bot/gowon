@@ -6,7 +6,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { Fishy } from "../../../services/fishy/classes/Fishy";
+import { BaseFishy } from "../../../services/fishy/classes/BaseFishy";
 import { findFishy } from "../../../services/fishy/fishyList";
 import { User } from "../User";
 
@@ -30,7 +30,7 @@ export class FishyCatch extends BaseEntity {
   @CreateDateColumn()
   fishedAt!: Date;
 
-  get fishy(): Fishy {
+  get fishy(): BaseFishy {
     return findFishy({ byID: this.fishyId })!;
   }
 }

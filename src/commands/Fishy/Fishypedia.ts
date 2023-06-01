@@ -6,7 +6,6 @@ import { EmojisArgument } from "../../lib/context/arguments/argumentTypes/discor
 import { standardMentions } from "../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../lib/context/arguments/types";
 import { displayNumber } from "../../lib/views/displays";
-import { displayRarity } from "../../lib/views/fishy";
 import { findFishy } from "../../services/fishy/fishyList";
 import { FishyChildCommand } from "./FishyChildCommand";
 
@@ -67,7 +66,9 @@ export class Fishypedia extends FishyChildCommand<typeof args> {
       .setDescription(
         `
 ${fishy.emoji} ${bold(italic(fishy.binomialName), false)}
-${displayRarity(fishy.rarity, true)} 
+${fishy.rarity.emoji.forLevel(fishy.requiredFishyLevel)} Level ${
+          fishy.requiredFishyLevel
+        } ${fishy.rarity.name} fishy
 
 ${italic(quote(fishy.description))}
 

@@ -2,6 +2,7 @@ import { Chance } from "chance";
 import { quote } from "../../helpers/specialCharacters";
 import { Emoji } from "../../lib/emoji/Emoji";
 import { displayNumber, displayProgressBar } from "../../lib/views/displays";
+import { displayFishyLevelUp } from "../../lib/views/fishy";
 import { FishyChildCommand } from "./FishyChildCommand";
 
 export class Quest extends FishyChildCommand {
@@ -42,6 +43,23 @@ ${displayProgressBar(currentQuest.progress, currentQuest.count)}`
       );
       await this.fishyProgressionService.saveQuest(quest);
 
+      if (quest.isMilestone && quest.isCompleted) {
+        const milestoneCompletedEmbed = this.newEmbed()
+          .setAuthor(this.generateEmbedAuthor("Fishy level up"))
+          .setDescription(
+            displayFishyLevelUp(fishyProfile.level + 1) +
+              ` See your next quest with \`${this.prefix}fq\``
+          );
+
+        await this.fishyProgressionService.incrementQuestProgress(
+          quest,
+          fishyProfile
+        );
+
+        await this.send(milestoneCompletedEmbed);
+        return;
+      }
+
       const embed = this.newEmbed()
         .setAuthor(this.generateEmbedAuthor("Fishy quest"))
         .setDescription(
@@ -49,9 +67,9 @@ ${displayProgressBar(currentQuest.progress, currentQuest.count)}`
             "given",
             "tasked with",
             "hired for",
-          ])} a new quest:\n\n${quest.emoji}${Emoji.newFishy}${quote(
-            quest.name
-          )}`
+          ])} a new ${quest.isMilestone ? "milestone " : ""}quest:\n\n${
+            quest.emoji
+          }${Emoji.newFishy}${quote(quest.name)}`
         );
 
       await this.send(embed);

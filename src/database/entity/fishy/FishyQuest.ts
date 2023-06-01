@@ -7,7 +7,7 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { bold } from "../../../helpers/discord";
-import { Emoji } from "../../../lib/emoji/Emoji";
+import { FishyRarityEmojiList } from "../../../lib/emoji/FishyRarityEmoji";
 import { displayNumber } from "../../../lib/views/displays";
 import {
   FishyRarities,
@@ -53,7 +53,11 @@ export class FishyQuest extends BaseEntity {
   completedAt?: Date;
 
   get isCompleted(): boolean {
-    return this.progress === this.count;
+    return this.progress >= this.count;
+  }
+
+  get isMilestone(): boolean {
+    return this.type === FishyQuestType.Milestone;
   }
 
   get name(): string {
@@ -99,8 +103,8 @@ export class FishyQuest extends BaseEntity {
       start +
       `${bold(
         rarity.isTrash()
-          ? `pieces of ${Emoji.trash}Trash`
-          : `${rarity.emoji}${rarity.name} fishy`
+          ? `pieces of ${FishyRarityEmojiList.trash.base}Trash`
+          : `${rarity.emoji.base}${rarity.name} fishy`
       )}`
     );
   }

@@ -13,6 +13,8 @@ export class TrashEmoji extends FishyEmoji {
 }
 
 export const FishyEmojiList = {
+  // Level 1 Fishy
+
   asianSheepsheadWrasse: new FishyEmoji(
     "<:AsianSheepsheadWrasse:1091499815461994576>",
     "<:AsianSheepsheadWrasseWater:1091500108757078037>",
@@ -192,5 +194,120 @@ export const FishyEmojiList = {
     "<:Blahaj:1103414812635037767>",
     "<:BlahajWater:1103414815432659014>",
     "<:bhSilhouette:1103415399233630288>"
+  ),
+
+  // Level 2 Fishy
+
+  pinkShrimp: new FishyEmoji(
+    "<:PinkShrimp:1109227666164416602>",
+    "<:PinkShrimpWater:1109227631825670144>",
+    "<:sSilhouette:1111855045965774908>"
+  ),
+  brownShrimp: new FishyEmoji(
+    "<:BrownShrimp:1109227661584253060>",
+    "<:BrownShrimpWater:1109227627186765844>",
+    "<:sSilhouette:1111855045965774908>"
+  ),
+  blackTigerShrimp: new FishyEmoji(
+    "<:TigerShrimp:1109227659440963668>",
+    "<:TigerShrimpWater:1109227625987186728>",
+    "<:sSilhouette:1111855045965774908>"
+  ),
+  snowballShrimp: new FishyEmoji(
+    "<:SnowballShrimp:1109237324069474334>",
+    "<:SnowballShrimpWater:1109237335750627390>",
+    "<:sSilhouette:1111855045965774908>"
+  ),
+  blueBoltShrimp: new FishyEmoji(
+    "<:BlueBoltShrimp:1109227664146964530>",
+    "<:BlueBoltShrimpWater:1109227630546403468>",
+    "<:sSilhouette:1111855045965774908>"
+  ),
+  cardinalShrimp: new FishyEmoji(
+    "<:CardinalShrimp:1109227658451091476>",
+    "<:CardinalShrimpWater:1109227624082972723>",
+    "<:sSilhouette:1111855045965774908>"
+  ),
+  crystalShrimp: new FishyEmoji(
+    "<:CrystalShrimp:1109227652092526713>",
+    "<:CrystalShrimpWater:1109227621524443178>",
+    "<:sSilhouette:1111855045965774908>"
+  ),
+  ghostShrimp: new FishyEmoji(
+    "<:GhostShrimp:1109227662922231979>",
+    "<:GhostShrimpWater:1109227628545720400>",
+    "<:sSilhouette:1111855045965774908>"
+  ),
+  commonSeahorse: new FishyEmoji(
+    "<:CommonSeahorse:1112271542559191130>",
+    "<:CommonSeahorseWater:1112271577048961064>",
+    "<:cs3Silhouette:1112271510950907924>"
+  ),
+  linedSeahorse: new FishyEmoji(
+    "<:LinedSeahorse:1112271536578101288>",
+    "<:LinedSeahorseWater:1112271573722873856>",
+    "<:lsSilhouette:1112271509025730592>"
+  ),
+  bigbellySeahorse: new FishyEmoji(
+    "<:BigbellySeahorse:1112271537832218665>",
+    "<:BigbellySeahorseWater:1112271575018917960>",
+    "<:bbsSilhouette:1112271507394154557>"
+  ),
+  denisesPygmySeahorse: new FishyEmoji(
+    "<:PygmySeahorse:1112271535277871194>",
+    "<:PygmySeahorseWater:1112271572028362762>",
+    "<:psSilhouette:1112271505661907015>"
+  ),
+  zebraSeahorse: new FishyEmoji(
+    "<:ZebraSeahorse:1112271533419802734>",
+    "<:ZebraSeahorseWater:1112271570191261776>",
+    "<:zsSilhouette:1112271504382632016>"
+  ),
+  clione: new FishyEmoji(
+    "<:Clione:1112271544358543442>",
+    "<:ClioneWater:1112271578340806656>",
+    "<:cSilhouette:1112271512104353822>"
+  ),
+
+  // Level 3 Fishy
+  dungenessCrab: new FishyEmoji(
+    "<:DungenessCrab:1112868976003911761>",
+    "<:DungenessCrabWater:1112869024984993822>",
+    "<:dcSilhouette:1112868942831157258>"
+  ),
+  blueCrab: new FishyEmoji(
+    "<:BlueCrab:1112868968798105660>",
+    "<:BlueCrabWater:1112869012116869151>",
+    "<:bc2Silhouette:1112868934371254396>"
+  ),
+  floridaStoneCrab: new FishyEmoji(
+    "<:FloridaStoneCrab:1112868967237816320>",
+    "<:FloridaStoneCrabWater:1112869010292355202>",
+    "<:fscSilhouette:1112868933654020186>"
+  ),
+  sleepyCrab: new FishyEmoji(
+    "<:SleepyCrab:1112868969595019448>",
+    "<:SleepyCrabWater:1112869016608964608>",
+    "<:sc2Silhouette:1112868936111882341>"
+  ),
+  redDevilVampireCrab: new FishyEmoji(
+    "<:RedDevilVampireCrab:1112868972887543849>",
+    "<:RedDevilVampireCrabWater:1112869021033963640>",
+    "<:rdvcSilhouette:1112868939622522901>"
+  ),
+  maskedCrab: new FishyEmoji(
+    "<:MaskedCrab:1112868971767677070>",
+    "<:MaskedCrabWater:1112869019817619466>",
+    "<:mcSilhouette:1112868937764458618>"
+  ),
+  palawanPurpleCrab: new FishyEmoji(
+    "<:PalawanPurpleCrab:1112868964914176090>",
+    "<:PalawanPurpleCrabWater:1112869008732074005>",
+    "<:ppcSilhouette:1112868931766603856>"
+  ),
+  goldenKingCrab: new FishyEmoji(
+    "<:GoldenKingCrab:1112868974410088570>",
+    "<:GoldenKingCrabWater:1112869023491821719>",
+    "<:gkcSilhouette:1112868941036003428>"
   ),
 } satisfies Record<string, FishyEmoji>;

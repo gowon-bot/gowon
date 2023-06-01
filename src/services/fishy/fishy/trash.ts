@@ -1,4 +1,5 @@
 import { TrashEmoji } from "../../../lib/emoji/FishEmoji";
+import { BaseFishy } from "../classes/BaseFishy";
 import { Fishy, FishyRarities } from "../classes/Fishy";
 
 export const trash = [
@@ -51,4 +52,4 @@ export const trash = [
     emoji: new TrashEmoji("🏀", "<:bSilhouette:1091509616157933689>"),
     weight: { min: 0, max: 0 },
   }),
-] satisfies Fishy[];
+] satisfies BaseFishy[];

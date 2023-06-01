@@ -1,9 +1,11 @@
 import { ago } from "../../helpers";
 import { italic } from "../../helpers/discord";
+import { fishyQuestLevelSize } from "../../helpers/fishy";
 import { emDash } from "../../helpers/specialCharacters";
+import { calculatePercent } from "../../helpers/stats";
 import { standardMentions } from "../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../lib/context/arguments/types";
-import { Emoji } from "../../lib/emoji/Emoji";
+import { FishyRarityEmojiList } from "../../lib/emoji/FishyRarityEmoji";
 import { displayDate, displayNumber } from "../../lib/views/displays";
 import { FishyRarities } from "../../services/fishy/classes/Fishy";
 import { FishyChildCommand } from "./FishyChildCommand";
@@ -12,11 +14,11 @@ const args = {
   ...standardMentions,
 } satisfies ArgumentsMap;
 
-export class Stats extends FishyChildCommand<typeof args> {
+export class Profile extends FishyChildCommand<typeof args> {
   idSeed = "csr sihyeon";
-  aliases = ["fishystats", "fs"];
+  aliases = ["stats", "fishystats", "fs", "fishyprofile", "fp"];
 
-  description = "See stats about a user's fishing";
+  description = "See a user's fishy profile";
 
   arguments = args;
 
@@ -36,19 +38,26 @@ export class Stats extends FishyChildCommand<typeof args> {
       ]);
 
     const embed = this.newEmbed().setAuthor(
-      this.generateEmbedAuthor("Fishy stats")
+      this.generateEmbedAuthor("Fishy profile")
     ).setDescription(`
-_Fishing since ${displayDate(fishyProfile.createdAt)} (${ago(
+Level **${fishyProfile.level}** fisher ${emDash} _Fishing since ${displayDate(
       fishyProfile.createdAt
-    )})_
+    )} (${ago(fishyProfile.createdAt)})_
+${displayNumber(fishyProfile.questsCompleted, "quest")} completed ${emDash} _${
+      fishyQuestLevelSize - (fishyProfile.questsCompleted % fishyQuestLevelSize)
+    } until next level_
+  
+**Times fished**: ${displayNumber(fishyProfile.timesFished)} (${displayNumber(
+      fishyProfile.totalWeight,
+      "kg",
+      true
+    )} in total)
 
-**Total weight**: ${displayNumber(fishyProfile.totalWeight, "kg", true)}
-**Times fished**: ${displayNumber(fishyProfile.timesFished)}
+**Gifts**:    ${giftsGiven} given / ${giftsReceived} received ${emDash} _${
+      giftsReceived ? calculatePercent(giftsGiven, giftsReceived, 0) : "∞"
+    }% ratio_
 
-**Gifts given**:    ${giftsGiven}
-**Gifts received**: ${giftsReceived}
-
-**Biggest fishy**: ${biggestFishy?.weight} (${italic(
+**Biggest fishy**: ${biggestFishy?.weight}kg (${italic(
       biggestFishy!.fishy.name
     )} on ${displayDate(biggestFishy!.fishedAt)})
 **Average weight**: ${displayNumber(
@@ -58,27 +67,27 @@ _Fishing since ${displayDate(fishyProfile.createdAt)} (${ago(
     )}
 
 **Rarity breakdown:**
-${FishyRarities.Trash.emoji} _Trash_ ${emDash} ${displayNumber(
+${FishyRarities.Trash.emoji.base} _Trash_ ${emDash} ${displayNumber(
       rarityBreakdown.Trash
     )} fishy
-${FishyRarities.Common.emoji} _Common_ ${emDash} ${displayNumber(
+${FishyRarities.Common.emoji.base} _Common_ ${emDash} ${displayNumber(
       rarityBreakdown.Common
     )} fishy
-${FishyRarities.Uncommon.emoji} _Uncommon_ ${emDash} ${displayNumber(
+${FishyRarities.Uncommon.emoji.base} _Uncommon_ ${emDash} ${displayNumber(
       rarityBreakdown.Uncommon
     )} fishy
-${FishyRarities.Rare.emoji} _Rare_ ${emDash} ${displayNumber(
+${FishyRarities.Rare.emoji.base} _Rare_ ${emDash} ${displayNumber(
       rarityBreakdown.Rare
     )} fishy
-${FishyRarities.SuperRare.emoji} _Super rare_ ${emDash} ${displayNumber(
+${FishyRarities.SuperRare.emoji.base} _Super rare_ ${emDash} ${displayNumber(
       rarityBreakdown.SuperRare
     )} fishy
-${FishyRarities.Legendary.emoji} _Legendary_ ${emDash} ${displayNumber(
+${FishyRarities.Legendary.emoji.base} _Legendary_ ${emDash} ${displayNumber(
       rarityBreakdown.Legendary
     )} fishy
 ${
   "special" in rarityBreakdown
-    ? `${Emoji.unknown} _Special_ ${emDash} ${displayNumber(
+    ? `${FishyRarityEmojiList.unknown.base} _Special_ ${emDash} ${displayNumber(
         rarityBreakdown.special as string
       )} fishy`
     : ""
