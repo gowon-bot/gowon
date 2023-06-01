@@ -62,18 +62,21 @@ export default class Issue extends Command<typeof args> {
 
 ## Notes from Gowon:
 
-${this.payload.isMessage()
-        ? displayLink("Jump to message", this.payload.source.url)
-        : ""
-      }
+${
+  this.payload.isMessage()
+    ? displayLink("Jump to message", this.payload.source.url)
+    : ""
+}
 
-**Author**: ${this.author.username} (${this.payload.member?.nickname || "*No Nickname*"
-      })
+**Author**: ${this.author.username} (${
+      this.payload.member?.nickname || "*No Nickname*"
+    })
 **Ran at**: ${format(new Date(), "h:mma 'on' MMMM do, yyyy")}
-**Channel:** \\#${this.payload.guild?.channels.cache.find(
+**Channel:** \\#${
+      this.payload.guild?.channels.cache.find(
         (c) => c.id === this.payload.channel.id
       )?.name
-      }
+    }
 **Guild**: ${this.requiredGuild.name}`;
 
     const labels = ["user feedback"];
