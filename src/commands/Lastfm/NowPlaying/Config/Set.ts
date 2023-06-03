@@ -52,7 +52,7 @@ export class Set extends NowPlayingConfigChildCommand<typeof args> {
       senderRequired: true,
     });
 
-    const presetConfig = (this.presets as any)[newConfig[0]];
+    const presetConfig = this.getPresetConfig(newConfig[0], senderUser);
 
     let filtered = [] as string[],
       filteredOut = [] as string[];

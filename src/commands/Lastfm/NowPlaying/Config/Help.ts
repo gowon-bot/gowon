@@ -38,7 +38,7 @@ ${sortConfigOptions(getComponents().map((o) => o.componentName))
 
 **Presets**
 In \`npc set\` you can use some presets, they are:
-${Object.keys(this.presets)
+${this.getPresets()
   .map((d) => code(d))
   .join(", ")}
 `

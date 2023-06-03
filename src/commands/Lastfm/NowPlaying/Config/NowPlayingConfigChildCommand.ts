@@ -1,3 +1,4 @@
+import { User } from "../../../../database/entity/User";
 import { flatDeep } from "../../../../helpers";
 import { code } from "../../../../helpers/discord";
 import { ArgumentsMap } from "../../../../lib/context/arguments/types";
@@ -14,7 +15,7 @@ export abstract class NowPlayingConfigChildCommand<
 
   configService = ServiceRegistry.get(ConfigService);
 
-  readonly presets = {
+  private readonly presets = {
     blank: [],
     default: ["artist-plays", "artist-tags", "scrobbles", "artist-crown"],
     verbose: [
@@ -36,6 +37,25 @@ export abstract class NowPlayingConfigChildCommand<
 
   protected parseConfig(config: string[]): string[] {
     return flatDeep([...config.map((c) => c.split(/,\s*/))]).filter((c) => !!c);
+  }
+
+  protected getPresets(): string[] {
+    return Object.keys(this.presets);
+  }
+
+  protected getPresetConfig(
+    preset: string,
+    dbUser?: User
+  ): string[] | undefined {
+    if (preset === "all") {
+      return Object.entries(componentMap)
+        .filter(
+          ([_key, component]) => dbUser?.isPatron || !component.patronOnly
+        )
+        .map(([k]) => k);
+    }
+
+    return (this.presets as any)[preset[0]];
   }
 }
 

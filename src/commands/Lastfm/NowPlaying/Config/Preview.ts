@@ -63,10 +63,10 @@ export class Preview extends NowPlayingConfigChildCommand<typeof args> {
       c.toLowerCase()
     );
 
-    const presetConfig = (this.presets as any)[parsedOptions[0]];
+    const presetConfig = this.getPresetConfig(parsedOptions[0]);
 
     if (presetConfig) {
-      parsedOptions = (this.presets as any)[parsedOptions[0]];
+      parsedOptions = presetConfig;
     }
 
     if (
