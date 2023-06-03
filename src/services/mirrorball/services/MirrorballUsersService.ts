@@ -12,44 +12,6 @@ export class MirrorballUsersService extends BaseService {
     return ServiceRegistry.get(MirrorballService);
   }
 
-  public async login(
-    ctx: GowonContext,
-    username: string,
-    session: string | undefined
-  ) {
-    const discordID = ctx.author.id;
-
-    return await this.mirrorballService.query(
-      ctx,
-      gql`
-        mutation login(
-          $username: String!
-          $discordID: String!
-          $session: String
-        ) {
-          login(username: $username, discordID: $discordID, session: $session) {
-            id
-          }
-        }
-      `,
-      { username, discordID, session }
-    );
-  }
-
-  public async logout(ctx: GowonContext) {
-    const discordID = ctx.author.id;
-
-    return await this.mirrorballService.query(
-      ctx,
-      gql`
-        mutation logout($discordID: String!) {
-          logout(discordID: $discordID)
-        }
-      `,
-      { discordID }
-    );
-  }
-
   public async quietAddUserToGuild(
     ctx: GowonContext,
     discordID: string,

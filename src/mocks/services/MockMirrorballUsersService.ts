@@ -16,14 +16,6 @@ export class MockMirrorballUsersService extends BaseMockService {
 
   async updatePrivacy(_ctx: GowonContext, _privacy: MirrorballPrivacy) {}
 
-  public async login(
-    _ctx: GowonContext,
-    _username: string,
-    _session: string | undefined
-  ) {}
-
-  public async logout(_ctx: GowonContext) {}
-
   public async quietAddUserToGuild(
     _ctx: GowonContext,
     _discordID: string,

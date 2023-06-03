@@ -145,4 +145,51 @@ export class LilacUsersService extends LilacAPIService {
 
     return new LilacUser(response);
   }
+
+  public async login(
+    ctx: GowonContext,
+    username: string,
+    lastFmSession: string
+  ): Promise<LilacUser> {
+    const discordId = ctx.author.id;
+
+    const user = await this.mutate<
+      RawLilacUser,
+      { username: string; lastFmSession: string; discordId: string }
+    >(
+      ctx,
+      gql`
+        mutation login(
+          $username: String!
+          $discordId: String!
+          $lastFmSession: String!
+        ) {
+          login(
+            username: $username
+            discordId: $discordId
+            lastFmSession: $lastFmSession
+          ) {
+            id
+            username
+            discordID
+          }
+        }
+      `,
+      { username, discordId, lastFmSession }
+    );
+
+    return new LilacUser(user);
+  }
+
+  public async logout(ctx: GowonContext): Promise<void> {
+    await this.mutate<void, { user: LilacUserInput }>(
+      ctx,
+      gql`
+        mutation logout($user: UserInput!) {
+          logout(user: $user)
+        }
+      `,
+      { user: { discordID: ctx.author.id } }
+    );
+  }
 }
