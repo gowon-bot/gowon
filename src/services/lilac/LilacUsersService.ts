@@ -199,7 +199,7 @@ export class LilacUsersService extends LilacAPIService {
     guildID: string
   ): Promise<Error | undefined> {
     try {
-      await this.mutate(
+      await this.mutate<void, { discordID: string; guildID: string }>(
         ctx,
         gql`
           mutation addUserToGuild($discordID: String!, $guildID: String!) {
@@ -228,7 +228,7 @@ export class LilacUsersService extends LilacAPIService {
     guildID: string
   ): Promise<Error | undefined> {
     try {
-      await this.mutate(
+      await this.mutate<void, { discordID: string; guildID: string }>(
         ctx,
         gql`
           mutation removeUserFromGuild($discordID: String!, $guildID: String!) {
@@ -244,5 +244,38 @@ export class LilacUsersService extends LilacAPIService {
     }
 
     return;
+  }
+
+  public async syncGuild(
+    ctx: GowonContext,
+    guildID: string,
+    discordIDs: string[]
+  ): Promise<void> {
+    const mutation = gql`
+      mutation syncGuild($guildID: String!, $discordIDs: [String!]!) {
+        syncGuild(guildID: $guildID, discordIDs: $discordIDs)
+      }
+    `;
+
+    await this.mutate<void, { discordIDs: string[]; guildID: string }>(
+      ctx,
+      mutation,
+      {
+        discordIDs,
+        guildID,
+      }
+    );
+  }
+
+  public async clearGuild(ctx: GowonContext, guildID: string): Promise<void> {
+    const mutation = gql`
+      mutation clearGuild($guildID: String!) {
+        clearGuild(guildID: $guildID)
+      }
+    `;
+
+    await this.mutate<void, { guildID: string }>(ctx, mutation, {
+      guildID,
+    });
   }
 }
