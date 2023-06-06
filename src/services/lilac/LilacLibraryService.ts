@@ -87,4 +87,29 @@ export class LilacLibraryService extends LilacAPIService {
 
     return response;
   }
+
+  public async getScrobbleCount(
+    ctx: GowonContext,
+    discordID: string
+  ): Promise<number> {
+    const query = gql`
+      query scrobbleCount($filters: ScrobblesFilters!) {
+        scrobbles(filters: $filters) {
+          pagination {
+            totalItems
+            currentPage
+            totalPages
+            perPage
+          }
+        }
+      }
+    `;
+
+    const response = await this.query<
+      { scrobbles: LilacScrobblesPage },
+      { filters: LilacScrobbleFilters }
+    >(ctx, query, { filters: { user: { discordID: discordID } } });
+
+    return response?.scrobbles?.pagination?.totalItems;
+  }
 }

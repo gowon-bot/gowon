@@ -17,7 +17,7 @@ export default class SyncGuild extends AdminBaseCommand {
     const discordIDs = members.map((m) => m.id);
     const guildID = this.requiredGuild.id;
 
-    await this.lilacUsersService.syncGuild(this.ctx, guildID, discordIDs);
+    await this.lilacGuildsService.sync(this.ctx, guildID, discordIDs);
 
     const embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor("Server sync"))

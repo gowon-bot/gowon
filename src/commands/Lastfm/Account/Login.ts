@@ -148,7 +148,7 @@ ${displayProgressBar(progress.page, progress.totalPages, {
   private async handleLilacLogin(username: string, session: string) {
     await this.lilacUsersService.login(this.ctx, username, session);
     try {
-      await this.lilacUsersService.addUserToGuild(
+      await this.lilacGuildsService.addUser(
         this.ctx,
         this.author.id,
         this.requiredGuild.id

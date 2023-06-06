@@ -5,7 +5,7 @@ import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { Emoji } from "../../../lib/emoji/Emoji";
 import { displayLink } from "../../../lib/views/displays";
 import { LilacPrivacy } from "../../../services/lilac/LilacAPIService.types";
-import { PrivateUserDisplay } from "../../../services/mirrorball/services/MirrorballUsersService";
+import { PrivateUserDisplay } from "../../../services/lilac/LilacUsersService";
 
 const args = {
   privacy: new StringArgument({
@@ -50,7 +50,7 @@ export default class Privacy extends Command<typeof args> {
       .setFooter({ text: this.privacyHelp });
 
     if (privacy) {
-      await this.lilacUsersService.modifyUser(
+      await this.lilacUsersService.modify(
         this.ctx,
         { discordID: this.author.id },
         { privacy: privacy.toUpperCase() as LilacPrivacy }

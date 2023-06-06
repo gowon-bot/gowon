@@ -10,6 +10,8 @@ import {
   RawLilacUser,
 } from "./LilacAPIService.types";
 
+export const PrivateUserDisplay = "Private user";
+
 export class LilacUsersService extends LilacAPIService {
   public async index(ctx: GowonContext, user: LilacUserInput): Promise<void> {
     await this.mutate<{ index: any }, { user: LilacUserInput }>(
@@ -57,7 +59,7 @@ export class LilacUsersService extends LilacAPIService {
     );
   }
 
-  public async fetchUsers(
+  public async fetchAll(
     ctx: GowonContext,
     filters?: LilacUserInput
   ): Promise<LilacUser[]> {
@@ -84,14 +86,14 @@ export class LilacUsersService extends LilacAPIService {
     return users.users.map((u) => new LilacUser(u));
   }
 
-  public async fetchUser(
+  public async fetch(
     ctx: GowonContext,
     filters: LilacUserInput
   ): Promise<LilacUser | undefined> {
-    return (await this.fetchUsers(ctx, filters))[0];
+    return (await this.fetchAll(ctx, filters))[0];
   }
 
-  public async isUserBeingIndexed(
+  public async isBeingIndexed(
     ctx: GowonContext,
     filters: LilacUserInput
   ): Promise<boolean> {
@@ -114,7 +116,7 @@ export class LilacUsersService extends LilacAPIService {
     return users.users[0]?.isIndexing ?? false;
   }
 
-  public async modifyUser(
+  public async modify(
     ctx: GowonContext,
     user: LilacUserInput,
     modifications: LilacUserModifications
@@ -191,91 +193,5 @@ export class LilacUsersService extends LilacAPIService {
       `,
       { user: { discordID: ctx.author.id } }
     );
-  }
-
-  public async addUserToGuild(
-    ctx: GowonContext,
-    discordID: string,
-    guildID: string
-  ): Promise<Error | undefined> {
-    try {
-      await this.mutate<void, { discordID: string; guildID: string }>(
-        ctx,
-        gql`
-          mutation addUserToGuild($discordID: String!, $guildID: String!) {
-            addUserToGuild(discordID: $discordID, guildID: $guildID) {
-              user {
-                id
-              }
-              guildID
-            }
-          }
-        `,
-        { discordID, guildID }
-      );
-    } catch (e) {
-      if (e instanceof Error) {
-        return e;
-      }
-    }
-
-    return;
-  }
-
-  public async removeUserFromGuild(
-    ctx: GowonContext,
-    discordID: string,
-    guildID: string
-  ): Promise<Error | undefined> {
-    try {
-      await this.mutate<void, { discordID: string; guildID: string }>(
-        ctx,
-        gql`
-          mutation removeUserFromGuild($discordID: String!, $guildID: String!) {
-            removeUserFromGuild(discordID: $discordID, guildID: $guildID)
-          }
-        `,
-        { discordID, guildID }
-      );
-    } catch (e) {
-      if (e instanceof Error) {
-        return e;
-      }
-    }
-
-    return;
-  }
-
-  public async syncGuild(
-    ctx: GowonContext,
-    guildID: string,
-    discordIDs: string[]
-  ): Promise<void> {
-    const mutation = gql`
-      mutation syncGuild($guildID: String!, $discordIDs: [String!]!) {
-        syncGuild(guildID: $guildID, discordIDs: $discordIDs)
-      }
-    `;
-
-    await this.mutate<void, { discordIDs: string[]; guildID: string }>(
-      ctx,
-      mutation,
-      {
-        discordIDs,
-        guildID,
-      }
-    );
-  }
-
-  public async clearGuild(ctx: GowonContext, guildID: string): Promise<void> {
-    const mutation = gql`
-      mutation clearGuild($guildID: String!) {
-        clearGuild(guildID: $guildID)
-      }
-    `;
-
-    await this.mutate<void, { guildID: string }>(ctx, mutation, {
-      guildID,
-    });
   }
 }

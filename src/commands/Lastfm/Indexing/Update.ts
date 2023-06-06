@@ -28,7 +28,7 @@ export default class Update extends LilacBaseCommand<typeof args> {
   ];
 
   async run() {
-    this.lilacUsersService.addUserToGuild(
+    this.lilacGuildsService.addUser(
       this.ctx,
       this.author.id,
       this.requiredGuild.id

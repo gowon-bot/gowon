@@ -37,7 +37,7 @@ export default class WhoKnowsTrack extends WhoKnowsBaseCommand<typeof args> {
         !this.parsedArguments.artist || !this.parsedArguments.track,
     });
 
-    const senderLilacUser = await this.lilacUsersService.fetchUser(this.ctx, {
+    const senderLilacUser = await this.lilacUsersService.fetch(this.ctx, {
       discordID: this.author.id,
     });
 

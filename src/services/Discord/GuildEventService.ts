@@ -6,15 +6,11 @@ import { PermissionsService } from "../../lib/permissions/PermissionsService";
 import { MockMessage } from "../../mocks/discord";
 import { BaseService } from "../BaseService";
 import { ServiceRegistry } from "../ServicesRegistry";
-import { LilacUsersService } from "../lilac/LilacUsersService";
-import { MirrorballUsersService } from "../mirrorball/services/MirrorballUsersService";
+import { LilacGuildsService } from "../lilac/LilacGuildsService";
 
 export class GuildEventService extends BaseService {
-  get mirrorballUsersService() {
-    return ServiceRegistry.get(MirrorballUsersService);
-  }
-  get lilacUsersService() {
-    return ServiceRegistry.get(LilacUsersService);
+  get lilacGuildsService() {
+    return ServiceRegistry.get(LilacGuildsService);
   }
   get permissionsService() {
     return ServiceRegistry.get(PermissionsService);
@@ -30,6 +26,7 @@ export class GuildEventService extends BaseService {
     await Promise.all([
       this.registerUsers(ctx, guild),
       this.permissionsService.syncGuildPermissions(ctx),
+      this.lilacGuildsService.create(guild.id),
     ]);
   }
 
@@ -39,7 +36,7 @@ export class GuildEventService extends BaseService {
   ): Promise<void> {
     Logger.log("GuildEventService", `tearing down Gowon for ${guild.name}`);
 
-    this.lilacUsersService.clearGuild(ctx, guild.id);
+    this.lilacGuildsService.clear(ctx, guild.id);
   }
 
   public async handleNewUser(
@@ -48,18 +45,13 @@ export class GuildEventService extends BaseService {
   ): Promise<void> {
     Logger.log("GuildEventService", "Handling new user");
 
-    try {
-      await this.lilacUsersService.addUserToGuild(
-        ctx,
-        guildMember.user.id,
-        guildMember.guild.id
-      );
-    } catch (e) {
-      Logger.log(
-        "GuildEventService",
-        `Failed to log in guildMember ${guildMember.user.id} in ${guildMember.guild.id} (${e})`
-      );
-    }
+    await this.lilacGuildsService.addUser(
+      ctx,
+      guildMember.user.id,
+      guildMember.guild.id
+    );
+
+    this.lilacGuildsService.syncIfRequired(ctx, guildMember.guild);
   }
 
   public async handleUserLeave(
@@ -68,18 +60,11 @@ export class GuildEventService extends BaseService {
   ): Promise<void> {
     Logger.log("GuildEventService", "Handling user leave");
 
-    try {
-      await this.lilacUsersService.removeUserFromGuild(
-        ctx,
-        guildMember.user.id,
-        guildMember.guild.id
-      );
-    } catch (e) {
-      Logger.log(
-        "GuildEventService",
-        `Failed to log out guildMember ${guildMember.user.id} in ${guildMember.guild.id} (${e})`
-      );
-    }
+    await this.lilacGuildsService.removeUser(
+      ctx,
+      guildMember.user.id,
+      guildMember.guild.id
+    );
   }
 
   public async handleRoleUpdate(
@@ -111,6 +96,6 @@ export class GuildEventService extends BaseService {
     const discordIDs = members.map((m) => m.id);
     const guildID = guild.id;
 
-    await this.lilacUsersService.syncGuild(ctx, guildID, discordIDs);
+    await this.lilacGuildsService.sync(ctx, guildID, discordIDs);
   }
 }
