@@ -12,59 +12,6 @@ export class MirrorballUsersService extends BaseService {
     return ServiceRegistry.get(MirrorballService);
   }
 
-  public async quietAddUserToGuild(
-    ctx: GowonContext,
-    discordID: string,
-    guildID: string
-  ): Promise<Error | undefined> {
-    try {
-      await this.mirrorballService.query(
-        ctx,
-        gql`
-          mutation addUserToGuild($discordID: String!, $guildID: String!) {
-            addUserToGuild(discordID: $discordID, guildID: $guildID) {
-              user {
-                id
-              }
-              guildID
-            }
-          }
-        `,
-        { discordID, guildID }
-      );
-    } catch (e) {
-      if (e instanceof Error) {
-        return e;
-      }
-    }
-
-    return;
-  }
-
-  public async quietRemoveUserFromGuild(
-    ctx: GowonContext,
-    discordID: string,
-    guildID: string
-  ): Promise<Error | undefined> {
-    try {
-      await this.mirrorballService.query(
-        ctx,
-        gql`
-          mutation removeUserFromGuild($discordID: String!, $guildID: String!) {
-            removeUserFromGuild(discordID: $discordID, guildID: $guildID)
-          }
-        `,
-        { discordID, guildID }
-      );
-    } catch (e) {
-      if (e instanceof Error) {
-        return e;
-      }
-    }
-
-    return;
-  }
-
   public async getCachedPlaycount(
     ctx: GowonContext,
     discordID: string

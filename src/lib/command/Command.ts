@@ -531,7 +531,7 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
         this.lilacUsersService.update(this.ctx, senderUser);
 
         try {
-          await this.mirrorballUsersService.quietAddUserToGuild(
+          await this.lilacUsersService.addUserToGuild(
             this.ctx,
             this.author.id,
             this.requiredGuild.id

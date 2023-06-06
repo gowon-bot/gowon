@@ -192,4 +192,57 @@ export class LilacUsersService extends LilacAPIService {
       { user: { discordID: ctx.author.id } }
     );
   }
+
+  public async addUserToGuild(
+    ctx: GowonContext,
+    discordID: string,
+    guildID: string
+  ): Promise<Error | undefined> {
+    try {
+      await this.mutate(
+        ctx,
+        gql`
+          mutation addUserToGuild($discordID: String!, $guildID: String!) {
+            addUserToGuild(discordID: $discordID, guildID: $guildID) {
+              user {
+                id
+              }
+              guildID
+            }
+          }
+        `,
+        { discordID, guildID }
+      );
+    } catch (e) {
+      if (e instanceof Error) {
+        return e;
+      }
+    }
+
+    return;
+  }
+
+  public async removeUserFromGuild(
+    ctx: GowonContext,
+    discordID: string,
+    guildID: string
+  ): Promise<Error | undefined> {
+    try {
+      await this.mutate(
+        ctx,
+        gql`
+          mutation removeUserFromGuild($discordID: String!, $guildID: String!) {
+            removeUserFromGuild(discordID: $discordID, guildID: $guildID)
+          }
+        `,
+        { discordID, guildID }
+      );
+    } catch (e) {
+      if (e instanceof Error) {
+        return e;
+      }
+    }
+
+    return;
+  }
 }

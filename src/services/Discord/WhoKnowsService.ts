@@ -7,14 +7,12 @@ import { displayLink } from "../../lib/views/displays";
 import { BaseService } from "../BaseService";
 import { LilacUser } from "../lilac/converters/user";
 import { LilacPrivacy } from "../lilac/LilacAPIService.types";
+import { LilacUsersService } from "../lilac/LilacUsersService";
 import {
   MirrorballPrivacy,
   MirrorballUser,
 } from "../mirrorball/MirrorballTypes";
-import {
-  MirrorballUsersService,
-  PrivateUserDisplay,
-} from "../mirrorball/services/MirrorballUsersService";
+import { PrivateUserDisplay } from "../mirrorball/services/MirrorballUsersService";
 import {
   RedisService,
   RedisServiceContextOptions,
@@ -34,8 +32,8 @@ export class WhoKnowsService extends BaseService<WhoKnowsServiceContext> {
   get redis() {
     return ServiceRegistry.get(RedisService);
   }
-  get mirrorballUsersService() {
-    return ServiceRegistry.get(MirrorballUsersService);
+  get lilacUsersService() {
+    return ServiceRegistry.get(LilacUsersService);
   }
   private get nicknameService() {
     return ServiceRegistry.get(NicknameService);
@@ -56,11 +54,7 @@ export class WhoKnowsService extends BaseService<WhoKnowsServiceContext> {
     );
 
     if (existingTries && toInt(existingTries) === 2) {
-      this.mirrorballUsersService.quietRemoveUserFromGuild(
-        ctx,
-        userID,
-        guildID
-      );
+      this.lilacUsersService.removeUserFromGuild(ctx, userID, guildID);
       this.redis.sessionDelete(this.ctx(ctx), this.retryKey());
     } else {
       const newTries = existingTries ? toInt(existingTries) + 1 : 1;

@@ -1,14 +1,15 @@
 import { Guild, GuildMember, Role } from "discord.js";
 import gql from "graphql-tag";
+import { Logger } from "../../lib/Logger";
 import { CommandRegistry } from "../../lib/command/CommandRegistry";
 import { GowonContext } from "../../lib/context/Context";
-import { Logger } from "../../lib/Logger";
 import { PermissionsService } from "../../lib/permissions/PermissionsService";
 import { MockMessage } from "../../mocks/discord";
 import { BaseService } from "../BaseService";
+import { ServiceRegistry } from "../ServicesRegistry";
+import { LilacUsersService } from "../lilac/LilacUsersService";
 import { MirrorballService } from "../mirrorball/MirrorballService";
 import { MirrorballUsersService } from "../mirrorball/services/MirrorballUsersService";
-import { ServiceRegistry } from "../ServicesRegistry";
 
 export class GuildEventService extends BaseService {
   get mirrorballService() {
@@ -17,6 +18,10 @@ export class GuildEventService extends BaseService {
 
   get mirrorballUsersService() {
     return ServiceRegistry.get(MirrorballUsersService);
+  }
+
+  get lilacUsersService() {
+    return ServiceRegistry.get(LilacUsersService);
   }
 
   get permissionsService() {
@@ -54,7 +59,7 @@ export class GuildEventService extends BaseService {
     Logger.log("GuildEventService", "Handling new user");
 
     try {
-      await this.mirrorballUsersService.quietAddUserToGuild(
+      await this.lilacUsersService.addUserToGuild(
         ctx,
         guildMember.user.id,
         guildMember.guild.id
@@ -71,7 +76,7 @@ export class GuildEventService extends BaseService {
     Logger.log("GuildEventService", "Handling user leave");
 
     try {
-      await this.mirrorballUsersService.quietRemoveUserFromGuild(
+      await this.lilacUsersService.removeUserFromGuild(
         ctx,
         guildMember.user.id,
         guildMember.guild.id

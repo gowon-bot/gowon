@@ -12,7 +12,7 @@ export default class Index extends LilacBaseCommand {
   slashCommand = true;
 
   async run() {
-    this.mirrorballUsersService.quietAddUserToGuild(
+    this.lilacUsersService.addUserToGuild(
       this.ctx,
       this.author.id,
       this.requiredGuild.id
