@@ -38,12 +38,12 @@ import { CrownsUserService } from "./dbservices/crowns/CrownsUserService";
 import { FishyService } from "./fishy/FishyService";
 import { LilacAPIService } from "./lilac/LilacAPIService";
 import { LilacArtistsService } from "./lilac/LilacArtistsService";
+import { LilacGuildsService } from "./lilac/LilacGuildsService";
 import { LilacLibraryService } from "./lilac/LilacLibraryService";
 import { LilacTagsService } from "./lilac/LilacTagsService";
 import { LilacUsersService } from "./lilac/LilacUsersService";
 import { LilacWhoKnowsService } from "./lilac/LilacWhoKnowsService";
 import { MirrorballService } from "./mirrorball/MirrorballService";
-import { MirrorballUsersService } from "./mirrorball/services/MirrorballUsersService";
 import { AlbumCoverService } from "./moderation/AlbumCoverService";
 import { ChartService } from "./pantomime/ChartService";
 import { RedisInteractionService } from "./redis/RedisInteractionService";
@@ -79,6 +79,7 @@ const services: Service[] = [
   // Lilac services
   LilacAPIService,
   LilacArtistsService,
+  LilacGuildsService,
   LilacLibraryService,
   LilacTagsService,
   LilacUsersService,
@@ -87,7 +88,6 @@ const services: Service[] = [
   MetaService,
   MentionsService,
   MirrorballService,
-  MirrorballUsersService,
   NicknameService,
   NowPlayingEmbedParsingService,
   PermissionsService,

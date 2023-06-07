@@ -270,13 +270,13 @@ export class MentionsService extends BaseService {
   ): Promise<void> {
     if (options.fetchLilacUser) {
       const userPromises: Promise<LilacUser | undefined>[] = [
-        this.lilacUsersService.fetchUser(ctx, { discordID: ctx.author.id }),
+        this.lilacUsersService.fetch(ctx, { discordID: ctx.author.id }),
       ];
 
       const discordID = mentionsBuilder.getDiscordID("mentioned");
 
       if (discordID) {
-        userPromises.push(this.lilacUsersService.fetchUser(ctx, { discordID }));
+        userPromises.push(this.lilacUsersService.fetch(ctx, { discordID }));
       }
 
       const users = await Promise.all(userPromises);

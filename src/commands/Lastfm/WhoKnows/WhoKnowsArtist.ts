@@ -43,7 +43,7 @@ export default class WhoKnowsArtist extends WhoKnowsBaseCommand<typeof args> {
       senderRequired: !this.parsedArguments.artist,
     });
 
-    const senderLilacUser = await this.lilacUsersService.fetchUser(this.ctx, {
+    const senderLilacUser = await this.lilacUsersService.fetch(this.ctx, {
       discordID: this.author.id,
     });
 

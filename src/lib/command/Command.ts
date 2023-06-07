@@ -28,9 +28,9 @@ import {
 } from "../../services/arguments/mentions/MentionsService.types";
 import { UsersService } from "../../services/dbservices/UsersService";
 import { CrownsService } from "../../services/dbservices/crowns/CrownsService";
+import { LilacGuildsService } from "../../services/lilac/LilacGuildsService";
 import { LilacUsersService } from "../../services/lilac/LilacUsersService";
 import { MirrorballService } from "../../services/mirrorball/MirrorballService";
-import { MirrorballUsersService } from "../../services/mirrorball/services/MirrorballUsersService";
 import { constants } from "../constants";
 import { GowonContext } from "../context/Context";
 import { ArgumentsMap, ParsedArguments } from "../context/arguments/types";
@@ -203,9 +203,8 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
   mentionsService = ServiceRegistry.get(MentionsService);
   mirrorballService = ServiceRegistry.get(MirrorballService);
   lilacUsersService = ServiceRegistry.get(LilacUsersService);
+  lilacGuildsService = ServiceRegistry.get(LilacGuildsService);
   analyticsCollector = ServiceRegistry.get(AnalyticsCollector);
-  // Soon to be deprecated...
-  mirrorballUsersService = ServiceRegistry.get(MirrorballUsersService);
   argumentParsingService = ServiceRegistry.get(ArgumentParsingService);
   nowPlayingEmbedParsingService = ServiceRegistry.get(
     NowPlayingEmbedParsingService
@@ -531,7 +530,7 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
         this.lilacUsersService.update(this.ctx, senderUser);
 
         try {
-          await this.mirrorballUsersService.quietAddUserToGuild(
+          await this.lilacGuildsService.addUser(
             this.ctx,
             this.author.id,
             this.requiredGuild.id

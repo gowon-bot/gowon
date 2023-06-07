@@ -9,6 +9,7 @@ import { Emoji } from "../../lib/emoji/Emoji";
 import { displayNumber } from "../../lib/views/displays";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { BotStatsService } from "../../services/dbservices/BotStatsService";
+import { LilacLibraryService } from "../../services/lilac/LilacLibraryService";
 
 const args = {
   ...standardMentions,
@@ -27,6 +28,7 @@ export default class UserInfo extends Command<typeof args> {
   arguments = args;
 
   botStatsService = ServiceRegistry.get(BotStatsService);
+  lilacLibraryService = ServiceRegistry.get(LilacLibraryService);
 
   async run() {
     const { dbUser, discordUser } = await this.getMentions({
@@ -38,11 +40,11 @@ export default class UserInfo extends Command<typeof args> {
       await Promise.all([
         this.botStatsService.countUserCommandRuns(this.ctx, dbUser.discordID),
         this.botStatsService.userTopCommands(this.ctx, dbUser.discordID),
-        this.mirrorballUsersService.getCachedPlaycount(
+        this.lilacLibraryService.getScrobbleCount(
           this.ctx,
           discordUser?.id || dbUser.discordID
         ),
-        this.lilacUsersService.fetchUser(this.ctx, {
+        this.lilacUsersService.fetch(this.ctx, {
           discordID: dbUser.discordID,
         }),
       ]);

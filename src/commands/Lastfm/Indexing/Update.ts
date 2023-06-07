@@ -1,10 +1,10 @@
 import { Stopwatch } from "../../../helpers";
-import { CommandRedirect } from "../../../lib/command/Command";
-import Index from "./Index";
-import { Flag } from "../../../lib/context/arguments/argumentTypes/Flag";
-import { displayProgressBar } from "../../../lib/views/displays";
 import { LilacBaseCommand } from "../../../lib/Lilac/LilacBaseCommand";
+import { CommandRedirect } from "../../../lib/command/Command";
+import { Flag } from "../../../lib/context/arguments/argumentTypes/Flag";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { displayProgressBar } from "../../../lib/views/displays";
+import Index from "./Index";
 
 const args = {
   full: new Flag({
@@ -28,7 +28,7 @@ export default class Update extends LilacBaseCommand<typeof args> {
   ];
 
   async run() {
-    this.mirrorballUsersService.quietAddUserToGuild(
+    this.lilacGuildsService.addUser(
       this.ctx,
       this.author.id,
       this.requiredGuild.id
@@ -65,8 +65,8 @@ export default class Update extends LilacBaseCommand<typeof args> {
           embed.setDescription(
             `Updating...
 ${displayProgressBar(progress.page, progress.totalPages, {
-              width: this.progressBarWidth,
-            })}
+  width: this.progressBarWidth,
+})}
 *Page ${progress.page}/${progress.totalPages}*`
           )
         );

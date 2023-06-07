@@ -82,6 +82,8 @@ export class CommandHandler {
   }
 
   private shouldSearchForCommand(message: Message): boolean {
+    if (!message.guild?.id) return false;
+
     const prefixRegex = this.gowonService.prefixAtStartOfMessageRegex(
       message.guild!.id
     );

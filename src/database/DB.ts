@@ -19,6 +19,7 @@ import { FishyCatch } from "./entity/fishy/FishyCatch";
 import { FishyProfile } from "./entity/fishy/FishyProfile";
 import { CommandRun } from "./entity/meta/CommandRun";
 import { CrownEvent } from "./entity/meta/CrownEvent";
+import { Guild } from "./entity/meta/Guild";
 
 export class DB {
   dataSource!: DataSource;
@@ -38,6 +39,7 @@ export class DB {
         CommandRun,
         CrownEvent,
         Error,
+        Guild,
         // other
         AlternateAlbumCover,
         ArtistCrownBan,

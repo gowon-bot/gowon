@@ -15,7 +15,7 @@ export async function throwSenderUserNotIndexed(
   ctx: GowonContext
 ): Promise<never> {
   if (
-    await ServiceRegistry.get(LilacUsersService).isUserBeingIndexed(ctx, {
+    await ServiceRegistry.get(LilacUsersService).isBeingIndexed(ctx, {
       discordID: ctx.author.id,
     })
   ) {

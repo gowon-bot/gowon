@@ -1,5 +1,4 @@
 import { DiscordAPIError, User as DiscordUser, Guild } from "discord.js";
-import gql from "graphql-tag";
 import {
   BaseEntity,
   Column,
@@ -8,11 +7,7 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { Logger } from "../../lib/Logger";
 import { CommandAccessRoleName } from "../../lib/command/access/roles";
-import { GowonContext } from "../../lib/context/Context";
-import { ServiceRegistry } from "../../services/ServicesRegistry";
-import { MirrorballService } from "../../services/mirrorball/MirrorballService";
 import { Combo } from "./Combo";
 import { Crown } from "./Crown";
 import { Friend } from "./Friend";
@@ -104,27 +99,5 @@ export class User extends BaseEntity {
       if (!(e instanceof DiscordAPIError)) throw e;
       return;
     }
-  }
-
-  async mirrorballUpdate(ctx: GowonContext): Promise<void> {
-    const mirrorballService = ServiceRegistry.get(MirrorballService);
-
-    Logger.log("User", `updating ${this.discordID}`);
-
-    if (!this.isIndexed) {
-      return;
-    }
-
-    mirrorballService.mutate(
-      ctx,
-      gql`
-        mutation Update($discordID: String!) {
-          update(user: { discordID: $discordID }) {
-            success
-          }
-        }
-      `,
-      { discordID: this.discordID }
-    );
   }
 }

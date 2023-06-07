@@ -6,7 +6,6 @@ import { LastfmLinks } from "../../../helpers/lastfm/LastfmLinks";
 import { LilacBaseCommand } from "../../../lib/Lilac/LilacBaseCommand";
 import { Payload } from "../../../lib/context/Payload";
 import { EmojiRaw } from "../../../lib/emoji/Emoji";
-import { Validation } from "../../../lib/validation/ValidationChecker";
 import { displayLink, displayProgressBar } from "../../../lib/views/displays";
 import { ConfirmationEmbed } from "../../../lib/views/embeds/ConfirmationEmbed";
 import { LastFMSession } from "../../../services/LastFM/converters/Misc";
@@ -21,8 +20,6 @@ export default class Login extends LilacBaseCommand {
   usage = "";
 
   slashCommand = true;
-
-  validation: Validation = {};
 
   async run() {
     const { token } = await this.lastFMService.getToken(this.ctx);
@@ -69,12 +66,12 @@ export default class Login extends LilacBaseCommand {
       );
 
       if (await confirmationEmbed.awaitConfirmation(this.ctx)) {
-        this.aimpromptuIndex(confirmationEmbed, successEmbed);
+        this.impromptuIndex(confirmationEmbed, successEmbed);
       }
     }
   }
 
-  private async aimpromptuIndex(
+  private async impromptuIndex(
     confirmationEmbed: ConfirmationEmbed,
     embed: MessageEmbed
   ) {
@@ -138,21 +135,20 @@ ${displayProgressBar(progress.page, progress.totalPages, {
         session
       );
 
-      await this.handleMirrorballLogin(session.username, session.key);
+      await this.handleLilacLogin(session.username, session.key);
     } catch (e) {
+      console.log(e);
+
       return { success: false };
     }
 
     return { success: true, user };
   }
 
-  private async handleMirrorballLogin(
-    username: string,
-    session: string | undefined
-  ) {
-    await this.mirrorballUsersService.login(this.ctx, username, session);
+  private async handleLilacLogin(username: string, session: string) {
+    await this.lilacUsersService.login(this.ctx, username, session);
     try {
-      await this.mirrorballUsersService.quietAddUserToGuild(
+      await this.lilacGuildsService.addUser(
         this.ctx,
         this.author.id,
         this.requiredGuild.id
@@ -184,7 +180,7 @@ ${displayProgressBar(progress.page, progress.totalPages, {
         session
       );
 
-      await this.handleMirrorballLogin(session.username, session.key);
+      await this.handleLilacLogin(session.username, session.key);
 
       return user;
     }

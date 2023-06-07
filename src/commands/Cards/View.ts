@@ -53,7 +53,7 @@ export class View extends CardsChildCommand {
       throw new CardNotMintedYetError();
     }
 
-    const owner = await this.lilacUsersService.fetchUser(this.ctx, {
+    const owner = await this.lilacUsersService.fetch(this.ctx, {
       discordID: card.owner.discordID,
     });
 
