@@ -19,17 +19,19 @@ export class GowonService extends BaseService {
     return ServiceRegistry.get(SettingsService);
   }
 
-  public prefix(guildID: string): string {
+  public prefix(guildID?: string): string {
+    if (!guildID) return config.defaultPrefix;
+
     return (
       this.settingsService.get("prefix", { guildID }) || config.defaultPrefix
     );
   }
 
-  public regexSafePrefix(serverID: string): string {
+  public regexSafePrefix(serverID?: string): string {
     return regexEscape(this.prefix(serverID));
   }
 
-  public prefixAtStartOfMessageRegex(guildID: string): RegExp {
+  public prefixAtStartOfMessageRegex(guildID?: string): RegExp {
     return new RegExp(`^${this.regexSafePrefix(guildID)}[^\\s]+`, "i");
   }
 
@@ -38,7 +40,7 @@ export class GowonService extends BaseService {
       .replace(
         new RegExp(
           `${this.regexSafePrefix(
-            ctx.requiredGuild.id
+            ctx.guild?.id
           )}${ctx.extract.asRemovalRegexString()}`,
           "i"
         ),

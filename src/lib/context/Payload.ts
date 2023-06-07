@@ -33,10 +33,10 @@ export class Payload<T extends OriginalPayload = OriginalPayload> {
     else return this.normalizedProperties.author!;
   }
 
-  get member(): GuildMember {
+  get member(): GuildMember | undefined {
     if (this.isMessage()) return this.source.member!;
     else if (this.isInteraction()) return this.source.member as GuildMember;
-    else return {} as GuildMember;
+    else return undefined;
   }
 
   get channel(): TextBasedChannel {

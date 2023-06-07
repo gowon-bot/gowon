@@ -111,7 +111,7 @@ export abstract class NowPlayingBaseCommand<
           nowPlaying.isNowPlaying ? "Now playing" : "Last scrobbled"
         } for ${username}`,
         iconURL:
-          this.payload.member.avatarURL() ||
+          this.payload.member?.avatarURL() ||
           this.payload.author.avatarURL() ||
           undefined,
         url: LastfmLinks.userPage(username),

@@ -65,7 +65,7 @@ export class CommandRegistry {
 
   async find(
     messageString: string,
-    guildID: string,
+    guildID?: string,
     commands?: Command[]
   ): Promise<ExtractedCommand | undefined> {
     const extractor = new CommandExtractor();

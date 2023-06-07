@@ -20,6 +20,8 @@ export abstract class CrownsChildCommand<
   parentName = "crowns";
   subcategory = "crowns";
 
+  guildRequired = true;
+
   protected async ensureUserCanCheck(senderUser: User): Promise<void> {
     const userIsInPurgatory = await this.crownsUserService.isInPurgatory(
       this.ctx,

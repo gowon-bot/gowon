@@ -21,6 +21,7 @@ import {
   interactionHandler,
   setup,
 } from "./setup";
+
 function context() {
   return new GowonContext({
     gowonClient: client,

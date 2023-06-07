@@ -1,9 +1,9 @@
 import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
   BaseEntity,
+  Column,
   CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
 } from "typeorm";
 import { TimeRange } from "../../../lib/timeAndDate/TimeRange";
 
@@ -22,11 +22,11 @@ export class CommandRun extends BaseEntity {
   @Column()
   commandID!: string;
 
-  @Column()
-  channelID!: string;
+  @Column({ nullable: true })
+  channelID?: string;
 
-  @Column()
-  serverID!: string;
+  @Column({ nullable: true })
+  serverID?: string;
 
   @Column()
   userID!: string;

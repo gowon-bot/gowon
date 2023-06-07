@@ -1,14 +1,14 @@
 import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
   BaseEntity,
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
   Unique,
 } from "typeorm";
 import { SimpleMap } from "../../helpers/types";
 import {
-  generateCacheKey,
   PermissionCacheKey,
+  generateCacheKey,
 } from "../../lib/permissions/PermissionsCache";
 import { PermissionQuery } from "../../lib/permissions/PermissionsCacheService";
 
@@ -56,13 +56,14 @@ export class Permission extends BaseEntity {
   // Static methods
   static async getFromQueries(
     queries: PermissionQuery[],
-    guildID: string
+    guildID?: string
   ): Promise<Permission[]> {
     const queryBuilder = Permission.createQueryBuilder();
 
     for (const query of queries) {
-      const where = { guildID } as SimpleMap;
+      const where = {} as SimpleMap;
 
+      if (guildID) where.guildID = guildID;
       if (query.entityID) where.entityID = query.entityID;
       if (query.type) where.type = query.type;
       if (query.commandID) where.commandID = query.commandID;

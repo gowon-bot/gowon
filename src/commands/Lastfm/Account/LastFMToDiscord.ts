@@ -1,8 +1,8 @@
-import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import { LogicError } from "../../../errors/errors";
-import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { bold, code } from "../../../helpers/discord";
+import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 const args = {
   username: new StringArgument({
@@ -43,7 +43,8 @@ export default class LastFmToDiscord extends LastFMBaseCommand<typeof args> {
     const embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor("Account lookup"))
       .setDescription(
-        `${bold(member.nickname || member.user.username)} (${member.user.username
+        `${bold(member.nickname || member.user.username)} (${
+          member.user.username
         }#${member.user.discriminator}) is logged in as ${code(
           username.toLowerCase()
         )}.`

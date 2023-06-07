@@ -82,15 +82,13 @@ export class CommandHandler {
   }
 
   private shouldSearchForCommand(message: Message): boolean {
-    if (!message.guild?.id) return false;
-
+    // Gowon will use the default set in config if there's no guild present
     const prefixRegex = this.gowonService.prefixAtStartOfMessageRegex(
-      message.guild!.id
+      message.guild?.id
     );
 
     return !!(
       !message.author.bot &&
-      message.guild &&
       (message.content.match(prefixRegex) || this.isMentionedAtStart(message))
     );
   }
@@ -116,7 +114,7 @@ export class CommandHandler {
   ): Promise<ExtractedCommand | undefined> {
     const extract = await this.commandRegistry.find(
       message.content,
-      message.guild!.id
+      message.guild?.id
     );
 
     if (extract?.command instanceof ParentCommand) {

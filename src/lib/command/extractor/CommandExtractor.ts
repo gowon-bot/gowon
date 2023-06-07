@@ -14,7 +14,7 @@ export class CommandExtractor {
 
   async extract(
     messageString: string,
-    guildID: string,
+    guildID: string | undefined,
     commands: Command[]
   ): Promise<ExtractedCommand | undefined> {
     const splits = this.getSplits(guildID, messageString);
@@ -30,7 +30,7 @@ export class CommandExtractor {
 
   private async attemptExtract(
     splits: [string, string | undefined],
-    guildID: string,
+    guildID: string | undefined,
     command: Command
   ): Promise<ExtractedCommand | undefined> {
     if (command instanceof ParentCommand) {
@@ -58,7 +58,7 @@ export class CommandExtractor {
 
   private async attemptParentExtract(
     parentCommand: ParentCommand,
-    guildID: string,
+    guildID: string | undefined,
     splits: [string, string | undefined]
   ): Promise<ExtractedCommand | undefined> {
     const noPrefix = await this.attemptNoPrefixExtract(
@@ -109,7 +109,7 @@ export class CommandExtractor {
   private async attemptNoPrefixExtract(
     command: ParentCommand,
     string: string,
-    guildID: string
+    guildID: string | undefined
   ): Promise<Command | undefined> {
     const child = await this.commandRegistry.find(
       string,
@@ -140,7 +140,7 @@ export class CommandExtractor {
   }
 
   private getSplits(
-    guildID: string,
+    guildID: string | undefined,
     messageString: string
   ): [string, string | undefined] {
     const splits = this.cleanContent(guildID, messageString).split(/\s+/);
@@ -148,7 +148,7 @@ export class CommandExtractor {
     return [splits[0], splits[1]];
   }
 
-  private cleanContent(guildID: string, content: string): string {
+  private cleanContent(guildID: string | undefined, content: string): string {
     const cleanContent = content.toLowerCase().trim();
 
     const prefixRegex = this.gowonService.prefixAtStartOfMessageRegex(guildID);

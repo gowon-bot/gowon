@@ -10,6 +10,7 @@ import md5 from "js-md5";
 import config from "../../../config.json";
 import { AnalyticsCollector } from "../../analytics/AnalyticsCollector";
 import { UnknownError } from "../../errors/errors";
+import { GuildRequiredError } from "../../errors/gowon";
 import { SimpleMap } from "../../helpers/types";
 import { DiscordService } from "../../services/Discord/DiscordService";
 import {
@@ -250,10 +251,12 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
   // which allow them to run code before the run method is called
   async beforeRun(): Promise<void> {}
 
-  async execute(ctx: GowonContext) {
+  async execute(ctx: GowonContext): Promise<void> {
     ctx.setCommand(this);
     ctx.addContext(this.customContext);
     this.ctx = ctx;
+
+    if (!(await this.checkGuildRequirement(ctx))) return;
 
     await this.setup();
 
@@ -362,6 +365,19 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
     }
   }
 
+  private async checkGuildRequirement(ctx: GowonContext): Promise<boolean> {
+    if (
+      this.guildRequired &&
+      ctx.payload.isMessage() &&
+      ctx.payload.source.channel.type === "DM"
+    ) {
+      await this.sendError(new GuildRequiredError().message);
+      return false;
+    }
+
+    return true;
+  }
+
   /**
    * Helpers
    * (These methods are called when by a command when needed)
@@ -415,7 +431,7 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
         ? `${this.payload.author.tag} | ${title}`
         : `${this.payload.author.tag}`,
       iconURL:
-        this.payload.member.avatarURL() ||
+        this.payload.member?.avatarURL() ||
         this.payload.author.avatarURL() ||
         undefined,
       url: url,

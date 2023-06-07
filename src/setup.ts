@@ -1,7 +1,7 @@
 import config from "../config.json";
 
 import chalk from "chalk";
-import { Client } from "discord.js";
+import { Client, Intents } from "discord.js";
 import gql from "graphql-tag";
 import { GraphQLAPI } from "./api";
 import { DB } from "./database/DB";
@@ -24,14 +24,14 @@ export const client = new GowonClient(
   new Client({
     // List of intents: https://discord.com/developers/docs/topics/gateway#list-of-intents
     intents: [
-      "GUILDS",
-      "GUILD_MEMBERS",
-      "GUILD_MESSAGES",
-      "GUILD_MESSAGE_REACTIONS",
-      "GUILD_MESSAGE_TYPING",
-      "DIRECT_MESSAGES",
-      "DIRECT_MESSAGE_REACTIONS",
-      "DIRECT_MESSAGE_TYPING",
+      Intents.FLAGS.GUILDS,
+      Intents.FLAGS.GUILD_MEMBERS,
+      Intents.FLAGS.GUILD_MESSAGES,
+      Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
+      Intents.FLAGS.GUILD_MESSAGE_TYPING,
+      Intents.FLAGS.DIRECT_MESSAGES,
+      Intents.FLAGS.DIRECT_MESSAGE_REACTIONS,
+      Intents.FLAGS.DIRECT_MESSAGE_TYPING,
     ],
     presence: {
       status: "online",
@@ -44,6 +44,7 @@ export const client = new GowonClient(
       ],
     },
     allowedMentions: { parse: ["users", "roles"] },
+    partials: ["CHANNEL"],
   }),
   config.environment
 );

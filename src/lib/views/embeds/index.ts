@@ -2,8 +2,8 @@ import { GuildMember, HexColorString, MessageEmbed, User } from "discord.js";
 import { ucFirst } from "../../../helpers";
 import { bold, italic } from "../../../helpers/discord";
 import { ImageCollection } from "../../../services/LastFM/converters/BaseConverter";
-import { AlbumCoverService } from "../../../services/moderation/AlbumCoverService";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
+import { AlbumCoverService } from "../../../services/moderation/AlbumCoverService";
 import { GowonContext } from "../../context/Context";
 
 export const errorColour = "#ED008E";
@@ -52,7 +52,7 @@ export async function trackEmbed(
 export function errorEmbed(
   from: MessageEmbed,
   author: User,
-  member: GuildMember,
+  member: GuildMember | undefined,
   message: string,
   footer: string = ""
 ): MessageEmbed {
@@ -60,7 +60,7 @@ export function errorEmbed(
     .setColor(errorColour)
     .setAuthor({
       name: `Error | ${author.username}#${author.discriminator}`,
-      iconURL: member.avatarURL() || author.avatarURL() || undefined,
+      iconURL: member?.avatarURL() || author.avatarURL() || undefined,
     })
     .setDescription(ucFirst(message))
     .setFooter({ text: footer });

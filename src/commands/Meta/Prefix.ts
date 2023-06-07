@@ -24,7 +24,7 @@ export default class Prefix extends Command {
   async run() {
     if (this.newPrefix) {
       if (
-        !this.ctx.authorMember.permissions.has("ADMINISTRATOR") &&
+        !this.ctx.requiredAuthorMember.permissions.has("ADMINISTRATOR") &&
         !this.gowonClient.isDeveloper(this.author.id)
       ) {
         throw new CannotChangePrefixError();
