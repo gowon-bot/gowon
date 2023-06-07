@@ -69,7 +69,7 @@ _Following ${displayNumber(friends.meta.total, "user")}_
 **Tracks per album**: ${await this.calculator.tracksPerAlbum()}
 
 **H-Index**: ${await this.calculator.hIndex()}
-**\# of artists to equal 50% of scrobbles**: ${
+**\\# of artists to equal 50% of scrobbles**: ${
           (await this.calculator.topPercent(50)).count
         }
 **Total scrobbles for top 10 artists**: ${await this.calculator.sumTop(10)}
