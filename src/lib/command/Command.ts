@@ -38,11 +38,11 @@ import { ArgumentsMap, ParsedArguments } from "../context/arguments/types";
 import { Emoji, EmojiRaw } from "../emoji/Emoji";
 import { SettingsService } from "../settings/SettingsService";
 import { Validation, ValidationChecker } from "../validation/ValidationChecker";
+import { displayUserTag } from "../views/displays";
 import { errorEmbed, gowonEmbed } from "../views/embeds";
 import { CommandGroup } from "./CommandGroup";
 import { CommandRegistry } from "./CommandRegistry";
 import { CommandAccess } from "./access/access";
-import { displayUserTag } from "../views/displays";
 
 export interface Variation {
   name: string;

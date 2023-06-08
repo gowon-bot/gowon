@@ -82,7 +82,7 @@ The options for privacy are:
             LastfmLinks.userPage(senderUsername)
           )})
 - \`discord\`: Discord username is shown (${displayUserTag(this.author)})
-- \`both\`: Discord username and discriminator are shown, and last.fm linked (${displayLink(
+- \`both\`: Discord username is shown, and last.fm linked (${displayLink(
             displayUserTag(this.author),
             LastfmLinks.userPage(senderUsername)
           )})

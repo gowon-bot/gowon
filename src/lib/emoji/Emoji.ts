@@ -106,8 +106,8 @@ export const Emoji = {
   // Commmand icons
   runsInDMs: "<:runs_in_DMs:1116262516520124436>",
   doesNotRunInDMs: "<:does_not_run_in_DMs:1116262511428259881>",
-  requiresAdmin: "<:requires_admin:1116262515177947267>",
-  doesNotRequireAdmin: "<:does_not_require_admin:1116262513831583846>",
+  requiresAdmin: "<:requires_admin:1116285314332364930>",
+  doesNotRequireAdmin: "<:does_not_require_admin:1116285311513800786>",
   slashCommand: "<:slash_command:1116262522085965824>",
   notASlashCommand: "<:not_a_slash_command:1116262520156590090>",
 } satisfies Record<string, string>;

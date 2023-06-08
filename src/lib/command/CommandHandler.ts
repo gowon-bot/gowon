@@ -15,6 +15,7 @@ import { HeaderlessLogger, Logger } from "../Logger";
 import { GowonContext } from "../context/Context";
 import { Payload } from "../context/Payload";
 import { PermissionsService } from "../permissions/PermissionsService";
+import { displayUserTag } from "../views/displays";
 import { Command } from "./Command";
 import { CommandRegistry } from "./CommandRegistry";
 import { ParentCommand } from "./ParentCommand";
@@ -105,7 +106,7 @@ export class CommandHandler {
     this.nicknameService.recordUsername(
       ctx,
       message.author.id,
-      message.author.username + "#" + message.author.discriminator
+      displayUserTag(message.author)
     );
   }
 

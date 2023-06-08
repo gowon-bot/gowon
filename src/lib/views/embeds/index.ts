@@ -5,6 +5,7 @@ import { ImageCollection } from "../../../services/LastFM/converters/BaseConvert
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { AlbumCoverService } from "../../../services/moderation/AlbumCoverService";
 import { GowonContext } from "../../context/Context";
+import { displayUserTag } from "../displays";
 
 export const errorColour = "#ED008E";
 
@@ -59,7 +60,7 @@ export function errorEmbed(
   return from
     .setColor(errorColour)
     .setAuthor({
-      name: `Error | ${author.username}#${author.discriminator}`,
+      name: `Error | ${displayUserTag(author)}`,
       iconURL: member?.avatarURL() || author.avatarURL() || undefined,
     })
     .setDescription(ucFirst(message))

@@ -9,6 +9,7 @@ import {
   displayDate,
   displayLink,
   displayNumber,
+  displayUserTag,
 } from "../../lib/views/displays";
 import { LastFMService } from "../../services/LastFM/LastFMService";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
@@ -103,7 +104,7 @@ Total commands: ${displayNumber(commandCount)}`,
         }
       )
       .setFooter({
-        text: `Made with <3 by ${author.username}#${author.discriminator}`,
+        text: `Made with <3 by ${displayUserTag(author)}`,
         iconURL: author.avatarURL({ dynamic: true }) ?? undefined,
       });
 
