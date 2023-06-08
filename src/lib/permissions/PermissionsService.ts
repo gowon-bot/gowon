@@ -124,7 +124,7 @@ export class PermissionsService extends BaseService {
       forRoles || Array.from(ctx.requiredGuild.roles.cache.values());
 
     const adminCommands = this.commandRegistry
-      .list(true)
+      .list({ includeSecret: true })
       .filter((c) => c.adminCommand);
 
     for (const adminCommand of adminCommands) {

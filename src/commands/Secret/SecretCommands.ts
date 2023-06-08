@@ -10,7 +10,7 @@ export default class SecretCommands extends Command {
 
   async run() {
     const commands = this.commandRegistry
-      .list(true)
+      .list({ includeSecret: true })
       .filter((c) => c.secretCommand);
 
     const embed = this.newEmbed()

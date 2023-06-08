@@ -120,6 +120,12 @@ export class GowonContext<T extends CustomContext = CustomContext> {
     return this._command;
   }
 
+  public isDM(): boolean {
+    return (
+      this.payload.isMessage() && this.payload.source.channel.type === "DM"
+    );
+  }
+
   public setCommand(command: Command) {
     this._command = command;
   }

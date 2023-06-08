@@ -256,7 +256,7 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
     ctx.addContext(this.customContext);
     this.ctx = ctx;
 
-    if (!(await this.checkGuildRequirement(ctx))) return;
+    if (!(await this.checkGuildRequirement())) return;
 
     await this.setup();
 
@@ -365,12 +365,8 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
     }
   }
 
-  private async checkGuildRequirement(ctx: GowonContext): Promise<boolean> {
-    if (
-      this.guildRequired &&
-      ctx.payload.isMessage() &&
-      ctx.payload.source.channel.type === "DM"
-    ) {
+  private async checkGuildRequirement(): Promise<boolean> {
+    if (this.guildRequired && this.ctx.isDM()) {
       await this.sendError(new GuildRequiredError().message);
       return false;
     }
