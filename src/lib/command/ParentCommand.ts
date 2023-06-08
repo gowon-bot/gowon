@@ -1,6 +1,6 @@
 import { ArgumentsMap } from "../context/arguments/types";
-import { Command } from "./Command";
 import { ChildCommand } from "./ChildCommand";
+import { Command } from "./Command";
 import { CommandGroup } from "./CommandGroup";
 
 export abstract class ParentCommand extends Command {
@@ -18,7 +18,7 @@ export abstract class ParentCommand extends Command {
 
   async getChild(
     string: string,
-    guildID: string
+    guildID: string | undefined
   ): Promise<Command | undefined> {
     const childCommand = await this.commandRegistry.find(
       string,

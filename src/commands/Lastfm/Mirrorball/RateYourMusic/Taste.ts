@@ -5,7 +5,11 @@ import { emDash } from "../../../../helpers/specialCharacters";
 import { Flag } from "../../../../lib/context/arguments/argumentTypes/Flag";
 import { standardMentions } from "../../../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../../../lib/context/arguments/types";
-import { displayNumber, displayRating } from "../../../../lib/views/displays";
+import {
+  displayNumber,
+  displayRating,
+  displayUserTag,
+} from "../../../../lib/views/displays";
 import { SimpleScrollingEmbed } from "../../../../lib/views/embeds/SimpleScrollingEmbed";
 import { ServiceRegistry } from "../../../../services/ServicesRegistry";
 import { TasteService } from "../../../../services/taste/TasteService";
@@ -80,7 +84,9 @@ export class Taste extends RateYourMusicIndexingChildCommand<
 
     if (!tasteMatch.ratings.length) {
       throw new LogicError(
-        `You and ${discordUser?.tag} share no common ratings! (try using the --lenient flag to allow for larger differences)`
+        `You and ${displayUserTag(
+          discordUser
+        )} share no common ratings! (try using the --lenient flag to allow for larger differences)`
       );
     }
 
@@ -96,7 +102,9 @@ export class Taste extends RateYourMusicIndexingChildCommand<
     const embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor("Ratings taste comparison"))
       .setTitle(
-        `Taste comparison for ${this.author.tag} and ${discordUser?.tag}`
+        `Taste comparison for ${displayUserTag(
+          this.author
+        )} and ${displayUserTag(discordUser)}`
       );
 
     const scrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {

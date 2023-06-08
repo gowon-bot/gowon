@@ -28,7 +28,6 @@ export default class WhoKnowsArtist extends WhoKnowsBaseCommand<typeof args> {
   description = "Shows who has scrobbled an artist in a server";
   subcategory = "whoknows";
   aliases = ["wk", "fmwk", "whoknows"];
-  guildRequired = true;
 
   variations: Variation[] = [VARIATIONS.global("wk")];
 

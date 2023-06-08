@@ -8,7 +8,7 @@ export class GuildRequiredError extends ClientError {
   name = "GuildRequiredError";
 
   constructor() {
-    super("This command must be run in a server!");
+    super("This command cannot be run in DMs!");
   }
 }
 

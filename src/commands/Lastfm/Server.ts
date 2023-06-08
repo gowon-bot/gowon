@@ -12,6 +12,7 @@ export default class Server extends LastFMBaseCommand {
   usage = [""];
 
   slashCommand = true;
+  guildRequired = true;
 
   async run() {
     const serverUsers = await this.serverUserIDs();

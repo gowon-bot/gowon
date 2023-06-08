@@ -1,5 +1,5 @@
-import { BetaAccess } from "../../lib/command/access/access";
-import { Command } from "../../lib/command/Command";
+import { BetaAccess } from "../../../lib/command/access/access";
+import { Command } from "../../../lib/command/Command";
 
 export default class TwitterLogin extends Command {
   idSeed = "ive yujin";

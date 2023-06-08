@@ -124,7 +124,7 @@ export class PermissionsService extends BaseService {
       forRoles || Array.from(ctx.requiredGuild.roles.cache.values());
 
     const adminCommands = this.commandRegistry
-      .list(true)
+      .list({ includeSecret: true })
       .filter((c) => c.adminCommand);
 
     for (const adminCommand of adminCommands) {
@@ -253,8 +253,8 @@ export class PermissionsService extends BaseService {
     ctx: GowonContext,
     command: Command
   ): CanCheck | undefined {
-    if (ctx.payload.guild && ctx.authorMember) {
-      for (const role of ctx.authorMember.roles.cache.values()) {
+    if (ctx.payload.guild && ctx.requiredAuthorMember) {
+      for (const role of ctx.requiredAuthorMember.roles.cache.values()) {
         const permission = this.permissionsCacheService.get(ctx, {
           type: PermissionType.role,
           commandID: command.id,
@@ -299,8 +299,8 @@ export class PermissionsService extends BaseService {
     const isAdmin =
       ctx.constants.isAdmin !== undefined
         ? ctx.constants.isAdmin
-        : (adminRole && ctx.authorMember.roles.cache.has(adminRole)) ||
-          ctx.authorMember.permissions.has("ADMINISTRATOR");
+        : (adminRole && ctx.requiredAuthorMember.roles.cache.has(adminRole)) ||
+          ctx.requiredAuthorMember.permissions.has("ADMINISTRATOR");
 
     if (isAdmin) return { allowed: true, permission: "admin" };
 

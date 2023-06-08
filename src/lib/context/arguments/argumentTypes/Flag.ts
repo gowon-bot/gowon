@@ -9,17 +9,21 @@ import {
   StringCleaningArgument,
 } from "./BaseArgument";
 
-export interface FlagArgumentOptions extends BaseArgumentOptions, FlagOptions { }
+export interface FlagArgumentOptions extends BaseArgumentOptions, FlagOptions {}
 
-export class Flag<
-  OptionsT extends Partial<FlagArgumentOptions>
->
+export class Flag<OptionsT extends Partial<FlagArgumentOptions>>
   extends BaseArgument<boolean, FlagArgumentOptions, OptionsT>
-  implements StringCleaningArgument {
+  implements StringCleaningArgument
+{
   private flagParser = new FlagParser();
 
   constructor(options?: OptionsT) {
-    super({ shortnames: [], longnames: [], description: "", ...(options ?? {}) } as OptionsT);
+    super({
+      shortnames: [],
+      longnames: [],
+      description: "",
+      ...(options ?? {}),
+    } as OptionsT);
   }
 
   parseFromMessage(_: Message, content: string): boolean {
@@ -42,6 +46,10 @@ export class Flag<
 
   public clean(string: string): string {
     return this.flagParser.clean(this.options, string);
+  }
+
+  public isDebug(): boolean {
+    return this.options.longnames.includes("debug");
   }
 }
 

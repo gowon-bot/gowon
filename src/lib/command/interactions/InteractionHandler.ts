@@ -2,10 +2,10 @@ import { CommandInteraction, Interaction, MessageEmbed } from "discord.js";
 import { generateCanCheckMessage } from "../../../helpers/permissions";
 import { DiscordService } from "../../../services/Discord/DiscordService";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
-import { GowonContext } from "../../context/Context";
-import { Payload } from "../../context/Payload";
 import { GowonClient } from "../../GowonClient";
 import { HeaderlessLogger, Logger } from "../../Logger";
+import { GowonContext } from "../../context/Context";
+import { Payload } from "../../context/Payload";
 import {
   CanCheck,
   PermissionsService,
@@ -101,7 +101,7 @@ export class InteractionHandler {
     const embed = errorEmbed(
       new MessageEmbed(),
       ctx.author,
-      ctx.authorMember,
+      ctx.requiredAuthorMember,
       message
     );
 

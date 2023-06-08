@@ -104,7 +104,7 @@ export default class WhoFirstArtist extends WhoKnowsBaseCommand<
         shouldDisplay: senderUndated,
         string: `\`${rows.length > 9 ? " " : ""}•\`. ${bold(
           displayLink(
-            this.ctx.authorMember.nickname || this.author.username,
+            this.ctx.requiredAuthorMember.nickname || this.author.username,
             LastfmLinks.libraryArtistPage(senderUsername, artist.name)
           )
         )} - \`(undated)\``,

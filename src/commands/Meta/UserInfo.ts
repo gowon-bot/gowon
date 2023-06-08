@@ -105,9 +105,7 @@ export default class UserInfo extends Command<typeof args> {
     );
 
     const embed = this.newEmbed()
-      .setTitle(
-        `User info for ${discordUser!.username}#${discordUser!.discriminator}`
-      )
+      .setAuthor(this.generateEmbedAuthor("User info"))
       .setDescription(lineConsolidator.consolidate());
 
     await this.send(embed);

@@ -69,7 +69,7 @@ export default class FakeNowPlaying extends NowPlayingBaseCommand<typeof args> {
     ).setAuthor({
       name: `Track for ${username}`,
       iconURL:
-        this.payload.member.avatarURL() ||
+        this.payload.member?.avatarURL() ||
         this.payload.author.avatarURL() ||
         undefined,
       url: LastfmLinks.userPage(username),

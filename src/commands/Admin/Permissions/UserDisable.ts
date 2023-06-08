@@ -12,6 +12,7 @@ import { bold, code } from "../../../helpers/discord";
 import { Command, Variation } from "../../../lib/command/Command";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { DiscordUserArgument } from "../../../lib/context/arguments/argumentTypes/discord/DiscordUserArgument";
+import { displayUserTag } from "../../../lib/views/displays";
 import { PermissionsChildCommand } from "./PermissionsChildCommand";
 
 const args = {
@@ -112,7 +113,7 @@ export class UserDisable extends PermissionsChildCommand<typeof args> {
       .setDescription(
         `Successfully ${deletedAllow ? "un-allowed" : "disabled"} ${code(
           command.name
-        )} for ${bold(user.tag)} (${user.id})`
+        )} for ${bold(displayUserTag(user))} (${user.id})`
       );
   }
 
@@ -149,7 +150,7 @@ export class UserDisable extends PermissionsChildCommand<typeof args> {
       .setDescription(
         `Successfully ${allowed ? "allowed" : "re-enabled"} ${code(
           command.name
-        )} for ${bold(user.tag)} (${user.id})`
+        )} for ${bold(displayUserTag(user))} (${user.id})`
       );
   }
 }

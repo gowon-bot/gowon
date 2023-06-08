@@ -1,4 +1,4 @@
-import { Command } from "../../lib/command/Command";
+import { Command } from "../../../lib/command/Command";
 
 export default class Uptime extends Command {
   idSeed = "gfriend yuju";

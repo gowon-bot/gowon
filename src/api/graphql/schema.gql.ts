@@ -4,7 +4,7 @@ export const typeDefs = gql`
   scalar Date
 
   type Query {
-    commands(keywords: String, isAdmin: Boolean): [Command!]!
+    commands(keywords: String, isAdmin: Boolean, inDMs: Boolean): [Command!]!
     allSettings: [Setting!]!
 
     guildSettings(guildID: String!): [SettingAndValue!]!

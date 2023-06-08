@@ -1,7 +1,7 @@
 import { asyncMap } from "../../helpers";
 import { SimpleMap } from "../../helpers/types";
 import { GowonContext } from "../../lib/context/Context";
-import { displayNumber } from "../../lib/views/displays";
+import { displayNumber, displayUserTag } from "../../lib/views/displays";
 import { BaseService } from "../BaseService";
 import {
   RedisService,
@@ -162,7 +162,7 @@ export class NicknameService extends BaseService<NicknameServiceContext> {
       try {
         const user = await ctx.client.client.users.fetch(discordID);
 
-        username = user ? user.username + "#" + user.discriminator : undefined;
+        username = user ? displayUserTag(user) : undefined;
 
         if (username) this.recordUsername(ctx, discordID, username);
         else username = UnknownUserDisplay;

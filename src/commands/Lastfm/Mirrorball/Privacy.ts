@@ -3,7 +3,7 @@ import { Command } from "../../../lib/command/Command";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { Emoji } from "../../../lib/emoji/Emoji";
-import { displayLink } from "../../../lib/views/displays";
+import { displayLink, displayUserTag } from "../../../lib/views/displays";
 import { LilacPrivacy } from "../../../services/lilac/LilacAPIService.types";
 import { PrivateUserDisplay } from "../../../services/lilac/LilacUsersService";
 
@@ -59,11 +59,14 @@ export default class Privacy extends Command<typeof args> {
       embed.setDescription(
         `Your new privacy is: \`${privacy.toLowerCase()}\` (${
           privacy === LilacPrivacy.Discord
-            ? this.author.tag
+            ? displayUserTag(this.author)
             : privacy === LilacPrivacy.FMUsername
             ? displayLink(senderUsername, LastfmLinks.userPage(senderUsername))
             : privacy === LilacPrivacy.Both
-            ? displayLink(this.author.tag, LastfmLinks.userPage(senderUsername))
+            ? displayLink(
+                displayUserTag(this.author),
+                LastfmLinks.userPage(senderUsername)
+              )
             : PrivateUserDisplay
         })`
       );
@@ -78,9 +81,9 @@ The options for privacy are:
             senderUsername,
             LastfmLinks.userPage(senderUsername)
           )})
-- \`discord\`: Discord username and discriminator are shown (${this.author.tag})
-- \`both\`: Discord username and discriminator are shown, and last.fm linked (${displayLink(
-            this.author.tag,
+- \`discord\`: Discord username is shown (${displayUserTag(this.author)})
+- \`both\`: Discord username is shown, and last.fm linked (${displayLink(
+            displayUserTag(this.author),
             LastfmLinks.userPage(senderUsername)
           )})
 - \`private\`: Your identity will be hidden (${PrivateUserDisplay})

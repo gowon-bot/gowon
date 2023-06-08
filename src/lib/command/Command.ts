@@ -10,6 +10,7 @@ import md5 from "js-md5";
 import config from "../../../config.json";
 import { AnalyticsCollector } from "../../analytics/AnalyticsCollector";
 import { UnknownError } from "../../errors/errors";
+import { GuildRequiredError } from "../../errors/gowon";
 import { SimpleMap } from "../../helpers/types";
 import { DiscordService } from "../../services/Discord/DiscordService";
 import {
@@ -37,6 +38,7 @@ import { ArgumentsMap, ParsedArguments } from "../context/arguments/types";
 import { Emoji, EmojiRaw } from "../emoji/Emoji";
 import { SettingsService } from "../settings/SettingsService";
 import { Validation, ValidationChecker } from "../validation/ValidationChecker";
+import { displayUserTag } from "../views/displays";
 import { errorEmbed, gowonEmbed } from "../views/embeds";
 import { CommandGroup } from "./CommandGroup";
 import { CommandRegistry } from "./CommandRegistry";
@@ -250,10 +252,12 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
   // which allow them to run code before the run method is called
   async beforeRun(): Promise<void> {}
 
-  async execute(ctx: GowonContext) {
+  async execute(ctx: GowonContext): Promise<void> {
     ctx.setCommand(this);
     ctx.addContext(this.customContext);
     this.ctx = ctx;
+
+    if (!(await this.checkGuildRequirement())) return;
 
     await this.setup();
 
@@ -362,6 +366,15 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
     }
   }
 
+  private async checkGuildRequirement(): Promise<boolean> {
+    if (this.guildRequired && this.ctx.isDM()) {
+      await this.sendError(new GuildRequiredError().message);
+      return false;
+    }
+
+    return true;
+  }
+
   /**
    * Helpers
    * (These methods are called when by a command when needed)
@@ -412,10 +425,10 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
   generateEmbedAuthor(title?: string, url?: string): EmbedAuthorData {
     return {
       name: title
-        ? `${this.payload.author.tag} | ${title}`
-        : `${this.payload.author.tag}`,
+        ? `${displayUserTag(this.payload.author)} | ${title}`
+        : `${displayUserTag(this.payload.author)}`,
       iconURL:
-        this.payload.member.avatarURL() ||
+        this.payload.member?.avatarURL() ||
         this.payload.author.avatarURL() ||
         undefined,
       url: url,

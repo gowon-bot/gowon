@@ -12,6 +12,7 @@ import { gowonAPIPort } from "./api";
 import { HeaderlessLogger } from "./lib/Logger";
 import { GowonContext } from "./lib/context/Context";
 import { Payload } from "./lib/context/Payload";
+import { displayUserTag } from "./lib/views/displays";
 import { MockMessage } from "./mocks/discord";
 import { UsersService } from "./services/dbservices/UsersService";
 import {
@@ -21,6 +22,7 @@ import {
   interactionHandler,
   setup,
 } from "./setup";
+
 function context() {
   return new GowonContext({
     gowonClient: client,
@@ -39,7 +41,7 @@ async function start() {
   client.client.on("ready", () => {
     console.log(
       chalk`\n{white Logged in as} {magenta ${
-        client.client?.user && client.client.user.tag
+        client.client?.user && displayUserTag(client.client.user)
       }}\n` +
         chalk`{white API running at} {magenta http://localhost:${gowonAPIPort}}`
     );

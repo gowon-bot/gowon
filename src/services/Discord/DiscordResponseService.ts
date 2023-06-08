@@ -11,6 +11,7 @@ import { DMsAreOffError } from "../../errors/errors";
 import { sleep, ucFirst } from "../../helpers";
 import { GowonContext } from "../../lib/context/Context";
 import { Payload } from "../../lib/context/Payload";
+import { displayUserTag } from "../../lib/views/displays";
 import { BaseService } from "../BaseService";
 import { ServiceRegistry } from "../ServicesRegistry";
 import { DiscordServiceContext } from "./DiscordService";
@@ -49,7 +50,7 @@ export class DiscordResponseService extends BaseService<DiscordServiceContext> {
         this.shouldReply(options) ? "reply" : "message"
       } in ${
         channel instanceof DMChannel || isPartialDMChannel(channel)
-          ? channel.recipient.tag
+          ? displayUserTag(channel.recipient)
           : `#${channel.name}`
       }`
     );

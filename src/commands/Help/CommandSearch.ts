@@ -1,10 +1,10 @@
+import { bold, code } from "../../helpers/discord";
 import { Command } from "../../lib/command/Command";
+import { StringArgument } from "../../lib/context/arguments/argumentTypes/StringArgument";
+import { ArgumentsMap } from "../../lib/context/arguments/types";
+import { PermissionsService } from "../../lib/permissions/PermissionsService";
 import { displayNumber } from "../../lib/views/displays";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
-import { StringArgument } from "../../lib/context/arguments/argumentTypes/StringArgument";
-import { bold, code } from "../../helpers/discord";
-import { PermissionsService } from "../../lib/permissions/PermissionsService";
-import { ArgumentsMap } from "../../lib/context/arguments/types";
 
 const args = {
   keywords: new StringArgument({

@@ -12,13 +12,17 @@ export default (ctx: PermissionsCacheContext) => ({
   queries: {
     async commands(
       _: any,
-      { keywords, isAdmin }: { keywords: string; isAdmin?: boolean },
+      {
+        keywords,
+        isAdmin,
+        inDMs,
+      }: { keywords: string; isAdmin?: boolean; inDMs?: boolean },
       { doughnutID }: { doughnutID: string }
     ) {
       ctx.payload.source = new MockMessage("", { authorID: doughnutID });
       ctx.constants.isAdmin = isAdmin ?? true;
 
-      const allCommands = registry.deepList();
+      const allCommands = registry.deepList({ includeOnlyDMCommands: inDMs });
 
       const results = registry.search(allCommands, keywords);
 

@@ -80,13 +80,17 @@ export class GowonContext<T extends CustomContext = CustomContext> {
     return this.payload.author;
   }
 
-  get authorMember(): GuildMember {
+  get requiredAuthorMember(): GuildMember {
     if (!this.payload.member) {
       throw new UnexpectedGowonError(
         "Author member not found for that payload"
       );
     }
 
+    return this.payload.member;
+  }
+
+  get authorMember(): GuildMember | undefined {
     return this.payload.member;
   }
 
@@ -114,6 +118,12 @@ export class GowonContext<T extends CustomContext = CustomContext> {
     }
 
     return this._command;
+  }
+
+  public isDM(): boolean {
+    return (
+      this.payload.isMessage() && this.payload.source.channel.type === "DM"
+    );
   }
 
   public setCommand(command: Command) {

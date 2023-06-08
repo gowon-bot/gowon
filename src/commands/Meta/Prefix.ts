@@ -11,6 +11,7 @@ export default class Prefix extends Command {
   description = "Set or view the prefix";
   secretCommand = true;
   shouldBeIndexed = false;
+  guildRequired = true;
 
   newPrefix?: string;
 
@@ -24,7 +25,7 @@ export default class Prefix extends Command {
   async run() {
     if (this.newPrefix) {
       if (
-        !this.ctx.authorMember.permissions.has("ADMINISTRATOR") &&
+        !this.ctx.requiredAuthorMember.permissions.has("ADMINISTRATOR") &&
         !this.gowonClient.isDeveloper(this.author.id)
       ) {
         throw new CannotChangePrefixError();

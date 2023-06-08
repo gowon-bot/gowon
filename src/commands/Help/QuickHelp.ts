@@ -10,7 +10,11 @@ export default class QuickHelp extends Command {
 
   async run() {
     const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Quick help"))
+      .setAuthor(
+        this.generateEmbedAuthor(
+          this.ctx.isDM() ? "Quick help in DMs" : "Quick help"
+        )
+      )
       .setDescription(
         `Welcome to Gowon! ${Emoji.gowonPeek}
       
@@ -19,7 +23,10 @@ To see a list of all commands see \`${this.prefix}help all\`, or visit https://g
 To change prefix, run \`@Gowon prefix <prefix>\` (the current prefix is \`${this.prefix}\`)
 
 Curious how Gowon uses your data? https://gowon.ca/privacy
-More questions? Come visit the support server: https://discord.gg/9Vr7Df7TZf`
+More questions? Come visit the support server: https://discord.gg/9Vr7Df7TZf` +
+          (this.ctx.isDM()
+            ? `\n\nOnly certain commands can be run in DMs. Simply use the default prefix \`${this.prefix}\`, and run commands like you would normally`
+            : "")
       );
 
     await this.send(embed);

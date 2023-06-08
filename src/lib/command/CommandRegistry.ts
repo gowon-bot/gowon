@@ -15,6 +15,12 @@ type CommandFactory = SimpleMap<{
   parentID?: string;
 }>;
 
+export interface CommandListOptions {
+  includeSecret?: boolean;
+  includeArchived?: boolean;
+  includeOnlyDMCommands?: boolean;
+}
+
 export class CommandRegistry {
   private constructor() {}
 
@@ -65,7 +71,7 @@ export class CommandRegistry {
 
   async find(
     messageString: string,
-    guildID: string,
+    guildID?: string,
     commands?: Command[]
   ): Promise<ExtractedCommand | undefined> {
     const extractor = new CommandExtractor();
@@ -73,7 +79,7 @@ export class CommandRegistry {
     return await extractor.extract(
       messageString,
       guildID,
-      commands || this.list(true)
+      commands || this.list({ includeSecret: true })
     );
   }
 
@@ -82,23 +88,35 @@ export class CommandRegistry {
     {
       includeSecret,
       includeArchived,
-    }: { includeSecret?: boolean; includeArchived?: boolean } = {}
+      includeOnlyDMCommands,
+    }: CommandListOptions = {}
   ): Command | undefined {
-    return this.deepList(includeSecret, includeArchived).find(
-      (c) => c.id === id
-    );
+    return this.deepList({
+      includeSecret,
+      includeArchived,
+      includeOnlyDMCommands,
+    }).find((c) => c.id === id);
   }
 
-  list(showSecret: boolean = false, showArchived = false): Command[] {
+  list({
+    includeSecret,
+    includeArchived,
+    includeOnlyDMCommands,
+  }: CommandListOptions = {}): Command[] {
     return this.pool.filter(
       (c) =>
         (c.parentName ? true : c.shouldBeIndexed) &&
-        (showSecret || !c.secretCommand) &&
-        (showArchived || !c.archived)
+        (includeSecret || !c.secretCommand) &&
+        (includeArchived || !c.archived) &&
+        (includeOnlyDMCommands ? !c.guildRequired : true)
     );
   }
 
-  deepList(showSecret = false, showArchived = false): Command[] {
+  deepList({
+    includeSecret,
+    includeArchived,
+    includeOnlyDMCommands,
+  }: CommandListOptions = {}): Command[] {
     const shallowCommands = this.list();
 
     return flatDeep<Command>(
@@ -106,7 +124,10 @@ export class CommandRegistry {
         sc.hasChildren ? [sc, ...(sc.children?.asDeepList() || [])] : sc
       )
     ).filter(
-      (c) => (showSecret || !c.secretCommand) && (showArchived || !c.archived)
+      (c) =>
+        (includeSecret || !c.secretCommand) &&
+        (includeArchived || !c.archived) &&
+        (includeOnlyDMCommands ? !c.guildRequired : true)
     );
   }
 

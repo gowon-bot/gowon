@@ -61,7 +61,9 @@ export default class Help extends Command<typeof args> {
   }
 
   private async helpForAllCommands() {
-    const rawCommands = this.commandRegistry.list();
+    const rawCommands = this.commandRegistry.list({
+      includeOnlyDMCommands: this.ctx.isDM(),
+    });
 
     const canChecks = await this.permissionsService.canListInContext(
       this.ctx,
@@ -73,7 +75,9 @@ export default class Help extends Command<typeof args> {
     const footer = (page: number, totalPages: number) =>
       `Page ${page} of ${totalPages} ${bullet} Can't find a command? Try ${this.prefix}searchcommand <keywords> to search commands`;
     const description = `Run \`${this.prefix}help <command>\` to learn more about specific commands\nTo change prefix, mention Gowon (\`@Gowon prefix ?)\``;
-    const embed = this.newEmbed().setAuthor(this.generateEmbedAuthor("Help"));
+    const embed = this.newEmbed().setAuthor(
+      this.generateEmbedAuthor(this.ctx.isDM() ? "Help in DMs" : "Help")
+    );
 
     const groupedCommands = commands.reduce((acc, command) => {
       const subcategory = command.subcategory || command.category || "misc";

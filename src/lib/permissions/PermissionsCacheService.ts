@@ -4,9 +4,9 @@ import { BaseService } from "../../services/BaseService";
 import { Command } from "../command/Command";
 import { GowonContext } from "../context/Context";
 import {
-  generateCacheKey,
   PermissionCacheKey,
   PermissionsCache,
+  generateCacheKey,
 } from "./PermissionsCache";
 
 export interface PermissionQuery {
@@ -70,7 +70,7 @@ export class PermissionsCacheService extends BaseService<PermissionsCacheContext
     }
 
     if (ctx.guild) {
-      const roles = ctx.authorMember?.roles;
+      const roles = ctx.requiredAuthorMember?.roles;
 
       queries.push(
         {
@@ -106,12 +106,13 @@ export class PermissionsCacheService extends BaseService<PermissionsCacheContext
     ctx: PermissionsCacheContext,
     queries: PermissionQuery[]
   ): Promise<SimpleMap<boolean>> {
-    return (
-      await Permission.getFromQueries(queries, ctx.requiredGuild.id)
-    ).reduce((acc, val) => {
-      acc[val.asCacheKey()] = val.allow;
+    return (await Permission.getFromQueries(queries, ctx.guild?.id)).reduce(
+      (acc, val) => {
+        acc[val.asCacheKey()] = val.allow;
 
-      return acc;
-    }, {} as SimpleMap<boolean>);
+        return acc;
+      },
+      {} as SimpleMap<boolean>
+    );
   }
 }

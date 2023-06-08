@@ -26,6 +26,7 @@ export class ServerCombos extends ComboChildCommand<typeof args> {
 
   slashCommand = true;
   slashCommandName = "server";
+  guildRequired = true;
 
   nicknameService = ServiceRegistry.get(NicknameService);
   lilacArtistsService = ServiceRegistry.get(LilacArtistsService);

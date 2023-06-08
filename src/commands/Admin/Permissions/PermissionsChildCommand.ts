@@ -1,7 +1,7 @@
-import { AdminBaseChildCommand } from "../AdminBaseCommand";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
-import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { PermissionsService } from "../../../lib/permissions/PermissionsService";
+import { ServiceRegistry } from "../../../services/ServicesRegistry";
+import { AdminBaseChildCommand } from "../AdminBaseCommand";
 
 export abstract class PermissionsChildCommand<
   T extends ArgumentsMap = {}
@@ -10,6 +10,7 @@ export abstract class PermissionsChildCommand<
   subcategory = "permissions";
 
   adminCommand = true;
+  guildRequired = true;
 
   permissionsService = ServiceRegistry.get(PermissionsService);
 }
