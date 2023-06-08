@@ -7,6 +7,7 @@ export class Help extends PermissionsChildCommand {
   usage = "";
 
   slashCommand = true;
+  guildRequired = false;
 
   async run() {
     const prefix = this.prefix;

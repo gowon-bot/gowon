@@ -11,6 +11,7 @@ export default class Prefix extends Command {
   description = "Set or view the prefix";
   secretCommand = true;
   shouldBeIndexed = false;
+  guildRequired = true;
 
   newPrefix?: string;
 

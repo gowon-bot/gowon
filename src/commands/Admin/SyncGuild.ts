@@ -10,6 +10,7 @@ export default class SyncGuild extends AdminBaseCommand {
 
   adminCommand = true;
   slashCommand = true;
+  guildRequired = true;
 
   async run() {
     const members = await this.requiredGuild.members.fetch();

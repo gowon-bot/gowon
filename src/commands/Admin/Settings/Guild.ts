@@ -1,6 +1,6 @@
-import { SettingsChildCommand } from "./SettingsChildCommand";
 import config from "../../../../config.json";
 import { bold } from "../../../helpers/discord";
+import { SettingsChildCommand } from "./SettingsChildCommand";
 
 export class Guild extends SettingsChildCommand {
   idSeed = "kep1er dayeon";
@@ -12,6 +12,7 @@ export class Guild extends SettingsChildCommand {
 
   slashCommand = true;
   adminCommand = true;
+  guildRequired = true;
 
   async run() {
     const embed = this.newEmbed()

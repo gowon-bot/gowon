@@ -22,6 +22,7 @@ export default class LastFmToDiscord extends LastFMBaseCommand<typeof args> {
 
   arguments = args;
   slashCommand = true;
+  guildRequired = true;
 
   async run() {
     let username = this.parsedArguments.username;

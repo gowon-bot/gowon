@@ -1,13 +1,13 @@
+import { format } from "date-fns";
+import { InvalidTimeZoneError } from "../../../errors/timesAndDates";
+import { code } from "../../../helpers/discord";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { TimeZone as TimeZoneType } from "../../../lib/timeAndDate/TimeZone";
 import { displayLink } from "../../../lib/views/displays";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { TimeAndDateService } from "../../../services/TimeAndDateService";
-import { TimeZone as TimeZoneType } from "../../../lib/timeAndDate/TimeZone";
-import { code } from "../../../helpers/discord";
 import { SettingsChildCommand } from "./SettingsChildCommand";
-import { InvalidTimeZoneError } from "../../../errors/timesAndDates";
-import { format } from "date-fns";
-import { ArgumentsMap } from "../../../lib/context/arguments/types";
 
 const args = {
   timeZone: new StringArgument({
@@ -74,9 +74,10 @@ export default class TimeZone extends SettingsChildCommand<typeof args> {
         `
 **Your current timezone**: \`${(
           userTimeZone?.asString() || "unset"
-        ).toLowerCase()}\` ${userTimeZone
-          ? `\n*Local time: ${this.displayLocalTime(userTimeZone)}*`
-          : ""
+        ).toLowerCase()}\` ${
+          userTimeZone
+            ? `\n*Local time: ${this.displayLocalTime(userTimeZone)}*`
+            : ""
         }
       
 A list of all accepted timezones can be ${displayLink(

@@ -1,4 +1,4 @@
-import { Command } from "../../lib/command/Command";
+import { Command } from "../../../lib/command/Command";
 
 export default class Restart extends Command {
   idSeed = "gfriend yerin";

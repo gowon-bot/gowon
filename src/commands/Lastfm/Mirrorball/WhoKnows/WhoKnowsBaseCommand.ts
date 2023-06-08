@@ -22,6 +22,7 @@ export abstract class WhoKnowsBaseCommand<
 
   nicknameService = ServiceRegistry.get(NicknameService);
   whoKnowsService = ServiceRegistry.get(WhoKnowsService);
+  guildRequired = true;
 
   protected notIndexedHelp() {
     return `Don't see yourself? Run ${this.prefix}index to download all your data!`;

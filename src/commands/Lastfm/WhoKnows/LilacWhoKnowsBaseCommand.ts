@@ -20,6 +20,8 @@ export abstract class WhoKnowsBaseCommand<
     format: "png",
   });
 
+  guildRequired = true;
+
   nicknameService = ServiceRegistry.get(NicknameService);
   whoKnowsService = ServiceRegistry.get(WhoKnowsService);
   lilacWhoKnowsService = ServiceRegistry.get(LilacWhoKnowsService);
