@@ -102,6 +102,14 @@ export const Emoji = {
 
   // Fishy misc
   newFishy: "<:newFishy:1091512966672830594>",
+
+  // Commmand icons
+  runsInDMs: "<:runs_in_DMs:1116262516520124436>",
+  doesNotRunInDMs: "<:does_not_run_in_DMs:1116262511428259881>",
+  requiresAdmin: "<:requires_admin:1116262515177947267>",
+  doesNotRequireAdmin: "<:does_not_require_admin:1116262513831583846>",
+  slashCommand: "<:slash_command:1116262522085965824>",
+  notASlashCommand: "<:not_a_slash_command:1116262520156590090>",
 } satisfies Record<string, string>;
 
 export const EmojiRaw = Object.entries(Emoji).reduce(

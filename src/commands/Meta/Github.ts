@@ -1,5 +1,5 @@
 import { Command } from "../../lib/command/Command";
-import { displayLink } from "../../lib/views/displays";
+import { displayLink, displayUserTag } from "../../lib/views/displays";
 
 export default class Github extends Command {
   idSeed = "apink chorom";
@@ -30,7 +30,7 @@ export default class Github extends Command {
 The bot is written in Typescript with Discord.js, Lilac is written in Elixir serving a GraphQL api, and Gowon.ca is built with Typescript and React.`
       )
       .setFooter({
-        text: `Made with <3 by ${author.tag}`,
+        text: `Made with <3 by ${displayUserTag(author)}`,
         iconURL:
           (
             await this.gowonClient.client.users.fetch("267794154459889664")

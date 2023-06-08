@@ -42,6 +42,7 @@ import { errorEmbed, gowonEmbed } from "../views/embeds";
 import { CommandGroup } from "./CommandGroup";
 import { CommandRegistry } from "./CommandRegistry";
 import { CommandAccess } from "./access/access";
+import { displayUserTag } from "../views/displays";
 
 export interface Variation {
   name: string;
@@ -424,8 +425,8 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
   generateEmbedAuthor(title?: string, url?: string): EmbedAuthorData {
     return {
       name: title
-        ? `${this.payload.author.tag} | ${title}`
-        : `${this.payload.author.tag}`,
+        ? `${displayUserTag(this.payload.author)} | ${title}`
+        : `${displayUserTag(this.payload.author)}`,
       iconURL:
         this.payload.member?.avatarURL() ||
         this.payload.author.avatarURL() ||

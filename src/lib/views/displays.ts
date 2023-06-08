@@ -1,4 +1,5 @@
 import { DocumentNode } from "apollo-link";
+import { User } from "discord.js";
 import {
   bold,
   cleanURL,
@@ -171,4 +172,12 @@ export function displayTrackLink(
   const link = displayLink(track, LastfmLinks.trackPage(artist, track));
 
   return stylize ? italic(link, false) : link;
+}
+
+export function displayUserTag(user: User): string {
+  if (user.discriminator === "0") {
+    return user.username;
+  }
+
+  return user.tag;
 }

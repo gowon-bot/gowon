@@ -5,6 +5,7 @@ import { SimpleMap } from "../helpers/types";
 import { Command } from "./command/Command";
 import { ExtractedCommand } from "./command/extractor/ExtractedCommand";
 import { GowonContext } from "./context/Context";
+import { displayUserTag } from "./views/displays";
 
 export class Logger {
   static output = true;
@@ -112,7 +113,7 @@ ${payload.isMessage() ? chalk`{bgGrey ${payload.source.content}}` : ""}
   private sanitizeParamsForDisplay(params: SimpleMap): SimpleMap {
     return Object.entries(params).reduce((acc, [key, value]) => {
       if (value instanceof User) {
-        acc[key] = `<Discord User '${value.tag}' (${value.id})>`;
+        acc[key] = `<Discord User '${displayUserTag(value)}' (${value.id})>`;
       } else if (key !== "debug") {
         acc[key] = value;
       }

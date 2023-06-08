@@ -1,14 +1,15 @@
-import { PermissionsChildCommand } from "./PermissionsChildCommand";
-import { Variation } from "../../../lib/command/Command";
-import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
-import { DiscordUserArgument } from "../../../lib/context/arguments/argumentTypes/discord/DiscordUserArgument";
-import { CommandNotFoundError } from "../../../errors/errors";
+import { MessageEmbed } from "discord.js";
 import {
   Permission,
   PermissionType,
 } from "../../../database/entity/Permission";
-import { MessageEmbed } from "discord.js";
+import { CommandNotFoundError } from "../../../errors/errors";
 import { bold, code } from "../../../helpers/discord";
+import { Variation } from "../../../lib/command/Command";
+import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
+import { DiscordUserArgument } from "../../../lib/context/arguments/argumentTypes/discord/DiscordUserArgument";
+import { displayUserTag } from "../../../lib/views/displays";
+import { PermissionsChildCommand } from "./PermissionsChildCommand";
 
 const args = {
   user: new DiscordUserArgument({
@@ -68,9 +69,9 @@ export class BotwideUserDisable extends PermissionsChildCommand<typeof args> {
       embed = this.newEmbed()
         .setAuthor(this.generateEmbedAuthor("Permissions user disable"))
         .setDescription(
-          `Successfully disabled ${code(command.name)} for ${bold(user.tag)} (${
-            user.id
-          }) bot-wide`
+          `Successfully disabled ${code(command.name)} for ${bold(
+            displayUserTag(user)
+          )} (${user.id}) bot-wide`
         );
     } else {
       await this.permissionsService.destroyPermission(
@@ -83,7 +84,7 @@ export class BotwideUserDisable extends PermissionsChildCommand<typeof args> {
         .setAuthor(this.generateEmbedAuthor("Permissions enable"))
         .setDescription(
           `Successfully re-enabled ${code(command.name)} for ${bold(
-            user.tag
+            displayUserTag(user)
           )} (${user.id}) bot-wide`
         );
     }

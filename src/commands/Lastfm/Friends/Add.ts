@@ -13,6 +13,7 @@ import { DiscordIDMention } from "../../../lib/context/arguments/mentionTypes/Di
 import { LastFMMention } from "../../../lib/context/arguments/mentionTypes/LastFMMention";
 import { DiscordUsernameMention } from "../../../lib/context/arguments/mentionTypes/UsernameMention";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { displayUserTag } from "../../../lib/views/displays";
 import { FriendsChildCommand } from "./FriendsChildCommand";
 
 const args = {
@@ -160,7 +161,9 @@ export class Add extends FriendsChildCommand<typeof args> {
           const user = await this.usersService.getUser(this.ctx, friend.id);
           if (user) toAdd.push(user);
         } catch {
-          notFound.push(friend instanceof DiscordUser ? friend.tag : friend.id);
+          notFound.push(
+            friend instanceof DiscordUser ? displayUserTag(friend) : friend.id
+          );
         }
       }
     }

@@ -1,6 +1,6 @@
 import { CommandNotFoundError } from "../../errors/errors";
 import { flatDeep } from "../../helpers";
-import { bold, code, italic } from "../../helpers/discord";
+import { bold, code, italic, subheader } from "../../helpers/discord";
 import { Command } from "../../lib/command/Command";
 import { ParentCommand } from "../../lib/command/ParentCommand";
 import { BaseArgument } from "../../lib/context/arguments/argumentTypes/BaseArgument";
@@ -14,6 +14,7 @@ import { ArgumentsMap } from "../../lib/context/arguments/types";
 import { Emoji } from "../../lib/emoji/Emoji";
 import { LineConsolidator } from "../../lib/LineConsolidator";
 import { PermissionsService } from "../../lib/permissions/PermissionsService";
+import { displayCommandIcons } from "../../lib/views/command";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 
 const args = {
@@ -40,10 +41,7 @@ export default class HelpForOneCommand extends Command<typeof args> {
   }
 
   private async helpForOneCommand(input: string) {
-    const extract = await this.commandRegistry.find(
-      input,
-      this.requiredGuild.id
-    );
+    const extract = await this.commandRegistry.find(input, this.guild?.id);
 
     const command = extract?.command;
 
@@ -82,11 +80,12 @@ export default class HelpForOneCommand extends Command<typeof args> {
     const lineConsolidator = new LineConsolidator();
 
     lineConsolidator.addLines(
-      (command.access?.role ? `${Emoji[command.access.role]} ` : "") +
-        bold(commandName) +
-        (command.slashCommand ? " (slash command)" : "") +
-        ":",
-
+      subheader(
+        (command.access?.role ? `${Emoji[command.access.role]} ` : "") +
+          commandName
+      ),
+      displayCommandIcons(command),
+      "",
       italic(command.description + command.extraDescription, false),
       "",
       {
@@ -117,6 +116,7 @@ export default class HelpForOneCommand extends Command<typeof args> {
               isFlag(a as BaseArgument<any, any>)
             ) as Flag<any>[]
           )
+            .filter((f) => !f.isDebug())
             .map(
               (f) =>
                 `${[
