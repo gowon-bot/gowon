@@ -290,17 +290,17 @@ export class PermissionsService extends BaseService {
     command: Command
   ): CanCheck | undefined {
     const adminRole =
-      ctx.constants.isAdmin === undefined
+      ctx.constants.isAdmin === undefined && ctx.guild
         ? this.settingsService.get("adminRole", {
-            guildID: ctx.requiredGuild.id,
+            guildID: ctx.guild.id,
           })
         : undefined;
 
     const isAdmin =
       ctx.constants.isAdmin !== undefined
         ? ctx.constants.isAdmin
-        : (adminRole && ctx.requiredAuthorMember.roles.cache.has(adminRole)) ||
-          ctx.requiredAuthorMember.permissions.has("ADMINISTRATOR");
+        : (adminRole && ctx.authorMember?.roles?.cache?.has(adminRole)) ||
+          ctx.authorMember?.permissions?.has("ADMINISTRATOR");
 
     if (isAdmin) return { allowed: true, permission: "admin" };
 
@@ -328,6 +328,8 @@ export class PermissionsService extends BaseService {
     ctx: GowonContext,
     command: Command
   ): CanCheck | undefined {
+    if (ctx.isDM()) return { allowed: true };
+
     // If a command is disabled in a channel, no one should be able to run it
     const canRunInChannel = this.canRunInChannel(ctx, command);
     if (canRunInChannel && !canRunInChannel.allowed) {
