@@ -52,8 +52,10 @@ export class WordBlacklistService extends BaseService<WordBlacklistServiceContex
 
     return (
       !blacklistGroup.strings.includes(this.normalizeItem(item)) &&
-      !blacklistGroup.regexes.some((regex) =>
-        regex.test(this.getItemName(item))
+      !blacklistGroup.regexes.some(
+        (regex) =>
+          regex.test(this.getItemName(item)) ||
+          regex.test(this.normalizeItem(item))
       ) &&
       !ctx.mutable.serverBannedTags?.some(
         (bt) => this.normalizeItem(bt.tag) === this.normalizeItem(item)
