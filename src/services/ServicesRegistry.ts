@@ -24,6 +24,7 @@ import { TrackingService } from "./TrackingService";
 import { WordBlacklistService } from "./WordBlacklistService";
 import { ArgumentParsingService } from "./arguments/ArgumentsParsingService";
 import { MentionsService } from "./arguments/mentions/MentionsService";
+import { CommunityPlaylistService } from "./communityPlaylists/CommunityPlaylistService";
 import { BotStatsService } from "./dbservices/BotStatsService";
 import { CardsService } from "./dbservices/CardsService";
 import { ComboService } from "./dbservices/ComboService";
@@ -64,6 +65,7 @@ const services: Service[] = [
   CrownsUserService,
   ComboService,
   ConcurrencyService,
+  CommunityPlaylistService,
   ConfigService,
   DatasourceService,
   DiscordService,
