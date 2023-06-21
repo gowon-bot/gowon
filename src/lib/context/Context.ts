@@ -122,7 +122,7 @@ export class GowonContext<T extends CustomContext = CustomContext> {
 
   public isDM(): boolean {
     return (
-      this.payload.isMessage() && this.payload.source.channel.type === "DM"
+      this.payload.isMessage() && this.payload.source?.channel?.type === "DM"
     );
   }
 
