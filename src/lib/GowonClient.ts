@@ -1,4 +1,9 @@
-import { Client, User as DiscordUser, Guild } from "discord.js";
+import {
+  Client,
+  User as DiscordUser,
+  Guild,
+  PermissionsBitField,
+} from "discord.js";
 import { BotName } from "../helpers/bots";
 import { DiscordService } from "../services/Discord/DiscordService";
 import { DiscordID } from "../services/Discord/DiscordService.types";
@@ -91,7 +96,11 @@ export class GowonClient {
     try {
       const guildMember = await guild.members.fetch(userID);
 
-      if (guildMember.permissions.has("ADMINISTRATOR")) return true;
+      if (
+        guildMember.permissions.has(PermissionsBitField.Flags.Administrator)
+      ) {
+        return true;
+      }
 
       const adminRole = this.settingsService.get("adminRole", {
         guildID: guild.id,

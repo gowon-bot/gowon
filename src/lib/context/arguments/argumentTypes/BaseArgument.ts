@@ -1,5 +1,5 @@
 import chalk from "chalk";
-import { Interaction, Message } from "discord.js";
+import { CommandInteraction, Message } from "discord.js";
 import { toInt } from "../../../../helpers/lastfm/";
 import { GowonService } from "../../../../services/GowonService";
 import { ServiceRegistry } from "../../../../services/ServicesRegistry";
@@ -86,7 +86,7 @@ export abstract class BaseArgument<
   ): ReturnT | undefined;
 
   abstract parseFromInteraction(
-    interaction: Interaction,
+    interaction: CommandInteraction,
     context: GowonContext,
     argumentName: string
   ): ReturnT | undefined;

@@ -1,5 +1,8 @@
-import { SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction, Message } from "discord.js";
+import {
+  ChatInputCommandInteraction,
+  Message,
+  SlashCommandBuilder,
+} from "discord.js";
 import { toInt } from "../../../../helpers/lastfm/";
 import { GowonService } from "../../../../services/GowonService";
 import { ServiceRegistry } from "../../../../services/ServicesRegistry";
@@ -47,7 +50,7 @@ export class NumberArgument<
   }
 
   parseFromInteraction(
-    interaction: CommandInteraction,
+    interaction: ChatInputCommandInteraction,
     _: GowonContext,
     argumentName: string
   ): number | undefined {

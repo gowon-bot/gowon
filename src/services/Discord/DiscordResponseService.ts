@@ -1,9 +1,9 @@
 import {
   CommandInteraction,
   DMChannel,
+  EmbedBuilder,
   InteractionReplyOptions,
   Message,
-  MessageEmbed,
   MessagePayload,
 } from "discord.js";
 import { AnalyticsCollector } from "../../analytics/AnalyticsCollector";
@@ -39,7 +39,7 @@ export class DiscordResponseService extends BaseService<DiscordServiceContext> {
 
   public async send(
     ctx: DiscordServiceContext,
-    content: string | MessageEmbed,
+    content: string | EmbedBuilder,
     options?: Partial<SendOptions>
   ): Promise<Message> {
     const channel = this.getChannel(ctx, options);
@@ -50,7 +50,9 @@ export class DiscordResponseService extends BaseService<DiscordServiceContext> {
         this.shouldReply(options) ? "reply" : "message"
       } in ${
         channel instanceof DMChannel || isPartialDMChannel(channel)
-          ? displayUserTag(channel.recipient)
+          ? channel.recipient
+            ? displayUserTag(channel.recipient)
+            : ""
           : `#${channel.name}`
       }`
     );
@@ -86,7 +88,7 @@ export class DiscordResponseService extends BaseService<DiscordServiceContext> {
   async edit(
     ctx: DiscordServiceContext,
     message: Message,
-    content: string | MessageEmbed
+    content: string | EmbedBuilder
   ) {
     if (ctx.payload.isInteraction()) {
       this.log(ctx, `Editing interaction reply`);
@@ -176,7 +178,7 @@ export class DiscordResponseService extends BaseService<DiscordServiceContext> {
 
   private async replyToInteraction(
     ctx: DiscordServiceContext,
-    content: string | MessageEmbed,
+    content: string | EmbedBuilder,
     options: Partial<SendOptions> | undefined
   ): Promise<Message> {
     const payload = ctx.payload as Payload<CommandInteraction>;

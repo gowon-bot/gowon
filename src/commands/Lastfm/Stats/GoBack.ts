@@ -68,7 +68,7 @@ export default class GoBack extends LastFMBaseCommand<typeof args> {
     const embed = this.newEmbed(await trackEmbed(this.ctx, track));
 
     embed.setDescription(
-      embed.description +
+      embed.data.description +
         (date
           ? `\n\nScrobbled on ${displayDate(date)}`
           : `\n\nScrobbled ${ago(timeRange?.from!)}`)

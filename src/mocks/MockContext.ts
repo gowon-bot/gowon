@@ -1,4 +1,4 @@
-import { MessageEmbed } from "discord.js";
+import { Embed } from "discord.js";
 import { SimpleMap } from "../helpers/types";
 import { Logger } from "../lib/Logger";
 import { Command } from "../lib/command/Command";
@@ -28,7 +28,7 @@ interface MockedContext {
 export class MockContext<
   T extends CustomContext = CustomContext
 > extends GowonContext<T> {
-  private responses: Array<string | MessageEmbed> = [];
+  private responses: Array<string | Embed> = [];
 
   public mocked: Partial<MockedContext>;
 
@@ -38,11 +38,11 @@ export class MockContext<
     this.mocked = options.mock || {};
   }
 
-  latestResponse<T extends string | MessageEmbed>(): T {
+  latestResponse<T extends string | Embed>(): T {
     return this.responses[this.responses.length - 1] as T;
   }
 
-  addResponse(response: string | MessageEmbed) {
+  addResponse(response: string | Embed) {
     this.responses.push(response);
   }
 

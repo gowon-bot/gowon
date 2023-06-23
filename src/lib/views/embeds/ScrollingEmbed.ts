@@ -1,9 +1,10 @@
 import {
+  EmbedBuilder,
   EmbedField,
   Emoji,
   Message,
-  MessageEmbed,
   MessageReaction,
+  PermissionsBitField,
   ReactionCollector,
   User,
 } from "discord.js";
@@ -53,7 +54,7 @@ export class ScrollingEmbed {
 
   constructor(
     private ctx: GowonContext,
-    private embed: MessageEmbed,
+    private embed: EmbedBuilder,
     options: Partial<ScrollingEmbedOptions>
   ) {
     this.options = Object.assign(
@@ -84,8 +85,8 @@ export class ScrollingEmbed {
 
   public async customSend(
     sendCallback:
-      | ((embed: MessageEmbed) => Message)
-      | ((embed: MessageEmbed) => Promise<Message>)
+      | ((embed: EmbedBuilder) => Message)
+      | ((embed: EmbedBuilder) => Promise<Message>)
   ) {
     this.generateEmbed();
 
@@ -111,7 +112,7 @@ export class ScrollingEmbed {
 
     if (isEmbedFields(this.currentItems)) {
       this.embed.setDescription(this.options.embedDescription);
-      this.embed.fields = [];
+      this.embed.setFields([]);
       this.currentItems.forEach((item) => this.embed.addFields(item));
     } else {
       this.embed.setDescription(
@@ -222,7 +223,11 @@ export class ScrollingEmbed {
   }
 
   private async removeReaction(emoji: Emoji, userId: string) {
-    if (this.ctx.guild?.me?.permissions?.has("MANAGE_MESSAGES")) {
+    if (
+      this.ctx.guild?.members?.me?.permissions?.has(
+        PermissionsBitField.Flags.ManageMessages
+      )
+    ) {
       await this.sentMessage!.reactions.resolve(
         (emoji.id ?? emoji.name)!
       )!.users.remove(userId);

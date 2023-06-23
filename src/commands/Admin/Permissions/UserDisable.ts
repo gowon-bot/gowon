@@ -1,4 +1,4 @@
-import { MessageEmbed, User } from "discord.js";
+import { EmbedBuilder, User } from "discord.js";
 import {
   Permission,
   PermissionType,
@@ -67,7 +67,7 @@ export class UserDisable extends PermissionsChildCommand<typeof args> {
       guildID: this.requiredGuild.id,
     });
 
-    let embed: MessageEmbed;
+    let embed: EmbedBuilder;
 
     if (
       !this.variationWasUsed("userenable") &&
@@ -85,7 +85,7 @@ export class UserDisable extends PermissionsChildCommand<typeof args> {
     command: Command,
     permission: Permission,
     user: User
-  ): Promise<MessageEmbed> {
+  ): Promise<EmbedBuilder> {
     let deletedAllow = false;
 
     try {
@@ -121,7 +121,7 @@ export class UserDisable extends PermissionsChildCommand<typeof args> {
     command: Command,
     permission: Permission,
     user: User
-  ): Promise<MessageEmbed> {
+  ): Promise<EmbedBuilder> {
     let allowed = false;
 
     try {

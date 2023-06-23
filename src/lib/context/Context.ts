@@ -1,4 +1,4 @@
-import { Guild, GuildMember, Message, User } from "discord.js";
+import { ChannelType, Guild, GuildMember, Message, User } from "discord.js";
 import { GuildRequiredError, UnexpectedGowonError } from "../../errors/gowon";
 import { GowonClient } from "../GowonClient";
 import { Logger } from "../Logger";
@@ -122,7 +122,8 @@ export class GowonContext<T extends CustomContext = CustomContext> {
 
   public isDM(): boolean {
     return (
-      this.payload.isMessage() && this.payload.source.channel.type === "DM"
+      this.payload.isMessage() &&
+      this.payload.source.channel.type === ChannelType.DM
     );
   }
 

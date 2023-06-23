@@ -1,12 +1,14 @@
 import {
+  AttachmentBuilder,
   DMChannel,
-  FileOptions,
-  MessageEmbed,
+  EmbedBuilder,
   MessageResolvable,
   NewsChannel,
   PartialDMChannel,
+  StageChannel,
   TextChannel,
   ThreadChannel,
+  VoiceChannel,
 } from "discord.js";
 
 export type RespondableChannel =
@@ -14,7 +16,9 @@ export type RespondableChannel =
   | TextChannel
   | PartialDMChannel
   | ThreadChannel
-  | NewsChannel;
+  | NewsChannel
+  | StageChannel
+  | VoiceChannel;
 
 export type ReplyOptions = Partial<{
   to: MessageResolvable;
@@ -24,9 +28,9 @@ export type ReplyOptions = Partial<{
 
 export interface SendOptions {
   inChannel: RespondableChannel;
-  withEmbed: MessageEmbed;
+  withEmbed: EmbedBuilder;
   reply: boolean | ReplyOptions;
-  files: string[] | FileOptions[];
+  files: AttachmentBuilder[];
   forceNoInteractionReply?: boolean;
   ephemeral?: boolean;
 }

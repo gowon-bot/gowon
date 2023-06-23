@@ -1,4 +1,10 @@
-import { ApplicationCommand, Guild, GuildResolvable } from "discord.js";
+import {
+  ApplicationCommand,
+  ApplicationCommandPermissionType,
+  Guild,
+  GuildResolvable,
+} from "discord.js";
+import { discordToken } from "../../../config.json";
 import { Permission, PermissionType } from "../../database/entity/Permission";
 import { Command } from "../command/Command";
 import { GowonContext } from "../context/Context";
@@ -83,10 +89,14 @@ export class PermissionsRegister {
       // Typescript seems to a bit flaky with this function call,
       // complaining that "guild" shouldn't be there
       await applicationCommand.permissions.set({
+        token: discordToken,
         guild: ctx.requiredGuild,
         permissions: filteredPermissions.map((permission) => ({
           id: permission.entityID!,
-          type: permission.type === PermissionType.role ? "ROLE" : "USER",
+          type:
+            permission.type === PermissionType.role
+              ? ApplicationCommandPermissionType.Role
+              : ApplicationCommandPermissionType.User,
           permission: permission.allow || false,
         })),
       } as any);
@@ -138,11 +148,12 @@ export class PermissionsRegister {
     const [guildID, userID] = permission.entityID!.split(":");
 
     await applicationCommand.permissions.add({
+      token: discordToken,
       guild: guildID,
       permissions: [
         {
           id: userID,
-          type: "USER",
+          type: ApplicationCommandPermissionType.User,
           permission: permission.allow || false,
         },
       ],
@@ -155,11 +166,12 @@ export class PermissionsRegister {
     permission: Permission
   ) {
     await applicationCommand.permissions.add({
+      token: discordToken,
       guild: ctx.requiredGuild.id,
       permissions: [
         {
           id: permission.entityID!,
-          type: "ROLE",
+          type: ApplicationCommandPermissionType.Role,
           permission: permission.allow || false,
         },
       ],
@@ -176,6 +188,7 @@ export class PermissionsRegister {
     permission: Permission
   ) {
     await applicationCommand.permissions.remove({
+      token: discordToken,
       guild: ctx.requiredGuild,
       users: [permission.entityID!],
     });
@@ -187,6 +200,7 @@ export class PermissionsRegister {
     permission: Permission
   ) {
     await applicationCommand.permissions.remove({
+      token: discordToken,
       guild: ctx.requiredGuild,
       roles: [permission.entityID!],
     });

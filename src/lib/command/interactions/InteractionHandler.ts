@@ -1,4 +1,8 @@
-import { CommandInteraction, Interaction, MessageEmbed } from "discord.js";
+import {
+  ChatInputCommandInteraction,
+  CommandInteraction,
+  EmbedBuilder,
+} from "discord.js";
 import { generateCanCheckMessage } from "../../../helpers/permissions";
 import { DiscordService } from "../../../services/Discord/DiscordService";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
@@ -36,7 +40,7 @@ export class InteractionHandler {
     await this.interactionRegistry.init();
   }
 
-  async handle(interaction: Interaction) {
+  async handle(interaction: ChatInputCommandInteraction) {
     if (interaction.isCommand()) {
       const extract = this.interactionRegistry.find({
         byName: interaction.commandName,
@@ -99,7 +103,7 @@ export class InteractionHandler {
     );
 
     const embed = errorEmbed(
-      new MessageEmbed(),
+      new EmbedBuilder(),
       ctx.author,
       ctx.requiredAuthorMember,
       message

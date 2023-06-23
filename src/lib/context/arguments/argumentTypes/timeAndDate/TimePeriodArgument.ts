@@ -1,14 +1,14 @@
-import { CommandInteraction, Message } from "discord.js";
+import { ChatInputCommandInteraction, Message } from "discord.js";
 import { GowonService } from "../../../../../services/GowonService";
+import { LastFMPeriod } from "../../../../../services/LastFM/LastFMService.types";
 import { ServiceRegistry } from "../../../../../services/ServicesRegistry";
 import { GowonContext } from "../../../Context";
-import { BaseArgument, BaseArgumentOptions } from "../BaseArgument";
-import { LastFMPeriod } from "../../../../../services/LastFM/LastFMService.types";
 import { TimePeriodParser } from "../../parsers/TimePeriodParser";
+import { BaseArgument, BaseArgumentOptions } from "../BaseArgument";
 import { SlashCommandBuilder } from "../SlashCommandTypes";
 
 export interface TimePeriodArgumentOptions
-  extends BaseArgumentOptions<LastFMPeriod> { }
+  extends BaseArgumentOptions<LastFMPeriod> {}
 
 const periodChoices: { name: string; value: LastFMPeriod }[] = [
   { name: "Alltime", value: "overall" },
@@ -43,7 +43,7 @@ export class TimePeriodArgument<
   }
 
   parseFromInteraction(
-    interaction: CommandInteraction,
+    interaction: ChatInputCommandInteraction,
     _: GowonContext,
     argumentName: string
   ): LastFMPeriod | undefined {

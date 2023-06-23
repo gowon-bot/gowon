@@ -17,7 +17,7 @@ export abstract class WhoKnowsBaseCommand<
 > extends LilacBaseCommand<A> {
   protected readonly gowonIconURL = client.client.user?.displayAvatarURL({
     size: 1024,
-    format: "png",
+    extension: "png",
   });
 
   guildRequired = true;

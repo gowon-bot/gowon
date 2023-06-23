@@ -83,7 +83,9 @@ async function start() {
   });
 
   client.client.on("interactionCreate", (interaction) => {
-    interactionHandler.handle(interaction);
+    if (interaction.isChatInputCommand()) {
+      interactionHandler.handle(interaction);
+    }
   });
 
   // For setting permissions on commands

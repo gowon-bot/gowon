@@ -1,5 +1,9 @@
-import { SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction, Message, Role } from "discord.js";
+import {
+  ChatInputCommandInteraction,
+  Message,
+  Role,
+  SlashCommandBuilder,
+} from "discord.js";
 import { GowonContext } from "../../../Context";
 import {
   BaseArgument,
@@ -28,7 +32,7 @@ export class DiscordRoleArgument<
   }
 
   parseFromInteraction(
-    interaction: CommandInteraction,
+    interaction: ChatInputCommandInteraction,
     _: GowonContext,
     argumentName: string
   ): Role | undefined {

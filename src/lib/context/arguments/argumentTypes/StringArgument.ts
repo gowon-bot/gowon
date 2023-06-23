@@ -1,8 +1,9 @@
 import {
+  ChatInputCommandInteraction,
+  Message,
   SlashCommandBuilder,
   SlashCommandStringOption,
-} from "@discordjs/builders";
-import { CommandInteraction, Message } from "discord.js";
+} from "discord.js";
 import escapeStringRegexp from "escape-string-regexp";
 import { ArgumentValidationError } from "../../../validation/validators/BaseValidator";
 import { GowonContext } from "../../Context";
@@ -88,7 +89,7 @@ export class StringArgument<
   }
 
   parseFromInteraction(
-    interaction: CommandInteraction,
+    interaction: ChatInputCommandInteraction,
     _: GowonContext,
     argumentName: string
   ): string | undefined {

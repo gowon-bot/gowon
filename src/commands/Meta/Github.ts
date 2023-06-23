@@ -34,7 +34,7 @@ The bot is written in Typescript with Discord.js, Lilac is written in Elixir ser
         iconURL:
           (
             await this.gowonClient.client.users.fetch("267794154459889664")
-          ).avatarURL({ dynamic: true }) ?? undefined,
+          ).avatarURL() ?? undefined,
       });
 
     await this.send(embed);

@@ -1,4 +1,4 @@
-import { MessageEmbed } from "discord.js";
+import { EmbedBuilder } from "discord.js";
 import {
   Permission,
   PermissionType,
@@ -91,7 +91,7 @@ export class Disable extends PermissionsChildCommand<typeof args> {
       guildID: this.requiredGuild.id,
     });
 
-    let embed: MessageEmbed;
+    let embed: EmbedBuilder;
 
     if (!this.variationWasUsed("enable")) {
       await this.permissionsService.createPermission(

@@ -23,7 +23,7 @@ export default class ArtistList extends ListCommand {
       ...this.timeRange?.asTimeframeParams,
     });
 
-    const messageEmbed = this.newEmbed()
+    const Embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor("Top artists"))
       .setTitle(
         `Top artists for \`${username}\` ${
@@ -45,6 +45,6 @@ export default class ArtistList extends ListCommand {
           )
       );
 
-    await this.send(messageEmbed);
+    await this.send(Embed);
   }
 }

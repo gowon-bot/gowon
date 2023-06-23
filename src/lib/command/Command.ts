@@ -2,9 +2,9 @@ import { Chance } from "chance";
 import {
   CommandInteraction,
   EmbedAuthorData,
+  EmbedBuilder,
   Guild,
   Message,
-  MessageEmbed,
 } from "discord.js";
 import md5 from "js-md5";
 import config from "../../../config.json";
@@ -389,7 +389,7 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
    */
 
   async send(
-    content: MessageEmbed | string,
+    content: EmbedBuilder | string,
     options?: Partial<SendOptions>
   ): Promise<Message> {
     return await this.discordService.send(this.ctx, content, options);
@@ -404,7 +404,7 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
     });
   }
 
-  async dmAuthor(content: string | MessageEmbed): Promise<Message> {
+  async dmAuthor(content: string | EmbedBuilder): Promise<Message> {
     return await this.discordService.send(this.ctx, content, {
       inChannel: await this.ctx.author.createDM(true),
     });
@@ -418,7 +418,7 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
     return await this.discordService.send(this.ctx, content);
   }
 
-  newEmbed(embed?: MessageEmbed): MessageEmbed {
+  newEmbed(embed?: EmbedBuilder): EmbedBuilder {
     return gowonEmbed(this.payload.member ?? undefined, embed);
   }
 

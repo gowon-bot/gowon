@@ -1,4 +1,4 @@
-import { CommandInteraction, Message, User } from "discord.js";
+import { ChatInputCommandInteraction, Message, User } from "discord.js";
 import { isGowon } from "../../../../../helpers/bots";
 import { GowonContext } from "../../../Context";
 import {
@@ -46,7 +46,7 @@ export class DiscordUserArgument<
   }
 
   parseFromInteraction(
-    interaction: CommandInteraction,
+    interaction: ChatInputCommandInteraction,
     _: GowonContext,
     argumentName: string
   ): User {

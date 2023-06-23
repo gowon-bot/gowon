@@ -1,4 +1,4 @@
-import { GuildMember, HexColorString, MessageEmbed, User } from "discord.js";
+import { EmbedBuilder, GuildMember, HexColorString, User } from "discord.js";
 import { ucFirst } from "../../../helpers";
 import { bold, italic } from "../../../helpers/discord";
 import { ImageCollection } from "../../../services/LastFM/converters/BaseConverter";
@@ -9,9 +9,9 @@ import { displayUserTag } from "../displays";
 
 export const errorColour = "#ED008E";
 
-export function gowonEmbed(member?: GuildMember, embed?: MessageEmbed) {
-  const gowonEmbed = (embed || new MessageEmbed()).setColor(
-    (member?.roles?.color?.hexColor as HexColorString) || "black"
+export function gowonEmbed(member?: GuildMember, embed?: EmbedBuilder) {
+  const gowonEmbed = (embed || new EmbedBuilder()).setColor(
+    (member?.roles?.color?.hexColor as HexColorString) || "#000000"
   );
 
   return gowonEmbed;
@@ -28,7 +28,7 @@ export async function trackEmbed(
   ctx: GowonContext,
   track: SimpleTrack,
   imageSize = "large"
-): Promise<MessageEmbed> {
+): Promise<EmbedBuilder> {
   const artist =
     typeof track.artist === "string" ? track.artist : track.artist.name;
   const album =
@@ -42,7 +42,7 @@ export async function trackEmbed(
     }
   );
 
-  return new MessageEmbed()
+  return new EmbedBuilder()
     .setTitle(track.name)
     .setDescription(
       `by ${bold(artist)}` + (album ? ` from ${italic(album)}` : "")
@@ -51,12 +51,12 @@ export async function trackEmbed(
 }
 
 export function errorEmbed(
-  from: MessageEmbed,
+  from: EmbedBuilder,
   author: User,
   member: GuildMember | undefined,
   message: string,
   footer: string = ""
-): MessageEmbed {
+): EmbedBuilder {
   return from
     .setColor(errorColour)
     .setAuthor({

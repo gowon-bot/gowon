@@ -1,4 +1,4 @@
-import { Message, Role } from "discord.js";
+import { Message, PermissionsBitField, Role } from "discord.js";
 import { QueryFailedError } from "typeorm";
 import { Permission, PermissionType } from "../../database/entity/Permission";
 import {
@@ -135,7 +135,9 @@ export class PermissionsService extends BaseService {
           Permission.create({
             type: PermissionType.role,
             entityID: r.id,
-            allow: r.permissions.has("ADMINISTRATOR") || r.id === adminRoleID,
+            allow:
+              r.permissions.has(PermissionsBitField.Flags.Administrator) ||
+              r.id === adminRoleID,
           })
         )
       );
@@ -300,7 +302,9 @@ export class PermissionsService extends BaseService {
       ctx.constants.isAdmin !== undefined
         ? ctx.constants.isAdmin
         : (adminRole && ctx.authorMember?.roles?.cache?.has(adminRole)) ||
-          ctx.authorMember?.permissions?.has("ADMINISTRATOR");
+          ctx.authorMember?.permissions?.has(
+            PermissionsBitField.Flags.Administrator
+          );
 
     if (isAdmin) return { allowed: true, permission: "admin" };
 

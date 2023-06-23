@@ -1,3 +1,4 @@
+import { AttachmentBuilder } from "discord.js";
 import {
   AlbumHasNoCoverError,
   NoAlbumForCoverError,
@@ -7,11 +8,11 @@ import { Flag } from "../../lib/context/arguments/argumentTypes/Flag";
 import { standardMentions } from "../../lib/context/arguments/mentionTypes/mentions";
 import { prefabArguments } from "../../lib/context/arguments/prefabArguments";
 import { ArgumentsMap } from "../../lib/context/arguments/types";
+import { LastFMArgumentsMutableContext } from "../../services/LastFM/LastFMArguments";
 import { AlbumInfo } from "../../services/LastFM/converters/InfoTypes";
 import { RecentTrack } from "../../services/LastFM/converters/RecentTracks";
-import { LastFMArgumentsMutableContext } from "../../services/LastFM/LastFMArguments";
-import { AlbumCoverService } from "../../services/moderation/AlbumCoverService";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
+import { AlbumCoverService } from "../../services/moderation/AlbumCoverService";
 import { LastFMBaseCommand } from "./LastFMBaseCommand";
 
 const args = {
@@ -107,11 +108,10 @@ export default class Cover extends LastFMBaseCommand<typeof args> {
       }`,
       {
         files: [
-          {
-            attachment: albumCover.url,
+          new AttachmentBuilder(albumCover.url, {
             name: `${artist} - ${album}.${albumCover.fileExtension}`,
             description: `The album cover for ${album} by ${artist}`,
-          },
+          }),
         ],
       }
     );
@@ -122,7 +122,13 @@ export default class Cover extends LastFMBaseCommand<typeof args> {
       `Cover for ${bold("Blue Tape")} by ${bold(
         "f(x)"
       )}. *(Thanks to jopping and ember for the image)*`,
-      { files: ["http://gowon.ca/images/blueTape.png"] }
+      {
+        files: [
+          new AttachmentBuilder("http://gowon.ca/images/blueTape.png", {
+            description: "The album cover for Blue Tape by f(x)",
+          }),
+        ],
+      }
     );
   }
 }

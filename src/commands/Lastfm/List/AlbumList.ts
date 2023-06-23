@@ -23,7 +23,7 @@ export default class AlbumList extends ListCommand {
       ...this.timeRange?.asTimeframeParams,
     });
 
-    const messageEmbed = this.newEmbed()
+    const Embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor("Top albums"))
       .setTitle(
         `Top albums for \`${username}\` ${
@@ -44,6 +44,6 @@ export default class AlbumList extends ListCommand {
           )
       );
 
-    await this.send(messageEmbed);
+    await this.send(Embed);
   }
 }

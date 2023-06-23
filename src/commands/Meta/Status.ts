@@ -1,4 +1,4 @@
-import { Message, MessageEmbed } from "discord.js";
+import { EmbedBuilder, Message } from "discord.js";
 import { LogicError } from "../../errors/errors";
 import { Stopwatch } from "../../helpers";
 import { Command } from "../../lib/command/Command";
@@ -79,7 +79,7 @@ Lilac..........${this.displayLatency(lilacLatency)}
   }
 
   private async discordLatency(
-    embed: MessageEmbed
+    embed: EmbedBuilder
   ): Promise<[Message, Stopwatch]> {
     const stopwatch = new Stopwatch();
     stopwatch.start();

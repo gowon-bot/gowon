@@ -1,6 +1,6 @@
 import {
+  EmbedBuilder,
   Message,
-  MessageEmbed,
   MessageReaction,
   ReactionCollector,
   User,
@@ -27,7 +27,7 @@ export class ConfirmationEmbed {
 
   constructor(
     private ctx: GowonContext,
-    private embed: MessageEmbed,
+    private embed: EmbedBuilder,
     originalMessage?: Payload
   ) {
     this.originalMessage = originalMessage || ctx.command.payload;
@@ -96,7 +96,7 @@ export class ConfirmationEmbed {
             embeds: [
               this.embed.setFooter({
                 text: (
-                  (this.embed.footer?.text || "") +
+                  (this.embed.data.footer?.text || "") +
                   (reason === "rejected"
                     ? `\n\n❌ This confirmation has been rejected.`
                     : `\n\n🕒 This confirmation has timed out.`)

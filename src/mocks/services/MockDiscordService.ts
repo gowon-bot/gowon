@@ -1,4 +1,4 @@
-import { Message, MessageEmbed } from "discord.js";
+import { Embed, Message } from "discord.js";
 import { GowonContext } from "../../lib/context/Context";
 import { SendOptions } from "../../services/Discord/DiscordService.types";
 import { MockContext } from "../MockContext";
@@ -10,7 +10,7 @@ export class MockDiscordService extends BaseMockService {
 
   public async send(
     ctx: MockContext,
-    content: string | MessageEmbed,
+    content: string | Embed,
     _options?: Partial<SendOptions>
   ): Promise<Message> {
     ctx.addResponse(content);
@@ -19,11 +19,7 @@ export class MockDiscordService extends BaseMockService {
     return new MockMessage();
   }
 
-  async edit(
-    _ctx: GowonContext,
-    _message: Message,
-    _content: string | MessageEmbed
-  ) {
+  async edit(_ctx: GowonContext, _message: Message, _content: string | Embed) {
     return new MockMessage();
   }
 }
@@ -34,7 +30,7 @@ export function erroringMockDiscordService(allowEdit?: boolean) {
 
     public async send(
       _ctx: MockContext,
-      _content: string | MessageEmbed,
+      _content: string | Embed,
       _options?: Partial<SendOptions>
     ): Promise<Message> {
       throw "I shouldn't send!";
@@ -43,7 +39,7 @@ export function erroringMockDiscordService(allowEdit?: boolean) {
     async edit(
       _ctx: GowonContext,
       _message: Message,
-      _content: string | MessageEmbed
+      _content: string | Embed
     ) {
       if (allowEdit) {
         return new MockMessage();

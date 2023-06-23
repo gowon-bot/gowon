@@ -1,4 +1,4 @@
-import { DiscordAPIError, User as DiscordUser, Guild } from "discord.js";
+import { DiscordjsError, User as DiscordUser, Guild } from "discord.js";
 import {
   BaseEntity,
   Column,
@@ -8,12 +8,12 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { CommandAccessRoleName } from "../../lib/command/access/roles";
+import { AlbumCard } from "./cards/AlbumCard";
 import { Combo } from "./Combo";
 import { Crown } from "./Crown";
-import { Friend } from "./Friend";
-import { AlbumCard } from "./cards/AlbumCard";
 import { FishyCatch } from "./fishy/FishyCatch";
 import { FishyProfile } from "./fishy/FishyProfile";
+import { Friend } from "./Friend";
 
 @Entity({ name: "users" })
 export class User extends BaseEntity {
@@ -96,7 +96,7 @@ export class User extends BaseEntity {
     try {
       return await User.toDiscordUser(guild, this.discordID);
     } catch (e) {
-      if (!(e instanceof DiscordAPIError)) throw e;
+      if (!(e instanceof DiscordjsError)) throw e;
       return;
     }
   }
