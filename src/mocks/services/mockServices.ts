@@ -6,6 +6,7 @@ import { MockDiscordService } from "./MockDiscordService";
 import { MockGowonService } from "./MockGowonService";
 import { MockLastFMArguments } from "./MockLastFMArguments";
 import { MockLastFMService } from "./MockLastFMService";
+import { MockLilacGuildsService } from "./MockLilacGuildsService";
 import { MockLilacUsersService } from "./MockLilacUsersService";
 import { MockMentionsService } from "./MockMentionsService";
 import { MockMetaService } from "./MockMetaService";
@@ -26,6 +27,7 @@ export const mockServices: Service[] = [
   MockLastFMArguments,
   MockLastFMService,
   MockLilacUsersService,
+  MockLilacGuildsService,
   MockMetaService,
   MockMentionsService,
   MockMirrorballService,

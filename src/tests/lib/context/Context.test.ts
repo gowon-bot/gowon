@@ -1,8 +1,9 @@
 import "../../shims";
 
+import { GuildRequiredError } from "../../../errors/gowon";
 import { Payload } from "../../../lib/context/Payload";
-import { MockGuild, MockGuildlessMessage } from "../../../mocks/discord";
 import { mockContext } from "../../../mocks/MockContext";
+import { MockGuild, MockGuildlessMessage } from "../../../mocks/discord";
 import { setMockServices } from "../../../mocks/services/mockServices";
 
 describe("Context", () => {
@@ -25,7 +26,7 @@ describe("Context", () => {
       payload: new Payload(new MockGuildlessMessage()),
     });
 
-    expect(() => context.requiredGuild).toThrow("run in a server");
+    expect(() => context.requiredGuild).toThrow(GuildRequiredError);
   });
 
   test("should assign properties to the command when set", () => {
