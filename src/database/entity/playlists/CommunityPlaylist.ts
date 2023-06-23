@@ -3,8 +3,10 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
+import { CommunityPlaylistSubmission } from "./CommunityPlaylistSubmission";
 
 @Entity({ name: "community_playlists" })
 export class CommunityPlaylist extends BaseEntity {
@@ -28,4 +30,10 @@ export class CommunityPlaylist extends BaseEntity {
 
   @CreateDateColumn()
   createdAt!: Date;
+
+  @OneToMany(
+    (_) => CommunityPlaylistSubmission,
+    (submission) => submission.playlist
+  )
+  submissions!: CommunityPlaylistSubmission[];
 }
