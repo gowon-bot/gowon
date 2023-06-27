@@ -10,9 +10,10 @@ import { GowonClient } from "./lib/GowonClient";
 import { CommandHandler } from "./lib/command/CommandHandler";
 import {
   CommandRegistry,
-  generateCommands,
+  generateRunnables,
 } from "./lib/command/CommandRegistry";
 import { InteractionHandler } from "./lib/command/interactions/InteractionHandler";
+import { InteractionReplyRegistry } from "./lib/command/interactions/InteractionReplyRegistry";
 import { mirrorballClient } from "./lib/indexing/client";
 import { SettingsService } from "./lib/settings/SettingsService";
 import { GuildEventService } from "./services/Discord/GuildEventService";
@@ -123,10 +124,12 @@ function connectToMirrorball() {
 }
 
 function initializeCommandRegistry() {
-  return logStartup(
-    async () => CommandRegistry.getInstance().init(await generateCommands()),
-    "Initialized command registry"
-  );
+  return logStartup(async () => {
+    const { commands, interactionReplies } = await generateRunnables();
+
+    CommandRegistry.getInstance().init(commands);
+    InteractionReplyRegistry.getInstance().init(interactionReplies);
+  }, "Initialized command registry");
 }
 
 function seedCache() {

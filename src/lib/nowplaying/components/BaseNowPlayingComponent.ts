@@ -23,7 +23,7 @@ export abstract class BaseNowPlayingComponent<
   abstract readonly requirements: Requirements;
 
   protected ctx = new GowonContext({
-    command: { logger: this.values.logger! } as any,
+    runnable: { logger: this.values.logger! } as any,
     custom: {},
     payload: this.values.payload,
     extract: new ExtractedCommand([]),
@@ -33,7 +33,7 @@ export abstract class BaseNowPlayingComponent<
   constructor(
     protected values: Pick<RequirementMap, Requirements[number]> & Resources
   ) {
-    this.ctx.dangerousSetCommand({
+    this.ctx.dangerousSetRunnable({
       guild: values.payload?.guild,
     });
   }

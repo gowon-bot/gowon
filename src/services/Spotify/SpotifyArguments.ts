@@ -154,9 +154,9 @@ export class SpotifyArguments extends BaseService<SpotifyArgumentsContext> {
     ctx: SpotifyArgumentsContext,
     track: SpotifyTrack
   ): Promise<boolean> {
-    const embed = ctx.command
+    const embed = ctx.runnable
       .newEmbed()
-      .setAuthor(ctx.command.generateEmbedAuthor("Confirm track"))
+      .setAuthor(ctx.runnable.generateEmbedAuthor("Confirm track"))
       .setTitle("Couldn't find that exact track, did you mean:")
       .setDescription(
         `${italic(track.name)} by ${bold(track.artists.primary.name)}?`

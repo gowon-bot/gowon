@@ -17,3 +17,12 @@ export class SlashCommandCannotBeDevCommand extends ClientError {
     super("A slash command cannot be a developer command!");
   }
 }
+
+// Not client-facing
+export class CannotShowModalError extends Error {
+  name = "CannotShowModalError";
+
+  constructor() {
+    super("Cannot show modal in this context");
+  }
+}

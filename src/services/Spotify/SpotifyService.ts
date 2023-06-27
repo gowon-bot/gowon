@@ -128,7 +128,7 @@ export class SpotifyService extends BaseSpotifyService<SpotifyServiceContext> {
     });
 
     if (jsonResponse.error) {
-      throw new SpotifyConnectionError(ctx.command.prefix);
+      throw new SpotifyConnectionError(ctx.runnable.prefix);
     }
 
     return token;
@@ -310,7 +310,7 @@ export class SpotifyService extends BaseSpotifyService<SpotifyServiceContext> {
 
   private ensureAuthenticated(ctx: SpotifyServiceContext) {
     if (!ctx.mutable.spotifyToken) {
-      throw new NotAuthenticatedWithSpotifyError(ctx.command.prefix);
+      throw new NotAuthenticatedWithSpotifyError(ctx.runnable.prefix);
     }
   }
 

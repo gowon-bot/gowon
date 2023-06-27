@@ -1,8 +1,8 @@
 import "../../shims";
 
-import Roll from "../../../commands/Miscellaneous/Roll";
 import { mockContextForCommand } from "../../../mocks/MockContext";
 import { setMockServices } from "../../../mocks/services/mockServices";
+import Roll from "../../../commands/Miscellaneous/Roll";
 
 describe("Roll command", () => {
   beforeEach(setMockServices);

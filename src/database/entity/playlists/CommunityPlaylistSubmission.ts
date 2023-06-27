@@ -24,7 +24,10 @@ export class CommunityPlaylistSubmission extends BaseEntity {
   playlist!: CommunityPlaylist;
 
   // Either a name or a user is required to submit
-  @Column({ nullable: true })
+  @ManyToOne((_) => User, (user) => user.playlistSubmissions, {
+    eager: true,
+    nullable: true,
+  })
   submitterUser?: User;
 
   @Column({ nullable: true })

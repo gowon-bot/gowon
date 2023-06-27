@@ -151,7 +151,7 @@ export class LastFMArguments extends BaseService<LastFMArgumentsContext> {
   }
 
   private parsedArguments(ctx: LastFMArgumentsContext): any {
-    return ctx.command.parsedArguments as any;
+    return ctx.runnable.parsedArguments as any;
   }
 
   private async getNowPlaying(
@@ -159,7 +159,7 @@ export class LastFMArguments extends BaseService<LastFMArgumentsContext> {
     requestable: Requestable,
     options: LastFMArgumentsOptions
   ): Promise<RecentTrack> {
-    const originalPayload = ctx.command.payload;
+    const originalPayload = ctx.runnable.payload;
 
     if (options.fromRecentTrack) return options.fromRecentTrack;
 

@@ -1,12 +1,14 @@
-import { Commands } from "./CommandGroup";
-import { CommandExtractor } from "./extractor/CommandExtractor";
-
-import _glob from "glob";
 import { promisify } from "util";
 import { flatDeep } from "../../helpers";
 import { SimpleMap } from "../../helpers/types";
 import { Command } from "./Command";
+import { CommandExtractor } from "./extractor/CommandExtractor";
 import { ExtractedCommand } from "./extractor/ExtractedCommand";
+
+import _glob from "glob";
+import { CommandClass } from "./CommandGroup";
+import { RunnableType } from "./Runnable";
+import { InteractionReplyClass } from "./interactions/InteractionReply";
 const glob = promisify(_glob);
 
 type Registry = Array<Command>;
@@ -35,10 +37,10 @@ export class CommandRegistry {
   private pool: Registry = [];
   private factory: CommandFactory = {};
 
-  public init(commands: Commands) {
+  public init(commands: CommandClass[]) {
     this.pool = [];
 
-    for (const command of Object.values(commands)) {
+    for (const command of commands) {
       const instance = new command();
 
       if (instance.archived || !instance.shouldBeIndexed) {
@@ -181,26 +183,33 @@ export class CommandRegistry {
   }
 }
 
-export async function generateCommands(): Promise<Commands> {
+export async function generateRunnables(): Promise<{
+  commands: CommandClass[];
+  interactionReplies: InteractionReplyClass[];
+}> {
   const files = await glob(
     require("path").dirname(require.main?.filename) + "/commands/**/*.js"
   );
 
-  return files.reduce((acc, file) => {
-    const command = require(file).default;
+  return files.reduce(
+    (acc, file) => {
+      const runnable = require(file).default;
 
-    if (command?.constructor) {
-      const commandNameSplit = file.split("/");
+      if (runnable?.constructor) {
+        if (runnable.type === RunnableType.Command) {
+          acc.commands.push(runnable);
+        } else if (runnable.type === RunnableType.InteractionReply) {
+          acc.interactionReplies.push(runnable);
+        }
+      }
 
-      const commandName = commandNameSplit[commandNameSplit.length - 1]
-        .slice(0, -3)
-        .toLowerCase();
-
-      acc[commandName] = command;
+      return acc;
+    },
+    { commands: [], interactionReplies: [] } as {
+      commands: CommandClass[];
+      interactionReplies: InteractionReplyClass[];
     }
-
-    return acc;
-  }, {} as Commands);
+  );
 }
 
 function checkPrefixes(

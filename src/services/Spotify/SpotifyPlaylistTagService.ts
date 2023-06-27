@@ -105,7 +105,7 @@ export class SpotifyPlaylistTagService extends BaseService {
       ctx,
       "defaultSpotifyPlaylist",
       {
-        userID: ctx.command.payload.author.id,
+        userID: ctx.runnable.payload.author.id,
       },
       stringifiedPlaylist
     );
@@ -114,11 +114,11 @@ export class SpotifyPlaylistTagService extends BaseService {
   getDefaultPlaylist(ctx: GowonContext): SpotifyPlaylistTag | undefined {
     this.log(
       ctx,
-      `Fetching default Spotify playlist for user ${ctx.command.payload.author.id}`
+      `Fetching default Spotify playlist for user ${ctx.runnable.payload.author.id}`
     );
 
     const response = this.settingsService.get("defaultSpotifyPlaylist", {
-      userID: ctx.command.payload.author.id,
+      userID: ctx.runnable.payload.author.id,
     });
 
     if (!response) return undefined;

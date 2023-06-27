@@ -21,7 +21,7 @@ export async function throwSenderUserNotIndexed(
   ) {
     throw new SenderUserStillBeingIndexedError();
   } else {
-    throw new SenderUserNotIndexedError(ctx.command.prefix);
+    throw new SenderUserNotIndexedError(ctx.runnable.prefix);
   }
 }
 

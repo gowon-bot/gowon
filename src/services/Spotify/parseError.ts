@@ -32,11 +32,11 @@ export async function parseError(
 
     switch (json.error.message) {
       case spotifyErrorMessages.badScope:
-        throw new InvalidSpotifyScopeError(ctx.command.prefix);
+        throw new InvalidSpotifyScopeError(ctx.runnable.prefix);
     }
   }
 
-  throw new SpotifyConnectionError(ctx.command.prefix);
+  throw new SpotifyConnectionError(ctx.runnable.prefix);
 }
 
 const spotifyErrorReasons = {

@@ -10,6 +10,7 @@ import {
 } from "discord.js";
 import { ReactionCollectorFilter } from "../../../helpers/discord";
 import { DiscordService } from "../../../services/Discord/DiscordService";
+import { Sendable } from "../../../services/Discord/DiscordService.types";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { GowonContext } from "../../context/Context";
 import { EmojiRaw } from "../../emoji/Emoji";
@@ -78,7 +79,10 @@ export class ScrollingEmbed {
   public async send() {
     this.generateEmbed();
 
-    this.sentMessage = await this.discordService.send(this.ctx, this.embed);
+    this.sentMessage = await this.discordService.send(
+      this.ctx,
+      new Sendable(this.embed)
+    );
 
     await this.react();
   }

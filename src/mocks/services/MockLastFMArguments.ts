@@ -34,6 +34,6 @@ export class MockLastFMArguments extends BaseMockService {
   }
 
   private parsedArguments(ctx: GowonContext): any {
-    return ctx.command.parsedArguments as any;
+    return ctx.runnable.parsedArguments as any;
   }
 }

@@ -32,9 +32,9 @@ describe("Context", () => {
   test("should assign properties to the command when set", () => {
     const context = mockContext();
 
-    context.dangerousSetCommand({ name: "gowon one and only" });
+    context.dangerousSetRunnable({ idSeed: "gowon one and only" });
 
-    expect(context.command.name).toBe("gowon one and only");
+    expect(context.runnable.idSeed).toBe("gowon one and only");
   });
 
   test("should return mutable and constant parameters", () => {

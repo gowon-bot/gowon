@@ -14,6 +14,7 @@ import { Crown } from "./Crown";
 import { FishyCatch } from "./fishy/FishyCatch";
 import { FishyProfile } from "./fishy/FishyProfile";
 import { Friend } from "./Friend";
+import { CommunityPlaylistSubmission } from "./playlists/CommunityPlaylistSubmission";
 
 @Entity({ name: "users" })
 export class User extends BaseEntity {
@@ -61,6 +62,12 @@ export class User extends BaseEntity {
 
   @OneToOne((_) => FishyProfile, (fishyProfile) => fishyProfile.user)
   fishyProfile!: FishyProfile;
+
+  @OneToMany(
+    (_) => CommunityPlaylistSubmission,
+    (submission) => submission.submitterUser
+  )
+  playlistSubmissions!: CommunityPlaylistSubmission[];
 
   @Column("simple-array", { nullable: true })
   roles?: CommandAccessRoleName[];

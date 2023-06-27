@@ -1,14 +1,21 @@
 import {
+  BaseInteraction,
   CommandInteraction,
   Guild,
   GuildMember,
   Message,
+  ModalSubmitInteraction,
+  StringSelectMenuInteraction,
   TextBasedChannel,
   User,
 } from "discord.js";
 import { GowonClient } from "../GowonClient";
 
-export type OriginalPayload = Message | CommandInteraction;
+export type OriginalPayload =
+  | Message
+  | CommandInteraction
+  | StringSelectMenuInteraction
+  | ModalSubmitInteraction;
 
 export class Payload<T extends OriginalPayload = OriginalPayload> {
   constructor(public source: T) {}
@@ -45,7 +52,7 @@ export class Payload<T extends OriginalPayload = OriginalPayload> {
   }
 
   isInteraction(): this is Payload<CommandInteraction> {
-    return this.source instanceof CommandInteraction;
+    return this.source instanceof BaseInteraction;
   }
 
   isMessage(): this is Payload<Message> {

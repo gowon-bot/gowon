@@ -65,16 +65,17 @@ export class Logger {
   }
 
   logCommand(ctx: GowonContext): void {
-    const command = ctx.command;
+    const runnable = ctx.runnable;
     const payload = ctx.payload;
     const commandStack = ctx.extract.commandStack;
 
-    let redirectedFrom = command.redirectedFrom;
+    let redirectedFrom =
+      runnable instanceof Command ? runnable.redirectedFrom : undefined;
 
     this.header +=
       "\n" +
       chalk`
-{cyan ID}: ${command.id}
+{cyan ID}: ${runnable.id}
 ${
   redirectedFrom
     ? chalk`{cyan Redirected from}: ${
@@ -86,7 +87,9 @@ ${
         payload.author.username
       } ${chalk`{cyan in} ${payload.guild?.name || chalk`{red DMs}`}`}
 {cyan with arguments}: ${Logger.formatObject(
-        this.sanitizeParamsForDisplay(command.parsedArguments)
+        this.sanitizeParamsForDisplay(
+          runnable instanceof Command ? runnable.parsedArguments : {}
+        )
       )}
 {cyan as}: ${
         payload.isInteraction()

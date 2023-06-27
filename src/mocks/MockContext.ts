@@ -2,6 +2,7 @@ import { Embed } from "discord.js";
 import { SimpleMap } from "../helpers/types";
 import { Logger } from "../lib/Logger";
 import { Command } from "../lib/command/Command";
+import { Runnable } from "../lib/command/Runnable";
 import { ExtractedCommand } from "../lib/command/extractor/ExtractedCommand";
 import {
   ContextParamaters,
@@ -15,7 +16,7 @@ import { MockMessage, MockUser } from "./discord";
 
 export const mockBotId = "541298511430287395";
 
-interface MockContextParameters<T> extends ContextParamaters<T> {
+interface MockContextParameters<T> extends ContextParamaters<T, Runnable> {
   mock?: Partial<MockedContext>;
 }
 
@@ -74,17 +75,17 @@ export function mockContextForCommand<
 export function mockContext<T extends CustomContext = CustomContext>(
   overrides: Partial<MockContextParameters<T>> = {}
 ) {
-  const command = new CommandThatShouldntRun();
+  const runnable = new CommandThatShouldntRun();
   const ctx = new MockContext<T>({
     payload: new Payload(new MockMessage()),
     extract: mockExtractedCommand(),
     gowonClient: {} as any,
     logger: new MockLogger(),
-    command: command,
+    runnable: runnable,
     ...overrides,
   });
 
-  command.ctx = ctx;
+  runnable.ctx = ctx as any as GowonContext<any, Command>;
 
   return ctx;
 }

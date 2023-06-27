@@ -1,7 +1,7 @@
 import { Message } from "discord.js";
-import Prefix from "../../commands/Meta/Prefix";
 import { isBot } from "../../helpers/bots";
 import { userMentionAtStartRegex } from "../../helpers/discord";
+import Prefix from "../../commands/Meta/Prefix";
 import { DiscordService } from "../../services/Discord/DiscordService";
 import {
   NicknameService,
@@ -41,7 +41,7 @@ export class CommandHandler {
       gowonClient: this.client,
       payload: new Payload(message),
       extract: new ExtractedCommand([]),
-      command: {
+      runnable: {
         logger: this.logger,
         guild: message.guild!,
         author: message.author,

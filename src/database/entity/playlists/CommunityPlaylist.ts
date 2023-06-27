@@ -19,6 +19,9 @@ export class CommunityPlaylist extends BaseEntity {
   @Column({ type: "text" })
   description!: string;
 
+  @Column({ nullable: true })
+  emoji?: string;
+
   @Column()
   guildID!: string;
 

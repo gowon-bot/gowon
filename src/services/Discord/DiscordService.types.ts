@@ -10,6 +10,7 @@ import {
   ThreadChannel,
   VoiceChannel,
 } from "discord.js";
+import { SendableComponent, SendableModal } from "../../lib/views/base";
 
 export type RespondableChannel =
   | DMChannel
@@ -42,3 +43,41 @@ export function isPartialDMChannel(
 }
 
 export type DiscordID = string;
+
+export type SendableContentType =
+  | string
+  | EmbedBuilder
+  | SendableComponent
+  | SendableModal;
+
+export class Sendable<
+  ContentType extends SendableContentType = SendableContentType
+> {
+  constructor(public content: ContentType) {}
+
+  public isString(): this is Sendable<string> {
+    return typeof this.content === "string";
+  }
+
+  public isComponent(): this is Sendable<SendableComponent> {
+    return this.content instanceof SendableComponent;
+  }
+
+  public isModal(): this is Sendable<SendableModal> {
+    return this.content instanceof SendableModal;
+  }
+
+  public isEmbed(): this is Sendable<EmbedBuilder> {
+    return this.content instanceof EmbedBuilder;
+  }
+
+  public getLogDisplay(): string {
+    return this.isString()
+      ? "string"
+      : this.isComponent()
+      ? "component"
+      : this.isModal()
+      ? "modal"
+      : "embed";
+  }
+}
