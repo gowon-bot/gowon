@@ -38,7 +38,7 @@ export class TimeRangeArgument<
     return this.timeRangeParser.parse(cleanContent) || this.getDefault();
   }
 
-  parseFromInteraction(
+  parseFromCommandInteraction(
     interaction: ChatInputCommandInteraction,
     _: GowonContext,
     argumentName: string

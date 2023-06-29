@@ -49,7 +49,7 @@ export class NumberArgument<
     return this.getElementFromIndex(numbers, this.options.index);
   }
 
-  parseFromInteraction(
+  parseFromCommandInteraction(
     interaction: ChatInputCommandInteraction,
     _: GowonContext,
     argumentName: string

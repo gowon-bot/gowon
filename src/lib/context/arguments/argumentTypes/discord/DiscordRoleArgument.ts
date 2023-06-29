@@ -31,7 +31,7 @@ export class DiscordRoleArgument<
     return this.getElementFromIndex(mentions, this.options.index);
   }
 
-  parseFromInteraction(
+  parseFromCommandInteraction(
     interaction: ChatInputCommandInteraction,
     _: GowonContext,
     argumentName: string

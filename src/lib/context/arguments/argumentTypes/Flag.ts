@@ -33,7 +33,7 @@ export class Flag<OptionsT extends Partial<FlagArgumentOptions>>
     return this.flagParser.parse(this.options, content);
   }
 
-  parseFromInteraction(
+  parseFromCommandInteraction(
     interaction: ChatInputCommandInteraction,
     _: GowonContext,
     argumentName: string

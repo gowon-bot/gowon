@@ -1,6 +1,7 @@
 import {
   ChatInputCommandInteraction,
   Message,
+  ModalSubmitInteraction,
   SlashCommandBuilder,
   SlashCommandStringOption,
 } from "discord.js";
@@ -11,6 +12,7 @@ import {
   BaseArgument,
   BaseArgumentOptions,
   ContentBasedArgumentOptions,
+  ModalArgumentOptions,
   SliceableArgumentOptions,
   defaultContentBasedOptions,
   defaultIndexableOptions,
@@ -25,7 +27,8 @@ export interface Choice {
 export interface StringArgumentOptions
   extends BaseArgumentOptions<string>,
     SliceableArgumentOptions,
-    ContentBasedArgumentOptions {
+    ContentBasedArgumentOptions,
+    ModalArgumentOptions {
   splitOn: string | RegExp;
   regex: RegExp;
   match: string[];
@@ -88,12 +91,24 @@ export class StringArgument<
     return parsedArgument;
   }
 
-  parseFromInteraction(
+  parseFromCommandInteraction(
     interaction: ChatInputCommandInteraction,
     _: GowonContext,
     argumentName: string
   ): string | undefined {
     return interaction.options.getString(argumentName) ?? undefined;
+  }
+
+  parseFromModalSubmitInteraction(
+    interaction: ModalSubmitInteraction,
+    _: GowonContext,
+    argumentName: string
+  ): string | undefined {
+    return (
+      interaction.fields.getTextInputValue(
+        this.options.modalFieldID || argumentName
+      ) ?? undefined
+    );
   }
 
   addAsOption(slashCommand: SlashCommandBuilder, argumentName: string) {

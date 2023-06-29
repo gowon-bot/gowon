@@ -1,4 +1,4 @@
-import { CommandInteraction, Message } from "discord.js";
+import { BaseInteraction, Message } from "discord.js";
 import { SimpleMap } from "../../helpers/types";
 import { GowonContext } from "../../lib/context/Context";
 import { isStringCleaning } from "../../lib/context/arguments/argumentTypes/BaseArgument";
@@ -25,7 +25,7 @@ export class ArgumentParsingService extends BaseService {
   }
 
   private parseInteraction(
-    interaction: CommandInteraction,
+    interaction: BaseInteraction,
     context: GowonContext,
     args: ArgumentsMap
   ) {

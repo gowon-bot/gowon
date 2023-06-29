@@ -1,10 +1,4 @@
-import {
-  CommandInteraction,
-  EmbedAuthorData,
-  EmbedBuilder,
-  Guild,
-  Message,
-} from "discord.js";
+import { EmbedAuthorData, EmbedBuilder, Guild, Message } from "discord.js";
 import md5 from "js-md5";
 import { GuildRequiredError } from "../../errors/gowon";
 import { DiscordService } from "../../services/Discord/DiscordService";
@@ -15,7 +9,10 @@ import {
   SendableContentType,
 } from "../../services/Discord/DiscordService.types";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
+import { ArgumentParsingService } from "../../services/arguments/ArgumentsParsingService";
 import { GowonContext } from "../context/Context";
+import { ArgumentsMap, ParsedArguments } from "../context/arguments/types";
+import { Validation, ValidationChecker } from "../validation/ValidationChecker";
 import { displayUserTag } from "../views/displays";
 import { errorEmbed, gowonEmbed } from "../views/embeds";
 
@@ -24,7 +21,7 @@ export enum RunnableType {
   InteractionReply,
 }
 
-export abstract class Runnable {
+export abstract class Runnable<ArgumentsType extends ArgumentsMap = {}> {
   protected debug = false;
 
   /**
@@ -44,6 +41,7 @@ export abstract class Runnable {
    */
   guildRequired?: boolean;
   archived = false;
+  shouldDefer = true;
 
   get id(): string {
     return md5(this.idSeed);
@@ -88,14 +86,29 @@ export abstract class Runnable {
     return "";
   }
 
-  get parsedArguments(): any {
-    return {};
+  /**
+   * Argument metadata
+   * (properties related to what arguments a command takes)
+   */
+  arguments: ArgumentsType = {} as any;
+  validation: Validation = {};
+
+  private _parsedArguments: ParsedArguments<ArgumentsType> =
+    {} as ParsedArguments<ArgumentsType>;
+
+  get parsedArguments(): ParsedArguments<ArgumentsType> {
+    return this._parsedArguments;
+  }
+
+  protected set parsedArguments(args: ParsedArguments<ArgumentsType>) {
+    this._parsedArguments = args;
   }
 
   /**
    * Services
    */
   discordService = ServiceRegistry.get(DiscordService);
+  argumentParsingService = ServiceRegistry.get(ArgumentParsingService);
 
   /**
    * Execution
@@ -114,7 +127,22 @@ export abstract class Runnable {
     ctx.addContext(this.customContext);
     this.ctx = ctx;
 
+    this.parsedArguments = this.parseArguments();
+
     if (!(await this.checkGuildRequirement())) return;
+  }
+
+  protected parseArguments(): ParsedArguments<ArgumentsType> {
+    const parsedArguments = this.argumentParsingService.parseContext(
+      this.ctx,
+      this.arguments
+    );
+
+    this.debug = !!(this.parsedArguments as any).debug;
+
+    new ValidationChecker(parsedArguments, this.validation).validate();
+
+    return parsedArguments;
   }
 
   /**
@@ -198,13 +226,17 @@ export abstract class Runnable {
   }
 
   protected async deferResponseIfInteraction() {
-    if (this.payload.isInteraction()) {
+    const payload = this.payload;
+
+    if (payload.isInteraction() && this.shouldDefer) {
       this.mutableContext<{
         deferredResponseTimeout?: NodeJS.Timeout;
       }>().mutable.deferredResponseTimeout = setTimeout(() => {
-        (this.payload.source as CommandInteraction).deferReply();
-        this.mutableContext<{ deferredAt: Date }>().mutable.deferredAt =
-          new Date();
+        if (!payload.source.replied) {
+          payload.source.deferReply();
+          this.mutableContext<{ deferredAt: Date }>().mutable.deferredAt =
+            new Date();
+        }
       }, 2000);
     }
   }

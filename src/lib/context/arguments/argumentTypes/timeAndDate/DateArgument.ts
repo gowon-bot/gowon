@@ -39,7 +39,7 @@ export class DateArgument<
     return (date || this.getDefault())!;
   }
 
-  parseFromInteraction(
+  parseFromCommandInteraction(
     interaction: ChatInputCommandInteraction,
     _: GowonContext,
     argumentName: string

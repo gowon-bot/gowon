@@ -42,7 +42,7 @@ export class TimePeriodArgument<
     return this.timePeriodParser.parse(cleanContent);
   }
 
-  parseFromInteraction(
+  parseFromCommandInteraction(
     interaction: ChatInputCommandInteraction,
     _: GowonContext,
     argumentName: string

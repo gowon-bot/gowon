@@ -87,7 +87,7 @@ export class DiscordResponseService extends BaseService<DiscordServiceContext> {
         ...sendable.content.present(),
       });
     } else if (sendable.isModal()) {
-      if (ctx.payload.isInteraction()) {
+      if (ctx.payload.isInteraction() && !ctx.payload.source.isModalSubmit()) {
         ctx.payload.source.showModal(sendable.content.present());
       } else {
         throw new CannotShowModalError();

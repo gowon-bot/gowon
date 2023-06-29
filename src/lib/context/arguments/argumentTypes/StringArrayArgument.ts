@@ -53,7 +53,7 @@ export class StringArrayArgument<
     return element instanceof Array ? element : element ? [element] : element;
   }
 
-  parseFromInteraction(): string[] | undefined {
+  parseFromCommandInteraction(): string[] | undefined {
     return [];
   }
 }

@@ -4,9 +4,11 @@ import { InteractionID } from "../../lib/command/interactions/interactions";
 import { Emoji } from "../../lib/emoji/Emoji";
 import { PlaylistSubmitModal } from "../../lib/views/playlistSubmissions/PlaylistSubmitModal";
 
-export default class SubmitModal extends InteractionReply {
+export default class OnSelectPlaylist extends InteractionReply {
   idSeed = "newjeans minji";
   replyTo = InteractionID.SelectPlaylist;
+
+  shouldDefer = false;
 
   async run() {
     const modal = new PlaylistSubmitModal(

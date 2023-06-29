@@ -27,7 +27,7 @@ export class ChannelArgument<
     return this.getElementFromIndex(channels, this.options.index);
   }
 
-  parseFromInteraction(
+  parseFromCommandInteraction(
     interaction: ChatInputCommandInteraction,
     _: GowonContext,
     argumentName: string

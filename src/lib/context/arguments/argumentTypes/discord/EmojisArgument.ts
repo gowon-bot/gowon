@@ -50,7 +50,7 @@ export class EmojisArgument<
     );
   }
 
-  parseFromInteraction(
+  parseFromCommandInteraction(
     interaction: ChatInputCommandInteraction,
     _: GowonContext,
     argumentName: string

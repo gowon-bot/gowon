@@ -34,7 +34,7 @@ export class UserStringArrayArgument<
     return typeof element === "string" ? [element] : element ? [element] : [];
   }
 
-  parseFromInteraction() {
+  parseFromCommandInteraction() {
     return [];
   }
 

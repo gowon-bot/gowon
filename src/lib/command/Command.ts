@@ -9,7 +9,6 @@ import { GowonService } from "../../services/GowonService";
 import { NowPlayingEmbedParsingService } from "../../services/NowPlayingEmbedParsingService";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { TrackingService } from "../../services/TrackingService";
-import { ArgumentParsingService } from "../../services/arguments/ArgumentsParsingService";
 import { MentionsService } from "../../services/arguments/mentions/MentionsService";
 import {
   GetMentionsOptions,
@@ -25,7 +24,6 @@ import { GowonContext } from "../context/Context";
 import { ArgumentsMap, ParsedArguments } from "../context/arguments/types";
 import { Emoji, EmojiRaw } from "../emoji/Emoji";
 import { SettingsService } from "../settings/SettingsService";
-import { Validation, ValidationChecker } from "../validation/ValidationChecker";
 import { CommandGroup } from "./CommandGroup";
 import { CommandRegistry } from "./CommandRegistry";
 import { Runnable, RunnableType } from "./Runnable";
@@ -46,7 +44,7 @@ export interface CommandRedirect<T extends ArgumentsMap> {
 
 export abstract class Command<
   ArgumentsType extends ArgumentsMap = {}
-> extends Runnable {
+> extends Runnable<ArgumentsType> {
   static type = RunnableType.Command;
 
   ctx!: GowonContext<(typeof this)["customContext"], Command>;
@@ -105,29 +103,9 @@ export abstract class Command<
   access?: CommandAccess;
 
   /**
-   * Argument metadata
-   * (properties related to what arguments a command takes)
-   */
-  arguments: ArgumentsType = {} as any;
-  validation: Validation = {};
-
-  /**
    * Run-specific data
    * (properties set before a command is run)
    */
-  // Has to be any typed because the parsed flags aren't optionally typed
-  // because they always will be either true or false
-  // this is set by the FlagParser when this.parseArguments() is called
-  private _parsedArguments: ParsedArguments<ArgumentsType> =
-    {} as ParsedArguments<ArgumentsType>;
-
-  get parsedArguments(): ParsedArguments<ArgumentsType> {
-    return this._parsedArguments;
-  }
-
-  private set parsedArguments(args: ParsedArguments<ArgumentsType>) {
-    this._parsedArguments = args;
-  }
 
   get prefix(): string {
     return this.payload.isInteraction()
@@ -158,7 +136,6 @@ export abstract class Command<
   lilacUsersService = ServiceRegistry.get(LilacUsersService);
   lilacGuildsService = ServiceRegistry.get(LilacGuildsService);
   analyticsCollector = ServiceRegistry.get(AnalyticsCollector);
-  argumentParsingService = ServiceRegistry.get(ArgumentParsingService);
   nowPlayingEmbedParsingService = ServiceRegistry.get(
     NowPlayingEmbedParsingService
   );
@@ -199,8 +176,6 @@ export abstract class Command<
     await this.setup();
 
     try {
-      this.parsedArguments = this.parseArguments();
-
       if (await this.redirectIfRequired(ctx)) return;
 
       this.logger.logCommand(ctx);
@@ -250,19 +225,6 @@ export abstract class Command<
         .resolve(EmojiRaw.loading)
         ?.users.remove(this.gowonClient.client.user!);
     }
-  }
-
-  parseArguments(): ParsedArguments<ArgumentsType> {
-    const parsedArguments = this.argumentParsingService.parseContext(
-      this.ctx,
-      this.arguments
-    );
-
-    this.debug = !!(this.parsedArguments as any).debug;
-
-    new ValidationChecker(parsedArguments, this.validation).validate();
-
-    return parsedArguments;
   }
 
   private async redirectIfRequired(ctx: GowonContext): Promise<boolean> {

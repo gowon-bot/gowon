@@ -11,8 +11,9 @@ import {
 } from "discord.js";
 import { GowonClient } from "../GowonClient";
 
-export type OriginalPayload =
-  | Message
+export type OriginalPayload = Message | InteractionPayload;
+
+export type InteractionPayload =
   | CommandInteraction
   | StringSelectMenuInteraction
   | ModalSubmitInteraction;
@@ -51,7 +52,7 @@ export class Payload<T extends OriginalPayload = OriginalPayload> {
     return {} as TextBasedChannel;
   }
 
-  isInteraction(): this is Payload<CommandInteraction> {
+  isInteraction(): this is Payload<InteractionPayload> {
     return this.source instanceof BaseInteraction;
   }
 

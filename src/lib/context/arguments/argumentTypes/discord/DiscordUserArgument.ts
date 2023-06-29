@@ -45,7 +45,7 @@ export class DiscordUserArgument<
     );
   }
 
-  parseFromInteraction(
+  parseFromCommandInteraction(
     interaction: ChatInputCommandInteraction,
     _: GowonContext,
     argumentName: string
