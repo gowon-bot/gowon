@@ -1,6 +1,7 @@
 import { Chance } from "chance";
 import { bold } from "../../helpers/discord";
 import { ArgumentsMap } from "../../lib/context/arguments/types";
+import { Emoji } from "../../lib/emoji/Emoji";
 import { displayNumber } from "../../lib/views/displays";
 import {
   AquariumDimensions,
@@ -80,7 +81,7 @@ ${
         "No fishies? :(",
         "There doesn't seem to be a fishy in sight!",
         "There are no fishy around right now...",
-        "🐈 Naan has scared away all the fishy!",
+        `${Emoji.naan} Naan has scared away all the fishy!`,
         "🌫️ the fog has come for your fishy.",
       ]);
     } else if (fishyCount === 1) {

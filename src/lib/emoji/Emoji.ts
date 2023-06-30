@@ -112,6 +112,7 @@ export const Emoji = {
   level1Fishy: "<:Level1Fishy:1112268413377712208>",
   level2Fishy: "<:Level2Fishy:1112268414833152050>",
   level3Fishy: "<:Level3Fishy:1112268417068695623>",
+  naan: "<:Naan:1124419258647072981>",
 } satisfies Record<string, string>;
 
 export const EmojiRaw = Object.entries(Emoji).reduce(
