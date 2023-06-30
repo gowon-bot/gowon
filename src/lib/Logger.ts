@@ -3,7 +3,9 @@ import { format } from "date-fns";
 import { User } from "discord.js";
 import { SimpleMap } from "../helpers/types";
 import { Command } from "./command/Command";
+import { Runnable, RunnableType } from "./command/Runnable";
 import { ExtractedCommand } from "./command/extractor/ExtractedCommand";
+import { InteractionReply } from "./command/interactions/InteractionReply";
 import { GowonContext } from "./context/Context";
 import { displayUserTag } from "./views/displays";
 
@@ -47,29 +49,31 @@ export class Logger {
     );
   }
 
-  openCommandHeader(command: Command): void {
-    this.header = chalk`\n\n==============={yellow ${
-      (command.parentName ? command.parentName + ":" : "") + command.name
-    }}====================`;
+  openRunnableHeader(runnable: Runnable): void {
+    this.header = chalk`\n\n==============={yellow ${getRunnableName(
+      runnable
+    )} {red (${
+      runnable.type === RunnableType.Command ? "Command" : "Interaction reply"
+    })}}====================`;
   }
 
-  closeCommandHeader(command: Command): void {
+  closeRunnableHeader(runnable: Runnable): void {
     Logger.log("Command", chalk.grey("finished"), this);
     Logger.output &&
       console.log(
         this.header +
-          chalk`\n=============={yellow /${
-            (command.parentName ? command.parentName + ":" : "") + command.name
-          }}====================\n`
+          chalk`\n=============={yellow /${getRunnableName(
+            runnable
+          )}}====================\n`
       );
   }
 
-  logCommand(ctx: GowonContext): void {
+  logRunnable(ctx: GowonContext): void {
     const runnable = ctx.runnable;
     const payload = ctx.payload;
     const commandStack = ctx.extract.commandStack;
 
-    let redirectedFrom =
+    const redirectedFrom =
       runnable instanceof Command ? runnable.redirectedFrom : undefined;
 
     this.header +=
@@ -87,14 +91,14 @@ ${
         payload.author.username
       } ${chalk`{cyan in} ${payload.guild?.name || chalk`{red DMs}`}`}
 {cyan with arguments}: ${Logger.formatObject(
-        this.sanitizeParamsForDisplay(
-          runnable instanceof Command ? runnable.parsedArguments : {}
-        )
+        this.sanitizeParamsForDisplay(runnable.parsedArguments)
       )}
 {cyan as}: ${
-        payload.isInteraction()
+        payload.isInteraction() && payload.source.isCommand()
           ? `/${payload.source.commandName}`
-          : commandStack.map((c) => c.command.name).join(" ")
+          : payload.isMessage()
+          ? commandStack.map((c) => c.command.name).join(" ")
+          : getRunnableName(runnable)
       }
 
 {cyan Raw message content}:
@@ -134,6 +138,21 @@ export class HeaderlessLogger extends Logger {
 
 export class SilentLogger extends Logger {
   override log(_context: string, _msg?: any): void {}
-  override closeCommandHeader(_command: Command): void {}
+  override closeRunnableHeader(_command: Command): void {}
   override logCommandHandle(_extract: ExtractedCommand): void {}
+}
+
+function getRunnableName(runnable: Runnable): string {
+  switch (runnable.type) {
+    case RunnableType.Command:
+      const command = runnable as Command;
+
+      return (
+        (command.parentName ? command.parentName + ":" : "") + command.name
+      );
+    case RunnableType.InteractionReply:
+      const interactionReply = runnable as InteractionReply;
+
+      return interactionReply.constructor.name;
+  }
 }

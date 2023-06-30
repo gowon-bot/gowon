@@ -53,7 +53,8 @@ export class MockContext<
 }
 
 export class MockLogger extends Logger {
-  closeCommandHeader() {}
+  openRunnableHeader(_?: any) {}
+  closeRunnableHeader(_?: any) {}
 }
 
 export function mockContextForCommand<

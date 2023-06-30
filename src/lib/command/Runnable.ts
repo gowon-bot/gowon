@@ -17,11 +17,13 @@ import { displayUserTag } from "../views/displays";
 import { errorEmbed, gowonEmbed } from "../views/embeds";
 
 export enum RunnableType {
-  Command,
   InteractionReply,
+  Command,
 }
 
 export abstract class Runnable<ArgumentsType extends ArgumentsMap = {}> {
+  static type: RunnableType;
+
   protected debug = false;
 
   /**
@@ -34,6 +36,8 @@ export abstract class Runnable<ArgumentsType extends ArgumentsMap = {}> {
    * **Must be unique among all runnables!**
    */
   abstract idSeed: string;
+
+  abstract get type(): RunnableType;
 
   /**
    * Run-condition metadata

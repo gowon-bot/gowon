@@ -158,6 +158,10 @@ export abstract class Command<
     return CommandRegistry.getInstance().make(this.id);
   }
 
+  public get type(): RunnableType {
+    return Command.type;
+  }
+
   /**
    * Execution
    * (These methods are called when a command is actually run)
@@ -178,7 +182,7 @@ export abstract class Command<
     try {
       if (await this.redirectIfRequired(ctx)) return;
 
-      this.logger.logCommand(ctx);
+      this.logger.logRunnable(ctx);
       this.analyticsCollector.metrics.commandRuns.inc();
 
       this.deferResponseIfInteraction();
@@ -199,7 +203,7 @@ export abstract class Command<
 
   async setup() {
     this.startTyping();
-    this.logger.openCommandHeader(this);
+    this.logger.openRunnableHeader(this);
 
     if (this.showLoadingAfter) {
       setTimeout(() => {
@@ -217,7 +221,7 @@ export abstract class Command<
       console.log(this.constructor.name + "", this);
     }
 
-    this.logger.closeCommandHeader(this);
+    this.logger.closeRunnableHeader(this);
     this.isCompleted = true;
 
     if (this.showLoadingAfter && this.payload.isMessage()) {
@@ -379,4 +383,8 @@ export abstract class Command<
       }
     }
   }
+}
+
+export function isCommand(runnable: Runnable): runnable is Command {
+  return runnable instanceof Command;
 }

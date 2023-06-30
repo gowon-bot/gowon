@@ -19,6 +19,15 @@ export abstract class InteractionReply<
 
     await this.deferResponseIfInteraction();
 
+    this.logger.openRunnableHeader(this);
+    this.logger.logRunnable(ctx);
+
     await this.run();
+
+    this.logger.closeRunnableHeader(this);
+  }
+
+  public get type(): RunnableType {
+    return InteractionReply.type;
   }
 }
