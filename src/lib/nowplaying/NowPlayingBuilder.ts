@@ -1,15 +1,15 @@
-import { MessageEmbed } from "discord.js";
+import { EmbedBuilder } from "discord.js";
 import { sum } from "mathjs";
 import { asyncMap } from "../../helpers";
 import { UNUSED_CONFIG } from "../../services/dbservices/NowPlayingService";
+import { ResolvedRequirements } from "./DatasourceService";
 import {
+  NowPlayingComponent,
   compoundComponentList,
   getComponentByName,
-  NowPlayingComponent,
 } from "./componentMap";
 import { PresentedComponent } from "./components/BaseNowPlayingComponent";
 import { UnusedComponent } from "./components/UnusedComponent";
-import { ResolvedRequirements } from "./DatasourceService";
 
 export const rowSize = 3;
 
@@ -47,8 +47,8 @@ export class NowPlayingBuilder {
 
   async asEmbed(
     resolvedRequirements: ResolvedRequirements,
-    embed?: MessageEmbed
-  ): Promise<MessageEmbed> {
+    embed?: EmbedBuilder
+  ): Promise<EmbedBuilder> {
     const presentedComponents = await this.getPresentedComponents(
       resolvedRequirements
     );
@@ -57,7 +57,7 @@ export class NowPlayingBuilder {
       presentedComponents.filter((s) => !!s.string && s.size !== undefined)
     );
 
-    return (embed || new MessageEmbed()).setFooter({
+    return (embed || new EmbedBuilder()).setFooter({
       text: presented
         .map((row) => row.map((r) => r.string).join(" • "))
         .join("\n"),

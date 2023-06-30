@@ -1,13 +1,14 @@
 import {
   CommandInteraction,
   DMChannel,
+  EmbedBuilder,
   InteractionReplyOptions,
   Message,
-  MessageEmbed,
   MessagePayload,
 } from "discord.js";
 import { AnalyticsCollector } from "../../analytics/AnalyticsCollector";
 import { DMsAreOffError } from "../../errors/errors";
+import { CannotShowModalError } from "../../errors/external/discord";
 import { sleep, ucFirst } from "../../helpers";
 import { GowonContext } from "../../lib/context/Context";
 import { Payload } from "../../lib/context/Payload";
@@ -18,6 +19,7 @@ import { DiscordServiceContext } from "./DiscordService";
 import {
   RespondableChannel,
   SendOptions,
+  Sendable,
   isPartialDMChannel,
 } from "./DiscordService.types";
 
@@ -39,54 +41,68 @@ export class DiscordResponseService extends BaseService<DiscordServiceContext> {
 
   public async send(
     ctx: DiscordServiceContext,
-    content: string | MessageEmbed,
+    sendable: Sendable,
     options?: Partial<SendOptions>
   ): Promise<Message> {
     const channel = this.getChannel(ctx, options);
 
     this.log(
       ctx,
-      `Sending ${typeof content === "string" ? "string" : "embed"} ${
+      `Sending ${sendable.getLogDisplay()} ${
         this.shouldReply(options) ? "reply" : "message"
       } in ${
         channel instanceof DMChannel || isPartialDMChannel(channel)
-          ? displayUserTag(channel.recipient)
+          ? channel.recipient
+            ? displayUserTag(channel.recipient)
+            : ""
           : `#${channel.name}`
       }`
     );
 
     const end = this.analyticsCollector.metrics.discordLatency.startTimer();
 
-    let response: Message;
+    let response: Message | undefined = undefined;
 
-    if (typeof content === "string") {
-      response = await this.sendString(ctx, content, options);
-    } else {
+    if (sendable.isString()) {
+      response = await this.sendString(ctx, sendable.content, options);
+    } else if (sendable.isEmbed()) {
       const channel = this.getChannel(ctx, options);
 
       try {
         if (this.shouldReplyToInteraction(ctx, options)) {
-          return await this.replyToInteraction(ctx, content, options);
+          return await this.replyToInteraction(ctx, sendable.content, options);
         }
 
         response = await channel.send({
-          embeds: options?.withEmbed ? [content, options.withEmbed] : [content],
+          embeds: options?.withEmbed
+            ? [sendable.content, options.withEmbed]
+            : [sendable.content],
           files: options?.files,
         });
       } catch (e) {
         throw this.areDMsTurnedOff(e) ? new DMsAreOffError() : e;
       }
+    } else if (sendable.isComponent()) {
+      response = await channel.send({
+        ...sendable.content.present(),
+      });
+    } else if (sendable.isModal()) {
+      if (ctx.payload.isInteraction() && !ctx.payload.source.isModalSubmit()) {
+        ctx.payload.source.showModal(sendable.content.present());
+      } else {
+        throw new CannotShowModalError();
+      }
     }
 
     end();
 
-    return response;
+    return response!;
   }
 
   async edit(
     ctx: DiscordServiceContext,
     message: Message,
-    content: string | MessageEmbed
+    content: string | EmbedBuilder
   ) {
     if (ctx.payload.isInteraction()) {
       this.log(ctx, `Editing interaction reply`);
@@ -169,6 +185,7 @@ export class DiscordResponseService extends BaseService<DiscordServiceContext> {
   ): boolean {
     return (
       ctx.payload.isInteraction() &&
+      ctx.payload.source.isRepliable() &&
       !options?.inChannel &&
       !options?.forceNoInteractionReply
     );
@@ -176,7 +193,7 @@ export class DiscordResponseService extends BaseService<DiscordServiceContext> {
 
   private async replyToInteraction(
     ctx: DiscordServiceContext,
-    content: string | MessageEmbed,
+    content: string | EmbedBuilder,
     options: Partial<SendOptions> | undefined
   ): Promise<Message> {
     const payload = ctx.payload as Payload<CommandInteraction>;

@@ -1,4 +1,4 @@
-import { MessageEmbed } from "discord.js";
+import { EmbedBuilder } from "discord.js";
 import {
   Permission,
   PermissionType,
@@ -57,7 +57,7 @@ export class BotwideUserDisable extends PermissionsChildCommand<typeof args> {
       entityID: user.id,
     });
 
-    let embed: MessageEmbed;
+    let embed: EmbedBuilder;
 
     if (!this.variationWasUsed("botwideuserenable")) {
       await this.permissionsService.createPermission(

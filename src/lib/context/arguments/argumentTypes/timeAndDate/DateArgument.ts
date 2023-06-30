@@ -1,5 +1,8 @@
-import { SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction, Message } from "discord.js";
+import {
+  ChatInputCommandInteraction,
+  Message,
+  SlashCommandBuilder,
+} from "discord.js";
 import { GowonService } from "../../../../../services/GowonService";
 import { ServiceRegistry } from "../../../../../services/ServicesRegistry";
 import { constants } from "../../../../constants";
@@ -36,8 +39,8 @@ export class DateArgument<
     return (date || this.getDefault())!;
   }
 
-  parseFromInteraction(
-    interaction: CommandInteraction,
+  parseFromCommandInteraction(
+    interaction: ChatInputCommandInteraction,
     _: GowonContext,
     argumentName: string
   ): Date | undefined {

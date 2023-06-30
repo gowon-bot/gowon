@@ -1,4 +1,4 @@
-import { DiscordAPIError, GuildMember, User } from "discord.js";
+import { DiscordjsError, GuildMember, User } from "discord.js";
 import { GowonContext } from "../../lib/context/Context";
 import { DiscordResponseService } from "./DiscordResponseService";
 import { DiscordID } from "./DiscordService.types";
@@ -34,7 +34,7 @@ export class DiscordService extends DiscordResponseService {
     try {
       return await ctx.guild?.members.fetch(userID);
     } catch (e) {
-      if (!(e instanceof DiscordAPIError)) throw e;
+      if (!(e instanceof DiscordjsError)) throw e;
       return undefined;
     }
   }

@@ -1,4 +1,4 @@
-import { Guild, GuildMember, Role } from "discord.js";
+import { Guild, GuildMember, PermissionFlagsBits, Role } from "discord.js";
 import { Logger } from "../../lib/Logger";
 import { CommandRegistry } from "../../lib/command/CommandRegistry";
 import { GowonContext } from "../../lib/context/Context";
@@ -73,8 +73,8 @@ export class GuildEventService extends BaseService {
     newRole: Role
   ): Promise<void> {
     if (
-      oldRole.permissions.has("ADMINISTRATOR") !==
-      newRole.permissions.has("ADMINISTRATOR")
+      oldRole.permissions.has(PermissionFlagsBits.Administrator) !==
+      newRole.permissions.has(PermissionFlagsBits.Administrator)
     ) {
       ctx.payload.source = new MockMessage("", { guild: newRole.guild });
 
@@ -83,7 +83,7 @@ export class GuildEventService extends BaseService {
   }
 
   public async handleRoleCreate(ctx: GowonContext, role: Role): Promise<void> {
-    if (role.permissions.has("ADMINISTRATOR")) {
+    if (role.permissions.has(PermissionFlagsBits.Administrator)) {
       ctx.payload.source = new MockMessage("", { guild: role.guild });
 
       this.permissionsService.syncGuildPermissions(ctx, [role]);

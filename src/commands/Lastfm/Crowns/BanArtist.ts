@@ -1,4 +1,4 @@
-import { MessageEmbed } from "discord.js";
+import { EmbedBuilder } from "discord.js";
 import { bold } from "../../../helpers/discord";
 import { Variation } from "../../../lib/command/Command";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
@@ -50,7 +50,7 @@ export class BanArtist extends CrownsChildCommand<typeof args> {
     }
   }
 
-  private makeEmbed(artistName: string, unban: boolean): MessageEmbed {
+  private makeEmbed(artistName: string, unban: boolean): EmbedBuilder {
     const embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor("Crowns artist ban"))
       .setDescription(

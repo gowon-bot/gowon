@@ -101,7 +101,7 @@ export class SpotifyAuthenticationService extends BaseSpotifyService<SpotifyAuth
     );
 
     if (!refreshToken && !token) {
-      throw new NotAuthenticatedWithSpotifyError(ctx.command.prefix);
+      throw new NotAuthenticatedWithSpotifyError(ctx.runnable.prefix);
     }
 
     const newToken = await this.spotifyService.fetchToken(ctx, {

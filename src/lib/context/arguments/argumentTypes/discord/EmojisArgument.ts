@@ -1,5 +1,8 @@
-import { SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction, Message } from "discord.js";
+import {
+  ChatInputCommandInteraction,
+  Message,
+  SlashCommandBuilder,
+} from "discord.js";
 import { GowonService } from "../../../../../services/GowonService";
 import { ServiceRegistry } from "../../../../../services/ServicesRegistry";
 import { GowonContext } from "../../../Context";
@@ -47,8 +50,8 @@ export class EmojisArgument<
     );
   }
 
-  parseFromInteraction(
-    interaction: CommandInteraction,
+  parseFromCommandInteraction(
+    interaction: ChatInputCommandInteraction,
     _: GowonContext,
     argumentName: string
   ): EmojiMention[] | undefined {

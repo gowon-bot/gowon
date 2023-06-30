@@ -1,5 +1,8 @@
-import { SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction, Message } from "discord.js";
+import {
+  ChatInputCommandInteraction,
+  Message,
+  SlashCommandBuilder,
+} from "discord.js";
 import { GowonService } from "../../../../../services/GowonService";
 import { ServiceRegistry } from "../../../../../services/ServicesRegistry";
 import { TimeRange } from "../../../../timeAndDate/TimeRange";
@@ -35,8 +38,8 @@ export class TimeRangeArgument<
     return this.timeRangeParser.parse(cleanContent) || this.getDefault();
   }
 
-  parseFromInteraction(
-    interaction: CommandInteraction,
+  parseFromCommandInteraction(
+    interaction: ChatInputCommandInteraction,
     _: GowonContext,
     argumentName: string
   ): TimeRange | undefined {

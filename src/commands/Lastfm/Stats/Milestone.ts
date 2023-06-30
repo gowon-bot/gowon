@@ -64,7 +64,7 @@ export default class Milestone extends LastFMBaseCommand<typeof args> {
         )} track was:`,
       })
       .setDescription(
-        embed.description +
+        embed.data.description +
           `\n\nScrobbled at ${displayDateTime(track.scrobbledAt)}`
       );
 

@@ -1,5 +1,5 @@
 import { bold, italic } from "../../../helpers/discord";
-import { LinkConsolidator, toInt } from "../../../helpers/lastfm/";
+import { LinkConsolidator, toInt } from "../../../helpers/lastfm";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";

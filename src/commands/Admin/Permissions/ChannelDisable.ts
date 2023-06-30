@@ -1,4 +1,4 @@
-import { Channel, MessageEmbed } from "discord.js";
+import { Channel, ChannelType, EmbedBuilder } from "discord.js";
 import {
   Permission,
   PermissionType,
@@ -51,7 +51,7 @@ export class ChannelDisable extends PermissionsChildCommand<typeof args> {
     const channel = this.parsedArguments.channel!;
     const commandName = this.parsedArguments.command;
 
-    if (channel.type !== "GUILD_TEXT") throw new NotTextChannelError();
+    if (channel.type !== ChannelType.GuildText) throw new NotTextChannelError();
 
     const extract = await this.commandRegistry.find(
       commandName,
@@ -69,7 +69,7 @@ export class ChannelDisable extends PermissionsChildCommand<typeof args> {
       guildID: this.requiredGuild.id,
     });
 
-    let embed: MessageEmbed;
+    let embed: EmbedBuilder;
 
     if (
       !this.variationWasUsed("channelenable") &&
@@ -87,7 +87,7 @@ export class ChannelDisable extends PermissionsChildCommand<typeof args> {
     command: Command,
     permission: Permission,
     channel: Channel
-  ): Promise<MessageEmbed> {
+  ): Promise<EmbedBuilder> {
     let deletedAllow = false;
 
     try {
@@ -123,7 +123,7 @@ export class ChannelDisable extends PermissionsChildCommand<typeof args> {
     command: Command,
     permission: Permission,
     channel: Channel
-  ): Promise<MessageEmbed> {
+  ): Promise<EmbedBuilder> {
     let allowed = false;
 
     try {

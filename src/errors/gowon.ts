@@ -29,3 +29,14 @@ export class CannotEditUserError extends ClientError {
     super("You don't have permissions to edit this user");
   }
 }
+
+// Arguments
+
+// Not client-facing
+export class ArgumentNotImplementedForInteractionTypeError extends Error {
+  name = "ArgumentNotImplementedForInteractionTypeError";
+
+  constructor() {
+    super("This argument cannot be parsed from the provided interaction");
+  }
+}

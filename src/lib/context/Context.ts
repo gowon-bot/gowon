@@ -1,8 +1,8 @@
-import { Guild, GuildMember, Message, User } from "discord.js";
+import { ChannelType, Guild, GuildMember, Message, User } from "discord.js";
 import { GuildRequiredError, UnexpectedGowonError } from "../../errors/gowon";
 import { GowonClient } from "../GowonClient";
 import { Logger } from "../Logger";
-import { Command } from "../command/Command";
+import { Runnable } from "../command/Runnable";
 import { ExtractedCommand } from "../command/extractor/ExtractedCommand";
 import { Payload } from "./Payload";
 
@@ -14,8 +14,8 @@ export interface CustomContext<
   mutable?: M;
 }
 
-export interface ContextParamaters<CustomContextT> {
-  command?: Command;
+export interface ContextParamaters<CustomContextT, RunnableType> {
+  runnable?: RunnableType;
   custom?: CustomContextT;
   logger?: Logger;
   payload: Payload;
@@ -23,8 +23,11 @@ export interface ContextParamaters<CustomContextT> {
   gowonClient: GowonClient;
 }
 
-export class GowonContext<T extends CustomContext = CustomContext> {
-  private _command: Command | undefined;
+export class GowonContext<
+  T extends CustomContext = CustomContext,
+  RunnableType = Runnable
+> {
+  private _runnable: RunnableType | undefined;
   private custom: T;
   private _payload: Payload;
   private _extract: ExtractedCommand;
@@ -43,8 +46,8 @@ export class GowonContext<T extends CustomContext = CustomContext> {
     return this.custom.constants;
   }
 
-  constructor(params: ContextParamaters<T>) {
-    this._command = params.command;
+  constructor(params: ContextParamaters<T, RunnableType>) {
+    this._runnable = params.runnable;
     this._payload = params.payload;
     this.custom = (params.custom || {}) as T;
     this._extract = params.extract;
@@ -112,22 +115,23 @@ export class GowonContext<T extends CustomContext = CustomContext> {
     return this._logger;
   }
 
-  get command(): Command {
-    if (!this._command) {
-      throw new UnexpectedGowonError("Command not found in context");
+  get runnable(): RunnableType {
+    if (!this._runnable) {
+      throw new UnexpectedGowonError("Runnable not found in context");
     }
 
-    return this._command;
+    return this._runnable;
   }
 
   public isDM(): boolean {
     return (
-      this.payload.isMessage() && this.payload.source.channel.type === "DM"
+      this.payload.isMessage() &&
+      this.payload.source.channel.type === ChannelType.DM
     );
   }
 
-  public setCommand(command: Command) {
-    this._command = command;
+  public setRunnable(runnable: RunnableType) {
+    this._runnable = runnable;
   }
 
   async getRepliedMessage(): Promise<Message | undefined> {
@@ -140,8 +144,8 @@ export class GowonContext<T extends CustomContext = CustomContext> {
 
   /* Used to set commands from non-command places, eg. GuildEventService */
   /* eslint @typescript-eslint/no-explicit-any: 0 */
-  public dangerousSetCommand(command: any) {
-    this._command = Object.assign(this._command || {}, command);
+  public dangerousSetRunnable(runnable: any) {
+    this._runnable = Object.assign(this._runnable || {}, runnable);
   }
 
   // Used to set authors from places without a real discord author

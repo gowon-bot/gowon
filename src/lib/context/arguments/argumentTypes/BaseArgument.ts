@@ -1,5 +1,11 @@
 import chalk from "chalk";
-import { Interaction, Message } from "discord.js";
+import {
+  BaseInteraction,
+  CommandInteraction,
+  Message,
+  ModalSubmitInteraction,
+} from "discord.js";
+import { ArgumentNotImplementedForInteractionTypeError } from "../../../../errors/gowon";
 import { toInt } from "../../../../helpers/lastfm/";
 import { GowonService } from "../../../../services/GowonService";
 import { ServiceRegistry } from "../../../../services/ServicesRegistry";
@@ -85,15 +91,43 @@ export abstract class BaseArgument<
     context: GowonContext
   ): ReturnT | undefined;
 
-  abstract parseFromInteraction(
-    interaction: Interaction,
-    context: GowonContext,
+  parseFromInteraction(
+    interaction: BaseInteraction,
+    ctx: GowonContext,
     argumentName: string
-  ): ReturnT | undefined;
+  ): ReturnT | undefined {
+    if (interaction.isCommand()) {
+      return this.parseFromCommandInteraction(interaction, ctx, argumentName);
+    } else if (interaction.isModalSubmit()) {
+      return this.parseFromModalSubmitInteraction(
+        interaction,
+        ctx,
+        argumentName
+      );
+    }
+
+    return undefined;
+  }
+
+  parseFromCommandInteraction(
+    _interaction: CommandInteraction,
+    _ctx: GowonContext,
+    _argumentName: string
+  ): ReturnT | undefined {
+    throw new ArgumentNotImplementedForInteractionTypeError();
+  }
+
+  parseFromModalSubmitInteraction(
+    _interaction: ModalSubmitInteraction,
+    _ctx: GowonContext,
+    _argumentName: string
+  ): ReturnT | undefined {
+    throw new ArgumentNotImplementedForInteractionTypeError();
+  }
 
   addAsOption(
     slashCommand: SlashCommandBuilder,
-    _: string
+    _argName: string
   ): SlashCommandBuilderReturn {
     return slashCommand;
   }
@@ -240,6 +274,10 @@ export interface SliceableArgumentOptions {
 
 export interface ContentBasedArgumentOptions {
   preprocessor: (content: string) => string;
+}
+
+export interface ModalArgumentOptions {
+  modalFieldID: string;
 }
 
 export type StringCleaningArgument = {

@@ -1,4 +1,4 @@
-import { Message, MessageEmbed } from "discord.js";
+import { Embed, Message } from "discord.js";
 import { GowonContext } from "../../lib/context/Context";
 import { BaseMockService } from "./BaseMockService";
 
@@ -11,7 +11,7 @@ export class MockNowPlayingEmbedParsingService extends BaseMockService {
     return false;
   }
 
-  parseGowonEmbed(_embed: MessageEmbed) {
+  parseGowonEmbed(_embed: Embed) {
     return undefined;
   }
 
@@ -19,7 +19,7 @@ export class MockNowPlayingEmbedParsingService extends BaseMockService {
     return false;
   }
 
-  parseFmbotEmbed(_embed: MessageEmbed) {
+  parseFmbotEmbed(_embed: Embed) {
     return undefined;
   }
 
@@ -27,7 +27,7 @@ export class MockNowPlayingEmbedParsingService extends BaseMockService {
     return false;
   }
 
-  parseChuuEmbed(_embed: MessageEmbed) {
+  parseChuuEmbed(_embed: Embed) {
     return undefined;
   }
 
@@ -35,7 +35,7 @@ export class MockNowPlayingEmbedParsingService extends BaseMockService {
     return false;
   }
 
-  parseWhoKnowsEmbed(_embed: MessageEmbed) {
+  parseWhoKnowsEmbed(_embed: Embed) {
     return undefined;
   }
 }

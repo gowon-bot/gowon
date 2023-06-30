@@ -34,7 +34,7 @@ export class FriendsService extends BaseService {
     ) {
       throw new TooManyFriendsError(
         user.isPatron ? this.patronFriendsLimit : this.friendsLimit,
-        ctx.command.prefix,
+        ctx.runnable.prefix,
         !user.isPatron
       );
     }

@@ -34,7 +34,7 @@ export class GraphQLAPI {
       payload: new Payload({} as any),
     } as any);
 
-    ctx.dangerousSetCommand({ logger: new HeaderlessLogger() });
+    ctx.dangerousSetRunnable({ logger: new HeaderlessLogger() });
 
     return ctx;
   }

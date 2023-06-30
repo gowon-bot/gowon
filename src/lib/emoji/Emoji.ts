@@ -110,6 +110,9 @@ export const Emoji = {
   doesNotRequireAdmin: "<:does_not_require_admin:1116285311513800786>",
   slashCommand: "<:slash_command:1116262522085965824>",
   notASlashCommand: "<:not_a_slash_command:1116262520156590090>",
+
+  // Playlists
+  defaultPlaylistEmoji: "�",
 } satisfies Record<string, string>;
 
 export const EmojiRaw = Object.entries(Emoji).reduce(

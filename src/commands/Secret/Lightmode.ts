@@ -1,3 +1,4 @@
+import { AttachmentBuilder } from "discord.js";
 import { Command } from "../../lib/command/Command";
 
 export default class Lightmode extends Command {
@@ -14,7 +15,9 @@ export default class Lightmode extends Command {
     if (this.author.id === "196249128286552064")
       await this.send("*sigh*", {
         files: [
-          "https://media.discordapp.net/attachments/743258490553761913/752764405049065552/unknown.png",
+          new AttachmentBuilder(
+            "https://media.discordapp.net/attachments/743258490553761913/752764405049065552/unknown.png"
+          ),
         ],
       });
   }

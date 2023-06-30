@@ -1,4 +1,4 @@
-import { EmbedField, MessageEmbed } from "discord.js";
+import { EmbedBuilder, EmbedField } from "discord.js";
 import { GowonContext } from "../../context/Context";
 import {
   ScrollingEmbed,
@@ -25,7 +25,7 @@ export class SimpleScrollingEmbed<T> {
 
   constructor(
     ctx: GowonContext,
-    embed: MessageEmbed,
+    embed: EmbedBuilder,
     private options: SimpleOptions<T>
   ) {
     this.scrollingEmbed = new ScrollingEmbed(

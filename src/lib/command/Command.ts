@@ -1,27 +1,14 @@
 import { Chance } from "chance";
-import {
-  CommandInteraction,
-  EmbedAuthorData,
-  Guild,
-  Message,
-  MessageEmbed,
-} from "discord.js";
-import md5 from "js-md5";
+import { Message } from "discord.js";
 import config from "../../../config.json";
 import { AnalyticsCollector } from "../../analytics/AnalyticsCollector";
 import { UnknownError } from "../../errors/errors";
-import { GuildRequiredError } from "../../errors/gowon";
 import { SimpleMap } from "../../helpers/types";
-import { DiscordService } from "../../services/Discord/DiscordService";
-import {
-  ReplyOptions,
-  SendOptions,
-} from "../../services/Discord/DiscordService.types";
+import { Sendable } from "../../services/Discord/DiscordService.types";
 import { GowonService } from "../../services/GowonService";
 import { NowPlayingEmbedParsingService } from "../../services/NowPlayingEmbedParsingService";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { TrackingService } from "../../services/TrackingService";
-import { ArgumentParsingService } from "../../services/arguments/ArgumentsParsingService";
 import { MentionsService } from "../../services/arguments/mentions/MentionsService";
 import {
   GetMentionsOptions,
@@ -37,11 +24,9 @@ import { GowonContext } from "../context/Context";
 import { ArgumentsMap, ParsedArguments } from "../context/arguments/types";
 import { Emoji, EmojiRaw } from "../emoji/Emoji";
 import { SettingsService } from "../settings/SettingsService";
-import { Validation, ValidationChecker } from "../validation/ValidationChecker";
-import { displayUserTag } from "../views/displays";
-import { errorEmbed, gowonEmbed } from "../views/embeds";
 import { CommandGroup } from "./CommandGroup";
 import { CommandRegistry } from "./CommandRegistry";
+import { Runnable, RunnableType } from "./Runnable";
 import { CommandAccess } from "./access/access";
 
 export interface Variation {
@@ -57,14 +42,12 @@ export interface CommandRedirect<T extends ArgumentsMap> {
   when(args: ParsedArguments<T>): boolean;
 }
 
-export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
-  /**
-   * idSeed is the seed for the generated command id
-   * **Must be unique among all commands!**
-   */
-  abstract idSeed: string;
+export abstract class Command<
+  ArgumentsType extends ArgumentsMap = {}
+> extends Runnable<ArgumentsType> {
+  static type = RunnableType.Command;
 
-  protected debug = false;
+  ctx!: GowonContext<(typeof this)["customContext"], Command>;
 
   /**
    * Indexing metadata
@@ -106,7 +89,6 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
   subcategory: string | undefined = undefined;
   usage: string | string[] = "";
   customHelp?: { new (): Command } | undefined;
-  guildRequired?: boolean;
 
   /**
    * Authentication metadata
@@ -114,7 +96,6 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
    */
   // Archived are commands that can't be run, but stick around for data purposes
   // Should be used to 'decommission' commands that aren't needed anymore
-  archived = false;
   secretCommand: boolean = false;
   shouldBeIndexed: boolean = true;
   devCommand: boolean = false;
@@ -122,57 +103,9 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
   access?: CommandAccess;
 
   /**
-   * Argument metadata
-   * (properties related to what arguments a command takes)
-   */
-  arguments: ArgumentsType = {} as any;
-  validation: Validation = {};
-
-  /**
    * Run-specific data
    * (properties set before a command is run)
    */
-  // Has to be any typed because the parsed flags aren't optionally typed
-  // because they always will be either true or false
-  // this is set by the FlagParser when this.parseArguments() is called
-  private _parsedArguments: ParsedArguments<ArgumentsType> =
-    {} as ParsedArguments<ArgumentsType>;
-
-  get parsedArguments(): ParsedArguments<ArgumentsType> {
-    return this._parsedArguments;
-  }
-
-  private set parsedArguments(args: ParsedArguments<ArgumentsType>) {
-    this._parsedArguments = args;
-  }
-
-  get logger() {
-    return this.ctx.logger;
-  }
-
-  get payload() {
-    return this.ctx.payload;
-  }
-
-  get extract() {
-    return this.ctx.extract;
-  }
-
-  get guild(): Guild | undefined {
-    return this.ctx.guild;
-  }
-
-  get requiredGuild(): Guild {
-    return this.ctx.requiredGuild;
-  }
-
-  get author() {
-    return this.ctx.author;
-  }
-
-  get gowonClient() {
-    return this.ctx.client;
-  }
 
   get prefix(): string {
     return this.payload.isInteraction()
@@ -181,9 +114,6 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
       ? this.gowonService.prefix(this.guild.id)
       : config.defaultPrefix;
   }
-
-  ctx!: GowonContext<(typeof this)["customContext"]>;
-  customContext = {};
 
   /**
    * Misc metadata
@@ -200,14 +130,12 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
   track = ServiceRegistry.get(TrackingService);
   usersService = ServiceRegistry.get(UsersService);
   gowonService = ServiceRegistry.get(GowonService);
-  discordService = ServiceRegistry.get(DiscordService);
   settingsService = ServiceRegistry.get(SettingsService);
   mentionsService = ServiceRegistry.get(MentionsService);
   mirrorballService = ServiceRegistry.get(MirrorballService);
   lilacUsersService = ServiceRegistry.get(LilacUsersService);
   lilacGuildsService = ServiceRegistry.get(LilacGuildsService);
   analyticsCollector = ServiceRegistry.get(AnalyticsCollector);
-  argumentParsingService = ServiceRegistry.get(ArgumentParsingService);
   nowPlayingEmbedParsingService = ServiceRegistry.get(
     NowPlayingEmbedParsingService
   );
@@ -220,24 +148,18 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
    * Helper getters
    */
 
-  mutableContext<T extends Record<string, unknown>>(): GowonContext<{
-    mutable: T;
-  }> {
-    return this.ctx as GowonContext<{ mutable: T }>;
-  }
-
   // Implemented in ParentCommand
   async getChild(_: string, __: string): Promise<Command | undefined> {
     return undefined;
   }
 
-  get id(): string {
-    return md5(this.idSeed);
-  }
-
   // Returns a fresh instance of this command from the registry
   public copy(): Command {
     return CommandRegistry.getInstance().make(this.id);
+  }
+
+  public get type(): RunnableType {
+    return Command.type;
   }
 
   /**
@@ -253,20 +175,14 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
   async beforeRun(): Promise<void> {}
 
   async execute(ctx: GowonContext): Promise<void> {
-    ctx.setCommand(this);
-    ctx.addContext(this.customContext);
-    this.ctx = ctx;
-
-    if (!(await this.checkGuildRequirement())) return;
+    await super.execute(ctx);
 
     await this.setup();
 
     try {
-      this.parsedArguments = this.parseArguments();
-
       if (await this.redirectIfRequired(ctx)) return;
 
-      this.logger.logCommand(ctx);
+      this.logger.logRunnable(ctx);
       this.analyticsCollector.metrics.commandRuns.inc();
 
       this.deferResponseIfInteraction();
@@ -287,7 +203,7 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
 
   async setup() {
     this.startTyping();
-    this.logger.openCommandHeader(this);
+    this.logger.openRunnableHeader(this);
 
     if (this.showLoadingAfter) {
       setTimeout(() => {
@@ -305,7 +221,7 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
       console.log(this.constructor.name + "", this);
     }
 
-    this.logger.closeCommandHeader(this);
+    this.logger.closeRunnableHeader(this);
     this.isCompleted = true;
 
     if (this.showLoadingAfter && this.payload.isMessage()) {
@@ -313,19 +229,6 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
         .resolve(EmojiRaw.loading)
         ?.users.remove(this.gowonClient.client.user!);
     }
-  }
-
-  parseArguments(): ParsedArguments<ArgumentsType> {
-    const parsedArguments = this.argumentParsingService.parseContext(
-      this.ctx,
-      this.arguments
-    );
-
-    this.debug = !!(this.parsedArguments as any).debug;
-
-    new ValidationChecker(parsedArguments, this.validation).validate();
-
-    return parsedArguments;
   }
 
   private async redirectIfRequired(ctx: GowonContext): Promise<boolean> {
@@ -341,18 +244,6 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
     return false;
   }
 
-  private async deferResponseIfInteraction() {
-    if (this.payload.isInteraction()) {
-      this.mutableContext<{
-        deferredResponseTimeout?: NodeJS.Timeout;
-      }>().mutable.deferredResponseTimeout = setTimeout(() => {
-        (this.payload.source as CommandInteraction).deferReply();
-        this.mutableContext<{ deferredAt: Date }>().mutable.deferredAt =
-          new Date();
-      }, 2000);
-    }
-  }
-
   protected async handleRunError(e: any) {
     this.logger.logError(e);
     this.analyticsCollector.metrics.commandErrors.inc();
@@ -364,15 +255,6 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
     } else if (!e.isClientFacing) {
       await this.sendError(new UnknownError().message);
     }
-  }
-
-  private async checkGuildRequirement(): Promise<boolean> {
-    if (this.guildRequired && this.ctx.isDM()) {
-      await this.sendError(new GuildRequiredError().message);
-      return false;
-    }
-
-    return true;
   }
 
   /**
@@ -388,51 +270,12 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
    * (These methods help interact with Discord)
    */
 
-  async send(
-    content: MessageEmbed | string,
-    options?: Partial<SendOptions>
-  ): Promise<Message> {
-    return await this.discordService.send(this.ctx, content, options);
-  }
-
-  async reply(
-    content: string,
-    options?: Partial<ReplyOptions>
-  ): Promise<Message> {
-    return await this.discordService.send(this.ctx, content, {
-      reply: options || true,
-    });
-  }
-
-  async dmAuthor(content: string | MessageEmbed): Promise<Message> {
-    return await this.discordService.send(this.ctx, content, {
-      inChannel: await this.ctx.author.createDM(true),
-    });
-  }
-
   // Mimics the old Discord.js reply method
   /** @deprecated Use Command#reply + embed instead */
   async oldReply(message: string): Promise<Message> {
     const content = `<@!${this.author.id}>, ` + message.trimStart();
 
-    return await this.discordService.send(this.ctx, content);
-  }
-
-  newEmbed(embed?: MessageEmbed): MessageEmbed {
-    return gowonEmbed(this.payload.member ?? undefined, embed);
-  }
-
-  generateEmbedAuthor(title?: string, url?: string): EmbedAuthorData {
-    return {
-      name: title
-        ? `${displayUserTag(this.payload.author)} | ${title}`
-        : `${displayUserTag(this.payload.author)}`,
-      iconURL:
-        this.payload.member?.avatarURL() ||
-        this.payload.author.avatarURL() ||
-        undefined,
-      url: url,
-    };
+    return await this.discordService.send(this.ctx, new Sendable(content));
   }
 
   protected async fetchUsername(id: string): Promise<string> {
@@ -472,18 +315,6 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
     return (await this.requiredGuild.members.fetch())
       .map((u) => u.user.id)
       .filter(filter);
-  }
-
-  protected async sendError(message: string, footer = "") {
-    const embed = errorEmbed(
-      this.newEmbed(),
-      this.author,
-      this.ctx.authorMember,
-      message,
-      footer
-    );
-
-    await this.send(embed);
   }
 
   protected startTyping() {
@@ -552,4 +383,8 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
       }
     }
   }
+}
+
+export function isCommand(runnable: Runnable): runnable is Command {
+  return runnable instanceof Command;
 }

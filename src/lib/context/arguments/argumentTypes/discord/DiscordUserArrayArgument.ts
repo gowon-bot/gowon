@@ -27,7 +27,7 @@ export class DiscordUserArrayArgument<
     return element instanceof Array ? element : element ? [element] : [];
   }
 
-  parseFromInteraction(): User[] {
+  parseFromCommandInteraction(): User[] {
     return [];
   }
 }

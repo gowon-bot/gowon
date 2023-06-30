@@ -20,6 +20,8 @@ import { FishyProfile } from "./entity/fishy/FishyProfile";
 import { CommandRun } from "./entity/meta/CommandRun";
 import { CrownEvent } from "./entity/meta/CrownEvent";
 import { Guild } from "./entity/meta/Guild";
+import { CommunityPlaylist } from "./entity/playlists/CommunityPlaylist";
+import { CommunityPlaylistSubmission } from "./entity/playlists/CommunityPlaylistSubmission";
 
 export class DB {
   dataSource!: DataSource;
@@ -40,6 +42,9 @@ export class DB {
         CrownEvent,
         Error,
         Guild,
+        // playlists
+        CommunityPlaylist,
+        CommunityPlaylistSubmission,
         // other
         AlternateAlbumCover,
         ArtistCrownBan,

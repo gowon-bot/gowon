@@ -1,5 +1,5 @@
 import { bold, italic } from "../../../helpers/discord";
-import { toInt } from "../../../helpers/lastfm/";
+import { toInt } from "../../../helpers/lastfm";
 import { CommandRedirect } from "../../../lib/command/Command";
 import { Flag } from "../../../lib/context/arguments/argumentTypes/Flag";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";

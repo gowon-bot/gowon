@@ -1,7 +1,7 @@
 import config from "../config.json";
 
 import chalk from "chalk";
-import { Client, Intents } from "discord.js";
+import { ActivityType, Client, GatewayIntentBits, Partials } from "discord.js";
 import gql from "graphql-tag";
 import { GraphQLAPI } from "./api";
 import { DB } from "./database/DB";
@@ -10,9 +10,10 @@ import { GowonClient } from "./lib/GowonClient";
 import { CommandHandler } from "./lib/command/CommandHandler";
 import {
   CommandRegistry,
-  generateCommands,
+  generateRunnables,
 } from "./lib/command/CommandRegistry";
 import { InteractionHandler } from "./lib/command/interactions/InteractionHandler";
+import { InteractionReplyRegistry } from "./lib/command/interactions/InteractionReplyRegistry";
 import { mirrorballClient } from "./lib/indexing/client";
 import { SettingsService } from "./lib/settings/SettingsService";
 import { GuildEventService } from "./services/Discord/GuildEventService";
@@ -24,27 +25,28 @@ export const client = new GowonClient(
   new Client({
     // List of intents: https://discord.com/developers/docs/topics/gateway#list-of-intents
     intents: [
-      Intents.FLAGS.GUILDS,
-      Intents.FLAGS.GUILD_MEMBERS,
-      Intents.FLAGS.GUILD_MESSAGES,
-      Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
-      Intents.FLAGS.GUILD_MESSAGE_TYPING,
-      Intents.FLAGS.DIRECT_MESSAGES,
-      Intents.FLAGS.DIRECT_MESSAGE_REACTIONS,
-      Intents.FLAGS.DIRECT_MESSAGE_TYPING,
+      GatewayIntentBits.Guilds,
+      GatewayIntentBits.GuildMembers,
+      GatewayIntentBits.GuildMessages,
+      GatewayIntentBits.GuildMessageReactions,
+      GatewayIntentBits.GuildMessageTyping,
+      GatewayIntentBits.DirectMessages,
+      GatewayIntentBits.DirectMessageReactions,
+      GatewayIntentBits.DirectMessageTyping,
+      GatewayIntentBits.MessageContent,
     ],
     presence: {
       status: "online",
       activities: [
         {
           name: "One & Only",
-          type: "LISTENING",
+          type: ActivityType.Listening,
           url: "https://gowon.ca",
         },
       ],
     },
     allowedMentions: { parse: ["users", "roles"] },
-    partials: ["CHANNEL"],
+    partials: [Partials.Channel],
   }),
   config.environment
 );
@@ -122,10 +124,12 @@ function connectToMirrorball() {
 }
 
 function initializeCommandRegistry() {
-  return logStartup(
-    async () => CommandRegistry.getInstance().init(await generateCommands()),
-    "Initialized command registry"
-  );
+  return logStartup(async () => {
+    const { commands, interactionReplies } = await generateRunnables();
+
+    CommandRegistry.getInstance().init(commands);
+    InteractionReplyRegistry.getInstance().init(interactionReplies);
+  }, "Initialized command registry");
 }
 
 function seedCache() {

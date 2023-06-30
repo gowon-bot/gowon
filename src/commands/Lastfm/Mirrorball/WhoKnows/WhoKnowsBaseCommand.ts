@@ -1,4 +1,4 @@
-import { MessageEmbed } from "discord.js";
+import { EmbedBuilder } from "discord.js";
 import { User } from "../../../../database/entity/User";
 import { ArgumentsMap } from "../../../../lib/context/arguments/types";
 import { MirrorballBaseCommand } from "../../../../lib/indexing/MirrorballCommands";
@@ -43,7 +43,7 @@ export abstract class WhoKnowsBaseCommand<
       : "";
   }
 
-  protected whoKnowsEmbed(): MessageEmbed {
+  protected whoKnowsEmbed(): EmbedBuilder {
     return this.newEmbed().setAuthor({
       name: this.isGlobal() ? "Gowon" : this.requiredGuild.name,
       iconURL: this.isGlobal()

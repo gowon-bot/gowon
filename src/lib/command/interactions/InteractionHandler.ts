@@ -1,6 +1,7 @@
-import { CommandInteraction, Interaction, MessageEmbed } from "discord.js";
+import { CommandInteraction, EmbedBuilder, Interaction } from "discord.js";
 import { generateCanCheckMessage } from "../../../helpers/permissions";
 import { DiscordService } from "../../../services/Discord/DiscordService";
+import { Sendable } from "../../../services/Discord/DiscordService.types";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { GowonClient } from "../../GowonClient";
 import { HeaderlessLogger, Logger } from "../../Logger";
@@ -15,10 +16,12 @@ import { Command } from "../Command";
 import { CommandRegistry } from "../CommandRegistry";
 import { ExtractedCommand } from "../extractor/ExtractedCommand";
 import { InteractionRegistry } from "./InteractionRegistry";
+import { InteractionReplyRegistry } from "./InteractionReplyRegistry";
 
 export class InteractionHandler {
   client!: GowonClient;
   private commandRegistry = CommandRegistry.getInstance();
+  private interactionReplyRegistry = InteractionReplyRegistry.getInstance();
   private interactionRegistry!: InteractionRegistry;
 
   private logger = new HeaderlessLogger();
@@ -37,7 +40,7 @@ export class InteractionHandler {
   }
 
   async handle(interaction: Interaction) {
-    if (interaction.isCommand()) {
+    if (interaction.isChatInputCommand()) {
       const extract = this.interactionRegistry.find({
         byName: interaction.commandName,
         withSubcommand: interaction.options.getSubcommand(false) ?? undefined,
@@ -70,6 +73,25 @@ export class InteractionHandler {
           await newCommand.execute.bind(newCommand)(ctx);
         } catch {}
       }
+    } else if (
+      interaction.isStringSelectMenu() ||
+      interaction.isModalSubmit()
+    ) {
+      const interactionReply = this.interactionReplyRegistry.get(
+        interaction.customId
+      );
+
+      if (interactionReply) {
+        const ctx = new GowonContext({
+          extract: new ExtractedCommand([]),
+          payload: new Payload(interaction),
+          gowonClient: this.client,
+        });
+
+        try {
+          await interactionReply.execute.bind(interactionReply)(ctx);
+        } catch {}
+      }
     }
   }
 
@@ -78,7 +100,7 @@ export class InteractionHandler {
       gowonClient: this.client,
       payload: new Payload(interaction),
       extract: new ExtractedCommand([]),
-      command: {
+      runnable: {
         logger: this.logger,
         guild: interaction.guild!,
         author: interaction.user,
@@ -99,13 +121,13 @@ export class InteractionHandler {
     );
 
     const embed = errorEmbed(
-      new MessageEmbed(),
+      new EmbedBuilder(),
       ctx.author,
       ctx.requiredAuthorMember,
       message
     );
 
-    await this.discordService.send(ctx, embed, {
+    await this.discordService.send(ctx, new Sendable(embed), {
       reply: true,
       ephemeral: true,
     });

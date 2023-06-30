@@ -1,4 +1,4 @@
-import { CommandInteraction, Message } from "discord.js";
+import { ChatInputCommandInteraction, Message } from "discord.js";
 import { GowonContext } from "../../Context";
 import { BaseMention } from "../mentionTypes/BaseMention";
 import {
@@ -34,8 +34,8 @@ export class UserStringArgument<
     return this.getElementFromIndex(mentions, this.options.index);
   }
 
-  parseFromInteraction(
-    interaction: CommandInteraction,
+  parseFromCommandInteraction(
+    interaction: ChatInputCommandInteraction,
     _: GowonContext,
     argumentName: string
   ): string {

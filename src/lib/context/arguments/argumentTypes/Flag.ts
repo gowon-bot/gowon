@@ -1,5 +1,8 @@
-import { SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction, Message } from "discord.js";
+import {
+  ChatInputCommandInteraction,
+  Message,
+  SlashCommandBuilder,
+} from "discord.js";
 import { GowonContext } from "../../Context";
 import { FlagOptions, FlagParser } from "../parsers/FlagParser";
 import { ArgumentsMap } from "../types";
@@ -30,8 +33,8 @@ export class Flag<OptionsT extends Partial<FlagArgumentOptions>>
     return this.flagParser.parse(this.options, content);
   }
 
-  parseFromInteraction(
-    interaction: CommandInteraction,
+  parseFromCommandInteraction(
+    interaction: ChatInputCommandInteraction,
     _: GowonContext,
     argumentName: string
   ): boolean {

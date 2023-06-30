@@ -1,4 +1,4 @@
-import { Message, MessageEmbed, User } from "discord.js";
+import { EmbedBuilder, Message, User } from "discord.js";
 import config from "../../../../config.json";
 import { bold, italic, sanitizeForDiscord } from "../../../helpers/discord";
 import { LastfmLinks } from "../../../helpers/lastfm/LastfmLinks";
@@ -91,7 +91,7 @@ export abstract class NowPlayingBaseCommand<
   protected async nowPlayingEmbed(
     nowPlaying: RecentTrack,
     username: string
-  ): Promise<MessageEmbed> {
+  ): Promise<EmbedBuilder> {
     const links = LastfmLinks.generateTrackLinksForEmbed(nowPlaying);
 
     const albumCover = await this.albumCoverService.get(

@@ -1,7 +1,8 @@
-import { MessageEmbed } from "discord.js";
+import { Embed } from "discord.js";
 import { SimpleMap } from "../helpers/types";
 import { Logger } from "../lib/Logger";
 import { Command } from "../lib/command/Command";
+import { Runnable } from "../lib/command/Runnable";
 import { ExtractedCommand } from "../lib/command/extractor/ExtractedCommand";
 import {
   ContextParamaters,
@@ -15,7 +16,7 @@ import { MockMessage, MockUser } from "./discord";
 
 export const mockBotId = "541298511430287395";
 
-interface MockContextParameters<T> extends ContextParamaters<T> {
+interface MockContextParameters<T> extends ContextParamaters<T, Runnable> {
   mock?: Partial<MockedContext>;
 }
 
@@ -28,7 +29,7 @@ interface MockedContext {
 export class MockContext<
   T extends CustomContext = CustomContext
 > extends GowonContext<T> {
-  private responses: Array<string | MessageEmbed> = [];
+  private responses: Array<string | Embed> = [];
 
   public mocked: Partial<MockedContext>;
 
@@ -38,11 +39,11 @@ export class MockContext<
     this.mocked = options.mock || {};
   }
 
-  latestResponse<T extends string | MessageEmbed>(): T {
+  latestResponse<T extends string | Embed>(): T {
     return this.responses[this.responses.length - 1] as T;
   }
 
-  addResponse(response: string | MessageEmbed) {
+  addResponse(response: string | Embed) {
     this.responses.push(response);
   }
 
@@ -52,7 +53,8 @@ export class MockContext<
 }
 
 export class MockLogger extends Logger {
-  closeCommandHeader() {}
+  openRunnableHeader(_?: any) {}
+  closeRunnableHeader(_?: any) {}
 }
 
 export function mockContextForCommand<
@@ -74,17 +76,17 @@ export function mockContextForCommand<
 export function mockContext<T extends CustomContext = CustomContext>(
   overrides: Partial<MockContextParameters<T>> = {}
 ) {
-  const command = new CommandThatShouldntRun();
+  const runnable = new CommandThatShouldntRun();
   const ctx = new MockContext<T>({
     payload: new Payload(new MockMessage()),
     extract: mockExtractedCommand(),
     gowonClient: {} as any,
     logger: new MockLogger(),
-    command: command,
+    runnable: runnable,
     ...overrides,
   });
 
-  command.ctx = ctx;
+  runnable.ctx = ctx as any as GowonContext<any, Command>;
 
   return ctx;
 }

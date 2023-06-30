@@ -105,7 +105,7 @@ Total commands: ${displayNumber(commandCount)}`,
       )
       .setFooter({
         text: `Made with <3 by ${displayUserTag(author)}`,
-        iconURL: author.avatarURL({ dynamic: true }) ?? undefined,
+        iconURL: author.avatarURL() ?? undefined,
       });
 
     await this.send(embed);

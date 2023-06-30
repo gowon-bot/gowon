@@ -1,15 +1,15 @@
-import { MessageEmbed } from "discord.js";
+import { EmbedBuilder } from "discord.js";
 import { promiseAllSettled } from "../../../helpers";
+import { LineConsolidator } from "../../../lib/LineConsolidator";
 import { CommandRedirect } from "../../../lib/command/Command";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
-import { LineConsolidator } from "../../../lib/LineConsolidator";
-import { SettingsService } from "../../../lib/settings/SettingsService";
 import { FMMode } from "../../../lib/settings/SettingValues";
-import { CrownsService } from "../../../services/dbservices/crowns/CrownsService";
+import { SettingsService } from "../../../lib/settings/SettingsService";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
+import { CrownsService } from "../../../services/dbservices/crowns/CrownsService";
 import NowPlayingAlbum from "./NowPlayingAlbum";
-import { nowPlayingArgs, NowPlayingBaseCommand } from "./NowPlayingBaseCommand";
+import { NowPlayingBaseCommand, nowPlayingArgs } from "./NowPlayingBaseCommand";
 import NowPlayingCombo from "./NowPlayingCombo";
 import NowPlayingCompact from "./NowPlayingCompact";
 import NowPlayingCustom from "./NowPlayingCustom";
@@ -149,11 +149,11 @@ export default class NowPlaying extends NowPlayingBaseCommand<typeof args> {
     await this.easterEggs(sentMessage, nowPlaying);
   }
 
-  private reverseEmbed(embed: MessageEmbed): MessageEmbed {
-    embed.setTitle(reverse(embed.title!));
-    embed.setDescription(reverseLinks(embed.description!));
+  private reverseEmbed(embed: EmbedBuilder): EmbedBuilder {
+    embed.setTitle(reverse(embed.data.title!));
+    embed.setDescription(reverseLinks(embed.data.description!));
 
-    const footer = embed.footer?.text!.split("\n") as [string, string];
+    const footer = embed.data.footer?.text!.split("\n") as [string, string];
 
     footer[0] = footer[0]
       .split(" ‧ ")
@@ -165,14 +165,14 @@ export default class NowPlaying extends NowPlayingBaseCommand<typeof args> {
 
     embed.setFooter({ text: footer.join("\n") });
 
-    const author = (embed.author = {
-      ...embed.author,
+    const author = {
+      ...embed.data.author,
       name:
-        embed.author?.name!.replace(
+        embed.data.author?.name!.replace(
           /(?<=(Now playing|Last scrobbled) for ).*/i,
           (match) => reverse(match)
         ) || "",
-    });
+    };
 
     embed.setAuthor(author);
 

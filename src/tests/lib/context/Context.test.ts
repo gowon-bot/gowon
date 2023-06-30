@@ -1,8 +1,9 @@
 import "../../shims";
 
+import { GuildRequiredError } from "../../../errors/gowon";
 import { Payload } from "../../../lib/context/Payload";
-import { MockGuild, MockGuildlessMessage } from "../../../mocks/discord";
 import { mockContext } from "../../../mocks/MockContext";
+import { MockGuild, MockGuildlessMessage } from "../../../mocks/discord";
 import { setMockServices } from "../../../mocks/services/mockServices";
 
 describe("Context", () => {
@@ -25,15 +26,15 @@ describe("Context", () => {
       payload: new Payload(new MockGuildlessMessage()),
     });
 
-    expect(() => context.requiredGuild).toThrow("run in a server");
+    expect(() => context.requiredGuild).toThrow(GuildRequiredError);
   });
 
   test("should assign properties to the command when set", () => {
     const context = mockContext();
 
-    context.dangerousSetCommand({ name: "gowon one and only" });
+    context.dangerousSetRunnable({ idSeed: "gowon one and only" });
 
-    expect(context.command.name).toBe("gowon one and only");
+    expect(context.runnable.idSeed).toBe("gowon one and only");
   });
 
   test("should return mutable and constant parameters", () => {

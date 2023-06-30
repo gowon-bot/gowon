@@ -1,20 +1,22 @@
-import { Command, Variation } from "../Command";
-import {
-  SlashCommandBuilder,
-  SlashCommandSubcommandBuilder,
-} from "@discordjs/builders";
+import { SlashCommandBuilder, SlashCommandSubcommandBuilder } from "discord.js";
+import { SlashCommandCannotBeDevCommand } from "../../../errors/external/discord";
 import { ArgumentsMap } from "../../context/arguments/types";
-import { ParentCommand } from "../ParentCommand";
 import { ChildCommand } from "../ChildCommand";
+import { Command, Variation } from "../Command";
+import { ParentCommand } from "../ParentCommand";
 
 export class SlashCommandConverter {
   convert(command: Command, asVariation?: Variation): SlashCommandBuilder[] {
+    if (command.devCommand) {
+      throw new SlashCommandCannotBeDevCommand();
+    }
+
     if (command instanceof ParentCommand) {
       return [this.convertParentCommand(command)];
     }
 
     let slashCommand = new SlashCommandBuilder()
-      .setDefaultPermission(!(command.devCommand || command.adminCommand))
+      .setDefaultMemberPermissions(command.adminCommand ? 0 : undefined)
       .setName(
         (
           asVariation?.name ||
@@ -93,7 +95,7 @@ export class SlashCommandConverter {
 
   private convertParentCommand(command: ParentCommand): SlashCommandBuilder {
     let parentCommand = new SlashCommandBuilder()
-      .setDefaultPermission(!(command.devCommand || command.adminCommand))
+      .setDefaultMemberPermissions(command.adminCommand ? 0 : undefined)
       .setName(command.friendlyName)
       .setDescription(command.description);
 

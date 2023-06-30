@@ -1,5 +1,5 @@
 import { bold, italic } from "../../../helpers/discord";
-import { LinkConsolidator } from "../../../helpers/lastfm/";
+import { LinkConsolidator } from "../../../helpers/lastfm";
 import { calculatePercent } from "../../../helpers/stats";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";

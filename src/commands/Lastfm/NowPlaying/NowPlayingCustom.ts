@@ -71,7 +71,7 @@ export default class NowPlayingCustom extends NowPlayingBaseCommand {
     if (this.variationWasUsed("badTyping")) {
       embed.setFooter({
         text:
-          embed.footer?.text?.replaceAll(/s/gi, (match) =>
+          embed.data.footer?.text?.replaceAll(/s/gi, (match) =>
             match === "S" ? "Z" : "z"
           ) || "",
       });

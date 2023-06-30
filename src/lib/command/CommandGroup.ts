@@ -1,9 +1,7 @@
-import { SimpleMap } from "../../helpers/types";
 import { flatDeep } from "../../helpers";
 import { Command } from "./Command";
 
-type CommandClass = { new (): Command };
-export type Commands = SimpleMap<CommandClass>;
+export type CommandClass = { new (): Command };
 
 export class CommandGroup {
   public commands: Command[];

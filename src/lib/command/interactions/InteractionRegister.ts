@@ -1,6 +1,4 @@
-import { SlashCommandBuilder } from "@discordjs/builders";
-import { REST } from "@discordjs/rest";
-import { Routes } from "discord-api-types/v9";
+import { REST, Routes, SlashCommandBuilder } from "discord.js";
 import config from "../../../../config.json";
 import { Command } from "../Command";
 import { SlashCommandConverter } from "./SlashCommandConverter";

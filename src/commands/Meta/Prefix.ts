@@ -1,3 +1,4 @@
+import { PermissionsBitField } from "discord.js";
 import { CannotChangePrefixError } from "../../errors/commands/permissions";
 import { LogicError } from "../../errors/errors";
 import { code } from "../../helpers/discord";
@@ -25,7 +26,9 @@ export default class Prefix extends Command {
   async run() {
     if (this.newPrefix) {
       if (
-        !this.ctx.requiredAuthorMember.permissions.has("ADMINISTRATOR") &&
+        !this.ctx.requiredAuthorMember.permissions.has(
+          PermissionsBitField.Flags.Administrator
+        ) &&
         !this.gowonClient.isDeveloper(this.author.id)
       ) {
         throw new CannotChangePrefixError();

@@ -1,27 +1,27 @@
 import {
-  SlashCommandBuilder as _SlashCommandBuilder,
-  SlashCommandRoleOption,
-  SlashCommandUserOption,
-  SlashCommandNumberOption,
-  SlashCommandStringOption,
   SlashCommandBooleanOption,
   SlashCommandChannelOption,
   SlashCommandIntegerOption,
   SlashCommandMentionableOption,
-} from "@discordjs/builders";
+  SlashCommandNumberOption,
+  SlashCommandRoleOption,
+  SlashCommandStringOption,
+  SlashCommandUserOption,
+  SlashCommandBuilder as _SlashCommandBuilder,
+} from "discord.js";
 
 // Discord.js doesn't export any interfaces to help deal with building slash commands
 // so I created them myself
 
 export {
-  SlashCommandRoleOption,
-  SlashCommandUserOption,
-  SlashCommandNumberOption,
-  SlashCommandStringOption,
   SlashCommandBooleanOption,
   SlashCommandChannelOption,
   SlashCommandIntegerOption,
   SlashCommandMentionableOption,
+  SlashCommandNumberOption,
+  SlashCommandRoleOption,
+  SlashCommandStringOption,
+  SlashCommandUserOption,
 };
 
 // Any type of slash command option

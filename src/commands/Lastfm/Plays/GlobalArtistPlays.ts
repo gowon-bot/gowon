@@ -1,4 +1,4 @@
-import { toInt } from "../../../helpers/lastfm/";
+import { toInt } from "../../../helpers/lastfm";
 import { calculatePercent } from "../../../helpers/stats";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";

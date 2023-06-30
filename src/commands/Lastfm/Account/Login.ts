@@ -1,4 +1,4 @@
-import { Message, MessageEmbed } from "discord.js";
+import { EmbedBuilder, Message } from "discord.js";
 import { User } from "../../../database/entity/User";
 import { Stopwatch, sleep } from "../../../helpers";
 import { ReactionCollectorFilter } from "../../../helpers/discord";
@@ -73,7 +73,7 @@ export default class Login extends LilacBaseCommand {
 
   private async impromptuIndex(
     confirmationEmbed: ConfirmationEmbed,
-    embed: MessageEmbed
+    embed: EmbedBuilder
   ) {
     await this.lilacUsersService.index(this.ctx, { discordID: this.author.id });
 
@@ -192,7 +192,7 @@ ${displayProgressBar(progress.page, progress.totalPages, {
     filter: ReactionCollectorFilter,
     sentMessage: Message,
     token: string,
-    embed: MessageEmbed
+    embed: EmbedBuilder
   ): Promise<User | undefined> {
     return new Promise((resolve, reject) => {
       const reactionCollector = sentMessage.createReactionCollector({
@@ -206,7 +206,7 @@ ${displayProgressBar(progress.page, progress.totalPages, {
         if (success) {
           reactionCollector.stop();
           resolve(user!);
-        } else if (!embed.footer?.text?.includes("didn't work")) {
+        } else if (!embed.data.footer?.text?.includes("didn't work")) {
           this.discordService.edit(
             this.ctx,
             sentMessage,

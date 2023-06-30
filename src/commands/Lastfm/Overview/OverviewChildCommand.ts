@@ -1,4 +1,4 @@
-import { HexColorString, MessageEmbed } from "discord.js";
+import { EmbedBuilder, HexColorString } from "discord.js";
 import { ucFirst } from "../../../helpers";
 import { OverviewStatsCalculator } from "../../../lib/calculators/OverviewStatsCalculator";
 import { TimePeriodArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/TimePeriodArgument";
@@ -62,7 +62,7 @@ export abstract class OverviewChildCommand<
         : userType === "staff"
         ? "#b90100"
         : userType === "subscriber"
-        ? "black"
+        ? "#000000"
         : "#ffffff";
 
     return { colour, badge, image };
@@ -98,7 +98,7 @@ export abstract class OverviewChildCommand<
     );
   }
 
-  protected async overviewEmbed(useFooter = true): Promise<MessageEmbed> {
+  protected async overviewEmbed(useFooter = true): Promise<EmbedBuilder> {
     const { badge, colour, image } = await this.getAuthorDetails();
 
     return this.newEmbed()

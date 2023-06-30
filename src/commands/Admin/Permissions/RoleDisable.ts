@@ -1,4 +1,4 @@
-import { MessageEmbed, Role } from "discord.js";
+import { EmbedBuilder, Role } from "discord.js";
 import {
   Permission,
   PermissionType,
@@ -65,7 +65,7 @@ export class RoleDisable extends PermissionsChildCommand<typeof args> {
       guildID: this.requiredGuild.id,
     });
 
-    let embed: MessageEmbed;
+    let embed: EmbedBuilder;
 
     if (
       !this.variationWasUsed("roleenable") &&
@@ -83,7 +83,7 @@ export class RoleDisable extends PermissionsChildCommand<typeof args> {
     command: Command,
     permission: Permission,
     role: Role
-  ): Promise<MessageEmbed> {
+  ): Promise<EmbedBuilder> {
     let deletedAllow = false;
 
     try {
@@ -119,7 +119,7 @@ export class RoleDisable extends PermissionsChildCommand<typeof args> {
     command: Command,
     permission: Permission,
     role: Role
-  ): Promise<MessageEmbed> {
+  ): Promise<EmbedBuilder> {
     let allowed = false;
 
     try {

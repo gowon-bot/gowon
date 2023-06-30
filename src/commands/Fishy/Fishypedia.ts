@@ -81,7 +81,9 @@ ${
       );
 
     if (!fishy.rarity.isTrash()) {
-      embed.addField("Weight", `${fishy.minWeight}-${fishy.maxWeight}kg`);
+      embed.addFields([
+        { name: "Weight", value: `${fishy.minWeight}-${fishy.maxWeight}kg` },
+      ]);
     }
 
     await this.send(embed);

@@ -1,12 +1,13 @@
 import {
+  EmbedBuilder,
   Message,
-  MessageEmbed,
   MessageReaction,
   ReactionCollector,
   User,
 } from "discord.js";
 import { ReactionCollectorFilter } from "../../../helpers/discord";
 import { DiscordService } from "../../../services/Discord/DiscordService";
+import { Sendable } from "../../../services/Discord/DiscordService.types";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { GowonContext } from "../../context/Context";
 import { Payload } from "../../context/Payload";
@@ -27,10 +28,10 @@ export class ConfirmationEmbed {
 
   constructor(
     private ctx: GowonContext,
-    private embed: MessageEmbed,
+    private embed: EmbedBuilder,
     originalMessage?: Payload
   ) {
-    this.originalMessage = originalMessage || ctx.command.payload;
+    this.originalMessage = originalMessage || ctx.runnable.payload;
   }
 
   public withRejectionReact(): ConfirmationEmbed {
@@ -42,7 +43,7 @@ export class ConfirmationEmbed {
   private get filter(): ReactionCollectorFilter {
     return (reaction: MessageReaction, user: User) => {
       return (
-        user.id === this.ctx.command.author.id &&
+        user.id === this.ctx.runnable.author.id &&
         ((reaction.emoji.id ?? reaction.emoji.name) === this.reactionEmoji ||
           (this.allowRejection &&
             (reaction.emoji.id ?? reaction.emoji.name) === this.rejectionEmoji))
@@ -55,9 +56,13 @@ export class ConfirmationEmbed {
     timeout = 30000
   ): Promise<boolean> {
     return new Promise(async (resolve) => {
-      const sentEmbed = await this.discordService.send(ctx, this.embed, {
-        inChannel: this.originalMessage.channel,
-      });
+      const sentEmbed = await this.discordService.send(
+        ctx,
+        new Sendable(this.embed),
+        {
+          inChannel: this.originalMessage.channel,
+        }
+      );
 
       this.sentMessage = sentEmbed;
 
@@ -96,7 +101,7 @@ export class ConfirmationEmbed {
             embeds: [
               this.embed.setFooter({
                 text: (
-                  (this.embed.footer?.text || "") +
+                  (this.embed.data.footer?.text || "") +
                   (reason === "rejected"
                     ? `\n\n❌ This confirmation has been rejected.`
                     : `\n\n🕒 This confirmation has timed out.`)

@@ -47,7 +47,7 @@ export class MentionsService extends BaseService {
     inputOptions: Partial<GetMentionsOptions>
   ): Promise<Mentions> {
     const options = Object.assign(this.defaultOptions(), inputOptions);
-    const args = ctx.command.parsedArguments as Record<string, unknown>;
+    const args = ctx.runnable.parsedArguments as Record<string, unknown>;
     const mentionsBuilder = new MentionsBuilder();
 
     const discordUsername = args[argumentKeys.discordUsername] as string;
@@ -294,7 +294,7 @@ export class MentionsService extends BaseService {
     mentionsBuilder: MentionsBuilder
   ): void | never {
     if (!mentionsBuilder.getLfmUsername("sender")) {
-      throw new SenderSignInRequiredError(ctx.command.prefix);
+      throw new SenderSignInRequiredError(ctx.runnable.prefix);
     }
   }
 
@@ -303,7 +303,7 @@ export class MentionsService extends BaseService {
     mentionsBuilder: MentionsBuilder
   ): void | never {
     if (!mentionsBuilder.getLfmUsername("sender")) {
-      throw new SenderSignInRequiredError(ctx.command.prefix);
+      throw new SenderSignInRequiredError(ctx.runnable.prefix);
     }
   }
 
@@ -317,16 +317,16 @@ export class MentionsService extends BaseService {
 
     if (dbUser && !dbUser.isIndexed) {
       if (dbUser.id === mentionedDbUser?.id) {
-        throw new MentionedUserNotIndexedError(ctx.command.prefix);
+        throw new MentionedUserNotIndexedError(ctx.runnable.prefix);
       } else if (dbUser.id === senderDbUser?.id) {
         if (!senderDbUser.lastFMSession) {
-          throw new SenderUserNotAuthenticatedError(ctx.command.prefix);
+          throw new SenderUserNotAuthenticatedError(ctx.runnable.prefix);
         }
 
         await throwSenderUserNotIndexed(ctx);
       }
     } else if (!senderDbUser) {
-      throw new SenderSignInRequiredError(ctx.command.prefix);
+      throw new SenderSignInRequiredError(ctx.runnable.prefix);
     } else if (mentionsBuilder.hasAnyMentioned() && !mentionedDbUser) {
       throw new MentionedSignInRequiredError(mentionsBuilder.getUserDisplay());
     }
@@ -339,9 +339,9 @@ export class MentionsService extends BaseService {
   ): void | never {
     if (!isSessionKey(requestables?.requestable)) {
       if (mentionsBuilder.hasAnyMentioned()) {
-        throw new MentionedUserNotAuthenticatedError(ctx.command.prefix);
+        throw new MentionedUserNotAuthenticatedError(ctx.runnable.prefix);
       } else {
-        throw new SenderUserNotAuthenticatedError(ctx.command.prefix);
+        throw new SenderUserNotAuthenticatedError(ctx.runnable.prefix);
       }
     }
   }

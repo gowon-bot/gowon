@@ -1,4 +1,5 @@
-import { MessageEmbed } from "discord.js";
+import { EmbedBuilder } from "discord.js";
+import { ServiceRegistry } from "../../services/ServicesRegistry";
 import {
   LilacPagination,
   LilacScrobble,
@@ -6,7 +7,6 @@ import {
   LilacScrobblesPage,
 } from "../../services/lilac/LilacAPIService.types";
 import { LilacLibraryService } from "../../services/lilac/LilacLibraryService";
-import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { GowonContext } from "../context/Context";
 import { displayNumberedList } from "../views/displays";
 import {
@@ -47,7 +47,7 @@ export class PaginatedLilacScrobbleCache extends PaginatedCache<LilacScrobble> {
   }
 
   async generateScrollingEmbed(
-    embed: MessageEmbed,
+    embed: EmbedBuilder,
     firstPage: LilacScrobblesPage,
     generateTableRow: (scrobble: LilacScrobble) => string,
     overrides: Partial<ScrollingEmbedOptions> = {}

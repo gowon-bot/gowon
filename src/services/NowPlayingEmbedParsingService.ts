@@ -1,4 +1,4 @@
-import { Message, MessageEmbed } from "discord.js";
+import { Embed, Message } from "discord.js";
 import { isBot } from "../helpers/bots";
 import { BaseService } from "./BaseService";
 import { RecentTrack } from "./LastFM/converters/RecentTracks";
@@ -35,7 +35,7 @@ export class NowPlayingEmbedParsingService extends BaseService {
     );
   }
 
-  parseGowonEmbed(embed: MessageEmbed) {
+  parseGowonEmbed(embed: Embed) {
     const track = embed.title!;
 
     const [_, artist, album] =
@@ -53,7 +53,7 @@ export class NowPlayingEmbedParsingService extends BaseService {
     );
   }
 
-  parseFmbotEmbed(embed: MessageEmbed) {
+  parseFmbotEmbed(embed: Embed) {
     const [_, track, artist, album] =
       embed.description?.match(this.fmbotDescriptionRegex) || [];
 
@@ -69,7 +69,7 @@ export class NowPlayingEmbedParsingService extends BaseService {
     );
   }
 
-  parseChuuEmbed(embed: MessageEmbed) {
+  parseChuuEmbed(embed: Embed) {
     const cleanTitle = embed.title?.replaceAll(this.emojiRegex, "")!;
     const cleanDescription = embed.description?.replaceAll(
       this.emojiRegex,
@@ -96,7 +96,7 @@ export class NowPlayingEmbedParsingService extends BaseService {
     );
   }
 
-  parseWhoKnowsEmbed(embed: MessageEmbed) {
+  parseWhoKnowsEmbed(embed: Embed) {
     const track = embed.title!;
 
     const [artistText, albumText] = embed.description!.split(" | ");
