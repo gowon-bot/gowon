@@ -41,6 +41,20 @@ export class DiscordService extends DiscordResponseService {
     }
   }
 
+  public async fetchUser(
+    ctx: GowonContext,
+    userID: DiscordID
+  ): Promise<User | undefined> {
+    if (ctx.author.id === userID) return ctx.author;
+
+    try {
+      return await ctx.client.client.users.fetch(userID);
+    } catch (e) {
+      if (!(e instanceof DiscordAPIError)) throw e;
+      return undefined;
+    }
+  }
+
   public async userInServer(
     ctx: GowonContext,
     userID: DiscordID

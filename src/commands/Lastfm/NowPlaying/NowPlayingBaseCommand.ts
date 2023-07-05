@@ -1,13 +1,16 @@
 import { Message, MessageEmbed, User } from "discord.js";
 import config from "../../../../config.json";
+import { User as DBUser } from "../../../database/entity/User";
 import { bold, italic, sanitizeForDiscord } from "../../../helpers/discord";
 import { LastfmLinks } from "../../../helpers/lastfm/LastfmLinks";
+import { GowonContext } from "../../../lib/context/Context";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { FMUsernameDisplay } from "../../../lib/settings/SettingValues";
 import { SettingsService } from "../../../lib/settings/SettingsService";
 import { TagConsolidator } from "../../../lib/tags/TagConsolidator";
-import { displayNumber } from "../../../lib/views/displays";
+import { displayNumber, displayUserTag } from "../../../lib/views/displays";
 import {
   AlbumInfo,
   ArtistInfo,
@@ -89,10 +92,16 @@ export abstract class NowPlayingBaseCommand<
   }
 
   protected async nowPlayingEmbed(
+    ctx: GowonContext,
     nowPlaying: RecentTrack,
-    username: string
+    username: string,
+    dbUser: DBUser
   ): Promise<MessageEmbed> {
     const links = LastfmLinks.generateTrackLinksForEmbed(nowPlaying);
+    const usernameDisplay =
+      this.settingsService.get("fmUsernameDisplay", {
+        userID: dbUser.discordID,
+      }) || FMUsernameDisplay.LAST_FM_USERNAME;
 
     const albumCover = await this.albumCoverService.get(
       this.ctx,
@@ -109,12 +118,21 @@ export abstract class NowPlayingBaseCommand<
       .setAuthor({
         name: `${
           nowPlaying.isNowPlaying ? "Now playing" : "Last scrobbled"
-        } for ${username}`,
+        } for ${
+          usernameDisplay === FMUsernameDisplay.LAST_FM_USERNAME
+            ? username
+            : displayUserTag(
+                await this.discordService.fetchUser(ctx, dbUser.discordID)
+              )
+        }`,
         iconURL:
           this.payload.member?.avatarURL() ||
           this.payload.author.avatarURL() ||
           undefined,
-        url: LastfmLinks.userPage(username),
+        url:
+          usernameDisplay === FMUsernameDisplay.DISCORD_USERNAME
+            ? undefined
+            : LastfmLinks.userPage(username),
       })
       .setDescription(
         `by ${bold(links.artist, false)}` +

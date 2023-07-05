@@ -26,21 +26,22 @@ export default class LastFmToDiscord extends LastFMBaseCommand<typeof args> {
   guildRequired = true;
 
   async run() {
-    let username = this.parsedArguments.username;
+    const username = this.parsedArguments.username;
 
-    let user = await this.usersService.getUserFromLastFMUsername(
+    const user = await this.usersService.getUserFromLastFMUsername(
       this.ctx,
       username
     );
 
-    let member = user
+    const member = user
       ? await this.requiredGuild.members.fetch(user.discordID)
       : undefined;
 
-    if (!user || !member)
+    if (!user || !member) {
       throw new LogicError(
         `couldn't find anyone logged in as ${code(username)} in this server.`
       );
+    }
 
     const embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor("Account lookup"))

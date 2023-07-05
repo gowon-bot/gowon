@@ -174,7 +174,9 @@ export function displayTrackLink(
   return stylize ? italic(link, false) : link;
 }
 
-export function displayUserTag(user: User): string {
+export function displayUserTag(user: User | undefined): string {
+  if (!user) return "";
+
   if (user.discriminator === "0") {
     return user.username;
   }

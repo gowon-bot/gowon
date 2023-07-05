@@ -76,7 +76,8 @@ export default class NowPlaying extends NowPlayingBaseCommand<typeof args> {
   ];
 
   async run() {
-    const { username, requestable, discordUser } = await this.getMentions();
+    const { username, requestable, discordUser, dbUser } =
+      await this.getMentions();
 
     const nowPlayingResponse = await this.lastFMService.recentTracks(this.ctx, {
       username: requestable || "flushed_emoji",
@@ -89,7 +90,12 @@ export default class NowPlaying extends NowPlayingBaseCommand<typeof args> {
 
     this.tagConsolidator.blacklistTags(nowPlaying.artist, nowPlaying.name);
 
-    let nowPlayingEmbed = await this.nowPlayingEmbed(nowPlaying, username);
+    let nowPlayingEmbed = await this.nowPlayingEmbed(
+      this.ctx,
+      nowPlaying,
+      username,
+      dbUser
+    );
 
     const [artistInfo, crown] = await promiseAllSettled([
       this.lastFMService.artistInfo(this.ctx, {

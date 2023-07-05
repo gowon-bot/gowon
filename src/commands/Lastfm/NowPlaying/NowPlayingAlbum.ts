@@ -14,7 +14,8 @@ export default class NowPlayingAlbum extends NowPlayingBaseCommand {
   crownsService = ServiceRegistry.get(CrownsService);
 
   async run() {
-    const { username, requestable, discordUser } = await this.getMentions();
+    const { username, requestable, discordUser, dbUser } =
+      await this.getMentions();
 
     const nowPlaying = await this.lastFMService.nowPlaying(
       this.ctx,
@@ -100,7 +101,7 @@ export default class NowPlayingAlbum extends NowPlayingBaseCommand {
     );
 
     const nowPlayingEmbed = (
-      await this.nowPlayingEmbed(nowPlaying, username)
+      await this.nowPlayingEmbed(this.ctx, nowPlaying, username, dbUser)
     ).setFooter({
       text: lineConsolidator.consolidate(),
     });

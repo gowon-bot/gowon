@@ -18,7 +18,8 @@ export default class NowPlayingCombo extends NowPlayingBaseCommand {
   redirectsService = ServiceRegistry.get(RedirectsService);
 
   async run() {
-    const { username, requestable, discordUser } = await this.getMentions();
+    const { username, requestable, discordUser, dbUser } =
+      await this.getMentions();
 
     const recentTracks = await this.lastFMService.recentTracks(this.ctx, {
       username: requestable,
@@ -105,7 +106,7 @@ export default class NowPlayingCombo extends NowPlayingBaseCommand {
     );
 
     const nowPlayingEmbed = (
-      await this.nowPlayingEmbed(nowPlaying, username)
+      await this.nowPlayingEmbed(this.ctx, nowPlaying, username, dbUser)
     ).setFooter({
       text: lineConsolidator.consolidate(),
     });

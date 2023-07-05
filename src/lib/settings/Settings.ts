@@ -8,7 +8,7 @@ import {
   SettingType,
   UserScopedSetting,
 } from "./SettingTypes";
-import { FMMode, toggleValues } from "./SettingValues";
+import { FMMode, FMUsernameDisplay, toggleValues } from "./SettingValues";
 
 export const Settings = {
   // Guild scoped
@@ -62,21 +62,6 @@ export const Settings = {
     default: toggleValues.ON,
     type: SettingType.Toggle,
   }),
-  defaultFMMode: new UserScopedSetting("default_fm_mode", {
-    friendlyName: "Default !fm mode",
-    category: "Configuration",
-    description: "Control which type of embed Gowon uses when you !fm",
-    type: SettingType.Choice,
-    default: FMMode.DEFAULT,
-    choices: [
-      FMMode.ALBUM,
-      FMMode.COMBO,
-      FMMode.COMPACT,
-      FMMode.CUSTOM,
-      FMMode.DEFAULT,
-      FMMode.VERBOSE,
-    ],
-  }),
   timezone: new UserScopedSetting("timezone", {
     friendlyName: "Timezone",
     description: "Control what timezone Gowon uses",
@@ -90,6 +75,33 @@ export const Settings = {
     category: "Configuration",
     type: SettingType.Number,
     default: `${ComboService.defaultComboThreshold}`,
+  }),
+  defaultFMMode: new UserScopedSetting("default_fm_mode", {
+    friendlyName: "Default !fm mode",
+    category: "Now Playing",
+    description: "Control which type of embed Gowon uses when you !fm",
+    type: SettingType.Choice,
+    default: FMMode.DEFAULT,
+    choices: [
+      FMMode.ALBUM,
+      FMMode.COMBO,
+      FMMode.COMPACT,
+      FMMode.CUSTOM,
+      FMMode.DEFAULT,
+      FMMode.VERBOSE,
+    ],
+  }),
+  fmUsernameDisplay: new UserScopedSetting("fm_username_display", {
+    friendlyName: "!fm username display",
+    description: "Control what username Gowon shows in your !fms",
+    category: "Now Playing",
+    type: SettingType.Choice,
+    default: FMUsernameDisplay.LAST_FM_USERNAME,
+    choices: [
+      FMUsernameDisplay.DISCORD_USERNAME,
+      FMUsernameDisplay.LAST_FM_USERNAME,
+      FMUsernameDisplay.DISCORD_USERNAME_WITH_LINK,
+    ],
   }),
 
   // Bot scoped

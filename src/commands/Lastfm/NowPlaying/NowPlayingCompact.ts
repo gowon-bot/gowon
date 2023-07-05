@@ -7,7 +7,7 @@ export default class NowPlayingCompact extends NowPlayingBaseCommand {
   description = "Displays the now playing or last played track from Last.fm";
 
   async run() {
-    const { username, requestable } = await this.getMentions({
+    const { username, requestable, dbUser } = await this.getMentions({
       fetchDiscordUser: false,
     });
 
@@ -16,7 +16,12 @@ export default class NowPlayingCompact extends NowPlayingBaseCommand {
       requestable
     );
 
-    const nowPlayingEmbed = await this.nowPlayingEmbed(nowPlaying, username);
+    const nowPlayingEmbed = await this.nowPlayingEmbed(
+      this.ctx,
+      nowPlaying,
+      username,
+      dbUser
+    );
 
     const sentMessage = await this.send(nowPlayingEmbed);
 

@@ -11,3 +11,9 @@ export enum FMMode {
   COMBO = "combo",
   CUSTOM = "custom",
 }
+
+export enum FMUsernameDisplay {
+  LAST_FM_USERNAME = "Last.fm username",
+  DISCORD_USERNAME = "Discord username",
+  DISCORD_USERNAME_WITH_LINK = "Discord username (with Last.fm link)",
+}
