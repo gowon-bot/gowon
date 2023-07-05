@@ -18,6 +18,8 @@ export class DiscordService extends DiscordResponseService {
   ): Promise<User | undefined> {
     const members = await ctx.requiredGuild.members.fetch();
 
+    console.log(username);
+
     const member = members.find(
       (m) =>
         m.user.username.toLowerCase() === username.toLowerCase() ||

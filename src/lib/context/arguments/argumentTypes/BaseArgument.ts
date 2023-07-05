@@ -139,9 +139,39 @@ export abstract class BaseArgument<
     O extends Partial<GetElementFromIndexOptions<T, O>>
   >(
     array: Array<T>,
+    index: Slice,
+    options?: O
+  ): UnWrapGetElementOptions<T, O>[] | undefined;
+  protected getElementFromIndex<
+    T,
+    O extends Partial<GetElementFromIndexOptions<T, O>>
+  >(
+    array: Array<T>,
+    index: number,
+    options?: O
+  ): UnWrapGetElementOptions<T, O> | undefined;
+  protected getElementFromIndex<
+    T,
+    O extends Partial<GetElementFromIndexOptions<T, O>>
+  >(
+    array: Array<T>,
+    index: number | Slice,
+    options?: O
+  ):
+    | UnWrapGetElementOptions<T, O>[]
+    | UnWrapGetElementOptions<T, O>
+    | undefined;
+  protected getElementFromIndex<
+    T,
+    O extends Partial<GetElementFromIndexOptions<T, O>>
+  >(
+    array: Array<T>,
     index: number | Slice,
     options: O = {} as O
-  ): UnWrapGetElementOptions<T, O> | undefined {
+  ):
+    | UnWrapGetElementOptions<T, O>
+    | UnWrapGetElementOptions<T, O>[]
+    | undefined {
     if (index === undefined) return undefined;
 
     if (this.shouldReturnDefault(array, index)) {
@@ -167,7 +197,7 @@ export abstract class BaseArgument<
     } else if (typeof argument === "string" && options.trim) {
       return argument.trim() as UnWrapGetElementOptions<T, O>;
     } else {
-      return argument ?? this.getDefault();
+      return !!argument || !!argument?.length ? argument : this.getDefault();
     }
   }
 

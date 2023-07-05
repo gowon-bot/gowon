@@ -31,7 +31,7 @@ export class UserStringArrayArgument<
 
     const element = this.getElementFromIndex(mentions, this.options.index);
 
-    return typeof element === "string" ? [element] : element ? [element] : [];
+    return element instanceof Array ? element : element ? [element] : [];
   }
 
   parseFromInteraction() {

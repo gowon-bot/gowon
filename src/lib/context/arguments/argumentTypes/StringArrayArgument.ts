@@ -41,16 +41,13 @@ export class StringArrayArgument<
 
     const splitContent = cleanContent.split(this.options.splitOn);
 
-    const element = this.getElementFromIndex<string | string[], {}>(
-      splitContent,
-      this.options.index
-    );
+    const element = this.getElementFromIndex(splitContent, this.options.index);
 
     if (typeof element === "string") {
       return [element];
     }
 
-    return element instanceof Array ? element : element ? [element] : element;
+    return element instanceof Array ? element : element ? [element] : [];
   }
 
   parseFromInteraction(): string[] | undefined {

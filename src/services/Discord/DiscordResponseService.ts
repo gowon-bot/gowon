@@ -154,7 +154,7 @@ export class DiscordResponseService extends BaseService<DiscordServiceContext> {
     ctx: GowonContext,
     options?: Partial<SendOptions>
   ): RespondableChannel {
-    return options?.inChannel || ctx.payload.channel;
+    return (options?.inChannel || ctx.payload.channel) as RespondableChannel;
   }
 
   private areDMsTurnedOff(e: any): boolean {

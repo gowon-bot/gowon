@@ -7,6 +7,7 @@ import {
 } from "discord.js";
 import { ReactionCollectorFilter } from "../../../helpers/discord";
 import { DiscordService } from "../../../services/Discord/DiscordService";
+import { RespondableChannel } from "../../../services/Discord/DiscordService.types";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { GowonContext } from "../../context/Context";
 import { Payload } from "../../context/Payload";
@@ -56,7 +57,7 @@ export class ConfirmationEmbed {
   ): Promise<boolean> {
     return new Promise(async (resolve) => {
       const sentEmbed = await this.discordService.send(ctx, this.embed, {
-        inChannel: this.originalMessage.channel,
+        inChannel: this.originalMessage.channel as RespondableChannel,
       });
 
       this.sentMessage = sentEmbed;

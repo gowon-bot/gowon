@@ -81,7 +81,7 @@ export class StringArgument<
           join: true,
           trim: true,
         }
-      );
+      ) as string | undefined;
     }
 
     return parsedArgument;
@@ -116,7 +116,7 @@ export class StringArgument<
       matches.map((m) => m[0]),
       this.options.index,
       { join: true }
-    );
+    ) as string | undefined;
 
     return match ?? "";
   }
