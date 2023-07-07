@@ -73,7 +73,8 @@ export class FishyProgressionService extends BaseService {
   private async generateFishyQuest(
     fishyProfile: FishyProfile
   ): Promise<FishyQuest> {
-    const tier = Math.floor(fishyProfile.questsCompleted / 25) || 1;
+    const tier =
+      Math.floor(fishyProfile.questsCompleted / fishyQuestLevelSize) || 1;
 
     const questType = await this.pickQuestType(fishyProfile);
 
