@@ -210,7 +210,7 @@ export const FishyEmojiList = {
   ),
   blackTigerShrimp: new FishyEmoji(
     "<:TigerShrimp:1109227659440963668>",
-    "<:TigerShrimpWater:1109227625987186728>",
+    "<:TigerShrimpWater:1126793964297662494>",
     "<:sSilhouette:1111855045965774908>"
   ),
   snowballShrimp: new FishyEmoji(
