@@ -1,6 +1,11 @@
 import { Chance } from "chance";
-import { FishyEmoji } from "../../../lib/emoji/FishEmoji";
+import { FishyEmoji } from "../../../lib/emoji/FishyEmoji";
 import { FishyRarity, FishyRarityData } from "./Fishy";
+
+export enum FishyDisplayMode {
+  Floating,
+  Bottom,
+}
 
 interface FishyOptions {
   id: string;
@@ -10,6 +15,7 @@ interface FishyOptions {
   description: string;
   weight: { min: number; max: number };
   emoji: FishyEmoji;
+  displayMode?: FishyDisplayMode;
 }
 
 export abstract class BaseFishy {
@@ -63,5 +69,9 @@ export abstract class BaseFishy {
 
   get hidden(): boolean {
     return !!this.rarity.special;
+  }
+
+  get displayMode(): FishyDisplayMode {
+    return this.options.displayMode || FishyDisplayMode.Floating;
   }
 }

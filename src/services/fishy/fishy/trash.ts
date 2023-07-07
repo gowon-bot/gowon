@@ -1,4 +1,4 @@
-import { TrashEmoji } from "../../../lib/emoji/FishEmoji";
+import { TrashEmoji } from "../../../lib/emoji/FishyEmoji";
 import { BaseFishy } from "../classes/BaseFishy";
 import { Fishy, FishyRarities } from "../classes/Fishy";
 

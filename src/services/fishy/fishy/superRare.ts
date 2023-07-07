@@ -1,4 +1,4 @@
-import { FishyEmojiList } from "../../../lib/emoji/FishEmoji";
+import { FishyEmojiList } from "../../../lib/emoji/FishyEmoji";
 import { BaseFishy } from "../classes/BaseFishy";
 import { Fishy, FishyRarities } from "../classes/Fishy";
 import { GlovesFishy } from "../classes/GlovesFishy";
@@ -139,6 +139,20 @@ export const superRareFishies = [
     weight: {
       min: 0.1,
       max: 0.1,
+    },
+  }),
+
+  new GlovesFishy({
+    id: "atlantic-pincer-lobster",
+    name: "Atlantic Pincer Lobster",
+    binomialName: "Thaumastocheles zaleucus",
+    rarity: FishyRarities.SuperRare,
+    emoji: FishyEmojiList.atlanticPincerLobster,
+    description:
+      "This species has adapted to deep ocean life by becoming blind",
+    weight: {
+      min: 0.1,
+      max: 0.2,
     },
   }),
 ] satisfies BaseFishy[];

@@ -1,5 +1,5 @@
-import { FishyEmojiList } from "../../../lib/emoji/FishEmoji";
-import { BaseFishy } from "../classes/BaseFishy";
+import { FishyEmojiList } from "../../../lib/emoji/FishyEmoji";
+import { BaseFishy, FishyDisplayMode } from "../classes/BaseFishy";
 import { Fishy, FishyRarities } from "../classes/Fishy";
 import { GlovesFishy } from "../classes/GlovesFishy";
 import { NetFishy } from "../classes/NetFishy";
@@ -127,5 +127,20 @@ export const legendaryFishies = [
       min: 0.1,
       max: 0.3,
     },
+  }),
+
+  new GlovesFishy({
+    id: "banded-sea-urchin",
+    name: "Banded Sea Urchin",
+    binomialName: "Echinothrix calamaris",
+    rarity: FishyRarities.Legendary,
+    emoji: FishyEmojiList.bandedSeaUrchin,
+    description:
+      "This sea urchin is active at night, hiding in crevices or under rocks during the day",
+    weight: {
+      min: 0.1,
+      max: 0.3,
+    },
+    displayMode: FishyDisplayMode.Bottom,
   }),
 ] satisfies BaseFishy[];

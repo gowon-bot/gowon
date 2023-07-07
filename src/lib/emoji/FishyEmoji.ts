@@ -310,4 +310,39 @@ export const FishyEmojiList = {
     "<:GoldenKingCrabWater:1112869023491821719>",
     "<:gkcSilhouette:1112868941036003428>"
   ),
+  purpleSeaUrchin: new FishyEmoji(
+    "<:PurpleSeaUrchin:1126781865139900508>",
+    "<:PurpleSeaUrchinWater:1126782402061144124>",
+    "<:psuSilhouette:1126782375129526312>"
+  ),
+  americanLobster: new FishyEmoji(
+    "<:AmericanLobster:1126781860584882266>",
+    "<:AmericanLobsterWater:1126782412911808532>",
+    "<:alSilhouette:1126782380653412443>"
+  ),
+  longSpineSlatePenSeaUrchin: new FishyEmoji(
+    "<:LongspineSlatePenSeaUrchin:1126781864191983626>",
+    "<:LongspineSlatePenSeaUrchinWater:1126782404347035708>",
+    "<:lspsuSilhouette:1126782374064177192>"
+  ),
+  europeanLobster: new FishyEmoji(
+    "<:EuropeanLobster:1126781867518083112>",
+    "<:EuropeanLobsterWater:1126782408742670417>",
+    "<:elSilhouette:1126782379504193566>"
+  ),
+  patagonianLobsterette: new FishyEmoji(
+    "<:PatagonianLobsterette:1126781868667318394>",
+    "<:PatagonianLobsteretteWater:1126782409967415296>",
+    "<:plSilhouette:1126782376467513385>"
+  ),
+  atlanticPincerLobster: new FishyEmoji(
+    "<:AtlanticPincerLobster:1126781869397123175>",
+    "<:AtlanticPincerLobsterWater:1126782411078905866>",
+    "<:aplSilhouette:1126782377407041598>"
+  ),
+  bandedSeaUrchin: new FishyEmoji(
+    "<:BandedSeaUrchin:1126781862975647744>",
+    "<:BandedSeaUrchinWater:1126782405680828447>",
+    "<:bsuSilhouette:1126782372386443325>"
+  ),
 } satisfies Record<string, FishyEmoji>;

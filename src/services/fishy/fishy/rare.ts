@@ -1,4 +1,4 @@
-import { FishyEmojiList } from "../../../lib/emoji/FishEmoji";
+import { FishyEmojiList } from "../../../lib/emoji/FishyEmoji";
 import { BaseFishy } from "../classes/BaseFishy";
 import { Fishy, FishyRarities } from "../classes/Fishy";
 import { GlovesFishy } from "../classes/GlovesFishy";
@@ -153,8 +153,8 @@ export const rareFishies = [
     description:
       "This species of crab carries a sponge on its back, earning it the nickname of Sponge Crab",
     weight: {
-      min: 0.1,
-      max: 1,
+      min: 0.4,
+      max: 1.5,
     },
   }),
 
@@ -166,12 +166,22 @@ export const rareFishies = [
     emoji: FishyEmojiList.goldenKingCrab,
     description: "This crab uses its strong sense of smell to seek out food",
     weight: {
+      min: 3,
+      max: 5,
+    },
+  }),
+
+  new GlovesFishy({
+    id: "patagonian-lobsterette",
+    name: "Patagonian Lobsterette",
+    binomialName: "Thymops birsteini",
+    rarity: FishyRarities.Rare,
+    emoji: FishyEmojiList.patagonianLobsterette,
+    description:
+      "This species seems to prefer muddy bottoms, and has been observed entering and exiting burrows",
+    weight: {
       min: 0.1,
       max: 1,
     },
   }),
-
-  // Achelous sebae
-  // Quadrella maculosa
-  // Favus granulatus
 ] satisfies BaseFishy[];

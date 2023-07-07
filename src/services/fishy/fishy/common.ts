@@ -1,5 +1,5 @@
-import { FishyEmojiList } from "../../../lib/emoji/FishEmoji";
-import { BaseFishy } from "../classes/BaseFishy";
+import { FishyEmojiList } from "../../../lib/emoji/FishyEmoji";
+import { BaseFishy, FishyDisplayMode } from "../classes/BaseFishy";
 import { Fishy, FishyRarities } from "../classes/Fishy";
 import { GlovesFishy } from "../classes/GlovesFishy";
 import { NetFishy } from "../classes/NetFishy";
@@ -154,5 +154,34 @@ export const commonFishies = [
       min: 0.1,
       max: 0.5,
     },
+  }),
+
+  new GlovesFishy({
+    id: "american-lobster",
+    name: "American Lobster",
+    binomialName: "Homarus americanus",
+    rarity: FishyRarities.Common,
+    emoji: FishyEmojiList.americanLobster,
+    description:
+      "American lobsters can be blue, red, yellow, orange, white, or even split coloured!",
+    weight: {
+      min: 0.5,
+      max: 4,
+    },
+  }),
+
+  new GlovesFishy({
+    id: "purple-sea-urchin",
+    name: "Purple Sea Urchin",
+    binomialName: "Strongylocentrotus purpuratus",
+    rarity: FishyRarities.Common,
+    emoji: FishyEmojiList.purpleSeaUrchin,
+    description:
+      "The genome of this species was completely sequenced and annotated in 2006",
+    weight: {
+      min: 0.1,
+      max: 0.3,
+    },
+    displayMode: FishyDisplayMode.Bottom,
   }),
 ] satisfies BaseFishy[];

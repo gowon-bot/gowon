@@ -1,4 +1,4 @@
-import { FishyEmojiList } from "../../../lib/emoji/FishEmoji";
+import { FishyEmojiList } from "../../../lib/emoji/FishyEmoji";
 import { FishyRarityEmojiList } from "../../../lib/emoji/FishyRarityEmoji";
 import { BaseFishy } from "../classes/BaseFishy";
 import { Fishy, FishyRarityData } from "../classes/Fishy";
