@@ -137,15 +137,18 @@ export class AquariumDisplay {
     floatingFishy: BaseFishy[];
     bottomFishy: BaseFishy[];
   } {
-    return fishy.reduce((acc, fishy) => {
-      if (fishy.displayMode === FishyDisplayMode.Floating) {
-        acc.floatingFishy.push(fishy);
-      } else if (fishy.displayMode === FishyDisplayMode.Bottom) {
-        acc.bottomFishy.push(fishy);
-      }
+    return fishy.reduce(
+      (acc, fishy) => {
+        if (fishy.displayMode === FishyDisplayMode.Floating) {
+          acc.floatingFishy.push(fishy);
+        } else if (fishy.displayMode === FishyDisplayMode.Bottom) {
+          acc.bottomFishy.push(fishy);
+        }
 
-      return acc;
-    }, {} as { floatingFishy: BaseFishy[]; bottomFishy: BaseFishy[] });
+        return acc;
+      },
+      { floatingFishy: [] as BaseFishy[], bottomFishy: [] as BaseFishy[] }
+    );
   }
 
   private getAquariumDecorations(bottomFishy: BaseFishy[]): string[] {
