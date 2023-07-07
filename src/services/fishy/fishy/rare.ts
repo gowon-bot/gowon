@@ -1,5 +1,8 @@
-import { FishyEmojiList } from "../../../lib/emoji/FishEmoji";
-import { Fishy, FishyRarities } from "../Fishy";
+import { FishyEmojiList } from "../../../lib/emoji/FishyEmoji";
+import { BaseFishy } from "../classes/BaseFishy";
+import { Fishy, FishyRarities } from "../classes/Fishy";
+import { GlovesFishy } from "../classes/GlovesFishy";
+import { NetFishy } from "../classes/NetFishy";
 
 export const rareFishies = [
   new Fishy({
@@ -98,4 +101,87 @@ export const rareFishies = [
       max: 6,
     },
   }),
-] satisfies Fishy[];
+
+  new NetFishy({
+    id: "blue-bolt-shrimp",
+    name: "Blue Bolt Shrimp",
+    binomialName: "Caridina cantonensis",
+    rarity: FishyRarities.Rare,
+    emoji: FishyEmojiList.blueBoltShrimp,
+    description:
+      "This shrimp is a blue variant of the Bee Shrimp, named after its brilliant blue colour.",
+    weight: {
+      min: 0.1,
+      max: 1,
+    },
+  }),
+
+  new NetFishy({
+    id: "cardinal-shrimp",
+    name: "Cardinal Shrimp",
+    binomialName: "Caridina dennerli",
+    rarity: FishyRarities.Rare,
+    emoji: FishyEmojiList.cardinalShrimp,
+    description:
+      "No Caridina dennerli have been recorded in the wild since 2013, and the species possibly is extinct in the wild. However, it is still kept and bred in captivity.",
+    weight: {
+      min: 0.1,
+      max: 1,
+    },
+  }),
+
+  new NetFishy({
+    id: "big-belly-seahorse",
+    name: "Big-belly Seahorse",
+    binomialName: "Hippocampus abdominalis",
+    rarity: FishyRarities.Rare,
+    emoji: FishyEmojiList.bigbellySeahorse,
+    description:
+      "Each this species' eyes can move independently, allowing it to more easily see predators",
+    weight: {
+      min: 0.1,
+      max: 1,
+    },
+  }),
+
+  new GlovesFishy({
+    id: "sleepy-crab",
+    name: "Sleepy Crab",
+    binomialName: "Dromia dormia",
+    rarity: FishyRarities.Rare,
+    emoji: FishyEmojiList.sleepyCrab,
+    description:
+      "This species of crab carries a sponge on its back, earning it the nickname of Sponge Crab",
+    weight: {
+      min: 0.4,
+      max: 1.5,
+    },
+  }),
+
+  new GlovesFishy({
+    id: "golden-king-crab",
+    name: "Golden King Crab",
+    binomialName: "Lithodes aequispinus",
+    rarity: FishyRarities.Rare,
+    emoji: FishyEmojiList.goldenKingCrab,
+    description: "This crab uses its strong sense of smell to seek out food",
+    weight: {
+      min: 3,
+      max: 5,
+    },
+  }),
+
+  new GlovesFishy({
+    id: "patagonian-lobsterette",
+    name: "Patagonian Lobsterette",
+    binomialName: "Thymops birsteini",
+    rarity: FishyRarities.Rare,
+    emoji: FishyEmojiList.patagonianLobsterette,
+    description:
+      "This species seems to prefer muddy bottoms, and has been observed entering and exiting burrows",
+    weight: {
+      min: 0.1,
+      max: 1,
+    },
+  }),
+] satisfies BaseFishy[];

@@ -1,6 +1,7 @@
-import { Emoji } from "../../../lib/emoji/Emoji";
-import { FishyEmojiList } from "../../../lib/emoji/FishEmoji";
-import { Fishy, FishyRarityData } from "../Fishy";
+import { FishyEmojiList } from "../../../lib/emoji/FishyEmoji";
+import { FishyRarityEmojiList } from "../../../lib/emoji/FishyRarityEmoji";
+import { BaseFishy } from "../classes/BaseFishy";
+import { Fishy, FishyRarityData } from "../classes/Fishy";
 
 export const specialFishies = [
   new Fishy({
@@ -11,7 +12,7 @@ export const specialFishies = [
       "Blåhaj",
       0.1,
       "#f5a8b9",
-      Emoji.blahajRarity,
+      FishyRarityEmojiList.blahajRarity,
       "special",
       true
     ),
@@ -22,4 +23,4 @@ export const specialFishies = [
       max: 999,
     },
   }),
-] satisfies Fishy[];
+] satisfies BaseFishy[];

@@ -1,5 +1,8 @@
-import { FishyEmojiList } from "../../../lib/emoji/FishEmoji";
-import { Fishy, FishyRarities } from "../Fishy";
+import { FishyEmojiList } from "../../../lib/emoji/FishyEmoji";
+import { BaseFishy, FishyDisplayMode } from "../classes/BaseFishy";
+import { Fishy, FishyRarities } from "../classes/Fishy";
+import { GlovesFishy } from "../classes/GlovesFishy";
+import { NetFishy } from "../classes/NetFishy";
 
 export const uncommonFishy = [
   new Fishy({
@@ -126,4 +129,101 @@ export const uncommonFishy = [
       max: 12,
     },
   }),
-] satisfies Fishy[];
+
+  new NetFishy({
+    id: "black-tiger-shrimp",
+    name: "Black Tiger Shrimp",
+    binomialName: "Penaeus monodon",
+    rarity: FishyRarities.Uncommon,
+    emoji: FishyEmojiList.blackTigerShrimp,
+    description:
+      "This specicies is the second-most widely cultured prawn species in the world",
+    weight: {
+      min: 1,
+      max: 3,
+    },
+  }),
+
+  new NetFishy({
+    id: "snowball-shrimp",
+    name: "Snowball Shrimp",
+    binomialName: "Neocaridina zhangjiajiensis",
+    rarity: FishyRarities.Uncommon,
+    emoji: FishyEmojiList.snowballShrimp,
+    description: "The eggs in this transluscent shrimp look like snowballs!",
+    weight: {
+      min: 0.1,
+      max: 1,
+    },
+  }),
+
+  new NetFishy({
+    id: "common-seahorse",
+    name: "Common Seahorse",
+    binomialName: "Hippocampus kuda",
+    rarity: FishyRarities.Uncommon,
+    emoji: FishyEmojiList.commonSeahorse,
+    description:
+      "This species is extremely valuable to the traditional Chinese medicine trade, where it has been said to regulate nervous, reproductive, endocrine, and immune systems",
+    weight: {
+      min: 0.2,
+      max: 0.5,
+    },
+  }),
+
+  new NetFishy({
+    id: "lined-seahorse",
+    name: "Lined Seahorse",
+    binomialName: "Hippocampus erectus",
+    rarity: FishyRarities.Uncommon,
+    emoji: FishyEmojiList.linedSeahorse,
+    description: "Lined Seahorse are monogamous, meaning they mate for life!",
+    weight: {
+      min: 0.2,
+      max: 0.5,
+    },
+  }),
+
+  new GlovesFishy({
+    id: "florida-stone-crab",
+    name: "Florida Stone Crab",
+    binomialName: "Menippe mercenaria",
+    rarity: FishyRarities.Uncommon,
+    emoji: FishyEmojiList.floridaStoneCrab,
+    description:
+      "This crab can lose its limbs easily to escape from predators or tight spaces, but don't worry their limbs can grow back!",
+    weight: {
+      min: 0.2,
+      max: 0.5,
+    },
+  }),
+
+  new GlovesFishy({
+    id: "european-lobster",
+    name: "European Lobster",
+    binomialName: "Homarus gammarus",
+    rarity: FishyRarities.Uncommon,
+    emoji: FishyEmojiList.europeanLobster,
+    description:
+      "In this species, the right claw is the crusher and the left claw is the cutter",
+    weight: {
+      min: 1,
+      max: 10,
+    },
+  }),
+
+  new GlovesFishy({
+    id: "long-spine-slate-pen-sea-urchin",
+    name: "Long-spine Slate Pen Sea Urchin",
+    binomialName: "Cidaris cidaris",
+    rarity: FishyRarities.Uncommon,
+    emoji: FishyEmojiList.longSpineSlatePenSeaUrchin,
+    description:
+      "This sea urchin often has bits of algae, sponge or other organisms adhering to the spines",
+    weight: {
+      min: 0.2,
+      max: 0.5,
+    },
+    displayMode: FishyDisplayMode.Bottom,
+  }),
+] satisfies BaseFishy[];

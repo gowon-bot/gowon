@@ -6,12 +6,13 @@ import { FishyProfile } from "../../database/entity/fishy/FishyProfile";
 import { toInt } from "../../helpers/lastfm";
 import { GowonContext } from "../../lib/context/Context";
 import { BaseService } from "../BaseService";
-import { Fishy, FishyRarities, FishyRarityData } from "./Fishy";
 import {
   Aquarium,
   FishyRarityBreakdown,
   FishyResult,
 } from "./FishyService.types";
+import { BaseFishy } from "./classes/BaseFishy";
+import { FishyRarities, FishyRarityData } from "./classes/Fishy";
 import { specialFishies } from "./fishy/special";
 import { trash } from "./fishy/trash";
 import { findFishy, getFishyList } from "./fishyList";
@@ -25,7 +26,7 @@ export class FishyService extends BaseService {
 
   public async fish(fishyProfile: FishyProfile): Promise<FishyResult> {
     const rarity = this.pickRarity();
-    const fishyList = getFishyList(rarity);
+    const fishyList = getFishyList(rarity, fishyProfile.level);
 
     const fishy = this.chance.pickone(fishyList);
     const weight = fishy.pickWeight();
@@ -52,10 +53,12 @@ export class FishyService extends BaseService {
       weight: fishyResult.weight,
     });
 
-    profile.timesFished++;
-    profile.totalWeight += fishyResult.weight;
+    (gifter || profile).timesFished++;
+    (gifter || profile).totalWeight += fishyResult.weight;
 
     await profile.save();
+    await gifter?.save();
+
     return await fishyCatch.save();
   }
 
@@ -152,7 +155,7 @@ export class FishyService extends BaseService {
 
   public async countFishy(
     fishyProfile: FishyProfile,
-    fishy: Fishy
+    fishy: BaseFishy
   ): Promise<number> {
     return await FishyCatch.countBy({
       owner: { id: fishyProfile.user.id },
@@ -203,7 +206,7 @@ export class FishyService extends BaseService {
 
   private async getMostAbundantFish(
     fishyProfile: FishyProfile
-  ): Promise<Fishy> {
+  ): Promise<BaseFishy> {
     const result = await FishyCatch.createQueryBuilder()
       .select('"fishyId"')
       .addSelect("count(*)", "count")
@@ -218,7 +221,7 @@ export class FishyService extends BaseService {
 
   private async isFishyNewForUser(
     fishyProfile: FishyProfile,
-    fishy: Fishy
+    fishy: BaseFishy
   ): Promise<boolean> {
     const fishyCount = await FishyCatch.countBy({
       owner: { id: fishyProfile.user.id },

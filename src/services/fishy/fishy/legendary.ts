@@ -1,5 +1,8 @@
-import { FishyEmojiList } from "../../../lib/emoji/FishEmoji";
-import { Fishy, FishyRarities } from "../Fishy";
+import { FishyEmojiList } from "../../../lib/emoji/FishyEmoji";
+import { BaseFishy, FishyDisplayMode } from "../classes/BaseFishy";
+import { Fishy, FishyRarities } from "../classes/Fishy";
+import { GlovesFishy } from "../classes/GlovesFishy";
+import { NetFishy } from "../classes/NetFishy";
 
 export const legendaryFishies = [
   new Fishy({
@@ -70,4 +73,74 @@ export const legendaryFishies = [
       max: 1200,
     },
   }),
-] satisfies Fishy[];
+
+  new NetFishy({
+    id: "ghost-shrimp",
+    name: "Ghost Shrimp",
+    binomialName: "Palaemonetes paludosus",
+    rarity: FishyRarities.Legendary,
+    emoji: FishyEmojiList.ghostShrimp,
+    description:
+      "This shrimp is nocturnal, remaining hidden among the vegetation by day, and emerging at night to feed on plankton",
+    weight: {
+      min: 0.1,
+      max: 1,
+    },
+  }),
+
+  new NetFishy({
+    id: "zebra-seahorse",
+    name: "Zebra Seahorse",
+    binomialName: "Hippocampus zebra",
+    rarity: FishyRarities.Legendary,
+    emoji: FishyEmojiList.zebraSeahorse,
+    description:
+      "This species is ovoviviparous, which means it carries the eggs in a pouch which is situated under the tail",
+    weight: {
+      min: 0.1,
+      max: 0.5,
+    },
+  }),
+
+  new NetFishy({
+    id: "sea-angel",
+    name: "Sea Angel",
+    binomialName: "Clione limacina",
+    rarity: FishyRarities.Legendary,
+    emoji: FishyEmojiList.clione,
+    description:
+      "This species was first described in 1676, when it became the first pteropod without a shell to be described",
+    weight: {
+      min: 0,
+      max: 0,
+    },
+  }),
+
+  new GlovesFishy({
+    id: "palawan-purple-crab",
+    name: "Palawan Purple Crab",
+    binomialName: "Insulamon palawanense",
+    rarity: FishyRarities.Legendary,
+    emoji: FishyEmojiList.palawanPurpleCrab,
+    description: "This species of crab was only recently described in 2012",
+    weight: {
+      min: 0.1,
+      max: 0.3,
+    },
+  }),
+
+  new GlovesFishy({
+    id: "banded-sea-urchin",
+    name: "Banded Sea Urchin",
+    binomialName: "Echinothrix calamaris",
+    rarity: FishyRarities.Legendary,
+    emoji: FishyEmojiList.bandedSeaUrchin,
+    description:
+      "This sea urchin is active at night, hiding in crevices or under rocks during the day",
+    weight: {
+      min: 0.1,
+      max: 0.3,
+    },
+    displayMode: FishyDisplayMode.Bottom,
+  }),
+] satisfies BaseFishy[];

@@ -1,17 +1,23 @@
 import { GuildMember, MessageReaction, User } from "discord.js";
 import escapeStringRegexp from "escape-string-regexp";
 
-export function sanitizeForDiscord(string: string): string {
-  const characters = ["||", "*", "_", "`"];
+export function sanitizeForDiscord<T>(value: T): T {
+  if (typeof value === "string") {
+    const characters = ["||", "*", "_", "`"];
 
-  for (let character of characters) {
-    string = string.replace(
-      new RegExp(escapeStringRegexp(character), "g"),
-      (match) => `\\${match}`
+    const sanitizedValue = characters.reduce(
+      (acc, char) =>
+        acc.replace(
+          new RegExp(escapeStringRegexp(char), "g"),
+          (match) => `\\${match}`
+        ),
+      value
     );
+
+    return sanitizedValue.replace(/\n/g, " ") as T;
   }
 
-  return string.replace(/\n/g, " ");
+  return value;
 }
 
 export function userHasRole(
@@ -46,19 +52,19 @@ export function serverIconURL(guildID: string, icon: string) {
   }
 }
 
-export function bold(string: string, sanitize = true) {
+export function bold(string: string | unknown, sanitize = true) {
   return "**" + (sanitize ? sanitizeForDiscord(string) : string) + "**";
 }
 
-export function italic(string: string, sanitize = true) {
+export function italic(string: string | unknown, sanitize = true) {
   return "_" + (sanitize ? sanitizeForDiscord(string) : string) + "_";
 }
 
-export function code(string: string) {
+export function code(string: string | unknown) {
   return "`" + string + "`";
 }
 
-export function strikethrough(string: string, sanitize = true) {
+export function strikethrough(string: string | unknown, sanitize = true) {
   return "~~" + (sanitize ? sanitizeForDiscord(string) : string) + "~~";
 }
 

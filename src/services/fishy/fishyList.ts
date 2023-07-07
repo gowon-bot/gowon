@@ -1,5 +1,6 @@
 import { extractEmojiID } from "../../lib/emoji/Emoji";
-import { Fishy, FishyRarities, FishyRarityData } from "./Fishy";
+import { BaseFishy } from "./classes/BaseFishy";
+import { FishyRarities, FishyRarityData } from "./classes/Fishy";
 import { commonFishies } from "./fishy/common";
 import { legendaryFishies } from "./fishy/legendary";
 import { rareFishies } from "./fishy/rare";
@@ -18,34 +19,49 @@ export const fishyList = [
   ...specialFishies,
 ];
 
-export function getFishyList(rarity: FishyRarityData): Fishy[] {
+export function getFishyList(
+  rarity: FishyRarityData,
+  fishyProfileLevel?: number
+): BaseFishy[] {
+  let fishies: BaseFishy[];
+
   switch (rarity.name) {
     case FishyRarities.Trash.name:
-      return trash;
+      fishies = trash;
+      break;
 
     case FishyRarities.Common.name:
-      return commonFishies;
+      fishies = commonFishies;
+      break;
 
     case FishyRarities.Uncommon.name:
-      return uncommonFishy;
+      fishies = uncommonFishy;
+      break;
 
     case FishyRarities.Rare.name:
-      return rareFishies;
+      fishies = rareFishies;
+      break;
 
     case FishyRarities.SuperRare.name:
-      return superRareFishies;
+      fishies = superRareFishies;
+      break;
 
     case FishyRarities.Legendary.name:
-      return legendaryFishies;
+      fishies = legendaryFishies;
+      break;
 
     default:
-      return specialFishies.filter((f) => f.rarity.name === rarity.name);
+      fishies = specialFishies.filter((f) => f.rarity.name === rarity.name);
   }
+
+  if (fishyProfileLevel !== undefined) {
+    return fishies.filter((f) => fishyProfileLevel >= f.requiredFishyLevel);
+  } else return fishies;
 }
 
 export function findFishy(
   name: string | { byID: string } | { byEmoji: string }
-): Fishy | undefined {
+): BaseFishy | undefined {
   const equalize = (str: string) => str.toLowerCase().replace(/[\s-_]+/, "");
 
   return fishyList.find((f) => {

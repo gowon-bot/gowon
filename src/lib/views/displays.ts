@@ -127,7 +127,7 @@ export function displayProgressBar(
     width: number;
     progressEmoji: string;
     remainingEmoji: string;
-  }>
+  }> = {}
 ): string {
   const options = Object.assign(
     {

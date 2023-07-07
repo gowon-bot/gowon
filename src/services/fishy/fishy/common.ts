@@ -1,5 +1,8 @@
-import { FishyEmojiList } from "../../../lib/emoji/FishEmoji";
-import { Fishy, FishyRarities } from "../Fishy";
+import { FishyEmojiList } from "../../../lib/emoji/FishyEmoji";
+import { BaseFishy, FishyDisplayMode } from "../classes/BaseFishy";
+import { Fishy, FishyRarities } from "../classes/Fishy";
+import { GlovesFishy } from "../classes/GlovesFishy";
+import { NetFishy } from "../classes/NetFishy";
 
 export const commonFishies = [
   new Fishy({
@@ -111,4 +114,74 @@ export const commonFishies = [
       max: 40,
     },
   }),
-] satisfies Fishy[];
+
+  new NetFishy({
+    id: "pink-shrimp",
+    name: "Pink Shrimp",
+    binomialName: "Pandalus borealis",
+    rarity: FishyRarities.Common,
+    emoji: FishyEmojiList.pinkShrimp,
+    description:
+      "This shrimp's carapace is a source of a versatile chemical used for treating bleeding wounds, filtering wine and improving the soil in organic farming",
+    weight: {
+      min: 0.1,
+      max: 2,
+    },
+  }),
+
+  new GlovesFishy({
+    id: "dungeness-crab",
+    name: "Dungeness Crab",
+    binomialName: "Metacarcinus magister",
+    rarity: FishyRarities.Common,
+    emoji: FishyEmojiList.dungenessCrab,
+    description:
+      "This species can be found as far north as the Aleutian Islands of Alaska, and as far south as Magdalena Bay in Baja California, Mexico",
+    weight: {
+      min: 0.5,
+      max: 2,
+    },
+  }),
+
+  new GlovesFishy({
+    id: "blue-crab",
+    name: "Blue Crab",
+    binomialName: "Callinectes sapidus",
+    rarity: FishyRarities.Common,
+    emoji: FishyEmojiList.blueCrab,
+    description: "The Blue Crab is the state crustacean of Maryland!",
+    weight: {
+      min: 0.1,
+      max: 0.5,
+    },
+  }),
+
+  new GlovesFishy({
+    id: "american-lobster",
+    name: "American Lobster",
+    binomialName: "Homarus americanus",
+    rarity: FishyRarities.Common,
+    emoji: FishyEmojiList.americanLobster,
+    description:
+      "American lobsters can be blue, red, yellow, orange, white, or even split coloured!",
+    weight: {
+      min: 0.5,
+      max: 4,
+    },
+  }),
+
+  new GlovesFishy({
+    id: "purple-sea-urchin",
+    name: "Purple Sea Urchin",
+    binomialName: "Strongylocentrotus purpuratus",
+    rarity: FishyRarities.Common,
+    emoji: FishyEmojiList.purpleSeaUrchin,
+    description:
+      "The genome of this species was completely sequenced and annotated in 2006",
+    weight: {
+      min: 0.1,
+      max: 0.3,
+    },
+    displayMode: FishyDisplayMode.Bottom,
+  }),
+] satisfies BaseFishy[];

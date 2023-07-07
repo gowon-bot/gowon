@@ -17,6 +17,7 @@ import { User } from "./entity/User";
 import { AlbumCard } from "./entity/cards/AlbumCard";
 import { FishyCatch } from "./entity/fishy/FishyCatch";
 import { FishyProfile } from "./entity/fishy/FishyProfile";
+import { FishyQuest } from "./entity/fishy/FishyQuest";
 import { CommandRun } from "./entity/meta/CommandRun";
 import { CrownEvent } from "./entity/meta/CrownEvent";
 import { Guild } from "./entity/meta/Guild";
@@ -35,6 +36,7 @@ export class DB {
         AlbumCard,
         FishyCatch,
         FishyProfile,
+        FishyQuest,
         // meta
         CommandRun,
         CrownEvent,

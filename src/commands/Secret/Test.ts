@@ -10,6 +10,7 @@ export default class Test extends Command<typeof args> {
   subcategory = "developer";
 
   secretCommand = true;
+
   arguments = args;
   slashCommand = true;
 

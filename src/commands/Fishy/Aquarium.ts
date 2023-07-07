@@ -1,13 +1,14 @@
 import { Chance } from "chance";
 import { bold } from "../../helpers/discord";
 import { ArgumentsMap } from "../../lib/context/arguments/types";
+import { Emoji } from "../../lib/emoji/Emoji";
 import { displayNumber } from "../../lib/views/displays";
-import { Fishy } from "../../services/fishy/Fishy";
 import {
   AquariumDimensions,
   AquariumDisplay,
   Aquarium as AquariumType,
 } from "../../services/fishy/FishyService.types";
+import { BaseFishy } from "../../services/fishy/classes/BaseFishy";
 import { FishyChildCommand } from "./FishyChildCommand";
 
 const args = {} satisfies ArgumentsMap;
@@ -72,7 +73,7 @@ ${
 `;
   }
 
-  private getAquariumMessage(fishy: Fishy[]): string {
+  private getAquariumMessage(fishy: BaseFishy[]): string {
     const fishyCount = fishy.length;
 
     if (fishyCount === 0) {
@@ -80,7 +81,7 @@ ${
         "No fishies? :(",
         "There doesn't seem to be a fishy in sight!",
         "There are no fishy around right now...",
-        "🐈 Naan has scared away all the fishy!",
+        `${Emoji.naan} Naan has scared away all the fishy!`,
         "🌫️ the fog has come for your fishy.",
       ]);
     } else if (fishyCount === 1) {
@@ -102,6 +103,9 @@ ${
         `The fishy seem to have a sense of impending doom...`,
         `The fishy are swimming around aimlessly`,
         `The ${fishyCount} fishy seem to be having a staring contest`,
+        "The fishy seem a little crabby...",
+        "The fishy are just hanging out",
+        "The fishy seem to be playing hide and seak",
       ]);
     } else if (fishyCount <= 8) {
       return Chance().pickone([
@@ -112,13 +116,16 @@ ${
         `Despite there only being ${fishyCount} fishy in the tank, they keep bumping into eachother`,
         `${fishyCount} fishy are engaged in a deep conversation... or sitting in silence, you don't speak fishy.`,
         `The ${fishyCount} fishy are having a discussion... it seems a bit fishy`,
+        `The fishy are scrobbling some fish themed music`,
       ]);
     } else {
       return Chance().pickone([
-        `Fishies mad x32`,
+        `Fishies mad x24`,
         `Wow! ${fishyCount} fishy fill the tank!`,
         `The tank is bursting with fish!`,
         `The fishy gather around the glass staring at you.`,
+        `Your fishy are having a whale of a time!`,
+        "WOOOOOO!!!! FISHY!!!!!",
       ]);
     }
   }

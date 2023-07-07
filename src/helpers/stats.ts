@@ -9,8 +9,9 @@ export function calculatePercent(
     !number2 ||
     isNaN(typeof number2 === "string" ? toInt(number2) : number2) ||
     toInt(number2) <= 0
-  )
+  ) {
     return "0";
+  }
 
   return parseFloat(
     (

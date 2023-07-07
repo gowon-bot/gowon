@@ -8,6 +8,7 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
+import { getFishyLevel } from "../../../helpers/fishy";
 import { constants } from "../../../lib/constants";
 import { humanizeDuration } from "../../../lib/timeAndDate/helpers/humanize";
 import { User } from "../User";
@@ -26,12 +27,19 @@ export class FishyProfile extends BaseEntity {
   @Column({ default: 0, type: "float" })
   totalWeight!: number;
 
+  @Column({ default: 0 })
+  questsCompleted!: number;
+
   @OneToOne((_) => User, (user) => user.fishyProfile, { eager: true })
   @JoinColumn()
   user!: User;
 
   @CreateDateColumn()
   createdAt!: Date;
+
+  get level(): number {
+    return getFishyLevel(this.questsCompleted);
+  }
 
   public canFish(): boolean {
     return (
