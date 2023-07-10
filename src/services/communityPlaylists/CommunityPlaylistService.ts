@@ -1,3 +1,4 @@
+import { In } from "typeorm";
 import { User } from "../../database/entity/User";
 import { CommunityPlaylist } from "../../database/entity/playlists/CommunityPlaylist";
 import { CommunityPlaylistSubmission } from "../../database/entity/playlists/CommunityPlaylistSubmission";
@@ -41,7 +42,7 @@ export class CommunityPlaylistService extends BaseService {
   ): Promise<CommunityPlaylistSubmission> {
     this.log(
       ctx,
-      `Submitting ${submission.spotifyURL} for ${
+      `Submitting ${submission.spotifyURI} for ${
         submission.submitterName || submission.submitterUser?.discordID
       }`
     );
@@ -56,6 +57,18 @@ export class CommunityPlaylistService extends BaseService {
     } else {
       return await submission.save();
     }
+  }
+
+  public async getPlaylistByID(
+    id: number
+  ): Promise<CommunityPlaylist | undefined> {
+    return (await CommunityPlaylist.findOneBy({ id })) ?? undefined;
+  }
+
+  public async list(guildIDs: string[]): Promise<CommunityPlaylist[]> {
+    return await CommunityPlaylist.findBy({
+      guildID: In(guildIDs),
+    });
   }
 
   private async getSubmission(

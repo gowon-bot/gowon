@@ -4,6 +4,7 @@ import {
   CommandInteraction,
   Message,
   ModalSubmitInteraction,
+  StringSelectMenuInteraction,
 } from "discord.js";
 import { ArgumentNotImplementedForInteractionTypeError } from "../../../../errors/gowon";
 import { toInt } from "../../../../helpers/lastfm/";
@@ -104,6 +105,12 @@ export abstract class BaseArgument<
         ctx,
         argumentName
       );
+    } else if (interaction.isStringSelectMenu()) {
+      return this.parseFromStringSelectInteraction(
+        interaction,
+        ctx,
+        argumentName
+      );
     }
 
     return undefined;
@@ -119,6 +126,14 @@ export abstract class BaseArgument<
 
   parseFromModalSubmitInteraction(
     _interaction: ModalSubmitInteraction,
+    _ctx: GowonContext,
+    _argumentName: string
+  ): ReturnT | undefined {
+    throw new ArgumentNotImplementedForInteractionTypeError();
+  }
+
+  parseFromStringSelectInteraction(
+    _interaction: StringSelectMenuInteraction,
     _ctx: GowonContext,
     _argumentName: string
   ): ReturnT | undefined {

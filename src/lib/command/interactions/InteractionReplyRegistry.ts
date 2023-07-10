@@ -1,4 +1,5 @@
 import { InteractionReply, InteractionReplyClass } from "./InteractionReply";
+import { InteractionID, matchesInteractionID } from "./interactions";
 
 export class InteractionReplyRegistry {
   private constructor() {}
@@ -28,8 +29,12 @@ export class InteractionReplyRegistry {
   }
 
   public get(id: string): InteractionReply | undefined {
-    const interactionReply = this.pool[id];
+    for (const [interactionID, interactionReply] of Object.entries(this.pool)) {
+      if (matchesInteractionID(id, interactionID as InteractionID)) {
+        return new interactionReply();
+      }
+    }
 
-    return new interactionReply();
+    return undefined;
   }
 }

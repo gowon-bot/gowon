@@ -14,7 +14,6 @@ import {
   GetMentionsOptions,
   Mentions,
 } from "../../services/arguments/mentions/MentionsService.types";
-import { UsersService } from "../../services/dbservices/UsersService";
 import { CrownsService } from "../../services/dbservices/crowns/CrownsService";
 import { LilacGuildsService } from "../../services/lilac/LilacGuildsService";
 import { LilacUsersService } from "../../services/lilac/LilacUsersService";
@@ -128,7 +127,6 @@ export abstract class Command<
   }
 
   track = ServiceRegistry.get(TrackingService);
-  usersService = ServiceRegistry.get(UsersService);
   gowonService = ServiceRegistry.get(GowonService);
   settingsService = ServiceRegistry.get(SettingsService);
   mentionsService = ServiceRegistry.get(MentionsService);

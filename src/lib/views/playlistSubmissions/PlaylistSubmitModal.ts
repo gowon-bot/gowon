@@ -5,7 +5,10 @@ import {
   TextInputStyle,
 } from "discord.js";
 import { CommunityPlaylist } from "../../../database/entity/playlists/CommunityPlaylist";
-import { InteractionID } from "../../command/interactions/interactions";
+import {
+  InteractionID,
+  composeInteractionID,
+} from "../../command/interactions/interactions";
 import { SendableModal } from "../base";
 
 export class PlaylistSubmitModal extends SendableModal {
@@ -18,7 +21,9 @@ export class PlaylistSubmitModal extends SendableModal {
 
   present(): ModalBuilder {
     const modal = new ModalBuilder()
-      .setCustomId(InteractionID.PlaylistSubmit)
+      .setCustomId(
+        composeInteractionID(InteractionID.PlaylistSubmit, this.playlist.id)
+      )
       .setTitle(`Submit to ${this.playlist.title}`);
 
     const submitterNameInput = new TextInputBuilder()
