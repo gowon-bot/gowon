@@ -7,6 +7,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
+import { RawSpotifyURI } from "../../../services/Spotify/SpotifyService.types";
 import { User } from "../User";
 import { CommunityPlaylist } from "./CommunityPlaylist";
 
@@ -15,8 +16,8 @@ export class CommunityPlaylistSubmission extends BaseEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column()
-  spotifyURL!: string;
+  @Column({ type: "character varying" })
+  spotifyURI!: RawSpotifyURI<"track">;
 
   @ManyToOne((_) => CommunityPlaylist, (playlist) => playlist.submissions, {
     eager: true,

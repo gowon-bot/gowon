@@ -2,6 +2,7 @@ import {
   ChatInputCommandInteraction,
   Message,
   SlashCommandBuilder,
+  StringSelectMenuInteraction,
 } from "discord.js";
 import { toInt } from "../../../../helpers/lastfm/";
 import { GowonService } from "../../../../services/GowonService";
@@ -55,6 +56,16 @@ export class NumberArgument<
     argumentName: string
   ): number | undefined {
     return interaction.options.getInteger(argumentName) || this.options.default;
+  }
+
+  parseFromStringSelectInteraction(
+    interaction: StringSelectMenuInteraction,
+    _ctx: GowonContext,
+    _argumentName: string
+  ): number | undefined {
+    return this.getElementFromIndex(interaction.values, this.options.index, {
+      number: true,
+    });
   }
 
   addAsOption(slashCommand: SlashCommandBuilder, argumentName: string) {

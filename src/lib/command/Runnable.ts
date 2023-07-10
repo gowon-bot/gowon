@@ -10,6 +10,7 @@ import {
 } from "../../services/Discord/DiscordService.types";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { ArgumentParsingService } from "../../services/arguments/ArgumentsParsingService";
+import { UsersService } from "../../services/dbservices/UsersService";
 import { GowonContext } from "../context/Context";
 import { ArgumentsMap, ParsedArguments } from "../context/arguments/types";
 import { Validation, ValidationChecker } from "../validation/ValidationChecker";
@@ -111,6 +112,7 @@ export abstract class Runnable<ArgumentsType extends ArgumentsMap = {}> {
   /**
    * Services
    */
+  usersService = ServiceRegistry.get(UsersService);
   discordService = ServiceRegistry.get(DiscordService);
   argumentParsingService = ServiceRegistry.get(ArgumentParsingService);
 

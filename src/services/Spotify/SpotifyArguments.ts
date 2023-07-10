@@ -25,11 +25,11 @@ type SpotifyArgumentsContext = GowonContext<{
 }>;
 
 export class SpotifyArguments extends BaseService<SpotifyArgumentsContext> {
-  private readonly trackLinkRegex =
+  public readonly trackLinkRegex =
     /https:\/\/open\.spotify\.com\/track\/([\w]+)\/?/i;
-  private readonly artistLinkRegex =
+  public readonly artistLinkRegex =
     /https:\/\/open\.spotify\.com\/artist\/([\w]+)\/?/i;
-  private readonly albumLinkRegex =
+  public readonly albumLinkRegex =
     /https:\/\/open\.spotify\.com\/album\/([\w]+)\/?/i;
 
   private get lastFMArguments() {
@@ -127,25 +127,25 @@ export class SpotifyArguments extends BaseService<SpotifyArgumentsContext> {
     return { track: spotifyTrackSearch.bestResult };
   }
 
-  protected getSpotifyTrackURI(string: string): SpotifyURI<"track"> {
+  public getSpotifyTrackURI(string: string): SpotifyURI<"track"> {
     const id = (string.match(this.trackLinkRegex) || [])[1];
 
     return this.spotifyService.generateURI("track", id);
   }
 
-  protected getSpotifyArtistURI(string: string): SpotifyURI<"artist"> {
+  public getSpotifyArtistURI(string: string): SpotifyURI<"artist"> {
     const id = (string.match(this.artistLinkRegex) || [])[1];
 
     return this.spotifyService.generateURI("artist", id);
   }
 
-  protected getSpotifyAlbumURI(string: string): SpotifyURI<"album"> {
+  public getSpotifyAlbumURI(string: string): SpotifyURI<"album"> {
     const id = (string.match(this.albumLinkRegex) || [])[1];
 
     return this.spotifyService.generateURI("album", id);
   }
 
-  protected containsLink(string: string | undefined, regex: RegExp): boolean {
+  public containsLink(string: string | undefined, regex: RegExp): boolean {
     if (!string) return false;
     return regex.test(string);
   }
