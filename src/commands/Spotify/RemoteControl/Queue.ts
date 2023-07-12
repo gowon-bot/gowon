@@ -1,7 +1,7 @@
-import { LogicError } from "../../../../errors/errors";
-import { bold, italic } from "../../../../helpers/discord";
-import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";
-import { ArgumentsMap } from "../../../../lib/context/arguments/types";
+import { LogicError } from "../../../errors/errors";
+import { bold, italic } from "../../../helpers/discord";
+import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { SpotifyChildCommand } from "../SpotifyChildCommand";
 
 const args = {

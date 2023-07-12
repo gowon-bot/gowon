@@ -1,11 +1,11 @@
-import { CommandGroup } from "../../../lib/command/CommandGroup";
+import { CommandGroup } from "../../lib/command/CommandGroup";
 import { Help } from "./Help";
 import { Like } from "./Like";
+import { Login } from "./Login";
 import { Privacy } from "./Privacy";
 import { Next } from "./RemoteControl/Next";
 import { Queue } from "./RemoteControl/Queue";
 import { SpotifyBaseParentCommand } from "./SpotifyBaseCommands";
-import { Login } from "./Login";
 
 export default class SpotifyParentCommand extends SpotifyBaseParentCommand {
   idSeed = "viviz sinb";

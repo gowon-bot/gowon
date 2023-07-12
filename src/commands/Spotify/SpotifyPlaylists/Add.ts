@@ -1,11 +1,14 @@
-import { LogicError } from "../../../../errors/errors";
-import { bold, italic } from "../../../../helpers/discord";
-import { Variation } from "../../../../lib/command/Command";
-import { EmojisArgument } from "../../../../lib/context/arguments/argumentTypes/discord/EmojisArgument";
-import { StringArgument } from "../../../../lib/context/arguments/argumentTypes/StringArgument";
-import { removeEmojisFromString } from "../../../../lib/context/arguments/parsers/EmojiParser";
-import { ArgumentsMap } from "../../../../lib/context/arguments/types";
-import { PlaylistChildCommand } from "./PlaylistChildCommand";
+import {
+  CannotFindTaggedSpotifyPlaylistError,
+  CouldNotFindTrackInSpotifyPlaylist,
+} from "../../../errors/external/spotify/playlists";
+import { bold, italic } from "../../../helpers/discord";
+import { Variation } from "../../../lib/command/Command";
+import { EmojisArgument } from "../../../lib/context/arguments/argumentTypes/discord/EmojisArgument";
+import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
+import { removeEmojisFromString } from "../../../lib/context/arguments/parsers/EmojiParser";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { SpotifyPlaylistChildCommand } from "./SpotifyPlaylistChildCommand";
 
 const args = {
   playlist: new EmojisArgument({
@@ -24,9 +27,9 @@ const args = {
     preprocessor: removeEmojisFromString,
     description: "That track of the track you want to add",
   }),
-} satisfies ArgumentsMap
+} satisfies ArgumentsMap;
 
-export class Add extends PlaylistChildCommand<typeof args> {
+export class Add extends SpotifyPlaylistChildCommand<typeof args> {
   idSeed = "pink fantasy harin";
 
   description = "Adds a song to one of your Spotify playlists";
@@ -58,11 +61,7 @@ export class Add extends PlaylistChildCommand<typeof args> {
     );
 
     if (!playlistTag) {
-      throw new LogicError(
-        emoji
-          ? `Couldn't find a playlist tagged with ${emoji.resolvable}!`
-          : `Couldn't find a default playlist! (Set one with \`${this.prefix}pl default\`)`
-      );
+      throw new CannotFindTaggedSpotifyPlaylistError(emoji, this.prefix);
     }
 
     const { track, askedConfirmation } = await this.spotifyArguments.getTrack(
@@ -74,10 +73,7 @@ export class Add extends PlaylistChildCommand<typeof args> {
     if (!track) {
       if (askedConfirmation) return;
 
-      throw new LogicError(
-        `Couldn't find a track to ${remove ? "remove from" : "add to"
-        } a playlist!`
-      );
+      throw new CouldNotFindTrackInSpotifyPlaylist(remove);
     }
 
     await this.spotifyService[remove ? "removeFromPlaylist" : "addToPlaylist"](
@@ -93,7 +89,8 @@ export class Add extends PlaylistChildCommand<typeof args> {
         )
       )
       .setDescription(
-        `Successfully ${remove ? "removed" : "added"} ${italic(track.name)} ${remove ? "from" : "to"
+        `Successfully ${remove ? "removed" : "added"} ${italic(track.name)} ${
+          remove ? "from" : "to"
         } ${bold(playlistTag.playlistName)}`
       )
       .setThumbnail(track.album.images.largest.url);

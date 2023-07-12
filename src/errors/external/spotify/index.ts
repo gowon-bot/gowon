@@ -1,4 +1,4 @@
-import { ClientError } from "../errors";
+import { ClientError } from "../../errors";
 
 export class SpotifyConnectionError extends ClientError {
   name = "SpotifyConnectionError";

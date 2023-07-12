@@ -1,24 +1,24 @@
-import { LogicError } from "../../../../errors/errors";
-import { bold } from "../../../../helpers/discord";
-import { StringArgument } from "../../../../lib/context/arguments/argumentTypes/StringArgument";
-import { ArgumentsMap } from "../../../../lib/context/arguments/types";
-import { PlaylistChildCommand } from "./PlaylistChildCommand";
+import { SpotifyPlaylistNotFound } from "../../../errors/external/spotify/playlists";
+import { bold } from "../../../helpers/discord";
+import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { SpotifyPlaylistChildCommand } from "./SpotifyPlaylistChildCommand";
 
 const args = {
   playlist: new StringArgument({
     index: { start: 0 },
     required: true,
-    description: "The name of the playlist to set as the default",
+    description: "The name of the Spotify playlist to set as the default",
   }),
-} satisfies ArgumentsMap
+} satisfies ArgumentsMap;
 
-export class SetDefault extends PlaylistChildCommand<typeof args> {
+export class SetDefault extends SpotifyPlaylistChildCommand<typeof args> {
   idSeed = "pink fantasy arang";
 
   aliases = ["default"];
   usage = ["playlistName"];
 
-  description = "Sets one of your playlists as the default";
+  description = "Sets one of your Spotify playlists as the default";
 
   arguments = args;
 
@@ -36,7 +36,7 @@ export class SetDefault extends PlaylistChildCommand<typeof args> {
     );
 
     if (!foundPlaylist) {
-      throw new LogicError(`Couldn't find a playlist with that name!`);
+      throw new SpotifyPlaylistNotFound();
     }
 
     await this.spotifyPlaylistTagService.setPlaylistAsDefault(

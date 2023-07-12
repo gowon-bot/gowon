@@ -1,21 +1,21 @@
-import { ChildCommand } from "../../../lib/command/ChildCommand";
-import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { ChildCommand } from "../../lib/command/ChildCommand";
+import { ArgumentsMap } from "../../lib/context/arguments/types";
 import {
   GetMentionsOptions,
   Mentions,
-} from "../../../services/arguments/mentions/MentionsService.types";
-import { ServiceRegistry } from "../../../services/ServicesRegistry";
-import { SpotifyToken } from "../../../services/Spotify/converters/Auth";
-import { SpotifyArguments } from "../../../services/Spotify/SpotifyArguments";
-import { SpotifyAuthenticationService } from "../../../services/Spotify/SpotifyAuthenticationService";
+} from "../../services/arguments/mentions/MentionsService.types";
+import { ServiceRegistry } from "../../services/ServicesRegistry";
+import { SpotifyToken } from "../../services/Spotify/converters/Auth";
+import { SpotifyArguments } from "../../services/Spotify/SpotifyArguments";
+import { SpotifyAuthenticationService } from "../../services/Spotify/SpotifyAuthenticationService";
 import {
   SpotifySearchParams,
   SpotifyService,
-} from "../../../services/Spotify/SpotifyService";
+} from "../../services/Spotify/SpotifyService";
 import {
   LastFMBaseCommand,
   LastFMBaseParentCommand,
-} from "../LastFMBaseCommand";
+} from "../Lastfm/LastFMBaseCommand";
 
 export abstract class SpotifyBaseCommand<
   T extends ArgumentsMap = {}

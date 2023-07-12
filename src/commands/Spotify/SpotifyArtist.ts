@@ -1,7 +1,7 @@
-import { LogicError } from "../../../errors/errors";
-import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
-import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
-import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { LogicError } from "../../errors/errors";
+import { StringArgument } from "../../lib/context/arguments/argumentTypes/StringArgument";
+import { standardMentions } from "../../lib/context/arguments/mentionTypes/mentions";
+import { ArgumentsMap } from "../../lib/context/arguments/types";
 import { SpotifyBaseCommand } from "./SpotifyBaseCommands";
 
 const args = {
@@ -11,7 +11,7 @@ const args = {
       "The keywords to search Spotify with (defaults to your currently playing artist)",
   }),
   ...standardMentions,
-} satisfies ArgumentsMap
+} satisfies ArgumentsMap;
 
 export default class SpotifyArtist extends SpotifyBaseCommand<typeof args> {
   idSeed = "iz*one chaeyeon";

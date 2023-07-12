@@ -1,13 +1,13 @@
-import { bold } from "../../../../helpers/discord";
-import { emDash } from "../../../../helpers/specialCharacters";
+import { bold } from "../../../helpers/discord";
+import { emDash } from "../../../helpers/specialCharacters";
 import {
   displayNumber,
   displayNumberedList,
-} from "../../../../lib/views/displays";
-import { SimpleScrollingEmbed } from "../../../../lib/views/embeds/SimpleScrollingEmbed";
-import { PlaylistChildCommand } from "./PlaylistChildCommand";
+} from "../../../lib/views/displays";
+import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingEmbed";
+import { SpotifyPlaylistChildCommand } from "./SpotifyPlaylistChildCommand";
 
-export class List extends PlaylistChildCommand {
+export class List extends SpotifyPlaylistChildCommand {
   idSeed = "pink fantasy yechan";
 
   description = "Lists your Spotify playlists";

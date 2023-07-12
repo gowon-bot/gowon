@@ -1,4 +1,4 @@
-import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { ArgumentsMap } from "../../lib/context/arguments/types";
 import { SpotifyBaseChildCommand } from "./SpotifyBaseCommands";
 
 export abstract class SpotifyChildCommand<

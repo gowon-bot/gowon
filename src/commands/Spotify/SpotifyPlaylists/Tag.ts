@@ -1,12 +1,12 @@
-import { LogicError } from "../../../../errors/errors";
-import { bold } from "../../../../helpers/discord";
-import { EmojisArgument } from "../../../../lib/context/arguments/argumentTypes/discord/EmojisArgument";
-import { StringArgument } from "../../../../lib/context/arguments/argumentTypes/StringArgument";
-import { removeEmojisFromString } from "../../../../lib/context/arguments/parsers/EmojiParser";
-import { ArgumentsMap } from "../../../../lib/context/arguments/types";
-import { Validation } from "../../../../lib/validation/ValidationChecker";
-import { validators } from "../../../../lib/validation/validators";
-import { PlaylistChildCommand } from "./PlaylistChildCommand";
+import { SpotifyPlaylistNotFound } from "../../../errors/external/spotify/playlists";
+import { bold } from "../../../helpers/discord";
+import { EmojisArgument } from "../../../lib/context/arguments/argumentTypes/discord/EmojisArgument";
+import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
+import { removeEmojisFromString } from "../../../lib/context/arguments/parsers/EmojiParser";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { Validation } from "../../../lib/validation/ValidationChecker";
+import { validators } from "../../../lib/validation/validators";
+import { SpotifyPlaylistChildCommand } from "./SpotifyPlaylistChildCommand";
 
 const args = {
   emoji: new EmojisArgument({
@@ -20,9 +20,9 @@ const args = {
     description: "The name of the playlist to tag",
     index: { start: 0 },
   }),
-} satisfies ArgumentsMap
+} satisfies ArgumentsMap;
 
-export class Tag extends PlaylistChildCommand<typeof args> {
+export class Tag extends SpotifyPlaylistChildCommand<typeof args> {
   idSeed = "pink fantasy momoka";
 
   description = "Tags one of your playlists with an emoji";
@@ -56,7 +56,7 @@ export class Tag extends PlaylistChildCommand<typeof args> {
     );
 
     if (!foundPlaylist) {
-      throw new LogicError(`Couldn't find a playlist with that name!`);
+      throw new SpotifyPlaylistNotFound();
     }
 
     await this.spotifyPlaylistTagService.tagPlaylist(this.ctx, dbUser, {
