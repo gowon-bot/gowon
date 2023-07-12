@@ -1,4 +1,5 @@
 import { EmbedBuilder, GuildMember, HexColorString, User } from "discord.js";
+import { ClientError } from "../../../errors/errors";
 import { ucFirst } from "../../../helpers";
 import { bold, italic } from "../../../helpers/discord";
 import { ImageCollection } from "../../../services/LastFM/converters/BaseConverter";
@@ -8,6 +9,7 @@ import { GowonContext } from "../../context/Context";
 import { displayUserTag } from "../displays";
 
 export const errorColour = "#ED008E";
+export const warningColour = "#FCCA28";
 
 export function gowonEmbed(member?: GuildMember, embed?: EmbedBuilder) {
   const gowonEmbed = (embed || new EmbedBuilder()).setColor(
@@ -54,15 +56,17 @@ export function errorEmbed(
   from: EmbedBuilder,
   author: User,
   member: GuildMember | undefined,
-  message: string,
-  footer: string = ""
+  error: Error
 ): EmbedBuilder {
+  const footer = error instanceof ClientError ? error.footer : "";
+  const isWarning = error instanceof ClientError ? error.isWarning : false;
+
   return from
-    .setColor(errorColour)
+    .setColor(isWarning ? warningColour : errorColour)
     .setAuthor({
-      name: `Error | ${displayUserTag(author)}`,
+      name: `${isWarning ? "Warning" : "Error"} | ${displayUserTag(author)}`,
       iconURL: member?.avatarURL() || author.avatarURL() || undefined,
     })
-    .setDescription(ucFirst(message))
+    .setDescription(ucFirst(error.message))
     .setFooter({ text: footer });
 }

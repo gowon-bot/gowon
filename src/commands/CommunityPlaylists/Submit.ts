@@ -1,18 +1,13 @@
-import { Command } from "../../lib/command/Command";
-import { PlaylistSubmitEmbed } from "../../lib/views/playlistSubmissions/PlaylistSubmitEmbed";
-import { ServiceRegistry } from "../../services/ServicesRegistry";
-import { CommunityPlaylistService } from "../../services/communityPlaylists/CommunityPlaylistService";
+import { PlaylistSubmitEmbed } from "../../lib/views/communityPlaylists/PlaylistSubmitEmbed";
+import { CommunityPlaylistChildCommand } from "./CommunityPlaylistsChildCommand";
 
-export default class Submit extends Command {
+export class Submit extends CommunityPlaylistChildCommand {
   idSeed = "newjeans danielle";
 
   description = "Submit to a community playlist";
-  subcategory = "playlists";
-
-  communityPlaylistsService = ServiceRegistry.get(CommunityPlaylistService);
 
   async run() {
-    const playlists = await this.communityPlaylistsService.list([
+    const playlists = await this.communityPlaylistService.list([
       this.requiredGuild.id,
     ]);
 

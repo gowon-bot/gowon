@@ -3,7 +3,7 @@ import { InvalidPlaylistError } from "../../errors/communityPlaylists";
 import { InteractionReply } from "../../lib/command/interactions/InteractionReply";
 import { InteractionID } from "../../lib/command/interactions/interactions";
 import { NumberArgument } from "../../lib/context/arguments/argumentTypes/NumberArgument";
-import { PlaylistSubmitModal } from "../../lib/views/playlistSubmissions/PlaylistSubmitModal";
+import { PlaylistSubmitModal } from "../../lib/views/communityPlaylists/PlaylistSubmitModal";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { CommunityPlaylistService } from "../../services/communityPlaylists/CommunityPlaylistService";
 

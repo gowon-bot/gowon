@@ -8,7 +8,7 @@ import { InteractionReply } from "../../lib/command/interactions/InteractionRepl
 import { InteractionID } from "../../lib/command/interactions/interactions";
 import { StringArgument } from "../../lib/context/arguments/argumentTypes/StringArgument";
 import { ArgumentsMap } from "../../lib/context/arguments/types";
-import { PlaylistSubmitModal } from "../../lib/views/playlistSubmissions/PlaylistSubmitModal";
+import { PlaylistSubmitModal } from "../../lib/views/communityPlaylists/PlaylistSubmitModal";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { SpotifyArguments } from "../../services/Spotify/SpotifyArguments";
 import { SpotifyService } from "../../services/Spotify/SpotifyService";

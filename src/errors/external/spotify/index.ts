@@ -1,4 +1,4 @@
-import { ClientError } from "../../errors";
+import { ClientError, ClientWarning } from "../../errors";
 
 export class SpotifyConnectionError extends ClientError {
   name = "SpotifyConnectionError";
@@ -59,7 +59,7 @@ export class InvalidSpotifyScopeError extends ClientError {
   }
 }
 
-export class PrivateModeOnWarning extends ClientError {
+export class PrivateModeOnWarning extends ClientWarning {
   name = "PrivateModeOnWarning";
 
   constructor(prefix: string) {

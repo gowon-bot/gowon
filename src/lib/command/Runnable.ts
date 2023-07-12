@@ -1,5 +1,6 @@
 import { EmbedAuthorData, EmbedBuilder, Guild, Message } from "discord.js";
 import md5 from "js-md5";
+import { ClientError } from "../../errors/errors";
 import { GuildRequiredError } from "../../errors/gowon";
 import { DiscordService } from "../../services/Discord/DiscordService";
 import {
@@ -187,16 +188,18 @@ export abstract class Runnable<ArgumentsType extends ArgumentsMap = {}> {
     );
   }
 
-  protected async sendError(message: string, footer = "") {
-    const embed = errorEmbed(
-      this.newEmbed(),
-      this.author,
-      this.ctx.authorMember,
-      message,
-      footer
-    );
+  protected async sendError(error: Error | string): Promise<void> {
+    const errorInstance =
+      typeof error === "string" ? new ClientError(error) : error;
 
-    await this.send(embed);
+    await this.send(
+      errorEmbed(
+        this.newEmbed(),
+        this.author,
+        this.ctx.authorMember,
+        errorInstance
+      )
+    );
   }
 
   newEmbed(embed?: EmbedBuilder): EmbedBuilder {

@@ -249,9 +249,9 @@ export abstract class Command<
     console.log(e);
 
     if (e.isClientFacing && !e.silent) {
-      await this.sendError(e.message, e.footer);
+      await this.sendError(e);
     } else if (!e.isClientFacing) {
-      await this.sendError(new UnknownError().message);
+      await this.sendError(new UnknownError());
     }
   }
 
