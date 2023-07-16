@@ -2,6 +2,7 @@ import { FishyEmojiList } from "../../../lib/emoji/FishyEmoji";
 import { FishyRarityEmojiList } from "../../../lib/emoji/FishyRarityEmoji";
 import { BaseFishy } from "../classes/BaseFishy";
 import { Fishy, FishyRarityData } from "../classes/Fishy";
+import { FishyRegionTrait } from "../traits/region";
 
 export const specialFishies = [
   new Fishy({
@@ -22,5 +23,7 @@ export const specialFishies = [
       min: 999,
       max: 999,
     },
+    url: "https://en.wikipedia.org/wiki/Bl%C3%A5haj",
+    traits: [FishyRegionTrait.Worldwide],
   }),
 ] satisfies BaseFishy[];

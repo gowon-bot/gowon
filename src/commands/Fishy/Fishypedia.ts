@@ -1,12 +1,19 @@
 import { FishyNotFoundError } from "../../errors/commands/fishy";
 import { bold, italic } from "../../helpers/discord";
-import { quote } from "../../helpers/specialCharacters";
+import { emDash, quote } from "../../helpers/specialCharacters";
 import { StringArgument } from "../../lib/context/arguments/argumentTypes/StringArgument";
 import { EmojisArgument } from "../../lib/context/arguments/argumentTypes/discord/EmojisArgument";
 import { standardMentions } from "../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../lib/context/arguments/types";
 import { displayNumber } from "../../lib/views/displays";
-import { findFishy } from "../../services/fishy/fishyList";
+import { SimpleScrollingEmbed } from "../../lib/views/embeds/SimpleScrollingEmbed";
+import { findFishy, fishyList } from "../../services/fishy/fishyList";
+import {
+  FishyTrait,
+  convertFishyTrait,
+  displayFishyTrait,
+  matchesFishyTrait,
+} from "../../services/fishy/traits";
 import { FishyChildCommand } from "./FishyChildCommand";
 
 const args = {
@@ -17,6 +24,11 @@ const args = {
   fishyEmoji: new EmojisArgument({
     index: { start: 0 },
     description: "The fishy emoji to learn about",
+  }),
+  fishyTrait: new StringArgument({
+    index: { start: 0 },
+    description: "The fishy trait to list fish",
+    preprocessor: (s) => s.toLowerCase(),
   }),
   ...standardMentions,
 } satisfies ArgumentsMap;
@@ -32,6 +44,13 @@ export class Fishypedia extends FishyChildCommand<typeof args> {
   arguments = args;
 
   async run() {
+    const fishyTrait = convertFishyTrait(this.parsedArguments.fishyTrait);
+
+    if (fishyTrait) {
+      await this.listFishy(fishyTrait);
+      return;
+    }
+
     const { fishyProfile, discordUser } = await this.getMentions({
       fetchFishyProfile: true,
       fetchDiscordUser: true,
@@ -63,6 +82,7 @@ export class Fishypedia extends FishyChildCommand<typeof args> {
       .setAuthor(this.generateEmbedAuthor("Fishy wiki"))
       .setColor(fishy.rarity.colour)
       .setTitle(fishy.name)
+      .setURL(fishy.url)
       .setDescription(
         `
 ${fishy.emoji} ${bold(italic(fishy.binomialName), false)}
@@ -86,5 +106,27 @@ ${
     }
 
     await this.send(embed);
+  }
+
+  private async listFishy(trait: FishyTrait) {
+    const fishy = fishyList.filter(
+      (f) => !f.rarity.special && matchesFishyTrait(f, trait)
+    );
+
+    const embed = this.newEmbed()
+      .setAuthor(this.generateEmbedAuthor("Fishy wiki"))
+      .setTitle(`Search results for ${displayFishyTrait(trait, true)}`);
+
+    const simpleScrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
+      items: fishy.map(
+        (f) =>
+          `${f.rarity.emoji.forLevel(f.requiredFishyLevel)} ${
+            f.emoji
+          } ${emDash} ${bold(f.name)} (${f.binomialName})`
+      ),
+      pageSize: 15,
+    });
+
+    simpleScrollingEmbed.send();
   }
 }

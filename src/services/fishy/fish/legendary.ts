@@ -3,6 +3,11 @@ import { BaseFishy, FishyDisplayMode } from "../classes/BaseFishy";
 import { Fishy, FishyRarities } from "../classes/Fishy";
 import { GlovesFishy } from "../classes/GlovesFishy";
 import { NetFishy } from "../classes/NetFishy";
+import { FishyCategoryTrait } from "../traits/category";
+import { FishyDepthTrait } from "../traits/depth";
+import { FishyNameTrait } from "../traits/name";
+import { FishyPhysicalTrait } from "../traits/physical";
+import { FishyRegionTrait } from "../traits/region";
 
 export const legendaryFishies = [
   new Fishy({
@@ -16,6 +21,13 @@ export const legendaryFishies = [
       min: 100,
       max: 150,
     },
+    url: "https://en.wikipedia.org/wiki/Bull_shark",
+    traits: [
+      FishyCategoryTrait.Saltwater,
+      FishyRegionTrait.AllOceans,
+      FishyRegionTrait.Worldwide,
+      new FishyDepthTrait(5, 100),
+    ],
   }),
 
   new Fishy({
@@ -30,6 +42,15 @@ export const legendaryFishies = [
       min: 50,
       max: 200,
     },
+    url: "https://en.wikipedia.org/wiki/Swordfish",
+    traits: [
+      FishyNameTrait.PlaceInName,
+      FishyCategoryTrait.Saltwater,
+      FishyRegionTrait.IndianOcean,
+      FishyRegionTrait.AtlanticOcean,
+      FishyRegionTrait.PacificOcean,
+      new FishyDepthTrait(3, 2000),
+    ],
   }),
 
   new Fishy({
@@ -44,6 +65,14 @@ export const legendaryFishies = [
       min: 250,
       max: 1000,
     },
+    url: "https://en.wikipedia.org/wiki/Mola_tecta",
+    traits: [
+      FishyPhysicalTrait.Spotted,
+      FishyCategoryTrait.Saltwater,
+      FishyRegionTrait.PacificOcean,
+      FishyRegionTrait.AtlanticOcean,
+      new FishyDepthTrait(0, 200),
+    ],
   }),
 
   new Fishy({
@@ -58,6 +87,14 @@ export const legendaryFishies = [
       min: 500,
       max: 1200,
     },
+    url: "https://en.wikipedia.org/wiki/Megamouth_shark",
+    traits: [
+      FishyCategoryTrait.Saltwater,
+      FishyRegionTrait.PacificOcean,
+      FishyRegionTrait.AtlanticOcean,
+      FishyRegionTrait.IndianOcean,
+      new FishyDepthTrait(200, 1000),
+    ],
   }),
 
   new Fishy({
@@ -72,6 +109,13 @@ export const legendaryFishies = [
       min: 500,
       max: 1200,
     },
+    url: "https://en.wikipedia.org/wiki/Taningia_danae",
+    traits: [
+      FishyPhysicalTrait.Red,
+      FishyCategoryTrait.Saltwater,
+      FishyRegionTrait.AllOceans,
+      new FishyDepthTrait(200, 1000),
+    ],
   }),
 
   new NetFishy({
@@ -86,6 +130,14 @@ export const legendaryFishies = [
       min: 0.1,
       max: 1,
     },
+    url: "https://en.wikipedia.org/wiki/Palaemon_paludosus",
+    traits: [
+      FishyPhysicalTrait.Transparent,
+      FishyCategoryTrait.Shrimp,
+      FishyCategoryTrait.Freshwater,
+      FishyRegionTrait.NorthAmerica,
+      new FishyDepthTrait(0, 10),
+    ],
   }),
 
   new NetFishy({
@@ -100,6 +152,14 @@ export const legendaryFishies = [
       min: 0.1,
       max: 0.5,
     },
+    url: "https://en.wikipedia.org/wiki/Zebra_seahorse",
+    traits: [
+      FishyPhysicalTrait.Striped,
+      FishyCategoryTrait.Seahorse,
+      FishyCategoryTrait.Saltwater,
+      FishyRegionTrait.Oceania,
+      new FishyDepthTrait(2, 69),
+    ],
   }),
 
   new NetFishy({
@@ -114,6 +174,14 @@ export const legendaryFishies = [
       min: 0,
       max: 0,
     },
+    url: "https://en.wikipedia.org/wiki/Clione_limacina",
+    traits: [
+      FishyPhysicalTrait.Transparent,
+      FishyRegionTrait.ArcticOcean,
+      FishyRegionTrait.AtlanticOcean,
+      FishyCategoryTrait.Saltwater,
+      new FishyDepthTrait(0, 500),
+    ],
   }),
 
   new GlovesFishy({
@@ -127,6 +195,16 @@ export const legendaryFishies = [
       min: 0.1,
       max: 0.3,
     },
+    url: "https://en.wikipedia.org/wiki/Insulamon_palawanense",
+    traits: [
+      FishyNameTrait.ColorInName,
+      FishyNameTrait.PlaceInName,
+      FishyPhysicalTrait.Purple,
+      FishyCategoryTrait.Crab,
+      FishyCategoryTrait.Freshwater,
+      FishyRegionTrait.Asia,
+      new FishyDepthTrait(0, 10),
+    ],
   }),
 
   new GlovesFishy({
@@ -142,5 +220,14 @@ export const legendaryFishies = [
       max: 0.3,
     },
     displayMode: FishyDisplayMode.Bottom,
+    url: "https://en.wikipedia.org/wiki/Echinothrix_calamaris",
+    traits: [
+      FishyNameTrait.AdjectiveInName,
+      FishyPhysicalTrait.Striped,
+      FishyCategoryTrait.Urchin,
+      FishyRegionTrait.IndianOcean,
+      FishyRegionTrait.PacificOcean,
+      new FishyDepthTrait(0, 70),
+    ],
   }),
 ] satisfies BaseFishy[];

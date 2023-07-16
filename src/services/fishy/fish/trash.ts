@@ -1,4 +1,4 @@
-import { TrashEmoji } from "../../../lib/emoji/FishyEmoji";
+import { FishyEmojiList, TrashEmoji } from "../../../lib/emoji/FishyEmoji";
 import { BaseFishy } from "../classes/BaseFishy";
 import { Fishy, FishyRarities } from "../classes/Fishy";
 
@@ -8,8 +8,8 @@ export const trash = [
     name: "Old boot",
     binomialName: "Vetus calceus",
     rarity: FishyRarities.Trash,
-    emoji: new TrashEmoji("👢", "<:obSilhouette:1091509618280243330>"),
     description: "Someone must've lost their boot in the water...",
+    emoji: new TrashEmoji("👢", "<:obSilhouette:1091509618280243330>"),
     weight: { min: 0, max: 0 },
   }),
 
@@ -50,6 +50,17 @@ export const trash = [
     rarity: FishyRarities.Trash,
     description: "Probably not so good for balling anymore",
     emoji: new TrashEmoji("🏀", "<:bSilhouette:1091509616157933689>"),
+    weight: { min: 0, max: 0 },
+  }),
+
+  new Fishy({
+    id: "unexploded-ordnance",
+    name: "Unexploded ordnance",
+    binomialName: "Ignis inaestimabile",
+    rarity: FishyRarities.Trash,
+    description:
+      "Rule number one of unexploded ordnance: post a pic to Reddit before calling bomb control",
+    emoji: FishyEmojiList.unexplodedOrdnance,
     weight: { min: 0, max: 0 },
   }),
 ] satisfies BaseFishy[];

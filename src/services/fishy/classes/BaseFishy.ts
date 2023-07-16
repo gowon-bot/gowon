@@ -1,5 +1,7 @@
 import { Chance } from "chance";
 import { FishyEmoji } from "../../../lib/emoji/FishyEmoji";
+import { type FishyTrait } from "../traits";
+import { FishyDepthTrait, isFishyDepthTrait } from "../traits/depth";
 import { FishyRarity, FishyRarityData } from "./Fishy";
 
 export enum FishyDisplayMode {
@@ -16,6 +18,8 @@ interface FishyOptions {
   weight: { min: number; max: number };
   emoji: FishyEmoji;
   displayMode?: FishyDisplayMode;
+  traits?: FishyTrait[];
+  url?: string;
 }
 
 export abstract class BaseFishy {
@@ -73,5 +77,19 @@ export abstract class BaseFishy {
 
   get displayMode(): FishyDisplayMode {
     return this.options.displayMode || FishyDisplayMode.Floating;
+  }
+
+  get url(): string {
+    return this.options.url || "";
+  }
+
+  get traits(): FishyTrait[] {
+    return this.options.traits || [];
+  }
+
+  get depth(): FishyDepthTrait | undefined {
+    return this.traits.find((t) => isFishyDepthTrait(t)) as
+      | FishyDepthTrait
+      | undefined;
   }
 }

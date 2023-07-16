@@ -13,8 +13,8 @@ import {
 } from "./FishyService.types";
 import { BaseFishy } from "./classes/BaseFishy";
 import { FishyRarities, FishyRarityData } from "./classes/Fishy";
-import { specialFishies } from "./fishy/special";
-import { trash } from "./fishy/trash";
+import { specialFishies } from "./fish/special";
+import { trash } from "./fish/trash";
 import { findFishy, getFishyList } from "./fishyList";
 
 type RarityPool = [FishyRarityData[], number[]];

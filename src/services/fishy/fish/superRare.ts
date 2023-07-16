@@ -3,6 +3,11 @@ import { BaseFishy } from "../classes/BaseFishy";
 import { Fishy, FishyRarities } from "../classes/Fishy";
 import { GlovesFishy } from "../classes/GlovesFishy";
 import { NetFishy } from "../classes/NetFishy";
+import { FishyCategoryTrait } from "../traits/category";
+import { FishyDepthTrait } from "../traits/depth";
+import { FishyNameTrait } from "../traits/name";
+import { FishyPhysicalTrait } from "../traits/physical";
+import { FishyRegionTrait } from "../traits/region";
 
 export const superRareFishies = [
   new Fishy({
@@ -17,6 +22,15 @@ export const superRareFishies = [
       min: 3,
       max: 6,
     },
+    url: "https://en.wikipedia.org/wiki/Triplewart_seadevil",
+    traits: [
+      FishyRegionTrait.IndianOcean,
+      FishyRegionTrait.AtlanticOcean,
+      FishyRegionTrait.PacificOcean,
+      FishyRegionTrait.ArcticOcean,
+      FishyCategoryTrait.Saltwater,
+      new FishyDepthTrait(150, 4000),
+    ],
   }),
 
   new Fishy({
@@ -30,6 +44,12 @@ export const superRareFishies = [
       min: 9,
       max: 10,
     },
+    url: "https://en.wikipedia.org/wiki/Psychrolutes_marcidus",
+    traits: [
+      FishyRegionTrait.PacificOcean,
+      FishyCategoryTrait.Saltwater,
+      new FishyDepthTrait(600, 1200),
+    ],
   }),
 
   new Fishy({
@@ -43,6 +63,16 @@ export const superRareFishies = [
       min: 0.7,
       max: 2,
     },
+    url: "https://en.wikipedia.org/wiki/Peppermint_angelfish",
+    traits: [
+      FishyNameTrait.ColorInName,
+      FishyPhysicalTrait.Striped,
+      FishyPhysicalTrait.Red,
+      FishyRegionTrait.PacificOcean,
+      FishyCategoryTrait.Perciform,
+      FishyCategoryTrait.Saltwater,
+      new FishyDepthTrait(55, 120),
+    ],
   }),
 
   new Fishy({
@@ -57,6 +87,16 @@ export const superRareFishies = [
       min: 2,
       max: 8,
     },
+    url: "https://en.wikipedia.org/wiki/Blackspotted_puffer",
+    traits: [
+      FishyNameTrait.ColorInName,
+      FishyNameTrait.AdjectiveInName,
+      FishyPhysicalTrait.Spotted,
+      FishyCategoryTrait.Saltwater,
+      FishyRegionTrait.IndianOcean,
+      FishyRegionTrait.PacificOcean,
+      new FishyDepthTrait(0, 25),
+    ],
   }),
 
   new Fishy({
@@ -71,6 +111,15 @@ export const superRareFishies = [
       min: 5,
       max: 15,
     },
+    url: "https://en.wikipedia.org/wiki/Asian_sheepshead_wrasse",
+    traits: [
+      FishyNameTrait.AdjectiveInName,
+      FishyNameTrait.PlaceInName,
+      FishyCategoryTrait.Saltwater,
+      FishyRegionTrait.PacificOcean,
+      FishyRegionTrait.Asia,
+      new FishyDepthTrait(8, 20),
+    ],
   }),
 
   new Fishy({
@@ -85,6 +134,18 @@ export const superRareFishies = [
       min: 4,
       max: 8,
     },
+    url: "https://en.wikipedia.org/wiki/White-edged_lyretail",
+    traits: [
+      FishyNameTrait.ColorInName,
+      FishyNameTrait.AdjectiveInName,
+      FishyPhysicalTrait.Spotted,
+      FishyPhysicalTrait.Red,
+      FishyCategoryTrait.Grouper,
+      FishyCategoryTrait.Saltwater,
+      FishyRegionTrait.IndianOcean,
+      FishyRegionTrait.PacificOcean,
+      new FishyDepthTrait(3, 200),
+    ],
   }),
 
   new NetFishy({
@@ -98,6 +159,15 @@ export const superRareFishies = [
       min: 0.1,
       max: 1,
     },
+    url: "https://en.wikipedia.org/wiki/Bee_shrimp",
+    traits: [
+      FishyNameTrait.ColorInName,
+      FishyPhysicalTrait.Red,
+      FishyRegionTrait.Asia,
+      FishyCategoryTrait.Shrimp,
+      FishyCategoryTrait.Freshwater,
+      new FishyDepthTrait(0, 15),
+    ],
   }),
 
   new NetFishy({
@@ -112,6 +182,15 @@ export const superRareFishies = [
       min: 0.1,
       max: 0.1,
     },
+    url: "https://en.wikipedia.org/wiki/Denise%27s_pygmy_seahorse",
+    traits: [
+      FishyPhysicalTrait.Spotted,
+      FishyPhysicalTrait.Red,
+      FishyCategoryTrait.Seahorse,
+      FishyCategoryTrait.Saltwater,
+      FishyRegionTrait.PacificOcean,
+      new FishyDepthTrait(13, 100),
+    ],
   }),
 
   new GlovesFishy({
@@ -126,6 +205,15 @@ export const superRareFishies = [
       min: 0.1,
       max: 0.1,
     },
+    url: "https://en.wikipedia.org/wiki/Corystes",
+    traits: [
+      FishyNameTrait.AdjectiveInName,
+      FishyCategoryTrait.Crab,
+      FishyCategoryTrait.Saltwater,
+      FishyRegionTrait.AtlanticOcean,
+      FishyRegionTrait.MediterraneanSea,
+      new FishyDepthTrait(0, 100),
+    ],
   }),
 
   new GlovesFishy({
@@ -140,6 +228,15 @@ export const superRareFishies = [
       min: 0.1,
       max: 0.1,
     },
+    url: "https://en.wikipedia.org/wiki/Geosesarma_hagen",
+    traits: [
+      FishyNameTrait.ColorInName,
+      FishyPhysicalTrait.Red,
+      FishyRegionTrait.Asia,
+      FishyCategoryTrait.Crab,
+      FishyCategoryTrait.Freshwater,
+      new FishyDepthTrait(0, 10),
+    ],
   }),
 
   new GlovesFishy({
@@ -154,5 +251,13 @@ export const superRareFishies = [
       min: 0.1,
       max: 0.2,
     },
+    url: "https://en.wikipedia.org/wiki/Thaumastochelidae",
+    traits: [
+      FishyNameTrait.PlaceInName,
+      FishyCategoryTrait.Lobster,
+      FishyCategoryTrait.Saltwater,
+      FishyRegionTrait.PacificOcean,
+      new FishyDepthTrait(650, 1000),
+    ],
   }),
 ] satisfies BaseFishy[];

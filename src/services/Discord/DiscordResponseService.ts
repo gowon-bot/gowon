@@ -8,7 +8,8 @@ import {
 } from "discord.js";
 import { AnalyticsCollector } from "../../analytics/AnalyticsCollector";
 import { DMsAreOffError } from "../../errors/errors";
-import { sleep, ucFirst } from "../../helpers";
+import { sleep } from "../../helpers";
+import { uppercaseFirst } from "../../helpers/string";
 import { GowonContext } from "../../lib/context/Context";
 import { Payload } from "../../lib/context/Payload";
 import { displayUserTag } from "../../lib/views/displays";
@@ -122,7 +123,9 @@ export class DiscordResponseService extends BaseService<DiscordServiceContext> {
     );
 
     const messageContent =
-      shouldReply && !replyOptions.noUppercase ? ucFirst(content) : content;
+      shouldReply && !replyOptions.noUppercase
+        ? uppercaseFirst(content)
+        : content;
 
     const channel = this.getChannel(ctx, options);
 

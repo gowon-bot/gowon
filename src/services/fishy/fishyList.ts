@@ -1,13 +1,13 @@
 import { extractEmojiID } from "../../lib/emoji/Emoji";
 import { BaseFishy } from "./classes/BaseFishy";
 import { FishyRarities, FishyRarityData } from "./classes/Fishy";
-import { commonFishies } from "./fishy/common";
-import { legendaryFishies } from "./fishy/legendary";
-import { rareFishies } from "./fishy/rare";
-import { specialFishies } from "./fishy/special";
-import { superRareFishies } from "./fishy/superRare";
-import { trash } from "./fishy/trash";
-import { uncommonFishy } from "./fishy/uncommon";
+import { commonFishies } from "./fish/common";
+import { legendaryFishies } from "./fish/legendary";
+import { rareFishies } from "./fish/rare";
+import { specialFishies } from "./fish/special";
+import { superRareFishies } from "./fish/superRare";
+import { trash } from "./fish/trash";
+import { uncommonFishy } from "./fish/uncommon";
 
 export const fishyList = [
   ...trash,

@@ -3,6 +3,11 @@ import { BaseFishy, FishyDisplayMode } from "../classes/BaseFishy";
 import { Fishy, FishyRarities } from "../classes/Fishy";
 import { GlovesFishy } from "../classes/GlovesFishy";
 import { NetFishy } from "../classes/NetFishy";
+import { FishyCategoryTrait } from "../traits/category";
+import { FishyDepthTrait } from "../traits/depth";
+import { FishyNameTrait } from "../traits/name";
+import { FishyPhysicalTrait } from "../traits/physical";
+import { FishyRegionTrait } from "../traits/region";
 
 export const commonFishies = [
   new Fishy({
@@ -17,6 +22,17 @@ export const commonFishies = [
       min: 0.5,
       max: 2.5,
     },
+    url: "https://en.wikipedia.org/wiki/Rainbow_trout",
+    traits: [
+      FishyNameTrait.ColorInName,
+      FishyNameTrait.AdjectiveInName,
+      FishyCategoryTrait.Invasive,
+      FishyCategoryTrait.Saltwater,
+      FishyCategoryTrait.Freshwater,
+      FishyRegionTrait.ArcticOcean,
+      FishyRegionTrait.PacificOcean,
+      new FishyDepthTrait(0, 10),
+    ],
   }),
 
   new Fishy({
@@ -31,6 +47,13 @@ export const commonFishies = [
       min: 4.4,
       max: 10,
     },
+    url: "https://en.wikipedia.org/wiki/Chum_salmon",
+    traits: [
+      FishyRegionTrait.PacificOcean,
+      FishyCategoryTrait.Saltwater,
+      FishyCategoryTrait.Freshwater,
+      new FishyDepthTrait(5, 50),
+    ],
   }),
 
   new Fishy({
@@ -44,6 +67,13 @@ export const commonFishies = [
       min: 5,
       max: 9,
     },
+    url: "https://en.wikipedia.org/wiki/Walleye",
+    traits: [
+      FishyRegionTrait.NorthAmerica,
+      FishyCategoryTrait.Perciform,
+      FishyCategoryTrait.Freshwater,
+      new FishyDepthTrait(0, 10),
+    ],
   }),
 
   new Fishy({
@@ -58,6 +88,13 @@ export const commonFishies = [
       min: 1,
       max: 7,
     },
+    url: "https://en.wikipedia.org/wiki/Black_crappie",
+    traits: [
+      FishyNameTrait.ColorInName,
+      FishyRegionTrait.NorthAmerica,
+      FishyCategoryTrait.Freshwater,
+      new FishyDepthTrait(0, 10),
+    ],
   }),
 
   new Fishy({
@@ -71,6 +108,13 @@ export const commonFishies = [
       min: 3,
       max: 8,
     },
+    url: "https://en.wikipedia.org/wiki/Channel_catfish",
+    traits: [
+      FishyCategoryTrait.Invasive,
+      FishyCategoryTrait.Freshwater,
+      FishyRegionTrait.NorthAmerica,
+      new FishyDepthTrait(0, 10),
+    ],
   }),
 
   new Fishy({
@@ -85,6 +129,15 @@ export const commonFishies = [
       min: 8,
       max: 10,
     },
+    url: "https://en.wikipedia.org/wiki/Skipjack_tuna",
+    traits: [
+      FishyCategoryTrait.Perciform,
+      FishyCategoryTrait.Saltwater,
+      FishyRegionTrait.AtlanticOcean,
+      FishyRegionTrait.PacificOcean,
+      FishyRegionTrait.IndianOcean,
+      new FishyDepthTrait(0, 250),
+    ],
   }),
 
   new Fishy({
@@ -99,6 +152,16 @@ export const commonFishies = [
       min: 2,
       max: 3,
     },
+    url: "https://en.wikipedia.org/wiki/Sea_goldie",
+    traits: [
+      FishyNameTrait.ColorInName,
+      FishyPhysicalTrait.Red,
+      FishyCategoryTrait.Grouper,
+      FishyCategoryTrait.Saltwater,
+      FishyRegionTrait.IndianOcean,
+      FishyRegionTrait.PacificOcean,
+      new FishyDepthTrait(0, 35),
+    ],
   }),
 
   new Fishy({
@@ -113,6 +176,15 @@ export const commonFishies = [
       min: 30,
       max: 40,
     },
+    url: "https://en.wikipedia.org/wiki/Atlantic_cod",
+    traits: [
+      FishyNameTrait.PlaceInName,
+      FishyCategoryTrait.Cod,
+      FishyCategoryTrait.Saltwater,
+      FishyRegionTrait.AtlanticOcean,
+      FishyRegionTrait.ArcticOcean,
+      new FishyDepthTrait(50, 200),
+    ],
   }),
 
   new NetFishy({
@@ -127,6 +199,15 @@ export const commonFishies = [
       min: 0.1,
       max: 2,
     },
+    url: "https://en.wikipedia.org/wiki/Pandalus_borealis",
+    traits: [
+      FishyNameTrait.ColorInName,
+      FishyPhysicalTrait.Red,
+      FishyCategoryTrait.Shrimp,
+      FishyCategoryTrait.Saltwater,
+      FishyRegionTrait.AtlanticOcean,
+      new FishyDepthTrait(20, 1300),
+    ],
   }),
 
   new GlovesFishy({
@@ -141,6 +222,13 @@ export const commonFishies = [
       min: 0.5,
       max: 2,
     },
+    url: "https://en.wikipedia.org/wiki/Dungeness_crab",
+    traits: [
+      FishyCategoryTrait.Crab,
+      FishyCategoryTrait.Saltwater,
+      FishyRegionTrait.PacificOcean,
+      new FishyDepthTrait(15, 55),
+    ],
   }),
 
   new GlovesFishy({
@@ -154,6 +242,15 @@ export const commonFishies = [
       min: 0.1,
       max: 0.5,
     },
+    url: "https://en.wikipedia.org/wiki/Callinectes_sapidus",
+    traits: [
+      FishyNameTrait.ColorInName,
+      FishyPhysicalTrait.Blue,
+      FishyRegionTrait.AtlanticOcean,
+      FishyCategoryTrait.Saltwater,
+      FishyCategoryTrait.Crab,
+      new FishyDepthTrait(0, 90),
+    ],
   }),
 
   new GlovesFishy({
@@ -168,6 +265,15 @@ export const commonFishies = [
       min: 0.5,
       max: 4,
     },
+    url: "https://en.wikipedia.org/wiki/American_lobster",
+    traits: [
+      FishyNameTrait.PlaceInName,
+      FishyPhysicalTrait.Red,
+      FishyCategoryTrait.Lobster,
+      FishyCategoryTrait.Saltwater,
+      FishyRegionTrait.AtlanticOcean,
+      new FishyDepthTrait(4, 100),
+    ],
   }),
 
   new GlovesFishy({
@@ -183,5 +289,14 @@ export const commonFishies = [
       max: 0.3,
     },
     displayMode: FishyDisplayMode.Bottom,
+    url: "https://en.wikipedia.org/wiki/Strongylocentrotus_purpuratus",
+    traits: [
+      FishyNameTrait.ColorInName,
+      FishyPhysicalTrait.Purple,
+      FishyCategoryTrait.Urchin,
+      FishyCategoryTrait.Saltwater,
+      FishyRegionTrait.PacificOcean,
+      new FishyDepthTrait(0, 90),
+    ],
   }),
 ] satisfies BaseFishy[];

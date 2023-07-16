@@ -80,7 +80,7 @@ export class FishyQuest extends BaseEntity {
   public countsTowardsQuest(fishyCatch: FishyCatch): boolean {
     switch (this.type) {
       case FishyQuestType.Count:
-        return true;
+        return !fishyCatch.fishy.rarity.isTrash();
       case FishyQuestType.Rarity:
         return (
           FishyRarities[this.stringConstraint! as FishyRarityKey] ===

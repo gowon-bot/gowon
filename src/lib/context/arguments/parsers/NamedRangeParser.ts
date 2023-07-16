@@ -1,5 +1,6 @@
-import { flatDeep, ucFirst } from "../../../../helpers";
+import { flatDeep } from "../../../../helpers";
 import { toInt } from "../../../../helpers/lastfm/";
+import { uppercaseFirst } from "../../../../helpers/string";
 import { NamedRange } from "../../../timeAndDate/NamedRange";
 import { TimeRange } from "../../../timeAndDate/TimeRange";
 
@@ -154,9 +155,9 @@ export class NamedRangeParser {
     const from = [] as string[];
     const to = [] as string[];
 
-    if (m1) from.push(ucFirst(this.months[this.getMonthNumber(m1)][0]));
+    if (m1) from.push(uppercaseFirst(this.months[this.getMonthNumber(m1)][0]));
     if (y1) from.push(`${y1}`);
-    if (m2) to.push(ucFirst(this.months[this.getMonthNumber(m2)][0]));
+    if (m2) to.push(uppercaseFirst(this.months[this.getMonthNumber(m2)][0]));
     if (y2) to.push(`${y2}`);
     if (hyphen && !m2 && !y2) to.push("today");
 
