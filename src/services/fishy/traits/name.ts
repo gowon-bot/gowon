@@ -23,7 +23,9 @@ export function displayFishyNameTrait(
   withFishy: "" | "fishy"
 ): string {
   const withFunc = (str: string) =>
-    `${withFishy} with ${str} in its name`.trim();
+    withFishy
+      ? `${withFishy} with ${str} in its name`
+      : `has ${str} in its name`;
 
   switch (trait) {
     case FishyNameTrait.AdjectiveInName:

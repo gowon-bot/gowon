@@ -40,9 +40,9 @@ export function convertFishyCategoryTrait(
 
 export function displayFishyCategoryTrait(
   trait: FishyCategoryTrait,
-  withFishy: "" | "fishy"
+  _withFishy: "" | "fishy"
 ): string {
-  const withFunc = (str: string) => `${str} ${withFishy}`.trim();
+  const withFunc = (str: string) => `${str} fishy`;
 
   switch (trait) {
     case FishyCategoryTrait.Invasive:

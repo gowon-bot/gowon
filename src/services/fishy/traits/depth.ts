@@ -32,11 +32,15 @@ export function displayFishyDepthTrait(
   trait: FishyDepthTrait,
   withFishy: "" | "fishy"
 ): string {
+  const withFunc = (str: string) => `${withFishy} found ${str}`.trim();
+
   if (trait.deep === -1) {
-    return `${withFishy} found at ${trait.shallow}m or deeper`.trim();
+    return withFunc(`at ${trait.shallow}m or deeper`);
   } else if (trait.shallow === -1) {
-    return `${withFishy} found at up to ${trait.deep}m`.trim();
+    return withFunc(`at up to ${trait.deep}m`);
+  } else if (trait.deep === trait.shallow) {
+    return withFunc(`at ${trait.deep}m`);
   } else {
-    return `${withFishy} found at ${trait.deep}m`.trim();
+    return withFunc(`between ${trait.shallow}m and ${trait.deep}m`);
   }
 }
