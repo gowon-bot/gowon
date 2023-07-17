@@ -1,20 +1,25 @@
 import { Chance } from "chance";
 import { IsNull, Not } from "typeorm";
-import { User } from "../../database/entity/User";
-import { FishyProfile } from "../../database/entity/fishy/FishyProfile";
+import { User } from "../../../database/entity/User";
+import { FishyCatch } from "../../../database/entity/fishy/FishyCatch";
+import { FishyProfile } from "../../../database/entity/fishy/FishyProfile";
 import {
   FishyQuest,
   FishyQuestType,
-} from "../../database/entity/fishy/FishyQuest";
-import { getNumberEnumValues } from "../../helpers/enum";
-import { fishyQuestLevelSize } from "../../helpers/fishy";
-import { average } from "../../helpers/stats";
-import { Emoji } from "../../lib/emoji/Emoji";
-import { BaseService } from "../BaseService";
-import { getFishyList } from "./fishyList";
-import { FishyRarities, FishyRarityData } from "./rarity";
+} from "../../../database/entity/fishy/FishyQuest";
+import { getNumberEnumValues } from "../../../helpers/enum";
+import { fishyQuestLevelSize } from "../../../helpers/fishy";
+import { average } from "../../../helpers/stats";
+import { Emoji } from "../../../lib/emoji/Emoji";
+import { BaseService } from "../../BaseService";
+import { getFishyList } from "../fishyList";
+import { FishyRarities, FishyRarityData, FishyRarityKey } from "../rarity";
+import { matchesFishyTrait } from "../traits";
+import { FishyTraitNoDepth, QuestTraitPicker } from "./QuestTraitPicker";
 
 export class FishyProgressionService extends BaseService {
+  private questTraitPicker = new QuestTraitPicker();
+
   private readonly rarities = [
     FishyRarities.Common,
     FishyRarities.Uncommon,
@@ -70,6 +75,32 @@ export class FishyProgressionService extends BaseService {
     }
   }
 
+  public countsTowardsQuest(
+    quest: FishyQuest,
+    fishyCatch: FishyCatch
+  ): boolean {
+    switch (quest.type) {
+      case FishyQuestType.Count:
+        return !fishyCatch.fishy.rarity.isTrash();
+      case FishyQuestType.Rarity:
+        return (
+          FishyRarities[quest.stringConstraint! as FishyRarityKey] ===
+          fishyCatch.fishy.rarity
+        );
+      case FishyQuestType.Weight:
+        return fishyCatch.weight >= quest.numberConstraint!;
+      case FishyQuestType.Trait:
+        return matchesFishyTrait(
+          fishyCatch.fishy,
+          quest.stringConstraint! as FishyTraitNoDepth
+        );
+      case FishyQuestType.Milestone:
+        true;
+    }
+
+    return false;
+  }
+
   private async generateFishyQuest(
     fishyProfile: FishyProfile
   ): Promise<FishyQuest> {
@@ -85,6 +116,8 @@ export class FishyProgressionService extends BaseService {
         return this.generateCountFishyQuest(fishyProfile.user, count);
       case FishyQuestType.Rarity:
         return this.generateRarityFishyQuest(fishyProfile.user, count, tier);
+      case FishyQuestType.Trait:
+        return this.generateTraitFishyQuest(fishyProfile);
       case FishyQuestType.Weight:
       default:
         return this.generateWeightFishyQuest(fishyProfile.user, count, tier);
@@ -96,6 +129,20 @@ export class FishyProgressionService extends BaseService {
       quester: user,
       count: count,
       type: FishyQuestType.Count,
+      emoji: this.pickFishyQuestEmoji(),
+    });
+  }
+
+  private generateTraitFishyQuest(fishyProfile: FishyProfile): FishyQuest {
+    const { trait, likeliness } = this.questTraitPicker.pick(fishyProfile);
+
+    const count = likeliness > 100 ? 5 : likeliness > 50 ? 3 : 1;
+
+    return FishyQuest.create({
+      quester: fishyProfile.user,
+      count: count,
+      type: FishyQuestType.Trait,
+      stringConstraint: trait,
       emoji: this.pickFishyQuestEmoji(),
     });
   }

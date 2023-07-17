@@ -14,8 +14,8 @@ export enum FishyRegionTrait {
 
   MediterraneanSea = "mediterranean",
 
-  NorthAmerica = "northAmerica",
-  SouthAmerica = "southAmerica",
+  NorthAmerica = "north america",
+  SouthAmerica = "south america",
   Asia = "asia",
   Oceania = "oceania",
   Africa = "africa",

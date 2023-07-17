@@ -22,7 +22,7 @@ export const rareFishies = [
     },
     url: "https://en.wikipedia.org/wiki/Betta_smaragdina",
     traits: [
-      FishyNameTrait.ColorInName,
+      FishyNameTrait.Color,
       FishyPhysicalTrait.Blue,
       FishyRegionTrait.Asia,
       FishyCategoryTrait.Freshwater,
@@ -44,7 +44,7 @@ export const rareFishies = [
     },
     url: "https://en.wikipedia.org/wiki/Orange_clownfish",
     traits: [
-      FishyNameTrait.ColorInName,
+      FishyNameTrait.Color,
       FishyPhysicalTrait.Red,
       FishyCategoryTrait.Saltwater,
       FishyPhysicalTrait.Striped,
@@ -68,7 +68,7 @@ export const rareFishies = [
     },
     url: "https://en.wikipedia.org/wiki/Yellow_boxfish",
     traits: [
-      FishyNameTrait.ColorInName,
+      FishyNameTrait.Color,
       FishyPhysicalTrait.Spotted,
       FishyPhysicalTrait.Yellow,
       FishyRegionTrait.PacificOcean,
@@ -94,8 +94,8 @@ export const rareFishies = [
     },
     url: "https://en.wikipedia.org/wiki/Banded_rainbowfish",
     traits: [
-      FishyNameTrait.ColorInName,
-      FishyNameTrait.AdjectiveInName,
+      FishyNameTrait.Color,
+      FishyNameTrait.Adjective,
       FishyCategoryTrait.Freshwater,
       FishyRegionTrait.Oceania,
       new FishyDepthTrait(0, 20),
@@ -116,7 +116,7 @@ export const rareFishies = [
     },
     url: "https://en.wikipedia.org/wiki/Pseudotropheus_sp._%22acei%22",
     traits: [
-      FishyNameTrait.ColorInName,
+      FishyNameTrait.Color,
       FishyRegionTrait.Africa,
       FishyCategoryTrait.Freshwater,
       new FishyDepthTrait(5, 20),
@@ -136,7 +136,7 @@ export const rareFishies = [
     },
     url: "https://en.wikipedia.org/wiki/Spanish_flag_(fish)",
     traits: [
-      FishyNameTrait.PlaceInName,
+      FishyNameTrait.Place,
       FishyPhysicalTrait.Striped,
       FishyPhysicalTrait.Yellow,
       FishyCategoryTrait.Grouper,
@@ -160,8 +160,8 @@ export const rareFishies = [
     },
     url: "https://en.wikipedia.org/wiki/Goldenstriped_soapfish",
     traits: [
-      FishyNameTrait.ColorInName,
-      FishyNameTrait.AdjectiveInName,
+      FishyNameTrait.Color,
+      FishyNameTrait.Adjective,
       FishyCategoryTrait.Grouper,
       FishyCategoryTrait.Saltwater,
       FishyRegionTrait.IndianOcean,
@@ -184,7 +184,7 @@ export const rareFishies = [
     },
     url: "https://en.wikipedia.org/wiki/Bee_shrimp",
     traits: [
-      FishyNameTrait.ColorInName,
+      FishyNameTrait.Color,
       FishyPhysicalTrait.Blue,
       FishyRegionTrait.Asia,
       FishyCategoryTrait.Shrimp,
@@ -230,7 +230,7 @@ export const rareFishies = [
     },
     url: "https://en.wikipedia.org/wiki/Big-belly_seahorse",
     traits: [
-      FishyNameTrait.AdjectiveInName,
+      FishyNameTrait.Adjective,
       FishyPhysicalTrait.Spotted,
       FishyPhysicalTrait.Yellow,
       FishyRegionTrait.PacificOcean,
@@ -254,7 +254,7 @@ export const rareFishies = [
     },
     url: "https://en.wikipedia.org/wiki/Dromia_personata",
     traits: [
-      FishyNameTrait.AdjectiveInName,
+      FishyNameTrait.Adjective,
       FishyCategoryTrait.Crab,
       FishyCategoryTrait.Saltwater,
       FishyRegionTrait.MediterraneanSea,
@@ -276,8 +276,8 @@ export const rareFishies = [
     },
     url: "https://en.wikipedia.org/wiki/Lithodes_aequispinus",
     traits: [
-      FishyNameTrait.ColorInName,
-      FishyNameTrait.AdjectiveInName,
+      FishyNameTrait.Color,
+      FishyNameTrait.Adjective,
       FishyPhysicalTrait.Red,
       FishyCategoryTrait.Crab,
       FishyCategoryTrait.Saltwater,
@@ -301,8 +301,8 @@ export const rareFishies = [
     },
     url: "https://en.wikipedia.org/wiki/Thymops",
     traits: [
-      FishyNameTrait.AdjectiveInName,
-      FishyNameTrait.PlaceInName,
+      FishyNameTrait.Adjective,
+      FishyNameTrait.Place,
       FishyPhysicalTrait.Red,
       FishyCategoryTrait.Lobster,
       FishyCategoryTrait.Saltwater,

@@ -48,7 +48,7 @@ export const legendaryFishies = [
     },
     url: "https://en.wikipedia.org/wiki/Swordfish",
     traits: [
-      FishyNameTrait.PlaceInName,
+      FishyNameTrait.Place,
       FishyCategoryTrait.Saltwater,
       FishyRegionTrait.IndianOcean,
       FishyRegionTrait.AtlanticOcean,
@@ -201,8 +201,8 @@ export const legendaryFishies = [
     },
     url: "https://en.wikipedia.org/wiki/Insulamon_palawanense",
     traits: [
-      FishyNameTrait.ColorInName,
-      FishyNameTrait.PlaceInName,
+      FishyNameTrait.Color,
+      FishyNameTrait.Place,
       FishyPhysicalTrait.Purple,
       FishyCategoryTrait.Crab,
       FishyCategoryTrait.Freshwater,
@@ -226,7 +226,7 @@ export const legendaryFishies = [
     displayMode: FishyDisplayMode.Bottom,
     url: "https://en.wikipedia.org/wiki/Echinothrix_calamaris",
     traits: [
-      FishyNameTrait.AdjectiveInName,
+      FishyNameTrait.Adjective,
       FishyPhysicalTrait.Striped,
       FishyCategoryTrait.Urchin,
       FishyRegionTrait.IndianOcean,

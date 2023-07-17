@@ -147,7 +147,10 @@ export class Fish extends FishyChildCommand<typeof args> {
     madeQuestProgress: boolean;
     questCompleted: boolean;
   }> {
-    const madeQuestProgress = quest.countsTowardsQuest(fishyCatch);
+    const madeQuestProgress = this.fishyProgressionService.countsTowardsQuest(
+      quest,
+      fishyCatch
+    );
 
     let questCompleted = false;
 

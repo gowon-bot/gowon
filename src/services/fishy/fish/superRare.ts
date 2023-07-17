@@ -63,7 +63,7 @@ export const superRareFishies = [
     },
     url: "https://en.wikipedia.org/wiki/Peppermint_angelfish",
     traits: [
-      FishyNameTrait.ColorInName,
+      FishyNameTrait.Color,
       FishyPhysicalTrait.Striped,
       FishyPhysicalTrait.Red,
       FishyRegionTrait.PacificOcean,
@@ -87,8 +87,8 @@ export const superRareFishies = [
     },
     url: "https://en.wikipedia.org/wiki/Blackspotted_puffer",
     traits: [
-      FishyNameTrait.ColorInName,
-      FishyNameTrait.AdjectiveInName,
+      FishyNameTrait.Color,
+      FishyNameTrait.Adjective,
       FishyPhysicalTrait.Spotted,
       FishyCategoryTrait.Saltwater,
       FishyRegionTrait.IndianOcean,
@@ -111,8 +111,8 @@ export const superRareFishies = [
     },
     url: "https://en.wikipedia.org/wiki/Asian_sheepshead_wrasse",
     traits: [
-      FishyNameTrait.AdjectiveInName,
-      FishyNameTrait.PlaceInName,
+      FishyNameTrait.Adjective,
+      FishyNameTrait.Place,
       FishyCategoryTrait.Saltwater,
       FishyRegionTrait.PacificOcean,
       FishyRegionTrait.Asia,
@@ -134,8 +134,8 @@ export const superRareFishies = [
     },
     url: "https://en.wikipedia.org/wiki/White-edged_lyretail",
     traits: [
-      FishyNameTrait.ColorInName,
-      FishyNameTrait.AdjectiveInName,
+      FishyNameTrait.Color,
+      FishyNameTrait.Adjective,
       FishyPhysicalTrait.Spotted,
       FishyPhysicalTrait.Red,
       FishyCategoryTrait.Grouper,
@@ -159,7 +159,7 @@ export const superRareFishies = [
     },
     url: "https://en.wikipedia.org/wiki/Bee_shrimp",
     traits: [
-      FishyNameTrait.ColorInName,
+      FishyNameTrait.Color,
       FishyPhysicalTrait.Red,
       FishyRegionTrait.Asia,
       FishyCategoryTrait.Shrimp,
@@ -205,7 +205,7 @@ export const superRareFishies = [
     },
     url: "https://en.wikipedia.org/wiki/Corystes",
     traits: [
-      FishyNameTrait.AdjectiveInName,
+      FishyNameTrait.Adjective,
       FishyCategoryTrait.Crab,
       FishyCategoryTrait.Saltwater,
       FishyRegionTrait.AtlanticOcean,
@@ -228,7 +228,7 @@ export const superRareFishies = [
     },
     url: "https://en.wikipedia.org/wiki/Geosesarma_hagen",
     traits: [
-      FishyNameTrait.ColorInName,
+      FishyNameTrait.Color,
       FishyPhysicalTrait.Red,
       FishyRegionTrait.Asia,
       FishyCategoryTrait.Crab,
@@ -251,7 +251,7 @@ export const superRareFishies = [
     },
     url: "https://en.wikipedia.org/wiki/Thaumastochelidae",
     traits: [
-      FishyNameTrait.PlaceInName,
+      FishyNameTrait.Place,
       FishyCategoryTrait.Lobster,
       FishyCategoryTrait.Saltwater,
       FishyRegionTrait.PacificOcean,

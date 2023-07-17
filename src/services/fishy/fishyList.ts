@@ -20,12 +20,16 @@ export const fishyList = [
 ];
 
 export function getFishyList(
-  rarity: FishyRarityData,
+  rarity?: FishyRarityData,
   fishyProfileLevel?: number
 ): Fishy[] {
   let fishies: Fishy[];
 
-  switch (rarity.name) {
+  switch (rarity?.name) {
+    case undefined:
+      fishies = fishyList;
+      break;
+
     case FishyRarities.Trash.name:
       fishies = trash;
       break;
@@ -51,7 +55,7 @@ export function getFishyList(
       break;
 
     default:
-      fishies = specialFishies.filter((f) => f.rarity.name === rarity.name);
+      fishies = specialFishies.filter((f) => f.rarity.name === rarity!.name);
   }
 
   if (fishyProfileLevel !== undefined) {

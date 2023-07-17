@@ -28,8 +28,8 @@ export const commonFishies = [
     },
     url: "https://en.wikipedia.org/wiki/Rainbow_trout",
     traits: [
-      FishyNameTrait.ColorInName,
-      FishyNameTrait.AdjectiveInName,
+      FishyNameTrait.Color,
+      FishyNameTrait.Adjective,
       FishyCategoryTrait.Invasive,
       FishyCategoryTrait.Saltwater,
       FishyCategoryTrait.Freshwater,
@@ -94,7 +94,7 @@ export const commonFishies = [
     },
     url: "https://en.wikipedia.org/wiki/Black_crappie",
     traits: [
-      FishyNameTrait.ColorInName,
+      FishyNameTrait.Color,
       FishyRegionTrait.NorthAmerica,
       FishyCategoryTrait.Freshwater,
       new FishyDepthTrait(0, 10),
@@ -158,7 +158,7 @@ export const commonFishies = [
     },
     url: "https://en.wikipedia.org/wiki/Sea_goldie",
     traits: [
-      FishyNameTrait.ColorInName,
+      FishyNameTrait.Color,
       FishyPhysicalTrait.Red,
       FishyCategoryTrait.Grouper,
       FishyCategoryTrait.Saltwater,
@@ -182,7 +182,7 @@ export const commonFishies = [
     },
     url: "https://en.wikipedia.org/wiki/Atlantic_cod",
     traits: [
-      FishyNameTrait.PlaceInName,
+      FishyNameTrait.Place,
       FishyCategoryTrait.Cod,
       FishyCategoryTrait.Saltwater,
       FishyRegionTrait.AtlanticOcean,
@@ -205,7 +205,7 @@ export const commonFishies = [
     },
     url: "https://en.wikipedia.org/wiki/Pandalus_borealis",
     traits: [
-      FishyNameTrait.ColorInName,
+      FishyNameTrait.Color,
       FishyPhysicalTrait.Red,
       FishyCategoryTrait.Shrimp,
       FishyCategoryTrait.Saltwater,
@@ -248,7 +248,7 @@ export const commonFishies = [
     },
     url: "https://en.wikipedia.org/wiki/Callinectes_sapidus",
     traits: [
-      FishyNameTrait.ColorInName,
+      FishyNameTrait.Color,
       FishyPhysicalTrait.Blue,
       FishyRegionTrait.AtlanticOcean,
       FishyCategoryTrait.Saltwater,
@@ -271,7 +271,7 @@ export const commonFishies = [
     },
     url: "https://en.wikipedia.org/wiki/American_lobster",
     traits: [
-      FishyNameTrait.PlaceInName,
+      FishyNameTrait.Place,
       FishyPhysicalTrait.Red,
       FishyCategoryTrait.Lobster,
       FishyCategoryTrait.Saltwater,
@@ -295,7 +295,7 @@ export const commonFishies = [
     displayMode: FishyDisplayMode.Bottom,
     url: "https://en.wikipedia.org/wiki/Strongylocentrotus_purpuratus",
     traits: [
-      FishyNameTrait.ColorInName,
+      FishyNameTrait.Color,
       FishyPhysicalTrait.Purple,
       FishyCategoryTrait.Urchin,
       FishyCategoryTrait.Saltwater,

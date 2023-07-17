@@ -1,9 +1,9 @@
 import { looseCompare } from "../../../helpers/string";
 
 export enum FishyNameTrait {
-  ColorInName = "colorInName",
-  PlaceInName = "placeInName",
-  AdjectiveInName = "adjectiveInName",
+  Color = "color",
+  Place = "place",
+  Adjective = "adjective",
 }
 
 export function isFishyNameTrait(trait: string): trait is FishyNameTrait {
@@ -28,13 +28,13 @@ export function displayFishyNameTrait(
       : `has ${str} in its name`;
 
   switch (trait) {
-    case FishyNameTrait.AdjectiveInName:
+    case FishyNameTrait.Adjective:
       return withFunc("an adjective");
 
-    case FishyNameTrait.PlaceInName:
+    case FishyNameTrait.Place:
       return withFunc("a place");
 
-    case FishyNameTrait.ColorInName:
+    case FishyNameTrait.Color:
       return withFunc("a color");
   }
 }

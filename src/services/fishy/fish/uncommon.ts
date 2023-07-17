@@ -50,7 +50,7 @@ export const uncommonFishy = [
     },
     url: "https://en.wikipedia.org/wiki/Yellow_tang",
     traits: [
-      FishyNameTrait.ColorInName,
+      FishyNameTrait.Color,
       FishyPhysicalTrait.Yellow,
       FishyCategoryTrait.Surgeonfish,
       FishyCategoryTrait.Saltwater,
@@ -73,7 +73,7 @@ export const uncommonFishy = [
     },
     url: "https://en.wikipedia.org/wiki/Paracanthurus",
     traits: [
-      FishyNameTrait.ColorInName,
+      FishyNameTrait.Color,
       FishyPhysicalTrait.Blue,
       FishyRegionTrait.PacificOcean,
       FishyCategoryTrait.Saltwater,
@@ -95,7 +95,7 @@ export const uncommonFishy = [
     },
     url: "https://en.wikipedia.org/wiki/White_sturgeon",
     traits: [
-      FishyNameTrait.ColorInName,
+      FishyNameTrait.Color,
       FishyRegionTrait.AtlanticOcean,
       FishyRegionTrait.PacificOcean,
       FishyCategoryTrait.Freshwater,
@@ -139,7 +139,7 @@ export const uncommonFishy = [
     },
     url: "https://en.wikipedia.org/wiki/Red_grouper",
     traits: [
-      FishyNameTrait.ColorInName,
+      FishyNameTrait.Color,
       FishyPhysicalTrait.Red,
       FishyCategoryTrait.Grouper,
       FishyCategoryTrait.Saltwater,
@@ -185,7 +185,7 @@ export const uncommonFishy = [
     url: "https://en.wikipedia.org/wiki/Striped_Raphael_catfish",
     traits: [
       FishyCategoryTrait.Freshwater,
-      FishyNameTrait.AdjectiveInName,
+      FishyNameTrait.Adjective,
       FishyPhysicalTrait.Striped,
       FishyRegionTrait.SouthAmerica,
       new FishyDepthTrait(0, 10),
@@ -206,7 +206,7 @@ export const uncommonFishy = [
     },
     url: "https://en.wikipedia.org/wiki/Poor_cod",
     traits: [
-      FishyNameTrait.AdjectiveInName,
+      FishyNameTrait.Adjective,
       FishyRegionTrait.AtlanticOcean,
       FishyCategoryTrait.Cod,
       FishyCategoryTrait.Saltwater,
@@ -228,7 +228,7 @@ export const uncommonFishy = [
     },
     url: "https://en.wikipedia.org/wiki/Penaeus_monodon",
     traits: [
-      FishyNameTrait.ColorInName,
+      FishyNameTrait.Color,
       FishyRegionTrait.AtlanticOcean,
       FishyRegionTrait.PacificOcean,
       FishyRegionTrait.IndianOcean,
@@ -272,7 +272,7 @@ export const uncommonFishy = [
     },
     url: "https://en.wikipedia.org/wiki/Hippocampus_kuda",
     traits: [
-      FishyNameTrait.AdjectiveInName,
+      FishyNameTrait.Adjective,
       FishyPhysicalTrait.Yellow,
       FishyCategoryTrait.Seahorse,
       FishyCategoryTrait.Saltwater,
@@ -295,7 +295,7 @@ export const uncommonFishy = [
     },
     url: "https://en.wikipedia.org/wiki/Lined_seahorse",
     traits: [
-      FishyNameTrait.AdjectiveInName,
+      FishyNameTrait.Adjective,
       FishyCategoryTrait.Seahorse,
       FishyCategoryTrait.Saltwater,
       FishyRegionTrait.AtlanticOcean,
@@ -317,7 +317,7 @@ export const uncommonFishy = [
     },
     url: "https://en.wikipedia.org/wiki/Florida_stone_crab",
     traits: [
-      FishyNameTrait.PlaceInName,
+      FishyNameTrait.Place,
       FishyCategoryTrait.Crab,
       FishyCategoryTrait.Saltwater,
       FishyRegionTrait.AtlanticOcean,
@@ -339,7 +339,7 @@ export const uncommonFishy = [
     },
     url: "https://en.wikipedia.org/wiki/Homarus_gammarus",
     traits: [
-      FishyNameTrait.PlaceInName,
+      FishyNameTrait.Place,
       FishyPhysicalTrait.Red,
       FishyPhysicalTrait.Blue,
       FishyRegionTrait.AtlanticOcean,

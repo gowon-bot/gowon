@@ -9,15 +9,17 @@ import {
 import { bold } from "../../../helpers/discord";
 import { FishyRarityEmojis } from "../../../lib/emoji/FishyRarityEmoji";
 import { displayNumber } from "../../../lib/views/displays";
-import { FishyRarities, FishyRarityKey } from "../../../services/fishy/rarity";
+import { FishyTraitNoDepth } from "../../../services/fishy/quests/QuestTraitPicker";
+import { FishyRarities } from "../../../services/fishy/rarity";
+import { displayFishyTrait } from "../../../services/fishy/traits";
 import { User } from "../User";
-import { FishyCatch } from "./FishyCatch";
 
 export enum FishyQuestType {
   Count = 0,
   Rarity,
   Weight,
   Milestone,
+  Trait,
 }
 
 @Entity({ name: "fishy_quests" })
@@ -67,29 +69,13 @@ export class FishyQuest extends BaseEntity {
         return this.getQuestNameForRarity(questStart);
       case FishyQuestType.Weight:
         return this.getQuestNameForWeight(questStart);
+      case FishyQuestType.Trait:
+        return this.getQuestNameForTrait(questStart);
       case FishyQuestType.Milestone:
         return `Catch ${bold(displayNumber(this.count))} fishy in total`;
     }
 
     return "";
-  }
-
-  public countsTowardsQuest(fishyCatch: FishyCatch): boolean {
-    switch (this.type) {
-      case FishyQuestType.Count:
-        return !fishyCatch.fishy.rarity.isTrash();
-      case FishyQuestType.Rarity:
-        return (
-          FishyRarities[this.stringConstraint! as FishyRarityKey] ===
-          fishyCatch.fishy.rarity
-        );
-      case FishyQuestType.Weight:
-        return fishyCatch.weight >= this.numberConstraint!;
-      case FishyQuestType.Milestone:
-        true;
-    }
-
-    return false;
   }
 
   private getQuestNameForRarity(start: string): string {
@@ -110,6 +96,13 @@ export class FishyQuest extends BaseEntity {
     return (
       start +
       `fishy weighing at least **${displayNumber(this.numberConstraint)}kg**.`
+    );
+  }
+
+  private getQuestNameForTrait(start: string): string {
+    return (
+      start +
+      displayFishyTrait(this.stringConstraint as FishyTraitNoDepth, true)
     );
   }
 
