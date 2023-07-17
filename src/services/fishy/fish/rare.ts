@@ -1,8 +1,6 @@
-import { FishyEmojiList } from "../../../lib/emoji/FishyEmoji";
-import { BaseFishy } from "../classes/BaseFishy";
-import { Fishy, FishyRarities } from "../classes/Fishy";
-import { GlovesFishy } from "../classes/GlovesFishy";
-import { NetFishy } from "../classes/NetFishy";
+import { FishyEmojis } from "../../../lib/emoji/FishyEmoji";
+import { Fishy, Level1Fishy, Level2Fishy, Level3Fishy } from "../Fishy";
+import { FishyRarities } from "../rarity";
 import { FishyCategoryTrait } from "../traits/category";
 import { FishyDepthTrait } from "../traits/depth";
 import { FishyNameTrait } from "../traits/name";
@@ -10,14 +8,14 @@ import { FishyPhysicalTrait } from "../traits/physical";
 import { FishyRegionTrait } from "../traits/region";
 
 export const rareFishies = [
-  new Fishy({
+  new Level1Fishy({
     id: "blue-betta",
     name: "Blue Betta",
     binomialName: "Betta smaragdina",
     rarity: FishyRarities.Rare,
     description:
       "The species gets its blue colours due to refraction and interference of light that results from hexagonal crystals that are less than 0.5 micrometres",
-    emoji: FishyEmojiList.blueBetta,
+    emoji: FishyEmojis.blueBetta,
     weight: {
       min: 0.1,
       max: 0.2,
@@ -32,14 +30,14 @@ export const rareFishies = [
     ],
   }),
 
-  new Fishy({
+  new Level1Fishy({
     id: "orange-clownfish",
     name: "Orange Clownfish",
     binomialName: "Amphiprion percula",
     rarity: FishyRarities.Rare,
     description:
       "This fish hides from predators in sea anenome's stinging tentacles, which it is immune to",
-    emoji: FishyEmojiList.clownfish,
+    emoji: FishyEmojis.clownfish,
     weight: {
       min: 1,
       max: 3,
@@ -56,14 +54,14 @@ export const rareFishies = [
     ],
   }),
 
-  new Fishy({
+  new Level1Fishy({
     id: "yellow-boxfish",
     name: "Yellow Boxfish",
     binomialName: "Ostracion cubicum",
     rarity: FishyRarities.Rare,
     description:
       "Boxfish are known for their armored and rigid body, which is adapted to its style of swimming",
-    emoji: FishyEmojiList.yellowBoxfish,
+    emoji: FishyEmojis.yellowBoxfish,
     weight: {
       min: 1,
       max: 3,
@@ -82,14 +80,14 @@ export const rareFishies = [
     ],
   }),
 
-  new Fishy({
+  new Level1Fishy({
     id: "banded-rainbowfish",
     name: "Banded Rainbowfish",
     binomialName: "Melanotaenia trifasciata",
     rarity: FishyRarities.Rare,
     description:
       "Males compete with one another for territory and female attention in contests where they compare body coloration and size",
-    emoji: FishyEmojiList.bandedRainbowfish,
+    emoji: FishyEmojis.bandedRainbowfish,
     weight: {
       min: 0.5,
       max: 2,
@@ -104,14 +102,14 @@ export const rareFishies = [
     ],
   }),
 
-  new Fishy({
+  new Level1Fishy({
     id: "yellow-tail-acei",
     name: "Yellow-tail Acei",
     binomialName: 'Pseudotropheus sp. "acei"',
     rarity: FishyRarities.Rare,
     description:
       "This fish can only be found naturally in Lake Malawi, however it is a popular fish for fish-keepers",
-    emoji: FishyEmojiList.yellowtailAcei,
+    emoji: FishyEmojis.yellowtailAcei,
     weight: {
       min: 0.3,
       max: 1.7,
@@ -125,13 +123,13 @@ export const rareFishies = [
     ],
   }),
 
-  new Fishy({
+  new Level1Fishy({
     id: "spanish-flag",
     name: "Spanish Flag",
     binomialName: "Gonioplectrus hispanus",
     rarity: FishyRarities.Rare,
     description: "Not to be confused with the Spanish flag",
-    emoji: FishyEmojiList.spanishFlag,
+    emoji: FishyEmojis.spanishFlag,
     weight: {
       min: 4,
       max: 7,
@@ -148,14 +146,14 @@ export const rareFishies = [
     ],
   }),
 
-  new Fishy({
+  new Level1Fishy({
     id: "goldenstriped-soapfish",
     name: "Goldenstriped Soapfish",
     binomialName: "Grammistes sexlineatus",
     rarity: FishyRarities.Rare,
     description:
       "The secretions from the skin of soapfish resemble lathered soap, and are the basis for the name.",
-    emoji: FishyEmojiList.goldenstripedSoapfish,
+    emoji: FishyEmojis.goldenstripedSoapfish,
     weight: {
       min: 3,
       max: 6,
@@ -172,12 +170,12 @@ export const rareFishies = [
     ],
   }),
 
-  new NetFishy({
+  new Level2Fishy({
     id: "blue-bolt-shrimp",
     name: "Blue Bolt Shrimp",
     binomialName: "Caridina cantonensis",
     rarity: FishyRarities.Rare,
-    emoji: FishyEmojiList.blueBoltShrimp,
+    emoji: FishyEmojis.blueBoltShrimp,
     description:
       "This shrimp is a blue variant of the Bee Shrimp, named after its brilliant blue colour.",
     weight: {
@@ -195,12 +193,12 @@ export const rareFishies = [
     ],
   }),
 
-  new NetFishy({
+  new Level2Fishy({
     id: "cardinal-shrimp",
     name: "Cardinal Shrimp",
     binomialName: "Caridina dennerli",
     rarity: FishyRarities.Rare,
-    emoji: FishyEmojiList.cardinalShrimp,
+    emoji: FishyEmojis.cardinalShrimp,
     description:
       "No Caridina dennerli have been recorded in the wild since 2013, and the species possibly is extinct in the wild. However, it is still kept and bred in captivity.",
     weight: {
@@ -218,12 +216,12 @@ export const rareFishies = [
     ],
   }),
 
-  new NetFishy({
+  new Level2Fishy({
     id: "big-belly-seahorse",
     name: "Big-belly Seahorse",
     binomialName: "Hippocampus abdominalis",
     rarity: FishyRarities.Rare,
-    emoji: FishyEmojiList.bigbellySeahorse,
+    emoji: FishyEmojis.bigbellySeahorse,
     description:
       "Each this species' eyes can move independently, allowing it to more easily see predators",
     weight: {
@@ -242,12 +240,12 @@ export const rareFishies = [
     ],
   }),
 
-  new GlovesFishy({
+  new Level3Fishy({
     id: "sleepy-crab",
     name: "Sleepy Crab",
     binomialName: "Dromia dormia",
     rarity: FishyRarities.Rare,
-    emoji: FishyEmojiList.sleepyCrab,
+    emoji: FishyEmojis.sleepyCrab,
     description:
       "This species of crab carries a sponge on its back, earning it the nickname of Sponge Crab",
     weight: {
@@ -265,12 +263,12 @@ export const rareFishies = [
     ],
   }),
 
-  new GlovesFishy({
+  new Level3Fishy({
     id: "golden-king-crab",
     name: "Golden King Crab",
     binomialName: "Lithodes aequispinus",
     rarity: FishyRarities.Rare,
-    emoji: FishyEmojiList.goldenKingCrab,
+    emoji: FishyEmojis.goldenKingCrab,
     description: "This crab uses its strong sense of smell to seek out food",
     weight: {
       min: 3,
@@ -289,12 +287,12 @@ export const rareFishies = [
     ],
   }),
 
-  new GlovesFishy({
+  new Level3Fishy({
     id: "patagonian-lobsterette",
     name: "Patagonian Lobsterette",
     binomialName: "Thymops birsteini",
     rarity: FishyRarities.Rare,
-    emoji: FishyEmojiList.patagonianLobsterette,
+    emoji: FishyEmojis.patagonianLobsterette,
     description:
       "This species seems to prefer muddy bottoms, and has been observed entering and exiting burrows",
     weight: {
@@ -312,4 +310,4 @@ export const rareFishies = [
       new FishyDepthTrait(120, 1500),
     ],
   }),
-] satisfies BaseFishy[];
+] satisfies Fishy[];

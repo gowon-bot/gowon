@@ -1,13 +1,8 @@
 import { HexColorString } from "discord.js";
 import {
   FishyRarityEmoji,
-  FishyRarityEmojiList,
-} from "../../../lib/emoji/FishyRarityEmoji";
-import { BaseFishy } from "./BaseFishy";
-
-export class Fishy extends BaseFishy {
-  requiredFishyLevel = 1;
-}
+  FishyRarityEmojis,
+} from "../../lib/emoji/FishyRarityEmoji";
 
 export class FishyRarityData {
   constructor(
@@ -30,34 +25,29 @@ export class FishyRarityData {
 
 export const FishyRarities = {
   // Grey
-  Trash: new FishyRarityData(
-    "Trash",
-    10,
-    "#929394",
-    FishyRarityEmojiList.trash
-  ),
+  Trash: new FishyRarityData("Trash", 10, "#929394", FishyRarityEmojis.trash),
   // Green
   Common: new FishyRarityData(
     "Common",
     44,
     "#8bc34a",
-    FishyRarityEmojiList.common
+    FishyRarityEmojis.common
   ),
   // Blue
   Uncommon: new FishyRarityData(
     "Uncommon",
     29,
     "#4a8bc3",
-    FishyRarityEmojiList.uncommon
+    FishyRarityEmojis.uncommon
   ),
   // Purple
-  Rare: new FishyRarityData("Rare", 10, "#be4ac3", FishyRarityEmojiList.rare),
+  Rare: new FishyRarityData("Rare", 10, "#be4ac3", FishyRarityEmojis.rare),
   // Pink
   SuperRare: new FishyRarityData(
     "Super rare",
     5.5,
     "#ffc0cb",
-    FishyRarityEmojiList.superRare,
+    FishyRarityEmojis.superRare,
     "SuperRare"
   ),
   // Yellow
@@ -65,7 +55,7 @@ export const FishyRarities = {
     "Legendary",
     1.2,
     "#ffc107",
-    FishyRarityEmojiList.legendary
+    FishyRarityEmojis.legendary
   ),
   // // Red
   // Mythic: new FishyRarityData("???", 0.3, "#e91e63", Emoji.mythic, "Mythic"),

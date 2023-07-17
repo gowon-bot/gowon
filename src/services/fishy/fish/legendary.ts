@@ -1,8 +1,12 @@
-import { FishyEmojiList } from "../../../lib/emoji/FishyEmoji";
-import { BaseFishy, FishyDisplayMode } from "../classes/BaseFishy";
-import { Fishy, FishyRarities } from "../classes/Fishy";
-import { GlovesFishy } from "../classes/GlovesFishy";
-import { NetFishy } from "../classes/NetFishy";
+import { FishyEmojis } from "../../../lib/emoji/FishyEmoji";
+import {
+  Fishy,
+  FishyDisplayMode,
+  Level1Fishy,
+  Level2Fishy,
+  Level3Fishy,
+} from "../Fishy";
+import { FishyRarities } from "../rarity";
 import { FishyCategoryTrait } from "../traits/category";
 import { FishyDepthTrait } from "../traits/depth";
 import { FishyNameTrait } from "../traits/name";
@@ -10,13 +14,13 @@ import { FishyPhysicalTrait } from "../traits/physical";
 import { FishyRegionTrait } from "../traits/region";
 
 export const legendaryFishies = [
-  new Fishy({
+  new Level1Fishy({
     id: "bull-shark",
     name: "Bull Shark",
     binomialName: "Carcharhinus leucas",
     rarity: FishyRarities.Legendary,
     description: "Bull Sharks were the inspiration for the 1974 novel *Jaws*.",
-    emoji: FishyEmojiList.bullShark,
+    emoji: FishyEmojis.bullShark,
     weight: {
       min: 100,
       max: 150,
@@ -30,14 +34,14 @@ export const legendaryFishies = [
     ],
   }),
 
-  new Fishy({
+  new Level1Fishy({
     id: "north-pacific-swordfish",
     name: "North Pacific Swordfish",
     binomialName: "Xiphias gladius",
     rarity: FishyRarities.Legendary,
     description:
       'The popular belief of the "sword" being used as a spear is misleading, their nose is actually more likely to be used to slash at its prey.',
-    emoji: FishyEmojiList.northPacificSwordfish,
+    emoji: FishyEmojis.northPacificSwordfish,
     weight: {
       min: 50,
       max: 200,
@@ -53,14 +57,14 @@ export const legendaryFishies = [
     ],
   }),
 
-  new Fishy({
+  new Level1Fishy({
     id: "hoodwinker-sunfish",
     name: "Hoodwinker Sunfish",
     binomialName: "Mola tecta",
     rarity: FishyRarities.Legendary,
     description:
       "This fish was only discovered in 2015, due to its habit of blending in with other species of sunfish.",
-    emoji: FishyEmojiList.hoodwinkerSunfish,
+    emoji: FishyEmojis.hoodwinkerSunfish,
     weight: {
       min: 250,
       max: 1000,
@@ -75,14 +79,14 @@ export const legendaryFishies = [
     ],
   }),
 
-  new Fishy({
+  new Level1Fishy({
     id: "megamouth-shark",
     name: "Megamouth Shark",
     binomialName: "Megachasma pelagios",
     rarity: FishyRarities.Legendary,
     description:
       "Since its discovery in 1976, fewer than 100 specimens have been observed or caught...",
-    emoji: FishyEmojiList.megamouthShark,
+    emoji: FishyEmojis.megamouthShark,
     weight: {
       min: 500,
       max: 1200,
@@ -97,14 +101,14 @@ export const legendaryFishies = [
     ],
   }),
 
-  new Fishy({
+  new Level1Fishy({
     id: "dana-octopus-squid",
     name: "Dana Octopus Squid",
     binomialName: "Taningia danae",
     rarity: FishyRarities.Legendary,
     description:
       'The Dana Octopus Squid possesses giant bioluminescence organs the size of lemons, which it can "blink" using a black membrane.',
-    emoji: FishyEmojiList.danaOctopusSquid,
+    emoji: FishyEmojis.danaOctopusSquid,
     weight: {
       min: 500,
       max: 1200,
@@ -118,12 +122,12 @@ export const legendaryFishies = [
     ],
   }),
 
-  new NetFishy({
+  new Level2Fishy({
     id: "ghost-shrimp",
     name: "Ghost Shrimp",
     binomialName: "Palaemonetes paludosus",
     rarity: FishyRarities.Legendary,
-    emoji: FishyEmojiList.ghostShrimp,
+    emoji: FishyEmojis.ghostShrimp,
     description:
       "This shrimp is nocturnal, remaining hidden among the vegetation by day, and emerging at night to feed on plankton",
     weight: {
@@ -140,12 +144,12 @@ export const legendaryFishies = [
     ],
   }),
 
-  new NetFishy({
+  new Level2Fishy({
     id: "zebra-seahorse",
     name: "Zebra Seahorse",
     binomialName: "Hippocampus zebra",
     rarity: FishyRarities.Legendary,
-    emoji: FishyEmojiList.zebraSeahorse,
+    emoji: FishyEmojis.zebraSeahorse,
     description:
       "This species is ovoviviparous, which means it carries the eggs in a pouch which is situated under the tail",
     weight: {
@@ -162,12 +166,12 @@ export const legendaryFishies = [
     ],
   }),
 
-  new NetFishy({
+  new Level2Fishy({
     id: "sea-angel",
     name: "Sea Angel",
     binomialName: "Clione limacina",
     rarity: FishyRarities.Legendary,
-    emoji: FishyEmojiList.clione,
+    emoji: FishyEmojis.clione,
     description:
       "This species was first described in 1676, when it became the first pteropod without a shell to be described",
     weight: {
@@ -184,12 +188,12 @@ export const legendaryFishies = [
     ],
   }),
 
-  new GlovesFishy({
+  new Level3Fishy({
     id: "palawan-purple-crab",
     name: "Palawan Purple Crab",
     binomialName: "Insulamon palawanense",
     rarity: FishyRarities.Legendary,
-    emoji: FishyEmojiList.palawanPurpleCrab,
+    emoji: FishyEmojis.palawanPurpleCrab,
     description: "This species of crab was only recently described in 2012",
     weight: {
       min: 0.1,
@@ -207,12 +211,12 @@ export const legendaryFishies = [
     ],
   }),
 
-  new GlovesFishy({
+  new Level3Fishy({
     id: "banded-sea-urchin",
     name: "Banded Sea Urchin",
     binomialName: "Echinothrix calamaris",
     rarity: FishyRarities.Legendary,
-    emoji: FishyEmojiList.bandedSeaUrchin,
+    emoji: FishyEmojis.bandedSeaUrchin,
     description:
       "This sea urchin is active at night, hiding in crevices or under rocks during the day",
     weight: {
@@ -230,4 +234,4 @@ export const legendaryFishies = [
       new FishyDepthTrait(0, 70),
     ],
   }),
-] satisfies BaseFishy[];
+] satisfies Fishy[];

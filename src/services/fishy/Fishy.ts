@@ -1,8 +1,8 @@
 import { Chance } from "chance";
-import { FishyEmoji } from "../../../lib/emoji/FishyEmoji";
-import { type FishyTrait } from "../traits";
-import { FishyDepthTrait, isFishyDepthTrait } from "../traits/depth";
-import { FishyRarity, FishyRarityData } from "./Fishy";
+import { FishyEmoji } from "../../lib/emoji/FishyEmoji";
+import { FishyRarity, FishyRarityData } from "./rarity";
+import { type FishyTrait } from "./traits";
+import { FishyDepthTrait, isFishyDepthTrait } from "./traits/depth";
 
 export enum FishyDisplayMode {
   Floating,
@@ -22,7 +22,7 @@ interface FishyOptions {
   url?: string;
 }
 
-export abstract class BaseFishy {
+export abstract class Fishy {
   abstract requiredFishyLevel: number;
 
   constructor(private options: FishyOptions) {}
@@ -92,4 +92,16 @@ export abstract class BaseFishy {
       | FishyDepthTrait
       | undefined;
   }
+}
+
+export class Level1Fishy extends Fishy {
+  requiredFishyLevel = 1;
+}
+
+export class Level3Fishy extends Fishy {
+  requiredFishyLevel = 3;
+}
+
+export class Level2Fishy extends Fishy {
+  requiredFishyLevel = 2;
 }

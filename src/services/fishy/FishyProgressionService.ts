@@ -11,8 +11,8 @@ import { fishyQuestLevelSize } from "../../helpers/fishy";
 import { average } from "../../helpers/stats";
 import { Emoji } from "../../lib/emoji/Emoji";
 import { BaseService } from "../BaseService";
-import { FishyRarities, FishyRarityData } from "./classes/Fishy";
 import { getFishyList } from "./fishyList";
+import { FishyRarities, FishyRarityData } from "./rarity";
 
 export class FishyProgressionService extends BaseService {
   private readonly rarities = [

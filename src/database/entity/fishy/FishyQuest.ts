@@ -7,12 +7,9 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { bold } from "../../../helpers/discord";
-import { FishyRarityEmojiList } from "../../../lib/emoji/FishyRarityEmoji";
+import { FishyRarityEmojis } from "../../../lib/emoji/FishyRarityEmoji";
 import { displayNumber } from "../../../lib/views/displays";
-import {
-  FishyRarities,
-  FishyRarityKey,
-} from "../../../services/fishy/classes/Fishy";
+import { FishyRarities, FishyRarityKey } from "../../../services/fishy/rarity";
 import { User } from "../User";
 import { FishyCatch } from "./FishyCatch";
 
@@ -103,7 +100,7 @@ export class FishyQuest extends BaseEntity {
       start +
       `${bold(
         rarity.isTrash()
-          ? `pieces of ${FishyRarityEmojiList.trash.base}Trash`
+          ? `pieces of ${FishyRarityEmojis.trash.base}Trash`
           : `${rarity.emoji.base}${rarity.name} fishy`
       )}`
     );

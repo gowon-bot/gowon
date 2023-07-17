@@ -1,6 +1,5 @@
 import { extractEmojiID } from "../../lib/emoji/Emoji";
-import { BaseFishy } from "./classes/BaseFishy";
-import { FishyRarities, FishyRarityData } from "./classes/Fishy";
+import { Fishy } from "./Fishy";
 import { commonFishies } from "./fish/common";
 import { legendaryFishies } from "./fish/legendary";
 import { rareFishies } from "./fish/rare";
@@ -8,6 +7,7 @@ import { specialFishies } from "./fish/special";
 import { superRareFishies } from "./fish/superRare";
 import { trash } from "./fish/trash";
 import { uncommonFishy } from "./fish/uncommon";
+import { FishyRarities, FishyRarityData } from "./rarity";
 
 export const fishyList = [
   ...trash,
@@ -22,8 +22,8 @@ export const fishyList = [
 export function getFishyList(
   rarity: FishyRarityData,
   fishyProfileLevel?: number
-): BaseFishy[] {
-  let fishies: BaseFishy[];
+): Fishy[] {
+  let fishies: Fishy[];
 
   switch (rarity.name) {
     case FishyRarities.Trash.name:
@@ -61,7 +61,7 @@ export function getFishyList(
 
 export function findFishy(
   name: string | { byID: string } | { byEmoji: string }
-): BaseFishy | undefined {
+): Fishy | undefined {
   const equalize = (str: string) => str.toLowerCase().replace(/[\s-_]+/, "");
 
   return fishyList.find((f) => {

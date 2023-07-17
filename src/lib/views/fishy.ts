@@ -1,12 +1,12 @@
 import { bold } from "../../helpers/discord";
-import { BaseFishy } from "../../services/fishy/classes/BaseFishy";
-import { FishyRarityData } from "../../services/fishy/classes/Fishy";
+import { Fishy } from "../../services/fishy/Fishy";
+import { FishyRarityData } from "../../services/fishy/rarity";
 import { Emoji } from "../emoji/Emoji";
 
 export function displayRarity(
   rarity: FishyRarityData,
   withEmoji?: boolean,
-  forFishy?: BaseFishy
+  forFishy?: Fishy
 ): string {
   const display = rarity.isTrash()
     ? rarity.name

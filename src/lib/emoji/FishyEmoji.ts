@@ -12,7 +12,7 @@ export class TrashEmoji extends FishyEmoji {
   }
 }
 
-export const FishyEmojiList = {
+export const FishyEmojis = {
   // Trash
   unexplodedOrdnance: new TrashEmoji(
     "<:unexplodedOrdnance:1129947007520358461>",

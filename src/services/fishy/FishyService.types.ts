@@ -2,11 +2,11 @@ import { Chance } from "chance";
 import { FishyCatch } from "../../database/entity/fishy/FishyCatch";
 import { chunkArray, shuffle } from "../../helpers";
 import { Emoji } from "../../lib/emoji/Emoji";
-import { BaseFishy, FishyDisplayMode } from "./classes/BaseFishy";
-import { FishyRarities } from "./classes/Fishy";
+import { Fishy, FishyDisplayMode } from "./Fishy";
+import { FishyRarities } from "./rarity";
 
 export interface FishyResult {
-  fishy: BaseFishy;
+  fishy: Fishy;
   weight: number;
   isNew: boolean;
 }
@@ -23,7 +23,7 @@ export interface AquariumDimensions {
 export interface Aquarium {
   fishies: FishyCatch[];
   size: number;
-  mostAbundantFish: BaseFishy;
+  mostAbundantFish: Fishy;
 }
 
 export class AquariumDisplay {
@@ -43,10 +43,7 @@ export class AquariumDisplay {
 
   constructor() {}
 
-  public render(
-    { width, height }: AquariumDimensions,
-    fishy: BaseFishy[]
-  ): string {
+  public render({ width, height }: AquariumDimensions, fishy: Fishy[]): string {
     const flattenedAquarium = this.createFlattenedAquarium(width, height);
 
     const { floatingFishy, bottomFishy } = this.separateFishy(fishy);
@@ -76,10 +73,7 @@ export class AquariumDisplay {
     return shuffle([...water, ...bubbles]);
   }
 
-  private fillWithFishy(
-    flattenedAquarium: string[],
-    fishy: BaseFishy[]
-  ): string[] {
+  private fillWithFishy(flattenedAquarium: string[], fishy: Fishy[]): string[] {
     return shuffle(
       flattenedAquarium
         .slice(fishy.length, flattenedAquarium.length)
@@ -94,7 +88,7 @@ export class AquariumDisplay {
   private addAquariumWalls(
     aquarium: string[][],
     width: number,
-    bottomFishy: BaseFishy[]
+    bottomFishy: Fishy[]
   ): string[][] {
     const top: string[] = [
       Emoji.aquariumTopLeft,
@@ -115,7 +109,7 @@ export class AquariumDisplay {
 
   private generateAquariumBottom(
     width: number,
-    bottomFishy: BaseFishy[]
+    bottomFishy: Fishy[]
   ): string[] {
     const decorations = this.getAquariumDecorations(bottomFishy);
 
@@ -133,9 +127,9 @@ export class AquariumDisplay {
     return withWalls.map((row) => row.join("")).join("\n");
   }
 
-  private separateFishy(fishy: BaseFishy[]): {
-    floatingFishy: BaseFishy[];
-    bottomFishy: BaseFishy[];
+  private separateFishy(fishy: Fishy[]): {
+    floatingFishy: Fishy[];
+    bottomFishy: Fishy[];
   } {
     return fishy.reduce(
       (acc, fishy) => {
@@ -147,11 +141,11 @@ export class AquariumDisplay {
 
         return acc;
       },
-      { floatingFishy: [] as BaseFishy[], bottomFishy: [] as BaseFishy[] }
+      { floatingFishy: [] as Fishy[], bottomFishy: [] as Fishy[] }
     );
   }
 
-  private getAquariumDecorations(bottomFishy: BaseFishy[]): string[] {
+  private getAquariumDecorations(bottomFishy: Fishy[]): string[] {
     const decorationCount = Chance().integer({ min: 0, max: 3 });
 
     const possibleDecorations = [

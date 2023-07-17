@@ -14,7 +14,7 @@ import {
   TabbedEmbed,
   TabbedEmbedTab,
 } from "../../lib/views/embeds/TabbedEmbed";
-import { BaseFishy } from "../../services/fishy/classes/BaseFishy";
+import { Fishy } from "../../services/fishy/Fishy";
 import { findFishy, fishyList } from "../../services/fishy/fishyList";
 import {
   FishyTrait,
@@ -106,7 +106,7 @@ export class Fishypedia extends FishyChildCommand<typeof args> {
   }
 
   private getMainTabEmbed(
-    fishy: BaseFishy,
+    fishy: Fishy,
     fishyCount: number,
     perspective: Perspective
   ): MessageEmbed {
@@ -135,14 +135,14 @@ ${
     return embed;
   }
 
-  private getTraitsTabEmbed(fishy: BaseFishy): MessageEmbed {
+  private getTraitsTabEmbed(fishy: Fishy): MessageEmbed {
     return this.getBaseTabEmbed(fishy).setDescription(
       `**Traits**:
  ${fishy.traits.map((t) => `${bullet} ${displayFishyTrait(t)}`).join("\n")}`
     );
   }
 
-  private getBaseTabEmbed(fishy: BaseFishy): MessageEmbed {
+  private getBaseTabEmbed(fishy: Fishy): MessageEmbed {
     return this.newEmbed()
       .setAuthor(this.generateEmbedAuthor("Fishypedia"))
       .setColor(fishy.rarity.colour)

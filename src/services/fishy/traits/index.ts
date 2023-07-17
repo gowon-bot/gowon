@@ -1,4 +1,4 @@
-import { Fishy } from "../classes/Fishy";
+import { Level1Fishy } from "../Fishy";
 import {
   FishyCategoryTrait,
   convertFishyCategoryTrait,
@@ -68,7 +68,10 @@ export function convertFishyTrait(
   );
 }
 
-export function matchesFishyTrait(fishy: Fishy, trait: FishyTrait): boolean {
+export function matchesFishyTrait(
+  fishy: Level1Fishy,
+  trait: FishyTrait
+): boolean {
   if (isFishyDepthTrait(trait)) {
     if (!fishy.depth) return false;
 

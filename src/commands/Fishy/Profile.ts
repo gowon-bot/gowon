@@ -5,9 +5,9 @@ import { emDash } from "../../helpers/specialCharacters";
 import { calculatePercent } from "../../helpers/stats";
 import { standardMentions } from "../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../lib/context/arguments/types";
-import { FishyRarityEmojiList } from "../../lib/emoji/FishyRarityEmoji";
+import { FishyRarityEmojis } from "../../lib/emoji/FishyRarityEmoji";
 import { displayDate, displayNumber } from "../../lib/views/displays";
-import { FishyRarities } from "../../services/fishy/classes/Fishy";
+import { FishyRarities } from "../../services/fishy/rarity";
 import { FishyChildCommand } from "./FishyChildCommand";
 
 const args = {
@@ -87,7 +87,7 @@ ${FishyRarities.Legendary.emoji.base} _Legendary_ ${emDash} ${displayNumber(
     )} fishy
 ${
   "special" in rarityBreakdown
-    ? `${FishyRarityEmojiList.unknown.base} _Special_ ${emDash} ${displayNumber(
+    ? `${FishyRarityEmojis.unknown.base} _Special_ ${emDash} ${displayNumber(
         rarityBreakdown.special as string
       )} fishy`
     : ""

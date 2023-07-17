@@ -1,11 +1,11 @@
-import { FishyEmojiList } from "../../../lib/emoji/FishyEmoji";
-import { FishyRarityEmojiList } from "../../../lib/emoji/FishyRarityEmoji";
-import { BaseFishy } from "../classes/BaseFishy";
-import { Fishy, FishyRarityData } from "../classes/Fishy";
+import { FishyEmojis } from "../../../lib/emoji/FishyEmoji";
+import { FishyRarityEmojis } from "../../../lib/emoji/FishyRarityEmoji";
+import { Fishy, Level1Fishy } from "../Fishy";
+import { FishyRarityData } from "../rarity";
 import { FishyRegionTrait } from "../traits/region";
 
 export const specialFishies = [
-  new Fishy({
+  new Level1Fishy({
     id: "blahaj",
     name: "Blåhaj",
     binomialName: "Carcharhinus blåhaj",
@@ -13,12 +13,12 @@ export const specialFishies = [
       "Blåhaj",
       0.1,
       "#f5a8b9",
-      FishyRarityEmojiList.blahajRarity,
+      FishyRarityEmojis.blahajRarity,
       "special",
       true
     ),
     description: "Trans rights!",
-    emoji: FishyEmojiList.blahaj,
+    emoji: FishyEmojis.blahaj,
     weight: {
       min: 999,
       max: 999,
@@ -26,4 +26,4 @@ export const specialFishies = [
     url: "https://en.wikipedia.org/wiki/Bl%C3%A5haj",
     traits: [FishyRegionTrait.Worldwide],
   }),
-] satisfies BaseFishy[];
+] satisfies Fishy[];
