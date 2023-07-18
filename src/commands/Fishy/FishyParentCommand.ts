@@ -6,8 +6,9 @@ import { Cooldown } from "./Cooldown";
 import { Fish } from "./Fish";
 import { Fishypedia } from "./Fishypedia";
 import { Help } from "./Help";
-import { Quest } from "./Quest";
 import { Profile } from "./Profile";
+import { Quest } from "./Quest";
+import { fishyAliases } from "./fishyAliases";
 
 export default class FishyParentCommand extends ParentCommand {
   idSeed = "le sserafim kazuha";
@@ -23,12 +24,7 @@ export default class FishyParentCommand extends ParentCommand {
 
   noPrefixAliases = [
     // Fish
-    "fish",
-    "fosh",
-    "foshy",
-    "fush",
-    "fushy",
-    "gofish",
+    ...fishyAliases,
     // Fishypedia
     "fishypedia",
     // Cooldown
