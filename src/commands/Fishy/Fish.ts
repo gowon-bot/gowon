@@ -77,9 +77,11 @@ export class Fish extends FishyChildCommand<typeof args> {
 
     const fishyDisplay = `${fishy.emoji} ${
       this.extract.didMatch("phishy") ? "Scammed" : ""
-    } a ${bold(fishy.name)}${isNew ? Emoji.newFishy : ""}${giftDisplay}${
-      isNew && !giftDisplay ? "" : "!"
-    }  ${italic(emDash + " " + displayRarity(fishy.rarity))}`;
+    } ${fishy.article}${bold(fishy.name)}${
+      isNew ? Emoji.newFishy : ""
+    }${giftDisplay}${isNew && !giftDisplay ? "" : "!"}  ${italic(
+      emDash + " " + displayRarity(fishy.rarity)
+    )}`;
 
     const lineConsolidator = new LineConsolidator().addLines(
       fishyDisplay,

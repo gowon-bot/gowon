@@ -20,6 +20,8 @@ interface FishyOptions {
   displayMode?: FishyDisplayMode;
   traits?: FishyTrait[];
   url?: string;
+
+  article?: "an" | "a" | "";
 }
 
 export abstract class Fishy {
@@ -91,6 +93,10 @@ export abstract class Fishy {
     return this.traits.find((t) => isFishyDepthTrait(t)) as
       | FishyDepthTrait
       | undefined;
+  }
+
+  get article(): string {
+    return ((this.options.article ?? "a") + " ").trim();
   }
 }
 

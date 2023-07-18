@@ -62,5 +62,6 @@ export const trash = [
       "Rule number one of unexploded ordnance: post a pic to Reddit before calling bomb control",
     emoji: FishyEmojis.unexplodedOrdnance,
     weight: { min: 0, max: 0 },
+    article: "",
   }),
 ] satisfies Fishy[];
