@@ -10,6 +10,7 @@ import { ArgumentsMap } from "../../lib/context/arguments/types";
 import { Emoji } from "../../lib/emoji/Emoji";
 import { displayNumber } from "../../lib/views/displays";
 import { displayFishyLevelUp, displayRarity } from "../../lib/views/fishy";
+import { Fishy } from "../../services/fishy/Fishy";
 import { FishyChildCommand } from "./FishyChildCommand";
 import { fishyAliases } from "./fishyAliases";
 
@@ -75,13 +76,7 @@ export class Fish extends FishyChildCommand<typeof args> {
       ? ""
       : ` for ${mentionGuildMember(mentionedFishyProfile.user.discordID)}`;
 
-    const fishyDisplay = `${fishy.emoji} ${
-      this.extract.didMatch("phishy") ? "Scammed" : ""
-    } ${fishy.article}${bold(fishy.name)}${
-      isNew ? Emoji.newFishy : ""
-    }${giftDisplay}${isNew && !giftDisplay ? "" : "!"}  ${italic(
-      emDash + " " + displayRarity(fishy.rarity)
-    )}`;
+    const fishyDisplay = this.getFishyDisplay(fishy, isNew, giftDisplay);
 
     const lineConsolidator = new LineConsolidator().addLines(
       fishyDisplay,
@@ -179,5 +174,22 @@ export class Fish extends FishyChildCommand<typeof args> {
     }
 
     return { questCompleted, madeQuestProgress };
+  }
+
+  private getFishyDisplay(
+    fishy: Fishy,
+    isNew: boolean,
+    giftDisplay: string
+  ): string {
+    const unfish = this.extract.didMatch("unfish");
+    const phishy = this.extract.didMatch("phishy");
+
+    return `${fishy.emoji} ${unfish ? "Put" : phishy ? "Scammed" : "Caught"} ${
+      fishy.article
+    }${bold(fishy.name)}${isNew ? Emoji.newFishy : ""}${
+      unfish ? " back in the water" : ""
+    }${giftDisplay}${isNew && !giftDisplay ? "" : "!"}  ${italic(
+      emDash + " " + displayRarity(fishy.rarity)
+    )}`;
   }
 }

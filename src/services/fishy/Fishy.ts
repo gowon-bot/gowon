@@ -96,7 +96,8 @@ export abstract class Fishy {
   }
 
   get article(): string {
-    return ((this.options.article ?? "a") + " ").trim();
+    const article = this.options.article ?? "a";
+    return article ? article + " " : "";
   }
 }
 
