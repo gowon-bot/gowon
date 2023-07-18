@@ -11,6 +11,7 @@ import { Emoji } from "../../lib/emoji/Emoji";
 import { displayNumber } from "../../lib/views/displays";
 import { displayFishyLevelUp, displayRarity } from "../../lib/views/fishy";
 import { FishyChildCommand } from "./FishyChildCommand";
+import { fishyAliases } from "./fishyAliases";
 
 const args = {
   ...standardMentions,
@@ -18,7 +19,7 @@ const args = {
 
 export class Fish extends FishyChildCommand<typeof args> {
   idSeed = "le sserafim yunjin";
-  aliases = ["fishy", "fosh", "foshy", "fush", "fushy", "gofish"];
+  aliases = fishyAliases;
 
   description = "Grab a seat by the water and catch some fish :)";
 
@@ -74,7 +75,9 @@ export class Fish extends FishyChildCommand<typeof args> {
       ? ""
       : ` for ${mentionGuildMember(mentionedFishyProfile.user.discordID)}`;
 
-    const fishyDisplay = `${fishy.emoji} Caught a ${bold(fishy.name)}${
+    const fishyDisplay = `${fishy.emoji} ${
+      this.extract.didMatch("phishy") ? "Scammed" : ""
+    } ${fishy.article}${bold(fishy.name)}${
       isNew ? Emoji.newFishy : ""
     }${giftDisplay}${isNew && !giftDisplay ? "" : "!"}  ${italic(
       emDash + " " + displayRarity(fishy.rarity)
@@ -147,7 +150,10 @@ export class Fish extends FishyChildCommand<typeof args> {
     madeQuestProgress: boolean;
     questCompleted: boolean;
   }> {
-    const madeQuestProgress = quest.countsTowardsQuest(fishyCatch);
+    const madeQuestProgress = this.fishyProgressionService.countsTowardsQuest(
+      quest,
+      fishyCatch
+    );
 
     let questCompleted = false;
 

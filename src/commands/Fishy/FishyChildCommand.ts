@@ -5,13 +5,13 @@ import {
 } from "../../errors/commands/fishy";
 import { BaseChildCommand } from "../../lib/command/ParentCommand";
 import { ArgumentsMap } from "../../lib/context/arguments/types";
+import { ServiceRegistry } from "../../services/ServicesRegistry";
 import {
   GetMentionsOptions,
   Mentions,
 } from "../../services/arguments/mentions/MentionsService.types";
-import { FishyProgressionService } from "../../services/fishy/FishyProgressionService";
 import { FishyService } from "../../services/fishy/FishyService";
-import { ServiceRegistry } from "../../services/ServicesRegistry";
+import { FishyProgressionService } from "../../services/fishy/quests/FishyProgressionService";
 
 export type FishyMentions<Required = false> = Mentions & {
   senderFishyProfile?: FishyProfile;

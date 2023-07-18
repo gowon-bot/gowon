@@ -77,6 +77,10 @@ export const Emoji = {
   slashCommand: "<:slash_command:1116262522085965824>",
   notASlashCommand: "<:not_a_slash_command:1116262520156590090>",
 
+  // Fishy icons
+  fishypediaMainTab: "<:main:1130055372367990886>",
+  fishypediaTraitsTab: "<:traits:1130059610607325195>",
+
   // Aquarium
   aquariumLeft: "<:AquariumLeft:1089731232952234044>",
   aquariumRight: "<:AquariumRight:1089731228581769356>",

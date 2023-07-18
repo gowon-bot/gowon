@@ -2,7 +2,7 @@ import { standardMentions } from "../../lib/context/arguments/mentionTypes/menti
 import { ArgumentsMap } from "../../lib/context/arguments/types";
 import { displayNumber, displayNumberedList } from "../../lib/views/displays";
 import { SimpleScrollingEmbed } from "../../lib/views/embeds/SimpleScrollingEmbed";
-import { BaseFishy } from "../../services/fishy/classes/BaseFishy";
+import { Fishy } from "../../services/fishy/Fishy";
 import { findFishy, fishyList } from "../../services/fishy/fishyList";
 import { FishyChildCommand } from "./FishyChildCommand";
 
@@ -37,7 +37,7 @@ export class Collection extends FishyChildCommand<typeof args> {
       ...noHidden,
       ...(collection
         .map((c) => findFishy({ byID: c }))
-        .filter((f) => f && f.hidden) as BaseFishy[]),
+        .filter((f) => f && f.hidden) as Fishy[]),
     ];
 
     const embed = this.newEmbed()

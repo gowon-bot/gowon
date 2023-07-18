@@ -12,7 +12,13 @@ export class TrashEmoji extends FishyEmoji {
   }
 }
 
-export const FishyEmojiList = {
+export const FishyEmojis = {
+  // Trash
+  unexplodedOrdnance: new TrashEmoji(
+    "<:unexplodedOrdnance:1129947007520358461>",
+    "<:uoSilhouette:1129947274856894524>"
+  ),
+
   // Level 1 Fishy
 
   asianSheepsheadWrasse: new FishyEmoji(

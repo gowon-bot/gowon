@@ -1,6 +1,6 @@
 import { GuildMember, HexColorString, MessageEmbed, User } from "discord.js";
-import { ucFirst } from "../../../helpers";
 import { bold, italic } from "../../../helpers/discord";
+import { uppercaseFirst } from "../../../helpers/string";
 import { ImageCollection } from "../../../services/LastFM/converters/BaseConverter";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { AlbumCoverService } from "../../../services/moderation/AlbumCoverService";
@@ -63,6 +63,6 @@ export function errorEmbed(
       name: `Error | ${displayUserTag(author)}`,
       iconURL: member?.avatarURL() || author.avatarURL() || undefined,
     })
-    .setDescription(ucFirst(message))
+    .setDescription(uppercaseFirst(message))
     .setFooter({ text: footer });
 }

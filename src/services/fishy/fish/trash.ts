@@ -1,19 +1,19 @@
-import { TrashEmoji } from "../../../lib/emoji/FishyEmoji";
-import { BaseFishy } from "../classes/BaseFishy";
-import { Fishy, FishyRarities } from "../classes/Fishy";
+import { FishyEmojis, TrashEmoji } from "../../../lib/emoji/FishyEmoji";
+import { Fishy, Level1Fishy } from "../Fishy";
+import { FishyRarities } from "../rarity";
 
 export const trash = [
-  new Fishy({
+  new Level1Fishy({
     id: "old-boot",
     name: "Old boot",
     binomialName: "Vetus calceus",
     rarity: FishyRarities.Trash,
-    emoji: new TrashEmoji("👢", "<:obSilhouette:1091509618280243330>"),
     description: "Someone must've lost their boot in the water...",
+    emoji: new TrashEmoji("👢", "<:obSilhouette:1091509618280243330>"),
     weight: { min: 0, max: 0 },
   }),
 
-  new Fishy({
+  new Level1Fishy({
     id: "favourite-album",
     name: "A copy of your favourite album",
     binomialName: "Malus musica",
@@ -23,7 +23,7 @@ export const trash = [
     weight: { min: 0, max: 0 },
   }),
 
-  new Fishy({
+  new Level1Fishy({
     id: "miso-soup",
     name: "Miso soup",
     binomialName: "Pulmenti miso",
@@ -33,7 +33,7 @@ export const trash = [
     weight: { min: 0, max: 0 },
   }),
 
-  new Fishy({
+  new Level1Fishy({
     id: "trumpet",
     name: "A trumpet",
     binomialName: "Instrumentum tubae",
@@ -43,7 +43,7 @@ export const trash = [
     weight: { min: 0, max: 0 },
   }),
 
-  new Fishy({
+  new Level1Fishy({
     id: "ball",
     name: "A ball",
     binomialName: "Sphera canistrum",
@@ -52,4 +52,16 @@ export const trash = [
     emoji: new TrashEmoji("🏀", "<:bSilhouette:1091509616157933689>"),
     weight: { min: 0, max: 0 },
   }),
-] satisfies BaseFishy[];
+
+  new Level1Fishy({
+    id: "unexploded-ordnance",
+    name: "Unexploded ordnance",
+    binomialName: "Ignis inaestimabile",
+    rarity: FishyRarities.Trash,
+    description:
+      "Rule number one of unexploded ordnance: post a pic to Reddit before calling bomb control",
+    emoji: FishyEmojis.unexplodedOrdnance,
+    weight: { min: 0, max: 0 },
+    article: "",
+  }),
+] satisfies Fishy[];

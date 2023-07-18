@@ -1,6 +1,8 @@
 import { Chance } from "chance";
-import { FishyEmoji } from "../../../lib/emoji/FishyEmoji";
-import { FishyRarity, FishyRarityData } from "./Fishy";
+import { FishyEmoji } from "../../lib/emoji/FishyEmoji";
+import { FishyRarity, FishyRarityData } from "./rarity";
+import { type FishyTrait } from "./traits";
+import { FishyDepthTrait, isFishyDepthTrait } from "./traits/depth";
 
 export enum FishyDisplayMode {
   Floating,
@@ -16,9 +18,13 @@ interface FishyOptions {
   weight: { min: number; max: number };
   emoji: FishyEmoji;
   displayMode?: FishyDisplayMode;
+  traits?: FishyTrait[];
+  url?: string;
+
+  article?: "an" | "a" | "";
 }
 
-export abstract class BaseFishy {
+export abstract class Fishy {
   abstract requiredFishyLevel: number;
 
   constructor(private options: FishyOptions) {}
@@ -74,4 +80,34 @@ export abstract class BaseFishy {
   get displayMode(): FishyDisplayMode {
     return this.options.displayMode || FishyDisplayMode.Floating;
   }
+
+  get url(): string {
+    return this.options.url || "";
+  }
+
+  get traits(): FishyTrait[] {
+    return this.options.traits || [];
+  }
+
+  get depth(): FishyDepthTrait | undefined {
+    return this.traits.find((t) => isFishyDepthTrait(t)) as
+      | FishyDepthTrait
+      | undefined;
+  }
+
+  get article(): string {
+    return ((this.options.article ?? "a") + " ").trim();
+  }
+}
+
+export class Level1Fishy extends Fishy {
+  requiredFishyLevel = 1;
+}
+
+export class Level3Fishy extends Fishy {
+  requiredFishyLevel = 3;
+}
+
+export class Level2Fishy extends Fishy {
+  requiredFishyLevel = 2;
 }

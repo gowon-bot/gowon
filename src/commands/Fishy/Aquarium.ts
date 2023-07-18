@@ -3,12 +3,12 @@ import { bold } from "../../helpers/discord";
 import { ArgumentsMap } from "../../lib/context/arguments/types";
 import { Emoji } from "../../lib/emoji/Emoji";
 import { displayNumber } from "../../lib/views/displays";
+import { Fishy } from "../../services/fishy/Fishy";
 import {
   AquariumDimensions,
   AquariumDisplay,
   Aquarium as AquariumType,
 } from "../../services/fishy/FishyService.types";
-import { BaseFishy } from "../../services/fishy/classes/BaseFishy";
 import { FishyChildCommand } from "./FishyChildCommand";
 
 const args = {} satisfies ArgumentsMap;
@@ -73,7 +73,7 @@ ${
 `;
   }
 
-  private getAquariumMessage(fishy: BaseFishy[]): string {
+  private getAquariumMessage(fishy: Fishy[]): string {
     const fishyCount = fishy.length;
 
     if (fishyCount === 0) {

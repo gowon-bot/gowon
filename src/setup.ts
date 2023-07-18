@@ -5,7 +5,8 @@ import { Client, Intents } from "discord.js";
 import gql from "graphql-tag";
 import { GraphQLAPI } from "./api";
 import { DB } from "./database/DB";
-import { Stopwatch, ucFirst } from "./helpers";
+import { Stopwatch } from "./helpers";
+import { uppercaseFirst } from "./helpers/string";
 import { GowonClient } from "./lib/GowonClient";
 import { CommandHandler } from "./lib/command/CommandHandler";
 import {
@@ -61,7 +62,7 @@ export async function setup() {
   console.log(
     chalk`{cyan ${
       asciiArt + "\n" + "=".repeat(asciiArt.split("\n").reverse()[0].length)
-    }}\n{yellow -${ucFirst(config.environment)}-}\n`
+    }}\n{yellow -${uppercaseFirst(config.environment)}-}\n`
   );
 
   await Promise.all([

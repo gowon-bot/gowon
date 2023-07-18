@@ -1,5 +1,5 @@
 import { HexColorString, MessageEmbed } from "discord.js";
-import { ucFirst } from "../../../helpers";
+import { uppercaseFirst } from "../../../helpers/string";
 import { OverviewStatsCalculator } from "../../../lib/calculators/OverviewStatsCalculator";
 import { TimePeriodArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/TimePeriodArgument";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
@@ -51,7 +51,7 @@ export abstract class OverviewChildCommand<
       userType !== "user"
         ? userType === "subscriber"
           ? " [Pro]"
-          : ` [${ucFirst(userType)}]`
+          : ` [${uppercaseFirst(userType)}]`
         : "";
 
     const colour =

@@ -1,4 +1,5 @@
 import { Chance } from "chance";
+import { FishyQuestType } from "../../database/entity/fishy/FishyQuest";
 import { quote } from "../../helpers/specialCharacters";
 import { Emoji } from "../../lib/emoji/Emoji";
 import { displayNumber, displayProgressBar } from "../../lib/views/displays";
@@ -69,7 +70,10 @@ ${displayProgressBar(currentQuest.progress, currentQuest.count)}`
             "hired for",
           ])} a new ${quest.isMilestone ? "milestone " : ""}quest:\n\n${
             quest.emoji
-          }${Emoji.newFishy}${quote(quest.name)}`
+          }${Emoji.newFishy}${quote(quest.name)}` +
+            (quest.type === FishyQuestType.Trait
+              ? `\n\nYou can see a list of all fishy that count towards this quest by running \`${this.prefix}fishypedia ${quest.stringConstraint}\``
+              : "")
         );
 
       await this.send(embed);

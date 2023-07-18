@@ -1,13 +1,13 @@
 import { extractEmojiID } from "../../lib/emoji/Emoji";
-import { BaseFishy } from "./classes/BaseFishy";
-import { FishyRarities, FishyRarityData } from "./classes/Fishy";
-import { commonFishies } from "./fishy/common";
-import { legendaryFishies } from "./fishy/legendary";
-import { rareFishies } from "./fishy/rare";
-import { specialFishies } from "./fishy/special";
-import { superRareFishies } from "./fishy/superRare";
-import { trash } from "./fishy/trash";
-import { uncommonFishy } from "./fishy/uncommon";
+import { Fishy } from "./Fishy";
+import { commonFishies } from "./fish/common";
+import { legendaryFishies } from "./fish/legendary";
+import { rareFishies } from "./fish/rare";
+import { specialFishies } from "./fish/special";
+import { superRareFishies } from "./fish/superRare";
+import { trash } from "./fish/trash";
+import { uncommonFishy } from "./fish/uncommon";
+import { FishyRarities, FishyRarityData } from "./rarity";
 
 export const fishyList = [
   ...trash,
@@ -20,12 +20,16 @@ export const fishyList = [
 ];
 
 export function getFishyList(
-  rarity: FishyRarityData,
+  rarity?: FishyRarityData,
   fishyProfileLevel?: number
-): BaseFishy[] {
-  let fishies: BaseFishy[];
+): Fishy[] {
+  let fishies: Fishy[];
 
-  switch (rarity.name) {
+  switch (rarity?.name) {
+    case undefined:
+      fishies = fishyList;
+      break;
+
     case FishyRarities.Trash.name:
       fishies = trash;
       break;
@@ -51,7 +55,7 @@ export function getFishyList(
       break;
 
     default:
-      fishies = specialFishies.filter((f) => f.rarity.name === rarity.name);
+      fishies = specialFishies.filter((f) => f.rarity.name === rarity!.name);
   }
 
   if (fishyProfileLevel !== undefined) {
@@ -61,7 +65,7 @@ export function getFishyList(
 
 export function findFishy(
   name: string | { byID: string } | { byEmoji: string }
-): BaseFishy | undefined {
+): Fishy | undefined {
   const equalize = (str: string) => str.toLowerCase().replace(/[\s-_]+/, "");
 
   return fishyList.find((f) => {

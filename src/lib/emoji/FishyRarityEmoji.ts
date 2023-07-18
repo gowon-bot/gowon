@@ -6,7 +6,7 @@ export class FishyRarityEmoji {
   }
 }
 
-export const FishyRarityEmojiList = {
+export const FishyRarityEmojis = {
   trash: new FishyRarityEmoji("<:TrashRarity:1111855975121555507>"),
   common: new FishyRarityEmoji("<:common:1111855971136983131>", [
     "<:level1Common:1111856009112207451>",
