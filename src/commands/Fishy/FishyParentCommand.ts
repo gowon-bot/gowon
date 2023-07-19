@@ -25,7 +25,7 @@ export default class FishyParentCommand extends ParentCommand {
   noPrefixAliases = [
     // Fish
     "fish",
-    ...fishyAliases,
+    ...fishyAliases.filter((a) => a !== "fishy"),
     // Fishypedia
     "fishypedia",
     // Cooldown
