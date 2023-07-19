@@ -136,6 +136,7 @@ ${
         "Your fishy are hard at work doing something",
         "The fishy have become aware they are in a Discord bot. your time is limited.",
         "Your fishy have hacked the mainframe",
+        "Your fishy are holding a prayer circle to get Leoni a legendary",
       ]);
     } else {
       return Chance().pickone([
