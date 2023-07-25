@@ -1,5 +1,5 @@
-import { chunkArray } from "../../../helpers";
 import { bold } from "../../../helpers/discord";
+import { chunkArray } from "../../../helpers/native/array";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import {

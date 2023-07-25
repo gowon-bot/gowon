@@ -1,7 +1,7 @@
 import { formatDistance } from "date-fns";
 import { bold } from "../../../helpers/discord";
 import { LastfmLinks } from "../../../helpers/lastfm/LastfmLinks";
-import { uppercaseFirst } from "../../../helpers/string";
+import { uppercaseFirst } from "../../../helpers/native/string";
 import { LineConsolidator } from "../../../lib/LineConsolidator";
 import {
   ComboCalculator,

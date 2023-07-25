@@ -2,7 +2,7 @@ import { ILike, In, MoreThanOrEqual } from "typeorm";
 import { Combo as DBCombo } from "../../database/entity/Combo";
 import { User } from "../../database/entity/User";
 import { sqlLikeEscape } from "../../helpers/database";
-import { toInt } from "../../helpers/lastfm/";
+import { toInt } from "../../helpers/native/number";
 import { Combo } from "../../lib/calculators/ComboCalculator";
 import { GowonContext } from "../../lib/context/Context";
 import { SettingsService } from "../../lib/settings/SettingsService";

@@ -3,7 +3,7 @@ import {
   looseCompare,
   titlecase,
   uppercaseFirst,
-} from "../../../helpers/string";
+} from "../../../helpers/native/string";
 
 export enum FishyRegionTrait {
   AtlanticOcean = "atlantic",

@@ -1,7 +1,8 @@
 import { MessageCollector } from "discord.js";
 import { LogicError } from "../../../errors/errors";
-import { abbreviateNumber, shuffle } from "../../../helpers";
 import { bold, code } from "../../../helpers/discord";
+import { shuffle } from "../../../helpers/native/array";
+import { abbreviateNumber } from "../../../helpers/native/number";
 import { LineConsolidator } from "../../../lib/LineConsolidator";
 import { Variation } from "../../../lib/command/Command";
 import { GowonContext } from "../../../lib/context/Context";
@@ -11,7 +12,7 @@ import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { TagConsolidator } from "../../../lib/tags/TagConsolidator";
 import { displayNumber } from "../../../lib/views/displays";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
-import { TagBlacklistService } from "../../../services/TagBlacklistService";
+import { TagBlacklistService } from "../../../services/moderation/TagBlacklistService";
 import { JumbleChildCommand } from "./JumbleChildCommand";
 import { JumbledArtist, jumbleRedisKey } from "./JumbleParentCommand";
 
@@ -90,7 +91,7 @@ export class Me extends JumbleChildCommand<typeof args> {
 
     this.sessionSetJSON(jumbleRedisKey, jumbledArtist);
 
-    await this.tagConsolidator.saveServerBannedTagsInContext(this.ctx);
+    await this.tagConsolidator.saveBannedTagsInContext(this.ctx);
 
     let tags = this.tagConsolidator
       .blacklistTags(artist.name)

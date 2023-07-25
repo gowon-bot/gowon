@@ -12,9 +12,9 @@ import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { Emoji } from "../../../lib/emoji/Emoji";
 import { displayLink, displayNumber } from "../../../lib/views/displays";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
-import { TagBlacklistService } from "../../../services/TagBlacklistService";
 import { LilacArtistsService } from "../../../services/lilac/LilacArtistsService";
 import { LilacTagsService } from "../../../services/lilac/LilacTagsService";
+import { TagBlacklistService } from "../../../services/moderation/TagBlacklistService";
 import { InfoCommand } from "./InfoCommand";
 
 const args = {
@@ -44,7 +44,7 @@ export default class TagInfo extends InfoCommand<typeof args> {
   async run() {
     const tag = this.parsedArguments.tag;
 
-    await this.tagBlacklistService.saveServerBannedTagsInContext(this.ctx);
+    await this.tagBlacklistService.saveBannedTagsInContext(this.ctx);
     this.tagBlacklistService.throwIfTagNotAllowedAsInput(this.ctx, tag);
 
     const [tagInfo, tagList, tagTopArtists, lilacArtists, userTopArtists] =

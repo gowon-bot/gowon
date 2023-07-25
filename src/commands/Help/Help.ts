@@ -1,7 +1,7 @@
 import { EmbedField } from "discord.js";
 import { code } from "../../helpers/discord";
+import { uppercaseFirst } from "../../helpers/native/string";
 import { bullet } from "../../helpers/specialCharacters";
-import { uppercaseFirst } from "../../helpers/string";
 import { Command, CommandRedirect } from "../../lib/command/Command";
 import { Flag } from "../../lib/context/arguments/argumentTypes/Flag";
 import { StringArgument } from "../../lib/context/arguments/argumentTypes/StringArgument";

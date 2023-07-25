@@ -258,7 +258,7 @@ export class DatasourceService extends BaseService<DatasourceServiceContext> {
   ) {
     if (!ctx.mutable.tagConsolidator) {
       ctx.mutable.tagConsolidator = new TagConsolidator();
-      await ctx.mutable.tagConsolidator.saveServerBannedTagsInContext(ctx);
+      await ctx.mutable.tagConsolidator.saveBannedTagsInContext(ctx);
     }
 
     ctx.mutable.tagConsolidator.addTags(ctx, tags);

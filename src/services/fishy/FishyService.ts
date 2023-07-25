@@ -3,7 +3,7 @@ import { In, IsNull, Not } from "typeorm";
 import { User } from "../../database/entity/User";
 import { FishyCatch } from "../../database/entity/fishy/FishyCatch";
 import { FishyProfile } from "../../database/entity/fishy/FishyProfile";
-import { toInt } from "../../helpers/lastfm";
+import { toInt } from "../../helpers/native/number";
 import { GowonContext } from "../../lib/context/Context";
 import { BaseService } from "../BaseService";
 import { Fishy } from "./Fishy";

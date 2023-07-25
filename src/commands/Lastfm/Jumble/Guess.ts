@@ -1,9 +1,9 @@
-import { JumbleChildCommand } from "./JumbleChildCommand";
-import { jumbleRedisKey, JumbledArtist } from "./JumbleParentCommand";
 import { LogicError } from "../../../errors/errors";
-import { shuffle } from "../../../helpers";
+import { shuffle } from "../../../helpers/native/array";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { JumbleChildCommand } from "./JumbleChildCommand";
+import { JumbledArtist, jumbleRedisKey } from "./JumbleParentCommand";
 
 const args = {
   guess: new StringArgument({

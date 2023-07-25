@@ -62,7 +62,7 @@ export class TagsComponent extends BaseCompoundComponent<typeof requirements> {
   }
 
   private async addTags(consolidator: TagConsolidator) {
-    await consolidator.saveServerBannedTagsInContext(this.ctx);
+    await consolidator.saveBannedTagsInContext(this.ctx);
 
     if (
       this.values.artistInfo &&

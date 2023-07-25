@@ -1,7 +1,7 @@
 import { UserHasNoCrownsInServerError } from "../../../errors/commands/crowns";
 import { LogicError } from "../../../errors/errors";
-import { getOrdinal } from "../../../helpers";
 import { bold, italic } from "../../../helpers/discord";
+import { getOrdinal } from "../../../helpers/native/number";
 import { displayNumber } from "../../../lib/views/displays";
 import { OverviewChildCommand } from "./OverviewChildCommand";
 

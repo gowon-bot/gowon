@@ -1,6 +1,6 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, Message } from "discord.js";
-import { toInt } from "../../../../helpers/lastfm/";
+import { toInt } from "../../../../helpers/native/number";
 import { GowonService } from "../../../../services/GowonService";
 import { ServiceRegistry } from "../../../../services/ServicesRegistry";
 import { isDuration } from "../../../timeAndDate/durations";

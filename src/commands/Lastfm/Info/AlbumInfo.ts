@@ -49,7 +49,7 @@ export default class AlbumInfo extends InfoCommand<typeof args> {
       this.spotifyService.searchAlbum(this.ctx, { artist, album }),
     ]);
 
-    await this.tagConsolidator.saveServerBannedTagsInContext(this.ctx);
+    await this.tagConsolidator.saveBannedTagsInContext(this.ctx);
     this.tagConsolidator.blacklistTags(albumInfo.artist, albumInfo.name);
     this.tagConsolidator.addTags(this.ctx, albumInfo.tags);
 

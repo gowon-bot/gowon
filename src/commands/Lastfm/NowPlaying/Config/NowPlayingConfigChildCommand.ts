@@ -1,10 +1,10 @@
 import { User } from "../../../../database/entity/User";
-import { flatDeep } from "../../../../helpers";
 import { code } from "../../../../helpers/discord";
+import { flatDeep } from "../../../../helpers/native/array";
 import { ArgumentsMap } from "../../../../lib/context/arguments/types";
 import { componentMap } from "../../../../lib/nowplaying/componentMap";
-import { ConfigService } from "../../../../services/dbservices/NowPlayingService";
 import { ServiceRegistry } from "../../../../services/ServicesRegistry";
+import { ConfigService } from "../../../../services/dbservices/NowPlayingService";
 import { LastFMBaseChildCommand } from "../../LastFMBaseCommand";
 
 export abstract class NowPlayingConfigChildCommand<

@@ -1,4 +1,4 @@
-import { flatDeep } from "../../helpers";
+import { flatDeep } from "../../helpers/native/array";
 
 export const durations = {
   years: ["year", "years", "y"],

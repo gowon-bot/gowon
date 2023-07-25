@@ -1,18 +1,18 @@
 import { CommandNotFoundError } from "../../errors/errors";
-import { flatDeep } from "../../helpers";
 import { bold, code, italic, subheader } from "../../helpers/discord";
+import { flatDeep } from "../../helpers/native/array";
+import { LineConsolidator } from "../../lib/LineConsolidator";
 import { Command } from "../../lib/command/Command";
 import { ParentCommand } from "../../lib/command/ParentCommand";
 import { BaseArgument } from "../../lib/context/arguments/argumentTypes/BaseArgument";
 import {
-  argumentsHasFlags,
   Flag,
+  argumentsHasFlags,
   isFlag,
 } from "../../lib/context/arguments/argumentTypes/Flag";
 import { StringArgument } from "../../lib/context/arguments/argumentTypes/StringArgument";
 import { ArgumentsMap } from "../../lib/context/arguments/types";
 import { Emoji } from "../../lib/emoji/Emoji";
-import { LineConsolidator } from "../../lib/LineConsolidator";
 import { PermissionsService } from "../../lib/permissions/PermissionsService";
 import { displayCommandIcons } from "../../lib/views/command";
 import { ServiceRegistry } from "../../services/ServicesRegistry";

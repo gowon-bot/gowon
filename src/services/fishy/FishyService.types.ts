@@ -1,6 +1,6 @@
 import { Chance } from "chance";
 import { FishyCatch } from "../../database/entity/fishy/FishyCatch";
-import { chunkArray, shuffle } from "../../helpers";
+import { chunkArray, shuffle } from "../../helpers/native/array";
 import { Emoji } from "../../lib/emoji/Emoji";
 import { Fishy, FishyDisplayMode } from "./Fishy";
 import { FishyRarities } from "./rarity";

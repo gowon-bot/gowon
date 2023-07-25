@@ -16,7 +16,7 @@ import {
   NotCrownBannedError,
 } from "../../../errors/commands/crowns";
 import { asyncMap } from "../../../helpers";
-import { toInt } from "../../../helpers/lastfm";
+import { toInt } from "../../../helpers/native/number";
 import { constants } from "../../../lib/constants";
 import { GowonContext } from "../../../lib/context/Context";
 import { SettingsService } from "../../../lib/settings/SettingsService";

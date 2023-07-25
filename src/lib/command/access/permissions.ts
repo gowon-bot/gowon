@@ -1,4 +1,4 @@
-import { flatDeep } from "../../../helpers";
+import { flatDeep } from "../../../helpers/native/array";
 import { CommandAccessRoleName, getRoles } from "./roles";
 
 type PermissionNamespace = "";

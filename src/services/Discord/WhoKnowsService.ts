@@ -1,14 +1,15 @@
 import { bold } from "../../helpers/discord";
-import { toInt } from "../../helpers/lastfm/";
 import { LastfmLinks } from "../../helpers/lastfm/LastfmLinks";
+import { toInt } from "../../helpers/native/number";
 import { GowonContext } from "../../lib/context/Context";
 import { Emoji } from "../../lib/emoji/Emoji";
 import { displayLink } from "../../lib/views/displays";
 import { BaseService } from "../BaseService";
-import { LilacUser } from "../lilac/converters/user";
+import { ServiceRegistry } from "../ServicesRegistry";
 import { LilacPrivacy } from "../lilac/LilacAPIService.types";
 import { LilacGuildsService } from "../lilac/LilacGuildsService";
 import { PrivateUserDisplay } from "../lilac/LilacUsersService";
+import { LilacUser } from "../lilac/converters/user";
 import {
   MirrorballPrivacy,
   MirrorballUser,
@@ -17,7 +18,6 @@ import {
   RedisService,
   RedisServiceContextOptions,
 } from "../redis/RedisService";
-import { ServiceRegistry } from "../ServicesRegistry";
 import { NicknameService, UnknownUserDisplay } from "./NicknameService";
 
 export interface DisplayUserOptions {

@@ -1,6 +1,6 @@
 import chalk from "chalk";
 import { Interaction, Message } from "discord.js";
-import { toInt } from "../../../../helpers/lastfm/";
+import { toInt } from "../../../../helpers/native/number";
 import { GowonService } from "../../../../services/GowonService";
 import { ServiceRegistry } from "../../../../services/ServicesRegistry";
 import { ArgumentValidationError } from "../../../validation/validators/BaseValidator";

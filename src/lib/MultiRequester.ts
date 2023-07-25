@@ -1,4 +1,5 @@
-import { insertAtIndex, promiseAllSettled } from "../helpers";
+import { promiseAllSettled } from "../helpers";
+import { insertAtIndex } from "../helpers/native/array";
 import { Requestable } from "../services/LastFM/LastFMAPIService";
 import { GowonContext } from "./context/Context";
 

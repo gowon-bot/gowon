@@ -104,7 +104,7 @@ export default class Year extends MirrorballBaseCommand<
 
     const tagConsolidator = new TagConsolidator();
 
-    await tagConsolidator.saveServerBannedTagsInContext(this.ctx);
+    await tagConsolidator.saveBannedTagsInContext(this.ctx);
 
     tagConsolidator.addTags(this.ctx, month.top.tags);
 

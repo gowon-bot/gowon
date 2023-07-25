@@ -1,8 +1,8 @@
-import { JumbleChildCommand } from "./JumbleChildCommand";
-import { jumbleRedisKey, JumbledArtist } from "./JumbleParentCommand";
 import { LogicError } from "../../../errors/errors";
-import { shuffle } from "../../../helpers";
 import { code } from "../../../helpers/discord";
+import { shuffle } from "../../../helpers/native/array";
+import { JumbleChildCommand } from "./JumbleChildCommand";
+import { JumbledArtist, jumbleRedisKey } from "./JumbleParentCommand";
 
 export class Hint extends JumbleChildCommand {
   idSeed = "clc elkie";

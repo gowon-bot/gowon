@@ -1,5 +1,5 @@
+import { flatDeep } from "../../helpers/native/array";
 import { SimpleMap } from "../../helpers/types";
-import { flatDeep } from "../../helpers";
 import { Command } from "./Command";
 
 type CommandClass = { new (): Command };

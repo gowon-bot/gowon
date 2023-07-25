@@ -44,7 +44,7 @@ export default class NowPlayingVerbose extends NowPlayingBaseCommand {
       discordUser
     );
 
-    await this.tagConsolidator.saveServerBannedTagsInContext(this.ctx);
+    await this.tagConsolidator.saveBannedTagsInContext(this.ctx);
 
     if (trackInfo.value) {
       this.tagConsolidator.addTags(this.ctx, trackInfo.value?.tags || []);

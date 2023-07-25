@@ -1,4 +1,4 @@
-import { looseCompare, uppercaseFirst } from "../../../helpers/string";
+import { looseCompare, uppercaseFirst } from "../../../helpers/native/string";
 
 export enum FishyCategoryTrait {
   // Level 1

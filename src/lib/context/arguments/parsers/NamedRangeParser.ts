@@ -1,6 +1,6 @@
-import { flatDeep } from "../../../../helpers";
-import { toInt } from "../../../../helpers/lastfm/";
-import { uppercaseFirst } from "../../../../helpers/string";
+import { flatDeep } from "../../../../helpers/native/array";
+import { toInt } from "../../../../helpers/native/number";
+import { uppercaseFirst } from "../../../../helpers/native/string";
 import { DateRange } from "../../../timeAndDate/DateRange";
 import { NamedRange } from "../../../timeAndDate/NamedRange";
 

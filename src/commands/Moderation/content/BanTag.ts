@@ -6,7 +6,7 @@ import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
-import { TagBlacklistService } from "../../../services/TagBlacklistService";
+import { TagBlacklistService } from "../../../services/moderation/TagBlacklistService";
 import { ContentModerationCommand } from "./ContentModerationCommand";
 
 const args = {

@@ -1,25 +1,21 @@
 import { IsNull } from "typeorm";
-import { TagBan } from "../database/entity/TagBan";
+import { TagBan } from "../../database/entity/TagBan";
 import {
   TagAlreadyBannedError,
   TagBannedByDefaultError,
   TagNotAllowedError,
   TagNotBannedError,
-} from "../errors/commands/tags";
-import { GowonContext } from "../lib/context/Context";
-import { SettingsService } from "../lib/settings/SettingsService";
-import { BaseService } from "./BaseService";
-import { GowonService } from "./GowonService";
-import { ServiceRegistry } from "./ServicesRegistry";
-
-interface TagBlacklistGroup {
-  strings: string[];
-  regexes: RegExp[];
-}
+} from "../../errors/commands/tags";
+import { partition } from "../../helpers/native/array";
+import { GowonContext } from "../../lib/context/Context";
+import { SettingsService } from "../../lib/settings/SettingsService";
+import { BaseService } from "../BaseService";
+import { GowonService } from "../GowonService";
+import { ServiceRegistry } from "../ServicesRegistry";
 
 type TagBlacklistServiceContext = GowonContext<{
   mutable?: {
-    serverBannedTags?: TagBan[];
+    bannedTags?: TagBan[];
   };
 }>;
 
@@ -48,16 +44,19 @@ export class TagBlacklistService extends BaseService<TagBlacklistServiceContext>
     item: string | { name: string },
     customBlacklist: string[] = []
   ): boolean {
-    const blacklistGroup = this.getBlacklists(customBlacklist);
+    const [regexes, strings] = partition(
+      ctx.mutable.bannedTags || [],
+      (e) => e.isRegex
+    );
 
     return (
-      !blacklistGroup.strings.includes(this.normalizeItem(item)) &&
-      !blacklistGroup.regexes.some(
-        (regex) =>
-          regex.test(this.getItemName(item)) ||
-          regex.test(this.normalizeItem(item))
+      !customBlacklist.includes(this.normalizeItem(item)) &&
+      !regexes.some(
+        (tb) =>
+          tb.asRegex().test(this.getItemName(item)) ||
+          tb.asRegex().test(this.normalizeItem(item))
       ) &&
-      !ctx.mutable.serverBannedTags?.some(
+      !strings.some(
         (bt) => this.normalizeItem(bt.tag) === this.normalizeItem(item)
       )
     );
@@ -106,10 +105,6 @@ export class TagBlacklistService extends BaseService<TagBlacklistServiceContext>
 
     const savedNewBan = await newBan.save();
 
-    if (!guildID) {
-      this.gowonService.cache.fetchGlobalBannedTag(savedNewBan);
-    }
-
     return savedNewBan;
   }
 
@@ -130,10 +125,6 @@ export class TagBlacklistService extends BaseService<TagBlacklistServiceContext>
     if (!existingBan) throw new TagNotBannedError(guildID);
 
     await existingBan.remove();
-
-    if (!guildID) {
-      this.gowonService.cache.deleteGlobalBannedTag(existingBan);
-    }
   }
 
   public async getServerBannedTags(
@@ -143,25 +134,29 @@ export class TagBlacklistService extends BaseService<TagBlacklistServiceContext>
     return await TagBan.findBy({ serverID: ctx.requiredGuild.id });
   }
 
-  public async saveServerBannedTagsInContext(ctx: TagBlacklistServiceContext) {
+  public async getGlobalBannedTags(
+    ctx: TagBlacklistServiceContext
+  ): Promise<TagBan[]> {
+    this.log(ctx, `Getting globally banned tags`);
+    return await TagBan.findBy({ serverID: IsNull() });
+  }
+
+  public async saveBannedTagsInContext(ctx: TagBlacklistServiceContext) {
+    ctx.mutable.bannedTags = await this.getGlobalBannedTags(ctx);
+
     if (ctx.guild) {
-      ctx.mutable.serverBannedTags = await this.getServerBannedTags(ctx);
+      const serverBannedTags = await this.getServerBannedTags(ctx);
+
+      ctx.mutable.bannedTags = ctx.mutable.bannedTags.concat(
+        ...serverBannedTags
+      );
     }
   }
 
-  private getBlacklists(customBlacklist: string[] = []): TagBlacklistGroup {
-    const { regexs, strings } = this.gowonService.cache.fetchGlobalBannedTags();
-
-    return {
-      strings: strings.concat(
-        customBlacklist.map((t) => this.normalizeItem(t))
-      ),
-      regexes: regexs,
-    };
-  }
-
   private normalizeItem(item: string | { name: string }): string {
-    return this.getItemName(item).replace(/\s+/g, "").toLowerCase();
+    return this.getItemName(item)
+      .replaceAll(/[\s\-_]/g, "")
+      .toLowerCase();
   }
 
   private getItemName(item: string | { name: string }) {

@@ -11,7 +11,7 @@ import {
 import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingEmbed";
 import { TopTracks } from "../../../services/LastFM/converters/TopTypes";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
-import { TagBlacklistService } from "../../../services/TagBlacklistService";
+import { TagBlacklistService } from "../../../services/moderation/TagBlacklistService";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 interface Overlap {
@@ -49,7 +49,7 @@ export default class TagTracks extends LastFMBaseCommand<typeof args> {
   async run() {
     const tag = this.parsedArguments.tag;
 
-    await this.tagBlacklistService.saveServerBannedTagsInContext(this.ctx);
+    await this.tagBlacklistService.saveBannedTagsInContext(this.ctx);
 
     this.tagBlacklistService.throwIfTagNotAllowedAsInput(this.ctx, tag);
 

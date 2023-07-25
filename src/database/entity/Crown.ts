@@ -8,7 +8,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { toInt } from "../../helpers/lastfm/";
+import { toInt } from "../../helpers/native/number";
 import { SimpleMap } from "../../helpers/types";
 import { Logger } from "../../lib/Logger";
 import { GowonContext } from "../../lib/context/Context";

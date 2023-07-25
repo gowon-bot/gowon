@@ -1,6 +1,6 @@
 import { User as DiscordUser } from "discord.js";
 import { code } from "../helpers/discord";
-import { uppercaseFirst } from "../helpers/string";
+import { uppercaseFirst } from "../helpers/native/string";
 
 export class Perspective {
   private titlecase = false;

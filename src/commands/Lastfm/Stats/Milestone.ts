@@ -1,5 +1,5 @@
 import { BadLastFMResponseError } from "../../../errors/errors";
-import { getOrdinal } from "../../../helpers";
+import { getOrdinal } from "../../../helpers/native/number";
 import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";

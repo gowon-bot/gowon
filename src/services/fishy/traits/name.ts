@@ -1,4 +1,4 @@
-import { looseCompare } from "../../../helpers/string";
+import { looseCompare } from "../../../helpers/native/string";
 
 export enum FishyNameTrait {
   Color = "color",

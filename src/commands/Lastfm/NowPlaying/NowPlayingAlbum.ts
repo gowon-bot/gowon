@@ -44,7 +44,7 @@ export default class NowPlayingAlbum extends NowPlayingBaseCommand {
       discordUser
     );
 
-    await this.tagConsolidator.saveServerBannedTagsInContext(this.ctx);
+    await this.tagConsolidator.saveBannedTagsInContext(this.ctx);
 
     if (albumInfo.value)
       this.tagConsolidator.addTags(this.ctx, albumInfo.value?.tags || []);

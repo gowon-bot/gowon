@@ -1,4 +1,4 @@
-import { getOrdinal } from "../../../helpers";
+import { getOrdinal } from "../../../helpers/native/number";
 import { displayNumber } from "../../views/displays";
 import { BaseNowPlayingComponent } from "./BaseNowPlayingComponent";
 

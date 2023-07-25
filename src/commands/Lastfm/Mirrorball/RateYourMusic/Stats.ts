@@ -1,6 +1,6 @@
 import { mean } from "mathjs";
 import { LogicError, UnknownMirrorballError } from "../../../../errors/errors";
-import { toInt } from "../../../../helpers/lastfm/";
+import { toInt } from "../../../../helpers/native/number";
 import { extraWideSpace } from "../../../../helpers/specialCharacters";
 import { standardMentions } from "../../../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../../../lib/context/arguments/types";

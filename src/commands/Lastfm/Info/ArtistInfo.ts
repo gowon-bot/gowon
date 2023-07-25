@@ -61,7 +61,7 @@ export default class ArtistInfo extends InfoCommand<typeof args> {
       { name: artist },
     ]);
 
-    await this.tagConsolidator.saveServerBannedTagsInContext(this.ctx);
+    await this.tagConsolidator.saveBannedTagsInContext(this.ctx);
     this.tagConsolidator.addTags(this.ctx, artistInfo.tags);
     this.tagConsolidator.addTags(this.ctx, tags);
 

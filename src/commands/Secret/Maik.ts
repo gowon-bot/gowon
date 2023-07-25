@@ -1,4 +1,4 @@
-import { shuffle } from "../../helpers";
+import { shuffle } from "../../helpers/native/array";
 import { Command } from "../../lib/command/Command";
 
 export default class Maik extends Command {
@@ -23,5 +23,5 @@ const quotes: string[] = [
   "I got a pic of my cat next to the penis vinyl somewhere",
   "Wanna know my credit card number",
   "You havent lived if you have never pondered the anaconda lyrics on a starry night by sea",
-  "I had a dream i was watching the new dr strange movie and it just ended with a google screenshot of someone search for jiheon fromis 9"
+  "I had a dream i was watching the new dr strange movie and it just ended with a google screenshot of someone search for jiheon fromis 9",
 ];

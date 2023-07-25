@@ -1,7 +1,6 @@
 import { UserHasNoCrownsInServerError } from "../../../errors/commands/crowns";
-import { getOrdinal } from "../../../helpers";
 import { bold } from "../../../helpers/discord";
-import { toInt } from "../../../helpers/lastfm/";
+import { getOrdinal, toInt } from "../../../helpers/native/number";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import {

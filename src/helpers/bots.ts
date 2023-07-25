@@ -1,5 +1,5 @@
-import { flatDeep } from ".";
 import specialUsers from "../lib/specialUsers.json";
+import { flatDeep } from "./native/array";
 
 export type BotName =
   | "rem"

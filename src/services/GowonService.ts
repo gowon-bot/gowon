@@ -1,7 +1,6 @@
 import { Guild } from "discord.js";
 import regexEscape from "escape-string-regexp";
 import config from "../../config.json";
-import { GowonCache } from "../database/cache/GowonCache";
 import { userMentionAtStartRegex } from "../helpers/discord";
 import { GowonContext } from "../lib/context/Context";
 import { SettingsService } from "../lib/settings/SettingsService";
@@ -9,8 +8,6 @@ import { BaseService } from "./BaseService";
 import { ServiceRegistry } from "./ServicesRegistry";
 
 export class GowonService extends BaseService {
-  public cache = new GowonCache();
-
   private get settingsService() {
     return ServiceRegistry.get(SettingsService);
   }

@@ -44,7 +44,7 @@ export default class NowPlayingCombo extends NowPlayingBaseCommand {
       this.crownsService.getCrownDisplay(this.ctx, nowPlaying.artist),
     ]);
 
-    await this.tagConsolidator.saveServerBannedTagsInContext(this.ctx);
+    await this.tagConsolidator.saveBannedTagsInContext(this.ctx);
 
     if (artistInfo.value) {
       this.tagConsolidator.addTags(this.ctx, artistInfo.value.tags);

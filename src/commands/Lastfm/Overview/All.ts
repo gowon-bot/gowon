@@ -1,9 +1,9 @@
-import { getOrdinal } from "../../../helpers";
 import { isGowon } from "../../../helpers/bots";
 import { bold, italic } from "../../../helpers/discord";
-import { toInt } from "../../../helpers/lastfm/";
-import { Emoji } from "../../../lib/emoji/Emoji";
+import { toInt } from "../../../helpers/native/number";
+import { getOrdinal } from "../../../helpers/native/number";
 import { Perspective } from "../../../lib/Perspective";
+import { Emoji } from "../../../lib/emoji/Emoji";
 import { displayNumber } from "../../../lib/views/displays";
 import { OverviewChildCommand } from "./OverviewChildCommand";
 

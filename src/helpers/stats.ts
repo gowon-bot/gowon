@@ -1,4 +1,4 @@
-import { toInt } from "./lastfm/";
+import { toInt } from "./native/number";
 
 export function calculatePercent(
   number1: number | string,

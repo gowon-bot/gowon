@@ -3,7 +3,7 @@ import { CommandExtractor } from "./extractor/CommandExtractor";
 
 import _glob from "glob";
 import { promisify } from "util";
-import { flatDeep } from "../../helpers";
+import { flatDeep } from "../../helpers/native/array";
 import { SimpleMap } from "../../helpers/types";
 import { Command } from "./Command";
 import { ExtractedCommand } from "./extractor/ExtractedCommand";

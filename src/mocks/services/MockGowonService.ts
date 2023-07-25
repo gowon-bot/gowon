@@ -1,5 +1,4 @@
 import { Guild } from "discord.js";
-import { GowonCache } from "../../database/cache/GowonCache";
 import { userMentionAtStartRegex } from "../../helpers/discord";
 import { GowonContext } from "../../lib/context/Context";
 import { BaseMockService } from "./BaseMockService";
@@ -7,8 +6,6 @@ import { BaseMockService } from "./BaseMockService";
 export const mockPrefix = "!";
 
 export class MockGowonService extends BaseMockService {
-  public cache = new GowonCache();
-
   prefix(_guildID: string): string {
     return mockPrefix;
   }

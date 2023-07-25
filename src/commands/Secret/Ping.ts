@@ -1,5 +1,5 @@
 import { Chance } from "chance";
-import { shuffle } from "../../helpers";
+import { shuffle } from "../../helpers/native/array";
 import { Command } from "../../lib/command/Command";
 
 export default class Ping extends Command {

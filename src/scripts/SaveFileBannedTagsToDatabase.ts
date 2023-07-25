@@ -1,6 +1,6 @@
 import { GowonContext } from "../lib/context/Context";
 import { ServiceRegistry } from "../services/ServicesRegistry";
-import { TagBlacklistService } from "../services/TagBlacklistService";
+import { TagBlacklistService } from "../services/moderation/TagBlacklistService";
 import blacklistedTags from "../wordBlacklist.json";
 
 export default async function saveFileBannedTagsToDatabase(ctx: GowonContext) {

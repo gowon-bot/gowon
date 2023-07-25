@@ -3,9 +3,9 @@ import {
   RecentTracks,
 } from "../../services/LastFM/converters/RecentTracks";
 import { TagsCache } from "../caches/TagsCache";
+import { GowonContext } from "../context/Context";
 import { Paginator } from "../paginators/Paginator";
 import { TagConsolidator } from "../tags/TagConsolidator";
-import { GowonContext } from "../context/Context";
 
 export interface TagComboDetails {
   plays: number;
@@ -130,7 +130,7 @@ export class TagCombo {
 
     const tagConsolidator = new TagConsolidator();
 
-    await tagConsolidator.saveServerBannedTagsInContext(this.ctx);
+    await tagConsolidator.saveBannedTagsInContext(this.ctx);
 
     return tagConsolidator
       .addTags(this.ctx, tags)

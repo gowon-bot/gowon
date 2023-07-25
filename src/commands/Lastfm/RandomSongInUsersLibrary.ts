@@ -1,4 +1,4 @@
-import { getOrdinal } from "../../helpers";
+import { getOrdinal } from "../../helpers/native/number";
 import { bold, italic } from "../../helpers/discord";
 import { NumberArgument } from "../../lib/context/arguments/argumentTypes/NumberArgument";
 import { standardMentions } from "../../lib/context/arguments/mentionTypes/mentions";

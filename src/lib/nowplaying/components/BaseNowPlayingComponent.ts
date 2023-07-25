@@ -1,4 +1,4 @@
-import { insertAtIndex } from "../../../helpers";
+import { insertAtIndex } from "../../../helpers/native/array";
 import { RecentTrack } from "../../../services/LastFM/converters/RecentTracks";
 import { ExtractedCommand } from "../../command/extractor/ExtractedCommand";
 import { GowonContext } from "../../context/Context";

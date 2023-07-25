@@ -1,4 +1,4 @@
-import { toInt } from "../../../helpers/lastfm";
+import { toInt } from "../../../helpers/native/number";
 
 export class FishyDepthTrait {
   constructor(public shallow: number, public deep: number) {}

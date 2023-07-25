@@ -1,8 +1,8 @@
 import { sum } from "mathjs";
 import { RawTag } from "../../services/LastFM/LastFMService.types";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
-import { TagBlacklistService } from "../../services/TagBlacklistService";
 import { LilacTag } from "../../services/lilac/LilacAPIService.types";
+import { TagBlacklistService } from "../../services/moderation/TagBlacklistService";
 import { GowonContext } from "../context/Context";
 
 function isLilacTag(tag: any | LilacTag): tag is LilacTag {
@@ -29,8 +29,8 @@ export class TagConsolidator {
     return !!this.tags.length;
   }
 
-  async saveServerBannedTagsInContext(ctx: GowonContext) {
-    await this.tagBlacklistService.saveServerBannedTagsInContext(ctx);
+  async saveBannedTagsInContext(ctx: GowonContext) {
+    await this.tagBlacklistService.saveBannedTagsInContext(ctx);
   }
 
   addTags(

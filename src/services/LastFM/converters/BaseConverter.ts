@@ -1,5 +1,5 @@
 import { fromUnixTime } from "date-fns";
-import { toInt } from "../../../helpers/lastfm/";
+import { toInt } from "../../../helpers/native/number";
 import { RawImage, RawTag } from "../LastFMService.types";
 
 export class ImageCollection {

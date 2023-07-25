@@ -1,6 +1,6 @@
 import { User } from "../../../database/entity/User";
 import { AccessDeniedError, CommandInBetaError } from "../../../errors/errors";
-import { flatDeep } from "../../../helpers";
+import { flatDeep } from "../../../helpers/native/array";
 import { CommandPermission, getPermissions } from "./permissions";
 import { CommandAccessRole, CommandAccessRoleName, getRoles } from "./roles";
 

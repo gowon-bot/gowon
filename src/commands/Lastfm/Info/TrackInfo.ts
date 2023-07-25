@@ -1,5 +1,6 @@
 import { bold, italic } from "../../../helpers/discord";
-import { LinkConsolidator, toInt } from "../../../helpers/lastfm/";
+import { LinkConsolidator } from "../../../helpers/lastfm/";
+import { toInt } from "../../../helpers/native/number";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
@@ -43,8 +44,7 @@ export default class TrackInfo extends InfoCommand<typeof args> {
       this.spotifyService.searchTrack(this.ctx, { artist, track }),
     ]);
 
-    await this.tagConsolidator.saveServerBannedTagsInContext(this.ctx);
-
+    await this.tagConsolidator.saveBannedTagsInContext(this.ctx);
     this.tagConsolidator.blacklistTags(trackInfo.artist.name, trackInfo.name);
     this.tagConsolidator.addTags(this.ctx, trackInfo.tags);
 

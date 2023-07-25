@@ -1,5 +1,5 @@
 import { HexColorString, MessageEmbed } from "discord.js";
-import { uppercaseFirst } from "../../../helpers/string";
+import { uppercaseFirst } from "../../../helpers/native/string";
 import { OverviewStatsCalculator } from "../../../lib/calculators/OverviewStatsCalculator";
 import { TimePeriodArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/TimePeriodArgument";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";

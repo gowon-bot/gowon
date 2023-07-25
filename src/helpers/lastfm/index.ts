@@ -35,13 +35,3 @@ export class LinkConsolidator {
     };
   }
 }
-
-export function toInt(number: any): number {
-  if (typeof number === "number") {
-    return number;
-  } else if (typeof number === "string") {
-    return parseInt(number.replaceAll(/(\s|,)+/g, ""), 10);
-  }
-
-  return parseInt(number, 10);
-}

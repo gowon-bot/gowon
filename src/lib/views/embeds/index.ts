@@ -1,6 +1,6 @@
 import { GuildMember, HexColorString, MessageEmbed, User } from "discord.js";
 import { bold, italic } from "../../../helpers/discord";
-import { uppercaseFirst } from "../../../helpers/string";
+import { uppercaseFirst } from "../../../helpers/native/string";
 import { ImageCollection } from "../../../services/LastFM/converters/BaseConverter";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { AlbumCoverService } from "../../../services/moderation/AlbumCoverService";

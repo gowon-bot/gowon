@@ -8,7 +8,7 @@ import {
   LastFMConnectionError,
   LastFMError,
 } from "../../errors/errors";
-import { toInt } from "../../helpers/lastfm/";
+import { toInt } from "../../helpers/native/number";
 import { SimpleMap } from "../../helpers/types";
 import { GowonContext } from "../../lib/context/Context";
 import { BaseService } from "../BaseService";

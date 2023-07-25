@@ -1,7 +1,7 @@
 import { sub } from "date-fns";
 import { LogicError } from "../../../errors/errors";
 import { italic } from "../../../helpers/discord";
-import { toInt } from "../../../helpers/lastfm/";
+import { toInt } from "../../../helpers/native/number";
 import { bullet, extraWideSpace } from "../../../helpers/specialCharacters";
 import { ReportCalculator } from "../../../lib/calculators/ReportCalculator";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
@@ -9,8 +9,8 @@ import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { Paginator } from "../../../lib/paginators/Paginator";
 import { TagConsolidator } from "../../../lib/tags/TagConsolidator";
 import { displayDate, displayNumber } from "../../../lib/views/displays";
-import { RedirectsService } from "../../../services/dbservices/RedirectsService";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
+import { RedirectsService } from "../../../services/dbservices/RedirectsService";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 const args = {
@@ -85,7 +85,7 @@ export default class Week extends LastFMBaseCommand<typeof args> {
 
     const tagConsolidator = new TagConsolidator();
 
-    await tagConsolidator.saveServerBannedTagsInContext(this.ctx);
+    await tagConsolidator.saveBannedTagsInContext(this.ctx);
     tagConsolidator.addTags(this.ctx, week.top.tags);
 
     let embed = this.newEmbed()
