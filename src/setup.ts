@@ -46,6 +46,7 @@ export const client = new GowonClient(
     },
     allowedMentions: { parse: ["users", "roles"] },
     partials: ["CHANNEL"],
+    shards: "auto",
   }),
   config.environment
 );
