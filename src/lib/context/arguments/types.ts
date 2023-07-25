@@ -1,15 +1,15 @@
 import { SimpleMap } from "../../../helpers/types";
 import { ArgumentReturnType, BaseArgument } from "./argumentTypes/BaseArgument";
-import { ChannelArgument } from "./argumentTypes/discord/ChannelArgument";
-import { DiscordRoleArgument } from "./argumentTypes/discord/DiscordRoleArgument";
-import { EmojisArgument } from "./argumentTypes/discord/EmojisArgument";
 import { Flag } from "./argumentTypes/Flag";
 import { NumberArgument } from "./argumentTypes/NumberArgument";
 import { StringArgument } from "./argumentTypes/StringArgument";
 import { StringArrayArgument } from "./argumentTypes/StringArrayArgument";
+import { ChannelArgument } from "./argumentTypes/discord/ChannelArgument";
+import { DiscordRoleArgument } from "./argumentTypes/discord/DiscordRoleArgument";
+import { EmojisArgument } from "./argumentTypes/discord/EmojisArgument";
 import { DateArgument } from "./argumentTypes/timeAndDate/DateArgument";
+import { DateRangeArgument } from "./argumentTypes/timeAndDate/DateRangeArgument";
 import { TimePeriodArgument } from "./argumentTypes/timeAndDate/TimePeriodArgument";
-import { TimeRangeArgument } from "./argumentTypes/timeAndDate/TimeRangeArgument";
 
 export type ArgumentsMap = SimpleMap<BaseArgument<unknown>>;
 
@@ -22,7 +22,7 @@ export type ImplementedOptions<T extends Record<string, unknown>> =
   | StringArgument<T>
   | NumberArgument<T>
   | StringArrayArgument<T>
-  | TimeRangeArgument<T>
+  | DateRangeArgument<T>
   | TimePeriodArgument<T>
   | EmojisArgument<T>
   | DateArgument<T>

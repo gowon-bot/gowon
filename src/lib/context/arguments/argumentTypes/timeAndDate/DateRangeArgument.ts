@@ -2,24 +2,24 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, Message } from "discord.js";
 import { GowonService } from "../../../../../services/GowonService";
 import { ServiceRegistry } from "../../../../../services/ServicesRegistry";
-import { TimeRange } from "../../../../timeAndDate/TimeRange";
+import { DateRange } from "../../../../timeAndDate/DateRange";
 import { GowonContext } from "../../../Context";
-import { TimeRangeParser } from "../../parsers/TimeRangeParser";
+import { DateRangeParser } from "../../parsers/DateRangeParser";
 import { BaseArgument, BaseArgumentOptions } from "../BaseArgument";
 
-export interface TimeRangeArgumentOptions
-  extends BaseArgumentOptions<TimeRange> {
+export interface DateRangeArgumentOptions
+  extends BaseArgumentOptions<DateRange> {
   useOverall?: boolean;
 }
 
-export class TimeRangeArgument<
-  OptionsT extends Partial<TimeRangeArgumentOptions> = {}
-> extends BaseArgument<TimeRange, TimeRangeArgumentOptions, OptionsT> {
+export class DateRangeArgument<
+  OptionsT extends Partial<DateRangeArgumentOptions> = {}
+> extends BaseArgument<DateRange, DateRangeArgumentOptions, OptionsT> {
   get gowonService() {
     return ServiceRegistry.get(GowonService);
   }
 
-  timeRangeParser = new TimeRangeParser(this.options);
+  dateRangeParser = new DateRangeParser(this.options);
 
   constructor(options?: OptionsT) {
     super((options ?? {}) as OptionsT);
@@ -29,21 +29,21 @@ export class TimeRangeArgument<
     _: Message,
     content: string,
     ctx: GowonContext
-  ): TimeRange | undefined {
+  ): DateRange | undefined {
     const cleanContent = this.cleanContent(ctx, content);
 
-    return this.timeRangeParser.parse(cleanContent) || this.getDefault();
+    return this.dateRangeParser.parse(cleanContent) || this.getDefault();
   }
 
   parseFromInteraction(
     interaction: CommandInteraction,
     _: GowonContext,
     argumentName: string
-  ): TimeRange | undefined {
+  ): DateRange | undefined {
     const range = interaction.options.getString(argumentName);
-    const timeRange = range ? this.timeRangeParser.parse(range) : undefined;
+    const dateRange = range ? this.dateRangeParser.parse(range) : undefined;
 
-    return timeRange || this.getDefault();
+    return dateRange || this.getDefault();
   }
 
   addAsOption(slashCommand: SlashCommandBuilder, argumentName: string) {

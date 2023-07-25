@@ -4,7 +4,7 @@ import {
   MostUsedCommandsResponse,
 } from "../../database/entity/meta/CommandRun";
 import { GowonContext } from "../../lib/context/Context";
-import { TimeRange } from "../../lib/timeAndDate/TimeRange";
+import { DateRange } from "../../lib/timeAndDate/DateRange";
 import { BaseService } from "../BaseService";
 
 export class MetaService extends BaseService {
@@ -27,13 +27,13 @@ export class MetaService extends BaseService {
 
   async mostUsedCommands(
     ctx: GowonContext,
-    timeRange?: TimeRange
+    dateRange?: DateRange
   ): Promise<MostUsedCommandsResponse[]> {
     const serverID = ctx.requiredGuild.id;
 
     this.log(ctx, `Counting most used commands in ${serverID}`);
 
-    return await CommandRun.mostUsedCommands(serverID, timeRange);
+    return await CommandRun.mostUsedCommands(serverID, dateRange);
   }
 
   async countCommandRuns(ctx: GowonContext, commandID: string) {

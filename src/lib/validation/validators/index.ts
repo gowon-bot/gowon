@@ -1,4 +1,5 @@
 import { ChoicesValidator } from "./Choices";
+import { DateRangeValidator } from "./DateRange";
 import { LengthRangeValidator } from "./LengthRange";
 import { NumberValidator } from "./Number";
 import { RangeValidator } from "./Range";
@@ -7,7 +8,6 @@ import {
   RequiredOrValidator,
   RequiredValidator,
 } from "./Required";
-import { TimeRangeValidator } from "./TimeRange";
 
 export const validators = {
   LengthRangeValidator,
@@ -16,7 +16,7 @@ export const validators = {
   RequiredValidator,
   RequiredAndValidator,
   RequiredOrValidator,
-  TimeRangeValidator,
+  DateRangeValidator,
   ChoicesValidator,
 
   positiveNumberValidator: new RangeValidator({

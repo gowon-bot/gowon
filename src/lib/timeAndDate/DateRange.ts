@@ -2,25 +2,25 @@ import {
   LastFMPeriod,
   TimeframeParams,
 } from "../../services/LastFM/LastFMService.types";
-import { timeRangeFromDuration } from "./helpers";
-import { humanizeTimeRange } from "./helpers/humanize";
-import { parseTimeRange } from "./helpers/parse";
+import { dateRangeFromDuration } from "./helpers";
+import { humanizeDateRange } from "./helpers/humanize";
+import { parseDateRange } from "./helpers/parse";
 import { NamedRange } from "./NamedRange";
 
-export class TimeRange {
+export class DateRange {
   static fromPeriod(
     period?: LastFMPeriod,
     options: { fallback?: Duration | "overall"; useOverall?: boolean } = {}
-  ): TimeRange | undefined {
-    return parseTimeRange(period, options);
+  ): DateRange | undefined {
+    return parseDateRange(period, options);
   }
 
-  static fromDuration(duration: Duration): TimeRange {
-    return timeRangeFromDuration(duration);
+  static fromDuration(duration: Duration): DateRange {
+    return dateRangeFromDuration(duration);
   }
 
-  static overall(): TimeRange {
-    return new TimeRange({
+  static overall(): DateRange {
+    return new DateRange({
       to: new Date(),
       isOverall: true,
     });
@@ -56,8 +56,10 @@ export class TimeRange {
     return this.options.namedRange;
   }
 
-  get humanized(): string {
-    return this.namedRange?.humanized || humanizeTimeRange(this);
+  humanized(includeTime?: boolean): string {
+    return (
+      this.namedRange?.humanized || humanizeDateRange(this, { includeTime })
+    );
   }
 
   get asTimeframeParams(): TimeframeParams {

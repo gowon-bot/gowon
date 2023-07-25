@@ -39,7 +39,7 @@ export class NumberArgument<
   ): number | undefined {
     const cleanContent = this.cleanContent(ctx, content);
 
-    const split = this.filterTimeRanges(cleanContent.split(/\s+/));
+    const split = this.filterDateRanges(cleanContent.split(/\s+/));
 
     const numbers = this.getNumbersFromSplit(split);
 
@@ -75,7 +75,7 @@ export class NumberArgument<
     return numbers;
   }
 
-  private filterTimeRanges(splits: string[]): string[] {
+  private filterDateRanges(splits: string[]): string[] {
     const filtered = [] as string[];
 
     for (let i = 0; i < splits.length; i++) {

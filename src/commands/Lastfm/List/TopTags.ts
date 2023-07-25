@@ -1,25 +1,25 @@
-import { humanizePeriod } from "../../../lib/timeAndDate/helpers/humanize";
+import { bold } from "../../../helpers/discord";
+import { DateRangeArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/DateRangeArgument";
+import { TimePeriodArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/TimePeriodArgument";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { TagConsolidator } from "../../../lib/tags/TagConsolidator";
+import { humanizePeriod } from "../../../lib/timeAndDate/helpers/humanize";
 import {
   displayNumber,
   displayNumberedList,
 } from "../../../lib/views/displays";
 import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingEmbed";
-import { LastFMBaseCommand } from "../LastFMBaseCommand";
-import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
-import { TimePeriodArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/TimePeriodArgument";
-import { TimeRangeArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/TimeRangeArgument";
-import { bold } from "../../../helpers/discord";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { LilacTagsService } from "../../../services/lilac/LilacTagsService";
-import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 const args = {
   timePeriod: new TimePeriodArgument({
     default: "7day",
     description: "The time period to use (defaults to week)",
   }),
-  timeRange: new TimeRangeArgument({
+  dateRange: new DateRangeArgument({
     description: "The time range to use",
   }),
   ...standardMentions,
@@ -40,16 +40,16 @@ export default class TagList extends LastFMBaseCommand<typeof args> {
   lilacTagsService = ServiceRegistry.get(LilacTagsService);
 
   async run() {
-    const timePeriod = this.parsedArguments.timePeriod,
-      timeRange = this.parsedArguments.timeRange;
+    const timePeriod = this.parsedArguments.timePeriod;
+    const dateRange = this.parsedArguments.dateRange;
 
     const { requestable, perspective } = await this.getMentions();
 
     const topArtists = await this.lastFMService.topArtists(this.ctx, {
       username: requestable,
       limit: 1000,
-      period: timePeriod,
-      ...timeRange?.asTimeframeParams,
+      period: !dateRange ? timePeriod : undefined,
+      ...dateRange?.asTimeframeParams,
     });
 
     const artists = topArtists.artists.map((a) => ({ name: a.name }));
@@ -58,7 +58,8 @@ export default class TagList extends LastFMBaseCommand<typeof args> {
     const embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor("Top tags"))
       .setTitle(
-        `${perspective.possessive} top tags ${timeRange?.humanized || humanizePeriod(timePeriod)
+        `${perspective.possessive} top tags ${
+          dateRange?.humanized() || humanizePeriod(timePeriod)
         }`
       );
 

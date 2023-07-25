@@ -8,12 +8,8 @@ import { SettingsService } from "../lib/settings/SettingsService";
 import { BaseService } from "./BaseService";
 import { ServiceRegistry } from "./ServicesRegistry";
 
-export const gowonServiceConstants = {} as const;
-
 export class GowonService extends BaseService {
   public cache = new GowonCache();
-
-  constants = gowonServiceConstants;
 
   private get settingsService() {
     return ServiceRegistry.get(SettingsService);

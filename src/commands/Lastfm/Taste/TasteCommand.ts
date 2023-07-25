@@ -9,7 +9,7 @@ import { DurationParser } from "../../../lib/context/arguments/parsers/DurationP
 import { NamedRangeParser } from "../../../lib/context/arguments/parsers/NamedRangeParser";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { Paginator } from "../../../lib/paginators/Paginator";
-import { TimeRange } from "../../../lib/timeAndDate/TimeRange";
+import { DateRange } from "../../../lib/timeAndDate/DateRange";
 import { LastFMPeriod } from "../../../services/LastFM/LastFMService.types";
 import { ArtistPlaysPair } from "../../../services/taste/TasteService.types";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
@@ -57,7 +57,7 @@ export abstract class TasteCommand<
 
   arguments = tasteArgs as T;
 
-  timeRange?: TimeRange;
+  dateRange?: DateRange;
 
   protected async getUsernames(): Promise<[string, string]> {
     const usernames: string[] = [];
@@ -137,17 +137,17 @@ export abstract class TasteCommand<
     const artistAmount = (this.parsedArguments as any).artistAmount as number,
       timePeriod = ((this.parsedArguments as any).timePeriod ||
         "overall") as LastFMPeriod,
-      timeRange = (this.parsedArguments as any).timeRange as
-        | TimeRange
+      dateRange = (this.parsedArguments as any).dateRange as
+        | DateRange
         | undefined;
 
-    this.timeRange = timeRange;
+    this.dateRange = dateRange;
 
     const maxPages = artistAmount > 1000 ? 2 : 1;
     const params = {
       limit: artistAmount > 1000 ? Math.ceil(artistAmount / 2) : artistAmount,
       period: timePeriod,
-      ...timeRange?.asTimeframeParams,
+      ...dateRange?.asTimeframeParams,
     };
 
     const senderPaginator = new Paginator(

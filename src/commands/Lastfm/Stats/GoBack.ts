@@ -1,7 +1,6 @@
 import { LogicError } from "../../../errors/errors";
-import { ago } from "../../../helpers";
 import { DateArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/DateArgument";
-import { TimeRangeArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/TimeRangeArgument";
+import { DateRangeArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/DateRangeArgument";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { Validation } from "../../../lib/validation/ValidationChecker";
@@ -11,7 +10,7 @@ import { trackEmbed } from "../../../lib/views/embeds";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 const args = {
-  timeRange: new TimeRangeArgument({
+  dateRange: new DateRangeArgument({
     description: "The amount of time to go back",
   }),
   date: new DateArgument({
@@ -33,8 +32,8 @@ export default class GoBack extends LastFMBaseCommand<typeof args> {
   slashCommand = true;
 
   validation: Validation = {
-    timeRange: {
-      validator: new validators.TimeRangeValidator({
+    dateRange: {
+      validator: new validators.DateRangeValidator({
         requireFrom: true,
         treatOnlyToAsEmpty: true,
       }),
@@ -43,10 +42,10 @@ export default class GoBack extends LastFMBaseCommand<typeof args> {
   };
 
   async run() {
-    const timeRange = this.parsedArguments.timeRange,
+    const dateRange = this.parsedArguments.dateRange,
       date = this.parsedArguments.date;
 
-    if (!date && !timeRange?.from) {
+    if (!date && !dateRange?.from) {
       throw new LogicError("please enter a valid date or time range!");
     }
 
@@ -57,7 +56,7 @@ export default class GoBack extends LastFMBaseCommand<typeof args> {
     const track = await this.lastFMService.goBack(
       this.ctx,
       requestable,
-      (date || timeRange?.from)!
+      (date || dateRange?.from)!
     );
 
     if (!track)
@@ -68,10 +67,7 @@ export default class GoBack extends LastFMBaseCommand<typeof args> {
     const embed = this.newEmbed(await trackEmbed(this.ctx, track));
 
     embed.setDescription(
-      embed.description +
-        (date
-          ? `\n\nScrobbled on ${displayDate(date)}`
-          : `\n\nScrobbled ${ago(timeRange?.from!)}`)
+      embed.description + `\n\nScrobbled on ${displayDate(track.scrobbledAt)}`
     );
 
     await this.send(embed);

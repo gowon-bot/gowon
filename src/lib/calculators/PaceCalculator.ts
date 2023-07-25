@@ -1,9 +1,9 @@
 import { add, differenceInSeconds } from "date-fns";
-import { TimeRange } from "../timeAndDate/TimeRange";
 import { Requestable } from "../../services/LastFM/LastFMAPIService";
 import { LastFMService } from "../../services/LastFM/LastFMService";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { GowonContext } from "../context/Context";
+import { DateRange } from "../timeAndDate/DateRange";
 
 export interface PacePrediction {
   scrobbleRate: number;
@@ -18,9 +18,9 @@ export class PaceCalculator {
 
   private calculateScrobblesPerHour(
     scrobbles: number,
-    timeRange: TimeRange
+    dateRange: DateRange
   ): number {
-    const diff = differenceInSeconds(timeRange.to!, timeRange.from!) / 3600;
+    const diff = differenceInSeconds(dateRange.to!, dateRange.from!) / 3600;
 
     return scrobbles / diff;
   }
@@ -44,7 +44,7 @@ export class PaceCalculator {
 
     const rate = this.calculateScrobblesPerHour(
       userInfo.scrobbleCount,
-      new TimeRange({
+      new DateRange({
         from: userInfo.registeredAt,
         to: new Date(),
       })
@@ -57,23 +57,23 @@ export class PaceCalculator {
     };
   }
 
-  private async calculateFromTimeRange(
-    timeRange: TimeRange,
+  private async calculateFromDateRange(
+    dateRange: DateRange,
     milestone: number
   ): Promise<PacePrediction> {
-    const [totalScrobbles, scrobblesOverTimeRange] = await Promise.all([
+    const [totalScrobbles, scrobblesOverDateRange] = await Promise.all([
       this.lastFMService.getNumberScrobbles(this.ctx, this.requestable),
       this.lastFMService.getNumberScrobbles(
         this.ctx,
         this.requestable,
-        timeRange.from,
-        timeRange.to
+        dateRange.from,
+        dateRange.to
       ),
     ]);
 
     const rate = this.calculateScrobblesPerHour(
-      scrobblesOverTimeRange,
-      timeRange
+      scrobblesOverDateRange,
+      dateRange
     );
 
     return {
@@ -99,13 +99,13 @@ export class PaceCalculator {
   }
 
   async calculate(
-    timeRange: TimeRange,
+    dateRange: DateRange,
     milestone?: number
   ): Promise<PacePrediction> {
     if (!milestone) milestone = await this.getNearestMilestone();
 
-    if (timeRange.from) {
-      return await this.calculateFromTimeRange(timeRange, milestone);
+    if (dateRange.from) {
+      return await this.calculateFromDateRange(dateRange, milestone);
     } else return await this.calculateFromOverall(milestone);
   }
 }

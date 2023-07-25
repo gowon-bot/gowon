@@ -1,7 +1,7 @@
 import { MultiRequester } from "../../../../lib/MultiRequester";
-import { TimeRangeArgument } from "../../../../lib/context/arguments/argumentTypes/timeAndDate/TimeRangeArgument";
+import { DateRangeArgument } from "../../../../lib/context/arguments/argumentTypes/timeAndDate/DateRangeArgument";
 import { ArgumentsMap } from "../../../../lib/context/arguments/types";
-import { TimeRange } from "../../../../lib/timeAndDate/TimeRange";
+import { DateRange } from "../../../../lib/timeAndDate/DateRange";
 import {
   displayNumber,
   displayNumberedList,
@@ -9,9 +9,9 @@ import {
 import { FriendsChildCommand } from "../FriendsChildCommand";
 
 const args = {
-  timeRange: new TimeRangeArgument({
+  dateRange: new DateRangeArgument({
     useOverall: true,
-    default: () => TimeRange.overall(),
+    default: () => DateRange.overall(),
   }),
 } satisfies ArgumentsMap;
 
@@ -30,14 +30,14 @@ export class Scrobbles extends FriendsChildCommand<typeof args> {
       fetchFriendsList: true,
     });
 
-    const timeRange = this.parsedArguments.timeRange;
+    const dateRange = this.parsedArguments.dateRange;
 
     const scrobbles = await new MultiRequester(
       this.ctx,
       friends.usernames()
     ).fetch(this.lastFMService.getNumberScrobbles.bind(this.lastFMService), [
-      timeRange.from,
-      timeRange.to,
+      dateRange.from,
+      dateRange.to,
     ]);
 
     const friendDisplays = friends
@@ -59,7 +59,7 @@ export class Scrobbles extends FriendsChildCommand<typeof args> {
 
     const embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor("Friends scrobbles"))
-      .setTitle(`Your friends scrobbles ${timeRange.humanized}`)
+      .setTitle(`Your friends scrobbles ${dateRange.humanized()}`)
       .setDescription(displayNumberedList(friendDisplays))
       .setFooter({
         text: `Your friends have a total of ${displayNumber(

@@ -4,6 +4,7 @@ export const constants = {
   defaultTasteAmount: 1000,
   hardPageLimit: 100,
   crownThreshold: 30,
+  dateDisplayFormat: "d MMMM y",
   dateParsers: [
     "yy-MM-dd",
     "yyyy-MM-dd",
@@ -11,6 +12,9 @@ export const constants = {
     "yyyy/MM/dd",
     "yy.MM.dd",
     "yyyy.MM.dd",
+    "MM-dd",
+    "MM/dd",
+    "MM.dd",
   ] as string[],
   unknownUserDisplay: "???",
   defaultLoadingTime: 5,

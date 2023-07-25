@@ -1,8 +1,8 @@
 import { isValid, parse, sub } from "date-fns";
-import { timeRangeFromDuration } from ".";
+import { dateRangeFromDuration } from ".";
 import { DurationParser } from "../../context/arguments/parsers/DurationParser";
 import { overallRegex } from "../../context/arguments/parsers/TimePeriodParser";
-import { TimeRange } from "../TimeRange";
+import { DateRange } from "../DateRange";
 
 export function parseDate(
   string: string,
@@ -16,40 +16,45 @@ export function parseDate(
     if (typeof parser === "string") {
       const attempt = parse(string, parser, now);
 
-      if (attempt !== now && isValid(attempt)) return attempt;
+      if (attempt !== now && isValid(attempt)) {
+        return attempt;
+      }
     } else {
       const attempt = parser(string);
-      if (attempt) return attempt;
+
+      if (attempt && isValid(attempt)) {
+        return attempt;
+      }
     }
   }
 
   return;
 }
 
-export function parseTimeRange(
+export function parseDateRange(
   string?: string,
   options: { fallback?: Duration | "overall"; useOverall?: boolean } = {}
-): TimeRange | undefined {
+): DateRange | undefined {
   const durationParser = new DurationParser();
 
   const parsedDuration = durationParser.parse(string || "");
 
   if (Object.keys(parsedDuration || {}).length) {
-    return timeRangeFromDuration(parsedDuration);
+    return dateRangeFromDuration(parsedDuration);
   }
 
   if (
     (options.useOverall && overallRegex.test(string || "")) ||
     options.fallback === "overall"
   ) {
-    return new TimeRange({
+    return new DateRange({
       to: new Date(),
       isOverall: options.useOverall,
     });
   }
 
   if (options.fallback) {
-    return new TimeRange({
+    return new DateRange({
       from: sub(new Date(), options.fallback),
       to: new Date(),
       duration: options.fallback,

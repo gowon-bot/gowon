@@ -1,18 +1,18 @@
-import { LastFMBaseCommand } from "../LastFMBaseCommand";
-import { displayDate, displayNumber } from "../../../lib/views/displays";
-import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
-import { TimeRangeArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/TimeRangeArgument";
-import { DateArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/DateArgument";
-import { TimeRange } from "../../../lib/timeAndDate/TimeRange";
 import { bold } from "../../../helpers/discord";
+import { DateArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/DateArgument";
+import { DateRangeArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/DateRangeArgument";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { DateRange } from "../../../lib/timeAndDate/DateRange";
+import { displayDate, displayNumber } from "../../../lib/views/displays";
+import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 const args = {
   ...standardMentions,
   date: new DateArgument(),
-  timeRange: new TimeRangeArgument({
+  dateRange: new DateRangeArgument({
     useOverall: true,
-    default: () => TimeRange.overall(),
+    default: () => DateRange.overall(),
   }),
 } satisfies ArgumentsMap;
 
@@ -36,7 +36,7 @@ export default class Scrobbles extends LastFMBaseCommand<typeof args> {
       return;
     }
 
-    const timeRange = this.parsedArguments.timeRange,
+    const dateRange = this.parsedArguments.dateRange,
       date = this.parsedArguments.date;
 
     const { requestable, perspective } = await this.getMentions();
@@ -44,8 +44,8 @@ export default class Scrobbles extends LastFMBaseCommand<typeof args> {
     const scrobbles = await this.lastFMService.getNumberScrobbles(
       this.ctx,
       requestable,
-      date || timeRange.from,
-      date ? undefined : timeRange.to
+      date || dateRange.from,
+      date ? undefined : dateRange.to
     );
 
     const sentMessage = await this.oldReply(
@@ -54,10 +54,10 @@ export default class Scrobbles extends LastFMBaseCommand<typeof args> {
           scrobbles,
           `scr${this.extract.didMatch("scrabbles") ? "a" : "o"}bble`
         )
-      )} ${date ? `since ${displayDate(date)}` : timeRange.humanized}`
+      )} ${date ? `since ${displayDate(date)}` : dateRange.humanized()}`
     );
 
-    if (timeRange.isOverall && scrobbles % 25000 === 0 && scrobbles > 0) {
+    if (dateRange.isOverall && scrobbles % 25000 === 0 && scrobbles > 0) {
       await sentMessage.react("🥳");
     }
   }

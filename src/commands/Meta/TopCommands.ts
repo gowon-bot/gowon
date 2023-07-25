@@ -1,15 +1,15 @@
-import { MetaChildCommand } from "./MetaChildCommand";
-import { displayNumber } from "../../lib/views/displays";
-import { TimeRangeArgument } from "../../lib/context/arguments/argumentTypes/timeAndDate/TimeRangeArgument";
 import { bold } from "../../helpers/discord";
-import { humanizeTimeRange } from "../../lib/timeAndDate/helpers/humanize";
-import { TimeRange } from "../../lib/timeAndDate/TimeRange";
+import { DateRangeArgument } from "../../lib/context/arguments/argumentTypes/timeAndDate/DateRangeArgument";
 import { ArgumentsMap } from "../../lib/context/arguments/types";
+import { DateRange } from "../../lib/timeAndDate/DateRange";
+import { humanizeDateRange } from "../../lib/timeAndDate/helpers/humanize";
+import { displayNumber } from "../../lib/views/displays";
+import { MetaChildCommand } from "./MetaChildCommand";
 
 const args = {
-  timeRange: new TimeRangeArgument({
+  dateRange: new DateRangeArgument({
     useOverall: false,
-    default: () => TimeRange.fromDuration({ weeks: 1 }),
+    default: () => DateRange.fromDuration({ weeks: 1 }),
   }),
 } satisfies ArgumentsMap;
 
@@ -22,17 +22,17 @@ export class TopCommands extends MetaChildCommand<typeof args> {
   arguments = args;
 
   async run() {
-    const timeRange = this.parsedArguments.timeRange;
-    const humanizedTimeRange = humanizeTimeRange(timeRange, {
+    const dateRange = this.parsedArguments.dateRange;
+    const humanizedDateRange = humanizeDateRange(dateRange, {
       useOverall: false,
     });
 
     const topCommands = (
-      await this.metaService.mostUsedCommands(this.ctx, timeRange)
+      await this.metaService.mostUsedCommands(this.ctx, dateRange)
     ).slice(0, 10);
 
     const embed = this.newEmbed()
-      .setTitle(`Top commands in ${this.guild?.name!} ${humanizedTimeRange}`)
+      .setTitle(`Top commands in ${this.guild?.name!} ${humanizedDateRange}`)
       .setDescription(
         topCommands
           .map(

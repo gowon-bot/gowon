@@ -50,7 +50,10 @@ export class TimeAndDateService extends BaseService<TimeAndDateServiceContext> {
     return TimeZone.fromString(timeZone);
   }
 
-  public async saveUserTimeZoneInContext(ctx: TimeAndDateServiceContext, discordID: string) {
+  public async saveUserTimeZoneInContext(
+    ctx: TimeAndDateServiceContext,
+    discordID: string
+  ) {
     this.ctx(ctx).mutable.userTimeZone = await this.getUserTimeZone(
       ctx,
       discordID

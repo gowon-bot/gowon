@@ -2,11 +2,7 @@ import { getTimezoneOffset, utcToZonedTime } from "date-fns-tz";
 import { TimeZonedDate } from "../../services/TimeAndDateService";
 
 export class TimeZone {
-  private timezone: string;
-
-  constructor(timezone: string) {
-    this.timezone = timezone;
-  }
+  constructor(private timezone: string) {}
 
   static fromString(string: string | undefined): TimeZone | undefined {
     if (!string) return undefined;

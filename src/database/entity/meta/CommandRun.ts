@@ -5,7 +5,7 @@ import {
   Entity,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { TimeRange } from "../../../lib/timeAndDate/TimeRange";
+import { DateRange } from "../../../lib/timeAndDate/DateRange";
 
 export interface MostUsedCommandsResponse {
   commandID: string;
@@ -36,9 +36,9 @@ export class CommandRun extends BaseEntity {
 
   static async mostUsedCommands(
     serverID: string,
-    timeRange?: TimeRange
+    dateRange?: DateRange
   ): Promise<MostUsedCommandsResponse[]> {
-    let query = timeRange?.from
+    let query = dateRange?.from
       ? this.query(
           `SELECT "commandID", count("commandID")
     FROM ${tableName}
@@ -46,7 +46,7 @@ export class CommandRun extends BaseEntity {
       AND "runAt" between $2 and $3
     GROUP BY "commandID"
     ORDER BY 2 DESC`,
-          [serverID, timeRange.from, timeRange.to ?? new Date()]
+          [serverID, dateRange.from, dateRange.to ?? new Date()]
         )
       : this.query(
           `SELECT "commandID", count("commandID")

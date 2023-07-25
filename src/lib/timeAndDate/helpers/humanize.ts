@@ -1,6 +1,7 @@
 import { formatDuration, intervalToDuration } from "date-fns";
 import { LastFMPeriod } from "../../../services/LastFM/LastFMService.types";
-import { TimeRange } from "../TimeRange";
+import { displayDate, displayDateNoTime } from "../../views/displays";
+import { DateRange } from "../DateRange";
 
 export function humanizePeriod(period: LastFMPeriod): string {
   switch (period) {
@@ -46,23 +47,30 @@ export const humanizeDuration = (
   }, "");
 };
 
-export function humanizeTimeRange(
-  timeRange: TimeRange,
+export function humanizeDateRange(
+  dateRange: DateRange,
   options: {
     fallback?: string;
     useOverall?: boolean;
     overallMessage?: string;
+    includeTime?: boolean;
   } = {}
 ): string {
   const useOverall = options.useOverall || false;
   const overallMessage = options.overallMessage || "overall";
 
-  if (timeRange.duration) {
-    const timeString = humanizeDuration(timeRange.duration);
+  if (dateRange.duration) {
+    const timeString = humanizeDuration(dateRange.duration);
 
     if (timeString.length) return overThePast(timeString);
-  } else if (useOverall && timeRange.isOverall) {
+  } else if (useOverall && dateRange.isOverall) {
     return overallMessage;
+  } else if (dateRange.from && dateRange.to) {
+    const displayFunc = options.includeTime ? displayDate : displayDateNoTime;
+
+    return `from ${displayFunc(dateRange.from)} to ${displayFunc(
+      dateRange.to
+    )}`;
   }
 
   return overThePast(options.fallback) || (!useOverall ? overallMessage : "");

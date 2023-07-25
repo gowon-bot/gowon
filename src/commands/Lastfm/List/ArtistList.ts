@@ -20,14 +20,14 @@ export default class ArtistList extends ListCommand {
       username: requestable,
       limit: this.listAmount,
       period: this.timePeriod,
-      ...this.timeRange?.asTimeframeParams,
+      ...this.dateRange?.asTimeframeParams,
     });
 
     const messageEmbed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor("Top artists"))
       .setTitle(
         `Top artists for \`${username}\` ${
-          this.timeRange?.humanized || this.humanizedPeriod
+          this.dateRange?.humanized() || this.humanizedPeriod
         }`
       )
       .setDescription(

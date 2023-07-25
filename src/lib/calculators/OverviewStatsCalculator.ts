@@ -20,7 +20,7 @@ import { CrownsService } from "../../services/dbservices/crowns/CrownsService";
 import { MirrorballService } from "../../services/mirrorball/MirrorballService";
 import { MirrorballPageInfo } from "../../services/mirrorball/MirrorballTypes";
 import { GowonContext } from "../context/Context";
-import { TimeRange } from "../timeAndDate/TimeRange";
+import { DateRange } from "../timeAndDate/DateRange";
 import { displayDate, displayNumber } from "../views/displays";
 
 export class Stat {
@@ -75,15 +75,15 @@ export class OverviewStatsCalculator {
 
   async scrobbleCount(): Promise<number> {
     if (!this.cache.scrobbleCount) {
-      const timeRange = TimeRange.fromPeriod(this.timePeriod, {
+      const dateRange = DateRange.fromPeriod(this.timePeriod, {
         fallback: "overall",
       });
 
       this.cache.scrobbleCount = await this.lastFMService.getNumberScrobbles(
         this.ctx,
         this.requestable,
-        timeRange?.from,
-        timeRange?.to
+        dateRange?.from,
+        dateRange?.to
       );
     }
 
@@ -174,7 +174,7 @@ export class OverviewStatsCalculator {
     ]);
 
     const beginDate =
-      TimeRange.fromPeriod(this.timePeriod, {
+      DateRange.fromPeriod(this.timePeriod, {
         fallback: "overall",
       })?.from || userInfo.registeredAt;
 

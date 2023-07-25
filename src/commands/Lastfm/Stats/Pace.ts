@@ -1,30 +1,30 @@
-import { LastFMBaseCommand } from "../LastFMBaseCommand";
-import { PaceCalculator } from "../../../lib/calculators/PaceCalculator";
-import { LogicError } from "../../../errors/errors";
 import { isBefore, isValid } from "date-fns";
+import { LogicError } from "../../../errors/errors";
+import { ago } from "../../../helpers";
+import { bold } from "../../../helpers/discord";
+import { PaceCalculator } from "../../../lib/calculators/PaceCalculator";
+import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
+import { DateRangeArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/DateRangeArgument";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { DateRange } from "../../../lib/timeAndDate/DateRange";
+import { humanizeDateRange } from "../../../lib/timeAndDate/helpers/humanize";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { displayDate, displayNumber } from "../../../lib/views/displays";
-import { ago } from "../../../helpers";
-import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
-import { TimeRangeArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/TimeRangeArgument";
-import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
-import { bold } from "../../../helpers/discord";
-import { TimeRange } from "../../../lib/timeAndDate/TimeRange";
-import { humanizeTimeRange } from "../../../lib/timeAndDate/helpers/humanize";
-import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 const args = {
   milestone: new NumberArgument({
     description: "The milestone you want to hit (defaults to your next 25k)",
   }),
-  timeRange: new TimeRangeArgument({
-    default: () => TimeRange.fromDuration({ weeks: 1 }),
+  dateRange: new DateRangeArgument({
+    default: () => DateRange.fromDuration({ weeks: 1 }),
     useOverall: true,
     description: "The time range to calculate your scrobble rate over",
   }),
   ...standardMentions,
-} satisfies ArgumentsMap
+} satisfies ArgumentsMap;
 
 export default class Pace extends LastFMBaseCommand<typeof args> {
   idSeed = "wooah minseo";
@@ -49,14 +49,14 @@ export default class Pace extends LastFMBaseCommand<typeof args> {
   };
 
   async run() {
-    const timeRange = this.parsedArguments.timeRange,
+    const dateRange = this.parsedArguments.dateRange,
       milestone = this.parsedArguments.milestone;
 
     const { requestable, perspective } = await this.getMentions();
 
     const paceCalculator = new PaceCalculator(this.ctx, requestable);
 
-    const pace = await paceCalculator.calculate(timeRange, milestone);
+    const pace = await paceCalculator.calculate(dateRange, milestone);
 
     if (!isValid(pace.prediction)) {
       throw new LogicError(
@@ -73,7 +73,7 @@ export default class Pace extends LastFMBaseCommand<typeof args> {
       );
     }
 
-    const humanizedTimeRange = humanizeTimeRange(timeRange, {
+    const humanizedDateRange = humanizeDateRange(dateRange, {
       fallback: "week",
       useOverall: true,
       overallMessage: `since ${perspective.pronoun} began scrobbling`,
@@ -85,7 +85,8 @@ export default class Pace extends LastFMBaseCommand<typeof args> {
         `At a rate of **${displayNumber(
           pace.scrobbleRate.toFixed(2),
           "scrobble"
-        )}/hour** ${humanizedTimeRange}, ${perspective.name
+        )}/hour** ${humanizedDateRange}, ${
+          perspective.name
         } will hit **${displayNumber(pace.milestone, "**scrobble")} on ${bold(
           displayDate(pace.prediction)
         )} (${ago(pace.prediction)})`

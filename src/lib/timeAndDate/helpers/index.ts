@@ -1,10 +1,10 @@
 import { Duration, sub } from "date-fns";
-import { TimeRange } from "../TimeRange";
+import { DateRange } from "../DateRange";
 
-export function timeRangeFromDuration(duration: Duration) {
+export function dateRangeFromDuration(duration: Duration) {
   const fromDate = sub(new Date(), duration);
 
-  return new TimeRange({
+  return new DateRange({
     from: fromDate,
     to: new Date(),
     duration: duration,

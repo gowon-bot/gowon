@@ -1,4 +1,5 @@
 import { DocumentNode } from "apollo-link";
+import { format } from "date-fns";
 import { User } from "discord.js";
 import {
   bold,
@@ -7,6 +8,7 @@ import {
   sanitizeForDiscord,
 } from "../../helpers/discord";
 import { LastfmLinks } from "../../helpers/lastfm/LastfmLinks";
+import { constants } from "../constants";
 import { Emoji } from "../emoji/Emoji";
 
 export function displayNumber(
@@ -42,6 +44,10 @@ export function displayDate(date: Date): string {
   return discordTimestamp(date, "D");
 }
 
+export function displayDateNoTime(date: Date): string {
+  return format(date, constants.dateDisplayFormat);
+}
+
 export function displayDateTime(date: Date | undefined): string {
   if (!date) return "";
   return discordTimestamp(date, "f");
@@ -56,7 +62,7 @@ export function discordTimestamp(
   date: Date,
   flag: "t" | "T" | "d" | "D" | "f" | "F" | "R" = "f"
 ) {
-  return `<t:${Math.round(+date / 1000)}:${flag}>`;
+  return `<t:${Math.round(date.getTime() / 1000)}:${flag}>`;
 }
 
 export function displayNumberedList(

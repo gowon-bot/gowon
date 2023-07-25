@@ -4,8 +4,8 @@ import { LastfmLinks } from "../../../helpers/lastfm/LastfmLinks";
 import { constants } from "../../../lib/constants";
 import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
+import { DateRangeArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/DateRangeArgument";
 import { TimePeriodArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/TimePeriodArgument";
-import { TimeRangeArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/TimeRangeArgument";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { humanizePeriod } from "../../../lib/timeAndDate/helpers/humanize";
 import { Validation } from "../../../lib/validation/ValidationChecker";
@@ -14,7 +14,7 @@ import { displayLink, displayNumber } from "../../../lib/views/displays";
 import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingEmbed";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { TasteService } from "../../../services/taste/TasteService";
-import { tasteArgs, TasteCommand } from "./TasteCommand";
+import { TasteCommand, tasteArgs } from "./TasteCommand";
 
 const args = {
   ...tasteArgs,
@@ -22,7 +22,7 @@ const args = {
     default: "overall",
     description: "The time period to compare",
   }),
-  timeRange: new TimeRangeArgument({
+  dateRange: new DateRangeArgument({
     description: "The time range to compare",
   }),
   artistAmount: new NumberArgument({
@@ -114,7 +114,9 @@ export default class Taste extends TasteCommand<typeof args> {
     )} and ${displayLink(
       userTwoUsername,
       LastfmLinks.userPage(userTwoUsername)
-    )} ${this.timeRange?.humanized || humanizedPeriod}**\n\n${percentageMatch}`;
+    )} ${
+      this.dateRange?.humanized() || humanizedPeriod
+    }**\n\n${percentageMatch}`;
 
     const embed = this.newEmbed()
       .setAuthor(this.generateEmbedAuthor("Taste"))

@@ -1,8 +1,8 @@
 import { flatDeep } from "../../../../helpers";
 import { toInt } from "../../../../helpers/lastfm/";
 import { uppercaseFirst } from "../../../../helpers/string";
+import { DateRange } from "../../../timeAndDate/DateRange";
 import { NamedRange } from "../../../timeAndDate/NamedRange";
-import { TimeRange } from "../../../timeAndDate/TimeRange";
 
 export class NamedRangeParser {
   private months = [
@@ -31,7 +31,7 @@ export class NamedRangeParser {
     return `(${flatDeep(this.months).join("|")})`;
   }
 
-  parse(string: string): TimeRange | undefined {
+  parse(string: string): DateRange | undefined {
     const regex = new RegExp(
       this.rangeRegex(`\\b(${this.monthsRegex})?\\s*(${this.yearRegex})?\\b`),
       "gi"
@@ -54,7 +54,7 @@ export class NamedRangeParser {
 
   private handleMatches([_, m1, __, y1, hyphen, ___, m2, ____, y2]: Array<
     string | undefined
-  >): TimeRange | undefined {
+  >): DateRange | undefined {
     if (!m1 && !y1 && !m2 && !y2) return undefined;
 
     if (y2 && !y2 && !m1) {
@@ -80,7 +80,7 @@ export class NamedRangeParser {
 
     if (!date1 && !date2) return undefined;
 
-    return new TimeRange({
+    return new DateRange({
       ...this.arrangeDates(m1 ? "month" : "year", date1!, date2),
       namedRange,
     });
