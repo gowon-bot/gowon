@@ -13,7 +13,7 @@ import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingE
 import { TopArtists } from "../../../services/LastFM/converters/TopTypes";
 import { LilacArtistsService } from "../../../services/lilac/LilacArtistsService";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
-import { WordBlacklistService } from "../../../services/WordBlacklistService";
+import { TagBlacklistService } from "../../../services/TagBlacklistService";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import ArtistTags from "./ArtistTags";
 
@@ -50,14 +50,14 @@ export default class Tag extends LastFMBaseCommand<typeof args> {
   ];
 
   lilacArtistsService = ServiceRegistry.get(LilacArtistsService);
-  wordBlacklistService = ServiceRegistry.get(WordBlacklistService);
+  tagBlacklistService = ServiceRegistry.get(TagBlacklistService);
 
   async run() {
     const tag = this.parsedArguments.tag!;
 
-    await this.wordBlacklistService.saveServerBannedTagsInContext(this.ctx);
+    await this.tagBlacklistService.saveServerBannedTagsInContext(this.ctx);
 
-    this.wordBlacklistService.throwIfTagNotAllowedAsInput(this.ctx, tag);
+    this.tagBlacklistService.throwIfTagNotAllowedAsInput(this.ctx, tag);
 
     const { requestable, perspective } = await this.getMentions({
       perspectiveAsCode: false,

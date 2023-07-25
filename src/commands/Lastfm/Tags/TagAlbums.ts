@@ -11,7 +11,7 @@ import {
 import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingEmbed";
 import { TopAlbums } from "../../../services/LastFM/converters/TopTypes";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
-import { WordBlacklistService } from "../../../services/WordBlacklistService";
+import { TagBlacklistService } from "../../../services/TagBlacklistService";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 interface Overlap {
@@ -44,14 +44,14 @@ export default class TagAlbums extends LastFMBaseCommand<typeof args> {
 
   slashCommand = true;
 
-  wordBlacklistService = ServiceRegistry.get(WordBlacklistService);
+  tagBlacklistService = ServiceRegistry.get(TagBlacklistService);
 
   async run() {
     const tag = this.parsedArguments.tag;
 
-    await this.wordBlacklistService.saveServerBannedTagsInContext(this.ctx);
+    await this.tagBlacklistService.saveServerBannedTagsInContext(this.ctx);
 
-    this.wordBlacklistService.throwIfTagNotAllowedAsInput(this.ctx, tag);
+    this.tagBlacklistService.throwIfTagNotAllowedAsInput(this.ctx, tag);
 
     const { requestable, perspective } = await this.getMentions({
       perspectiveAsCode: false,

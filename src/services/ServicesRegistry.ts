@@ -19,9 +19,9 @@ import { SpotifyArguments } from "./Spotify/SpotifyArguments";
 import { SpotifyAuthenticationService } from "./Spotify/SpotifyAuthenticationService";
 import { SpotifyPlaylistTagService } from "./Spotify/SpotifyPlaylistTagService";
 import { SpotifyService } from "./Spotify/SpotifyService";
+import { TagBlacklistService } from "./TagBlacklistService";
 import { TimeAndDateService } from "./TimeAndDateService";
 import { TrackingService } from "./TrackingService";
-import { WordBlacklistService } from "./WordBlacklistService";
 import { ArgumentParsingService } from "./arguments/ArgumentsParsingService";
 import { MentionsService } from "./arguments/mentions/MentionsService";
 import { BotStatsService } from "./dbservices/BotStatsService";
@@ -107,7 +107,7 @@ const services: Service[] = [
   TrackingService,
   UsersService,
   WhoKnowsService,
-  WordBlacklistService,
+  TagBlacklistService,
 ];
 
 export class ServiceRegistry {

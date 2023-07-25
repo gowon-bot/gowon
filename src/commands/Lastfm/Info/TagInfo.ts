@@ -12,7 +12,7 @@ import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { Emoji } from "../../../lib/emoji/Emoji";
 import { displayLink, displayNumber } from "../../../lib/views/displays";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
-import { WordBlacklistService } from "../../../services/WordBlacklistService";
+import { TagBlacklistService } from "../../../services/TagBlacklistService";
 import { LilacArtistsService } from "../../../services/lilac/LilacArtistsService";
 import { LilacTagsService } from "../../../services/lilac/LilacTagsService";
 import { InfoCommand } from "./InfoCommand";
@@ -39,13 +39,13 @@ export default class TagInfo extends InfoCommand<typeof args> {
 
   lilacTagsService = ServiceRegistry.get(LilacTagsService);
   lilacArtistsService = ServiceRegistry.get(LilacArtistsService);
-  wordBlacklistService = ServiceRegistry.get(WordBlacklistService);
+  tagBlacklistService = ServiceRegistry.get(TagBlacklistService);
 
   async run() {
     const tag = this.parsedArguments.tag;
 
-    await this.wordBlacklistService.saveServerBannedTagsInContext(this.ctx);
-    this.wordBlacklistService.throwIfTagNotAllowedAsInput(this.ctx, tag);
+    await this.tagBlacklistService.saveServerBannedTagsInContext(this.ctx);
+    this.tagBlacklistService.throwIfTagNotAllowedAsInput(this.ctx, tag);
 
     const [tagInfo, tagList, tagTopArtists, lilacArtists, userTopArtists] =
       await Promise.all([

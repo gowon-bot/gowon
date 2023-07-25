@@ -1,19 +1,19 @@
-import { JumbleChildCommand } from "./JumbleChildCommand";
+import { MessageCollector } from "discord.js";
 import { LogicError } from "../../../errors/errors";
 import { abbreviateNumber, shuffle } from "../../../helpers";
-import { JumbledArtist, jumbleRedisKey } from "./JumbleParentCommand";
-import { Variation } from "../../../lib/command/Command";
+import { bold, code } from "../../../helpers/discord";
 import { LineConsolidator } from "../../../lib/LineConsolidator";
+import { Variation } from "../../../lib/command/Command";
+import { GowonContext } from "../../../lib/context/Context";
+import { Flag } from "../../../lib/context/arguments/argumentTypes/Flag";
+import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { TagConsolidator } from "../../../lib/tags/TagConsolidator";
 import { displayNumber } from "../../../lib/views/displays";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
-import { WordBlacklistService } from "../../../services/WordBlacklistService";
-import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
-import { GowonContext } from "../../../lib/context/Context";
-import { Flag } from "../../../lib/context/arguments/argumentTypes/Flag";
-import { bold, code } from "../../../helpers/discord";
-import { MessageCollector } from "discord.js";
-import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { TagBlacklistService } from "../../../services/TagBlacklistService";
+import { JumbleChildCommand } from "./JumbleChildCommand";
+import { JumbledArtist, jumbleRedisKey } from "./JumbleParentCommand";
 
 const args = {
   poolAmount: new NumberArgument({
@@ -48,7 +48,7 @@ export class Me extends JumbleChildCommand<typeof args> {
   slashCommandName = "start";
 
   tagConsolidator = new TagConsolidator();
-  wordBlacklistService = ServiceRegistry.get(WordBlacklistService);
+  tagBlacklistService = ServiceRegistry.get(TagBlacklistService);
 
   async run() {
     let alreadyJumbled = await this.sessionGetJSON<JumbledArtist>(
@@ -100,7 +100,8 @@ export class Me extends JumbleChildCommand<typeof args> {
     let lineConsolidator = new LineConsolidator();
 
     lineConsolidator.addLines(
-      `This artist has **${abbreviateNumber(artistInfo.listeners)}** listener${artistInfo.listeners === 1 ? "" : "s"
+      `This artist has **${abbreviateNumber(artistInfo.listeners)}** listener${
+        artistInfo.listeners === 1 ? "" : "s"
       } on Last.fm and you have scrobbled them **${displayNumber(
         artist.userPlaycount,
         "**time"
@@ -180,7 +181,7 @@ export class Me extends JumbleChildCommand<typeof args> {
     }
 
     return jumbled === item ||
-      !this.wordBlacklistService.isAllowed(this.ctx as GowonContext, item)
+      !this.tagBlacklistService.isAllowed(this.ctx as GowonContext, item)
       ? this.jumbleItem(item)
       : jumbled;
   }

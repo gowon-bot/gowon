@@ -12,18 +12,18 @@ import { BaseService } from "./BaseService";
 import { GowonService } from "./GowonService";
 import { ServiceRegistry } from "./ServicesRegistry";
 
-interface WordBlacklistGroup {
+interface TagBlacklistGroup {
   strings: string[];
   regexes: RegExp[];
 }
 
-type WordBlacklistServiceContext = GowonContext<{
+type TagBlacklistServiceContext = GowonContext<{
   mutable?: {
     serverBannedTags?: TagBan[];
   };
 }>;
 
-export class WordBlacklistService extends BaseService<WordBlacklistServiceContext> {
+export class TagBlacklistService extends BaseService<TagBlacklistServiceContext> {
   get settingsService() {
     return ServiceRegistry.get(SettingsService);
   }
@@ -36,7 +36,7 @@ export class WordBlacklistService extends BaseService<WordBlacklistServiceContex
   }
 
   public filter<T extends string | { name: string }>(
-    ctx: WordBlacklistServiceContext,
+    ctx: TagBlacklistServiceContext,
     items: T[],
     customBlacklist: string[] = []
   ): T[] {
@@ -44,7 +44,7 @@ export class WordBlacklistService extends BaseService<WordBlacklistServiceContex
   }
 
   public isAllowed(
-    ctx: WordBlacklistServiceContext,
+    ctx: TagBlacklistServiceContext,
     item: string | { name: string },
     customBlacklist: string[] = []
   ): boolean {
@@ -64,7 +64,7 @@ export class WordBlacklistService extends BaseService<WordBlacklistServiceContex
   }
 
   public throwIfTagNotAllowedAsInput(
-    ctx: WordBlacklistServiceContext,
+    ctx: TagBlacklistServiceContext,
     tag: string | { name: string }
   ): void {
     const strictTagBans = this.settingsService.get("strictTagBans", {
@@ -77,7 +77,7 @@ export class WordBlacklistService extends BaseService<WordBlacklistServiceContex
   }
 
   public async banTag(
-    ctx: WordBlacklistServiceContext,
+    ctx: TagBlacklistServiceContext,
     tag: string,
     guildID?: string,
     isRegex?: boolean
@@ -114,7 +114,7 @@ export class WordBlacklistService extends BaseService<WordBlacklistServiceContex
   }
 
   public async unbanTag(
-    ctx: WordBlacklistServiceContext,
+    ctx: TagBlacklistServiceContext,
     tag: string,
     guildID?: string,
     isRegex?: boolean
@@ -137,19 +137,19 @@ export class WordBlacklistService extends BaseService<WordBlacklistServiceContex
   }
 
   public async getServerBannedTags(
-    ctx: WordBlacklistServiceContext
+    ctx: TagBlacklistServiceContext
   ): Promise<TagBan[]> {
     this.log(ctx, `Getting banned tags for ${ctx.requiredGuild.id}`);
     return await TagBan.findBy({ serverID: ctx.requiredGuild.id });
   }
 
-  public async saveServerBannedTagsInContext(ctx: WordBlacklistServiceContext) {
+  public async saveServerBannedTagsInContext(ctx: TagBlacklistServiceContext) {
     if (ctx.guild) {
       ctx.mutable.serverBannedTags = await this.getServerBannedTags(ctx);
     }
   }
 
-  private getBlacklists(customBlacklist: string[] = []): WordBlacklistGroup {
+  private getBlacklists(customBlacklist: string[] = []): TagBlacklistGroup {
     const { regexs, strings } = this.gowonService.cache.fetchGlobalBannedTags();
 
     return {

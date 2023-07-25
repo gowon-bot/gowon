@@ -6,7 +6,7 @@ import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
-import { WordBlacklistService } from "../../../services/WordBlacklistService";
+import { TagBlacklistService } from "../../../services/TagBlacklistService";
 import { ContentModerationCommand } from "./ContentModerationCommand";
 
 const args = {
@@ -64,7 +64,7 @@ export default class BanTag extends ContentModerationCommand<typeof args> {
     tag: new validators.RequiredValidator({}),
   };
 
-  wordBlacklistService = ServiceRegistry.get(WordBlacklistService);
+  tagBlacklistService = ServiceRegistry.get(TagBlacklistService);
 
   async run() {
     const { senderUser } = await this.getMentions();
@@ -100,14 +100,14 @@ export default class BanTag extends ContentModerationCommand<typeof args> {
     const guildID = global ? undefined : this.requiredGuild.id;
 
     if (this.variationWasUsed("unban")) {
-      await this.wordBlacklistService.unbanTag(
+      await this.tagBlacklistService.unbanTag(
         this.ctx,
         tag,
         guildID,
         global && this.parsedArguments.regex
       );
     } else {
-      await this.wordBlacklistService.banTag(
+      await this.tagBlacklistService.banTag(
         this.ctx,
         tag,
         guildID,
