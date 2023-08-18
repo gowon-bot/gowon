@@ -49,14 +49,16 @@ export class LastFMArguments extends BaseService<LastFMArgumentsContext> {
     requestable: Requestable,
     options: LastFMArgumentsOptions = {}
   ): Promise<string> {
-    const artist = this.parsedArguments(ctx).artist as string;
+    let artist = this.parsedArguments(ctx).artist as string;
 
     if (!artist) {
       const spotifyArtist = await this.getSpotifyArtist(ctx);
       if (spotifyArtist) return spotifyArtist;
 
-      return (await this.getNowPlaying(ctx, requestable, options)).artist;
-    } else if (options.redirect) {
+      artist = (await this.getNowPlaying(ctx, requestable, options)).artist;
+    }
+
+    if (options.redirect) {
       return (
         (await this.redirectsService.getRedirect(ctx, artist))?.to || artist
       );

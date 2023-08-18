@@ -7,6 +7,7 @@ import { standardMentions } from "../../lib/context/arguments/mentionTypes/menti
 import { ArgumentsMap } from "../../lib/context/arguments/types";
 import { FishyRarityEmojis } from "../../lib/emoji/FishyRarityEmoji";
 import { displayDate, displayNumber } from "../../lib/views/displays";
+import { displayFishyCollectionProgress } from "../../lib/views/fishy";
 import { FishyRarities } from "../../services/fishy/rarity";
 import { FishyChildCommand } from "./FishyChildCommand";
 
@@ -35,13 +36,19 @@ export class Profile extends FishyChildCommand<typeof args> {
       discordUser
     );
 
-    const [giftsGiven, giftsReceived, biggestFishy, rarityBreakdown] =
-      await Promise.all([
-        this.fishyService.countGiftsGiven(fishyProfile.user.id),
-        this.fishyService.countGiftsReceived(fishyProfile.user.id),
-        this.fishyService.getBiggestFishy(fishyProfile.user.id),
-        this.fishyService.rarityBreakdown(fishyProfile),
-      ]);
+    const [
+      giftsGiven,
+      giftsReceived,
+      biggestFishy,
+      rarityBreakdown,
+      collection,
+    ] = await Promise.all([
+      this.fishyService.countGiftsGiven(fishyProfile.user.id),
+      this.fishyService.countGiftsReceived(fishyProfile.user.id),
+      this.fishyService.getBiggestFishy(fishyProfile.user.id),
+      this.fishyService.rarityBreakdown(fishyProfile),
+      this.fishyService.getCollection(fishyProfile),
+    ]);
 
     const embed = this.newEmbed().setAuthor(
       this.generateEmbedAuthor(`${perspective.upper.possessive} fishy profile`)
@@ -58,8 +65,7 @@ ${displayNumber(fishyProfile.questsCompleted, "quest")} completed ${emDash} _${
       "kg",
       true
     )} in total)
-
-**Gifts**:    ${giftsGiven} given / ${giftsReceived} received ${emDash} _${
+**Gifts**: ${giftsGiven} given / ${giftsReceived} received ${emDash} _${
       giftsReceived ? calculatePercent(giftsGiven, giftsReceived, 0) : "∞"
     }% ratio_
 
@@ -71,6 +77,7 @@ ${displayNumber(fishyProfile.questsCompleted, "quest")} completed ${emDash} _${
       "kg",
       true
     )}
+**Fishy caught**: ${displayFishyCollectionProgress(collection)}
 
 **Rarity breakdown:**
 ${FishyRarities.Trash.emoji.base} _Trash_ ${emDash} ${displayNumber(

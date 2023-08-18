@@ -1,7 +1,9 @@
 import { bold } from "../../helpers/discord";
 import { Fishy } from "../../services/fishy/Fishy";
+import { fishyList } from "../../services/fishy/fishyList";
 import { FishyRarityData } from "../../services/fishy/rarity";
 import { Emoji } from "../emoji/Emoji";
+import { displayNumber } from "./displays";
 
 export function displayRarity(
   rarity: FishyRarityData,
@@ -29,4 +31,10 @@ export function displayFishyLevelUp(level: number): string {
     `You've leveled up to level ${bold(level)}` +
     (levelUpMessage ? "\n\n" + levelUpMessage : "")
   );
+}
+
+export function displayFishyCollectionProgress(collection: string[]) {
+  const noHidden = fishyList.filter((f) => !f.hidden);
+
+  return `${displayNumber(collection.length)} of ${noHidden.length}`;
 }

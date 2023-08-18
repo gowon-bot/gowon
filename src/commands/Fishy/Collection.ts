@@ -1,7 +1,8 @@
 import { standardMentions } from "../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../lib/context/arguments/types";
-import { displayNumber, displayNumberedList } from "../../lib/views/displays";
+import { displayNumberedList } from "../../lib/views/displays";
 import { SimpleScrollingEmbed } from "../../lib/views/embeds/SimpleScrollingEmbed";
+import { displayFishyCollectionProgress } from "../../lib/views/fishy";
 import { Fishy } from "../../services/fishy/Fishy";
 import { findFishy, fishyList } from "../../services/fishy/fishyList";
 import { FishyChildCommand } from "./FishyChildCommand";
@@ -49,9 +50,7 @@ export class Collection extends FishyChildCommand<typeof args> {
       pageSize: 15,
       pageRenderer(items, { offset }) {
         return (
-          `_${displayNumber(collection.length)} of ${
-            noHidden.length
-          } fishy collected_\n\n` +
+          `_${displayFishyCollectionProgress(collection)}fishy collected_\n\n` +
           displayNumberedList(
             items.map((f) => {
               const owned = collection.includes(f.id);
