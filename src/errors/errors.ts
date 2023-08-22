@@ -273,7 +273,7 @@ export class NotFoundInTopError extends ClientError {
     count: number
   ) {
     super(
-      `That track wasn't found in ${perspective} top ${displayNumber(
+      `That ${entity} wasn't found in ${perspective} top ${displayNumber(
         count,
         entity
       )}`
