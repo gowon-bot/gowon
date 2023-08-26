@@ -1,6 +1,6 @@
 import { getOrdinal } from "../../../helpers";
 import { displayNumber } from "../../views/displays";
-import { BaseNowPlayingComponent } from "./BaseNowPlayingComponent";
+import { BaseNowPlayingComponent } from "../base/BaseNowPlayingComponent";
 
 const artistRankRequirements = ["globalArtistRank"] as const;
 

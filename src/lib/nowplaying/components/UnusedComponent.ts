@@ -1,4 +1,4 @@
-import { BaseNowPlayingComponent } from "./BaseNowPlayingComponent";
+import { BaseNowPlayingComponent } from "../base/BaseNowPlayingComponent";
 
 export class UnusedComponent extends BaseNowPlayingComponent<never[]> {
   static componentName = "loved";

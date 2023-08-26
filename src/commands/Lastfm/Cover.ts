@@ -49,7 +49,7 @@ export default class Cover extends LastFMBaseCommand<typeof args> {
     );
 
     const nowPlaying =
-      this.mutableContext<LastFMArgumentsMutableContext>().mutable.nowplaying;
+      this.ctx.getMutable<LastFMArgumentsMutableContext>().nowplaying;
 
     if (
       artist.toLowerCase() === "f(x)" &&

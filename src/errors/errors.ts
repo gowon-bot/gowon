@@ -54,6 +54,7 @@ export class LastFMError extends ClientError {
 
   constructor(error: RawLastFMErrorResponse, isInIssueMode = false) {
     super(parseError(error));
+
     this.response = error;
     this.name = "LastFMError:" + error.error;
     this.footer = isInIssueMode
@@ -278,5 +279,13 @@ export class NotFoundInTopError extends ClientError {
         entity
       )}`
     );
+  }
+}
+
+export class TrackDoesNotExistError extends ClientError {
+  name = "TrackDoesNotExistError";
+
+  constructor() {
+    super(`That track does not exist on Last.fm!`);
   }
 }

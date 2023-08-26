@@ -1,5 +1,5 @@
 import { displayNumber } from "../../views/displays";
-import { BaseNowPlayingComponent } from "./BaseNowPlayingComponent";
+import { BaseNowPlayingComponent } from "../base/BaseNowPlayingComponent";
 
 const scrobblesRequirements = [] as const;
 

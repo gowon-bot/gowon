@@ -8,6 +8,8 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { CommandAccessRoleName } from "../../lib/command/access/roles";
+import { Requestable } from "../../services/LastFM/LastFMAPIService";
+import { buildRequestable } from "../../services/arguments/mentions/MentionsBuilder";
 import { Combo } from "./Combo";
 import { Crown } from "./Crown";
 import { Friend } from "./Friend";
@@ -103,5 +105,11 @@ export class User extends BaseEntity {
       if (!(e instanceof DiscordAPIError)) throw e;
       return;
     }
+  }
+
+  asRequestable(): Requestable {
+    const { requestable } = buildRequestable(this.lastFMUsername, this);
+
+    return requestable;
   }
 }

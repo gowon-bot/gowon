@@ -14,11 +14,13 @@ import {
   generateCommands,
 } from "./lib/command/CommandRegistry";
 import { InteractionHandler } from "./lib/command/interactions/InteractionHandler";
+import { GowonContext } from "./lib/context/Context";
 import { mirrorballClient } from "./lib/indexing/client";
 import { SettingsService } from "./lib/settings/SettingsService";
 import { GuildEventService } from "./services/Discord/GuildEventService";
 import { GowonService } from "./services/GowonService";
 import { ServiceRegistry } from "./services/ServicesRegistry";
+import { IntervaledJobsService } from "./services/intervaledJobs/IntervaledJobsService";
 import { RedisInteractionService } from "./services/redis/RedisInteractionService";
 
 export const client = new GowonClient(
@@ -57,9 +59,10 @@ const db = new DB();
 const api = new GraphQLAPI(client);
 const settingsService = ServiceRegistry.get(SettingsService);
 const redisService = ServiceRegistry.get(RedisInteractionService);
+const intervaledJobsService = ServiceRegistry.get(IntervaledJobsService);
 export const guildEventService = ServiceRegistry.get(GuildEventService);
 
-export async function setup() {
+export async function setup(ctx: GowonContext) {
   console.log(
     chalk`{cyan ${
       asciiArt + "\n" + "=".repeat(asciiArt.split("\n").reverse()[0].length)
@@ -76,12 +79,12 @@ export async function setup() {
 
   // These depend on other initilzations above
   await Promise.all([
-    // SettingsManager needs the database to be connected to cache settings
-    initializeSettingsManager(),
     // The interaction handler depends on the command registry
     initializeInteractions(),
-    // GowonCache needs to the database to be initialized
+    // The below needs to the database to be initialized
+    initializeSettingsManager(),
     seedCache(),
+    startIntervaledJobs(ctx),
   ]);
 }
 
@@ -136,6 +139,12 @@ function seedCache() {
 
     await gowonService.cache.seedAll.bind(gowonService.cache)();
   }, "Seeded cache");
+}
+
+function startIntervaledJobs(ctx: GowonContext) {
+  return logStartup(async () => {
+    intervaledJobsService.start(ctx);
+  }, "Started intervaled jobs");
 }
 
 async function logStartup(func: () => any, logItem: string): Promise<void> {

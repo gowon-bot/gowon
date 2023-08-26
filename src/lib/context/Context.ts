@@ -120,6 +120,10 @@ export class GowonContext<T extends CustomContext = CustomContext> {
     return this._command;
   }
 
+  getMutable<T extends Record<string, unknown>>(): T {
+    return this.mutable as T;
+  }
+
   public isDM(): boolean {
     return (
       this.payload.isMessage() && this.payload.source?.channel?.type === "DM"

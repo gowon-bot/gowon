@@ -404,11 +404,13 @@ export class LastFMAPIService extends BaseService {
   }
 
   async love(ctx: GowonContext, params: TrackLoveParams): Promise<void> {
-    return await this.request(ctx, "track.love", params, { post: true });
+    await this.request(ctx, "track.love", params, {
+      post: true,
+    });
   }
 
   async unlove(ctx: GowonContext, params: TrackLoveParams): Promise<void> {
-    return await this.request(ctx, "track.unlove", params, { post: true });
+    await this.request(ctx, "track.unlove", params, { post: true });
   }
 
   private async request<T>(

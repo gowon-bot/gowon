@@ -1,4 +1,4 @@
-import { BaseNowPlayingComponent } from "./BaseNowPlayingComponent";
+import { BaseNowPlayingComponent } from "../base/BaseNowPlayingComponent";
 
 const fishyReminderRequirements = ["fishyProfile"] as const;
 

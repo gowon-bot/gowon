@@ -33,7 +33,7 @@ function context() {
 }
 
 async function start() {
-  await setup();
+  await setup(context());
 
   const analyticsCollector = ServiceRegistry.get(AnalyticsCollector);
   const usersService = ServiceRegistry.get(UsersService);

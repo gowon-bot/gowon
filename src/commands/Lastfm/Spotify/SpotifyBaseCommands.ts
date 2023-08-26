@@ -43,9 +43,9 @@ export abstract class AuthenticatedSpotifyBaseCommand<
       discordID || this.author.id
     );
 
-    this.mutableContext<{
+    this.ctx.getMutable<{
       spotifyToken?: SpotifyToken;
-    }>().mutable.spotifyToken = token;
+    }>().spotifyToken = token;
   }
 
   async getMentions(

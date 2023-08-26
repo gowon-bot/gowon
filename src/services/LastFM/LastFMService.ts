@@ -4,6 +4,7 @@ import { code } from "../../helpers/discord";
 import { requestableAsUsername } from "../../lib/MultiRequester";
 import { GowonContext } from "../../lib/context/Context";
 import { displayNumber } from "../../lib/views/displays";
+import { ServiceRegistry } from "../ServicesRegistry";
 import { LastFMAPIService, Requestable } from "./LastFMAPIService";
 import {
   AlbumInfoParams,
@@ -27,6 +28,7 @@ import {
   UserInfoParams,
   isTimeframeParams,
 } from "./LastFMService.types";
+import { LovedTrackService } from "./LovedTrackService";
 import {
   AlbumInfo,
   ArtistInfo,
@@ -48,6 +50,10 @@ import { AlbumSearch, TrackSearch } from "./converters/Search";
 import { TopAlbums, TopArtists, TopTracks } from "./converters/TopTypes";
 
 export class LastFMService extends LastFMAPIService {
+  get lovedTrackService() {
+    return ServiceRegistry.get(LovedTrackService);
+  }
+
   async artistInfo(
     ctx: GowonContext,
     params: ArtistInfoParams
@@ -70,7 +76,11 @@ export class LastFMService extends LastFMAPIService {
     ctx: GowonContext,
     params: TrackInfoParams
   ): Promise<TrackInfo> {
-    return new TrackInfo(await this._trackInfo(ctx, params));
+    const trackInfo = new TrackInfo(await this._trackInfo(ctx, params));
+
+    this.lovedTrackService.attemptResolveCachedLoveTrack(ctx, params);
+
+    return trackInfo;
   }
 
   async userInfo(ctx: GowonContext, params: UserInfoParams): Promise<UserInfo> {

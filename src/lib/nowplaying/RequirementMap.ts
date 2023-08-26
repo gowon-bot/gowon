@@ -1,3 +1,4 @@
+import { CachedLovedTrack } from "../../database/entity/CachedLovedTrack";
 import { AlbumCard } from "../../database/entity/cards/AlbumCard";
 import { FishyProfile } from "../../database/entity/fishy/FishyProfile";
 import {
@@ -25,6 +26,7 @@ export type RequirementMap = {
   artistCrown: CrownDisplay | undefined;
   albumCard: AlbumCard | undefined;
   fishyProfile: FishyProfile | undefined;
+  cachedLovedTrack: CachedLovedTrack | undefined;
 
   // Mirrorball data
   albumPlays: [{ album: MirrorballAlbum; playcount: number }];

@@ -14,6 +14,7 @@ import { GithubService } from "./Github/GithubService";
 import { GowonService } from "./GowonService";
 import { LastFMArguments } from "./LastFM/LastFMArguments";
 import { LastFMService } from "./LastFM/LastFMService";
+import { LovedTrackService } from "./LastFM/LovedTrackService";
 import { NowPlayingEmbedParsingService } from "./NowPlayingEmbedParsingService";
 import { SpotifyArguments } from "./Spotify/SpotifyArguments";
 import { SpotifyAuthenticationService } from "./Spotify/SpotifyAuthenticationService";
@@ -37,6 +38,7 @@ import { CrownsService } from "./dbservices/crowns/CrownsService";
 import { CrownsUserService } from "./dbservices/crowns/CrownsUserService";
 import { FishyService } from "./fishy/FishyService";
 import { FishyProgressionService } from "./fishy/quests/FishyProgressionService";
+import { IntervaledJobsService } from "./intervaledJobs/IntervaledJobsService";
 import { LilacAPIService } from "./lilac/LilacAPIService";
 import { LilacArtistsService } from "./lilac/LilacArtistsService";
 import { LilacGuildsService } from "./lilac/LilacGuildsService";
@@ -75,6 +77,7 @@ const services: Service[] = [
   GowonService,
   GithubService,
   GuildEventService,
+  IntervaledJobsService,
   LastFMService,
   LastFMArguments,
 
@@ -87,6 +90,7 @@ const services: Service[] = [
   LilacUsersService,
   LilacWhoKnowsService,
 
+  LovedTrackService,
   MetaService,
   MentionsService,
   MirrorballService,

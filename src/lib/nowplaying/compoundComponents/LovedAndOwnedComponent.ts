@@ -1,9 +1,10 @@
-import {
-  AnyIn,
-  BaseCompoundComponent,
-} from "../components/BaseNowPlayingComponent";
+import { AnyIn, BaseCompoundComponent } from "../base/BaseNowPlayingComponent";
 
-const lovedAndOwnedRequirements = ["trackInfo", "albumCard"] as const;
+const lovedAndOwnedRequirements = [
+  "trackInfo",
+  "albumCard",
+  "cachedLovedTrack",
+] as const;
 
 export class LovedAndOwnedComponent extends BaseCompoundComponent<
   typeof lovedAndOwnedRequirements
@@ -14,7 +15,8 @@ export class LovedAndOwnedComponent extends BaseCompoundComponent<
   static replaces = new AnyIn(["loved", "card-ownership"]);
 
   async present() {
-    const loved = this.values.trackInfo && this.values.trackInfo.loved;
+    const loved =
+      this.values.trackInfo?.loved || !!this.values.cachedLovedTrack;
     const owned =
       this.values.albumCard &&
       this.values.albumCard.owner.id === this.values.dbUser.id;

@@ -1,32 +1,24 @@
 import { TagConsolidator } from "../../tags/TagConsolidator";
-import {
-  AnyIn,
-  BaseCompoundComponent,
-  BaseNowPlayingComponent,
-} from "../components/BaseNowPlayingComponent";
+import { AnyIn, BaseCompoundComponent } from "../base/BaseNowPlayingComponent";
+import { PlaceholderNowPlayingComponent } from "../base/PlaceholderNowPlayingComponent";
 import { rowSize } from "../NowPlayingBuilder";
 
-// The following classes are placeholders because they will be replaced with the compound tags component
 const areqs = ["artistInfo"] as const;
-export class ArtistTagsComponent extends BaseNowPlayingComponent<typeof areqs> {
+export class ArtistTagsComponent extends PlaceholderNowPlayingComponent<
+  typeof areqs
+> {
   static componentName = "artist-tags";
   static friendlyName = "Artist tags";
   readonly requirements = areqs;
-
-  present() {
-    return { string: "", size: 0 };
-  }
 }
 
 const treqs = ["trackInfo"] as const;
-export class TrackTagsComponent extends BaseNowPlayingComponent<typeof treqs> {
+export class TrackTagsComponent extends PlaceholderNowPlayingComponent<
+  typeof treqs
+> {
   static componentName = "track-tags";
   static friendlyName = "Track tags";
   readonly requirements = treqs;
-
-  present() {
-    return { string: "", size: 0 };
-  }
 }
 
 const requirements = ["artistInfo", "trackInfo"] as const;

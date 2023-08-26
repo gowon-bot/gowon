@@ -1,7 +1,7 @@
 import { DiscordService } from "../../../services/Discord/DiscordService";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { displayNumber } from "../../views/displays";
-import { BaseNowPlayingComponent } from "./BaseNowPlayingComponent";
+import { BaseNowPlayingComponent } from "../base/BaseNowPlayingComponent";
 
 const artistCrownRequirements = ["artistCrown"] as const;
 
