@@ -1,8 +1,8 @@
-import { promisify } from "util";
 import _glob from "glob";
+import { promisify } from "util";
 import { LogicError } from "../errors/errors";
-import { SimpleMap } from "../helpers/types";
 import { code } from "../helpers/discord";
+import { SimpleMap } from "../helpers/types";
 import { GowonContext } from "../lib/context/Context";
 const glob = promisify(_glob);
 

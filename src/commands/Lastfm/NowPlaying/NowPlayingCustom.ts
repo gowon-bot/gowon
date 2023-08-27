@@ -88,8 +88,7 @@ export default class NowPlayingCustom extends NowPlayingBaseCommand {
     await this.easterEggs(
       sentMessage,
       nowPlaying,
-      this.mutableContext<DatasourceServiceContext["mutable"]>().mutable
-        .tagConsolidator
+      this.ctx.getMutable<DatasourceServiceContext["mutable"]>().tagConsolidator
     );
   }
 }

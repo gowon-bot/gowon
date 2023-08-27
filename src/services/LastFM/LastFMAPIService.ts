@@ -76,6 +76,7 @@ import {
   UserInfoParams,
   isErrorResponse,
 } from "./LastFMService.types";
+import { LovedTrackService } from "./LovedTrackService";
 
 export interface SessionKey {
   username: string;
@@ -97,6 +98,10 @@ export class LastFMAPIService extends BaseService {
 
   private get analyticsCollector() {
     return ServiceRegistry.get(AnalyticsCollector);
+  }
+
+  get lovedTrackService() {
+    return ServiceRegistry.get(LovedTrackService);
   }
 
   url = "https://ws.audioscrobbler.com/2.0/";
@@ -150,15 +155,20 @@ export class LastFMAPIService extends BaseService {
     ctx: GowonContext,
     params: TrackInfoParams
   ): Promise<RawTrackInfo> {
-    let response = (
+    const response = (
       await this.request<RawTrackInfoResponse>(ctx, "track.getInfo", params)
     ).track;
+
+    try {
+      this.lovedTrackService.resolveCache(response);
+    } catch {}
 
     if (
       response?.userplaycount !== undefined &&
       isNaN(toInt(response.userplaycount))
-    )
+    ) {
       throw new BadLastFMResponseError();
+    }
 
     return response;
   }
@@ -404,11 +414,13 @@ export class LastFMAPIService extends BaseService {
   }
 
   async love(ctx: GowonContext, params: TrackLoveParams): Promise<void> {
-    return await this.request(ctx, "track.love", params, { post: true });
+    await this.request(ctx, "track.love", params, {
+      post: true,
+    });
   }
 
   async unlove(ctx: GowonContext, params: TrackLoveParams): Promise<void> {
-    return await this.request(ctx, "track.unlove", params, { post: true });
+    await this.request(ctx, "track.unlove", params, { post: true });
   }
 
   private async request<T>(

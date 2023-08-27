@@ -2,12 +2,12 @@ import { MessageEmbed } from "discord.js";
 import { sum } from "mathjs";
 import { asyncMap } from "../../helpers";
 import { UNUSED_CONFIG } from "../../services/dbservices/NowPlayingService";
+import { PresentedComponent } from "./base/BaseNowPlayingComponent";
 import {
   compoundComponentList,
   getComponentByName,
   NowPlayingComponent,
 } from "./componentMap";
-import { PresentedComponent } from "./components/BaseNowPlayingComponent";
 import { UnusedComponent } from "./components/UnusedComponent";
 import { ResolvedRequirements } from "./DatasourceService";
 

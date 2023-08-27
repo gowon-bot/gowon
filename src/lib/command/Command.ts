@@ -216,16 +216,6 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
     return CommandRegistry.getInstance();
   }
 
-  /**
-   * Helper getters
-   */
-
-  mutableContext<T extends Record<string, unknown>>(): GowonContext<{
-    mutable: T;
-  }> {
-    return this.ctx as GowonContext<{ mutable: T }>;
-  }
-
   // Implemented in ParentCommand
   async getChild(_: string, __: string): Promise<Command | undefined> {
     return undefined;
@@ -343,12 +333,11 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
 
   private async deferResponseIfInteraction() {
     if (this.payload.isInteraction()) {
-      this.mutableContext<{
+      this.ctx.getMutable<{
         deferredResponseTimeout?: NodeJS.Timeout;
-      }>().mutable.deferredResponseTimeout = setTimeout(() => {
+      }>().deferredResponseTimeout = setTimeout(() => {
         (this.payload.source as CommandInteraction).deferReply();
-        this.mutableContext<{ deferredAt: Date }>().mutable.deferredAt =
-          new Date();
+        this.ctx.getMutable<{ deferredAt: Date }>().deferredAt = new Date();
       }, 2000);
     }
   }

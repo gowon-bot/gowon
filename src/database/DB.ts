@@ -4,6 +4,7 @@ import { AlternateAlbumCover } from "./entity/AlternateAlbumCover";
 import { ArtistCrownBan } from "./entity/ArtistCrownBan";
 import { ArtistRedirect } from "./entity/ArtistRedirect";
 import { ArtistTagCache } from "./entity/ArtistTagCache";
+import { CachedLovedTrack } from "./entity/CachedLovedTrack";
 import { Combo } from "./entity/Combo";
 import { Crown } from "./entity/Crown";
 import { CrownBan } from "./entity/CrownBan";
@@ -47,6 +48,7 @@ export class DB {
         ArtistCrownBan,
         ArtistRedirect,
         ArtistTagCache,
+        CachedLovedTrack,
         Combo,
         Crown,
         CrownBan,

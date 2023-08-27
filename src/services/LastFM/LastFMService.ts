@@ -70,7 +70,9 @@ export class LastFMService extends LastFMAPIService {
     ctx: GowonContext,
     params: TrackInfoParams
   ): Promise<TrackInfo> {
-    return new TrackInfo(await this._trackInfo(ctx, params));
+    const trackInfo = new TrackInfo(await this._trackInfo(ctx, params));
+
+    return trackInfo;
   }
 
   async userInfo(ctx: GowonContext, params: UserInfoParams): Promise<UserInfo> {

@@ -1,6 +1,6 @@
 import { displayNumber } from "../../views/displays";
+import { BaseNowPlayingComponent } from "../base/BaseNowPlayingComponent";
 import { getArtistPlays } from "../helpers/artist";
-import { BaseNowPlayingComponent } from "./BaseNowPlayingComponent";
 
 const artistPlaysRequirements = ["artistInfo", "artistPlays"] as const;
 

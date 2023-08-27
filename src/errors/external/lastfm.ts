@@ -49,3 +49,11 @@ export class NoAlbumForCoverError extends ClientError {
     super("There is no album to show a cover for");
   }
 }
+
+export class TrackAlreadyLovedError extends ClientError {
+  name = "TrackAlreadyLovedError";
+
+  constructor() {
+    super(`That track was already loved on Last.fm`);
+  }
+}

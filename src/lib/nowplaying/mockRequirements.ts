@@ -156,6 +156,7 @@ export const mockRequirements = (
     },
     albumCard: undefined,
     fishyProfile: undefined,
+    cachedLovedTrack: undefined,
 
     // Mirrorball types
     albumPlays: [

@@ -102,8 +102,7 @@ export default class FakeNowPlaying extends NowPlayingBaseCommand<typeof args> {
       { fromRecentTrack: recentTracks.first() }
     );
 
-    const mutableContext =
-      this.mutableContext<LastFMArgumentsMutableContext>().mutable;
+    const mutableContext = this.ctx.getMutable<LastFMArgumentsMutableContext>();
 
     // if lastFMArguments used the recent track
     if (mutableContext.nowplaying || mutableContext.parsedNowplaying) {

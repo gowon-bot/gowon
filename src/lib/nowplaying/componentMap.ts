@@ -1,9 +1,9 @@
 import { UNUSED_CONFIG } from "../../services/dbservices/NowPlayingService";
 import { Choice } from "../context/arguments/argumentTypes/StringArgument";
+import { BaseNowPlayingComponent } from "./base/BaseNowPlayingComponent";
 import { AlbumPlaysComponent } from "./components/AlbumPlaysComponent";
 import { ArtistCrownComponent } from "./components/ArtistCrownComponent";
 import { ArtistPlaysComponent } from "./components/ArtistPlaysComponent";
-import { BaseNowPlayingComponent } from "./components/BaseNowPlayingComponent";
 import { CardOwnershipComponent } from "./components/CardOwnershipComponent";
 import { FishyReminderComponent } from "./components/FishyReminderComponent";
 import { GlobalArtistRankComponent } from "./components/GlobalArtistRankComponent";

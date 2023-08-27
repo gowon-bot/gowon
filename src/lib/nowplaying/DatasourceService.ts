@@ -1,11 +1,11 @@
+import { CachedLovedTrack } from "../../database/entity/CachedLovedTrack";
+import { User } from "../../database/entity/User";
 import { AlbumCard } from "../../database/entity/cards/AlbumCard";
 import { FishyProfile } from "../../database/entity/fishy/FishyProfile";
-import { User } from "../../database/entity/User";
 import { BaseService } from "../../services/BaseService";
-import { CardsService } from "../../services/dbservices/CardsService";
-import { CrownsService } from "../../services/dbservices/crowns/CrownsService";
-import { CrownDisplay } from "../../services/dbservices/crowns/CrownsService.types";
-import { FishyService } from "../../services/fishy/FishyService";
+import { Requestable } from "../../services/LastFM/LastFMAPIService";
+import { LastFMService } from "../../services/LastFM/LastFMService";
+import { LovedTrackService } from "../../services/LastFM/LovedTrackService";
 import {
   ArtistInfo,
   TrackInfo,
@@ -14,17 +14,19 @@ import {
   RecentTrack,
   RecentTracks,
 } from "../../services/LastFM/converters/RecentTracks";
-import { Requestable } from "../../services/LastFM/LastFMAPIService";
-import { LastFMService } from "../../services/LastFM/LastFMService";
+import { ServiceRegistry } from "../../services/ServicesRegistry";
+import { CardsService } from "../../services/dbservices/CardsService";
+import { CrownsService } from "../../services/dbservices/crowns/CrownsService";
+import { CrownDisplay } from "../../services/dbservices/crowns/CrownsService.types";
+import { FishyService } from "../../services/fishy/FishyService";
 import { MirrorballService } from "../../services/mirrorball/MirrorballService";
 import { UserInput } from "../../services/mirrorball/MirrorballTypes";
-import { ServiceRegistry } from "../../services/ServicesRegistry";
+import { Logger } from "../Logger";
 import { GowonContext } from "../context/Context";
 import { Payload } from "../context/Payload";
-import { Logger } from "../Logger";
 import { TagConsolidator } from "../tags/TagConsolidator";
-import { buildQuery, isQueryPart, QueryPart } from "./buildQuery";
-import { NowPlayingRequirement } from "./components/BaseNowPlayingComponent";
+import { NowPlayingRequirement } from "./base/BaseNowPlayingComponent";
+import { QueryPart, buildQuery, isQueryPart } from "./buildQuery";
 
 export interface ResolvedRequirements {
   [requirement: string]: any;
@@ -65,6 +67,9 @@ export class DatasourceService extends BaseService<DatasourceServiceContext> {
   }
   get fishyService() {
     return ServiceRegistry.get(FishyService);
+  }
+  get lovedTrackService() {
+    return ServiceRegistry.get(LovedTrackService);
   }
 
   private nowPlaying(ctx: DatasourceServiceContext): RecentTrack {
@@ -126,10 +131,10 @@ export class DatasourceService extends BaseService<DatasourceServiceContext> {
     ctx: DatasourceServiceContext
   ): Promise<ArtistInfo | undefined> {
     try {
-      const nowPlaying = this.nowPlaying;
+      const np = this.nowPlaying(ctx);
 
       const artistInfo = await this.lastFMService.artistInfo(ctx, {
-        artist: nowPlaying(ctx).artist,
+        artist: np.artist,
         username: ctx.constants.resources!.requestable,
       });
 
@@ -186,6 +191,22 @@ export class DatasourceService extends BaseService<DatasourceServiceContext> {
     return await this.fishyService.getFishyProfile(
       ctx.constants.resources!.dbUser,
       false
+    );
+  }
+
+  async cachedLovedTrack(
+    ctx: DatasourceServiceContext
+  ): Promise<CachedLovedTrack | undefined> {
+    const np = this.nowPlaying(ctx);
+
+    return await this.lovedTrackService.getCachedLovedTrack(
+      ctx,
+      {
+        artist: np.artist,
+        track: np.name,
+        username: ctx.constants.resources!.dbUser.asRequestable(),
+      },
+      ctx.constants.resources!.dbUser
     );
   }
 
