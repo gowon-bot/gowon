@@ -2,59 +2,50 @@ import { sub } from "date-fns";
 import { LessThan } from "typeorm";
 import { CachedLovedTrack } from "../../database/entity/CachedLovedTrack";
 import { User } from "../../database/entity/User";
-import { LastFMError, TrackDoesNotExistError } from "../../errors/errors";
 import { GowonContext } from "../../lib/context/Context";
 import { BaseService } from "../BaseService";
 import { ServiceRegistry } from "../ServicesRegistry";
-import { UsersService } from "../dbservices/UsersService";
-import { LastFMArgumentsMutableContext } from "./LastFMArguments";
 import { LastFMService } from "./LastFMService";
-import { TrackInfoParams, TrackLoveParams } from "./LastFMService.types";
+import { RawTrackInfo, TrackLoveParams } from "./LastFMService.types";
 
 export class LovedTrackService extends BaseService {
   private get lastFMService() {
     return ServiceRegistry.get(LastFMService);
   }
-  private get usersService() {
-    return ServiceRegistry.get(UsersService);
-  }
 
   async love(
     ctx: GowonContext,
-    params: TrackLoveParams,
-    dbUser: User
+    {
+      params,
+      dbUser,
+      shouldCache,
+    }: { params: TrackLoveParams; dbUser: User; shouldCache: boolean }
   ): Promise<CachedLovedTrack | undefined> {
     await this.lastFMService.love(ctx, params);
 
-    const mutableContext = ctx.getMutable<LastFMArgumentsMutableContext>();
-
-    if (!(await this.isTrackLoved(ctx, params))) {
-      if (!mutableContext.nowplaying && !mutableContext.parsedNowplaying) {
-        throw new TrackDoesNotExistError();
-      }
-
+    if (shouldCache) {
       return await this.cacheLovedTrack(ctx, params, dbUser);
-    } else return undefined;
+    }
+
+    return undefined;
   }
 
   async unlove(
     ctx: GowonContext,
     params: TrackLoveParams,
     dbUser: User
-  ): Promise<{ wasCached: boolean }> {
+  ): Promise<CachedLovedTrack | undefined> {
     const cachedLovedTrack = await this.getCachedLovedTrack(
       ctx,
       params,
       dbUser
     );
 
-    if (cachedLovedTrack) {
-      await cachedLovedTrack.remove();
-      return { wasCached: true };
-    } else {
-      await this.lastFMService.unlove(ctx, params);
-      return { wasCached: false };
-    }
+    await cachedLovedTrack?.remove();
+
+    await this.lastFMService.unlove(ctx, params);
+
+    return cachedLovedTrack;
   }
 
   async getCachedLovedTrack(
@@ -76,24 +67,13 @@ export class LovedTrackService extends BaseService {
     );
   }
 
-  async attemptResolveCachedLoveTrack(
-    ctx: GowonContext,
-    params: TrackInfoParams,
-    dbUser?: User
-  ): Promise<boolean> {
-    const user =
-      dbUser || (await this.usersService.getUser(ctx, ctx.author.id));
-    const cachedLovedTrack = await this.getCachedLovedTrack(ctx, params, user);
+  async resolveCache(trackInfo: RawTrackInfo): Promise<void> {
+    const cachedLovedTracks = await CachedLovedTrack.findBy({
+      artist: trackInfo.artist.name,
+      track: trackInfo.name,
+    });
 
-    if (!cachedLovedTrack) return false;
-
-    this.lastFMService.love(ctx, params);
-
-    if (await this.isTrackLoved(ctx, params)) {
-      await cachedLovedTrack.remove();
-
-      return true;
-    } else return false;
+    await CachedLovedTrack.remove(cachedLovedTracks);
   }
 
   async getExpiredCachedLoveTracks(
@@ -120,25 +100,8 @@ export class LovedTrackService extends BaseService {
       user: dbUser,
     });
 
+    cachedLovedTrack.new = true;
+
     return await cachedLovedTrack.save();
-  }
-
-  private wasTrackNotLoved(e: unknown): boolean {
-    return e instanceof LastFMError && e.response.error === 6;
-  }
-
-  private async isTrackLoved(
-    ctx: GowonContext,
-    params: TrackLoveParams
-  ): Promise<boolean> {
-    try {
-      // Use the raw request to skip the attempt to love the track
-      const response = await this.lastFMService._trackInfo(ctx, params);
-
-      return response.userloved === "1";
-    } catch (e) {
-      if (!this.wasTrackNotLoved(e)) throw e;
-      return false;
-    }
   }
 }

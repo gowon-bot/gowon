@@ -69,20 +69,24 @@ In the meantime, it will appear in your \`!fm\`s as a loved track.`;
       (np && np.artist === artist && np.name == track) ||
       (parsedNp && parsedNp.artist === artist && parsedNp.name === track);
 
-    const trackInfo = undefined;
-    // await this.getTrackInfo({
-    //   artist,
-    //   track,
-    //   username: senderRequestable,
-    // });
+    const trackInfo = await this.getTrackInfo({
+      artist,
+      track,
+      username: senderRequestable,
+    });
 
-    const cachedLovedTrack = await this.loveOrUnlove(
-      senderUser!,
-      { artist, track, username: senderRequestable },
-      trackInfo
+    const { cachedLovedTrack, removedCachedLovedTrack } =
+      await this.loveOrUnlove(
+        senderUser!,
+        { artist, track, username: senderRequestable },
+        trackInfo
+      );
+
+    const title = this.getTitle(
+      trackInfo,
+      cachedLovedTrack,
+      removedCachedLovedTrack
     );
-
-    const title = this.getTitle(trackInfo, cachedLovedTrack);
 
     const image =
       (isNowPlaying
@@ -112,13 +116,7 @@ In the meantime, it will appear in your \`!fm\`s as a loved track.`;
         `by ${bold(trackInfo?.artist.name || artist)}${
           album ? ` from ${italic(album)}` : ""
         }`
-      )
-      .setFooter({
-        text:
-          cachedLovedTrack && !this.variationWasUsed(Variations.Unlove)
-            ? `This track love has been cached, and will be submitted when the track exists on Last.fm. See "${this.prefix}help love" for more info`
-            : "",
-      });
+      );
 
     if (image) embed.setThumbnail(albumCover || "");
 
@@ -129,23 +127,44 @@ In the meantime, it will appear in your \`!fm\`s as a loved track.`;
     dbUser: User,
     params: TrackLoveParams,
     trackInfo?: TrackInfo
-  ): Promise<CachedLovedTrack | undefined | { uncached: boolean }> {
-    if (
-      this.variationWasUsed(Variations.Unlove) &&
-      (!trackInfo || trackInfo.loved)
-    ) {
-      const { wasCached } = await this.lovedTrackService.unlove(
-        this.ctx,
-        params,
-        dbUser
-      );
+  ): Promise<{
+    cachedLovedTrack?: CachedLovedTrack;
+    removedCachedLovedTrack?: CachedLovedTrack;
+  }> {
+    if (this.variationWasUsed(Variations.Unlove)) {
+      return {
+        removedCachedLovedTrack: await this.lovedTrackService.unlove(
+          this.ctx,
+          params,
+          dbUser
+        ),
+      };
+    } else {
+      const mutableContext =
+        this.ctx.getMutable<LastFMArgumentsMutableContext>();
 
-      return { uncached: wasCached };
-    } else if (!trackInfo || !trackInfo.loved) {
-      return await this.lovedTrackService.love(this.ctx, params, dbUser);
+      if (
+        trackInfo ||
+        mutableContext.nowplaying ||
+        mutableContext.parsedNowplaying
+      ) {
+        return {
+          cachedLovedTrack: await this.lovedTrackService.love(this.ctx, {
+            params,
+            dbUser,
+            shouldCache: !trackInfo,
+          }),
+        };
+      } else if (
+        !trackInfo &&
+        !mutableContext.nowplaying &&
+        !mutableContext.parsedNowplaying
+      ) {
+        throw new TrackDoesNotExistError();
+      }
     }
 
-    return undefined;
+    return {};
   }
 
   private async getTrackInfo(
@@ -162,26 +181,23 @@ In the meantime, it will appear in your \`!fm\`s as a loved track.`;
 
   private getTitle(
     trackInfo: TrackInfo | undefined,
-    cachedLovedTrack: CachedLovedTrack | { uncached: boolean } | undefined
+    cachedLovedTrack: CachedLovedTrack | undefined,
+    removedCachedLovedTrack: CachedLovedTrack | undefined
   ): string {
     const unlove = this.variationWasUsed(Variations.Unlove);
 
-    if ((cachedLovedTrack as any)?.uncached) {
-      return `Uncached track love! 💔`;
-    } else if (!trackInfo && !unlove) {
-      return `Cached track love! ❤️`;
-    } else if (!trackInfo && (unlove || !cachedLovedTrack)) {
-      throw new TrackDoesNotExistError();
-    } else if (trackInfo) {
-      return unlove
-        ? !trackInfo.loved
-          ? "Track already not loved! ❤️‍🩹"
-          : "Unloved! 💔"
-        : !trackInfo.loved
-        ? "Loved! ❤️"
-        : "Track already loved! 💞";
-    }
+    const wasAlreadyLoved =
+      trackInfo?.loved || (cachedLovedTrack && !cachedLovedTrack.new);
+    const wasAlreadyUnloved =
+      (trackInfo && !trackInfo.loved) ||
+      (!trackInfo && !removedCachedLovedTrack);
 
-    return "";
+    return unlove
+      ? wasAlreadyUnloved
+        ? "Track already not loved! ❤️‍🩹"
+        : "Unloved! 💔"
+      : !wasAlreadyLoved
+      ? "Loved! ❤️"
+      : "Track already loved! 💞";
   }
 }
