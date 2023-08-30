@@ -89,6 +89,12 @@ export interface LilacAlbumCountFilters {
   pagination?: LilacPaginationInput;
 }
 
+export interface LilacTrackCountFilters {
+  track?: LilacTrackInput;
+  users?: LilacUserInput[];
+  pagination?: LilacPaginationInput;
+}
+
 export interface LilacTagsFilters {
   inputs?: LilacTagInput[];
   artists?: ArtistInput[];
@@ -208,6 +214,12 @@ export interface LilacAlbumCount {
   album: LilacAlbum;
 }
 
+export interface LilacTrackCount {
+  user: LilacUser;
+  playcount: number;
+  track: LilacTrack;
+}
+
 export interface LilacAmbiguousTrackCount {
   user: LilacUser;
   playcount: number;
@@ -232,6 +244,11 @@ export interface LilacArtistCountsPage {
 export interface LilacAlbumCountsPage {
   pagination: LilacPagination;
   albumCounts: LilacAlbumCount[];
+}
+
+export interface LilacTrackCountsPage {
+  pagination: LilacPagination;
+  trackCounts: LilacTrackCount[];
 }
 
 export interface LilacTagsPage {

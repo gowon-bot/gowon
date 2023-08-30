@@ -8,6 +8,8 @@ import {
   LilacArtistsPage,
   LilacScrobbleFilters,
   LilacScrobblesPage,
+  LilacTrackCountFilters,
+  LilacTrackCountsPage,
 } from "./LilacAPIService.types";
 
 export class LilacLibraryService extends LilacAPIService {
@@ -86,6 +88,40 @@ export class LilacLibraryService extends LilacAPIService {
     >(ctx, query, { filters, artistsFilters }, false);
 
     return response;
+  }
+
+  async trackCounts(
+    ctx: GowonContext,
+    filters: LilacTrackCountFilters
+  ): Promise<LilacTrackCountsPage> {
+    const query = gql`
+      query trackCounts($filters: TrackCountsFilters!) {
+        trackCounts(filters: $filters) {
+          trackCounts {
+            playcount
+
+            track {
+              name
+
+              artist {
+                name
+              }
+
+              album {
+                name
+              }
+            }
+          }
+        }
+      }
+    `;
+
+    const response = await this.query<
+      { trackCounts: LilacTrackCountsPage },
+      { filters: LilacTrackCountFilters }
+    >(ctx, query, { filters }, false);
+
+    return response.trackCounts;
   }
 
   public async getScrobbleCount(
