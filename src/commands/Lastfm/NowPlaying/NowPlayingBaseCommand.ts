@@ -11,6 +11,7 @@ import { FMUsernameDisplay } from "../../../lib/settings/SettingValues";
 import { SettingsService } from "../../../lib/settings/SettingsService";
 import { TagConsolidator } from "../../../lib/tags/TagConsolidator";
 import { displayNumber, displayUserTag } from "../../../lib/views/displays";
+import { Requestable } from "../../../services/LastFM/LastFMAPIService";
 import {
   AlbumInfo,
   ArtistInfo,
@@ -78,16 +79,15 @@ export abstract class NowPlayingBaseCommand<
       this.gowonClient.environment === "production" &&
       this.gowonClient.isAlphaTester(this.author.id)
     ) {
-      this.lastFMService.scrobbleTrack(
-        this.ctx,
-        {
-          artist: track.artist,
-          track: track.name,
-          album: track.album,
-          timestamp: new Date().getTime() / 1000,
-        },
-        config.lastFMBotSessionKey
-      );
+      this.lastFMService.scrobble(this.ctx, {
+        artist: track.artist,
+        track: track.name,
+        album: track.album,
+        timestamp: new Date().getTime() / 1000,
+        username: {
+          session: config.lastFMBotSessionKey,
+        } as Requestable,
+      });
     }
   }
 

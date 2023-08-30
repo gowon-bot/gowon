@@ -663,7 +663,7 @@ export interface AlbumSearchParams extends PagedParams {
   artist?: string;
 }
 
-export interface ScrobbleParams {
+export interface ScrobbleParams extends UsernameParams {
   artist: string;
   track: string;
   timestamp: number;

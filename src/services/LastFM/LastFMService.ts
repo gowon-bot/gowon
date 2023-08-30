@@ -1,5 +1,9 @@
 import { add } from "date-fns";
-import { BadLastFMResponseError, LogicError } from "../../errors/errors";
+import {
+  BadLastFMResponseError,
+  LastFMError,
+  LogicError,
+} from "../../errors/errors";
 import { code } from "../../helpers/discord";
 import { requestableAsUsername } from "../../lib/MultiRequester";
 import { GowonContext } from "../../lib/context/Context";
@@ -370,5 +374,17 @@ export class LastFMService extends LastFMAPIService {
     let recentTracks = await this.recentTracks(ctx, params);
 
     return recentTracks.tracks[1] ?? recentTracks.first();
+  }
+
+  async noErrorTrackInfo(
+    ctx: GowonContext,
+    params: TrackInfoParams
+  ): Promise<TrackInfo | undefined> {
+    try {
+      return await this.trackInfo(ctx, params);
+    } catch (e) {
+      if (e instanceof LastFMError && e.response.error === 6) return undefined;
+      else throw e;
+    }
   }
 }

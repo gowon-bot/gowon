@@ -423,6 +423,10 @@ export class LastFMAPIService extends BaseService {
     await this.request(ctx, "track.unlove", params, { post: true });
   }
 
+  async scrobble(ctx: GowonContext, params: ScrobbleParams): Promise<void> {
+    return await this.request(ctx, "track.scrobble", params, { post: true });
+  }
+
   private async request<T>(
     ctx: GowonContext,
     method: string,
@@ -528,18 +532,6 @@ export class LastFMAPIService extends BaseService {
     return await this.request(ctx, "auth.getSession", params, {
       forceSignature: true,
     });
-  }
-
-  async scrobbleTrack(ctx: GowonContext, params: ScrobbleParams, sk?: string) {
-    return await this.request(
-      ctx,
-      "track.scrobble",
-      {
-        ...params,
-        sk: sk,
-      },
-      { post: true }
-    );
   }
 
   // private methods
