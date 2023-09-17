@@ -1,7 +1,7 @@
 import { bold } from "../../../helpers/discord";
 import {
-  TagCombo as TagComboType,
   TagComboCalculator,
+  TagCombo as TagComboType,
 } from "../../../lib/calculators/TagComboCalculator";
 import { constants } from "../../../lib/constants";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
@@ -17,7 +17,14 @@ const args = {
 export default class TagCombo extends LastFMBaseCommand<typeof args> {
   idSeed = "secret number dita";
 
-  aliases = ["tagstreak", "tac", "tagscombo", "combotags"];
+  aliases = [
+    "tagstreak",
+    "tac",
+    "tagscombo",
+    "combotags",
+    "genrecombo",
+    "genrestreak",
+  ];
   description = `Shows your current streak\n Max combo: ${displayNumber(
     constants.hardPageLimit * 1000
   )}`;
