@@ -4,14 +4,20 @@ import { Emoji } from "../lib/emoji/Emoji";
 import { displayNumber } from "../lib/views/displays";
 import { RawLastFMErrorResponse } from "../services/LastFM/LastFMService.types";
 
-export abstract class ClientError extends Error {
+export class ClientError extends Error {
   name = "ClientError";
   isClientFacing = true;
   silent = false;
+  isWarning = false;
 
   constructor(public message: string, public footer = "") {
     super(message);
   }
+}
+
+export class ClientWarning extends ClientError {
+  name = "ClientWarning";
+  isWarning = true;
 }
 
 export class UnknownError extends ClientError {

@@ -1,7 +1,7 @@
 import { EmbedField } from "discord.js";
 import { code } from "../../helpers/discord";
 import { bullet } from "../../helpers/specialCharacters";
-import { uppercaseFirst } from "../../helpers/string";
+import { uppercaseFirstLetter } from "../../helpers/string";
 import { Command, CommandRedirect } from "../../lib/command/Command";
 import { Flag } from "../../lib/context/arguments/argumentTypes/Flag";
 import { StringArgument } from "../../lib/context/arguments/argumentTypes/StringArgument";
@@ -93,7 +93,7 @@ export default class Help extends Command<typeof args> {
 
     for (const [subcategory, commands] of Object.entries(groupedCommands)) {
       fields.push({
-        name: uppercaseFirst(subcategory),
+        name: uppercaseFirstLetter(subcategory),
         value: commands.map((c) => code(c.friendlyName)).join(", "),
         inline: true,
       });

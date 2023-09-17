@@ -108,6 +108,16 @@ export class GowonContext<T extends CustomContext = CustomContext> {
     return this.client.client.user;
   }
 
+  get botMember(): GuildMember | undefined {
+    if (!this.client.client.user) {
+      throw new UnexpectedGowonError(
+        "A bot user could not be found in context"
+      );
+    }
+
+    return this.guild?.members?.me ?? undefined;
+  }
+
   get logger(): Logger {
     return this._logger;
   }

@@ -87,3 +87,11 @@ export class MustBeAPatronError extends ClientError {
     super(`You must be a patron to access this command!`);
   }
 }
+
+export class CanCheckFailedError extends ClientError {
+  name = "CanCheckFailedError";
+
+  constructor(message: string) {
+    super(message);
+  }
+}

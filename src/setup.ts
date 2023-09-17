@@ -6,7 +6,7 @@ import gql from "graphql-tag";
 import { GraphQLAPI } from "./api";
 import { DB } from "./database/DB";
 import { Stopwatch } from "./helpers";
-import { uppercaseFirst } from "./helpers/string";
+import { uppercaseFirstLetter } from "./helpers/string";
 import { GowonClient } from "./lib/GowonClient";
 import { CommandHandler } from "./lib/command/CommandHandler";
 import {
@@ -66,7 +66,7 @@ export async function setup(ctx: GowonContext) {
   console.log(
     chalk`{cyan ${
       asciiArt + "\n" + "=".repeat(asciiArt.split("\n").reverse()[0].length)
-    }}\n{yellow -${uppercaseFirst(config.environment)}-}\n`
+    }}\n{yellow -${uppercaseFirstLetter(config.environment)}-}\n`
   );
 
   await Promise.all([

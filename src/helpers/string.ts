@@ -1,9 +1,9 @@
-export function uppercaseFirst(string: string): string {
+export function uppercaseFirstLetter(string: string): string {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
 export function titlecase(string: string): string {
-  return string.split(/\s+/).map(uppercaseFirst).join(" ");
+  return string.split(/\s+/).map(uppercaseFirstLetter).join(" ");
 }
 
 /**

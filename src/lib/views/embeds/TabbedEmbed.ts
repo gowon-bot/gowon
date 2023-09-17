@@ -101,7 +101,7 @@ export class TabbedEmbed {
   }
 
   private async removeReaction(emoji: Emoji, userId: string) {
-    if (this.ctx.guild?.me?.permissions?.has("MANAGE_MESSAGES")) {
+    if (this.ctx.botMember?.permissions?.has("MANAGE_MESSAGES")) {
       await this.sentMessage!.reactions.resolve(
         (emoji.id ?? emoji.name)!
       )!.users.remove(userId);

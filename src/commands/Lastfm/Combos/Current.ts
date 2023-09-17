@@ -1,7 +1,7 @@
 import { formatDistance } from "date-fns";
 import { bold } from "../../../helpers/discord";
 import { LastfmLinks } from "../../../helpers/lastfm/LastfmLinks";
-import { uppercaseFirst } from "../../../helpers/string";
+import { uppercaseFirstLetter } from "../../../helpers/string";
 import { LineConsolidator } from "../../../lib/LineConsolidator";
 import {
   ComboCalculator,
@@ -178,7 +178,7 @@ export class Current extends ComboChildCommand<typeof args> {
     combo: ComboType,
     entity: "artist" | "album" | "track"
   ): string {
-    return `${bold(uppercaseFirst(entity))}: ${displayNumber(
+    return `${bold(uppercaseFirstLetter(entity))}: ${displayNumber(
       combo[entity].plays
     )}${
       combo[entity].plays >= 1000

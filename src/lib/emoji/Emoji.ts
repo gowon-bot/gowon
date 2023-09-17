@@ -1,3 +1,5 @@
+import { icons } from "./icons";
+
 const extractionRegex = /<a?:\w+:([0-9]+)>/i;
 const nameExtractionRegex = /<a?(:\w+:)[0-9]+>/i;
 
@@ -14,6 +16,8 @@ export function extractEmojiName(emoji: string): string {
 }
 
 export const Emoji = {
+  ...icons,
+
   spotify: "<:spotify:757100448548126720>",
   lastfm: "<:lastfm:879259073143517224>",
   gowonswag2: "<:gowonswag2:754923498786521088>",
@@ -68,18 +72,6 @@ export const Emoji = {
   betatester: "<:betatester:913203995663798322>",
   developer: "<:developer:913203995470888990>",
   "#swag": "<:swag:936102174394581032>",
-
-  // Commmand icons
-  runsInDMs: "<:runs_in_DMs:1116262516520124436>",
-  doesNotRunInDMs: "<:does_not_run_in_DMs:1116262511428259881>",
-  requiresAdmin: "<:requires_admin:1116285314332364930>",
-  doesNotRequireAdmin: "<:does_not_require_admin:1116285311513800786>",
-  slashCommand: "<:slash_command:1116262522085965824>",
-  notASlashCommand: "<:not_a_slash_command:1116262520156590090>",
-
-  // Fishy icons
-  fishypediaMainTab: "<:main:1130055372367990886>",
-  fishypediaTraitsTab: "<:traits:1130059610607325195>",
 
   // Aquarium
   aquariumLeft: "<:AquariumLeft:1089731232952234044>",

@@ -9,7 +9,7 @@ import {
 import md5 from "js-md5";
 import config from "../../../config.json";
 import { AnalyticsCollector } from "../../analytics/AnalyticsCollector";
-import { UnknownError } from "../../errors/errors";
+import { ClientError, UnknownError } from "../../errors/errors";
 import { GuildRequiredError } from "../../errors/gowon";
 import { SimpleMap } from "../../helpers/types";
 import { DiscordService } from "../../services/Discord/DiscordService";
@@ -349,9 +349,9 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
     console.log(e);
 
     if (e.isClientFacing && !e.silent) {
-      await this.sendError(e.message, e.footer);
+      await this.sendError(e);
     } else if (!e.isClientFacing) {
-      await this.sendError(new UnknownError().message);
+      await this.sendError(new UnknownError());
     }
   }
 
@@ -463,16 +463,18 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
       .filter(filter);
   }
 
-  protected async sendError(message: string, footer = "") {
-    const embed = errorEmbed(
-      this.newEmbed(),
-      this.author,
-      this.ctx.authorMember,
-      message,
-      footer
-    );
+  protected async sendError(error: Error | string): Promise<void> {
+    const errorInstance =
+      typeof error === "string" ? new ClientError(error) : error;
 
-    await this.send(embed);
+    await this.send(
+      errorEmbed(
+        this.newEmbed(),
+        this.author,
+        this.ctx.authorMember,
+        errorInstance
+      )
+    );
   }
 
   protected startTyping() {

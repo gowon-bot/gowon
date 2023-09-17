@@ -1,4 +1,5 @@
 import { CommandInteraction, Interaction, MessageEmbed } from "discord.js";
+import { CanCheckFailedError } from "../../../errors/commands/permissions";
 import { generateCanCheckMessage } from "../../../helpers/permissions";
 import { DiscordService } from "../../../services/Discord/DiscordService";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
@@ -102,7 +103,7 @@ export class InteractionHandler {
       new MessageEmbed(),
       ctx.author,
       ctx.requiredAuthorMember,
-      message
+      new CanCheckFailedError(message)
     );
 
     await this.discordService.send(ctx, embed, {

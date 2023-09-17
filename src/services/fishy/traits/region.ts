@@ -2,7 +2,7 @@ import { type FishyTrait } from ".";
 import {
   looseCompare,
   titlecase,
-  uppercaseFirst,
+  uppercaseFirstLetter,
 } from "../../../helpers/string";
 
 export enum FishyRegionTrait {
@@ -62,7 +62,7 @@ export function displayFishyRegionTrait(
     case FishyRegionTrait.AtlanticOcean:
     case FishyRegionTrait.ArcticOcean:
     case FishyRegionTrait.IndianOcean:
-      return withFunc(`in the ${uppercaseFirst(trait)} Ocean`);
+      return withFunc(`in the ${uppercaseFirstLetter(trait)} Ocean`);
 
     case FishyRegionTrait.AllOceans:
       return withFunc(`in all oceans`);

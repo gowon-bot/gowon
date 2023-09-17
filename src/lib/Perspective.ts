@@ -1,6 +1,6 @@
 import { User as DiscordUser } from "discord.js";
 import { code } from "../helpers/discord";
-import { uppercaseFirst } from "../helpers/string";
+import { uppercaseFirstLetter } from "../helpers/string";
 
 export class Perspective {
   private titlecase = false;
@@ -69,8 +69,9 @@ export class Perspective {
   }
 
   private titleCaseIfRequired(property: string): string {
-    if (this.titlecase && !this.different) return uppercaseFirst(property);
-    else return property;
+    if (this.titlecase && !this.different) {
+      return uppercaseFirstLetter(property);
+    } else return property;
   }
 
   public get name(): string {

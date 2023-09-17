@@ -1,13 +1,23 @@
 import { GuildMember, HexColorString, MessageEmbed, User } from "discord.js";
+import { ClientError } from "../../../errors/errors";
 import { bold, italic } from "../../../helpers/discord";
-import { uppercaseFirst } from "../../../helpers/string";
+import { uppercaseFirstLetter } from "../../../helpers/string";
 import { ImageCollection } from "../../../services/LastFM/converters/BaseConverter";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { AlbumCoverService } from "../../../services/moderation/AlbumCoverService";
 import { GowonContext } from "../../context/Context";
+import { Emoji } from "../../emoji/Emoji";
 import { displayUserTag } from "../displays";
 
-export const errorColour = "#ED008E";
+export const errorColour = "#F1759A";
+export const warningColour = "#FCCA28";
+export const infoColour = "#02BCA1";
+
+enum ConditionEmbedType {
+  Info = "info",
+  Warning = "warning",
+  Error = "error",
+}
 
 export function gowonEmbed(member?: GuildMember, embed?: MessageEmbed) {
   const gowonEmbed = (embed || new MessageEmbed()).setColor(
@@ -54,15 +64,70 @@ export function errorEmbed(
   from: MessageEmbed,
   author: User,
   member: GuildMember | undefined,
-  message: string,
-  footer: string = ""
+  error: Error
 ): MessageEmbed {
+  const footer = error instanceof ClientError ? error.footer : "";
+  const isWarning = error instanceof ClientError ? error.isWarning : false;
+
+  return baseConditionEmbed(
+    isWarning ? ConditionEmbedType.Warning : ConditionEmbedType.Error,
+    from,
+    author,
+    member,
+    uppercaseFirstLetter(error.message),
+    footer
+  );
+}
+
+export function infoEmbed(
+  from: MessageEmbed,
+  author: User,
+  member: GuildMember | undefined,
+  message: string,
+  footer?: string
+): MessageEmbed {
+  return baseConditionEmbed(
+    ConditionEmbedType.Info,
+    from,
+    author,
+    member,
+    message,
+    footer
+  );
+}
+
+function baseConditionEmbed(
+  type: ConditionEmbedType,
+  from: MessageEmbed,
+  author: User,
+  member: GuildMember | undefined,
+  message: string,
+  footer?: string
+) {
   return from
-    .setColor(errorColour)
+    .setColor(
+      type === ConditionEmbedType.Error
+        ? errorColour
+        : type === ConditionEmbedType.Info
+        ? infoColour
+        : type === ConditionEmbedType.Warning
+        ? warningColour
+        : "#000000"
+    )
     .setAuthor({
-      name: `Error | ${displayUserTag(author)}`,
+      name: `${uppercaseFirstLetter(type)} | ${displayUserTag(author)}`,
       iconURL: member?.avatarURL() || author.avatarURL() || undefined,
     })
-    .setDescription(uppercaseFirst(message))
-    .setFooter({ text: footer });
+    .setDescription(
+      `${
+        type === ConditionEmbedType.Error
+          ? Emoji.error
+          : type === ConditionEmbedType.Info
+          ? Emoji.info
+          : type === ConditionEmbedType.Warning
+          ? Emoji.warning
+          : ""
+      } ${uppercaseFirstLetter(message)}`
+    )
+    .setFooter({ text: footer ?? "" });
 }

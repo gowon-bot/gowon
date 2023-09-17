@@ -1,4 +1,4 @@
-import { looseCompare, uppercaseFirst } from "../../../helpers/string";
+import { looseCompare, uppercaseFirstLetter } from "../../../helpers/string";
 
 export enum FishyCategoryTrait {
   // Level 1
@@ -51,6 +51,6 @@ export function displayFishyCategoryTrait(
       return withFunc(trait);
 
     default:
-      return withFunc(uppercaseFirst(trait));
+      return withFunc(uppercaseFirstLetter(trait));
   }
 }
