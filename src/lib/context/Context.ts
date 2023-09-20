@@ -115,7 +115,7 @@ export class GowonContext<T extends CustomContext = CustomContext> {
       );
     }
 
-    return this.guild?.members?.me ?? undefined;
+    return this.guild?.me ?? undefined;
   }
 
   get logger(): Logger {
