@@ -32,5 +32,7 @@
   "lilacWebsocket": "ws://localhost:4000/socket",
   "lilacPassword": "this needs to match the 'password' config in Lilac",
 
-  "redisHost": "localhost"
+  "redisHost": "localhost",
+
+  "sentryDSN": "http://<sentry_key>@host.docker.internal:8000/1"
 }
