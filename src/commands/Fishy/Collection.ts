@@ -50,7 +50,9 @@ export class Collection extends FishyChildCommand<typeof args> {
       pageSize: 15,
       pageRenderer(items, { offset }) {
         return (
-          `_${displayFishyCollectionProgress(collection)}fishy collected_\n\n` +
+          `_${displayFishyCollectionProgress(
+            collection
+          )} fishy collected_\n\n` +
           displayNumberedList(
             items.map((f) => {
               const owned = collection.includes(f.id);
