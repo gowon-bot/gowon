@@ -3,5 +3,8 @@
   "editor.formatOnPaste": false,
   "editor.formatOnType": false,
   "editor.formatOnSaveMode": "file",
-  "editor.defaultFormatter": "rvest.vs-code-prettier-eslint"
+  "editor.defaultFormatter": "rvest.vs-code-prettier-eslint",
+  "yaml.schemas": {
+    "https://json.schemastore.org/github-workflow.json": ".github/workflows/deploy.yml"
+  }
 }

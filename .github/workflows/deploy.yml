@@ -1,0 +1,18 @@
+name: Deploy Gowon
+run-name: ${{ github.actor }} is deploying Gowon
+on:
+  push:
+    branches:
+      - main
+      - server-split
+jobs:
+  Deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: executing remote ssh commands using ssh key
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.GOWON_HOST_IP }}
+          username: ${{ secrets.GOWON_HOST_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script: cd ./gowon && /bin/bash ./deploy.sh
