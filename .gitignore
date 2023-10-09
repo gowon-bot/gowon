@@ -11,3 +11,6 @@ ormconfig.json
 
 docker-compose.*.yml
 Dockerfile.dev
+
+# Sentry Auth Token
+.sentryclirc

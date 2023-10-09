@@ -21,6 +21,7 @@ import { GowonService } from "../../services/GowonService";
 import { NowPlayingEmbedParsingService } from "../../services/NowPlayingEmbedParsingService";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { TrackingService } from "../../services/TrackingService";
+import { ReportingService } from "../../services/analytics/ReportingService";
 import { ArgumentParsingService } from "../../services/arguments/ArgumentsParsingService";
 import { MentionsService } from "../../services/arguments/mentions/MentionsService";
 import {
@@ -203,6 +204,7 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
   discordService = ServiceRegistry.get(DiscordService);
   settingsService = ServiceRegistry.get(SettingsService);
   mentionsService = ServiceRegistry.get(MentionsService);
+  reportingService = ServiceRegistry.get(ReportingService);
   mirrorballService = ServiceRegistry.get(MirrorballService);
   lilacUsersService = ServiceRegistry.get(LilacUsersService);
   lilacGuildsService = ServiceRegistry.get(LilacGuildsService);
@@ -345,6 +347,7 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
   protected async handleRunError(e: any) {
     this.logger.logError(e);
     this.analyticsCollector.metrics.commandErrors.inc();
+    this.reportingService.reportError(this.ctx, e);
 
     console.log(e);
 
