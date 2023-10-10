@@ -14,6 +14,7 @@ import { GowonContext } from "./lib/context/Context";
 import { Payload } from "./lib/context/Payload";
 import { displayUserTag } from "./lib/views/displays";
 import { MockMessage } from "./mocks/discord";
+import { ReportingService } from "./services/analytics/ReportingService";
 import { UsersService } from "./services/dbservices/UsersService";
 import {
   client,
@@ -37,6 +38,9 @@ async function start() {
 
   const analyticsCollector = ServiceRegistry.get(AnalyticsCollector);
   const usersService = ServiceRegistry.get(UsersService);
+  const reportingService = ServiceRegistry.get(ReportingService);
+
+  reportingService.init();
 
   client.client.on("ready", () => {
     console.log(
