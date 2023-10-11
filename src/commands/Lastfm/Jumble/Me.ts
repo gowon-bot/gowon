@@ -1,19 +1,24 @@
-import { JumbleChildCommand } from "./JumbleChildCommand";
-import { LogicError } from "../../../errors/errors";
+import { Message, MessageCollector } from "discord.js";
+import {
+  InvalidJumblePoolAmountError,
+  NoSuitableArtistsFoundForJumbleError,
+} from "../../../errors/commands/jumble";
 import { abbreviateNumber, shuffle } from "../../../helpers";
-import { JumbledArtist, jumbleRedisKey } from "./JumbleParentCommand";
-import { Variation } from "../../../lib/command/Command";
+import { bold, code } from "../../../helpers/discord";
 import { LineConsolidator } from "../../../lib/LineConsolidator";
+import { Variation } from "../../../lib/command/Command";
+import { CommandRegistry } from "../../../lib/command/CommandRegistry";
+import { CommandExtractor } from "../../../lib/command/extractor/CommandExtractor";
+import { GowonContext } from "../../../lib/context/Context";
+import { Flag } from "../../../lib/context/arguments/argumentTypes/Flag";
+import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { TagConsolidator } from "../../../lib/tags/TagConsolidator";
 import { displayNumber } from "../../../lib/views/displays";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { WordBlacklistService } from "../../../services/WordBlacklistService";
-import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
-import { GowonContext } from "../../../lib/context/Context";
-import { Flag } from "../../../lib/context/arguments/argumentTypes/Flag";
-import { bold, code } from "../../../helpers/discord";
-import { MessageCollector } from "discord.js";
-import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { JumbleChildCommand } from "./JumbleChildCommand";
+import { JumbledArtist, jumbleRedisKey } from "./JumbleParentCommand";
 
 const args = {
   poolAmount: new NumberArgument({
@@ -28,12 +33,14 @@ const args = {
   }),
 } satisfies ArgumentsMap;
 
-export class Me extends JumbleChildCommand<typeof args> {
+export class Start extends JumbleChildCommand<typeof args> {
   idSeed = "csvc stella jang";
 
+  aliases = ["me", "begin"];
   description =
     "Picks an artist from your library to jumble, or reshuffles your current one";
   usage = ["", "poolAmount"];
+
   variations: Variation[] = [
     {
       name: "nonalphanumeric",
@@ -48,10 +55,13 @@ export class Me extends JumbleChildCommand<typeof args> {
   slashCommandName = "start";
 
   tagConsolidator = new TagConsolidator();
+  commandExtractor = new CommandExtractor();
   wordBlacklistService = ServiceRegistry.get(WordBlacklistService);
 
   async run() {
-    let alreadyJumbled = await this.sessionGetJSON<JumbledArtist>(
+    const poolAmount = this.parsedArguments.poolAmount;
+
+    const alreadyJumbled = await this.sessionGetJSON<JumbledArtist>(
       jumbleRedisKey
     );
 
@@ -60,19 +70,18 @@ export class Me extends JumbleChildCommand<typeof args> {
       return;
     }
 
-    const poolAmount = this.parsedArguments.poolAmount;
+    if (poolAmount < 5 || poolAmount > 1000) {
+      throw new InvalidJumblePoolAmountError();
+    }
 
-    if (poolAmount < 5 || poolAmount > 1000)
-      throw new LogicError("Please enter a number between 5 and 1000!");
-
-    let artist = await this.jumbleCalculator.getArtist(poolAmount, {
+    const artist = await this.jumbleCalculator.getArtist(poolAmount, {
       includeNonAlphanumeric:
         this.parsedArguments.nonAlphanumeric ||
         this.variationWasUsed("nonalphanumeric"),
     });
 
     if (!artist) {
-      throw new LogicError("No suitable artists were found in your library!");
+      throw new NoSuitableArtistsFoundForJumbleError();
     }
 
     const { senderRequestable } = await this.getMentions();
@@ -82,7 +91,7 @@ export class Me extends JumbleChildCommand<typeof args> {
       username: senderRequestable,
     });
 
-    let jumbledArtist: JumbledArtist = {
+    const jumbledArtist: JumbledArtist = {
       jumbled: this.jumble(artist.name),
       unjumbled: artist.name,
       currenthint: artist.name.replace(/[^\s]/g, this.hintChar),
@@ -92,15 +101,16 @@ export class Me extends JumbleChildCommand<typeof args> {
 
     await this.tagConsolidator.saveServerBannedTagsInContext(this.ctx);
 
-    let tags = this.tagConsolidator
+    const tags = this.tagConsolidator
       .blacklistTags(artist.name)
       .addTags(this.ctx, artistInfo.tags)
       .consolidateAsStrings();
 
-    let lineConsolidator = new LineConsolidator();
+    const lineConsolidator = new LineConsolidator();
 
     lineConsolidator.addLines(
-      `This artist has **${abbreviateNumber(artistInfo.listeners)}** listener${artistInfo.listeners === 1 ? "" : "s"
+      `This artist has **${abbreviateNumber(artistInfo.listeners)}** listener${
+        artistInfo.listeners === 1 ? "" : "s"
       } on Last.fm and you have scrobbled them **${displayNumber(
         artist.userPlaycount,
         "**time"
@@ -120,8 +130,8 @@ export class Me extends JumbleChildCommand<typeof args> {
       }
     );
 
-    let embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Jumble"))
+    const embed = this.newEmbed()
+      .setAuthor(this.generateEmbedAuthor("Jumble me"))
       .setDescription(
         `**Who is this artist?**
       
@@ -131,7 +141,7 @@ export class Me extends JumbleChildCommand<typeof args> {
       _${lineConsolidator.consolidate()}_`
       )
       .setFooter({
-        text: `Simply send a message to make a guess or type "quit" to quit`,
+        text: `Send a message to make a guess or type "quit" to quit\nType "hint" to get a hint`,
       });
 
     await this.send(embed);
@@ -144,15 +154,15 @@ export class Me extends JumbleChildCommand<typeof args> {
 
     this.sessionSetJSON(jumbleRedisKey, jumble);
 
-    let embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Jumble"))
+    const embed = this.newEmbed()
+      .setAuthor(this.generateEmbedAuthor("Jumble reshuffle"))
       .setDescription(
         `I've reshuffled the letters, now who is this artist?\n\n${code(
           jumble.jumbled
         )}`
       )
       .setFooter({
-        text: `Trying to skip? Run "${this.prefix}j quit" to give up`,
+        text: `Trying to skip? Type "quit" to give up\nNeed a hint? Type "hint" to get a hint`,
       });
 
     await this.send(embed);
@@ -172,17 +182,19 @@ export class Me extends JumbleChildCommand<typeof args> {
     return jumbled;
   }
 
-  private jumbleItem(item: string): string {
+  private jumbleItem(item: string, tries = 0): string {
     const jumbled = shuffle(item.split("")).join("");
 
-    if (item.length == 1) {
+    if (item.length == 1 || tries > this.maximumJumbleTries) {
       return item;
     }
 
-    return jumbled === item ||
+    if (
+      jumbled === item ||
       !this.wordBlacklistService.isAllowed(this.ctx as GowonContext, item)
-      ? this.jumbleItem(item)
-      : jumbled;
+    ) {
+      return this.jumbleItem(item, tries + 1);
+    } else return jumbled;
   }
 
   private watchForAnswers(jumble: JumbledArtist) {
@@ -192,19 +204,7 @@ export class Me extends JumbleChildCommand<typeof args> {
     });
 
     messageCollector.on("collect", async (message) => {
-      if (
-        ["stop", "quit", "cancel"].includes(
-          message.content.toLowerCase().trim()
-        )
-      ) {
-        this.stopJumble(jumble.unjumbled, jumbleRedisKey);
-        messageCollector.stop();
-      } else if (this.isGuessCorrect(message.content, jumble.unjumbled)) {
-        await this.handleCorrectGuess(jumble.unjumbled, jumbleRedisKey);
-        messageCollector.stop();
-      } else {
-        message.react(shuffle(this.wrongAnswerEmojis)[0]);
-      }
+      await this.handleAnswerMessage(message, jumble, messageCollector);
     });
 
     messageCollector.on("end", async (_message, reason) => {
@@ -220,5 +220,43 @@ export class Me extends JumbleChildCommand<typeof args> {
         await this.send(embed);
       }
     });
+  }
+
+  private async handleAnswerMessage(
+    message: Message,
+    jumble: JumbledArtist,
+    messageCollector: MessageCollector
+  ): Promise<void> {
+    const normalizedMessageInput = message.content
+      .toLowerCase()
+      .trim()
+      .replaceAll(/\s+/g, " ");
+
+    const extractedCommand = await this.commandExtractor.extract(
+      normalizedMessageInput,
+      this.guild?.id,
+      CommandRegistry.getInstance().list()
+    );
+
+    // If jumble begin is being run again, don't respond
+    if (extractedCommand?.command?.id === this.id) {
+      return;
+    }
+
+    if (this.isGuessCorrect(message.content, jumble.unjumbled)) {
+      await this.handleCorrectGuess(jumble.unjumbled, jumbleRedisKey);
+      messageCollector.stop();
+    } else if (
+      ["stop", "quit", "cancel", "give up"].some((quitWord) =>
+        normalizedMessageInput.includes(quitWord)
+      )
+    ) {
+      this.stopJumble(jumble.unjumbled, jumbleRedisKey);
+      messageCollector.stop();
+    } else if (normalizedMessageInput === "hint") {
+      await this.giveHint(jumble, jumbleRedisKey);
+    } else {
+      message.react(shuffle(this.wrongAnswerEmojis)[0]);
+    }
   }
 }

@@ -139,8 +139,11 @@ ${
         },
       ]);
 
-    if (spotifyArtistSearch.hasAnyResults) {
-      embed.setThumbnail(spotifyArtistSearch.bestResult.images.largest?.url);
+    if (
+      spotifyArtistSearch.hasAnyResults &&
+      spotifyArtistSearch.bestResult.images.largest
+    ) {
+      embed.setThumbnail(spotifyArtistSearch.bestResult.images.largest.url);
       embed.setFooter({ text: "Image source: Spotify" });
     }
 

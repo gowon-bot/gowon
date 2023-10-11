@@ -1,4 +1,5 @@
 import { icons } from "./icons";
+import { nativeEmojis } from "./nativeEmojis";
 
 const extractionRegex = /<a?:\w+:([0-9]+)>/i;
 const nameExtractionRegex = /<a?(:\w+:)[0-9]+>/i;
@@ -17,6 +18,7 @@ export function extractEmojiName(emoji: string): string {
 
 export const Emoji = {
   ...icons,
+  ...nativeEmojis,
 
   spotify: "<:spotify:757100448548126720>",
   lastfm: "<:lastfm:879259073143517224>",
