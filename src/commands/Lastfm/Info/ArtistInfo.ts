@@ -119,24 +119,28 @@ export default class ArtistInfo extends InfoCommand<typeof args> {
       .setTitle(artistInfo.name)
       .setURL(artistInfo.url)
       .setDescription(this.lineConsolidator.consolidate())
-      .addField(
-        `${perspective.upper.possessive} stats`,
-        `\`${displayNumber(artistInfo.userPlaycount, "` play", true)} by ${
-          perspective.objectPronoun
-        } (${bold(
-          calculatePercent(artistInfo.userPlaycount, userInfo.scrobbleCount)
-        )}% of ${perspective.possessivePronoun} total scrobbles)
+      .addFields([
+        {
+          name: `${perspective.upper.possessive} stats`,
+          value: `\`${displayNumber(
+            artistInfo.userPlaycount,
+            "` play",
+            true
+          )} by ${perspective.objectPronoun} (${bold(
+            calculatePercent(artistInfo.userPlaycount, userInfo.scrobbleCount)
+          )}% of ${perspective.possessivePronoun} total scrobbles)
 ${
   parseFloat(percentage) > 0
     ? `${perspective.upper.regularVerb("account")} for ${bold(
         percentage
       )}% of all ${artistInfo.name} scrobbles!`
     : ""
-}\n`
-      );
+}\n`,
+        },
+      ]);
 
     if (spotifyArtistSearch.hasAnyResults) {
-      embed.setThumbnail(spotifyArtistSearch.bestResult.images.largest.url);
+      embed.setThumbnail(spotifyArtistSearch.bestResult.images.largest?.url);
       embed.setFooter({ text: "Image source: Spotify" });
     }
 
