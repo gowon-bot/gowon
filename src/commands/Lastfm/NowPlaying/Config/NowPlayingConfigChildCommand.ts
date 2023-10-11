@@ -55,7 +55,7 @@ export abstract class NowPlayingConfigChildCommand<
         .map(([k]) => k);
     }
 
-    return (this.presets as any)[preset[0]];
+    return (this.presets as any)[preset];
   }
 }
 
