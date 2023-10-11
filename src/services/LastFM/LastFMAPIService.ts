@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import fetch, { RequestInit } from "node-fetch";
+import fetch, { RequestInit, Response } from "node-fetch";
 import { stringify } from "querystring";
 import config from "../../../config.json";
 import { AnalyticsCollector } from "../../analytics/AnalyticsCollector";
@@ -496,7 +496,7 @@ export class LastFMAPIService extends BaseService {
       throw new LastFMConnectionError(response);
     }
 
-    const jsonResponse = (await response.json()) as T | RawLastFMErrorResponse;
+    const jsonResponse = await this.getJSON<T>(response);
 
     if (isErrorResponse(jsonResponse)) {
       // Retry
@@ -514,6 +514,16 @@ export class LastFMAPIService extends BaseService {
     }
 
     return jsonResponse as T;
+  }
+
+  private async getJSON<T>(
+    response: Response
+  ): Promise<T | RawLastFMErrorResponse> {
+    try {
+      return (await response.json()) as T | RawLastFMErrorResponse;
+    } catch (e) {
+      throw new BadLastFMResponseError();
+    }
   }
 
   async getToken(ctx: GowonContext): Promise<{ token: string }> {
