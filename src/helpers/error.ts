@@ -37,3 +37,9 @@ export function parseError(error: RawLastFMErrorResponse): string {
       return error.message;
   }
 }
+
+export function silentFail(func: () => any) {
+  try {
+    func();
+  } catch {}
+}

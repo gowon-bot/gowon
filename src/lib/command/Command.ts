@@ -11,6 +11,7 @@ import config from "../../../config.json";
 import { AnalyticsCollector } from "../../analytics/AnalyticsCollector";
 import { ClientError, UnknownError } from "../../errors/errors";
 import { GuildRequiredError } from "../../errors/gowon";
+import { silentFail } from "../../helpers/error";
 import { SimpleMap } from "../../helpers/types";
 import { DiscordService } from "../../services/Discord/DiscordService";
 import {
@@ -534,7 +535,7 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
       );
 
       if (senderUser) {
-        this.lilacUsersService.update(this.ctx, senderUser);
+        silentFail(() => this.lilacUsersService.update(this.ctx, senderUser));
 
         try {
           await this.lilacGuildsService.addUser(
