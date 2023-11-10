@@ -58,7 +58,7 @@ export class View extends CardsChildCommand {
     });
 
     if (owner) {
-      await this.nicknameService.cacheNicknames(this.ctx, [owner.discordID]);
+      await this.nicknameService.cacheNicknames(this.ctx, [owner]);
     }
 
     const ownerDisplay = !owner
