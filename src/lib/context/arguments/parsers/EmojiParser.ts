@@ -1,29 +1,40 @@
 import emojiRegexFunction from "emoji-regex";
+import { flatDeep } from "../../../../helpers";
 import { extractEmojiID } from "../../../emoji/Emoji";
+
+type EmojiType = "animated" | "static" | "unicode";
 
 export interface EmojiMention {
   raw: string;
   resolvable: string;
-  type: "animated" | "custom" | "unicode";
+  type: EmojiType;
 }
 
 const animatedRegex = /<a:[\w-]+:\d{18,}>/g;
-const customRegex = /<:[\w-]+:\d{18,}>/g;
-const emojiRegex = emojiRegexFunction();
+const staticRegex = /<:[\w-]+:\d{18,}>/g;
+const unicodeEmojiRegex = emojiRegexFunction();
+
+const emojiRegex = new RegExp(
+  `(${staticRegex.source})|(${animatedRegex.source})|(${unicodeEmojiRegex.source})`
+);
 
 export function isUnicodeEmoji(value: string): boolean {
-  return emojiRegex.test(value);
+  return unicodeEmojiRegex.test(value);
 }
 
 export class EmojiParser {
-  parseAll(rawString: string): EmojiMention[] {
-    return this.parseAnimatedEmotes(rawString)
-      .concat(this.parseCustomEmotes(rawString))
-      .concat(this.parseDefaultEmotes(rawString));
+  parse(rawString: string): EmojiMention[] {
+    const split = rawString.split(/\s+/);
+
+    const allEmojis = split.map((s) => {
+      this.parseEmojisFromSplit(s);
+    });
+
+    return flatDeep(allEmojis);
   }
 
-  parseAnimatedEmotes(rawString: string): EmojiMention[] {
-    const matches = rawString.matchAll(animatedRegex);
+  private parseEmojisFromSplit(split: string): EmojiMention[] {
+    const matches = split.matchAll(animatedRegex);
     const mentions = [] as EmojiMention[];
 
     for (const match of matches) {
@@ -31,58 +42,36 @@ export class EmojiParser {
 
       if (!matchString) continue;
 
-      mentions.push({
-        raw: matchString,
-        resolvable: extractEmojiID(matchString),
-        type: "animated",
-      });
+      const type = this.getEmojiType(matchString);
+
+      if (type === "animated" || type == "static") {
+        mentions.push({
+          raw: matchString,
+          resolvable: extractEmojiID(matchString),
+          type,
+        });
+      } else {
+        mentions.push({
+          raw: matchString,
+          resolvable: matchString,
+          type,
+        });
+      }
     }
 
     return mentions;
   }
 
-  parseCustomEmotes(rawString: string): EmojiMention[] {
-    const matches = rawString.matchAll(customRegex);
-    const mentions = [] as EmojiMention[];
-
-    for (const match of matches) {
-      const matchString = match.shift();
-
-      if (!matchString) continue;
-
-      mentions.push({
-        raw: matchString,
-        resolvable: extractEmojiID(matchString),
-        type: "custom",
-      });
-    }
-
-    return mentions;
-  }
-
-  parseDefaultEmotes(rawString: string): EmojiMention[] {
-    const matches = rawString.matchAll(emojiRegex);
-    const mentions = [] as EmojiMention[];
-
-    for (const match of matches) {
-      const matchString = match.shift();
-
-      if (!matchString) continue;
-
-      mentions.push({
-        raw: matchString,
-        resolvable: matchString,
-        type: "unicode",
-      });
-    }
-
-    return mentions;
+  private getEmojiType(emoji: string): EmojiType {
+    if (animatedRegex.test(emoji)) return "animated";
+    if (staticRegex.test(emoji)) return "static";
+    else return "unicode";
   }
 
   static removeEmojisFromString(string: string): string {
     return string
       .replaceAll(animatedRegex, "")
-      .replaceAll(customRegex, "")
+      .replaceAll(staticRegex, "")
       .replaceAll(emojiRegex, "");
   }
 }
