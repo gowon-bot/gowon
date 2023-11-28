@@ -6,4 +6,8 @@ export class URLParser {
 
     return matches.map((m) => m[0]);
   }
+
+  static removeURLsFromString(string: string): string {
+    return string.replaceAll(urlRegex, "");
+  }
 }

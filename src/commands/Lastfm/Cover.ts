@@ -109,7 +109,9 @@ export default class Cover extends LastFMBaseCommand<typeof args> {
         files: [
           {
             attachment: albumCover.url,
-            name: `${artist} - ${album}.${albumCover.fileExtension}`,
+            name: albumCover.fileExtension
+              ? `${artist} - ${album}.${albumCover.fileExtension}`
+              : undefined,
             description: `The album cover for ${album} by ${artist}`,
           },
         ],

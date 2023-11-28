@@ -22,7 +22,7 @@ interface AlbumCoverGetOptions {
 export interface AlbumCoverWithDetails {
   url: string | undefined;
   source: "lastfm" | "moderation" | "custom" | "spotify";
-  fileExtension: string;
+  fileExtension?: string;
 }
 
 export class AlbumCoverService extends BaseService {
@@ -238,11 +238,16 @@ export class AlbumCoverService extends BaseService {
     return url.endsWith("2a96cbd8b46e442fc41c2b86b821562f.png");
   }
 
-  private extractFileExtension(url?: string): string {
+  private extractFileExtension(url?: string): string | undefined {
     if (!url) return "";
 
     const fileEndingSplit = url.split(".");
 
-    return fileEndingSplit[fileEndingSplit.length - 1];
+    const fileEnding = fileEndingSplit[fileEndingSplit.length - 1];
+
+    if (["png", "jpeg", "jpg", "webp", "gif"].includes(fileEnding)) {
+      return fileEnding;
+    }
+    return undefined;
   }
 }

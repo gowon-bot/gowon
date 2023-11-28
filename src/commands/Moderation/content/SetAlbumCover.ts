@@ -3,8 +3,9 @@ import { bold, italic } from "../../../helpers/discord";
 import { Flag } from "../../../lib/context/arguments/argumentTypes/Flag";
 import { ImageArgument } from "../../../lib/context/arguments/argumentTypes/ImageArgument";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
-import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
+import { URLParser } from "../../../lib/context/arguments/parsers/URLParser";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { ArgumentValidationError } from "../../../lib/validation/validators/BaseValidator";
 import { ConfirmationEmbed } from "../../../lib/views/embeds/ConfirmationEmbed";
 import { LastFMArguments } from "../../../services/LastFM/LastFMArguments";
 import { AlbumCoverService } from "../../../services/moderation/AlbumCoverService";
@@ -12,15 +13,25 @@ import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { ContentModerationCommand } from "./ContentModerationCommand";
 
 const args = {
-  ...prefabArguments.album,
+  artist: new StringArgument({
+    splitOn: "|",
+    description:
+      "The artist to use (defaults to your currently playing artist)",
+    preprocessor: URLParser.removeURLsFromString,
+  }),
+  album: new StringArgument({
+    splitOn: "|",
+    index: 1,
+    description: "The album to use (defaults to your currently playing album)",
+    preprocessor: URLParser.removeURLsFromString,
+  }),
   clear: new StringArgument({
     splitOn: "|",
     index: 2,
-    match: ["clear"],
+    preprocessor: URLParser.removeURLsFromString,
   }),
   image: new ImageArgument({
     description: "The image to set as the alternate (URL or file upload)",
-    required: true,
   }),
   moderation: new Flag({
     description: "Replace an album cover bot wide (content moderators only)",
@@ -50,6 +61,10 @@ export default class SetAlbumCover extends ContentModerationCommand<
   async run() {
     const image = (this.parsedArguments.image || [])[0],
       shouldClear = this.parsedArguments.clear === "clear";
+
+    if (!shouldClear && !image) {
+      throw new ArgumentValidationError(`Please enter an image!`);
+    }
 
     const { dbUser, requestable } = await this.getMentions({
       senderRequired: true,
