@@ -59,7 +59,9 @@ export class EmojiService extends BaseService {
   ): Promise<EmojiValidation> {
     this.log(
       ctx,
-      `Performing manual emoji verification on ${emojis.length} emojis: ${emojis}`
+      `Performing manual emoji verification on ${
+        emojis.length
+      } emojis: ${emojis.map((e) => e.resolvable)}`
     );
 
     const valid: EmojiMention[] = [];
@@ -79,7 +81,7 @@ export class EmojiService extends BaseService {
       );
 
       if (emojiReaction) valid.push(emoji);
-      else valid.push(emoji);
+      else invalid.push(emoji);
     }
 
     return {
