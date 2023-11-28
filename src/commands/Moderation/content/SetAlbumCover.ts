@@ -1,6 +1,7 @@
 import { MustBeAPatronError } from "../../../errors/commands/permissions";
 import { bold, italic } from "../../../helpers/discord";
 import { Flag } from "../../../lib/context/arguments/argumentTypes/Flag";
+import { ImageArgument } from "../../../lib/context/arguments/argumentTypes/ImageArgument";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
@@ -12,10 +13,13 @@ import { ContentModerationCommand } from "./ContentModerationCommand";
 
 const args = {
   ...prefabArguments.album,
-  url: new StringArgument({
+  clear: new StringArgument({
     splitOn: "|",
     index: 2,
-    description: "The url to set as the alternate",
+    match: ["clear"],
+  }),
+  image: new ImageArgument({
+    description: "The image to set as the alternate (URL or file upload)",
     required: true,
   }),
   moderation: new Flag({
@@ -44,6 +48,9 @@ export default class SetAlbumCover extends ContentModerationCommand<
   albumCoverService = ServiceRegistry.get(AlbumCoverService);
 
   async run() {
+    const image = (this.parsedArguments.image || [])[0],
+      shouldClear = this.parsedArguments.clear === "clear";
+
     const { dbUser, requestable } = await this.getMentions({
       senderRequired: true,
     });
@@ -61,8 +68,6 @@ export default class SetAlbumCover extends ContentModerationCommand<
       requestable,
       { redirect: true }
     );
-
-    const shouldClear = this.parsedArguments.url === "clear";
 
     const existingCover = await this.albumCoverService.getAlternateCover(
       this.ctx,
@@ -88,7 +93,7 @@ This will ${shouldClear ? "clear" : "set"} the image ${bold(
           this.parsedArguments.moderation ? "bot-wide" : "for you only"
         )}.`
       )
-      .setImage(!shouldClear ? this.parsedArguments.url : "")
+      .setImage(!shouldClear ? image.asURL() : "")
       .setThumbnail(existingCover?.url || "");
 
     const confirmationEmbed = new ConfirmationEmbed(
@@ -113,9 +118,7 @@ This will ${shouldClear ? "clear" : "set"} the image ${bold(
     } else {
       await this.albumCoverService.setAlternate(
         this.ctx,
-        artist,
-        album,
-        this.parsedArguments.url,
+        image.withMetadata({ artist, album }),
         user
       );
     }

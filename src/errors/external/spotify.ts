@@ -1,3 +1,4 @@
+import { EmojiMention } from "../../lib/context/arguments/parsers/EmojiParser";
 import { ClientError, ClientWarning } from "../errors";
 
 export class SpotifyConnectionError extends ClientError {
@@ -65,6 +66,38 @@ export class PrivateModeOnWarning extends ClientWarning {
   constructor(prefix: string) {
     super(
       `Spotify private mode is on! This prevents Gowon from showing information that may reveal your Spotify profile.\n\nTo disable it see \`${prefix}sprivacy\``
+    );
+  }
+}
+
+export class PlaylistNotFoundError extends ClientError {
+  name = "PlaylistNotFoundError";
+
+  constructor() {
+    super(`Couldn't find a playlist with that name!`);
+  }
+}
+
+export class CouldNotFindPlaylistWithTagError extends ClientError {
+  name = "CouldNotFindPlaylistWithTagError";
+
+  constructor(prefix: string, emoji: EmojiMention | undefined) {
+    super(
+      emoji
+        ? `Couldn't find a playlist tagged with ${emoji.resolvable}!`
+        : `Couldn't find a default playlist! (Set one with \`${prefix}pl default\`)`
+    );
+  }
+}
+
+export class CouldNotFindTrackToChangePlaylistError extends ClientError {
+  name = "CouldNotFindTrackToChangePlaylistError";
+
+  constructor(isRemove?: boolean) {
+    super(
+      `Couldn't find a track to ${
+        isRemove ? "remove from" : "add to"
+      } a playlist!`
     );
   }
 }

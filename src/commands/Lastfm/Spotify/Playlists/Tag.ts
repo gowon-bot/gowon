@@ -1,8 +1,8 @@
-import { LogicError } from "../../../../errors/errors";
+import { PlaylistNotFoundError } from "../../../../errors/external/spotify";
 import { bold } from "../../../../helpers/discord";
 import { EmojisArgument } from "../../../../lib/context/arguments/argumentTypes/discord/EmojisArgument";
 import { StringArgument } from "../../../../lib/context/arguments/argumentTypes/StringArgument";
-import { removeEmojisFromString } from "../../../../lib/context/arguments/parsers/EmojiParser";
+import { EmojiParser } from "../../../../lib/context/arguments/parsers/EmojiParser";
 import { ArgumentsMap } from "../../../../lib/context/arguments/types";
 import { Validation } from "../../../../lib/validation/ValidationChecker";
 import { validators } from "../../../../lib/validation/validators";
@@ -15,12 +15,12 @@ const args = {
     required: true,
   }),
   playlist: new StringArgument({
-    preprocessor: removeEmojisFromString,
+    preprocessor: EmojiParser.removeEmojisFromString,
     required: true,
     description: "The name of the playlist to tag",
     index: { start: 0 },
   }),
-} satisfies ArgumentsMap
+} satisfies ArgumentsMap;
 
 export class Tag extends PlaylistChildCommand<typeof args> {
   idSeed = "pink fantasy momoka";
@@ -56,7 +56,7 @@ export class Tag extends PlaylistChildCommand<typeof args> {
     );
 
     if (!foundPlaylist) {
-      throw new LogicError(`Couldn't find a playlist with that name!`);
+      throw new PlaylistNotFoundError();
     }
 
     await this.spotifyPlaylistTagService.tagPlaylist(this.ctx, dbUser, {

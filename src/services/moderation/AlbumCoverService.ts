@@ -6,6 +6,7 @@ import {
   AlternateCoverURLCannotBeBlankError,
 } from "../../errors/contentModeration";
 import { GowonContext } from "../../lib/context/Context";
+import { Image } from "../../lib/views/Image";
 import { BaseService } from "../BaseService";
 import { ServiceRegistry } from "../ServicesRegistry";
 import { SpotifyService } from "../Spotify/SpotifyService";
@@ -98,11 +99,12 @@ export class AlbumCoverService extends BaseService {
 
   public async setAlternate(
     ctx: GowonContext,
-    artist: string,
-    album: string,
-    url: string,
+    image: Image<{ artist: string; album: string }>,
     user?: User
   ): Promise<AlternateAlbumCover> {
+    const url = image.asURL();
+    const { artist, album } = image.getMetadata();
+
     this.log(
       ctx,
       `Setting ${url} as an album cover for ${artist} | ${album} (${

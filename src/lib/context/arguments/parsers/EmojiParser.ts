@@ -78,11 +78,11 @@ export class EmojiParser {
 
     return mentions;
   }
-}
 
-export function removeEmojisFromString(string: string): string {
-  return string
-    .replaceAll(animatedRegex, "")
-    .replaceAll(customRegex, "")
-    .replaceAll(emojiRegex, "");
+  static removeEmojisFromString(string: string): string {
+    return string
+      .replaceAll(animatedRegex, "")
+      .replaceAll(customRegex, "")
+      .replaceAll(emojiRegex, "");
+  }
 }

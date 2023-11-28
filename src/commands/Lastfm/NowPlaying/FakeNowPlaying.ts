@@ -22,7 +22,7 @@ const args = {
 export default class FakeNowPlaying extends NowPlayingBaseCommand<typeof args> {
   idSeed = "april jinsol";
 
-  aliases = ["track"];
+  aliases = ["track", "fnp", "ffm"];
 
   arguments = args;
 
