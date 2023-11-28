@@ -93,7 +93,7 @@ export class React extends NowPlayingConfigChildCommand<typeof args> {
   }
 
   private async saveReacts(emojis: EmojiMention[]) {
-    const { valid, invalid } = this.emojiService.validateEmojis(
+    const { valid, invalid } = await this.emojiService.validateEmojis(
       this.ctx,
       emojis
     );
@@ -135,7 +135,7 @@ export class React extends NowPlayingConfigChildCommand<typeof args> {
 
     if (invalid.length) {
       embed.setFooter({
-        text: "Gowon needs to share a server with an emoji to be able to react with it\nRecently-added emojis may take a little while for Gowon to be able to recognize",
+        text: "Gowon needs to share a server with an emoji to be able to react with it",
       });
     }
 

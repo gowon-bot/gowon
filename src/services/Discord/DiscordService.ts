@@ -1,4 +1,4 @@
-import { DiscordAPIError, GuildMember, User } from "discord.js";
+import { AnyChannel, DiscordAPIError, GuildMember, User } from "discord.js";
 import { GowonContext } from "../../lib/context/Context";
 import { DiscordResponseService } from "./DiscordResponseService";
 import { DiscordID } from "./DiscordService.types";
@@ -17,8 +17,6 @@ export class DiscordService extends DiscordResponseService {
     username: string
   ): Promise<User | undefined> {
     const members = await ctx.requiredGuild.members.fetch();
-
-    console.log(username);
 
     const member = members.find(
       (m) =>
@@ -49,6 +47,20 @@ export class DiscordService extends DiscordResponseService {
 
     try {
       return await ctx.client.client.users.fetch(userID);
+    } catch (e) {
+      if (!(e instanceof DiscordAPIError)) throw e;
+      return undefined;
+    }
+  }
+
+  public async fetchChannel(
+    ctx: GowonContext,
+    channelID: DiscordID
+  ): Promise<AnyChannel | undefined> {
+    if (ctx.payload.channel.id === channelID) return ctx.payload.channel;
+
+    try {
+      return (await ctx.client.client.channels.fetch(channelID)) ?? undefined;
     } catch (e) {
       if (!(e instanceof DiscordAPIError)) throw e;
       return undefined;

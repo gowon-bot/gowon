@@ -15,7 +15,8 @@ const staticRegex = /<:[\w-]+:\d{18,}>/g;
 const unicodeEmojiRegex = emojiRegexFunction();
 
 const emojiRegex = new RegExp(
-  `(${staticRegex.source})|(${animatedRegex.source})|(${unicodeEmojiRegex.source})`
+  `.*(${staticRegex.source})|(${animatedRegex.source})|(${unicodeEmojiRegex.source}).*`,
+  "g"
 );
 
 export function isUnicodeEmoji(value: string): boolean {
@@ -26,15 +27,13 @@ export class EmojiParser {
   parse(rawString: string): EmojiMention[] {
     const split = rawString.split(/\s+/);
 
-    const allEmojis = split.map((s) => {
-      this.parseEmojisFromSplit(s);
-    });
+    const allEmojis = split.map((s) => this.parseEmojisFromSplit(s));
 
     return flatDeep(allEmojis);
   }
 
   private parseEmojisFromSplit(split: string): EmojiMention[] {
-    const matches = split.matchAll(animatedRegex);
+    const matches = split.matchAll(emojiRegex);
     const mentions = [] as EmojiMention[];
 
     for (const match of matches) {
@@ -63,8 +62,8 @@ export class EmojiParser {
   }
 
   private getEmojiType(emoji: string): EmojiType {
-    if (animatedRegex.test(emoji)) return "animated";
-    if (staticRegex.test(emoji)) return "static";
+    if (emoji.match(animatedRegex)) return "animated";
+    if (emoji.match(staticRegex)) return "static";
     else return "unicode";
   }
 
