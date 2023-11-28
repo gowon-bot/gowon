@@ -63,7 +63,7 @@ export class EmojisArgument<
   }
 
   private parseFromString(string: string): EmojiMention[] | undefined {
-    const emojis = this.emojiParser.parse(string);
+    const emojis = this.emojiParser.parse(string.replaceAll("|", ""));
 
     const element = this.getElementFromIndex(emojis, this.options.index);
 

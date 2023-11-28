@@ -12,7 +12,10 @@ export interface EmojiMention {
 
 const animatedRegex = /<a:[\w-]+:\d{18,}>/g;
 const staticRegex = /<:[\w-]+:\d{18,}>/g;
-const unicodeEmojiRegex = emojiRegexFunction();
+const unicodeEmojiRegex = new RegExp(
+  `((${emojiRegexFunction().source})|([\uD83C][\uDDE6-\uDDFF]))`,
+  "g"
+);
 
 const emojiRegex = new RegExp(
   `.*(${staticRegex.source})|(${animatedRegex.source})|(${unicodeEmojiRegex.source}).*`,
@@ -35,6 +38,8 @@ export class EmojiParser {
   private parseEmojisFromSplit(split: string): EmojiMention[] {
     const matches = split.matchAll(emojiRegex);
     const mentions = [] as EmojiMention[];
+
+    console.log(emojiRegex);
 
     for (const match of matches) {
       const matchString = match.shift();
