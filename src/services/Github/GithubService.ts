@@ -1,13 +1,12 @@
+import Axios, { AxiosInstance } from "axios";
+import config from "../../../config.json";
+import { GowonContext } from "../../lib/context/Context";
 import { BaseService } from "../BaseService";
 import {
-  Params,
   CreateIssueParams,
   CreateIssueResponse,
-  GetBranchResponse,
+  Params,
 } from "./GithubService.types";
-import config from "../../../config.json";
-import Axios, { AxiosInstance } from "axios";
-import { GowonContext } from "../../lib/context/Context";
 
 export class GithubService extends BaseService {
   private baseURL = "https://api.github.com";
@@ -65,19 +64,6 @@ export class GithubService extends BaseService {
       {
         params,
         verb: "POST",
-      }
-    );
-  }
-
-  async getBranch(
-    ctx: GowonContext,
-    branch = "master"
-  ): Promise<GetBranchResponse> {
-    return await this.request<GetBranchResponse>(
-      ctx,
-      `/repos/${this.owner}/${this.repo}/branches/${branch}`,
-      {
-        verb: "GET",
       }
     );
   }
