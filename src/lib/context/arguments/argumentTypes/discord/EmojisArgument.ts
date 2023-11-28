@@ -13,9 +13,7 @@ import {
 
 export interface EmojisArgumentOptions
   extends BaseArgumentOptions<EmojiMention[]>,
-    SliceableArgumentOptions {
-  parse: "all" | "default" | "custom" | "animated";
-}
+    SliceableArgumentOptions {}
 
 export class EmojisArgument<
   OptionsT extends Partial<EmojisArgumentOptions> = {}
@@ -29,7 +27,6 @@ export class EmojisArgument<
   constructor(options?: OptionsT) {
     super({
       ...defaultIndexableOptions,
-      parse: "all",
       ...(options ?? {}),
     } as OptionsT);
   }
@@ -66,22 +63,7 @@ export class EmojisArgument<
   }
 
   private parseFromString(string: string): EmojiMention[] | undefined {
-    let emojis: EmojiMention[] = [];
-
-    switch (this.options.parse) {
-      case "all":
-        emojis = this.emojiParser.parseAll(string);
-        break;
-      case "default":
-        emojis = this.emojiParser.parseDefaultEmotes(string);
-        break;
-      case "animated":
-        emojis = this.emojiParser.parseAnimatedEmotes(string);
-        break;
-      case "custom":
-        emojis = this.emojiParser.parseCustomEmotes(string);
-        break;
-    }
+    const emojis = this.emojiParser.parse(string);
 
     const element = this.getElementFromIndex(emojis, this.options.index);
 

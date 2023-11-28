@@ -1,9 +1,11 @@
 import { MustBeAPatronError } from "../../../errors/commands/permissions";
 import { bold, italic } from "../../../helpers/discord";
 import { Flag } from "../../../lib/context/arguments/argumentTypes/Flag";
+import { ImageArgument } from "../../../lib/context/arguments/argumentTypes/ImageArgument";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
-import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
+import { URLParser } from "../../../lib/context/arguments/parsers/URLParser";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { ArgumentValidationError } from "../../../lib/validation/validators/BaseValidator";
 import { ConfirmationEmbed } from "../../../lib/views/embeds/ConfirmationEmbed";
 import { LastFMArguments } from "../../../services/LastFM/LastFMArguments";
 import { AlbumCoverService } from "../../../services/moderation/AlbumCoverService";
@@ -11,12 +13,25 @@ import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { ContentModerationCommand } from "./ContentModerationCommand";
 
 const args = {
-  ...prefabArguments.album,
-  url: new StringArgument({
+  artist: new StringArgument({
+    splitOn: "|",
+    description:
+      "The artist to use (defaults to your currently playing artist)",
+    preprocessor: URLParser.removeURLsFromString,
+  }),
+  album: new StringArgument({
+    splitOn: "|",
+    index: 1,
+    description: "The album to use (defaults to your currently playing album)",
+    preprocessor: URLParser.removeURLsFromString,
+  }),
+  clear: new StringArgument({
     splitOn: "|",
     index: 2,
-    description: "The url to set as the alternate",
-    required: true,
+    preprocessor: URLParser.removeURLsFromString,
+  }),
+  image: new ImageArgument({
+    description: "The image to set as the alternate (URL or file upload)",
   }),
   moderation: new Flag({
     description: "Replace an album cover bot wide (content moderators only)",
@@ -44,6 +59,13 @@ export default class SetAlbumCover extends ContentModerationCommand<
   albumCoverService = ServiceRegistry.get(AlbumCoverService);
 
   async run() {
+    const image = (this.parsedArguments.image || [])[0],
+      shouldClear = this.parsedArguments.clear === "clear";
+
+    if (!shouldClear && !image) {
+      throw new ArgumentValidationError(`Please enter an image!`);
+    }
+
     const { dbUser, requestable } = await this.getMentions({
       senderRequired: true,
     });
@@ -61,8 +83,6 @@ export default class SetAlbumCover extends ContentModerationCommand<
       requestable,
       { redirect: true }
     );
-
-    const shouldClear = this.parsedArguments.url === "clear";
 
     const existingCover = await this.albumCoverService.getAlternateCover(
       this.ctx,
@@ -88,7 +108,7 @@ This will ${shouldClear ? "clear" : "set"} the image ${bold(
           this.parsedArguments.moderation ? "bot-wide" : "for you only"
         )}.`
       )
-      .setImage(!shouldClear ? this.parsedArguments.url : "")
+      .setImage(!shouldClear ? image.asURL() : "")
       .setThumbnail(existingCover?.url || "");
 
     const confirmationEmbed = new ConfirmationEmbed(
@@ -113,9 +133,7 @@ This will ${shouldClear ? "clear" : "set"} the image ${bold(
     } else {
       await this.albumCoverService.setAlternate(
         this.ctx,
-        artist,
-        album,
-        this.parsedArguments.url,
+        image.withMetadata({ artist, album }),
         user
       );
     }

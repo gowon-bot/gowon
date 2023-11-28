@@ -11,6 +11,7 @@
   "discordToken": "Get this from the discord developer portal",
   "discordClientID": "Get this from the discord developer portal",
   "slashCommandTestGuildID": "If environment = development, it will register slash commands to this guild instead of globally",
+  "emojiVerificationChannelId": "The channel which Gowon will use to verify emojis are accessible to the bot",
 
   "defaultPrefix": "!",
 

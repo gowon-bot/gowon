@@ -6,6 +6,7 @@ import {
   AlternateCoverURLCannotBeBlankError,
 } from "../../errors/contentModeration";
 import { GowonContext } from "../../lib/context/Context";
+import { Image } from "../../lib/views/Image";
 import { BaseService } from "../BaseService";
 import { ServiceRegistry } from "../ServicesRegistry";
 import { SpotifyService } from "../Spotify/SpotifyService";
@@ -21,7 +22,7 @@ interface AlbumCoverGetOptions {
 export interface AlbumCoverWithDetails {
   url: string | undefined;
   source: "lastfm" | "moderation" | "custom" | "spotify";
-  fileExtension: string;
+  fileExtension?: string;
 }
 
 export class AlbumCoverService extends BaseService {
@@ -98,11 +99,12 @@ export class AlbumCoverService extends BaseService {
 
   public async setAlternate(
     ctx: GowonContext,
-    artist: string,
-    album: string,
-    url: string,
+    image: Image<{ artist: string; album: string }>,
     user?: User
   ): Promise<AlternateAlbumCover> {
+    const url = image.asURL();
+    const { artist, album } = image.getMetadata();
+
     this.log(
       ctx,
       `Setting ${url} as an album cover for ${artist} | ${album} (${
@@ -236,11 +238,16 @@ export class AlbumCoverService extends BaseService {
     return url.endsWith("2a96cbd8b46e442fc41c2b86b821562f.png");
   }
 
-  private extractFileExtension(url?: string): string {
+  private extractFileExtension(url?: string): string | undefined {
     if (!url) return "";
 
     const fileEndingSplit = url.split(".");
 
-    return fileEndingSplit[fileEndingSplit.length - 1];
+    const fileEnding = fileEndingSplit[fileEndingSplit.length - 1];
+
+    if (["png", "jpeg", "jpg", "webp", "gif"].includes(fileEnding)) {
+      return fileEnding;
+    }
+    return undefined;
   }
 }
