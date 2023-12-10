@@ -82,7 +82,7 @@ ${displayNumber(fishyProfile.questsCompleted, "quest")} completed ${emDash} _${
 **Rarity breakdown:**
 ${FishyRarities.Trash.emoji.base} _Trash_ ${emDash} ${displayNumber(
       rarityBreakdown.Trash
-    )} fishy
+    )} trashy
 ${FishyRarities.Common.emoji.base} _Common_ ${emDash} ${displayNumber(
       rarityBreakdown.Common
     )} fishy
