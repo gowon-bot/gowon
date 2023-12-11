@@ -29,7 +29,7 @@ export class BanArtist extends CrownsChildCommand<typeof args> {
   async run() {
     const artist = this.parsedArguments.artist;
 
-    const unban = this.extract.didMatch("unban");
+    const unban = this.variationWasUsed("unban");
 
     if (unban) {
       const artistCrownBan = await this.crownsService.artistCrownUnban(
