@@ -149,7 +149,7 @@ ${difference >= 5000 ? Emoji.wail : "😔"} → ${mentionGuildMember(
       )} - ${displayNumber(this.options.plays, "play")}
 
       You are ${displayNumber(
-        difference,
+        difference + 1,
         "play"
       )} away from being able to claim it.`
     );
