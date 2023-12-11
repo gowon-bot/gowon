@@ -224,7 +224,7 @@ export class FishyProgressionService extends BaseService {
         quester: { id: fishyProfile.user.id },
         completedAt: Not(IsNull()),
       },
-      order: { completedAt: "ASC" },
+      order: { completedAt: "DESC" },
     });
 
     return Chance().pickone(
