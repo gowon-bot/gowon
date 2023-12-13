@@ -90,8 +90,8 @@ export class Ratings extends RateYourMusicIndexingChildCommand<
 
     paginatedCache.cacheInitial(initialPages.ratings.ratings, this.pageSize);
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Ratings"))
+    const embed = this.authorEmbed()
+      .setHeader("Ratings")
       .setTitle(
         rating
           ? `${perspective.upper.possessive} albums rated ${rating / 2}`
@@ -111,7 +111,7 @@ export class Ratings extends RateYourMusicIndexingChildCommand<
       return this.generateTable(await paginatedCache.getPage(page));
     });
 
-    scrollingEmbed.send();
+    await this.send(scrollingEmbed);
   }
 
   private generateTable(ratings: MirrorballRating[]): string {

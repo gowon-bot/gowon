@@ -62,8 +62,8 @@ export default class TrackTopAlbums extends LilacBaseCommand<typeof args> {
     const totalScrobbles = trackCounts.reduce((sum, l) => sum + l.playcount, 0);
     const average = totalScrobbles / trackCounts.length;
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Track top albums"))
+    const embed = this.authorEmbed()
+      .setHeader("Track top albums")
       .setTitle(
         `${Emoji.usesIndexedDataLink} Top albums for ${italic(
           track.name
@@ -106,6 +106,6 @@ export default class TrackTopAlbums extends LilacBaseCommand<typeof args> {
       },
     });
 
-    simpleScrollingEmbed.send();
+    await this.send(simpleScrollingEmbed);
   }
 }

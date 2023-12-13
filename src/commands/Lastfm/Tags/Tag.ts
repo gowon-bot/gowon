@@ -116,8 +116,8 @@ export default class Tag extends LastFMBaseCommand<typeof args> {
           )})\n\n`
         : "Couldn't find any matching artists!");
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Tags"))
+    const embed = this.authorEmbed()
+      .setHeader("Tag")
       .setTitle(
         `${perspective.upper.possessive} top ${tagTopArtists.meta.tag} artists`
       );
@@ -139,7 +139,7 @@ export default class Tag extends LastFMBaseCommand<typeof args> {
       overrides: { itemName: "artist" },
     });
 
-    scrollingEmbed.send();
+    await this.send(scrollingEmbed);
   }
 
   calculateOverlap(

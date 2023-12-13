@@ -1,5 +1,6 @@
 import {
   ColorResolvable,
+  EmbedFieldData,
   GuildMember,
   HexColorString,
   MessageEmbed,
@@ -27,6 +28,7 @@ export class EmbedComponent extends UIComponent {
   private colour?: ColorResolvable;
   private guildMember?: GuildMember;
   private user?: User;
+  private fields?: EmbedFieldData[];
 
   constructor(options?: Partial<UIComponentOptions>) {
     super(options || {});
@@ -47,6 +49,7 @@ export class EmbedComponent extends UIComponent {
               iconURL: this.footerIcon,
             } as MessageEmbedFooter)
           : undefined,
+      fields: this.fields,
     });
 
     if (this.colour || this.guildMember) {
@@ -106,6 +109,18 @@ export class EmbedComponent extends UIComponent {
 
   setColour(colour: ColorResolvable): this {
     this.colour = colour;
+    return this;
+  }
+
+  setFields(fields: EmbedFieldData[]): this {
+    this.fields = fields;
+    return this;
+  }
+
+  addFields(...fields: EmbedFieldData[]): this {
+    if (!this.fields) this.fields = [];
+    this.fields.push(...fields);
+
     return this;
   }
 

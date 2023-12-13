@@ -1,12 +1,12 @@
-import { InfoCommand } from "./InfoCommand";
+import { bold } from "../../../helpers/discord";
+import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import {
   displayNumber,
   displayNumberedList,
 } from "../../../lib/views/displays";
-import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingEmbed";
-import { bold } from "../../../helpers/discord";
-import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { InfoCommand } from "./InfoCommand";
 
 const args = {
   ...prefabArguments.artist,
@@ -38,9 +38,11 @@ export default class PopularTracks extends InfoCommand<typeof args> {
       limit: 1000,
     });
 
-    const embed = this.newEmbed().setTitle(
-      `Top tracks for ${topTracks.tracks[0]?.artist?.name || artist}`
-    );
+    const embed = this.authorEmbed()
+      .setHeader("Popular tracks")
+      .setTitle(
+        `Top tracks for ${topTracks.tracks[0]?.artist?.name || artist}`
+      );
 
     const scrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
       items: topTracks.tracks,
@@ -57,6 +59,6 @@ export default class PopularTracks extends InfoCommand<typeof args> {
       overrides: { itemName: "track" },
     });
 
-    scrollingEmbed.send();
+    await this.send(scrollingEmbed);
   }
 }

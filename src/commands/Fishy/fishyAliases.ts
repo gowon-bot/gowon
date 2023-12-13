@@ -22,6 +22,13 @@ export const fishyAliases = [
   "phishy",
   "gofishyourself",
   "unfish",
+  "fgishy",
+  "fishyn",
+  "fidhu",
+  "ifisht",
+  "dushy",
+  "fishyt",
+  "ridhy",
 
   // From a typo generator
   "fisy",

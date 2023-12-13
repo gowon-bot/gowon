@@ -90,8 +90,8 @@ export class ArtistRatings extends RateYourMusicIndexingChildCommand<
       );
     }
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Artist ratings"))
+    const embed = this.authorEmbed()
+      .setHeader("Artist ratings")
       .setTitle(
         `${perspective.upper.possessive} top rated ${artistName} albums`
       )
@@ -127,7 +127,7 @@ export class ArtistRatings extends RateYourMusicIndexingChildCommand<
       overrides: { itemName: "rating" },
     });
 
-    simpleScrollingEmbed.send();
+    await this.send(simpleScrollingEmbed);
   }
 
   private generateTable(

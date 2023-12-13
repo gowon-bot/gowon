@@ -24,8 +24,8 @@ export class Quest extends FishyChildCommand {
     );
 
     if (currentQuest) {
-      const embed = this.newEmbed()
-        .setAuthor(this.generateEmbedAuthor("Fishy quest"))
+      const embed = this.authorEmbed()
+        .setHeader("Fishy quest")
         .setDescription(
           `Your current quest:
           
@@ -45,8 +45,8 @@ ${displayProgressBar(currentQuest.progress, currentQuest.count)}`
       await this.fishyProgressionService.saveQuest(quest);
 
       if (quest.isMilestone && quest.isCompleted) {
-        const milestoneCompletedEmbed = this.newEmbed()
-          .setAuthor(this.generateEmbedAuthor("Fishy level up"))
+        const milestoneCompletedEmbed = this.authorEmbed()
+          .setHeader("Fishy level up")
           .setDescription(
             displayFishyLevelUp(fishyProfile.level + 1) +
               ` See your next quest with \`${this.prefix}fq\``
@@ -61,8 +61,8 @@ ${displayProgressBar(currentQuest.progress, currentQuest.count)}`
         return;
       }
 
-      const embed = this.newEmbed()
-        .setAuthor(this.generateEmbedAuthor("Fishy quest"))
+      const embed = this.authorEmbed()
+        .setHeader("Fishy quest")
         .setDescription(
           `You've been ${Chance().pickone([
             "given",

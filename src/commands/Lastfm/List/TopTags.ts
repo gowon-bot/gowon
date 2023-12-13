@@ -55,8 +55,8 @@ export default class TagList extends LastFMBaseCommand<typeof args> {
     const artists = topArtists.artists.map((a) => ({ name: a.name }));
     const response = await this.lilacTagsService.list(this.ctx, { artists });
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Top tags"))
+    const embed = this.authorEmbed()
+      .setHeader("Top tags")
       .setTitle(
         `${perspective.possessive} top tags ${
           dateRange?.humanized() || humanizePeriod(timePeriod)
@@ -83,6 +83,6 @@ export default class TagList extends LastFMBaseCommand<typeof args> {
       overrides: { itemName: "tag" },
     });
 
-    scrollingEmbed.send();
+    await this.send(scrollingEmbed);
   }
 }

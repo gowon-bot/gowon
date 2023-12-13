@@ -118,8 +118,8 @@ export default class Taste extends TasteCommand<typeof args> {
       this.dateRange?.humanized() || humanizedPeriod
     }**\n\n${percentageMatch}`;
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Taste"))
+    const embed = this.authorEmbed()
+      .setHeader("Taste")
       .setDescription(embedDescription);
 
     const scrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
@@ -134,6 +134,6 @@ export default class Taste extends TasteCommand<typeof args> {
       },
     });
 
-    scrollingEmbed.send();
+    await this.send(scrollingEmbed);
   }
 }

@@ -58,9 +58,7 @@ export class Tag extends CrownsChildCommand<typeof args> {
       genres
     );
 
-    const embed = this.newEmbed().setAuthor(
-      this.generateEmbedAuthor("Crowns by genre")
-    );
+    const embed = this.authorEmbed().setHeader("Crowns tag");
 
     const description =
       italic(
@@ -86,6 +84,6 @@ export class Tag extends CrownsChildCommand<typeof args> {
       overrides: { itemName: "crown" },
     });
 
-    scrollingEmbed.send();
+    await this.send(scrollingEmbed);
   }
 }

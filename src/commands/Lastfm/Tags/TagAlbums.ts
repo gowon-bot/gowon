@@ -94,8 +94,8 @@ export default class TagAlbums extends LastFMBaseCommand<typeof args> {
           )})\n\n`
         : "Couldn't find any matching albums!");
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Tag albums"))
+    const embed = this.authorEmbed()
+      .setHeader("Tag albums")
       .setTitle(
         `${perspective.upper.possessive} top ${tagTopAlbums.meta.tag} albums`
       );
@@ -121,7 +121,7 @@ export default class TagAlbums extends LastFMBaseCommand<typeof args> {
       overrides: { itemName: "track" },
     });
 
-    scrollingEmbed.send();
+    await this.send(scrollingEmbed);
   }
 
   private calculateOverlap(

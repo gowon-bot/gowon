@@ -74,8 +74,8 @@ export default class AlbumTopTracks extends MirrorballBaseCommand<
     const totalScrobbles = topTracks.reduce((sum, t) => sum + t.playcount, 0);
     const average = totalScrobbles / topTracks.length;
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Album top tracks"))
+    const embed = this.authorEmbed()
+      .setHeader("Album top tracks")
       .setTitle(
         `${Emoji.usesIndexedDataLink} Top tracks on ${italic(
           album.name
@@ -116,6 +116,6 @@ export default class AlbumTopTracks extends MirrorballBaseCommand<
       },
     });
 
-    simpleScrollingEmbed.send();
+    await this.send(simpleScrollingEmbed);
   }
 }

@@ -23,9 +23,7 @@ export class Inventory extends CardsChildCommand<typeof args> {
 
     const cards = await this.cardsService.inventory(dbUser, artist);
 
-    const embed = this.newEmbed().setAuthor(
-      this.generateEmbedAuthor("Cards inventory")
-    );
+    const embed = this.authorEmbed().setHeader("Cards inventory");
 
     const scrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
       items: cards,
@@ -39,6 +37,6 @@ export class Inventory extends CardsChildCommand<typeof args> {
       overrides: { itemName: "card" },
     });
 
-    scrollingEmbed.send();
+    await this.send(scrollingEmbed);
   }
 }

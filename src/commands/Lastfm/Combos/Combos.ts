@@ -53,12 +53,8 @@ export class Combos extends ComboChildCommand<typeof args> {
       throw new NoUserCombosError(perspective, this.prefix, artistName);
     }
 
-    const embed = this.newEmbed().setAuthor(
-      this.generateEmbedAuthor(
-        `${perspective.upper.possessive.replace(/`/g, "")} top ${
-          artistName ? `${artistName} ` : ""
-        }combos`
-      )
+    const embed = this.authorEmbed().setHeader(
+      artistName ? "Artist combos" : "Combos"
     );
 
     const displayCombo = this.displayCombo.bind(this);
@@ -72,6 +68,6 @@ export class Combos extends ComboChildCommand<typeof args> {
       overrides: { itemName: "combo" },
     });
 
-    scrollingEmbed.send();
+    await this.send(scrollingEmbed);
   }
 }

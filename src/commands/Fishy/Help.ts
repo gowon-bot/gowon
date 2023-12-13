@@ -9,9 +9,7 @@ export class Help extends FishyChildCommand {
   slashCommand = true;
 
   async run() {
-    const embed = this.newEmbed().setAuthor(
-      this.generateEmbedAuthor("Fishy help")
-    );
+    const embed = this.authorEmbed().setHeader("Fishy help");
 
     embed
       .setDescription(
@@ -34,9 +32,9 @@ If you're a patron, you can add a fishy reminder to your nowplaying config with 
 Happy fishing!
 `
       )
-      .setFooter({
-        text: `All fish you catch are kept in a sustainable and infinitely large aquarium :)`,
-      });
+      .setFooter(
+        `All fish you catch are kept in a sustainable and infinitely large aquarium :)`
+      );
     await this.send(embed);
   }
 }

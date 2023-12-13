@@ -55,12 +55,8 @@ export class ServerCombos extends ComboChildCommand<typeof args> {
       throw new NoServerCombosError(this.prefix, artistName);
     }
 
-    const embed = this.newEmbed().setAuthor(
-      this.generateEmbedAuthor(
-        `${this.requiredGuild.name}'s top ${
-          artistName ? `${artistName} ` : ""
-        }combos`
-      )
+    const embed = this.authorEmbed().setHeader(
+      artistName ? "Server artist combos" : "Server combos"
     );
 
     const displayCombo = ((combo: Combo) => {
@@ -81,6 +77,6 @@ export class ServerCombos extends ComboChildCommand<typeof args> {
       overrides: { itemName: "combo" },
     });
 
-    scrollingEmbed.send();
+    await this.send(scrollingEmbed);
   }
 }

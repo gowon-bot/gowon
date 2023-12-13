@@ -99,8 +99,8 @@ export class Taste extends RateYourMusicIndexingChildCommand<
       tasteMatch.percent
     }% match found (${this.tasteService.compatibility(tasteMatch.percent)})_`;
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Ratings taste comparison"))
+    const embed = this.authorEmbed()
+      .setHeader("Ratings taste")
       .setTitle(
         `Taste comparison for ${displayUserTag(
           this.author
@@ -116,7 +116,7 @@ export class Taste extends RateYourMusicIndexingChildCommand<
       overrides: { itemName: "rating" },
     });
 
-    scrollingEmbed.send();
+    await this.send(scrollingEmbed);
   }
 
   private generateTable(ratings: RatingPair[]): string {

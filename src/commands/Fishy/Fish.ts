@@ -78,7 +78,7 @@ export class Fish extends FishyChildCommand<typeof args> {
 
     const fishyDisplay = this.getFishyDisplay(fishy, isNew, giftDisplay);
 
-    const lineConsolidator = new LineConsolidator().addLines(
+    const description = new LineConsolidator().addLines(
       fishyDisplay,
       weightDisplay,
       {
@@ -103,15 +103,13 @@ export class Fish extends FishyChildCommand<typeof args> {
       }
     );
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Fishy fish"))
-      .setColor(fishy.rarity.colour)
-      .setDescription(lineConsolidator.consolidate());
+    const embed = this.authorEmbed()
+      .setHeader("Fishy fish")
+      .setColour(fishy.rarity.colour)
+      .setDescription(description);
 
     if (isNew) {
-      embed.setFooter({
-        text: `See ${this.prefix}fishypedia to learn about this fish`,
-      });
+      embed.setFooter(`See ${this.prefix}fishypedia to learn about this fish`);
     }
 
     await this.send(embed);
@@ -161,8 +159,8 @@ export class Fish extends FishyChildCommand<typeof args> {
     }
 
     if (quest.isMilestone && quest.isCompleted) {
-      const milestoneCompletedEmbed = this.newEmbed()
-        .setAuthor(this.generateEmbedAuthor("Fishy level up"))
+      const milestoneCompletedEmbed = this.authorEmbed()
+        .setHeader("Fishy level up")
         .setDescription(displayFishyLevelUp(fishyProfile.level + 1));
 
       await this.fishyProgressionService.incrementQuestProgress(

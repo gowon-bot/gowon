@@ -45,8 +45,8 @@ export class List extends CrownsChildCommand<typeof args> {
       throw new UserHasNoCrownsInServerError(perspective);
     }
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Crowns list"))
+    const embed = this.authorEmbed()
+      .setHeader("Crowns list")
       .setTitle(
         `${perspective.upper.possessive} crowns in ${this.requiredGuild.name}`
       );
@@ -72,6 +72,6 @@ export class List extends CrownsChildCommand<typeof args> {
       },
     });
 
-    scrollingEmbed.send();
+    await this.send(scrollingEmbed);
   }
 }

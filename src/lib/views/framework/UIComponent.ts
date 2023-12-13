@@ -11,10 +11,15 @@ export interface UIComponentOptions {
 }
 
 export abstract class UIComponent {
-  constructor(protected options: Partial<UIComponentOptions>) {}
+  constructor(protected componentOptions: Partial<UIComponentOptions> = {}) {}
 
   asMessageEmbed(): MessageEmbed {
     return new MessageEmbed();
+  }
+
+  public setReacts(reacts: EmojiResolvable[]): this {
+    this.componentOptions.reacts = reacts;
+    return this;
   }
 
   public getFiles(): NonNullable<MessageOptions["files"]> {
@@ -22,12 +27,12 @@ export abstract class UIComponent {
   }
 
   public isEphemeral(): boolean {
-    return this.options.ephemeral ?? false;
+    return this.componentOptions.ephemeral ?? false;
   }
 
   public async afterSend(message: Message) {
-    if (this.options.reacts) {
-      for (const react of this.options.reacts) {
+    if (this.componentOptions.reacts) {
+      for (const react of this.componentOptions.reacts) {
         await message.react(react);
       }
     }

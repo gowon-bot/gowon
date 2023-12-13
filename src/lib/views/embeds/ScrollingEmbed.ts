@@ -1,5 +1,5 @@
 import {
-  EmbedField,
+  EmbedFieldData,
   Emoji,
   Message,
   MessageEmbed,
@@ -8,13 +8,13 @@ import {
   User,
 } from "discord.js";
 import { ReactionCollectorFilter } from "../../../helpers/discord";
-import { DiscordService } from "../../../services/Discord/DiscordService";
-import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { GowonContext } from "../../context/Context";
 import { EmojiRaw } from "../../emoji/Emoji";
+import { EmbedComponent } from "../framework/EmbedComponent";
+import { UIComponent } from "../framework/UIComponent";
 
 export interface ScrollingEmbedOptions {
-  initialItems: string | EmbedField[];
+  initialItems: string | EmbedFieldData[];
   totalPages: number;
   totalItems: number;
   startingPage: number;
@@ -22,27 +22,26 @@ export interface ScrollingEmbedOptions {
   itemName: string;
   itemNamePlural: string;
 
-  customFooter: OnPageChangeCallback | string;
+  customFooter: ((page: number, totalPages: number) => string) | string;
 }
 
-type FooterReturn = string | Promise<string | EmbedField[]> | EmbedField[];
+type OnPageChangeCallback = (
+  page: number,
+  totalPages: number
+) => string | EmbedFieldData[] | Promise<string | EmbedFieldData[]>;
 
 export function isEmbedFields(
-  value: string | EmbedField[] | any
-): value is EmbedField[] {
-  return !!((value[0] as EmbedField)?.name && (value[0] as EmbedField)?.value);
+  value: string | EmbedFieldData[] | any
+): value is EmbedFieldData[] {
+  return !!(
+    (value[0] as EmbedFieldData)?.name && (value[0] as EmbedFieldData)?.value
+  );
 }
 
-type OnPageChangeCallback = (page: number, totalPages: number) => FooterReturn;
-
-export class ScrollingEmbed {
-  private get discordService() {
-    return ServiceRegistry.get(DiscordService);
-  }
-
+export class ScrollingEmbed extends UIComponent {
   private sentMessage!: Message;
   private currentPage = 1;
-  private currentItems: string | EmbedField[];
+  private currentItems: string | EmbedFieldData[];
   private options: ScrollingEmbedOptions;
   private onPageChangeCallback: OnPageChangeCallback = () => "";
 
@@ -53,9 +52,11 @@ export class ScrollingEmbed {
 
   constructor(
     private ctx: GowonContext,
-    private embed: MessageEmbed,
+    private embed: EmbedComponent,
     options: Partial<ScrollingEmbedOptions>
   ) {
+    super();
+
     this.options = Object.assign(
       {
         initialItems: "",
@@ -74,22 +75,14 @@ export class ScrollingEmbed {
     this.currentPage = this.options.startingPage;
   }
 
-  public async send() {
+  asMessageEmbed(): MessageEmbed {
     this.generateEmbed();
 
-    this.sentMessage = await this.discordService.send(this.ctx, this.embed);
-
-    await this.react();
+    return this.embed.asMessageEmbed();
   }
 
-  public async customSend(
-    sendCallback:
-      | ((embed: MessageEmbed) => Message)
-      | ((embed: MessageEmbed) => Promise<Message>)
-  ) {
-    this.generateEmbed();
-
-    this.sentMessage = await Promise.resolve(sendCallback(this.embed));
+  public async afterSend(message: Message<boolean>): Promise<void> {
+    this.sentMessage = message;
 
     await this.react();
   }
@@ -105,13 +98,11 @@ export class ScrollingEmbed {
   }
 
   private generateEmbed() {
-    this.embed.setFooter({
-      text: this.generateFooter() as string,
-    });
+    this.embed.setFooter(this.generateFooter());
 
     if (isEmbedFields(this.currentItems)) {
       this.embed.setDescription(this.options.embedDescription);
-      this.embed.fields = [];
+      this.embed.setFields([]);
       this.currentItems.forEach((item) => this.embed.addFields(item));
     } else {
       this.embed.setDescription(
@@ -120,7 +111,7 @@ export class ScrollingEmbed {
     }
   }
 
-  private generateFooter(): FooterReturn {
+  private generateFooter(): string {
     if (this.options.customFooter instanceof Function) {
       return this.options.customFooter(
         this.currentPage,
@@ -197,7 +188,7 @@ export class ScrollingEmbed {
 
           this.generateEmbed();
 
-          this.sentMessage.edit({ embeds: [this.embed] });
+          this.sentMessage.edit({ embeds: [this.embed.asMessageEmbed()] });
         });
       });
 

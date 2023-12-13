@@ -73,8 +73,8 @@ export default class ArtistTopAlbums extends LilacBaseCommand<typeof args> {
     const totalScrobbles = topAlbums.reduce((sum, l) => sum + l.playcount, 0);
     const average = totalScrobbles / topAlbums.length;
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Artist top albums"))
+    const embed = this.authorEmbed()
+      .setHeader("Artist top albums")
       .setTitle(
         `${Emoji.usesIndexedDataLink} Top ${artist.name} albums for ${username}`
       )
@@ -112,6 +112,6 @@ export default class ArtistTopAlbums extends LilacBaseCommand<typeof args> {
       },
     });
 
-    simpleScrollingEmbed.send();
+    await this.send(simpleScrollingEmbed);
   }
 }

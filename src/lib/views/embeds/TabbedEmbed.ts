@@ -6,45 +6,47 @@ import {
   ReactionCollector,
   User,
 } from "discord.js";
-import { CannotSwitchToTabError } from "../../../errors/gowon";
+import {
+  CannotSwitchToTabError,
+  NoMessageToReactToError,
+} from "../../../errors/ui";
 import { ReactionCollectorFilter } from "../../../helpers/discord";
-import { DiscordService } from "../../../services/Discord/DiscordService";
-import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { GowonContext } from "../../context/Context";
+import { EmbedComponent } from "../framework/EmbedComponent";
+import { UIComponent } from "../framework/UIComponent";
 
 export interface TabbedEmbedTab {
   name: string;
   rawEmoji: string;
-  embed: MessageEmbed;
+  embed: EmbedComponent;
 }
 
 export interface TabbedEmbedOptions {
   tabs: TabbedEmbedTab[];
 }
 
-export class TabbedEmbed {
-  private get discordService() {
-    return ServiceRegistry.get(DiscordService);
-  }
-
-  private sentMessage!: Message;
+export class TabbedEmbed extends UIComponent {
+  private sentMessage?: Message;
   private currentTab: string;
 
   constructor(private ctx: GowonContext, private options: TabbedEmbedOptions) {
+    super();
     this.currentTab = options.tabs[0].name;
   }
 
-  public async send() {
-    const embed = this.getEmbed();
+  asMessageEmbed(): MessageEmbed {
+    return this.getEmbed().asMessageEmbed();
+  }
 
-    this.sentMessage = await this.discordService.send(this.ctx, embed);
+  public async afterSend(message: Message<boolean>): Promise<void> {
+    this.sentMessage = message;
 
     if (this.options.tabs.length > 1) {
       await this.react();
     }
   }
 
-  private getEmbed(): MessageEmbed {
+  private getEmbed(): EmbedComponent {
     const embed = this.options.tabs.find(
       (t) => t.name === this.currentTab
     )?.embed;
@@ -62,6 +64,10 @@ export class TabbedEmbed {
 
   private async react() {
     return new Promise(async (resolve, reject) => {
+      if (!this.sentMessage) {
+        throw new NoMessageToReactToError();
+      }
+
       const collector = new ReactionCollector(this.sentMessage, {
         filter: this.filter,
         time: 3 * 60 * 1000,
@@ -83,7 +89,7 @@ export class TabbedEmbed {
 
         const embed = this.getEmbed();
 
-        this.sentMessage.edit({ embeds: [embed] });
+        this.sentMessage!.edit({ embeds: [embed.asMessageEmbed()] });
       });
 
       collector.on("error", (e: Error) => {

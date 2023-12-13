@@ -78,8 +78,8 @@ export default class ArtistTopTracks extends MirrorballBaseCommand<
         )}!${await this.redirectHelp(this.parsedArguments.artist)}`
       );
     }
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Artist top tracks"))
+    const embed = this.authorEmbed()
+      .setHeader("Artist top tracks")
       .setTitle(
         `${Emoji.usesIndexedDataLink} Top ${bold(
           artist.name
@@ -121,7 +121,7 @@ export default class ArtistTopTracks extends MirrorballBaseCommand<
       },
     });
 
-    simpleScrollingEmbed.send();
+    await this.send(simpleScrollingEmbed);
   }
 
   private async redirectHelp(artistName?: string): Promise<string> {

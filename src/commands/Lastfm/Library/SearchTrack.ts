@@ -51,8 +51,8 @@ export default class SearchTrack extends SearchCommand {
       );
     }
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Track search"))
+    const embed = this.authorEmbed()
+      .setHeader("Track search")
       .setTitle(
         `Search results in ${perspective.possessive} top ${displayNumber(
           topTracks.tracks.length,
@@ -88,6 +88,6 @@ export default class SearchTrack extends SearchCommand {
       overrides: { itemName: "result" },
     });
 
-    scrollingEmbed.send();
+    await this.send(scrollingEmbed);
   }
 }

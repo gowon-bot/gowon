@@ -61,8 +61,8 @@ export default class NoAlbums extends LilacBaseCommand<typeof args> {
 
     const firstPage = await scrobbleCache.getFirstPage();
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("No albums"))
+    const embed = this.authorEmbed()
+      .setHeader("No albums")
       .setTitle(
         `${Emoji.usesIndexedDataTitle} ${perspective.upper.possessive} scrobbles with no albums`
       );
@@ -85,7 +85,7 @@ export default class NoAlbums extends LilacBaseCommand<typeof args> {
       { customFooter: !timeZone ? recommendUserToSetTimezone(this.prefix) : "" }
     );
 
-    scrollingEmbed.send();
+    await this.send(scrollingEmbed);
   }
 
   private displayScrobbleGenerator(

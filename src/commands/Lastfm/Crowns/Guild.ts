@@ -70,8 +70,8 @@ export class Guild extends CrownsChildCommand<typeof args> {
       this.crownsService.countAllInServer(this.ctx, serverUsers),
     ]);
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Crowns guild"))
+    const embed = this.authorEmbed()
+      .setHeader("Crowns guild")
       .setTitle(`${this.requiredGuild.name}'s crown leaderboard`);
 
     const scrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
@@ -80,7 +80,7 @@ export class Guild extends CrownsChildCommand<typeof args> {
       pageRenderer: this.renderPage(crownsCount),
     });
 
-    scrollingEmbed.send();
+    await this.send(scrollingEmbed);
   }
 
   private renderPage(crownsCount: number) {

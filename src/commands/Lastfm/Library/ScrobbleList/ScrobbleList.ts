@@ -52,8 +52,8 @@ export default class ScrobbleList extends LilacBaseCommand<typeof args> {
 
     const firstPage = await scrobbleCache.getFirstPage();
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Scrobble list"))
+    const embed = this.authorEmbed()
+      .setHeader("Scrobble list")
       .setTitle(
         `${Emoji.usesIndexedDataTitle} ${
           perspective.upper.possessive
@@ -73,6 +73,6 @@ export default class ScrobbleList extends LilacBaseCommand<typeof args> {
       (s) => displayDateTime(convertLilacDate(s.scrobbledAt))
     );
 
-    scrollingEmbed.send();
+    await this.send(scrollingEmbed);
   }
 }

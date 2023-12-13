@@ -1,12 +1,13 @@
-import { EmbedField, MessageEmbed } from "discord.js";
+import { EmbedFieldData } from "discord.js";
 import { GowonContext } from "../../context/Context";
+import { EmbedComponent } from "../framework/EmbedComponent";
 import {
   ScrollingEmbed,
   ScrollingEmbedOptions,
   isEmbedFields,
 } from "./ScrollingEmbed";
 
-export interface SimpleOptions<T> {
+export interface SimpleScrollingEmbedOptions<T> {
   items: Array<T>;
   pageSize: number;
   /**
@@ -20,52 +21,46 @@ export interface SimpleOptions<T> {
   overrides?: Partial<ScrollingEmbedOptions>;
 }
 
-export class SimpleScrollingEmbed<T> {
-  scrollingEmbed: ScrollingEmbed;
-
+export class SimpleScrollingEmbed<T> extends ScrollingEmbed {
   constructor(
     ctx: GowonContext,
-    embed: MessageEmbed,
-    private options: SimpleOptions<T>
+    embed: EmbedComponent,
+    private simpleOptions: SimpleScrollingEmbedOptions<T>
   ) {
-    this.scrollingEmbed = new ScrollingEmbed(
+    super(
       ctx,
       embed,
       Object.assign(
         {
-          totalItems: options.items.length,
-          totalPages: this.getTotalPages(),
-          initialItems: this.renderItemsFromPage(1),
+          totalItems: simpleOptions.items.length,
+          totalPages: getTotalPages(simpleOptions),
+          initialItems: renderItemsFromPage(simpleOptions, 1),
         },
-        options.overrides || {}
+        simpleOptions.overrides || {}
       )
     );
 
-    this.scrollingEmbed.onPageChange((page) => {
-      return this.renderItemsFromPage(page);
+    this.onPageChange((page) => {
+      return renderItemsFromPage(this.simpleOptions, page);
     });
   }
+}
 
-  public async send() {
-    return this.scrollingEmbed.send();
-  }
+function getTotalPages(options: SimpleScrollingEmbedOptions<any>): number {
+  return Math.ceil(options.items.length / options.pageSize);
+}
 
-  private getTotalPages(): number {
-    return Math.ceil(this.options.items.length / this.options.pageSize);
-  }
+function renderItemsFromPage(
+  options: SimpleScrollingEmbedOptions<any>,
+  page: number
+): string | EmbedFieldData[] {
+  const offset = (page - 1) * options.pageSize;
 
-  private renderItemsFromPage(page: number): string | EmbedField[] {
-    const offset = (page - 1) * this.options.pageSize;
+  const items = options.items.slice(offset, page * options.pageSize);
 
-    const items = this.options.items.slice(
-      offset,
-      page * this.options.pageSize
-    );
-
-    return this.options.pageRenderer
-      ? this.options.pageRenderer(items, { page, offset })
-      : !isEmbedFields(items)
-      ? items.join("\n")
-      : items;
-  }
+  return options.pageRenderer
+    ? options.pageRenderer(items, { page, offset })
+    : !isEmbedFields(items)
+    ? items.join("\n")
+    : items;
 }

@@ -29,13 +29,3 @@ export class CannotEditUserError extends ClientError {
     super("You don't have permissions to edit this user");
   }
 }
-
-// Embeds
-
-export class CannotSwitchToTabError extends Error {
-  name = "CannotSwitchToTabError";
-
-  constructor() {
-    super(`Couldn't find a tab to switch to!`);
-  }
-}

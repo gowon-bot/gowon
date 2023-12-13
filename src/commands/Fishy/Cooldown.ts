@@ -20,9 +20,7 @@ export class Cooldown extends FishyChildCommand<typeof args> {
       fishyProfileRequired: true,
     });
 
-    const embed = this.newEmbed().setAuthor(
-      this.generateEmbedAuthor("Fishy cooldown")
-    );
+    const embed = this.authorEmbed().setHeader("Fishy cooldown");
 
     if (!fishyProfile.canFish()) {
       await this.send(

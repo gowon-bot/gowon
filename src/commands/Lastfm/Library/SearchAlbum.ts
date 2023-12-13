@@ -51,8 +51,8 @@ export default class SearchAlbum extends SearchCommand {
       );
     }
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Album search"))
+    const embed = this.authorEmbed()
+      .setHeader("Album search")
       .setTitle(
         `Search results in ${perspective.possessive} top ${displayNumber(
           topAlbums.albums.length,
@@ -87,6 +87,6 @@ export default class SearchAlbum extends SearchCommand {
       overrides: { itemName: "result" },
     });
 
-    scrollingEmbed.send();
+    await this.send(scrollingEmbed);
   }
 }

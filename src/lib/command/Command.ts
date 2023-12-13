@@ -41,6 +41,7 @@ import { SettingsService } from "../settings/SettingsService";
 import { Validation, ValidationChecker } from "../validation/ValidationChecker";
 import { displayUserTag } from "../views/displays";
 import { errorEmbed, gowonEmbed } from "../views/embeds";
+import { EmbedComponent } from "../views/framework/EmbedComponent";
 import { Sendable, SendableContent } from "../views/framework/Sendable";
 import { CommandGroup } from "./CommandGroup";
 import { CommandRegistry } from "./CommandRegistry";
@@ -419,10 +420,16 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
     return await this.discordService.send(this.ctx, new Sendable(content));
   }
 
+  public authorEmbed(): EmbedComponent {
+    return new EmbedComponent().setAuthor(this.author, this.authorMember);
+  }
+
+  /** @deprecated Use Command#authorEmbed */
   newEmbed(embed?: MessageEmbed): MessageEmbed {
     return gowonEmbed(this.payload.member ?? undefined, embed);
   }
 
+  /** @deprecated Use Command#authorEmbed + EmbedComponent#setHeader instead */
   generateEmbedAuthor(title?: string, url?: string): EmbedAuthorData {
     return {
       name: title

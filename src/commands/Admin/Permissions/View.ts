@@ -1,20 +1,20 @@
-import { PermissionsChildCommand } from "./PermissionsChildCommand";
-import { code, italic } from "../../../helpers/discord";
-import { displayNumberedList } from "../../../lib/views/displays";
-import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingEmbed";
-import { PermissionQuery } from "../../../lib/permissions/PermissionsCacheService";
-import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
-import { ChannelArgument } from "../../../lib/context/arguments/argumentTypes/discord/ChannelArgument";
-import { DiscordUserArgument } from "../../../lib/context/arguments/argumentTypes/discord/DiscordUserArgument";
+import { channelMention, roleMention, userMention } from "@discordjs/builders";
 import {
   Permission,
   PermissionType,
 } from "../../../database/entity/Permission";
-import { channelMention, roleMention, userMention } from "@discordjs/builders";
+import { code, italic } from "../../../helpers/discord";
 import { emDash } from "../../../helpers/specialCharacters";
-import { DiscordRoleArgument } from "../../../lib/context/arguments/argumentTypes/discord/DiscordRoleArgument";
 import { Flag } from "../../../lib/context/arguments/argumentTypes/Flag";
+import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
+import { ChannelArgument } from "../../../lib/context/arguments/argumentTypes/discord/ChannelArgument";
+import { DiscordRoleArgument } from "../../../lib/context/arguments/argumentTypes/discord/DiscordRoleArgument";
+import { DiscordUserArgument } from "../../../lib/context/arguments/argumentTypes/discord/DiscordUserArgument";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { PermissionQuery } from "../../../lib/permissions/PermissionsCacheService";
+import { displayNumberedList } from "../../../lib/views/displays";
+import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingEmbed";
+import { PermissionsChildCommand } from "./PermissionsChildCommand";
 
 const args = {
   command: new StringArgument({
@@ -59,8 +59,8 @@ export class View extends PermissionsChildCommand<typeof args> {
       query
     );
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Permissions"))
+    const embed = this.authorEmbed()
+      .setHeader("Permissions")
       .setTitle(`Permissions in ${this.guild?.name}`);
 
     if (!permissions.length) {
@@ -83,15 +83,15 @@ export class View extends PermissionsChildCommand<typeof args> {
         itemName: "permissions",
         embedDescription:
           !this.parsedArguments.all &&
-            !this.parsedArguments.user &&
-            !this.parsedArguments.channel &&
-            !this.parsedArguments.role
+          !this.parsedArguments.user &&
+          !this.parsedArguments.channel &&
+          !this.parsedArguments.role
             ? italic(this.allHelp) + "\n"
             : "",
       },
     });
 
-    scrollingEmbed.send();
+    await this.send(scrollingEmbed);
   }
 
   private async getQueries(): Promise<PermissionQuery[]> {
@@ -167,7 +167,8 @@ export class View extends PermissionsChildCommand<typeof args> {
         break;
     }
 
-    return `${code(commandName)}${extra}${permission.allow ? italic(" (allow)") : ""
-      }`;
+    return `${code(commandName)}${extra}${
+      permission.allow ? italic(" (allow)") : ""
+    }`;
   }
 }

@@ -50,8 +50,8 @@ export class Profile extends FishyChildCommand<typeof args> {
       this.fishyService.getCollection(fishyProfile),
     ]);
 
-    const embed = this.newEmbed().setAuthor(
-      this.generateEmbedAuthor(`${perspective.upper.possessive} fishy profile`)
+    const embed = this.authorEmbed().setHeader(
+      `${perspective.upper.possessive} fishy profile`
     ).setDescription(`
 Level **${fishyProfile.level}** fisher ${emDash} _Fishing since ${displayDate(
       fishyProfile.createdAt

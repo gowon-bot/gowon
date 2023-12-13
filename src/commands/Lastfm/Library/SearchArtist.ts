@@ -54,8 +54,8 @@ export default class SearchArtist extends SearchCommand {
       );
     }
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Artist search"))
+    const embed = this.authorEmbed()
+      .setHeader("Artist search")
       .setTitle(
         `Search results in ${perspective.possessive} top ${displayNumber(
           topArtists.artists.length,
@@ -93,6 +93,6 @@ export default class SearchArtist extends SearchCommand {
       overrides: { itemName: "result" },
     });
 
-    scrollingEmbed.send();
+    await this.send(scrollingEmbed);
   }
 }

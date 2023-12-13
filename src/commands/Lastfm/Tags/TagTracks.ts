@@ -93,8 +93,8 @@ export default class TagTracks extends LastFMBaseCommand<typeof args> {
           )})\n\n`
         : "Couldn't find any matching tracks!");
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Tag tracks"))
+    const embed = this.authorEmbed()
+      .setHeader("Tag tracks")
       .setTitle(
         `${perspective.upper.possessive} top ${tagTopTracks.meta.tag} tracks`
       );
@@ -120,7 +120,7 @@ export default class TagTracks extends LastFMBaseCommand<typeof args> {
       overrides: { itemName: "track" },
     });
 
-    scrollingEmbed.send();
+    await this.send(scrollingEmbed);
   }
 
   private calculateOverlap(

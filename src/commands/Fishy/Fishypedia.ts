@@ -1,4 +1,3 @@
-import { MessageEmbed } from "discord.js";
 import { FishyNotFoundError } from "../../errors/commands/fishy";
 import { bold, italic } from "../../helpers/discord";
 import { bullet, emDash, quote } from "../../helpers/specialCharacters";
@@ -14,6 +13,7 @@ import {
   TabbedEmbed,
   TabbedEmbedTab,
 } from "../../lib/views/embeds/TabbedEmbed";
+import { EmbedComponent } from "../../lib/views/framework/EmbedComponent";
 import { Fishy } from "../../services/fishy/Fishy";
 import { findFishy, fishyList } from "../../services/fishy/fishyList";
 import {
@@ -102,14 +102,14 @@ export class Fishypedia extends FishyChildCommand<typeof args> {
       tabs: fishy.traits.length ? [mainTab, traitsTab] : [mainTab],
     });
 
-    tabbedEmbed.send();
+    await this.send(tabbedEmbed);
   }
 
   private getMainTabEmbed(
     fishy: Fishy,
     fishyCount: number,
     perspective: Perspective
-  ): MessageEmbed {
+  ): EmbedComponent {
     const embed = this.getBaseTabEmbed(fishy).setDescription(
       `
 ${fishy.emoji} ${bold(italic(fishy.binomialName), false)}
@@ -129,23 +129,26 @@ ${
     );
 
     if (!fishy.rarity.isTrash()) {
-      embed.addField("Weight", `${fishy.minWeight}-${fishy.maxWeight}kg`);
+      embed.addFields({
+        name: "Weight",
+        value: `${fishy.minWeight}-${fishy.maxWeight}kg`,
+      });
     }
 
     return embed;
   }
 
-  private getTraitsTabEmbed(fishy: Fishy): MessageEmbed {
+  private getTraitsTabEmbed(fishy: Fishy): EmbedComponent {
     return this.getBaseTabEmbed(fishy).setDescription(
       `**Traits**:
  ${fishy.traits.map((t) => `${bullet} ${displayFishyTrait(t)}`).join("\n")}`
     );
   }
 
-  private getBaseTabEmbed(fishy: Fishy): MessageEmbed {
-    return this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Fishypedia"))
-      .setColor(fishy.rarity.colour)
+  private getBaseTabEmbed(fishy: Fishy): EmbedComponent {
+    return this.authorEmbed()
+      .setHeader("Fishypedia")
+      .setColour(fishy.rarity.colour)
       .setTitle(fishy.name)
       .setURL(fishy.url);
   }
@@ -155,8 +158,8 @@ ${
       (f) => !f.rarity.special && matchesFishyTrait(f, trait)
     );
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Fishy wiki"))
+    const embed = this.authorEmbed()
+      .setHeader("Fishy wiki")
       .setTitle(`Search results for ${displayFishyTrait(trait, true)}`);
 
     const simpleScrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
@@ -169,6 +172,6 @@ ${
       pageSize: 15,
     });
 
-    simpleScrollingEmbed.send();
+    await this.send(simpleScrollingEmbed);
   }
 }
