@@ -41,6 +41,7 @@ import { SettingsService } from "../settings/SettingsService";
 import { Validation, ValidationChecker } from "../validation/ValidationChecker";
 import { displayUserTag } from "../views/displays";
 import { errorEmbed, gowonEmbed } from "../views/embeds";
+import { Sendable, SendableContent } from "../views/framework/Sendable";
 import { CommandGroup } from "./CommandGroup";
 import { CommandRegistry } from "./CommandRegistry";
 import { CommandAccess } from "./access/access";
@@ -169,6 +170,10 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
 
   get author() {
     return this.ctx.author;
+  }
+
+  get authorMember() {
+    return this.ctx.authorMember;
   }
 
   get gowonClient() {
@@ -381,23 +386,27 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
    */
 
   async send(
-    content: MessageEmbed | string,
+    content: SendableContent,
     options?: Partial<SendOptions>
   ): Promise<Message> {
-    return await this.discordService.send(this.ctx, content, options);
+    return await this.discordService.send(
+      this.ctx,
+      new Sendable(content),
+      options
+    );
   }
 
   async reply(
     content: string,
     options?: Partial<ReplyOptions>
   ): Promise<Message> {
-    return await this.discordService.send(this.ctx, content, {
+    return await this.discordService.send(this.ctx, new Sendable(content), {
       reply: options || true,
     });
   }
 
-  async dmAuthor(content: string | MessageEmbed): Promise<Message> {
-    return await this.discordService.send(this.ctx, content, {
+  async dmAuthor(content: SendableContent): Promise<Message> {
+    return await this.discordService.send(this.ctx, new Sendable(content), {
       inChannel: await this.ctx.author.createDM(true),
     });
   }
@@ -407,7 +416,7 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
   async oldReply(message: string): Promise<Message> {
     const content = `<@!${this.author.id}>, ` + message.trimStart();
 
-    return await this.discordService.send(this.ctx, content);
+    return await this.discordService.send(this.ctx, new Sendable(content));
   }
 
   newEmbed(embed?: MessageEmbed): MessageEmbed {

@@ -13,6 +13,7 @@ import { uppercaseFirstLetter } from "../../helpers/string";
 import { GowonContext } from "../../lib/context/Context";
 import { Payload } from "../../lib/context/Payload";
 import { displayUserTag } from "../../lib/views/displays";
+import { Sendable } from "../../lib/views/framework/Sendable";
 import { BaseService } from "../BaseService";
 import { ServiceRegistry } from "../ServicesRegistry";
 import { DiscordServiceContext } from "./DiscordService";
@@ -40,14 +41,14 @@ export class DiscordResponseService extends BaseService<DiscordServiceContext> {
 
   public async send(
     ctx: DiscordServiceContext,
-    content: string | MessageEmbed,
+    sendable: Sendable,
     options?: Partial<SendOptions>
   ): Promise<Message> {
     const channel = this.getChannel(ctx, options);
 
     this.log(
       ctx,
-      `Sending ${typeof content === "string" ? "string" : "embed"} ${
+      `Sending ${typeof sendable === "string" ? "string" : "embed"} ${
         this.shouldReply(options) ? "reply" : "message"
       } in ${
         channel instanceof DMChannel || isPartialDMChannel(channel)
@@ -60,26 +61,25 @@ export class DiscordResponseService extends BaseService<DiscordServiceContext> {
 
     let response: Message;
 
-    if (typeof content === "string") {
-      response = await this.sendString(ctx, content, options);
+    if (typeof sendable === "string") {
+      response = await this.sendString(ctx, sendable, options);
     } else {
       const channel = this.getChannel(ctx, options);
 
       try {
         if (this.shouldReplyToInteraction(ctx, options)) {
-          return await this.replyToInteraction(ctx, content, options);
+          return await this.replyToInteraction(ctx, sendable, options);
         }
 
-        response = await channel.send({
-          embeds: options?.withEmbed ? [content, options.withEmbed] : [content],
-          files: options?.files,
-        });
+        response = await channel.send(sendable.asDiscordSendOptions(options));
       } catch (e) {
         throw this.areDMsTurnedOff(e) ? new DMsAreOffError() : e;
       }
     }
 
     end();
+
+    sendable.afterSend(response);
 
     return response;
   }
@@ -112,7 +112,7 @@ export class DiscordResponseService extends BaseService<DiscordServiceContext> {
 
   private async sendString(
     ctx: DiscordServiceContext,
-    content: string,
+    sendable: Sendable<string>,
     options?: Partial<SendOptions>
   ): Promise<Message> {
     const shouldReply = this.shouldReply(options);
@@ -124,19 +124,19 @@ export class DiscordResponseService extends BaseService<DiscordServiceContext> {
 
     const messageContent =
       shouldReply && !replyOptions.noUppercase
-        ? uppercaseFirstLetter(content)
-        : content;
+        ? uppercaseFirstLetter(sendable.content)
+        : sendable.content;
 
     const channel = this.getChannel(ctx, options);
 
     try {
       if (this.shouldReplyToInteraction(ctx, options)) {
-        return await this.replyToInteraction(ctx, content, options);
+        return await this.replyToInteraction(ctx, sendable, options);
       }
 
       return await channel.send({
+        ...sendable.asDiscordSendOptions(),
         content: messageContent,
-        embeds: options?.withEmbed ? [options?.withEmbed] : [],
         reply:
           shouldReply && ctx.payload.isMessage()
             ? {
@@ -146,7 +146,6 @@ export class DiscordResponseService extends BaseService<DiscordServiceContext> {
         allowedMentions: shouldReply
           ? { repliedUser: replyOptions.ping }
           : undefined,
-        files: options?.files,
       });
     } catch (e) {
       throw this.areDMsTurnedOff(e) ? new DMsAreOffError() : e;
@@ -179,19 +178,14 @@ export class DiscordResponseService extends BaseService<DiscordServiceContext> {
 
   private async replyToInteraction(
     ctx: DiscordServiceContext,
-    content: string | MessageEmbed,
+    sendable: Sendable,
     options: Partial<SendOptions> | undefined
   ): Promise<Message> {
     const payload = ctx.payload as Payload<CommandInteraction>;
 
-    const sendContent =
-      typeof content === "string" ? { content } : { embeds: [content] };
-
     const sendOptions = {
-      ...sendContent,
+      ...sendable.asDiscordSendOptions(options),
       fetchReply: true,
-      files: options?.files,
-      ephemeral: options?.ephemeral,
     } as MessagePayload | InteractionReplyOptions;
 
     // Discord doesn't like if you defer a message and then try and
