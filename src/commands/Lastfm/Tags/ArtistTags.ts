@@ -55,8 +55,8 @@ export default class ArtistTags extends LastFMBaseCommand<typeof args> {
     const artistTags = tagConsolidator.consolidate();
 
     if (artistTags.length == 0) {
-      const embed = this.newEmbed()
-        .setAuthor(this.generateEmbedAuthor("Artist tags"))
+      const embed = this.authorEmbed()
+        .setHeader("Artist tags")
         .setDescription(`Couldn't find any tags for ${artistInfo.name}`);
 
       await this.send(embed);
@@ -89,8 +89,8 @@ export default class ArtistTags extends LastFMBaseCommand<typeof args> {
         }))
     );
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Artist tags"))
+    const embed = this.authorEmbed()
+      .setHeader("Artist tags")
       .setTitle(
         `${Emoji.usesIndexedDataLink} Artist tags for ${artistInfo.name}`
       )

@@ -1,4 +1,4 @@
-import { PermissionsChildCommand } from "./PermissionsChildCommand";
+import { PermissionsChildCommand } from "../../Admin/Permissions/PermissionsChildCommand";
 
 export class Delist extends PermissionsChildCommand {
   idSeed = "red velvet joy";

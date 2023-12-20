@@ -1,7 +1,7 @@
 import { bold } from "../../../helpers/discord";
-import { OverviewChildCommand } from "./OverviewChildCommand";
+import { ProfileChildCommand } from "./ProfileChildCommand";
 
-export class Per extends OverviewChildCommand {
+export class Per extends ProfileChildCommand {
   idSeed = "snsd yoona";
 
   aliases = ["lpa", "tpa", "tpl", "alpa", "tpal"];
@@ -27,7 +27,7 @@ export class Per extends OverviewChildCommand {
       this.calculator.tracksPerAlbum(),
     ]);
 
-    const embed = (await this.overviewEmbed())
+    const embed = (await this.profileEmbed()).setHeader("Profile averages")
       .setDescription(`${perspective.upper.regularVerb(
       "listen"
     )} to an average of...

@@ -87,18 +87,18 @@ ${filtered.map((f) => `+ ${f}`).join("\n")}\`\`\``
 ${filteredOut.map((f) => `- ${f}`).join("\n")}\`\`\``
       : "";
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Config set"))
+    const embed = this.authorEmbed()
+      .setHeader("Config set")
       .setDescription(
         `${presetConfig ? `Using preset ${code(newConfig[0])}` : ""}
         ${filteredDisplay}
         ${filteredOutDisplay}`.trim()
       )
-      .setFooter({
-        text: filteredOut.length
+      .setFooter(
+        filteredOut.length
           ? `See ${this.prefix}npc help for a list of all available options`
-          : "",
-      });
+          : ""
+      );
 
     await this.send(embed);
   }

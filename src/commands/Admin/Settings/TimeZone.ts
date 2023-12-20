@@ -42,9 +42,7 @@ export default class TimeZone extends SettingsChildCommand<typeof args> {
       ?.toLowerCase()
       ?.replace(/\s+/, "_");
 
-    const embed = this.newEmbed().setAuthor(
-      this.generateEmbedAuthor("Time zone")
-    );
+    const embed = this.authorEmbed().setHeader("Time zone");
 
     if (timeZoneString) {
       if (!TimeZoneType.isValidString(timeZoneString)) {

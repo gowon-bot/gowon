@@ -109,8 +109,8 @@ In the meantime, it will appear in your \`!fm\`s as a loved track.`;
       ? np?.album || parsedNp?.album
       : trackInfo?.album?.name;
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor(title))
+    const embed = this.authorEmbed()
+      .setHeader(title)
       .setTitle(trackInfo?.name || track)
       .setDescription(
         `by ${bold(trackInfo?.artist.name || artist)}${

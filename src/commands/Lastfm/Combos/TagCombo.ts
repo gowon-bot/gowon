@@ -57,7 +57,8 @@ export default class TagCombo extends LastFMBaseCommand<typeof args> {
           combo.comboCollection[b].plays - combo.comboCollection[a].plays
       );
 
-    const embed = this.newEmbed()
+    const embed = this.authorEmbed()
+      .setHeader("Tag combo")
       .setTitle(
         `Streak for ${username} (from recent ${displayNumber(
           comboCalculator.totalTracks,

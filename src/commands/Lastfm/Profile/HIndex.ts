@@ -1,7 +1,7 @@
 import { bold } from "../../../helpers/discord";
-import { OverviewChildCommand } from "./OverviewChildCommand";
+import { ProfileChildCommand } from "./ProfileChildCommand";
 
-export class HIndex extends OverviewChildCommand {
+export class HIndex extends ProfileChildCommand {
   idSeed = "snsd hyoyeon";
 
   slashCommand = true;
@@ -18,9 +18,11 @@ export class HIndex extends OverviewChildCommand {
 
     const hindex = await this.calculator.hIndex();
 
-    const embed = (await this.overviewEmbed()).setDescription(
-      `${perspective.upper.possessive} H-index is ${bold(hindex.asString)}!`
-    );
+    const embed = (await this.profileEmbed())
+      .setHeader("Profile h-index")
+      .setDescription(
+        `${perspective.upper.possessive} H-index is ${bold(hindex.asString)}!`
+      );
 
     await this.send(embed);
   }

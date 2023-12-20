@@ -1,4 +1,4 @@
-import { PermissionsChildCommand } from "./PermissionsChildCommand";
+import { PermissionsChildCommand } from "../../Admin/Permissions/PermissionsChildCommand";
 
 export class Enable extends PermissionsChildCommand {
   idSeed = "loona heejin";

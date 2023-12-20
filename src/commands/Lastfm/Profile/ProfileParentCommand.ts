@@ -1,33 +1,33 @@
 import { CommandGroup } from "../../../lib/command/CommandGroup";
 import { LastFMBaseParentCommand } from "../LastFMBaseCommand";
-import { All } from "./All";
-import { Joined } from "./Joined";
 import { AvgPerDay } from "./AvgPerDay";
-import { ScrobblesPerArtist } from "./ScrobblesPerArtist";
-import { ScrobblesPerAlbum } from "./ScrobblesPerAlbum";
-import { ScrobblesPerTrack } from "./ScrobblesPerTrack";
-import { Per } from "./Per";
-import { HIndex } from "./HIndex";
-import { TopPercent } from "./TopPercent";
-import { SumTop } from "./SumTop";
-import { Crowns } from "./Crowns";
 import { Breadth } from "./Breadth";
-import { Playsover } from "./Playsover";
+import { Crowns } from "./Crowns";
+import { HIndex } from "./HIndex";
 import { Help } from "./Help";
+import { Joined } from "./Joined";
+import { Overview } from "./Overview";
+import { Per } from "./Per";
+import { Playsover } from "./Playsover";
+import { ScrobblesPerAlbum } from "./ScrobblesPerAlbum";
+import { ScrobblesPerArtist } from "./ScrobblesPerArtist";
+import { ScrobblesPerTrack } from "./ScrobblesPerTrack";
+import { SumTop } from "./SumTop";
+import { TopPercent } from "./TopPercent";
 
-export default class OverviewParentCommand extends LastFMBaseParentCommand {
+export default class ProfileParentCommand extends LastFMBaseParentCommand {
   idSeed = "snsd sooyoung";
 
   subcategory = "library";
   description =
     "Shows information about you and your library. Run overview all to see an example";
-  friendlyName = "overview";
+  friendlyName = "profile";
   customHelp = Help;
 
   slashCommand = true;
 
-  prefixes = ["o", "overview"];
-  default = () => new All();
+  prefixes = ["profile", "pf", "o", "overview"];
+  default = () => new Overview();
 
   noPrefixAliases = [
     // Breadth
@@ -40,7 +40,7 @@ export default class OverviewParentCommand extends LastFMBaseParentCommand {
 
   children: CommandGroup = new CommandGroup(
     [
-      All,
+      Overview,
       Joined,
       AvgPerDay,
       ScrobblesPerArtist,

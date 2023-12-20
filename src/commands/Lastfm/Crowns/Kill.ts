@@ -31,8 +31,8 @@ export class Kill extends CrownsChildCommand<typeof args> {
       throw new CrownDoesntExistError(artist, true);
     }
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Kill crown"))
+    const embed = this.authorEmbed()
+      .setHeader("Kill crown")
       .setDescription(
         `Are you sure you want to kill the crown for ${bold(crown.artistName)}?`
       );
@@ -44,8 +44,8 @@ export class Kill extends CrownsChildCommand<typeof args> {
       this.crownsService.scribe.kill(this.ctx, crown, this.author);
 
       await this.send(
-        this.newEmbed()
-          .setAuthor(this.generateEmbedAuthor("Kill crown"))
+        this.authorEmbed()
+          .setHeader("Kill crown")
           .setDescription(`Successfully killed the crown for ${bold(artist)}`)
       );
     }

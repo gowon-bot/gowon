@@ -26,12 +26,12 @@ export default class ColorCodedLyrics extends LastFMBaseCommand<typeof args> {
   async run() {
     let keywords = this.parsedArguments.keywords;
 
-    let { requestable } = await this.getMentions({
+    const { requestable } = await this.getMentions({
       usernameRequired: !keywords,
     });
 
     if (!keywords) {
-      let nowplaying = await this.lastFMService.nowPlaying(
+      const nowplaying = await this.lastFMService.nowPlaying(
         this.ctx,
         requestable
       );
@@ -39,13 +39,13 @@ export default class ColorCodedLyrics extends LastFMBaseCommand<typeof args> {
       keywords = `${nowplaying.artist} - ${nowplaying.name}`;
     }
 
-    let encodedKeywords = encodeURIComponent(keywords);
-
-    let embed = this.newEmbed()
-      .setAuthor({ name: `Colorcodedlyrics search for "${keywords}"` })
-      .setTitle("Click here to view the results")
+    const embed = this.authorEmbed()
+      .setHeader("Color Coded Lyrics search")
+      .setTitle(`Colorcodedlyrics search for "${keywords}"`)
       .setURL(
-        `https://www.google.com/search?q=${encodedKeywords}+site%3Acolorcodedlyrics.com`
+        `https://www.google.com/search?q=${encodeURIComponent(
+          keywords
+        )}+site%3Acolorcodedlyrics.com`
       )
       .setThumbnail(
         "https://i1.wp.com/colorcodedlyrics.com/wp-content/uploads/2020/05/CCL-color-logo2020.png?fit=1666%2C1189&ssl=1"

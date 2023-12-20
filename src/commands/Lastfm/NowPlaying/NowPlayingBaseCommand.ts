@@ -114,7 +114,7 @@ export abstract class NowPlayingBaseCommand<
       }
     );
 
-    return this.newEmbed()
+    return this.authorEmbed()
       .setAuthor({
         name: `${
           nowPlaying.isNowPlaying ? "Now playing" : "Last scrobbled"

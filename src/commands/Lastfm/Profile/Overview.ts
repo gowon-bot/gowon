@@ -1,16 +1,17 @@
 import { getOrdinal } from "../../../helpers";
 import { isGowon } from "../../../helpers/bots";
 import { bold, italic } from "../../../helpers/discord";
-import { toInt } from "../../../helpers/lastfm/";
+import { toInt } from "../../../helpers/lastfm";
 import { Emoji } from "../../../lib/emoji/Emoji";
 import { Perspective } from "../../../lib/Perspective";
 import { displayNumber } from "../../../lib/views/displays";
-import { OverviewChildCommand } from "./OverviewChildCommand";
+import { ProfileChildCommand } from "./ProfileChildCommand";
 
-export class All extends OverviewChildCommand {
+export class Overview extends ProfileChildCommand {
   idSeed = "fx victoria";
 
   description = "Shows information about you and your library";
+  aliases = ["all"];
   slashCommand = true;
 
   showLoadingAfter = 5;
@@ -37,7 +38,8 @@ export class All extends OverviewChildCommand {
       breadth = await this.calculator.breadth();
     } catch {}
 
-    const embed = (await this.overviewEmbed())
+    const embed = (await this.profileEmbed())
+      .setHeader("Profile overview")
       .setThumbnail(image)
       .setDescription(
         `

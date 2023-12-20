@@ -122,7 +122,7 @@ export default class AlbumInfo extends InfoCommand<typeof args> {
       }
     );
 
-    const embed = this.newEmbed()
+    const embed = this.authorEmbed()
       .setTitle(italic(albumInfo.name) + " by " + bold(albumInfo.artist))
       .setDescription(this.lineConsolidator.consolidate())
       .setURL(albumInfo.url)
@@ -155,16 +155,15 @@ export default class AlbumInfo extends InfoCommand<typeof args> {
         }`,
         }
       )
-      .setFooter({
-        text:
-          albumCover.source === "custom" || albumCover.source === "moderation"
-            ? ""
-            : albumInfo.images.get("large")
-            ? "Image source: Last.fm"
-            : spotifyAlbumArt && spotifyAlbumArt.url
-            ? "Image source: Spotify"
-            : "",
-      });
+      .setFooter(
+        albumCover.source === "custom" || albumCover.source === "moderation"
+          ? ""
+          : albumInfo.images.get("large")
+          ? "Image source: Last.fm"
+          : spotifyAlbumArt && spotifyAlbumArt.url
+          ? "Image source: Spotify"
+          : ""
+      );
 
     this.send(embed);
   }

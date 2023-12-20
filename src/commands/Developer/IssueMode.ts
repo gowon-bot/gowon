@@ -24,8 +24,8 @@ export default class IssueMode extends Command {
       issueMode === "true" ? "false" : "true"
     );
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Issue mode"))
+    const embed = this.authorEmbed()
+      .setHeader("Issue mode")
       .setDescription(
         `Issue mode is now ${bold(
           issueMode === "true" ? toggleValues.OFF : toggleValues.ON

@@ -13,10 +13,12 @@ export class RemoveAll extends FriendsChildCommand {
 
     const deletedCount = await this.friendsService.clearFriends(this.ctx, user);
 
-    await this.send(
-      this.newEmbed().setDescription(
+    const embed = this.authorEmbed()
+      .setHeader("Friends remove all")
+      .setDescription(
         `Successfully removed ${displayNumber(deletedCount, "friend")}!`
-      )
-    );
+      );
+
+    await this.send(embed);
   }
 }

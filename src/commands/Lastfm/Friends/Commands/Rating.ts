@@ -106,8 +106,8 @@ export class Rating extends FriendsChildCommand<typeof args> {
       2
     )}/5 from ${displayNumber(filteredRatings.length, "rating")}_\n\n`;
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Friends rating"))
+    const embed = this.authorEmbed()
+      .setHeader("Friends rating")
       .setTitle(
         `Your friends ratings of ${rateYourMusicAlbum.title} by ${rateYourMusicAlbum.artistName}`
       )

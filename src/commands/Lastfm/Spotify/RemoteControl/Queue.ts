@@ -36,8 +36,8 @@ export class Queue extends SpotifyChildCommand<typeof args> {
 
     await this.spotifyService.queue(this.ctx, track.uri.asString);
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Spotify queue song"))
+    const embed = this.authorEmbed()
+      .setHeader("Spotify queue song")
       .setDescription(
         `Succesfully queued:
 ${italic(track.name)} by ${bold(track.artists.primary.name)}!`

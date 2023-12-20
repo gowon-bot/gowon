@@ -43,8 +43,9 @@ export default class SearchCommands extends Command<typeof args> {
 
     const foundCommands = this.commandRegistry.search(commands, keywords);
 
-    const embed = this.newEmbed()
-      .setTitle(`Command search results for ${code(keywords)}`)
+    const embed = this.authorEmbed()
+      .setHeader("Command search")
+      .setTitle(`Search results for ${code(keywords)}`)
       .setDescription(
         foundCommands
           .map((c) => this.displayCommand(c, keywords))
@@ -52,16 +53,15 @@ export default class SearchCommands extends Command<typeof args> {
           .sort()
           .join("\n")
       )
-      .setFooter({
-        text:
-          `Searched ${displayNumber(
-            commandList.length,
-            "command"
-          )}, found ${displayNumber(foundCommands.length, "result")}` +
+      .setFooter(
+        `Searched ${displayNumber(
+          commandList.length,
+          "command"
+        )}, found ${displayNumber(foundCommands.length, "result")}` +
           (foundCommands.length > 12
             ? "\nTry narrowing down your search to see more results, or go to https://gowon.ca/commands"
-            : ""),
-      });
+            : "")
+      );
 
     await this.send(embed);
   }

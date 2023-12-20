@@ -1,7 +1,7 @@
 import { displayNumber } from "../../../lib/views/displays";
-import { OverviewChildCommand } from "./OverviewChildCommand";
+import { ProfileChildCommand } from "./ProfileChildCommand";
 
-export class Playsover extends OverviewChildCommand {
+export class Playsover extends ProfileChildCommand {
   idSeed = "snsd seohyun";
 
   aliases = ["po"];
@@ -18,7 +18,8 @@ export class Playsover extends OverviewChildCommand {
 
     const artistCount = await this.calculator.totalArtists();
 
-    const embed = (await this.overviewEmbed()).setDescription(`Among ${
+    const embed = (await this.profileEmbed()).setHeader("Profile playsover")
+      .setDescription(`Among ${
       perspective.possessivePronoun
     } top ${displayNumber(
       artistCount.asNumber > 1000 ? 1000 : artistCount.asNumber,

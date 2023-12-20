@@ -1,14 +1,14 @@
 import { Command } from "../../lib/command/Command";
 import {
-  ParentCommand,
   BaseChildCommand,
+  ParentCommand,
 } from "../../lib/command/ParentCommand";
-import { SpotifyService } from "../../services/Spotify/SpotifyService";
-import { LastFMService } from "../../services/LastFM/LastFMService";
-import { AlbumCoverService } from "../../services/moderation/AlbumCoverService";
-import { LastFMArguments } from "../../services/LastFM/LastFMArguments";
-import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { ArgumentsMap } from "../../lib/context/arguments/types";
+import { LastFMArguments } from "../../services/LastFM/LastFMArguments";
+import { LastFMService } from "../../services/LastFM/LastFMService";
+import { ServiceRegistry } from "../../services/ServicesRegistry";
+import { SpotifyService } from "../../services/Spotify/SpotifyService";
+import { AlbumCoverService } from "../../services/moderation/AlbumCoverService";
 
 export abstract class LastFMBaseCommand<
   T extends ArgumentsMap = {}

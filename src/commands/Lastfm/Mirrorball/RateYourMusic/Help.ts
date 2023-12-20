@@ -8,8 +8,8 @@ export class Help extends RateYourMusicChildCommand {
   slashCommand = true;
 
   async run() {
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Rateyourmusic import help"))
+    const embed = this.authorEmbed()
+      .setHeader("RateYourMusic import help")
       .setDescription(
         `You can export your rateyourmusic data by going to your profile page, and at the very botton of the page clicking the "Export your data" button.
 

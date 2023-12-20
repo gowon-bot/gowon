@@ -18,12 +18,12 @@ export default class Index extends LilacBaseCommand {
       this.requiredGuild.id
     );
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Lilac indexing"))
+    const embed = this.authorEmbed()
+      .setHeader("Lilac indexing")
       .setDescription(
         "Indexing will download all your scrobbles from Last.fm. Are you sure you want to full index?"
       )
-      .setFooter({ text: this.indexingHelp });
+      .setFooter(this.indexingHelp);
 
     const confirmationEmbed = new ConfirmationEmbed(this.ctx, embed);
 
@@ -35,11 +35,13 @@ export default class Index extends LilacBaseCommand {
 
     confirmationEmbed.sentMessage?.edit({
       embeds: [
-        embed.setDescription(
-          `Indexing...\n${displayProgressBar(0, 1, {
-            width: this.progressBarWidth,
-          })}\n*Loading...*`
-        ),
+        embed
+          .setDescription(
+            `Indexing...\n${displayProgressBar(0, 1, {
+              width: this.progressBarWidth,
+            })}\n*Loading...*`
+          )
+          .asMessageEmbed(),
       ],
     });
 
@@ -59,20 +61,22 @@ export default class Index extends LilacBaseCommand {
         await this.discordService.edit(
           this.ctx,
           sentMessage,
-          embed.setDescription("Done!")
+          embed.setDescription("Done!").asMessageEmbed()
         );
         subscription.unsubscribe();
       } else if (stopwatch.elapsedInMilliseconds >= 3000) {
         await this.discordService.edit(
           this.ctx,
           sentMessage,
-          embed.setDescription(
-            `Indexing...
+          embed
+            .setDescription(
+              `Indexing...
 ${displayProgressBar(progress.page, progress.totalPages, {
   width: this.progressBarWidth,
 })}
 *Page ${progress.page}/${progress.totalPages}*`
-          )
+            )
+            .asMessageEmbed()
         );
 
         stopwatch.zero().start();

@@ -81,8 +81,8 @@ export default class TagInfo extends InfoCommand<typeof args> {
         }
       );
 
-      const embed = this.newEmbed()
-        .setAuthor(this.generateEmbedAuthor("Tag info"))
+      const embed = this.authorEmbed()
+        .setHeader("Tag info")
         .setDescription(lineConsolidator.consolidate());
 
       await this.send(embed);
@@ -166,8 +166,8 @@ export default class TagInfo extends InfoCommand<typeof args> {
         });
       }
 
-      const embed = this.newEmbed()
-        .setAuthor(this.generateEmbedAuthor("Tag info"))
+      const embed = this.authorEmbed()
+        .setHeader("Tag info")
         .setTitle(tagInfo.name)
         .setURL(this.getLinkFromBio(tagInfo.wiki.summary) || "")
         .setDescription(summary ? summary + "\n" : "_(no description)_")

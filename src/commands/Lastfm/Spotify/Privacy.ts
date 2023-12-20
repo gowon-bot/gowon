@@ -10,7 +10,7 @@ const args = {
     choices: ["private", "public"],
     description: "Controls whether Gowon will show identifying info",
   }),
-} satisfies ArgumentsMap
+} satisfies ArgumentsMap;
 
 export class Privacy extends SpotifyChildCommand<typeof args> {
   idSeed = "billlie sheon";
@@ -33,10 +33,11 @@ ${extraWideSpace}${bullet} \`public\` means Gowon will show this information.`;
         userID: this.author.id,
       });
 
-      const embed = this.newEmbed()
+      const embed = this.authorEmbed()
         .setTitle("Spotify privacy")
         .setDescription(
-          `Your current spotify privacy is: \`${currentPrivacy === toggleValues.ON ? "private" : "public"
+          `Your current spotify privacy is: \`${
+            currentPrivacy === toggleValues.ON ? "private" : "public"
           }\`\n\n${this.privacyHelp}`
         );
 
@@ -49,7 +50,7 @@ ${extraWideSpace}${bullet} \`public\` means Gowon will show this information.`;
         privacy === "public" ? toggleValues.OFF : toggleValues.ON
       );
 
-      const embed = this.newEmbed()
+      const embed = this.authorEmbed()
         .setTitle("Spotify privacy")
         .setDescription(
           `Your new Spotify privacy is: \`${privacy}\`\n\n${this.privacyHelp}`

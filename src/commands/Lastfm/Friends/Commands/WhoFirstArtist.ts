@@ -77,8 +77,8 @@ export class WhoFirstArtist extends FriendsChildCommand<typeof args> {
       throw new FriendsHaveNoScrobblesOfArtistError();
     }
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Friends who first"))
+    const embed = this.authorEmbed()
+      .setHeader("Friends who first")
       .setTitle(
         `When your friends first scrobbled ${bold(
           whoFirst.whoFirstArtist.artist.name

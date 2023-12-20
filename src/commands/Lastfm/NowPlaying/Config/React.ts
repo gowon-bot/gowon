@@ -60,8 +60,8 @@ export class React extends NowPlayingConfigChildCommand<typeof args> {
         }) || "[]"
       ) as string[];
 
-      const embed = this.newEmbed()
-        .setAuthor(this.generateEmbedAuthor("Reacts"))
+      const embed = this.authorEmbed()
+        .setHeader("Reacts")
         .setDescription(
           `Choose which reactions Gowon should react with when you \`${this.prefix}fm\`.\nSet them with \`${this.prefix}reacts emoji1 emoji2 ...emoji5\` and use \`${this.prefix}reacts clear\` to clear them!` +
             (reactions.length
@@ -76,8 +76,8 @@ export class React extends NowPlayingConfigChildCommand<typeof args> {
   }
 
   private async handleClear() {
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Reacts"))
+    const embed = this.authorEmbed()
+      .setHeader("Nowplaying config reacts")
       .setDescription("Are you sure you want to clear your reacts?");
 
     const confirmationEmbed = new ConfirmationEmbed(this.ctx, embed);
@@ -87,7 +87,11 @@ export class React extends NowPlayingConfigChildCommand<typeof args> {
         userID: this.author.id,
       });
       confirmationEmbed.sentMessage!.edit({
-        embeds: [embed.setDescription("Successfully cleared your reactions!")],
+        embeds: [
+          embed
+            .setDescription("Successfully cleared your reactions!")
+            .asMessageEmbed(),
+        ],
       });
     }
   }
@@ -129,14 +133,14 @@ export class React extends NowPlayingConfigChildCommand<typeof args> {
       }
     );
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Reacts"))
+    const embed = this.authorEmbed()
+      .setHeader("Reacts")
       .setDescription(lineConsolidator.consolidate());
 
     if (invalid.length) {
-      embed.setFooter({
-        text: "Gowon needs to share a server with an emoji to be able to react with it",
-      });
+      embed.setFooter(
+        "Gowon needs to share a server with an emoji to be able to react with it"
+      );
     }
 
     await this.send(embed);

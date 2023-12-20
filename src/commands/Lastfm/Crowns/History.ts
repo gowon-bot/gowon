@@ -52,8 +52,8 @@ export class History extends CrownsChildCommand<typeof args> {
 
     if (!history.length) throw new NoCrownHistoryError(artistDetails.name);
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Crown history"))
+    const embed = this.authorEmbed()
+      .setHeader("Crown history")
       .setTitle(
         `Crown history for ${crown.artistName}${crown.redirectDisplay()}`
       )

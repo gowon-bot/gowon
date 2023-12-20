@@ -20,8 +20,8 @@ export default class SyncGuild extends AdminBaseCommand {
 
     await this.lilacGuildsService.sync(this.ctx, guildID, discordIDs);
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Server sync"))
+    const embed = this.authorEmbed()
+      .setHeader("Server sync")
       .setDescription(
         `Successfully synced ${displayNumber(discordIDs.length, "member")}`
       );

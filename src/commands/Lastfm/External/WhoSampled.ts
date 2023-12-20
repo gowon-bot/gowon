@@ -25,12 +25,12 @@ export default class WhoSampled extends LastFMBaseCommand<typeof args> {
   async run() {
     let keywords = this.parsedArguments.keywords;
 
-    let { requestable } = await this.getMentions({
+    const { requestable } = await this.getMentions({
       usernameRequired: !keywords,
     });
 
     if (!keywords) {
-      let nowplaying = await this.lastFMService.nowPlaying(
+      const nowplaying = await this.lastFMService.nowPlaying(
         this.ctx,
         requestable
       );
@@ -38,11 +38,11 @@ export default class WhoSampled extends LastFMBaseCommand<typeof args> {
       keywords = `${nowplaying.artist} - ${nowplaying.name}`;
     }
 
-    let encodedKeywords = encodeURIComponent(keywords);
+    const encodedKeywords = encodeURIComponent(keywords);
 
-    let embed = this.newEmbed()
-      .setAuthor({ name: `WhoSampled search for "${keywords}"` })
-      .setTitle("Click here to view the results")
+    const embed = this.authorEmbed()
+      .setHeader("WhoSampled search")
+      .setTitle(`WhoSampled search for "${keywords}"`)
       .setURL(`https://www.whosampled.com/search/?q=${encodedKeywords}`)
       .setThumbnail(
         "https://www.whosampled.com/static/images/press/whosampled_logo_hires.png"

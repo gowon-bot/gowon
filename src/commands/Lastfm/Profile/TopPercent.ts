@@ -1,12 +1,12 @@
-import { OverviewChildCommand } from "./OverviewChildCommand";
+import { bold } from "../../../helpers/discord";
+import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
+import { TimePeriodArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/TimePeriodArgument";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { displayNumber } from "../../../lib/views/displays";
-import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
-import { TimePeriodArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/TimePeriodArgument";
-import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
-import { bold } from "../../../helpers/discord";
-import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { ProfileChildCommand } from "./ProfileChildCommand";
 
 const args = {
   timePeriod: new TimePeriodArgument({
@@ -19,7 +19,7 @@ const args = {
   ...standardMentions,
 } satisfies ArgumentsMap;
 
-export class TopPercent extends OverviewChildCommand<typeof args> {
+export class TopPercent extends ProfileChildCommand<typeof args> {
   idSeed = "twice sana";
 
   aliases = ["toppct", "apct"];
@@ -41,12 +41,14 @@ export class TopPercent extends OverviewChildCommand<typeof args> {
 
     const toppct = await this.calculator.topPercent(percent);
 
-    const embed = (await this.overviewEmbed()).setDescription(
-      `${bold(toppct.count.asString)} artists (a total of ${displayNumber(
-        toppct.total.asNumber,
-        "scrobble"
-      )}) make up ${percent}% of ${perspective.possessive} scrobbles!`
-    );
+    const embed = (await this.profileEmbed())
+      .setHeader("Profile top percent")
+      .setDescription(
+        `${bold(toppct.count.asString)} artists (a total of ${displayNumber(
+          toppct.total.asNumber,
+          "scrobble"
+        )}) make up ${percent}% of ${perspective.possessive} scrobbles!`
+      );
 
     await this.send(embed);
   }

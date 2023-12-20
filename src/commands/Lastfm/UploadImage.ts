@@ -2,6 +2,7 @@ import { LogicError } from "../../errors/errors";
 import { LastfmLinks } from "../../helpers/lastfm/LastfmLinks";
 import { prefabArguments } from "../../lib/context/arguments/prefabArguments";
 import { ArgumentsMap } from "../../lib/context/arguments/types";
+import { displayLink } from "../../lib/views/displays";
 import { LastFMBaseCommand } from "./LastFMBaseCommand";
 
 const args = {
@@ -34,6 +35,15 @@ export default class ImageUpload extends LastFMBaseCommand<typeof args> {
       );
     }
 
-    await this.send("<" + LastfmLinks.imageUploadLink(artist, album) + ">");
+    const embed = this.authorEmbed()
+      .setHeader("Image upload")
+      .setDescription(
+        displayLink(
+          "Click here to upload an image",
+          LastfmLinks.imageUploadLink(artist, album)
+        )
+      );
+
+    await this.send(embed);
   }
 }

@@ -14,8 +14,8 @@ export default class Usercount extends AdminBaseCommand {
     let usercount = await this.usersService.countUsers(this.ctx);
 
     await this.send(
-      this.newEmbed()
-        .setAuthor(this.generateEmbedAuthor("User count"))
+      this.authorEmbed()
+        .setHeader("User count")
         .setDescription(
           `There are ${bold(
             displayNumber(usercount, "registered user")

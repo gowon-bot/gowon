@@ -43,12 +43,12 @@ export class SetAdminRole extends PermissionsChildCommand<typeof args> {
         adminRole.id
       );
 
-      const embed = this.newEmbed()
-        .setAuthor(this.generateEmbedAuthor("Administrator role"))
+      const embed = this.authorEmbed()
+        .setHeader("Administrator role")
         .setDescription(
           `Successfully set <@&${adminRole.id}> as the administrator role!`
         )
-        .setFooter({ text: this.adminRoleHelp });
+        .setFooter(this.adminRoleHelp);
 
       await this.send(embed);
     } else {
@@ -56,14 +56,14 @@ export class SetAdminRole extends PermissionsChildCommand<typeof args> {
         guildID: this.requiredGuild.id,
       });
 
-      const embed = this.newEmbed()
-        .setAuthor(this.generateEmbedAuthor("Administrator role"))
+      const embed = this.authorEmbed()
+        .setHeader("Administrator role")
         .setDescription(
           adminRole
             ? `The current admin role is: <@&${adminRole}>`
             : `There is no admin role yet, you can set one by running: \n\n\`${this.prefix}perms setadminrole @role\`\nor\n\`${this.prefix}perms setadminrole <role id>\``
         )
-        .setFooter({ text: this.adminRoleHelp });
+        .setFooter(this.adminRoleHelp);
 
       await this.send(embed);
     }

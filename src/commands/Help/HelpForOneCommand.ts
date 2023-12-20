@@ -130,8 +130,8 @@ export default class HelpForOneCommand extends Command<typeof args> {
       }
     );
 
-    let embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor(`Help with ${commandName}`))
+    const embed = this.authorEmbed()
+      .setHeader(`Help with ${commandName}`)
       .setDescription(lineConsolidator.consolidate());
 
     return embed;
@@ -179,8 +179,8 @@ export default class HelpForOneCommand extends Command<typeof args> {
         .join("\n")
     );
 
-    return this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor(`Help with ${command.friendlyName}`))
+    return this.authorEmbed()
+      .setHeader(`Help with ${command.friendlyName}`)
       .setDescription(lineConsolidator.consolidate());
   }
 

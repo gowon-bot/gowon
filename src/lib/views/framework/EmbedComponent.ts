@@ -20,7 +20,7 @@ export class EmbedComponent extends UIComponent {
   private header?: string;
   private headerIcon?: string;
   private headerURL?: string;
-  private footer?: string;
+  public footer?: string;
   private footerIcon?: string;
   private description?: string | LineConsolidator;
   private image?: string | Image;
@@ -77,6 +77,11 @@ export class EmbedComponent extends UIComponent {
     return this;
   }
 
+  setHeaderURL(url: string): this {
+    this.headerURL = url;
+    return this;
+  }
+
   setHeaderIcon(icon: string): this {
     this.headerIcon = icon;
     return this;
@@ -87,7 +92,13 @@ export class EmbedComponent extends UIComponent {
     return this;
   }
 
-  setFooterIcon(icon: string): this {
+  addFooter(footer: string): this {
+    this.footer = ((this.footer || "") + footer).trim();
+
+    return this;
+  }
+
+  setFooterIcon(icon: string | undefined): this {
     this.footerIcon = icon;
     return this;
   }

@@ -1,28 +1,26 @@
-import { OverviewChildCommand } from "./OverviewChildCommand";
+import { ProfileChildCommand } from "./ProfileChildCommand";
 
-export class Help extends OverviewChildCommand {
+export class Help extends ProfileChildCommand {
   idSeed = "shasha a ryeom";
 
-  description = "View help about overview";
+  description = "View help about the profile command";
   usage = [""];
 
-  // Overriding the type constraint from OverviewChildCommand
+  // Overriding the type constraint from ProfileChildCommand
   arguments = {} as any;
 
   async run() {
-    const embed = this.newEmbed().setAuthor(
-      this.generateEmbedAuthor("Overview help")
-    );
+    const embed = this.authorEmbed()
+      .setHeader("Profile help")
+      .setDescription(
+        `
+The profile command allows you to see many stats about your last.fm account! The following statistics are available:
 
-    embed.setDescription(
-      `
-The overview command allows you to see many stats about your last.fm account! The following statistics are available:
-
-Use \`${this.prefix}o <statistic> optional_time_period\` to use one. Run \`${this.prefix}help o <statistic>\` to see more about a specific one
+Use \`${this.prefix}pf <statistic> optional_time_period\` to use one. Run \`${this.prefix}help pf <statistic>\` to see more about a specific one
 
 **Statistics**:
 
-\`all\` - Shows all statistics in a single embed
+\`overview\` - Shows all statistics in a single embed
 
 \`joined\` - When a user joined Last.fm
 \`avgperday\` - A user's average scrobble count per day
@@ -37,7 +35,7 @@ Use \`${this.prefix}o <statistic> optional_time_period\` to use one. Run \`${thi
 \`breadth\` - Shows a user's breadth rating.
 \`playsover\` - Shows how many artists a user has over some common scrobble tiers
 `
-    );
+      );
 
     await this.send(embed);
   }

@@ -27,8 +27,8 @@ export default class Eval extends Command<typeof args> {
 
     const result = eval(this.parsedArguments.script);
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Eval"))
+    const embed = this.authorEmbed()
+      .setHeader("Eval")
       .setDescription(`\`\`\`\n${result}\n\`\`\``);
 
     await this.send(embed);

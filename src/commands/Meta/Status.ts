@@ -1,7 +1,8 @@
-import { Message, MessageEmbed } from "discord.js";
+import { Message } from "discord.js";
 import { LogicError } from "../../errors/errors";
 import { Stopwatch } from "../../helpers";
 import { Command } from "../../lib/command/Command";
+import { EmbedComponent } from "../../lib/views/framework/EmbedComponent";
 import { LastFMService } from "../../services/LastFM/LastFMService";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { LilacAPIService } from "../../services/lilac/LilacAPIService";
@@ -17,7 +18,7 @@ export default class Status extends Command {
   lastFMService = ServiceRegistry.get(LastFMService);
 
   async run() {
-    const embed = this.newEmbed()
+    const embed = this.authorEmbed()
       .setTitle("Gowon status:")
       .setDescription(
         "**Latency**: External:\b```\nDiscord........pinging\nLast.fm........pinging\n```\nGowon:\n```\nMirrorball.....pinging\nLilac..........pinging\n```"
@@ -30,8 +31,9 @@ export default class Status extends Command {
 
     await sentMessage.edit({
       embeds: [
-        embed.setDescription(
-          `**Latency**:
+        embed
+          .setDescription(
+            `**Latency**:
 External:
 \`\`\`
 Discord........${this.displayLatency(discordLatency)}
@@ -43,7 +45,8 @@ Mirrorball.....${this.displayLatency(mirrorballLatency)}
 Lilac..........${this.displayLatency(lilacLatency)}
 \`\`\`
 `
-        ),
+          )
+          .asMessageEmbed(),
       ],
     });
   }
@@ -79,7 +82,7 @@ Lilac..........${this.displayLatency(lilacLatency)}
   }
 
   private async discordLatency(
-    embed: MessageEmbed
+    embed: EmbedComponent
   ): Promise<[Message, Stopwatch]> {
     const stopwatch = new Stopwatch();
     stopwatch.start();

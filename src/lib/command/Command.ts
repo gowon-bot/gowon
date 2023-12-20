@@ -4,7 +4,6 @@ import {
   EmbedAuthorData,
   Guild,
   Message,
-  MessageEmbed,
 } from "discord.js";
 import md5 from "js-md5";
 import config from "../../../config.json";
@@ -40,7 +39,7 @@ import { Emoji, EmojiRaw } from "../emoji/Emoji";
 import { SettingsService } from "../settings/SettingsService";
 import { Validation, ValidationChecker } from "../validation/ValidationChecker";
 import { displayUserTag } from "../views/displays";
-import { errorEmbed, gowonEmbed } from "../views/embeds";
+import { errorEmbed } from "../views/embeds";
 import { EmbedComponent } from "../views/framework/EmbedComponent";
 import { Sendable, SendableContent } from "../views/framework/Sendable";
 import { CommandGroup } from "./CommandGroup";
@@ -424,11 +423,6 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
     return new EmbedComponent().setAuthor(this.author, this.authorMember);
   }
 
-  /** @deprecated Use Command#authorEmbed */
-  newEmbed(embed?: MessageEmbed): MessageEmbed {
-    return gowonEmbed(this.payload.member ?? undefined, embed);
-  }
-
   /** @deprecated Use Command#authorEmbed + EmbedComponent#setHeader instead */
   generateEmbedAuthor(title?: string, url?: string): EmbedAuthorData {
     return {
@@ -488,7 +482,7 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
 
     await this.send(
       errorEmbed(
-        this.newEmbed(),
+        this.authorEmbed(),
         this.author,
         this.ctx.authorMember,
         errorInstance

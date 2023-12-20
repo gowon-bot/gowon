@@ -1,4 +1,3 @@
-import { MessageEmbed } from "discord.js";
 import {
   Permission,
   PermissionType,
@@ -57,8 +56,6 @@ export class BotwideUserDisable extends PermissionsChildCommand<typeof args> {
       entityID: user.id,
     });
 
-    let embed: MessageEmbed;
-
     if (!this.variationWasUsed("botwideuserenable")) {
       await this.permissionsService.createPermission(
         this.ctx,
@@ -66,13 +63,15 @@ export class BotwideUserDisable extends PermissionsChildCommand<typeof args> {
         permission
       );
 
-      embed = this.newEmbed()
-        .setAuthor(this.generateEmbedAuthor("Permissions user disable"))
+      const embed = this.authorEmbed()
+        .setHeader("Permissions user disable")
         .setDescription(
           `Successfully disabled ${code(command.name)} for ${bold(
             displayUserTag(user)
           )} (${user.id}) bot-wide`
         );
+
+      await this.send(embed);
     } else {
       await this.permissionsService.destroyPermission(
         this.ctx,
@@ -80,15 +79,15 @@ export class BotwideUserDisable extends PermissionsChildCommand<typeof args> {
         permission
       );
 
-      embed = this.newEmbed()
-        .setAuthor(this.generateEmbedAuthor("Permissions enable"))
+      const embed = this.authorEmbed()
+        .setHeader("Permissions user enable")
         .setDescription(
           `Successfully re-enabled ${code(command.name)} for ${bold(
             displayUserTag(user)
           )} (${user.id}) bot-wide`
         );
-    }
 
-    await this.send(embed);
+      await this.send(embed);
+    }
   }
 }

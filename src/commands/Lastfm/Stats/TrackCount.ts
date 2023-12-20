@@ -1,10 +1,10 @@
-import { LastFMBaseCommand } from "../LastFMBaseCommand";
-import { displayNumber } from "../../../lib/views/displays";
-import { humanizePeriod } from "../../../lib/timeAndDate/helpers/humanize";
-import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
-import { TimePeriodArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/TimePeriodArgument";
 import { bold } from "../../../helpers/discord";
+import { TimePeriodArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/TimePeriodArgument";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { humanizePeriod } from "../../../lib/timeAndDate/helpers/humanize";
+import { displayNumber } from "../../../lib/views/displays";
+import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 const args = {
   timePeriod: new TimePeriodArgument({
@@ -12,7 +12,7 @@ const args = {
     description: "The time period to count your albums over",
   }),
   ...standardMentions,
-} satisfies ArgumentsMap
+} satisfies ArgumentsMap;
 
 export default class TrackCount extends LastFMBaseCommand<typeof args> {
   idSeed = "secret number soodam";
@@ -37,10 +37,14 @@ export default class TrackCount extends LastFMBaseCommand<typeof args> {
       timePeriod
     );
 
-    await this.oldReply(
-      `${perspective.plusToHave} scrobbled ${bold(
-        displayNumber(trackCount, "track")
-      )} ${humanizePeriod(timePeriod)}`
-    );
+    const embed = this.authorEmbed()
+      .setHeader("Track count")
+      .setDescription(
+        `${perspective.plusToHave} scrobbled ${bold(
+          displayNumber(trackCount, "track")
+        )} ${humanizePeriod(timePeriod)}`
+      );
+
+    await this.send(embed);
   }
 }

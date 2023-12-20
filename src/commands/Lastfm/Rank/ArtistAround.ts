@@ -98,8 +98,8 @@ export default class ArtistAround extends AroundCommand<typeof args> {
       );
     }
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Artist around"))
+    const embed = this.authorEmbed()
+      .setHeader("Artist around")
       .setTitle(
         `Artists around ${
           shouldSearchByRank

@@ -104,8 +104,8 @@ export default class UserInfo extends Command<typeof args> {
       }
     );
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("User info"))
+    const embed = this.authorEmbed()
+      .setHeader("User info")
       .setDescription(lineConsolidator.consolidate());
 
     await this.send(embed);

@@ -66,18 +66,18 @@ export class TrackPlays extends FriendsChildCommand<typeof args> {
       0
     );
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Friends track plays"))
+    const embed = this.authorEmbed()
+      .setHeader("Friends track plays")
       .setTitle(
         `Your friends plays of ${trackInfo.name} by ${trackInfo.artist.name}`
       )
       .setDescription(displayNumberedList(friendDisplays))
-      .setFooter({
-        text: `Your friends have a total of ${displayNumber(
+      .setFooter(
+        `Your friends have a total of ${displayNumber(
           totalPlays,
           "scrobble"
-        )} of this track`,
-      });
+        )} of this track`
+      );
 
     await this.send(embed);
   }

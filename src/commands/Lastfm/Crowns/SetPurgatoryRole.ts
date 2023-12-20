@@ -21,8 +21,8 @@ export class SetPurgatoryRole extends CrownsChildCommand<typeof args> {
 
     await this.crownsService.setPurgatoryRole(this.ctx, purgatoryRole?.id);
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Purgatory role"))
+    const embed = this.authorEmbed()
+      .setHeader("Purgatory role")
       .setDescription(
         purgatoryRole?.name
           ? `Set the purgatory role for crowns to ${purgatoryRole.name.trim()}`

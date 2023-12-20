@@ -5,7 +5,7 @@ import { TimePeriodArgument } from "../../../lib/context/arguments/argumentTypes
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { displayNumber } from "../../../lib/views/displays";
-import { OverviewChildCommand } from "./OverviewChildCommand";
+import { ProfileChildCommand } from "./ProfileChildCommand";
 
 const args = {
   timePeriod: new TimePeriodArgument({
@@ -18,7 +18,7 @@ const args = {
   ...standardMentions,
 } satisfies ArgumentsMap;
 
-export class SumTop extends OverviewChildCommand<typeof args> {
+export class SumTop extends ProfileChildCommand<typeof args> {
   idSeed = "twice momo";
 
   aliases = ["toppct"];
@@ -49,13 +49,15 @@ export class SumTop extends OverviewChildCommand<typeof args> {
       this.calculator.sumTopPercent(top),
     ]);
 
-    const embed = (await this.overviewEmbed()).setDescription(
-      `${perspective.upper.possessive} top ${bold(
-        displayNumber(top, "artist")
-      )} make up ${bold(displayNumber(sumtop.asNumber, "scrobble"))} (${bold(
-        sumtoppct.asString
-      )}% of ${perspective.possessivePronoun} total scrobbles!)`
-    );
+    const embed = (await this.profileEmbed())
+      .setHeader("Profile sum top")
+      .setDescription(
+        `${perspective.upper.possessive} top ${bold(
+          displayNumber(top, "artist")
+        )} make up ${bold(displayNumber(sumtop.asNumber, "scrobble"))} (${bold(
+          sumtoppct.asString
+        )}% of ${perspective.possessivePronoun} total scrobbles!)`
+      );
 
     await this.send(embed);
   }

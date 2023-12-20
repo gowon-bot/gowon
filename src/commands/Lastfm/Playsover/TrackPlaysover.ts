@@ -53,7 +53,7 @@ export default class TrackPlaysover extends LastFMBaseCommand<typeof args> {
       0
     );
 
-    const embed = this.newEmbed()
+    const embed = this.authorEmbed()
       .setAuthor(
         this.generateEmbedAuthor(`Track plays${equal ? "equal" : "over"}`)
       )

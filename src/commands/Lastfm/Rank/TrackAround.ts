@@ -84,8 +84,8 @@ export default class TrackAround extends AroundCommand<typeof args> {
       );
     }
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Track around"))
+    const embed = this.authorEmbed()
+      .setHeader("Track around")
       .setTitle(
         `Tracks around ${
           shouldSearchByRank

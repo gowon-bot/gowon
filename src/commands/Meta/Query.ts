@@ -1,8 +1,8 @@
 import { getConnection } from "typeorm";
+import { Logger } from "../../lib/Logger";
 import { Command } from "../../lib/command/Command";
 import { StringArgument } from "../../lib/context/arguments/argumentTypes/StringArgument";
 import { ArgumentsMap } from "../../lib/context/arguments/types";
-import { Logger } from "../../lib/Logger";
 import { Validation } from "../../lib/validation/ValidationChecker";
 import { validators } from "../../lib/validation/validators";
 
@@ -29,9 +29,9 @@ export default class Query extends Command<typeof args> {
       return;
     }
 
-    let connection = getConnection();
+    const connection = getConnection();
 
-    let result = await connection.query(this.parsedArguments.query);
+    const result = await connection.query(this.parsedArguments.query);
 
     await this.send("```" + Logger.formatObject(result) + "```");
   }

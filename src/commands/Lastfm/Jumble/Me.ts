@@ -130,8 +130,8 @@ export class Start extends JumbleChildCommand<typeof args> {
       }
     );
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Jumble me"))
+    const embed = this.authorEmbed()
+      .setHeader("Jumble me")
       .setDescription(
         `**Who is this artist?**
       
@@ -140,9 +140,9 @@ export class Start extends JumbleChildCommand<typeof args> {
       **Hints**:
       _${lineConsolidator.consolidate()}_`
       )
-      .setFooter({
-        text: `Send a message to make a guess or type "quit" to quit\nType "hint" to get a hint`,
-      });
+      .setFooter(
+        `Send a message to make a guess or type "quit" to quit\nType "hint" to get a hint`
+      );
 
     await this.send(embed);
 
@@ -154,16 +154,16 @@ export class Start extends JumbleChildCommand<typeof args> {
 
     this.sessionSetJSON(jumbleRedisKey, jumble);
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Jumble reshuffle"))
+    const embed = this.authorEmbed()
+      .setHeader("Jumble reshuffle")
       .setDescription(
         `I've reshuffled the letters, now who is this artist?\n\n${code(
           jumble.jumbled
         )}`
       )
-      .setFooter({
-        text: `Trying to skip? Type "quit" to give up\nNeed a hint? Type "hint" to get a hint`,
-      });
+      .setFooter(
+        `Trying to skip? Type "quit" to give up\nNeed a hint? Type "hint" to get a hint`
+      );
 
     await this.send(embed);
   }
@@ -211,8 +211,8 @@ export class Start extends JumbleChildCommand<typeof args> {
       if (reason === "time") {
         this.redisService.sessionDelete(this.ctx, jumbleRedisKey);
 
-        const embed = this.newEmbed()
-          .setAuthor(this.generateEmbedAuthor("Jumble"))
+        const embed = this.authorEmbed()
+          .setHeader("Jumble")
           .setDescription(
             `You ran out of time! The answer was ${bold(jumble.unjumbled)}`
           );

@@ -62,8 +62,8 @@ export class GuildAround extends CrownsChildCommand<typeof args> {
       username: await this.fetchUsername(u.discordID),
     }));
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Crowns rank"))
+    const embed = this.authorEmbed()
+      .setHeader("Crowns rank")
       .setTitle(`${this.requiredGuild.name}'s crown leaderboard`)
       .setDescription(
         displayNumberedList(

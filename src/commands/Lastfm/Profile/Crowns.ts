@@ -3,9 +3,9 @@ import { LogicError } from "../../../errors/errors";
 import { getOrdinal } from "../../../helpers";
 import { bold, italic } from "../../../helpers/discord";
 import { displayNumber } from "../../../lib/views/displays";
-import { OverviewChildCommand } from "./OverviewChildCommand";
+import { ProfileChildCommand } from "./ProfileChildCommand";
 
-export class Crowns extends OverviewChildCommand {
+export class Crowns extends ProfileChildCommand {
   idSeed = "snsd tiffany";
 
   aliases = ["cw", "cws"];
@@ -27,7 +27,7 @@ export class Crowns extends OverviewChildCommand {
     }
 
     if (await this.calculator.hasCrownStats()) {
-      const embed = (await this.overviewEmbed())
+      const embed = (await this.profileEmbed()).setHeader("Profile crown stats")
         .setDescription(`You have ${bold(
         displayNumber(crownRank!.count, "crown")
       )} (ranked ${italic(getOrdinal(crownRank!.rank))})

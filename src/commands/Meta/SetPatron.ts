@@ -52,11 +52,13 @@ export default class SetPatron extends Command<typeof args> {
       );
     }
 
-    const embed = this.newEmbed().setDescription(
-      `Successfully ${
-        this.variationWasUsed("unset") ? "un" : ""
-      }set ${id} as a patron!`
-    );
+    const embed = this.authorEmbed()
+      .setHeader("Set patron")
+      .setDescription(
+        `Successfully ${
+          this.variationWasUsed("unset") ? "un" : ""
+        }set ${id} as a patron!`
+      );
 
     await this.send(embed);
   }

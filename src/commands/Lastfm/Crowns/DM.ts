@@ -39,8 +39,8 @@ export class DM extends CrownsChildCommand<typeof args> {
       this.crownsService.count(this.ctx, dbUser.id),
     ]);
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Crowns DM"))
+    const embed = this.authorEmbed()
+      .setHeader("Crowns DM")
       .setDescription(
         `Sending you a list of ${perspective.possessive} crowns...`
       );
@@ -51,8 +51,8 @@ export class DM extends CrownsChildCommand<typeof args> {
 
     chunks
       .map((chunk, chunkIdx) =>
-        this.newEmbed()
-          .setAuthor(this.generateEmbedAuthor("Crowns DM"))
+        this.authorEmbed()
+          .setHeader("Crowns DM")
           .setTitle(
             `Crowns ${chunkIdx * this.crownsPerMessage + 1}-${
               (chunkIdx + 1) * this.crownsPerMessage < crowns.length

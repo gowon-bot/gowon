@@ -73,8 +73,8 @@ export class View extends CardsChildCommand {
       }
     );
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("View card"))
+    const embed = this.authorEmbed()
+      .setHeader("View card")
       .setDescription(
         `${bold(card.album)}
 by ${italic(card.artist)}

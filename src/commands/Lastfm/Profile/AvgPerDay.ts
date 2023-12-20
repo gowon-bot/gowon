@@ -1,7 +1,7 @@
 import { bold } from "../../../helpers/discord";
-import { OverviewChildCommand } from "./OverviewChildCommand";
+import { ProfileChildCommand } from "./ProfileChildCommand";
 
-export class AvgPerDay extends OverviewChildCommand {
+export class AvgPerDay extends ProfileChildCommand {
   idSeed = "snsd taeyeon";
 
   aliases = ["avg", "average", "daily", "spd"];
@@ -14,11 +14,13 @@ export class AvgPerDay extends OverviewChildCommand {
 
     const avg = await this.calculator.avgPerDay();
 
-    const embed = (await this.overviewEmbed()).setDescription(
-      `${perspective.upper.plusToHave} an average ${bold(
-        avg.asString
-      )} scrobbles per day!`
-    );
+    const embed = (await this.profileEmbed())
+      .setHeader("Profile average scrobbles per day")
+      .setDescription(
+        `${perspective.upper.plusToHave} an average ${bold(
+          avg.asString
+        )} scrobbles per day!`
+      );
 
     await this.send(embed);
   }

@@ -23,8 +23,8 @@ export default class ArtistList extends ListCommand {
       ...this.dateRange?.asTimeframeParams,
     });
 
-    const messageEmbed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Top artists"))
+    const messageEmbed = this.authorEmbed()
+      .setHeader("Top artists")
       .setTitle(
         `Top artists for \`${username}\` ${
           this.dateRange?.humanized() || this.humanizedPeriod

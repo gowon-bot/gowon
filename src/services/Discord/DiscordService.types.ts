@@ -1,13 +1,13 @@
 import {
   DMChannel,
   FileOptions,
-  MessageEmbed,
   MessageResolvable,
   NewsChannel,
   PartialDMChannel,
   TextChannel,
   ThreadChannel,
 } from "discord.js";
+import { EmbedComponent } from "../../lib/views/framework/EmbedComponent";
 
 export type RespondableChannel =
   | DMChannel
@@ -24,7 +24,7 @@ export type ReplyOptions = Partial<{
 
 export interface SendOptions {
   inChannel: RespondableChannel;
-  withEmbed: MessageEmbed;
+  withEmbed: EmbedComponent;
   reply: boolean | ReplyOptions;
   files: string[] | FileOptions[];
   forceNoInteractionReply?: boolean;

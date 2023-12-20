@@ -44,8 +44,8 @@ export class Joined extends FriendsChildCommand {
         return `${f.display()} - ${displayDate(s)}`;
       });
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Friends joined"))
+    const embed = this.authorEmbed()
+      .setHeader("Friends joined")
       .setTitle(`Your friends' join dates`)
       .setDescription(displayNumberedList(friendDisplays));
 

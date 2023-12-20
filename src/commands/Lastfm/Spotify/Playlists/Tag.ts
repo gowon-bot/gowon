@@ -65,8 +65,8 @@ export class Tag extends PlaylistChildCommand<typeof args> {
       emoji: emoji.raw,
     });
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Spotify playlist tag"))
+    const embed = this.authorEmbed()
+      .setHeader("Spotify playlist tag")
       .setDescription(
         `Succesfully tagged ${bold(foundPlaylist.name)} as ${emoji.raw}`
       );

@@ -50,8 +50,8 @@ export class ImportRatings extends RateYourMusicIndexingChildCommand<
   async run() {
     if (this.payload.isInteraction()) {
       await this.send(
-        this.newEmbed()
-          .setAuthor(this.generateEmbedAuthor("Rateyourmusic import"))
+        this.authorEmbed()
+          .setHeader("Rateyourmusic import")
           .setDescription(
             "As of right now, you cannot import with slash commands.\n\nPlease go to https://gowon.ca/import-ratings to import, or use message commands"
           )
@@ -96,8 +96,8 @@ export class ImportRatings extends RateYourMusicIndexingChildCommand<
       throw new LogicError("Something went wrong when importing your ratings");
     }
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("RateYourMusic import"))
+    const embed = this.authorEmbed()
+      .setHeader("RateYourMusic import")
       .setDescription(`Ratings processed succesfully!`);
 
     await this.send(Emoji.gowonRated, { withEmbed: embed });

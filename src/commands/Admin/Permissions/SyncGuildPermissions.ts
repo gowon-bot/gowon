@@ -12,8 +12,8 @@ export class SyncGuildPermissions extends PermissionsChildCommand {
   async run() {
     await this.permissionsService.syncGuildPermissions(this.ctx);
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Sync guild permissions"))
+    const embed = this.authorEmbed()
+      .setHeader("Sync guild permissions")
       .setDescription("Successfully guild synced permissions!");
 
     await this.send(embed);

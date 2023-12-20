@@ -89,10 +89,8 @@ export class Like extends SpotifyChildCommand<typeof args> {
       }
     );
 
-    const embed = this.newEmbed()
-      .setAuthor(
-        this.generateEmbedAuthor(`Spotify ${unlike ? "un" : ""}like song`)
-      )
+    const embed = this.authorEmbed()
+      .setHeader(`Spotify ${unlike ? "un" : ""}like song`)
       .setDescription(lineConsolidator.consolidate())
       .setThumbnail(track.album.images.largest.url);
 

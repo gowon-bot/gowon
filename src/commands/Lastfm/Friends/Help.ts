@@ -9,11 +9,8 @@ export class Help extends FriendsChildCommand {
   slashCommand = true;
 
   async run() {
-    const embed = this.newEmbed().setAuthor(
-      this.generateEmbedAuthor("Friends help")
-    );
-
-    embed
+    const embed = this.authorEmbed()
+      .setHeader("Friends help")
       .setDescription(
         `
 **Adding/Removing Friends**
@@ -33,9 +30,10 @@ If you have an alias set for a friend, you can use that alias to mention them. F
 \`${this.prefix}fr whofirst\` - See when your friends first listened to an artist
         `
       )
-      .setFooter({
-        text: `All fish you catch are kept in a sustainable and infinitely large aquarium :)`,
-      });
+      .setFooter(
+        `All fish you catch are kept in a sustainable and infinitely large aquarium :)`
+      );
+
     await this.send(embed);
   }
 }

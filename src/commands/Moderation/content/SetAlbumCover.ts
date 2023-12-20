@@ -91,8 +91,8 @@ export default class SetAlbumCover extends ContentModerationCommand<
       this.parsedArguments.moderation
     );
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Set album cover"))
+    const embed = this.authorEmbed()
+      .setHeader("Set album cover")
       .setDescription(
         `${
           existingCover
@@ -141,13 +141,15 @@ This will ${shouldClear ? "clear" : "set"} the image ${bold(
     await this.discordService.edit(
       this.ctx,
       confirmationEmbed.sentMessage!,
-      embed.setDescription(
-        `${shouldClear ? "Cleared" : "Set this as"} the image for ${bold(
-          artist
-        )} | ${italic(album)}${
-          this.parsedArguments.moderation ? " bot-wide" : ""
-        }!`
-      )
+      embed
+        .setDescription(
+          `${shouldClear ? "Cleared" : "Set this as"} the image for ${bold(
+            artist
+          )} | ${italic(album)}${
+            this.parsedArguments.moderation ? " bot-wide" : ""
+          }!`
+        )
+        .asMessageEmbed()
     );
   }
 }

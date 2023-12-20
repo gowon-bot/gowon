@@ -31,7 +31,7 @@ export default class About extends Command {
   redirectsService = ServiceRegistry.get(RedirectsService);
 
   async run() {
-    const author = await this.gowonClient.client.users.fetch(
+    const developer = await this.gowonClient.client.users.fetch(
       this.gowonClient.specialUsers.developers[0].id
     );
 
@@ -55,10 +55,8 @@ export default class About extends Command {
       this.ctx
     );
 
-    const embed = this.newEmbed()
-      .setAuthor({
-        name: `About ${this.gowonClient.client.user?.username || "Gowon"}`,
-      })
+    const embed = this.authorEmbed()
+      .setHeader(`About ${this.gowonClient.client.user?.username || "Gowon"}`)
       .setThumbnail(
         "https://raw.githubusercontent.com/jivison/gowon/master/assets/gowonswag2.png"
       )
@@ -103,10 +101,8 @@ Total commands: ${displayNumber(commandCount)}`,
           )}\nArtists scrobbled: ${displayNumber(artistCount)}`,
         }
       )
-      .setFooter({
-        text: `Made with <3 by ${displayUserTag(author)}`,
-        iconURL: author.avatarURL({ dynamic: true }) ?? undefined,
-      });
+      .setFooter(`Made with <3 by ${displayUserTag(developer)}`)
+      .setFooterIcon(developer.avatarURL({ dynamic: true }) ?? undefined);
 
     await this.send(embed);
   }

@@ -55,17 +55,20 @@ export default class CommandInfo extends MetaBaseCommand<typeof args> {
 
     const count = await this.metaService.countCommandRuns(this.ctx, command.id);
 
-    const embed = this.newEmbed().setTitle(
-      `Info about ${command.friendlyNameWithParent}`
-    ).setDescription(`
-      **Name**: ${command.name}${command.parentName ? `\n**Parent**: ${command.parentName}` : ""
-      }
-      **ID**: ${command.idSeed} ${emDash} ${italic(command.id)}${command.hasChildren
+    const embed = this.authorEmbed()
+      .setHeader("Command info")
+      .setTitle(`Info about ${command.friendlyNameWithParent}`).setDescription(`
+      **Name**: ${command.name}${
+      command.parentName ? `\n**Parent**: ${command.parentName}` : ""
+    }
+      **ID**: ${command.idSeed} ${emDash} ${italic(command.id)}${
+      command.hasChildren
         ? `\n**Number of children**: ${command.children?.commands?.length || 0}`
         : ""
-      }
-    **Category**: ${command.category || "(no category)"}${command.subcategory ? ` > ${command.subcategory}` : ""
-      }
+    }
+    **Category**: ${command.category || "(no category)"}${
+      command.subcategory ? ` > ${command.subcategory}` : ""
+    }
     
     Run ${displayNumber(count, "time")}`);
 

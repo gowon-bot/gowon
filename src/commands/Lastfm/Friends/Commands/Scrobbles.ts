@@ -57,16 +57,16 @@ export class Scrobbles extends FriendsChildCommand<typeof args> {
       0
     );
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Friends scrobbles"))
+    const embed = this.authorEmbed()
+      .setHeader("Friends scrobbles")
       .setTitle(`Your friends scrobbles ${dateRange.humanized()}`)
       .setDescription(displayNumberedList(friendDisplays))
-      .setFooter({
-        text: `Your friends have a total of ${displayNumber(
+      .setFooter(
+        `Your friends have a total of ${displayNumber(
           totalScrobbles,
           "scrobble"
-        )}`,
-      });
+        )}`
+      );
 
     await this.send(embed);
   }

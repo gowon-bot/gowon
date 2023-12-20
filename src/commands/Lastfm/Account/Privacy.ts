@@ -45,9 +45,9 @@ export default class Privacy extends Command<typeof args> {
       fetchLilacUser: true,
     });
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Privacy"))
-      .setFooter({ text: this.privacyHelp });
+    const embed = this.authorEmbed()
+      .setHeader("Privacy")
+      .setFooter(this.privacyHelp);
 
     if (privacy) {
       await this.lilacUsersService.modify(
@@ -90,13 +90,12 @@ The options for privacy are:
 
 You can set your privacy with \`${this.prefix}privacy <option>\``
         )
-        .setFooter({
-          text:
-            this.privacyHelp +
+        .setFooter(
+          this.privacyHelp +
             (!lilacUser?.privacy || lilacUser.privacy === LilacPrivacy.Unset
               ? "\nGowon will not reveal any information about you until you set your privacy"
-              : ""),
-        });
+              : "")
+        );
     }
 
     await this.send(embed);

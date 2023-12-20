@@ -65,11 +65,9 @@ export default class LastScrobbledTrack extends MirrorballBaseCommand<
 
     const [play] = response.plays.plays;
 
-    const embed = this.newEmbed()
-      .setAuthor(
-        this.generateEmbedAuthor(
-          (this.variationWasUsed("first") ? "First" : "Last") + " scrobbled"
-        )
+    const embed = this.authorEmbed()
+      .setHeader(
+        (this.variationWasUsed("first") ? "First" : "Last") + " scrobbled"
       )
       .setDescription(
         `${Emoji.usesIndexedDataDescription} ${perspective.upper.name} ${

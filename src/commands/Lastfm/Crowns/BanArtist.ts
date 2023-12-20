@@ -1,8 +1,8 @@
-import { MessageEmbed } from "discord.js";
 import { bold } from "../../../helpers/discord";
 import { Variation } from "../../../lib/command/Command";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { EmbedComponent } from "../../../lib/views/framework/EmbedComponent";
 import { CrownsChildCommand } from "./CrownsChildCommand";
 
 const args = {
@@ -50,9 +50,9 @@ export class BanArtist extends CrownsChildCommand<typeof args> {
     }
   }
 
-  private makeEmbed(artistName: string, unban: boolean): MessageEmbed {
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Crowns artist ban"))
+  private makeEmbed(artistName: string, unban: boolean): EmbedComponent {
+    const embed = this.authorEmbed()
+      .setHeader("Crowns artist ban")
       .setDescription(
         `Succesfully ${unban ? "un" : ""}banned ${bold(
           artistName

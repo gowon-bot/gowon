@@ -12,8 +12,8 @@ export class Next extends SpotifyChildCommand {
     await this.spotifyService.next(this.ctx);
 
     await this.send(
-      this.newEmbed()
-        .setAuthor(this.generateEmbedAuthor("Spotify skip"))
+      this.authorEmbed()
+        .setHeader("Spotify skip")
         .setDescription("Successfully skipped!")
     );
   }

@@ -1,4 +1,4 @@
-import { MessageEmbed, User } from "discord.js";
+import { User } from "discord.js";
 import {
   Permission,
   PermissionType,
@@ -13,6 +13,7 @@ import { Command, Variation } from "../../../lib/command/Command";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { DiscordUserArgument } from "../../../lib/context/arguments/argumentTypes/discord/DiscordUserArgument";
 import { displayUserTag } from "../../../lib/views/displays";
+import { EmbedComponent } from "../../../lib/views/framework/EmbedComponent";
 import { PermissionsChildCommand } from "./PermissionsChildCommand";
 
 const args = {
@@ -67,25 +68,25 @@ export class UserDisable extends PermissionsChildCommand<typeof args> {
       guildID: this.requiredGuild.id,
     });
 
-    let embed: MessageEmbed;
-
     if (
       !this.variationWasUsed("userenable") &&
       !this.extract.didMatch("enable")
     ) {
-      embed = await this.handleDisable(command, permission, user);
-    } else {
-      embed = await this.handleEnable(command, permission, user);
-    }
+      const embed = await this.handleDisable(command, permission, user);
 
-    await this.send(embed);
+      await this.send(embed);
+    } else {
+      const embed = await this.handleEnable(command, permission, user);
+
+      await this.send(embed);
+    }
   }
 
   private async handleDisable(
     command: Command,
     permission: Permission,
     user: User
-  ): Promise<MessageEmbed> {
+  ): Promise<EmbedComponent> {
     let deletedAllow = false;
 
     try {
@@ -108,8 +109,8 @@ export class UserDisable extends PermissionsChildCommand<typeof args> {
       }
     }
 
-    return this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Permissions user disable"))
+    return this.authorEmbed()
+      .setHeader("Permissions user disable")
       .setDescription(
         `Successfully ${deletedAllow ? "un-allowed" : "disabled"} ${code(
           command.name
@@ -121,7 +122,7 @@ export class UserDisable extends PermissionsChildCommand<typeof args> {
     command: Command,
     permission: Permission,
     user: User
-  ): Promise<MessageEmbed> {
+  ): Promise<EmbedComponent> {
     let allowed = false;
 
     try {
@@ -145,8 +146,8 @@ export class UserDisable extends PermissionsChildCommand<typeof args> {
       }
     }
 
-    return this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Permissions enable"))
+    return this.authorEmbed()
+      .setHeader("Permissions enable")
       .setDescription(
         `Successfully ${allowed ? "allowed" : "re-enabled"} ${code(
           command.name

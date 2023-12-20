@@ -79,8 +79,8 @@ export default class Pace extends LastFMBaseCommand<typeof args> {
       overallMessage: `since ${perspective.pronoun} began scrobbling`,
     });
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Pace"))
+    const embed = this.authorEmbed()
+      .setHeader("Pace")
       .setDescription(
         `At a rate of **${displayNumber(
           pace.scrobbleRate.toFixed(2),

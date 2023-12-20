@@ -31,8 +31,8 @@ export class List extends FriendsChildCommand {
       senderUser!
     );
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Friends list"))
+    const embed = this.authorEmbed()
+      .setHeader("Friends list")
       .setTitle(
         `${displayNumber(numberOfFriends, "friend")} for ${
           this.author.username

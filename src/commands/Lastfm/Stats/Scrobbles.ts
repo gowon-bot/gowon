@@ -48,17 +48,21 @@ export default class Scrobbles extends LastFMBaseCommand<typeof args> {
       date ? undefined : dateRange.to
     );
 
-    const sentMessage = await this.oldReply(
-      `${perspective.plusToHave} ${bold(
-        displayNumber(
-          scrobbles,
-          `scr${this.extract.didMatch("scrabbles") ? "a" : "o"}bble`
-        )
-      )} ${date ? `since ${displayDate(date)}` : dateRange.humanized()}`
-    );
+    const embed = this.authorEmbed()
+      .setHeader("Scrobble count")
+      .setDescription(
+        `${perspective.plusToHave} ${bold(
+          displayNumber(
+            scrobbles,
+            `scr${this.extract.didMatch("scrabbles") ? "a" : "o"}bble`
+          )
+        )} ${date ? `since ${displayDate(date)}` : dateRange.humanized()}`
+      );
 
     if (dateRange.isOverall && scrobbles % 25000 === 0 && scrobbles > 0) {
-      await sentMessage.react("🥳");
+      embed.setReacts(["🥳"]);
     }
+
+    await this.send(embed);
   }
 }

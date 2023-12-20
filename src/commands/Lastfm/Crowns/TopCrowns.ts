@@ -26,8 +26,8 @@ export class TopCrowns extends CrownsChildCommand {
       this.crownsService.countAllInServer(this.ctx, serverUsers),
     ]);
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Top crowns"))
+    const embed = this.authorEmbed()
+      .setHeader("Top crowns")
       .setTitle(`Top crowns in ${this.requiredGuild.name}`)
       .setDescription(
         displayNumberedList(

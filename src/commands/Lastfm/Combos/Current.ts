@@ -127,28 +127,26 @@ export class Current extends ComboChildCommand<typeof args> {
       )}_`
     );
 
-    const embed = this.newEmbed()
-      .setAuthor({
-        ...this.generateEmbedAuthor(
-          `${perspective.upper.possessive.replace(/`/g, "")} ongoing streaks`
-        ),
-        url: LastfmLinks.userPage(username),
-      })
+    const embed = this.authorEmbed()
+      .setHeader(
+        `${perspective.upper.possessive.replace(/`/g, "")} ongoing streaks`
+      )
+      .setHeaderURL(LastfmLinks.userPage(username))
       .setDescription(
         combo.hasAnyConsecutivePlays()
           ? lineConsolidator.consolidate()
           : "No streaks found!"
       )
-      .setFooter({
-        text: comboSaved
+      .setFooter(
+        comboSaved
           ? `This combo has been saved! See ${this.prefix}combos to see all your combos`
           : thresholdNotMet
           ? `Only combos with more than ${displayNumber(
               this.comboService.getThreshold(this.ctx),
               "play"
             )} are saved.`
-          : "",
-      });
+          : ""
+      );
 
     if (combo.hasAnyConsecutivePlays()) {
       const nowplaying = await this.lastFMService.nowPlaying(
@@ -166,9 +164,9 @@ export class Current extends ComboChildCommand<typeof args> {
 
       embed.setThumbnail(albumCover || "");
     } else {
-      embed.setFooter({
-        text: "A streak is when you loop the same artist/album/track more than once",
-      });
+      embed.setFooter(
+        "A streak is when you loop the same artist/album/track more than once"
+      );
     }
 
     await this.send(embed);

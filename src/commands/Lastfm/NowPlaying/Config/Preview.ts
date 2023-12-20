@@ -96,7 +96,7 @@ export class Preview extends NowPlayingConfigChildCommand<typeof args> {
       }
     );
 
-    let embed = this.newEmbed()
+    let embed = this.authorEmbed()
       .setDescription(
         `by ${bold(links.artist, false)}` +
           (nowPlaying.album ? ` from ${italic(links.album, false)}` : "")
@@ -104,21 +104,17 @@ export class Preview extends NowPlayingConfigChildCommand<typeof args> {
       .setTitle(sanitizeForDiscord(nowPlaying.name))
       .setURL(LastfmLinks.trackPage(nowPlaying.artist, nowPlaying.name))
       .setThumbnail(albumCover || "")
-      .setAuthor(
-        this.generateEmbedAuthor(
-          `Previewing ${
-            presetConfig
-              ? this.parsedArguments.options[0]
-              : parsedOptions.length === 1
-              ? parsedOptions[0]
-              : displayNumber(parsedOptions.length, "option")
-          }`
-        )
+      .setHeader(
+        `Previewing ${
+          presetConfig
+            ? this.parsedArguments.options[0]
+            : parsedOptions.length === 1
+            ? parsedOptions[0]
+            : displayNumber(parsedOptions.length, "option")
+        }`
       );
 
-    embed = await nowPlayingBuilder.asEmbed(mockRequirements, embed);
-
-    await this.send(embed);
+    await this.send(await nowPlayingBuilder.asEmbed(mockRequirements, embed));
   }
 
   private resolveMockRequirements(

@@ -1,8 +1,8 @@
 import { bold } from "../../../helpers/discord";
 import { displayNumber } from "../../../lib/views/displays";
-import { OverviewChildCommand } from "./OverviewChildCommand";
+import { ProfileChildCommand } from "./ProfileChildCommand";
 
-export class Breadth extends OverviewChildCommand {
+export class Breadth extends ProfileChildCommand {
   idSeed = "snsd sunny";
 
   aliases = ["diversity", "div"];
@@ -17,11 +17,13 @@ export class Breadth extends OverviewChildCommand {
 
     const breadth = await this.calculator.breadth();
 
-    const embed = (await this.overviewEmbed()).setDescription(
-      `${perspective.upper.possessive} breadth rating is ${bold(
-        displayNumber(breadth.rating.toFixed(1))
-      )} _(${breadth.ratingString})_`
-    );
+    const embed = (await this.profileEmbed())
+      .setHeader("Profile breadth")
+      .setDescription(
+        `${perspective.upper.possessive} breadth rating is ${bold(
+          displayNumber(breadth.rating.toFixed(1))
+        )} _(${breadth.ratingString})_`
+      );
 
     await this.send(embed);
   }

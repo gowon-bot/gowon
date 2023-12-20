@@ -31,8 +31,8 @@ export class ContentiousCrowns extends CrownsChildCommand {
       throw new NoContentiousCrownsError();
     }
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Contentious crowns"))
+    const embed = this.authorEmbed()
+      .setHeader("Contentious crowns")
       .setTitle(`Most contentious crowns in ${this.requiredGuild.name}`)
       .setDescription(
         `There are **${displayNumber(crownsCount, "** crown")} in ${

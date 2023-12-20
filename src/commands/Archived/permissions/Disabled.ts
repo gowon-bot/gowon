@@ -1,4 +1,4 @@
-import { PermissionsChildCommand } from "./PermissionsChildCommand";
+import { PermissionsChildCommand } from "../../Admin/Permissions/PermissionsChildCommand";
 
 export class Disabled extends PermissionsChildCommand {
   idSeed = "red velvet seulgi";

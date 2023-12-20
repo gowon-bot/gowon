@@ -25,12 +25,12 @@ export default class Wikipedia extends LastFMBaseCommand<typeof args> {
   async run() {
     let keywords = this.parsedArguments.keywords;
 
-    let { requestable } = await this.getMentions({
+    const { requestable } = await this.getMentions({
       usernameRequired: !keywords,
     });
 
     if (!keywords) {
-      let nowplaying = await this.lastFMService.nowPlaying(
+      const nowplaying = await this.lastFMService.nowPlaying(
         this.ctx,
         requestable
       );
@@ -38,11 +38,11 @@ export default class Wikipedia extends LastFMBaseCommand<typeof args> {
       keywords = `${nowplaying.artist} - ${nowplaying.name}`;
     }
 
-    let encodedKeywords = encodeURIComponent(keywords);
+    const encodedKeywords = encodeURIComponent(keywords);
 
-    let embed = this.newEmbed()
-      .setAuthor({ name: `Wikipedia search for "${keywords}"` })
-      .setTitle("Click here to view the results")
+    const embed = this.authorEmbed()
+      .setHeader("Wikipedia search")
+      .setTitle(`Wikipedia search for "${keywords}"`)
       .setURL(`https://en.wikipedia.org/w/index.php?search=${encodedKeywords}`)
       .setThumbnail(
         "https://upload.wikimedia.org/wikipedia/commons/5/53/Wikipedia-logo-en-big.png"

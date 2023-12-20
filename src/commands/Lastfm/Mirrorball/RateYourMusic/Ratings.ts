@@ -91,7 +91,7 @@ export class Ratings extends RateYourMusicIndexingChildCommand<
     paginatedCache.cacheInitial(initialPages.ratings.ratings, this.pageSize);
 
     const embed = this.authorEmbed()
-      .setHeader("Ratings")
+      .setHeader("RateYourMusic ratings")
       .setTitle(
         rating
           ? `${perspective.upper.possessive} albums rated ${rating / 2}`

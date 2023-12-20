@@ -70,7 +70,8 @@ export class CheckMany extends CrownsChildCommand<typeof args> {
       return acc;
     }, {} as CheckedCrownsDisplay);
 
-    const embed = this.newEmbed()
+    const embed = this.authorEmbed()
+      .setHeader("Crowns check many")
       .setTitle(`Crown checks for ${checkedCrowns.length} artists`)
       .setDescription(
         Object.keys(display)

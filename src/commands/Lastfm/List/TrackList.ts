@@ -23,8 +23,8 @@ export default class TrackList extends ListCommand {
       ...this.dateRange?.asTimeframeParams,
     });
 
-    const messageEmbed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Top tracks"))
+    const messageEmbed = this.authorEmbed()
+      .setHeader("Top tracks")
       .setTitle(
         `Top tracks for \`${username}\` ${
           this.dateRange?.humanized() || this.humanizedPeriod

@@ -13,8 +13,8 @@ export default class SecretCommands extends Command {
       .list({ includeSecret: true })
       .filter((c) => c.secretCommand);
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Secret commands"))
+    const embed = this.authorEmbed()
+      .setHeader("Secret commands")
       .setDescription(commands.map((c) => c.name).join(", "));
 
     await this.send(embed);

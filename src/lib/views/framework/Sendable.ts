@@ -46,12 +46,12 @@ export class Sendable<T extends SendableContent = SendableContent> {
   ): Pick<DiscordMessageOptions, "embeds"> {
     if (typeof content === "string") {
       if (overrides.withEmbed) {
-        return { embeds: [overrides.withEmbed] };
+        return { embeds: [overrides.withEmbed.asMessageEmbed()] };
       } else return {};
     } else {
       return {
         embeds: overrides?.withEmbed
-          ? [content, overrides.withEmbed]
+          ? [content, overrides.withEmbed.asMessageEmbed()]
           : [content],
       };
     }

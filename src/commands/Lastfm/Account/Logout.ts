@@ -11,8 +11,8 @@ export default class Logout extends LastFMBaseCommand {
   slashCommand = true;
 
   async run() {
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Log out"))
+    const embed = this.authorEmbed()
+      .setHeader("Log out")
       .setDescription(
         "Are you sure you want to log out? This will delete all your stored data!"
       );
@@ -29,7 +29,7 @@ export default class Logout extends LastFMBaseCommand {
         await this.discordService.edit(
           this.ctx,
           confirmationEmbed.sentMessage,
-          embed.setDescription("Logged out successfully.")
+          embed.setDescription("Logged out successfully.").asMessageEmbed()
         );
       }
     }

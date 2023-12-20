@@ -31,7 +31,7 @@ export class TopCommands extends MetaChildCommand<typeof args> {
       await this.metaService.mostUsedCommands(this.ctx, dateRange)
     ).slice(0, 10);
 
-    const embed = this.newEmbed()
+    const embed = this.authorEmbed()
       .setTitle(`Top commands in ${this.guild?.name!} ${humanizedDateRange}`)
       .setDescription(
         topCommands

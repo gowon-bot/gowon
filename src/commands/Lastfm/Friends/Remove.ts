@@ -55,10 +55,10 @@ export class Remove extends FriendsChildCommand<typeof args> {
 
     await this.friendsService.removeFriend(this.ctx, friend);
 
-    await this.send(
-      this.newEmbed().setDescription(
-        `Successfully removed ${friend?.display()} as a friend!`
-      )
-    );
+    const embed = this.authorEmbed()
+      .setHeader("Friends remove")
+      .setDescription(`Successfully removed ${friend?.display()} as a friend!`);
+
+    await this.send(embed);
   }
 }

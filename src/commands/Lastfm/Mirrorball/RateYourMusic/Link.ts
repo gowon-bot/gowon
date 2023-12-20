@@ -42,11 +42,9 @@ export class Link extends RateYourMusicChildCommand<typeof args> {
 
     const encodedKeywords = encodeURIComponent(keywords);
 
-    const embed = this.newEmbed()
-      .setAuthor(
-        this.generateEmbedAuthor(`Rateyourmusic search for "${keywords}"`)
-      )
-      .setTitle("Click here to view the results")
+    const embed = this.authorEmbed()
+      .setHeader("RateYourMusic search")
+      .setTitle(`RateYourMusic search for "${keywords}"`)
       .setURL(
         `https://www.google.com/search?q=${encodedKeywords}+site%3Arateyourmusic.com`
       )

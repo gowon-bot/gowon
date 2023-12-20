@@ -71,18 +71,18 @@ export class AlbumPlays extends FriendsChildCommand<typeof args> {
       0
     );
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Friends album plays"))
+    const embed = this.authorEmbed()
+      .setHeader("Friends album plays")
       .setTitle(
         `Your friends plays of ${albumInfo.name} by ${albumInfo.artist}`
       )
       .setDescription(displayNumberedList(friendDisplays))
-      .setFooter({
-        text: `Your friends have a total of ${displayNumber(
+      .setFooter(
+        `Your friends have a total of ${displayNumber(
           totalPlays,
           "scrobble"
-        )} of this album`,
-      });
+        )} of this album`
+      );
 
     await this.send(embed);
   }

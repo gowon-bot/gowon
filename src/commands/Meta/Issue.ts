@@ -87,7 +87,7 @@ ${
     else if (this.variationWasUsed("documentation"))
       labels.push("documentation");
 
-    let issue = await this.githubService.createIssue(this.ctx, {
+    const issue = await this.githubService.createIssue(this.ctx, {
       title,
       body: body + metadata,
       labels: labels,

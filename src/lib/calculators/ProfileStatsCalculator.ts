@@ -4,7 +4,7 @@ import { log } from "mathjs";
 import { CrownRankResponse } from "../../database/entity/Crown";
 import { LogicError } from "../../errors/errors";
 import { ago } from "../../helpers";
-import { toInt } from "../../helpers/lastfm/";
+import { toInt } from "../../helpers/lastfm";
 import { calculatePercent } from "../../helpers/stats";
 import { Requestable } from "../../services/LastFM/LastFMAPIService";
 import { LastFMService } from "../../services/LastFM/LastFMService";
@@ -36,7 +36,7 @@ export class Stat {
   }
 }
 
-export class OverviewStatsCalculator {
+export class ProfileStatsCalculator {
   private cache: {
     userInfo?: UserInfo;
     topArtists?: TopArtists;

@@ -56,8 +56,8 @@ export class Ban extends CrownsChildCommand<typeof args> {
       );
     }
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor(`Crowns ${unban ? "un" : ""}ban`))
+    const embed = this.authorEmbed()
+      .setHeader(`Crowns ${unban ? "un" : ""}ban`)
       .setDescription(
         `Successfully ${unban ? "un" : ""}banned ${code(
           discordUser?.username || "<unknown user>"

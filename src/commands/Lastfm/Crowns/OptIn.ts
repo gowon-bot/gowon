@@ -10,8 +10,8 @@ export class OptIn extends CrownsChildCommand {
   slashCommand = true;
 
   async run() {
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Crowns opt-in"))
+    const embed = this.authorEmbed()
+      .setHeader("Crowns opt-in")
       .setDescription(
         "Are you sure you want to opt back into the crowns game?"
       );
@@ -22,7 +22,7 @@ export class OptIn extends CrownsChildCommand {
       await this.crownsService.optIn(this.ctx, this.author.id);
 
       await confirmationEmbed.sentMessage?.edit({
-        embeds: [embed.setDescription("Opted you back in!")],
+        embeds: [embed.setDescription("Opted you back in!").asMessageEmbed()],
       });
     }
   }

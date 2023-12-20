@@ -155,7 +155,7 @@ export class SpotifyArguments extends BaseService<SpotifyArgumentsContext> {
     track: SpotifyTrack
   ): Promise<boolean> {
     const embed = ctx.command
-      .newEmbed()
+      .authorEmbed()
       .setAuthor(ctx.command.generateEmbedAuthor("Confirm track"))
       .setTitle("Couldn't find that exact track, did you mean:")
       .setDescription(

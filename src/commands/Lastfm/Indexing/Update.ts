@@ -42,8 +42,8 @@ export default class Update extends LilacBaseCommand<typeof args> {
       discordID: this.author.id,
     });
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Lilac updating"))
+    const embed = this.authorEmbed()
+      .setHeader("Lilac updating")
       .setDescription("Updating...");
 
     const sentMessage = await this.send(embed);
@@ -55,20 +55,22 @@ export default class Update extends LilacBaseCommand<typeof args> {
         await this.discordService.edit(
           this.ctx,
           sentMessage,
-          embed.setDescription("Done!")
+          embed.setDescription("Done!").asMessageEmbed()
         );
         subscription.unsubscribe();
       } else if (stopwatch.elapsedInMilliseconds >= 3000) {
         await this.discordService.edit(
           this.ctx,
           sentMessage,
-          embed.setDescription(
-            `Updating...
+          embed
+            .setDescription(
+              `Updating...
 ${displayProgressBar(progress.page, progress.totalPages, {
   width: this.progressBarWidth,
 })}
 *Page ${progress.page}/${progress.totalPages}*`
-          )
+            )
+            .asMessageEmbed()
         );
 
         stopwatch.zero().start();

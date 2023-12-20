@@ -9,8 +9,8 @@ import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { Paginator } from "../../../lib/paginators/Paginator";
 import { TagConsolidator } from "../../../lib/tags/TagConsolidator";
 import { displayDate, displayNumber } from "../../../lib/views/displays";
-import { RedirectsService } from "../../../services/dbservices/RedirectsService";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
+import { RedirectsService } from "../../../services/dbservices/RedirectsService";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 const args = {
@@ -88,7 +88,7 @@ export default class Week extends LastFMBaseCommand<typeof args> {
     await tagConsolidator.saveServerBannedTagsInContext(this.ctx);
     tagConsolidator.addTags(this.ctx, week.top.tags);
 
-    let embed = this.newEmbed()
+    let embed = this.authorEmbed()
       .setAuthor(this.generateEmbedAuthor())
       .setTitle(`${perspective.upper.possessive} week`).setDescription(`
       _${displayDate(sub(new Date(), { weeks: 1 }))} - ${displayDate(

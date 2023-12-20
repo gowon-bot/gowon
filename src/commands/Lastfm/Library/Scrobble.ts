@@ -39,8 +39,8 @@ export default class Scrobble extends LastFMBaseCommand<typeof args> {
     });
 
     if (!trackInfo) {
-      const baseConfirmationEmbed = this.newEmbed()
-        .setAuthor(this.generateEmbedAuthor("Confirm scrobble"))
+      const baseConfirmationEmbed = this.authorEmbed()
+        .setHeader("Confirm scrobble")
         .setDescription(
           `This track doesn't exist yet on Last.fm, are you sure you want to scrobble it?
           
@@ -100,8 +100,8 @@ export default class Scrobble extends LastFMBaseCommand<typeof args> {
         : {}
     );
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Track scrobbled"))
+    const embed = this.authorEmbed()
+      .setHeader("Track scrobbled")
       .setTitle(trackName)
       .setDescription(
         `by ${bold(trackInfo?.artist.name || artist)}${

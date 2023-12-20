@@ -62,8 +62,8 @@ export class Alias extends FriendsChildCommand<typeof args> {
       alias!
     );
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Friend alias"))
+    const embed = this.authorEmbed()
+      .setHeader("Friend alias")
       .setDescription(
         `Aliased ${code(aliasedFriend.getUsername())} as ${alias}!`
       );

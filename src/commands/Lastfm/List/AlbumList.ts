@@ -23,8 +23,8 @@ export default class AlbumList extends ListCommand {
       ...this.dateRange?.asTimeframeParams,
     });
 
-    const messageEmbed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Top albums"))
+    const messageEmbed = this.authorEmbed()
+      .setHeader("Top albums")
       .setTitle(
         `Top albums for \`${username}\` ${
           this.dateRange?.humanized() || this.humanizedPeriod

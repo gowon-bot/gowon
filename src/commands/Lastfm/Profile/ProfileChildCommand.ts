@@ -1,10 +1,11 @@
-import { HexColorString, MessageEmbed } from "discord.js";
+import { HexColorString } from "discord.js";
 import { uppercaseFirstLetter } from "../../../helpers/string";
-import { OverviewStatsCalculator } from "../../../lib/calculators/OverviewStatsCalculator";
+import { ProfileStatsCalculator } from "../../../lib/calculators/ProfileStatsCalculator";
 import { TimePeriodArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/TimePeriodArgument";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { humanizePeriod } from "../../../lib/timeAndDate/helpers/humanize";
+import { EmbedComponent } from "../../../lib/views/framework/EmbedComponent";
 import { Requestable } from "../../../services/LastFM/LastFMAPIService";
 import { LastFMPeriod } from "../../../services/LastFM/LastFMService.types";
 import { LastFMBaseChildCommand } from "../LastFMBaseCommand";
@@ -17,16 +18,16 @@ const args = {
   ...standardMentions,
 } satisfies ArgumentsMap;
 
-export abstract class OverviewChildCommand<
+export abstract class ProfileChildCommand<
   T extends typeof args = typeof args
 > extends LastFMBaseChildCommand<T> {
-  parentName = "overview";
-  subcategory = "overview";
+  parentName = "profile";
+  subcategory = "profile";
   usage = ["", "time_period @user or lfm:username"];
 
   arguments = args as T;
 
-  calculator!: OverviewStatsCalculator;
+  calculator!: ProfileStatsCalculator;
   requestable!: Requestable;
   username!: string;
   senderRequestable!: Requestable;
@@ -89,7 +90,7 @@ export abstract class OverviewChildCommand<
     this.timePeriod = (this.parsedArguments as any).timePeriod as LastFMPeriod;
     this.humanizedPeriod = humanizePeriod(this.timePeriod);
 
-    this.calculator = new OverviewStatsCalculator(
+    this.calculator = new ProfileStatsCalculator(
       this.ctx,
       requestable,
       this.discordID,
@@ -98,13 +99,13 @@ export abstract class OverviewChildCommand<
     );
   }
 
-  protected async overviewEmbed(useFooter = true): Promise<MessageEmbed> {
-    const { badge, colour, image } = await this.getAuthorDetails();
+  protected async profileEmbed(useFooter = true): Promise<EmbedComponent> {
+    const { badge, colour } = await this.getAuthorDetails();
 
-    return this.newEmbed()
-      .setAuthor({ name: this.username + badge, iconURL: image })
-      .setColor(colour as HexColorString)
-      .setFooter({ text: useFooter ? this.getFooter() : "" });
+    return this.authorEmbed()
+      .setTitle(this.username + badge)
+      .setColour(colour as HexColorString)
+      .setFooter(useFooter ? this.getFooter() : "");
   }
 
   protected getFooter(): string {

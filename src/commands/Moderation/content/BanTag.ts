@@ -80,18 +80,18 @@ export default class BanTag extends ContentModerationCommand<typeof args> {
 
     await this.banOrUnban(tag, global);
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor(`${unban ? "Unb" : "B"}an tag`))
+    const embed = this.authorEmbed()
+      .setHeader(`${unban ? "Unb" : "B"}an tag`)
       .setDescription(
         `Successfully ${unban ? "un" : ""}banned the tag: ${bold(tag)}${
           this.parsedArguments.regex ? " (regex)" : ""
         }${global ? " bot-wide" : ""}!`
       )
-      .setFooter({
-        text: `It will ${
+      .setFooter(
+        `It will ${
           unban ? "now" : "no longer"
-        } appear in places where tags are listed`,
-      });
+        } appear in places where tags are listed`
+      );
 
     await this.send(embed);
   }

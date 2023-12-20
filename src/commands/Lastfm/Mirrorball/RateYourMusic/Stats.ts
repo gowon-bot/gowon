@@ -61,7 +61,8 @@ export class Stats extends RateYourMusicIndexingChildCommand<
 
     const ratingsCounts = this.getRatingsCounts(response.ratings.ratings);
 
-    const embed = this.newEmbed()
+    const embed = this.authorEmbed()
+      .setHeader("RateYourMusic stats")
       .setTitle(`${perspective.upper.possessive} RateYourMusic statistics`)
       .setDescription(
         `_${displayNumber(

@@ -15,8 +15,8 @@ export class Guild extends SettingsChildCommand {
   guildRequired = true;
 
   async run() {
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Guild settings"))
+    const embed = this.authorEmbed()
+      .setHeader("Guild settings")
       .setDescription(
         `The guild settings for ${bold(
           this.requiredGuild.name

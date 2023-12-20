@@ -9,10 +9,12 @@ export default class Patreon extends Command {
   aliases = ["pat", "donate"];
 
   async run() {
-    const embed = this.newEmbed().setDescription(
-      `You can support me at: https://www.patreon.com/gowon_
+    const embed = this.authorEmbed()
+      .setHeader("Patreon")
+      .setDescription(
+        `You can support me at: https://www.patreon.com/gowon_
 Anything is appreciated!`
-    );
+      );
 
     await this.send(Emoji.gowonPatreon, { withEmbed: embed });
   }

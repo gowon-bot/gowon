@@ -59,7 +59,7 @@ export default class ArtistPlaysover extends LastFMBaseCommand<typeof args> {
       0
     );
 
-    const embed = this.newEmbed()
+    const embed = this.authorEmbed()
       .setAuthor(
         this.generateEmbedAuthor(`Artist plays${equal ? "equal" : "over"}`)
       )

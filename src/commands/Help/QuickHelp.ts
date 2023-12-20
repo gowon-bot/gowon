@@ -9,12 +9,8 @@ export default class QuickHelp extends Command {
   usage = [""];
 
   async run() {
-    const embed = this.newEmbed()
-      .setAuthor(
-        this.generateEmbedAuthor(
-          this.ctx.isDM() ? "Quick help in DMs" : "Quick help"
-        )
-      )
+    const embed = this.authorEmbed()
+      .setHeader(this.ctx.isDM() ? "Quick help in DMs" : "Quick help")
       .setDescription(
         `Welcome to Gowon! ${Emoji.gowonPeek}
       

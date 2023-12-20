@@ -76,10 +76,8 @@ export default class RandomsongInUsersLibrary extends LastFMBaseCommand<
         : {}
     );
 
-    const embed = this.newEmbed()
-      .setAuthor({
-        name: `${username}'s ${getOrdinal(randomIndex - 1)} top track`,
-      })
+    const embed = this.authorEmbed()
+      .setHeader(`${username}'s ${getOrdinal(randomIndex - 1)} top track`)
       .setTitle(randomSong.name)
       .setDescription(
         `by ${bold(randomSong.artist.name)}` +

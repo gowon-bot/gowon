@@ -55,8 +55,8 @@ export default class Randomsong extends LastFMBaseCommand<typeof args> {
       }
     );
 
-    const embed = this.newEmbed()
-      .setAuthor({ name: `Scrobbled by ${randomUser.lastFMUsername}` })
+    const embed = this.authorEmbed()
+      .setHeader(`Scrobbled by ${randomUser.lastFMUsername}`)
       .setTitle(randomSong.name)
       .setDescription(
         `by ${bold(randomSong.artist)}` +

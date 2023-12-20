@@ -1,4 +1,4 @@
-import { Channel, MessageEmbed } from "discord.js";
+import { Channel } from "discord.js";
 import {
   Permission,
   PermissionType,
@@ -13,6 +13,7 @@ import { code, mentionChannel } from "../../../helpers/discord";
 import { Command, Variation } from "../../../lib/command/Command";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { ChannelArgument } from "../../../lib/context/arguments/argumentTypes/discord/ChannelArgument";
+import { EmbedComponent } from "../../../lib/views/framework/EmbedComponent";
 import { PermissionsChildCommand } from "./PermissionsChildCommand";
 
 const args = {
@@ -69,25 +70,25 @@ export class ChannelDisable extends PermissionsChildCommand<typeof args> {
       guildID: this.requiredGuild.id,
     });
 
-    let embed: MessageEmbed;
-
     if (
       !this.variationWasUsed("channelenable") &&
       !this.extract.didMatch("enable")
     ) {
-      embed = await this.handleDisable(command, permission, channel);
-    } else {
-      embed = await this.handleEnable(command, permission, channel);
-    }
+      const embed = await this.handleDisable(command, permission, channel);
 
-    await this.send(embed);
+      await this.send(embed);
+    } else {
+      const embed = await this.handleEnable(command, permission, channel);
+
+      await this.send(embed);
+    }
   }
 
   private async handleDisable(
     command: Command,
     permission: Permission,
     channel: Channel
-  ): Promise<MessageEmbed> {
+  ): Promise<EmbedComponent> {
     let deletedAllow = false;
 
     try {
@@ -110,8 +111,8 @@ export class ChannelDisable extends PermissionsChildCommand<typeof args> {
       }
     }
 
-    return this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Permissions channel disable"))
+    return this.authorEmbed()
+      .setHeader("Permissions channel disable")
       .setDescription(
         `Successfully ${deletedAllow ? "un-allowed" : "disabled"} ${code(
           command.name
@@ -123,7 +124,7 @@ export class ChannelDisable extends PermissionsChildCommand<typeof args> {
     command: Command,
     permission: Permission,
     channel: Channel
-  ): Promise<MessageEmbed> {
+  ): Promise<EmbedComponent> {
     let allowed = false;
 
     try {
@@ -147,8 +148,8 @@ export class ChannelDisable extends PermissionsChildCommand<typeof args> {
       }
     }
 
-    return this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Permissions channel enable"))
+    return this.authorEmbed()
+      .setHeader("Permissions channel enable")
       .setDescription(
         `Successfully ${allowed ? "allowed" : "enabled"} ${code(
           command.name

@@ -41,9 +41,7 @@ export class Check extends CrownsChildCommand<typeof args> {
       senderDBUser: senderUser!,
     });
 
-    const baseEmbed = this.newEmbed().setAuthor(
-      this.generateEmbedAuthor("Crowns check")
-    );
+    const baseEmbed = this.authorEmbed().setHeader("Crowns check");
 
     const embed = crownCheck.asEmbed(this.ctx, baseEmbed);
 

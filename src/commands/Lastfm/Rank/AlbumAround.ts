@@ -85,8 +85,8 @@ export default class AlbumAround extends AroundCommand<typeof args> {
       );
     }
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Album around"))
+    const embed = this.authorEmbed()
+      .setHeader("Album around")
       .setTitle(
         `Albums around ${
           shouldSearchByRank

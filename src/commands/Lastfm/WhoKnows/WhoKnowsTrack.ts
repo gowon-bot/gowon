@@ -60,9 +60,7 @@ export default class WhoKnowsTrack extends WhoKnowsBaseCommand<typeof args> {
     const { rows, track } = whoKnows;
     const { rank, playcount } = whoKnowsRank;
 
-    const lineConsolidator = new LineConsolidator();
-
-    lineConsolidator.addLines(
+    const description = new LineConsolidator().addLines(
       {
         shouldDisplay: !track || rows.length === 0,
         string: "No one knows this track",
@@ -95,8 +93,8 @@ export default class WhoKnowsTrack extends WhoKnowsBaseCommand<typeof args> {
       }
     );
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Who knows track"))
+    const embed = this.authorEmbed()
+      .setHeader("Who knows track")
       .setTitle(
         `${Emoji.usesIndexedDataTitle} Who knows ${italic(
           track.name
@@ -104,18 +102,18 @@ export default class WhoKnowsTrack extends WhoKnowsBaseCommand<typeof args> {
           this.isGlobal() ? "globally" : `in ${this.requiredGuild.name}`
         }?`
       )
-      .setDescription(lineConsolidator.consolidate())
-      .setFooter({
-        text: (
+      .setDescription(description.consolidate())
+      .setFooter(
+        (
           `${displayNumber(
             whoKnowsRank.totalListeners,
             this.isGlobal() ? "global listener" : "server listener"
           )}\n` + this.footerHelp(senderLilacUser)
-        ).trim(),
-        iconURL: this.isGlobal()
-          ? this.gowonIconURL
-          : this.guild?.iconURL() ?? undefined,
-      });
+        ).trim()
+      )
+      .setFooterIcon(
+        this.isGlobal() ? this.gowonIconURL : this.guild?.iconURL() ?? undefined
+      );
 
     await this.send(embed);
   }

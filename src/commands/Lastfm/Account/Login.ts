@@ -1,4 +1,4 @@
-import { Message, MessageEmbed } from "discord.js";
+import { Message } from "discord.js";
 import { User } from "../../../database/entity/User";
 import { Stopwatch, sleep } from "../../../helpers";
 import { ReactionCollectorFilter } from "../../../helpers/discord";
@@ -8,6 +8,7 @@ import { Payload } from "../../../lib/context/Payload";
 import { EmojiRaw } from "../../../lib/emoji/Emoji";
 import { displayLink, displayProgressBar } from "../../../lib/views/displays";
 import { ConfirmationEmbed } from "../../../lib/views/embeds/ConfirmationEmbed";
+import { EmbedComponent } from "../../../lib/views/framework/EmbedComponent";
 import { LastFMSession } from "../../../services/LastFM/converters/Misc";
 
 export default class Login extends LilacBaseCommand {
@@ -27,12 +28,12 @@ export default class Login extends LilacBaseCommand {
     const url = LastfmLinks.authURL(this.lastFMService.apikey, token);
 
     await this.send(
-      this.newEmbed()
-        .setAuthor(this.generateEmbedAuthor("Login"))
+      this.authorEmbed()
+        .setHeader("Login")
         .setDescription("Please check your DMs for a login link")
     );
 
-    const embed = this.newEmbed()
+    const embed = this.authorEmbed()
       .setTitle("Login with Last.fm")
       .setDescription(
         `To login, ${displayLink(
@@ -53,11 +54,11 @@ export default class Login extends LilacBaseCommand {
     const user = await Promise.race([poll, reaction]);
 
     if (user) {
-      const successEmbed = this.newEmbed()
+      const successEmbed = this.authorEmbed()
         .setDescription(
           `Success! You've been logged in as ${user.lastFMUsername}\n\nWould you like to index your data?`
         )
-        .setFooter({ text: this.indexingHelp });
+        .setFooter(this.indexingHelp);
 
       const confirmationEmbed = new ConfirmationEmbed(
         this.ctx,
@@ -73,17 +74,19 @@ export default class Login extends LilacBaseCommand {
 
   private async impromptuIndex(
     confirmationEmbed: ConfirmationEmbed,
-    embed: MessageEmbed
+    embed: EmbedComponent
   ) {
     await this.lilacUsersService.index(this.ctx, { discordID: this.author.id });
 
     confirmationEmbed.sentMessage?.edit({
       embeds: [
-        embed.setDescription(
-          `Indexing...\n${displayProgressBar(0, 1, {
-            width: this.progressBarWidth,
-          })}\n*Loading...*`
-        ),
+        embed
+          .setDescription(
+            `Indexing...\n${displayProgressBar(0, 1, {
+              width: this.progressBarWidth,
+            })}\n*Loading...*`
+          )
+          .asMessageEmbed(),
       ],
     });
 
@@ -100,20 +103,22 @@ export default class Login extends LilacBaseCommand {
         await this.discordService.edit(
           this.ctx,
           sentMessage,
-          embed.setDescription("Done!")
+          embed.setDescription("Done!").asMessageEmbed()
         );
         subscription.unsubscribe();
       } else if (stopwatch.elapsedInMilliseconds >= 3000) {
         await this.discordService.edit(
           this.ctx,
           sentMessage,
-          embed.setDescription(
-            `Indexing...
+          embed
+            .setDescription(
+              `Indexing...
 ${displayProgressBar(progress.page, progress.totalPages, {
   width: this.progressBarWidth,
 })}
 *Page ${progress.page}/${progress.totalPages}*`
-          )
+            )
+            .asMessageEmbed()
         );
 
         stopwatch.zero().start();
@@ -192,7 +197,7 @@ ${displayProgressBar(progress.page, progress.totalPages, {
     filter: ReactionCollectorFilter,
     sentMessage: Message,
     token: string,
-    embed: MessageEmbed
+    embed: EmbedComponent
   ): Promise<User | undefined> {
     return new Promise((resolve, reject) => {
       const reactionCollector = sentMessage.createReactionCollector({
@@ -206,13 +211,15 @@ ${displayProgressBar(progress.page, progress.totalPages, {
         if (success) {
           reactionCollector.stop();
           resolve(user!);
-        } else if (!embed.footer?.text?.includes("didn't work")) {
+        } else if (!embed.footer?.includes("didn't work")) {
           this.discordService.edit(
             this.ctx,
             sentMessage,
-            embed.setFooter({
-              text: "Hmm that didn't work, please ensure you've authenticated with the link and try again",
-            })
+            embed
+              .setFooter(
+                "Hmm that didn't work, please ensure you've authenticated with the link and try again"
+              )
+              .asMessageEmbed()
           );
         }
       });
@@ -227,9 +234,9 @@ ${displayProgressBar(progress.page, progress.totalPages, {
           this.discordService.edit(
             this.ctx,
             sentMessage,
-            embed.setFooter({
-              text: "This login link has expired, please try again",
-            })
+            embed
+              .setFooter("This login link has expired, please try again")
+              .asMessageEmbed()
           );
 
           resolve(undefined);

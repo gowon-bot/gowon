@@ -82,12 +82,8 @@ export class Add extends PlaylistChildCommand<typeof args> {
       [track.uri.asString]
     );
 
-    const embed = this.newEmbed()
-      .setAuthor(
-        this.generateEmbedAuthor(
-          `${remove ? "Remove from" : "Add to"} playlist`
-        )
-      )
+    const embed = this.authorEmbed()
+      .setHeader(`${remove ? "Remove from" : "Add to"} playlist`)
       .setDescription(
         `Successfully ${remove ? "removed" : "added"} ${italic(track.name)} ${
           remove ? "from" : "to"

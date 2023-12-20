@@ -42,8 +42,8 @@ export class CrownRanks extends CrownsChildCommand<typeof args> {
       throw new UserHasNoCrownsInServerError(perspective);
     }
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Crown ranks"))
+    const embed = this.authorEmbed()
+      .setHeader("Crown ranks")
       .setTitle(`The ranks of ${discordUser?.username}'s top crowns in Last.fm`)
       .setDescription(
         crownRanks

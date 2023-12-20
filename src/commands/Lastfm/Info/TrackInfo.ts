@@ -88,7 +88,7 @@ export default class TrackInfo extends InfoCommand<typeof args> {
       }
     );
 
-    const embed = this.newEmbed()
+    const embed = this.authorEmbed()
       .setTitle(italic(trackInfo.name) + " by " + bold(trackInfo.artist.name))
       .setDescription(this.lineConsolidator.consolidate())
       .setThumbnail(trackInfo.album?.images?.get("large") || "")

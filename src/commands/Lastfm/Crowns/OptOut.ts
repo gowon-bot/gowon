@@ -15,8 +15,8 @@ export class OptOut extends CrownsChildCommand {
   async run() {
     const { dbUser } = await this.getMentions({ dbUserRequired: true });
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Crown opt-out"))
+    const embed = this.authorEmbed()
+      .setHeader("Crown opt-out")
       .setDescription(
         `Are you sure you want to opt out? This will delete all your crowns!`
       );
@@ -37,11 +37,13 @@ export class OptOut extends CrownsChildCommand {
 
       await confirmationEmbed.sentMessage?.edit({
         embeds: [
-          embed.setDescription(
-            `Opted you out, deleting ${bold(
-              displayNumber(numberOfCrowns, "crown")
-            )}!`
-          ),
+          embed
+            .setDescription(
+              `Opted you out, deleting ${bold(
+                displayNumber(numberOfCrowns, "crown")
+              )}!`
+            )
+            .asMessageEmbed(),
         ],
       });
     }

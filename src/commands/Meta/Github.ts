@@ -13,7 +13,8 @@ export default class Github extends Command {
       this.gowonClient.specialUsers.developers[0].id
     );
 
-    const embed = this.newEmbed()
+    const embed = this.authorEmbed()
+      .setHeader("Source code")
       .setTitle("Gowon's source code </>")
       .setDescription(
         `You can find the bot repo at ${displayLink(
@@ -29,13 +30,12 @@ export default class Github extends Command {
       
 The bot is written in Typescript with Discord.js, Lilac is written in Elixir serving a GraphQL api, and Gowon.ca is built with Typescript and React.`
       )
-      .setFooter({
-        text: `Made with <3 by ${displayUserTag(author)}`,
-        iconURL:
-          (
-            await this.gowonClient.client.users.fetch("267794154459889664")
-          ).avatarURL({ dynamic: true }) ?? undefined,
-      });
+      .setFooter(`Made with <3 by ${displayUserTag(author)}`)
+      .setFooterIcon(
+        (
+          await this.gowonClient.client.users.fetch("267794154459889664")
+        ).avatarURL({ dynamic: true }) ?? undefined
+      );
 
     await this.send(embed);
   }

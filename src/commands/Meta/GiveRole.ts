@@ -70,10 +70,11 @@ export default class GiveRole extends Command<typeof args> {
       (newRoles as CommandAccessRoleName[]) || []
     );
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Role management"))
+    const embed = this.authorEmbed()
+      .setHeader(`${this.variationWasUsed("remove") ? "Remove" : "Give"} role`)
       .setDescription(
-        `Succesfully ${this.variationWasUsed("remove") ? "removed" : "added"
+        `Succesfully ${
+          this.variationWasUsed("remove") ? "removed" : "added"
         } the role ${code(role)}`
       );
 

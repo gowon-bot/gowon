@@ -43,8 +43,8 @@ export default class LastFmToDiscord extends LastFMBaseCommand<typeof args> {
       );
     }
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Account lookup"))
+    const embed = this.authorEmbed()
+      .setHeader("Account lookup")
       .setDescription(
         `${bold(member.nickname || member.user.username)} (${displayUserTag(
           member.user

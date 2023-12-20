@@ -21,8 +21,8 @@ export class SetInactiveRole extends CrownsChildCommand<typeof args> {
 
     await this.crownsService.setInactiveRole(this.ctx, inactiveRole?.id);
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Crowns inactive role"))
+    const embed = this.authorEmbed()
+      .setHeader("Crowns inactive role")
       .setDescription(
         inactiveRole?.name
           ? `Set the inactive role for crowns to ${inactiveRole.name.trim()}`

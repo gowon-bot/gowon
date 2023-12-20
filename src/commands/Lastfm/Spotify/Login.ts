@@ -17,16 +17,16 @@ export class Login extends SpotifyBaseCommand {
 
   async run() {
     await this.send(
-      this.newEmbed()
-        .setAuthor(this.generateEmbedAuthor("Spotify login"))
+      this.authorEmbed()
+        .setHeader("Spotify login")
         .setDescription(`Please check your DMs for a login link`)
     );
 
     const state = this.spotifyAuthenticationService.generateState();
     const url = this.spotifyAuthenticationService.generateAuthURL(state);
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Login with Spotify"))
+    const embed = this.authorEmbed()
+      .setHeader("Login with Spotify")
       .setDescription(
         `To login, ${displayLink(
           "click the link",
@@ -48,7 +48,11 @@ export class Login extends SpotifyBaseCommand {
     );
 
     await sentMessage.edit({
-      embeds: [embed.setDescription("Successfully logged in with Spotify!")],
+      embeds: [
+        embed
+          .setDescription("Successfully logged in with Spotify!")
+          .asMessageEmbed(),
+      ],
     });
   }
 }

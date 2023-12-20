@@ -100,7 +100,7 @@ export class Taste extends RateYourMusicIndexingChildCommand<
     }% match found (${this.tasteService.compatibility(tasteMatch.percent)})_`;
 
     const embed = this.authorEmbed()
-      .setHeader("Ratings taste")
+      .setHeader("RateYourMusic taste")
       .setTitle(
         `Taste comparison for ${displayUserTag(
           this.author

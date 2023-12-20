@@ -1,15 +1,15 @@
 import { CommandGroup } from "../../../lib/command/CommandGroup";
 import { AdminBaseParentCommand } from "../AdminBaseCommand";
-import { UserDisable } from "./UserDisable";
-import { Help } from "./Help";
-import { View } from "./View";
-import { Disable } from "./Disable";
-import { ChannelDisable } from "./ChannelDisable";
-import { SetAdminRole } from "./SetAdminRole";
-import { RoleDisable } from "./RoleDisable";
 import { BotDisable } from "./BotDisable";
 import { BotwideUserDisable } from "./BotwideUserDisable";
+import { ChannelDisable } from "./ChannelDisable";
+import { Disable } from "./Disable";
+import { Help } from "./Help";
+import { RoleDisable } from "./RoleDisable";
+import { SetAdminRole } from "./SetAdminRole";
 import { SyncGuildPermissions } from "./SyncGuildPermissions";
+import { UserDisable } from "./UserDisable";
+import { View } from "./View";
 
 export default class PermissionsParentCommand extends AdminBaseParentCommand {
   idSeed = "loona vivi";

@@ -9,9 +9,7 @@ export class Help extends SpotifyChildCommand {
   usage = ["public", "private"];
 
   async run() {
-    const embed = this.newEmbed().setAuthor(
-      this.generateEmbedAuthor("Spotify help")
-    ).setDescription(`
+    const embed = this.authorEmbed().setHeader("Spotify help").setDescription(`
 You can see a list of all Spotify commands at ${displayLink(
       "gowon.ca/commands/spotify",
       "https://gowon.ca/commands/spotify"

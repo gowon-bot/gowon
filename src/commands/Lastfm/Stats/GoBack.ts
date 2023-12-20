@@ -64,7 +64,7 @@ export default class GoBack extends LastFMBaseCommand<typeof args> {
         `${perspective.plusToHave} not scrobbled any tracks in that time period!`
       );
 
-    const embed = this.newEmbed(await trackEmbed(this.ctx, track));
+    const embed = this.authorEmbed(await trackEmbed(this.ctx, track));
 
     embed.setDescription(
       embed.description + `\n\nScrobbled on ${displayDate(track.scrobbledAt)}`

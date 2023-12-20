@@ -72,13 +72,7 @@ export class Add extends NowPlayingConfigChildCommand<typeof args> {
 
     await this.configService.saveConfigForUser(this.ctx, senderUser!, config);
 
-    const embed = this.newEmbed().setAuthor(
-      this.generateEmbedAuthor("Config add")
-    );
-
-    const consolidator = new LineConsolidator();
-
-    consolidator.addLines(
+    const description = new LineConsolidator().addLines(
       {
         string: `**Ignored**: ${ignored.map((c) => code(c)).join(", ")}`,
         shouldDisplay: !!ignored.length,
@@ -86,11 +80,14 @@ export class Add extends NowPlayingConfigChildCommand<typeof args> {
       `Your new config: ${config.map((c) => code(c)).join(", ")}`
     );
 
-    embed.setDescription(consolidator.consolidate()).setFooter({
-      text: ignored.length
-        ? `Nonexistant config was ignored. See ${this.prefix}npc help for a list of options`
-        : "",
-    });
+    const embed = this.authorEmbed()
+      .setHeader("Nowplaying config add")
+      .setDescription(description)
+      .setFooter(
+        ignored.length
+          ? `Nonexistant config was ignored. See ${this.prefix}npc help for a list of options`
+          : ""
+      );
 
     await this.send(embed);
   }

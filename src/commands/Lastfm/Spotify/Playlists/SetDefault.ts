@@ -10,7 +10,7 @@ const args = {
     required: true,
     description: "The name of the playlist to set as the default",
   }),
-} satisfies ArgumentsMap
+} satisfies ArgumentsMap;
 
 export class SetDefault extends PlaylistChildCommand<typeof args> {
   idSeed = "pink fantasy arang";
@@ -44,8 +44,8 @@ export class SetDefault extends PlaylistChildCommand<typeof args> {
       foundPlaylist
     );
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Spotify default playlist"))
+    const embed = this.authorEmbed()
+      .setHeader("Spotify default playlist")
       .setDescription(
         `Succesfully set ${bold(foundPlaylist.name)} as your default playlist!`
       );

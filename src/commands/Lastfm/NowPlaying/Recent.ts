@@ -1,10 +1,10 @@
 import { bold, italic } from "../../../helpers/discord";
 import { LastfmLinks } from "../../../helpers/lastfm/LastfmLinks";
 import { bullet } from "../../../helpers/specialCharacters";
+import { requestableAsUsername } from "../../../lib/MultiRequester";
 import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
-import { requestableAsUsername } from "../../../lib/MultiRequester";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import {
@@ -59,13 +59,11 @@ export default class Recent extends LastFMBaseCommand<typeof args> {
       }
     );
 
-    const embed = this.newEmbed()
-      .setAuthor({
-        ...this.generateEmbedAuthor(
-          `${perspective.upper.possessive.replace(/`/g, "")} recent tracks`
-        ),
-        url: LastfmLinks.userPage(requestableAsUsername(requestable)),
-      })
+    const embed = this.authorEmbed()
+      .setHeader(
+        `${perspective.upper.possessive.replace(/`/g, "")} recent tracks`
+      )
+      .setHeaderURL(LastfmLinks.userPage(requestableAsUsername(requestable)))
       .setDescription(
         (recentTracks.isNowPlaying
           ? `\`${amount! > 9 ? " " : ""}•\`. ` +
