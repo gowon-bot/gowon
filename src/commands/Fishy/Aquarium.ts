@@ -1,5 +1,5 @@
 import { ArgumentsMap } from "../../lib/context/arguments/types";
-import { AquariumEmbed } from "../../lib/views/embeds/AquariumEmbed";
+import { AquariumEmbed } from "../../lib/ui/embeds/AquariumEmbed";
 import { FishyChildCommand } from "./FishyChildCommand";
 
 const args = {} satisfies ArgumentsMap;
@@ -21,7 +21,11 @@ export class Aquarium extends FishyChildCommand<typeof args> {
 
     const aquarium = await this.fishyService.getAquarium(fishyProfile);
 
-    const embed = new AquariumEmbed(this.authorEmbed(), aquarium);
+    const embed = this.authorEmbed()
+      .setHeader("Fishy aquarium")
+      .setTitle("Your aquarium")
+      .transform(AquariumEmbed)
+      .setAquarium(aquarium);
 
     await this.send(embed);
   }

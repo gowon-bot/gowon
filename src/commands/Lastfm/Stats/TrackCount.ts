@@ -3,7 +3,7 @@ import { TimePeriodArgument } from "../../../lib/context/arguments/argumentTypes
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { humanizePeriod } from "../../../lib/timeAndDate/helpers/humanize";
-import { displayNumber } from "../../../lib/views/displays";
+import { displayNumber } from "../../../lib/ui/displays";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 const args = {

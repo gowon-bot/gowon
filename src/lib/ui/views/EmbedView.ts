@@ -12,9 +12,13 @@ import {
 import { LineConsolidator } from "../../LineConsolidator";
 import { Image } from "../Image";
 import { displayUserTag } from "../displays";
-import { UIComponent, UIComponentOptions } from "./UIComponent";
+import { View, ViewOptions } from "./View";
 
-export class EmbedComponent extends UIComponent {
+export interface Transformable<T extends View> {
+  new (embed: EmbedView): T;
+}
+
+export class EmbedView extends View {
   private title?: string;
   private url?: string;
   private header?: string;
@@ -30,7 +34,7 @@ export class EmbedComponent extends UIComponent {
   private user?: User;
   private fields?: EmbedFieldData[];
 
-  constructor(options?: Partial<UIComponentOptions>) {
+  constructor(options?: Partial<ViewOptions>) {
     super(options || {});
   }
 
@@ -96,6 +100,10 @@ export class EmbedComponent extends UIComponent {
     this.footer = ((this.footer || "") + footer).trim();
 
     return this;
+  }
+
+  transform<T extends View>(klass: Transformable<T>): T {
+    return new klass(this);
   }
 
   setFooterIcon(icon: string | undefined): this {

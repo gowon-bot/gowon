@@ -9,7 +9,7 @@ import {
 } from "../../../helpers/discord";
 import { GowonContext } from "../../../lib/context/Context";
 import { Emoji } from "../../../lib/emoji/Emoji";
-import { displayNumber } from "../../../lib/views/displays";
+import { displayNumber } from "../../../lib/ui/displays";
 import {
   CrownOptions,
   CrownState,

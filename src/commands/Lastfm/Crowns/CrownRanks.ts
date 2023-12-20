@@ -2,7 +2,7 @@ import { UserHasNoCrownsInServerError } from "../../../errors/commands/crowns";
 import { bold } from "../../../helpers/discord";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
-import { displayNumber } from "../../../lib/views/displays";
+import { displayNumber } from "../../../lib/ui/displays";
 import { CrownsChildCommand } from "./CrownsChildCommand";
 
 const args = {

@@ -5,7 +5,7 @@ import { TimePeriodArgument } from "../../../lib/context/arguments/argumentTypes
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { humanizePeriod } from "../../../lib/timeAndDate/helpers/humanize";
-import { EmbedComponent } from "../../../lib/views/framework/EmbedComponent";
+import { EmbedView } from "../../../lib/ui/views/EmbedView";
 import { Requestable } from "../../../services/LastFM/LastFMAPIService";
 import { LastFMPeriod } from "../../../services/LastFM/LastFMService.types";
 import { LastFMBaseChildCommand } from "../LastFMBaseCommand";
@@ -99,7 +99,7 @@ export abstract class ProfileChildCommand<
     );
   }
 
-  protected async profileEmbed(useFooter = true): Promise<EmbedComponent> {
+  protected async profileEmbed(useFooter = true): Promise<EmbedView> {
     const { badge, colour } = await this.getAuthorDetails();
 
     return this.authorEmbed()

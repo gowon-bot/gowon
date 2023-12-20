@@ -1,7 +1,7 @@
 import { Stopwatch } from "../../../helpers";
 import { LilacBaseCommand } from "../../../lib/Lilac/LilacBaseCommand";
-import { displayProgressBar } from "../../../lib/views/displays";
-import { ConfirmationEmbed } from "../../../lib/views/embeds/ConfirmationEmbed";
+import { displayProgressBar } from "../../../lib/ui/displays";
+import { ConfirmationView } from "../../../lib/ui/views/ConfirmationView";
 
 export default class Index extends LilacBaseCommand {
   idSeed = "iz*one yujin";
@@ -25,7 +25,7 @@ export default class Index extends LilacBaseCommand {
       )
       .setFooter(this.indexingHelp);
 
-    const confirmationEmbed = new ConfirmationEmbed(this.ctx, embed);
+    const confirmationEmbed = new ConfirmationView(this.ctx, embed);
 
     if (!(await confirmationEmbed.awaitConfirmation(this.ctx))) {
       return;

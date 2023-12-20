@@ -5,11 +5,11 @@ import { ImageArgument } from "../../../lib/context/arguments/argumentTypes/Imag
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { URLParser } from "../../../lib/context/arguments/parsers/URLParser";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { ConfirmationView } from "../../../lib/ui/views/ConfirmationView";
 import { ArgumentValidationError } from "../../../lib/validation/validators/BaseValidator";
-import { ConfirmationEmbed } from "../../../lib/views/embeds/ConfirmationEmbed";
 import { LastFMArguments } from "../../../services/LastFM/LastFMArguments";
-import { AlbumCoverService } from "../../../services/moderation/AlbumCoverService";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
+import { AlbumCoverService } from "../../../services/moderation/AlbumCoverService";
 import { ContentModerationCommand } from "./ContentModerationCommand";
 
 const args = {
@@ -111,7 +111,7 @@ This will ${shouldClear ? "clear" : "set"} the image ${bold(
       .setImage(!shouldClear ? image.asURL() : "")
       .setThumbnail(existingCover?.url || "");
 
-    const confirmationEmbed = new ConfirmationEmbed(
+    const confirmationEmbed = new ConfirmationView(
       this.ctx,
       embed,
       this.ctx.payload

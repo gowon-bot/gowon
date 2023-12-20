@@ -1,8 +1,8 @@
 import { standardMentions } from "../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../lib/context/arguments/types";
-import { displayNumberedList } from "../../lib/views/displays";
-import { SimpleScrollingEmbed } from "../../lib/views/embeds/SimpleScrollingEmbed";
-import { displayFishyCollectionProgress } from "../../lib/views/fishy";
+import { displayNumberedList } from "../../lib/ui/displays";
+import { displayFishyCollectionProgress } from "../../lib/ui/fishy";
+import { ScrollingListView } from "../../lib/ui/views/ScrollingListView";
 import { Fishy } from "../../services/fishy/Fishy";
 import { findFishy, fishyList } from "../../services/fishy/fishyList";
 import { FishyChildCommand } from "./FishyChildCommand";
@@ -45,7 +45,7 @@ export class Collection extends FishyChildCommand<typeof args> {
       .setHeader("Fishy collection")
       .setTitle(`${perspective.upper.possessive} fishy collection`);
 
-    const scrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
+    const scrollingEmbed = new ScrollingListView(this.ctx, embed, {
       items: fishyDisplayList,
       pageSize: 15,
       pageRenderer(items, { offset }) {

@@ -4,7 +4,7 @@ import { code } from "../../../helpers/discord";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { TimeZone as TimeZoneType } from "../../../lib/timeAndDate/TimeZone";
-import { displayLink } from "../../../lib/views/displays";
+import { displayLink } from "../../../lib/ui/displays";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { TimeAndDateService } from "../../../services/TimeAndDateService";
 import { SettingsChildCommand } from "./SettingsChildCommand";

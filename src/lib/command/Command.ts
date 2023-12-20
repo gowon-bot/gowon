@@ -37,11 +37,11 @@ import { GowonContext } from "../context/Context";
 import { ArgumentsMap, ParsedArguments } from "../context/arguments/types";
 import { Emoji, EmojiRaw } from "../emoji/Emoji";
 import { SettingsService } from "../settings/SettingsService";
+import { Sendable, SendableContent } from "../ui/Sendable";
+import { displayUserTag } from "../ui/displays";
+import { errorEmbed } from "../ui/embeds";
+import { EmbedView } from "../ui/views/EmbedView";
 import { Validation, ValidationChecker } from "../validation/ValidationChecker";
-import { displayUserTag } from "../views/displays";
-import { errorEmbed } from "../views/embeds";
-import { EmbedComponent } from "../views/framework/EmbedComponent";
-import { Sendable, SendableContent } from "../views/framework/Sendable";
 import { CommandGroup } from "./CommandGroup";
 import { CommandRegistry } from "./CommandRegistry";
 import { CommandAccess } from "./access/access";
@@ -419,8 +419,8 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
     return await this.discordService.send(this.ctx, new Sendable(content));
   }
 
-  public authorEmbed(): EmbedComponent {
-    return new EmbedComponent().setAuthor(this.author, this.authorMember);
+  public authorEmbed(): EmbedView {
+    return new EmbedView().setAuthor(this.author, this.authorMember);
   }
 
   /** @deprecated Use Command#authorEmbed + EmbedComponent#setHeader instead */

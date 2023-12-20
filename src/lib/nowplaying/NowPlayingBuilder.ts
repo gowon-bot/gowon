@@ -1,7 +1,7 @@
 import { sum } from "mathjs";
 import { asyncMap } from "../../helpers";
 import { UNUSED_CONFIG } from "../../services/dbservices/NowPlayingService";
-import { EmbedComponent } from "../views/framework/EmbedComponent";
+import { EmbedView } from "../ui/views/EmbedView";
 import { PresentedComponent } from "./base/BaseNowPlayingComponent";
 import {
   compoundComponentList,
@@ -47,8 +47,8 @@ export class NowPlayingBuilder {
 
   async asEmbed(
     resolvedRequirements: ResolvedRequirements,
-    embed?: EmbedComponent
-  ): Promise<EmbedComponent> {
+    embed?: EmbedView
+  ): Promise<EmbedView> {
     const presentedComponents = await this.getPresentedComponents(
       resolvedRequirements
     );
@@ -57,7 +57,7 @@ export class NowPlayingBuilder {
       presentedComponents.filter((s) => !!s.string && s.size !== undefined)
     );
 
-    return (embed || new EmbedComponent()).setFooter(
+    return (embed || new EmbedView()).setFooter(
       presented.map((row) => row.map((r) => r.string).join(" • ")).join("\n")
     );
   }

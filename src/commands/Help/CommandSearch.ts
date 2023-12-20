@@ -3,7 +3,7 @@ import { Command } from "../../lib/command/Command";
 import { StringArgument } from "../../lib/context/arguments/argumentTypes/StringArgument";
 import { ArgumentsMap } from "../../lib/context/arguments/types";
 import { PermissionsService } from "../../lib/permissions/PermissionsService";
-import { displayNumber } from "../../lib/views/displays";
+import { displayNumber } from "../../lib/ui/displays";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 
 const args = {

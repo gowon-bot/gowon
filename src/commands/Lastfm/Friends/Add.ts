@@ -13,7 +13,7 @@ import { DiscordIDMention } from "../../../lib/context/arguments/mentionTypes/Di
 import { LastFMMention } from "../../../lib/context/arguments/mentionTypes/LastFMMention";
 import { DiscordUsernameMention } from "../../../lib/context/arguments/mentionTypes/UsernameMention";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
-import { displayUserTag } from "../../../lib/views/displays";
+import { displayUserTag } from "../../../lib/ui/displays";
 import { FriendsChildCommand } from "./FriendsChildCommand";
 
 const args = {

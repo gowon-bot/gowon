@@ -13,7 +13,7 @@ import {
   displayLink,
   displayNumber,
   displayNumberedList,
-} from "../../../lib/views/displays";
+} from "../../../lib/ui/displays";
 import { CrownsService } from "../../../services/dbservices/crowns/CrownsService";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { WhoKnowsBaseCommand } from "./LilacWhoKnowsBaseCommand";

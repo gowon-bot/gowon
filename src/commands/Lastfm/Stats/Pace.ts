@@ -9,9 +9,9 @@ import { standardMentions } from "../../../lib/context/arguments/mentionTypes/me
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { DateRange } from "../../../lib/timeAndDate/DateRange";
 import { humanizeDateRange } from "../../../lib/timeAndDate/helpers/humanize";
+import { displayDate, displayNumber } from "../../../lib/ui/displays";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
-import { displayDate, displayNumber } from "../../../lib/views/displays";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 const args = {

@@ -10,7 +10,7 @@ import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { FMUsernameDisplay } from "../../../lib/settings/SettingValues";
 import { SettingsService } from "../../../lib/settings/SettingsService";
 import { TagConsolidator } from "../../../lib/tags/TagConsolidator";
-import { displayNumber, displayUserTag } from "../../../lib/views/displays";
+import { displayNumber, displayUserTag } from "../../../lib/ui/displays";
 import { Requestable } from "../../../services/LastFM/LastFMAPIService";
 import {
   AlbumInfo,

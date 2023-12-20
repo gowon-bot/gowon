@@ -14,7 +14,7 @@ import { ArgumentsMap } from "../../lib/context/arguments/types";
 import { Emoji } from "../../lib/emoji/Emoji";
 import { LineConsolidator } from "../../lib/LineConsolidator";
 import { PermissionsService } from "../../lib/permissions/PermissionsService";
-import { displayCommandIcons } from "../../lib/views/command";
+import { displayCommandIcons } from "../../lib/ui/command";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 
 const args = {

@@ -1,10 +1,10 @@
+import { bold } from "../../../helpers/discord";
 import { calculatePercent } from "../../../helpers/stats";
-import { LastFMBaseCommand } from "../LastFMBaseCommand";
-import { displayNumber } from "../../../lib/views/displays";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
-import { bold } from "../../../helpers/discord";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { displayNumber } from "../../../lib/ui/displays";
+import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 const args = {
   ...prefabArguments.artist,

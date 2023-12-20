@@ -9,8 +9,8 @@ import {
   displayNumber,
   displayRating,
   displayUserTag,
-} from "../../../../lib/views/displays";
-import { SimpleScrollingEmbed } from "../../../../lib/views/embeds/SimpleScrollingEmbed";
+} from "../../../../lib/ui/displays";
+import { ScrollingListView } from "../../../../lib/ui/views/ScrollingListView";
 import { ServiceRegistry } from "../../../../services/ServicesRegistry";
 import { TasteService } from "../../../../services/taste/TasteService";
 import { RatingPair } from "../../../../services/taste/TasteService.types";
@@ -107,7 +107,7 @@ export class Taste extends RateYourMusicIndexingChildCommand<
         )} and ${displayUserTag(discordUser)}`
       );
 
-    const scrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
+    const scrollingEmbed = new ScrollingListView(this.ctx, embed, {
       items: tasteMatch.ratings,
       pageSize: 10,
       pageRenderer: (ratings) => {

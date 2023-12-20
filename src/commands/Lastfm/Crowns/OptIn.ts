@@ -1,4 +1,4 @@
-import { ConfirmationEmbed } from "../../../lib/views/embeds/ConfirmationEmbed";
+import { ConfirmationView } from "../../../lib/ui/views/ConfirmationView";
 import { CrownsChildCommand } from "./CrownsChildCommand";
 
 export class OptIn extends CrownsChildCommand {
@@ -16,7 +16,7 @@ export class OptIn extends CrownsChildCommand {
         "Are you sure you want to opt back into the crowns game?"
       );
 
-    const confirmationEmbed = new ConfirmationEmbed(this.ctx, embed);
+    const confirmationEmbed = new ConfirmationView(this.ctx, embed);
 
     if (await confirmationEmbed.awaitConfirmation(this.ctx)) {
       await this.crownsService.optIn(this.ctx, this.author.id);

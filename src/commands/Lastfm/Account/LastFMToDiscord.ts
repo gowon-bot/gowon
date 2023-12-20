@@ -2,7 +2,7 @@ import { LogicError } from "../../../errors/errors";
 import { bold, code } from "../../../helpers/discord";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
-import { displayUserTag } from "../../../lib/views/displays";
+import { displayUserTag } from "../../../lib/ui/displays";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 const args = {

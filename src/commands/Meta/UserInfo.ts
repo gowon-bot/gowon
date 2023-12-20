@@ -6,7 +6,7 @@ import { roles } from "../../lib/command/access/roles";
 import { standardMentions } from "../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../lib/context/arguments/types";
 import { Emoji } from "../../lib/emoji/Emoji";
-import { displayNumber } from "../../lib/views/displays";
+import { displayNumber } from "../../lib/ui/displays";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { BotStatsService } from "../../services/dbservices/BotStatsService";
 import { LilacLibraryService } from "../../services/lilac/LilacLibraryService";

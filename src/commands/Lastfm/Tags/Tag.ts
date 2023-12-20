@@ -5,11 +5,8 @@ import { StringArgument } from "../../../lib/context/arguments/argumentTypes/Str
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { Paginator } from "../../../lib/paginators/Paginator";
-import {
-  displayNumber,
-  displayNumberedList,
-} from "../../../lib/views/displays";
-import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingEmbed";
+import { displayNumber, displayNumberedList } from "../../../lib/ui/displays";
+import { ScrollingListView } from "../../../lib/ui/views/ScrollingListView";
 import { TopArtists } from "../../../services/LastFM/converters/TopTypes";
 import { LilacArtistsService } from "../../../services/lilac/LilacArtistsService";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
@@ -122,7 +119,7 @@ export default class Tag extends LastFMBaseCommand<typeof args> {
         `${perspective.upper.possessive} top ${tagTopArtists.meta.tag} artists`
       );
 
-    const scrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
+    const scrollingEmbed = new ScrollingListView(this.ctx, embed, {
       items: overlap,
       pageSize: 15,
       pageRenderer(overlap, { offset }) {

@@ -2,9 +2,9 @@ import { format } from "date-fns";
 import { Command, Variation } from "../../lib/command/Command";
 import { StringArgument } from "../../lib/context/arguments/argumentTypes/StringArgument";
 import { ArgumentsMap } from "../../lib/context/arguments/types";
+import { displayLink } from "../../lib/ui/displays";
 import { Validation } from "../../lib/validation/ValidationChecker";
 import { validators } from "../../lib/validation/validators";
-import { displayLink } from "../../lib/views/displays";
 import { GithubService } from "../../services/Github/GithubService";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 

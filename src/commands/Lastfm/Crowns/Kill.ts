@@ -2,7 +2,7 @@ import { CrownDoesntExistError } from "../../../errors/commands/crowns";
 import { bold } from "../../../helpers/discord";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
-import { ConfirmationEmbed } from "../../../lib/views/embeds/ConfirmationEmbed";
+import { ConfirmationView } from "../../../lib/ui/views/ConfirmationView";
 import { CrownsChildCommand } from "./CrownsChildCommand";
 
 const args = {
@@ -37,7 +37,7 @@ export class Kill extends CrownsChildCommand<typeof args> {
         `Are you sure you want to kill the crown for ${bold(crown.artistName)}?`
       );
 
-    const confirmationEmbed = new ConfirmationEmbed(this.ctx, embed);
+    const confirmationEmbed = new ConfirmationView(this.ctx, embed);
 
     if (await confirmationEmbed.awaitConfirmation(this.ctx)) {
       await this.crownsService.killCrown(this.ctx, artist);

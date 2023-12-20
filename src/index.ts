@@ -12,7 +12,7 @@ import { gowonAPIPort } from "./api";
 import { HeaderlessLogger } from "./lib/Logger";
 import { GowonContext } from "./lib/context/Context";
 import { Payload } from "./lib/context/Payload";
-import { displayUserTag } from "./lib/views/displays";
+import { displayUserTag } from "./lib/ui/displays";
 import { MockMessage } from "./mocks/discord";
 import { ReportingService } from "./services/analytics/ReportingService";
 import { UsersService } from "./services/dbservices/UsersService";

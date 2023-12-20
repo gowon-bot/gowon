@@ -1,11 +1,11 @@
-import { displayNumber } from "../../../lib/views/displays";
-import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
-import { LastFMBaseCommand } from "../LastFMBaseCommand";
-import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
-import { Flag } from "../../../lib/context/arguments/argumentTypes/Flag";
 import { CommandRedirect } from "../../../lib/command/Command";
-import GlobalTrackPlays from "./GlobalTrackPlays";
+import { Flag } from "../../../lib/context/arguments/argumentTypes/Flag";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
+import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { displayNumber } from "../../../lib/ui/displays";
+import { LastFMBaseCommand } from "../LastFMBaseCommand";
+import GlobalTrackPlays from "./GlobalTrackPlays";
 
 const args = {
   ...prefabArguments.track,
@@ -57,13 +57,13 @@ export default class TrackPlays extends LastFMBaseCommand<typeof args> {
 
     await this.oldReply(
       `${hamham ? "FTFY\n" : ""}${perspective.plusToHave}` +
-      (trackDetails.userPlaycount === 0
-        ? "n't scrobbled"
-        : ` **${displayNumber(
-          trackDetails.userPlaycount,
-          "**scrobble"
-        )} of`) +
-      ` **${trackDetails.name}** by ${trackDetails.artist.name}`
+        (trackDetails.userPlaycount === 0
+          ? "n't scrobbled"
+          : ` **${displayNumber(
+              trackDetails.userPlaycount,
+              "**scrobble"
+            )} of`) +
+        ` **${trackDetails.name}** by ${trackDetails.artist.name}`
     );
   }
 }

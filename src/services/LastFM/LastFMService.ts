@@ -7,7 +7,7 @@ import {
 import { code } from "../../helpers/discord";
 import { requestableAsUsername } from "../../lib/MultiRequester";
 import { GowonContext } from "../../lib/context/Context";
-import { displayNumber } from "../../lib/views/displays";
+import { displayNumber } from "../../lib/ui/displays";
 import { LastFMAPIService, Requestable } from "./LastFMAPIService";
 import {
   AlbumInfoParams,

@@ -10,8 +10,8 @@ import {
 import { ReactionCollectorFilter } from "../../../helpers/discord";
 import { GowonContext } from "../../context/Context";
 import { EmojiRaw } from "../../emoji/Emoji";
-import { EmbedComponent } from "../framework/EmbedComponent";
-import { UIComponent } from "../framework/UIComponent";
+import { EmbedView } from "./EmbedView";
+import { View } from "./View";
 
 export interface ScrollingEmbedOptions {
   initialItems: string | EmbedFieldData[];
@@ -38,7 +38,7 @@ export function isEmbedFields(
   );
 }
 
-export class ScrollingEmbed extends UIComponent {
+export class ScrollingView extends View {
   private sentMessage!: Message;
   private currentPage = 1;
   private currentItems: string | EmbedFieldData[];
@@ -52,7 +52,7 @@ export class ScrollingEmbed extends UIComponent {
 
   constructor(
     private ctx: GowonContext,
-    private embed: EmbedComponent,
+    private embed: EmbedView,
     options: Partial<ScrollingEmbedOptions>
   ) {
     super();

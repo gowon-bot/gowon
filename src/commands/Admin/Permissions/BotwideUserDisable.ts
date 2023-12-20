@@ -7,7 +7,7 @@ import { bold, code } from "../../../helpers/discord";
 import { Variation } from "../../../lib/command/Command";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { DiscordUserArgument } from "../../../lib/context/arguments/argumentTypes/discord/DiscordUserArgument";
-import { displayUserTag } from "../../../lib/views/displays";
+import { displayUserTag } from "../../../lib/ui/displays";
 import { PermissionsChildCommand } from "./PermissionsChildCommand";
 
 const args = {

@@ -4,7 +4,7 @@ import { toInt } from "../../../../helpers/lastfm/";
 import { extraWideSpace } from "../../../../helpers/specialCharacters";
 import { standardMentions } from "../../../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../../../lib/context/arguments/types";
-import { displayNumber, displayRating } from "../../../../lib/views/displays";
+import { displayNumber, displayRating } from "../../../../lib/ui/displays";
 import { MirrorballRateYourMusicAlbum } from "../../../../services/mirrorball/MirrorballTypes";
 import { RateYourMusicIndexingChildCommand } from "./RateYourMusicChildCommand";
 import { StatsConnector, StatsParams, StatsResponse } from "./connectors";

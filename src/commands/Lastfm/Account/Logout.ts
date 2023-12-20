@@ -1,4 +1,4 @@
-import { ConfirmationEmbed } from "../../../lib/views/embeds/ConfirmationEmbed";
+import { ConfirmationView } from "../../../lib/ui/views/ConfirmationView";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 export default class Logout extends LastFMBaseCommand {
@@ -17,7 +17,7 @@ export default class Logout extends LastFMBaseCommand {
         "Are you sure you want to log out? This will delete all your stored data!"
       );
 
-    const confirmationEmbed = new ConfirmationEmbed(this.ctx, embed);
+    const confirmationEmbed = new ConfirmationView(this.ctx, embed);
 
     const confirmation = await confirmationEmbed.awaitConfirmation(this.ctx);
 

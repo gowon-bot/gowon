@@ -10,7 +10,7 @@ import {
   displayLink,
   displayNumber,
   displayUserTag,
-} from "../../lib/views/displays";
+} from "../../lib/ui/displays";
 import { LastFMService } from "../../services/LastFM/LastFMService";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { RedirectsService } from "../../services/dbservices/RedirectsService";

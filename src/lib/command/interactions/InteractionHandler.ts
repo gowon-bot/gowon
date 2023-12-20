@@ -11,7 +11,7 @@ import {
   CanCheck,
   PermissionsService,
 } from "../../permissions/PermissionsService";
-import { errorEmbed } from "../../views/embeds";
+import { errorEmbed } from "../../ui/embeds";
 import { Command } from "../Command";
 import { CommandRegistry } from "../CommandRegistry";
 import { ExtractedCommand } from "../extractor/ExtractedCommand";

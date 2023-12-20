@@ -3,7 +3,7 @@ import {
   displayArtistLink,
   displayNumber,
   displayNumberedList,
-} from "../../../lib/views/displays";
+} from "../../../lib/ui/displays";
 import { ListCommand } from "./ListCommand";
 
 export default class ArtistList extends ListCommand {

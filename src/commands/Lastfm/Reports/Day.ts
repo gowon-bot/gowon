@@ -1,13 +1,11 @@
 import { sub } from "date-fns";
 import { LogicError } from "../../../errors/errors";
-import { italic } from "../../../helpers/discord";
-import { bullet, extraWideSpace } from "../../../helpers/specialCharacters";
 import { ReportCalculator } from "../../../lib/calculators/ReportCalculator";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { Paginator } from "../../../lib/paginators/Paginator";
 import { TagConsolidator } from "../../../lib/tags/TagConsolidator";
-import { displayDate, displayNumber } from "../../../lib/views/displays";
+import { ReportEmbed } from "../../../lib/ui/embeds/ReportEmbed";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { RedirectsService } from "../../../services/dbservices/RedirectsService";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
@@ -70,59 +68,17 @@ export default class Day extends LastFMBaseCommand<typeof args> {
 
     const day = await reportCalculator.calculate();
 
-    const topTracks = Object.keys(day.top.tracks).sort(
-      (a, b) => day.top.tracks[b] - day.top.tracks[a]
-    );
-
-    const topAlbums = Object.keys(day.top.albums).sort(
-      (a, b) => day.top.albums[b] - day.top.albums[a]
-    );
-
-    const topArtists = Object.keys(day.top.artists).sort(
-      (a, b) => day.top.artists[b] - day.top.artists[a]
-    );
-
     const tagConsolidator = new TagConsolidator();
 
     await tagConsolidator.saveServerBannedTagsInContext(this.ctx);
     tagConsolidator.addTags(this.ctx, day.top.tags);
 
     const embed = this.authorEmbed()
-      .setAuthor(this.generateEmbedAuthor())
-      .setTitle(`${perspective.upper.possessive} day`).setDescription(`
-      _${displayDate(sub(new Date(), { days: 1 }))} - ${displayDate(
-      new Date()
-    )}_
-    _${displayNumber(firstPage.tracks.length, "scrobble")}, ${displayNumber(
-      day.total.artists,
-      "artist"
-    )}, ${displayNumber(day.total.albums, "album")}, ${displayNumber(
-      day.total.tracks,
-      "track"
-    )}_
-${
-  tagConsolidator.hasAnyTags()
-    ? `\n${italic(tagConsolidator.consolidateAsStrings(10).join(", "))}\n`
-    : ""
-}
-**Top Tracks**:
-${extraWideSpace}${bullet} ${topTracks
-      .slice(0, 3)
-      .map((t) => `${t} (${displayNumber(day.top.tracks[t], "play")})`)
-      .join(`\n​${extraWideSpace}${bullet} `)}
-
-**Top Albums**:
-${extraWideSpace}${bullet} ${topAlbums
-      .slice(0, 3)
-      .map((t) => `${t} (${displayNumber(day.top.albums[t], "play")})`)
-      .join(`\n​${extraWideSpace}${bullet} `)}
-
-**Top Artists**:
-${extraWideSpace}${bullet} ${topArtists
-      .slice(0, 3)
-      .map((t) => `${t} (${displayNumber(day.top.artists[t], "play")})`)
-      .join(`\n​${extraWideSpace}${bullet} `)}
-    `);
+      .setHeader("Report day")
+      .setTitle(`${perspective.upper.possessive} day`)
+      .transform(ReportEmbed)
+      .setReport(day)
+      .setDateRange(sub(new Date(), { days: 1 }), new Date());
 
     await this.send(embed);
   }

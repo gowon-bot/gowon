@@ -1,6 +1,6 @@
 import { NoContentiousCrownsError } from "../../../errors/commands/crowns";
 import { bold } from "../../../helpers/discord";
-import { displayNumber } from "../../../lib/views/displays";
+import { displayNumber } from "../../../lib/ui/displays";
 import { CrownsChildCommand } from "./CrownsChildCommand";
 
 export class ContentiousCrowns extends CrownsChildCommand {

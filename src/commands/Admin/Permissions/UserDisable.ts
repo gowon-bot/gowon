@@ -12,8 +12,8 @@ import { bold, code } from "../../../helpers/discord";
 import { Command, Variation } from "../../../lib/command/Command";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { DiscordUserArgument } from "../../../lib/context/arguments/argumentTypes/discord/DiscordUserArgument";
-import { displayUserTag } from "../../../lib/views/displays";
-import { EmbedComponent } from "../../../lib/views/framework/EmbedComponent";
+import { displayUserTag } from "../../../lib/ui/displays";
+import { EmbedView } from "../../../lib/ui/views/EmbedView";
 import { PermissionsChildCommand } from "./PermissionsChildCommand";
 
 const args = {
@@ -86,7 +86,7 @@ export class UserDisable extends PermissionsChildCommand<typeof args> {
     command: Command,
     permission: Permission,
     user: User
-  ): Promise<EmbedComponent> {
+  ): Promise<EmbedView> {
     let deletedAllow = false;
 
     try {
@@ -122,7 +122,7 @@ export class UserDisable extends PermissionsChildCommand<typeof args> {
     command: Command,
     permission: Permission,
     user: User
-  ): Promise<EmbedComponent> {
+  ): Promise<EmbedView> {
     let allowed = false;
 
     try {

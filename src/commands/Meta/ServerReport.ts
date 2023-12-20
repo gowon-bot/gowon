@@ -1,5 +1,5 @@
-import { displayNumber } from "../../lib/views/displays";
-import { SimpleScrollingEmbed } from "../../lib/views/embeds/SimpleScrollingEmbed";
+import { displayNumber } from "../../lib/ui/displays";
+import { ScrollingListView } from "../../lib/ui/views/ScrollingListView";
 import { MetaChildCommand } from "./MetaChildCommand";
 
 export class ServerReport extends MetaChildCommand {
@@ -13,7 +13,7 @@ export class ServerReport extends MetaChildCommand {
       this.gowonClient.client.guilds.cache.values()
     ).sort((a, b) => b.memberCount - a.memberCount);
 
-    const scrollingEmbed = new SimpleScrollingEmbed(
+    const scrollingEmbed = new ScrollingListView(
       this.ctx,
       this.authorEmbed().setTitle("Gowon guild report"),
       {

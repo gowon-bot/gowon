@@ -3,10 +3,10 @@ import { DateArgument } from "../../../lib/context/arguments/argumentTypes/timeA
 import { DateRangeArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/DateRangeArgument";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { displayDate } from "../../../lib/ui/displays";
+import { trackEmbed } from "../../../lib/ui/embeds";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
-import { displayDate } from "../../../lib/views/displays";
-import { trackEmbed } from "../../../lib/views/embeds";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 const args = {

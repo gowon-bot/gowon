@@ -4,19 +4,19 @@ import { LastfmLinks } from "../../../../helpers/lastfm/LastfmLinks";
 import { StringArgument } from "../../../../lib/context/arguments/argumentTypes/StringArgument";
 import { StringArrayArgument } from "../../../../lib/context/arguments/argumentTypes/StringArrayArgument";
 import { ArgumentsMap } from "../../../../lib/context/arguments/types";
+import { ResolvedRequirements } from "../../../../lib/nowplaying/DatasourceService";
+import { NowPlayingBuilder } from "../../../../lib/nowplaying/NowPlayingBuilder";
 import {
   componentMap,
   getComponentsAsChoices,
 } from "../../../../lib/nowplaying/componentMap";
-import { ResolvedRequirements } from "../../../../lib/nowplaying/DatasourceService";
 import { mockRequirements } from "../../../../lib/nowplaying/mockRequirements";
-import { NowPlayingBuilder } from "../../../../lib/nowplaying/NowPlayingBuilder";
+import { displayNumber } from "../../../../lib/ui/displays";
 import { Validation } from "../../../../lib/validation/ValidationChecker";
 import { validators } from "../../../../lib/validation/validators";
-import { displayNumber } from "../../../../lib/views/displays";
 import { RecentTrack } from "../../../../services/LastFM/converters/RecentTracks";
-import { AlbumCoverService } from "../../../../services/moderation/AlbumCoverService";
 import { ServiceRegistry } from "../../../../services/ServicesRegistry";
+import { AlbumCoverService } from "../../../../services/moderation/AlbumCoverService";
 import {
   NowPlayingConfigChildCommand,
   preprocessConfig,

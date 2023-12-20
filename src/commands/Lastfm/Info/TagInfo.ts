@@ -10,7 +10,7 @@ import { LineConsolidator } from "../../../lib/LineConsolidator";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { Emoji } from "../../../lib/emoji/Emoji";
-import { displayLink, displayNumber } from "../../../lib/views/displays";
+import { displayLink, displayNumber } from "../../../lib/ui/displays";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { WordBlacklistService } from "../../../services/WordBlacklistService";
 import { LilacArtistsService } from "../../../services/lilac/LilacArtistsService";

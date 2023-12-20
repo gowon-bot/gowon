@@ -1,5 +1,5 @@
 import { Command } from "../../lib/command/Command";
-import { displayLink, displayUserTag } from "../../lib/views/displays";
+import { displayLink, displayUserTag } from "../../lib/ui/displays";
 
 export default class Github extends Command {
   idSeed = "apink chorom";

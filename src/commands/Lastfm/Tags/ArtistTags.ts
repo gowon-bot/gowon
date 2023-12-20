@@ -6,10 +6,7 @@ import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { Emoji } from "../../../lib/emoji/Emoji";
 import { LineConsolidator } from "../../../lib/LineConsolidator";
 import { TagConsolidator } from "../../../lib/tags/TagConsolidator";
-import {
-  displayNumber,
-  displayNumberedList,
-} from "../../../lib/views/displays";
+import { displayNumber, displayNumberedList } from "../../../lib/ui/displays";
 import { LilacArtistCountsPage } from "../../../services/lilac/LilacAPIService.types";
 import { LilacArtistsService } from "../../../services/lilac/LilacArtistsService";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";

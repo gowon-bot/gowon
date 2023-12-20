@@ -1,6 +1,6 @@
 import { formatDuration, intervalToDuration } from "date-fns";
 import { LastFMPeriod } from "../../../services/LastFM/LastFMService.types";
-import { displayDate, displayDateNoTime } from "../../views/displays";
+import { displayDate, displayDateNoTime } from "../../ui/displays";
 import { DateRange } from "../DateRange";
 
 export function humanizePeriod(period: LastFMPeriod): string {

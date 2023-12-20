@@ -1,7 +1,7 @@
 import { Message } from "discord.js";
 import { bold, italic } from "../../helpers/discord";
 import { GowonContext } from "../../lib/context/Context";
-import { ConfirmationEmbed } from "../../lib/views/embeds/ConfirmationEmbed";
+import { ConfirmationView } from "../../lib/ui/views/ConfirmationView";
 import { BaseService } from "../BaseService";
 import { Requestable } from "../LastFM/LastFMAPIService";
 import {
@@ -163,7 +163,7 @@ export class SpotifyArguments extends BaseService<SpotifyArgumentsContext> {
       )
       .setThumbnail(track.album.images.largest.url);
 
-    const confirmationEmbed = new ConfirmationEmbed(
+    const confirmationEmbed = new ConfirmationView(
       ctx,
       embed
     ).withRejectionReact();

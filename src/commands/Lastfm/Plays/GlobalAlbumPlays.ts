@@ -4,7 +4,7 @@ import { calculatePercent } from "../../../helpers/stats";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
-import { displayNumber } from "../../../lib/views/displays";
+import { displayNumber } from "../../../lib/ui/displays";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 const args = {

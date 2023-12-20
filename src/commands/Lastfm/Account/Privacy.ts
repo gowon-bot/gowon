@@ -3,7 +3,7 @@ import { Command } from "../../../lib/command/Command";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { Emoji } from "../../../lib/emoji/Emoji";
-import { displayLink, displayUserTag } from "../../../lib/views/displays";
+import { displayLink, displayUserTag } from "../../../lib/ui/displays";
 import { LilacPrivacy } from "../../../services/lilac/LilacAPIService.types";
 import { PrivateUserDisplay } from "../../../services/lilac/LilacUsersService";
 

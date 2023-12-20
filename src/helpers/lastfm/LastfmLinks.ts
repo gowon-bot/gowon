@@ -1,5 +1,5 @@
 import { format } from "date-fns";
-import { displayLink } from "../../lib/views/displays";
+import { displayLink } from "../../lib/ui/displays";
 import { RecentTrack } from "../../services/LastFM/converters/RecentTracks";
 import { cleanURL } from "../discord";
 

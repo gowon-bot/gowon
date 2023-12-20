@@ -7,7 +7,7 @@ import { ArgumentsMap } from "../../../../lib/context/arguments/types";
 import { Emoji } from "../../../../lib/emoji/Emoji";
 import { LilacBaseCommand } from "../../../../lib/Lilac/LilacBaseCommand";
 import { PaginatedLilacScrobbleCache } from "../../../../lib/paginators/PaginatedScrobbleCache";
-import { displayDateTime, displayLink } from "../../../../lib/views/displays";
+import { displayDateTime, displayLink } from "../../../../lib/ui/displays";
 import { recommendUserToSetTimezone } from "../../../../services/lilac/helpers";
 import {
   LilacScrobble,

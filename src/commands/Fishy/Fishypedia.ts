@@ -7,13 +7,10 @@ import { EmojisArgument } from "../../lib/context/arguments/argumentTypes/discor
 import { standardMentions } from "../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../lib/context/arguments/types";
 import { EmojiRaw } from "../../lib/emoji/Emoji";
-import { displayNumber } from "../../lib/views/displays";
-import { SimpleScrollingEmbed } from "../../lib/views/embeds/SimpleScrollingEmbed";
-import {
-  TabbedEmbed,
-  TabbedEmbedTab,
-} from "../../lib/views/embeds/TabbedEmbed";
-import { EmbedComponent } from "../../lib/views/framework/EmbedComponent";
+import { displayNumber } from "../../lib/ui/displays";
+import { EmbedView } from "../../lib/ui/views/EmbedView";
+import { ScrollingListView } from "../../lib/ui/views/ScrollingListView";
+import { TabbedView, TabbedViewTab } from "../../lib/ui/views/TabbedView";
 import { Fishy } from "../../services/fishy/Fishy";
 import { findFishy, fishyList } from "../../services/fishy/fishyList";
 import {
@@ -86,19 +83,19 @@ export class Fishypedia extends FishyChildCommand<typeof args> {
       ? await this.fishyService.countFishy(fishyProfile, fishy)
       : 0;
 
-    const mainTab: TabbedEmbedTab = {
+    const mainTab: TabbedViewTab = {
       name: "main",
       rawEmoji: EmojiRaw.fishypediaMainTab,
       embed: this.getMainTabEmbed(fishy, fishyCount, perspective),
     };
 
-    const traitsTab: TabbedEmbedTab = {
+    const traitsTab: TabbedViewTab = {
       name: "traits",
       rawEmoji: EmojiRaw.fishypediaTraitsTab,
       embed: this.getTraitsTabEmbed(fishy),
     };
 
-    const tabbedEmbed = new TabbedEmbed(this.ctx, {
+    const tabbedEmbed = new TabbedView(this.ctx, {
       tabs: fishy.traits.length ? [mainTab, traitsTab] : [mainTab],
     });
 
@@ -109,7 +106,7 @@ export class Fishypedia extends FishyChildCommand<typeof args> {
     fishy: Fishy,
     fishyCount: number,
     perspective: Perspective
-  ): EmbedComponent {
+  ): EmbedView {
     const embed = this.getBaseTabEmbed(fishy).setDescription(
       `
 ${fishy.emoji} ${bold(italic(fishy.binomialName), false)}
@@ -138,14 +135,14 @@ ${
     return embed;
   }
 
-  private getTraitsTabEmbed(fishy: Fishy): EmbedComponent {
+  private getTraitsTabEmbed(fishy: Fishy): EmbedView {
     return this.getBaseTabEmbed(fishy).setDescription(
       `**Traits**:
  ${fishy.traits.map((t) => `${bullet} ${displayFishyTrait(t)}`).join("\n")}`
     );
   }
 
-  private getBaseTabEmbed(fishy: Fishy): EmbedComponent {
+  private getBaseTabEmbed(fishy: Fishy): EmbedView {
     return this.authorEmbed()
       .setHeader("Fishypedia")
       .setColour(fishy.rarity.colour)
@@ -162,7 +159,7 @@ ${
       .setHeader("Fishy wiki")
       .setTitle(`Search results for ${displayFishyTrait(trait, true)}`);
 
-    const simpleScrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
+    const simpleScrollingEmbed = new ScrollingListView(this.ctx, embed, {
       items: fishy.map(
         (f) =>
           `${f.rarity.emoji.forLevel(f.requiredFishyLevel)} ${

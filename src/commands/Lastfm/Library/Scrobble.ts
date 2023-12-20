@@ -1,7 +1,7 @@
 import { bold, italic } from "../../../helpers/discord";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
-import { ConfirmationEmbed } from "../../../lib/views/embeds/ConfirmationEmbed";
+import { ConfirmationView } from "../../../lib/ui/views/ConfirmationView";
 import { LastFMArgumentsMutableContext } from "../../../services/LastFM/LastFMArguments";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { LilacLibraryService } from "../../../services/lilac/LilacLibraryService";
@@ -47,7 +47,7 @@ export default class Scrobble extends LastFMBaseCommand<typeof args> {
           ${bold(track)} by ${italic(artist)}`
         );
 
-      const confirmationEmbed = new ConfirmationEmbed(
+      const confirmationEmbed = new ConfirmationView(
         this.ctx,
         baseConfirmationEmbed
       ).withRejectionReact();

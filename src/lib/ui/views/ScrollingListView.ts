@@ -1,13 +1,13 @@
 import { EmbedFieldData } from "discord.js";
 import { GowonContext } from "../../context/Context";
-import { EmbedComponent } from "../framework/EmbedComponent";
+import { EmbedView } from "./EmbedView";
 import {
-  ScrollingEmbed,
   ScrollingEmbedOptions,
+  ScrollingView,
   isEmbedFields,
-} from "./ScrollingEmbed";
+} from "./ScrollingView";
 
-export interface SimpleScrollingEmbedOptions<T> {
+export interface ScrollingListViewOptions<T> {
   items: Array<T>;
   pageSize: number;
   /**
@@ -21,37 +21,37 @@ export interface SimpleScrollingEmbedOptions<T> {
   overrides?: Partial<ScrollingEmbedOptions>;
 }
 
-export class SimpleScrollingEmbed<T> extends ScrollingEmbed {
+export class ScrollingListView<T> extends ScrollingView {
   constructor(
     ctx: GowonContext,
-    embed: EmbedComponent,
-    private simpleOptions: SimpleScrollingEmbedOptions<T>
+    embed: EmbedView,
+    private listOptions: ScrollingListViewOptions<T>
   ) {
     super(
       ctx,
       embed,
       Object.assign(
         {
-          totalItems: simpleOptions.items.length,
-          totalPages: getTotalPages(simpleOptions),
-          initialItems: renderItemsFromPage(simpleOptions, 1),
+          totalItems: listOptions.items.length,
+          totalPages: getTotalPages(listOptions),
+          initialItems: renderItemsFromPage(listOptions, 1),
         },
-        simpleOptions.overrides || {}
+        listOptions.overrides || {}
       )
     );
 
     this.onPageChange((page) => {
-      return renderItemsFromPage(this.simpleOptions, page);
+      return renderItemsFromPage(this.listOptions, page);
     });
   }
 }
 
-function getTotalPages(options: SimpleScrollingEmbedOptions<any>): number {
+function getTotalPages(options: ScrollingListViewOptions<any>): number {
   return Math.ceil(options.items.length / options.pageSize);
 }
 
 function renderItemsFromPage(
-  options: SimpleScrollingEmbedOptions<any>,
+  options: ScrollingListViewOptions<any>,
   page: number
 ): string | EmbedFieldData[] {
   const offset = (page - 1) * options.pageSize;

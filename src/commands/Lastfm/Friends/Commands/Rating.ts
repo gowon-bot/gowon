@@ -8,7 +8,7 @@ import {
   displayNumber,
   displayNumberedList,
   displayRating,
-} from "../../../../lib/views/displays";
+} from "../../../../lib/ui/displays";
 import { ServiceRegistry } from "../../../../services/ServicesRegistry";
 import { MirrorballRateYourMusicAlbum } from "../../../../services/mirrorball/MirrorballTypes";
 import { AlbumCoverService } from "../../../../services/moderation/AlbumCoverService";

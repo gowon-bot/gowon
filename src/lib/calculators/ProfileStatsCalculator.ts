@@ -21,7 +21,7 @@ import { MirrorballService } from "../../services/mirrorball/MirrorballService";
 import { MirrorballPageInfo } from "../../services/mirrorball/MirrorballTypes";
 import { GowonContext } from "../context/Context";
 import { DateRange } from "../timeAndDate/DateRange";
-import { displayDate, displayNumber } from "../views/displays";
+import { displayDate, displayNumber } from "../ui/displays";
 
 export class Stat {
   public asString: string;

@@ -1,7 +1,7 @@
 import { ArtistRedirect } from "../../database/entity/ArtistRedirect";
 import { RecordNotFoundError } from "../../errors/errors";
 import { GowonContext } from "../../lib/context/Context";
-import { displayNumber } from "../../lib/views/displays";
+import { displayNumber } from "../../lib/ui/displays";
 import { BaseService } from "../BaseService";
 import { LastFMService } from "../LastFM/LastFMService";
 import { ServiceRegistry } from "../ServicesRegistry";

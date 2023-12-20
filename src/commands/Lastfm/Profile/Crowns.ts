@@ -2,7 +2,7 @@ import { UserHasNoCrownsInServerError } from "../../../errors/commands/crowns";
 import { LogicError } from "../../../errors/errors";
 import { getOrdinal } from "../../../helpers";
 import { bold, italic } from "../../../helpers/discord";
-import { displayNumber } from "../../../lib/views/displays";
+import { displayNumber } from "../../../lib/ui/displays";
 import { ProfileChildCommand } from "./ProfileChildCommand";
 
 export class Crowns extends ProfileChildCommand {

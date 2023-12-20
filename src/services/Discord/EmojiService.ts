@@ -3,7 +3,7 @@ import { emojiVerificationChannelId } from "../../../config.json";
 import { promiseAllSettled } from "../../helpers";
 import { GowonContext } from "../../lib/context/Context";
 import { EmojiMention } from "../../lib/context/arguments/parsers/EmojiParser";
-import { Sendable } from "../../lib/views/framework/Sendable";
+import { Sendable } from "../../lib/ui/Sendable";
 import { BaseService } from "../BaseService";
 import { ServiceRegistry } from "../ServicesRegistry";
 import { DiscordService } from "./DiscordService";

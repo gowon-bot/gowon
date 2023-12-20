@@ -4,10 +4,7 @@ import { bold } from "../../../../helpers/discord";
 import { convertMirrorballDate } from "../../../../helpers/mirrorball";
 import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";
 import { ArgumentsMap } from "../../../../lib/context/arguments/types";
-import {
-  displayDate,
-  displayNumberedList,
-} from "../../../../lib/views/displays";
+import { displayDate, displayNumberedList } from "../../../../lib/ui/displays";
 import { MirrorballUser } from "../../../../services/mirrorball/MirrorballTypes";
 import { FriendsChildCommand } from "../FriendsChildCommand";
 

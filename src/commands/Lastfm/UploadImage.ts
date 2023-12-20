@@ -2,7 +2,7 @@ import { LogicError } from "../../errors/errors";
 import { LastfmLinks } from "../../helpers/lastfm/LastfmLinks";
 import { prefabArguments } from "../../lib/context/arguments/prefabArguments";
 import { ArgumentsMap } from "../../lib/context/arguments/types";
-import { displayLink } from "../../lib/views/displays";
+import { displayLink } from "../../lib/ui/displays";
 import { LastFMBaseCommand } from "./LastFMBaseCommand";
 
 const args = {

@@ -1,4 +1,4 @@
-import { displayNumber } from "../../views/displays";
+import { displayNumber } from "../../ui/displays";
 import { BaseNowPlayingComponent } from "../base/BaseNowPlayingComponent";
 import { getArtistPlays } from "../helpers/artist";
 

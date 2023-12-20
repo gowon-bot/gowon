@@ -1,4 +1,4 @@
-import { displayNumber } from "../../lib/views/displays";
+import { displayNumber } from "../../lib/ui/displays";
 import { ClientError } from "../errors";
 
 export class NoFriendsError extends ClientError {

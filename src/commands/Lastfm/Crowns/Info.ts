@@ -6,7 +6,7 @@ import { bold } from "../../../helpers/discord";
 import { LineConsolidator } from "../../../lib/LineConsolidator";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
-import { displayNumber } from "../../../lib/views/displays";
+import { displayNumber } from "../../../lib/ui/displays";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { RedirectsService } from "../../../services/dbservices/RedirectsService";
 import { CrownsChildCommand } from "./CrownsChildCommand";

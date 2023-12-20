@@ -5,13 +5,13 @@ import {
   MessageOptions,
 } from "discord.js";
 
-export interface UIComponentOptions {
+export interface ViewOptions {
   reacts: EmojiResolvable[];
   ephemeral: boolean;
 }
 
-export abstract class UIComponent {
-  constructor(protected componentOptions: Partial<UIComponentOptions> = {}) {}
+export abstract class View {
+  constructor(protected componentOptions: Partial<ViewOptions> = {}) {}
 
   asMessageEmbed(): MessageEmbed {
     return new MessageEmbed();

@@ -4,7 +4,7 @@ import { bold, italic } from "../../../helpers/discord";
 import { toInt } from "../../../helpers/lastfm";
 import { Emoji } from "../../../lib/emoji/Emoji";
 import { Perspective } from "../../../lib/Perspective";
-import { displayNumber } from "../../../lib/views/displays";
+import { displayNumber } from "../../../lib/ui/displays";
 import { ProfileChildCommand } from "./ProfileChildCommand";
 
 export class Overview extends ProfileChildCommand {

@@ -3,14 +3,14 @@ import { bold, code, sanitizeForDiscord } from "../../../helpers/discord";
 import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { displayNumber } from "../../../lib/ui/displays";
+import { ScrollingListView } from "../../../lib/ui/views/ScrollingListView";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
-import { displayNumber } from "../../../lib/views/displays";
-import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingEmbed";
-import { LilacArtistsService } from "../../../services/lilac/LilacArtistsService";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
+import { LilacArtistsService } from "../../../services/lilac/LilacArtistsService";
 import { TasteService } from "../../../services/taste/TasteService";
-import { tasteArgs, TasteCommand } from "./TasteCommand";
+import { TasteCommand, tasteArgs } from "./TasteCommand";
 
 const args = {
   ...tasteArgs,
@@ -116,7 +116,7 @@ export default class TagTaste extends TasteCommand<typeof args> {
       )
       .setDescription(embedDescription);
 
-    const scrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
+    const scrollingEmbed = new ScrollingListView(this.ctx, embed, {
       items: tasteMatch.artists,
       pageSize: 20,
       pageRenderer: (items) => {

@@ -4,7 +4,7 @@ import { DateRangeArgument } from "../../../lib/context/arguments/argumentTypes/
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { DateRange } from "../../../lib/timeAndDate/DateRange";
-import { displayDate, displayNumber } from "../../../lib/views/displays";
+import { displayDate, displayNumber } from "../../../lib/ui/displays";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 const args = {

@@ -1,7 +1,7 @@
 import { asyncMap } from "../../helpers";
 import { SimpleMap } from "../../helpers/types";
 import { GowonContext } from "../../lib/context/Context";
-import { displayNumber, displayUserTag } from "../../lib/views/displays";
+import { displayNumber, displayUserTag } from "../../lib/ui/displays";
 import { BaseService } from "../BaseService";
 import {
   RedisService,

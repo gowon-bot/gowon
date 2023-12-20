@@ -5,7 +5,7 @@ import { DateRange } from "../../../../lib/timeAndDate/DateRange";
 import {
   displayNumber,
   displayNumberedList,
-} from "../../../../lib/views/displays";
+} from "../../../../lib/ui/displays";
 import { FriendsChildCommand } from "../FriendsChildCommand";
 
 const args = {

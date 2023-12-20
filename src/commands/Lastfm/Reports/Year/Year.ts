@@ -9,7 +9,7 @@ import { ArgumentsMap } from "../../../../lib/context/arguments/types";
 import { MirrorballBaseCommand } from "../../../../lib/indexing/MirrorballCommands";
 import { MirrorballPaginator } from "../../../../lib/paginators/MirrorballPaginator";
 import { TagConsolidator } from "../../../../lib/tags/TagConsolidator";
-import { displayDate, displayNumber } from "../../../../lib/views/displays";
+import { displayDate, displayNumber } from "../../../../lib/ui/displays";
 import { RecentTracks } from "../../../../services/LastFM/converters/RecentTracks";
 import { ServiceRegistry } from "../../../../services/ServicesRegistry";
 import { RedirectsService } from "../../../../services/dbservices/RedirectsService";

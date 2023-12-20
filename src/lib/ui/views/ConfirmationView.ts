@@ -6,10 +6,10 @@ import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { GowonContext } from "../../context/Context";
 import { Payload } from "../../context/Payload";
 import { EmojiRaw } from "../../emoji/Emoji";
-import { EmbedComponent } from "../framework/EmbedComponent";
-import { Sendable } from "../framework/Sendable";
+import { Sendable } from "../Sendable";
+import { EmbedView } from "./EmbedView";
 
-export class ConfirmationEmbed {
+export class ConfirmationView {
   private get discordService() {
     return ServiceRegistry.get(DiscordService);
   }
@@ -24,13 +24,13 @@ export class ConfirmationEmbed {
 
   constructor(
     private ctx: GowonContext,
-    private embed: EmbedComponent,
+    private embed: EmbedView,
     originalMessage?: Payload
   ) {
     this.originalMessage = originalMessage || ctx.command.payload;
   }
 
-  public withRejectionReact(): ConfirmationEmbed {
+  public withRejectionReact(): ConfirmationView {
     this.allowRejection = true;
 
     return this;

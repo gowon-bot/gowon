@@ -3,7 +3,7 @@ import { LilacBaseCommand } from "../../../lib/Lilac/LilacBaseCommand";
 import { CommandRedirect } from "../../../lib/command/Command";
 import { Flag } from "../../../lib/context/arguments/argumentTypes/Flag";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
-import { displayProgressBar } from "../../../lib/views/displays";
+import { displayProgressBar } from "../../../lib/ui/displays";
 import Index from "./Index";
 
 const args = {

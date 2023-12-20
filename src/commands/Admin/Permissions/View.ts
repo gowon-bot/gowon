@@ -12,8 +12,8 @@ import { DiscordRoleArgument } from "../../../lib/context/arguments/argumentType
 import { DiscordUserArgument } from "../../../lib/context/arguments/argumentTypes/discord/DiscordUserArgument";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { PermissionQuery } from "../../../lib/permissions/PermissionsCacheService";
-import { displayNumberedList } from "../../../lib/views/displays";
-import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingEmbed";
+import { displayNumberedList } from "../../../lib/ui/displays";
+import { ScrollingListView } from "../../../lib/ui/views/ScrollingListView";
 import { PermissionsChildCommand } from "./PermissionsChildCommand";
 
 const args = {
@@ -71,7 +71,7 @@ export class View extends PermissionsChildCommand<typeof args> {
       return;
     }
 
-    const scrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
+    const scrollingEmbed = new ScrollingListView(this.ctx, embed, {
       items: permissions,
       pageSize: 15,
       pageRenderer: (items, { offset }) => {

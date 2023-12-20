@@ -5,13 +5,13 @@ import { requestableAsUsername } from "../../../lib/MultiRequester";
 import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
-import { Validation } from "../../../lib/validation/ValidationChecker";
-import { validators } from "../../../lib/validation/validators";
 import {
   displayLink,
   displayNumberedList,
   displayTime,
-} from "../../../lib/views/displays";
+} from "../../../lib/ui/displays";
+import { Validation } from "../../../lib/validation/ValidationChecker";
+import { validators } from "../../../lib/validation/validators";
 import { RecentTrack } from "../../../services/LastFM/converters/RecentTracks";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 

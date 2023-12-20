@@ -1,5 +1,5 @@
 import { bold } from "../../helpers/discord";
-import { displayNumber } from "../../lib/views/displays";
+import { displayNumber } from "../../lib/ui/displays";
 import { AdminBaseCommand } from "./AdminBaseCommand";
 
 export default class Usercount extends AdminBaseCommand {

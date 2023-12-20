@@ -5,7 +5,7 @@ import { Flag } from "../../../lib/context/arguments/argumentTypes/Flag";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
-import { displayNumber } from "../../../lib/views/displays";
+import { displayNumber } from "../../../lib/ui/displays";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 import GlobalAlbumPlays from "./GlobalAlbumPlays";
 

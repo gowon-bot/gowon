@@ -12,24 +12,24 @@ import {
 } from "../../../errors/ui";
 import { ReactionCollectorFilter } from "../../../helpers/discord";
 import { GowonContext } from "../../context/Context";
-import { EmbedComponent } from "../framework/EmbedComponent";
-import { UIComponent } from "../framework/UIComponent";
+import { EmbedView } from "./EmbedView";
+import { View } from "./View";
 
-export interface TabbedEmbedTab {
+export interface TabbedViewTab {
   name: string;
   rawEmoji: string;
-  embed: EmbedComponent;
+  embed: EmbedView;
 }
 
-export interface TabbedEmbedOptions {
-  tabs: TabbedEmbedTab[];
+export interface TabbedViewOptions {
+  tabs: TabbedViewTab[];
 }
 
-export class TabbedEmbed extends UIComponent {
+export class TabbedView extends View {
   private sentMessage?: Message;
   private currentTab: string;
 
-  constructor(private ctx: GowonContext, private options: TabbedEmbedOptions) {
+  constructor(private ctx: GowonContext, private options: TabbedViewOptions) {
     super();
     this.currentTab = options.tabs[0].name;
   }
@@ -46,7 +46,7 @@ export class TabbedEmbed extends UIComponent {
     }
   }
 
-  private getEmbed(): EmbedComponent {
+  private getEmbed(): EmbedView {
     const embed = this.options.tabs.find(
       (t) => t.name === this.currentTab
     )?.embed;

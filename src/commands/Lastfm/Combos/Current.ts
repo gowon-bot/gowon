@@ -13,14 +13,14 @@ import { standardMentions } from "../../../lib/context/arguments/mentionTypes/me
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { Emoji } from "../../../lib/emoji/Emoji";
 import { Paginator } from "../../../lib/paginators/Paginator";
-import { Validation } from "../../../lib/validation/ValidationChecker";
-import { validators } from "../../../lib/validation/validators";
 import {
   displayAlbumLink,
   displayArtistLink,
   displayNumber,
   displayTrackLink,
-} from "../../../lib/views/displays";
+} from "../../../lib/ui/displays";
+import { Validation } from "../../../lib/validation/ValidationChecker";
+import { validators } from "../../../lib/validation/validators";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { LilacArtistsService } from "../../../services/lilac/LilacArtistsService";
 import { AlbumCoverService } from "../../../services/moderation/AlbumCoverService";

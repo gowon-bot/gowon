@@ -2,7 +2,7 @@ import { Message } from "discord.js";
 import { LogicError } from "../../errors/errors";
 import { Stopwatch } from "../../helpers";
 import { Command } from "../../lib/command/Command";
-import { EmbedComponent } from "../../lib/views/framework/EmbedComponent";
+import { EmbedView } from "../../lib/ui/views/EmbedView";
 import { LastFMService } from "../../services/LastFM/LastFMService";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { LilacAPIService } from "../../services/lilac/LilacAPIService";
@@ -82,7 +82,7 @@ Lilac..........${this.displayLatency(lilacLatency)}
   }
 
   private async discordLatency(
-    embed: EmbedComponent
+    embed: EmbedView
   ): Promise<[Message, Stopwatch]> {
     const stopwatch = new Stopwatch();
     stopwatch.start();

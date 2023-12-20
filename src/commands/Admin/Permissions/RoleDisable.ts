@@ -12,7 +12,7 @@ import { code, mentionRole } from "../../../helpers/discord";
 import { Command, Variation } from "../../../lib/command/Command";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { DiscordRoleArgument } from "../../../lib/context/arguments/argumentTypes/discord/DiscordRoleArgument";
-import { EmbedComponent } from "../../../lib/views/framework/EmbedComponent";
+import { EmbedView } from "../../../lib/ui/views/EmbedView";
 import { PermissionsChildCommand } from "./PermissionsChildCommand";
 
 const args = {
@@ -84,7 +84,7 @@ export class RoleDisable extends PermissionsChildCommand<typeof args> {
     command: Command,
     permission: Permission,
     role: Role
-  ): Promise<EmbedComponent> {
+  ): Promise<EmbedView> {
     let deletedAllow = false;
 
     try {
@@ -120,7 +120,7 @@ export class RoleDisable extends PermissionsChildCommand<typeof args> {
     command: Command,
     permission: Permission,
     role: Role
-  ): Promise<EmbedComponent> {
+  ): Promise<EmbedView> {
     let allowed = false;
 
     try {

@@ -6,8 +6,8 @@ import { prefabArguments } from "../../../../lib/context/arguments/prefabArgumen
 import { ArgumentsMap } from "../../../../lib/context/arguments/types";
 import { Emoji } from "../../../../lib/emoji/Emoji";
 import { MirrorballBaseCommand } from "../../../../lib/indexing/MirrorballCommands";
-import { displayNumber } from "../../../../lib/views/displays";
-import { SimpleScrollingEmbed } from "../../../../lib/views/embeds/SimpleScrollingEmbed";
+import { displayNumber } from "../../../../lib/ui/displays";
+import { ScrollingListView } from "../../../../lib/ui/views/ScrollingListView";
 import {
   AlbumTopTracksConnector,
   AlbumTopTracksParams,
@@ -85,7 +85,7 @@ export default class AlbumTopTracks extends MirrorballBaseCommand<
         LastfmLinks.libraryAlbumPage(username, album.artist.name, album.name)
       );
 
-    const simpleScrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
+    const simpleScrollingEmbed = new ScrollingListView(this.ctx, embed, {
       pageSize: 15,
       items: topTracks,
 

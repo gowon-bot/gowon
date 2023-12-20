@@ -1,9 +1,6 @@
 import { asyncMap } from "../../../helpers";
 import { bold } from "../../../helpers/discord";
-import {
-  displayNumber,
-  displayNumberedList,
-} from "../../../lib/views/displays";
+import { displayNumber, displayNumberedList } from "../../../lib/ui/displays";
 import { CrownsChildCommand } from "./CrownsChildCommand";
 
 export class TopCrowns extends CrownsChildCommand {

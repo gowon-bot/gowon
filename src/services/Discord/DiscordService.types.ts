@@ -7,7 +7,7 @@ import {
   TextChannel,
   ThreadChannel,
 } from "discord.js";
-import { EmbedComponent } from "../../lib/views/framework/EmbedComponent";
+import { EmbedView } from "../../lib/ui/views/EmbedView";
 
 export type RespondableChannel =
   | DMChannel
@@ -24,7 +24,7 @@ export type ReplyOptions = Partial<{
 
 export interface SendOptions {
   inChannel: RespondableChannel;
-  withEmbed: EmbedComponent;
+  withEmbed: EmbedView;
   reply: boolean | ReplyOptions;
   files: string[] | FileOptions[];
   forceNoInteractionReply?: boolean;

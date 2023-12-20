@@ -8,7 +8,7 @@ import {
 } from "typeorm";
 import { bold } from "../../../helpers/discord";
 import { FishyRarityEmojis } from "../../../lib/emoji/FishyRarityEmoji";
-import { displayNumber } from "../../../lib/views/displays";
+import { displayNumber } from "../../../lib/ui/displays";
 import { FishyTraitNoDepth } from "../../../services/fishy/quests/QuestTraitPicker";
 import { FishyRarities } from "../../../services/fishy/rarity";
 import { displayFishyTrait } from "../../../services/fishy/traits";

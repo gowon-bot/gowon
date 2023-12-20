@@ -1,5 +1,5 @@
 import { SpotifyWebhookService } from "../../../api/webhooks/SpotifyWebhookService";
-import { displayLink } from "../../../lib/views/displays";
+import { displayLink } from "../../../lib/ui/displays";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { SpotifyAuthenticationService } from "../../../services/Spotify/SpotifyAuthenticationService";
 import { SpotifyBaseCommand } from "./SpotifyBaseCommands";

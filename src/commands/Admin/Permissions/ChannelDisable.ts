@@ -13,7 +13,7 @@ import { code, mentionChannel } from "../../../helpers/discord";
 import { Command, Variation } from "../../../lib/command/Command";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { ChannelArgument } from "../../../lib/context/arguments/argumentTypes/discord/ChannelArgument";
-import { EmbedComponent } from "../../../lib/views/framework/EmbedComponent";
+import { EmbedView } from "../../../lib/ui/views/EmbedView";
 import { PermissionsChildCommand } from "./PermissionsChildCommand";
 
 const args = {
@@ -88,7 +88,7 @@ export class ChannelDisable extends PermissionsChildCommand<typeof args> {
     command: Command,
     permission: Permission,
     channel: Channel
-  ): Promise<EmbedComponent> {
+  ): Promise<EmbedView> {
     let deletedAllow = false;
 
     try {
@@ -124,7 +124,7 @@ export class ChannelDisable extends PermissionsChildCommand<typeof args> {
     command: Command,
     permission: Permission,
     channel: Channel
-  ): Promise<EmbedComponent> {
+  ): Promise<EmbedView> {
     let allowed = false;
 
     try {

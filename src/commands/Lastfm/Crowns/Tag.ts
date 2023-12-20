@@ -2,13 +2,10 @@ import { italic } from "../../../helpers/discord";
 import { StringArrayArgument } from "../../../lib/context/arguments/argumentTypes/StringArrayArgument";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { displayNumber, displayNumberedList } from "../../../lib/ui/displays";
+import { ScrollingListView } from "../../../lib/ui/views/ScrollingListView";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
-import {
-  displayNumber,
-  displayNumberedList,
-} from "../../../lib/views/displays";
-import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingEmbed";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { LilacArtistsService } from "../../../services/lilac/LilacArtistsService";
 import { CrownsChildCommand } from "./CrownsChildCommand";
@@ -67,7 +64,7 @@ export class Tag extends CrownsChildCommand<typeof args> {
         } top crowns for the following genres: ${genres.join(", ")}`
       ) + "\n\n";
 
-    const scrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
+    const scrollingEmbed = new ScrollingListView(this.ctx, embed, {
       items: filteredCrowns,
       pageSize: 15,
       pageRenderer(crowns, { offset }) {

@@ -6,7 +6,7 @@ import { prefabArguments } from "../../../../lib/context/arguments/prefabArgumen
 import { ArgumentsMap } from "../../../../lib/context/arguments/types";
 import { Emoji } from "../../../../lib/emoji/Emoji";
 import { MirrorballBaseCommand } from "../../../../lib/indexing/MirrorballCommands";
-import { displayDate } from "../../../../lib/views/displays";
+import { displayDate } from "../../../../lib/ui/displays";
 import {
   LastScrobbledConnector,
   LastScrobbledParams,

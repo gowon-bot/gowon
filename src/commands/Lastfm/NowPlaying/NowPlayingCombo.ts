@@ -1,7 +1,7 @@
 import { promiseAllSettled } from "../../../helpers";
 import { LineConsolidator } from "../../../lib/LineConsolidator";
 import { ComboCalculator } from "../../../lib/calculators/ComboCalculator";
-import { displayNumber } from "../../../lib/views/displays";
+import { displayNumber } from "../../../lib/ui/displays";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { RedirectsService } from "../../../services/dbservices/RedirectsService";
 import { CrownsService } from "../../../services/dbservices/crowns/CrownsService";

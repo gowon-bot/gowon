@@ -5,7 +5,7 @@ import { ArgumentsMap } from "../../../../lib/context/arguments/types";
 import {
   displayNumber,
   displayNumberedList,
-} from "../../../../lib/views/displays";
+} from "../../../../lib/ui/displays";
 import { FriendsChildCommand } from "../FriendsChildCommand";
 
 const args = {

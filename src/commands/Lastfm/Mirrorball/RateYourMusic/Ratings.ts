@@ -4,8 +4,8 @@ import { StringArgument } from "../../../../lib/context/arguments/argumentTypes/
 import { standardMentions } from "../../../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../../../lib/context/arguments/types";
 import { PaginatedCache } from "../../../../lib/paginators/PaginatedCache";
-import { displayRating } from "../../../../lib/views/displays";
-import { ScrollingEmbed } from "../../../../lib/views/embeds/ScrollingEmbed";
+import { displayRating } from "../../../../lib/ui/displays";
+import { ScrollingView } from "../../../../lib/ui/views/ScrollingView";
 import { MirrorballRating } from "../../../../services/mirrorball/MirrorballTypes";
 import { RatingsConnector, RatingsParams, RatingsResponse } from "./connectors";
 import { RateYourMusicIndexingChildCommand } from "./RateYourMusicChildCommand";
@@ -98,7 +98,7 @@ export class Ratings extends RateYourMusicIndexingChildCommand<
           : `${perspective.upper.possessive} top rated albums`
       );
 
-    const scrollingEmbed = new ScrollingEmbed(this.ctx, embed, {
+    const scrollingEmbed = new ScrollingView(this.ctx, embed, {
       initialItems: this.generateTable(await paginatedCache.getPage(1)),
       totalPages: Math.ceil(
         initialPages.ratings.pageInfo.recordCount / this.pageSize

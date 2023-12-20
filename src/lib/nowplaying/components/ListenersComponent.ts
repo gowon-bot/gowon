@@ -1,4 +1,4 @@
-import { displayNumber } from "../../views/displays";
+import { displayNumber } from "../../ui/displays";
 import { BaseNowPlayingComponent } from "../base/BaseNowPlayingComponent";
 
 const listenersRequirements = ["artistInfo"] as const;

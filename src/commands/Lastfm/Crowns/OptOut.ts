@@ -1,6 +1,6 @@
 import { bold } from "../../../helpers/discord";
-import { displayNumber } from "../../../lib/views/displays";
-import { ConfirmationEmbed } from "../../../lib/views/embeds/ConfirmationEmbed";
+import { displayNumber } from "../../../lib/ui/displays";
+import { ConfirmationView } from "../../../lib/ui/views/ConfirmationView";
 import { CrownsChildCommand } from "./CrownsChildCommand";
 
 export class OptOut extends CrownsChildCommand {
@@ -21,7 +21,7 @@ export class OptOut extends CrownsChildCommand {
         `Are you sure you want to opt out? This will delete all your crowns!`
       );
 
-    const confirmationEmbed = new ConfirmationEmbed(this.ctx, embed);
+    const confirmationEmbed = new ConfirmationView(this.ctx, embed);
 
     if (await confirmationEmbed.awaitConfirmation(this.ctx)) {
       await this.crownsService.scribe.optOut(

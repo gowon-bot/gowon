@@ -6,7 +6,7 @@ import {
   AlternateCoverURLCannotBeBlankError,
 } from "../../errors/contentModeration";
 import { GowonContext } from "../../lib/context/Context";
-import { Image } from "../../lib/views/Image";
+import { Image } from "../../lib/ui/Image";
 import { BaseService } from "../BaseService";
 import { ServiceRegistry } from "../ServicesRegistry";
 import { SpotifyService } from "../Spotify/SpotifyService";

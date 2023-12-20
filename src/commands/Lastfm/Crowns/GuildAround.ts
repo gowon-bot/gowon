@@ -6,10 +6,7 @@ import { asyncMap } from "../../../helpers";
 import { bold } from "../../../helpers/discord";
 import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
-import {
-  displayNumber,
-  displayNumberedList,
-} from "../../../lib/views/displays";
+import { displayNumber, displayNumberedList } from "../../../lib/ui/displays";
 import { CrownsChildCommand } from "./CrownsChildCommand";
 
 const args = {

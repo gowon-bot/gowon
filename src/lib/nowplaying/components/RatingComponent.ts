@@ -1,4 +1,4 @@
-import { displayPlainRating } from "../../views/displays";
+import { displayPlainRating } from "../../ui/displays";
 import { BaseNowPlayingComponent } from "../base/BaseNowPlayingComponent";
 
 const ratingRequirements = ["albumRating"] as const;

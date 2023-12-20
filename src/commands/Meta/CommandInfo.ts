@@ -5,9 +5,9 @@ import { Command } from "../../lib/command/Command";
 import { Flag } from "../../lib/context/arguments/argumentTypes/Flag";
 import { StringArgument } from "../../lib/context/arguments/argumentTypes/StringArgument";
 import { ArgumentsMap } from "../../lib/context/arguments/types";
+import { displayNumber } from "../../lib/ui/displays";
 import { Validation } from "../../lib/validation/ValidationChecker";
 import { validators } from "../../lib/validation/validators";
-import { displayNumber } from "../../lib/views/displays";
 import { MetaBaseCommand } from "./MetaBaseCommand";
 
 const args = {

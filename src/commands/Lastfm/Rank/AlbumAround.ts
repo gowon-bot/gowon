@@ -5,12 +5,9 @@ import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/Num
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { displayNumber, displayNumberedList } from "../../../lib/ui/displays";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
-import {
-  displayNumber,
-  displayNumberedList,
-} from "../../../lib/views/displays";
 import { AroundCommand } from "./AroundCommand";
 
 const args = {

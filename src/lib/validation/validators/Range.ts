@@ -1,4 +1,4 @@
-import { displayNumber } from "../../views/displays";
+import { displayNumber } from "../../ui/displays";
 import { BaseValidator, ValidatorOptions } from "./BaseValidator";
 
 export interface RangeValidatorOptions extends ValidatorOptions {

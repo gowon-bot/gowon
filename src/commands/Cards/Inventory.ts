@@ -1,8 +1,8 @@
 import { AlbumCard } from "../../database/entity/cards/AlbumCard";
 import { bold, italic } from "../../helpers/discord";
 import { StringArgument } from "../../lib/context/arguments/argumentTypes/StringArgument";
-import { displayNumberedList } from "../../lib/views/displays";
-import { SimpleScrollingEmbed } from "../../lib/views/embeds/SimpleScrollingEmbed";
+import { displayNumberedList } from "../../lib/ui/displays";
+import { ScrollingListView } from "../../lib/ui/views/ScrollingListView";
 import { CardsChildCommand } from "./CardsChildCommand";
 
 const args = {
@@ -25,7 +25,7 @@ export class Inventory extends CardsChildCommand<typeof args> {
 
     const embed = this.authorEmbed().setHeader("Cards inventory");
 
-    const scrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
+    const scrollingEmbed = new ScrollingListView(this.ctx, embed, {
       items: cards,
       pageSize: 15,
       pageRenderer(cards: AlbumCard[], { offset }) {

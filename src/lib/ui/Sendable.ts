@@ -4,10 +4,10 @@ import {
   Message,
   MessageEmbed,
 } from "discord.js";
-import { SendOptions } from "../../../services/Discord/DiscordService.types";
-import { UIComponent } from "./UIComponent";
+import { SendOptions } from "../../services/Discord/DiscordService.types";
+import { View } from "./views/View";
 
-export type SendableContent = string | MessageEmbed | UIComponent;
+export type SendableContent = string | MessageEmbed | View;
 
 export class Sendable<T extends SendableContent = SendableContent> {
   constructor(public content: T) {}
@@ -74,7 +74,7 @@ export class Sendable<T extends SendableContent = SendableContent> {
     );
   }
 
-  private isUIComponent(): this is Sendable<UIComponent> {
-    return this.content instanceof UIComponent;
+  private isUIComponent(): this is Sendable<View> {
+    return this.content instanceof View;
   }
 }

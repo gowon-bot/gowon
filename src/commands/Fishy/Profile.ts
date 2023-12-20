@@ -6,8 +6,8 @@ import { calculatePercent } from "../../helpers/stats";
 import { standardMentions } from "../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../lib/context/arguments/types";
 import { FishyRarityEmojis } from "../../lib/emoji/FishyRarityEmoji";
-import { displayDate, displayNumber } from "../../lib/views/displays";
-import { displayFishyCollectionProgress } from "../../lib/views/fishy";
+import { displayDate, displayNumber } from "../../lib/ui/displays";
+import { displayFishyCollectionProgress } from "../../lib/ui/fishy";
 import { FishyRarities } from "../../services/fishy/rarity";
 import { FishyChildCommand } from "./FishyChildCommand";
 

@@ -5,7 +5,7 @@ import { SimpleMap } from "../helpers/types";
 import { Command } from "./command/Command";
 import { ExtractedCommand } from "./command/extractor/ExtractedCommand";
 import { GowonContext } from "./context/Context";
-import { displayUserTag } from "./views/displays";
+import { displayUserTag } from "./ui/displays";
 
 export class Logger {
   static output = true;

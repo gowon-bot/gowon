@@ -1,4 +1,4 @@
-import { displayLink } from "../../../lib/views/displays";
+import { displayLink } from "../../../lib/ui/displays";
 import { SpotifyChildCommand } from "./SpotifyChildCommand";
 
 export class Help extends SpotifyChildCommand {

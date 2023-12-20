@@ -6,9 +6,9 @@ import { LastfmLinks } from "../../../helpers/lastfm/LastfmLinks";
 import { LilacBaseCommand } from "../../../lib/Lilac/LilacBaseCommand";
 import { Payload } from "../../../lib/context/Payload";
 import { EmojiRaw } from "../../../lib/emoji/Emoji";
-import { displayLink, displayProgressBar } from "../../../lib/views/displays";
-import { ConfirmationEmbed } from "../../../lib/views/embeds/ConfirmationEmbed";
-import { EmbedComponent } from "../../../lib/views/framework/EmbedComponent";
+import { displayLink, displayProgressBar } from "../../../lib/ui/displays";
+import { ConfirmationView } from "../../../lib/ui/views/ConfirmationView";
+import { EmbedView } from "../../../lib/ui/views/EmbedView";
 import { LastFMSession } from "../../../services/LastFM/converters/Misc";
 
 export default class Login extends LilacBaseCommand {
@@ -60,7 +60,7 @@ export default class Login extends LilacBaseCommand {
         )
         .setFooter(this.indexingHelp);
 
-      const confirmationEmbed = new ConfirmationEmbed(
+      const confirmationEmbed = new ConfirmationView(
         this.ctx,
         successEmbed,
         new Payload(sentMessage)
@@ -73,8 +73,8 @@ export default class Login extends LilacBaseCommand {
   }
 
   private async impromptuIndex(
-    confirmationEmbed: ConfirmationEmbed,
-    embed: EmbedComponent
+    confirmationEmbed: ConfirmationView,
+    embed: EmbedView
   ) {
     await this.lilacUsersService.index(this.ctx, { discordID: this.author.id });
 
@@ -197,7 +197,7 @@ ${displayProgressBar(progress.page, progress.totalPages, {
     filter: ReactionCollectorFilter,
     sentMessage: Message,
     token: string,
-    embed: EmbedComponent
+    embed: EmbedView
   ): Promise<User | undefined> {
     return new Promise((resolve, reject) => {
       const reactionCollector = sentMessage.createReactionCollector({

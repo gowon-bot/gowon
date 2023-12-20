@@ -4,7 +4,7 @@ import { User } from "../../database/entity/User";
 import { GowonContext } from "../../lib/context/Context";
 import { EmojiMention } from "../../lib/context/arguments/parsers/EmojiParser";
 import { SettingsService } from "../../lib/settings/SettingsService";
-import { displayNumber } from "../../lib/views/displays";
+import { displayNumber } from "../../lib/ui/displays";
 import { BaseService } from "../BaseService";
 import { ServiceRegistry } from "../ServicesRegistry";
 import { SpotifyPlaylist } from "./converters/Playlist";

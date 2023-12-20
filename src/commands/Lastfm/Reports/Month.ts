@@ -1,13 +1,11 @@
 import { sub } from "date-fns";
 import { LogicError } from "../../../errors/errors";
-import { italic } from "../../../helpers/discord";
-import { bullet, extraWideSpace } from "../../../helpers/specialCharacters";
 import { ReportCalculator } from "../../../lib/calculators/ReportCalculator";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { Paginator } from "../../../lib/paginators/Paginator";
 import { TagConsolidator } from "../../../lib/tags/TagConsolidator";
-import { displayDate, displayNumber } from "../../../lib/views/displays";
+import { ReportEmbed } from "../../../lib/ui/embeds/ReportEmbed";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { RedirectsService } from "../../../services/dbservices/RedirectsService";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
@@ -64,57 +62,18 @@ export default class Month extends LastFMBaseCommand<typeof args> {
 
     const month = await reportCalculator.calculate();
 
-    const topTracks = Object.keys(month.top.tracks).sort(
-      (a, b) => month.top.tracks[b] - month.top.tracks[a]
-    );
-
-    const topAlbums = Object.keys(month.top.albums).sort(
-      (a, b) => month.top.albums[b] - month.top.albums[a]
-    );
-
-    const topArtists = Object.keys(month.top.artists).sort(
-      (a, b) => month.top.artists[b] - month.top.artists[a]
-    );
-
     const tagConsolidator = new TagConsolidator();
 
     await tagConsolidator.saveServerBannedTagsInContext(this.ctx);
     tagConsolidator.addTags(this.ctx, month.top.tags);
 
     const embed = this.authorEmbed()
-      .setAuthor(this.generateEmbedAuthor())
-      .setTitle(`${perspective.upper.possessive} month`).setDescription(`
-      _${displayDate(sub(new Date(), { months: 1 }))} - ${displayDate(
-      new Date()
-    )}_
-    _${displayNumber(firstPage.tracks.length, "scrobble")}, ${displayNumber(
-      month.total.artists,
-      "artist"
-    )}, ${displayNumber(month.total.albums, "album")}, ${displayNumber(
-      month.total.tracks,
-      "track"
-    )}_
-
-${italic(tagConsolidator.consolidateAsStrings(10).join(", "))}
-  
-**Top Tracks**:
-${extraWideSpace}${bullet} ${topTracks
-      .slice(0, 3)
-      .map((t) => `${t} (${displayNumber(month.top.tracks[t], "play")})`)
-      .join(`\n​${extraWideSpace}${bullet} `)}
-
-**Top Albums**:
-${extraWideSpace}${bullet} ${topAlbums
-      .slice(0, 3)
-      .map((t) => `${t} (${displayNumber(month.top.albums[t], "play")})`)
-      .join(`\n​${extraWideSpace}${bullet} `)}
-
-**Top Artists**:
-${extraWideSpace}${bullet} ${topArtists
-      .slice(0, 3)
-      .map((t) => `${t} (${displayNumber(month.top.artists[t], "play")})`)
-      .join(`\n​${extraWideSpace}${bullet} `)}
-    `);
+      .setHeader("Report month")
+      .setTitle(`${perspective.upper.possessive} month`)
+      .transform(ReportEmbed)
+      .setDateRange(sub(new Date(), { months: 1 }), new Date())
+      .setReport(month)
+      .setTags(tagConsolidator);
 
     await this.send(embed);
   }

@@ -3,10 +3,10 @@ import { getOrdinal } from "../../../helpers";
 import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { displayDateTime } from "../../../lib/ui/displays";
+import { trackEmbed } from "../../../lib/ui/embeds";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
-import { displayDateTime } from "../../../lib/views/displays";
-import { trackEmbed } from "../../../lib/views/embeds";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 const args = {

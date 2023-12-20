@@ -7,7 +7,7 @@ import { Flag } from "../../lib/context/arguments/argumentTypes/Flag";
 import { StringArgument } from "../../lib/context/arguments/argumentTypes/StringArgument";
 import { ArgumentsMap } from "../../lib/context/arguments/types";
 import { PermissionsService } from "../../lib/permissions/PermissionsService";
-import { SimpleScrollingEmbed } from "../../lib/views/embeds/SimpleScrollingEmbed";
+import { ScrollingListView } from "../../lib/ui/views/ScrollingListView";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 import HelpForOneCommand from "./HelpForOneCommand";
 import QuickHelp from "./QuickHelp";
@@ -99,7 +99,7 @@ export default class Help extends Command<typeof args> {
       });
     }
 
-    const simpleScrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
+    const simpleScrollingEmbed = new ScrollingListView(this.ctx, embed, {
       items: fields,
       pageSize: 9,
       overrides: { customFooter: footer, embedDescription: description },

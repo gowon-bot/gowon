@@ -3,9 +3,9 @@ import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/Num
 import { TimePeriodArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/TimePeriodArgument";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { displayNumber } from "../../../lib/ui/displays";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
-import { displayNumber } from "../../../lib/views/displays";
 import { ProfileChildCommand } from "./ProfileChildCommand";
 
 const args = {

@@ -3,8 +3,8 @@ import { emDash } from "../../../../helpers/specialCharacters";
 import {
   displayNumber,
   displayNumberedList,
-} from "../../../../lib/views/displays";
-import { SimpleScrollingEmbed } from "../../../../lib/views/embeds/SimpleScrollingEmbed";
+} from "../../../../lib/ui/displays";
+import { ScrollingListView } from "../../../../lib/ui/views/ScrollingListView";
 import { PlaylistChildCommand } from "./PlaylistChildCommand";
 
 export class List extends PlaylistChildCommand {
@@ -38,7 +38,7 @@ export class List extends PlaylistChildCommand {
       .setHeader("Spotify playlists")
       .setTitle("Your Spotify playlists");
 
-    const simpleScrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
+    const simpleScrollingEmbed = new ScrollingListView(this.ctx, embed, {
       items: playlists.items,
       pageSize: 15,
       pageRenderer(items, { offset }) {

@@ -2,10 +2,7 @@ import {
   FetchedResponses,
   MultiRequester,
 } from "../../../../lib/MultiRequester";
-import {
-  displayDate,
-  displayNumberedList,
-} from "../../../../lib/views/displays";
+import { displayDate, displayNumberedList } from "../../../../lib/ui/displays";
 import { FriendsChildCommand } from "../FriendsChildCommand";
 
 export class Joined extends FriendsChildCommand {

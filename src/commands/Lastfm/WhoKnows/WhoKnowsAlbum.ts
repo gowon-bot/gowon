@@ -10,7 +10,7 @@ import {
   displayLink,
   displayNumber,
   displayNumberedList,
-} from "../../../lib/views/displays";
+} from "../../../lib/ui/displays";
 import { WhoKnowsBaseCommand } from "./LilacWhoKnowsBaseCommand";
 
 const args = {

@@ -9,8 +9,8 @@ import {
 import { ArgumentsMap } from "../../../../lib/context/arguments/types";
 import { Emoji } from "../../../../lib/emoji/Emoji";
 import { MirrorballBaseCommand } from "../../../../lib/indexing/MirrorballCommands";
-import { displayNumber } from "../../../../lib/views/displays";
-import { SimpleScrollingEmbed } from "../../../../lib/views/embeds/SimpleScrollingEmbed";
+import { displayNumber } from "../../../../lib/ui/displays";
+import { ScrollingListView } from "../../../../lib/ui/views/ScrollingListView";
 import { RedirectsService } from "../../../../services/dbservices/RedirectsService";
 import { ServiceRegistry } from "../../../../services/ServicesRegistry";
 import {
@@ -90,7 +90,7 @@ export default class ArtistTopTracks extends MirrorballBaseCommand<
     const totalScrobbles = topTracks.reduce((sum, t) => sum + t.playcount, 0);
     const average = totalScrobbles / topTracks.length;
 
-    const simpleScrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
+    const simpleScrollingEmbed = new ScrollingListView(this.ctx, embed, {
       pageSize: 15,
       items: topTracks,
 

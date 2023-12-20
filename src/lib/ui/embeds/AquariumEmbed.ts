@@ -10,10 +10,11 @@ import {
 } from "../../../services/fishy/FishyService.types";
 import { Emoji } from "../../emoji/Emoji";
 import { displayNumber } from "../displays";
-import { EmbedComponent } from "../framework/EmbedComponent";
-import { UIComponent } from "../framework/UIComponent";
+import { EmbedView } from "../views/EmbedView";
+import { View } from "../views/View";
 
-export class AquariumEmbed extends UIComponent {
+export class AquariumEmbed extends View {
+  private aquarium!: Aquarium;
   private readonly width: number = 8;
   private readonly height: number = 5;
 
@@ -31,8 +32,13 @@ export class AquariumEmbed extends UIComponent {
     Emoji.bubbles3,
   ];
 
-  constructor(private baseEmbed: EmbedComponent, private aquarium: Aquarium) {
+  constructor(private baseEmbed: EmbedView) {
     super({});
+  }
+
+  setAquarium(aquarium: Aquarium): this {
+    this.aquarium = aquarium;
+    return this;
   }
 
   asMessageEmbed(): MessageEmbed {
@@ -44,8 +50,7 @@ export class AquariumEmbed extends UIComponent {
     );
     const message = this.getAquariumMessage(fishies);
 
-    this.baseEmbed.setHeader("Fishy aquarium").setTitle("Your aquarium")
-      .setDescription(`
+    this.baseEmbed.setDescription(`
       _${message}_
       
       ${tank}

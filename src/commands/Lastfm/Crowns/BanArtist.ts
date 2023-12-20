@@ -2,7 +2,7 @@ import { bold } from "../../../helpers/discord";
 import { Variation } from "../../../lib/command/Command";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
-import { EmbedComponent } from "../../../lib/views/framework/EmbedComponent";
+import { EmbedView } from "../../../lib/ui/views/EmbedView";
 import { CrownsChildCommand } from "./CrownsChildCommand";
 
 const args = {
@@ -50,7 +50,7 @@ export class BanArtist extends CrownsChildCommand<typeof args> {
     }
   }
 
-  private makeEmbed(artistName: string, unban: boolean): EmbedComponent {
+  private makeEmbed(artistName: string, unban: boolean): EmbedView {
     const embed = this.authorEmbed()
       .setHeader("Crowns artist ban")
       .setDescription(

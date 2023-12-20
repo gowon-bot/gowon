@@ -1,11 +1,8 @@
 import { bold } from "../../../helpers/discord";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
-import {
-  displayNumber,
-  displayNumberedList,
-} from "../../../lib/views/displays";
-import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingEmbed";
+import { displayNumber, displayNumberedList } from "../../../lib/ui/displays";
+import { ScrollingListView } from "../../../lib/ui/views/ScrollingListView";
 import { InfoCommand } from "./InfoCommand";
 
 const args = {
@@ -44,7 +41,7 @@ export default class PopularTracks extends InfoCommand<typeof args> {
         `Top tracks for ${topTracks.tracks[0]?.artist?.name || artist}`
       );
 
-    const scrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
+    const scrollingEmbed = new ScrollingListView(this.ctx, embed, {
       items: topTracks.tracks,
       pageSize: 10,
 

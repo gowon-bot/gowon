@@ -2,8 +2,8 @@ import { Chance } from "chance";
 import { FishyQuestType } from "../../database/entity/fishy/FishyQuest";
 import { quote } from "../../helpers/specialCharacters";
 import { Emoji } from "../../lib/emoji/Emoji";
-import { displayNumber, displayProgressBar } from "../../lib/views/displays";
-import { displayFishyLevelUp } from "../../lib/views/fishy";
+import { displayNumber, displayProgressBar } from "../../lib/ui/displays";
+import { displayFishyLevelUp } from "../../lib/ui/fishy";
 import { FishyChildCommand } from "./FishyChildCommand";
 
 export class Quest extends FishyChildCommand {

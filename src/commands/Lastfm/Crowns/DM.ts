@@ -2,10 +2,7 @@ import { chunkArray } from "../../../helpers";
 import { bold } from "../../../helpers/discord";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
-import {
-  displayNumber,
-  displayNumberedList,
-} from "../../../lib/views/displays";
+import { displayNumber, displayNumberedList } from "../../../lib/ui/displays";
 import { CrownsChildCommand } from "./CrownsChildCommand";
 
 const args = {

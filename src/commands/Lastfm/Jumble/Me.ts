@@ -14,7 +14,7 @@ import { Flag } from "../../../lib/context/arguments/argumentTypes/Flag";
 import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { TagConsolidator } from "../../../lib/tags/TagConsolidator";
-import { displayNumber } from "../../../lib/views/displays";
+import { displayNumber } from "../../../lib/ui/displays";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { WordBlacklistService } from "../../../services/WordBlacklistService";
 import { JumbleChildCommand } from "./JumbleChildCommand";

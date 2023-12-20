@@ -5,14 +5,14 @@ import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { RedirectsCache } from "../caches/RedirectsCache";
 import { GowonContext } from "../context/Context";
 
-interface Count {
+export interface ReportCount {
   [name: string]: number;
 }
 
 interface Top {
-  artists: Count;
-  albums: Count;
-  tracks: Count;
+  artists: ReportCount;
+  albums: ReportCount;
+  tracks: ReportCount;
   tags: LilacTag[];
 }
 
@@ -21,9 +21,10 @@ interface TotalCounts {
   albums: number;
   tracks: number;
   tags: number;
+  scrobbles: number;
 }
 
-interface Report {
+export interface Report {
   top: Top;
   total: TotalCounts;
 }
@@ -101,6 +102,7 @@ export class ReportCalculator {
       albums: Object.values(this.top.albums).length,
       tracks: Object.values(this.top.tracks).length,
       tags: Object.values(this.top.tags).length,
+      scrobbles: this.tracks.meta.totalPages,
     };
   }
 

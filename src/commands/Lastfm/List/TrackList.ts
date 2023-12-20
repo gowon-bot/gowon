@@ -3,7 +3,7 @@ import {
   displayNumber,
   displayNumberedList,
   displayTrackLink,
-} from "../../../lib/views/displays";
+} from "../../../lib/ui/displays";
 import { ListCommand } from "./ListCommand";
 
 export default class TrackList extends ListCommand {

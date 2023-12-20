@@ -1,4 +1,4 @@
-import { displayNumber } from "../../../lib/views/displays";
+import { displayNumber } from "../../../lib/ui/displays";
 import { FriendsChildCommand } from "./FriendsChildCommand";
 
 export class RemoveAll extends FriendsChildCommand {

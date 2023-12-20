@@ -8,7 +8,7 @@ import { EmojiMention } from "../../../../lib/context/arguments/parsers/EmojiPar
 import { ArgumentsMap } from "../../../../lib/context/arguments/types";
 import { extractEmojiName } from "../../../../lib/emoji/Emoji";
 import { SettingsService } from "../../../../lib/settings/SettingsService";
-import { ConfirmationEmbed } from "../../../../lib/views/embeds/ConfirmationEmbed";
+import { ConfirmationView } from "../../../../lib/ui/views/ConfirmationView";
 import { EmojiService } from "../../../../services/Discord/EmojiService";
 import { ServiceRegistry } from "../../../../services/ServicesRegistry";
 import { NowPlayingConfigChildCommand } from "./NowPlayingConfigChildCommand";
@@ -80,7 +80,7 @@ export class React extends NowPlayingConfigChildCommand<typeof args> {
       .setHeader("Nowplaying config reacts")
       .setDescription("Are you sure you want to clear your reacts?");
 
-    const confirmationEmbed = new ConfirmationEmbed(this.ctx, embed);
+    const confirmationEmbed = new ConfirmationView(this.ctx, embed);
 
     if (await confirmationEmbed.awaitConfirmation(this.ctx)) {
       await this.settingsService.set(this.ctx, "reacts", {
