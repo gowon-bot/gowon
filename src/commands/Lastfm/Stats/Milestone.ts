@@ -3,8 +3,9 @@ import { getOrdinal } from "../../../helpers";
 import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { Image } from "../../../lib/ui/Image";
 import { displayDateTime } from "../../../lib/ui/displays";
-import { trackEmbed } from "../../../lib/ui/embeds";
+import { TrackEmbed } from "../../../lib/ui/embeds/TrackEmbed";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
@@ -55,18 +56,19 @@ export default class Milestone extends LastFMBaseCommand<typeof args> {
 
     if (!track) throw new BadLastFMResponseError();
 
-    let embed = this.authorEmbed(await trackEmbed(this.ctx, track));
+    const albumCover = await this.albumCoverService.getFromSimpleTrack(
+      this.ctx,
+      track
+    );
 
-    embed = embed
-      .setAuthor({
-        name: `${perspective.upper.possessive} ${getOrdinal(
-          milestone
-        )} track was:`,
-      })
-      .setDescription(
-        embed.description +
-          `\n\nScrobbled at ${displayDateTime(track.scrobbledAt)}`
-      );
+    const embed = this.authorEmbed()
+      .setHeader(
+        `${perspective.upper.possessive} ${getOrdinal(milestone)} track was:`
+      )
+      .transform(TrackEmbed)
+      .setTrack(track)
+      .setAlbumCover(albumCover ? Image.fromURL(albumCover) : undefined)
+      .addDescription(`\n\nScrobbled at ${displayDateTime(track.scrobbledAt)}`);
 
     await this.send(embed);
   }

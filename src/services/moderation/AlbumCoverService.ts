@@ -7,6 +7,10 @@ import {
 } from "../../errors/contentModeration";
 import { GowonContext } from "../../lib/context/Context";
 import { Image } from "../../lib/ui/Image";
+import {
+  SimpleTrack,
+  getSimpleTrackDetails,
+} from "../../lib/ui/embeds/TrackEmbed";
 import { BaseService } from "../BaseService";
 import { ServiceRegistry } from "../ServicesRegistry";
 import { SpotifyService } from "../Spotify/SpotifyService";
@@ -41,6 +45,17 @@ export class AlbumCoverService extends BaseService {
     options: AlbumCoverGetOptions = {}
   ): Promise<string | undefined> {
     return (await this.getWithDetails(ctx, url, options)).url;
+  }
+
+  public async getFromSimpleTrack(
+    ctx: GowonContext,
+    track: SimpleTrack
+  ): Promise<string | undefined> {
+    const { artist, album } = getSimpleTrackDetails(track);
+
+    return this.get(ctx, track.images.get("large"), {
+      metadata: { artist, album },
+    });
   }
 
   public async getWithDetails(

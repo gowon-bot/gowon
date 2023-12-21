@@ -3,8 +3,9 @@ import { DateArgument } from "../../../lib/context/arguments/argumentTypes/timeA
 import { DateRangeArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/DateRangeArgument";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { Image } from "../../../lib/ui/Image";
 import { displayDate } from "../../../lib/ui/displays";
-import { trackEmbed } from "../../../lib/ui/embeds";
+import { TrackEmbed } from "../../../lib/ui/embeds/TrackEmbed";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
@@ -59,16 +60,22 @@ export default class GoBack extends LastFMBaseCommand<typeof args> {
       (date || dateRange?.from)!
     );
 
-    if (!track)
+    if (!track) {
       throw new LogicError(
         `${perspective.plusToHave} not scrobbled any tracks in that time period!`
       );
+    }
 
-    const embed = this.authorEmbed(await trackEmbed(this.ctx, track));
-
-    embed.setDescription(
-      embed.description + `\n\nScrobbled on ${displayDate(track.scrobbledAt)}`
+    const albumCover = await this.albumCoverService.getFromSimpleTrack(
+      this.ctx,
+      track
     );
+
+    const embed = this.authorEmbed()
+      .transform(TrackEmbed)
+      .setTrack(track)
+      .setAlbumCover(albumCover ? Image.fromURL(albumCover) : undefined)
+      .addDescription(`\n\nScrobbled on ${displayDate(track.scrobbledAt)}`);
 
     await this.send(embed);
   }

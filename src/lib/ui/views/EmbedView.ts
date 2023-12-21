@@ -116,12 +116,18 @@ export class EmbedView extends View {
     return this;
   }
 
+  addDescription(description: string): this {
+    this.description = ((this.description || "") + description).trim();
+
+    return this;
+  }
+
   setImage(image: string | Image): this {
     this.image = image;
     return this;
   }
 
-  setThumbnail(image: string | Image): this {
+  setThumbnail(image: string | Image | undefined): this {
     this.thumbnail = image;
     return this;
   }
