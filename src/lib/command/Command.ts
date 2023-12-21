@@ -39,7 +39,7 @@ import { Emoji, EmojiRaw } from "../emoji/Emoji";
 import { SettingsService } from "../settings/SettingsService";
 import { Sendable, SendableContent } from "../ui/Sendable";
 import { displayUserTag } from "../ui/displays";
-import { errorEmbed } from "../ui/embeds";
+import { ErrorEmbed } from "../ui/embeds/conditionEmbeds";
 import { EmbedView } from "../ui/views/EmbedView";
 import { Validation, ValidationChecker } from "../validation/ValidationChecker";
 import { CommandGroup } from "./CommandGroup";
@@ -480,14 +480,11 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
     const errorInstance =
       typeof error === "string" ? new ClientError(error) : error;
 
-    await this.send(
-      errorEmbed(
-        this.authorEmbed(),
-        this.author,
-        this.ctx.authorMember,
-        errorInstance
-      )
-    );
+    const embed = this.authorEmbed()
+      .transform(ErrorEmbed)
+      .setError(errorInstance);
+
+    await this.send(embed);
   }
 
   protected startTyping() {

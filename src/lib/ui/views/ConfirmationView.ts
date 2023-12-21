@@ -6,7 +6,6 @@ import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { GowonContext } from "../../context/Context";
 import { Payload } from "../../context/Payload";
 import { EmojiRaw } from "../../emoji/Emoji";
-import { Sendable } from "../Sendable";
 import { EmbedView } from "./EmbedView";
 
 export class ConfirmationView {
@@ -54,7 +53,7 @@ export class ConfirmationView {
     return new Promise(async (resolve) => {
       const sentEmbed = await this.discordService.send(
         ctx,
-        new Sendable(this.embed),
+        this.embed.asSendable(),
         {
           inChannel: this.originalMessage.channel as RespondableChannel,
         }

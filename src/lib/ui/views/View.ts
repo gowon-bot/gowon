@@ -4,6 +4,7 @@ import {
   MessageEmbed,
   MessageOptions,
 } from "discord.js";
+import { Sendable } from "../Sendable";
 
 export interface ViewOptions {
   reacts: EmojiResolvable[];
@@ -36,5 +37,9 @@ export abstract class View {
         await message.react(react);
       }
     }
+  }
+
+  public asSendable(): Sendable {
+    return new Sendable(this);
   }
 }

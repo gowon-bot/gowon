@@ -91,7 +91,7 @@ export class EmbedView extends View {
     return this;
   }
 
-  setFooter(footer: string): this {
+  setFooter(footer: string | undefined): this {
     this.footer = footer;
     return this;
   }
