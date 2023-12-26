@@ -25,13 +25,9 @@ export default class Logout extends LastFMBaseCommand {
       await this.usersService.clearUsername(this.ctx, this.author.id);
       await this.lilacUsersService.logout(this.ctx);
 
-      if (confirmationEmbed.sentMessage) {
-        await this.discordService.edit(
-          this.ctx,
-          confirmationEmbed.sentMessage,
-          embed.setDescription("Logged out successfully.").asEmbed()
-        );
-      }
+      await embed
+        .setDescription("Logged out successfully.")
+        .editMessage(this.ctx);
     }
   }
 }

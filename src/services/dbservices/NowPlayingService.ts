@@ -5,7 +5,7 @@ import { GowonContext } from "../../lib/context/Context";
 import { DatasourceService } from "../../lib/nowplaying/DatasourceService";
 import { DependencyMap } from "../../lib/nowplaying/DependencyMap";
 import { NowPlayingBuilder } from "../../lib/nowplaying/NowPlayingBuilder";
-import { PresentedComponent } from "../../lib/nowplaying/base/BaseNowPlayingComponent";
+import { RenderedComponent } from "../../lib/nowplaying/base/BaseNowPlayingComponent";
 import {
   NowPlayingComponent,
   componentMap,
@@ -75,7 +75,7 @@ export class NowPlayingService extends BaseService {
     return await dbConfig.save();
   }
 
-  public async getPresentedComponents(
+  public async renderComponents(
     ctx: GowonContext,
     config: string[],
     recentTracks: RecentTracks,
@@ -85,7 +85,7 @@ export class NowPlayingService extends BaseService {
       components?: NowPlayingComponent[];
       dependencies?: Record<string, any>;
     } = {}
-  ): Promise<PresentedComponent[]> {
+  ): Promise<RenderedComponent[]> {
     const builder = new NowPlayingBuilder(config);
 
     builder.components.push(...(extras.components || []));
@@ -105,9 +105,7 @@ export class NowPlayingService extends BaseService {
         ...(extras.dependencies || {}),
       });
 
-    const components = await builder.getPresentedComponents(
-      resolvedDependencies
-    );
+    const components = await builder.renderComponents(resolvedDependencies);
 
     return components;
   }

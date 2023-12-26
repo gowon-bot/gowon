@@ -11,7 +11,7 @@ export class ArtistPlaysComponent extends BaseNowPlayingComponent<
   static friendlyName = "Artist plays";
   readonly dependencies = artistPlaysDependencies;
 
-  present() {
+  render() {
     const { plays, name } = getArtistPlays(this.values);
 
     if (plays !== undefined && name) {

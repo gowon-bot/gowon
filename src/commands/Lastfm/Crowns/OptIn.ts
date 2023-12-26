@@ -21,9 +21,7 @@ export class OptIn extends CrownsChildCommand {
     if (await confirmationEmbed.awaitConfirmation(this.ctx)) {
       await this.crownsService.optIn(this.ctx, this.author.id);
 
-      await confirmationEmbed.sentMessage?.edit({
-        embeds: [embed.setDescription("Opted you back in!").asEmbed()],
-      });
+      await embed.setDescription("Opted you back in!").editMessage(this.ctx);
     }
   }
 }

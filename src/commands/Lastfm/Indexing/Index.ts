@@ -33,23 +33,17 @@ export default class Index extends LilacBaseCommand {
 
     await this.lilacUsersService.index(this.ctx, { discordID: this.author.id });
 
-    confirmationEmbed.sentMessage?.edit({
-      embeds: [
-        embed
-          .setDescription(
-            `Indexing...\n${displayProgressBar(0, 1, {
-              width: this.progressBarWidth,
-            })}\n*Loading...*`
-          )
-          .asEmbed(),
-      ],
-    });
+    embed
+      .setDescription(
+        `Indexing...\n${displayProgressBar(0, 1, {
+          width: this.progressBarWidth,
+        })}\n*Loading...*`
+      )
+      .editMessage(this.ctx);
 
     const observable = this.lilacUsersService.indexingProgress(this.ctx, {
       discordID: this.author.id,
     });
-
-    const sentMessage = confirmationEmbed.sentMessage!;
 
     const stopwatch = new Stopwatch().start();
 
@@ -58,26 +52,18 @@ export default class Index extends LilacBaseCommand {
     const subscription = observable.subscribe(async (progress) => {
       if (progress.page === progress.totalPages) {
         await this.usersService.setIndexed(this.ctx, this.author.id);
-        await this.discordService.edit(
-          this.ctx,
-          sentMessage,
-          embed.setDescription("Done!").asEmbed()
-        );
+        await embed.setDescription("Done!").editMessage(this.ctx);
         subscription.unsubscribe();
       } else if (stopwatch.elapsedInMilliseconds >= 3000) {
-        await this.discordService.edit(
-          this.ctx,
-          sentMessage,
-          embed
-            .setDescription(
-              `Indexing...
+        await embed
+          .setDescription(
+            `Indexing...
 ${displayProgressBar(progress.page, progress.totalPages, {
   width: this.progressBarWidth,
 })}
 *Page ${progress.page}/${progress.totalPages}*`
-            )
-            .asEmbed()
-        );
+          )
+          .editMessage(this.ctx);
 
         stopwatch.zero().start();
       }

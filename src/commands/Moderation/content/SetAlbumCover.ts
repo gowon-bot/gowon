@@ -146,6 +146,6 @@ This will ${shouldClear ? "clear" : "set"} the image ${bold(
           this.parsedArguments.moderation ? " bot-wide" : ""
         }!`
       )
-      .updateMessage(this.ctx);
+      .editMessage(this.ctx);
   }
 }

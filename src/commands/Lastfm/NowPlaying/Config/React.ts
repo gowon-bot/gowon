@@ -89,7 +89,7 @@ export class React extends NowPlayingConfigChildCommand<typeof args> {
 
       await embed
         .setDescription("Successfully cleared your reactions!")
-        .updateMessage(this.ctx);
+        .editMessage(this.ctx);
     }
   }
 

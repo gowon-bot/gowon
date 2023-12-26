@@ -1,6 +1,6 @@
 import { asyncMap } from "../../helpers";
 import { UNUSED_CONFIG } from "../../services/dbservices/NowPlayingService";
-import { PresentedComponent } from "./base/BaseNowPlayingComponent";
+import { RenderedComponent } from "./base/BaseNowPlayingComponent";
 import {
   compoundComponentList,
   getComponentByName,
@@ -45,22 +45,22 @@ export class NowPlayingBuilder {
   // - Resolves promises
   // - Moves components around according to placeAfter
   // - Flattens out multiple component returns
-  public async getPresentedComponents(
+  public async renderComponents(
     resolvedDependencies: ResolvedDependencies
-  ): Promise<PresentedComponent[]> {
+  ): Promise<RenderedComponent[]> {
     const promises = await asyncMap(
       this.components,
       async (c) =>
         [
           (c as any).componentName,
-          await Promise.resolve(new c(resolvedDependencies).present()),
-        ] as [string, PresentedComponent | PresentedComponent[]]
+          await Promise.resolve(new c(resolvedDependencies).render()),
+        ] as [string, RenderedComponent | RenderedComponent[]]
     );
 
-    const initialComponentList = this.flattenPresentedComponents(promises);
+    const initialComponentList = this.flattenRenderedComponents(promises);
     const newComponentList = JSON.parse(
       JSON.stringify(initialComponentList)
-    ) as [string, PresentedComponent][];
+    ) as [string, RenderedComponent][];
 
     for (let index = 0; index < initialComponentList.length; index++) {
       const [_, component] = initialComponentList[index];
@@ -72,8 +72,8 @@ export class NowPlayingBuilder {
   }
 
   private handleComponent(
-    component: PresentedComponent,
-    newComponentList: [string, PresentedComponent | PresentedComponent[]][],
+    component: RenderedComponent,
+    newComponentList: [string, RenderedComponent | RenderedComponent[]][],
     componentIndex: number
   ) {
     if (component.placeAfter) {
@@ -99,10 +99,10 @@ export class NowPlayingBuilder {
     }
   }
 
-  private flattenPresentedComponents(
-    componentList: [string, PresentedComponent | PresentedComponent[]][]
-  ): [string, PresentedComponent][] {
-    const flattenedlist = [] as [string, PresentedComponent][];
+  private flattenRenderedComponents(
+    componentList: [string, RenderedComponent | RenderedComponent[]][]
+  ): [string, RenderedComponent][] {
+    const flattenedlist = [] as [string, RenderedComponent][];
 
     for (const [componentName, component] of componentList) {
       const miniComponentList =
@@ -110,7 +110,7 @@ export class NowPlayingBuilder {
 
       flattenedlist.push(
         ...miniComponentList.map(
-          (c) => [componentName, c] as [string, PresentedComponent]
+          (c) => [componentName, c] as [string, RenderedComponent]
         )
       );
     }

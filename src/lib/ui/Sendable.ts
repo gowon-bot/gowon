@@ -49,7 +49,7 @@ export class Sendable<T extends SendableContent = SendableContent> {
 
   public getContent(): string | MessageEmbed {
     if (this.isUIComponent()) {
-      return this.content.asEmbed().toMessageEmbed();
+      return this.content.asDiscordSendable().toMessageEmbed();
     } else return this.content as string | MessageEmbed;
   }
 
@@ -59,12 +59,14 @@ export class Sendable<T extends SendableContent = SendableContent> {
   ): Pick<DiscordMessageOptions, "embeds"> {
     if (typeof content === "string") {
       if (overrides.withEmbed) {
-        return { embeds: [overrides.withEmbed.asEmbed().toMessageEmbed()] };
+        return {
+          embeds: [overrides.withEmbed.asDiscordSendable().toMessageEmbed()],
+        };
       } else return {};
     } else {
       return {
         embeds: overrides?.withEmbed
-          ? [content, overrides.withEmbed.asEmbed().toMessageEmbed()]
+          ? [content, overrides.withEmbed.asDiscordSendable().toMessageEmbed()]
           : [content],
       };
     }

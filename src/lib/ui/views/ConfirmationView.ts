@@ -98,7 +98,7 @@ export class ConfirmationView {
               ? `\n\n❌ This confirmation has been rejected.`
               : `\n\n🕒 This confirmation has timed out.`;
 
-          await this.embed.addFooter(footer).updateMessage(ctx);
+          await this.embed.addFooter(footer).editMessage(ctx);
           await Promise.all([
             this.removeReaction(this.confirmationEmoji),
             this.allowRejection

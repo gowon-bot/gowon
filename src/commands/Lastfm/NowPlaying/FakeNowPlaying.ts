@@ -40,19 +40,27 @@ export default class FakeNowPlaying extends NowPlayingBaseCommand<typeof args> {
 
     const recentTracks = await this.getRecentTracks(senderRequestable);
 
-    const components = await this.getPresentedComponents(
+    const components = await this.nowPlayingService.renderComponents(
+      this.ctx,
       await this.getConfig(senderUser!),
       recentTracks,
       requestable,
       dbUser
     );
 
-    const usernameDisplay = await this.getUsernameDisplay(dbUser, username);
+    const usernameDisplay = await this.nowPlayingService.getUsernameDisplay(
+      this.ctx,
+      dbUser,
+      username
+    );
+
+    const albumCover = await this.getAlbumCover(recentTracks.first());
 
     const embed = this.authorEmbed()
       .transform(NowPlayingEmbed)
       .setDbUser(dbUser)
       .setNowPlaying(recentTracks.first(), this.tagConsolidator)
+      .setAlbumCover(albumCover)
       .setUsername(username)
       .setUsernameDisplay(usernameDisplay)
       .setComponents(components)

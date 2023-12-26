@@ -10,7 +10,7 @@ export class FishyReminderComponent extends BaseNowPlayingComponent<
   static patronOnly = true;
   readonly dependencies = fishyReminderDependencies;
 
-  present() {
+  render() {
     if (this.values.fishyProfile?.canFish()) {
       return { size: 0, string: "🐟" };
     }

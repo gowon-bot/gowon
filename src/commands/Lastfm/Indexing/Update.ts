@@ -52,7 +52,7 @@ export default class Update extends LilacBaseCommand<typeof args> {
 
     const subscription = observable.subscribe(async (progress) => {
       if (progress.page === progress.totalPages) {
-        await embed.setDescription("Done!").updateMessage(this.ctx);
+        await embed.setDescription("Done!").editMessage(this.ctx);
 
         subscription.unsubscribe();
       } else if (stopwatch.elapsedInMilliseconds >= 3000) {
@@ -62,7 +62,7 @@ export default class Update extends LilacBaseCommand<typeof args> {
         })}
         *Page ${progress.page}/${progress.totalPages}*`;
 
-        await embed.setDescription(description).updateMessage(this.ctx);
+        await embed.setDescription(description).editMessage(this.ctx);
 
         stopwatch.zero().start();
       }

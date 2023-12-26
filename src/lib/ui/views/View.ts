@@ -1,14 +1,22 @@
-import { EmojiResolvable, Message, MessageOptions } from "discord.js";
+import {
+  EmojiResolvable,
+  Message,
+  MessageEmbed,
+  MessageOptions,
+} from "discord.js";
 import { ViewHasNotBeenSentError } from "../../../errors/ui";
 import { DiscordService } from "../../../services/Discord/DiscordService";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { GowonContext } from "../../context/Context";
 import { Sendable } from "../Sendable";
-import { EmbedView } from "./EmbedView";
 
 export interface ViewOptions {
   reacts: EmojiResolvable[];
   ephemeral: boolean;
+}
+
+export interface DiscordSendable {
+  toMessageEmbed(): MessageEmbed;
 }
 
 export abstract class View {
@@ -16,11 +24,9 @@ export abstract class View {
 
   constructor(protected componentOptions: Partial<ViewOptions> = {}) {}
 
-  asEmbed(): EmbedView {
-    return new EmbedView();
-  }
+  abstract asDiscordSendable(): DiscordSendable;
 
-  public async updateMessage(ctx: GowonContext) {
+  public async editMessage(ctx: GowonContext) {
     const discordService = ServiceRegistry.get(DiscordService);
 
     await discordService.edit(ctx, this.getSentMessage(), new Sendable(this));

@@ -13,7 +13,7 @@ export class ArtistPlaysAndCrownComponent extends BaseCompoundComponent<
   static componentName = "artist-plays-and-crown";
   static replaces = ["artist-plays", "artist-crown"];
 
-  async present() {
+  async render() {
     const crown = this.values.artistCrown;
 
     let crownString = "";

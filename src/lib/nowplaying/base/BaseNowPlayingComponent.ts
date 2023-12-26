@@ -6,7 +6,7 @@ import { Resources } from "../DatasourceService";
 import { DependencyMap } from "../DependencyMap";
 
 export type NowPlayingDependency = keyof DependencyMap;
-export interface PresentedComponent {
+export interface RenderedComponent {
   string: string;
   size: number;
   // some components should be placed after certain ones
@@ -42,10 +42,10 @@ export abstract class BaseNowPlayingComponent<
     return this.values.recentTracks.first();
   }
 
-  abstract present():
-    | PresentedComponent
-    | PresentedComponent[]
-    | Promise<PresentedComponent | PresentedComponent[]>;
+  abstract render():
+    | RenderedComponent
+    | RenderedComponent[]
+    | Promise<RenderedComponent | RenderedComponent[]>;
 }
 
 export class AnyIn {

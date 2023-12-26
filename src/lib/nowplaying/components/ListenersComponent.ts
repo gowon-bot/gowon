@@ -10,7 +10,7 @@ export class ListenersComponent extends BaseNowPlayingComponent<
   static friendlyName = "Last.fm listeners";
   readonly dependencies = listenersDependencies;
 
-  present() {
+  render() {
     return {
       string: `${displayNumber(
         this.values.artistInfo?.listeners || 0,

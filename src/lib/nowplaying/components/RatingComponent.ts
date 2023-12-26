@@ -10,7 +10,7 @@ export class RatingComponent extends BaseNowPlayingComponent<
   static friendlyName = "Album rating";
   readonly dependencies = ratingDependencies;
 
-  present() {
+  render() {
     const albumRating = this.values.albumRating.ratings[0];
 
     if (albumRating) {

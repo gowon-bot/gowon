@@ -11,7 +11,7 @@ export class ServerArtistRankComponent extends BaseNowPlayingComponent<
   static friendlyName = "Server artist rank";
   readonly dependencies = artistRankDependencies;
 
-  present() {
+  render() {
     const artistRank = this.values.serverArtistRank;
 
     if (artistRank && artistRank.rank != -1) {

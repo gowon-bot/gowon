@@ -17,13 +17,4 @@ export default class NowPlayingCustom extends NowPlayingBaseCommand {
   async getConfig(senderUser: User): Promise<string[]> {
     return await this.nowPlayingService.getConfigForUser(this.ctx, senderUser!);
   }
-
-  // if (this.variationWasUsed("badTyping")) {
-  //   embed.setFooter({
-  //     text:
-  //       embed.footer?.text?.replaceAll(/s/gi, (match) =>
-  //         match === "S" ? "Z" : "z"
-  //       ) || "",
-  //   });
-  // }
 }

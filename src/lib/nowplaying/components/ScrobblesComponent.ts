@@ -10,7 +10,7 @@ export class ScrobblesComponent extends BaseNowPlayingComponent<
   static friendlyName = "Scrobbles";
   readonly dependencies = scrobblesDependencies;
 
-  present() {
+  render() {
     if (this.values.recentTracks) {
       return {
         string: `${displayNumber(

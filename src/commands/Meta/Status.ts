@@ -43,7 +43,7 @@ Lilac..........${this.displayLatency(lilacLatency)}
 \`\`\`
 `
       )
-      .updateMessage(this.ctx);
+      .editMessage(this.ctx);
   }
 
   private async mirrorballLatency(): Promise<Stopwatch> {

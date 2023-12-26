@@ -32,7 +32,7 @@ export class TabbedView extends View {
     this.currentTab = options.tabs[0].name;
   }
 
-  asEmbed(): EmbedView {
+  asDiscordSendable(): EmbedView {
     return this.getEmbed();
   }
 
@@ -87,7 +87,7 @@ export class TabbedView extends View {
 
         const embed = this.getEmbed();
 
-        embed.updateMessage(this.ctx);
+        embed.editMessage(this.ctx);
       });
 
       collector.on("error", (e: Error) => {

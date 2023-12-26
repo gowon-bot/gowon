@@ -32,7 +32,7 @@ export class TrackEmbed extends View {
     super();
   }
 
-  asEmbed(): EmbedView {
+  asDiscordSendable(): EmbedView {
     const { artist, album } = getSimpleTrackDetails(this.track);
 
     return this.baseEmbed

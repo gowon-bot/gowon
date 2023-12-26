@@ -3,15 +3,15 @@ import { BaseNowPlayingComponent } from "../../base/BaseNowPlayingComponent";
 
 const comboDependencies = ["combo"] as const;
 
+// Only used by NowPlayingCombo
 export class ComboComponent extends BaseNowPlayingComponent<
   typeof comboDependencies
 > {
   static componentName = "combo";
-  static friendlyName = "Com";
-  static patronOnly = true;
+  static friendlyName = "Combo";
   readonly dependencies = comboDependencies;
 
-  present() {
+  render() {
     if (this.values.combo) {
       return {
         string: `${displayNumber(this.values.combo.artist.plays)} in a row ${

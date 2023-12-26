@@ -13,11 +13,6 @@ import NowPlayingCompact from "./NowPlayingCompact";
 import NowPlayingCustom from "./NowPlayingCustom";
 import NowPlayingVerbose from "./NowPlayingVerbose";
 
-const reverse = (s: string) =>
-  s.split("").reverse().join("").replace("(", ")").replace(")", "(");
-const reverseLinks = (s: string) =>
-  s.replace(/(?<=\[)[^\]]*(?=\])/g, (match) => reverse(match));
-
 const args = {
   type: new StringArgument({
     description: "Controls what type of embed Gowon uses",
@@ -76,40 +71,6 @@ export default class NowPlaying extends NowPlayingBaseCommand<typeof args> {
   getConfig(): string[] {
     return NowPlayingService.presets.default;
   }
-
-  // if (this.extract.didMatch("mf")) {
-  //   nowPlayingEmbed = this.reverseEmbed(nowPlayingEmbed);
-  // }
-
-  // private reverseEmbed(embed: MessageEmbed): MessageEmbed {
-  //   embed.setTitle(reverse(embed.title!));
-  //   embed.setDescription(reverseLinks(embed.description!));
-
-  //   const footer = embed.footer?.text!.split("\n") as [string, string];
-
-  //   footer[0] = footer[0]
-  //     .split(" ‧ ")
-  //     .map((t) => reverse(t))
-  //     .join(" ‧ ");
-  //   footer[1] = footer[1].replace(/(?<= ).*(?= scrobbles •)/, (match) =>
-  //     reverse(match)
-  //   );
-
-  //   embed.setFooter({ text: footer.join("\n") });
-
-  //   const author = (embed.author = {
-  //     ...embed.author,
-  //     name:
-  //       embed.author?.name!.replace(
-  //         /(?<=(Now playing|Last scrobbled) for ).*/i,
-  //         (match) => reverse(match)
-  //       ) || "",
-  //   });
-
-  //   embed.setAuthor(author);
-
-  //   return embed;
-  // }
 
   private fmModeWasUsed(mode: FMMode, input: string | undefined) {
     return (

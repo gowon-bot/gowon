@@ -40,7 +40,7 @@ export class AquariumEmbed extends View {
     return this;
   }
 
-  asEmbed(): EmbedView {
+  asDiscordSendable(): EmbedView {
     const fishies = this.aquarium.fishies.map((f) => f.fishy);
 
     const tank = this.renderTank(

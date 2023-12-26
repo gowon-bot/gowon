@@ -1,17 +1,14 @@
-import { User } from "discord.js";
 import config from "../../../../config.json";
 import { User as DBUser } from "../../../database/entity/User";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
-import {
-  DatasourceService,
-  DatasourceServiceContext,
-} from "../../../lib/nowplaying/DatasourceService";
+import { DatasourceServiceContext } from "../../../lib/nowplaying/DatasourceService";
 import { SettingsService } from "../../../lib/settings/SettingsService";
 import { TagConsolidator } from "../../../lib/tags/TagConsolidator";
-import { displayNumber } from "../../../lib/ui/displays";
+import { Image } from "../../../lib/ui/Image";
 import { NowPlayingEmbed } from "../../../lib/ui/embeds/NowPlayingEmbed";
+import { fmz, reverseNowPlayingEmbed } from "../../../lib/ui/embeds/mutators";
 import { Requestable } from "../../../services/LastFM/LastFMAPIService";
 import { RecentTrack } from "../../../services/LastFM/converters/RecentTracks";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
@@ -20,7 +17,6 @@ import {
   Mentions,
 } from "../../../services/arguments/mentions/MentionsService.types";
 import { NowPlayingService } from "../../../services/dbservices/NowPlayingService";
-import { CrownDisplay } from "../../../services/dbservices/crowns/CrownsService.types";
 import { AlbumCoverService } from "../../../services/moderation/AlbumCoverService";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
@@ -47,7 +43,6 @@ export abstract class NowPlayingBaseCommand<
   nowPlayingService = ServiceRegistry.get(NowPlayingService);
   settingsService = ServiceRegistry.get(SettingsService);
   albumCoverService = ServiceRegistry.get(AlbumCoverService);
-  datasourceService = ServiceRegistry.get(DatasourceService);
 
   tagConsolidator = new TagConsolidator();
 
@@ -73,27 +68,32 @@ export abstract class NowPlayingBaseCommand<
       dbUser,
       username
     );
-    const presentedComponents =
-      await this.nowPlayingService.getPresentedComponents(
-        this.ctx,
-        await Promise.resolve(this.getConfig(senderUser!)),
-        recentTracks,
-        requestable,
-        dbUser
-      );
+    const renderedComponents = await this.nowPlayingService.renderComponents(
+      this.ctx,
+      await Promise.resolve(this.getConfig(senderUser!)),
+      recentTracks,
+      requestable,
+      dbUser
+    );
 
     const tagConsolidator =
       this.ctx.getMutable<DatasourceServiceContext["mutable"]>()
         .tagConsolidator;
 
+    const albumCover = await this.getAlbumCover(recentTracks.first());
+
     const embed = this.authorEmbed()
       .transform(NowPlayingEmbed)
       .setDbUser(dbUser)
       .setNowPlaying(recentTracks.first(), tagConsolidator)
+      .setAlbumCover(albumCover)
       .setUsername(username)
       .setUsernameDisplay(usernameDisplay)
-      .setComponents(presentedComponents)
-      .setCustomReacts(await this.getCustomReactions());
+      .setComponents(renderedComponents)
+      .setCustomReacts(await this.getCustomReactions())
+      .asDiscordSendable()
+      .mutateIf(this.extract.didMatch("mf"), reverseNowPlayingEmbed)
+      .mutateIf(this.variationWasUsed("badTyping"), fmz);
 
     await this.send(embed);
   }
@@ -134,35 +134,28 @@ export abstract class NowPlayingBaseCommand<
     }
   }
 
-  protected async crownDetails(
-    crown: { value?: CrownDisplay },
-    discordUser?: User
-  ): Promise<{ isCrownHolder: boolean; crownString: string }> {
-    let crownString = "";
-    let isCrownHolder = false;
-
-    if (crown.value && crown.value.user) {
-      if (crown.value.user.id === discordUser?.id) {
-        isCrownHolder = true;
-      } else {
-        if (
-          await this.discordService.userInServer(this.ctx, crown.value.user.id)
-        ) {
-          crownString = `👑 ${displayNumber(crown.value.crown.plays)} (${
-            crown.value.user.username
-          })`;
-        }
-      }
-    }
-
-    return { isCrownHolder, crownString };
-  }
-
   protected async getCustomReactions() {
     return JSON.parse(
       this.settingsService.get("reacts", {
         userID: this.author.id,
       }) || "[]"
     ) as string[];
+  }
+
+  protected async getAlbumCover(
+    nowPlaying: RecentTrack
+  ): Promise<Image | undefined> {
+    const url = await this.albumCoverService.get(
+      this.ctx,
+      nowPlaying.images.get("large"),
+      {
+        metadata: {
+          artist: nowPlaying.artist,
+          album: nowPlaying.album,
+        },
+      }
+    );
+
+    return url ? Image.fromURL(url) : undefined;
   }
 }

@@ -16,7 +16,7 @@ export class ReportEmbed extends View {
     super();
   }
 
-  asEmbed(): EmbedView {
+  asDiscordSendable(): EmbedView {
     return this.baseEmbed.setDescription(
       `
     _${displayDate(this.fromDate)} - ${displayDate(this.toDate)}_

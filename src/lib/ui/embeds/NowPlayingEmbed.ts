@@ -7,7 +7,7 @@ import { RecentTrack } from "../../../services/LastFM/converters/RecentTracks";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { AlbumCoverService } from "../../../services/moderation/AlbumCoverService";
 import { GowonContext } from "../../context/Context";
-import { PresentedComponent } from "../../nowplaying/base/BaseNowPlayingComponent";
+import { RenderedComponent } from "../../nowplaying/base/BaseNowPlayingComponent";
 import { FMUsernameDisplay } from "../../settings/SettingValues";
 import { SettingsService } from "../../settings/SettingsService";
 import { TagConsolidator } from "../../tags/TagConsolidator";
@@ -22,8 +22,8 @@ export class NowPlayingEmbed extends View {
   username!: string;
   dbUser!: DBUser;
   usernameDisplay!: string;
-  albumCover!: Image;
-  components!: PresentedComponent[];
+  albumCover?: Image;
+  components!: RenderedComponent[];
   customReactions!: string[];
   ctx!: GowonContext;
 
@@ -39,14 +39,13 @@ export class NowPlayingEmbed extends View {
     super();
   }
 
-  asEmbed(): EmbedView {
+  asDiscordSendable(): EmbedView {
     const links = LastfmLinks.generateTrackLinksForEmbed(this.nowPlaying);
 
     return this.baseEmbed
+      .setAuthorUsername(this.usernameDisplay)
       .setHeader(
-        `${
-          this.nowPlaying.isNowPlaying ? "Now playing" : "Last scrobbled"
-        } for ${this.usernameDisplay}`
+        `${this.nowPlaying.isNowPlaying ? "Now playing" : "Last scrobbled"}`
       )
       .setHeaderURL(
         this.usernameDisplay === FMUsernameDisplay.DISCORD_USERNAME
@@ -88,7 +87,7 @@ export class NowPlayingEmbed extends View {
     return this;
   }
 
-  setComponents(components: PresentedComponent[]): this {
+  setComponents(components: RenderedComponent[]): this {
     this.components = components;
     return this;
   }
@@ -98,37 +97,42 @@ export class NowPlayingEmbed extends View {
     return this;
   }
 
+  setAlbumCover(cover: Image | undefined): this {
+    this.albumCover = cover;
+    return this;
+  }
+
   public async afterSend(message: Message<boolean>): Promise<void> {
     await this.reactWithCustom(message);
     await super.afterSend(message);
   }
 
   private getFooter(): string {
-    const presented = this.organizeRows(
+    const rendered = this.organizeRows(
       this.components.filter((s) => !!s.string && s.size !== undefined)
     );
 
-    return presented
+    return rendered
       .map((row) => row.map((r) => r.string).join(" • "))
       .join("\n");
   }
 
   private organizeRows(
-    presentedComponents: PresentedComponent[]
-  ): PresentedComponent[][] {
-    const finalArray = [] as PresentedComponent[][];
+    renderedComponents: RenderedComponent[]
+  ): RenderedComponent[][] {
+    const finalArray = [] as RenderedComponent[][];
 
-    for (const presentedComponent of presentedComponents) {
-      const findFunction = (row: PresentedComponent[]) =>
+    for (const renderedComponent of renderedComponents) {
+      const findFunction = (row: RenderedComponent[]) =>
         NowPlayingEmbed.rowSize - sum(...row.map((r) => r.size)) >=
-        presentedComponent.size;
+        renderedComponent.size;
 
       const index = finalArray.findIndex(findFunction);
 
       if (index !== -1) {
-        finalArray[index].push(presentedComponent);
+        finalArray[index].push(renderedComponent);
       } else {
-        finalArray.push([presentedComponent]);
+        finalArray.push([renderedComponent]);
       }
     }
 

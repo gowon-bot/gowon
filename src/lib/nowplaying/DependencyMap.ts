@@ -2,6 +2,7 @@ import { CachedLovedTrack } from "../../database/entity/CachedLovedTrack";
 import { AlbumCard } from "../../database/entity/cards/AlbumCard";
 import { FishyProfile } from "../../database/entity/fishy/FishyProfile";
 import {
+  AlbumInfo,
   ArtistInfo,
   TrackInfo,
 } from "../../services/LastFM/converters/InfoTypes";
@@ -22,6 +23,7 @@ export type DependencyMap = {
   // Lastfm data
   artistInfo: ArtistInfo;
   trackInfo: TrackInfo;
+  albumInfo?: AlbumInfo;
 
   // Gowon data
   artistCrown: CrownDisplay | undefined;

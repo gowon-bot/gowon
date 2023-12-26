@@ -35,17 +35,13 @@ export class OptOut extends CrownsChildCommand {
         this.author.id
       );
 
-      await confirmationEmbed.sentMessage?.edit({
-        embeds: [
-          embed
-            .setDescription(
-              `Opted you out, deleting ${bold(
-                displayNumber(numberOfCrowns, "crown")
-              )}!`
-            )
-            .asEmbed(),
-        ],
-      });
+      await embed
+        .setDescription(
+          `Opted you out, deleting ${bold(
+            displayNumber(numberOfCrowns, "crown")
+          )}!`
+        )
+        .editMessage(this.ctx);
     }
   }
 }

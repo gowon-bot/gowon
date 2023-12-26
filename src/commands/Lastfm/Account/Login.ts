@@ -81,7 +81,7 @@ export default class Login extends LilacBaseCommand {
           width: this.progressBarWidth,
         })}\n*Loading...*`
       )
-      .updateMessage(this.ctx);
+      .editMessage(this.ctx);
 
     const observable = this.lilacUsersService.indexingProgress(this.ctx, {
       discordID: this.author.id,
@@ -91,7 +91,7 @@ export default class Login extends LilacBaseCommand {
 
     const subscription = observable.subscribe(async (progress) => {
       if (progress.page === progress.totalPages) {
-        await embed.setDescription("Done!").updateMessage(this.ctx);
+        await embed.setDescription("Done!").editMessage(this.ctx);
 
         subscription.unsubscribe();
       } else if (stopwatch.elapsedInMilliseconds >= 3000) {
@@ -103,7 +103,7 @@ ${displayProgressBar(progress.page, progress.totalPages, {
 })}
 *Page ${progress.page}/${progress.totalPages}*`
           )
-          .updateMessage(this.ctx);
+          .editMessage(this.ctx);
       }
     });
   }
@@ -198,7 +198,7 @@ ${displayProgressBar(progress.page, progress.totalPages, {
             .setFooter(
               "Hmm that didn't work, please ensure you've authenticated with the link and try again"
             )
-            .updateMessage(this.ctx);
+            .editMessage(this.ctx);
         }
       });
 
@@ -211,7 +211,7 @@ ${displayProgressBar(progress.page, progress.totalPages, {
         if (reason === "time") {
           embed
             .setFooter("This login link has expired, please try again")
-            .updateMessage(this.ctx);
+            .editMessage(this.ctx);
 
           resolve(undefined);
         }

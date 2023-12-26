@@ -4,7 +4,7 @@ export class UnusedComponent extends BaseNowPlayingComponent<never[]> {
   static componentName = "loved";
   readonly dependencies = [];
 
-  present() {
+  render() {
     return {
       string: `You can customize what gets shown here! See ${this.values.prefix}npc help for more information`,
       size: 4,

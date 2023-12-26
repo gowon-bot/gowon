@@ -29,7 +29,7 @@ export class TagsComponent extends BaseCompoundComponent<typeof dependencies> {
   static componentName = "tags";
   static replaces = new AnyIn(["artist-tags", "track-tags"]);
 
-  async present() {
+  async render() {
     const tagConsolidator = new TagConsolidator();
 
     this.blacklistTags(tagConsolidator);

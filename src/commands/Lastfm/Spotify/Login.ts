@@ -49,6 +49,6 @@ export class Login extends SpotifyBaseCommand {
 
     await embed
       .setDescription("Successfully logged in with Spotify!")
-      .updateMessage(this.ctx);
+      .editMessage(this.ctx);
   }
 }

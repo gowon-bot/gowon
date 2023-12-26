@@ -47,27 +47,29 @@ export default class NowPlayingCombo extends NowPlayingBaseCommand {
       dbUser,
       username
     );
-    const presentedComponents =
-      await this.nowPlayingService.getPresentedComponents(
-        this.ctx,
-        this.getConfig(),
-        recentTracks,
-        requestable,
-        dbUser,
-        { components: [ComboComponent], dependencies: { combo } }
-      );
+    const renderedComponents = await this.nowPlayingService.renderComponents(
+      this.ctx,
+      this.getConfig(),
+      recentTracks,
+      requestable,
+      dbUser,
+      { components: [ComboComponent], dependencies: { combo } }
+    );
 
     const tagConsolidator =
       this.ctx.getMutable<DatasourceServiceContext["mutable"]>()
         .tagConsolidator;
 
+    const albumCover = await this.getAlbumCover(recentTracks.first());
+
     const embed = this.authorEmbed()
       .transform(NowPlayingEmbed)
       .setDbUser(dbUser)
       .setNowPlaying(recentTracks.first(), tagConsolidator)
+      .setAlbumCover(albumCover)
       .setUsername(username)
       .setUsernameDisplay(usernameDisplay)
-      .setComponents(presentedComponents)
+      .setComponents(renderedComponents)
       .setCustomReacts(await this.getCustomReactions());
 
     await this.send(embed);

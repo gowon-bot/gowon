@@ -10,7 +10,7 @@ export class AlbumPlaysComponent extends BaseNowPlayingComponent<
   static friendlyName = "Album plays";
   readonly dependencies = albumPlaysDependencies;
 
-  present() {
+  render() {
     const albumPlays = this.values.albumPlays[0];
 
     return {
@@ -18,6 +18,26 @@ export class AlbumPlaysComponent extends BaseNowPlayingComponent<
         albumPlays ? albumPlays.playcount : 0,
         "album scrobble"
       ),
+      size: 1,
+    };
+  }
+}
+
+const lastFMAlbumPlaysDependencies = ["albumInfo"] as const;
+
+// Only used by NowPlayingAlbum
+export class LastFMAlbumPlaysComponent extends BaseNowPlayingComponent<
+  typeof lastFMAlbumPlaysDependencies
+> {
+  static componentName = "album-plays";
+  static friendlyName = "Album plays";
+  readonly dependencies = lastFMAlbumPlaysDependencies;
+
+  render() {
+    const albumPlays = this.values.albumInfo?.userPlaycount;
+
+    return {
+      string: displayNumber(albumPlays ? albumPlays : 0, "album scrobble"),
       size: 1,
     };
   }

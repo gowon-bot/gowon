@@ -11,7 +11,7 @@ export class GlobalArtistRankComponent extends BaseNowPlayingComponent<
   static friendlyName = "Global artist rank";
   readonly dependencies = artistRankDependencies;
 
-  present() {
+  render() {
     const artistRank = this.values.globalArtistRank;
 
     if (artistRank && artistRank.rank != -1) {

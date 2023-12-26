@@ -23,7 +23,7 @@ export class BaseConditionEmbed extends View {
     super();
   }
 
-  asEmbed(): EmbedView {
+  asDiscordSendable(): EmbedView {
     return this.baseEmbed
       .setColour(
         this.type === ConditionEmbedType.Error
@@ -72,7 +72,7 @@ export class ErrorEmbed extends View {
     super();
   }
 
-  asEmbed(): EmbedView {
+  asDiscordSendable(): EmbedView {
     const footer = this.error instanceof ClientError ? this.error.footer : "";
     const isWarning =
       this.error instanceof ClientError ? this.error.isWarning : false;
@@ -83,7 +83,7 @@ export class ErrorEmbed extends View {
       )
       .setMessage(uppercaseFirstLetter(this.error.message))
       .setFooter(footer)
-      .asEmbed();
+      .asDiscordSendable();
   }
 
   setError(error: Error): this {
@@ -100,12 +100,12 @@ export class InfoEmbed extends View {
     super();
   }
 
-  asEmbed(): EmbedView {
+  asDiscordSendable(): EmbedView {
     return new BaseConditionEmbed(this.baseEmbed)
       .setType(ConditionEmbedType.Info)
       .setMessage(this.message)
       .setFooter(this.footer)
-      .asEmbed();
+      .asDiscordSendable();
   }
 
   setMessage(message: string): this {

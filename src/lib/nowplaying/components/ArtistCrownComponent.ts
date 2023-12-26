@@ -12,7 +12,7 @@ export class ArtistCrownComponent extends BaseNowPlayingComponent<
   static friendlyName = "Artist crown";
   readonly dependencies = artistCrownDependencies;
 
-  async present() {
+  async render() {
     if (this.values.artistCrown) {
       const crown = this.values.artistCrown!;
 

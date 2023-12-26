@@ -10,7 +10,7 @@ export class TrackPlaysComponent extends BaseNowPlayingComponent<
   static friendlyName = "Track plays";
   readonly dependencies = trackPlaysDependencies;
 
-  present() {
+  render() {
     if (this.values.trackInfo) {
       return {
         string: displayNumber(

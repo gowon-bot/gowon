@@ -6,12 +6,13 @@ import { StringArrayArgument } from "../../../../lib/context/arguments/argumentT
 import { ArgumentsMap } from "../../../../lib/context/arguments/types";
 import { ResolvedDependencies } from "../../../../lib/nowplaying/DatasourceService";
 import { NowPlayingBuilder } from "../../../../lib/nowplaying/NowPlayingBuilder";
-import { PresentedComponent } from "../../../../lib/nowplaying/base/BaseNowPlayingComponent";
+import { RenderedComponent } from "../../../../lib/nowplaying/base/BaseNowPlayingComponent";
 import {
   componentMap,
   getComponentsAsChoices,
 } from "../../../../lib/nowplaying/componentMap";
 import { mockDependencies } from "../../../../lib/nowplaying/mockDependencies";
+import { Image } from "../../../../lib/ui/Image";
 import { displayNumber } from "../../../../lib/ui/displays";
 import { NowPlayingEmbed } from "../../../../lib/ui/embeds/NowPlayingEmbed";
 import { Validation } from "../../../../lib/validation/ValidationChecker";
@@ -111,7 +112,7 @@ export class Preview extends NowPlayingConfigChildCommand<typeof args> {
       username
     );
 
-    const presentedComponents = await this.getPresentedComponents(
+    const renderedComponents = await this.renderComponents(
       parsedOptions,
       mockDependencies
     );
@@ -123,7 +124,6 @@ export class Preview extends NowPlayingConfigChildCommand<typeof args> {
       )
       .setTitle(sanitizeForDiscord(nowPlaying.name))
       .setURL(LastfmLinks.trackPage(nowPlaying.artist, nowPlaying.name))
-      .setThumbnail(albumCover || "")
       .setHeader(
         `Previewing ${
           presetConfig
@@ -136,9 +136,10 @@ export class Preview extends NowPlayingConfigChildCommand<typeof args> {
       .transform(NowPlayingEmbed)
       .setDbUser(dbUser)
       .setNowPlaying((mockDependencies.recentTracks as RecentTracks).first())
+      .setAlbumCover(albumCover ? Image.fromURL(albumCover) : undefined)
       .setUsername(username)
       .setUsernameDisplay(usernameDisplay)
-      .setComponents(presentedComponents);
+      .setComponents(renderedComponents);
 
     await this.send(embed);
   }
@@ -167,12 +168,12 @@ export class Preview extends NowPlayingConfigChildCommand<typeof args> {
     return object;
   }
 
-  private async getPresentedComponents(
+  private async renderComponents(
     config: string[],
     resolvedDependencies: ResolvedDependencies
-  ): Promise<PresentedComponent[]> {
+  ): Promise<RenderedComponent[]> {
     const builder = new NowPlayingBuilder(config);
 
-    return await builder.getPresentedComponents(resolvedDependencies);
+    return await builder.renderComponents(resolvedDependencies);
   }
 }

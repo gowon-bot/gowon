@@ -12,13 +12,17 @@ import {
 import { LineConsolidator } from "../../LineConsolidator";
 import { Image } from "../Image";
 import { displayUserTag } from "../displays";
-import { View, ViewOptions } from "./View";
+import { DiscordSendable, View, ViewOptions } from "./View";
 
 export interface Transformable<T extends View> {
   new (embed: EmbedView): T;
 }
 
-interface EmbedViewProperties {
+export type EmbedMutator = (
+  properties: EmbedViewProperties
+) => EmbedViewProperties;
+
+export interface EmbedViewProperties {
   title?: string;
   url?: string;
   header?: string;
@@ -33,16 +37,17 @@ interface EmbedViewProperties {
   guildMember?: GuildMember;
   user?: User;
   fields?: EmbedFieldData[];
+  authorUsername?: string;
 }
 
-export class EmbedView extends View {
+export class EmbedView extends View implements DiscordSendable {
   private properties: EmbedViewProperties = {};
 
   constructor(options?: Partial<ViewOptions>) {
     super(options || {});
   }
 
-  asEmbed(): EmbedView {
+  asDiscordSendable(): EmbedView {
     return this;
   }
 
@@ -73,6 +78,22 @@ export class EmbedView extends View {
     }
 
     return embed;
+  }
+
+  transform<T extends View>(klass: Transformable<T>): T {
+    return new klass(this);
+  }
+
+  mutate(mutator: EmbedMutator): EmbedView {
+    this.properties = { ...this.properties, ...mutator(this.getProperties()) };
+    return this;
+  }
+
+  mutateIf(predicate: boolean, mutator: EmbedMutator): EmbedView {
+    if (!predicate) return this;
+
+    this.properties = { ...this.properties, ...mutator(this.getProperties()) };
+    return this;
   }
 
   setTitle(title: string): this {
@@ -113,10 +134,6 @@ export class EmbedView extends View {
 
   getFooter(): string | undefined {
     return this.properties.footer;
-  }
-
-  transform<T extends View>(klass: Transformable<T>): T {
-    return new klass(this);
   }
 
   setFooterIcon(icon: string | undefined): this {
@@ -170,17 +187,17 @@ export class EmbedView extends View {
     return this;
   }
 
+  setAuthorUsername(username: string): this {
+    this.properties.authorUsername = username;
+    return this;
+  }
+
   getAuthorUser(): User | undefined {
     return this.properties.user;
   }
 
   getProperties(): EmbedViewProperties {
     return this.properties;
-  }
-
-  merge(embed: EmbedView): EmbedView {
-    this.properties = { ...this.properties, ...embed.getProperties() };
-    return this;
   }
 
   private getDescription(): string | undefined {
@@ -190,10 +207,14 @@ export class EmbedView extends View {
   }
 
   private getAuthor(): MessageEmbedAuthor | undefined {
-    const headerText = this.getUser()
+    const username =
+      this.properties.authorUsername ||
+      (this.getUser() ? displayUserTag(this.getUser()) : "");
+
+    const headerText = username
       ? this.properties.header
-        ? `${displayUserTag(this.getUser())} | ${this.properties.header}`
-        : `${displayUserTag(this.getUser())}`
+        ? `${username} | ${this.properties.header}`
+        : `${username}`
       : this.properties.header;
 
     return this.properties.header ||

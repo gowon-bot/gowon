@@ -13,7 +13,7 @@ import {
 export abstract class PlaceholderNowPlayingComponent<
   Dependencies extends readonly NowPlayingDependency[]
 > extends BaseNowPlayingComponent<Dependencies> {
-  public present() {
+  public render() {
     return { size: 0, string: "" };
   }
 }

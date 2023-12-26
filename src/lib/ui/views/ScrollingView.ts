@@ -73,7 +73,7 @@ export class ScrollingView extends View {
     this.currentPage = this.options.startingPage;
   }
 
-  asEmbed(): EmbedView {
+  asDiscordSendable(): EmbedView {
     this.generateEmbed();
 
     return this.embed;
@@ -188,7 +188,7 @@ export class ScrollingView extends View {
 
           this.generateEmbed();
 
-          this.embed.updateMessage(this.ctx);
+          this.embed.editMessage(this.ctx);
         });
       });
 
