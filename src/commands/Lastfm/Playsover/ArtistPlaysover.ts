@@ -60,9 +60,7 @@ export default class ArtistPlaysover extends LastFMBaseCommand<typeof args> {
     );
 
     const embed = this.authorEmbed()
-      .setAuthor(
-        this.generateEmbedAuthor(`Artist plays${equal ? "equal" : "over"}`)
-      )
+      .setHeader(`Artist plays${equal ? "equal" : "over"}`)
       .setDescription(
         `${bold(displayNumber(playsover))} of ${
           perspective.possessive

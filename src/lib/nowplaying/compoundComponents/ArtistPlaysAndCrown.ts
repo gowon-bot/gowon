@@ -3,12 +3,12 @@ import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { displayNumber } from "../../ui/displays";
 import { BaseCompoundComponent } from "../base/BaseNowPlayingComponent";
 
-const requirements = ["artistInfo", "artistCrown"] as const;
+const dependencies = ["artistInfo", "artistCrown"] as const;
 
 export class ArtistPlaysAndCrownComponent extends BaseCompoundComponent<
-  typeof requirements
+  typeof dependencies
 > {
-  requirements = requirements;
+  dependencies = dependencies;
 
   static componentName = "artist-plays-and-crown";
   static replaces = ["artist-plays", "artist-crown"];

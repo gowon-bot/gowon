@@ -4,18 +4,24 @@ import { LastfmLinks } from "../../../../helpers/lastfm/LastfmLinks";
 import { StringArgument } from "../../../../lib/context/arguments/argumentTypes/StringArgument";
 import { StringArrayArgument } from "../../../../lib/context/arguments/argumentTypes/StringArrayArgument";
 import { ArgumentsMap } from "../../../../lib/context/arguments/types";
-import { ResolvedRequirements } from "../../../../lib/nowplaying/DatasourceService";
+import { ResolvedDependencies } from "../../../../lib/nowplaying/DatasourceService";
 import { NowPlayingBuilder } from "../../../../lib/nowplaying/NowPlayingBuilder";
+import { PresentedComponent } from "../../../../lib/nowplaying/base/BaseNowPlayingComponent";
 import {
   componentMap,
   getComponentsAsChoices,
 } from "../../../../lib/nowplaying/componentMap";
-import { mockRequirements } from "../../../../lib/nowplaying/mockRequirements";
+import { mockDependencies } from "../../../../lib/nowplaying/mockDependencies";
 import { displayNumber } from "../../../../lib/ui/displays";
+import { NowPlayingEmbed } from "../../../../lib/ui/embeds/NowPlayingEmbed";
 import { Validation } from "../../../../lib/validation/ValidationChecker";
 import { validators } from "../../../../lib/validation/validators";
-import { RecentTrack } from "../../../../services/LastFM/converters/RecentTracks";
+import {
+  RecentTrack,
+  RecentTracks,
+} from "../../../../services/LastFM/converters/RecentTracks";
 import { ServiceRegistry } from "../../../../services/ServicesRegistry";
+import { NowPlayingService } from "../../../../services/dbservices/NowPlayingService";
 import { AlbumCoverService } from "../../../../services/moderation/AlbumCoverService";
 import {
   NowPlayingConfigChildCommand,
@@ -53,8 +59,11 @@ export class Preview extends NowPlayingConfigChildCommand<typeof args> {
   };
 
   albumCoverService = ServiceRegistry.get(AlbumCoverService);
+  nowPlayingService = ServiceRegistry.get(NowPlayingService);
 
   async run() {
+    const { dbUser, username } = await this.getMentions();
+
     const options = this.parsedArguments.options.length
       ? this.parsedArguments.options
       : [this.parsedArguments.option];
@@ -79,13 +88,13 @@ export class Preview extends NowPlayingConfigChildCommand<typeof args> {
 
     const nowPlayingBuilder = new NowPlayingBuilder(parsedOptions);
 
-    const requirements = nowPlayingBuilder.generateRequirements();
+    const dependencies = nowPlayingBuilder.generateDependencies();
 
-    const mockRequirements = this.resolveMockRequirements(
-      requirements,
+    const mockDependencies = this.resolveMockDependencies(
+      dependencies,
       parsedOptions
     );
-    const nowPlaying = mockRequirements.recentTracks.first() as RecentTrack;
+    const nowPlaying = mockDependencies.recentTracks.first() as RecentTrack;
     const links = LastfmLinks.generateTrackLinksForEmbed(nowPlaying);
 
     const albumCover = await this.albumCoverService.get(
@@ -96,7 +105,18 @@ export class Preview extends NowPlayingConfigChildCommand<typeof args> {
       }
     );
 
-    let embed = this.authorEmbed()
+    const usernameDisplay = await this.nowPlayingService.getUsernameDisplay(
+      this.ctx,
+      dbUser,
+      username
+    );
+
+    const presentedComponents = await this.getPresentedComponents(
+      parsedOptions,
+      mockDependencies
+    );
+
+    const embed = this.authorEmbed()
       .setDescription(
         `by ${bold(links.artist, false)}` +
           (nowPlaying.album ? ` from ${italic(links.album, false)}` : "")
@@ -112,32 +132,47 @@ export class Preview extends NowPlayingConfigChildCommand<typeof args> {
             ? parsedOptions[0]
             : displayNumber(parsedOptions.length, "option")
         }`
-      );
+      )
+      .transform(NowPlayingEmbed)
+      .setDbUser(dbUser)
+      .setNowPlaying((mockDependencies.recentTracks as RecentTracks).first())
+      .setUsername(username)
+      .setUsernameDisplay(usernameDisplay)
+      .setComponents(presentedComponents);
 
-    await this.send(await nowPlayingBuilder.asEmbed(mockRequirements, embed));
+    await this.send(embed);
   }
 
-  private resolveMockRequirements(
-    requirements: string[],
+  private resolveMockDependencies(
+    dependencies: string[],
     options: string[]
-  ): ResolvedRequirements {
-    const object = {} as ResolvedRequirements;
+  ): ResolvedDependencies {
+    const object = {} as ResolvedDependencies;
 
-    const mr = mockRequirements(this.payload);
+    const mr = mockDependencies(this.payload);
 
-    for (const requirement of [
-      ...requirements,
+    for (const dependency of [
+      ...dependencies,
       "recentTracks",
       "username",
       "message",
       "dbUser",
       "requestable",
     ]) {
-      object[requirement] = (mr as ResolvedRequirements)[requirement];
+      object[dependency] = (mr as ResolvedDependencies)[dependency];
     }
 
     object.components = options;
 
     return object;
+  }
+
+  private async getPresentedComponents(
+    config: string[],
+    resolvedDependencies: ResolvedDependencies
+  ): Promise<PresentedComponent[]> {
+    const builder = new NowPlayingBuilder(config);
+
+    return await builder.getPresentedComponents(resolvedDependencies);
   }
 }

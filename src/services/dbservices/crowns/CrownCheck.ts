@@ -1,5 +1,4 @@
 import { Chance } from "chance";
-import { MessageEmbed } from "discord.js";
 import { ArtistRedirect } from "../../../database/entity/ArtistRedirect";
 import { Crown } from "../../../database/entity/Crown";
 import {
@@ -10,6 +9,7 @@ import {
 import { GowonContext } from "../../../lib/context/Context";
 import { Emoji } from "../../../lib/emoji/Emoji";
 import { displayNumber } from "../../../lib/ui/displays";
+import { EmbedView } from "../../../lib/ui/views/EmbedView";
 import {
   CrownOptions,
   CrownState,
@@ -34,7 +34,7 @@ export abstract class CrownCheck {
   public readonly displayName: string = this.constructor.name;
   public abstract state: CrownState;
 
-  public asEmbed(ctx: GowonContext, embed: MessageEmbed): MessageEmbed {
+  public asEmbed(ctx: GowonContext, embed: EmbedView): EmbedView {
     const newEmbed = embed.setTitle(
       `Crown for ${
         this.options.artistName
@@ -58,17 +58,14 @@ export abstract class CrownCheck {
     );
   }
 
-  protected abstract buildEmbed(
-    ctx: GowonContext,
-    embed: MessageEmbed
-  ): MessageEmbed;
+  protected abstract buildEmbed(ctx: GowonContext, embed: EmbedView): EmbedView;
 }
 
 export class TooLow extends CrownCheck {
   displayName = "Too low";
   state = CrownState.tooLow;
 
-  protected buildEmbed(ctx: GowonContext, embed: MessageEmbed): MessageEmbed {
+  protected buildEmbed(ctx: GowonContext, embed: EmbedView): EmbedView {
     return embed.setDescription(
       `:pensive: → ${mentionGuildMember(ctx.author.id)} - ${displayNumber(
         this.options.plays,
@@ -87,7 +84,7 @@ export class New extends CrownCheck {
   displayName = "New";
   state = CrownState.newCrown;
 
-  protected buildEmbed(ctx: GowonContext, embed: MessageEmbed): MessageEmbed {
+  protected buildEmbed(ctx: GowonContext, embed: EmbedView): EmbedView {
     return embed.setDescription(
       `:crown: → ${mentionGuildMember(ctx.author.id)} - ${displayNumber(
         this.options.crown.plays,
@@ -105,7 +102,7 @@ export class Yoinked extends CrownCheck {
   displayName = "Yoinked";
   state = CrownState.snatched;
 
-  protected buildEmbed(ctx: GowonContext, embed: MessageEmbed): MessageEmbed {
+  protected buildEmbed(ctx: GowonContext, embed: EmbedView): EmbedView {
     const yoinkEmoji = Chance().weighted([Emoji.yoink, Emoji.yoimk], [100, 1]);
 
     return embed.setDescription(
@@ -130,7 +127,7 @@ export class Yoinked extends CrownCheck {
 export class Fail extends CrownCheck {
   state = CrownState.fail;
 
-  protected buildEmbed(ctx: GowonContext, embed: MessageEmbed): MessageEmbed {
+  protected buildEmbed(ctx: GowonContext, embed: EmbedView): EmbedView {
     const difference = this.options.crown.plays - this.options.plays;
 
     const crownEmoji =
@@ -159,7 +156,7 @@ ${difference >= 5000 ? Emoji.wail : "😔"} → ${mentionGuildMember(
 export class Tie extends CrownCheck {
   state = CrownState.tie;
 
-  protected buildEmbed(ctx: GowonContext, embed: MessageEmbed): MessageEmbed {
+  protected buildEmbed(ctx: GowonContext, embed: EmbedView): EmbedView {
     return embed.setDescription(
       `
 :crown: → ${mentionGuildMember(
@@ -180,7 +177,7 @@ It's a tie! The owner will keep the crown for ${this.options.artistName}.
 export class Updated extends CrownCheck {
   state = CrownState.updated;
 
-  protected buildEmbed(_ctx: GowonContext, embed: MessageEmbed): MessageEmbed {
+  protected buildEmbed(_ctx: GowonContext, embed: EmbedView): EmbedView {
     return embed.setDescription(
       `You already have the crown for ${bold(
         this.options.artistName
@@ -200,7 +197,7 @@ export class InvalidCrownCheck extends CrownCheck {
     super(options);
   }
 
-  protected buildEmbed(ctx: GowonContext, embed: MessageEmbed): MessageEmbed {
+  protected buildEmbed(ctx: GowonContext, embed: EmbedView): EmbedView {
     switch (this.reason) {
       case CrownState.inactivity:
         return this.inactivity(ctx, embed);
@@ -215,7 +212,7 @@ export class InvalidCrownCheck extends CrownCheck {
     }
   }
 
-  private inactivity(ctx: GowonContext, embed: MessageEmbed): MessageEmbed {
+  private inactivity(ctx: GowonContext, embed: EmbedView): EmbedView {
     return embed.setDescription(
       `
 ${Emoji.yoink} → ${mentionGuildMember(ctx.author.id)} - ${displayNumber(
@@ -233,7 +230,7 @@ ${Emoji.yoink} → ${mentionGuildMember(ctx.author.id)} - ${displayNumber(
     );
   }
 
-  private purgatory(ctx: GowonContext, embed: MessageEmbed): MessageEmbed {
+  private purgatory(ctx: GowonContext, embed: EmbedView): EmbedView {
     return embed.setDescription(
       `
 ${Emoji.yoink} → ${mentionGuildMember(ctx.author.id)} - ${displayNumber(
@@ -251,7 +248,7 @@ ${Emoji.yoink} → ${mentionGuildMember(ctx.author.id)} - ${displayNumber(
     );
   }
 
-  private left(ctx: GowonContext, embed: MessageEmbed): MessageEmbed {
+  private left(ctx: GowonContext, embed: EmbedView): EmbedView {
     return embed.setDescription(
       `
 ${Emoji.yoink} → ${mentionGuildMember(ctx.author.id)} - ${displayNumber(
@@ -267,7 +264,7 @@ ${Emoji.yoink} → ${mentionGuildMember(ctx.author.id)} - ${displayNumber(
     );
   }
 
-  private banned(ctx: GowonContext, embed: MessageEmbed): MessageEmbed {
+  private banned(ctx: GowonContext, embed: EmbedView): EmbedView {
     return embed.setDescription(
       `
 ${Emoji.yoink} → ${mentionGuildMember(ctx.author.id)} - ${displayNumber(
@@ -285,7 +282,7 @@ ${Emoji.yoink} → ${mentionGuildMember(ctx.author.id)} - ${displayNumber(
     );
   }
 
-  private loggedOut(ctx: GowonContext, embed: MessageEmbed): MessageEmbed {
+  private loggedOut(ctx: GowonContext, embed: EmbedView): EmbedView {
     return embed.setDescription(
       `
 :crown: → ${mentionGuildMember(ctx.author.id)} - ${displayNumber(

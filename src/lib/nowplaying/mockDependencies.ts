@@ -1,7 +1,7 @@
 import { User } from "discord.js";
 import { Crown } from "../../database/entity/Crown";
 import { User as DBUser } from "../../database/entity/User";
-import { ParsedTrack } from "../../helpers/lastfm/";
+import { ParsedTrack } from "../../helpers/lastfm";
 import { RawTag } from "../../services/LastFM/LastFMService.types";
 import {
   ArtistInfo,
@@ -10,7 +10,7 @@ import {
 import { RecentTracks } from "../../services/LastFM/converters/RecentTracks";
 import { Payload } from "../context/Payload";
 import { Resources } from "./DatasourceService";
-import { RequirementMap } from "./RequirementMap";
+import { DependencyMap } from "./DependencyMap";
 
 function createTags(tags: string[]): RawTag[] {
   return tags.map((t) => ({
@@ -19,9 +19,9 @@ function createTags(tags: string[]): RawTag[] {
   }));
 }
 
-export const mockRequirements = (
+export const mockDependencies = (
   payload: Payload
-): RequirementMap & Resources => {
+): DependencyMap & Resources => {
   const nowPlaying: ParsedTrack = {
     artist: "Red Velvet",
     album: "Rookie - The 4th Mini Album",
@@ -43,7 +43,7 @@ export const mockRequirements = (
     username: "gowon_",
     requestable: "gowon_",
     dbUser,
-    requirements: [],
+    dependencies: [],
     components: [],
     prefix: "!",
 
@@ -157,6 +157,7 @@ export const mockRequirements = (
     albumCard: undefined,
     fishyProfile: undefined,
     cachedLovedTrack: undefined,
+    combo: undefined,
 
     // Mirrorball types
     albumPlays: [

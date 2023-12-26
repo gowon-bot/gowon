@@ -2,7 +2,6 @@ import {
   EmbedFieldData,
   Emoji,
   Message,
-  MessageEmbed,
   MessageReaction,
   ReactionCollector,
   User,
@@ -39,7 +38,6 @@ export function isEmbedFields(
 }
 
 export class ScrollingView extends View {
-  private sentMessage!: Message;
   private currentPage = 1;
   private currentItems: string | EmbedFieldData[];
   private options: ScrollingEmbedOptions;
@@ -75,10 +73,10 @@ export class ScrollingView extends View {
     this.currentPage = this.options.startingPage;
   }
 
-  asMessageEmbed(): MessageEmbed {
+  asEmbed(): EmbedView {
     this.generateEmbed();
 
-    return this.embed.asMessageEmbed();
+    return this.embed;
   }
 
   public async afterSend(message: Message<boolean>): Promise<void> {
@@ -143,9 +141,11 @@ export class ScrollingView extends View {
 
   private async react() {
     return new Promise(async (resolve, reject) => {
+      const sentMessage = this.getSentMessage();
+
       if (this.options.totalPages < 2) return;
 
-      const collector = new ReactionCollector(this.sentMessage, {
+      const collector = new ReactionCollector(sentMessage, {
         filter: this.filter,
         time: 3 * 60 * 1000,
       });
@@ -188,7 +188,7 @@ export class ScrollingView extends View {
 
           this.generateEmbed();
 
-          this.sentMessage.edit({ embeds: [this.embed.asMessageEmbed()] });
+          this.embed.updateMessage(this.ctx);
         });
       });
 
@@ -201,14 +201,12 @@ export class ScrollingView extends View {
       });
 
       if (this.options.totalPages > -1 && this.options.totalPages > 2)
-        await this.sentMessage.react(this.firstArrow);
-      if (this.options.totalPages > 1)
-        await this.sentMessage.react(this.leftArrow);
+        await sentMessage.react(this.firstArrow);
+      if (this.options.totalPages > 1) await sentMessage.react(this.leftArrow);
 
-      if (this.options.totalPages > 1)
-        await this.sentMessage.react(this.rightArrow);
+      if (this.options.totalPages > 1) await sentMessage.react(this.rightArrow);
       if (this.options.totalPages > -1 && this.options.totalPages > 2)
-        await this.sentMessage.react(this.lastArrow);
+        await sentMessage.react(this.lastArrow);
     });
   }
 

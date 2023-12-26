@@ -6,4 +6,5 @@ export const nativeEmojis = {
   worried: "😣",
   neutral: "😐",
   sighing: "😪",
+  x: "❌",
 } as const satisfies Record<string, string>;

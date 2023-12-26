@@ -46,32 +46,23 @@ export default class Update extends LilacBaseCommand<typeof args> {
       .setHeader("Lilac updating")
       .setDescription("Updating...");
 
-    const sentMessage = await this.send(embed);
+    await this.send(embed);
 
     const stopwatch = new Stopwatch().start();
 
     const subscription = observable.subscribe(async (progress) => {
       if (progress.page === progress.totalPages) {
-        await this.discordService.edit(
-          this.ctx,
-          sentMessage,
-          embed.setDescription("Done!").asMessageEmbed()
-        );
+        await embed.setDescription("Done!").updateMessage(this.ctx);
+
         subscription.unsubscribe();
       } else if (stopwatch.elapsedInMilliseconds >= 3000) {
-        await this.discordService.edit(
-          this.ctx,
-          sentMessage,
-          embed
-            .setDescription(
-              `Updating...
-${displayProgressBar(progress.page, progress.totalPages, {
-  width: this.progressBarWidth,
-})}
-*Page ${progress.page}/${progress.totalPages}*`
-            )
-            .asMessageEmbed()
-        );
+        const description = `Updating...
+        ${displayProgressBar(progress.page, progress.totalPages, {
+          width: this.progressBarWidth,
+        })}
+        *Page ${progress.page}/${progress.totalPages}*`;
+
+        await embed.setDescription(description).updateMessage(this.ctx);
 
         stopwatch.zero().start();
       }

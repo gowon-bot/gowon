@@ -1,14 +1,14 @@
 import { displayNumber } from "../../ui/displays";
 import { BaseNowPlayingComponent } from "../base/BaseNowPlayingComponent";
 
-const albumPlaysRequirements = ["albumPlays"] as const;
+const albumPlaysDependencies = ["albumPlays"] as const;
 
 export class AlbumPlaysComponent extends BaseNowPlayingComponent<
-  typeof albumPlaysRequirements
+  typeof albumPlaysDependencies
 > {
   static componentName = "album-plays";
   static friendlyName = "Album plays";
-  readonly requirements = albumPlaysRequirements;
+  readonly dependencies = albumPlaysDependencies;
 
   present() {
     const albumPlays = this.values.albumPlays[0];

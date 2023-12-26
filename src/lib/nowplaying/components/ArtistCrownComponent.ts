@@ -3,14 +3,14 @@ import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { displayNumber } from "../../ui/displays";
 import { BaseNowPlayingComponent } from "../base/BaseNowPlayingComponent";
 
-const artistCrownRequirements = ["artistCrown"] as const;
+const artistCrownDependencies = ["artistCrown"] as const;
 
 export class ArtistCrownComponent extends BaseNowPlayingComponent<
-  typeof artistCrownRequirements
+  typeof artistCrownDependencies
 > {
   static componentName = "artist-crown";
   static friendlyName = "Artist crown";
-  readonly requirements = artistCrownRequirements;
+  readonly dependencies = artistCrownDependencies;
 
   async present() {
     if (this.values.artistCrown) {

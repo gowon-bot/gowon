@@ -1,7 +1,6 @@
 import {
   Emoji,
   Message,
-  MessageEmbed,
   MessageReaction,
   ReactionCollector,
   User,
@@ -26,7 +25,6 @@ export interface TabbedViewOptions {
 }
 
 export class TabbedView extends View {
-  private sentMessage?: Message;
   private currentTab: string;
 
   constructor(private ctx: GowonContext, private options: TabbedViewOptions) {
@@ -34,16 +32,16 @@ export class TabbedView extends View {
     this.currentTab = options.tabs[0].name;
   }
 
-  asMessageEmbed(): MessageEmbed {
-    return this.getEmbed().asMessageEmbed();
+  asEmbed(): EmbedView {
+    return this.getEmbed();
   }
 
   public async afterSend(message: Message<boolean>): Promise<void> {
-    this.sentMessage = message;
-
     if (this.options.tabs.length > 1) {
       await this.react();
     }
+
+    await this.afterSend(message);
   }
 
   private getEmbed(): EmbedView {
@@ -89,7 +87,7 @@ export class TabbedView extends View {
 
         const embed = this.getEmbed();
 
-        this.sentMessage!.edit({ embeds: [embed.asMessageEmbed()] });
+        embed.updateMessage(this.ctx);
       });
 
       collector.on("error", (e: Error) => {

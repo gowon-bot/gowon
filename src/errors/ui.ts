@@ -13,3 +13,11 @@ export class NoMessageToReactToError extends Error {
     super(`There is no message to react to!`);
   }
 }
+
+export class ViewHasNotBeenSentError extends Error {
+  name = "ViewHasNotBeenSentError";
+
+  constructor() {
+    super(`This view has not been sent yet!`);
+  }
+}

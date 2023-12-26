@@ -1,6 +1,6 @@
 import {
   BaseNowPlayingComponent,
-  NowPlayingRequirement,
+  NowPlayingDependency,
 } from "./BaseNowPlayingComponent";
 
 /**
@@ -11,8 +11,8 @@ import {
  * therefore it is merely a placeholder
  */
 export abstract class PlaceholderNowPlayingComponent<
-  Requirements extends readonly NowPlayingRequirement[]
-> extends BaseNowPlayingComponent<Requirements> {
+  Dependencies extends readonly NowPlayingDependency[]
+> extends BaseNowPlayingComponent<Dependencies> {
   public present() {
     return { size: 0, string: "" };
   }

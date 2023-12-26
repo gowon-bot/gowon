@@ -1,31 +1,25 @@
-import { Message, MessageEmbed, User } from "discord.js";
+import { User } from "discord.js";
 import config from "../../../../config.json";
 import { User as DBUser } from "../../../database/entity/User";
-import { bold, italic, sanitizeForDiscord } from "../../../helpers/discord";
-import { LastfmLinks } from "../../../helpers/lastfm/LastfmLinks";
-import { GowonContext } from "../../../lib/context/Context";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
-import { FMUsernameDisplay } from "../../../lib/settings/SettingValues";
+import {
+  DatasourceService,
+  DatasourceServiceContext,
+} from "../../../lib/nowplaying/DatasourceService";
 import { SettingsService } from "../../../lib/settings/SettingsService";
 import { TagConsolidator } from "../../../lib/tags/TagConsolidator";
-import { displayNumber, displayUserTag } from "../../../lib/ui/displays";
+import { displayNumber } from "../../../lib/ui/displays";
+import { NowPlayingEmbed } from "../../../lib/ui/embeds/NowPlayingEmbed";
 import { Requestable } from "../../../services/LastFM/LastFMAPIService";
-import {
-  AlbumInfo,
-  ArtistInfo,
-  TrackInfo,
-} from "../../../services/LastFM/converters/InfoTypes";
-import {
-  RecentTrack,
-  RecentTracks,
-} from "../../../services/LastFM/converters/RecentTracks";
+import { RecentTrack } from "../../../services/LastFM/converters/RecentTracks";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import {
   GetMentionsOptions,
   Mentions,
 } from "../../../services/arguments/mentions/MentionsService.types";
+import { NowPlayingService } from "../../../services/dbservices/NowPlayingService";
 import { CrownDisplay } from "../../../services/dbservices/crowns/CrownsService.types";
 import { AlbumCoverService } from "../../../services/moderation/AlbumCoverService";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
@@ -50,10 +44,59 @@ export abstract class NowPlayingBaseCommand<
 
   arguments = nowPlayingArgs as T;
 
+  nowPlayingService = ServiceRegistry.get(NowPlayingService);
   settingsService = ServiceRegistry.get(SettingsService);
   albumCoverService = ServiceRegistry.get(AlbumCoverService);
+  datasourceService = ServiceRegistry.get(DatasourceService);
 
   tagConsolidator = new TagConsolidator();
+
+  abstract getConfig(senderUser: DBUser): string[] | Promise<string[]>;
+
+  async run() {
+    const { username, requestable, dbUser, senderUser } =
+      await this.getMentions();
+
+    const recentTracks = await this.lastFMService.recentTracks(this.ctx, {
+      username: requestable,
+      limit: 1,
+    });
+
+    const nowPlaying = recentTracks.first();
+
+    if (nowPlaying.isNowPlaying) this.scrobble(nowPlaying);
+
+    this.tagConsolidator.blacklistTags(nowPlaying.artist, nowPlaying.name);
+
+    const usernameDisplay = await this.nowPlayingService.getUsernameDisplay(
+      this.ctx,
+      dbUser,
+      username
+    );
+    const presentedComponents =
+      await this.nowPlayingService.getPresentedComponents(
+        this.ctx,
+        await Promise.resolve(this.getConfig(senderUser!)),
+        recentTracks,
+        requestable,
+        dbUser
+      );
+
+    const tagConsolidator =
+      this.ctx.getMutable<DatasourceServiceContext["mutable"]>()
+        .tagConsolidator;
+
+    const embed = this.authorEmbed()
+      .transform(NowPlayingEmbed)
+      .setDbUser(dbUser)
+      .setNowPlaying(recentTracks.first(), tagConsolidator)
+      .setUsername(username)
+      .setUsernameDisplay(usernameDisplay)
+      .setComponents(presentedComponents)
+      .setCustomReacts(await this.getCustomReactions());
+
+    await this.send(embed);
+  }
 
   async getMentions(options?: Partial<GetMentionsOptions>): Promise<Mentions> {
     const otherWords = this.parsedArguments.otherWords;
@@ -91,100 +134,6 @@ export abstract class NowPlayingBaseCommand<
     }
   }
 
-  protected async nowPlayingEmbed(
-    ctx: GowonContext,
-    nowPlaying: RecentTrack,
-    username: string,
-    dbUser: DBUser
-  ): Promise<MessageEmbed> {
-    const links = LastfmLinks.generateTrackLinksForEmbed(nowPlaying);
-    const usernameDisplay =
-      this.settingsService.get("fmUsernameDisplay", {
-        userID: dbUser.discordID,
-      }) || FMUsernameDisplay.LAST_FM_USERNAME;
-
-    const albumCover = await this.albumCoverService.get(
-      this.ctx,
-      nowPlaying.images.get("large"),
-      {
-        metadata: {
-          artist: nowPlaying.artist,
-          album: nowPlaying.album,
-        },
-      }
-    );
-
-    return this.authorEmbed()
-      .setAuthor({
-        name: `${
-          nowPlaying.isNowPlaying ? "Now playing" : "Last scrobbled"
-        } for ${
-          usernameDisplay === FMUsernameDisplay.LAST_FM_USERNAME
-            ? username
-            : displayUserTag(
-                await this.discordService.fetchUser(ctx, dbUser.discordID)
-              )
-        }`,
-        iconURL:
-          this.payload.member?.avatarURL() ||
-          this.payload.author.avatarURL() ||
-          undefined,
-        url:
-          usernameDisplay === FMUsernameDisplay.DISCORD_USERNAME
-            ? undefined
-            : LastfmLinks.userPage(username),
-      })
-      .setDescription(
-        `by ${bold(links.artist, false)}` +
-          (nowPlaying.album ? ` from ${italic(links.album, false)}` : "")
-      )
-      .setTitle(sanitizeForDiscord(nowPlaying.name))
-      .setURL(LastfmLinks.trackPage(nowPlaying.artist, nowPlaying.name))
-      .setThumbnail(albumCover || this.albumCoverService.defaultCover);
-  }
-
-  protected artistPlays(
-    artistInfo: { value?: ArtistInfo },
-    track: RecentTrack,
-    isCrownHolder: boolean
-  ): string {
-    return artistInfo.value
-      ? (isCrownHolder ? "👑 " : "") +
-          (track.artist.length < 150
-            ? displayNumber(
-                artistInfo.value.userPlaycount,
-                `${track.artist} scrobble`
-              )
-            : displayNumber(artistInfo.value.userPlaycount, `scrobble`) +
-              " of that artist")
-      : "";
-  }
-
-  protected noArtistData(track: RecentTrack): string {
-    return (
-      "No data on last.fm for " +
-      (track.artist.length > 150 ? "that artist" : track.artist)
-    );
-  }
-
-  protected trackPlays(trackInfo: { value?: TrackInfo }): string {
-    return trackInfo.value
-      ? displayNumber(trackInfo.value.userPlaycount, "scrobble") +
-          " of this song"
-      : "";
-  }
-
-  protected albumPlays(albumInfo: { value?: AlbumInfo }): string {
-    return albumInfo.value
-      ? displayNumber(albumInfo.value?.userPlaycount, "scrobble") +
-          " of this album"
-      : "";
-  }
-
-  protected scrobbleCount(nowPlayingResponse: RecentTracks): string {
-    return `${displayNumber(nowPlayingResponse.meta.total, "total scrobble")}`;
-  }
-
   protected async crownDetails(
     crown: { value?: CrownDisplay },
     discordUser?: User
@@ -209,49 +158,11 @@ export abstract class NowPlayingBaseCommand<
     return { isCrownHolder, crownString };
   }
 
-  protected async easterEggs(
-    sentMessage: Message,
-    track: RecentTrack,
-    tagConsolidator?: TagConsolidator
-  ) {
-    const consolidator = tagConsolidator || this.tagConsolidator;
-
-    if (
-      track.artist.toLowerCase() === "twice" &&
-      track.name.toLowerCase() === "jaljayo good night"
-    ) {
-      await sentMessage.react("😴");
-    }
-
-    if (consolidator.hasTag("rare sad boy", "rsb", "rsg", "rare sad girl")) {
-      await sentMessage.react("😭");
-    }
-  }
-
-  protected async customReactions(sentMessage: Message) {
-    const reactions = JSON.parse(
+  protected async getCustomReactions() {
+    return JSON.parse(
       this.settingsService.get("reacts", {
         userID: this.author.id,
       }) || "[]"
     ) as string[];
-
-    const badReactions = [] as string[];
-
-    for (const reaction of reactions) {
-      try {
-        await sentMessage.react(reaction);
-      } catch {
-        badReactions.push(reaction);
-      }
-    }
-
-    if (badReactions.length) {
-      await this.settingsService.set(
-        this.ctx,
-        "reacts",
-        { userID: this.author.id },
-        JSON.stringify(reactions.filter((r) => !badReactions.includes(r)))
-      );
-    }
   }
 }

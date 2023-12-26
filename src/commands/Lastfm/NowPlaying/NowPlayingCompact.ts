@@ -1,3 +1,4 @@
+import { NowPlayingService } from "../../../services/dbservices/NowPlayingService";
 import { NowPlayingBaseCommand } from "./NowPlayingBaseCommand";
 
 export default class NowPlayingCompact extends NowPlayingBaseCommand {
@@ -6,26 +7,7 @@ export default class NowPlayingCompact extends NowPlayingBaseCommand {
   aliases = ["fmc"];
   description = "Displays the now playing or last played track from Last.fm";
 
-  async run() {
-    const { username, requestable, dbUser } = await this.getMentions({
-      fetchDiscordUser: false,
-    });
-
-    const nowPlaying = await this.lastFMService.nowPlaying(
-      this.ctx,
-      requestable
-    );
-
-    const nowPlayingEmbed = await this.nowPlayingEmbed(
-      this.ctx,
-      nowPlaying,
-      username,
-      dbUser
-    );
-
-    const sentMessage = await this.send(nowPlayingEmbed);
-
-    await this.customReactions(sentMessage);
-    await this.easterEggs(sentMessage, nowPlaying);
+  getConfig(): string[] {
+    return NowPlayingService.presets.blank;
   }
 }

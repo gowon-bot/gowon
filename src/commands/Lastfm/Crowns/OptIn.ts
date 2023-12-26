@@ -22,7 +22,7 @@ export class OptIn extends CrownsChildCommand {
       await this.crownsService.optIn(this.ctx, this.author.id);
 
       await confirmationEmbed.sentMessage?.edit({
-        embeds: [embed.setDescription("Opted you back in!").asMessageEmbed()],
+        embeds: [embed.setDescription("Opted you back in!").asEmbed()],
       });
     }
   }

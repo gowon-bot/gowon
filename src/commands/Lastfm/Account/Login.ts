@@ -67,61 +67,43 @@ export default class Login extends LilacBaseCommand {
       );
 
       if (await confirmationEmbed.awaitConfirmation(this.ctx)) {
-        this.impromptuIndex(confirmationEmbed, successEmbed);
+        this.impromptuIndex(successEmbed);
       }
     }
   }
 
-  private async impromptuIndex(
-    confirmationEmbed: ConfirmationView,
-    embed: EmbedView
-  ) {
+  private async impromptuIndex(embed: EmbedView) {
     await this.lilacUsersService.index(this.ctx, { discordID: this.author.id });
 
-    confirmationEmbed.sentMessage?.edit({
-      embeds: [
-        embed
-          .setDescription(
-            `Indexing...\n${displayProgressBar(0, 1, {
-              width: this.progressBarWidth,
-            })}\n*Loading...*`
-          )
-          .asMessageEmbed(),
-      ],
-    });
+    embed
+      .setDescription(
+        `Indexing...\n${displayProgressBar(0, 1, {
+          width: this.progressBarWidth,
+        })}\n*Loading...*`
+      )
+      .updateMessage(this.ctx);
 
     const observable = this.lilacUsersService.indexingProgress(this.ctx, {
       discordID: this.author.id,
     });
 
-    const sentMessage = confirmationEmbed.sentMessage!;
-
     const stopwatch = new Stopwatch().start();
 
     const subscription = observable.subscribe(async (progress) => {
       if (progress.page === progress.totalPages) {
-        await this.discordService.edit(
-          this.ctx,
-          sentMessage,
-          embed.setDescription("Done!").asMessageEmbed()
-        );
+        await embed.setDescription("Done!").updateMessage(this.ctx);
+
         subscription.unsubscribe();
       } else if (stopwatch.elapsedInMilliseconds >= 3000) {
-        await this.discordService.edit(
-          this.ctx,
-          sentMessage,
-          embed
-            .setDescription(
-              `Indexing...
+        await embed
+          .setDescription(
+            `Indexing...
 ${displayProgressBar(progress.page, progress.totalPages, {
   width: this.progressBarWidth,
 })}
 *Page ${progress.page}/${progress.totalPages}*`
-            )
-            .asMessageEmbed()
-        );
-
-        stopwatch.zero().start();
+          )
+          .updateMessage(this.ctx);
       }
     });
   }
@@ -211,16 +193,12 @@ ${displayProgressBar(progress.page, progress.totalPages, {
         if (success) {
           reactionCollector.stop();
           resolve(user!);
-        } else if (!embed.footer?.includes("didn't work")) {
-          this.discordService.edit(
-            this.ctx,
-            sentMessage,
-            embed
-              .setFooter(
-                "Hmm that didn't work, please ensure you've authenticated with the link and try again"
-              )
-              .asMessageEmbed()
-          );
+        } else if (!embed.getFooter()?.includes("didn't work")) {
+          embed
+            .setFooter(
+              "Hmm that didn't work, please ensure you've authenticated with the link and try again"
+            )
+            .updateMessage(this.ctx);
         }
       });
 
@@ -231,13 +209,9 @@ ${displayProgressBar(progress.page, progress.totalPages, {
 
       reactionCollector.on("end", async (_: any, reason) => {
         if (reason === "time") {
-          this.discordService.edit(
-            this.ctx,
-            sentMessage,
-            embed
-              .setFooter("This login link has expired, please try again")
-              .asMessageEmbed()
-          );
+          embed
+            .setFooter("This login link has expired, please try again")
+            .updateMessage(this.ctx);
 
           resolve(undefined);
         }

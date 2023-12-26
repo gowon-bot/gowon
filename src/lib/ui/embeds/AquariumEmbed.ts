@@ -1,5 +1,4 @@
 import { Chance } from "chance";
-import { MessageEmbed } from "discord.js";
 import { chunkArray, shuffle } from "../../../helpers";
 import { bold } from "../../../helpers/discord";
 import { emDash, quote } from "../../../helpers/specialCharacters";
@@ -41,7 +40,7 @@ export class AquariumEmbed extends View {
     return this;
   }
 
-  asMessageEmbed(): MessageEmbed {
+  asEmbed(): EmbedView {
     const fishies = this.aquarium.fishies.map((f) => f.fishy);
 
     const tank = this.renderTank(
@@ -50,7 +49,7 @@ export class AquariumEmbed extends View {
     );
     const message = this.getAquariumMessage(fishies);
 
-    this.baseEmbed.setDescription(`
+    return this.baseEmbed.setDescription(`
       _${message}_
       
       ${tank}
@@ -66,8 +65,6 @@ export class AquariumEmbed extends View {
             )}.`
       }
       `);
-
-    return this.baseEmbed.asMessageEmbed();
   }
 
   private renderTank(

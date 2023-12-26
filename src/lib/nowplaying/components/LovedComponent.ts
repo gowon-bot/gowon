@@ -1,11 +1,11 @@
 import { PlaceholderNowPlayingComponent } from "../base/PlaceholderNowPlayingComponent";
 
-const lovedRequirements = ["trackInfo"] as const;
+const lovedDependencies = ["trackInfo"] as const;
 
 export class LovedComponent extends PlaceholderNowPlayingComponent<
-  typeof lovedRequirements
+  typeof lovedDependencies
 > {
   static componentName = "loved";
   static friendlyName = "Loved";
-  readonly requirements = lovedRequirements;
+  readonly dependencies = lovedDependencies;
 }

@@ -1,4 +1,3 @@
-import { MessageEmbed } from "discord.js";
 import { italic } from "../../../helpers/discord";
 import { bullet, extraWideSpace } from "../../../helpers/specialCharacters";
 import { Report, ReportCount } from "../../calculators/ReportCalculator";
@@ -17,18 +16,17 @@ export class ReportEmbed extends View {
     super();
   }
 
-  asMessageEmbed(): MessageEmbed {
-    return this.baseEmbed
-      .setDescription(
-        `
+  asEmbed(): EmbedView {
+    return this.baseEmbed.setDescription(
+      `
     _${displayDate(this.fromDate)} - ${displayDate(this.toDate)}_
   _${displayNumber(this.report.total.scrobbles, "scrobble")}, ${displayNumber(
-          this.report.total.artists,
-          "artist"
-        )}, ${displayNumber(
-          this.report.total.albums,
-          "album"
-        )}, ${displayNumber(this.report.total.tracks, "track")}_
+        this.report.total.artists,
+        "artist"
+      )}, ${displayNumber(this.report.total.albums, "album")}, ${displayNumber(
+        this.report.total.tracks,
+        "track"
+      )}_
 ${
   this.tags.hasAnyTags()
     ? `\n${italic(this.tags.consolidateAsStrings(10).join(", "))}\n`
@@ -43,8 +41,7 @@ ${this.displayTopEntities(this.report.top.albums)}
 **Top Artists**:
 ${this.displayTopEntities(this.report.top.artists)}
   `
-      )
-      .asMessageEmbed();
+    );
   }
 
   setDateRange(from: Date, to: Date): this {

@@ -1,14 +1,14 @@
 import { displayPlainRating } from "../../ui/displays";
 import { BaseNowPlayingComponent } from "../base/BaseNowPlayingComponent";
 
-const ratingRequirements = ["albumRating"] as const;
+const ratingDependencies = ["albumRating"] as const;
 
 export class RatingComponent extends BaseNowPlayingComponent<
-  typeof ratingRequirements
+  typeof ratingDependencies
 > {
   static componentName = "album-rating";
   static friendlyName = "Album rating";
-  readonly requirements = ratingRequirements;
+  readonly dependencies = ratingDependencies;
 
   present() {
     const albumRating = this.values.albumRating.ratings[0];

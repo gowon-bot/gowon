@@ -11,13 +11,14 @@ import {
   MirrorballArtist,
   MirrorballRating,
 } from "../../services/mirrorball/MirrorballTypes";
+import { Combo } from "../calculators/ComboCalculator";
 
 type ArtistRank = {
   rank: number;
   listeners: number;
 };
 
-export type RequirementMap = {
+export type DependencyMap = {
   // Lastfm data
   artistInfo: ArtistInfo;
   trackInfo: TrackInfo;
@@ -27,6 +28,7 @@ export type RequirementMap = {
   albumCard: AlbumCard | undefined;
   fishyProfile: FishyProfile | undefined;
   cachedLovedTrack: CachedLovedTrack | undefined;
+  combo: Combo | undefined;
 
   // Mirrorball data
   albumPlays: [{ album: MirrorballAlbum; playcount: number }];

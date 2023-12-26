@@ -1,7 +1,5 @@
-import { sum } from "mathjs";
 import { asyncMap } from "../../helpers";
 import { UNUSED_CONFIG } from "../../services/dbservices/NowPlayingService";
-import { EmbedView } from "../ui/views/EmbedView";
 import { PresentedComponent } from "./base/BaseNowPlayingComponent";
 import {
   compoundComponentList,
@@ -9,9 +7,7 @@ import {
   NowPlayingComponent,
 } from "./componentMap";
 import { UnusedComponent } from "./components/UnusedComponent";
-import { ResolvedRequirements } from "./DatasourceService";
-
-export const rowSize = 3;
+import { ResolvedDependencies } from "./DatasourceService";
 
 export class NowPlayingBuilder {
   components: NowPlayingComponent[];
@@ -37,65 +33,27 @@ export class NowPlayingBuilder {
     );
   }
 
-  generateRequirements(): string[] {
-    const requirements = new Set(
-      this.components.map((c) => new c({}).requirements).flat()
+  generateDependencies(): string[] {
+    const dependencies = new Set(
+      this.components.map((c) => new c({}).dependencies).flat()
     );
 
-    return Array.from(requirements.values());
-  }
-
-  async asEmbed(
-    resolvedRequirements: ResolvedRequirements,
-    embed?: EmbedView
-  ): Promise<EmbedView> {
-    const presentedComponents = await this.getPresentedComponents(
-      resolvedRequirements
-    );
-
-    const presented = this.organizeRows(
-      presentedComponents.filter((s) => !!s.string && s.size !== undefined)
-    );
-
-    return (embed || new EmbedView()).setFooter(
-      presented.map((row) => row.map((r) => r.string).join(" • ")).join("\n")
-    );
-  }
-
-  private organizeRows(
-    presentedComponents: PresentedComponent[]
-  ): PresentedComponent[][] {
-    const finalArray = [] as PresentedComponent[][];
-
-    for (const presentedComponent of presentedComponents) {
-      const findFunction = (row: PresentedComponent[]) =>
-        rowSize - sum(...row.map((r) => r.size)) >= presentedComponent.size;
-
-      const index = finalArray.findIndex(findFunction);
-
-      if (index !== -1) {
-        finalArray[index].push(presentedComponent);
-      } else {
-        finalArray.push([presentedComponent]);
-      }
-    }
-
-    return finalArray;
+    return Array.from(dependencies.values());
   }
 
   // This function does three things:
   // - Resolves promises
   // - Moves components around according to placeAfter
   // - Flattens out multiple component returns
-  private async getPresentedComponents(
-    resolvedRequirements: ResolvedRequirements
+  public async getPresentedComponents(
+    resolvedDependencies: ResolvedDependencies
   ): Promise<PresentedComponent[]> {
     const promises = await asyncMap(
       this.components,
       async (c) =>
         [
           (c as any).componentName,
-          await Promise.resolve(new c(resolvedRequirements).present()),
+          await Promise.resolve(new c(resolvedDependencies).present()),
         ] as [string, PresentedComponent | PresentedComponent[]]
     );
 

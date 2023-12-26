@@ -41,7 +41,7 @@ export default class Index extends LilacBaseCommand {
               width: this.progressBarWidth,
             })}\n*Loading...*`
           )
-          .asMessageEmbed(),
+          .asEmbed(),
       ],
     });
 
@@ -61,7 +61,7 @@ export default class Index extends LilacBaseCommand {
         await this.discordService.edit(
           this.ctx,
           sentMessage,
-          embed.setDescription("Done!").asMessageEmbed()
+          embed.setDescription("Done!").asEmbed()
         );
         subscription.unsubscribe();
       } else if (stopwatch.elapsedInMilliseconds >= 3000) {
@@ -76,7 +76,7 @@ ${displayProgressBar(progress.page, progress.totalPages, {
 })}
 *Page ${progress.page}/${progress.totalPages}*`
             )
-            .asMessageEmbed()
+            .asEmbed()
         );
 
         stopwatch.zero().start();

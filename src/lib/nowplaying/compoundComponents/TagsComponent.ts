@@ -1,7 +1,7 @@
 import { TagConsolidator } from "../../tags/TagConsolidator";
+import { NowPlayingEmbed } from "../../ui/embeds/NowPlayingEmbed";
 import { AnyIn, BaseCompoundComponent } from "../base/BaseNowPlayingComponent";
 import { PlaceholderNowPlayingComponent } from "../base/PlaceholderNowPlayingComponent";
-import { rowSize } from "../NowPlayingBuilder";
 
 const areqs = ["artistInfo"] as const;
 export class ArtistTagsComponent extends PlaceholderNowPlayingComponent<
@@ -9,7 +9,7 @@ export class ArtistTagsComponent extends PlaceholderNowPlayingComponent<
 > {
   static componentName = "artist-tags";
   static friendlyName = "Artist tags";
-  readonly requirements = areqs;
+  readonly dependencies = areqs;
 }
 
 const treqs = ["trackInfo"] as const;
@@ -18,13 +18,13 @@ export class TrackTagsComponent extends PlaceholderNowPlayingComponent<
 > {
   static componentName = "track-tags";
   static friendlyName = "Track tags";
-  readonly requirements = treqs;
+  readonly dependencies = treqs;
 }
 
-const requirements = ["artistInfo", "trackInfo"] as const;
+const dependencies = ["artistInfo", "trackInfo"] as const;
 
-export class TagsComponent extends BaseCompoundComponent<typeof requirements> {
-  requirements = requirements;
+export class TagsComponent extends BaseCompoundComponent<typeof dependencies> {
+  dependencies = dependencies;
 
   static componentName = "tags";
   static replaces = new AnyIn(["artist-tags", "track-tags"]);
@@ -39,7 +39,7 @@ export class TagsComponent extends BaseCompoundComponent<typeof requirements> {
       string: tagConsolidator
         .consolidateAsStrings(Infinity, false)
         .join(TagConsolidator.tagJoin),
-      size: rowSize,
+      size: NowPlayingEmbed.rowSize,
     };
   }
 

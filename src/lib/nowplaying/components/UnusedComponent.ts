@@ -2,7 +2,7 @@ import { BaseNowPlayingComponent } from "../base/BaseNowPlayingComponent";
 
 export class UnusedComponent extends BaseNowPlayingComponent<never[]> {
   static componentName = "loved";
-  readonly requirements = [];
+  readonly dependencies = [];
 
   present() {
     return {

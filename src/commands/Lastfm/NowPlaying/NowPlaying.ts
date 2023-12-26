@@ -1,12 +1,10 @@
-import { MessageEmbed } from "discord.js";
-import { promiseAllSettled } from "../../../helpers";
 import { CommandRedirect } from "../../../lib/command/Command";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
-import { LineConsolidator } from "../../../lib/LineConsolidator";
 import { SettingsService } from "../../../lib/settings/SettingsService";
 import { FMMode } from "../../../lib/settings/SettingValues";
 import { CrownsService } from "../../../services/dbservices/crowns/CrownsService";
+import { NowPlayingService } from "../../../services/dbservices/NowPlayingService";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import NowPlayingAlbum from "./NowPlayingAlbum";
 import { nowPlayingArgs, NowPlayingBaseCommand } from "./NowPlayingBaseCommand";
@@ -75,115 +73,43 @@ export default class NowPlaying extends NowPlayingBaseCommand<typeof args> {
     },
   ];
 
-  async run() {
-    const { username, requestable, discordUser, dbUser } =
-      await this.getMentions();
-
-    const nowPlayingResponse = await this.lastFMService.recentTracks(this.ctx, {
-      username: requestable || "flushed_emoji",
-      limit: 1,
-    });
-
-    const nowPlaying = nowPlayingResponse.first();
-
-    if (nowPlaying.isNowPlaying) this.scrobble(nowPlaying);
-
-    this.tagConsolidator.blacklistTags(nowPlaying.artist, nowPlaying.name);
-
-    let nowPlayingEmbed = await this.nowPlayingEmbed(
-      this.ctx,
-      nowPlaying,
-      username,
-      dbUser
-    );
-
-    const [artistInfo, crown] = await promiseAllSettled([
-      this.lastFMService.artistInfo(this.ctx, {
-        artist: nowPlaying.artist,
-        username: requestable,
-      }),
-      this.crownsService.getCrownDisplay(this.ctx, nowPlaying.artist),
-    ]);
-
-    const { crownString, isCrownHolder } = await this.crownDetails(
-      crown,
-      discordUser
-    );
-
-    await this.tagConsolidator.saveServerBannedTagsInContext(this.ctx);
-
-    this.tagConsolidator.addTags(this.ctx, artistInfo.value?.tags || []);
-
-    const lineConsolidator = new LineConsolidator();
-
-    const artistPlays = this.artistPlays(artistInfo, nowPlaying, isCrownHolder);
-    const noArtistData = this.noArtistData(nowPlaying);
-    const scrobbleCount = this.scrobbleCount(nowPlayingResponse);
-
-    lineConsolidator.addLines(
-      {
-        shouldDisplay: this.tagConsolidator.hasAnyTags(),
-        string: this.tagConsolidator.consolidateAsStrings().join(" ‧ "),
-      },
-      {
-        shouldDisplay: !!artistInfo.value && !!crownString,
-        string: `${artistPlays} • ${scrobbleCount} • ${crownString}`,
-      },
-      {
-        shouldDisplay: !!artistInfo.value && !crownString,
-        string: `${artistPlays} • ${scrobbleCount}`,
-      },
-      {
-        shouldDisplay: !artistInfo.value && !!crownString,
-        string: `${noArtistData} • ${scrobbleCount} • ${crownString}`,
-      },
-      {
-        shouldDisplay: !artistInfo.value && !crownString,
-        string: `${noArtistData} • ${scrobbleCount}`,
-      }
-    );
-
-    nowPlayingEmbed.setFooter({ text: lineConsolidator.consolidate() });
-
-    if (this.extract.didMatch("mf")) {
-      nowPlayingEmbed = this.reverseEmbed(nowPlayingEmbed);
-    }
-
-    const sentMessage = await this.send(nowPlayingEmbed);
-
-    await this.customReactions(sentMessage);
-    await this.easterEggs(sentMessage, nowPlaying);
+  getConfig(): string[] {
+    return NowPlayingService.presets.default;
   }
 
-  private reverseEmbed(embed: MessageEmbed): MessageEmbed {
-    embed.setTitle(reverse(embed.title!));
-    embed.setDescription(reverseLinks(embed.description!));
+  // if (this.extract.didMatch("mf")) {
+  //   nowPlayingEmbed = this.reverseEmbed(nowPlayingEmbed);
+  // }
 
-    const footer = embed.footer?.text!.split("\n") as [string, string];
+  // private reverseEmbed(embed: MessageEmbed): MessageEmbed {
+  //   embed.setTitle(reverse(embed.title!));
+  //   embed.setDescription(reverseLinks(embed.description!));
 
-    footer[0] = footer[0]
-      .split(" ‧ ")
-      .map((t) => reverse(t))
-      .join(" ‧ ");
-    footer[1] = footer[1].replace(/(?<= ).*(?= scrobbles •)/, (match) =>
-      reverse(match)
-    );
+  //   const footer = embed.footer?.text!.split("\n") as [string, string];
 
-    embed.setFooter({ text: footer.join("\n") });
+  //   footer[0] = footer[0]
+  //     .split(" ‧ ")
+  //     .map((t) => reverse(t))
+  //     .join(" ‧ ");
+  //   footer[1] = footer[1].replace(/(?<= ).*(?= scrobbles •)/, (match) =>
+  //     reverse(match)
+  //   );
 
-    const author = (embed.author = {
-      ...embed.author,
-      name:
-        embed.author?.name!.replace(
-          /(?<=(Now playing|Last scrobbled) for ).*/i,
-          (match) => reverse(match)
-        ) || "",
-    });
+  //   embed.setFooter({ text: footer.join("\n") });
 
-    embed.setAuthor(author);
+  //   const author = (embed.author = {
+  //     ...embed.author,
+  //     name:
+  //       embed.author?.name!.replace(
+  //         /(?<=(Now playing|Last scrobbled) for ).*/i,
+  //         (match) => reverse(match)
+  //       ) || "",
+  //   });
 
-    return embed;
-  }
+  //   embed.setAuthor(author);
+
+  //   return embed;
+  // }
 
   private fmModeWasUsed(mode: FMMode, input: string | undefined) {
     return (

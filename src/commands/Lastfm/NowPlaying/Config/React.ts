@@ -86,13 +86,10 @@ export class React extends NowPlayingConfigChildCommand<typeof args> {
       await this.settingsService.set(this.ctx, "reacts", {
         userID: this.author.id,
       });
-      confirmationEmbed.sentMessage!.edit({
-        embeds: [
-          embed
-            .setDescription("Successfully cleared your reactions!")
-            .asMessageEmbed(),
-        ],
-      });
+
+      await embed
+        .setDescription("Successfully cleared your reactions!")
+        .updateMessage(this.ctx);
     }
   }
 

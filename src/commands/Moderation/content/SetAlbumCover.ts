@@ -138,18 +138,14 @@ This will ${shouldClear ? "clear" : "set"} the image ${bold(
       );
     }
 
-    await this.discordService.edit(
-      this.ctx,
-      confirmationEmbed.sentMessage!,
-      embed
-        .setDescription(
-          `${shouldClear ? "Cleared" : "Set this as"} the image for ${bold(
-            artist
-          )} | ${italic(album)}${
-            this.parsedArguments.moderation ? " bot-wide" : ""
-          }!`
-        )
-        .asMessageEmbed()
-    );
+    await embed
+      .setDescription(
+        `${shouldClear ? "Cleared" : "Set this as"} the image for ${bold(
+          artist
+        )} | ${italic(album)}${
+          this.parsedArguments.moderation ? " bot-wide" : ""
+        }!`
+      )
+      .updateMessage(this.ctx);
   }
 }

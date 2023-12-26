@@ -1,4 +1,3 @@
-import { Message } from "discord.js";
 import { LogicError } from "../../errors/errors";
 import { Stopwatch } from "../../helpers";
 import { Command } from "../../lib/command/Command";
@@ -26,14 +25,12 @@ export default class Status extends Command {
 
     const mirrorballLatency = await this.mirrorballLatency();
     const lilacLatency = await this.lilacLatency();
-    const [sentMessage, discordLatency] = await this.discordLatency(embed);
+    const discordLatency = await this.discordLatency(embed);
     const lastfmLatency = await this.lastFMLatency();
 
-    await sentMessage.edit({
-      embeds: [
-        embed
-          .setDescription(
-            `**Latency**:
+    await embed
+      .setDescription(
+        `**Latency**:
 External:
 \`\`\`
 Discord........${this.displayLatency(discordLatency)}
@@ -45,10 +42,8 @@ Mirrorball.....${this.displayLatency(mirrorballLatency)}
 Lilac..........${this.displayLatency(lilacLatency)}
 \`\`\`
 `
-          )
-          .asMessageEmbed(),
-      ],
-    });
+      )
+      .updateMessage(this.ctx);
   }
 
   private async mirrorballLatency(): Promise<Stopwatch> {
@@ -81,23 +76,19 @@ Lilac..........${this.displayLatency(lilacLatency)}
     return stopwatch;
   }
 
-  private async discordLatency(
-    embed: EmbedView
-  ): Promise<[Message, Stopwatch]> {
+  private async discordLatency(embed: EmbedView): Promise<Stopwatch> {
     const stopwatch = new Stopwatch();
     stopwatch.start();
 
-    let sentMessage: Message;
-
     try {
-      sentMessage = await this.send(embed);
+      await this.send(embed);
     } catch {
       throw new LogicError("Failed to send message...");
     }
 
     stopwatch.stop();
 
-    return [sentMessage, stopwatch];
+    return stopwatch;
   }
 
   private async lastFMLatency() {

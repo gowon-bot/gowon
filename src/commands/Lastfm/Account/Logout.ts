@@ -29,7 +29,7 @@ export default class Logout extends LastFMBaseCommand {
         await this.discordService.edit(
           this.ctx,
           confirmationEmbed.sentMessage,
-          embed.setDescription("Logged out successfully.").asMessageEmbed()
+          embed.setDescription("Logged out successfully.").asEmbed()
         );
       }
     }

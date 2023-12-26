@@ -2,6 +2,7 @@ import {
   MessageOptions as DiscordMessageOptions,
   InteractionReplyOptions,
   Message,
+  MessageEditOptions,
   MessageEmbed,
 } from "discord.js";
 import { SendOptions } from "../../services/Discord/DiscordService.types";
@@ -28,15 +29,27 @@ export class Sendable<T extends SendableContent = SendableContent> {
     };
   }
 
+  public asDiscordEditOptions(
+    overrides: Partial<SendOptions> = {}
+  ): MessageEditOptions {
+    const content = this.getContent();
+    const embeds = this.getEmbeds(content, overrides);
+
+    return {
+      ...embeds,
+      content: typeof content === "string" ? content : undefined,
+    };
+  }
+
   public async afterSend(message: Message) {
     if (this.isUIComponent()) {
       this.content.afterSend(message);
     }
   }
 
-  private getContent(): string | MessageEmbed {
+  public getContent(): string | MessageEmbed {
     if (this.isUIComponent()) {
-      return this.content.asMessageEmbed();
+      return this.content.asEmbed().toMessageEmbed();
     } else return this.content as string | MessageEmbed;
   }
 
@@ -46,12 +59,12 @@ export class Sendable<T extends SendableContent = SendableContent> {
   ): Pick<DiscordMessageOptions, "embeds"> {
     if (typeof content === "string") {
       if (overrides.withEmbed) {
-        return { embeds: [overrides.withEmbed.asMessageEmbed()] };
+        return { embeds: [overrides.withEmbed.asEmbed().toMessageEmbed()] };
       } else return {};
     } else {
       return {
         embeds: overrides?.withEmbed
-          ? [content, overrides.withEmbed.asMessageEmbed()]
+          ? [content, overrides.withEmbed.asEmbed().toMessageEmbed()]
           : [content],
       };
     }

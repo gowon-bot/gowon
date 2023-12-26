@@ -34,7 +34,7 @@ export class Login extends SpotifyBaseCommand {
         )} and authenticate with Spotify!`
       );
 
-    const sentMessage = await this.dmAuthor(embed);
+    await this.dmAuthor(embed);
 
     const code = await this.spotifyWebhookService.waitForResponse(
       state,
@@ -47,12 +47,8 @@ export class Login extends SpotifyBaseCommand {
       code
     );
 
-    await sentMessage.edit({
-      embeds: [
-        embed
-          .setDescription("Successfully logged in with Spotify!")
-          .asMessageEmbed(),
-      ],
-    });
+    await embed
+      .setDescription("Successfully logged in with Spotify!")
+      .updateMessage(this.ctx);
   }
 }

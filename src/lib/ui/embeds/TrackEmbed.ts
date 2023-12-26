@@ -1,4 +1,3 @@
-import { MessageEmbed } from "discord.js";
 import { bold, italic } from "../../../helpers/discord";
 import { ImageCollection } from "../../../services/LastFM/converters/BaseConverter";
 import { Image } from "../Image";
@@ -33,7 +32,7 @@ export class TrackEmbed extends View {
     super();
   }
 
-  asMessageEmbed(): MessageEmbed {
+  asEmbed(): EmbedView {
     const { artist, album } = getSimpleTrackDetails(this.track);
 
     return this.baseEmbed
@@ -42,8 +41,7 @@ export class TrackEmbed extends View {
         `by ${bold(artist)}` + (album ? ` from ${italic(album)}` : "")
       )
       .addDescription(this.additionalDescription || "")
-      .setThumbnail(this.albumCover)
-      .asMessageEmbed();
+      .setThumbnail(this.albumCover);
   }
 
   setTrack(track: SimpleTrack): this {

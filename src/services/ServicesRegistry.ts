@@ -31,7 +31,7 @@ import { CardsService } from "./dbservices/CardsService";
 import { ComboService } from "./dbservices/ComboService";
 import { FriendsService } from "./dbservices/FriendsService";
 import { MetaService } from "./dbservices/MetaService";
-import { ConfigService } from "./dbservices/NowPlayingService";
+import { NowPlayingService } from "./dbservices/NowPlayingService";
 import { RedirectsService } from "./dbservices/RedirectsService";
 import { UsersService } from "./dbservices/UsersService";
 import { CrownsHistoryService } from "./dbservices/crowns/CrownsHistoryService";
@@ -68,7 +68,6 @@ const services: Service[] = [
   CrownsUserService,
   ComboService,
   ConcurrencyService,
-  ConfigService,
   DatasourceService,
   DiscordService,
   EmojiService,
@@ -96,6 +95,7 @@ const services: Service[] = [
   MentionsService,
   MirrorballService,
   NicknameService,
+  NowPlayingService,
   NowPlayingEmbedParsingService,
   PermissionsService,
   PermissionsCacheService,

@@ -2,14 +2,14 @@ import { displayNumber } from "../../ui/displays";
 import { BaseNowPlayingComponent } from "../base/BaseNowPlayingComponent";
 import { getArtistPlays } from "../helpers/artist";
 
-const artistPlaysRequirements = ["artistInfo", "artistPlays"] as const;
+const artistPlaysDependencies = ["artistInfo", "artistPlays"] as const;
 
 export class ArtistPlaysComponent extends BaseNowPlayingComponent<
-  typeof artistPlaysRequirements
+  typeof artistPlaysDependencies
 > {
   static componentName = "artist-plays";
   static friendlyName = "Artist plays";
-  readonly requirements = artistPlaysRequirements;
+  readonly dependencies = artistPlaysDependencies;
 
   present() {
     const { plays, name } = getArtistPlays(this.values);

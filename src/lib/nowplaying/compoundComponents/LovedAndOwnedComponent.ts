@@ -1,15 +1,15 @@
 import { AnyIn, BaseCompoundComponent } from "../base/BaseNowPlayingComponent";
 
-const lovedAndOwnedRequirements = [
+const lovedAndOwnedDependencies = [
   "trackInfo",
   "albumCard",
   "cachedLovedTrack",
 ] as const;
 
 export class LovedAndOwnedComponent extends BaseCompoundComponent<
-  typeof lovedAndOwnedRequirements
+  typeof lovedAndOwnedDependencies
 > {
-  requirements = lovedAndOwnedRequirements;
+  dependencies = lovedAndOwnedDependencies;
 
   static componentName = "loved-and-owned";
   static replaces = new AnyIn(["loved", "card-ownership"]);

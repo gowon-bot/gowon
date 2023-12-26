@@ -43,7 +43,7 @@ export class OptOut extends CrownsChildCommand {
                 displayNumber(numberOfCrowns, "crown")
               )}!`
             )
-            .asMessageEmbed(),
+            .asEmbed(),
         ],
       });
     }

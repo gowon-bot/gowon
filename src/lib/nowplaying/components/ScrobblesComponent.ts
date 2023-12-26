@@ -1,14 +1,14 @@
 import { displayNumber } from "../../ui/displays";
 import { BaseNowPlayingComponent } from "../base/BaseNowPlayingComponent";
 
-const scrobblesRequirements = [] as const;
+const scrobblesDependencies = [] as const;
 
 export class ScrobblesComponent extends BaseNowPlayingComponent<
-  typeof scrobblesRequirements
+  typeof scrobblesDependencies
 > {
   static componentName = "scrobbles";
   static friendlyName = "Scrobbles";
-  readonly requirements = scrobblesRequirements;
+  readonly dependencies = scrobblesDependencies;
 
   present() {
     if (this.values.recentTracks) {

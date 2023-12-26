@@ -5,7 +5,7 @@ import { RespondableChannel } from "../../../services/Discord/DiscordService.typ
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { GowonContext } from "../../context/Context";
 import { Payload } from "../../context/Payload";
-import { EmojiRaw } from "../../emoji/Emoji";
+import { Emoji, EmojiRaw } from "../../emoji/Emoji";
 import { EmbedView } from "./EmbedView";
 
 export class ConfirmationView {
@@ -13,8 +13,8 @@ export class ConfirmationView {
     return ServiceRegistry.get(DiscordService);
   }
 
-  private readonly reactionEmoji = EmojiRaw.checkmark;
-  private readonly rejectionEmoji = "❌";
+  private readonly confirmationEmoji = EmojiRaw.checkmark;
+  private readonly rejectionEmoji = Emoji.x;
 
   public sentMessage: Message | undefined;
   private originalMessage: Payload;
@@ -39,7 +39,8 @@ export class ConfirmationView {
     return (reaction: MessageReaction, user: User) => {
       return (
         user.id === this.ctx.command.author.id &&
-        ((reaction.emoji.id ?? reaction.emoji.name) === this.reactionEmoji ||
+        ((reaction.emoji.id ?? reaction.emoji.name) ===
+          this.confirmationEmoji ||
           (this.allowRejection &&
             (reaction.emoji.id ?? reaction.emoji.name) === this.rejectionEmoji))
       );
@@ -61,7 +62,7 @@ export class ConfirmationView {
 
       this.sentMessage = sentEmbed;
 
-      await sentEmbed.react(this.reactionEmoji);
+      await sentEmbed.react(this.confirmationEmoji);
 
       if (this.allowRejection) await sentEmbed.react(this.rejectionEmoji);
 
@@ -75,7 +76,7 @@ export class ConfirmationView {
 
         const emojiResolvable = emoji.id ?? emoji.name;
 
-        if (emojiResolvable == this.reactionEmoji) {
+        if (emojiResolvable == this.confirmationEmoji) {
           collector.stop("collected");
         } else {
           collector.stop("rejected");
@@ -92,19 +93,14 @@ export class ConfirmationView {
         if (reason === "collected") {
           return resolve(true);
         } else if (reason === "time" || reason === "rejected") {
-          await sentEmbed.edit({
-            embeds: [
-              this.embed
-                .addFooter(
-                  reason === "rejected"
-                    ? `\n\n❌ This confirmation has been rejected.`
-                    : `\n\n🕒 This confirmation has timed out.`
-                )
-                .asMessageEmbed(),
-            ],
-          });
+          const footer =
+            reason === "rejected"
+              ? `\n\n❌ This confirmation has been rejected.`
+              : `\n\n🕒 This confirmation has timed out.`;
+
+          await this.embed.addFooter(footer).updateMessage(ctx);
           await Promise.all([
-            this.removeReaction(this.reactionEmoji),
+            this.removeReaction(this.confirmationEmoji),
             this.allowRejection
               ? this.removeReaction(this.rejectionEmoji)
               : undefined,

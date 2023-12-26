@@ -3,7 +3,6 @@ import {
   DMChannel,
   InteractionReplyOptions,
   Message,
-  MessageEmbed,
   MessagePayload,
 } from "discord.js";
 import { AnalyticsCollector } from "../../analytics/AnalyticsCollector";
@@ -84,23 +83,17 @@ export class DiscordResponseService extends BaseService<DiscordServiceContext> {
     return response;
   }
 
-  async edit(
-    ctx: DiscordServiceContext,
-    message: Message,
-    content: string | MessageEmbed
-  ) {
+  async edit(ctx: DiscordServiceContext, message: Message, sendable: Sendable) {
     if (ctx.payload.isInteraction()) {
       this.log(ctx, `Editing interaction reply`);
 
       return await ctx.payload.source.editReply(
-        typeof content === "string" ? { content } : { embeds: [content] }
+        sendable.asDiscordSendOptions()
       );
     } else {
       this.log(ctx, `Editing message ${message.id}`);
 
-      return await message.edit(
-        typeof content === "string" ? { content } : { embeds: [content] }
-      );
+      return await message.edit(sendable.asDiscordEditOptions());
     }
   }
 

@@ -1,18 +1,14 @@
-import { LastfmLinks } from "../../../helpers/lastfm/LastfmLinks";
+import { User as DBUser } from "../../../database/entity/User";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
-import { DatasourceService } from "../../../lib/nowplaying/DatasourceService";
-import { NowPlayingBuilder } from "../../../lib/nowplaying/NowPlayingBuilder";
-import { RequirementMap } from "../../../lib/nowplaying/RequirementMap";
-import { ConfigService } from "../../../services/dbservices/NowPlayingService";
+import { NowPlayingEmbed } from "../../../lib/ui/embeds/NowPlayingEmbed";
+import { Requestable } from "../../../services/LastFM/LastFMAPIService";
+import { LastFMArgumentsMutableContext } from "../../../services/LastFM/LastFMArguments";
 import { TrackInfo } from "../../../services/LastFM/converters/InfoTypes";
 import {
   RecentTrack,
   RecentTracks,
 } from "../../../services/LastFM/converters/RecentTracks";
-import { Requestable } from "../../../services/LastFM/LastFMAPIService";
-import { LastFMArgumentsMutableContext } from "../../../services/LastFM/LastFMArguments";
-import { ServiceRegistry } from "../../../services/ServicesRegistry";
-import { nowPlayingArgs, NowPlayingBaseCommand } from "./NowPlayingBaseCommand";
+import { NowPlayingBaseCommand, nowPlayingArgs } from "./NowPlayingBaseCommand";
 
 const args = {
   ...prefabArguments.track,
@@ -32,8 +28,9 @@ export default class FakeNowPlaying extends NowPlayingBaseCommand<typeof args> {
 
   slashCommand = true;
 
-  datasourceService = ServiceRegistry.get(DatasourceService);
-  configService = ServiceRegistry.get(ConfigService);
+  async getConfig(senderUser: DBUser): Promise<string[]> {
+    return await this.nowPlayingService.getConfigForUser(this.ctx, senderUser);
+  }
 
   async run() {
     const { dbUser, senderUser, senderRequestable, requestable, username } =
@@ -43,49 +40,25 @@ export default class FakeNowPlaying extends NowPlayingBaseCommand<typeof args> {
 
     const recentTracks = await this.getRecentTracks(senderRequestable);
 
-    const config = await this.configService.getConfigForUser(
-      this.ctx,
-      senderUser!
+    const components = await this.getPresentedComponents(
+      await this.getConfig(senderUser!),
+      recentTracks,
+      requestable,
+      dbUser
     );
 
-    const builder = new NowPlayingBuilder(config);
+    const usernameDisplay = await this.getUsernameDisplay(dbUser, username);
 
-    const requirements =
-      builder.generateRequirements() as (keyof RequirementMap)[];
+    const embed = this.authorEmbed()
+      .transform(NowPlayingEmbed)
+      .setDbUser(dbUser)
+      .setNowPlaying(recentTracks.first(), this.tagConsolidator)
+      .setUsername(username)
+      .setUsernameDisplay(usernameDisplay)
+      .setComponents(components)
+      .setCustomReacts(await this.getCustomReactions());
 
-    const resolvedRequirements =
-      await this.datasourceService.resolveRequirements(this.ctx, requirements, {
-        recentTracks,
-        requestable,
-        username,
-        dbUser,
-        payload: this.payload,
-        components: config,
-        prefix: this.prefix,
-      });
-
-    const baseEmbed = (
-      await this.nowPlayingEmbed(
-        this.ctx,
-        recentTracks.first(),
-        username,
-        dbUser
-      )
-    ).setAuthor({
-      name: `Track for ${username}`,
-      iconURL:
-        this.payload.member?.avatarURL() ||
-        this.payload.author.avatarURL() ||
-        undefined,
-      url: LastfmLinks.userPage(username),
-    });
-
-    const embed = await builder.asEmbed(resolvedRequirements, baseEmbed);
-
-    const sentMessage = await this.send(embed);
-
-    await this.customReactions(sentMessage);
-    await this.easterEggs(sentMessage, recentTracks.first());
+    await this.send(embed);
   }
 
   private async getRecentTracks(
