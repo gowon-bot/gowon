@@ -1,4 +1,4 @@
-import { LogicError } from "../../../errors/errors";
+import { NoScrobblesOfAlbumError } from "../../../errors/commands/library";
 import { bold, italic } from "../../../helpers/discord";
 import { LastfmLinks } from "../../../helpers/lastfm/LastfmLinks";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
@@ -63,18 +63,13 @@ export default class ArtistTopAlbums extends LilacBaseCommand<typeof args> {
     const topAlbums = response.albumCounts.albumCounts;
 
     if (topAlbums.length < 1) {
-      throw new LogicError(
-        `${perspective.plusToHave} no scrobbles of any albums from ${bold(
-          artist.name
-        )}!`
-      );
+      throw new NoScrobblesOfAlbumError(perspective, artist.name);
     }
 
     const totalScrobbles = topAlbums.reduce((sum, l) => sum + l.playcount, 0);
     const average = totalScrobbles / topAlbums.length;
 
-    const embed = this.authorEmbed()
-      .setHeader("Artist top albums")
+    const embed = this.minimalEmbed()
       .setTitle(
         `${Emoji.usesIndexedDataLink} Top ${artist.name} albums for ${username}`
       )
@@ -112,6 +107,6 @@ export default class ArtistTopAlbums extends LilacBaseCommand<typeof args> {
       },
     });
 
-    await this.send(simpleScrollingEmbed);
+    await this.reply(simpleScrollingEmbed);
   }
 }

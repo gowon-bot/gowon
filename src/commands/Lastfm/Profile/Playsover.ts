@@ -18,8 +18,7 @@ export class Playsover extends ProfileChildCommand {
 
     const artistCount = await this.calculator.totalArtists();
 
-    const embed = (await this.profileEmbed()).setHeader("Profile playsover")
-      .setDescription(`Among ${
+    const embed = this.profileEmbed().setDescription(`Among ${
       perspective.possessivePronoun
     } top ${displayNumber(
       artistCount.asNumber > 1000 ? 1000 : artistCount.asNumber,
@@ -36,6 +35,6 @@ export class Playsover extends ProfileChildCommand {
       )
       .join("\n")}`);
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

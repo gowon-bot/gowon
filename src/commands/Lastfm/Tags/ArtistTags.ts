@@ -1,3 +1,4 @@
+import { CouldNotFindAnyTagsForArtistError } from "../../../errors/commands/tags";
 import { italic } from "../../../helpers/discord";
 import { extraWideSpace } from "../../../helpers/specialCharacters";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
@@ -52,12 +53,7 @@ export default class ArtistTags extends LastFMBaseCommand<typeof args> {
     const artistTags = tagConsolidator.consolidate();
 
     if (artistTags.length == 0) {
-      const embed = this.authorEmbed()
-        .setHeader("Artist tags")
-        .setDescription(`Couldn't find any tags for ${artistInfo.name}`);
-
-      await this.send(embed);
-      return;
+      throw new CouldNotFindAnyTagsForArtistError(artistInfo.name);
     }
 
     const artistCountPages =
@@ -86,15 +82,14 @@ export default class ArtistTags extends LastFMBaseCommand<typeof args> {
         }))
     );
 
-    const embed = this.authorEmbed()
-      .setHeader("Artist tags")
+    const embed = this.minimalEmbed()
       .setTitle(
         `${Emoji.usesIndexedDataLink} Artist tags for ${artistInfo.name}`
       )
       .setURL(artistInfo.url)
       .setDescription(lineConsolidator.consolidate());
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 
   private generateArtistList(page: LilacArtistCountsPage): string {

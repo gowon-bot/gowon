@@ -12,14 +12,12 @@ export class ScrobblesPerAlbum extends ProfileChildCommand {
 
     const spl = await this.calculator.avgScrobblesPerAlbum();
 
-    const embed = (await this.profileEmbed())
-      .setHeader("Profile scrobbles per album")
-      .setDescription(
-        `${perspective.upper.regularVerb("average")} ${bold(
-          spl.asString
-        )} scrobbles per album!`
-      );
+    const embed = this.profileEmbed().setDescription(
+      `${perspective.upper.regularVerb("average")} ${bold(
+        spl.asString
+      )} scrobbles per album!`
+    );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

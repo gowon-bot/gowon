@@ -56,7 +56,7 @@ export default class FakeNowPlaying extends NowPlayingBaseCommand<typeof args> {
 
     const albumCover = await this.getAlbumCover(recentTracks.first());
 
-    const embed = this.authorEmbed()
+    const embed = this.minimalEmbed()
       .transform(NowPlayingEmbed)
       .setDbUser(dbUser)
       .setNowPlaying(recentTracks.first(), this.tagConsolidator)
@@ -66,7 +66,7 @@ export default class FakeNowPlaying extends NowPlayingBaseCommand<typeof args> {
       .setComponents(components)
       .setCustomReacts(await this.getCustomReactions());
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 
   private async getRecentTracks(

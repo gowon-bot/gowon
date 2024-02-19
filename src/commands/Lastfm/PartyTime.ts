@@ -1,9 +1,10 @@
-import { LastFMBaseCommand } from "./LastFMBaseCommand";
+import { bold } from "../../helpers/discord";
+import { NumberArgument } from "../../lib/context/arguments/argumentTypes/NumberArgument";
+import { ArgumentsMap } from "../../lib/context/arguments/types";
+import { Emoji } from "../../lib/emoji/Emoji";
 import { Validation } from "../../lib/validation/ValidationChecker";
 import { validators } from "../../lib/validation/validators";
-import { NumberArgument } from "../../lib/context/arguments/argumentTypes/NumberArgument";
-import { bold } from "../../helpers/discord";
-import { ArgumentsMap } from "../../lib/context/arguments/types";
+import { LastFMBaseCommand } from "./LastFMBaseCommand";
 
 const args = {
   time: new NumberArgument({
@@ -28,21 +29,21 @@ export default class PartyTime extends LastFMBaseCommand<typeof args> {
     time: new validators.RangeValidator({
       min: 3,
       max: 15,
-      message: "Please enter a reasonable time. 😐",
+      message: `Please enter a reasonable time. ${Emoji.neutralFace}`,
     }),
   };
 
   async run() {
-    this.parsedArguments;
+    const time = this.parsedArguments.time;
 
-    let time = this.parsedArguments.time;
-
-    await this.send(bold("The party begins in..."));
+    await this.reply(bold("The party begins in..."));
 
     for (let currentTime = time; currentTime >= 0; currentTime--) {
       setTimeout(() => {
         this.send(
-          currentTime === 0 ? bold("🎉 NOW 🎊") : bold(`${currentTime}`),
+          currentTime === 0
+            ? bold(`${Emoji.tada} NOW ${Emoji.confettiBall}`)
+            : bold(`${currentTime}`),
           { forceNoInteractionReply: true }
         );
       }, (time - currentTime) * 1800);

@@ -12,14 +12,12 @@ export class ScrobblesPerTrack extends ProfileChildCommand {
 
     const spt = await this.calculator.avgScrobblesPerTrack();
 
-    const embed = (await this.profileEmbed())
-      .setHeader("Profile scrobbles per track")
-      .setDescription(
-        `${perspective.upper.regularVerb("average")} ${bold(
-          spt.asString
-        )} scrobbles per track!`
-      );
+    const embed = this.profileEmbed().setDescription(
+      `${perspective.upper.regularVerb("average")} ${bold(
+        spt.asString
+      )} scrobbles per track!`
+    );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

@@ -57,8 +57,7 @@ export class Scrobbles extends FriendsChildCommand<typeof args> {
       0
     );
 
-    const embed = this.authorEmbed()
-      .setHeader("Friends scrobbles")
+    const embed = this.minimalEmbed()
       .setTitle(`Your friends scrobbles ${dateRange.humanized()}`)
       .setDescription(displayNumberedList(friendDisplays))
       .setFooter(
@@ -68,6 +67,6 @@ export class Scrobbles extends FriendsChildCommand<typeof args> {
         )}`
       );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

@@ -1,3 +1,4 @@
+import { HelpEmbed } from "../../lib/ui/embeds/HelpEmbed";
 import { FishyChildCommand } from "./FishyChildCommand";
 
 export class Help extends FishyChildCommand {
@@ -9,9 +10,8 @@ export class Help extends FishyChildCommand {
   slashCommand = true;
 
   async run() {
-    const embed = this.authorEmbed().setHeader("Fishy help");
-
-    embed
+    const embed = new HelpEmbed()
+      .setHeader("Fishy Help")
       .setDescription(
         `
 Fishy is a fishing minigame built into Gowon!
@@ -35,6 +35,7 @@ Happy fishing!
       .setFooter(
         `All fish you catch are kept in a sustainable and infinitely large aquarium :)`
       );
-    await this.send(embed);
+
+    await this.reply(embed);
   }
 }

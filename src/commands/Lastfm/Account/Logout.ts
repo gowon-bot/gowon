@@ -1,3 +1,6 @@
+import { Emoji } from "../../../lib/emoji/Emoji";
+import { successColour } from "../../../lib/ui/embeds/SuccessEmbed";
+import { WarningEmbed } from "../../../lib/ui/embeds/WarningEmbed";
 import { ConfirmationView } from "../../../lib/ui/views/ConfirmationView";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
@@ -11,11 +14,9 @@ export default class Logout extends LastFMBaseCommand {
   slashCommand = true;
 
   async run() {
-    const embed = this.authorEmbed()
-      .setHeader("Log out")
-      .setDescription(
-        "Are you sure you want to log out? This will delete all your stored data!"
-      );
+    const embed = new WarningEmbed().setDescription(
+      `Are you sure you want to log out? This will delete all your stored data!`
+    );
 
     const confirmationEmbed = new ConfirmationView(this.ctx, embed);
 
@@ -26,7 +27,8 @@ export default class Logout extends LastFMBaseCommand {
       await this.lilacUsersService.logout(this.ctx);
 
       await embed
-        .setDescription("Logged out successfully.")
+        .setColour(successColour)
+        .setDescription(`${Emoji.checkmark} Logged out successfully.`)
         .editMessage(this.ctx);
     }
   }

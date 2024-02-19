@@ -1,5 +1,4 @@
-import { LogicError } from "../../errors/errors";
-import { code } from "../../helpers/discord";
+import { code, mentionGuildMember } from "../../helpers/discord";
 import { CommandAccessRoleName, roles } from "../../lib/command/access/roles";
 import { Command, Variation } from "../../lib/command/Command";
 import { DiscordUserArgument } from "../../lib/context/arguments/argumentTypes/discord/DiscordUserArgument";
@@ -7,6 +6,7 @@ import { StringArgument } from "../../lib/context/arguments/argumentTypes/String
 import { UserStringArgument } from "../../lib/context/arguments/argumentTypes/UserStringArgument";
 import { DiscordIDMention } from "../../lib/context/arguments/mentionTypes/DiscordIDMention";
 import { ArgumentsMap } from "../../lib/context/arguments/types";
+import { SuccessEmbed } from "../../lib/ui/embeds/SuccessEmbed";
 import { validators } from "../../lib/validation/validators";
 
 const args = {
@@ -52,32 +52,28 @@ export default class GiveRole extends Command<typeof args> {
 
   async run() {
     const role = this.parsedArguments.role;
-    const { mentionedDBUser } = await this.getMentions();
-
-    if (!mentionedDBUser) {
-      throw new LogicError(
-        "The user you mentioned does not exist in the database!"
-      );
-    }
+    const { mentionedDBUser } = await this.getMentions({
+      dbUserRequired: true,
+    });
 
     const newRoles = this.variationWasUsed("remove")
-      ? mentionedDBUser.roles?.filter((r) => r !== role)
-      : [...new Set(mentionedDBUser.roles || []), role];
+      ? mentionedDBUser!.roles?.filter((r) => r !== role)
+      : [...new Set(mentionedDBUser!.roles || []), role];
 
     await this.usersService.setRoles(
       this.ctx,
-      mentionedDBUser.discordID,
+      mentionedDBUser!.discordID,
       (newRoles as CommandAccessRoleName[]) || []
     );
 
-    const embed = this.authorEmbed()
-      .setHeader(`${this.variationWasUsed("remove") ? "Remove" : "Give"} role`)
-      .setDescription(
-        `Succesfully ${
-          this.variationWasUsed("remove") ? "removed" : "added"
-        } the role ${code(role)}`
-      );
+    const embed = new SuccessEmbed().setDescription(
+      `Succesfully ${
+        this.variationWasUsed("remove") ? "removed" : "gave"
+      } the role ${code(role)} to ${mentionGuildMember(
+        mentionedDBUser!.discordID
+      )}`
+    );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

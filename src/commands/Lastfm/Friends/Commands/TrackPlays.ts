@@ -66,8 +66,7 @@ export class TrackPlays extends FriendsChildCommand<typeof args> {
       0
     );
 
-    const embed = this.authorEmbed()
-      .setHeader("Friends track plays")
+    const embed = this.minimalEmbed()
       .setTitle(
         `Your friends plays of ${trackInfo.name} by ${trackInfo.artist.name}`
       )
@@ -79,6 +78,6 @@ export class TrackPlays extends FriendsChildCommand<typeof args> {
         )} of this track`
       );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

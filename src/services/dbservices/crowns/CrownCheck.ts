@@ -67,10 +67,9 @@ export class TooLow extends CrownCheck {
 
   protected buildEmbed(ctx: GowonContext, embed: EmbedView): EmbedView {
     return embed.setDescription(
-      `:pensive: → ${mentionGuildMember(ctx.author.id)} - ${displayNumber(
-        this.options.plays,
-        "play"
-      )}
+      `${Emoji.pensive} → ${mentionGuildMember(
+        ctx.author.id
+      )} - ${displayNumber(this.options.plays, "play")}
   
   You must have at least ${bold(
     displayNumber(this.options.threshold, "play")
@@ -86,7 +85,7 @@ export class New extends CrownCheck {
 
   protected buildEmbed(ctx: GowonContext, embed: EmbedView): EmbedView {
     return embed.setDescription(
-      `:crown: → ${mentionGuildMember(ctx.author.id)} - ${displayNumber(
+      `${Emoji.crown} → ${mentionGuildMember(ctx.author.id)} - ${displayNumber(
         this.options.crown.plays,
         "play"
       )}
@@ -133,7 +132,7 @@ export class Fail extends CrownCheck {
     const crownEmoji =
       this.options.plays > this.options.previousCrown.plays
         ? Emoji.baited
-        : "👑";
+        : Emoji.crown;
 
     return embed.setDescription(
       `
@@ -141,7 +140,7 @@ ${crownEmoji} → ${mentionGuildMember(
         this.options.crown.user.discordID
       )} - ${displayNumber(this.options.crown.plays, "play")}
 
-${difference >= 5000 ? Emoji.wail : "😔"} → ${mentionGuildMember(
+${difference >= 5000 ? Emoji.wail : Emoji.pensive} → ${mentionGuildMember(
         ctx.author.id
       )} - ${displayNumber(this.options.plays, "play")}
 
@@ -159,11 +158,11 @@ export class Tie extends CrownCheck {
   protected buildEmbed(ctx: GowonContext, embed: EmbedView): EmbedView {
     return embed.setDescription(
       `
-:crown: → ${mentionGuildMember(
+${Emoji.crown} → ${mentionGuildMember(
         this.options.crown.user.discordID
       )} - ${displayNumber(this.options.crown.plays, "play")}
 
-:eyes: → ${mentionGuildMember(ctx.author.id)} - ${displayNumber(
+${Emoji.eyes} → ${mentionGuildMember(ctx.author.id)} - ${displayNumber(
         this.options.plays,
         "play"
       )}
@@ -220,7 +219,7 @@ ${Emoji.yoink} → ${mentionGuildMember(ctx.author.id)} - ${displayNumber(
         "play"
       )}
 
-🫥 → ${mentionGuildMember(
+${Emoji.dottedLineFace} → ${mentionGuildMember(
         this.options.previousCrown.ownerDiscordID
       )} - ${displayNumber(this.options.previousCrown.plays, "play")}
 
@@ -238,7 +237,7 @@ ${Emoji.yoink} → ${mentionGuildMember(ctx.author.id)} - ${displayNumber(
         "play"
       )}
 
-:pensive: → ${mentionGuildMember(
+${Emoji.pensive} → ${mentionGuildMember(
         this.options.previousCrown.ownerDiscordID
       )} - ${displayNumber(this.options.previousCrown.plays, "play")}
 
@@ -256,7 +255,7 @@ ${Emoji.yoink} → ${mentionGuildMember(ctx.author.id)} - ${displayNumber(
         "play"
       )}
 
-:wave: → ??? - ${displayNumber(this.options.previousCrown.plays, "play")}
+${Emoji.wave} → ??? - ${displayNumber(this.options.previousCrown.plays, "play")}
 
         Yoink! The crown for ${bold(
           this.options.artistName
@@ -272,7 +271,7 @@ ${Emoji.yoink} → ${mentionGuildMember(ctx.author.id)} - ${displayNumber(
         "play"
       )}
 
-:pensive: → ${mentionGuildMember(
+${Emoji.pensive} → ${mentionGuildMember(
         this.options.previousCrown.ownerDiscordID
       )} - ${displayNumber(this.options.previousCrown.plays, "play")}
 
@@ -285,12 +284,12 @@ ${Emoji.yoink} → ${mentionGuildMember(ctx.author.id)} - ${displayNumber(
   private loggedOut(ctx: GowonContext, embed: EmbedView): EmbedView {
     return embed.setDescription(
       `
-:crown: → ${mentionGuildMember(ctx.author.id)} - ${displayNumber(
+${Emoji.crown} → ${mentionGuildMember(ctx.author.id)} - ${displayNumber(
         this.options.crown.plays,
         "play"
       )}
 
-:pensive: → ??? - ${strikethrough(
+${Emoji.pensive} → ??? - ${strikethrough(
         displayNumber(this.options.previousCrown.plays, "play")
       )}
 

@@ -24,17 +24,11 @@ export class Profile extends FishyChildCommand<typeof args> {
   arguments = args;
 
   async run() {
-    const { fishyProfile, discordUser } = await this.getMentions({
-      fetchDiscordUser: true,
+    const { fishyProfile } = await this.getMentions({
       fetchFishyProfile: true,
       fishyProfileRequired: true,
       autoCreateFishyProfile: false,
     });
-
-    const perspective = this.usersService.discordPerspective(
-      this.author,
-      discordUser
-    );
 
     const [
       giftsGiven,
@@ -50,9 +44,7 @@ export class Profile extends FishyChildCommand<typeof args> {
       this.fishyService.getCollection(fishyProfile),
     ]);
 
-    const embed = this.authorEmbed().setHeader(
-      `${perspective.upper.possessive} fishy profile`
-    ).setDescription(`
+    const embed = this.minimalEmbed().setDescription(`
 Level **${fishyProfile.level}** fisher ${emDash} _Fishing since ${displayDate(
       fishyProfile.createdAt
     )} (${ago(fishyProfile.createdAt)})_
@@ -107,6 +99,6 @@ ${
 }
 `);
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

@@ -21,12 +21,11 @@ export class Aquarium extends FishyChildCommand<typeof args> {
 
     const aquarium = await this.fishyService.getAquarium(fishyProfile);
 
-    const embed = this.authorEmbed()
-      .setHeader("Fishy aquarium")
+    const embed = this.minimalEmbed()
       .setTitle("Your aquarium")
       .transform(AquariumEmbed)
       .setAquarium(aquarium);
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

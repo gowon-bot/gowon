@@ -11,8 +11,7 @@ import {
   CanCheck,
   PermissionsService,
 } from "../../permissions/PermissionsService";
-import { ErrorEmbed } from "../../ui/embeds/conditionEmbeds";
-import { EmbedView } from "../../ui/views/EmbedView";
+import { ErrorEmbed } from "../../ui/embeds/ErrorEmbed";
 import { Command } from "../Command";
 import { CommandRegistry } from "../CommandRegistry";
 import { ExtractedCommand } from "../extractor/ExtractedCommand";
@@ -100,10 +99,7 @@ export class InteractionHandler {
       `Attempt to run disabled command ${command.name}`
     );
 
-    const embed = new EmbedView()
-      .setAuthor(ctx.author, ctx.requiredAuthorMember)
-      .transform(ErrorEmbed)
-      .setError(new CanCheckFailedError(message));
+    const embed = new ErrorEmbed().setError(new CanCheckFailedError(message));
 
     await this.discordService.send(ctx, embed.asSendable(), {
       reply: true,

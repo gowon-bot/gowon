@@ -42,8 +42,7 @@ export class CrownRanks extends CrownsChildCommand<typeof args> {
       throw new UserHasNoCrownsInServerError(perspective);
     }
 
-    const embed = this.authorEmbed()
-      .setHeader("Crown ranks")
+    const embed = this.minimalEmbed()
       .setTitle(`The ranks of ${discordUser?.username}'s top crowns in Last.fm`)
       .setDescription(
         crownRanks
@@ -60,6 +59,6 @@ export class CrownRanks extends CrownsChildCommand<typeof args> {
           )} in ${this.requiredGuild.name}`
       );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

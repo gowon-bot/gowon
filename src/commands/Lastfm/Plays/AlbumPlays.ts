@@ -46,14 +46,14 @@ export default class AlbumPlays extends LastFMBaseCommand<typeof args> {
       senderRequestable
     );
 
-    let albumDetails = await this.lastFMService.albumInfo(this.ctx, {
+    const albumDetails = await this.lastFMService.albumInfo(this.ctx, {
       artist,
       album,
       username: requestable,
     });
 
-    await this.oldReply(
-      `${perspective.plusToHave}` +
+    const embed = this.minimalEmbed().setDescription(
+      `${perspective.upper.plusToHave}` +
         (toInt(albumDetails.userPlaycount) === 0
           ? "n't scrobbled"
           : ` **${displayNumber(
@@ -62,5 +62,7 @@ export default class AlbumPlays extends LastFMBaseCommand<typeof args> {
             )} of`) +
         ` ${italic(albumDetails.name)} by ${bold(albumDetails.artist)}`
     );
+
+    await this.reply(embed);
   }
 }

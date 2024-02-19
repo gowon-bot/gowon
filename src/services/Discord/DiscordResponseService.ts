@@ -70,7 +70,9 @@ export class DiscordResponseService extends BaseService<DiscordServiceContext> {
           return await this.replyToInteraction(ctx, sendable, options);
         }
 
-        response = await channel.send(sendable.asDiscordSendOptions(options));
+        response = await channel.send(
+          sendable.asDiscordSendOptions(ctx, options)
+        );
       } catch (e) {
         throw this.areDMsTurnedOff(e) ? new DMsAreOffError() : e;
       }
@@ -88,7 +90,7 @@ export class DiscordResponseService extends BaseService<DiscordServiceContext> {
       this.log(ctx, `Editing interaction reply`);
 
       return await ctx.payload.source.editReply(
-        sendable.asDiscordSendOptions()
+        sendable.asDiscordSendOptions(ctx)
       );
     } else {
       this.log(ctx, `Editing message ${message.id}`);
@@ -128,7 +130,7 @@ export class DiscordResponseService extends BaseService<DiscordServiceContext> {
       }
 
       return await channel.send({
-        ...sendable.asDiscordSendOptions(),
+        ...sendable.asDiscordSendOptions(ctx),
         content: messageContent,
         reply:
           shouldReply && ctx.payload.isMessage()
@@ -177,7 +179,7 @@ export class DiscordResponseService extends BaseService<DiscordServiceContext> {
     const payload = ctx.payload as Payload<CommandInteraction>;
 
     const sendOptions = {
-      ...sendable.asDiscordSendOptions(options),
+      ...sendable.asDiscordSendOptions(ctx, options),
       fetchReply: true,
     } as MessagePayload | InteractionReplyOptions;
 

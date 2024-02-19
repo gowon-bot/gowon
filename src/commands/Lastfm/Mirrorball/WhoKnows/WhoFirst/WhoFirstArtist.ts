@@ -90,9 +90,7 @@ export default class WhoFirstArtist extends WhoKnowsBaseCommand<
     const { rows, artist } = response.whoFirstArtist;
     const { undated, senderUndated } = this.getUndated(response);
 
-    const description = new LineConsolidator();
-
-    description.addLines(
+    const description = new LineConsolidator().addLines(
       {
         shouldDisplay: !!undated.length,
         string:
@@ -131,8 +129,7 @@ export default class WhoFirstArtist extends WhoKnowsBaseCommand<
       }
     );
 
-    const embed = this.authorEmbed()
-      .setHeader("Whofirst artist")
+    const embed = this.minimalEmbed()
       .setTitle(
         `${Emoji.usesIndexedDataTitle} Who ${
           whoLast ? "last" : "first"
@@ -141,7 +138,7 @@ export default class WhoFirstArtist extends WhoKnowsBaseCommand<
       .setDescription(description)
       .setFooter(this.footerHelp(senderUser, senderLilacUser));
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 
   private getUndated(response: WhoFirstArtistResponse): {

@@ -33,6 +33,6 @@ export default class LastFMAccount extends LastFMBaseCommand<typeof args> {
 
     const link = LastfmLinks.userPage(username);
 
-    await this.send(`${perspective.upper.possessive} profile: ${link}`);
+    await this.reply(`${perspective.upper.possessive} profile: ${link}`);
   }
 }

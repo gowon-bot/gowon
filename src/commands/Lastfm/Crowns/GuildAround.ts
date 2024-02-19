@@ -3,7 +3,7 @@ import { User } from "../../../database/entity/User";
 import { UserHasNoCrownsInServerError } from "../../../errors/commands/crowns";
 import { UnknownError } from "../../../errors/errors";
 import { asyncMap } from "../../../helpers";
-import { bold } from "../../../helpers/discord";
+import { bold, sanitizeForDiscord } from "../../../helpers/discord";
 import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { displayNumber, displayNumberedList } from "../../../lib/ui/displays";
@@ -59,18 +59,16 @@ export class GuildAround extends CrownsChildCommand<typeof args> {
       username: await this.fetchUsername(u.discordID),
     }));
 
-    const embed = this.authorEmbed()
-      .setHeader("Crowns rank")
+    const embed = this.minimalEmbed()
       .setTitle(`${this.requiredGuild.name}'s crown leaderboard`)
       .setDescription(
         displayNumberedList(
           guildAroundUsers.map((u, idx) => {
             const rank = guildAroundUsers[0].rank - 1 + idx;
 
-            const display = `${u.username} with ${displayNumber(
-              u.count,
-              "crown"
-            )}`;
+            const display = `${sanitizeForDiscord(
+              u.username
+            )} with ${displayNumber(u.count, "crown")}`;
 
             return u.discordID === highlighted?.discordID ||
               rank === highlightedRank - 1
@@ -81,7 +79,7 @@ export class GuildAround extends CrownsChildCommand<typeof args> {
         )
       );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 
   private async getGuildAround(

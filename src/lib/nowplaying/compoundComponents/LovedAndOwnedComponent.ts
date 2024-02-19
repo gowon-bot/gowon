@@ -1,3 +1,4 @@
+import { Emoji } from "../../emoji/Emoji";
 import { AnyIn, BaseCompoundComponent } from "../base/BaseNowPlayingComponent";
 
 const lovedAndOwnedDependencies = [
@@ -22,11 +23,11 @@ export class LovedAndOwnedComponent extends BaseCompoundComponent<
       this.values.albumCard.owner.id === this.values.dbUser.id;
 
     if (owned && loved) {
-      return { size: 0, string: "💖" };
+      return { size: 0, string: Emoji.sparklingHeart };
     } else if (owned) {
-      return { size: 0, string: "✨" };
+      return { size: 0, string: Emoji.sparkles };
     } else if (loved) {
-      return { size: 0, string: "❤️" };
+      return { size: 0, string: Emoji.heart };
     } else {
       return { string: "", size: 0 };
     }

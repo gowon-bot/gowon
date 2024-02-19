@@ -94,8 +94,7 @@ export default class WhoKnowsAlbum extends WhoKnowsBaseCommand<typeof args> {
       }
     );
 
-    const embed = this.authorEmbed()
-      .setHeader("Who knows album")
+    const embed = this.minimalEmbed()
       .setTitle(
         `${Emoji.usesIndexedDataTitle} Who knows ${italic(
           album.name
@@ -116,6 +115,6 @@ export default class WhoKnowsAlbum extends WhoKnowsBaseCommand<typeof args> {
         this.isGlobal() ? this.gowonIconURL : this.guild?.iconURL() ?? undefined
       );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

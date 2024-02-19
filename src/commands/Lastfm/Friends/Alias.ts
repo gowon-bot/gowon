@@ -62,12 +62,10 @@ export class Alias extends FriendsChildCommand<typeof args> {
       alias!
     );
 
-    const embed = this.authorEmbed()
-      .setHeader("Friend alias")
-      .setDescription(
-        `Aliased ${code(aliasedFriend.getUsername())} as ${alias}!`
-      );
+    const embed = this.minimalEmbed().setDescription(
+      `Aliased your friend ${code(aliasedFriend.getUsername())} as ${alias}!`
+    );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

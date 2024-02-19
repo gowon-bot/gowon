@@ -1,5 +1,6 @@
 import { DiscordRoleArgument } from "../../../lib/context/arguments/argumentTypes/discord/DiscordRoleArgument";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { SuccessEmbed } from "../../../lib/ui/embeds/SuccessEmbed";
 import { CrownsChildCommand } from "./CrownsChildCommand";
 
 const args = {
@@ -21,14 +22,12 @@ export class SetInactiveRole extends CrownsChildCommand<typeof args> {
 
     await this.crownsService.setInactiveRole(this.ctx, inactiveRole?.id);
 
-    const embed = this.authorEmbed()
-      .setHeader("Crowns inactive role")
-      .setDescription(
-        inactiveRole?.name
-          ? `Set the inactive role for crowns to ${inactiveRole.name.trim()}`
-          : `Cleared the inactive role`
-      );
+    const embed = new SuccessEmbed().setDescription(
+      inactiveRole?.name
+        ? `Set the inactive role for crowns to ${inactiveRole.name.trim()}`
+        : `Cleared the inactive role`
+    );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

@@ -12,14 +12,12 @@ export class ScrobblesPerArtist extends ProfileChildCommand {
 
     const spa = await this.calculator.avgScrobblesPerArtist();
 
-    const embed = (await this.profileEmbed())
-      .setHeader("Profile scrobbles per artist")
-      .setDescription(
-        `${perspective.upper.regularVerb("average")} ${bold(
-          spa.asString
-        )} scrobbles per artist!`
-      );
+    const embed = this.profileEmbed().setDescription(
+      `${perspective.upper.regularVerb("average")} ${bold(
+        spa.asString
+      )} scrobbles per artist!`
+    );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

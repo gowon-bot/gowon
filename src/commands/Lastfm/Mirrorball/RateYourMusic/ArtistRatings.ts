@@ -1,5 +1,6 @@
 import { mean } from "mathjs";
-import { LogicError, UnknownMirrorballError } from "../../../../errors/errors";
+import { NoRatingsFromArtistError } from "../../../../errors/commands/library";
+import { UnknownMirrorballError } from "../../../../errors/errors";
 import { code, italic, sanitizeForDiscord } from "../../../../helpers/discord";
 import { emDash, extraWideSpace } from "../../../../helpers/specialCharacters";
 import { mostCommonOccurrence } from "../../../../helpers/stats";
@@ -85,13 +86,10 @@ export class ArtistRatings extends RateYourMusicIndexingChildCommand<
     }
 
     if (!response.ratings.ratings.length) {
-      throw new LogicError(
-        `Couldn't find any albums by that artist in ${perspective.possessive} ratings!`
-      );
+      throw new NoRatingsFromArtistError(perspective);
     }
 
-    const embed = this.authorEmbed()
-      .setHeader("RateYourMusic artist ratings")
+    const embed = this.minimalEmbed()
       .setTitle(
         `${perspective.upper.possessive} top rated ${artistName} albums`
       )
@@ -127,7 +125,7 @@ export class ArtistRatings extends RateYourMusicIndexingChildCommand<
       overrides: { itemName: "rating" },
     });
 
-    await this.send(simpleScrollingEmbed);
+    await this.reply(simpleScrollingEmbed);
   }
 
   private generateTable(

@@ -14,7 +14,7 @@ export default class AlbumList extends ListCommand {
   aliases = ["llist", "allist", "topalbums", "topalbum", "albums", "ll"];
 
   async run() {
-    const { requestable, username, perspective } = await this.getMentions();
+    const { requestable, perspective } = await this.getMentions();
 
     const topAlbums = await this.lastFMService.topAlbums(this.ctx, {
       username: requestable,
@@ -23,10 +23,9 @@ export default class AlbumList extends ListCommand {
       ...this.dateRange?.asTimeframeParams,
     });
 
-    const messageEmbed = this.authorEmbed()
-      .setHeader("Top albums")
+    const messageEmbed = this.minimalEmbed()
       .setTitle(
-        `Top albums for \`${username}\` ${
+        `${perspective.upper.possessive} top albums ${
           this.dateRange?.humanized() || this.humanizedPeriod
         }`
       )
@@ -44,6 +43,6 @@ export default class AlbumList extends ListCommand {
           )
       );
 
-    await this.send(messageEmbed);
+    await this.reply(messageEmbed);
   }
 }

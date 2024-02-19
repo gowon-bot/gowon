@@ -4,6 +4,8 @@ import { StringArgument } from "../../../lib/context/arguments/argumentTypes/Str
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { Emoji } from "../../../lib/emoji/Emoji";
 import { displayLink, displayUserTag } from "../../../lib/ui/displays";
+import { InfoEmbed } from "../../../lib/ui/embeds/InfoEmbed";
+import { SuccessEmbed } from "../../../lib/ui/embeds/SuccessEmbed";
 import { LilacPrivacy } from "../../../services/lilac/LilacAPIService.types";
 import { PrivateUserDisplay } from "../../../services/lilac/LilacUsersService";
 
@@ -37,17 +39,13 @@ export default class Privacy extends Command<typeof args> {
     "Your privacy determines what users in other servers can see about you on global leaderboards";
 
   async run() {
-    const privacy = this.parsedArguments.privacy?.toLowerCase() as
+    const privacy = this.parsedArguments.privacy?.toUpperCase() as
       | LilacPrivacy
       | undefined;
 
     const { lilacUser, senderUsername } = await this.getMentions({
       fetchLilacUser: true,
     });
-
-    const embed = this.authorEmbed()
-      .setHeader("Privacy")
-      .setFooter(this.privacyHelp);
 
     if (privacy) {
       await this.lilacUsersService.modify(
@@ -56,25 +54,33 @@ export default class Privacy extends Command<typeof args> {
         { privacy: privacy.toUpperCase() as LilacPrivacy }
       );
 
-      embed.setDescription(
-        `Your new privacy is: \`${privacy.toLowerCase()}\` (${
-          privacy === LilacPrivacy.Discord
-            ? displayUserTag(this.author)
-            : privacy === LilacPrivacy.FMUsername
-            ? displayLink(senderUsername, LastfmLinks.userPage(senderUsername))
-            : privacy === LilacPrivacy.Both
-            ? displayLink(
-                displayUserTag(this.author),
-                LastfmLinks.userPage(senderUsername)
-              )
-            : PrivateUserDisplay
-        })`
-      );
-    } else {
-      embed
+      const embed = new SuccessEmbed()
         .setDescription(
-          `
-Your current privacy: \`${lilacUser?.privacy?.toLowerCase() || "unset"}\`
+          `Your new privacy is: \`${privacy.toLowerCase()}\` (${
+            privacy === LilacPrivacy.Discord
+              ? displayUserTag(this.author)
+              : privacy === LilacPrivacy.FMUsername
+              ? displayLink(
+                  senderUsername,
+                  LastfmLinks.userPage(senderUsername)
+                )
+              : privacy === LilacPrivacy.Both
+              ? displayLink(
+                  displayUserTag(this.author),
+                  LastfmLinks.userPage(senderUsername)
+                )
+              : PrivateUserDisplay
+          })`
+        )
+        .setFooter(this.privacyHelp);
+
+      await this.reply(embed);
+    } else {
+      const embed = new InfoEmbed()
+        .setDescription(
+          `Your current privacy: \`${
+            lilacUser?.privacy?.toLowerCase() || "unset"
+          }\`
       
 The options for privacy are:
 - \`fmusername\`: Last.fm username is shown (${Emoji.lastfm} ${displayLink(
@@ -96,8 +102,8 @@ You can set your privacy with \`${this.prefix}privacy <option>\``
               ? "\nGowon will not reveal any information about you until you set your privacy"
               : "")
         );
-    }
 
-    await this.send(embed);
+      await this.reply(embed);
+    }
   }
 }

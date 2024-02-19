@@ -81,8 +81,7 @@ export default class TrackAround extends AroundCommand<typeof args> {
       );
     }
 
-    const embed = this.authorEmbed()
-      .setHeader("Track around")
+    const embed = this.minimalEmbed()
       .setTitle(
         `Tracks around ${
           shouldSearchByRank
@@ -108,6 +107,6 @@ export default class TrackAround extends AroundCommand<typeof args> {
         )
       );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

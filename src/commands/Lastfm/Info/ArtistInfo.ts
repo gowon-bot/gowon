@@ -30,7 +30,6 @@ export default class ArtistInfo extends InfoCommand<typeof args> {
 
   crownsService = ServiceRegistry.get(CrownsService);
   lilacTagsService = ServiceRegistry.get(LilacTagsService);
-  lineConsolidator = new LineConsolidator();
 
   async run() {
     let { senderRequestable, requestable, perspective } =
@@ -74,7 +73,7 @@ export default class ArtistInfo extends InfoCommand<typeof args> {
       LinkConsolidator.lastfm(artistInfo.url),
     ]);
 
-    this.lineConsolidator.addLines(
+    const description = new LineConsolidator().addLines(
       {
         shouldDisplay: !!artistInfo.wiki.summary,
         string: this.scrubReadMore(artistInfo.wiki.summary.trimRight())!,
@@ -92,7 +91,7 @@ export default class ArtistInfo extends InfoCommand<typeof args> {
       {
         shouldDisplay: this.tagConsolidator.hasAnyTags(),
         string: `**Tags:** ${this.tagConsolidator
-          .consolidateAsStrings()
+          .consolidateAsStrings(10)
           .join(" ‧ ")}`,
       },
       {
@@ -115,10 +114,10 @@ export default class ArtistInfo extends InfoCommand<typeof args> {
       4
     );
 
-    const embed = this.authorEmbed()
+    const embed = this.minimalEmbed()
       .setTitle(artistInfo.name)
       .setURL(artistInfo.url)
-      .setDescription(this.lineConsolidator.consolidate())
+      .setDescription(description)
       .addFields({
         name: `${perspective.upper.possessive} stats`,
         value: `\`${displayNumber(
@@ -145,6 +144,6 @@ ${
       embed.setFooter("Image source: Spotify");
     }
 
-    this.send(embed);
+    this.reply(embed);
   }
 }

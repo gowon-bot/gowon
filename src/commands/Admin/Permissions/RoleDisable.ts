@@ -12,6 +12,7 @@ import { code, mentionRole } from "../../../helpers/discord";
 import { Command, Variation } from "../../../lib/command/Command";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { DiscordRoleArgument } from "../../../lib/context/arguments/argumentTypes/discord/DiscordRoleArgument";
+import { SuccessEmbed } from "../../../lib/ui/embeds/SuccessEmbed";
 import { EmbedView } from "../../../lib/ui/views/EmbedView";
 import { PermissionsChildCommand } from "./PermissionsChildCommand";
 
@@ -72,11 +73,11 @@ export class RoleDisable extends PermissionsChildCommand<typeof args> {
     ) {
       const embed = await this.handleDisable(command, permission, role);
 
-      await this.send(embed);
+      await this.reply(embed);
     } else {
       const embed = await this.handleEnable(command, permission, role);
 
-      await this.send(embed);
+      await this.reply(embed);
     }
   }
 
@@ -107,13 +108,11 @@ export class RoleDisable extends PermissionsChildCommand<typeof args> {
       }
     }
 
-    return this.authorEmbed()
-      .setHeader("Permissions role disable")
-      .setDescription(
-        `Successfully ${deletedAllow ? "un-allowed" : "disabled"} ${code(
-          command.name
-        )} for ${mentionRole(role.id)}`
-      );
+    return new SuccessEmbed().setDescription(
+      `Successfully ${deletedAllow ? "un-allowed" : "disabled"} ${code(
+        command.name
+      )} for ${mentionRole(role.id)}`
+    );
   }
 
   private async handleEnable(
@@ -144,12 +143,10 @@ export class RoleDisable extends PermissionsChildCommand<typeof args> {
       }
     }
 
-    return this.authorEmbed()
-      .setHeader("Permissions role enable")
-      .setDescription(
-        `Successfully ${allowed ? "allowed" : "enabled"} ${code(
-          command.name
-        )} for ${mentionRole(role.id)}`
-      );
+    return new SuccessEmbed().setDescription(
+      `Successfully ${allowed ? "allowed" : "enabled"} ${code(
+        command.name
+      )} for ${mentionRole(role.id)}`
+    );
   }
 }

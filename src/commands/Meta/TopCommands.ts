@@ -31,7 +31,7 @@ export class TopCommands extends MetaChildCommand<typeof args> {
       await this.metaService.mostUsedCommands(this.ctx, dateRange)
     ).slice(0, 10);
 
-    const embed = this.authorEmbed()
+    const embed = this.minimalEmbed()
       .setTitle(`Top commands in ${this.guild?.name!} ${humanizedDateRange}`)
       .setDescription(
         topCommands
@@ -45,6 +45,6 @@ export class TopCommands extends MetaChildCommand<typeof args> {
           .join("\n")
       );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

@@ -8,6 +8,7 @@ import { Emoji } from "../../../../lib/emoji/Emoji";
 import { LilacBaseCommand } from "../../../../lib/Lilac/LilacBaseCommand";
 import { PaginatedLilacScrobbleCache } from "../../../../lib/paginators/PaginatedScrobbleCache";
 import { displayDateTime, displayLink } from "../../../../lib/ui/displays";
+import { ErrorEmbed } from "../../../../lib/ui/embeds/ErrorEmbed";
 import { recommendUserToSetTimezone } from "../../../../services/lilac/helpers";
 import {
   LilacScrobble,
@@ -61,16 +62,14 @@ export default class NoAlbums extends LilacBaseCommand<typeof args> {
 
     const firstPage = await scrobbleCache.getFirstPage();
 
-    const embed = this.authorEmbed()
-      .setHeader("No albums")
-      .setTitle(
-        `${Emoji.usesIndexedDataTitle} ${perspective.upper.possessive} scrobbles with no albums`
-      );
+    const embed = this.minimalEmbed().setTitle(
+      `${Emoji.usesIndexedDataTitle} ${perspective.upper.possessive} scrobbles with no albums`
+    );
 
     if (firstPage.pagination.totalItems === 0) {
-      await this.send(
-        embed.setDescription(
-          `You have no scrobbles without an album${
+      await this.reply(
+        new ErrorEmbed().setDescription(
+          `You don't have any scrobbles without an album${
             artistName ? ` from ${bold(artistName)}` : ""
           }!`
         )
@@ -85,7 +84,7 @@ export default class NoAlbums extends LilacBaseCommand<typeof args> {
       { customFooter: !timeZone ? recommendUserToSetTimezone(this.prefix) : "" }
     );
 
-    await this.send(scrollingEmbed);
+    await this.reply(scrollingEmbed);
   }
 
   private displayScrobbleGenerator(

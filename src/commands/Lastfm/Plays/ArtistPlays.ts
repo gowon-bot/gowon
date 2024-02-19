@@ -49,8 +49,8 @@ export default class ArtistPlays extends LastFMBaseCommand<typeof args> {
       username: requestable,
     });
 
-    await this.oldReply(
-      `${perspective.plusToHave}` +
+    const embed = this.minimalEmbed().setDescription(
+      `${perspective.upper.plusToHave}` +
         (artistDetails.userPlaycount === 0
           ? "n't scrobbled"
           : ` **${displayNumber(
@@ -59,5 +59,7 @@ export default class ArtistPlays extends LastFMBaseCommand<typeof args> {
             )} of`) +
         ` ${bold(artistDetails.name)}`
     );
+
+    await this.reply(embed);
   }
 }

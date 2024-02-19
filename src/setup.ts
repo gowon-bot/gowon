@@ -42,7 +42,7 @@ export const client = new GowonClient(
         {
           name: "One & Only",
           type: "LISTENING",
-          url: "https://gowon.ca",
+          url: "https://gowon.bot",
         },
       ],
     },

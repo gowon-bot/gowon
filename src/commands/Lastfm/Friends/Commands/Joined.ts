@@ -41,11 +41,10 @@ export class Joined extends FriendsChildCommand {
         return `${f.display()} - ${displayDate(s)}`;
       });
 
-    const embed = this.authorEmbed()
-      .setHeader("Friends joined")
+    const embed = this.minimalEmbed()
       .setTitle(`Your friends' join dates`)
       .setDescription(displayNumberedList(friendDisplays));
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

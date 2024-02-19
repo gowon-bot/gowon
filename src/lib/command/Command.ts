@@ -3,6 +3,7 @@ import {
   CommandInteraction,
   EmbedAuthorData,
   Guild,
+  HexColorString,
   Message,
 } from "discord.js";
 import md5 from "js-md5";
@@ -36,10 +37,11 @@ import { constants } from "../constants";
 import { GowonContext } from "../context/Context";
 import { ArgumentsMap, ParsedArguments } from "../context/arguments/types";
 import { Emoji, EmojiRaw } from "../emoji/Emoji";
+import { toggleValues } from "../settings/SettingValues";
 import { SettingsService } from "../settings/SettingsService";
 import { Sendable, SendableContent } from "../ui/Sendable";
 import { displayUserTag } from "../ui/displays";
-import { ErrorEmbed } from "../ui/embeds/conditionEmbeds";
+import { ErrorEmbed } from "../ui/embeds/ErrorEmbed";
 import { EmbedView } from "../ui/views/EmbedView";
 import { Validation, ValidationChecker } from "../validation/ValidationChecker";
 import { CommandGroup } from "./CommandGroup";
@@ -397,11 +399,22 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
   }
 
   async reply(
-    content: string,
-    options?: Partial<ReplyOptions>
+    content: SendableContent,
+    options?: Partial<SendOptions & ReplyOptions>
   ): Promise<Message> {
+    const reply: ReplyOptions = {
+      to:
+        options?.to ||
+        (this.payload.isMessage() ? this.payload.source : undefined),
+      ping:
+        this.settingsService.get("replyPings", { userID: this.author.id }) ===
+        toggleValues.ON,
+      ...options,
+    };
+
     return await this.discordService.send(this.ctx, new Sendable(content), {
-      reply: options || true,
+      ...options,
+      reply: reply,
     });
   }
 
@@ -421,6 +434,12 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
 
   public authorEmbed(): EmbedView {
     return new EmbedView().setAuthor(this.author, this.authorMember);
+  }
+
+  public minimalEmbed(): EmbedView {
+    return new EmbedView().setColour(
+      this.authorMember?.roles?.color?.hexColor as HexColorString
+    );
   }
 
   /** @deprecated Use Command#authorEmbed + EmbedComponent#setHeader instead */
@@ -480,11 +499,9 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
     const errorInstance =
       typeof error === "string" ? new ClientError(error) : error;
 
-    const embed = this.authorEmbed()
-      .transform(ErrorEmbed)
-      .setError(errorInstance);
+    const embed = new ErrorEmbed().setError(errorInstance);
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 
   protected startTyping() {

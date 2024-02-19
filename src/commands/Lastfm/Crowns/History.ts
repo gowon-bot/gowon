@@ -52,8 +52,7 @@ export class History extends CrownsChildCommand<typeof args> {
 
     if (!history.length) throw new NoCrownHistoryError(artistDetails.name);
 
-    const embed = this.authorEmbed()
-      .setHeader("Crown history")
+    const embed = this.minimalEmbed()
       .setTitle(
         `Crown history for ${crown.artistName}${crown.redirectDisplay()}`
       )
@@ -61,7 +60,7 @@ export class History extends CrownsChildCommand<typeof args> {
         (await asyncMap(history, this.displayEvent.bind(this))).join("\n")
       );
 
-    this.send(embed);
+    this.reply(embed);
   }
 
   private async displayEvent(event: CrownEvent): Promise<string> {

@@ -67,14 +67,13 @@ export default class Month extends LastFMBaseCommand<typeof args> {
     await tagConsolidator.saveServerBannedTagsInContext(this.ctx);
     tagConsolidator.addTags(this.ctx, month.top.tags);
 
-    const embed = this.authorEmbed()
-      .setHeader("Report month")
-      .setTitle(`${perspective.upper.possessive} month`)
+    const embed = this.minimalEmbed()
+      .setTitle(`${perspective.upper.possessive} month on Last.fm`)
       .transform(ReportEmbed)
       .setDateRange(sub(new Date(), { months: 1 }), new Date())
       .setReport(month)
       .setTags(tagConsolidator);
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

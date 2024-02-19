@@ -80,8 +80,7 @@ export class Add extends NowPlayingConfigChildCommand<typeof args> {
       `Your new config: ${config.map((c) => code(c)).join(", ")}`
     );
 
-    const embed = this.authorEmbed()
-      .setHeader("Nowplaying config add")
+    const embed = this.minimalEmbed()
       .setDescription(description)
       .setFooter(
         ignored.length
@@ -89,7 +88,7 @@ export class Add extends NowPlayingConfigChildCommand<typeof args> {
           : ""
       );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 
   private ensurePatronIfPatronOptionsPresent(

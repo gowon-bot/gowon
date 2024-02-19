@@ -58,7 +58,5 @@ export function isFlag(argument: BaseArgument<any>): argument is Flag<any> {
 }
 
 export function argumentsHasFlags(args: ArgumentsMap): boolean {
-  return Object.values(args).some(
-    (a) => isFlag(a) && a.options.longnames.includes("debug")
-  );
+  return Object.values(args).some((a) => isFlag(a) && !a.isDebug());
 }

@@ -55,8 +55,8 @@ export default class TrackPlays extends LastFMBaseCommand<typeof args> {
       username: requestable,
     });
 
-    await this.oldReply(
-      `${hamham ? "FTFY\n" : ""}${perspective.plusToHave}` +
+    const embed = this.minimalEmbed().setDescription(
+      `${hamham ? "FTFY\n" : ""}${perspective.upper.plusToHave}` +
         (trackDetails.userPlaycount === 0
           ? "n't scrobbled"
           : ` **${displayNumber(
@@ -65,5 +65,7 @@ export default class TrackPlays extends LastFMBaseCommand<typeof args> {
             )} of`) +
         ` **${trackDetails.name}** by ${trackDetails.artist.name}`
     );
+
+    await this.reply(embed);
   }
 }

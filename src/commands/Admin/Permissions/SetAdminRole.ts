@@ -1,5 +1,8 @@
 import { DiscordRoleArgument } from "../../../lib/context/arguments/argumentTypes/discord/DiscordRoleArgument";
 import { SettingsService } from "../../../lib/settings/SettingsService";
+import { InfoEmbed } from "../../../lib/ui/embeds/InfoEmbed";
+import { SuccessEmbed } from "../../../lib/ui/embeds/SuccessEmbed";
+
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { PermissionsChildCommand } from "./PermissionsChildCommand";
 
@@ -43,21 +46,19 @@ export class SetAdminRole extends PermissionsChildCommand<typeof args> {
         adminRole.id
       );
 
-      const embed = this.authorEmbed()
-        .setHeader("Administrator role")
+      const embed = new SuccessEmbed()
         .setDescription(
           `Successfully set <@&${adminRole.id}> as the administrator role!`
         )
         .setFooter(this.adminRoleHelp);
 
-      await this.send(embed);
+      await this.reply(embed);
     } else {
       const adminRole = this.settingsService.get("adminRole", {
         guildID: this.requiredGuild.id,
       });
 
-      const embed = this.authorEmbed()
-        .setHeader("Administrator role")
+      const embed = new InfoEmbed()
         .setDescription(
           adminRole
             ? `The current admin role is: <@&${adminRole}>`
@@ -65,7 +66,7 @@ export class SetAdminRole extends PermissionsChildCommand<typeof args> {
         )
         .setFooter(this.adminRoleHelp);
 
-      await this.send(embed);
+      await this.reply(embed);
     }
   }
 }

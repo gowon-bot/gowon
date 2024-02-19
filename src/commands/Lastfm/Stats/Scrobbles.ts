@@ -32,7 +32,7 @@ export default class Scrobbles extends LastFMBaseCommand<typeof args> {
       this.payload.isMessage() &&
       this.payload.source.content.trim() === `${this.prefix}s n s d`
     ) {
-      await this.send("Gee gee gee gee baby baby baby");
+      await this.reply("Gee gee gee gee baby baby baby");
       return;
     }
 
@@ -48,21 +48,19 @@ export default class Scrobbles extends LastFMBaseCommand<typeof args> {
       date ? undefined : dateRange.to
     );
 
-    const embed = this.authorEmbed()
-      .setHeader("Scrobble count")
-      .setDescription(
-        `${perspective.plusToHave} ${bold(
-          displayNumber(
-            scrobbles,
-            `scr${this.extract.didMatch("scrabbles") ? "a" : "o"}bble`
-          )
-        )} ${date ? `since ${displayDate(date)}` : dateRange.humanized()}`
-      );
+    const embed = this.minimalEmbed().setDescription(
+      `${perspective.upper.plusToHave} ${bold(
+        displayNumber(
+          scrobbles,
+          `scr${this.extract.didMatch("scrabbles") ? "a" : "o"}bble`
+        )
+      )} ${date ? `since ${displayDate(date)}` : dateRange.humanized()}`
+    );
 
     if (dateRange.isOverall && scrobbles % 25000 === 0 && scrobbles > 0) {
       embed.setReacts(["🥳"]);
     }
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

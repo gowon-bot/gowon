@@ -101,8 +101,7 @@ export class Info extends CrownsChildCommand<typeof args> {
     if (crown.user.id) {
       const holderUsername = await this.fetchUsername(crown.user.discordID);
 
-      const embed = this.authorEmbed()
-        .setHeader("Crown info")
+      const embed = this.minimalEmbed()
         .setTitle(
           `Who has ${bold(crown.artistName)}?` + crown.redirectDisplay()
         )
@@ -122,7 +121,7 @@ export class Info extends CrownsChildCommand<typeof args> {
           }_`
         );
 
-      await this.send(embed);
+      await this.reply(embed);
     }
   }
 
@@ -159,11 +158,10 @@ export class Info extends CrownsChildCommand<typeof args> {
       }
     );
 
-    const embed = this.authorEmbed()
-      .setHeader("Crown info")
+    const embed = this.minimalEmbed()
       .setTitle(`Who has ${bold(artistName)}?`)
       .setDescription(description);
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

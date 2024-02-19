@@ -31,8 +31,7 @@ export class List extends FriendsChildCommand {
       senderUser!
     );
 
-    const embed = this.authorEmbed()
-      .setHeader("Friends list")
+    const embed = this.minimalEmbed()
       .setTitle(
         `${displayNumber(numberOfFriends, "friend")} for ${
           this.author.username
@@ -63,7 +62,7 @@ export class List extends FriendsChildCommand {
         )
       );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 
   private displayDuration(np: RecentTrack): string {

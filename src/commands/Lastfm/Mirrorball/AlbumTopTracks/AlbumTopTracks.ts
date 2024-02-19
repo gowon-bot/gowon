@@ -1,4 +1,5 @@
-import { LogicError, MirrorballError } from "../../../../errors/errors";
+import { NoScrobblesFromAlbumError } from "../../../../errors/commands/library";
+import { MirrorballError } from "../../../../errors/errors";
 import { bold, italic } from "../../../../helpers/discord";
 import { LastfmLinks } from "../../../../helpers/lastfm/LastfmLinks";
 import { standardMentions } from "../../../../lib/context/arguments/mentionTypes/mentions";
@@ -64,18 +65,17 @@ export default class AlbumTopTracks extends MirrorballBaseCommand<
     const { topTracks, album } = response.albumTopTracks;
 
     if (topTracks.length < 1) {
-      throw new LogicError(
-        `${perspective.plusToHave} no scrobbles of any songs from ${italic(
-          album.name
-        )} by ${bold(album.artist.name)}!`
+      throw new NoScrobblesFromAlbumError(
+        perspective,
+        album.artist.name,
+        album.name
       );
     }
 
     const totalScrobbles = topTracks.reduce((sum, t) => sum + t.playcount, 0);
     const average = totalScrobbles / topTracks.length;
 
-    const embed = this.authorEmbed()
-      .setHeader("Album top tracks")
+    const embed = this.minimalEmbed()
       .setTitle(
         `${Emoji.usesIndexedDataLink} Top tracks on ${italic(
           album.name
@@ -116,6 +116,6 @@ export default class AlbumTopTracks extends MirrorballBaseCommand<
       },
     });
 
-    await this.send(simpleScrollingEmbed);
+    await this.reply(simpleScrollingEmbed);
   }
 }

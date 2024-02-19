@@ -1,4 +1,5 @@
 import { displayNumber } from "../../../lib/ui/displays";
+import { SuccessEmbed } from "../../../lib/ui/embeds/SuccessEmbed";
 import { FriendsChildCommand } from "./FriendsChildCommand";
 
 export class RemoveAll extends FriendsChildCommand {
@@ -13,12 +14,10 @@ export class RemoveAll extends FriendsChildCommand {
 
     const deletedCount = await this.friendsService.clearFriends(this.ctx, user);
 
-    const embed = this.authorEmbed()
-      .setHeader("Friends remove all")
-      .setDescription(
-        `Successfully removed ${displayNumber(deletedCount, "friend")}!`
-      );
+    const embed = new SuccessEmbed().setDescription(
+      `Successfully removed ${displayNumber(deletedCount, "friend")}!`
+    );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

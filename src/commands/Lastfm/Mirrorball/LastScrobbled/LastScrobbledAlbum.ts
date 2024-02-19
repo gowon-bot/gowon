@@ -65,18 +65,14 @@ export default class LastScrobbledAlbum extends MirrorballBaseCommand<
 
     const [play] = response.plays.plays;
 
-    const embed = this.authorEmbed()
-      .setHeader(
-        (this.variationWasUsed("first") ? "First" : "Last") + " scrobbled"
-      )
-      .setDescription(
-        `${Emoji.usesIndexedDataDescription} ${perspective.upper.name} ${
-          this.variationWasUsed("first") ? "first" : "last"
-        } scrobbled ${italic(play.track.album.name)} by ${bold(
-          play.track.artist.name
-        )} on ${displayDate(convertMirrorballDate(play.scrobbledAt))}`
-      );
+    const embed = this.minimalEmbed().setDescription(
+      `${Emoji.usesIndexedDataDescription} ${perspective.upper.name} ${
+        this.variationWasUsed("first") ? "first" : "last"
+      } scrobbled ${italic(play.track.album.name)} by ${bold(
+        play.track.artist.name
+      )} on ${displayDate(convertMirrorballDate(play.scrobbledAt))}`
+    );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

@@ -36,6 +36,8 @@ export default class ProfileParentCommand extends LastFMBaseParentCommand {
     // H-Index
     "hindex",
     "hidx",
+    // Joined
+    "joined",
   ];
 
   children: CommandGroup = new CommandGroup(

@@ -41,8 +41,7 @@ export default class Melon extends LastFMBaseCommand<typeof args> {
 
     const encodedKeywords = encodeURIComponent(keywords);
 
-    const embed = this.authorEmbed()
-      .setHeader("Melon search")
+    const embed = this.minimalEmbed()
       .setTitle(`Melon search for "${keywords}"`)
       .setURL(
         `https://www.melon.com/search/album/index.htm?q=${encodedKeywords}&section=&searchGnbYn=Y&kkoSpl=N&kkoDpType=&ipath=srch_form`
@@ -51,6 +50,6 @@ export default class Melon extends LastFMBaseCommand<typeof args> {
         "https://upload.wikimedia.org/wikipedia/commons/c/c5/Melon_logo.png"
       );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

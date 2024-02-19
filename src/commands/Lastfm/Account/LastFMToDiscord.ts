@@ -1,8 +1,7 @@
-import { LogicError } from "../../../errors/errors";
-import { bold, code } from "../../../helpers/discord";
+import { CouldNotFindUserWithUsername } from "../../../errors/user";
+import { code, mentionGuildMember } from "../../../helpers/discord";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
-import { displayUserTag } from "../../../lib/ui/displays";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 const args = {
@@ -38,19 +37,15 @@ export default class LastFmToDiscord extends LastFMBaseCommand<typeof args> {
       : undefined;
 
     if (!user || !member) {
-      throw new LogicError(
-        `couldn't find anyone logged in as ${code(username)} in this server.`
-      );
+      throw new CouldNotFindUserWithUsername(username);
     }
 
-    const embed = this.authorEmbed()
-      .setHeader("Account lookup")
-      .setDescription(
-        `${bold(member.nickname || member.user.username)} (${displayUserTag(
-          member.user
-        )}) is logged in as ${code(username.toLowerCase())}.`
-      );
+    const embed = this.minimalEmbed().setDescription(
+      `${mentionGuildMember(user.discordID)} is logged in as ${code(
+        username.toLowerCase()
+      )}.`
+    );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

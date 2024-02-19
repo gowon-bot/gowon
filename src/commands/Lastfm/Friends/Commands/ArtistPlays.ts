@@ -75,8 +75,7 @@ export class ArtistPlays extends FriendsChildCommand<typeof args> {
       0
     );
 
-    const embed = this.authorEmbed()
-      .setHeader("Friends artist plays")
+    const embed = this.minimalEmbed()
       .setTitle(`Your friends plays of ${artistName}`)
       .setURL(LastfmLinks.listenersYouKnow(artistName))
       .setDescription(displayNumberedList(friendDisplays))
@@ -87,6 +86,6 @@ export class ArtistPlays extends FriendsChildCommand<typeof args> {
         )} of this artist`
       );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

@@ -35,11 +35,9 @@ export default class PopularTracks extends InfoCommand<typeof args> {
       limit: 1000,
     });
 
-    const embed = this.authorEmbed()
-      .setHeader("Popular tracks")
-      .setTitle(
-        `Top tracks for ${topTracks.tracks[0]?.artist?.name || artist}`
-      );
+    const embed = this.minimalEmbed().setTitle(
+      `Top tracks on Last.fm for ${topTracks.tracks[0]?.artist?.name || artist}`
+    );
 
     const scrollingEmbed = new ScrollingListView(this.ctx, embed, {
       items: topTracks.tracks,
@@ -56,6 +54,6 @@ export default class PopularTracks extends InfoCommand<typeof args> {
       overrides: { itemName: "track" },
     });
 
-    await this.send(scrollingEmbed);
+    await this.reply(scrollingEmbed);
   }
 }

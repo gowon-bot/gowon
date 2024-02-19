@@ -1,5 +1,6 @@
 import { Stopwatch } from "../../../helpers";
 import { LilacBaseCommand } from "../../../lib/Lilac/LilacBaseCommand";
+import { Emoji } from "../../../lib/emoji/Emoji";
 import { displayProgressBar } from "../../../lib/ui/displays";
 import { ConfirmationView } from "../../../lib/ui/views/ConfirmationView";
 
@@ -18,8 +19,7 @@ export default class Index extends LilacBaseCommand {
       this.requiredGuild.id
     );
 
-    const embed = this.authorEmbed()
-      .setHeader("Lilac indexing")
+    const embed = this.minimalEmbed()
       .setDescription(
         "Indexing will download all your scrobbles from Last.fm. Are you sure you want to full index?"
       )
@@ -52,7 +52,9 @@ export default class Index extends LilacBaseCommand {
     const subscription = observable.subscribe(async (progress) => {
       if (progress.page === progress.totalPages) {
         await this.usersService.setIndexed(this.ctx, this.author.id);
-        await embed.setDescription("Done!").editMessage(this.ctx);
+        await embed
+          .setDescription(`${Emoji.checkmark} Done!`)
+          .editMessage(this.ctx);
         subscription.unsubscribe();
       } else if (stopwatch.elapsedInMilliseconds >= 3000) {
         await embed

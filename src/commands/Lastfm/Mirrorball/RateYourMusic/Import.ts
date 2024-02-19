@@ -1,13 +1,18 @@
 import fetch from "node-fetch";
 import streamToString from "stream-to-string";
 import {
-  CannotBeUsedAsASlashCommand,
-  LogicError,
-} from "../../../../errors/errors";
+  NoRatingsFileAttatchedError,
+  TooManyAttachmentsError,
+  UnknownRatingsImportError,
+  WrongFileFormatAttachedError,
+} from "../../../../errors/commands/library";
+import { CannotBeUsedAsASlashCommand } from "../../../../errors/errors";
 import { AlreadyImportingRatingsError } from "../../../../errors/external/rateYourMusic";
 import { StringArgument } from "../../../../lib/context/arguments/argumentTypes/StringArgument";
 import { ArgumentsMap } from "../../../../lib/context/arguments/types";
 import { Emoji } from "../../../../lib/emoji/Emoji";
+import { SuccessEmbed } from "../../../../lib/ui/embeds/SuccessEmbed";
+import { WarningEmbed } from "../../../../lib/ui/embeds/WarningEmbed";
 import { ConcurrentAction } from "../../../../services/ConcurrencyService";
 import { RateYourMusicIndexingChildCommand } from "./RateYourMusicChildCommand";
 import {
@@ -49,12 +54,10 @@ export class ImportRatings extends RateYourMusicIndexingChildCommand<
 
   async run() {
     if (this.payload.isInteraction()) {
-      await this.send(
-        this.authorEmbed()
-          .setHeader("Rateyourmusic import")
-          .setDescription(
-            "As of right now, you cannot import with slash commands.\n\nPlease go to https://gowon.ca/import-ratings to import, or use message commands"
-          )
+      await this.reply(
+        new WarningEmbed().setDescription(
+          "As of right now, you cannot import with slash commands.\n\nPlease go to https://gowon.bot/import-ratings to import, or use message commands"
+        )
       );
 
       return;
@@ -93,14 +96,14 @@ export class ImportRatings extends RateYourMusicIndexingChildCommand<
     const errors = this.parseErrors(response);
 
     if (errors) {
-      throw new LogicError("Something went wrong when importing your ratings");
+      throw new UnknownRatingsImportError();
     }
 
-    const embed = this.authorEmbed()
-      .setHeader("RateYourMusic import")
-      .setDescription(`Ratings processed succesfully!`);
+    const embed = new SuccessEmbed().setDescription(
+      `RateYourMusic ratings imported succesfully! ${Emoji.gowonRated}`
+    );
 
-    await this.send(Emoji.gowonRated, { withEmbed: embed });
+    await this.reply(embed);
   }
 
   private async getRatings(): Promise<string> {
@@ -115,7 +118,7 @@ export class ImportRatings extends RateYourMusicIndexingChildCommand<
     ratings = ratings.trim();
 
     if (!ratings.startsWith("RYM Album,")) {
-      throw new LogicError("Please attach a file with the correct format");
+      throw new WrongFileFormatAttachedError();
     }
 
     return ratings;
@@ -128,17 +131,13 @@ export class ImportRatings extends RateYourMusicIndexingChildCommand<
       const attachments = this.payload.source.attachments;
 
       if (attachments.size > 1) {
-        throw new LogicError(
-          "Too many attachments! Please attach only one file with your ratings"
-        );
+        throw new TooManyAttachmentsError();
       }
 
       const attachment = attachments.first();
 
       if (!attachment) {
-        throw new LogicError(
-          `Please attach your ratings! (See \`${this.prefix}rym help\` for more info)`
-        );
+        throw new NoRatingsFileAttatchedError(this.prefix);
       }
 
       const file = await fetch(attachment.url);

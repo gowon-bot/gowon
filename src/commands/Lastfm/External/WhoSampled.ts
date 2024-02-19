@@ -40,14 +40,13 @@ export default class WhoSampled extends LastFMBaseCommand<typeof args> {
 
     const encodedKeywords = encodeURIComponent(keywords);
 
-    const embed = this.authorEmbed()
-      .setHeader("WhoSampled search")
+    const embed = this.minimalEmbed()
       .setTitle(`WhoSampled search for "${keywords}"`)
       .setURL(`https://www.whosampled.com/search/?q=${encodedKeywords}`)
       .setThumbnail(
         "https://www.whosampled.com/static/images/press/whosampled_logo_hires.png"
       );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

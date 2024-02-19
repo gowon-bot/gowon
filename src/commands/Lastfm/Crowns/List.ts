@@ -42,11 +42,9 @@ export class List extends CrownsChildCommand<typeof args> {
       throw new UserHasNoCrownsInServerError(perspective);
     }
 
-    const embed = this.authorEmbed()
-      .setHeader("Crowns list")
-      .setTitle(
-        `${perspective.upper.possessive} crowns in ${this.requiredGuild.name}`
-      );
+    const embed = this.minimalEmbed().setTitle(
+      `${perspective.upper.possessive} crowns in ${this.requiredGuild.name}`
+    );
 
     const scrollingEmbed = new ScrollingListView(this.ctx, embed, {
       pageSize: 15,
@@ -69,6 +67,6 @@ export class List extends CrownsChildCommand<typeof args> {
       },
     });
 
-    await this.send(scrollingEmbed);
+    await this.reply(scrollingEmbed);
   }
 }

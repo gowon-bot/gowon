@@ -106,8 +106,7 @@ export class Rating extends FriendsChildCommand<typeof args> {
       2
     )}/5 from ${displayNumber(filteredRatings.length, "rating")}_\n\n`;
 
-    const embed = this.authorEmbed()
-      .setHeader("Friends rating")
+    const embed = this.minimalEmbed()
       .setTitle(
         `Your friends ratings of ${rateYourMusicAlbum.title} by ${rateYourMusicAlbum.artistName}`
       )
@@ -125,6 +124,6 @@ export class Rating extends FriendsChildCommand<typeof args> {
       )
       .setThumbnail(albumCover || "");
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

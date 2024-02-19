@@ -23,7 +23,6 @@ export const reverseNowPlayingEmbed: EmbedMutator = (
     title: reverse(properties.title),
     description: reverseLinks(description),
     footer: reverse(properties.footer),
-    authorUsername: reverse(properties.authorUsername),
   };
 };
 

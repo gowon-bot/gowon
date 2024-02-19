@@ -7,6 +7,7 @@ import { Flag } from "../../lib/context/arguments/argumentTypes/Flag";
 import { StringArgument } from "../../lib/context/arguments/argumentTypes/StringArgument";
 import { ArgumentsMap } from "../../lib/context/arguments/types";
 import { PermissionsService } from "../../lib/permissions/PermissionsService";
+import { HelpEmbed } from "../../lib/ui/embeds/HelpEmbed";
 import { ScrollingListView } from "../../lib/ui/views/ScrollingListView";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 import HelpForOneCommand from "./HelpForOneCommand";
@@ -74,9 +75,12 @@ export default class Help extends Command<typeof args> {
 
     const footer = (page: number, totalPages: number) =>
       `Page ${page} of ${totalPages} ${bullet} Can't find a command? Try ${this.prefix}searchcommand <keywords> to search commands`;
-    const description = `Run \`${this.prefix}help <command>\` to learn more about specific commands\nTo change prefix, mention Gowon (\`@Gowon prefix ?)\``;
-    const embed = this.authorEmbed().setHeader(
-      this.ctx.isDM() ? "Help in DMs" : "Help"
+    const description = `
+
+Run \`${this.prefix}help <command>\` to learn more about specific commands\nTo change prefix, mention Gowon (\`@Gowon prefix ?)\``;
+
+    const embed = new HelpEmbed().setHeader(
+      this.ctx.isDM() ? "All Commands in DMs" : "All Commands"
     );
 
     const groupedCommands = commands.reduce((acc, command) => {
@@ -105,6 +109,6 @@ export default class Help extends Command<typeof args> {
       overrides: { customFooter: footer, embedDescription: description },
     });
 
-    await this.send(simpleScrollingEmbed);
+    await this.reply(simpleScrollingEmbed);
   }
 }

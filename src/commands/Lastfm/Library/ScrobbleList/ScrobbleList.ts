@@ -7,6 +7,7 @@ import { Emoji } from "../../../../lib/emoji/Emoji";
 import { LilacBaseCommand } from "../../../../lib/Lilac/LilacBaseCommand";
 import { PaginatedLilacScrobbleCache } from "../../../../lib/paginators/PaginatedScrobbleCache";
 import { displayDateTime } from "../../../../lib/ui/displays";
+import { ErrorEmbed } from "../../../../lib/ui/embeds/ErrorEmbed";
 import { LilacScrobbleFilters } from "../../../../services/lilac/LilacAPIService.types";
 import { LilacLibraryService } from "../../../../services/lilac/LilacLibraryService";
 import { ServiceRegistry } from "../../../../services/ServicesRegistry";
@@ -52,17 +53,15 @@ export default class ScrobbleList extends LilacBaseCommand<typeof args> {
 
     const firstPage = await scrobbleCache.getFirstPage();
 
-    const embed = this.authorEmbed()
-      .setHeader("Scrobble list")
-      .setTitle(
-        `${Emoji.usesIndexedDataTitle} ${
-          perspective.upper.possessive
-        } scrobbles of ${italic(trackName)} by ${bold(artistName)}`
-      );
+    const embed = this.minimalEmbed().setTitle(
+      `${Emoji.usesIndexedDataTitle} ${
+        perspective.upper.possessive
+      } scrobbles of ${italic(trackName)} by ${bold(artistName)}`
+    );
 
     if (firstPage.pagination.totalItems === 0) {
-      await this.send(
-        embed.setDescription(`You have no scrobbles of this song!`)
+      await this.reply(
+        new ErrorEmbed().setDescription(`You have no scrobbles of this song!`)
       );
       return;
     }
@@ -73,6 +72,6 @@ export default class ScrobbleList extends LilacBaseCommand<typeof args> {
       (s) => displayDateTime(convertLilacDate(s.scrobbledAt))
     );
 
-    await this.send(scrollingEmbed);
+    await this.reply(scrollingEmbed);
   }
 }

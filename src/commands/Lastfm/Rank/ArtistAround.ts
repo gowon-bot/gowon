@@ -36,6 +36,7 @@ export default class ArtistAround extends AroundCommand<typeof args> {
   };
 
   redirectsService = ServiceRegistry.get(RedirectsService);
+
   async run() {
     const redirectsCache = new RedirectsCache(this.ctx);
 
@@ -95,8 +96,7 @@ export default class ArtistAround extends AroundCommand<typeof args> {
       );
     }
 
-    const embed = this.authorEmbed()
-      .setHeader("Artist around")
+    const embed = this.minimalEmbed()
       .setTitle(
         `Artists around ${
           shouldSearchByRank
@@ -122,6 +122,6 @@ export default class ArtistAround extends AroundCommand<typeof args> {
         )
       );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

@@ -1,10 +1,4 @@
-import {
-  Emoji,
-  Message,
-  MessageReaction,
-  ReactionCollector,
-  User,
-} from "discord.js";
+import { Emoji, MessageReaction, ReactionCollector, User } from "discord.js";
 import {
   CannotSwitchToTabError,
   NoMessageToReactToError,
@@ -30,18 +24,16 @@ export class TabbedView extends View {
   constructor(private ctx: GowonContext, private options: TabbedViewOptions) {
     super();
     this.currentTab = options.tabs[0].name;
+
+    this.hook("afterSend", async () => {
+      if (this.options.tabs.length > 1) {
+        await this.react();
+      }
+    });
   }
 
   asDiscordSendable(): EmbedView {
     return this.getEmbed();
-  }
-
-  public async afterSend(message: Message<boolean>): Promise<void> {
-    if (this.options.tabs.length > 1) {
-      await this.react();
-    }
-
-    await this.afterSend(message);
   }
 
   private getEmbed(): EmbedView {
@@ -85,9 +77,7 @@ export class TabbedView extends View {
 
         this.currentTab = newTab.name;
 
-        const embed = this.getEmbed();
-
-        embed.editMessage(this.ctx);
+        this.editMessage(this.ctx);
       });
 
       collector.on("error", (e: Error) => {

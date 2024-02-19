@@ -53,16 +53,14 @@ export default class TrackPlaysover extends LastFMBaseCommand<typeof args> {
       0
     );
 
-    const embed = this.authorEmbed()
-      .setHeader(`Track plays${equal ? "equal" : "over"}`)
-      .setDescription(
-        `${bold(displayNumber(playsover))} of ${
-          perspective.possessive
-        } top ${displayNumber(topTracks.tracks.length, "track")} have ${
-          equal ? "" : "at least "
-        }${bold(displayNumber(plays, "play"))}`
-      );
+    const embed = this.minimalEmbed().setDescription(
+      `${bold(displayNumber(playsover))} of ${
+        perspective.possessive
+      } top ${displayNumber(topTracks.tracks.length, "track")} have ${
+        equal ? "" : "at least "
+      }${bold(displayNumber(plays, "play"))}`
+    );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

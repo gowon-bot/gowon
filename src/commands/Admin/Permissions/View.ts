@@ -13,6 +13,7 @@ import { DiscordUserArgument } from "../../../lib/context/arguments/argumentType
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { PermissionQuery } from "../../../lib/permissions/PermissionsCacheService";
 import { displayNumberedList } from "../../../lib/ui/displays";
+import { ErrorEmbed } from "../../../lib/ui/embeds/ErrorEmbed";
 import { ScrollingListView } from "../../../lib/ui/views/ScrollingListView";
 import { PermissionsChildCommand } from "./PermissionsChildCommand";
 
@@ -59,15 +60,19 @@ export class View extends PermissionsChildCommand<typeof args> {
       query
     );
 
-    const embed = this.authorEmbed()
-      .setHeader("Permissions")
-      .setTitle(`Permissions in ${this.guild?.name}`);
+    const embed = this.minimalEmbed().setTitle(
+      `Permissions in ${this.guild?.name}`
+    );
 
     if (!permissions.length) {
-      embed.setDescription(
-        `No permissions found! ${!this.parsedArguments.all ? this.allHelp : ""}`
+      await this.reply(
+        new ErrorEmbed().setDescription(
+          `No permissions found! ${
+            !this.parsedArguments.all ? this.allHelp : ""
+          }`
+        )
       );
-      await this.send(embed);
+
       return;
     }
 
@@ -80,7 +85,7 @@ export class View extends PermissionsChildCommand<typeof args> {
         return displayNumberedList(renderedItems, offset);
       },
       overrides: {
-        itemName: "permissions",
+        itemName: "permission",
         embedDescription:
           !this.parsedArguments.all &&
           !this.parsedArguments.user &&
@@ -91,7 +96,7 @@ export class View extends PermissionsChildCommand<typeof args> {
       },
     });
 
-    await this.send(scrollingEmbed);
+    await this.reply(scrollingEmbed);
   }
 
   private async getQueries(): Promise<PermissionQuery[]> {
@@ -148,9 +153,10 @@ export class View extends PermissionsChildCommand<typeof args> {
   }
 
   private displayPermission(permission: Permission): string {
-    const commandName = this.commandRegistry.findByID(
-      permission.commandID
-    )!.friendlyName;
+    const commandName =
+      this.commandRegistry.findByID(permission.commandID, {
+        includeSecret: true,
+      })?.friendlyName || "<unknown command>";
 
     let extra = "";
 

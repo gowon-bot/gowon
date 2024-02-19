@@ -73,13 +73,13 @@ export default class Day extends LastFMBaseCommand<typeof args> {
     await tagConsolidator.saveServerBannedTagsInContext(this.ctx);
     tagConsolidator.addTags(this.ctx, day.top.tags);
 
-    const embed = this.authorEmbed()
-      .setHeader("Report day")
-      .setTitle(`${perspective.upper.possessive} day`)
+    const embed = this.minimalEmbed()
+      .setTitle(`${perspective.upper.possessive} day on Last.fm`)
       .transform(ReportEmbed)
       .setReport(day)
-      .setDateRange(sub(new Date(), { days: 1 }), new Date());
+      .setDateRange(sub(new Date(), { days: 1 }), new Date())
+      .setTags(tagConsolidator);
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

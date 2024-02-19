@@ -3,7 +3,6 @@ import { DatasourceServiceContext } from "../../../lib/nowplaying/DatasourceServ
 import { ComboComponent } from "../../../lib/nowplaying/components/hidden/ComboComponent";
 import { NowPlayingEmbed } from "../../../lib/ui/embeds/NowPlayingEmbed";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
-import { NowPlayingService } from "../../../services/dbservices/NowPlayingService";
 import { RedirectsService } from "../../../services/dbservices/RedirectsService";
 import { CrownsService } from "../../../services/dbservices/crowns/CrownsService";
 import { NowPlayingBaseCommand } from "./NowPlayingBaseCommand";
@@ -19,7 +18,7 @@ export default class NowPlayingCombo extends NowPlayingBaseCommand {
   redirectsService = ServiceRegistry.get(RedirectsService);
 
   getConfig(): string[] {
-    return NowPlayingService.presets.default;
+    return ["artist-plays", "artist-tags", "artist-crown"];
   }
 
   async run() {
@@ -62,7 +61,7 @@ export default class NowPlayingCombo extends NowPlayingBaseCommand {
 
     const albumCover = await this.getAlbumCover(recentTracks.first());
 
-    const embed = this.authorEmbed()
+    const embed = this.minimalEmbed()
       .transform(NowPlayingEmbed)
       .setDbUser(dbUser)
       .setNowPlaying(recentTracks.first(), tagConsolidator)
@@ -72,6 +71,6 @@ export default class NowPlayingCombo extends NowPlayingBaseCommand {
       .setComponents(renderedComponents)
       .setCustomReacts(await this.getCustomReactions());
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

@@ -1,4 +1,5 @@
 import { AlbumCard } from "../../database/entity/cards/AlbumCard";
+import { NoCardsError } from "../../errors/commands/cards";
 import { bold, italic } from "../../helpers/discord";
 import { StringArgument } from "../../lib/context/arguments/argumentTypes/StringArgument";
 import { displayNumberedList } from "../../lib/ui/displays";
@@ -23,20 +24,30 @@ export class Inventory extends CardsChildCommand<typeof args> {
 
     const cards = await this.cardsService.inventory(dbUser, artist);
 
-    const embed = this.authorEmbed().setHeader("Cards inventory");
+    if (!cards.length && !artist) {
+      throw new NoCardsError();
+    } else if (!cards.length && artist) {
+      throw new NoCardsError(artist);
+    }
 
-    const scrollingEmbed = new ScrollingListView(this.ctx, embed, {
-      items: cards,
-      pageSize: 15,
-      pageRenderer(cards: AlbumCard[], { offset }) {
-        return displayNumberedList(
-          cards.map((c) => `${bold(c.album)} by ${italic(c.artist)}`),
-          offset
-        );
-      },
-      overrides: { itemName: "card" },
-    });
+    const scrollingEmbed = new ScrollingListView(
+      this.ctx,
+      this.minimalEmbed().setTitle("Cards inventory"),
+      {
+        items: cards,
+        pageSize: 15,
+        pageRenderer(cards: AlbumCard[], { offset }) {
+          return displayNumberedList(
+            cards.map((c) => `${bold(c.album)} by ${italic(c.artist)}`),
+            offset
+          );
+        },
+        overrides: {
+          itemName: "card",
+        },
+      }
+    );
 
-    await this.send(scrollingEmbed);
+    await this.reply(scrollingEmbed);
   }
 }

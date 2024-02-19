@@ -71,12 +71,12 @@ export default class GoBack extends LastFMBaseCommand<typeof args> {
       track
     );
 
-    const embed = this.authorEmbed()
+    const embed = this.minimalEmbed()
       .transform(TrackEmbed)
       .setTrack(track)
       .setAlbumCover(albumCover ? Image.fromURL(albumCover) : undefined)
       .addDescription(`\n\nScrobbled on ${displayDate(track.scrobbledAt)}`);
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

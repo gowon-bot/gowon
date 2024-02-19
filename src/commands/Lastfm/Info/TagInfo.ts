@@ -11,6 +11,7 @@ import { StringArgument } from "../../../lib/context/arguments/argumentTypes/Str
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { Emoji } from "../../../lib/emoji/Emoji";
 import { displayLink, displayNumber } from "../../../lib/ui/displays";
+import { ErrorEmbed } from "../../../lib/ui/embeds/ErrorEmbed";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { WordBlacklistService } from "../../../services/WordBlacklistService";
 import { LilacArtistsService } from "../../../services/lilac/LilacArtistsService";
@@ -60,12 +61,12 @@ export default class TagInfo extends InfoCommand<typeof args> {
         }),
       ]);
 
-    const similarTags = tagList.tags.filter(
-      (t) => t.name.toLowerCase() != tag.toLowerCase()
-    );
+    const similarTags = tagList.tags
+      .filter((t) => t.name.toLowerCase() != tag.toLowerCase())
+      .slice(0, 10);
 
     if (tagInfo.uses === 0) {
-      const lineConsolidator = new LineConsolidator().addLines(
+      const description = new LineConsolidator().addLines(
         `${bold(tag)} doesn't appear to be a registered tag on Last.fm`,
         {
           string: `\nDid you mean...\n${similarTags
@@ -81,11 +82,9 @@ export default class TagInfo extends InfoCommand<typeof args> {
         }
       );
 
-      const embed = this.authorEmbed()
-        .setHeader("Tag info")
-        .setDescription(lineConsolidator.consolidate());
+      const embed = new ErrorEmbed().setDescription(description);
 
-      await this.send(embed);
+      await this.reply(embed);
     } else {
       const summary = this.scrubReadMore(tagInfo.wiki.summary);
 
@@ -166,14 +165,13 @@ export default class TagInfo extends InfoCommand<typeof args> {
         });
       }
 
-      const embed = this.authorEmbed()
-        .setHeader("Tag info")
+      const embed = this.minimalEmbed()
         .setTitle(tagInfo.name)
         .setURL(this.getLinkFromBio(tagInfo.wiki.summary) || "")
         .setDescription(summary ? summary + "\n" : "_(no description)_")
         .addFields(...embedFields);
 
-      this.send(embed);
+      this.reply(embed);
     }
   }
 }

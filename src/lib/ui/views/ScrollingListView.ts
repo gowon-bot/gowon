@@ -2,7 +2,7 @@ import { EmbedFieldData } from "discord.js";
 import { GowonContext } from "../../context/Context";
 import { EmbedView } from "./EmbedView";
 import {
-  ScrollingEmbedOptions,
+  ScrollinViewOptions,
   ScrollingView,
   isEmbedFields,
 } from "./ScrollingView";
@@ -18,7 +18,7 @@ export interface ScrollingListViewOptions<T> {
     pageInfo: { page: number; offset: number }
   ) => string;
 
-  overrides?: Partial<ScrollingEmbedOptions>;
+  overrides?: Partial<ScrollinViewOptions>;
 }
 
 export class ScrollingListView<T> extends ScrollingView {

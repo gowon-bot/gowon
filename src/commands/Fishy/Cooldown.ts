@@ -20,16 +20,16 @@ export class Cooldown extends FishyChildCommand<typeof args> {
       fishyProfileRequired: true,
     });
 
-    const embed = this.authorEmbed().setHeader("Fishy cooldown");
-
     if (!fishyProfile.canFish()) {
-      await this.send(
-        embed.setDescription(
+      await this.reply(
+        this.minimalEmbed().setDescription(
           `You can fish again in ${bold(fishyProfile.getCooldownTime())}.`
         )
       );
     } else {
-      await this.send(embed.setDescription(this.pickCanFishMessage()));
+      await this.reply(
+        this.minimalEmbed().setDescription(this.pickCanFishMessage())
+      );
     }
   }
 

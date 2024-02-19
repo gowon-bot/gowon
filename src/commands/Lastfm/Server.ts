@@ -27,8 +27,7 @@ export default class Server extends LastFMBaseCommand {
       users.map((u) => buildRequestable(u.lastFMUsername, u).requestable)
     ).fetch(this.lastFMService.nowPlaying.bind(this.lastFMService), []);
 
-    const embed = this.authorEmbed()
-      .setHeader("Server")
+    const embed = this.minimalEmbed()
       .setTitle("Random songs across the server")
       .setDescription(
         Object.keys(nowPlayings)
@@ -44,6 +43,6 @@ export default class Server extends LastFMBaseCommand {
           .join("\n")
       );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

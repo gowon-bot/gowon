@@ -26,7 +26,7 @@ To start docker-compose, run `docker-compose up`. Note you will have to download
 
 _You can find the source code for all the commands at [/src/commands](/src/commands)_
 
-There are now too many commands to list in the README, see `!help all` or visit https://gowon.ca/commands for a list of all commands.
+There are now too many commands to list in the README, see `!help all` or visit https://gowon.bot/commands for a list of all commands.
 
 ## Special Thanks
 

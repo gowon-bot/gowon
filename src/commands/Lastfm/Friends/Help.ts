@@ -1,3 +1,4 @@
+import { HelpEmbed } from "../../../lib/ui/embeds/HelpEmbed";
 import { FriendsChildCommand } from "./FriendsChildCommand";
 
 export class Help extends FriendsChildCommand {
@@ -9,8 +10,8 @@ export class Help extends FriendsChildCommand {
   slashCommand = true;
 
   async run() {
-    const embed = this.authorEmbed()
-      .setHeader("Friends help")
+    const embed = new HelpEmbed()
+      .setHeader("Help with friends")
       .setDescription(
         `
 **Adding/Removing Friends**
@@ -34,6 +35,6 @@ If you have an alias set for a friend, you can use that alias to mention them. F
         `All fish you catch are kept in a sustainable and infinitely large aquarium :)`
       );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

@@ -8,6 +8,6 @@ export default class Support extends Command {
   usage = [""];
 
   async run() {
-    await this.send("https://discord.gg/9Vr7Df7TZf");
+    await this.reply("https://discord.gg/9Vr7Df7TZf");
   }
 }

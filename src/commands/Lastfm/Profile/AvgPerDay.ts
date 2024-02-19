@@ -14,14 +14,12 @@ export class AvgPerDay extends ProfileChildCommand {
 
     const avg = await this.calculator.avgPerDay();
 
-    const embed = (await this.profileEmbed())
-      .setHeader("Profile average scrobbles per day")
-      .setDescription(
-        `${perspective.upper.plusToHave} an average ${bold(
-          avg.asString
-        )} scrobbles per day!`
-      );
+    const embed = this.profileEmbed().setDescription(
+      `${perspective.upper.plusToHave} an average ${bold(
+        avg.asString
+      )} scrobbles per day!`
+    );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

@@ -108,9 +108,9 @@ export default class Year extends MirrorballBaseCommand<
 
     tagConsolidator.addTags(this.ctx, month.top.tags);
 
-    const embed = this.authorEmbed()
-      .setHeader("Report year")
-      .setTitle(`${perspective.upper.possessive} year`).setDescription(`
+    const embed = this.minimalEmbed().setTitle(
+      `${perspective.upper.possessive} year on Last.fm`
+    ).setDescription(`
       _${displayDate(sub(new Date(), { years: 1 }))} - ${displayDate(
       new Date()
     )}_
@@ -143,7 +143,7 @@ ${extraWideSpace}${bullet} ${topArtists
       .join(`\n​${extraWideSpace}${bullet} `)}
     `);
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 
   private async queryAndConvert(

@@ -23,8 +23,7 @@ export class TopCrowns extends CrownsChildCommand {
       this.crownsService.countAllInServer(this.ctx, serverUsers),
     ]);
 
-    const embed = this.authorEmbed()
-      .setHeader("Top crowns")
+    const embed = this.minimalEmbed()
       .setTitle(`Top crowns in ${this.requiredGuild.name}`)
       .setDescription(
         displayNumberedList(
@@ -41,6 +40,6 @@ export class TopCrowns extends CrownsChildCommand {
           }`
       );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

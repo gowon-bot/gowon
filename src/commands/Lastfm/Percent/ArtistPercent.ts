@@ -43,13 +43,15 @@ export default class ArtistPercent extends LastFMBaseCommand<typeof args> {
       this.lastFMService.userInfo(this.ctx, { username: requestable }),
     ]);
 
-    await this.oldReply(
-      `${perspective.possessive} ${displayNumber(
+    const embed = this.minimalEmbed().setDescription(
+      `${perspective.upper.possessive} ${displayNumber(
         artistInfo.userPlaycount,
         "play"
       )} of ${bold(artistInfo.name)} represent ${bold(
         calculatePercent(artistInfo.userPlaycount, userInfo.scrobbleCount)
-      )}% of ${perspective.possessivePronoun} total scrobbles`
+      )}% of ${perspective.possessivePronoun} total scrobbles.`
     );
+
+    await this.reply(embed);
   }
 }

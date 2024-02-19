@@ -5,7 +5,8 @@ import { RespondableChannel } from "../../../services/Discord/DiscordService.typ
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { GowonContext } from "../../context/Context";
 import { Payload } from "../../context/Payload";
-import { Emoji, EmojiRaw } from "../../emoji/Emoji";
+import { EmojiRaw } from "../../emoji/Emoji";
+import { errorColour } from "../embeds/ErrorEmbed";
 import { EmbedView } from "./EmbedView";
 
 export class ConfirmationView {
@@ -14,12 +15,12 @@ export class ConfirmationView {
   }
 
   private readonly confirmationEmoji = EmojiRaw.checkmark;
-  private readonly rejectionEmoji = Emoji.x;
+  private readonly rejectionEmoji = EmojiRaw.x;
 
   public sentMessage: Message | undefined;
   private originalMessage: Payload;
 
-  private allowRejection = false;
+  private isRejectionAllowed = false;
 
   constructor(
     private ctx: GowonContext,
@@ -29,21 +30,15 @@ export class ConfirmationView {
     this.originalMessage = originalMessage || ctx.command.payload;
   }
 
-  public withRejectionReact(): ConfirmationView {
-    this.allowRejection = true;
+  public allowRejection(): ConfirmationView {
+    this.isRejectionAllowed = true;
 
     return this;
   }
 
   private get filter(): ReactionCollectorFilter {
-    return (reaction: MessageReaction, user: User) => {
-      return (
-        user.id === this.ctx.command.author.id &&
-        ((reaction.emoji.id ?? reaction.emoji.name) ===
-          this.confirmationEmoji ||
-          (this.allowRejection &&
-            (reaction.emoji.id ?? reaction.emoji.name) === this.rejectionEmoji))
-      );
+    return (_: MessageReaction, user: User) => {
+      return user.id === this.ctx.command.author.id;
     };
   }
 
@@ -57,6 +52,7 @@ export class ConfirmationView {
         this.embed.asSendable(),
         {
           inChannel: this.originalMessage.channel as RespondableChannel,
+          reply: true,
         }
       );
 
@@ -64,7 +60,7 @@ export class ConfirmationView {
 
       await sentEmbed.react(this.confirmationEmoji);
 
-      if (this.allowRejection) await sentEmbed.react(this.rejectionEmoji);
+      if (this.isRejectionAllowed) await sentEmbed.react(this.rejectionEmoji);
 
       const collector = new ReactionCollector(sentEmbed, {
         filter: this.filter,
@@ -73,12 +69,11 @@ export class ConfirmationView {
 
       collector.on("collect", async (reaction: MessageReaction) => {
         const emoji = reaction.emoji;
-
         const emojiResolvable = emoji.id ?? emoji.name;
 
-        if (emojiResolvable == this.confirmationEmoji) {
+        if (emojiResolvable === this.confirmationEmoji) {
           collector.stop("collected");
-        } else {
+        } else if (emojiResolvable === this.rejectionEmoji) {
           collector.stop("rejected");
         }
       });
@@ -98,10 +93,14 @@ export class ConfirmationView {
               ? `\n\n❌ This confirmation has been rejected.`
               : `\n\n🕒 This confirmation has timed out.`;
 
-          await this.embed.addFooter(footer).editMessage(ctx);
+          await this.embed
+            .setColour(errorColour)
+            .addFooter(footer)
+            .editMessage(ctx);
+
           await Promise.all([
             this.removeReaction(this.confirmationEmoji),
-            this.allowRejection
+            this.isRejectionAllowed
               ? this.removeReaction(this.rejectionEmoji)
               : undefined,
           ]);

@@ -99,7 +99,7 @@ export class Fishypedia extends FishyChildCommand<typeof args> {
       tabs: fishy.traits.length ? [mainTab, traitsTab] : [mainTab],
     });
 
-    await this.send(tabbedEmbed);
+    await this.reply(tabbedEmbed);
   }
 
   private getMainTabEmbed(
@@ -143,7 +143,7 @@ ${
   }
 
   private getBaseTabEmbed(fishy: Fishy): EmbedView {
-    return this.authorEmbed()
+    return this.minimalEmbed()
       .setHeader("Fishypedia")
       .setColour(fishy.rarity.colour)
       .setTitle(fishy.name)
@@ -155,9 +155,9 @@ ${
       (f) => !f.rarity.special && matchesFishyTrait(f, trait)
     );
 
-    const embed = this.authorEmbed()
-      .setHeader("Fishy wiki")
-      .setTitle(`Search results for ${displayFishyTrait(trait, true)}`);
+    const embed = this.minimalEmbed().setTitle(
+      `Fishypedia search results for ${displayFishyTrait(trait, true)}`
+    );
 
     const simpleScrollingEmbed = new ScrollingListView(this.ctx, embed, {
       items: fishy.map(
@@ -169,6 +169,6 @@ ${
       pageSize: 15,
     });
 
-    await this.send(simpleScrollingEmbed);
+    await this.reply(simpleScrollingEmbed);
   }
 }

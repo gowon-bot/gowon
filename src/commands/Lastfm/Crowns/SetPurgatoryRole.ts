@@ -1,5 +1,6 @@
 import { DiscordRoleArgument } from "../../../lib/context/arguments/argumentTypes/discord/DiscordRoleArgument";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { SuccessEmbed } from "../../../lib/ui/embeds/SuccessEmbed";
 import { CrownsChildCommand } from "./CrownsChildCommand";
 
 const args = {
@@ -21,14 +22,12 @@ export class SetPurgatoryRole extends CrownsChildCommand<typeof args> {
 
     await this.crownsService.setPurgatoryRole(this.ctx, purgatoryRole?.id);
 
-    const embed = this.authorEmbed()
-      .setHeader("Purgatory role")
-      .setDescription(
-        purgatoryRole?.name
-          ? `Set the purgatory role for crowns to ${purgatoryRole.name.trim()}`
-          : `Cleared the purgatory role`
-      );
+    const embed = new SuccessEmbed().setDescription(
+      purgatoryRole?.name
+        ? `Set the purgatory role for crowns to ${purgatoryRole.name.trim()}`
+        : `Cleared the purgatory role`
+    );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

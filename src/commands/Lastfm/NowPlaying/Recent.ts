@@ -26,6 +26,7 @@ const args = {
 export default class Recent extends LastFMBaseCommand<typeof args> {
   idSeed = "fx krystal";
 
+  aliases = ["rec"];
   description = "Shows a few of your recent tracks";
   subcategory = "nowplaying";
   usage = ["", "amount"];
@@ -59,8 +60,8 @@ export default class Recent extends LastFMBaseCommand<typeof args> {
       }
     );
 
-    const embed = this.authorEmbed()
-      .setHeader(
+    const embed = this.minimalEmbed()
+      .setTitle(
         `${perspective.upper.possessive.replace(/`/g, "")} recent tracks`
       )
       .setHeaderURL(LastfmLinks.userPage(requestableAsUsername(requestable)))
@@ -76,7 +77,7 @@ export default class Recent extends LastFMBaseCommand<typeof args> {
       )
       .setThumbnail(albumCover || "");
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 
   private displayTrack(t: RecentTrack) {

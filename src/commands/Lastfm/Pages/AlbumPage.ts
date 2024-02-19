@@ -35,10 +35,10 @@ export default class AlbumPage extends LastFMBaseCommand<typeof args> {
       username: requestable,
     });
 
-    this.send(
+    this.reply(
       `${italic(albumDetails.name)} by ${bold(
         albumDetails.artist
-      )} on last.fm: ${cleanURL(albumDetails.url)}`
+      )} on Last.fm: ${cleanURL(albumDetails.url)}`
     );
   }
 }

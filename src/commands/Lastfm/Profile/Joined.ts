@@ -9,12 +9,16 @@ export class Joined extends ProfileChildCommand {
   slashCommand = true;
 
   async run() {
+    const { perspective } = await this.getMentions();
+
     const joined = await this.calculator.joined();
 
-    const embed = (await this.profileEmbed())
-      .setHeader("Profile joined")
-      .setDescription(`Scrobbling since ${joined}`);
+    const embed = this.profileEmbed()
+      .setDescription(
+        `${perspective.upper.plusToHave} scrobbling since ${joined}`
+      )
+      .setFooter("");
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

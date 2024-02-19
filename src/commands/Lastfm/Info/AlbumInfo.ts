@@ -1,10 +1,10 @@
 import { bold, italic } from "../../../helpers/discord";
 import { LinkConsolidator } from "../../../helpers/lastfm/";
 import { calculatePercent } from "../../../helpers/stats";
+import { LineConsolidator } from "../../../lib/LineConsolidator";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
-import { LineConsolidator } from "../../../lib/LineConsolidator";
 import { displayNumber } from "../../../lib/ui/displays";
 import { InfoCommand } from "./InfoCommand";
 
@@ -24,8 +24,6 @@ export default class AlbumInfo extends InfoCommand<typeof args> {
 
   arguments = args;
   slashCommand = true;
-
-  lineConsolidator = new LineConsolidator();
 
   async run() {
     const { senderRequestable, requestable, perspective } =
@@ -73,7 +71,7 @@ export default class AlbumInfo extends InfoCommand<typeof args> {
         ? spotifyAlbumSearch.bestResult.images.largest
         : undefined;
 
-    this.lineConsolidator.addLines(
+    const description = new LineConsolidator().addLines(
       {
         shouldDisplay: albumInfo.tracks.length > 0 && !!albumDuration,
         string: `_${displayNumber(
@@ -100,7 +98,7 @@ export default class AlbumInfo extends InfoCommand<typeof args> {
       {
         shouldDisplay: this.tagConsolidator.hasAnyTags(),
         string: `**Tags:** ${this.tagConsolidator
-          .consolidateAsStrings()
+          .consolidateAsStrings(10)
           .join(" ‧ ")}`,
       },
       {
@@ -122,9 +120,9 @@ export default class AlbumInfo extends InfoCommand<typeof args> {
       }
     );
 
-    const embed = this.authorEmbed()
+    const embed = this.minimalEmbed()
       .setTitle(italic(albumInfo.name) + " by " + bold(albumInfo.artist))
-      .setDescription(this.lineConsolidator.consolidate())
+      .setDescription(description)
       .setURL(albumInfo.url)
       .setImage(albumCover.url || "")
       .addFields(
@@ -165,6 +163,6 @@ export default class AlbumInfo extends InfoCommand<typeof args> {
           : ""
       );
 
-    this.send(embed);
+    this.reply(embed);
   }
 }

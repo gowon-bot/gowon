@@ -1,5 +1,6 @@
 import { bold } from "../../helpers/discord";
 import { displayNumber } from "../../lib/ui/displays";
+import { InfoEmbed } from "../../lib/ui/embeds/InfoEmbed";
 import { AdminBaseCommand } from "./AdminBaseCommand";
 
 export default class Usercount extends AdminBaseCommand {
@@ -11,16 +12,14 @@ export default class Usercount extends AdminBaseCommand {
   devCommand = true;
 
   async run() {
-    let usercount = await this.usersService.countUsers(this.ctx);
+    const usercount = await this.usersService.countUsers(this.ctx);
 
-    await this.send(
-      this.authorEmbed()
-        .setHeader("User count")
-        .setDescription(
-          `There are ${bold(
-            displayNumber(usercount, "registered user")
-          )} logged into Gowon`
-        )
+    const embed = new InfoEmbed().setDescription(
+      `There are ${bold(
+        displayNumber(usercount, "registered user")
+      )} logged into Gowon`
     );
+
+    await this.reply(embed);
   }
 }

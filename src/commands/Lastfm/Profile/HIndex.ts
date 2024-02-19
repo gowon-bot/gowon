@@ -1,4 +1,4 @@
-import { bold } from "../../../helpers/discord";
+import { bold, italic } from "../../../helpers/discord";
 import { ProfileChildCommand } from "./ProfileChildCommand";
 
 export class HIndex extends ProfileChildCommand {
@@ -18,12 +18,12 @@ export class HIndex extends ProfileChildCommand {
 
     const hindex = await this.calculator.hIndex();
 
-    const embed = (await this.profileEmbed())
-      .setHeader("Profile h-index")
-      .setDescription(
-        `${perspective.upper.possessive} H-index is ${bold(hindex.asString)}!`
-      );
+    const embed = this.profileEmbed().setDescription(
+      `${perspective.upper.possessive} H-index is ${bold(hindex.asString)}!
+      
+${italic(this.description)}`
+    );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

@@ -82,8 +82,7 @@ export default class AlbumAround extends AroundCommand<typeof args> {
       );
     }
 
-    const embed = this.authorEmbed()
-      .setHeader("Album around")
+    const embed = this.minimalEmbed()
       .setTitle(
         `Albums around ${
           shouldSearchByRank
@@ -109,6 +108,6 @@ export default class AlbumAround extends AroundCommand<typeof args> {
         )
       );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

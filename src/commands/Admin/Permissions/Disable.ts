@@ -11,6 +11,7 @@ import { ChannelArgument } from "../../../lib/context/arguments/argumentTypes/di
 import { DiscordRoleArgument } from "../../../lib/context/arguments/argumentTypes/discord/DiscordRoleArgument";
 import { DiscordUserArgument } from "../../../lib/context/arguments/argumentTypes/discord/DiscordUserArgument";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { SuccessEmbed } from "../../../lib/ui/embeds/SuccessEmbed";
 import { ChannelDisable } from "./ChannelDisable";
 import { PermissionsChildCommand } from "./PermissionsChildCommand";
 import { RoleDisable } from "./RoleDisable";
@@ -97,11 +98,11 @@ export class Disable extends PermissionsChildCommand<typeof args> {
         permission
       );
 
-      const embed = this.authorEmbed()
-        .setHeader("Permissions disable")
-        .setDescription(`Successfully disabled ${code(command.name)}`);
+      const embed = new SuccessEmbed().setDescription(
+        `Successfully disabled ${code(command.name)} for this server`
+      );
 
-      await this.send(embed);
+      await this.reply(embed);
     } else {
       await this.permissionsService.destroyPermission(
         this.ctx,
@@ -109,11 +110,11 @@ export class Disable extends PermissionsChildCommand<typeof args> {
         permission
       );
 
-      const embed = this.authorEmbed()
-        .setHeader("Permissions enable")
-        .setDescription(`Successfully enabled ${code(command.name)}`);
+      const embed = new SuccessEmbed().setDescription(
+        `Successfully re-enabled ${code(command.name)} for this server`
+      );
 
-      await this.send(embed);
+      await this.reply(embed);
     }
   }
 }

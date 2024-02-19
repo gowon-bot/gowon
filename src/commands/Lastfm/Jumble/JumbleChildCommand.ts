@@ -69,7 +69,7 @@ export abstract class JumbleChildCommand<
       .setHeader("Jumble guess")
       .setDescription(`You are correct! The artist was ${bold(artistName)}`);
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 
   async stopJumble(artistName: string, jumbleKey: string) {
@@ -79,7 +79,7 @@ export abstract class JumbleChildCommand<
       .setHeader("Jumble quit")
       .setDescription(`Too bad, the artist was ${bold(artistName)}!`);
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 
   async giveHint(jumbledArtist: JumbledArtist, jumbleKey: string) {
@@ -101,7 +101,7 @@ export abstract class JumbleChildCommand<
       ${code(jumbledArtist.currenthint)}`
       );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 
   private generateHint(jumble: JumbledArtist, number = 3): string {

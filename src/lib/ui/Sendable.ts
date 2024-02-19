@@ -6,6 +6,7 @@ import {
   MessageEmbed,
 } from "discord.js";
 import { SendOptions } from "../../services/Discord/DiscordService.types";
+import { GowonContext } from "../context/Context";
 import { View } from "./views/View";
 
 export type SendableContent = string | MessageEmbed | View;
@@ -14,8 +15,9 @@ export class Sendable<T extends SendableContent = SendableContent> {
   constructor(public content: T) {}
 
   public asDiscordSendOptions(
+    ctx: GowonContext,
     overrides: Partial<SendOptions> = {}
-  ): DiscordMessageOptions & InteractionReplyOptions {
+  ): InteractionReplyOptions & DiscordMessageOptions {
     const content = this.getContent();
 
     const embeds = this.getEmbeds(content, overrides);
@@ -24,6 +26,7 @@ export class Sendable<T extends SendableContent = SendableContent> {
     return {
       ...embeds,
       ...files,
+      ...this.getReplyOptions(ctx, overrides),
       content: typeof content === "string" ? content : undefined,
       ephemeral: this.getEphemeral(overrides),
     };
@@ -43,7 +46,7 @@ export class Sendable<T extends SendableContent = SendableContent> {
 
   public async afterSend(message: Message) {
     if (this.isUIComponent()) {
-      this.content.afterSend(message);
+      this.content.triggerHooks("afterSend", message);
     }
   }
 
@@ -91,5 +94,23 @@ export class Sendable<T extends SendableContent = SendableContent> {
 
   private isUIComponent(): this is Sendable<View> {
     return this.content instanceof View;
+  }
+
+  private getReplyOptions(
+    ctx: GowonContext,
+    options: Partial<SendOptions>
+  ): Pick<DiscordMessageOptions, "reply" | "allowedMentions"> {
+    return typeof options.reply === "boolean"
+      ? {
+          reply: { messageReference: ctx.payload.source.id },
+        }
+      : options.reply?.to
+      ? {
+          reply: { messageReference: options.reply.to },
+          allowedMentions: options.reply.ping
+            ? { repliedUser: true }
+            : undefined,
+        }
+      : {};
   }
 }

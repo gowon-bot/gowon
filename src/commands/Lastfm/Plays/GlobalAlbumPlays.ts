@@ -1,4 +1,4 @@
-import { italic } from "../../../helpers/discord";
+import { bold, italic } from "../../../helpers/discord";
 import { toInt } from "../../../helpers/lastfm/";
 import { calculatePercent } from "../../../helpers/stats";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
@@ -46,17 +46,19 @@ export default class GlobalAlbumPlays extends LastFMBaseCommand<typeof args> {
       albumDetails.globalPlaycount
     );
 
-    await this.send(
-      `Last.fm has scrobbled ${italic(albumDetails.name)} by ${
+    const embed = this.minimalEmbed().setDescription(
+      `Last.fm has scrobbled ${italic(albumDetails.name)} by ${bold(
         albumDetails.artist
-      } ${displayNumber(albumDetails.globalPlaycount, "time")}${
+      )} ${displayNumber(albumDetails.globalPlaycount, "time")}${
         toInt(albumDetails.userPlaycount) > 0
           ? `. ${perspective.upper.plusToHave} ${displayNumber(
               albumDetails.userPlaycount,
               "scrobble"
-            )} ${parseFloat(percentage) > 0 ? `(${percentage}%)` : ""}`
+            )} ${parseFloat(percentage) > 0 ? `(${percentage}%)` : ""}.`
           : ""
       }`
     );
+
+    await this.reply(embed);
   }
 }

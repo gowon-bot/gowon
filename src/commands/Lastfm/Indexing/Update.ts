@@ -3,6 +3,7 @@ import { LilacBaseCommand } from "../../../lib/Lilac/LilacBaseCommand";
 import { CommandRedirect } from "../../../lib/command/Command";
 import { Flag } from "../../../lib/context/arguments/argumentTypes/Flag";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { Emoji } from "../../../lib/emoji/Emoji";
 import { displayProgressBar } from "../../../lib/ui/displays";
 import Index from "./Index";
 
@@ -42,17 +43,19 @@ export default class Update extends LilacBaseCommand<typeof args> {
       discordID: this.author.id,
     });
 
-    const embed = this.authorEmbed()
-      .setHeader("Lilac updating")
-      .setDescription("Updating...");
+    const embed = this.minimalEmbed().setDescription(
+      "Updating your indexed data..."
+    );
 
-    await this.send(embed);
+    await this.reply(embed);
 
     const stopwatch = new Stopwatch().start();
 
     const subscription = observable.subscribe(async (progress) => {
       if (progress.page === progress.totalPages) {
-        await embed.setDescription("Done!").editMessage(this.ctx);
+        await embed
+          .setDescription(`${Emoji.checkmark} Done!`)
+          .editMessage(this.ctx);
 
         subscription.unsubscribe();
       } else if (stopwatch.elapsedInMilliseconds >= 3000) {

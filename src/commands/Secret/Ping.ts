@@ -30,7 +30,7 @@ export default class Ping extends Command {
         }
       }
 
-      await this.send(`\`\`\`
+      await this.reply(`\`\`\`
     ${columns.join(" ")}
   / ${" ".repeat(columns.join(" ").length)} \\
 ${matrix

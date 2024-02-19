@@ -13,6 +13,7 @@ import { Command, Variation } from "../../../lib/command/Command";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { DiscordUserArgument } from "../../../lib/context/arguments/argumentTypes/discord/DiscordUserArgument";
 import { displayUserTag } from "../../../lib/ui/displays";
+import { SuccessEmbed } from "../../../lib/ui/embeds/SuccessEmbed";
 import { EmbedView } from "../../../lib/ui/views/EmbedView";
 import { PermissionsChildCommand } from "./PermissionsChildCommand";
 
@@ -74,11 +75,11 @@ export class UserDisable extends PermissionsChildCommand<typeof args> {
     ) {
       const embed = await this.handleDisable(command, permission, user);
 
-      await this.send(embed);
+      await this.reply(embed);
     } else {
       const embed = await this.handleEnable(command, permission, user);
 
-      await this.send(embed);
+      await this.reply(embed);
     }
   }
 
@@ -109,13 +110,11 @@ export class UserDisable extends PermissionsChildCommand<typeof args> {
       }
     }
 
-    return this.authorEmbed()
-      .setHeader("Permissions user disable")
-      .setDescription(
-        `Successfully ${deletedAllow ? "un-allowed" : "disabled"} ${code(
-          command.name
-        )} for ${bold(displayUserTag(user))} (${user.id})`
-      );
+    return new SuccessEmbed().setDescription(
+      `Successfully ${deletedAllow ? "un-allowed" : "disabled"} ${code(
+        command.name
+      )} for ${bold(displayUserTag(user))} (${user.id})`
+    );
   }
 
   private async handleEnable(
@@ -146,12 +145,10 @@ export class UserDisable extends PermissionsChildCommand<typeof args> {
       }
     }
 
-    return this.authorEmbed()
-      .setHeader("Permissions enable")
-      .setDescription(
-        `Successfully ${allowed ? "allowed" : "re-enabled"} ${code(
-          command.name
-        )} for ${bold(displayUserTag(user))} (${user.id})`
-      );
+    return new SuccessEmbed().setDescription(
+      `Successfully ${allowed ? "allowed" : "re-enabled"} ${code(
+        command.name
+      )} for ${bold(displayUserTag(user))} (${user.id})`
+    );
   }
 }

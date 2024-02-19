@@ -1,4 +1,4 @@
-import { LogicError } from "../../../errors/errors";
+import { NoScrobblesForTrackError } from "../../../errors/commands/library";
 import { bold, italic } from "../../../helpers/discord";
 import { LastfmLinks } from "../../../helpers/lastfm/LastfmLinks";
 import { LilacBaseCommand } from "../../../lib/Lilac/LilacBaseCommand";
@@ -52,18 +52,17 @@ export default class TrackTopAlbums extends LilacBaseCommand<typeof args> {
     const trackCounts = response.trackCounts;
 
     if (trackCounts.length < 1) {
-      throw new LogicError(
-        `${perspective.plusToHave} no scrobbles for ${italic(
-          track.name
-        )} by ${bold(track.artist.name)}!`
+      throw new NoScrobblesForTrackError(
+        perspective,
+        track.artist.name,
+        track.name
       );
     }
 
     const totalScrobbles = trackCounts.reduce((sum, l) => sum + l.playcount, 0);
     const average = totalScrobbles / trackCounts.length;
 
-    const embed = this.authorEmbed()
-      .setHeader("Track top albums")
+    const embed = this.minimalEmbed()
       .setTitle(
         `${Emoji.usesIndexedDataLink} Top albums for ${italic(
           track.name
@@ -106,6 +105,6 @@ export default class TrackTopAlbums extends LilacBaseCommand<typeof args> {
       },
     });
 
-    await this.send(simpleScrollingEmbed);
+    await this.reply(simpleScrollingEmbed);
   }
 }

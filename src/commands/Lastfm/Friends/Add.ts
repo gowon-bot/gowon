@@ -13,6 +13,7 @@ import { DiscordIDMention } from "../../../lib/context/arguments/mentionTypes/Di
 import { LastFMMention } from "../../../lib/context/arguments/mentionTypes/LastFMMention";
 import { DiscordUsernameMention } from "../../../lib/context/arguments/mentionTypes/UsernameMention";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { Emoji } from "../../../lib/emoji/Emoji";
 import { displayUserTag } from "../../../lib/ui/displays";
 import { FriendsChildCommand } from "./FriendsChildCommand";
 
@@ -78,32 +79,30 @@ export class Add extends FriendsChildCommand<typeof args> {
       })
     ).filter((u) => !!u);
 
-    const lineConsolidator = new LineConsolidator();
-
-    lineConsolidator.addLines(
+    const description = new LineConsolidator().addLines(
       {
         shouldDisplay: !!addedFriends.length,
-        string: `**Successfully added**: ${addedFriends
+        string: `${Emoji.checkmark} **Successfully added**: ${addedFriends
           .map((f) => code(f!.friendUsername || f!.friend?.lastFMUsername!))
           .join(", ")}`,
       },
       {
         shouldDisplay: !!alreadyFriends.length,
-        string: `**Already friends**: ${alreadyFriends.map((f) =>
-          code(typeof f === "string" ? f : f.lastFMUsername)
+        string: `${Emoji.warning} **Already friends**: ${alreadyFriends.map(
+          (f) => code(typeof f === "string" ? f : f.lastFMUsername)
         )}`,
       },
       {
         shouldDisplay: !!notFound.length,
-        string: `**Not found**: ${notFound.map((f) => code(`${f}`))}`,
+        string: `${Emoji.error} **Not found**: ${notFound.map((f) =>
+          code(`${f}`)
+        )}`,
       }
     );
 
-    const embed = this.authorEmbed()
-      .setHeader("Friends add")
-      .setDescription(lineConsolidator.consolidate());
+    const embed = this.minimalEmbed().setDescription(description);
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 
   private async getFriendsFromArguments(): Promise<{

@@ -36,13 +36,11 @@ export class DM extends CrownsChildCommand<typeof args> {
       this.crownsService.count(this.ctx, dbUser.id),
     ]);
 
-    const embed = this.authorEmbed()
-      .setHeader("Crowns DM")
-      .setDescription(
-        `Sending you a list of ${perspective.possessive} crowns...`
-      );
+    const embed = this.minimalEmbed().setDescription(
+      `Sending you a list of ${perspective.possessive} crowns...`
+    );
 
-    await this.send(embed);
+    await this.reply(embed);
 
     const chunks = chunkArray(crowns, this.crownsPerMessage);
 

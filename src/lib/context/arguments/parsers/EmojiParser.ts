@@ -39,8 +39,6 @@ export class EmojiParser {
     const matches = split.matchAll(emojiRegex);
     const mentions = [] as EmojiMention[];
 
-    console.log(emojiRegex);
-
     for (const match of matches) {
       const matchString = match.shift();
 

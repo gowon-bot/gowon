@@ -1,3 +1,4 @@
+import { Emoji } from "../../../emoji/Emoji";
 import { displayNumber } from "../../../ui/displays";
 import { BaseNowPlayingComponent } from "../../base/BaseNowPlayingComponent";
 
@@ -15,7 +16,7 @@ export class ComboComponent extends BaseNowPlayingComponent<
     if (this.values.combo) {
       return {
         string: `${displayNumber(this.values.combo.artist.plays)} in a row ${
-          this.values.combo.artist.plays > 100 ? "🔥" : ""
+          this.values.combo.artist.plays > 100 ? Emoji.fire : ""
         }`,
         size: 1,
         placeAfter: ["artist-plays"],

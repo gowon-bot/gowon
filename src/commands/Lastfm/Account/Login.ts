@@ -1,12 +1,16 @@
 import { Message } from "discord.js";
 import { User } from "../../../database/entity/User";
 import { Stopwatch, sleep } from "../../../helpers";
-import { ReactionCollectorFilter } from "../../../helpers/discord";
+import {
+  ReactionCollectorFilter,
+  sanitizeForDiscord,
+} from "../../../helpers/discord";
 import { LastfmLinks } from "../../../helpers/lastfm/LastfmLinks";
 import { LilacBaseCommand } from "../../../lib/Lilac/LilacBaseCommand";
 import { Payload } from "../../../lib/context/Payload";
-import { EmojiRaw } from "../../../lib/emoji/Emoji";
+import { Emoji, EmojiRaw } from "../../../lib/emoji/Emoji";
 import { displayLink, displayProgressBar } from "../../../lib/ui/displays";
+import { InfoEmbed } from "../../../lib/ui/embeds/InfoEmbed";
 import { ConfirmationView } from "../../../lib/ui/views/ConfirmationView";
 import { EmbedView } from "../../../lib/ui/views/EmbedView";
 import { LastFMSession } from "../../../services/LastFM/converters/Misc";
@@ -27,13 +31,11 @@ export default class Login extends LilacBaseCommand {
 
     const url = LastfmLinks.authURL(this.lastFMService.apikey, token);
 
-    await this.send(
-      this.authorEmbed()
-        .setHeader("Login")
-        .setDescription("Please check your DMs for a login link")
+    await this.reply(
+      new InfoEmbed().setDescription("Please check your DMs for a login link")
     );
 
-    const embed = this.authorEmbed()
+    const embed = this.minimalEmbed()
       .setTitle("Login with Last.fm")
       .setDescription(
         `To login, ${displayLink(
@@ -56,7 +58,11 @@ export default class Login extends LilacBaseCommand {
     if (user) {
       const successEmbed = this.authorEmbed()
         .setDescription(
-          `Success! You've been logged in as ${user.lastFMUsername}\n\nWould you like to index your data?`
+          `${
+            Emoji.checkmark
+          } Success! You've been logged in as ${sanitizeForDiscord(
+            user.lastFMUsername
+          )}\n\nWould you like to index your data?`
         )
         .setFooter(this.indexingHelp);
 
@@ -91,7 +97,9 @@ export default class Login extends LilacBaseCommand {
 
     const subscription = observable.subscribe(async (progress) => {
       if (progress.page === progress.totalPages) {
-        await embed.setDescription("Done!").editMessage(this.ctx);
+        await embed
+          .setDescription(`${Emoji.checkmark} Done!`)
+          .editMessage(this.ctx);
 
         subscription.unsubscribe();
       } else if (stopwatch.elapsedInMilliseconds >= 3000) {
@@ -210,7 +218,9 @@ ${displayProgressBar(progress.page, progress.totalPages, {
       reactionCollector.on("end", async (_: any, reason) => {
         if (reason === "time") {
           embed
-            .setFooter("This login link has expired, please try again")
+            .setFooter(
+              `${Emoji.error} This login link has expired, please try again`
+            )
             .editMessage(this.ctx);
 
           resolve(undefined);

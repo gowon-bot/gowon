@@ -1,7 +1,6 @@
 import {
   EmbedFieldData,
   Emoji,
-  Message,
   MessageReaction,
   ReactionCollector,
   User,
@@ -12,7 +11,7 @@ import { EmojiRaw } from "../../emoji/Emoji";
 import { EmbedView } from "./EmbedView";
 import { View } from "./View";
 
-export interface ScrollingEmbedOptions {
+export interface ScrollinViewOptions {
   initialItems: string | EmbedFieldData[];
   totalPages: number;
   totalItems: number;
@@ -40,7 +39,7 @@ export function isEmbedFields(
 export class ScrollingView extends View {
   private currentPage = 1;
   private currentItems: string | EmbedFieldData[];
-  private options: ScrollingEmbedOptions;
+  private options: ScrollinViewOptions;
   private onPageChangeCallback: OnPageChangeCallback = () => "";
 
   private readonly leftArrow = EmojiRaw.arrowLeft;
@@ -51,7 +50,7 @@ export class ScrollingView extends View {
   constructor(
     private ctx: GowonContext,
     private embed: EmbedView,
-    options: Partial<ScrollingEmbedOptions>
+    options: Partial<ScrollinViewOptions>
   ) {
     super();
 
@@ -71,18 +70,14 @@ export class ScrollingView extends View {
 
     this.currentItems = this.options.initialItems;
     this.currentPage = this.options.startingPage;
+
+    this.hook("afterSend", this.react.bind(this));
   }
 
   asDiscordSendable(): EmbedView {
     this.generateEmbed();
 
-    return this.embed;
-  }
-
-  public async afterSend(message: Message<boolean>): Promise<void> {
-    this.sentMessage = message;
-
-    await this.react();
+    return this.embed.asDiscordSendable();
   }
 
   public onPageChange(callback: OnPageChangeCallback) {
@@ -139,7 +134,7 @@ export class ScrollingView extends View {
     );
   }
 
-  private async react() {
+  private async react(): Promise<void> {
     return new Promise(async (resolve, reject) => {
       const sentMessage = this.getSentMessage();
 
@@ -188,7 +183,7 @@ export class ScrollingView extends View {
 
           this.generateEmbed();
 
-          this.embed.editMessage(this.ctx);
+          this.editMessage(this.ctx);
         });
       });
 

@@ -1,5 +1,6 @@
 import { code } from "../../../helpers/discord";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
+import { InfoEmbed } from "../../../lib/ui/embeds/InfoEmbed";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 const args = {
@@ -24,6 +25,10 @@ export default class Whoami extends LastFMBaseCommand<typeof args> {
 
     const perspective = this.usersService.discordPerspective(this.author, user);
 
-    this.oldReply(`${perspective.plusToBe} logged in as ${code(username)}.`);
+    const embed = new InfoEmbed().setDescription(
+      `${perspective.upper.plusToBe} logged in as ${code(username)}.`
+    );
+
+    this.reply(embed);
   }
 }

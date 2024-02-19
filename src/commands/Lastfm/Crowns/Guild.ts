@@ -1,4 +1,4 @@
-import { bold } from "../../../helpers/discord";
+import { bold, sanitizeForDiscord } from "../../../helpers/discord";
 import { CommandRedirect } from "../../../lib/command/Command";
 import { Flag } from "../../../lib/context/arguments/argumentTypes/Flag";
 import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
@@ -67,9 +67,9 @@ export class Guild extends CrownsChildCommand<typeof args> {
       this.crownsService.countAllInServer(this.ctx, serverUsers),
     ]);
 
-    const embed = this.authorEmbed()
-      .setHeader("Crowns guild")
-      .setTitle(`${this.requiredGuild.name}'s crown leaderboard`);
+    const embed = this.minimalEmbed().setTitle(
+      `${this.requiredGuild.name}'s crown leaderboard`
+    );
 
     const scrollingEmbed = new ScrollingListView(this.ctx, embed, {
       items: holders,
@@ -77,7 +77,7 @@ export class Guild extends CrownsChildCommand<typeof args> {
       pageRenderer: this.renderPage(crownsCount),
     });
 
-    await this.send(scrollingEmbed);
+    await this.reply(scrollingEmbed);
   }
 
   private renderPage(crownsCount: number) {
@@ -93,7 +93,7 @@ export class Guild extends CrownsChildCommand<typeof args> {
         displayNumberedList(
           items.map(
             (ch) =>
-              `${ch.user.username} with ${bold(
+              `${sanitizeForDiscord(ch.user.username)} with ${bold(
                 displayNumber(ch.numberOfCrowns, "crown")
               )}`
           ),

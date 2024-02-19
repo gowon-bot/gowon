@@ -49,8 +49,7 @@ export default class MusicBrainz extends LastFMBaseCommand<typeof args> {
 
     const encodedKeywords = encodeURIComponent(keywords);
 
-    const embed = this.authorEmbed()
-      .setHeader("MusicBrainz search")
+    const embed = this.minimalEmbed()
       .setTitle(`MusicBrainz search for "${keywords}"`)
       .setURL(
         `https://musicbrainz.org/search?query=${encodedKeywords}&type=${
@@ -61,6 +60,6 @@ export default class MusicBrainz extends LastFMBaseCommand<typeof args> {
         "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/MusicBrainz_Logo_%282016%29.svg/1200px-MusicBrainz_Logo_%282016%29.svg.png"
       );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

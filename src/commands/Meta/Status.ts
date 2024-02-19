@@ -1,4 +1,3 @@
-import { LogicError } from "../../errors/errors";
 import { Stopwatch } from "../../helpers";
 import { Command } from "../../lib/command/Command";
 import { EmbedView } from "../../lib/ui/views/EmbedView";
@@ -17,7 +16,7 @@ export default class Status extends Command {
   lastFMService = ServiceRegistry.get(LastFMService);
 
   async run() {
-    const embed = this.authorEmbed()
+    const embed = this.minimalEmbed()
       .setTitle("Gowon status:")
       .setDescription(
         "**Latency**: External:\b```\nDiscord........pinging\nLast.fm........pinging\n```\nGowon:\n```\nMirrorball.....pinging\nLilac..........pinging\n```"
@@ -81,9 +80,9 @@ Lilac..........${this.displayLatency(lilacLatency)}
     stopwatch.start();
 
     try {
-      await this.send(embed);
+      await this.reply(embed);
     } catch {
-      throw new LogicError("Failed to send message...");
+      throw new Error("Failed to send message...");
     }
 
     stopwatch.stop();

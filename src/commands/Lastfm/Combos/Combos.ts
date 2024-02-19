@@ -53,7 +53,7 @@ export class Combos extends ComboChildCommand<typeof args> {
       throw new NoUserCombosError(perspective, this.prefix, artistName);
     }
 
-    const embed = this.authorEmbed().setHeader(
+    const embed = this.minimalEmbed().setTitle(
       artistName ? "Artist combos" : "Combos"
     );
 
@@ -68,6 +68,6 @@ export class Combos extends ComboChildCommand<typeof args> {
       overrides: { itemName: "combo" },
     });
 
-    await this.send(scrollingEmbed);
+    await this.reply(scrollingEmbed);
   }
 }

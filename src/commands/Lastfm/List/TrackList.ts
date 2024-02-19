@@ -14,7 +14,7 @@ export default class TrackList extends ListCommand {
   aliases = ["tlist", "toptracks", "toptrack", "tracks", "tl", "topsongs"];
 
   async run() {
-    const { requestable, username, perspective } = await this.getMentions();
+    const { requestable, perspective } = await this.getMentions();
 
     const topTracks = await this.lastFMService.topTracks(this.ctx, {
       username: requestable,
@@ -23,10 +23,9 @@ export default class TrackList extends ListCommand {
       ...this.dateRange?.asTimeframeParams,
     });
 
-    const messageEmbed = this.authorEmbed()
-      .setHeader("Top tracks")
+    const messageEmbed = this.minimalEmbed()
       .setTitle(
-        `Top tracks for \`${username}\` ${
+        `${perspective.upper.possessive} top tracks ${
           this.dateRange?.humanized() || this.humanizedPeriod
         }`
       )
@@ -44,6 +43,6 @@ export default class TrackList extends ListCommand {
           )
       );
 
-    await this.send(messageEmbed);
+    await this.reply(messageEmbed);
   }
 }

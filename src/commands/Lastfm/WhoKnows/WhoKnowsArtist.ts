@@ -107,8 +107,7 @@ export default class WhoKnowsArtist extends WhoKnowsBaseCommand<typeof args> {
       }
     );
 
-    const embed = this.authorEmbed()
-      .setHeader("Who knows artist")
+    const embed = this.minimalEmbed()
       .setTitle(
         `${Emoji.usesIndexedDataTitle} Who knows ${bold(artist.name)} ${
           this.isGlobal() ? "globally" : `in ${this.requiredGuild.name}`
@@ -127,6 +126,6 @@ export default class WhoKnowsArtist extends WhoKnowsBaseCommand<typeof args> {
         this.isGlobal() ? this.gowonIconURL : this.guild?.iconURL() ?? undefined
       );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

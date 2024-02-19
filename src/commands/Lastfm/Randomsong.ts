@@ -55,7 +55,7 @@ export default class Randomsong extends LastFMBaseCommand<typeof args> {
       }
     );
 
-    const embed = this.authorEmbed()
+    const embed = this.minimalEmbed()
       .setHeader(`Scrobbled by ${randomUser.lastFMUsername}`)
       .setTitle(randomSong.name)
       .setDescription(
@@ -64,6 +64,6 @@ export default class Randomsong extends LastFMBaseCommand<typeof args> {
       )
       .setThumbnail(albumCover || "");
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

@@ -57,8 +57,7 @@ export default class TagCombo extends LastFMBaseCommand<typeof args> {
           combo.comboCollection[b].plays - combo.comboCollection[a].plays
       );
 
-    const embed = this.authorEmbed()
-      .setHeader("Tag combo")
+    const embed = this.minimalEmbed()
       .setTitle(
         `Streak for ${username} (from recent ${displayNumber(
           comboCalculator.totalTracks,
@@ -71,7 +70,7 @@ export default class TagCombo extends LastFMBaseCommand<typeof args> {
           : "No consecutive plays found!"
       );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 
   private displayCombo(combo: TagComboType, tag: string): string {

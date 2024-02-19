@@ -39,8 +39,7 @@ export default class ColorCodedLyrics extends LastFMBaseCommand<typeof args> {
       keywords = `${nowplaying.artist} - ${nowplaying.name}`;
     }
 
-    const embed = this.authorEmbed()
-      .setHeader("Color Coded Lyrics search")
+    const embed = this.minimalEmbed()
       .setTitle(`Colorcodedlyrics search for "${keywords}"`)
       .setURL(
         `https://www.google.com/search?q=${encodeURIComponent(
@@ -51,6 +50,6 @@ export default class ColorCodedLyrics extends LastFMBaseCommand<typeof args> {
         "https://i1.wp.com/colorcodedlyrics.com/wp-content/uploads/2020/05/CCL-color-logo2020.png?fit=1666%2C1189&ssl=1"
       );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

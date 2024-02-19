@@ -14,7 +14,7 @@ export default class ArtistList extends ListCommand {
   aliases = ["alist", "topartists", "topartist", "artists", "al"];
 
   async run() {
-    const { requestable, username, perspective } = await this.getMentions();
+    const { requestable, perspective } = await this.getMentions();
 
     const topArtists = await this.lastFMService.topArtists(this.ctx, {
       username: requestable,
@@ -23,10 +23,9 @@ export default class ArtistList extends ListCommand {
       ...this.dateRange?.asTimeframeParams,
     });
 
-    const messageEmbed = this.authorEmbed()
-      .setHeader("Top artists")
+    const messageEmbed = this.minimalEmbed()
       .setTitle(
-        `Top artists for \`${username}\` ${
+        `${perspective.upper.possessive} top artists ${
           this.dateRange?.humanized() || this.humanizedPeriod
         }`
       )
@@ -45,6 +44,6 @@ export default class ArtistList extends ListCommand {
           )
       );
 
-    await this.send(messageEmbed);
+    await this.reply(messageEmbed);
   }
 }

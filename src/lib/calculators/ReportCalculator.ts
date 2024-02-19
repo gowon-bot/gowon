@@ -102,7 +102,7 @@ export class ReportCalculator {
       albums: Object.values(this.top.albums).length,
       tracks: Object.values(this.top.tracks).length,
       tags: Object.values(this.top.tags).length,
-      scrobbles: this.tracks.meta.totalPages,
+      scrobbles: this.tracks.meta.total,
     };
   }
 

@@ -41,15 +41,13 @@ export class TopPercent extends ProfileChildCommand<typeof args> {
 
     const toppct = await this.calculator.topPercent(percent);
 
-    const embed = (await this.profileEmbed())
-      .setHeader("Profile top percent")
-      .setDescription(
-        `${bold(toppct.count.asString)} artists (a total of ${displayNumber(
-          toppct.total.asNumber,
-          "scrobble"
-        )}) make up ${percent}% of ${perspective.possessive} scrobbles!`
-      );
+    const embed = this.profileEmbed().setDescription(
+      `${bold(toppct.count.asString)} artists (a total of ${displayNumber(
+        toppct.total.asNumber,
+        "scrobble"
+      )}) make up ${percent}% of ${perspective.possessive} scrobbles!`
+    );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

@@ -1,6 +1,6 @@
-import { LastFMBaseCommand } from "../LastFMBaseCommand";
-import { TagConsolidator } from "../../../lib/tags/TagConsolidator";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { TagConsolidator } from "../../../lib/tags/TagConsolidator";
+import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 export abstract class InfoCommand<
   T extends ArgumentsMap = {}

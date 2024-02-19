@@ -68,7 +68,7 @@ export class CrownDoesntExistError extends ClientError {
       } doesn't exist yet!` +
         (caseSensitive
           ? italic(
-              "Please ensure the artist exactly matches the artist name on the crown!"
+              " Please ensure the artist exactly matches the artist name on the crown!"
             )
           : "")
     );

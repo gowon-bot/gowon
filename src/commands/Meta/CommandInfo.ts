@@ -6,6 +6,7 @@ import { Flag } from "../../lib/context/arguments/argumentTypes/Flag";
 import { StringArgument } from "../../lib/context/arguments/argumentTypes/StringArgument";
 import { ArgumentsMap } from "../../lib/context/arguments/types";
 import { displayNumber } from "../../lib/ui/displays";
+import { HelpEmbed } from "../../lib/ui/embeds/HelpEmbed";
 import { Validation } from "../../lib/validation/ValidationChecker";
 import { validators } from "../../lib/validation/validators";
 import { MetaBaseCommand } from "./MetaBaseCommand";
@@ -55,9 +56,9 @@ export default class CommandInfo extends MetaBaseCommand<typeof args> {
 
     const count = await this.metaService.countCommandRuns(this.ctx, command.id);
 
-    const embed = this.authorEmbed()
-      .setHeader("Command info")
-      .setTitle(`Info about ${command.friendlyNameWithParent}`).setDescription(`
+    const embed = new HelpEmbed().setHeader(
+      `Info about ${command.friendlyNameWithParent}`
+    ).setDescription(`
       **Name**: ${command.name}${
       command.parentName ? `\n**Parent**: ${command.parentName}` : ""
     }
@@ -72,6 +73,6 @@ export default class CommandInfo extends MetaBaseCommand<typeof args> {
     
     Run ${displayNumber(count, "time")}`);
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

@@ -1,3 +1,4 @@
+import { HelpEmbed } from "../../../lib/ui/embeds/HelpEmbed";
 import { ProfileChildCommand } from "./ProfileChildCommand";
 
 export class Help extends ProfileChildCommand {
@@ -10,13 +11,11 @@ export class Help extends ProfileChildCommand {
   arguments = {} as any;
 
   async run() {
-    const embed = this.authorEmbed()
-      .setHeader("Profile help")
-      .setDescription(
-        `
+    const embed = new HelpEmbed().setHeader("Help with Profile").setDescription(
+      `
 The profile command allows you to see many stats about your last.fm account! The following statistics are available:
 
-Use \`${this.prefix}pf <statistic> optional_time_period\` to use one. Run \`${this.prefix}help pf <statistic>\` to see more about a specific one
+Use \`${this.prefix}pf <statistic> <optional_time_period>\` to use one. Run \`${this.prefix}help pf <statistic>\` to see more about a specific one
 
 **Statistics**:
 
@@ -35,8 +34,8 @@ Use \`${this.prefix}pf <statistic> optional_time_period\` to use one. Run \`${th
 \`breadth\` - Shows a user's breadth rating.
 \`playsover\` - Shows how many artists a user has over some common scrobble tiers
 `
-      );
+    );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

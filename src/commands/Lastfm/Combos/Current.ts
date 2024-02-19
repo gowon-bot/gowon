@@ -100,9 +100,7 @@ export class Current extends ComboChildCommand<typeof args> {
       }
     }
 
-    const lineConsolidator = new LineConsolidator();
-
-    lineConsolidator.addLines(
+    const description = new LineConsolidator().addLines(
       {
         string:
           this.displayCurrentCombo(combo, "artist") +
@@ -127,15 +125,13 @@ export class Current extends ComboChildCommand<typeof args> {
       )}_`
     );
 
-    const embed = this.authorEmbed()
-      .setHeader(
+    const embed = this.minimalEmbed()
+      .setTitle(
         `${perspective.upper.possessive.replace(/`/g, "")} ongoing streaks`
       )
-      .setHeaderURL(LastfmLinks.userPage(username))
+      .setURL(LastfmLinks.userPage(username))
       .setDescription(
-        combo.hasAnyConsecutivePlays()
-          ? lineConsolidator.consolidate()
-          : "No streaks found!"
+        combo.hasAnyConsecutivePlays() ? description : "No streaks found!"
       )
       .setFooter(
         comboSaved
@@ -169,7 +165,7 @@ export class Current extends ComboChildCommand<typeof args> {
       );
     }
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 
   private displayCurrentCombo(
@@ -183,8 +179,8 @@ export class Current extends ComboChildCommand<typeof args> {
         ? ` ${Emoji.gowonLitDance}`
         : combo[entity].plays >= 100
         ? this.isEnya(this.author.id)
-          ? "💹"
-          : "🔥"
+          ? Emoji.chart
+          : Emoji.fire
         : combo[entity].hitMax
         ? "+"
         : combo[entity].nowplaying

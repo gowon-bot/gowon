@@ -35,15 +35,13 @@ export default class ImageUpload extends LastFMBaseCommand<typeof args> {
       );
     }
 
-    const embed = this.authorEmbed()
-      .setHeader("Image upload")
-      .setDescription(
-        displayLink(
-          "Click here to upload an image",
-          LastfmLinks.imageUploadLink(artist, album)
-        )
-      );
+    const embed = this.minimalEmbed().setDescription(
+      displayLink(
+        "Click here to upload an image to Last.fm",
+        LastfmLinks.imageUploadLink(artist, album)
+      )
+    );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

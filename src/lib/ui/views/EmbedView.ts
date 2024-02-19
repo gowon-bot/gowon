@@ -18,6 +18,10 @@ export interface Transformable<T extends View> {
   new (embed: EmbedView): T;
 }
 
+export interface Convertable<T extends EmbedView> {
+  new (): T;
+}
+
 export type EmbedMutator = (
   properties: EmbedViewProperties
 ) => EmbedViewProperties;
@@ -37,11 +41,10 @@ export interface EmbedViewProperties {
   guildMember?: GuildMember;
   user?: User;
   fields?: EmbedFieldData[];
-  authorUsername?: string;
 }
 
 export class EmbedView extends View implements DiscordSendable {
-  private properties: EmbedViewProperties = {};
+  protected properties: EmbedViewProperties = {};
 
   constructor(options?: Partial<ViewOptions>) {
     super(options || {});
@@ -84,6 +87,12 @@ export class EmbedView extends View implements DiscordSendable {
     return new klass(this);
   }
 
+  convert<T extends EmbedView>(klass: Convertable<T>): T {
+    return new klass()
+      .mergeProperties(this.getProperties())
+      .setSentMessage(this.sentMessage);
+  }
+
   mutate(mutator: EmbedMutator): EmbedView {
     this.properties = { ...this.properties, ...mutator(this.getProperties()) };
     return this;
@@ -92,8 +101,7 @@ export class EmbedView extends View implements DiscordSendable {
   mutateIf(predicate: boolean, mutator: EmbedMutator): EmbedView {
     if (!predicate) return this;
 
-    this.properties = { ...this.properties, ...mutator(this.getProperties()) };
-    return this;
+    return this.mutate(mutator);
   }
 
   setTitle(title: string): this {
@@ -106,7 +114,7 @@ export class EmbedView extends View implements DiscordSendable {
     return this;
   }
 
-  setHeader(header: string): this {
+  setHeader(header: string | undefined): this {
     this.properties.header = header;
     return this;
   }
@@ -187,11 +195,6 @@ export class EmbedView extends View implements DiscordSendable {
     return this;
   }
 
-  setAuthorUsername(username: string): this {
-    this.properties.authorUsername = username;
-    return this;
-  }
-
   getAuthorUser(): User | undefined {
     return this.properties.user;
   }
@@ -200,16 +203,19 @@ export class EmbedView extends View implements DiscordSendable {
     return this.properties;
   }
 
-  private getDescription(): string | undefined {
+  mergeProperties(properties: EmbedViewProperties): this {
+    this.properties = { ...this.properties, ...properties };
+    return this;
+  }
+
+  protected getDescription(): string | undefined {
     return this.properties.description instanceof LineConsolidator
       ? this.properties.description.consolidate()
       : this.properties.description;
   }
 
   private getAuthor(): MessageEmbedAuthor | undefined {
-    const username =
-      this.properties.authorUsername ||
-      (this.getUser() ? displayUserTag(this.getUser()) : "");
+    const username = this.getUser() ? displayUserTag(this.getUser()) : "";
 
     const headerText = username
       ? this.properties.header

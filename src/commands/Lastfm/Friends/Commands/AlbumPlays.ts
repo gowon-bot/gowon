@@ -71,8 +71,7 @@ export class AlbumPlays extends FriendsChildCommand<typeof args> {
       0
     );
 
-    const embed = this.authorEmbed()
-      .setHeader("Friends album plays")
+    const embed = this.minimalEmbed()
       .setTitle(
         `Your friends plays of ${albumInfo.name} by ${albumInfo.artist}`
       )
@@ -84,6 +83,6 @@ export class AlbumPlays extends FriendsChildCommand<typeof args> {
         )} of this album`
       );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

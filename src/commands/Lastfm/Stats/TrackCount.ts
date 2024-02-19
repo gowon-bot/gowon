@@ -37,14 +37,12 @@ export default class TrackCount extends LastFMBaseCommand<typeof args> {
       timePeriod
     );
 
-    const embed = this.authorEmbed()
-      .setHeader("Track count")
-      .setDescription(
-        `${perspective.plusToHave} scrobbled ${bold(
-          displayNumber(trackCount, "track")
-        )} ${humanizePeriod(timePeriod)}`
-      );
+    const embed = this.minimalEmbed().setDescription(
+      `${perspective.upper.plusToHave} scrobbled ${bold(
+        displayNumber(trackCount, "track")
+      )} ${humanizePeriod(timePeriod)}`
+    );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

@@ -15,7 +15,7 @@ export class ServerReport extends MetaChildCommand {
 
     const scrollingEmbed = new ScrollingListView(
       this.ctx,
-      this.authorEmbed().setTitle("Gowon guild report"),
+      this.minimalEmbed().setTitle("Gowon guild report"),
       {
         pageSize: 20,
         items: servers,

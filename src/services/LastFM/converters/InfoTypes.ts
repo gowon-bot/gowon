@@ -1,12 +1,19 @@
 import {
-  RawArtistInfo,
-  RawTrackInfo,
   RawAlbumInfo,
-  RawUserInfo,
+  RawArtistInfo,
   RawTagInfo,
+  RawTrackInfo,
+  RawUserInfo,
 } from "../LastFMService.types";
 import { BaseLastFMConverter, ImageCollection } from "./BaseConverter";
-export type LastFMUserType = "user" | "subscriber" | "alum" | "mod" | "staff";
+
+export enum LastFMUserType {
+  User = "user",
+  Subscriber = "subscriber",
+  Alum = "alum",
+  Mod = "mod",
+  Staff = "staff",
+}
 
 export class ArtistInfo extends BaseLastFMConverter {
   name: string;

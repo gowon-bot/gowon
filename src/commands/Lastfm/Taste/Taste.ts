@@ -118,9 +118,7 @@ export default class Taste extends TasteCommand<typeof args> {
       this.dateRange?.humanized() || humanizedPeriod
     }**\n\n${percentageMatch}`;
 
-    const embed = this.authorEmbed()
-      .setHeader("Taste")
-      .setDescription(embedDescription);
+    const embed = this.minimalEmbed().setDescription(embedDescription);
 
     const scrollingEmbed = new ScrollingListView(this.ctx, embed, {
       items: tasteMatch.artists,
@@ -134,6 +132,6 @@ export default class Taste extends TasteCommand<typeof args> {
       },
     });
 
-    await this.send(scrollingEmbed);
+    await this.reply(scrollingEmbed);
   }
 }

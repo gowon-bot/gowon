@@ -1,4 +1,4 @@
-import { LogicError } from "../../../errors/errors";
+import { InvalidTopArgumentError } from "../../../errors/commands/profile";
 import { bold } from "../../../helpers/discord";
 import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
 import { TimePeriodArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/TimePeriodArgument";
@@ -35,8 +35,9 @@ export class SumTop extends ProfileChildCommand<typeof args> {
 
     const { perspective } = await this.getMentions();
 
-    if (top > 1000 || top < 2)
-      throw new LogicError("Please enter a valid number (between 2 and 1000)");
+    if (top > 1000 || top < 2) {
+      throw new InvalidTopArgumentError();
+    }
 
     // Cache the top artists and user info responses
     await Promise.all([
@@ -49,16 +50,14 @@ export class SumTop extends ProfileChildCommand<typeof args> {
       this.calculator.sumTopPercent(top),
     ]);
 
-    const embed = (await this.profileEmbed())
-      .setHeader("Profile sum top")
-      .setDescription(
-        `${perspective.upper.possessive} top ${bold(
-          displayNumber(top, "artist")
-        )} make up ${bold(displayNumber(sumtop.asNumber, "scrobble"))} (${bold(
-          sumtoppct.asString
-        )}% of ${perspective.possessivePronoun} total scrobbles!)`
-      );
+    const embed = this.profileEmbed().setDescription(
+      `${perspective.upper.possessive} top ${bold(
+        displayNumber(top, "artist")
+      )} make up ${bold(displayNumber(sumtop.asNumber, "scrobble"))} (${bold(
+        sumtoppct.asString
+      )}% of ${perspective.possessivePronoun} total scrobbles!)`
+    );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

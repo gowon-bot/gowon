@@ -103,8 +103,7 @@ export class Fish extends FishyChildCommand<typeof args> {
       }
     );
 
-    const embed = this.authorEmbed()
-      .setHeader("Fishy fish")
+    const embed = this.minimalEmbed()
       .setColour(fishy.rarity.colour)
       .setDescription(description);
 
@@ -112,7 +111,7 @@ export class Fish extends FishyChildCommand<typeof args> {
       embed.setFooter(`See ${this.prefix}fishypedia to learn about this fish`);
     }
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 
   private async getQuest(senderFishyProfile: FishyProfile): Promise<{
@@ -159,16 +158,16 @@ export class Fish extends FishyChildCommand<typeof args> {
     }
 
     if (quest.isMilestone && quest.isCompleted) {
-      const milestoneCompletedEmbed = this.authorEmbed()
-        .setHeader("Fishy level up")
-        .setDescription(displayFishyLevelUp(fishyProfile.level + 1));
+      const milestoneCompletedEmbed = this.minimalEmbed().setDescription(
+        displayFishyLevelUp(fishyProfile.level + 1)
+      );
 
       await this.fishyProgressionService.incrementQuestProgress(
         quest,
         fishyProfile
       );
 
-      this.send(milestoneCompletedEmbed);
+      this.reply(milestoneCompletedEmbed);
     }
 
     return { questCompleted, madeQuestProgress };

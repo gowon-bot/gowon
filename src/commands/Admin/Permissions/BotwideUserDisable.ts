@@ -8,6 +8,7 @@ import { Variation } from "../../../lib/command/Command";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { DiscordUserArgument } from "../../../lib/context/arguments/argumentTypes/discord/DiscordUserArgument";
 import { displayUserTag } from "../../../lib/ui/displays";
+import { SuccessEmbed } from "../../../lib/ui/embeds/SuccessEmbed";
 import { PermissionsChildCommand } from "./PermissionsChildCommand";
 
 const args = {
@@ -63,15 +64,13 @@ export class BotwideUserDisable extends PermissionsChildCommand<typeof args> {
         permission
       );
 
-      const embed = this.authorEmbed()
-        .setHeader("Permissions user disable")
-        .setDescription(
-          `Successfully disabled ${code(command.name)} for ${bold(
-            displayUserTag(user)
-          )} (${user.id}) bot-wide`
-        );
+      const embed = new SuccessEmbed().setDescription(
+        `Successfully disabled ${code(command.name)} for ${bold(
+          displayUserTag(user)
+        )} (${user.id}) bot-wide`
+      );
 
-      await this.send(embed);
+      await this.reply(embed);
     } else {
       await this.permissionsService.destroyPermission(
         this.ctx,
@@ -79,15 +78,13 @@ export class BotwideUserDisable extends PermissionsChildCommand<typeof args> {
         permission
       );
 
-      const embed = this.authorEmbed()
-        .setHeader("Permissions user enable")
-        .setDescription(
-          `Successfully re-enabled ${code(command.name)} for ${bold(
-            displayUserTag(user)
-          )} (${user.id}) bot-wide`
-        );
+      const embed = new SuccessEmbed().setDescription(
+        `Successfully re-enabled ${code(command.name)} for ${bold(
+          displayUserTag(user)
+        )} (${user.id}) bot-wide`
+      );
 
-      await this.send(embed);
+      await this.reply(embed);
     }
   }
 }

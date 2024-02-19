@@ -18,8 +18,6 @@ export default class AmIScrobbling extends LastFMBaseCommand {
       senderRequestable
     );
 
-    await this.oldReply(
-      nowPlaying.isNowPlaying ? "probably." : "probably not."
-    );
+    await this.reply(nowPlaying.isNowPlaying ? "Probably." : "Probably not.");
   }
 }

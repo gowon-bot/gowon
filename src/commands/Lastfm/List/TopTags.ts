@@ -52,13 +52,11 @@ export default class TagList extends LastFMBaseCommand<typeof args> {
     const artists = topArtists.artists.map((a) => ({ name: a.name }));
     const response = await this.lilacTagsService.list(this.ctx, { artists });
 
-    const embed = this.authorEmbed()
-      .setHeader("Top tags")
-      .setTitle(
-        `${perspective.possessive} top tags ${
-          dateRange?.humanized() || humanizePeriod(timePeriod)
-        }`
-      );
+    const embed = this.minimalEmbed().setTitle(
+      `${perspective.upper.possessive} top tags ${
+        dateRange?.humanized() || humanizePeriod(timePeriod)
+      }`
+    );
 
     const tagConsolidator = new TagConsolidator();
 
@@ -80,6 +78,6 @@ export default class TagList extends LastFMBaseCommand<typeof args> {
       overrides: { itemName: "tag" },
     });
 
-    await this.send(scrollingEmbed);
+    await this.reply(scrollingEmbed);
   }
 }

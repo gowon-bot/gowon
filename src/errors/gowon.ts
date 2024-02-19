@@ -29,3 +29,13 @@ export class CannotEditUserError extends ClientError {
     super("You don't have permissions to edit this user");
   }
 }
+
+export class OmitTriangularBracketsFromPrefixError extends ClientError {
+  name = "OmitTriangularBracketsFromPrefixError";
+
+  constructor() {
+    super(
+      "Please omit the triangular brackets!\neg. `@Gowon prefix <!>` should be `@Gowon prefix !`"
+    );
+  }
+}

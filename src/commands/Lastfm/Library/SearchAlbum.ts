@@ -1,4 +1,4 @@
-import { LogicError } from "../../../errors/errors";
+import { TooManySearchResultsError } from "../../../errors/commands/library";
 import { bold, code, italic } from "../../../helpers/discord";
 import { LastfmLinks } from "../../../helpers/lastfm/LastfmLinks";
 import { Variation } from "../../../lib/command/Command";
@@ -46,23 +46,19 @@ export default class SearchAlbum extends SearchCommand {
     );
 
     if (filtered.length !== 0 && filtered.length === topAlbums.albums.length) {
-      throw new LogicError(
-        "too many search results, try narrowing down your query..."
-      );
+      throw new TooManySearchResultsError();
     }
 
-    const embed = this.authorEmbed()
-      .setHeader("Album search")
-      .setTitle(
-        `Search results in ${perspective.possessive} top ${displayNumber(
-          topAlbums.albums.length,
-          "album"
-        )}`
-      );
+    const embed = this.minimalEmbed().setTitle(
+      `Search results in ${perspective.possessive} top ${displayNumber(
+        topAlbums.albums.length,
+        "album"
+      )}`
+    );
 
     if (!filtered.length) {
       embed.setDescription(`No results found for ${code(keywords)}!`);
-      await this.send(embed);
+      await this.reply(embed);
       return;
     }
 
@@ -87,6 +83,6 @@ export default class SearchAlbum extends SearchCommand {
       overrides: { itemName: "result" },
     });
 
-    await this.send(scrollingEmbed);
+    await this.reply(scrollingEmbed);
   }
 }

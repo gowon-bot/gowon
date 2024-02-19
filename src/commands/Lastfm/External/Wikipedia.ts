@@ -40,14 +40,13 @@ export default class Wikipedia extends LastFMBaseCommand<typeof args> {
 
     const encodedKeywords = encodeURIComponent(keywords);
 
-    const embed = this.authorEmbed()
-      .setHeader("Wikipedia search")
+    const embed = this.minimalEmbed()
       .setTitle(`Wikipedia search for "${keywords}"`)
       .setURL(`https://en.wikipedia.org/w/index.php?search=${encodedKeywords}`)
       .setThumbnail(
         "https://upload.wikimedia.org/wikipedia/commons/5/53/Wikipedia-logo-en-big.png"
       );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

@@ -1,5 +1,3 @@
-import { HexColorString } from "discord.js";
-import { uppercaseFirstLetter } from "../../../helpers/string";
 import { ProfileStatsCalculator } from "../../../lib/calculators/ProfileStatsCalculator";
 import { TimePeriodArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/TimePeriodArgument";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
@@ -40,35 +38,6 @@ export abstract class ProfileChildCommand<
     20_000, 15_000, 10_000, 5000, 2000, 1000, 500, 250, 100, 50, 10, 1,
   ];
 
-  async getAuthorDetails(): Promise<{
-    badge: string;
-    colour: string;
-    image: string;
-  }> {
-    const image = (await this.calculator.userInfo()).images.get("large")!;
-
-    const userType = (await this.calculator.userInfo()).type;
-    const badge =
-      userType !== "user"
-        ? userType === "subscriber"
-          ? " [Pro]"
-          : ` [${uppercaseFirstLetter(userType)}]`
-        : "";
-
-    const colour =
-      userType === "alum"
-        ? "#9804fe"
-        : userType === "mod"
-        ? "#fb9904"
-        : userType === "staff"
-        ? "#b90100"
-        : userType === "subscriber"
-        ? "black"
-        : "#ffffff";
-
-    return { colour, badge, image };
-  }
-
   async beforeRun() {
     const {
       senderRequestable,
@@ -99,13 +68,8 @@ export abstract class ProfileChildCommand<
     );
   }
 
-  protected async profileEmbed(useFooter = true): Promise<EmbedView> {
-    const { badge, colour } = await this.getAuthorDetails();
-
-    return this.authorEmbed()
-      .setTitle(this.username + badge)
-      .setColour(colour as HexColorString)
-      .setFooter(useFooter ? this.getFooter() : "");
+  protected profileEmbed(useFooter = true): EmbedView {
+    return this.minimalEmbed().setFooter(useFooter ? this.getFooter() : "");
   }
 
   protected getFooter(): string {

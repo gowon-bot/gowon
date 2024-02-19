@@ -49,9 +49,7 @@ export default class UserInfo extends Command<typeof args> {
         }),
       ]);
 
-    const lineConsolidator = new LineConsolidator();
-
-    lineConsolidator.addLines(
+    const description = new LineConsolidator().addLines(
       {
         string: `${dbUser.roles
           ?.map((r) => `${Emoji[r]} ${roles[r].friendlyName}`)
@@ -104,10 +102,10 @@ export default class UserInfo extends Command<typeof args> {
       }
     );
 
-    const embed = this.authorEmbed()
-      .setHeader("User info")
-      .setDescription(lineConsolidator.consolidate());
+    const embed = this.minimalEmbed()
+      .setTitle("User info")
+      .setDescription(description);
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

@@ -17,14 +17,12 @@ export class Breadth extends ProfileChildCommand {
 
     const breadth = await this.calculator.breadth();
 
-    const embed = (await this.profileEmbed())
-      .setHeader("Profile breadth")
-      .setDescription(
-        `${perspective.upper.possessive} breadth rating is ${bold(
-          displayNumber(breadth.rating.toFixed(1))
-        )} _(${breadth.ratingString})_`
-      );
+    const embed = this.profileEmbed().setDescription(
+      `${perspective.upper.possessive} breadth rating is ${bold(
+        displayNumber(breadth.rating.toFixed(1))
+      )} _(${breadth.ratingString})_`
+    );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

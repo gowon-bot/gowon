@@ -55,8 +55,6 @@ export class Tag extends CrownsChildCommand<typeof args> {
       genres
     );
 
-    const embed = this.authorEmbed().setHeader("Crowns tag");
-
     const description =
       italic(
         `${
@@ -64,23 +62,27 @@ export class Tag extends CrownsChildCommand<typeof args> {
         } top crowns for the following genres: ${genres.join(", ")}`
       ) + "\n\n";
 
-    const scrollingEmbed = new ScrollingListView(this.ctx, embed, {
-      items: filteredCrowns,
-      pageSize: 15,
-      pageRenderer(crowns, { offset }) {
-        return (
-          description +
-          displayNumberedList(
-            crowns.map(
-              (c) => `${c.artistName} - **${displayNumber(c.plays)}**`
-            ),
-            offset
-          )
-        );
-      },
-      overrides: { itemName: "crown" },
-    });
+    const scrollingEmbed = new ScrollingListView(
+      this.ctx,
+      this.minimalEmbed(),
+      {
+        items: filteredCrowns,
+        pageSize: 15,
+        pageRenderer(crowns, { offset }) {
+          return (
+            description +
+            displayNumberedList(
+              crowns.map(
+                (c) => `${c.artistName} - **${displayNumber(c.plays)}**`
+              ),
+              offset
+            )
+          );
+        },
+        overrides: { itemName: "crown" },
+      }
+    );
 
-    await this.send(scrollingEmbed);
+    await this.reply(scrollingEmbed);
   }
 }

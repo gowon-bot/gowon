@@ -117,7 +117,7 @@ export class Preview extends NowPlayingConfigChildCommand<typeof args> {
       mockDependencies
     );
 
-    const embed = this.authorEmbed()
+    const embed = this.minimalEmbed()
       .setDescription(
         `by ${bold(links.artist, false)}` +
           (nowPlaying.album ? ` from ${italic(links.album, false)}` : "")
@@ -141,7 +141,7 @@ export class Preview extends NowPlayingConfigChildCommand<typeof args> {
       .setUsernameDisplay(usernameDisplay)
       .setComponents(renderedComponents);
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 
   private resolveMockDependencies(

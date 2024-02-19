@@ -77,8 +77,7 @@ export class Remove extends NowPlayingConfigChildCommand<typeof args> {
       }
     );
 
-    const embed = this.authorEmbed()
-      .setHeader("Config remove")
+    const embed = this.minimalEmbed()
       .setDescription(description)
       .setFooter(
         ignored.length
@@ -86,6 +85,6 @@ export class Remove extends NowPlayingConfigChildCommand<typeof args> {
           : ""
       );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

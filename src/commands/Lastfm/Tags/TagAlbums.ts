@@ -91,11 +91,9 @@ export default class TagAlbums extends LastFMBaseCommand<typeof args> {
           )})\n\n`
         : "Couldn't find any matching albums!");
 
-    const embed = this.authorEmbed()
-      .setHeader("Tag albums")
-      .setTitle(
-        `${perspective.upper.possessive} top ${tagTopAlbums.meta.tag} albums`
-      );
+    const embed = this.minimalEmbed().setTitle(
+      `${perspective.upper.possessive} top ${tagTopAlbums.meta.tag} albums`
+    );
 
     const scrollingEmbed = new ScrollingListView(this.ctx, embed, {
       items: overlap,
@@ -118,7 +116,7 @@ export default class TagAlbums extends LastFMBaseCommand<typeof args> {
       overrides: { itemName: "track" },
     });
 
-    await this.send(scrollingEmbed);
+    await this.reply(scrollingEmbed);
   }
 
   private calculateOverlap(

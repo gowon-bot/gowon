@@ -1,5 +1,6 @@
 import { code } from "../../../../helpers/discord";
 import { LineConsolidator } from "../../../../lib/LineConsolidator";
+import { InfoEmbed } from "../../../../lib/ui/embeds/InfoEmbed";
 import { NowPlayingConfigChildCommand } from "./NowPlayingConfigChildCommand";
 
 export class View extends NowPlayingConfigChildCommand {
@@ -20,19 +21,20 @@ export class View extends NowPlayingConfigChildCommand {
       senderUser!
     );
 
-    const embed = this.authorEmbed()
-      .setHeader("Config view")
+    const embed = new InfoEmbed()
       .setFooter(
         `This config only applies to your ${this.prefix}fmx calls\nSee ${this.prefix}npc help for more info`
       )
       .setDescription(
         new LineConsolidator().addLines({
           shouldDisplay: !!config.length,
-          string: config.map((c) => code(c)).join(", "),
-          else: "Empty config (your footer will be blank)",
+          string:
+            "Your nowplaying config is: " +
+            config.map((c) => code(c)).join(", "),
+          else: "Empty nowplaying config (your footer will be blank)",
         })
       );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

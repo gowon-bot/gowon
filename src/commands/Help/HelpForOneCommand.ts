@@ -1,6 +1,7 @@
 import { CommandNotFoundError } from "../../errors/errors";
 import { flatDeep } from "../../helpers";
-import { bold, code, italic, subheader } from "../../helpers/discord";
+import { bold, code, italic } from "../../helpers/discord";
+import { uppercaseFirstLetter } from "../../helpers/string";
 import { Command } from "../../lib/command/Command";
 import { ParentCommand } from "../../lib/command/ParentCommand";
 import { BaseArgument } from "../../lib/context/arguments/argumentTypes/BaseArgument";
@@ -15,6 +16,7 @@ import { Emoji } from "../../lib/emoji/Emoji";
 import { LineConsolidator } from "../../lib/LineConsolidator";
 import { PermissionsService } from "../../lib/permissions/PermissionsService";
 import { displayCommandIcons } from "../../lib/ui/command";
+import { HelpEmbed } from "../../lib/ui/embeds/HelpEmbed";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 
 const args = {
@@ -37,7 +39,7 @@ export default class HelpForOneCommand extends Command<typeof args> {
 
     if (!embed) return;
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 
   private async helpForOneCommand(input: string) {
@@ -61,8 +63,9 @@ export default class HelpForOneCommand extends Command<typeof args> {
       throw new CommandNotFoundError();
     }
 
-    if (command instanceof ParentCommand)
+    if (command instanceof ParentCommand) {
       return this.showHelpForParentCommand(command);
+    }
 
     const commandName = command.friendlyNameWithParent || command.friendlyName;
 
@@ -77,13 +80,7 @@ export default class HelpForOneCommand extends Command<typeof args> {
       })
       .join("\n");
 
-    const lineConsolidator = new LineConsolidator();
-
-    lineConsolidator.addLines(
-      subheader(
-        (command.access?.role ? `${Emoji[command.access.role]} ` : "") +
-          commandName
-      ),
+    const lineConsolidator = new LineConsolidator().addLines(
       displayCommandIcons(command),
       "",
       italic(command.description + command.extraDescription, false),
@@ -130,11 +127,9 @@ export default class HelpForOneCommand extends Command<typeof args> {
       }
     );
 
-    const embed = this.authorEmbed()
-      .setHeader(`Help with ${commandName}`)
+    return new HelpEmbed()
+      .setHeader(`${uppercaseFirstLetter(commandName)}`)
       .setDescription(lineConsolidator.consolidate());
-
-    return embed;
   }
 
   private async showHelpForParentCommand(command: ParentCommand) {
@@ -151,9 +146,7 @@ export default class HelpForOneCommand extends Command<typeof args> {
       [command.prefixes].flat().sort((a, b) => a.length - b.length)[0] ||
       command.friendlyName;
 
-    const lineConsolidator = new LineConsolidator();
-
-    lineConsolidator.addLines(
+    const lineConsolidator = new LineConsolidator().addLines(
       (command.access?.role ? `${Emoji[command.access.role]} ` : "") +
         bold(command.friendlyName) +
         ":",
@@ -179,7 +172,7 @@ export default class HelpForOneCommand extends Command<typeof args> {
         .join("\n")
     );
 
-    return this.authorEmbed()
+    return new HelpEmbed()
       .setHeader(`Help with ${command.friendlyName}`)
       .setDescription(lineConsolidator.consolidate());
   }

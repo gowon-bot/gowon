@@ -6,8 +6,10 @@ import { StringArgument } from "../../../../lib/context/arguments/argumentTypes/
 import { EmojisArgument } from "../../../../lib/context/arguments/argumentTypes/discord/EmojisArgument";
 import { EmojiMention } from "../../../../lib/context/arguments/parsers/EmojiParser";
 import { ArgumentsMap } from "../../../../lib/context/arguments/types";
-import { extractEmojiName } from "../../../../lib/emoji/Emoji";
+import { Emoji, extractEmojiName } from "../../../../lib/emoji/Emoji";
 import { SettingsService } from "../../../../lib/settings/SettingsService";
+import { SuccessEmbed } from "../../../../lib/ui/embeds/SuccessEmbed";
+import { WarningEmbed } from "../../../../lib/ui/embeds/WarningEmbed";
 import { ConfirmationView } from "../../../../lib/ui/views/ConfirmationView";
 import { EmojiService } from "../../../../services/Discord/EmojiService";
 import { ServiceRegistry } from "../../../../services/ServicesRegistry";
@@ -60,25 +62,25 @@ export class React extends NowPlayingConfigChildCommand<typeof args> {
         }) || "[]"
       ) as string[];
 
-      const embed = this.authorEmbed()
-        .setHeader("Reacts")
-        .setDescription(
-          `Choose which reactions Gowon should react with when you \`${this.prefix}fm\`.\nSet them with \`${this.prefix}reacts emoji1 emoji2 ...emoji5\` and use \`${this.prefix}reacts clear\` to clear them!` +
-            (reactions.length
-              ? `\n\n**You have the following reactions set**:\n${reactions
-                  .map((r) => this.gowonClient.displayEmoji(r))
-                  .join(extraWideSpace)}`
-              : "")
-        );
+      const embed = this.minimalEmbed().setDescription(
+        `Choose which reactions Gowon should react with when you \`${this.prefix}fm\`.\nSet them with \`${this.prefix}reacts emoji1 emoji2 ...emoji5\` and use \`${this.prefix}reacts clear\` to clear them!` +
+          (reactions.length
+            ? `\n\n${
+                Emoji.info
+              } **You have the following reactions set**:\n${reactions
+                .map((r) => this.gowonClient.displayEmoji(r))
+                .join(extraWideSpace)}`
+            : "")
+      );
 
-      await this.send(embed);
+      await this.reply(embed);
     }
   }
 
   private async handleClear() {
-    const embed = this.authorEmbed()
-      .setHeader("Nowplaying config reacts")
-      .setDescription("Are you sure you want to clear your reacts?");
+    const embed = new WarningEmbed().setDescription(
+      "Are you sure you want to clear your nowplaying reacts?"
+    );
 
     const confirmationEmbed = new ConfirmationView(this.ctx, embed);
 
@@ -88,6 +90,7 @@ export class React extends NowPlayingConfigChildCommand<typeof args> {
       });
 
       await embed
+        .convert(SuccessEmbed)
         .setDescription("Successfully cleared your reactions!")
         .editMessage(this.ctx);
     }
@@ -110,8 +113,7 @@ export class React extends NowPlayingConfigChildCommand<typeof args> {
       );
     }
 
-    const lineConsolidator = new LineConsolidator();
-    lineConsolidator.addLines(
+    const description = new LineConsolidator().addLines(
       {
         shouldDisplay: !!valid.length,
         string: `**Gowon will react with the following emojis**:\n${valid
@@ -130,9 +132,7 @@ export class React extends NowPlayingConfigChildCommand<typeof args> {
       }
     );
 
-    const embed = this.authorEmbed()
-      .setHeader("Reacts")
-      .setDescription(lineConsolidator.consolidate());
+    const embed = this.minimalEmbed().setDescription(description);
 
     if (invalid.length) {
       embed.setFooter(
@@ -140,6 +140,6 @@ export class React extends NowPlayingConfigChildCommand<typeof args> {
       );
     }
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

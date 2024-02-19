@@ -1,5 +1,6 @@
 import { mean } from "mathjs";
-import { LogicError, UnknownMirrorballError } from "../../../../errors/errors";
+import { NoImportedRatingsFound } from "../../../../errors/commands/library";
+import { UnknownMirrorballError } from "../../../../errors/errors";
 import { toInt } from "../../../../helpers/lastfm/";
 import { extraWideSpace } from "../../../../helpers/specialCharacters";
 import { standardMentions } from "../../../../lib/context/arguments/mentionTypes/mentions";
@@ -54,15 +55,12 @@ export class Stats extends RateYourMusicIndexingChildCommand<
     }
 
     if (!response.ratings.ratings.length) {
-      throw new LogicError(
-        `You don't have any ratings imported yet! To import your ratings see \`${this.prefix}ryms help\``
-      );
+      throw new NoImportedRatingsFound(this.prefix);
     }
 
     const ratingsCounts = this.getRatingsCounts(response.ratings.ratings);
 
-    const embed = this.authorEmbed()
-      .setHeader("RateYourMusic stats")
+    const embed = this.minimalEmbed()
       .setTitle(`${perspective.upper.possessive} RateYourMusic statistics`)
       .setDescription(
         `_${displayNumber(
@@ -82,7 +80,7 @@ ${Object.entries(ratingsCounts)
   .join("\n")}`
       );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 
   private getRatingsCounts(

@@ -82,7 +82,7 @@ export abstract class NowPlayingBaseCommand<
 
     const albumCover = await this.getAlbumCover(recentTracks.first());
 
-    const embed = this.authorEmbed()
+    const embed = this.minimalEmbed()
       .transform(NowPlayingEmbed)
       .setDbUser(dbUser)
       .setNowPlaying(recentTracks.first(), tagConsolidator)
@@ -95,7 +95,7 @@ export abstract class NowPlayingBaseCommand<
       .mutateIf(this.extract.didMatch("mf"), reverseNowPlayingEmbed)
       .mutateIf(this.variationWasUsed("badTyping"), fmz);
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 
   async getMentions(options?: Partial<GetMentionsOptions>): Promise<Mentions> {

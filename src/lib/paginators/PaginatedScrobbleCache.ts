@@ -9,10 +9,7 @@ import { LilacLibraryService } from "../../services/lilac/LilacLibraryService";
 import { GowonContext } from "../context/Context";
 import { displayNumberedList } from "../ui/displays";
 import { EmbedView } from "../ui/views/EmbedView";
-import {
-  ScrollingEmbedOptions,
-  ScrollingView,
-} from "../ui/views/ScrollingView";
+import { ScrollinViewOptions, ScrollingView } from "../ui/views/ScrollingView";
 import { PaginatedCache } from "./PaginatedCache";
 
 export class PaginatedLilacScrobbleCache extends PaginatedCache<LilacScrobble> {
@@ -50,7 +47,7 @@ export class PaginatedLilacScrobbleCache extends PaginatedCache<LilacScrobble> {
     embed: EmbedView,
     firstPage: LilacScrobblesPage,
     generateTableRow: (scrobble: LilacScrobble) => string,
-    overrides: Partial<ScrollingEmbedOptions> = {}
+    overrides: Partial<ScrollinViewOptions> = {}
   ): Promise<ScrollingView> {
     const scrollingEmbed = new ScrollingView(this.ctx, embed, {
       initialItems: this.generateTable(

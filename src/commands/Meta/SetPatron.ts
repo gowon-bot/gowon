@@ -1,9 +1,10 @@
-import { LogicError } from "../../errors/errors";
+import { CouldNotSetUserAsPatronError } from "../../errors/user";
 import { Command, Variation } from "../../lib/command/Command";
 import { DiscordUserArgument } from "../../lib/context/arguments/argumentTypes/discord/DiscordUserArgument";
 import { UserStringArgument } from "../../lib/context/arguments/argumentTypes/UserStringArgument";
 import { DiscordIDMention } from "../../lib/context/arguments/mentionTypes/DiscordIDMention";
 import { ArgumentsMap } from "../../lib/context/arguments/types";
+import { SuccessEmbed } from "../../lib/ui/embeds/SuccessEmbed";
 import { validators } from "../../lib/validation/validators";
 
 const args = {
@@ -47,19 +48,15 @@ export default class SetPatron extends Command<typeof args> {
         !this.variationWasUsed("unset")
       );
     } catch (e) {
-      throw new LogicError(
-        `Something went wrong setting that user as a patron`
-      );
+      throw new CouldNotSetUserAsPatronError();
     }
 
-    const embed = this.authorEmbed()
-      .setHeader("Set patron")
-      .setDescription(
-        `Successfully ${
-          this.variationWasUsed("unset") ? "un" : ""
-        }set ${id} as a patron!`
-      );
+    const embed = new SuccessEmbed().setDescription(
+      `Successfully ${
+        this.variationWasUsed("unset") ? "un" : ""
+      }set ${id} as a patron!`
+    );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

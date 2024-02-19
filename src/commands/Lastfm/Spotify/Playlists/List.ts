@@ -34,9 +34,7 @@ export class List extends PlaylistChildCommand {
       playlists.items
     );
 
-    const embed = this.authorEmbed()
-      .setHeader("Spotify playlists")
-      .setTitle("Your Spotify playlists");
+    const embed = this.minimalEmbed().setTitle("Your Spotify playlists");
 
     const simpleScrollingEmbed = new ScrollingListView(this.ctx, embed, {
       items: playlists.items,
@@ -60,6 +58,6 @@ export class List extends PlaylistChildCommand {
       overrides: { itemName: "playlist" },
     });
 
-    await this.send(simpleScrollingEmbed);
+    await this.reply(simpleScrollingEmbed);
   }
 }

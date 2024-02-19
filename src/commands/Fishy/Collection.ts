@@ -41,9 +41,8 @@ export class Collection extends FishyChildCommand<typeof args> {
         .filter((f) => f && f.hidden) as Fishy[]),
     ];
 
-    const embed = this.authorEmbed()
-      .setHeader("Fishy collection")
-      .setTitle(`${perspective.upper.possessive} fishy collection`);
+    const embed = this.minimalEmbed()
+    .setTitle(`${perspective.upper.possessive} fishy collection`);
 
     const scrollingEmbed = new ScrollingListView(this.ctx, embed, {
       items: fishyDisplayList,
@@ -72,6 +71,6 @@ export class Collection extends FishyChildCommand<typeof args> {
       },
     });
 
-    await this.send(scrollingEmbed);
+    await this.reply(scrollingEmbed);
   }
 }

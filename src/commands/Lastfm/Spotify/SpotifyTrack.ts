@@ -12,7 +12,7 @@ const args = {
       "The keywords to search Spotify with (defaults to your currently playing track)",
   }),
   ...standardMentions,
-} satisfies ArgumentsMap
+} satisfies ArgumentsMap;
 
 export default class SpotifyTrack extends SpotifyBaseCommand<typeof args> {
   idSeed = "iz*one chaewon";
@@ -50,6 +50,6 @@ export default class SpotifyTrack extends SpotifyBaseCommand<typeof args> {
       );
     }
 
-    await this.send(spotifyTrackSearch.bestResult.externalURLs.spotify);
+    await this.reply(spotifyTrackSearch.bestResult.externalURLs.spotify);
   }
 }

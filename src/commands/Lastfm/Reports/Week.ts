@@ -74,14 +74,13 @@ export default class Week extends LastFMBaseCommand<typeof args> {
     await tagConsolidator.saveServerBannedTagsInContext(this.ctx);
     tagConsolidator.addTags(this.ctx, week.top.tags);
 
-    const embed = this.authorEmbed()
-      .setHeader("Report week")
-      .setTitle(`${perspective.upper.possessive} week`)
+    const embed = this.minimalEmbed()
+      .setTitle(`${perspective.upper.possessive} week on Last.fm`)
       .transform(ReportEmbed)
       .setDateRange(sub(new Date(), { weeks: 1 }), new Date())
       .setReport(week)
       .setTags(tagConsolidator);
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

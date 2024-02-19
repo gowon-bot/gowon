@@ -13,6 +13,7 @@ import { code, mentionChannel } from "../../../helpers/discord";
 import { Command, Variation } from "../../../lib/command/Command";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { ChannelArgument } from "../../../lib/context/arguments/argumentTypes/discord/ChannelArgument";
+import { SuccessEmbed } from "../../../lib/ui/embeds/SuccessEmbed";
 import { EmbedView } from "../../../lib/ui/views/EmbedView";
 import { PermissionsChildCommand } from "./PermissionsChildCommand";
 
@@ -76,11 +77,11 @@ export class ChannelDisable extends PermissionsChildCommand<typeof args> {
     ) {
       const embed = await this.handleDisable(command, permission, channel);
 
-      await this.send(embed);
+      await this.reply(embed);
     } else {
       const embed = await this.handleEnable(command, permission, channel);
 
-      await this.send(embed);
+      await this.reply(embed);
     }
   }
 
@@ -111,13 +112,11 @@ export class ChannelDisable extends PermissionsChildCommand<typeof args> {
       }
     }
 
-    return this.authorEmbed()
-      .setHeader("Permissions channel disable")
-      .setDescription(
-        `Successfully ${deletedAllow ? "un-allowed" : "disabled"} ${code(
-          command.name
-        )} in ${mentionChannel(channel.id)}`
-      );
+    return new SuccessEmbed().setDescription(
+      `Successfully ${deletedAllow ? "un-allowed" : "disabled"} ${code(
+        command.name
+      )} in ${mentionChannel(channel.id)}`
+    );
   }
 
   private async handleEnable(
@@ -148,12 +147,10 @@ export class ChannelDisable extends PermissionsChildCommand<typeof args> {
       }
     }
 
-    return this.authorEmbed()
-      .setHeader("Permissions channel enable")
-      .setDescription(
-        `Successfully ${allowed ? "allowed" : "enabled"} ${code(
-          command.name
-        )} in ${mentionChannel(channel.id)}`
-      );
+    return new SuccessEmbed().setDescription(
+      `Successfully ${allowed ? "allowed" : "enabled"} ${code(
+        command.name
+      )} in ${mentionChannel(channel.id)}`
+    );
   }
 }

@@ -1,4 +1,5 @@
 import { displayLink } from "../../../lib/ui/displays";
+import { HelpEmbed } from "../../../lib/ui/embeds/HelpEmbed";
 import { SpotifyChildCommand } from "./SpotifyChildCommand";
 
 export class Help extends SpotifyChildCommand {
@@ -9,10 +10,11 @@ export class Help extends SpotifyChildCommand {
   usage = ["public", "private"];
 
   async run() {
-    const embed = this.authorEmbed().setHeader("Spotify help").setDescription(`
+    const embed = new HelpEmbed().setHeader("Help with Spotify")
+      .setDescription(`
 You can see a list of all Spotify commands at ${displayLink(
-      "gowon.ca/commands/spotify",
-      "https://gowon.ca/commands/spotify"
+      "gowon.bot/commands/spotify",
+      "https://gowon.bot/commands/spotify"
     )}.
 
 To connect your Spotify account, run \`${this.prefix}slogin\`
@@ -20,6 +22,6 @@ To change your Spotify privacy, see \`${this.prefix}sprivacy\`
 To see help for managing Spotify playlists, see \`${this.prefix}help pl\`
 `);
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

@@ -27,7 +27,7 @@ export class Per extends ProfileChildCommand {
       this.calculator.tracksPerAlbum(),
     ]);
 
-    const embed = (await this.profileEmbed()).setHeader("Profile averages")
+    const embed = this.profileEmbed()
       .setDescription(`${perspective.upper.regularVerb(
       "listen"
     )} to an average of...
@@ -35,6 +35,6 @@ export class Per extends ProfileChildCommand {
       ${bold(tpa.asString)} tracks per artist!
       ${bold(tpl.asString)} tracks per album!`);
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

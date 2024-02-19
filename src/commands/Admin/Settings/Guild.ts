@@ -1,5 +1,6 @@
 import config from "../../../../config.json";
 import { bold } from "../../../helpers/discord";
+import { InfoEmbed } from "../../../lib/ui/embeds/InfoEmbed";
 import { SettingsChildCommand } from "./SettingsChildCommand";
 
 export class Guild extends SettingsChildCommand {
@@ -15,17 +16,15 @@ export class Guild extends SettingsChildCommand {
   guildRequired = true;
 
   async run() {
-    const embed = this.authorEmbed()
-      .setHeader("Guild settings")
-      .setDescription(
-        `The guild settings for ${bold(
-          this.requiredGuild.name
-        )} can be found at:\n${
-          config.gowonWebsiteURL +
-          `/dashboard/settings/guild/${this.requiredGuild.id}`
-        }`
-      );
+    const embed = new InfoEmbed().setDescription(
+      `The guild settings for ${bold(
+        this.requiredGuild.name
+      )} can be found at:\n${
+        config.gowonWebsiteURL +
+        `/dashboard/settings/guild/${this.requiredGuild.id}`
+      }`
+    );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

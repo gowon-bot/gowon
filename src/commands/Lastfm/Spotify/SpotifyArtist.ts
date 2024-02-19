@@ -11,7 +11,7 @@ const args = {
       "The keywords to search Spotify with (defaults to your currently playing artist)",
   }),
   ...standardMentions,
-} satisfies ArgumentsMap
+} satisfies ArgumentsMap;
 
 export default class SpotifyArtist extends SpotifyBaseCommand<typeof args> {
   idSeed = "iz*one chaeyeon";
@@ -50,6 +50,6 @@ export default class SpotifyArtist extends SpotifyBaseCommand<typeof args> {
       );
     }
 
-    await this.send(spotifyArtistSearch.bestResult.externalURLs.spotify);
+    await this.reply(spotifyArtistSearch.bestResult.externalURLs.spotify);
   }
 }

@@ -1,4 +1,5 @@
-import { LogicError, MirrorballError } from "../../../../errors/errors";
+import { NoScrobblesOfArtistError } from "../../../../errors/commands/library";
+import { MirrorballError } from "../../../../errors/errors";
 import { bold, italic } from "../../../../helpers/discord";
 import { LastfmLinks } from "../../../../helpers/lastfm/LastfmLinks";
 import { standardMentions } from "../../../../lib/context/arguments/mentionTypes/mentions";
@@ -72,14 +73,13 @@ export default class ArtistTopTracks extends MirrorballBaseCommand<
     const { topTracks, artist } = response.artistTopTracks;
 
     if (topTracks.length < 1) {
-      throw new LogicError(
-        `${perspective.plusToHave} no scrobbles of any songs from ${bold(
-          artist.name
-        )}!${await this.redirectHelp(this.parsedArguments.artist)}`
+      throw new NoScrobblesOfArtistError(
+        perspective,
+        artist.name,
+        await this.redirectHelp(this.parsedArguments.artist)
       );
     }
-    const embed = this.authorEmbed()
-      .setHeader("Artist top tracks")
+    const embed = this.minimalEmbed()
       .setTitle(
         `${Emoji.usesIndexedDataLink} Top ${bold(
           artist.name
@@ -121,7 +121,7 @@ export default class ArtistTopTracks extends MirrorballBaseCommand<
       },
     });
 
-    await this.send(simpleScrollingEmbed);
+    await this.reply(simpleScrollingEmbed);
   }
 
   private async redirectHelp(artistName?: string): Promise<string> {

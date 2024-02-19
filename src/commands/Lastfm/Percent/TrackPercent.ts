@@ -48,15 +48,17 @@ export default class TrackPercent extends LastFMBaseCommand<typeof args> {
       }),
     ]);
 
-    await this.oldReply(
-      `${perspective.possessive} ${displayNumber(
+    const embed = this.minimalEmbed().setDescription(
+      `${perspective.upper.possessive} ${displayNumber(
         trackInfo.userPlaycount,
         "play"
       )} of ${bold(trackInfo.name)} represent ${bold(
         calculatePercent(trackInfo.userPlaycount, artistInfo.userPlaycount)
       )}% of ${perspective.possessivePronoun} ${bold(
         artistInfo.name
-      )} scrobbles`
+      )} scrobbles.`
     );
+
+    await this.reply(embed);
   }
 }

@@ -2,6 +2,8 @@ import { bullet, extraWideSpace } from "../../../helpers/specialCharacters";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { toggleValues } from "../../../lib/settings/SettingValues";
+import { InfoEmbed } from "../../../lib/ui/embeds/InfoEmbed";
+import { SuccessEmbed } from "../../../lib/ui/embeds/SuccessEmbed";
 import { SpotifyChildCommand } from "./SpotifyChildCommand";
 
 const args = {
@@ -33,15 +35,13 @@ ${extraWideSpace}${bullet} \`public\` means Gowon will show this information.`;
         userID: this.author.id,
       });
 
-      const embed = this.authorEmbed()
-        .setTitle("Spotify privacy")
-        .setDescription(
-          `Your current spotify privacy is: \`${
-            currentPrivacy === toggleValues.ON ? "private" : "public"
-          }\`\n\n${this.privacyHelp}`
-        );
+      const embed = new InfoEmbed().setDescription(
+        `Your current Spotify privacy is: \`${
+          currentPrivacy === toggleValues.ON ? "private" : "public"
+        }\`\n\n${this.privacyHelp}`
+      );
 
-      await this.send(embed);
+      await this.reply(embed);
     } else {
       await this.settingsService.set(
         this.ctx,
@@ -50,13 +50,11 @@ ${extraWideSpace}${bullet} \`public\` means Gowon will show this information.`;
         privacy === "public" ? toggleValues.OFF : toggleValues.ON
       );
 
-      const embed = this.authorEmbed()
-        .setTitle("Spotify privacy")
-        .setDescription(
-          `Your new Spotify privacy is: \`${privacy}\`\n\n${this.privacyHelp}`
-        );
+      const embed = new SuccessEmbed().setDescription(
+        `Successfully set your Spotify privacy as: \`${privacy}\`\n\n${this.privacyHelp}`
+      );
 
-      await this.send(embed);
+      await this.reply(embed);
     }
   }
 }

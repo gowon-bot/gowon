@@ -83,7 +83,7 @@ export class NowPlayingService extends BaseService {
     dbUser: User,
     extras: {
       components?: NowPlayingComponent[];
-      dependencies?: Record<string, any>;
+      dependencies?: Partial<DependencyMap>;
     } = {}
   ): Promise<RenderedComponent[]> {
     const builder = new NowPlayingBuilder(config);

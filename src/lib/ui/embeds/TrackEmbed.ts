@@ -55,9 +55,8 @@ export class TrackEmbed extends View {
   }
 
   addDescription(description: string): this {
-    this.additionalDescription = (
-      (this.additionalDescription || "") + description
-    ).trim();
+    this.additionalDescription =
+      (this.additionalDescription || "") + description;
 
     return this;
   }

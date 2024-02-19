@@ -61,7 +61,7 @@ export default class Milestone extends LastFMBaseCommand<typeof args> {
       track
     );
 
-    const embed = this.authorEmbed()
+    const embed = this.minimalEmbed()
       .setHeader(
         `${perspective.upper.possessive} ${getOrdinal(milestone)} track was:`
       )
@@ -70,6 +70,6 @@ export default class Milestone extends LastFMBaseCommand<typeof args> {
       .setAlbumCover(albumCover ? Image.fromURL(albumCover) : undefined)
       .addDescription(`\n\nScrobbled at ${displayDateTime(track.scrobbledAt)}`);
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

@@ -1,9 +1,11 @@
 import { bold, code } from "../../helpers/discord";
+import { LineConsolidator } from "../../lib/LineConsolidator";
 import { Command } from "../../lib/command/Command";
 import { StringArgument } from "../../lib/context/arguments/argumentTypes/StringArgument";
 import { ArgumentsMap } from "../../lib/context/arguments/types";
 import { PermissionsService } from "../../lib/permissions/PermissionsService";
 import { displayNumber } from "../../lib/ui/displays";
+import { HelpEmbed } from "../../lib/ui/embeds/HelpEmbed";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 
 const args = {
@@ -43,15 +45,15 @@ export default class SearchCommands extends Command<typeof args> {
 
     const foundCommands = this.commandRegistry.search(commands, keywords);
 
-    const embed = this.authorEmbed()
-      .setHeader("Command search")
-      .setTitle(`Search results for ${code(keywords)}`)
+    const embed = new HelpEmbed()
+      .setHeader(`Search results for ${code(keywords)}`)
       .setDescription(
-        foundCommands
-          .map((c) => this.displayCommand(c, keywords))
-          .slice(0, 12)
-          .sort()
-          .join("\n")
+        new LineConsolidator().addLines(
+          ...foundCommands
+            .map((c) => this.displayCommand(c, keywords))
+            .slice(0, 12)
+            .sort()
+        )
       )
       .setFooter(
         `Searched ${displayNumber(
@@ -59,11 +61,11 @@ export default class SearchCommands extends Command<typeof args> {
           "command"
         )}, found ${displayNumber(foundCommands.length, "result")}` +
           (foundCommands.length > 12
-            ? "\nTry narrowing down your search to see more results, or go to https://gowon.ca/commands"
+            ? "\nTry narrowing down your search to see more results, or go to https://gowon.bot/commands"
             : "")
       );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 
   private displayCommand(command: Command, keywords: string) {

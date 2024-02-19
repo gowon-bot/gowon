@@ -103,6 +103,13 @@ export const Settings = {
       FMUsernameDisplay.DISCORD_USERNAME_WITH_LINK,
     ],
   }),
+  replyPings: new UserScopedSetting("reply_pings", {
+    friendlyName: "Reply pings",
+    description: "Control whether Gowon pings you when replying",
+    category: "Configuration",
+    type: SettingType.Toggle,
+    default: toggleValues.OFF,
+  }),
 
   // Bot scoped
   issueMode: new BotScopedSetting("issue_mode", {

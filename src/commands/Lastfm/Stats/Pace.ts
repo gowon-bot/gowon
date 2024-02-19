@@ -79,19 +79,17 @@ export default class Pace extends LastFMBaseCommand<typeof args> {
       overallMessage: `since ${perspective.pronoun} began scrobbling`,
     });
 
-    const embed = this.authorEmbed()
-      .setHeader("Pace")
-      .setDescription(
-        `At a rate of **${displayNumber(
-          pace.scrobbleRate.toFixed(2),
-          "scrobble"
-        )}/hour** ${humanizedDateRange}, ${
-          perspective.name
-        } will hit **${displayNumber(pace.milestone, "**scrobble")} on ${bold(
-          displayDate(pace.prediction)
-        )} (${ago(pace.prediction)})`
-      );
+    const embed = this.minimalEmbed().setDescription(
+      `At a rate of **${displayNumber(
+        pace.scrobbleRate.toFixed(2),
+        "scrobble"
+      )}/hour** ${humanizedDateRange}, ${
+        perspective.name
+      } will hit **${displayNumber(pace.milestone, "**scrobble")} on ${bold(
+        displayDate(pace.prediction)
+      )} (${ago(pace.prediction)})`
+    );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

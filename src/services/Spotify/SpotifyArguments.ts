@@ -163,10 +163,7 @@ export class SpotifyArguments extends BaseService<SpotifyArgumentsContext> {
       )
       .setThumbnail(track.album.images.largest.url);
 
-    const confirmationEmbed = new ConfirmationView(
-      ctx,
-      embed
-    ).withRejectionReact();
+    const confirmationEmbed = new ConfirmationView(ctx, embed).allowRejection();
 
     return await confirmationEmbed.awaitConfirmation(ctx);
   }

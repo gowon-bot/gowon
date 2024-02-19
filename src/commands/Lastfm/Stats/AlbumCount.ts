@@ -37,14 +37,12 @@ export default class AlbumCount extends LastFMBaseCommand<typeof args> {
       timePeriod
     );
 
-    const embed = this.authorEmbed()
-      .setHeader("Album count")
-      .setDescription(
-        `${perspective.plusToHave} scrobbled ${bold(
-          displayNumber(albumCount, "album")
-        )} ${humanizedPeriod}`
-      );
+    const embed = this.minimalEmbed().setDescription(
+      `${perspective.upper.plusToHave} scrobbled ${bold(
+        displayNumber(albumCount, "album")
+      )} ${humanizedPeriod}`
+    );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

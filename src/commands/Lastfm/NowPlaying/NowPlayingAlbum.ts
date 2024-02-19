@@ -28,7 +28,7 @@ export default class NowPlayingAlbum extends NowPlayingBaseCommand {
 
     const nowPlaying = recentTracks.first();
 
-    const albumInfo = this.lastFMService.albumInfo(this.ctx, {
+    const albumInfo = await this.lastFMService.albumInfo(this.ctx, {
       artist: nowPlaying.artist,
       album: nowPlaying.album,
       username: requestable,
@@ -45,6 +45,7 @@ export default class NowPlayingAlbum extends NowPlayingBaseCommand {
       dbUser,
       username
     );
+
     const renderedComponents = await this.nowPlayingService.renderComponents(
       this.ctx,
       this.getConfig(),
@@ -60,7 +61,7 @@ export default class NowPlayingAlbum extends NowPlayingBaseCommand {
 
     const albumCover = await this.getAlbumCover(recentTracks.first());
 
-    const embed = this.authorEmbed()
+    const embed = this.minimalEmbed()
       .transform(NowPlayingEmbed)
       .setDbUser(dbUser)
       .setNowPlaying(recentTracks.first(), tagConsolidator)
@@ -70,6 +71,6 @@ export default class NowPlayingAlbum extends NowPlayingBaseCommand {
       .setComponents(renderedComponents)
       .setCustomReacts(await this.getCustomReactions());
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

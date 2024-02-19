@@ -6,8 +6,7 @@ export default class Issues extends Command {
   secretCommand = true;
   description = "Displays the github issues link for the bot";
   subcategory = "developer";
+  archived = true;
 
-  async run() {
-    await this.send("https://github.com/jivison/gowon/issues");
-  }
+  async run() {}
 }

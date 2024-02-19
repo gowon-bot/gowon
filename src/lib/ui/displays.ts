@@ -35,7 +35,7 @@ export function displayNumber(
 export function displayLink(
   text: string,
   link: string,
-  sanitize = true
+  sanitize = false
 ): string {
   return `[${sanitize ? sanitizeForDiscord(text) : text}](${cleanURL(link)})`;
 }

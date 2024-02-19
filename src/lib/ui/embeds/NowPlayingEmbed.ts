@@ -37,15 +37,18 @@ export class NowPlayingEmbed extends View {
 
   constructor(private baseEmbed: EmbedView = new EmbedView()) {
     super();
+
+    this.baseEmbed.hook("afterSend", this.reactWithCustom.bind(this));
   }
 
   asDiscordSendable(): EmbedView {
     const links = LastfmLinks.generateTrackLinksForEmbed(this.nowPlaying);
 
     return this.baseEmbed
-      .setAuthorUsername(this.usernameDisplay)
       .setHeader(
-        `${this.nowPlaying.isNowPlaying ? "Now playing" : "Last scrobbled"}`
+        `${
+          this.nowPlaying.isNowPlaying ? "Now playing" : "Last scrobbled"
+        } for ${this.usernameDisplay}`
       )
       .setHeaderURL(
         this.usernameDisplay === FMUsernameDisplay.DISCORD_USERNAME
@@ -102,11 +105,6 @@ export class NowPlayingEmbed extends View {
     return this;
   }
 
-  public async afterSend(message: Message<boolean>): Promise<void> {
-    await this.reactWithCustom(message);
-    await super.afterSend(message);
-  }
-
   private getFooter(): string {
     const rendered = this.organizeRows(
       this.components.filter((s) => !!s.string && s.size !== undefined)
@@ -140,6 +138,8 @@ export class NowPlayingEmbed extends View {
   }
 
   private async reactWithCustom(message: Message): Promise<void> {
+    console.log("Reacting with custom...");
+
     const badReactions: string[] = [];
 
     for (const reaction of this.customReactions) {

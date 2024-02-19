@@ -31,8 +31,8 @@ export default class ArtistPage extends LastFMBaseCommand<typeof args> {
       username: requestable,
     });
 
-    this.send(
-      `${bold(artistDetails.name)} on last.fm: ${cleanURL(artistDetails.url)}`
+    this.reply(
+      `${bold(artistDetails.name)} on Last.fm: ${cleanURL(artistDetails.url)}`
     );
   }
 }

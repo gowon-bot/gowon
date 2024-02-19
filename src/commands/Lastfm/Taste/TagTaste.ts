@@ -107,8 +107,7 @@ export default class TagTaste extends TasteCommand<typeof args> {
       tasteMatch.percent
     )})_`;
 
-    const embed = this.authorEmbed()
-      .setHeader("Tag taste")
+    const embed = this.minimalEmbed()
       .setTitle(
         `${tag} taste comparison for ${sanitizeForDiscord(
           userOneUsername
@@ -128,6 +127,6 @@ export default class TagTaste extends TasteCommand<typeof args> {
       },
     });
 
-    await this.send(scrollingEmbed);
+    await this.reply(scrollingEmbed);
   }
 }

@@ -1,15 +1,20 @@
-import { LogicError } from "../../../../errors/errors";
+import {
+  MentionedUserHasNoRatingsError,
+  NoSharedRatingsError,
+  NoUserToCompareRatingsToError,
+} from "../../../../errors/commands/library";
 import { NoRatingsError } from "../../../../errors/external/rateYourMusic";
-import { bold, italic, sanitizeForDiscord } from "../../../../helpers/discord";
+import {
+  bold,
+  italic,
+  mentionGuildMember,
+  sanitizeForDiscord,
+} from "../../../../helpers/discord";
 import { emDash } from "../../../../helpers/specialCharacters";
 import { Flag } from "../../../../lib/context/arguments/argumentTypes/Flag";
 import { standardMentions } from "../../../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../../../lib/context/arguments/types";
-import {
-  displayNumber,
-  displayRating,
-  displayUserTag,
-} from "../../../../lib/ui/displays";
+import { displayNumber, displayRating } from "../../../../lib/ui/displays";
 import { ScrollingListView } from "../../../../lib/ui/views/ScrollingListView";
 import { ServiceRegistry } from "../../../../services/ServicesRegistry";
 import { TasteService } from "../../../../services/taste/TasteService";
@@ -60,9 +65,7 @@ export class Taste extends RateYourMusicIndexingChildCommand<
     });
 
     if (!discordUser || discordUser?.id === this.author.id) {
-      throw new LogicError(
-        "Please mention a user to compare your ratings with!"
-      );
+      throw new NoUserToCompareRatingsToError();
     }
 
     const ratings = await this.query({
@@ -73,7 +76,7 @@ export class Taste extends RateYourMusicIndexingChildCommand<
     if (!ratings.sender.ratings?.length) {
       throw new NoRatingsError(this.prefix);
     } else if (!ratings.mentioned.ratings?.length) {
-      throw new LogicError("The user you mentioned doesn't have any ratings!");
+      throw new MentionedUserHasNoRatingsError();
     }
 
     const tasteMatch = this.tasteService.ratingsTaste(
@@ -83,14 +86,12 @@ export class Taste extends RateYourMusicIndexingChildCommand<
     );
 
     if (!tasteMatch.ratings.length) {
-      throw new LogicError(
-        `You and ${displayUserTag(
-          discordUser
-        )} share no common ratings! (try using the --lenient flag to allow for larger differences)`
-      );
+      throw new NoSharedRatingsError(discordUser.id);
     }
 
-    const embedDescription = `Comparing ${displayNumber(
+    const embedDescription = `Taste comparison for ${mentionGuildMember(
+      this.author.id
+    )} and ${mentionGuildMember(discordUser.id)}\n\nComparing ${displayNumber(
       ratings.sender.pageInfo.recordCount
     )} and ${displayNumber(
       ratings.mentioned.pageInfo.recordCount,
@@ -99,24 +100,22 @@ export class Taste extends RateYourMusicIndexingChildCommand<
       tasteMatch.percent
     }% match found (${this.tasteService.compatibility(tasteMatch.percent)})_`;
 
-    const embed = this.authorEmbed()
-      .setHeader("RateYourMusic taste")
-      .setTitle(
-        `Taste comparison for ${displayUserTag(
-          this.author
-        )} and ${displayUserTag(discordUser)}`
-      );
+    const scrollingEmbed = new ScrollingListView(
+      this.ctx,
+      this.minimalEmbed(),
+      {
+        items: tasteMatch.ratings,
+        pageSize: 10,
+        pageRenderer: (ratings) => {
+          return (
+            italic(embedDescription) + "\n\n" + this.generateTable(ratings)
+          );
+        },
+        overrides: { itemName: "rating" },
+      }
+    );
 
-    const scrollingEmbed = new ScrollingListView(this.ctx, embed, {
-      items: tasteMatch.ratings,
-      pageSize: 10,
-      pageRenderer: (ratings) => {
-        return italic(embedDescription) + "\n\n" + this.generateTable(ratings);
-      },
-      overrides: { itemName: "rating" },
-    });
-
-    await this.send(scrollingEmbed);
+    await this.reply(scrollingEmbed);
   }
 
   private generateTable(ratings: RatingPair[]): string {

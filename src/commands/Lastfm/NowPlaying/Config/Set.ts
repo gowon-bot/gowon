@@ -2,6 +2,7 @@ import { code } from "../../../../helpers/discord";
 import { CommandRedirect } from "../../../../lib/command/Command";
 import { StringArrayArgument } from "../../../../lib/context/arguments/argumentTypes/StringArrayArgument";
 import { ArgumentsMap } from "../../../../lib/context/arguments/types";
+import { Emoji } from "../../../../lib/emoji/Emoji";
 import {
   componentMap,
   sortConfigOptions,
@@ -79,7 +80,7 @@ export class Set extends NowPlayingConfigChildCommand<typeof args> {
     }
 
     const filteredDisplay = filtered.length
-      ? `\`\`\`diff
+      ? `${Emoji.checkmark} Successfully set your config as:\n\`\`\`diff
 ${filtered.map((f) => `+ ${f}`).join("\n")}\`\`\``
       : "";
     const filteredOutDisplay = filteredOut.length
@@ -87,10 +88,13 @@ ${filtered.map((f) => `+ ${f}`).join("\n")}\`\`\``
 ${filteredOut.map((f) => `- ${f}`).join("\n")}\`\`\``
       : "";
 
-    const embed = this.authorEmbed()
-      .setHeader("Config set")
+    const embed = this.minimalEmbed()
       .setDescription(
-        `${presetConfig ? `Using preset ${code(newConfig[0])}` : ""}
+        `${
+          presetConfig
+            ? `${Emoji.checkmark} Using preset ${code(newConfig[0])}`
+            : ""
+        }
         ${filteredDisplay}
         ${filteredOutDisplay}`.trim()
       )
@@ -100,7 +104,7 @@ ${filteredOut.map((f) => `- ${f}`).join("\n")}\`\`\``
           : ""
       );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 
   private filterBadOptions(options: string[]): {

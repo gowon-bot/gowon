@@ -1,4 +1,5 @@
 import { displayNumber } from "../../lib/ui/displays";
+import { SuccessEmbed } from "../../lib/ui/embeds/SuccessEmbed";
 import { AdminBaseCommand } from "./AdminBaseCommand";
 
 export default class SyncGuild extends AdminBaseCommand {
@@ -20,12 +21,13 @@ export default class SyncGuild extends AdminBaseCommand {
 
     await this.lilacGuildsService.sync(this.ctx, guildID, discordIDs);
 
-    const embed = this.authorEmbed()
-      .setHeader("Server sync")
-      .setDescription(
-        `Successfully synced ${displayNumber(discordIDs.length, "member")}`
-      );
+    const embed = new SuccessEmbed().setDescription(
+      `Successfully synced ${displayNumber(
+        discordIDs.length,
+        "member"
+      )} with Lilac`
+    );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

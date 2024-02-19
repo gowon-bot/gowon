@@ -55,8 +55,8 @@ export default class About extends Command {
       this.ctx
     );
 
-    const embed = this.authorEmbed()
-      .setHeader(`About ${this.gowonClient.client.user?.username || "Gowon"}`)
+    const embed = this.minimalEmbed()
+      .setTitle(`About ${this.gowonClient.client.user?.username || "Gowon"}`)
       .setThumbnail(
         "https://raw.githubusercontent.com/jivison/gowon/master/assets/gowonswag2.png"
       )
@@ -104,6 +104,6 @@ Total commands: ${displayNumber(commandCount)}`,
       .setFooter(`Made with <3 by ${displayUserTag(developer)}`)
       .setFooterIcon(developer.avatarURL({ dynamic: true }) ?? undefined);
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }
