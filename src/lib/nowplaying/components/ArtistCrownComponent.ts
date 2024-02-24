@@ -1,18 +1,18 @@
 import { DiscordService } from "../../../services/Discord/DiscordService";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
-import { displayNumber } from "../../views/displays";
+import { displayNumber } from "../../ui/displays";
 import { BaseNowPlayingComponent } from "../base/BaseNowPlayingComponent";
 
-const artistCrownRequirements = ["artistCrown"] as const;
+const artistCrownDependencies = ["artistCrown"] as const;
 
 export class ArtistCrownComponent extends BaseNowPlayingComponent<
-  typeof artistCrownRequirements
+  typeof artistCrownDependencies
 > {
   static componentName = "artist-crown";
   static friendlyName = "Artist crown";
-  readonly requirements = artistCrownRequirements;
+  readonly dependencies = artistCrownDependencies;
 
-  async present() {
+  async render() {
     if (this.values.artistCrown) {
       const crown = this.values.artistCrown!;
 

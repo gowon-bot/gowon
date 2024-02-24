@@ -9,6 +9,6 @@ export default class Pleading extends Command {
   secretCommand = true;
 
   async run() {
-    await this.send(`​   🥺\n👉👈`);
+    await this.reply(`​   🥺\n👉👈`);
   }
 }

@@ -6,8 +6,8 @@ import { calculatePercent } from "../../helpers/stats";
 import { standardMentions } from "../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../lib/context/arguments/types";
 import { FishyRarityEmojis } from "../../lib/emoji/FishyRarityEmoji";
-import { displayDate, displayNumber } from "../../lib/views/displays";
-import { displayFishyCollectionProgress } from "../../lib/views/fishy";
+import { displayDate, displayNumber } from "../../lib/ui/displays";
+import { displayFishyCollectionProgress } from "../../lib/ui/fishy";
 import { FishyRarities } from "../../services/fishy/rarity";
 import { FishyChildCommand } from "./FishyChildCommand";
 
@@ -24,17 +24,11 @@ export class Profile extends FishyChildCommand<typeof args> {
   arguments = args;
 
   async run() {
-    const { fishyProfile, discordUser } = await this.getMentions({
-      fetchDiscordUser: true,
+    const { fishyProfile } = await this.getMentions({
       fetchFishyProfile: true,
       fishyProfileRequired: true,
       autoCreateFishyProfile: false,
     });
-
-    const perspective = this.usersService.discordPerspective(
-      this.author,
-      discordUser
-    );
 
     const [
       giftsGiven,
@@ -50,9 +44,7 @@ export class Profile extends FishyChildCommand<typeof args> {
       this.fishyService.getCollection(fishyProfile),
     ]);
 
-    const embed = this.newEmbed().setAuthor(
-      this.generateEmbedAuthor(`${perspective.upper.possessive} fishy profile`)
-    ).setDescription(`
+    const embed = this.minimalEmbed().setDescription(`
 Level **${fishyProfile.level}** fisher ${emDash} _Fishing since ${displayDate(
       fishyProfile.createdAt
     )} (${ago(fishyProfile.createdAt)})_
@@ -107,6 +99,6 @@ ${
 }
 `);
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

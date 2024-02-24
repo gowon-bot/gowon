@@ -1,12 +1,12 @@
-import { LastFMBaseCommand } from "../LastFMBaseCommand";
-import { displayNumber } from "../../../lib/views/displays";
+import { bold } from "../../../helpers/discord";
+import { CommandRedirect } from "../../../lib/command/Command";
+import { Flag } from "../../../lib/context/arguments/argumentTypes/Flag";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
-import { Flag } from "../../../lib/context/arguments/argumentTypes/Flag";
-import { CommandRedirect } from "../../../lib/command/Command";
-import GlobalArtistPlays from "./GlobalArtistPlays";
-import { bold } from "../../../helpers/discord";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { displayNumber } from "../../../lib/ui/displays";
+import { LastFMBaseCommand } from "../LastFMBaseCommand";
+import GlobalArtistPlays from "./GlobalArtistPlays";
 
 const args = {
   ...prefabArguments.artist,
@@ -49,15 +49,17 @@ export default class ArtistPlays extends LastFMBaseCommand<typeof args> {
       username: requestable,
     });
 
-    await this.oldReply(
-      `${perspective.plusToHave}` +
-      (artistDetails.userPlaycount === 0
-        ? "n't scrobbled"
-        : ` **${displayNumber(
-          artistDetails.userPlaycount,
-          "**scrobble"
-        )} of`) +
-      ` ${bold(artistDetails.name)}`
+    const embed = this.minimalEmbed().setDescription(
+      `${perspective.upper.plusToHave}` +
+        (artistDetails.userPlaycount === 0
+          ? "n't scrobbled"
+          : ` **${displayNumber(
+              artistDetails.userPlaycount,
+              "**scrobble"
+            )} of`) +
+        ` ${bold(artistDetails.name)}`
     );
+
+    await this.reply(embed);
   }
 }

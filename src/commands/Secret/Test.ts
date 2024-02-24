@@ -15,6 +15,6 @@ export default class Test extends Command<typeof args> {
   slashCommand = true;
 
   async run() {
-    await this.send("Hello, world!");
+    await this.reply("Hello, world!");
   }
 }

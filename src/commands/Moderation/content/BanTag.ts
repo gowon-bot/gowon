@@ -3,6 +3,7 @@ import { Variation } from "../../../lib/command/Command";
 import { Flag } from "../../../lib/context/arguments/argumentTypes/Flag";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { SuccessEmbed } from "../../../lib/ui/embeds/SuccessEmbed";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
@@ -80,20 +81,19 @@ export default class BanTag extends ContentModerationCommand<typeof args> {
 
     await this.banOrUnban(tag, global);
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor(`${unban ? "Unb" : "B"}an tag`))
+    const embed = new SuccessEmbed()
       .setDescription(
         `Successfully ${unban ? "un" : ""}banned the tag: ${bold(tag)}${
           this.parsedArguments.regex ? " (regex)" : ""
         }${global ? " bot-wide" : ""}!`
       )
-      .setFooter({
-        text: `It will ${
+      .setFooter(
+        `It will ${
           unban ? "now" : "no longer"
-        } appear in places where tags are listed`,
-      });
+        } appear in places where tags are listed`
+      );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 
   private async banOrUnban(tag: string, global: boolean) {

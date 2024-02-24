@@ -8,10 +8,10 @@ import { DateRangeArgument } from "../../../lib/context/arguments/argumentTypes/
 import { TimePeriodArgument } from "../../../lib/context/arguments/argumentTypes/timeAndDate/TimePeriodArgument";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { humanizePeriod } from "../../../lib/timeAndDate/helpers/humanize";
+import { displayLink, displayNumber } from "../../../lib/ui/displays";
+import { ScrollingListView } from "../../../lib/ui/views/ScrollingListView";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
-import { displayLink, displayNumber } from "../../../lib/views/displays";
-import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingEmbed";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { TasteService } from "../../../services/taste/TasteService";
 import { TasteCommand, tasteArgs } from "./TasteCommand";
@@ -118,11 +118,9 @@ export default class Taste extends TasteCommand<typeof args> {
       this.dateRange?.humanized() || humanizedPeriod
     }**\n\n${percentageMatch}`;
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Taste"))
-      .setDescription(embedDescription);
+    const embed = this.minimalEmbed().setDescription(embedDescription);
 
-    const scrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
+    const scrollingEmbed = new ScrollingListView(this.ctx, embed, {
       items: tasteMatch.artists,
       pageSize: 20,
       pageRenderer: (items) => {
@@ -134,6 +132,6 @@ export default class Taste extends TasteCommand<typeof args> {
       },
     });
 
-    scrollingEmbed.send();
+    await this.reply(scrollingEmbed);
   }
 }

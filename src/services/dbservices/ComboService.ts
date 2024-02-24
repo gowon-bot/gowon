@@ -6,7 +6,7 @@ import { toInt } from "../../helpers/lastfm/";
 import { Combo } from "../../lib/calculators/ComboCalculator";
 import { GowonContext } from "../../lib/context/Context";
 import { SettingsService } from "../../lib/settings/SettingsService";
-import { displayNumber } from "../../lib/views/displays";
+import { displayNumber } from "../../lib/ui/displays";
 import { BaseService } from "../BaseService";
 import { ServiceRegistry } from "../ServicesRegistry";
 

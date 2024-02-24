@@ -3,7 +3,7 @@ import { Variation } from "../../../lib/command/Command";
 import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
-import { displayNumber } from "../../../lib/views/displays";
+import { displayNumber } from "../../../lib/ui/displays";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 const args = {
@@ -53,18 +53,14 @@ export default class TrackPlaysover extends LastFMBaseCommand<typeof args> {
       0
     );
 
-    const embed = this.newEmbed()
-      .setAuthor(
-        this.generateEmbedAuthor(`Track plays${equal ? "equal" : "over"}`)
-      )
-      .setDescription(
-        `${bold(displayNumber(playsover))} of ${
-          perspective.possessive
-        } top ${displayNumber(topTracks.tracks.length, "track")} have ${
-          equal ? "" : "at least "
-        }${bold(displayNumber(plays, "play"))}`
-      );
+    const embed = this.minimalEmbed().setDescription(
+      `${bold(displayNumber(playsover))} of ${
+        perspective.possessive
+      } top ${displayNumber(topTracks.tracks.length, "track")} have ${
+        equal ? "" : "at least "
+      }${bold(displayNumber(plays, "play"))}`
+    );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

@@ -65,21 +65,21 @@ export abstract class JumbleChildCommand<
   async handleCorrectGuess(artistName: string, jumbleKey: string) {
     this.redisService.sessionDelete(this.ctx, jumbleKey);
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Jumble guess"))
+    const embed = this.authorEmbed()
+      .setHeader("Jumble guess")
       .setDescription(`You are correct! The artist was ${bold(artistName)}`);
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 
   async stopJumble(artistName: string, jumbleKey: string) {
     this.redisService.sessionDelete(this.ctx, jumbleKey);
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Jumble quit"))
+    const embed = this.authorEmbed()
+      .setHeader("Jumble quit")
       .setDescription(`Too bad, the artist was ${bold(artistName)}!`);
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 
   async giveHint(jumbledArtist: JumbledArtist, jumbleKey: string) {
@@ -93,15 +93,15 @@ export abstract class JumbleChildCommand<
 
     this.sessionSetJSON(jumbleKey, jumbledArtist);
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Jumble hint"))
+    const embed = this.authorEmbed()
+      .setHeader("Jumble hint")
       .setDescription(
         (noNewHint ? `_You've reached the maximum amount of hints!_\n\n` : "") +
           `${code(jumbledArtist.jumbled)}
       ${code(jumbledArtist.currenthint)}`
       );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 
   private generateHint(jumble: JumbledArtist, number = 3): string {

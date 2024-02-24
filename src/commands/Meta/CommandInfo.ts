@@ -5,9 +5,10 @@ import { Command } from "../../lib/command/Command";
 import { Flag } from "../../lib/context/arguments/argumentTypes/Flag";
 import { StringArgument } from "../../lib/context/arguments/argumentTypes/StringArgument";
 import { ArgumentsMap } from "../../lib/context/arguments/types";
+import { displayNumber } from "../../lib/ui/displays";
+import { HelpEmbed } from "../../lib/ui/embeds/HelpEmbed";
 import { Validation } from "../../lib/validation/ValidationChecker";
 import { validators } from "../../lib/validation/validators";
-import { displayNumber } from "../../lib/views/displays";
 import { MetaBaseCommand } from "./MetaBaseCommand";
 
 const args = {
@@ -55,20 +56,23 @@ export default class CommandInfo extends MetaBaseCommand<typeof args> {
 
     const count = await this.metaService.countCommandRuns(this.ctx, command.id);
 
-    const embed = this.newEmbed().setTitle(
+    const embed = new HelpEmbed().setHeader(
       `Info about ${command.friendlyNameWithParent}`
     ).setDescription(`
-      **Name**: ${command.name}${command.parentName ? `\n**Parent**: ${command.parentName}` : ""
-      }
-      **ID**: ${command.idSeed} ${emDash} ${italic(command.id)}${command.hasChildren
+      **Name**: ${command.name}${
+      command.parentName ? `\n**Parent**: ${command.parentName}` : ""
+    }
+      **ID**: ${command.idSeed} ${emDash} ${italic(command.id)}${
+      command.hasChildren
         ? `\n**Number of children**: ${command.children?.commands?.length || 0}`
         : ""
-      }
-    **Category**: ${command.category || "(no category)"}${command.subcategory ? ` > ${command.subcategory}` : ""
-      }
+    }
+    **Category**: ${command.category || "(no category)"}${
+      command.subcategory ? ` > ${command.subcategory}` : ""
+    }
     
     Run ${displayNumber(count, "time")}`);
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

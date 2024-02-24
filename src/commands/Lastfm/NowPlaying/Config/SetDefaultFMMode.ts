@@ -2,6 +2,8 @@ import { code } from "../../../../helpers/discord";
 import { StringArgument } from "../../../../lib/context/arguments/argumentTypes/StringArgument";
 import { ArgumentsMap } from "../../../../lib/context/arguments/types";
 import { FMMode } from "../../../../lib/settings/SettingValues";
+import { InfoEmbed } from "../../../../lib/ui/embeds/InfoEmbed";
+import { SuccessEmbed } from "../../../../lib/ui/embeds/SuccessEmbed";
 import { NowPlayingConfigChildCommand } from "./NowPlayingConfigChildCommand";
 
 const args = {
@@ -39,16 +41,13 @@ export class SetFMMode extends NowPlayingConfigChildCommand<typeof args> {
         userID: this.author.id,
       });
 
-      const embed = this.newEmbed()
-        .setAuthor(this.generateEmbedAuthor())
-        .setTitle(`${this.prefix}fm mode`)
-        .setDescription(
-          `Your current ${this.prefix}fm mode is: ${code(
-            currentMode || FMMode.DEFAULT
-          )}\n\nUse \`${this.prefix}fmmode <mode>\` to set a new one`
-        );
+      const embed = new InfoEmbed().setDescription(
+        `Your current ${this.prefix}fm mode is: ${code(
+          currentMode || FMMode.DEFAULT
+        )}\n\nUse \`${this.prefix}fmmode <mode>\` to set a new one`
+      );
 
-      await this.send(embed);
+      await this.reply(embed);
     } else {
       await this.settingsService.set(
         this.ctx,
@@ -57,12 +56,11 @@ export class SetFMMode extends NowPlayingConfigChildCommand<typeof args> {
         mode === FMMode.DEFAULT ? undefined : mode
       );
 
-      const embed = this.newEmbed()
-        .setAuthor(this.generateEmbedAuthor())
-        .setTitle(`${this.prefix}fm mode`)
-        .setDescription(`Your new ${this.prefix}fm mode is: \`${mode}\``);
+      const embed = new SuccessEmbed().setDescription(
+        `Your new ${this.prefix}fm mode is: \`${mode}\``
+      );
 
-      await this.send(embed);
+      await this.reply(embed);
     }
   }
 }

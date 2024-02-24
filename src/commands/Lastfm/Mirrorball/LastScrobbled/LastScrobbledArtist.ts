@@ -10,7 +10,7 @@ import {
 import { ArgumentsMap } from "../../../../lib/context/arguments/types";
 import { Emoji } from "../../../../lib/emoji/Emoji";
 import { MirrorballBaseCommand } from "../../../../lib/indexing/MirrorballCommands";
-import { displayDate } from "../../../../lib/views/displays";
+import { displayDate } from "../../../../lib/ui/displays";
 import {
   LastScrobbledConnector,
   LastScrobbledParams,
@@ -72,20 +72,14 @@ export default class LastScrobbledArtist extends MirrorballBaseCommand<
 
     const [play] = response.plays.plays;
 
-    const embed = this.newEmbed()
-      .setAuthor(
-        this.generateEmbedAuthor(
-          (this.variationWasUsed("first") ? "First" : "Last") + " scrobbled"
-        )
-      )
-      .setDescription(
-        `${Emoji.usesIndexedDataDescription} ${perspective.upper.name} ${
-          this.variationWasUsed("first") ? "first" : "last"
-        } scrobbled ${bold(play.track.artist.name)} on ${displayDate(
-          convertMirrorballDate(play.scrobbledAt)
-        )}`
-      );
+    const embed = this.minimalEmbed().setDescription(
+      `${Emoji.usesIndexedDataDescription} ${perspective.upper.name} ${
+        this.variationWasUsed("first") ? "first" : "last"
+      } scrobbled ${bold(play.track.artist.name)} on ${displayDate(
+        convertMirrorballDate(play.scrobbledAt)
+      )}`
+    );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

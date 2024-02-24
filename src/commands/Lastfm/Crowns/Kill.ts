@@ -2,7 +2,9 @@ import { CrownDoesntExistError } from "../../../errors/commands/crowns";
 import { bold } from "../../../helpers/discord";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
-import { ConfirmationEmbed } from "../../../lib/views/embeds/ConfirmationEmbed";
+import { SuccessEmbed } from "../../../lib/ui/embeds/SuccessEmbed";
+import { WarningEmbed } from "../../../lib/ui/embeds/WarningEmbed";
+import { ConfirmationView } from "../../../lib/ui/views/ConfirmationView";
 import { CrownsChildCommand } from "./CrownsChildCommand";
 
 const args = {
@@ -31,23 +33,20 @@ export class Kill extends CrownsChildCommand<typeof args> {
       throw new CrownDoesntExistError(artist, true);
     }
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Kill crown"))
-      .setDescription(
-        `Are you sure you want to kill the crown for ${bold(crown.artistName)}?`
-      );
+    const embed = new WarningEmbed().setDescription(
+      `Are you sure you want to kill the crown for ${bold(crown.artistName)}?`
+    );
 
-    const confirmationEmbed = new ConfirmationEmbed(this.ctx, embed);
+    const confirmationEmbed = new ConfirmationView(this.ctx, embed);
 
     if (await confirmationEmbed.awaitConfirmation(this.ctx)) {
       await this.crownsService.killCrown(this.ctx, artist);
       this.crownsService.scribe.kill(this.ctx, crown, this.author);
 
-      await this.send(
-        this.newEmbed()
-          .setAuthor(this.generateEmbedAuthor("Kill crown"))
-          .setDescription(`Successfully killed the crown for ${bold(artist)}`)
-      );
+      await embed
+        .convert(SuccessEmbed)
+        .setDescription(`Successfully killed the crown for ${bold(artist)}`)
+        .editMessage(this.ctx);
     }
   }
 }

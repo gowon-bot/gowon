@@ -32,7 +32,7 @@ export default class MusicBrainz extends LastFMBaseCommand<typeof args> {
   async run() {
     let keywords = this.parsedArguments.keywords;
 
-    let { requestable } = await this.getMentions({
+    const { requestable } = await this.getMentions({
       usernameRequired: !keywords,
     });
 
@@ -47,19 +47,19 @@ export default class MusicBrainz extends LastFMBaseCommand<typeof args> {
         : `${nowplaying.artist} - ${nowplaying.album}`;
     }
 
-    let encodedKeywords = encodeURIComponent(keywords);
+    const encodedKeywords = encodeURIComponent(keywords);
 
-    let embed = this.newEmbed()
-      .setAuthor({ name: `MusicBrainz search for "${keywords}"` })
-      .setTitle("Click here to view the results")
+    const embed = this.minimalEmbed()
+      .setTitle(`MusicBrainz search for "${keywords}"`)
       .setURL(
-        `https://musicbrainz.org/search?query=${encodedKeywords}&type=${this.parsedArguments.searchArtists ? "artist" : "release"
+        `https://musicbrainz.org/search?query=${encodedKeywords}&type=${
+          this.parsedArguments.searchArtists ? "artist" : "release"
         }&method=indexed`
       )
       .setThumbnail(
         "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/MusicBrainz_Logo_%282016%29.svg/1200px-MusicBrainz_Logo_%282016%29.svg.png"
       );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

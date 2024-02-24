@@ -3,8 +3,8 @@ import {
   CommandInteraction,
   EmbedAuthorData,
   Guild,
+  HexColorString,
   Message,
-  MessageEmbed,
 } from "discord.js";
 import md5 from "js-md5";
 import config from "../../../config.json";
@@ -37,10 +37,13 @@ import { constants } from "../constants";
 import { GowonContext } from "../context/Context";
 import { ArgumentsMap, ParsedArguments } from "../context/arguments/types";
 import { Emoji, EmojiRaw } from "../emoji/Emoji";
+import { toggleValues } from "../settings/SettingValues";
 import { SettingsService } from "../settings/SettingsService";
+import { Sendable, SendableContent } from "../ui/Sendable";
+import { displayUserTag } from "../ui/displays";
+import { ErrorEmbed } from "../ui/embeds/ErrorEmbed";
+import { EmbedView } from "../ui/views/EmbedView";
 import { Validation, ValidationChecker } from "../validation/ValidationChecker";
-import { displayUserTag } from "../views/displays";
-import { errorEmbed, gowonEmbed } from "../views/embeds";
 import { CommandGroup } from "./CommandGroup";
 import { CommandRegistry } from "./CommandRegistry";
 import { CommandAccess } from "./access/access";
@@ -169,6 +172,10 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
 
   get author() {
     return this.ctx.author;
+  }
+
+  get authorMember() {
+    return this.ctx.authorMember;
   }
 
   get gowonClient() {
@@ -381,23 +388,38 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
    */
 
   async send(
-    content: MessageEmbed | string,
+    content: SendableContent,
     options?: Partial<SendOptions>
   ): Promise<Message> {
-    return await this.discordService.send(this.ctx, content, options);
+    return await this.discordService.send(
+      this.ctx,
+      new Sendable(content),
+      options
+    );
   }
 
   async reply(
-    content: string,
-    options?: Partial<ReplyOptions>
+    content: SendableContent,
+    options?: Partial<SendOptions & ReplyOptions>
   ): Promise<Message> {
-    return await this.discordService.send(this.ctx, content, {
-      reply: options || true,
+    const reply: ReplyOptions = {
+      to:
+        options?.to ||
+        (this.payload.isMessage() ? this.payload.source : undefined),
+      ping:
+        this.settingsService.get("replyPings", { userID: this.author.id }) ===
+        toggleValues.ON,
+      ...options,
+    };
+
+    return await this.discordService.send(this.ctx, new Sendable(content), {
+      ...options,
+      reply: reply,
     });
   }
 
-  async dmAuthor(content: string | MessageEmbed): Promise<Message> {
-    return await this.discordService.send(this.ctx, content, {
+  async dmAuthor(content: SendableContent): Promise<Message> {
+    return await this.discordService.send(this.ctx, new Sendable(content), {
       inChannel: await this.ctx.author.createDM(true),
     });
   }
@@ -407,13 +429,20 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
   async oldReply(message: string): Promise<Message> {
     const content = `<@!${this.author.id}>, ` + message.trimStart();
 
-    return await this.discordService.send(this.ctx, content);
+    return await this.discordService.send(this.ctx, new Sendable(content));
   }
 
-  newEmbed(embed?: MessageEmbed): MessageEmbed {
-    return gowonEmbed(this.payload.member ?? undefined, embed);
+  public authorEmbed(): EmbedView {
+    return new EmbedView().setAuthor(this.author, this.authorMember);
   }
 
+  public minimalEmbed(): EmbedView {
+    return new EmbedView().setColour(
+      this.authorMember?.roles?.color?.hexColor as HexColorString
+    );
+  }
+
+  /** @deprecated Use Command#authorEmbed + EmbedComponent#setHeader instead */
   generateEmbedAuthor(title?: string, url?: string): EmbedAuthorData {
     return {
       name: title
@@ -470,14 +499,9 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
     const errorInstance =
       typeof error === "string" ? new ClientError(error) : error;
 
-    await this.send(
-      errorEmbed(
-        this.newEmbed(),
-        this.author,
-        this.ctx.authorMember,
-        errorInstance
-      )
-    );
+    const embed = new ErrorEmbed().setError(errorInstance);
+
+    await this.reply(embed);
   }
 
   protected startTyping() {

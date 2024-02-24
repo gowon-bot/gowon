@@ -1,4 +1,5 @@
 import { Command } from "../../lib/command/Command";
+import { HelpEmbed } from "../../lib/ui/embeds/HelpEmbed";
 
 export default class SecretCommands extends Command {
   idSeed = "2ne1 minzy";
@@ -13,10 +14,10 @@ export default class SecretCommands extends Command {
       .list({ includeSecret: true })
       .filter((c) => c.secretCommand);
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Secret commands"))
+    const embed = new HelpEmbed()
+      .setHeader("Secret commands")
       .setDescription(commands.map((c) => c.name).join(", "));
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

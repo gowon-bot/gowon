@@ -1,6 +1,7 @@
 import { InvalidFriendUsernameError } from "../../../errors/commands/friends";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
+import { SuccessEmbed } from "../../../lib/ui/embeds/SuccessEmbed";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
 import { FriendsChildCommand } from "./FriendsChildCommand";
@@ -55,10 +56,10 @@ export class Remove extends FriendsChildCommand<typeof args> {
 
     await this.friendsService.removeFriend(this.ctx, friend);
 
-    await this.send(
-      this.newEmbed().setDescription(
-        `Successfully removed ${friend?.display()} as a friend!`
-      )
+    const embed = new SuccessEmbed().setDescription(
+      `Successfully removed ${friend?.display()} as a friend!`
     );
+
+    await this.reply(embed);
   }
 }

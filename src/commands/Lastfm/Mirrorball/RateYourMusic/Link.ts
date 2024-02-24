@@ -42,17 +42,14 @@ export class Link extends RateYourMusicChildCommand<typeof args> {
 
     const encodedKeywords = encodeURIComponent(keywords);
 
-    const embed = this.newEmbed()
-      .setAuthor(
-        this.generateEmbedAuthor(`Rateyourmusic search for "${keywords}"`)
-      )
-      .setTitle("Click here to view the results")
+    const embed = this.minimalEmbed()
+      .setTitle(`RateYourMusic search for "${keywords}"`)
       .setURL(
         `https://www.google.com/search?q=${encodedKeywords}+site%3Arateyourmusic.com`
       )
       .setThumbnail("https://e.snmc.io/3.0/img/logo/sonemic-512.png");
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 
   private cleanAlbumName(albumName: string): string {

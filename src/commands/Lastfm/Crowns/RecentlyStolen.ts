@@ -18,8 +18,7 @@ export class RecentlyStolen extends CrownsChildCommand {
       await this.serverUserIDs({ filterCrownBannedUsers: true })
     );
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Crowns recently stolen"))
+    const embed = this.minimalEmbed()
       .setTitle(`Recently stolen crowns in ${this.requiredGuild.name}`)
       .setDescription(
         crowns
@@ -27,6 +26,6 @@ export class RecentlyStolen extends CrownsChildCommand {
           .join("\n")
       );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

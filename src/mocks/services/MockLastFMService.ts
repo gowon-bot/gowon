@@ -2,7 +2,7 @@ import { LogicError } from "../../errors/errors";
 import { code } from "../../helpers/discord";
 import { GowonContext } from "../../lib/context/Context";
 import { requestableAsUsername } from "../../lib/MultiRequester";
-import { displayNumber } from "../../lib/views/displays";
+import { displayNumber } from "../../lib/ui/displays";
 import {
   AlbumInfo,
   ArtistInfo,

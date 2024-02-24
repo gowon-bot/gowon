@@ -8,6 +8,7 @@ import { EmojisArgument } from "../../../../lib/context/arguments/argumentTypes/
 import { StringArgument } from "../../../../lib/context/arguments/argumentTypes/StringArgument";
 import { EmojiParser } from "../../../../lib/context/arguments/parsers/EmojiParser";
 import { ArgumentsMap } from "../../../../lib/context/arguments/types";
+import { SuccessEmbed } from "../../../../lib/ui/embeds/SuccessEmbed";
 import { PlaylistChildCommand } from "./PlaylistChildCommand";
 
 const args = {
@@ -82,12 +83,7 @@ export class Add extends PlaylistChildCommand<typeof args> {
       [track.uri.asString]
     );
 
-    const embed = this.newEmbed()
-      .setAuthor(
-        this.generateEmbedAuthor(
-          `${remove ? "Remove from" : "Add to"} playlist`
-        )
-      )
+    const embed = new SuccessEmbed()
       .setDescription(
         `Successfully ${remove ? "removed" : "added"} ${italic(track.name)} ${
           remove ? "from" : "to"
@@ -95,6 +91,6 @@ export class Add extends PlaylistChildCommand<typeof args> {
       )
       .setThumbnail(track.album.images.largest.url);
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

@@ -3,7 +3,7 @@ import { toInt } from "../../helpers/lastfm/";
 import { LastfmLinks } from "../../helpers/lastfm/LastfmLinks";
 import { GowonContext } from "../../lib/context/Context";
 import { Emoji } from "../../lib/emoji/Emoji";
-import { displayLink } from "../../lib/views/displays";
+import { displayLink } from "../../lib/ui/displays";
 import { BaseService } from "../BaseService";
 import { LilacUser } from "../lilac/converters/user";
 import { LilacPrivacy } from "../lilac/LilacAPIService.types";

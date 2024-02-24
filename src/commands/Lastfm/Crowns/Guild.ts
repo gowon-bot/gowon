@@ -1,15 +1,12 @@
-import { bold } from "../../../helpers/discord";
+import { bold, sanitizeForDiscord } from "../../../helpers/discord";
 import { CommandRedirect } from "../../../lib/command/Command";
 import { Flag } from "../../../lib/context/arguments/argumentTypes/Flag";
 import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
-import {
-  displayNumber,
-  displayNumberedList,
-} from "../../../lib/views/displays";
-import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingEmbed";
+import { displayNumber, displayNumberedList } from "../../../lib/ui/displays";
+import { ScrollingListView } from "../../../lib/ui/views/ScrollingListView";
 import { CrownHolder } from "../../../services/dbservices/crowns/CrownsService.types";
 import { GuildAt } from "../../Archived/crowns/GuildAt";
 import { GuildUserRank } from "../../Archived/crowns/GuildRank";
@@ -70,17 +67,17 @@ export class Guild extends CrownsChildCommand<typeof args> {
       this.crownsService.countAllInServer(this.ctx, serverUsers),
     ]);
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Crowns guild"))
-      .setTitle(`${this.requiredGuild.name}'s crown leaderboard`);
+    const embed = this.minimalEmbed().setTitle(
+      `${this.requiredGuild.name}'s crown leaderboard`
+    );
 
-    const scrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
+    const scrollingEmbed = new ScrollingListView(this.ctx, embed, {
       items: holders,
       pageSize: 15,
       pageRenderer: this.renderPage(crownsCount),
     });
 
-    scrollingEmbed.send();
+    await this.reply(scrollingEmbed);
   }
 
   private renderPage(crownsCount: number) {
@@ -96,7 +93,7 @@ export class Guild extends CrownsChildCommand<typeof args> {
         displayNumberedList(
           items.map(
             (ch) =>
-              `${ch.user.username} with ${bold(
+              `${sanitizeForDiscord(ch.user.username)} with ${bold(
                 displayNumber(ch.numberOfCrowns, "crown")
               )}`
           ),

@@ -1,16 +1,14 @@
 import { sub } from "date-fns";
 import { LogicError } from "../../../errors/errors";
-import { italic } from "../../../helpers/discord";
 import { toInt } from "../../../helpers/lastfm/";
-import { bullet, extraWideSpace } from "../../../helpers/specialCharacters";
 import { ReportCalculator } from "../../../lib/calculators/ReportCalculator";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { Paginator } from "../../../lib/paginators/Paginator";
 import { TagConsolidator } from "../../../lib/tags/TagConsolidator";
-import { displayDate, displayNumber } from "../../../lib/views/displays";
-import { RedirectsService } from "../../../services/dbservices/RedirectsService";
+import { ReportEmbed } from "../../../lib/ui/embeds/ReportEmbed";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
+import { RedirectsService } from "../../../services/dbservices/RedirectsService";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 const args = {
@@ -33,9 +31,9 @@ export default class Week extends LastFMBaseCommand<typeof args> {
   redirectsService = ServiceRegistry.get(RedirectsService);
 
   async run() {
-    let { requestable, perspective, senderUser } = await this.getMentions();
+    const { requestable, perspective, senderUser } = await this.getMentions();
 
-    let paginator = new Paginator(
+    const paginator = new Paginator(
       this.lastFMService.recentTracks.bind(this.lastFMService),
       4,
       {
@@ -47,7 +45,7 @@ export default class Week extends LastFMBaseCommand<typeof args> {
       this.ctx
     );
 
-    let firstPage = await paginator.getNext();
+    const firstPage = await paginator.getNext();
 
     if (!firstPage || firstPage.meta.total < 1) {
       throw new LogicError(
@@ -63,66 +61,26 @@ export default class Week extends LastFMBaseCommand<typeof args> {
 
     paginator.maxPages = toInt(firstPage.meta.totalPages);
 
-    let restPages = await paginator.getAllToConcatonable();
+    const restPages = await paginator.getAllToConcatonable();
 
     firstPage.concat(restPages);
 
-    let reportCalculator = new ReportCalculator(this.ctx, firstPage);
+    const reportCalculator = new ReportCalculator(this.ctx, firstPage);
 
-    let week = await reportCalculator.calculate();
-
-    let topTracks = Object.keys(week.top.tracks).sort(
-      (a, b) => week.top.tracks[b] - week.top.tracks[a]
-    );
-
-    let topAlbums = Object.keys(week.top.albums).sort(
-      (a, b) => week.top.albums[b] - week.top.albums[a]
-    );
-
-    let topArtists = Object.keys(week.top.artists).sort(
-      (a, b) => week.top.artists[b] - week.top.artists[a]
-    );
+    const week = await reportCalculator.calculate();
 
     const tagConsolidator = new TagConsolidator();
 
     await tagConsolidator.saveServerBannedTagsInContext(this.ctx);
     tagConsolidator.addTags(this.ctx, week.top.tags);
 
-    let embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor())
-      .setTitle(`${perspective.upper.possessive} week`).setDescription(`
-      _${displayDate(sub(new Date(), { weeks: 1 }))} - ${displayDate(
-      new Date()
-    )}_
-    _${displayNumber(firstPage.tracks.length, "scrobble")}, ${displayNumber(
-      week.total.artists,
-      "artist"
-    )}, ${displayNumber(week.total.albums, "album")}, ${displayNumber(
-      week.total.tracks,
-      "track"
-    )}_
+    const embed = this.minimalEmbed()
+      .setTitle(`${perspective.upper.possessive} week on Last.fm`)
+      .transform(ReportEmbed)
+      .setDateRange(sub(new Date(), { weeks: 1 }), new Date())
+      .setReport(week)
+      .setTags(tagConsolidator);
 
-${italic(tagConsolidator.consolidateAsStrings(10).join(", "))}
-  
-**Top Tracks**:
-${extraWideSpace}${bullet} ${topTracks
-      .slice(0, 3)
-      .map((t) => `${t} (${displayNumber(week.top.tracks[t], "play")})`)
-      .join(`\n​${extraWideSpace}${bullet} `)}
-
-**Top Albums**:
-${extraWideSpace}${bullet} ${topAlbums
-      .slice(0, 3)
-      .map((t) => `${t} (${displayNumber(week.top.albums[t], "play")})`)
-      .join(`\n​${extraWideSpace}${bullet} `)}
-
-**Top Artists**:
-${extraWideSpace}${bullet} ${topArtists
-      .slice(0, 3)
-      .map((t) => `${t} (${displayNumber(week.top.artists[t], "play")})`)
-      .join(`\n​${extraWideSpace}${bullet} `)}
-    `);
-
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

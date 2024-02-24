@@ -1,3 +1,4 @@
+import { SuccessEmbed } from "../../../lib/ui/embeds/SuccessEmbed";
 import { PermissionsChildCommand } from "./PermissionsChildCommand";
 
 export class SyncGuildPermissions extends PermissionsChildCommand {
@@ -12,10 +13,10 @@ export class SyncGuildPermissions extends PermissionsChildCommand {
   async run() {
     await this.permissionsService.syncGuildPermissions(this.ctx);
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Sync guild permissions"))
-      .setDescription("Successfully guild synced permissions!");
+    const embed = new SuccessEmbed().setDescription(
+      "Successfully guild synced permissions!"
+    );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

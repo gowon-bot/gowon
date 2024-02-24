@@ -1,4 +1,4 @@
-import { CommandInteraction, Interaction, MessageEmbed } from "discord.js";
+import { CommandInteraction, Interaction } from "discord.js";
 import { CanCheckFailedError } from "../../../errors/commands/permissions";
 import { generateCanCheckMessage } from "../../../helpers/permissions";
 import { DiscordService } from "../../../services/Discord/DiscordService";
@@ -11,7 +11,7 @@ import {
   CanCheck,
   PermissionsService,
 } from "../../permissions/PermissionsService";
-import { errorEmbed } from "../../views/embeds";
+import { ErrorEmbed } from "../../ui/embeds/ErrorEmbed";
 import { Command } from "../Command";
 import { CommandRegistry } from "../CommandRegistry";
 import { ExtractedCommand } from "../extractor/ExtractedCommand";
@@ -99,14 +99,9 @@ export class InteractionHandler {
       `Attempt to run disabled command ${command.name}`
     );
 
-    const embed = errorEmbed(
-      new MessageEmbed(),
-      ctx.author,
-      ctx.requiredAuthorMember,
-      new CanCheckFailedError(message)
-    );
+    const embed = new ErrorEmbed().setError(new CanCheckFailedError(message));
 
-    await this.discordService.send(ctx, embed, {
+    await this.discordService.send(ctx, embed.asSendable(), {
       reply: true,
       ephemeral: true,
     });

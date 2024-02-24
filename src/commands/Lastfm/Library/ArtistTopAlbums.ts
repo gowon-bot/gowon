@@ -1,4 +1,4 @@
-import { LogicError } from "../../../errors/errors";
+import { NoScrobblesOfAlbumError } from "../../../errors/commands/library";
 import { bold, italic } from "../../../helpers/discord";
 import { LastfmLinks } from "../../../helpers/lastfm/LastfmLinks";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
@@ -9,8 +9,8 @@ import {
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { Emoji } from "../../../lib/emoji/Emoji";
 import { LilacBaseCommand } from "../../../lib/Lilac/LilacBaseCommand";
-import { displayNumber } from "../../../lib/views/displays";
-import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingEmbed";
+import { displayNumber } from "../../../lib/ui/displays";
+import { ScrollingListView } from "../../../lib/ui/views/ScrollingListView";
 import { LilacLibraryService } from "../../../services/lilac/LilacLibraryService";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 
@@ -63,24 +63,19 @@ export default class ArtistTopAlbums extends LilacBaseCommand<typeof args> {
     const topAlbums = response.albumCounts.albumCounts;
 
     if (topAlbums.length < 1) {
-      throw new LogicError(
-        `${perspective.plusToHave} no scrobbles of any albums from ${bold(
-          artist.name
-        )}!`
-      );
+      throw new NoScrobblesOfAlbumError(perspective, artist.name);
     }
 
     const totalScrobbles = topAlbums.reduce((sum, l) => sum + l.playcount, 0);
     const average = totalScrobbles / topAlbums.length;
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Artist top albums"))
+    const embed = this.minimalEmbed()
       .setTitle(
         `${Emoji.usesIndexedDataLink} Top ${artist.name} albums for ${username}`
       )
       .setURL(LastfmLinks.libraryArtistTopAlbums(username, artist.name));
 
-    const simpleScrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
+    const simpleScrollingEmbed = new ScrollingListView(this.ctx, embed, {
       items: topAlbums,
       pageSize: 15,
       pageRenderer(albums) {
@@ -112,6 +107,6 @@ export default class ArtistTopAlbums extends LilacBaseCommand<typeof args> {
       },
     });
 
-    simpleScrollingEmbed.send();
+    await this.reply(simpleScrollingEmbed);
   }
 }

@@ -3,10 +3,10 @@ import { RecentTrack } from "../../../services/LastFM/converters/RecentTracks";
 import { ExtractedCommand } from "../../command/extractor/ExtractedCommand";
 import { GowonContext } from "../../context/Context";
 import { Resources } from "../DatasourceService";
-import { RequirementMap } from "../RequirementMap";
+import { DependencyMap } from "../DependencyMap";
 
-export type NowPlayingRequirement = keyof RequirementMap;
-export interface PresentedComponent {
+export type NowPlayingDependency = keyof DependencyMap;
+export interface RenderedComponent {
   string: string;
   size: number;
   // some components should be placed after certain ones
@@ -14,13 +14,13 @@ export interface PresentedComponent {
 }
 
 export abstract class BaseNowPlayingComponent<
-  Requirements extends readonly NowPlayingRequirement[]
+  Dependency extends readonly NowPlayingDependency[]
 > {
   static readonly componentName: string;
   static readonly friendlyName: string;
   static readonly secret: boolean = false;
   static readonly patronOnly: boolean = false;
-  abstract readonly requirements: Requirements;
+  abstract readonly dependencies: Dependency;
 
   protected ctx = new GowonContext({
     command: { logger: this.values.logger! } as any,
@@ -31,7 +31,7 @@ export abstract class BaseNowPlayingComponent<
   });
 
   constructor(
-    protected values: Pick<RequirementMap, Requirements[number]> & Resources
+    protected values: Pick<DependencyMap, Dependency[number]> & Resources
   ) {
     this.ctx.dangerousSetCommand({
       guild: values.payload?.guild,
@@ -42,10 +42,10 @@ export abstract class BaseNowPlayingComponent<
     return this.values.recentTracks.first();
   }
 
-  abstract present():
-    | PresentedComponent
-    | PresentedComponent[]
-    | Promise<PresentedComponent | PresentedComponent[]>;
+  abstract render():
+    | RenderedComponent
+    | RenderedComponent[]
+    | Promise<RenderedComponent | RenderedComponent[]>;
 }
 
 export class AnyIn {
@@ -57,8 +57,8 @@ function isAnyIn(value: AnyIn | any): value is AnyIn {
 }
 
 export abstract class BaseCompoundComponent<
-  Requirements extends readonly NowPlayingRequirement[]
-> extends BaseNowPlayingComponent<Requirements> {
+  Dependencies extends readonly NowPlayingDependency[]
+> extends BaseNowPlayingComponent<Dependencies> {
   static replaceComponentsInArray(
     components: string[],
     compoundName: string,

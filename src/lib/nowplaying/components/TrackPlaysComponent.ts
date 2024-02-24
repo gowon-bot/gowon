@@ -1,16 +1,16 @@
-import { displayNumber } from "../../views/displays";
+import { displayNumber } from "../../ui/displays";
 import { BaseNowPlayingComponent } from "../base/BaseNowPlayingComponent";
 
-const trackPlaysRequirements = ["trackInfo"] as const;
+const trackPlaysDependencies = ["trackInfo"] as const;
 
 export class TrackPlaysComponent extends BaseNowPlayingComponent<
-  typeof trackPlaysRequirements
+  typeof trackPlaysDependencies
 > {
   static componentName = "track-plays";
   static friendlyName = "Track plays";
-  readonly requirements = trackPlaysRequirements;
+  readonly dependencies = trackPlaysDependencies;
 
-  present() {
+  render() {
     if (this.values.trackInfo) {
       return {
         string: displayNumber(

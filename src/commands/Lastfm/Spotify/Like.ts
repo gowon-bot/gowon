@@ -3,6 +3,7 @@ import { bold, italic } from "../../../helpers/discord";
 import { Variation } from "../../../lib/command/Command";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { Emoji } from "../../../lib/emoji/Emoji";
 import { LineConsolidator } from "../../../lib/LineConsolidator";
 import { SpotifyChildCommand } from "./SpotifyChildCommand";
 
@@ -65,37 +66,33 @@ export class Like extends SpotifyChildCommand<typeof args> {
       await this.spotifyService.saveTrackToLibrary(this.ctx, track.uri.asID);
     }
 
-    const lineConsolidator = new LineConsolidator();
-
     const artistName = bold(track.artists.primary.name);
     const trackName = italic(track.name);
 
-    lineConsolidator.addLines(
+    const description = new LineConsolidator().addLines(
       {
         shouldDisplay: unlike && trackInLibrary,
-        string: `💔 Succesfully unliked:\n${trackName} by ${artistName}!`,
+        string: `${Emoji.brokenHeart} Succesfully unliked:\n${trackName} by ${artistName}!`,
       },
       {
         shouldDisplay: unlike && !trackInLibrary,
-        string: `❤️‍🩹 Already not in your library:\n${trackName} by ${artistName}`,
+        string: `${Emoji.mendingHeart} Already not in your library:\n${trackName} by ${artistName}`,
       },
       {
         shouldDisplay: !unlike && !trackInLibrary,
-        string: `❤️ Succesfully liked:\n${trackName} by ${artistName}!`,
+        string: `${Emoji.heart} Succesfully liked:\n${trackName} by ${artistName}!`,
       },
       {
         shouldDisplay: !unlike && trackInLibrary,
-        string: `💞 Already in your library:\n${trackName} by ${artistName}`,
+        string: `${Emoji.revolvingHearts} Already in your library:\n${trackName} by ${artistName}`,
       }
     );
 
-    const embed = this.newEmbed()
-      .setAuthor(
-        this.generateEmbedAuthor(`Spotify ${unlike ? "un" : ""}like song`)
-      )
-      .setDescription(lineConsolidator.consolidate())
+    const embed = this.minimalEmbed()
+      .setHeader(`Spotify ${unlike ? "un" : ""}like song`)
+      .setDescription(description)
       .setThumbnail(track.album.images.largest.url);
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

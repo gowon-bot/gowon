@@ -1,4 +1,4 @@
-import { MessageEmbed } from "discord.js";
+import { ServiceRegistry } from "../../services/ServicesRegistry";
 import {
   LilacPagination,
   LilacScrobble,
@@ -6,13 +6,10 @@ import {
   LilacScrobblesPage,
 } from "../../services/lilac/LilacAPIService.types";
 import { LilacLibraryService } from "../../services/lilac/LilacLibraryService";
-import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { GowonContext } from "../context/Context";
-import { displayNumberedList } from "../views/displays";
-import {
-  ScrollingEmbed,
-  ScrollingEmbedOptions,
-} from "../views/embeds/ScrollingEmbed";
+import { displayNumberedList } from "../ui/displays";
+import { EmbedView } from "../ui/views/EmbedView";
+import { ScrollinViewOptions, ScrollingView } from "../ui/views/ScrollingView";
 import { PaginatedCache } from "./PaginatedCache";
 
 export class PaginatedLilacScrobbleCache extends PaginatedCache<LilacScrobble> {
@@ -47,12 +44,12 @@ export class PaginatedLilacScrobbleCache extends PaginatedCache<LilacScrobble> {
   }
 
   async generateScrollingEmbed(
-    embed: MessageEmbed,
+    embed: EmbedView,
     firstPage: LilacScrobblesPage,
     generateTableRow: (scrobble: LilacScrobble) => string,
-    overrides: Partial<ScrollingEmbedOptions> = {}
-  ): Promise<ScrollingEmbed> {
-    const scrollingEmbed = new ScrollingEmbed(this.ctx, embed, {
+    overrides: Partial<ScrollinViewOptions> = {}
+  ): Promise<ScrollingView> {
+    const scrollingEmbed = new ScrollingView(this.ctx, embed, {
       initialItems: this.generateTable(
         await this.getPage(1),
         firstPage.pagination,

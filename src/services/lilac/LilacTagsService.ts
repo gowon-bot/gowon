@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 import { GowonContext } from "../../lib/context/Context";
-import { displayNumber } from "../../lib/views/displays";
+import { displayNumber } from "../../lib/ui/displays";
 import { RawArtistInfo, RawTagTopArtists } from "../LastFM/LastFMService.types";
 import { ArtistInput } from "../mirrorball/MirrorballTypes";
 import { LilacAPIService } from "./LilacAPIService";

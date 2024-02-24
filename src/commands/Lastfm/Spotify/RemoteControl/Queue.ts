@@ -2,6 +2,7 @@ import { LogicError } from "../../../../errors/errors";
 import { bold, italic } from "../../../../helpers/discord";
 import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";
 import { ArgumentsMap } from "../../../../lib/context/arguments/types";
+import { SuccessEmbed } from "../../../../lib/ui/embeds/SuccessEmbed";
 import { SpotifyChildCommand } from "../SpotifyChildCommand";
 
 const args = {
@@ -36,14 +37,13 @@ export class Queue extends SpotifyChildCommand<typeof args> {
 
     await this.spotifyService.queue(this.ctx, track.uri.asString);
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Spotify queue song"))
+    const embed = new SuccessEmbed()
       .setDescription(
         `Succesfully queued:
 ${italic(track.name)} by ${bold(track.artists.primary.name)}!`
       )
       .setThumbnail(track.album.images.largest.url);
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

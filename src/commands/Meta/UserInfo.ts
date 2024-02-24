@@ -6,7 +6,7 @@ import { roles } from "../../lib/command/access/roles";
 import { standardMentions } from "../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../lib/context/arguments/types";
 import { Emoji } from "../../lib/emoji/Emoji";
-import { displayNumber } from "../../lib/views/displays";
+import { displayNumber } from "../../lib/ui/displays";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { BotStatsService } from "../../services/dbservices/BotStatsService";
 import { LilacLibraryService } from "../../services/lilac/LilacLibraryService";
@@ -49,9 +49,7 @@ export default class UserInfo extends Command<typeof args> {
         }),
       ]);
 
-    const lineConsolidator = new LineConsolidator();
-
-    lineConsolidator.addLines(
+    const description = new LineConsolidator().addLines(
       {
         string: `${dbUser.roles
           ?.map((r) => `${Emoji[r]} ${roles[r].friendlyName}`)
@@ -104,10 +102,10 @@ export default class UserInfo extends Command<typeof args> {
       }
     );
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("User info"))
-      .setDescription(lineConsolidator.consolidate());
+    const embed = this.minimalEmbed()
+      .setTitle("User info")
+      .setDescription(description);
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

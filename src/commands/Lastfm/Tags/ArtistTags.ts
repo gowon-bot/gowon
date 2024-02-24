@@ -1,3 +1,4 @@
+import { CouldNotFindAnyTagsForArtistError } from "../../../errors/commands/tags";
 import { italic } from "../../../helpers/discord";
 import { extraWideSpace } from "../../../helpers/specialCharacters";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
@@ -6,10 +7,7 @@ import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { Emoji } from "../../../lib/emoji/Emoji";
 import { LineConsolidator } from "../../../lib/LineConsolidator";
 import { TagConsolidator } from "../../../lib/tags/TagConsolidator";
-import {
-  displayNumber,
-  displayNumberedList,
-} from "../../../lib/views/displays";
+import { displayNumber, displayNumberedList } from "../../../lib/ui/displays";
 import { LilacArtistCountsPage } from "../../../services/lilac/LilacAPIService.types";
 import { LilacArtistsService } from "../../../services/lilac/LilacArtistsService";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
@@ -55,12 +53,7 @@ export default class ArtistTags extends LastFMBaseCommand<typeof args> {
     const artistTags = tagConsolidator.consolidate();
 
     if (artistTags.length == 0) {
-      const embed = this.newEmbed()
-        .setAuthor(this.generateEmbedAuthor("Artist tags"))
-        .setDescription(`Couldn't find any tags for ${artistInfo.name}`);
-
-      await this.send(embed);
-      return;
+      throw new CouldNotFindAnyTagsForArtistError(artistInfo.name);
     }
 
     const artistCountPages =
@@ -89,15 +82,14 @@ export default class ArtistTags extends LastFMBaseCommand<typeof args> {
         }))
     );
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Artist tags"))
+    const embed = this.minimalEmbed()
       .setTitle(
         `${Emoji.usesIndexedDataLink} Artist tags for ${artistInfo.name}`
       )
       .setURL(artistInfo.url)
       .setDescription(lineConsolidator.consolidate());
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 
   private generateArtistList(page: LilacArtistCountsPage): string {

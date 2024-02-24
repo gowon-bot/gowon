@@ -8,6 +8,6 @@ export default class Ooga extends Command {
   secretCommand = true;
 
   async run() {
-    await this.send("booga");
+    await this.reply("booga");
   }
 }

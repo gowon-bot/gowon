@@ -3,7 +3,7 @@ import { bold, italic } from "../../../helpers/discord";
 import { emDash } from "../../../helpers/specialCharacters";
 import { MultiRequester } from "../../../lib/MultiRequester";
 import { humanizeDuration } from "../../../lib/timeAndDate/helpers/humanize";
-import { displayIconList, displayNumber } from "../../../lib/views/displays";
+import { displayIconList, displayNumber } from "../../../lib/ui/displays";
 import { RecentTrack } from "../../../services/LastFM/converters/RecentTracks";
 import { FriendsChildCommand } from "./FriendsChildCommand";
 
@@ -31,8 +31,7 @@ export class List extends FriendsChildCommand {
       senderUser!
     );
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Friends list"))
+    const embed = this.minimalEmbed()
       .setTitle(
         `${displayNumber(numberOfFriends, "friend")} for ${
           this.author.username
@@ -63,7 +62,7 @@ export class List extends FriendsChildCommand {
         )
       );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 
   private displayDuration(np: RecentTrack): string {

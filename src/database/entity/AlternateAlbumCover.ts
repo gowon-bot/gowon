@@ -6,7 +6,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { Image } from "../../lib/views/Image";
+import { Image } from "../../lib/ui/Image";
 import { User } from "./User";
 
 @Entity({ name: "alternate_album_covers" })

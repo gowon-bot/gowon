@@ -6,7 +6,7 @@ import { bold } from "../../../helpers/discord";
 import { LineConsolidator } from "../../../lib/LineConsolidator";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
-import { displayNumber } from "../../../lib/views/displays";
+import { displayNumber } from "../../../lib/ui/displays";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { RedirectsService } from "../../../services/dbservices/RedirectsService";
 import { CrownsChildCommand } from "./CrownsChildCommand";
@@ -101,8 +101,7 @@ export class Info extends CrownsChildCommand<typeof args> {
     if (crown.user.id) {
       const holderUsername = await this.fetchUsername(crown.user.discordID);
 
-      const embed = this.newEmbed()
-        .setAuthor(this.generateEmbedAuthor("Crown info"))
+      const embed = this.minimalEmbed()
         .setTitle(
           `Who has ${bold(crown.artistName)}?` + crown.redirectDisplay()
         )
@@ -122,7 +121,7 @@ export class Info extends CrownsChildCommand<typeof args> {
           }_`
         );
 
-      await this.send(embed);
+      await this.reply(embed);
     }
   }
 
@@ -132,7 +131,7 @@ export class Info extends CrownsChildCommand<typeof args> {
     playcount?: number,
     redirectedFrom?: string
   ) {
-    const lineConsolidator = new LineConsolidator();
+    const description = new LineConsolidator();
 
     const userCanClaimCrowns = !senderUser
       ? false
@@ -141,7 +140,7 @@ export class Info extends CrownsChildCommand<typeof args> {
           senderUser.discordID
         );
 
-    lineConsolidator.addLines(
+    description.addLines(
       `No one has the crown for ${bold(artistName)}` +
         (redirectedFrom ? ` _(redirected from ${redirectedFrom})_` : ""),
       {
@@ -159,11 +158,10 @@ export class Info extends CrownsChildCommand<typeof args> {
       }
     );
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Crown info"))
+    const embed = this.minimalEmbed()
       .setTitle(`Who has ${bold(artistName)}?`)
-      .setDescription(lineConsolidator.consolidate());
+      .setDescription(description);
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

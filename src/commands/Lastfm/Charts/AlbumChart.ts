@@ -3,8 +3,8 @@ import { BetaAccess } from "../../../lib/command/access/access";
 import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
-import { ChartService } from "../../../services/pantomime/ChartService";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
+import { ChartService } from "../../../services/pantomime/ChartService";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 const args = {

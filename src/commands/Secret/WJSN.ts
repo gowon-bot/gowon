@@ -8,7 +8,7 @@ export default class WJSN extends Command {
   secretCommand = true;
 
   async run() {
-    await this.send(
+    await this.reply(
       "smaller😳smaller 😳small 😅and bigger😏 bié kàn 😃wô xiâo 💦bié kàn😃 wô xiâo ⁉️dào kêyî👀 fàng kâ bāo 😈"
     );
   }

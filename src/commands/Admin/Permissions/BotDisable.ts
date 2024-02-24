@@ -1,4 +1,3 @@
-import { MessageEmbed } from "discord.js";
 import {
   Permission,
   PermissionType,
@@ -7,6 +6,8 @@ import { CommandNotFoundError } from "../../../errors/errors";
 import { code } from "../../../helpers/discord";
 import { Variation } from "../../../lib/command/Command";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
+import { Emoji } from "../../../lib/emoji/Emoji";
+import { SuccessEmbed } from "../../../lib/ui/embeds/SuccessEmbed";
 import { PermissionsChildCommand } from "./PermissionsChildCommand";
 
 const args = {
@@ -49,8 +50,6 @@ export class BotDisable extends PermissionsChildCommand<typeof args> {
       commandID: command.id,
     });
 
-    let embed: MessageEmbed;
-
     if (!this.variationWasUsed("botenable")) {
       await this.permissionsService.createPermission(
         this.ctx,
@@ -58,9 +57,11 @@ export class BotDisable extends PermissionsChildCommand<typeof args> {
         permission
       );
 
-      embed = this.newEmbed()
-        .setAuthor(this.generateEmbedAuthor("Permissions bot disable"))
-        .setDescription(`Successfully disabled ${code(command.name)} bot-wide`);
+      const embed = new SuccessEmbed().setDescription(
+        `Successfully disabled ${code(command.name)} bot-wide`
+      );
+
+      await this.reply(embed);
     } else {
       await this.permissionsService.destroyPermission(
         this.ctx,
@@ -68,11 +69,11 @@ export class BotDisable extends PermissionsChildCommand<typeof args> {
         permission
       );
 
-      embed = this.newEmbed()
-        .setAuthor(this.generateEmbedAuthor("Permissions bot enable"))
-        .setDescription(`Successfully enabled ${code(command.name)} bot-wide`);
-    }
+      const embed = new SuccessEmbed().setDescription(
+        `${Emoji.checkmark} Successfully enabled ${code(command.name)} bot-wide`
+      );
 
-    await this.send(embed);
+      await this.reply(embed);
+    }
   }
 }

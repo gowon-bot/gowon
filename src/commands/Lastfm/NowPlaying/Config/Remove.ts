@@ -62,13 +62,7 @@ export class Remove extends NowPlayingConfigChildCommand<typeof args> {
     config = config.filter((c) => !included.includes(c));
     await this.configService.saveConfigForUser(this.ctx, senderUser!, config);
 
-    const embed = this.newEmbed().setAuthor(
-      this.generateEmbedAuthor("Config remove")
-    );
-
-    const consolidator = new LineConsolidator();
-
-    consolidator.addLines(
+    const description = new LineConsolidator().addLines(
       {
         string: `**Ignored**: ${ignored.map((c) => code(c)).join(", ")}`,
         shouldDisplay: !!ignored.length,
@@ -83,12 +77,14 @@ export class Remove extends NowPlayingConfigChildCommand<typeof args> {
       }
     );
 
-    embed.setDescription(consolidator.consolidate()).setFooter({
-      text: ignored.length
-        ? `Nonexistant config was ignored. See ${this.prefix}npc help for a list of options`
-        : "",
-    });
+    const embed = this.minimalEmbed()
+      .setDescription(description)
+      .setFooter(
+        ignored.length
+          ? `Nonexistant config was ignored. See ${this.prefix}npc help for a list of options`
+          : ""
+      );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

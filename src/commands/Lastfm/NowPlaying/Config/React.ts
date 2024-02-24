@@ -6,9 +6,11 @@ import { StringArgument } from "../../../../lib/context/arguments/argumentTypes/
 import { EmojisArgument } from "../../../../lib/context/arguments/argumentTypes/discord/EmojisArgument";
 import { EmojiMention } from "../../../../lib/context/arguments/parsers/EmojiParser";
 import { ArgumentsMap } from "../../../../lib/context/arguments/types";
-import { extractEmojiName } from "../../../../lib/emoji/Emoji";
+import { Emoji, extractEmojiName } from "../../../../lib/emoji/Emoji";
 import { SettingsService } from "../../../../lib/settings/SettingsService";
-import { ConfirmationEmbed } from "../../../../lib/views/embeds/ConfirmationEmbed";
+import { SuccessEmbed } from "../../../../lib/ui/embeds/SuccessEmbed";
+import { WarningEmbed } from "../../../../lib/ui/embeds/WarningEmbed";
+import { ConfirmationView } from "../../../../lib/ui/views/ConfirmationView";
 import { EmojiService } from "../../../../services/Discord/EmojiService";
 import { ServiceRegistry } from "../../../../services/ServicesRegistry";
 import { NowPlayingConfigChildCommand } from "./NowPlayingConfigChildCommand";
@@ -60,35 +62,37 @@ export class React extends NowPlayingConfigChildCommand<typeof args> {
         }) || "[]"
       ) as string[];
 
-      const embed = this.newEmbed()
-        .setAuthor(this.generateEmbedAuthor("Reacts"))
-        .setDescription(
-          `Choose which reactions Gowon should react with when you \`${this.prefix}fm\`.\nSet them with \`${this.prefix}reacts emoji1 emoji2 ...emoji5\` and use \`${this.prefix}reacts clear\` to clear them!` +
-            (reactions.length
-              ? `\n\n**You have the following reactions set**:\n${reactions
-                  .map((r) => this.gowonClient.displayEmoji(r))
-                  .join(extraWideSpace)}`
-              : "")
-        );
+      const embed = this.minimalEmbed().setDescription(
+        `Choose which reactions Gowon should react with when you \`${this.prefix}fm\`.\nSet them with \`${this.prefix}reacts emoji1 emoji2 ...emoji5\` and use \`${this.prefix}reacts clear\` to clear them!` +
+          (reactions.length
+            ? `\n\n${
+                Emoji.info
+              } **You have the following reactions set**:\n${reactions
+                .map((r) => this.gowonClient.displayEmoji(r))
+                .join(extraWideSpace)}`
+            : "")
+      );
 
-      await this.send(embed);
+      await this.reply(embed);
     }
   }
 
   private async handleClear() {
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Reacts"))
-      .setDescription("Are you sure you want to clear your reacts?");
+    const embed = new WarningEmbed().setDescription(
+      "Are you sure you want to clear your nowplaying reacts?"
+    );
 
-    const confirmationEmbed = new ConfirmationEmbed(this.ctx, embed);
+    const confirmationEmbed = new ConfirmationView(this.ctx, embed);
 
     if (await confirmationEmbed.awaitConfirmation(this.ctx)) {
       await this.settingsService.set(this.ctx, "reacts", {
         userID: this.author.id,
       });
-      confirmationEmbed.sentMessage!.edit({
-        embeds: [embed.setDescription("Successfully cleared your reactions!")],
-      });
+
+      await embed
+        .convert(SuccessEmbed)
+        .setDescription("Successfully cleared your reactions!")
+        .editMessage(this.ctx);
     }
   }
 
@@ -109,8 +113,7 @@ export class React extends NowPlayingConfigChildCommand<typeof args> {
       );
     }
 
-    const lineConsolidator = new LineConsolidator();
-    lineConsolidator.addLines(
+    const description = new LineConsolidator().addLines(
       {
         shouldDisplay: !!valid.length,
         string: `**Gowon will react with the following emojis**:\n${valid
@@ -129,16 +132,14 @@ export class React extends NowPlayingConfigChildCommand<typeof args> {
       }
     );
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Reacts"))
-      .setDescription(lineConsolidator.consolidate());
+    const embed = this.minimalEmbed().setDescription(description);
 
     if (invalid.length) {
-      embed.setFooter({
-        text: "Gowon needs to share a server with an emoji to be able to react with it",
-      });
+      embed.setFooter(
+        "Gowon needs to share a server with an emoji to be able to react with it"
+      );
     }
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

@@ -26,12 +26,12 @@ export default class Melon extends LastFMBaseCommand<typeof args> {
   async run() {
     let keywords = this.parsedArguments.keywords;
 
-    let { requestable } = await this.getMentions({
+    const { requestable } = await this.getMentions({
       usernameRequired: !keywords,
     });
 
     if (!keywords) {
-      let nowplaying = await this.lastFMService.nowPlaying(
+      const nowplaying = await this.lastFMService.nowPlaying(
         this.ctx,
         requestable
       );
@@ -39,11 +39,10 @@ export default class Melon extends LastFMBaseCommand<typeof args> {
       keywords = `${nowplaying.artist}`;
     }
 
-    let encodedKeywords = encodeURIComponent(keywords);
+    const encodedKeywords = encodeURIComponent(keywords);
 
-    let embed = this.newEmbed()
-      .setAuthor({ name: `Melon search for "${keywords}"` })
-      .setTitle("Click here to view the results")
+    const embed = this.minimalEmbed()
+      .setTitle(`Melon search for "${keywords}"`)
       .setURL(
         `https://www.melon.com/search/album/index.htm?q=${encodedKeywords}&section=&searchGnbYn=Y&kkoSpl=N&kkoDpType=&ipath=srch_form`
       )
@@ -51,6 +50,6 @@ export default class Melon extends LastFMBaseCommand<typeof args> {
         "https://upload.wikimedia.org/wikipedia/commons/c/c5/Melon_logo.png"
       );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

@@ -9,7 +9,7 @@ import { ArgumentsMap } from "../../../../lib/context/arguments/types";
 import { MirrorballBaseCommand } from "../../../../lib/indexing/MirrorballCommands";
 import { MirrorballPaginator } from "../../../../lib/paginators/MirrorballPaginator";
 import { TagConsolidator } from "../../../../lib/tags/TagConsolidator";
-import { displayDate, displayNumber } from "../../../../lib/views/displays";
+import { displayDate, displayNumber } from "../../../../lib/ui/displays";
 import { RecentTracks } from "../../../../services/LastFM/converters/RecentTracks";
 import { ServiceRegistry } from "../../../../services/ServicesRegistry";
 import { RedirectsService } from "../../../../services/dbservices/RedirectsService";
@@ -108,9 +108,9 @@ export default class Year extends MirrorballBaseCommand<
 
     tagConsolidator.addTags(this.ctx, month.top.tags);
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor())
-      .setTitle(`${perspective.upper.possessive} year`).setDescription(`
+    const embed = this.minimalEmbed().setTitle(
+      `${perspective.upper.possessive} year on Last.fm`
+    ).setDescription(`
       _${displayDate(sub(new Date(), { years: 1 }))} - ${displayDate(
       new Date()
     )}_
@@ -143,7 +143,7 @@ ${extraWideSpace}${bullet} ${topArtists
       .join(`\n​${extraWideSpace}${bullet} `)}
     `);
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 
   private async queryAndConvert(

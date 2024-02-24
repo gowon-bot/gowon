@@ -2,6 +2,7 @@ import { LogicError } from "../../../../errors/errors";
 import { bold } from "../../../../helpers/discord";
 import { StringArgument } from "../../../../lib/context/arguments/argumentTypes/StringArgument";
 import { ArgumentsMap } from "../../../../lib/context/arguments/types";
+import { SuccessEmbed } from "../../../../lib/ui/embeds/SuccessEmbed";
 import { PlaylistChildCommand } from "./PlaylistChildCommand";
 
 const args = {
@@ -10,7 +11,7 @@ const args = {
     required: true,
     description: "The name of the playlist to set as the default",
   }),
-} satisfies ArgumentsMap
+} satisfies ArgumentsMap;
 
 export class SetDefault extends PlaylistChildCommand<typeof args> {
   idSeed = "pink fantasy arang";
@@ -44,12 +45,12 @@ export class SetDefault extends PlaylistChildCommand<typeof args> {
       foundPlaylist
     );
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Spotify default playlist"))
-      .setDescription(
-        `Succesfully set ${bold(foundPlaylist.name)} as your default playlist!`
-      );
+    const embed = new SuccessEmbed().setDescription(
+      `Succesfully set ${bold(
+        foundPlaylist.name
+      )} as your default Spotify playlist!`
+    );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

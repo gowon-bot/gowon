@@ -1,7 +1,7 @@
-import { bold, italic } from "../../../helpers/discord";
+import { bold, italic, subsubheader } from "../../../helpers/discord";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
-import { ConfirmationEmbed } from "../../../lib/views/embeds/ConfirmationEmbed";
+import { ConfirmationView } from "../../../lib/ui/views/ConfirmationView";
 import { LastFMArgumentsMutableContext } from "../../../services/LastFM/LastFMArguments";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { LilacLibraryService } from "../../../services/lilac/LilacLibraryService";
@@ -39,20 +39,18 @@ export default class Scrobble extends LastFMBaseCommand<typeof args> {
     });
 
     if (!trackInfo) {
-      const baseConfirmationEmbed = this.newEmbed()
-        .setAuthor(this.generateEmbedAuthor("Confirm scrobble"))
-        .setDescription(
-          `This track doesn't exist yet on Last.fm, are you sure you want to scrobble it?
+      const baseConfirmationEmbed = this.minimalEmbed().setDescription(
+        `This track doesn't exist yet on Last.fm, are you sure you want to scrobble it?
           
           ${bold(track)} by ${italic(artist)}`
-        );
+      );
 
-      const confirmationEmbed = new ConfirmationEmbed(
+      const confirmationView = new ConfirmationView(
         this.ctx,
         baseConfirmationEmbed
-      ).withRejectionReact();
+      ).allowRejection();
 
-      const confirmation = await confirmationEmbed.awaitConfirmation(this.ctx);
+      const confirmation = await confirmationView.awaitConfirmation(this.ctx);
 
       if (!confirmation) return;
     }
@@ -100,18 +98,18 @@ export default class Scrobble extends LastFMBaseCommand<typeof args> {
         : {}
     );
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Track scrobbled"))
-      .setTitle(trackName)
+    const embed = this.minimalEmbed()
+      .setHeader("Track scrobbled!")
       .setDescription(
-        `by ${bold(trackInfo?.artist.name || artist)}${
+        `${subsubheader(trackName)}
+by ${bold(trackInfo?.artist.name || artist)}${
           albumName ? ` from ${italic(albumName)}` : ""
         }`
       );
 
     if (image) embed.setThumbnail(albumCover || "");
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 
   private async getTopAlbumCover(

@@ -5,11 +5,8 @@ import { standardMentions } from "../../../lib/context/arguments/mentionTypes/me
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { TagConsolidator } from "../../../lib/tags/TagConsolidator";
 import { humanizePeriod } from "../../../lib/timeAndDate/helpers/humanize";
-import {
-  displayNumber,
-  displayNumberedList,
-} from "../../../lib/views/displays";
-import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingEmbed";
+import { displayNumber, displayNumberedList } from "../../../lib/ui/displays";
+import { ScrollingListView } from "../../../lib/ui/views/ScrollingListView";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { LilacTagsService } from "../../../services/lilac/LilacTagsService";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
@@ -55,20 +52,18 @@ export default class TagList extends LastFMBaseCommand<typeof args> {
     const artists = topArtists.artists.map((a) => ({ name: a.name }));
     const response = await this.lilacTagsService.list(this.ctx, { artists });
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Top tags"))
-      .setTitle(
-        `${perspective.possessive} top tags ${
-          dateRange?.humanized() || humanizePeriod(timePeriod)
-        }`
-      );
+    const embed = this.minimalEmbed().setTitle(
+      `${perspective.upper.possessive} top tags ${
+        dateRange?.humanized() || humanizePeriod(timePeriod)
+      }`
+    );
 
     const tagConsolidator = new TagConsolidator();
 
     await tagConsolidator.saveServerBannedTagsInContext(this.ctx);
     tagConsolidator.addTags(this.ctx, response.tags);
 
-    const scrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
+    const scrollingEmbed = new ScrollingListView(this.ctx, embed, {
       items: tagConsolidator.consolidate(),
       pageSize: 15,
       pageRenderer(tags, { offset }) {
@@ -83,6 +78,6 @@ export default class TagList extends LastFMBaseCommand<typeof args> {
       overrides: { itemName: "tag" },
     });
 
-    scrollingEmbed.send();
+    await this.reply(scrollingEmbed);
   }
 }

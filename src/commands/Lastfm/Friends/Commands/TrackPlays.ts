@@ -5,7 +5,7 @@ import { ArgumentsMap } from "../../../../lib/context/arguments/types";
 import {
   displayNumber,
   displayNumberedList,
-} from "../../../../lib/views/displays";
+} from "../../../../lib/ui/displays";
 import { FriendsChildCommand } from "../FriendsChildCommand";
 
 const args = {
@@ -66,19 +66,18 @@ export class TrackPlays extends FriendsChildCommand<typeof args> {
       0
     );
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Friends track plays"))
+    const embed = this.minimalEmbed()
       .setTitle(
         `Your friends plays of ${trackInfo.name} by ${trackInfo.artist.name}`
       )
       .setDescription(displayNumberedList(friendDisplays))
-      .setFooter({
-        text: `Your friends have a total of ${displayNumber(
+      .setFooter(
+        `Your friends have a total of ${displayNumber(
           totalPlays,
           "scrobble"
-        )} of this track`,
-      });
+        )} of this track`
+      );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

@@ -1,4 +1,3 @@
-import { MessageEmbed } from "discord.js";
 import { FishyNotFoundError } from "../../errors/commands/fishy";
 import { bold, italic } from "../../helpers/discord";
 import { bullet, emDash, quote } from "../../helpers/specialCharacters";
@@ -8,12 +7,10 @@ import { EmojisArgument } from "../../lib/context/arguments/argumentTypes/discor
 import { standardMentions } from "../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../lib/context/arguments/types";
 import { EmojiRaw } from "../../lib/emoji/Emoji";
-import { displayNumber } from "../../lib/views/displays";
-import { SimpleScrollingEmbed } from "../../lib/views/embeds/SimpleScrollingEmbed";
-import {
-  TabbedEmbed,
-  TabbedEmbedTab,
-} from "../../lib/views/embeds/TabbedEmbed";
+import { displayNumber } from "../../lib/ui/displays";
+import { EmbedView } from "../../lib/ui/views/EmbedView";
+import { ScrollingListView } from "../../lib/ui/views/ScrollingListView";
+import { TabbedView, TabbedViewTab } from "../../lib/ui/views/TabbedView";
 import { Fishy } from "../../services/fishy/Fishy";
 import { findFishy, fishyList } from "../../services/fishy/fishyList";
 import {
@@ -86,30 +83,30 @@ export class Fishypedia extends FishyChildCommand<typeof args> {
       ? await this.fishyService.countFishy(fishyProfile, fishy)
       : 0;
 
-    const mainTab: TabbedEmbedTab = {
+    const mainTab: TabbedViewTab = {
       name: "main",
       rawEmoji: EmojiRaw.fishypediaMainTab,
       embed: this.getMainTabEmbed(fishy, fishyCount, perspective),
     };
 
-    const traitsTab: TabbedEmbedTab = {
+    const traitsTab: TabbedViewTab = {
       name: "traits",
       rawEmoji: EmojiRaw.fishypediaTraitsTab,
       embed: this.getTraitsTabEmbed(fishy),
     };
 
-    const tabbedEmbed = new TabbedEmbed(this.ctx, {
+    const tabbedEmbed = new TabbedView(this.ctx, {
       tabs: fishy.traits.length ? [mainTab, traitsTab] : [mainTab],
     });
 
-    tabbedEmbed.send();
+    await this.reply(tabbedEmbed);
   }
 
   private getMainTabEmbed(
     fishy: Fishy,
     fishyCount: number,
     perspective: Perspective
-  ): MessageEmbed {
+  ): EmbedView {
     const embed = this.getBaseTabEmbed(fishy).setDescription(
       `
 ${fishy.emoji} ${bold(italic(fishy.binomialName), false)}
@@ -129,23 +126,26 @@ ${
     );
 
     if (!fishy.rarity.isTrash()) {
-      embed.addField("Weight", `${fishy.minWeight}-${fishy.maxWeight}kg`);
+      embed.addFields({
+        name: "Weight",
+        value: `${fishy.minWeight}-${fishy.maxWeight}kg`,
+      });
     }
 
     return embed;
   }
 
-  private getTraitsTabEmbed(fishy: Fishy): MessageEmbed {
+  private getTraitsTabEmbed(fishy: Fishy): EmbedView {
     return this.getBaseTabEmbed(fishy).setDescription(
       `**Traits**:
  ${fishy.traits.map((t) => `${bullet} ${displayFishyTrait(t)}`).join("\n")}`
     );
   }
 
-  private getBaseTabEmbed(fishy: Fishy): MessageEmbed {
-    return this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Fishypedia"))
-      .setColor(fishy.rarity.colour)
+  private getBaseTabEmbed(fishy: Fishy): EmbedView {
+    return this.minimalEmbed()
+      .setHeader("Fishypedia")
+      .setColour(fishy.rarity.colour)
       .setTitle(fishy.name)
       .setURL(fishy.url);
   }
@@ -155,11 +155,11 @@ ${
       (f) => !f.rarity.special && matchesFishyTrait(f, trait)
     );
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Fishy wiki"))
-      .setTitle(`Search results for ${displayFishyTrait(trait, true)}`);
+    const embed = this.minimalEmbed().setTitle(
+      `Fishypedia search results for ${displayFishyTrait(trait, true)}`
+    );
 
-    const simpleScrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
+    const simpleScrollingEmbed = new ScrollingListView(this.ctx, embed, {
       items: fishy.map(
         (f) =>
           `${f.rarity.emoji.forLevel(f.requiredFishyLevel)} ${
@@ -169,6 +169,6 @@ ${
       pageSize: 15,
     });
 
-    simpleScrollingEmbed.send();
+    await this.reply(simpleScrollingEmbed);
   }
 }

@@ -1,8 +1,10 @@
 import { CannotChangePrefixError } from "../../errors/commands/permissions";
-import { LogicError } from "../../errors/errors";
+import { OmitTriangularBracketsFromPrefixError } from "../../errors/gowon";
 import { code } from "../../helpers/discord";
 import { Command } from "../../lib/command/Command";
 import { SettingsService } from "../../lib/settings/SettingsService";
+import { InfoEmbed } from "../../lib/ui/embeds/InfoEmbed";
+import { SuccessEmbed } from "../../lib/ui/embeds/SuccessEmbed";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 
 export default class Prefix extends Command {
@@ -31,10 +33,9 @@ export default class Prefix extends Command {
         throw new CannotChangePrefixError();
       }
 
-      if (this.newPrefix.startsWith("<") && this.newPrefix.endsWith(">"))
-        throw new LogicError(
-          "Please omit the triangular brackets!\neg. `@Gowon prefix <!>` should be `@Gowon prefix !`"
-        );
+      if (this.newPrefix.startsWith("<") && this.newPrefix.endsWith(">")) {
+        throw new OmitTriangularBracketsFromPrefixError();
+      }
 
       await this.settingsService.set(
         this.ctx,
@@ -42,9 +43,18 @@ export default class Prefix extends Command {
         this.scopes.guild,
         this.newPrefix
       );
-      await this.oldReply(`the new prefix is ${code(this.prefix)}`);
+
+      const embed = new SuccessEmbed().setDescription(
+        `The new prefix is ${code(this.prefix)}`
+      );
+
+      await this.reply(embed);
     } else {
-      await this.oldReply(`the prefix is ${code(this.prefix)}`);
+      const embed = new InfoEmbed().setDescription(
+        `The current prefix is ${code(this.prefix)}`
+      );
+
+      await this.reply(embed);
     }
   }
 }

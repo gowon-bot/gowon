@@ -13,14 +13,14 @@ import { standardMentions } from "../../../lib/context/arguments/mentionTypes/me
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { Emoji } from "../../../lib/emoji/Emoji";
 import { Paginator } from "../../../lib/paginators/Paginator";
-import { Validation } from "../../../lib/validation/ValidationChecker";
-import { validators } from "../../../lib/validation/validators";
 import {
   displayAlbumLink,
   displayArtistLink,
   displayNumber,
   displayTrackLink,
-} from "../../../lib/views/displays";
+} from "../../../lib/ui/displays";
+import { Validation } from "../../../lib/validation/ValidationChecker";
+import { validators } from "../../../lib/validation/validators";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { LilacArtistsService } from "../../../services/lilac/LilacArtistsService";
 import { AlbumCoverService } from "../../../services/moderation/AlbumCoverService";
@@ -100,9 +100,7 @@ export class Current extends ComboChildCommand<typeof args> {
       }
     }
 
-    const lineConsolidator = new LineConsolidator();
-
-    lineConsolidator.addLines(
+    const description = new LineConsolidator().addLines(
       {
         string:
           this.displayCurrentCombo(combo, "artist") +
@@ -127,28 +125,24 @@ export class Current extends ComboChildCommand<typeof args> {
       )}_`
     );
 
-    const embed = this.newEmbed()
-      .setAuthor({
-        ...this.generateEmbedAuthor(
-          `${perspective.upper.possessive.replace(/`/g, "")} ongoing streaks`
-        ),
-        url: LastfmLinks.userPage(username),
-      })
-      .setDescription(
-        combo.hasAnyConsecutivePlays()
-          ? lineConsolidator.consolidate()
-          : "No streaks found!"
+    const embed = this.minimalEmbed()
+      .setTitle(
+        `${perspective.upper.possessive.replace(/`/g, "")} ongoing streaks`
       )
-      .setFooter({
-        text: comboSaved
+      .setURL(LastfmLinks.userPage(username))
+      .setDescription(
+        combo.hasAnyConsecutivePlays() ? description : "No streaks found!"
+      )
+      .setFooter(
+        comboSaved
           ? `This combo has been saved! See ${this.prefix}combos to see all your combos`
           : thresholdNotMet
           ? `Only combos with more than ${displayNumber(
               this.comboService.getThreshold(this.ctx),
               "play"
             )} are saved.`
-          : "",
-      });
+          : ""
+      );
 
     if (combo.hasAnyConsecutivePlays()) {
       const nowplaying = await this.lastFMService.nowPlaying(
@@ -166,12 +160,12 @@ export class Current extends ComboChildCommand<typeof args> {
 
       embed.setThumbnail(albumCover || "");
     } else {
-      embed.setFooter({
-        text: "A streak is when you loop the same artist/album/track more than once",
-      });
+      embed.setFooter(
+        "A streak is when you loop the same artist/album/track more than once"
+      );
     }
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 
   private displayCurrentCombo(
@@ -185,8 +179,8 @@ export class Current extends ComboChildCommand<typeof args> {
         ? ` ${Emoji.gowonLitDance}`
         : combo[entity].plays >= 100
         ? this.isEnya(this.author.id)
-          ? "💹"
-          : "🔥"
+          ? Emoji.chart
+          : Emoji.fire
         : combo[entity].hitMax
         ? "+"
         : combo[entity].nowplaying

@@ -1,10 +1,10 @@
 import { bold, italic } from "../../../helpers/discord";
 import { LinkConsolidator, toInt } from "../../../helpers/lastfm/";
+import { LineConsolidator } from "../../../lib/LineConsolidator";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
-import { LineConsolidator } from "../../../lib/LineConsolidator";
-import { displayNumber } from "../../../lib/views/displays";
+import { displayNumber } from "../../../lib/ui/displays";
 import { InfoCommand } from "./InfoCommand";
 
 const args = {
@@ -24,8 +24,6 @@ export default class TrackInfo extends InfoCommand<typeof args> {
   slashCommand = true;
 
   arguments = args;
-
-  lineConsolidator = new LineConsolidator();
 
   async run() {
     const { senderRequestable } = await this.getMentions({
@@ -59,7 +57,7 @@ export default class TrackInfo extends InfoCommand<typeof args> {
 
     const duration = toInt(trackInfo.duration);
 
-    this.lineConsolidator.addLines(
+    const description = new LineConsolidator().addLines(
       (duration
         ? `_${displayNumber(Math.round(duration / 60000), "minute")}_`
         : "") +
@@ -79,7 +77,7 @@ export default class TrackInfo extends InfoCommand<typeof args> {
       {
         shouldDisplay: this.tagConsolidator.hasAnyTags(),
         string: `**Tags:** ${this.tagConsolidator
-          .consolidateAsStrings(Infinity, false)
+          .consolidateAsStrings(10, false)
           .join(" ‧ ")}`,
       },
       {
@@ -88,9 +86,9 @@ export default class TrackInfo extends InfoCommand<typeof args> {
       }
     );
 
-    const embed = this.newEmbed()
+    const embed = this.minimalEmbed()
       .setTitle(italic(trackInfo.name) + " by " + bold(trackInfo.artist.name))
-      .setDescription(this.lineConsolidator.consolidate())
+      .setDescription(description)
       .setThumbnail(trackInfo.album?.images?.get("large") || "")
       .addFields(
         {
@@ -106,6 +104,6 @@ export default class TrackInfo extends InfoCommand<typeof args> {
       )
       .setURL(trackInfo.url);
 
-    this.send(embed);
+    this.reply(embed);
   }
 }

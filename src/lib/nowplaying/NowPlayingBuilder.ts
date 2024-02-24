@@ -1,17 +1,13 @@
-import { MessageEmbed } from "discord.js";
-import { sum } from "mathjs";
 import { asyncMap } from "../../helpers";
 import { UNUSED_CONFIG } from "../../services/dbservices/NowPlayingService";
-import { PresentedComponent } from "./base/BaseNowPlayingComponent";
+import { RenderedComponent } from "./base/BaseNowPlayingComponent";
 import {
   compoundComponentList,
   getComponentByName,
   NowPlayingComponent,
 } from "./componentMap";
 import { UnusedComponent } from "./components/UnusedComponent";
-import { ResolvedRequirements } from "./DatasourceService";
-
-export const rowSize = 3;
+import { ResolvedDependencies } from "./DatasourceService";
 
 export class NowPlayingBuilder {
   components: NowPlayingComponent[];
@@ -37,74 +33,34 @@ export class NowPlayingBuilder {
     );
   }
 
-  generateRequirements(): string[] {
-    const requirements = new Set(
-      this.components.map((c) => new c({}).requirements).flat()
+  generateDependencies(): string[] {
+    const dependencies = new Set(
+      this.components.map((c) => new c({}).dependencies).flat()
     );
 
-    return Array.from(requirements.values());
-  }
-
-  async asEmbed(
-    resolvedRequirements: ResolvedRequirements,
-    embed?: MessageEmbed
-  ): Promise<MessageEmbed> {
-    const presentedComponents = await this.getPresentedComponents(
-      resolvedRequirements
-    );
-
-    const presented = this.organizeRows(
-      presentedComponents.filter((s) => !!s.string && s.size !== undefined)
-    );
-
-    return (embed || new MessageEmbed()).setFooter({
-      text: presented
-        .map((row) => row.map((r) => r.string).join(" • "))
-        .join("\n"),
-    });
-  }
-
-  private organizeRows(
-    presentedComponents: PresentedComponent[]
-  ): PresentedComponent[][] {
-    const finalArray = [] as PresentedComponent[][];
-
-    for (const presentedComponent of presentedComponents) {
-      const findFunction = (row: PresentedComponent[]) =>
-        rowSize - sum(...row.map((r) => r.size)) >= presentedComponent.size;
-
-      const index = finalArray.findIndex(findFunction);
-
-      if (index !== -1) {
-        finalArray[index].push(presentedComponent);
-      } else {
-        finalArray.push([presentedComponent]);
-      }
-    }
-
-    return finalArray;
+    return Array.from(dependencies.values());
   }
 
   // This function does three things:
   // - Resolves promises
   // - Moves components around according to placeAfter
   // - Flattens out multiple component returns
-  private async getPresentedComponents(
-    resolvedRequirements: ResolvedRequirements
-  ): Promise<PresentedComponent[]> {
+  public async renderComponents(
+    resolvedDependencies: ResolvedDependencies
+  ): Promise<RenderedComponent[]> {
     const promises = await asyncMap(
       this.components,
       async (c) =>
         [
           (c as any).componentName,
-          await Promise.resolve(new c(resolvedRequirements).present()),
-        ] as [string, PresentedComponent | PresentedComponent[]]
+          await Promise.resolve(new c(resolvedDependencies).render()),
+        ] as [string, RenderedComponent | RenderedComponent[]]
     );
 
-    const initialComponentList = this.flattenPresentedComponents(promises);
+    const initialComponentList = this.flattenRenderedComponents(promises);
     const newComponentList = JSON.parse(
       JSON.stringify(initialComponentList)
-    ) as [string, PresentedComponent][];
+    ) as [string, RenderedComponent][];
 
     for (let index = 0; index < initialComponentList.length; index++) {
       const [_, component] = initialComponentList[index];
@@ -116,8 +72,8 @@ export class NowPlayingBuilder {
   }
 
   private handleComponent(
-    component: PresentedComponent,
-    newComponentList: [string, PresentedComponent | PresentedComponent[]][],
+    component: RenderedComponent,
+    newComponentList: [string, RenderedComponent | RenderedComponent[]][],
     componentIndex: number
   ) {
     if (component.placeAfter) {
@@ -143,10 +99,10 @@ export class NowPlayingBuilder {
     }
   }
 
-  private flattenPresentedComponents(
-    componentList: [string, PresentedComponent | PresentedComponent[]][]
-  ): [string, PresentedComponent][] {
-    const flattenedlist = [] as [string, PresentedComponent][];
+  private flattenRenderedComponents(
+    componentList: [string, RenderedComponent | RenderedComponent[]][]
+  ): [string, RenderedComponent][] {
+    const flattenedlist = [] as [string, RenderedComponent][];
 
     for (const [componentName, component] of componentList) {
       const miniComponentList =
@@ -154,7 +110,7 @@ export class NowPlayingBuilder {
 
       flattenedlist.push(
         ...miniComponentList.map(
-          (c) => [componentName, c] as [string, PresentedComponent]
+          (c) => [componentName, c] as [string, RenderedComponent]
         )
       );
     }

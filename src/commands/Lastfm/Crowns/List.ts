@@ -4,11 +4,8 @@ import { bold } from "../../../helpers/discord";
 import { toInt } from "../../../helpers/lastfm/";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
-import {
-  displayNumber,
-  displayNumberedList,
-} from "../../../lib/views/displays";
-import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingEmbed";
+import { displayNumber, displayNumberedList } from "../../../lib/ui/displays";
+import { ScrollingListView } from "../../../lib/ui/views/ScrollingListView";
 import { CrownsChildCommand } from "./CrownsChildCommand";
 
 const args = {
@@ -45,13 +42,11 @@ export class List extends CrownsChildCommand<typeof args> {
       throw new UserHasNoCrownsInServerError(perspective);
     }
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Crowns list"))
-      .setTitle(
-        `${perspective.upper.possessive} crowns in ${this.requiredGuild.name}`
-      );
+    const embed = this.minimalEmbed().setTitle(
+      `${perspective.upper.possessive} crowns in ${this.requiredGuild.name}`
+    );
 
-    const scrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
+    const scrollingEmbed = new ScrollingListView(this.ctx, embed, {
       pageSize: 15,
       items: crowns,
       pageRenderer(crownsPage, { offset }) {
@@ -72,6 +67,6 @@ export class List extends CrownsChildCommand<typeof args> {
       },
     });
 
-    scrollingEmbed.send();
+    await this.reply(scrollingEmbed);
   }
 }

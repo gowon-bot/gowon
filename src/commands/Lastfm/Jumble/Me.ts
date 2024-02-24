@@ -14,7 +14,7 @@ import { Flag } from "../../../lib/context/arguments/argumentTypes/Flag";
 import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/NumberArgument";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { TagConsolidator } from "../../../lib/tags/TagConsolidator";
-import { displayNumber } from "../../../lib/views/displays";
+import { displayNumber } from "../../../lib/ui/displays";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { WordBlacklistService } from "../../../services/WordBlacklistService";
 import { JumbleChildCommand } from "./JumbleChildCommand";
@@ -104,11 +104,9 @@ export class Start extends JumbleChildCommand<typeof args> {
     const tags = this.tagConsolidator
       .blacklistTags(artist.name)
       .addTags(this.ctx, artistInfo.tags)
-      .consolidateAsStrings();
+      .consolidateAsStrings(10);
 
-    const lineConsolidator = new LineConsolidator();
-
-    lineConsolidator.addLines(
+    const description = new LineConsolidator().addLines(
       `This artist has **${abbreviateNumber(artistInfo.listeners)}** listener${
         artistInfo.listeners === 1 ? "" : "s"
       } on Last.fm and you have scrobbled them **${displayNumber(
@@ -130,21 +128,20 @@ export class Start extends JumbleChildCommand<typeof args> {
       }
     );
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Jumble me"))
+    const embed = this.minimalEmbed()
       .setDescription(
         `**Who is this artist?**
       
       ${code(jumbledArtist.jumbled)}
       
       **Hints**:
-      _${lineConsolidator.consolidate()}_`
+      _${description.consolidate()}_`
       )
-      .setFooter({
-        text: `Send a message to make a guess or type "quit" to quit\nType "hint" to get a hint`,
-      });
+      .setFooter(
+        `Send a message to make a guess or type "quit" to quit\nType "hint" to get a hint`
+      );
 
-    await this.send(embed);
+    await this.reply(embed);
 
     this.watchForAnswers(jumbledArtist);
   }
@@ -154,18 +151,17 @@ export class Start extends JumbleChildCommand<typeof args> {
 
     this.sessionSetJSON(jumbleRedisKey, jumble);
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Jumble reshuffle"))
+    const embed = this.minimalEmbed()
       .setDescription(
         `I've reshuffled the letters, now who is this artist?\n\n${code(
           jumble.jumbled
         )}`
       )
-      .setFooter({
-        text: `Trying to skip? Type "quit" to give up\nNeed a hint? Type "hint" to get a hint`,
-      });
+      .setFooter(
+        `Trying to skip? Type "quit" to give up\nNeed a hint? Type "hint" to get a hint`
+      );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 
   private jumble(artistName: string): string {
@@ -211,13 +207,11 @@ export class Start extends JumbleChildCommand<typeof args> {
       if (reason === "time") {
         this.redisService.sessionDelete(this.ctx, jumbleRedisKey);
 
-        const embed = this.newEmbed()
-          .setAuthor(this.generateEmbedAuthor("Jumble"))
-          .setDescription(
-            `You ran out of time! The answer was ${bold(jumble.unjumbled)}`
-          );
+        const embed = this.minimalEmbed().setDescription(
+          `You ran out of time! The answer was ${bold(jumble.unjumbled)}`
+        );
 
-        await this.send(embed);
+        await this.reply(embed);
       }
     });
   }

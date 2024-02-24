@@ -1,16 +1,16 @@
-import { displayNumber } from "../../views/displays";
+import { displayNumber } from "../../ui/displays";
 import { BaseNowPlayingComponent } from "../base/BaseNowPlayingComponent";
 
-const listenersRequirements = ["artistInfo"] as const;
+const listenersDependencies = ["artistInfo"] as const;
 
 export class ListenersComponent extends BaseNowPlayingComponent<
-  typeof listenersRequirements
+  typeof listenersDependencies
 > {
   static componentName = "listeners";
   static friendlyName = "Last.fm listeners";
-  readonly requirements = listenersRequirements;
+  readonly dependencies = listenersDependencies;
 
-  present() {
+  render() {
     return {
       string: `${displayNumber(
         this.values.artistInfo?.listeners || 0,

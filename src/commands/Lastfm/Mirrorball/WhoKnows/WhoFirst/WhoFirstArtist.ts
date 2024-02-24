@@ -16,7 +16,7 @@ import {
   displayLink,
   displayNumber,
   displayNumberedList,
-} from "../../../../../lib/views/displays";
+} from "../../../../../lib/ui/displays";
 import { WhoKnowsBaseCommand } from "../WhoKnowsBaseCommand";
 import {
   WhoFirstArtistConnector,
@@ -90,9 +90,7 @@ export default class WhoFirstArtist extends WhoKnowsBaseCommand<
     const { rows, artist } = response.whoFirstArtist;
     const { undated, senderUndated } = this.getUndated(response);
 
-    const lineConsolidator = new LineConsolidator();
-
-    lineConsolidator.addLines(
+    const description = new LineConsolidator().addLines(
       {
         shouldDisplay: !!undated.length,
         string:
@@ -131,16 +129,16 @@ export default class WhoFirstArtist extends WhoKnowsBaseCommand<
       }
     );
 
-    const embed = this.whoKnowsEmbed()
+    const embed = this.minimalEmbed()
       .setTitle(
         `${Emoji.usesIndexedDataTitle} Who ${
           whoLast ? "last" : "first"
         } scrobbled ${bold(artist.name)}${this.isGlobal() ? " globally" : ""}?`
       )
-      .setDescription(lineConsolidator.consolidate())
-      .setFooter({ text: this.footerHelp(senderUser, senderLilacUser) });
+      .setDescription(description)
+      .setFooter(this.footerHelp(senderUser, senderLilacUser));
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 
   private getUndated(response: WhoFirstArtistResponse): {

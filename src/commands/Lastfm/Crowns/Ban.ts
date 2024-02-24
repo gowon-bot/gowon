@@ -3,6 +3,7 @@ import { code } from "../../../helpers/discord";
 import { Variation } from "../../../lib/command/Command";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { SuccessEmbed } from "../../../lib/ui/embeds/SuccessEmbed";
 import { CrownsChildCommand } from "./CrownsChildCommand";
 
 const args = {
@@ -56,14 +57,12 @@ export class Ban extends CrownsChildCommand<typeof args> {
       );
     }
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor(`Crowns ${unban ? "un" : ""}ban`))
-      .setDescription(
-        `Successfully ${unban ? "un" : ""}banned ${code(
-          discordUser?.username || "<unknown user>"
-        )}`
-      );
+    const embed = new SuccessEmbed().setDescription(
+      `Successfully ${unban ? "un" : ""}banned ${code(
+        discordUser?.username || "<unknown user>"
+      )} from the crowns game.`
+    );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

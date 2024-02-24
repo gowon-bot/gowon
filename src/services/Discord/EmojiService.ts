@@ -3,6 +3,7 @@ import { emojiVerificationChannelId } from "../../../config.json";
 import { promiseAllSettled } from "../../helpers";
 import { GowonContext } from "../../lib/context/Context";
 import { EmojiMention } from "../../lib/context/arguments/parsers/EmojiParser";
+import { Sendable } from "../../lib/ui/Sendable";
 import { BaseService } from "../BaseService";
 import { ServiceRegistry } from "../ServicesRegistry";
 import { DiscordService } from "./DiscordService";
@@ -102,7 +103,7 @@ export class EmojiService extends BaseService {
 
     const messageContent = `Emoji verification for user ${ctx.author.id}`;
 
-    return await this.discordService.send(ctx, messageContent, {
+    return await this.discordService.send(ctx, new Sendable(messageContent), {
       inChannel: testChannel as RespondableChannel,
     });
   }

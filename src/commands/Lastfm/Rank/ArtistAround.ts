@@ -7,14 +7,11 @@ import { NumberArgument } from "../../../lib/context/arguments/argumentTypes/Num
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { displayNumber, displayNumberedList } from "../../../lib/ui/displays";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
-import {
-  displayNumber,
-  displayNumberedList,
-} from "../../../lib/views/displays";
-import { RedirectsService } from "../../../services/dbservices/RedirectsService";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
+import { RedirectsService } from "../../../services/dbservices/RedirectsService";
 import { AroundCommand } from "./AroundCommand";
 
 const args = {
@@ -39,6 +36,7 @@ export default class ArtistAround extends AroundCommand<typeof args> {
   };
 
   redirectsService = ServiceRegistry.get(RedirectsService);
+
   async run() {
     const redirectsCache = new RedirectsCache(this.ctx);
 
@@ -98,8 +96,7 @@ export default class ArtistAround extends AroundCommand<typeof args> {
       );
     }
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Artist around"))
+    const embed = this.minimalEmbed()
       .setTitle(
         `Artists around ${
           shouldSearchByRank
@@ -125,6 +122,6 @@ export default class ArtistAround extends AroundCommand<typeof args> {
         )
       );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

@@ -4,7 +4,7 @@ import { DateRangeArgument } from "../../../lib/context/arguments/argumentTypes/
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { DateRange } from "../../../lib/timeAndDate/DateRange";
-import { displayDate, displayNumber } from "../../../lib/views/displays";
+import { displayDate, displayNumber } from "../../../lib/ui/displays";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 const args = {
@@ -32,7 +32,7 @@ export default class Scrobbles extends LastFMBaseCommand<typeof args> {
       this.payload.isMessage() &&
       this.payload.source.content.trim() === `${this.prefix}s n s d`
     ) {
-      await this.send("Gee gee gee gee baby baby baby");
+      await this.reply("Gee gee gee gee baby baby baby");
       return;
     }
 
@@ -48,8 +48,8 @@ export default class Scrobbles extends LastFMBaseCommand<typeof args> {
       date ? undefined : dateRange.to
     );
 
-    const sentMessage = await this.oldReply(
-      `${perspective.plusToHave} ${bold(
+    const embed = this.minimalEmbed().setDescription(
+      `${perspective.upper.plusToHave} ${bold(
         displayNumber(
           scrobbles,
           `scr${this.extract.didMatch("scrabbles") ? "a" : "o"}bble`
@@ -58,7 +58,9 @@ export default class Scrobbles extends LastFMBaseCommand<typeof args> {
     );
 
     if (dateRange.isOverall && scrobbles % 25000 === 0 && scrobbles > 0) {
-      await sentMessage.react("🥳");
+      embed.setReacts(["🥳"]);
     }
+
+    await this.reply(embed);
   }
 }

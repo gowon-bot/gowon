@@ -1,4 +1,4 @@
-import { discordTimestamp, displayNumber } from "../lib/views/displays";
+import { discordTimestamp, displayNumber } from "../lib/ui/displays";
 import { toInt } from "./lastfm/";
 
 export function addS(string: string, number: number) {

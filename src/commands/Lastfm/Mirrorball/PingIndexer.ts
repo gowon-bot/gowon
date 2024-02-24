@@ -30,9 +30,9 @@ export default class PingMirrorball extends MirrorballBaseCommand<
     const response = await this.query({});
 
     if (!response.ping) {
-      await this.send("No response :(");
+      await this.reply("No response :(");
     } else {
-      await this.send(response.ping);
+      await this.reply(response.ping);
     }
   }
 }

@@ -30,12 +30,12 @@ export class CannotEditUserError extends ClientError {
   }
 }
 
-// Embeds
-
-export class CannotSwitchToTabError extends Error {
-  name = "CannotSwitchToTabError";
+export class OmitTriangularBracketsFromPrefixError extends ClientError {
+  name = "OmitTriangularBracketsFromPrefixError";
 
   constructor() {
-    super(`Couldn't find a tab to switch to!`);
+    super(
+      "Please omit the triangular brackets!\neg. `@Gowon prefix <!>` should be `@Gowon prefix !`"
+    );
   }
 }

@@ -1,20 +1,21 @@
-import { PermissionsChildCommand } from "./PermissionsChildCommand";
-import { code, italic } from "../../../helpers/discord";
-import { displayNumberedList } from "../../../lib/views/displays";
-import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingEmbed";
-import { PermissionQuery } from "../../../lib/permissions/PermissionsCacheService";
-import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
-import { ChannelArgument } from "../../../lib/context/arguments/argumentTypes/discord/ChannelArgument";
-import { DiscordUserArgument } from "../../../lib/context/arguments/argumentTypes/discord/DiscordUserArgument";
+import { channelMention, roleMention, userMention } from "@discordjs/builders";
 import {
   Permission,
   PermissionType,
 } from "../../../database/entity/Permission";
-import { channelMention, roleMention, userMention } from "@discordjs/builders";
+import { code, italic } from "../../../helpers/discord";
 import { emDash } from "../../../helpers/specialCharacters";
-import { DiscordRoleArgument } from "../../../lib/context/arguments/argumentTypes/discord/DiscordRoleArgument";
 import { Flag } from "../../../lib/context/arguments/argumentTypes/Flag";
+import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
+import { ChannelArgument } from "../../../lib/context/arguments/argumentTypes/discord/ChannelArgument";
+import { DiscordRoleArgument } from "../../../lib/context/arguments/argumentTypes/discord/DiscordRoleArgument";
+import { DiscordUserArgument } from "../../../lib/context/arguments/argumentTypes/discord/DiscordUserArgument";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { PermissionQuery } from "../../../lib/permissions/PermissionsCacheService";
+import { displayNumberedList } from "../../../lib/ui/displays";
+import { ErrorEmbed } from "../../../lib/ui/embeds/ErrorEmbed";
+import { ScrollingListView } from "../../../lib/ui/views/ScrollingListView";
+import { PermissionsChildCommand } from "./PermissionsChildCommand";
 
 const args = {
   command: new StringArgument({
@@ -59,19 +60,23 @@ export class View extends PermissionsChildCommand<typeof args> {
       query
     );
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Permissions"))
-      .setTitle(`Permissions in ${this.guild?.name}`);
+    const embed = this.minimalEmbed().setTitle(
+      `Permissions in ${this.guild?.name}`
+    );
 
     if (!permissions.length) {
-      embed.setDescription(
-        `No permissions found! ${!this.parsedArguments.all ? this.allHelp : ""}`
+      await this.reply(
+        new ErrorEmbed().setDescription(
+          `No permissions found! ${
+            !this.parsedArguments.all ? this.allHelp : ""
+          }`
+        )
       );
-      await this.send(embed);
+
       return;
     }
 
-    const scrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
+    const scrollingEmbed = new ScrollingListView(this.ctx, embed, {
       items: permissions,
       pageSize: 15,
       pageRenderer: (items, { offset }) => {
@@ -80,18 +85,18 @@ export class View extends PermissionsChildCommand<typeof args> {
         return displayNumberedList(renderedItems, offset);
       },
       overrides: {
-        itemName: "permissions",
+        itemName: "permission",
         embedDescription:
           !this.parsedArguments.all &&
-            !this.parsedArguments.user &&
-            !this.parsedArguments.channel &&
-            !this.parsedArguments.role
+          !this.parsedArguments.user &&
+          !this.parsedArguments.channel &&
+          !this.parsedArguments.role
             ? italic(this.allHelp) + "\n"
             : "",
       },
     });
 
-    scrollingEmbed.send();
+    await this.reply(scrollingEmbed);
   }
 
   private async getQueries(): Promise<PermissionQuery[]> {
@@ -148,9 +153,10 @@ export class View extends PermissionsChildCommand<typeof args> {
   }
 
   private displayPermission(permission: Permission): string {
-    const commandName = this.commandRegistry.findByID(
-      permission.commandID
-    )!.friendlyName;
+    const commandName =
+      this.commandRegistry.findByID(permission.commandID, {
+        includeSecret: true,
+      })?.friendlyName || "<unknown command>";
 
     let extra = "";
 
@@ -167,7 +173,8 @@ export class View extends PermissionsChildCommand<typeof args> {
         break;
     }
 
-    return `${code(commandName)}${extra}${permission.allow ? italic(" (allow)") : ""
-      }`;
+    return `${code(commandName)}${extra}${
+      permission.allow ? italic(" (allow)") : ""
+    }`;
   }
 }

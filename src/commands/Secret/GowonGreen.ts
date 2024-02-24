@@ -10,6 +10,6 @@ export default class GowonGreen extends Command {
   secretCommand = true;
 
   async run() {
-    await this.send(code("#02BCA1"));
+    await this.reply(code("Gowon green is dead."));
   }
 }

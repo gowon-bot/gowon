@@ -1,7 +1,8 @@
-import { LogicError, UnknownMirrorballError } from "../../../../errors/errors";
+import { CouldNotFindRatingError } from "../../../../errors/commands/library";
+import { UnknownMirrorballError } from "../../../../errors/errors";
 import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";
 import { ArgumentsMap } from "../../../../lib/context/arguments/types";
-import { displayRating } from "../../../../lib/views/displays";
+import { displayRating } from "../../../../lib/ui/displays";
 import { AlbumCoverService } from "../../../../services/moderation/AlbumCoverService";
 import { ServiceRegistry } from "../../../../services/ServicesRegistry";
 import { RatingConnector, RatingParams, RatingResponse } from "./connectors";
@@ -55,7 +56,7 @@ export class Rating extends RateYourMusicIndexingChildCommand<
     }
 
     if (!response.ratings.ratings.length) {
-      throw new LogicError("Couldn't find this album in your ratings!");
+      throw new CouldNotFindRatingError();
     }
 
     const { rating, rateYourMusicAlbum } = response.ratings.ratings[0];
@@ -73,14 +74,14 @@ export class Rating extends RateYourMusicIndexingChildCommand<
       }
     );
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Rating"))
+    const embed = this.minimalEmbed()
+      .setHeader("RateYourMusic rating")
       .setTitle(
         `${rateYourMusicAlbum.artistName} - ${rateYourMusicAlbum.title}`
       )
       .setDescription(`${displayRating(rating)}`)
       .setThumbnail(albumCover || "");
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

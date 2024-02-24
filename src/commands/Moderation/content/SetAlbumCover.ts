@@ -5,11 +5,12 @@ import { ImageArgument } from "../../../lib/context/arguments/argumentTypes/Imag
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { URLParser } from "../../../lib/context/arguments/parsers/URLParser";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { Emoji } from "../../../lib/emoji/Emoji";
+import { ConfirmationView } from "../../../lib/ui/views/ConfirmationView";
 import { ArgumentValidationError } from "../../../lib/validation/validators/BaseValidator";
-import { ConfirmationEmbed } from "../../../lib/views/embeds/ConfirmationEmbed";
 import { LastFMArguments } from "../../../services/LastFM/LastFMArguments";
-import { AlbumCoverService } from "../../../services/moderation/AlbumCoverService";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
+import { AlbumCoverService } from "../../../services/moderation/AlbumCoverService";
 import { ContentModerationCommand } from "./ContentModerationCommand";
 
 const args = {
@@ -91,8 +92,8 @@ export default class SetAlbumCover extends ContentModerationCommand<
       this.parsedArguments.moderation
     );
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Set album cover"))
+    const embed = this.minimalEmbed()
+      .setHeader("Set album cover")
       .setDescription(
         `${
           existingCover
@@ -111,11 +112,11 @@ This will ${shouldClear ? "clear" : "set"} the image ${bold(
       .setImage(!shouldClear ? image.asURL() : "")
       .setThumbnail(existingCover?.url || "");
 
-    const confirmationEmbed = new ConfirmationEmbed(
+    const confirmationEmbed = new ConfirmationView(
       this.ctx,
       embed,
       this.ctx.payload
-    ).withRejectionReact();
+    ).allowRejection();
 
     if (!(await confirmationEmbed.awaitConfirmation(this.ctx))) {
       return;
@@ -138,16 +139,14 @@ This will ${shouldClear ? "clear" : "set"} the image ${bold(
       );
     }
 
-    await this.discordService.edit(
-      this.ctx,
-      confirmationEmbed.sentMessage!,
-      embed.setDescription(
-        `${shouldClear ? "Cleared" : "Set this as"} the image for ${bold(
-          artist
-        )} | ${italic(album)}${
+    await embed
+      .setDescription(
+        `${Emoji.checkmark} ${
+          shouldClear ? "Cleared" : "Set this as"
+        } the image for ${bold(artist)} | ${italic(album)}${
           this.parsedArguments.moderation ? " bot-wide" : ""
         }!`
       )
-    );
+      .editMessage(this.ctx);
   }
 }

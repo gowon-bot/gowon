@@ -6,7 +6,7 @@ import { MultiRequester } from "../../../../lib/MultiRequester";
 import {
   displayNumber,
   displayNumberedList,
-} from "../../../../lib/views/displays";
+} from "../../../../lib/ui/displays";
 import { FriendsChildCommand } from "../FriendsChildCommand";
 
 const args = {
@@ -75,18 +75,17 @@ export class ArtistPlays extends FriendsChildCommand<typeof args> {
       0
     );
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Friends artist plays"))
+    const embed = this.minimalEmbed()
       .setTitle(`Your friends plays of ${artistName}`)
       .setURL(LastfmLinks.listenersYouKnow(artistName))
       .setDescription(displayNumberedList(friendDisplays))
-      .setFooter({
-        text: `Your friends have a total of ${displayNumber(
+      .setFooter(
+        `Your friends have a total of ${displayNumber(
           totalPlays,
           "scrobble"
-        )} of this artist`,
-      });
+        )} of this artist`
+      );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

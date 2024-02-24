@@ -1,20 +1,21 @@
+import { Emoji } from "../../emoji/Emoji";
 import { AnyIn, BaseCompoundComponent } from "../base/BaseNowPlayingComponent";
 
-const lovedAndOwnedRequirements = [
+const lovedAndOwnedDependencies = [
   "trackInfo",
   "albumCard",
   "cachedLovedTrack",
 ] as const;
 
 export class LovedAndOwnedComponent extends BaseCompoundComponent<
-  typeof lovedAndOwnedRequirements
+  typeof lovedAndOwnedDependencies
 > {
-  requirements = lovedAndOwnedRequirements;
+  dependencies = lovedAndOwnedDependencies;
 
   static componentName = "loved-and-owned";
   static replaces = new AnyIn(["loved", "card-ownership"]);
 
-  async present() {
+  async render() {
     const loved =
       this.values.trackInfo?.loved || !!this.values.cachedLovedTrack;
     const owned =
@@ -22,11 +23,11 @@ export class LovedAndOwnedComponent extends BaseCompoundComponent<
       this.values.albumCard.owner.id === this.values.dbUser.id;
 
     if (owned && loved) {
-      return { size: 0, string: "💖" };
+      return { size: 0, string: Emoji.sparklingHeart };
     } else if (owned) {
-      return { size: 0, string: "✨" };
+      return { size: 0, string: Emoji.sparkles };
     } else if (loved) {
-      return { size: 0, string: "❤️" };
+      return { size: 0, string: Emoji.heart };
     } else {
       return { string: "", size: 0 };
     }

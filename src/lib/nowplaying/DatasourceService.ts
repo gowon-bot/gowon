@@ -25,11 +25,11 @@ import { Logger } from "../Logger";
 import { GowonContext } from "../context/Context";
 import { Payload } from "../context/Payload";
 import { TagConsolidator } from "../tags/TagConsolidator";
-import { NowPlayingRequirement } from "./base/BaseNowPlayingComponent";
+import { NowPlayingDependency } from "./base/BaseNowPlayingComponent";
 import { QueryPart, buildQuery, isQueryPart } from "./buildQuery";
 
-export interface ResolvedRequirements {
-  [requirement: string]: any;
+export interface ResolvedDependencies {
+  [dependency: string]: any;
 }
 
 export interface InputResources {
@@ -44,7 +44,7 @@ export interface InputResources {
 
 export type Resources = InputResources & {
   logger?: Logger;
-  requirements: NowPlayingRequirement[];
+  dependencies: NowPlayingDependency[];
 };
 
 export type DatasourceServiceContext = GowonContext<{
@@ -76,14 +76,14 @@ export class DatasourceService extends BaseService<DatasourceServiceContext> {
     return ctx.constants.resources!.recentTracks.first();
   }
 
-  async resolveRequirements(
+  async resolveDependencies(
     ctx: DatasourceServiceContext,
-    requirements: NowPlayingRequirement[],
+    dependencies: NowPlayingDependency[],
     resources: InputResources
-  ): Promise<ResolvedRequirements> {
+  ): Promise<ResolvedDependencies> {
     ctx.constants.resources = Object.assign(resources, {
       logger: ctx.logger,
-      requirements,
+      dependencies: dependencies,
     });
 
     const graphQLDatasource = new GraphQLDatasource();
@@ -94,7 +94,7 @@ export class DatasourceService extends BaseService<DatasourceServiceContext> {
     for (const key of Object.getOwnPropertyNames(DatasourceService.prototype)) {
       const data = (this as any)[key];
 
-      if (requirements.includes(key as NowPlayingRequirement)) {
+      if (dependencies.includes(key as NowPlayingDependency)) {
         const resolvedData = data.bind(this)(ctx);
 
         if (isQueryPart(resolvedData)) {
@@ -122,7 +122,7 @@ export class DatasourceService extends BaseService<DatasourceServiceContext> {
       acc[datasourceName] = val;
 
       return acc;
-    }, {} as ResolvedRequirements);
+    }, {} as ResolvedDependencies);
 
     return Object.assign(resolvedMap, resources);
   }

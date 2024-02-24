@@ -1,5 +1,6 @@
-import { promiseAllSettled } from "../../../helpers";
-import { LineConsolidator } from "../../../lib/LineConsolidator";
+import { DatasourceServiceContext } from "../../../lib/nowplaying/DatasourceService";
+import { LastFMAlbumPlaysComponent } from "../../../lib/nowplaying/components/AlbumPlaysComponent";
+import { NowPlayingEmbed } from "../../../lib/ui/embeds/NowPlayingEmbed";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { CrownsService } from "../../../services/dbservices/crowns/CrownsService";
 import { NowPlayingBaseCommand } from "./NowPlayingBaseCommand";
@@ -13,102 +14,63 @@ export default class NowPlayingAlbum extends NowPlayingBaseCommand {
 
   crownsService = ServiceRegistry.get(CrownsService);
 
-  async run() {
-    const { username, requestable, discordUser, dbUser } =
-      await this.getMentions();
+  getConfig(): string[] {
+    return ["artist-plays", "artist-tags", "artist-crown"];
+  }
 
-    const nowPlaying = await this.lastFMService.nowPlaying(
-      this.ctx,
-      requestable
-    );
+  async run() {
+    const { username, requestable, dbUser } = await this.getMentions();
+
+    const recentTracks = await this.lastFMService.recentTracks(this.ctx, {
+      username: requestable,
+      limit: 1000,
+    });
+
+    const nowPlaying = recentTracks.first();
+
+    const albumInfo = await this.lastFMService.albumInfo(this.ctx, {
+      artist: nowPlaying.artist,
+      album: nowPlaying.album,
+      username: requestable,
+    });
+
+    this.tagConsolidator.blacklistTags(nowPlaying.artist, nowPlaying.name);
 
     if (nowPlaying.isNowPlaying) this.scrobble(nowPlaying);
 
     this.tagConsolidator.blacklistTags(nowPlaying.artist, nowPlaying.name);
 
-    const [artistInfo, albumInfo, crown] = await promiseAllSettled([
-      this.lastFMService.artistInfo(this.ctx, {
-        artist: nowPlaying.artist,
-        username: requestable,
-      }),
-      this.lastFMService.albumInfo(this.ctx, {
-        artist: nowPlaying.artist,
-        album: nowPlaying.album,
-        username: requestable,
-      }),
-      this.crownsService.getCrownDisplay(this.ctx, nowPlaying.artist),
-    ]);
-
-    const { crownString, isCrownHolder } = await this.crownDetails(
-      crown,
-      discordUser
+    const usernameDisplay = await this.nowPlayingService.getUsernameDisplay(
+      this.ctx,
+      dbUser,
+      username
     );
 
-    await this.tagConsolidator.saveServerBannedTagsInContext(this.ctx);
-
-    if (albumInfo.value)
-      this.tagConsolidator.addTags(this.ctx, albumInfo.value?.tags || []);
-    if (artistInfo.value)
-      this.tagConsolidator.addTags(this.ctx, artistInfo.value?.tags || []);
-
-    const artistPlays = this.artistPlays(artistInfo, nowPlaying, isCrownHolder);
-    const noArtistData = this.noArtistData(nowPlaying);
-    const albumPlays = this.albumPlays(albumInfo);
-    const tags = this.tagConsolidator
-      .consolidateAsStrings(Infinity)
-      .join(" ‧ ");
-
-    const lineConsolidator = new LineConsolidator();
-    lineConsolidator.addLines(
-      // Top line
-      {
-        shouldDisplay: !!artistPlays && !!albumPlays && !!crownString,
-        string: `${artistPlays} • ${albumPlays} • ${crownString}`,
-      },
-      {
-        shouldDisplay: !!artistPlays && !!albumPlays && !crownString,
-        string: `${artistPlays} • ${albumPlays}`,
-      },
-      {
-        shouldDisplay: !!artistPlays && !albumPlays && !!crownString,
-        string: `${artistPlays} • ${crownString}`,
-      },
-      {
-        shouldDisplay: !artistPlays && !!albumPlays && !!crownString,
-        string: `${noArtistData} • ${albumPlays} • ${crownString}`,
-      },
-      {
-        shouldDisplay: !artistPlays && !albumPlays && !!crownString,
-        string: `${noArtistData} • ${crownString}`,
-      },
-      {
-        shouldDisplay: !artistPlays && !!albumPlays && !crownString,
-        string: `${noArtistData} • ${albumPlays}`,
-      },
-      {
-        shouldDisplay: !!artistPlays && !albumPlays && !crownString,
-        string: `${artistPlays}`,
-      },
-      {
-        shouldDisplay: !artistPlays && !albumPlays && !crownString,
-        string: `${noArtistData}`,
-      },
-      // Second line
-      {
-        shouldDisplay: this.tagConsolidator.hasAnyTags(),
-        string: tags,
-      }
+    const renderedComponents = await this.nowPlayingService.renderComponents(
+      this.ctx,
+      this.getConfig(),
+      recentTracks,
+      requestable,
+      dbUser,
+      { components: [LastFMAlbumPlaysComponent], dependencies: { albumInfo } }
     );
 
-    const nowPlayingEmbed = (
-      await this.nowPlayingEmbed(this.ctx, nowPlaying, username, dbUser)
-    ).setFooter({
-      text: lineConsolidator.consolidate(),
-    });
+    const tagConsolidator =
+      this.ctx.getMutable<DatasourceServiceContext["mutable"]>()
+        .tagConsolidator;
 
-    const sentMessage = await this.send(nowPlayingEmbed);
+    const albumCover = await this.getAlbumCover(recentTracks.first());
 
-    await this.customReactions(sentMessage);
-    await this.easterEggs(sentMessage, nowPlaying);
+    const embed = this.minimalEmbed()
+      .transform(NowPlayingEmbed)
+      .setDbUser(dbUser)
+      .setNowPlaying(recentTracks.first(), tagConsolidator)
+      .setAlbumCover(albumCover)
+      .setUsername(username)
+      .setUsernameDisplay(usernameDisplay)
+      .setComponents(renderedComponents)
+      .setCustomReacts(await this.getCustomReactions());
+
+    await this.reply(embed);
   }
 }

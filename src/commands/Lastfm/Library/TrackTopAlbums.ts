@@ -1,4 +1,4 @@
-import { LogicError } from "../../../errors/errors";
+import { NoScrobblesForTrackError } from "../../../errors/commands/library";
 import { bold, italic } from "../../../helpers/discord";
 import { LastfmLinks } from "../../../helpers/lastfm/LastfmLinks";
 import { LilacBaseCommand } from "../../../lib/Lilac/LilacBaseCommand";
@@ -6,8 +6,8 @@ import { standardMentions } from "../../../lib/context/arguments/mentionTypes/me
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { Emoji } from "../../../lib/emoji/Emoji";
-import { displayNumber } from "../../../lib/views/displays";
-import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingEmbed";
+import { displayNumber } from "../../../lib/ui/displays";
+import { ScrollingListView } from "../../../lib/ui/views/ScrollingListView";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { LilacLibraryService } from "../../../services/lilac/LilacLibraryService";
 
@@ -52,18 +52,17 @@ export default class TrackTopAlbums extends LilacBaseCommand<typeof args> {
     const trackCounts = response.trackCounts;
 
     if (trackCounts.length < 1) {
-      throw new LogicError(
-        `${perspective.plusToHave} no scrobbles for ${italic(
-          track.name
-        )} by ${bold(track.artist.name)}!`
+      throw new NoScrobblesForTrackError(
+        perspective,
+        track.artist.name,
+        track.name
       );
     }
 
     const totalScrobbles = trackCounts.reduce((sum, l) => sum + l.playcount, 0);
     const average = totalScrobbles / trackCounts.length;
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Track top albums"))
+    const embed = this.minimalEmbed()
       .setTitle(
         `${Emoji.usesIndexedDataLink} Top albums for ${italic(
           track.name
@@ -73,7 +72,7 @@ export default class TrackTopAlbums extends LilacBaseCommand<typeof args> {
         LastfmLinks.libraryTrackPage(username, track.artist.name, track.name)
       );
 
-    const simpleScrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
+    const simpleScrollingEmbed = new ScrollingListView(this.ctx, embed, {
       pageSize: 15,
       items: trackCounts,
 
@@ -106,6 +105,6 @@ export default class TrackTopAlbums extends LilacBaseCommand<typeof args> {
       },
     });
 
-    simpleScrollingEmbed.send();
+    await this.reply(simpleScrollingEmbed);
   }
 }

@@ -1,12 +1,12 @@
 import { PlaceholderNowPlayingComponent } from "../base/PlaceholderNowPlayingComponent";
 
-const cardOwnershipRequirements = ["albumCard"] as const;
+const cardOwnershipDependencies = ["albumCard"] as const;
 
 export class CardOwnershipComponent extends PlaceholderNowPlayingComponent<
-  typeof cardOwnershipRequirements
+  typeof cardOwnershipDependencies
 > {
   static componentName = "card-ownership";
   static friendlyName = "Card ownership";
   static secret = true;
-  readonly requirements = cardOwnershipRequirements;
+  readonly dependencies = cardOwnershipDependencies;
 }

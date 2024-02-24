@@ -35,10 +35,10 @@ export default class TrackPage extends LastFMBaseCommand<typeof args> {
       username: requestable,
     });
 
-    this.send(
+    this.reply(
       `${italic(trackDetails.name)} by ${bold(
         trackDetails.artist.name
-      )} on last.fm: ${cleanURL(trackDetails.url)}`
+      )} on Last.fm: ${cleanURL(trackDetails.url)}`
     );
   }
 }

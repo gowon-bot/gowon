@@ -8,8 +8,8 @@ import { LineConsolidator } from "../../lib/LineConsolidator";
 import { standardMentions } from "../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../lib/context/arguments/types";
 import { Emoji } from "../../lib/emoji/Emoji";
-import { displayNumber } from "../../lib/views/displays";
-import { displayFishyLevelUp, displayRarity } from "../../lib/views/fishy";
+import { displayNumber } from "../../lib/ui/displays";
+import { displayFishyLevelUp, displayRarity } from "../../lib/ui/fishy";
 import { Fishy } from "../../services/fishy/Fishy";
 import { FishyChildCommand } from "./FishyChildCommand";
 import { fishyAliases } from "./fishyAliases";
@@ -78,7 +78,7 @@ export class Fish extends FishyChildCommand<typeof args> {
 
     const fishyDisplay = this.getFishyDisplay(fishy, isNew, giftDisplay);
 
-    const lineConsolidator = new LineConsolidator().addLines(
+    const description = new LineConsolidator().addLines(
       fishyDisplay,
       weightDisplay,
       {
@@ -103,18 +103,15 @@ export class Fish extends FishyChildCommand<typeof args> {
       }
     );
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Fishy fish"))
-      .setColor(fishy.rarity.colour)
-      .setDescription(lineConsolidator.consolidate());
+    const embed = this.minimalEmbed()
+      .setColour(fishy.rarity.colour)
+      .setDescription(description);
 
     if (isNew) {
-      embed.setFooter({
-        text: `See ${this.prefix}fishypedia to learn about this fish`,
-      });
+      embed.setFooter(`See ${this.prefix}fishypedia to learn about this fish`);
     }
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 
   private async getQuest(senderFishyProfile: FishyProfile): Promise<{
@@ -161,16 +158,16 @@ export class Fish extends FishyChildCommand<typeof args> {
     }
 
     if (quest.isMilestone && quest.isCompleted) {
-      const milestoneCompletedEmbed = this.newEmbed()
-        .setAuthor(this.generateEmbedAuthor("Fishy level up"))
-        .setDescription(displayFishyLevelUp(fishyProfile.level + 1));
+      const milestoneCompletedEmbed = this.minimalEmbed().setDescription(
+        displayFishyLevelUp(fishyProfile.level + 1)
+      );
 
       await this.fishyProgressionService.incrementQuestProgress(
         quest,
         fishyProfile
       );
 
-      this.send(milestoneCompletedEmbed);
+      this.reply(milestoneCompletedEmbed);
     }
 
     return { questCompleted, madeQuestProgress };

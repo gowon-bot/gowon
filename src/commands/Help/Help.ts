@@ -7,7 +7,8 @@ import { Flag } from "../../lib/context/arguments/argumentTypes/Flag";
 import { StringArgument } from "../../lib/context/arguments/argumentTypes/StringArgument";
 import { ArgumentsMap } from "../../lib/context/arguments/types";
 import { PermissionsService } from "../../lib/permissions/PermissionsService";
-import { SimpleScrollingEmbed } from "../../lib/views/embeds/SimpleScrollingEmbed";
+import { HelpEmbed } from "../../lib/ui/embeds/HelpEmbed";
+import { ScrollingListView } from "../../lib/ui/views/ScrollingListView";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 import HelpForOneCommand from "./HelpForOneCommand";
 import QuickHelp from "./QuickHelp";
@@ -74,9 +75,12 @@ export default class Help extends Command<typeof args> {
 
     const footer = (page: number, totalPages: number) =>
       `Page ${page} of ${totalPages} ${bullet} Can't find a command? Try ${this.prefix}searchcommand <keywords> to search commands`;
-    const description = `Run \`${this.prefix}help <command>\` to learn more about specific commands\nTo change prefix, mention Gowon (\`@Gowon prefix ?)\``;
-    const embed = this.newEmbed().setAuthor(
-      this.generateEmbedAuthor(this.ctx.isDM() ? "Help in DMs" : "Help")
+    const description = `
+
+Run \`${this.prefix}help <command>\` to learn more about specific commands\nTo change prefix, mention Gowon (\`@Gowon prefix ?)\``;
+
+    const embed = new HelpEmbed().setHeader(
+      this.ctx.isDM() ? "All Commands in DMs" : "All Commands"
     );
 
     const groupedCommands = commands.reduce((acc, command) => {
@@ -99,12 +103,12 @@ export default class Help extends Command<typeof args> {
       });
     }
 
-    const simpleScrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
+    const simpleScrollingEmbed = new ScrollingListView(this.ctx, embed, {
       items: fields,
       pageSize: 9,
       overrides: { customFooter: footer, embedDescription: description },
     });
 
-    simpleScrollingEmbed.send();
+    await this.reply(simpleScrollingEmbed);
   }
 }

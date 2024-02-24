@@ -2,6 +2,7 @@ import { code } from "../../helpers/discord";
 import { Command } from "../../lib/command/Command";
 import { StringArgument } from "../../lib/context/arguments/argumentTypes/StringArgument";
 import { ArgumentsMap } from "../../lib/context/arguments/types";
+import { SuccessEmbed } from "../../lib/ui/embeds/SuccessEmbed";
 import { Validation } from "../../lib/validation/ValidationChecker";
 import { validators } from "../../lib/validation/validators";
 import { ScriptsRegistry } from "../../services/ScriptsRegistry";
@@ -32,6 +33,10 @@ export default class RunScript extends Command<typeof args> {
 
     this.scriptsRegistry.runScript(script, this.ctx);
 
-    await this.reply(`Running script ${code(script)}`);
+    const embed = new SuccessEmbed().setDescription(
+      `Running script ${code(script)}`
+    );
+
+    await this.reply(embed);
   }
 }

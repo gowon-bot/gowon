@@ -9,6 +9,6 @@ export default class Ha extends Command {
   secretCommand = true;
 
   async run() {
-    await this.send("Hah! https://www.youtube.com/watch?v=3ec6jOMDCXI");
+    await this.reply("Hah! https://www.youtube.com/watch?v=3ec6jOMDCXI");
   }
 }

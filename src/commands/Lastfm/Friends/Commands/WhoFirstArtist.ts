@@ -4,10 +4,7 @@ import { bold } from "../../../../helpers/discord";
 import { convertMirrorballDate } from "../../../../helpers/mirrorball";
 import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";
 import { ArgumentsMap } from "../../../../lib/context/arguments/types";
-import {
-  displayDate,
-  displayNumberedList,
-} from "../../../../lib/views/displays";
+import { displayDate, displayNumberedList } from "../../../../lib/ui/displays";
 import { MirrorballUser } from "../../../../services/mirrorball/MirrorballTypes";
 import { FriendsChildCommand } from "../FriendsChildCommand";
 
@@ -77,8 +74,7 @@ export class WhoFirstArtist extends FriendsChildCommand<typeof args> {
       throw new FriendsHaveNoScrobblesOfArtistError();
     }
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Friends who first"))
+    const embed = this.minimalEmbed()
       .setTitle(
         `When your friends first scrobbled ${bold(
           whoFirst.whoFirstArtist.artist.name
@@ -97,6 +93,6 @@ export class WhoFirstArtist extends FriendsChildCommand<typeof args> {
         )
       );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

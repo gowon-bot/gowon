@@ -7,7 +7,7 @@ import {
 } from "typeorm";
 import { code } from "../../helpers/discord";
 import { LastfmLinks } from "../../helpers/lastfm/LastfmLinks";
-import { displayLink } from "../../lib/views/displays";
+import { displayLink } from "../../lib/ui/displays";
 import { User } from "./User";
 
 @Entity({ name: "friends" })

@@ -2,10 +2,7 @@ import { chunkArray } from "../../../helpers";
 import { bold } from "../../../helpers/discord";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
-import {
-  displayNumber,
-  displayNumberedList,
-} from "../../../lib/views/displays";
+import { displayNumber, displayNumberedList } from "../../../lib/ui/displays";
 import { CrownsChildCommand } from "./CrownsChildCommand";
 
 const args = {
@@ -39,20 +36,18 @@ export class DM extends CrownsChildCommand<typeof args> {
       this.crownsService.count(this.ctx, dbUser.id),
     ]);
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Crowns DM"))
-      .setDescription(
-        `Sending you a list of ${perspective.possessive} crowns...`
-      );
+    const embed = this.minimalEmbed().setDescription(
+      `Sending you a list of ${perspective.possessive} crowns...`
+    );
 
-    await this.send(embed);
+    await this.reply(embed);
 
     const chunks = chunkArray(crowns, this.crownsPerMessage);
 
     chunks
       .map((chunk, chunkIdx) =>
-        this.newEmbed()
-          .setAuthor(this.generateEmbedAuthor("Crowns DM"))
+        this.authorEmbed()
+          .setHeader("Crowns DM")
           .setTitle(
             `Crowns ${chunkIdx * this.crownsPerMessage + 1}-${
               (chunkIdx + 1) * this.crownsPerMessage < crowns.length

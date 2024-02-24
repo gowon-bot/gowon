@@ -1,17 +1,17 @@
 import { getOrdinal } from "../../../helpers";
-import { displayNumber } from "../../views/displays";
+import { displayNumber } from "../../ui/displays";
 import { BaseNowPlayingComponent } from "../base/BaseNowPlayingComponent";
 
-const artistRankRequirements = ["globalArtistRank"] as const;
+const artistRankDependencies = ["globalArtistRank"] as const;
 
 export class GlobalArtistRankComponent extends BaseNowPlayingComponent<
-  typeof artistRankRequirements
+  typeof artistRankDependencies
 > {
   static componentName = "global-artist-rank";
   static friendlyName = "Global artist rank";
-  readonly requirements = artistRankRequirements;
+  readonly dependencies = artistRankDependencies;
 
-  present() {
+  render() {
     const artistRank = this.values.globalArtistRank;
 
     if (artistRank && artistRank.rank != -1) {

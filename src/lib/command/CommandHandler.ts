@@ -15,7 +15,7 @@ import { HeaderlessLogger, Logger } from "../Logger";
 import { GowonContext } from "../context/Context";
 import { Payload } from "../context/Payload";
 import { PermissionsService } from "../permissions/PermissionsService";
-import { displayUserTag } from "../views/displays";
+import { displayUserTag } from "../ui/displays";
 import { Command } from "./Command";
 import { CommandRegistry } from "./CommandRegistry";
 import { ParentCommand } from "./ParentCommand";

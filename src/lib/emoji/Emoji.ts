@@ -28,8 +28,6 @@ export const Emoji = {
   wail: "<:wail:751562824366555146>",
   gnop: "<:gnop:772245126571360256>",
   joppinh: "<a:joppinh:755881087905038387>",
-  gronning: "<:gronning:774797344632995900>",
-  kapp: "<:Kapp:775580682876747778>",
   loading: "<a:loading:784905179451359252>",
   ish: "<:ish:785397271725604875>",
   fmbot: "<:fmbot:822230495713689650>",
@@ -66,7 +64,6 @@ export const Emoji = {
   arrowRight: "<:arrowRight:825626338534490162>",
   arrowFirst: "<:arrowFirst:825626330648412180>",
   arrowLast: "<:arrowLast:825626334436917248>",
-  checkmark: "<:checkmark:825628201354657823>",
 
   // Roles
   contentmoderator: "<:contentmoderator:913203995542175794>",

@@ -1,16 +1,16 @@
 import { formatDistance } from "date-fns";
 import { Combo } from "../../../database/entity/Combo";
-import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { LineConsolidator } from "../../../lib/LineConsolidator";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import {
   displayAlbumLink,
   displayArtistLink,
   displayDate,
   displayNumber,
   displayTrackLink,
-} from "../../../lib/views/displays";
-import { ComboService } from "../../../services/dbservices/ComboService";
+} from "../../../lib/ui/displays";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
+import { ComboService } from "../../../services/dbservices/ComboService";
 import { LastFMBaseChildCommand } from "../LastFMBaseCommand";
 
 export abstract class ComboChildCommand<

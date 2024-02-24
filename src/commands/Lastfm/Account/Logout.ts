@@ -1,4 +1,7 @@
-import { ConfirmationEmbed } from "../../../lib/views/embeds/ConfirmationEmbed";
+import { Emoji } from "../../../lib/emoji/Emoji";
+import { successColour } from "../../../lib/ui/embeds/SuccessEmbed";
+import { WarningEmbed } from "../../../lib/ui/embeds/WarningEmbed";
+import { ConfirmationView } from "../../../lib/ui/views/ConfirmationView";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 export default class Logout extends LastFMBaseCommand {
@@ -11,13 +14,11 @@ export default class Logout extends LastFMBaseCommand {
   slashCommand = true;
 
   async run() {
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Log out"))
-      .setDescription(
-        "Are you sure you want to log out? This will delete all your stored data!"
-      );
+    const embed = new WarningEmbed().setDescription(
+      `Are you sure you want to log out? This will delete all your stored data!`
+    );
 
-    const confirmationEmbed = new ConfirmationEmbed(this.ctx, embed);
+    const confirmationEmbed = new ConfirmationView(this.ctx, embed);
 
     const confirmation = await confirmationEmbed.awaitConfirmation(this.ctx);
 
@@ -25,13 +26,10 @@ export default class Logout extends LastFMBaseCommand {
       await this.usersService.clearUsername(this.ctx, this.author.id);
       await this.lilacUsersService.logout(this.ctx);
 
-      if (confirmationEmbed.sentMessage) {
-        await this.discordService.edit(
-          this.ctx,
-          confirmationEmbed.sentMessage,
-          embed.setDescription("Logged out successfully.")
-        );
-      }
+      await embed
+        .setColour(successColour)
+        .setDescription(`${Emoji.checkmark} Logged out successfully.`)
+        .editMessage(this.ctx);
     }
   }
 }

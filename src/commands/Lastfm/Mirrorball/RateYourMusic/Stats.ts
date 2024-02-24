@@ -1,10 +1,11 @@
 import { mean } from "mathjs";
-import { LogicError, UnknownMirrorballError } from "../../../../errors/errors";
+import { NoImportedRatingsFound } from "../../../../errors/commands/library";
+import { UnknownMirrorballError } from "../../../../errors/errors";
 import { toInt } from "../../../../helpers/lastfm/";
 import { extraWideSpace } from "../../../../helpers/specialCharacters";
 import { standardMentions } from "../../../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../../../lib/context/arguments/types";
-import { displayNumber, displayRating } from "../../../../lib/views/displays";
+import { displayNumber, displayRating } from "../../../../lib/ui/displays";
 import { MirrorballRateYourMusicAlbum } from "../../../../services/mirrorball/MirrorballTypes";
 import { RateYourMusicIndexingChildCommand } from "./RateYourMusicChildCommand";
 import { StatsConnector, StatsParams, StatsResponse } from "./connectors";
@@ -54,14 +55,12 @@ export class Stats extends RateYourMusicIndexingChildCommand<
     }
 
     if (!response.ratings.ratings.length) {
-      throw new LogicError(
-        `You don't have any ratings imported yet! To import your ratings see \`${this.prefix}ryms help\``
-      );
+      throw new NoImportedRatingsFound(this.prefix);
     }
 
     const ratingsCounts = this.getRatingsCounts(response.ratings.ratings);
 
-    const embed = this.newEmbed()
+    const embed = this.minimalEmbed()
       .setTitle(`${perspective.upper.possessive} RateYourMusic statistics`)
       .setDescription(
         `_${displayNumber(
@@ -81,7 +80,7 @@ ${Object.entries(ratingsCounts)
   .join("\n")}`
       );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 
   private getRatingsCounts(

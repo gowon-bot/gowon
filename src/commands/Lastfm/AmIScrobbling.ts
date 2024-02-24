@@ -11,15 +11,13 @@ export default class AmIScrobbling extends LastFMBaseCommand {
   slashCommand = true;
 
   async run() {
-    let { senderRequestable } = await this.getMentions();
+    const { senderRequestable } = await this.getMentions();
 
-    let nowPlaying = await this.lastFMService.nowPlaying(
+    const nowPlaying = await this.lastFMService.nowPlaying(
       this.ctx,
       senderRequestable
     );
 
-    await this.oldReply(
-      nowPlaying.isNowPlaying ? "probably." : "probably not."
-    );
+    await this.reply(nowPlaying.isNowPlaying ? "Probably." : "Probably not.");
   }
 }

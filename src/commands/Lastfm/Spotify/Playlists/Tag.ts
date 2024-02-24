@@ -4,6 +4,7 @@ import { EmojisArgument } from "../../../../lib/context/arguments/argumentTypes/
 import { StringArgument } from "../../../../lib/context/arguments/argumentTypes/StringArgument";
 import { EmojiParser } from "../../../../lib/context/arguments/parsers/EmojiParser";
 import { ArgumentsMap } from "../../../../lib/context/arguments/types";
+import { SuccessEmbed } from "../../../../lib/ui/embeds/SuccessEmbed";
 import { Validation } from "../../../../lib/validation/ValidationChecker";
 import { validators } from "../../../../lib/validation/validators";
 import { PlaylistChildCommand } from "./PlaylistChildCommand";
@@ -65,12 +66,10 @@ export class Tag extends PlaylistChildCommand<typeof args> {
       emoji: emoji.raw,
     });
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Spotify playlist tag"))
-      .setDescription(
-        `Succesfully tagged ${bold(foundPlaylist.name)} as ${emoji.raw}`
-      );
+    const embed = new SuccessEmbed().setDescription(
+      `Succesfully tagged ${bold(foundPlaylist.name)} as ${emoji.raw}`
+    );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

@@ -7,7 +7,7 @@ import { constants } from "../../../lib/constants";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { Paginator } from "../../../lib/paginators/Paginator";
-import { displayNumber } from "../../../lib/views/displays";
+import { displayNumber } from "../../../lib/ui/displays";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 const args = {
@@ -57,7 +57,7 @@ export default class TagCombo extends LastFMBaseCommand<typeof args> {
           combo.comboCollection[b].plays - combo.comboCollection[a].plays
       );
 
-    const embed = this.newEmbed()
+    const embed = this.minimalEmbed()
       .setTitle(
         `Streak for ${username} (from recent ${displayNumber(
           comboCalculator.totalTracks,
@@ -70,7 +70,7 @@ export default class TagCombo extends LastFMBaseCommand<typeof args> {
           : "No consecutive plays found!"
       );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 
   private displayCombo(combo: TagComboType, tag: string): string {

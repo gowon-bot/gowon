@@ -97,7 +97,7 @@ export default class Cover extends LastFMBaseCommand<typeof args> {
     if (!album) throw new NoAlbumForCoverError();
     if (!albumCover.url) throw new AlbumHasNoCoverError(artist, album);
 
-    await this.send(
+    await this.reply(
       `Cover for ${bold(album)} by ${bold(artist)}${
         albumCover.source === "moderation"
           ? "\n*This image has been set by Gowon moderators*"
@@ -120,11 +120,11 @@ export default class Cover extends LastFMBaseCommand<typeof args> {
   }
 
   private async blueTape() {
-    await this.send(
+    await this.reply(
       `Cover for ${bold("Blue Tape")} by ${bold(
         "f(x)"
       )}. *(Thanks to jopping and ember for the image)*`,
-      { files: ["http://gowon.ca/images/blueTape.png"] }
+      { files: ["http://gowon.bot/images/blueTape.png"] }
     );
   }
 }

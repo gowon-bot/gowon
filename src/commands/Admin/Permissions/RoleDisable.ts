@@ -1,4 +1,4 @@
-import { MessageEmbed, Role } from "discord.js";
+import { Role } from "discord.js";
 import {
   Permission,
   PermissionType,
@@ -12,6 +12,8 @@ import { code, mentionRole } from "../../../helpers/discord";
 import { Command, Variation } from "../../../lib/command/Command";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { DiscordRoleArgument } from "../../../lib/context/arguments/argumentTypes/discord/DiscordRoleArgument";
+import { SuccessEmbed } from "../../../lib/ui/embeds/SuccessEmbed";
+import { EmbedView } from "../../../lib/ui/views/EmbedView";
 import { PermissionsChildCommand } from "./PermissionsChildCommand";
 
 const args = {
@@ -65,25 +67,25 @@ export class RoleDisable extends PermissionsChildCommand<typeof args> {
       guildID: this.requiredGuild.id,
     });
 
-    let embed: MessageEmbed;
-
     if (
       !this.variationWasUsed("roleenable") &&
       !this.extract.didMatch("enable")
     ) {
-      embed = await this.handleDisable(command, permission, role);
-    } else {
-      embed = await this.handleEnable(command, permission, role);
-    }
+      const embed = await this.handleDisable(command, permission, role);
 
-    await this.send(embed);
+      await this.reply(embed);
+    } else {
+      const embed = await this.handleEnable(command, permission, role);
+
+      await this.reply(embed);
+    }
   }
 
   private async handleDisable(
     command: Command,
     permission: Permission,
     role: Role
-  ): Promise<MessageEmbed> {
+  ): Promise<EmbedView> {
     let deletedAllow = false;
 
     try {
@@ -106,20 +108,18 @@ export class RoleDisable extends PermissionsChildCommand<typeof args> {
       }
     }
 
-    return this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Permissions role disable"))
-      .setDescription(
-        `Successfully ${deletedAllow ? "un-allowed" : "disabled"} ${code(
-          command.name
-        )} for ${mentionRole(role.id)}`
-      );
+    return new SuccessEmbed().setDescription(
+      `Successfully ${deletedAllow ? "un-allowed" : "disabled"} ${code(
+        command.name
+      )} for ${mentionRole(role.id)}`
+    );
   }
 
   private async handleEnable(
     command: Command,
     permission: Permission,
     role: Role
-  ): Promise<MessageEmbed> {
+  ): Promise<EmbedView> {
     let allowed = false;
 
     try {
@@ -143,12 +143,10 @@ export class RoleDisable extends PermissionsChildCommand<typeof args> {
       }
     }
 
-    return this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Permissions role enable"))
-      .setDescription(
-        `Successfully ${allowed ? "allowed" : "enabled"} ${code(
-          command.name
-        )} for ${mentionRole(role.id)}`
-      );
+    return new SuccessEmbed().setDescription(
+      `Successfully ${allowed ? "allowed" : "enabled"} ${code(
+        command.name
+      )} for ${mentionRole(role.id)}`
+    );
   }
 }

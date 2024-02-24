@@ -2,10 +2,7 @@ import {
   FetchedResponses,
   MultiRequester,
 } from "../../../../lib/MultiRequester";
-import {
-  displayDate,
-  displayNumberedList,
-} from "../../../../lib/views/displays";
+import { displayDate, displayNumberedList } from "../../../../lib/ui/displays";
 import { FriendsChildCommand } from "../FriendsChildCommand";
 
 export class Joined extends FriendsChildCommand {
@@ -44,11 +41,10 @@ export class Joined extends FriendsChildCommand {
         return `${f.display()} - ${displayDate(s)}`;
       });
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Friends joined"))
+    const embed = this.minimalEmbed()
       .setTitle(`Your friends' join dates`)
       .setDescription(displayNumberedList(friendDisplays));
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

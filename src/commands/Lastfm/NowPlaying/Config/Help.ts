@@ -3,6 +3,7 @@ import {
   getComponents,
   sortConfigOptions,
 } from "../../../../lib/nowplaying/componentMap";
+import { HelpEmbed } from "../../../../lib/ui/embeds/HelpEmbed";
 import { NowPlayingConfigChildCommand } from "./NowPlayingConfigChildCommand";
 
 export class Help extends NowPlayingConfigChildCommand {
@@ -14,11 +15,8 @@ export class Help extends NowPlayingConfigChildCommand {
   slashCommand = true;
 
   async run() {
-    const embed = this.newEmbed().setAuthor(
-      this.generateEmbedAuthor("Config help")
-    );
-
-    embed
+    const embed = new HelpEmbed()
+      .setHeader("Help with nowplaying config")
       .setDescription(
         `
 nowplaying config allows you to customize which elements appear in the footer of your nowplaying embeds!
@@ -43,9 +41,10 @@ ${this.getPresets()
   .join(", ")}
 `
       )
-      .setFooter({
-        text: `Not sure what an option is? Try ${this.prefix}npc preview <option> to see what it might look like!`,
-      });
-    await this.send(embed);
+      .setFooter(
+        `Not sure what an option is? Try ${this.prefix}npc preview <option> to see what it might look like!`
+      );
+
+    await this.reply(embed);
   }
 }

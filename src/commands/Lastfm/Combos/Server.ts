@@ -3,8 +3,8 @@ import { NoServerCombosError } from "../../../errors/commands/combo";
 import { bold } from "../../../helpers/discord";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
-import { displayNumberedList } from "../../../lib/views/displays";
-import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingEmbed";
+import { displayNumberedList } from "../../../lib/ui/displays";
+import { ScrollingListView } from "../../../lib/ui/views/ScrollingListView";
 import { NicknameService } from "../../../services/Discord/NicknameService";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { LilacArtistsService } from "../../../services/lilac/LilacArtistsService";
@@ -55,12 +55,8 @@ export class ServerCombos extends ComboChildCommand<typeof args> {
       throw new NoServerCombosError(this.prefix, artistName);
     }
 
-    const embed = this.newEmbed().setAuthor(
-      this.generateEmbedAuthor(
-        `${this.requiredGuild.name}'s top ${
-          artistName ? `${artistName} ` : ""
-        }combos`
-      )
+    const embed = this.minimalEmbed().setTitle(
+      artistName ? "Server artist combos" : "Server combos"
     );
 
     const displayCombo = ((combo: Combo) => {
@@ -72,7 +68,7 @@ export class ServerCombos extends ComboChildCommand<typeof args> {
       return bold(nickname) + ": " + this.displayCombo(combo);
     }).bind(this);
 
-    const scrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
+    const scrollingEmbed = new ScrollingListView(this.ctx, embed, {
       items: combos,
       pageSize: 5,
       pageRenderer(combos, { offset }) {
@@ -81,6 +77,6 @@ export class ServerCombos extends ComboChildCommand<typeof args> {
       overrides: { itemName: "combo" },
     });
 
-    scrollingEmbed.send();
+    await this.reply(scrollingEmbed);
   }
 }

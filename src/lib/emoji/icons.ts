@@ -12,7 +12,12 @@ export const icons = {
   fishypediaTraitsTab: "<:traits:1130059610607325195>",
 
   // Utility icons
-  error: "<:error:1148943982437597224>",
-  warning: "<:gowarning:1148943986720002098>",
-  info: "<:info:1148943985080021052>",
+
+  help: "<:help:1206473330740297739>",
+  error: "<:error:1206473332418023454>",
+  warning: "<:warning:1206473333412208661>",
+  info: "<:info:1206473334519365664>",
+
+  checkmark: "<:checkmark:1206487809137967145>",
+  x: "<:x_:1206487810337407036>",
 } as const satisfies Record<string, string>;

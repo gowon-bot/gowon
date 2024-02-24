@@ -8,7 +8,7 @@ export default class AirFry extends Command {
   secretCommand = true;
 
   async run() {
-    await this.send(
+    await this.reply(
       "cdn.discordapp.com/attachments/768596255697272865/953103223751839844/1503414000255655944_01.mp4"
     );
   }

@@ -1,4 +1,4 @@
-import { displayLink } from "../../lib/views/displays";
+import { displayLink } from "../../lib/ui/displays";
 
 export interface ParsedTrack {
   artist: string;

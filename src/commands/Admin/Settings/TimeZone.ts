@@ -3,8 +3,11 @@ import { InvalidTimeZoneError } from "../../../errors/timesAndDates";
 import { code } from "../../../helpers/discord";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { Emoji } from "../../../lib/emoji/Emoji";
 import { TimeZone as TimeZoneType } from "../../../lib/timeAndDate/TimeZone";
-import { displayLink } from "../../../lib/views/displays";
+import { displayLink } from "../../../lib/ui/displays";
+import { InfoEmbed } from "../../../lib/ui/embeds/InfoEmbed";
+import { SuccessEmbed } from "../../../lib/ui/embeds/SuccessEmbed";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { TimeAndDateService } from "../../../services/TimeAndDateService";
 import { SettingsChildCommand } from "./SettingsChildCommand";
@@ -42,10 +45,6 @@ export default class TimeZone extends SettingsChildCommand<typeof args> {
       ?.toLowerCase()
       ?.replace(/\s+/, "_");
 
-    const embed = this.newEmbed().setAuthor(
-      this.generateEmbedAuthor("Time zone")
-    );
-
     if (timeZoneString) {
       if (!TimeZoneType.isValidString(timeZoneString)) {
         throw new InvalidTimeZoneError(this.prefix);
@@ -59,20 +58,20 @@ export default class TimeZone extends SettingsChildCommand<typeof args> {
         timeZone
       );
 
-      embed.setDescription(
-        `Your new timezone is: ${code(
-          timeZone.asString()
-        )}\n*Local time: ${this.displayLocalTime(timeZone)}*`
+      const embed = new SuccessEmbed().setDescription(
+        `Your new timezone is: ${code(timeZone.asString())}
+        ${Emoji.blank} *Local time: ${this.displayLocalTime(timeZone)}*`
       );
+
+      await this.reply(embed);
     } else {
       const userTimeZone = await this.timeAndDateService.getUserTimeZone(
         this.ctx,
         this.author.id
       );
 
-      embed.setDescription(
-        `
-**Your current timezone**: \`${(
+      const embed = new InfoEmbed().setDescription(
+        ` **Your current timezone**: \`${(
           userTimeZone?.asString() || "unset"
         ).toLowerCase()}\` ${
           userTimeZone
@@ -87,9 +86,9 @@ A list of all accepted timezones can be ${displayLink(
 
 You can set your time zone with \`${this.prefix}tz Continent/City\``
       );
-    }
 
-    await this.send(embed);
+      await this.reply(embed);
+    }
   }
 
   private displayLocalTime(userTimeZone: TimeZoneType): string {

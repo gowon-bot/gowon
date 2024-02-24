@@ -2,9 +2,10 @@ import { format } from "date-fns";
 import { Command, Variation } from "../../lib/command/Command";
 import { StringArgument } from "../../lib/context/arguments/argumentTypes/StringArgument";
 import { ArgumentsMap } from "../../lib/context/arguments/types";
+import { displayLink } from "../../lib/ui/displays";
+import { ErrorEmbed } from "../../lib/ui/embeds/ErrorEmbed";
 import { Validation } from "../../lib/validation/ValidationChecker";
 import { validators } from "../../lib/validation/validators";
-import { displayLink } from "../../lib/views/displays";
 import { GithubService } from "../../services/Github/GithubService";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 
@@ -54,10 +55,10 @@ export default class Issue extends Command<typeof args> {
   githubService = ServiceRegistry.get(GithubService);
 
   async run() {
-    let title = this.parsedArguments.title,
+    const title = this.parsedArguments.title,
       body = this.parsedArguments.body;
 
-    let metadata = `
+    const metadata = `
 
 
 ## Notes from Gowon:
@@ -87,19 +88,21 @@ ${
     else if (this.variationWasUsed("documentation"))
       labels.push("documentation");
 
-    let issue = await this.githubService.createIssue(this.ctx, {
+    const issue = await this.githubService.createIssue(this.ctx, {
       title,
       body: body + metadata,
       labels: labels,
     });
 
     if (issue.id) {
-      await this.send(
+      await this.reply(
         `Feedback sent! You can view it and add comments here: ${issue.html_url}`
       );
     } else {
-      await this.send(
-        "There was an issue submitting feedback, you can dm the author at john!#2527"
+      await this.reply(
+        new ErrorEmbed().setDescription(
+          "An error occurred trying to create an issue"
+        )
       );
     }
   }

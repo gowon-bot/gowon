@@ -1,3 +1,4 @@
+import { SuccessEmbed } from "../../../../lib/ui/embeds/SuccessEmbed";
 import { SpotifyChildCommand } from "../SpotifyChildCommand";
 
 export class Next extends SpotifyChildCommand {
@@ -11,10 +12,8 @@ export class Next extends SpotifyChildCommand {
 
     await this.spotifyService.next(this.ctx);
 
-    await this.send(
-      this.newEmbed()
-        .setAuthor(this.generateEmbedAuthor("Spotify skip"))
-        .setDescription("Successfully skipped!")
+    await this.reply(
+      new SuccessEmbed().setDescription("Successfully skipped!")
     );
   }
 }

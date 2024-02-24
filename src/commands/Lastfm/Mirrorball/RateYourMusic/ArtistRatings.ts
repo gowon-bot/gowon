@@ -1,5 +1,6 @@
 import { mean } from "mathjs";
-import { LogicError, UnknownMirrorballError } from "../../../../errors/errors";
+import { NoRatingsFromArtistError } from "../../../../errors/commands/library";
+import { UnknownMirrorballError } from "../../../../errors/errors";
 import { code, italic, sanitizeForDiscord } from "../../../../helpers/discord";
 import { emDash, extraWideSpace } from "../../../../helpers/specialCharacters";
 import { mostCommonOccurrence } from "../../../../helpers/stats";
@@ -7,8 +8,8 @@ import { Flag } from "../../../../lib/context/arguments/argumentTypes/Flag";
 import { standardMentions } from "../../../../lib/context/arguments/mentionTypes/mentions";
 import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";
 import { ArgumentsMap } from "../../../../lib/context/arguments/types";
-import { displayNumber, displayRating } from "../../../../lib/views/displays";
-import { SimpleScrollingEmbed } from "../../../../lib/views/embeds/SimpleScrollingEmbed";
+import { displayNumber, displayRating } from "../../../../lib/ui/displays";
+import { ScrollingListView } from "../../../../lib/ui/views/ScrollingListView";
 import { MirrorballRating } from "../../../../services/mirrorball/MirrorballTypes";
 import { RateYourMusicIndexingChildCommand } from "./RateYourMusicChildCommand";
 import {
@@ -85,13 +86,10 @@ export class ArtistRatings extends RateYourMusicIndexingChildCommand<
     }
 
     if (!response.ratings.ratings.length) {
-      throw new LogicError(
-        `Couldn't find any albums by that artist in ${perspective.possessive} ratings!`
-      );
+      throw new NoRatingsFromArtistError(perspective);
     }
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Artist ratings"))
+    const embed = this.minimalEmbed()
       .setTitle(
         `${perspective.upper.possessive} top rated ${artistName} albums`
       )
@@ -119,7 +117,7 @@ export class ArtistRatings extends RateYourMusicIndexingChildCommand<
         )
       : response.ratings.ratings;
 
-    const simpleScrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
+    const simpleScrollingEmbed = new ScrollingListView(this.ctx, embed, {
       items: ratings,
       pageSize: 10,
       pageRenderer: (items) =>
@@ -127,7 +125,7 @@ export class ArtistRatings extends RateYourMusicIndexingChildCommand<
       overrides: { itemName: "rating" },
     });
 
-    simpleScrollingEmbed.send();
+    await this.reply(simpleScrollingEmbed);
   }
 
   private generateTable(

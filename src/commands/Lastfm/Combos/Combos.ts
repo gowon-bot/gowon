@@ -2,8 +2,8 @@ import { NoUserCombosError } from "../../../errors/commands/combo";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
-import { displayNumberedList } from "../../../lib/views/displays";
-import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingEmbed";
+import { displayNumberedList } from "../../../lib/ui/displays";
+import { ScrollingListView } from "../../../lib/ui/views/ScrollingListView";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { LilacArtistsService } from "../../../services/lilac/LilacArtistsService";
 import { ComboChildCommand } from "./ComboChildCommand";
@@ -53,17 +53,13 @@ export class Combos extends ComboChildCommand<typeof args> {
       throw new NoUserCombosError(perspective, this.prefix, artistName);
     }
 
-    const embed = this.newEmbed().setAuthor(
-      this.generateEmbedAuthor(
-        `${perspective.upper.possessive.replace(/`/g, "")} top ${
-          artistName ? `${artistName} ` : ""
-        }combos`
-      )
+    const embed = this.minimalEmbed().setTitle(
+      artistName ? "Artist combos" : "Combos"
     );
 
     const displayCombo = this.displayCombo.bind(this);
 
-    const scrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
+    const scrollingEmbed = new ScrollingListView(this.ctx, embed, {
       items: combos,
       pageSize: 5,
       pageRenderer(combos, { offset }) {
@@ -72,6 +68,6 @@ export class Combos extends ComboChildCommand<typeof args> {
       overrides: { itemName: "combo" },
     });
 
-    scrollingEmbed.send();
+    await this.reply(scrollingEmbed);
   }
 }

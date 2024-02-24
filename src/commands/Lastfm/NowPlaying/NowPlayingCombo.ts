@@ -1,7 +1,7 @@
-import { promiseAllSettled } from "../../../helpers";
-import { LineConsolidator } from "../../../lib/LineConsolidator";
 import { ComboCalculator } from "../../../lib/calculators/ComboCalculator";
-import { displayNumber } from "../../../lib/views/displays";
+import { DatasourceServiceContext } from "../../../lib/nowplaying/DatasourceService";
+import { ComboComponent } from "../../../lib/nowplaying/components/hidden/ComboComponent";
+import { NowPlayingEmbed } from "../../../lib/ui/embeds/NowPlayingEmbed";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { RedirectsService } from "../../../services/dbservices/RedirectsService";
 import { CrownsService } from "../../../services/dbservices/crowns/CrownsService";
@@ -17,9 +17,12 @@ export default class NowPlayingCombo extends NowPlayingBaseCommand {
   crownsService = ServiceRegistry.get(CrownsService);
   redirectsService = ServiceRegistry.get(RedirectsService);
 
+  getConfig(): string[] {
+    return ["artist-plays", "artist-tags", "artist-crown"];
+  }
+
   async run() {
-    const { username, requestable, discordUser, dbUser } =
-      await this.getMentions();
+    const { username, requestable, dbUser } = await this.getMentions();
 
     const recentTracks = await this.lastFMService.recentTracks(this.ctx, {
       username: requestable,
@@ -36,84 +39,38 @@ export default class NowPlayingCombo extends NowPlayingBaseCommand {
 
     if (nowPlaying.isNowPlaying) this.scrobble(nowPlaying);
 
-    const [artistInfo, crown] = await promiseAllSettled([
-      this.lastFMService.artistInfo(this.ctx, {
-        artist: nowPlaying.artist,
-        username: requestable,
-      }),
-      this.crownsService.getCrownDisplay(this.ctx, nowPlaying.artist),
-    ]);
+    this.tagConsolidator.blacklistTags(nowPlaying.artist, nowPlaying.name);
 
-    await this.tagConsolidator.saveServerBannedTagsInContext(this.ctx);
-
-    if (artistInfo.value) {
-      this.tagConsolidator.addTags(this.ctx, artistInfo.value.tags);
-    }
-
-    const { crownString, isCrownHolder } = await this.crownDetails(
-      crown,
-      discordUser
+    const usernameDisplay = await this.nowPlayingService.getUsernameDisplay(
+      this.ctx,
+      dbUser,
+      username
+    );
+    const renderedComponents = await this.nowPlayingService.renderComponents(
+      this.ctx,
+      this.getConfig(),
+      recentTracks,
+      requestable,
+      dbUser,
+      { components: [ComboComponent], dependencies: { combo } }
     );
 
-    const artistPlays = this.artistPlays(artistInfo, nowPlaying, isCrownHolder);
-    const noArtistData = this.noArtistData(nowPlaying);
+    const tagConsolidator =
+      this.ctx.getMutable<DatasourceServiceContext["mutable"]>()
+        .tagConsolidator;
 
-    const comboString = `${displayNumber(combo.artist.plays)} in a row ${
-      combo.artist.plays > 100 ? "🔥" : ""
-    }`;
-    const hasCombo = combo.artist.plays > 1;
+    const albumCover = await this.getAlbumCover(recentTracks.first());
 
-    const lineConsolidator = new LineConsolidator();
-    lineConsolidator.addLines(
-      // Top line
-      {
-        shouldDisplay: !!artistPlays && !!crownString && hasCombo,
-        string: `${artistPlays} • ${comboString} • ${crownString}`,
-      },
-      {
-        shouldDisplay: !!artistPlays && !!crownString && !hasCombo,
-        string: `${artistPlays} • ${crownString}`,
-      },
-      {
-        shouldDisplay: !!artistPlays && !crownString && hasCombo,
-        string: `${artistPlays} • ${comboString}`,
-      },
-      {
-        shouldDisplay: !!artistPlays && !crownString && !hasCombo,
-        string: `${artistPlays}`,
-      },
-      {
-        shouldDisplay: !artistPlays && !!crownString && hasCombo,
-        string: `${noArtistData} • ${crownString} • ${hasCombo}`,
-      },
-      {
-        shouldDisplay: !artistPlays && !!crownString && !hasCombo,
-        string: `${noArtistData} • ${crownString}`,
-      },
-      {
-        shouldDisplay: !artistPlays && !crownString && hasCombo,
-        string: `${noArtistData} • ${comboString}`,
-      },
-      {
-        shouldDisplay: !artistPlays && !crownString && !hasCombo,
-        string: `${noArtistData}`,
-      },
-      // Second line
-      {
-        shouldDisplay: this.tagConsolidator.hasAnyTags(),
-        string: this.tagConsolidator.consolidateAsStrings(Infinity).join(" ‧ "),
-      }
-    );
+    const embed = this.minimalEmbed()
+      .transform(NowPlayingEmbed)
+      .setDbUser(dbUser)
+      .setNowPlaying(recentTracks.first(), tagConsolidator)
+      .setAlbumCover(albumCover)
+      .setUsername(username)
+      .setUsernameDisplay(usernameDisplay)
+      .setComponents(renderedComponents)
+      .setCustomReacts(await this.getCustomReactions());
 
-    const nowPlayingEmbed = (
-      await this.nowPlayingEmbed(this.ctx, nowPlaying, username, dbUser)
-    ).setFooter({
-      text: lineConsolidator.consolidate(),
-    });
-
-    const sentMessage = await this.send(nowPlayingEmbed);
-
-    await this.customReactions(sentMessage);
-    await this.easterEggs(sentMessage, nowPlaying);
+    await this.reply(embed);
   }
 }

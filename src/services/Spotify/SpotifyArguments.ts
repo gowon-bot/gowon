@@ -1,7 +1,7 @@
 import { Message } from "discord.js";
 import { bold, italic } from "../../helpers/discord";
 import { GowonContext } from "../../lib/context/Context";
-import { ConfirmationEmbed } from "../../lib/views/embeds/ConfirmationEmbed";
+import { ConfirmationView } from "../../lib/ui/views/ConfirmationView";
 import { BaseService } from "../BaseService";
 import { Requestable } from "../LastFM/LastFMAPIService";
 import {
@@ -155,18 +155,15 @@ export class SpotifyArguments extends BaseService<SpotifyArgumentsContext> {
     track: SpotifyTrack
   ): Promise<boolean> {
     const embed = ctx.command
-      .newEmbed()
-      .setAuthor(ctx.command.generateEmbedAuthor("Confirm track"))
+      .authorEmbed()
+      .setHeader("Confirm track")
       .setTitle("Couldn't find that exact track, did you mean:")
       .setDescription(
         `${italic(track.name)} by ${bold(track.artists.primary.name)}?`
       )
       .setThumbnail(track.album.images.largest.url);
 
-    const confirmationEmbed = new ConfirmationEmbed(
-      ctx,
-      embed
-    ).withRejectionReact();
+    const confirmationEmbed = new ConfirmationView(ctx, embed).allowRejection();
 
     return await confirmationEmbed.awaitConfirmation(ctx);
   }

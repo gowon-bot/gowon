@@ -1,10 +1,11 @@
 import { CachedLovedTrack } from "../../database/entity/CachedLovedTrack";
 import { User } from "../../database/entity/User";
 import { LastFMError, TrackDoesNotExistError } from "../../errors/errors";
-import { bold, italic } from "../../helpers/discord";
+import { bold, italic, subsubheader } from "../../helpers/discord";
 import { Variation } from "../../lib/command/Command";
 import { prefabArguments } from "../../lib/context/arguments/prefabArguments";
 import { ArgumentsMap } from "../../lib/context/arguments/types";
+import { Emoji } from "../../lib/emoji/Emoji";
 import { LastFMArgumentsMutableContext } from "../../services/LastFM/LastFMArguments";
 import {
   TrackInfoParams,
@@ -109,18 +110,19 @@ In the meantime, it will appear in your \`!fm\`s as a loved track.`;
       ? np?.album || parsedNp?.album
       : trackInfo?.album?.name;
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor(title))
-      .setTitle(trackInfo?.name || track)
+    const embed = this.minimalEmbed()
+      .setTitle(title)
       .setDescription(
-        `by ${bold(trackInfo?.artist.name || artist)}${
+        `${subsubheader(trackInfo?.name || track)}
+        
+by ${bold(trackInfo?.artist.name || artist)}${
           album ? ` from ${italic(album)}` : ""
         }`
       );
 
     if (image) embed.setThumbnail(albumCover || "");
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 
   private async loveOrUnlove(
@@ -194,10 +196,10 @@ In the meantime, it will appear in your \`!fm\`s as a loved track.`;
 
     return unlove
       ? wasAlreadyUnloved
-        ? "Track already not loved! ❤️‍🩹"
-        : "Unloved! 💔"
+        ? `Track already not loved! ${Emoji.mendingHeart}`
+        : `Unloved! ${Emoji.brokenHeart}`
       : !wasAlreadyLoved
-      ? "Loved! ❤️"
-      : "Track already loved! 💞";
+      ? `Loved! ${Emoji.heart}`
+      : `Track already loved! ${Emoji.revolvingHearts}`;
   }
 }

@@ -4,8 +4,8 @@ import { StringArgument } from "../../../../lib/context/arguments/argumentTypes/
 import { standardMentions } from "../../../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../../../lib/context/arguments/types";
 import { PaginatedCache } from "../../../../lib/paginators/PaginatedCache";
-import { displayRating } from "../../../../lib/views/displays";
-import { ScrollingEmbed } from "../../../../lib/views/embeds/ScrollingEmbed";
+import { displayRating } from "../../../../lib/ui/displays";
+import { ScrollingView } from "../../../../lib/ui/views/ScrollingView";
 import { MirrorballRating } from "../../../../services/mirrorball/MirrorballTypes";
 import { RatingsConnector, RatingsParams, RatingsResponse } from "./connectors";
 import { RateYourMusicIndexingChildCommand } from "./RateYourMusicChildCommand";
@@ -90,15 +90,13 @@ export class Ratings extends RateYourMusicIndexingChildCommand<
 
     paginatedCache.cacheInitial(initialPages.ratings.ratings, this.pageSize);
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Ratings"))
-      .setTitle(
-        rating
-          ? `${perspective.upper.possessive} albums rated ${rating / 2}`
-          : `${perspective.upper.possessive} top rated albums`
-      );
+    const embed = this.minimalEmbed().setTitle(
+      rating
+        ? `${perspective.upper.possessive} albums rated ${rating / 2}`
+        : `${perspective.upper.possessive} top rated albums`
+    );
 
-    const scrollingEmbed = new ScrollingEmbed(this.ctx, embed, {
+    const scrollingEmbed = new ScrollingView(this.ctx, embed, {
       initialItems: this.generateTable(await paginatedCache.getPage(1)),
       totalPages: Math.ceil(
         initialPages.ratings.pageInfo.recordCount / this.pageSize
@@ -111,7 +109,7 @@ export class Ratings extends RateYourMusicIndexingChildCommand<
       return this.generateTable(await paginatedCache.getPage(page));
     });
 
-    scrollingEmbed.send();
+    await this.reply(scrollingEmbed);
   }
 
   private generateTable(ratings: MirrorballRating[]): string {

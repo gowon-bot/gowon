@@ -1,4 +1,3 @@
-import { MessageEmbed } from "discord.js";
 import {
   Permission,
   PermissionType,
@@ -12,6 +11,7 @@ import { ChannelArgument } from "../../../lib/context/arguments/argumentTypes/di
 import { DiscordRoleArgument } from "../../../lib/context/arguments/argumentTypes/discord/DiscordRoleArgument";
 import { DiscordUserArgument } from "../../../lib/context/arguments/argumentTypes/discord/DiscordUserArgument";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { SuccessEmbed } from "../../../lib/ui/embeds/SuccessEmbed";
 import { ChannelDisable } from "./ChannelDisable";
 import { PermissionsChildCommand } from "./PermissionsChildCommand";
 import { RoleDisable } from "./RoleDisable";
@@ -91,8 +91,6 @@ export class Disable extends PermissionsChildCommand<typeof args> {
       guildID: this.requiredGuild.id,
     });
 
-    let embed: MessageEmbed;
-
     if (!this.variationWasUsed("enable")) {
       await this.permissionsService.createPermission(
         this.ctx,
@@ -100,9 +98,11 @@ export class Disable extends PermissionsChildCommand<typeof args> {
         permission
       );
 
-      embed = this.newEmbed()
-        .setAuthor(this.generateEmbedAuthor("Permissions disable"))
-        .setDescription(`Successfully disabled ${code(command.name)}`);
+      const embed = new SuccessEmbed().setDescription(
+        `Successfully disabled ${code(command.name)} for this server`
+      );
+
+      await this.reply(embed);
     } else {
       await this.permissionsService.destroyPermission(
         this.ctx,
@@ -110,11 +110,11 @@ export class Disable extends PermissionsChildCommand<typeof args> {
         permission
       );
 
-      embed = this.newEmbed()
-        .setAuthor(this.generateEmbedAuthor("Permissions enable"))
-        .setDescription(`Successfully enabled ${code(command.name)}`);
-    }
+      const embed = new SuccessEmbed().setDescription(
+        `Successfully re-enabled ${code(command.name)} for this server`
+      );
 
-    await this.send(embed);
+      await this.reply(embed);
+    }
   }
 }

@@ -6,7 +6,7 @@ export interface LineField {
 }
 
 export interface Line {
-  shouldDisplay: boolean;
+  shouldDisplay: boolean | (() => boolean);
   string: string | LineField;
   else?: string;
 }
@@ -40,4 +40,8 @@ export class LineConsolidator {
       return field;
     } else return `${bold(field.title)}: ${field.value}`;
   }
+}
+
+export function gap(count: number = 1): string {
+  return "\n".repeat(count - 1);
 }

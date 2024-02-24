@@ -5,7 +5,7 @@ import { standardMentions } from "../../../lib/context/arguments/mentionTypes/me
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { LineConsolidator } from "../../../lib/LineConsolidator";
-import { displayNumber } from "../../../lib/views/displays";
+import { displayNumber } from "../../../lib/ui/displays";
 import { CrownsService } from "../../../services/dbservices/crowns/CrownsService";
 import { LilacTagsService } from "../../../services/lilac/LilacTagsService";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
@@ -30,7 +30,6 @@ export default class ArtistInfo extends InfoCommand<typeof args> {
 
   crownsService = ServiceRegistry.get(CrownsService);
   lilacTagsService = ServiceRegistry.get(LilacTagsService);
-  lineConsolidator = new LineConsolidator();
 
   async run() {
     let { senderRequestable, requestable, perspective } =
@@ -74,7 +73,7 @@ export default class ArtistInfo extends InfoCommand<typeof args> {
       LinkConsolidator.lastfm(artistInfo.url),
     ]);
 
-    this.lineConsolidator.addLines(
+    const description = new LineConsolidator().addLines(
       {
         shouldDisplay: !!artistInfo.wiki.summary,
         string: this.scrubReadMore(artistInfo.wiki.summary.trimRight())!,
@@ -92,7 +91,7 @@ export default class ArtistInfo extends InfoCommand<typeof args> {
       {
         shouldDisplay: this.tagConsolidator.hasAnyTags(),
         string: `**Tags:** ${this.tagConsolidator
-          .consolidateAsStrings()
+          .consolidateAsStrings(10)
           .join(" ‧ ")}`,
       },
       {
@@ -115,20 +114,19 @@ export default class ArtistInfo extends InfoCommand<typeof args> {
       4
     );
 
-    const embed = this.newEmbed()
+    const embed = this.minimalEmbed()
       .setTitle(artistInfo.name)
       .setURL(artistInfo.url)
-      .setDescription(this.lineConsolidator.consolidate())
-      .addFields([
-        {
-          name: `${perspective.upper.possessive} stats`,
-          value: `\`${displayNumber(
-            artistInfo.userPlaycount,
-            "` play",
-            true
-          )} by ${perspective.objectPronoun} (${bold(
-            calculatePercent(artistInfo.userPlaycount, userInfo.scrobbleCount)
-          )}% of ${perspective.possessivePronoun} total scrobbles)
+      .setDescription(description)
+      .addFields({
+        name: `${perspective.upper.possessive} stats`,
+        value: `\`${displayNumber(
+          artistInfo.userPlaycount,
+          "` play",
+          true
+        )} by ${perspective.objectPronoun} (${bold(
+          calculatePercent(artistInfo.userPlaycount, userInfo.scrobbleCount)
+        )}% of ${perspective.possessivePronoun} total scrobbles)
 ${
   parseFloat(percentage) > 0
     ? `${perspective.upper.regularVerb("account")} for ${bold(
@@ -136,17 +134,16 @@ ${
       )}% of all ${artistInfo.name} scrobbles!`
     : ""
 }\n`,
-        },
-      ]);
+      });
 
     if (
       spotifyArtistSearch.hasAnyResults &&
       spotifyArtistSearch.bestResult.images.largest
     ) {
       embed.setThumbnail(spotifyArtistSearch.bestResult.images.largest.url);
-      embed.setFooter({ text: "Image source: Spotify" });
+      embed.setFooter("Image source: Spotify");
     }
 
-    this.send(embed);
+    this.reply(embed);
   }
 }

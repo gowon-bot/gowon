@@ -3,7 +3,7 @@ import { DateRangeArgument } from "../../lib/context/arguments/argumentTypes/tim
 import { ArgumentsMap } from "../../lib/context/arguments/types";
 import { DateRange } from "../../lib/timeAndDate/DateRange";
 import { humanizeDateRange } from "../../lib/timeAndDate/helpers/humanize";
-import { displayNumber } from "../../lib/views/displays";
+import { displayNumber } from "../../lib/ui/displays";
 import { MetaChildCommand } from "./MetaChildCommand";
 
 const args = {
@@ -31,7 +31,7 @@ export class TopCommands extends MetaChildCommand<typeof args> {
       await this.metaService.mostUsedCommands(this.ctx, dateRange)
     ).slice(0, 10);
 
-    const embed = this.newEmbed()
+    const embed = this.minimalEmbed()
       .setTitle(`Top commands in ${this.guild?.name!} ${humanizedDateRange}`)
       .setDescription(
         topCommands
@@ -45,6 +45,6 @@ export class TopCommands extends MetaChildCommand<typeof args> {
           .join("\n")
       );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

@@ -1,5 +1,5 @@
 import { CommandInteraction, Message } from "discord.js";
-import { Image } from "../../../views/Image";
+import { Image } from "../../../ui/Image";
 import { GowonContext } from "../../Context";
 import { URLParser } from "../parsers/URLParser";
 import {

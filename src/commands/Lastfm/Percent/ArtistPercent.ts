@@ -1,10 +1,10 @@
+import { bold } from "../../../helpers/discord";
 import { calculatePercent } from "../../../helpers/stats";
-import { LastFMBaseCommand } from "../LastFMBaseCommand";
-import { displayNumber } from "../../../lib/views/displays";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
-import { bold } from "../../../helpers/discord";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { displayNumber } from "../../../lib/ui/displays";
+import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 const args = {
   ...prefabArguments.artist,
@@ -43,13 +43,15 @@ export default class ArtistPercent extends LastFMBaseCommand<typeof args> {
       this.lastFMService.userInfo(this.ctx, { username: requestable }),
     ]);
 
-    await this.oldReply(
-      `${perspective.possessive} ${displayNumber(
+    const embed = this.minimalEmbed().setDescription(
+      `${perspective.upper.possessive} ${displayNumber(
         artistInfo.userPlaycount,
         "play"
       )} of ${bold(artistInfo.name)} represent ${bold(
         calculatePercent(artistInfo.userPlaycount, userInfo.scrobbleCount)
-      )}% of ${perspective.possessivePronoun} total scrobbles`
+      )}% of ${perspective.possessivePronoun} total scrobbles.`
     );
+
+    await this.reply(embed);
   }
 }

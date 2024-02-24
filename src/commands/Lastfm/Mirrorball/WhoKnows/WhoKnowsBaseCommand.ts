@@ -1,4 +1,3 @@
-import { MessageEmbed } from "discord.js";
 import { User } from "../../../../database/entity/User";
 import { ArgumentsMap } from "../../../../lib/context/arguments/types";
 import { MirrorballBaseCommand } from "../../../../lib/indexing/MirrorballCommands";
@@ -17,9 +16,6 @@ export abstract class WhoKnowsBaseCommand<
   P,
   A extends ArgumentsMap = {}
 > extends MirrorballBaseCommand<R, P, A> {
-  private readonly gowonIconURL =
-    "https://cdn.discordapp.com/avatars/720135602669879386/a65b2e976bac5821073cacf4a8f8305a.png?size=1024";
-
   nicknameService = ServiceRegistry.get(NicknameService);
   whoKnowsService = ServiceRegistry.get(WhoKnowsService);
   guildRequired = true;
@@ -41,15 +37,6 @@ export abstract class WhoKnowsBaseCommand<
       : this.isGlobal() && senderLilacUser?.privacy === LilacPrivacy.Unset
       ? this.unsetPrivacyHelp()
       : "";
-  }
-
-  protected whoKnowsEmbed(): MessageEmbed {
-    return this.newEmbed().setAuthor({
-      name: this.isGlobal() ? "Gowon" : this.requiredGuild.name,
-      iconURL: this.isGlobal()
-        ? this.gowonIconURL
-        : this.requiredGuild.iconURL() || "",
-    });
   }
 
   protected displayUser(

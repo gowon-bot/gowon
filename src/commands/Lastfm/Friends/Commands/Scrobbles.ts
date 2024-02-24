@@ -5,7 +5,7 @@ import { DateRange } from "../../../../lib/timeAndDate/DateRange";
 import {
   displayNumber,
   displayNumberedList,
-} from "../../../../lib/views/displays";
+} from "../../../../lib/ui/displays";
 import { FriendsChildCommand } from "../FriendsChildCommand";
 
 const args = {
@@ -57,17 +57,16 @@ export class Scrobbles extends FriendsChildCommand<typeof args> {
       0
     );
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Friends scrobbles"))
+    const embed = this.minimalEmbed()
       .setTitle(`Your friends scrobbles ${dateRange.humanized()}`)
       .setDescription(displayNumberedList(friendDisplays))
-      .setFooter({
-        text: `Your friends have a total of ${displayNumber(
+      .setFooter(
+        `Your friends have a total of ${displayNumber(
           totalScrobbles,
           "scrobble"
-        )}`,
-      });
+        )}`
+      );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

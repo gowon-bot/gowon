@@ -9,9 +9,9 @@ import { standardMentions } from "../../../lib/context/arguments/mentionTypes/me
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { DateRange } from "../../../lib/timeAndDate/DateRange";
 import { humanizeDateRange } from "../../../lib/timeAndDate/helpers/humanize";
+import { displayDate, displayNumber } from "../../../lib/ui/displays";
 import { Validation } from "../../../lib/validation/ValidationChecker";
 import { validators } from "../../../lib/validation/validators";
-import { displayDate, displayNumber } from "../../../lib/views/displays";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 const args = {
@@ -79,19 +79,17 @@ export default class Pace extends LastFMBaseCommand<typeof args> {
       overallMessage: `since ${perspective.pronoun} began scrobbling`,
     });
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Pace"))
-      .setDescription(
-        `At a rate of **${displayNumber(
-          pace.scrobbleRate.toFixed(2),
-          "scrobble"
-        )}/hour** ${humanizedDateRange}, ${
-          perspective.name
-        } will hit **${displayNumber(pace.milestone, "**scrobble")} on ${bold(
-          displayDate(pace.prediction)
-        )} (${ago(pace.prediction)})`
-      );
+    const embed = this.minimalEmbed().setDescription(
+      `At a rate of **${displayNumber(
+        pace.scrobbleRate.toFixed(2),
+        "scrobble"
+      )}/hour** ${humanizedDateRange}, ${
+        perspective.name
+      } will hit **${displayNumber(pace.milestone, "**scrobble")} on ${bold(
+        displayDate(pace.prediction)
+      )} (${ago(pace.prediction)})`
+    );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

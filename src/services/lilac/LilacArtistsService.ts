@@ -1,6 +1,6 @@
 import { gql } from "apollo-server-express";
 import { GowonContext } from "../../lib/context/Context";
-import { displayNumber } from "../../lib/views/displays";
+import { displayNumber } from "../../lib/ui/displays";
 import { LilacAPIService } from "./LilacAPIService";
 import {
   LilacArtistCountFilters,

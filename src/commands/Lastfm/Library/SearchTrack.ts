@@ -1,10 +1,10 @@
-import { LogicError } from "../../../errors/errors";
+import { TooManySearchResultsError } from "../../../errors/commands/library";
 import { bold, code, italic } from "../../../helpers/discord";
 import { LastfmLinks } from "../../../helpers/lastfm/LastfmLinks";
 import { Variation } from "../../../lib/command/Command";
 import { Paginator } from "../../../lib/paginators/Paginator";
-import { displayLink, displayNumber } from "../../../lib/views/displays";
-import { SimpleScrollingEmbed } from "../../../lib/views/embeds/SimpleScrollingEmbed";
+import { displayLink, displayNumber } from "../../../lib/ui/displays";
+import { ScrollingListView } from "../../../lib/ui/views/ScrollingListView";
 import { SearchCommand } from "./SearchCommand";
 
 export default class SearchTrack extends SearchCommand {
@@ -46,27 +46,23 @@ export default class SearchTrack extends SearchCommand {
     );
 
     if (filtered.length !== 0 && filtered.length === topTracks.tracks.length) {
-      throw new LogicError(
-        "too many search results, try narrowing down your query..."
-      );
+      throw new TooManySearchResultsError();
     }
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Track search"))
-      .setTitle(
-        `Search results in ${perspective.possessive} top ${displayNumber(
-          topTracks.tracks.length,
-          "track"
-        )}`
-      );
+    const embed = this.minimalEmbed().setTitle(
+      `Search results in ${perspective.possessive} top ${displayNumber(
+        topTracks.tracks.length,
+        "track"
+      )}`
+    );
 
     if (!filtered.length) {
       embed.setDescription(`No results found for ${code(keywords)}!`);
-      await this.send(embed);
+      await this.reply(embed);
       return;
     }
 
-    const scrollingEmbed = new SimpleScrollingEmbed(this.ctx, embed, {
+    const scrollingEmbed = new ScrollingListView(this.ctx, embed, {
       items: filtered,
       pageSize: 15,
       pageRenderer(items) {
@@ -88,6 +84,6 @@ export default class SearchTrack extends SearchCommand {
       overrides: { itemName: "result" },
     });
 
-    scrollingEmbed.send();
+    await this.reply(scrollingEmbed);
   }
 }

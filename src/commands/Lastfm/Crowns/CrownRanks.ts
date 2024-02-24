@@ -2,7 +2,7 @@ import { UserHasNoCrownsInServerError } from "../../../errors/commands/crowns";
 import { bold } from "../../../helpers/discord";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
-import { displayNumber } from "../../../lib/views/displays";
+import { displayNumber } from "../../../lib/ui/displays";
 import { CrownsChildCommand } from "./CrownsChildCommand";
 
 const args = {
@@ -42,8 +42,7 @@ export class CrownRanks extends CrownsChildCommand<typeof args> {
       throw new UserHasNoCrownsInServerError(perspective);
     }
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("Crown ranks"))
+    const embed = this.minimalEmbed()
       .setTitle(`The ranks of ${discordUser?.username}'s top crowns in Last.fm`)
       .setDescription(
         crownRanks
@@ -60,6 +59,6 @@ export class CrownRanks extends CrownsChildCommand<typeof args> {
           )} in ${this.requiredGuild.name}`
       );
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }

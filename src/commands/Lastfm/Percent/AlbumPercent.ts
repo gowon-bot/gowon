@@ -1,10 +1,10 @@
+import { bold, italic } from "../../../helpers/discord";
 import { calculatePercent } from "../../../helpers/stats";
-import { LastFMBaseCommand } from "../LastFMBaseCommand";
-import { displayNumber } from "../../../lib/views/displays";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
-import { bold } from "../../../helpers/discord";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { displayNumber } from "../../../lib/ui/displays";
+import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 const args = {
   ...prefabArguments.album,
@@ -25,7 +25,7 @@ export default class AlbumPercent extends LastFMBaseCommand<typeof args> {
   arguments = args;
 
   async run() {
-    let { requestable, senderRequestable, perspective } =
+    const { requestable, senderRequestable, perspective } =
       await this.getMentions({
         senderRequired:
           !this.parsedArguments.artist || !this.parsedArguments.album,
@@ -48,15 +48,17 @@ export default class AlbumPercent extends LastFMBaseCommand<typeof args> {
       }),
     ]);
 
-    await this.oldReply(
-      `${perspective.possessive} ${displayNumber(
+    const embed = this.minimalEmbed().setDescription(
+      `${perspective.upper.possessive} ${displayNumber(
         albumInfo.userPlaycount,
         "play"
-      )} of ${bold(albumInfo.name)} represent ${bold(
+      )} of ${italic(albumInfo.name)} represent ${bold(
         calculatePercent(albumInfo.userPlaycount, artistInfo.userPlaycount)
       )}% of ${perspective.possessivePronoun} ${bold(
         artistInfo.name
-      )} scrobbles`
+      )} scrobbles.`
     );
+
+    await this.reply(embed);
   }
 }

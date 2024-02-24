@@ -1,16 +1,16 @@
 import { BaseNowPlayingComponent } from "../base/BaseNowPlayingComponent";
 
-const fishyReminderRequirements = ["fishyProfile"] as const;
+const fishyReminderDependencies = ["fishyProfile"] as const;
 
 export class FishyReminderComponent extends BaseNowPlayingComponent<
-  typeof fishyReminderRequirements
+  typeof fishyReminderDependencies
 > {
   static componentName = "fishy-reminder";
   static friendlyName = "Fishy reminder";
   static patronOnly = true;
-  readonly requirements = fishyReminderRequirements;
+  readonly dependencies = fishyReminderDependencies;
 
-  present() {
+  render() {
     if (this.values.fishyProfile?.canFish()) {
       return { size: 0, string: "🐟" };
     }

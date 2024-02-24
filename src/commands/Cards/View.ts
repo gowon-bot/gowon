@@ -1,5 +1,5 @@
 import { CardNotMintedYetError } from "../../errors/commands/cards";
-import { bold, italic } from "../../helpers/discord";
+import { italic } from "../../helpers/discord";
 import { prefabArguments } from "../../lib/context/arguments/prefabArguments";
 import { ArgumentsMap } from "../../lib/context/arguments/types";
 import {
@@ -73,15 +73,15 @@ export class View extends CardsChildCommand {
       }
     );
 
-    const embed = this.newEmbed()
-      .setAuthor(this.generateEmbedAuthor("View card"))
+    const embed = this.minimalEmbed()
+      .setTitle(card.album)
       .setDescription(
-        `${bold(card.album)}
-by ${italic(card.artist)}
-_Owned by ${ownerDisplay}_ `
+        `by ${italic(card.artist)}
+
+_Card owned by ${ownerDisplay}_ `
       )
       .setThumbnail(albumCover || "");
 
-    await this.send(embed);
+    await this.reply(embed);
   }
 }
