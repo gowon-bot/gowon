@@ -1,5 +1,5 @@
 import { icons } from "./icons";
-import { nativeEmojis } from "./nativeEmojis";
+import { NativeEmoji } from "./nativeEmojis";
 
 const extractionRegex = /<a?:\w+:([0-9]+)>/i;
 const nameExtractionRegex = /<a?(:\w+:)[0-9]+>/i;
@@ -17,8 +17,8 @@ export function extractEmojiName(emoji: string): string {
 }
 
 export const Emoji = {
+  ...NativeEmoji,
   ...icons,
-  ...nativeEmojis,
 
   spotify: "<:spotify:757100448548126720>",
   lastfm: "<:lastfm:879259073143517224>",
@@ -53,17 +53,6 @@ export const Emoji = {
   usesIndexedDataDescription: "<:uses_indexed_data:1056207690474467359>",
   usesIndexedDataLink: "<:uses_indexed_data2:1056204845683581048>",
   usesIndexedDataTitle: "<:uses_indexed_data3:1056207688696086581>",
-
-  // RYM Stars
-  fullStar: "<:fullStar:843763033858899968>",
-  halfStar: "<:halfStar:843763307994284032>",
-  emptyStar: "<:emptyStar:843763307428315148>",
-
-  // Utlity reactions
-  arrowLeft: "<:arrowleft:825600908594905107>",
-  arrowRight: "<:arrowRight:825626338534490162>",
-  arrowFirst: "<:arrowFirst:825626330648412180>",
-  arrowLast: "<:arrowLast:825626334436917248>",
 
   // Roles
   contentmoderator: "<:contentmoderator:913203995542175794>",

@@ -1,9 +1,6 @@
-export const nativeEmojis = {
+export const NativeEmoji = {
   fire: "🔥",
-  chart: "💹",
   sparkles: "✨",
-  tada: "🎉",
-  confettiBall: "🎊",
   crown: "👑",
   eyes: "👀",
   wave: "👋",

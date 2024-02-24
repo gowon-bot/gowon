@@ -1,5 +1,6 @@
 import { DiscordService } from "../../../services/Discord/DiscordService";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
+import { NativeEmoji } from "../../emoji/nativeEmojis";
 import { displayNumber } from "../../ui/displays";
 import { BaseNowPlayingComponent } from "../base/BaseNowPlayingComponent";
 
@@ -25,7 +26,7 @@ export class ArtistCrownComponent extends BaseNowPlayingComponent<
 
       if (userInServer) {
         return {
-          string: `👑 ${displayNumber(crown.crown.plays)} (${
+          string: `${NativeEmoji.crown} ${displayNumber(crown.crown.plays)} (${
             crown.user!.username
           })`,
           size: 1,
