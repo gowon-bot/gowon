@@ -1,11 +1,5 @@
 import { Chance } from "chance";
-import {
-  CommandInteraction,
-  EmbedAuthorData,
-  Guild,
-  HexColorString,
-  Message,
-} from "discord.js";
+import { CommandInteraction, Guild, HexColorString, Message } from "discord.js";
 import md5 from "js-md5";
 import config from "../../../config.json";
 import { AnalyticsCollector } from "../../analytics/AnalyticsCollector";
@@ -40,7 +34,6 @@ import { Emoji, EmojiRaw } from "../emoji/Emoji";
 import { toggleValues } from "../settings/SettingValues";
 import { SettingsService } from "../settings/SettingsService";
 import { Sendable, SendableContent } from "../ui/Sendable";
-import { displayUserTag } from "../ui/displays";
 import { ErrorEmbed } from "../ui/embeds/ErrorEmbed";
 import { EmbedView } from "../ui/views/EmbedView";
 import { Validation, ValidationChecker } from "../validation/ValidationChecker";
@@ -424,36 +417,10 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
     });
   }
 
-  // Mimics the old Discord.js reply method
-  /** @deprecated Use Command#reply + embed instead */
-  async oldReply(message: string): Promise<Message> {
-    const content = `<@!${this.author.id}>, ` + message.trimStart();
-
-    return await this.discordService.send(this.ctx, new Sendable(content));
-  }
-
-  public authorEmbed(): EmbedView {
-    return new EmbedView().setAuthor(this.author, this.authorMember);
-  }
-
   public minimalEmbed(): EmbedView {
     return new EmbedView().setColour(
       this.authorMember?.roles?.color?.hexColor as HexColorString
     );
-  }
-
-  /** @deprecated Use Command#authorEmbed + EmbedComponent#setHeader instead */
-  generateEmbedAuthor(title?: string, url?: string): EmbedAuthorData {
-    return {
-      name: title
-        ? `${displayUserTag(this.payload.author)} | ${title}`
-        : `${displayUserTag(this.payload.author)}`,
-      iconURL:
-        this.payload.member?.avatarURL() ||
-        this.payload.author.avatarURL() ||
-        undefined,
-      url: url,
-    };
   }
 
   protected async fetchUsername(id: string): Promise<string> {

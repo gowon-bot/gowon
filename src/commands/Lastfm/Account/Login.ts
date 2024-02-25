@@ -11,6 +11,7 @@ import { Payload } from "../../../lib/context/Payload";
 import { Emoji, EmojiRaw } from "../../../lib/emoji/Emoji";
 import { displayLink, displayProgressBar } from "../../../lib/ui/displays";
 import { InfoEmbed } from "../../../lib/ui/embeds/InfoEmbed";
+import { SuccessEmbed } from "../../../lib/ui/embeds/SuccessEmbed";
 import { ConfirmationView } from "../../../lib/ui/views/ConfirmationView";
 import { EmbedView } from "../../../lib/ui/views/EmbedView";
 import { LastFMSession } from "../../../services/LastFM/converters/Misc";
@@ -56,11 +57,9 @@ export default class Login extends LilacBaseCommand {
     const user = await Promise.race([poll, reaction]);
 
     if (user) {
-      const successEmbed = this.authorEmbed()
+      const successEmbed = new SuccessEmbed()
         .setDescription(
-          `${
-            Emoji.checkmark
-          } Success! You've been logged in as ${sanitizeForDiscord(
+          `Success! You've been logged in as ${sanitizeForDiscord(
             user.lastFMUsername
           )}\n\nWould you like to index your data?`
         )

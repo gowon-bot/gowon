@@ -46,8 +46,7 @@ export class DM extends CrownsChildCommand<typeof args> {
 
     chunks
       .map((chunk, chunkIdx) =>
-        this.authorEmbed()
-          .setHeader("Crowns DM")
+        this.minimalEmbed()
           .setTitle(
             `Crowns ${chunkIdx * this.crownsPerMessage + 1}-${
               (chunkIdx + 1) * this.crownsPerMessage < crowns.length

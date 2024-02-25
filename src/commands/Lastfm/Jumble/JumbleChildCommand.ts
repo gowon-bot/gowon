@@ -3,6 +3,8 @@ import { bold, code } from "../../../helpers/discord";
 import { JumbleCalculator } from "../../../lib/calculators/JumbleCalculator";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { Emoji } from "../../../lib/emoji/Emoji";
+import { errorColour } from "../../../lib/ui/embeds/ErrorEmbed";
+import { SuccessEmbed } from "../../../lib/ui/embeds/SuccessEmbed";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { RedisService } from "../../../services/redis/RedisService";
 import { LastFMBaseChildCommand } from "../LastFMBaseCommand";
@@ -65,9 +67,9 @@ export abstract class JumbleChildCommand<
   async handleCorrectGuess(artistName: string, jumbleKey: string) {
     this.redisService.sessionDelete(this.ctx, jumbleKey);
 
-    const embed = this.authorEmbed()
-      .setHeader("Jumble guess")
-      .setDescription(`You are correct! The artist was ${bold(artistName)}`);
+    const embed = new SuccessEmbed().setDescription(
+      `You are correct! The artist was ${bold(artistName)}`
+    );
 
     await this.reply(embed);
   }
@@ -75,8 +77,8 @@ export abstract class JumbleChildCommand<
   async stopJumble(artistName: string, jumbleKey: string) {
     this.redisService.sessionDelete(this.ctx, jumbleKey);
 
-    const embed = this.authorEmbed()
-      .setHeader("Jumble quit")
+    const embed = this.minimalEmbed()
+      .setColour(errorColour)
       .setDescription(`Too bad, the artist was ${bold(artistName)}!`);
 
     await this.reply(embed);
@@ -93,13 +95,11 @@ export abstract class JumbleChildCommand<
 
     this.sessionSetJSON(jumbleKey, jumbledArtist);
 
-    const embed = this.authorEmbed()
-      .setHeader("Jumble hint")
-      .setDescription(
-        (noNewHint ? `_You've reached the maximum amount of hints!_\n\n` : "") +
-          `${code(jumbledArtist.jumbled)}
+    const embed = this.minimalEmbed().setDescription(
+      (noNewHint ? `_You've reached the maximum amount of hints!_\n\n` : "") +
+        `${code(jumbledArtist.jumbled)}
       ${code(jumbledArtist.currenthint)}`
-      );
+    );
 
     await this.reply(embed);
   }

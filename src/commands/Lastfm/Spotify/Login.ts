@@ -18,9 +18,8 @@ export class Login extends SpotifyBaseCommand {
 
   async run() {
     await this.reply(
-      this.authorEmbed()
-        .setHeader("Spotify login")
-        .setDescription(`Please check your DMs for a login link`)
+      this.minimalEmbed()
+      .setDescription(`Please check your DMs for a login link`)
     );
 
     const state = this.spotifyAuthenticationService.generateState();

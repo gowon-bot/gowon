@@ -40,6 +40,7 @@ export class Queue extends SpotifyChildCommand<typeof args> {
     const embed = new SuccessEmbed()
       .setDescription(
         `Succesfully queued:
+
 ${italic(track.name)} by ${bold(track.artists.primary.name)}!`
       )
       .setThumbnail(track.album.images.largest.url);
