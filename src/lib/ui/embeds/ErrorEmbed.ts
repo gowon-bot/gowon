@@ -17,7 +17,7 @@ export class ErrorEmbed extends EmbedView {
     const embed = super
       .asDiscordSendable()
       .setColour(errorColour)
-      .setDescription(`${Emoji.error} ${this.getDescription()}`);
+      .setDescription(`${Emoji.error} ${this.description()}`);
 
     if (footer) {
       embed.setFooter(footer);
@@ -31,7 +31,7 @@ export class ErrorEmbed extends EmbedView {
     return this;
   }
 
-  protected getDescription(): string | undefined {
+  protected description(): string | undefined {
     if (this.error) {
       return uppercaseFirstLetter(this.error.message);
     }
