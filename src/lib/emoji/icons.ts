@@ -28,8 +28,8 @@ export const icons = {
   // Utlity reactions
   arrowFirst: "<:first:1197111484967292928>",
   arrowLeft: "<:previous:1197111409302065162>",
-  arrowLast: "<:next:1197111479883812895>",
-  arrowRight: "<:last:1197111411055263764>",
+  arrowRight: "<:next:1197111479883812895>",
+  arrowLast: "<:last:1197111411055263764>",
 
   // Native emoji overrides
   fire: "<:fire:1197111444542595162>",
