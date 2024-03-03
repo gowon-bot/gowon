@@ -53,7 +53,7 @@ export class LilacWhoKnowsService extends LilacAPIService {
                 username
                 discordID
                 privacy
-                lastIndexed
+                lastSynced
               }
             }
           }
@@ -73,7 +73,8 @@ export class LilacWhoKnowsService extends LilacAPIService {
         artist: { name: artist },
         settings: { guildID, limit },
         user: { discordID },
-      }
+      },
+      false
     );
   }
 
@@ -117,7 +118,7 @@ export class LilacWhoKnowsService extends LilacAPIService {
                 username
                 discordID
                 privacy
-                lastIndexed
+                lastSynced
               }
             }
           }
@@ -177,7 +178,7 @@ export class LilacWhoKnowsService extends LilacAPIService {
                 username
                 discordID
                 privacy
-                lastIndexed
+                lastSynced
               }
             }
           }

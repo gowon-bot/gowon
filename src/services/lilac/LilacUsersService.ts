@@ -4,24 +4,31 @@ import { LilacUser } from "./converters/user";
 import { userToUserInput } from "./helpers";
 import { LilacAPIService } from "./LilacAPIService";
 import {
-  IndexingProgress,
   LilacUserInput,
   LilacUserModifications,
   RawLilacUser,
+  SyncProgress,
 } from "./LilacAPIService.types";
 
 export const PrivateUserDisplay = "Private user";
 
 export class LilacUsersService extends LilacAPIService {
-  public async index(ctx: GowonContext, user: LilacUserInput): Promise<void> {
-    await this.mutate<{ index: any }, { user: LilacUserInput }>(
+  public async sync(
+    ctx: GowonContext,
+    user: LilacUserInput,
+    forceRestart = false
+  ): Promise<void> {
+    await this.mutate<
+      { index: any },
+      { user: LilacUserInput; forceRestart: boolean }
+    >(
       ctx,
       gql`
-        mutation index($user: UserInput!) {
-          index(user: $user)
+        mutation sync($user: UserInput!, $forceRestart: Boolean!) {
+          sync(user: $user, forceRestart: $forceRestart)
         }
       `,
-      { user: userToUserInput(user) }
+      { user: userToUserInput(user), forceRestart }
     );
   }
 
@@ -37,26 +44,26 @@ export class LilacUsersService extends LilacAPIService {
     );
   }
 
-  public indexingProgress(
+  public syncProgress(
     ctx: GowonContext,
     user: LilacUserInput
-  ): Observable<IndexingProgress> {
+  ): Observable<SyncProgress> {
     const subscription = gql`
-      subscription index($user: UserInput!) {
-        index(user: $user) {
+      subscription sync($user: UserInput!) {
+        sync(user: $user) {
           action
-          page
-          totalPages
+          stage
+          current
+          total
         }
       }
     `;
 
-    return this.subscribe<
-      { index: IndexingProgress },
-      { user: LilacUserInput }
-    >(ctx, subscription, { user: userToUserInput(user) }).map(
-      (data) => data.index
-    );
+    return this.subscribe<{ sync: SyncProgress }, { user: LilacUserInput }>(
+      ctx,
+      subscription,
+      { user: userToUserInput(user) }
+    ).map((data) => data.sync);
   }
 
   public async fetchAll(
@@ -75,7 +82,7 @@ export class LilacUsersService extends LilacAPIService {
             discordID
             username
             privacy
-            lastIndexed
+            lastSynced
           }
         }
       `,
@@ -113,7 +120,7 @@ export class LilacUsersService extends LilacAPIService {
       false
     );
 
-    return users.users[0]?.isIndexing ?? false;
+    return users.users[0]?.isSyncing ?? false;
   }
 
   public async modify(

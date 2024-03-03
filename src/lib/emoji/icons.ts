@@ -31,6 +31,11 @@ export const icons = {
   arrowRight: "<:next:1197111479883812895>",
   arrowLast: "<:last:1197111411055263764>",
 
+  // Progress bar icons
+  remainingProgress: "<:loading:1197111489337761832>",
+  progress: "<:progress:1197111521109618758>",
+  moreProgress: "<:moreProgress:1197111523064164362>",
+
   // Native emoji overrides
   fire: "<:fire:1197111444542595162>",
   chart: "<:chart:1197111406793850900>",

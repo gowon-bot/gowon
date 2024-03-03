@@ -5,7 +5,16 @@ import { LilacUser } from "./converters/user";
 
 export type LilacDate = number;
 
-export type LilacProgressAction = "indexing" | "updating";
+export enum LilacProgressAction {
+  Syncing = "syncing",
+  Updating = "updating",
+}
+
+export enum LilacProgressStage {
+  Fetching = "fetching",
+  Inserting = "inserting",
+  Terminated = "terminated",
+}
 
 export enum LilacPrivacy {
   Private = "PRIVATE",
@@ -103,12 +112,13 @@ export interface LilacTagsFilters {
 }
 
 // Responses
-export interface IndexingProgress<
+export interface SyncProgress<
   Action extends LilacProgressAction = LilacProgressAction
 > {
   action: Action;
-  page: number;
-  totalPages: number;
+  stage: LilacProgressStage;
+  current: number;
+  total: number;
 }
 
 export interface LilacPagination {
@@ -123,8 +133,8 @@ export interface RawLilacUser {
   username: string;
   discordId: string;
   privacy: LilacPrivacy;
-  lastIndexed?: LilacDate;
-  isIndexing?: boolean;
+  lastSynced?: LilacDate;
+  isSyncing?: boolean;
 }
 
 export interface LilacWhoKnowsArtistRank {

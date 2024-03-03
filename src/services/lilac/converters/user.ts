@@ -6,8 +6,8 @@ export class LilacUser extends BaseLilacConverter {
   username: string;
   discordID: string;
   privacy: LilacPrivacy;
-  lastUpdated?: Date;
-  isBeingindexed?: boolean;
+  lastSynced?: Date;
+  isSyncing?: boolean;
 
   constructor(raw: RawLilacUser) {
     super();
@@ -16,7 +16,7 @@ export class LilacUser extends BaseLilacConverter {
     this.username = raw.username;
     this.discordID = raw.discordId;
     this.privacy = raw.privacy;
-    this.lastUpdated = this.convertDate(raw.lastIndexed);
-    this.isBeingindexed = raw.isIndexing;
+    this.lastSynced = this.convertDate(raw.lastSynced);
+    this.isSyncing = raw.isSyncing;
   }
 }

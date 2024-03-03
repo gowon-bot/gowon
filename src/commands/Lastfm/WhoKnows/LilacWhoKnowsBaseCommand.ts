@@ -38,7 +38,7 @@ export abstract class WhoKnowsBaseCommand<
   }
 
   protected footerHelp(senderLilacUser?: LilacUser) {
-    return !senderLilacUser?.lastUpdated
+    return !senderLilacUser?.lastSynced
       ? this.notIndexedHelp()
       : this.isGlobal() && senderLilacUser?.privacy === LilacPrivacy.Unset
       ? this.unsetPrivacyHelp()

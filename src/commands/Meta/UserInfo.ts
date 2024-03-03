@@ -75,7 +75,7 @@ export default class UserInfo extends Command<typeof args> {
       `**Cached scrobbles**: ${displayNumber(cachedPlaycount)}`,
       `**Commands run**: ${displayNumber(commandRunCount)}`,
       `**Last updated**: ${
-        lilacUserInfo?.lastUpdated ? ago(lilacUserInfo.lastUpdated) : "(never)"
+        lilacUserInfo?.lastSynced ? ago(lilacUserInfo.lastSynced) : "(never)"
       }`,
       {
         shouldDisplay: topCommands.length > 0,

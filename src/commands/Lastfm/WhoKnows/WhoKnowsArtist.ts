@@ -71,6 +71,8 @@ export default class WhoKnowsArtist extends WhoKnowsBaseCommand<typeof args> {
     const { rows, artist } = whoKnows;
     const { rank, playcount } = whoKnowsRank;
 
+    console.log(rows);
+
     const description = new LineConsolidator().addLines(
       {
         shouldDisplay: !artist || rows.length === 0,

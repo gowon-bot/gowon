@@ -1,11 +1,9 @@
-import { Stopwatch } from "../../../helpers";
 import { LilacBaseCommand } from "../../../lib/Lilac/LilacBaseCommand";
 import { CommandRedirect } from "../../../lib/command/Command";
 import { Flag } from "../../../lib/context/arguments/argumentTypes/Flag";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
-import { Emoji } from "../../../lib/emoji/Emoji";
-import { displayProgressBar } from "../../../lib/ui/displays";
-import Index from "./Index";
+import { SyncingProgressView } from "../../../lib/ui/views/SyncingProgressView";
+import Sync from "./Sync";
 
 const args = {
   full: new Flag({
@@ -25,7 +23,7 @@ export default class Update extends LilacBaseCommand<typeof args> {
   arguments = args;
 
   redirects: CommandRedirect<typeof args>[] = [
-    { when: (args) => args.full, redirectTo: Index },
+    { when: (args) => args.full, redirectTo: Sync },
   ];
 
   async run() {
@@ -39,36 +37,22 @@ export default class Update extends LilacBaseCommand<typeof args> {
       discordID: this.author.id,
     });
 
-    const observable = this.lilacUsersService.indexingProgress(this.ctx, {
+    const observable = this.lilacUsersService.syncProgress(this.ctx, {
       discordID: this.author.id,
     });
 
     const embed = this.minimalEmbed().setDescription(
-      "Updating your indexed data..."
+      "Updating your synced data..."
     );
 
     await this.reply(embed);
 
-    const stopwatch = new Stopwatch().start();
+    const syncingProgressView = new SyncingProgressView(
+      this.ctx,
+      embed,
+      observable
+    );
 
-    const subscription = observable.subscribe(async (progress) => {
-      if (progress.page === progress.totalPages) {
-        await embed
-          .setDescription(`${Emoji.checkmark} Done!`)
-          .editMessage(this.ctx);
-
-        subscription.unsubscribe();
-      } else if (stopwatch.elapsedInMilliseconds >= 3000) {
-        const description = `Updating...
-        ${displayProgressBar(progress.page, progress.totalPages, {
-          width: this.progressBarWidth,
-        })}
-        *Page ${progress.page}/${progress.totalPages}*`;
-
-        await embed.setDescription(description).editMessage(this.ctx);
-
-        stopwatch.zero().start();
-      }
-    });
+    syncingProgressView.subscribeToObservable(false);
   }
 }
