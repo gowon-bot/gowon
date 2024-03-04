@@ -14,7 +14,7 @@ export class LilacUser extends BaseLilacConverter {
 
     this.id = raw.id;
     this.username = raw.username;
-    this.discordID = raw.discordId;
+    this.discordID = raw.discordID;
     this.privacy = raw.privacy;
     this.lastSynced = this.convertDate(raw.lastSynced);
     this.isSyncing = raw.isSyncing;

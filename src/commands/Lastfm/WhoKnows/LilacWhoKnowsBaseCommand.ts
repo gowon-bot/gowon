@@ -8,7 +8,6 @@ import {
 import { LilacUser } from "../../../services/lilac/converters/user";
 import { LilacPrivacy } from "../../../services/lilac/LilacAPIService.types";
 import { LilacWhoKnowsService } from "../../../services/lilac/LilacWhoKnowsService";
-import { MirrorballUser } from "../../../services/mirrorball/MirrorballTypes";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { client } from "../../../setup";
 
@@ -26,8 +25,8 @@ export abstract class WhoKnowsBaseCommand<
   whoKnowsService = ServiceRegistry.get(WhoKnowsService);
   lilacWhoKnowsService = ServiceRegistry.get(LilacWhoKnowsService);
 
-  protected notIndexedHelp() {
-    return `Don't see yourself? Run ${this.prefix}index to download all your data!`;
+  protected notSyncedHelp() {
+    return `Don't see yourself? Run ${this.prefix}sync to download all your data!`;
   }
   protected unsetPrivacyHelp() {
     return `Your privacy is currently unset! See ${this.prefix}privacy for more info`;
@@ -37,16 +36,16 @@ export abstract class WhoKnowsBaseCommand<
     return this.variationWasUsed("global");
   }
 
-  protected footerHelp(senderLilacUser?: LilacUser) {
+  protected footerHelp(senderLilacUser: LilacUser | undefined) {
     return !senderLilacUser?.lastSynced
-      ? this.notIndexedHelp()
+      ? this.notSyncedHelp()
       : this.isGlobal() && senderLilacUser?.privacy === LilacPrivacy.Unset
       ? this.unsetPrivacyHelp()
       : "";
   }
 
   protected displayUser(
-    user: MirrorballUser,
+    user: LilacUser,
     options?: Partial<DisplayUserOptions>
   ): string {
     return this.whoKnowsService.displayUser(this.ctx, user, options);

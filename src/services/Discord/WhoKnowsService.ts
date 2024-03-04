@@ -68,7 +68,7 @@ export class WhoKnowsService extends BaseService<WhoKnowsServiceContext> {
     user: MirrorballUser | LilacUser,
     options?: Partial<DisplayUserOptions>
   ): string {
-    let nickname = this.nicknameService.cacheGetNickname(ctx, user.discordID);
+    const nickname = this.nicknameService.cacheGetNickname(ctx, user.discordID);
 
     const profileLink =
       options?.customProfileLink || LastfmLinks.userPage(user.username);

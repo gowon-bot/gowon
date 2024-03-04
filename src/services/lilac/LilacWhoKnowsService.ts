@@ -2,6 +2,7 @@ import { gql } from "@apollo/client";
 import { GowonContext } from "../../lib/context/Context";
 import { LilacAPIService } from "./LilacAPIService";
 import {
+  LIlacWhoFirstArtistRank,
   LilacAlbum,
   LilacAlbumInput,
   LilacAmbiguousTrack,
@@ -9,6 +10,8 @@ import {
   LilacArtistInput,
   LilacTrackInput,
   LilacUserInput,
+  LilacWhoFirstInput,
+  LilacWhoFirstRow,
   LilacWhoKnowsAlbumRank,
   LilacWhoKnowsArtistRank,
   LilacWhoKnowsInput,
@@ -53,7 +56,6 @@ export class LilacWhoKnowsService extends LilacAPIService {
                 username
                 discordID
                 privacy
-                lastSynced
               }
             }
           }
@@ -72,7 +74,7 @@ export class LilacWhoKnowsService extends LilacAPIService {
       {
         artist: { name: artist },
         settings: { guildID, limit },
-        user: { discordID },
+        user: { discordID: discordID },
       },
       false
     );
@@ -118,7 +120,6 @@ export class LilacWhoKnowsService extends LilacAPIService {
                 username
                 discordID
                 privacy
-                lastSynced
               }
             }
           }
@@ -133,7 +134,7 @@ export class LilacWhoKnowsService extends LilacAPIService {
       {
         album: { name: album, artist: { name: artist } },
         settings: { guildID, limit },
-        user: { discordID },
+        user: { discordID: discordID },
       }
     );
   }
@@ -178,7 +179,6 @@ export class LilacWhoKnowsService extends LilacAPIService {
                 username
                 discordID
                 privacy
-                lastSynced
               }
             }
           }
@@ -193,7 +193,69 @@ export class LilacWhoKnowsService extends LilacAPIService {
       {
         track: { name: track, artist: { name: artist } },
         settings: { guildID, limit },
-        user: { discordID },
+        user: { discordID: discordID },
+      }
+    );
+  }
+
+  public async whoFirstArtist(
+    ctx: GowonContext,
+    artist: string,
+    discordID: string,
+    guildID?: string,
+    limit = 15,
+    reverse = false
+  ) {
+    return await this.query<
+      {
+        whoFirstArtist: { artist: LilacArtist; rows: LilacWhoFirstRow[] };
+        whoFirstArtistRank: LIlacWhoFirstArtistRank;
+      },
+      {
+        artist: LilacArtistInput;
+        settings: LilacWhoFirstInput;
+        user: LilacUserInput;
+      }
+    >(
+      ctx,
+      gql`
+        query whoFirstArtist(
+          $artist: ArtistInput!
+          $settings: WhoFirstInput!
+          $user: UserInput!
+        ) {
+          whoFirstArtist(artist: $artist, settings: $settings) {
+            artist {
+              name
+            }
+
+            rows {
+              firstScrobbled
+              lastScrobbled
+              user {
+                username
+                discordID
+                privacy
+              }
+            }
+          }
+
+          whoFirstArtistRank(
+            artist: $artist
+            settings: $settings
+            user: $user
+          ) {
+            rank
+            totalListeners
+            firstScrobbled
+            lastScrobbled
+          }
+        }
+      `,
+      {
+        artist: { name: artist },
+        settings: { guildID, limit, reverse },
+        user: { discordID: discordID },
       }
     );
   }

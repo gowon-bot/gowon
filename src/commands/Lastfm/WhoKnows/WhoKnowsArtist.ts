@@ -38,13 +38,11 @@ export default class WhoKnowsArtist extends WhoKnowsBaseCommand<typeof args> {
   crownsService = ServiceRegistry.get(CrownsService);
 
   async run() {
-    const { senderRequestable, senderUser } = await this.getMentions({
-      senderRequired: !this.parsedArguments.artist,
-    });
-
-    const senderLilacUser = await this.lilacUsersService.fetch(this.ctx, {
-      discordID: this.author.id,
-    });
+    const { senderRequestable, senderUser, senderLilacUser } =
+      await this.getMentions({
+        senderRequired: !this.parsedArguments.artist,
+        fetchLilacUser: true,
+      });
 
     const artistName = await this.lastFMArguments.getArtist(
       this.ctx,
@@ -66,12 +64,12 @@ export default class WhoKnowsArtist extends WhoKnowsBaseCommand<typeof args> {
         guildID
       );
 
+    console.log(whoKnows.rows.map((u) => u.user));
+
     await this.cacheUserInfo(whoKnows.rows.map((u) => u.user));
 
     const { rows, artist } = whoKnows;
     const { rank, playcount } = whoKnowsRank;
-
-    console.log(rows);
 
     const description = new LineConsolidator().addLines(
       {

@@ -65,6 +65,13 @@ export interface LilacWhoKnowsInput {
   userIDs?: string[];
 }
 
+export interface LilacWhoFirstInput {
+  guildID?: string;
+  limit?: number;
+  userIDs?: string[];
+  reverse?: boolean;
+}
+
 export interface LilacPaginationInput {
   page: number;
   perPage: number;
@@ -132,7 +139,7 @@ export interface LilacPagination {
 export interface RawLilacUser {
   id: number;
   username: string;
-  discordId: string;
+  discordID: string;
   privacy: LilacPrivacy;
   lastSynced?: LilacDate;
   isSyncing?: boolean;
@@ -166,6 +173,14 @@ export interface LilacWhoKnowsTrackRank {
 
   above: LilacAmbiguousTrackCount;
   below: LilacAmbiguousTrackCount;
+}
+
+export interface LIlacWhoFirstArtistRank {
+  artist: LilacArtist;
+  firstScrobbled: LilacDate;
+  lastScrobbled: LilacDate;
+  rank: number;
+  totalListeners: number;
 }
 
 // Objects
@@ -211,6 +226,12 @@ export interface LilacScrobble {
 export interface LilacWhoKnowsRow {
   user: LilacUser;
   playcount: number;
+}
+
+export interface LilacWhoFirstRow {
+  user: LilacUser;
+  firstScrobbled: LilacDate;
+  lastScrobbled: LilacDate;
 }
 
 export interface LilacArtistCount {
