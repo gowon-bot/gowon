@@ -1,5 +1,6 @@
 import { User as DiscordUser } from "discord.js";
 import {
+  CommandRequiresBackerError,
   MentionedSignInRequiredError,
   MentionedUserNotAuthenticatedError,
   MentionedUserNotIndexedError,
@@ -136,6 +137,9 @@ export class MentionsService extends BaseService {
     if (options.indexedRequired) await this.ensureIndexed(ctx, mentionsBuilder);
     if (options.lfmAuthentificationRequired) {
       this.ensureUserAuthenticated(ctx, requestables, mentionsBuilder);
+    }
+    if (options.backerRequired) {
+      this.ensurePremium(ctx, mentionsBuilder);
     }
   }
 
@@ -343,6 +347,12 @@ export class MentionsService extends BaseService {
       } else {
         throw new SenderUserNotAuthenticatedError(ctx.command.prefix);
       }
+    }
+  }
+
+  private ensurePremium(ctx: GowonContext, mentionsBuilder: MentionsBuilder) {
+    if (mentionsBuilder.getDBUser()?.hasPremium === false) {
+      throw new CommandRequiresBackerError(ctx.command.prefix);
     }
   }
 }

@@ -98,3 +98,13 @@ export class CouldNotFindUserWithUsername extends ClientError {
     );
   }
 }
+
+export class CommandRequiresBackerError extends ClientError {
+  constructor(prefix: string) {
+    super(
+      `This command is only available to backers! See ${code(
+        `${prefix}backer`
+      )} for more info`
+    );
+  }
+}

@@ -57,8 +57,8 @@ export default class UserInfo extends Command<typeof args> {
         shouldDisplay: !!dbUser.roles?.length,
       },
       {
-        string: `${Emoji.gowonPatreon} Patron!`,
-        shouldDisplay: dbUser.isPatron,
+        string: `${Emoji.gowonPatreon} Backer!`,
+        shouldDisplay: dbUser.hasPremium,
       },
       {
         string: `${Emoji.checkmark} Authenticated!`,

@@ -71,6 +71,10 @@ export class User extends BaseEntity {
   @Column("simple-array", { nullable: true })
   roles?: CommandAccessRoleName[];
 
+  get hasPremium(): boolean {
+    return this.isPatron;
+  }
+
   static async toDiscordUser(
     guild: Guild,
     discordID: string

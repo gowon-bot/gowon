@@ -97,7 +97,7 @@ ${displayProgressBar(progress.current, progress.total, {
             : "counts inserted"
         }*`
       )
-      .setFooter(this.getFooterMessage(progress))
+      .setFooter(this.getFooterMessage())
       .editMessage(this.ctx);
 
     this.stopwatch.zero().start();
@@ -109,9 +109,7 @@ ${displayProgressBar(progress.current, progress.total, {
       : `Successfully updated your synced data!`;
   }
 
-  private getFooterMessage(progress: SyncProgress): string {
-    return `Your Last.fm data has been ${
-      progress.action === LilacProgressAction.Syncing ? "synced" : "updated"
-    }. This is required for many commands to function.`;
+  private getFooterMessage(): string {
+    return `Syncing means downloading all your Last.fm data. This is required for many commands to function.`;
   }
 }

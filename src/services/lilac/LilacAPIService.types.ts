@@ -37,6 +37,7 @@ export interface LilacUserModifications {
   username?: string;
   privacy?: LilacPrivacy;
   lastFMSession?: string;
+  hasPremium?: boolean;
 }
 
 export interface LilacArtistInput {

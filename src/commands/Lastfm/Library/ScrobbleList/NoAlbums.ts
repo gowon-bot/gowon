@@ -43,6 +43,7 @@ export default class NoAlbums extends LilacBaseCommand<typeof args> {
       senderRequired: !this.parsedArguments.artist,
       reverseLookup: { required: true },
       indexedRequired: true,
+      backerRequired: true,
     });
 
     const timeZone = await this.timeAndDateService.saveUserTimeZoneInContext(

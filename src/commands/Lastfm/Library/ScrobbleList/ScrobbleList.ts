@@ -37,6 +37,7 @@ export default class ScrobbleList extends LilacBaseCommand<typeof args> {
         !this.parsedArguments.artist || !this.parsedArguments.track,
       reverseLookup: { required: true },
       indexedRequired: true,
+      backerRequired: true,
     });
 
     const { artist: artistName, track: trackName } =

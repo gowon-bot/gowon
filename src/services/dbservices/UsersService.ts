@@ -16,10 +16,15 @@ import { Requestable } from "../LastFM/LastFMAPIService";
 import { LastFMSession } from "../LastFM/converters/Misc";
 import { ServiceRegistry } from "../ServicesRegistry";
 import { buildRequestable } from "../arguments/mentions/MentionsBuilder";
+import { LilacUsersService } from "../lilac/LilacUsersService";
 
 export class UsersService extends BaseService {
   get analyticsCollector() {
     return ServiceRegistry.get(AnalyticsCollector);
+  }
+
+  get lilacUsersService() {
+    return ServiceRegistry.get(LilacUsersService);
   }
 
   async getUsername(ctx: GowonContext, discordID: string): Promise<string> {
@@ -191,7 +196,7 @@ export class UsersService extends BaseService {
     await user.save();
   }
 
-  async setPatron(ctx: GowonContext, discordID: string, value: boolean) {
+  async setAsBacker(ctx: GowonContext, discordID: string, value: boolean) {
     this.log(ctx, `Setting user with id ${discordID} as a patron`);
 
     const user = await this.getUser(ctx, discordID);
@@ -199,6 +204,12 @@ export class UsersService extends BaseService {
     user.isPatron = value;
 
     await user.save();
+
+    await this.lilacUsersService.modify(
+      ctx,
+      { discordID: user.discordID },
+      { hasPremium: value }
+    );
   }
 
   async setRoles(
