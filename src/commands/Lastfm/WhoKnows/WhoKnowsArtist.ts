@@ -64,8 +64,6 @@ export default class WhoKnowsArtist extends WhoKnowsBaseCommand<typeof args> {
         guildID
       );
 
-    console.log(whoKnows.rows.map((u) => u.user));
-
     await this.cacheUserInfo(whoKnows.rows.map((u) => u.user));
 
     const { rows, artist } = whoKnows;

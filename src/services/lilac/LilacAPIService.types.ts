@@ -238,6 +238,8 @@ export interface LilacArtistCount {
   user: LilacUser;
   playcount: number;
   artist: LilacArtist;
+  firstScrobbled: LilacDate;
+  lastScrobbled: LilacDate;
 }
 
 export interface LilacAlbumCount {

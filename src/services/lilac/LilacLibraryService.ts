@@ -4,6 +4,8 @@ import { LilacAPIService } from "./LilacAPIService";
 import {
   LilacAlbumCountFilters,
   LilacAlbumCountsPage,
+  LilacArtistCount,
+  LilacArtistCountFilters,
   LilacArtistFilters,
   LilacArtistsPage,
   LilacScrobbleFilters,
@@ -147,5 +149,37 @@ export class LilacLibraryService extends LilacAPIService {
     >(ctx, query, { filters: { user: { discordID: discordID } } });
 
     return response?.scrobbles?.pagination?.totalItems;
+  }
+
+  public async getArtistCount(
+    ctx: GowonContext,
+    discordID: string,
+    artist: string
+  ): Promise<LilacArtistCount | undefined> {
+    const query = gql`
+      query artistCount($filters: ArtistCountsFilters!) {
+        artistCounts(filters: $filters) {
+          artistCounts {
+            playcount
+            lastScrobbled
+            firstScrobbled
+            artist {
+              name
+            }
+          }
+        }
+      }
+    `;
+
+    const response = await this.query<
+      { artistCounts: { artistCounts: LilacArtistCount[] } },
+      { filters: LilacArtistCountFilters }
+    >(ctx, query, {
+      filters: { users: [{ discordID }], artists: [{ name: artist }] },
+    });
+
+    console.log(response.artistCounts.artistCounts);
+
+    return response.artistCounts.artistCounts[0];
   }
 }

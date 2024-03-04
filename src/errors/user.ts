@@ -108,3 +108,13 @@ export class CommandRequiresBackerError extends ClientError {
     );
   }
 }
+
+export class CommandRequiresSyncError extends ClientError {
+  constructor(prefix: string) {
+    super(
+      `This command requires updated sync data! Run \`${code(
+        `${prefix}sync`
+      )}\` to re-sync your account.`
+    );
+  }
+}

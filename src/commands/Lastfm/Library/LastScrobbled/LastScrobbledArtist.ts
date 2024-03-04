@@ -1,6 +1,8 @@
-import { MirrorballError } from "../../../../errors/errors";
+import { NoScrobblesOfArtistError } from "../../../../errors/commands/library";
+import { CommandRequiresSyncError } from "../../../../errors/user";
 import { bold } from "../../../../helpers/discord";
-import { convertMirrorballDate } from "../../../../helpers/mirrorball";
+import { convertLilacDate } from "../../../../helpers/lilac";
+import { LilacBaseCommand } from "../../../../lib/Lilac/LilacBaseCommand";
 import { Variation } from "../../../../lib/command/Command";
 import { standardMentions } from "../../../../lib/context/arguments/mentionTypes/mentions";
 import {
@@ -9,13 +11,9 @@ import {
 } from "../../../../lib/context/arguments/prefabArguments";
 import { ArgumentsMap } from "../../../../lib/context/arguments/types";
 import { Emoji } from "../../../../lib/emoji/Emoji";
-import { MirrorballBaseCommand } from "../../../../lib/indexing/MirrorballCommands";
 import { displayDate } from "../../../../lib/ui/displays";
-import {
-  LastScrobbledConnector,
-  LastScrobbledParams,
-  LastScrobbledResponse,
-} from "./connector";
+import { ServiceRegistry } from "../../../../services/ServicesRegistry";
+import { LilacLibraryService } from "../../../../services/lilac/LilacLibraryService";
 
 const args = {
   ...standardMentions,
@@ -23,13 +21,7 @@ const args = {
   noRedirect: prefabFlags.noRedirect,
 } satisfies ArgumentsMap;
 
-export default class LastScrobbledArtist extends MirrorballBaseCommand<
-  LastScrobbledResponse,
-  LastScrobbledParams,
-  typeof args
-> {
-  connector = new LastScrobbledConnector();
-
+export default class LastScrobbledArtist extends LilacBaseCommand<typeof args> {
   idSeed = "shasha wanlim";
 
   aliases = ["last", "lasta", "la", "lastartist"];
@@ -42,6 +34,8 @@ export default class LastScrobbledArtist extends MirrorballBaseCommand<
   description = "Shows the last time you scrobbled an artist";
 
   arguments = args;
+
+  lilacLibraryService = ServiceRegistry.get(LilacLibraryService);
 
   async run() {
     const { senderRequestable, dbUser, perspective } = await this.getMentions({
@@ -56,27 +50,27 @@ export default class LastScrobbledArtist extends MirrorballBaseCommand<
       { redirect: !this.parsedArguments.noRedirect }
     );
 
-    const response = await this.query({
-      track: { artist: { name: artistName } },
-      user: { discordID: dbUser.discordID },
-      sort: this.variationWasUsed("first")
-        ? "scrobbled_at asc"
-        : "scrobbled_at desc",
-    });
+    const response = await this.lilacLibraryService.getArtistCount(
+      this.ctx,
+      dbUser.discordID,
+      artistName
+    );
 
-    const errors = this.parseErrors(response);
-
-    if (errors) {
-      throw new MirrorballError(errors.errors[0].message);
+    if (!response) {
+      throw new NoScrobblesOfArtistError(perspective, artistName, "");
+    } else if (!response.lastScrobbled || !response.firstScrobbled) {
+      throw new CommandRequiresSyncError(this.prefix);
     }
-
-    const [play] = response.plays.plays;
 
     const embed = this.minimalEmbed().setDescription(
       `${Emoji.usesIndexedDataDescription} ${perspective.upper.name} ${
         this.variationWasUsed("first") ? "first" : "last"
-      } scrobbled ${bold(play.track.artist.name)} on ${displayDate(
-        convertMirrorballDate(play.scrobbledAt)
+      } scrobbled ${bold(response.artist.name)} on ${displayDate(
+        convertLilacDate(
+          this.variationWasUsed("first")
+            ? response.firstScrobbled
+            : response.lastScrobbled
+        )
       )}`
     );
 
