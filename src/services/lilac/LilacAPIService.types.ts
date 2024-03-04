@@ -6,8 +6,8 @@ import { LilacUser } from "./converters/user";
 export type LilacDate = number;
 
 export enum LilacProgressAction {
-  Syncing = "syncing",
-  Updating = "updating",
+  Syncing = "sync",
+  Updating = "update",
 }
 
 export enum LilacProgressStage {

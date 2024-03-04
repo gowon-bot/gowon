@@ -1,6 +1,5 @@
 import { Observable, ObservableSubscription } from "@apollo/client";
 import { Stopwatch } from "../../../helpers";
-import { uppercaseFirstLetter } from "../../../helpers/string";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { UsersService } from "../../../services/dbservices/UsersService";
 import {
@@ -76,7 +75,11 @@ export class SyncingProgressView extends UnsendableView {
   private async handleProgressUpdate(progress: SyncProgress) {
     await this.embed
       .setDescription(
-        `${uppercaseFirstLetter(progress.action)}...
+        `${
+          progress.action === LilacProgressAction.Syncing
+            ? "Syncing"
+            : "Updating"
+        }...
 ${displayProgressBar(progress.current, progress.total, {
   width: LilacBaseCommand.progressBarWidth,
   progressEmoji:
