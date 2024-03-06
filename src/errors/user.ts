@@ -109,7 +109,7 @@ export class CommandRequiresBackerError extends ClientError {
   }
 }
 
-export class CommandRequiresSyncError extends ClientError {
+export class CommandRequiresResyncError extends ClientError {
   constructor(prefix: string) {
     super(
       `This command requires updated sync data! Run \`${code(

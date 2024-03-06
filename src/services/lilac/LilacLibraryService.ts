@@ -2,6 +2,7 @@ import { gql } from "@apollo/client";
 import { GowonContext } from "../../lib/context/Context";
 import { LilacAPIService } from "./LilacAPIService";
 import {
+  LilacAlbumCount,
   LilacAlbumCountFilters,
   LilacAlbumCountsPage,
   LilacArtistCount,
@@ -163,6 +164,7 @@ export class LilacLibraryService extends LilacAPIService {
             playcount
             lastScrobbled
             firstScrobbled
+
             artist {
               name
             }
@@ -178,8 +180,47 @@ export class LilacLibraryService extends LilacAPIService {
       filters: { users: [{ discordID }], artists: [{ name: artist }] },
     });
 
-    console.log(response.artistCounts.artistCounts);
-
     return response.artistCounts.artistCounts[0];
+  }
+
+  public async getAlbumCount(
+    ctx: GowonContext,
+    discordID: string,
+    artist: string,
+    album: string
+  ): Promise<LilacAlbumCount | undefined> {
+    const query = gql`
+      query albumCount($filters: AlbumCountsFilters!) {
+        albumCounts(filters: $filters) {
+          albumCounts {
+            playcount
+            lastScrobbled
+            firstScrobbled
+
+            album {
+              name
+
+              artist {
+                name
+              }
+            }
+          }
+        }
+      }
+    `;
+
+    const response = await this.query<
+      {
+        albumCounts: { albumCounts: LilacAlbumCount[] };
+      },
+      { filters: LilacAlbumCountFilters }
+    >(ctx, query, {
+      filters: {
+        users: [{ discordID }],
+        album: { name: album, artist: { name: artist } },
+      },
+    });
+
+    return response.albumCounts.albumCounts[0];
   }
 }

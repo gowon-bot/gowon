@@ -52,7 +52,7 @@ export class ArtistRatings extends RateYourMusicIndexingChildCommand<
     const { senderRequestable, dbUser, discordUser } = await this.getMentions({
       senderRequired: !this.parsedArguments.artist,
       fetchDiscordUser: true,
-      indexedRequired: true,
+      syncedRequired: true,
     });
 
     const artist = await this.lastFMArguments.getArtist(

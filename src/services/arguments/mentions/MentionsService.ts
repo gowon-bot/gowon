@@ -134,7 +134,7 @@ export class MentionsService extends BaseService {
   ): Promise<void> {
     if (options.usernameRequired) this.ensureUsername(ctx, mentionsBuilder);
     if (options.senderRequired) this.ensureSender(ctx, mentionsBuilder);
-    if (options.indexedRequired) await this.ensureIndexed(ctx, mentionsBuilder);
+    if (options.syncedRequired) await this.ensureIndexed(ctx, mentionsBuilder);
     if (options.lfmAuthentificationRequired) {
       this.ensureUserAuthenticated(ctx, requestables, mentionsBuilder);
     }

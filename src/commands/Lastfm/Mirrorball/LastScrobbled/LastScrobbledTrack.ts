@@ -41,7 +41,7 @@ export default class LastScrobbledTrack extends MirrorballBaseCommand<
       senderRequired:
         !this.parsedArguments.artist || !this.parsedArguments.track,
       reverseLookup: { required: true },
-      indexedRequired: true,
+      syncedRequired: true,
     });
 
     const { artist: artistName, track: trackName } =

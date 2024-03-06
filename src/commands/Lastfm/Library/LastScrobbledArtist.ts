@@ -1,19 +1,19 @@
-import { NoScrobblesOfArtistError } from "../../../../errors/commands/library";
-import { CommandRequiresSyncError } from "../../../../errors/user";
-import { bold } from "../../../../helpers/discord";
-import { convertLilacDate } from "../../../../helpers/lilac";
-import { LilacBaseCommand } from "../../../../lib/Lilac/LilacBaseCommand";
-import { Variation } from "../../../../lib/command/Command";
-import { standardMentions } from "../../../../lib/context/arguments/mentionTypes/mentions";
+import { NoScrobblesOfArtistError } from "../../../errors/commands/library";
+import { CommandRequiresResyncError } from "../../../errors/user";
+import { bold } from "../../../helpers/discord";
+import { convertLilacDate } from "../../../helpers/lilac";
+import { LilacBaseCommand } from "../../../lib/Lilac/LilacBaseCommand";
+import { Variation } from "../../../lib/command/Command";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import {
   prefabArguments,
   prefabFlags,
-} from "../../../../lib/context/arguments/prefabArguments";
-import { ArgumentsMap } from "../../../../lib/context/arguments/types";
-import { Emoji } from "../../../../lib/emoji/Emoji";
-import { displayDate } from "../../../../lib/ui/displays";
-import { ServiceRegistry } from "../../../../services/ServicesRegistry";
-import { LilacLibraryService } from "../../../../services/lilac/LilacLibraryService";
+} from "../../../lib/context/arguments/prefabArguments";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { Emoji } from "../../../lib/emoji/Emoji";
+import { displayDate } from "../../../lib/ui/displays";
+import { ServiceRegistry } from "../../../services/ServicesRegistry";
+import { LilacLibraryService } from "../../../services/lilac/LilacLibraryService";
 
 const args = {
   ...standardMentions,
@@ -41,7 +41,7 @@ export default class LastScrobbledArtist extends LilacBaseCommand<typeof args> {
     const { senderRequestable, dbUser, perspective } = await this.getMentions({
       senderRequired: !this.parsedArguments.artist,
       reverseLookup: { required: true },
-      indexedRequired: true,
+      syncedRequired: true,
     });
 
     const artistName = await this.lastFMArguments.getArtist(
@@ -50,26 +50,26 @@ export default class LastScrobbledArtist extends LilacBaseCommand<typeof args> {
       { redirect: !this.parsedArguments.noRedirect }
     );
 
-    const response = await this.lilacLibraryService.getArtistCount(
+    const artistCount = await this.lilacLibraryService.getArtistCount(
       this.ctx,
       dbUser.discordID,
       artistName
     );
 
-    if (!response) {
+    if (!artistCount) {
       throw new NoScrobblesOfArtistError(perspective, artistName, "");
-    } else if (!response.lastScrobbled || !response.firstScrobbled) {
-      throw new CommandRequiresSyncError(this.prefix);
+    } else if (!artistCount.lastScrobbled || !artistCount.firstScrobbled) {
+      throw new CommandRequiresResyncError(this.prefix);
     }
 
     const embed = this.minimalEmbed().setDescription(
       `${Emoji.usesIndexedDataDescription} ${perspective.upper.name} ${
         this.variationWasUsed("first") ? "first" : "last"
-      } scrobbled ${bold(response.artist.name)} on ${displayDate(
+      } scrobbled ${bold(artistCount.artist.name)} on ${displayDate(
         convertLilacDate(
           this.variationWasUsed("first")
-            ? response.firstScrobbled
-            : response.lastScrobbled
+            ? artistCount.firstScrobbled
+            : artistCount.lastScrobbled
         )
       )}`
     );

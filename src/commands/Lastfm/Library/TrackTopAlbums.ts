@@ -35,7 +35,7 @@ export default class TrackTopAlbums extends LilacBaseCommand<typeof args> {
         senderRequired:
           !this.parsedArguments.artist || !this.parsedArguments.track,
         reverseLookup: { required: true },
-        indexedRequired: true,
+        syncedRequired: true,
       });
 
     const { artist: artistName, track: trackName } =
