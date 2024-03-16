@@ -1,6 +1,5 @@
 // Types
 
-import { ArtistInput } from "../mirrorball/MirrorballTypes";
 import { LilacUser } from "./converters/user";
 
 export type LilacDate = number;
@@ -119,7 +118,7 @@ export interface LilacTrackCountFilters {
 
 export interface LilacTagsFilters {
   inputs?: LilacTagInput[];
-  artists?: ArtistInput[];
+  artists?: LilacArtistInput[];
   pagination?: LilacPaginationInput;
   fetchTagsForMissing?: boolean;
 }

@@ -10,10 +10,6 @@ import { LilacPrivacy } from "../lilac/LilacAPIService.types";
 import { LilacGuildsService } from "../lilac/LilacGuildsService";
 import { PrivateUserDisplay } from "../lilac/LilacUsersService";
 import {
-  MirrorballPrivacy,
-  MirrorballUser,
-} from "../mirrorball/MirrorballTypes";
-import {
   RedisService,
   RedisServiceContextOptions,
 } from "../redis/RedisService";
@@ -65,7 +61,7 @@ export class WhoKnowsService extends BaseService<WhoKnowsServiceContext> {
 
   displayUser(
     ctx: GowonContext,
-    user: MirrorballUser | LilacUser,
+    user: LilacUser,
     options?: Partial<DisplayUserOptions>
   ): string {
     const nickname = this.nicknameService.cacheGetNickname(ctx, user.discordID);
@@ -86,17 +82,15 @@ export class WhoKnowsService extends BaseService<WhoKnowsServiceContext> {
     }
 
     switch (user.privacy) {
-      case MirrorballPrivacy.Discord:
       case LilacPrivacy.Discord:
         return (
           this.nicknameService.cacheGetUsername(ctx, user.discordID) ||
           UnknownUserDisplay
         );
 
-      case MirrorballPrivacy.FMUsername:
       case LilacPrivacy.FMUsername:
         return Emoji.lastfm + " " + displayLink(user.username, profileLink);
-      case MirrorballPrivacy.Both:
+
       case LilacPrivacy.Both:
         return displayLink(
           this.nicknameService.cacheGetUsername(ctx, user.discordID) ||
@@ -104,8 +98,6 @@ export class WhoKnowsService extends BaseService<WhoKnowsServiceContext> {
           profileLink
         );
 
-      case MirrorballPrivacy.Private:
-      case MirrorballPrivacy.Unset:
       case LilacPrivacy.Private:
       case LilacPrivacy.Unset:
         return PrivateUserDisplay;
