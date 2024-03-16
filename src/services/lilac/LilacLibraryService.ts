@@ -5,14 +5,10 @@ import {
   LilacAlbumCount,
   LilacAlbumCountFilters,
   LilacAlbumCountsPage,
-  LilacArtistCount,
-  LilacArtistCountFilters,
   LilacArtistFilters,
   LilacArtistsPage,
   LilacScrobbleFilters,
   LilacScrobblesPage,
-  LilacTrackCountFilters,
-  LilacTrackCountsPage,
 } from "./LilacAPIService.types";
 
 export class LilacLibraryService extends LilacAPIService {
@@ -93,40 +89,6 @@ export class LilacLibraryService extends LilacAPIService {
     return response;
   }
 
-  async trackCounts(
-    ctx: GowonContext,
-    filters: LilacTrackCountFilters
-  ): Promise<LilacTrackCountsPage> {
-    const query = gql`
-      query trackCounts($filters: TrackCountsFilters!) {
-        trackCounts(filters: $filters) {
-          trackCounts {
-            playcount
-
-            track {
-              name
-
-              artist {
-                name
-              }
-
-              album {
-                name
-              }
-            }
-          }
-        }
-      }
-    `;
-
-    const response = await this.query<
-      { trackCounts: LilacTrackCountsPage },
-      { filters: LilacTrackCountFilters }
-    >(ctx, query, { filters }, false);
-
-    return response.trackCounts;
-  }
-
   public async getScrobbleCount(
     ctx: GowonContext,
     discordID: string
@@ -150,37 +112,6 @@ export class LilacLibraryService extends LilacAPIService {
     >(ctx, query, { filters: { user: { discordID: discordID } } });
 
     return response?.scrobbles?.pagination?.totalItems;
-  }
-
-  public async getArtistCount(
-    ctx: GowonContext,
-    discordID: string,
-    artist: string
-  ): Promise<LilacArtistCount | undefined> {
-    const query = gql`
-      query artistCount($filters: ArtistCountsFilters!) {
-        artistCounts(filters: $filters) {
-          artistCounts {
-            playcount
-            lastScrobbled
-            firstScrobbled
-
-            artist {
-              name
-            }
-          }
-        }
-      }
-    `;
-
-    const response = await this.query<
-      { artistCounts: { artistCounts: LilacArtistCount[] } },
-      { filters: LilacArtistCountFilters }
-    >(ctx, query, {
-      filters: { users: [{ discordID }], artists: [{ name: artist }] },
-    });
-
-    return response.artistCounts.artistCounts[0];
   }
 
   public async getAlbumCount(

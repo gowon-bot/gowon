@@ -1,24 +1,20 @@
-import { NoScrobblesOfArtistError } from "../../../../errors/commands/library";
-import { MirrorballError } from "../../../../errors/errors";
-import { bold, italic } from "../../../../helpers/discord";
-import { LastfmLinks } from "../../../../helpers/lastfm/LastfmLinks";
-import { standardMentions } from "../../../../lib/context/arguments/mentionTypes/mentions";
+import { NoScrobblesOfArtistError } from "../../../errors/commands/library";
+import { bold, italic } from "../../../helpers/discord";
+import { LastfmLinks } from "../../../helpers/lastfm/LastfmLinks";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
 import {
   prefabArguments,
   prefabFlags,
-} from "../../../../lib/context/arguments/prefabArguments";
-import { ArgumentsMap } from "../../../../lib/context/arguments/types";
-import { Emoji } from "../../../../lib/emoji/Emoji";
-import { MirrorballBaseCommand } from "../../../../lib/indexing/MirrorballCommands";
-import { displayNumber } from "../../../../lib/ui/displays";
-import { ScrollingListView } from "../../../../lib/ui/views/ScrollingListView";
-import { RedirectsService } from "../../../../services/dbservices/RedirectsService";
-import { ServiceRegistry } from "../../../../services/ServicesRegistry";
-import {
-  ArtistTopTracksConnector,
-  ArtistTopTracksParams,
-  ArtistTopTracksResponse,
-} from "./ArtistTopTracks.connector";
+} from "../../../lib/context/arguments/prefabArguments";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { Emoji } from "../../../lib/emoji/Emoji";
+import { LilacBaseCommand } from "../../../lib/Lilac/LilacBaseCommand";
+import { displayNumber } from "../../../lib/ui/displays";
+import { ScrollingListView } from "../../../lib/ui/views/ScrollingListView";
+import { RedirectsService } from "../../../services/dbservices/RedirectsService";
+import { LilacArtistsService } from "../../../services/lilac/LilacArtistsService";
+import { LilacTracksService } from "../../../services/lilac/LilacTracksService";
+import { ServiceRegistry } from "../../../services/ServicesRegistry";
 
 const args = {
   ...prefabArguments.artist,
@@ -26,13 +22,7 @@ const args = {
   ...standardMentions,
 } satisfies ArgumentsMap;
 
-export default class ArtistTopTracks extends MirrorballBaseCommand<
-  ArtistTopTracksResponse,
-  ArtistTopTracksParams,
-  typeof args
-> {
-  connector = new ArtistTopTracksConnector();
-
+export default class ArtistTopTracks extends LilacBaseCommand<typeof args> {
   idSeed = "weeekly soojin";
 
   aliases = ["att", "at", "iatt", "favs"];
@@ -44,6 +34,8 @@ export default class ArtistTopTracks extends MirrorballBaseCommand<
   arguments = args;
 
   redirectsService = ServiceRegistry.get(RedirectsService);
+  lilacTracksService = ServiceRegistry.get(LilacTracksService);
+  lilacArtistsService = ServiceRegistry.get(LilacArtistsService);
 
   async run() {
     const { username, senderRequestable, perspective, dbUser } =
@@ -59,33 +51,32 @@ export default class ArtistTopTracks extends MirrorballBaseCommand<
       { redirect: !this.parsedArguments.noRedirect }
     );
 
-    const response = await this.query({
-      artist: { name: artistName },
-      user: { discordID: dbUser.discordID },
-    });
+    const { trackCounts: topTracks } =
+      await this.lilacTracksService.listAmbiguousCounts(this.ctx, {
+        track: { artist: { name: artistName } },
+        users: [{ discordID: dbUser.discordID }],
+      });
 
-    const errors = this.parseErrors(response);
-
-    if (errors) {
-      throw new MirrorballError(errors.errors[0].message);
-    }
-
-    const { topTracks, artist } = response.artistTopTracks;
+    const [correctedArtistName] =
+      await this.lilacArtistsService.correctArtistNames(this.ctx, [artistName]);
 
     if (topTracks.length < 1) {
       throw new NoScrobblesOfArtistError(
         perspective,
-        artist.name,
+        correctedArtistName,
         await this.redirectHelp(this.parsedArguments.artist)
       );
     }
+
     const embed = this.minimalEmbed()
       .setTitle(
         `${Emoji.usesIndexedDataLink} Top ${bold(
-          artist.name
+          correctedArtistName
         )} tracks for ${username}`
       )
-      .setURL(LastfmLinks.libraryArtistTopTracks(username, artist.name));
+      .setURL(
+        LastfmLinks.libraryArtistTopTracks(username, correctedArtistName)
+      );
 
     const totalScrobbles = topTracks.reduce((sum, t) => sum + t.playcount, 0);
     const average = totalScrobbles / topTracks.length;
@@ -94,11 +85,13 @@ export default class ArtistTopTracks extends MirrorballBaseCommand<
       pageSize: 15,
       items: topTracks,
 
-      pageRenderer(tracks) {
-        return tracks
+      pageRenderer(trackCounts) {
+        return trackCounts
           .map(
-            (track) =>
-              `${displayNumber(track.playcount, "play")} - ${bold(track.name)}`
+            (trackCount) =>
+              `${displayNumber(trackCount.playcount, "play")} - ${bold(
+                trackCount.track.name
+              )}`
           )
           .join("\n");
       },

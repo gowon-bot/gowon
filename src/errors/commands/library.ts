@@ -12,7 +12,7 @@ export class NoScrobblesOfAnyAlbumsFromArtistError extends ClientError {
   }
 }
 
-export class NoScrobblesForTrackError extends ClientError {
+export class NoScrobblesOfTrackError extends ClientError {
   constructor(perspective: Perspective, artistName: string, trackName: string) {
     super(
       `${perspective.plusToHave} no scrobbles for ${italic(

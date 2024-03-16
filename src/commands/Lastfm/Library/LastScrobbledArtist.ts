@@ -13,7 +13,7 @@ import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { Emoji } from "../../../lib/emoji/Emoji";
 import { displayDate } from "../../../lib/ui/displays";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
-import { LilacLibraryService } from "../../../services/lilac/LilacLibraryService";
+import { LilacArtistsService } from "../../../services/lilac/LilacArtistsService";
 
 const args = {
   ...standardMentions,
@@ -35,7 +35,7 @@ export default class LastScrobbledArtist extends LilacBaseCommand<typeof args> {
 
   arguments = args;
 
-  lilacLibraryService = ServiceRegistry.get(LilacLibraryService);
+  lilacArtistsService = ServiceRegistry.get(LilacArtistsService);
 
   async run() {
     const { senderRequestable, dbUser, perspective } = await this.getMentions({
@@ -50,7 +50,7 @@ export default class LastScrobbledArtist extends LilacBaseCommand<typeof args> {
       { redirect: !this.parsedArguments.noRedirect }
     );
 
-    const artistCount = await this.lilacLibraryService.getArtistCount(
+    const artistCount = await this.lilacArtistsService.getCount(
       this.ctx,
       dbUser.discordID,
       artistName
