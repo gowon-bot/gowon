@@ -160,35 +160,41 @@ export const mockDependencies = (
     combo: undefined,
 
     // Mirrorball types
-    albumPlays: [
-      {
-        album: { name: nowPlaying.album, artist: { name: nowPlaying.artist } },
-        playcount: 605,
+    albumCount: {
+      user: {} as any,
+      album: {
+        id: 2,
+        name: nowPlaying.album,
+        artist: { id: 1, name: nowPlaying.artist, tags: [] },
       },
-    ],
-    artistPlays: [
-      {
-        artist: { name: nowPlaying.artist },
-        playcount: 6360,
-      },
-    ],
+      lastScrobbled: new Date().getTime(),
+      firstScrobbled: new Date().getTime(),
+      playcount: 605,
+    },
+    artistCount: {
+      user: {} as any,
+      artist: { id: 1, name: nowPlaying.artist, tags: [] },
+      playcount: 6360,
+      lastScrobbled: new Date().getTime(),
+      firstScrobbled: new Date().getTime(),
+    },
     albumRating: {
-      ratings: [
-        {
-          rating: 7,
-          rateYourMusicAlbum: {
-            rateYourMusicID: "",
-            title: nowPlaying.album,
-            artistName: nowPlaying.artist,
-            releaseYear: 2014,
-          },
-        },
-      ],
+      rating: 7,
+      rateYourMusicAlbum: {
+        rateYourMusicID: "12412",
+        title: nowPlaying.album,
+        artistName: nowPlaying.artist,
+        artistNativeName: "",
+        releaseYear: 2014,
+      },
     },
     serverArtistRank: {
       rank: 4,
-      listeners: 678,
+      totalListeners: 678,
     },
-    globalArtistRank: { rank: 4, listeners: 678 },
+    globalArtistRank: {
+      rank: 4,
+      totalListeners: 678,
+    },
   };
 };

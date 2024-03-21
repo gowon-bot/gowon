@@ -8,16 +8,12 @@ import {
 } from "../../services/LastFM/converters/InfoTypes";
 import { CrownDisplay } from "../../services/dbservices/crowns/CrownsService.types";
 import {
-  MirrorballAlbum,
-  MirrorballArtist,
-  MirrorballRating,
-} from "../../services/mirrorball/MirrorballTypes";
+  LilacAlbumCount,
+  LilacArtistCount,
+  LilacRating,
+  LilacWhoKnowsArtistRank,
+} from "../../services/lilac/LilacAPIService.types";
 import { Combo } from "../calculators/ComboCalculator";
-
-type ArtistRank = {
-  rank: number;
-  listeners: number;
-};
 
 export type DependencyMap = {
   // Lastfm data
@@ -32,10 +28,10 @@ export type DependencyMap = {
   cachedLovedTrack: CachedLovedTrack | undefined;
   combo: Combo | undefined;
 
-  // Mirrorball data
-  albumPlays: [{ album: MirrorballAlbum; playcount: number }];
-  artistPlays: [{ artist: MirrorballArtist; playcount: number }];
-  albumRating: { ratings: [MirrorballRating] };
-  globalArtistRank: ArtistRank;
-  serverArtistRank: ArtistRank;
+  // Lilac data
+  albumCount: LilacAlbumCount | undefined;
+  artistCount: LilacArtistCount | undefined;
+  albumRating: LilacRating | undefined;
+  globalArtistRank: Pick<LilacWhoKnowsArtistRank, "rank" | "totalListeners">;
+  serverArtistRank: Pick<LilacWhoKnowsArtistRank, "rank" | "totalListeners">;
 };

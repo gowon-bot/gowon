@@ -1,7 +1,7 @@
 import { displayNumber } from "../../ui/displays";
 import { BaseNowPlayingComponent } from "../base/BaseNowPlayingComponent";
 
-const albumPlaysDependencies = ["albumPlays"] as const;
+const albumPlaysDependencies = ["albumCount"] as const;
 
 export class AlbumPlaysComponent extends BaseNowPlayingComponent<
   typeof albumPlaysDependencies
@@ -11,11 +11,9 @@ export class AlbumPlaysComponent extends BaseNowPlayingComponent<
   readonly dependencies = albumPlaysDependencies;
 
   render() {
-    const albumPlays = this.values.albumPlays[0];
-
     return {
       string: displayNumber(
-        albumPlays ? albumPlays.playcount : 0,
+        this.values.albumCount ? this.values.albumCount.playcount : 0,
         "album scrobble"
       ),
       size: 1,

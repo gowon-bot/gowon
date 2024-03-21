@@ -123,6 +123,13 @@ export interface LilacTagsFilters {
   fetchTagsForMissing?: boolean;
 }
 
+export interface LilacRatingsFilters {
+  album?: LilacAlbumInput;
+  user?: LilacUserInput;
+  rating?: number;
+  pagination?: LilacPaginationInput;
+}
+
 // Responses
 export interface SyncProgress<
   Action extends LilacProgressAction = LilacProgressAction
@@ -198,7 +205,7 @@ export interface LilacArtist {
 export interface LilacAlbum {
   id: number;
   name: string;
-  artist: LilacAlbum;
+  artist: LilacArtist;
 }
 
 export interface LilacTrack {
@@ -268,6 +275,21 @@ export interface LilacAmbiguousTrackCount {
   lastScrobbled: LilacDate;
 }
 
+export interface LilacRating {
+  rating: number;
+  rateYourMusicAlbum: LilacRateYourMusicAlbum;
+}
+
+export interface LilacRateYourMusicAlbum {
+  rateYourMusicID: string;
+  title: string;
+  artistName: string;
+  artistNativeName: string;
+  releaseYear: number;
+}
+
+// Pages
+
 export interface LilacScrobblesPage {
   pagination: LilacPagination;
   scrobbles: LilacScrobble[];
@@ -306,4 +328,9 @@ export interface LilacAmbiguousTrackCountsPage {
 export interface LilacTagsPage {
   pagination: LilacPagination;
   tags: LilacTag[];
+}
+
+export interface LilacRatingsPage {
+  pagination: LilacPagination;
+  ratings: LilacRating[];
 }

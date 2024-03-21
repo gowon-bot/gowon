@@ -45,6 +45,7 @@ import { LilacAlbumsService } from "./lilac/LilacAlbumsService";
 import { LilacArtistsService } from "./lilac/LilacArtistsService";
 import { LilacGuildsService } from "./lilac/LilacGuildsService";
 import { LilacLibraryService } from "./lilac/LilacLibraryService";
+import { LilacRatingsService } from "./lilac/LilacRatingsService";
 import { LilacTagsService } from "./lilac/LilacTagsService";
 import { LilacTracksService } from "./lilac/LilacTracksService";
 import { LilacUsersService } from "./lilac/LilacUsersService";
@@ -89,6 +90,7 @@ const services: Service[] = [
   LilacAlbumsService,
   LilacGuildsService,
   LilacLibraryService,
+  LilacRatingsService,
   LilacTagsService,
   LilacTracksService,
   LilacUsersService,
