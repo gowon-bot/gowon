@@ -1,11 +1,11 @@
 import { gql } from "@apollo/client/core";
 import { DocumentNode } from "graphql";
+import config from "../../../config.json";
+import { MirrorballError } from "../../errors/errors";
 import { SimpleMap } from "../../helpers/types";
+import { GowonContext } from "../../lib/context/Context";
 import { mirrorballClient } from "../../lib/indexing/client";
 import { BaseService } from "../BaseService";
-import config from "../../../config.json";
-import { GowonContext } from "../../lib/context/Context";
-import { MirrorballError } from "../../errors/errors";
 
 export class MirrorballService extends BaseService {
   private async makeRequest(

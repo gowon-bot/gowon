@@ -2,14 +2,13 @@ import { gql } from "@apollo/client";
 import { GowonContext } from "../../lib/context/Context";
 import { LilacAPIService } from "./LilacAPIService";
 import {
+  LilacAlbumCount,
   LilacAlbumCountFilters,
   LilacAlbumCountsPage,
   LilacArtistFilters,
   LilacArtistsPage,
   LilacScrobbleFilters,
   LilacScrobblesPage,
-  LilacTrackCountFilters,
-  LilacTrackCountsPage,
 } from "./LilacAPIService.types";
 
 export class LilacLibraryService extends LilacAPIService {
@@ -90,40 +89,6 @@ export class LilacLibraryService extends LilacAPIService {
     return response;
   }
 
-  async trackCounts(
-    ctx: GowonContext,
-    filters: LilacTrackCountFilters
-  ): Promise<LilacTrackCountsPage> {
-    const query = gql`
-      query trackCounts($filters: TrackCountsFilters!) {
-        trackCounts(filters: $filters) {
-          trackCounts {
-            playcount
-
-            track {
-              name
-
-              artist {
-                name
-              }
-
-              album {
-                name
-              }
-            }
-          }
-        }
-      }
-    `;
-
-    const response = await this.query<
-      { trackCounts: LilacTrackCountsPage },
-      { filters: LilacTrackCountFilters }
-    >(ctx, query, { filters }, false);
-
-    return response.trackCounts;
-  }
-
   public async getScrobbleCount(
     ctx: GowonContext,
     discordID: string
@@ -147,5 +112,46 @@ export class LilacLibraryService extends LilacAPIService {
     >(ctx, query, { filters: { user: { discordID: discordID } } });
 
     return response?.scrobbles?.pagination?.totalItems;
+  }
+
+  public async getAlbumCount(
+    ctx: GowonContext,
+    discordID: string,
+    artist: string,
+    album: string
+  ): Promise<LilacAlbumCount | undefined> {
+    const query = gql`
+      query albumCount($filters: AlbumCountsFilters!) {
+        albumCounts(filters: $filters) {
+          albumCounts {
+            playcount
+            lastScrobbled
+            firstScrobbled
+
+            album {
+              name
+
+              artist {
+                name
+              }
+            }
+          }
+        }
+      }
+    `;
+
+    const response = await this.query<
+      {
+        albumCounts: { albumCounts: LilacAlbumCount[] };
+      },
+      { filters: LilacAlbumCountFilters }
+    >(ctx, query, {
+      filters: {
+        users: [{ discordID }],
+        album: { name: album, artist: { name: artist } },
+      },
+    });
+
+    return response.albumCounts.albumCounts[0];
   }
 }

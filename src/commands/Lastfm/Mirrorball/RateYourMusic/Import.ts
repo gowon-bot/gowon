@@ -65,7 +65,7 @@ export class ImportRatings extends RateYourMusicIndexingChildCommand<
 
     await this.getMentions({
       senderRequired: true,
-      indexedRequired: true,
+      syncedRequired: true,
     });
 
     const ratings = await this.getRatings();

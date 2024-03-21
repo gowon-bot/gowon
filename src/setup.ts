@@ -8,6 +8,7 @@ import { DB } from "./database/DB";
 import { Stopwatch } from "./helpers";
 import { uppercaseFirstLetter } from "./helpers/string";
 import { GowonClient } from "./lib/GowonClient";
+import { lilacClient } from "./lib/Lilac/client";
 import { CommandHandler } from "./lib/command/CommandHandler";
 import {
   CommandRegistry,
@@ -73,6 +74,7 @@ export async function setup(ctx: GowonContext) {
     connectToDB(),
     connectToRedis(),
     connectToMirrorball(),
+    connectToLilac(),
     intializeAPI(),
     initializeCommandRegistry(),
   ]);
@@ -124,6 +126,18 @@ function connectToMirrorball() {
       `,
     });
   }, "Connected to Mirrorball");
+}
+
+function connectToLilac() {
+  return logStartup(async () => {
+    await lilacClient.query({
+      query: gql`
+        query {
+          ping
+        }
+      `,
+    });
+  }, "Connected to Lilac");
 }
 
 function initializeCommandRegistry() {

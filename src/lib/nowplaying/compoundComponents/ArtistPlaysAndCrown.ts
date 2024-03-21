@@ -2,8 +2,9 @@ import { DiscordService } from "../../../services/Discord/DiscordService";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { displayNumber } from "../../ui/displays";
 import { BaseCompoundComponent } from "../base/BaseNowPlayingComponent";
+import { getArtistPlays } from "../helpers/artist";
 
-const dependencies = ["artistInfo", "artistCrown"] as const;
+const dependencies = ["artistInfo", "artistCount", "artistCrown"] as const;
 
 export class ArtistPlaysAndCrownComponent extends BaseCompoundComponent<
   typeof dependencies
@@ -41,11 +42,10 @@ export class ArtistPlaysAndCrownComponent extends BaseCompoundComponent<
     let artistPlaysString = "";
     let artistExists = false;
 
-    if (this.values.artistInfo) {
-      artistPlaysString = `${displayNumber(
-        this.values.artistInfo.userPlaycount,
-        `${this.values.artistInfo.name} scrobble`
-      )}`;
+    const { plays, name } = getArtistPlays(this.values);
+
+    if (plays !== undefined && name) {
+      artistPlaysString = `${displayNumber(plays, `${name} scrobble`)}`;
       artistExists = true;
     } else {
       artistPlaysString = `No data on last.fm for ${this.nowPlaying.artist}`;

@@ -11,11 +11,9 @@ export class RatingComponent extends BaseNowPlayingComponent<
   readonly dependencies = ratingDependencies;
 
   render() {
-    const albumRating = this.values.albumRating.ratings[0];
-
-    if (albumRating) {
+    if (this.values.albumRating) {
       return {
-        string: displayPlainRating(albumRating.rating),
+        string: displayPlainRating(this.values.albumRating.rating),
         size: 1,
       };
     }

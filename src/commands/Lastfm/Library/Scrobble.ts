@@ -4,7 +4,7 @@ import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { ConfirmationView } from "../../../lib/ui/views/ConfirmationView";
 import { LastFMArgumentsMutableContext } from "../../../services/LastFM/LastFMArguments";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
-import { LilacLibraryService } from "../../../services/lilac/LilacLibraryService";
+import { LilacTracksService } from "../../../services/lilac/LilacTracksService";
 import { LastFMBaseCommand } from "../LastFMBaseCommand";
 
 const args = {
@@ -20,7 +20,7 @@ export default class Scrobble extends LastFMBaseCommand<typeof args> {
 
   arguments = args;
 
-  lilacLibraryService = ServiceRegistry.get(LilacLibraryService);
+  lilacTracksService = ServiceRegistry.get(LilacTracksService);
 
   async run() {
     const { senderRequestable, dbUser, requestable } = await this.getMentions({
@@ -55,7 +55,7 @@ export default class Scrobble extends LastFMBaseCommand<typeof args> {
       if (!confirmation) return;
     }
 
-    const indexedTrackCounts = await this.lilacLibraryService.trackCounts(
+    const indexedTrackCounts = await this.lilacTracksService.listCounts(
       this.ctx,
       {
         track: { name: track, artist: { name: artist } },

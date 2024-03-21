@@ -1,11 +1,19 @@
 // Types
 
-import { ArtistInput } from "../mirrorball/MirrorballTypes";
 import { LilacUser } from "./converters/user";
 
 export type LilacDate = number;
 
-export type LilacProgressAction = "indexing" | "updating";
+export enum LilacProgressAction {
+  Syncing = "sync",
+  Updating = "update",
+}
+
+export enum LilacProgressStage {
+  Fetching = "fetching",
+  Inserting = "inserting",
+  Terminated = "terminated",
+}
 
 export enum LilacPrivacy {
   Private = "PRIVATE",
@@ -28,6 +36,7 @@ export interface LilacUserModifications {
   username?: string;
   privacy?: LilacPrivacy;
   lastFMSession?: string;
+  hasPremium?: boolean;
 }
 
 export interface LilacArtistInput {
@@ -53,6 +62,13 @@ export interface LilacWhoKnowsInput {
   guildID?: string;
   limit?: number;
   userIDs?: string[];
+}
+
+export interface LilacWhoFirstInput {
+  guildID?: string;
+  limit?: number;
+  userIDs?: string[];
+  reverse?: boolean;
 }
 
 export interface LilacPaginationInput {
@@ -83,6 +99,11 @@ export interface LilacArtistCountFilters {
   tags?: LilacTagInput[];
 }
 
+export interface LilacAlbumFilters {
+  album?: LilacAlbumInput;
+  pagination?: LilacPaginationInput;
+}
+
 export interface LilacAlbumCountFilters {
   album?: LilacAlbumInput;
   users?: LilacUserInput[];
@@ -97,18 +118,26 @@ export interface LilacTrackCountFilters {
 
 export interface LilacTagsFilters {
   inputs?: LilacTagInput[];
-  artists?: ArtistInput[];
+  artists?: LilacArtistInput[];
   pagination?: LilacPaginationInput;
   fetchTagsForMissing?: boolean;
 }
 
+export interface LilacRatingsFilters {
+  album?: LilacAlbumInput;
+  user?: LilacUserInput;
+  rating?: number;
+  pagination?: LilacPaginationInput;
+}
+
 // Responses
-export interface IndexingProgress<
+export interface SyncProgress<
   Action extends LilacProgressAction = LilacProgressAction
 > {
   action: Action;
-  page: number;
-  totalPages: number;
+  stage: LilacProgressStage;
+  current: number;
+  total: number;
 }
 
 export interface LilacPagination {
@@ -121,10 +150,10 @@ export interface LilacPagination {
 export interface RawLilacUser {
   id: number;
   username: string;
-  discordId: string;
+  discordID: string;
   privacy: LilacPrivacy;
-  lastIndexed?: LilacDate;
-  isIndexing?: boolean;
+  lastSynced?: LilacDate;
+  isSyncing?: boolean;
 }
 
 export interface LilacWhoKnowsArtistRank {
@@ -157,6 +186,14 @@ export interface LilacWhoKnowsTrackRank {
   below: LilacAmbiguousTrackCount;
 }
 
+export interface LIlacWhoFirstArtistRank {
+  artist: LilacArtist;
+  firstScrobbled: LilacDate;
+  lastScrobbled: LilacDate;
+  rank: number;
+  totalListeners: number;
+}
+
 // Objects
 export interface LilacArtist {
   id: number;
@@ -168,7 +205,7 @@ export interface LilacArtist {
 export interface LilacAlbum {
   id: number;
   name: string;
-  artist: LilacAlbum;
+  artist: LilacArtist;
 }
 
 export interface LilacTrack {
@@ -202,16 +239,26 @@ export interface LilacWhoKnowsRow {
   playcount: number;
 }
 
+export interface LilacWhoFirstRow {
+  user: LilacUser;
+  firstScrobbled: LilacDate;
+  lastScrobbled: LilacDate;
+}
+
 export interface LilacArtistCount {
   user: LilacUser;
   playcount: number;
   artist: LilacArtist;
+  firstScrobbled: LilacDate;
+  lastScrobbled: LilacDate;
 }
 
 export interface LilacAlbumCount {
   user: LilacUser;
   playcount: number;
   album: LilacAlbum;
+  firstScrobbled: LilacDate;
+  lastScrobbled: LilacDate;
 }
 
 export interface LilacTrackCount {
@@ -223,8 +270,25 @@ export interface LilacTrackCount {
 export interface LilacAmbiguousTrackCount {
   user: LilacUser;
   playcount: number;
-  album: LilacAlbum;
+  track: LilacAmbiguousTrack;
+  firstScrobbled: LilacDate;
+  lastScrobbled: LilacDate;
 }
+
+export interface LilacRating {
+  rating: number;
+  rateYourMusicAlbum: LilacRateYourMusicAlbum;
+}
+
+export interface LilacRateYourMusicAlbum {
+  rateYourMusicID: string;
+  title: string;
+  artistName: string;
+  artistNativeName: string;
+  releaseYear: number;
+}
+
+// Pages
 
 export interface LilacScrobblesPage {
   pagination: LilacPagination;
@@ -241,6 +305,11 @@ export interface LilacArtistCountsPage {
   artistCounts: LilacArtistCount[];
 }
 
+export interface LilacAlbumsPage {
+  pagination: LilacPagination;
+  albums: LilacAlbum[];
+}
+
 export interface LilacAlbumCountsPage {
   pagination: LilacPagination;
   albumCounts: LilacAlbumCount[];
@@ -251,7 +320,17 @@ export interface LilacTrackCountsPage {
   trackCounts: LilacTrackCount[];
 }
 
+export interface LilacAmbiguousTrackCountsPage {
+  pagination: LilacPagination;
+  trackCounts: LilacAmbiguousTrackCount[];
+}
+
 export interface LilacTagsPage {
   pagination: LilacPagination;
   tags: LilacTag[];
+}
+
+export interface LilacRatingsPage {
+  pagination: LilacPagination;
+  ratings: LilacRating[];
 }

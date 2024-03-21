@@ -41,10 +41,13 @@ import { FishyService } from "./fishy/FishyService";
 import { FishyProgressionService } from "./fishy/quests/FishyProgressionService";
 import { IntervaledJobsService } from "./intervaledJobs/IntervaledJobsService";
 import { LilacAPIService } from "./lilac/LilacAPIService";
+import { LilacAlbumsService } from "./lilac/LilacAlbumsService";
 import { LilacArtistsService } from "./lilac/LilacArtistsService";
 import { LilacGuildsService } from "./lilac/LilacGuildsService";
 import { LilacLibraryService } from "./lilac/LilacLibraryService";
+import { LilacRatingsService } from "./lilac/LilacRatingsService";
 import { LilacTagsService } from "./lilac/LilacTagsService";
+import { LilacTracksService } from "./lilac/LilacTracksService";
 import { LilacUsersService } from "./lilac/LilacUsersService";
 import { LilacWhoKnowsService } from "./lilac/LilacWhoKnowsService";
 import { MirrorballService } from "./mirrorball/MirrorballService";
@@ -84,9 +87,12 @@ const services: Service[] = [
   // Lilac services
   LilacAPIService,
   LilacArtistsService,
+  LilacAlbumsService,
   LilacGuildsService,
   LilacLibraryService,
+  LilacRatingsService,
   LilacTagsService,
+  LilacTracksService,
   LilacUsersService,
   LilacWhoKnowsService,
 

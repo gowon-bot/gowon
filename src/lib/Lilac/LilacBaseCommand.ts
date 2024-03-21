@@ -7,7 +7,7 @@ import { ArgumentsMap } from "../context/arguments/types";
 export abstract class LilacBaseCommand<
   T extends ArgumentsMap = {}
 > extends Command<T> {
-  protected readonly progressBarWidth = 15;
+  public static readonly progressBarWidth = 15;
 
   // The old Mirrorball commands had a connector field
   // that shouldn't be present on the new Lilac commands
@@ -16,6 +16,6 @@ export abstract class LilacBaseCommand<
   lastFMService = ServiceRegistry.get(LastFMService);
   lastFMArguments = ServiceRegistry.get(LastFMArguments);
 
-  readonly indexingHelp =
-    '"Indexing" means downloading all your last.fm data. This is required for many commands to function.';
+  readonly syncHelp =
+    '"Syncing" means downloading all your Last.fm data. This is required for many commands to function.';
 }

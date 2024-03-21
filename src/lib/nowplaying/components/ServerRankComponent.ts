@@ -14,10 +14,12 @@ export class ServerArtistRankComponent extends BaseNowPlayingComponent<
   render() {
     const artistRank = this.values.serverArtistRank;
 
+    console.log(artistRank);
+
     if (artistRank && artistRank.rank != -1) {
       return {
         string: `Server rank: ${getOrdinal(artistRank.rank)}/${displayNumber(
-          artistRank.listeners
+          artistRank.totalListeners
         )}`,
         size: 1,
       };

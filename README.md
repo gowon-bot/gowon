@@ -4,7 +4,7 @@ _어떤 꿈조차도 전부 이뤄질 듯한 느낌_
 
 Gowon is a Last.FM discord bot in active development.
 
-Check out the indexing server over at [gowon-bot/mirrorball](https://github.com/gowon-bot/mirrorball)
+Check out the indexing server over at [gowon-bot/lilac](https://github.com/gowon-bot/lilac)
 
 Check out the website over at [gowon-bot/gowon.ca](https://github.com/gowon-bot/gowon.ca)
 
@@ -20,7 +20,7 @@ Copy `config.example.json` to `config.json`, and fill in all the fields. Then, d
 
 If you want to run a development version of the bot, you can create a `docker-compose.yml.override` to specify exposed ports and a development Dockerfile (where you could setup auto-reload with nodemon).
 
-To start docker-compose, run `docker-compose up`. Note you will have to download and build the Mirrorball docker image. (Available at [gowon-bot/mirrorball](https://github.com/gowon-bot/mirrorball))
+To start docker-compose, run `docker-compose up`. Note you will have to download and build the Mirrorball docker image. (Available at [gowon-bot/lilac](https://github.com/gowon-bot/lilac))
 
 ## Commands list
 

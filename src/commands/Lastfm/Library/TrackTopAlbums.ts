@@ -1,4 +1,4 @@
-import { NoScrobblesForTrackError } from "../../../errors/commands/library";
+import { NoScrobblesOfTrackError } from "../../../errors/commands/library";
 import { bold, italic } from "../../../helpers/discord";
 import { LastfmLinks } from "../../../helpers/lastfm/LastfmLinks";
 import { LilacBaseCommand } from "../../../lib/Lilac/LilacBaseCommand";
@@ -9,7 +9,7 @@ import { Emoji } from "../../../lib/emoji/Emoji";
 import { displayNumber } from "../../../lib/ui/displays";
 import { ScrollingListView } from "../../../lib/ui/views/ScrollingListView";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
-import { LilacLibraryService } from "../../../services/lilac/LilacLibraryService";
+import { LilacTracksService } from "../../../services/lilac/LilacTracksService";
 
 const args = {
   ...prefabArguments.track,
@@ -27,7 +27,7 @@ export default class TrackTopAlbums extends LilacBaseCommand<typeof args> {
 
   arguments = args;
 
-  lilacLibraryService = ServiceRegistry.get(LilacLibraryService);
+  lilacTracksService = ServiceRegistry.get(LilacTracksService);
 
   async run() {
     const { username, dbUser, senderRequestable, perspective } =
@@ -35,7 +35,7 @@ export default class TrackTopAlbums extends LilacBaseCommand<typeof args> {
         senderRequired:
           !this.parsedArguments.artist || !this.parsedArguments.track,
         reverseLookup: { required: true },
-        indexedRequired: true,
+        syncedRequired: true,
       });
 
     const { artist: artistName, track: trackName } =
@@ -43,7 +43,7 @@ export default class TrackTopAlbums extends LilacBaseCommand<typeof args> {
         redirect: true,
       });
 
-    const response = await this.lilacLibraryService.trackCounts(this.ctx, {
+    const response = await this.lilacTracksService.listCounts(this.ctx, {
       track: { name: trackName, artist: { name: artistName } },
       users: [{ discordID: dbUser.discordID }],
     });
@@ -52,7 +52,7 @@ export default class TrackTopAlbums extends LilacBaseCommand<typeof args> {
     const trackCounts = response.trackCounts;
 
     if (trackCounts.length < 1) {
-      throw new NoScrobblesForTrackError(
+      throw new NoScrobblesOfTrackError(
         perspective,
         track.artist.name,
         track.name

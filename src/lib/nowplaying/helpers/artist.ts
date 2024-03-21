@@ -1,4 +1,6 @@
-export function getArtistPlays(values: any): {
+import { DependencyMap } from "../DependencyMap";
+
+export function getArtistPlays(values: Partial<DependencyMap>): {
   plays: number | undefined;
   name: string | undefined;
 } {
@@ -7,10 +9,10 @@ export function getArtistPlays(values: any): {
       plays: values.artistInfo.userPlaycount,
       name: values.artistInfo.name,
     };
-  } else if (values.artistPlays.length) {
+  } else if (values.artistCount) {
     return {
-      plays: values.artistPlays[0].playcount,
-      name: values.artistPlays[0].artist.name,
+      plays: values.artistCount.playcount,
+      name: values.artistCount.artist.name,
     };
   }
 

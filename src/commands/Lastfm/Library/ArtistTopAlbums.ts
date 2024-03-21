@@ -1,4 +1,4 @@
-import { NoScrobblesOfAlbumError } from "../../../errors/commands/library";
+import { NoScrobblesOfAnyAlbumsFromArtistError } from "../../../errors/commands/library";
 import { bold, italic } from "../../../helpers/discord";
 import { LastfmLinks } from "../../../helpers/lastfm/LastfmLinks";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
@@ -38,7 +38,7 @@ export default class ArtistTopAlbums extends LilacBaseCommand<typeof args> {
       await this.getMentions({
         senderRequired: !this.parsedArguments.artist,
         reverseLookup: { required: true },
-        indexedRequired: true,
+        syncedRequired: true,
       });
 
     const artistName = await this.lastFMArguments.getArtist(
@@ -63,7 +63,7 @@ export default class ArtistTopAlbums extends LilacBaseCommand<typeof args> {
     const topAlbums = response.albumCounts.albumCounts;
 
     if (topAlbums.length < 1) {
-      throw new NoScrobblesOfAlbumError(perspective, artist.name);
+      throw new NoScrobblesOfAnyAlbumsFromArtistError(perspective, artist.name);
     }
 
     const totalScrobbles = topAlbums.reduce((sum, l) => sum + l.playcount, 0);

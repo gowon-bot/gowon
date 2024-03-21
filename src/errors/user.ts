@@ -98,3 +98,23 @@ export class CouldNotFindUserWithUsername extends ClientError {
     );
   }
 }
+
+export class CommandRequiresBackerError extends ClientError {
+  constructor(prefix: string) {
+    super(
+      `This command is only available to backers! See ${code(
+        `${prefix}backer`
+      )} for more info`
+    );
+  }
+}
+
+export class CommandRequiresResyncError extends ClientError {
+  constructor(prefix: string) {
+    super(
+      `This command requires updated sync data! Run \`${code(
+        `${prefix}sync`
+      )}\` to re-sync your account.`
+    );
+  }
+}

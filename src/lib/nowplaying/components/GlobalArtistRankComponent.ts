@@ -17,7 +17,7 @@ export class GlobalArtistRankComponent extends BaseNowPlayingComponent<
     if (artistRank && artistRank.rank != -1) {
       return {
         string: `Global rank: ${getOrdinal(artistRank.rank)}/${displayNumber(
-          artistRank.listeners
+          artistRank.totalListeners
         )}`,
         size: 1,
       };

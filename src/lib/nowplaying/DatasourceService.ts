@@ -19,14 +19,28 @@ import { CardsService } from "../../services/dbservices/CardsService";
 import { CrownsService } from "../../services/dbservices/crowns/CrownsService";
 import { CrownDisplay } from "../../services/dbservices/crowns/CrownsService.types";
 import { FishyService } from "../../services/fishy/FishyService";
-import { MirrorballService } from "../../services/mirrorball/MirrorballService";
+import { LilacAPIService } from "../../services/lilac/LilacAPIService";
+import {
+  LilacAlbumCountFilters,
+  LilacAlbumCountsPage,
+  LilacArtistCountFilters,
+  LilacArtistCountsPage,
+  LilacRatingsFilters,
+  LilacRatingsPage,
+  LilacUserInput,
+} from "../../services/lilac/LilacAPIService.types";
 import { UserInput } from "../../services/mirrorball/MirrorballTypes";
 import { Logger } from "../Logger";
 import { GowonContext } from "../context/Context";
 import { Payload } from "../context/Payload";
 import { TagConsolidator } from "../tags/TagConsolidator";
 import { NowPlayingDependency } from "./base/BaseNowPlayingComponent";
-import { QueryPart, buildQuery, isQueryPart } from "./buildQuery";
+import {
+  QueryPart,
+  QueryPartName,
+  buildQuery,
+  isQueryPart,
+} from "./buildQuery";
 
 export interface ResolvedDependencies {
   [dependency: string]: any;
@@ -56,8 +70,8 @@ export class DatasourceService extends BaseService<DatasourceServiceContext> {
   get lastFMService() {
     return ServiceRegistry.get(LastFMService);
   }
-  get mirrorballService() {
-    return ServiceRegistry.get(MirrorballService);
+  get lilacAPIService() {
+    return ServiceRegistry.get(LilacAPIService);
   }
   get crownsService() {
     return ServiceRegistry.get(CrownsService);
@@ -210,41 +224,55 @@ export class DatasourceService extends BaseService<DatasourceServiceContext> {
     );
   }
 
-  albumPlays(ctx: DatasourceServiceContext): QueryPart {
-    const user: UserInput = {
-      discordID: ctx.constants.resources!.dbUser.discordID,
+  artistCount(ctx: DatasourceServiceContext): QueryPart {
+    const acFilters: LilacArtistCountFilters = {
+      artists: [{ name: this.nowPlaying(ctx).artist }],
+      users: [this.userInput(ctx)],
     };
-    const lpSettings = {
+
+    return {
+      query: QueryPartName.ArtistCount,
+      variables: { acFilters },
+      transformer(data: LilacArtistCountsPage) {
+        return data.artistCounts[0];
+      },
+    };
+  }
+
+  albumCount(ctx: DatasourceServiceContext): QueryPart {
+    const lcFilters: LilacAlbumCountFilters = {
       album: {
         name: this.nowPlaying(ctx).album,
         artist: { name: this.nowPlaying(ctx).artist },
       },
+      users: [this.userInput(ctx)],
     };
 
-    return { query: "albumPlays", variables: { user, lpSettings } };
-  }
-
-  artistPlays(ctx: DatasourceServiceContext): QueryPart {
-    const user: UserInput = {
-      discordID: ctx.constants.resources!.dbUser.discordID,
+    return {
+      query: QueryPartName.AlbumCount,
+      variables: { lcFilters },
+      transformer(data: LilacAlbumCountsPage) {
+        return data.albumCounts[0];
+      },
     };
-    const apSettings = {
-      artist: { name: this.nowPlaying(ctx).artist },
-    };
-
-    return { query: "artistPlays", variables: { user, apSettings } };
   }
 
   albumRating(ctx: DatasourceServiceContext): QueryPart {
-    const user: UserInput = {
-      discordID: ctx.constants.resources!.dbUser.discordID,
-    };
-    const lrAlbum = {
-      name: this.nowPlaying(ctx).album,
-      artist: { name: this.nowPlaying(ctx).artist },
+    const lrFilters: LilacRatingsFilters = {
+      album: {
+        name: this.nowPlaying(ctx).album,
+        artist: { name: this.nowPlaying(ctx).artist },
+      },
+      user: this.userInput(ctx),
     };
 
-    return { query: "albumRating", variables: { user, lrAlbum } };
+    return {
+      query: QueryPartName.AlbumRating,
+      variables: { lrFilters },
+      transformer(data: LilacRatingsPage) {
+        return data.ratings[0];
+      },
+    };
   }
 
   globalArtistRank(ctx: DatasourceServiceContext): QueryPart {
@@ -254,7 +282,10 @@ export class DatasourceService extends BaseService<DatasourceServiceContext> {
 
     const arArtist = { name: this.nowPlaying(ctx).artist };
 
-    return { query: "globalArtistRank", variables: { user, arArtist } };
+    return {
+      query: QueryPartName.GlobalArtistRank,
+      variables: { user, arArtist },
+    };
   }
 
   serverArtistRank(ctx: DatasourceServiceContext): QueryPart {
@@ -264,11 +295,11 @@ export class DatasourceService extends BaseService<DatasourceServiceContext> {
     const arArtist = { name: this.nowPlaying(ctx).artist };
 
     return {
-      query: "serverArtistRank",
+      query: QueryPartName.ServerArtistRank,
       variables: {
         user,
         arArtist,
-        serverID: ctx.constants.resources!.payload.guild?.id,
+        guildID: ctx.constants.resources!.payload.guild?.id,
       },
     };
   }
@@ -283,6 +314,12 @@ export class DatasourceService extends BaseService<DatasourceServiceContext> {
     }
 
     ctx.mutable.tagConsolidator.addTags(ctx, tags);
+  }
+
+  private userInput(ctx: DatasourceServiceContext): LilacUserInput {
+    return {
+      discordID: ctx.constants.resources!.dbUser.discordID,
+    };
   }
 }
 
@@ -304,11 +341,21 @@ class GraphQLDatasource {
     const { query, variables } = buildQuery(this.parts);
 
     return async () => ({
-      graphQLData: await datasourceService.mirrorballService.query(
-        ctx,
-        query,
-        variables
+      graphQLData: this.transformResponse(
+        await datasourceService.lilacAPIService.query(ctx, query, variables)
       ),
     });
+  }
+
+  private transformResponse(response: Record<string, any>) {
+    const newResponse = { ...response };
+
+    for (const part of this.parts) {
+      if (part.transformer) {
+        newResponse[part.query] = part.transformer(newResponse[part.query]);
+      }
+    }
+
+    return newResponse;
   }
 }

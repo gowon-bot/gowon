@@ -4,7 +4,10 @@ import {
   MessageEmbed,
   MessageOptions,
 } from "discord.js";
-import { ViewHasNotBeenSentError } from "../../../errors/ui";
+import {
+  ViewCannotBeSentError,
+  ViewHasNotBeenSentError,
+} from "../../../errors/ui";
 import { DiscordService } from "../../../services/Discord/DiscordService";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { GowonContext } from "../../context/Context";
@@ -100,4 +103,10 @@ function chainHooks<T extends Function>(hook: T | undefined, incoming: T): T {
     if (hook) await Promise.resolve(hook(...args));
     await Promise.resolve(incoming(...args));
   }) as any as T;
+}
+
+export abstract class UnsendableView extends View {
+  asDiscordSendable(): DiscordSendable {
+    throw new ViewCannotBeSentError();
+  }
 }

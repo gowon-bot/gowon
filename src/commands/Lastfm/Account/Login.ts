@@ -1,6 +1,6 @@
 import { Message } from "discord.js";
 import { User } from "../../../database/entity/User";
-import { Stopwatch, sleep } from "../../../helpers";
+import { sleep } from "../../../helpers";
 import {
   ReactionCollectorFilter,
   sanitizeForDiscord,
@@ -9,11 +9,12 @@ import { LastfmLinks } from "../../../helpers/lastfm/LastfmLinks";
 import { LilacBaseCommand } from "../../../lib/Lilac/LilacBaseCommand";
 import { Payload } from "../../../lib/context/Payload";
 import { Emoji, EmojiRaw } from "../../../lib/emoji/Emoji";
-import { displayLink, displayProgressBar } from "../../../lib/ui/displays";
+import { displayLink } from "../../../lib/ui/displays";
 import { InfoEmbed } from "../../../lib/ui/embeds/InfoEmbed";
 import { SuccessEmbed } from "../../../lib/ui/embeds/SuccessEmbed";
 import { ConfirmationView } from "../../../lib/ui/views/ConfirmationView";
 import { EmbedView } from "../../../lib/ui/views/EmbedView";
+import { SyncingProgressView } from "../../../lib/ui/views/SyncingProgressView";
 import { LastFMSession } from "../../../services/LastFM/converters/Misc";
 
 export default class Login extends LilacBaseCommand {
@@ -61,9 +62,9 @@ export default class Login extends LilacBaseCommand {
         .setDescription(
           `Success! You've been logged in as ${sanitizeForDiscord(
             user.lastFMUsername
-          )}\n\nWould you like to index your data?`
+          )}\n\nWould you like to sync your Last.fm data?`
         )
-        .setFooter(this.indexingHelp);
+        .setFooter(this.syncHelp);
 
       const confirmationEmbed = new ConfirmationView(
         this.ctx,
@@ -72,47 +73,25 @@ export default class Login extends LilacBaseCommand {
       );
 
       if (await confirmationEmbed.awaitConfirmation(this.ctx)) {
-        this.impromptuIndex(successEmbed);
+        this.impromptuSync(successEmbed);
       }
     }
   }
 
-  private async impromptuIndex(embed: EmbedView) {
-    await this.lilacUsersService.index(this.ctx, { discordID: this.author.id });
+  private async impromptuSync(embed: EmbedView) {
+    await this.lilacUsersService.sync(this.ctx, { discordID: this.author.id });
 
-    embed
-      .setDescription(
-        `Indexing...\n${displayProgressBar(0, 1, {
-          width: this.progressBarWidth,
-        })}\n*Loading...*`
-      )
-      .editMessage(this.ctx);
-
-    const observable = this.lilacUsersService.indexingProgress(this.ctx, {
+    const observable = this.lilacUsersService.syncProgress(this.ctx, {
       discordID: this.author.id,
     });
 
-    const stopwatch = new Stopwatch().start();
+    const syncingProgressView = new SyncingProgressView(
+      this.ctx,
+      embed,
+      observable
+    );
 
-    const subscription = observable.subscribe(async (progress) => {
-      if (progress.page === progress.totalPages) {
-        await embed
-          .setDescription(`${Emoji.checkmark} Done!`)
-          .editMessage(this.ctx);
-
-        subscription.unsubscribe();
-      } else if (stopwatch.elapsedInMilliseconds >= 3000) {
-        await embed
-          .setDescription(
-            `Indexing...
-${displayProgressBar(progress.page, progress.totalPages, {
-  width: this.progressBarWidth,
-})}
-*Page ${progress.page}/${progress.totalPages}*`
-          )
-          .editMessage(this.ctx);
-      }
-    });
+    syncingProgressView.subscribeToObservable();
   }
 
   private async handleCreateSession(
@@ -131,8 +110,6 @@ ${displayProgressBar(progress.page, progress.totalPages, {
 
       await this.handleLilacLogin(session.username, session.key);
     } catch (e) {
-      console.log(e);
-
       return { success: false };
     }
 
