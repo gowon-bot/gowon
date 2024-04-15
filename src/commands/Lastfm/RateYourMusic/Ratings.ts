@@ -1,14 +1,14 @@
-import { UnknownMirrorballError } from "../../../../errors/errors";
-import { NoRatingsError } from "../../../../errors/external/rateYourMusic";
-import { StringArgument } from "../../../../lib/context/arguments/argumentTypes/StringArgument";
-import { standardMentions } from "../../../../lib/context/arguments/mentionTypes/mentions";
-import { ArgumentsMap } from "../../../../lib/context/arguments/types";
-import { PaginatedCache } from "../../../../lib/paginators/PaginatedCache";
-import { displayRating } from "../../../../lib/ui/displays";
-import { ScrollingView } from "../../../../lib/ui/views/ScrollingView";
-import { MirrorballRating } from "../../../../services/mirrorball/MirrorballTypes";
-import { RatingsConnector, RatingsParams, RatingsResponse } from "./connectors";
-import { RateYourMusicIndexingChildCommand } from "./RateYourMusicChildCommand";
+import { NoRatingsError } from "../../../errors/external/rateYourMusic";
+import { fourPerEmSpace } from "../../../helpers/specialCharacters";
+import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { PaginatedCache } from "../../../lib/paginators/PaginatedCache";
+import { displayRating } from "../../../lib/ui/displays";
+import { ScrollingView } from "../../../lib/ui/views/ScrollingView";
+import { LilacRatingsFilters } from "../../../services/lilac/LilacAPIService.types";
+import { MirrorballRating } from "../../../services/mirrorball/MirrorballTypes";
+import { RateYourMusicChildCommand } from "./RateYourMusicChildCommand";
 
 const args = {
   rating: new StringArgument({
@@ -19,14 +19,8 @@ const args = {
   ...standardMentions,
 } satisfies ArgumentsMap;
 
-export class Ratings extends RateYourMusicIndexingChildCommand<
-  RatingsResponse,
-  RatingsParams,
-  typeof args
-> {
+export class Ratings extends RateYourMusicChildCommand<typeof args> {
   private readonly pageSize = 15;
-
-  connector = new RatingsConnector();
 
   aliases = ["rat"];
   idSeed = "hot issue yewon";
@@ -56,39 +50,32 @@ export class Ratings extends RateYourMusicIndexingChildCommand<
       discordUser
     );
 
-    const initialPages = await this.query({
+    const filters: LilacRatingsFilters = {
       rating,
       user: {
-        lastFMUsername: dbUser.lastFMUsername,
         discordID: dbUser.discordID,
       },
-      pageInput: { limit: this.pageSize * 3, offset: 0 },
+    };
+
+    const initialPages = await this.lilacRatingsService.ratings(this.ctx, {
+      ...filters,
+      pagination: { perPage: this.pageSize * 3, page: 1 },
     });
 
-    const errors = this.parseErrors(initialPages);
-
-    if (errors) {
-      throw new UnknownMirrorballError();
-    }
-
-    if (!initialPages.ratings.pageInfo.recordCount) {
+    if (!initialPages.pagination.totalItems) {
       throw new NoRatingsError(this.prefix, rating, perspective);
     }
 
     const paginatedCache = new PaginatedCache(async (page) => {
-      const response = await this.query({
-        user: {
-          lastFMUsername: dbUser.lastFMUsername,
-          discordID: dbUser.discordID,
-        },
-        rating,
-        pageInput: { limit: this.pageSize, offset: this.pageSize * (page - 1) },
+      const response = await this.lilacRatingsService.ratings(this.ctx, {
+        ...filters,
+        pagination: { perPage: this.pageSize, page },
       });
 
-      return response.ratings.ratings;
+      return response.ratings;
     });
 
-    paginatedCache.cacheInitial(initialPages.ratings.ratings, this.pageSize);
+    paginatedCache.cacheInitial(initialPages.ratings, this.pageSize);
 
     const embed = this.minimalEmbed().setTitle(
       rating
@@ -98,10 +85,8 @@ export class Ratings extends RateYourMusicIndexingChildCommand<
 
     const scrollingEmbed = new ScrollingView(this.ctx, embed, {
       initialItems: this.generateTable(await paginatedCache.getPage(1)),
-      totalPages: Math.ceil(
-        initialPages.ratings.pageInfo.recordCount / this.pageSize
-      ),
-      totalItems: initialPages.ratings.pageInfo.recordCount,
+      totalPages: Math.ceil(initialPages.pagination.totalItems / this.pageSize),
+      totalItems: initialPages.pagination.totalItems,
       itemName: "rating",
     });
 
@@ -130,8 +115,7 @@ export class Ratings extends RateYourMusicIndexingChildCommand<
 
           return (
             (header ? header + "\n" : "") +
-            // this is a special space to make things align better
-            ` ${r.rateYourMusicAlbum.artistName} - ${r.rateYourMusicAlbum.title}`
+            `${fourPerEmSpace}${r.rateYourMusicAlbum.artistName} - ${r.rateYourMusicAlbum.title}`
           );
         })
         .join("\n")

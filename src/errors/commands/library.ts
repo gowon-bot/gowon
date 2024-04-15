@@ -100,14 +100,14 @@ export class NoRatingsFileAttatchedError extends ClientError {
 
 export class CouldNotFindRatingError extends ClientError {
   constructor() {
-    super("Couldn't find this album in your ratings!");
+    super("Couldn't find that album in your ratings!");
   }
 }
 
 export class NoImportedRatingsFound extends ClientError {
   constructor(prefix: string) {
     super(
-      `You don't have any ratings imported yet! To import your ratings see \`${prefix}ryms help\``
+      `You don't have any ratings imported yet! To import your ratings see \`${prefix}rym help\``
     );
   }
 }

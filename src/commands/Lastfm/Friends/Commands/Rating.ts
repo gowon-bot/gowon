@@ -1,4 +1,3 @@
-import gql from "graphql-tag";
 import { FriendsHaveNoRatingsError } from "../../../../errors/commands/friends";
 import { asyncMap } from "../../../../helpers";
 import { average } from "../../../../helpers/stats";
@@ -10,9 +9,9 @@ import {
   displayRating,
 } from "../../../../lib/ui/displays";
 import { ServiceRegistry } from "../../../../services/ServicesRegistry";
+import { LilacRatingsService } from "../../../../services/lilac/LilacRatingsService";
 import { MirrorballRateYourMusicAlbum } from "../../../../services/mirrorball/MirrorballTypes";
 import { AlbumCoverService } from "../../../../services/moderation/AlbumCoverService";
-import { RatingResponse } from "../../Mirrorball/RateYourMusic/connectors";
 import { FriendsChildCommand } from "../FriendsChildCommand";
 
 const args = {
@@ -29,6 +28,7 @@ export class Rating extends FriendsChildCommand<typeof args> {
   arguments = args;
 
   albumCoverService = ServiceRegistry.get(AlbumCoverService);
+  lilacRatingsService = ServiceRegistry.get(LilacRatingsService);
 
   async run() {
     const { senderRequestable, friends } = await this.getMentions({
@@ -42,40 +42,20 @@ export class Rating extends FriendsChildCommand<typeof args> {
       senderRequestable
     );
 
-    const query = gql`
-      query friendsRatings($user: UserInput!, $album: AlbumInput!) {
-        ratings(
-          settings: { user: $user, album: $album, pageInput: { limit: 1 } }
-        ) {
-          ratings {
-            rating
-            rateYourMusicAlbum {
-              title
-              artistName
-            }
-          }
-        }
-      }
-    `;
-
     const ratings: {
       discordID: string;
       rating: number | undefined;
       album: MirrorballRateYourMusicAlbum | undefined;
     }[] = await asyncMap(friends.discordIDs(), async (friendID) => {
-      const ratingResponse = (await this.mirrorballService.query(
-        this.ctx,
-        query,
-        {
-          user: { discordID: friendID },
-          album: { name: album, artist: { name: artist } },
-        }
-      )) as RatingResponse;
+      const { ratings } = await this.lilacRatingsService.ratings(this.ctx, {
+        user: { discordID: friendID },
+        album: { name: album, artist: { name: artist } },
+      });
 
       return {
         discordID: friendID,
-        rating: ratingResponse.ratings.ratings[0]?.rating,
-        album: ratingResponse.ratings.ratings[0]?.rateYourMusicAlbum,
+        rating: ratings[0]?.rating,
+        album: ratings[0]?.rateYourMusicAlbum,
       };
     });
 

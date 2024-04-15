@@ -5,15 +5,15 @@ import {
   TooManyAttachmentsError,
   UnknownRatingsImportError,
   WrongFileFormatAttachedError,
-} from "../../../../errors/commands/library";
-import { CannotBeUsedAsASlashCommand } from "../../../../errors/errors";
-import { AlreadyImportingRatingsError } from "../../../../errors/external/rateYourMusic";
-import { StringArgument } from "../../../../lib/context/arguments/argumentTypes/StringArgument";
-import { ArgumentsMap } from "../../../../lib/context/arguments/types";
-import { Emoji } from "../../../../lib/emoji/Emoji";
-import { SuccessEmbed } from "../../../../lib/ui/embeds/SuccessEmbed";
-import { WarningEmbed } from "../../../../lib/ui/embeds/WarningEmbed";
-import { ConcurrentAction } from "../../../../services/ConcurrencyService";
+} from "../../../errors/commands/library";
+import { CannotBeUsedAsASlashCommand } from "../../../errors/errors";
+import { AlreadyImportingRatingsError } from "../../../errors/external/rateYourMusic";
+import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { Emoji } from "../../../lib/emoji/Emoji";
+import { SuccessEmbed } from "../../../lib/ui/embeds/SuccessEmbed";
+import { WarningEmbed } from "../../../lib/ui/embeds/WarningEmbed";
+import { ConcurrentAction } from "../../../services/ConcurrencyService";
 import { RateYourMusicIndexingChildCommand } from "./RateYourMusicChildCommand";
 import {
   ImportRatingsConnector,

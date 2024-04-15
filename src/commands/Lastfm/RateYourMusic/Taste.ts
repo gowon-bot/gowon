@@ -2,29 +2,23 @@ import {
   MentionedUserHasNoRatingsError,
   NoSharedRatingsError,
   NoUserToCompareRatingsToError,
-} from "../../../../errors/commands/library";
-import { NoRatingsError } from "../../../../errors/external/rateYourMusic";
+} from "../../../errors/commands/library";
+import { NoRatingsError } from "../../../errors/external/rateYourMusic";
 import {
   bold,
-  italic,
   mentionGuildMember,
   sanitizeForDiscord,
-} from "../../../../helpers/discord";
-import { emDash } from "../../../../helpers/specialCharacters";
-import { Flag } from "../../../../lib/context/arguments/argumentTypes/Flag";
-import { standardMentions } from "../../../../lib/context/arguments/mentionTypes/mentions";
-import { ArgumentsMap } from "../../../../lib/context/arguments/types";
-import { displayNumber, displayRating } from "../../../../lib/ui/displays";
-import { ScrollingListView } from "../../../../lib/ui/views/ScrollingListView";
-import { ServiceRegistry } from "../../../../services/ServicesRegistry";
-import { TasteService } from "../../../../services/taste/TasteService";
-import { RatingPair } from "../../../../services/taste/TasteService.types";
-import {
-  RatingsTasteConnector,
-  RatingsTasteParams,
-  RatingsTasteResponse,
-} from "./connectors";
-import { RateYourMusicIndexingChildCommand } from "./RateYourMusicChildCommand";
+} from "../../../helpers/discord";
+import { emDash } from "../../../helpers/specialCharacters";
+import { Flag } from "../../../lib/context/arguments/argumentTypes/Flag";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { displayNumber, displayRating } from "../../../lib/ui/displays";
+import { ScrollingListView } from "../../../lib/ui/views/ScrollingListView";
+import { ServiceRegistry } from "../../../services/ServicesRegistry";
+import { TasteService } from "../../../services/taste/TasteService";
+import { RatingPair } from "../../../services/taste/TasteService.types";
+import { RateYourMusicChildCommand } from "./RateYourMusicChildCommand";
 
 const args = {
   ...standardMentions,
@@ -41,13 +35,7 @@ const args = {
   }),
 } satisfies ArgumentsMap;
 
-export class Taste extends RateYourMusicIndexingChildCommand<
-  RatingsTasteResponse,
-  RatingsTasteParams,
-  typeof args
-> {
-  connector = new RatingsTasteConnector();
-
+export class Taste extends RateYourMusicChildCommand<typeof args> {
   aliases = ["t", "tasteratings", "ratingstaste"];
   idSeed = "dreamnote sinae";
   description = "Shows the overlap between your ratings and another user's";
@@ -68,9 +56,9 @@ export class Taste extends RateYourMusicIndexingChildCommand<
       throw new NoUserToCompareRatingsToError();
     }
 
-    const ratings = await this.query({
-      mentioned: { discordID: discordUser.id },
+    const ratings = await this.lilacRatingsService.ratingsTaste(this.ctx, {
       sender: { discordID: this.author.id },
+      mentioned: { discordID: discordUser.id },
     });
 
     if (!ratings.sender.ratings?.length) {
@@ -89,12 +77,12 @@ export class Taste extends RateYourMusicIndexingChildCommand<
       throw new NoSharedRatingsError(discordUser.id);
     }
 
-    const embedDescription = `Taste comparison for ${mentionGuildMember(
+    const embedDescription = `**Taste comparison for ${mentionGuildMember(
       this.author.id
-    )} and ${mentionGuildMember(discordUser.id)}\n\nComparing ${displayNumber(
-      ratings.sender.pageInfo.recordCount
+    )} and ${mentionGuildMember(discordUser.id)}**\n\nComparing ${displayNumber(
+      ratings.sender.pagination.totalItems
     )} and ${displayNumber(
-      ratings.mentioned.pageInfo.recordCount,
+      ratings.mentioned.pagination.totalItems,
       "rating"
     )}, ${displayNumber(tasteMatch.ratings.length, "similar rating")}\n_${
       tasteMatch.percent
@@ -107,9 +95,7 @@ export class Taste extends RateYourMusicIndexingChildCommand<
         items: tasteMatch.ratings,
         pageSize: 10,
         pageRenderer: (ratings) => {
-          return (
-            italic(embedDescription) + "\n\n" + this.generateTable(ratings)
-          );
+          return embedDescription + "\n\n" + this.generateTable(ratings);
         },
         overrides: { itemName: "rating" },
       }

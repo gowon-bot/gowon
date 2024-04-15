@@ -24,6 +24,7 @@ export function isQueryPart(value: any): value is QueryPart {
 // Some variables must be defined, so these are defaults
 const startingVariables = {
   arArtist: {},
+  user: {},
 };
 
 const nowPlayingQuery = gql`

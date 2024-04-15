@@ -288,6 +288,11 @@ export interface LilacRateYourMusicAlbum {
   releaseYear: number;
 }
 
+export interface LilacRateYourMusicArtist {
+  artistName: string;
+  artistNativeName: string;
+}
+
 // Pages
 
 export interface LilacScrobblesPage {

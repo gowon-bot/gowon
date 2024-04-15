@@ -8,6 +8,7 @@ import {
 import { ReactionCollectorFilter } from "../../../helpers/discord";
 import { GowonContext } from "../../context/Context";
 import { EmojiRaw } from "../../emoji/Emoji";
+import { displayNumber } from "../displays";
 import { EmbedView } from "./EmbedView";
 import { View } from "./View";
 
@@ -121,7 +122,7 @@ export class ScrollingView extends View {
     if (this.options.totalItems >= 0) {
       if (this.options.totalPages >= 0) footer += " • ";
 
-      footer += `${this.options.totalItems} ${
+      footer += `${displayNumber(this.options.totalItems)} ${
         this.options.totalItems === 1
           ? this.options.itemName
           : this.options.itemNamePlural
