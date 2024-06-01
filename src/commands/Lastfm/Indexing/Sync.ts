@@ -1,5 +1,5 @@
-import { LilacBaseCommand } from "../../../lib/Lilac/LilacBaseCommand";
 import { Flag } from "../../../lib/context/arguments/argumentTypes/Flag";
+import { LilacBaseCommand } from "../../../lib/Lilac/LilacBaseCommand";
 import { ConfirmationView } from "../../../lib/ui/views/ConfirmationView";
 import { SyncingProgressView } from "../../../lib/ui/views/SyncingProgressView";
 

@@ -112,7 +112,7 @@ export class LilacUsersService extends LilacAPIService {
       gql`
         query fetchUsers($filters: UserInput) {
           users(filters: $filters) {
-            isIndexing
+            isSyncing
           }
         }
       `,

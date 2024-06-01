@@ -10,8 +10,8 @@ import {
   User,
 } from "discord.js";
 import { LineConsolidator } from "../../LineConsolidator";
-import { Image } from "../Image";
 import { displayUserTag } from "../displays";
+import { Image } from "../Image";
 import { DiscordSendable, View, ViewOptions } from "./View";
 
 export interface Transformable<T extends View> {
