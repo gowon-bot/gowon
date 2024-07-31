@@ -515,7 +515,7 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
     if (
       this.author.id &&
       Chance().bool({ likelihood: 33 }) &&
-      !["update", "index", "login", "logout"].includes(this.name) &&
+      !["update", "sync", "login", "logout"].includes(this.name) &&
       !this.gowonClient.isInIssueMode &&
       !this.gowonClient.isTesting
     ) {
