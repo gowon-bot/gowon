@@ -98,6 +98,8 @@ export class LilacArtistsService extends LilacAPIService {
               name
             }
             playcount
+            lastScrobbled
+            firstScrobbled
           }
 
           pagination {
