@@ -2,7 +2,7 @@ import { code } from "../helpers/discord";
 import { GowonContext } from "../lib/context/Context";
 import { LilacUsersService } from "../services/lilac/LilacUsersService";
 import { ServiceRegistry } from "../services/ServicesRegistry";
-import { ClientError } from "./errors";
+import { ClientError, ServerError } from "./errors";
 
 export class UserNotIndexedError extends ClientError {
   constructor() {
@@ -99,6 +99,7 @@ export class CouldNotFindUserWithUsername extends ClientError {
   }
 }
 
+
 export class CommandRequiresBackerError extends ClientError {
   constructor(prefix: string) {
     super(
@@ -116,5 +117,15 @@ export class CommandRequiresResyncError extends ClientError {
         `${prefix}sync`
       )}\` to re-sync your account.`
     );
+
+export class FailedToModifyUserError extends ServerError {
+  constructor() {
+    super(`Failed to modify user`);
+  }
+}
+
+export class LilacLoginFailedError extends ClientError {
+  constructor() {
+    super(`Failed to login to Lilac`);
   }
 }

@@ -6,8 +6,8 @@ import {
   PrimaryGeneratedColumn,
   Unique,
 } from "typeorm";
-import { GowonContext } from "../../../lib/context/Context";
-import { User } from "../User";
+import { GowonContext } from "../../lib/context/Context";
+import { User } from "../entity/User";
 
 @Entity({ name: "permissions" })
 @Unique(["serverID", "entityID", "commandID"])

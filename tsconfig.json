@@ -91,6 +91,6 @@
     // This improves issue grouping in Sentry.
     "sourceRoot": "/"
   },
-  "include": ["src/"]
+  "include": ["src/", "ormconfig.ts"]
   // "exclude": ["src/tests"] // Unfortunately excluding disables editor import support :(
 }

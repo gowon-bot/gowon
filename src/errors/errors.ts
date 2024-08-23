@@ -15,6 +15,8 @@ export class ClientError extends Error {
   }
 }
 
+export class ServerError extends Error {}
+
 export class ClientWarning extends ClientError {
   name = "ClientWarning";
   isWarning = true;

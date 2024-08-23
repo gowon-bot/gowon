@@ -1,6 +1,6 @@
-import { __DeprecatedChannelBlacklist } from "../database/entity/deprecated/ChannelBlacklist";
-import { __DeprecatedDisabledCommand } from "../database/entity/deprecated/DisabledCommand";
-import { __DeprecatedPermission } from "../database/entity/deprecated/OldPermission";
+import { __DeprecatedChannelBlacklist } from "../database/deprecated/ChannelBlacklist";
+import { __DeprecatedDisabledCommand } from "../database/deprecated/DisabledCommand";
+import { __DeprecatedPermission } from "../database/deprecated/OldPermission";
 import { Permission, PermissionType } from "../database/entity/Permission";
 import { CommandRegistry } from "../lib/command/CommandRegistry";
 import { GowonContext } from "../lib/context/Context";

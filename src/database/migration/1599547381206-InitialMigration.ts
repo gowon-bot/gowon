@@ -37,9 +37,6 @@ export class InitialMigration1599547381206 implements MigrationInterface {
     await queryRunner.query(
       `CREATE TABLE IF NOT EXISTS "crowns" ("id" SERIAL NOT NULL, "serverID" character varying NOT NULL, "artistName" character varying NOT NULL, "plays" integer NOT NULL, "version" integer NOT NULL, "lastStolen" TIMESTAMP NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "userId" integer, CONSTRAINT "PK_a6754f73b303226836d15e01334" PRIMARY KEY ("id"))`
     );
-    await queryRunner.query(
-      `CREATE TABLE IF NOT EXISTS "bootleg_crowns" ("id" SERIAL NOT NULL, "artistName" character varying NOT NULL, "serverID" character varying NOT NULL, "crownId" integer, CONSTRAINT "REL_a25f693ae419a19b6483f0b9f5" UNIQUE ("crownId"), CONSTRAINT "PK_e402109511e58956d13e60f32e5" PRIMARY KEY ("id"))`
-    );
 
     queryRunner.createForeignKey(
       "friends",
@@ -67,28 +64,9 @@ export class InitialMigration1599547381206 implements MigrationInterface {
         referencedColumnNames: ["id"],
       })
     );
-
-    queryRunner.createForeignKey(
-      "crown_crownsevents",
-      new TableForeignKey({
-        columnNames: ["userId"],
-        referencedTableName: "users",
-        referencedColumnNames: ["id"],
-      })
-    );
-
-    queryRunner.createForeignKey(
-      "bootleg_crowns",
-      new TableForeignKey({
-        columnNames: ["crownId"],
-        referencedTableName: "crowns",
-        referencedColumnNames: ["id"],
-      })
-    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`DROP TABLE "bootleg_crowns"`);
     await queryRunner.query(`DROP TABLE "crowns"`);
     await queryRunner.query(`DROP TABLE "crown_events"`);
     await queryRunner.query(`DROP TABLE "users"`);

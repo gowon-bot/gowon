@@ -1,4 +1,8 @@
 import { gql, Observable } from "@apollo/client";
+import {
+  FailedToModifyUserError,
+  LilacLoginFailedError,
+} from "../../errors/user";
 import { GowonContext } from "../../lib/context/Context";
 import { LilacUser } from "./converters/user";
 import { userToUserInput } from "./helpers";
@@ -152,6 +156,10 @@ export class LilacUsersService extends LilacAPIService {
       }
     );
 
+    if (!response) {
+      throw new FailedToModifyUserError();
+    }
+
     return new LilacUser(response);
   }
 
@@ -186,6 +194,10 @@ export class LilacUsersService extends LilacAPIService {
       `,
       { username, discordId, lastFmSession }
     );
+
+    if (!user) {
+      throw new LilacLoginFailedError();
+    }
 
     return new LilacUser(user);
   }

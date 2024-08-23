@@ -1,4 +1,4 @@
-import { gql, Observable } from "@apollo/client";
+import { gql, Observable, OperationVariables } from "@apollo/client";
 import { DocumentNode } from "graphql";
 import { parseLilacError } from "../../errors/lilac";
 import { GowonContext } from "../../lib/context/Context";
@@ -6,7 +6,7 @@ import { lilacClient } from "../../lib/Lilac/client";
 import { BaseService } from "../BaseService";
 
 export class LilacAPIService extends BaseService {
-  public async query<R, V>(
+  protected async query<R, V extends OperationVariables>(
     ctx: GowonContext,
     query: DocumentNode,
     variables?: V,
@@ -15,7 +15,7 @@ export class LilacAPIService extends BaseService {
     this.logRequest(ctx, variables, "query");
 
     try {
-      const response = await lilacClient.query({
+      const response = await lilacClient.query<R, V>({
         query,
         variables: variables,
         ...(cache ? {} : { fetchPolicy: "no-cache" }),
@@ -27,33 +27,33 @@ export class LilacAPIService extends BaseService {
     }
   }
 
-  protected async mutate<R, V>(
+  protected async mutate<R, V extends OperationVariables>(
     ctx: GowonContext,
     mutation: DocumentNode,
     variables?: V
-  ): Promise<R> {
+  ): Promise<R | undefined> {
     this.logRequest(ctx, variables, "mutation");
 
     try {
-      const response = await lilacClient.mutate({
+      const response = await lilacClient.mutate<R, V>({
         mutation,
         variables: variables,
       });
 
-      return response.data;
+      return response.data ?? undefined;
     } catch (e) {
       throw parseLilacError(e as Error);
     }
   }
 
-  protected subscribe<R, V>(
+  protected subscribe<R, V extends OperationVariables>(
     ctx: GowonContext,
     subscription: DocumentNode,
     variables?: V
   ): Observable<R> {
     this.logRequest(ctx, variables, "subscription");
 
-    const observable = lilacClient.subscribe({
+    const observable = lilacClient.subscribe<R, V>({
       query: subscription,
       variables: variables,
     });
