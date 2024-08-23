@@ -44,7 +44,7 @@ export default class Year extends MirrorballBaseCommand<
     const { dbUser, discordUser } = await this.getMentions({
       fetchDiscordUser: true,
       reverseLookup: { required: true },
-      indexedRequired: true,
+      syncedRequired: true,
     });
 
     const perspective = this.usersService.discordPerspective(

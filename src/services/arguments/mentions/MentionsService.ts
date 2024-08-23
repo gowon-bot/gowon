@@ -1,5 +1,6 @@
 import { User as DiscordUser } from "discord.js";
 import {
+  CommandRequiresBackerError,
   MentionedSignInRequiredError,
   MentionedUserNotAuthenticatedError,
   MentionedUserNotIndexedError,
@@ -133,9 +134,12 @@ export class MentionsService extends BaseService {
   ): Promise<void> {
     if (options.usernameRequired) this.ensureUsername(ctx, mentionsBuilder);
     if (options.senderRequired) this.ensureSender(ctx, mentionsBuilder);
-    if (options.indexedRequired) await this.ensureIndexed(ctx, mentionsBuilder);
+    if (options.syncedRequired) await this.ensureIndexed(ctx, mentionsBuilder);
     if (options.lfmAuthentificationRequired) {
       this.ensureUserAuthenticated(ctx, requestables, mentionsBuilder);
+    }
+    if (options.backerRequired) {
+      this.ensurePremium(ctx, mentionsBuilder);
     }
   }
 
@@ -276,7 +280,9 @@ export class MentionsService extends BaseService {
       const discordID = mentionsBuilder.getDiscordID("mentioned");
 
       if (discordID) {
-        userPromises.push(this.lilacUsersService.fetch(ctx, { discordID }));
+        userPromises.push(
+          this.lilacUsersService.fetch(ctx, { discordID: discordID })
+        );
       }
 
       const users = await Promise.all(userPromises);
@@ -343,6 +349,12 @@ export class MentionsService extends BaseService {
       } else {
         throw new SenderUserNotAuthenticatedError(ctx.command.prefix);
       }
+    }
+  }
+
+  private ensurePremium(ctx: GowonContext, mentionsBuilder: MentionsBuilder) {
+    if (mentionsBuilder.getDBUser()?.hasPremium === false) {
+      throw new CommandRequiresBackerError(ctx.command.prefix);
     }
   }
 }

@@ -6,7 +6,7 @@ import { lilacClient } from "../../lib/Lilac/client";
 import { BaseService } from "../BaseService";
 
 export class LilacAPIService extends BaseService {
-  protected async query<R, V>(
+  public async query<R, V>(
     ctx: GowonContext,
     query: DocumentNode,
     variables?: V,

@@ -2,7 +2,7 @@ import { bold, italic, mentionGuildMember } from "../../helpers/discord";
 import { Perspective } from "../../lib/Perspective";
 import { ClientError } from "../errors";
 
-export class NoScrobblesOfAlbumError extends ClientError {
+export class NoScrobblesOfAnyAlbumsFromArtistError extends ClientError {
   constructor(perspective: Perspective, artistName: string) {
     super(
       `${perspective.plusToHave} no scrobbles of any albums from ${bold(
@@ -12,7 +12,7 @@ export class NoScrobblesOfAlbumError extends ClientError {
   }
 }
 
-export class NoScrobblesForTrackError extends ClientError {
+export class NoScrobblesOfTrackError extends ClientError {
   constructor(perspective: Perspective, artistName: string, trackName: string) {
     super(
       `${perspective.plusToHave} no scrobbles for ${italic(
@@ -42,6 +42,16 @@ export class NoScrobblesOfArtistError extends ClientError {
       `${perspective.plusToHave} no scrobbles of any songs from ${bold(
         artistName
       )}!${redirectHelp}`
+    );
+  }
+}
+
+export class NoScrobblesOfAlbumError extends ClientError {
+  constructor(perspective: Perspective, artistName: string, albumName: string) {
+    super(
+      `${perspective.plusToHave} no scrobbles of any songs from ${italic(
+        albumName
+      )} by ${bold(artistName)}!`
     );
   }
 }
@@ -90,14 +100,14 @@ export class NoRatingsFileAttatchedError extends ClientError {
 
 export class CouldNotFindRatingError extends ClientError {
   constructor() {
-    super("Couldn't find this album in your ratings!");
+    super("Couldn't find that album in your ratings!");
   }
 }
 
 export class NoImportedRatingsFound extends ClientError {
   constructor(prefix: string) {
     super(
-      `You don't have any ratings imported yet! To import your ratings see \`${prefix}ryms help\``
+      `You don't have any ratings imported yet! To import your ratings see \`${prefix}rym help\``
     );
   }
 }

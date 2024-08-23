@@ -2,9 +2,9 @@ import { gql } from "@apollo/client";
 import { GowonContext } from "../../lib/context/Context";
 import { displayNumber } from "../../lib/ui/displays";
 import { RawArtistInfo, RawTagTopArtists } from "../LastFM/LastFMService.types";
-import { ArtistInput } from "../mirrorball/MirrorballTypes";
 import { LilacAPIService } from "./LilacAPIService";
 import {
+  LilacArtistInput,
   LilacTag,
   LilacTagsFilters,
   LilacTagsPage,
@@ -83,7 +83,7 @@ export class LilacTagsService extends LilacAPIService {
 
   async getTagsForArtists(
     ctx: GowonContext,
-    artists: ArtistInput[]
+    artists: LilacArtistInput[]
   ): Promise<LilacTag[]> {
     this.log(
       ctx,

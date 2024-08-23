@@ -2,7 +2,7 @@ import { displayNumber } from "../../ui/displays";
 import { BaseNowPlayingComponent } from "../base/BaseNowPlayingComponent";
 import { getArtistPlays } from "../helpers/artist";
 
-const artistPlaysDependencies = ["artistInfo", "artistPlays"] as const;
+const artistPlaysDependencies = ["artistInfo", "artistCount"] as const;
 
 export class ArtistPlaysComponent extends BaseNowPlayingComponent<
   typeof artistPlaysDependencies

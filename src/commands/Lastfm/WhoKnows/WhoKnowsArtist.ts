@@ -38,13 +38,11 @@ export default class WhoKnowsArtist extends WhoKnowsBaseCommand<typeof args> {
   crownsService = ServiceRegistry.get(CrownsService);
 
   async run() {
-    const { senderRequestable, senderUser } = await this.getMentions({
-      senderRequired: !this.parsedArguments.artist,
-    });
-
-    const senderLilacUser = await this.lilacUsersService.fetch(this.ctx, {
-      discordID: this.author.id,
-    });
+    const { senderRequestable, senderUser, senderLilacUser } =
+      await this.getMentions({
+        senderRequired: !this.parsedArguments.artist,
+        fetchLilacUser: true,
+      });
 
     const artistName = await this.lastFMArguments.getArtist(
       this.ctx,

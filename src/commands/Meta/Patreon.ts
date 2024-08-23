@@ -6,12 +6,17 @@ export default class Patreon extends Command {
 
   subcategory = "about";
   description = "Displays the link to sign up for Patreon";
-  aliases = ["pat", "donate"];
+  aliases = ["donate", "backer"];
 
   async run() {
     const embed = this.minimalEmbed().setDescription(
       `${Emoji.gowonPatreon} You can support me at: https://www.patreon.com/gowon_
-Anything is appreciated!`
+Anything is appreciated!
+
+This unlocks backer features on the bot, such as:
+- Full scrobbles indexing
+- Custom album art
+- More to come!`
     );
 
     await this.reply(embed);

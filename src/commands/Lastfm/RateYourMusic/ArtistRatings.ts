@@ -1,22 +1,16 @@
 import { mean } from "mathjs";
-import { NoRatingsFromArtistError } from "../../../../errors/commands/library";
-import { UnknownMirrorballError } from "../../../../errors/errors";
-import { code, italic, sanitizeForDiscord } from "../../../../helpers/discord";
-import { emDash, extraWideSpace } from "../../../../helpers/specialCharacters";
-import { mostCommonOccurrence } from "../../../../helpers/stats";
-import { Flag } from "../../../../lib/context/arguments/argumentTypes/Flag";
-import { standardMentions } from "../../../../lib/context/arguments/mentionTypes/mentions";
-import { prefabArguments } from "../../../../lib/context/arguments/prefabArguments";
-import { ArgumentsMap } from "../../../../lib/context/arguments/types";
-import { displayNumber, displayRating } from "../../../../lib/ui/displays";
-import { ScrollingListView } from "../../../../lib/ui/views/ScrollingListView";
-import { MirrorballRating } from "../../../../services/mirrorball/MirrorballTypes";
-import { RateYourMusicIndexingChildCommand } from "./RateYourMusicChildCommand";
-import {
-  ArtistRatingsConnector,
-  ArtistRatingsParams,
-  ArtistRatingsResponse,
-} from "./connectors";
+import { NoRatingsFromArtistError } from "../../../errors/commands/library";
+import { code, italic, sanitizeForDiscord } from "../../../helpers/discord";
+import { emDash, extraWideSpace } from "../../../helpers/specialCharacters";
+import { mostCommonOccurrence } from "../../../helpers/stats";
+import { Flag } from "../../../lib/context/arguments/argumentTypes/Flag";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
+import { prefabArguments } from "../../../lib/context/arguments/prefabArguments";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
+import { displayNumber, displayRating } from "../../../lib/ui/displays";
+import { ScrollingListView } from "../../../lib/ui/views/ScrollingListView";
+import { LilacRating } from "../../../services/lilac/LilacAPIService.types";
+import { RateYourMusicChildCommand } from "./RateYourMusicChildCommand";
 
 const args = {
   ...prefabArguments.artist,
@@ -33,13 +27,7 @@ const args = {
   ...standardMentions,
 } satisfies ArgumentsMap;
 
-export class ArtistRatings extends RateYourMusicIndexingChildCommand<
-  ArtistRatingsResponse,
-  ArtistRatingsParams,
-  typeof args
-> {
-  connector = new ArtistRatingsConnector();
-
+export class ArtistRatings extends RateYourMusicChildCommand<typeof args> {
   aliases = ["ara"];
   idSeed = "sonamoo sumin";
   description = "Shows your top rated albums from an artist";
@@ -52,7 +40,7 @@ export class ArtistRatings extends RateYourMusicIndexingChildCommand<
     const { senderRequestable, dbUser, discordUser } = await this.getMentions({
       senderRequired: !this.parsedArguments.artist,
       fetchDiscordUser: true,
-      indexedRequired: true,
+      syncedRequired: true,
     });
 
     const artist = await this.lastFMArguments.getArtist(
@@ -65,27 +53,18 @@ export class ArtistRatings extends RateYourMusicIndexingChildCommand<
       discordUser
     );
 
-    const response = await this.query({
-      user: {
-        lastFMUsername: dbUser.lastFMUsername,
-        discordID: dbUser.discordID,
-      },
-      artist: { name: artist },
-      artistKeywords: artist,
-    });
-
-    const errors = this.parseErrors(response);
+    const [rymArtist, ratingsPage] = await Promise.all([
+      this.lilacRatingsService.getArtist(this.ctx, artist),
+      this.lilacRatingsService.ratings(this.ctx, {
+        user: { discordID: dbUser.discordID },
+        album: { artist: { name: artist } },
+      }),
+    ]);
 
     const artistName =
-      response.artist?.artistName ||
-      this.getArtistName(response.ratings.ratings) ||
-      artist;
+      rymArtist.artistName || this.getArtistName(ratingsPage.ratings) || artist;
 
-    if (errors) {
-      throw new UnknownMirrorballError();
-    }
-
-    if (!response.ratings.ratings.length) {
+    if (!ratingsPage.ratings.length) {
       throw new NoRatingsFromArtistError(perspective);
     }
 
@@ -100,22 +79,22 @@ export class ArtistRatings extends RateYourMusicIndexingChildCommand<
       );
 
     const header = `**Average**: ${(
-      (mean(response.ratings.ratings.map((r) => r.rating)) as number) / 2
+      (mean(ratingsPage.ratings.map((r) => r.rating)) as number) / 2
     ).toFixed(2)}/5 from ${displayNumber(
-      response.ratings.ratings.length,
+      ratingsPage.ratings.length,
       "rating"
     )}`;
 
     const ratings = this.parsedArguments.yearly
-      ? response.ratings.ratings.sort(
+      ? ratingsPage.ratings.sort(
           (a, b) =>
             b.rateYourMusicAlbum.releaseYear - a.rateYourMusicAlbum.releaseYear
         )
       : this.parsedArguments.ids
-      ? response.ratings.ratings.sort((a, b) =>
+      ? ratingsPage.ratings.sort((a, b) =>
           a.rateYourMusicAlbum.title.localeCompare(b.rateYourMusicAlbum.title)
         )
-      : response.ratings.ratings;
+      : ratingsPage.ratings;
 
     const simpleScrollingEmbed = new ScrollingListView(this.ctx, embed, {
       items: ratings,
@@ -128,10 +107,7 @@ export class ArtistRatings extends RateYourMusicIndexingChildCommand<
     await this.reply(simpleScrollingEmbed);
   }
 
-  private generateTable(
-    ratings: MirrorballRating[],
-    artistName: string
-  ): string {
+  private generateTable(ratings: LilacRating[], artistName: string): string {
     return ratings
       .map((r, idx) => {
         return (
@@ -157,7 +133,7 @@ export class ArtistRatings extends RateYourMusicIndexingChildCommand<
       .join("\n");
   }
 
-  private getArtistName(ratings: MirrorballRating[]): string {
+  private getArtistName(ratings: LilacRating[]): string {
     return mostCommonOccurrence(
       ratings.map((r) => r.rateYourMusicAlbum.artistName)
     )!;

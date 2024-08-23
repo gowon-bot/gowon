@@ -1,6 +1,6 @@
-import { StringArgument } from "../../../../lib/context/arguments/argumentTypes/StringArgument";
-import { standardMentions } from "../../../../lib/context/arguments/mentionTypes/mentions";
-import { ArgumentsMap } from "../../../../lib/context/arguments/types";
+import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
+import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
+import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { RateYourMusicChildCommand } from "./RateYourMusicChildCommand";
 
 const args = {
@@ -16,6 +16,8 @@ export class Link extends RateYourMusicChildCommand<typeof args> {
   idSeed = "elris bella";
   description = "Search Rateyourmusic for an album (or anything!)";
   slashCommand = true;
+
+  aliases = ["ryms"];
 
   arguments = args;
 

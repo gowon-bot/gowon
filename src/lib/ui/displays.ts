@@ -138,8 +138,8 @@ export function displayProgressBar(
   const options = Object.assign(
     {
       width: 10,
-      progressEmoji: "🟩",
-      remainingEmoji: "⬜",
+      progressEmoji: Emoji.progress,
+      remainingEmoji: Emoji.remainingProgress,
     },
     displayOptions
   );

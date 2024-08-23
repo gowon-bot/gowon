@@ -57,8 +57,8 @@ export default class UserInfo extends Command<typeof args> {
         shouldDisplay: !!dbUser.roles?.length,
       },
       {
-        string: `${Emoji.gowonPatreon} Patron!`,
-        shouldDisplay: dbUser.isPatron,
+        string: `${Emoji.gowonPatreon} Backer!`,
+        shouldDisplay: dbUser.hasPremium,
       },
       {
         string: `${Emoji.checkmark} Authenticated!`,
@@ -75,7 +75,7 @@ export default class UserInfo extends Command<typeof args> {
       `**Cached scrobbles**: ${displayNumber(cachedPlaycount)}`,
       `**Commands run**: ${displayNumber(commandRunCount)}`,
       `**Last updated**: ${
-        lilacUserInfo?.lastUpdated ? ago(lilacUserInfo.lastUpdated) : "(never)"
+        lilacUserInfo?.lastSynced ? ago(lilacUserInfo.lastSynced) : "(never)"
       }`,
       {
         shouldDisplay: topCommands.length > 0,

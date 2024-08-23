@@ -1,17 +1,20 @@
 import { DocumentNode, gql } from "@apollo/client/core";
+import { SimpleMap } from "../../helpers/types";
 
-const queryParts = [
-  "artistPlays",
-  "albumPlays",
-  "albumRating",
-  "globalArtistRank",
-  "serverArtistRank",
-] as const;
-export type QueryPartName = (typeof queryParts)[number];
+export enum QueryPartName {
+  ArtistCount = "artistCount",
+  AlbumCount = "albumCount",
+  AlbumRating = "albumRating",
+  GlobalArtistRank = "globalArtistRank",
+  ServerArtistRank = "serverArtistRank",
+}
 
-export interface QueryPart {
+const queryParts = Object.values(QueryPartName);
+
+export interface QueryPart<T = any, TransformClass = any> {
   query: QueryPartName;
-  variables: any;
+  variables: SimpleMap;
+  transformer?: (data: T) => TransformClass;
 }
 
 export function isQueryPart(value: any): value is QueryPart {
@@ -21,44 +24,48 @@ export function isQueryPart(value: any): value is QueryPart {
 // Some variables must be defined, so these are defaults
 const startingVariables = {
   arArtist: {},
+  user: {},
 };
 
 const nowPlayingQuery = gql`
   query nowPlayingQuery(
-    $artistPlays: Boolean!
-    $albumPlays: Boolean!
+    $artistCount: Boolean!
+    $albumCount: Boolean!
     $albumRating: Boolean!
     $globalArtistRank: Boolean!
     $serverArtistRank: Boolean!
     $user: UserInput!
-    $apSettings: ArtistPlaysSettings
-    $lpSettings: AlbumPlaysSettings
-    $lrAlbum: AlbumInput
+    $acFilters: ArtistCountsFilters
+    $lcFilters: AlbumCountsFilters
+    $lrFilters: RatingsFilters
     $arArtist: ArtistInput!
-    $serverID: String
+    $guildID: String
   ) {
-    artistPlays: artistPlays(user: $user, settings: $apSettings)
-      @include(if: $artistPlays) {
-      artist {
-        name
-      }
-      playcount
-    }
-
-    albumPlays: albumPlays(user: $user, settings: $lpSettings)
-      @include(if: $albumPlays) {
-      album {
-        name
+    ${QueryPartName.ArtistCount}: artistCounts(filters: $acFilters) @include(if: $artistCount) {
+      artistCounts {
         artist {
           name
         }
+
+        playcount
+        firstScrobbled
       }
-      playcount
     }
 
-    albumRating: ratings(
-      settings: { user: $user, album: $lrAlbum, pageInput: { limit: 1 } }
-    ) @include(if: $albumRating) {
+    ${QueryPartName.AlbumCount}: albumCounts(filters: $lcFilters) @include(if: $albumCount) {
+      albumCounts {
+        album {
+          name
+          artist {
+            name
+          }
+        }
+
+        playcount
+      }
+    }
+
+    ${QueryPartName.AlbumRating}: ratings(filters: $lrFilters) @include(if: $albumRating) {
       ratings {
         rating
         rateYourMusicAlbum {
@@ -68,19 +75,19 @@ const nowPlayingQuery = gql`
       }
     }
 
-    globalArtistRank: artistRank(artist: $arArtist, userInput: $user)
+    ${QueryPartName.GlobalArtistRank}: whoKnowsArtistRank(artist: $arArtist, user: $user)
       @include(if: $globalArtistRank) {
       rank
-      listeners
+      totalListeners
     }
 
-    serverArtistRank: artistRank(
+    ${QueryPartName.ServerArtistRank}: whoKnowsArtistRank(
       artist: $arArtist
-      userInput: $user
-      serverID: $serverID
+      user: $user
+      settings: { guildID: $guildID }
     ) @include(if: $serverArtistRank) {
       rank
-      listeners
+      totalListeners
     }
   }
 `;

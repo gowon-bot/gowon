@@ -1,4 +1,4 @@
-import { HelpEmbed } from "../../../../lib/ui/embeds/HelpEmbed";
+import { HelpEmbed } from "../../../lib/ui/embeds/HelpEmbed";
 import { RateYourMusicChildCommand } from "./RateYourMusicChildCommand";
 
 export class Help extends RateYourMusicChildCommand {

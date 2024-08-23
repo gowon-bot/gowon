@@ -16,15 +16,15 @@ export default class SetPatron extends Command<typeof args> {
   idSeed = "hello venus yooyoung";
 
   subcategory = "developer";
-  description = "Sets a user as a patron";
-  aliases = ["setp"];
+  description = "Sets a user as a backer";
+  aliases = ["setp", "setbacker"];
   secretCommand = true;
   devCommand = true;
 
   variations: Variation[] = [
     {
       name: "unset",
-      variation: ["unsetpatron", "unsetp"],
+      variation: ["unsetpatron", "unsetp", "unsetbacker"],
     },
   ];
 
@@ -42,7 +42,7 @@ export default class SetPatron extends Command<typeof args> {
     const id = this.parsedArguments.user?.id || this.parsedArguments.userID;
 
     try {
-      await this.usersService.setPatron(
+      await this.usersService.setAsBacker(
         this.ctx,
         id!,
         !this.variationWasUsed("unset")
@@ -54,7 +54,7 @@ export default class SetPatron extends Command<typeof args> {
     const embed = new SuccessEmbed().setDescription(
       `Successfully ${
         this.variationWasUsed("unset") ? "un" : ""
-      }set ${id} as a patron!`
+      }set ${id} as a backer!`
     );
 
     await this.reply(embed);

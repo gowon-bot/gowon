@@ -1,5 +1,5 @@
-import { CommandGroup } from "../../../../lib/command/CommandGroup";
-import { ParentCommand } from "../../../../lib/command/ParentCommand";
+import { CommandGroup } from "../../../lib/command/CommandGroup";
+import { ParentCommand } from "../../../lib/command/ParentCommand";
 import { ArtistRatings } from "./ArtistRatings";
 import { Help } from "./Help";
 import { ImportRatings } from "./Import";
@@ -34,9 +34,11 @@ export default class RateYourMusicParentCommand extends ParentCommand {
     // Taste
     "tasteratings",
     "ratingstaste",
+    // Link
+    "ryms",
   ];
 
-  prefixes = ["rateyourmusic", "rym", "ryms"];
+  prefixes = ["rateyourmusic", "rym"];
   default = () => new Link();
 
   children = new CommandGroup(

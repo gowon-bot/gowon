@@ -6,7 +6,7 @@ export default class SyncGuild extends AdminBaseCommand {
   idSeed = "billlie moon sua";
 
   description = "Syncs the list of server members with Gowon";
-  aliases = ["sync", "serversync", "syncserver", "syncservermembers"];
+  aliases = ["serversync", "syncserver", "syncservermembers"];
   usage = "";
 
   adminCommand = true;

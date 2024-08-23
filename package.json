@@ -7,7 +7,7 @@
   "dependencies": {
     "@absinthe/socket": "^0.2.1",
     "@absinthe/socket-apollo-link": "^0.2.1",
-    "@apollo/client": "^3.6.2",
+    "@apollo/client": "3.6.2",
     "@discordjs/rest": "^0.3.0",
     "@sentry/cli": "^2.21.2",
     "@sentry/node": "^7.72.0",
@@ -50,7 +50,7 @@
   },
   "scripts": {
     "start": "yarn build && node dist/src/index.js",
-    "build": "tsc --project ./ && yarn sentry:sourcemaps",
+    "build": "tsc --project ./",
     "rebuild": "yarn clean && yarn build",
     "clean": "rm -rf dist/",
     "build:watch": "tsc -w --project ./",

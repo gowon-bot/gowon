@@ -3,6 +3,7 @@ import { GowonContext } from "../../lib/context/Context";
 import { displayNumber } from "../../lib/ui/displays";
 import { LilacAPIService } from "./LilacAPIService";
 import {
+  LilacArtistCount,
   LilacArtistCountFilters,
   LilacArtistCountsPage,
   LilacArtistFilters,
@@ -97,6 +98,8 @@ export class LilacArtistsService extends LilacAPIService {
               name
             }
             playcount
+            lastScrobbled
+            firstScrobbled
           }
 
           pagination {
@@ -115,6 +118,19 @@ export class LilacArtistsService extends LilacAPIService {
     >(ctx, query, { filters }, false);
 
     return response.artistCounts;
+  }
+
+  public async getCount(
+    ctx: GowonContext,
+    discordID: string,
+    artist: string
+  ): Promise<LilacArtistCount | undefined> {
+    const response = await this.listCounts(ctx, {
+      users: [{ discordID }],
+      artists: [{ name: artist }],
+    });
+
+    return response.artistCounts[0];
   }
 
   async getTagsForArtistsMap(

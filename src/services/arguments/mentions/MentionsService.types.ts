@@ -21,11 +21,13 @@ export interface GetMentionsOptions {
   /** If set to true, throws an error if no username is provided */
   usernameRequired: boolean;
   /** If set to true, throws an error if the returned user isn't indexed */
-  indexedRequired?: boolean;
+  syncedRequired?: boolean;
   /** If set to true, throws an error if the user is not authenticated with Last.fm */
   lfmAuthentificationRequired?: boolean;
   /** If set to true, throws an error if a database user is not found */
   dbUserRequired?: boolean;
+  /** If set to true, throws an error if the user does not have premium */
+  backerRequired?: boolean;
 
   /** @deprecated Use `dbUserRequired` instead */
   reverseLookup: {
