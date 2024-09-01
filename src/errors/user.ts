@@ -99,7 +99,6 @@ export class CouldNotFindUserWithUsername extends ClientError {
   }
 }
 
-
 export class CommandRequiresBackerError extends ClientError {
   constructor(prefix: string) {
     super(
@@ -117,6 +116,8 @@ export class CommandRequiresResyncError extends ClientError {
         `${prefix}sync`
       )}\` to re-sync your account.`
     );
+  }
+}
 
 export class FailedToModifyUserError extends ServerError {
   constructor() {

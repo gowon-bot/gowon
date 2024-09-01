@@ -1,0 +1,68 @@
+import { DataSource } from "typeorm";
+import { AlternateAlbumCover } from "./src/database/entity/AlternateAlbumCover";
+import { ArtistCrownBan } from "./src/database/entity/ArtistCrownBan";
+import { ArtistRedirect } from "./src/database/entity/ArtistRedirect";
+import { ArtistTagCache } from "./src/database/entity/ArtistTagCache";
+import { CachedLovedTrack } from "./src/database/entity/CachedLovedTrack";
+import { AlbumCard } from "./src/database/entity/cards/AlbumCard";
+import { Combo } from "./src/database/entity/Combo";
+import { Crown } from "./src/database/entity/Crown";
+import { CrownBan } from "./src/database/entity/CrownBan";
+import { FishyCatch } from "./src/database/entity/fishy/FishyCatch";
+import { FishyProfile } from "./src/database/entity/fishy/FishyProfile";
+import { FishyQuest } from "./src/database/entity/fishy/FishyQuest";
+import { Friend } from "./src/database/entity/Friend";
+import { CommandRun } from "./src/database/entity/meta/CommandRun";
+import { CrownEvent } from "./src/database/entity/meta/CrownEvent";
+import { Guild } from "./src/database/entity/meta/Guild";
+import { NowPlayingConfig } from "./src/database/entity/NowPlayingConfig";
+import { Permission } from "./src/database/entity/Permission";
+import { Setting } from "./src/database/entity/Setting";
+import { SpotifyPlaylistTag } from "./src/database/entity/SpotifyPlaylistTag";
+import { TagBan } from "./src/database/entity/TagBan";
+import { User } from "./src/database/entity/User";
+
+export const gowonDatabase = new DataSource({
+  migrationsTableName: "migrations",
+  type: "postgres",
+  // Change to localhost to run migrations
+  host: "host.docker.internal",
+  port: 5432,
+  username: "your username here",
+  password: "your password here",
+  database: "gowon",
+  logging: false,
+  synchronize: false,
+  name: "default",
+  migrations: ["src/database/migration/**/*.js"],
+
+  entities: [
+    AlternateAlbumCover,
+    ArtistCrownBan,
+    ArtistRedirect,
+    ArtistTagCache,
+    CachedLovedTrack,
+    Combo,
+    CommandRun,
+    Crown,
+    CrownBan,
+    CrownEvent,
+    Error,
+    Guild,
+    Friend,
+    NowPlayingConfig,
+    Permission,
+    Setting,
+    SpotifyPlaylistTag,
+    TagBan,
+    User,
+
+    // Cards
+    AlbumCard,
+
+    // Fishy
+    FishyCatch,
+    FishyProfile,
+    FishyQuest,
+  ],
+});

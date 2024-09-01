@@ -1,5 +1,4 @@
 import { differenceInDays } from "date-fns";
-import gql from "graphql-tag";
 import { log } from "mathjs";
 import { CrownRankResponse } from "../../database/entity/Crown";
 import { LogicError } from "../../errors/errors";
@@ -17,8 +16,7 @@ import {
 } from "../../services/LastFM/converters/TopTypes";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { CrownsService } from "../../services/dbservices/crowns/CrownsService";
-import { MirrorballService } from "../../services/mirrorball/MirrorballService";
-import { MirrorballPageInfo } from "../../services/mirrorball/MirrorballTypes";
+import { LilacTagsService } from "../../services/lilac/LilacTagsService";
 import { GowonContext } from "../context/Context";
 import { DateRange } from "../timeAndDate/DateRange";
 import { displayDate, displayNumber } from "../ui/displays";
@@ -49,7 +47,7 @@ export class ProfileStatsCalculator {
 
   private lastFMService = ServiceRegistry.get(LastFMService);
   private crownsService = ServiceRegistry.get(CrownsService);
-  private mirrorballService = ServiceRegistry.get(MirrorballService);
+  private lilacTagsService = ServiceRegistry.get(LilacTagsService);
 
   constructor(
     private ctx: GowonContext,
@@ -458,22 +456,13 @@ export class ProfileStatsCalculator {
 
   async uniqueTags(): Promise<Stat> {
     const topArtists = await this.topArtists();
-    const query = gql`
-      query tags($artists: [ArtistInput!]!) {
-        tags(settings: { artists: $artists }, requireTagsForMissing: true) {
-          pageInfo {
-            recordCount
-          }
-        }
-      }
-    `;
+    const artistNames = topArtists.artists.map((a) => ({ name: a.name }));
 
-    const artists = topArtists.artists.map((a) => ({ name: a.name }));
+    const response = await this.lilacTagsService.list(this.ctx, {
+      artists: artistNames,
+      fetchTagsForMissing: true,
+    });
 
-    const response = await this.mirrorballService.query<{
-      tags: { pageInfo: MirrorballPageInfo };
-    }>(this.ctx, query, { artists });
-
-    return new Stat(response.tags.pageInfo.recordCount);
+    return new Stat(response.pagination.totalItems);
   }
 }

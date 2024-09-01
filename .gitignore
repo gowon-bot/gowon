@@ -6,7 +6,7 @@ data/
 **/.DS_Store
 
 config.json
-ormconfig.json
+ormconfig.ts
 
 docker-compose.*.yml
 Dockerfile.dev

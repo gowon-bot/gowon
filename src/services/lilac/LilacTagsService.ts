@@ -67,6 +67,13 @@ export class LilacTagsService extends LilacAPIService {
             name
             occurrences
           }
+
+          pagination {
+            totalItems
+            currentPage
+            totalPages
+            perPage
+          }
         }
       }
     `;
