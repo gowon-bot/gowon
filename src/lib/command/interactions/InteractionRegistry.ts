@@ -58,7 +58,7 @@ export class InteractionRegistry {
 
   private getCommands(): Command[] {
     return this.commandRegistry
-      .list({ includeSecret: true })
+      .list({ includeSecret: true, includeDeveloper: false })
       .filter((c) => !!c.slashCommand) as Command[];
   }
 
