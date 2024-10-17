@@ -50,13 +50,11 @@ export class AquariumEmbed extends View {
     const message = this.getAquariumMessage(fishies);
 
     return this.baseEmbed.setDescription(`
-      _${message}_
+_${message}_
       
-      ${tank}
+${tank}
       
-      There be **${displayNumber(
-        this.aquarium.size
-      )} total fishy** in your aquarium.
+There be **${displayNumber(this.aquarium.size)} total fishy** in your aquarium.
       ${
         this.aquarium.size === 0
           ? ``

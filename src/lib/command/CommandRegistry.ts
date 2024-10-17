@@ -18,6 +18,7 @@ type CommandFactory = SimpleMap<{
 export interface CommandListOptions {
   includeSecret?: boolean;
   includeArchived?: boolean;
+  includeDeveloper?: boolean;
   includeOnlyDMCommands?: boolean;
 }
 
@@ -101,6 +102,7 @@ export class CommandRegistry {
   list({
     includeSecret,
     includeArchived,
+    includeDeveloper,
     includeOnlyDMCommands,
   }: CommandListOptions = {}): Command[] {
     return this.pool.filter(
@@ -108,7 +110,8 @@ export class CommandRegistry {
         (c.parentName ? true : c.shouldBeIndexed) &&
         (includeSecret || !c.secretCommand) &&
         (includeArchived || !c.archived) &&
-        (includeOnlyDMCommands ? !c.guildRequired : true)
+        (includeOnlyDMCommands ? !c.guildRequired : true) &&
+        (includeDeveloper || !c.devCommand)
     );
   }
 

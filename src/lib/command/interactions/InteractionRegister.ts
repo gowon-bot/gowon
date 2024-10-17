@@ -1,22 +1,22 @@
-import { SlashCommandBuilder } from "@discordjs/builders";
 import { REST } from "@discordjs/rest";
 import { Routes } from "discord-api-types/v9";
 import config from "../../../../config.json";
 import { Command } from "../Command";
+import { ConvertedSlashCommand } from "./ConvertedSlashCommand";
 import { SlashCommandConverter } from "./SlashCommandConverter";
 
 export class InteractionRegister {
   private discord!: REST;
   private converter = new SlashCommandConverter();
 
-  init() {
+  public init() {
     this.discord = new REST({ version: "9" }).setToken(config.discordToken);
   }
 
   constructor() {}
 
   async register(commands: Command[]) {
-    const convertedCommands = [] as SlashCommandBuilder[];
+    const convertedCommands = [] as ConvertedSlashCommand[];
 
     for (const command of commands) {
       try {
@@ -29,7 +29,7 @@ export class InteractionRegister {
     await this.registerWithDiscord(convertedCommands);
   }
 
-  private async registerWithDiscord(commands: SlashCommandBuilder[]) {
+  private async registerWithDiscord(commands: ConvertedSlashCommand[]) {
     try {
       if (config.environment === "development") {
         await this.clearApplicationCommands();

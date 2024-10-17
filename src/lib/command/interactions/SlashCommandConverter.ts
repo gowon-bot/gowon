@@ -1,20 +1,25 @@
-import { Command, Variation } from "../Command";
 import {
   SlashCommandBuilder,
   SlashCommandSubcommandBuilder,
 } from "@discordjs/builders";
+import { PermissionFlagsBits } from "discord-api-types/v9";
 import { ArgumentsMap } from "../../context/arguments/types";
-import { ParentCommand } from "../ParentCommand";
 import { ChildCommand } from "../ChildCommand";
+import { Command, Variation } from "../Command";
+import { ParentCommand } from "../ParentCommand";
+import { ConvertedSlashCommand } from "./ConvertedSlashCommand";
 
 export class SlashCommandConverter {
-  convert(command: Command, asVariation?: Variation): SlashCommandBuilder[] {
+  convert(command: Command, asVariation?: Variation): ConvertedSlashCommand[] {
     if (command instanceof ParentCommand) {
       return [this.convertParentCommand(command)];
     }
 
     let slashCommand = new SlashCommandBuilder()
-      .setDefaultPermission(!(command.devCommand || command.adminCommand))
+      .setDefaultMemberPermissions(
+        command.adminCommand ? PermissionFlagsBits.Administrator : undefined
+      )
+      .setDMPermission(!command.guildRequired)
       .setName(
         (
           asVariation?.name ||
@@ -33,12 +38,19 @@ export class SlashCommandConverter {
 
     const variations = this.getSeparateVariations(command);
 
+    const convertedSlashCommand = new ConvertedSlashCommand(
+      slashCommand
+    ).setUserInstallable(!command.guildRequired);
+
     // Break the variation recursion
     if (variations.length && !asVariation) {
-      return [slashCommand, ...this.convertVariations(command, variations)];
+      return [
+        convertedSlashCommand,
+        ...this.convertVariations(command, variations),
+      ];
     }
 
-    return [slashCommand];
+    return [convertedSlashCommand];
   }
 
   // The typing here is a disaster
@@ -91,7 +103,7 @@ export class SlashCommandConverter {
     return newSlashCommand;
   }
 
-  private convertParentCommand(command: ParentCommand): SlashCommandBuilder {
+  private convertParentCommand(command: ParentCommand): ConvertedSlashCommand {
     let parentCommand = new SlashCommandBuilder()
       .setDefaultPermission(!(command.devCommand || command.adminCommand))
       .setName(command.friendlyName)
@@ -111,7 +123,7 @@ export class SlashCommandConverter {
       }
     }
 
-    return parentCommand;
+    return new ConvertedSlashCommand(parentCommand);
   }
 
   private getSeparateVariations(command: Command): Variation[] {
@@ -121,8 +133,8 @@ export class SlashCommandConverter {
   private convertVariations(
     command: Command,
     variations: Variation[]
-  ): SlashCommandBuilder[] {
-    const slashCommands: SlashCommandBuilder[] = [];
+  ): ConvertedSlashCommand[] {
+    const slashCommands: ConvertedSlashCommand[] = [];
 
     for (const variation of variations) {
       slashCommands.push(...this.convert(command, variation));
