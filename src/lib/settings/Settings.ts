@@ -1,5 +1,6 @@
 import { defaultPrefix } from "../../../config.json";
 import { ComboService } from "../../services/dbservices/ComboService";
+import { Emoji } from "../emoji/Emoji";
 import {
   BaseSetting,
   BotScopedSetting,
@@ -89,6 +90,26 @@ export const Settings = {
       FMMode.CUSTOM,
       FMMode.DEFAULT,
       FMMode.VERBOSE,
+    ],
+  }),
+  fmLovedEmoji: new UserScopedSetting("fm_loved_emoji", {
+    friendlyName: "!fm loved emoji",
+    description: "Control what emoji Gowon shows for loved tracks in your !fms",
+    category: "Now Playing",
+    type: SettingType.Choice,
+    default: Emoji.heart,
+    choices: [
+      Emoji.heart,
+      Emoji.pinkheart,
+      Emoji.orangeheart,
+      Emoji.yellowheart,
+      Emoji.greenheart,
+      Emoji.lightblueheart,
+      Emoji.blueheart,
+      Emoji.purpleheart,
+      Emoji.blackheart,
+      Emoji.whiteheart,
+      Emoji.brownheart,
     ],
   }),
   fmUsernameDisplay: new UserScopedSetting("fm_username_display", {

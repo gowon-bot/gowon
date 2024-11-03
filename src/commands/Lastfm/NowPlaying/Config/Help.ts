@@ -27,7 +27,10 @@ nowplaying config allows you to customize which elements appear in the footer of
 \`${this.prefix}npc add <options>\` - Quickly add some options
 \`${this.prefix}npc remove <options>\` - Quickly remove some options
 
-You can also use \`${this.prefix}reacts\` to control nowplaying reactions
+You can also use \`${this.prefix}reacts\` to control nowplaying reactions.
+You can change the username display and heart emoji in user settings. (\`${
+          this.prefix
+        }usersettings\`)
 
 **Options**
 ${sortConfigOptions(getComponents().map((o) => o.componentName))

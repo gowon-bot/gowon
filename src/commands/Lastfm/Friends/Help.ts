@@ -4,7 +4,7 @@ import { FriendsChildCommand } from "./FriendsChildCommand";
 export class Help extends FriendsChildCommand {
   idSeed = "csr yeham";
 
-  description = "View help about the fishy minigame";
+  description = "View help about managing friends";
   usage = [""];
 
   slashCommand = true;
