@@ -64,8 +64,7 @@ export class NowPlayingEmbed extends View {
         LastfmLinks.trackPage(this.nowPlaying.artist, this.nowPlaying.name)
       )
       .setThumbnail(this.albumCover || this.albumCoverService.defaultCover)
-      .setFooter(this.getFooter())
-      .useDescriptionFooter();
+      .setFooter(this.getFooter());
   }
 
   setNowPlaying(track: RecentTrack, tagConsolidator?: TagConsolidator): this {
