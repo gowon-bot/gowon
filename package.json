@@ -14,16 +14,13 @@
     "psql": "psql gowon",
     "test": "jest",
     "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
-    "migrate": "yarn typeorm migration:run",
-    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org gowon-bot --project node ./dist && sentry-cli sourcemaps upload --org gowon-bot --project node ./dist"
+    "migrate": "yarn typeorm migration:run"
   },
   "dependencies": {
     "@absinthe/socket": "^0.2.1",
     "@absinthe/socket-apollo-link": "^0.2.1",
     "@apollo/client": "3.6.2",
     "@discordjs/rest": "^0.3.0",
-    "@sentry/cli": "^2.21.2",
-    "@sentry/node": "^7.72.0",
     "@types/absinthe__socket": "^0.2.3",
     "@types/absinthe__socket-apollo-link": "^0.2.1",
     "@types/morgan": "^1.9.9",
