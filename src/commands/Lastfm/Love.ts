@@ -6,6 +6,7 @@ import { Variation } from "../../lib/command/Command";
 import { prefabArguments } from "../../lib/context/arguments/prefabArguments";
 import { ArgumentsMap } from "../../lib/context/arguments/types";
 import { Emoji } from "../../lib/emoji/Emoji";
+import { SettingsService } from "../../lib/settings/SettingsService";
 import { LastFMArgumentsMutableContext } from "../../services/LastFM/LastFMArguments";
 import {
   TrackInfoParams,
@@ -48,6 +49,7 @@ In the meantime, it will appear in your \`!fm\`s as a loved track.`;
 
   arguments = args;
 
+  settingsService = ServiceRegistry.get(SettingsService);
   lovedTrackService = ServiceRegistry.get(LovedTrackService);
 
   async run() {
@@ -199,7 +201,9 @@ by ${bold(trackInfo?.artist.name || artist)}${
         ? `Track already not loved! ${Emoji.mendingHeart}`
         : `Unloved! ${Emoji.brokenHeart}`
       : !wasAlreadyLoved
-      ? `Loved! ${Emoji.heart}`
+      ? `Loved! ${this.settingsService.get("fmLovedEmoji", {
+          userID: this.author.id,
+        })}`
       : `Track already loved! ${Emoji.revolvingHearts}`;
   }
 }
