@@ -137,7 +137,7 @@ export class InactiveError extends ClientError {
 
   constructor() {
     super(
-      "you are currently marked as inactive on the server. This is usually updated when you become an active user again, if you think this is an error please speak to a staff member. Otherwise this role should automatically removed after you chat a bit more."
+      "you have been marked as inactive on this server, and can no longer claim crowns."
     );
   }
 }
@@ -147,7 +147,7 @@ export class PurgatoryError extends ClientError {
 
   constructor() {
     super(
-      "you have been placed in scrobble purgatory, this means you cannot participate in the crowns game. If you think this is an error please speak to a staff member."
+      "you have been placed in scrobble purgatory, and can no longer claim crowns."
     );
   }
 }
