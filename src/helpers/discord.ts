@@ -80,6 +80,10 @@ export function subsubheader(string: string, sanitize = true) {
   return "### " + (sanitize ? sanitizeForDiscord(string) : string);
 }
 
+export function tiny(string: string, sanitize = true) {
+  return "-# " + (sanitize ? sanitizeForDiscord(string) : string);
+}
+
 export function mentionChannel(channelID: string): string {
   return `<#${channelID}>`;
 }

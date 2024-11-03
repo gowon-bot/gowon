@@ -64,7 +64,8 @@ export class NowPlayingEmbed extends View {
         LastfmLinks.trackPage(this.nowPlaying.artist, this.nowPlaying.name)
       )
       .setThumbnail(this.albumCover || this.albumCoverService.defaultCover)
-      .setFooter(this.getFooter());
+      .setFooter(this.getFooter())
+      .useDescriptionFooter();
   }
 
   setNowPlaying(track: RecentTrack, tagConsolidator?: TagConsolidator): this {
@@ -138,8 +139,6 @@ export class NowPlayingEmbed extends View {
   }
 
   private async reactWithCustom(message: Message): Promise<void> {
-    console.log("Reacting with custom...");
-
     const badReactions: string[] = [];
 
     for (const reaction of this.customReactions) {

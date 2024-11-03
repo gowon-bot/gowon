@@ -9,6 +9,7 @@ import {
   MessageEmbedImage,
   User,
 } from "discord.js";
+import { tiny } from "../../../helpers/discord";
 import { LineConsolidator } from "../../LineConsolidator";
 import { displayUserTag } from "../displays";
 import { Image } from "../Image";
@@ -41,6 +42,7 @@ export interface EmbedViewProperties {
   guildMember?: GuildMember;
   user?: User;
   fields?: EmbedFieldData[];
+  useDescriptionFooter?: boolean;
 }
 
 export class EmbedView extends View implements DiscordSendable {
@@ -62,13 +64,7 @@ export class EmbedView extends View implements DiscordSendable {
       image: this.getImageURL(this.properties.image),
       thumbnail: this.getImageURL(this.properties.thumbnail),
       author: this.getAuthor(),
-      footer:
-        this.properties.footer || this.properties.footerIcon
-          ? ({
-              text: this.properties.footer,
-              iconURL: this.properties.footerIcon,
-            } as MessageEmbedFooter)
-          : undefined,
+      footer: this.renderFooter(),
       fields: this.properties.fields,
     });
 
@@ -131,6 +127,11 @@ export class EmbedView extends View implements DiscordSendable {
 
   setFooter(footer: string | undefined): this {
     this.properties.footer = footer;
+    return this;
+  }
+
+  useDescriptionFooter(): this {
+    this.properties.useDescriptionFooter = true;
     return this;
   }
 
@@ -209,9 +210,14 @@ export class EmbedView extends View implements DiscordSendable {
   }
 
   protected getDescription(): string | undefined {
-    return this.properties.description instanceof LineConsolidator
-      ? this.properties.description.consolidate()
-      : this.properties.description;
+    const description =
+      this.properties.description instanceof LineConsolidator
+        ? this.properties.description.consolidate()
+        : this.properties.description;
+
+    if (this.properties.footer && this.properties.useDescriptionFooter) {
+      return `${description}\n\n${this.renderFooterAsTiny()}`;
+    } else return description;
   }
 
   private getAuthor(): MessageEmbedAuthor | undefined {
@@ -251,5 +257,27 @@ export class EmbedView extends View implements DiscordSendable {
     if (image instanceof Image) {
       return { url: image.asURL() };
     } else return { url: image };
+  }
+
+  private renderFooter(): MessageEmbedFooter | undefined {
+    const trueFooter = !this.properties.useDescriptionFooter
+      ? this.properties.footer
+      : undefined;
+
+    if (trueFooter || this.properties.footerIcon) {
+      return {
+        text: trueFooter,
+        iconURL: this.properties.footerIcon,
+      } as MessageEmbedFooter;
+    } else return undefined;
+  }
+
+  private renderFooterAsTiny(): string {
+    return (
+      this.properties.footer
+        ?.split("\n")
+        ?.map((l) => tiny(l))
+        ?.join("\n") || ""
+    );
   }
 }
