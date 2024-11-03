@@ -15,8 +15,11 @@ import config from "../../../config.json";
 const absintheSocket = createAbsintheSocket(
   new PhoenixSocket(config.lilacWebsocket, {
     transport: WebSocket,
+    sessionStorage: global.sessionStorage,
   })
 );
+
+absintheSocket.phoenixSocket.onError((e) => console.log(e));
 
 const websocketLink = createAbsintheSocketLink(absintheSocket);
 const httpLink = createHttpLink({

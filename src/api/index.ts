@@ -1,6 +1,7 @@
 import { ApolloServer, Config, CorsOptions } from "apollo-server-express";
 import bodyParser from "body-parser";
 import express from "express";
+import morgan from "morgan";
 import gowonConfig from "../../config.json";
 import { AnalyticsCollector } from "../analytics/AnalyticsCollector";
 import { GowonClient } from "../lib/GowonClient";
@@ -41,6 +42,8 @@ export class GraphQLAPI {
 
   async init() {
     const app = express();
+
+    app.use(morgan("tiny"));
 
     const corsOptions: CorsOptions = {
       origin: gowonConfig.gowonWebsiteURL,
