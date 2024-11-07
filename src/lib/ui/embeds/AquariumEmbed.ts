@@ -250,7 +250,6 @@ There be **${displayNumber(this.aquarium.size)} total fishy** in your aquarium.
         "Your fishy are hard at work doing something",
         "The fishy have become aware they are in a Discord bot. your time is limited.",
         "Your fishy have hacked the mainframe",
-        "Your fishy are holding a prayer circle to get Leoni a legendary",
         "Your fishy are having a heated debate about food... again",
         `The fishy are starting a multilevel marketing scheme ${emDash} want to buy a pyramidfish?`,
         "The fishy are pondering the existence of the 'other side' of the glass.",

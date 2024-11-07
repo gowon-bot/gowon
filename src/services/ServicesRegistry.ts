@@ -23,7 +23,7 @@ import { SpotifyService } from "./Spotify/SpotifyService";
 import { TimeAndDateService } from "./TimeAndDateService";
 import { TrackingService } from "./TrackingService";
 import { WordBlacklistService } from "./WordBlacklistService";
-import { ReportingService } from "./analytics/ReportingService";
+import { ErrorReportingService } from "./analytics/ReportingService";
 import { ArgumentParsingService } from "./arguments/ArgumentsParsingService";
 import { MentionsService } from "./arguments/mentions/MentionsService";
 import { BotStatsService } from "./dbservices/BotStatsService";
@@ -108,7 +108,7 @@ const services: Service[] = [
   RedirectsService,
   RedisService,
   RedisInteractionService,
-  ReportingService,
+  ErrorReportingService,
   SettingsService,
   SpotifyService,
   SpotifyArguments,
