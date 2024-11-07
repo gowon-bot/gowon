@@ -33,5 +33,8 @@
   "lilacWebsocket": "ws://localhost:4000/socket",
   "lilacPassword": "this needs to match the 'password' config in Lilac",
 
-  "redisHost": "localhost"
+  "redisHost": "localhost",
+
+  "supernovaURL": "http://localhost:8082/",
+  "supernovaPassword": "this needs to match the 'password' config in Supernova"
 }
