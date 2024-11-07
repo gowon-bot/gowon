@@ -8,6 +8,7 @@ export const errorColour = "#F1759A";
 
 export class ErrorEmbed extends EmbedView {
   error?: Error;
+  errorCode?: string;
 
   asDiscordSendable(): EmbedView {
     const footer = this.error instanceof ClientError ? this.error.footer : "";
@@ -21,6 +22,8 @@ export class ErrorEmbed extends EmbedView {
 
     if (footer) {
       embed.setFooter(footer);
+    } else if (this.errorCode) {
+      embed.setFooter(`Error ID: ${this.errorCode}`);
     }
 
     return isWarning ? embed.convert(WarningEmbed) : embed;
@@ -28,6 +31,11 @@ export class ErrorEmbed extends EmbedView {
 
   setError(error: Error): this {
     this.error = error;
+    return this;
+  }
+
+  setErrorCode(code: string | undefined): this {
+    this.errorCode = code;
     return this;
   }
 

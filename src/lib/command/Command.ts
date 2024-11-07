@@ -15,7 +15,7 @@ import { GowonService } from "../../services/GowonService";
 import { NowPlayingEmbedParsingService } from "../../services/NowPlayingEmbedParsingService";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { TrackingService } from "../../services/TrackingService";
-import { ReportingService } from "../../services/analytics/ReportingService";
+import { ErrorReportingService } from "../../services/analytics/ReportingService";
 import { ArgumentParsingService } from "../../services/arguments/ArgumentsParsingService";
 import { MentionsService } from "../../services/arguments/mentions/MentionsService";
 import {
@@ -204,7 +204,7 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
   discordService = ServiceRegistry.get(DiscordService);
   settingsService = ServiceRegistry.get(SettingsService);
   mentionsService = ServiceRegistry.get(MentionsService);
-  reportingService = ServiceRegistry.get(ReportingService);
+  reportingService = ServiceRegistry.get(ErrorReportingService);
   mirrorballService = ServiceRegistry.get(MirrorballService);
   lilacUsersService = ServiceRegistry.get(LilacUsersService);
   lilacGuildsService = ServiceRegistry.get(LilacGuildsService);
@@ -347,14 +347,12 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
   protected async handleRunError(e: any) {
     this.logger.logError(e);
     this.analyticsCollector.metrics.commandErrors.inc();
-    this.reportingService.reportError(this.ctx, e);
-
-    console.log(e);
+    const errorID = await this.reportingService.reportError(this.ctx, e);
 
     if (e.isClientFacing && !e.silent) {
       await this.sendError(e);
     } else if (!e.isClientFacing) {
-      await this.sendError(new UnknownError());
+      await this.sendError(new UnknownError(), errorID);
     }
   }
 
@@ -462,11 +460,16 @@ export abstract class Command<ArgumentsType extends ArgumentsMap = {}> {
       .filter(filter);
   }
 
-  protected async sendError(error: Error | string): Promise<void> {
+  protected async sendError(
+    error: Error | string,
+    errorID?: string
+  ): Promise<void> {
     const errorInstance =
       typeof error === "string" ? new ClientError(error) : error;
 
-    const embed = new ErrorEmbed().setError(errorInstance);
+    const embed = new ErrorEmbed()
+      .setError(errorInstance)
+      .setErrorCode(errorID);
 
     await this.reply(embed);
   }
