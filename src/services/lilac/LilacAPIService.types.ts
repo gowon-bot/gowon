@@ -140,6 +140,18 @@ export interface SyncProgress<
   total: number;
 }
 
+export enum LilacRatingsImportStage {
+  Started = "started",
+  Finished = "finished",
+  Errored = "errored",
+}
+
+export interface RatingsImportProgress {
+  stage: LilacRatingsImportStage;
+  count?: number;
+  error?: string;
+}
+
 export interface LilacPagination {
   currentPage: number;
   perPage: number;

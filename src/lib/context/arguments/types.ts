@@ -4,6 +4,7 @@ import { Flag } from "./argumentTypes/Flag";
 import { NumberArgument } from "./argumentTypes/NumberArgument";
 import { StringArgument } from "./argumentTypes/StringArgument";
 import { StringArrayArgument } from "./argumentTypes/StringArrayArgument";
+import { AttachmentArgument } from "./argumentTypes/discord/AttachmentArgument";
 import { ChannelArgument } from "./argumentTypes/discord/ChannelArgument";
 import { DiscordRoleArgument } from "./argumentTypes/discord/DiscordRoleArgument";
 import { EmojisArgument } from "./argumentTypes/discord/EmojisArgument";
@@ -27,7 +28,8 @@ export type ImplementedOptions<T extends Record<string, unknown>> =
   | EmojisArgument<T>
   | DateArgument<T>
   | ChannelArgument<T>
-  | DiscordRoleArgument<T>;
+  | DiscordRoleArgument<T>
+  | AttachmentArgument<T>;
 
 export type UnwrapProvidedOptions<T extends BaseArgument<unknown>> =
   T extends ImplementedOptions<infer U> ? U : {};

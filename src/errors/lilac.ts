@@ -1,5 +1,5 @@
 import { ApolloError, ServerError } from "@apollo/client";
-import { ErrorWithSupernovaID } from "../services/analytics/ReportingService";
+import { ErrorWithSupernovaID } from "../services/analytics/ErrorReportingService";
 import { ClientError } from "./errors";
 
 export function parseLilacError(error: Error): Error {
@@ -9,7 +9,7 @@ export function parseLilacError(error: Error): Error {
     error instanceof ApolloError &&
     isServerError(error.networkError)
   ) {
-    if (error.networkError.result.supernova_id) {
+    if (error?.networkError?.result?.supernova_id) {
       return new LilacError(
         error.message,
         error.networkError.result.supernova_id
