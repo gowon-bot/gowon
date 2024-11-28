@@ -10,7 +10,9 @@ const args = {
   ratings: new AttachmentArgument({
     index: 0,
     description: "The file containing your RateYourMusic ratings",
-    required: true,
+    required: {
+      customMessage: `Please attach your ratings! (See \`rym help\` for more info)`,
+    },
   }),
 } satisfies ArgumentsMap;
 
