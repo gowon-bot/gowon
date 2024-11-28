@@ -41,8 +41,9 @@ export class Collection extends FishyChildCommand<typeof args> {
         .filter((f) => f && f.hidden) as Fishy[]),
     ];
 
-    const embed = this.minimalEmbed()
-    .setTitle(`${perspective.upper.possessive} fishy collection`);
+    const embed = this.minimalEmbed().setTitle(
+      `${perspective.upper.possessive} fishy collection`
+    );
 
     const scrollingEmbed = new ScrollingListView(this.ctx, embed, {
       items: fishyDisplayList,

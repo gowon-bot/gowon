@@ -79,8 +79,14 @@ export class Set extends NowPlayingConfigChildCommand<typeof args> {
       }
     }
 
+    const successMessage = presetConfig
+      ? `${Emoji.checkmark} Using preset ${code(newConfig[0])}:`
+      : filtered.length
+      ? `${Emoji.checkmark} Successfully set your config as:`
+      : "";
+
     const filteredDisplay = filtered.length
-      ? `${Emoji.checkmark} Successfully set your config as:\n\`\`\`diff
+      ? `\`\`\`diff
 ${filtered.map((f) => `+ ${f}`).join("\n")}\`\`\``
       : "";
     const filteredOutDisplay = filteredOut.length
@@ -90,11 +96,7 @@ ${filteredOut.map((f) => `- ${f}`).join("\n")}\`\`\``
 
     const embed = this.minimalEmbed()
       .setDescription(
-        `${
-          presetConfig
-            ? `${Emoji.checkmark} Using preset ${code(newConfig[0])}`
-            : ""
-        }
+        `${successMessage}
         ${filteredDisplay}
         ${filteredOutDisplay}`.trim()
       )

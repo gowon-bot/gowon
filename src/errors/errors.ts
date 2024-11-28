@@ -175,9 +175,7 @@ export class CrownBannedError extends ClientError {
   name = "CrownBannedError";
 
   constructor() {
-    super(
-      "you have been banned from the crowns game. If you think this is an error please speak to a staff member."
-    );
+    super("you have been banned from the crowns game.");
   }
 }
 

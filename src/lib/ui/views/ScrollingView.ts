@@ -12,7 +12,7 @@ import { displayNumber } from "../displays";
 import { EmbedView } from "./EmbedView";
 import { View } from "./View";
 
-export interface ScrollinViewOptions {
+export interface ScrollingViewOptions {
   initialItems: string | EmbedFieldData[];
   totalPages: number;
   totalItems: number;
@@ -40,7 +40,7 @@ export function isEmbedFields(
 export class ScrollingView extends View {
   private currentPage = 1;
   private currentItems: string | EmbedFieldData[];
-  private options: ScrollinViewOptions;
+  private options: ScrollingViewOptions;
   private onPageChangeCallback: OnPageChangeCallback = () => "";
 
   private readonly leftArrow = EmojiRaw.arrowLeft;
@@ -51,7 +51,7 @@ export class ScrollingView extends View {
   constructor(
     private ctx: GowonContext,
     private embed: EmbedView,
-    options: Partial<ScrollinViewOptions>
+    options: Partial<ScrollingViewOptions>
   ) {
     super();
 
