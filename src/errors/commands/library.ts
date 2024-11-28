@@ -70,31 +70,9 @@ export class TooManySearchResultsError extends ClientError {
   }
 }
 
-export class UnknownRatingsImportError extends ClientError {
-  constructor() {
-    super("Something went wrong when importing your ratings");
-  }
-}
-
 export class WrongFileFormatAttachedError extends ClientError {
   constructor() {
     super("Please attach a file with the correct format");
-  }
-}
-
-export class TooManyAttachmentsError extends ClientError {
-  constructor() {
-    super(
-      "Too many attachments! Please attach only one file with your ratings"
-    );
-  }
-}
-
-export class NoRatingsFileAttatchedError extends ClientError {
-  constructor(prefix: string) {
-    super(
-      `Please attach your ratings! (See \`${prefix}rym help\` for more info)`
-    );
   }
 }
 
