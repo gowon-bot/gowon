@@ -4,7 +4,6 @@ import { PermissionsCacheService } from "../lib/permissions/PermissionsCacheServ
 import { PermissionsService } from "../lib/permissions/PermissionsService";
 import { SettingsService } from "../lib/settings/SettingsService";
 import { BaseService } from "./BaseService";
-import { ConcurrencyService } from "./ConcurrencyService";
 import { DiscordService } from "./Discord/DiscordService";
 import { EmojiService } from "./Discord/EmojiService";
 import { GuildEventService } from "./Discord/GuildEventService";
@@ -23,7 +22,7 @@ import { SpotifyService } from "./Spotify/SpotifyService";
 import { TimeAndDateService } from "./TimeAndDateService";
 import { TrackingService } from "./TrackingService";
 import { WordBlacklistService } from "./WordBlacklistService";
-import { ErrorReportingService } from "./analytics/ReportingService";
+import { ErrorReportingService } from "./analytics/ErrorReportingService";
 import { ArgumentParsingService } from "./arguments/ArgumentsParsingService";
 import { MentionsService } from "./arguments/mentions/MentionsService";
 import { BotStatsService } from "./dbservices/BotStatsService";
@@ -70,7 +69,6 @@ const services: Service[] = [
   CrownsHistoryService,
   CrownsUserService,
   ComboService,
-  ConcurrencyService,
   DatasourceService,
   DiscordService,
   EmojiService,

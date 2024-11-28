@@ -1,10 +1,9 @@
-import { Command } from "../command/Command";
-import { Connector } from "./BaseConnector";
-import { ArgumentsMap } from "../context/arguments/types";
-import { LastFMService } from "../../services/LastFM/LastFMService";
-import { ConcurrencyService } from "../../services/ConcurrencyService";
 import { LastFMArguments } from "../../services/LastFM/LastFMArguments";
+import { LastFMService } from "../../services/LastFM/LastFMService";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
+import { Command } from "../command/Command";
+import { ArgumentsMap } from "../context/arguments/types";
+import { Connector } from "./BaseConnector";
 
 export interface ErrorResponse {
   errors: { message: string }[];
@@ -26,7 +25,6 @@ export abstract class MirrorballBaseCommand<
   abstract connector: Connector<ResponseT, ParamsT>;
   lastFMService = ServiceRegistry.get(LastFMService);
   lastFMArguments = ServiceRegistry.get(LastFMArguments);
-  concurrencyService = ServiceRegistry.get(ConcurrencyService);
 
   protected readonly progressBarWidth = 15;
 

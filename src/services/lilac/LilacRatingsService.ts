@@ -1,3 +1,4 @@
+import { Observable } from "@apollo/client";
 import { gql } from "apollo-server-express";
 import { GowonContext } from "../../lib/context/Context";
 import { LilacAPIService } from "./LilacAPIService";
@@ -6,7 +7,9 @@ import {
   LilacRatingsFilters,
   LilacRatingsPage,
   LilacUserInput,
+  RatingsImportProgress,
 } from "./LilacAPIService.types";
+import { userToUserInput } from "./helpers";
 
 export class LilacRatingsService extends LilacAPIService {
   async ratings(
@@ -113,5 +116,41 @@ export class LilacRatingsService extends LilacAPIService {
     >(ctx, query, variables);
 
     return response;
+  }
+
+  public async import(
+    ctx: GowonContext,
+    csv: string,
+    user: LilacUserInput
+  ): Promise<void> {
+    const mutation = gql`
+      mutation importRatings($ratingsCsv: String!, $user: UserInput!) {
+        importRatings(ratingsCsv: $ratingsCsv, user: $user)
+      }
+    `;
+
+    await this.mutate(ctx, mutation, { ratingsCsv: csv, user });
+  }
+
+  public importProgress(
+    ctx: GowonContext,
+    user: LilacUserInput
+  ): Observable<RatingsImportProgress> {
+    const subscription = gql`
+      subscription RatingsImportProgress($user: UserInput!) {
+        ratingsImport(user: $user) {
+          stage
+          count
+          error
+        }
+      }
+    `;
+
+    return this.subscribe<
+      { ratingsImport: RatingsImportProgress },
+      { user: LilacUserInput }
+    >(ctx, subscription, { user: userToUserInput(user) }).map(
+      (data) => data.ratingsImport
+    );
   }
 }

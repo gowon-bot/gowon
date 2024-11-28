@@ -3,35 +3,20 @@ import streamToString from "stream-to-string";
 import {
   NoRatingsFileAttatchedError,
   TooManyAttachmentsError,
-  UnknownRatingsImportError,
   WrongFileFormatAttachedError,
 } from "../../../errors/commands/library";
 import { CannotBeUsedAsASlashCommand } from "../../../errors/errors";
-import { AlreadyImportingRatingsError } from "../../../errors/external/rateYourMusic";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
-import { Emoji } from "../../../lib/emoji/Emoji";
-import { SuccessEmbed } from "../../../lib/ui/embeds/SuccessEmbed";
 import { WarningEmbed } from "../../../lib/ui/embeds/WarningEmbed";
-import { ConcurrentAction } from "../../../services/ConcurrencyService";
-import { RateYourMusicIndexingChildCommand } from "./RateYourMusicChildCommand";
-import {
-  ImportRatingsConnector,
-  ImportRatingsParams,
-  ImportRatingsResponse,
-} from "./connectors";
+import { RatingsImportProgressView } from "../../../lib/ui/views/RatingsImportProgressView";
+import { RateYourMusicChildCommand } from "./RateYourMusicChildCommand";
 
 const args = {
   input: new StringArgument({ index: { start: 0 }, slashCommandOption: false }),
 } satisfies ArgumentsMap;
 
-export class ImportRatings extends RateYourMusicIndexingChildCommand<
-  ImportRatingsResponse,
-  ImportRatingsParams,
-  typeof args
-> {
-  connector = new ImportRatingsConnector();
-
+export class ImportRatings extends RateYourMusicChildCommand<typeof args> {
   idSeed = "sonamoo high d";
   aliases = ["rymimport", "rymsimport"];
   description =
@@ -41,22 +26,11 @@ export class ImportRatings extends RateYourMusicIndexingChildCommand<
 
   slashCommand = true;
 
-  async beforeRun() {
-    if (
-      await this.concurrencyService.isUserDoingAction(
-        this.author.id,
-        ConcurrentAction.RYMImport
-      )
-    ) {
-      throw new AlreadyImportingRatingsError();
-    }
-  }
-
   async run() {
     if (this.payload.isInteraction()) {
       await this.reply(
         new WarningEmbed().setDescription(
-          "As of right now, you cannot import with slash commands.\n\nPlease go to https://gowon.bot/import-ratings to import, or use message commands"
+          `As of right now, you cannot import with slash commands.\n\nPlease use the message command \`${this.prefix}rymimport\``
         )
       );
 
@@ -70,40 +44,25 @@ export class ImportRatings extends RateYourMusicIndexingChildCommand<
 
     const ratings = await this.getRatings();
 
-    if (this.payload.isMessage()) {
-      this.payload.source.react(Emoji.loading);
-    }
+    const ratingsProgress = this.lilacRatingsService.importProgress(this.ctx, {
+      discordID: this.author.id,
+    });
 
-    this.concurrencyService.registerUser(
-      this.ctx,
-      ConcurrentAction.RYMImport,
-      this.author.id
-    );
-
-    let response: ImportRatingsResponse;
-
-    try {
-      response = await this.query({
-        csv: ratings,
-        user: { discordID: this.author.id },
-      });
-      this.unregisterConcurrency();
-    } catch (e) {
-      this.unregisterConcurrency();
-      throw e;
-    }
-
-    const errors = this.parseErrors(response);
-
-    if (errors) {
-      throw new UnknownRatingsImportError();
-    }
-
-    const embed = new SuccessEmbed().setDescription(
-      `RateYourMusic ratings imported succesfully! ${Emoji.gowonRated}`
-    );
+    const embed = this.minimalEmbed().setDescription(`Preparing import...`);
 
     await this.reply(embed);
+
+    const syncProgressView = new RatingsImportProgressView(
+      this.ctx,
+      embed,
+      ratingsProgress
+    );
+
+    syncProgressView.subscribeToObservable();
+
+    await this.lilacRatingsService.import(this.ctx, ratings, {
+      discordID: this.author.id,
+    });
   }
 
   private async getRatings(): Promise<string> {
@@ -163,13 +122,5 @@ export class ImportRatings extends RateYourMusicIndexingChildCommand<
     }
 
     return "";
-  }
-
-  private unregisterConcurrency() {
-    this.concurrencyService.unregisterUser(
-      this.ctx,
-      ConcurrentAction.RYMImport,
-      this.author.id
-    );
   }
 }

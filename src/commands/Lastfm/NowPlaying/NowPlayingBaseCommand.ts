@@ -68,6 +68,7 @@ export abstract class NowPlayingBaseCommand<
       dbUser,
       username
     );
+
     const renderedComponents = await this.nowPlayingService.renderComponents(
       this.ctx,
       await Promise.resolve(this.getConfig(senderUser!)),

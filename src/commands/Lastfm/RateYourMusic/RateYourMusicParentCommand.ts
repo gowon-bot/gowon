@@ -2,7 +2,7 @@ import { CommandGroup } from "../../../lib/command/CommandGroup";
 import { ParentCommand } from "../../../lib/command/ParentCommand";
 import { ArtistRatings } from "./ArtistRatings";
 import { Help } from "./Help";
-import { ImportRatings } from "./Import";
+import { ImportRatings } from "./ImportRatings";
 import { Link } from "./Link";
 import { Rating } from "./Rating";
 import { Ratings } from "./Ratings";

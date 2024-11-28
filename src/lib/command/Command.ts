@@ -15,7 +15,7 @@ import { GowonService } from "../../services/GowonService";
 import { NowPlayingEmbedParsingService } from "../../services/NowPlayingEmbedParsingService";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { TrackingService } from "../../services/TrackingService";
-import { ErrorReportingService } from "../../services/analytics/ReportingService";
+import { ErrorReportingService } from "../../services/analytics/ErrorReportingService";
 import { ArgumentParsingService } from "../../services/arguments/ArgumentsParsingService";
 import { MentionsService } from "../../services/arguments/mentions/MentionsService";
 import {
