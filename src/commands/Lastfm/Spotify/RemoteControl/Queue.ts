@@ -39,7 +39,7 @@ export class Queue extends SpotifyChildCommand<typeof args> {
 
     const embed = new SuccessEmbed()
       .setDescription(
-        `Succesfully queued:
+        `Successfully queued:
 
 ${italic(track.name)} by ${bold(track.artists.primary.name)}!`
       )

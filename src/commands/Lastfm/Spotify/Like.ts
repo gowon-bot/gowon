@@ -72,7 +72,7 @@ export class Like extends SpotifyChildCommand<typeof args> {
     const description = new LineConsolidator().addLines(
       {
         shouldDisplay: unlike && trackInLibrary,
-        string: `${Emoji.brokenHeart} Succesfully unliked:\n${trackName} by ${artistName}!`,
+        string: `${Emoji.brokenHeart} Successfully unliked:\n${trackName} by ${artistName}!`,
       },
       {
         shouldDisplay: unlike && !trackInLibrary,
@@ -80,7 +80,7 @@ export class Like extends SpotifyChildCommand<typeof args> {
       },
       {
         shouldDisplay: !unlike && !trackInLibrary,
-        string: `${Emoji.heart} Succesfully liked:\n${trackName} by ${artistName}!`,
+        string: `${Emoji.heart} Successfully liked:\n${trackName} by ${artistName}!`,
       },
       {
         shouldDisplay: !unlike && trackInLibrary,

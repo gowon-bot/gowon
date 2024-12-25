@@ -46,7 +46,7 @@ export class SetDefault extends PlaylistChildCommand<typeof args> {
     );
 
     const embed = new SuccessEmbed().setDescription(
-      `Succesfully set ${bold(
+      `Successfully set ${bold(
         foundPlaylist.name
       )} as your default Spotify playlist!`
     );

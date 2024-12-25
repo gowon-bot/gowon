@@ -67,7 +67,7 @@ export class Tag extends PlaylistChildCommand<typeof args> {
     });
 
     const embed = new SuccessEmbed().setDescription(
-      `Succesfully tagged ${bold(foundPlaylist.name)} as ${emoji.raw}`
+      `Successfully tagged ${bold(foundPlaylist.name)} as ${emoji.raw}`
     );
 
     await this.reply(embed);

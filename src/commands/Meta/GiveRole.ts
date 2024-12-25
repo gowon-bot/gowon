@@ -67,7 +67,7 @@ export default class GiveRole extends Command<typeof args> {
     );
 
     const embed = new SuccessEmbed().setDescription(
-      `Succesfully ${
+      `Successfully ${
         this.variationWasUsed("remove") ? "removed" : "gave"
       } the role ${code(role)} to ${mentionGuildMember(
         mentionedDBUser!.discordID
