@@ -53,7 +53,7 @@ export class BanArtist extends CrownsChildCommand<typeof args> {
 
   private makeEmbed(artistName: string, unban: boolean): EmbedView {
     const embed = new SuccessEmbed().setDescription(
-      `Succesfully ${unban ? "un" : ""}banned the artist ${bold(
+      `Successfully ${unban ? "un" : ""}banned the artist ${bold(
         artistName
       )} from the crowns game.`
     );
