@@ -1,9 +1,14 @@
 import { TooManySearchResultsError } from "../../../errors/commands/library";
-import { bold, code } from "../../../helpers/discord";
+import { code } from "../../../helpers/discord";
 import { LastfmLinks } from "../../../helpers/lastfm/LastfmLinks";
 import { Variation } from "../../../lib/command/Command";
 import { Paginator } from "../../../lib/paginators/Paginator";
-import { displayLink, displayNumber } from "../../../lib/ui/displays";
+import {
+  displayLink,
+  displayNumber,
+  displayNumberedList,
+  highlightKeywords,
+} from "../../../lib/ui/displays";
 import { ScrollingListView } from "../../../lib/ui/views/ScrollingListView";
 import { SearchCommand } from "./SearchCommand";
 
@@ -70,20 +75,20 @@ export default class SearchArtist extends SearchCommand {
       pageSize: 15,
       pageRenderer(items) {
         return `Artists matching ${code(keywords)}
-\n${items
-          .map(
-            (a) =>
-              `${a.rank}. ` +
-              displayLink(
-                a.name.replaceAll(new RegExp(`${keywords}`, "gi"), (match) =>
-                  bold(match)
-                ),
-                LastfmLinks.libraryArtistPage(username, a.name),
-                false
-              ) +
-              ` (${displayNumber(a.userPlaycount, "play")})`
-          )
-          .join("\n")}`;
+\n${displayNumberedList(
+          items.map((a) => {
+            const link = displayLink(
+              highlightKeywords(a.name, keywords),
+              LastfmLinks.libraryArtistPage(username, a.name),
+              false
+            );
+
+            return {
+              value: `${link} (${displayNumber(a.userPlaycount, "play")})`,
+              i: a.rank,
+            };
+          })
+        )}`;
       },
 
       overrides: { itemName: "result" },

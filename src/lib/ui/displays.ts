@@ -65,21 +65,42 @@ export function discordTimestamp(
   return `<t:${Math.round(date.getTime() / 1000)}:${flag}>`;
 }
 
-export function displayNumberedList(
-  list: any[],
+type IndexedListItem<T> = { value: T; i: number };
+
+function isIndexedListItem<T>(
+  item: T | IndexedListItem<T>
+): item is IndexedListItem<T> {
+  return item && typeof item === "object" && "value" in item && "i" in item;
+}
+
+export function displayNumberedList<T>(
+  list: IndexedListItem<T>[],
   startAt = 0,
   step = 1,
   padding = ""
 ): string {
+  const getDisplayIdx = (val: T | IndexedListItem<T>, idx: number) => {
+    if (isIndexedListItem(val)) {
+      return val.i;
+    }
+
+    return idx * step + startAt + (step === 1 ? 1 : 0);
+  };
+
+  const columnWidth = Math.max(
+    ...list.map((val, idx) => displayNumber(getDisplayIdx(val, idx)).length)
+  );
+
   return list
     .map((val, idx) => {
-      const displayIdx = idx * step + startAt + (step === 1 ? 1 : 0);
+      const displayIdx = getDisplayIdx(val, idx);
+      const numberDisplay = displayNumber(displayIdx);
+      const spaces = columnWidth - numberDisplay.length;
+      const displayValue = isIndexedListItem(val) ? val.value : val;
 
-      const spaces = `${startAt + list.length}`.length - `${displayIdx}`.length;
-
-      return `${padding}\`${" ".repeat(spaces)}${displayNumber(
-        displayIdx
-      )}\`. ${val}`;
+      return `${padding}\`${" ".repeat(
+        spaces
+      )}${numberDisplay}\`. ${displayValue}`;
     })
     .join("\n");
 }
@@ -188,4 +209,14 @@ export function displayUserTag(user: User | undefined): string {
   }
 
   return user.tag;
+}
+
+export function highlightKeywords(
+  text: string,
+  keywords: string,
+  highligther = bold
+): string {
+  return text.replaceAll(new RegExp(`${keywords}`, "gi"), (match) =>
+    highligther(match)
+  );
 }

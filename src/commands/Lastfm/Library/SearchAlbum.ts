@@ -1,9 +1,14 @@
 import { TooManySearchResultsError } from "../../../errors/commands/library";
-import { bold, code, italic } from "../../../helpers/discord";
+import { code, italic } from "../../../helpers/discord";
 import { LastfmLinks } from "../../../helpers/lastfm/LastfmLinks";
 import { Variation } from "../../../lib/command/Command";
 import { Paginator } from "../../../lib/paginators/Paginator";
-import { displayLink, displayNumber } from "../../../lib/ui/displays";
+import {
+  displayLink,
+  displayNumber,
+  displayNumberedList,
+  highlightKeywords,
+} from "../../../lib/ui/displays";
 import { ScrollingListView } from "../../../lib/ui/views/ScrollingListView";
 import { SearchCommand } from "./SearchCommand";
 
@@ -67,18 +72,23 @@ export default class SearchAlbum extends SearchCommand {
       pageSize: 15,
       pageRenderer(items) {
         return `Albums matching ${code(keywords)}
-\n${items
-          .map(
-            (l) =>
-              `${l.rank}. ${italic(l.artist.name)} - ${displayLink(
-                l.name.replaceAll(new RegExp(`${keywords}`, "gi"), (match) =>
-                  bold(match)
-                ),
-                LastfmLinks.libraryAlbumPage(username, l.artist.name, l.name),
-                false
-              )} (${displayNumber(l.userPlaycount, "play")})`
-          )
-          .join("\n")}`;
+\n${displayNumberedList(
+          items.map((l) => {
+            const link = displayLink(
+              highlightKeywords(l.name, keywords),
+              LastfmLinks.libraryAlbumPage(username, l.artist.name, l.name),
+              false
+            );
+
+            return {
+              value: `${italic(l.artist.name)} - ${link} (${displayNumber(
+                l.userPlaycount,
+                "play"
+              )})`,
+              i: l.rank,
+            };
+          })
+        )}`;
       },
       overrides: { itemName: "result" },
     });
