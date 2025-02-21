@@ -88,13 +88,13 @@ export function displayNumberedList<T>(
   };
 
   const columnWidth = Math.max(
-    ...list.map((val, idx) => displayNumber(getDisplayIdx(val, idx)).length)
+    ...list.map((val, idx) => getDisplayIdx(val, idx).toString().length)
   );
 
   return list
     .map((val, idx) => {
       const displayIdx = getDisplayIdx(val, idx);
-      const numberDisplay = displayNumber(displayIdx);
+      const numberDisplay = displayIdx.toString();
       const spaces = columnWidth - numberDisplay.length;
       const displayValue = isIndexedListItem(val) ? val.value : val;
 
