@@ -36,8 +36,6 @@ export default class NowPlayingAlbum extends NowPlayingBaseCommand {
 
     this.tagConsolidator.blacklistTags(nowPlaying.artist, nowPlaying.name);
 
-    if (nowPlaying.isNowPlaying) this.scrobble(nowPlaying);
-
     this.tagConsolidator.blacklistTags(nowPlaying.artist, nowPlaying.name);
 
     const usernameDisplay = await this.nowPlayingService.getUsernameDisplay(

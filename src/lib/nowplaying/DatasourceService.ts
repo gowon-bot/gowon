@@ -342,7 +342,12 @@ class GraphQLDatasource {
 
     return async () => ({
       graphQLData: this.transformResponse(
-        await datasourceService.lilacAPIService.query(ctx, query, variables)
+        await datasourceService.lilacAPIService.query(
+          ctx,
+          query,
+          variables,
+          false
+        )
       ),
     });
   }

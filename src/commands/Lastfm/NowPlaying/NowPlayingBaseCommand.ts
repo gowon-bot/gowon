@@ -1,4 +1,3 @@
-import config from "../../../../config.json";
 import { User as DBUser } from "../../../database/entity/User";
 import { StringArgument } from "../../../lib/context/arguments/argumentTypes/StringArgument";
 import { standardMentions } from "../../../lib/context/arguments/mentionTypes/mentions";
@@ -9,7 +8,6 @@ import { TagConsolidator } from "../../../lib/tags/TagConsolidator";
 import { Image } from "../../../lib/ui/Image";
 import { NowPlayingEmbed } from "../../../lib/ui/embeds/NowPlayingEmbed";
 import { fmz, reverseNowPlayingEmbed } from "../../../lib/ui/embeds/mutators";
-import { Requestable } from "../../../services/LastFM/LastFMAPIService";
 import { RecentTrack } from "../../../services/LastFM/converters/RecentTracks";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import {
@@ -58,8 +56,6 @@ export abstract class NowPlayingBaseCommand<
     });
 
     const nowPlaying = recentTracks.first();
-
-    if (nowPlaying.isNowPlaying) this.scrobble(nowPlaying);
 
     this.tagConsolidator.blacklistTags(nowPlaying.artist, nowPlaying.name);
 
@@ -116,23 +112,6 @@ export abstract class NowPlayingBaseCommand<
     }
 
     return mentions;
-  }
-
-  protected scrobble(track: RecentTrack) {
-    if (
-      this.gowonClient.environment === "production" &&
-      this.gowonClient.isAlphaTester(this.author.id)
-    ) {
-      this.lastFMService.scrobble(this.ctx, {
-        artist: track.artist,
-        track: track.name,
-        album: track.album,
-        timestamp: new Date().getTime() / 1000,
-        username: {
-          session: config.lastFMBotSessionKey,
-        } as Requestable,
-      });
-    }
   }
 
   protected async getCustomReactions() {
