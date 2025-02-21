@@ -74,7 +74,7 @@ function isIndexedListItem<T>(
 }
 
 export function displayNumberedList<T>(
-  list: IndexedListItem<T>[],
+  list: IndexedListItem<T>[] | T[],
   startAt = 0,
   step = 1,
   padding = ""
