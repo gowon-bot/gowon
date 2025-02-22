@@ -147,14 +147,16 @@ export function displayRating(rating: number): string {
   );
 }
 
+export interface ProgressBarDisplayOptions {
+  width: number;
+  progressEmoji: string;
+  remainingEmoji: string;
+}
+
 export function displayProgressBar(
   progress: number,
   total: number,
-  displayOptions: Partial<{
-    width: number;
-    progressEmoji: string;
-    remainingEmoji: string;
-  }> = {}
+  displayOptions: Partial<ProgressBarDisplayOptions> = {}
 ): string {
   const options = Object.assign(
     {
@@ -170,6 +172,13 @@ export function displayProgressBar(
   return `${options.progressEmoji.repeat(
     relativeProgress
   )}${options.remainingEmoji.repeat(options.width - relativeProgress)}`;
+}
+
+export function displayErrorredProgressBar(width?: number): string {
+  return displayProgressBar(1, 1, {
+    width: width,
+    progressEmoji: Emoji.evilProgress,
+  });
 }
 
 export function displayArtistLink(

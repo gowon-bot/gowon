@@ -1,16 +1,24 @@
 import { Observable, ObservableSubscription } from "@apollo/client";
 import { Stopwatch } from "../../../helpers";
+import { code } from "../../../helpers/discord";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { UsersService } from "../../../services/dbservices/UsersService";
 import {
+  ErroredSyncProgress,
   LilacProgressAction,
   LilacProgressStage,
+  SuccessfulSyncProgress,
   SyncProgress,
 } from "../../../services/lilac/LilacAPIService.types";
 import { LilacBaseCommand } from "../../Lilac/LilacBaseCommand";
 import { GowonContext } from "../../context/Context";
 import { Emoji } from "../../emoji/Emoji";
-import { displayNumber, displayProgressBar } from "../displays";
+import {
+  displayErrorredProgressBar,
+  displayNumber,
+  displayProgressBar,
+} from "../displays";
+import { errorColour } from "../embeds/ErrorEmbed";
 import { SuccessEmbed } from "../embeds/SuccessEmbed";
 import { EmbedView } from "./EmbedView";
 import { UnsendableView } from "./View";
@@ -18,6 +26,7 @@ import { UnsendableView } from "./View";
 export class SyncingProgressView extends UnsendableView {
   private stopwatch = new Stopwatch();
   private subscription?: ObservableSubscription;
+  private currentProgress: SuccessfulSyncProgress | undefined;
 
   private get usersService() {
     return ServiceRegistry.get(UsersService);
@@ -52,14 +61,35 @@ export class SyncingProgressView extends UnsendableView {
   }
 
   private async handleProgress(progress: SyncProgress) {
-    if (
-      progress.current === progress.total &&
-      progress.stage == LilacProgressStage.Inserting
+    if (progress.stage === LilacProgressStage.Terminated) {
+      await this.handleTermination(progress as ErroredSyncProgress);
+    } else if (
+      progress.stage == LilacProgressStage.Inserting &&
+      progress.current === progress.total
     ) {
       await this.handleInsertingComplete(progress);
     } else if (this.stopwatch.elapsedInMilliseconds >= 3000) {
       await this.handleProgressUpdate(progress);
     }
+  }
+
+  private async handleProgressUpdate(progress: SuccessfulSyncProgress) {
+    const { current, total, action, stage } = this.cacheProgress(progress);
+
+    await this.embed
+      .setDescription(
+        `${this.getActionVerb(action)}...
+${this.displayProgressBar(progress)}
+*${displayNumber(current)}/${displayNumber(total)} ${
+          stage === LilacProgressStage.Fetching
+            ? "scrobbles fetched"
+            : "counts inserted"
+        }*`
+      )
+      .setFooter(this.getFooterMessage())
+      .editMessage(this.ctx);
+
+    this.stopwatch.zero().start();
   }
 
   private async handleInsertingComplete(progress: SyncProgress) {
@@ -72,35 +102,27 @@ export class SyncingProgressView extends UnsendableView {
     this.subscription?.unsubscribe();
   }
 
-  private async handleProgressUpdate(progress: SyncProgress) {
-    await this.embed
-      .setDescription(
-        `${
-          progress.action === LilacProgressAction.Syncing
-            ? "Syncing"
-            : "Updating"
-        }...
-${displayProgressBar(progress.current, progress.total, {
-  width: LilacBaseCommand.progressBarWidth,
-  progressEmoji:
-    progress.stage === LilacProgressStage.Fetching
-      ? Emoji.progress
-      : Emoji.moreProgress,
-  remainingEmoji:
-    progress.stage === LilacProgressStage.Fetching
-      ? Emoji.remainingProgress
-      : Emoji.progress,
-})}
-*${displayNumber(progress.current)}/${displayNumber(progress.total)} ${
-          progress.stage === LilacProgressStage.Fetching
-            ? "scrobbles fetched"
-            : "counts inserted"
-        }*`
-      )
-      .setFooter(this.getFooterMessage())
-      .editMessage(this.ctx);
+  private async handleTermination(progress: ErroredSyncProgress) {
+    this.subscription?.unsubscribe();
 
-    this.stopwatch.zero().start();
+    if (progress.error) {
+      await this.embed
+        .setColour(errorColour)
+        .setDescription(
+          `${this.getActionVerb(progress.action)}...
+${
+  this.currentProgress
+    ? this.displayProgressBar(this.currentProgress, Emoji.evilProgress)
+    : displayErrorredProgressBar(LilacBaseCommand.progressBarWidth)
+}
+_An error occurred${
+            progress.supernova_id ? `: ${code(progress.supernova_id)}` : ""
+          }_
+`
+        )
+        .setFooter(this.getFooterMessage())
+        .editMessage(this.ctx);
+    }
   }
 
   private getInsertingCompleteMessage(progress: SyncProgress): string {
@@ -111,5 +133,35 @@ ${displayProgressBar(progress.current, progress.total, {
 
   private getFooterMessage(): string {
     return `Syncing means downloading all your Last.fm data. This is required for many commands to function.`;
+  }
+
+  private cacheProgress(
+    currentProgress: SuccessfulSyncProgress
+  ): SuccessfulSyncProgress {
+    this.currentProgress = currentProgress;
+
+    return currentProgress;
+  }
+
+  private getActionVerb(action: LilacProgressAction): string {
+    return action === LilacProgressAction.Syncing ? "Syncing" : "Updating";
+  }
+
+  private displayProgressBar(
+    { current, total, stage }: SuccessfulSyncProgress,
+    overrideProgressEmoji?: string
+  ): string {
+    return displayProgressBar(current, total, {
+      width: LilacBaseCommand.progressBarWidth,
+      progressEmoji:
+        overrideProgressEmoji ??
+        (stage === LilacProgressStage.Fetching
+          ? Emoji.progress
+          : Emoji.moreProgress),
+      remainingEmoji:
+        stage === LilacProgressStage.Fetching
+          ? Emoji.remainingProgress
+          : Emoji.progress,
+    });
   }
 }

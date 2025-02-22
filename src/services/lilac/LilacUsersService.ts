@@ -59,6 +59,8 @@ export class LilacUsersService extends LilacAPIService {
           stage
           current
           total
+          error
+          supernova_id
         }
       }
     `;

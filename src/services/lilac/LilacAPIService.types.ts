@@ -131,14 +131,24 @@ export interface LilacRatingsFilters {
 }
 
 // Responses
-export interface SyncProgress<
-  Action extends LilacProgressAction = LilacProgressAction
-> {
-  action: Action;
+
+type BaseSyncProgress = {
+  action: LilacProgressAction;
   stage: LilacProgressStage;
+};
+
+export type ErroredSyncProgress = BaseSyncProgress & {
+  stage: LilacProgressStage.Terminated;
+  error: string;
+  supernova_id?: string;
+};
+
+export type SuccessfulSyncProgress = BaseSyncProgress & {
   current: number;
   total: number;
-}
+};
+
+export type SyncProgress = ErroredSyncProgress | SuccessfulSyncProgress;
 
 export enum LilacRatingsImportStage {
   Started = "started",
