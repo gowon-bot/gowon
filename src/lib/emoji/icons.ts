@@ -35,6 +35,7 @@ export const icons = {
   remainingProgress: "<:loading:1197111489337761832>",
   progress: "<:progress:1197111521109618758>",
   moreProgress: "<:moreProgress:1197111523064164362>",
+  evilProgress: "<:evilProgress:1342478443798986842>",
 
   // Native emoji overrides
   fire: "<:fire:1197111444542595162>",
