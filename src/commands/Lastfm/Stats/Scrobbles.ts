@@ -19,7 +19,7 @@ const args = {
 export default class Scrobbles extends LastFMBaseCommand<typeof args> {
   idSeed = "wooah songyee";
 
-  aliases = ["s", "scrabbles", "scromples"];
+  aliases = ["s", "scrabbles", "scromples", "scroibles"];
   description =
     "Shows you how many scrobbles you have over a given time period";
   subcategory = "library stats";
@@ -52,7 +52,13 @@ export default class Scrobbles extends LastFMBaseCommand<typeof args> {
       `${perspective.upper.plusToHave} ${bold(
         displayNumber(
           scrobbles,
-          `scr${this.extract.didMatch("scrabbles") ? "a" : "o"}bble`
+          this.extract.didMatch("scrabbles")
+            ? "scrabble"
+            : this.extract.didMatch("scromples")
+            ? "scromple"
+            : this.extract.didMatch("scroibles")
+            ? "scroible"
+            : "scrobble"
         )
       )} ${date ? `since ${displayDate(date)}` : dateRange.humanized()}`
     );

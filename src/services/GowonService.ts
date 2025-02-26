@@ -1,3 +1,4 @@
+import { execSync } from "child_process";
 import { Guild } from "discord.js";
 import regexEscape from "escape-string-regexp";
 import config from "../../config.json";
@@ -10,6 +11,7 @@ import { ServiceRegistry } from "./ServicesRegistry";
 
 export class GowonService extends BaseService {
   public cache = new GowonCache();
+  private commitHash?: string;
 
   private get settingsService() {
     return ServiceRegistry.get(SettingsService);
@@ -60,5 +62,13 @@ export class GowonService extends BaseService {
 
   async getPurgatoryRole(guild: Guild): Promise<string | undefined> {
     return this.settingsService.get("purgatoryRole", { guildID: guild.id });
+  }
+
+  public getCommitHash(): string {
+    if (this.commitHash) return this.commitHash;
+
+    this.commitHash = execSync("git rev-parse --short HEAD").toString().trim();
+
+    return this.commitHash;
   }
 }

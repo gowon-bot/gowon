@@ -1,12 +1,23 @@
 import { Stopwatch } from "../../helpers";
+import { bold, italic, subsubheader } from "../../helpers/discord";
+import { extraWideSpace } from "../../helpers/specialCharacters";
+import { LineConsolidator } from "../../lib/LineConsolidator";
 import { Command } from "../../lib/command/Command";
+import { Emoji } from "../../lib/emoji/Emoji";
 import { EmbedView } from "../../lib/ui/views/EmbedView";
 import { LastFMService } from "../../services/LastFM/LastFMService";
 import { ServiceRegistry } from "../../services/ServicesRegistry";
 import { LilacAPIService } from "../../services/lilac/LilacAPIService";
 
+type Latencies = {
+  discord?: Stopwatch;
+  lastfm?: Stopwatch;
+  mirrorball?: Stopwatch;
+  lilac?: Stopwatch;
+};
+
 export default class Status extends Command {
-  idSeed = "Fill in a unique idSeed here";
+  idSeed = "newjeans danielle";
 
   description = "See the status of Gowon's services";
   category = "meta";
@@ -18,9 +29,7 @@ export default class Status extends Command {
   async run() {
     const embed = this.minimalEmbed()
       .setTitle("Gowon status:")
-      .setDescription(
-        "**Latency**: External:\b```\nDiscord........pinging\nLast.fm........pinging\n```\nGowon:\n```\nMirrorball.....pinging\nLilac..........pinging\n```"
-      );
+      .setDescription(this.displayLatencies({} as Latencies));
 
     const mirrorballLatency = await this.mirrorballLatency();
     const lilacLatency = await this.lilacLatency();
@@ -29,20 +38,39 @@ export default class Status extends Command {
 
     await embed
       .setDescription(
-        `**Latency**:
-External:
-\`\`\`
-Discord........${this.displayLatency(discordLatency)}
-Last.fm........${this.displayLatency(lastfmLatency)}
-\`\`\`
-Gowon:
-\`\`\`
-Mirrorball.....${this.displayLatency(mirrorballLatency)}
-Lilac..........${this.displayLatency(lilacLatency)}
-\`\`\`
-`
+        this.displayLatencies({
+          discord: discordLatency,
+          lastfm: lastfmLatency,
+          mirrorball: mirrorballLatency,
+          lilac: lilacLatency,
+        })
       )
       .editMessage(this.ctx);
+  }
+
+  private displayLatencies(latencies: Latencies): LineConsolidator {
+    const displayLatency = (latency: Stopwatch | undefined) =>
+      italic(latency ? this.displayLatency(latency) : "pinging");
+
+    return new LineConsolidator().addLines(
+      subsubheader("Latency:"),
+
+      bold("External:"),
+      `${extraWideSpace}${Emoji.discordLogo} Discord – ${displayLatency(
+        latencies.discord
+      )}`,
+      `${extraWideSpace}${Emoji.lastfmLogo} Last.fm – ${displayLatency(
+        latencies.lastfm
+      )}`,
+      "",
+      bold("Gowon:"),
+      `${extraWideSpace}${Emoji.mirrorballLogo} Mirrorball – ${displayLatency(
+        latencies.mirrorball
+      )}`,
+      `${extraWideSpace}${Emoji.lilacLogo} Lilac – ${displayLatency(
+        latencies.lilac
+      )}`
+    );
   }
 
   private async mirrorballLatency(): Promise<Stopwatch> {

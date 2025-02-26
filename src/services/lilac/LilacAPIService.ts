@@ -72,6 +72,17 @@ export class LilacAPIService extends BaseService {
     );
   }
 
+  public async getVersion(ctx: GowonContext): Promise<{ version: string }> {
+    return await this.query(
+      ctx,
+      gql`
+        query {
+          version
+        }
+      `
+    );
+  }
+
   private logRequest(
     ctx: GowonContext,
     variables: any,

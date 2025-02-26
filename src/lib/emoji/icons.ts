@@ -43,4 +43,15 @@ export const icons = {
   tada: "<:tada:1197111408052158504>",
   confettiBall: "<:confettiBall:1197111405762052146>",
   crown: "<:crown:1197111412162580562>",
+
+  // Logos
+  lastfmLogo: "<:lastfm:1344284739250556990>",
+  discordLogo: "<:discord:1344284737413447682>",
+
+  gowonLogo: "<:gowonbot:1344282058754883687>",
+  gowonWebLogo: "<:gowonweb:1344282054480629770>",
+  lilacLogo: "<:lilac:1344282326531575868>",
+  mirrorballLogo: "<:mirrorball:1344282053365207131>",
+  supernovaLogo: "<:supernova:1344282057316237363>",
+  doughnutLogo: "<:doughnut:1344282055688585286>",
 } as const satisfies Record<string, string>;

@@ -1,4 +1,4 @@
-# Gowon
+<img src="assets/Gowon Banner.png" alt="Gowon" width="500"/>
 
 _어떤 꿈조차도 전부 이뤄질 듯한 느낌_
 
@@ -33,7 +33,7 @@ There are now too many commands to list in the README, see `!help all` or visit 
 - All my alpha testers, for breaking everything:
 
   - Luca
-  - Kat
+  - Ethan
   - Enya ([Go checkout REM](https://github.com/yayuyokitano/rem-next))
   - DunsterJR
   - Manu
@@ -52,7 +52,7 @@ There are now too many commands to list in the README, see `!help all` or visit 
 
 Somethings broken? Just curious how something works?
 
-Feel free to shoot me a Discord dm at `john!#2527`
+Feel free to shoot me a Discord dm at `@abbyfour`
 or join the support server! https://discord.gg/9Vr7Df7TZf
 
 Become a patreon at [patreon.com/gowon\_](https://www.patreon.com/gowon_)
