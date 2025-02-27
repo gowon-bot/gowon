@@ -79,7 +79,9 @@ export class LilacAPIService extends BaseService {
         query {
           version
         }
-      `
+      `,
+      undefined,
+      false
     );
   }
 
