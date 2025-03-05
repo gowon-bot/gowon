@@ -80,7 +80,7 @@ export class CommandRegistry {
     return await extractor.extract(
       messageString,
       guildID,
-      commands || this.list({ includeSecret: true })
+      commands || this.list({ includeSecret: true, includeDeveloper: true })
     );
   }
 
