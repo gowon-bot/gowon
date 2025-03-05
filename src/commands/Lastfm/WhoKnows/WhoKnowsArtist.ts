@@ -9,12 +9,14 @@ import {
 import { ArgumentsMap } from "../../../lib/context/arguments/types";
 import { Emoji } from "../../../lib/emoji/Emoji";
 import { LineConsolidator } from "../../../lib/LineConsolidator";
+import { TagConsolidator } from "../../../lib/tags/TagConsolidator";
 import {
   displayLink,
   displayNumber,
   displayNumberedList,
 } from "../../../lib/ui/displays";
 import { CrownsService } from "../../../services/dbservices/crowns/CrownsService";
+import { RedirectsService } from "../../../services/dbservices/RedirectsService";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { WhoKnowsBaseCommand } from "./LilacWhoKnowsBaseCommand";
 
@@ -36,6 +38,7 @@ export default class WhoKnowsArtist extends WhoKnowsBaseCommand<typeof args> {
   arguments = args;
 
   crownsService = ServiceRegistry.get(CrownsService);
+  redirectsService = ServiceRegistry.get(RedirectsService);
 
   async run() {
     const { senderRequestable, senderUser, senderLilacUser } =
@@ -49,6 +52,13 @@ export default class WhoKnowsArtist extends WhoKnowsBaseCommand<typeof args> {
       senderRequestable,
       { redirect: !this.parsedArguments.noRedirect }
     );
+
+    const artistTags = await this.lilacTagsService.getTagsForArtists(this.ctx, [
+      { name: artistName },
+    ]);
+
+    const tagConsolidator = new TagConsolidator();
+    tagConsolidator.addTags(this.ctx, artistTags);
 
     const crown = this.isGlobal()
       ? undefined
@@ -64,7 +74,15 @@ export default class WhoKnowsArtist extends WhoKnowsBaseCommand<typeof args> {
         guildID
       );
 
-    await this.cacheUserInfo(whoKnows.rows.map((u) => u.user));
+    await Promise.all([
+      this.cacheUserInfo(whoKnows.rows.map((u) => u.user)),
+      tagConsolidator.saveServerBannedTagsInContext(this.ctx),
+    ]);
+
+    const redirectHelp = await this.redirectsService.artistRedirectReminder(
+      this.ctx,
+      this.parsedArguments.artist
+    );
 
     const { rows, artist } = whoKnows;
     const { rank, playcount } = whoKnowsRank;
@@ -73,6 +91,10 @@ export default class WhoKnowsArtist extends WhoKnowsBaseCommand<typeof args> {
       {
         shouldDisplay: !artist || rows.length === 0,
         string: "No one knows this artist",
+      },
+      {
+        shouldDisplay: rows.length === 0 && !!redirectHelp,
+        string: "\n" + redirectHelp,
       },
       {
         shouldDisplay: artist && rows.length !== 0,
@@ -102,6 +124,12 @@ export default class WhoKnowsArtist extends WhoKnowsBaseCommand<typeof args> {
           ) +
           `- **${displayNumber(playcount, "**play")}` +
           (crown?.user?.discordID === this.author.id ? " 👑" : ""),
+      },
+      {
+        shouldDisplay: tagConsolidator.hasAnyTags(),
+        string: `\n-# ${tagConsolidator
+          .consolidateAsStrings(10)
+          .join(TagConsolidator.tagJoin)}`,
       }
     );
 

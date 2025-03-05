@@ -2,7 +2,6 @@ import { gql } from "@apollo/client";
 import { GowonContext } from "../../lib/context/Context";
 import { LilacAPIService } from "./LilacAPIService";
 import {
-  LIlacWhoFirstArtistRank,
   LilacAlbum,
   LilacAlbumInput,
   LilacAmbiguousTrack,
@@ -10,6 +9,7 @@ import {
   LilacArtistInput,
   LilacTrackInput,
   LilacUserInput,
+  LilacWhoFirstArtistRank,
   LilacWhoFirstInput,
   LilacWhoFirstRow,
   LilacWhoKnowsAlbumRank,
@@ -209,7 +209,7 @@ export class LilacWhoKnowsService extends LilacAPIService {
     return await this.query<
       {
         whoFirstArtist: { artist: LilacArtist; rows: LilacWhoFirstRow[] };
-        whoFirstArtistRank: LIlacWhoFirstArtistRank;
+        whoFirstArtistRank: LilacWhoFirstArtistRank;
       },
       {
         artist: LilacArtistInput;

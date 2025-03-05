@@ -64,7 +64,10 @@ export default class ArtistTopTracks extends LilacBaseCommand<typeof args> {
       throw new NoScrobblesOfArtistError(
         perspective,
         correctedArtistName,
-        await this.redirectHelp(this.parsedArguments.artist)
+        await this.redirectsService.artistRedirectReminder(
+          this.ctx,
+          this.parsedArguments.artist
+        )
       );
     }
 
@@ -115,22 +118,5 @@ export default class ArtistTopTracks extends LilacBaseCommand<typeof args> {
     });
 
     await this.reply(simpleScrollingEmbed);
-  }
-
-  private async redirectHelp(artistName?: string): Promise<string> {
-    if (artistName) {
-      const redirect = await this.redirectsService.getRedirect(
-        this.ctx,
-        artistName
-      );
-
-      if (redirect?.to) {
-        return `\n\nLooking for ${bold(redirect.from)}? Try \`${
-          this.prefix
-        }at ${artistName} -nr\``;
-      }
-    }
-
-    return "";
   }
 }
