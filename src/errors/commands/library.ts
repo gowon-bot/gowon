@@ -41,7 +41,7 @@ export class NoScrobblesOfArtistError extends ClientError {
     super(
       `${perspective.plusToHave} no scrobbles of any songs from ${bold(
         artistName
-      )}!${redirectHelp}`
+      )}!${redirectHelp ? "\n\n" : ""}${redirectHelp}`
     );
   }
 }

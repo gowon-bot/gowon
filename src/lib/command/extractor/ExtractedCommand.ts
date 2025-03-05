@@ -32,4 +32,11 @@ export class ExtractedCommand {
       (variation) => this.matched.toLowerCase() === variation
     );
   }
+
+  public originalString(): string {
+    return this.commandStack
+      .map(({ matched }) => matched)
+      .join(" ")
+      .trim();
+  }
 }

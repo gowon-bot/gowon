@@ -1,5 +1,6 @@
 import { ArtistRedirect } from "../../database/entity/ArtistRedirect";
 import { RecordNotFoundError } from "../../errors/errors";
+import { bold } from "../../helpers/discord";
 import { GowonContext } from "../../lib/context/Context";
 import { displayNumber } from "../../lib/ui/displays";
 import { BaseService } from "../BaseService";
@@ -106,6 +107,27 @@ export class RedirectsService extends BaseService {
     }
 
     return map;
+  }
+
+  /**
+   * @returns An empty string if there is no redirect
+   * @returns A string with a reminder to use the redirect command if there is a redirect
+   */
+  public async artistRedirectReminder(
+    ctx: GowonContext,
+    artistName: string | undefined
+  ): Promise<string> {
+    if (artistName) {
+      const redirect = await this.getRedirect(ctx, artistName);
+
+      if (redirect?.to) {
+        return `Looking for ${bold(redirect.from)}? Try \`${
+          ctx.command.prefix
+        }${ctx.extract.originalString()} ${artistName} -nr\``;
+      }
+    }
+
+    return "";
   }
 
   private async createRedirect(

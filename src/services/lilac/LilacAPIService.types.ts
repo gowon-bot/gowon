@@ -208,11 +208,11 @@ export interface LilacWhoKnowsTrackRank {
   below: LilacAmbiguousTrackCount;
 }
 
-export interface LIlacWhoFirstArtistRank {
+export interface LilacWhoFirstArtistRank {
   artist: LilacArtist;
-  firstScrobbled: LilacDate;
-  lastScrobbled: LilacDate;
-  rank: number;
+  firstScrobbled?: LilacDate;
+  lastScrobbled?: LilacDate;
+  rank: 0 | number;
   totalListeners: number;
 }
 

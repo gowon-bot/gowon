@@ -10,12 +10,15 @@ import {
 } from "../../../../lib/context/arguments/prefabArguments";
 import { ArgumentsMap } from "../../../../lib/context/arguments/types";
 import { Emoji } from "../../../../lib/emoji/Emoji";
+import { TagConsolidator } from "../../../../lib/tags/TagConsolidator";
 import {
   displayDate,
   displayLink,
   displayNumber,
   displayNumberedList,
 } from "../../../../lib/ui/displays";
+import { ServiceRegistry } from "../../../../services/ServicesRegistry";
+import { RedirectsService } from "../../../../services/dbservices/RedirectsService";
 import { WhoKnowsBaseCommand } from "../LilacWhoKnowsBaseCommand";
 
 const args = {
@@ -43,6 +46,8 @@ export default class WhoFirstArtist extends WhoKnowsBaseCommand<typeof args> {
 
   arguments = args;
 
+  redirectsService = ServiceRegistry.get(RedirectsService);
+
   async run() {
     const whoLast = this.variationWasUsed("wholast");
 
@@ -58,6 +63,13 @@ export default class WhoFirstArtist extends WhoKnowsBaseCommand<typeof args> {
       { redirect: !this.parsedArguments.noRedirect }
     );
 
+    const artistTags = await this.lilacTagsService.getTagsForArtists(this.ctx, [
+      { name: artistName },
+    ]);
+
+    const tagConsolidator = new TagConsolidator();
+    tagConsolidator.addTags(this.ctx, artistTags);
+
     const guildID = this.isGlobal() ? undefined : this.requiredGuild.id;
 
     const { whoFirstArtist: whoFirst, whoFirstArtistRank: whoFirstRank } =
@@ -70,7 +82,15 @@ export default class WhoFirstArtist extends WhoKnowsBaseCommand<typeof args> {
         whoLast
       );
 
-    await this.cacheUserInfo(whoFirst.rows.map((u) => u.user));
+    await Promise.all([
+      this.cacheUserInfo(whoFirst.rows.map((u) => u.user)),
+      tagConsolidator.saveServerBannedTagsInContext(this.ctx),
+    ]);
+
+    const redirectHelp = await this.redirectsService.artistRedirectReminder(
+      this.ctx,
+      this.parsedArguments.artist
+    );
 
     const { rows, artist } = whoFirst;
     const { rank, totalListeners } = whoFirstRank;
@@ -97,7 +117,7 @@ export default class WhoFirstArtist extends WhoKnowsBaseCommand<typeof args> {
         ),
       },
       {
-        shouldDisplay: rank > 15,
+        shouldDisplay: rank > 15 && !!userListenedDate,
         string:
           `\n\`${rank}\` ` +
           bold(
@@ -106,11 +126,21 @@ export default class WhoFirstArtist extends WhoKnowsBaseCommand<typeof args> {
               LastfmLinks.userPage(senderUser?.lastFMUsername!)
             )
           ) +
-          `- **${this.displayScrobbleDate(convertLilacDate(userListenedDate))}`,
+          `- ${this.displayScrobbleDate(convertLilacDate(userListenedDate!))}`,
       },
       {
         shouldDisplay: !artist || rows.length === 0,
         string: "No one has scrobbled this artist",
+      },
+      {
+        shouldDisplay: rows.length === 0 && !!redirectHelp,
+        string: "\n" + redirectHelp,
+      },
+      {
+        shouldDisplay: tagConsolidator.hasAnyTags(),
+        string: `\n-# ${tagConsolidator
+          .consolidateAsStrings(10)
+          .join(TagConsolidator.tagJoin)}`,
       }
     );
 

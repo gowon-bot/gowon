@@ -18,9 +18,17 @@ function isLine(line: Line | string | LineField): line is Line {
 export class LineConsolidator {
   private lines: Line[] = [];
 
-  addLines(...lines: Array<Line | string | LineField>): LineConsolidator {
+  addLines(
+    ...lines: Array<Line | string | LineField | undefined>
+  ): LineConsolidator {
     this.lines.push(
-      ...lines.map((l) => (isLine(l) ? l : { shouldDisplay: true, string: l }))
+      ...lines.map((l) =>
+        typeof l === "undefined"
+          ? { shouldDisplay: false, string: "" }
+          : isLine(l)
+          ? l
+          : { shouldDisplay: true, string: l }
+      )
     );
 
     return this;

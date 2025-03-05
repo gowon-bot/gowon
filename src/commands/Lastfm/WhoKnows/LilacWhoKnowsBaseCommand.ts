@@ -7,6 +7,7 @@ import {
 } from "../../../services/Discord/WhoKnowsService";
 import { LilacUser } from "../../../services/lilac/converters/user";
 import { LilacPrivacy } from "../../../services/lilac/LilacAPIService.types";
+import { LilacTagsService } from "../../../services/lilac/LilacTagsService";
 import { LilacWhoKnowsService } from "../../../services/lilac/LilacWhoKnowsService";
 import { ServiceRegistry } from "../../../services/ServicesRegistry";
 import { client } from "../../../setup";
@@ -23,6 +24,7 @@ export abstract class WhoKnowsBaseCommand<
 
   nicknameService = ServiceRegistry.get(NicknameService);
   whoKnowsService = ServiceRegistry.get(WhoKnowsService);
+  lilacTagsService = ServiceRegistry.get(LilacTagsService);
   lilacWhoKnowsService = ServiceRegistry.get(LilacWhoKnowsService);
 
   protected notSyncedHelp() {
