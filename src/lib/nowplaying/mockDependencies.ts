@@ -178,6 +178,16 @@ export const mockDependencies = (
       lastScrobbled: new Date().getTime(),
       firstScrobbled: new Date().getTime(),
     },
+    ambiguousTrackCount: {
+      user: {} as any,
+      track: {
+        artist: { id: 1, name: nowPlaying.artist, tags: [] },
+        name: nowPlaying.name,
+      },
+      playcount: 179,
+      lastScrobbled: new Date().getTime(),
+      firstScrobbled: new Date().getTime(),
+    },
     albumRating: {
       rating: 7,
       rateYourMusicAlbum: {

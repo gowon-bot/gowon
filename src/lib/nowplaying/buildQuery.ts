@@ -5,6 +5,7 @@ export enum QueryPartName {
   ArtistCount = "artistCount",
   AlbumCount = "albumCount",
   AlbumRating = "albumRating",
+  AmbiguousTrackCount = "ambiguousTrackCount",
   GlobalArtistRank = "globalArtistRank",
   ServerArtistRank = "serverArtistRank",
 }
@@ -31,12 +32,15 @@ const nowPlayingQuery = gql`
   query nowPlayingQuery(
     $artistCount: Boolean!
     $albumCount: Boolean!
+    $ambiguousTrackCount: Boolean!
     $albumRating: Boolean!
     $globalArtistRank: Boolean!
     $serverArtistRank: Boolean!
+
     $user: UserInput!
     $acFilters: ArtistCountsFilters
     $lcFilters: AlbumCountsFilters
+    $atcFilters: TrackCountsFilters
     $lrFilters: RatingsFilters
     $arArtist: ArtistInput!
     $guildID: String
@@ -49,6 +53,7 @@ const nowPlayingQuery = gql`
 
         playcount
         firstScrobbled
+        lastScrobbled
       }
     }
 
@@ -62,8 +67,28 @@ const nowPlayingQuery = gql`
         }
 
         playcount
+        firstScrobbled
+        lastScrobbled
       }
     }
+
+    ${QueryPartName.AmbiguousTrackCount}: ambiguousTrackCounts(
+      filters: $atcFilters
+    ) @include(if: $ambiguousTrackCount) {
+      trackCounts {
+        playcount
+        firstScrobbled
+        lastScrobbled
+
+        track {
+          name
+          artist {
+            name
+          }
+        }
+      }
+    }
+
 
     ${QueryPartName.AlbumRating}: ratings(filters: $lrFilters) @include(if: $albumRating) {
       ratings {

@@ -9,6 +9,7 @@ import {
 import { CrownDisplay } from "../../services/dbservices/crowns/CrownsService.types";
 import {
   LilacAlbumCount,
+  LilacAmbiguousTrackCount,
   LilacArtistCount,
   LilacRating,
   LilacWhoKnowsArtistRank,
@@ -31,6 +32,7 @@ export type DependencyMap = {
   // Lilac data
   albumCount: LilacAlbumCount | undefined;
   artistCount: LilacArtistCount | undefined;
+  ambiguousTrackCount: LilacAmbiguousTrackCount | undefined;
   albumRating: LilacRating | undefined;
   globalArtistRank: Pick<LilacWhoKnowsArtistRank, "rank" | "totalListeners">;
   serverArtistRank: Pick<LilacWhoKnowsArtistRank, "rank" | "totalListeners">;

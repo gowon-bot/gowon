@@ -1,8 +1,10 @@
 import { UNUSED_CONFIG } from "../../services/dbservices/NowPlayingService";
 import { Choice } from "../context/arguments/argumentTypes/StringArgument";
 import { BaseNowPlayingComponent } from "./base/BaseNowPlayingComponent";
+import { AlbumLastPlayedComponent } from "./components/AlbumLastPlayedComponent";
 import { AlbumPlaysComponent } from "./components/AlbumPlaysComponent";
 import { ArtistCrownComponent } from "./components/ArtistCrownComponent";
+import { ArtistLastPlayedComponent } from "./components/ArtistLastPlayedComponent";
 import { ArtistPlaysComponent } from "./components/ArtistPlaysComponent";
 import { CardOwnershipComponent } from "./components/CardOwnershipComponent";
 import { FishyReminderComponent } from "./components/FishyReminderComponent";
@@ -11,9 +13,12 @@ import { ListenersComponent } from "./components/ListenersComponent";
 import { LovedComponent } from "./components/LovedComponent";
 import { RatingComponent } from "./components/RatingComponent";
 import { ScrobblesComponent } from "./components/ScrobblesComponent";
-import { ServerArtistRankComponent } from "./components/ServerRankComponent";
+import { ServerArtistRankComponent } from "./components/ServerArtistRankComponent";
+import { TrackLastPlayedComponent } from "./components/TrackLastPlayedComponent";
 import { TrackPlaysComponent } from "./components/TrackPlaysComponent";
 import { ArtistPlaysAndCrownComponent } from "./compoundComponents/ArtistPlaysAndCrown";
+import { ArtistRanksComponent } from "./compoundComponents/ArtistRanksComponent";
+import { LastPlayedComponent } from "./compoundComponents/LastPlayedComponent";
 import { LovedAndOwnedComponent } from "./compoundComponents/LovedAndOwnedComponent";
 import {
   ArtistTagsComponent,
@@ -46,10 +51,13 @@ const componentList = [
   ArtistCrownComponent,
   RatingComponent,
   ListenersComponent,
-  ServerArtistRankComponent,
-  GlobalArtistRankComponent,
 
   // Placeholder components
+  ServerArtistRankComponent,
+  GlobalArtistRankComponent,
+  ArtistLastPlayedComponent,
+  AlbumLastPlayedComponent,
+  TrackLastPlayedComponent,
   ArtistTagsComponent,
   TrackTagsComponent,
 ] as const;
@@ -57,6 +65,8 @@ const componentList = [
 export const compoundComponentList = [
   LovedAndOwnedComponent,
   ArtistPlaysAndCrownComponent,
+  ArtistRanksComponent,
+  LastPlayedComponent,
 
   // TagsComponent should always be last because it takes up the most space
   TagsComponent,
