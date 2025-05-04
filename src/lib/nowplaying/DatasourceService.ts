@@ -23,10 +23,12 @@ import { LilacAPIService } from "../../services/lilac/LilacAPIService";
 import {
   LilacAlbumCountFilters,
   LilacAlbumCountsPage,
+  LilacAmbiguousTrackCountsPage,
   LilacArtistCountFilters,
   LilacArtistCountsPage,
   LilacRatingsFilters,
   LilacRatingsPage,
+  LilacTrackCountFilters,
   LilacUserInput,
 } from "../../services/lilac/LilacAPIService.types";
 import { UserInput } from "../../services/mirrorball/MirrorballTypes";
@@ -253,6 +255,24 @@ export class DatasourceService extends BaseService<DatasourceServiceContext> {
       variables: { lcFilters },
       transformer(data: LilacAlbumCountsPage) {
         return data.albumCounts[0];
+      },
+    };
+  }
+
+  ambiguousTrackCount(ctx: DatasourceServiceContext): QueryPart {
+    const atcFilters: LilacTrackCountFilters = {
+      track: {
+        name: this.nowPlaying(ctx).name,
+        artist: { name: this.nowPlaying(ctx).artist },
+      },
+      users: [this.userInput(ctx)],
+    };
+
+    return {
+      query: QueryPartName.AmbiguousTrackCount,
+      variables: { atcFilters },
+      transformer(data: LilacAmbiguousTrackCountsPage) {
+        return data.trackCounts[0];
       },
     };
   }

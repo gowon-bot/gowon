@@ -4,7 +4,7 @@ export const constants = {
   defaultTasteAmount: 1000,
   hardPageLimit: 100,
   crownThreshold: 30,
-  dateDisplayFormat: "d MMMM y",
+  dateDisplayFormat: "dd/MM/yyyy",
   dateParsers: [
     "yy-MM-dd",
     "yyyy-MM-dd",

@@ -20,7 +20,10 @@ export default class LastScrobbledTrack extends LilacBaseCommand<typeof args> {
 
   aliases = ["lastt", "lasttrack", "lt"];
   variations: Variation[] = [
-    { name: "first", variation: ["firstt", "ft", "firsttrack"] },
+    {
+      name: "first",
+      variation: ["firstt", "ft", "firsttrack", "firstscrobbledtrack"],
+    },
   ];
 
   subcategory = "library";
