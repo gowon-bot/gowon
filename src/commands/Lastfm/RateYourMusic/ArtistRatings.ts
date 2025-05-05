@@ -62,7 +62,9 @@ export class ArtistRatings extends RateYourMusicChildCommand<typeof args> {
     ]);
 
     const artistName =
-      rymArtist.artistName || this.getArtistName(ratingsPage.ratings) || artist;
+      rymArtist?.artistName ||
+      this.getArtistName(ratingsPage.ratings) ||
+      artist;
 
     if (!ratingsPage.ratings.length) {
       throw new NoRatingsFromArtistError(perspective);
