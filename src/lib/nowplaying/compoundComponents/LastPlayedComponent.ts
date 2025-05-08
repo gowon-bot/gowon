@@ -98,10 +98,16 @@ export class LastPlayedComponent extends BaseCompoundComponent<
         : "",
     ];
 
-    return {
-      string: `Last played — ${parts.filter((part) => part !== "").join(", ")}`,
-      size: NowPlayingEmbed.rowSize,
-    };
+    if (parts.length) {
+      return {
+        string: `Last played — ${parts
+          .filter((part) => part !== "")
+          .join(", ")}`,
+        size: NowPlayingEmbed.rowSize,
+      };
+    } else {
+      return { string: "", size: 0 };
+    }
   }
 
   private renderSingleComponentFromParts(
