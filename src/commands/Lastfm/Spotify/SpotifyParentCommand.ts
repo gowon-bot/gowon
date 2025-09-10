@@ -1,11 +1,12 @@
 import { CommandGroup } from "../../../lib/command/CommandGroup";
 import { Help } from "./Help";
 import { Like } from "./Like";
+import { Login } from "./Login";
 import { Privacy } from "./Privacy";
+import { Loop } from "./RemoteControl/Loop";
 import { Next } from "./RemoteControl/Next";
 import { Queue } from "./RemoteControl/Queue";
 import { SpotifyBaseParentCommand } from "./SpotifyBaseCommands";
-import { Login } from "./Login";
 
 export default class SpotifyParentCommand extends SpotifyBaseParentCommand {
   idSeed = "viviz sinb";
@@ -40,6 +41,9 @@ export default class SpotifyParentCommand extends SpotifyBaseParentCommand {
     // Help
     "spotifyhelp",
     "shelp",
+    // Loop
+    "loop",
+    "unloop",
   ];
 
   prefixes = ["spotify", "sp"];
@@ -47,7 +51,7 @@ export default class SpotifyParentCommand extends SpotifyBaseParentCommand {
   customHelp = Help;
 
   children = new CommandGroup(
-    [Help, Like, Login, Next, Privacy, Queue],
+    [Help, Like, Login, Loop, Next, Privacy, Queue],
     this.id
   );
 }

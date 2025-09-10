@@ -54,6 +54,12 @@ interface Keywords {
 
 export type SpotifySearchParams<T extends object> = Keywords | T;
 
+export enum SpotifyRepeatState {
+  Track = "track",
+  Context = "context",
+  Off = "off",
+}
+
 export function isKeywords(
   params: SpotifySearchParams<any>
 ): params is Keywords {
@@ -304,6 +310,20 @@ export class SpotifyService extends BaseSpotifyService<SpotifyServiceContext> {
     await this.request(ctx, {
       path: "me/player/next",
       method: "POST",
+      expectNoContent: true,
+    });
+  }
+
+  async setRepeatState(
+    ctx: SpotifyServiceContext,
+    state: SpotifyRepeatState
+  ): Promise<void> {
+    this.ensureAuthenticated(ctx);
+
+    await this.request(ctx, {
+      path: "me/player/repeat",
+      method: "PUT",
+      params: { state },
       expectNoContent: true,
     });
   }

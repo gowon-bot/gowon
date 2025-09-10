@@ -5,7 +5,7 @@ export default class Maik extends Command {
   idSeed = "billlie tsuki";
 
   subcategory = "fun";
-  description = `"John can you add a maik command to gowon"\n"ok"`;
+  description = `"Abby can you add a maik command to gowon"\n"ok"`;
   secretCommand = true;
 
   async run() {
