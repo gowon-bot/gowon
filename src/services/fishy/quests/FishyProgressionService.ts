@@ -9,10 +9,8 @@ import {
 } from "../../../database/entity/fishy/FishyQuest";
 import { getNumberEnumValues } from "../../../helpers/enum";
 import { fishyQuestLevelSize } from "../../../helpers/fishy";
-import { average } from "../../../helpers/stats";
 import { Emoji } from "../../../lib/emoji/Emoji";
 import { BaseService } from "../../BaseService";
-import { getFishyList } from "../fishyList";
 import { FishyRarities, FishyRarityData, FishyRarityKey } from "../rarity";
 import { matchesFishyTrait } from "../traits";
 import { FishyTraitNoDepth, QuestTraitPicker } from "./QuestTraitPicker";
@@ -24,9 +22,9 @@ export class FishyProgressionService extends BaseService {
     FishyRarities.Common,
     FishyRarities.Uncommon,
     FishyRarities.Rare,
-    FishyRarities.SuperRare,
-    FishyRarities.Legendary,
   ];
+
+  private readonly questWeights = [1, 5, 10];
 
   public async getCurrentQuest(
     fishyProfile: FishyProfile
@@ -109,7 +107,7 @@ export class FishyProgressionService extends BaseService {
 
     const questType = await this.pickQuestType(fishyProfile);
 
-    const count = Chance().pickone([2 * tier, 3 * tier, 5 * tier]);
+    const count = Chance().pickone([1 * tier, 2 * tier, 3 * tier]);
 
     switch (questType) {
       case FishyQuestType.Count:
@@ -153,7 +151,7 @@ export class FishyProgressionService extends BaseService {
     tier: number
   ): FishyQuest {
     const rarity = this.getRarityForTier(tier);
-    const rebalancedCount = this.rebalanceCountForRarity(count, tier, rarity);
+    const rebalancedCount = this.rebalanceCountForRarity(count, rarity);
 
     return FishyQuest.create({
       quester: user,
@@ -169,16 +167,12 @@ export class FishyProgressionService extends BaseService {
     count: number,
     tier: number
   ): FishyQuest {
-    const rarity = this.getRarityForTier(tier);
-
-    const weights = getFishyList(rarity).map(
-      (f) => (f.maxWeight + f.minWeight) / 2
-    );
+    const weightLevel = Chance().shuffle(this.questWeights.slice(0, tier))[0];
 
     return FishyQuest.create({
       quester: user,
       count,
-      numberConstraint: Math.floor(average(weights)) || 1,
+      numberConstraint: weightLevel,
       type: FishyQuestType.Weight,
       emoji: this.pickFishyQuestEmoji(),
     });
@@ -200,7 +194,6 @@ export class FishyProgressionService extends BaseService {
 
   private rebalanceCountForRarity(
     count: number,
-    tier: number,
     rarity: FishyRarityData
   ): number {
     // Rebalance the count so that players aren't expected to catch large numbers of super rare fish
@@ -209,10 +202,6 @@ export class FishyProgressionService extends BaseService {
       ? count
       : rarity === FishyRarities.Rare || rarity === FishyRarities.Trash
       ? Math.ceil(count / 2)
-      : rarity === FishyRarities.SuperRare
-      ? count / tier
-      : rarity === FishyRarities.Legendary
-      ? Chance().integer({ min: 1, max: 5 })
       : 1;
   }
 
